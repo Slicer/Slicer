@@ -30,7 +30,6 @@
 #include <vtkMRMLProceduralColorNode.h>
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLSliceNode.h"
-//#include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLInteractionNode.h"
 
@@ -45,6 +44,7 @@
 #include <vtkImplicitBoolean.h>
 #include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkPlane.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
@@ -1375,12 +1375,12 @@ void vtkMRMLModelDisplayableManager::RemoveHierarchyObservers(int clearCache)
 void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableNode *model)
 {
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
-  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
   if (tnode != 0 && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
 
   int ndnodes = model->GetNumberOfDisplayNodes();
@@ -1406,7 +1406,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
       vtkActor *actor = vtkActor::SafeDownCast(prop);
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
-      prop->SetUserMatrix(transformToWorld);
+      prop->SetUserMatrix(transformToWorld.GetPointer());
 
       bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
       prop->SetVisibility(visible);
@@ -1892,14 +1892,15 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper(
   clipper->SetValue( 0.0);
 
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
-  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
   if (tnode != 0 && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
 
-    vtkImplicitBoolean *slicePlanes =   vtkImplicitBoolean::New();
+    vtkNew<vtkImplicitBoolean> slicePlanes;
+
     if (this->Internal->ClipType == vtkMRMLClipModelsNode::ClipIntersection)
       {
       slicePlanes->SetOperationTypeToIntersection();
@@ -1909,56 +1910,49 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper(
       slicePlanes->SetOperationTypeToUnion();
       }
 
-    vtkPlane *redSlicePlane = vtkPlane::New();
-    vtkPlane *greenSlicePlane = vtkPlane::New();
-    vtkPlane *yellowSlicePlane = vtkPlane::New();
-
+    vtkNew<vtkPlane> redSlicePlane;
+    vtkNew<vtkPlane> greenSlicePlane;
+    vtkNew<vtkPlane> yellowSlicePlane;
 
     if (this->Internal->RedSliceClipState != vtkMRMLClipModelsNode::ClipOff)
       {
-      slicePlanes->AddFunction(redSlicePlane);
+      slicePlanes->AddFunction(redSlicePlane.GetPointer());
       }
 
     if (this->Internal->GreenSliceClipState != vtkMRMLClipModelsNode::ClipOff)
       {
-      slicePlanes->AddFunction(greenSlicePlane);
+      slicePlanes->AddFunction(greenSlicePlane.GetPointer());
       }
 
     if (this->Internal->YellowSliceClipState != vtkMRMLClipModelsNode::ClipOff)
       {
-      slicePlanes->AddFunction(yellowSlicePlane);
+      slicePlanes->AddFunction(yellowSlicePlane.GetPointer());
       }
 
     vtkMatrix4x4 *sliceMatrix = 0;
-    vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> mat;
     int planeDirection = 1;
     transformToWorld->Invert();
 
     sliceMatrix = this->Internal->RedSliceNode->GetSliceToRAS();
     mat->Identity();
-    vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
+    vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), sliceMatrix, mat.GetPointer());
     planeDirection = (this->Internal->RedSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
-    this->SetClipPlaneFromMatrix(mat, planeDirection, redSlicePlane);
+    this->SetClipPlaneFromMatrix(mat.GetPointer(), planeDirection, redSlicePlane.GetPointer());
 
     sliceMatrix = this->Internal->GreenSliceNode->GetSliceToRAS();
     mat->Identity();
-    vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
+    vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), sliceMatrix, mat.GetPointer());
     planeDirection = (this->Internal->GreenSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
-    this->SetClipPlaneFromMatrix(mat, planeDirection, greenSlicePlane);
+    this->SetClipPlaneFromMatrix(mat.GetPointer(), planeDirection, greenSlicePlane.GetPointer());
 
     sliceMatrix = this->Internal->YellowSliceNode->GetSliceToRAS();
     mat->Identity();
-    vtkMatrix4x4::Multiply4x4(transformToWorld, sliceMatrix, mat);
+    vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), sliceMatrix, mat.GetPointer());
     planeDirection = (this->Internal->YellowSliceClipState == vtkMRMLClipModelsNode::ClipNegativeSpace) ? -1 : 1;
-    this->SetClipPlaneFromMatrix(mat, planeDirection, yellowSlicePlane);
+    this->SetClipPlaneFromMatrix(mat.GetPointer(), planeDirection, yellowSlicePlane.GetPointer());
 
-    clipper->SetClipFunction(slicePlanes);
-
-    slicePlanes->Delete();
-    redSlicePlane->Delete();
-    greenSlicePlane->Delete();
-    yellowSlicePlane->Delete();
-
+    clipper->SetClipFunction(slicePlanes.GetPointer());
     }
   else
     {

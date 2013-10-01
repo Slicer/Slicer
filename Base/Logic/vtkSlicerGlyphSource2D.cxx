@@ -14,15 +14,15 @@
 =========================================================================*/
 #include "vtkSlicerGlyphSource2D.h"
 
-#include "vtkCellArray.h"
-#include "vtkCellData.h"
-#include "vtkMath.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkObjectFactory.h"
-
-#include "vtkSmartPointer.h"
-#include "vtkMRMLFiducialListNode.h"
+// VTK includes
+#include <vtkCellArray.h>
+#include <vtkCellData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkMath.h>
+#include <vtkMRMLFiducialListNode.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 vtkCxxRevisionMacro(vtkSlicerGlyphSource2D, "$Revision$");
 vtkStandardNewMacro(vtkSlicerGlyphSource2D);
@@ -626,8 +626,7 @@ void vtkSlicerGlyphSource2D::SetGlyphTypeAsString(const char *type)
     return;
     }
   
-  //vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::New();
-  vtkSmartPointer<vtkMRMLFiducialListNode> listNode = vtkSmartPointer<vtkMRMLFiducialListNode>::New();
+  vtkNew<vtkMRMLFiducialListNode> listNode;
   
   if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::StarBurst2D) ) )
     {
@@ -677,6 +676,4 @@ void vtkSlicerGlyphSource2D::SetGlyphTypeAsString(const char *type)
     {
     this->SetGlyphTypeToHookedArrow();
     }
-//  listNode->Delete();
-//  listNode = NULL;
 }

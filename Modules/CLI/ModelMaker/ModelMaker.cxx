@@ -13,42 +13,50 @@ Version:   $Revision$
 =========================================================================auto=*/
 
 #include "ModelMakerCLP.h"
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkImageData.h"
-#include "vtkImageAccumulate.h"
-#include "vtkDiscreteMarchingCubes.h"
-#include "vtkWindowedSincPolyDataFilter.h"
-#include "vtkPointData.h"
-#include "vtkTransform.h"
-#include "vtkImageThreshold.h"
-#include "vtkThreshold.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkImageToStructuredPoints.h"
-#include "vtkGeometryFilter.h"
-#include "vtkDecimatePro.h"
-#include "vtkSmoothPolyDataFilter.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkReverseSense.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkStripper.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkImageChangeInformation.h"
-#include "vtkSmartPointer.h"
-#include "vtkLookupTable.h"
-#include "vtkImageConstantPad.h"
 
-#include "vtkPluginFilterWatcher.h"
+// Slicer includes
+#include <vtkPluginFilterWatcher.h>
 
-#include "vtksys/SystemTools.hxx"
-
-#include "vtkMRMLScene.h"
+// MRML includes
+#include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLModelDisplayNode.h"
+#include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
-#include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLModelHierarchyNode.h"
-#include "vtkMRMLColorTableStorageNode.h"
-#include "vtkDebugLeaks.h"
+#include "vtkMRMLScene.h"
+
+// vtkITK includes
+#include "vtkITKArchetypeImageSeriesScalarReader.h"
+
+// VTK includes
+#include <vtkDebugLeaks.h>
+#include <vtkDecimatePro.h>
+#include <vtkDiscreteMarchingCubes.h>
+#include <vtkGeometryFilter.h>
+#include <vtkImageAccumulate.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkImageConstantPad.h>
+#include <vtkImageData.h>
+#include <vtkImageThreshold.h>
+#include <vtkImageToStructuredPoints.h>
+#include <vtkLookupTable.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkReverseSense.h>
+#include <vtkSmartPointer.h>
+#include <vtkSmoothPolyDataFilter.h>
+#include <vtkStripper.h>
+#include <vtkThreshold.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkWindowedSincPolyDataFilter.h>
+
+// VTKsys includes
+#include <vtksys/SystemTools.hxx>
 
 int main(int argc, char * argv[])
 {
@@ -141,7 +149,7 @@ int main(int argc, char * argv[])
   std::string rootDir
     = vtksys::SystemTools::GetParentDirectory(sceneFilename.c_str());
 
-  vtkSmartPointer<vtkMRMLScene> modelScene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> modelScene;
 
 
   // load the scene that Slicer will re-read
@@ -418,7 +426,7 @@ int main(int argc, char * argv[])
   reader->SetDesiredCoordinateOrientationToNative();
   reader->SetUseNativeOriginOn();
   reader->Update();
-  vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
+  vtkNew<vtkImageChangeInformation> ici;
   ici->SetInput(reader->GetOutput());
   ici->SetOutputSpacing(1, 1, 1);
   ici->SetOutputOrigin(0, 0, 0);
@@ -437,7 +445,7 @@ int main(int argc, char * argv[])
       padder = NULL;
       }
     padder = vtkSmartPointer<vtkImageConstantPad>::New();
-    vtkSmartPointer<vtkImageChangeInformation> translator = vtkSmartPointer<vtkImageChangeInformation>::New();
+    vtkNew<vtkImageChangeInformation> translator;
     translator->SetInput(image);
     // translate the extent by 1 pixel
     translator->SetExtentTranslation(1, 1, 1);
@@ -492,11 +500,10 @@ int main(int argc, char * argv[])
     }
 
   // each hierarchy node needs a display node
-  vtkSmartPointer<vtkMRMLModelDisplayNode> dnd = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  vtkNew<vtkMRMLModelDisplayNode> dnd;
   dnd->SetVisibility(1);
-  modelScene->AddNode(dnd);
+  modelScene->AddNode(dnd.GetPointer());
   rtnd->SetAndObserveDisplayNodeID(dnd->GetID());
-  dnd = NULL;
 
   // If making mulitple models, figure out which labels have voxels
   if (makeMultiple)
@@ -1605,7 +1612,7 @@ int main(int argc, char * argv[])
 
       writer->SetInput(NULL);
       writer = NULL;
-      if (modelScene != NULL)
+      if (modelScene.GetPointer() != NULL)
         {
         if (debug)
           {
@@ -1613,17 +1620,17 @@ int main(int argc, char * argv[])
                     << endl;
           }
         // each model needs a mrml node, a storage node and a display node
-        vtkSmartPointer<vtkMRMLModelNode> mnode = vtkSmartPointer<vtkMRMLModelNode>::New();
-        mnode->SetScene(modelScene);
+        vtkNew<vtkMRMLModelNode> mnode;
+        mnode->SetScene(modelScene.GetPointer());
         mnode->SetName(labelName.c_str());
 
-        vtkSmartPointer<vtkMRMLModelStorageNode> snode = vtkSmartPointer<vtkMRMLModelStorageNode>::New();
+        vtkNew<vtkMRMLModelStorageNode> snode;
         snode->SetFileName(fileName.c_str());
-        if (modelScene->AddNode(snode) == NULL)
+        if (modelScene->AddNode(snode.GetPointer()) == NULL)
           {
           std::cerr << "ERROR: unable to add the storage node to the model scene" << endl;
           }
-        vtkSmartPointer<vtkMRMLModelDisplayNode> dnode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+        vtkNew<vtkMRMLModelDisplayNode> dnode;
         dnode->SetColor(0.5, 0.5, 0.5);
         double *rgba;
         if (colorNode != NULL)
@@ -1645,7 +1652,7 @@ int main(int argc, char * argv[])
           }
 
         dnode->SetVisibility(1);
-        modelScene->AddNode(dnode);
+        modelScene->AddNode(dnode.GetPointer());
         if (debug)
           {
           std::cout << "Added display node: id = " << (dnode->GetID() == NULL ? "(null)" : dnode->GetID()) << endl;
@@ -1654,7 +1661,7 @@ int main(int argc, char * argv[])
           }
         mnode->SetAndObserveStorageNodeID(snode->GetID());
         mnode->SetAndObserveDisplayNodeID(dnode->GetID());
-        modelScene->AddNode(mnode);
+        modelScene->AddNode(mnode.GetPointer());
 
         // put it in the hierarchy, either the flat one by default or 
         // try to find the matching color hierarchy node to make this an
@@ -1688,12 +1695,11 @@ int main(int argc, char * argv[])
             mrmlNode == NULL ||
             strcmp(mrmlNode->GetClassName(),"vtkMRMLModelHierarchyNode") != 0)
           {
-          vtkSmartPointer<vtkMRMLModelHierarchyNode> mhnd = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+          vtkNew<vtkMRMLModelHierarchyNode> mhnd;
           mhnd->SetHideFromEditors(1);
-          modelScene->AddNode(mhnd);
+          modelScene->AddNode(mhnd.GetPointer());
           mhnd->SetParentNodeID(rnd->GetID());
           mhnd->SetModelNodeID(mnode->GetID());
-          mhnd = NULL;
           }
         else
           {
@@ -1714,10 +1720,6 @@ int main(int argc, char * argv[])
           {
           std::cout << "...done adding model to output scene" << endl;
           }
-        // clean up
-        dnode = NULL;
-        snode = NULL;
-        mnode = NULL;
         }
       } // end of skipping an empty label
     }   // end of loop over labels
@@ -1960,14 +1962,13 @@ int main(int argc, char * argv[])
     stripper->SetInput(NULL);
     stripper = NULL;
     }
-  if (ici)
+  if (ici.GetPointer())
     {
     if (debug)
       {
       std::cout << "Deleting ici, no set input null" << endl;
       }
     ici->SetInput(NULL);
-    ici = NULL;
     }
   if (debug)
     {
@@ -1975,14 +1976,13 @@ int main(int argc, char * argv[])
     }
   reader = NULL;
 
-  if (modelScene)
+  if (modelScene.GetPointer())
     {
     if (debug)
       {
       std::cout << "Deleting model scene" << endl;
       }
     modelScene->Clear(1);
-    modelScene = NULL;
     }
   return EXIT_SUCCESS;
 }

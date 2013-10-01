@@ -12,24 +12,27 @@
 
 ==========================================================================*/
 
+// vtkITK includes
 #include "vtkITKImageWriter.h"
 
-#include "vtkFloatArray.h"
-#include "vtkImageExport.h"
-#include "vtkImageFlip.h"
-#include "vtkITKUtility.h"
-#include "vtkPointData.h"
-#include "vtkSmartPointer.h"
+// VTK includes
+#include <vtkFloatArray.h>
+#include <vtkImageExport.h>
+#include <vtkImageFlip.h>
+#include <vtkITKUtility.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 
-#include "itkImageFileWriter.h"
-#include "itkDiffusionTensor3D.h"
-#include "itkMetaDataDictionary.h"
-#include "itkMetaDataObject.h"
-#include "itkMetaDataObjectBase.h"
-#include "itkVTKImageImport.h"
+// ITK includes
+#include <itkDiffusionTensor3D.h>
+#include <itkImageFileWriter.h>
+#include <itkMetaDataDictionary.h>
+#include <itkMetaDataObject.h>
+#include <itkMetaDataObjectBase.h>
+#include <itkVTKImageImport.h>
 
 
 vtkStandardNewMacro(vtkITKImageWriter);
@@ -477,7 +480,7 @@ void vtkITKImageWriter::Write()
       case VTK_FLOAT:
         {
         typedef itk::DiffusionTensor3D<float> TensorPixelType;
-        vtkSmartPointer<vtkImageData> outImage = vtkSmartPointer<vtkImageData>::New();
+        vtkNew<vtkImageData> outImage;
         outImage->SetDimensions(inputImage->GetDimensions());
         outImage->SetWholeExtent(inputImage->GetWholeExtent());
         outImage->SetOrigin(0, 0, 0);
@@ -502,7 +505,7 @@ void vtkITKImageWriter::Write()
           out->SetTuple(i, outValue);
           }
 
-        ITKWriteVTKImage<TensorPixelType>(this, outImage,
+        ITKWriteVTKImage<TensorPixelType>(this, outImage.GetPointer(),
           this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
         }
         inputImage->GetPointData()->SetScalars(NULL);

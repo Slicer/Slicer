@@ -40,7 +40,7 @@
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkMath.h>
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 #include <vtkTransform.h>
 
 //------------------------------------------------------------------------------
@@ -657,7 +657,7 @@ onSliderRotationChanged(double rotation)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> transform;
   transform->SetMatrix(d->MRMLSliceNode->GetSliceToRAS());
 
   if (this->sender() == d->LRSlider)

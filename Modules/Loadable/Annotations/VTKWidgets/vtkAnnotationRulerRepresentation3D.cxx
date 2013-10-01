@@ -3,23 +3,21 @@
 
 // VTK includes
 #include <vtkAxisActor2D.h>
+#include <vtkBox.h>
+#include <vtkCylinderSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkFollower.h>
 #include <vtkGlyph3D.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkMath.h>
 #include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkRenderer.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkVectorText.h>
 #include <vtkWindow.h>
-
-#include <vtkBox.h>
-#include <vtkPointData.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkTransform.h>
-#include <vtkSmartPointer.h>
-#include <vtkCylinderSource.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerRepresentation3D);
@@ -240,8 +238,8 @@ void vtkAnnotationRulerRepresentation3D::UpdateGlyphPolyData(vtkPolyData *polyDa
   this->GlyphPolyData->GetPointData()->SetVectors(this->GlyphVectors);
 
   this->GlyphXForm->SetInput(this->GlyphPolyData);
-  vtkSmartPointer<vtkTransform> xform = vtkSmartPointer<vtkTransform>::New();
-  this->GlyphXForm->SetTransform(xform);
+  vtkNew<vtkTransform> xform;
+  this->GlyphXForm->SetTransform(xform.GetPointer());
   
   this->Glyph3D->SetInput(this->GlyphPolyData);
   // set the transform to identity

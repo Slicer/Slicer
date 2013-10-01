@@ -46,6 +46,7 @@
 /// VTK includes
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLDataParser.h>
 
@@ -932,10 +933,9 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   //    tk_messageBox -message "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
   //     return
   // }
-  vtkSmartPointer<vtkMRMLLinearTransformNode> tnode = 
-    vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
+  vtkNew<vtkMRMLLinearTransformNode> tnode;
   tnode->SetName(node["name"].toLatin1());
-  q->mrmlScene()->AddNode(tnode);
+  q->mrmlScene()->AddNode(tnode.GetPointer());
   QString tid = tnode->GetID();
   if (tid.isNull())
     {
@@ -979,8 +979,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   // }
   // close $fid
   // TODO: use IOManager to read the file...
-  vtkSmartPointer<vtkMatrix4x4> matrix =
-    vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> matrix;
   QFile fid(node["uri"]);
   if (fid.open(QFile::ReadOnly | QIODevice::Text))
     {
@@ -1017,7 +1016,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   // $M DeepCopy $matrix
   // $matrix Delete
   // $tnode Delete
-  M->DeepCopy(matrix);
+  M->DeepCopy(matrix.GetPointer());
     
   // //--- this is for help with FIPS registration correction
   // if { $n(name) == "anat2exf" } {
@@ -1171,10 +1170,9 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
   // set ras2rasT [ vtkMRMLLinearTransformNode New ]
   // $ras2rasT SetName StatisticsToBrainXform
   // $::slicer3::MRMLScene AddNode $ras2rasT
-  vtkSmartPointer<vtkMRMLLinearTransformNode> ras2rasT =
-    vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
+  vtkNew<vtkMRMLLinearTransformNode> ras2rasT;
   ras2rasT->SetName("StatisticsToBrainXform");
-  q->mrmlScene()->AddNode(ras2rasT);
+  q->mrmlScene()->AddNode(ras2rasT.GetPointer());
   this->LoadedNodes << ras2rasT->GetID();
   
   //set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
@@ -1188,18 +1186,17 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
   //set mat [ vtkMatrix4x4 New]
   //$volumesLogic ComputeTkRegVox2RASMatrix $v1 $mat
   //$volumesLogic TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix $v1 $v2 $anat2exf $mat
-  vtkSmartPointer<vtkMatrix4x4> mat =
-    vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> mat;
   vtkFSSurfaceHelper::ComputeTkRegVox2RASMatrix(
-    v1->GetSpacing(), v1->GetImageData()->GetDimensions(), mat);
-  vtkSmartPointer<vtkMatrix4x4> ijkToRas = vtkSmartPointer<vtkMatrix4x4>::New();
-  vtkSmartPointer<vtkMatrix4x4> rasToIjk = vtkSmartPointer<vtkMatrix4x4>::New();  
-  v1->GetIJKToRASMatrix(ijkToRas);
-  v2->GetRASToIJKMatrix(rasToIjk);
+    v1->GetSpacing(), v1->GetImageData()->GetDimensions(), mat.GetPointer());
+  vtkNew<vtkMatrix4x4> ijkToRas;
+  vtkNew<vtkMatrix4x4> rasToIjk;
+  v1->GetIJKToRASMatrix(ijkToRas.GetPointer());
+  v2->GetRASToIJKMatrix(rasToIjk.GetPointer());
   vtkFSSurfaceHelper::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix(
-    v1->GetSpacing(), v1->GetImageData()->GetDimensions(), ijkToRas,
-    v2->GetSpacing(), v2->GetImageData()->GetDimensions(), rasToIjk,
-    anat2exf, mat);
+    v1->GetSpacing(), v1->GetImageData()->GetDimensions(), ijkToRas.GetPointer(),
+    v2->GetSpacing(), v2->GetImageData()->GetDimensions(), rasToIjk.GetPointer(),
+    anat2exf, mat.GetPointer());
     
   //--- this inverse will register statistics to the brain.mgz
   //$mat Invert
@@ -1207,7 +1204,7 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
 
   //--- now have matrix. put it in transform.
   //[ $ras2rasT GetMatrixTransformToParent ] DeepCopy $mat
-  ras2rasT->GetMatrixTransformToParent()->DeepCopy(mat);
+  ras2rasT->GetMatrixTransformToParent()->DeepCopy(mat.GetPointer());
 
   //--- ok -- now manually put your volume in the ras2rasT transform node.
   //$mat Delete
@@ -1325,8 +1322,7 @@ bool qSlicerXcedeCatalogIO::load(const qSlicerIO::IOProperties& properties)
   //  $parser Delete
   //  return $retval
   //} else {
-  vtkSmartPointer<vtkXMLDataParser> parser =
-    vtkSmartPointer<vtkXMLDataParser>::New();
+  vtkNew<vtkXMLDataParser> parser;
   parser->SetFileName(fileName.toLatin1());
   if (parser->Parse() == 0)
     {

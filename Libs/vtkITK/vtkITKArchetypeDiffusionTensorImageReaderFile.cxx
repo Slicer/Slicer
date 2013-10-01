@@ -12,21 +12,22 @@
 
 ==========================================================================*/
 
+// vtkITK includes
 #include "vtkITKArchetypeDiffusionTensorImageReaderFile.h"
 
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkDataArray.h>
+#include <vtkFloatArray.h>
+#include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 
-#include "vtkCommand.h"
-#include "vtkDataArray.h"
-#include "vtkFloatArray.h"
-#include "vtkImageData.h"
-#include "vtkPointData.h"
-#include "vtkObjectFactory.h"
-#include "vtkSmartPointer.h"
-
-
-#include "itkImageRegionConstIteratorWithIndex.h"
-#include "itkDiffusionTensor3D.h"
-#include "itkOrientImageFilter.h"
+// ITK includes
+#include <itkDiffusionTensor3D.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
+#include <itkOrientImageFilter.h>
 
 vtkStandardNewMacro(vtkITKArchetypeDiffusionTensorImageReaderFile);
 vtkCxxRevisionMacro(vtkITKArchetypeDiffusionTensorImageReaderFile, "$Revision: 4068 $");
@@ -132,7 +133,7 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *o
   data->SetExtent(data->GetWholeExtent());
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1, 1, 1);
-  vtkSmartPointer<vtkFloatArray> tensors = vtkSmartPointer<vtkFloatArray>::New();
+  vtkNew<vtkFloatArray> tensors;
   tensors->SetName("ArchetypeReader");
 
     // If there is only one file in the series, just use an image file reader
@@ -142,11 +143,11 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *o
     switch (this->OutputScalarType)
       {
       vtkTemplateMacro(vtkITKExecuteDataFromFileDiffusionTensor3D<VTK_TT>(
-        this, tensors, data));
+        this, tensors.GetPointer(), data));
       default:
         vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
       }
-    data->GetPointData()->SetTensors(tensors);
+    data->GetPointData()->SetTensors(tensors.GetPointer());
     }
   else
     {

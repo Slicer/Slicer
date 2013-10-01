@@ -14,7 +14,7 @@
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
 #include <vtkImageToImageStencil.h>
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // ITK includes
 #include <itkGDCMImageIO.h>
@@ -738,11 +738,11 @@ const char * MapLabelIDtoColorName( int id, std::string colorFile )
 
   const char *colorName = "";
 
-  vtkSmartPointer<vtkMRMLColorTableNode>        colorNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
-  vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode = vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
+  vtkNew<vtkMRMLColorTableNode> colorNode;
+  vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
   colorStorageNode->SetFileName(colorFile.c_str() );
 
-  if( !colorStorageNode->ReadData(colorNode) )
+  if( !colorStorageNode->ReadData(colorNode.GetPointer()) )
     {
     std::cerr << "Error reading colour file " << colorStorageNode->GetFileName() << endl;
     }

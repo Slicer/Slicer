@@ -27,9 +27,9 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
 #include <vtkUnsignedCharArray.h>
 
 vtkCxxRevisionMacro(vtkMarkupsGlyphSource2D, "$Revision: 12554 $");
@@ -634,7 +634,7 @@ void vtkMarkupsGlyphSource2D::SetGlyphTypeAsString(const char *type)
     return;
     }
 
-  vtkSmartPointer<vtkMRMLMarkupsDisplayNode> markupsDisplayNode = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
+  vtkNew<vtkMRMLMarkupsDisplayNode> markupsDisplayNode;
 
   if ( !strcmp( type, markupsDisplayNode->GetGlyphTypeAsString(vtkMRMLMarkupsDisplayNode::StarBurst2D) ) )
     {

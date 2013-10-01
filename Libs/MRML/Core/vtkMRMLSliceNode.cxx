@@ -21,8 +21,8 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
 // VNL includes
@@ -460,8 +460,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
     }
   double spacing[3];
   unsigned int i;
-  vtkSmartPointer<vtkMatrix4x4> xyToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
-  vtkSmartPointer<vtkMatrix4x4> xyToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> xyToSlice;
+  vtkNew<vtkMatrix4x4> xyToRAS;
 
   int disabledModify = this->StartModify();
 
@@ -497,15 +497,15 @@ void vtkMRMLSliceNode::UpdateMatrices()
     //
     // RAS = XYToRAS * XY
     //
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice, xyToRAS);
+    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice.GetPointer(), xyToRAS.GetPointer());
 
     bool modified = false;
 
     // check to see if the matrix actually changed
-    if ( !Matrix4x4AreEqual (xyToRAS, this->XYToRAS) )
+    if ( !Matrix4x4AreEqual (xyToRAS.GetPointer(), this->XYToRAS) )
       {
-      this->XYToSlice->DeepCopy( xyToSlice );
-      this->XYToRAS->DeepCopy( xyToRAS );
+      this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
+      this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
       modified = true;
       }
 
@@ -526,13 +526,13 @@ void vtkMRMLSliceNode::UpdateMatrices()
       this->UVWToSlice->SetElement(2, 3, 0.);
       }
 
-    vtkSmartPointer<vtkMatrix4x4> uvwToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> uvwToRAS;
 
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS);
+    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
 
-    if ( !Matrix4x4AreEqual (uvwToRAS, this->UVWToRAS) )
+    if (!Matrix4x4AreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
       {
-      this->UVWToRAS->DeepCopy( uvwToRAS );
+      this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
       modified = true;
       }
 
@@ -1666,7 +1666,7 @@ double vtkMRMLSliceNode::GetSliceOffset()
   // - pull out the Z translation part
   //
 
-  vtkSmartPointer<vtkMatrix4x4> sliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> sliceToRAS;
   sliceToRAS->DeepCopy( this->GetSliceToRAS() );
   for (int i = 0; i < 3; i++)
     {
@@ -1703,14 +1703,14 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
     return;
     }
 
-  vtkSmartPointer<vtkMatrix4x4> sliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> sliceToRAS;
   sliceToRAS->DeepCopy( this->GetSliceToRAS() );
   for (int i = 0; i < 3; i++)
     {
     sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the tranlation portion
     }
-  vtkSmartPointer<vtkMatrix4x4> sliceToRASInverted = vtkSmartPointer<vtkMatrix4x4>::New(); // inverse sliceToRAS
-  sliceToRASInverted->DeepCopy( sliceToRAS );
+  vtkNew<vtkMatrix4x4> sliceToRASInverted; // inverse sliceToRAS
+  sliceToRASInverted->DeepCopy(sliceToRAS.GetPointer());
   sliceToRASInverted->Invert();
   double v1[4], v2[4], v3[4];
   for (int i = 0; i < 4; i++)
@@ -1737,7 +1737,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
       {
       sliceToRAS->SetElement( i, 3, v3[i] );
       }
-    this->GetSliceToRAS()->DeepCopy( sliceToRAS );
+    this->GetSliceToRAS()->DeepCopy(sliceToRAS.GetPointer());
     this->UpdateMatrices();
     }
 }
@@ -1761,8 +1761,8 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
     return;
     }
 
-  vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  volumeNode->GetIJKToRASMatrix(ijkToRAS);
+  vtkNew<vtkMatrix4x4> ijkToRAS;
+  volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
 
   // apply the transform 
   vtkMRMLTransformNode *transformNode  = volumeNode->GetParentTransformNode();
@@ -1770,9 +1770,9 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
     {
     if ( transformNode->IsTransformToWorldLinear() )
       {
-      vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-      transformNode->GetMatrixTransformToWorld( rasToRAS );
-      rasToRAS->Multiply4x4( rasToRAS, ijkToRAS, ijkToRAS );
+      vtkNew<vtkMatrix4x4> rasToRAS;
+      transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());
+      rasToRAS->Multiply4x4( rasToRAS.GetPointer(), ijkToRAS.GetPointer(), ijkToRAS.GetPointer());
       } 
     else 
       {

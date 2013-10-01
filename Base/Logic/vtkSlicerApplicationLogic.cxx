@@ -13,6 +13,7 @@
 #include "vtkSlicerTask.h"
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
@@ -1319,7 +1320,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     return;
     }
 
-  vtkSmartPointer<vtkMRMLScene> miniscene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> miniscene;
   miniscene->SetURL( req.GetFilename().c_str() );
   miniscene->Import();
 

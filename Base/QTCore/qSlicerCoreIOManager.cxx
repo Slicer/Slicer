@@ -38,7 +38,7 @@
 
 // VTK includes
 #include <vtkCollection.h>
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreIOManagerPrivate
@@ -449,8 +449,8 @@ vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
   qSlicerIO::IOFileType fileType,
   const qSlicerIO::IOProperties& parameters)
 {
-  vtkSmartPointer<vtkCollection> loadedNodes = vtkSmartPointer<vtkCollection>::New();
-  this->loadNodes(fileType, parameters, loadedNodes);
+  vtkNew<vtkCollection> loadedNodes;
+  this->loadNodes(fileType, parameters, loadedNodes.GetPointer());
 
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(0));
   Q_ASSERT(node);

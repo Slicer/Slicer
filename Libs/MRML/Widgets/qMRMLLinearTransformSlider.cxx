@@ -28,8 +28,8 @@
 #include "vtkMRMLLinearTransformNode.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
-#include "vtkTransform.h"
+#include <vtkNew.h>
+#include <vtkTransform.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLLinearTransformSliderPrivate
@@ -146,9 +146,9 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
     }
   Q_ASSERT(d->MRMLTransformNode == transformNode);
 
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform);
+    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
@@ -184,9 +184,9 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
   Q_D(qMRMLLinearTransformSlider);
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform);
+    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);

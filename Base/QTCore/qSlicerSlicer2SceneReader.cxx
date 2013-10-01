@@ -50,6 +50,7 @@
 #include <vtkImageReader.h>
 #include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkXMLDataParser.h>
@@ -512,8 +513,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     {
     //set fileList [vtkStringArray New]
     QStringList fileNames;
-    vtkSmartPointer<vtkStringArray> fileList = 
-      vtkSmartPointer<vtkStringArray>::New();
+    vtkNew<vtkStringArray> fileList;
     //foreach f $n(dicomFileNameList) {
     foreach(QString file, node["dicomFileNameList"].split(' '))
       {
@@ -615,8 +615,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     // next, read the image data
     //
     //set imageReader [vtkImageReader New]
-    vtkSmartPointer<vtkImageReader> imageReader =
-      vtkSmartPointer<vtkImageReader>::New();
+    vtkNew<vtkImageReader> imageReader;
     
     // if { [file pathtype $n(filePrefix)] == "relative" } {
     //   $imageReader SetFilePrefix  $::S2(dir)/$n(filePrefix)
@@ -713,8 +712,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     //  eval $rasToVTK DeepCopy $n(rasToVtkMatrix)
     //  $volumeNode SetRASToIJKMatrix $rasToVTK
     //  $rasToVTK Delete
-    vtkSmartPointer<vtkMatrix4x4> rasToVTK =
-      vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> rasToVTK;
     double elements[16];
     int i = 0;
     foreach(QString element, node["rasToVtkMatrix"].split(' '))
@@ -722,7 +720,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
       elements[i++] = element.toDouble();
       }
     rasToVTK->DeepCopy(elements);
-    volumeNode->SetRASToIJKMatrix(rasToVTK);
+    volumeNode->SetRASToIJKMatrix(rasToVTK.GetPointer());
     
     //
     // clean up
@@ -911,8 +909,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelNode(NodeType& node)
       }
 
     //set cnode [vtkMRMLColorTableNode New]
-    vtkSmartPointer<vtkMRMLColorTableNode> cnode =
-      vtkSmartPointer<vtkMRMLColorTableNode>::New();
+    vtkNew<vtkMRMLColorTableNode> cnode;
     
     //foreach colorType "SPLBrainAtlas Labels" {
     QStringList colorTypes;
@@ -1165,7 +1162,7 @@ void qSlicerSlicer2SceneReaderPrivate::importFiducialsNode(NodeType& node)
   q->mrmlScene()->AddNode(fiducialNode);
   this->LoadedNodes << fiducialNode->GetID();
   //set ::S2(fiducialListNode) $fiducialNode
-  this->FiducialListNode = fiducialNode;
+  this->FiducialListNode = fiducialNode.GetPointer();
 
   // set it to be the selected one, last one imported will stick
   //set selNode [$::slicer3::ApplicationLogic GetSelectionNode]
@@ -1341,8 +1338,7 @@ bool qSlicerSlicer2SceneReader::load(const IOProperties& properties)
     this->mrmlScene()->Clear(false);
     }
 
-  vtkSmartPointer<vtkXMLDataParser> slicer2Parser = 
-    vtkSmartPointer<vtkXMLDataParser>::New();
+  vtkNew<vtkXMLDataParser> slicer2Parser;
   slicer2Parser->SetFileName(file.toLatin1());
   slicer2Parser->Parse();
   vtkXMLDataElement* root = slicer2Parser->GetRootElement();

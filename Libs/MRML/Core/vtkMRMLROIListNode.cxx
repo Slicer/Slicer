@@ -6,11 +6,10 @@
 
 // VTK includes
 #include <vtkCollection.h>
-#include <vtkObjectFactory.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
-#include <vtkSmartPointer.h>
-
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLROIListNode);
@@ -475,17 +474,17 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
   //Update IJK
   if (this->VolumeNodeID != NULL)
     {
-    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
-    if (VolumeNode)
+    vtkMRMLVolumeNode *volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    if (volumeNode)
       {
       double rasPoint[4] = { x, y, z, 1.0 };
       double ijkPoint[4];
-      vtkSmartPointer<vtkMatrix4x4> rasToijk = vtkSmartPointer<vtkMatrix4x4>::New();
-      VolumeNode->GetRASToIJKMatrix(rasToijk);
+      vtkNew<vtkMatrix4x4> rasToijk;
+      volumeNode->GetRASToIJKMatrix(rasToijk.GetPointer());
       rasToijk->MultiplyPoint(rasPoint, ijkPoint);
       
       int* dims = new int[3];
-      VolumeNode->GetImageData()->GetDimensions(dims);
+      volumeNode->GetImageData()->GetDimensions(dims);
       ijkPoint[0] = ijkPoint[0] >= 0 ? ijkPoint[0] : 0;
       ijkPoint[0] = ijkPoint[0] < dims[0] ? ijkPoint[0] : dims[0];
       ijkPoint[1] = ijkPoint[1] >= 0 ? ijkPoint[1] : 0;
@@ -520,12 +519,12 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
     }
   if (this->VolumeNodeID != NULL)
     {
-    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
-    if (VolumeNode)
+    vtkMRMLVolumeNode *volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    if (volumeNode)
       {
 
       int* dims = new int[3];
-      VolumeNode->GetImageData()->GetDimensions(dims);
+      volumeNode->GetImageData()->GetDimensions(dims);
       i = i >= 0 ? i : 0;
       i = i < dims[0] ? i : dims[0];
       j = j >= 0 ? j : 0;
@@ -539,8 +538,8 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
       //Update XYZ
       double rasPoint[4]; 
       double ijkPoint[4]= { i, j, k, 1.0 };
-      vtkSmartPointer<vtkMatrix4x4> ijkToras = vtkSmartPointer<vtkMatrix4x4>::New();
-      VolumeNode->GetIJKToRASMatrix(ijkToras);
+      vtkNew<vtkMatrix4x4> ijkToras;
+      volumeNode->GetIJKToRASMatrix(ijkToras.GetPointer());
       ijkToras->MultiplyPoint(ijkPoint,rasPoint);
       node->SetXYZ(rasPoint[0], rasPoint[1], rasPoint[2]);
       }

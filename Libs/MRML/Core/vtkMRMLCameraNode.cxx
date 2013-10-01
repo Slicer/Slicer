@@ -24,8 +24,8 @@ Version:   $Revision: 1.3 $
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 // STD includes
@@ -396,13 +396,13 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
      * Pn = Td * Pa
      * then we save Tn as Ta for next time
      */
-    vtkSmartPointer<vtkMatrix4x4> deltaTransform = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> deltaTransform;
+    vtkNew<vtkMatrix4x4> transformToWorld;
     transformToWorld->Identity();
-    tnode->GetMatrixTransformToWorld(transformToWorld);
+    tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
 
     this->AppliedTransform->Invert();
-    vtkMatrix4x4::Multiply4x4(transformToWorld, this->AppliedTransform, deltaTransform);
+    vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), this->AppliedTransform, deltaTransform.GetPointer());
 
     // transform the points and the vector through delta and store back to camera
     double v[4];
@@ -428,7 +428,7 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
     deltaTransform->MultiplyPoint(v,v);
     this->Camera->SetViewUp(v[0],v[1],v[2]);
 
-    this->GetAppliedTransform()->DeepCopy(transformToWorld);
+    this->GetAppliedTransform()->DeepCopy(transformToWorld.GetPointer());
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
 }

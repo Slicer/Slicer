@@ -16,12 +16,12 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 
-// VTKsys includes
+// ITKsys includes
 #include <itksys/SystemTools.hxx>
 
 // VTK includes
 #include <vtkGeneralTransform.h>
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // ITK includes
 #include "itkBSplineDeformableTransform.h"
@@ -63,15 +63,15 @@ bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transfor
     }
   if (transformNode->IsTransformToWorldLinear())
     {
-    vtkSmartPointer<vtkMatrix4x4> hardeningMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-    transformNode->GetMatrixTransformToWorld(hardeningMatrix);
-    transformableNode->ApplyTransformMatrix(hardeningMatrix);
+    vtkNew<vtkMatrix4x4> hardeningMatrix;
+    transformNode->GetMatrixTransformToWorld(hardeningMatrix.GetPointer());
+    transformableNode->ApplyTransformMatrix(hardeningMatrix.GetPointer());
     }
   else
     {
-    vtkSmartPointer<vtkGeneralTransform> hardeningTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-    transformNode->GetTransformToWorld(hardeningTransform);
-    transformableNode->ApplyTransform(hardeningTransform);
+    vtkNew<vtkGeneralTransform> hardeningTransform;
+    transformNode->GetTransformToWorld(hardeningTransform.GetPointer());
+    transformableNode->ApplyTransform(hardeningTransform.GetPointer());
     }
 
   transformableNode->SetAndObserveTransformNodeID(NULL);

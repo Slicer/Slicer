@@ -7,18 +7,20 @@
 #include <itkConfigure.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkITKArchetypeDiffusionTensorImageReaderFile.h>
-#include <vtkITKArchetypeImageSeriesScalarReader.h>
-#include <vtkXMLPolyDataWriter.h>
-#include <vtkPolyDataWriter.h>
-#include <vtkMath.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
+#include <vtkITKArchetypeDiffusionTensorImageReaderFile.h>
+#include <vtkITKArchetypeImageSeriesScalarReader.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkPointData.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkSmartPointer.h>
 #include <vtksys/SystemTools.hxx>
+#include <vtkXMLPolyDataWriter.h>
 
+// STD includes
 #include <string>
 
 int main( int argc, char * argv[] )
@@ -26,7 +28,7 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
   try
     {
-    vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile> reader = vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile>::New();
+    vtkNew<vtkITKArchetypeDiffusionTensorImageReaderFile> reader;
     reader->SetArchetype(InputVolume.c_str() );
     reader->SetSingleFile(1);
     reader->SetUseOrientationFromFile(1);
@@ -43,11 +45,11 @@ int main( int argc, char * argv[] )
 
 
     vtkSmartPointer<vtkImageData> ROI;
-    vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader> reader2 = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();
-    vtkSmartPointer<vtkImageCast> imageCast = vtkSmartPointer<vtkImageCast>::New();
-    vtkSmartPointer<vtkDiffusionTensorMathematics> math = vtkSmartPointer<vtkDiffusionTensorMathematics>::New();
-    vtkSmartPointer<vtkImageThreshold> th = vtkSmartPointer<vtkImageThreshold>::New();
-    vtkSmartPointer<vtkMatrix4x4> ROIRASToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader2;
+    vtkNew<vtkImageCast> imageCast;
+    vtkNew<vtkDiffusionTensorMathematics> math;
+    vtkNew<vtkImageThreshold> th;
+    vtkNew<vtkMatrix4x4> ROIRASToIJK;
 
     if (InputROI.length() > 0)
     {
@@ -120,13 +122,13 @@ int main( int argc, char * argv[] )
     }
 
 
-    vtkSmartPointer<vtkSeedTracts> seed = vtkSmartPointer<vtkSeedTracts>::New();
+    vtkNew<vtkSeedTracts> seed;
 
     // 1. Set Input
     seed->SetInputTensorField(reader->GetOutput() );
 
     // 2. Set Up matrices
-    vtkSmartPointer<vtkMatrix4x4> TensorRASToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> TensorRASToIJK;
     TensorRASToIJK->DeepCopy(reader->GetRasToIjkMatrix() );
 
     // VTK seeding is in ijk space with voxel scale included.
@@ -135,10 +137,10 @@ int main( int argc, char * argv[] )
     // to our RAS.
     double sp[3];
     reader->GetOutput()->GetSpacing(sp);
-    vtkSmartPointer<vtkTransform> trans = vtkSmartPointer<vtkTransform>::New();
+    vtkNew<vtkTransform> trans;
     trans->Identity();
     trans->PreMultiply();
-    trans->SetMatrix(TensorRASToIJK);
+    trans->SetMatrix(TensorRASToIJK.GetPointer());
     // Trans from IJK to RAS
     trans->Inverse();
     // Take into account spacing (remove from matrix) to compute Scaled IJK to RAS matrix
@@ -146,7 +148,7 @@ int main( int argc, char * argv[] )
     trans->Inverse();
 
     // Set Transformation to seeding class
-    seed->SetWorldToTensorScaledIJK(trans);
+    seed->SetWorldToTensorScaledIJK(trans.GetPointer());
 
     // Rotation part of matrix is only thing tensor is transformed by.
     // This is to transform output tensors into RAS space.
@@ -155,8 +157,8 @@ int main( int argc, char * argv[] )
     // The following should be replaced with finite strain method
     // rather than assuming rotation part of the matrix according to
     // slicer convention.
-    vtkSmartPointer<vtkMatrix4x4> TensorRASToIJKRotation = vtkSmartPointer<vtkMatrix4x4>::New();
-    TensorRASToIJKRotation->DeepCopy(TensorRASToIJK);
+    vtkNew<vtkMatrix4x4> TensorRASToIJKRotation;
+    TensorRASToIJKRotation->DeepCopy(TensorRASToIJK.GetPointer());
     // Set Translation to zero
     for( int i = 0; i < 3; i++ )
       {
@@ -177,21 +179,19 @@ int main( int argc, char * argv[] )
         }
       }
     TensorRASToIJKRotation->Invert();
-    seed->SetTensorRotationMatrix(TensorRASToIJKRotation);
-
-    // vtkSmartPointer<vtkNRRDWriter> iwriter = vtkSmartPointer<vtkNRRDWriter>::New();
+    seed->SetTensorRotationMatrix(TensorRASToIJKRotation.GetPointer());
 
     // 3. Set up ROI (not based on Cl mask), from input now
 
-    vtkSmartPointer<vtkTransform> trans2 = vtkSmartPointer<vtkTransform>::New();
+    vtkNew<vtkTransform> trans2;
     trans2->Identity();
     trans2->PreMultiply();
 
     // no longer assume this ROI is in tensor space
-    // trans2->SetMatrix(TensorRASToIJK);
-    trans2->SetMatrix(ROIRASToIJK);
+    // trans2->SetMatrix(TensorRASToIJK.GetPointer());
+    trans2->SetMatrix(ROIRASToIJK.GetPointer());
     trans2->Inverse();
-    seed->SetROIToWorld(trans2);
+    seed->SetROIToWorld(trans2.GetPointer());
 
 
     // PENDING: Do merging with input ROI
@@ -225,8 +225,8 @@ int main( int argc, char * argv[] )
     seed->SetIsotropicSeedingResolution(SeedSpacing);
     seed->SetMinimumPathLength(MinimumLength);
     seed->UseVtkHyperStreamlinePoints();
-    vtkSmartPointer<vtkHyperStreamlineDTMRI> streamer = vtkSmartPointer<vtkHyperStreamlineDTMRI>::New();
-    seed->SetVtkHyperStreamlinePointsSettings(streamer);
+    vtkNew<vtkHyperStreamlineDTMRI> streamer;
+    seed->SetVtkHyperStreamlinePointsSettings(streamer.GetPointer());
 
     if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
       {
@@ -258,7 +258,7 @@ int main( int argc, char * argv[] )
     seed->SeedStreamlinesInROI();
 
     // 6. Extra5ct PolyData in RAS
-    vtkSmartPointer<vtkPolyData> outFibers = vtkSmartPointer<vtkPolyData>::New();
+    vtkNew<vtkPolyData> outFibers;
 
     // Save result
     if ( !WriteToFile )
@@ -266,11 +266,11 @@ int main( int argc, char * argv[] )
       std::string fileExtension = vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str());
       if (fileExtension == ".vtk")
         {
-          vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-          seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+          vtkNew<vtkPolyDataWriter> writer;
+          seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
           writer->SetFileName(OutputFibers.c_str());
           writer->SetFileTypeToBinary();
-          writer->SetInput(outFibers);
+          writer->SetInput(outFibers.GetPointer());
           writer->Write();
         }
       else 
@@ -279,10 +279,10 @@ int main( int argc, char * argv[] )
           {
           cerr << "Extension not recognize, saving the information in VTP format" << endl;
           }
-        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-        seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+        vtkNew<vtkXMLPolyDataWriter> writer;
+        seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
         writer->SetFileName(OutputFibers.c_str() );
-        writer->SetInput(outFibers);
+        writer->SetInput(outFibers.GetPointer());
         writer->Write();
         }
       }

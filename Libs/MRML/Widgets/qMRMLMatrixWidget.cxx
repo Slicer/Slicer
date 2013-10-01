@@ -29,6 +29,7 @@
 #include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkWeakPointer.h>
@@ -132,11 +133,11 @@ void qMRMLMatrixWidget::updateMatrix()
     return;
     }
   
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(
     d->MRMLTransformNode,
     d->CoordinateReference == qMRMLMatrixWidget::GLOBAL, 
-    transform);
+    transform.GetPointer());
   int oldUserUpdates = d->UserUpdates;
   d->UserUpdates = false;
 
@@ -145,7 +146,7 @@ void qMRMLMatrixWidget::updateMatrix()
   d->UserUpdates = oldUserUpdates;
   // keep a ref on the transform otherwise, the matrix will be reset when transform
   // goes out of scope (because ctkVTKAbstractMatrixWidget has a weak ref on the matrix).
-  d->Transform = transform;
+  d->Transform = transform.GetPointer();
 }
 
 // --------------------------------------------------------------------------

@@ -39,7 +39,7 @@
 #include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 #include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
@@ -130,8 +130,8 @@ bool qMRMLVolumeInfoWidgetPrivate::centeredOrigin(double* origin)const
   dimsH[2] = dims[2] - 1;
   dimsH[3] = 0.;
 
-  vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  this->VolumeNode->GetIJKToRASMatrix(ijkToRAS);
+  vtkNew<vtkMatrix4x4> ijkToRAS;
+  this->VolumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
   double rasCorner[4];
   ijkToRAS->MultiplyPoint(dimsH, rasCorner);
 
@@ -280,10 +280,10 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
 
   d->CenterVolumePushButton->setEnabled(!this->isCentered());
   
-  vtkSmartPointer<vtkMatrix4x4> mat  = vtkSmartPointer<vtkMatrix4x4>::New();
-  d->VolumeNode->GetIJKToRASMatrix(mat);
+  vtkNew<vtkMatrix4x4> mat;
+  d->VolumeNode->GetIJKToRASMatrix(mat.GetPointer());
   d->ScanOrderComboBox->setCurrentIndex(d->ScanOrderComboBox->findData(
-    vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(mat)));
+    vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(mat.GetPointer())));
   
   d->NumberOfScalarsSpinBox->setValue(
     image ? image->GetNumberOfScalarComponents() : 0);
@@ -395,13 +395,13 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
     return;
     }
   QString scanOrder = d->ScanOrderComboBox->itemData(index).toString();
-  vtkSmartPointer<vtkMatrix4x4> IJKToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> IJKToRAS;
   if (vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(
     scanOrder.toLatin1(),
     d->VolumeNode->GetSpacing(),
     d->VolumeNode->GetImageData()->GetDimensions(),
     this->isCentered(),
-    IJKToRAS))
+    IJKToRAS.GetPointer()))
     {
     if (!this->isCentered())
       {
@@ -409,7 +409,7 @@ void qMRMLVolumeInfoWidget::setScanOrder(int index)
       IJKToRAS->SetElement(1, 3, d->VolumeNode->GetOrigin()[1]);
       IJKToRAS->SetElement(2, 3, d->VolumeNode->GetOrigin()[2]);
       }
-    d->VolumeNode->SetIJKToRASMatrix(IJKToRAS);
+    d->VolumeNode->SetIJKToRASMatrix(IJKToRAS.GetPointer());
     }
 }
 

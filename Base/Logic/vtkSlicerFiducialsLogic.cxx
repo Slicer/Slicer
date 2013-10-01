@@ -7,18 +7,18 @@
 
 =========================================================================auto=*/
 
+// Slicer includes
 #include "vtkSlicerFiducialsLogic.h"
 
+// MRML includes
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkMRMLLinearTransformNode.h" // for transforming picked points
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLStorageNode.h"
 
-// for transforming picked points
-#include "vtkMRMLLinearTransformNode.h"
-
+// VTK includes
 #include <vtkMatrix4x4.h>
-#include "vtkSmartPointer.h"
-
+#include <vtkNew.h>
 #include <vtksys/SystemTools.hxx> 
 
 
@@ -183,12 +183,12 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
   // otherwise, we have an exisiting list, check to see if there's a transform
   // on it
   vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
-  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
   // will convert by the inverted parent transform
   transformToWorld->Invert();

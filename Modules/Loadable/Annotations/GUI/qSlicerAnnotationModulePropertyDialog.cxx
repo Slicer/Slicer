@@ -30,7 +30,7 @@
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 //------------------------------------------------------------------------------
 qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
@@ -1805,7 +1805,7 @@ void qSlicerAnnotationModulePropertyDialog::onHierarchyPointGlyphTypeDefaultButt
 void qSlicerAnnotationModulePropertyDialog::onSizeSmallPushButtonClicked()
 {
   // get and use the default sizes from the display nodes and scale them down
-  vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
+  vtkNew<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode;
   double defaultTextSize = defaultTextDisplayNode->GetTextScale();
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
   if (textDisplayNode)
@@ -1813,7 +1813,7 @@ void qSlicerAnnotationModulePropertyDialog::onSizeSmallPushButtonClicked()
     textDisplayNode->SetTextScale(defaultTextSize / 2.0);
     }
 
-  vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
+  vtkNew<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode;
   double defaultPointSize = defaultPointDisplayNode->GetGlyphScale();
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (pointDisplayNode)
@@ -1826,7 +1826,7 @@ void qSlicerAnnotationModulePropertyDialog::onSizeSmallPushButtonClicked()
 void qSlicerAnnotationModulePropertyDialog:: onSizeMediumPushButtonClicked()
 {
   // get and use the default sizes from the display nodes and scale them down
-  vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
+  vtkNew<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode;
   double defaultTextSize = defaultTextDisplayNode->GetTextScale();
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
   if (textDisplayNode)
@@ -1834,7 +1834,7 @@ void qSlicerAnnotationModulePropertyDialog:: onSizeMediumPushButtonClicked()
     textDisplayNode->SetTextScale(defaultTextSize * 0.75);
     }
 
-  vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
+  vtkNew<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode;
   double defaultPointSize = defaultPointDisplayNode->GetGlyphScale();
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (pointDisplayNode)
@@ -1847,7 +1847,7 @@ void qSlicerAnnotationModulePropertyDialog:: onSizeMediumPushButtonClicked()
 void qSlicerAnnotationModulePropertyDialog:: onSizeLargePushButtonClicked()
 {
   // get and use the default sizes from the display nodes 
-  vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode = vtkSmartPointer<vtkMRMLAnnotationTextDisplayNode>::New();
+  vtkNew<vtkMRMLAnnotationTextDisplayNode> defaultTextDisplayNode;
   double defaultTextSize = defaultTextDisplayNode->GetTextScale();
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
   if (textDisplayNode)
@@ -1855,7 +1855,7 @@ void qSlicerAnnotationModulePropertyDialog:: onSizeLargePushButtonClicked()
     textDisplayNode->SetTextScale(defaultTextSize);
     }
 
-  vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode = vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New();
+  vtkNew<vtkMRMLAnnotationPointDisplayNode> defaultPointDisplayNode;
   double defaultPointSize = defaultPointDisplayNode->GetGlyphScale();
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(this->m_id.c_str());
   if (pointDisplayNode)

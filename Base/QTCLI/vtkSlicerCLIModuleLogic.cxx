@@ -886,9 +886,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // Mini-scene used to communicate a subset of the main scene to the module
   // Additional handling is necessary because we use SmartPointers
   // (see http://slicer.spl.harvard.edu/slicerWiki/index.php/Slicer3:Memory_Management#SmartPointers)
-  vtkSmartPointer<vtkMRMLScene> miniscene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> miniscene;
   std::string minisceneFilename
-    = this->ConstructTemporarySceneFileName(miniscene);
+    = this->ConstructTemporarySceneFileName(miniscene.GetPointer());
 
   // vector of files to delete
   std::set<std::string> filesToDelete;
@@ -1421,14 +1421,10 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           else if (points)
             {
             // find the children of this hierarchy node
-            vtkSmartPointer<vtkCollection> col = vtkSmartPointer<vtkCollection>::New();
-            points->GetChildrenDisplayableNodes(col);
+            vtkNew<vtkCollection> col;
+            points->GetChildrenDisplayableNodes(col.GetPointer());
             vtkDebugMacro("Getting children displayable nodes from points " << points->GetID());
-            unsigned int numChildren = 0;
-            if (col)
-              {
-              numChildren = col->GetNumberOfItems();
-              }
+            unsigned int numChildren = col->GetNumberOfItems();
             vtkDebugMacro("Displayable hierarchy has " << numChildren << " child nodes");
             int multipleFlag = 1;
             if ((*pit).GetMultiple() == "false")
@@ -1535,14 +1531,10 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           else if (points)
             {
             // find the children of this hierarchy node
-            vtkSmartPointer<vtkCollection> col = vtkSmartPointer<vtkCollection>::New();
-            points->GetChildrenDisplayableNodes(col);
+            vtkNew<vtkCollection> col;
+            points->GetChildrenDisplayableNodes(col.GetPointer());
             vtkDebugMacro("Getting children displayable nodes from points " << points->GetID());
-            unsigned int numChildren = 0;
-            if (col)
-              {
-              numChildren = col->GetNumberOfItems();
-              }
+            unsigned int numChildren = col->GetNumberOfItems();
             vtkDebugMacro("Displayable hierarchy has " << numChildren << " child nodes");
             for (unsigned int c = 0; c < numChildren; c++)
               {

@@ -21,8 +21,8 @@
 
 // VTK includes
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 // Use an anonymous namespace to keep class types and function names
@@ -88,7 +88,7 @@ int main(int argc, char * argv[])
   vtkMRMLLinearTransformNode *outNode = NULL;
 
   // read in the scene, output and input transform file names should be the same
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
   scene->SetURL( OutputTransformFilename.c_str() );
   scene->Import();
@@ -109,7 +109,7 @@ int main(int argc, char * argv[])
   float numFilterSteps = 2.0;
 
   // fill in this transform with either the output or input matrix
-  vtkSmartPointer<vtkTransform> transformToApply = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> transformToApply;
   transformToApply->Identity();
   transformToApply->PostMultiply();
 
@@ -119,10 +119,10 @@ int main(int argc, char * argv[])
       {
       std::cout << "Doing Midline..." << std::endl;
       }
-    vtkSmartPointer<vtkMath>     math = vtkSmartPointer<vtkMath>::New();
-    vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkPolyData> output = vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkPoints>   points = vtkSmartPointer<vtkPoints>::New();
+    vtkNew<vtkMath>     math;
+    vtkNew<vtkPolyData> polydata;
+    vtkNew<vtkPolyData> output;
+    vtkNew<vtkPoints>   points;
     points->SetDataTypeToDouble();
     size_t x = Midline.size();
     if( debugSwitch )
@@ -141,19 +141,19 @@ int main(int argc, char * argv[])
         std::cout << "Set midline point " << i << " to " << pt[0] << ", " << pt[1] << "," << pt[2] << "\n";
         }
       }
-    polydata->SetPoints(points);
+    polydata->SetPoints(points.GetPointer());
 
-    vtkSmartPointer<vtkPrincipalAxesAlign> pa = vtkSmartPointer<vtkPrincipalAxesAlign>::New();
+    vtkNew<vtkPrincipalAxesAlign> pa;
     if( debugSwitch )
       {
       std::cout << "Set Input to PrincipalAxesAlign\n";
       }
-    pa->SetInput(polydata);
+    pa->SetInput(polydata.GetPointer());
     if( debugSwitch )
       {
       std::cout << "Executing PrincipalAxesAlign\n";
       }
-    vtkPluginFilterWatcher watchPA(pa,
+    vtkPluginFilterWatcher watchPA(pa.GetPointer(),
                                    "Principle Axes Align",
                                    CLPProcessInformation,
                                    1.0 / numFilterSteps,
@@ -186,7 +186,7 @@ int main(int argc, char * argv[])
       }
 
     // prepare the rotation matrix
-    vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> mat;
     mat->Identity();
     for( size_t p = 0; p < 4; p++ )
       {
@@ -207,10 +207,10 @@ int main(int argc, char * argv[])
       {
       std::cout << "Determinant " << det << endl;
       }
-    vtkSmartPointer<vtkMatrix4x4> matInverse = vtkSmartPointer<vtkMatrix4x4>::New();
-    matInverse->DeepCopy(mat);
+    vtkNew<vtkMatrix4x4> matInverse;
+    matInverse->DeepCopy(mat.GetPointer());
     matInverse->Invert();
-    transformToApply->SetMatrix(matInverse);
+    transformToApply->SetMatrix(matInverse.GetPointer());
     }
 
   // need at least two points

@@ -605,18 +605,18 @@ char * vtkSlicerMarkupsLogic::LoadMarkupsFiducials(const char *fileName, const c
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   // make a storage node and fiducial node and set the file name
-  vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode> storageNode = vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New();
+  vtkNew<vtkMRMLMarkupsFiducialStorageNode> storageNode;
   storageNode->SetFileName(fileName);
-  vtkSmartPointer<vtkMRMLMarkupsFiducialNode> fidNode = vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New();
+  vtkNew<vtkMRMLMarkupsFiducialNode> fidNode;
   fidNode->SetName(fidsName);
 
   // add the nodes to the scene and set up the observation on the storage node
-  this->GetMRMLScene()->AddNode(storageNode);
-  this->GetMRMLScene()->AddNode(fidNode);
+  this->GetMRMLScene()->AddNode(storageNode.GetPointer());
+  this->GetMRMLScene()->AddNode(fidNode.GetPointer());
   fidNode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   // read the file
-  if (storageNode->ReadData(fidNode))
+  if (storageNode->ReadData(fidNode.GetPointer()))
     {
     nodeID = fidNode->GetID();
     }

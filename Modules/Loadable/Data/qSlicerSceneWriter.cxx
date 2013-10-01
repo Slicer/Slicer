@@ -153,9 +153,9 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
     sceneViewNode->SetScreenShotType(4);
     QImage screenShot = properties["screenShot"].value<QImage>();  
     // convert to vtkImageData
-    vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-    qMRMLUtils::qImageToVtkImageData(screenShot, imageData);
-    sceneViewNode->SetScreenShot(imageData);
+    vtkNew<vtkImageData> imageData;
+    qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
+    sceneViewNode->SetScreenShot(imageData.GetPointer());
     }
   sceneViewNode->StoreScene();
 

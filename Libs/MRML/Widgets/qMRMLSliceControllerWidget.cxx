@@ -47,6 +47,8 @@
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
+// VTK includes
+#include <vtkNew.h>
 
 
 //--------------------------------------------------------------------------
@@ -395,9 +397,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
   // Hide all buttons by default
   this->MoreButton->setChecked(false);
 
-  vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
-    vtkSmartPointer<vtkMRMLSliceLogic>::New();
-  q->setSliceLogic(defaultLogic);
+  vtkNew<vtkMRMLSliceLogic> defaultLogic;
+  q->setSliceLogic(defaultLogic.GetPointer());
 
   q->setSliceViewName("Red");
 }

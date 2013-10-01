@@ -1022,8 +1022,8 @@ void vtkSlicerVolumesLogic
   dimsH[2] = dims[2] - 1;
   dimsH[3] = 0.;
 
-  vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  volumeNode->GetIJKToRASMatrix(ijkToRAS);
+  vtkNew<vtkMatrix4x4> ijkToRAS;
+  volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
   double rasCorner[4];
   ijkToRAS->MultiplyPoint(dimsH, rasCorner);
 
@@ -1040,11 +1040,6 @@ void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASTo
 {
   if  ( V1Node  && V2Node && FSRegistrationMatrix  && RAS2RASMatrix )
     {
-
-    if ( RAS2RASMatrix == NULL )
-      {
-      RAS2RASMatrix = vtkMatrix4x4::New();
-      }
     RAS2RASMatrix->Zero();
     
     //
@@ -1085,36 +1080,36 @@ void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASTo
     // volume. But for an Axial volume, these two matrices are different.
     // How do we compute the correct orientation for FreeSurfer Data?
   
-    vtkSmartPointer<vtkMatrix4x4> T = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> S = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> Sinv = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> M = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> Minv = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> N = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> Ninv = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> T;
+    vtkNew<vtkMatrix4x4> S;
+    vtkNew<vtkMatrix4x4> Sinv;
+    vtkNew<vtkMatrix4x4> M;
+    vtkNew<vtkMatrix4x4> Minv;
+    vtkNew<vtkMatrix4x4> N;
+    vtkNew<vtkMatrix4x4> Ninv;
 
     //--
     // compute FreeSurfer tkRegVox2RAS for V1 volume
     //--
-    ComputeTkRegVox2RASMatrix ( V1Node, T );
+    ComputeTkRegVox2RASMatrix(V1Node, T.GetPointer());
 
     //--
     // compute FreeSurfer tkRegVox2RAS for V2 volume
     //--
-    ComputeTkRegVox2RASMatrix ( V2Node, S );
+    ComputeTkRegVox2RASMatrix(V2Node, S.GetPointer());
 
     // Probably a faster way to do these things?
-    vtkMatrix4x4::Invert (S, Sinv );
-    V1Node->GetIJKToRASMatrix( M );
-    V2Node->GetRASToIJKMatrix( N );
-    vtkMatrix4x4::Invert (M, Minv );
-    vtkMatrix4x4::Invert (N, Ninv );
+    vtkMatrix4x4::Invert(S.GetPointer(), Sinv.GetPointer());
+    V1Node->GetIJKToRASMatrix(M.GetPointer());
+    V2Node->GetRASToIJKMatrix(N.GetPointer());
+    vtkMatrix4x4::Invert(M.GetPointer(), Minv.GetPointer());
+    vtkMatrix4x4::Invert(N.GetPointer(), Ninv.GetPointer());
 
     //    [Ninv]  [Sinv]  [R]  [T]  [Minv]
-    vtkMatrix4x4::Multiply4x4 ( T, Minv, RAS2RASMatrix );
-    vtkMatrix4x4::Multiply4x4 ( FSRegistrationMatrix, RAS2RASMatrix, RAS2RASMatrix );
-    vtkMatrix4x4::Multiply4x4 ( Sinv, RAS2RASMatrix, RAS2RASMatrix );
-    vtkMatrix4x4::Multiply4x4 ( Ninv, RAS2RASMatrix, RAS2RASMatrix );    
+    vtkMatrix4x4::Multiply4x4(T.GetPointer(), Minv.GetPointer(), RAS2RASMatrix );
+    vtkMatrix4x4::Multiply4x4(FSRegistrationMatrix, RAS2RASMatrix, RAS2RASMatrix );
+    vtkMatrix4x4::Multiply4x4(Sinv.GetPointer(), RAS2RASMatrix, RAS2RASMatrix );
+    vtkMatrix4x4::Multiply4x4(Ninv.GetPointer(), RAS2RASMatrix, RAS2RASMatrix );
     }
 }
 

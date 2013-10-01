@@ -17,39 +17,31 @@
 #include "vtkAnnotationROIRepresentation2D.h"
 
 // VTK includes
-#include "vtkActor2D.h"
-#include "vtkSphereSource.h"
-#include "vtkPolyDataMapper2D.h"
-#include "vtkPolyData.h"
-#include "vtkCallbackCommand.h"
-#include "vtkBox.h"
-#include "vtkPolyData.h"
-#include "vtkProperty2D.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkRenderer.h"
-#include "vtkInteractorObserver.h"
-#include "vtkMath.h"
-#include "vtkCellArray.h"
-#include "vtkPropPicker.h"
-#include "vtkTransform.h"
-#include "vtkDoubleArray.h"
-#include "vtkFloatArray.h"
-#include "vtkPlanes.h"
-#include "vtkCamera.h"
-#include "vtkAssemblyPath.h"
-#include "vtkWindow.h"
-#include "vtkProperty2D.h"
-#include "vtkObjectFactory.h"
-
-#include <vtkSmartPointer.h>
-#include <vtkTransform.h>
+#include <vtkActor2D.h>
+#include <vtkAssemblyPath.h>
+#include <vtkBox.h>
+#include <vtkCallbackCommand.h>
+#include <vtkCamera.h>
+#include <vtkCellArray.h>
 #include <vtkCutter.h>
+#include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
+#include <vtkInteractorObserver.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPlane.h>
+#include <vtkPlanes.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
-#include <vtkMath.h>
+#include <vtkProperty2D.h>
+#include <vtkPropPicker.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSphereSource.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkWindow.h>
 
 
 vtkCxxRevisionMacro(vtkAnnotationROIRepresentation2D, "$Revision: 12141 $");
@@ -500,7 +492,7 @@ void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
     }
 
   // Get transform from 2D image to world
-  vtkSmartPointer<vtkMatrix4x4> XYtoWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> XYtoWorldMatrix;
   XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
   XYtoWorldMatrix->Invert();
 
@@ -654,7 +646,7 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
 
  
   // Get transform from 2D image to world
-  vtkSmartPointer<vtkMatrix4x4> XYtoWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> XYtoWorldMatrix;
   XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
   XYtoWorldMatrix->Invert();
   double xyz0[4] = {0,0,0,1};

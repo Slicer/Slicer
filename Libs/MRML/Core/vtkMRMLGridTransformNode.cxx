@@ -12,16 +12,17 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-
-#include "vtkGridTransform.h"
-#include "vtkImageData.h"
-
+// MRML includes
 #include "vtkMRMLGridTransformNode.h"
 
-#include "vtkSmartPointer.h"
+// VTK includes
+#include <vtkGridTransform.h>
+#include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLGridTransformNode);
@@ -74,8 +75,8 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  vtkSmartPointer<vtkGridTransform> vtkgrid = vtkSmartPointer<vtkGridTransform>::New();
-  vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
+  vtkNew<vtkGridTransform> vtkgrid;
+  vtkNew<vtkImageData> image;
   image->Initialize();
   image->SetNumberOfScalarComponents( 3 );
   image->SetScalarTypeToDouble();
@@ -217,8 +218,8 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
-  vtkgrid->SetDisplacementGrid( image );
-  this->SetAndObserveWarpTransformToParent( vtkgrid );
+  vtkgrid->SetDisplacementGrid(image.GetPointer());
+  this->SetAndObserveWarpTransformToParent(vtkgrid.GetPointer());
 }
 
 //----------------------------------------------------------------------------

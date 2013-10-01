@@ -502,23 +502,20 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
   //
   if ( this->BackgroundLayer == 0 )
     {
-    vtkMRMLSliceLayerLogic *layer = vtkMRMLSliceLayerLogic::New();
-    this->SetBackgroundLayer (layer);
-    layer->Delete();
+    vtkNew<vtkMRMLSliceLayerLogic> layer;
+    this->SetBackgroundLayer(layer.GetPointer());
     }
   if ( this->ForegroundLayer == 0 )
     {
-    vtkMRMLSliceLayerLogic *layer = vtkMRMLSliceLayerLogic::New();
-    this->SetForegroundLayer (layer);
-    layer->Delete();
+    vtkNew<vtkMRMLSliceLayerLogic> layer;
+    this->SetForegroundLayer(layer.GetPointer());
     }
   if ( this->LabelLayer == 0 )
     {
-    vtkMRMLSliceLayerLogic *layer = vtkMRMLSliceLayerLogic::New();
+    vtkNew<vtkMRMLSliceLayerLogic> layer;
     // turn on using the label outline only in this layer
     layer->IsLabelLayerOn();
-    this->SetLabelLayer (layer);
-    layer->Delete();
+    this->SetLabelLayer(layer.GetPointer());
     }
   // Update slice plane geometry
   if (this->SliceNode != 0
@@ -1309,11 +1306,9 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetSaveWithScene(0);
 
     // create plane slice
-    vtkPlaneSource *planeSource;
-    planeSource = vtkPlaneSource::New();
+    vtkNew<vtkPlaneSource> planeSource;
     planeSource->GetOutput()->Update();
     this->SliceModelNode->SetAndObservePolyData(planeSource->GetOutput());
-    planeSource->Delete();
     this->SliceModelNode->SetDisableModifiedEvent(0);
 
     // create display node and set texture

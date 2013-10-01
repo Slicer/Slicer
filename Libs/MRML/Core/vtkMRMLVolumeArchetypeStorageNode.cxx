@@ -546,7 +546,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkDebugMacro("WriteData: writing out file with archetype " << fullName);
     
-    vtkSmartPointer<vtkITKImageWriter> writer = vtkSmartPointer<vtkITKImageWriter>::New();
+    vtkNew<vtkITKImageWriter> writer;
     writer->SetFileName(fullName.c_str());
   
     writer->SetInput( volNode->GetImageData() );
@@ -559,9 +559,9 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       }
     
     // set volume attributes
-    vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
-    volNode->GetRASToIJKMatrix(mat);
-    writer->SetRasToIJKMatrix(mat);
+    vtkNew<vtkMatrix4x4> mat;
+    volNode->GetRASToIJKMatrix(mat.GetPointer());
+    writer->SetRasToIJKMatrix(mat.GetPointer());
     
     try
       {
@@ -680,7 +680,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   vtkDebugMacro("UpdateFileList: new archetype file name = " << tempName.c_str());
 
   // set up the writer and write
-  vtkSmartPointer<vtkITKImageWriter> writer = vtkSmartPointer<vtkITKImageWriter>::New();
+  vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(tempName.c_str());
   
   writer->SetInput( volNode->GetImageData() );
@@ -697,9 +697,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     }
 
   // set volume attributes
-  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
-  volNode->GetRASToIJKMatrix(mat);
-  writer->SetRasToIJKMatrix(mat);
+  vtkNew<vtkMatrix4x4> mat;
+  volNode->GetRASToIJKMatrix(mat.GetPointer());
+  writer->SetRasToIJKMatrix(mat.GetPointer());
 
   try
     {

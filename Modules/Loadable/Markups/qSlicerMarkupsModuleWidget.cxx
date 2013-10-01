@@ -48,6 +48,9 @@
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkSlicerMarkupsLogic.h"
 
+// VTK includes
+#include <vtkNew.h>
+
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Markups
@@ -149,7 +152,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // populate the glyph type combo box
   if (this->glyphTypeComboBox->count() == 0)
     {
-    vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::New();
+    vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
     int min = displayNode->GetMinimumGlyphType();
     int max = displayNode->GetMaximumGlyphType();
     this->glyphTypeComboBox->setEnabled(false);
@@ -159,12 +162,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       this->glyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString());
       }
     this->glyphTypeComboBox->setEnabled(true);
-    displayNode->Delete();
     }
   // set the default value if not set
   if (this->glyphTypeComboBox->currentIndex() == 0)
     {
-    vtkSmartPointer<vtkMRMLMarkupsDisplayNode> displayNode = vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New();
+    vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
     QString glyphType = QString(displayNode->GetGlyphTypeAsString());
     this->glyphTypeComboBox->setEnabled(false);
     int index =  this->glyphTypeComboBox->findData(glyphType);
@@ -1864,7 +1866,7 @@ void qSlicerMarkupsModuleWidget::onResetNameFormatToDefaultPushButtonClicked()
      return;
      }
    // make a new default markups node and use its value for the name format
-   vtkSmartPointer<vtkMRMLMarkupsNode> defaultNode = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
+   vtkNew<vtkMRMLMarkupsNode> defaultNode;
    listNode->SetMarkupLabelFormat(defaultNode->GetMarkupLabelFormat());
 }
 

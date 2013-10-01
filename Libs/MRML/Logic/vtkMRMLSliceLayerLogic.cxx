@@ -35,7 +35,6 @@
 #include <vtkInformationVector.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
-#include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 //
@@ -462,18 +461,18 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
   dimensionsUVW[1] = 100;
   dimensionsUVW[2] = 100;
 
-  vtkSmartPointer<vtkMatrix4x4> xyToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> xyToIJK;
   xyToIJK->Identity();
 
-  vtkSmartPointer<vtkMatrix4x4> uvwToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> uvwToIJK;
   uvwToIJK->Identity();
 
   if (this->SliceNode)
     {
-    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), xyToIJK, xyToIJK);
+    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetXYToRAS(), xyToIJK.GetPointer(), xyToIJK.GetPointer());
     this->SliceNode->GetDimensions(dimensions);
 
-    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetUVWToRAS(), uvwToIJK, uvwToIJK);
+    vtkMatrix4x4::Multiply4x4(this->SliceNode->GetUVWToRAS(), uvwToIJK.GetPointer(), uvwToIJK.GetPointer());
     this->SliceNode->GetUVWDimensions(dimensionsUVW);
     }
 
@@ -493,34 +492,34 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
         }
       else
         {
-        vtkSmartPointer<vtkMatrix4x4> rasToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-        transformNode->GetMatrixTransformToWorld( rasToRAS );
+        vtkNew<vtkMatrix4x4> rasToRAS;
+        transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());
         rasToRAS->Invert();
-        vtkMatrix4x4::Multiply4x4(rasToRAS, xyToIJK, xyToIJK); 
-        vtkMatrix4x4::Multiply4x4(rasToRAS, uvwToIJK, uvwToIJK); 
+        vtkMatrix4x4::Multiply4x4(rasToRAS.GetPointer(), xyToIJK.GetPointer(), xyToIJK.GetPointer());
+        vtkMatrix4x4::Multiply4x4(rasToRAS.GetPointer(), uvwToIJK.GetPointer(), uvwToIJK.GetPointer());
         }
       }
 
-    vtkSmartPointer<vtkMatrix4x4> rasToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-    this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
-    vtkMatrix4x4::Multiply4x4(rasToIJK, xyToIJK, xyToIJK); 
-    vtkMatrix4x4::Multiply4x4(rasToIJK, uvwToIJK, uvwToIJK); 
+    vtkNew<vtkMatrix4x4> rasToIJK;
+    this->VolumeNode->GetRASToIJKMatrix(rasToIJK.GetPointer());
+    vtkMatrix4x4::Multiply4x4(rasToIJK.GetPointer(), xyToIJK.GetPointer(), xyToIJK.GetPointer());
+    vtkMatrix4x4::Multiply4x4(rasToIJK.GetPointer(), uvwToIJK.GetPointer(), uvwToIJK.GetPointer());
   }
 
   // Optimisation: If there is no volume, calling or not Modified() won't
   // have any visual impact. the transform has no sense if there is no volume
   bool transformModified = this->VolumeNode &&
-    !AreMatricesEqual(this->XYToIJKTransform->GetMatrix(), xyToIJK);
+    !AreMatricesEqual(this->XYToIJKTransform->GetMatrix(), xyToIJK.GetPointer());
   if (transformModified)
     {
-    this->XYToIJKTransform->SetMatrix( xyToIJK );
+    this->XYToIJKTransform->SetMatrix(xyToIJK.GetPointer());
     }
 
   bool transformModifiedUVW = this->VolumeNode &&
-    !AreMatricesEqual(this->UVWToIJKTransform->GetMatrix(), uvwToIJK);
+    !AreMatricesEqual(this->UVWToIJKTransform->GetMatrix(), uvwToIJK.GetPointer());
   if (transformModifiedUVW)
     {
-    this->UVWToIJKTransform->SetMatrix( uvwToIJK );
+    this->UVWToIJKTransform->SetMatrix(uvwToIJK.GetPointer());
     }
 
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
@@ -837,21 +836,21 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
         !strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
       {
       vtkMRMLTransformNode* tnode = this->VolumeNode->GetParentTransformNode();
-      vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+      vtkNew<vtkMatrix4x4> transformToWorld;
       //transformToWorld->Identity();unnecessary, transformToWorld is already identiy
       if (tnode != 0 && tnode->IsLinear())
         {
         vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-        lnode->GetMatrixTransformToWorld(transformToWorld);
+        lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
         transformToWorld->Invert();
         }
 
       vtkMatrix4x4* xyToRas = this->SliceNode->GetXYToRAS();
 
-      vtkMatrix4x4::Multiply4x4(transformToWorld, xyToRas, transformToWorld);
+      vtkMatrix4x4::Multiply4x4(transformToWorld.GetPointer(), xyToRas, transformToWorld.GetPointer());
       double dirs[3][3];
       this->VolumeNode->GetIJKToRASDirections(dirs);
-      vtkSmartPointer<vtkMatrix4x4> trot = vtkSmartPointer<vtkMatrix4x4>::New();
+      vtkNew<vtkMatrix4x4> trot;
       //trot->Identity(); unnecessary, trot is already identiy
       for (int i=0; i<3; i++)
         {
@@ -865,8 +864,8 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       // once
       int blocked = dnode->StartModify();
       dnode->SetSliceImage(sliceImage);
-      dnode->SetSlicePositionMatrix(transformToWorld);
-      dnode->SetSliceGlyphRotationMatrix(trot);
+      dnode->SetSlicePositionMatrix(transformToWorld.GetPointer());
+      dnode->SetSliceGlyphRotationMatrix(trot.GetPointer());
       displayNodesModified += dnode->EndModify(blocked);
       }
     }

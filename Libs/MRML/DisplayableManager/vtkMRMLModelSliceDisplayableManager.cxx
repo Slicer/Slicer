@@ -346,8 +346,8 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
     // Update transform matrices
 
-    vtkSmartPointer<vtkMatrix4x4> tempMat1 = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> tempMat2 = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> tempMat1;
+    vtkNew<vtkMatrix4x4> tempMat2;
     tempMat1->Identity();
     tempMat2->Identity();
 
@@ -355,15 +355,15 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     tempMat1->Identity();
     tempMat1->DeepCopy(pipeline->NodeToWorld);
     tempMat1->Invert();
-    vtkMatrix4x4::Multiply4x4(tempMat1, this->SliceXYToRAS, tempMat2);
-    this->SetSlicePlaneFromMatrix(tempMat2, pipeline->Plane);
+    vtkMatrix4x4::Multiply4x4(tempMat1.GetPointer(), this->SliceXYToRAS, tempMat2.GetPointer());
+    this->SetSlicePlaneFromMatrix(tempMat2.GetPointer(), pipeline->Plane);
 
     //    Set PolyData Transform
     tempMat1->DeepCopy(this->SliceXYToRAS);
     tempMat1->Invert();
-    vtkMatrix4x4::Multiply4x4(tempMat1,
-                              pipeline->NodeToWorld, tempMat2);
-    pipeline->TransformToSlice->SetMatrix(tempMat2);
+    vtkMatrix4x4::Multiply4x4(tempMat1.GetPointer(),
+                              pipeline->NodeToWorld, tempMat2.GetPointer());
+    pipeline->TransformToSlice->SetMatrix(tempMat2.GetPointer());
 
     pipeline->Plane->Modified(); 
     
@@ -371,11 +371,11 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     // no need for 50^3 default locator divisons
     if (polyData->GetPoints() != NULL && polyData->GetNumberOfPoints() <= 4)
     {
-      vtkSmartPointer<vtkPointLocator> locator = vtkSmartPointer<vtkPointLocator>::New();
+      vtkNew<vtkPointLocator> locator;
       double *bounds = polyData->GetBounds();
       locator->SetDivisions(2,2,2);
       locator->InitPointInsertion(polyData->GetPoints(), bounds);
-      pipeline->Cutter->SetLocator(locator);
+      pipeline->Cutter->SetLocator(locator.GetPointer());
     }
 
     // Update pipeline actor

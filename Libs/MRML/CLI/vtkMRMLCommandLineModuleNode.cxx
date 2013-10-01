@@ -24,8 +24,8 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
 #include <sstream>
@@ -400,10 +400,9 @@ bool vtkMRMLCommandLineModuleNode
       if (this->MRMLObserverManager->GetObservationsCount(node) == 0 &&
           this->IsInputDefaultValue(value))
         {
-        vtkSmartPointer<vtkIntArray> events =
-          vtkSmartPointer<vtkIntArray>::New();
+        vtkNew<vtkIntArray> events;
         events->InsertNextValue(vtkCommand::AnyEvent);
-        vtkObserveMRMLObjectEventsMacro(node, events);
+        vtkObserveMRMLObjectEventsMacro(node, events.GetPointer());
         }
       // if the old node is no longer an input parameter
       //if (!this->IsInputDefaultValue(oldValue))

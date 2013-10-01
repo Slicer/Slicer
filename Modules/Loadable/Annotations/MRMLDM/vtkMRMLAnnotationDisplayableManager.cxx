@@ -2047,10 +2047,10 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordinates(vtkMRMLAnno
   vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
   if (tnode != NULL && tnode->IsLinear())
     {
-    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> transformToWorld;
     transformToWorld->Identity();
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     transformToWorld->Invert();
 
     double p[4];

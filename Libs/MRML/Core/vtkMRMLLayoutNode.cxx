@@ -2,8 +2,8 @@
 #include <sstream>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 #include <vtkXMLDataParser.h>
 
 // MRML includes
@@ -294,8 +294,7 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
     }
 
   std::istringstream iss(description, std::istringstream::in);
-  vtkSmartPointer<vtkXMLDataParser> parser =
-    vtkSmartPointer<vtkXMLDataParser>::New();
+  vtkNew<vtkXMLDataParser> parser;
   parser->SetStream(&iss);
   parser->Parse();
 

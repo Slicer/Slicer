@@ -101,7 +101,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
       return 1;
     }
 
-  vtkDebugMacro("got a line: \n\"" << line << "\""); 
+  vtkDebugMacro("got a line: \n\"" << line << "\"");
   std::string attValue(line);
   size_t size = std::string(this->GetAnnotationStorageType()).size();
  

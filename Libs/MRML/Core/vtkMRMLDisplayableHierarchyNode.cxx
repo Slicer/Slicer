@@ -21,10 +21,8 @@ Version:   $Revision: 1.3 $
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-
-// STD includes
 
 //----------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayableHierarchyNode, DisplayNodeID);
@@ -143,8 +141,8 @@ void vtkMRMLDisplayableHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
   os << indent << "Expanded:        " << this->Expanded << "\n";
 
-  vtkSmartPointer<vtkCollection> col =  vtkSmartPointer<vtkCollection>::New();
-  this->GetChildrenDisplayableNodes(col);
+  vtkNew<vtkCollection> col;
+  this->GetChildrenDisplayableNodes(col.GetPointer());
   unsigned int numChildren = col->GetNumberOfItems();
   os << indent << "Number of children displayable nodes = " << numChildren << "\n";
   for (unsigned int i = 0; i < numChildren; i++)

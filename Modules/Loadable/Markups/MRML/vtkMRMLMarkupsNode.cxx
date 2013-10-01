@@ -30,6 +30,7 @@
 #include <vtkBitArray.h>
 #include <vtkCommand.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
@@ -581,12 +582,12 @@ int vtkMRMLMarkupsNode::GetMarkupPointWorld(int markupIndex, int pointIndex, dou
   xyz[2] = vectorPoint.GetZ();
   // get the markup's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
   if (tnode != NULL && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
   // convert by the parent transform
   double  xyzw[4];
@@ -783,14 +784,14 @@ void vtkMRMLMarkupsNode::SetMarkupPointWorld(const int markupIndex, const int po
     }
   // get the markup's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
   if (tnode != NULL)
   {
       if (tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
   }
   // convert by the inverted parent transform

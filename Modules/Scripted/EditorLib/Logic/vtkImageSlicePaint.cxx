@@ -14,8 +14,9 @@
 =========================================================================*/
 #include "vtkImageSlicePaint.h"
 
-#include "vtkObjectFactory.h"
-#include "vtkSmartPointer.h"
+// VTK includes
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 
 vtkCxxRevisionMacro(vtkImageSlicePaint, "$Revision$");
@@ -182,10 +183,10 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
   //    
   vtkMatrix4x4 *workingIJKToWorld = self->GetWorkingIJKToWorld();
   vtkMatrix4x4 *backgroundIJKToWorld = self->GetBackgroundIJKToWorld();
-  vtkSmartPointer<vtkMatrix4x4> backgroundWorldToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-  backgroundWorldToIJK->DeepCopy( backgroundIJKToWorld );
+  vtkNew<vtkMatrix4x4> backgroundWorldToIJK;
+  backgroundWorldToIJK->DeepCopy(backgroundIJKToWorld);
   backgroundWorldToIJK->Invert();
-  vtkSmartPointer<vtkMatrix4x4> maskWorldToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> maskWorldToIJK;
   if ( self->GetMaskIJKToWorld() )
     {
     maskWorldToIJK->DeepCopy( self->GetMaskIJKToWorld() );
@@ -274,7 +275,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
             {
             // check the mask image
             // note: k will always be zero for the mask since it is 2D...
-            transform3(maskWorldToIJK, workingWorld, maskIJK);
+            transform3(maskWorldToIJK.GetPointer(), workingWorld, maskIJK);
             for (int i = 0; i < 2; i++) 
               { 
               intMaskIJK[i] = paintRound(maskIJK[i]); 
@@ -332,7 +333,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
               int intbgIJK[3];
 
               // get the background pixel
-              transform3(backgroundWorldToIJK, workingWorld, bgIJK);
+              transform3(backgroundWorldToIJK.GetPointer(), workingWorld, bgIJK);
               for (int i = 0; i < 3; i++) 
                 { 
                 intbgIJK[i] = paintRound(bgIJK[i]); 

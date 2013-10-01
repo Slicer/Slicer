@@ -31,9 +31,9 @@
 // VTK includes
 #include <vtkActor2D.h>
 #include <vtkCallbackCommand.h>
+#include <vtkNew.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 
 // STD includes
@@ -466,9 +466,8 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::AddActor(
   vtkActor2D* actor = vtkActor2D::New();
   if (displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode"))
     {
-    vtkSmartPointer<vtkPolyDataMapper2D> mapper =
-      vtkSmartPointer<vtkPolyDataMapper2D>::New();
-    actor->SetMapper( mapper );
+    vtkNew<vtkPolyDataMapper2D> mapper;
+    actor->SetMapper(mapper.GetPointer());
     }
   this->External->GetRenderer()->AddActor( actor );
   this->Actors[displayNode] = actor;

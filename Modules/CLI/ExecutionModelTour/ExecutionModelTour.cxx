@@ -5,9 +5,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-
-// STD includes
+#include <vtkNew.h>
 
 int main(int argc, char *argv[])
 {
@@ -58,7 +56,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   scene->SetURL( transform1Filename.c_str() );
   scene->Import();
 
@@ -83,7 +81,6 @@ int main(int argc, char *argv[])
     std::cerr << "No input transform found! Specified transform ID = " << transform1ID << std::endl;
     return EXIT_FAILURE;
     }
-  scene = 0;
 
   // Write out the return parameters in "name = value" form
   std::ofstream rts;

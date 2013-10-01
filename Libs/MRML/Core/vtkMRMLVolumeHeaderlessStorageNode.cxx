@@ -32,9 +32,7 @@ Version:   $Revision: 1.3 $
 #include <vtkImageReader2.h>
 #include <vtkImageAppend.h>
 #include <vtkImageFlip.h>
-#include <vtkSmartPointer.h>
-
-// STD includes
+#include <vtkNew.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeHeaderlessStorageNode);
@@ -331,18 +329,18 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkSmartPointer<vtkStringArray> archNames = vtkSmartPointer<vtkStringArray>::New();
+  vtkNew<vtkStringArray> archNames;
   itk::ArchetypeSeriesFileNames::Pointer archtypeNames = itk::ArchetypeSeriesFileNames::New();
 
   archtypeNames->SetArchetype(fullName);
   itk::ArchetypeSeriesFileNames::StringVectorType names = archtypeNames->GetFileNames();
 
-  vtkSmartPointer<vtkImageReader2> reader = vtkSmartPointer<vtkImageReader2>::New();
+  vtkNew<vtkImageReader2> reader;
   reader->SetNumberOfScalarComponents(this->GetFileNumberOfScalarComponents());
   reader->SetDataScalarType(this->GetFileScalarType());
   reader->SetDataByteOrder(this->GetFileLittleEndian());
 
-  vtkSmartPointer<vtkImageFlip> flip = vtkSmartPointer<vtkImageFlip>::New();
+  vtkNew<vtkImageFlip> flip;
   flip->SetInput(reader->GetOutput());
   flip->SetFilteredAxes(1);
 
@@ -354,10 +352,10 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   double spacing[3];
   this->GetFileSpacing(spacing);
 
-  vtkSmartPointer<vtkImageAppend> appender = vtkSmartPointer<vtkImageAppend>::New();
+  vtkNew<vtkImageAppend> appender;
   appender->SetAppendAxis(2);
   
-  vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
+  vtkNew<vtkImageData> image;
 
   int result = 1;
 
@@ -387,15 +385,15 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
-      appender->SetInput(0, image);
+      appender->SetInput(0, image.GetPointer());
       appender->SetInput(1, flip->GetOutput());
       appender->Update();  
       image ->DeepCopy(appender->GetOutput());
       }
     }
 
-  vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
-  ici->SetInput (image);
+  vtkNew<vtkImageChangeInformation> ici;
+  ici->SetInput(image.GetPointer());
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
@@ -411,14 +409,14 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     volNode->SetAndObserveImageData (ici->GetOutput());
     }
 
-  vtkSmartPointer<vtkMatrix4x4> mat  = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> mat;
   mat->Identity();
   volNode->ComputeIJKToRASFromScanOrder(this->GetFileScanOrder(), 
                                         spacing, dims, 
                                         this->GetCenterImage(),
-                                        mat);
+                                        mat.GetPointer());
 
-  volNode->SetIJKToRASMatrix(mat);
+  volNode->SetIJKToRASMatrix(mat.GetPointer());
 
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 
@@ -448,7 +446,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("vtkMRMLVolumeNode: File name not specified");
     return 0;
     }
-  vtkSmartPointer<vtkITKImageWriter> writer = vtkSmartPointer<vtkITKImageWriter>::New();
+  vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(fullName.c_str());
   
   writer->SetInput( volNode->GetImageData() );
@@ -460,9 +458,9 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   // set volume attributes
-  vtkSmartPointer<vtkMatrix4x4> mat  = vtkSmartPointer<vtkMatrix4x4>::New();
-  volNode->GetRASToIJKMatrix(mat);
-  writer->SetRasToIJKMatrix(mat);
+  vtkNew<vtkMatrix4x4> mat;
+  volNode->GetRASToIJKMatrix(mat.GetPointer());
+  writer->SetRasToIJKMatrix(mat.GetPointer());
 
   int result = 1;
   try

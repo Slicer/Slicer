@@ -36,7 +36,6 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkPNGWriter.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
 #include <string>
@@ -223,41 +222,39 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
 
   if (fileType == this->Fiducial)
     {
-    vtkSmartPointer<vtkMRMLAnnotationFiducialsStorageNode> fStorageNode = vtkSmartPointer<vtkMRMLAnnotationFiducialsStorageNode>::New();
-    // vtkSmartPointer<vtkMRMLAnnotationFiducialNode> fnode = vtkSmartPointer<vtkMRMLAnnotationFiducialNode>::New();
-    vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
+    vtkNew<vtkMRMLAnnotationFiducialsStorageNode> fStorageNode;
+    vtkNew<vtkMRMLAnnotationFiducialNode> fnode;
     fnode->SetName(name);
     
     fStorageNode->SetFileName(filename);
     
     // add the storage node to the scene
-    this->GetMRMLScene()->AddNode(fStorageNode);
+    this->GetMRMLScene()->AddNode(fStorageNode.GetPointer());
     fnode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNode(fnode);
+    this->GetMRMLScene()->AddNode(fnode.GetPointer());
     fnode->SetAndObserveStorageNodeID(fStorageNode->GetID());
   
-    if (fStorageNode->ReadData(fnode))
+    if (fStorageNode->ReadData(fnode.GetPointer()))
       {
       vtkDebugMacro("LoadAnnotation: fiducial storage node read " << filename);
       nodeID =  fnode->GetID();
       }
-    fnode->Delete();
     }
   else if (fileType == this->Ruler)
     {
-    vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode> rStorageNode = vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode>::New();
-    vtkSmartPointer<vtkMRMLAnnotationRulerNode> rNode = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
+    vtkNew<vtkMRMLAnnotationRulerStorageNode> rStorageNode;
+    vtkNew<vtkMRMLAnnotationRulerNode> rNode;
     rNode->SetName(name);
 
     rStorageNode->SetFileName(filename);
 
     // add to the scene
-    this->GetMRMLScene()->AddNode(rStorageNode);
+    this->GetMRMLScene()->AddNode(rStorageNode.GetPointer());
     rNode->Initialize(this->GetMRMLScene());
     rNode->SetAndObserveStorageNodeID(rStorageNode->GetID());
 
-    if (rStorageNode->ReadData(rNode))
+    if (rStorageNode->ReadData(rNode.GetPointer()))
       {
       vtkDebugMacro("LoadAnnotation: ruler storage node read " << filename);
       nodeID = rNode->GetID();
@@ -265,28 +262,22 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     }
   else if (fileType == this->ROI)
     {
-    vtkSmartPointer<vtkMRMLAnnotationLinesStorageNode> roiStorageNode = vtkSmartPointer<vtkMRMLAnnotationLinesStorageNode>::New();
-    vtkMRMLAnnotationROINode * roiNode = vtkMRMLAnnotationROINode::New();
+    vtkNew<vtkMRMLAnnotationLinesStorageNode> roiStorageNode;
+    vtkNew<vtkMRMLAnnotationROINode> roiNode;
     roiNode->SetName(name);
     
     roiStorageNode->SetFileName(filename);
     
     // add the storage node to the scene
-    this->GetMRMLScene()->AddNode(roiStorageNode);
-
+    this->GetMRMLScene()->AddNode(roiStorageNode.GetPointer());
     roiNode->Initialize(this->GetMRMLScene());
-
     roiNode->SetAndObserveStorageNodeID(roiStorageNode->GetID());
 
-
-    if (roiStorageNode->ReadData(roiNode))
+    if (roiStorageNode->ReadData(roiNode.GetPointer()))
       {
       vtkDebugMacro("LoadAnnotation: fiducial storage node read " << filename);
       nodeID =  roiNode->GetID();
       }
-
-
-    roiNode->Delete();
     }
   else
     {
@@ -303,7 +294,7 @@ char *vtkSlicerAnnotationModuleLogic::AddFiducial(double r, double a, double s,
                                                   const char *label)
 {
   char *nodeID = NULL;
-  vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
+  vtkNew<vtkMRMLAnnotationFiducialNode> fnode;
 
   if (label != NULL)
     {
@@ -313,8 +304,6 @@ char *vtkSlicerAnnotationModuleLogic::AddFiducial(double r, double a, double s,
   fnode->Initialize(this->GetMRMLScene());
 
   nodeID = fnode->GetID();
-
-  fnode->Delete();
 
   return nodeID;
 }

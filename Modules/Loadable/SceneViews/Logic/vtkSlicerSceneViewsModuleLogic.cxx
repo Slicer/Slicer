@@ -9,6 +9,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
 // STD includes
@@ -242,7 +243,7 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
 
   vtkStdString nameString = vtkStdString(name);
 
-  vtkMRMLSceneViewNode * newSceneViewNode = vtkMRMLSceneViewNode::New();
+  vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
   newSceneViewNode->SetScene(this->GetMRMLScene());
   if (strcmp(nameString,""))
     {
@@ -261,22 +262,20 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
   newSceneViewNode->SetScreenShotType(screenshotType);
 
   // make a new vtk image data, as the set macro is taking the pointer
-  vtkSmartPointer<vtkImageData> copyScreenShot = vtkSmartPointer<vtkImageData>::New();
+  vtkNew<vtkImageData> copyScreenShot;
   copyScreenShot->DeepCopy(screenshot);
-  newSceneViewNode->SetScreenShot(copyScreenShot);
+  newSceneViewNode->SetScreenShot(copyScreenShot.GetPointer());
   newSceneViewNode->StoreScene();
   //newSceneViewNode->HideFromEditorsOff();
   // mark it modified since read so that the screen shot will get saved to disk
 
-  this->GetMRMLScene()->AddNode(newSceneViewNode);
+  this->GetMRMLScene()->AddNode(newSceneViewNode.GetPointer());
 
   // put it in a hierarchy
-  if (!this->AddHierarchyNodeForNode(newSceneViewNode))
+  if (!this->AddHierarchyNodeForNode(newSceneViewNode.GetPointer()))
     {
     vtkErrorMacro("CreateSceneView: Error adding a hierarchy node for new scene view node " << newSceneViewNode->GetID());
     }
-
-  newSceneViewNode->Delete();
 }
 
 //---------------------------------------------------------------------------

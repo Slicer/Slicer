@@ -12,18 +12,20 @@
 
 =========================================================================auto=*/
 
+// vtkTeem includes
 #include "vtkSeedTracts.h"
-#include "vtkCellArray.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkSmartPointer.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkTimerLog.h"
 
-#include "vtkMath.h"
-#include "vtkCommand.h"
+// VTK includes
+#include <vtkCellArray.h>
+#include <vtkCommand.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkTimerLog.h>
+#include <vtkTransformPolyDataFilter.h>
 
-#include "vtkPointData.h"
-
+// STD includes
 #include <sstream>
 
 //----------------------------------------------------------------------------
@@ -493,13 +495,14 @@ void vtkSeedTracts::SeedStreamlinesInROI()
       return;      
     }
 
-  vtkSmartPointer<vtkTransform> transform=vtkSmartPointer<vtkTransform>::New();
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkNew<vtkTransform> transform;
   transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
   transform->Inverse();
-  transformer->SetTransform(transform);
 
-  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+  vtkNew<vtkTransformPolyDataFilter> transformer;
+  transformer->SetTransform(transform.GetPointer());
+
+  vtkNew<vtkPolyDataWriter> writer;
 
   // make sure we are creating objects with points
   this->UseVtkHyperStreamlinePoints();
@@ -787,12 +790,12 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
       
   // Create transformation matrix to place actors in scene
   // This is used to transform the models before writing them to disk
-  vtkSmartPointer<vtkTransform> transform=vtkSmartPointer<vtkTransform>::New();
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkNew<vtkTransform> transform;
   transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
   transform->Inverse();
-  //transformer=vtkTransformPolyDataFilter::New();
-  transformer->SetTransform(transform);
+
+  vtkNew<vtkTransformPolyDataFilter> transformer;
+  transformer->SetTransform(transform.GetPointer());
   
   vtkHyperStreamline *streamline;
   int npts = 0;
@@ -975,13 +978,14 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
       return;      
     }
 
-  vtkSmartPointer<vtkTransform> transform=vtkSmartPointer<vtkTransform>::New();
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkNew<vtkTransform> transform;
   transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
   transform->Inverse();
-  transformer->SetTransform(transform);
 
-  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+  vtkNew<vtkTransformPolyDataFilter> transformer;
+  transformer->SetTransform(transform.GetPointer());
+
+  vtkNew<vtkPolyDataWriter> writer;
 
   // Create transformation matrices to go backwards from streamline points to ROI space
   // This is used to access ROI2.

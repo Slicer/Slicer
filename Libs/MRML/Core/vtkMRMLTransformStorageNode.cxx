@@ -13,30 +13,31 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 
-#include "vtkObjectFactory.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
 
-#include "vtkGeneralTransform.h"
-#include "vtkGridTransform.h"
-#include "vtkImageData.h"
-#include "vtkSmartPointer.h"
-#include "vtkStringArray.h"
+// VTKITK includes
+#include <vtkITKBSplineTransform.h>
 
-#include "vtkITKBSplineTransform.h"
+// VTK includes
+#include <vtkGeneralTransform.h>
+#include <vtkGridTransform.h>
+#include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 
-
-#include "itkTransformFileWriter.h"
-#include "itkTransformFileReader.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkTranslationTransform.h"
-#include "itkScaleTransform.h"
-
-
+// ITK includes
+#include <itkTransformFileWriter.h>
+#include <itkTransformFileReader.h>
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
+#include <itkTranslationTransform.h>
+#include <itkScaleTransform.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
@@ -354,8 +355,7 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       typedef itk::BSplineDeformableTransform<double,D,D> DoubleBSplineTransformType;
       typedef itk::BSplineDeformableTransform<float,D,D> FloatBSplineTransformType;
 
-      vtkSmartPointer<vtkITKBSplineTransform> vtkBSpline = 
-        vtkSmartPointer<vtkITKBSplineTransform>::New();
+      vtkNew<vtkITKBSplineTransform> vtkBSpline;
       
       // B-spline transform of doubles, dimension 3
       {
@@ -406,7 +406,7 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         vtkBSpline->SetSwitchCoordinateSystem( true );
         
         // Set the transform on the node
-        btn->SetAndObserveWarpTransformToParent( vtkBSpline );
+        btn->SetAndObserveWarpTransformToParent( vtkBSpline.GetPointer() );
 
         result = 1;
         }

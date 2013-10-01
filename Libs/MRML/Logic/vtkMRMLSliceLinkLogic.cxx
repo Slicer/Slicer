@@ -72,8 +72,8 @@ int vtkMRMLSliceLinkLogic::GetBroadcastingEvents()
 void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   // List of events the slice logics should listen
-  vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkFloatArray> priorities =vtkSmartPointer<vtkFloatArray>::New();
+  vtkNew<vtkIntArray> events;
+  vtkNew<vtkFloatArray> priorities;
 
   float normalPriority = 0.0;
   float lowPriority = -0.5;
@@ -101,7 +101,7 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
   events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
   priorities->InsertNextValue(lowPriority);
 
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events, priorities);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer(), priorities.GetPointer());
 
   this->ProcessMRMLSceneEvents(newScene, vtkCommand::ModifiedEvent, 0);
 }

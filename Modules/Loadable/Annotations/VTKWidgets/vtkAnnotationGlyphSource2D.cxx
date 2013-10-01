@@ -28,9 +28,9 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
 #include <vtkUnsignedCharArray.h>
 
 vtkCxxRevisionMacro(vtkAnnotationGlyphSource2D, "$Revision: 12554 $");
@@ -635,8 +635,7 @@ void vtkAnnotationGlyphSource2D::SetGlyphTypeAsString(const char *type)
     return;
     }
   
-  //vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::New();
-  vtkSmartPointer<vtkMRMLFiducialListNode> listNode = vtkSmartPointer<vtkMRMLFiducialListNode>::New();
+  vtkNew<vtkMRMLFiducialListNode> listNode;
   
   if ( !strcmp( type, listNode->GetGlyphTypeAsString(vtkMRMLFiducialListNode::StarBurst2D) ) )
     {
@@ -686,6 +685,4 @@ void vtkAnnotationGlyphSource2D::SetGlyphTypeAsString(const char *type)
     {
     this->SetGlyphTypeToHookedArrow();
     }
-//  listNode->Delete();
-//  listNode = NULL;
 }

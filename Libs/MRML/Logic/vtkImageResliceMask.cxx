@@ -12,25 +12,28 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
 #include "vtkImageResliceMask.h"
 
+// VTK includes
 #include <vtkDataSetAttributes.h>
-#include "vtkImageData.h"
-#include "vtkImageStencilData.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
-#include "vtkObjectFactory.h"
-#include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkTransform.h"
-#include "vtkSmartPointer.h"
+#include <vtkImageData.h>
+#include <vtkImageStencilData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkTransform.h>
 
-#include "vtkTemplateAliasMacro.h"
+#include <vtkTemplateAliasMacro.h>
 // turn off 64-bit ints when templating over all types
 # undef VTK_USE_INT64
 # define VTK_USE_INT64 0
 # undef VTK_USE_UINT64
 # define VTK_USE_UINT64 0
 
+// STD includes
 #include <cassert>
 
 vtkCxxRevisionMacro(vtkImageResliceMask, "$Revision$");
@@ -639,10 +642,10 @@ void vtkImageResliceMask::GetAutoCroppedOutputBounds(vtkInformation *inInfo,
   inInfo->Get(vtkDataObject::SPACING(), inSpacing);
   inInfo->Get(vtkDataObject::ORIGIN(), inOrigin);
 
-  vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> matrix;
   if (this->ResliceAxes)
     {
-    vtkMatrix4x4::Invert(this->ResliceAxes, matrix);
+    vtkMatrix4x4::Invert(this->ResliceAxes, matrix.GetPointer());
     }
   vtkAbstractTransform* transform = NULL;
   if (this->ResliceTransform)
@@ -3283,9 +3286,9 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
   outInfo->Get(vtkDataObject::SPACING(), outSpacing);
   outInfo->Get(vtkDataObject::ORIGIN(), outOrigin);
 
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  vtkSmartPointer<vtkMatrix4x4> inMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  vtkSmartPointer<vtkMatrix4x4> outMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkTransform> transform;
+  vtkNew<vtkMatrix4x4> inMatrix;
+  vtkNew<vtkMatrix4x4> outMatrix;
   
 
   if (this->OptimizedTransform)
@@ -3337,11 +3340,11 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
   if (!isIdentity)
     {
     transform->PreMultiply();
-    transform->Concatenate(outMatrix);
+    transform->Concatenate(outMatrix.GetPointer());
     if (this->OptimizedTransform == NULL)
       {
       transform->PostMultiply();
-      transform->Concatenate(inMatrix);
+      transform->Concatenate(inMatrix.GetPointer());
       }
     }
 

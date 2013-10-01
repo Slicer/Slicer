@@ -64,9 +64,9 @@ vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkSmartPointer<vtkIntArray> sceneEvents = vtkSmartPointer<vtkIntArray>::New();
+  vtkNew<vtkIntArray> sceneEvents;
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -145,10 +145,10 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     {
     return 0;
     }
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
-  vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  vtkSmartPointer<vtkMRMLModelStorageNode> mStorageNode = vtkSmartPointer<vtkMRMLModelStorageNode>::New();
-  vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> fsmStorageNode = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::New();
+  vtkNew<vtkMRMLModelNode> modelNode;
+  vtkNew<vtkMRMLModelDisplayNode> displayNode;
+  vtkNew<vtkMRMLModelStorageNode> mStorageNode;
+  vtkNew<vtkMRMLFreeSurferModelStorageNode> fsmStorageNode;
   fsmStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
   vtkSmartPointer<vtkMRMLStorageNode> storageNode;
 
@@ -184,12 +184,12 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   // check to see which node can read this type of file
   if (mStorageNode->SupportedFileType(name.c_str()))
     {
-    storageNode = mStorageNode;
+    storageNode = mStorageNode.GetPointer();
     }
   else if (fsmStorageNode->SupportedFileType(name.c_str()))
     {
     vtkDebugMacro("AddModel: have a freesurfer type model file.");
-    storageNode = fsmStorageNode;
+    storageNode = fsmStorageNode.GetPointer();
     }
 
   /* don't read just yet, need to add to the scene first for remote reading
@@ -210,8 +210,8 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 
     this->GetMRMLScene()->SaveStateForUndo();
 
-    this->GetMRMLScene()->AddNode(storageNode);
-    this->GetMRMLScene()->AddNode(displayNode);
+    this->GetMRMLScene()->AddNode(storageNode.GetPointer());
+    this->GetMRMLScene()->AddNode(displayNode.GetPointer());
 
     // Set the scene so that SetAndObserve[Display|Storage]NodeID can find the
     // node in the scene (so that DisplayNodes return something not empty)
@@ -219,25 +219,23 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
-    this->GetMRMLScene()->AddNode(modelNode);
+    this->GetMRMLScene()->AddNode(modelNode.GetPointer());
 
     // now set up the reading
     vtkDebugMacro("AddModel: calling read on the storage node");
-    int retval = storageNode->ReadData(modelNode);
+    int retval = storageNode->ReadData(modelNode.GetPointer());
     if (retval != 1)
       {
       vtkErrorMacro("AddModel: error reading " << filename);
-      this->GetMRMLScene()->RemoveNode(modelNode);
-      modelNode = NULL;
+      this->GetMRMLScene()->RemoveNode(modelNode.GetPointer());
       }
     }
   else
     {
     vtkDebugMacro("Couldn't read file, returning null model node: " << filename);
-    modelNode = NULL;
     }
 
-  return modelNode;
+  return modelNode.GetPointer();
 }
 
 //----------------------------------------------------------------------------

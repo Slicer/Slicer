@@ -16,7 +16,7 @@
 
 // VTK includes
 #include <vtkMath.h>
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // ITK includes
 #if ITK_VERSION_MAJOR >= 4
@@ -35,8 +35,7 @@ int main( int argc, char * argv[] )
 
   PARSE_ARGS;
     {
-    vtkSmartPointer<vtkNRRDReader> reader =
-      vtkSmartPointer<vtkNRRDReader>::New();
+    vtkNew<vtkNRRDReader> reader;
     reader->SetFileName(inputVolume.c_str() );
     reader->Update();
     if( reader->GetReadStatus() )
@@ -45,34 +44,28 @@ int main( int argc, char * argv[] )
       return EXIT_FAILURE;
       }
 
-    vtkSmartPointer<vtkDoubleArray> bValues =
-      vtkSmartPointer<vtkDoubleArray>::New();
-    vtkSmartPointer<vtkDoubleArray> grads =
-      vtkSmartPointer<vtkDoubleArray>::New();
-    vtkSmartPointer<vtkMRMLNRRDStorageNode> helper =
-      vtkSmartPointer<vtkMRMLNRRDStorageNode>::New();
+    vtkNew<vtkDoubleArray> bValues;
+    vtkNew<vtkDoubleArray> grads;
+    vtkNew<vtkMRMLNRRDStorageNode> helper;
 
-    if( !helper->ParseDiffusionInformation(reader, grads, bValues) )
+    if( !helper->ParseDiffusionInformation(reader.GetPointer(), grads.GetPointer(), bValues.GetPointer()) )
       {
       std::cerr << argv[0] << ": Error parsing Diffusion information" << std::endl;
       return EXIT_FAILURE;
       }
-    vtkSmartPointer<vtkTeemEstimateDiffusionTensor> estim =
-      vtkSmartPointer<vtkTeemEstimateDiffusionTensor>::New();
+    vtkNew<vtkTeemEstimateDiffusionTensor> estim;
 
     estim->SetInput(reader->GetOutput() );
     estim->SetNumberOfGradients(grads->GetNumberOfTuples() );
-    estim->SetDiffusionGradients(grads);
-    estim->SetBValues(bValues);
+    estim->SetDiffusionGradients(grads.GetPointer());
+    estim->SetBValues(bValues.GetPointer());
     estim->SetShiftNegativeEigenvalues(ShiftNegativeEigenvalues);
 
     // Compute Transformation that brings the gradients to ijk
     // double *sp = reader->GetOutput()->GetSpacing();
-    vtkSmartPointer<vtkMatrix4x4> mf =
-      vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> mf;
     mf->DeepCopy(reader->GetMeasurementFrameMatrix() );
-    vtkSmartPointer<vtkMatrix4x4> rasToIjkRotation =
-      vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> rasToIjkRotation;
     rasToIjkRotation->DeepCopy(reader->GetRasToIjkMatrix() );
     // Set Translation to zero
     for( int i = 0; i < 3; i++ )
@@ -94,14 +87,13 @@ int main( int argc, char * argv[] )
         }
       }
 
-    vtkSmartPointer<vtkTransform> trans =
-      vtkSmartPointer<vtkTransform>::New();
+    vtkNew<vtkTransform> trans;
     trans->PostMultiply();
-    trans->SetMatrix(mf);
-    trans->Concatenate(rasToIjkRotation);
+    trans->SetMatrix(mf.GetPointer());
+    trans->Concatenate(rasToIjkRotation.GetPointer());
     trans->Update();
 
-    estim->SetTransform(trans);
+    estim->SetTransform(trans.GetPointer());
     if( estimationMethod == std::string("LS") )
       {
       estim->SetEstimationMethodToLLS();
@@ -115,11 +107,10 @@ int main( int argc, char * argv[] )
     tensorImage->GetPointData()->SetScalars(NULL);
 
     // Read the tensor mask
-    vtkSmartPointer<vtkImageData> mask = vtkSmartPointer<vtkImageData>::New();
+    vtkNew<vtkImageData> mask;
     if( strlen(inputMaskVolume.c_str() ) > 0 )
       {
-      vtkSmartPointer<vtkNRRDReader> maskReader =
-        vtkSmartPointer<vtkNRRDReader>::New();
+      vtkNew<vtkNRRDReader> maskReader;
       maskReader->SetFileName(inputMaskVolume.c_str() );
       maskReader->Update();
       if( maskReader->GetReadStatus() )
@@ -135,8 +126,7 @@ int main( int argc, char * argv[] )
         return EXIT_FAILURE;
         }
 
-      vtkSmartPointer<vtkImageCast> cast =
-        vtkSmartPointer<vtkImageCast>::New();
+      vtkNew<vtkImageCast> cast;
       cast->SetInput(maskReader->GetOutput() );
       cast->SetOutputScalarTypeToUnsignedChar();
       cast->Update();
@@ -150,25 +140,23 @@ int main( int argc, char * argv[] )
       }
 
     // Mask tensor
-    vtkSmartPointer<vtkTensorMask> tensorMask =
-      vtkSmartPointer<vtkTensorMask>::New();
+    vtkNew<vtkTensorMask> tensorMask;
     tensorMask->SetNumberOfThreads(1);
     if( applyMask )
       {
       tensorMask->SetMaskAlpha(0.0);
       tensorMask->SetInput(tensorImage);
-      tensorMask->SetMaskInput(mask);
+      tensorMask->SetMaskInput(mask.GetPointer());
       tensorMask->Update();
       tensorImage = tensorMask->GetOutput();
       }
     /**/
     // Compute IjkToRas (used by Writer)
-    vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = reader->GetRasToIjkMatrix();
+    vtkMatrix4x4* ijkToRasMatrix = reader->GetRasToIjkMatrix();
     ijkToRasMatrix->Invert();
 
     // Save tensor
-    vtkSmartPointer<vtkNRRDWriter> writer =
-      vtkSmartPointer<vtkNRRDWriter>::New();
+    vtkNew<vtkNRRDWriter> writer;
     tensorImage->GetPointData()->SetScalars(NULL);
     writer->SetInput(tensorImage);
     writer->SetFileName( outputTensor.c_str() );
@@ -177,12 +165,11 @@ int main( int argc, char * argv[] )
     // Compute measurement frame: Take into account that we have transformed
     // the gradients so tensor components are defined in ijk.
     rasToIjkRotation->Invert();
-    writer->SetMeasurementFrameMatrix( rasToIjkRotation );
+    writer->SetMeasurementFrameMatrix(rasToIjkRotation.GetPointer());
     writer->Write();
 
     // Save baseline
-    vtkSmartPointer<vtkNRRDWriter> writer2 =
-      vtkSmartPointer<vtkNRRDWriter>::New();
+    vtkNew<vtkNRRDWriter> writer2;
     writer2->SetInput(estim->GetBaseline() );
     writer2->SetFileName( outputBaseline.c_str() );
     writer2->UseCompressionOn();
