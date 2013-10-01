@@ -18,11 +18,11 @@
 
 int vtkMRMLVolumeHeaderlessStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumeHeaderlessStorageNode > node1 = vtkSmartPointer< vtkMRMLVolumeHeaderlessStorageNode >::New();
+  vtkNew<vtkMRMLVolumeHeaderlessStorageNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_STORAGE_MRML_METHODS( vtkMRMLVolumeHeaderlessStorageNode, node1);
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLVolumeHeaderlessStorageNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

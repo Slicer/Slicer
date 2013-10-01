@@ -15,17 +15,18 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#include <vtkNew.h>
 #include <vtkCollection.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
 class vtkMRMLNodeTestHelper1 : public vtkMRMLNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLNodeTestHelper1 *New(){return new vtkMRMLNodeTestHelper1;};
+  static vtkMRMLNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLNodeTestHelper1,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLNodeTestHelper1,vtkMRMLNode);
 
   NodeReferencesType& GetInternalReferencedNodes()
     {
@@ -34,13 +35,14 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLNodeTestHelper1;
+    return vtkMRMLNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
     return "vtkMRMLNodeTestHelper1";
     }
 };
+vtkStandardNewMacro(vtkMRMLNodeTestHelper1);
 
 //---------------------------------------------------------------------------
 bool TestAttribute();
@@ -61,11 +63,11 @@ bool TestReferenceNodeNoObservers();
 //---------------------------------------------------------------------------
 int vtkMRMLNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLNodeTestHelper1> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLNodeTestHelper1, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLNodeTestHelper1, node1.GetPointer());
 
   bool res = true;
   res = TestAttribute();

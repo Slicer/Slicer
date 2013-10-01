@@ -14,9 +14,6 @@
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
 
-// VTK includes
-#include <vtkNew.h>
-
 int vtkMRMLCameraNodeTest1(int , char * [] )
 {
   vtkNew< vtkMRMLCameraNode > node1;

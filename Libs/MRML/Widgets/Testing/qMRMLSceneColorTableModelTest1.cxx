@@ -34,7 +34,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -44,9 +44,9 @@ int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
 
   qMRMLSceneColorTableModel model;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   qMRMLNodeFactory nodeFactory(0);
-  nodeFactory.setMRMLScene(scene);
+  nodeFactory.setMRMLScene(scene.GetPointer());
   nodeFactory.addAttribute("Category", "First category");
   vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
@@ -54,7 +54,7 @@ int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
     {
     colorNode->SetTypeToWarmShade1();
     }
-  model.setMRMLScene(scene);
+  model.setMRMLScene(scene.GetPointer());
   colorNode->SetTypeToCool1();
 
   QTreeView* view = new QTreeView(0);

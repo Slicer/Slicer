@@ -10,17 +10,15 @@
 
 =========================================================================auto=*/
 
-
+// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-
-// to make an owner
 #include "vtkMRMLModelNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkIntArray.h>
-
-// STD includes
+#include <vtkNew.h>
+#include <vtkSmartPointer.h>
 
 struct callBackDataStruct{
   std::string testString;
@@ -52,38 +50,25 @@ void TestCallback( vtkObject *caller,
 
 int vtkObserverManagerTest1(int , char * [] )
 {
+  vtkNew<vtkObserverManager> observerManager;
 
-  vtkSmartPointer< vtkObserverManager > observerManager = vtkSmartPointer< vtkObserverManager >::New();
-  
-  if( observerManager == NULL )
-    {
-    std::cerr << "This class is returning a NULL pointer from its New() method" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  EXERCISE_BASIC_OBJECT_METHODS( observerManager );
-
+  EXERCISE_BASIC_OBJECT_METHODS(observerManager.GetPointer());
 
   observerManager->Modified();
 
   // set up an owner
-  vtkSmartPointer< vtkMRMLModelNode  > modelNode =  vtkSmartPointer< vtkMRMLModelNode > ::New();
-  if (modelNode == NULL)
-    {
-    std::cerr << "Unable to create a model node."  << std::endl;
-    return EXIT_FAILURE;
-    }
+  vtkNew<vtkMRMLModelNode> modelNode;
   modelNode->SetName("Owner");
-  observerManager->AssignOwner(modelNode);
+  observerManager->AssignOwner(modelNode.GetPointer());
   vtkObject *owner = observerManager->GetOwner();
-  if (vtkMRMLModelNode::SafeDownCast(owner) != modelNode)
+  if (vtkMRMLModelNode::SafeDownCast(owner) != modelNode.GetPointer())
     {
     std::cerr << "Error getting owner."  << std::endl;
     return EXIT_FAILURE;
     }
  
   // get the call back
-  vtkSmartPointer< vtkCallbackCommand> callbackCommand = observerManager->GetCallbackCommand();
+  vtkCallbackCommand* callbackCommand = observerManager->GetCallbackCommand();
   if (callbackCommand == NULL)
     {
      std::cerr << "Error getting call back command."  << std::endl;
@@ -95,23 +80,22 @@ int vtkObserverManagerTest1(int , char * [] )
   callbackCommand->SetCallback(TestCallback);
 
   // set up something to observe
-  vtkSmartPointer<vtkMRMLModelNode> observed =  vtkSmartPointer<vtkMRMLModelNode>::New();
-//  vtkObject *oldNode = observed;
+  vtkSmartPointer<vtkMRMLModelNode> observed = vtkSmartPointer<vtkMRMLModelNode>::New();
   observerManager->SetObject(vtkObjectPointer( &(observed)), observed);
 
   // add some events
-  vtkSmartPointer<vtkIntArray> events =  vtkSmartPointer<vtkIntArray>::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
-  observerManager->AddObjectEvents(observed, events);
+  observerManager->AddObjectEvents(observed.GetPointer(), events.GetPointer());
 
   // modify the observed
   observed->SetName("Testing Model Node");
   
 
   // make a new node to observe
-  vtkSmartPointer<vtkMRMLModelNode> observed2 =  vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkSmartPointer<vtkMRMLModelNode> observed2 = vtkSmartPointer<vtkMRMLModelNode>::New();
   observerManager->SetAndObserveObject(vtkObjectPointer( &(observed2)), observed2);
-  observerManager->AddObjectEvents(observed2, events);
+  observerManager->AddObjectEvents(observed2, events.GetPointer());
   observed2->SetName("Testing a second model node");
 
   observerManager->RemoveObjectEvents(observed2);
@@ -119,13 +103,13 @@ int vtkObserverManagerTest1(int , char * [] )
   observed2->SetName("Don't trigger a callback");
 
   // another node to observe
-  vtkSmartPointer<vtkMRMLModelNode> observed3 =  vtkSmartPointer<vtkMRMLModelNode>::New();
-  observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed3)), observed3, events);
+  vtkSmartPointer<vtkMRMLModelNode> observed3 = vtkSmartPointer<vtkMRMLModelNode>::New();
+  observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed3)), observed3, events.GetPointer());
   observed3->SetName("Third node callback");
 
   // not using smart pointers
   vtkMRMLModelNode *observed4 = vtkMRMLModelNode::New();
-  observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed4)), observed4, events);
+  observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed4)), observed4, events.GetPointer());
   observed4->SetName("Fourth node callback");
   observerManager->SetAndObserveObject(vtkObjectPointer(&(observed4)), NULL);
   // don't need to call delete, the prior command nulled it

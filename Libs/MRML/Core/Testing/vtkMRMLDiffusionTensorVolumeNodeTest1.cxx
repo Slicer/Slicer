@@ -19,11 +19,11 @@
 
 int vtkMRMLDiffusionTensorVolumeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLDiffusionTensorVolumeNode > node1 = vtkSmartPointer< vtkMRMLDiffusionTensorVolumeNode >::New();
+  vtkNew<vtkMRMLDiffusionTensorVolumeNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLDiffusionTensorVolumeNode, node1);
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLDiffusionTensorVolumeNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

@@ -26,19 +26,15 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelNode.h"
 
-// VTK includes
-
-// STD includes
-
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
 {
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   vtkMRMLModelHierarchyLogic* modelHierarchyLogic = vtkMRMLModelHierarchyLogic::New();
   modelHierarchyLogic->SetDebug(1);
 
-  modelHierarchyLogic->SetMRMLScene(scene);
+  modelHierarchyLogic->SetMRMLScene(scene.GetPointer());
 
   vtkMRMLModelHierarchyNode *hnode = modelHierarchyLogic->GetModelHierarchyNode(0);
   if (hnode)
@@ -61,15 +57,15 @@ int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
   std::cout << "Now adding a hierarchy and a node" << std::endl;
   
   // now test with some nodes
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> mhnode = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-  scene->AddNode(mhnode);
+  vtkNew<vtkMRMLModelHierarchyNode> mhnode;
+  scene->AddNode(mhnode.GetPointer());
 
-  vtkSmartPointer<vtkMRMLModelDisplayNode> mdnode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  scene->AddNode(mdnode);
+  vtkNew<vtkMRMLModelDisplayNode> mdnode;
+  scene->AddNode(mdnode.GetPointer());
   mhnode->SetAndObserveDisplayNodeID(mdnode->GetID());
 
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
-  scene->AddNode(modelNode);
+  vtkNew<vtkMRMLModelNode> modelNode;
+  scene->AddNode(modelNode.GetPointer());
   mhnode->SetModelNodeID(modelNode->GetID());
 
   int numModels = modelHierarchyLogic->GetNumberOfModelsInHierarchy();

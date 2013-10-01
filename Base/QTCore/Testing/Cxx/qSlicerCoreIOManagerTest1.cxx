@@ -34,17 +34,17 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
 
   qSlicerCoreIOManager manager;
 
-  vtkSmartPointer< vtkMRMLScene > scene1 = vtkSmartPointer< vtkMRMLScene >::New();
+  vtkNew<vtkMRMLScene> scene1;
 
   QString filename = argv[1];
 
-  //manager.loadScene( scene1, filename );
+  //manager.loadScene( scene1.GetPointer(), filename );
 
-  vtkSmartPointer< vtkMRMLScene > scene2 = vtkSmartPointer< vtkMRMLScene >::New();
+  vtkNew<vtkMRMLScene> scene2;
 
-  //manager.loadScene( scene2, filename );
+  //manager.loadScene( scene2.GetPointer(), filename );
 
-  //manager.closeScene( scene1 );
+  //manager.closeScene( scene1.GetPointer() );
 
   QString extension = "mrml";
 

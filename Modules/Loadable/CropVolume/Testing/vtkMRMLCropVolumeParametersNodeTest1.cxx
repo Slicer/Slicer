@@ -14,9 +14,6 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLCropVolumeParametersNode.h"
 
-// VTK includes
-#include <vtkNew.h>
-
 int vtkMRMLCropVolumeParametersNodeTest1(int , char * [] )
 {
   vtkNew< vtkMRMLCropVolumeParametersNode > node1;

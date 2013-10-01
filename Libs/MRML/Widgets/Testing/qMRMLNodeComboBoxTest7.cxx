@@ -28,34 +28,32 @@
 #include <vtkMRMLScalarVolumeNode.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
-
-// STD includes
+#include <vtkNew.h>
 
 // test the filtering with many cases
 int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> noAttributeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
-  scene->AddNode(noAttributeNode);
+  vtkNew<vtkMRMLScalarVolumeNode> noAttributeNode;
+  scene->AddNode(noAttributeNode.GetPointer());
   
   const char *testingAttributeName = "testingAttribute";
   const char *testingAttribute = noAttributeNode->GetAttribute(testingAttributeName);
   std::cout << "Volume node with no call to SetAttribute, GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
   
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> emptyStringAttributeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+  vtkNew<vtkMRMLScalarVolumeNode> emptyStringAttributeNode;
   emptyStringAttributeNode->SetAttribute(testingAttributeName, "");
-  scene->AddNode(emptyStringAttributeNode);
+  scene->AddNode(emptyStringAttributeNode.GetPointer());
 
   testingAttribute = emptyStringAttributeNode->GetAttribute(testingAttributeName);
   std::cout << "Volume node with SetAttribute called with an empty string, GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
 
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> validAttributeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+  vtkNew<vtkMRMLScalarVolumeNode> validAttributeNode;
   validAttributeNode->SetAttribute(testingAttributeName, "a");
-  scene->AddNode(validAttributeNode);
+  scene->AddNode(validAttributeNode.GetPointer());
 
   testingAttribute = validAttributeNode->GetAttribute(testingAttributeName);
   std::cout << "Volume node with SetAttribute called with 'a', GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
@@ -64,7 +62,7 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   // counted
   qMRMLNodeComboBox nodeSelector;
   nodeSelector.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
-  nodeSelector.setMRMLScene(scene);
+  nodeSelector.setMRMLScene(scene.GetPointer());
 
   int nodeCount = nodeSelector.nodeCount();
   if (nodeCount != 3)
@@ -83,7 +81,7 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   qMRMLNodeComboBox nodeSelectorA;
   nodeSelectorA.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
   nodeSelectorA.addAttribute("vtkMRMLScalarVolumeNode", testingAttributeName, "a");
-  nodeSelectorA.setMRMLScene(scene);
+  nodeSelectorA.setMRMLScene(scene.GetPointer());
 
   nodeCount = nodeSelectorA.nodeCount();
   if (nodeCount != 1)
@@ -102,7 +100,7 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   qMRMLNodeComboBox nodeSelectorB;
   nodeSelectorB.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
   nodeSelectorB.addAttribute("vtkMRMLScalarVolumeNode", testingAttributeName, "b");
-  nodeSelectorB.setMRMLScene(scene);
+  nodeSelectorB.setMRMLScene(scene.GetPointer());
 
   nodeCount = nodeSelectorB.nodeCount();
   if (nodeCount != 0)
@@ -121,7 +119,7 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   qMRMLNodeComboBox nodeSelectorEmpty;
   nodeSelectorEmpty.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
   nodeSelectorEmpty.addAttribute("vtkMRMLScalarVolumeNode", testingAttributeName, "");
-  nodeSelectorEmpty.setMRMLScene(scene);
+  nodeSelectorEmpty.setMRMLScene(scene.GetPointer());
 
   nodeCount = nodeSelectorEmpty.nodeCount();
   if (nodeCount != 1)
@@ -140,7 +138,7 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   qMRMLNodeComboBox nodeSelectorNull;
   nodeSelectorNull.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
   nodeSelectorNull.addAttribute("vtkMRMLScalarVolumeNode", testingAttributeName);
-  nodeSelectorNull.setMRMLScene(scene);
+  nodeSelectorNull.setMRMLScene(scene.GetPointer());
 
   nodeCount = nodeSelectorNull.nodeCount();
   if (nodeCount != 2)

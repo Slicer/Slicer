@@ -30,9 +30,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
-
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
 {
@@ -42,8 +40,8 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   nodeSelector.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
   nodeSelector.addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
 
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
-  nodeSelector.setMRMLScene(scene);
+  vtkNew<vtkMRMLScene> scene;
+  nodeSelector.setMRMLScene(scene.GetPointer());
 
   vtkMRMLNode* node = nodeSelector.addNode();
   if (nodeSelector.nodeCount() != 1)

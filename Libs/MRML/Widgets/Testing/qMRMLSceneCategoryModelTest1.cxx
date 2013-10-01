@@ -33,7 +33,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -43,9 +43,9 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
 
   qMRMLSceneCategoryModel model;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   qMRMLNodeFactory nodeFactory(0);
-  nodeFactory.setMRMLScene(scene);
+  nodeFactory.setMRMLScene(scene.GetPointer());
   nodeFactory.createNode("vtkMRMLROINode");
   nodeFactory.addAttribute("Category", "First Category");
   nodeFactory.createNode("vtkMRMLCameraNode");
@@ -53,7 +53,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
   nodeFactory.createNode("vtkMRMLLinearTransformNode");
   nodeFactory.removeAttribute("Category");
   nodeFactory.createNode("vtkMRMLDoubleArrayNode");
-  model.setMRMLScene(scene);
+  model.setMRMLScene(scene.GetPointer());
   nodeFactory.createNode("vtkMRMLScalarVolumeNode");
   nodeFactory.addAttribute("Category", "Second Category");
   nodeFactory.createNode("vtkMRMLSliceNode");

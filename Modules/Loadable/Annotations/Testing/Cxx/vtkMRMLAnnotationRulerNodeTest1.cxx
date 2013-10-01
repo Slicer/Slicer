@@ -1,10 +1,12 @@
+
+// MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
+// STD includes
 #include <sstream>
-
-#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 {
@@ -13,21 +15,21 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
   // Basic Setup 
   // ======================
 
-  vtkSmartPointer< vtkMRMLAnnotationRulerNode > node2 = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
-  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
-  // node2->Initialize(mrmlScene);
+  vtkNew<vtkMRMLAnnotationRulerNode> node2;
+  vtkNew<vtkMRMLScene> mrmlScene;
+  // node2->Initialize(mrmlScene.GetPointer());
 
   {
 
-    vtkSmartPointer< vtkMRMLAnnotationRulerNode > node1 = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();  
-    // node1->Initialize(mrmlScene);
-    EXERCISE_BASIC_OBJECT_METHODS( node1 );
+    vtkNew<vtkMRMLAnnotationRulerNode> node1;
+    // node1->Initialize(mrmlScene.GetPointer());
+    EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
     node1->UpdateReferences();
-    node2->Copy( node1 );
+    node2->Copy(node1.GetPointer());
 
-    mrmlScene->RegisterNodeClass(node1);
-    mrmlScene->AddNode(node2);
+    mrmlScene->RegisterNodeClass(node1.GetPointer());
+    mrmlScene->AddNode(node2.GetPointer());
   }
   vtkMRMLAnnotationRulerStorageNode *storNode = dynamic_cast <vtkMRMLAnnotationRulerStorageNode *> (node2->CreateDefaultStorageNode());
 
@@ -80,8 +82,8 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
   node2->Modified();
 
   // Test Copy
-  vtkSmartPointer< vtkMRMLAnnotationRulerNode > cNode = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
-  cNode->Copy(node2);
+  vtkNew< vtkMRMLAnnotationRulerNode> cNode;
+  cNode->Copy(node2.GetPointer());
 
   if (cNode->GetPosition1()[0]!=node2->GetPosition1()[0] || cNode->GetPosition1()[1]!=node2->GetPosition1()[1] || cNode->GetPosition1()[2]!=node2->GetPosition1()[2])
     {
@@ -102,8 +104,8 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 
 
   // Test CopyWithoutModifiedEvent
-  vtkSmartPointer< vtkMRMLAnnotationRulerNode > c2Node = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
-  c2Node->CopyWithoutModifiedEvent(node2);
+  vtkNew< vtkMRMLAnnotationRulerNode> c2Node;
+  c2Node->CopyWithoutModifiedEvent(node2.GetPointer());
 
   if (c2Node->GetPosition1()[0]!=node2->GetPosition1()[0] || c2Node->GetPosition1()[1]!=node2->GetPosition1()[1] || c2Node->GetPosition1()[2]!=node2->GetPosition1()[2])
     {

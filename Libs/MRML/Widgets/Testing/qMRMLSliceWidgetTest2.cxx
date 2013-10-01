@@ -36,15 +36,13 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-
-// STD includes
+#include <vtkNew.h>
 
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> displayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> scalarNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
-  vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode> storageNode = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
+  vtkNew<vtkMRMLScalarVolumeNode> scalarNode;
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
 
   displayNode->SetAutoWindowLevel(false);
   displayNode->SetInterpolate(false);
@@ -60,12 +58,12 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
   //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
   //colorLogic->Delete();
-  scene->AddNode(storageNode);
-  scene->AddNode(displayNode);
+  scene->AddNode(storageNode.GetPointer());
+  scene->AddNode(displayNode.GetPointer());
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
   scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-  scene->AddNode(scalarNode);
-  storageNode->ReadData(scalarNode);
+  scene->AddNode(scalarNode.GetPointer());
+  storageNode->ReadData(scalarNode.GetPointer());
 
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
   colorNode->SetTypeToGrey();
@@ -87,8 +85,8 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene);
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene.GetPointer());
   if (scalarNode == 0)
     {
     std::cerr << "Not a valid volume: " << argv[1] << std::endl;
@@ -97,7 +95,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
 
   QSize viewSize(256, 256);
   qMRMLSliceWidget sliceWidget;
-  sliceWidget.setMRMLScene(scene);
+  sliceWidget.setMRMLScene(scene.GetPointer());
   sliceWidget.resize(viewSize.width(), sliceWidget.sliceController()->height() + viewSize.height() );
 
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceWidget.sliceLogic()->GetSliceCompositeNode();

@@ -281,11 +281,10 @@ bool storeTwiceAndRemoveVolume()
 //---------------------------------------------------------------------------
 bool references()
 {
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   populateScene(scene.GetPointer());
 
-  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode =
-    vtkSmartPointer<vtkMRMLSceneViewNode>::New();
+  vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
   vtkMRMLNode* volumeNode =
@@ -346,8 +345,8 @@ bool references()
 //---------------------------------------------------------------------------
 bool storePerformance()
 {
-  // This test is for perfor
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  // This test is for performance
+  vtkNew<vtkMRMLScene> scene;
   const int displayNodePairCount = 100;
 
   for (int i = 0; i < displayNodePairCount; ++i)
@@ -355,8 +354,7 @@ bool storePerformance()
     populateScene(scene.GetPointer());
     }
 
-  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode =
-    vtkSmartPointer<vtkMRMLSceneViewNode>::New();
+  vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
   vtkNew<vtkTimerLog> timer;

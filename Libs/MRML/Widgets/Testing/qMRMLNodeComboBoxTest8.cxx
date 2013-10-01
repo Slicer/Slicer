@@ -30,16 +30,14 @@
 #include <vtkMRMLScalarVolumeNode.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
-
-// STD includes
+#include <vtkNew.h>
 
 // test the adding of user menu actions
 int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
   // a node selector with user actions
   qMRMLNodeComboBox nodeSelector;
@@ -48,13 +46,13 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   nodeSelector.setBaseName("testing");
   nodeSelector.setNodeTypes(QStringList(QString("vtkMRMLScalarVolumeNode")));
   nodeSelector.setShowHidden(true);
-  nodeSelector.setMRMLScene(scene);
+  nodeSelector.setMRMLScene(scene.GetPointer());
 
   // add some test nodes
   for (int i = 0; i < 5; i++)
     {
-    vtkSmartPointer<vtkMRMLScalarVolumeNode> cnode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
-    scene->AddNode(cnode);
+    vtkNew<vtkMRMLScalarVolumeNode> cnode;
+    scene->AddNode(cnode.GetPointer());
     }
 
 

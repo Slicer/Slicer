@@ -48,13 +48,11 @@ public:
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayNodeTest1(int , char * [])
 {
-  vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDisplayNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLDisplayNodeTestHelper1> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  // EXERCISE_BASIC_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1);
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1);
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDisplayNodeTestHelper1, node1.GetPointer());
 
   return EXIT_SUCCESS;
 }

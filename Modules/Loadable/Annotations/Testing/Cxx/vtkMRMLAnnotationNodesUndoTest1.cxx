@@ -118,8 +118,8 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   
 
   // test undo/redo on the scene with a fiducial node
-  vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node1 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
-  scene->RegisterNodeClass(node1);
+  vtkNew<vtkMRMLAnnotationFiducialNode> node1;
+  scene->RegisterNodeClass(node1.GetPointer());
   double f1[3];
   f1[0] = 0.0;
   f1[1] = 1.0;
@@ -131,8 +131,8 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   std::cout << "After undo for fiducial" << std::endl;
   
   // test undo/redo on the scene with a ruler node
-  vtkSmartPointer< vtkMRMLAnnotationRulerNode > node2 = vtkSmartPointer< vtkMRMLAnnotationRulerNode >::New();
-  scene->RegisterNodeClass(node2);
+  vtkNew<vtkMRMLAnnotationRulerNode> node2;
+  scene->RegisterNodeClass(node2.GetPointer());
   std::cout << "Ruler node class registered: " << node2->GetClassName() << std::endl;
   double p1[3], p2[3];
   p1[0] = p1[1] = p1[2] = 0.0;
@@ -145,7 +145,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   // this adds the node to the scene, along with display nodes
   node2->Initialize(scene);
   std::cout << "Ruler node initialized/added to scene" << std::endl;
-  if (node2 && node2->GetID())
+  if (node2->GetID())
     {
     std::cout << "Node2 added to scene, id = " << node2->GetID() << ", number of display nodes = " << node2->GetNumberOfDisplayNodes() << std::endl;
     
@@ -155,8 +155,8 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   std::cout << "After undo for ruler" << std::endl;
 
   // test undo/redo on the scene with a bidimensional node
-  vtkSmartPointer< vtkMRMLAnnotationBidimensionalNode > node3 = vtkSmartPointer< vtkMRMLAnnotationBidimensionalNode >::New();
-  scene->RegisterNodeClass(node3);
+  vtkNew<vtkMRMLAnnotationBidimensionalNode> node3;
+  scene->RegisterNodeClass(node3.GetPointer());
   double b1[3];
   b1[0] = 0.0;
   b1[1] = 1.0;
@@ -174,7 +174,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   std::cout << "After undo for bidimensional" << std::endl;
 
   // and one more test: add a fiducial after all the undo's are done
-  vtkSmartPointer< vtkMRMLAnnotationFiducialNode > doFid = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
+  vtkNew<vtkMRMLAnnotationFiducialNode> doFid;
   doFid->SetFiducialWorldCoordinates(f1);
   scene->SaveStateForUndo();
   doFid->Initialize(scene);

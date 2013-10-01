@@ -33,7 +33,7 @@
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -49,7 +49,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   scene->SetURL(argv[1]);
   scene->Connect();
   if (scene->GetNumberOfNodes() == 0)
@@ -92,7 +92,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
   topLevel.setLayout(layout);
 
   volumeThreshold.setMRMLVolumeNode(volumeNode);
-  sliceWidget.setMRMLScene(scene);
+  sliceWidget.setMRMLScene(scene.GetPointer());
   sliceWidget.setMRMLSliceNode(redSliceNode);
   topLevel.show();
   

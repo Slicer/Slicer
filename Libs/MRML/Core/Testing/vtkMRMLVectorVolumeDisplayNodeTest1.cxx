@@ -17,11 +17,11 @@
 
 int vtkMRMLVectorVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVectorVolumeDisplayNode > node1 = vtkSmartPointer< vtkMRMLVectorVolumeDisplayNode >::New();
+  vtkNew<vtkMRMLVectorVolumeDisplayNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS( vtkMRMLVectorVolumeDisplayNode, node1);
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLVectorVolumeDisplayNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

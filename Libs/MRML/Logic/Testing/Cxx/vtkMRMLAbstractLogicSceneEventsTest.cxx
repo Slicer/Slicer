@@ -28,7 +28,6 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
 
 // STD includes
 #include <iostream>
@@ -224,8 +223,7 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkSmartPointer<vtkMRMLTestLogic> testLogic =
-    vtkSmartPointer<vtkMRMLTestLogic>::New();
+  vtkNew<vtkMRMLTestLogic> testLogic;
 
   //---------------------------------------------------------------------------
   // SetMRMLScene
@@ -414,9 +412,6 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   // Add node again (outside of batch processing)
   //---------------------------------------------------------------------------
   scene->AddNode(modelNode.GetPointer());
-
-  testLogic = 0;
-
   scene->AddNode(volumeNode.GetPointer());
 
   return EXIT_SUCCESS;

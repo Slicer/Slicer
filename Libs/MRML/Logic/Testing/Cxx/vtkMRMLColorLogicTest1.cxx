@@ -63,13 +63,13 @@ bool TestPerformance()
 {
   // To load freesurfer files, SLICER_HOME is requested
   //vtksys::SystemTools::PutEnv("SLICER_HOME=..." );
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::New();
 
   vtkNew<vtkTimerLog> overallTimer;
   overallTimer->StartTimer();
 
-  colorLogic->SetMRMLScene(scene);
+  colorLogic->SetMRMLScene(scene.GetPointer());
 
   overallTimer->StopTimer();
   std::cout << "<DartMeasurement name=\"AddDefaultColorNodes\" "
@@ -194,7 +194,7 @@ bool TestCopy()
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
 
-  vtkSmartPointer<vtkMRMLColorTableNode> originalNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  vtkNew<vtkMRMLColorTableNode> originalNode;
   originalNode->SetTypeToFile();
   originalNode->NamesInitialisedOff();
   originalNode->SetNumberOfColors(6);
@@ -207,7 +207,7 @@ bool TestCopy()
   originalNode->SetColor(5, "five and done", 1.0, 1.0, 1.0, 1.0);
   originalNode->NamesInitialisedOn();
   
-  vtkMRMLColorTableNode *copiedNode = colorLogic->CopyNode(originalNode, "Copied Generic");
+  vtkMRMLColorTableNode *copiedNode = colorLogic->CopyNode(originalNode.GetPointer(), "Copied Generic");
   if (!copiedNode)
     {
     std::cerr << "Failed to create a copy of the generic colors node" << std::endl;

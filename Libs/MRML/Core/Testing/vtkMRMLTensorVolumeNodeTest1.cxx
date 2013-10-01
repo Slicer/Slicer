@@ -19,11 +19,11 @@
 
 int vtkMRMLTensorVolumeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLTensorVolumeNode > node1 = vtkSmartPointer< vtkMRMLTensorVolumeNode >::New();
+  vtkNew<vtkMRMLTensorVolumeNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLTensorVolumeNode, node1);
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLTensorVolumeNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

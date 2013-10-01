@@ -31,9 +31,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
-
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
 {
@@ -43,12 +41,12 @@ int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
   nodeSelector.setNodeTypes(QStringList("vtkMRMLCameraNode"));
   nodeSelector.setNoneEnabled(true);
 
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer<vtkMRMLCameraNode> camNode = vtkSmartPointer<vtkMRMLCameraNode>::New();
-  scene->AddNode(camNode);
+  vtkNew<vtkMRMLCameraNode> camNode;
+  scene->AddNode(camNode.GetPointer());
 
-  nodeSelector.setMRMLScene(scene);
+  nodeSelector.setMRMLScene(scene.GetPointer());
   
   if (nodeSelector.currentNode() != 0)
     {
@@ -57,7 +55,7 @@ int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
     }
   
   QSignalSpy spy(&nodeSelector, SIGNAL(currentNodeChanged(bool)));
-  nodeSelector.setCurrentNode(camNode);
+  nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)
     {
     std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "
@@ -73,7 +71,7 @@ int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   spy.clear();
-  nodeSelector.setCurrentNode(camNode);
+  nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)
     {
     std::cerr << "qMRMLNodeComboBox::setCurrentNode() failed: "

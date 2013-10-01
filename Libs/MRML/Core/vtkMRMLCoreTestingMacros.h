@@ -20,6 +20,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
 /// tests basic vtkObject methods

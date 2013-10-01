@@ -10,77 +10,64 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLDisplayableHierarchyNode.h"
-
-
+// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-
-#include "vtkMRMLScene.h"
-#include "vtkMRMLModelNode.h"
+#include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLModelDisplayNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkNew.h>
 
 // test more general hierachy uses, with different displayable node types
 int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
 {
+  vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  
-  vtkSmartPointer< vtkMRMLDisplayableHierarchyNode > hnode1 = vtkSmartPointer< vtkMRMLDisplayableHierarchyNode >::New();
-  if (hnode1 == NULL)
-    {
-    std::cerr << "Error making a new hierarchy node.\n";
-    return EXIT_FAILURE;
-    }
-  vtkSmartPointer<vtkMRMLModelDisplayNode> hdnode1 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  if (hdnode1 == NULL)
-    {
-    std::cerr << "Error making a new hierarchy display node.\n";
-    return EXIT_FAILURE;
-    }
-  scene->AddNode(hnode1);
-  scene->AddNode(hdnode1);
-  if (hnode1 && hdnode1 &&
-      hdnode1->GetID())
+  vtkNew< vtkMRMLDisplayableHierarchyNode > hnode1;
+  scene->AddNode(hnode1.GetPointer());
+
+  vtkNew<vtkMRMLModelDisplayNode> hdnode1;
+  scene->AddNode(hdnode1.GetPointer());
+
+  if (hdnode1->GetID())
     {
     hnode1->SetAndObserveDisplayNodeID(hdnode1->GetID());
     }
   else
     {
-    std::cerr << "Error setting up a display node for the first hierarchy node:";
-    if (hnode1 == NULL) { std::cerr << "\thierarchy node is null\n"; }
-    if (hdnode1 == NULL) { std::cerr << "\thierarhcy display node is null\n"; }
-    if (!hdnode1->GetID()) { std:: cerr << "\nid is null on hierarchy display node\n"; }
+    std::cerr << "Error setting up a display node for the first hierarchy node: "
+              << "id is null on hierarchy display node" << std::endl;
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer< vtkMRMLDisplayableHierarchyNode > hnode2 = vtkSmartPointer< vtkMRMLDisplayableHierarchyNode >::New();
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> hdnode2 = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
+  vtkNew<vtkMRMLDisplayableHierarchyNode> hnode2;
+  scene->AddNode(hnode2.GetPointer());
 
-  scene->AddNode(hnode2);
-  scene->AddNode(hdnode2);
-  if (hnode2 && hdnode2 &&
-      hdnode2->GetID())
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> hdnode2;
+  scene->AddNode(hdnode2.GetPointer());
+
+  if (hdnode2->GetID())
     {
     hnode2->SetAndObserveDisplayNodeID(hdnode2->GetID());
     }
   else
     {
-    std::cerr << "Error setting up a display node for the second hierarchy node:";
-    if (hnode2 == NULL) { std::cerr << "\thierarchy node is null\n"; }
-    if (hdnode2 == NULL) { std::cerr << "\thierarhcy display node is null\n"; }
-    if (!hdnode2->GetID()) { std:: cerr << "\nid is null on hierarchy display node\n"; }
+    std::cerr << "Error setting up a display node for the second hierarchy node: "
+              << "id is null on hierarchy display node" << std::endl;
     return EXIT_FAILURE;
     }
   
-  vtkSmartPointer<vtkMRMLModelNode> mnode1 = vtkSmartPointer<vtkMRMLModelNode>::New();
-  vtkSmartPointer<vtkMRMLModelDisplayNode> mdnode1 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  vtkNew<vtkMRMLModelNode> mnode1;
+  scene->AddNode(mnode1.GetPointer());
 
-  scene->AddNode(mnode1);
-  scene->AddNode(mdnode1);
-  if (mnode1 && mdnode1 &&
-      mdnode1->GetID())
+  vtkNew<vtkMRMLModelDisplayNode> mdnode1;
+  scene->AddNode(mdnode1.GetPointer());
+
+  if (mdnode1->GetID())
     {
     mnode1->SetAndObserveDisplayNodeID(mdnode1->GetID());
     }
@@ -90,14 +77,13 @@ int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
     return EXIT_FAILURE;
     }
   
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> vnode1 = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> vdnode1 = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-  
-  scene->AddNode(vnode1);
-  scene->AddNode(vdnode1);
+  vtkNew<vtkMRMLScalarVolumeNode> vnode1;
+  scene->AddNode(vnode1.GetPointer());
 
-  if (vnode1 && vdnode1 &&
-      vdnode1->GetID())
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> vdnode1;
+  scene->AddNode(vdnode1.GetPointer());
+
+  if (vdnode1->GetID())
     {
     vnode1->SetAndObserveDisplayNodeID(vdnode1->GetID());
     }
@@ -106,12 +92,11 @@ int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
     std::cerr << "Error setting up a display node for the first volume node\n";
     return EXIT_FAILURE;
     }
-  
+
   // now set up a hierarchy
   hnode2->SetDisplayableNodeID(vnode1->GetID());
   hnode2->SetParentNodeID(hnode1->GetID());
   hnode1->SetDisplayableNodeID(mnode1->GetID());
-  
 
   return EXIT_SUCCESS;
 }

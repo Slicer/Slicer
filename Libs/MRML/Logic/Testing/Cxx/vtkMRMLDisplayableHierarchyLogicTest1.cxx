@@ -20,19 +20,15 @@
 #include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
 
-// VTK includes
-
-// STD includes
-
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
 {
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   vtkMRMLDisplayableHierarchyLogic* displayableHierarchyLogic = vtkMRMLDisplayableHierarchyLogic::New();
   displayableHierarchyLogic->SetDebug(1);
 
-  displayableHierarchyLogic->SetMRMLScene(scene);
+  displayableHierarchyLogic->SetMRMLScene(scene.GetPointer());
 
   // test null pointers
   char *id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(NULL);
@@ -77,7 +73,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
     std::cout << "AddChildToParent added hierarchies to make m1 " << m1->GetID() << " a child of m2 " << m2->GetID() << std::endl;
     }
 
-  vtkMRMLHierarchyNode* h1 = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene, m1->GetID());
+  vtkMRMLHierarchyNode* h1 = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene.GetPointer(), m1->GetID());
   if (!h1)
     {
     std::cerr << "GetAssociatedHierarchyNode failed for m1 " << m1->GetID() << std::endl;
@@ -88,7 +84,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
     std::cout << "Found hierarchy node for m1 with id " << h1->GetID() << std::endl;
     }
 
-  vtkMRMLHierarchyNode* h2 = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene, m2->GetID());
+  vtkMRMLHierarchyNode* h2 = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene.GetPointer(), m2->GetID());
   if (!h2)
     {
     std::cerr << "GetAssociatedHierarchyNode failed for m2 " << m2->GetID() << std::endl;

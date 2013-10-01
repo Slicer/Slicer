@@ -17,10 +17,10 @@
 
 int vtkMRMLGlyphableVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLGlyphableVolumeDisplayNode > node1 = vtkSmartPointer< vtkMRMLGlyphableVolumeDisplayNode >::New();
+  vtkNew<vtkMRMLGlyphableVolumeDisplayNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLGlyphableVolumeDisplayNode, node1);
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLGlyphableVolumeDisplayNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

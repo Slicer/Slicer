@@ -44,7 +44,7 @@
 #include <vtkMRMLModelDisplayNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <cstdlib>
@@ -89,8 +89,8 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   // Test case 1
   qMRMLTreeView widget;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  widget.setMRMLScene(scene);
+  vtkNew<vtkMRMLScene> scene;
+  widget.setMRMLScene(scene.GetPointer());
   scene->SetURL(argv[2]);
   scene->Import();
 
@@ -101,22 +101,22 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   // Test case 2
   qMRMLTreeView widget2;
 
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
-  vtkSmartPointer<vtkMRMLModelNode> modelNode2 = vtkSmartPointer<vtkMRMLModelNode>::New();
-  vtkSmartPointer<vtkMRMLModelDisplayNode> displayModelNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  vtkSmartPointer<vtkMRMLModelDisplayNode> displayModelNode2 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  vtkNew<vtkMRMLModelNode> modelNode;
+  vtkNew<vtkMRMLModelNode> modelNode2;
+  vtkNew<vtkMRMLModelDisplayNode> displayModelNode;
+  vtkNew<vtkMRMLModelDisplayNode> displayModelNode2;
 
-  vtkSmartPointer<vtkMRMLScene> scene2 = vtkSmartPointer<vtkMRMLScene>::New();
-  scene2->AddNode(modelNode);
-  scene2->AddNode(modelNode2);
-  scene2->AddNode(displayModelNode);
-  scene2->AddNode(displayModelNode2);
+  vtkNew<vtkMRMLScene> scene2;
+  scene2->AddNode(modelNode.GetPointer());
+  scene2->AddNode(modelNode2.GetPointer());
+  scene2->AddNode(displayModelNode.GetPointer());
+  scene2->AddNode(displayModelNode2.GetPointer());
 
   modelNode->SetAndObserveDisplayNodeID(displayModelNode->GetID());
   modelNode2->SetAndObserveDisplayNodeID(displayModelNode2->GetID());
 
   widget2.setSceneModelType("ModelHierarchy");
-  widget2.setMRMLScene(scene2);
+  widget2.setMRMLScene(scene2.GetPointer());
 
   QAction* insertTransformAction = new QAction("Insert transform", 0);
   widget2.prependNodeMenuAction(insertTransformAction);

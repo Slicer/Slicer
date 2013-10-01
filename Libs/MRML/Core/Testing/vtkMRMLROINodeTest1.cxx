@@ -14,9 +14,6 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLROINode.h"
 
-// VTK includes
-#include <vtkNew.h>
-
 int vtkMRMLROINodeTest1(int , char * [] )
 {
   vtkNew< vtkMRMLROINode > node1;

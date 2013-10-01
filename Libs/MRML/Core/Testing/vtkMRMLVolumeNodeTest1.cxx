@@ -64,19 +64,19 @@ public:
  
 int vtkMRMLVolumeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLVolumeNodeTestHelper1> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLVolumeNodeTestHelper1, node1);
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLVolumeNodeTestHelper1, node1.GetPointer());
 
-  vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 > node2 = vtkSmartPointer< vtkMRMLVolumeNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLVolumeNodeTestHelper1> node2;
 
-  node1->CopyOrientation(node2);
+  node1->CopyOrientation(node2.GetPointer());
 
   // Scan Order
-  vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  const char *scanOrder = node1->ComputeScanOrderFromIJKToRAS(ijkToRAS);
+  vtkNew<vtkMatrix4x4> ijkToRAS;
+  const char *scanOrder = node1->ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
   if (!scanOrder || strcmp(scanOrder, "") == 0)
     {
     std::cerr << "Failed to compute scan order from identity matrix: '" << (scanOrder ? scanOrder : "null") << "'" << std::endl;
@@ -128,20 +128,20 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   // matrices
   // IJK to RAS
   ijkToRAS->Identity();
-  node1->GetIJKToRASMatrix(ijkToRAS);
+  node1->GetIJKToRASMatrix(ijkToRAS.GetPointer());
   vtkIndent indent;
   std::cout << "IJK to RAS matrix: " << std::endl;
   ijkToRAS->PrintSelf(std::cout, indent.GetNextIndent());
 
   // RAS to IJK
-  vtkSmartPointer<vtkMatrix4x4> rasToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-  node1->GetRASToIJKMatrix(rasToIJK);
+  vtkNew<vtkMatrix4x4> rasToIJK;
+  node1->GetRASToIJKMatrix(rasToIJK.GetPointer());
   std::cout << "RAS to IJK matrix: " << std::endl;
   rasToIJK->PrintSelf(std::cout, indent.GetNextIndent());
 
   // IJK to RAS direction matrix
-  vtkSmartPointer<vtkMatrix4x4> ijkToRASDir = vtkSmartPointer<vtkMatrix4x4>::New();
-  vtkSmartPointer<vtkMatrix4x4> retIJKToRASDir = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkNew<vtkMatrix4x4> ijkToRASDir;
+  vtkNew<vtkMatrix4x4> retIJKToRASDir;
   ijkToRASDir->Identity();
   ijkToRASDir->SetElement(0,0,-0.03);
   ijkToRASDir->SetElement(0,1,-0.06);
@@ -151,8 +151,8 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   ijkToRASDir->SetElement(1,2,-0.4);
   ijkToRASDir->SetElement(2,1,-0.44);
   ijkToRASDir->SetElement(2,2,-0.8);
-  node1->SetIJKToRASDirectionMatrix(ijkToRASDir);
-  node1->GetIJKToRASDirectionMatrix(retIJKToRASDir);
+  node1->SetIJKToRASDirectionMatrix(ijkToRASDir.GetPointer());
+  node1->GetIJKToRASDirectionMatrix(retIJKToRASDir.GetPointer());
   for (int i=0; i<3; i++)
     {
     for (int j=0; j<3; j++)
@@ -172,14 +172,14 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   retIJKToRASDir->PrintSelf(std::cout, indent.GetNextIndent());
 
   // Image Data
-  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
+  vtkNew<vtkImageData> imageData;
   node1->SetAndObserveImageData(NULL);
   if (node1->GetImageData() != NULL)
     {
     std::cerr << "Get image data didn't return null" << std::endl;
     return EXIT_FAILURE;
     }
-  node1->SetAndObserveImageData(imageData);
+  node1->SetAndObserveImageData(imageData.GetPointer());
   vtkImageData *retImageData = node1->GetImageData();
   if (!retImageData)
     {
@@ -192,14 +192,14 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   double ijk[4] = {0.0, 0.0, 0.0, 1.0};
   double ras2[4] = {0.0, 0.0, 0.0, 1.0};
   rasToIJK->Identity();
-  node1->SetRASToIJKMatrix(rasToIJK);
-  vtkSmartPointer<vtkMatrix4x4> retRASToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-  node1->GetRASToIJKMatrix(retRASToIJK);
+  node1->SetRASToIJKMatrix(rasToIJK.GetPointer());
+  vtkNew<vtkMatrix4x4> retRASToIJK;
+  node1->GetRASToIJKMatrix(retRASToIJK.GetPointer());
   retRASToIJK->MultiplyPoint(ras, ijk);
   std::cout << "RAS: [" << ras[0] << "," << ras[1] << "," << ras[2] << "] -> IJK: [" << ijk[0] << "," << ijk[1] << "," << ijk[2] << "]" << std::endl;
 
   // and back to RAS
-  node1->GetIJKToRASMatrix(ijkToRAS);
+  node1->GetIJKToRASMatrix(ijkToRAS.GetPointer());
   std::cout << "IJK to RAS matrix: " << std::endl;
   ijkToRAS->PrintSelf(std::cout, indent.GetNextIndent());
   ijkToRAS->MultiplyPoint(ijk, ras2);
@@ -226,8 +226,8 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   rasToIJK->SetElement(2,1,-0.445087);
   rasToIJK->SetElement(2,2,-0.811908);
   rasToIJK->SetElement(2,3,118.057);
-  node1->SetRASToIJKMatrix(rasToIJK);
-  node1->GetRASToIJKMatrix(retRASToIJK);
+  node1->SetRASToIJKMatrix(rasToIJK.GetPointer());
+  node1->GetRASToIJKMatrix(retRASToIJK.GetPointer());
   std::cout << "Using RAS to IJK matrix: "<< std::endl;
   retRASToIJK->PrintSelf(std::cout, indent.GetNextIndent());
   ras[0] = -11.9901 ;
@@ -235,7 +235,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   ras[2] = -1.66493;
   retRASToIJK->MultiplyPoint(ras, ijk);
   std::cout << "RAS: [" << ras[0] << "," << ras[1] << "," << ras[2] << "] -> IJK: [" << ijk[0] << "," << ijk[1] << "," << ijk[2] << "]" << std::endl;
-  node1->GetIJKToRASMatrix(ijkToRAS);
+  node1->GetIJKToRASMatrix(ijkToRAS.GetPointer());
   ijkToRAS->MultiplyPoint(ijk, ras2);
   std::cout << "IJK: [" << ijk[0] << "," << ijk[1] << "," << ijk[2] << "] -> RAS: [" << ras[0] << "," << ras[1] << "," << ras[2] << "]" << std::endl;
   rasDif = sqrt(vtkMath::Distance2BetweenPoints(ras, ras2));

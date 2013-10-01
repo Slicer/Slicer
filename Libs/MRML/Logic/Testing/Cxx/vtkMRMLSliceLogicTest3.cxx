@@ -30,9 +30,9 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkImageViewer2.h>
+#include <vtkNew.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
 
 // ITK includes
@@ -44,9 +44,9 @@
 //-----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> displayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-  vtkSmartPointer<vtkMRMLScalarVolumeNode> scalarNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
-  vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode> storageNode = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
+  vtkNew<vtkMRMLScalarVolumeNode> scalarNode;
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
 
   displayNode->SetAutoWindowLevel(false);
   displayNode->SetInterpolate(false);
@@ -62,17 +62,16 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
   //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
   //colorLogic->Delete();
-  scene->AddNode(storageNode);
-  scene->AddNode(displayNode);
+  scene->AddNode(storageNode.GetPointer());
+  scene->AddNode(displayNode.GetPointer());
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
   scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-  scene->AddNode(scalarNode);
-  storageNode->ReadData(scalarNode);
+  scene->AddNode(scalarNode.GetPointer());
+  storageNode->ReadData(scalarNode.GetPointer());
 
-  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
+  vtkNew<vtkMRMLColorTableNode> colorNode;
   colorNode->SetTypeToGrey();
-  scene->AddNode(colorNode);
-  colorNode->Delete();
+  scene->AddNode(colorNode.GetPointer());
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   return scalarNode.GetPointer();
@@ -93,21 +92,20 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer< vtkMRMLSliceLogic > sliceLogic = vtkSmartPointer< vtkMRMLSliceLogic >::New();
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLSliceLogic> sliceLogic;
   sliceLogic->SetName("Green");
-  sliceLogic->SetMRMLScene(scene);
+  sliceLogic->SetMRMLScene(scene.GetPointer());
   sliceLogic->ResizeSliceNode(256, 256);
   
   //vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode(); 
   
-  vtkSmartPointer<vtkMRMLSliceLayerLogic> sliceLayerLogic = 
-    vtkSmartPointer<vtkMRMLSliceLayerLogic>::New();
+  vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
   
-  sliceLogic->SetBackgroundLayer(sliceLayerLogic);
+  sliceLogic->SetBackgroundLayer(sliceLayerLogic.GetPointer());
 
-  vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene);
+  vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene.GetPointer());
   if (scalarNode == 0 || scalarNode->GetImageData() == 0)
     {
     std::cerr << "Not a valid volume: " << argv[1] << std::endl;

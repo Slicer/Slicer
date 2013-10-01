@@ -19,11 +19,11 @@
 
 int vtkMRMLDiffusionImageVolumeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLDiffusionImageVolumeNode > node1 = vtkSmartPointer< vtkMRMLDiffusionImageVolumeNode >::New();
+  vtkNew<vtkMRMLDiffusionImageVolumeNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( vtkMRMLDiffusionImageVolumeNode, node1);
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( vtkMRMLDiffusionImageVolumeNode, node1.GetPointer());
 
   return EXIT_SUCCESS;
 }

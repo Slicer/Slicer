@@ -1,7 +1,9 @@
+
+// vtkITK includes
 #include "vtkITKBSplineTransform.h"
 
-
-#include "vtkSmartPointer.h"
+// VTK includes
+#include "vtkNew.h"
 
 int main( int, char** )
 {
@@ -95,8 +97,7 @@ int main( int, char** )
   {
     std::cout << "vtkITK:\n";
 
-    typedef vtkSmartPointer<vtkITKBSplineTransform> BSplineSPtr;
-    BSplineSPtr vtkBSpline = vtkITKBSplineTransform::New();
+    vtkNew<vtkITKBSplineTransform> vtkBSpline;
 
     double origin[3] = { -100.0, -100.0, -100.0 };
     double spacing[3] = { 100.0, 100.0, 100.0 };
@@ -106,7 +107,7 @@ int main( int, char** )
     vtkBSpline->SetGridSpacing( spacing );
     vtkBSpline->SetGridSize( gridsize );
 
-    vtkDoubleArray* parameters = vtkDoubleArray::New();
+    vtkNew<vtkDoubleArray> parameters;
     parameters->SetNumberOfValues( vtkBSpline->GetNumberOfParameters() );
 
     std::cout << " number of parameters = " << vtkBSpline->GetNumberOfParameters() << std::endl;
@@ -115,7 +116,7 @@ int main( int, char** )
     parameters->FillComponent( 0, 0.0 );
     parameters->SetValue( 2 + 3*7 + 1*7*8, 3 );
 
-    vtkBSpline->SetParameters( *parameters );
+    vtkBSpline->SetParameters(*parameters.GetPointer());
 
     double inputPoint[3] = { 100, 200, 0 };
     double outputPoint[3] = { -1, -1, -1 };
@@ -134,8 +135,6 @@ int main( int, char** )
     if( itkOutputPoint.EuclideanDistanceTo( vtkOutputPoint ) > 1e-6 )
     {
       std::cout << "Mismatch with ITK result\n";
-      parameters->Delete();
-      vtkBSpline->Delete();
       return 1;
     }
 
@@ -153,13 +152,8 @@ int main( int, char** )
     {
       std::cout << "Inverse doesn't match original result. Error = "
                 << vtkInputPoint.EuclideanDistanceTo( vtkInversePoint ) << "\n";
-      parameters->Delete();
-      vtkBSpline->Delete();
       return 1;
     }
-
-    parameters->Delete();
-    vtkBSpline->Delete();
   }
 
   return 0;

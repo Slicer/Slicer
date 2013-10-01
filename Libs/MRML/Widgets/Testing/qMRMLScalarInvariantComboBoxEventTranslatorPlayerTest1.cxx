@@ -38,7 +38,7 @@
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <cstdlib>
@@ -70,10 +70,9 @@ int qMRMLScalarInvariantComboBoxEventTranslatorPlayerTest1(int argc, char * argv
   // Test case 1
   qMRMLScalarInvariantComboBox* widget = new qMRMLScalarInvariantComboBox();
 
-  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> displayPropertiesNode
-    = vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
+  vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNode> displayPropertiesNode;
 
-  widget->setDisplayPropertiesNode(displayPropertiesNode);
+  widget->setDisplayPropertiesNode(displayPropertiesNode.GetPointer());
 
   etpWidget.addTestCase(widget,
                         xmlDirectory + "qMRMLScalarInvariantComboBoxEventTranslatorPlayerTest1.xml",

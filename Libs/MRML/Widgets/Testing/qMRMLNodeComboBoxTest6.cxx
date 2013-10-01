@@ -31,9 +31,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include "vtkSmartPointer.h"
-
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
 {
@@ -49,18 +47,18 @@ int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
   nodeSelector2.setNoneEnabled(false);
   nodeSelector2.addAttribute("vtkMRMLModelNode", "foo", 0);
 */
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkNew<vtkMRMLModelNode> modelNode;
   modelNode->SetAttribute("foo", "1");
-  scene->AddNode(modelNode);
+  scene->AddNode(modelNode.GetPointer());
 
-  nodeSelector.setMRMLScene(scene);
-  nodeSelector.setCurrentNode(modelNode);
+  nodeSelector.setMRMLScene(scene.GetPointer());
+  nodeSelector.setCurrentNode(modelNode.GetPointer());
   nodeSelector.show();
 /*
-  nodeSelector2.setMRMLScene(scene);
-  nodeSelector2.setCurrentNode(modelNode);
+  nodeSelector2.setMRMLScene(scene.GetPointer());
+  nodeSelector2.setCurrentNode(modelNode.GetPointer());
   nodeSelector2.show();
 */
   if (argc < 2 || QString(argv[1]) != "-I")

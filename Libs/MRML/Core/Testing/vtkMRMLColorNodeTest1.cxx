@@ -14,9 +14,6 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
 
-// VTK includes
-#include <vtkNew.h>
-
 /// \brief Concrete implementation of vtkMRMLColorNode
 class vtkMRMLColorNodeTestHelper1 : public vtkMRMLColorNode
 {

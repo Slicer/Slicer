@@ -18,43 +18,42 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLCoreTestingMacros.h"
-
 // MRML includes
 #include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkImageData.h>
-
-// STD includes
+#include <vtkNew.h>
 
 int vtkMRMLScalarVolumeNodeTest2(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLScalarVolumeNode > volumeNode = vtkSmartPointer< vtkMRMLScalarVolumeNode >::New();
-
-  vtkSmartPointer< vtkImageData > imageData = vtkSmartPointer< vtkImageData >::New();
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(256, 256, 1);
   imageData->SetScalarTypeToUnsignedShort();
   imageData->SetNumberOfScalarComponents(1); // image holds one value intensities
   //imageData->SetSpacing(2., 2., 512.); not used by vtkMRMLVolumeNode
   //imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
   imageData->AllocateScalars(); // allocate storage for image data  
-  
-  volumeNode->SetAndObserveImageData(imageData);
 
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> displayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  scene->AddNode(volumeNode);
-  scene->AddNode(displayNode);
+  vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer<vtkMRMLColorTableNode> colorNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
+  volumeNode->SetAndObserveImageData(imageData.GetPointer());
+  scene->AddNode(volumeNode.GetPointer());
+
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
+  scene->AddNode(displayNode.GetPointer());
+
+  vtkNew<vtkMRMLColorTableNode> colorNode;
   colorNode->SetTypeToGrey();
-  scene->AddNode(colorNode);
+  scene->AddNode(colorNode.GetPointer());
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
   return EXIT_SUCCESS;
 }
