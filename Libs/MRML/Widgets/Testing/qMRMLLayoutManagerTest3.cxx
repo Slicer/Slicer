@@ -23,7 +23,7 @@
 #include <QTimer>
 #include <QWidget>
 
-// SlicerQt includes
+// Slicer includes
 #include "qMRMLLayoutManager.h"
 
 // MRML includes
@@ -33,9 +33,45 @@
 
 // VTK includes
 #include <vtkCollection.h>
+#include <vtkNew.h>
 
-// STD includes
+namespace
+{
 
+// --------------------------------------------------------------------------
+bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
+                          vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
+{
+  if (layoutManager->layout() != expectedViewArrangement ||
+      layoutNode->GetViewArrangement() != expectedViewArrangement)
+    {
+    std::cerr << "Line " << line << " - Add scene failed:\n"
+              << " expected ViewArrangement: " << expectedViewArrangement << "\n"
+              << " current ViewArrangement: " << layoutNode->GetViewArrangement() << "\n"
+              << " current layout: " << layoutManager->layout() << std::endl;
+    return false;
+    }
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool checkNumberOfItems(int line, qMRMLLayoutManager* layoutManager, int expected)
+{
+  vtkMRMLLayoutLogic * layoutLogic = layoutManager->layoutLogic();
+  vtkCollection* viewNodes = layoutLogic->GetViewNodes();
+  if (viewNodes->GetNumberOfItems() != expected)
+    {
+    std::cerr << "Line " << line << " - Problem with vtkMRMLLayoutLogic::GetViewNodes()\n"
+              << " expected NumberOfItems: " << expected << "\n"
+              << " current NumberOfItems: " << viewNodes->GetNumberOfItems() << std::endl;
+    return false;
+    }
+  return true;
+}
+
+} // end of anonymous namespace
+
+// --------------------------------------------------------------------------
 int qMRMLLayoutManagerTest3(int argc, char * argv[] )
 {
   QApplication app(argc, argv);
@@ -43,62 +79,51 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   w.show();
   qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);
 
-  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+  vtkNew<vtkMRMLScene> scene;
 
-  vtkMRMLScene* scene = vtkMRMLScene::New();
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
 
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::New();
-  // The view arrangement is set before the view descriptions are registered
-  // into the layout node. Setting the scene to the layout manager will set the
-  // the scene to the layout logic which will register the layout descriptions.
-  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
-  scene->AddNode(layoutNode);
-  layoutNode->Delete();
+  vtkMRMLLayoutNode * layoutNode = 0;
+  {
+    vtkNew<vtkMRMLLayoutNode> newLayoutNode;
 
-  applicationLogic->SetMRMLScene(scene);
-  layoutManager->setMRMLScene(scene);
+    // The view arrangement can be set before the view descriptions are registered
+    // into the layout node. Setting the scene to the layout manager will set the
+    // the scene to the layout logic which will register the layout descriptions.
+    newLayoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
 
-  if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
-      layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView)
+    layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->AddNode(newLayoutNode.GetPointer()));
+  }
+
+  applicationLogic->SetMRMLScene(scene.GetPointer());
+  layoutManager->setMRMLScene(scene.GetPointer());
+
+  if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView))
     {
-    std::cerr << __LINE__ << " Add scene failed:" << std::endl
-              << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
-              << ", layout set: " << layoutManager->layout()
-              << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
     return EXIT_FAILURE;
     }
-
-  vtkMRMLLayoutLogic* layoutLogic = layoutManager->layoutLogic();
-  vtkCollection* viewNodes = layoutLogic->GetViewNodes();
-  if (viewNodes->GetNumberOfItems() != 1)
+  if (!checkNumberOfItems(__LINE__, layoutManager, /* expected = */ 1))
     {
-    std::cerr << __LINE__ << " vtkMRMLLayoutLogic::GetViewNodes failed. "
-              << "It found " << viewNodes->GetNumberOfItems() << " nodes instead of 1"
-              << std::endl;
     return EXIT_FAILURE;
     }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView);
-
-  viewNodes = layoutLogic->GetViewNodes();
-
-  if (viewNodes->GetNumberOfItems() != 1)
+  if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView))
     {
-    std::cerr << __LINE__ << " vtkMRMLLayoutLogic::GetViewNodes failed. "
-              << "It found " << viewNodes->GetNumberOfItems() << " nodes instead of 1"
-              << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (!checkNumberOfItems(__LINE__, layoutManager, /* expected = */ 1))
+    {
     return EXIT_FAILURE;
     }
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
-
-  viewNodes = layoutLogic->GetViewNodes();
-
-  if (viewNodes->GetNumberOfItems() != 4)
+  if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutConventionalView))
     {
-    std::cerr << __LINE__ << " vtkMRMLLayoutLogic::GetViewNodes failed. "
-              << "It found " << viewNodes->GetNumberOfItems() << " nodes instead of 4"
-              << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (!checkNumberOfItems(__LINE__, layoutManager, /* expected = */ 4))
+    {
     return EXIT_FAILURE;
     }
 
@@ -108,11 +133,5 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
     }
-  int res = app.exec();
-
-  applicationLogic->Delete();
-  scene->Delete();
-  delete layoutManager;
-  return res;
+  return app.exec();
 }
-
