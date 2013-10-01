@@ -91,7 +91,7 @@
      <addaction name="actionViewLayoutSideBySide"/>
      <addaction name="actionViewLayoutFourByThreeSlice"/>
      <addaction name="actionViewLayoutFourByTwoSlice"/>
-     <addaction name="actionViewLayoutFiveByTwoSlice"/>
+     <addaction name="actionViewLayoutThreeByThreeSlice"/>
     </widget>
     <widget class="QMenu" name="menuWindowToolBars">
      <property name="title">
@@ -272,6 +272,7 @@
    <addaction name="actionViewLayoutFourByThreeSlice"/>
    <addaction name="actionViewLayoutFourByTwoSlice"/>
    <addaction name="actionViewLayoutFiveByTwoSlice"/>
+   <addaction name="actionViewLayoutThreeByThreeSlice"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
    <property name="enabled">
@@ -1218,6 +1219,18 @@
    </property>
    <property name="toolTip">
     <string>Five by two slice</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutThreeByThreeSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutThreeByThreeSliceView.png</normaloff>:/Icons/LayoutThreeByThreeSliceView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Three by three slice</string>
+   </property>
+   <property name="toolTip">
+    <string>Three by three slice</string>
    </property>
   </action>
  </widget>
