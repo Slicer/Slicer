@@ -27,6 +27,7 @@
 #include "qMRMLLayoutManager.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 
 // STD includes
@@ -36,7 +37,10 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
   QApplication app(argc, argv);
   qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(0);
 
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+
   vtkMRMLScene* scene = vtkMRMLScene::New();
+  applicationLogic->SetMRMLScene(scene);
   layoutManager->setMRMLScene(scene);
   if (layoutManager->mrmlScene() != scene)
     {
@@ -44,8 +48,10 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   layoutManager->setMRMLScene(0);
+  applicationLogic->SetMRMLScene(0);
   scene->Delete();
   scene = vtkMRMLScene::New();
+  applicationLogic->SetMRMLScene(scene);
   layoutManager->setMRMLScene(scene);
   QWidget* viewport = new QWidget(0);
   viewport->setWindowTitle("Old widget");
@@ -68,6 +74,7 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
     }
   int res = app.exec();
 
+  applicationLogic->Delete();
   scene->Delete();
   delete layoutManager;
   delete viewport;

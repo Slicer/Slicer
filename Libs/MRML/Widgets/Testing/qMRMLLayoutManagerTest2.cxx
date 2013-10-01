@@ -27,6 +27,7 @@
 #include "qMRMLLayoutManager.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLLayoutNode.h>
 
@@ -41,7 +42,10 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   w.show();
   qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);
 
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+
   vtkMRMLScene* scene = vtkMRMLScene::New();
+  applicationLogic->SetMRMLScene(scene);
   layoutManager->setMRMLScene(scene);
   if (layoutManager->mrmlScene() != scene)
     {
@@ -49,6 +53,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   layoutManager->setMRMLScene(0);
+  applicationLogic->SetMRMLScene(0);
   scene->Delete();
   scene = vtkMRMLScene::New();
 
@@ -57,6 +62,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
   vtkMRMLLayoutNode* layoutNode =
     vtkMRMLLayoutNode::SafeDownCast(scene->AddNode(newLayoutNode));
   newLayoutNode->Delete();
+  applicationLogic->SetMRMLScene(scene);
   layoutManager->setMRMLScene(scene);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
@@ -66,6 +72,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -78,6 +85,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -90,6 +98,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutCompareView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -104,6 +113,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutCompareView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -119,6 +129,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -133,6 +144,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpGreenSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -148,6 +160,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -162,6 +175,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -178,6 +192,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
               << " Layout wanted: " << vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView
               << ", layout set: " << layoutManager->layout()
               << ", node layout: " << layoutNode->GetViewArrangement() << std::endl;
+    applicationLogic->Delete();
     scene->Delete();
     return EXIT_FAILURE;
     }
@@ -190,6 +205,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     }
   int res = app.exec();
 
+  applicationLogic->Delete();
   scene->Delete();
   delete layoutManager;
   return res;

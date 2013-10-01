@@ -27,6 +27,7 @@
 #include "qMRMLLayoutManager.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLLayoutNode.h>
 
@@ -42,6 +43,8 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   w.show();
   qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager(&w, &w);
 
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::New();
@@ -52,6 +55,7 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   scene->AddNode(layoutNode);
   layoutNode->Delete();
 
+  applicationLogic->SetMRMLScene(scene);
   layoutManager->setMRMLScene(scene);
 
   if (layoutManager->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView ||
@@ -106,6 +110,7 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
     }
   int res = app.exec();
 
+  applicationLogic->Delete();
   scene->Delete();
   delete layoutManager;
   return res;
