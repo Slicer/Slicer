@@ -507,10 +507,6 @@ void vtkSlicerVolumeRenderingLogic
 {
   assert(scalarRange && volumeProp);
 
-  double gradientRange[2];
-  gradientRange[0] = 0.;
-  gradientRange[1] = (scalarRange[1] - scalarRange[0]); // *0.25;
-
   double previous = VTK_DOUBLE_MIN;
   vtkNew<vtkPiecewiseFunction> opacity;
   // opacity doesn't support duplicate points
