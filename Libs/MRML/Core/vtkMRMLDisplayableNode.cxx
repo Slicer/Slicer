@@ -35,8 +35,14 @@ const char* vtkMRMLDisplayableNode::DisplayNodeReferenceMRMLAttributeName = "dis
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
+  vtkIntArray  *events = vtkIntArray::New();
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(vtkMRMLDisplayableNode::DisplayModifiedEvent);
+
   this->AddNodeReferenceRole(this->GetDisplayNodeReferenceRole(),
-                             this->GetDisplayNodeReferenceMRMLAttributeName() );
+                             this->GetDisplayNodeReferenceMRMLAttributeName(),
+                             events);
+  events->Delete();
 }
 
 //----------------------------------------------------------------------------

@@ -450,7 +450,7 @@ public:
   /// Use this method to add new reference types to a node.
   /// This method is typically called in the contructors of each subclass.
   /// \sa GetReferenceNodeFromMRMLAttributeName()
-  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=0);
+  void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=0, vtkIntArray *events=0);
   
   ///
   /// set a reference to a node with specified nodeID from this node for a specific referenceRole
@@ -602,13 +602,14 @@ protected:
 
   };
 
-  /// NodeReferences maps stores vector of refererences for each referenceRole, 
+  /// NodeReferences is a map that stores vector of refererences for each referenceRole, 
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  /// use AddNodeReferenceType() to add new reference types to a node
   typedef std::map< std::string, std::vector< vtkMRMLNodeReference *> > NodeReferencesType;
   NodeReferencesType NodeReferences;
 
   std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
+
+  std::map< std::string, vtkIntArray*> NodeReferenceEvents;
 
 protected:
   

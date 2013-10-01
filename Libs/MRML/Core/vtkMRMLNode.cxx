@@ -129,7 +129,7 @@ vtkMRMLNode::~vtkMRMLNode()
 void vtkMRMLNode::DeleteAllReferences(bool callOnNodeReferenceRemoved)
 {
   NodeReferencesType::iterator it;
-  for (it = this->NodeReferences.begin(); it != NodeReferences.end(); it++)
+  for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
     std::vector< vtkMRMLNodeReference *>::iterator it1;
     for (it1 = it->second.begin(); it1 != it->second.end(); it1++)
@@ -151,8 +151,16 @@ void vtkMRMLNode::DeleteAllReferences(bool callOnNodeReferenceRemoved)
       (*it1)->Delete();
       }
     }
-    this->NodeReferences.clear();
+  this->NodeReferences.clear();
 
+  std::map< std::string, vtkIntArray*>::iterator it1;
+  for (it1 = this->NodeReferenceEvents.begin(); it1 != this->NodeReferenceEvents.end(); it1++)
+    {
+    if (it1->second)
+      {
+      it1->second->Delete();
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -530,7 +538,7 @@ void vtkMRMLNode::SetScene(vtkMRMLScene* scene)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::AddNodeReferenceRole(const char *refRole, const char *mrmlAttributeName)
+void vtkMRMLNode::AddNodeReferenceRole(const char *refRole, const char *mrmlAttributeName, vtkIntArray *events)
 {
   if (!refRole)
     {
@@ -542,6 +550,15 @@ void vtkMRMLNode::AddNodeReferenceRole(const char *refRole, const char *mrmlAttr
   if (!this->IsReferenceRoleGeneric(refRole))
     {
     this->NodeReferences[referenceRole] = std::vector< vtkMRMLNodeReference *>();
+    }    
+  
+  this->NodeReferenceEvents[referenceRole] = vtkIntArray::New();
+  if (events)
+    {
+    for (int i=0; i<events->GetNumberOfTuples(); i++)
+      {
+      this->NodeReferenceEvents[referenceRole]->InsertNextValue(events->GetValue(i));
+      }
     }
 }
 
@@ -1153,10 +1170,15 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 //----------------------------------------------------------------------------
  vtkMRMLNode* vtkMRMLNode::SetAndObserveNthNodeReferenceID(const char* referenceRole, 
                                                            int n, 
-                                                           const char* referencedNodeID, 
+                                                           const char* referencedNodeID,
                                                            vtkIntArray *events)
 {
   vtkMRMLNode* referencedNode = NULL;
+
+  if (events == 0 && this->NodeReferenceEvents[referenceRole] && this->NodeReferenceEvents[referenceRole]->GetNumberOfTuples() > 0)
+    {
+    events = NodeReferenceEvents[referenceRole];
+    }
 
   std::vector< vtkMRMLNodeReference *> referencedNodes;
   if (referenceRole)
