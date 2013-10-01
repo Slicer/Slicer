@@ -340,11 +340,13 @@ void qMRMLLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
   Q_ASSERT(sliceNode);
 
   qMRMLSliceWidget * sliceWidgetToDelete = this->sliceWidget(sliceNode);
-  Q_ASSERT(sliceWidgetToDelete);
 
   // Remove slice widget
-  this->SliceWidgetList.removeAll(sliceWidgetToDelete);
-  delete sliceWidgetToDelete;
+  if (sliceWidgetToDelete)
+    {
+    this->SliceWidgetList.removeAll(sliceWidgetToDelete);
+    delete sliceWidgetToDelete;
+    }
 }
 
 // --------------------------------------------------------------------------
