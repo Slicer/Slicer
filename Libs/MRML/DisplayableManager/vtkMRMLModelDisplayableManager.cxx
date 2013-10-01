@@ -1987,7 +1987,6 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
       // it's a 3D displayable manager and the click could have been on a node
       double yNew = windowHeight - y - 1;
       vtkMRMLDisplayNode *displayNode = NULL;
-      vtkMRMLDisplayableNode *displayableNode = NULL;
 
       if (this->Pick(x,yNew) &&
           strcmp(this->GetPickedNodeID(),"") != 0)
@@ -2009,7 +2008,6 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
       if (displayNode)
         {
         displayNode->SetColor(1.0, 0, 0);
-        displayableNode = displayNode->GetDisplayableNode();
         this->GetInteractionNode()->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
         }
       }
