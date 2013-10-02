@@ -216,13 +216,13 @@ QString qSlicerScriptedFileWriter::description()const
   PyObject * method = d->PythonAPIMethods[d->DescriptionMethod];
   if (!method)
     {
-    return false;
+    return QString();
     }
   PythonQt::self()->clearError();
   PyObject * result = PyObject_CallObject(method, 0);
   if (PythonQt::self()->handleError())
     {
-    return false;
+    return QString();
     }
   if (!PyString_Check(result))
     {
