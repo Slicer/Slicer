@@ -220,20 +220,40 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
     {
     if (info.isDir())
       {
-      if (!QFile::setPermissions(info.filePath(), directoryPermissions))
+      if (directoryPermissions & QFile::ExeOwner
+             || directoryPermissions & QFile::ExeGroup
+             || directoryPermissions & QFile::ExeOther)
         {
-        return false;
+        // If executable bit is on /a/b/c/d, we should start with a, b, c, then d
+        if (!QFile::setPermissions(info.filePath(), directoryPermissions))
+          {
+          qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory" << info.filePath();
+          return false;
+          }
+        if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
+          {
+          return false;
+          }
         }
-      if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
+      else
         {
-        qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();
-        return false;
+        // .. otherwise we should start with d, c, b, then a
+        if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
+          {
+          return false;
+          }
+        if (!QFile::setPermissions(info.filePath(), directoryPermissions))
+          {
+          qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on directory" << info.filePath();
+          return false;
+          }
         }
       }
     else if (info.isFile())
       {
       if (!QFile::setPermissions(info.filePath(), filePermissions))
         {
+        qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();
         return false;
         }
       }
