@@ -562,8 +562,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   QFETCH(bool, nonExistentDestinationPath);
   QFETCH(bool, readOnlyDestinationPath);
 
-  QFile destinationPath(this->Tmp.absolutePath());
-  QCOMPARE(static_cast<bool>(destinationPath.permissions() & QFile::WriteUser), true);
+  QCOMPARE(static_cast<bool>(QFile::permissions(this->Tmp.absolutePath()) & QFile::WriteUser), true);
 
   qSlicerExtensionsManagerModel model;
   model.setSlicerRevision(slicerRevision);
@@ -572,7 +571,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
 
   QString copiedArchiveFile = this->Tmp.filePath(QFileInfo(inputArchiveFile).fileName());
   QVERIFY(QFile::copy(inputArchiveFile, copiedArchiveFile));
-  QVERIFY(QFile(copiedArchiveFile).setPermissions(QFile::ReadUser | QFile::WriteUser));
+  QVERIFY(QFile::setPermissions(copiedArchiveFile, QFile::ReadUser | QFile::WriteUser));
 
   if (nonExistentDestinationPath)
     {
@@ -582,8 +581,8 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
 
   if (readOnlyDestinationPath)
     {
-    QVERIFY(destinationPath.setPermissions(QFile::ReadUser));
-    QCOMPARE(static_cast<bool>(destinationPath.permissions() & QFile::WriteUser), false);
+    QVERIFY(QFile::setPermissions(this->Tmp.absolutePath(), QFile::ExeUser | QFile::ReadUser));
+    QCOMPARE(static_cast<bool>(QFile::permissions(this->Tmp.absolutePath()) & QFile::WriteUser), false);
     }
 
   bool extractSuccess =
