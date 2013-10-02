@@ -772,6 +772,9 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
     return;
     }
 
+  Q_Q(qMRMLSliceControllerWidget);
+  q->setSliceViewLabel(this->MRMLSliceNode->GetLayoutLabel());
+
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
   bool wasBlocked;
@@ -1475,12 +1478,6 @@ QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
 void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLabel)
 {
   Q_D(qMRMLSliceControllerWidget);
-
-  if (d->MRMLSliceNode)
-    {
-    qCritical() << "qMRMLSliceControllerWidget::setSliceViewLabel should be called before setMRMLSliceNode !";
-    return;
-    }
 
   d->SliceViewLabel = newSliceViewLabel;
   d->ViewLabel->setText(d->SliceViewLabel);
