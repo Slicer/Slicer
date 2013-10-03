@@ -353,9 +353,34 @@
     vtkSmartPointer < className > node1 =                               \
       vtkSmartPointer < className >::New();                             \
                                                                         \
+    /* Test GetID() */                                                  \
+    {                                                                   \
+    const char * outputPointer = node1->GetID();                        \
+    if (outputPointer != NULL)                                          \
+      {                                                                 \
+      std::cerr << "Error in GetID !\n"                                 \
+                << "  expected: (null)\n"                               \
+                << "  current: " << outputPointer << std::endl;         \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    }                                                                   \
+                                                                        \
+    /* Test GetNodeTagName() */                                         \
+    {                                                                   \
+    const char * outputPointer = node1->GetNodeTagName();               \
+    if (outputPointer == NULL || strlen(outputPointer) == 0)            \
+      {                                                                 \
+      std::cerr << "Error in GetNodeTagName !\n"                        \
+                << "  expected: (NOT null or empty)\n"                  \
+                << "  current: (null or empty)" << std::endl;           \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    }                                                                   \
+                                                                        \
     /* Test Copy() */                                                   \
     node1->Copy(node);                                                  \
     node->Reset();                                                      \
+                                                                        \
                                                                         \
     /* Test SetAttribute() / GetAttribute() */                          \
     int mod = node->StartModify();                                      \
