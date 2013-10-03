@@ -28,6 +28,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLSliceViewPrivate;
+class vtkCollection;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
 class vtkSliceViewInteractorStyle;
@@ -57,7 +58,11 @@ public:
   /// By default: vtkMRMLModelSliceDisplayableManager,
   /// vtkMRMLVolumeGlyphSliceDisplayableManager and
   /// vtkMRMLCrosshairDisplayableManager are registered.
+  /// \sa getDisplayableManagers
   void addDisplayableManager(const QString& displayableManager);
+  /// Get the displayable managers registered in this view
+  /// \sa addDisplayableManager
+  Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLSliceNode* mrmlSliceNode()const;
