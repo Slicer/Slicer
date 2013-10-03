@@ -131,8 +131,9 @@ void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
   qMRMLSliceControllerWidget sliceControllerWidget;
   void* nullPtr = 0;
 
-  // \todo The following should be set automatically from setMRMLSliceNode
   sliceControllerWidget.setSliceViewLabel("R");
+  QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString(""));
+
   sliceControllerWidget.setSliceViewColor(Qt::red);
 
   sliceControllerWidget.setMRMLScene(this->MRMLScene);
@@ -148,7 +149,10 @@ void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode()->GetLabelVolumeID(), nullPtr);
 
   QCOMPARE(sliceControllerWidget.sliceViewName(), QString("Red"));
+
+  sliceControllerWidget.setSliceViewLabel("R");
   QCOMPARE(sliceControllerWidget.sliceViewLabel(), QString("R"));
+
   QCOMPARE(sliceControllerWidget.sliceViewColor(), QColor(Qt::red));
 
   QCOMPARE(sliceControllerWidget.isLinked(), false);
