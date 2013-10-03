@@ -119,12 +119,24 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     nodeObject.modify();
     }
 
+  // test the list of displayable managers
+  QStringList expectedDisplayableManagerClassNames =
+    QStringList() << "vtkMRMLVolumeGlyphSliceDisplayableManager"
+                  << "vtkMRMLModelSliceDisplayableManager"
+                  << "vtkMRMLCrosshairDisplayableManager";
   qMRMLSliceView *sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
   vtkNew<vtkCollection> collection;
   sliceView->getDisplayableManagers(collection.GetPointer());
   int numManagers = collection->GetNumberOfItems();
   std::cout << "Slice widget slice view has " << numManagers
             << " displayable managers." << std::endl;
+  if (numManagers != expectedDisplayableManagerClassNames.size())
+    {
+    std::cerr << "Incorrect number of displayable managers, expected "
+              << expectedDisplayableManagerClassNames.size()
+              << " but got " << numManagers << std::endl;
+    return EXIT_FAILURE;
+    }
   for (int i = 0; i < numManagers; ++i)
     {
     vtkMRMLAbstractSliceViewDisplayableManager *sliceViewDM =
@@ -132,10 +144,16 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     if (sliceViewDM)
       {
       std::cout << "\tDisplayable manager " << i << " class name = " << sliceViewDM->GetClassName() << std::endl;
+      if (!expectedDisplayableManagerClassNames.contains(sliceViewDM->GetClassName()))
+        {
+        std::cerr << "\t\tnot in expected list!" << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     else
       {
-      std::cout << "\tDisplayable manager " << i << " is null." << std::endl;
+      std::cerr << "\tDisplayable manager " << i << " is null." << std::endl;
+      return EXIT_FAILURE;
       }
     }
   collection->RemoveAllItems();
