@@ -39,6 +39,7 @@ def CreateNewVolumeNode(nodeName, nodeType='vtkMRMLScalarVolumeNode', overwrite=
     scene = slicer.mrmlScene
     checkVolumeNodeType(nodeType)
     newNode = scene.CreateNodeByClass(nodeType)
+    newNode.UnRegister(scene)
     AddNodeToMRMLScene(newNode, nodeName, overwrite)
     return newNode
 
@@ -48,6 +49,7 @@ def CreateNewDisplayNode(nodeName='default'):
     scene = slicer.mrmlScene
     nodeType='vtkMRMLScalarVolumeDisplayNode'
     newNode = scene.CreateNodeByClass(nodeType)
+    newNode.UnRegister(scene)
     AddNodeToMRMLScene(newNode, nodeName + '_Display', False)
     return newNode
 

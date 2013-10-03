@@ -350,6 +350,7 @@ class ScenePerformanceTest(unittest.TestCase):
     averageTime = 0
     for x in range(self.Repeat):
       newNode = node.CreateNodeInstance()
+      newNode.UnRegister(node)
       newNode.Copy(node)
       logic.startTiming()
       slicer.mrmlScene.AddNode(newNode)
