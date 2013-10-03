@@ -335,32 +335,44 @@
 
 // ----------------------------------------------------------------------------
 /// Slicer Libs/MRML/vtkMRMLNode exercises
-#define EXERCISE_BASIC_MRML_METHODS( className, node )   \
-  {\
-    vtkMRMLNode * newNode = node1->CreateNodeInstance();    \
-    if( newNode == NULL )                                   \
-      {                                                         \
-      std::cerr << "Error in CreateNodeInstance()" << std::endl;    \
-      return EXIT_FAILURE;                                          \
-      }                                                             \
+#define EXERCISE_BASIC_MRML_METHODS( className, node )                  \
+  {                                                                     \
+    /* Test CreateNodeInstance() */                                     \
+    vtkMRMLNode * newNode = node1->CreateNodeInstance();                \
+    if( newNode == NULL )                                               \
+      {                                                                 \
+      std::cerr << "Error in CreateNodeInstance()" << std::endl;        \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
     newNode->Delete();                                                  \
-    node->UpdateScene(NULL);                                                \
-    vtkSmartPointer < className > node1 = vtkSmartPointer < className >::New(); \
-    node1->Copy(node);                                                 \
+                                                                        \
+    /* Test UpdateScene() */                                            \
+    node->UpdateScene(NULL);                                            \
+                                                                        \
+    /* Test New() */                                                    \
+    vtkSmartPointer < className > node1 =                               \
+      vtkSmartPointer < className >::New();                             \
+                                                                        \
+    /* Test Copy() */                                                   \
+    node1->Copy(node);                                                  \
     node->Reset();                                                      \
+                                                                        \
+    /* Test SetAttribute() / GetAttribute() */                          \
     int mod = node->StartModify();                                      \
-    std::string nodeTagName = node->GetNodeTagName();                   \
-    std::cout << "Node Tag Name = " << nodeTagName << std::endl;        \
     std::string attributeName = std::string("attName");                 \
     std::string attributeValue = std::string("attValue");               \
-    node->SetAttribute( attributeName.c_str(), attributeValue.c_str() ); \
-    std::string attributeValue2 = node->GetAttribute( attributeName.c_str() ); \
+    node->SetAttribute(                                                 \
+        attributeName.c_str(), attributeValue.c_str() );                \
+    std::string attributeValue2 =                                       \
+        node->GetAttribute( attributeName.c_str() );                    \
     if( attributeValue != attributeValue2 )                             \
       {                                                                 \
       std::cerr << "Error in Set/GetAttribute() " << std::endl;         \
       return EXIT_FAILURE;                                              \
       }                                                                 \
     node->EndModify(mod);                                               \
+                                                                        \
+    /* Test getters */                                                  \
     TEST_SET_GET_BOOLEAN( node, HideFromEditors );                      \
     TEST_SET_GET_BOOLEAN( node, Selectable );                           \
     TEST_SET_GET_STRING( node, Description );                           \
@@ -371,6 +383,7 @@
     TEST_SET_GET_BOOLEAN( node, AddToScene );                           \
     TEST_SET_GET_BOOLEAN( node, DisableModifiedEvent);                  \
     TEST_SET_GET_BOOLEAN( node, Selected );                             \
+                                                                        \
     node->Modified();                                                   \
     node->InvokePendingModifiedEvent();                                 \
     node1->SetName("copywithsinglemodified");                           \
@@ -379,17 +392,20 @@
     node->CopyWithoutModifiedEvent(node1);                              \
     node1->SetName("copywithscenewithsinglemodified");                  \
     node->CopyWithSceneWithSingleModifiedEvent(node1);                  \
-    vtkMRMLScene * scene = node->GetScene();                            \
                                                                         \
+    /* Test GetScene() */                                               \
+    vtkMRMLScene * scene = node->GetScene();                            \
     if( scene != NULL )                                                 \
       {                                                                 \
       std::cerr << "Error in GetScene() " << std::endl;                 \
       return EXIT_FAILURE;                                              \
       }                                                                 \
                                                                         \
+    /* Test UpdateReferences() */                                       \
     node->UpdateReferences();                                           \
     node->UpdateReferenceID("oldID", "newID");                          \
                                                                         \
+    /* Test URLEncodeString() / URLDecodeString() */                    \
     std::string stringToEncode = "Thou Shall Test !";                   \
     std::string stringURLEncoded = node1->URLEncodeString( stringToEncode.c_str() ); \
     std::string stringDecoded = node1->URLDecodeString( stringURLEncoded.c_str() ); \
@@ -399,13 +415,25 @@
       return EXIT_FAILURE;                                              \
       }                                                                 \
                                                                         \
-    const char *atts[] = {"id", "vtkMRMLNodeTest1", "name", "MyName", "description", "Testing a mrml node", "hideFromEditors", "false", "selectable", "true", "selected", "true", NULL}; \
+    /* Test ReadXMLAttributes() */                                      \
+    const char *atts[] = {                                              \
+              "id", "vtkMRMLNodeTest1",                                 \
+              "name", "MyName",                                         \
+              "description", "Testing a mrml node",                     \
+              "hideFromEditors", "false",                               \
+              "selectable", "true",                                     \
+              "selected", "true",                                       \
+              NULL};                                                    \
     node->ReadXMLAttributes(atts);                                      \
-    if (strcmp(node->GetID(), "vtkMRMLNodeTest1") != 0)     \
+                                                                        \
+    if (strcmp(node->GetID(), "vtkMRMLNodeTest1") != 0)                 \
       {                                                                 \
       std::cerr << "Error in ReadXMLAttributes! id should be vtkMRMLNodeTest1, but is " << node->GetID() << std::endl; \
       return EXIT_FAILURE;                                              \
       }                                                                 \
+                                                                        \
+    /* Test WriteXML */                                                 \
+    std::cout << "WriteXML output:" << std::endl;                       \
     node->WriteXML(std::cout, 0);                                       \
     std::cout << std::endl;                                             \
   }
