@@ -405,15 +405,47 @@
     node->UpdateReferences();                                           \
     node->UpdateReferenceID("oldID", "newID");                          \
                                                                         \
-    /* Test URLEncodeString() / URLDecodeString() */                    \
-    std::string stringToEncode = "Thou Shall Test !";                   \
-    std::string stringURLEncoded = node1->URLEncodeString( stringToEncode.c_str() ); \
-    std::string stringDecoded = node1->URLDecodeString( stringURLEncoded.c_str() ); \
-    if( stringDecoded != stringToEncode )                               \
+    /* Test URLEncodeString() */                                        \
+    {                                                                   \
+    const char* inputPointer = "Thou Shall Test !";                     \
+    const char* exepectedPointer = "Thou%20Shall%20Test%20!";           \
+    const char* outputPointer = node1->URLEncodeString(inputPointer);   \
+    if (outputPointer == NULL)                                          \
       {                                                                 \
-      std::cerr << "Error in URLEncodeString/URLDecodeString() " << std::endl; \
+      std::cerr << "Problem with URLEncodeString()!\n"                  \
+                << "  expected: " << exepectedPointer << "\n"           \
+                << "  current: (null)" << std::endl;                    \
       return EXIT_FAILURE;                                              \
       }                                                                 \
+    if (strcmp(outputPointer, exepectedPointer) != 0)                   \
+      {                                                                 \
+      std::cerr << "Problem with URLEncodeString()!\n"                  \
+                << "  expected: " << exepectedPointer << "\n"           \
+                << "  current: " << outputPointer << std::endl;         \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    }                                                                   \
+                                                                        \
+    /* Test URLDecodeString() */                                        \
+    {                                                                   \
+    const char* inputPointer = "Thou%20Shall%20Test%20!";               \
+    const char* exepectedPointer = "Thou Shall Test !";                 \
+    const char* outputPointer = node1->URLDecodeString(inputPointer);   \
+    if (outputPointer == NULL)                                          \
+      {                                                                 \
+      std::cerr << "Problem with URLDecodeString()!\n"                  \
+                << "  expected: " << exepectedPointer << "\n"           \
+                << "  current: (null)" << std::endl;                    \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    if (strcmp(outputPointer, exepectedPointer) != 0)                   \
+      {                                                                 \
+      std::cerr << "Problem with URLDecodeString()!\n"                  \
+                << "  expected: " << exepectedPointer << "\n"           \
+                << "  current: " << outputPointer << std::endl;         \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    }                                                                   \
                                                                         \
     /* Test ReadXMLAttributes() */                                      \
     const char *atts[] = {                                              \
