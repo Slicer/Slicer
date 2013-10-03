@@ -50,13 +50,9 @@ int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  vtkNew<vtkMRMLModelHierarchyNode> hnode1;
-  std::cout << "Unexpanded parent node = " << hnode1->GetID() << std::endl;
-
   vtkNew<vtkCollection> col;
   node1->GetChildrenModelNodes(col.GetPointer());
   int numChildren =  col->GetNumberOfItems();
-  std::cout << "Number of children model nodes = " << numChildren << std::endl;
   if (numChildren != 1)
     {
     std::cerr << "Expected 1 child, got " << numChildren << std::endl;
