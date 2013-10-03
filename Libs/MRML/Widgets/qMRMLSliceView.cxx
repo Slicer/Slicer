@@ -47,6 +47,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
@@ -259,6 +260,22 @@ void qMRMLSliceView::addDisplayableManager(const QString& displayableManagerName
     vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(
       displayableManagerName.toLatin1()));
   d->DisplayableManagerGroup->AddDisplayableManager(displayableManager);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSliceView::getDisplayableManagers(vtkCollection *displayableManagers)
+{
+  Q_D(qMRMLSliceView);
+
+  if (!displayableManagers)
+    {
+    return;
+    }
+  int num = d->DisplayableManagerGroup->GetDisplayableManagerCount();
+  for (int n = 0; n < num; n++)
+    {
+    displayableManagers->AddItem(d->DisplayableManagerGroup->GetNthDisplayableManager(n));
+    }
 }
 
 //------------------------------------------------------------------------------

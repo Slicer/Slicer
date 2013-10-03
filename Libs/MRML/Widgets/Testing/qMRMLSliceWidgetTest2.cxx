@@ -24,10 +24,12 @@
 
 // qMRML includes
 #include "qMRMLSliceControllerWidget.h"
+#include "qMRMLSliceView.h"
 #include "qMRMLSliceWidget.h"
 #include "qMRMLNodeObject.h"
 
 // MRML includes
+#include <vtkMRMLAbstractSliceViewDisplayableManager.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -36,6 +38,7 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkNew.h>
 
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
@@ -115,6 +118,28 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     {
     nodeObject.modify();
     }
+
+  qMRMLSliceView *sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
+  vtkNew<vtkCollection> collection;
+  sliceView->getDisplayableManagers(collection.GetPointer());
+  int numManagers = collection->GetNumberOfItems();
+  std::cout << "Slice widget slice view has " << numManagers
+            << " displayable managers." << std::endl;
+  for (int i = 0; i < numManagers; ++i)
+    {
+    vtkMRMLAbstractSliceViewDisplayableManager *sliceViewDM =
+      vtkMRMLAbstractSliceViewDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
+    if (sliceViewDM)
+      {
+      std::cout << "\tDisplayable manager " << i << " class name = " << sliceViewDM->GetClassName() << std::endl;
+      }
+    else
+      {
+      std::cout << "\tDisplayable manager " << i << " is null." << std::endl;
+      }
+    }
+  collection->RemoveAllItems();
+
 /*
   QTimer modifyTimer;
   modifyTimer.setInterval(0);
