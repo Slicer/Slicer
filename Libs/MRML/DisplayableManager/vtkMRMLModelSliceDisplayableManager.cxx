@@ -261,6 +261,17 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     return;
     }
 
+  // Do not add the display node if it is already associated with a pipeline object.
+  // This happens when a model node already associated with a display node
+  // is copied into an other (using vtkMRMLNode::Copy()) and is added to the scene afterward.
+  // Related issue are #3428 and #2608
+  PipelinesCacheType::iterator it;
+  it = this->DisplayPipelines.find(displayNode);
+  if (it != this->DisplayPipelines.end())
+    {
+    return;
+    }
+
   vtkNew<vtkActor2D> actor;
   if (displayNode->IsA("vtkMRMLModelDisplayNode"))
     {
