@@ -520,19 +520,27 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     {
     ArchetypeVolumeNodeSet nodeSet( (*fit)(volumeName, this->GetMRMLScene(), loadingOptions) );
 
-    nodeSet.StorageNode->AddObserver(vtkCommand::ErrorEvent, errorSink.GetPointer());
-    nodeSet.StorageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
-
     // if the labelMap flags for reader and factory are consistent
     // (both true or both false)
     if (labelMap == nodeSet.LabelMap)
       {
+
+      // connect the observers
+      nodeSet.StorageNode->AddObserver(vtkCommand::ErrorEvent, errorSink.GetPointer());
+      nodeSet.StorageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
+
       this->InitializeStorageNode(nodeSet.StorageNode, filename, fileList);
 
       vtkDebugMacro("Attempt to read file as a volume of type "
                     << nodeSet.Node->GetNodeTagName() << " using "
                     << nodeSet.Node->GetClassName() << " [filename = " << filename << "]");
-      if (nodeSet.StorageNode->ReadData(nodeSet.Node))
+      bool success = nodeSet.StorageNode->ReadData(nodeSet.Node);
+
+      // disconnect the observers
+      nodeSet.StorageNode->RemoveObservers(vtkCommand::ErrorEvent, errorSink.GetPointer());
+      nodeSet.StorageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
+
+      if (success)
         {
         displayNode = nodeSet.DisplayNode;
         volumeNode =  nodeSet.Node;
@@ -546,10 +554,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     // 
     // Wasn't the right factory, so we need to clean up
     //
-    
-    // disconnect the observers
-    nodeSet.StorageNode->RemoveObservers(vtkCommand::ErrorEvent, errorSink.GetPointer());
-    nodeSet.StorageNode->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
     // clean up the scene
     nodeSet.Node->SetAndObserveDisplayNodeID(NULL);
