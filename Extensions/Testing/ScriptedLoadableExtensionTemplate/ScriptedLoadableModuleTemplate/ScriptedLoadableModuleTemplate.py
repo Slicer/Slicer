@@ -304,7 +304,7 @@ class ScriptedLoadableModuleTemplateLogic:
     annotationLogic = slicer.modules.annotations.logic()
     annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
 
-  def run(self,inputVolume,outputVolume,,enableScreenshots=0,screenshotScaleFactor=1):
+  def run(self,inputVolume,outputVolume,enableScreenshots=0,screenshotScaleFactor=1):
     """
     Run the actual algorithm
     """
