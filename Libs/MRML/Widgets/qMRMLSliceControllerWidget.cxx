@@ -782,9 +782,9 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   Q_ASSERT(index>=0 && index <=4);
 
   // We block the signal to avoid calling setSliceOrientation from the MRMLNode
-  this->SliceOrientationSelector->blockSignals(true);
+  wasBlocked = this->SliceOrientationSelector->blockSignals(true);
   this->SliceOrientationSelector->setCurrentIndex(index);
-  this->SliceOrientationSelector->blockSignals(false);
+  this->SliceOrientationSelector->blockSignals(wasBlocked);
 
   // Update slice offset slider tooltip
   qMRMLOrientation orientation = this->SliceOrientationToDescription[
