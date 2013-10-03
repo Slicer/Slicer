@@ -772,12 +772,10 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
     return;
     }
 
-  Q_Q(qMRMLSliceControllerWidget);
-  q->setSliceViewLabel(this->MRMLSliceNode->GetLayoutLabel());
-
-  //qDebug() << "qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode";
-
   bool wasBlocked;
+
+  // Update abbreviated slice view name
+  this->ViewLabel->setText(this->MRMLSliceNode->GetLayoutLabel());
 
   // Update orientation selector state
   int index = this->SliceOrientationSelector->findText(
@@ -1478,13 +1476,19 @@ QColor qMRMLSliceControllerWidget::sliceViewColor(const QString& sliceViewName)
 void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLabel)
 {
   Q_D(qMRMLSliceControllerWidget);
-
-  d->SliceViewLabel = newSliceViewLabel;
-  d->ViewLabel->setText(d->SliceViewLabel);
+  if (!d->MRMLSliceNode)
+    {
+    return;
+    }
+  d->MRMLSliceNode->SetLayoutLabel(newSliceViewLabel.toLatin1());
 }
 
 //---------------------------------------------------------------------------
-CTK_GET_CPP(qMRMLSliceControllerWidget, QString, sliceViewLabel, SliceViewLabel);
+QString qMRMLSliceControllerWidget::sliceViewLabel()const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+  return d->ViewLabel->text();
+}
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewColor)

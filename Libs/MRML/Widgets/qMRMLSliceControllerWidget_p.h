@@ -137,7 +137,6 @@ public:
   QString                             SliceOrientation;
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;
-  QString                             SliceViewLabel;
   QButtonGroup*                       ControllerButtonGroup;
 
   QToolButton*                        FitToWindowToolButton;

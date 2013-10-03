@@ -52,6 +52,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
+  Q_PROPERTY(QString sliceViewLabel READ sliceViewLabel WRITE setSliceViewLabel)
   Q_PROPERTY(bool moreButtonVisibility READ isMoreButtonVisible WRITE setMoreButtonVisible)
 public:
   /// Superclass typedef
@@ -97,11 +98,14 @@ public:
   /// Return the color associated to the slice view
   Q_INVOKABLE static QColor sliceViewColor(const QString& sliceViewName);
 
-  /// Set the label for the slice view (abbreviation for the view
-  /// name)
+  /// Convenience function to set the abbreviated name for the slice view.
+  /// This is equivalent to call vtkMRMLSliceNode::SetLayoutLabel()
+  /// If no SliceNode is set, this is a no-op.
+  /// \sa setMRMLSliceNode(), vtkMRMLSliceNode::SetLayoutLabel()
   void setSliceViewLabel(const QString& newSliceViewLabel);
 
-  /// Get the label for the slice view (abbreviation for the view name)
+  /// Get the abbreviated slice view name.
+  /// \sa setSliceViewLabel(), vtkMRMLSliceNode::GetLayoutLabel()
   QString sliceViewLabel()const;
 
   /// Set the color for the slice view
