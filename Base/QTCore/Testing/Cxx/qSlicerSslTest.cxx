@@ -48,13 +48,13 @@ void qSlicerSslTester::testHttpsConnection()
 
   QNetworkAccessManager * manager = new QNetworkAccessManager(this);
 
-  QNetworkReply * reply = manager->get(QNetworkRequest(QUrl(url)));
-
   QEventLoop eventLoop;
   QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
                    &eventLoop, SLOT(quit()));
   QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
             &eventLoop, SLOT(quit()));
+
+  QNetworkReply * reply = manager->get(QNetworkRequest(QUrl(url)));
   eventLoop.exec();
 
   QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
