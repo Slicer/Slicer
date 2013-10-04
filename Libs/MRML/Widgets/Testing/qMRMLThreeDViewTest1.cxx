@@ -24,6 +24,13 @@
 // qMRML includes
 #include "qMRMLThreeDView.h"
 
+// MRML includes
+#include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
+
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkNew.h>
+
 // STD includes
 
 int qMRMLThreeDViewTest1(int argc, char * argv [] )
@@ -31,6 +38,46 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLThreeDView view;
   view.show();
+
+  // test the list of displayable managers
+  QStringList expectedDisplayableManagerClassNames =
+    QStringList() << "vtkMRMLCameraDisplayableManager"
+                  << "vtkMRMLViewDisplayableManager"
+                  << "vtkMRMLModelDisplayableManager"
+                  << "vtkMRMLThreeDReformatDisplayableManager";
+  vtkNew<vtkCollection> collection;
+  view.getDisplayableManagers(collection.GetPointer());
+  int numManagers = collection->GetNumberOfItems();
+  std::cout << "3D view has " << numManagers
+            << " displayable managers." << std::endl;
+  if (numManagers != expectedDisplayableManagerClassNames.size())
+    {
+    std::cerr << "Incorrect number of displayable managers, expected "
+              << expectedDisplayableManagerClassNames.size()
+              << " but got " << numManagers << std::endl;
+    return EXIT_FAILURE;
+    }
+  for (int i = 0; i < numManagers; ++i)
+    {
+    vtkMRMLAbstractThreeDViewDisplayableManager *threeDViewDM =
+      vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
+    if (threeDViewDM)
+      {
+      std::cout << "\tDisplayable manager " << i << " class name = " << threeDViewDM->GetClassName() << std::endl;
+      if (!expectedDisplayableManagerClassNames.contains(threeDViewDM->GetClassName()))
+        {
+        std::cerr << "\t\tnot in expected list!" << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+    else
+      {
+      std::cerr << "\tDisplayable manager " << i << " is null." << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  collection->RemoveAllItems();
+
   return EXIT_SUCCESS;
 }
 
