@@ -123,21 +123,6 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
   this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLTransformableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
-{
-  Superclass::OnNodeReferenceAdded(reference);
-
-  // When a scene is loaded, vtkMRMLScene::UpdateNodeReferences doesn't handle
-  // event registration. Except for vtkCommand::ModifiedEvent, any other events
-  // need to be registered via OnNodeReferenceAdded API.
-  if (std::string(reference->GetReferenceRole()) == this->GetTransformNodeReferenceRole()
-     && reference->ReferencedNode && reference->ReferencingNode)
-    {
-    vtkEventBroker::GetInstance()->AddObservation(reference->ReferencedNode,
-      vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencingNode, this->MRMLCallbackCommand);
-    }
-}
 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,

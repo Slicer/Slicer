@@ -105,8 +105,39 @@ protected:
   virtual const char* GetTransformNodeReferenceRole();
   virtual const char* GetTransformNodeReferenceMRMLAttributeName();
 
+  ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+  {
+    Superclass::OnNodeReferenceAdded(reference);
+    if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
+      {
+      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
+      }
+  }
+
+  ///
+  /// Called when a node reference ID is modified.
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+  {
+    Superclass::OnNodeReferenceModified(reference);
+    if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
+    {
+      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
+    }
+  }
+
+  ///
+  /// Called after a node reference ID is removed (list size decreased).
+  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+  {
+    Superclass::OnNodeReferenceRemoved(reference);
+    if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
+    {
+      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
+    }
+  }
+
 
 private:
   char* TransformNodeIDInternal;

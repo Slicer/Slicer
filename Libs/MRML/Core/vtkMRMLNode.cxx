@@ -1042,7 +1042,14 @@ void vtkMRMLNode::UpdateNthNodeReference(vtkMRMLNodeReference *reference, int n)
   vtkMRMLNode* node = this->GetScene() ?
     this->GetScene()->GetNodeByID(reference->GetReferencedNodeID()) : 0;
 
-  this->SetAndObserveNthNodeReference(reference->GetReferenceRole(), n, node, reference->Events);
+  vtkIntArray *events = reference->Events;
+  const char* referenceRole = reference->GetReferenceRole();
+  if (events == 0 && this->NodeReferenceEvents[referenceRole] && this->NodeReferenceEvents[referenceRole]->GetNumberOfTuples() > 0)
+    {
+    events = NodeReferenceEvents[referenceRole];
+    }
+
+  this->SetAndObserveNthNodeReference(reference->GetReferenceRole(), n, node, events);
   reference->ReferencedNode = node;
   reference->ReferencingNode = this;
 }
@@ -1260,6 +1267,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   if (newReferencedNodeID.empty())
     {
     /// Need to unobserve
+    (*referencedNodesIt)->SetReferencedNodeID(0);
     this->SetAndObserveNthNodeReference(referenceRole, n, 0, (*referencedNodesIt)->Events);
     vtkMRMLNodeReference *tmp = (*referencedNodesIt);
     referencedNodes.erase(referencedNodesIt);

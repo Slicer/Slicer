@@ -249,7 +249,10 @@ public:
   virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceModified(reference);
-    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
+    {
+      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    }
   }
 
   ///
@@ -257,7 +260,10 @@ public:
   virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceRemoved(reference);
-    //this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
+    {
+      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    }
   }
 
 

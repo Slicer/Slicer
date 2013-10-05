@@ -98,7 +98,7 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
               << callback->GetErrorString().c_str() << " "
               << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
               << "Number of TransformModifiedEvent: "
-              << callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent)
+              << callback->GetNumberOfEvents(vtkMRMLTransformableNode::TransformModifiedEvent)
               << std::endl;
     return EXIT_FAILURE;
     }
