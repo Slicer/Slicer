@@ -588,16 +588,16 @@ bool TestDisplayModifiedEvent()
 
   displayableNode->SetAndObserveDisplayNodeID(0);
 
-  if (spy->GetTotalNumberOfEvents() != 2 ||
+  if (spy->GetTotalNumberOfEvents() != 3 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
-      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) != 1) //||
-      //spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) != 1 ||
+      spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
-              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) << " "<< std::endl;
-              //<< spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) << " "<< std::endl
+              << spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
     return false;
     }
   spy->ResetNumberOfEvents();

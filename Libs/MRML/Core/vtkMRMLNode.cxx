@@ -1441,7 +1441,15 @@ int vtkMRMLNode::GetNumberOfNodeReferences(const char* referenceRole)
   int n=0;
   if (referenceRole)
     {
-    n = static_cast<int>(this->NodeReferences[std::string(referenceRole)].size());
+    std::vector< vtkMRMLNodeReference *> &references = this->NodeReferences[std::string(referenceRole)];
+    std::vector< vtkMRMLNodeReference *>::iterator it;
+    for (it = references.begin(); it != references.end(); it++)
+      {
+      if ((*it)->GetReferencedNodeID() != 0)
+        {
+        n++;
+        }
+      }
     }
   return n;
 }

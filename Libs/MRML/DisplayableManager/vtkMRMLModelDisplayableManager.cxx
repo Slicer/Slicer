@@ -442,13 +442,17 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
                                                            unsigned long event,
                                                            void *callData)
 {
+  if (this->GetMRMLScene() == 0)
+    {
+    return;
+    }
   if ( this->GetInteractor() &&
      this->GetInteractor()->GetRenderWindow() &&
      this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
-  {
+    {
     vtkDebugMacro("skipping ProcessMRMLNodesEvents during render");
     return;
-  }
+    }
 
   bool isUpdating = this->GetMRMLScene()->IsBatchProcessing();
   if (vtkMRMLDisplayableNode::SafeDownCast(caller))
