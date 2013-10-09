@@ -247,6 +247,43 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
     return EXIT_FAILURE;
     }
 
+  // Test copying markup between lists
+  // null cases
+  if (logic1->CopyNthMarkupToNewList(0, NULL, NULL))
+    {
+    std::cerr << "CopyNthMarkupToNewList: Failed to return false when passed null lists" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (logic1->CopyNthMarkupToNewList(0, source, NULL))
+    {
+    std::cerr << "CopyNthMarkupToNewList: Failed to return false when passed null destination list" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (logic1->CopyNthMarkupToNewList(0, NULL, dest))
+    {
+    std::cerr << "CopyNthMarkupToNewList: Failed to return false when passed null source list" << std::endl;
+    return EXIT_FAILURE;
+    }
+  source->AddMarkupWithNPoints(1);
+  int sourceSize = source->GetNumberOfMarkups();
+  int destSize = dest->GetNumberOfMarkups();
+  if (!logic1->CopyNthMarkupToNewList(0, source, dest))
+    {
+    std::cerr << "Failed to copy 0th markup to new list" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (sourceSize != source->GetNumberOfMarkups())
+    {
+    std::cerr << "Failed to copy 0th markup to new list, source list expected size was "
+              << sourceSize << " but is now " << source->GetNumberOfMarkups() << std::endl;
+    return EXIT_FAILURE;
+    }
+  if ((destSize + 1) != dest->GetNumberOfMarkups())
+    {
+    std::cerr << "Failed to copy 0th markup to new list, destination list expected size was "
+              << destSize << " but is now " << dest->GetNumberOfMarkups() << std::endl;
+    return EXIT_FAILURE;
+    }
   // cleanup
 
   return EXIT_SUCCESS;

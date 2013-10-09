@@ -142,6 +142,13 @@ public:
   /// utility method to set up a display node from the defaults
   void SetDisplayNodeToDefaults(vtkMRMLMarkupsDisplayNode *displayNode);
 
+  /// utility method to copy a markup from one list to another, adding it
+  /// to the end of the new list
+  /// \sa vtkMRMLMarkupsNode::AddMarkup
+  /// Returns true on success, false on failure
+  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+                              vtkMRMLMarkupsNode *newMarkupsNode);
+
   /// utility method to move a markup from one list to another, trying to
   /// insert it at the given new index. If the new index is larger than the
   /// number of markups in the list, adds it to the end. If new index is

@@ -934,6 +934,34 @@ bool vtkSlicerMarkupsLogic::MoveNthMarkupToNewListAtIndex(int n, vtkMRMLMarkupsN
 }
 
 //---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode *markupsNode,
+                                                   vtkMRMLMarkupsNode *newMarkupsNode)
+{
+  if (!markupsNode || !newMarkupsNode)
+    {
+    vtkErrorMacro("CopyNthMarkupToNewList: at least one of the markup list nodes are null!");
+    return false;
+    }
+
+  if (n < 0 || n >= markupsNode->GetNumberOfMarkups())
+    {
+    vtkErrorMacro("CopyNthMarkupToNewList: source index n " << n
+                  << " is not in list of size " << markupsNode->GetNumberOfMarkups());
+    return false;
+    }
+
+  // get the markup
+  Markup newMarkup;
+  markupsNode->CopyMarkup(markupsNode->GetNthMarkup(n), &newMarkup);
+
+  // add it to the destination list
+  newMarkupsNode->AddMarkup(newMarkup);
+
+  return true;
+}
+
+
+//---------------------------------------------------------------------------
 void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
 {
   if (!this->GetMRMLScene())

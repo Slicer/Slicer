@@ -58,7 +58,7 @@
   </parameters>
   <parameters>
     <label>Markups Table</label>
-    <description><![CDATA[Right click on rows in the table to bring up a context menu to delete the highlighted markup, jump slice viewers to that location, or move the markup to another list if one is in the scene.]]></description>
+    <description><![CDATA[Right click on rows in the table to bring up a context menu to delete the highlighted markup, jump slice viewers to that location, or if there are other lists, to copy or move the markup to another list.]]></description>
     <parameter>
       <label>Selected</label>
       <description><![CDATA[A check box is shown in this column, it's check state depends on if the markup is selected or not. Click to toggle the selected state. Only selected markups will be passed to command line modules.]]></description>

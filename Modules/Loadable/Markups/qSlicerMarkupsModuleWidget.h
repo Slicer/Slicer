@@ -23,12 +23,13 @@
 
 #include "qSlicerMarkupsModuleExport.h"
 
-class qSlicerMarkupsModuleWidgetPrivate;
-class vtkMRMLNode;
-class QTableWidgetItem;
-class vtkSlicerMarkupsLogic;
 class QModelIndex;
+class QTableWidgetItem;
 class QShortcut;
+class qSlicerMarkupsModuleWidgetPrivate;
+class vtkMRMLMarkupsNode;
+class vtkMRMLNode;
+class vtkSlicerMarkupsLogic;
 
 /// \ingroup Slicer_QtModules_Markups
 class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
@@ -174,8 +175,16 @@ public slots:
   void onRightClickActiveMarkupTableWidget(QPoint pos);
   /// Jump slices action slot
   void onJumpSlicesActionTriggered();
-  /// Right click action slots
-  void onMoveToOtherListActionTriggered(QString destinationPosition);
+  /// Build a string list of the names of other nodes with the same
+  /// class name as thisMarkup. Return an empty string list if no other
+  /// markups in the scene
+  QStringList getOtherMarkupNames(vtkMRMLNode *thisMarkup);
+  /// Right click action slot for copy
+  void onCopyToOtherListActionTriggered();
+  /// Right click action slot for move
+  void onMoveToOtherListActionTriggered();
+  /// Respond to the user selecting another list to copy the selected markup
+  void copySelectedToNamedList(QString listName);
   /// Respond to the user selecting another list to move selected markups to
   /// the named list, calls logic method to do the move if it can find both
   /// markups nodes in the scene
