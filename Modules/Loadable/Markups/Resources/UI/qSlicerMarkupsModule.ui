@@ -350,7 +350,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>The currently active markup node.</string>
+      <string>The markups in the currently active markups node. Right click in a row for delete, jump, copy, move.</string>
      </property>
      <property name="accessibleName">
       <string>active markup table</string>
