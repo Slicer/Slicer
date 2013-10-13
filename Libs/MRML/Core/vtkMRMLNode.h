@@ -720,7 +720,9 @@ protected:
     this->InvokeEvent(vtkMRMLNode::ReferenceRemovedEvent, reference);
   }
 
-
+  /// parse references in the form "role1:id1 id2;role2:id3;"
+  /// map contains existing role-id pairs, so we don't repeat them
+  void ParseReferencesAttribute(const char *attValue, std::map<std::string, std::string> &references);
 
 private:
   /// 

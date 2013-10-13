@@ -339,6 +339,8 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
 
+  std::map<std::string, std::string> references;
+
   const char* attName;
   const char* attValue;
   while (*atts != NULL) 
@@ -403,25 +405,72 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
          this->SetAttribute(name.c_str(), value.c_str());
          }
        }
+     else if (!strcmp(attName, "references"))
+       {
+       this->ParseReferencesAttribute(attValue, references);
+       }
      else if ( const char* referenceRole =
                  this->GetReferenceRoleFromMRMLAttributeName(attName) )
        {
        std::stringstream ss(attValue);
        while (!ss.eof())
-        {
-        std::string id;
-        ss >> id;
-        if (!id.empty())
-          {
-          this->AddNodeReferenceID(referenceRole, id.c_str());
-          }
-        }
+         {
+         std::string id;
+         ss >> id;
+         if (!id.empty())
+           {
+           if (references.find(id) == references.end() ||
+             references.find(id)->second != referenceRole)
+             {
+             this->AddNodeReferenceID(referenceRole, id.c_str());
+             references[id] = std::string(referenceRole);
+             }
+           }
+         }
        }
     }
   this->EndModify(disabledModify);
 
   return;
 }
+
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ParseReferencesAttribute(const char *attValue,
+                                           std::map<std::string, std::string> &references)
+{
+  /// parse refernces in the form "role1:id1 id2;role2:id3;"
+  std::string attribute(attValue);
+
+  std::size_t start = 0;
+  std::size_t end = attribute.find_first_of(';', start);
+  std::size_t sep = attribute.find_first_of(':', start);
+  while (start != std::string::npos && sep != std::string::npos && start != end && start != sep)
+    {
+    std::string ref = attribute.substr(start, end-start);
+    std::string role = attribute.substr(start, sep-start);
+    std::string ids = attribute.substr(sep+1, end-sep-1);
+    std::stringstream ss(ids);
+    while (!ss.eof())
+      {
+      std::string id;
+      ss >> id;
+      if (!id.empty())
+        {
+        if (references.find(id) == references.end() ||
+          references.find(id)->second != role )
+          {
+          this->AddNodeReferenceID(role.c_str(), id.c_str());
+          references[id] = role;
+          }
+        }
+      }
+    start = (end == std::string::npos) ? std::string::npos : end+1;
+    end = attribute.find_first_of(';', start);
+    sep = attribute.find_first_of(':', start);
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
@@ -461,32 +510,53 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
     }
 
   //write node references
+  std::stringstream ssRef;
   NodeReferencesType::iterator it;
   std::map< std::string, std::string>::iterator itName;
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
+    std::string referenceMRMLAttributeName;
     const std::string& referenceRole = it->first;
-    const std::string referenceMRMLAttributeName =
-      this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
-
+    const char *attName = this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
+    if (attName != 0)
+      {
+      referenceMRMLAttributeName = std::string(attName);
+      }
     std::stringstream ss;
+
     int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
+
+    if (numReferencedNodes > 0)
+      {
+      ssRef << referenceRole << ":";
+      }
 
     for (int n=0; n < numReferencedNodes; n++)
       {
       const char * id = this->GetNthNodeReferenceID(referenceRole.c_str(), n);
 
       ss << id;
+      ssRef << id;
       if (n < numReferencedNodes-1)
         {
         ss << " ";
+        ssRef << " ";
         }
       }
     if (numReferencedNodes > 0)
       {
-      of << indent << " " << referenceMRMLAttributeName << "=\"" << ss.str().c_str() << "\"";
+      if (referenceMRMLAttributeName.length() > 0)
+        {
+        of << indent << " " << referenceMRMLAttributeName << "=\"" << ss.str().c_str() << "\"";
+        }
+      ssRef << ";";
       }
-    }
+    }//for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
+
+    if (!(ssRef.str().empty()))
+      {
+      of << indent << " " << "references=\"" << ssRef.str().c_str() << "\"";
+      }
 }
 
 //----------------------------------------------------------------------------
