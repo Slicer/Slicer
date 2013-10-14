@@ -73,7 +73,7 @@ protected:
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
   void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
-  virtual void AdditionnalInitializeStep();
+  virtual void AdditionalInitializeStep();
   void SetCameraToRenderer();
   void SetCameraToInteractor();
 

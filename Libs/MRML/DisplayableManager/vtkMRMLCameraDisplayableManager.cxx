@@ -486,7 +486,7 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::AdditionnalInitializeStep()
+void vtkMRMLCameraDisplayableManager::AdditionalInitializeStep()
 {
   assert(this->GetRenderer());
   this->SetCameraToRenderer();
