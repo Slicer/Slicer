@@ -1497,24 +1497,27 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       // --- write output CSV file
 
       // open file containing suvs and append to it.
-      ofile.open( outputFile.c_str(), ios::out | ios::app );
-      if( !ofile.is_open() )
+      if (outputFile.compare("") != 0)
         {
-        // report error, clean up, and get out.
-        std::cerr << "ERROR: cannot open nuclear medicine output csv parameter file '" << outputFile.c_str() << "', see return strings for values" << std::endl;
-        }
-      else
-        {
-        // --- for each value..
-        // --- format looks like:
-        // patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName
-        // ...
-        ss.str("");
-        ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmin << ", " << suvmax
-           << ", " << suvmean << ", " << labelName.c_str() << std::endl;
-        ofile << ss.str();
-        ofile.close();
-        std::cout << "Wrote output for label " << labelName.c_str() << " to " << outputFile.c_str() << std::endl;
+        ofile.open( outputFile.c_str(), ios::out | ios::app );
+        if( !ofile.is_open() )
+          {
+          // report error, clean up, and get out.
+          std::cerr << "ERROR: cannot open nuclear medicine output csv parameter file '" << outputFile.c_str() << "', see return strings for values" << std::endl;
+          }
+        else
+          {
+          // --- for each value..
+          // --- format looks like:
+          // patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName
+          // ...
+          ss.str("");
+          ss << list.patientName << ", " << list.studyDate << ", " << list.injectedDose  << ", "  << i << ", " << suvmin << ", " << suvmax
+             << ", " << suvmean << ", " << labelName.c_str() << std::endl;
+          ofile << ss.str();
+          ofile.close();
+          std::cout << "Wrote output for label " << labelName.c_str() << " to " << outputFile.c_str() << std::endl;
+          }
         }
       }
 
@@ -1523,24 +1526,36 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     labelstat->Delete();
     }
   // --- write output return string file
-  std::stringstream ss;
-  ss << outputLabelString << std::endl;
-  ss << outputLabelValueString << std::endl;
-  ss << outputSUVMaxString << std::endl;
-  ss << outputSUVMeanString << std::endl;
-  ss << outputSUVMinString << std::endl;
-  std::string stringOutput = ss.str();
-  stringFile.open(list.SUVOutputStringFile.c_str());
-  if (!stringFile.is_open() )
+  if (outputStringFile.compare("") != 0)
     {
-    // report error, clean up
-    std::cerr << "ERROR: cannot open nuclear medicine output string parameter file '" << list.SUVOutputStringFile.c_str() << "', output string was:\n" << stringOutput.c_str() << std::endl;
-    return EXIT_FAILURE;
+    std::stringstream ss;
+    ss << outputLabelString << std::endl;
+    ss << outputLabelValueString << std::endl;
+    ss << outputSUVMaxString << std::endl;
+    ss << outputSUVMeanString << std::endl;
+    ss << outputSUVMinString << std::endl;
+    std::string stringOutput = ss.str();
+    stringFile.open(outputStringFile.c_str());
+    if (!stringFile.is_open() )
+      {
+      // report error, clean up
+      std::cerr << "ERROR: cannot open nuclear medicine output string parameter file '" << outputStringFile.c_str() << "', output string was:\n" << stringOutput.c_str() << std::endl;
+      return EXIT_FAILURE;
+      }
+    stringFile << stringOutput;
+    stringFile.close();
+    std::cout << "Wrote return string to " << outputStringFile.c_str() << ": " << std::endl << stringOutput.c_str() << std::endl;
     }
-  stringFile << stringOutput;
-  stringFile.close();
-  std::cout << "Wrote return string to " << list.SUVOutputStringFile.c_str() << ": " << std::endl << stringOutput.c_str() << std::endl;
-
+  else
+    {
+    // if nothing was written because no output file was specified, report an
+    // error
+     if (outputFile.compare("") == 0)
+       {
+       std::cerr << "Neither the nuclear medicine output csv parameter file nor the string parameter file were specified, please specify one or the other to obtain the calculated output." << std::endl;
+       return EXIT_FAILURE;
+       }
+    }
   reader1->Delete();
   reader2->Delete();
 
