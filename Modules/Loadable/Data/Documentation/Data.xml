@@ -31,5 +31,9 @@
       <label>Filter</label>
       <description>Hide all the nodes not matching the typed string. This can be useful to quickly search for a specific node. Please note that the search is case sensitive</description>
     </parameter>
+    <parameter>
+      <label>MRML Node Inspector</label>
+      <description>Attribute list of the currently selected node. Attributes can be edited (double click in the "Attribute value" cell), added (with the "Add" button) or removed (with the "Remove" button).</description>
+    </parameter>
   </parameters>
 </executable>
