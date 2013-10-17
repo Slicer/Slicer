@@ -657,6 +657,7 @@ const char* vtkMRMLNode::GetReferenceRoleFromMRMLAttributeName(const char* attNa
       return nodeReferenceRole.c_str();
       }
     else if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) &&
+             (attributeName.length() >= nodeMRMLAttributeName.length()) &&
              attributeName.compare(
               attributeName.length() - nodeMRMLAttributeName.length(),
               nodeMRMLAttributeName.length(), nodeMRMLAttributeName) == 0)
