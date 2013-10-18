@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QDir>
 #include <QDateTime>
 
@@ -74,7 +75,7 @@ bool qSlicerSceneBundleIO::load(const qSlicerIO::IOProperties& properties)
                         QString("/__BundleLoadTemp") + 
                           QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
 
-  std::cerr << "unpacking to " << unpackPath.toStdString() << "\n";
+  qDebug() << "Unpacking bundle to " << unpackPath;
 
   if (vtksys::SystemTools::FileIsDirectory(unpackPath.toLatin1()))
     {
@@ -116,6 +117,6 @@ bool qSlicerSceneBundleIO::load(const qSlicerIO::IOProperties& properties)
     return false;
     }
 
-  std::cerr << "loaded " << unpackPath.toStdString() << "\n";
+  qDebug() << "Loaded bundle from " << unpackPath;
   return res;
 }
