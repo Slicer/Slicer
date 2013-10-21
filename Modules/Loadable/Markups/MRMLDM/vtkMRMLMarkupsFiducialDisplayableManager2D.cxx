@@ -73,6 +73,7 @@ public:
 
   virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *callData)
   {
+
     // sanity checks
     if (!this->DisplayableManager)
       {
@@ -87,6 +88,40 @@ public:
       return;
       }
     // sanity checks end
+
+    //
+    // mark the Node with an attribute to indicate if it is currently being interacted with
+    // so that other code can respond to changes only when it is not moving
+    // Markups.MovingInSliceView will be set to the layout name of
+    // our slice node while it is being actively manipulated
+    vtkSeedWidget *widget = vtkSeedWidget::SafeDownCast(this->Widget);
+    if (widget && this->DisplayableManager && this->Node)
+      {
+      vtkMRMLSliceNode *sliceNode = this->DisplayableManager->GetSliceNode();
+      if (sliceNode)
+        {
+        int modifiedWasDisabled = this->Node->GetDisableModifiedEvent();
+        this->Node->DisableModifiedEventOn();
+        if (widget->GetWidgetState() == vtkSeedWidget::MovingSeed)
+          {
+          this->Node->SetAttribute("Markups.MovingInSliceView", sliceNode->GetLayoutName());
+          std::ostringstream seedNumber;
+          unsigned int *n =  reinterpret_cast<unsigned int *>(callData);
+          seedNumber << *n;
+          this->Node->SetAttribute("Markups.MovingSeedNumber", seedNumber.str().c_str());
+          }
+        else
+          {
+          const char *movingView = this->Node->GetAttribute("Markups.MovingInSliceView");
+          if (movingView && !strcmp(movingView, sliceNode->GetLayoutName()))
+            {
+            this->Node->RemoveAttribute("Markups.MovingInSliceView");
+            }
+          }
+        this->Node->SetDisableModifiedEvent(modifiedWasDisabled);
+        }
+      }
+
 
     // check which event it is
     if (event ==  vtkCommand::PlacePointEvent)
