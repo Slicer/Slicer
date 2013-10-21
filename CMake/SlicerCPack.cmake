@@ -1,3 +1,4 @@
+
 if(Slicer_USE_PYTHONQT)
   # Python install rules are common to both 'bundled' and 'regular' package
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
@@ -39,6 +40,19 @@ if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallLibArchive.cmake)
   include(InstallRequiredSystemLibraries)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallCMakeProjects.cmake)
+
+  # Remove development files installed by teem. Ideally, teem project itself should be updated.
+  # See http://na-mic.org/Mantis/view.php?id=3455
+  set(dollar "$")
+  install(CODE "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove_directory \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}include/teem\")")
+  foreach(file
+    lib/Teem-1.10.0/TeemBuildSettings.cmake
+    lib/Teem-1.10.0/TeemConfig.cmake
+    lib/Teem-1.10.0/TeemLibraryDepends.cmake
+    lib/Teem-1.10.0/TeemUse.cmake
+    )
+    install(CODE "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${file}\")")
+  endforeach()
 else()
 
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
