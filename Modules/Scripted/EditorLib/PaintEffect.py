@@ -6,18 +6,21 @@ from __main__ import slicer
 from EditOptions import EditOptions
 from EditorLib import EditorLib
 import LabelEffect
+import numpy
+from math import sqrt
+
 
 
 #########################################################
 #
-# 
+#
 comment = """
 
   PaintEffect is a subclass of LabelEffect
   that implements the interactive paintbrush tool
   in the slicer editor
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -101,6 +104,11 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.frame.layout().addWidget(self.radius)
     self.widgets.append(self.radius)
 
+    self.sphere = qt.QCheckBox("Sphere", self.frame)
+    self.sphere.setToolTip("Use a 3D spherical brush rather than a 2D circular brush.")
+    self.frame.layout().addWidget(self.sphere)
+    self.widgets.append(self.sphere)
+
     self.smudge = qt.QCheckBox("Smudge", self.frame)
     self.smudge.setToolTip("Set the label number automatically by sampling the pixel location where the brush stroke starts.")
     self.frame.layout().addWidget(self.smudge)
@@ -113,6 +121,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
 
     EditorLib.HelpButton(self.frame, "Use this tool to paint with a round brush of the selected radius")
 
+    self.connections.append( (self.sphere, 'clicked()', self.updateMRMLFromGUI) )
     self.connections.append( (self.smudge, 'clicked()', self.updateMRMLFromGUI) )
     self.connections.append( (self.pixelMode, 'clicked()', self.updateMRMLFromGUI) )
     self.connections.append( (self.radius, 'valueChanged(double)', self.onRadiusValueChanged) )
@@ -129,7 +138,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -144,6 +153,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
       ("radius", "5"),
+      ("sphere", "0"),
       ("smudge", "0"),
       ("pixelMode", "0"),
     )
@@ -155,13 +165,15 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.parameterNode.SetDisableModifiedEvent(disableState)
 
   def updateGUIFromMRML(self,caller,event):
-    params = ("radius", "smudge", "pixelMode")
+    params = ("radius", "sphere", "smudge", "pixelMode")
     for p in params:
       if self.parameterNode.GetParameter("PaintEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
     super(PaintEffectOptions,self).updateGUIFromMRML(caller,event)
     self.disconnectWidgets()
+    sphere = not (0 == int(self.parameterNode.GetParameter("PaintEffect,sphere")))
+    self.sphere.setChecked( sphere )
     smudge = not (0 == int(self.parameterNode.GetParameter("PaintEffect,smudge")))
     self.smudge.setChecked( smudge )
     pixelMode = not (0 == int(self.parameterNode.GetParameter("PaintEffect,pixelMode")))
@@ -175,6 +187,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.radius.setValue( radius )
     self.radiusSpinBox.setValue( radius )
     for tool in self.tools:
+      tool.sphere = sphere
       tool.smudge = smudge
       tool.pixelMode = pixelMode
       tool.radius = radius
@@ -233,6 +246,10 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     super(PaintEffectOptions,self).updateMRMLFromGUI()
+    if self.sphere.checked:
+      self.parameterNode.SetParameter( "PaintEffect,sphere", "1" )
+    else:
+      self.parameterNode.SetParameter( "PaintEffect,sphere", "0" )
     if self.smudge.checked:
       self.parameterNode.SetParameter( "PaintEffect,smudge", "1" )
     else:
@@ -249,7 +266,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
 #
 # PaintEffectTool
 #
- 
+
 class PaintEffectTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -268,6 +285,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     # configuration variables
     self.delayedPaint = True
     self.parameterNode = self.editUtil.getParameterNode()
+    self.sphere = not (0 == int(self.parameterNode.GetParameter("PaintEffect,sphere")))
     self.smudge = not (0 == int(self.parameterNode.GetParameter("PaintEffect,smudge")))
     self.pixelMode = not (0 == int(self.parameterNode.GetParameter("PaintEffect,pixelMode")))
     self.radius = float(self.parameterNode.GetParameter("PaintEffect,radius"))
@@ -315,11 +333,11 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     labelImage = labelLogic.GetVolumeNode().GetImageData()
     pixel = int(labelImage.GetScalarComponentAsDouble(i,j,k,0))
     return(pixel)
-    
+
   def scaleRadius(self,scaleFactor):
     radius = float(self.parameterNode.GetParameter("PaintEffect,radius"))
     self.parameterNode.SetParameter( "PaintEffect,radius", str(radius * scaleFactor) )
-    
+
 
   def processEvent(self, caller=None, event=None):
     """
@@ -376,7 +394,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     if hasattr(self,'actor'):
       self.actor.SetPosition( self.interactor.GetEventPosition() )
       self.sliceView.scheduleRender()
-    
+
 
   def createGlyph(self, polyData):
     """
@@ -435,7 +453,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
   def paintAddPoint(self, x, y):
     """
     depending on the delayedPaint mode, either paint the
-    given point or queue it up with a marker for later 
+    given point or queue it up with a marker for later
     painting
     """
     self.paintCoordinates.append( (x, y) )
@@ -471,7 +489,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     if self.paintCoordinates != []:
       if self.undoRedo:
         self.undoRedo.saveState()
-    
+
     for xy in self.paintCoordinates:
       if self.pixelMode:
         self.paintPixel(xy[0], xy[1])
@@ -523,11 +541,12 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
   def paintBrush(self, x, y):
     """
-    paint with a brush that is circular in XY space 
+    paint with a brush that is circular (or optionally spherical) in XY space
      (could be streched or rotate when transformed to IJK)
-     - make sure to hit ever pixel in IJK space 
+     - make sure to hit every pixel in IJK space
      - apply the threshold if selected
     """
+
     sliceLogic = self.sliceWidget.sliceLogic()
     sliceNode = sliceLogic.GetSliceNode()
     labelLogic = sliceLogic.GetLabelLayer()
@@ -561,7 +580,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
     dims = labelImage.GetDimensions()
 
-    # clamp the top, bottom, left, right to the 
+    # clamp the top, bottom, left, right to the
     # valid dimensions of the label image
     tl = [0,0,0]
     tr = [0,0,0]
@@ -588,9 +607,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
         br[i] = 0
       if br[i] > dims[i]:
         br[i] = dims[i] - 1
-        
+
+
     #
-    # get the layers and nodes 
+    # get the layers and nodes
     # and ijk to ras matrices including transforms
     #
     labelLogic = self.sliceLogic.GetLabelLayer()
@@ -603,7 +623,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
     xyToRAS = sliceNode.GetXYToRAS()
     brushCenter = xyToRAS.MultiplyPoint( (x, y, 0, 1) )[:3]
+
+
     brushRadius = self.radius
+    bSphere = self.sphere
 
     parameterNode = self.editUtil.getParameterNode()
     paintLabel = int(parameterNode.GetParameter("label"))
@@ -619,6 +642,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     #
     if not hasattr(self,"painter"):
       self.painter = slicer.vtkImageSlicePaint()
+
     self.painter.SetBackgroundImage(backgroundImage)
     self.painter.SetBackgroundIJKToWorld(backgroundIJKToRAS)
     self.painter.SetWorkingImage(labelImage)
@@ -633,19 +657,106 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     self.painter.SetPaintOver(paintOver)
     self.painter.SetThresholdPaint(paintThreshold)
     self.painter.SetThresholdPaintRange(paintThresholdMin, paintThresholdMax)
+
+    if bSphere:  # fill volume of a sphere rather than a circle on the currently displayed image slice
+        # Algorithm:
+        ###########################
+        # Assume brushRadius is in mm
+        # Estimate zVoxelSize
+        # Compute number of slices spanned by sphere, that are still within the volume
+        # For each spanned slice
+        #    reposition the brushCenter using xy(z)ToRAS transform: i.e. canvas to patient world coordinates
+        #    resize the radius: brushRadiusOffset=sqrt(brushRadius*brushRadius - zOffset_mm*zOffset_mm)
+        #    invoke Paint()
+        # Finally paint on the center slice, leaving the gui on the center slice being most visibly edited
+        #------------------
+        # Estimate zVoxelSize_mm
+        brushCenter1 = xyToRAS.MultiplyPoint( (x, y, 0, 1) )[:3]
+        brushCenter2 = xyToRAS.MultiplyPoint( (x, y, 100, 1) )[:3]
+        dx1=brushCenter1[0]-brushCenter2[0]
+        dx2=brushCenter1[1]-brushCenter2[1]
+        dx3=brushCenter1[2]-brushCenter2[2]
+        distanceSpannedBy100Slices = sqrt(dx1*dx1+dx2*dx2+dx3*dx3)  # compute L2 norm
+        if distanceSpannedBy100Slices==0:
+            zVoxelSize_mm=1
+        else:
+            zVoxelSize_mm = 100/distanceSpannedBy100Slices
+        # --
+        # Compute number of slices spanned by sphere
+        nNumSlicesInEachDirection=brushRadius / zVoxelSize_mm;
+        nNumSlicesInEachDirection=nNumSlicesInEachDirection-1
+        sliceOffsetArray=numpy.concatenate((-1*numpy.arange(1,nNumSlicesInEachDirection+1,),  numpy.arange(1,nNumSlicesInEachDirection+1)))
+        for iSliceOffset in sliceOffsetArray:
+            # x,y uses slice (canvas) coordinate system and actually has a 3rd z component (index into the slice you're looking at)
+            # hence xyToRAS is really performing xyzToRAS.   RAS is patient world coordinate system. Note the 1 is because the trasform uses homogeneous coordinates
+            iBrushCenter = xyToRAS.MultiplyPoint( (x, y, iSliceOffset, 1) )[:3]
+            self.painter.SetBrushCenter( iBrushCenter[0], iBrushCenter[1], iBrushCenter[2] )
+            # [ ] Need to just continue (pass this loop iteration if the brush center is not within the volume
+            zOffset_mm=zVoxelSize_mm*iSliceOffset;
+            brushRadiusOffset=sqrt(brushRadius*brushRadius - zOffset_mm*zOffset_mm)
+            self.painter.SetBrushRadius( brushRadiusOffset )
+
+            # --
+            tlIJKtemp = xyToIJK.MultiplyPoint( (left, top, iSliceOffset, 1) )
+            trIJKtemp = xyToIJK.MultiplyPoint( (right, top, iSliceOffset, 1) )
+            blIJKtemp = xyToIJK.MultiplyPoint( (left, bottom, iSliceOffset, 1) )
+            brIJKtemp = xyToIJK.MultiplyPoint( (right, bottom, iSliceOffset, 1) )
+            # clamp the top, bottom, left, right to the
+            # valid dimensions of the label image
+            tltemp = [0,0,0]
+            trtemp = [0,0,0]
+            bltemp = [0,0,0]
+            brtemp = [0,0,0]
+            for i in xrange(3):
+              tltemp[i] = int(round(tlIJKtemp[i]))
+              if tltemp[i] < 0:
+                tltemp[i] = 0
+              if tltemp[i] >= dims[i]:
+                tltemp[i] = dims[i] - 1
+              trtemp[i] = int(round(trIJKtemp[i]))
+              if trtemp[i] < 0:
+                trtemp[i] = 0
+              if trtemp[i] > dims[i]:
+                trtemp[i] = dims[i] - 1
+              bltemp[i] = int(round(blIJKtemp[i]))
+              if bltemp[i] < 0:
+                bltemp[i] = 0
+              if bltemp[i] > dims[i]:
+                bltemp[i] = dims[i] - 1
+              brtemp[i] = int(round(brIJKtemp[i]))
+              if brtemp[i] < 0:
+                brtemp[i] = 0
+              if brtemp[i] > dims[i]:
+                brtemp[i] = dims[i] - 1
+            self.painter.SetTopLeft( tltemp[0], tltemp[1], tltemp[2] )
+            self.painter.SetTopRight( trtemp[0], trtemp[1], trtemp[2] )
+            self.painter.SetBottomLeft( bltemp[0], bltemp[1], bltemp[2] )
+            self.painter.SetBottomRight( brtemp[0], brtemp[1], brtemp[2] )
+
+
+            self.painter.Paint()
+
+
+    # paint the slice: same for circular and spherical brush modes
+    self.painter.SetTopLeft( tl[0], tl[1], tl[2] )
+    self.painter.SetTopRight( tr[0], tr[1], tr[2] )
+    self.painter.SetBottomLeft( bl[0], bl[1], bl[2] )
+    self.painter.SetBottomRight( br[0], br[1], br[2] )
+    self.painter.SetBrushCenter( brushCenter[0], brushCenter[1], brushCenter[2] )
+    self.painter.SetBrushRadius( brushRadius )
     self.painter.Paint()
 
 
 #
 # PaintEffectLogic
 #
- 
+
 class PaintEffectLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an PaintEffectTool
   or PaintEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the PaintEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -656,7 +767,7 @@ class PaintEffectLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The PaintEffect class definition 
+# The PaintEffect class definition
 #
 
 class PaintEffect(LabelEffect.LabelEffect):
