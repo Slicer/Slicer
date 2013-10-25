@@ -24,6 +24,7 @@
 #include <QSplashScreen>
 #include <QString>
 #include <QStyleFactory>
+#include <QSysInfo>
 #include <QTimer>
 
 // Slicer includes
@@ -96,6 +97,15 @@ int SlicerAppMain(int argc, char* argv[])
 {
 #if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration(); 
+#endif
+
+#ifdef Q_OS_MACX
+  if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
+    {
+    // Fix Mac OS X 10.9 (mavericks) font issue
+    // https://bugreports.qt-project.org/browse/QTBUG-32789
+    QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
+    }
 #endif
   
   QCoreApplication::setApplicationName("Slicer");
