@@ -139,7 +139,7 @@ if(TEST_midas_api_upload_extension_test)
 
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../CMake ${CMAKE_MODULE_PATH})
 
-    set(Test_TESTDATE "2011-12-26")
+    set(Test_TESTDATE "2013-10-09")
 
     # Sanity check
     set(expected_nonempty_vars Test_TESTDATE)
@@ -152,9 +152,9 @@ if(TEST_midas_api_upload_extension_test)
 
     set(server_url "http://karakoram/midas")
     set(server_email "jchris.fillionr@kitware.com")
-    set(server_apikey "a4d947d1772e227adf75639b449974d3")
+    set(server_apikey "x5Dxxz3t9hKSJ2AObxlAXWk3mRhskSXI")
 
-    set(source_checkoutdate "2011-12-26 12:21:42 -0500 (Mon, 26 Dec 2011)")
+    set(source_checkoutdate "2013-10-09 12:21:42 -0500 (Wed, 9 Oct 2013)")
     set(package_type "installer")
 
     #set(slicer_revisions "100" "101" "102" "103" "104" "105" "106")
@@ -164,8 +164,9 @@ if(TEST_midas_api_upload_extension_test)
     set(slicer_revision_105_nightly_release "4.2")
 
     set(extension_infos
-      "ExtensionA^^git^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5^^Foo^^0"
-      "ExtensionB^^git^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4^^Bar^^1")
+      "ExtensionA^^git^^git://github.com/jcfr/SimpleVTKPythonWrap.git^^7896b30d82^^Foo^^0"
+      "ExtensionB^^git^^git://github.com/jcfr/SimpleVTKPythonWrap.git^^31c6782a1e^^Bar^^1"
+      "ExtensionC^^svn^^https://subversion.assembla.com/svn/plusremote/trunk/PlusRemote/src^^9^^Far^^1")
 
     include(SlicerBlockOperatingSystemNames)
 
@@ -186,7 +187,10 @@ if(TEST_midas_api_upload_extension_test)
               set(extension_homepage "http://homepage.${extension_name}.org/foo/bar")
               set(extension_iconurl "http://homepage.${extension_name}.org/foo/bar.png")
               set(extension_contributors "Jean-Christophe Fillion-Robin (Kitware)")
-              set(extension_screenshoturls "http://homepage.${extension_name}.org/screenshot1.png http://homepage.${extension_name}.org/screenshot2.png")
+              set(extension_screenshoturls
+                "http://wiki.slicer.org/slicerWiki/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png")
+              set(extension_screenshoturls
+                "${extension_screenshoturls} http://wiki.slicer.org/slicerWiki/images/e/ea/SlicerToKiwiExporter_SaveDialog_Select-dest-directory_2.png")
 
               #set(release "${slicer_revision_${slicer_revision}_${submission_type}_release}")
 
