@@ -494,7 +494,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   XYToWorld->Identity();
   XYToWorld->Multiply4x4(rasToXY.GetPointer(), transformToWorld.GetPointer(), XYToWorld.GetPointer());
 
-  vtkNew<vtkTransform> transform;
+  vtkSmartPointer<vtkTransform> transform = rep->GetIntersectionPlaneTransform();
 
   transform->SetMatrix(XYToWorld.GetPointer());
 
