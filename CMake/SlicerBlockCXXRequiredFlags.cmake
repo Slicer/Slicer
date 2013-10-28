@@ -39,6 +39,7 @@ if(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
     set(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
     SlicerFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
     SlicerFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
+    SlicerFunctionCheckCompilerFlags("-Wno-unused-local-typedefs" cflags)
 
     slicerFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
     # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
