@@ -99,6 +99,7 @@ int SlicerAppMain(int argc, char* argv[])
   itk::itkFactoryRegistration(); 
 #endif
 
+#if QT_VERSION >= 0x040803
 #ifdef Q_OS_MACX
   if (QSysInfo::MacintoshVersion > QSysInfo::MV_10_8)
     {
@@ -106,6 +107,7 @@ int SlicerAppMain(int argc, char* argv[])
     // https://bugreports.qt-project.org/browse/QTBUG-32789
     QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
     }
+#endif
 #endif
   
   QCoreApplication::setApplicationName("Slicer");
