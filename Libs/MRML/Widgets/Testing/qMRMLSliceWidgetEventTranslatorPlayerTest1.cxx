@@ -36,6 +36,7 @@
 #include "qMRMLNodeObject.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorLogic.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
@@ -73,10 +74,12 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   vtkNew<vtkMRMLColorLogic> colorLogic;
 
   // Test case 1
   vtkNew<vtkMRMLScene> scene;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
   colorLogic->SetMRMLScene(scene.GetPointer());
 
   scene->SetURL(argv[2]);
