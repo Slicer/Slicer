@@ -830,7 +830,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
 
   QStringList unparsedArguments = options->unparsedArguments();
-  if (unparsedArguments.length() > 0)
+  if (unparsedArguments.length() > 0 &&
+      options->pythonScript().isEmpty() &&
+      options->extraPythonScript().isEmpty())
     {
     foreach(QString fileName, unparsedArguments)
       {
