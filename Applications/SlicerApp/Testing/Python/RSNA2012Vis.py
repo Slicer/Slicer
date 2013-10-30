@@ -469,7 +469,7 @@ class RSNA2012VisTest(unittest.TestCase):
     #
     import urllib
     downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=8611', 'LiverData.mrb', slicer.util.loadScene),
+        ('http://slicer.kitware.com/midas3/download?items=117033', 'LiverData.mrb', slicer.util.loadScene),
         )
 
     for url,name,loader in downloads:
