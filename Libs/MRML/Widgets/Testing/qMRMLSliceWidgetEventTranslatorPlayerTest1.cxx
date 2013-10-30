@@ -36,7 +36,7 @@
 #include "qMRMLNodeObject.h"
 
 // MRML includes
-#include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLColorLogic.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
@@ -73,8 +73,12 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   ctkQtTestingUtility* testUtility = new ctkQtTestingUtility(&etpWidget);
   etpWidget.setTestUtility(testUtility);
 
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+
   // Test case 1
   vtkNew<vtkMRMLScene> scene;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+
   scene->SetURL(argv[2]);
   scene->Connect();
 
@@ -82,6 +86,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   // search for a red slice node
   std::vector<vtkMRMLNode*> sliceNodes;
   scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
     {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
