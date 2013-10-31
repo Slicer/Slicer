@@ -61,24 +61,16 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Set URL (file name) of the scene
-  void SetURL(const char *url) {
-    this->URL = std::string(url);
-  };
+  void SetURL(const char *url);
 
   /// Get URL (file name) of the scene
-  const char *GetURL() {
-    return this->URL.c_str();
-  };
+  const char *GetURL();
 
   /// Set Root directory, where URL is pointing
-  void SetRootDirectory(const char *dir) {
-    this->RootDirectory = std::string(dir);
-  };
+  void SetRootDirectory(const char *dir);
 
   /// Get Root directory, where URL is pointing
-  const char *GetRootDirectory() {
-    return this->RootDirectory.c_str();
-  };
+  const char *GetRootDirectory();
 
   /// Create new scene from URL
   /// Returns nonzero on success
@@ -137,11 +129,8 @@ public:
   /// Add a path to the list.
   const char* GetTagByClassName(const char *className);
 
-  /// return collection of nodes
-  vtkCollection* GetNodes()
-    {
-    return this->Nodes;
-    };
+  /// Return collection of nodes
+  vtkCollection* GetNodes();
 
   /// Add a node to the scene and send NodeAboutToBeAddedEvent, NodeAddedEvent
   /// and SceneModified events.
@@ -380,50 +369,26 @@ public:
   vtkSetMacro(ReadDataOnLoad,int);
   vtkGetMacro(ReadDataOnLoad,int);
 
-  void SetErrorMessage(const std::string &error) {
-    this->ErrorMessage = error;
-  };
-
-  std::string GetErrorMessage() {
-    return this->ErrorMessage;
-  };
+  void SetErrorMessage(const std::string &error);
+  std::string GetErrorMessage();
 
   /// Set the XML string to read from by Import() if GetLoadFromXMLString() is
   /// true.
   /// \sa Import(), GetLoadFromXMLString(), GetSceneXMLString()
-  void SetSceneXMLString(const std::string &xmlString) {
-    this->SceneXMLString = xmlString;
-  };
+  void SetSceneXMLString(const std::string &xmlString);
 
   /// Returns the saved scene with an XML format if  SaveToXMLString is true
   /// and Commit() was called prior.
   /// \sa Commit(), SetSaveToXMLString()
-  const std::string& GetSceneXMLString() {
-    return this->SceneXMLString;
-  };
+  const std::string& GetSceneXMLString();
 
-  void SetErrorMessage(const char * message)
-    {
-    this->SetErrorMessage(std::string(message));
-    }
-
-  const char *GetErrorMessagePointer()
-    {
-    return (this->GetErrorMessage().c_str());
-    }
+  void SetErrorMessage(const char * message);
+  const char *GetErrorMessagePointer();
 
   unsigned long GetSceneModifiedTime();
+  void IncrementSceneModifiedTime();
 
-  void IncrementSceneModifiedTime()
-    {
-    this->SceneModifiedTime ++;
-    };
-
-  void Edited()
-    {
-    this->InvokeEvent( vtkMRMLScene::SceneEditedEvent );
-    }
-
+  void Edited();
 
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
   virtual void SetCacheManager(vtkCacheManager* );

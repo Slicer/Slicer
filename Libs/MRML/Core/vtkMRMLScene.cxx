@@ -542,6 +542,12 @@ const char* vtkMRMLScene::GetTagByClassName(const char *className)
 }
 
 //------------------------------------------------------------------------------
+vtkCollection* vtkMRMLScene::GetNodes()
+{
+  return this->Nodes;
+}
+
+//------------------------------------------------------------------------------
 namespace
 {
 int bitwiseOr(int firstValue, int secondValue)
@@ -1928,6 +1934,30 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //------------------------------------------------------------------------------
+void vtkMRMLScene::SetURL(const char *url)
+{
+  this->URL = std::string(url);
+}
+
+//------------------------------------------------------------------------------
+const char * vtkMRMLScene::GetURL()
+{
+  return this->URL.c_str();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::SetRootDirectory(const char *dir)
+{
+  this->RootDirectory = std::string(dir);
+}
+
+//------------------------------------------------------------------------------
+const char * vtkMRMLScene::GetRootDirectory()
+{
+  return this->RootDirectory.c_str();
+}
+
+//------------------------------------------------------------------------------
 int vtkMRMLScene::GetNumberOfRegisteredNodeClasses()
 {
   return static_cast<int>(this->RegisteredNodeClasses.size());
@@ -2655,7 +2685,6 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
     {
     return 0;
     }
-
 }
 
 //------------------------------------------------------------------------------
@@ -2863,6 +2892,7 @@ void vtkMRMLScene::UpdateNodeIDs()
     }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLScene::AddNodeID(vtkMRMLNode *node)
 {
   if (this->Nodes && node && node->GetID())
@@ -2872,6 +2902,7 @@ void vtkMRMLScene::AddNodeID(vtkMRMLNode *node)
     }
 }
 
+//-----------------------------------------------------------------------------
 void vtkMRMLScene::RemoveNodeID(char *nodeID)
 {
   if (this->Nodes && nodeID)
@@ -2881,7 +2912,7 @@ void vtkMRMLScene::RemoveNodeID(char *nodeID)
     }
 }
 
-
+//-----------------------------------------------------------------------------
 void vtkMRMLScene::ClearNodeIDs()
 {
   if (this->Nodes)
@@ -3060,6 +3091,41 @@ void vtkMRMLScene
   nodes->Delete();
 }
 
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::SetErrorMessage(const std::string &error)
+{
+  this->ErrorMessage = error;
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkMRMLScene::GetErrorMessage()
+{
+  return this->ErrorMessage;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::SetSceneXMLString(const std::string &xmlString)
+{
+  this->SceneXMLString = xmlString;
+}
+
+//-----------------------------------------------------------------------------
+const std::string& vtkMRMLScene::GetSceneXMLString()
+{
+  return this->SceneXMLString;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::SetErrorMessage(const char * message)
+  {
+  this->SetErrorMessage(std::string(message));
+  }
+
+//-----------------------------------------------------------------------------
+const char * vtkMRMLScene::GetErrorMessagePointer()
+  {
+  return (this->GetErrorMessage().c_str());
+  }
 
 //-----------------------------------------------------------------------------
 unsigned long vtkMRMLScene::GetSceneModifiedTime()
@@ -3069,6 +3135,18 @@ unsigned long vtkMRMLScene::GetSceneModifiedTime()
     this->SceneModifiedTime = this->Nodes->GetMTime();
     }
   return this->SceneModifiedTime;
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::IncrementSceneModifiedTime()
+{
+  this->SceneModifiedTime ++;
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::Edited()
+{
+  this->InvokeEvent(vtkMRMLScene::SceneEditedEvent);
 }
 
 //-----------------------------------------------------------------------------
