@@ -279,7 +279,10 @@ void vtkMRMLSceneViewNode::UpdateScene(vtkMRMLScene *scene)
     }
   if (this->Nodes)
     {
-    this->Nodes->CopyNodeReferences(scene);
+    // node references are in (this->Nodes) already, so they should not be modified
+    // but there could have been some node ID changes, so get them and update the
+    // references accordingly
+    this->Nodes->CopyNodeChangedIDs(scene);
     this->Nodes->UpdateNodeChangedIDs();
     this->Nodes->UpdateNodeReferences();
     }
@@ -384,6 +387,7 @@ void vtkMRMLSceneViewNode::StoreScene()
       }
     }
   this->Nodes->CopyNodeReferences(this->GetScene());
+  this->Nodes->CopyNodeChangedIDs(this->GetScene());
 }
 
 //----------------------------------------------------------------------------

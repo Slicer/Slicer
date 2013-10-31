@@ -27,6 +27,7 @@ Version:   $Revision: 1.18 $
 #include <map>
 #include <vector>
 #include <string>
+#include <set>
 
 class vtkCacheManager;
 class vtkDataIOManager;
@@ -80,14 +81,17 @@ public:
   };
 
   /// Create new scene from URL
+  /// Returns nonzero on success
   int Connect();
 
   /// Add the scene into the existing scene (no clear) from \a URL file or
   /// from \sa SceneXMLString XML string.
+  /// Returns nonzero on success
   /// \sa SetURL(), GetLoadFromXMLString(), SetSceneXMLString()
   int Import();
 
   /// Save scene into URL
+  /// Returns nonzero on success
   int Commit(const char* url=NULL);
 
   /// Remove nodes and clear undo/redo stacks
@@ -293,12 +297,15 @@ public:
   void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
   bool IsNodeReferencingNodeID(vtkMRMLNode* referencingNode, const char* id);
 
-  void ClearReferencedNodeID()
-  {
-    this->ReferencedIDs.clear();
-    this->ReferencingNodes.clear();
-    this->ReferencedIDChanges.clear();
-  };
+  /// Get the total number of node references (number of ReferencedID-ReferencingNode pairs).
+  /// Only for testing and debugging.
+  int GetNumberOfNodeReferences();
+  /// Get the ReferencingNode component of the n-th ReferencedID-ReferencingNode pair.
+  /// Only for testing and debugging.
+  vtkMRMLNode* GetNthReferencingNode(int n);
+  /// Get the ReferencedID component of the n-th ReferencedID-ReferencingNode pair.
+  /// Only for testing and debugging.
+  const char* GetNthReferencedID(int n);
 
   void RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
 
@@ -306,12 +313,16 @@ public:
 
   void RemoveReferencesToNode(vtkMRMLNode *node);
 
-  void UpdateNodeReferences();
-
-  void UpdateNodeReferences(vtkCollection* chekNodes);
+  /// Notify nodes about node ID changes.
+  /// UpdateReferenceID is called for all the nodes that refer to a node with a changed ID.
+  /// If checkNodes is not NULL, then only those nodes are notified that are part of the checkNodes collection.
+  void UpdateNodeReferences(vtkCollection* checkNodes=NULL);
 
   void CopyNodeReferences(vtkMRMLScene *scene);
 
+  void CopyNodeChangedIDs(vtkMRMLScene *scene);
+
+  /// Change node IDs based on the ReferencedIDChanges list
   void UpdateNodeChangedIDs();
 
   void RemoveUnusedNodeReferences();
@@ -344,12 +355,6 @@ public:
   /// \sa AddReferencedNodeID(), GetReferencedNodes()
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
 
-  /// Return the list of referencing nodes.
-  /// Only used for debugging
-  const std::vector< vtkSmartPointer<vtkMRMLNode> >& GetReferencingNodes();
-  /// Return the list of referenced ids.
-  /// Only used for debugging
-  const std::vector< std::string >& GetReferencedIDs();
 
   int IsFilePathRelative(const char * filepath);
 
@@ -600,6 +605,8 @@ public:
   bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = 0);
 protected:
 
+  typedef std::map< std::string, std::set<std::string> > NodeReferencesType;
+
   vtkMRMLScene();
   virtual ~vtkMRMLScene();
 
@@ -647,6 +654,8 @@ protected:
   /// Clear NodeIDs map used to speedup GetByID() method
   void ClearNodeIDs();
 
+  /// Get a NodeReferences iterator for a node reference
+  NodeReferencesType::iterator FindNodeReference(const char* referencedId, vtkMRMLNode* referencingNode);
 
   vtkCollection*  Nodes;
   unsigned long   SceneModifiedTime;
@@ -672,13 +681,12 @@ protected:
 
   std::map<std::string, int> UniqueIDs;
   std::map<std::string, int> UniqueNames;
-  std::vector<std::string>   ReservedIDs;
+  std::set<std::string>   ReservedIDs;
   
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
 
-  std::vector< std::string >          ReferencedIDs;
-  std::vector< vtkSmartPointer<vtkMRMLNode> >         ReferencingNodes;
+  NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
   std::map< std::string, std::string > ReferencedIDChanges;
   std::map< std::string, vtkSmartPointer<vtkMRMLNode> > NodeIDs;
 
@@ -694,7 +702,7 @@ protected:
 
   unsigned long NodeIDsMTime;
 
-  void RemoveAllNodesExceptSingletons();
+  void RemoveAllNodes(bool removeSingletons);
 
   vtkSetStringMacro(ClassNameList);
   vtkGetStringMacro(ClassNameList);
@@ -709,6 +717,7 @@ private:
   vtkMRMLScene(const vtkMRMLScene&);   // Not implemented
   void operator=(const vtkMRMLScene&); // Not implemented
 
+  /// Returns nonzero on success
   int LoadIntoScene(vtkCollection* scene);
 
   unsigned long ErrorCode;

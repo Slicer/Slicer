@@ -1082,7 +1082,7 @@ bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
   std::string presetFileName = this->GetModuleShareDirectory() + "/presets.xml";
   scene->SetURL(presetFileName.c_str());
   int connected = scene->Connect();
-  if (connected != 1)
+  if (!connected)
     {
     vtkErrorMacro(<< "Failed to load presets [" << presetFileName << "]");
     return false;

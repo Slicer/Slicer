@@ -322,20 +322,20 @@ bool references()
   if (sceneViewReferencedNodes->GetNumberOfItems() != 2 ||
       sceneViewReferencedNodes->GetItemAsObject(0) != sceneViewVolumeNode ||
       sceneViewReferencedNodes->GetItemAsObject(1) != sceneViewVolumeDisplayNode ||
-      sceneViewNode->GetNodes()->GetReferencingNodes().size() != 1 ||
-      sceneViewNode->GetNodes()->GetReferencingNodes()[0] != sceneViewVolumeNode)
+      sceneViewNode->GetNodes()->GetNumberOfNodeReferences() != 1 ||
+      sceneViewNode->GetNodes()->GetNthReferencingNode(0) != sceneViewVolumeNode)
     {
     std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed." << std::endl
               << sceneViewReferencedNodes->GetNumberOfItems() << " items for "
               << sceneViewVolumeNode << ": "
               << sceneViewReferencedNodes->GetItemAsObject(0) << ", "
               << sceneViewReferencedNodes->GetItemAsObject(1) << std::endl;
-    unsigned int referencingNodesSize = sceneViewNode->GetNodes()->GetReferencingNodes().size();
+    unsigned int referencingNodesSize = sceneViewNode->GetNodes()->GetNumberOfNodeReferences();
     std::cout << "Referencing nodes: " << referencingNodesSize << "(1 expected) ";
     for (unsigned int i = 0; i < referencingNodesSize; ++i)
       {
-      std::cout << sceneViewNode->GetNodes()->GetReferencingNodes()[i] << "("
-                << sceneViewNode->GetNodes()->GetReferencingNodes()[i]->GetID() << ") ";
+      std::cout << sceneViewNode->GetNodes()->GetNthReferencingNode(i) << "("
+                << sceneViewNode->GetNodes()->GetNthReferencingNode(i)->GetID() << ") ";
       }
     std::cout << std::endl;
     std::cout << referencedNodes->GetNumberOfItems() << " items in scene for "

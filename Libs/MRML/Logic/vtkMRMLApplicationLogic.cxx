@@ -392,8 +392,8 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, cons
     }
 
   this->GetMRMLScene()->SetURL( mrmlFile.c_str() );
-  int result = this->GetMRMLScene()->Connect();
-  if ( result )
+  int success = this->GetMRMLScene()->Connect();
+  if ( !success )
     {
     vtkErrorMacro("Could not connect to scene");
     return false;
