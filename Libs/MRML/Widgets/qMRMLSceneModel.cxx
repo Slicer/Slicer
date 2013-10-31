@@ -438,32 +438,66 @@ QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
 //------------------------------------------------------------------------------
 QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
 {
-  if (node == 0)
+  Q_D(const qMRMLSceneModel);
+
+  if (node == 0 || node->GetID() == 0 )
     {
     return QModelIndex();
     }
-  // QAbstractItemModel::match doesn't browse through columns
-  // we need to do it manually
-  QModelIndexList nodeIndexes = this->match(
-    this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole, QString(node->GetID()),
-    1, Qt::MatchExactly | Qt::MatchRecursive);
-  Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
-  if (nodeIndexes.size() == 0)
+
+  QModelIndex nodeIndex;
+
+  // Try to find the nodeIndex in the cache first
+  QMap<vtkMRMLNode*,QPersistentModelIndex>::iterator rowCacheIt=d->RowCache.find(node);
+  if (rowCacheIt==d->RowCache.end())
     {
-    // maybe the node hasn't been added to the scene yet...
-    // (if it's called from populateScene/inserteNode)
-    return QModelIndex();
+    // not found in cache, therefore it cannot be in the model
+    return nodeIndex;
+    }
+  if (rowCacheIt.value().isValid())
+    {
+    // An entry found in the cache. If the item at the cached index matches the requested node ID
+    // then we use it.
+    QStandardItem* nodeItem = this->itemFromIndex(rowCacheIt.value());
+    if (nodeItem!=NULL)
+      {
+      if (nodeItem->data(qMRMLSceneModel::UIDRole).toString().compare(QLatin1String(node->GetID()))==0)
+        {
+        // id matched
+        nodeIndex=rowCacheIt.value();
+        }
+      }
+    }
+
+  // The cache was not up-to-date. Do a slow linear search.
+  if (!nodeIndex.isValid())
+    {
+    // QAbstractItemModel::match doesn't browse through columns
+    // we need to do it manually
+    QModelIndexList nodeIndexes = this->match(
+      this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole, QString(node->GetID()),
+      1, Qt::MatchExactly | Qt::MatchRecursive);
+    Q_ASSERT(nodeIndexes.size() <= 1); // we know for sure it won't be more than 1
+    if (nodeIndexes.size() == 0)
+      {
+      // maybe the node hasn't been added to the scene yet...
+      // (if it's called from populateScene/inserteNode)
+      d->RowCache.remove(node);
+      return QModelIndex();
+      }
+    nodeIndex=nodeIndexes[0];
+    d->RowCache[node]=nodeIndex;
     }
   if (column == 0)
     {
     // QAbstractItemModel::match only search through the first column
     // (because scene is in the first column)
-    Q_ASSERT(nodeIndexes[0].isValid());
-    return nodeIndexes[0];
+    Q_ASSERT(nodeIndex.isValid());
+    return nodeIndex;
     }
   // Add the QModelIndexes from the other columns
-  const int row = nodeIndexes[0].row();
-  QModelIndex nodeParentIndex = nodeIndexes[0].parent();
+  const int row = nodeIndex.row();
+  QModelIndex nodeParentIndex = nodeIndex.parent();
   Q_ASSERT( column < this->columnCount(nodeParentIndex) );
   return nodeParentIndex.child(row, column);
 }
@@ -669,6 +703,8 @@ void qMRMLSceneModel::updateScene()
   qvtkDisconnect(0, vtkMRMLNode::IDChangedEvent,
                  this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
 
+  d->RowCache.clear();
+
   // Enabled so it can be interacted with
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
 
@@ -807,6 +843,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
     {
     this->insertRow(row,items);
     }
+  d->RowCache[node]=items[0]->index();
   // TODO: don't listen to nodes that are hidden from editors ?
   if (d->ListenNodeModifiedEvent == AllNodes)
     {

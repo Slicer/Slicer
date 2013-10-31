@@ -24,6 +24,7 @@
 // Qt includes
 class QStandardItemModel;
 #include <QFlags>
+#include <QMap>
 
 // qMRML includes
 #include "qMRMLSceneModel.h"
@@ -82,6 +83,13 @@ public:
   // We keep a list of QStandardItem instead of vtkMRMLNode* because they are
   // likely to be unreachable when browsing the model
   QList<QList<QStandardItem*> > Orphans;
+
+  // Map from MRML node to row.
+  // It just stores the result of the latest lookup by indexFromNode,
+  // not guaranteed to contain up-to-date information, should be just used
+  // as a search hint. If the node cannot be found at the given index then
+  // we need to browse through all model items.
+  mutable QMap<vtkMRMLNode*,QPersistentModelIndex> RowCache;
 };
 
 #endif
