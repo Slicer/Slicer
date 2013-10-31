@@ -137,232 +137,66 @@ vtkMRMLScene::vtkMRMLScene()
 
   //
   // Register all the 'built-in' nodes for the library
+  // SmartPointer is used to create an instance of the class, and destroy immediately after registration is complete.
   // - note: the scene will maintain a registered pointer to the nodes,
   //   so we delete them here (same should be done by any module that
   //   creates nodes).
   //
-  vtkMRMLScalarVolumeNode *volumenode = vtkMRMLScalarVolumeNode::New();
-  this->RegisterNodeClass( volumenode );
-  volumenode->Delete();
 
-  vtkMRMLModelNode *modelnode = vtkMRMLModelNode::New();
-  this->RegisterNodeClass( modelnode );
-  modelnode->Delete();
-
-  vtkMRMLLinearTransformNode *linxnode = vtkMRMLLinearTransformNode::New();
-  this->RegisterNodeClass( linxnode );
-  linxnode->Delete();
-
-  vtkMRMLModelStorageNode *modelstorenode = vtkMRMLModelStorageNode::New();
-  this->RegisterNodeClass( modelstorenode );
-  modelstorenode->Delete();
-
-  vtkMRMLFreeSurferModelStorageNode *surfermodelstorenode = vtkMRMLFreeSurferModelStorageNode::New();
-  this->RegisterNodeClass( surfermodelstorenode );
-  surfermodelstorenode->Delete();
-
-  vtkMRMLFreeSurferModelOverlayStorageNode *surfermodeloverlaystorenode  = vtkMRMLFreeSurferModelOverlayStorageNode::New();
-  this->RegisterNodeClass ( surfermodeloverlaystorenode );
-  surfermodeloverlaystorenode->Delete();
-
-  vtkMRMLModelDisplayNode *modeldisplaynode = vtkMRMLModelDisplayNode::New();
-  this->RegisterNodeClass( modeldisplaynode );
-  modeldisplaynode->Delete();
-
-  vtkMRMLClipModelsNode *modelclipnode = vtkMRMLClipModelsNode::New();
-  this->RegisterNodeClass( modelclipnode );
-  modelclipnode->Delete();
-
-  vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New();
-  this->RegisterNodeClass( fidln );
-  fidln->Delete();
-
-  vtkMRMLFiducialListStorageNode *fidlsn = vtkMRMLFiducialListStorageNode::New();
-  this->RegisterNodeClass(fidlsn);
-  fidlsn->Delete();
-
-  vtkMRMLROINode *roin = vtkMRMLROINode::New();
-  this->RegisterNodeClass( roin );
-  roin->Delete();
-
-  vtkMRMLROIListNode *roiln = vtkMRMLROIListNode::New();
-  this->RegisterNodeClass( roiln );
-  roiln->Delete();
-
-  vtkMRMLSliceCompositeNode *scompn = vtkMRMLSliceCompositeNode::New();
-  this->RegisterNodeClass( scompn );
-  scompn->Delete();
-
-  vtkMRMLScriptedModuleNode *scriptedNode = vtkMRMLScriptedModuleNode::New();
-  this->RegisterNodeClass( scriptedNode );
-  scriptedNode->Delete();
-
-  vtkMRMLSelectionNode *sseln = vtkMRMLSelectionNode::New();
-  this->RegisterNodeClass( sseln );
-  sseln->Delete();
-
-  vtkMRMLSliceNode *snode = vtkMRMLSliceNode::New();
-  this->RegisterNodeClass( snode );
-  snode->Delete();
-
-  vtkMRMLVolumeArchetypeStorageNode *astoren = vtkMRMLVolumeArchetypeStorageNode::New();
-  this->RegisterNodeClass( astoren );
-  astoren->Delete();
-
-  vtkMRMLScalarVolumeDisplayNode *vdisn = vtkMRMLScalarVolumeDisplayNode::New();
-  this->RegisterNodeClass( vdisn );
-  vdisn->Delete();
-
-  vtkMRMLLabelMapVolumeDisplayNode *lmdisn = vtkMRMLLabelMapVolumeDisplayNode::New();
-  this->RegisterNodeClass( lmdisn );
-  lmdisn->Delete();
-
-  vtkMRMLColorNode *vcn = vtkMRMLColorNode::New();
-  this->RegisterNodeClass ( vcn );
-  vcn->Delete();
-
-  vtkMRMLDiffusionWeightedVolumeNode *dwvn = vtkMRMLDiffusionWeightedVolumeNode::New();
-  this->RegisterNodeClass (dwvn);
-  dwvn->Delete();
-
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScalarVolumeNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLLinearTransformNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFreeSurferModelStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFreeSurferModelOverlayStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLClipModelsNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLFiducialListStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROINode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceCompositeNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScriptedModuleNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSelectionNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScalarVolumeDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLLabelMapVolumeDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionWeightedVolumeNode >::New() );
 #ifdef MRML_USE_vtkTeem
-  vtkMRMLDiffusionTensorVolumeNode *dtvn = vtkMRMLDiffusionTensorVolumeNode::New();
-  this->RegisterNodeClass (dtvn);
-  dtvn->Delete();
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn =
-                         vtkMRMLDiffusionTensorVolumeDisplayNode::New();
-  this->RegisterNodeClass (dtvdn);
-  dtvdn->Delete();
-
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *dtvsdn =
-                         vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
-  this->RegisterNodeClass (dtvsdn);
-  dtvsdn->Delete();
-
-  vtkMRMLNRRDStorageNode *nrrd = vtkMRMLNRRDStorageNode::New();
-  this->RegisterNodeClass ( nrrd );
-  nrrd->Delete();
-
-  vtkMRMLVectorVolumeNode *vvoln = vtkMRMLVectorVolumeNode::New();
-  this->RegisterNodeClass( vvoln );
-  vvoln->Delete();
-
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionTensorVolumeNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionTensorVolumeDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionTensorVolumeSliceDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLNRRDStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVectorVolumeNode >::New() );
 #endif
-
-  vtkMRMLVectorVolumeDisplayNode *vvoldn = vtkMRMLVectorVolumeDisplayNode::New();
-  this->RegisterNodeClass( vvoldn );
-  vvoldn->Delete();
-
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwvdn =
-                         vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
-  this->RegisterNodeClass (dwvdn);
-  dwvdn->Delete();
-
-
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *dtdpn =
-                         vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
-  this->RegisterNodeClass (dtdpn);
-  dtdpn->Delete();
-
-  vtkMRMLCameraNode *camera = vtkMRMLCameraNode::New();
-  this->RegisterNodeClass ( camera );
-  camera->Delete();
-
-  vtkMRMLViewNode *view = vtkMRMLViewNode::New();
-  this->RegisterNodeClass ( view );
-  view->Delete();
-
-  vtkMRMLLayoutNode *layout = vtkMRMLLayoutNode::New();
-  this->RegisterNodeClass ( layout );
-  layout->Delete();
-
-  vtkMRMLHierarchyNode *hier = vtkMRMLHierarchyNode::New();
-  if (hier)
-    {
-    this->RegisterNodeClass ( hier );
-    hier->Delete();
-    }
-  
-  vtkMRMLHierarchyStorageNode *hiersn = vtkMRMLHierarchyStorageNode::New();
-  if (hiersn)
-    {
-    this->RegisterNodeClass ( hiersn );
-    hiersn->Delete();
-    }
-  
-  vtkMRMLDisplayableHierarchyNode *dhier = vtkMRMLDisplayableHierarchyNode::New();
-  this->RegisterNodeClass ( dhier );
-  dhier->Delete();
-
-  vtkMRMLModelHierarchyNode *mhier = vtkMRMLModelHierarchyNode::New();
-  this->RegisterNodeClass ( mhier );
-  mhier->Delete();
-
-  vtkMRMLSnapshotClipNode *cshot = vtkMRMLSnapshotClipNode::New();
-  this->RegisterNodeClass ( cshot );
-  cshot->Delete();
-
-  vtkMRMLUnstructuredGridNode *unstg = vtkMRMLUnstructuredGridNode::New();
-  this->RegisterNodeClass ( unstg );
-  unstg->Delete();
-
-  vtkMRMLUnstructuredGridDisplayNode *unstgd = vtkMRMLUnstructuredGridDisplayNode::New();
-  this->RegisterNodeClass ( unstgd );
-  unstgd->Delete();
-
-  vtkMRMLUnstructuredGridStorageNode *unstgs = vtkMRMLUnstructuredGridStorageNode::New();
-  this->RegisterNodeClass ( unstgs );
-  unstgs->Delete();
-
-  vtkMRMLColorTableNode *ctn = vtkMRMLColorTableNode::New();
-  this->RegisterNodeClass (ctn);
-  ctn->Delete();
-
-  vtkMRMLColorTableStorageNode *ctsn = vtkMRMLColorTableStorageNode::New();
-  this->RegisterNodeClass ( ctsn );
-  ctsn->Delete();
-
-  vtkMRMLTransformStorageNode *tsn = vtkMRMLTransformStorageNode::New();
-  this->RegisterNodeClass( tsn );
-  tsn->Delete();
-
-  vtkMRMLNonlinearTransformNode *ntn = vtkMRMLNonlinearTransformNode::New();
-  this->RegisterNodeClass( ntn );
-  ntn->Delete();
-
-  vtkMRMLGridTransformNode *gtn = vtkMRMLGridTransformNode::New();
-  this->RegisterNodeClass( gtn );
-  gtn->Delete();
-
-  vtkMRMLBSplineTransformNode *btn = vtkMRMLBSplineTransformNode::New();
-  this->RegisterNodeClass( btn );
-  btn->Delete();
-
-  vtkMRMLDoubleArrayNode *dan = vtkMRMLDoubleArrayNode::New();
-  this->RegisterNodeClass( dan );
-  dan->Delete();
-
-  vtkMRMLDoubleArrayStorageNode *dasn = vtkMRMLDoubleArrayStorageNode::New();
-  this->RegisterNodeClass(dasn);
-  dasn->Delete();
-
-  vtkMRMLCrosshairNode *chn = vtkMRMLCrosshairNode::New();
-  this->RegisterNodeClass(chn);
-  chn->Delete();
-
-  vtkMRMLInteractionNode *intn = vtkMRMLInteractionNode::New();
-  this->RegisterNodeClass(intn);
-  intn->Delete();
-
-  vtkMRMLChartNode *chartnode = vtkMRMLChartNode::New(); 
-  this->RegisterNodeClass( chartnode );
-  chartnode->Delete();
-
-  vtkMRMLChartViewNode *chartviewnode = vtkMRMLChartViewNode::New(); 
-  this->RegisterNodeClass( chartviewnode );
-  chartviewnode->Delete();
-
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVectorVolumeDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionWeightedVolumeDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionTensorDisplayPropertiesNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLCameraNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLViewNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLLayoutNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLHierarchyNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLHierarchyStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDisplayableHierarchyNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLModelHierarchyNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSnapshotClipNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLUnstructuredGridNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLUnstructuredGridDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLUnstructuredGridStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLNonlinearTransformNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLGridTransformNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLBSplineTransformNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLCrosshairNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLInteractionNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartViewNode >::New() );
 }
 
 //------------------------------------------------------------------------------
