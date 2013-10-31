@@ -499,10 +499,27 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
   int index = -1;
   vtkMRMLNode* parent = this->parentNode(node);
 
-  // otherwise, iterate through the scene
+  // Iterate through the scene and see if there is any matching node.
+  // First try to find based on ptr value, as it's much faster than comparing string IDs.
   vtkCollection* nodes = d->MRMLScene->GetNodes();
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);
+       (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
+    {
+    // note: parent can be NULL, it means that the scene is the parent
+    if (parent == this->parentNode(n))
+      {
+      ++index;
+      if (node==n)
+        {
+        // found the node
+        return index;
+        }
+      }
+    }
+
+  // Not found by node ptr, try to find it by ID (much slower)
   for (nodes->InitTraversal(it);
        (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
@@ -517,6 +534,8 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
         }
       }
     }
+
+  // Not found
   return -1;
 }
 
@@ -1125,7 +1144,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
   Q_UNUSED(scene);
   Q_ASSERT(scene == d->MRMLScene);
 
-  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
     {
     return;
     }
@@ -1178,7 +1197,7 @@ void qMRMLSceneModel::onMRMLSceneNodeRemoved(vtkMRMLScene* scene, vtkMRMLNode* n
   Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
   Q_UNUSED(node);
-  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
     {
     return;
     }
@@ -1277,7 +1296,7 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
 {
   Q_D(qMRMLSceneModel);
 
-  if (d->LazyUpdate && d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing() || (d->LazyUpdate && d->MRMLScene->IsBatchProcessing()))
     {
     return;
     }
@@ -1408,11 +1427,7 @@ void qMRMLSceneModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 {
   Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
-  //this->endResetModel();
-  if (d->LazyUpdate)
-    {
-    this->updateScene();
-    }
+  this->updateScene();
 }
 
 //------------------------------------------------------------------------------
