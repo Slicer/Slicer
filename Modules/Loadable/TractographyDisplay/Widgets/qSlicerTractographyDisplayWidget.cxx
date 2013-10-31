@@ -40,7 +40,9 @@ qSlicerTractographyDisplayWidgetPrivate::qSlicerTractographyDisplayWidgetPrivate
                                       (qSlicerTractographyDisplayWidget& object)
   : q_ptr(&object)
 {
+  this->FiberBundleNode = 0;
   this->FiberBundleDisplayNode = 0;
+  this->DiffusionTensorDisplayPropertiesNode = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -132,6 +134,13 @@ vtkMRMLFiberBundleNode* qSlicerTractographyDisplayWidget::FiberBundleNode()const
 vtkMRMLFiberBundleDisplayNode* qSlicerTractographyDisplayWidget::FiberBundleDisplayNode()const
 {
   Q_D(const qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleNode)
+    {
+    // when the FiberBundleNode is being deleted we may still have a
+    // non-zero pointer to (a formerly valid) FiberBundleDisplayNode,
+    // but this display node is not applicable anymore
+    return 0;
+    }
   return d->FiberBundleDisplayNode;
 }
 
@@ -139,8 +148,8 @@ vtkMRMLFiberBundleDisplayNode* qSlicerTractographyDisplayWidget::FiberBundleDisp
 vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerTractographyDisplayWidget::DiffusionTensorDisplayPropertiesNode()const
 {
   Q_D(const qSlicerTractographyDisplayWidget);
-  return d->FiberBundleDisplayNode ?
-    d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() : 0;
+  return this->FiberBundleDisplayNode() ?
+    this->FiberBundleDisplayNode()->GetDiffusionTensorDisplayPropertiesNode() : 0;
 }
 
 //------------------------------------------------------------------------------
@@ -153,11 +162,9 @@ void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLNode* node)
 void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* fiberBundleNode)
 {
   Q_D(qSlicerTractographyDisplayWidget);
-  vtkMRMLFiberBundleNode *oldNode = 
-    this->FiberBundleNode();
-  
-  d->FiberBundleNode = fiberBundleNode;
 
+  vtkMRMLFiberBundleNode *oldNode = d->FiberBundleNode;
+  d->FiberBundleNode = fiberBundleNode;
   qvtkReconnect( oldNode, this->FiberBundleNode(),
                 vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
 
@@ -176,15 +183,18 @@ void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLNode* no
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode)
+void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode* fiberBundleDisplayNode)
 {
   Q_D(qSlicerTractographyDisplayWidget);
-  vtkMRMLFiberBundleDisplayNode *oldDisplayNode = 
-    this->FiberBundleDisplayNode();
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *oldDisplayPropertiesNode =
-    this->DiffusionTensorDisplayPropertiesNode();
-  
-  d->FiberBundleDisplayNode = FiberBundleDisplayNode;
+
+  vtkMRMLFiberBundleDisplayNode *oldDisplayNode = d->FiberBundleDisplayNode;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *oldDisplayPropertiesNode = d->DiffusionTensorDisplayPropertiesNode;
+  d->FiberBundleDisplayNode = fiberBundleDisplayNode;
+  d->DiffusionTensorDisplayPropertiesNode = this->DiffusionTensorDisplayPropertiesNode();
+  qvtkReconnect( oldDisplayNode, d->FiberBundleDisplayNode,
+                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
+  qvtkReconnect( oldDisplayPropertiesNode, d->DiffusionTensorDisplayPropertiesNode,
+                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
   
   if (vtkMRMLFiberBundleLineDisplayNode::SafeDownCast(d->FiberBundleDisplayNode))
     {
@@ -197,11 +207,6 @@ void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLFiberBun
     d->MaterialPropertyGroupBox->setHidden(false);
     }
 
-
-  qvtkReconnect( oldDisplayNode, this->FiberBundleDisplayNode(),
-                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
-  qvtkReconnect( oldDisplayPropertiesNode, this->DiffusionTensorDisplayPropertiesNode(),
-                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
   this->updateWidgetFromMRML();
 }
 
