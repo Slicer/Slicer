@@ -72,7 +72,14 @@ public:
 
   ///
   /// Set visibility on all children of the node recursively
-  static void SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *parentNode, int visibilty);
+  static void SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *parentNode, int visibility);
+
+  ///
+  /// Children visibility setting will be performed in batch processing mode
+  /// if the number of children nodes are more than this number
+  /// (the same value is used by all the logic instances)
+  vtkSetMacro(ChildrenVisibilitySetBatchUpdateThreshold, int);
+  vtkGetMacro(ChildrenVisibilitySetBatchUpdateThreshold, int);
 
 protected:
   vtkMRMLModelHierarchyLogic();
@@ -100,6 +107,7 @@ protected:
   unsigned long ModelHierarchyNodesMTime;
   unsigned long HierarchyChildrenNodesMTime;
 
+  static int ChildrenVisibilitySetBatchUpdateThreshold;
 };
 
 #endif

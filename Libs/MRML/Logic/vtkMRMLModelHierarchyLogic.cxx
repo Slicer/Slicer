@@ -26,6 +26,12 @@
 vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLModelHierarchyLogic);
 
+// The number should large enough so smaller branches can be shown/hidden
+// without entering batch processing mode. The number should be small enough
+// so that showing/hiding nodes one-by one doesn't take too long time.
+// 30 nodes seems to be a reasonble compromise.
+int vtkMRMLModelHierarchyLogic::ChildrenVisibilitySetBatchUpdateThreshold = 30;
+
 //----------------------------------------------------------------------------
 vtkMRMLModelHierarchyLogic::vtkMRMLModelHierarchyLogic()
 {
@@ -227,6 +233,11 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
 void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode,
                                                       int visibility)
 {
+  if (displayableHierarchyNode==NULL)
+  {
+    std::cerr << "vtkMRMLModelHierarchyLogic::SetChildrenVisibility failed: displayableHierarchyNode is invalid" << std::endl;
+    return;
+  }
   vtkMRMLDisplayNode *displayNode = displayableHierarchyNode->GetDisplayNode();
   if (displayNode)
     {
@@ -237,6 +248,27 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
   displayableHierarchyNode->GetAllChildrenNodes(children);
   vtkMRMLModelNode *model = NULL;
   vtkMRMLNode      *node = NULL;
+  // When there are many child nodes in a hierarchy then show/hide is much more efficient if batch processing is enabled.
+  // However, if there are few nodes only then a full refresh at the end of a batch processing takes longer than doing
+  // the update on each node separately.
+  bool batchProcess = (children.size() > vtkMRMLModelHierarchyLogic::ChildrenVisibilitySetBatchUpdateThreshold);
+  vtkMRMLScene* scene=NULL;
+  if (batchProcess)
+    {
+    if (!children.empty() && children.front()!=NULL)
+      {
+      scene=children.front()->GetScene();
+      }
+    if (scene!=NULL)
+      {
+      scene->StartState(vtkMRMLScene::BatchProcessState);
+      }
+    else
+      {
+      vtkWarningWithObjectMacro(displayableHierarchyNode,"SetChildrenVisibility cannot be performed using batch processing because scene is invalid");
+      batchProcess=false;
+      }
+    }
   for (unsigned int i=0; i<children.size(); i++)
     {
     node = children[i]->GetAssociatedNode();
@@ -259,5 +291,8 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
       displayNode->SetVisibility(visibility);
       }
     }
+  if (batchProcess && scene!=NULL)
+    {
+    scene->EndState(vtkMRMLScene::BatchProcessState);
+    }
 }
-
