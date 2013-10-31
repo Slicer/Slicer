@@ -141,6 +141,7 @@ void vtkEventBroker::DetachObservations()
       (*oiter)->Delete();
       }
     }
+  this->SubjectMap.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -151,10 +152,8 @@ vtkObservation *vtkEventBroker::AddObservation (
 
   vtkObservation *observation = vtkObservation::New();
   observation->SetEventBroker( this );
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  this->SubjectMap[subjectKey].push_back( observation );
-  KeyType observerKey = reinterpret_cast<KeyType>(observer);
-  this->ObserverMap[observerKey].push_back( observation );
+  this->SubjectMap[subject].insert( observation );
+  this->ObserverMap[observer].insert( observation );
   observation->AssignSubject( subject );
   observation->SetEvent( event );
   observation->AssignObserver( observer );
@@ -184,8 +183,7 @@ vtkObservation *vtkEventBroker::AddObservation (
 {       
   vtkObservation *observation = vtkObservation::New();
   observation->SetEventBroker( this );
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  this->SubjectMap[subjectKey].push_back( observation );
+  this->SubjectMap[subject].insert( observation );
   observation->AssignSubject( subject );
 
   // figure out event either as a predefined string, or
@@ -275,13 +273,13 @@ void vtkEventBroker::RemoveObservation ( vtkObservation *observation )
     {
     return;
     }
-  std::vector< vtkObservation *> removeList;
-  removeList.push_back( observation );
+  ObservationVector removeList;
+  removeList.insert( observation );
   this->RemoveObservations( removeList );
 }
 
 //----------------------------------------------------------------------------
-void vtkEventBroker::RemoveObservations (std::vector< vtkObservation *>observations)
+void vtkEventBroker::RemoveObservations (ObservationVector observations)
 {
   // remove passed observations from:
   // - broker's observation maps
@@ -291,77 +289,41 @@ void vtkEventBroker::RemoveObservations (std::vector< vtkObservation *>observati
   // - detach from subject (and observer)
   // - delete the observation
 
-  // for each of the pass observations
-  // - loop through the list of observers associated with the subject and make
-  //   a new vector that doesn't include the passed observation
-  // then do the same for the observer (if there is one)
-  ObservationVector newObservations;
-  ObservationVector::iterator obsIter, nextObsIter, inObsIter;
+  ObservationVector::iterator inObsIter;
 
   for(inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
     {
     vtkObservation *inObs = (*inObsIter);
-    KeyType subjectKey = reinterpret_cast<KeyType>((*inObsIter)->GetSubject());
-    ObservationVector& subjectObservations = this->SubjectMap[subjectKey];
-    newObservations.clear();
-    newObservations.reserve(subjectObservations.size());
-    for(obsIter=subjectObservations.begin(); obsIter != subjectObservations.end(); obsIter++)
-      {
-      vtkObservation *obs = (*obsIter);
-      if (inObs != obs)
-        {
-        newObservations.push_back(obs);
-        }
-      }
-    subjectObservations = newObservations;
+    ObservationVector& subjectObservations = this->SubjectMap[(*inObsIter)->GetSubject()];
+    subjectObservations.erase(subjectObservations.find(inObs));
     }
 
   for(inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
     {
     vtkObservation *inObs = (*inObsIter);
-    newObservations.clear();
-    KeyType observerKey = reinterpret_cast<KeyType>(inObs->GetObserver());
-    ObservationVector& observerObservations = this->ObserverMap[observerKey];
-    newObservations.reserve(observerObservations.size());
-    for(obsIter=observerObservations.begin(); obsIter != observerObservations.end(); obsIter++)
-      {
-      vtkObservation *obs = (*obsIter);
-      if (obs != inObs)
-        {
-        newObservations.push_back(obs);
-        }
-      }
-    observerObservations = newObservations;
+    ObservationVector& observerObservations = this->ObserverMap[inObs->GetObserver()];
+    observerObservations.erase(observerObservations.find(inObs));
     }
 
   // remove from event queue
-  std::deque< vtkObservation *> newEventQueue;
   std::deque< vtkObservation *>::iterator queueIter; 
-  for(queueIter=this->EventQueue.begin(); queueIter != this->EventQueue.end(); queueIter++)  
+  for(queueIter=this->EventQueue.begin(); queueIter != this->EventQueue.end();)
     { 
     // foreach of the broker's observations see if it is in the list of items to be removed
-    std::vector< vtkObservation *>::iterator searchIter;
-    bool inRemoveList = false;
-    for(searchIter=observations.begin(); searchIter != observations.end(); searchIter++)  
+    if (observations.find(*queueIter)!=observations.end())
       {
-      if (*queueIter == *searchIter)
-        {
-        inRemoveList = true;
-        break;
-        }
+      // these event is related to the observations to be deleted
+      queueIter=this->EventQueue.erase(queueIter);
       }
-    if ( !inRemoveList )
+    else
       {
-      newEventQueue.push_back( *queueIter );
+      ++queueIter;
       }
     }
-  this->EventQueue = newEventQueue;
 
   // detach and delete each of the observations
-  std::vector< vtkObservation *>::iterator removeIter;
-  for(removeIter=observations.begin(); removeIter != observations.end(); removeIter++)  
+  for(ObservationVector::iterator removeIter=observations.begin(); removeIter != observations.end(); removeIter++)
     {
-
     (*removeIter)->SetInEventQueue( 0 );
     this->DetachObservation( *removeIter );
     (*removeIter)->Delete();
@@ -399,22 +361,21 @@ void vtkEventBroker::RemoveObservationsForSubjectByTag (vtkObject *subject, unsi
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker
+vtkEventBroker::ObservationVector vtkEventBroker
 ::GetSubjectObservations (vtkObject *observer)
 {
   // find matching observations to remove
-  KeyType observerKey = reinterpret_cast<KeyType>(observer);
-  std::vector< vtkObservation *> observationList = this->ObserverMap[observerKey];
+  ObservationVector observationList = this->ObserverMap[observer];
 
   return( observationList );
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker::GetObservations (
+vtkEventBroker::ObservationVector vtkEventBroker::GetObservations (
   vtkObject *subject, unsigned long event,
-  vtkObject *observer, vtkCallbackCommand *notify)
+  vtkObject *observer, vtkCallbackCommand *notify, unsigned int maxReturnedObservations/*=0*/)
 {
-  std::vector< vtkObservation *> observationList;
+  ObservationVector observationList;
   // Special case for fast return
   if (event == 0 && observer == 0 && notify == 0)
     {
@@ -422,42 +383,53 @@ std::vector< vtkObservation *> vtkEventBroker::GetObservations (
     return observationList;
     }
   // find matching observations to remove
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  std::vector< vtkObservation *>& subjectList = this->SubjectMap[subjectKey];
-  observationList.reserve(subjectList.size()); // speed-up to avoid push_back realloc
+  ObservationVector& subjectList = this->SubjectMap[subject];
 
-  for(std::vector< vtkObservation *>::iterator obsIter = subjectList.begin();
+  for(ObservationVector::iterator obsIter = subjectList.begin();
       obsIter != subjectList.end();
       ++obsIter)
     {
-    if ( ((*obsIter)->GetObserver() == observer || observer == 0) &&
-         //((*obsIter)->GetSubject() == subject || subject == 0) &&
-         ((*obsIter)->GetEvent() == event || event == 0) && 
-         ((*obsIter)->GetCallbackCommand() == notify || notify == 0))
+    if ( (observer == 0 || (*obsIter)->GetObserver() == observer) &&
+         //(subject == 0 || (*obsIter)->GetSubject() == subject) &&
+         (event == 0 || (*obsIter)->GetEvent() == event) &&
+         (notify == 0 || (*obsIter)->GetCallbackCommand() == notify))
       {
-      observationList.push_back( *obsIter );
+      observationList.insert( *obsIter );
+      if (maxReturnedObservations && observationList.size()>=maxReturnedObservations)
+        {
+        // reached enough number of requested observations
+        break;
+        }
       }
     }
   return observationList;
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkObservation *> vtkEventBroker::GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag)
+bool vtkEventBroker::GetObservationExist (
+  vtkObject *subject, unsigned long event,
+  vtkObject *observer, vtkCallbackCommand *notify)
+{
+  // request up to 1 element to see if any observation exist
+  ObservationVector observationList = GetObservations (subject, event, observer, notify, 1);
+  return (observationList.size()>0);
+}
+
+//----------------------------------------------------------------------------
+vtkEventBroker::ObservationVector vtkEventBroker::GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag)
 {
   // find matching observations to remove
   // - all tags match 0
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  std::vector< vtkObservation *>& subjectList = this->SubjectMap[subjectKey];
-  std::vector< vtkObservation *> observationList;
-  observationList.reserve(subjectList.size());
-  for (std::vector< vtkObservation *>::iterator obsIter = subjectList.begin();
+  ObservationVector& subjectList = this->SubjectMap[subject];
+  ObservationVector observationList;
+  for (ObservationVector::iterator obsIter = subjectList.begin();
        obsIter != subjectList.end(); obsIter++)
     {
     vtkObservation *obs = *obsIter;
     if ( ( obs->GetSubject() == subject ) &&
          ( (tag == 0) || (obs->GetEventTag() == tag) ) )
       {
-      observationList.push_back( obs );
+      observationList.insert( obs );
       }
     }
   return ( observationList );
@@ -467,9 +439,8 @@ std::vector< vtkObservation *> vtkEventBroker::GetObservationsForSubjectByTag (v
 vtkCollection *vtkEventBroker::GetObservationsForSubject ( vtkObject *subject )
 {
   vtkCollection *collection = vtkCollection::New();
-  KeyType subjectKey = reinterpret_cast<KeyType>(subject);
-  std::vector< vtkObservation *>& subjectList = this->SubjectMap[subjectKey];
-  for(std::vector< vtkObservation *>::iterator iter=subjectList.begin();
+  ObservationVector& subjectList = this->SubjectMap[subject];
+  for(ObservationVector::iterator iter=subjectList.begin();
       iter != subjectList.end(); iter++)
     {
     if ( (*iter)->GetSubject() == subject )
@@ -484,9 +455,8 @@ vtkCollection *vtkEventBroker::GetObservationsForSubject ( vtkObject *subject )
 vtkCollection *vtkEventBroker::GetObservationsForObserver ( vtkObject *observer )
 {
   vtkCollection *collection = vtkCollection::New();
-  KeyType observerKey = reinterpret_cast<KeyType>(observer);
-  std::vector< vtkObservation *>& observerList = this->ObserverMap[observerKey];
-  for (std::vector< vtkObservation *>::iterator iter = observerList.begin();
+  ObservationVector& observerList = this->ObserverMap[observer];
+  for (ObservationVector::iterator iter = observerList.begin();
        iter != observerList.end(); iter++)
     {
     if ( (*iter)->GetObserver() == observer )
@@ -504,7 +474,7 @@ vtkCollection *vtkEventBroker::GetObservationsForCallback ( vtkCallbackCommand *
   ObjectToObservationVectorMap::iterator it;
   for (it = this->ObserverMap.begin(); it != this->ObserverMap.end(); ++it)
     {
-    std::vector< vtkObservation *>::iterator iter;
+    ObservationVector::iterator iter;
     for(iter=it->second.begin(); iter != it->second.end(); iter++)
       {
       if ( *iter && (*iter)->GetCallbackCommand() == callback )
@@ -542,7 +512,9 @@ vtkObservation *vtkEventBroker::GetNthObservation ( int n )
     {
     if ( static_cast<size_t>(n) < count + iter->second.size())
       {
-      return (iter->second[n-count]);
+      ObservationVector::iterator it=iter->second.begin();
+      std::advance(it, n-count);
+      return (*it);
       }
     else
       {
@@ -736,10 +708,9 @@ void vtkEventBroker::ProcessEvent ( vtkObservation *observation, vtkObject *call
   if ( eid == vtkCommand::DeleteEvent )
     {
     // iterate list of observations for the deleted object (caller) as subject
-    std::vector< vtkObservation *>::iterator obsIter; 
-    KeyType subjectKey = reinterpret_cast<KeyType>(caller);
-    std::vector< vtkObservation *>& subjectList = this->SubjectMap[subjectKey];
-    for(obsIter=subjectList.begin(); obsIter != subjectList.end(); obsIter++)
+    ObservationVector::iterator obsIter;
+    ObservationVector& subjectList = this->SubjectMap[caller];
+    for(obsIter=subjectList.begin(); obsIter != subjectList.end(); ++obsIter)
       {
       if ( (*obsIter)->GetEvent() == vtkCommand::DeleteEvent )
         {

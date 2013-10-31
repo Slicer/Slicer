@@ -235,7 +235,7 @@ int vtkObserverManager::GetObservationsCount(vtkObject *nodePtr, unsigned long e
 {
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   vtkObject *observer = this->GetObserver();
-  std::vector<vtkObservation*> observations =
+  vtkEventBroker::ObservationVector observations =
     broker->GetObservations(nodePtr, event, observer, this->CallbackCommand);
   return static_cast<int>(observations.size());
 }

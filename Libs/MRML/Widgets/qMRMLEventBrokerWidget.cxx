@@ -101,10 +101,10 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
     reinterpret_cast<void *>(
       item->data(0, Qt::UserRole).toLongLong()));
 
-  std::vector< vtkObservation *> observations =
-    vtkEventBroker::GetInstance()->GetObservations(subject, event, observer);
+  vtkEventBroker::ObservationVector observations =
+    vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, 0, 1);
   Q_ASSERT(observations.size());
-  return observations.size() ? observations[0] : 0; 
+  return observations.size() ? (*observations.begin()) : 0;
 }
 
 //------------------------------------------------------------------------------

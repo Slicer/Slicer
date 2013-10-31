@@ -1025,28 +1025,25 @@ void vtkMRMLModelDisplayableManager::UpdateModel(vtkMRMLDisplayableNode *model)
   this->UpdateModelPolyData(model);
 
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
-  std::vector< vtkObservation *> observations;
-  // observe polydata
-  observations = broker->GetObservations(model, vtkMRMLModelNode::PolyDataModifiedEvent,
-                                         this, this->GetMRMLNodesCallbackCommand());
-  if (observations.size() == 0)
+  vtkEventBroker::ObservationVector observations;
+  // observe polydata;
+  if (!broker->GetObservationExist(model, vtkMRMLModelNode::PolyDataModifiedEvent,
+                                         this, this->GetMRMLNodesCallbackCommand()))
     {
     broker->AddObservation(model, vtkMRMLModelNode::PolyDataModifiedEvent,
                            this, this->GetMRMLNodesCallbackCommand());
     this->Internal->DisplayableNodes[model->GetID()] = model;
     }
   // observe display node
-  observations = broker->GetObservations(model, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                                         this, this->GetMRMLNodesCallbackCommand());
-  if (observations.size() == 0)
+  if (!broker->GetObservationExist(model, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                                         this, this->GetMRMLNodesCallbackCommand()))
     {
     broker->AddObservation(model, vtkMRMLDisplayableNode::DisplayModifiedEvent,
                            this, this->GetMRMLNodesCallbackCommand());
     }
 
-  observations = broker->GetObservations(model, vtkMRMLTransformableNode::TransformModifiedEvent,
-                                         this, this->GetMRMLNodesCallbackCommand());
-  if (observations.size() == 0)
+  if (!broker->GetObservationExist(model, vtkMRMLTransformableNode::TransformModifiedEvent,
+                                         this, this->GetMRMLNodesCallbackCommand()))
     {
     broker->AddObservation(model, vtkMRMLTransformableNode::TransformModifiedEvent,
                            this, this->GetMRMLNodesCallbackCommand());
@@ -1334,7 +1331,7 @@ void vtkMRMLModelDisplayableManager::RemoveModelObservers(int clearCache)
 void vtkMRMLModelDisplayableManager::RemoveDisplayableNodeObservers(vtkMRMLDisplayableNode *model)
 {
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
-  std::vector< vtkObservation *> observations;
+  vtkEventBroker::ObservationVector observations;
   if (model != 0)
     {
     observations = broker->GetObservations(
@@ -1353,7 +1350,7 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayableNodeObservers(vtkMRMLDispl
 void vtkMRMLModelDisplayableManager::RemoveHierarchyObservers(int clearCache)
 {
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
-  std::vector< vtkObservation *> observations;
+  vtkEventBroker::ObservationVector observations;
   std::map<std::string, int>::iterator iter;
 
   for(iter=this->Internal->RegisteredModelHierarchies.begin();

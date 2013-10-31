@@ -25,7 +25,7 @@ class vtkTimerLog;
 // STD includes
 #include <deque>
 #include <vector>
-//#include <set>
+#include <set>
 #include <map>
 #include <fstream>
 
@@ -51,6 +51,8 @@ class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 public:
   vtkTypeRevisionMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  typedef std::set< vtkObservation * > ObservationVector;
   
   /// 
   /// Return the singleton instance with no reference counting.
@@ -92,22 +94,29 @@ public:
   /// Remove all observations that match
   /// - various signatures provided as helpers
   /// - when specifying the tag, a 0 matches all tags
-  void RemoveObservations (std::vector< vtkObservation *>observations);
+  void RemoveObservations (ObservationVector observations);
   void RemoveObservations (vtkObject *observer);
   void RemoveObservations (vtkObject *subject, vtkObject *observer);
   void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer);
   void RemoveObservations (vtkObject *subject, unsigned long event, vtkObject *observer, vtkCallbackCommand *notify);
   void RemoveObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
   /// Fast retrieve of all observations of a given subject
-  std::vector< vtkObservation *> GetSubjectObservations(vtkObject *subject);
+  ObservationVector GetSubjectObservations(vtkObject *subject);
   /// If event is != 0 , only observations matching the events are returned
   /// If observer is != 0 , only observations matching the observer are returned
-  /// If notify is != 0, only observations matching the callback are are returned
-  std::vector< vtkObservation *> GetObservations (vtkObject *subject,
+  /// If notify is != 0, only observations matching the callback are returned
+  /// If maxReturnedObservations is != 0, only up to this number of observations are are returned
+  ObservationVector GetObservations (vtkObject *subject,
+                                                  unsigned long event = 0,
+                                                  vtkObject *observer = 0,
+                                                  vtkCallbackCommand *notify = 0,
+                                                  unsigned int maxReturnedObservations = 0);
+  /// Returns true if such an observation exists (arguments are same as for GetObservations)
+  bool GetObservationExist (vtkObject *subject,
                                                   unsigned long event = 0,
                                                   vtkObject *observer = 0,
                                                   vtkCallbackCommand *notify = 0);
-  std::vector< vtkObservation *> GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
+  ObservationVector GetObservationsForSubjectByTag (vtkObject *subject, unsigned long tag);
 
   /// Description
   /// Accessors for intropsection
@@ -257,9 +266,7 @@ protected:
   
 
   /// 
-  typedef char *KeyType;
-  typedef std::vector< vtkObservation * > ObservationVector;
-  typedef std::map< KeyType, ObservationVector > ObjectToObservationVectorMap;
+  typedef std::map< vtkObject*, ObservationVector > ObjectToObservationVectorMap;
 
   /// maps to manage quick lookup by object
   ObjectToObservationVectorMap SubjectMap;

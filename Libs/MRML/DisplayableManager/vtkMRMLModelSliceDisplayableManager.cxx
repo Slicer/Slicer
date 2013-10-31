@@ -409,27 +409,24 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::AddObservations(vtkMRMLDisplayableNode* node)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  std::vector< vtkObservation* > observations;
+  vtkEventBroker::ObservationVector observations;
 
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::TransformModifiedEvent,
-                                          this->External, this->External->GetMRMLNodesCallbackCommand() );
-  if (observations.size() == 0)
+  if (!broker->GetObservationExist(node, vtkMRMLDisplayableNode::TransformModifiedEvent,
+                                          this->External, this->External->GetMRMLNodesCallbackCommand() ))
     {
     broker->AddObservation(node, vtkMRMLDisplayableNode::TransformModifiedEvent,
                             this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
 
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-                                          this->External, this->External->GetMRMLNodesCallbackCommand() );
-  if (observations.size() == 0)
+  if (!broker->GetObservationExist(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                                          this->External, this->External->GetMRMLNodesCallbackCommand() ))
     {
     broker->AddObservation(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
                             this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
 
-  observations = broker->GetObservations(node, vtkMRMLModelNode::PolyDataModifiedEvent,
-                                          this->External, this->External->GetMRMLNodesCallbackCommand() );
-  if (observations.size() == 0)
+  if (!broker->GetObservationExist(node, vtkMRMLModelNode::PolyDataModifiedEvent,
+                                          this->External, this->External->GetMRMLNodesCallbackCommand() ))
     {
     broker->AddObservation(node, vtkMRMLModelNode::PolyDataModifiedEvent,
                             this->External, this->External->GetMRMLNodesCallbackCommand() );
@@ -441,7 +438,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::RemoveObservations(vtkMRMLDisplayableNode* node)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
-  std::vector< vtkObservation* > observations;
+  vtkEventBroker::ObservationVector observations;
   observations = broker->GetObservations(
     node, vtkMRMLModelNode::PolyDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
