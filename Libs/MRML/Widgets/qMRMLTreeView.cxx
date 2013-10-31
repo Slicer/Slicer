@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+// STL includes
+#include <deque>
+
 // Qt includes
 #include <QDebug>
 #include <QHeaderView>
@@ -833,6 +836,8 @@ bool qMRMLTreeView::clickDecoration(const QModelIndex& index)
 //------------------------------------------------------------------------------
 void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
 {
+  Q_D(qMRMLTreeView);
+
   vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   vtkMRMLDisplayNode* displayNode =
     vtkMRMLDisplayNode::SafeDownCast(node);
@@ -848,9 +853,7 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
       {
       visibility = (hierDisplayNode->GetVisibility() ? 0 : 1);
       }
-    this->mrmlScene()->StartState(vtkMRMLScene::BatchProcessState);
     vtkMRMLModelHierarchyLogic::SetChildrenVisibility(displayableHierarchyNode,visibility);
-    this->mrmlScene()->EndState(vtkMRMLScene::BatchProcessState);
     }
   else if (displayNode)
     {

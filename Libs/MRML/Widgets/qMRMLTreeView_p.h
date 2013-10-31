@@ -25,6 +25,9 @@
 class QAction;
 class QMenu;
 
+// MRML includes
+class vtkMRMLHierarchyNode;
+
 // MRMLWidgets includes
 #include "qMRMLTreeView.h"
 class qMRMLSceneModel;
