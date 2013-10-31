@@ -161,7 +161,9 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     ijk = self.logic.backgroundXYToIJK( xy )
     dimensions = backgroundImage.GetDimensions()
     for index in xrange(3):
-      if ijk[index] < 0 or ijk[index] >= dimensions[index]:
+      # tracingFilter crashes if it receives a seed point at the edge of the image,
+      # so only accept the point if it is inside the image and is at least one pixel away from the edge
+      if ijk[index] < 1 or ijk[index] >= dimensions[index]-1:
         return
     self.tracingFilter.SetInput( self.editUtil.getBackgroundImage() )
     self.tracingFilter.SetSeed( ijk )
