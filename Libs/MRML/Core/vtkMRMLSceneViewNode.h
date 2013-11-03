@@ -49,31 +49,33 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   /// 
   /// Get node XML tag name (like Volume, Model)
-//  virtual const char* GetNodeTagName() {return "SceneSnapshot";};
   virtual const char* GetNodeTagName() {return "SceneView";};
 
   /// 
   /// Updates scene nodes 
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
-  /// Updates internal nodes 
-  virtual void UpdateSnapshotScene(vtkMRMLScene *);
+  ///
+  /// Updates internal nodes
+  virtual void UpdateStoredScene();
 
-  /// 
+  ///
   /// Set dependencies between this node and a child node
   /// when parsing XML file
   virtual void ProcessChildNode(vtkMRMLNode *node);
 
+  /// \sa StoreScene() RestoreScene()
+  vtkMRMLScene* GetStoredScene();
+
   /// 
   /// Store content of the scene
+  /// \sa GetStoredScene() RestoreScene()
   void StoreScene();
 
   /// 
   /// Restore content of the scene from the node
+  /// \sa GetStoredScene() StoreScene()
   void RestoreScene();
-
-  vtkGetObjectMacro ( Nodes, vtkMRMLScene );
 
   void SetAbsentStorageFileNames();
 
@@ -117,7 +119,7 @@ protected:
   void operator=(const vtkMRMLSceneViewNode&);
 
 
-  vtkMRMLScene* Nodes;
+  vtkMRMLScene* SnapshotScene;
 
   /// The associated Description
   vtkStdString SceneViewDescription;

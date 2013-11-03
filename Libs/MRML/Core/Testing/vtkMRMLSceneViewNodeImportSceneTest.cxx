@@ -137,11 +137,11 @@ bool import()
 
   // Check sceneViewNode node IDs.
   vtkMRMLNode* sceneViewDisplayNode =
-    sceneViewNode->GetNodes()->GetNthNodeByClass(0, "vtkMRMLScalarVolumeDisplayNode");
+    sceneViewNode->GetStoredScene()->GetNthNodeByClass(0, "vtkMRMLScalarVolumeDisplayNode");
   vtkMRMLDisplayableNode* sceneViewDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(
-    sceneViewNode->GetNodes()->GetNthNodeByClass(
+    sceneViewNode->GetStoredScene()->GetNthNodeByClass(
       0, "vtkMRMLScalarVolumeNode"));
-  if (sceneViewNode->GetNodes()->GetNumberOfNodes() != 2
+  if (sceneViewNode->GetStoredScene()->GetNumberOfNodes() != 2
       || !sceneViewDisplayNode || !sceneViewDisplayableNode
       || strcmp(sceneViewDisplayNode->GetID(), "vtkMRMLScalarVolumeDisplayNode2") != 0
       || strcmp(sceneViewDisplayableNode->GetID(),

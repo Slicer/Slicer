@@ -980,9 +980,9 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
     {
     vtkMRMLSceneViewNode *sceneView =
       vtkMRMLSceneViewNode::SafeDownCast(sceneViews->GetItemAsObject(n));
-    if (sceneView && sceneView->GetNodes())
+    if (sceneView && sceneView->GetStoredScene())
       {
-      scenes.push_back(sceneView->GetNodes());
+      scenes.push_back(sceneView->GetStoredScene());
       }
     }
 

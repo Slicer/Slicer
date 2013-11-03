@@ -278,7 +278,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     w2i1.Update()
     image1 = w2i1.GetOutput()
     sceneViewNode.SetScreenShot(image1)
-    sceneViewNode.UpdateSnapshotScene(slicer.mrmlScene)
+    sceneViewNode.UpdateStoredScene()
     slicer.mrmlScene.AddNode(sceneViewNode)
 
     sceneViewNode.SetName(name)
