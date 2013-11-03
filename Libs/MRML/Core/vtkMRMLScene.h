@@ -680,8 +680,6 @@ private:
 
   /// Time when the scene was last read or written.
   vtkTimeStamp StoredTime;
-
-  static vtkMRMLScene *ActiveScene;
 };
 
 //------------------------------------------------------------------------------
