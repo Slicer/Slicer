@@ -5,7 +5,6 @@ sc SetURL $::SlicerHome/share/MRML/Testing/volScene3.xml
 sc Connect
 
 puts "GetNumberOfNodesByClass [sc GetNumberOfNodesByClass vtkMRMLScalarVolumeNode]"
-puts "GetNodeClasses [sc GetNodeClasses]"
 puts "GetNthNode"
 
 set v0 [sc GetNthNodeByClass 0 vtkMRMLScalarVolumeNode]

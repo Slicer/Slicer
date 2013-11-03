@@ -97,7 +97,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->NodeIDsMTime = 0;
   this->SceneModifiedTime = 0;
 
-  this->ClassNameList = NULL;
   this->RegisteredNodeClasses.clear();
   this->UniqueIDs.clear();
   this->UniqueNames.clear();
@@ -201,11 +200,6 @@ vtkMRMLScene::vtkMRMLScene()
 //------------------------------------------------------------------------------
 vtkMRMLScene::~vtkMRMLScene()
 {
-  if (this->ClassNameList)
-    {
-    delete this->ClassNameList;
-    }
-
   this->ClearUndoStack ( );
   this->ClearRedoStack ( );
 
@@ -1461,28 +1455,6 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
   return classes;
 
 }
-
-//------------------------------------------------------------------------------
-const char* vtkMRMLScene::GetNodeClasses()
-{
-  std::list< std::string > classes = this->GetNodeClassesList();
-  std::string classList;
-
-  std::list< std::string >::const_iterator iter;
-  // Iterate through list and output each element.
-  for (iter = classes.begin(); iter != classes.end(); iter++)
-    {
-    if (!(iter == classes.begin()))
-      {
-      classList += std::string(" ");
-      }
-    classList.append(*iter);
-    }
-  SetClassNameList(classList.c_str());
-  return this->ClassNameList;
-}
-
-
 
 //------------------------------------------------------------------------------
 vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)

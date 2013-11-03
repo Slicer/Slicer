@@ -24,9 +24,6 @@ int vtkMRMLSceneTest1(int , char * [] )
   std::cout << "GetNumberOfRegisteredNodeClasses() = ";
   std::cout << scene1->GetNumberOfRegisteredNodeClasses() << std::endl;
 
-  std::cout << "GetNodeClasses() = " << std::endl;
-  std::cout << scene1->GetNodeClasses() << std::endl;
-
   TEST_SET_GET_STRING(scene1.GetPointer(), URL);
   TEST_SET_GET_STRING(scene1.GetPointer(), RootDirectory);
 

@@ -26,7 +26,6 @@ proc initMRML {} {
 initMRML
 
 puts "GetNumberOfNodesByClass [$::scene GetNumberOfNodesByClass vtkMRMLVolumeNode]"
-puts "GetNodeClasses [$::scene GetNodeClasses]"
 puts "GetNthNode"
 
 set v0 [$::scene GetNthNodeByClass 0 vtkMRMLVolumeNode]

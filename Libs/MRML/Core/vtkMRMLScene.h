@@ -209,9 +209,6 @@ public:
 
   std::list<std::string> GetNodeClassesList();
 
-  /// returns list of names
-  const char* GetNodeClasses();
-
   /// Get the number of registered node classes (is probably greater than the current number
   /// of nodes instantiated in the scene)
   int GetNumberOfRegisteredNodeClasses();
@@ -666,9 +663,6 @@ protected:
 
   void RemoveAllNodes(bool removeSingletons);
 
-  vtkSetStringMacro(ClassNameList);
-  vtkGetStringMacro(ClassNameList);
-
   char * Version;
   char * LastLoadedVersion;
 
@@ -683,8 +677,6 @@ private:
   int LoadIntoScene(vtkCollection* scene);
 
   unsigned long ErrorCode;
-
-  char* ClassNameList;
 
   /// Time when the scene was last read or written.
   vtkTimeStamp StoredTime;
