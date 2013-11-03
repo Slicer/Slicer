@@ -76,9 +76,7 @@ void vtkSlicerModelsLogic::ObserveMRMLScene()
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLClipModelsNode") == 0)
     {
     // vtkMRMLClipModelsNode is a singleton
-    vtkMRMLClipModelsNode* clipNode = vtkMRMLClipModelsNode::New();
-    this->GetMRMLScene()->AddNode(clipNode);
-    clipNode->Delete();
+    this->GetMRMLScene()->AddNode(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
     }
   this->Superclass::ObserveMRMLScene();
 }
@@ -411,9 +409,8 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     return;
     }
 
-  vtkPolyData *poly = vtkPolyData::New();
-  modelOut->SetAndObservePolyData(poly);
-  poly->Delete();
+  vtkNew<vtkPolyData> poly;
+  modelOut->SetAndObservePolyData(poly.GetPointer());
 
   poly->DeepCopy(modelNode->GetPolyData());
 
@@ -429,8 +426,8 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     //--- triangle strips only. Normals are not computed for lines or vertices.
     //--- Triangle strips are broken up into triangle polygons.
     //--- Polygons are not automatically re-stripped.
-    vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
-    normals->SetInput ( poly );
+    vtkNew<vtkPolyDataNormals> normals;
+    normals->SetInput(poly.GetPointer());
     //--- NOTE: This assumes a completely closed surface
     //---(i.e. no boundary edges) and no non-manifold edges.
     //--- If these constraints do not hold, the AutoOrientNormals
@@ -445,8 +442,6 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 
     normals->Update();
     modelOut->SetAndObservePolyData(normals->GetOutput());
-
-    normals->Delete();
    }
 
   modelOut->SetAndObserveTransformNodeID(mtnode == NULL ? NULL : mtnode->GetID());
