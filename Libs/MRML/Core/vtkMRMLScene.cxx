@@ -3128,22 +3128,6 @@ const char * vtkMRMLScene::GetErrorMessagePointer()
   }
 
 //-----------------------------------------------------------------------------
-unsigned long vtkMRMLScene::GetSceneModifiedTime()
-{
-  if (this->Nodes->GetMTime() > this->SceneModifiedTime)
-    {
-    this->SceneModifiedTime = this->Nodes->GetMTime();
-    }
-  return this->SceneModifiedTime;
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLScene::IncrementSceneModifiedTime()
-{
-  this->SceneModifiedTime ++;
-}
-
-//-----------------------------------------------------------------------------
 void vtkMRMLScene::Edited()
 {
   this->InvokeEvent(vtkMRMLScene::SceneEditedEvent);

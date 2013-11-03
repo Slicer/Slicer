@@ -21,6 +21,7 @@
 #include "vtkMRMLDisplayNode.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkNew.h>
 
 vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
@@ -76,7 +77,7 @@ int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
     {
     this->ModelHierarchyNodes.clear();
     }
-  else if (this->GetMRMLScene()->GetSceneModifiedTime() > this->ModelHierarchyNodesMTime)
+  else if (this->GetMRMLScene()->GetNodes()->GetMTime() > this->ModelHierarchyNodesMTime)
   {
     this->ModelHierarchyNodes.clear();
     
@@ -95,7 +96,7 @@ int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
           }
         }
       }
-    this->ModelHierarchyNodesMTime = this->GetMRMLScene()->GetSceneModifiedTime();
+    this->ModelHierarchyNodesMTime = this->GetMRMLScene()->GetNodes()->GetMTime();
   }
   return static_cast<int>(ModelHierarchyNodes.size());
 }
@@ -189,7 +190,7 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
     }
     
   if (this->GetMRMLScene() &&
-      (this->GetMRMLScene()->GetSceneModifiedTime() > this->HierarchyChildrenNodesMTime))
+      (this->GetMRMLScene()->GetNodes()->GetMTime() > this->HierarchyChildrenNodesMTime))
     {
     for (iter  = this->HierarchyChildrenNodes.begin();
          iter != this->HierarchyChildrenNodes.end();
@@ -224,7 +225,7 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
           }
         }
       }
-    this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetSceneModifiedTime();
+    this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetNodes()->GetMTime();
     }
 }
 

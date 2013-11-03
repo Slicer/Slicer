@@ -385,9 +385,6 @@ public:
   void SetErrorMessage(const char * message);
   const char *GetErrorMessagePointer();
 
-  unsigned long GetSceneModifiedTime();
-  void IncrementSceneModifiedTime();
-
   void Edited();
 
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
