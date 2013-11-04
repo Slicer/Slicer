@@ -22,7 +22,7 @@ if(NOT DEFINED OpenIGTLinkIF_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLinkIF.git"
-    GIT_TAG "fb85003758388d525d2c72b8a98d1bdb41a4e730"
+    GIT_TAG "5c3a47f0aeac303b2442ffa3aebd7698d065683f"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
