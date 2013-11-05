@@ -38,7 +38,7 @@ endif()
 
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLink.git"
-  GIT_TAG "ee594372eb8c9a25da1dbff2bd081cb70ce9554a"
+  GIT_TAG "3ac531115f55e74265e7de7ff508312dbfb16695"
   SOURCE_DIR OpenIGTLink
   BINARY_DIR OpenIGTLink-build
   CMAKE_GENERATOR ${gen}
