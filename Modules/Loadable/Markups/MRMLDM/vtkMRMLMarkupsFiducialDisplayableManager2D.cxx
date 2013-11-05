@@ -108,7 +108,7 @@ public:
           std::ostringstream seedNumber;
           unsigned int *n =  reinterpret_cast<unsigned int *>(callData);
           seedNumber << *n;
-          this->Node->SetAttribute("Markups.MovingSeedNumber", seedNumber.str().c_str());
+          this->Node->SetAttribute("Markups.MovingMarkupIndex", seedNumber.str().c_str());
           }
         else
           {
