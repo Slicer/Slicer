@@ -45,7 +45,7 @@ protected slots:
   void formatChanged();
   bool saveScene();
   bool saveNodes();
-  QFileInfo sceneFile()const;
+  QFileInfo sceneFile()const; // ### Slicer 4.4: Move as protected
   void showMoreColumns(bool);
   void updateSize();
   void onSceneFormatChanged();
@@ -79,6 +79,8 @@ protected:
   void              setSceneRootDirectory(const QString& rootDirectory);
   void              updateOptionsWidget(int row);
 
+  QString           sceneFileFormat()const;
+
   void              populateScene();
   void              populateNode(vtkMRMLNode* node);
 
@@ -102,6 +104,7 @@ protected:
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;
+  QString LastMRMLSceneFileFormat;
 
   friend class qSlicerFileNameItemDelegate;
 };
