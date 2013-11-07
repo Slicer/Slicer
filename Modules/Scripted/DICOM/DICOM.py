@@ -18,7 +18,7 @@ import DICOMLib
 class DICOM:
 
   @staticmethod
-  def setDatabasePrecacheTags(dicomApp=None):
+  def setDatabasePrecacheTags(dicomBrowser=None):
     """query each plugin for tags that should be cached on import
        and set them for the dicom app widget and slicer"""
     if not slicer.dicomDatabase:
@@ -30,8 +30,8 @@ class DICOM:
     tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
     tagsToPrecache.sort()
     slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
-    if dicomApp:
-      dicomApp.tagsToPrecache = tagsToPrecache
+    if dicomBrowser:
+      dicomBrowser.tagsToPrecache = tagsToPrecache
 
   def __init__(self, parent):
     import string
@@ -143,7 +143,7 @@ class DICOMFileDialog:
     mainWindow.moduleSelector().selectModule('DICOM')
     dicomWidget = slicer.modules.DICOMWidget
     for directory in self.directoriesToAdd:
-      dicomWidget.detailsPopup.dicomApp.onImportDirectory(directory)
+      dicomWidget.detailsPopup.dicomBrowser.onImportDirectory(directory)
     self.directoriesToAdd = []
 
 
@@ -158,10 +158,7 @@ class DICOMWidget:
 
   def __init__(self, parent=None):
     self.testingServer = None
-    self.dicomApp = None
-
-    # hide the search box
-    self.hideSearch = True
+    self.dicomBrowser = None
 
     # options for browser
     self.browserPersistent = False
@@ -175,10 +172,6 @@ class DICOMWidget:
     # - each time an update is requested, start the singleShot timer
     # - if the update is requested before the timeout, the call to timer.start() resets it
     # - the actual update only happens when the the full time elapses since the last request
-    self.resumeModelTimer = qt.QTimer()
-    self.resumeModelTimer.singleShot = True
-    self.resumeModelTimer.interval = 500
-    self.resumeModelTimer.connect('timeout()', self.onResumeModelRequestTimeout)
     self.updateRecentActivityTimer = qt.QTimer()
     self.updateRecentActivityTimer.singleShot = True
     self.updateRecentActivityTimer.interval = 500
@@ -268,16 +261,12 @@ class DICOMWidget:
     # - TODO: this configurability should be exposed more natively
     #   in the CTK code to avoid the findChildren calls
     #
-    self.dicomApp = ctk.ctkDICOMAppWidget()
-    DICOM.setDatabasePrecacheTags(self.dicomApp)
-    if self.hideSearch:
-      # hide the search options - doesn't work yet and doesn't fit
-      # well into the frame
-      slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
+    self.dicomBrowser = ctk.ctkDICOMBrowser()
+    DICOM.setDatabasePrecacheTags(self.dicomBrowser)
 
-    self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp,setBrowserPersistence=self.setBrowserPersistence)
+    self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomBrowser,setBrowserPersistence=self.setBrowserPersistence)
 
-    self.tree = self.detailsPopup.tree
+    self.tables = self.detailsPopup.tables
 
     self.showBrowser = qt.QPushButton('Show DICOM Browser')
     self.dicomFrame.layout().addWidget(self.showBrowser)
@@ -298,14 +287,14 @@ class DICOMWidget:
         if action.text == 'DICOM':
           action.connect('triggered()',self.detailsPopup.open)
 
-    # make the tree view a bit bigger
-    self.tree.setMinimumHeight(250)
+    # make the tables view a bit bigger
+    self.tables.setMinimumHeight(250)
 
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
-    self.contextMenu = qt.QMenu(self.tree)
+    self.contextMenu = qt.QMenu(self.tables)
     self.exportAction = qt.QAction("Export to Study", self.contextMenu)
     self.contextMenu.addAction(self.exportAction)
     self.exportAction.enabled = False
@@ -314,17 +303,14 @@ class DICOMWidget:
     self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
 
     slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
-    self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
-    selectionModel = self.tree.selectionModel()
-    # TODO: can't use this because QList<QModelIndex> is not visible in PythonQt
-    #selectionModel.connect('selectionChanged(QItemSelection, QItemSelection)', self.onTreeSelectionChanged)
-    self.tree.connect('clicked(QModelIndex)', self.onTreeClicked)
-    self.tree.setContextMenuPolicy(3)
-    self.tree.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
+    self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
+    self.tables.connect('seriesSelectionChanged(QStringList)', self.onSeriesSelected)
+    self.tables.setContextMenuPolicy(3)
+    self.tables.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
 
     # enable to the Send button of the app widget and take it over
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
-    self.sendButton = slicer.util.findChildren(self.dicomApp, text='Send')[0]
+    self.sendButton = slicer.util.findChildren(self.dicomBrowser, text='Send')[0]
     self.sendButton.enabled = False
     self.sendButton.connect('triggered()', self.onSendClicked)
 
@@ -349,8 +335,6 @@ class DICOMWidget:
     that is not currently available.
     https://bugreports.qt-project.org/browse/QTBUG-10775
     """
-    self.dicomApp.suspendModel()
-    self.requestResumeModel()
     self.requestUpdateRecentActivity()
 
   def requestUpdateRecentActivity(self):
@@ -363,20 +347,10 @@ class DICOMWidget:
   def onUpateRecentActivityRequestTimeout(self):
     self.recentActivity.update()
 
-  def requestResumeModel(self):
-    """This method serves to compress the requests for resuming
-    the dicom model since it is time consuming and there can be
-    many of them coming in a rapid sequence when the
-    database is active"""
-    self.resumeModelTimer.start()
-
-  def onResumeModelRequestTimeout(self):
-    self.dicomApp.resumeModel()
-
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
       slicer.dicomDatabase = ctk.ctkDICOMDatabase()
-    DICOM.setDatabasePrecacheTags(self.dicomApp)
+    DICOM.setDatabasePrecacheTags(self.dicomBrowser)
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     messages = ""
     if not os.path.exists(databaseDirectory):
@@ -397,9 +371,9 @@ class DICOMWidget:
         self.messageBox('The database file path "%s" cannot be opened.\nPlease pick a different database directory using the LocalDatabase button in the DICOM Browser.' % databaseFilepath)
         self.dicomDatabase = None
       else:
-        if self.dicomApp:
-          if self.dicomApp.databaseDirectory != databaseDirectory:
-            self.dicomApp.databaseDirectory = databaseDirectory
+        if self.dicomBrowser:
+          if self.dicomBrowser.databaseDirectory != databaseDirectory:
+            self.dicomBrowser.databaseDirectory = databaseDirectory
         else:
           settings = qt.QSettings()
           settings.setValue('DatabaseDirectory', databaseDirectory)
@@ -437,28 +411,28 @@ class DICOMWidget:
           os.mkdir(databaseDirectory)
         self.onDatabaseDirectoryChanged(databaseDirectory)
 
-  def onTreeClicked(self,index):
-    self.model = index.model()
-    self.tree.setExpanded(index, not self.tree.expanded(index))
-    self.selection = index.sibling(index.row(), 0)
-    typeRole = self.selection.data(self.dicomModelTypeRole)
-    if typeRole > 0:
-      self.sendButton.enabled = True
-    else:
-      self.sendButton.enabled = False
-    if typeRole:
-      self.exportAction.enabled = self.dicomModelTypes[typeRole] == "Study"
-    else:
-      self.exportAction.enabled = False
+  def onSeriesSelected(self,seriesUIDList):
+    #self.model = index.model()
+    #self.tables.setExpanded(index, not self.tables.expanded(index))
+    #self.selection = index.sibling(index.row(), 0)
+    #typeRole = self.selection.data(self.dicomModelTypeRole)
+    #if typeRole > 0:
+      #self.sendButton.enabled = True
+    #else:
+      #self.sendButton.enabled = False
+    #if typeRole:
+      #self.exportAction.enabled = self.dicomModelTypes[typeRole] == "Study"
+    #else:
+      #self.exportAction.enabled = False
     self.detailsPopup.open()
-    uid = self.selection.data(self.dicomModelUIDRole)
-    role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
-    self.detailsPopup.offerLoadables(uid, role)
+    #uid = self.selection.data(self.dicomModelUIDRole)
+    #role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
+    self.detailsPopup.offerLoadables(seriesUIDList, "SeriesUIDList")
 
   def onTreeContextMenuRequested(self,pos):
-    index = self.tree.indexAt(pos)
+    index = self.tables.indexAt(pos)
     self.selection = index.sibling(index.row(), 0)
-    self.contextMenu.popup(self.tree.mapToGlobal(pos))
+    self.contextMenu.popup(self.tables.mapToGlobal(pos))
 
   def onContextMenuTriggered(self,action):
     if action == self.deleteAction:
@@ -467,7 +441,6 @@ class DICOMWidget:
       uid = self.selection.data(self.dicomModelUIDRole)
       if self.okayCancel('This will remove references from the database\n(Files will not be deleted)\n\nDelete %s?' % role):
         # TODO: add delete option to ctkDICOMDatabase
-        self.dicomApp.suspendModel()
         if role == "Patient":
           removeWorked = slicer.dicomDatabase.removePatient(uid)
         elif role == "Study":
@@ -476,7 +449,6 @@ class DICOMWidget:
           removeWorked = slicer.dicomDatabase.removeSeries(uid)
         if not removeWorked:
           self.messageBox(self,"Could not remove %s" % role,title='DICOM')
-        self.dicomApp.resumeModel()
     elif action == self.exportAction:
       self.onExportClicked()
 
@@ -484,11 +456,10 @@ class DICOMWidget:
     """Associate a slicer volume as a series in the selected dicom study"""
     uid = self.selection.data(self.dicomModelUIDRole)
     exportDialog = DICOMLib.DICOMExportDialog(uid,onExportFinished=self.onExportFinished)
-    self.dicomApp.suspendModel()
     exportDialog.open()
 
   def onExportFinished(self):
-    self.requestResumeModel()
+    pass
 
   def onSendClicked(self):
     """Perform a dicom store of slicer data to a peer"""
@@ -550,7 +521,6 @@ class DICOMWidget:
     Works around issue where ctkDICOMModel has open queries that keep the
     database locked.
     """
-    self.dicomApp.suspendModel()
 
   def onListenerAddedFile(self):
     """Called after the listener has added a file.
@@ -559,7 +529,6 @@ class DICOMWidget:
     newFile = slicer.dicomListener.lastFileAdded
     if newFile:
       slicer.util.showStatusMessage("Loaded: %s" % newFile, 1000)
-    self.requestResumeModel()
 
   def onToggleServer(self):
     if self.testingServer and self.testingServer.qrRunning():
@@ -618,7 +587,7 @@ class DICOMWidget:
 def DICOMTest():
   w = slicer.modules.dicom.widgetRepresentation()
   w.onToggleServer()
-  queryButton = slicer.util.findChildren(w.dicomApp, text='Query')[0]
+  queryButton = slicer.util.findChildren(w.dicomBrowser, text='Query')[0]
   queryButton.click()
 
 

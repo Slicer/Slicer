@@ -404,7 +404,6 @@ class JRC2013VisTest(unittest.TestCase):
       self.delayDisplay('Retrieve DICOM')
       mainWindow = slicer.util.mainWindow()
       mainWindow.moduleSelector().selectModule('DICOM')
-      dicomWidget.dicomApp.suspendModel()
       dicomRetrieve = ctk.ctkDICOMRetrieve()
       dicomRetrieve.setKeepAssociationOpen(True)
       dicomRetrieve.setDatabase(slicer.dicomDatabase)
@@ -413,7 +412,6 @@ class JRC2013VisTest(unittest.TestCase):
       dicomRetrieve.setPort(12345)
       dicomRetrieve.setHost('localhost')
       dicomRetrieve.getStudy('1.2.124.113932.1.170.223.162.178.20050502.160340.12640015');
-      dicomWidget.dicomApp.resumeModel()
       popen.kill()
       dicomWidget.detailsPopup.open()
       # click on the first row of the tree

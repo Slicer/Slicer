@@ -307,11 +307,9 @@ class RSNA2012VisTest(unittest.TestCase):
       self.delayDisplay('Importing DICOM')
       mainWindow = slicer.util.mainWindow()
       mainWindow.moduleSelector().selectModule('DICOM')
-      dicomWidget.dicomApp.suspendModel()
       indexer = ctk.ctkDICOMIndexer()
       indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
       indexer.waitForImportFinished()
-      dicomWidget.dicomApp.resumeModel()
       dicomWidget.detailsPopup.open()
       # click on the first row of the tree
       index = dicomWidget.tree.indexAt(qt.QPoint(0,0))
