@@ -64,6 +64,7 @@
 qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
   : Superclass(parent)
 {
+  this->MRMLScene = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -91,14 +92,16 @@ void qSlicerFileNameItemDelegate
   if (lineEdit)
     {
     QString extension = model->data(index, qSlicerSaveDataDialogPrivate::FileExtensionRole).toString();
+    QString nodeID = model->data(index, qSlicerSaveDataDialogPrivate::UIDRole).toString();
     lineEdit->setText(
-      qSlicerFileNameItemDelegate::fixupFileName(lineEdit->text(), extension));
+      qSlicerFileNameItemDelegate::fixupFileName(lineEdit->text(), extension, this->MRMLScene, nodeID));
     }
   this->Superclass::setModelData(editor, model, index);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, const QString& extension)
+QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, const QString& extension,
+                                                   vtkMRMLScene* mrmlScene, const QString& nodeID)
 {
   QString fixup;
   QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
@@ -109,11 +112,20 @@ QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, cons
       fixup += fileName[i];
       }
     }
-  if (!extension.isEmpty() && !fixup.endsWith(extension))
+
+  QString stippedFileName = fixup;
+  if(mrmlScene)
     {
-    fixup += extension;
+    vtkObject * object = mrmlScene;
+    if (!nodeID.isEmpty())
+      {
+      object = mrmlScene->GetNodeByID(nodeID.toLatin1());
+      }
+    Q_ASSERT(object);
+    stippedFileName = qSlicerSaveDataDialogPrivate::stripKnownExtension(fixup, object);
+    stippedFileName += extension;
     }
-  return fixup;
+  return stippedFileName;
 }
 
 //-----------------------------------------------------------------------------
@@ -130,7 +142,7 @@ QRegExp qSlicerFileNameItemDelegate::fileNameRegExp(const QString& extension)
 
 //-----------------------------------------------------------------------------
 qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget)
-  :QDialog(parentWidget)
+  : QDialog(parentWidget)
 {
   this->MRMLScene = 0;
 
@@ -182,6 +194,12 @@ qSlicerSaveDataDialogPrivate::~qSlicerSaveDataDialogPrivate()
 void qSlicerSaveDataDialogPrivate::setMRMLScene(vtkMRMLScene* scene)
 {
   this->MRMLScene = scene;
+
+  qSlicerFileNameItemDelegate * fileNameItemDelegate =
+      dynamic_cast<qSlicerFileNameItemDelegate*>(this->FileWidget->itemDelegateForColumn(Self::FileNameColumn));
+  Q_ASSERT(fileNameItemDelegate);
+  fileNameItemDelegate->MRMLScene = scene;
+
   this->populateItems();
 }
 
@@ -288,8 +306,24 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate::populateScene()
 {
+  // Create a new entry
   int row = this->FileWidget->rowCount();
   this->FileWidget->insertRow(row);
+
+  // Get absolute filename
+  QFileInfo sceneFileInfo;
+  if (this->MRMLScene->GetURL() != 0 &&
+      strlen(this->MRMLScene->GetURL()) > 0)
+    {
+    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
+                               this->MRMLScene->GetURL());
+    }
+  else
+    {
+    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
+                               QDate::currentDate().toString(
+                                 "yyyy-MM-dd") + "-Scene");
+    }
 
   // Scene Name
   QTableWidgetItem* sceneNameItem = new QTableWidgetItem("");
@@ -313,11 +347,21 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   
   // Scene Format
   QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
-  foreach(const QString& extension,
+  int currentFormat = -1;
+  QString currentExtension = Self::extractKnownExtension(sceneFileInfo.fileName(), this->MRMLScene);
+  foreach(const QString& nameFilter,
           coreIOManager->fileWriterExtensions(this->MRMLScene))
     {
-    sceneComboBoxWidget->addItem(extension);
+    QString extension = QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+      nameFilter.toLatin1()));
+    sceneComboBoxWidget->addItem(nameFilter, extension);
+    if (extension == currentExtension)
+      {
+      currentFormat = sceneComboBoxWidget->count() - 1;
+      }
     }
+  sceneComboBoxWidget->setCurrentIndex(currentFormat);
+
   this->FileWidget->setCellWidget(row, FileFormatColumn, sceneComboBoxWidget);
   QObject::connect(sceneComboBoxWidget, SIGNAL(currentIndexChanged(int)),
                    this, SLOT(formatChanged()));
@@ -325,20 +369,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
                    this, SLOT(onSceneFormatChanged()));
 
   // Scene FileName
-  QFileInfo sceneFileInfo;
-  if (this->MRMLScene->GetURL() != 0 &&
-      strlen(this->MRMLScene->GetURL()) > 0)
-    {
-    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
-                               this->MRMLScene->GetURL());
-    }
-  else
-    {
-    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
-                               QDate::currentDate().toString(
-                                 "yyyy-MM-dd") + "-Scene");
-    }
-  QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, ".mrml");
+  QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, ".mrml", /* nodeID = */ QString());
   this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
 
   // Scene Directory
@@ -426,7 +457,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
     fileFormatsWidget->currentIndex()).toString();
 
   // File name
-  QTableWidgetItem *fileNameItem = this->createFileNameItem(fileInfo, extension);
+  QTableWidgetItem *fileNameItem = this->createFileNameItem(fileInfo, extension, QString(node->GetID()));
   this->FileWidget->setItem(row, FileNameColumn, fileNameItem);
 
   // File Directory
@@ -629,14 +660,15 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
 
 //-----------------------------------------------------------------------------
 QTableWidgetItem* qSlicerSaveDataDialogPrivate
-::createFileNameItem(const QFileInfo& fileInfo, const QString& extension)
+::createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID)
 {
   QTableWidgetItem* fileNameItem = new QTableWidgetItem(
-    qSlicerFileNameItemDelegate::fixupFileName(fileInfo.fileName(), extension));
+    qSlicerFileNameItemDelegate::fixupFileName(fileInfo.fileName(), extension, this->mrmlScene(), nodeID));
   if (!extension.isEmpty())
     {
     fileNameItem->setData(Self::FileExtensionRole, extension);
     }
+  fileNameItem->setData(Self::UIDRole, nodeID);
   return fileNameItem;
 }
 
@@ -648,6 +680,39 @@ ctkDirectoryButton* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(cons
   directoryButton->setOptions(ctkDirectoryButton::DontUseNativeDialog);
   directoryButton->setAcceptMode(QFileDialog::AcceptSave);
   return directoryButton;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSaveDataDialogPrivate::extractKnownExtension(const QString& fileName, vtkObject* object)
+{
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+
+  foreach(const QString& nameFilter,
+          coreIOManager->fileWriterExtensions(object))
+    {
+    QString extension = QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+      nameFilter.toLatin1()));
+    if (!extension.isEmpty() && fileName.endsWith(extension))
+      {
+      return extension;
+      }
+    }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSaveDataDialogPrivate::stripKnownExtension(const QString& fileName, vtkObject* object)
+{
+  QString strippedFileName(fileName);
+
+  QString knownExtension = Self::extractKnownExtension(fileName, object);
+  if (!knownExtension.isEmpty())
+    {
+    strippedFileName.chop(knownExtension.length());
+    return strippedFileName;
+    }
+  return strippedFileName;
 }
 
 //-----------------------------------------------------------------------------
@@ -1080,6 +1145,9 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   // don't need this property anymore.
   formatComboBox->setEditable(false);
 
+  QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
+  Q_ASSERT(fileNameItem);
+
   // Set the new selected extension to the file name
   QString extension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
     formatComboBox->currentText().toLatin1());
@@ -1087,10 +1155,12 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
     {
     extension = QString();
     }
-  QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
-  Q_ASSERT(fileNameItem);
-  fileNameItem->setText(QFileInfo(fileNameItem->text()).completeBaseName() + extension);
   fileNameItem->setData(Self::FileExtensionRole, extension);
+
+  // Update fileName based on new selected extension
+  QString nodeID = fileNameItem->data(Self::UIDRole).toString();
+  fileNameItem->setText(
+        qSlicerFileNameItemDelegate::fixupFileName(fileNameItem->text(), extension, this->MRMLScene, nodeID));
 
   // If the user changed the format, that means he wants to save the node
   // Select the row to mark the node to be saved.

@@ -68,7 +68,8 @@ protected:
   enum CustomRole
   {
     SceneTypeRole = Qt::UserRole,
-    FileExtensionRole
+    FileExtensionRole,
+    UIDRole
   };
 
   int               findSceneRow()const;
@@ -86,8 +87,11 @@ protected:
   QTableWidgetItem* createNodeTypeItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
-  QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension = QString());
+  QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID);
   ctkDirectoryButton* createFileDirectoryWidget(const QFileInfo& fileInfo);
+
+  static QString extractKnownExtension(const QString& fileName, vtkObject* object);
+  static QString stripKnownExtension(const QString& fileName, vtkObject* object);
 
   QFileInfo         file(int row)const;
   vtkObject*        object(int row)const;
@@ -114,13 +118,16 @@ public:
   virtual void setModelData(QWidget *editor,
                             QAbstractItemModel *model,
                             const QModelIndex &index) const;
-  static QString fixupFileName(const QString& fileName, const QString& extension = QString());
+  static QString fixupFileName(const QString& fileName, const QString& extension,
+                               vtkMRMLScene *mrmlScene, const QString &nodeID);
   /// Generate a regular expression that can ensure a filename has a valid
   /// extension.
   /// Example of supported extensions:
   /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
   /// An empty extension or "*" means any filename (or directory) is valid
   static QRegExp fileNameRegExp(const QString& extension = QString());
+
+  vtkMRMLScene* MRMLScene;
 };
 
 #endif
