@@ -23,6 +23,7 @@ class qSlicerSaveDataDialogPrivate
 {
   Q_OBJECT
 public:
+  typedef qSlicerSaveDataDialogPrivate Self;
   explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=0);
   virtual ~qSlicerSaveDataDialogPrivate();
 
@@ -64,6 +65,12 @@ protected:
     NodeStatusColumn = 6
   };
 
+  enum CustomRole
+  {
+    SceneTypeRole = Qt::UserRole,
+    FileExtensionRole
+  };
+
   int               findSceneRow()const;
   bool              mustSceneBeSaved()const;
   bool              prepareForSaving();
@@ -91,6 +98,8 @@ protected:
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;
+
+  friend class qSlicerFileNameItemDelegate;
 };
 
 //-----------------------------------------------------------------------------

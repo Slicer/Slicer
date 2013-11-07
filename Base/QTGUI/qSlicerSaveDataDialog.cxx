@@ -75,7 +75,7 @@ QWidget* qSlicerFileNameItemDelegate
   QLineEdit* lineEdit = qobject_cast<QLineEdit*>(widget);
   if (lineEdit)
     {
-    QString extension = index.data(Qt::UserRole).toString();
+    QString extension = index.data(qSlicerSaveDataDialogPrivate::FileExtensionRole).toString();
     lineEdit->setValidator(
       new QRegExpValidator(qSlicerFileNameItemDelegate::fileNameRegExp(extension), lineEdit));
     }
@@ -90,7 +90,7 @@ void qSlicerFileNameItemDelegate
   QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
   if (lineEdit)
     {
-    QString extension = model->data(index, Qt::UserRole).toString();
+    QString extension = model->data(index, qSlicerSaveDataDialogPrivate::FileExtensionRole).toString();
     lineEdit->setText(
       qSlicerFileNameItemDelegate::fixupFileName(lineEdit->text(), extension));
     }
@@ -298,7 +298,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   // Scene Type
   QTableWidgetItem* sceneTypeItem = new QTableWidgetItem("");
-  sceneTypeItem->setData(Qt::UserRole, QString("Scene"));
+  sceneTypeItem->setData(Self::SceneTypeRole, QString("Scene"));
   sceneTypeItem->setFlags(sceneTypeItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsEnabled);
   this->FileWidget->setItem(row, NodeTypeColumn, sceneTypeItem);
 
@@ -635,7 +635,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
     qSlicerFileNameItemDelegate::fixupFileName(fileInfo.fileName(), extension));
   if (!extension.isEmpty())
     {
-    fileNameItem->setData(Qt::UserRole, extension);
+    fileNameItem->setData(Self::FileExtensionRole, extension);
     }
   return fileNameItem;
 }
@@ -882,7 +882,7 @@ QString qSlicerSaveDataDialogPrivate::type(int row)const
 {
   QTableWidgetItem* typeItem = this->FileWidget->item(row, NodeTypeColumn);
   Q_ASSERT(typeItem);
-  return typeItem->data(Qt::UserRole).toString();
+  return typeItem->data(Self::SceneTypeRole).toString();
 }
 
 //-----------------------------------------------------------------------------
@@ -899,7 +899,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
   QAbstractItemModel* model = this->FileWidget->model();
   QModelIndexList found = model->match(
     model->index(0, NodeTypeColumn),
-    Qt::UserRole, QString("Scene"), 1, Qt::MatchExactly);
+    Self::SceneTypeRole, QString("Scene"), 1, Qt::MatchExactly);
   if (found.count() == 0 || !found[0].isValid())
     {
     return false;
@@ -916,7 +916,7 @@ int qSlicerSaveDataDialogPrivate::findSceneRow()const
   QAbstractItemModel* model = this->FileWidget->model();
   QModelIndexList found = model->match(
     model->index(0, NodeTypeColumn),
-    Qt::UserRole, QString("Scene"), 1, Qt::MatchExactly);
+    Self::SceneTypeRole, QString("Scene"), 1, Qt::MatchExactly);
   return found[0].row();
 }
 
@@ -1021,7 +1021,7 @@ void qSlicerSaveDataDialogPrivate::selectModifiedData()
     Q_ASSERT(selectItem);
     selectItem->setCheckState(
       statusItem->text() == tr("Modified") &&
-      typeItem->data(Qt::UserRole).toString() != tr("Scene") ? Qt::Checked : Qt::Unchecked);
+      typeItem->data(Self::SceneTypeRole).toString() != tr("Scene") ? Qt::Checked : Qt::Unchecked);
     }
 }
 
@@ -1090,7 +1090,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   Q_ASSERT(fileNameItem);
   fileNameItem->setText(QFileInfo(fileNameItem->text()).completeBaseName() + extension);
-  fileNameItem->setData(Qt::UserRole, extension);
+  fileNameItem->setData(Self::FileExtensionRole, extension);
 
   // If the user changed the format, that means he wants to save the node
   // Select the row to mark the node to be saved.
