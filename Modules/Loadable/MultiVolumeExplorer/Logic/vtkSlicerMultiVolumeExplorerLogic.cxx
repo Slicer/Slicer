@@ -35,6 +35,7 @@
 
 // VTK includes
 #include <vtkDoubleArray.h>
+#include "vtkObjectFactory.h"
 #include <vtkStringArray.h>
 #include <vtkNew.h>
 
