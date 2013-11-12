@@ -294,12 +294,14 @@ class DICOMWidget:
       slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
+    # TODO: populate context menu
     self.contextMenu = qt.QMenu(self.tables)
     self.exportAction = qt.QAction("Export to Study", self.contextMenu)
     self.contextMenu.addAction(self.exportAction)
     self.exportAction.enabled = False
     self.deleteAction = qt.QAction("Delete", self.contextMenu)
     self.contextMenu.addAction(self.deleteAction)
+    self.deleteAction.enabled = False
     self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
 
     slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
@@ -430,8 +432,9 @@ class DICOMWidget:
     self.detailsPopup.offerLoadables(seriesUIDList, "SeriesUIDList")
 
   def onTreeContextMenuRequested(self,pos):
-    index = self.tables.indexAt(pos)
-    self.selection = index.sibling(index.row(), 0)
+    # TODO: populate the context menu
+    #index = self.tables.indexAt(pos)
+    #self.selection = index.sibling(index.row(), 0)
     self.contextMenu.popup(self.tables.mapToGlobal(pos))
 
   def onContextMenuTriggered(self,action):
