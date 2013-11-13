@@ -171,8 +171,8 @@ QString qMRMLModelDisplayNodeWidget::activeScalarName()const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   // TODO: use currentArrayName()
-  vtkDataArray* dataArray = d->ActiveScalarComboBox->currentArray();
-  return dataArray ? dataArray->GetName() : "";
+  vtkAbstractArray* array = d->ActiveScalarComboBox->currentArray();
+  return array ? array->GetName() : "";
 }
 
 //------------------------------------------------------------------------------
