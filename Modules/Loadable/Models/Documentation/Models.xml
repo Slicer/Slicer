@@ -9,6 +9,25 @@
   <contributor>Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Nicole Aucoin (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. This work is partially supported by the Air Force Research Laboratories (AFRL).]]></acknowledgements>
   <parameters>
+    <label>Top level</label>
+    <parameter>
+      <label>Include Fibers</label>
+      <description><![CDATA[Check this box to include fiber bundle nodes in the scene model hierarchy view.]]></description>
+    </parameter>
+    <parameter>
+      <label>Scroll to...</label>
+      <description><![CDATA[Enter a model name to scroll the model hierarchy tree view to the first model matching that name.]]></description>
+    </parameter>
+    <parameter>
+      <label>Hide All Models</label>
+      <description><![CDATA[Turn off the visibility flag on all models in the scene. If any hierarchies have the "Force color to children" checkbox selected, the hierarchy node visibility will override model visibility settings.]]></description>
+    </parameter>
+    <parameter>
+      <label>Show All Models</label>
+      <description><![CDATA[Turn on the visibility flag on all models in the scene. If any hierarchies have the "Force color to children" checkbox selected, the hierarchy node visibility will override model visibility settings.]]></description>
+    </parameter>
+  </parameters>
+  <parameters>
     <label>Scene</label>
     <parameter>
       <label>Scene tree view</label>
@@ -47,15 +66,15 @@
     </parameter>
     <parameter>
       <label>Filename</label>
-      <description><![CDATA[Path to the file which this surface model was loaded from/saved to]]></description>
+      <description><![CDATA[Path to the file from which this surface model was loaded and/or where it will be saved.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Display</label>
-    <description><![CDATA[Control the display properties of the currently selected model in the Scene]]></description>
+    <description><![CDATA[Control the display properties of the currently selected model in the Scene.]]></description>
     <parameters>
       <label>Visibility</label>
-      <description><![CDATA[Control the visibility of the model]]></description>
+      <description><![CDATA[Control the visibility of the model.]]></description>
       <parameter>
         <label>Visible</label>
         <description><![CDATA[Is this surface model visible in the 3D view?]]></description>
@@ -78,23 +97,23 @@
       <description><![CDATA[Control the representation of the model.]]></description>
       <parameter>
         <label>Representation</label>
-        <description><![CDATA[Control the surface geometry representation (points, wireframe or surface) for the object. Surface by default. Note that you can change the representation of all the models to wireframe with the 'w' key shortcut in the 3D view.]]></description>
+        <description><![CDATA[Control the surface geometry representation (points, wireframe or surface) for the object. The default is Surface. Note that you can change the representation of all the models to wireframe with the 'w' key shortcut in the 3D view.]]></description>
       </parameter>
       <parameter>
         <label>Point Size</label>
-        <description><![CDATA[Set the diameter of the model points (if the model is a point cloud or representation is "points".) The size is expressed in screen units. 1.0 by default.]]></description>
+        <description><![CDATA[Set the diameter of the model points (if the model is a point cloud or if the representation is "Points".) The size is expressed in screen units. 1.0 by default.]]></description>
       </parameter>
       <parameter>
         <label>Line Width</label>
-        <description><![CDATA[Set the width of the model lines (if the model is a polyline or representation is "wireframe"). The width is expressed in screen units. 1.0 by default.]]></description>
+        <description><![CDATA[Set the width of the model lines (if the model is a polyline or representation is "Wireframe"). The width is expressed in screen units. 1.0 by default.]]></description>
       </parameter>
       <parameter>
         <label>Frontface culling</label>
-        <description><![CDATA[Turn on/off culling of polygons based on orientation of normal with respect to camera. If frontface culling is on, polygons facing towards camera are not drawn. Visible by default.]]></description>
+        <description><![CDATA[Turn on/off culling of polygons based on the orientation of normals with respect to the camera. If frontface culling is on, polygons facing toward the camera are not drawn. Visible by default.]]></description>
       </parameter>
       <parameter>
         <label>Backface culling</label>
-        <description><![CDATA[Turn on/off culling of polygons based on orientation of normal with respect to camera. If backface culling is on, polygons facing away from camera are not drawn. This feature needs to be turned off if the inside of a model is viewed, either when clipping or when moving the camera inside an object. Hidden by default.]]></description>
+        <description><![CDATA[Turn on/off culling of polygons based on orientation of normals with respect to the camera. If backface culling is on, polygons facing away from the camera are not drawn. This feature needs to be turned off if the inside of a model is viewed, either when clipping or when moving the camera inside an object. Hidden by default.]]></description>
       </parameter>
     </parameters>
     <parameters>
@@ -122,7 +141,7 @@
       <description><![CDATA[Control the lighting effects on the model.]]></description>
       <parameter>
         <label>Lighting</label>
-        <description><![CDATA[Control whether the model representation is impacted is by the frontfacing light. If enabled, Ambient, Diffuse and Specular parameters are used to compute the lighting effect. Enabled by default.]]></description>
+        <description><![CDATA[Control whether the model representation is impacted by the frontfacing light. If enabled, Ambient, Diffuse and Specular parameters are used to compute the lighting effect. Enabled by default.]]></description>
       </parameter>
       <parameter>
         <label>Interpolation</label>
