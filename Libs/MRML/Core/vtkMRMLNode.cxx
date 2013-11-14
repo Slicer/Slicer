@@ -439,7 +439,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLNode::ParseReferencesAttribute(const char *attValue,
                                            std::map<std::string, std::string> &references)
 {
-  /// parse refernces in the form "role1:id1 id2;role2:id3;"
+  /// parse references in the form "role1:id1 id2;role2:id3;"
   std::string attribute(attValue);
 
   std::size_t start = 0;

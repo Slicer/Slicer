@@ -19,6 +19,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <sstream>
+
 //---------------------------------------------------------------------------
 class vtkMRMLNodeTestHelper1 : public vtkMRMLNode
 {
@@ -56,8 +59,9 @@ bool TestRemoveReferencingNode();
 bool TestNodeReferences();
 bool TestReferenceModifiedEvent();
 bool TestReferencesWithEvent();
-bool TestAddReferenceedNodeIDEventsWithNoScene();
+bool TestAddReferencedNodeIDEventsWithNoScene();
 bool TestReferenceNodeNoObservers();
+bool TestNodeReferenceSerialization();
 
 
 //---------------------------------------------------------------------------
@@ -81,8 +85,9 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = TestNodeReferences() && res;
   res = TestReferenceModifiedEvent() && res;
   res = TestReferencesWithEvent() && res;
-  res = TestAddReferenceedNodeIDEventsWithNoScene() && res;
+  res = TestAddReferencedNodeIDEventsWithNoScene() && res;
   res = TestReferenceNodeNoObservers() && res;
+  res = TestNodeReferenceSerialization() && res;
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -953,7 +958,7 @@ bool TestReferencesWithEvent()
 
 
 //----------------------------------------------------------------------------
-bool TestAddReferenceedNodeIDEventsWithNoScene()
+bool TestAddReferencedNodeIDEventsWithNoScene()
 {
   std::string role1("refrole1");
 
@@ -1152,5 +1157,67 @@ bool TestReferenceNodeNoObservers()
     }
 
 
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestNodeReferenceSerialization()
+{
+  std::string role1("refrole1");
+  std::string role2("refrole2");
+
+  vtkNew<vtkMRMLScene> scene;
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
+  scene->AddNode(referencingNode.GetPointer());
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode11;
+  scene->AddNode(referencedNode11.GetPointer());
+  referencingNode->AddNodeReferenceID(role1.c_str(), referencedNode11->GetID());
+  
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode21;
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode22;
+  scene->AddNode(referencedNode21.GetPointer());
+  scene->AddNode(referencedNode22.GetPointer());
+  referencingNode->AddNodeReferenceID(role2.c_str(), referencedNode21->GetID());
+  referencingNode->AddNodeReferenceID(role2.c_str(), referencedNode22->GetID());
+
+  std::stringstream ss;
+
+  // Write scene to XML string
+  scene->SetSaveToXMLString(1);
+  scene->Commit();
+  std::string sceneXMLString = scene->GetSceneXMLString();
+
+  vtkNew<vtkMRMLScene> scene2;
+  scene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
+  scene2->SetLoadFromXMLString(1);
+  scene2->SetSceneXMLString(sceneXMLString);
+  scene2->Import();
+
+  vtkMRMLNode* referencingNodeImported = NULL;
+  if (scene2->GetNumberOfNodes() != 4 ||
+      (referencingNodeImported = scene2->GetNodeByID(referencingNode->GetID())) == 0 ||
+      referencingNodeImported->GetNumberOfNodeReferences(role1.c_str()) != 1 || 
+      referencingNodeImported->GetNumberOfNodeReferences(role2.c_str()) != 2 ||
+      referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
+      strcmp(referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0),
+             referencedNode11->GetID()) != 0 ||
+      referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0) == 0 ||
+      strcmp(referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0),
+             referencedNode21->GetID()) != 0 ||
+      referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1) == 0 ||
+      strcmp(referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1),
+             referencedNode22->GetID()) != 0)
+    {
+    std::cerr << __LINE__ << ": TestNodeReferenceSerialization failed" << std::endl
+      << "Number of nodes: " << scene2->GetNumberOfNodes()
+      << "Number of role1 references: "
+        << referencingNodeImported->GetNumberOfNodeReferences(role1.c_str())
+      << "Number of role2 references: "
+        << referencingNodeImported->GetNumberOfNodeReferences(role2.c_str());
+    return false;
+    }
   return true;
 }
