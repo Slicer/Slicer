@@ -51,6 +51,7 @@ public:
   QString               CurrentModule;
   bool                  DuplicateActions;
   bool                  ShowHiddenModules;
+  QStringList           TopLevelCategoryOrder;
 };
 
 //---------------------------------------------------------------------------
@@ -62,6 +63,10 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   this->NoModuleAction = 0;
   this->DuplicateActions = false;
   this->ShowHiddenModules = false;
+  this->TopLevelCategoryOrder << "Wizards" << "Informatics" << "Registration"
+    << "Segmentation" << "Quantification" << "Diffusion" << "IGT"
+    << "Filtering" << "Surface Models" << "Converters" << "Endoscopy"
+    << "Utilities" << "Developer Tools" << "Legacy" << "Testing";
 }
 
 //---------------------------------------------------------------------------
@@ -82,27 +87,10 @@ void qSlicerModulesMenuPrivate::addDefaultCategories()
   Q_Q(qSlicerModulesMenu);
   this->AllModulesMenu = q->addMenu(QObject::tr("All Modules"));
   q->addSeparator();
-  // between the 2 separators goes the top level modules (with no category)
+  // between the 2 separators are the top level modules (with no category)
   q->addSeparator();
-  q->addMenu("Wizards");
-  q->addMenu("Informatics");
-  q->addMenu("Registration");
-  q->addMenu("Segmentation");
-  q->addMenu("Quantification");
-  q->addMenu("Diffusion");
-  //q->addMenu("Tractography");
-  q->addMenu("IGT");
-  //q->addMenu("Time Series");
-  q->addMenu("Filtering");
-  q->addMenu("Surface Models");
-  q->addMenu("Converters");
-  q->addMenu("Endoscopy");
-  q->addMenu("Utilities");
-  q->addMenu("Developer Tools");
-  q->addMenu("Legacy");
-  q->addMenu("Testing");
-  q->addSeparator();
-  // after the separator goes custom modules
+  // after the separator are the predefined categories followed by the custom
+  // ones.
 }
 
 //---------------------------------------------------------------------------
@@ -152,12 +140,17 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
 {
   Q_Q(qSlicerModulesMenu);
   QList<QAction*> actions = menu->actions();
+  QStringList orderedList;
   if (menu == q)
     {
     // special ordering at the top level, the actions need to be added
     // between the submenu AllModules and the other submenus
     actions.removeFirst(); // remove AllModules
     actions.removeFirst(); // remove first separator
+    if (moduleAction->menu())
+      {
+      orderedList = this->TopLevelCategoryOrder;
+      }
     }
   // The actions are before submenus and inserted based on their index or alphabetically
   bool ok = false;
@@ -166,6 +159,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
     {
     index = 65535; // big enough
     }
+  // Search where moduleAction should be inserted. Before what action.
   foreach(QAction* action, actions)
     {
     Q_ASSERT(action);
@@ -174,24 +168,49 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
       {
       actionIndex = 65535;
       }
+    // Sort alphabetically if the indexes are the same
+    if (actionIndex == index)
+      {
+      if (action->text().compare(moduleAction->text(), Qt::CaseInsensitive) > 0)
+        {
+        actionIndex = index + 1;
+        }
+      }
+    int order = orderedList.indexOf(moduleAction->text());
+    int actionOrder = orderedList.indexOf(action->text());
+    if (order != -1 || actionOrder != -1)
+      {
+      if (order == -1)
+        {// insert (with index or alphabetically) at the end of the ordered list.
+        index = actionIndex;
+        }
+      else if (actionOrder == -1)
+        {// insert it now
+        actionIndex = index + 1;
+        }
+      else
+        {
+        actionIndex = actionOrder;
+        index = order;
+        }
+      }
+    // If the action to add is NOT a menu
     if (!moduleAction->menu() && (action->menu() ||
                                   action->isSeparator() ||
-                                  actionIndex > index ||
-                                  (actionIndex == index &&
-                                   (action->text().compare(moduleAction->text(), Qt::CaseInsensitive) > 0))))
+                                  actionIndex > index))
       {
       menu->insertAction(action, moduleAction);
       return;
       }
+    // If the action to add is a menu
     else if (moduleAction->menu() && action->menu() &&
-             (actionIndex > index ||
-              (actionIndex == index &&
-               (action->text().compare(moduleAction->text(), Qt::CaseInsensitive) > 0))))
+             (actionIndex > index))
       {
       menu->insertAction(action, moduleAction);
       return;
       }
     }
+  // otherwise, simply add it to the end of the menu list
   menu->addAction(moduleAction);
 }
 
