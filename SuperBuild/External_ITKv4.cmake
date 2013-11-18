@@ -39,11 +39,6 @@ if(NOT DEFINED ITK_DIR)
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
   endif()
 
-  # HACK This code fixes a loony problem with HDF5 -- it doesn't
-  #      link properly if -fopenmp is used.
-  string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-  string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
-
   if(NOT DEFINED git_protocol)
       set(git_protocol "git")
   endif()
