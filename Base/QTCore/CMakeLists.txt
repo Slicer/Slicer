@@ -133,6 +133,12 @@ set(KIT_target_libraries
   CTKVisualizationVTKCore
   )
 
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND KIT_target_libraries
+    CTKDICOMCore
+    )
+endif()
+
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_target_libraries
     qRestAPI
