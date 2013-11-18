@@ -430,7 +430,8 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
   Q_ASSERT(slider);
   d->ActiveSliders.push(slider);
 
-  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
+  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
+    || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
     {
     // When a rotation slider is manipulated, the other rotation sliders are
     // reset to 0. Resetting the other sliders should no fire any event.

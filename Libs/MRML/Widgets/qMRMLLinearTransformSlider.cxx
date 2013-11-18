@@ -170,8 +170,16 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 
   if (this->isTranslation())
     {
-    d->OldPosition = _value;
-    this->setValue(_value);
+    // Slider values only match matrix translation values in case of GLOBAL reference
+    if (d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL)
+      {
+      d->OldPosition = _value;
+      this->setValue(_value);
+      }
+    else
+      {
+      d->OldPosition = this->value();
+      }
     }
   else if (this->isRotation())
     {
@@ -210,19 +218,43 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   else if (this->typeOfTransform() == TRANSLATION_LR)
     {
     double vector[] = {0., 0., 0.};
-    vector[0] = _sliderPosition - matrix->GetElement(0,3);
+    // Slider values only match matrix translation values in case of GLOBAL reference
+    if (d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL)
+      {
+      vector[0] = _sliderPosition - matrix->GetElement(0,3);
+      }
+    else
+      {
+      vector[0] = _sliderPosition - d->OldPosition;
+      }
     transform->Translate(vector);
     }
   else if (this->typeOfTransform() == TRANSLATION_PA)
     {
     double vector[] = {0., 0., 0.};
-    vector[1] = _sliderPosition - matrix->GetElement(1,3);
+    // Slider values only match matrix translation values in case of GLOBAL reference
+    if (d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL)
+      {
+      vector[1] = _sliderPosition - matrix->GetElement(1,3);
+      }
+    else
+      {
+      vector[1] = _sliderPosition - d->OldPosition;
+      }
     transform->Translate(vector);
     }
   else if (this->typeOfTransform() == TRANSLATION_IS)
     {
     double vector[] = {0., 0., 0.};
-    vector[2] = _sliderPosition - matrix->GetElement(2,3);
+    // Slider values only match matrix translation values in case of GLOBAL reference
+    if (d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL)
+      {
+      vector[2] = _sliderPosition - matrix->GetElement(2,3);
+      }
+    else
+      {
+      vector[2] = _sliderPosition - d->OldPosition;
+      }
     transform->Translate(vector);
     }
   d->OldPosition = _sliderPosition;

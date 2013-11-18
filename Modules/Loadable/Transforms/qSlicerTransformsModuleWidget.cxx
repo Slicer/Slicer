@@ -221,6 +221,7 @@ void qSlicerTransformsModuleWidget::identity()
     return;
     }
 
+  d->TranslationSliders->resetUnactiveSliders();
   d->RotationSliders->resetUnactiveSliders();
   d->MRMLTransformNode->GetMatrixTransformToParent()->Identity();
 }
