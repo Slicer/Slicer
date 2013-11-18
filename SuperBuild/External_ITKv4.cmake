@@ -39,28 +39,6 @@ if(NOT DEFINED ITK_DIR)
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
   endif()
 
-  #if(foo)
-    #list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-    #  -DINSTALL_WRAP_ITK_COMPATIBILITY:BOOL=OFF
-    #  -DWRAP_float:BOOL=ON
-    #  -DWRAP_unsigned_char:BOOL=ON
-    #  -DWRAP_signed_short:BOOL=ON
-    #  -DWRAP_unsigned_short:BOOL=ON
-    #  -DWRAP_complex_float:BOOL=ON
-    #  -DWRAP_vector_float:BOOL=ON
-    #  -DWRAP_covariant_vector_float:BOOL=ON
-    #  -DWRAP_rgb_signed_short:BOOL=ON
-    #  -DWRAP_rgb_unsigned_char:BOOL=ON
-    #  -DWRAP_rgb_unsigned_short:BOOL=ON
-    #  -DWRAP_ITK_TCL:BOOL=OFF
-    #  -DWRAP_ITK_JAVA:BOOL=OFF
-    #  -DWRAP_ITK_PYTHON:BOOL=ON
-    #  -DPYTHON_EXECUTABLE:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_EXECUTABLE}
-    #  -DPYTHON_INCLUDE_DIR:PATH=${${CMAKE_PROJECT_NAME}_PYTHON_INCLUDE}
-    #  -DPYTHON_LIBRARY:FILEPATH=${${CMAKE_PROJECT_NAME}_PYTHON_LIBRARY}
-    #  )
-  #endif()
-
   # HACK This code fixes a loony problem with HDF5 -- it doesn't
   #      link properly if -fopenmp is used.
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
