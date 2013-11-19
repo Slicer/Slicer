@@ -2,12 +2,12 @@
 <executable>
   <category>Examples</category>
   <title>CLIModuleTemplate</title>
-  <description><![CDATA[This is a CLI module (based on GaussianBlurImageFilter) bundled in an extension]]></description>
+  <description><![CDATA[This is a CLI module that can be bundled in an extension]]></description>
   <version>0.0.1</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/CLIModuleTemplate</documentation-url>
   <license>Slicer</license>
-  <contributor>Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)</contributor>
-  <acknowledgements>This work was partially funded by NIH grant 3P41RR013218-12S1</acknowledgements>
+  <contributor>FirstName LastName (Institution), FirstName LastName (Institution)</contributor>
+  <acknowledgements>This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN</acknowledgements>
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
@@ -16,7 +16,7 @@
       <longflag>sigma</longflag>
       <flag>s</flag>
       <label>Sigma</label>
-      <description><![CDATA[Sigma value in physical units (e.g., mm) of the Gaussian kernel]]></description>
+      <description><![CDATA[A double value (in units of mm) passed to the algorithm]]></description>
       <default>1.0</default>
     </double>
     <image>
@@ -31,7 +31,7 @@
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description><![CDATA[Blurred Volume]]></description>
+      <description><![CDATA[Output Volume]]></description>
     </image>
   </parameters>
 </executable>
