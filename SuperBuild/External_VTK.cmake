@@ -157,9 +157,25 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
+  set(PNG_INCLUDE_DIR ${VTK_SOURCE_DIR}/Utilities/vtkpng)
+
+  set(PNG_LIBRARY_DIR ${VTK_DIR}/bin)
+  if(CMAKE_CONFIGURATION_TYPES)
+    set(PNG_LIBRARY_DIR ${PNG_LIBRARY_DIR}/${CMAKE_CFG_INTDIR})
+  endif()
+  if(WIN32)
+    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/vtkpng.lib)
+  elseif(APPLE)
+    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng.dylib)
+  else()
+    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng.so)
+  endif()
+
 else()
   # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other
   # project may depend on VTK, let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
 endif()
 
+message(STATUS "${__${proj}_superbuild_message} - PNG_INCLUDE_DIR:${PNG_INCLUDE_DIR}")
+message(STATUS "${__${proj}_superbuild_message} - PNG_LIBRARY:${PNG_LIBRARY}")
