@@ -55,20 +55,11 @@ if(NOT DEFINED python_DIR)
   endif()
 
   if(Slicer_USE_PYTHONQT_WITH_TCL)
-    if(WIN32)
-      set(tcl_library ${CMAKE_CURRENT_BINARY_DIR}/tcl-build/lib/tcl${TCL_TK_VERSION}.lib)
-      set(tk_library ${CMAKE_CURRENT_BINARY_DIR}/tcl-build/lib/tk${TCL_TK_VERSION}.lib)
-    else()
-      set(tcl_library ${CMAKE_CURRENT_BINARY_DIR}/tcl-build/lib/libtcl${TCL_TK_VERSION_DOT}${CMAKE_SHARED_LIBRARY_SUFFIX})
-      set(tk_library ${CMAKE_CURRENT_BINARY_DIR}/tcl-build/lib/libtk${TCL_TK_VERSION_DOT}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    endif()
-    message(STATUS "TCL_LIBRARY:${tcl_library}")
-    message(STATUS "TK_LIBRARY:${tk_library}")
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DENABLE_TKINTER:BOOL=ON
-      -DTCL_LIBRARY:FILEPATH=${tcl_library}
+      -DTCL_LIBRARY:FILEPATH=${TCL_LIBRARY}
       -DTCL_INCLUDE_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/tcl-build/include
-      -DTK_LIBRARY:FILEPATH=${tk_library}
+      -DTK_LIBRARY:FILEPATH=${TK_LIBRARY}
       -DTK_INCLUDE_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/tcl-build/include
       )
   else()

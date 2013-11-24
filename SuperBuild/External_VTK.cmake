@@ -73,29 +73,13 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DVTK_USE_TK:BOOL=OFF)
   endif()
 
-  set(slicer_TCL_LIB)
-  set(slicer_TK_LIB)
-  set(slicer_TCLSH)
   if(VTK_WRAP_TCL)
-    if(WIN32)
-      set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tcl84.lib)
-      set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tk84.lib)
-      set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh.exe)
-    elseif(APPLE)
-      set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.dylib)
-      set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.dylib)
-      set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
-    else()
-      set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.so)
-      set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.so)
-      set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
-    endif()
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DTCL_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
-      -DTK_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
-      -DTCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
-      -DTK_LIBRARY:FILEPATH=${slicer_TK_LIB}
-      -DTCL_TCLSH:FILEPATH=${slicer_TCLSH}
+      -DTCL_INCLUDE_PATH:PATH=${TCL_INCLUDE_PATH}
+      -DTK_INCLUDE_PATH:PATH=${TK_INCLUDE_PATH}
+      -DTCL_LIBRARY:FILEPATH=${TCL_LIBRARY}
+      -DTK_LIBRARY:FILEPATH=${TK_LIBRARY}
+      -DTCL_TCLSH:FILEPATH=${TCL_TCLSH}
       )
   endif()
 
