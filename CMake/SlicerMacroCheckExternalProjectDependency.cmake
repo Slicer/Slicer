@@ -22,6 +22,15 @@ if(NOT EXISTS "${EXTERNAL_PROJECT_DIR}")
   set(EXTERNAL_PROJECT_DIR ${${CMAKE_PROJECT_NAME}_SOURCE_DIR}/SuperBuild)
 endif()
 
+macro(slicer_include_once)
+  # Make sure this file is included only once
+  get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+  if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+    return()
+  endif()
+  set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+endmacro()
+
 macro(SlicerMacroCheckExternalProjectDependency proj)
   # Set indent variable if needed
   if(NOT DEFINED __indent)
