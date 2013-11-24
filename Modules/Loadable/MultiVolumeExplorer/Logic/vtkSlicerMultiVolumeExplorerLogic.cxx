@@ -18,9 +18,6 @@
 // Slicer includes
 #include <vtkSlicerColorLogic.h>
 #include <vtkSlicerVolumesLogic.h>
-#include <qSlicerCoreApplication.h>
-#include <qSlicerModuleManager.h>
-#include <qSlicerAbstractCoreModule.h>
 
 // MultiVolumeExplorer includes
 #include "vtkSlicerMultiVolumeExplorerLogic.h"
