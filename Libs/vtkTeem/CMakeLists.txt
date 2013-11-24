@@ -14,8 +14,17 @@ endif()
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-find_package(Teem REQUIRED)
+find_package(Teem REQUIRED NO_MODULE)
+# XXX Since no TeemConfigVersion.cmake is configured, let's check the version explicitly
+if(${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH} VERSION_LESS 1.10)
+  message(FATAL_ERROR
+    "Could not find a configuration file for package "Teem" that is compatible with requested version \"1.10\".")
+endif()
 include(${Teem_USE_FILE})
+
+# XXX Teem 1.11.0 or Teem >= 4168 - This variable won't be needed anymore.
+#     See http://sourceforge.net/p/teem/code/4168/
+set(Teem_LIBRARIES teem)
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -98,17 +107,6 @@ set(lib_name ${PROJECT_NAME})
 
 set(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
-
-# after teem 1.9, all the teem libraries are groups in one big libteem.so
-if ( ${Teem_VERSION_MAJOR} GREATER 1 )
-  set(Teem_LIBRARIES teem)
-else ( ${Teem_VERSION_MAJOR} GREATER 1 )
-  if ( ${Teem_VERSION_MINOR} LESS 10 )
-    set(Teem_LIBRARIES air biff nrrd ten ell)
-  else ( ${Teem_VERSION_MINOR} LESS 10 )
-    set(Teem_LIBRARIES teem)
-  endif ( ${Teem_VERSION_MINOR} LESS 10 )
-endif ( ${Teem_VERSION_MAJOR} GREATER 1 )
 
 set(VTK_LIBRARIES
   vtkCommon
