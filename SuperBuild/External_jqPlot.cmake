@@ -8,6 +8,10 @@ set(jqPlot_DEPENDENCIES "")
 SlicerMacroCheckExternalProjectDependency(jqPlot)
 set(proj jqPlot)
 
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
 if(NOT DEFINED jqPlot_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 

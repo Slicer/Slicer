@@ -1,11 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED zlib_DIR AND NOT EXISTS ${zlib_DIR})
-  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(zlib_DEPENDENCIES "")
 
@@ -13,7 +8,19 @@ set(zlib_DEPENDENCIES "")
 SlicerMacroCheckExternalProjectDependency(zlib)
 set(proj zlib)
 
-if(NOT DEFINED zlib_DIR)
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  unset(zlib_DIR CACHE)
+  find_package(ZLIB REQUIRED)
+  set(ZLIB_INCLUDE_DIR ${ZLIB_INCLUDE_DIRS})
+  set(ZLIB_LIBRARY ${ZLIB_LIBRARIES})
+endif()
+
+# Sanity checks
+if(DEFINED zlib_DIR AND NOT EXISTS ${zlib_DIR})
+  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
@@ -69,4 +76,10 @@ else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${zlib_DEPENDENCIES}")
+endif()
+
+message(STATUS "${__${proj}_superbuild_message} - ZLIB_INCLUDE_DIR:${ZLIB_INCLUDE_DIR}")
+message(STATUS "${__${proj}_superbuild_message} - ZLIB_LIBRARY:${ZLIB_LIBRARY}")
+if(ZLIB_ROOT)
+  message(STATUS "${__${proj}_superbuild_message} - ZLIB_ROOT:${ZLIB_ROOT}")
 endif()

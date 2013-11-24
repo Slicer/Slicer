@@ -16,6 +16,12 @@
  *
  *=========================================================================*/
 
+// XXX # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
+//     # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
+#ifndef HAVE_CONFIG_H
+#define HAVE_CONFIG_H
+#endif
+
 #include "itkDCMTKFileReader.h"
 #undef HAVE_SSTREAM   // 'twould be nice if people coded without using
 // incredibly generic macro names

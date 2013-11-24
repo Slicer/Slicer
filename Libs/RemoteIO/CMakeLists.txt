@@ -30,8 +30,8 @@ if(${ITK_VERSION_MAJOR} GREATER 3)
 endif()
 include(${ITK_USE_FILE})
 
-find_package(SLICERLIBCURL REQUIRED)
-include(${SLICERLIBCURL_USE_FILE})
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
 
 # Disable MSVC 8 warnings
 if(WIN32)
@@ -101,7 +101,7 @@ set(srcs ${RemoteIO_SRCS})
 add_library(${lib_name} ${srcs})
 
 set(libs
-  ${SLICERLIBCURL_LIBRARIES}
+  ${CURL_LIBRARIES}
   MRMLCore
   )
 target_link_libraries(${lib_name} ${libs})

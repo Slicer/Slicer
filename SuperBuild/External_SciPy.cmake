@@ -8,6 +8,10 @@ set(SciPy_DEPENDENCIES NUMPY)
 SlicerMacroCheckExternalProjectDependency(SciPy)
 set(proj SciPy)
 
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
 #message(STATUS "${__indent}Adding project ${proj}")
 
 ExternalProject_Add(${proj}

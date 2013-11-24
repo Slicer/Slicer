@@ -72,25 +72,41 @@ endif()
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_LIBRARY_PATHS_BUILD
-  ${DCMTK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
-  ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
-  ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
-  ${QT_LIBRARY_DIR}
-  ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
-  ${LibArchive_DIR}/${LIB_SUBDIR}
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
   )
+if(NOT Slicer_USE_SYSTEM_DCMTK)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${DCMTK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>)
+endif()
+if(NOT Slicer_USE_SYSTEM_VTK)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>)
+endif()
+if(NOT Slicer_USE_SYSTEM_CTK)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>)
+endif()
+if(NOT Slicer_USE_SYSTEM_QT)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${QT_LIBRARY_DIR})
+endif()
+if(NOT Slicer_USE_SYSTEM_LibArchive)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${LibArchive_DIR}/${LIB_SUBDIR})
+endif()
+if(NOT Slicer_USE_SYSTEM_Teem)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>)
+endif()
 if(${ITK_VERSION_MAJOR} GREATER 3)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${ITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
-    )
+  if(NOT Slicer_USE_SYSTEM_ITKv3)
+    list(APPEND SLICER_LIBRARY_PATHS_BUILD
+      ${ITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
+      )
+  endif()
 else()
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
-    )
+  if(NOT Slicer_USE_SYSTEM_ITKv4)
+    list(APPEND SLICER_LIBRARY_PATHS_BUILD
+      ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
+      )
+  endif()
 endif()
 
-if(Slicer_BUILD_CLI_SUPPORT)
+if(Slicer_BUILD_CLI_SUPPORT AND NOT Slicer_USE_SYSTEM_SlicerExecutionModel)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${SlicerExecutionModel_DIR}/ModuleDescriptionParser/bin/<CMAKE_CFG_INTDIR>
     )
@@ -115,13 +131,13 @@ if(Slicer_BUILD_QTLOADABLEMODULES)
     )
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL AND NOT Slicer_USE_SYSTEM_OpenSSL)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${OpenSSL_EXPORT_LIBRARY_DIR}
     )
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${Slicer_TCL_DIR}/lib
     )
@@ -133,20 +149,20 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   endif()
 endif()
 
-if(Slicer_USE_BatchMake)
+if(Slicer_USE_BatchMake AND NOT Slicer_USE_SYSTEM_BatchMake)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${BatchMake_DIR}/bin/<CMAKE_CFG_INTDIR>
     )
 endif()
 
-if(Slicer_USE_OpenIGTLink)
+if(Slicer_USE_OpenIGTLink AND NOT Slicer_USE_SYSTEM_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${OpenIGTLink_DIR}
     ${OpenIGTLink_DIR}/bin/<CMAKE_CFG_INTDIR>
     )
 endif()
 
-if(Slicer_USE_PYTHONQT)
+if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
   set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-install)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
@@ -159,20 +175,20 @@ if(Slicer_USE_PYTHONQT)
   endif()
 endif()
 
-if(Slicer_USE_QtTesting)
+if(Slicer_USE_QtTesting AND NOT Slicer_USE_SYSTEM_CTK)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/QtTesting-build/<CMAKE_CFG_INTDIR>
     )
 endif()
 
-if(Slicer_USE_NUMPY)
+if(Slicer_USE_NUMPY AND NOT Slicer_USE_SYSTEM_NUMPY)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/core
     ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/lib
     )
 endif()
 
-if(Slicer_USE_SimpleITK)
+if(Slicer_USE_SimpleITK AND NOT Slicer_USE_SYSTEM_SimpleITK)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${SimpleITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
     )
@@ -193,7 +209,7 @@ if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
     )
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcls)
   list(APPEND SLICER_PATHS_BUILD
     ${Slicer_TCL_DIR}/bin
     )
@@ -217,25 +233,29 @@ set(SLICER_ENVVARS_BUILD
 if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-dynload")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
+  if(NOT Slicer_USE_SYSTEM_python)
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}")
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-dynload")
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
+  endif()
 
   if(Slicer_BUILD_QTLOADABLEMODULES)
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>")
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
   endif()
 
-  if(Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-tk")
   endif()
 
-  list(APPEND SLICER_ENVVARS_BUILD
-    "PYTHONHOME=${SLICER_PYTHONHOME}"
-    "PYTHONPATH=${PYTHONPATH}")
+  if(NOT Slicer_USE_SYSTEM_python)
+    list(APPEND SLICER_ENVVARS_BUILD
+      "PYTHONHOME=${SLICER_PYTHONHOME}"
+      "PYTHONPATH=${PYTHONPATH}")
+  endif()
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
   # Search locations for TCL packages - space separated list
   set(TCLLIBPATH "${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}")
   set(TCLLIBPATH "${TCLLIBPATH} ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}")
@@ -261,9 +281,12 @@ set(SLICER_LIBRARY_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_CLIMODULES_LIB_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
-  # External projects
-  <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
   )
+if(NOT Slicer_USE_SYSTEM_Teem)
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+    <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
+    )
+endif()
 
 # The following lines allow Slicer to load a CLI module extension that depends
 # on libraries (i.e a logic class) provided by a loadable module extension.
@@ -272,14 +295,14 @@ if(CMAKE_CONFIGURATION_TYPES)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED ../${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>)
 endif()
 
-if(Slicer_USE_OpenIGTLink)
+if(Slicer_USE_OpenIGTLink AND NOT Slicer_USE_SYSTEM_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     # External projects
     <APPLAUNCHER_DIR>/lib/igtl
     )
 endif()
 
-if(Slicer_USE_BatchMake)
+if(Slicer_USE_BatchMake AND NOT Slicer_USE_SYSTEM_BatchMake)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     <APPLAUNCHER_DIR>/lib/BatchMake
     <APPLAUNCHER_DIR>/lib/bmModuleDescriptionParser
@@ -288,13 +311,19 @@ endif()
 
 if(UNIX AND Slicer_USE_PYTHONQT)
   # On windows, both pythonQt and python libraries are installed allong with the executable
-  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/lib
-    <APPLAUNCHER_DIR>/lib/PythonQt
-    )
+  if(NOT Slicer_USE_SYSTEM_python)
+    list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+      <APPLAUNCHER_DIR>/lib/Python/lib
+      )
+  endif()
+  if(NOT Slicer_USE_SYSTEM_CTK)
+    list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
+      <APPLAUNCHER_DIR>/lib/PythonQt
+      )
+  endif()
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
   set(tcllib_subdir lib)
   if(WIN32)
     set(tcllib_subdir bin)
@@ -313,7 +342,7 @@ if(Slicer_USE_PYTHONQT)
   endif()
 endif()
 
-if(Slicer_USE_NUMPY)
+if(Slicer_USE_NUMPY AND NOT Slicer_USE_SYSTEM_NUMPY)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core
     <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib
@@ -342,25 +371,29 @@ set(SLICER_ENVVARS_INSTALLED
 
 if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
+  if(NOT Slicer_USE_SYSTEM_python)
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload")
+    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
+  endif()
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
 
-  if(Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
   endif()
 
-  list(APPEND SLICER_ENVVARS_INSTALLED
-    "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python"
-    "PYTHONPATH=${PYTHONPATH}")
+  if(NOT Slicer_USE_SYSTEM_python)
+    list(APPEND SLICER_ENVVARS_INSTALLED
+      "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python"
+      "PYTHONPATH=${PYTHONPATH}")
+  endif()
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL)
+if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
   # Search locations for TCL packages - space separated list
   set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
   set(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")

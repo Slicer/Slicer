@@ -16,8 +16,14 @@
  *
  *=========================================================================*/
 #ifndef __itkDCMTKFileReader_h
-
 #define __itkDCMTKFileReader_h
+
+// XXX # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
+//     # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
+#ifndef HAVE_CONFIG_H
+#define HAVE_CONFIG_H
+#endif
+
 #include <stack>
 #include <vector>
 #include "itkByteSwapper.h"

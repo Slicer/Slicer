@@ -1,17 +1,21 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED BRAINSTools_SOURCE_DIR AND NOT EXISTS ${BRAINSTools_SOURCE_DIR})
-  message(FATAL_ERROR "BRAINSTools_SOURCE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK )
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 set(proj BRAINSTools)
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED BRAINSTools_SOURCE_DIR AND NOT EXISTS ${BRAINSTools_SOURCE_DIR})
+  message(FATAL_ERROR "BRAINSTools_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+endif()
 
 if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")

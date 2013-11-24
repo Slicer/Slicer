@@ -1,15 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
-  message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
-if(DEFINED VTK_SOURCE_DIR AND NOT EXISTS ${VTK_SOURCE_DIR})
-  message(FATAL_ERROR "VTK_SOURCE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(VTK_DEPENDENCIES "zlib")
 if (Slicer_USE_PYTHONQT)
@@ -20,7 +11,23 @@ endif()
 SlicerMacroCheckExternalProjectDependency(VTK)
 set(proj VTK)
 
-if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  unset(VTK_DIR CACHE)
+  unset(VTK_SOURCE_DIR CACHE)
+  find_package(VTK REQUIRED NO_MODULE)
+endif()
+
+# Sanity checks
+if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
+  message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(DEFINED VTK_SOURCE_DIR AND NOT EXISTS ${VTK_SOURCE_DIR})
+  message(FATAL_ERROR "VTK_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+
+if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 

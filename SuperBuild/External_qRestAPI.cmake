@@ -1,17 +1,21 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED qRestAPI_DIR AND NOT EXISTS ${qRestAPI_DIR})
-  message(FATAL_ERROR "qRestAPI_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(qRestAPI_DEPENDENCIES "")
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(qRestAPI)
 set(proj qRestAPI)
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED qRestAPI_DIR AND NOT EXISTS ${qRestAPI_DIR})
+  message(FATAL_ERROR "qRestAPI_DIR variable is defined but corresponds to non-existing directory")
+endif()
 
 if(NOT DEFINED qRestAPI_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")

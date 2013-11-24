@@ -1,17 +1,21 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED MultiVolumeImporter_SOURCE_DIR AND NOT EXISTS ${MultiVolumeImporter_SOURCE_DIR})
-  message(FATAL_ERROR "MultiVolumeImporter_SOURCE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(MultiVolumeImporter_DEPENDENCIES "")
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(MultiVolumeImporter)
 set(proj MultiVolumeImporter)
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED MultiVolumeImporter_SOURCE_DIR AND NOT EXISTS ${MultiVolumeImporter_SOURCE_DIR})
+  message(FATAL_ERROR "MultiVolumeImporter_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+endif()
 
 if(NOT DEFINED MultiVolumeImporter_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")

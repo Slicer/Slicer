@@ -9,9 +9,9 @@ endif(WIN32)
 find_package(VTK REQUIRED)
 include_directories(${VTK_SOURCE_DIR})
 
-# Find SLICERLIBCURL (slicercurl)
-find_package(SLICERLIBCURL REQUIRED)
-include(${SLICERLIBCURL_USE_FILE})
+# Find CURL
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
 
 # Find GenerateCLP
 find_package(GenerateCLP REQUIRED)
@@ -20,6 +20,6 @@ include(${GenerateCLP_USE_FILE})
 SEMMacroBuildCLI(
   NAME ${PROJECT_NAME}
   #LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${SLICERLIBCURL_LIBRARIES} ${ITK_LIBRARIES}
+  TARGET_LIBRARIES ${CURL_LIBRARIES} ${ITK_LIBRARIES}
   )
 

@@ -1,17 +1,21 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED SimpleFilters_SOURCE_DIR AND NOT EXISTS ${SimpleFilters_SOURCE_DIR})
-  message(FATAL_ERROR "SimpleFilters_SOURCE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set compile time dependency list
 set(SimpleFilters_DEPENDENCIES "")
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(SimpleFilters)
 set(proj SimpleFilters)
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED SimpleFilters_SOURCE_DIR AND NOT EXISTS ${SimpleFilters_SOURCE_DIR})
+  message(FATAL_ERROR "SimpleFilters_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+endif()
 
 if(NOT DEFINED SimpleFilters_SOURCE_DIR)
 

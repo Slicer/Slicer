@@ -1,11 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED LibArchive_DIR AND NOT EXISTS ${LibArchive_DIR})
-  message(FATAL_ERROR "LibArchive_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(LibArchive_DEPENDENCIES "zlib")
 if(WIN32)
@@ -16,8 +11,22 @@ endif()
 SlicerMacroCheckExternalProjectDependency(LibArchive)
 set(proj LibArchive)
 
-if(NOT DEFINED LibArchive_DIR)
-  #message(STATUS "${__indent}Adding project ${proj}")
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} AND (WIN32 OR APPLE))
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  unset(LibArchive_DIR CACHE)
+  find_package(LibArchive REQUIRED MODULE)
+endif()
+
+# Sanity checks
+if(DEFINED LibArchive_DIR AND NOT EXISTS ${LibArchive_DIR})
+  message(FATAL_ERROR "LibArchive_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(NOT DEFINED LibArchive_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  #message(STATUS "unset(DCMTK_DIR CACHE)${__indent}Adding project ${proj}")
   #
   # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git
   #         for all platforms.  For notes on cross-platform issues with earlier versions
@@ -89,8 +98,21 @@ if(NOT DEFINED LibArchive_DIR)
   endif()
 
   set(LibArchive_DIR ${CMAKE_BINARY_DIR}/LibArchive-install)
+
+  set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
+  if(WIN32)
+    set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
+  else()
+    set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
+  endif()
+
 else()
   # The project is provided using LibArchive_DIR, nevertheless since other project may depend on LibArchive,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${LibArchive_DEPENDENCIES}")
+endif()
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(STATUS "${__${proj}_superbuild_message} - LibArchive_INCLUDE_DIRS:${LibArchive_INCLUDE_DIRS}")
+  message(STATUS "${__${proj}_superbuild_message} - LibArchive_LIBRARIES:${LibArchive_LIBRARIES}")
 endif()

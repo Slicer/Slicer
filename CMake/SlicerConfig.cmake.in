@@ -399,9 +399,14 @@ slicer_config_set_ep(
   CACHE PATH "Path to qRestAPI build or install directory" FORCE)
 
 slicer_config_set_ep(
-  SLICERLIBCURL_DIR
-  "@SLICERLIBCURL_DIR_CONFIG@"
-  CACHE PATH "Path to Curl build or install directory" FORCE)
+  CURL_INCLUDE_DIR
+  "@CURL_INCLUDE_DIR_CONFIG@"
+  CACHE PATH "Path to CURL include directory" FORCE)
+
+slicer_config_set_ep(
+  CURL_LIBRARY
+  "@CURL_LIBRARY_CONFIG@"
+  CACHE PATH "Path to CURL library" FORCE)
 
 # SlicerExecutionModel settings
 set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX "@SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG@")

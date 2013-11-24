@@ -5,7 +5,7 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include <slicerlibcurl/slicerlibcurl.h>
+#include <curl/curl.h>
 
 #include <vtkRemoteIOConfigure.h>
 #include "vtkRemoteIO.h"

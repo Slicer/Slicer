@@ -14,6 +14,10 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   SlicerMacroCheckExternalProjectDependency(CTKAPPLAUNCHER)
   set(proj CTKAPPLAUNCHER)
 
+  if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+    message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+  endif()
+
   if(NOT DEFINED CTKAPPLAUNCHER_DIR)
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
     set(launcher_version "0.1.11")

@@ -1,11 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
-  message(FATAL_ERROR "CTK_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(CTK_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME})
 if(Slicer_USE_PYTHONQT)
@@ -19,7 +14,17 @@ endif()
 SlicerMacroCheckExternalProjectDependency(CTK)
 set(proj CTK)
 
-if(NOT DEFINED CTK_DIR)
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
+  unset(CTK_DIR CACHE)
+  find_package(CTK 0.1.0 REQUIRED NO_MODULE)
+endif()
+
+if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
@@ -56,6 +61,7 @@ if(NOT DEFINED CTK_DIR)
 
   if(Slicer_BUILD_DICOM_SUPPORT)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DCTK_USE_SYSTEM_DCMTK:BOOL=${CTK_USE_SYSTEM_DCMTK}
       -DDCMTK_DIR:PATH=${DCMTK_DIR}
       )
   endif()
@@ -66,7 +72,7 @@ if(NOT DEFINED CTK_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
-    GIT_TAG "02ecc27d0bf68fc01f7ab73090c2a442ace64247"
+    GIT_TAG "91cdf9e0f7a9a70038dbe987025cf443fe665fd7"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
@@ -83,7 +89,9 @@ if(NOT DEFINED CTK_DIR)
       -DCTK_INSTALL_QTPLUGIN_DIR:STRING=${Slicer_INSTALL_QtPlugins_DIR}
       -DCTK_USE_GIT_PROTOCOL:BOOL=${Slicer_USE_GIT_PROTOCOL}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      -DCTK_USE_SYSTEM_VTK:BOOL=${CTK_USE_SYSTEM_VTK}
       -DVTK_DIR:PATH=${VTK_DIR}
+      -DCTK_USE_SYSTEM_ITK:BOOL=${CTK_USE_SYSTEM_ITK}
       -DITK_DIR:PATH=${ITK_DIR}
       -DCTK_LIB_Widgets:BOOL=ON
       -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON

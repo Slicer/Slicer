@@ -1,17 +1,21 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED OpenIGTLinkIF_SOURCE_DIR AND NOT EXISTS ${OpenIGTLinkIF_SOURCE_DIR})
-  message(FATAL_ERROR "OpenIGTLinkIF_SOURCE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(OpenIGTLinkIF_DEPENDENCIES OpenIGTLink)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(OpenIGTLinkIF)
 set(proj OpenIGTLinkIF)
+
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED OpenIGTLinkIF_SOURCE_DIR AND NOT EXISTS ${OpenIGTLinkIF_SOURCE_DIR})
+  message(FATAL_ERROR "OpenIGTLinkIF_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+endif()
 
 if(NOT DEFINED OpenIGTLinkIF_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")

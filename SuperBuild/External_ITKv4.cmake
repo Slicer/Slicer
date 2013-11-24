@@ -1,11 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
-  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(ITKv4_DEPENDENCIES "zlib")
 if(Slicer_BUILD_DICOM_SUPPORT)
@@ -16,7 +11,17 @@ endif()
 SlicerMacroCheckExternalProjectDependency(ITKv4)
 set(proj ITKv4)
 
-if(NOT DEFINED ITK_DIR)
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  unset(ITK_DIR CACHE)
+  find_package(ITK 4 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
+endif()
+
+# Sanity checks
+if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
+  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)

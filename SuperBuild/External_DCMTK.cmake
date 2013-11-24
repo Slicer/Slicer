@@ -8,7 +8,17 @@ set(DCMTK_DEPENDENCIES "zlib")
 SlicerMacroCheckExternalProjectDependency(DCMTK)
 set(proj DCMTK)
 
-if(NOT DEFINED DCMTK_DIR)
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  unset(DCMTK_DIR CACHE)
+  find_package(DCMTK REQUIRED)
+endif()
+
+# Sanity checks
+if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
+  message(FATAL_ERROR "DCMTK_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
   # Set CMake OSX variable to pass down the external project

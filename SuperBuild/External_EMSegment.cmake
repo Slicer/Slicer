@@ -1,11 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED EMSegment_SOURCE_DIR AND NOT EXISTS ${EMSegment_SOURCE_DIR})
-  message(FATAL_ERROR "EMSegment_SOURCE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(EMSegment_DEPENDENCIES "")
 
@@ -13,11 +8,20 @@ set(EMSegment_DEPENDENCIES "")
 SlicerMacroCheckExternalProjectDependency(EMSegment)
 set(proj EMSegment)
 
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED EMSegment_SOURCE_DIR AND NOT EXISTS ${EMSegment_SOURCE_DIR})
+  message(FATAL_ERROR "EMSegment_SOURCE_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
 if(NOT DEFINED EMSegment_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk/Modules/EMSegment"
-    SVN_REVISION -r "17039"
+    SVN_REVISION -r "17040"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

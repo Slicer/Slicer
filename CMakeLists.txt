@@ -471,6 +471,85 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 #-----------------------------------------------------------------------------
+# ITKv4 - Slicer_ITK_COMPONENTS
+#-----------------------------------------------------------------------------
+set(Slicer_ITK_COMPONENTS "")
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  set(ITK_IO_MODULES_USED
+    ITKIOJPEG
+    ITKIOGDCM
+    ITKIOBMP
+    ITKIOLSM
+    ITKIOPNG
+    ITKIOTIFF
+    ITKIOVTK
+    ITKIOStimulate
+    ITKIOBioRad
+    ITKIOMeta
+    ITKIONIFTI
+    ITKIONRRD
+    ITKIOGIPL
+    )
+  if(Slicer_BUILD_DICOM_SUPPORT)
+    list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
+  endif()
+  set(Slicer_ITK_COMPONENTS
+    ITKAnisotropicSmoothing
+    ITKAntiAlias
+    ITKBiasCorrection
+    ITKBinaryMathematicalMorphology
+    ITKCommon
+    ITKConnectedComponents
+    ITKCurvatureFlow
+    ITKDeprecated
+    ITKDiffusionTensorImage
+    ITKDisplacementField
+    ITKDistanceMap
+    ITKFastMarching
+    ITKHDF5
+    ITKIOImageBase
+    ITKIOSpatialObjects
+    ITKIOStimulate
+    ITKIOTransformBase
+    ITKImageAdaptors
+    ITKImageCompare
+    ITKImageCompose
+    ITKImageFeature
+    ITKImageFilterBase
+    ITKImageFunction
+    ITKImageFusion
+    ITKImageGradient
+    ITKImageGrid
+    ITKImageIntensity
+    ITKImageSources
+    ITKImageStatistics
+    ITKLabelVoting
+    ITKLevelSets
+    ITKMathematicalMorphology
+    ITKMesh
+    ITKOptimizers
+    ITKPDEDeformableRegistration
+    ITKPath
+    ITKQuadEdgeMesh
+    ITKQuadEdgeMeshFiltering
+    ITKRegionGrowing
+    ITKRegistrationCommon
+    ITKReview
+    ITKSmoothing
+    ITKSpatialObjects
+    ITKStatistics
+    ITKTestKernel
+    ITKThresholding
+    ITKTransform
+    ITKV3Compatibility
+    ITKVTK
+    #    ITKVtkGlue
+    ITKZLIB
+    ${ITK_IO_MODULES_USED}
+    )
+endif()
+
+#-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_MODULES
 #-----------------------------------------------------------------------------
 # Module name should be specified as they appear in FindQt4.cmake
@@ -515,6 +594,12 @@ if(Slicer_SUPERBUILD)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 endif()
+
+foreach(dep QT ${Slicer_DEPENDENCIES})
+  if(Slicer_USE_SYSTEM_${dep})
+    message(STATUS "Using system ${dep}")
+  endif()
+endforeach()
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
@@ -607,78 +692,6 @@ endif()
 set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
 set(Slicer_ITK_COMPONENTS "")
 if(${ITK_VERSION_MAJOR} GREATER 3)
-  set(ITK_IO_MODULES_USED
-    ITKIOJPEG
-    ITKIOGDCM
-    ITKIOBMP
-    ITKIOLSM
-    ITKIOPNG
-    ITKIOTIFF
-    ITKIOVTK
-    ITKIOStimulate
-    ITKIOBioRad
-    ITKIOMeta
-    ITKIONIFTI
-    ITKIONRRD
-    ITKIOGIPL
-    )
-  if(Slicer_BUILD_DICOM_SUPPORT)
-    list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
-  endif()
-  set(Slicer_ITK_COMPONENTS
-    ITKAnisotropicSmoothing
-    ITKAntiAlias
-    ITKBiasCorrection
-    ITKBinaryMathematicalMorphology
-    ITKCommon
-    ITKConnectedComponents
-    ITKCurvatureFlow
-    ITKDeprecated
-    ITKDiffusionTensorImage
-    ITKDisplacementField
-    ITKDistanceMap
-    ITKFastMarching
-    ITKHDF5
-    ITKIOImageBase
-    ITKIOSpatialObjects
-    ITKIOStimulate
-    ITKIOTransformBase
-    ITKImageAdaptors
-    ITKImageCompare
-    ITKImageCompose
-    ITKImageFeature
-    ITKImageFilterBase
-    ITKImageFunction
-    ITKImageFusion
-    ITKImageGradient
-    ITKImageGrid
-    ITKImageIntensity
-    ITKImageSources
-    ITKImageStatistics
-    ITKLabelVoting
-    ITKLevelSets
-    ITKMathematicalMorphology
-    ITKMesh
-    ITKOptimizers
-    ITKPDEDeformableRegistration
-    ITKPath
-    ITKQuadEdgeMesh
-    ITKQuadEdgeMeshFiltering
-    ITKRegionGrowing
-    ITKRegistrationCommon
-    ITKReview
-    ITKSmoothing
-    ITKSpatialObjects
-    ITKStatistics
-    ITKTestKernel
-    ITKThresholding
-    ITKTransform
-    ITKV3Compatibility
-    ITKVTK
-    #    ITKVtkGlue
-    ITKZLIB
-    ${ITK_IO_MODULES_USED}
-    )
   find_package(ITK COMPONENTS ${Slicer_ITK_COMPONENTS})
 else()
   find_package(ITK REQUIRED)
@@ -814,23 +827,15 @@ include(${Teem_USE_FILE})
 #-----------------------------------------------------------------------------
 # SlicerLibCurl
 #-----------------------------------------------------------------------------
-find_package(SLICERLIBCURL REQUIRED)
-include(${SLICERLIBCURL_USE_FILE})
+find_package(CURL REQUIRED)
+include(${CURL_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
 # LibArchive
 #-----------------------------------------------------------------------------
-set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
-if(WIN32)
-  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
-else()
-  set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
-endif()
-foreach(var LibArchive_LIBRARY LibArchive_INCLUDE_DIR)
-  if(NOT EXISTS "${${var}}")
-    message(FATAL_ERROR "error: ${var} corresponds to an inexistant file or directory. [${${var}}]")
-  endif()
-endforeach()
+find_package(LibArchive REQUIRED MODULE)
+set(LibArchive_LIBRARY ${LibArchive_LIBRARIES})
+set(LibArchive_INCLUDE_DIR ${LibArchive_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
 # BatchMake

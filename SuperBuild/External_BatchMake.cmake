@@ -8,6 +8,10 @@ set(BatchMake_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 SlicerMacroCheckExternalProjectDependency(BatchMake)
 set(proj BatchMake)
 
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
 set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
 # Set CMake OSX variable to pass down the external project

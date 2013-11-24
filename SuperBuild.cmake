@@ -86,7 +86,9 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
+set(Slicer_DEPENDENCIES curl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
+
+set(CURL_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
@@ -340,6 +342,19 @@ if(Slicer_ADDITIONAL_PROJECTS)
     -DSlicer_ADDITIONAL_PROJECTS:STRING=${Slicer_ADDITIONAL_PROJECTS_STRING})
 endif()
 
+# Pass variable of the form 'Slicer_USE_SYSTEM_<proj>' allowing to check
+# if a project identified by <proj> has been built by Slicer build system or not.
+set(Slicer_PROJECTS_STRING)
+foreach(ep ${Slicer_DEPENDENCIES})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+    -DSlicer_USE_SYSTEM_${ep}:BOOL=${Slicer_USE_SYSTEM_${ep}}
+    )
+endforeach()
+
+list_to_string(${ep_list_separator} ${Slicer_DEPENDENCIES} ep_Slicer_DEPENDENCIES)
+list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_DEPENDENCIES:STRING=${ep_Slicer_DEPENDENCIES})
+
+
 # Set CMake OSX variable to pass down the external project
 if(APPLE)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
@@ -407,6 +422,8 @@ ExternalProject_Add(${proj}
     -DSlicer_EXTENSION_SOURCE_DIRS:STRING=${Slicer_EXTENSION_SOURCE_DIRS}
     -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}
     ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+    # Qt
+    -DSlicer_USE_SYSTEM_QT:BOOL=${Slicer_USE_SYSTEM_QT}
     # ITK
     -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
     -DITK_DIR:PATH=${ITK_DIR}
@@ -415,8 +432,9 @@ ExternalProject_Add(${proj}
     # VTK
     -DVTK_DIR:PATH=${VTK_DIR}
     -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
-    # cmcurl
-    -DSLICERLIBCURL_DIR:PATH=${SLICERLIBCURL_DIR}
+    # CURL
+    -DCURL_INCLUDE_DIR:PATH=${CURL_INCLUDE_DIR}
+    -DCURL_LIBRARY:PATH=${CURL_LIBRARY}
     # Qt
     -DSlicer_REQUIRED_QT_VERSION:STRING=${Slicer_REQUIRED_QT_VERSION}
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
@@ -424,10 +442,14 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # DCMTK
     -DDCMTK_DIR:PATH=${DCMTK_DIR}
+    -DDCMTK_INCLUDE_DIRS:STRING=${DCMTK_INCLUDE_DIRS}
+    -DDCMTK_LIBRARIES:STRING=${DCMTK_LIBRARIES}
     # jqPlot
     -DjqPlot_DIR:PATH=${jqPlot_DIR}
     # LibArchive
     -DLibArchive_DIR:PATH=${LibArchive_DIR}
+    -DLibArchive_INCLUDE_DIRS:PATH=${LibArchive_INCLUDE_DIRS}
+    -DLibArchive_LIBRARIES:FILEPATH=${LibArchive_LIBRARIES}
     # zlib
     -DZLIB_ROOT:PATH=${ZLIB_ROOT}
     -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}

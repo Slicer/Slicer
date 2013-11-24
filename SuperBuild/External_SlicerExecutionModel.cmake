@@ -1,11 +1,6 @@
 
 slicer_include_once()
 
-# Sanity checks
-if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
-  message(FATAL_ERROR "SlicerExecutionModel_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 # Set dependency list
 set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 
@@ -13,7 +8,16 @@ set(SlicerExecutionModel_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 SlicerMacroCheckExternalProjectDependency(SlicerExecutionModel)
 set(proj SlicerExecutionModel)
 
-if(NOT DEFINED SlicerExecutionModel_DIR)
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+endif()
+
+# Sanity checks
+if(DEFINED SlicerExecutionModel_DIR AND NOT EXISTS ${SlicerExecutionModel_DIR})
+  message(FATAL_ERROR "SlicerExecutionModel_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
