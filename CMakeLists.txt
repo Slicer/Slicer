@@ -834,8 +834,6 @@ include(${CURL_INCLUDE_DIRS})
 # LibArchive
 #-----------------------------------------------------------------------------
 find_package(LibArchive REQUIRED MODULE)
-set(LibArchive_LIBRARY ${LibArchive_LIBRARIES})
-set(LibArchive_INCLUDE_DIR ${LibArchive_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
 # BatchMake

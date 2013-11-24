@@ -448,8 +448,8 @@ ExternalProject_Add(${proj}
     -DjqPlot_DIR:PATH=${jqPlot_DIR}
     # LibArchive
     -DLibArchive_DIR:PATH=${LibArchive_DIR}
-    -DLibArchive_INCLUDE_DIRS:PATH=${LibArchive_INCLUDE_DIRS}
-    -DLibArchive_LIBRARIES:FILEPATH=${LibArchive_LIBRARIES}
+    -DLibArchive_INCLUDE_DIR:PATH=${LibArchive_INCLUDE_DIR}
+    -DLibArchive_LIBRARY:FILEPATH=${LibArchive_LIBRARY}
     # zlib
     -DZLIB_ROOT:PATH=${ZLIB_ROOT}
     -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}

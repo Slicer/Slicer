@@ -113,6 +113,6 @@ else()
 endif()
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(STATUS "${__${proj}_superbuild_message} - LibArchive_INCLUDE_DIRS:${LibArchive_INCLUDE_DIRS}")
-  message(STATUS "${__${proj}_superbuild_message} - LibArchive_LIBRARIES:${LibArchive_LIBRARIES}")
+  message(STATUS "${__${proj}_superbuild_message} - LibArchive_INCLUDE_DIR:${LibArchive_INCLUDE_DIR}")
+  message(STATUS "${__${proj}_superbuild_message} - LibArchive_LIBRARY:${LibArchive_LIBRARY}")
 endif()
