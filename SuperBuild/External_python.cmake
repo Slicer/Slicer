@@ -125,15 +125,15 @@ if(NOT DEFINED python_DIR)
       set(python_IMPORT_SUFFIX dylib)
     endif()
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/lib)
-    set(slicer_PYTHON_INCLUDE ${python_DIR}/include/python2.7)
-    set(slicer_PYTHON_LIBRARY ${python_DIR}/lib/libpython2.7.${python_IMPORT_SUFFIX})
-    set(slicer_PYTHON_EXECUTABLE ${python_DIR}/bin/customPython)
+    set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python2.7)
+    set(PYTHON_LIBRARY ${python_DIR}/lib/libpython2.7.${python_IMPORT_SUFFIX})
+    set(PYTHON_EXECUTABLE ${python_DIR}/bin/customPython)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python)
   elseif(WIN32)
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/bin)
-    set(slicer_PYTHON_INCLUDE ${python_DIR}/include)
-    set(slicer_PYTHON_LIBRARY ${python_DIR}/libs/python27.lib)
-    set(slicer_PYTHON_EXECUTABLE ${python_DIR}/bin/customPython.exe)
+    set(PYTHON_INCLUDE_DIR ${python_DIR}/include)
+    set(PYTHON_LIBRARY ${python_DIR}/libs/python27.lib)
+    set(PYTHON_EXECUTABLE ${python_DIR}/bin/customPython.exe)
     set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python.exe)
   else()
     message(FATAL_ERROR "Unknown system !")
@@ -160,7 +160,7 @@ if(NOT DEFINED python_DIR)
   # to make sure it's the case.
   if(APPLE)
     ExternalProject_Add_Step(${proj} python_install_chmod_library
-      COMMAND chmod u+xw ${slicer_PYTHON_LIBRARY}
+      COMMAND chmod u+xw ${PYTHON_LIBRARY}
       DEPENDEES install
       )
   endif()
@@ -173,8 +173,6 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${python_DEPENDENCIES}")
 endif()
 
-
-
-message(STATUS "slicer_PYTHON_INCLUDE:${slicer_PYTHON_INCLUDE}")
-message(STATUS "slicer_PYTHON_LIBRARY:${slicer_PYTHON_LIBRARY}")
-message(STATUS "slicer_PYTHON_EXECUTABLE:${slicer_PYTHON_EXECUTABLE}")
+message(STATUS "${__${proj}_superbuild_message} - PYTHON_INCLUDE_DIR:${PYTHON_INCLUDE_DIR}")
+message(STATUS "${__${proj}_superbuild_message} - PYTHON_LIBRARY:${PYTHON_LIBRARY}")
+message(STATUS "${__${proj}_superbuild_message} - PYTHON_EXECUTABLE:${PYTHON_EXECUTABLE}")

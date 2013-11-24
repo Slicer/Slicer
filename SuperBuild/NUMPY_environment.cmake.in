@@ -44,7 +44,7 @@ macro(numpy_setup_command stepname)
   message(STATUS "NUMPY_DIR: @NUMPY_DIR@")
   message(STATUS "NUMPY_SETUP_CMD: ${setup_cmd}")
   execute_process(
-    COMMAND "@slicer_PYTHON_EXECUTABLE@" ${setup_cmd}
+    COMMAND "@PYTHON_EXECUTABLE@" ${setup_cmd}
     WORKING_DIRECTORY "@NUMPY_DIR@"
     RESULT_VARIABLE result
     OUTPUT_VARIABLE output

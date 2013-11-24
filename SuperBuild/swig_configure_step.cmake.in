@@ -25,6 +25,6 @@ execute_process(
     --prefix=@swig_install_dir@
     --with-pcre-prefix=@pcre_install_dir@
     --without-octave
-    --with-python=@slicer_PYTHON_EXECUTABLE@
+    --with-python=@PYTHON_EXECUTABLE@
   WORKING_DIRECTORY @swig_binary_dir@
 )

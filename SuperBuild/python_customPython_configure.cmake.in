@@ -15,7 +15,7 @@ set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
 
 
 set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
-set(slicer_PYTHON_EXECUTABLE "@slicer_PYTHON_EXECUTABLE@")
+set(PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE@")
 set(slicer_PYTHON_REAL_EXECUTABLE "@slicer_PYTHON_REAL_EXECUTABLE@")
 
 # Configure customPython launcher settings.
@@ -36,9 +36,9 @@ endif()
 
 configure_file(
   ${CTKAPPLAUNCHER_EXECUTABLE}
-  ${slicer_PYTHON_EXECUTABLE}
+  ${PYTHON_EXECUTABLE}
   COPYONLY
   )
-if(NOT EXISTS ${slicer_PYTHON_EXECUTABLE})
-  message(FATAL_ERROR "error: slicer_PYTHON_EXECUTABLE points to an inexistent file: ${slicer_PYTHON_EXECUTABLE}")
+if(NOT EXISTS ${PYTHON_EXECUTABLE})
+  message(FATAL_ERROR "error: PYTHON_EXECUTABLE points to an inexistent file: ${PYTHON_EXECUTABLE}")
 endif()

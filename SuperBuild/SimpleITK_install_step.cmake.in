@@ -16,4 +16,4 @@ file(DOWNLOAD  "http://midas3.kitware.com/midas/download/item/208573/distribute-
 # file so that it will be picked up by distuils setup, and installed
 execute_process(
   WORKING_DIRECTORY "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping"
-  COMMAND "@slicer_PYTHON_EXECUTABLE@" "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/PythonPackage/setup.py" install )
+  COMMAND "@PYTHON_EXECUTABLE@" "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/PythonPackage/setup.py" install )
