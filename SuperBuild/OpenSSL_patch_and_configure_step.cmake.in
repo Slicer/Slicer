@@ -50,10 +50,13 @@ if(APPLE)
   set(ENV{PATH} "/usr/sbin:$ENV{PATH}")
 endif()
 
+set(ZLIB_LIBRARY "@ZLIB_LIBRARY@")
+get_filename_component(ZLIB_LIBRARY_DIR ${ZLIB_LIBRARY} PATH)
+
 message(STATUS "Configuring @proj@")
 execute_process(
   COMMAND sh config
-    zlib -lzlib -L@SLICER_ZLIB_LIBRARY_DIR@
+    zlib -lzlib -L${ZLIB_LIBRARY_DIR}
     shared
   WORKING_DIRECTORY ${EP_SOURCE_DIR}
   RESULT_VARIABLE result
