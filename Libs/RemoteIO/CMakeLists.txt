@@ -33,6 +33,8 @@ include(${ITK_USE_FILE})
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
 
+find_package(OpenSSL REQUIRED)
+
 # Disable MSVC 8 warnings
 if(WIN32)
   option(DISABLE_MSVC8_DEPRECATED_WARNINGS
@@ -102,6 +104,7 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   ${CURL_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
   MRMLCore
   )
 target_link_libraries(${lib_name} ${libs})
