@@ -63,6 +63,11 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
       )
   endif()
 
+  set(${proj}_CMAKE_C_FLAGS ${ep_common_c_flags})
+  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set(${proj}_CMAKE_C_FLAGS "${ep_common_c_flags} -fPIC")
+  endif()
+
   set(EP_BUILD_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
   ExternalProject_Add(${proj}
@@ -75,7 +80,7 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
     #Not needed -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     #Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      -DCMAKE_C_FLAGS:STRING=${${proj}_CMAKE_C_FLAGS}
       -DBUILD_CURL_TESTS:BOOL=OFF # BUILD_TESTING is not used
       -DBUILD_CURL_EXE:BOOL=OFF
       -DBUILD_DASHBOARD_REPORTS:BOOL=OFF
