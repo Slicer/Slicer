@@ -79,7 +79,7 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
       -DBUILD_CURL_TESTS:BOOL=OFF # BUILD_TESTING is not used
       -DBUILD_CURL_EXE:BOOL=OFF
       -DBUILD_DASHBOARD_REPORTS:BOOL=OFF
-      -DCURL_STATICLIB:BOOL=OFF
+      -DCURL_STATICLIB:BOOL=ON
       -DCURL_USE_ARES:BOOL=OFF
       -DCURL_ZLIB:BOOL=ON
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
@@ -98,12 +98,12 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
   endif()
 
   if(UNIX)
-    set(curl_IMPORT_SUFFIX .so)
+    set(curl_IMPORT_SUFFIX .a)
     if(APPLE)
-      set(curl_IMPORT_SUFFIX .dylib)
+      set(curl_IMPORT_SUFFIX .a)
     endif()
   elseif(WIN32)
-    set(curl_IMPORT_SUFFIX _imp.lib)
+    set(curl_IMPORT_SUFFIX .lib)
   else()
     message(FATAL_ERROR "Unknown system !")
   endif()
