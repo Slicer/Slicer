@@ -94,7 +94,7 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
 
   set(curl_LIBRARY_DIR ${curl_DIR}/lib)
   if(DEFINED CMAKE_CONFIGURATION_TYPES)
-    set(curl_LIBRARY_DIR ${curl_DIR}/${CMAKE_CFG_INTDIR}/lib)
+    set(curl_LIBRARY_DIR ${curl_LIBRARY_DIR}/${CMAKE_CFG_INTDIR})
   endif()
 
   if(UNIX)
