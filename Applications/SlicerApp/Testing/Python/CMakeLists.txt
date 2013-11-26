@@ -201,7 +201,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT Charting.py)
   slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
   slicer_add_python_unittest(SCRIPT ScenePerformance.py)
-  slicer_add_python_unittest(SCRIPT RSNA2012Vis.py)
+  slicer_add_python_unittest(SCRIPT RSNAVisTutorial.py)
   slicer_add_python_unittest(SCRIPT RSNAQuantTutorial.py)
   slicer_add_python_unittest(SCRIPT slicerCloseCrashBug2590.py)
   slicer_add_python_unittest(SCRIPT ViewControllersSliceInterpolationBug1926.py)
@@ -221,7 +221,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     Charting.py
     SliceLinkLogic.py
     ScenePerformance.py
-    RSNA2012Vis.py
+    RSNAVisTutorial.py
     RSNAQuantTutorial.py
     slicerCloseCrashBug2590.py
     ViewControllersSliceInterpolationBug1926.py  
