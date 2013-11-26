@@ -32,7 +32,9 @@ include(${ITK_USE_FILE})
 
 find_package(CURL REQUIRED)
 
-find_package(OpenSSL REQUIRED)
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  find_package(OpenSSL REQUIRED)
+endif()
 
 # Disable MSVC 8 warnings
 if(WIN32)
@@ -104,9 +106,13 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   ${CURL_LIBRARIES}
-  ${OPENSSL_LIBRARIES}
   MRMLCore
   )
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  list(APPEND libs
+    ${OPENSSL_LIBRARIES}
+    )
+endif()
 target_link_libraries(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.
