@@ -12,21 +12,16 @@
 
 =========================================================================auto=*/
 
-// MRMLLogic includes
-
 // MRML includes
+#include <vtkCacheManager.h>
+#include <vtkDataIOManager.h>
+#include <vtkTagTable.h>
 
 // VTK sys includes
 #include <vtkCollection.h>
 
 // RemoteIO includes
-#include "vtkDataIOManager.h"
-#include "vtkCacheManager.h"
-#include "vtkSRBHandler.h"
-#include "vtkXNATHandler.h"
-#include "vtkHIDHandler.h"
-#include "vtkXNDHandler.h"
-//#include "vtkSlicerXNATPermissionPrompterWidget.h"
+#include <vtkHTTPHandler.h>
 
 #include "vtkMRMLRemoteIOLogic.h"
 
@@ -96,43 +91,6 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
   httpHandler->SetName ( "HTTPHandler");
   this->GetMRMLScene()->AddURIHandler(httpHandler);
   httpHandler->Delete();
-
-  vtkSRBHandler *srbHandler = vtkSRBHandler::New();
-  srbHandler->SetPrefix ( "srb://" );
-  srbHandler->SetName ( "SRBHandler" );
-  this->GetMRMLScene()->AddURIHandler(srbHandler);
-  srbHandler->Delete();
-
-  vtkXNATHandler *xnatHandler = vtkXNATHandler::New();
-  // TODO: deal with permission prompting at the application level
-  //vtkSlicerXNATPermissionPrompterWidget *xnatPermissionPrompter = vtkSlicerXNATPermissionPrompterWidget::New();
-#if 0
-  if (app)
-    {
-    //xnatPermissionPrompter->SetApplication ( app );
-    }
-#endif
-  //xnatPermissionPrompter->SetPromptTitle ("Permission Prompt");
-  xnatHandler->SetPrefix ( "xnat://" );
-  xnatHandler->SetName ( "XNATHandler" );
-  xnatHandler->SetRequiresPermission (0);
-  //xnatHandler->SetRequiresPermission (1);
-  //xnatHandler->SetPermissionPrompter ( xnatPermissionPrompter );
-  this->GetMRMLScene()->AddURIHandler(xnatHandler);
-  //xnatPermissionPrompter->Delete();
-  xnatHandler->Delete();
-
-  vtkHIDHandler *hidHandler = vtkHIDHandler::New();
-  hidHandler->SetPrefix ( "hid://" );
-  hidHandler->SetName ( "HIDHandler" );
-  this->GetMRMLScene()->AddURIHandler( hidHandler);
-  hidHandler->Delete();
-
-  vtkXNDHandler *xndHandler = vtkXNDHandler::New();
-  xndHandler->SetPrefix ( "xnd://" );
-  xndHandler->SetName ( "XNDHandler" );
-  this->GetMRMLScene()->AddURIHandler( xndHandler);
-  xndHandler->Delete();
 
   //add something to hold user tags
   vtkTagTable *userTagTable = vtkTagTable::New();

@@ -10,7 +10,6 @@ set(qtmodules
   Annotations
   Data
   DoubleArrays
-  FetchMI
   Markups
   #Measurements
   Models
