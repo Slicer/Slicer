@@ -86,15 +86,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
-
-if(APPLE)
-  # On MacOSX, systematically use system CURL to prevent "'socklen_t' does not name a type" error.
-  set(CURL_INCLUDE_DIR "CURL_INCLUDE_DIR-NOTFOUND")
-  set(CURL_LIBRARY "CURL_LIBRARY-NOTFOUND")
-else()
-  list(APPEND Slicer_DEPENDENCIES curl)
-endif()
+set(Slicer_DEPENDENCIES curl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
 
 set(CURL_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
 

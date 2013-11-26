@@ -69,10 +69,11 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
   endif()
 
   set(EP_BUILD_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
   ExternalProject_Add(${proj}
-    URL "http://curl.haxx.se/download/curl-7.33.0.tar.gz"
-    URL_MD5 c8a4eaac7ce7b0d1bf458d62ccd4ef93
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/curl.git"
+    GIT_TAG "c2bc1187192ea9565f16db6382abc574114af193"
     SOURCE_DIR curl
     BINARY_DIR ${EP_BUILD_DIR}
     CMAKE_GENERATOR ${gen}
@@ -81,6 +82,7 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
     #Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${${proj}_CMAKE_C_FLAGS}
+      -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
       -DBUILD_CURL_TESTS:BOOL=OFF # BUILD_TESTING is not used
       -DBUILD_CURL_EXE:BOOL=OFF
       -DBUILD_DASHBOARD_REPORTS:BOOL=OFF
@@ -98,17 +100,9 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
       -DCURL_DISABLE_TFTP:BOOL=ON
       -DHAVE_LIBIDN:BOOL=FALSE
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
-    INSTALL_COMMAND ""
     DEPENDS
       ${curl_DEPENDENCIES}
     )
-
-  set(curl_DIR ${EP_BUILD_DIR})
-
-  set(curl_LIBRARY_DIR ${curl_DIR}/lib)
-  if(DEFINED CMAKE_CONFIGURATION_TYPES)
-    set(curl_LIBRARY_DIR ${curl_LIBRARY_DIR}/${CMAKE_CFG_INTDIR})
-  endif()
 
   if(UNIX)
     set(curl_IMPORT_SUFFIX .a)
@@ -121,8 +115,8 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
     message(FATAL_ERROR "Unknown system !")
   endif()
 
-  set(CURL_INCLUDE_DIR "${curl_DIR}/include")
-  set(CURL_LIBRARY "${curl_LIBRARY_DIR}/libcurl${curl_IMPORT_SUFFIX}")
+  set(CURL_INCLUDE_DIR "${EP_INSTALL_DIR}/include")
+  set(CURL_LIBRARY "${EP_INSTALL_DIR}/lib/libcurl${curl_IMPORT_SUFFIX}")
 
 else()
   SlicerMacroEmptyExternalProject(${proj} "${curl_DEPENDENCIES}")

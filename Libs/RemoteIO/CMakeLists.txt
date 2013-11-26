@@ -31,7 +31,6 @@ endif()
 include(${ITK_USE_FILE})
 
 find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIRS})
 
 find_package(OpenSSL REQUIRED)
 
@@ -56,6 +55,7 @@ set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${MRMLCore_INCLUDE_DIRS}
+  ${CURL_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
 

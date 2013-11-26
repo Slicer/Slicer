@@ -828,6 +828,7 @@ include(${Teem_USE_FILE})
 # SlicerLibCurl
 #-----------------------------------------------------------------------------
 find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
 # LibArchive
