@@ -149,7 +149,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIRS
     set(python_customPython_configure_args)
 
     if(PYTHON_ENABLE_SSL)
-      set(python_customPython_configure_args -DOpenSSL_EXPORT_LIBRARY_DIR:PATH=${EP_OpenSSL_EXPORT_LIBRARY_DIR})
+      set(python_customPython_configure_args -DOPENSSL_EXPORT_LIBRARY_DIR:PATH=${OPENSSL_EXPORT_LIBRARY_DIR})
     endif()
 
     ExternalProject_Add_Step(${proj} python_customPython_configure

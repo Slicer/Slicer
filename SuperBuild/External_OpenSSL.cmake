@@ -68,11 +68,11 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
 
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
     set(OPENSSL_INCLUDE_DIR ${OpenSSL_DIR}/include)
-    set(EP_OpenSSL_LIBRARY_DIR ${OpenSSL_DIR})
-    set(EP_OpenSSL_EXPORT_LIBRARY_DIR ${OpenSSL_DIR})
+    set(OPENSSL_LIBRARY_DIR ${OpenSSL_DIR})
+    set(OPENSSL_EXPORT_LIBRARY_DIR ${OpenSSL_DIR})
 
-    set(OPENSSL_CRYPTO_LIBRARY ${EP_OpenSSL_LIBRARY_DIR}/libcrypto${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(OPENSSL_SSL_LIBRARY ${EP_OpenSSL_LIBRARY_DIR}/libssl${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(OPENSSL_CRYPTO_LIBRARY ${OPENSSL_LIBRARY_DIR}/libcrypto${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(OPENSSL_SSL_LIBRARY ${OPENSSL_LIBRARY_DIR}/libssl${CMAKE_SHARED_LIBRARY_SUFFIX})
 
     set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 
@@ -106,9 +106,9 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
     endif()
 
     set(OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
-    set(EP_OpenSSL_LIBRARY_DIR "${OpenSSL_DIR}/lib")
-    set(EP_OpenSSL_EXPORT_LIBRARY_DIR "${OpenSSL_DIR}/bin")
-    set(OPENSSL_LIBRARIES "${EP_OpenSSL_LIBRARY_DIR}/libeay32.lib" "${EP_OpenSSL_LIBRARY_DIR}/ssleay32.lib")
+    set(OPENSSL_LIBRARY_DIR "${OpenSSL_DIR}/lib")
+    set(OPENSSL_EXPORT_LIBRARY_DIR "${OpenSSL_DIR}/bin")
+    set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARY_DIR}/libeay32.lib" "${OPENSSL_LIBRARY_DIR}/ssleay32.lib")
 
     set(LIB_EAY_DEBUG "${EP_SOURCE_DIR}/Debug/lib/libeay32.lib")
     set(LIB_EAY_RELEASE "${EP_SOURCE_DIR}/Release/lib/libeay32.lib")
@@ -116,8 +116,8 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
     set(SSL_EAY_RELEASE "${EP_SOURCE_DIR}/Release/lib/ssleay32.lib")
   endif()
 
-  message(STATUS "${__${proj}_superbuild_message} - EP_OpenSSL_LIBRARY_DIR:${EP_OpenSSL_LIBRARY_DIR}")
-  message(STATUS "${__${proj}_superbuild_message} - EP_OpenSSL_EXPORT_LIBRARY_DIR:${EP_OpenSSL_EXPORT_LIBRARY_DIR}")
+  message(STATUS "${__${proj}_superbuild_message} - OPENSSL_LIBRARY_DIR:${OPENSSL_LIBRARY_DIR}")
+  message(STATUS "${__${proj}_superbuild_message} - OPENSSL_EXPORT_LIBRARY_DIR:${OPENSSL_EXPORT_LIBRARY_DIR}")
 else()
   SlicerMacroEmptyExternalProject(${proj} "${OpenSSL_DEPENDENCIES}")
 endif()
