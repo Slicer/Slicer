@@ -2,7 +2,7 @@
 # Find and install OpenSSL Libs
 # -------------------------------------------------------------------------
 
-foreach(library ${OpenSSL_LIBRARIES})
+foreach(library ${OPENSSL_LIBRARIES})
   get_filename_component(library_without_extension ${library} NAME_WE)
   if(WIN32)
     install(FILES ${OpenSSL_EXPORT_LIBRARY_DIR}/${library_without_extension}.dll
