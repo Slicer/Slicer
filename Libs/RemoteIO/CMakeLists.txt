@@ -123,21 +123,6 @@ install(TARGETS ${lib_name}
   )
 
 # --------------------------------------------------------------------------
-# Python Wrapping
-# --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${lib_name}
-    KIT_SRCS ${RemoteIO_SRCS}
-    KIT_PYTHON_LIBRARIES MRMLCorePythonD
-    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
-    )
-  # Export target
-  export(TARGETS ${lib_name}Python ${lib_name}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
-endif()
-
-# --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
 set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
