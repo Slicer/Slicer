@@ -29,6 +29,7 @@
 #ifdef ITKV3_COMPATIBILITY
 #include "itkAnalyzeImageIOFactory.h"
 #endif
+#include <itksys/SystemTools.hxx>
 
 // VTK includes
 #include <vtkDebugLeaks.h>
@@ -129,13 +130,12 @@ int DoIt( int argc, char * argv[])
   vtkSmartPointer<vtkXMLPolyDataReader> pdxReader;
 
   // do we have vtk or vtp models?
-  std::string::size_type loc = surface.find_last_of(".");
-  if( loc == std::string::npos )
+  std::string extension = itksys::SystemTools::LowerCase( itksys::SystemTools::GetFilenameLastExtension(surface) );
+  if( extension.empty() )
     {
     std::cerr << "Failed to find an extension for " << surface << std::endl;
     return EXIT_FAILURE;
     }
-  std::string extension = surface.substr(loc);
 
   if( extension == std::string(".vtk") )
     {

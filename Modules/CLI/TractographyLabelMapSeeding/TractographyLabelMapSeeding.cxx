@@ -263,7 +263,7 @@ int main( int argc, char * argv[] )
     // Save result
     if ( !WriteToFile )
       {
-      std::string fileExtension = vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str());
+      std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str()) );
       if (fileExtension == ".vtk")
         {
           vtkNew<vtkPolyDataWriter> writer;

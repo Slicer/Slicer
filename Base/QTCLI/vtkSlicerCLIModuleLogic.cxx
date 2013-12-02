@@ -34,6 +34,7 @@
 #include <vtkMultiThreader.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
+#include <vtksys/SystemTools.hxx>
 
 // ITKSYS includes
 #include <itksys/Process.h>
@@ -1022,13 +1023,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       {
       // Transform nodes will use either a storage node OR a miniscene
 
-      std::string::size_type loc = (*id2fn0).second.find_last_of(".");
-      if (loc != std::string::npos)
+      std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension((*id2fn0).second) );
+      if (!extension.empty())
         {
         // if we start passing pointers to MRML transforms, then we'll
         // need an additional check/case
-        std::string extension = (*id2fn0).second.substr(loc);
-
         if (extension == ".mrml")
           {
           // not using a storage node.  using a mini-scene to transfer
@@ -1096,13 +1095,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
     if (tnd || mhnd)
       {
-      std::string::size_type loc = (*id2fn0).second.find_last_of(".");
-      if (loc != std::string::npos)
+      std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension((*id2fn0).second) );
+      if (!extension.empty())
         {
         // if we start passing pointers to MRML transforms, then we'll
         // need an additional check/case
-        std::string extension = (*id2fn0).second.substr(loc);
-
         if (extension == ".mrml")
           {
           // put this transform node in the miniscene

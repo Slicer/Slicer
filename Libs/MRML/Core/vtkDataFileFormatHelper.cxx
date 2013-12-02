@@ -3,6 +3,7 @@
 
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
+#include <vtksys/SystemTools.hxx>
 
 #include <set>
 
@@ -190,7 +191,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
   const char* format)
 {
   std::string fileformat(format);
@@ -211,14 +212,12 @@ const char* vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
       {
       fileext = fileext.substr(0, pos1);
       }
-    static char buffer[20];
-    sprintf(buffer, "%s", fileext.c_str());
-    return buffer;
-    //return fileext.c_str();
+    std::string lowercaseExtension=vtksys::SystemTools::LowerCase(fileext);
+    return lowercaseExtension;
     }
   else
     {
-    return NULL;
+    return "";
     }
 }
 
@@ -227,10 +226,10 @@ const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(
   const char* format)
 {
   std::string fileformat(format);
-  const char* fileExt = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+  std::string fileExt = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
     fileformat.c_str());
   // if no extension found
-  if(!fileExt || !(*fileExt))
+  if(fileExt.empty())
     {
     return NULL;
     }
@@ -245,14 +244,12 @@ const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(
     for(int idx=0; idx<itkFileExtensions->GetNumberOfTuples(); idx++)
       {
       const char* extFormat = this->GetITKSupportedExtensionGenericNameByIndex(idx);
-      std::string strExt = itkFileExtensions->GetValue(idx);
+      std::string strExt = vtksys::SystemTools::LowerCase( itkFileExtensions->GetValue(idx) );
       
-      if((!strExt.empty() && strcmp(strExt.c_str(), fileExt)==0)
+      if((!strExt.empty() && strExt.compare(fileExt)==0)
         && (extFormat && strcmp(extFormat, genericName.c_str())==0))
         {
-        std::string strClassName(
-          this->GetITKSupportedExtensionClassNameByIndex(idx));
-        return strClassName.c_str();
+        return this->GetITKSupportedExtensionClassNameByIndex(idx);
         }
       }
 

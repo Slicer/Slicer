@@ -116,14 +116,12 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
       
   // compute file prefix
-  std::string name(fullName);
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos )
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  if( extension.empty() )
     {
-    vtkErrorMacro("ReadDataInternal: no file extension specified: " << name.c_str());
+    vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
     return 0;
     }
-  std::string extension = name.substr(loc);
 
   vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
 
@@ -264,7 +262,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     else
       {
-      vtkDebugMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkDebugMacro("Cannot read model file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
       }
     }
@@ -302,7 +300,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  std::string extension = itksys::SystemTools::GetFilenameLastExtension(fullName);
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   int result = 1;
   if (extension == ".vtk")

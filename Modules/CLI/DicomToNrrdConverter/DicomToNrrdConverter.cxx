@@ -369,17 +369,13 @@ int main(int argc, char* argv[])
   std::cout << nhdrname << std::endl;
   std::string dataname;
     {
-    const ::size_t i = nhdrname.find(".nhdr");
-    const ::size_t j = nhdrname.find(".nrrd");
-    if (i == std::string::npos && j == std::string::npos)
+    std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(nhdrname) );
+    if (extension == ".nrrd")
       {
-      // not a valid nrrd extension
-      std::cerr << "Warning: Output file does not have extension .nhdr or .nrrd." << std::endl;
-      std::cerr << "         Extension .nrrd added." << std::endl;
-      nhdrname = nhdrname + ".nrrd";
+      // user specified .nrrd
       NrrdFormat = true;
       }
-    else if( i != std::string::npos )
+    else if (extension == ".nhdr")
       {
       // user specified .nhdr
       dataname = nhdrname.substr(0, i) + ".raw";
@@ -387,7 +383,10 @@ int main(int argc, char* argv[])
       }
     else
       {
-      // user specified .nrrd
+      // not a valid nrrd extension
+      std::cerr << "Warning: Output file does not have extension .nhdr or .nrrd." << std::endl;
+      std::cerr << "         Extension .nrrd added." << std::endl;
+      nhdrname = nhdrname + ".nrrd";
       NrrdFormat = true;
       }
     }

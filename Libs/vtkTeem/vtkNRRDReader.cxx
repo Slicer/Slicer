@@ -44,6 +44,7 @@
 #include "vtkLongArray.h"
 #include "vtkDoubleArray.h"
 #include "vtkFloatArray.h"
+#include <vtksys/SystemTools.hxx>
 
 #include "teem/ten.h"
 
@@ -167,22 +168,8 @@ int vtkNRRDReader::CanReadFile(const char* filename)
   //  return true;
   //  }
 
-  bool extensionFound = false;
-  std::string::size_type nrrdPos = fname.rfind(".nrrd");
-  if ((nrrdPos != std::string::npos)
-      && (nrrdPos == fname.length() - 5))
-    {
-    extensionFound = true;
-    }
-
-  std::string::size_type nhdrPos = fname.rfind(".nhdr");
-  if ((nhdrPos != std::string::npos)
-      && (nhdrPos == fname.length() - 5))
-    {
-    extensionFound = true;
-    }
-
-  if( !extensionFound )
+  std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fname) );
+  if (extension != ".nrrd" || extension != ".nhdr")
     {
     vtkDebugMacro(<<"The filename extension is not recognized");
     return false;

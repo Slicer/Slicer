@@ -927,21 +927,13 @@ int vtkSlicerVolumesLogic::IsFreeSurferVolume (const char* filename)
     {
     return 0;
     }
-  std::string fname(filename);
-  std::string::size_type loc = fname.find(".");
-  if (loc != std::string::npos)
+
+  std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(filename) );
+  if (extension == std::string(".mgz") ||
+      extension == std::string(".mgh") ||
+      extension == std::string(".mgh.gz"))
     {
-    std::string extension = fname.substr(loc);
-    if (extension == std::string(".mgz") ||
-        extension == std::string(".mgh") ||
-        extension == std::string(".mgh.gz"))
-      {
-      return 1;
-      }
-    else
-      {
-      return 0;
-      }
+    return 1;
     }
   else
     {

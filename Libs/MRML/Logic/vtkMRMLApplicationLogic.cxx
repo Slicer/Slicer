@@ -740,11 +740,13 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
     pathComponents.pop_back();
     this->OriginalStorageNodeDirs[storageNode] = vtksys::SystemTools::JoinPath(pathComponents);
 
-    std::string ext = std::string(".") + std::string(storageNode->GetDefaultWriteFileExtension());
+    std::string defaultWriteExtension = std::string(".")
+      + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
     std::string uniqueFileName = fileBaseName;
-    if (ext != vtksys::SystemTools::GetFilenameExtension(fileBaseName))
+    std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileBaseName);
+    if (defaultWriteExtension != extension)
       {
-      uniqueFileName = uniqueFileName + ext;
+      uniqueFileName = uniqueFileName + defaultWriteExtension;
       }
     storageNode->SetFileName(uniqueFileName.c_str());
     storageNode->SetDataDirectory(dataDir.c_str());

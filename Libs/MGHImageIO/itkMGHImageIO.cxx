@@ -6,6 +6,7 @@
 #include "itkMetaDataObject.h"
 #include "itksys/SystemTools.hxx"
 
+#include <itksys/SystemTools.hxx>
 
 static const int MRI_UCHAR = 0;
 static const int MRI_INT   = 1;
@@ -101,7 +102,7 @@ MGHImageIO::CanReadFile(const char* FileNameToRead)
     }
 
   // check if the correct extension is given by the user
-  const std::string extension = itksys::SystemTools::GetFilenameExtension(filename.c_str());
+  std::string extension = itksys::SystemTools::LowerCase( itksys::SystemTools::GetFilenameLastExtension(filename) );
   if( extension == __MGH_EXT || this->IsCompressedFilename(filename) )
     {
     return true;
@@ -469,7 +470,7 @@ MGHImageIO::CanWriteFile(const char* name)
     return false;
     }
 
-  const std::string extension = itksys::SystemTools::GetFilenameExtension(filename.c_str());
+  std::string extension = itksys::SystemTools::LowerCase( itksys::SystemTools::GetFilenameLastExtension(filename) );
   if( extension != __MGH_EXT && !this->IsCompressedFilename(filename))
     {
     return false;
@@ -524,7 +525,7 @@ MGHImageIO::Write(const void* buffer)
 bool
 MGHImageIO::IsCompressedFilename(const std::string fname)
 {
-  const std::string extension = itksys::SystemTools::GetFilenameExtension(fname.c_str());
+  std::string extension = itksys::SystemTools::LowerCase( itksys::SystemTools::GetFilenameLastExtension(fname) );
   return extension == __MGZ_EXT || extension == __GZ_EXT || extension == __MGHGZ_EXT;
 }
 

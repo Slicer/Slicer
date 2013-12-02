@@ -118,7 +118,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   // check if it's an annotation csv file
   bool parseAsAnnotationFiducial = false;
-  std::string ext = vtksys::SystemTools::GetFilenameExtension(this->GetFileName());
+  std::string ext = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (ext.compare(".acsv") == 0)
     {
     parseAsAnnotationFiducial = true;

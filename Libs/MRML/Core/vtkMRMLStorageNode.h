@@ -271,6 +271,9 @@ public:
   /// instance to turn off compression.
   virtual void ConfigureForDataExchange() {};
 
+  /// Helper function for getting extension from a full filename.
+  /// It always returns lowercase extension.
+  static std::string GetLowercaseExtensionFromFileName(const std::string& filename);
 
 protected:
   vtkMRMLStorageNode();

@@ -227,10 +227,8 @@ template <class  TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=NULL)
 {
-  std::string fileExtension = vtksys::SystemTools::GetFilenameLastExtension(fileName);
-  bool saveAsJPEG =
-    (fileExtension == ".jpg") || (fileExtension == ".JPG") ||
-    (fileExtension == ".jpeg") || (fileExtension == ".JPEG");
+  std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fileName) );
+  bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
   if (saveAsJPEG)
     {
     ITKWriteVTKImage<TPixelType, 2>(self, inputImage, fileName, rasToIjkMatrix);

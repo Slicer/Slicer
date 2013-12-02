@@ -675,28 +675,31 @@ int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
     {
     return 1;
     }
-  std::string extension;
-  std::string::size_type extensionPos = name.find_last_of(".");
-  if( extensionPos != std::string::npos )
-    {
-    extension = name.substr(extensionPos);
-    }
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(name);
 
   for (int i = 0; i < supportedReadFileTypes->GetNumberOfTuples(); ++i)
     {
-    std::string supportedFileType = supportedReadFileTypes->GetValue(i);
-    extensionPos = supportedFileType.find_last_of(".");
+    std::string supportedFileType = supportedReadFileTypes->GetValue(i); // "Color Table (.ctbl)"
+    std::string::size_type extensionPos = supportedFileType.find_last_of(".");
     std::string supportedExtension;
     if( extensionPos != std::string::npos )
       {
-      supportedExtension = supportedFileType.substr(extensionPos);
+      supportedExtension = vtksys::SystemTools::LowerCase( supportedFileType.substr(extensionPos) ); // ".ctbl"
       }
-    if (supportedExtension.size() == 0 ||
-        (supportedExtension[1] == '*' && extension.size() > 0))
+
+    if (supportedExtension.empty())
       {
       // No extension means all extensions are supported
       return 1;
       }
+    if (supportedExtension.size() >=2 && supportedExtension[1] == '*' && !extension.empty() )
+      {
+      // .* supported extension means all extensions are supported
+      return 1;
+      }
+    // Only compare up to the length of extension, as supportedExtension usually contains some
+    // additional character, such as parentheses. For example: .ctbl
+    // XXX It would be nicer to parse the supportedFileType string properly and do an exact comparison
     if (extension.compare(0, extension.size(), supportedExtension, 0, extension.size()) == 0)
       {
       return 1;
@@ -1139,4 +1142,11 @@ int vtkMRMLStorageNode::ReadDataInternal(vtkMRMLNode* vtkNotUsed(refNode))
 int vtkMRMLStorageNode::WriteDataInternal(vtkMRMLNode* vtkNotUsed(refNode))
 {
   return 0;
+}
+
+//------------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(const std::string& filename)
+{
+  std::string extension = vtksys::SystemTools::GetFilenameLastExtension(filename);
+  return vtksys::SystemTools::LowerCase(extension);
 }

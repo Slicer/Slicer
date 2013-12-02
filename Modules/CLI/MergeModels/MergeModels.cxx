@@ -25,6 +25,7 @@
 #include "vtkPolyDataWriter.h"
 #include "vtkAppendPolyData.h"
 #include "MergeModelsCLP.h"
+#include <vtksys/SystemTools.hxx>
 
 int main( int argc, char * argv[] )
 {
@@ -40,15 +41,14 @@ int main( int argc, char * argv[] )
   vtkXMLPolyDataReader *pdxReader2 = NULL;
 
   // do we have vtk or vtp models?
-  std::string::size_type loc = Model1.find_last_of(".");
-  if( loc == std::string::npos )
+  std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(Model1) );
+  if( extension.empty() )
     {
     std::cerr << "Failed to find an extension for " << Model1 << std::endl;
     return EXIT_FAILURE;
     }
-  std::string extension = Model1.substr(loc);
-  // read the first poly data
 
+  // read the first poly data
   if( extension == std::string(".vtk") )
     {
     pdReader1 = vtkPolyDataReader::New();
@@ -71,8 +71,8 @@ int main( int argc, char * argv[] )
     }
   // read the second poly data
 
-  loc = Model2.find_last_of(".");
-  if( loc == std::string::npos )
+  extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(Model2) );
+  if( extension.empty() )
     {
     std::cerr << "Failed to find an extension for " << Model2 << std::endl;
     return EXIT_FAILURE;
@@ -103,8 +103,8 @@ int main( int argc, char * argv[] )
   add->Update();
 
   // write the output
-  loc = ModelOutput.find_last_of(".");
-  if( loc == std::string::npos )
+  extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(ModelOutput) );
+  if( extension.empty() )
     {
     std::cerr << "Failed to find an extension for " << ModelOutput << std::endl;
     return EXIT_FAILURE;

@@ -352,8 +352,8 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   foreach(const QString& nameFilter,
           coreIOManager->fileWriterExtensions(this->MRMLScene))
     {
-    QString extension = QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-      nameFilter.toLatin1()));
+    QString extension = QString::fromStdString(
+      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toLatin1()));
     sceneComboBoxWidget->addItem(nameFilter, extension);
     if (extension == currentExtension)
       {
@@ -621,8 +621,8 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   QString currentExtension = QString(".") + fileInfo.suffix();
   foreach(QString nameFilter, coreIOManager->fileWriterExtensions(node))
     {
-    QString extension = QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-      nameFilter.toLatin1()));
+    QString extension = QString::fromStdString(
+      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toLatin1()));
     fileFormats->addItem(nameFilter, extension);
     if (extension == currentExtension)
       {
@@ -698,8 +698,8 @@ QString qSlicerSaveDataDialogPrivate::extractKnownExtension(const QString& fileN
   foreach(const QString& nameFilter,
           coreIOManager->fileWriterExtensions(object))
     {
-    QString extension = QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-      nameFilter.toLatin1()));
+    QString extension = QString::fromStdString(
+      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toLatin1()));
     if (!extension.isEmpty() && fileName.endsWith(extension))
       {
       return extension;
@@ -1168,8 +1168,8 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   Q_ASSERT(fileNameItem);
 
   // Set the new selected extension to the file name
-  QString extension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-    formatComboBox->currentText().toLatin1());
+  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+    formatComboBox->currentText().toLatin1()));
   if (extension == "*")
     {
     extension = QString();

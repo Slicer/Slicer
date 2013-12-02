@@ -37,6 +37,7 @@ Version:   $Revision: 1.2 $
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
+#include <vtksys/SystemTools.hxx>
 
 // ITKSys includes
 
@@ -97,15 +98,9 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
   vtkDebugMacro("ReadData: reading " << fullName.c_str());
 
   // compute file prefix
-  std::string name(fullName);
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos )
-    {
-    vtkErrorMacro("ReadData: no file extension specified");
-    }
-  std::string extension = name.substr(loc);
-
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   vtkDebugMacro("ReadData: extension = " << extension.c_str());
+
   // don't delete the polydata if reading in a scalar overlay
 
   // reset this to 0 if have an error
@@ -130,27 +125,27 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
         reader->SetFileName(fullName.c_str());
         // the array to read into
         vtkFloatArray *floatArray = vtkFloatArray::New();
-        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string::size_type ptr = fullName.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
         {
             // find the dir name above
             std::string::size_type ptrNext = ptr;
-            std::string::size_type dirptr = name.find_last_of(std::string("/"), --ptrNext);
+            std::string::size_type dirptr = fullName.find_last_of(std::string("/"), --ptrNext);
             if (dirptr != std::string::npos)
             {
-                scalarName = name.substr(++dirptr);
+                scalarName = fullName.substr(++dirptr);
                 vtkDebugMacro("Using dir name in scalar name " << scalarName.c_str());
             }
             else
             {
-                scalarName = name.substr(++ptr);
+                scalarName = fullName.substr(++ptr);
                 vtkDebugMacro("Not using the dir name in the scalar name " << scalarName.c_str());
             }
         }
         else
         {
-            scalarName = name;
+            scalarName = fullName;
         }
         floatArray->SetName(scalarName.c_str());
         reader->SetOutput(floatArray);
@@ -206,15 +201,15 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 
         // the array to read into
         vtkFloatArray *floatArray = vtkFloatArray::New();
-        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string::size_type ptr = fullName.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
           {
-          scalarName = name.substr(++ptr);
+          scalarName = fullName.substr(++ptr);
           }
         else
           {
-          scalarName = name;
+          scalarName = fullName;
           }
         floatArray->SetName(scalarName.c_str());
         reader->SetOutput(floatArray);
@@ -274,7 +269,8 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
         }
       else
         {
-        vtkErrorMacro("Cannot read scalar overlay file '" << name.c_str() << "', as there are no points in the model " << modelNode->GetID() << " to associate it with.");
+        vtkErrorMacro("Cannot read scalar overlay file '" << fullName.c_str()
+                      << "', as there are no points in the model " << modelNode->GetID() << " to associate it with.");
         result = 1;
         }
       }
@@ -293,15 +289,15 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 
         // the array to read into
         vtkFloatArray *floatArray = vtkFloatArray::New();
-        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string::size_type ptr = fullName.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
           {
-          scalarName = name.substr(++ptr);
+          scalarName = fullName.substr(++ptr);
           }
         else
           {
-          scalarName = name;
+          scalarName = fullName;
           }
         floatArray->SetName(scalarName.c_str());
         reader->SetOutput(floatArray);
@@ -538,51 +534,55 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
           }
         catch (...)
           {
-          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData Cannot read scalar overlay volume file " << fullName.c_str());
+          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData Cannot read scalar overlay volume file "
+                        << fullName.c_str());
           reader->Delete();
           return 0;
           }
         vtkImageData *imageData = reader->GetOutput();
         if (imageData == NULL)
           {
-          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData Unable to get image data out of scalar overlay volume file " << fullName.c_str());
+          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData Unable to get image data out of scalar overlay volume file "
+                        << fullName.c_str());
           reader->Delete();
           return 0;
           }
         int numPoints = imageData->GetNumberOfPoints();
-        vtkDebugMacro("Testing volume file for scalar overlay, num vertices = " << numVertices << ", image data number of points = " << numPoints );
+        vtkDebugMacro("Testing volume file for scalar overlay, num vertices = "
+                      << numVertices << ", image data number of points = " << numPoints );
         // only valid if volume w*h*d == num vertices
         if (numPoints != numVertices)
           {
-          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData : volume file data size " << numPoints << " not the same as model vertices " << numVertices);
+          vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData : volume file data size "
+                        << numPoints << " not the same as model vertices " << numVertices);
           reader->Delete();
           return 0;
           }
 
         // put it into an array
         vtkFloatArray *floatArray = vtkFloatArray::New();
-        std::string::size_type ptr = name.find_last_of(std::string("/"));
+        std::string::size_type ptr = fullName.find_last_of(std::string("/"));
         std::string scalarName;
         if (ptr != std::string::npos)
           {
           // find the dir name above
           std::string::size_type ptrNext = ptr;
-          std::string::size_type dirptr = name.find_last_of(std::string("/"), --ptrNext);
+          std::string::size_type dirptr = fullName.find_last_of(std::string("/"), --ptrNext);
           if (dirptr != std::string::npos)
             {
-            scalarName = name.substr(++dirptr);
+            scalarName = fullName.substr(++dirptr);
             vtkDebugMacro("Using dir name in scalar name " << scalarName.c_str());
             }
           else
             {
-            scalarName = name.substr(++ptr);
+            scalarName = fullName.substr(++ptr);
             vtkDebugMacro("Not using the dir name in the scalar name " << scalarName.c_str());
             }
 
           }
         else
           {
-          scalarName = name;
+          scalarName = fullName;
           }
         floatArray->SetName(scalarName.c_str());
 
@@ -624,7 +624,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
       }
     else
       {
-      vtkErrorMacro("MRML FreeSurfer ModelStorage Node: Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
+      vtkErrorMacro("MRML FreeSurfer ModelStorage Node: Cannot read model file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
       }
     }
@@ -646,26 +646,27 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 std::string vtkMRMLFreeSurferModelOverlayStorageNode
 ::GetColorNodeIDFromExtension(const std::string& extension)
 {
+  std::string lowercaseExtension = vtksys::SystemTools::LowerCase(extension);
   int type = vtkMRMLFreeSurferProceduralColorNode::Heat;
-  if (extension == std::string(".thickness"))
+  if (lowercaseExtension == std::string(".thickness"))
     {
     type = vtkMRMLFreeSurferProceduralColorNode::GreenRed;
     }
-  else if (extension == std::string(".curv") ||
-           extension == std::string(".avg_curv") ||
-           extension == std::string(".sulc"))
+  else if (lowercaseExtension == std::string(".curv") ||
+           lowercaseExtension == std::string(".avg_curv") ||
+           lowercaseExtension == std::string(".sulc"))
     {
     type = vtkMRMLFreeSurferProceduralColorNode::GreenRed;
     }
-  else if (extension == std::string(".area"))
+  else if (lowercaseExtension == std::string(".area"))
     {
     type = vtkMRMLFreeSurferProceduralColorNode::RedGreen;
     }
-  else if (extension == std::string(".fs"))
+  else if (lowercaseExtension == std::string(".fs"))
     {
     type = vtkMRMLFreeSurferProceduralColorNode::BlueRed;
     }
-  else if (extension == std::string(".retinotopy"))
+  else if (lowercaseExtension == std::string(".retinotopy"))
     {
     vtkWarningMacro("Retinotopy color wheel not implemented yet, using default of Heat.");
     //type = type = vtkMRMLFreeSurferProceduralColorNode::ColorWheel();

@@ -239,7 +239,7 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storag
   // check for Analyze and similar format- if the archetype is 
   // one of those, then don't send the rest of the list
   //
-  std::string fileExt(itksys::SystemTools::GetFilenameLastExtension(fullName));
+  std::string fileExt=vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if ( fileExt != std::string(".hdr") 
       && fileExt != std::string(".img") 
       && fileExt != std::string(".mhd") 
