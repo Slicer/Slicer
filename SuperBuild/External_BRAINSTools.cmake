@@ -1,5 +1,5 @@
 
-slicer_include_once()
+superbuild_include_once()
 
 # Set dependency list
 set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK )

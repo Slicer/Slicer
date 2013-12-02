@@ -1,5 +1,5 @@
 
-slicer_include_once()
+superbuild_include_once()
 
 # Set dependency list
 set(CTK_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME})

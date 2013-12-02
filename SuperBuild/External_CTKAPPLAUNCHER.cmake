@@ -1,5 +1,5 @@
 
-slicer_include_once()
+superbuild_include_once()
 
 if(Slicer_USE_CTKAPPLAUNCHER)
   # Sanity checks

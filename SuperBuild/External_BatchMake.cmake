@@ -1,5 +1,5 @@
 
-slicer_include_once()
+superbuild_include_once()
 
 # Set dependency list
 set(BatchMake_DEPENDENCIES ${ITK_EXTERNAL_NAME})

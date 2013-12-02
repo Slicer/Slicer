@@ -26,7 +26,7 @@ if(NOT DEFINED EXTERNAL_PROJECT_FILE_PREFIX)
   set(EXTERNAL_PROJECT_FILE_PREFIX "External_")
 endif()
 
-macro(slicer_include_once)
+macro(superbuild_include_once)
   # Make sure this file is included only once
   get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
   if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)

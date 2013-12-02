@@ -1,5 +1,5 @@
 
-slicer_include_once()
+superbuild_include_once()
 
 # Set dependency list
 set(SimpleITK_DEPENDENCIES ITKv4 Swig python)
