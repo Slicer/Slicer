@@ -167,12 +167,12 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QRadioButton" name="jumpCenteredRadioButton">
+       <widget class="QRadioButton" name="jumpOffsetRadioButton">
         <property name="toolTip">
-         <string>Jumps slices centered around the highlighted point</string>
+         <string>Jumps slices with offset</string>
         </property>
         <property name="text">
-         <string>Centered</string>
+         <string>Offset</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -180,12 +180,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="jumpOffsetRadioButton">
+       <widget class="QRadioButton" name="jumpCenteredRadioButton">
         <property name="toolTip">
-         <string>Jumps slices with offset</string>
+         <string>Jumps slices centered around the highlighted point</string>
         </property>
         <property name="text">
-         <string>Offset</string>
+         <string>Centered</string>
         </property>
         <property name="checked">
          <bool>false</bool>

@@ -39,6 +39,7 @@
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLSliceNode.h"
 
 // Markups includes
 #include "qSlicerMarkupsModule.h"
@@ -295,6 +296,24 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                    q, SLOT(onActiveMarkupMRMLNodeChanged(vtkMRMLNode*)));
   QObject::connect(this->activeMarkupMRMLNodeComboBox, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
                    q, SLOT(onActiveMarkupMRMLNodeAdded(vtkMRMLNode*)));
+
+  // Make sure tha the Jump to Slices radio buttons match the default of the
+  // MRML slice node
+  vtkNew<vtkMRMLSliceNode> sliceNode;
+  if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::OffsetJumpSlice)
+    {
+    if (this->jumpOffsetRadioButton->isChecked() != true)
+      {
+      this->jumpOffsetRadioButton->setChecked(true);
+      }
+    }
+  else if (sliceNode->GetJumpMode() == vtkMRMLSliceNode::CenteredJumpSlice)
+    {
+    if (this->jumpCenteredRadioButton->isChecked() != true)
+      {
+      this->jumpCenteredRadioButton->setChecked(true);
+      }
+    }
 
   //
   // add an action to create a new markups list using the display node
