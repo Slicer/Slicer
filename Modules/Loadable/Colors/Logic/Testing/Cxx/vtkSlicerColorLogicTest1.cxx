@@ -22,6 +22,7 @@
 #include "vtkSlicerColorLogic.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkTimerLog.h>

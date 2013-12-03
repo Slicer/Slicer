@@ -39,6 +39,7 @@
 #include <vtkImageReslice.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataCollection.h>
 #include <vtkSmartPointer.h>

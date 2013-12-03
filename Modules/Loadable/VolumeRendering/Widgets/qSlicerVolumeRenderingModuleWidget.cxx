@@ -39,6 +39,7 @@
 
 // MRML includes
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumePropertyNode.h"

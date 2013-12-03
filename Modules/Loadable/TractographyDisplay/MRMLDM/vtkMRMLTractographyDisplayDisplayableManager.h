@@ -30,7 +30,8 @@ class vtkMRMLFiberBundleNode;
 // MRML DisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
-// VTK includes
+// STD includes
+#include <vector>
 
 /// \ingroup Slicer_QtModules_Tractography
 class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTractographyDisplayDisplayableManager

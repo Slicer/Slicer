@@ -23,6 +23,7 @@
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>

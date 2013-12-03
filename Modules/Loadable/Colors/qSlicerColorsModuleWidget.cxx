@@ -37,6 +37,7 @@
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLProceduralColorNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkColorTransferFunction.h>

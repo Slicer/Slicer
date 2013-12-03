@@ -17,10 +17,11 @@
 
 // MRML includes
 #include "vtkMRMLColorTableNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 #include "vtkMRMLPETProceduralColorNode.h"
-#include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK sys includes
 #include <vtkLookupTable.h>
@@ -29,6 +30,7 @@
 // VTK includes
 #include <vtkColorTransferFunction.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 // STD includes
 #include <cassert>

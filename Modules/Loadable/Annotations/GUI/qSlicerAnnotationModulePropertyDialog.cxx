@@ -29,6 +29,9 @@
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
 // VTK includes
 #include <vtkNew.h>
 

@@ -15,10 +15,12 @@
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkDataIOManager.h>
+#include <vtkMRMLScene.h>
 #include <vtkTagTable.h>
 
-// VTK sys includes
+// VTK includes
 #include <vtkCollection.h>
+#include <vtkObjectFactory.h>
 
 // RemoteIO includes
 #include <vtkHTTPHandler.h>

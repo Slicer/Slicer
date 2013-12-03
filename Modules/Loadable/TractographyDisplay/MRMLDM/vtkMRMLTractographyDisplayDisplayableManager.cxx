@@ -34,6 +34,7 @@
 
 #include <vtkMRMLModelDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 

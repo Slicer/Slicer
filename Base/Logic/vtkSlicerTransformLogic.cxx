@@ -14,6 +14,7 @@
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLTransformStorageNode.h"
 
 // ITKsys includes
@@ -22,6 +23,7 @@
 // VTK includes
 #include <vtkGeneralTransform.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 // ITK includes
 #include "itkBSplineDeformableTransform.h"

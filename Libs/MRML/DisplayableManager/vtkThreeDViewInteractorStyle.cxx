@@ -14,16 +14,19 @@
 =========================================================================*/
 #include "vtkThreeDViewInteractorStyle.h"
 
-// VTK includes
-#include "vtkCamera.h"
-#include "vtkCallbackCommand.h"
-#include "vtkMath.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkRenderer.h"
-#include "vtkMRMLInteractionNode.h"
-
-// for picking
+// MRML includes
 #include "vtkMRMLModelDisplayableManager.h"
+#include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkCamera.h>
+#include <vtkCallbackCommand.h>
+#include <vtkMath.h>
+#include <vtkObjectFactory.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkMRMLInteractionNode.h>
+
 
 vtkCxxRevisionMacro(vtkThreeDViewInteractorStyle, "$Revision: 13328 $");
 vtkStandardNewMacro(vtkThreeDViewInteractorStyle);

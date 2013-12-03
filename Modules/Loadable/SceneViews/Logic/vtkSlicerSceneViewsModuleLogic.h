@@ -32,6 +32,8 @@
 
 #include "vtkSlicerModuleLogic.h"
 
+// MRML includes
+class vtkMRMLSceneViewNode;
 
 // VTK includes
 class vtkImageData;

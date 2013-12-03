@@ -30,6 +30,7 @@
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>

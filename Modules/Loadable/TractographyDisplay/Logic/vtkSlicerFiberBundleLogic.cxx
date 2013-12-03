@@ -15,6 +15,7 @@
 
 #include "vtkSlicerFiberBundleLogic.h"
 
+// MRML includes
 #include <vtkMRMLConfigure.h>
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
@@ -24,9 +25,12 @@
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 #endif
+#include <vtkMRMLScene.h>
 
+// VTK includes
 #include <vtkNew.h>
-#include "vtkPolyData.h"
+#include <vtkObjectFactory.h>
+#include <vtkPolyData.h>
 
 #include <itksys/SystemTools.hxx> 
 #include <itksys/Directory.hxx> 

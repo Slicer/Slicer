@@ -40,6 +40,7 @@
 #include <vtkImageClip.h>
 #include <vtkNew.h>
 #include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // STD includes

@@ -7,10 +7,12 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkPermissionPrompter.h"
+#include "vtkMRMLScene.h"
 #include <vtkURIHandler.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>

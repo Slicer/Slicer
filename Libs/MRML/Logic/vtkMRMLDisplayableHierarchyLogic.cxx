@@ -19,9 +19,11 @@
 #include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 vtkCxxRevisionMacro(vtkMRMLDisplayableHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLDisplayableHierarchyLogic);

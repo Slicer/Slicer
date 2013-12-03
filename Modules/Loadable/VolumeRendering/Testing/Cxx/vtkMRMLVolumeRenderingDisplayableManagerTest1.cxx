@@ -32,6 +32,7 @@
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLViewNode.h>

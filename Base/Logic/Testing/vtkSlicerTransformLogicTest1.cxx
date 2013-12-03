@@ -12,6 +12,9 @@
 // Logic includes
 #include "vtkSlicerTransformLogic.h"
 
+// MRML includes
+#include "vtkMRMLScene.h"
+
 // ITK includes
 #include <itkConfigure.h>
 #if ITK_VERSION_MAJOR > 3

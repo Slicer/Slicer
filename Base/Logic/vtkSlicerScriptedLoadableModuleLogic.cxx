@@ -26,8 +26,12 @@
 
 // VTK includes
 #include <vtkPythonUtil.h>
+#include <vtkStdString.h>
 
 // Python includes
+
+// STD includes
+#include <cstdlib>
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerScriptedLoadableModuleLogic, "$Revision$");

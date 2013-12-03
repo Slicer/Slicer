@@ -24,11 +24,13 @@
 // MRML includes
 #include <vtkMRMLCameraNode.h>
 #include <vtkMRMLNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 // STD includes
 #include <cassert>

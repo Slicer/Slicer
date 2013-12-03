@@ -94,6 +94,7 @@
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include <vtkMRMLCommandLineModuleNode.h>
 #endif
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>

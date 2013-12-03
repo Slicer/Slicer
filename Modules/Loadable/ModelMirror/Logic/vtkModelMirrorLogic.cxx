@@ -9,9 +9,10 @@
 #include <itksys/SystemTools.hxx>
 
 // VTK includes
+#include <vtkCleanPolyData.h>
 #include <vtkGeneralTransform.h>
-#include "vtkPolyDataNormals.h"
-#include "vtkCleanPolyData.h"
+#include <vtkObjectFactory.h>
+#include <vtkPolyDataNormals.h>
 
 // STD includes
 

@@ -22,6 +22,7 @@ class vtkMRMLDisplayableHierarchyNode;
 
 // STD includes
 #include <cstdlib>
+#include <vector>
 
 typedef std::vector< vtkMRMLDisplayableHierarchyNode *> vtkMRMLDisplayableHierarchyNodeList;
 

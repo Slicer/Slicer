@@ -19,16 +19,15 @@
 class vtkMRMLApplicationLogic;
 
 // MRML includes
-#include <vtkMRMLScene.h>
 #include <vtkObserverManager.h>
+class vtkMRMLNode;
+class vtkMRMLScene;
 
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkObject.h>
-#include <vtkObjectFactory.h>
-#include <vtkIntArray.h>
-#include <vtkFloatArray.h>
-#include <vtkUnsignedLongArray.h>
+class vtkIntArray;
+class vtkFloatArray;
 
 #include "vtkMRMLLogicWin32Header.h"
 
@@ -182,12 +181,12 @@ protected:
   /// Receives all the events fired by the nodes.
   /// To listen to a node, you can add an observer using
   /// GetMRMLNodesCallbackCommand() or use the utility macros
-  /// vtkSet[AndObserve]MRMLNode[Event]Macro
+  /// vtk[SetAndObserve|Observe]MRMLNode[Event]Macro
   /// ProcessMRMLNodesEvents calls OnMRMLNodeModified when event is
   /// vtkCommand::ModifiedEvent.
   /// \sa ProcessMRMLSceneEvents, ProcessMRMLLogicsEvents,
   /// OnMRMLNodeModified(), vtkSetAndObserveMRMLNodeMacro,
-  /// vtkSetAndObserveMRMLNodeMacro, vtkSetAndObserveMRMLNodeEventMacro
+  /// vtkObserveMRMLNodeMacro, vtkSetAndObserveMRMLNodeEventMacro
   virtual void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
                                       void * callData);

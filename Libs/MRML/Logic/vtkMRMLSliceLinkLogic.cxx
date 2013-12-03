@@ -19,14 +19,17 @@
 
 // MRML includes
 #include <vtkEventBroker.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
+#include <vtkFloatArray.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 

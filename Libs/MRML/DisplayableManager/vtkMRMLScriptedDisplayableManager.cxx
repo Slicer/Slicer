@@ -28,8 +28,9 @@
 #include <vtksys/SystemTools.hxx>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkObjectFactory.h>
 #include <vtkPythonUtil.h>
+#include <vtkSmartPointer.h>
 
 // Python includes
 

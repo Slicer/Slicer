@@ -26,6 +26,7 @@
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLdGEMRICProceduralColorNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkLookupTable.h>

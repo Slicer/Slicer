@@ -30,6 +30,7 @@ class vtkMRMLColorTableNode;
 
 // STD includes
 #include <cstdlib>
+#include <vector>
 
 /// \brief MRML logic class for color manipulation.
 ///

@@ -30,17 +30,18 @@
 #include "GUI/qSlicerAnnotationModulePropertyDialog.h"
 #include "GUI/qSlicerAnnotationModuleSnapShotDialog.h"
 
+// MRML includes
+#include "vtkMRMLDisplayableHierarchyNode.h"
+#include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLNode.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSelectionNode.h"
+
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
-
-// MRML includes
-#include "vtkMRMLDisplayableHierarchyNode.h"
-#include "vtkMRMLInteractionNode.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLSelectionNode.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation

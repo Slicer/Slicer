@@ -21,6 +21,7 @@
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes

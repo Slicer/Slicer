@@ -29,10 +29,12 @@
 class vtkMRMLLayoutNode;
 
 // VTK includes
+class vtkCollection;
 class vtkXMLDataElement;
 
 // STD includes
 #include <cstdlib>
+#include <vector>
 
 /// \brief MRML logic class for layout manipulation
 ///

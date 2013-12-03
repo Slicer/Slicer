@@ -38,6 +38,10 @@
 // MRML Logic includes
 #include <vtkMRMLColorLogic.h>
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
+
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
 

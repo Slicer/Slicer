@@ -29,6 +29,7 @@
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelDisplayableManager.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes

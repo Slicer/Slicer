@@ -8,6 +8,7 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include "vtkMRMLScene.h"
 
 // Tractography Logic includes
 #include "vtkSlicerTractographyInteractiveSeedingLogic.h"

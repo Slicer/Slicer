@@ -24,6 +24,7 @@
 // MRML includes
 #include "vtkMRMLColors.h"
 #include "vtkMRMLLayoutNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLChartViewNode.h"
@@ -32,6 +33,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLDataElement.h>
 

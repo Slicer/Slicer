@@ -4,6 +4,7 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
 

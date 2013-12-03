@@ -1,9 +1,14 @@
 //#include <vtkSlicerConfigure.h>
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
+// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include <vtkImageData.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSceneViewNode.h>
+
+// VTK includes
+#include <vtkImageData.h>
+
 
 int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
 {

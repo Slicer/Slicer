@@ -24,9 +24,11 @@
 // MRML includes
 #include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLDoubleArrayStorageNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 // STD includes
 

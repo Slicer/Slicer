@@ -37,6 +37,7 @@
 #include "vtkEventBroker.h"
 #include "vtkMRMLAnnotationROINode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLSliceLogic.h"

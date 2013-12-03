@@ -33,12 +33,13 @@
 /// MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkURIHandler.h>
+#include <vtkMRMLVolumeNode.h>
 
 /// FreeSurfer includes
 #include <vtkFSSurfaceHelper.h>

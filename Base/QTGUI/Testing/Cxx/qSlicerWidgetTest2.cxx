@@ -25,23 +25,24 @@
 // QVTK includes
 #include <QVTKWidget.h>
 
+// Slicer includes
+#include <vtkMRMLSliceLogic.h>
+
+// MRML includes
+#include <vtkMRMLScalarVolumeNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
+#include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLScene.h>
+#include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLColorTableNode.h>
+
 // VTK includes
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkImageMapper.h>
 #include <vtkProperty2D.h>
 #include <vtkActor2D.h>
-
-// MRML includes
-#include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLScalarVolumeDisplayNode.h>
-#include <vtkMRMLVolumeArchetypeStorageNode.h>
-#include <vtkMRMLSliceCompositeNode.h>
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLColorTableNode.h>
-
-// Slicer includes
-#include <vtkMRMLSliceLogic.h>
 
 // STD includes
 

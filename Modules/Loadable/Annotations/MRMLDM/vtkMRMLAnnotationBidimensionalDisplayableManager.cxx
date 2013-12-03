@@ -19,6 +19,7 @@
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>

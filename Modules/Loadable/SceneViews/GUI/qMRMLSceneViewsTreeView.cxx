@@ -38,6 +38,7 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLHierarchyNode.h"
 

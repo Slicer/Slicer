@@ -26,6 +26,7 @@
 
 // VTK includes
 #include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>

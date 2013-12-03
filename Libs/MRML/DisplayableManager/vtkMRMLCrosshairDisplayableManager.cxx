@@ -28,6 +28,7 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLLightBoxRendererManagerProxy.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
@@ -38,6 +39,7 @@
 #include <vtkCellArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>

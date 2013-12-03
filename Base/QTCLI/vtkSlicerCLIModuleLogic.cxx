@@ -33,6 +33,7 @@
 #include <vtkIntArray.h>
 #include <vtkMultiThreader.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>
 

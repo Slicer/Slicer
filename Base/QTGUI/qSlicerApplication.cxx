@@ -80,6 +80,7 @@
 
 // MRML includes
 #include <vtkMRMLNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>

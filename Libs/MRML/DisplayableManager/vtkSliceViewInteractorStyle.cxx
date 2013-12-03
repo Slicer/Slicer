@@ -13,8 +13,14 @@
 
 =========================================================================*/
 
-
 #include "vtkSliceViewInteractorStyle.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLSliceLogic.h"
+#include "vtkMRMLSliceNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLVolumeNode.h"
 
 // VTK includes
 #include "vtkRenderWindowInteractor.h"
@@ -24,11 +30,6 @@
 #include "vtkCommand.h"
 #include "vtkNew.h"
 
-// MRML includes
-#include "vtkMRMLSliceLogic.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLSliceCompositeNode.h"
-#include "vtkMRMLVolumeNode.h"
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkSliceViewInteractorStyle, SliceLogic, vtkMRMLSliceLogic);

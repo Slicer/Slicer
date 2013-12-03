@@ -25,6 +25,7 @@
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
 
 // MRML includes
+#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes

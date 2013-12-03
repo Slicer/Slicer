@@ -49,6 +49,7 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------

@@ -18,9 +18,11 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 // STD includes

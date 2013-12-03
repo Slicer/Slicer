@@ -22,6 +22,9 @@
 #include <vtkMRMLVolumeRenderingDisplayNode.h>
 #include <vtkSlicerVolumeRenderingLogic.h>
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
 // VTK includes
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>

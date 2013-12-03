@@ -24,6 +24,7 @@
 
 // MRMLLogic includes
 #include <vtkMRMLApplicationLogic.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceLogic.h>
 
 // MRML includes

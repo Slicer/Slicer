@@ -37,6 +37,7 @@
 #include <vtkFollower.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkOutlineSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>

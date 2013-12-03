@@ -26,10 +26,12 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 // STD includes
 #include <cassert>

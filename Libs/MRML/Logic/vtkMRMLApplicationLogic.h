@@ -31,10 +31,16 @@ class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLModelHierarchyLogic;
 class vtkMRMLSelectionNode;
-class vtkMRMLInteractionNode;
 class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
+class vtkMRMLInteractionNode;
+
+// VTK includes
+class vtkCollection;
 class vtkImageData;
+
+// STD includes
+#include <vector>
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
   : public vtkMRMLAbstractLogic

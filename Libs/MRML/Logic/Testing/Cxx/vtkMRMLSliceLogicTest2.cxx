@@ -23,9 +23,10 @@
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
 #include <vtkImageAppendComponents.h>

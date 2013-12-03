@@ -30,6 +30,7 @@
 #include <vtkMRMLColorLogic.h>
 
 // MRML includes
+#include <vtkMRMLScene.h>
 
 // STD includes
 

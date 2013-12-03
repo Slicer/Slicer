@@ -23,6 +23,7 @@
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleStorageNode.h>
 #include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include "vtkMRMLTractographyInteractiveSeedingNode.h"
 #include <vtkMRMLTransformNode.h>

@@ -25,6 +25,7 @@
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 
@@ -32,6 +33,7 @@
 #include <vtkActor2D.h>
 #include <vtkCallbackCommand.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkRenderer.h>
 #include <vtkWeakPointer.h>

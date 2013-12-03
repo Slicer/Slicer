@@ -26,6 +26,7 @@
 
 // MRML includes
 #include "vtkMRML.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 
 // STD includes

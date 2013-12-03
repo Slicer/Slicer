@@ -10,6 +10,9 @@
 // SlicerLogic includes
 #include "vtkSlicerModuleLogic.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerModuleLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModuleLogic);

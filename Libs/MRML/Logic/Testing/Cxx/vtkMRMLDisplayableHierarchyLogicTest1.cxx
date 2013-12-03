@@ -19,6 +19,7 @@
 // MRML includes
 #include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLModelNode.h"
+#include "vtkMRMLScene.h"
 
 #include "vtkMRMLCoreTestingMacros.h"
 

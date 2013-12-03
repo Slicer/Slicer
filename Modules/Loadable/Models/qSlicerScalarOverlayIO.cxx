@@ -30,6 +30,7 @@
 
 // MRML includes
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
 
 // VTK includes

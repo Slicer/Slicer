@@ -40,6 +40,7 @@
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation

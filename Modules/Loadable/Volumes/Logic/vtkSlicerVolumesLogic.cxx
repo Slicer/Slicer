@@ -31,6 +31,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
@@ -41,6 +42,7 @@
 #include <vtkImageThreshold.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>

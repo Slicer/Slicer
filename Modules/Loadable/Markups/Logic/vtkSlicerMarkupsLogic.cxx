@@ -33,12 +33,14 @@
 // MRML includes
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLInteractionNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
 
 // STD includes

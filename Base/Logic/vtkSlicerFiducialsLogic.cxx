@@ -11,14 +11,17 @@
 #include "vtkSlicerFiducialsLogic.h"
 
 // MRML includes
+#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLFiducialListNode.h"
-#include "vtkMRMLLinearTransformNode.h" // for transforming picked points
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLStorageNode.h"
 
 // VTK includes
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
+
 #include <vtksys/SystemTools.hxx> 
 
 

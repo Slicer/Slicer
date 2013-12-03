@@ -36,6 +36,7 @@ class vtkMRMLVolumePropertyNode;
 
 // VTK includes
 class vtkColorTransferFunction;
+class vtkLookupTable;
 class vtkPiecewiseFunction;
 class vtkScalarsToColors;
 class vtkVolumeProperty;

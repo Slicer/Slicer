@@ -29,6 +29,7 @@
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 #include "vtkMRMLClipModelsNode.h"
+#include <vtkMRMLScene.h>
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLInteractionNode.h"
@@ -45,6 +46,7 @@
 #include <vtkLookupTable.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPlane.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>

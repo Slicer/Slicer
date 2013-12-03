@@ -1,4 +1,8 @@
+// ModelTransform includes
 #include "vtkModelTransformLogic.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
 
 
 //----------------------------------------------------------------------------

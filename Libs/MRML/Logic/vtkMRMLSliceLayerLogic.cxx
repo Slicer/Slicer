@@ -22,6 +22,7 @@
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkAssignAttribute.h>
@@ -34,6 +35,7 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkTransform.h>
 

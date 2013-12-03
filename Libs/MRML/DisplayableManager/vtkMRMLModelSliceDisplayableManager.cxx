@@ -25,6 +25,7 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -35,6 +36,7 @@
 #include <vtkEventBroker.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPlane.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>

@@ -11,8 +11,15 @@
 // SceneViewLogic includes
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkStdString.h>
+
+// STD includes
+#include <vector>
 
 //-----------------------------------------------------------------------------
 qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog()

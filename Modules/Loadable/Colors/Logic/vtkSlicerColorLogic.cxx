@@ -18,6 +18,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtksys/SystemTools.hxx>
 
 #ifdef WIN32

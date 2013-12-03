@@ -22,6 +22,7 @@
 #include "vtkSlicerReformatLogic.h"
 
 // MRML includes
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -31,6 +32,7 @@
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkTransform.h>
 
 // STD includes

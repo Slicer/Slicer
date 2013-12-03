@@ -1,5 +1,8 @@
 #include "vtkSlicerTask.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerTask, "$Revision$");
 vtkStandardNewMacro(vtkSlicerTask);

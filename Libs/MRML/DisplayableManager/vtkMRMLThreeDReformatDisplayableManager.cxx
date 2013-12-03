@@ -24,6 +24,7 @@
 // MRML includes
 #include "vtkMRMLApplicationLogic.h"
 #include <vtkMRMLColors.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLSliceLogic.h>
@@ -39,6 +40,7 @@
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>

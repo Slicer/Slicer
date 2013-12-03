@@ -3,6 +3,7 @@
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
 

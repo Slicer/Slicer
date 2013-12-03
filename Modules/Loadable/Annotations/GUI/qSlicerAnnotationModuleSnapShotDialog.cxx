@@ -11,8 +11,12 @@
 // AnnotationLogics includes
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
+// MRML includes
+#include <vtkMRMLScene.h>
+
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkStdString.h>
 
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleSnapShotDialog

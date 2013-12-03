@@ -31,6 +31,7 @@
 // MRML includes
 #include <vtkMRMLAbstractSliceViewDisplayableManager.h>
 #include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLScalarVolumeNode.h>

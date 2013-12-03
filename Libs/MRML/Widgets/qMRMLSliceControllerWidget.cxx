@@ -45,11 +45,11 @@
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
 #include <vtkNew.h>
-
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods

@@ -18,6 +18,7 @@
 #include "vtkMRMLAnnotationHierarchyNode.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 
 //---------------------------------------------------------------------------
 qSlicerAnnotationModuleReportDialog::qSlicerAnnotationModuleReportDialog()

@@ -35,6 +35,7 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPNGWriter.h>
 
 // STD includes

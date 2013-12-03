@@ -31,6 +31,7 @@
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
@@ -46,6 +47,7 @@
 #include <vtkImageData.h>
 #include <vtkLookupTable.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkPointData.h>
 #include <vtkVolumeProperty.h>

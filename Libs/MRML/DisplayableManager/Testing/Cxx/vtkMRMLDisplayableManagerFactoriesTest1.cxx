@@ -4,6 +4,7 @@
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 #include <vtkThreeDViewInteractorStyle.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLTestThreeDViewDisplayableManager.h>
 #include <vtkMRMLTestSliceViewDisplayableManager.h>
 #include <vtkMRMLTestCustomDisplayableManager.h>

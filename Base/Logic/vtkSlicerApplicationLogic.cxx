@@ -12,11 +12,6 @@
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_CLI_SUPPORT
 #include "vtkSlicerTask.h"
 
-// VTK includes
-#include <vtkNew.h>
-#include <vtkPointData.h>
-#include <vtkPolyData.h>
-
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLColorTableStorageNode.h>
@@ -38,6 +33,7 @@
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLNRRDStorageNode.h>
 #include <vtkMRMLNonlinearTransformNode.h>
+#include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
@@ -45,6 +41,12 @@
 #include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
+
+// VTK includes
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
 
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
