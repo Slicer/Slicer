@@ -553,14 +553,26 @@ endif()
 # Qt - Slicer_REQUIRED_QT_MODULES
 #-----------------------------------------------------------------------------
 # Module name should be specified as they appear in FindQt4.cmake
-# For example, the module name associated with the variable QT_USE_QTXML is XML.
-set(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK UITOOLS XML WEBKIT SVG SQL)
+# For example, the module name associated with the variable QT_USE_QTXML is QTXML.
+# Note that the modules will be installed when packaging.
+set(Slicer_REQUIRED_QT_MODULES
+  QTCORE QTGUI
+  QTNETWORK QTOPENGL
+  QTUITOOLS #no dll
+  QTXML QTXMLPATTERNS
+  QTWEBKIT PHONON # webkit requires phonon
+  QTSVG QTSQL
+  )
+if(UNIX OR APPLE)
+  list(APPEND QTLIBLIST QTDBUS)
+endif()
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_REQUIRED_QT_MODULES SCRIPT)
+  list(APPEND Slicer_REQUIRED_QT_MODULES QTSCRIPT)
 endif()
 if(BUILD_TESTING)
-  list(APPEND Slicer_REQUIRED_QT_MODULES TEST)
+  list(APPEND Slicer_REQUIRED_QT_MODULES QTTEST)
 endif()
+list(APPEND Slicer_REQUIRED_QT_MODULES ${Slicer_ADDITIONAL_REQUIRED_QT_MODULES})
 
 #-----------------------------------------------------------------------------
 # Qt plugins (designer, imageformats, ...) relative directories
