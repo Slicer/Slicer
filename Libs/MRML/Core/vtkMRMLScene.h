@@ -207,6 +207,13 @@ public:
   /// tag. Return 0 if such node can't be found in the scene.
   vtkMRMLNode* GetSingletonNode(const char* singletonTag, const char* className);
 
+  /// Search and return a matching singleton in the scene that the input singleton
+  /// node will overwrite if it is added to the scene.
+  /// There is matching if the singleton tag and className are the same,
+  /// or there is an existing node with the generated unique singleton node ID.
+  /// Return 0 if such node can't be found in the scene.
+  vtkMRMLNode* GetSingletonNode(vtkMRMLNode* n);
+
   std::list<std::string> GetNodeClassesList();
 
   /// Get the number of registered node classes (is probably greater than the current number

@@ -369,7 +369,7 @@ void vtkMRMLSceneViewNode::StoreScene()
     if (this->IncludeNodeInSceneView(node) &&
         node->GetSaveWithScene() )
       {
-      vtkMRMLNode *newNode = node->CreateNodeInstance();
+      vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
 
       newNode->SetScene(this->SnapshotScene);
       newNode->CopyWithoutModifiedEvent(node);
@@ -378,9 +378,6 @@ void vtkMRMLSceneViewNode::StoreScene()
       newNode->SetAddToSceneNoModify(1);
       this->SnapshotScene->AddNode(newNode);
       newNode->SetAddToSceneNoModify(0);
-
-      // Node has been added into the scene, decrease reference count to 1.
-      newNode->Delete();
 
       // sanity check
       assert(newNode->GetScene() == this->SnapshotScene);

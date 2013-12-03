@@ -21,6 +21,8 @@
 vtkCxxRevisionMacro(vtkSlicerSceneViewsModuleLogic, "$Revision: 1.0$")
 vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic)
 
+const char SCENE_VIEW_TOP_LEVEL_SINGLETON_TAG[] = "SceneViewTopLevel";
+
 //-----------------------------------------------------------------------------
 // vtkSlicerSceneViewsModuleLogic methods
 //-----------------------------------------------------------------------------
@@ -95,7 +97,20 @@ void vtkSlicerSceneViewsModuleLogic::AddMissingHierarchyNodes()
     vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(sceneViewNodes->GetItemAsObject(n));
     vtkMRMLHierarchyNode *hierarchyNode =  NULL;
     hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(sceneViewNode->GetScene(), sceneViewNode->GetID());
-    if (!hierarchyNode)
+    if (hierarchyNode)
+      {
+      vtkMRMLHierarchyNode *topLevelNode = hierarchyNode->GetParentNode();
+      if (topLevelNode != NULL)
+        {
+        if (topLevelNode->GetSingletonTag() == NULL)
+          {
+          // If the top-level hierarchy node is just read from the scene then it is not yet set up as a singleton.
+          // The top-level node has to be a singleton, so its singleton tag now.
+          topLevelNode->SetSingletonTag(SCENE_VIEW_TOP_LEVEL_SINGLETON_TAG);
+          }
+        }
+      }
+    else
       {
       vtkDebugMacro("AddMissingHierarchyNodes: missing a hierarchy node for scene view node " << sceneViewNode->GetID() << ", adding one");
       int retval = this->AddHierarchyNodeForNode(sceneViewNode);
@@ -648,43 +663,37 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
     return NULL;
     }
   
-  const char *toplevelTag = "SceneViewTopLevel";
- 
-  char *toplevelNodeID = NULL;
-
-  vtkMRMLHierarchyNode* toplevelNode = NULL;
-  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetSingletonNode(toplevelTag, "vtkMRMLHierarchyNode");
-  if (mrmlNode)
-    {
-    toplevelNode = vtkMRMLHierarchyNode::SafeDownCast(mrmlNode);
-    }
-
-  if (toplevelNode)
-    {
-    toplevelNodeID = toplevelNode->GetID();
-    }
-  else
+  vtkMRMLNode *toplevelNode = this->GetMRMLScene()->GetSingletonNode(SCENE_VIEW_TOP_LEVEL_SINGLETON_TAG, "vtkMRMLHierarchyNode");
+  if (!toplevelNode)
     {
     // there wasn't a top level node, create one
     vtkDebugMacro("GetTopLevelHierarchyNode: no top level node, making new" );
-    toplevelNode = vtkMRMLHierarchyNode::New();
-    toplevelNode->SetSingletonTag(toplevelTag);
-    toplevelNode->HideFromEditorsOff();
-    toplevelNode->SetName("Scene Views");
-    toplevelNode->SetAttribute("SceneViewHierarchy", "true");
-
+    vtkNew<vtkMRMLHierarchyNode> createdToplevelNode;
+    createdToplevelNode->SetSingletonTag(SCENE_VIEW_TOP_LEVEL_SINGLETON_TAG);
+    createdToplevelNode->HideFromEditorsOff();
+    createdToplevelNode->SetName("Scene Views");
+    createdToplevelNode->SetAttribute("SceneViewHierarchy", "true");
     if (!node)
       {
-      this->GetMRMLScene()->AddNode(toplevelNode);
+      toplevelNode = this->GetMRMLScene()->AddNode(createdToplevelNode.GetPointer());
       }
     else
       {
-      this->GetMRMLScene()->InsertBeforeNode(node,toplevelNode);
+      toplevelNode = this->GetMRMLScene()->InsertBeforeNode(node,createdToplevelNode.GetPointer());
       }
-    toplevelNodeID = toplevelNode->GetID();
-    vtkDebugMacro("Added a new top level node with id " << toplevelNodeID << " and name " << toplevelNode->GetName());
-    toplevelNode->Delete();
+    if (toplevelNode)
+      {
+      vtkDebugMacro("Added a new top level node with id " << toplevelNode->GetID()
+        << " and name " << ( toplevelNode->GetName() ? toplevelNode->GetName() : "undefined" ) );
+      }
+    else
+      {
+      vtkErrorMacro("Failed to add top-level scene view node");
+      }
+
     }
+  char *toplevelNodeID = ( toplevelNode ? toplevelNode->GetID() : NULL );
+
   // sanity check
   this->FlattenSceneViewsHierarchy(toplevelNodeID);
   

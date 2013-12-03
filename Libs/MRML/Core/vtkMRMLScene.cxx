@@ -1012,9 +1012,9 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   // check if node is a singletone
   if (n->GetSingletonTag() != NULL)
     {
-    // check if there is a singletone of this class in the scene
+    // check if there is a singleton of this class in the scene
     // and if found copy this node into it
-    vtkMRMLNode *sn = this->GetSingletonNode(n->GetSingletonTag(), n->GetClassName());
+    vtkMRMLNode *sn = this->GetSingletonNode(n);
     if (sn != NULL)
       {
       // A node can't be added twice into the scene
@@ -1110,7 +1110,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
   // fired.
   bool add = true;
   if (n->GetSingletonTag() != NULL &&
-      this->GetSingletonNode(n->GetSingletonTag(), n->GetClassName()) != NULL)
+      this->GetSingletonNode(n) != NULL)
     {
     // if the node is a singleton, then it won't be added, just replaced
     add = false;
@@ -1506,6 +1506,43 @@ vtkMRMLNode* vtkMRMLScene::GetSingletonNode(const char* singletonTag, const char
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetSingletonNode(vtkMRMLNode* n)
+{
+  if (n == NULL || n->GetSingletonTag() == NULL)
+    {
+    vtkErrorMacro("vtkMRMLScene::GetSingletonNode failed: singleton node is expected");
+    return NULL;
+    }
+  vtkMRMLNode *sn = this->GetSingletonNode(n->GetSingletonTag(), n->GetClassName());
+  if (sn != NULL)
+    {
+    // singleton node found
+    return sn;
+    }
+
+  // No singleton node found, but it may be possible that a non-singleton node exists with
+  // the same ID, which is probably a singleton node where the tag was not set by mistake.
+  std::string singletonId = this->GenerateUniqueID(n);
+  sn = this->GetNodeByID(singletonId.c_str());
+  if (sn != NULL)
+    {
+    if (sn->GetSingletonTag() == NULL)
+      {
+      vtkWarningMacro("The " << singletonId << " ID belongs to a singleton, therefore it will be treated as a singleton");
+      }
+    else
+      {
+      vtkWarningMacro("The node ID " << singletonId << " is inconsistent with its singleton tag " << sn->GetSingletonTag()
+        << ", the singleton tag is updated");
+      }
+    sn->SetSingletonTag(n->GetSingletonTag());
+    return sn;
+    }
+
+  return NULL;
+}
+
+//------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNthNode(int n)
 {
 
@@ -1665,7 +1702,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
       }
     if ( foundNode )
       {
-      vtkErrorMacro("GetNodeByID: No node found for ID: " << id);
+      vtkErrorMacro("GetNodeByID: Node is in the scene, but its ID is missing from the NodeIDs cache: " << id);
       }
     }
 #endif
