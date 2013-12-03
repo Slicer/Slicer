@@ -566,9 +566,6 @@ set(Slicer_REQUIRED_QT_MODULES
 if(WIN32)
   list(APPEND Slicer_REQUIRED_QT_MODULES PHONON) # webkit requires phonon
 endif()
-if(UNIX OR APPLE)
-  list(APPEND QTLIBLIST QTDBUS)
-endif()
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_REQUIRED_QT_MODULES QTSCRIPT)
 endif()
