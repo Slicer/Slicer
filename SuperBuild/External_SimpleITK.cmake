@@ -40,7 +40,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
 
   set(SimpleITK_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
-  set(SimpleITK_GIT_TAG e2ec6bbfd7a68b9881f699513627ee9971dedeb9) #v0.7rc1
+  set(SimpleITK_GIT_TAG 83c344feff4b085df0879fd259337740f3f38c5d) # Patched v0.7.1
 
   ExternalProject_add(SimpleITK
     SOURCE_DIR SimpleITK
