@@ -34,6 +34,7 @@
 
 // STD includes
 #include <algorithm>
+#include <string>
 #include <vector>
 
 //----------------------------------------------------------------------------
