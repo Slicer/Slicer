@@ -38,16 +38,12 @@ set(SlicerApp_SRCS
   qSlicerAppAboutDialog.h
   qSlicerAppMainWindow.cxx
   qSlicerAppMainWindow.h
-  qSlicerAppMainWindowCore.cxx
-  qSlicerAppMainWindowCore.h
-  qSlicerAppMainWindowCore_p.h
+  qSlicerAppMainWindow_p.h
   )
 
 set(SlicerApp_MOC_SRCS
   qSlicerAppAboutDialog.h
   qSlicerAppMainWindow.h
-  qSlicerAppMainWindowCore.h
-  qSlicerAppMainWindowCore_p.h
   )
 
 set(SlicerApp_UI_SRCS

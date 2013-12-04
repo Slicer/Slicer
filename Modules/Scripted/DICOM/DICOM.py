@@ -90,11 +90,11 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     connection is made that will also cause the instance-created
     DICOM browser to be raised by this menu action"""
     a = self.parent.action()
-    menuFile = slicer.util.lookupTopLevelWidget('menuFile')
-    if menuFile:
-      for action in menuFile.actions():
+    fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
+    if fileMenu:
+      for action in fileMenu.actions():
         if action.text == 'Save':
-          menuFile.insertAction(action,a)
+          fileMenu.insertAction(action,a)
 
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
@@ -281,9 +281,9 @@ class DICOMWidget:
       print('Could not connect to the main window DICOM button')
 
     # connect to our menu file entry so it raises the browser
-    menuFile = slicer.util.lookupTopLevelWidget('menuFile')
-    if menuFile:
-      for action in menuFile.actions():
+    fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
+    if fileMenu:
+      for action in fileMenu.actions():
         if action.text == 'DICOM':
           action.connect('triggered()',self.detailsPopup.open)
 

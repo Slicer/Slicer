@@ -36,7 +36,7 @@
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerVolumesModuleWidget/DisplayCollapsibleButton/VolumeDisplayWidget/qSlicerScalarVolumeDisplayWidget/MRMLWindowLevelWidget/WindowSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="3200"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerVolumesModuleWidget/DisplayCollapsibleButton/VolumeDisplayWidget/qSlicerScalarVolumeDisplayWidget/MRMLWindowLevelWidget/LevelSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="1857"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerVolumesModuleWidget/DisplayCollapsibleButton/VolumeDisplayWidget/qSlicerScalarVolumeDisplayWidget/MRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="false"/>
-        <event widget="qSlicerAppMainWindow/menubar/menuView/MenuLayout" command="activate" arguments="actionViewLayoutOneUpRedSlice"/>
+        <event widget="qSlicerAppMainWindow/menubar/ViewMenu/LayoutMenu" command="activate" arguments="ViewLayoutOneUpRedSliceAction"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="show_popup" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="show_popup" arguments="false"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Editor"/>
@@ -437,7 +437,7 @@
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,-9,57"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,-9,57"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/EditorModuleWidget/VolumeCollapsibleButton/1QFrame0/PerStructureVolumesFrame/AllButtonsFrameButton/MergeStructuresAndBuildModelsButton" command="activate" arguments=""/>
-        <event widget="qSlicerAppMainWindow/menubar/menuView/MenuLayout" command="activate" arguments="actionViewLayoutConventional"/>
+        <event widget="qSlicerAppMainWindow/menubar/ViewMenu/LayoutMenu" command="activate" arguments="ViewLayoutConventionalAction"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/ThreeDWidget1/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.0674374,0.507353,1,1,0)"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/ThreeDWidget1/1qMRMLThreeDView0/1QVTKWidget0" command="mousePress" arguments="(-0.0674374,0.507353,1,1,0)"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/ThreeDWidget1/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.0674374,0.492647,0,1,0)"/>

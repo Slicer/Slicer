@@ -27,12 +27,13 @@
 
 // CTK includes
 #include <ctkErrorLogModel.h>
-#include <ctkPimpl.h>
-#include <ctkVTKObject.h>
+class ctkErrorLogWidget;
+class ctkPythonConsole;
 
 // Slicer includes
 #include "qSlicerAppExport.h"
 #include "qSlicerIO.h"
+#include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT, Slicer_USE_PYTHONQT, Slicer_USE_QtTesting
 
 class qSlicerAbstractCoreModule;
 class qSlicerModulePanel;
@@ -40,62 +41,108 @@ class qSlicerModuleSelectorToolBar;
 class qSlicerAppMainWindowCore;
 class qSlicerAppMainWindowPrivate;
 
+// VTK includes
+class vtkObject;
+
 class Q_SLICER_APP_EXPORT qSlicerAppMainWindow : public QMainWindow
 {
   Q_OBJECT
-  QVTK_OBJECT
 public:
-
   typedef QMainWindow Superclass;
+
   qSlicerAppMainWindow(QWidget *parent=0);
   virtual ~qSlicerAppMainWindow();
 
-  /// Return the main window core.
-  qSlicerAppMainWindowCore* core()const;
-
-  /// Return the module selector
+  /// Return a pointer to the module selector toolbar that can change the
+  /// current module.
+  /// \sa pythonConsole(), errorLogWidget()
   Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector()const;
 
+#ifdef Slicer_USE_PYTHONQT
+  /// Return a pointer to the python console.
+  /// \sa moduleSelector(), errorLogWidget()
+  Q_INVOKABLE ctkPythonConsole* pythonConsole()const;
+#endif
+  /// Return a pointer to the error log widget.
+  /// \sa moduleSelector(), pythonConsole()
+  Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
+
 public slots:
-  void setHomeModuleCurrent();
-  void restoreToolbars();
+  virtual void setHomeModuleCurrent();
+  virtual void restoreToolbars();
+
+  virtual void on_FileAddDataAction_triggered();
+  virtual void on_FileLoadDataAction_triggered();
+  virtual void on_FileImportSceneAction_triggered();
+  virtual void on_FileLoadSceneAction_triggered();
+  virtual void on_FileAddVolumeAction_triggered();
+  virtual void on_FileAddTransformAction_triggered();
+  virtual void on_FileSaveSceneAction_triggered();
+  virtual void on_FileExitAction_triggered();
+  virtual void onFileRecentLoadedActionTriggered();
+  virtual void on_SDBSaveToDirectoryAction_triggered();
+  virtual void on_SDBSaveToMRBAction_triggered();
+  virtual void on_SDBSaveToDCMAction_triggered();
+  virtual void on_FileCloseSceneAction_triggered();
+  virtual void on_LoadDICOMAction_triggered();
+
+  virtual void on_EditRecordMacroAction_triggered();
+  virtual void on_EditPlayMacroAction_triggered();
+  virtual void on_EditUndoAction_triggered();
+  virtual void on_EditRedoAction_triggered();
+
+  virtual void onLayoutActionTriggered(QAction* action);
+  virtual void onLayoutCompareActionTriggered(QAction* action);
+  virtual void onLayoutCompareWidescreenActionTriggered(QAction* action);
+  virtual void onLayoutCompareGridActionTriggered(QAction* action);
+
+  virtual void setLayout(int);
+  virtual void setLayoutNumberOfCompareViewRows(int);
+  virtual void setLayoutNumberOfCompareViewColumns(int);
+
+  virtual void on_WindowErrorLogAction_triggered();
+  virtual void on_WindowPythonInteractorAction_triggered();
+  virtual void on_WindowToolbarsResetToDefaultAction_triggered();
+
+  virtual void on_HelpKeyboardShortcutsAction_triggered();
+  virtual void on_HelpBrowseTutorialsAction_triggered();
+  virtual void on_HelpInterfaceDocumentationAction_triggered();
+  virtual void on_HelpSlicerPublicationsAction_triggered();
+  virtual void on_HelpVisualBlogAction_triggered();
+
+  virtual void on_HelpReportBugOrFeatureRequestAction_triggered();
+  virtual void on_HelpAboutSlicerAppAction_triggered();
+
+  virtual void on_EditApplicationSettingsAction_triggered();
+  virtual void on_CutAction_triggered();
+  virtual void on_CopyAction_triggered();
+  virtual void on_PasteAction_triggered();
+  virtual void on_ViewExtensionsManagerAction_triggered();
 
 protected slots:
-  void onModuleLoaded(const QString& moduleName);
-  void onModuleAboutToBeUnloaded(const QString& moduleName);
-  void onEditApplicationSettingsActionTriggered();
-  void onCutActionTriggered();
-  void onCopyActionTriggered();
-  void onPasteActionTriggered();
-  void onViewExtensionsManagerActionTriggered();
+  virtual void onModuleLoaded(const QString& moduleName);
+  virtual void onModuleAboutToBeUnloaded(const QString& moduleName);
+  virtual void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);
 
-  void onFileRecentLoadedActionTriggered();
-  void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);
-
-  void onMRMLSceneModified(vtkObject*);
-  void onLayoutActionTriggered(QAction* action);
-  void onLayoutCompareActionTriggered(QAction* action);
-  void onLayoutCompareWidescreenActionTriggered(QAction* action);
-  void onLayoutCompareGridActionTriggered(QAction* action);
-  void onLayoutChanged(int);
-  void loadDICOMActionTriggered();
-
-  void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
+  virtual void onMRMLSceneModified(vtkObject*);
+  virtual void onLayoutChanged(int);
+  virtual void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
 
 protected:
-
   /// Connect MainWindow action with slots defined in MainWindowCore
-  void setupMenuActions();
+  virtual void setupMenuActions();
 
   /// Open a popup to warn the user Slicer is not for clinical use.
-  void disclaimer();
+  virtual void disclaimer();
 
   /// Forward the dragEnterEvent to the IOManager which will
   /// decide if it could accept a drag/drop or not.
-  void dragEnterEvent(QDragEnterEvent *event);
+  /// \sa dropEvent()
+  virtual void dragEnterEvent(QDragEnterEvent *event);
 
   /// Forward the dropEvent to the IOManager.
-  void dropEvent(QDropEvent *event);
+  /// \sa dragEnterEvent()
+  virtual void dropEvent(QDropEvent *event);
 
   /// Reimplemented to catch activationChange/show/hide events.
   /// More specifically it allows to:
@@ -110,6 +157,8 @@ protected:
 
 protected:
   QScopedPointer<qSlicerAppMainWindowPrivate> d_ptr;
+
+  qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl, QWidget* parent);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerAppMainWindow);

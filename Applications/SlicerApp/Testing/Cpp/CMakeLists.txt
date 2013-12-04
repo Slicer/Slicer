@@ -11,7 +11,6 @@ endif()
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
   qSlicerAppAboutDialogTest1.cxx
-  qSlicerAppMainWindowCoreTest1.cxx
   qSlicerAppMainWindowTest1.cxx
   qSlicerModuleFactoryManagerTest1.cxx
   )
@@ -54,7 +53,6 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     endif()
   endif()
 endif()
-simple_test( qSlicerAppMainWindowCoreTest1 )
 simple_test( qSlicerAppMainWindowTest1 )
 simple_test( qSlicerModuleFactoryManagerTest1 )
 

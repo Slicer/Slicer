@@ -43,11 +43,11 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     a.setToolTip('Go to the SampleData module to download data from the network')
     a.connect('triggered()', self.select)
 
-    menuFile = slicer.util.lookupTopLevelWidget('menuFile')
-    if menuFile:
-      for action in menuFile.actions():
+    fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
+    if fileMenu:
+      for action in fileMenu.actions():
         if action.text == 'Save':
-          menuFile.insertAction(action,a)
+          fileMenu.insertAction(action,a)
 
 
   def select(self):

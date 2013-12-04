@@ -27,39 +27,39 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
+   <widget class="QMenu" name="FileMenu">
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="menuRecentlyLoaded">
+    <widget class="QMenu" name="RecentlyLoadedMenu">
      <property name="title">
       <string>Recently Loaded</string>
      </property>
     </widget>
-    <addaction name="actionFileAddData"/>
-    <addaction name="actionFileSaveScene"/>
-    <addaction name="menuRecentlyLoaded"/>
-    <addaction name="actionFileCloseScene"/>
+    <addaction name="FileAddDataAction"/>
+    <addaction name="FileSaveSceneAction"/>
+    <addaction name="RecentlyLoadedMenu"/>
+    <addaction name="FileCloseSceneAction"/>
     <addaction name="separator"/>
-    <addaction name="actionFileExit"/>
+    <addaction name="FileExitAction"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
+   <widget class="QMenu" name="EditMenu">
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionEditApplicationSettings"/>
-    <addaction name="actionCut"/>
-    <addaction name="actionCopy"/>
-    <addaction name="actionPaste"/>
+    <addaction name="EditApplicationSettingsAction"/>
+    <addaction name="CutAction"/>
+    <addaction name="CopyAction"/>
+    <addaction name="PasteAction"/>
     <addaction name="separator"/>
-    <addaction name="actionEditRecordMacro"/>
-    <addaction name="actionEditPlayMacro"/>
+    <addaction name="EditRecordMacroAction"/>
+    <addaction name="EditPlayMacroAction"/>
    </widget>
-   <widget class="QMenu" name="menuView">
+   <widget class="QMenu" name="ViewMenu">
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="MenuLayout">
+    <widget class="QMenu" name="LayoutMenu">
      <property name="title">
       <string>Layout</string>
      </property>
@@ -67,67 +67,67 @@
       <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
        <normaloff>:/Icons/LayoutChooseView.png</normaloff>:/Icons/LayoutChooseView.png</iconset>
      </property>
-     <addaction name="actionViewLayoutConventional"/>
-     <addaction name="actionViewLayoutConventionalWidescreen"/>
-     <addaction name="actionViewLayoutConventionalQuantitative"/>
-     <addaction name="actionViewLayoutFourUp"/>
-     <addaction name="actionViewLayoutFourUpQuantitative"/>
-     <addaction name="actionViewLayoutDual3D"/>
-     <addaction name="actionViewLayoutTriple3D"/>
-     <addaction name="actionViewLayoutOneUp3D"/>
-     <addaction name="actionViewLayoutOneUpQuantitative"/>
-     <addaction name="actionViewLayoutOneUpRedSlice"/>
-     <addaction name="actionViewLayoutOneUpYellowSlice"/>
-     <addaction name="actionViewLayoutOneUpGreenSlice"/>
-     <addaction name="actionViewLayoutTabbed3D"/>
-     <addaction name="actionViewLayoutTabbedSlice"/>
-     <addaction name="actionViewLayoutCompare"/>
-     <addaction name="actionViewLayoutCompareWidescreen"/>
-     <addaction name="actionViewLayoutCompareGrid"/>
-     <addaction name="actionViewLayoutThreeOverThree"/>
-     <addaction name="actionViewLayoutThreeOverThreeQuantitative"/>
-     <addaction name="actionViewLayoutFourOverFour"/>
-     <addaction name="actionViewLayoutTwoOverTwo"/>
-     <addaction name="actionViewLayoutSideBySide"/>
-     <addaction name="actionViewLayoutFourByThreeSlice"/>
-     <addaction name="actionViewLayoutFourByTwoSlice"/>
-     <addaction name="actionViewLayoutThreeByThreeSlice"/>
+     <addaction name="ViewLayoutConventionalAction"/>
+     <addaction name="ViewLayoutConventionalWidescreenAction"/>
+     <addaction name="ViewLayoutConventionalQuantitativeAction"/>
+     <addaction name="ViewLayoutFourUpAction"/>
+     <addaction name="ViewLayoutFourUpQuantitativeAction"/>
+     <addaction name="ViewLayoutDual3DAction"/>
+     <addaction name="ViewLayoutTriple3DAction"/>
+     <addaction name="ViewLayoutOneUp3DAction"/>
+     <addaction name="ViewLayoutOneUpQuantitativeAction"/>
+     <addaction name="ViewLayoutOneUpRedSliceAction"/>
+     <addaction name="ViewLayoutOneUpYellowSliceAction"/>
+     <addaction name="ViewLayoutOneUpGreenSliceAction"/>
+     <addaction name="ViewLayoutTabbed3DAction"/>
+     <addaction name="ViewLayoutTabbedSliceAction"/>
+     <addaction name="ViewLayoutCompareAction"/>
+     <addaction name="ViewLayoutCompareWidescreenAction"/>
+     <addaction name="ViewLayoutCompareGridAction"/>
+     <addaction name="ViewLayoutThreeOverThreeAction"/>
+     <addaction name="ViewLayoutThreeOverThreeQuantitativeAction"/>
+     <addaction name="ViewLayoutFourOverFourAction"/>
+     <addaction name="ViewLayoutTwoOverTwoAction"/>
+     <addaction name="ViewLayoutSideBySideAction"/>
+     <addaction name="ViewLayoutFourByThreeSliceAction"/>
+     <addaction name="ViewLayoutFourByTwoSliceAction"/>
+     <addaction name="ViewLayoutThreeByThreeSliceAction"/>
     </widget>
-    <widget class="QMenu" name="menuWindowToolBars">
+    <widget class="QMenu" name="WindowToolBarsMenu">
      <property name="title">
       <string>&amp;Toolbars</string>
      </property>
-     <addaction name="actionWindowToolbarsResetToDefault"/>
+     <addaction name="WindowToolbarsResetToDefaultAction"/>
     </widget>
-    <addaction name="actionWindowPythonInteractor"/>
-    <addaction name="actionViewExtensionsManager"/>
+    <addaction name="WindowPythonInteractorAction"/>
+    <addaction name="ViewExtensionsManagerAction"/>
     <addaction name="separator"/>
-    <addaction name="menuWindowToolBars"/>
-    <addaction name="MenuLayout"/>
+    <addaction name="WindowToolBarsMenu"/>
+    <addaction name="LayoutMenu"/>
     <addaction name="separator"/>
-    <addaction name="actionWindowErrorLog"/>
+    <addaction name="WindowErrorLogAction"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuHelp">
+   <widget class="QMenu" name="HelpMenu">
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="actionHelpKeyboardShortcuts"/>
-    <addaction name="actionHelpInterfaceDocumentation"/>
-    <addaction name="actionHelpBrowseTutorials"/>
+    <addaction name="HelpKeyboardShortcutsAction"/>
+    <addaction name="HelpInterfaceDocumentationAction"/>
+    <addaction name="HelpBrowseTutorialsAction"/>
     <addaction name="separator"/>
-    <addaction name="actionHelpSlicerPublications"/>
-    <addaction name="actionHelpVisualBlog"/>
+    <addaction name="HelpSlicerPublicationsAction"/>
+    <addaction name="HelpVisualBlogAction"/>
     <addaction name="separator"/>
-    <addaction name="actionHelpReportBugOrFeatureRequest"/>
-    <addaction name="actionHelpAboutSlicerApp"/>
+    <addaction name="HelpReportBugOrFeatureRequestAction"/>
+    <addaction name="HelpAboutSlicerAppAction"/>
    </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
-   <addaction name="menuHelp"/>
+   <addaction name="FileMenu"/>
+   <addaction name="EditMenu"/>
+   <addaction name="ViewMenu"/>
+   <addaction name="HelpMenu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="StatusBar"/>
   <widget class="QDockWidget" name="PanelDockWidget">
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
@@ -162,7 +162,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="logoLabel">
+      <widget class="QLabel" name="LogoLabel">
        <property name="pixmap">
         <pixmap resource="../../../../Resources/qSlicer.qrc">:/Logos/Slicer3.png</pixmap>
        </property>
@@ -201,9 +201,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionFileLoadData"/>
-   <addaction name="actionLoadDICOM"/>
-   <addaction name="actionFileSaveScene"/>
+   <addaction name="FileLoadDataAction"/>
+   <addaction name="LoadDICOMAction"/>
+   <addaction name="FileSaveSceneAction"/>
   </widget>
   <widget class="QToolBar" name="ModuleToolBar">
    <property name="windowTitle">
@@ -248,31 +248,31 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionViewLayoutConventional"/>
-   <addaction name="actionViewLayoutConventionalWidescreen"/>
-   <addaction name="actionViewLayoutConventionalQuantitative"/>
-   <addaction name="actionViewLayoutFourUp"/>
-   <addaction name="actionViewLayoutFourUpQuantitative"/>
-   <addaction name="actionViewLayoutDual3D"/>
-   <addaction name="actionViewLayoutTriple3D"/>
-   <addaction name="actionViewLayoutOneUp3D"/>
-   <addaction name="actionViewLayoutOneUpQuantitative"/>
-   <addaction name="actionViewLayoutOneUpRedSlice"/>
-   <addaction name="actionViewLayoutOneUpYellowSlice"/>
-   <addaction name="actionViewLayoutOneUpGreenSlice"/>
-   <addaction name="actionViewLayoutTabbed3D"/>
-   <addaction name="actionViewLayoutTabbedSlice"/>
-   <addaction name="actionViewLayoutCompare"/>
-   <addaction name="actionViewLayoutCompareWidescreen"/>
-   <addaction name="actionViewLayoutCompareGrid"/>
-   <addaction name="actionViewLayoutThreeOverThree"/>
-   <addaction name="actionViewLayoutThreeOverThreeQuantitative"/>
-   <addaction name="actionViewLayoutFourOverFour"/>
-   <addaction name="actionViewLayoutSideBySide"/>
-   <addaction name="actionViewLayoutFourByThreeSlice"/>
-   <addaction name="actionViewLayoutFourByTwoSlice"/>
-   <addaction name="actionViewLayoutFiveByTwoSlice"/>
-   <addaction name="actionViewLayoutThreeByThreeSlice"/>
+   <addaction name="ViewLayoutConventionalAction"/>
+   <addaction name="ViewLayoutConventionalWidescreenAction"/>
+   <addaction name="ViewLayoutConventionalQuantitativeAction"/>
+   <addaction name="ViewLayoutFourUpAction"/>
+   <addaction name="ViewLayoutFourUpQuantitativeAction"/>
+   <addaction name="ViewLayoutDual3DAction"/>
+   <addaction name="ViewLayoutTriple3DAction"/>
+   <addaction name="ViewLayoutOneUp3DAction"/>
+   <addaction name="ViewLayoutOneUpQuantitativeAction"/>
+   <addaction name="ViewLayoutOneUpRedSliceAction"/>
+   <addaction name="ViewLayoutOneUpYellowSliceAction"/>
+   <addaction name="ViewLayoutOneUpGreenSliceAction"/>
+   <addaction name="ViewLayoutTabbed3DAction"/>
+   <addaction name="ViewLayoutTabbedSliceAction"/>
+   <addaction name="ViewLayoutCompareAction"/>
+   <addaction name="ViewLayoutCompareWidescreenAction"/>
+   <addaction name="ViewLayoutCompareGridAction"/>
+   <addaction name="ViewLayoutThreeOverThreeAction"/>
+   <addaction name="ViewLayoutThreeOverThreeQuantitativeAction"/>
+   <addaction name="ViewLayoutFourOverFourAction"/>
+   <addaction name="ViewLayoutSideBySideAction"/>
+   <addaction name="ViewLayoutFourByThreeSliceAction"/>
+   <addaction name="ViewLayoutFourByTwoSliceAction"/>
+   <addaction name="ViewLayoutFiveByTwoSliceAction"/>
+   <addaction name="ViewLayoutThreeByThreeSliceAction"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
    <property name="enabled">
@@ -315,7 +315,7 @@
   </widget>
   <widget class="QToolBar" name="DialogToolBar">
    <property name="windowTitle">
-    <string>Dialog</string>
+    <string>Extensions</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -323,10 +323,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionViewExtensionsManager"/>
-   <addaction name="actionWindowPythonInteractor"/>
+   <addaction name="ViewExtensionsManagerAction"/>
+   <addaction name="WindowPythonInteractorAction"/>
   </widget>
-  <action name="actionFileLoadScene">
+  <action name="FileLoadSceneAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadScene.png</normaloff>:/Icons/Small/SlicerLoadScene.png</iconset>
@@ -338,7 +338,7 @@
     <string>Raise a file browser to select a scene (mrml, xcat or xml) to load. It first clears any existing scene in Slicer and resets the application state.</string>
    </property>
   </action>
-  <action name="actionFileLoadData">
+  <action name="FileLoadDataAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
@@ -350,7 +350,7 @@
     <string>Raise an &quot;Add Data&quot; widget that allows you to select individual datasets to add to the existing scene. This load option is most useful when you want to load many different data types at once (volumes, models, etc.) which may not yet be described by a scene file.</string>
    </property>
   </action>
-  <action name="actionLoadDICOM">
+  <action name="LoadDICOMAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadDICOM.png</normaloff>:/Icons/Small/SlicerLoadDICOM.png</iconset>
@@ -362,7 +362,7 @@
     <string>Raise the DICOM module for loading DICOM datasets.</string>
    </property>
   </action>
-  <action name="actionFileImportScene">
+  <action name="FileImportSceneAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddScene.png</normaloff>:/Icons/Medium/SlicerAddScene.png</iconset>
@@ -371,10 +371,10 @@
     <string>Import Scene</string>
    </property>
    <property name="toolTip">
-    <string>Raise a file browser to navigate and select a scene file to be added to the existing Slicer scene. The scene is not cleared.</string>
+    <string>Raise a file browser to navigate and select a scene file to be added to the existing scene. The scene is not cleared.</string>
    </property>
   </action>
-  <action name="actionFileAddData">
+  <action name="FileAddDataAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
@@ -389,7 +389,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionFileAddVolume">
+  <action name="FileAddVolumeAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddVolume.png</normaloff>:/Icons/Medium/SlicerAddVolume.png</iconset>
@@ -401,7 +401,7 @@
     <string>Raise an &quot;Add Volume&quot; widget that allows you to select a volumetric dataset to add to the existing scene. The &quot;Volume Options&quot; panel can be used to clarify how a selected dataset should be loaded and displayed.</string>
    </property>
   </action>
-  <action name="actionFileAddTransform">
+  <action name="FileAddTransformAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerAddTransform.png</normaloff>:/Icons/Medium/SlicerAddTransform.png</iconset>
@@ -413,7 +413,7 @@
     <string>Raise a standard file browser that allows you to select a transform to the existing scene.</string>
    </property>
   </action>
-  <action name="actionFileSaveScene">
+  <action name="FileSaveSceneAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
@@ -428,7 +428,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionSDBSaveToDirectory">
+  <action name="SDBSaveToDirectoryAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
@@ -440,7 +440,7 @@
     <string>UNDER CONSTRUCTION: Save the current scene to a stand alone directory.</string>
    </property>
   </action>
-  <action name="actionSDBSaveToMRB">
+  <action name="SDBSaveToMRBAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
@@ -452,7 +452,7 @@
     <string>Create a Medical Reality Bundle containing the scene.</string>
    </property>
   </action>
-  <action name="actionSDBSaveToDCM">
+  <action name="SDBSaveToDCMAction">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -467,7 +467,7 @@
     <string>Encapsulate MRB file as a DICOM secondary capture</string>
    </property>
   </action>
-  <action name="actionFileCloseScene">
+  <action name="FileCloseSceneAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerCloseScene.png</normaloff>:/Icons/Small/SlicerCloseScene.png</iconset>
@@ -482,15 +482,15 @@
     <string>Ctrl+W</string>
    </property>
   </action>
-  <action name="actionFileExit">
+  <action name="FileExitAction">
    <property name="text">
     <string>E&amp;xit</string>
    </property>
    <property name="toolTip">
-    <string>Exit Slicer</string>
+    <string>Quit the application</string>
    </property>
   </action>
-  <action name="actionEditUndo">
+  <action name="EditUndoAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Undo.png</normaloff>:/Icons/Undo.png</iconset>
@@ -505,7 +505,7 @@
     <string>Ctrl+Z</string>
    </property>
   </action>
-  <action name="actionEditRedo">
+  <action name="EditRedoAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Redo.png</normaloff>:/Icons/Redo.png</iconset>
@@ -520,7 +520,7 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="actionEditEditBox">
+  <action name="EditEditBoxAction">
    <property name="text">
     <string>Edit Box</string>
    </property>
@@ -531,7 +531,7 @@
     <string>Space</string>
    </property>
   </action>
-  <action name="actionEditNewFiducialList">
+  <action name="EditNewFiducialListAction">
    <property name="text">
     <string>New Fiducial List</string>
    </property>
@@ -542,7 +542,7 @@
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionViewExtensionsManager">
+  <action name="ViewExtensionsManagerAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
@@ -557,7 +557,7 @@
     <string>Ctrl+4</string>
    </property>
   </action>
-  <action name="actionViewCacheRemoteIOManager">
+  <action name="ViewCacheRemoteIOManagerAction">
    <property name="text">
     <string>Cache &amp; Remote I/O Manager</string>
    </property>
@@ -565,18 +565,18 @@
     <string>The Cache and Remote Data Handling interface provides status and information about all remote data transfers, and allows some control over the local cache.</string>
    </property>
   </action>
-  <action name="actionEditApplicationSettings">
+  <action name="EditApplicationSettingsAction">
    <property name="text">
     <string>Application Settings</string>
    </property>
    <property name="toolTip">
-    <string>The Application Settings interface provides options for saving many of Slicer's Interface and Remote Data Handling options to the Application Registry, so they are preserved across sessions.</string>
+    <string>The Application Settings provides options for controlling the application's user interface preferences into the application registry, so they are preserved across sessions.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
    </property>
   </action>
-  <action name="actionCut">
+  <action name="CutAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditCut.png</normaloff>:/Icons/Small/SlicerEditCut.png</iconset>
@@ -591,7 +591,7 @@
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionCopy">
+  <action name="CopyAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditCopy.png</normaloff>:/Icons/Small/SlicerEditCopy.png</iconset>
@@ -606,7 +606,7 @@
     <string>Ctrl+C</string>
    </property>
   </action>
-  <action name="actionPaste">
+  <action name="PasteAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditPaste.png</normaloff>:/Icons/Small/SlicerEditPaste.png</iconset>
@@ -621,7 +621,7 @@
     <string>Ctrl+V</string>
    </property>
   </action>
-  <action name="actionWindowMaximizeView">
+  <action name="WindowMaximizeViewAction">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -638,7 +638,7 @@
     <string>Ctrl+6</string>
    </property>
   </action>
-  <action name="actionWindowErrorLog">
+  <action name="WindowErrorLogAction">
    <property name="text">
     <string>&amp;Error Log</string>
    </property>
@@ -649,7 +649,7 @@
     <string>Ctrl+0</string>
    </property>
   </action>
-  <action name="actionWindowPythonInteractor">
+  <action name="WindowPythonInteractorAction">
    <property name="icon">
     <iconset>
      <normaloff>:/python-icon.png</normaloff>:/python-icon.png</iconset>
@@ -658,13 +658,13 @@
     <string>Python Interactor</string>
    </property>
    <property name="toolTip">
-    <string>Raise the Python Interactor for scripted interaction with Slicer data.</string>
+    <string>Raise the Python Interactor for controlling the application's data, gui and internals.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+3</string>
    </property>
   </action>
-  <action name="actionWindowToolbarsResetToDefault">
+  <action name="WindowToolbarsResetToDefaultAction">
    <property name="text">
     <string>Reset to default</string>
    </property>
@@ -672,7 +672,7 @@
     <string>Restore the toolbars to their default state</string>
    </property>
   </action>
-  <action name="actionHelpKeyboardShortcuts">
+  <action name="HelpKeyboardShortcutsAction">
    <property name="text">
     <string>&amp;Keyboard Shortcuts</string>
    </property>
@@ -680,15 +680,15 @@
     <string>Raise a window that lists commonly-used keyboard shortcuts.</string>
    </property>
   </action>
-  <action name="actionHelpBrowseTutorials">
+  <action name="HelpBrowseTutorialsAction">
    <property name="text">
     <string>Browse tutorials</string>
    </property>
    <property name="toolTip">
-    <string>Raise Slicer's training page in your favorite web browser</string>
+    <string>Raise the training pages in your favorite web browser</string>
    </property>
   </action>
-  <action name="actionHelpInterfaceDocumentation">
+  <action name="HelpInterfaceDocumentationAction">
    <property name="text">
     <string>Interface Documentation</string>
    </property>
@@ -696,12 +696,12 @@
     <string>Ctrl+1</string>
    </property>
   </action>
-  <action name="actionHelpSlicerPublications">
+  <action name="HelpSlicerPublicationsAction">
    <property name="text">
     <string>Slicer Publications</string>
    </property>
   </action>
-  <action name="actionHelpAboutSlicerApp">
+  <action name="HelpAboutSlicerAppAction">
    <property name="text">
     <string>About 3D Slicer</string>
    </property>
@@ -709,7 +709,7 @@
     <string>Provides a description of the Slicer effort and its support.</string>
    </property>
   </action>
-  <action name="actionHelpReportBugOrFeatureRequest">
+  <action name="HelpReportBugOrFeatureRequestAction">
    <property name="text">
     <string>Report a bug</string>
    </property>
@@ -717,7 +717,7 @@
     <string>Open your favorite web browser to http://www.na-mic.org/Bug/my_view_page.php so that any bug you encounter can quickly and easily be reported.</string>
    </property>
   </action>
-  <action name="actionFeedbackReportUsabilityIssue">
+  <action name="FeedbackReportUsabilityIssueAction">
    <property name="text">
     <string>Feedback: report usability issue (www)</string>
    </property>
@@ -725,7 +725,7 @@
     <string>Open your favorite web browser to http://www.na-mic.org/Bug/my_view_page.php so that any usability issue you encounter can quickly be captured.</string>
    </property>
   </action>
-  <action name="actionFeedbackMakeFeatureRequest">
+  <action name="FeedbackMakeFeatureRequestAction">
    <property name="text">
     <string>Feedback: make a feature request (www)</string>
    </property>
@@ -733,7 +733,7 @@
     <string>Open your Firefox web browser to http://www.na-mic.org/Bug/my_view_page.php so that community feature requests can easily be collected.</string>
    </property>
   </action>
-  <action name="actionHelpVisualBlog">
+  <action name="HelpVisualBlogAction">
    <property name="text">
     <string>Visual Blog</string>
    </property>
@@ -741,12 +741,12 @@
     <string>Open your favorite web browser to http://www.slicer.org/slicerWiki/index.php/Slicer3:VisualBlog where you can post screenshots of interesting ways you are using the Slicer3 software package in your research and share them with the Slicer community.</string>
    </property>
   </action>
-  <action name="actionDebugLoadModule">
+  <action name="DebugLoadModuleAction">
    <property name="text">
     <string>Load Module</string>
    </property>
   </action>
-  <action name="actionViewLayoutConventional">
+  <action name="ViewLayoutConventionalAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
@@ -758,7 +758,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutConventionalQuantitative">
+  <action name="ViewLayoutConventionalQuantitativeAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
@@ -770,7 +770,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutFourUp">
+  <action name="ViewLayoutFourUpAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourUpView.png</normaloff>:/Icons/LayoutFourUpView.png</iconset>
@@ -782,7 +782,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutFourUpQuantitative">
+  <action name="ViewLayoutFourUpQuantitativeAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourUpQuantitativeView.png</normaloff>:/Icons/LayoutFourUpQuantitativeView.png</iconset>
@@ -794,7 +794,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutDual3D">
+  <action name="ViewLayoutDual3DAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutDual3DView.png</normaloff>:/Icons/LayoutDual3DView.png</iconset>
@@ -806,7 +806,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutOneUp3D">
+  <action name="ViewLayoutOneUp3DAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUp3DView.png</normaloff>:/Icons/LayoutOneUp3DView.png</iconset>
@@ -818,7 +818,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutOneUpQuantitative">
+  <action name="ViewLayoutOneUpQuantitativeAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpQuantitativeView.png</normaloff>:/Icons/LayoutOneUpQuantitativeView.png</iconset>
@@ -830,7 +830,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutOneUpRedSlice">
+  <action name="ViewLayoutOneUpRedSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpRedSliceView.png</normaloff>:/Icons/LayoutOneUpRedSliceView.png</iconset>
@@ -842,7 +842,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutOneUpYellowSlice">
+  <action name="ViewLayoutOneUpYellowSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpYellowSliceView.png</normaloff>:/Icons/LayoutOneUpYellowSliceView.png</iconset>
@@ -854,7 +854,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutOneUpGreenSlice">
+  <action name="ViewLayoutOneUpGreenSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutOneUpGreenSliceView.png</normaloff>:/Icons/LayoutOneUpGreenSliceView.png</iconset>
@@ -866,7 +866,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutTabbed3D">
+  <action name="ViewLayoutTabbed3DAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTabbed3DView.png</normaloff>:/Icons/LayoutTabbed3DView.png</iconset>
@@ -878,7 +878,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutTabbedSlice">
+  <action name="ViewLayoutTabbedSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTabbedSliceView.png</normaloff>:/Icons/LayoutTabbedSliceView.png</iconset>
@@ -890,7 +890,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutCompare">
+  <action name="ViewLayoutCompareAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -902,7 +902,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen">
+  <action name="ViewLayoutCompareWidescreenAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -917,7 +917,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutTwoOverTwo">
+  <action name="ViewLayoutTwoOverTwoAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTwoOverTwoView.png</normaloff>:/Icons/LayoutTwoOverTwoView.png</iconset>
@@ -932,7 +932,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionModuleHome">
+  <action name="ModuleHomeAction">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerHome.png</normaloff>:/Icons/Medium/SlicerHome.png</iconset>
@@ -950,7 +950,7 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionViewLayoutConventionalWidescreen">
+  <action name="ViewLayoutConventionalWidescreenAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutConventionalWidescreenView.png</normaloff>:/Icons/LayoutConventionalWidescreenView.png</iconset>
@@ -959,7 +959,7 @@
     <string>Conventional Widescreen</string>
    </property>
   </action>
-  <action name="actionViewLayoutTriple3D">
+  <action name="ViewLayoutTriple3DAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutTriple3DView.png</normaloff>:/Icons/LayoutTriple3DView.png</iconset>
@@ -968,7 +968,7 @@
     <string>Triple 3D</string>
    </property>
   </action>
-  <action name="actionViewLayoutThreeOverThree">
+  <action name="ViewLayoutThreeOverThreeAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
@@ -977,7 +977,7 @@
     <string>Three over three</string>
    </property>
   </action>
-  <action name="actionViewLayoutFourOverFour">
+  <action name="ViewLayoutFourOverFourAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourOverFourView.png</normaloff>:/Icons/LayoutFourOverFourView.png</iconset>
@@ -986,7 +986,7 @@
     <string>Four over four</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_2_viewers">
+  <action name="ViewLayoutCompare_2_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -995,7 +995,7 @@
     <string>2 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_3_viewers">
+  <action name="ViewLayoutCompare_3_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -1004,7 +1004,7 @@
     <string>3 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_4_viewers">
+  <action name="ViewLayoutCompare_4_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -1013,7 +1013,7 @@
     <string>4 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_5_viewers">
+  <action name="ViewLayoutCompare_5_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -1022,7 +1022,7 @@
     <string>5 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_6_viewers">
+  <action name="ViewLayoutCompare_6_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -1031,7 +1031,7 @@
     <string>6 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_7_viewers">
+  <action name="ViewLayoutCompare_7_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -1040,7 +1040,7 @@
     <string>7 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompare_8_viewers">
+  <action name="ViewLayoutCompare_8_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareView.png</normaloff>:/Icons/LayoutCompareView.png</iconset>
@@ -1049,7 +1049,7 @@
     <string>8 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_2_viewers">
+  <action name="ViewLayoutCompareWidescreen_2_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1058,7 +1058,7 @@
     <string>2 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_3_viewers">
+  <action name="ViewLayoutCompareWidescreen_3_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1067,7 +1067,7 @@
     <string>3 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_4_viewers">
+  <action name="ViewLayoutCompareWidescreen_4_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1076,7 +1076,7 @@
     <string>4 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_5_viewers">
+  <action name="ViewLayoutCompareWidescreen_5_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1085,7 +1085,7 @@
     <string>5 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_6_viewers">
+  <action name="ViewLayoutCompareWidescreen_6_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1094,7 +1094,7 @@
     <string>6 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_7_viewers">
+  <action name="ViewLayoutCompareWidescreen_7_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1103,7 +1103,7 @@
     <string>7 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareWidescreen_8_viewers">
+  <action name="ViewLayoutCompareWidescreen_8_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideCompareView.png</normaloff>:/Icons/LayoutSideBySideCompareView.png</iconset>
@@ -1112,7 +1112,7 @@
     <string>8 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareGrid">
+  <action name="ViewLayoutCompareGridAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
@@ -1121,7 +1121,7 @@
     <string>Compare Grid</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareGrid_2x2_viewers">
+  <action name="ViewLayoutCompareGrid_2x2_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
@@ -1130,7 +1130,7 @@
     <string>2x2 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareGrid_3x3_viewers">
+  <action name="ViewLayoutCompareGrid_3x3_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
@@ -1139,7 +1139,7 @@
     <string>3x3 viewers</string>
    </property>
   </action>
-  <action name="actionViewLayoutCompareGrid_4x4_viewers">
+  <action name="ViewLayoutCompareGrid_4x4_viewersAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutCompareViewGrid.png</normaloff>:/Icons/LayoutCompareViewGrid.png</iconset>
@@ -1148,7 +1148,7 @@
     <string>4x4 viewers</string>
    </property>
   </action>
-  <action name="actionEditRecordMacro">
+  <action name="EditRecordMacroAction">
    <property name="text">
     <string>Record Macro</string>
    </property>
@@ -1156,7 +1156,7 @@
     <bool>false</bool>
    </property>
   </action>
-  <action name="actionEditPlayMacro">
+  <action name="EditPlayMacroAction">
    <property name="text">
     <string>Play Macro</string>
    </property>
@@ -1164,7 +1164,7 @@
     <bool>false</bool>
    </property>
   </action>
-  <action name="actionViewLayoutThreeOverThreeQuantitative">
+  <action name="ViewLayoutThreeOverThreeQuantitativeAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
@@ -1176,7 +1176,7 @@
     <string>Three Over Three Quantitative</string>
    </property>
   </action>
-  <action name="actionViewLayoutSideBySide">
+  <action name="ViewLayoutSideBySideAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutSideBySideView.png</normaloff>:/Icons/LayoutSideBySideView.png</iconset>
@@ -1185,7 +1185,7 @@
     <string>Side by side</string>
    </property>
   </action>
-  <action name="actionViewLayoutFourByThreeSlice">
+  <action name="ViewLayoutFourByThreeSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourByThreeSliceView.png</normaloff>:/Icons/LayoutFourByThreeThreeSliceView.png</iconset>
@@ -1197,7 +1197,7 @@
     <string>Four by three slice</string>
    </property>
   </action>
-  <action name="actionViewLayoutFourByTwoSlice">
+  <action name="ViewLayoutFourByTwoSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourByTwoSliceView.png</normaloff>:/Icons/LayoutFourByTwoSliceView.png</iconset>
@@ -1209,7 +1209,7 @@
     <string>Four by two slice</string>
    </property>
   </action>
-  <action name="actionViewLayoutFiveByTwoSlice">
+  <action name="ViewLayoutFiveByTwoSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFiveByTwoSliceView.png</normaloff>:/Icons/LayoutFiveByTwoSliceView.png</iconset>
@@ -1221,7 +1221,7 @@
     <string>Five by two slice</string>
    </property>
   </action>
-  <action name="actionViewLayoutThreeByThreeSlice">
+  <action name="ViewLayoutThreeByThreeSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutThreeByThreeSliceView.png</normaloff>:/Icons/LayoutThreeByThreeSliceView.png</iconset>
