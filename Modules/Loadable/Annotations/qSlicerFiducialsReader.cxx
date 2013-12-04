@@ -19,138 +19,118 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerAnnotationsIO.h"
-#include "qSlicerAnnotationsIOOptionsWidget.h"
+#include "qSlicerFiducialsReader.h"
 
 // Logic includes
+//#include "vtkSlicerFiducialsLogic.h"
+
 #include <vtkSlicerApplicationLogic.h>
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes
+#include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLNode.h>
-#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerAnnotationsIOPrivate
+class qSlicerFiducialsReaderPrivate
 {
   public:
   vtkSmartPointer<vtkSlicerAnnotationModuleLogic> AnnotationLogic;
 };
 
-
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotations
 //-----------------------------------------------------------------------------
-qSlicerAnnotationsIO::qSlicerAnnotationsIO(QObject* _parent)
+qSlicerFiducialsReader::qSlicerFiducialsReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerAnnotationsIOPrivate)
+  , d_ptr(new qSlicerFiducialsReaderPrivate)
 {
 }
 
-qSlicerAnnotationsIO::qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* _parent)
+qSlicerFiducialsReader::qSlicerFiducialsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerAnnotationsIOPrivate)
+  , d_ptr(new qSlicerFiducialsReaderPrivate)
 {
   this->setAnnotationLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationsIO::~qSlicerAnnotationsIO()
+qSlicerFiducialsReader::~qSlicerFiducialsReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAnnotationsIO::setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic)
+void qSlicerFiducialsReader::setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
-  Q_D(qSlicerAnnotationsIO);
+  Q_D(qSlicerFiducialsReader);
   d->AnnotationLogic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerAnnotationModuleLogic* qSlicerAnnotationsIO::annotationLogic()const
+vtkSlicerAnnotationModuleLogic* qSlicerFiducialsReader::annotationLogic()const
 {
-  Q_D(const qSlicerAnnotationsIO);
+  Q_D(const qSlicerFiducialsReader);
   return d->AnnotationLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAnnotationsIO::description()const
+QString qSlicerFiducialsReader::description()const
 {
-  return "Annotation";
+  return "Fiducials";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerAnnotationsIO::fileType()const
+qSlicerIO::IOFileType qSlicerFiducialsReader::fileType()const
 {
-  return QString("AnnotationFile");
+  return QString("FiducialListFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAnnotationsIO::extensions()const
+QStringList qSlicerFiducialsReader::extensions()const
 {
-  return QStringList()
-    << "Annotations (*.acsv)";
+  return QStringList() << "Fiducials (*.fcsv)";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerAnnotationsIO::options()const
+bool qSlicerFiducialsReader::load(const IOProperties& properties)
 {
-  return new qSlicerAnnotationsIOOptionsWidget;
-}
-
-//-----------------------------------------------------------------------------
-bool qSlicerAnnotationsIO::load(const IOProperties& properties)
-{
-  Q_D(qSlicerAnnotationsIO);
+  Q_D(qSlicerFiducialsReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
-
-  QString name = QFileInfo(fileName).baseName();
-  if (properties.contains("name"))
-    {
-    name = properties["name"].toString();
-    }
 
   if (d->AnnotationLogic.GetPointer() == 0)
     {
     return false;
     }
-  
-  // file type
-  int fileType = vtkSlicerAnnotationModuleLogic::None;
-  if (properties.contains("fiducial") && properties["fiducial"].toBool() == true)
-    {
-    fileType = vtkSlicerAnnotationModuleLogic::Fiducial;
-    }
-  else if (properties.contains("ruler") && properties["ruler"].toBool() == true)
-    {
-    fileType = vtkSlicerAnnotationModuleLogic::Ruler;
-    }
-  else if (properties.contains("roi") && properties["roi"].toBool() == true)
-    {
-    fileType = vtkSlicerAnnotationModuleLogic::ROI;
-    }
 
-  char * nodeID = d->AnnotationLogic->LoadAnnotation(
-    fileName.toLatin1(), name.toLatin1(), fileType);
-  if (!nodeID)
+  char * nodeIDs = d->AnnotationLogic->LoadFiducialList(fileName.toLatin1());
+
+  if (nodeIDs)
+    {
+    // returned a comma separated list of ids of the nodes that were loaded
+    QStringList nodeIDList;
+    char *ptr = strtok(nodeIDs, ",");
+
+    while (ptr)
+      {
+      nodeIDList.append(ptr);
+      ptr = strtok(NULL, ",");
+      }
+    this->setLoadedNodes(nodeIDList);
+    }
+  else
     {
     this->setLoadedNodes(QStringList());
     return false;
     }
-  this->setLoadedNodes( QStringList(QString(nodeID)) );
-  if (properties.contains("name"))
-    {
-    std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toLatin1());
-    this->mrmlScene()->GetNodeByID(nodeID)->SetName(uname.c_str());
-    }
-  return true;
+
+  return nodeIDs != 0;
 }
+
+// TODO: add the save() method. Use vtkSlicerTransformLogic::SaveTransform()

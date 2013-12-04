@@ -18,42 +18,42 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerScalarOverlayIO_h
-#define __qSlicerScalarOverlayIO_h
+#ifndef __qSlicerFiducialsReader
+#define __qSlicerFiducialsReader
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerScalarOverlayIOPrivate;
 
-// Slicer includes
-class vtkSlicerModelsLogic;
+class qSlicerFiducialsReaderPrivate;
+class vtkSlicerAnnotationModuleLogic;
 
-//-----------------------------------------------------------------------------
-class qSlicerScalarOverlayIO
+//----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Annotations
+class qSlicerFiducialsReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerScalarOverlayIO(vtkSlicerModelsLogic* modelsLogic, QObject* parent = 0);
-  virtual ~qSlicerScalarOverlayIO();
+  qSlicerFiducialsReader(QObject* parent = 0);
+  qSlicerFiducialsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerFiducialsReader();
 
-  void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
-  vtkSlicerModelsLogic* modelsLogic()const;
+  vtkSlicerAnnotationModuleLogic* annotationLogic()const;
+  void setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
-  virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
 
 protected:
-  QScopedPointer<qSlicerScalarOverlayIOPrivate> d_ptr;
+  QScopedPointer<qSlicerFiducialsReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerScalarOverlayIO);
-  Q_DISABLE_COPY(qSlicerScalarOverlayIO);
+  Q_DECLARE_PRIVATE(qSlicerFiducialsReader);
+  Q_DISABLE_COPY(qSlicerFiducialsReader);
 };
 
 #endif

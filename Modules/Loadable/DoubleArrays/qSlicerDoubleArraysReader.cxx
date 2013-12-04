@@ -19,86 +19,98 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerTransformsIO.h"
+#include "qSlicerDoubleArraysReader.h"
 
 // Logic includes
-#include "vtkSlicerTransformLogic.h"
+#include "vtkSlicerDoubleArraysLogic.h"
 
 // MRML includes
-#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLDoubleArrayNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsIOPrivate
+class qSlicerDoubleArraysReaderPrivate
 {
 public:
-  vtkSmartPointer<vtkSlicerTransformLogic> TransformLogic;
+  vtkSmartPointer<vtkSlicerDoubleArraysLogic> Logic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTransformsIO::qSlicerTransformsIO(
-  vtkSlicerTransformLogic* _transformLogic, QObject* _parent)
+qSlicerDoubleArraysReader::qSlicerDoubleArraysReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerTransformsIOPrivate)
-{
-  this->setTransformLogic(_transformLogic);
-}
-
-
-//-----------------------------------------------------------------------------
-qSlicerTransformsIO::~qSlicerTransformsIO()
+  , d_ptr(new qSlicerDoubleArraysReaderPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsIO::setTransformLogic(vtkSlicerTransformLogic* newTransformLogic)
+qSlicerDoubleArraysReader
+::qSlicerDoubleArraysReader(vtkSlicerDoubleArraysLogic* logic, QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerDoubleArraysReaderPrivate)
 {
-  Q_D(qSlicerTransformsIO);
-  d->TransformLogic = newTransformLogic;
+  this->setLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTransformLogic* qSlicerTransformsIO::transformLogic()const
+qSlicerDoubleArraysReader::~qSlicerDoubleArraysReader()
 {
-  Q_D(const qSlicerTransformsIO);
-  return d->TransformLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsIO::description()const
+void qSlicerDoubleArraysReader::setLogic(vtkSlicerDoubleArraysLogic* logic)
 {
-  return "Transform";
+  Q_D(qSlicerDoubleArraysReader);
+  d->Logic = logic;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerTransformsIO::fileType()const
+vtkSlicerDoubleArraysLogic* qSlicerDoubleArraysReader::logic()const
 {
-  return QString("TransformFile");
+  Q_D(const qSlicerDoubleArraysReader);
+  return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTransformsIO::extensions()const
+QString qSlicerDoubleArraysReader::description()const
 {
-  return QStringList() << "Transform (*.tfm *.mat *.nrrd *.txt)";
+  return "Double Array";
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTransformsIO::load(const IOProperties& properties)
+qSlicerIO::IOFileType qSlicerDoubleArraysReader::fileType()const
 {
-  Q_D(qSlicerTransformsIO);
+  return QString("DoubleArrayFile");
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerDoubleArraysReader::extensions()const
+{
+  return QStringList()
+    << "Double Array (*.mcsv)"
+    ;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerDoubleArraysReader::load(const IOProperties& properties)
+{
+  Q_D(qSlicerDoubleArraysReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
-  if (d->TransformLogic.GetPointer() == 0)
+  QString name = QFileInfo(fileName).baseName();
+  if (properties.contains("name"))
     {
-    return false;
+    name = properties["name"].toString();
     }
-  vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(
-    fileName.toLatin1(), this->mrmlScene());
+  Q_ASSERT(d->Logic);
+  vtkMRMLDoubleArrayNode* node = d->Logic->AddDoubleArray(
+    fileName.toLatin1(),
+    name.toLatin1());
   if (node)
     {
     this->setLoadedNodes(QStringList(QString(node->GetID())));
@@ -109,5 +121,3 @@ bool qSlicerTransformsIO::load(const IOProperties& properties)
     }
   return node != 0;
 }
-
-// TODO: add the save() method. Use vtkSlicerTransformLogic::SaveTransform()

@@ -25,14 +25,14 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerFiberBundleIO.cxx
-  qSlicerFiberBundleIO.h
+  qSlicerFiberBundleReader.cxx
+  qSlicerFiberBundleReader.h
   qSlicer${MODULE_NAME}Module.cxx
   qSlicer${MODULE_NAME}Module.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerFiberBundleIO.h
+  qSlicerFiberBundleReader.h
   qSlicer${MODULE_NAME}Module.h
   )
 

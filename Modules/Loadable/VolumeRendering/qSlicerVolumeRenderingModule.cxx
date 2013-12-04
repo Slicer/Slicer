@@ -31,9 +31,9 @@
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 
 // VolumeRendering includes
-#include "qSlicerVolumeRenderingIO.h"
 #include "qSlicerVolumeRenderingModule.h"
 #include "qSlicerVolumeRenderingModuleWidget.h"
+#include "qSlicerVolumeRenderingReader.h"
 #include "qSlicerVolumeRenderingSettingsPanel.h"
 #include "VolumeRenderingInstantiator.h"
 
@@ -146,7 +146,7 @@ void qSlicerVolumeRenderingModule::setup()
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   coreIOManager->registerIO(
-    new qSlicerVolumeRenderingIO(volumeRenderingLogic, this));
+    new qSlicerVolumeRenderingReader(volumeRenderingLogic, this));
   coreIOManager->registerIO(new qSlicerNodeWriter(
     "Transfer Function", QString("TransferFunctionFile"),
     QStringList() << "vtkMRMLVolumePropertyNode", this));

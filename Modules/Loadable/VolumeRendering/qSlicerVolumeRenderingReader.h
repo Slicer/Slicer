@@ -18,43 +18,44 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerAnnotationsIO_h
-#define __qSlicerAnnotationsIO_h
+#ifndef __qSlicerVolumeRenderingReader_h
+#define __qSlicerVolumeRenderingReader_h
 
-// SlicerQt includes
-#include "qSlicerFileReader.h"
+// SlicerQT includes
+#include <qSlicerFileReader.h>
 
-class qSlicerAnnotationsIOPrivate;
-class vtkSlicerAnnotationModuleLogic;
+// Volume Rendering includes
+class qSlicerVolumeRenderingReaderPrivate;
+class vtkSlicerVolumeRenderingLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Annotations
-class qSlicerAnnotationsIO
+/// \ingroup Slicer_QtModules_VolumeRendering
+class qSlicerVolumeRenderingReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerAnnotationsIO(QObject* parent = 0);
-  qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
-  virtual ~qSlicerAnnotationsIO();
-  
-  vtkSlicerAnnotationModuleLogic* annotationLogic()const;
-  void setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic);
+  qSlicerVolumeRenderingReader(QObject* parent = 0);
+  qSlicerVolumeRenderingReader(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerVolumeRenderingReader();
 
+  void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
+
+  // Reimplemented for IO specific description
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
-  virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
+
 protected:
-  QScopedPointer<qSlicerAnnotationsIOPrivate> d_ptr;
+  QScopedPointer<qSlicerVolumeRenderingReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerAnnotationsIO);
-  Q_DISABLE_COPY(qSlicerAnnotationsIO);
-
+  Q_DECLARE_PRIVATE(qSlicerVolumeRenderingReader);
+  Q_DISABLE_COPY(qSlicerVolumeRenderingReader);
 };
 
 #endif

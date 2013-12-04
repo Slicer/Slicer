@@ -31,11 +31,11 @@
 #include "qSlicerDataModule.h"
 #include "qSlicerDataModuleWidget.h"
 #include "qSlicerSaveDataDialog.h"
-#include "qSlicerSceneIO.h"
-#include "qSlicerSceneBundleIO.h"
+#include "qSlicerSceneBundleReader.h"
+#include "qSlicerSceneReader.h"
 #include "qSlicerSceneWriter.h"
 #include "qSlicerSlicer2SceneReader.h"
-#include "qSlicerXcedeCatalogIO.h"
+#include "qSlicerXcedeCatalogReader.h"
 
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -88,7 +88,7 @@ QStringList qSlicerDataModule::dependencies() const
 {
   QStringList moduleDependencies;
   // Colors: Required to have a valid color logic for XcedeCatalogUI.
-  // Cameras: Required in qSlicerSceneIO
+  // Cameras: Required in qSlicerSceneReader
   moduleDependencies << "Colors" << "Cameras";
   return moduleDependencies;
 }
@@ -111,10 +111,10 @@ void qSlicerDataModule::setup()
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   // Readers
-  ioManager->registerIO(new qSlicerSceneIO(camerasLogic, this));
-  ioManager->registerIO(new qSlicerSceneBundleIO(this));
+  ioManager->registerIO(new qSlicerSceneReader(camerasLogic, this));
+  ioManager->registerIO(new qSlicerSceneBundleReader(this));
   ioManager->registerIO(new qSlicerSlicer2SceneReader(this->appLogic(), this));
-  ioManager->registerIO(new qSlicerXcedeCatalogIO(colorLogic, this));
+  ioManager->registerIO(new qSlicerXcedeCatalogReader(colorLogic, this));
 
   // Writers
   ioManager->registerIO(new qSlicerSceneWriter(this));

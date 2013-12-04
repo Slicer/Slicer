@@ -18,38 +18,42 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSceneBundleIO_h
-#define __qSlicerSceneBundleIO_h
+#ifndef __qSlicerScalarOverlayReader_h
+#define __qSlicerScalarOverlayReader_h
 
-// QtCore includes
+// SlicerQt includes
 #include "qSlicerFileReader.h"
+class qSlicerScalarOverlayReaderPrivate;
 
-///
-/// qSlicerSceneBundleIO is the IO class that handle MRML scene
-/// embedded in a zip file (called a Slicer Data Bundle).  The extension
-/// is mrb (for Medical Reality Bundle)
-/// It internally calls vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
-/// depending on the clear flag.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleIO
+// Slicer includes
+class vtkSlicerModelsLogic;
+
+//-----------------------------------------------------------------------------
+class qSlicerScalarOverlayReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSceneBundleIO(QObject* _parent = 0);
+  qSlicerScalarOverlayReader(vtkSlicerModelsLogic* modelsLogic, QObject* parent = 0);
+  virtual ~qSlicerScalarOverlayReader();
+
+  void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
+  vtkSlicerModelsLogic* modelsLogic()const;
 
   virtual QString description()const;
-  /// Support QString("SceneFile")
-  virtual qSlicerIO::IOFileType fileType()const;
-
-  /// Support only .mrb files
+  virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
+  virtual qSlicerIOOptions* options()const;
 
-  /// the supported properties are:
-  /// QString fileName: the path of the mrml scene to load
-  /// bool clear: wether the current should be cleared or not
-  virtual bool load(const qSlicerIO::IOProperties& properties);
+  virtual bool load(const IOProperties& properties);
+
+protected:
+  QScopedPointer<qSlicerScalarOverlayReaderPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerScalarOverlayReader);
+  Q_DISABLE_COPY(qSlicerScalarOverlayReader);
 };
-
 
 #endif

@@ -37,7 +37,7 @@
 #include "MarkupsInstantiator.h"
 #include "qSlicerMarkupsModule.h"
 #include "qSlicerMarkupsModuleWidget.h"
-#include "qSlicerMarkupsIO.h"
+#include "qSlicerMarkupsReader.h"
 //#include "qSlicerMarkupsSettingsPanel.h"
 //#include "vtkSlicerMarkupsLogic.h"
 
@@ -127,7 +127,7 @@ void qSlicerMarkupsModule::setup()
 
   // Register IO
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  qSlicerMarkupsIO *markupsIO = new qSlicerMarkupsIO(vtkSlicerMarkupsLogic::SafeDownCast(this->logic()), this);
+  qSlicerMarkupsReader *markupsIO = new qSlicerMarkupsReader(vtkSlicerMarkupsLogic::SafeDownCast(this->logic()), this);
   ioManager->registerIO(markupsIO);
   ioManager->registerIO(new qSlicerNodeWriter(
                             "MarkupsFiducials", markupsIO->fileType(),

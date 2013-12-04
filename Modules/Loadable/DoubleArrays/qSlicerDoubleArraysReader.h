@@ -18,42 +18,41 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFiberBundleIO_h
-#define __qSlicerFiberBundleIO_h
+#ifndef __qSlicerDoubleArraysReader
+#define __qSlicerDoubleArraysReader
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerFiberBundleIOPrivate;
-
-// Slicer includes
-class vtkSlicerFiberBundleLogic;
+class qSlicerDoubleArraysReaderPrivate;
+class vtkSlicerDoubleArraysLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_TractographyDisplay
-class qSlicerFiberBundleIO
+/// \ingroup Slicer_QtModules_DoubleArray
+class qSlicerDoubleArraysReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerFiberBundleIO(vtkSlicerFiberBundleLogic* fiberBundleLogic, QObject* parent = 0);
-  virtual ~qSlicerFiberBundleIO();
+  qSlicerDoubleArraysReader(QObject* parent = 0);
+  qSlicerDoubleArraysReader(vtkSlicerDoubleArraysLogic* logic,
+                       QObject* parent = 0);
+  virtual ~qSlicerDoubleArraysReader();
 
-  void setFiberBundleLogic(vtkSlicerFiberBundleLogic* fiberBundleLogic);
-  vtkSlicerFiberBundleLogic* fiberBundleLogic()const;
+  vtkSlicerDoubleArraysLogic* logic()const;
+  void setLogic(vtkSlicerDoubleArraysLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
-
 protected:
-  QScopedPointer<qSlicerFiberBundleIOPrivate> d_ptr;
+  QScopedPointer<qSlicerDoubleArraysReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerFiberBundleIO);
-  Q_DISABLE_COPY(qSlicerFiberBundleIO);
+  Q_DECLARE_PRIVATE(qSlicerDoubleArraysReader);
+  Q_DISABLE_COPY(qSlicerDoubleArraysReader);
 };
 
 #endif

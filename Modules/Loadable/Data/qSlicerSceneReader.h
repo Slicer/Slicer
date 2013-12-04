@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSceneIO_h
-#define __qSlicerSceneIO_h
+#ifndef __qSlicerSceneReader_h
+#define __qSlicerSceneReader_h
 
 // QtCore includes
 #include "qSlicerDataModuleExport.h"
@@ -27,20 +27,20 @@
 
 // Logic includes
 class vtkSlicerCamerasModuleLogic;
-class qSlicerSceneIOPrivate;
+class qSlicerSceneReaderPrivate;
 
 ///
-/// qSlicerSceneIO is the IO class that handle MRML scene
+/// qSlicerSceneReader is the IO class that handle MRML scene
 /// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
 /// depending on the clear flag.
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIO
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSceneIO(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = 0);
-  virtual ~qSlicerSceneIO();
+  qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = 0);
+  virtual ~qSlicerSceneReader();
   
   virtual QString description()const;
   /// Support QString("SceneFile")
@@ -57,11 +57,11 @@ public:
   /// bool clear: wether the current should be cleared or not
   virtual bool load(const qSlicerIO::IOProperties& properties);
 protected:
-  QScopedPointer<qSlicerSceneIOPrivate> d_ptr;
+  QScopedPointer<qSlicerSceneReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSceneIO);
-  Q_DISABLE_COPY(qSlicerSceneIO);
+  Q_DECLARE_PRIVATE(qSlicerSceneReader);
+  Q_DISABLE_COPY(qSlicerSceneReader);
 };
 
 

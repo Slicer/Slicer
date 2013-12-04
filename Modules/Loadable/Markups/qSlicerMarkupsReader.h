@@ -2,7 +2,7 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) BWH
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -13,45 +13,44 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
-
 ==============================================================================*/
 
-#ifndef __qSlicerColorsIO_h
-#define __qSlicerColorsIO_h
+#ifndef __qSlicerMarkupsReader
+#define __qSlicerMarkupsReader
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerColorsIOPrivate;
 
-// Slicer includes
-class vtkSlicerColorLogic;
+class qSlicerMarkupsReaderPrivate;
+class vtkSlicerMarkupsLogic;
 
-//-----------------------------------------------------------------------------
-class qSlicerColorsIO
+//----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_Markups
+class qSlicerMarkupsReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerColorsIO(vtkSlicerColorLogic* colorLogic = 0, QObject* parent = 0);
-  virtual ~qSlicerColorsIO();
+  qSlicerMarkupsReader(QObject* parent = 0);
+  qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerMarkupsReader();
 
-  void setColorLogic(vtkSlicerColorLogic* colorLogic);
-  vtkSlicerColorLogic* colorLogic()const;
+  vtkSlicerMarkupsLogic* markupsLogic()const;
+  void setMarkupsLogic(vtkSlicerMarkupsLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+
 protected:
-  QScopedPointer<qSlicerColorsIOPrivate> d_ptr;
+  QScopedPointer<qSlicerMarkupsReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerColorsIO);
-  Q_DISABLE_COPY(qSlicerColorsIO);
+  Q_DECLARE_PRIVATE(qSlicerMarkupsReader);
+  Q_DISABLE_COPY(qSlicerMarkupsReader);
 };
 
 #endif

@@ -24,7 +24,7 @@
 #include <QDateTime>
 
 // QtCore includes
-#include "qSlicerSceneBundleIO.h"
+#include "qSlicerSceneBundleReader.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -39,31 +39,31 @@
 #include <vtksys/SystemTools.hxx>
 
 //-----------------------------------------------------------------------------
-qSlicerSceneBundleIO::qSlicerSceneBundleIO(QObject* _parent)
+qSlicerSceneBundleReader::qSlicerSceneBundleReader(QObject* _parent)
   : Superclass(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneBundleIO::description()const
+QString qSlicerSceneBundleReader::description()const
 {
   return "MRB Slicer Data Bundle";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSceneBundleIO::fileType()const
+qSlicerIO::IOFileType qSlicerSceneBundleReader::fileType()const
 {
   return QString("SceneFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSceneBundleIO::extensions()const 
+QStringList qSlicerSceneBundleReader::extensions()const
 {
   return QStringList() << "*.mrb" << "*.zip" << "*.xar";
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSceneBundleIO::load(const qSlicerIO::IOProperties& properties)
+bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
 {
   Q_ASSERT(properties.contains("fileName"));
   QString file = properties["fileName"].toString();

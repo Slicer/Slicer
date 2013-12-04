@@ -31,7 +31,7 @@
 #include <vtkSlicerVolumesLogic.h>
 
 // Volumes QTModule includes
-#include "qSlicerVolumesIO.h"
+#include "qSlicerVolumesReader.h"
 #include "qSlicerVolumesModule.h"
 #include "qSlicerVolumesModuleWidget.h"
 
@@ -151,7 +151,7 @@ void qSlicerVolumesModule::setup()
 
   qSlicerCoreIOManager* ioManager =
     qSlicerCoreApplication::application()->coreIOManager();
-  ioManager->registerIO(new qSlicerVolumesIO(volumesLogic,this));
+  ioManager->registerIO(new qSlicerVolumesReader(volumesLogic,this));
   ioManager->registerIO(new qSlicerNodeWriter(
     "Volumes", QString("VolumeFile"),
     QStringList() << "vtkMRMLVolumeNode", this));

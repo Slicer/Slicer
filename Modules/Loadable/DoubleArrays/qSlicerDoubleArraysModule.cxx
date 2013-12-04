@@ -27,8 +27,8 @@
 #include <vtkSlicerDoubleArraysLogic.h>
 
 // DoubleArrays includes
-#include "qSlicerDoubleArraysIO.h"
 #include "qSlicerDoubleArraysModule.h"
+#include "qSlicerDoubleArraysReader.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerDoubleArraysModule, qSlicerDoubleArraysModule);
@@ -105,7 +105,7 @@ void qSlicerDoubleArraysModule::setup()
 
   qSlicerCoreIOManager* ioManager =
     qSlicerCoreApplication::application()->coreIOManager();
-  ioManager->registerIO(new qSlicerDoubleArraysIO(doubleArraysLogic,this));
+  ioManager->registerIO(new qSlicerDoubleArraysReader(doubleArraysLogic,this));
   ioManager->registerIO(new qSlicerNodeWriter(
     "Double Arrays", QString("DoubleArrayFile"),
     QStringList() << "vtkMRMLDoubleArrayNode", this));

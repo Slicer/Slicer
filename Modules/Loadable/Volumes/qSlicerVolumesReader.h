@@ -18,25 +18,25 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerVolumesIO
-#define __qSlicerVolumesIO
+#ifndef __qSlicerVolumesReader_h
+#define __qSlicerVolumesReader_h
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerVolumesIOPrivate;
+class qSlicerVolumesReaderPrivate;
 class vtkSlicerVolumesLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
-class qSlicerVolumesIO
+class qSlicerVolumesReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerVolumesIO(QObject* parent = 0);
-  qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* parent = 0);
-  virtual ~qSlicerVolumesIO();
+  qSlicerVolumesReader(QObject* parent = 0);
+  qSlicerVolumesReader(vtkSlicerVolumesLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerVolumesReader();
 
   vtkSlicerVolumesLogic* logic()const;
   void setLogic(vtkSlicerVolumesLogic* logic);
@@ -48,11 +48,11 @@ public:
 
   virtual bool load(const IOProperties& properties);
 protected:
-  QScopedPointer<qSlicerVolumesIOPrivate> d_ptr;
+  QScopedPointer<qSlicerVolumesReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerVolumesIO);
-  Q_DISABLE_COPY(qSlicerVolumesIO);
+  Q_DECLARE_PRIVATE(qSlicerVolumesReader);
+  Q_DISABLE_COPY(qSlicerVolumesReader);
 };
 
 #endif

@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QDir>
 
-#include "qSlicerXcedeCatalogIO.h"
+#include "qSlicerXcedeCatalogReader.h"
 
 /// Slicer includes
 #include "qSlicerCoreApplication.h"
@@ -51,13 +51,13 @@
 #include <vtkSmartPointer.h>
 #include <vtkXMLDataParser.h>
 
-class qSlicerXcedeCatalogIOPrivate
+class qSlicerXcedeCatalogReaderPrivate
 {
-  Q_DECLARE_PUBLIC(qSlicerXcedeCatalogIO);
+  Q_DECLARE_PUBLIC(qSlicerXcedeCatalogReader);
 protected:
-  qSlicerXcedeCatalogIO* const q_ptr;
+  qSlicerXcedeCatalogReader* const q_ptr;
 public:
-  qSlicerXcedeCatalogIOPrivate(qSlicerXcedeCatalogIO& object);
+  qSlicerXcedeCatalogReaderPrivate(qSlicerXcedeCatalogReader& object);
 
   typedef QMap<QString, QString> NodeType;
   int     GetNumberOfElements(vtkXMLDataElement* parent);
@@ -92,20 +92,20 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerXcedeCatalogIOPrivate::qSlicerXcedeCatalogIOPrivate(qSlicerXcedeCatalogIO& object)
+qSlicerXcedeCatalogReaderPrivate::qSlicerXcedeCatalogReaderPrivate(qSlicerXcedeCatalogReader& object)
   : q_ptr(&object)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCoreIOManager* qSlicerXcedeCatalogIOPrivate::ioManager()const
+qSlicerCoreIOManager* qSlicerXcedeCatalogReaderPrivate::ioManager()const
 {
   return qSlicerCoreApplication::application()->coreIOManager();
 }
 
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportGetNumberOfElements { element } {
-int qSlicerXcedeCatalogIOPrivate::GetNumberOfElements(vtkXMLDataElement* parent)
+int qSlicerXcedeCatalogReaderPrivate::GetNumberOfElements(vtkXMLDataElement* parent)
 {
   ////--- save current parent locally
   //set parent $::XcedeCatalog_HParent_ID
@@ -149,7 +149,7 @@ int qSlicerXcedeCatalogIOPrivate::GetNumberOfElements(vtkXMLDataElement* parent)
 // nested parts
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportGetElement { element } {
-void qSlicerXcedeCatalogIOPrivate::importElement(vtkXMLDataElement* element)
+void qSlicerXcedeCatalogReaderPrivate::importElement(vtkXMLDataElement* element)
 {
   // save current parent locally
   //set parent $::XcedeCatalog_HParent_ID
@@ -207,7 +207,7 @@ void qSlicerXcedeCatalogIOPrivate::importElement(vtkXMLDataElement* element)
 // and returns the nodeType associated with that format
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportGetNodeType { format } {
-QString qSlicerXcedeCatalogIOPrivate::nodeType(const QString& format)const
+QString qSlicerXcedeCatalogReaderPrivate::nodeType(const QString& format)const
 {
   //if {$format == "FreeSurfer:mgz-1" } {
   //    return "Volume"
@@ -276,7 +276,7 @@ QString qSlicerXcedeCatalogIOPrivate::nodeType(const QString& format)const
 // checking to see if Slicer can read this file format
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportFormatCheck { format } {
-int qSlicerXcedeCatalogIOPrivate::checkFormat(const QString& format)const
+int qSlicerXcedeCatalogReaderPrivate::checkFormat(const QString& format)const
 {
     //--- check format against known formats
     //--- TODO: Once these values are formally defined for
@@ -319,9 +319,9 @@ int qSlicerXcedeCatalogIOPrivate::checkFormat(const QString& format)const
 // and then invoke the type-specific handler
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportGetEntry {element } {
-void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
+void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
 {
-  Q_Q(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogReader);
   //--- is this a catalog entry that contains a file or reference?
   //set elementType [$element GetName]
   //if { $elementType != "entry" && $elementType != "Entry" } {
@@ -575,7 +575,7 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 
 //----------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryVolume {node} {
-void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
+void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
 {
   //upvar $node n
 
@@ -782,7 +782,7 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
 
 //----------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryModel {node} {
-void qSlicerXcedeCatalogIOPrivate::importModelNode(NodeType node)
+void qSlicerXcedeCatalogReaderPrivate::importModelNode(NodeType node)
 {
   //upvar $node n
 
@@ -892,9 +892,9 @@ void qSlicerXcedeCatalogIOPrivate::importModelNode(NodeType node)
 //-- TODO: something in this proc is causing debug leaks. WHAT?
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryTransform {node} {
-void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
+void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
 {
-  Q_Q(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogReader);
   //upvar $node n
 
 
@@ -940,7 +940,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   QString tid = tnode->GetID();
   if (tid.isNull())
     {
-    qDebug() << "qSlicerXcedeCatalogIO::importTransformNode: unable to add Transform Node. No transform imported.";
+    qDebug() << "qSlicerXcedeCatalogReader::importTransformNode: unable to add Transform Node. No transform imported.";
     return;
     }
   this->LoadedNodes << tid;
@@ -1031,9 +1031,9 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
 
 //----------------------------------------------------------------------------
 //proc XcedeCatalogImportEntryOverlay {node} {
-void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
+void qSlicerXcedeCatalogReaderPrivate::importOverlayNode(NodeType node)
 {
-  Q_Q(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogReader);
   //upvar $node n
 
   // //--- not really a node, per se...
@@ -1130,9 +1130,9 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
 
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportComputeFIPS2SlicerTransformCorrection { } {
-bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
+bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
 {
-  Q_Q(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogReader);
   // if { $::XcedeCatalog_MrmlID(anat2exf) == "" } {
   //     return
   // }
@@ -1218,9 +1218,9 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
 
 //------------------------------------------------------------------------------
 //proc XcedeCatalogImportApplyFIPS2SlicerTransformCorrection { } {
-void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
+void qSlicerXcedeCatalogReaderPrivate::applyFIPS2SlicerTransformCorrection()
 {
-  Q_Q(qSlicerXcedeCatalogIO);
+  Q_Q(qSlicerXcedeCatalogReader);
   //if { $::XcedeCatalog_RAS2RASTransformCreated == 1 } {
   //$::XcedeCatalog_mainWindow SetStatusText "Applying registration matrix to statistics volumes"
   //--- move all the detected stats files under the new registration xform
@@ -1247,61 +1247,61 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
 }
 
 //------------------------------------------------------------------------------
-qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(QObject* _parent)
+qSlicerXcedeCatalogReader::qSlicerXcedeCatalogReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
+  , d_ptr(new qSlicerXcedeCatalogReaderPrivate(*this))
 {
 }
 
 //------------------------------------------------------------------------------
-qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(vtkMRMLColorLogic* logic, QObject* _parent)
+qSlicerXcedeCatalogReader::qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
+  , d_ptr(new qSlicerXcedeCatalogReaderPrivate(*this))
 {
   this->setColorLogic(logic);
 }
 
 //------------------------------------------------------------------------------
-qSlicerXcedeCatalogIO::~qSlicerXcedeCatalogIO()
+qSlicerXcedeCatalogReader::~qSlicerXcedeCatalogReader()
 {
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorLogic* qSlicerXcedeCatalogIO::colorLogic()const
+vtkMRMLColorLogic* qSlicerXcedeCatalogReader::colorLogic()const
 {
-  Q_D(const qSlicerXcedeCatalogIO);
+  Q_D(const qSlicerXcedeCatalogReader);
   return d->ColorLogic.GetPointer();
 }
 
 //------------------------------------------------------------------------------
-void qSlicerXcedeCatalogIO::setColorLogic(vtkMRMLColorLogic* logic)
+void qSlicerXcedeCatalogReader::setColorLogic(vtkMRMLColorLogic* logic)
 {
-  Q_D(qSlicerXcedeCatalogIO);
+  Q_D(qSlicerXcedeCatalogReader);
   d->ColorLogic = logic;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerXcedeCatalogIO::description()const
+QString qSlicerXcedeCatalogReader::description()const
 {
   return "Xcede Catalog";
 }
 
 //------------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerXcedeCatalogIO::fileType()const
+qSlicerIO::IOFileType qSlicerXcedeCatalogReader::fileType()const
 {
   return QString("SceneFile");
 }
 
 //------------------------------------------------------------------------------
-QStringList qSlicerXcedeCatalogIO::extensions()const
+QStringList qSlicerXcedeCatalogReader::extensions()const
 {
   return QStringList() << "*.xcat";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerXcedeCatalogIO::load(const qSlicerIO::IOProperties& properties)
+bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
 {
-  Q_D(qSlicerXcedeCatalogIO);
+  Q_D(qSlicerXcedeCatalogReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 

@@ -24,8 +24,8 @@
 // Models includes
 #include "qSlicerModelsModule.h"
 #include "qSlicerModelsModuleWidget.h"
-#include "qSlicerModelsIO.h"
-#include "qSlicerScalarOverlayIO.h"
+#include "qSlicerModelsReader.h"
+#include "qSlicerScalarOverlayReader.h"
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -151,8 +151,8 @@ void qSlicerModelsModule::setup()
     }
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-  ioManager->registerIO(new qSlicerModelsIO(modelsLogic, this));
-  ioManager->registerIO(new qSlicerScalarOverlayIO(modelsLogic, this));
+  ioManager->registerIO(new qSlicerModelsReader(modelsLogic, this));
+  ioManager->registerIO(new qSlicerScalarOverlayReader(modelsLogic, this));
   ioManager->registerDialog(new qSlicerModelsDialog(this));
   ioManager->registerIO(new qSlicerNodeWriter(
     "Models", QString("ModelFile"),

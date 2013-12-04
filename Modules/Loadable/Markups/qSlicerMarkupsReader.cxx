@@ -19,7 +19,7 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerMarkupsIO.h"
+#include "qSlicerMarkupsReader.h"
 
 // Logic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -32,7 +32,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerMarkupsIOPrivate
+class qSlicerMarkupsReaderPrivate
 {
   public:
   vtkSmartPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
@@ -41,52 +41,52 @@ class qSlicerMarkupsIOPrivate
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotations
 //-----------------------------------------------------------------------------
-qSlicerMarkupsIO::qSlicerMarkupsIO(QObject* _parent)
+qSlicerMarkupsReader::qSlicerMarkupsReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerMarkupsIOPrivate)
+  , d_ptr(new qSlicerMarkupsReaderPrivate)
 {
 }
 
-qSlicerMarkupsIO::qSlicerMarkupsIO(vtkSlicerMarkupsLogic* logic, QObject* _parent)
+qSlicerMarkupsReader::qSlicerMarkupsReader(vtkSlicerMarkupsLogic* logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerMarkupsIOPrivate)
+  , d_ptr(new qSlicerMarkupsReaderPrivate)
 {
   this->setMarkupsLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMarkupsIO::~qSlicerMarkupsIO()
+qSlicerMarkupsReader::~qSlicerMarkupsReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsIO::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
+void qSlicerMarkupsReader::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
 {
-  Q_D(qSlicerMarkupsIO);
+  Q_D(qSlicerMarkupsReader);
   d->MarkupsLogic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic* qSlicerMarkupsIO::markupsLogic()const
+vtkSlicerMarkupsLogic* qSlicerMarkupsReader::markupsLogic()const
 {
-  Q_D(const qSlicerMarkupsIO);
+  Q_D(const qSlicerMarkupsReader);
   return d->MarkupsLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsIO::description()const
+QString qSlicerMarkupsReader::description()const
 {
   return "MarkupsFiducials";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerMarkupsIO::fileType()const
+qSlicerIO::IOFileType qSlicerMarkupsReader::fileType()const
 {
   return QString("MarkupsFiducials");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsIO::extensions()const
+QStringList qSlicerMarkupsReader::extensions()const
 {
   return QStringList()
     << "Markups Fiducials (*.fcsv)"
@@ -94,9 +94,9 @@ QStringList qSlicerMarkupsIO::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerMarkupsIO::load(const IOProperties& properties)
+bool qSlicerMarkupsReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerMarkupsIO);
+  Q_D(qSlicerMarkupsReader);
 
   // get the properties
   Q_ASSERT(properties.contains("fileName"));

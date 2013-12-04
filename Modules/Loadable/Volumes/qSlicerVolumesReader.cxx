@@ -22,8 +22,8 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerVolumesIO.h"
 #include "qSlicerVolumesIOOptionsWidget.h"
+#include "qSlicerVolumesReader.h"
 
 // Logic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -38,60 +38,60 @@
 #include <vtkStringArray.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesIOPrivate
+class qSlicerVolumesReaderPrivate
 {
   public:
   vtkSmartPointer<vtkSlicerVolumesLogic> Logic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerVolumesIO::qSlicerVolumesIO(QObject* _parent)
+qSlicerVolumesReader::qSlicerVolumesReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVolumesIOPrivate)
+  , d_ptr(new qSlicerVolumesReaderPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumesIO::qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* _parent)
+qSlicerVolumesReader::qSlicerVolumesReader(vtkSlicerVolumesLogic* logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVolumesIOPrivate)
+  , d_ptr(new qSlicerVolumesReaderPrivate)
 {
   this->setLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumesIO::~qSlicerVolumesIO()
+qSlicerVolumesReader::~qSlicerVolumesReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumesIO::setLogic(vtkSlicerVolumesLogic* logic)
+void qSlicerVolumesReader::setLogic(vtkSlicerVolumesLogic* logic)
 {
-  Q_D(qSlicerVolumesIO);
+  Q_D(qSlicerVolumesReader);
   d->Logic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumesLogic* qSlicerVolumesIO::logic()const
+vtkSlicerVolumesLogic* qSlicerVolumesReader::logic()const
 {
-  Q_D(const qSlicerVolumesIO);
+  Q_D(const qSlicerVolumesReader);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesIO::description()const
+QString qSlicerVolumesReader::description()const
 {
   return "Volume";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerVolumesIO::fileType()const
+qSlicerIO::IOFileType qSlicerVolumesReader::fileType()const
 {
   return QString("VolumeFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumesIO::extensions()const
+QStringList qSlicerVolumesReader::extensions()const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList()
@@ -102,15 +102,15 @@ QStringList qSlicerVolumesIO::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerVolumesIO::options()const
+qSlicerIOOptions* qSlicerVolumesReader::options()const
 {
   return new qSlicerVolumesIOOptionsWidget;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerVolumesIO::load(const IOProperties& properties)
+bool qSlicerVolumesReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerVolumesIO);
+  Q_D(qSlicerVolumesReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 

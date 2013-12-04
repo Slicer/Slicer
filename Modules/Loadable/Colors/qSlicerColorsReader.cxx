@@ -21,7 +21,7 @@
 // Qt includes
 
 // SlicerQt includes
-#include "qSlicerColorsIO.h"
+#include "qSlicerColorsReader.h"
 
 // Logic includes
 #include "vtkSlicerColorLogic.h"
@@ -33,62 +33,62 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsIOPrivate
+class qSlicerColorsReaderPrivate
 {
 public:
   vtkSmartPointer<vtkSlicerColorLogic> ColorLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerColorsIO::qSlicerColorsIO(
+qSlicerColorsReader::qSlicerColorsReader(
   vtkSlicerColorLogic* _colorLogic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerColorsIOPrivate)
+  , d_ptr(new qSlicerColorsReaderPrivate)
 {
   this->setColorLogic(_colorLogic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerColorsIO::~qSlicerColorsIO()
+qSlicerColorsReader::~qSlicerColorsReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorsIO::setColorLogic(vtkSlicerColorLogic* newColorLogic)
+void qSlicerColorsReader::setColorLogic(vtkSlicerColorLogic* newColorLogic)
 {
-  Q_D(qSlicerColorsIO);
+  Q_D(qSlicerColorsReader);
   d->ColorLogic = newColorLogic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerColorLogic* qSlicerColorsIO::colorLogic()const
+vtkSlicerColorLogic* qSlicerColorsReader::colorLogic()const
 {
-  Q_D(const qSlicerColorsIO);
+  Q_D(const qSlicerColorsReader);
   return d->ColorLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsIO::description()const
+QString qSlicerColorsReader::description()const
 {
   return "Color";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerColorsIO::fileType()const
+qSlicerIO::IOFileType qSlicerColorsReader::fileType()const
 {
   return QString("ColorTableFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerColorsIO::extensions()const
+QStringList qSlicerColorsReader::extensions()const
 {
   return QStringList() << "Color (*.txt *.ctbl)";
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerColorsIO::load(const IOProperties& properties)
+bool qSlicerColorsReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerColorsIO);
+  Q_D(qSlicerColorsReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 

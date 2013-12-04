@@ -18,29 +18,29 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerModelsIO_h
-#define __qSlicerModelsIO_h
+#ifndef __qSlicerFiberBundleReader_h
+#define __qSlicerFiberBundleReader_h
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerModelsIOPrivate;
+class qSlicerFiberBundleReaderPrivate;
 
 // Slicer includes
-class vtkSlicerModelsLogic;
+class vtkSlicerFiberBundleLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Models
-class qSlicerModelsIO
+/// \ingroup Slicer_QtModules_TractographyDisplay
+class qSlicerFiberBundleReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerModelsIO(vtkSlicerModelsLogic* modelsLogic = 0, QObject* parent = 0);
-  virtual ~qSlicerModelsIO();
+  qSlicerFiberBundleReader(vtkSlicerFiberBundleLogic* fiberBundleLogic, QObject* parent = 0);
+  virtual ~qSlicerFiberBundleReader();
 
-  void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
-  vtkSlicerModelsLogic* modelsLogic()const;
+  void setFiberBundleLogic(vtkSlicerFiberBundleLogic* fiberBundleLogic);
+  vtkSlicerFiberBundleLogic* fiberBundleLogic()const;
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
@@ -49,11 +49,11 @@ public:
   virtual bool load(const IOProperties& properties);
 
 protected:
-  QScopedPointer<qSlicerModelsIOPrivate> d_ptr;
+  QScopedPointer<qSlicerFiberBundleReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerModelsIO);
-  Q_DISABLE_COPY(qSlicerModelsIO);
+  Q_DECLARE_PRIVATE(qSlicerFiberBundleReader);
+  Q_DISABLE_COPY(qSlicerFiberBundleReader);
 };
 
 #endif

@@ -18,41 +18,40 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerTransformsIO_h
-#define __qSlicerTransformsIO_h
+#ifndef __qSlicerColorsReader_h
+#define __qSlicerColorsReader_h
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerTransformsIOPrivate;
+class qSlicerColorsReaderPrivate;
 
 // Slicer includes
-class vtkSlicerTransformLogic;
+class vtkSlicerColorLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsIO
+class qSlicerColorsReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTransformsIO(vtkSlicerTransformLogic* transformLogic, QObject* parent = 0);
-  virtual ~qSlicerTransformsIO();
+  qSlicerColorsReader(vtkSlicerColorLogic* colorLogic = 0, QObject* parent = 0);
+  virtual ~qSlicerColorsReader();
 
-  void setTransformLogic(vtkSlicerTransformLogic* transformLogic);
-  vtkSlicerTransformLogic* transformLogic()const;
+  void setColorLogic(vtkSlicerColorLogic* colorLogic);
+  vtkSlicerColorLogic* colorLogic()const;
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
-
 protected:
-  QScopedPointer<qSlicerTransformsIOPrivate> d_ptr;
+  QScopedPointer<qSlicerColorsReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerTransformsIO);
-  Q_DISABLE_COPY(qSlicerTransformsIO);
+  Q_DECLARE_PRIVATE(qSlicerColorsReader);
+  Q_DISABLE_COPY(qSlicerColorsReader);
 };
 
 #endif

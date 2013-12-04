@@ -18,44 +18,43 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerVolumeRenderingIO_h
-#define __qSlicerVolumeRenderingIO_h
+#ifndef __qSlicerAnnotationsReader_h
+#define __qSlicerAnnotationsReader_h
 
-// SlicerQT includes
-#include <qSlicerFileReader.h>
+// SlicerQt includes
+#include "qSlicerFileReader.h"
 
-// Volume Rendering includes
-class qSlicerVolumeRenderingIOPrivate;
-class vtkSlicerVolumeRenderingLogic;
+class qSlicerAnnotationsReaderPrivate;
+class vtkSlicerAnnotationModuleLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_VolumeRendering
-class qSlicerVolumeRenderingIO
+/// \ingroup Slicer_QtModules_Annotations
+class qSlicerAnnotationsReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerVolumeRenderingIO(QObject* parent = 0);
-  qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = 0);
-  virtual ~qSlicerVolumeRenderingIO();
+  qSlicerAnnotationsReader(QObject* parent = 0);
+  qSlicerAnnotationsReader(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerAnnotationsReader();
 
-  void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
+  vtkSlicerAnnotationModuleLogic* annotationLogic()const;
+  void setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic);
 
-  // Reimplemented for IO specific description
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
+  virtual qSlicerIOOptions* options()const;
 
   virtual bool load(const IOProperties& properties);
-
 protected:
-  QScopedPointer<qSlicerVolumeRenderingIOPrivate> d_ptr;
+  QScopedPointer<qSlicerAnnotationsReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerVolumeRenderingIO);
-  Q_DISABLE_COPY(qSlicerVolumeRenderingIO);
+  Q_DECLARE_PRIVATE(qSlicerAnnotationsReader);
+  Q_DISABLE_COPY(qSlicerAnnotationsReader);
+
 };
 
 #endif

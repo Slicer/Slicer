@@ -18,42 +18,42 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFiducialsIO
-#define __qSlicerFiducialsIO
+#ifndef __qSlicerXcedeCatalogReader
+#define __qSlicerXcedeCatalogReader
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
 
-class qSlicerFiducialsIOPrivate;
-class vtkSlicerAnnotationModuleLogic;
+class qSlicerXcedeCatalogReaderPrivate;
 
-//----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_Annotations
-class qSlicerFiducialsIO
+// Slicer Logic
+class vtkMRMLColorLogic;
+
+//-----------------------------------------------------------------------------
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerFiducialsIO(QObject* parent = 0);
-  qSlicerFiducialsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
-  virtual ~qSlicerFiducialsIO();
+  qSlicerXcedeCatalogReader(QObject* parent = 0);
+  qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, QObject* parent = 0);
+  virtual ~qSlicerXcedeCatalogReader();
 
-  vtkSlicerAnnotationModuleLogic* annotationLogic()const;
-  void setAnnotationLogic(vtkSlicerAnnotationModuleLogic* logic);
+  vtkMRMLColorLogic* colorLogic()const;
+  void setColorLogic(vtkMRMLColorLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
-
 protected:
-  QScopedPointer<qSlicerFiducialsIOPrivate> d_ptr;
+  QScopedPointer<qSlicerXcedeCatalogReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerFiducialsIO);
-  Q_DISABLE_COPY(qSlicerFiducialsIO);
+  Q_DECLARE_PRIVATE(qSlicerXcedeCatalogReader);
+  Q_DISABLE_COPY(qSlicerXcedeCatalogReader);
 };
 
 #endif

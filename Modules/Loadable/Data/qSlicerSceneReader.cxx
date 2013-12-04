@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 // QtCore includes
-#include "qSlicerSceneIO.h"
+#include "qSlicerSceneReader.h"
 #include "qSlicerSceneIOOptionsWidget.h"
 
 // Logic includes
@@ -28,55 +28,55 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
-class qSlicerSceneIOPrivate
+class qSlicerSceneReaderPrivate
 {
 public:
   vtkSmartPointer<vtkSlicerCamerasModuleLogic> CamerasLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerSceneIO::qSlicerSceneIO(vtkSlicerCamerasModuleLogic* camerasLogic,
+qSlicerSceneReader::qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic,
                                QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerSceneIOPrivate)
+  , d_ptr(new qSlicerSceneReaderPrivate)
 {
-  Q_D(qSlicerSceneIO);
+  Q_D(qSlicerSceneReader);
   d->CamerasLogic = camerasLogic;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSceneIO::~qSlicerSceneIO()
+qSlicerSceneReader::~qSlicerSceneReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneIO::description()const
+QString qSlicerSceneReader::description()const
 {
   return "MRML Scene";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSceneIO::fileType()const
+qSlicerIO::IOFileType qSlicerSceneReader::fileType()const
 {
   return QString("SceneFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSceneIO::extensions()const 
+QStringList qSlicerSceneReader::extensions()const
 {
   return QStringList() << "*.mrml";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerSceneIO::options()const
+qSlicerIOOptions* qSlicerSceneReader::options()const
 {
   return new qSlicerSceneIOOptionsWidget;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSceneIO::load(const qSlicerIO::IOProperties& properties)
+bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
 {
-  Q_D(qSlicerSceneIO);
+  Q_D(qSlicerSceneReader);
   Q_ASSERT(properties.contains("fileName"));
   QString file = properties["fileName"].toString();
   this->mrmlScene()->SetURL(file.toLatin1());

@@ -30,7 +30,7 @@
 #include "qSlicerTractographyDisplayModule.h"
 #include "qSlicerTractographyDisplayModuleWidget.h"
 //#include "qSlicerTractographyDisplayWidget.h"
-#include "qSlicerFiberBundleIO.h"
+#include "qSlicerFiberBundleReader.h"
 
 // Tractography Logic includes
 #include "vtkSlicerFiberBundleLogic.h"
@@ -62,7 +62,7 @@ void qSlicerTractographyDisplayModule::setup()
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   coreIOManager->registerIO(
-    new qSlicerFiberBundleIO(fiberBundleLogic, this));
+    new qSlicerFiberBundleReader(fiberBundleLogic, this));
   coreIOManager->registerIO(new qSlicerNodeWriter(
     "FiberBundles", QString("FiberBundleFile"),
     QStringList() << "vtkMRMLFiberBundleNode", this));

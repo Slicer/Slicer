@@ -31,9 +31,9 @@
 #include "qSlicerNodeWriter.h"
 
 // Colors includes
-#include "qSlicerColorsIO.h"
 #include "qSlicerColorsModule.h"
 #include "qSlicerColorsModuleWidget.h"
+#include "qSlicerColorsReader.h"
 
 // qMRML includes
 #include <qMRMLColorPickerWidget.h>
@@ -99,7 +99,7 @@ void qSlicerColorsModule::setup()
     this->appLogic()->SetColorLogic(colorLogic);
     }
   app->coreIOManager()->registerIO(
-    new qSlicerColorsIO(colorLogic, this));
+    new qSlicerColorsReader(colorLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(
     "Colors", QString("ColorTableFile"),
     QStringList() << "vtkMRMLColorNode", this));

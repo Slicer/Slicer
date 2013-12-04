@@ -22,8 +22,8 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerScalarOverlayIO.h"
 #include "qSlicerScalarOverlayIOOptionsWidget.h"
+#include "qSlicerScalarOverlayReader.h"
 
 // Logic includes
 #include "vtkSlicerModelsLogic.h"
@@ -37,71 +37,71 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerScalarOverlayIOPrivate
+class qSlicerScalarOverlayReaderPrivate
 {
 public:
   vtkSmartPointer<vtkSlicerModelsLogic> ModelsLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerScalarOverlayIO::qSlicerScalarOverlayIO(
+qSlicerScalarOverlayReader::qSlicerScalarOverlayReader(
   vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerScalarOverlayIOPrivate)
+  , d_ptr(new qSlicerScalarOverlayReaderPrivate)
 {
   this->setModelsLogic(_modelsLogic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerScalarOverlayIO::~qSlicerScalarOverlayIO()
+qSlicerScalarOverlayReader::~qSlicerScalarOverlayReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerScalarOverlayIO::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
+void qSlicerScalarOverlayReader::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
 {
-  Q_D(qSlicerScalarOverlayIO);
+  Q_D(qSlicerScalarOverlayReader);
   d->ModelsLogic = newModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerModelsLogic* qSlicerScalarOverlayIO::modelsLogic()const
+vtkSlicerModelsLogic* qSlicerScalarOverlayReader::modelsLogic()const
 {
-  Q_D(const qSlicerScalarOverlayIO);
+  Q_D(const qSlicerScalarOverlayReader);
   return d->ModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerScalarOverlayIO::description()const
+QString qSlicerScalarOverlayReader::description()const
 {
   return "Scalar Overlay";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerScalarOverlayIO::fileType()const
+qSlicerIO::IOFileType qSlicerScalarOverlayReader::fileType()const
 {
   return QString("ScalarOverlayFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerScalarOverlayIO::extensions()const
+QStringList qSlicerScalarOverlayReader::extensions()const
 {
   return QStringList() << "*.*";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerScalarOverlayIO::options()const
+qSlicerIOOptions* qSlicerScalarOverlayReader::options()const
 {
   qSlicerIOOptionsWidget* options = new qSlicerScalarOverlayIOOptionsWidget;
-  qDebug() << "qSlicerScalarOverlayIO::options():" << this->mrmlScene();
+  qDebug() << "qSlicerScalarOverlayReader::options():" << this->mrmlScene();
   options->setMRMLScene(this->mrmlScene());
   return options;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
+bool qSlicerScalarOverlayReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerScalarOverlayIO);
+  Q_D(qSlicerScalarOverlayReader);
   Q_ASSERT(properties.contains("fileName"));
   if (!properties.contains("modelNodeId"))
     {

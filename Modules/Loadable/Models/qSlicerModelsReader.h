@@ -18,41 +18,42 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerDoubleArraysIO
-#define __qSlicerDoubleArraysIO
+#ifndef __qSlicerModelsReader_h
+#define __qSlicerModelsReader_h
 
 // SlicerQt includes
 #include "qSlicerFileReader.h"
-class qSlicerDoubleArraysIOPrivate;
-class vtkSlicerDoubleArraysLogic;
+class qSlicerModelsReaderPrivate;
+
+// Slicer includes
+class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_DoubleArray
-class qSlicerDoubleArraysIO
+/// \ingroup Slicer_QtModules_Models
+class qSlicerModelsReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerDoubleArraysIO(QObject* parent = 0);
-  qSlicerDoubleArraysIO(vtkSlicerDoubleArraysLogic* logic,
-                       QObject* parent = 0);
-  virtual ~qSlicerDoubleArraysIO();
+  qSlicerModelsReader(vtkSlicerModelsLogic* modelsLogic = 0, QObject* parent = 0);
+  virtual ~qSlicerModelsReader();
 
-  vtkSlicerDoubleArraysLogic* logic()const;
-  void setLogic(vtkSlicerDoubleArraysLogic* logic);
+  void setModelsLogic(vtkSlicerModelsLogic* modelsLogic);
+  vtkSlicerModelsLogic* modelsLogic()const;
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
   virtual QStringList extensions()const;
 
   virtual bool load(const IOProperties& properties);
+
 protected:
-  QScopedPointer<qSlicerDoubleArraysIOPrivate> d_ptr;
+  QScopedPointer<qSlicerModelsReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerDoubleArraysIO);
-  Q_DISABLE_COPY(qSlicerDoubleArraysIO);
+  Q_DECLARE_PRIVATE(qSlicerModelsReader);
+  Q_DISABLE_COPY(qSlicerModelsReader);
 };
 
 #endif

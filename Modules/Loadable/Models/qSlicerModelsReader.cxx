@@ -22,7 +22,7 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerModelsIO.h"
+#include "qSlicerModelsReader.h"
 
 // Logic includes
 #include "vtkSlicerModelsLogic.h"
@@ -35,7 +35,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerModelsIOPrivate
+class qSlicerModelsReaderPrivate
 {
 public:
   vtkSmartPointer<vtkSlicerModelsLogic> ModelsLogic;
@@ -43,46 +43,46 @@ public:
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
-qSlicerModelsIO::qSlicerModelsIO(vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
+qSlicerModelsReader::qSlicerModelsReader(vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerModelsIOPrivate)
+  , d_ptr(new qSlicerModelsReaderPrivate)
 {
   this->setModelsLogic(_modelsLogic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModelsIO::~qSlicerModelsIO()
+qSlicerModelsReader::~qSlicerModelsReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModelsIO::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
+void qSlicerModelsReader::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
 {
-  Q_D(qSlicerModelsIO);
+  Q_D(qSlicerModelsReader);
   d->ModelsLogic = newModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerModelsLogic* qSlicerModelsIO::modelsLogic()const
+vtkSlicerModelsLogic* qSlicerModelsReader::modelsLogic()const
 {
-  Q_D(const qSlicerModelsIO);
+  Q_D(const qSlicerModelsReader);
   return d->ModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsIO::description()const
+QString qSlicerModelsReader::description()const
 {
   return "Model";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerModelsIO::fileType()const
+qSlicerIO::IOFileType qSlicerModelsReader::fileType()const
 {
   return QString("ModelFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModelsIO::extensions()const
+QStringList qSlicerModelsReader::extensions()const
 {
   return QStringList()
     << "Model (*.vtk *.vtp *.g *.byu *.stl *.ply *.orig"
@@ -90,9 +90,9 @@ QStringList qSlicerModelsIO::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerModelsIO::load(const IOProperties& properties)
+bool qSlicerModelsReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerModelsIO);
+  Q_D(qSlicerModelsReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 

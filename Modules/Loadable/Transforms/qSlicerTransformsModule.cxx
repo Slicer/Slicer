@@ -28,9 +28,9 @@
 #include "vtkSlicerTransformLogic.h"
 
 // Transforms includes
-#include "qSlicerTransformsIO.h"
 #include "qSlicerTransformsModule.h"
 #include "qSlicerTransformsModuleWidget.h"
+#include "qSlicerTransformsReader.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerTransformsModule, qSlicerTransformsModule);
@@ -129,7 +129,7 @@ void qSlicerTransformsModule::setup()
   vtkSlicerTransformLogic* transformLogic =
     vtkSlicerTransformLogic::SafeDownCast(this->logic());
   app->coreIOManager()->registerIO(
-    new qSlicerTransformsIO(transformLogic, this));
+    new qSlicerTransformsReader(transformLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(
     "Transforms", QString("TransformFile"),
     QStringList() << "vtkMRMLTransformNode", this));

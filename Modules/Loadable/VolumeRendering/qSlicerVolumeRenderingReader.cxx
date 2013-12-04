@@ -22,7 +22,7 @@
 #include <QFileInfo>
 
 // SlicerQt includes
-#include "qSlicerVolumeRenderingIO.h"
+#include "qSlicerVolumeRenderingReader.h"
 
 // Logic includes
 #include "vtkSlicerVolumeRenderingLogic.h"
@@ -39,60 +39,60 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumeRenderingIOPrivate
+class qSlicerVolumeRenderingReaderPrivate
 {
   public:
   vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(QObject* _parent)
+qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVolumeRenderingIOPrivate)
+  , d_ptr(new qSlicerVolumeRenderingReaderPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
+qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVolumeRenderingIOPrivate)
+  , d_ptr(new qSlicerVolumeRenderingReaderPrivate)
 {
   this->setVolumeRenderingLogic(logic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingIO::~qSlicerVolumeRenderingIO()
+qSlicerVolumeRenderingReader::~qSlicerVolumeRenderingReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVolumeRenderingIO::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
+void qSlicerVolumeRenderingReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
 {
-  Q_D(qSlicerVolumeRenderingIO);
+  Q_D(qSlicerVolumeRenderingReader);
   d->VolumeRenderingLogic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingIO::volumeRenderingLogic()const
+vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingReader::volumeRenderingLogic()const
 {
-  Q_D(const qSlicerVolumeRenderingIO);
+  Q_D(const qSlicerVolumeRenderingReader);
   return d->VolumeRenderingLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingIO::description()const
+QString qSlicerVolumeRenderingReader::description()const
 {
   return "Transfer Function";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerVolumeRenderingIO::fileType()const
+qSlicerIO::IOFileType qSlicerVolumeRenderingReader::fileType()const
 {
   return QString("TransferFunctionFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumeRenderingIO::extensions()const
+QStringList qSlicerVolumeRenderingReader::extensions()const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList()
@@ -100,9 +100,9 @@ QStringList qSlicerVolumeRenderingIO::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerVolumeRenderingIO::load(const IOProperties& properties)
+bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerVolumeRenderingIO);
+  Q_D(qSlicerVolumeRenderingReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
   // Name is ignored

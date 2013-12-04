@@ -22,7 +22,7 @@
 #include <QDir>
 
 // SlicerQt includes
-#include "qSlicerFiberBundleIO.h"
+#include "qSlicerFiberBundleReader.h"
 
 // Logic includes
 #include "vtkSlicerFiberBundleLogic.h"
@@ -35,62 +35,62 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerFiberBundleIOPrivate
+class qSlicerFiberBundleReaderPrivate
 {
 public:
   vtkSmartPointer<vtkSlicerFiberBundleLogic> FiberBundleLogic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerFiberBundleIO::qSlicerFiberBundleIO(
+qSlicerFiberBundleReader::qSlicerFiberBundleReader(
   vtkSlicerFiberBundleLogic* _fiberBundleLogic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerFiberBundleIOPrivate)
+  , d_ptr(new qSlicerFiberBundleReaderPrivate)
 {
   this->setFiberBundleLogic(_fiberBundleLogic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFiberBundleIO::~qSlicerFiberBundleIO()
+qSlicerFiberBundleReader::~qSlicerFiberBundleReader()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFiberBundleIO::setFiberBundleLogic(vtkSlicerFiberBundleLogic* newFiberBundleLogic)
+void qSlicerFiberBundleReader::setFiberBundleLogic(vtkSlicerFiberBundleLogic* newFiberBundleLogic)
 {
-  Q_D(qSlicerFiberBundleIO);
+  Q_D(qSlicerFiberBundleReader);
   d->FiberBundleLogic = newFiberBundleLogic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerFiberBundleLogic* qSlicerFiberBundleIO::fiberBundleLogic()const
+vtkSlicerFiberBundleLogic* qSlicerFiberBundleReader::fiberBundleLogic()const
 {
-  Q_D(const qSlicerFiberBundleIO);
+  Q_D(const qSlicerFiberBundleReader);
   return d->FiberBundleLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFiberBundleIO::description()const
+QString qSlicerFiberBundleReader::description()const
 {
   return "FiberBundle";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerFiberBundleIO::fileType()const
+qSlicerIO::IOFileType qSlicerFiberBundleReader::fileType()const
 {
   return QString("FiberBundleFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerFiberBundleIO::extensions()const
+QStringList qSlicerFiberBundleReader::extensions()const
 {
   return QStringList("*.*");
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerFiberBundleIO::load(const IOProperties& properties)
+bool qSlicerFiberBundleReader::load(const IOProperties& properties)
 {
-  Q_D(qSlicerFiberBundleIO);
+  Q_D(qSlicerFiberBundleReader);
   Q_ASSERT(properties.contains("fileName"));
   QString fileName = properties["fileName"].toString();
 
