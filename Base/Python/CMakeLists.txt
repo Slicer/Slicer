@@ -12,7 +12,6 @@ set(Slicer_PYTHON_SCRIPTS
   mrml
   mrmlLogic
   saferef
-  remoteio
   teem
   vtkITK
   )
@@ -22,7 +21,6 @@ set(Slicer_PYTHON_MODULES_CONFIG "
 'freesurfer',
 'mrml',
 'mrmlLogic',
-'remoteio',
 'teem',
 'qMRMLWidgetsPythonQt',
 # slicer base libs
