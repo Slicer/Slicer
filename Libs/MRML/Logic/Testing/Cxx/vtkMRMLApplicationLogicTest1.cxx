@@ -24,6 +24,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// STD includes
+#include <string>
+
 //-----------------------------------------------------------------------------
 int vtkMRMLApplicationLogicTest1(int , char * [])
 {
