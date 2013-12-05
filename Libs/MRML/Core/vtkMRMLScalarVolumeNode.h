@@ -18,12 +18,6 @@
 // MRML includes
 #include "vtkMRMLVolumeNode.h"
 class vtkMRMLScalarVolumeDisplayNode;
-class vtkMRMLVolumeArchetypeStorageNode;
-
-// VTK includes
-class vtkImageData;
-class vtkImageAccumulateDiscrete;
-class vtkImageBimodalAnalysis;
 
 /// \brief MRML node for representing a volume (image stack).
 ///
@@ -103,13 +97,6 @@ protected:
   ~vtkMRMLScalarVolumeNode();
   vtkMRMLScalarVolumeNode(const vtkMRMLScalarVolumeNode&);
   void operator=(const vtkMRMLScalarVolumeNode&);
-
-  /// 
-  /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
-  vtkImageAccumulateDiscrete *Accumulate;
-  vtkImageBimodalAnalysis *Bimodal;
-
-  int CalculatingAutoLevels;
 };
 
 #endif

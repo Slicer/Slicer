@@ -23,37 +23,18 @@ Version:   $Revision: 1.14 $
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 
-// for calculating auto win/level
-#include <vtkImageAccumulateDiscrete.h>
-#include <vtkImageBimodalAnalysis.h>
-
-// STD includes
-
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLScalarVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::vtkMRMLScalarVolumeNode()
 {
-  this->Bimodal = vtkImageBimodalAnalysis::New();
-  this->Accumulate = vtkImageAccumulateDiscrete::New();
-  this->CalculatingAutoLevels = 0;
   this->SetAttribute("LabelMap", "0"); // not label by default; avoid set method in constructor
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()
 {
-  if (this->Bimodal)
-    {
-    this->Bimodal->Delete();
-    this->Bimodal = NULL;
-    }
-  if (this->Accumulate)
-    {
-    this->Accumulate->Delete();
-    this->Accumulate = NULL;
-    }
 }
 
 //----------------------------------------------------------------------------
