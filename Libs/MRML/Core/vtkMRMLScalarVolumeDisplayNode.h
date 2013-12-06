@@ -19,7 +19,7 @@
 #include "vtkMRMLVolumeDisplayNode.h"
 
 // VTK includes
-class vtkImageAccumulateDiscrete;
+class vtkImageAccumulate;
 class vtkImageAppendComponents;
 class vtkImageBimodalAnalysis;
 class vtkImageCast;
@@ -235,7 +235,7 @@ protected:
 
   /// 
   /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
-  vtkImageAccumulateDiscrete *Accumulate;
+  vtkImageAccumulate *Accumulate;
   vtkImageBimodalAnalysis *Bimodal;
   bool IsInCalculateAutoLevels;
 };

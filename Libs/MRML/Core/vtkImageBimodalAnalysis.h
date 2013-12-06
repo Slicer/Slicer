@@ -27,7 +27,7 @@
 /// \brief Analysis bimodal histograms
 ///
 /// This filter assumes the input comes
-/// from vtkImageAccumulateDiscrete, so there.
+/// from vtkImageAccumulate, so there.
 /// \warning
 /// FIXME: only works on output floating point
 /// FIXME: should use vtkTemplateMacro

@@ -96,7 +96,6 @@ endif()
 # --------------------------------------------------------------------------
 set(MRMLCore_SRCS
   vtkEventBroker.cxx
-  vtkImageAccumulateDiscrete.cxx
   vtkImageBimodalAnalysis.cxx
   vtkDataFileFormatHelper.cxx
   vtkMRMLLogic.cxx

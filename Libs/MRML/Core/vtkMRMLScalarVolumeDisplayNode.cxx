@@ -22,7 +22,7 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkImageAccumulateDiscrete.h>
+#include <vtkImageAccumulate.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageExtractComponents.h>
 #include <vtkImageBimodalAnalysis.h>
@@ -728,8 +728,14 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
       }
     if (this->Accumulate == NULL)
       {
-      this->Accumulate = vtkImageAccumulateDiscrete::New();
+      this->Accumulate = vtkImageAccumulate::New();
       }
+
+    // Setup filter to work with signed 16-bit integer.
+    int extent[6] = {0, 65535, 0, 0, 0, 0};
+    this->Accumulate->SetComponentExtent(extent);
+    double origin[3] = {-32768, 0, 0};
+    this->Accumulate->SetComponentOrigin(origin);
 
     this->Accumulate->SetInput(imageDataScalar);
     this->Bimodal->SetInput(this->Accumulate->GetOutput());
