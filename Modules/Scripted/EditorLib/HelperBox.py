@@ -106,6 +106,35 @@ class HelperBox(object):
       self.setMergeVolume( merge )
     self.select()
 
+  def checkForVolumeWarnings(self,master,merge):
+    """Verify that volumes are compatible with label calculation
+    algorithm assumptions.  Returns warning text of empty
+    string if none.
+    """
+    warnings = ""
+    if not master:
+      warnings = "Missing master volume"
+    if merge:
+      if not master.GetImageData() or not merge.GetImageData():
+        return "Missing image data"
+      if master.GetImageData().GetDimensions() != merge.GetImageData().GetDimensions():
+        warnings += "Volume dimensions do not match\n"
+      if master.GetImageData().GetSpacing() != merge.GetImageData().GetSpacing():
+        warnings += "Volume spacings do not match\n"
+      if master.GetImageData().GetOrigin() != merge.GetImageData().GetOrigin():
+        warnings += "Volume spacings do not match\n"
+      if merge.GetImageData().GetScalarType() != vtk.VTK_SHORT:
+        warnings += "Label map must be of type Short (Use Cast Scalar Volume to fix)\n"
+      masterIJKToRAS = vtk.vtkMatrix4x4()
+      mergeIJKToRAS = vtk.vtkMatrix4x4()
+      master.GetIJKToRASMatrix(masterIJKToRAS)
+      merge.GetIJKToRASMatrix(mergeIJKToRAS)
+      for row in range(4):
+        for column in range(4):
+          if masterIJKToRAS.GetElement(row,column) != mergeIJKToRAS.GetElement(row,column):
+            warnings += "Volume geometry does not match (Resample to fix)\n"
+            break
+    return warnings
 
   def select(self):
     """select master volume - load merge volume if one with the correct name exists"""
@@ -132,6 +161,10 @@ class HelperBox(object):
 
     self.mergeName.setText( mergeText )
     self.updateStructures()
+
+    warnings = self.checkForVolumeWarnings(self.master,self.merge)
+    if warnings != "":
+      self.errorDialog( "Warning: %s" % warnings )
 
     # trigger a modified event on the parameter node so that other parts of the GUI
     # (such as the EditColor) will know to update and enable themselves
