@@ -1,15 +1,14 @@
 
-superbuild_include_once()
+set(proj VTK)
 
 # Set dependency list
-set(VTK_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib")
 if (Slicer_USE_PYTHONQT)
-  list(APPEND VTK_DEPENDENCIES python)
+  list(APPEND ${proj}_DEPENDENCIES python)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(VTK)
-set(proj VTK)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(VTK_DIR CACHE)
@@ -31,7 +30,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
-  #message(STATUS "${__indent}Adding project ${proj}")
   set(VTK_WRAP_TCL OFF)
   set(VTK_WRAP_PYTHON OFF)
 
@@ -103,19 +101,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
   endif()
 
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
-
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "f387593148a8bc49cf46c1e27537674d5b779f49" CACHE STRING "VTK git tag to use" FORCE)
 
@@ -126,13 +111,13 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
-    CMAKE_GENERATOR ${gen}
     ${CUSTOM_BUILD_COMMAND}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -141,7 +126,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DVTK_USE_PARALLEL:BOOL=ON
-      -DVTK_DEBUG_LEAKS:BOOL=${Slicer_USE_VTK_DEBUG_LEAKS}
+      -DVTK_DEBUG_LEAKS:BOOL=${VTK_DEBUG_LEAKS}
       -DVTK_LEGACY_REMOVE:BOOL=ON
       -DVTK_WRAP_TCL:BOOL=${VTK_WRAP_TCL}
       #-DVTK_USE_RPATH:BOOL=ON # Unused
@@ -154,7 +139,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${VTK_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
@@ -174,10 +159,15 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
 
 else()
-  # The project is provided using VTK_DIR and VTK_SOURCE_DIR, nevertheless since other
-  # project may depend on VTK, let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${VTK_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-message(STATUS "${__${proj}_superbuild_message} - PNG_INCLUDE_DIR:${PNG_INCLUDE_DIR}")
-message(STATUS "${__${proj}_superbuild_message} - PNG_LIBRARY:${PNG_LIBRARY}")
+mark_as_superbuild(VTK_SOURCE_DIR:PATH)
+
+mark_as_superbuild(
+  VARS VTK_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )
+
+ExternalProject_Message(${proj} "PNG_INCLUDE_DIR:${PNG_INCLUDE_DIR}")
+ExternalProject_Message(${proj} "PNG_LIBRARY:${PNG_LIBRARY}")

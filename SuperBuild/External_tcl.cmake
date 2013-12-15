@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj tcl)
 
 # Set dependency list
-set(tcl_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(tcl)
-set(proj tcl)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(TCL_LIBRARY CACHE)
@@ -14,11 +13,12 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(TK_LIBRARY CACHE)
   unset(TK_INCLUDE_PATH CACHE)
   find_package(TCL 8.5 REQUIRED)
+
+  set(TCL_TK_VERSION_DOT "8.5")
+  set(TCL_TK_VERSION "85")
 endif()
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl)
-
-  #message(STATUS "${__indent}Adding project ${proj}")
+if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(tcl_SVN_REPOSITORY)
   set(tcl_SOURCE_DIR "")
@@ -48,6 +48,10 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl)
       set(tcl_SVN_REVISION -r "176")
     endif()
     set(tcl_SOURCE_DIR tcl-build)
+    mark_as_superbuild(
+      INCR_TCL_VERSION_DOT:STRING
+      INCR_TCL_VERSION:STRING
+      )
   else()
     set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
     set(tcl_SVN_REVISION -r "81")
@@ -81,6 +85,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
     SVN_REVISION ${tcl_SVN_REVISION}
     UPDATE_COMMAND "" # Disable update
@@ -90,7 +95,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl)
     BUILD_COMMAND ${tcl_BUILD_COMMAND}
     INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
     DEPENDS
-      ${tcl_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
 
   #-----------------------------------------------------------------------------
@@ -111,9 +116,18 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl)
     set(TK_LIBRARY ${tcl_build}/lib/libtk${TCL_TK_VERSION_DOT}${CMAKE_SHARED_LIBRARY_SUFFIX})
   endif()
 
+  set(Slicer_TCL_DIR ${tcl_build})
+
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${tcl_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-message(STATUS "${__${proj}_superbuild_message} - TCL_LIBRARY:${TCL_LIBRARY}")
-message(STATUS "${__${proj}_superbuild_message} - TK_LIBRARY:${TK_LIBRARY}")
+mark_as_superbuild(
+  Slicer_TCL_DIR:PATH
+  TCL_TK_VERSION_DOT:STRING
+  TCL_TK_VERSION:STRING
+  )
+
+
+ExternalProject_Message(${proj} "TCL_LIBRARY:${TCL_LIBRARY}")
+ExternalProject_Message(${proj} "TK_LIBRARY:${TK_LIBRARY}")

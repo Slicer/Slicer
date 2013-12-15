@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj SimpleITK)
 
 # Set dependency list
-set(SimpleITK_DEPENDENCIES ITKv4 Swig python)
+set(${proj}_DEPENDENCIES ITKv4 Swig python)
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(SimpleITK)
-set(proj SimpleITK)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -18,20 +17,6 @@ if(DEFINED SimpleITK_DIR AND NOT EXISTS ${SimpleITK_DIR})
 endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
 
   configure_file(SuperBuild/SimpleITK_install_step.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake
@@ -43,11 +28,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(SimpleITK_GIT_TAG 83c344feff4b085df0879fd259337740f3f38c5d) # Patched v0.7.1
 
   ExternalProject_add(SimpleITK
+    ${${proj}_EP_ARGS}
     SOURCE_DIR SimpleITK
     BINARY_DIR SimpleITK-build
     GIT_REPOSITORY ${SimpleITK_REPOSITORY}
     GIT_TAG ${SimpleITK_GIT_TAG}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -72,14 +58,18 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DWRAP_R:BOOL=OFF
       -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     #
     INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
     #
-    DEPENDS ${SimpleITK_DEPENDENCIES}
+    DEPENDS ${${proj}_DEPENDENCIES}
     )
   set(SimpleITK_DIR ${CMAKE_BINARY_DIR}/SimpleITK-build)
 
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${SimpleITK_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(
+  VARS SimpleITK_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

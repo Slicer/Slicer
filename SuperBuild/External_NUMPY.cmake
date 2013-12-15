@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj NUMPY)
 
 # Set dependency list
-set(NUMPY_DEPENDENCIES python)
+set(${proj}_DEPENDENCIES python)
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(NUMPY)
-set(proj NUMPY)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # XXX - Add a test checking if numpy is available
@@ -18,9 +17,7 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_NUMPY)
 
-  message(STATUS "${__${proj}_superbuild_message} - Building without Fortran compiler - Non-optimized code will be built !")
-
-  #message(STATUS "${__indent}Adding project ${proj}")
+  ExternalProject_Message(${proj} "${proj} - Building without Fortran compiler - Non-optimized code will be built !")
 
   set(numpy_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
   set(numpy_MD5 5c7b5349dc3161763f7f366ceb96516b)
@@ -46,6 +43,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_NUMPY)
 
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     URL ${numpy_URL}
     URL_MD5 ${numpy_MD5}
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
@@ -61,8 +59,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_NUMPY)
     -DNUMPY_SRC_DIR=${Slicer_BINARY_DIR}/NUMPY
       -P ${CMAKE_CURRENT_LIST_DIR}/${proj}_patch.cmake
     DEPENDS
-      ${NUMPY_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
+
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${NUMPY_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

@@ -1,6 +1,4 @@
 
-superbuild_include_once()
-
 set(proj Swig)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -40,10 +38,10 @@ if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     # not windows
 
     # Set dependency list
-    set(Swig_DEPENDENCIES PCRE python)
+    set(${proj}_DEPENDENCIES PCRE python)
 
     # Include dependent projects if any
-    SlicerMacroCheckExternalProjectDependency(Swig)
+    ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
     #
     # SWIG
@@ -69,7 +67,7 @@ if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       URL  http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&id=${SWIG_DOWNLOAD_SOURCE_ID}&name=swig-${SWIG_TARGET_VERSION}.tar.gz
       URL_MD5 ${SWIG_DOWNLOAD_SOURCE_HASH}
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
-      DEPENDS "${Swig_DEPENDENCIES}"
+      DEPENDS ${${proj}_DEPENDENCIES}
       )
 
     set(SWIG_DIR "${swig_install_dir}/share/swig/${SWIG_TARGET_VERSION}")

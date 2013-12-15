@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj ITKv3)
 
 # Set dependency list
-set(ITKv3_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(ITKv3)
-set(proj ITKv3)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -18,23 +17,6 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
 endif()
 
 if(NOT DEFINED ITK_DIR)
-  #message(STATUS "${__indent}Adding project ${proj}")
-
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
-
 
   set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG)
   if(CTEST_USE_LAUNCHERS)
@@ -53,12 +35,12 @@ if(NOT DEFINED ITK_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -76,15 +58,17 @@ if(NOT DEFINED ITK_DIR)
       -DITK_USE_TRANSFORM_IO_FACTORIES:BOOL=ON
       -DITK_LEGACY_REMOVE:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${ITKv3_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK,
-  # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${ITKv3_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(
+  VARS ITK_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

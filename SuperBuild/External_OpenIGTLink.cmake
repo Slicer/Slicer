@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj OpenIGTLink)
 
 # Set dependency list
-set(OpenIGTLink_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(OpenIGTLink)
-set(proj OpenIGTLink)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(OpenIGTLink_DIR CACHE)
@@ -20,21 +19,6 @@ endif()
 
 if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
-
   set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG)
   if(CTEST_USE_LAUNCHERS)
     set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG
@@ -42,12 +26,12 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLink.git"
     GIT_TAG "3ac531115f55e74265e7de7ff508312dbfb16695"
     SOURCE_DIR OpenIGTLink
     BINARY_DIR OpenIGTLink-build
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -56,14 +40,18 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${OpenIGTLink_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
 
   set(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/OpenIGTLink-build)
 
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${OpenIGTLink_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(
+  VARS OpenIGTLink_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

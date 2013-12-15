@@ -1,16 +1,14 @@
 
-superbuild_include_once()
+set(proj OpenSSL)
 
 # Set dependency list
-set(OpenSSL_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 if(UNIX)
-  set(OpenSSL_DEPENDENCIES zlib)
+  set(${proj}_DEPENDENCIES zlib)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(OpenSSL)
-set(proj OpenSSL)
-#message(STATUS "${__indent}Adding project ${proj}")
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(OPENSSL_INCLUDE_DIR CACHE)
@@ -42,6 +40,7 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
 
     #------------------------------------------------------------------------------
     ExternalProject_Add(${proj}
+      ${${proj}_EP_ARGS}
       URL ${OpenSSL_URL}
       URL_MD5 ${OpenSSL_MD5}
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
@@ -53,7 +52,7 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
       BUILD_COMMAND $(MAKE) -j1 build_libs
       INSTALL_COMMAND ""
       DEPENDS
-        ${OpenSSL_DEPENDENCIES}
+        ${${proj}_DEPENDENCIES}
       )
 
     if(APPLE)
@@ -89,6 +88,7 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
     set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
     ExternalProject_Add(${proj}
+      ${${proj}_EP_ARGS}
       URL ${OpenSSL_URL}
       URL_MD5 ${OpenSSL_MD5}
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
@@ -97,7 +97,7 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
-        ${OpenSSL_DEPENDENCIES}
+        ${${proj}_DEPENDENCIES}
       )
 
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
@@ -116,13 +116,44 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
     set(SSL_EAY_RELEASE "${EP_SOURCE_DIR}/Release/lib/ssleay32.lib")
   endif()
 
-  message(STATUS "${__${proj}_superbuild_message} - OPENSSL_LIBRARY_DIR:${OPENSSL_LIBRARY_DIR}")
-  message(STATUS "${__${proj}_superbuild_message} - OPENSSL_EXPORT_LIBRARY_DIR:${OPENSSL_EXPORT_LIBRARY_DIR}")
+  ExternalProject_Message(${proj} "OPENSSL_LIBRARY_DIR:${OPENSSL_LIBRARY_DIR}")
+  ExternalProject_Message(${proj} "OPENSSL_EXPORT_LIBRARY_DIR:${OPENSSL_EXPORT_LIBRARY_DIR}")
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${OpenSSL_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-message(STATUS "${__${proj}_superbuild_message} - OPENSSL_INCLUDE_DIR:${OPENSSL_INCLUDE_DIR}")
-message(STATUS "${__${proj}_superbuild_message} - OPENSSL_LIBRARIES:${OPENSSL_LIBRARIES}")
+mark_as_superbuild(
+  VARS OPENSSL_INCLUDE_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  CMAKE_CMD
+  )
 
-list_to_string(${ep_list_separator} "${OPENSSL_LIBRARIES}" OPENSSL_LIBRARIES)
+mark_as_superbuild(
+  VARS
+    OPENSSL_LIBRARIES:STRING
+    OPENSSL_EXPORT_LIBRARY_DIR:PATH
+  CMAKE_CMD
+  )
+
+if(UNIX)
+  mark_as_superbuild(
+    VARS
+      OPENSSL_SSL_LIBRARY:FILEPATH
+      OPENSSL_CRYPTO_LIBRARY:FILEPATH
+    LABELS "FIND_PACKAGE"
+    )
+elseif(WIN32)
+  mark_as_superbuild(
+    VARS
+      LIB_EAY_DEBUG:FILEPATH
+      LIB_EAY_RELEASE:FILEPATH
+      SSL_EAY_DEBUG:FILEPATH
+      SSL_EAY_RELEASE:FILEPATH
+    LABELS "FIND_PACKAGE"
+    )
+endif()
+
+ExternalProject_Message(${proj} "OPENSSL_INCLUDE_DIR:${OPENSSL_INCLUDE_DIR}")
+ExternalProject_Message(${proj} "OPENSSL_LIBRARIES:${OPENSSL_LIBRARIES}")
+
+list_to_string(${EP_LIST_SEPARATOR} "${OPENSSL_LIBRARIES}" OPENSSL_LIBRARIES)

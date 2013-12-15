@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj OpenIGTLinkIF)
 
 # Set dependency list
-set(OpenIGTLinkIF_DEPENDENCIES OpenIGTLink)
+set(${proj}_DEPENDENCIES OpenIGTLink)
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(OpenIGTLinkIF)
-set(proj OpenIGTLinkIF)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -18,22 +17,23 @@ if(DEFINED OpenIGTLinkIF_SOURCE_DIR AND NOT EXISTS ${OpenIGTLinkIF_SOURCE_DIR})
 endif()
 
 if(NOT DEFINED OpenIGTLinkIF_SOURCE_DIR)
-  #message(STATUS "${__indent}Adding project ${proj}")
+
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLinkIF.git"
     GIT_TAG "b73e6a31119e20ec4793a644d83fc03ab7e716d9"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    CMAKE_GENERATOR ${gen}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     DEPENDS
-      ${OpenIGTLinkIF_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
   set(OpenIGTLinkIF_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+
 else()
-  # The project is provided using OpenIGTLinkIF_SOURCE_DIR, nevertheless since other project may depend on OpenIGTLinkIF,
-  # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${OpenIGTLinkIF_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(OpenIGTLinkIF_SOURCE_DIR:PATH)

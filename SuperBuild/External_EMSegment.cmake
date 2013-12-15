@@ -1,12 +1,11 @@
 
-superbuild_include_once()
+set(proj EMSegment)
 
 # Set dependency list
-set(EMSegment_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(EMSegment)
-set(proj EMSegment)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -18,22 +17,23 @@ if(DEFINED EMSegment_SOURCE_DIR AND NOT EXISTS ${EMSegment_SOURCE_DIR})
 endif()
 
 if(NOT DEFINED EMSegment_SOURCE_DIR)
-  #message(STATUS "${__indent}Adding project ${proj}")
+
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk/Modules/EMSegment"
     SVN_REVISION -r "17040"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    CMAKE_GENERATOR ${gen}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     DEPENDS
-      ${EMSegment_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
   set(EMSegment_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+
 else()
-  # The project is provided using EMSegment_DIR, nevertheless since other project may depend on EMSegment,
-  # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${EMSegment_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(EMSegment_SOURCE_DIR:PATH)

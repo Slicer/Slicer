@@ -1,15 +1,14 @@
 
-superbuild_include_once()
+set(proj ITKv4)
 
 # Set dependency list
-set(ITKv4_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib")
 if(Slicer_BUILD_DICOM_SUPPORT)
-  list(APPEND ITKv4_DEPENDENCIES DCMTK)
+  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(ITKv4)
-set(proj ITKv4)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
@@ -22,22 +21,6 @@ if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
 endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  #message(STATUS "${__indent}Adding project ${proj}")
-
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
 
   if(NOT DEFINED git_protocol)
       set(git_protocol "git")
@@ -47,12 +30,12 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(ITKv4_GIT_TAG b95e6a0c835e1461b8192d5236604ed83114f5a8) # v4.5rc02 with one patch
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -78,15 +61,17 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${ITKv4_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  # The project is provided using ITK_DIR, nevertheless since other project may depend on ITK,
-  # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${ITKv4_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(
+  VARS ITK_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

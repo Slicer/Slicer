@@ -1,15 +1,14 @@
 
-superbuild_include_once()
+set(proj teem)
 
 # Set dependency list
-set(teem_DEPENDENCIES zlib)
+set(${proj}_DEPENDENCIES zlib)
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_teem)
-  list(APPEND teem_DEPENDENCIES VTK)
+  list(APPEND ${proj}_DEPENDENCIES VTK)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(teem)
-set(proj teem)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(Teem_DIR CACHE)
@@ -20,26 +19,11 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
-
   set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG)
   if(CTEST_USE_LAUNCHERS)
     set(CMAKE_PROJECT_INCLUDE_EXTERNAL_PROJECT_ARG
       "-DCMAKE_PROJECT_Teem_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
   endif()
-
-  #message(STATUS "${__indent}Adding project ${proj}")
 
   if(${CMAKE_VERSION} VERSION_GREATER "2.8.11.2")
     # Following CMake commit 2a7975398, the FindPNG.cmake module
@@ -59,13 +43,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(teem_MD5 efe219575adc89f6470994154d86c05b)
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     URL ${teem_URL}
     URL_MD5 ${teem_MD5}
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR teem
     BINARY_DIR teem-build
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       # Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -88,10 +72,16 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${teem_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
 
   set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
+
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${teem_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+
+mark_as_superbuild(
+  VARS Teem_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

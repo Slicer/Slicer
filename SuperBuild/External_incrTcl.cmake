@@ -1,19 +1,17 @@
 
-superbuild_include_once()
+set(proj incrTcl)
 
 # Set dependency list
-set(incrTcl_DEPENDENCIES tcl tk)
+set(${proj}_DEPENDENCIES tcl tk)
 
 if(NOT DEFINED ${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl)
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl})
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(incrTcl)
-set(proj incrTcl)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl)
-  #message(STATUS "${__indent}Adding project ${proj}")
+if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(INCR_TCL_VERSION_DOT "3.2")
   set(INCR_TCL_VERSION "32")
@@ -55,6 +53,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl)
 
   if(NOT WIN32)
     ExternalProject_Add(${proj}
+      ${${proj}_EP_ARGS}
       SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
       SVN_REVISION ${incrTcl_SVN_REVISION}
       UPDATE_COMMAND "" # Disable update
@@ -65,7 +64,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl)
       BUILD_COMMAND ${incrTcl_BUILD_COMMAND}
       INSTALL_COMMAND ${incrTcl_INSTALL_COMMAND}
       DEPENDS
-        ${incrTcl_DEPENDENCIES}
+        ${${proj}_DEPENDENCIES}
     )
 
     ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
@@ -74,7 +73,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_incrTcl)
       DEPENDERS configure
       )
   endif()
-else()
-  SlicerMacroEmptyExternalProject(${proj} "${incrTcl_DEPENDENCIES}")
-endif()
 
+  mark_as_superbuild(
+    INCR_TCL_VERSION_DOT:STRING
+    INCR_TCL_VERSION:STRING
+    )
+
+else()
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+endif()

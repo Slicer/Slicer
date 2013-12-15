@@ -1,19 +1,18 @@
 
-superbuild_include_once()
+set(proj curl)
 
 # Set dependency list
-set(curl_DEPENDENCIES zlib)
+set(${proj}_DEPENDENCIES zlib)
 if(CURL_ENABLE_SSL)
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_curl)
-    list(APPEND curl_DEPENDENCIES OpenSSL)
+  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+    list(APPEND ${proj}_DEPENDENCIES OpenSSL)
   else()
     # XXX - Add a test checking if system curl support OpenSSL
   endif()
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(curl)
-set(proj curl)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(CURL_INCLUDE_DIR CACHE)
@@ -24,43 +23,25 @@ endif()
 if((NOT DEFINED CURL_INCLUDE_DIRS
    OR NOT DEFINED CURL_LIBRARIES) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS CMAKE_ARGS)
 
   if(CURL_ENABLE_SSL)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_USE_OPENSSL:BOOL=ON
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
       -DOPENSSL_INCLUDE_DIR:PATH=${OPENSSL_INCLUDE_DIR}
       )
     if(UNIX)
-      list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
         -DOPENSSL_SSL_LIBRARY:STRING=${OPENSSL_SSL_LIBRARY}
         -DOPENSSL_CRYPTO_LIBRARY:STRING=${OPENSSL_CRYPTO_LIBRARY}
         )
     elseif(WIN32)
-      list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
         -DLIB_EAY_DEBUG:FILEPATH=${LIB_EAY_DEBUG}
         -DLIB_EAY_RELEASE:FILEPATH=${LIB_EAY_RELEASE}
         -DSSL_EAY_DEBUG:FILEPATH=${SSL_EAY_DEBUG}
         -DSSL_EAY_RELEASE:FILEPATH=${SSL_EAY_RELEASE}
         )
     endif()
-  else()
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_USE_OPENSSL:BOOL=OFF
-      )
   endif()
 
   set(${proj}_CMAKE_C_FLAGS ${ep_common_c_flags})
@@ -72,12 +53,12 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
   set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/curl.git"
     GIT_TAG "c2bc1187192ea9565f16db6382abc574114af193"
     SOURCE_DIR curl
     BINARY_DIR ${EP_BUILD_DIR}
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
     #Not needed -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     #Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -99,9 +80,10 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
       -DCURL_DISABLE_FILE:BOOL=ON
       -DCURL_DISABLE_TFTP:BOOL=ON
       -DHAVE_LIBIDN:BOOL=FALSE
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+      -DCMAKE_USE_OPENSSL:BOOL=${CURL_ENABLE_SSL}
+    ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     DEPENDS
-      ${curl_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
 
   if(UNIX)
@@ -119,8 +101,15 @@ if((NOT DEFINED CURL_INCLUDE_DIRS
   set(CURL_LIBRARY "${EP_INSTALL_DIR}/lib/libcurl${curl_IMPORT_SUFFIX}")
 
 else()
-  SlicerMacroEmptyExternalProject(${proj} "${curl_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-message(STATUS "${__${proj}_superbuild_message} - CURL_INCLUDE_DIR:${CURL_INCLUDE_DIR}")
-message(STATUS "${__${proj}_superbuild_message} - CURL_LIBRARY:${CURL_LIBRARY}")
+mark_as_superbuild(
+  VARS
+    CURL_INCLUDE_DIR:PATH
+    CURL_LIBRARY:FILEPATH
+  LABELS "FIND_PACKAGE"
+  )
+
+ExternalProject_Message(${proj} "CURL_INCLUDE_DIR:${CURL_INCLUDE_DIR}")
+ExternalProject_Message(${proj} "CURL_LIBRARY:${CURL_LIBRARY}")

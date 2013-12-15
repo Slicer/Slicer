@@ -1,25 +1,24 @@
 
-superbuild_include_once()
+set(proj python)
 
 # Set dependency list
-set(python_DEPENDENCIES zlib)
+set(${proj}_DEPENDENCIES zlib)
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_python)
-  list(APPEND python_DEPENDENCIES CTKAPPLAUNCHER)
+  list(APPEND ${proj}_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
-    list(APPEND python_DEPENDENCIES tcl)
+    list(APPEND ${proj}_DEPENDENCIES tcl)
   else()
-    list(APPEND python_DEPENDENCIES tcl tk)
+    list(APPEND ${proj}_DEPENDENCIES tcl tk)
   endif()
 endif()
 if(PYTHON_ENABLE_SSL)
-  list(APPEND python_DEPENDENCIES OpenSSL)
+  list(APPEND ${proj}_DEPENDENCIES OpenSSL)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(python)
-set(proj python)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(PYTHON_INCLUDE_DIR CACHE)
@@ -35,7 +34,6 @@ endif()
 if((NOT DEFINED PYTHON_INCLUDE_DIRS
    OR NOT DEFINED PYTHON_LIBRARIES
    OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  #message(STATUS "${__indent}Adding project ${proj}")
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.3")
 
@@ -49,43 +47,25 @@ if((NOT DEFINED PYTHON_INCLUDE_DIRS
     INSTALL_COMMAND ""
     )
 
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
-
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
 
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS CMAKE_ARGS)
+
   if(Slicer_USE_PYTHONQT_WITH_TCL)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DENABLE_TKINTER:BOOL=ON
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
       -DTCL_LIBRARY:FILEPATH=${TCL_LIBRARY}
       -DTCL_INCLUDE_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/tcl-build/include
       -DTK_LIBRARY:FILEPATH=${TK_LIBRARY}
       -DTK_INCLUDE_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/tcl-build/include
       )
-  else()
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DENABLE_TKINTER:BOOL=OFF
-      )
   endif()
 
   if(PYTHON_ENABLE_SSL)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DENABLE_SSL:BOOL=ON
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
       -DOPENSSL_INCLUDE_DIR:PATH=${OPENSSL_INCLUDE_DIR}
       -DOPENSSL_LIBRARIES:STRING=${OPENSSL_LIBRARIES}
-      )
-  else()
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DENABLE_SSL:BOOL=OFF
       )
   endif()
 
@@ -94,28 +74,28 @@ if((NOT DEFINED PYTHON_INCLUDE_DIRS
   set(CMAKE_CFG_INTDIR "Release")
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/davidsansome/python-cmake-buildsystem.git"
     GIT_TAG "892c95b5024a52ebd47a12292ff74ec7d713db24"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    LIST_SEPARATOR ${ep_list_separator}
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
-      #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       #-DBUILD_TESTING:BOOL=OFF
       -DBUILD_SHARED:BOOL=ON
       -DBUILD_STATIC:BOOL=OFF
       -DUSE_SYSTEM_LIBRARIES:BOOL=OFF
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+      -DENABLE_TKINTER:BOOL=${Slicer_USE_PYTHONQT_WITH_TCL}
+      -DENABLE_SSL:BOOL=${PYTHON_ENABLE_SSL}
+    ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
     DEPENDS
-      python-source ${python_DEPENDENCIES}
+      python-source ${${proj}_DEPENDENCIES}
     )
   set(python_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
@@ -172,11 +152,23 @@ if((NOT DEFINED PYTHON_INCLUDE_DIRS
   set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
 
 else()
-  # The project is provided using python_DIR, nevertheless since other project may depend on python,
-  # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${python_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
-message(STATUS "${__${proj}_superbuild_message} - PYTHON_INCLUDE_DIR:${PYTHON_INCLUDE_DIR}")
-message(STATUS "${__${proj}_superbuild_message} - PYTHON_LIBRARY:${PYTHON_LIBRARY}")
-message(STATUS "${__${proj}_superbuild_message} - PYTHON_EXECUTABLE:${PYTHON_EXECUTABLE}")
+mark_as_superbuild(
+  VARS
+    PYTHON_EXECUTABLE:FILEPATH
+    PYTHON_INCLUDE_DIR:PATH
+    PYTHON_LIBRARY:FILEPATH
+  LABELS "FIND_PACKAGE"
+  )
+
+ExternalProject_Message(${proj} "PYTHON_EXECUTABLE:${PYTHON_EXECUTABLE}")
+ExternalProject_Message(${proj} "PYTHON_INCLUDE_DIR:${PYTHON_INCLUDE_DIR}")
+ExternalProject_Message(${proj} "PYTHON_LIBRARY:${PYTHON_LIBRARY}")
+
+if(WIN32)
+  set(PYTHON_DEBUG_LIBRARY ${PYTHON_LIBRARY})
+  mark_as_superbuild(VARS PYTHON_DEBUG_LIBRARY LABELS "FIND_PACKAGE")
+  ExternalProject_Message(${proj} "PYTHON_DEBUG_LIBRARY:${PYTHON_DEBUG_LIBRARY}")
+endif()

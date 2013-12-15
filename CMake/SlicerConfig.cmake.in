@@ -330,103 +330,13 @@ macro(slicer_config_set_ep var value)
   endif()
 endmacro()
 
-# For sake of simplification, the macro 'slicer_config_set_ep' is not invoked conditionally, if
-# the configured 'value' parameter is an empty string, the macro 'slicer_config_set_ep' is a no-op.
-
-slicer_config_set_ep(
-  QT_QMAKE_EXECUTABLE
-  "@QT_QMAKE_EXECUTABLE_CONFIG@"
-  )
-
-slicer_config_set_ep(
-  BatchMake_DIR
-  "@BatchMake_DIR_CONFIG@"
-  CACHE PATH "Path to BatchMake build or install directory" FORCE)
-
-slicer_config_set_ep(
-  DCMTK_DIR
-  "@DCMTK_DIR_CONFIG@"
-  CACHE PATH "Path to DCMTK build or install directory" FORCE)
-
-slicer_config_set_ep(
-  CTK_DIR
-  "@CTK_DIR_CONFIG@"
-  CACHE PATH "Path to CTK build or install directory" FORCE)
-
-slicer_config_set_ep(
-  QtTesting_DIR
-  "@QtTesting_DIR_CONFIG@"
-  CACHE PATH "Path to QtTesting build or install directory" FORCE)
-
-slicer_config_set_ep(
-  ITK_DIR
-  "@ITK_DIR_CONFIG@"
-  CACHE PATH "Path to ITK build or install directory" FORCE)
-
-slicer_config_set_ep(
-  SimpleITK_DIR
-  "@SimpleITK_DIR_CONFIG@"
-  CACHE PATH "Path to SimpleITK build or install directory" FORCE)
-
-slicer_config_set_ep(
-  OpenIGTLink_DIR
-  "@OpenIGTLink_DIR_CONFIG@"
-  CACHE PATH "Path to OpenIGTLink build or install directory" FORCE)
-
-slicer_config_set_ep(
-  PYTHON_EXECUTABLE
-  "@PYTHON_EXECUTABLE_CONFIG@"
-  CACHE PATH "Path to Python executable" FORCE)
-
-slicer_config_set_ep(
-  PYTHON_INCLUDE_DIR
-  "@PYTHON_INCLUDE_DIR_CONFIG@"
-  CACHE PATH "Path to Python include directory" FORCE)
-
-slicer_config_set_ep(
-  PYTHON_LIBRARY
-  "@PYTHON_LIBRARY_CONFIG@"
-  CACHE FILEPATH "Path to Python library" FORCE)
-
-slicer_config_set_ep(
-  PYTHON_DEBUG_LIBRARY
-  "@PYTHON_DEBUG_LIBRARY_CONFIG@"
-  CACHE FILEPATH "Path to Python debug library" FORCE)
-
-slicer_config_set_ep(
-  qRestAPI_DIR
-  "@qRestAPI_DIR_CONFIG@"
-  CACHE PATH "Path to qRestAPI build or install directory" FORCE)
-
-slicer_config_set_ep(
-  CURL_INCLUDE_DIR
-  "@CURL_INCLUDE_DIR_CONFIG@"
-  CACHE PATH "Path to CURL include directory" FORCE)
-
-slicer_config_set_ep(
-  CURL_LIBRARY
-  "@CURL_LIBRARY_CONFIG@"
-  CACHE PATH "Path to CURL library" FORCE)
-
 # SlicerExecutionModel settings
 set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX "@SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG@")
 set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES "@SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG@")
 set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "@SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG@")
 
-slicer_config_set_ep(
-  SlicerExecutionModel_DIR
-  "@SlicerExecutionModel_DIR_CONFIG@"
-  CACHE PATH "Path to SlicerExecutionModel build or install directory" FORCE)
-
-slicer_config_set_ep(
-  Teem_DIR
-  "@Teem_DIR_CONFIG@"
-  CACHE PATH "Path to Teem build or install directory")
-
-slicer_config_set_ep(
-  VTK_DIR
-  "@VTK_DIR_CONFIG@"
-  CACHE PATH "Path to VTK build or install directory")
+# Slicer external projects variables
+@Slicer_SUPERBUILD_EP_VARS_CONFIG@
 
 # --------------------------------------------------------------------------
 # Consistent Compiler Selections

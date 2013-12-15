@@ -1,22 +1,19 @@
 
-superbuild_include_once()
-
 if(NOT WIN32)
 
+  set(proj tk)
+
   # Set dependency list
-  set(tk_DEPENDENCIES tcl)
+  set(${proj}_DEPENDENCIES tcl)
 
   if(NOT DEFINED ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk)
     set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_tcl})
   endif()
 
   # Include dependent projects if any
-  SlicerMacroCheckExternalProjectDependency(tk)
-  set(proj tk)
+  ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
   if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk)
-
-    #message(STATUS "${__indent}Adding project ${proj}")
 
     set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
     set(tk_SVN_REVISION -r "114")
@@ -56,6 +53,7 @@ if(NOT WIN32)
     set(tk_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake)
 
     ExternalProject_Add(${proj}
+      ${${proj}_EP_ARGS}
       SVN_REPOSITORY ${tk_SVN_REPOSITORY}
       SVN_REVISION ${tk_SVN_REVISION}
       UPDATE_COMMAND "" # Disable update
@@ -65,7 +63,7 @@ if(NOT WIN32)
       BUILD_COMMAND ${tk_BUILD_COMMAND}
       INSTALL_COMMAND ${tk_INSTALL_COMMAND}
       DEPENDS
-        ${tk_DEPENDENCIES}
+        ${${proj}_DEPENDENCIES}
       )
 
     ExternalProject_Add_Step(${proj} Install_default.h
@@ -92,8 +90,9 @@ if(NOT WIN32)
         DEPENDEES install
         )
     endif()
+
   else()
-    SlicerMacroEmptyExternalProject(${proj} "${tk_DEPENDENCIES}")
+    ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
   endif()
 endif()
 

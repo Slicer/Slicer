@@ -1,15 +1,14 @@
 
-superbuild_include_once()
+set(proj LibArchive)
 
 # Set dependency list
-set(LibArchive_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib")
 if(WIN32)
-  list(APPEND LibArchive_DEPENDENCIES zlib)
+  list(APPEND ${proj}_DEPENDENCIES zlib)
 endif()
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(LibArchive)
-set(proj LibArchive)
+ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} AND (WIN32 OR APPLE))
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -26,7 +25,7 @@ if(DEFINED LibArchive_DIR AND NOT EXISTS ${LibArchive_DIR})
 endif()
 
 if(NOT DEFINED LibArchive_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  #message(STATUS "unset(DCMTK_DIR CACHE)${__indent}Adding project ${proj}")
+
   #
   # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git
   #         for all platforms.  For notes on cross-platform issues with earlier versions
@@ -40,31 +39,18 @@ if(NOT DEFINED LibArchive_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     -DENABLE_OPENSSL:BOOL=OFF
     )
 
-  # Set CMake OSX variable to pass down the external project
-  if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-  endif()
-
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-      -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
-  endif()
-
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/libarchive/libarchive.git"
     GIT_TAG "v3.0.4"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR LibArchive-install
-    CMAKE_GENERATOR ${gen}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
     # Not used -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     # Not used -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -87,7 +73,7 @@ if(NOT DEFINED LibArchive_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     DEPENDS
-      ${LibArchive_DEPENDENCIES}
+      ${${proj}_DEPENDENCIES}
     )
 
   if(APPLE)
@@ -107,12 +93,19 @@ if(NOT DEFINED LibArchive_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
 else()
-  # The project is provided using LibArchive_DIR, nevertheless since other project may depend on LibArchive,
-  # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${LibArchive_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
+mark_as_superbuild(LibArchive_DIR:PATH)
+
+mark_as_superbuild(
+  VARS
+    LibArchive_INCLUDE_DIR:PATH
+    LibArchive_LIBRARY:FILEPATH
+  LABELS "FIND_PACKAGE"
+  )
+
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  message(STATUS "${__${proj}_superbuild_message} - LibArchive_INCLUDE_DIR:${LibArchive_INCLUDE_DIR}")
-  message(STATUS "${__${proj}_superbuild_message} - LibArchive_LIBRARY:${LibArchive_LIBRARY}")
+  ExternalProject_Message(${proj} "LibArchive_INCLUDE_DIR:${LibArchive_INCLUDE_DIR}")
+  ExternalProject_Message(${proj} "LibArchive_LIBRARY:${LibArchive_LIBRARY}")
 endif()

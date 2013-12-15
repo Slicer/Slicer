@@ -1,18 +1,18 @@
 
-superbuild_include_once()
-
 if(Slicer_USE_CTKAPPLAUNCHER)
+
+  set(proj CTKAPPLAUNCHER)
+
   # Sanity checks
   if(DEFINED CTKAPPLAUNCHER_DIR AND NOT EXISTS ${CTKAPPLAUNCHER_DIR})
     message(FATAL_ERROR "CTKAPPLAUNCHER_DIR variable is defined but corresponds to non-existing directory")
   endif()
 
   # Set dependency list
-  set(CTKAPPLAUNCHER_DEPENDENCIES "")
+  set(${proj}_DEPENDENCIES "")
 
   # Include dependent projects if any
-  SlicerMacroCheckExternalProjectDependency(CTKAPPLAUNCHER)
-  set(proj CTKAPPLAUNCHER)
+  ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
   if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -34,8 +34,9 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       set(md5 "0af14c017ff7953b6fcca76f4f88c952")
       set(item_id "4164")
     endif()
-    #message(STATUS "${__indent}Adding project ${proj}")
+
     ExternalProject_Add(${proj}
+      ${${proj}_EP_ARGS}
       URL http://packages.kitware.com/api/rest?method=midas.item.download&id=${item_id}&dummy=CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
       URL_MD5 ${md5}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -43,13 +44,14 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
-        ${CTKAPPLAUNCHER_DEPENDENCIES}
+        ${${proj}_DEPENDENCIES}
       )
     set(CTKAPPLAUNCHER_DIR ${CMAKE_BINARY_DIR}/${proj})
+
   else()
-    # The project is provided using CTKAPPLAUNCHER_DIR, nevertheless since other
-    # project may depend on CTKAPPLAUNCHER, let's add an 'empty' one
-    SlicerMacroEmptyExternalProject(${proj} "${CTKAPPLAUNCHER_DEPENDENCIES}")
+    ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
   endif()
+
+  mark_as_superbuild(CTKAPPLAUNCHER_DIR:PATH)
 
 endif()
