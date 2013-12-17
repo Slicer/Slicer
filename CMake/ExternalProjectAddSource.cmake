@@ -45,7 +45,7 @@
 #!
 function(ExternalProject_Add_Source projectname)
   set(options)
-  set(_ep_one_args BINARY_DIR DOWNLOAD_DIR GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
+  set(_ep_one_args BINARY_DIR DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
   set(oneValueArgs ${_ep_one_args} SOURCE_DIR_VAR)
   set(_ep_multi_args SVN_REVISION)
   set(multiValueArgs ${_ep_multi_args} LABELS PROJECTS)
@@ -118,7 +118,7 @@ endfunction()
 macro(Slicer_Remote_Add projectname)
   set(options)
   set(_add_source_args
-    BINARY_DIR DOWNLOAD_DIR GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
+    BINARY_DIR DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
   set(oneValueArgs OPTION_NAME OPTION_DEFAULT OPTION_FORCE SOURCE_DIR_VAR ${_add_source_args})
   set(_add_source_multi_args SVN_REVISION LABELS PROJECTS)
   set(multiValueArgs OPTION_DEPENDS ${_add_source_multi_args})
