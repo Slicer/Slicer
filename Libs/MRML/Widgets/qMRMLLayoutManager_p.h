@@ -21,6 +21,17 @@
 #ifndef __qMRMLLayoutManager_p_h
 #define __qMRMLLayoutManager_p_h
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Slicer API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 /// Qt includes
 #include <QHash>
 #include <QObject>
