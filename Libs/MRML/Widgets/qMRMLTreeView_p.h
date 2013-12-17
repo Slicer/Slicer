@@ -48,7 +48,7 @@ class qMRMLSortFilterProxyModel;
 class vtkCollection;
 
 //------------------------------------------------------------------------------
-class qMRMLTreeViewPrivate
+class QMRML_WIDGETS_EXPORT qMRMLTreeViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLTreeView);
 protected:
