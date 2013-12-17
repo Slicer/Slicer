@@ -140,15 +140,6 @@ if((NOT DEFINED PYTHON_INCLUDE_DIRS
 
   endif()
 
-  # Since fixup_bundle expects the library to be writable, let's add an extra step
-  # to make sure it's the case.
-  if(APPLE)
-    ExternalProject_Add_Step(${proj} python_install_chmod_library
-      COMMAND chmod u+xw ${PYTHON_LIBRARY}
-      DEPENDEES install
-      )
-  endif()
-
   set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
 
 else()
