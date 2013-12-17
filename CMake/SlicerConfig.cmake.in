@@ -186,6 +186,18 @@ set(MRML_LIBRARIES @MRML_LIBRARIES@)
 # Slicer Libs VTK wrapped libraries
 set(Slicer_Libs_VTK_WRAPPED_LIBRARIES "@Slicer_Libs_VTK_WRAPPED_LIBRARIES@")
 
+# Slicer include directories for module
+@Slicer_INCLUDE_MODULE_DIRS_CONFIG@
+
+# Slicer include directories for module logic
+@Slicer_INCLUDE_MODULE_LOGIC_DIRS_CONFIG@
+
+# Slicer include directories for module mrml
+@Slicer_INCLUDE_MODULE_MRML_DIRS_CONFIG@
+
+# Slicer include directories for module Widget
+@Slicer_INCLUDE_MODULE_WIDGET_DIRS_CONFIG@
+
 # Slicer Libs include file directories.
 set(Slicer_Libs_INCLUDE_DIRS "@Slicer_Libs_INCLUDE_DIRS_CONFIG@")
 
@@ -212,6 +224,9 @@ set(ITKFactoryRegistration_INCLUDE_DIRS "@ITKFactoryRegistration_INCLUDE_DIRS_CO
 
 set(MRMLCore_INCLUDE_DIRS "@MRMLCore_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "MRMLCore includes" FORCE)
+
+set(MRMLLogic_INCLUDE_DIRS "@MRMLLogic_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "MRMLLogic includes" FORCE)
 
 set(RemoteIO_INCLUDE_DIRS "@RemoteIO_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "RemoteIO includes" FORCE)

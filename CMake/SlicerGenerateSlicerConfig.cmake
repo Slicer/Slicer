@@ -45,15 +45,64 @@ set(Slicer_EXTENSION_CPACK_BUNDLE_FIXUP_CONFIG ${Slicer_SOURCE_DIR}/CMake/Slicer
 set(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})
 set(Slicer_CORE_LIBRARY_CONFIG ${Slicer_CORE_LIBRARY})
 
+get_property(_module_targets GLOBAL PROPERTY SLICER_MODULE_TARGETS)
+if(_module_targets)
+  foreach(target ${_module_targets})
+    set(Slicer_INCLUDE_MODULE_DIRS_CONFIG
+"${Slicer_INCLUDE_MODULE_DIRS_CONFIG}
+set(${target}_INCLUDE_DIRS
+  \"${${target}_SOURCE_DIR}\"
+  \"${${target}_BINARY_DIR}\")"
+)
+  endforeach()
+endif()
+
+get_property(_module_logic_targets GLOBAL PROPERTY SLICER_MODULE_LOGIC_TARGETS)
+if(_module_logic_targets)
+  foreach(target ${_module_logic_targets})
+    set(Slicer_INCLUDE_MODULE_LOGIC_DIRS_CONFIG
+"${Slicer_INCLUDE_MODULE_LOGIC_DIRS_CONFIG}
+set(${target}_INCLUDE_DIRS
+  \"${${target}_SOURCE_DIR}\"
+  \"${${target}_BINARY_DIR}\")"
+)
+    list(APPEND Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG "\${${target}_INCLUDE_DIRS}")
+  endforeach()
+endif()
+
+get_property(_module_mrml_targets GLOBAL PROPERTY SLICER_MODULE_MRML_TARGETS)
+if(_module_mrml_targets)
+  foreach(target ${_module_mrml_targets})
+    set(Slicer_INCLUDE_MODULE_MRML_DIRS_CONFIG
+"${Slicer_INCLUDE_MODULE_MRML_DIRS_CONFIG}
+set(${target}_INCLUDE_DIRS
+  \"${${target}_SOURCE_DIR}\"
+  \"${${target}_BINARY_DIR}\")"
+)
+    list(APPEND Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG "\${${target}_INCLUDE_DIRS}")
+  endforeach()
+endif()
+
+get_property(_module_widget_targets GLOBAL PROPERTY SLICER_MODULE_WIDGET_TARGETS)
+if(_module_widget_targets)
+  foreach(target ${_module_widget_targets})
+    set(Slicer_INCLUDE_MODULE_WIDGET_DIRS_CONFIG
+"${Slicer_INCLUDE_MODULE_WIDGET_DIRS_CONFIG}
+set(${target}_INCLUDE_DIRS
+  \"${${target}_SOURCE_DIR}\"
+  \"${${target}_BINARY_DIR}\")"
+)
+    list(APPEND Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG "\${${target}_INCLUDE_DIRS}")
+  endforeach()
+endif()
+
 set(Slicer_Libs_INCLUDE_DIRS_CONFIG ${Slicer_Libs_INCLUDE_DIRS})
 set(Slicer_Base_INCLUDE_DIRS_CONFIG ${Slicer_Base_INCLUDE_DIRS})
-set(Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG ${Slicer_ModuleLogic_INCLUDE_DIRS})
-set(Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG ${Slicer_ModuleMRML_INCLUDE_DIRS})
-set(Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG ${Slicer_ModuleWidgets_INCLUDE_DIRS})
 
 set(FreeSurfer_INCLUDE_DIRS_CONFIG ${FreeSurfer_INCLUDE_DIRS})
 set(ITKFactoryRegistration_INCLUDE_DIRS_CONFIG ${ITKFactoryRegistration_INCLUDE_DIRS})
 set(MRMLCore_INCLUDE_DIRS_CONFIG ${MRMLCore_INCLUDE_DIRS})
+set(MRMLLogic_INCLUDE_DIRS_CONFIG ${MRMLLogic_INCLUDE_DIRS})
 set(RemoteIO_INCLUDE_DIRS_CONFIG ${RemoteIO_INCLUDE_DIRS})
 set(vtkTeem_INCLUDE_DIRS_CONFIG ${vtkTeem_INCLUDE_DIRS})
 set(vtkITK_INCLUDE_DIRS_CONFIG ${vtkITK_INCLUDE_DIRS})

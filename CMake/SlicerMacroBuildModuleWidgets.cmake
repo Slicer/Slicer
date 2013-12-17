@@ -84,6 +84,8 @@ macro(SlicerMacroBuildModuleWidgets)
     ${MODULEWIDGETS_NO_INSTALL_OPTION}
     )
 
+  set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_WIDGET_TARGETS ${MODULEWIDGETS_NAME})
+
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleWidgets_INCLUDE_DIRS
   #-----------------------------------------------------------------------------

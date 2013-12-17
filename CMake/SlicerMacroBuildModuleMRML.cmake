@@ -66,6 +66,8 @@ macro(SlicerMacroBuildModuleMRML)
     ${MODULEMRML_NO_INSTALL_OPTION}
     )
 
+  set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_MRML_TARGETS ${MODULEMRML_NAME})
+
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleMRML_INCLUDE_DIRS
   #-----------------------------------------------------------------------------

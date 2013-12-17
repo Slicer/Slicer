@@ -90,6 +90,8 @@ macro(SlicerMacroBuildModuleLogic)
     ${MODULELOGIC_NO_INSTALL_OPTION}
     )
 
+  set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_LOGIC_TARGETS ${MODULELOGIC_NAME})
+
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleLogic_INCLUDE_DIRS
   #-----------------------------------------------------------------------------

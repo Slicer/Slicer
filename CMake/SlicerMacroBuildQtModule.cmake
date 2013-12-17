@@ -87,9 +87,19 @@ macro(slicerMacroBuildLoadableModule)
   # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
+
+  if(NOT DEFINED ${lib_name}_SOURCE_DIR)
+    set(${lib_name}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "" FORCE)
+  endif()
+
+  if(NOT DEFINED ${lib_name}_BINARY_DIR)
+    set(${lib_name}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
+  endif()
+
+  set(${lib_name}_INCLUDE_DIRS ${${lib_name}_SOURCE_DIR} ${${lib_name}_BINARY_DIR} CACHE INTERNAL "" FORCE)
+
   include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
+    ${${lib_name}_INCLUDE_DIRS}
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}
     ${Slicer_ModuleLogic_INCLUDE_DIRS}
@@ -183,6 +193,8 @@ macro(slicerMacroBuildLoadableModule)
   if(Slicer_LIBRARY_PROPERTIES)
     set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
   endif()
+
+  set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_TARGETS ${lib_name})
 
   # --------------------------------------------------------------------------
   # Install library
