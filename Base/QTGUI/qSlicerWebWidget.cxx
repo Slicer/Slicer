@@ -218,7 +218,6 @@ void qSlicerWebWidget::onLinkClicked(const QUrl& url)
 }
 
 // --------------------------------------------------------------------------
-#ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
 void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
                                        const QList<QSslError> &errors)
 {
@@ -228,7 +227,6 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
              << qPrintable(e.errorString());
     }
 }
-#endif
 
 // --------------------------------------------------------------------------
 bool qSlicerWebWidget::eventFilter(QObject* obj, QEvent* event)
