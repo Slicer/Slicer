@@ -53,9 +53,13 @@
 
 // STD includes
 #include <algorithm>
-#ifdef linux
+
+#ifdef ITK_USE_PTHREADS
 # include <unistd.h>
+# include <sys/time.h>
+# include <sys/resource.h>
 #endif
+
 #include <queue>
 
 //----------------------------------------------------------------------------
@@ -398,7 +402,13 @@ vtkSlicerApplicationLogic
 
 #ifdef ITK_USE_PTHREADS
   // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  int ret = nice(20);
+  int which = PRIO_PROCESS;
+  id_t pid;
+  int priority = 20;
+  int ret;
+
+  pid = getpid();
+  ret = setpriority(which, pid, priority);
   ret = ret; // dummy code to use the return value and avoid a compiler warning
 #endif
 
@@ -474,7 +484,13 @@ vtkSlicerApplicationLogic
 
 #ifdef ITK_USE_PTHREADS
   // Adjust the priority of all PROCESS level threads.  Not a perfect solution.
-  int ret = nice(20);
+  int which = PRIO_PROCESS;
+  id_t pid;
+  int priority = 20;
+  int ret;
+
+  pid = getpid();
+  ret = setpriority(which, pid, priority);
   ret = ret; // dummy code to use the return value and avoid a compiler warning
 #endif
 
