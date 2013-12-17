@@ -85,16 +85,12 @@ mark_as_superbuild(
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES curl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
+set(Slicer_DEPENDENCIES curl teem VTK ${ITK_EXTERNAL_NAME} CTK LibArchive)
 
 set(CURL_ENABLE_SSL ${Slicer_USE_PYTHONQT_WITH_OPENSSL})
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
-endif()
-
-if(Slicer_BUILD_OpenIGTLinkIF)
-  list(APPEND Slicer_DEPENDENCIES OpenIGTLinkIF)
 endif()
 
 if(Slicer_USE_SimpleITK)
@@ -103,14 +99,6 @@ endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES SlicerExecutionModel)
-endif()
-
-if(Slicer_BUILD_BRAINSTOOLS)
-    list(APPEND Slicer_DEPENDENCIES BRAINSTools)
-endif()
-
-if(Slicer_BUILD_EMSegment)
-  list(APPEND Slicer_DEPENDENCIES EMSegment)
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -142,23 +130,87 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
   list(APPEND Slicer_DEPENDENCIES incrTcl)
 endif()
 
-if(Slicer_BUILD_MultiVolumeExplorer)
-  list(APPEND Slicer_DEPENDENCIES MultiVolumeExplorer)
-endif()
-
-if(Slicer_BUILD_MultiVolumeImporter)
-  list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
-endif()
-
-if(Slicer_BUILD_SimpleFilters)
-  list(APPEND Slicer_DEPENDENCIES SimpleFilters)
-endif()
-
 if(DEFINED Slicer_ADDITIONAL_DEPENDENCIES)
   list(APPEND Slicer_DEPENDENCIES ${Slicer_ADDITIONAL_DEPENDENCIES})
 endif()
 
 mark_as_superbuild(Slicer_DEPENDENCIES:STRING)
+
+#------------------------------------------------------------------------------
+# Include remote modules
+#------------------------------------------------------------------------------
+include(ExternalProjectAddSource)
+
+macro(list_conditional_append cond list)
+  if(${cond})
+    list(APPEND ${list} ${ARGN})
+  endif()
+endmacro()
+
+Slicer_Remote_Add(jqPlot
+  URL http://slicer.kitware.com/midas3/download?items=15065&dummy=jquery.jqplot.1.0.4r1120.tar.gz
+  URL_MD5 5c5d73730145c3963f09e1d3ca355580
+  SOURCE_DIR_VAR jqPlot_DIR
+  LABELS FIND_PACKAGE
+  )
+list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
+
+Slicer_Remote_Add(OpenIGTLinkIF
+  GIT_REPOSITORY ${git_protocol}://github.com/openigtlink/OpenIGTLinkIF.git
+  GIT_TAG b73e6a31119e20ec4793a644d83fc03ab7e716d9
+  OPTION_NAME Slicer_BUILD_OpenIGTLinkIF
+  OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_OpenIGTLink"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_OpenIGTLinkIF Slicer_REMOTE_DEPENDENCIES OpenIGTLinkIF)
+
+option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
+mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+
+Slicer_Remote_Add(MultiVolumeExplorer
+  GIT_REPOSITORY ${git_protocol}://github.com/fedorov/MultiVolumeExplorer.git
+  GIT_TAG 8e1ad5f885a32a05c34b1699f945239cdba099b5
+  OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
+  OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_MultiVolumeExplorer Slicer_REMOTE_DEPENDENCIES MultiVolumeExplorer)
+
+Slicer_Remote_Add(MultiVolumeImporter
+  GIT_REPOSITORY ${git_protocol}://github.com/fedorov/MultiVolumeImporter.git
+  GIT_TAG 3ec521645718353226357c2cc8457f5535f1ef38
+  OPTION_NAME Slicer_BUILD_MultiVolumeImporter
+  OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENCIES MultiVolumeImporter)
+
+Slicer_Remote_Add(SimpleFilters
+  GIT_REPOSITORY ${git_protocol}://github.com/SimpleITK/SlicerSimpleFilters.git
+  GIT_TAG fc1f06ce52aec9272f928f3d1e0fa59b1a1c8bd6
+  OPTION_NAME Slicer_BUILD_SimpleFilters
+  OPTION_DEPENDS "Slicer_BUILD_QTSCRIPTEDMODULES;Slicer_USE_SimpleITK"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_SimpleFilters Slicer_REMOTE_DEPENDENCIES SimpleFilters)
+
+Slicer_Remote_Add(BRAINSTools
+  GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git"
+  GIT_TAG "bd755e2d82b7b8b8454fcb579d416e39b16dff80"
+  OPTION_NAME Slicer_BUILD_BRAINSTOOLS
+  OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
+  #LABELS REMOTE_MODULE # Do not specify label, source directory will be explictly added.
+  )
+list_conditional_append(Slicer_BUILD_BRAINSTOOLS Slicer_REMOTE_DEPENDENCIES BRAINSTools)
+
+Slicer_Remote_Add(EMSegment
+  SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk/Modules/EMSegment"
+  SVN_REVISION -r "17040"
+  OPTION_NAME Slicer_BUILD_EMSegment
+  OPTION_DEPENDS "Slicer_BUILD_BRAINSTOOLS;Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_PYTHONQT_WITH_TCL"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_EMSegment Slicer_REMOTE_DEPENDENCIES EMSegment)
 
 #-----------------------------------------------------------------------------
 # Define list of additional options used to configure Slicer
@@ -184,6 +236,7 @@ if(WIN32)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
 endif()
 
+
 #------------------------------------------------------------------------------
 # Configure and build Slicer
 #------------------------------------------------------------------------------
@@ -191,7 +244,7 @@ set(proj Slicer)
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
-  DEPENDS ${Slicer_DEPENDENCIES}
+  DEPENDS ${Slicer_DEPENDENCIES} ${Slicer_REMOTE_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${Slicer_BINARY_INNER_SUBDIR}
   DOWNLOAD_COMMAND ""

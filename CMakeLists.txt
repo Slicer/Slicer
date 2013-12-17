@@ -321,47 +321,6 @@ CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK_SHARED "Build SimpleITK with shared 
 mark_as_superbuild(Slicer_USE_SimpleITK_SHARED)
 
 #-----------------------------------------------------------------------------
-# The following option has been added for conveniency so that "extension-like"
-# module can be enabled/disabled at the superbuild level.
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_OpenIGTLinkIF "Build OpenIGTLinkIF." ON
-  "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_OpenIGTLink" OFF)
-mark_as_advanced(CLEAR Slicer_BUILD_OpenIGTLinkIF)
-mark_as_superbuild(Slicer_BUILD_OpenIGTLinkIF)
-
-option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
-mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
-
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_MultiVolumeImporter "Build MultiVolumeImporter." ON
-  "Slicer_BUILD_QTSCRIPTEDMODULES AND Slicer_BUILD_MULTIVOLUME_SUPPORT AND Slicer_USE_NUMPY" OFF)
-mark_as_advanced(Slicer_BUILD_MultiVolumeImporter)
-mark_as_superbuild(Slicer_BUILD_MultiVolumeImporter)
-
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_MultiVolumeExplorer "Build MultiVolumeExplorer." ON
-  "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_BUILD_MULTIVOLUME_SUPPORT AND Slicer_USE_PYTHONQT" OFF)
-mark_as_advanced(Slicer_BUILD_MultiVolumeExplorer)
-mark_as_superbuild(Slicer_BUILD_MultiVolumeExplorer)
-
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_SimpleFilters "Build SimpleFilters." ON
-  "Slicer_BUILD_QTSCRIPTEDMODULES AND Slicer_USE_SimpleITK" OFF)
-mark_as_advanced(Slicer_BUILD_SimpleFilters)
-
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." ON
-  "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI" OFF)
-mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
-mark_as_superbuild(Slicer_BUILD_BRAINSTOOLS)
-
-CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_EMSegment "Build EMSegment." ON
-  "Slicer_BUILD_BRAINSTOOLS AND Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_PYTHONQT" OFF)
-mark_as_advanced(Slicer_BUILD_EMSegment)
-mark_as_superbuild(Slicer_BUILD_EMSegment)
-
-#-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
 # them installed by setting Slicer_INSTALL_DEVELOPMENT to true.
 #-----------------------------------------------------------------------------
