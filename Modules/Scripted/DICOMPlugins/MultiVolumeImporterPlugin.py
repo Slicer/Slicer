@@ -241,7 +241,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frame = slicer.vtkMRMLScalarVolumeNode()
       sNode.ReadData(frame)
 
-      if frame == None:
+      if frame.GetImageData() == None:
         print('Failed to read a multivolume frame!')
         return None
 
