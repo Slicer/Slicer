@@ -220,6 +220,24 @@ Slicer_Remote_Add(DataStore
   )
 list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataStore)
 
+Slicer_Remote_Add(CompareVolumes
+  GIT_REPOSITORY "${git_protocol}://github.com/pieper/CompareVolumes"
+  GIT_TAG "51d44e6c977842063207732ae430f16708724d45"
+  OPTION_NAME Slicer_BUILD_CompareVolumes
+  OPTION_DEPENDS "Slicer_USE_PYTHONQT"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_CompareVolumes Slicer_REMOTE_DEPENDENCIES CompareVolumes)
+
+Slicer_Remote_Add(LandmarkRegistration
+  GIT_REPOSITORY "${git_protocol}://github.com/pieper/LandmarkRegistration"
+  GIT_TAG "ba0c5b4a75a990d76570477838de40d9c016001a"
+  OPTION_NAME Slicer_BUILD_LandmarkRegistration
+  OPTION_DEPENDS "Slicer_BUILD_CompareVolumes;Slicer_USE_PYTHONQT"
+  LABELS REMOTE_MODULE
+  )
+list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDENCIES LandmarkRegistration)
+
 #-----------------------------------------------------------------------------
 # Define list of additional options used to configure Slicer
 #------------------------------------------------------------------------------
