@@ -214,7 +214,7 @@ list_conditional_append(Slicer_BUILD_EMSegment Slicer_REMOTE_DEPENDENCIES EMSegm
 
 Slicer_Remote_Add(DataStore
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/Slicer-DataStore"
-  GIT_TAG "168ff49dbe2060a0613ca9cd1d785eb12733d349"
+  GIT_TAG "6ed2b737c1234c9105140bacc0619d2378c9d15e"
   OPTION_NAME Slicer_BUILD_DataStore
   LABELS REMOTE_MODULE
   )
