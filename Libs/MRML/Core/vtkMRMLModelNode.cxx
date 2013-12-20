@@ -592,7 +592,10 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 {
-  this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+  if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
+    {
+    this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+    }
   Superclass::OnNodeReferenceAdded(reference);
 }
 
