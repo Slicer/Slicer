@@ -1055,6 +1055,11 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       oldID = n->GetID();
       }
     n->SetID(this->GenerateUniqueID(n).c_str());
+    if (n->GetScene())
+      {
+      // The scene is set already so update the ID references for this new ID
+      n->SetSceneReferences();
+      }
 
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     std::string newID(n->GetID());
@@ -1774,6 +1779,11 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
     int modifyStatus = n->GetDisableModifiedEvent();
     n->SetDisableModifiedEvent(1);
     n->SetID(this->GenerateUniqueID(n).c_str());
+    if (n->GetScene())
+      {
+      // The scene is set already so update the ID references for this new ID
+      n->SetSceneReferences();
+      }
     n->SetDisableModifiedEvent(modifyStatus);
     std::string newID(n->GetID());
     if (oldID != newID)
@@ -1853,6 +1863,11 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
     int modifyStatus = n->GetDisableModifiedEvent();
     n->SetDisableModifiedEvent(1);
     n->SetID(this->GenerateUniqueID(n).c_str());
+    if (n->GetScene())
+      {
+      // The scene is set already so update the ID references for this new ID
+      n->SetSceneReferences();
+      }
     n->SetDisableModifiedEvent(modifyStatus);
     std::string newID(n->GetID());
     if (oldID != newID)
