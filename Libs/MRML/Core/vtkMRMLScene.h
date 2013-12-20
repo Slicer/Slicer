@@ -275,18 +275,12 @@ public:
   void SaveStateForUndo(vtkCollection *nodes);
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
 
-  /// The Scene maintains two lists that keep track of the relationship
+  /// The Scene maintains a map (NodeReferences) to keep track of the relationship
   /// between node IDs and the nodes referencing those IDs.  Each
   /// node can use the call AddReferencedNodeID to tell the scene
   /// that is 'has an interest' in the given ID so that the scene
   /// can notify that node when the ID has been remapped.   It does
   /// this notification through the UpdateNodeReferences call.
-  /// The two lists (std::vectors) are ReferencingNodes and ReferencedIDs,
-  /// which (usually) contain the same number of elements and the
-  /// entries should correspond; they can be different during update.
-  /// The ReferencingNodes is a vector of smart pointers,
-  /// so that the nodes are not freed until they are no longer
-  /// used by these lists.
   void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
   bool IsNodeReferencingNodeID(vtkMRMLNode* referencingNode, const char* id);
 
