@@ -265,41 +265,26 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     }
   QList<QAction*> previousActions = d->PreviousHistoryMenu->actions();
   QList<QAction*> nextActions = d->NextHistoryMenu->actions();
+  // Remove the activated module from the prev/next list
+  // to make sure that one module can appear only once
   int actionIndexInPreviousMenu = previousActions.indexOf(action);
   int actionIndexInNextMenu = nextActions.indexOf(action);
   if ( actionIndexInNextMenu >= 0)
     {
-    if (lastAction)
-      {
-      previousActions.push_front(lastAction);
-      }
-    for (int i = 0; i < actionIndexInNextMenu ; ++i)
-      {
-      previousActions.push_front(nextActions.takeFirst());
-      }
-    Q_ASSERT(nextActions[0] == action);
-    nextActions.removeFirst();
+    nextActions.removeAt(actionIndexInNextMenu);
     }
   else if ( actionIndexInPreviousMenu >= 0)
     {
-    if (lastAction)
-      {
-      nextActions.push_front(lastAction);
-      }
-    for (int i = 0; i < actionIndexInPreviousMenu  ; ++i)
-      {
-      nextActions.push_front(previousActions.takeFirst());
-      }
-    Q_ASSERT(previousActions[0] == action);
-    previousActions.removeFirst();
+    previousActions.removeAt(actionIndexInPreviousMenu);
     }
-  else
+  // Add the last active module to the previous list if it's not there already
+  // (it's already there if the prev/next button was used for module switching)
+  if (lastAction)
     {
-    if (lastAction)
+    if (nextActions.indexOf(lastAction)<0 && previousActions.indexOf(lastAction)<0)
       {
       previousActions.push_front(lastAction);
       }
-    nextActions.clear();
     }
   // don't keep more than X history
   previousActions = previousActions.mid(0, 8);
@@ -331,6 +316,16 @@ void qSlicerModuleSelectorToolBar::selectNextModule()
   QAction* nextAction = actions.size() ? actions.first() : 0;
   if (nextAction)
     {
+    // Add last active module to the previous list
+    // (to prevent default placement in actionSelected() )
+    QAction* lastAction = d->lastSelectedAction();
+    if (lastAction)
+      {
+      QList<QAction*> previousActions = d->PreviousHistoryMenu->actions();
+      previousActions.push_front(lastAction);
+      d->PreviousHistoryMenu->clear();
+      d->PreviousHistoryMenu->addActions(previousActions);
+      }
     // triggering the action will eventually call actionSelected()
     nextAction->trigger();
     }
@@ -347,6 +342,16 @@ void qSlicerModuleSelectorToolBar::selectPreviousModule()
   QAction* previousAction = actions.size() ? actions.first() : 0;
   if (previousAction)
     {
+    // Add last active module to the next list
+    // (to prevent default placement in actionSelected() )
+    QAction* lastAction = d->lastSelectedAction();
+    if (lastAction)
+      {
+      QList<QAction*> nextActions = d->NextHistoryMenu->actions();
+      nextActions.push_front(lastAction);
+      d->NextHistoryMenu->clear();
+      d->NextHistoryMenu->addActions(nextActions);
+      }
     // triggering the action will eventually call actionSelected()
     previousAction->trigger();
     }
