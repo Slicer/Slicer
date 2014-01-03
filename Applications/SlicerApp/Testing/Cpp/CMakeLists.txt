@@ -1,10 +1,12 @@
 set(KIT ${KIT_LIBRARY_NAME})
 
-if(Slicer_BUILD_CLI_SUPPORT)
-  if(Slicer_BUILD_EMSegment)
-    include_directories(
-      ${EMSegment_SOURCE_DIR}
-      ${RemoteIO_SOURCE_DIR} ${RemoteIO_BINARY_DIR})
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_BUILD_CLI_SUPPORT)
+    if(Slicer_BUILD_EMSegment)
+      include_directories(
+        ${EMSegment_SOURCE_DIR}
+        ${RemoteIO_SOURCE_DIR} ${RemoteIO_BINARY_DIR})
+    endif()
   endif()
 endif()
 
@@ -28,9 +30,11 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 
 set(target_libraries ${KIT})
-if(Slicer_BUILD_CLI_SUPPORT)
-  if(Slicer_BUILD_EMSegment)
-    list(APPEND target_libraries vtkSlicerEMSegmentModuleLogic)
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  if(Slicer_BUILD_CLI_SUPPORT)
+    if(Slicer_BUILD_EMSegment)
+      list(APPEND target_libraries vtkSlicerEMSegmentModuleLogic)
+    endif()
   endif()
 endif()
 
