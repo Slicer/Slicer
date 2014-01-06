@@ -146,6 +146,7 @@ void vtkMRMLMarkupsDisplayableManager2D::SetAndObserveNode(vtkMRMLMarkupsNode *m
   nodeEvents->InsertNextValue(vtkMRMLMarkupsNode::MarkupRemovedEvent);
   nodeEvents->InsertNextValue(vtkMRMLMarkupsNode::LockModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  nodeEvents->InsertNextValue(vtkMRMLDisplayableNode::DisplayModifiedEvent);
 
  if (markupsNode)// && !markupsNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent))
    {
@@ -344,6 +345,11 @@ void vtkMRMLMarkupsDisplayableManager2D
         break;
       case vtkMRMLMarkupsNode::LockModifiedEvent:
         this->OnMRMLMarkupsNodeLockModifiedEvent(markupsNode);
+        break;
+      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
+        // get the display node and process the change
+        vtkMRMLNode *displayNode = markupsNode->GetDisplayNode();
+        this->OnMRMLMarkupsDisplayNodeModifiedEvent(displayNode);
         break;
       }
     }
@@ -545,6 +551,12 @@ void vtkMRMLMarkupsDisplayableManager2D::OnMRMLMarkupsNodeModifiedEvent(vtkMRMLN
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager2D::OnMRMLMarkupsDisplayNodeModifiedEvent(vtkMRMLNode* node)
 {
+  if (!node)
+    {
+    vtkErrorMacro("OnMRMLMarkupsDisplayNodeModifiedEvent: no node!");
+    return;
+    }
+
   //this->DebugOn();
 
   if (this->Updating)
