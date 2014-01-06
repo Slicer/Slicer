@@ -258,6 +258,9 @@ public:
 
   std::string TemporaryDirectory;
 
+  itk::MutexLock::Pointer ProcessesKillLock;
+  std::vector<itksysProcess*> Processes;
+
   typedef std::vector<std::pair<int, vtkMRMLCommandLineModuleNode*> > RequestType;
   struct FindRequest
   {
@@ -352,6 +355,7 @@ vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 {
   this->Internal = new vtkInternal();
 
+  this->Internal->ProcessesKillLock = itk::MutexLock::New();
   this->Internal->DeleteTemporaryFiles = 1;
   this->Internal->RedirectModuleStreams = 1;
   this->Internal->RescheduleCallback =
@@ -682,6 +686,20 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node,
     {
     this->GetApplicationLogic()->ProcessReadData();
     }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::KillProcesses()
+{
+  this->Internal->ProcessesKillLock->Lock();
+  for (std::vector<itksysProcess*>::iterator it = this->Internal->Processes.begin();
+       it != this->Internal->Processes.end();
+       ++it)
+    {
+    itksysProcess* process = *it;
+    itksysProcess_Kill(process);
+    }
+  this->Internal->ProcessesKillLock->Unlock();
 }
 
 //-----------------------------------------------------------------------------
@@ -1745,6 +1763,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     //
     itksysProcess *process = itksysProcess_New();
 
+    this->Internal->Processes.push_back(process);
+
     // setup the command
     itksysProcess_SetCommand(process, command);
     itksysProcess_SetOption(process,
@@ -1791,6 +1811,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       if (node0->GetModuleDescription().GetProcessInformation()->Abort)
         {
         itksysProcess_Kill(process);
+        this->Internal->Processes.erase(
+              std::find(this->Internal->Processes.begin(), this->Internal->Processes.end(), process));
         node0->GetModuleDescription().GetProcessInformation()->Progress = 0;
         node0->GetModuleDescription().GetProcessInformation()->StageProgress =0;
         this->GetApplicationLogic()->RequestModified( node0 );
@@ -1871,7 +1893,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         }
       }
+    this->Internal->ProcessesKillLock->Lock();
     itksysProcess_WaitForExit(process, 0);
+    this->Internal->ProcessesKillLock->Unlock();
 
 
     // remove the embedded XML from the stdout stream
@@ -2032,7 +2056,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
 
       // clean up
+      this->Internal->ProcessesKillLock->Lock();
+      this->Internal->Processes.erase(
+            std::find(this->Internal->Processes.begin(), this->Internal->Processes.end(), process));
       itksysProcess_Delete(process);
+      this->Internal->ProcessesKillLock->Unlock();
       }
     }
   else if ( commandType == SharedObjectModule )

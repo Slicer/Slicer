@@ -26,6 +26,7 @@
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerUtils.h"
+#include <vtkSlicerCLIModuleLogic.h>
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
@@ -127,7 +128,16 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   module->setPath(this->path());
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
 
+  this->CLIModule = module.data();
+
   return module.take();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIExecutableModuleFactoryItem::uninstantiate()
+{
+  this->CLIModule->cliModuleLogic()->KillProcesses();
+  this->ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>::uninstantiate();
 }
 
 //-----------------------------------------------------------------------------

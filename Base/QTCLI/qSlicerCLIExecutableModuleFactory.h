@@ -24,6 +24,7 @@
 // SlicerQT includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerBaseQTCLIExport.h"
+class qSlicerCLIModule;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -36,10 +37,12 @@ class qSlicerCLIExecutableModuleFactoryItem
 public:
   qSlicerCLIExecutableModuleFactoryItem(const QString& newTempDirectory);
   virtual bool load();
+  virtual void uninstantiate();
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
 private:
   QString TempDirectory;
+  qSlicerCLIModule* CLIModule;
 };
 
 //-----------------------------------------------------------------------------
