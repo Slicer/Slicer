@@ -221,11 +221,16 @@ void qSlicerWebWidget::onLinkClicked(const QUrl& url)
 void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
                                        const QList<QSslError> &errors)
 {
+#ifdef QT_NO_OPENSSL
+  Q_UNUSED(reply)
+  Q_UNUSED(errors)
+#else
   foreach (QSslError e, errors)
     {
     qDebug() << "[SSL] [" << qPrintable(reply->url().host().trimmed()) << "]"
              << qPrintable(e.errorString());
     }
+#endif
 }
 
 // --------------------------------------------------------------------------

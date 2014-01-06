@@ -35,6 +35,10 @@ class qSlicerWebWidgetPrivate;
 class QUrl;
 class QWebView;
 
+#ifdef QT_NO_OPENSSL
+struct QSslError{};
+#endif
+
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   : public QWidget
 {
