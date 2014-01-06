@@ -702,7 +702,7 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
     }
 
 
-  vtkSlicerTask* task = vtkSlicerTask::New();
+  vtkNew<vtkSlicerTask> task;
   task->SetTypeToProcessing();
 
   // Pass the current node as client data to the task.  This allows
@@ -726,7 +726,7 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
     this, this->GetMRMLLogicsCallbackCommand());
 
   // Schedule the task
-  ret = this->GetApplicationLogic()->ScheduleTask( task );
+  ret = this->GetApplicationLogic()->ScheduleTask( task.GetPointer() );
 
   if (!ret)
     {
@@ -736,9 +736,6 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
     }
-
-  task->Delete();
-
 }
 
 //-----------------------------------------------------------------------------
