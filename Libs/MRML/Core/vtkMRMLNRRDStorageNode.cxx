@@ -177,7 +177,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   // Check if this is a NRRD file that we can read
   if (!reader->CanReadFile(fullName.c_str()))
     {
-    vtkDebugMacro("vtkMRMLNRRDStorageNode: This is not a nrrd file");
+    vtkErrorMacro("ReadData: This is not a nrrd file");
     return 0;
     }
 
@@ -190,13 +190,13 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     {
     if ( ! (reader->GetPointDataType() == vtkDataSetAttributes::TENSORS))
       {
-      vtkDebugMacro("MRMLVolumeNode does not match file kind");
+      vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
       }
     }
   else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
     {
-    vtkDebugMacro("Checking we have right info in file");
+    vtkDebugMacro("ReadData: Checking we have right info in file");
     const char *value = reader->GetHeaderValue("modality");
     if (value == NULL)
       {
@@ -205,7 +205,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     if ( ! (reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
             !strcmp(value,"DWMRI") ) )
       {
-      vtkErrorMacro("MRMLVolumeNode does not match file kind");
+      vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
       }
     }
@@ -214,7 +214,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     if (! (reader->GetPointDataType() == vtkDataSetAttributes::VECTORS
            || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS))
       {
-      vtkDebugMacro("MRMLVolumeNode does not match file kind");
+      vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
       }
     }  
@@ -223,7 +223,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     if (!(reader->GetPointDataType() == vtkDataSetAttributes::SCALARS && 
         (reader->GetNumberOfComponents() == 1 || reader->GetNumberOfComponents()==3) ))
       {
-      vtkErrorMacro("MRMLVolumeNode does not match file kind");
+      vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
       }
     }
@@ -240,7 +240,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     mat2 = reader->GetMeasurementFrameMatrix();
     if (mat2 == NULL) 
       {
-      vtkWarningMacro("Measurement frame is not provided");
+      vtkWarningMacro("ReadData: Measurement frame is not provided");
       } 
     else 
       {
@@ -253,7 +253,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     mat2 = reader->GetMeasurementFrameMatrix();
     if (mat2 == NULL) 
       {
-      vtkWarningMacro("Measurement frame is not provided");
+      vtkWarningMacro("ReadData: Measurement frame is not provided");
       } 
     else 
       {
@@ -344,7 +344,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
   else
     {
-    vtkErrorMacro(<< "Do not recognize node type " << refNode->GetClassName());
+    vtkErrorMacro(<< "WriteData: Do not recognize node type " << refNode->GetClassName());
     return 0;
     }
 
@@ -352,7 +352,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   
   if (volNode->GetImageData() == NULL) 
     {
-    vtkErrorMacro("cannot write ImageData, it's NULL");
+    vtkErrorMacro("WriteData: Cannot write NULL ImageData");
     }
   
   std::string fullName = this->GetFullNameFromFileName();
