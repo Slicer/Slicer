@@ -17,30 +17,12 @@
 #include "vtkAnnotationROIRepresentation2D.h"
 
 // VTK includes
-#include "vtkActor2D.h"
-#include "vtkSphereSource.h"
-#include "vtkPolyDataMapper2D.h"
-#include "vtkPolyData.h"
-#include "vtkCallbackCommand.h"
-#include "vtkBox.h"
-#include "vtkPolyData.h"
-#include "vtkProperty2D.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkRenderer.h"
-#include "vtkInteractorObserver.h"
-#include "vtkMath.h"
-#include "vtkCellArray.h"
-#include "vtkPropPicker.h"
-#include "vtkDoubleArray.h"
-#include "vtkFloatArray.h"
-#include "vtkPlanes.h"
-#include "vtkCamera.h"
-#include "vtkAssemblyPath.h"
-#include "vtkWindow.h"
-#include "vtkProperty2D.h"
-#include "vtkObjectFactory.h"
-
-#include <vtkSmartPointer.h>
+#include <vtkActor2D.h>
+#include <vtkAssemblyPath.h>
+#include <vtkBox.h>
+#include <vtkCallbackCommand.h>
+#include <vtkCamera.h>
+#include <vtkCellArray.h>
 #include <vtkCutter.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
@@ -68,10 +50,14 @@ vtkStandardNewMacro(vtkAnnotationROIRepresentation2D);
 //----------------------------------------------------------------------------
 vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 {
+  this->LastEventPosition2D[0]=0;
+  this->LastEventPosition2D[1]=0;
+  this->LastEventPosition2D[2]=0;
+  this->LastEventPosition2D[3]=1;
   this->LastPicker2D = NULL;
 
-  this->HandleSize = 4.0;
-  this->HandleVisibility = 1;
+  this->HandleSizeInPixels = 4;
+  this->HandlesVisibility = 1;
   
   // Set up the initial properties
   this->CreateDefaultProperties();
@@ -94,7 +80,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->IntersectionPlane->SetNormal(normal);
   this->IntersectionPlane->SetOrigin(origin);
 
-  this->WorldToDisplayTransform = vtkTransform::New();
+  this->IntersectionPlaneTransform = vtkTransform::New();
 
   this->HandlePicker2D = vtkPropPicker::New();
   this->HandlePicker2D->PickFromListOn();
@@ -109,7 +95,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 
     this->HandleToPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
     this->HandleToPlaneTransformFilters[i]->SetInput(this->HandleGeometry[i]->GetOutput());
-    this->HandleToPlaneTransformFilters[i]->SetTransform(this->WorldToDisplayTransform);
+    this->HandleToPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->HandleMapper2D[i] = vtkPolyDataMapper2D::New();
     this->HandleMapper2D[i]->SetInput(this->HandleToPlaneTransformFilters[i]->GetOutput());
@@ -147,7 +133,7 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
   delete [] this->HandleToPlaneTransformFilters;
  
   this->IntersectionPlane->Delete();
-  this->WorldToDisplayTransform->Delete();
+  this->IntersectionPlaneTransform->Delete();
   for (i=0; i<6; i++)
     {
     this->IntersectionFaces[i]->Delete();
@@ -205,7 +191,7 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 
     this->IntersectionPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
     this->IntersectionPlaneTransformFilters[i]->SetInput(this->IntersectionCutters[i]->GetOutput());
-    this->IntersectionPlaneTransformFilters[i]->SetTransform(this->WorldToDisplayTransform);
+    this->IntersectionPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->IntersectionMappers[i] = vtkPolyDataMapper2D::New();
     this->IntersectionMappers[i]->SetInput(this->IntersectionPlaneTransformFilters[i]->GetOutput());
@@ -218,43 +204,17 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 }
 
 
-//----------------------------------------------------------------------------
-void vtkAnnotationROIRepresentation2D::BuildRepresentation()
-{
-  // Rebuild only if necessary
-  if ( this->GetMTime() > this->BuildTime ||
-       (this->Renderer && this->Renderer->GetVTKWindow() &&
-        this->Renderer->GetVTKWindow()->GetMTime() > this->BuildTime) )
-    {
-    this->Superclass::BuildRepresentation();
-
-    // Handle visibility
-    bool atLeast1HandleVisible = false;
-    for (int i=0; i < 6; ++i)
-      {
-      bool visible = this->HandleVisibility
-          && this->IntersectionCutters[i]->GetOutput()->GetNumberOfLines() > 0;
-      this->Handle2D[i]->SetVisibility(visible);
-      atLeast1HandleVisible = atLeast1HandleVisible || visible;
-      }
-    this->Handle2D[6]->SetVisibility(atLeast1HandleVisible);
-
-    this->BuildTime.Modified();
-    }
-}
-
-//----------------------------------------------------------------------
-void vtkAnnotationROIRepresentation2D::GetActors(vtkPropCollection *vtkNotUsed(actors))
-{
-  // Intentionally empty to disable/hide all the 3D actors that are not used.
-}
-
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::GetActors2D(vtkPropCollection *actors)
 {
+  actors->RemoveAllItems();
   //actors->AddItem(this->HexFace2D);
-  this->GetIntersectionActors(actors);
-  for (int i=0; i<7; i++)
+  int i;
+  for (i=0; i<6; i++)
+    {
+    actors->AddItem(this->IntersectionActors[i]);
+    }
+  for (i=0; i<7; i++)
     {
     actors->AddItem(this->Handle2D[i]);
     }
@@ -263,10 +223,57 @@ void vtkAnnotationROIRepresentation2D::GetActors2D(vtkPropCollection *actors)
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::GetIntersectionActors(vtkPropCollection *actors)
 {
+  actors->RemoveAllItems();
   for (int i=0; i<6; i++)
     {
     actors->AddItem(this->IntersectionActors[i]);
     }
+}
+
+
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation2D::ReleaseGraphicsResources(vtkWindow *w)
+{
+  Superclass::ReleaseGraphicsResources(w);
+  this->HexFace2D->ReleaseGraphicsResources(w);
+  // render the handles
+  int j;
+  for (j=0; j<7; j++)
+    {
+    this->Handle2D[j]->ReleaseGraphicsResources(w);
+    }
+  for (j=0; j<6; j++)
+    {
+    this->IntersectionActors[j]->ReleaseGraphicsResources(w);
+    }
+
+}
+
+//----------------------------------------------------------------------
+int vtkAnnotationROIRepresentation2D::RenderOverlay(vtkViewport *vtkNotUsed(v))
+{
+  int count=0;
+  return count;
+}
+//----------------------------------------------------------------------------
+int vtkAnnotationROIRepresentation2D::RenderOpaqueGeometry(vtkViewport *vtkNotUsed(v))
+{
+  int count=0;
+  return count;
+}
+
+//----------------------------------------------------------------------------
+int vtkAnnotationROIRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport *vtkNotUsed(v))
+{
+  int count=0;
+  return count;
+}
+
+//----------------------------------------------------------------------------
+int vtkAnnotationROIRepresentation2D::HasTranslucentPolygonalGeometry()
+{
+  int result=0;
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -419,7 +426,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   //double *p7 = pts + 3*7;
   double x[3];
 
-  double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSize);
+  double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
 
   int count=0;
   this->Points->GetData()->Modified();
@@ -437,14 +444,14 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
       this->IntersectionCutters[i]->GetOutput()->GetPoint(1, pi1);
       VTK_AVERAGE(pi0,pi1,x);
       this->Points->SetPoint(8+i, x);
-      this->HandleGeometry[i]->SetRadius(/*this->HandlesVisibility**/radius);
-      //this->Handle2D[i]->SetVisibility(this->HandlesVisibility);
+      this->HandleGeometry[i]->SetRadius(this->HandlesVisibility*radius);
+      this->Handle2D[i]->SetVisibility(this->HandlesVisibility);
       count++;
       }
     else
       {
-      //this->HandleGeometry[i]->SetRadius(0);
-      //this->Handle2D[i]->SetVisibility(0);
+      this->HandleGeometry[i]->SetRadius(0);
+      this->Handle2D[i]->SetVisibility(0);
       }
     }
     
@@ -452,13 +459,13 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   this->Points->SetPoint(14, x);
   if (count)
     {
-    this->HandleGeometry[6]->SetRadius(/*this->HandlesVisibility**/radius);
-    //this->Handle2D[6]->SetVisibility(this->HandlesVisibility);
+    this->HandleGeometry[6]->SetRadius(this->HandlesVisibility*radius);
+    this->Handle2D[6]->SetVisibility(this->HandlesVisibility);
     }
   else
     {
-    //this->HandleGeometry[6]->SetRadius(0);
-    //this->Handle2D[6]->SetVisibility(0);
+    this->HandleGeometry[6]->SetRadius(0);
+    this->Handle2D[6]->SetVisibility(0);
     }
 
   for (i = 0; i < 7; ++i)
@@ -485,8 +492,8 @@ void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
     }
 
   // Get transform from 2D image to world
-  vtkSmartPointer<vtkMatrix4x4> XYtoWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  XYtoWorldMatrix->DeepCopy(this->GetWorldToDisplayTransform()->GetMatrix());
+  vtkNew<vtkMatrix4x4> XYtoWorldMatrix;
+  XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
   XYtoWorldMatrix->Invert();
 
 
@@ -497,7 +504,7 @@ void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
   double prevPickPoint[4] = {0, 0, 0, 1};
 
   XYtoWorldMatrix->MultiplyPoint(point2D, pickPoint);
-  XYtoWorldMatrix->MultiplyPoint(this->LastEventPosition, prevPickPoint);
+  XYtoWorldMatrix->MultiplyPoint(this->LastEventPosition2D, prevPickPoint);
 
   // Process the motion
   if ( this->InteractionState == vtkAnnotationROIRepresentation::MoveF0 )
@@ -550,11 +557,24 @@ void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
     }
 
   // Store the start position
-  this->LastEventPosition[0] = e[0];
-  this->LastEventPosition[1] = e[1];
-  this->LastEventPosition[2] = 0.0;
-  this->LastEventPosition[3] = 1.0;
+  this->LastEventPosition2D[0] = e[0];
+  this->LastEventPosition2D[1] = e[1];
+  this->LastEventPosition2D[2] = 0.0;
+  this->LastEventPosition2D[3] = 1.0;
 }
+
+
+//----------------------------------------------------------------------
+void vtkAnnotationROIRepresentation2D::StartWidgetInteraction(double e[2])
+{
+  Superclass::StartWidgetInteraction(e);
+  // Store the start position
+  this->LastEventPosition2D[0] = e[0];
+  this->LastEventPosition2D[1] = e[1];
+  this->LastEventPosition2D[2] = 0.0;
+  this->LastEventPosition2D[3] = 1.0;
+}
+
 
 //----------------------------------------------------------------------------
 int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int vtkNotUsed(modify))
@@ -626,8 +646,8 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
 
  
   // Get transform from 2D image to world
-  vtkSmartPointer<vtkMatrix4x4> XYtoWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  XYtoWorldMatrix->DeepCopy(this->GetWorldToDisplayTransform()->GetMatrix());
+  vtkNew<vtkMatrix4x4> XYtoWorldMatrix;
+  XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
   XYtoWorldMatrix->Invert();
   double xyz0[4] = {0,0,0,1};
   double xyz1[4] = {radInPixels,radInPixels,0,1};
@@ -648,14 +668,13 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::SizeHandles()
 {
-  //double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSize);
-  //for(int i=0; i<7; i++)
-    //{
+  //double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
+  for(int i=0; i<7; i++)
+    {
     //this->HandleGeometry[i]->SetRadius(radius);
-    //this->HandleGeometry[i]->Modified();
-    //}
+    this->HandleGeometry[i]->Modified();
+    }
 }
-
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::PrintIntersections(ostream& os)
 {

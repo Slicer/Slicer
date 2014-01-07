@@ -12,13 +12,21 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkAnnotationROIRepresentation - a class defining the representation for
-///  the vtkAnnotationROIWidget
+///  vtkAnnotationROIRepresentation - a class defining the representation for the vtkSlicerBoxWidget2
 /// 
+/// This class is a concrete representation for the vtkSlicerBoxWidget2. It
+/// represents a box with seven handles: one on each of the six faces, plus a
+/// center handle. Through interaction with the widget, the box
+/// representation can be arbitrarily positioned in the 3D space.
+//
 /// To use this representation, you normally use the PlaceWidget() method
 /// to position the widget at a specified region in space.
-/// Note that the PlaceFactor default is 1.
-///
+//
+/// .SECTION Caveats
+/// This class, and vtkSlicerBoxWidget2, are second generation VTK
+/// widgets. An earlier version of this functionality was defined in the
+/// class vtkSlicerBoxWidget.
+
 /// .SECTION See Also
 /// vtkSlicerBoxWidget2 vtkSlicerBoxWidget
 
@@ -153,9 +161,9 @@ public:
   /// 
   /// Switches handles (the spheres) on or off by manipulating the underlying
   /// actor visibility.
-  vtkSetMacro(HandleVisibility, int);
-  vtkGetMacro(HandleVisibility, int);
-
+  void HandlesOn();
+  void HandlesOff();
+  
   /// 
   /// These are methods that satisfy vtkWidgetRepresentation's API.
   virtual void PlaceWidget(double bounds[6]);
@@ -163,12 +171,7 @@ public:
   virtual int ComputeInteractionState(int X, int Y, int modify=0);
   virtual void StartWidgetInteraction(double e[2]);
   virtual void WidgetInteraction(double e[2]);
-
-  ///
-  /// \brief GetBounds returns the bounds of the representation
-  /// \return 0 if the bounds are invalid (in 2D mode)
   virtual double *GetBounds();
-  virtual void ComputeBounds();
   
   /// 
   /// Methods supporting, and required by, the rendering process.
@@ -176,7 +179,6 @@ public:
   virtual int RenderOpaqueGeometry(vtkViewport*);
   virtual int RenderTranslucentPolygonalGeometry(vtkViewport*);
   virtual int HasTranslucentPolygonalGeometry();
-  virtual int RenderOverlay(vtkViewport *v);
   
   enum {Outside=0,MoveF0,MoveF1,MoveF2,MoveF3,MoveF4,MoveF5,Translating,Rotating,Scaling};
 
@@ -198,13 +200,8 @@ public:
   /// get 3 extents along sides of the box 
   void GetExtents(double bounds[]);
 
-  /// Reimplemented to return the actors of the representation.
-  /// \sa GetActors2D(), GetProps()
   virtual void GetActors(vtkPropCollection *actors);
-  /// Populate the props collection with the actors and 2D actors of the
-  /// representation. It also InitTraversal the collection.
-  /// \sa GetActors(), GetActors2D()
-  virtual void GetProps(vtkPropCollection* props);
+
 
 protected:
   vtkAnnotationROIRepresentation();
@@ -288,8 +285,6 @@ protected:
   vtkMatrix4x4   *Matrix;
 
   vtkMatrix4x4   *WorldToLocalMatrix;
-
-  int HandleVisibility;
 
   //"dir" is the direction in which the face can be moved i.e. the axis passing
   //through the center

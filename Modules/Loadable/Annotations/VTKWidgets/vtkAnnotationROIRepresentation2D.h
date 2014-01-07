@@ -77,39 +77,38 @@ public:
   /// Get the intersecting plane;
   vtkGetObjectMacro(IntersectionPlane,vtkPlane);
 
-  /// Get the world to display matrix
-  vtkGetObjectMacro(WorldToDisplayTransform,vtkTransform);
+  /// Get Intersection transform to 2D coordinate system
+  vtkGetObjectMacro(IntersectionPlaneTransform,vtkTransform);
 
-  ///
-  /// \brief GetActors is reimplemented because there is no 3D actors
-  /// \param actors the collection where the 3D actors are added to.
-  ////
-  virtual void GetActors(vtkPropCollection *actors);
-  ///
-  /// \brief GetActors2D is reimplemented to return all the 2D actors
-  /// \param actors the collection where the 2D actors are added to.
-  ///
   virtual void GetActors2D(vtkPropCollection *actors);
 
-  ///
-  /// \brief GetIntersectionActors is a utility function that returns only
-  /// the intersection actors
-  /// \param actors
-  ///
   void GetIntersectionActors(vtkPropCollection *actors);
 
-  ///
-  /// \brief BuildRepresentation is reimplemented to control the handle visibility.
-  ///
-  virtual void BuildRepresentation();
   virtual int ComputeInteractionState(int X, int Y, int modify=0);
+  virtual void StartWidgetInteraction(double e[2]);
   virtual void WidgetInteraction(double e[2]);
   virtual void SetInteractionState(int state);
 
+  /// 
+  /// Methods supporting, and required by, the rendering process.
+  virtual void ReleaseGraphicsResources(vtkWindow*);
+  virtual int RenderOpaqueGeometry(vtkViewport*);
+  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*);
+  virtual int RenderOverlay(vtkViewport *viewport);
+
+  virtual int HasTranslucentPolygonalGeometry();
+
   virtual void SizeHandles();
+
+  vtkGetMacro(HandlesVisibility, int);
+  vtkSetMacro(HandlesVisibility, int);
 
   virtual int HighlightHandle(vtkProp *prop);
   virtual void HighlightFace(int cellId);
+
+  vtkSetMacro(HandleSizeInPixels,int);
+  vtkGetMacro(HandleSizeInPixels,int);
+
 
   void PrintIntersections(ostream& os);
 
@@ -128,7 +127,7 @@ protected:
 
   /// Plane/Face intersection pipelines
   vtkPlane *IntersectionPlane;
-  vtkTransform *WorldToDisplayTransform;
+  vtkTransform *IntersectionPlaneTransform;
   vtkCutter *IntersectionCutters[6];
   vtkPolyData *IntersectionFaces[6];
   vtkTransformPolyDataFilter *IntersectionPlaneTransformFilters[6];
@@ -144,12 +143,17 @@ protected:
   vtkPropPicker *LastPicker2D;
   vtkActor2D *CurrentHandle2D;
 
+  double LastEventPosition2D[4];
+
   void CreateFaceIntersections();
 
   double ComputeHandleRadiusInWorldCoordinates(double radInPixels);
 
   virtual void CreateDefaultProperties();
   virtual void PositionHandles();
+
+  double  HandleSizeInPixels;
+  int HandlesVisibility;
 
 private:
   vtkAnnotationROIRepresentation2D(const vtkAnnotationROIRepresentation2D&);  //Not implemented

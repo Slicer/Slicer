@@ -24,7 +24,6 @@ Version:   $Revision: 1.3 $
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
-#include <vtkMath.h>
 
 // STD includes
 #include <algorithm>
@@ -235,12 +234,6 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
       this->Modified();
       }
     }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::GetBounds(double bounds[])
-{
-  vtkMath::UninitializeBounds(bounds);
 }
 
 //----------------------------------------------------------------------------

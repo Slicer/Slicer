@@ -18,7 +18,6 @@
 
 // VTK includes
 #include "vtkActor.h"
-#include "vtkActor2D.h"
 #include "vtkAssemblyPath.h"
 #include "vtkBox.h"
 #include "vtkCallbackCommand.h"
@@ -29,7 +28,6 @@
 #include "vtkInteractorObserver.h"
 #include "vtkMath.h"
 #include "vtkMatrix4x4.h"
-#include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkPlanes.h"
 #include "vtkPolyData.h"
@@ -49,14 +47,11 @@ vtkStandardNewMacro(vtkAnnotationROIRepresentation);
 //----------------------------------------------------------------------------
 vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
 {
-  this->PlaceFactor = 1.0;
-
   // The initial state
   this->InteractionState = vtkAnnotationROIRepresentation::Outside;
 
   // Handle size is in pixels for this widget
   this->HandleSize = 5.0;
-  this->HandleVisibility = 1;
 
   // Control orientation of normals
   this->InsideOut = 0;
@@ -239,6 +234,21 @@ vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
   this->WorldToLocalMatrix->Delete();
 
 }
+
+//----------------------------------------------------------------------
+void vtkAnnotationROIRepresentation::GetActors(vtkPropCollection *actors)
+{
+  actors->RemoveAllItems();
+  actors->AddItem(this->HexActor);
+  actors->AddItem(this->HexFace);
+  actors->AddItem(this->HexOutline);
+  
+  for (int i=0; i<7; i++)
+    {
+    actors->AddItem(this->Handle[i]);
+    }
+}
+
 
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation::GetPolyData(vtkPolyData *pd)
@@ -810,23 +820,7 @@ void vtkAnnotationROIRepresentation::GetExtents(double bounds[])
 void vtkAnnotationROIRepresentation
 ::SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix)
 {
-  // Save for picking
   this->WorldToLocalMatrix->DeepCopy(worldToLocalMatrix);
-
-  // Apply to all the actors
-  vtkNew<vtkMatrix4x4> localToWorldMatrix;
-  localToWorldMatrix->DeepCopy(worldToLocalMatrix);
-  localToWorldMatrix->Invert();
-
-  vtkNew<vtkPropCollection> actors;
-  this->GetActors(actors.GetPointer());
-  actors->InitTraversal();
-
-  for (vtkActor* actor = 0;
-       (actor = vtkActor::SafeDownCast(actors->GetNextProp()));)
-    {
-    actor->SetUserMatrix(localToWorldMatrix.GetPointer());
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -1130,36 +1124,8 @@ void vtkAnnotationROIRepresentation::SetInteractionState(int state)
 double *vtkAnnotationROIRepresentation::GetBounds()
 {
   this->BuildRepresentation();
-  bool validBounds = vtkMath::AreBoundsInitialized(this->BoundingBox->GetBounds());
-  return validBounds ? this->BoundingBox->GetBounds() : 0;
-}
-
-//----------------------------------------------------------------------
-void vtkAnnotationROIRepresentation::ComputeBounds()
-{
-  // Reset bounds
-  this->BoundingBox->Delete();
-  this->BoundingBox = vtkBox::New();
-
-  double* bounds =this->Superclass::GetBounds();
-  if (bounds)
-    {
-    this->BoundingBox->SetBounds(bounds);
-    }
-
-  vtkNew<vtkPropCollection> actors;
-  this->GetActors(actors.GetPointer());
-  actors->InitTraversal();
-
-  for (vtkActor* actor = 0;
-       (actor = vtkActor::SafeDownCast(actors->GetNextProp()));)
-    {
-    bounds = actor->GetBounds();
-    if (bounds)
-      {
-      this->BoundingBox->AddBounds(bounds);
-      }
-    }
+  this->BoundingBox->SetBounds(this->HexActor->GetBounds());
+  return this->BoundingBox->GetBounds();
 }
 
 //----------------------------------------------------------------------------
@@ -1170,120 +1136,80 @@ void vtkAnnotationROIRepresentation::BuildRepresentation()
        (this->Renderer && this->Renderer->GetVTKWindow() &&
         this->Renderer->GetVTKWindow()->GetMTime() > this->BuildTime) )
     {
+
     this->SizeHandles();
-
-    for (int i=0; i<7; i++)
-      {
-      this->Handle[i]->SetVisibility(this->HandleVisibility);
-      }
-
-    this->ComputeBounds();
     this->BuildTime.Modified();
     }
-}
-
-//----------------------------------------------------------------------
-void vtkAnnotationROIRepresentation::GetActors(vtkPropCollection *actors)
-{
-  this->Superclass::GetActors(actors);
-  actors->AddItem(this->HexActor);
-  actors->AddItem(this->HexFace);
-  actors->AddItem(this->HexOutline);
-
-  for (int i=0; i<7; i++)
-    {
-    actors->AddItem(this->Handle[i]);
-    }
-}
-
-
-//----------------------------------------------------------------------
-void vtkAnnotationROIRepresentation::GetProps(vtkPropCollection *props)
-{
-  this->GetActors(props);
-  this->GetActors2D(props);
-  props->InitTraversal();
 }
 
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation::ReleaseGraphicsResources(vtkWindow *w)
 {
-  this->Superclass::ReleaseGraphicsResources(w);
-
-  vtkNew<vtkPropCollection> props;
-  this->GetProps(props.GetPointer());
-  for (vtkProp* prop= 0;
-       (prop= vtkProp::SafeDownCast(props->GetNextProp()));)
+  this->HexActor->ReleaseGraphicsResources(w);
+  this->HexOutline->ReleaseGraphicsResources(w);
+  this->HexFace->ReleaseGraphicsResources(w);
+  // render the handles
+  for (int j=0; j<7; j++)
     {
-    prop->ReleaseGraphicsResources(w);
+    this->Handle[j]->ReleaseGraphicsResources(w);
     }
+
 }
 
 //----------------------------------------------------------------------------
 int vtkAnnotationROIRepresentation::RenderOpaqueGeometry(vtkViewport *v)
 {
+  int count=0;
   this->BuildRepresentation();
-  int count = this->Superclass::RenderOpaqueGeometry(v);
-
-  vtkNew<vtkPropCollection> props;
-  this->GetProps(props.GetPointer());
-  for (vtkProp* prop= 0;
-       (prop= vtkProp::SafeDownCast(props->GetNextProp()));)
+  
+  count += this->HexActor->RenderOpaqueGeometry(v);
+  count += this->HexOutline->RenderOpaqueGeometry(v);
+  count += this->HexFace->RenderOpaqueGeometry(v);
+  // render the handles
+  for (int j=0; j<7; j++)
     {
-    count += prop->RenderOpaqueGeometry(v);
+    count += this->Handle[j]->RenderOpaqueGeometry(v);
     }
+
   return count;
 }
 
 //----------------------------------------------------------------------------
 int vtkAnnotationROIRepresentation::RenderTranslucentPolygonalGeometry(vtkViewport *v)
 {
+  int count=0;
   this->BuildRepresentation();
-  int count = this->Superclass::RenderTranslucentPolygonalGeometry(v);
-
-  vtkNew<vtkPropCollection> props;
-  this->GetProps(props.GetPointer());
-  for (vtkProp* prop= 0;
-       (prop= vtkProp::SafeDownCast(props->GetNextProp()));)
+  
+  count += this->HexActor->RenderTranslucentPolygonalGeometry(v);
+  count += this->HexOutline->RenderTranslucentPolygonalGeometry(v);
+  count += this->HexFace->RenderTranslucentPolygonalGeometry(v);
+  // render the handles
+  for (int j=0; j<7; j++)
     {
-    count += prop->RenderTranslucentPolygonalGeometry(v);
+    count += this->Handle[j]->RenderTranslucentPolygonalGeometry(v);
     }
+
   return count;
 }
 
 //----------------------------------------------------------------------------
 int vtkAnnotationROIRepresentation::HasTranslucentPolygonalGeometry()
 {
+  int result=0;
   this->BuildRepresentation();
-  int result = this->Superclass::HasTranslucentPolygonalGeometry();
 
-  vtkNew<vtkPropCollection> props;
-  this->GetProps(props.GetPointer());
-  for (vtkProp* prop= 0;
-       (prop= vtkProp::SafeDownCast(props->GetNextProp()));)
+  result |= this->HexActor->HasTranslucentPolygonalGeometry();
+  result |= this->HexOutline->HasTranslucentPolygonalGeometry();
+  result |= this->HexFace->HasTranslucentPolygonalGeometry();
+  // render the handles
+  for (int j=0; j<7; j++)
     {
-    result |= prop->HasTranslucentPolygonalGeometry();
+    result |= this->Handle[j]->HasTranslucentPolygonalGeometry();
     }
+
   return result;
 }
 
-//----------------------------------------------------------------------------
-int vtkAnnotationROIRepresentation::RenderOverlay(vtkViewport *v)
-{
-  this->BuildRepresentation();
-  int count = this->Superclass::RenderOverlay(v);
-
-  vtkNew<vtkPropCollection> props;
-  this->GetProps(props.GetPointer());
-  for (vtkProp* prop= 0;
-       (prop= vtkProp::SafeDownCast(props->GetNextProp()));)
-    {
-    count += prop->RenderOverlay(v);
-    }
-  return count;
-}
-
-//----------------------------------------------------------------------------
 #define VTK_AVERAGE(a,b,c) \
   c[0] = (a[0] + b[0])/2.0; \
   c[1] = (a[1] + b[1])/2.0; \
@@ -1331,6 +1257,24 @@ void vtkAnnotationROIRepresentation::PositionHandles()
   this->GenerateOutline();
 }
 #undef VTK_AVERAGE
+
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation::HandlesOn()
+{
+  for (int i=0; i<7; i++)
+    {
+    this->Handle[i]->VisibilityOn();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation::HandlesOff()
+{
+  for (int i=0; i<7; i++)
+    {
+    this->Handle[i]->VisibilityOff();
+    }
+}
 
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation::SizeHandles()

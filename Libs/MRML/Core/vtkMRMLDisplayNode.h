@@ -91,10 +91,6 @@ public:
   /// Update the stored reference to another node in the scene.
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// Return the bounds of what is displayed.
-  /// This must be reimplemented by subclasses. Returns invalid bounds by default.
-  virtual void GetBounds(double bounds[6]);
-
   /// Set the color of the display node.
   /// \sa Color, GetColor()
   vtkSetVector3Macro(Color, double);
