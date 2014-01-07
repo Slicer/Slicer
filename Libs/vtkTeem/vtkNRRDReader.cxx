@@ -169,7 +169,7 @@ int vtkNRRDReader::CanReadFile(const char* filename)
   //  }
 
   std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fname) );
-  if (extension != ".nrrd" || extension != ".nhdr")
+  if (extension != ".nrrd" && extension != ".nhdr")
     {
     vtkDebugMacro(<<"The filename extension is not recognized");
     return false;
