@@ -72,12 +72,12 @@
       <description><![CDATA[Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering]]></description>
     </parameter>
     <parameter>
-      <label>Volume Properties</label>
-      <description><![CDATA[Advanced views of the transfer functions.***Left button click: set current point or create a new point if no point is under the mouse.***Left button move: move the current or selected points if any.***Right button click: select/unselect point. Selected points can be moved at once***Right button move: define an area to select points***Middle button click: delete point under the mouse cursor.***Right/Left arrow keys: change of current point***Delete key: delete the current point and set the next point as current***Backspace key: delete the current point and set the previous point as current***ESC key: unselect all points.***Unsupported: "ALT to move selected points", "CTRL-A to select all points"]]></description>
-    </parameter>
-    <parameter>
       <label>Synchronize with Volumes module</label>
       <description><![CDATA[***Click: Apply once the properties (window/level, threshold, lut) of the Volumes module to the Volume Rendering module.***Toggled: by clicking on the checkbox, you can toggle the button. When toggled, any modification occuring in the Volumes module is instantaneously applied to the volume rendering]]></description>
+    </parameter>
+    <parameter>
+      <label>Volume Properties</label>
+      <description><![CDATA[Advanced views of the transfer functions.***Left button click: set current point or create a new point if no point is under the mouse.***Left button move: move the current or selected points if any.***Right button click: select/unselect point. Selected points can be moved at once***Right button move: define an area to select points***Middle button click: delete point under the mouse cursor.***Right/Left arrow keys: change of current point***Delete key: delete the current point and set the next point as current***Backspace key: delete the current point and set the previous point as current***ESC key: unselect all points.***Unsupported: "ALT to move selected points", "CTRL-A to select all points"]]***Control Inputs:****X: scalar value****O: opacity****M: mid-point****S: sharpness></description>
     </parameter>
     <parameter>
       <label>Scalar Opacity Mapping</label>
