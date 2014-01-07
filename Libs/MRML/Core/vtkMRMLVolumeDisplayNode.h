@@ -57,6 +57,10 @@ public:
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
+  ///
+  /// Return the bounds of the volume.
+  virtual void GetBounds(double bounds[6]);
+
   /// 
   /// Sets ImageData for background mask
   /// Must be reimplemented in deriving class if they need it.

@@ -41,6 +41,19 @@ vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
   this->AssignAttribute->Delete();
 }
 
+//-----------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::GetBounds(double bounds[])
+{
+  if (this->GetOutputPolyData())
+    {
+    this->GetOutputPolyData()->GetBounds(bounds);
+    }
+  else
+    {
+    this->Superclass::GetBounds(bounds);
+    }
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
                                                 unsigned long event,

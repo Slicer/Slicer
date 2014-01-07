@@ -373,36 +373,19 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
   b[4] = bounds[2];
   b[5] = bounds[5];
 
-  if (roiNode->GetLocked())
-    {
-    rep->HandlesOff();
-    }
-  else
-    {
-    rep->HandlesOn();
-    }
-
   rep->PlaceWidget(b);
+  rep->SetHandleVisibility(!roiNode->GetLocked());
 
-  this->SetParentTransformToWidget(roiNode, roiWidget);
+  //this->SetParentTransformToWidget(roiNode, roiWidget);
 
-  if (roiNode->GetDisplayVisibility())
-    {
-    widget->EnabledOn();
-    }
-  else
-    {
-    widget->EnabledOff();
-    }
-
+  widget->SetEnabled(roiNode->GetDisplayVisibility());
+  widget->Modified();
 
   // re-render the widget
   rep->NeedToRenderOn();
-  roiWidget->Modified();
 
   // enable processing of modified events
   this->m_Updating = 0;
-
 }
 
 //---------------------------------------------------------------------------
@@ -495,7 +478,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   XYToWorld->Identity();
   XYToWorld->Multiply4x4(rasToXY.GetPointer(), transformToWorld.GetPointer(), XYToWorld.GetPointer());
 
-  vtkSmartPointer<vtkTransform> transform = rep->GetIntersectionPlaneTransform();
+  vtkSmartPointer<vtkTransform> transform = rep->GetWorldToDisplayTransform();
 
   transform->SetMatrix(XYToWorld.GetPointer());
 
@@ -537,7 +520,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
-  rep->SetHandlesVisibility(roiNode->GetLocked()==0 && roiNode->GetDisplayVisibility() ? 1:0);
+  rep->SetHandleVisibility(roiNode->GetLocked()==0 && roiNode->GetDisplayVisibility() ? 1:0);
 
   rep->PlaceWidget(b);
 

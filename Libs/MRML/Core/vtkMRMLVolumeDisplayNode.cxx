@@ -84,6 +84,55 @@ void vtkMRMLVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //-----------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::GetBounds(double bounds[])
+{
+  this->Superclass::GetBounds(bounds);
+  if (this->GetOutputImageData())
+    {
+    this->GetOutputImageData()->UpdateInformation();
+    int wholeExtent[] = {0,0,0,0,0,0};
+    this->GetOutputImageData()->GetWholeExtent(wholeExtent);
+    if (wholeExtent[0] <= wholeExtent[1])
+      {
+//      int extentStart[3];
+//      extentStart[0] = wholeExtent[0];
+//      extentStart[1] = wholeExtent[2];
+//      extentStart[2] = wholeExtent[4];
+//      int extentEnd[3];
+//      extentEnd[0] = wholeExtent[1]-1;
+//      extentEnd[1] = wholeExtent[3]-1;
+//      extentEnd[2] = wholeExtent[5]-1;
+//      double startPoint[3];
+//      this->GetOutputImageData()->GetPoint(
+//            this->GetOutputImageData()->ComputePointId(extentStart),
+//            startPoint);
+//      double endPoint[3];
+//      this->GetOutputImageData()->GetPoint(
+//            this->GetOutputImageData()->ComputePointId(extentEnd),
+//            endPoint);
+      double origin[3];
+      this->GetOutputImageData()->GetOrigin(origin);
+      double spacing[3];
+      this->GetOutputImageData()->GetSpacing(spacing);
+      double startPoint[3];
+      double endPoint[3];
+      startPoint[0] = origin[0] + spacing[0]*wholeExtent[0];
+      startPoint[1] = origin[1] + spacing[1]*wholeExtent[2];
+      startPoint[2] = origin[2] + spacing[2]*wholeExtent[4];
+      endPoint[0] = origin[0] + spacing[0]*wholeExtent[1];
+      endPoint[1] = origin[1] + spacing[1]*wholeExtent[3];
+      endPoint[2] = origin[2] + spacing[2]*wholeExtent[5];
+      bounds[0] = std::min(startPoint[0], endPoint[0]);
+      bounds[1] = std::max(startPoint[0], endPoint[0]);
+      bounds[2] = std::min(startPoint[1], endPoint[1]);
+      bounds[3] = std::max(startPoint[1], endPoint[1]);
+      bounds[4] = std::min(startPoint[2], endPoint[2]);
+      bounds[5] = std::max(startPoint[2], endPoint[2]);
+      }
+    }
+}
+
+//-----------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::UpdateReferences()
 {
   this->Superclass::UpdateReferences();

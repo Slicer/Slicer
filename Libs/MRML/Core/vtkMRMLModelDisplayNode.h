@@ -39,6 +39,9 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
+  /// Return the bounds of the model.
+  virtual void GetBounds(double bounds[6]);
+
   /// Set and observe poly data for this model. It should be the output
   /// polydata of the model node.
   virtual void SetInputPolyData(vtkPolyData* polydata);
