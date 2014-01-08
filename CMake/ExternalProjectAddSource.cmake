@@ -87,6 +87,10 @@ function(ExternalProject_Add_Source projectname)
 
     set(${_ep_SOURCE_DIR_VAR} ${CMAKE_BINARY_DIR}/${projectname} PARENT_SCOPE)
 
+  else()
+
+    ExternalProject_Add_Empty(${projectname})
+
   endif()
 
   if(NOT _ep_LABELS)
