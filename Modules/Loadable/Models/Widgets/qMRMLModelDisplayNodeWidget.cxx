@@ -34,6 +34,7 @@
 
 // VTK includes
 #include <vtkDataArray.h>
+#include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -69,8 +70,9 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
                    q, SLOT(setScalarsVisibility(bool)));
   QObject::connect(this->ActiveScalarComboBox, SIGNAL(currentArrayChanged(QString)),
                    q, SLOT(setActiveScalarName(QString)));
-  QObject::connect(this->ScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(setScalarsColorTable(vtkMRMLNode*)));
+  QObject::connect(this->ScalarsColorNodeComboBox,
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   q, SLOT(setScalarsColorNode(vtkMRMLNode*)));
   q->setEnabled(this->MRMLModelDisplayNode.GetPointer() != 0);
 
   this->MRMLDisplayNodeWidget->setSelectedVisible(false);
@@ -176,13 +178,13 @@ QString qMRMLModelDisplayNodeWidget::activeScalarName()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setScalarsColorTable(vtkMRMLNode* colorNode)
+void qMRMLModelDisplayNodeWidget::setScalarsColorNode(vtkMRMLNode* colorNode)
 {
-  this->setScalarsColorTable(vtkMRMLColorTableNode::SafeDownCast(colorNode));
+  this->setScalarsColorNode(vtkMRMLColorNode::SafeDownCast(colorNode));
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelDisplayNodeWidget::setScalarsColorTable(vtkMRMLColorTableNode* colorNode)
+void qMRMLModelDisplayNodeWidget::setScalarsColorNode(vtkMRMLColorNode* colorNode)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
   if (!d->MRMLModelDisplayNode.GetPointer())
@@ -193,11 +195,11 @@ void qMRMLModelDisplayNodeWidget::setScalarsColorTable(vtkMRMLColorTableNode* co
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorTableNode* qMRMLModelDisplayNodeWidget::scalarsColorTable()const
+vtkMRMLColorNode* qMRMLModelDisplayNodeWidget::scalarsColorNode()const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
-  return vtkMRMLColorTableNode::SafeDownCast(
-    d->ScalarsColorTableComboBox->currentNode());
+  return vtkMRMLColorNode::SafeDownCast(
+    d->ScalarsColorNodeComboBox->currentNode());
 }
 
 //------------------------------------------------------------------------------
@@ -209,11 +211,56 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     {
     return;
     }
-  d->ScalarsVisibilityCheckBox->setChecked(d->MRMLModelDisplayNode->GetScalarVisibility());
+  if (d->ScalarsVisibilityCheckBox->isChecked() !=
+      d->MRMLModelDisplayNode->GetScalarVisibility())
+    {
+    d->ScalarsVisibilityCheckBox->setChecked(
+      d->MRMLModelDisplayNode->GetScalarVisibility());
+    }
   bool wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
-  d->ActiveScalarComboBox->setDataSet(d->MRMLModelDisplayNode->GetInputPolyData());
+  d->ActiveScalarComboBox->setDataSet(
+    d->MRMLModelDisplayNode->GetInputPolyData());
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
-  d->ActiveScalarComboBox->setCurrentArray(d->MRMLModelDisplayNode->GetActiveScalarName());
-  d->ScalarsColorTableComboBox->setMRMLScene(d->MRMLModelDisplayNode->GetScene());
-  d->ScalarsColorTableComboBox->setCurrentNodeID(d->MRMLModelDisplayNode->GetColorNodeID());
+  if (d->ActiveScalarComboBox->currentArrayName() !=
+      d->MRMLModelDisplayNode->GetActiveScalarName())
+    {
+    d->ActiveScalarComboBox->setCurrentArray(
+      d->MRMLModelDisplayNode->GetActiveScalarName());
+    }
+  // set the scalar range info
+  QString scalarRangeString;
+  if (!d->ActiveScalarComboBox->currentArrayName().isEmpty())
+    {
+    vtkPointData *pointData = NULL;
+    if (d->MRMLModelDisplayNode->GetInputPolyData())
+      {
+      pointData = d->MRMLModelDisplayNode->GetInputPolyData()->GetPointData();
+      }
+    if (pointData &&
+        pointData->GetArray(d->MRMLModelDisplayNode->GetActiveScalarName()))
+      {
+      double *range = pointData->GetArray(
+        d->MRMLModelDisplayNode->GetActiveScalarName())->GetRange();
+      if (range)
+        {
+        scalarRangeString = QString::number(range[0]) +
+          QString(", ") +
+          QString::number(range[1]);
+        }
+      }
+    }
+  d->ActiveScalarRangeLabel->setText(scalarRangeString);
+
+  if (d->ScalarsColorNodeComboBox->mrmlScene() !=
+      d->MRMLModelDisplayNode->GetScene())
+    {
+    d->ScalarsColorNodeComboBox->setMRMLScene(
+      d->MRMLModelDisplayNode->GetScene());
+    }
+  if (d->ScalarsColorNodeComboBox->currentNodeID() !=
+      d->MRMLModelDisplayNode->GetColorNodeID())
+    {
+    d->ScalarsColorNodeComboBox->setCurrentNodeID(
+      d->MRMLModelDisplayNode->GetColorNodeID());
+    }
 }

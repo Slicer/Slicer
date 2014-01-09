@@ -11,7 +11,7 @@
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License.
+  limitations under thes License.
 
   This file was originally developed by Julien Finet, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
@@ -33,7 +33,7 @@
 class qMRMLModelDisplayNodeWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLModelDisplayNode;
-class vtkMRMLColorTableNode;
+class vtkMRMLColorNode;
 
 class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : public QWidget
 {
@@ -47,7 +47,7 @@ public:
 
   bool scalarsVisibility()const;
   QString activeScalarName()const;
-  vtkMRMLColorTableNode* scalarsColorTable()const;
+  vtkMRMLColorNode* scalarsColorNode()const;
 
 public slots:
   /// Set the volume node to display
@@ -61,8 +61,8 @@ public slots:
   
   void setScalarsVisibility(bool);
   void setActiveScalarName(const QString&);
-  void setScalarsColorTable(vtkMRMLNode*);
-  void setScalarsColorTable(vtkMRMLColorTableNode*);
+  void setScalarsColorNode(vtkMRMLNode*);
+  void setScalarsColorNode(vtkMRMLColorNode*);
 
 protected slots:
   void updateWidgetFromMRML();
