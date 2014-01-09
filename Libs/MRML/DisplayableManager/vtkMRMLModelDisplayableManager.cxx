@@ -1426,7 +1426,16 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             {
             vtkMRMLProceduralColorNode* proceduralColorNode =
               vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode());
-            if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
+            if (proceduralColorNode &&
+                proceduralColorNode->GetColorTransferFunction() != 0)
+              {
+              // \tbd maybe the trick below should be applied here too
+              vtkColorTransferFunction *ctf = vtkColorTransferFunction::New();
+              ctf->DeepCopy(proceduralColorNode->GetColorTransferFunction());
+              actor->GetMapper()->SetLookupTable(ctf);
+              ctf->Delete();
+              }
+            else if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
               {
               // \tbd: Could slow down if done too often
               // copy lut so that they are not shared between the mappers
@@ -1436,12 +1445,6 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               lut->DeepCopy( modelDisplayNode->GetColorNode()->GetLookupTable());
               actor->GetMapper()->SetLookupTable(lut);
               lut->Delete();
-              }
-            else if (proceduralColorNode->GetColorTransferFunction() != 0)
-              {
-              // \tbd maybe the trick above should be applied here too
-              actor->GetMapper()->SetLookupTable(
-                proceduralColorNode->GetColorTransferFunction());
               }
             }
 
