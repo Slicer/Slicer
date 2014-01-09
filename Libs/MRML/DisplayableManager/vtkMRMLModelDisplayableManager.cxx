@@ -1430,10 +1430,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
                 proceduralColorNode->GetColorTransferFunction() != 0)
               {
               // \tbd maybe the trick below should be applied here too
-              vtkColorTransferFunction *ctf = vtkColorTransferFunction::New();
+              vtkNew<vtkColorTransferFunction> ctf;
               ctf->DeepCopy(proceduralColorNode->GetColorTransferFunction());
-              actor->GetMapper()->SetLookupTable(ctf);
-              ctf->Delete();
+              actor->GetMapper()->SetLookupTable(ctf.GetPointer());
               }
             else if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
               {
@@ -1441,10 +1440,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               // copy lut so that they are not shared between the mappers
               // vtk sets scalar range on lut while rendering
               // that may cause performance problem if lut's are shared
-              vtkLookupTable *lut = vtkLookupTable::New();
+              vtkNew<vtkLookupTable> lut;
               lut->DeepCopy( modelDisplayNode->GetColorNode()->GetLookupTable());
-              actor->GetMapper()->SetLookupTable(lut);
-              lut->Delete();
+              actor->GetMapper()->SetLookupTable(lut.GetPointer());
               }
             }
 
