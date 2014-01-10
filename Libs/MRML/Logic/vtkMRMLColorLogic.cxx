@@ -125,8 +125,8 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
   // add the rest of the default color table nodes
   this->AddDefaultTableNodes();
 
-  // add a random procedural node that covers full integer range
-  this->AddRandomNode();  
+  // add default procedural nodes, including a random one
+  this->AddDefaultProceduralNodes();
 
   // add freesurfer nodes
   this->AddFreeSurferNodes(); 
@@ -199,7 +199,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
     }
   basicFSNode->Delete();
 
-   // remove the random procedural color nodes (after the fs proc nodes as
+   // remove the procedural color nodes (after the fs proc nodes as
    // getting them by class)
   std::vector<vtkMRMLNode *> procNodes;
   int numProcNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLProceduralColorNode", procNodes);
@@ -483,7 +483,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateDefaultTableNode(int type)
 //------------------------------------------------------------------------------
 vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRandomNode()
 {
-  vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: making a random int mrml proc color node");
+  vtkDebugMacro("vtkMRMLColorLogic::CreateRandomNode: making a random  mrml proc color node");
   vtkMRMLProceduralColorNode *procNode = vtkMRMLProceduralColorNode::New();
   procNode->SetName("RandomIntegers");
   procNode->SetAttribute("Category", "Discrete");
@@ -502,6 +502,27 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRandomNode()
     }
   func->BuildFunctionFromTable(VTK_INT_MIN, VTK_INT_MAX, dimension, table);
   func->Build();
+  procNode->SetNamesFromColors();
+
+  return procNode;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateRedGreenBlueNode()
+{
+  vtkDebugMacro("vtkMRMLColorLogic::AddDefaultColorNodes: making a red - green - blue mrml proc color node");
+  vtkMRMLProceduralColorNode *procNode = vtkMRMLProceduralColorNode::New();
+  procNode->SetName("RedGreenBlue");
+  procNode->SetAttribute("Category", "Continuous");
+  procNode->SaveWithSceneOff();
+  procNode->SetSingletonTag(procNode->GetTypeAsString());
+  procNode->SetDescription("A color transfer function that maps from -6 to 6, red through green to blue");
+  vtkColorTransferFunction *func = procNode->GetColorTransferFunction();
+  func->SetColorSpaceToRGB();
+  func->AddRGBPoint(-6.0, 1.0, 0.0, 0.0);
+  func->AddRGBPoint(0.0, 0.0, 1.0, 0.0);
+  func->AddRGBPoint(6.0, 0.0, 0.0, 1.0);
+
   procNode->SetNamesFromColors();
 
   return procNode;
@@ -738,16 +759,17 @@ void vtkMRMLColorLogic::AddDefaultTableNode(int i)
 }
 
 //----------------------------------------------------------------------------------------
-void vtkMRMLColorLogic::AddRandomNode()
-{  
+void vtkMRMLColorLogic::AddDefaultProceduralNodes()
+{
+  // random one
   vtkMRMLProceduralColorNode* randomNode = this->CreateRandomNode();
-  //if (this->GetMRMLScene()->GetNodeByID(randomNode->GetSingletonTag()))
-    {
-    // Add the node after it has been initialized
-    //this->GetMRMLScene()->RequestNodeID(randomNode, randomNode->GetSingletonTag());
-    this->GetMRMLScene()->AddNode(randomNode);
-    }
+  this->GetMRMLScene()->AddNode(randomNode);
   randomNode->Delete();
+
+  // red green blue one
+  vtkMRMLProceduralColorNode* rgbNode = this->CreateRedGreenBlueNode();
+  this->GetMRMLScene()->AddNode(rgbNode);
+  rgbNode->Delete();
 }
 
 //----------------------------------------------------------------------------------------

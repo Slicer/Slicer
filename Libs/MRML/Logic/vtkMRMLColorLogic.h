@@ -128,6 +128,7 @@ protected:
   vtkMRMLColorTableNode* CreateLabelsNode();
   vtkMRMLColorTableNode* CreateDefaultTableNode(int type);
   vtkMRMLProceduralColorNode* CreateRandomNode();
+  vtkMRMLProceduralColorNode* CreateRedGreenBlueNode();
   vtkMRMLFreeSurferProceduralColorNode* CreateFreeSurferNode(int type);
   vtkMRMLColorTableNode* CreateFreeSurferFileNode(const char* fileName);
   vtkMRMLPETProceduralColorNode* CreatePETColorNode(int type);
@@ -138,7 +139,7 @@ protected:
   
   void AddLabelsNode();
   void AddDefaultTableNode(int i);
-  void AddRandomNode();
+  void AddDefaultProceduralNodes();
   void AddFreeSurferNode(int type);
   void AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode);
   void AddPETNode(int type);
