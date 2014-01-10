@@ -97,7 +97,7 @@ scmrevision ${MY_EXTENSION_WC_REVISION}
 # - The dependencies will be built first
 depends     ${MY_EXTENSION_DEPENDS}
 
-# Inner build directory (default is ".")
+# Inner build directory (default is \".\")
 build_subdirectory ${MY_EXTENSION_BUILD_SUBDIRECTORY}
 
 # homepage
