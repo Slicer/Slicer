@@ -62,10 +62,17 @@ virtual void ShowProgress()
           m_ProcessInformation->StageProgress = this->GetProcess()->GetProgress();
           }
 
-        this->GetTimeProbe().Stop();
-        m_ProcessInformation->ElapsedTime
-          = this->GetTimeProbe().GetMean()
-          * this->GetTimeProbe().GetNumberOfStops();
+        try
+          {
+          this->GetTimeProbe().Stop();
+          m_ProcessInformation->ElapsedTime
+            = this->GetTimeProbe().GetMean()
+            * this->GetTimeProbe().GetNumberOfStops();
+          }
+        catch(...)
+          {
+          // ignore time probe exceptions
+          }
         this->GetTimeProbe().Start();
 
         if (m_ProcessInformation->Abort)
