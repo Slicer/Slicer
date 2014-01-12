@@ -109,6 +109,10 @@ if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES DCMTK)
 endif()
 
+if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  list(APPEND Slicer_DEPENDENCIES pydicom)
+endif()
+
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
