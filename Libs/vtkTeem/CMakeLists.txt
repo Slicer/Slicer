@@ -18,7 +18,7 @@ find_package(Teem REQUIRED NO_MODULE)
 # XXX Since no TeemConfigVersion.cmake is configured, let's check the version explicitly
 if(${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH} VERSION_LESS 1.10)
   message(FATAL_ERROR
-    "Could not find a configuration file for package "Teem" that is compatible with requested version \"1.10\".")
+    "Could not find a configuration file for package \"Teem\" that is compatible with requested version \"1.10\".")
 endif()
 include(${Teem_USE_FILE})
 
