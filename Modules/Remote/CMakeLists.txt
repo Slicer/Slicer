@@ -10,7 +10,7 @@ if(Slicer_EP_LABEL_REMOTE_MODULE)
   endforeach()
 endif()
 
-if(Slicer_BUILD_BRAINSTOOLS)
+if(Slicer_BUILD_CLI AND Slicer_BUILD_BRAINSTOOLS)
   # NOTE: BRAINSTools source code is checkout using 'Slicer_Remote_Add' called in SuperBuild.cmake
   set(BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR} CACHE PATH "" FORCE)
   set(BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR} CACHE PATH "" FORCE)
