@@ -84,7 +84,6 @@ class DataProbeInfoWidget(object):
     self.styleObserverTags = []
     # keep a map of interactor styles to sliceWidgets so we can easily get sliceLogic
     self.sliceWidgetsPerStyle = {}
-    self.refreshObservers()
 
     layoutManager = slicer.app.layoutManager()
     layoutManager.connect('layoutChanged(int)', self.refreshObservers)
@@ -96,6 +95,9 @@ class DataProbeInfoWidget(object):
 
     #Helper class to calculate and display tensor scalars
     self.calculateTensorScalars = CalculateTensorScalars()
+
+    # once everything is set up, refresh the observers
+    self.refreshObservers()
 
 
   def __del__(self):
