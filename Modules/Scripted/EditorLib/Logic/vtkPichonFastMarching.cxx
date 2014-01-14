@@ -58,15 +58,18 @@ float vtkPichonFastMarching::speed( int index )
 
   getMedianInhomo( index, I, H );
 
+  float s;
 
   double pI=pdfIntensityIn->value(I);
   double pH=pdfInhomoIn->value(H);
 
-  float s=(float)pow(pI*pI*pH, powerSpeed);
+
+
+  s=(float)pow(pI*pI*pH, powerSpeed);
   // make sure speed is not too small
   s*=1e10;
 
-  if(!isfinite(s))
+  if(!finite(s))
     {
     s = 1.;
     if(!warned){
@@ -76,9 +79,9 @@ float vtkPichonFastMarching::speed( int index )
     }
 
 
-  if( (s<1.0/(INF/1e6)) || isfinite(s)==0 )
+  if( (s<1.0/(INF/1e6)) || finite(s)==0 )
     {
-      if(isfinite(s)==0)
+      if(finite(s)==0)
     vtkErrorMacro( "Error in vtkPichonFastMarching::speed(...): finite(s)==0 " << s );
       /*
       else
@@ -581,7 +584,7 @@ bool vtkPichonFastMarching::minHeapIsSorted( void )
     }
   for(k=(N-1);k>=1;k--)
     {
-      if( isfinite( node[tree[k].nodeIndex].T)==0 )
+      if( finite( node[tree[k].nodeIndex].T)==0 )
     vtkErrorMacro( "Error in vtkPichonFastMarching::minHeapIsSorted(): "
                << "NaN or Inf value in minHeap : " << node[tree[k].nodeIndex].T );
 

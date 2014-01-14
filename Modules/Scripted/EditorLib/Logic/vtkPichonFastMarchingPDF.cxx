@@ -190,7 +190,7 @@ void vtkPichonFastMarchingPDF::update( void )
 void vtkPichonFastMarchingPDF::addRealization( int k )
 {
   //assert(finite(k)!=0);
-  if(!(isfinite(k)!=0))
+  if(!(finite(k)!=0))
     {
       vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), !(finite(k)!=0)");
       return;
