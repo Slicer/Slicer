@@ -565,7 +565,7 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
     else
       {
       this->setEnvironmentVariable(
-            "TCL_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tcl"Slicer_TCL_TK_VERSION_DOT);
+            "TCL_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tcl" Slicer_TCL_TK_VERSION_DOT);
       }
     }
   if (this->Environment.value("TK_LIBRARY").isEmpty())
@@ -577,7 +577,7 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
     else
       {
       this->setEnvironmentVariable(
-            "TK_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tk"Slicer_TCL_TK_VERSION_DOT);
+            "TK_LIBRARY", app->slicerHome() + "/lib/TclTk/lib/tk" Slicer_TCL_TK_VERSION_DOT);
       }
     }
   if (this->Environment.value("TCLLIBPATH").isEmpty())
@@ -589,8 +589,8 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
     else
       {
       QStringList tclLibPaths;
-      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itcl"Slicer_INCR_TCL_VERSION_DOT;
-      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itk"Slicer_INCR_TCL_VERSION_DOT;
+      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itcl" Slicer_INCR_TCL_VERSION_DOT;
+      tclLibPaths << app->slicerHome() + "/lib/TclTk/lib/itk" Slicer_INCR_TCL_VERSION_DOT;
       this->setEnvironmentVariable("TCLLIBPATH", tclLibPaths.join(" "));
       }
     }

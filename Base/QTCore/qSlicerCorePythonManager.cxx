@@ -93,15 +93,15 @@ QStringList qSlicerCorePythonManager::pythonPaths()
     {
     // Add here python path specific to the BUILD tree
 #ifdef CMAKE_INTDIR
-    paths << VTK_DIR"/bin/"CMAKE_INTDIR"/";
+    paths << VTK_DIR "/bin/" CMAKE_INTDIR "/";
 #else
-    paths << VTK_DIR"/bin/";
+    paths << VTK_DIR "/bin/";
 #endif
     paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
 #ifdef CMAKE_INTDIR
-    paths << CTK_DIR"/CTK-build/bin/"CMAKE_INTDIR"/";
+    paths << CTK_DIR "/CTK-build/bin/" CMAKE_INTDIR "/";
 #else
-    paths << CTK_DIR"/CTK-build/bin/";
+    paths << CTK_DIR "/CTK-build/bin/";
 #endif
     paths << QString("%1/CTK-build/bin/Python").arg(CTK_DIR);
     }
@@ -118,7 +118,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
     // appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,
     // and ../lib/pythonX.Y/{lib-tk, lib-old, lib-dynload}
     // See http://docs.python.org/c-api/intro.html#embedding-python
-    QString pythonLibSubDirectory("/lib/python"Slicer_PYTHON_VERSION_DOT);
+    QString pythonLibSubDirectory("/lib/python" Slicer_PYTHON_VERSION_DOT);
 #endif
     paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory + "/site-packages";
     }
