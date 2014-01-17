@@ -1,4 +1,4 @@
-if( ("${MSVC_VERSION}" VERSION_GREATER "1599"))
+if("${MSVC_VERSION}" VERSION_GREATER "1599")
   message("Fixing source in ${PYTHON_SRC_DIR} for MSVC 2010/2012 compiler")
   set(msvc9c ${PYTHON_SRC_DIR}/Lib/distutils/msvc9compiler.py)
 
