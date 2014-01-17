@@ -91,7 +91,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIRS
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/davidsansome/python-cmake-buildsystem.git"
-    GIT_TAG "892c95b5024a52ebd47a12292ff74ec7d713db24"
+    GIT_TAG "82e14946e3640be603601623d9bd282b992f2d7c"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
