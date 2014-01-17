@@ -103,6 +103,8 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
     if(DEFINED CMAKE_CONFIGURATION_TYPES)
       set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_CFG_INTDIR})
+    else()
+      set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_BUILD_TYPE})
     endif()
 
     set(OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
