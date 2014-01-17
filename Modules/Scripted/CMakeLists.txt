@@ -31,6 +31,7 @@ endif()
 if(Slicer_BUILD_DIFFUSION_SUPPORT)
   list(APPEND modules
     FiberBundleToLabelMap
+    )
 endif()
 foreach(module ${modules})
   list(FIND Slicer_QTSCRIPTEDMODULES_DISABLED ${module} _module_disabled)
