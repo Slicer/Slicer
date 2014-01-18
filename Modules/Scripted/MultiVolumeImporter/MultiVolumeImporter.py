@@ -146,6 +146,14 @@ class MultiVolumeImporterWidget:
     self.__mvSelector.setMRMLScene(slicer.mrmlScene)
     return
 
+  def human_sort(self,l):
+    """ Sort the given list in the way that humans expect. 
+        Conributed by Yanling Liu
+    """ 
+    convert = lambda text: int(text) if text.isdigit() else text 
+    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+    l.sort( key=alphanum_key )
+
   def onImportButtonClicked(self):
     # check if the output container exists
     mvNode = self.__mvSelector.currentNode()
@@ -178,7 +186,7 @@ class MultiVolumeImporterWidget:
       if not f.startswith('.'):
         fileName = inputDir+'/'+f
         fileNames.append(fileName)
-    fileNames.sort()
+    self.humanSort(fileNames)
 
     for fileName in fileNames:
       (s,f) = self.readFrame(fileName)
