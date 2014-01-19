@@ -34,12 +34,14 @@ set(cli_modules
   ResampleDTIVolume # Needed by ResampleScalarVectorDWIVolume
   ResampleScalarVectorDWIVolume # Depends on DiffusionApplications, needed by CropVolume
   RobustStatisticsSegmenter
-  ROITest
   SimpleRegionGrowingSegmentation
   SubtractScalarVolumes
   ThresholdScalarVolume
   VotingBinaryHoleFillingImageFilter
   )
+if(BUILD_TESTING)
+  list(APPEND cli_modules ROITest)
+endif()
 
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND cli_modules CreateDICOMSeries)
@@ -65,7 +67,6 @@ if(Slicer_BUILD_LEGACY_CLI)
     AffineRegistration
     BSplineDeformableRegistration
     BSplineToDeformationField
-    DiffusionTensorTest
     ExpertAutomatedRegistration
     FiducialRegistration
     LinearRegistration
@@ -74,14 +75,19 @@ if(Slicer_BUILD_LEGACY_CLI)
     OtsuThresholdSegmentation
     ResampleScalarVolume
     RigidRegistration
-    TestGridTransformRegistration
     )
+  if(BUILD_TESTING)
+    list(APPEND legacy_cli_modules
+      DiffusionTensorTest
+      TestGridTransformRegistration
+      )
+  endif()
   list(APPEND cli_modules ${legacy_cli_modules})
 endif()
 
 if (Slicer_BUILD_EMSegment)
   ## EMSegment requires some LEGACY_CLI to work. Add them if not already added
-  if (NOT Slicer_BUILD_LEGACY_CLI)
+  if(NOT Slicer_BUILD_LEGACY_CLI)
     list(APPEND cli_modules BSplineToDeformationField)
   endif()
 endif()
