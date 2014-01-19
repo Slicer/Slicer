@@ -320,6 +320,53 @@ def getNewModuleGui(module):
     print("Could not find module widget representation with name '%s" % module.name, file=sys.stderr)
   return widgetRepr
 
+def reloadScriptedModule(moduleName):
+  """Generic reload method for any scripted module.
+  """
+  import imp, sys, os
+  import slicer
+
+  widgetName = moduleName + "Widget"
+
+  # reload the source code
+  # - set source file path
+  # - load the module to the global space
+  filePath = eval('slicer.modules.%s.path' % moduleName.lower())
+  p = os.path.dirname(filePath)
+  if not sys.path.__contains__(p):
+    sys.path.insert(0,p)
+  fp = open(filePath, "r")
+  globals()[moduleName] = imp.load_module(
+      moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
+  fp.close()
+
+  # rebuild the widget
+  # - find and hide the existing widget
+  # - create a new widget in the existing parent
+  parent = eval('slicer.modules.%s.widgetRepresentation()' % moduleName.lower())
+  for child in parent.children():
+    try:
+      child.hide()
+    except AttributeError:
+      pass
+  # Remove spacer items
+  item = parent.layout().itemAt(0)
+  while item:
+    parent.layout().removeItem(item)
+    item = parent.layout().itemAt(0)
+
+  # delete the old widget instance
+  if hasattr(slicer.modules, widgetName):
+    w = getattr(slicer.modules, widgetName)
+    if hasattr(slicer.modules, 'cleanup'):
+      w.cleanup()
+
+  # create new widget inside existing parent
+  globals()[widgetName.lower()] = eval(
+      'globals()["%s"].%s(parent)' % (moduleName, widgetName))
+  globals()[widgetName.lower()].setup()
+  setattr(slicer.modules, widgetName, globals()[widgetName.lower()])
+
 #
 # MRML
 #
