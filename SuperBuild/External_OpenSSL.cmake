@@ -49,7 +49,7 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
       PATCH_COMMAND ${CMAKE_COMMAND}
         -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_patch_and_configure_step.cmake
       CONFIGURE_COMMAND ""
-      BUILD_COMMAND $(MAKE) -j1 build_libs
+      BUILD_COMMAND make -j1 build_libs
       INSTALL_COMMAND ""
       DEPENDS
         ${${proj}_DEPENDENCIES}
