@@ -335,10 +335,9 @@ def reloadScriptedModule(moduleName):
   p = os.path.dirname(filePath)
   if not sys.path.__contains__(p):
     sys.path.insert(0,p)
-  fp = open(filePath, "r")
-  globals()[moduleName] = imp.load_module(
-      moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
-  fp.close()
+  with open(filePath, "r") as fp:
+    globals()[moduleName] = imp.load_module(
+        moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
 
   # rebuild the widget
   # - find and hide the existing widget
