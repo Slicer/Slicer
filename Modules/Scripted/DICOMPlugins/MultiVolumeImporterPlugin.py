@@ -279,6 +279,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
     mvNode.SetAndObserveImageData(mvImage)
     mvNode.SetNumberOfFrames(nFrames)
+    mvNode.SetName(loadable.name)
     slicer.mrmlScene.AddNode(mvNode)
 
     #
