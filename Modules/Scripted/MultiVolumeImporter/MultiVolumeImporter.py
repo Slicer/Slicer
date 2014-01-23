@@ -146,7 +146,7 @@ class MultiVolumeImporterWidget:
     self.__mvSelector.setMRMLScene(slicer.mrmlScene)
     return
 
-  def human_sort(self,l):
+  def humanSort(self,l):
     """ Sort the given list in the way that humans expect. 
         Conributed by Yanling Liu
     """ 
