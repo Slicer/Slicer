@@ -1005,7 +1005,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
             if (overLineRep)
               {
               overLine->Off();
-              underLine->Off();
+              if (underLine)
+                {
+                underLine->Off();
+                }
 
               double lineOpacity = lineDisplayNode->GetProjectedOpacity();
               double lineColor[3];
