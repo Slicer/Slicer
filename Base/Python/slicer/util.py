@@ -354,7 +354,7 @@ def reloadScriptedModule(moduleName):
   # delete the old widget instance
   if hasattr(slicer.modules, widgetName):
     w = getattr(slicer.modules, widgetName)
-    if hasattr(slicer.modules, 'cleanup'):
+    if hasattr(w, 'cleanup'):
       w.cleanup()
 
   # create new widget inside existing parent
