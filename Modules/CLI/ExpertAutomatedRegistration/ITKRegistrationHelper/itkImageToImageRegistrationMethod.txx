@@ -32,7 +32,7 @@ ImageToImageRegistrationMethod<TImage>
   this->m_Transform = 0;
   typename TransformOutputType::Pointer transformDecorator =
     static_cast<TransformOutputType *>
-    ( this->MakeOutput(0).GetPointer() );
+    ( this->MakeOutput(static_cast<DataObjectPointerArraySizeType>(0)).GetPointer() );
 
   this->ProcessObject::SetNthOutput( 0, transformDecorator.GetPointer() );
 
