@@ -331,10 +331,10 @@ def reloadScriptedModule(moduleName):
   # reload the source code
   filePath = eval('slicer.modules.%s.path' % moduleName.lower())
   p = os.path.dirname(filePath)
-  if not sys.path.__contains__(p):
+  if not p in sys.path:
     sys.path.insert(0,p)
   with open(filePath, "r") as fp:
-    globals()[moduleName] = imp.load_module(
+    reloaded_module = imp.load_module(
         moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
 
   # find and hide the existing widget
@@ -358,10 +358,11 @@ def reloadScriptedModule(moduleName):
       w.cleanup()
 
   # create new widget inside existing parent
-  globals()[widgetName.lower()] = eval(
-      'globals()["%s"].%s(parent)' % (moduleName, widgetName))
-  globals()[widgetName.lower()].setup()
-  setattr(slicer.modules, widgetName, globals()[widgetName.lower()])
+  widget = eval('reloaded_module.%s(parent)' % widgetName)
+  widget.setup()
+  setattr(slicer.modules, widgetName, widget)
+
+  return reloaded_module
 
 #
 # MRML

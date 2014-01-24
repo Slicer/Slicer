@@ -106,7 +106,7 @@ class sceneImport2428Widget:
     """Generic reload method for any scripted module.
     ModuleWizard will subsitute correct default moduleName.
     """
-    slicer.util.reloadScriptedModule(moduleName)
+    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
   def onTest(self,moduleName="sceneImport2428"):
     evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)

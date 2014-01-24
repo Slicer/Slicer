@@ -384,7 +384,7 @@ class SurfaceToolboxWidget:
     """Generic reload method for any scripted module.
     ModuleWizard will subsitute correct default moduleName.
     """
-    slicer.util.reloadScriptedModule(moduleName)
+    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
   def onReloadAndTest(self,moduleName="SurfaceToolbox"):
     self.onReload()

@@ -77,7 +77,7 @@ class test_tractography_displayWidget:
     """Generic reload method for any scripted module.
     ModuleWizard will subsitute correct default moduleName.
     """
-    slicer.util.reloadScriptedModule(moduleName)
+    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
   def onReloadAndTest(self,moduleName="test_tractography_display"):
     self.onReload()

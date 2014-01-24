@@ -97,7 +97,7 @@ class fiber_visibility_crash2438Widget:
     """Generic reload method for any scripted module.
     ModuleWizard will subsitute correct default moduleName.
     """
-    slicer.util.reloadScriptedModule(moduleName)
+    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
 
   def onReloadAndTest(self,moduleName="fiber_visibility_crash2438"):
     self.onReload()
