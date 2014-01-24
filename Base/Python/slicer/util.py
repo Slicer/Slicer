@@ -329,8 +329,6 @@ def reloadScriptedModule(moduleName):
   widgetName = moduleName + "Widget"
 
   # reload the source code
-  # - set source file path
-  # - load the module to the global space
   filePath = eval('slicer.modules.%s.path' % moduleName.lower())
   p = os.path.dirname(filePath)
   if not sys.path.__contains__(p):
@@ -339,16 +337,15 @@ def reloadScriptedModule(moduleName):
     globals()[moduleName] = imp.load_module(
         moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
 
-  # rebuild the widget
-  # - find and hide the existing widget
-  # - create a new widget in the existing parent
+  # find and hide the existing widget
   parent = eval('slicer.modules.%s.widgetRepresentation()' % moduleName.lower())
   for child in parent.children():
     try:
       child.hide()
     except AttributeError:
       pass
-  # Remove spacer items
+
+  # remove spacer items
   item = parent.layout().itemAt(0)
   while item:
     parent.layout().removeItem(item)
