@@ -320,6 +320,9 @@ def getNewModuleGui(module):
     print("Could not find module widget representation with name '%s" % module.name, file=sys.stderr)
   return widgetRepr
 
+def modulePath(moduleName):
+  return eval('slicer.modules.%s.path' % moduleName.lower())
+
 def reloadScriptedModule(moduleName):
   """Generic reload method for any scripted module.
   """
@@ -329,7 +332,7 @@ def reloadScriptedModule(moduleName):
   widgetName = moduleName + "Widget"
 
   # reload the source code
-  filePath = eval('slicer.modules.%s.path' % moduleName.lower())
+  filePath = modulePath(moduleName)
   p = os.path.dirname(filePath)
   if not p in sys.path:
     sys.path.insert(0,p)
