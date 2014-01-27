@@ -450,3 +450,37 @@ def array(pattern = "", index = 0):
     return a
   # TODO: accessors for other node types: polydata (verts, polys...), colors
 
+
+#
+# VTK
+#
+
+class VTKObservationMixin(object):
+  def __init__(self):
+    super(VTKObservationMixin, self).__init__()
+    self.Observations = []
+
+  def removeObservers(self, method):
+    for o, e, m, g, t in self.Observations:
+      if method == m:
+        o.RemoveObserver(t)
+        self.Observations.remove([o, e, m, g, t])
+
+  def addObserver(self, object, event, method, group = 'none'):
+    if self.hasObserver(object, event, method):
+      print('already has observer')
+      return
+    tag = object.AddObserver(event, method)
+    self.Observations.append([object, event, method, group, tag])
+
+  def hasObserver(self, object, event, method):
+    for o, e, m, g, t in self.Observations:
+      if o == object and e == event and m == method:
+        return True
+    return False
+
+  def observer(self, event, method):
+    for o, e, m, g, t in self.Observations:
+      if e == event and m == method:
+        return o
+    return None
