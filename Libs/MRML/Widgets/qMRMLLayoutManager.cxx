@@ -986,6 +986,26 @@ void qMRMLLayoutManager::setLayoutNumberOfCompareViewColumns(int num)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLLayoutManager::resetThreeDViews()
+{
+  for(int idx = 0; idx < this->threeDViewCount(); ++idx)
+    {
+    qMRMLThreeDView * threeDView = this->threeDWidget(idx)->threeDView();
+    threeDView->resetFocalPoint();
+    threeDView->resetCamera();
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::resetSliceViews()
+{
+  foreach(const QString& viewName, this->sliceViewNames())
+    {
+    this->sliceWidget(viewName)->sliceController()->fitSliceToBackground();
+    }
+}
+
+//------------------------------------------------------------------------------
 QWidget* qMRMLLayoutManager::viewFromXML(QDomElement viewElement)
 {
   Q_D(qMRMLLayoutManager);

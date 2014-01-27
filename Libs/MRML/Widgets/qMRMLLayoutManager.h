@@ -118,6 +118,14 @@ public slots:
   void setLayoutNumberOfCompareViewRows(int num);
   void setLayoutNumberOfCompareViewColumns(int num);
 
+  /// Reset focal view around volumes
+  /// \sa ctkVTKRenderView::resetFocalPoint(), ctkVTKRenderView::resetCamera()
+  void resetThreeDViews();
+
+  /// Reset focal view around volumes
+  /// \sa qMRMLSliceControllerWidget::fitSliceToBackground(), vtkMRMLSliceLogic::FitSliceToAll()
+  void resetSliceViews();
+
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
   void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode * newActiveMRMLChartViewNode);
