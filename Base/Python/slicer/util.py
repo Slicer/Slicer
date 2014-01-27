@@ -321,6 +321,7 @@ def getNewModuleGui(module):
   return widgetRepr
 
 def modulePath(moduleName):
+  import slicer
   return eval('slicer.modules.%s.path' % moduleName.lower())
 
 def reloadScriptedModule(moduleName):
