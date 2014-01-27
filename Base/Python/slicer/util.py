@@ -369,6 +369,20 @@ def reloadScriptedModule(moduleName):
   return reloaded_module
 
 #
+# Layout
+#
+
+def resetThreeDViews():
+  """Reset focal view around volumes
+  """
+  slicer.app.layoutManager().resetThreeDViews()
+
+def resetSliceViews():
+  """Reset focal view around volumes
+  """
+  manager = slicer.app.layoutManager().resetSliceViews()
+
+#
 # MRML
 #
 
