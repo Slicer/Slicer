@@ -46,7 +46,7 @@ public:
   virtual ~qMRMLLayoutWidget();
 
   /// Layout manager
-  qMRMLLayoutManager* layoutManager()const;
+  Q_INVOKABLE qMRMLLayoutManager* layoutManager()const;
   /// Utility function that returns the mrml scene of the layout manager
   vtkMRMLScene* mrmlScene()const;
   /// Utility function that returns the current layout of the layout manager
