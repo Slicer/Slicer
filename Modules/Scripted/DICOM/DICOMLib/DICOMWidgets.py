@@ -282,7 +282,7 @@ class DICOMDetailsPopup(object):
 
     if missingFileCount > 0:
       qt.QMessageBox.warning(self.window,
-          "DICOM", "Warning: %d of %d files listed in the database for this %s cannot be found on disk." % (missingFileCount, allFileCount, role))
+          "DICOM", "Warning: %d of %d selected files listed in the database cannot be found on disk." % (missingFileCount, allFileCount))
 
     if missingFileCount == allFileCount:
       return
