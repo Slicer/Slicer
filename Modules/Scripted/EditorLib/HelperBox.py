@@ -162,9 +162,10 @@ class HelperBox(object):
     self.mergeName.setText( mergeText )
     self.updateStructures()
 
-    warnings = self.checkForVolumeWarnings(self.master,self.merge)
-    if warnings != "":
-      self.errorDialog( "Warning: %s" % warnings )
+    if self.master or merge:
+      warnings = self.checkForVolumeWarnings(self.master,self.merge)
+      if warnings != "":
+        self.errorDialog( "Warning: %s" % warnings )
 
     # trigger a modified event on the parameter node so that other parts of the GUI
     # (such as the EditColor) will know to update and enable themselves
