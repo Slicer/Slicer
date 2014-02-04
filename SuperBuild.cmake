@@ -191,7 +191,7 @@ list_conditional_append(Slicer_BUILD_MultiVolumeImporter Slicer_REMOTE_DEPENDENC
 
 Slicer_Remote_Add(SimpleFilters
   GIT_REPOSITORY ${git_protocol}://github.com/SimpleITK/SlicerSimpleFilters.git
-  GIT_TAG fc1f06ce52aec9272f928f3d1e0fa59b1a1c8bd6
+  GIT_TAG 3bc2fdc5ca5c72b3fbfc596213eecf89cec31b32
   OPTION_NAME Slicer_BUILD_SimpleFilters
   OPTION_DEPENDS "Slicer_BUILD_QTSCRIPTEDMODULES;Slicer_USE_SimpleITK"
   LABELS REMOTE_MODULE
