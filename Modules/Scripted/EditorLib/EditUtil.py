@@ -116,16 +116,22 @@ class EditUtil(object):
   def setLabel(self,label):
     return self.getParameterNode().SetParameter('label',str(label))
 
+  def backupLabel(self):
+    """Save current label into 'storedLabel' parameter node attribute"""
+    self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
+
+  def restoreLabel(self):
+    """Restore the label saved as 'storedLabel' parameter node attribute"""
+    storedLabel = self.getParameterNode().GetParameter('storedLabel')
+    if storedLabel:
+      self.setLabel(storedLabel)
+
   def toggleLabel(self):
     """toggle the current label map in the editor parameter node"""
-    storedLabelParam = self.getParameterNode().GetParameter('storedLabel')
-    if storedLabelParam == '':
-      self.getParameterNode().SetParameter('storedLabel','0')
-    storedLabel = int(self.getParameterNode().GetParameter('storedLabel'))
     if self.getLabel() == 0:
-      self.setLabel(storedLabel)
+      self.restoreLabel()
     else:
-      self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
+      self.backupLabel()
       self.setLabel(0)
 
   def getLabelColor(self):

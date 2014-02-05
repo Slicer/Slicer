@@ -277,6 +277,8 @@ class EditBox(object):
   #
   def selectEffect(self, effectName):
 
+    self.editUtil.restoreLabel()
+
     if effectName ==  "EraseLabel":
         self.editUtil.toggleLabel()
         return
