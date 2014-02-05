@@ -42,6 +42,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_ENUMS(ItemDataRole)
   Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
 
 public:
@@ -56,6 +57,7 @@ public:
     PointerRole,
     ColorRole
   };
+
 
   /// The color column contains a Qt::DecorationRole with a pixmap of the color,
   /// the ColorRole with the color QColor, the colorName as Qt::TooltipRole and
