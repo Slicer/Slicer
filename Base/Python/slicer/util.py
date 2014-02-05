@@ -188,7 +188,7 @@ def loadTransform(filename, returnNode=False):
   filetype = 'TransformFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
-def loadLabelVolume(filename, properties, returnNode=False):
+def loadLabelVolume(filename, properties={}, returnNode=False):
   filetype = 'VolumeFile'
   properties['labelmap'] = True
   return loadNodeFromFile(filename, filetype, properties, returnNode)
