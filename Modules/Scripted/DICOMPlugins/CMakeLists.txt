@@ -5,9 +5,14 @@ set(MODULE_NAME DICOMPlugins)
 #-----------------------------------------------------------------------------
 set(MODULE_PYTHON_SCRIPTS
   DICOMScalarVolumePlugin.py
-  DICOMDiffusionVolumePlugin.py
   DICOMSlicerDataBundlePlugin.py
   )
+
+if(Slicer_BUILD_DIFFUSION_SUPPORT)
+  list(APPEND MODULE_PYTHON_SCRIPTS
+    DICOMDiffusionVolumePlugin.py
+    )
+endif()
 
 set(MODULE_PYTHON_RESOURCES
   )
