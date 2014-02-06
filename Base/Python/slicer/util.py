@@ -413,6 +413,14 @@ def getNode(pattern = "", index = 0):
     except IndexError:
       return None
 
+def getFirstNodeByClassByName(className, name):
+  import slicer
+  nodes = slicer.mrmlScene.GetNodesByClassByName(className, name)
+  nodes.UnRegister(nodes)
+  if nodes.GetNumberOfItems() > 0:
+    return nodes.GetItemAsObject(0)
+  return None
+
 #
 # MRML-numpy
 #
