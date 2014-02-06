@@ -114,7 +114,7 @@ class EditUtil(object):
     return int(self.getParameterNode().GetParameter('label'))
 
   def setLabel(self,label):
-    return self.getParameterNode().SetParameter('label',str(label))
+    self.getParameterNode().SetParameter('label',str(label))
 
   def backupLabel(self):
     """Save current label into 'storedLabel' parameter node attribute"""
