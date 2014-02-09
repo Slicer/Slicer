@@ -371,6 +371,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if (reader->GetOutput() == NULL || reader->GetOutput()->GetPointData() == NULL)
     {
     vtkErrorMacro("ReadData: Unable to read data from file: " << fullName);
+    return 0;
     }
 
   vtkPointData * pointData = reader->GetOutput()->GetPointData();
@@ -396,6 +397,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       && reader->GetNumberOfComponents() != 1)
     {
     vtkErrorMacro("ReadData: Not a scalar volume file: " << fullName );
+    return 0;
     }
 
   // Set volume attributes
