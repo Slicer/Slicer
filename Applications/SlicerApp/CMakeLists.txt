@@ -217,6 +217,7 @@ if(APPLE)
     PROPERTIES
       OUTPUT_NAME ${SlicerApp_APPLICATION_NAME}
       MACOSX_BUNDLE_BUNDLE_VERSION "${Slicer_VERSION_FULL}"
+      MACOSX_BUNDLE_INFO_PLIST "${Slicer_CMAKE_DIR}/MacOSXBundleInfo.plist.in"
       LINK_FLAGS ${link_flags}
     )
   if(DEFINED Slicer_VERSION_TWEAK)
