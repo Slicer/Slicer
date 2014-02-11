@@ -411,6 +411,39 @@
     <string>Show/Hide frames per second (FPS)</string>
    </property>
   </action>
+  <action name="actionSwitchToUserDefinedStereo_1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>User Defined 1</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to user defined stereo mode 1</string>
+   </property>
+  </action>
+  <action name="actionSwitchToUserDefinedStereo_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>User Defined 2</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to user defined stereo mode 2</string>
+   </property>
+  </action>
+  <action name="actionSwitchToUserDefinedStereo_3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>User Defined 3</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch to user defined stereo mode 3</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

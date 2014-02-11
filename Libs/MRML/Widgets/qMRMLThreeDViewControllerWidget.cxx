@@ -112,6 +112,12 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                                       vtkMRMLViewNode::Interlaced);
   this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
                                       vtkMRMLViewNode::RedBlue);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_1,
+                                      vtkMRMLViewNode::UserDefined_1);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_2,
+                                      vtkMRMLViewNode::UserDefined_2);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToUserDefinedStereo_3,
+                                      vtkMRMLViewNode::UserDefined_3);
   QActionGroup* stereoTypesActions = new QActionGroup(this->PopupWidget);
   stereoTypesActions->setExclusive(true);
   stereoTypesActions->addAction(this->actionNoStereo);
@@ -119,6 +125,9 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   stereoTypesActions->addAction(this->actionSwitchToAnaglyphStereo);
   stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
   stereoTypesActions->addAction(this->actionSwitchToQuadBufferStereo);
+  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_1);
+  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_2);
+  stereoTypesActions->addAction(this->actionSwitchToUserDefinedStereo_3);
   QMenu* stereoTypesMenu = new QMenu("Stereo Modes", this->PopupWidget);
   stereoTypesMenu->setObjectName("stereoTypesMenu");
   stereoTypesMenu->addActions(stereoTypesActions->actions());

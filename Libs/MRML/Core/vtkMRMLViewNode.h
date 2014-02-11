@@ -170,7 +170,10 @@ public:
       RedBlue,
       Anaglyph,
       QuadBuffer,
-      Interlaced
+      Interlaced,
+      UserDefined_1,
+      UserDefined_2,
+      UserDefined_3
     };
 
   /// render modes

@@ -483,6 +483,18 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
     {
     renderWindow->SetStereoTypeToInterlaced();
     }
+  else if (stereoType == vtkMRMLViewNode::UserDefined_1)
+    {
+    renderWindow->SetStereoType(101);
+    }
+  else if (stereoType == vtkMRMLViewNode::UserDefined_2)
+    {
+    renderWindow->SetStereoType(102);
+    }
+  else if (stereoType == vtkMRMLViewNode::UserDefined_3)
+    {
+    renderWindow->SetStereoType(103);
+    }
 
   renderWindow->SetStereoRender(stereoType != vtkMRMLViewNode::NoStereo);
   this->External->RequestRender();

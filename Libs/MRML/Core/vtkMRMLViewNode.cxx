@@ -162,6 +162,18 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " stereoType=\"" << "Interlaced" << "\"";    
     }
+  else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_1 )
+    {
+    of << indent << " stereoType=\"" << "UserDefined_1" << "\"";
+    }
+  else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_2 )
+    {
+    of << indent << " stereoType=\"" << "UserDefined_2" << "\"";
+    }
+  else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_3 )
+    {
+    of << indent << " stereoType=\"" << "UserDefined_3" << "\"";
+    }
 
   // configure render mode
   if (this->GetRenderMode() == vtkMRMLViewNode::Perspective )
@@ -282,6 +294,18 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       else if ( !strcmp (attValue, "Interlaced" ))
         {
         this->StereoType = vtkMRMLViewNode::Interlaced;
+        }
+      else if ( !strcmp (attValue, "UserDefined_1" ))
+        {
+        this->StereoType = vtkMRMLViewNode::UserDefined_1;
+        }
+      else if ( !strcmp (attValue, "UserDefined_2" ))
+        {
+        this->StereoType = vtkMRMLViewNode::UserDefined_2;
+        }
+      else if ( !strcmp (attValue, "UserDefined_3" ))
+        {
+        this->StereoType = vtkMRMLViewNode::UserDefined_3;
         }
       }
     else if (!strcmp(attName, "rockLength" ))
