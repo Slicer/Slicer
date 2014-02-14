@@ -23,8 +23,15 @@ Version:   $Revision: 1.14 $
 #include <vtkImageData.h>
 #include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
+#include <vtkHomogeneousTransform.h>
+#include <vtkGeneralTransform.h>
+#include <vtkImageDataGeometryFilter.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkAppendPolyData.h>
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 
+#include <vtkImageResliceMask.h>
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLVolumeNode, ImageData, vtkImageData);
 
@@ -810,21 +817,32 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
   // - map the middle of the volume to RAS for the center
   //   (IJK space always has origin at first pixel)
   //
+
+  vtkGeneralTransform *transform = vtkGeneralTransform::New();
+  transform->PostMultiply();
+  transform->Identity();
+
   vtkMatrix4x4 *ijkToRAS = vtkMatrix4x4::New();
   this->GetIJKToRASMatrix(ijkToRAS);
+  transform->Concatenate(ijkToRAS);
+
   vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
+
+
   if ( transformNode )
     {
-    vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();;
-    transformNode->GetMatrixTransformToWorld(rasToRAS);
-    vtkMatrix4x4::Multiply4x4(rasToRAS, ijkToRAS, ijkToRAS);
-    rasToRAS->Delete();
+    vtkGeneralTransform *worldTransform = vtkGeneralTransform::New();
+    worldTransform->Identity();
+    //transformNode->GetTransformFromWorld(worldTransform);
+    transformNode->GetTransformToWorld(worldTransform);
+    transform->Concatenate(worldTransform);
+    worldTransform->Delete();
     }
 
   int dimensions[3];
   int i,j,k;
   volumeImage->GetDimensions(dimensions);
-  double doubleDimensions[4], rasHDimensions[4];
+  double doubleDimensions[4], *rasHDimensions;
   double minBounds[3], maxBounds[3];
 
   for ( i=0; i<3; i++)
@@ -842,7 +860,7 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
         doubleDimensions[1] = j*(dimensions[1]) - 0.5 ;
         doubleDimensions[2] = k*(dimensions[2]) - 0.5;
         doubleDimensions[3] = 1;
-        ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
+        rasHDimensions = transform->TransformDoublePoint( doubleDimensions);
         for (int n=0; n<3; n++) {
           if (rasHDimensions[n] < minBounds[n])
             {
@@ -858,6 +876,7 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
     }
 
    ijkToRAS->Delete();
+   transform->Delete();
    for ( i=0; i<3; i++)
     {
     bounds[2*i]   = minBounds[i];
@@ -870,4 +889,187 @@ bool vtkMRMLVolumeNode::GetModifiedSinceRead()
 {
   return this->Superclass::GetModifiedSinceRead() ||
     (this->ImageData && this->ImageData->GetMTime() > this->GetStoredTime());
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLVolumeNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  vtkHomogeneousTransform* linearTransform = vtkHomogeneousTransform::SafeDownCast(transform);
+  if (linearTransform)
+    {
+    this->ApplyTransformMatrix(linearTransform->GetMatrix());
+    }
+  else
+    {
+    this->ApplyNonLinearTransform(transform);
+
+    }
+  return;
+}
+//-----------------------------------------------------------
+void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
+{
+  if (this->GetImageData() == 0 || !this->CanApplyNonLinearTransforms())
+    {
+    return;
+    }
+  int extent[6];
+  this->GetImageData()->GetExtent(extent);
+
+  vtkSmartPointer<vtkMatrix4x4> rasToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
+
+
+  /** THIS MAY BE NEEDED IF TRANSFORM ORIGIN
+  // Compute extents of the output image
+  // For each of 6 volume boundary planes:
+  // 1. Convert the slice image to a polydata
+  // 2. Transform polydata
+  // Then uppend all poly datas and compute RAS extents
+
+
+  vtkSmartPointer<vtkImageDataGeometryFilter> imageDataGeometryFilter =
+    vtkSmartPointer<vtkImageDataGeometryFilter>::New();
+  imageDataGeometryFilter->SetInput(this->GetImageData());
+
+  vtkGeneralTransform *IJK2WorldTransform = vtkGeneralTransform::New();
+  IJK2WorldTransform->Identity();
+  //IJK2WorldTransform->PostMultiply();
+
+  IJK2WorldTransform->Concatenate(transform);
+
+  this->GetRASToIJKMatrix(rasToIJK);
+  rasToIJK->Invert();
+  IJK2WorldTransform->Concatenate(rasToIJK.GetPointer());
+
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
+    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  transformFilter->SetInput(imageDataGeometryFilter->GetOutput());
+  transformFilter->SetTransform(IJK2WorldTransform);
+
+  IJK2WorldTransform->Delete();
+
+  vtkSmartPointer<vtkPolyData> planes[6];
+
+  planes[0] = vtkSmartPointer<vtkPolyData>::New();
+  imageDataGeometryFilter->SetExtent(extent[0],extent[0], extent[2],extent[3],extent[4],extent[5]);
+  imageDataGeometryFilter->Update();
+  transformFilter->Update();
+  planes[0]->DeepCopy(transformFilter->GetOutput());
+
+  planes[1] = vtkSmartPointer<vtkPolyData>::New();
+  imageDataGeometryFilter->SetExtent(extent[1],extent[1], extent[2],extent[3],extent[4],extent[5]);
+  imageDataGeometryFilter->Update();
+  transformFilter->Update();
+  planes[1]->DeepCopy(transformFilter->GetOutput());
+
+  planes[2] = vtkSmartPointer<vtkPolyData>::New();
+  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[2],extent[2],extent[4],extent[5]);
+  imageDataGeometryFilter->Update();
+  transformFilter->Update();
+  planes[2]->DeepCopy(transformFilter->GetOutput());
+
+  planes[3] = vtkSmartPointer<vtkPolyData>::New();
+  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[3],extent[3],extent[4],extent[5]);
+  imageDataGeometryFilter->Update();
+  transformFilter->Update();
+  planes[3]->DeepCopy(transformFilter->GetOutput());
+
+  planes[4] = vtkSmartPointer<vtkPolyData>::New();
+  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[2],extent[3],extent[4],extent[4]);
+  imageDataGeometryFilter->Update();
+  transformFilter->Update();
+  planes[4]->DeepCopy(transformFilter->GetOutput());
+
+  planes[5] = vtkSmartPointer<vtkPolyData>::New();
+  imageDataGeometryFilter->SetExtent(extent[0],extent[1], extent[2],extent[3],extent[5],extent[5]);
+  imageDataGeometryFilter->Update();
+  transformFilter->Update();
+  planes[5]->DeepCopy(transformFilter->GetOutput());
+
+  vtkSmartPointer<vtkAppendPolyData> appendPolyData
+    = vtkSmartPointer<vtkAppendPolyData>::New();
+  for (int i=0; i<6; i++)
+    {
+    appendPolyData->AddInput(planes[i]);
+    }
+  appendPolyData->Update();
+  double bounds[6];
+  appendPolyData->GetOutput()->ComputeBounds();
+  appendPolyData->GetOutput()->GetBounds(bounds);
+
+  ****/
+
+  vtkSmartPointer<vtkImageResliceMask> reslice
+    = vtkSmartPointer<vtkImageResliceMask>::New();
+
+  vtkGeneralTransform *resampleXform = vtkGeneralTransform::New();
+  resampleXform->Identity();
+  resampleXform->PostMultiply();
+
+  this->GetRASToIJKMatrix(rasToIJK);
+
+  vtkSmartPointer<vtkMatrix4x4> IJKToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  IJKToRAS->DeepCopy(rasToIJK);
+  IJKToRAS->Invert();
+  transform->Inverse();
+
+  resampleXform->Concatenate(IJKToRAS.GetPointer());
+  resampleXform->Concatenate(transform);
+  resampleXform->Concatenate(rasToIJK.GetPointer());
+
+  //resampleXform->Inverse();
+
+  reslice->SetResliceTransform(resampleXform);
+
+  reslice->SetInput(this->GetImageData());
+  reslice->SetInterpolationModeToNearestNeighbor();
+  reslice->SetBackgroundColor(0, 0, 0, 0);
+  reslice->AutoCropOutputOff();
+  reslice->SetOptimization(1);
+
+
+  reslice->SetOutputOrigin( this->GetImageData()->GetOrigin() );
+  reslice->SetOutputSpacing( this->GetImageData()->GetSpacing() );
+  reslice->SetOutputDimensionality( 3 );
+
+
+  /***
+  double spacing[3];
+  double boxBounds[6];
+
+  int dimensions[3];
+  double origin[3];
+
+  this->GetOrigin(origin);
+  this->GetSpacing(spacing);
+  this->GetRASBounds(boxBounds);
+
+  for (int i=0; i<3; i++)
+    {
+    dimensions[i] = (bounds[2*i+1] - bounds[2*i])/spacing[i];
+    }
+  reslice->SetOutputExtent( 0, dimensions[0],
+                            0, dimensions[1],
+                            0, dimensions[2]);
+  ***/
+
+  reslice->SetOutputExtent( extent);
+
+  reslice->GetBackgroundMask()->SetUpdateExtentToWholeExtent();
+
+  reslice->Update();
+
+  vtkSmartPointer<vtkImageData> resampleImage
+    = vtkSmartPointer<vtkImageData>::New();
+  resampleImage->DeepCopy(reslice->GetOutput());
+
+  this->SetAndObserveImageData(resampleImage);
+
+  resampleXform->Delete();
 }

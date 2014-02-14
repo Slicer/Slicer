@@ -22,8 +22,9 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode::vtkMRMLTransformNode()
 {
-  this->TransformToParent = vtkGeneralTransform::New();
-  this->TransformToParent->Identity();
+  this->TransformToParent = 0;
+  this->TransformFromParent = 0;
+  this->ReadWriteAsTransformToParent = 1;
 }
 
 //----------------------------------------------------------------------------
@@ -33,18 +34,47 @@ vtkMRMLTransformNode::~vtkMRMLTransformNode()
     {
     this->TransformToParent->Delete();
     }
+  if (this->TransformFromParent)
+    {
+    this->TransformFromParent->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 {
+  vtkIndent indent(nIndent);
+
   Superclass::WriteXML(of, nIndent);
+  of << indent << " readWriteAsTransformToParent=\"" << (this->ReadWriteAsTransformToParent ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::ReadXMLAttributes(atts);
+
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL)
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "readWriteAsTransformToParent"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->ReadWriteAsTransformToParent = 1;
+        }
+      else
+        {
+        this->ReadWriteAsTransformToParent = 0;
+        }
+      }
+    }
+    this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -52,13 +82,55 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
+  vtkMRMLTransformNode *node = (vtkMRMLTransformNode *) anode;
+
+  this->SetReadWriteAsTransformToParent(node->GetReadWriteAsTransformToParent());
+
+  this->EndModify(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+  os << indent << "ReadWriteAsTransformToParent: " << this->ReadWriteAsTransformToParent << "\n";
+
+}
+
+//----------------------------------------------------------------------------
+vtkGeneralTransform* vtkMRMLTransformNode::GetTransformToParent()
+{
+  if (this->TransformToParent == 0)
+    {
+    this->TransformToParent = vtkGeneralTransform::New();
+    this->TransformToParent->Identity();
+    if (this->TransformFromParent)
+      {
+      this->TransformToParent->DeepCopy(this->TransformFromParent);
+      this->TransformToParent->Inverse();
+      }
+    }
+  return this->TransformToParent;
+}
+
+//----------------------------------------------------------------------------
+vtkGeneralTransform* vtkMRMLTransformNode::GetTransformFromParent()
+{
+  if (this->TransformFromParent == 0)
+    {
+    this->TransformFromParent = vtkGeneralTransform::New();
+    this->TransformFromParent->Identity();
+    if (this->TransformToParent)
+      {
+      this->TransformFromParent->DeepCopy(this->TransformToParent);
+      this->TransformFromParent->Inverse();
+      }
+    }
+  return this->TransformFromParent;
 }
 
 //----------------------------------------------------------------------------
@@ -90,12 +162,31 @@ void vtkMRMLTransformNode::GetTransformToWorld(vtkGeneralTransform* transformToW
     transformToWorld->Identity();
     }
 
+  transformToWorld->PostMultiply();
   transformToWorld->Concatenate(this->GetTransformToParent());
 
   vtkMRMLTransformNode *parent = this->GetParentTransformNode();
   if (parent != NULL) 
     {
     parent->GetTransformToWorld(transformToWorld);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::GetTransformFromWorld(vtkGeneralTransform* transformToWorld)
+{
+  if (transformToWorld->GetNumberOfConcatenatedTransforms() == 0)
+    {
+    transformToWorld->Identity();
+    }
+
+  transformToWorld->PreMultiply();
+  transformToWorld->Concatenate(this->GetTransformFromParent());
+
+  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
+  if (parent != NULL)
+    {
+    parent->GetTransformFromWorld(transformToWorld);
     }
 }
 

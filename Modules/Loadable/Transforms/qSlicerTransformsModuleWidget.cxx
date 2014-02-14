@@ -223,7 +223,11 @@ void qSlicerTransformsModuleWidget::identity()
 
   d->TranslationSliders->resetUnactiveSliders();
   d->RotationSliders->resetUnactiveSliders();
-  d->MRMLTransformNode->GetMatrixTransformToParent()->Identity();
+
+  vtkMatrix4x4 *newMatrixToParent = vtkMatrix4x4::New();
+  newMatrixToParent->Identity();
+  d->MRMLTransformNode->SetAndObserveMatrixTransformToParent(newMatrixToParent);
+  newMatrixToParent->Delete();
 }
 
 //-----------------------------------------------------------------------------
@@ -234,7 +238,11 @@ void qSlicerTransformsModuleWidget::invert()
   if (!d->MRMLTransformNode) { return; }
 
   d->RotationSliders->resetUnactiveSliders();
-  d->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
+
+  vtkMatrix4x4 *newMatrixToParent = vtkMatrix4x4::New();
+  newMatrixToParent->Invert();
+  d->MRMLTransformNode->SetAndObserveMatrixTransformToParent(newMatrixToParent);
+  newMatrixToParent->Delete();
 }
 
 //-----------------------------------------------------------------------------

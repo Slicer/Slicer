@@ -394,7 +394,7 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
   this->CreateMirrorMatrix ( );
   if ( this->MirrorMatrix != NULL )
     {
-    vtkMatrix4x4 *m = mirrorTransformNode->GetMatrixTransformToParent();
+    vtkMatrix4x4 *m = vtkMatrix4x4::New();
     for ( int row = 0; row < 4; row++ )
       {
       for ( int col = 0; col < 4; col++ )
@@ -402,6 +402,8 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
         m->SetElement ( row, col, this->GetMirrorMatrix()->GetElement ( row, col ));
         }
       }
+    mirrorTransformNode->SetAndObserveMatrixTransformToParent(m);
+    m->Delete();
     }
 
   //---

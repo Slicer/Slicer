@@ -30,9 +30,6 @@ vtkMRMLNodeNewMacro(vtkMRMLGridTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLGridTransformNode::vtkMRMLGridTransformNode()
 {
-  vtkGridTransform *grid = vtkGridTransform::New();
-  this->SetAndObserveWarpTransformToParent(grid);
-  grid->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -219,7 +216,7 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
       }
     }
   vtkgrid->SetDisplacementGrid(image.GetPointer());
-  this->SetAndObserveWarpTransformToParent(vtkgrid.GetPointer());
+  this->SetAndObserveWarpTransformFromParent(vtkgrid.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -228,6 +225,18 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLGridTransformNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
+  vtkMRMLGridTransformNode *node = vtkMRMLGridTransformNode::SafeDownCast(anode);
+  if (node)
+    {
+    if (this->WarpTransformToParent)
+      {
+      this->SetAndObserveWarpTransformToParent(node->GetWarpTransformToParent());
+      }
+    if (this->WarpTransformFromParent)
+      {
+      this->SetAndObserveWarpTransformFromParent(node->GetWarpTransformFromParent());
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -236,5 +245,40 @@ void vtkMRMLGridTransformNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
+//----------------------------------------------------------------------------
+vtkWarpTransform* vtkMRMLGridTransformNode::GetWarpTransformToParent()
+{
+  if (this->WarpTransformToParent == 0)
+    {
+    vtkGridTransform *wrap = vtkGridTransform::New();
+
+    if (this->WarpTransformFromParent)
+      {
+      wrap->DeepCopy(this->WarpTransformFromParent);
+      wrap->Inverse();
+      }
+    this->SetAndObserveWarpTransformToParent(wrap);
+    wrap->Delete();
+    }
+  return this->WarpTransformToParent;
+}
+
+//----------------------------------------------------------------------------
+vtkWarpTransform* vtkMRMLGridTransformNode::GetWarpTransformFromParent()
+{
+  if (this->WarpTransformFromParent == 0)
+    {
+    vtkGridTransform *wrap = vtkGridTransform::New();
+
+    if (this->WarpTransformToParent)
+      {
+      wrap->DeepCopy(this->WarpTransformToParent);
+      wrap->Inverse();
+      }
+    this->SetAndObserveWarpTransformFromParent(wrap);
+    wrap->Delete();
+    }
+  return this->WarpTransformFromParent;
+}
 
 // End

@@ -40,6 +40,7 @@
 #include <vtkClipPolyData.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkDataSetAttributes.h>
+#include <vtkGeneralTransform.h>
 #include <vtkImageActor.h>
 #include <vtkImageData.h>
 #include <vtkImplicitBoolean.h>
@@ -52,6 +53,7 @@
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransformPolyDataFilter.h>
 
 // for picking
 #include <vtkCellPicker.h>
@@ -85,6 +87,7 @@ public:
   std::map<std::string, int>                       DisplayedVisibility;
   std::map<std::string, vtkMRMLDisplayableNode *>  DisplayableNodes;
   std::map<std::string, int>                       RegisteredModelHierarchies;
+  std::map<std::string, vtkTransformPolyDataFilter *> DisplayNodeTransformPolyDataFilters;
 
   vtkMRMLSliceNode *   RedSliceNode;
   vtkMRMLSliceNode *   GreenSliceNode;
@@ -199,6 +202,19 @@ vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
 
   // release the DisplayedModelActors
   this->Internal->DisplayedActors.clear();
+
+  // release transforms
+  std::map<std::string, vtkTransformPolyDataFilter *>::iterator tit;
+  for (tit = this->Internal->DisplayNodeTransformPolyDataFilters.begin();
+       tit != this->Internal->DisplayNodeTransformPolyDataFilters.end(); tit++ )
+    {
+    vtkTransformPolyDataFilter  *transformFilter = (*tit).second;
+    transformFilter->SetInput(0);
+    transformFilter->SetTransform(0);
+    transformFilter->Delete();
+    }
+
+  this->Internal->DisplayNodeTransformPolyDataFilters.clear();
 
   delete this->Internal;
 }
@@ -806,6 +822,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
     this->Internal->DisplayedNodes.clear();
     this->Internal->DisplayedClipState.clear();
     this->Internal->DisplayedVisibility.clear();
+    this->Internal->DisplayNodeTransformPolyDataFilters.clear();
     this->UpdateModelHierarchies();
     }
 
@@ -861,6 +878,16 @@ void vtkMRMLModelDisplayableManager
   vtkMRMLModelNode *hierarchyModelDisplayNode =
     vtkMRMLModelNode::SafeDownCast(hdnode);
 
+  bool hasNonLinearTransform = false;
+  vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
+  vtkGeneralTransform *worldTransform = vtkGeneralTransform::New();
+  worldTransform->Identity();
+  if (tnode != 0 && !tnode->IsLinear())
+    {
+    hasNonLinearTransform = true;
+    tnode->GetTransformToWorld(worldTransform);
+    }
+
   for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
@@ -903,6 +930,30 @@ void vtkMRMLModelDisplayableManager
       {
       continue;
       }
+
+    // create TransformPolyDataFilter for non-linear transform
+    vtkTransformPolyDataFilter* transformFilter = NULL;
+    if (hasNonLinearTransform)
+      {
+      std::map<std::string, vtkTransformPolyDataFilter *>::iterator tit;
+      tit = this->Internal->DisplayNodeTransformPolyDataFilters.find(displayNode->GetID());
+      if (tit == this->Internal->DisplayNodeTransformPolyDataFilters.end() )
+        {
+        transformFilter = vtkTransformPolyDataFilter::New();
+        this->Internal->DisplayNodeTransformPolyDataFilters[displayNode->GetID()] = transformFilter;
+        }
+      else
+        {
+        transformFilter = (*tit).second;
+        }
+      }
+
+    if (transformFilter && polyData)
+      {
+      transformFilter->SetInput(polyData);
+      transformFilter->SetTransform(worldTransform);
+      }
+
     std::map<std::string, vtkProp3D *>::iterator ait;
     ait = this->Internal->DisplayedActors.find(displayNode->GetID());
     if (ait == this->Internal->DisplayedActors.end() )
@@ -936,13 +987,19 @@ void vtkMRMLModelDisplayableManager
         if (actor)
           {
           vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
-          if (mapper && mapper->GetInput() != polyData && !(this->Internal->ClippingOn && clipping))
+
+          if (transformFilter && polyData)
+            {
+            mapper->SetInput(transformFilter->GetOutput());
+            }
+          else if (mapper && mapper->GetInput() != polyData && !(this->Internal->ClippingOn && clipping))
             {
             mapper->SetInput(polyData);
             }
           }
         vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
         // clipped model could be transformed
+        // TODO: handle non-linear transforms
         if (clipping == 0 || tnode == 0 || !tnode->IsLinear())
           {
           continue;
@@ -969,7 +1026,14 @@ void vtkMRMLModelDisplayableManager
         }
       else
         {
-        mapper->SetInput(polyData);
+        if (transformFilter)
+          {
+          mapper->SetInput(transformFilter->GetOutput());
+          }
+        else
+          {
+          mapper->SetInput(polyData);
+          }
         }
 
       actor->SetMapper(mapper);
@@ -1019,6 +1083,7 @@ void vtkMRMLModelDisplayableManager
         }
       }
     }
+  worldTransform->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -1378,12 +1443,13 @@ void vtkMRMLModelDisplayableManager::RemoveHierarchyObservers(int clearCache)
 void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableNode *model)
 {
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
-  vtkNew<vtkMatrix4x4> transformToWorld;
-  transformToWorld->Identity();
+
+  vtkNew<vtkMatrix4x4> matrixTransformToWorld;
+  matrixTransformToWorld->Identity();
   if (tnode != 0 && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
     }
 
   int ndnodes = model->GetNumberOfDisplayNodes();
@@ -1409,7 +1475,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
       vtkActor *actor = vtkActor::SafeDownCast(prop);
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
-      prop->SetUserMatrix(transformToWorld.GetPointer());
+      prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
 
       bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
       prop->SetVisibility(visible);

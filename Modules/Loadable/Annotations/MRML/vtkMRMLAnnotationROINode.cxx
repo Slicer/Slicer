@@ -667,9 +667,9 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
     //lnode->GetMatrixTransformToWorld(transformToWorld);
 
     vtkGeneralTransform *transform = vtkGeneralTransform::New();
-    tnode->GetTransformToWorld(transform);
+    tnode->GetTransformFromWorld(transform);
    
-    transform->Inverse();
+    //transform->Inverse();
     planes->SetTransform(transform);
     transform->Delete();
   }

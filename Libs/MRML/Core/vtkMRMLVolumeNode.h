@@ -168,7 +168,13 @@ public:
   void SetMetaDataDictionary( const itk::MetaDataDictionary& );
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 
+  virtual bool CanApplyNonLinearTransforms()const;
+
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
+
+  virtual void ApplyNonLinearTransform(vtkAbstractTransform* transform);
 
   virtual bool GetModifiedSinceRead();
 protected:

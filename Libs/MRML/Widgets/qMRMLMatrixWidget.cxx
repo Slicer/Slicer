@@ -159,5 +159,5 @@ void qMRMLMatrixWidget::updateTransformNode()
     return;
     }
   vtkMatrix4x4* matrix = this->matrix();
-  d->MRMLTransformNode->GetMatrixTransformToParent()->DeepCopy(matrix);
+  d->MRMLTransformNode->SetAndObserveMatrixTransformToParent(matrix);
 }

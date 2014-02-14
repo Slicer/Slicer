@@ -46,6 +46,14 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "GridTransform";};
 
+  ///
+  /// vtkWarpTransform of this node to paren node
+  virtual vtkWarpTransform* GetWarpTransformToParent();
+
+  ///
+  /// vtkWarpTransform of this node from paren node
+  virtual vtkWarpTransform* GetWarpTransformFromParent();
+
 protected:
   vtkMRMLGridTransformNode();
   ~vtkMRMLGridTransformNode();

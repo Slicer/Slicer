@@ -48,6 +48,7 @@
 
 class vtkAssignAttribute;
 class vtkImageResliceMask;
+class vtkGeneralTransform;
 
 // STL includes
 //#include <cstdlib>
@@ -122,7 +123,7 @@ public:
 
   /// 
   /// The current reslice transform XYToIJK
-  vtkGetObjectMacro (XYToIJKTransform, vtkTransform);
+  vtkGetObjectMacro (XYToIJKTransform, vtkGeneralTransform);
 
 
 protected:
@@ -173,8 +174,8 @@ protected:
   vtkAssignAttribute* AssignAttributeScalarsToTensorsUVW;
 
   /// TODO: make this a vtkAbstractTransform for non-linear
-  vtkTransform *XYToIJKTransform;
-  vtkTransform *UVWToIJKTransform;
+  vtkGeneralTransform *XYToIJKTransform;
+  vtkGeneralTransform *UVWToIJKTransform;
 
   int IsLabelLayer;
 
