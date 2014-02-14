@@ -16,7 +16,7 @@
 #ifndef __vtkImageResliceMask_h
 #define __vtkImageResliceMask_h
 
-#include "vtkMRMLLogicWin32Header.h"
+#include "vtkMRMLWin32Header.h"
 
 // VTK includes
 #include <vtkImageReslice.h> // for VTK_RESLICE_NEAREST, LINEAR, CUBIC
@@ -65,7 +65,7 @@ class vtkMatrix4x4;
 ///
 /// \sa vtkAbstractTransform
 /// \sa vtkMatrix4x4
-class VTK_MRML_LOGIC_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
+class VTK_MRML_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageResliceMask *New();

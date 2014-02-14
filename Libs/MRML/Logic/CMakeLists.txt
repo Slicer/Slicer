@@ -69,7 +69,6 @@ set(MRMLLogic_SRCS
   vtkImageLabelOutline.cxx
   vtkImageNeighborhoodFilter.cxx
   vtkImageLinearReslice.cxx
-  vtkImageResliceMask.cxx
   vtkArchive.cxx
   )
 
