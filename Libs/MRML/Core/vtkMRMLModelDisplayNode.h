@@ -67,6 +67,11 @@ public:
   /// Update the pipeline based on this node attributes
   virtual void UpdatePolyDataPipeline();
 
+  /// Returns true since can apply non linear transforms
+  /// \sa ApplyTransformMatrix, ApplyTransform
+  virtual bool CanApplyNonLinearTransforms()const {return true;};
+
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode();

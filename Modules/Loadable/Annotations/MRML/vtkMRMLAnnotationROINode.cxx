@@ -464,19 +464,25 @@ void vtkMRMLAnnotationROINode::SetLineColor(double initColor[3])
 void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
   double (*matrix)[4] = transformMatrix->Element;
-  double xyzIn[3];
-  double xyzOut[3];
-  double p[3];
 
-  // report warning if transform has rotation
-  double v[] = {1,0,0,0};
-  double *v1 = transformMatrix->MultiplyDoublePoint(v);
-  vtkMath::Normalize(v1);
+  // compute scale
+  double p[] = {0,0,0,0};
+  double p1[] = {1,1,1,0};
+  double p2[4];
+  double *v;
+  double *v1;
   double v2[4];
-  vtkMath::Cross(v, v1, v2);
-  if (vtkMath::Normalize(v2) > 1.0e-9)
+  double scale[3];
+
+  v = transformMatrix->MultiplyDoublePoint(p);
+  v1 = transformMatrix->MultiplyDoublePoint(p1);
+
+  int i;
+  for (i=0; i<3; i++)
     {
-      vtkErrorMacro("AnnotationROINode::ApplyTransformMatrix "<< this->GetName() << ". Matrix has rotation component. ROI does not support rotation.");
+    p2[i] = p1[i] - p[i];
+    v2[i] = v1[i] - v[i];
+    scale[i] = v2[i]/p2[i];
     }
 
   int modify = this->StartModify();
@@ -484,27 +490,19 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
   // first point
   if (this->GetXYZ(p))
     {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-  
-    xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
-    xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
-    xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
-    this->SetXYZ(xyzOut);
+    p1[0] = matrix[0][0]*p[0] + matrix[0][1]*p[1] + matrix[0][2]*p[2] + matrix[0][3];
+    p1[1] = matrix[1][0]*p[0] + matrix[1][1]*p[1] + matrix[1][2]*p[2] + matrix[1][3];
+    p1[2] = matrix[2][0]*p[0] + matrix[2][1]*p[1] + matrix[2][2]*p[2] + matrix[2][3];
+    this->SetXYZ(p1);
     }
 
-  // second point
+  // second point radius, only use scale
   if (this->GetRadiusXYZ(p))
     {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-
-    xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
-    xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
-    xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
-    this->SetRadiusXYZ(xyzOut);
+    p[0] *= scale[0];
+    p[1] *= scale[1];
+    p[2] *= scale[2];
+    this->SetRadiusXYZ(p);
     }
   this->EndModify(modify);
 }
@@ -512,44 +510,53 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
-  double xyzIn[3];
-  double xyzOut[3];
-  double p[3];
+
+  // compute scale
+  double p[] = {0,0,0,0};
+  double p1[] = {1,1,1,0};
+  double p2[4];
+  double v[4];
+  double v1[4];
+  double v2[4];
+  double scale[3];
+
+  transform->TransformPoint(p, v);
+  transform->TransformPoint(p1, v1);
+
+  int i;
+  for (i=0; i<3; i++)
+    {
+    p2[i] = p1[i] - p[i];
+    v2[i] = v1[i] - v[i];
+    scale[i] = v2[i]/p2[i];
+    }
 
   // report warning if transform has rotation
-  double v[] = {1,0,0,0};
-  double v1[4];
-  transform->TransformPoint(v, v1);
-  vtkMath::Normalize(v1);
-  double v2[4];
-  vtkMath::Cross(v, v1, v2);
-  if (vtkMath::Normalize(v2) > 1.0e-9)
+  vtkMath::Normalize(p2);
+  vtkMath::Normalize(v2);
+  vtkMath::Cross(p2, v2, v);
+  if (vtkMath::Normalize(v) > 1.0e-9)
     {
       vtkErrorMacro("AnnotationROINode::ApplyTransformMatrix "<< this->GetName() << ". Matrix has rotation component. ROI does not support rotation.");
     }
 
   int modify = this->StartModify();
 
-  // first point
+  // first point, origin
   if (this->GetXYZ(p))
     {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
-    
-    transform->TransformPoint(xyzIn,xyzOut);
-    this->SetXYZ(xyzOut);
+    transform->TransformPoint(p,p1);
+    this->SetXYZ(p1);
     }
   
-  // second point
+  // second point radius, only use scale
   if (this->GetRadiusXYZ(p))
     {
-    xyzIn[0] = p[0];
-    xyzIn[1] = p[1];
-    xyzIn[2] = p[2];
+    p[0] *= scale[0];
+    p[1] *= scale[1];
+    p[2] *= scale[2];
     
-    transform->TransformPoint(xyzIn,xyzOut);
-    this->SetRadiusXYZ(xyzOut);
+    this->SetRadiusXYZ(p);
     }
 
   this->EndModify(modify);

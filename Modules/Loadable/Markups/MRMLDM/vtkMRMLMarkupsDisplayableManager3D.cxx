@@ -58,6 +58,7 @@
 #include <vtkSeedRepresentation.h>
 #include <vtkSeedWidget.h>
 #include <vtkWidgetRepresentation.h>
+#include <vtkGeneralTransform.h>
 
 // STD includes
 #include <algorithm>
@@ -1125,35 +1126,41 @@ void vtkMRMLMarkupsDisplayableManager3D::GetWorldToLocalCoordinates(vtkMRMLMarku
     return;
     }
 
-  vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsLinear())
+  for (int i=0; i<3; i++)
     {
-    vtkNew<vtkMatrix4x4> transformToWorld;
-    transformToWorld->Identity();
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
-    transformToWorld->Invert();
+    localCoordinates[i] = worldCoordinates[i];
+    }
 
-    double p[4];
-    p[3] = 1;
-    int i;
-    for (i=0; i<3; i++)
-      {
-      p[i] = worldCoordinates[i];
-      }
-    double *xyz = transformToWorld->MultiplyDoublePoint(p);
-    for (i=0; i<3; i++)
-      {
-      localCoordinates[i] = xyz[i];
-      }
-    }
-  else
+  vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
+  vtkGeneralTransform *transformToWorld = vtkGeneralTransform::New();
+  transformToWorld->Identity();
+  if (tnode != 0 && !tnode->IsLinear())
     {
-    for (int i=0; i<3; i++)
-      {
-      localCoordinates[i] = worldCoordinates[i];
-      }
+    tnode->GetTransformToWorld(transformToWorld);
     }
+  else if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkNew<vtkMatrix4x4> matrixTransformToWorld;
+    matrixTransformToWorld->Identity();
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    matrixTransformToWorld->Invert();
+    transformToWorld->Concatenate(matrixTransformToWorld.GetPointer());
+  }
+
+  double p[4];
+  p[3] = 1;
+  int i;
+  for (i=0; i<3; i++)
+    {
+    p[i] = worldCoordinates[i];
+    }
+  double *xyz = transformToWorld->TransformDoublePoint(p);
+  for (i=0; i<3; i++)
+    {
+    localCoordinates[i] = xyz[i];
+    }
+  transformToWorld->Delete();
 }
 
 //---------------------------------------------------------------------------

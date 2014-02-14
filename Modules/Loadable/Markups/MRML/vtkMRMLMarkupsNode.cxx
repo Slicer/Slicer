@@ -35,6 +35,7 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
+#include <vtkGeneralTransform.h>
 
 // STD includes
 #include <sstream>
@@ -582,13 +583,21 @@ int vtkMRMLMarkupsNode::GetMarkupPointWorld(int markupIndex, int pointIndex, dou
   xyz[2] = vectorPoint.GetZ();
   // get the markup's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkNew<vtkMatrix4x4> transformToWorld;
+  vtkGeneralTransform *transformToWorld = vtkGeneralTransform::New();
   transformToWorld->Identity();
-  if (tnode != NULL && tnode->IsLinear())
+  if (tnode != 0 && !tnode->IsLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    tnode->GetTransformToWorld(transformToWorld);
     }
+  else if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkNew<vtkMatrix4x4> matrixTransformToWorld;
+    matrixTransformToWorld->Identity();
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    transformToWorld->Concatenate(matrixTransformToWorld.GetPointer());
+  }
+
   // convert by the parent transform
   double  xyzw[4];
   xyzw[0] = xyz[0];
@@ -596,7 +605,11 @@ int vtkMRMLMarkupsNode::GetMarkupPointWorld(int markupIndex, int pointIndex, dou
   xyzw[2] = xyz[2];
   xyzw[3] = 1.0;
 
-  transformToWorld->MultiplyPoint(xyzw, worldxyz);
+  double *p = transformToWorld->TransformDoublePoint(xyzw);
+  worldxyz[0]=p[0];
+  worldxyz[1]=p[1];
+  worldxyz[2]=p[2];
+  worldxyz[3]=1;
 
   return 1;
 }

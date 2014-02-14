@@ -73,6 +73,10 @@ public:
   // Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
 
+  /// Returns false since in general cannot apply non linear transforms
+  /// \sa ApplyTransformMatrix, ApplyTransform
+  virtual bool CanApplyNonLinearTransforms()const {return false;};
+
   int AddText(const char *newText,int selectedFlag, int visibleFlag); 
   void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
   vtkStdString GetText(int id); 
