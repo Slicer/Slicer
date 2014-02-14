@@ -325,8 +325,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
   def getLabelPixel(self,xy):
     sliceLogic = self.sliceWidget.sliceLogic()
     labelLogic = sliceLogic.GetLabelLayer()
-    xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
-    i,j,k,l = xyToIJK.MultiplyPoint( xy + (0, 1) )
+    xyToIJK = labelLogic.GetXYToIJKTransform()
+    i,j,k = xyToIJK.TransformDoublePoint( xy + (0) )
     i = int(round(i))
     j = int(round(j))
     k = int(round(k))
@@ -520,8 +520,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
       # if there's no label, we can't paint
       return
 
-    xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
-    ijkFloat = xyToIJK.MultiplyPoint( (x, y, 0, 1) )
+    xyToIJK = labelLogic.GetXYToIJKTransform()
+    ijkFloat = xyToIJK.TransformDoublePoint( (x, y, 0) )
     ijk = []
     for e in ijkFloat:
       try:
@@ -572,11 +572,11 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     bottom = y + bounds[2]
     top = y + bounds[3]
 
-    xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
-    tlIJK = xyToIJK.MultiplyPoint( (left, top, 0, 1) )
-    trIJK = xyToIJK.MultiplyPoint( (right, top, 0, 1) )
-    blIJK = xyToIJK.MultiplyPoint( (left, bottom, 0, 1) )
-    brIJK = xyToIJK.MultiplyPoint( (right, bottom, 0, 1) )
+    xyToIJK = labelLogic.GetXYToIJKTransform()
+    tlIJK = xyToIJK.TransformDoublePoint( (left, top, 0) )
+    trIJK = xyToIJK.TransformDoublePoint( (right, top, 0) )
+    blIJK = xyToIJK.TransformDoublePoint( (left, bottom, 0) )
+    brIJK = xyToIJK.TransformDoublePoint( (right, bottom, 0) )
 
     dims = labelImage.GetDimensions()
 
