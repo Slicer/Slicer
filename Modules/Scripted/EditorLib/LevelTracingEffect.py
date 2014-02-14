@@ -106,7 +106,7 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     self.polyData = vtk.vtkPolyData()
 
     self.tracingFilter = vtkITK.vtkITKLevelTracingImageFilter()
-    self.ijkToXY = vtk.vtkTransform()
+    self.ijkToXY = vtk.vtkGeneralTransform()
 
     self.mapper = vtk.vtkPolyDataMapper2D()
     self.actor = vtk.vtkActor2D()
@@ -182,8 +182,7 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     polyData = self.tracingFilter.GetOutput()
 
     backgroundLayer = self.logic.sliceLogic.GetBackgroundLayer()
-    xyToIJK = backgroundLayer.GetXYToIJKTransform().GetMatrix()
-    self.ijkToXY.SetMatrix( xyToIJK )
+    self.ijkToXY = backgroundLayer.GetXYToIJKTransform()
     self.ijkToXY.Inverse()
     self.ijkToXY.TransformPoints( polyData.GetPoints(), self.xyPoints )
 

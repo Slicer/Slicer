@@ -697,10 +697,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
             self.painter.SetBrushRadius( brushRadiusOffset )
 
             # --
-            tlIJKtemp = xyToIJK.MultiplyPoint( (left, top, iSliceOffset, 1) )
-            trIJKtemp = xyToIJK.MultiplyPoint( (right, top, iSliceOffset, 1) )
-            blIJKtemp = xyToIJK.MultiplyPoint( (left, bottom, iSliceOffset, 1) )
-            brIJKtemp = xyToIJK.MultiplyPoint( (right, bottom, iSliceOffset, 1) )
+            tlIJKtemp = xyToIJK.TransformDoublePoint( (left, top, iSliceOffset) )
+            trIJKtemp = xyToIJK.TransformDoublePoint( (right, top, iSliceOffset) )
+            blIJKtemp = xyToIJK.TransformDoublePoint( (left, bottom, iSliceOffset, 1) )
+            brIJKtemp = xyToIJK.TransformDoublePoint( (right, bottom, iSliceOffset, 1) )
             # clamp the top, bottom, left, right to the
             # valid dimensions of the label image
             tltemp = [0,0,0]

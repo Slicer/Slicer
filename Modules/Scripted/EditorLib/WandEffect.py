@@ -256,8 +256,8 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
     # by the editor, but can be different if the use selected
     # different bg nodes, but that is not handled here).
     #
-    xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
-    ijkFloat = xyToIJK.MultiplyPoint(xy+(0,1))[:3]
+    xyToIJK = labelLogic.GetXYToIJKTransform()
+    ijkFloat = xyToIJK.TransformDoublePoint(xy+(0,))
     ijk = []
     for element in ijkFloat:
       try:

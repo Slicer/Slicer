@@ -367,11 +367,11 @@ class LabelEffectLogic(Effect.EffectLogic):
 
     xlo, xhi, ylo, yhi, zlo, zhi = bounds
     labelLogic = self.sliceLogic.GetLabelLayer()
-    xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
-    tlIJK = xyToIJK.MultiplyPoint( (xlo, yhi, 0, 1) )[:3]
-    trIJK = xyToIJK.MultiplyPoint( (xhi, yhi, 0, 1) )[:3]
-    blIJK = xyToIJK.MultiplyPoint( (xlo, ylo, 0, 1) )[:3]
-    brIJK = xyToIJK.MultiplyPoint( (xhi, ylo, 0, 1) )[:3]
+    xyToIJK = labelLogic.GetXYToIJKTransform()
+    tlIJK = xyToIJK.TransformDoublePoint( (xlo, yhi, 0) )
+    trIJK = xyToIJK.TransformDoublePoint( (xhi, yhi, 0) )
+    blIJK = xyToIJK.TransformDoublePoint( (xlo, ylo, 0) )
+    brIJK = xyToIJK.TransformDoublePoint( (xhi, ylo, 0) )
 
     # do the clamping of the four corners
     dims = labelImage.GetDimensions()
