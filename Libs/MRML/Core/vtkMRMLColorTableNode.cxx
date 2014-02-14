@@ -131,7 +131,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
       // set the table range
       if ( this->LookupTable->GetNumberOfTableValues() > 0 )
         {
-        this->LookupTable->SetRange(0,  this->LookupTable->GetNumberOfTableValues() - 1);
+          this->LookupTable->SetRange(0, 255);
         }
       this->NamesInitialisedOn();
       }
@@ -953,7 +953,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     else if (this->Type == this->Iron)
       {
       this->GetLookupTable()->SetNumberOfTableValues(156);
-      this->GetLookupTable()->SetTableRange(0, 156);
+      this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetHueRange(0, 0.15);
       this->GetLookupTable()->SetSaturationRange(1,1);
       this->GetLookupTable()->SetValueRange(1,1);
@@ -1046,7 +1046,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       pos->Build();
 
       this->GetLookupTable()->SetNumberOfTableValues(43);
-      this->GetLookupTable()->SetTableRange(0,43);
+      this->GetLookupTable()->SetTableRange(0,255);
       this->GetLookupTable()->SetRampToLinear();
       this->GetLookupTable()->ForceBuild();
 
@@ -1069,7 +1069,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       {
       int size = 20;
       this->GetLookupTable()->SetNumberOfTableValues(size);
-      this->GetLookupTable()->SetTableRange(0,size);
+      this->GetLookupTable()->SetTableRange(0,255);
       this->GetLookupTable()->SetHueRange(0, 0.16667);
       this->GetLookupTable()->SetSaturationRange(1, 1);
       this->GetLookupTable()->SetValueRange(1, 1);
@@ -1083,7 +1083,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       {
       // from Slicer2's Colors.xml
       this->GetLookupTable()->SetNumberOfTableValues(257);
-      this->GetLookupTable()->SetTableRange(0,257);
+      this->GetLookupTable()->SetTableRange(0,255);
       this->Names.clear();
       this->Names.resize(this->GetLookupTable()->GetNumberOfTableValues());
 
@@ -1195,7 +1195,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       int size = 255;
 
       this->GetLookupTable()->SetNumberOfTableValues(size + 1);
-      this->GetLookupTable()->SetTableRange(0, size);
+      this->GetLookupTable()->SetTableRange(0, 255);
       this->GetLookupTable()->SetTableValue(0, 0, 0, 0, 0);
       for (int i = 1; i <= size; i++)
         {
