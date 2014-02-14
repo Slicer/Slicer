@@ -271,8 +271,8 @@ class DataProbeInfoWidget(object):
         valueLabel = ""
         if volumeNode:
           nameLabel = self.fitName(volumeNode.GetName())
-          xyToIJK = layerLogic.GetXYToIJKTransform().GetMatrix()
-          ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
+          xyToIJK = layerLogic.GetXYToIJKTransform()
+          ijkFloat = xyToIJK.TransformDoublePoint(xyz)
           ijk = []
           for element in ijkFloat:
             try:
