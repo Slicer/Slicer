@@ -1136,7 +1136,7 @@ void vtkMRMLMarkupsDisplayableManager3D::GetWorldToLocalCoordinates(vtkMRMLMarku
   transformToWorld->Identity();
   if (tnode != 0 && !tnode->IsLinear())
     {
-    tnode->GetTransformToWorld(transformToWorld);
+    tnode->GetTransformFromWorld(transformToWorld);
     }
   else if (tnode != NULL && tnode->IsLinear())
     {

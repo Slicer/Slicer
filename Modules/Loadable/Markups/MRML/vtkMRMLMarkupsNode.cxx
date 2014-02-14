@@ -611,6 +611,8 @@ int vtkMRMLMarkupsNode::GetMarkupPointWorld(int markupIndex, int pointIndex, dou
   worldxyz[2]=p[2];
   worldxyz[3]=1;
 
+  transformToWorld->Delete();
+
   return 1;
 }
 
@@ -795,31 +797,30 @@ void vtkMRMLMarkupsNode::SetMarkupPointWorld(const int markupIndex, const int po
     {
     return;
     }
-  // get the markup's transform node
+
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkNew<vtkMatrix4x4> transformToWorld;
-  transformToWorld->Identity();
-  if (tnode != NULL)
-  {
-      if (tnode->IsLinear())
+  vtkGeneralTransform *transformFromWorld = vtkGeneralTransform::New();
+  transformFromWorld->Identity();
+  if (tnode != 0 && !tnode->IsLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    tnode->GetTransformFromWorld(transformFromWorld);
     }
+  else if (tnode != NULL && tnode->IsLinear())
+    {
+    vtkNew<vtkMatrix4x4> matrixTransformToWorld;
+    matrixTransformToWorld->Identity();
+    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
+    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    matrixTransformToWorld->Invert();
+    transformFromWorld->Concatenate(matrixTransformToWorld.GetPointer());
   }
-  // convert by the inverted parent transform
-  transformToWorld->Invert();
-  double  xyzw[4];
-  xyzw[0] = x;
-  xyzw[1] = y;
-  xyzw[2] = z;
-  xyzw[3] = 1.0;
-  double worldxyz[4], *worldp = &worldxyz[0];
-  transformToWorld->MultiplyPoint(xyzw, worldp);
+
+  double *worldxyz = transformFromWorld->TransformDoublePoint(x,y,z);
 
   tnode = NULL;
 
   this->SetMarkupPoint(markupIndex, pointIndex, worldxyz[0], worldxyz[1], worldxyz[2]);
+  transformFromWorld->Delete();
 }
 
 //-----------------------------------------------------------
