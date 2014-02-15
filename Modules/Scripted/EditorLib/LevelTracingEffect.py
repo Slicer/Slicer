@@ -182,7 +182,7 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     polyData = self.tracingFilter.GetOutput()
 
     backgroundLayer = self.logic.sliceLogic.GetBackgroundLayer()
-    self.ijkToXY = backgroundLayer.GetXYToIJKTransform()
+    self.ijkToXY.DeepCopy( backgroundLayer.GetXYToIJKTransform() )
     self.ijkToXY.Inverse()
     self.ijkToXY.TransformPoints( polyData.GetPoints(), self.xyPoints )
 

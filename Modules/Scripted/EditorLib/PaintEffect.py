@@ -326,7 +326,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     sliceLogic = self.sliceWidget.sliceLogic()
     labelLogic = sliceLogic.GetLabelLayer()
     xyToIJK = labelLogic.GetXYToIJKTransform()
-    i,j,k = xyToIJK.TransformDoublePoint( xy + (0) )
+    i,j,k = xyToIJK.TransformDoublePoint( xy + (0,) )
     i = int(round(i))
     j = int(round(j))
     k = int(round(k))
@@ -699,8 +699,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
             # --
             tlIJKtemp = xyToIJK.TransformDoublePoint( (left, top, iSliceOffset) )
             trIJKtemp = xyToIJK.TransformDoublePoint( (right, top, iSliceOffset) )
-            blIJKtemp = xyToIJK.TransformDoublePoint( (left, bottom, iSliceOffset, 1) )
-            brIJKtemp = xyToIJK.TransformDoublePoint( (right, bottom, iSliceOffset, 1) )
+            blIJKtemp = xyToIJK.TransformDoublePoint( (left, bottom, iSliceOffset) )
+            brIJKtemp = xyToIJK.TransformDoublePoint( (right, bottom, iSliceOffset) )
             # clamp the top, bottom, left, right to the
             # valid dimensions of the label image
             tltemp = [0,0,0]
