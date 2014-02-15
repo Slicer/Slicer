@@ -2,28 +2,32 @@
 #include "vtkObjectFactory.h"
 #include "itkBSplineDeformableTransform.h"
 
-
 // Helper classes to handle dynamic setting of spline orders
 class vtkITKBSplineTransformHelper
 {
 public:
   typedef itk::Array<double> ParametersType;
   typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;
+  typedef itk::BSplineDeformableTransform< double, 3, 3 > BSplineType;
+
   virtual ~vtkITKBSplineTransformHelper() {};
   virtual unsigned GetOrder() const = 0;
   virtual unsigned int GetNumberOfParameters() const = 0;
   virtual void SetParameters( ParametersType const& ) = 0;
   virtual void SetParameters( vtkDoubleArray& param ) = 0;
   virtual void SetParameters( double const* ) = 0;
-  
+
   virtual ParametersType const& GetParameters() const = 0;
 
   virtual void SetFixedParameters( double const*, unsigned N ) = 0;
   virtual const double* GetFixedParameters( unsigned& N ) const = 0;
 
   virtual void SetGridOrigin( const double origin[3] ) = 0;
+  virtual void GetGridOrigin(double *origin) const = 0;
   virtual void SetGridSpacing( const double spacing[3] ) = 0;
+  virtual void GetGridSpacing(double *spacing) const = 0;
   virtual void SetGridSize( const unsigned int size[3] ) = 0;
+  virtual void GetGridSize(unsigned int *size) const = 0;
   virtual void ForwardTransformPoint( const double in[3], double out[3] ) = 0;
   virtual void ForwardTransformPoint( const float in[3], float out[3] ) = 0;
   virtual void ForwardTransformDerivative( const double in[3], double out[3],
@@ -43,7 +47,7 @@ public:
   virtual void SetBulkTransform( const double linear[3][3], const double offset[3] )=0;
   virtual void GetBulkTransform( double linear[3][3], double offset[3] ) const=0;
   virtual BulkTransformType const* GetBulkTransform() const=0;
-  
+
   virtual itk::Transform<double,3,3>::Pointer GetITKTransform() const=0;
 };
 
@@ -76,8 +80,11 @@ public:
   virtual void SetFixedParameters( double const*, unsigned N );
   virtual const double* GetFixedParameters( unsigned& N ) const;
   virtual void SetGridOrigin( const double origin[3] );
+  virtual void GetGridOrigin(double *origin) const;
   virtual void SetGridSpacing( const double spacing[3] );
+  virtual void GetGridSpacing(double *spacing) const;
   virtual void SetGridSize( const unsigned int size[3] );
+  virtual void GetGridSize(unsigned int *size) const;
   virtual void ForwardTransformPoint( const double in[3], double out[3] );
   virtual void ForwardTransformPoint( const float in[3], float out[3] );
   virtual void ForwardTransformDerivative( const double in[3], double out[3],
@@ -109,6 +116,7 @@ public:
     {
       return BSpline.GetPointer();
     }
+
   // the data is also public to allow the helper templates to access
   // them.
   typename BSplineType::Pointer BSpline;
@@ -116,11 +124,9 @@ public:
   bool switchCoordSystems;
 };
 
-
 //---------------------------------------------------------------------------
 // Implementation of main class.
 // This mostly just forwards everything to the helper class.
-
 
 vtkCxxRevisionMacro(vtkITKBSplineTransform, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkITKBSplineTransform);
@@ -158,13 +164,9 @@ vtkITKBSplineTransform
 ::MakeTransform()
 {
   vtkITKBSplineTransform* N = new vtkITKBSplineTransform;
-  if( Helper ) 
+  if( Helper )
   {
-    N->SetSplineOrder( this->GetSplineOrder() );
-    N->SetFixedParameters( this->GetFixedParameters(),
-                           this->GetNumberOfFixedParameters() );
-    N->SetParameters( this->GetParameters() );
-    N->SetSwitchCoordinateSystem( this->GetSwitchCoordinateSystem() );
+    N->DeepCopy(this);
   }
   return N;
 }
@@ -181,7 +183,6 @@ vtkITKBSplineTransform
   delete Helper;
 }
 
-
 void
 vtkITKBSplineTransform
 ::SetSplineOrder( unsigned int order )
@@ -192,7 +193,7 @@ vtkITKBSplineTransform
   }
 
   delete Helper;
-  switch( order ) 
+  switch( order )
   {
   case 2:
     Helper = new vtkITKBSplineTransformHelperImpl< 2 >;
@@ -205,7 +206,6 @@ vtkITKBSplineTransform
     break;
   }
 }
-
 
 unsigned int
 vtkITKBSplineTransform
@@ -221,10 +221,9 @@ vtkITKBSplineTransform
   }
 }
 
-
-void 
+void
 vtkITKBSplineTransform
-::SetGridOrigin( const double origin[3] ) 
+::SetGridOrigin( const double origin[3] )
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -237,9 +236,19 @@ vtkITKBSplineTransform
     }
 }
 
-void 
+void
 vtkITKBSplineTransform
-::SetGridSpacing( const double spacing[3] ) 
+::GetGridOrigin(double *origin) const
+{
+  if( Helper != NULL )
+    {
+    Helper->GetGridOrigin( origin );
+    }
+}
+
+void
+vtkITKBSplineTransform
+::SetGridSpacing( const double spacing[3] )
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -254,7 +263,17 @@ vtkITKBSplineTransform
 
 void
 vtkITKBSplineTransform
-::SetGridSize( const unsigned int size[3] ) 
+::GetGridSpacing(double *spacing) const
+{
+  if( Helper != NULL )
+    {
+    Helper->GetGridSpacing( spacing );
+    }
+}
+
+void
+vtkITKBSplineTransform
+::SetGridSize( const unsigned int size[3] )
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -269,7 +288,17 @@ vtkITKBSplineTransform
 
 void
 vtkITKBSplineTransform
-::SetParameters( vtkDoubleArray& param ) 
+::GetGridSize(unsigned int *size) const
+{
+  if( Helper != NULL )
+    {
+    Helper->GetGridSize( size );
+    }
+}
+
+void
+vtkITKBSplineTransform
+::SetParameters( vtkDoubleArray& param )
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -284,7 +313,7 @@ vtkITKBSplineTransform
 
 void
 vtkITKBSplineTransform
-::SetParameters( double const* param ) 
+::SetParameters( double const* param )
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -297,9 +326,9 @@ vtkITKBSplineTransform
     }
 }
 
-unsigned int 
+unsigned int
 vtkITKBSplineTransform
-::GetNumberOfParameters() const 
+::GetNumberOfParameters() const
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -314,7 +343,7 @@ vtkITKBSplineTransform
 
 double const*
 vtkITKBSplineTransform
-::GetParameters() const 
+::GetParameters() const
 {
   if( Helper != NULL )
     {
@@ -328,7 +357,7 @@ vtkITKBSplineTransform
 
 void
 vtkITKBSplineTransform
-::SetFixedParameters( double const* param, unsigned N ) 
+::SetFixedParameters( double const* param, unsigned N )
 {
   // Need to have called SetSplineOrder before calling this.
   if( Helper != NULL )
@@ -428,7 +457,7 @@ vtkITKBSplineTransform
     }
 }
 
-void 
+void
 vtkITKBSplineTransform
 ::ForwardTransformPoint( const double in[3], double out[3] )
 {
@@ -578,7 +607,6 @@ vtkITKBSplineTransform
     }
 }
 
-
 void
 vtkITKBSplineTransform
 ::SetSwitchCoordinateSystem( bool v )
@@ -592,7 +620,6 @@ vtkITKBSplineTransform
     vtkErrorMacro( "need to call SetSplineOrder before SetSwitchCoordinateSystem" );
     }
 }
-
 
 bool
 vtkITKBSplineTransform
@@ -608,11 +635,8 @@ vtkITKBSplineTransform
     }
 }
 
-
-
 // ---------------------------------------------------------------------------
 // implement the actual wrapper around the itkBSplineDeformableTransform
-
 
 template< unsigned O >
 vtkITKBSplineTransformHelperImpl<O>
@@ -620,8 +644,82 @@ vtkITKBSplineTransformHelperImpl<O>
   : BSpline( BSplineType::New() ),
     switchCoordSystems( false )
 {
+  BSpline->SetIdentity();
+
+  typename BSplineType::RegionType region;
+  typename BSplineType::OriginType origin;
+  typename BSplineType::SpacingType spacing;
+
+  origin[0] = 0;
+  origin[1] = 0;
+  origin[2] = 0;
+
+  spacing[0] = 100;
+  spacing[1] = 100;
+  spacing[2] = 100;
+
+  typename BSplineType::RegionType::SizeType sz;
+  sz[0] = 5;
+  sz[1] = 5;
+  sz[2] = 5;
+  region.SetSize( sz );
+
+  typename BSplineType::RegionType::IndexType idx;
+  idx[0] = idx[1] = idx[2] = 0;
+  region.SetIndex( idx );
+
+  BSpline->SetGridRegion( region );
+  BSpline->SetGridSpacing( spacing );
+  BSpline->SetGridOrigin( origin );
+
+  typedef typename BSplineType::ParametersType ParametersType;
+
+  const unsigned int numberOfParameters =
+               BSpline->GetNumberOfParameters();
+
+  ParametersType parameters( numberOfParameters );
+
+  parameters.Fill( 0.0 );
+
+  BSpline->SetParameters( parameters );
 }
 
+void vtkITKBSplineTransform::DeepCopy(vtkITKBSplineTransform *xform)
+{
+  if (xform->GetSplineOrder() == 0)
+  {
+    return;
+  }
+
+  this->SetSplineOrder( xform->GetSplineOrder() );
+
+  //double origin[3];
+  //double spacing[3];
+  //unsigned int size[3];
+  double linear[3][3];
+  double offset[3];
+
+  xform->GetBulkTransform(linear, offset);
+  this->SetBulkTransform(linear, offset);
+
+  //xform->GetGridOrigin(origin);
+  //xform->GetGridSpacing(spacing);
+  //xform->GetGridSize(size);
+
+  //this->SetGridOrigin(origin);
+  //this->SetGridSpacing(spacing);
+  //this->SetGridSize(size);
+
+  this->SetSwitchCoordinateSystem( xform->GetSwitchCoordinateSystem() );
+  this->SetFixedParameters( xform->GetFixedParameters(),
+                         xform->GetNumberOfFixedParameters() );
+  this->SetParameters( xform->GetParameters() );
+  if (xform->GetInverseFlag())
+    {
+    this->Inverse();
+    }
+  Superclass::DeepCopy(xform);
+}
 
 template< unsigned O >
 void
@@ -639,12 +737,36 @@ vtkITKBSplineTransformHelperImpl<O>
 template< unsigned O >
 void
 vtkITKBSplineTransformHelperImpl<O>
+::GetGridOrigin(double *vOrigin ) const
+{
+  typename BSplineType::OriginType origin = BSpline->GetGridOrigin();
+  for( unsigned int i=0; i<3; ++i )
+    {
+    vOrigin[i] = origin[i];
+    }
+}
+
+template< unsigned O >
+void
+vtkITKBSplineTransformHelperImpl<O>
 ::SetGridSpacing( const double vSpacing[3] )
 {
   typename BSplineType::SpacingType spacing;
   for( unsigned int i=0; i<3; ++i )
     spacing[i] = vSpacing[i];
   BSpline->SetGridSpacing( spacing );
+}
+
+template< unsigned O >
+void
+vtkITKBSplineTransformHelperImpl<O>
+::GetGridSpacing(double *vSpacing ) const
+{
+  typename BSplineType::SpacingType spacing = BSpline->GetGridSpacing();
+  for( unsigned int i=0; i<3; ++i )
+    {
+    vSpacing[i] = spacing[i];
+    }
 }
 
 template< unsigned O >
@@ -667,19 +789,33 @@ vtkITKBSplineTransformHelperImpl<O>
 template< unsigned O >
 void
 vtkITKBSplineTransformHelperImpl<O>
+::GetGridSize(unsigned int *vSize) const
+{
+  typename BSplineType::RegionType region = BSpline->GetGridRegion();
+
+  typename BSplineType::RegionType::SizeType size = region.GetSize();
+
+  for( unsigned int i=0; i<3; ++i )
+    {
+    vSize[i] = size[i];
+    }
+}
+template< unsigned O >
+void
+vtkITKBSplineTransformHelperImpl<O>
 ::SetParameters( ParametersType const& param )
 {
   BSpline->SetParameters( param );
 }
 
 template< unsigned O >
-void 
+void
 vtkITKBSplineTransformHelperImpl<O>
 ::SetParameters( vtkDoubleArray& param )
 {
   unsigned numberOfParam = BSpline->GetNumberOfParameters();
   this->parameters.SetSize( numberOfParam );
-                                         
+
   for( unsigned int i=0; i<numberOfParam; ++i )
     this->parameters.SetElement( i, param.GetTuple1(i) );
 
@@ -687,13 +823,13 @@ vtkITKBSplineTransformHelperImpl<O>
 }
 
 template< unsigned O >
-void 
+void
 vtkITKBSplineTransformHelperImpl<O>
 ::SetParameters( double const* param )
 {
   unsigned numberOfParam = BSpline->GetNumberOfParameters();
   this->parameters.SetSize( numberOfParam );
-                                         
+
   for( unsigned int i=0; i<numberOfParam; ++i )
     this->parameters.SetElement( i, param[i] );
 
@@ -701,18 +837,17 @@ vtkITKBSplineTransformHelperImpl<O>
 }
 
 template< unsigned O >
-void 
+void
 vtkITKBSplineTransformHelperImpl<O>
 ::SetFixedParameters( double const* param, unsigned N )
 {
   typename BSplineType::ParametersType params( N );
-                                         
+
   for( unsigned int i=0; i<N; ++i )
     params.SetElement( i, param[i] );
 
   BSpline->SetFixedParameters( params );
 }
-
 
 template< unsigned O >
 const double*
@@ -723,7 +858,6 @@ vtkITKBSplineTransformHelperImpl<O>
   return BSpline->GetFixedParameters().data_block();
 }
 
-
 template <class T, unsigned O>
 void
 ForwardTransformHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
@@ -733,7 +867,7 @@ ForwardTransformHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
   typename BSplineType::InputPointType inputPoint;
 
   inputPoint[0] = in[0];
-  inputPoint[1] = in[1]; 
+  inputPoint[1] = in[1];
   inputPoint[2] = in[2];
 
   // See the comments in ForwardTransformDerivativeHelper about the
@@ -747,8 +881,8 @@ ForwardTransformHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
   typename BSplineType::OutputPointType outputPoint;
   outputPoint = helper->BSpline->TransformPoint( inputPoint );
 
-  out[0] = static_cast<T>(outputPoint[0]); 
-  out[1] = static_cast<T>(outputPoint[1]); 
+  out[0] = static_cast<T>(outputPoint[0]);
+  out[1] = static_cast<T>(outputPoint[1]);
   out[2] = static_cast<T>(outputPoint[2]);
 
   if (helper->switchCoordSystems)
@@ -777,7 +911,7 @@ vtkITKBSplineTransformHelperImpl<O>
 template <class T, unsigned O>
 void
 ForwardTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
-                                  const T in[3], T out[3], 
+                                  const T in[3], T out[3],
                                   T derivative[3][3] )
 {
   // The logic for the LPS->RAS coordinate conversion is as follows.
@@ -822,7 +956,7 @@ ForwardTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
   typename BSplineType::InputPointType inputPoint;
 
   inputPoint[0] = in[0];
-  inputPoint[1] = in[1]; 
+  inputPoint[1] = in[1];
   inputPoint[2] = in[2];
 
   if (helper->switchCoordSystems)
@@ -834,8 +968,8 @@ ForwardTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
   typename BSplineType::OutputPointType outputPoint;
   outputPoint = helper->BSpline->TransformPoint( inputPoint );
 
-  out[0] = static_cast<T>( outputPoint[0] ); 
-  out[1] = static_cast<T>( outputPoint[1] ); 
+  out[0] = static_cast<T>( outputPoint[0] );
+  out[1] = static_cast<T>( outputPoint[1] );
   out[2] = static_cast<T>( outputPoint[2] );
 
   if (helper->switchCoordSystems)
@@ -884,7 +1018,6 @@ vtkITKBSplineTransformHelperImpl<O>
   ForwardTransformDerivativeHelper<float, O>( this, in, out, derivative );
 }
 
-
 template <class T, unsigned O>
 void
 InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
@@ -911,7 +1044,6 @@ InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
     opt[1] = -opt[1];
     }
 
-
   ipt[0] = opt[0];
   ipt[1] = opt[1];
   ipt[2] = opt[2];
@@ -928,8 +1060,8 @@ InverseTransformPointHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
     }
   }
 
-  out[0] = static_cast<T>(ipt[0]); 
-  out[1] = static_cast<T>(ipt[1]); 
+  out[0] = static_cast<T>(ipt[0]);
+  out[1] = static_cast<T>(ipt[1]);
   out[2] = static_cast<T>(ipt[2]);
 
   if (helper->switchCoordSystems)
@@ -955,7 +1087,6 @@ vtkITKBSplineTransformHelperImpl<O>
   InverseTransformPointHelper<double, O>( this, in, out );
 }
 
-
 template <class T, unsigned O>
 void
 InverseTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
@@ -970,7 +1101,7 @@ InverseTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
   InputPointType pt;
 
   pt[0] = out[0];
-  pt[1] = out[1]; 
+  pt[1] = out[1];
   pt[2] = out[2];
 
   // See the comments in ForwardTransformDerivativeHelper about the
@@ -992,7 +1123,7 @@ InverseTransformDerivativeHelper( vtkITKBSplineTransformHelperImpl<O>* helper,
     derivative[i][0] = static_cast<T>( jacobian( i, 0 ) );
     derivative[i][1] = static_cast<T>( jacobian( i, 1 ) );
     derivative[i][2] = static_cast<T>( jacobian( i, 2 ) );
-  }  
+  }
 
   if (helper->switchCoordSystems)
     {
@@ -1048,10 +1179,19 @@ void
 vtkITKBSplineTransformHelperImpl<O>
 ::GetBulkTransform( double linear[3][3], double offset[3] ) const
 {
+  BulkTransformType::MatrixType matrix;
+  matrix.SetIdentity();
+  BulkTransformType::OutputVectorType vector;
+  vector.Fill(0.0);
+
   //static const int VTKDimension = 3;
   BulkTransformType const* bulk = dynamic_cast< BulkTransformType const*>(BSpline->GetBulkTransform());
-  BulkTransformType::MatrixType matrix = bulk->GetMatrix();
-  BulkTransformType::OutputVectorType vector = bulk->GetOffset();
+  if (bulk)
+    {
+    matrix = bulk->GetMatrix();
+    BulkTransformType::OutputVectorType vector = bulk->GetOffset();
+    }
+
   for (unsigned i=0; i<3; ++i)
     {
     for (unsigned j=0; j<3; ++j)
@@ -1061,6 +1201,7 @@ vtkITKBSplineTransformHelperImpl<O>
      offset[i] = vector[i];
     }
 }
+
 
 template< unsigned O >
 typename vtkITKBSplineTransformHelperImpl<O>::BulkTransformType const*

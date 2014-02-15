@@ -35,8 +35,12 @@ public:
   /// away from the origin of the desired output image.
   void SetGridOrigin( const double origin[3] );
 
+  void GetGridOrigin(double *origin) const;
+
   /// The spacing between grid nodes.
   void SetGridSpacing( const double spacing[3] );
+
+  void GetGridSpacing(double *spacing) const;
 
   /// Number of grid nodes in each dimension.
   //
@@ -46,6 +50,8 @@ public:
   /// (order 3) BSpline, there needs to be 3 extra nodes in each
   /// dimension.
   void SetGridSize( const unsigned int size[3] );
+
+  void GetGridSize(unsigned int *size) const;
 
   /// See the documentation of SetParameters(double[]).
   void SetParameters( vtkDoubleArray& param );
@@ -114,6 +120,9 @@ public:
 
   itk::Transform<double,3,3>::Pointer GetITKTransform() const;
 
+  /// copy underlying ITK transform
+  void DeepCopy(vtkITKBSplineTransform *xform);
+
 protected:
   vtkITKBSplineTransform();
   virtual ~vtkITKBSplineTransform();
@@ -135,7 +144,8 @@ protected:
   void InverseTransformDerivative( const double in[3], double out[3],
                                    double derivative[3][3] );
 
-private:
+ public:
+//private:
   vtkITKBSplineTransformHelper* Helper;
 };
 

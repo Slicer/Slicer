@@ -872,6 +872,22 @@ void vtkMRMLModelDisplayableManager
 ::UpdateModelPolyData(vtkMRMLDisplayableNode *displayableNode)
 {
   int ndnodes = displayableNode->GetNumberOfDisplayNodes();
+  int i;
+
+  // if no model display nodes found, return
+  int modelDisplayNodeCount = 0;
+  for (i=0; i<ndnodes; i++)
+    {
+    vtkMRMLDisplayNode *dNode = displayableNode->GetNthDisplayNode(i);
+    if (vtkMRMLModelDisplayNode::SafeDownCast(dNode) != NULL)
+      {
+      modelDisplayNodeCount++;
+      }
+    }
+  if (modelDisplayNodeCount == 0)
+    {
+    return;
+    }
 
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(displayableNode);
   vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(displayableNode);
@@ -888,7 +904,7 @@ void vtkMRMLModelDisplayableManager
     tnode->GetTransformToWorld(worldTransform);
     }
 
-  for (int i=0; i<ndnodes; i++)
+  for (i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
     vtkMRMLModelDisplayNode *modelDisplayNode =

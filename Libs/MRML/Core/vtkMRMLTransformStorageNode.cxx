@@ -417,11 +417,11 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           // Convert the sense of the transform (from an ITK resampling
           // transform to a Slicer modeling transform)
           vtkBSpline->Inverse();
-          btn->SetAndObserveWarpTransformToParent( vtkBSpline.GetPointer() );
+          btn->SetAndObserveWarpTransformToParent( vtkBSpline.GetPointer(), true );
           }
         else
           {
-          btn->SetAndObserveWarpTransformFromParent( vtkBSpline.GetPointer() );
+          btn->SetAndObserveWarpTransformFromParent( vtkBSpline.GetPointer(), true );
           }
         result = 1;
         }
@@ -571,11 +571,11 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         // Convert the sense of the transform (from an ITK resampling
         // transform to a Slicer modeling transform)
         vtkgrid->Inverse();
-        gtn->SetAndObserveWarpTransformToParent( vtkgrid );
+        gtn->SetAndObserveWarpTransformToParent( vtkgrid, true );
         }
       else
         {
-        gtn->SetAndObserveWarpTransformFromParent( vtkgrid );
+        gtn->SetAndObserveWarpTransformFromParent( vtkgrid, true );
         }
 
       vtkgrid->Delete();

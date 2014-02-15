@@ -220,7 +220,7 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
 
   if( spline.GetPointer() != 0 )
     {
-    this->SetAndObserveWarpTransformFromParent( spline );
+    this->SetAndObserveWarpTransformFromParent( spline, true );
     }
 }
 
@@ -235,11 +235,11 @@ void vtkMRMLBSplineTransformNode::Copy(vtkMRMLNode *anode)
     {
     if (this->WarpTransformToParent)
       {
-      this->SetAndObserveWarpTransformToParent(node->GetWarpTransformToParent());
+      this->SetAndObserveWarpTransformToParent(node->GetWarpTransformToParent(), false);
       }
     if (this->WarpTransformFromParent)
       {
-      this->SetAndObserveWarpTransformFromParent(node->GetWarpTransformFromParent());
+      this->SetAndObserveWarpTransformFromParent(node->GetWarpTransformFromParent(), false);
       }
     }
 }
@@ -250,20 +250,45 @@ void vtkMRMLBSplineTransformNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 }
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLBSplineTransformNode::DeepCopyTransformToParent(vtkWarpTransform *warp)
+{
+  vtkITKBSplineTransform *warp1 = vtkITKBSplineTransform::SafeDownCast(warp);
+  vtkITKBSplineTransform *warp2 = vtkITKBSplineTransform::SafeDownCast(this->GetWarpTransformToParent());
+  if (warp1 && warp2)
+    {
+    warp2->DeepCopy(warp1);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLBSplineTransformNode::DeepCopyTransformFromParent(vtkWarpTransform *warp)
+{
+  vtkITKBSplineTransform *warp1 = vtkITKBSplineTransform::SafeDownCast(warp);
+  vtkITKBSplineTransform *warp2 = vtkITKBSplineTransform::SafeDownCast(this->GetWarpTransformFromParent());
+  if (warp1 && warp2)
+    {
+    warp2->DeepCopy(warp1);
+    }
+}
+
+
 //----------------------------------------------------------------------------
 vtkWarpTransform* vtkMRMLBSplineTransformNode::GetWarpTransformToParent()
 {
   if (this->WarpTransformToParent == 0)
     {
-    vtkITKBSplineTransform *wrap = vtkITKBSplineTransform::New();
+    vtkITKBSplineTransform *warp = vtkITKBSplineTransform::New();
 
     if (this->WarpTransformFromParent)
       {
-      wrap->DeepCopy(this->WarpTransformFromParent);
-      wrap->Inverse();
+      warp->SetSplineOrder(3);
+      warp->DeepCopy(vtkITKBSplineTransform::SafeDownCast(this->WarpTransformFromParent));
+      warp->Inverse();
       }
-    this->SetAndObserveWarpTransformToParent(wrap);
-    wrap->Delete();
+    this->SetAndObserveWarpTransformToParent(warp, false);
+    warp->Delete();
     }
   return this->WarpTransformToParent;
 }
@@ -273,15 +298,16 @@ vtkWarpTransform* vtkMRMLBSplineTransformNode::GetWarpTransformFromParent()
 {
   if (this->WarpTransformFromParent == 0)
     {
-    vtkITKBSplineTransform *wrap = vtkITKBSplineTransform::New();
+    vtkITKBSplineTransform *warp = vtkITKBSplineTransform::New();
 
     if (this->WarpTransformToParent)
       {
-      wrap->DeepCopy(this->WarpTransformToParent);
-      wrap->Inverse();
+      warp->SetSplineOrder(3);
+      warp->DeepCopy(vtkITKBSplineTransform::SafeDownCast(this->WarpTransformToParent));
+      warp->Inverse();
       }
-    this->SetAndObserveWarpTransformFromParent(wrap);
-    wrap->Delete();
+    this->SetAndObserveWarpTransformFromParent(warp, false);
+    warp->Delete();
     }
   return this->WarpTransformFromParent;
 }

@@ -81,7 +81,7 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
   /// vtkMRMLTransformableNode::TransformModifiedEvent is fired.
   /// ModifiedEvent() and TransformModifiedEvent() are fired after the transform
   /// is set.
-  void SetAndObserveWarpTransformToParent(vtkWarpTransform *warp);
+  void SetAndObserveWarpTransformToParent(vtkWarpTransform *warp, bool updateTrasformFromParent);
 
   ///
   /// Set and observe a new  transform of this node from parent node.
@@ -89,7 +89,7 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
   /// vtkMRMLTransformableNode::TransformModifiedEvent is fired.
   /// ModifiedEvent() and TransformModifiedEvent() are fired after the transform
   /// is set.
-  void SetAndObserveWarpTransformFromParent(vtkWarpTransform *warp);
+  void SetAndObserveWarpTransformFromParent(vtkWarpTransform *warp, bool updateTrasformToParent);
 
 
   /// 
@@ -117,7 +117,14 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
     return Superclass::CreateDefaultStorageNode();
     };
 
-  
+  ///
+  /// Deep copy input transform to this node transform to parent
+  virtual void DeepCopyTransformToParent(vtkWarpTransform *warp) {};
+
+  ///
+  /// Deep copy input transform to this node transform from parent
+  virtual void DeepCopyTransformFromParent(vtkWarpTransform *warp) {};
+
 protected:
   vtkMRMLNonlinearTransformNode();
   ~vtkMRMLNonlinearTransformNode();
@@ -129,6 +136,9 @@ protected:
 
   vtkWarpTransform* WarpTransformToParent;
   vtkWarpTransform* WarpTransformFromParent;
+
+  int InSetAndObserveWarpTransformToParent;
+  int InSetAndObserveWarpTransformFromParent;
 
 };
 
