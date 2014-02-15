@@ -129,7 +129,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     colorNode->SetNumberOfColors(maxID + 1);
     if (colorNode->GetLookupTable())
       {
-      colorNode->GetLookupTable()->SetTableRange(0, 255);
+      colorNode->GetLookupTable()->SetTableRange(0, maxID);
       }
     // init the table to black/opacity 0 with no name, just in case we're missing values
     const char *noName = colorNode->GetNoName();
