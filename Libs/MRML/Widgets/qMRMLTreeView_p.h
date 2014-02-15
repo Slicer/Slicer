@@ -56,7 +56,7 @@ protected:
 public:
   qMRMLTreeViewPrivate(qMRMLTreeView& object);
   virtual ~qMRMLTreeViewPrivate();
-  void init();
+  virtual void init();
   void setSceneModel(qMRMLSceneModel* newModel);
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
   QSize sizeHint()const;

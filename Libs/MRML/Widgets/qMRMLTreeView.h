@@ -288,6 +288,7 @@ public slots:
   /// returnPressed() signal.
   /// \sa scrollTo()
   void scrollToNext();
+
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
   void currentNodeDeleted(const QModelIndex& index);
@@ -310,6 +311,9 @@ protected slots:
   /// Expand the nodes previously saved by \a saveTreeExpandState()
   /// \sa saveTreeExpandState()
   void loadTreeExpandState();
+
+protected:
+  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parent=0);
 
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;

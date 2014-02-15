@@ -304,6 +304,15 @@ qMRMLTreeView::qMRMLTreeView(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
+qMRMLTreeView::qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parentObject)
+  :Superclass(parentObject)
+  , d_ptr(pimpl)
+{
+  Q_D(qMRMLTreeView);
+  d->init(/*factory*/);
+}
+
+//------------------------------------------------------------------------------
 qMRMLTreeView::~qMRMLTreeView()
 {
 }
