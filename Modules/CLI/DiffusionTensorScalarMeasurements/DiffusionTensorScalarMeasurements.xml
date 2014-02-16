@@ -28,13 +28,13 @@
   </parameters>
   <parameters>
     <label>Operation</label>
-    <description><![CDATA[Parameters for the estimation algorithm]]></description>
+    <description><![CDATA[Scalar Measurements]]></description>
     <string-enumeration>
       <name>operation</name>
       <flag>e</flag>
       <longflag>enumeration</longflag>
       <description><![CDATA[An enumeration of strings]]></description>
-      <label>Estimation Parameters</label>
+      <label>Scalar Maps</label>
       <default>FractionalAnisotropy</default>
       <element>Trace</element>
       <element>Determinant</element>
