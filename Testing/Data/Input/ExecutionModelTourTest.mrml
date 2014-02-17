@@ -1,6 +1,6 @@
 <MRML >
 <LinearTransform
-  id="vtkMRMLLinearTransformNode1"  name="vtkMRMLLinearTransformNode1"  hideFromEditors="false"  selectable="true"  selected="false"  userTags=""  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"></LinearTransform>
+  id="vtkMRMLLinearTransformNode1"  name="vtkMRMLLinearTransformNode1"  hideFromEditors="false"  selectable="true"  selected="false"  userTags=""  readWriteAsTransformToParent="true"  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"></LinearTransform>
  <LinearTransform
-  id="vtkMRMLLinearTransformNode2"  name="vtkMRMLLinearTransformNode1"  hideFromEditors="false"  selectable="true"  selected="false"  userTags=""  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1" ></LinearTransform>
+  id="vtkMRMLLinearTransformNode2"  name="vtkMRMLLinearTransformNode1"  hideFromEditors="false"  selectable="true"  selected="false"  userTags=""  readWriteAsTransformToParent="true"  matrixTransformToParent="1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1" ></LinearTransform>
 </MRML>
