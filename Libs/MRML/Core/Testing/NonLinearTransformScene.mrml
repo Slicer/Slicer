@@ -1,0 +1,10 @@
+<MRML  version="Slicer4" userTags="">
+ <TransformStorage
+  id="vtkMRMLTransformStorageNode1"  name="TransformStorage"  hideFromEditors="true"  selectable="true"  selected="false"  fileName="TestData/Bspline-f-m.tfm"  useCompression="1"  readState="0"  writeState="0" ></TransformStorage>
+ <BSplineTransform
+  id="vtkMRMLBSplineTransformNode1"  name="Bspline-f-m"  hideFromEditors="false"  selectable="true"  selected="false"  storageNodeRef="vtkMRMLTransformStorageNode1"  references="storage:vtkMRMLTransformStorageNode1;"  userTags=""  readWriteAsTransformToParent="false" ></BSplineTransform>
+ <TransformStorage
+  id="vtkMRMLTransformStorageNode2"  name="TransformStorage"  hideFromEditors="true"  selectable="true"  selected="false"  fileName="TestData/deform2x2x2_ras.nrrd"  useCompression="1"  readState="0"  writeState="0" ></TransformStorage>
+ <GridTransform
+  id="vtkMRMLGridTransformNode1"  name="deform2x2x2_ras"  hideFromEditors="false"  selectable="true"  selected="false"  storageNodeRef="vtkMRMLTransformStorageNode1"  references="storage:vtkMRMLTransformStorageNode2;"  userTags=""  readWriteAsTransformToParent="false" ></GridTransform>
+</MRML>
