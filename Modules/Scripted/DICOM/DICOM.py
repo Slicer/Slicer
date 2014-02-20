@@ -66,7 +66,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
           # the dicom listener is also global, but only started on app start if
           # the user so chooses
           if settings.contains('DICOM/RunListenerAtStart'):
-            if bool(settings.value('DICOM/RunListenerAtStart')):
+            if settings.value('DICOM/RunListenerAtStart') == 'true':
               if not hasattr(slicer, 'dicomListener'):
                 try:
                   slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
@@ -241,7 +241,7 @@ class DICOMWidget:
     self.runListenerAtStart = qt.QCheckBox("Start Listener when Slicer Starts")
     self.localFrame.layout().addWidget(self.runListenerAtStart)
     if settings.contains('DICOM/RunListenerAtStart'):
-      self.runListenerAtStart.checked = bool(settings.value('DICOM/RunListenerAtStart'))
+      self.runListenerAtStart.checked = bool(settings.value('DICOM/RunListenerAtStart') == 'true')
     self.runListenerAtStart.connect('clicked()', self.onRunListenerAtStart)
 
     # the Database frame (home of the ctkDICOM widget)
