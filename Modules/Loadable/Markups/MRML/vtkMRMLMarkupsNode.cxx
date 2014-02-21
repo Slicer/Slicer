@@ -933,6 +933,43 @@ std::string vtkMRMLMarkupsNode::GetNthMarkupID(int n)
   return id;
 }
 
+//-------------------------------------------------------------------------
+int vtkMRMLMarkupsNode::GetMarkupIndexByID(const char* markupID)
+{
+  if (!markupID)
+    {
+    return -1;
+    }
+
+  int numberOfMarkups = this->GetNumberOfMarkups();
+  for (int i = 0; i < numberOfMarkups; ++i)
+    {
+    Markup* compareMarkup = this->GetNthMarkup(i);
+    if (compareMarkup &&
+        strcmp(compareMarkup->ID.c_str(), markupID) == 0)
+      {
+      return i;
+      }
+    }
+  return -1;
+}
+
+//-------------------------------------------------------------------------
+Markup* vtkMRMLMarkupsNode::GetMarkupByID(const char* markupID)
+{
+  if (!markupID)
+    {
+    return NULL;
+    }
+
+  int markupIndex = this->GetMarkupIndexByID(markupID);
+  if (markupIndex >= 0 && markupIndex < this->GetNumberOfMarkups())
+    {
+    return this->GetNthMarkup(markupIndex);
+    }
+  return NULL;
+}
+
 //-----------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthMarkupID(int n, std::string id)
 {

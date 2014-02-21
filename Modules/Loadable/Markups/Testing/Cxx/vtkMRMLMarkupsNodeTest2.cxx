@@ -145,5 +145,52 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
     return EXIT_FAILURE;
     }
 
+  // Check if ID returned is valid
+  if (node1->GetNumberOfMarkups() > 0)
+    {
+    Markup* markup = node1->GetNthMarkup(0);
+    const char* markupID = markup->ID.c_str();
+    int markupIndex = node1->GetMarkupIndexByID(markupID);
+    if (node1->GetMarkupByID(markupID) != markup)
+      {
+      std::cerr << "Get Markup by ID failed" << std::endl;
+      return EXIT_FAILURE;
+      }
+    if (markupIndex != 0)
+      {
+      std::cerr << "Get Markup index by ID failed, returned "
+                << markupIndex << ", expecting 0" << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+  // Check returned value with a NULL ID
+  Markup* markupNull = node1->GetMarkupByID(NULL);
+  int indexNull = node1->GetMarkupIndexByID(NULL);
+  if (markupNull)
+    {
+    std::cerr << "Get Markup by ID with NULL parameters failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (indexNull >= 0)
+    {
+    std::cerr << "Get Markup index by ID with NULL parameters failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Check returned value with an invalid ID
+  Markup* markupInvalid = node1->GetMarkupByID("Invalid");
+  int indexInvalid = node1->GetMarkupIndexByID("Invalid");
+  if (markupInvalid)
+    {
+    std::cerr << "Get Markup by ID with invalid ID failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (indexInvalid >= 0)
+    {
+    std::cerr << "Get Markup index by ID with invalid ID failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }

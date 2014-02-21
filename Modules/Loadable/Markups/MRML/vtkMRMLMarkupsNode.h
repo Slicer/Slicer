@@ -240,6 +240,10 @@ public:
 
   /// Get the id for the nth markup
   std::string GetNthMarkupID(int n = 0);
+  /// Get Markup index based on it's ID
+  int GetMarkupIndexByID(const char* markupID);
+  /// Get Markup based on it's ID
+  Markup* GetMarkupByID(const char* markupID);
 
   /// Get the Selected flag on the nth markup, returns false if markup doesn't
   /// exist
