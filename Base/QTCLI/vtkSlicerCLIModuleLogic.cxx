@@ -2288,6 +2288,16 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         // now, he/she will still be looking at the node by the time the
         // data is reloaded by the main thread.
         bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
+
+        // displayData causes resetting of slice views (the output volume is shown in the background,
+        // the foreground volume is cleared, the middle slice is selected, the FOV is reset, etc.)
+        // which is not desirable when AutoRun is enabled (because the user already set up the
+        // slice viewers for optimal viewing)
+        if (node0->GetAutoRun())
+        {
+          displayData=false;
+        }
+
         bool deleteFile = this->GetDeleteTemporaryFiles();
         int requestUID = this->GetApplicationLogic()
           ->RequestReadData((*id2fn0).first.c_str(), (*id2fn0).second.c_str(),
