@@ -494,15 +494,13 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     vtkMRMLTransformNode *transformNode = this->VolumeNode->GetParentTransformNode();
     if ( transformNode != 0 )
       {
-      vtkGeneralTransform *worldTransform = vtkGeneralTransform::New();
+      vtkNew<vtkGeneralTransform> worldTransform;
       worldTransform->Identity();
-      transformNode->GetTransformFromWorld(worldTransform);
+      transformNode->GetTransformFromWorld(worldTransform.GetPointer());
       //worldTransform->Inverse();
 
-      this->XYToIJKTransform->Concatenate(worldTransform);
-      this->UVWToIJKTransform->Concatenate(worldTransform);
-
-      worldTransform->Delete();
+      this->XYToIJKTransform->Concatenate(worldTransform.GetPointer());
+      this->UVWToIJKTransform->Concatenate(worldTransform.GetPointer());
       /***
       if ( !transformNode->IsTransformToWorldLinear() )
         {
@@ -523,15 +521,15 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
         ***/
       }
 
-    vtkSmartPointer<vtkMatrix4x4> rasToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-    this->VolumeNode->GetRASToIJKMatrix(rasToIJK);
+    vtkNew<vtkMatrix4x4> rasToIJK;
+    this->VolumeNode->GetRASToIJKMatrix(rasToIJK.GetPointer());
 
     /***
     vtkMatrix4x4::Multiply4x4(rasToIJK, xyToIJK, xyToIJK);
     vtkMatrix4x4::Multiply4x4(rasToIJK, uvwToIJK, uvwToIJK);
     ***/
-    this->XYToIJKTransform->Concatenate(rasToIJK);
-    this->UVWToIJKTransform->Concatenate(rasToIJK);
+    this->XYToIJKTransform->Concatenate(rasToIJK.GetPointer());
+    this->UVWToIJKTransform->Concatenate(rasToIJK.GetPointer());
 
     this->Reslice->SetResliceTransform( this->XYToIJKTransform );
     this->ResliceUVW->SetResliceTransform( this->UVWToIJKTransform );

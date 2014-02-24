@@ -688,14 +688,13 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
   ctnode->SetScene(this->GetMRMLScene());
 
   // make a storage node
-  vtkMRMLColorTableStorageNode *colorStorageNode = vtkMRMLColorTableStorageNode::New();
+  vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
   colorStorageNode->SaveWithSceneOff();
   if (this->GetMRMLScene())
     {
-    this->GetMRMLScene()->AddNode(colorStorageNode);
+    this->GetMRMLScene()->AddNode(colorStorageNode.GetPointer());
     ctnode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     }
-  colorStorageNode->Delete();
   
   ctnode->GetStorageNode()->SetFileName(fileName);
   std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
@@ -712,7 +711,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
       {
       ctnode->SetAndObserveStorageNodeID(NULL);
       ctnode->SetScene(NULL);
-      this->GetMRMLScene()->RemoveNode(colorStorageNode);
+      this->GetMRMLScene()->RemoveNode(colorStorageNode.GetPointer());
       }
       
       ctnode->Delete();

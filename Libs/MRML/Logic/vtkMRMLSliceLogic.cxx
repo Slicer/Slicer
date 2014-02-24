@@ -740,6 +740,7 @@ void vtkMRMLSliceLogic::SetLabelOpacity(double labelOpacity)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLogic
 ::SetBackgroundWindowLevel(double newWindow, double newLevel)
 {
@@ -972,7 +973,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 
     if (!alphaBlending)
       {
-      vtkImageMathematics *tempMath = vtkImageMathematics::New();
+      vtkNew<vtkImageMathematics> tempMath;
       if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
         {
         // add the foreground and background
@@ -988,18 +989,15 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempMath->SetInput2( backgroundImage );
       tempMath->GetOutput()->SetScalarType(VTK_SHORT);
 
-      vtkImageCast *tempCast = vtkImageCast::New();
+      vtkNew<vtkImageCast> tempCast;
       tempCast->SetInput( tempMath->GetOutput() );
       tempCast->SetOutputScalarTypeToUnsignedChar();
 
       this->Blend->SetInput( layerIndex, tempCast->GetOutput() );
       this->Blend->SetOpacity( layerIndex++, 1.0 );
 
-      tempMath->Delete();  // Blend may still be holding a reference
-      tempCast->Delete();  // Blend may still be holding a reference
-
       // UVW pipeline
-      vtkImageMathematics *tempMathUVW = vtkImageMathematics::New();
+      vtkNew<vtkImageMathematics> tempMathUVW;
       if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
         {
         // add the foreground and background
@@ -1015,15 +1013,12 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       tempMathUVW->SetInput2( backgroundImageUVW );
       tempMathUVW->GetOutput()->SetScalarType(VTK_SHORT);
 
-      vtkImageCast *tempCastUVW = vtkImageCast::New();
+      vtkNew<vtkImageCast> tempCastUVW;
       tempCastUVW->SetInput( tempMathUVW->GetOutput() );
       tempCastUVW->SetOutputScalarTypeToUnsignedChar();
 
       this->BlendUVW->SetInput( layerIndexUVW, tempCastUVW->GetOutput() );
       this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
-
-      tempMathUVW->Delete();  // Blend may still be holding a reference
-      tempCastUVW->Delete();  // Blend may still be holding a reference
       }
     else
       {

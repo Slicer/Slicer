@@ -361,7 +361,7 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
   Q_Q(qSlicerSlicer2SceneReader);
   //upvar $node n
   //set transformNode [vtkMRMLLinearTransformNode New]
-  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::New();
+  vtkNew<vtkMRMLLinearTransformNode> transformNode;
 
   //set matrix [$transformNode GetMatrixTransformToParent]
   vtkMatrix4x4* matrix = transformNode->GetMatrixTransformToParent();
@@ -388,7 +388,7 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
   matrix->DeepCopy(elements);
   
   //$::slicer3::MRMLScene AddNode $transformNode
-  q->mrmlScene()->AddNode(transformNode);
+  q->mrmlScene()->AddNode(transformNode.GetPointer());
   this->LoadedNodes << transformNode->GetID();
 
   //set parentTransform ""
@@ -416,7 +416,6 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
   this->TransformIDStack << transformNode->GetID();
 
   //$transformNode Delete
-  transformNode->Delete();
 }
 
 //-----------------------------------------------------------------------------
@@ -447,9 +446,9 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     node["description"] = "";
     }
   
-  vtkMRMLVolumeNode* volumeNode = 0;
+  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode;
   QString volumeNodeID;
-  vtkMRMLVolumeDisplayNode* volumeDisplayNode = 0;
+  vtkSmartPointer<vtkMRMLVolumeDisplayNode> volumeDisplayNode;
 
 
   //switch [string tolower $n(fileType)] {
@@ -554,7 +553,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     properties["fileNames"] = fileNames;
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(
       this->ioManager()->loadNodesAndGetFirst(QString("VolumeFile"), properties));
-    Q_ASSERT(volumeNode);
+    Q_ASSERT(volumeNode.GetPointer());
     volumeNodeID = volumeNode->GetID();
     this->LoadedNodes << volumeNode->GetID();
     }
@@ -670,8 +669,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
       // $volumeNode SetName $n(name)
       // $volumeNode SetDescription $n(description)
       // $imageReader Delete
-    vtkSmartPointer<vtkMRMLScalarVolumeNode> volumeNode =
-      vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    volumeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
     volumeNode->SetAndObserveImageData(imageReader->GetOutput());
     volumeNode->SetName(node["name"].toLatin1());
     volumeNode->SetDescription(node["description"].toLatin1());
@@ -686,12 +684,12 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
         (node["labelMap"] == "yes" ||
          node["labelMap"] == "true"))
       {
-      volumeNode->SetLabelMap(1);
-      volumeDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
+      vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->SetLabelMap(1);
+      volumeDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
       }
     else
       {
-      volumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::New();
+      volumeDisplayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
       }
       
     //
@@ -702,7 +700,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     //$::slicer3::MRMLScene AddNode $volumeNode
     //$volumeNode SetAndObserveDisplayNodeID [$volumeDisplayNode GetID]
     //$volumeNode SetModifiedSinceRead 1
-    q->mrmlScene()->AddNode(volumeNode);
+    q->mrmlScene()->AddNode(volumeNode.GetPointer());
     q->mrmlScene()->AddNode(volumeDisplayNode);
     volumeNode->SetAndObserveDisplayNodeID(volumeDisplayNode->GetID());
     this->LoadedNodes << volumeNode->GetID() << volumeDisplayNode->GetID();
@@ -727,16 +725,13 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     // clean up
     //
     //set volumeNodeID [$volumeNode GetID]
-    //$volumeNode Delete
-    //$volumeDisplayNode Delete
     volumeNodeID = volumeNode->GetID();
-    volumeDisplayNode->Delete();
     }
 
   //set volumeNode [$::slicer3::MRMLScene GetNodeByID $volumeNodeID]
-  Q_ASSERT(volumeNode == q->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1()));
+  Q_ASSERT(volumeNode.GetPointer() == q->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1()));
   volumeNode = vtkMRMLVolumeNode::SafeDownCast(q->mrmlScene()->GetNodeByID(volumeNodeID.toLatin1()));
-  Q_ASSERT(volumeNode);
+  Q_ASSERT(volumeNode.GetPointer());
   
   // use the current top of stack (might be "" if empty, but that's okay)
   //set transformID [lindex $::S2(transformIDStack) end]
@@ -747,7 +742,7 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
 
   //set volumeDisplayNode [$volumeNode GetDisplayNode]
   volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
-  Q_ASSERT(volumeDisplayNode);
+  Q_ASSERT(volumeDisplayNode.GetPointer());
 
   // switch -- $n(colorLUT) {
   //   "0" {
