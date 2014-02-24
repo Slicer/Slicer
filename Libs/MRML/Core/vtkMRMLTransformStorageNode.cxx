@@ -66,8 +66,6 @@ bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  vtkMRMLTransformNode *transformNode = dynamic_cast <vtkMRMLTransformNode *> (refNode);
-
   std::string fullName = this->GetFullNameFromFileName(); 
   if (fullName == std::string("")) 
     {

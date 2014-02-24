@@ -119,11 +119,11 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
 
   ///
   /// Deep copy input transform to this node transform to parent
-  virtual void DeepCopyTransformToParent(vtkWarpTransform *warp) {};
+  virtual void DeepCopyTransformToParent(vtkWarpTransform * vtkNotUsed(warp)) {}
 
   ///
   /// Deep copy input transform to this node transform from parent
-  virtual void DeepCopyTransformFromParent(vtkWarpTransform *warp) {};
+  virtual void DeepCopyTransformFromParent(vtkWarpTransform * vtkNotUsed(warp)) {}
 
 protected:
   vtkMRMLNonlinearTransformNode();

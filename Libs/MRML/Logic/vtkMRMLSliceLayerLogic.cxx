@@ -442,8 +442,6 @@ void vtkMRMLSliceLayerLogic::UpdateVolumeDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLayerLogic::UpdateTransforms()
 {
-  static bool reportedNonlinearTransformSupport = false;
-  
   if (this->UpdatingTransforms) 
     {
     return;
