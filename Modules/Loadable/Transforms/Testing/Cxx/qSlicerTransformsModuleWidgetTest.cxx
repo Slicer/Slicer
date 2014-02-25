@@ -62,6 +62,7 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
   matrix->SetElement(0,0, 10.);
   matrix->SetElement(1,0, 2.);
   transformsWidget->identity();
+  matrix = transformNode->GetMatrixTransformToParent();
   QCOMPARE(matrix->GetElement(0,0), 1.);
   QCOMPARE(matrix->GetElement(1,0), 0.);
   //transformsWidget->show();
@@ -85,6 +86,7 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
   matrix->SetElement(0,0, 10.);
   matrix->SetElement(1,0, 2.);
   transformsWidget->invert();
+  matrix = transformNode->GetMatrixTransformToParent();
   QCOMPARE(matrix->GetElement(0,0), 0.1);
   QCOMPARE(matrix->GetElement(1,0), -0.2);
   //transformsWidget->show();

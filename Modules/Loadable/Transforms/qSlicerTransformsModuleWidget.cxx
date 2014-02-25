@@ -74,7 +74,7 @@ QList<vtkSmartPointer<vtkMRMLTransformableNode> > qSlicerTransformsModuleWidgetP
   QModelIndexList selectedIndexes =
     tree->selectionModel()->selectedRows();
   selectedIndexes = qMRMLTreeView::removeChildren(selectedIndexes);
-  
+
   // Return the list of nodes
   QList<vtkSmartPointer<vtkMRMLTransformableNode> > selectedNodes;
   foreach(QModelIndex selectedIndex, selectedIndexes)
@@ -167,7 +167,7 @@ void qSlicerTransformsModuleWidget::setup()
 void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
 {
   Q_D(qSlicerTransformsModuleWidget);
-  
+
   qMRMLTransformSliders::CoordinateReferenceType ref =
     (id == qMRMLTransformSliders::GLOBAL) ? qMRMLTransformSliders::GLOBAL : qMRMLTransformSliders::LOCAL;
   d->TranslationSliders->setCoordinateReference(ref);
@@ -178,7 +178,7 @@ void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
 void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 {
   Q_D(qSlicerTransformsModuleWidget);
-  
+
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
 
   // Enable/Disable CoordinateReference, identity buttons, MatrixViewGroupBox,
@@ -234,12 +234,13 @@ void qSlicerTransformsModuleWidget::identity()
 void qSlicerTransformsModuleWidget::invert()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  
+
   if (!d->MRMLTransformNode) { return; }
 
   d->RotationSliders->resetUnactiveSliders();
 
   vtkMatrix4x4 *newMatrixToParent = vtkMatrix4x4::New();
+  newMatrixToParent->DeepCopy(d->MRMLTransformNode->GetMatrixTransformToParent());
   newMatrixToParent->Invert();
   d->MRMLTransformNode->SetAndObserveMatrixTransformToParent(newMatrixToParent);
   newMatrixToParent->Delete();
