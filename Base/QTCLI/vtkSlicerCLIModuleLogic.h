@@ -98,9 +98,6 @@ public:
 
   void KillProcesses();
 
-  /// Set/Get the directory to use for temporary files
-  void SetTemporaryDirectory(const char *tempdir);
-
 //   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
 //   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node)
 //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }

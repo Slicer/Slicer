@@ -256,8 +256,6 @@ public:
 
   int RedirectModuleStreams;
 
-  std::string TemporaryDirectory;
-
   itk::MutexLock::Pointer ProcessesKillLock;
   std::vector<itksysProcess*> Processes;
 
@@ -506,7 +504,14 @@ vtkSlicerCLIModuleLogic
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = this->Internal->TemporaryDirectory + "/" + pid + "_" + fname + ".mrml";
+  // by default use the current directory
+  std::string temporaryDirectory = ".";
+  vtkSlicerApplicationLogic* appLogic = this->GetApplicationLogic();
+  if (appLogic)
+    {
+    temporaryDirectory = appLogic->GetTemporaryPath();
+    }
+  fname = temporaryDirectory + "/" + pid + "_" + fname + ".mrml";
 
   return fname;
 }
@@ -575,7 +580,13 @@ vtkSlicerCLIModuleLogic
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = this->Internal->TemporaryDirectory + "/" + pid + "_" + fname;
+  std::string temporaryDirectory = ".";
+  vtkSlicerApplicationLogic* appLogic = this->GetApplicationLogic();
+  if (appLogic)
+    {
+    temporaryDirectory = appLogic->GetTemporaryPath();
+    }
+  fname = temporaryDirectory + "/" + pid + "_" + fname;
 
   if (tag == "image")
     {
@@ -700,12 +711,6 @@ void vtkSlicerCLIModuleLogic::KillProcesses()
     itksysProcess_Kill(process);
     }
   this->Internal->ProcessesKillLock->Unlock();
-}
-
-//-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::SetTemporaryDirectory(const char *tempdir)
-{
-  this->Internal->TemporaryDirectory = tempdir;
 }
 
 //-----------------------------------------------------------------------------
@@ -1224,8 +1229,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       {
       code << alphanum[rand() % (sizeof(alphanum)-1)];
       }
-
-    std::string returnFile = this->Internal->TemporaryDirectory + "/" + pidString.str()
+    // by default use the current directory
+    std::string temporaryDirectory = ".";
+    vtkSlicerApplicationLogic* appLogic = this->GetApplicationLogic();
+    if (appLogic)
+      {
+      temporaryDirectory = appLogic->GetTemporaryPath();
+      }
+    std::string returnFile = temporaryDirectory + "/" + pidString.str()
       + "_" + code.str() + ".params";
 
     commandLineAsString.push_back( returnFile );

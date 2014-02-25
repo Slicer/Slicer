@@ -91,10 +91,6 @@ void qSlicerCLIModule::setup()
   
   // Temporary directory should be set before the module is initialized
   Q_ASSERT(!d->TempDirectory.isEmpty());
-
-  // Set temp directory 
-  vtkSlicerCLIModuleLogic* myLogic = vtkSlicerCLIModuleLogic::SafeDownCast(this->logic());
-  myLogic->SetTemporaryDirectory(d->TempDirectory.toLatin1());
 }
 
 //-----------------------------------------------------------------------------
