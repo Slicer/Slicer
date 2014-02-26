@@ -60,14 +60,6 @@ if(Slicer_BUILD_CLI AND Slicer_BUILD_BRAINSTOOLS)
   set(USE_DebugImageViewer               OFF CACHE BOOL "" FORCE)
   set(BRAINS_DEBUG_IMAGE_WRITE           OFF CACHE BOOL "" FORCE)
 
-  # HACK - Ensure BRAINSTools uses the same ExternalData version as Slicer.
-  #        See https://github.com/BRAINSia/BRAINSTools/issues/3
-  configure_file(
-    ${CMAKE_SOURCE_DIR}/CMake/ExternalData.cmake
-    ${BRAINSTools_SOURCE_DIR}/CMake/ExternalData.cmake
-    COPYONLY
-    )
-
   set(ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR} CACHE STRING "")
   set(BRAINSTools_SUPERBUILD             OFF CACHE BOOL "" FORCE)
   add_subdirectory(
