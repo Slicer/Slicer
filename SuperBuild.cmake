@@ -198,12 +198,60 @@ Slicer_Remote_Add(SimpleFilters
   )
 list_conditional_append(Slicer_BUILD_SimpleFilters Slicer_REMOTE_DEPENDENCIES SimpleFilters)
 
+set(BRAINSTools_options
+  BRAINSTools_SUPERBUILD:BOOL=OFF
+  BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH=${CMAKE_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/${Slicer_CLIMODULES_LIB_DIR}
+  BRAINSTools_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CMAKE_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/${Slicer_CLIMODULES_LIB_DIR}
+  BRAINSTools_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR}/${Slicer_CLIMODULES_BIN_DIR}
+  BRAINSTools_CLI_INSTALL_LIBRARY_DESTINATION:PATH=${Slicer_INSTALL_CLIMODULES_LIB_DIR}
+  BRAINSTools_CLI_INSTALL_ARCHIVE_DESTINATION:PATH=${Slicer_INSTALL_CLIMODULES_LIB_DIR}
+  BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION:PATH=${Slicer_INSTALL_CLIMODULES_BIN_DIR}
+  USE_BRAINSFit:BOOL=ON
+  USE_BRAINSROIAuto:BOOL=ON
+  USE_BRAINSResample:BOOL=ON
+  USE_BRAINSDemonWarp:BOOL=ON
+  # BRAINSTools comes with some extra tool that should not be compiled by default
+  USE_AutoWorkup:BOOL=OFF
+  USE_ANTS:BOOL=OFF
+  USE_GTRACT:BOOL=OFF
+  USE_BRAINSABC:BOOL=OFF
+  USE_BRAINSTalairach:BOOL=OFF
+  USE_BRAINSConstellationDetector:BOOL=OFF
+  USE_BRAINSMush:BOOL=OFF
+  USE_BRAINSInitializedControlPoints:BOOL=OFF
+  USE_BRAINSMultiModeSegment:BOOL=OFF
+  USE_BRAINSCut:BOOL=OFF
+  USE_BRAINSLandmarkInitializer:BOOL=OFF
+  USE_ImageCalculator:BOOL=OFF
+  USE_BRAINSSurfaceTools:BOOL=OFF
+  USE_BRAINSSnapShotWriter:BOOL=OFF
+  USE_ConvertBetweenFileFormats:BOOL=OFF
+  USE_BRAINSMultiSTAPLE:BOOL=OFF
+  USE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=OFF
+  USE_BRAINSContinuousClass:BOOL=OFF
+  USE_ICCDEF:BOOL=OFF
+  USE_BRAINSPosteriorToContinuousClass:BOOL=OFF
+  USE_DebugImageViewer:BOOL=OFF
+  BRAINS_DEBUG_IMAGE_WRITE:BOOL=OFF
+  )
+if("${ITK_VERSION_MAJOR}" GREATER 3)
+  list(APPEND BRAINSTools_options
+    USE_BRAINSTransformConvert:BOOL=ON
+    USE_DWIConvert:BOOL=${Slicer_BUILD_DICOM_SUPPORT} ## Need to figure out library linking
+    )
+else()
+  list(APPEND BRAINSTools_options
+    USE_BRAINSTransformConvert:BOOL=OFF
+    USE_DWIConvert:BOOL=OFF
+    )
+endif()
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git"
   GIT_TAG "bd755e2d82b7b8b8454fcb579d416e39b16dff80"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
-  #LABELS REMOTE_MODULE # Do not specify label, source directory will be explictly added.
+  LABELS REMOTE_MODULE
+  VARS ${BRAINSTools_options}
   )
 list_conditional_append(Slicer_BUILD_BRAINSTOOLS Slicer_REMOTE_DEPENDENCIES BRAINSTools)
 
