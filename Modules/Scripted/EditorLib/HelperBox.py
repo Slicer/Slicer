@@ -840,7 +840,7 @@ class HelperBox(object):
       self.colorSelector = slicer.qMRMLColorTableComboBox()
       # TODO
       self.colorSelector.nodeTypes = ("vtkMRMLColorNode", "")
-      self.colorSelector.hideChildNodeTypes = ("vtkMRMLDiffusionTensorDisplayPropertiesNode", "")
+      self.colorSelector.hideChildNodeTypes = ("vtkMRMLDiffusionTensorDisplayPropertiesNode", "vtkMRMLProceduralColorNode", "")
       self.colorSelector.addEnabled = False
       self.colorSelector.removeEnabled = False
       self.colorSelector.noneEnabled = False
@@ -875,7 +875,7 @@ class HelperBox(object):
       self.colorDialogApply.connect("clicked()", self.onColorDialogApply)
       self.colorDialogCancel.connect("clicked()", self.colorSelect.hide)
 
-    self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+"-label"))
+    self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node that will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+"-label"))
     self.colorSelect.show()
 
   # colorSelect callback (slot)

@@ -20,6 +20,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageData.h>
 #include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
@@ -112,7 +113,25 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
                     << this->ColorNodeID << " can't be found");
       }
     }
-  this->MapToColors->SetLookupTable(lookupTable);
+  if (lookupTable && lookupTable->IsA("vtkLookupTable"))
+    {
+    // make a copy so that the range can be adjusted
+    vtkNew<vtkLookupTable> lut;
+    lut->DeepCopy(lookupTable);
+    this->MapToColors->SetLookupTable(lut.GetPointer());
+    // make sure that the table range matches number of colors for proper drawing
+    // Tables are generally set up with the range set to 0-255 for non label map
+    // volume scalar mapping, but for label maps, we want a 1:1 mapping that doesn't get scaled.
+    if ((lut->GetTableRange()[1] - lut->GetTableRange()[0] + 1)
+        != lut->GetNumberOfTableValues())
+      {
+      lut->SetTableRange(0,lut->GetNumberOfTableValues() - 1);
+      }
+    }
+  else
+    {
+    this->MapToColors->SetLookupTable(lookupTable);
+    }
   // if there is no point, the mapping will fail (not sure)
   assert(!lookupTable || !vtkLookupTable::SafeDownCast(lookupTable) ||
          vtkLookupTable::SafeDownCast(lookupTable)->GetNumberOfTableValues());
