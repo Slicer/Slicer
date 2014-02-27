@@ -280,12 +280,12 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
   vtkMRMLHierarchyNode *parentNode = this->GetParentNode();
   if (oldParentNode)
     {
-    oldParentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
+    oldParentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent, this);
     oldParentNode->Modified();
     }
   if (parentNode)
     {
-    parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent);
+    parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent, this);
     parentNode->Modified();
     }
   this->InvokeHierarchyModifiedEvent();
