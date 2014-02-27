@@ -46,7 +46,7 @@
 #!
 function(ExternalProject_Add_Source projectname)
   set(options)
-  set(_ep_one_args BINARY_DIR DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
+  set(_ep_one_args DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
   set(oneValueArgs ${_ep_one_args} SOURCE_DIR_VAR)
   set(_ep_multi_args SVN_REVISION)
   set(multiValueArgs ${_ep_multi_args} LABELS PROJECTS VARS)
@@ -67,10 +67,6 @@ function(ExternalProject_Add_Source projectname)
       set(${_ep_SOURCE_DIR_VAR} ${CMAKE_BINARY_DIR}/${projectname})
     endif()
 
-    if(NOT _ep_BINARY_DIR)
-      set(_ep_BINARY_DIR CMakeFiles/${projectname}-build)
-    endif()
-
     set(_ep_args_to_pass)
     foreach(arg ${_ep_one_args} ${_ep_multi_args})
       if(_ep_${arg})
@@ -81,6 +77,7 @@ function(ExternalProject_Add_Source projectname)
     ExternalProject_Add(${projectname}
       ${_ep_args_to_pass}
       SOURCE_DIR ${${_ep_SOURCE_DIR_VAR}}
+      BUILD_IN_SOURCE 1
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
@@ -157,7 +154,7 @@ endfunction()
 macro(Slicer_Remote_Add projectname)
   set(options)
   set(_add_source_args
-    BINARY_DIR DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
+    DOWNLOAD_DIR URL URL_MD5 GIT_REPOSITORY GIT_TAG SVN_REPOSITORY SVN_USERNAME SVN_PASSWORD SVN_TRUST_CERT)
   set(oneValueArgs OPTION_NAME OPTION_DEFAULT OPTION_FORCE SOURCE_DIR_VAR ${_add_source_args})
   set(_add_source_multi_args SVN_REVISION LABELS PROJECTS VARS)
   set(multiValueArgs OPTION_DEPENDS ${_add_source_multi_args})
