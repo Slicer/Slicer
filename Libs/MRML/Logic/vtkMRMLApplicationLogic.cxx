@@ -382,7 +382,7 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, cons
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("no scene");
-    return NULL;
+    return false;
     }
 
   std::string mrmlFile = this->UnpackSlicerDataBundle(sdbFilePath, temporaryDirectory);
