@@ -39,6 +39,7 @@
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 
 // Markups includes
@@ -51,6 +52,8 @@
 
 // VTK includes
 #include <vtkNew.h>
+
+#include <math.h>
 
 
 //-----------------------------------------------------------------------------
@@ -428,6 +431,8 @@ qSlicerMarkupsModuleWidget::qSlicerMarkupsModuleWidget(QWidget* _parent)
     , d_ptr( new qSlicerMarkupsModuleWidgetPrivate(*this) )
 {
   this->pToAddShortcut = 0;
+
+  this->volumeSpacingScaleFactor = 10.0;
 }
 
 
@@ -492,6 +497,9 @@ void qSlicerMarkupsModuleWidget::enter()
   this->installShortcuts();
 
   this->checkForAnnotationFiducialConversion();
+
+  // check the max scales against volume spacing, they might need to be updated
+  this->updateMaximumScaleFromVolumes();
 
   this->updateWidgetFromMRML();
 }
@@ -773,10 +781,20 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromDisplayNode()
 
       // glyph scale
       double glyphScale = markupsDisplayNode->GetGlyphScale();
+
+      // make sure that the slider can accomodate this scale
+      if (glyphScale > d->glyphScaleSliderWidget->maximum())
+        {
+        d->glyphScaleSliderWidget->setMaximum(glyphScale);
+        }
       d->glyphScaleSliderWidget->setValue(glyphScale);
 
       // text scale
       double textScale = markupsDisplayNode->GetTextScale();
+      if (textScale > d->textScaleSliderWidget->maximum())
+        {
+        d->textScaleSliderWidget->setMaximum(textScale);
+        }
       d->textScaleSliderWidget->setValue(textScale);
       }
     }
@@ -800,9 +818,86 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromDisplayNode()
         {
         d->glyphTypeComboBox->setCurrentIndex(glyphTypeIndex);
         }
+
+      // make sure that the slider max values can accommodate the default settings
+      if (d->glyphScaleSliderWidget->maximum() <
+          this->markupsLogic()->GetDefaultMarkupsDisplayNodeGlyphScale())
+        {
+        d->glyphScaleSliderWidget->setMaximum(
+          this->markupsLogic()->GetDefaultMarkupsDisplayNodeGlyphScale());
+        }
+      // glyph scale
       d->glyphScaleSliderWidget->setValue(this->markupsLogic()->GetDefaultMarkupsDisplayNodeGlyphScale());
+
+      // check slider max
+      if (d->textScaleSliderWidget->maximum() <
+          this->markupsLogic()->GetDefaultMarkupsDisplayNodeTextScale())
+        {
+        d->textScaleSliderWidget->setMaximum(
+          this->markupsLogic()->GetDefaultMarkupsDisplayNodeTextScale());
+        }
+      // text scale
       d->textScaleSliderWidget->setValue(this->markupsLogic()->GetDefaultMarkupsDisplayNodeTextScale());
       }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::updateMaximumScaleFromVolumes()
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  double maxSliceSpacing = 1.0;
+
+  vtkMRMLSliceLogic *sliceLogic = NULL;
+  vtkMRMLApplicationLogic *mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
+  if (!mrmlAppLogic)
+    {
+    return;
+    }
+
+  vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNodeByID("vtkMRMLSliceNodeRed");
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLSliceNode *redSlice = vtkMRMLSliceNode::SafeDownCast(mrmlNode);
+  if (!redSlice)
+    {
+    return;
+    }
+  sliceLogic = mrmlAppLogic->GetSliceLogic(redSlice);
+  if (!sliceLogic)
+    {
+    return;
+    }
+
+  double *volumeSliceSpacing = sliceLogic->GetBackgroundSliceSpacing();
+  if (volumeSliceSpacing != NULL)
+    {
+    for (int i = 0; i < 3; ++i)
+      {
+      if (volumeSliceSpacing[i] > maxSliceSpacing)
+        {
+        maxSliceSpacing = volumeSliceSpacing[i];
+        }
+      }
+    }
+  double maxScale = maxSliceSpacing * this->volumeSpacingScaleFactor;
+  // round it up to nearest multiple of 10
+  maxScale = ceil(maxScale / 10.0) * 10.0;
+
+  if (maxScale > d->glyphScaleSliderWidget->maximum())
+    {
+    d->glyphScaleSliderWidget->setMaximum(maxScale);
+    }
+  if (maxScale > d->textScaleSliderWidget->maximum())
+    {
+    d->textScaleSliderWidget->setMaximum(maxScale);
+    }
+  if (maxScale > d->markupScaleSliderWidget->maximum())
+    {
+    d->markupScaleSliderWidget->setMaximum(maxScale);
     }
 }
 

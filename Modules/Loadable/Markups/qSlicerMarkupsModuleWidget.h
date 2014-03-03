@@ -44,6 +44,7 @@ public:
   virtual ~qSlicerMarkupsModuleWidget();
 
   /// Set up the GUI from mrml when entering
+  /// \sa updateMaximumScaleFromVolumes()
   virtual void enter();
   /// Disconnect from scene when exiting
   virtual void exit();
@@ -63,6 +64,12 @@ public:
   /// getting the display node associated with the active markups node.
   /// \sa  updateWidgetFromMRML()
   void updateWidgetFromDisplayNode();
+  /// Check Red volume slice spacing to make sure that the glyph and text scale
+  /// slider maximums allow the glyphs to be scaled so that they can be shown
+  /// on volumes with spacing larger than the default. Find the maximum background
+  /// volume spacing and multiply it by the volume spacing scale facotr
+  /// \sa volumeSpacingScaleFactor
+  void updateMaximumScaleFromVolumes();
   /// Refresh a row of the gui from the mth markup in the currently active
   /// markup node as defined by the selection node combo box
   void updateRow(int m);
@@ -214,6 +221,11 @@ protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
 
   virtual void setup();
+
+  /// A multiplication factor to apply to the maximum volume slice spacing when determining what the maximum value for the scale sliders should be.
+  /// \sa updateMaximumScaleFromVolumes
+  /// Default: 10.0
+  double volumeSpacingScaleFactor;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerMarkupsModuleWidget);
