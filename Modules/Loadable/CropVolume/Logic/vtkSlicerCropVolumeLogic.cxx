@@ -419,9 +419,19 @@ void vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtk
   minZ = std::max(minZ,0.);
   maxZ = std::min(maxZ,static_cast<double>(originalImageExtents[5]));
 
-  int outputWholeExtent[6] = {minX,maxX,minY,maxY,minZ,maxZ};
+  int outputWholeExtent[6] = {
+    static_cast<int>(minX),
+    static_cast<int>(maxX),
+    static_cast<int>(minY),
+    static_cast<int>(maxY),
+    static_cast<int>(minZ),
+    static_cast<int>(maxZ)};
 
-  double ijkNewOrigin[] = {outputWholeExtent[0],outputWholeExtent[2],outputWholeExtent[4],1.0};
+  const double ijkNewOrigin[] = {
+    static_cast<double>(outputWholeExtent[0]),
+    static_cast<double>(outputWholeExtent[2]),
+    static_cast<double>(outputWholeExtent[4]),
+    static_cast<double>(1.0)};
 
   double  rasNewOrigin[4];
   inputIJKToRAS->MultiplyPoint(ijkNewOrigin,rasNewOrigin);

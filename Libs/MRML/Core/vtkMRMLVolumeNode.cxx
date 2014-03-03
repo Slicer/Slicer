@@ -556,7 +556,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
       !strcmp(order,"Axial IS") ||
       !strcmp(order,  "Axial"))
     {
-    double elems[] = { -1,  0,  0,  0,
+    const double elems[] = { -1,  0,  0,  0,
                         0, -1,  0,  0, 
                         0,  0,  1,  0,
                         0,  0,  0,  1};   
@@ -565,7 +565,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
   else if (!strcmp(order,"SI") ||
            !strcmp(order,"Axial SI"))
     {
-    double elems[] = { -1,  0,  0,  0,
+    const double elems[] = { -1,  0,  0,  0,
                         0, -1,  0,  0, 
                         0,  0, -1,  0,
                         0,  0,  0,  1};   
@@ -575,7 +575,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
            !strcmp(order,"Sagittal RL") ||
            !strcmp(order,  "Sagittal"))
     {
-    double elems[] = {  0,  0, -1,  0,
+    const double elems[] = {  0,  0, -1,  0,
                        -1,  0,  0,  0, 
                         0,  -1,  0,  0,
                         0,  0,  0,  1};   
@@ -584,7 +584,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
   else if (!strcmp(order,"LR") ||
       !strcmp(order,"Sagittal LR") )
     {
-    double elems[] = {  0,  0,  1,  0,
+    const double elems[] = {  0,  0,  1,  0,
                        -1,  0,  0,  0, 
                         0, -1,  0,  0,
                         0,  0,  0,  1};   
@@ -594,7 +594,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
       !strcmp(order,"Coronal PA") ||
       !strcmp(order,  "Coronal"))
     {
-    double elems[] = { -1,  0,  0,  0,
+    const double elems[] = { -1,  0,  0,  0,
                         0,  0,  1,  0, 
                         0, -1,  0,  0,
                         0,  0,  0,  1};   
@@ -603,7 +603,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
   else if (!strcmp(order,"AP") ||
       !strcmp(order,"Coronal AP") )
     {
-    double elems[] = { -1,  0,  0,  0,
+    const double elems[] = { -1,  0,  0,  0,
                         0,  0, -1,  0, 
                         0, -1,  0,  0,
                         0,  0,  0,  1};   
@@ -616,9 +616,13 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
 
   vtkMatrix4x4::Multiply4x4(orientMat.GetPointer(), scaleMat.GetPointer(), IJKToRAS);
 
-  double pnt[] = {-dims[0]/2, -dims[1]/2, -dims[2]/2, 0};
+  const double pnt[] = {
+   static_cast<double>(-dims[0]/2), 
+   static_cast<double>(-dims[1]/2), 
+   static_cast<double>(-dims[2]/2),
+   static_cast<double>( 0.0 )};
 
-  double *pnt1 = IJKToRAS->MultiplyDoublePoint(pnt);
+  const double * const pnt1 = IJKToRAS->MultiplyDoublePoint(pnt);
 
   if (centerImage)
     {
