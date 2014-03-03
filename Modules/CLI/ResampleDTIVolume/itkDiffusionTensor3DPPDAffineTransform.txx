@@ -54,8 +54,7 @@ DiffusionTensor3DPPDAffineTransform<TData>
     }
   EValuesType                       eigenValues;
   EVectorsType                      eigenVectors;
-  DiffusionTensor3DExtended<double> tensorDouble;
-  tensorDouble = ( DiffusionTensor3DExtended<TData> )tensor;
+  DiffusionTensor3DExtended<double> tensorDouble ( tensor );
   InternalMatrixTransformType tensorMatrixDouble = tensorDouble.GetTensor2Matrix();
   // InternalMatrixDataType tensorMatrix = tensorDouble.GetTensor2Matrix() ;
   InternalMatrixTransformType MFT = this->m_MeasurementFrame.GetTranspose();
