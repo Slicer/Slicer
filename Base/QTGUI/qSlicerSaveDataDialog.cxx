@@ -300,6 +300,9 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   // MRML scene the first item of the list so we don't do restore the sorting.
   // this->FileWidget->setSortingEnabled(oldSortingEnabled);
 
+  // Enable/disable nodes depending on the scene file format
+  this->onSceneFormatChanged();
+
   this->updateSize();
 }
 
@@ -322,7 +325,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
     {
     sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
                                QDate::currentDate().toString(
-                                 "yyyy-MM-dd") + "-Scene");
+                                 "yyyy-MM-dd") + "-Scene.mrml");
     }
 
   // Scene Name
@@ -374,7 +377,8 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   // Scene Directory
   ctkDirectoryButton* sceneDirectoryButton =
-      this->createFileDirectoryWidget(QFileInfo(this->MRMLScene->GetRootDirectory()));
+      this->createFileDirectoryWidget(sceneFileInfo);
+
   this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryButton);
 
   // Scene Selected
