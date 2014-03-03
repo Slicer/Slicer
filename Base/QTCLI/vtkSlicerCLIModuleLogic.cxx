@@ -398,6 +398,8 @@ vtkMRMLCommandLineModuleNode* vtkSlicerCLIModuleLogic::CreateNode()
 {
   vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->GetMRMLScene()->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
+  node->SetName(this->GetMRMLScene()->GetUniqueNameByString(
+                  this->Internal->DefaultModuleDescription.GetTitle().c_str()));
   node->SetModuleDescription(this->Internal->DefaultModuleDescription);
   return node;
 }
