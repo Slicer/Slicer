@@ -522,8 +522,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       return
 
     nameLabel = volumeNode.GetName()
-    xyToIJK = bgLayer.GetXYToIJKTransform().GetMatrix()
-    ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
+    xyToIJK = bgLayer.GetXYToIJKTransform()
+    ijkFloat = xyToIJK.TransformDoublePoint(xyz)
     ijk = []
     for element in ijkFloat:
       try:
@@ -541,8 +541,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     useFg = False
     if fgVolumeNode:
-      fgxyToIJK = fgLayer.GetXYToIJKTransform().GetMatrix()
-      fgijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
+      fgxyToIJK = fgLayer.GetXYToIJKTransform()
+      fgijkFloat = xyToIJK.TransformDoublePoint(xyz)
       fgijk = []
       for element in fgijkFloat:
         try:
