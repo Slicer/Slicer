@@ -2729,12 +2729,18 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeMarkupAddedEvent()//vtkMRMLN
   int newRow = d->activeMarkupTableWidget->rowCount();
   //qDebug() << QString("\tnew row / row count = ") + QString::number(newRow);
   d->activeMarkupTableWidget->insertRow(newRow);
-  //qDebug() << QString("\t after insreting a row, row count = ") + QString::number(d->activeMarkupTableWidget->rowCount());
+  //qDebug() << QString("\t after inserting a row, row count = ") + QString::number(d->activeMarkupTableWidget->rowCount());
 
   this->updateRow(newRow);
 
-  // scroll to the new row
-  d->activeMarkupTableWidget->setCurrentCell(newRow, 0);
+  // scroll to the new row only if jump slices is not selected
+  // (if jump slices on click in table is selected, selecting the new
+  // row before the point coordinates are updated will cause the slices
+  // to jump to 0,0,0)
+  if (!d->jumpSlicesGroupBox->isChecked())
+    {
+    d->activeMarkupTableWidget->setCurrentCell(newRow, 0);
+    }
 }
 
 //-----------------------------------------------------------------------------
