@@ -127,14 +127,12 @@ endif()
 mark_as_superbuild(
   VARS OPENSSL_INCLUDE_DIR:PATH
   LABELS "FIND_PACKAGE"
-  CMAKE_CMD
   )
 
 mark_as_superbuild(
   VARS
     OPENSSL_LIBRARIES:STRING
     OPENSSL_EXPORT_LIBRARY_DIR:PATH
-  CMAKE_CMD
   )
 
 if(UNIX)

@@ -46,7 +46,6 @@ endif()
 #!     VARS <varname1>[:<vartype1>] [<varname2>[:<vartype2>] [...]]
 #!     [PROJECTS <projectname> [<projectname> [...]] | ALL_PROJECTS]
 #!     [LABELS <label1> [<label2> [...]]]
-#!     [CMAKE_CMD]
 #!   )
 #!
 #! PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
@@ -103,10 +102,6 @@ function(mark_as_superbuild)
     list(APPEND _vars_with_type ${_var})
   endforeach()
 
-  if(_sb_CMAKE_CMD)
-    set(optional_arg_CMAKE_CMD "CMAKE_CMD")
-  endif()
-
   if(_sb_ALL_PROJECTS)
     set(optional_arg_ALL_PROJECTS "ALL_PROJECTS")
   else()
@@ -114,7 +109,7 @@ function(mark_as_superbuild)
   endif()
 
   _sb_append_to_cmake_args(
-    VARS ${_vars_with_type} LABELS ${_sb_LABELS} ${optional_arg_ALL_PROJECTS} ${optional_arg_CMAKE_CMD})
+    VARS ${_vars_with_type} LABELS ${_sb_LABELS} ${optional_arg_ALL_PROJECTS})
 endfunction()
 
 #!
@@ -165,26 +160,24 @@ endfunction()
 
 
 #!
-#! _sb_cmakevar_to_cmakearg(<cmake_varname_and_type> <cmake_arg_var> <cmake_arg_type> [<varname_var> [<vartype_var>]])
+#! _sb_cmakevar_to_cmakearg(<cmake_varname_and_type> <cmake_arg_var> <has_cfg_intdir_var> [<varname_var> [<vartype_var>]])
 #!
 #! <cmake_varname_and_type> corresponds to variable name and variable type passed as "<varname>:<vartype>"
 #!
 #! <cmake_arg_var> is a variable name that will be set to "-D<varname>:<vartype>=${<varname>}"
 #!
-#! <cmake_arg_type> is set to either CMAKE_CACHE or CMAKE_CMD.
-#!                  CMAKE_CACHE means that the generated cmake argument will be passed to
-#!                  ExternalProject_Add as CMAKE_CACHE_ARGS.
-#!                  CMAKE_CMD means that the generated cmake argument will be passed to
-#!                  ExternalProject_Add as CMAKE_ARGS.
+#! <has_int_dir_var> is set to either TRUE or FALSE.
+#!                      FALSE means that the value does NOT reference ${CMAKE_CFG_INTDIR} and
+#!                      the generated cmake argument should be passed to ExternalProject_Add as CMAKE_CACHE_ARGS.
+#!                      TRUEmeans that the value does reference ${CMAKE_CFG_INTDIR} and
+#!                      the generated cmake argument should be passed to ExternalProject_Add as CMAKE_ARGS.
 #!
 #! <varname_var> is an optional variable name that will be set to "<varname>"
 #!
 #! <vartype_var> is an optional variable name that will be set to "<vartype>"
-function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var cmake_arg_type)
+function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var has_cfg_intdir_var)
   set(_varname_var "${ARGV3}")
   set(_vartype_var "${ARGV4}")
-
-  # XXX Add check for <cmake_arg_type> value
 
   _sb_extract_varname_and_vartype(${cmake_varname_and_type} _varname _vartype)
 
@@ -194,12 +187,18 @@ function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var cmake_arg
     get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
   endif()
 
-  if(cmake_arg_type STREQUAL "CMAKE_CMD")
-    # Separate list item with <EP_LIST_SEPARATOR>
-    _sb_list_to_string(${EP_LIST_SEPARATOR} "${_var_value}" _var_value)
+  set(_has_cfg_intdir FALSE)
+  if(CMAKE_CONFIGURATION_TYPES)
+    string(FIND "${_var_value}" ${CMAKE_CFG_INTDIR} _index)
+    if(NOT _index EQUAL -1)
+      # Separate list item with <EP_LIST_SEPARATOR>
+      _sb_list_to_string(${EP_LIST_SEPARATOR} "${_var_value}" _var_value)
+      set(_has_cfg_intdir TRUE)
+    endif()
   endif()
 
   set(${cmake_arg_var} -D${_varname}:${_vartype}=${_var_value} PARENT_SCOPE)
+  set(${has_cfg_intdir_var} ${_has_cfg_intdir} PARENT_SCOPE)
 
   if(_varname_var MATCHES ".+")
     set(${_varname_var} ${_varname} PARENT_SCOPE)
@@ -216,7 +215,6 @@ set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
 #!     VARS <varname1>:<vartype1> [<varname2>:<vartype2> [...]]
 #!     [PROJECTS <projectname> [<projectname> [...]] | ALL_PROJECTS]
 #!     [LABELS <label1> [<label2> [...]]]
-#!     [CMAKE_CMD]
 #!   )
 #!
 #! PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
@@ -233,7 +231,7 @@ set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
 #!          -D<projectname>_EP_LABEL_<label2>=<varname1>;<varname2>[...]
 #!
 function(_sb_append_to_cmake_args)
-  set(options ALL_PROJECTS CMAKE_CMD)
+  set(options ALL_PROJECTS)
   set(oneValueArgs)
   set(multiValueArgs VARS PROJECTS LABELS)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -251,16 +249,11 @@ function(_sb_append_to_cmake_args)
   endif()
 
   foreach(_sb_PROJECT ${_sb_PROJECTS})
-    set(_cmake_arg_type "CMAKE_CACHE")
-    if(_sb_CMAKE_CMD)
-      set(_cmake_arg_type "CMAKE")
-      set(optional_arg_CMAKE_CMD "CMAKE_CMD")
-    endif()
-    set(_ep_property "${_cmake_arg_type}_ARGS")
+
     set(_ep_varnames "")
     foreach(varname_and_vartype ${_sb_VARS})
       if(NOT TARGET ${_sb_PROJECT})
-        set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_${_ep_property} ${varname_and_vartype})
+        set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_CMAKE_ARGS ${varname_and_vartype})
         _sb_extract_varname_and_vartype(${varname_and_vartype} _varname)
       else()
         message(FATAL_ERROR "Function _sb_append_to_cmake_args not allowed because project '${_sb_PROJECT}' already added !")
@@ -294,20 +287,16 @@ function(_sb_get_external_project_arguments proj varname)
       endforeach()
     endif()
 
-    foreach(cmake_arg_type CMAKE_CMD CMAKE_CACHE)
-
+    get_property(_args GLOBAL PROPERTY ${proj}_EP_CMAKE_ARGS)
+    foreach(var ${_args})
+      _sb_cmakevar_to_cmakearg(${var} cmake_arg _has_cfg_intdir)
       set(_ep_property "CMAKE_CACHE_ARGS")
-      if(cmake_arg_type STREQUAL "CMAKE_CMD")
+      if(_has_cfg_intdir)
         set(_ep_property "CMAKE_ARGS")
       endif()
-
-      get_property(_args GLOBAL PROPERTY ${proj}_EP_${_ep_property})
-      foreach(var ${_args})
-        _sb_cmakevar_to_cmakearg(${var} cmake_arg ${cmake_arg_type})
-        set_property(GLOBAL APPEND PROPERTY ${proj}_EP_PROPERTY_${_ep_property} ${cmake_arg})
-      endforeach()
-
+      set_property(GLOBAL APPEND PROPERTY ${proj}_EP_PROPERTY_${_ep_property} ${cmake_arg})
     endforeach()
+
   endfunction()
 
   _sb_collect_args(${proj})
@@ -319,7 +308,6 @@ function(_sb_get_external_project_arguments proj varname)
     get_property(${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property} GLOBAL PROPERTY ${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property})
     set(_all ${${proj}_EP_PROPERTY_${property}} ${${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property}})
     if(_all)
-      list(REMOVE_DUPLICATES _all)
       list(APPEND _ep_arguments ${property} ${_all})
     endif()
   endforeach()
