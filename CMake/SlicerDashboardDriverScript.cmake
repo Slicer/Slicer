@@ -155,7 +155,7 @@ set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 
 #-----------------------------------------------------------------------------
 # Macro allowing to set a variable to its default value only if not already defined
-macro(setIfNotDefined var defaultvalue)
+macro(setOnlyIfNotDefined var defaultvalue)
   if(NOT DEFINED ${var})
     set(${var} "${defaultvalue}")
   endif()
@@ -164,16 +164,16 @@ endmacro()
 #-----------------------------------------------------------------------------
 # The following variable can be used while testing the driver scripts
 #-----------------------------------------------------------------------------
-setIfNotDefined(run_ctest_submit TRUE)
-setIfNotDefined(run_ctest_with_update TRUE)
-setIfNotDefined(run_ctest_with_configure TRUE)
-setIfNotDefined(run_ctest_with_build TRUE)
-setIfNotDefined(run_ctest_with_test TRUE)
-setIfNotDefined(run_ctest_with_coverage TRUE)
-setIfNotDefined(run_ctest_with_memcheck TRUE)
-setIfNotDefined(run_ctest_with_packages TRUE)
-setIfNotDefined(run_ctest_with_upload TRUE)
-setIfNotDefined(run_ctest_with_notes TRUE)
+setOnlyIfNotDefined(run_ctest_submit TRUE)
+setOnlyIfNotDefined(run_ctest_with_update TRUE)
+setOnlyIfNotDefined(run_ctest_with_configure TRUE)
+setOnlyIfNotDefined(run_ctest_with_build TRUE)
+setOnlyIfNotDefined(run_ctest_with_test TRUE)
+setOnlyIfNotDefined(run_ctest_with_coverage TRUE)
+setOnlyIfNotDefined(run_ctest_with_memcheck TRUE)
+setOnlyIfNotDefined(run_ctest_with_packages TRUE)
+setOnlyIfNotDefined(run_ctest_with_upload TRUE)
+setOnlyIfNotDefined(run_ctest_with_notes TRUE)
 
 #
 # run_ctest macro
