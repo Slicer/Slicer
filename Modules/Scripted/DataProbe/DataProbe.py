@@ -161,9 +161,11 @@ class DataProbeInfoWidget(object):
     if volumeNode.GetLabelMap():
       labelIndex = int(imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0))
       labelValue = "Unknown"
-      colorNode = volumeNode.GetDisplayNode().GetColorNode()
-      if colorNode:
-        labelValue = colorNode.GetColorName(labelIndex)
+      displayNode = volumeNode.GetDisplayNode()
+      if displayNode:
+        colorNode = displayNode.GetColorNode()
+        if colorNode:
+          labelValue = colorNode.GetColorName(labelIndex)
       return "%s (%d)" % (labelValue, labelIndex)
 
     if volumeNode.IsA("vtkMRMLDiffusionTensorVolumeNode"):
