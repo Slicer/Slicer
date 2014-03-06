@@ -123,6 +123,7 @@ class SelfTestsWidget:
 
   def onRun(self,test):
     self.logic.run([test,], continueCheck=self.continueCheck)
+    self.information(self.logic)
 
   def continueCheck(self,logic):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
