@@ -70,15 +70,7 @@ QString qSlicerVolumesModule::helpText()const
   QString help = QString(
     "The Volumes Module loads and adjusts display parameters of volume data.<br>"
     "<a href=\"%1/Documentation/%2.%3/Modules/Volumes\">"
-    "%1/Documentation/%2.%3/Modules/Volumes</a><br>"
-    "The Diffusion Editor allows modifying "
-    "parameters (gradients, bValues, measurement frame) of DWI data and "
-    "provides a quick way to interpret them. "
-    "For that it estimates a tensor and shows glyphs and tracts "
-    "for visual exploration.<br><br>"
-    "Help for Diffusion Editor: "
-    "<a href=\"%1/Modules:Volumes:Diffusion_Editor-Documentation\">"
-    "%1/Modules:Volumes:Diffusion_Editor-Documentation</a>");
+    "%1/Documentation/%2.%3/Modules/Volumes</a><br>");
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
@@ -98,8 +90,7 @@ QString qSlicerVolumesModule::acknowledgementText()const
     "</a> for details.<br>"
     "The Volumes module was contributed by Alex Yarmarkovich, Isomics Inc. "
     "(Steve Pieper) and Julien Finet, Kitware Inc. with help from others at "
-    "SPL, BWH (Ron Kikinis).<br><br>"
-    "The Diffusion Editor was developed by Kerstin Kessel.");
+    "SPL, BWH (Ron Kikinis).<br><br>");
   return acknowledgement;
 }
 
