@@ -35,6 +35,7 @@
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
+#include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSceneViewNode.h"
 
@@ -1302,4 +1303,64 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent)
     }
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+int vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility()
+{
+  if (!this->GetMRMLScene())
+    {
+    return -1;
+    }
+  int numVisible = 0;
+  vtkSmartPointer<vtkCollection> nodes;
+  nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode"));
+  if (!nodes.GetPointer())
+    {
+    return -1;
+    }
+  vtkMRMLSliceCompositeNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    if (node->GetSliceIntersectionVisibility())
+      {
+      numVisible++;
+      }
+    }
+  if (numVisible == 0)
+    {
+    return 0;
+    }
+  else if (numVisible == nodes->GetNumberOfItems())
+    {
+    return 1;
+    }
+  else
+    {
+    return 2;
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::SetSliceIntersectionsVisibility(bool flag)
+{
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  vtkSmartPointer<vtkCollection> nodes;
+  nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode"));
+  if (!nodes.GetPointer())
+    {
+    return;
+    }
+  vtkMRMLSliceCompositeNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceCompositeNode*>(
+                                   nodes->GetNextItemAsObject(it)));)
+    {
+    node->SetSliceIntersectionVisibility(flag);
+    }
 }

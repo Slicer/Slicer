@@ -20,6 +20,7 @@
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkSlicerMarkupsLogic.h"
 // VTK includes
@@ -53,6 +54,15 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     {
     std::cout << "Passed adding a fiducial point to no scene." << std::endl;
     }
+
+  int sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
+  if (sliceIntersectionVisibility != -1)
+    {
+    std::cerr << "Failed to get no scene slice intersections visibility of -1, got "
+              << sliceIntersectionVisibility << std::endl;
+    return EXIT_FAILURE;
+    }
+  logic1->SetSliceIntersectionsVisibility(true);
 
   // test with a scene
   logic1->SetMRMLScene(scene);
@@ -284,6 +294,36 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
               << activeListID.c_str() << std::endl;
     return EXIT_FAILURE;
     }
+
+  sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
+  if (sliceIntersectionVisibility != 0)
+    {
+    std::cerr << "Failed to get no scene slice intersections visibility of 0, got "
+              << sliceIntersectionVisibility << std::endl;
+    return EXIT_FAILURE;
+    }
+  logic1->SetSliceIntersectionsVisibility(true);
+  sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
+  if (sliceIntersectionVisibility != 0)
+    {
+    std::cerr << "Failed to get slice intersection visibility of 0"
+              << " with no slice composite node, got "
+              << sliceIntersectionVisibility << std::endl;
+    return EXIT_FAILURE;
+    }
+  // now add a slice composite node
+  vtkNew<vtkMRMLSliceCompositeNode> compNode;
+  scene->AddNode(compNode.GetPointer());
+  logic1->SetSliceIntersectionsVisibility(true);
+  sliceIntersectionVisibility = logic1->GetSliceIntersectionsVisibility();
+  if (sliceIntersectionVisibility != 1)
+    {
+    std::cerr << "Failed to get slice intersection visibility of 1"
+              << " with a slice composite node, got "
+              << sliceIntersectionVisibility << std::endl;
+    return EXIT_FAILURE;
+    }
+
   // cleanup
   applicationLogic->Delete();
 

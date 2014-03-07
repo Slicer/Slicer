@@ -178,6 +178,14 @@ public:
   /// \sa SetActiveIDList
   bool StartPlaceMode(bool persistent);
 
+  /// Inspect all the slice composite nodes in the scene. Return 1 if all have
+  /// SliceIntersectionVisibility set to true, 0 if all have it set to false,
+  /// 2 if it's a combination of true and false, -1 on error
+  int GetSliceIntersectionsVisibility();
+  /// Set the slice intersections visbility on all the slice composite nodes
+  /// in the scene
+  void SetSliceIntersectionsVisibility(bool flag);
+
 protected:
   vtkSlicerMarkupsLogic();
   virtual ~vtkSlicerMarkupsLogic();

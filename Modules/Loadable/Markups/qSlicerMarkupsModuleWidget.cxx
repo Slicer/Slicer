@@ -317,6 +317,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       this->jumpCenteredRadioButton->setChecked(true);
       }
     }
+  // update the checked state of showing the slice intersections
+  this->sliceIntersectionsVisibilityCheckBox->setChecked(q->sliceIntersectionsVisible());
+  QObject::connect(this->sliceIntersectionsVisibilityCheckBox,
+                   SIGNAL(toggled(bool)),
+                   q, SLOT(onSliceIntersectionsVisibilityToggled(bool)));
 
   //
   // add an action to create a new markups list using the display node
@@ -688,6 +693,9 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     d->listLockedUnlockedPushButton->setIcon(QIcon(":Icons/Medium/SlicerUnlock.png"));
     d->listLockedUnlockedPushButton->setToolTip(QString("Click to lock this markup list so that the markups cannot be moved by the mouse"));
     }
+
+  // update slice intersections
+  d->sliceIntersectionsVisibilityCheckBox->setChecked(this->sliceIntersectionsVisible());
 
   // update the point projections
   if (markupsNode->IsA("vtkMRMLMarkupsFiducialNode"))
@@ -2758,6 +2766,17 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeDisplayModifiedEvent()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onSliceIntersectionsVisibilityToggled(bool flag)
+{
+  if (!this->markupsLogic())
+    {
+    qWarning() << "Unable to get markups logic";
+    return;
+    }
+  this->markupsLogic()->SetSliceIntersectionsVisibility(flag);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggered()
 {
   Q_D(qSlicerMarkupsModuleWidget);
@@ -2894,4 +2913,24 @@ void qSlicerMarkupsModuleWidget::updateLogicFromSettings()
   this->markupsLogic()->SetDefaultMarkupsDisplayNodeSliceProjection(sliceProjection);
   this->markupsLogic()->SetDefaultMarkupsDisplayNodeSliceProjectionColor(projectionColor);
   this->markupsLogic()->SetDefaultMarkupsDisplayNodeSliceProjectionOpacity(projectionOpacity);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerMarkupsModuleWidget::sliceIntersectionsVisible()
+{
+  if (!this->markupsLogic())
+    {
+    qWarning() << "Unable to get markups logic";
+    return false;
+    }
+  int flag = this->markupsLogic()->GetSliceIntersectionsVisibility();
+  if (flag == 0 || flag == -1)
+    {
+    return false;
+    }
+  else
+    {
+    // if all or some are visible, return true
+    return true;
+    }
 }

@@ -192,6 +192,16 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="ctkCheckBox" name="sliceIntersectionsVisibilityCheckBox">
+        <property name="toolTip">
+         <string>Show how the other slice planes intersect each slice plane.</string>
+        </property>
+        <property name="text">
+         <string>Show Slice Intersections</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -697,6 +707,11 @@
    <class>qMRMLMarkupsFiducialProjectionPropertyWidget</class>
    <extends>qMRMLWidget</extends>
    <header>qMRMLMarkupsFiducialProjectionPropertyWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>ctkCheckBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleGroupBox</class>
