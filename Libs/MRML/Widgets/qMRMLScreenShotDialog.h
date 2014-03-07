@@ -91,6 +91,7 @@ public:
 protected slots:
 
   void grabScreenShot();
+  void setLastWidgetType(int id);
 
 private:
   QString enumToString(int type);

@@ -28,6 +28,10 @@ qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog()
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());
   this->setShowScaleFactorSpinBox(false);
   this->setWindowTitle("3D Slicer SceneView");
+
+  // default name
+  QString name("SceneView");
+  this->setNameEdit(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -87,7 +91,11 @@ void qSlicerSceneViewsModuleDialog::loadNode(const QString& nodeId)
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleDialog::reset()
 {
-  QString name("SceneView");
+  QString name = this->nameEdit();
+  if (name.length() == 0)
+    {
+    name = QString("SceneView");
+    }
   // check to see if it's an already used name for a node (redrawing the
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).

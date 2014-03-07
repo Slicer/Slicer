@@ -60,6 +60,10 @@ public:
   /// This is NULL if the dialog has no associated snapshot node (== new snapshot mode).
   QVariant                           Data;
   QButtonGroup*                      WidgetTypeGroup;
+
+  /// The last selected thumbnail type
+  int LastWidgetType;
+
 };
 
 //-----------------------------------------------------------------------------
@@ -69,11 +73,15 @@ qMRMLScreenShotDialogPrivate::qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog
   qRegisterMetaType<qMRMLScreenShotDialog::WidgetType>(
       "qMRMLScreenShotDialog::WidgetType");
   this->WidgetTypeGroup = 0;
+
+  this->LastWidgetType = qMRMLScreenShotDialog::FullLayout;
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLScreenShotDialogPrivate::setupUi(QDialog* dialog)
 {
+  Q_Q(qMRMLScreenShotDialog);
+
   this->Ui_qMRMLScreenShotDialog::setupUi(dialog);
   this->WidgetTypeGroup = new QButtonGroup(dialog);
   this->WidgetTypeGroup->setExclusive(true);
@@ -82,7 +90,13 @@ void qMRMLScreenShotDialogPrivate::setupUi(QDialog* dialog)
   this->WidgetTypeGroup->addButton(this->redSliceViewRadio, qMRMLScreenShotDialog::Red);
   this->WidgetTypeGroup->addButton(this->yellowSliceViewRadio, qMRMLScreenShotDialog::Yellow);
   this->WidgetTypeGroup->addButton(this->greenSliceViewRadio, qMRMLScreenShotDialog::Green);
+
+  this->setCheckedRadioButton(this->LastWidgetType);
+
+  QObject::connect(this->WidgetTypeGroup, SIGNAL(buttonClicked(int)),
+                   q, SLOT(setLastWidgetType(int)));
 }
+
 
 //-----------------------------------------------------------------------------
 void qMRMLScreenShotDialogPrivate::setCheckedRadioButton(int type)
@@ -125,6 +139,13 @@ void qMRMLScreenShotDialog::setLayoutManager(qMRMLLayoutManager* newlayoutManage
 {
   Q_D(qMRMLScreenShotDialog);
   d->LayoutManager = newlayoutManager;
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLScreenShotDialog::setLastWidgetType(int id)
+{
+  Q_D(qMRMLScreenShotDialog);
+  d->LastWidgetType = id;
 }
 
 //-----------------------------------------------------------------------------
@@ -250,7 +271,9 @@ void qMRMLScreenShotDialog::resetDialog()
   // We set the name
   d->nameEdit->clear();
 
-  this->setWidgetType(qMRMLScreenShotDialog::FullLayout);
+  // set the widget type to the last one used
+  this->setWidgetType(qMRMLScreenShotDialog::WidgetType(d->LastWidgetType));
+
   this->setScaleFactor(1.0);
 
   // reset the id
