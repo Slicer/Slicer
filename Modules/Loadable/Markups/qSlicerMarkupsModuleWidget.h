@@ -84,6 +84,10 @@ public:
   /// Set up the logic default display settings from the appplication settings
   void updateLogicFromSettings();
 
+  /// Query the logic as to the state of the slice intersection visibility on
+  /// the slice composite nodes
+  bool sliceIntersectionsVisible();
+
 public slots:
 
   /// Respond to the scene events
@@ -216,6 +220,11 @@ public slots:
   /// Create a new markups node and copy the display node settings from the
   /// current markups node if set, otherwise just uses the defaults.
   void onNewMarkupWithCurrentDisplayPropertiesTriggered();
+
+  /// Update the slice intersection visibility on all the slice composite
+  /// nodes in the scene
+  /// \sa sliceIntersectionsVisible()
+  void onSliceIntersectionsVisibilityToggled(bool checked);
 
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
