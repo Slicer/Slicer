@@ -178,5 +178,3 @@ endif()
 
 ExternalProject_Message(${proj} "OPENSSL_INCLUDE_DIR:${OPENSSL_INCLUDE_DIR}")
 ExternalProject_Message(${proj} "OPENSSL_LIBRARIES:${OPENSSL_LIBRARIES}")
-
-list_to_string(${EP_LIST_SEPARATOR} "${OPENSSL_LIBRARIES}" OPENSSL_LIBRARIES)
