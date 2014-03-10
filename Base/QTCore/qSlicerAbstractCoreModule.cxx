@@ -66,11 +66,13 @@ qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModulePrivate::~qSlicerAbstractCoreModulePrivate()
 {
- // Delete the widget representations
-  while (!this->WidgetRepresentations.isEmpty())
+  // Delete the widget representation
+  if (this->WidgetRepresentation)
     {
-    delete this->WidgetRepresentations.first();
+    delete this->WidgetRepresentation;
     }
+  qDeleteAll(this->WidgetRepresentations.begin(), this->WidgetRepresentations.end());
+  this->WidgetRepresentations.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -288,6 +290,8 @@ void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepre
 {
   Q_D(qSlicerAbstractCoreModule);
 
+  // Just remove the list entry, the object storage has already been
+  // deleted by caller.
   if (d->WidgetRepresentation == representation)
     {
     d->WidgetRepresentation = 0;
