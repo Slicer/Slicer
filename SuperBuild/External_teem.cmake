@@ -15,7 +15,12 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   find_package(Teem REQUIRED NO_MODULE)
 endif()
 
-if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+# Sanity checks
+if(DEFINED Teem_DIR AND NOT EXISTS ${Teem_DIR})
+  message(FATAL_ERROR "Teem_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
+if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
