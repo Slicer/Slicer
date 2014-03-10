@@ -15,16 +15,13 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} AND (WIN32 OR APPLE))
 endif()
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  unset(LibArchive_DIR CACHE)
+  unset(LibArchive_INCLUDE_DIR CACHE)
+  unset(LibArchive_LIBRARY CACHE)
   find_package(LibArchive REQUIRED MODULE)
 endif()
 
-# Sanity checks
-if(DEFINED LibArchive_DIR AND NOT EXISTS ${LibArchive_DIR})
-  message(FATAL_ERROR "LibArchive_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
-if(NOT DEFINED LibArchive_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if((NOT DEFINED LibArchive_INCLUDE_DIR
+   OR NOT DEFINED LibArchive_LIBRARY) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #
   # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git

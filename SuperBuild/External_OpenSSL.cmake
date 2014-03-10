@@ -24,8 +24,23 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   find_package(OpenSSL REQUIRED)
 endif()
 
-if((NOT DEFINED OPENSSL_INCLUDE_DIR
-  OR NOT DEFINED OPENSSL_LIBRARIES) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+
+if(UNIX)
+  set(_no_openssl_libraries
+    NOT DEFINED OPENSSL_CRYPTO_LIBRARY
+    OR NOT DEFINED OPENSSL_SSL_LIBRARY
+    )
+elseif(WIN32)
+  set(_no_openssl_libraries
+    NOT DEFINED LIB_EAY_DEBUG
+    OR NOT DEFINED LIB_EAY_RELEASE
+    OR NOT DEFINED SSL_EAY_DEBUG
+    OR NOT DEFINED SSL_EAY_RELEASE
+    )
+endif()
+
+if((NOT DEFINED OPENSSL_LIBRARIES
+   OR ${_no_openssl_libraries}) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(UNIX)
     set(OpenSSL_URL http://www.openssl.org/source/openssl-1.0.1e.tar.gz)
@@ -75,6 +90,9 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
 
     set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 
+    ExternalProject_Message(${proj} "OPENSSL_CRYPTO_LIBRARY:${OPENSSL_CRYPTO_LIBRARY}")
+    ExternalProject_Message(${proj} "OPENSSL_SSL_LIBRARY:${OPENSSL_SSL_LIBRARY}")
+
   elseif(WIN32)
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
       set(OpenSSL_URL http://packages.kitware.com/download/item/3877/OpenSSL_1_0_1e-install-32.tar.gz)
@@ -116,6 +134,11 @@ if((NOT DEFINED OPENSSL_INCLUDE_DIR
     set(LIB_EAY_RELEASE "${EP_SOURCE_DIR}/Release/lib/libeay32.lib")
     set(SSL_EAY_DEBUG "${EP_SOURCE_DIR}/Debug/lib/ssleay32.lib")
     set(SSL_EAY_RELEASE "${EP_SOURCE_DIR}/Release/lib/ssleay32.lib")
+
+    ExternalProject_Message(${proj} "LIB_EAY_DEBUG:${LIB_EAY_DEBUG}")
+    ExternalProject_Message(${proj} "LIB_EAY_RELEASE:${LIB_EAY_RELEASE}")
+    ExternalProject_Message(${proj} "SSL_EAY_DEBUG:${SSL_EAY_DEBUG}")
+    ExternalProject_Message(${proj} "SSL_EAY_RELEASE:${SSL_EAY_RELEASE}")
   endif()
 
   ExternalProject_Message(${proj} "OPENSSL_LIBRARY_DIR:${OPENSSL_LIBRARY_DIR}")
