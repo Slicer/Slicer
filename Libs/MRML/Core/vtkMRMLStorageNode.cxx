@@ -37,6 +37,7 @@ vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler)
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode::vtkMRMLStorageNode()
 {
+  this->HideFromEditors = 1;
   this->FileName = NULL;
   this->TempFileName = NULL;
   this->URI = NULL;

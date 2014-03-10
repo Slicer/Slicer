@@ -27,6 +27,8 @@ vtkMRMLNodeNewMacro(vtkMRMLCrosshairNode);
 //----------------------------------------------------------------------------
 vtkMRMLCrosshairNode::vtkMRMLCrosshairNode()
 {
+  this->HideFromEditors = 1;
+
   this->CrosshairMode = vtkMRMLCrosshairNode::NoCrosshair;
   this->CrosshairBehavior = vtkMRMLCrosshairNode::Normal;
   this->CrosshairThickness = vtkMRMLCrosshairNode::Fine;

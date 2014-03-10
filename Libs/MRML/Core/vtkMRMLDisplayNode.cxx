@@ -37,6 +37,8 @@ vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ActiveScalarName);
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 {
+  this->HideFromEditors = 1;
+
   this->Opacity = 1.0;
   this->Ambient = 0.0;
   this->Diffuse = 1.0;

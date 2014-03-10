@@ -35,6 +35,8 @@ vtkMRMLNodeNewMacro(vtkMRMLUnitNode);
 //----------------------------------------------------------------------------
 vtkMRMLUnitNode::vtkMRMLUnitNode()
 {
+  this->HideFromEditors = 1;
+
   this->Prefix = 0;
   this->Suffix = 0;
   this->Precision = 3;

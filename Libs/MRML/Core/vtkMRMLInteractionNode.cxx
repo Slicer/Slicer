@@ -14,6 +14,8 @@ vtkMRMLNodeNewMacro(vtkMRMLInteractionNode);
 //----------------------------------------------------------------------------
 vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 {
+  this->HideFromEditors = 1;
+
   this->SetSingletonTag("Singleton");
 
   this->CurrentInteractionMode = vtkMRMLInteractionNode::ViewTransform;

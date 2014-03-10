@@ -24,6 +24,8 @@ vtkMRMLNodeNewMacro(vtkMRMLScriptedModuleNode);
 //----------------------------------------------------------------------------
 vtkMRMLScriptedModuleNode::vtkMRMLScriptedModuleNode()
 {
+  this->HideFromEditors = 1;
+
   this->ModuleName = 0;
 }
 

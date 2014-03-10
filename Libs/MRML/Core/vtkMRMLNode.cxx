@@ -50,7 +50,7 @@ vtkMRMLNode::vtkMRMLNode()
   this->SceneRootDir = NULL;
   this->Scene = NULL;
 
-  this->HideFromEditors = 1;
+  this->HideFromEditors = 0;
   this->Selectable = 1;
   this->Selected = 0;
  

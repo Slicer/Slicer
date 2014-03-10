@@ -44,6 +44,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
 //----------------------------------------------------------------------------
 vtkMRMLSelectionNode::vtkMRMLSelectionNode()
 {
+  this->HideFromEditors = 1;
+
   this->SetSingletonTag("Singleton");
 
   this->ActiveVolumeID = NULL;

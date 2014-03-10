@@ -32,6 +32,8 @@ vtkMRMLNodeNewMacro(vtkMRMLSliceCompositeNode);
 //----------------------------------------------------------------------------
 vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
 {
+  this->HideFromEditors = 1;
+
   this->BackgroundVolumeID = NULL;
   this->ForegroundVolumeID = NULL;
   this->LabelVolumeID = NULL;
