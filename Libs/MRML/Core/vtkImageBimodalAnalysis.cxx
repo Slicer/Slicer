@@ -110,7 +110,10 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
     {
     for (k=0; k < width; k++) 
       {
-      outPtr[x] += (float)inPtr[x+k];
+      if (x+k <= max0) // skip any that would be outside range of outPtr see Bug #3429
+        {
+        outPtr[x] += (float)inPtr[x+k];
+        }
       }
     outPtr[x] *= fwidth;
     }
