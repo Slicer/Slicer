@@ -375,11 +375,13 @@ def reloadScriptedModule(moduleName):
 def resetThreeDViews():
   """Reset focal view around volumes
   """
+  import slicer
   slicer.app.layoutManager().resetThreeDViews()
 
 def resetSliceViews():
   """Reset focal view around volumes
   """
+  import slicer
   manager = slicer.app.layoutManager().resetSliceViews()
 
 #
