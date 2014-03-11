@@ -11,7 +11,8 @@ if(Slicer_USE_PYTHONQT)
   get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
   set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-install")
   if(NOT EXISTS "${PYTHON_DIR}${python_lib_subdir}")
-    message(FATAL_ERROR "error: Failed to install Python ! - Unexistant directory PYTHON_DIR:${PYTHON_DIR}${python_lib_subdir}")
+    message(STATUS "Skipping generation of python install rules - Unexistant directory PYTHON_DIR:${PYTHON_DIR}${python_lib_subdir}")
+    return()
   endif()
 
   # Install libraries
