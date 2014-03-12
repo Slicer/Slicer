@@ -95,7 +95,15 @@ class ExtensionDescription(object):
       self._read(fp)
 
   #---------------------------------------------------------------------------
-  def write(self, path):
-    with open(path, "w") as fp:
-      for key in sorted(self.__dict__):
-        fp.write(("%s %s" % (key, getattr(self, key))).strip() + "\n")
+  def _write(self, fp):
+    for key in sorted(self.__dict__):
+      fp.write(("%s %s" % (key, getattr(self, key))).strip() + "\n")
+
+  #---------------------------------------------------------------------------
+  def write(self, out):
+    if isinstance(out, file):
+      self._write(out)
+
+    else:
+      with open(out, "w") as fp:
+        self._write(fp)

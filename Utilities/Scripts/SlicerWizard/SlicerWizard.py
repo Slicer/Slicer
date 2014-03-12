@@ -68,6 +68,19 @@ class SlicerWizard(object):
     logging.info("created module '%s'" % name)
 
   #---------------------------------------------------------------------------
+  def describeExtension(self, args):
+    try:
+      r = getRepo(args.destination)
+      if r is None:
+        raise NotImplementedError("a git repository is required")
+
+      xd = ExtensionDescription(repo=r)
+      xd.write(sys.stdout)
+
+    except:
+      die("failed to describe extension: %s" % sys.exc_info()[1])
+
+  #---------------------------------------------------------------------------
   def publishExtension(self, args):
     createdRepo = False
     r = getRepo(args.destination)
@@ -380,6 +393,9 @@ class SlicerWizard(object):
     parser.add_argument("--listTemplates", action="store_true",
                         help="show list of available templates"
                              " and associated substitution keys")
+    parser.add_argument("--describeExtension", action="store_true",
+                        help="print the extension description (s4ext)"
+                             " to standard output")
     parser.add_argument("--publishExtension", action="store_true",
                         help="publish the extension in the destination"
                              " directory to github (account required)")
@@ -425,6 +441,11 @@ class SlicerWizard(object):
     if args.addModule is not None:
       for module in args.addModule:
         self.addModule(args, *module.split(":"))
+      acted = True
+
+    # Describe extension if requested
+    if args.describeExtension:
+      self.describeExtension(args)
       acted = True
 
     # Publish extension if requested
