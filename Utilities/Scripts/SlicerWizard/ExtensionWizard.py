@@ -480,6 +480,14 @@ class ExtensionWizard(object):
       # Commit and push the new/updated extension description
       xiRepo.index.commit(self._extensionIndexCommitMessage(
                             name, xd, update=update))
+
+      try:
+        # We need the old branch, if it exists, to be fetched locally, so that
+        # push info resolution doesn't choke trying to resolve the old SHA
+        xiRemote.fetch(branch)
+      except:
+        pass
+
       xiRemote.push("+%s" % branch)
 
       # Get message formatted for pull request
