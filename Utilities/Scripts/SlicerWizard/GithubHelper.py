@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import getpass
+import git
 import os
 import subprocess
 
@@ -9,38 +9,57 @@ from github.GithubObject import NotSet
 
 from urlparse import urlparse
 
+__all__ = [
+    'logIn',
+    'getRepo',
+    'getFork',
+    'getPullRequest',
+]
+
+#=============================================================================
+class CredentialToken(object):
+  #---------------------------------------------------------------------------
+  def __init__(self, text=None, **kwargs):
+    self._keys = kwargs.keys()
+    for k in kwargs:
+      setattr(self, k, kwargs[k])
+
+    if text is not None:
+      for l in text.split("\n"):
+        if "=" in l:
+          t = l.split("=", 1)
+          setattr(self, t[0], t[1])
+
+  #---------------------------------------------------------------------------
+  def __str__(self):
+    lines = ["%s=%s" % (k, getattr(self, k)) for k in self._keys]
+    return "%s\n\n" % "\n".join(lines)
+
 #-----------------------------------------------------------------------------
-def getPassword(prompt):
-  try:
-    askpass = os.environ['SSH_ASKPASS']
-    p = subprocess.Popen([askpass, prompt], stdout=subprocess.PIPE)
-    out, err = p.communicate()
-    if p.returncode == 0 and len(out):
-      return out
+def _credentials(client, request, action="fill"):
+  p = client.credential(action, as_process=True, istream=subprocess.PIPE)
+  out, err = p.communicate(input=str(request))
 
-  except:
-    pass
+  if p.returncode != 0:
+    raise git.GitCommandError(["credential", action], p.returncode,
+                              err.rstrip())
 
-  return getpass.getpass(prompt)
+  return CredentialToken(out)
 
 #-----------------------------------------------------------------------------
 def logIn(repo):
-  config = repo.config_reader()
+  # Request login credentials
+  credRequest = CredentialToken(protocol="https", host="github.com")
+  cred = _credentials(repo.git, credRequest)
 
-  try:
-    user = config.get_value("github", "user")
+  # Log in
+  session = Github(cred.username, cred.password)
 
-  except:
-    user = raw_input("Github user: ")
-    if not len(user):
-      raise ValueError("github user not provided")
+  # If login succeeded, save credentials
+  _credentials(repo.git, cred, action="approve")
 
-    config = repo.config_writer()
-    config.set_value("github", "user", user)
-
-  password = getPassword("Github password for '%s': " % user)
-
-  return Github(user, password)
+  # Return github session
+  return session
 
 #-----------------------------------------------------------------------------
 def getRepo(session, name=None, url=None):
