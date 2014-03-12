@@ -82,7 +82,7 @@ def warn(msg):
   _log(logging.warning, msg)
 
 #-----------------------------------------------------------------------------
-def die(msg, exitCode=0):
+def die(msg, exitCode=1):
   """Output an error message (or messages), with exception if present.
 
   :param msg: Message(s) to be output.
