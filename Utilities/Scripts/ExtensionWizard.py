@@ -3,8 +3,8 @@
 import sys
 sys.path.append("./SlicerWizard");
 
-from SlicerWizard import SlicerWizard
+from SlicerWizard import ExtensionWizard
 
 if __name__ == "__main__":
-  w = SlicerWizard()
+  w = ExtensionWizard()
   w.execute()

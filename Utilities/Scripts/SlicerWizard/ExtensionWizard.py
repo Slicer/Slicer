@@ -29,7 +29,7 @@ class WizardHelpFormatter(argparse.HelpFormatter):
     return text.replace("<", "[").replace(">", "]")
 
 #=============================================================================
-class SlicerWizard(object):
+class ExtensionWizard(object):
   _reModuleInsertPlaceholder = re.compile("(?<=\n)([ \t]*)## NEXT_MODULE")
   _reAddSubdirectory = \
     re.compile("(?<=\n)([ \t]*)add_subdirectory[(][^)]+[)][^\n]*\n")
@@ -57,7 +57,7 @@ class SlicerWizard(object):
       die(sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
-  def createExtension(self, args, name, kind="default"):
+  def create(self, args, name, kind="default"):
     args.destination = self._copyTemplate(args, "extensions", kind, name)
     logging.info("created extension '%s'" % name)
 
@@ -68,7 +68,7 @@ class SlicerWizard(object):
     logging.info("created module '%s'" % name)
 
   #---------------------------------------------------------------------------
-  def describeExtension(self, args):
+  def describe(self, args):
     try:
       r = getRepo(args.destination)
       if r is None:
@@ -81,7 +81,7 @@ class SlicerWizard(object):
       die("failed to describe extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
-  def publishExtension(self, args):
+  def publish(self, args):
     createdRepo = False
     r = getRepo(args.destination)
 
@@ -207,7 +207,7 @@ class SlicerWizard(object):
       return template % args
 
   #---------------------------------------------------------------------------
-  def submitExtension(self, args):
+  def contribute(self, args):
     try:
       r = getRepo(args.destination)
       if r is None:
@@ -372,7 +372,7 @@ class SlicerWizard(object):
                                     formatter_class=WizardHelpFormatter)
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--test", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--createExtension", metavar="<TYPE:>NAME",
+    parser.add_argument("--create", metavar="<TYPE:>NAME",
                         help="create TYPE extension NAME"
                              " under the destination directory;"
                              " any modules are added to the new extension"
@@ -393,13 +393,13 @@ class SlicerWizard(object):
     parser.add_argument("--listTemplates", action="store_true",
                         help="show list of available templates"
                              " and associated substitution keys")
-    parser.add_argument("--describeExtension", action="store_true",
+    parser.add_argument("--describe", action="store_true",
                         help="print the extension description (s4ext)"
                              " to standard output")
-    parser.add_argument("--publishExtension", action="store_true",
+    parser.add_argument("--publish", action="store_true",
                         help="publish the extension in the destination"
                              " directory to github (account required)")
-    parser.add_argument("--submitExtension", action="store_true",
+    parser.add_argument("--contribute", action="store_true",
                         help="register or update a compiled extension with the"
                              " extension index (github account required)")
     parser.add_argument("--target", metavar="VERSION", default="master",
@@ -431,10 +431,10 @@ class SlicerWizard(object):
       acted = True
 
     # Create requested extensions
-    if args.createExtension is not None:
-      extArgs = args.createExtension.split(":")
+    if args.create is not None:
+      extArgs = args.create.split(":")
       extArgs.reverse()
-      self.createExtension(args, *extArgs)
+      self.create(args, *extArgs)
       acted = True
 
     # Create requested modules
@@ -444,18 +444,18 @@ class SlicerWizard(object):
       acted = True
 
     # Describe extension if requested
-    if args.describeExtension:
-      self.describeExtension(args)
+    if args.describe:
+      self.describe(args)
       acted = True
 
     # Publish extension if requested
-    if args.publishExtension:
-      self.publishExtension(args)
+    if args.publish:
+      self.publish(args)
       acted = True
 
-    # Submit extension if requested
-    if args.submitExtension:
-      self.submitExtension(args)
+    # Contribute extension if requested
+    if args.contribute:
+      self.contribute(args)
       acted = True
 
     # Check that we did something
