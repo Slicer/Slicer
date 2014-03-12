@@ -1,9 +1,47 @@
+"""Symbolic manipulation of CMake scripts.
+
+This module provides a set of classes to support symbolic parsing of CMake
+script. The use of symbolic parsing, as opposed to regular expressions, frees
+the user from needing to worry about syntactic context (is that really a
+function, or is it inside of a string or comment?) and provides a representation
+that is more suitable to direct manipulation.
+
+In addition to the several token classes provided, :class:`.CMakeScript`
+provides an interface for bidirectional translation between raw text and
+tokenized representations.
+
+Unlike other parsers, this module is not a "pretty formatter", but rather is
+specifically designed to preserve the original formatting of a script in order
+to be able to perform convert losslessly from raw to parsed form and back,
+while still providing a parsed form that is easy to use and manipulate. Care
+should be used, however, when creating or manipulating scripts, as there are
+effectively no safeguards against producing a script that is syntactically
+invalid.
+"""
+
 import os
 import re
 import string
 
 #=============================================================================
 class Token(object):
+  """Base class for CMake script tokens.
+
+  This is the base class for CMake script tokens. An occurrence of a token
+  whose type is exactly :class:`.Token` (i.e. not a subclass thereof) is a
+  syntactic error unless the token text is empty.
+
+  .. attribute:: text
+
+    The textual content of the token.
+
+  .. attribute:: indent
+
+    The whitespace (including newlines) which preceded the token. As the parser
+    is strictly preserving of whitespace, note that this must be non-empty in
+    many cases in order to produce a syntactically correct script.
+  """
+
   #---------------------------------------------------------------------------
   def __init__(self, text, indent=""):
     self.text = text
@@ -19,6 +57,26 @@ class Token(object):
 
 #=============================================================================
 class String(Token):
+  """String token.
+
+  .. attribute:: text
+
+    The textual content of the string. Note that escapes are not evaluated and
+    will appear in their raw (escaped) form.
+
+  .. attribute:: prefix
+
+    The delimiter which starts this string. The delimiter may be empty,
+    ``'"'``, or a lua-style long bracket (e.g. ``'[['``, ``'[===['``, etc.).
+
+  .. attribute:: suffix
+
+    The delimiter which ends this string, which shall match the :attr:`prefix`.
+
+  String tokens appear as arguments to :class:`.Command`, as they are not valid
+  outside of a command context.
+  """
+
   #---------------------------------------------------------------------------
   def __init__(self, text, indent="", prefix="", suffix=""):
     text = super(String, self).__init__(text, indent)
@@ -36,6 +94,23 @@ class String(Token):
 
 #=============================================================================
 class Comment(Token):
+  """Comment token.
+
+  .. attribute:: text
+
+    The textual content of the comment.
+
+  .. attribute:: prefix
+
+    The delimiter which starts this comment: ``'#'``, optionally followed by a
+    lua-style long bracket (e.g. ``'[['``, ``'[===['``, etc.).
+
+  .. attribute:: suffix
+
+    The delimiter which ends this comment: either empty, or a lua-style long
+    bracket which shall match the long bracket in :attr:`prefix`.
+  """
+
   #---------------------------------------------------------------------------
   def __init__(self, prefix, text, indent="", suffix=""):
     text = super(Comment, self).__init__(text, indent)
@@ -53,6 +128,30 @@ class Comment(Token):
 
 #=============================================================================
 class Command(Token):
+  """Command token.
+
+  .. attribute:: text
+
+    The name of the command.
+
+  .. attribute:: prefix
+
+    The delimiter which starts the command's argument list. This shall end with
+    ``'('`` and may begin with whitespace if there is whitespace separating the
+    command name from the '('.
+
+  .. attribute:: suffix
+
+    The delimiter which ends the command's argument list. This shall end with
+    ``')'`` and may begin with whitespace if there is whitespace separating the
+    last argument (or the opening '(' if there are no arguments) from the ')'.
+
+  .. attribute:: arguments
+
+    A :class:`list` of :class:`.String` tokens which comprise the arguments of
+    the command.
+  """
+
   #---------------------------------------------------------------------------
   def __init__(self, text, arguments=[], indent="", prefix="(", suffix=")"):
     text = super(Command, self).__init__(text, indent)
@@ -73,6 +172,14 @@ class Command(Token):
 
 #=============================================================================
 class CMakeScript(object):
+  """Tokenized representation of a CMake script.
+
+  .. attribute:: tokens
+
+    The :class:`list` of tokens which comprise the script. Manipulations of
+    this list should be used to change the content of the script.
+  """
+
   _reWhitespace = re.compile(r"\s")
   _reCommand = re.compile(r"([" + string.letters + r"]\w*)(\s*\()")
   _reComment = re.compile(r"#(\[=*\[)?")
@@ -84,6 +191,23 @@ class CMakeScript(object):
 
   #---------------------------------------------------------------------------
   def __init__(self, content):
+    """
+    :param content: Textual content of a CMake script.
+    :type content: :class:`basestring`
+
+    :raises:
+      :exc:`~exceptions.SyntaxError` or :exc:`~exceptions.EOFError` if a
+      parsing error occurs (i.e. if the input text is not syntactically valid).
+
+    .. code-block:: python
+
+      with fi = open('CMakeLists.txt'):
+        script = CMakeParser.CMakeScript(f.read())
+
+      with fo = open('CMakeLists.txt.new', 'w'):
+        fo.write(str(script))
+    """
+
     self.tokens = []
 
     self._content = content
@@ -174,7 +298,7 @@ class CMakeScript(object):
         self._content = self._content[m.end():]
         continue
 
-      raise SyntaxError("syntax error in expansion; expected '}', found %r" %
+      raise SyntaxError("syntax error in expansion: expected '}', found %r" %
                         self._content[0])
 
     raise EOFError("unexpected EOF while parsing expansion (expected '}')")
