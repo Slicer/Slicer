@@ -640,4 +640,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     else:
       plot = self.__chart.AddPlot(vtk.vtkChart.LINE)
       plot.SetInput(self.__chartTable, 0, 1)
+      
+    if self.xLogScaleCheckBox.checkState() == 2:
+      title = self.__chart.GetAxis(1).GetTitle()
+      self.__chart.GetAxis(1).SetTitle('log of '+title)
+
+    if self.yLogScaleCheckBox.checkState() == 2:
+      title = self.__chart.GetAxis(0).GetTitle()
+      self.__chart.GetAxis(0).SetTitle('log of '+title)
     # seems to update only after another plot?..
