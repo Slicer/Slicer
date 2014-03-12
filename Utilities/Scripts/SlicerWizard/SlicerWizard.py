@@ -200,7 +200,7 @@ class SlicerWizard(object):
       if r is None:
         die("extension repository not found")
 
-      xd = ExtensionDescription(r)
+      xd = ExtensionDescription(repo=r)
       name = ExtensionProject(r.working_tree_dir).project()
       logging.debug("extension name: '%s'", name)
 

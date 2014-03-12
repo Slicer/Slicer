@@ -11,8 +11,16 @@ class ExtensionDescription(object):
   _reParam = re.compile(r"([a-zA-Z][a-zA-Z0-9_]*)\s+(.+)")
 
   #---------------------------------------------------------------------------
-  def __init__(self, repo=None):
-    if repo is not None:
+  def __init__(self, repo=None, filepath=None):
+    if repo is not None and filepath is not None:
+      raise Exception("cannot construct %s: only one of repo or filepath"
+                      " may be given" % type(self).__name__)
+
+    if filepath is not None:
+      with open(filepath) as fp:
+        self._read(fp)
+
+    elif repo is not None:
       try:
         remote = repo.remotes.origin
       except:
@@ -66,6 +74,13 @@ class ExtensionDescription(object):
       delattr(self, key)
 
   #---------------------------------------------------------------------------
+  def _read(self, fp):
+    for l in fp:
+      m = self._reParam.match(l)
+      if m is not None:
+        setattr(self, m.group(1), m.group(2).strip())
+
+  #---------------------------------------------------------------------------
   def read(self, path):
     self.clear()
 
@@ -77,10 +92,7 @@ class ExtensionDescription(object):
       raise IOError("multiple extension description files found")
 
     with open(descriptionFiles[0]) as fp:
-      for l in fp:
-        m = self._reParam.match(l)
-        if m is not None:
-          setattr(self, m.group(1), m.group(2).strip())
+      self._read(fp)
 
   #---------------------------------------------------------------------------
   def write(self, path):
