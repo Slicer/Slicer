@@ -1007,6 +1007,7 @@ include_directories(
 add_subdirectory(Libs)
 add_subdirectory(Base)
 add_subdirectory(Resources)
+add_subdirectory(Utilities/Scripts/SlicerWizard)
 
 #-----------------------------------------------------------------------------
 # Macro useful to build ModuleLogic, ModuleMRML and ModuleWidgets libraries

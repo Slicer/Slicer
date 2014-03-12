@@ -19,6 +19,8 @@ try:
 except ImportError:
   _haveGit = False
 
+from . import __version__
+
 from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
@@ -531,6 +533,10 @@ class ExtensionWizard(object):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
                                     formatter_class=WizardHelpFormatter)
+
+    parser.add_argument('--version', action='version',
+                        version=__version__)
+
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--test", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--create", metavar="<TYPE:>NAME",
