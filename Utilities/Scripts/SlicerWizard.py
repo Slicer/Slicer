@@ -173,13 +173,44 @@ def addModule(args, kind, name):
   print("created module '%s'" % name)
 
 #=============================================================================
+class TemporaryBool(object):
+  #---------------------------------------------------------------------------
+  def __init__(self, obj, attr, value):
+    self._obj = obj
+    self._attr = attr
+    self._oldValue = bool(getattr(obj, attr))
+    self._newValue = value
+  #---------------------------------------------------------------------------
+  def __enter__(self):
+    setattr(self._obj, self._attr, self._newValue)
+  #---------------------------------------------------------------------------
+  def __exit__(self, exc_type, exc_value, traceback):
+    setattr(self._obj, self._attr, self._oldValue)
+
+#=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
+  #---------------------------------------------------------------------------
+  def __init__(self, *args, **kwargs):
+    super(WizardHelpFormatter, self).__init__(*args, **kwargs)
+    self._splitWorkaround = False
+
   #---------------------------------------------------------------------------
   def _metavar_formatter(self, action, default_metavar):
     if action.dest in argValueFormats:
       default_metavar = argValueFormats[action.dest]
+      if self._splitWorkaround:
+        default_metavar = default_metavar.replace("[", "<").replace("]", ">")
+
     return super(WizardHelpFormatter, self)._metavar_formatter(action,
                                                                default_metavar)
+
+  #---------------------------------------------------------------------------
+  def _format_usage(self, usage, actions, groups, prefix):
+    with TemporaryBool(self, "_splitWorkaround", True):
+      text = super(WizardHelpFormatter, self)._format_usage(usage, actions,
+                                                            groups, prefix)
+
+    return text.replace("<", "[").replace(">", "]")
 
 #-----------------------------------------------------------------------------
 def main():
