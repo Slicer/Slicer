@@ -8,13 +8,13 @@ import sys
 import textwrap
 
 __all__ = [
-    'warn',
-    'die',
-    'inquire',
-    'initLogging',
-    'createEmptyRepo',
-    'getRepo',
-    'getRemote',
+  'warn',
+  'die',
+  'inquire',
+  'initLogging',
+  'createEmptyRepo',
+  'getRepo',
+  'getRemote',
 ]
 
 _yesno = {

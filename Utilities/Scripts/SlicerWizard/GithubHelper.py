@@ -10,10 +10,10 @@ from github.GithubObject import NotSet
 from urlparse import urlparse
 
 __all__ = [
-    'logIn',
-    'getRepo',
-    'getFork',
-    'getPullRequest',
+  'logIn',
+  'getRepo',
+  'getFork',
+  'getPullRequest',
 ]
 
 #=============================================================================
