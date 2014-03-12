@@ -12,6 +12,7 @@ __all__ = [
   'die',
   'inquire',
   'initLogging',
+  'buildProcessArgs',
   'createEmptyRepo',
   'getRepo',
   'getRemote',
@@ -190,6 +191,51 @@ def initLogging(logger, args):
   # Turn of github debugging
   ghLogger = logging.getLogger("github")
   ghLogger.setLevel(logging.WARNING)
+
+#-----------------------------------------------------------------------------
+def buildProcessArgs(*args, **kwargs):
+  """Build CLI arguments from Python-like arguments.
+
+  :param prefix: Prefix for named options.
+  :type prefix: :class:`basestring`
+  :param args: Positional arguments.
+  :type args: :class:`~collections.Sequence`
+  :param kwargs: Named options.
+  :type kwargs: :class:`dict`
+
+  :return: Converted argument list.
+  :rtype: :class:`list` of :class:`basestring`
+
+  This function converts Python-style arguments, including named arguments, to
+  a CLI-style argument list:
+
+  .. code-block:: python
+
+    >>> buildProcessArgs('p1', u'p2', None, 12, a=5, b=True, long_name=u'hello')
+    ['-a', '5', '--long-name', u'hello', '-b', 'p1', u'p2', '12']
+
+  Named arguments are converted to named options by adding ``'-'`` (if the name
+  is one letter) or ``'--'`` (otherwise), and converting any underscores
+  (``'_'``) to hyphens (``'-'``). If the value is ``True``, the option is
+  considered a flag that does not take a value. If the value is ``False`` or
+  ``None``, the option is skipped. Otherwise the stringified value is added
+  following the option argument. Positional arguments --- except for ``None``,
+  which is skipped --- are similarly stringified and added to the argument list
+  following named options.
+  """
+
+  result = []
+
+  for k, v in kwargs.items():
+    if v is None or v is False:
+      continue
+
+    result += ["%s%s" % ("-" if len(k) == 1 else "--", k.replace("_", "-"))]
+
+    if v is not True:
+      result += ["%s" % v]
+
+  return result + ["%s" % a for a in args if a is not None]
 
 #-----------------------------------------------------------------------------
 def createEmptyRepo(path):

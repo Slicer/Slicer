@@ -617,34 +617,28 @@ class ExtensionWizard(object):
     :param args:
       CLI arguments to use for execution.
     :type args:
-      :class:`list` of :class:`basestring`
+      :class:`~collections.Sequence`
     :param kwargs:
-      Named CLI options to use for execution. For example, ``create=name`` is
-      equivalent to passing ``['--create', name]`` in ``args``. Pass ``None``
-      as the value for CLI options which do not take an argument.
+      Named CLI options to use for execution.
     :type kwargs:
-      :class:`dict` of :class:`basestring` |rarr| {:class:`basestring` or
-      ``None``}
+      :class:`dict`
 
     This sets up CLI argument parsing and executes the wizard, using the
-    provided CLI arguments if any, or :attr:`sys.argv` otherwise.
+    provided CLI arguments if any, or :attr:`sys.argv` otherwise. See
+    :func:`.buildProcessArgs` for an explanation of how ``args`` and ``kwargs``
+    are processed.
 
     If multiple commands are given, an error in one may cause others to be
     skipped.
 
-    .. |rarr| unicode:: U+02192 .. right arrow
+    .. seealso:: :func:`.buildProcessArgs`
     """
 
     # Get values for non-CLI-argument named arguments
     exit = kwargs.pop('exit', True)
 
     # Convert other named arguments to CLI arguments
-    args = list(args)
-    for k in kwargs:
-      args += ['--%s' % k]
-      v = kwargs[k]
-      if v is not None:
-        args += [v]
+    args = buildProcessArgs(*args, **kwargs)
 
     try:
       self._execute(args if len(args) else None)
