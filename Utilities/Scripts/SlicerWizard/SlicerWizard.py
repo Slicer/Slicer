@@ -46,7 +46,6 @@ class SlicerWizard(object):
       p.save()
 
     except:
-      if args.debug: raise
       die("failed to add module to project '%s': %s" %
           (path, sys.exc_info()[1]))
 
@@ -55,7 +54,6 @@ class SlicerWizard(object):
     try:
       return self._templateManager.copyTemplate(args.destination, *pargs)
     except:
-      if args.debug: raise
       die(sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
@@ -159,7 +157,6 @@ class SlicerWizard(object):
     except SystemExit:
       raise
     except:
-      if args.debug: raise
       die("failed to publish extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
@@ -291,7 +288,6 @@ class SlicerWizard(object):
     except SystemExit:
       raise
     except:
-      if args.debug: raise
       die("failed to register extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------

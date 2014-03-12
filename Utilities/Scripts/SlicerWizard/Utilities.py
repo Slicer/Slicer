@@ -47,6 +47,10 @@ class _LogReverseLevelFilter(logging.Filter):
 
 #-----------------------------------------------------------------------------
 def die(msg, return_code=0):
+  if sys.exc_info()[0] is not None:
+    if _logLevel <= logging.DEBUG:
+      logging.exception("")
+
   if isinstance(msg, tuple):
     for m in msg:
       logging.error(m)
