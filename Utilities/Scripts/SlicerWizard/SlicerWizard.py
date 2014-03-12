@@ -7,7 +7,7 @@ import sys
 
 from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
-
+from .Utilities import die
 
 #=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
@@ -38,17 +38,15 @@ class SlicerWizard(object):
       p.addModule(name)
 
     except:
-      print("failed to add module to project '%s': %s" %
-            (path, sys.exc_info()[1]))
-      exit()
+      die("failed to add module to project '%s': %s" %
+          (path, sys.exc_info()[1]))
 
   #---------------------------------------------------------------------------
   def _copyTemplate(self, args, *pargs):
     try:
       return self._templateManager.copyTemplate(args.destination, *pargs)
     except:
-      print(sys.exc_info()[1])
-      exit()
+      die(sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
   def createExtension(self, args, name, kind="default"):
@@ -121,6 +119,4 @@ class SlicerWizard(object):
 
     # Check that we did something
     if not acted:
-      print("no action was requested!\n")
-      parser.print_usage()
-      exit()
+      die(("no action was requested!", "", parser.format_usage().rstrip()))

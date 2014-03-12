@@ -1,6 +1,8 @@
 import fnmatch
 import os
 
+from .Utilities import die
+
 _sourcePatterns = [
   "*.h",
   "*.cxx",
@@ -142,26 +144,21 @@ class TemplateManager(object):
 
         if len(tpParts) == 1:
           if not os.path.exists(tp):
-            print("template path '%s' does not exist" % tp)
-            exit()
+            die("template path '%s' does not exist" % tp)
           if not os.path.isdir(tp):
-            print("template path '%s' is not a directory" % tp)
-            exit()
+            die("template path '%s' is not a directory" % tp)
 
           self.addPath(tp)
 
         else:
           if tpParts[0].lower() not in _templateCategories:
-            print("'%s' is not a recognized template category" % tpParts[0])
-            print("recognized categories: %s" % ", ".join(_templateCategories))
-            exit()
+            die(("'%s' is not a recognized template category" % tpParts[0],
+                 "recognized categories: %s" % ", ".join(_templateCategories)))
 
           if not os.path.exists(tpParts[1]):
-            print("template path '%s' does not exist" % tpParts[1])
-            exit()
+            die("template path '%s' does not exist" % tpParts[1])
           if not os.path.isdir(tpParts[1]):
-            print("template path '%s' is not a directory" % tpParts[1])
-            exit()
+            die("template path '%s' is not a directory" % tpParts[1])
 
           self.addCategoryPath(tpParts[0].lower(),
                                os.path.realpath(tpParts[1]))
@@ -171,7 +168,6 @@ class TemplateManager(object):
       for tk in args.templateKey:
         tkParts = tk.split("=")
         if len(tkParts) != 2:
-          print("template key '%s' malformatted: expected 'NAME=KEY'" % tk)
-          exit()
+          die("template key '%s' malformatted: expected 'NAME=KEY'" % tk)
 
         self._keys[tkParts[0]] = tkParts[1]
