@@ -2,6 +2,7 @@
 
 import argparse
 import git
+import logging
 import os
 import re
 import sys
@@ -60,13 +61,13 @@ class SlicerWizard(object):
   #---------------------------------------------------------------------------
   def createExtension(self, args, name, kind="default"):
     args.destination = self._copyTemplate(args, "extensions", kind, name)
-    print("created extension '%s'" % name)
+    logging.info("created extension '%s'" % name)
 
   #---------------------------------------------------------------------------
   def addModule(self, args, kind, name):
     self._addModuleToProject(args.destination, name)
     self._copyTemplate(args, "modules", kind, name)
-    print("created module '%s'" % name)
+    logging.info("created module '%s'" % name)
 
   #---------------------------------------------------------------------------
   def publishExtension(self, args):
@@ -83,10 +84,10 @@ class SlicerWizard(object):
       r.git.checkout(b=branch)
       r.git.add(":/")
 
-      print("Creating initial commit containing the following files:")
+      logging.info("Creating initial commit containing the following files:")
       for e in r.index.entries:
-        print("  %s" % e[0])
-      print("")
+        logging.info("  %s" % e[0])
+      logging.info("")
       if not inquire("Continue"):
         prog = os.path.basename(sys.argv[0])
         die("canceling at user request:"
@@ -105,17 +106,22 @@ class SlicerWizard(object):
 
       branch = r.active_branch
       if branch.name != "master":
-        printw("You are currently on the '%s' branch." % branch,
-               "It is strongly recommended to publish the 'master' branch.")
+        logging.warning("You are currently on the '%s' branch." % branch,
+                        "It is strongly recommended to publish"
+                        " the 'master' branch.")
         if not inquire("Continue anyway"):
           die("canceled at user request")
+
+      logging.debug("preparing to publish %s branch", branch)
 
     try:
       # Get extension name
       p = ExtensionProject(args.destination)
       name = p.project()
+      logging.debug("extension name: '%s'", name)
 
       # Create github remote
+      logging.info("creating github repository")
       gh = GithubHelper.logIn(r)
       ghu = gh.get_user()
       for ghr in ghu.get_repos():
@@ -124,8 +130,10 @@ class SlicerWizard(object):
 
       description = p.getValue("EXTENSION_DESCRIPTION", default=NotSet)
       ghr = ghu.create_repo(name, description=description)
+      logging.debug("created github repository: %s", ghr.url)
 
       # Set extension meta-information
+      logging.info("updating extension meta-information")
       raw_url = "%s/%s" % (ghr.html_url.replace("//", "//raw."), branch)
       p.setValue("EXTENSION_HOMEPAGE", ghr.html_url)
       p.setValue("EXTENSION_ICONURL", "%s/%s.png" % (raw_url, name))
@@ -134,15 +142,19 @@ class SlicerWizard(object):
       # Commit the initial commit or updated meta-information
       r.git.add(":/CMakeLists.txt")
       if createdRepo:
+        logging.info("preparing initial commit")
         r.index.commit("ENH: Initial commit for %s" % name)
       else:
+        logging.info("committing changes")
         r.index.commit("ENH: Update extension information\n\n"
                        "Set %s information to reference"
                        " new github repository." % name)
 
       # Set up the remote and push
+      logging.info("preparing to push extension repository")
       remote = r.create_remote("origin", ghr.clone_url)
       remote.push(branch)
+      logging.info("extension published to %s", ghr.url)
 
     except SystemExit:
       raise
@@ -189,19 +201,25 @@ class SlicerWizard(object):
 
       xd = ExtensionDescription(r)
       name = ExtensionProject(r.working_tree_dir).project()
+      logging.debug("extension name: '%s'", name)
 
       # Validate that extension has a SCM URL
       if xd.scmurl == "NA":
         raise Exception("extension 'scmurl' is not set")
 
       # Get (or create) the user's fork of the extension index
+      logging.info("obtaining github repository information")
       gh = GithubHelper.logIn(r)
       upstreamRepo = GithubHelper.getRepo(gh, "Slicer/ExtensionsIndex")
       if upstreamRepo is None:
         die("error accessing extension index upstream repository")
 
+      logging.debug("index upstream: %s", upstreamRepo.url)
+
       forkedRepo = GithubHelper.getFork(user=gh.get_user(), create=True,
                                         upstream=upstreamRepo)
+
+      logging.debug("index fork: %s", forkedRepo.url)
 
       # Get or create extension index repository
       if args.index is not None:
@@ -212,6 +230,7 @@ class SlicerWizard(object):
       xiRepo = getRepo(xip)
 
       if xiRepo is None:
+        logging.info("cloning index repository")
         xiRepo = getRepo(xip, create=createEmptyRepo)
         xiRemote = getRemote(xiRepo, [forkedRepo.clone_url], create="origin")
 
@@ -224,9 +243,12 @@ class SlicerWizard(object):
                           " is not a clone of %s" %
                           (xiRepo.working_tree_dir, forkedRepo.clone_url))
 
+      logging.debug("index fork remote: %s", xiRemote.url)
+
       # Find or create the upstream remote for the index repository
       xiUpstream = [upstreamRepo.clone_url, upstreamRepo.git_url]
       xiUpstream = getRemote(xiRepo, xiUpstream, create="upstream")
+      logging.debug("index upstream remote: %s", xiUpstream.url)
 
       # Check that the index repository is clean
       if xiRepo.is_dirty():
@@ -234,6 +256,7 @@ class SlicerWizard(object):
                         xiRepo.working_tree_dir)
 
       # Update the index repository and get the base branch
+      logging.info("updating local index clone")
       xiRepo.git.fetch(xiUpstream)
       if not args.target in xiUpstream.refs:
         die("target branch '%s' does not exist" % args.target)
@@ -241,6 +264,7 @@ class SlicerWizard(object):
       xiBase = xiUpstream.refs[args.target]
 
       # Ensure that user's fork is up to date
+      logging.info("updating target branch (%s) branch on fork", args.target)
       xiRemote.push("%s:%s" % (xiBase, args.target))
 
       # Determine if this is an addition or update to the index
@@ -252,6 +276,7 @@ class SlicerWizard(object):
         branch = 'add-%s-%s' % (name, args.target)
         update = False
 
+      logging.debug("create index branch %s", branch)
       xiRepo.git.checkout(xiBase, B=branch)
 
       # Write the extension description and prepare to commit
@@ -313,6 +338,7 @@ class SlicerWizard(object):
                         help="location of output files / extension source"
                              " (default: '.')")
     args = parser.parse_args()
+    initLogging(logging.getLogger(), args)
 
     # Add built-in templates
     scriptPath = os.path.dirname(os.path.realpath(__file__))

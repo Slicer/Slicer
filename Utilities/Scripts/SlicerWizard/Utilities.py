@@ -2,8 +2,19 @@
 
 import argparse
 import git
+import logging
 import os
+import sys
 import textwrap
+
+__all__ = [
+    'die',
+    'inquire',
+    'initLogging',
+    'createEmptyRepo',
+    'getRemote',
+    'getRepo',
+]
 
 _yesno = {
   "y": True,
@@ -15,19 +26,33 @@ try:
 except:
   _width = 79
 
-#-----------------------------------------------------------------------------
-def printw(*args):
-  text = ' '.join(args)
-  print(textwrap.fill(text, _width))
+_logLevel = None
+
+#=============================================================================
+class _LogWrapFormatter(logging.Formatter):
+  #---------------------------------------------------------------------------
+  def format(self, record):
+    text = super(_LogWrapFormatter, self).format(record)
+    return "\n".join([textwrap.fill(l, _width) for l in text.split("\n")])
+
+#=============================================================================
+class _LogReverseLevelFilter(logging.Filter):
+  #---------------------------------------------------------------------------
+  def __init__(self, levelLimit):
+    self._levelLimit = levelLimit
+
+  #---------------------------------------------------------------------------
+  def filter(self, record):
+    return record.levelno < self._levelLimit
 
 #-----------------------------------------------------------------------------
 def die(msg, return_code=0):
   if isinstance(msg, tuple):
     for m in msg:
-      printw(m)
+      logging.error(m)
 
   else:
-    printw(msg)
+    logging.error(msg)
 
   exit(return_code)
 
@@ -51,6 +76,33 @@ def inquire(msg, choices=_yesno):
 
     except:
       pass
+
+#-----------------------------------------------------------------------------
+def initLogging(logger, args):
+  global _logLevel
+  _logLevel = logging.DEBUG if args.debug else logging.INFO
+
+  # Create log output formatter
+  f = _LogWrapFormatter()
+
+  # Create log output stream handlers
+  lho = logging.StreamHandler(sys.stdout)
+  lho.setLevel(_logLevel)
+  lho.addFilter(_LogReverseLevelFilter(logging.WARNING))
+  lho.setFormatter(f)
+
+  lhe = logging.StreamHandler(sys.stderr)
+  lhe.setLevel(logging.WARNING)
+  lhe.setFormatter(f)
+
+  # Set root logging level and add handlers
+  logging.getLogger().addHandler(lho)
+  logging.getLogger().addHandler(lhe)
+  logging.getLogger().setLevel(_logLevel)
+
+  # Turn of github debugging
+  ghLogger = logging.getLogger("github")
+  ghLogger.setLevel(logging.WARNING)
 
 #-----------------------------------------------------------------------------
 def createEmptyRepo(path):

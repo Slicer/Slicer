@@ -1,4 +1,5 @@
 import fnmatch
+import logging
 import os
 
 from .Utilities import die
@@ -68,7 +69,7 @@ class TemplateManager(object):
   #---------------------------------------------------------------------------
   def _copyAndReplace(self, inFile, template, destination, key, name):
     outFile = os.path.join(destination, inFile.replace(key, name))
-    print("creating '%s'" % outFile)
+    logging.info("creating '%s'" % outFile)
     path = os.path.dirname(outFile)
     if not os.path.exists(path):
       os.makedirs(path)
@@ -96,7 +97,7 @@ class TemplateManager(object):
     template = templates[kind]
     key = self._getKey(kind)
 
-    print("copy template '%s' to '%s', replacing '%s' -> '%s'" %
+    logging.info("copy template '%s' to '%s', replacing '%s' -> '%s'" %
           (template, destination, key, name))
     for f in listSources(template):
       self._copyAndReplace(f, template, destination, key, name)
@@ -124,16 +125,16 @@ class TemplateManager(object):
   #---------------------------------------------------------------------------
   def listTemplates(self):
     for c in _templateCategories:
-      print("Available templates for category '%s':" % c)
+      logging.info("Available templates for category '%s':" % c)
 
       if len(self._paths[c]):
         for t in self._paths[c]:
-          print("  '%s' ('%s')" % (t, self._getKey(t)))
+          logging.info("  '%s' ('%s')" % (t, self._getKey(t)))
 
       else:
-        print("  (none)")
+        logging.info("  (none)")
 
-      print("")
+      logging.info("")
 
   #---------------------------------------------------------------------------
   def parseArguments(self, args):
