@@ -240,6 +240,9 @@ class SlicerWizard(object):
 
       xiBase = xiUpstream.refs[args.target]
 
+      # Ensure that user's fork is up to date
+      xiRemote.push("%s:%s" % (xiBase, args.target))
+
       # Determine if this is an addition or update to the index
       xdf = name + ".s4ext"
       if xdf in xiBase.commit.tree:
