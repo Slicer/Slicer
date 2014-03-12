@@ -17,6 +17,28 @@ from .WizardHelpFormatter import WizardHelpFormatter
 
 #=============================================================================
 class ExtensionWizard(object):
+  """Implementation class for the Extension Wizard.
+
+  This class provides the entry point and implementation of the Extension
+  wizard. One normally uses it by writing a small bootstrap script to load the
+  module, which then calls code like:
+
+  .. code-block:: python
+
+    wizard = ExtensionWizard()
+    wizard.execute()
+
+  Interaction with `GitHub <http://github.com>`_ uses
+  :func:`.GithubHelper.logIn` to authenticate.
+
+  .. 'note' directive needs '\' to span multiple lines!
+  .. note:: Most methods will signal the application to exit if something goes \
+            wrong. This behavior is hidden by the :meth:`.execute` method when \
+            passing ``exit=False``; callers that need to continue execution \
+            after calling one of the other methods directly should catch \
+            :exc:`~exceptions.SystemExit`.
+  """
+
   _reModuleInsertPlaceholder = re.compile("(?<=\n)([ \t]*)## NEXT_MODULE")
   _reAddSubdirectory = \
     re.compile("(?<=\n)([ \t]*)add_subdirectory[(][^)]+[)][^\n]*\n")
@@ -26,36 +48,78 @@ class ExtensionWizard(object):
     self._templateManager = TemplateManager()
 
   #---------------------------------------------------------------------------
-  def _addModuleToProject(self, path, name):
-    try:
-      p = ExtensionProject(path)
-      p.addModule(name)
-      p.save()
-
-    except:
-      die("failed to add module to project '%s': %s" %
-          (path, sys.exc_info()[1]))
-
-  #---------------------------------------------------------------------------
-  def _copyTemplate(self, args, *pargs):
-    try:
-      return self._templateManager.copyTemplate(args.destination, *pargs)
-    except:
-      die(sys.exc_info()[1])
-
-  #---------------------------------------------------------------------------
   def create(self, args, name, kind="default"):
-    args.destination = self._copyTemplate(args, "extensions", kind, name)
-    logging.info("created extension '%s'" % name)
+    """Create a new extension from specified extension template.
+
+    :param args.destination: Directory wherein the new extension is created.
+    :type args.destination: :class:`basestring`
+    :param name: Name for the new extension.
+    :type name: :class:`basestring`
+    :param kind: Identifier of the template from which to create the extension.
+    :type kind: :class:`basestring`
+
+    Note that the extension is written to a *new subdirectory* which is created
+    in ``args.destination``. The ``name`` is used both as the name of this
+    directory, and as the replacement value when substituting the template key.
+
+    If an error occurs, the application displays an error message and exits.
+
+    .. seealso:: :meth:`.TemplateManager.copyTemplate`
+    """
+
+    try:
+      dest = args.destination
+      args.destination = self._templateManager.copyTemplate(dest, "extensions",
+                                                            kind, name)
+      logging.info("created extension '%s'" % name)
+
+    except:
+      die("failed to create extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
   def addModule(self, args, kind, name):
-    self._addModuleToProject(args.destination, name)
-    self._copyTemplate(args, "modules", kind, name)
-    logging.info("created module '%s'" % name)
+    """Add a module to an existing extension.
+
+    :param args.destination: Location (directory) of the extension to modify.
+    :type args.destination: :class:`basestring`
+    :param kind: Identifier of the template from which to create the module.
+    :type kind: :class:`basestring`
+    :param name: Name for the new module.
+    :type name: :class:`basestring`
+
+    This creates a new module from the specified module template and adds it to
+    the CMakeLists.txt of the extension. The ``name`` is used both as the name
+    of the new module subdirectory (created in ``args.destination``) and as the
+    replacement value when substituting the template key.
+
+    If an error occurs, the extension is not modified, and the application
+    displays an error message and then exits.
+
+    .. seealso:: :meth:`.ExtensionProject.addModule`,
+                 :meth:`.TemplateManager.copyTemplate`
+    """
+
+    try:
+      dest = args.destination
+      p = ExtensionProject(dest)
+      p.addModule(name)
+      self._templateManager.copyTemplate(dest, "modules", kind, name)
+      p.save()
+      logging.info("created module '%s'" % name)
+
+    except:
+      die("failed to add module: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
   def describe(self, args):
+    """Generate extension description and write it to :attr:`sys.stdout`.
+
+    :param args.destination: Location (directory) of the extension to describe.
+    :type args.destination: :class:`basestring`
+
+    If something goes wrong, the application displays a suitable error message.
+    """
+
     try:
       r = getRepo(args.destination)
       if r is None:
@@ -69,6 +133,26 @@ class ExtensionWizard(object):
 
   #---------------------------------------------------------------------------
   def publish(self, args):
+    """Publish extension to github repository.
+
+    :param args.destination: Location (directory) of the extension to publish.
+    :type args.destination: :class:`basestring`
+
+    This creates a public github repository for an extension (whose name is the
+    extension name), adds it as a remote of the extension's local repository,
+    and pushes the extension to the new github repository. The extension
+    information (homepage, icon url) is also updated to refer to the new public
+    repository.
+
+    If the extension is not already tracked in a local git repository, a new
+    local git repository is also created and populated by the files currently
+    in the extension source directory.
+
+    If the local repository is dirty or already has a remote, or a github
+    repository with the name of the extension already exists, the application
+    displays a suitable error message and then exits.
+    """
+
     createdRepo = False
     r = getRepo(args.destination)
 
@@ -195,6 +279,59 @@ class ExtensionWizard(object):
 
   #---------------------------------------------------------------------------
   def contribute(self, args):
+    """Add or update an extension to/in the index repository.
+
+    :param args.destination:
+      Location (directory) of the extension to contribute.
+    :type args.destination:
+      :class:`basestring`
+    :param args.target:
+      Name of branch which the extension targets (must match a branch name in
+      the extension index repository).
+    :type args.target:
+      :class:`basestring`
+    :param args.index:
+      Path to an existing clone of the extension index, or path to which the
+      index should be cloned. If ``None``, a subdirectory in the extension's
+      ``.git`` directory is used.
+    :type args.index:
+      :class:`basestring` or ``None``
+    :param args.test:
+      If ``True``, include a note in the pull request that the request is a
+      test and should not be merged.
+    :type args.test:
+      :class:`bool`
+
+    This writes the description of the specified extension --- which may be an
+    addition, or an update to a previously contributed extension --- to a user
+    fork of the `extension index repository`_, pushes the changes, and creates
+    a pull request to merge the contribution. In case of an update to an
+    extension with a github public repository, a "compare URL" (a github link
+    to view the changes between the previously contributed version of the
+    extension and the version being newly contributed) is included in the pull
+    request message.
+
+    This attempts to find the user's already existing fork of the index
+    repository, and to create one if it does not already exist. The fork is
+    then either cloned (adding remotes for both upstream and the user's fork)
+    or updated, and the current upstream target branch pushed to the user's
+    fork, ensuring that the target branch in the user's fork is up to date. The
+    changes to the index repository are made in a separate branch.
+
+    If a pull request for the extension already exists, its message is updated
+    and the corresponding branch is force-pushed (which automatically updates
+    the code portion of the request).
+
+    If anything goes wrong, no pull request is created, and the application
+    displays a suitable error message and then exits. Additionally, a branch
+    push for the index changes only occurs if the failed operation is the
+    creation or update of the pull request; other errors cause the application
+    to exit before pushing the branch. (Updates of the user's fork to current
+    upstream may still occur.)
+
+    .. _extension index repository: http://github.com/Slicer/ExtensionsIndex
+    """
+
     try:
       r = getRepo(args.destination)
       if r is None:
@@ -353,7 +490,7 @@ class ExtensionWizard(object):
       die("failed to register extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
-  def execute(self):
+  def _execute(self, args):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
                                     formatter_class=WizardHelpFormatter)
@@ -391,7 +528,7 @@ class ExtensionWizard(object):
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files / extension source"
                              " (default: '.')")
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     initLogging(logging.getLogger(), args)
 
     # Add built-in templates
@@ -440,3 +577,56 @@ class ExtensionWizard(object):
     # Check that we did something
     if not acted:
       die(("no action was requested!", "", parser.format_usage().rstrip()))
+
+  #---------------------------------------------------------------------------
+  def execute(self, *args, **kwargs):
+    """execute(*args, exit=True, **kwargs)
+    Execute the wizard in CLI mode.
+
+    :param exit:
+      * ``True``: The call does not return and the application exits.
+      * ``False``: The call returns an exit code, which is ``0`` if execution
+        was successful, or non-zero otherwise.
+    :type exit:
+      :class:`bool`
+    :param args:
+      CLI arguments to use for execution.
+    :type args:
+      :class:`list` of :class:`basestring`
+    :param kwargs:
+      Named CLI options to use for execution. For example, ``create=name`` is
+      equivalent to passing ``['--create', name]`` in ``args``. Pass ``None``
+      as the value for CLI options which do not take an argument.
+    :type kwargs:
+      :class:`dict` of :class:`basestring` |rarr| {:class:`basestring` or
+      ``None``}
+
+    This sets up CLI argument parsing and executes the wizard, using the
+    provided CLI arguments if any, or :attr:`sys.argv` otherwise.
+
+    If multiple commands are given, an error in one may cause others to be
+    skipped.
+
+    .. |rarr| unicode:: U+02192 .. right arrow
+    """
+
+    # Get values for non-CLI-argument named arguments
+    exit = kwargs.pop('exit', True)
+
+    # Convert other named arguments to CLI arguments
+    args = list(args)
+    for k in kwargs:
+      args += ['--%s' % k]
+      v = kwargs[k]
+      if v is not None:
+        args += [v]
+
+    try:
+      self._execute(args if len(args) else None)
+      sys.exit(0)
+
+    except SystemExit:
+      if not exit:
+        return sys.exc_info()[1].code
+
+      raise
