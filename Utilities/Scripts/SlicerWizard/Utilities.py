@@ -9,6 +9,7 @@ import textwrap
 
 __all__ = [
     'die',
+    'warn',
     'inquire',
     'initLogging',
     'createEmptyRepo',
@@ -49,18 +50,25 @@ class _LogReverseLevelFilter(logging.Filter):
     return record.levelno < self._levelLimit
 
 #-----------------------------------------------------------------------------
-def die(msg, return_code=0):
+def _log(func, msg):
   if sys.exc_info()[0] is not None:
     if _logLevel <= logging.DEBUG:
       logging.exception("")
 
   if isinstance(msg, tuple):
     for m in msg:
-      logging.error(m)
+      func(m)
 
   else:
-    logging.error(msg)
+    func(msg)
 
+#-----------------------------------------------------------------------------
+def warn(msg):
+  _log(logging.warning, msg)
+
+#-----------------------------------------------------------------------------
+def die(msg, return_code=0):
+  _log(logging.error, msg)
   exit(return_code)
 
 #-----------------------------------------------------------------------------

@@ -286,6 +286,17 @@ class SlicerWizard(object):
       logging.debug("existing pull request: %s",
                     pullRequest if pullRequest is None else pullRequest.url)
 
+      if update:
+        # Get old SCM revision
+        try:
+          odPath = os.path.join(xiRepo.working_tree_dir, xdf)
+          od = ExtensionDescription(filepath=odPath)
+          if od.scmurl != "NA":
+            oldRef = od.scmurl
+
+        except:
+          oldRef = None
+
       # Write the extension description and prepare to commit
       xd.write(os.path.join(xiRepo.working_tree_dir, xdf))
       xiRepo.index.add([xdf])
@@ -301,8 +312,19 @@ class SlicerWizard(object):
       if len(msg) > 2 and not len(msg[1].strip()):
         del msg[1]
 
-      if update:
-        pass # TODO get compare URL and add to message
+      # Try to add compare URL to pull request message, if applicable
+      if update and oldRef is not None:
+        extensionRepo = GithubHelper.getRepo(gh, url=xd.scmurl)
+        if extensionRepo is not None:
+          logging.info("building compare URL for update")
+          try:
+            c = extensionRepo.compare(oldRef, xd.scmrevision)
+
+            msg.append("")
+            msg.append("See %s to view changes to the extension." % c.html_url)
+
+          except:
+            warn("failed to build compare URL: %s" % sys.exc_info()[1])
 
       if args.test:
         msg.append("")
