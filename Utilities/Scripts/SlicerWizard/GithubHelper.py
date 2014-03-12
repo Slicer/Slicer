@@ -58,3 +58,12 @@ def getFork(user, upstream, create=False):
     return user.create_fork(upstream)
 
   return None
+
+#-----------------------------------------------------------------------------
+def getPullRequest(upstream, user, ref):
+  user = user.login
+  for p in upstream.get_pulls():
+    if p.head.user.login == user and p.head.ref == ref:
+      return p
+
+  return None

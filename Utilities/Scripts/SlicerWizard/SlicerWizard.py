@@ -160,7 +160,7 @@ class SlicerWizard(object):
       die("failed to publish extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
-  def _extensionIndexCommitMessage(self, name, description, update):
+  def _extensionIndexCommitMessage(self, name, description, update, wrap=True):
     args = description.__dict__
     args["name"] = name
 
@@ -170,8 +170,11 @@ class SlicerWizard(object):
 
         This updates the %(name)s extension to %(scmrevision)s.
         """)
-      paragraphs = (template % args).split("\n")
-      return "\n".join([textwrap.fill(p, width=76) for p in paragraphs])
+      if wrap:
+        paragraphs = (template % args).split("\n")
+        return "\n".join([textwrap.fill(p, width=76) for p in paragraphs])
+      else:
+        return template % args
 
     else:
       template = textwrap.dedent("""\
@@ -184,8 +187,9 @@ class SlicerWizard(object):
         %(contributors)s
         """)
 
-      for key in args:
-        args[key] = textwrap.fill(args[key], width=72)
+      if wrap:
+        for key in args:
+          args[key] = textwrap.fill(args[key], width=72)
 
       return template % args
 
@@ -276,14 +280,50 @@ class SlicerWizard(object):
       logging.debug("create index branch %s", branch)
       xiRepo.git.checkout(xiBase, B=branch)
 
+      # Check to see if there is an existing pull request
+      pullRequest = GithubHelper.getPullRequest(upstreamRepo, ref=branch,
+                                                user=forkedRepo.owner)
+      logging.debug("existing pull request: %s",
+                    pullRequest if pullRequest is None else pullRequest.url)
+
       # Write the extension description and prepare to commit
       xd.write(os.path.join(xiRepo.working_tree_dir, xdf))
       xiRepo.index.add([xdf])
 
       # Commit and push the new/updated extension description
-      xiRepo.index.commit(self._extensionIndexCommitMessage(name, xd,
-                                                            update=update))
+      xiRepo.index.commit(self._extensionIndexCommitMessage(
+                            name, xd, update=update))
       xiRemote.push("+%s" % branch)
+
+      # Get message formatted for pull request
+      msg = self._extensionIndexCommitMessage(name, xd, update=update,
+                                              wrap=False).split("\n")
+      if len(msg) > 2 and not len(msg[1].strip()):
+        del msg[1]
+
+      if update:
+        pass # TODO get compare URL and add to message
+
+      if args.test:
+        msg.append("")
+        msg.append("THIS PULL REQUEST WAS MACHINE GENERATED"
+                   " FOR TESTING PURPOSES. DO NOT MERGE.")
+
+      # Create or update the pull request
+      if pullRequest is None:
+        logging.info("creating pull request")
+
+        pull = "%s:%s" % (forkedRepo.owner.login, branch)
+        pullRequest = upstreamRepo.create_pull(
+                        title=msg[0], body="\n".join(msg[1:]),
+                        head=pull, base=args.target)
+
+        logging.info("created pull request %s", pullRequest.html_url)
+
+      else:
+        logging.info("updating pull request %s", pullRequest.html_url)
+        pullRequest.edit(title=msg[0], body="\n".join(msg[1:]), state="open")
+        logging.info("updated pull request %s", pullRequest.html_url)
 
     except SystemExit:
       raise
@@ -296,6 +336,7 @@ class SlicerWizard(object):
     parser = argparse.ArgumentParser(description="Slicer Wizard",
                                     formatter_class=WizardHelpFormatter)
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--test", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--createExtension", metavar="<TYPE:>NAME",
                         help="create TYPE extension NAME"
                              " under the destination directory;"
