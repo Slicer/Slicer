@@ -418,8 +418,8 @@ class ExtensionWizard(object):
       xiRepo.git.checkout(xiBase, B=branch)
 
       # Check to see if there is an existing pull request
-      pullRequest = GithubHelper.getPullRequest(upstreamRepo, ref=branch,
-                                                user=forkedRepo.owner)
+      pullRequest = GithubHelper.getPullRequest(upstreamRepo, fork=forkedRepo,
+                                                ref=branch)
       logging.debug("existing pull request: %s",
                     pullRequest if pullRequest is None else pullRequest.url)
 
