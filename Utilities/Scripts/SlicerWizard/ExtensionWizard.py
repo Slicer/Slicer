@@ -6,6 +6,8 @@ import re
 import sys
 import textwrap
 
+from urlparse import urlparse
+
 from . import GithubHelper
 
 from .ExtensionDescription import ExtensionDescription
@@ -131,6 +133,29 @@ class ExtensionWizard(object):
     except:
       die("failed to describe extension: %s" % sys.exc_info()[1])
 
+
+  #---------------------------------------------------------------------------
+  def _setExtensionUrl(self, project, name, value):
+    name = "EXTENSION_%s" % name
+
+    oldValue = project.getValue(name)
+
+    try:
+      url = urlparse(oldValue)
+      confirm = not url.hostname.endswith("example.com")
+
+    except:
+      confirm = True
+
+    if confirm:
+      logging.info("Your extension currently uses '%s' for %s,"
+                   " which can be changed to '%s' to point to your new"
+                   " public repository." % (oldValue, name, value))
+      if not inquire("Change it"):
+        return
+
+    project.setValue(name, value)
+
   #---------------------------------------------------------------------------
   def publish(self, args):
     """Publish extension to github repository.
@@ -217,8 +242,8 @@ class ExtensionWizard(object):
       # Set extension meta-information
       logging.info("updating extension meta-information")
       raw_url = "%s/%s" % (ghr.html_url.replace("//", "//raw."), branch)
-      p.setValue("EXTENSION_HOMEPAGE", ghr.html_url)
-      p.setValue("EXTENSION_ICONURL", "%s/%s.png" % (raw_url, name))
+      self._setExtensionUrl(p, "HOMEPAGE", ghr.html_url)
+      self._setExtensionUrl(p, "ICONURL", "%s/%s.png" % (raw_url, name))
       p.save()
 
       # Commit the initial commit or updated meta-information
