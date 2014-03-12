@@ -2,20 +2,32 @@
 
 import argparse
 import git
+import os
+import textwrap
 
 _yesno = {
   "y": True,
   "n": False,
 }
 
+try:
+  _width = int(os.environ['COLUMNS']) - 1
+except:
+  _width = 79
+
+#-----------------------------------------------------------------------------
+def printw(*args):
+  text = ' '.join(args)
+  print(textwrap.fill(text, _width))
+
 #-----------------------------------------------------------------------------
 def die(msg, return_code=0):
   if isinstance(msg, tuple):
     for m in msg:
-      print(m)
+      printw(m)
 
   else:
-    print(msg)
+    printw(msg)
 
   exit(return_code)
 

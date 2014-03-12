@@ -11,7 +11,7 @@ from . import GithubHelper
 from .ExtensionProject import ExtensionProject
 from .GithubHelper import NotSet
 from .TemplateManager import TemplateManager
-from .Utilities import die, inquire, getRepo
+from .Utilities import *
 
 #=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
@@ -103,8 +103,8 @@ class SlicerWizard(object):
 
       branch = r.active_branch
       if branch.name != "master":
-        print("You are currently on the '%s' branch." % branch)
-        print("It is strongly recommended to publish the 'master' branch.")
+        printw("You are currently on the '%s' branch." % branch,
+               "It is strongly recommended to publish the 'master' branch.")
         if not inquire("Continue anyway"):
           die("canceled at user request")
 
