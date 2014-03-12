@@ -607,7 +607,7 @@ class ExtensionWizard(object):
   #---------------------------------------------------------------------------
   def execute(self, *args, **kwargs):
     """execute(*args, exit=True, **kwargs)
-    Execute the wizard in CLI mode.
+    Execute the wizard in |CLI| mode.
 
     :param exit:
       * ``True``: The call does not return and the application exits.
@@ -616,16 +616,16 @@ class ExtensionWizard(object):
     :type exit:
       :class:`bool`
     :param args:
-      CLI arguments to use for execution.
+      |CLI| arguments to use for execution.
     :type args:
       :class:`~collections.Sequence`
     :param kwargs:
-      Named CLI options to use for execution.
+      Named |CLI| options to use for execution.
     :type kwargs:
       :class:`dict`
 
-    This sets up CLI argument parsing and executes the wizard, using the
-    provided CLI arguments if any, or :attr:`sys.argv` otherwise. See
+    This sets up |CLI| argument parsing and executes the wizard, using the
+    provided |CLI| arguments if any, or :attr:`sys.argv` otherwise. See
     :func:`.buildProcessArgs` for an explanation of how ``args`` and ``kwargs``
     are processed.
 

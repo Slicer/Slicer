@@ -230,12 +230,12 @@ class TemplateManager(object):
 
   #---------------------------------------------------------------------------
   def addArguments(self, parser):
-    """Add template manager CLI arguments to parser.
+    """Add template manager |CLI| arguments to parser.
 
     :param parser: Argument parser instance to which to add arguments.
     :type parser: :class:`argparse.ArgumentParser`
 
-    This adds CLI arguments to the specified ``parser`` that may be used to
+    This adds |CLI| arguments to the specified ``parser`` that may be used to
     interact with the template collection.
 
     .. 'note' directive needs '\' to span multiple lines!
@@ -259,7 +259,7 @@ class TemplateManager(object):
 
   #---------------------------------------------------------------------------
   def parseArguments(self, args):
-    """Automatically add paths and keys from CLI arguments.
+    """Automatically add paths and keys from |CLI| arguments.
 
     :param args.templatePath: List of additional template paths.
     :type args.templatePath: :class:`list` of :class:`basestring`

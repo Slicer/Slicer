@@ -72,3 +72,5 @@ SlicerWizard Package
   :members:
   :undoc-members:
   :show-inheritance:
+
+.. |CLI| replace:: :abbr:`CLI (Command Line Interface)`

@@ -2,7 +2,7 @@ import argparse
 
 #=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
-  """Custom formatter for ExtensionWizard CLI arguments.
+  """Custom formatter for ExtensionWizard |CLI| arguments.
 
   This formatter overrides :class:`argparse.HelpFormatter` in order to replace
   occurrences of the '<' and '>' characters with '[' and ']', respectively.

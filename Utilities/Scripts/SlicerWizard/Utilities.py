@@ -1,4 +1,4 @@
-"""Helpers for interacting with CLI users and git."""
+"""Helpers for interacting with |CLI| users and git."""
 
 import argparse
 import git
@@ -164,7 +164,6 @@ def initLogging(logger, args):
     ``True``, otherwise the log level is set to :data:`~logging.INFO`.
   * The log handlers will wrap their output according to the current terminal
     width (:envvar:`$COLUMNS`, if set, else 80).
-
   """
 
   global _logLevel
@@ -194,7 +193,7 @@ def initLogging(logger, args):
 
 #-----------------------------------------------------------------------------
 def buildProcessArgs(*args, **kwargs):
-  """Build CLI arguments from Python-like arguments.
+  """Build |CLI| arguments from Python-like arguments.
 
   :param prefix: Prefix for named options.
   :type prefix: :class:`basestring`
@@ -207,7 +206,7 @@ def buildProcessArgs(*args, **kwargs):
   :rtype: :class:`list` of :class:`basestring`
 
   This function converts Python-style arguments, including named arguments, to
-  a CLI-style argument list:
+  a |CLI|-style argument list:
 
   .. code-block:: python
 
