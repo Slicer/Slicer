@@ -43,6 +43,7 @@ class SlicerWizard(object):
       p.save()
 
     except:
+      if args.debug: raise
       die("failed to add module to project '%s': %s" %
           (path, sys.exc_info()[1]))
 
@@ -51,6 +52,7 @@ class SlicerWizard(object):
     try:
       return self._templateManager.copyTemplate(args.destination, *pargs)
     except:
+      if args.debug: raise
       die(sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
@@ -141,6 +143,7 @@ class SlicerWizard(object):
       remote.push(branch)
 
     except:
+      if args.debug: raise
       die("failed to publish extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
@@ -148,6 +151,7 @@ class SlicerWizard(object):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
                                     formatter_class=WizardHelpFormatter)
+    parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--addModule", metavar="TYPE:NAME", action="append",
                         help="add new TYPE module NAME to an existing project"
                              " in the destination directory;"
