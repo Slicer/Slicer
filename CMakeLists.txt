@@ -1135,6 +1135,7 @@ endif()
 #-----------------------------------------------------------------------------
 
 add_subdirectory(Utilities/Doxygen)
+add_subdirectory(Utilities/Scripts/SlicerWizard/doc)
 
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   file(GLOB cmake_files "${CMAKE_CURRENT_SOURCE_DIR}/CMake/*.cmake")
