@@ -68,22 +68,22 @@ class SlicerWizard(object):
                                     formatter_class=WizardHelpFormatter)
     parser.add_argument("--addModule", metavar="TYPE:NAME", action="append",
                         help="add new TYPE module NAME to an existing project"
-                            " in the destination directory;"
-                            " may use more than once")
+                             " in the destination directory;"
+                             " may use more than once")
     parser.add_argument("--createExtension", metavar="<TYPE:>NAME",
                         help="create TYPE extension NAME"
-                            " under the destination directory;"
-                            " any modules are added to the new extension"
-                            " (default type: 'default')")
+                             " under the destination directory;"
+                             " any modules are added to the new extension"
+                             " (default type: 'default')")
     parser.add_argument("--templatePath", metavar="<CATEGORY=>PATH",
                         action="append",
                         help="add additional template path for specified"
-                            " template category; if no category, expect that"
-                            " PATH contains subdirectories for one or more"
-                            " possible categories")
+                             " template category; if no category, expect that"
+                             " PATH contains subdirectories for one or more"
+                             " possible categories")
     parser.add_argument("--templateKey", metavar="TYPE=KEY", action="append",
                         help="set template substitution key for specified"
-                            " template (default key: 'TemplateKey')")
+                             " template (default key: 'TemplateKey')")
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files (default: '.')")
     args = parser.parse_args()
