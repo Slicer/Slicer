@@ -21,19 +21,22 @@ _yesno = {
   "n": False,
 }
 
-try:
-  _width = int(os.environ['COLUMNS']) - 1
-except:
-  _width = 79
-
 _logLevel = None
 
 #=============================================================================
 class _LogWrapFormatter(logging.Formatter):
   #---------------------------------------------------------------------------
+  def __init__(self):
+    super(_LogWrapFormatter, self).__init__()
+    try:
+      self._width = int(os.environ['COLUMNS']) - 1
+    except:
+      self._width = 79
+
+  #---------------------------------------------------------------------------
   def format(self, record):
-    text = super(_LogWrapFormatter, self).format(record)
-    return "\n".join([textwrap.fill(l, _width) for l in text.split("\n")])
+    lines = super(_LogWrapFormatter, self).format(record).split("\n")
+    return "\n".join([textwrap.fill(l, self._width) for l in lines])
 
 #=============================================================================
 class _LogReverseLevelFilter(logging.Filter):
