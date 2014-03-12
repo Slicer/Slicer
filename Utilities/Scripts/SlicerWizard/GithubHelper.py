@@ -7,6 +7,8 @@ import subprocess
 from github import Github
 from github.GithubObject import NotSet
 
+from urlparse import urlparse
+
 #-----------------------------------------------------------------------------
 def getPassword(prompt):
   try:
@@ -41,12 +43,35 @@ def logIn(repo):
   return Github(user, password)
 
 #-----------------------------------------------------------------------------
-def getRepo(session, name):
+def getRepo(session, name=None, url=None):
   try:
-    return session.get_repo(name)
+    # Look up repository by name
+    if name is not None:
+      return session.get_repo(name)
+
+    # Look up repository by clone URL
+    if url is not None:
+      # Parse URL
+      url = urlparse(url)
+
+      # Check that this is a github URL
+      if not url.hostname.endswith("github.com"):
+        return None
+
+      # Get repository name from clone URL
+      name = url.path
+      if name.startswith("/"):
+        name = name[1:]
+      if name.endswith(".git"):
+        name = name[:-4]
+
+      # Look up repository by name
+      return getRepo(session, name=name)
 
   except:
-    return None
+    pass
+
+  return None
 
 #-----------------------------------------------------------------------------
 def getFork(user, upstream, create=False):

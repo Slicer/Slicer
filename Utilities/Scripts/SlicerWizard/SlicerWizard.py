@@ -211,7 +211,7 @@ class SlicerWizard(object):
       # Get (or create) the user's fork of the extension index
       logging.info("obtaining github repository information")
       gh = GithubHelper.logIn(r)
-      upstreamRepo = GithubHelper.getRepo(gh, "Slicer/ExtensionsIndex")
+      upstreamRepo = GithubHelper.getRepo(gh, name="Slicer/ExtensionsIndex")
       if upstreamRepo is None:
         die("error accessing extension index upstream repository")
 
