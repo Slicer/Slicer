@@ -86,4 +86,4 @@ class ExtensionDescription(object):
   def write(self, path):
     with open(path, "w") as fp:
       for key in sorted(self.__dict__):
-        fp.write("%s %s\n" % (key, getattr(self, key)))
+        fp.write(("%s %s" % (key, getattr(self, key))).strip() + "\n")
