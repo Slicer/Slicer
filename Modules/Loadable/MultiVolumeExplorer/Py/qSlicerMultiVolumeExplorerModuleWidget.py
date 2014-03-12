@@ -614,9 +614,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
     else:
       self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
-    plot = self.__chart.AddPlot(0)
-    plot.SetInput(self.__chartTable, 0, 1)
     if useFg:
-      fgplot = self.__chart.AddPlot(0)
+      plot = self.__chart.AddPlot(vtk.vtkChart.POINTS)
+      plot.SetInput(self.__chartTable, 0, 1)
+      fgplot = self.__chart.AddPlot(vtk.vtkChart.LINE)
       fgplot.SetInput(fgChartTable, 0, 1)
+    else:
+      plot = self.__chart.AddPlot(vtk.vtkChart.LINE)
+      plot.SetInput(self.__chartTable, 0, 1)
     # seems to update only after another plot?..
