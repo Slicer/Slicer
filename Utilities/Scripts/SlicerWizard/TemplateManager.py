@@ -82,15 +82,14 @@ class TemplateManager(object):
   def copyTemplate(self, destination, category, kind, name):
     templates = self._paths[category]
     if not kind.lower() in templates:
-      print("'%s' is not a known extension template" % kind)
-      exit()
+      raise KeyError("'%s' is not a known extension template" % kind)
+
     kind = kind.lower()
 
     destination = os.path.join(destination, name)
     if os.path.exists(destination):
-      print("create %s: refusing to overwrite existing directory '%s'" \
-            % (category, destination))
-      exit()
+      raise IOError("create %s: refusing to overwrite"
+                    " existing directory '%s'" % (category, destination))
 
     template = templates[kind]
     key = self._getKey(kind)

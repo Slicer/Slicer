@@ -3,7 +3,9 @@
 import argparse
 import os
 import re
+import sys
 
+from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 
 _argValueFormats = {
@@ -21,9 +23,11 @@ class TemporaryBool(object):
     self._attr = attr
     self._oldValue = bool(getattr(obj, attr))
     self._newValue = value
+
   #---------------------------------------------------------------------------
   def __enter__(self):
     setattr(self._obj, self._attr, self._newValue)
+
   #---------------------------------------------------------------------------
   def __exit__(self, exc_type, exc_value, traceback):
     setattr(self._obj, self._attr, self._oldValue)
@@ -64,48 +68,23 @@ class SlicerWizard(object):
     self._templateManager = TemplateManager()
 
   #---------------------------------------------------------------------------
-  def _addModuleToScript(self, name, contents):
-    contents = "\n" + contents
-    pat = "%sadd_subdirectory(%s)\n"
-
-    # Try to insert before placeholder
-    m = self._reModuleInsertPlaceholder.search(contents)
-    if m is not None:
-      return contents[1:m.start()] + \
-            pat % (m.group(1), name) + \
-            contents[m.start():]
-
-    # No? Try to insert after last add_subdirectory
-    for m in self._reAddSubdirectory.finditer(contents):
-      pass
-
-    if m is not None:
-      print m.groups(), m.start(), m.end()
-      return contents[1:m.end()] + \
-            pat % (m.group(1), name) + \
-            contents[m.end():]
-
-    # Still no? Oh, dear...
-    print("failed to find insertion point for module"
-          " in parent CMakeLists.txt")
-    exit()
-
-  #---------------------------------------------------------------------------
   def _addModuleToProject(self, path, name):
-    cmakeFile = os.path.join(path, "CMakeLists.txt")
-    if not os.path.exists(cmakeFile):
-      print("failed to add module to project '%s': no CMakeLists.txt found" %
-            path)
-      exit()
+    try:
+      p = ExtensionProject(path)
+      p.addModule(name)
 
-    with open(cmakeFile) as fp:
-      contents = fp.read()
-    with open(cmakeFile, "w") as fp:
-      fp.write(self._addModuleToScript(name, contents))
+    except:
+      print("failed to add module to project '%s': %s" %
+            (path, sys.exc_info()[1]))
+      exit()
 
   #---------------------------------------------------------------------------
   def _copyTemplate(self, args, *pargs):
-    return self._templateManager.copyTemplate(args.destination, *pargs)
+    try:
+      return self._templateManager.copyTemplate(args.destination, *pargs)
+    except:
+      print(sys.exc_info()[1])
+      exit()
 
   #---------------------------------------------------------------------------
   def createExtension(self, args, name, kind="default"):
