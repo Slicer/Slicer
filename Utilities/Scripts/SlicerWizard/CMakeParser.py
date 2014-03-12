@@ -183,11 +183,9 @@ class CMakeScript(object):
   _reWhitespace = re.compile(r"\s")
   _reCommand = re.compile(r"([" + string.letters + r"]\w*)(\s*\()")
   _reComment = re.compile(r"#(\[=*\[)?")
-  _reExpansion = re.compile(r"[$](?:ENV)?[{]")
-  _reVariable = re.compile(r"[\w/.+-]+")
   _reQuote = re.compile("\"")
   _reBracketQuote = re.compile(r"\[=*\[")
-  _reEscape = re.compile(r"\\[\\\"n$]")
+  _reEscape = re.compile(r"\\[\\\"nrt$ ]")
 
   #---------------------------------------------------------------------------
   def __init__(self, content):
@@ -242,9 +240,6 @@ class CMakeScript(object):
 
   #---------------------------------------------------------------------------
   def _chomp(self):
-    if self._is(self._reExpansion):
-      return self._chompExpansion(self._match.group(0))
-
     result = self._content[0]
     self._content = self._content[1:]
     return result
@@ -277,31 +272,6 @@ class CMakeScript(object):
         result += self._chomp()
 
     raise EOFError("unexpected EOF while parsing string (expected %r)" % end)
-
-  #---------------------------------------------------------------------------
-  def _chompExpansion(self, start):
-    result = start
-    self._content = self._content[len(start):]
-
-    while len(self._content):
-      if self._content[0] == "}":
-        self._content = self._content[1:]
-        return result + "}"
-
-      if self._is(self._reExpansion):
-        result += self._chompExpansion(self._match.group(0))
-        continue
-
-      m = self._reVariable.match(self._content)
-      if m is not None:
-        result += m.group(0)
-        self._content = self._content[m.end():]
-        continue
-
-      raise SyntaxError("syntax error in expansion: expected '}', found %r" %
-                        self._content[0])
-
-    raise EOFError("unexpected EOF while parsing expansion (expected '}')")
 
   #---------------------------------------------------------------------------
   def _parseArgument(self, indent):
