@@ -25,6 +25,8 @@ sourcePatterns = [
 argValueFormats = {
   "addModule": "TYPE:NAME",
   "createExtension": "[TYPE:]NAME",
+  "templateKey": "TYPE=KEY",
+  "templatePath": "[CATEGORY=]PATH",
 }
 
 templateCategories = [
@@ -33,6 +35,7 @@ templateCategories = [
 ]
 
 templatePaths = {}
+templateKeys = {}
 
 reModuleInsertPlaceholder = re.compile("(?<=\n)([ \t]*)## NEXT_MODULE")
 reAddSubdirectory = \
@@ -47,12 +50,12 @@ def isSourceFile(name):
   return False
 
 #-----------------------------------------------------------------------------
-def isTemplateCategory(name, categories, relPath):
+def isTemplateCategory(name, relPath):
   if not os.path.isdir(os.path.join(relPath, name)):
     return False
 
   name = name.lower()
-  return name in categories and name in templateCategories
+  return name in templateCategories
 
 #-----------------------------------------------------------------------------
 def listSources(directory):
@@ -83,6 +86,7 @@ def copyTemplate(args, category, kind, name):
   if not kind.lower() in templates:
     print("'%s' is not a known extension template" % kind)
     exit()
+  kind = kind.lower()
 
   destination = os.path.join(args.destination, name)
   if os.path.exists(destination):
@@ -90,8 +94,11 @@ def copyTemplate(args, category, kind, name):
           % (category, destination))
     exit()
 
-  template = templates[kind.lower()]
-  key = "TemplateKey" # TODO allow user key
+  template = templates[kind]
+  if kind in templateKeys:
+    key = templateKeys[kind]
+  else:
+    key = "TemplateKey"
 
   print("copy template '%s' to '%s', replacing '%s' -> '%s'" %
         (template, destination, key, name))
@@ -111,14 +118,14 @@ def addTemplateCategoryPaths(category, path):
       templatePaths[category][entry.lower()] = entryPath
 
 #-----------------------------------------------------------------------------
-def addTemplatePaths(categories, basePath):
+def addTemplatePaths(basePath):
   if not os.path.exists(basePath):
     return
 
   basePath = os.path.realpath(basePath)
 
   for entry in os.listdir(basePath):
-    if isTemplateCategory(entry, categories, basePath):
+    if isTemplateCategory(entry, basePath):
       addTemplateCategoryPaths(entry.lower(), os.path.join(basePath, entry))
 
 #-----------------------------------------------------------------------------
@@ -215,6 +222,7 @@ class WizardHelpFormatter(argparse.HelpFormatter):
 #-----------------------------------------------------------------------------
 def main():
 
+  # Set up arguments
   parser = argparse.ArgumentParser(description="Slicer Wizard",
                                    formatter_class=WizardHelpFormatter)
   parser.add_argument("--addModule", action="append",
@@ -226,23 +234,74 @@ def main():
                            " under the destination directory;"
                            " any modules are added to the new extension"
                            " (default type: 'default')")
+  parser.add_argument("--templatePath", action="append",
+                      help="add additional template path for specified"
+                           " template category; if no category, expect that"
+                           " PATH contains subdirectories for one or more"
+                           " possible categories")
+  parser.add_argument("--templateKey", action="append",
+                      help="set template substitution key for specified"
+                           " template (default key: 'TemplateKey')")
   parser.add_argument("destination", default=os.getcwd(), nargs="?",
                       help="location of output files (default: '.')")
   args = parser.parse_args()
 
+  # Add built-in templates
   scriptPath = os.path.dirname(os.path.realpath(__file__))
-  addTemplatePaths(templateCategories,
-                   os.path.join(scriptPath, "..", "Templates"))
+  addTemplatePaths(os.path.join(scriptPath, "..", "Templates"))
 
+  # Add user-specified template paths
+  if args.templatePath is not None:
+    for tp in args.templatePath:
+      tpParts = tp.split("=", 1)
+
+      if len(tpParts) == 1:
+        if not os.path.exists(tp):
+          print("template path '%s' does not exist" % tp)
+          exit()
+        if not os.path.isdir(tp):
+          print("template path '%s' is not a directory" % tp)
+          exit()
+
+        addTemplatePaths(tp)
+
+      else:
+        if tpParts[0].lower() not in templateCategories:
+          print("'%s' is not a recognized template category" % tpParts[0])
+          print("recognized categories: %s" % ", ".join(templateCategories))
+          exit()
+
+        if not os.path.exists(tpParts[1]):
+          print("template path '%s' does not exist" % tpParts[1])
+          exit()
+        if not os.path.isdir(tpParts[1]):
+          print("template path '%s' is not a directory" % tpParts[1])
+          exit()
+
+        addTemplateCategoryPaths(tpParts[0].lower(),
+                                 os.path.realpath(tpParts[1]))
+
+  # Set user-specified template keys
+  if args.templateKey is not None:
+    for tk in args.templateKey:
+      tkParts = tk.split("=")
+      if len(tkParts) != 2:
+        print("template key '%s' malformatted: expected 'NAME=KEY'" % tk)
+        exit()
+      templateKeys[tkParts[0]] = tkParts[1]
+
+  # Check that we have something to do
   if args.createExtension is None and args.addModule is None:
     print("no action was requested!")
     exit()
 
+  # Create requested extensions
   if args.createExtension is not None:
     extArgs = args.createExtension.split(":")
     extArgs.reverse()
     createExtension(args, *extArgs)
 
+  # Create requested modules
   if args.addModule is not None:
     for module in args.addModule:
       addModule(args, *module.split(":"))
