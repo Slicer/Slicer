@@ -39,3 +39,22 @@ def logIn(repo):
   password = getPassword("Github password for '%s': " % user)
 
   return Github(user, password)
+
+#-----------------------------------------------------------------------------
+def getRepo(session, name):
+  try:
+    return session.get_repo(name)
+
+  except:
+    return None
+
+#-----------------------------------------------------------------------------
+def getFork(user, upstream, create=False):
+  for repo in user.get_repos():
+    if repo.fork and repo.parent.url == upstream.url:
+      return repo
+
+  if create:
+    return user.create_fork(upstream)
+
+  return None

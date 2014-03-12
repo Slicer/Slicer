@@ -5,9 +5,11 @@ import git
 import os
 import re
 import sys
+import textwrap
 
 from . import GithubHelper
 
+from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
 from .GithubHelper import NotSet
 from .TemplateManager import TemplateManager
@@ -149,23 +151,136 @@ class SlicerWizard(object):
       die("failed to publish extension: %s" % sys.exc_info()[1])
 
   #---------------------------------------------------------------------------
+  def _extensionIndexCommitMessage(self, name, description, update):
+    args = description.__dict__
+    args["name"] = name
+
+    if update:
+      template = textwrap.dedent("""\
+        ENH: Update %(name)s extension
+
+        This updates the %(name)s extension to %(scmrevision)s.
+        """)
+      paragraphs = (template % args).split("\n")
+      return "\n".join([textwrap.fill(p, width=76) for p in paragraphs])
+
+    else:
+      template = textwrap.dedent("""\
+        ENH: Add %(name)s extension
+
+        Description:
+        %(description)s
+
+        Contributors:
+        %(contributors)s
+        """)
+
+      for key in args:
+        args[key] = textwrap.fill(args[key], width=72)
+
+      return template % args
+
+  #---------------------------------------------------------------------------
+  def submitExtension(self, args):
+    try:
+      r = getRepo(args.destination)
+      if r is None:
+        die("extension repository not found")
+
+      xd = ExtensionDescription(r)
+      name = ExtensionProject(r.working_tree_dir).project()
+
+      # Validate that extension has a SCM URL
+      if xd.scmurl == "NA":
+        raise Exception("extension 'scmurl' is not set")
+
+      # Get (or create) the user's fork of the extension index
+      gh = GithubHelper.logIn(r)
+      upstreamRepo = GithubHelper.getRepo(gh, "Slicer/ExtensionsIndex")
+      if upstreamRepo is None:
+        die("error accessing extension index upstream repository")
+
+      forkedRepo = GithubHelper.getFork(user=gh.get_user(), create=True,
+                                        upstream=upstreamRepo)
+
+      # Get or create extension index repository
+      if args.index is not None:
+        xip = args.index
+      else:
+        xip = os.path.join(r.git_dir, "extension-index")
+
+      xiRepo = getRepo(xip)
+
+      if xiRepo is None:
+        xiRepo = getRepo(xip, create=createEmptyRepo)
+        xiRemote = getRemote(xiRepo, [forkedRepo.clone_url], create="origin")
+
+      else:
+        # Check that the index repository is a clone of the github fork
+        xiRemote = [forkedRepo.clone_url, forkedRepo.git_url]
+        xiRemote = getRemote(xiRepo, xiRemote)
+        if xiRemote is None:
+          raise Exception("the extension index repository ('%s')"
+                          " is not a clone of %s" %
+                          (xiRepo.working_tree_dir, forkedRepo.clone_url))
+
+      # Find or create the upstream remote for the index repository
+      xiUpstream = [upstreamRepo.clone_url, upstreamRepo.git_url]
+      xiUpstream = getRemote(xiRepo, xiUpstream, create="upstream")
+
+      # Check that the index repository is clean
+      if xiRepo.is_dirty():
+        raise Exception("the extension index repository ('%s') is dirty" %
+                        xiRepo.working_tree_dir)
+
+      # Update the index repository and get the base branch
+      xiRepo.git.fetch(xiUpstream)
+      if not args.target in xiUpstream.refs:
+        die("target branch '%s' does not exist" % args.target)
+
+      xiBase = xiUpstream.refs[args.target]
+
+      # Determine if this is an addition or update to the index
+      xdf = name + ".s4ext"
+      if xdf in xiBase.commit.tree:
+        branch = 'update-%s' % name
+        update = True
+      else:
+        branch = 'add-%s' % name
+        update = False
+
+      xiRepo.git.checkout(xiBase, B=branch)
+
+      # Write the extension description and prepare to commit
+      xd.write(os.path.join(xiRepo.working_tree_dir, xdf))
+      xiRepo.index.add([xdf])
+
+      # Commit and push the new/updated extension description
+      xiRepo.index.commit(self._extensionIndexCommitMessage(name, xd,
+                                                            update=update))
+      xiRemote.push("+%s" % branch)
+
+    except SystemExit:
+      raise
+    except:
+      if args.debug: raise
+      die("failed to register extension: %s" % sys.exc_info()[1])
+
+  #---------------------------------------------------------------------------
   def execute(self):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
                                     formatter_class=WizardHelpFormatter)
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--addModule", metavar="TYPE:NAME", action="append",
-                        help="add new TYPE module NAME to an existing project"
-                             " in the destination directory;"
-                             " may use more than once")
     parser.add_argument("--createExtension", metavar="<TYPE:>NAME",
                         help="create TYPE extension NAME"
                              " under the destination directory;"
                              " any modules are added to the new extension"
                              " (default type: 'default')")
-    parser.add_argument("--publishExtension", action="store_true",
-                        help="publish the extension in the destination"
-                             " directory to github (account required)")
+    parser.add_argument("--addModule", metavar="TYPE:NAME", action="append",
+                        help="add new TYPE module NAME to an existing project"
+                             " in the destination directory;"
+                             " may use more than once")
     parser.add_argument("--templatePath", metavar="<CATEGORY=>PATH",
                         action="append",
                         help="add additional template path for specified"
@@ -178,8 +293,22 @@ class SlicerWizard(object):
     parser.add_argument("--listTemplates", action="store_true",
                         help="show list of available templates"
                              " and associated substitution keys")
+    parser.add_argument("--publishExtension", action="store_true",
+                        help="publish the extension in the destination"
+                             " directory to github (account required)")
+    parser.add_argument("--submitExtension", action="store_true",
+                        help="register or update a compiled extension with the"
+                             " extension index (github account required)")
+    parser.add_argument("--target", metavar="VERSION", default="master",
+                        help="version of Slicer for which the extension"
+                             " is intended (default='master')")
+    parser.add_argument("--index", metavar="PATH",
+                        help="location for the extension index clone"
+                             " (default: private directory"
+                             " in the extension clone)")
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
-                        help="location of output files (default: '.')")
+                        help="location of output files / extension source"
+                             " (default: '.')")
     args = parser.parse_args()
 
     # Add built-in templates
@@ -213,6 +342,11 @@ class SlicerWizard(object):
     # Publish extension if requested
     if args.publishExtension:
       self.publishExtension(args)
+      acted = True
+
+    # Submit extension if requested
+    if args.submitExtension:
+      self.submitExtension(args)
       acted = True
 
     # Check that we did something

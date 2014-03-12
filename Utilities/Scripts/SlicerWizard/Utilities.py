@@ -53,10 +53,49 @@ def inquire(msg, choices=_yesno):
       pass
 
 #-----------------------------------------------------------------------------
-def getRepo(path):
+def createEmptyRepo(path):
+  # Create a repository at the specified location
+  if os.path.exists(path) and len(os.listdir(path)):
+    raise Exception("refusing to create repository in non-empty directory")
+
+  os.makedirs(path)
+  return git.Repo.init(path)
+
+#-----------------------------------------------------------------------------
+def getRepo(path, clone=None, create=False):
+  # Try to obtain repository
   try:
-    r = git.Repo(path)
-    return r
+    repo = git.Repo(path)
+    return repo
 
   except:
+    # Specified path is not a git repository; create it if requested or
+    # return None
+    if create:
+      if callable(create):
+        return create(path)
+
+      else:
+        return git.Repo.init(path)
+
     return None
+
+#-----------------------------------------------------------------------------
+def getRemote(repo, urls, create=None):
+  urls = list(urls)
+
+  for remote in repo.remotes:
+    if remote.url in urls:
+      return remote
+
+  if create is not None:
+    if not isinstance(create, str):
+      raise TypeError("name of remote to create must be a string")
+
+    if hasattr(repo.remotes, create):
+      raise Exception("cannot create remote '%s':"
+                      " a remote with that name already exists" % create)
+
+    return repo.create_remote(create, urls[0])
+
+  return None
