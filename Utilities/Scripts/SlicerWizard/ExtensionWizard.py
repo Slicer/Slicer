@@ -1,5 +1,4 @@
 import argparse
-import git
 import logging
 import os
 import re
@@ -8,11 +7,20 @@ import textwrap
 
 from urlparse import urlparse
 
-from . import GithubHelper
+try:
+  import git
+
+  from . import GithubHelper
+
+  from .GithubHelper import NotSet
+
+  _haveGit = True
+
+except ImportError:
+  _haveGit = False
 
 from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
-from .GithubHelper import NotSet
 from .TemplateManager import TemplateManager
 from .Utilities import *
 from .WizardHelpFormatter import WizardHelpFormatter
@@ -541,22 +549,26 @@ class ExtensionWizard(object):
     parser.add_argument("--describe", action="store_true",
                         help="print the extension description (s4ext)"
                              " to standard output")
-    parser.add_argument("--publish", action="store_true",
-                        help="publish the extension in the destination"
-                             " directory to github (account required)")
-    parser.add_argument("--contribute", action="store_true",
-                        help="register or update a compiled extension with the"
-                             " extension index (github account required)")
-    parser.add_argument("--target", metavar="VERSION", default="master",
-                        help="version of Slicer for which the extension"
-                             " is intended (default='master')")
-    parser.add_argument("--index", metavar="PATH",
-                        help="location for the extension index clone"
-                             " (default: private directory"
-                             " in the extension clone)")
+
+    if _haveGit:
+      parser.add_argument("--publish", action="store_true",
+                          help="publish the extension in the destination"
+                               " directory to github (account required)")
+      parser.add_argument("--contribute", action="store_true",
+                          help="register or update a compiled extension with"
+                               " the extension index (github account required)")
+      parser.add_argument("--target", metavar="VERSION", default="master",
+                          help="version of Slicer for which the extension"
+                               " is intended (default='master')")
+      parser.add_argument("--index", metavar="PATH",
+                          help="location for the extension index clone"
+                               " (default: private directory"
+                               " in the extension clone)")
+
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files / extension source"
                              " (default: '.')")
+
     args = parser.parse_args(args)
     initLogging(logging.getLogger(), args)
 
