@@ -34,10 +34,11 @@ class ExtensionWizard(object):
   :func:`.GithubHelper.logIn` to authenticate.
 
   .. 'note' directive needs '\' to span multiple lines!
-  .. note:: Most methods will signal the application to exit if something goes \
-            wrong. This behavior is hidden by the :meth:`.execute` method when \
-            passing ``exit=False``; callers that need to continue execution \
-            after calling one of the other methods directly should catch \
+  .. note:: Most methods will signal the application to exit if \
+            something goes wrong. This behavior is hidden by the \
+            :meth:`~ExtensionWizard.execute` method when  passing \
+            ``exit=False``; callers that need to continue execution after \
+            calling one of the other methods directly should catch \
             :exc:`~exceptions.SystemExit`.
   """
 
