@@ -84,6 +84,9 @@ class SlicerWizard(object):
     parser.add_argument("--templateKey", metavar="TYPE=KEY", action="append",
                         help="set template substitution key for specified"
                              " template (default key: 'TemplateKey')")
+    parser.add_argument("--listTemplates", action="store_true",
+                        help="show list of available templates"
+                             " and associated substitution keys")
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
                         help="location of output files (default: '.')")
     args = parser.parse_args()
@@ -96,19 +99,28 @@ class SlicerWizard(object):
     # Add user-specified template paths and keys
     self._templateManager.parseArguments(args)
 
-    # Check that we have something to do
-    if args.createExtension is None and args.addModule is None:
-      print("no action was requested!\n")
-      parser.print_usage()
-      exit()
+    acted = False
+
+    # List available templates
+    if args.listTemplates:
+      self._templateManager.listTemplates()
+      acted = True
 
     # Create requested extensions
     if args.createExtension is not None:
       extArgs = args.createExtension.split(":")
       extArgs.reverse()
       self.createExtension(args, *extArgs)
+      acted = True
 
     # Create requested modules
     if args.addModule is not None:
       for module in args.addModule:
         self.addModule(args, *module.split(":"))
+      acted = True
+
+    # Check that we did something
+    if not acted:
+      print("no action was requested!\n")
+      parser.print_usage()
+      exit()

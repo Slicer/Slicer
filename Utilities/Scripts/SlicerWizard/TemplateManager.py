@@ -120,6 +120,20 @@ class TemplateManager(object):
         self.addCategoryPath(entry.lower(), os.path.join(basePath, entry))
 
   #---------------------------------------------------------------------------
+  def listTemplates(self):
+    for c in _templateCategories:
+      print("Available templates for category '%s':" % c)
+
+      if len(self._paths[c]):
+        for t in self._paths[c]:
+          print("  '%s' ('%s')" % (t, self._getKey(t)))
+
+      else:
+        print("  (none)")
+
+      print("")
+
+  #---------------------------------------------------------------------------
   def parseArguments(self, args):
     # Add user-specified template paths
     if args.templatePath is not None:
