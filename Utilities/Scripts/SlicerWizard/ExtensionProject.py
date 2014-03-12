@@ -29,6 +29,7 @@ class ExtensionProject(object):
       self._scriptContents = CMakeParser.CMakeScript(fp.read())
 
   #---------------------------------------------------------------------------
+  @property
   def project(self):
     for t in self._scriptContents.tokens:
       if _isCommand(t, "project") and len(t.arguments):

@@ -126,7 +126,7 @@ class ExtensionWizard(object):
     try:
       # Get extension name
       p = ExtensionProject(args.destination)
-      name = p.project()
+      name = p.project
       logging.debug("extension name: '%s'", name)
 
       # Create github remote
@@ -212,7 +212,7 @@ class ExtensionWizard(object):
         die("extension repository not found")
 
       xd = ExtensionDescription(repo=r)
-      name = ExtensionProject(r.working_tree_dir).project()
+      name = ExtensionProject(r.working_tree_dir).project
       logging.debug("extension name: '%s'", name)
 
       # Validate that extension has a SCM URL
