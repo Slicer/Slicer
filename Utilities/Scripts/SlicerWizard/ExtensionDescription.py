@@ -6,10 +6,48 @@ from .ExtensionProject import ExtensionProject
 
 #=============================================================================
 class ExtensionDescription(object):
+  """Representation of an extension description.
+
+  This class provides a Python object representation of an extension
+  description. The extension information is made available as attributes on the
+  object. The "well known" attributes are described
+  :wikidoc:`Developers/Extensions/DescriptionFile here`. Custom attributes may
+  be added with :func:`setattr`. Attributes may be removed with :func:`delattr`
+  or the :meth:`.clear` method.
+  """
+
   _reParam = re.compile(r"([a-zA-Z][a-zA-Z0-9_]*)\s+(.+)")
 
   #---------------------------------------------------------------------------
   def __init__(self, repo=None, filepath=None, sourcedir=None):
+    """
+    :param repo:
+      Extension repository from which to create the description.
+    :type repo:
+      :class:`git.Repo <git:git.repo.base.Repo>`,
+      :class:`.Subversion.Repository` or ``None``.
+    :param filepath:
+      Path to an existing ``.s4ext`` to read.
+    :type filepath:
+      :class:`basestring` or ``None``.
+    :param sourcedir:
+      Path to an extension source directory.
+    :type sourcedir:
+      :class:`basestring` or ``None``.
+
+    :raises:
+      * :exc:`~exceptions.KeyError` if the extension description is missing a
+        required attribute.
+      * :exc:`~exceptions.Exception` if there is some other problem
+        constructing the description.
+
+    The description may be created from a repository instance (in which case
+    the description repository information will be populated), a path to the
+    extension source directory, or a path to an existing ``.s4ext`` file.
+    No more than one of ``repo``, ``filepath`` or ``sourcedir`` may be given.
+    If none are provided, the description will be incomplete.
+    """
+
     args = (repo, filepath, sourcedir)
     if args.count(None) < len(args) - 1:
       raise Exception("cannot construct %s: only one of"
@@ -124,8 +162,18 @@ class ExtensionDescription(object):
       setattr(self, name, v)
 
   #---------------------------------------------------------------------------
-  def clear(self):
-    for key in self.__dict__:
+  def clear(self, attr=None):
+    """Remove attributes from the extension description.
+
+    :param attr: Name of attribute to remove.
+    :type attr: :class:`str` or ``None``
+
+    If ``attr`` is not ``None``, this removes the specified attribute from the
+    description object, equivalent to calling ``delattr(instance, attr)``. If
+    ``attr`` is ``None``, all attributes are removed.
+    """
+
+    for key in self.__dict__.keys() if attr is None else (attr,):
       delattr(self, key)
 
   #---------------------------------------------------------------------------
@@ -137,6 +185,20 @@ class ExtensionDescription(object):
 
   #---------------------------------------------------------------------------
   def read(self, path):
+    """Read extension description from directory.
+
+    :param path: Directory containing extension description.
+    :type path: :class:`basestring`
+
+    :raises:
+      :exc:`~exceptions.IOError` if ``path`` does not contain exactly one
+      extension description file.
+
+    This attempts to read an extension description from the specified ``path``
+    which contains a single extension description (``.s4ext``) file (usually an
+    extension build directory).
+    """
+
     self.clear()
 
     descriptionFiles = glob.glob(os.path.join(path, "*.[Ss]4[Ee][Xx][Tt]"))
@@ -156,7 +218,17 @@ class ExtensionDescription(object):
 
   #---------------------------------------------------------------------------
   def write(self, out):
-    if isinstance(out, file):
+    """Write extension description to a file or stream.
+
+    :param out: Stream or path to which to write the description.
+    :type out: :class:`~io.IOBase` or :class:`basestring`
+
+    This writes the extension description to the specified file path or stream
+    object. This is suitable for producing a ``.s4ext`` file from a description
+    object.
+    """
+
+    if hasattr(out, "write") and callable(out.write):
       self._write(out)
 
     else:

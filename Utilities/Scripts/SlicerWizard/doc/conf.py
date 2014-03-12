@@ -16,6 +16,9 @@ import sys
 
 import sphinx
 
+from docutils import nodes, utils
+from docutils.parsers.rst import roles
+
 from sphinx.ext import autodoc
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -24,6 +27,23 @@ from sphinx.ext import autodoc
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
 # -- Site customizations -------------------------------------------------------
+
+class WikidocRole(object):
+  wiki_root = 'http://wiki.slicer.org/slicerWiki/index.php'
+  wiki_doc_version = 'Nightly' # TODO somehow get appropriate version
+
+  def __call__(self, role, rawtext, text, lineno, inliner,
+               options={}, content=[]):
+
+    roles.set_classes(options)
+
+    parts = utils.unescape(text).split(' ', 1)
+    uri = '%s/Documentation/%s/%s' % (self.wiki_root, self.wiki_doc_version,
+                                      parts[0])
+    text = parts[1]
+
+    node = nodes.reference(rawtext, text, refuri=uri, **options)
+    return [node], []
 
 class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
   def resolve_name(self, *args):
@@ -35,6 +55,7 @@ class ClassModuleClassDocumenter(autodoc.ClassDocumenter):
 
 def setup(app):
   app.add_autodocumenter(ClassModuleClassDocumenter)
+  app.add_role('wikidoc', WikidocRole())
 
 autoclass_content = 'both'
 autodoc_member_order = 'groupwise'
