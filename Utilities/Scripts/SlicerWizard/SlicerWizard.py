@@ -8,53 +8,17 @@ import sys
 from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 
-_argValueFormats = {
-  "addModule": "TYPE:NAME",
-  "createExtension": "[TYPE:]NAME",
-  "templateKey": "TYPE=KEY",
-  "templatePath": "[CATEGORY=]PATH",
-}
-
-#=============================================================================
-class TemporaryBool(object):
-  #---------------------------------------------------------------------------
-  def __init__(self, obj, attr, value):
-    self._obj = obj
-    self._attr = attr
-    self._oldValue = bool(getattr(obj, attr))
-    self._newValue = value
-
-  #---------------------------------------------------------------------------
-  def __enter__(self):
-    setattr(self._obj, self._attr, self._newValue)
-
-  #---------------------------------------------------------------------------
-  def __exit__(self, exc_type, exc_value, traceback):
-    setattr(self._obj, self._attr, self._oldValue)
 
 #=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
   #---------------------------------------------------------------------------
-  def __init__(self, *args, **kwargs):
-    super(WizardHelpFormatter, self).__init__(*args, **kwargs)
-    self._splitWorkaround = False
+  def _format_action_invocation(self, *args):
+    text = super(WizardHelpFormatter, self)._format_action_invocation(*args)
+    return text.replace("<", "[").replace(">", "]")
 
   #---------------------------------------------------------------------------
-  def _metavar_formatter(self, action, default_metavar):
-    if action.dest in _argValueFormats:
-      default_metavar = _argValueFormats[action.dest]
-      if self._splitWorkaround:
-        default_metavar = default_metavar.replace("[", "<").replace("]", ">")
-
-    return super(WizardHelpFormatter, self)._metavar_formatter(action,
-                                                               default_metavar)
-
-  #---------------------------------------------------------------------------
-  def _format_usage(self, usage, actions, groups, prefix):
-    with TemporaryBool(self, "_splitWorkaround", True):
-      text = super(WizardHelpFormatter, self)._format_usage(usage, actions,
-                                                            groups, prefix)
-
+  def _format_usage(self, *args):
+    text = super(WizardHelpFormatter, self)._format_usage(*args)
     return text.replace("<", "[").replace(">", "]")
 
 #=============================================================================
@@ -102,21 +66,22 @@ class SlicerWizard(object):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
                                     formatter_class=WizardHelpFormatter)
-    parser.add_argument("--addModule", action="append",
+    parser.add_argument("--addModule", metavar="TYPE:NAME", action="append",
                         help="add new TYPE module NAME to an existing project"
                             " in the destination directory;"
                             " may use more than once")
-    parser.add_argument("--createExtension",
-                        help="create extension NAME"
+    parser.add_argument("--createExtension", metavar="<TYPE:>NAME",
+                        help="create TYPE extension NAME"
                             " under the destination directory;"
                             " any modules are added to the new extension"
                             " (default type: 'default')")
-    parser.add_argument("--templatePath", action="append",
+    parser.add_argument("--templatePath", metavar="<CATEGORY=>PATH",
+                        action="append",
                         help="add additional template path for specified"
                             " template category; if no category, expect that"
                             " PATH contains subdirectories for one or more"
                             " possible categories")
-    parser.add_argument("--templateKey", action="append",
+    parser.add_argument("--templateKey", metavar="TYPE=KEY", action="append",
                         help="set template substitution key for specified"
                             " template (default key: 'TemplateKey')")
     parser.add_argument("destination", default=os.getcwd(), nargs="?",
@@ -133,7 +98,8 @@ class SlicerWizard(object):
 
     # Check that we have something to do
     if args.createExtension is None and args.addModule is None:
-      print("no action was requested!")
+      print("no action was requested!\n")
+      parser.print_usage()
       exit()
 
     # Create requested extensions
