@@ -176,6 +176,18 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     label = qt.QLabel('Number of frames for baseline calculation')
     self.groupLayout.addRow(label,self.baselineFrames)
 
+    self.xLogScaleCheckBox = qt.QCheckBox()
+    self.xLogScaleCheckBox.setChecked(0)
+    label = qt.QLabel('Use log scale for X axis')
+    self.groupLayout.addRow(self.xLogScaleCheckBox,label)
+    self.xLogScaleCheckBox.connect('stateChanged(int)', self.onXLogScaleRequested)
+
+    self.yLogScaleCheckBox = qt.QCheckBox()
+    self.yLogScaleCheckBox.setChecked(0)
+    label = qt.QLabel('Use log scale for Y axis')
+    self.groupLayout.addRow(self.yLogScaleCheckBox,label)
+    self.yLogScaleCheckBox.connect('stateChanged(int)', self.onYLogScaleRequested)
+
     plotSettingsFrameLayout.addWidget(self.groupWidget,2,0)
 
     # add chart container widget
@@ -191,6 +203,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__yArray.SetName('signal intensity')
     self.__chartTable.AddColumn(self.__xArray)
     self.__chartTable.AddColumn(self.__yArray)
+
+  def onXLogScaleRequested(self,checked):
+    self.__chart.GetAxis(1).SetLogScale(checked)
+
+  def onYLogScaleRequested(self,checked):
+    self.__chart.GetAxis(0).SetLogScale(checked)
 
   def onChartRequested(self):
     # iterate over the label image and collect the IJK for each label element
