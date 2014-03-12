@@ -246,10 +246,10 @@ class SlicerWizard(object):
       # Determine if this is an addition or update to the index
       xdf = name + ".s4ext"
       if xdf in xiBase.commit.tree:
-        branch = 'update-%s' % name
+        branch = 'update-%s-%s' % (name, args.target)
         update = True
       else:
-        branch = 'add-%s' % name
+        branch = 'add-%s-%s' % (name, args.target)
         update = False
 
       xiRepo.git.checkout(xiBase, B=branch)
