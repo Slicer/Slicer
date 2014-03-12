@@ -142,6 +142,8 @@ class SlicerWizard(object):
       remote = r.create_remote("origin", ghr.clone_url)
       remote.push(branch)
 
+    except SystemExit:
+      raise
     except:
       if args.debug: raise
       die("failed to publish extension: %s" % sys.exc_info()[1])
