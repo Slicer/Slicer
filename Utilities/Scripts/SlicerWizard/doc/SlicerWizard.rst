@@ -1,6 +1,8 @@
 SlicerWizard Package
 ====================
 
+.. automodule:: SlicerWizard
+
 :mod:`CMakeParser` Module
 -------------------------
 
