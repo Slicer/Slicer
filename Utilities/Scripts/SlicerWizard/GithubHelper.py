@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import git
 import os
 import subprocess
