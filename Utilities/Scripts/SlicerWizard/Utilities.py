@@ -1,4 +1,4 @@
-"""Helpers for interacting with |CLI| users and git."""
+"""Helpers for interacting with |CLI| users and |VCS| tools."""
 
 import argparse
 import git
@@ -16,6 +16,8 @@ __all__ = [
   'createEmptyRepo',
   'getRepo',
   'getRemote',
+  'localRoot',
+  'vcsPrivateDirectory',
 ]
 
 _yesno = {
@@ -237,20 +239,35 @@ def buildProcessArgs(*args, **kwargs):
   return result + ["%s" % a for a in args if a is not None]
 
 #-----------------------------------------------------------------------------
-def createEmptyRepo(path):
+def createEmptyRepo(path, tool=None):
   """Create a repository in an empty or non-existing location.
 
-  :param path: Location which should contain the newly created repository.
-  :type path: :class:`basestring`
+  :param path:
+    Location which should contain the newly created repository.
+  :type path:
+    :class:`basestring`
+  :param tool:
+    Name of the |VCS| tool to use to create the repository (e.g. ``'git'``). If
+    ``None``, a default tool (git) is used.
+  :type tool:
+    :class:`basestring` or ``None``
 
-  :raises: :exc:`~exceptions.Exception` if ``location`` exists and is not empty.
+  :raises:
+    :exc:`~exceptions.Exception` if ``location`` exists and is not empty, or if
+    the specified |VCS| tool is not supported.
 
-  This creates a new git repository at ``location``, first creating
-  ``location`` (and any parents) as necessary.
+  This creates a new repository using the specified ``tool`` at ``location``,
+  first creating ``location`` (and any parents) as necessary.
 
   This function is meant to be passed as the ``create`` argument to
   :func:`.getRepo`.
+
+  .. note:: Only ``'git'`` repositories are supported at this time.
   """
+
+  # Check that the requested tool is supported
+  if tool not in { None, "git" }:
+    raise Exception("unable to create %r repository" % tool)
 
   # Create a repository at the specified location
   if os.path.exists(path) and len(os.listdir(path)):
@@ -260,42 +277,70 @@ def createEmptyRepo(path):
   return git.Repo.init(path)
 
 #-----------------------------------------------------------------------------
-def getRepo(path, create=False):
+def getRepo(path, tool=None, create=False):
   """Obtain a git repository for the specified path.
 
   :param path: Path to the repository.
   :type path: :class:`basestring`
+  :param tool: Name of tool used to manage repository, e.g. ``'git'``.
+  :type tool: :class:`basestring` or ``None``
   :param create: See description.
   :type create: :class:`callable` or :class:`bool`
 
-  :returns: The repository instance, or ``None`` if no such repository exists.
-  :rtype: :class:`git.Repo <git:git.repo.base.Repo>` or ``None``.
+  :returns:
+    The repository instance, or ``None`` if no such repository exists.
+  :rtype:
+    :class:`git.Repo <git:git.repo.base.Repo>`, :class:`.Subversion.Repository`,
+    or ``None``.
 
-  This attempts to obtain a :class:`git.Repo <git:git.repo.base.Repo>` for the
-  specified ``path``. If ``create`` is callable, the specified function will be
-  called to create the repository if one does not exist. Otherwise if
-  ``bool(create)`` is ``True``, a repository is created using
-  :meth:`git.Repo.init <git:git.repo.base.Repo.init>`.
+  This attempts to obtain a repository for the specified ``path``. If ``tool``
+  is not ``None``, this will only look for a repository that is managed by the
+  specified ``tool``; otherwise, all supported repository types will be
+  considered.
+
+  If ``create`` is callable, the specified function will be called to create
+  the repository if one does not exist. Otherwise if ``bool(create)`` is
+  ``True``, and ``tool`` is either ``None`` or ``'git'``, a repository is
+  created using :meth:`git.Repo.init <git:git.repo.base.Repo.init>`. (Creation
+  of other repository types is only supported at this time via a callable
+  ``create``.)
 
   .. seealso:: :func:`.createEmptyRepo`
   """
 
-  # Try to obtain repository
-  try:
-    repo = git.Repo(path)
-    return repo
+  from . import Subversion
 
-  except:
-    # Specified path is not a git repository; create it if requested or
-    # return None
-    if create:
-      if callable(create):
-        return create(path)
+  # Try to obtain git repository
+  if tool in { None, "git" }:
+    try:
+      repo = git.Repo(path)
+      return repo
 
-      else:
-        return git.Repo.init(path)
+    except:
+      logging.debug("%r is not a git repository" % path)
 
-    return None
+  # Try to obtain subversion repository
+  if tool in { None, "svn" }:
+    try:
+      repo = Subversion.Repository(path)
+      return repo
+
+    except:
+      logging.debug("%r is not a svn repository" % path)
+
+  # Specified path is not a supported / allowed repository; create a repository
+  # if requested, otherwise return None
+  if create:
+    if callable(create):
+      return create(path, tool)
+
+    elif tool in { None, "git" }:
+      return git.Repo.init(path)
+
+    else:
+      raise Exception("unable to create %r repository" % tool)
+
+  return None
 
 #-----------------------------------------------------------------------------
 def getRemote(repo, urls, create=None):
@@ -321,7 +366,6 @@ def getRemote(repo, urls, create=None):
     :exc:`~exceptions.Exception` if, when trying to create a remote, a remote
     with the specified name already exists.
 
-
   This attempts to find a git remote of the specified repository whose upstream
   URL matches (one of) ``urls``. If no such remote exists and ``create`` is not
   ``None``, a new remote named ``create`` will be created using the first URL
@@ -345,3 +389,58 @@ def getRemote(repo, urls, create=None):
     return repo.create_remote(create, urls[0])
 
   return None
+
+#-----------------------------------------------------------------------------
+def localRoot(repo):
+  """Get top level local directory of a repository.
+
+  :param repo:
+    Repository instance.
+  :type repo:
+    :class:`git.Repo <git:git.repo.base.Repo>` or
+    :class:`.Subversion.Repository`.
+
+  :return: Absolute path to the repository local root.
+  :rtype: :class:`basestring`
+
+  :raises: :exc:`~exceptions.Exception` if the local root cannot be determined.
+
+  This returns the local file system path to the top level of a repository
+  working tree / working copy.
+  """
+
+  if hasattr(repo, "working_tree_dir"):
+    return repo.working_tree_dir
+
+  if hasattr(repo, "wc_root"):
+    return repo.wc_root
+
+  raise Exception("unable to determine repository local root")
+
+#-----------------------------------------------------------------------------
+def vcsPrivateDirectory(repo):
+  """Get |VCS| private directory of a repository.
+
+  :param repo:
+    Repository instance.
+  :type repo:
+    :class:`git.Repo <git:git.repo.base.Repo>` or
+    :class:`.Subversion.Repository`.
+
+  :return: Absolute path to the |VCS| private directory.
+  :rtype: :class:`basestring`
+
+  :raises:
+    :exc:`~exceptions.Exception` if the private directory cannot be determined.
+
+  This returns the |VCS| private directory for a repository, e.g. the ``.git``
+  or ``.svn`` directory.
+  """
+
+  if hasattr(repo, "git_dir"):
+    return repo.git_dir
+
+  if hasattr(repo, "svn_dir"):
+    return repo.svn_dir
+
+  raise Exception("unable to determine repository local private directory")

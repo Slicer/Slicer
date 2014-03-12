@@ -9,29 +9,68 @@ class ExtensionDescription(object):
   _reParam = re.compile(r"([a-zA-Z][a-zA-Z0-9_]*)\s+(.+)")
 
   #---------------------------------------------------------------------------
-  def __init__(self, repo=None, filepath=None):
-    if repo is not None and filepath is not None:
-      raise Exception("cannot construct %s: only one of repo or filepath"
-                      " may be given" % type(self).__name__)
+  def __init__(self, repo=None, filepath=None, sourcedir=None):
+    args = (repo, filepath, sourcedir)
+    if args.count(None) < len(args) - 1:
+      raise Exception("cannot construct %s: only one of"
+                      " (repo, filepath, sourcedir) may be given" %
+                      type(self).__name__)
 
     if filepath is not None:
       with open(filepath) as fp:
         self._read(fp)
 
     elif repo is not None:
-      try:
-        remote = repo.remotes.origin
-      except:
-        if len(repo.remotes) != 1:
-          raise Exception("unable to determine repository's primary remote")
+      # Handle git repositories
+      if hasattr(repo, "remotes"):
+        remote = None
+        svnRemote = None
 
-        remote = repo.remotes[0]
+        # Try to get git remote
+        try:
+          remote = repo.remotes.origin
+        except:
+          if len(repo.remotes) == 1:
+            remote = repo.remotes[0]
 
-      setattr(self, "scm", "git")
-      setattr(self, "scmurl", self._remotePublicUrl(remote))
-      setattr(self, "scmrevision", repo.head.commit.hexsha)
+        if remote is None:
+          # Try to get svn remote
+          config = repo.config_reader()
+          for s in config.sections():
+            if s.startswith("svn-remote"):
+              svnRemote = s[12:-1]
+              break
 
-      p = ExtensionProject(repo.working_tree_dir)
+          if svnRemote is None:
+            raise Exception("unable to determine repository's primary remote")
+
+          else:
+            si = self._gitSvnInfo(repo, svnRemote)
+            setattr(self, "scm", "svn")
+            setattr(self, "scmurl", si["URL"])
+            setattr(self, "scmrevision", si["Revision"])
+
+        else:
+          setattr(self, "scm", "git")
+          setattr(self, "scmurl", self._remotePublicUrl(remote))
+          setattr(self, "scmrevision", repo.head.commit.hexsha)
+
+        sourcedir = repo.working_tree_dir
+
+      # Handle svn repositories
+      elif hasattr(repo, "wc_root"):
+        setattr(self, "scm", "svn")
+        setattr(self, "scmurl", repo.url)
+        setattr(self, "scmrevision", repo.last_change_revision)
+        sourcedir = repo.wc_root
+
+    else:
+      setattr(self, "scm", "local")
+      setattr(self, "scmurl", "NA")
+      setattr(self, "scmrevision", "NA")
+
+    if sourcedir is not None:
+      p = ExtensionProject(sourcedir)
       self._setProjectAttribute("homepage", p, required=True)
       self._setProjectAttribute("category", p, required=True)
       self._setProjectAttribute("description", p)
@@ -44,6 +83,10 @@ class ExtensionDescription(object):
 
       self._setProjectAttribute("iconurl", p)
       self._setProjectAttribute("screenshoturls", p)
+
+      if self.scm == "svn":
+        self._setProjectAttribute("svnusername", p, elideempty=True)
+        self._setProjectAttribute("svnpassword", p, elideempty=True)
 
   #---------------------------------------------------------------------------
   def __repr__(self):
@@ -59,12 +102,26 @@ class ExtensionDescription(object):
     return url
 
   #---------------------------------------------------------------------------
-  def _setProjectAttribute(self, name, project, default=None, required=False):
+  @staticmethod
+  def _gitSvnInfo(repo, remote):
+    result = {}
+    for l in repo.git.svn('info', R=remote).split("\n"):
+      if len(l):
+        key, value = l.split(":", 1)
+        result[key] = value.strip()
+    return result
+
+  #---------------------------------------------------------------------------
+  def _setProjectAttribute(self, name, project, default=None, required=False,
+                           elideempty=False):
+
     if default is None and not required:
       default=""
 
-    pk = "EXTENSION_" + name.upper()
-    setattr(self, name, project.getValue(pk, default))
+    v = project.getValue("EXTENSION_" + name.upper(), default)
+
+    if len(v) or not elideempty:
+      setattr(self, name, v)
 
   #---------------------------------------------------------------------------
   def clear(self):

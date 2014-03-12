@@ -74,3 +74,4 @@ SlicerWizard Package
   :show-inheritance:
 
 .. |CLI| replace:: :abbr:`CLI (Command Line Interface)`
+.. |VCS| replace:: :abbr:`VCS (Version Control System)`

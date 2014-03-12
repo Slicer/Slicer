@@ -125,10 +125,13 @@ class ExtensionWizard(object):
 
     try:
       r = getRepo(args.destination)
-      if r is None:
-        raise NotImplementedError("a git repository is required")
 
-      xd = ExtensionDescription(repo=r)
+      if r is None:
+        xd = ExtensionDescription(sourcedir=args.destination)
+
+      else:
+        xd = ExtensionDescription(repo=r)
+
       xd.write(sys.stdout)
 
     except:
@@ -180,7 +183,7 @@ class ExtensionWizard(object):
     """
 
     createdRepo = False
-    r = getRepo(args.destination)
+    r = getRepo(args.destination, tool="git")
 
     if r is None:
       # Create new git repository
@@ -364,7 +367,7 @@ class ExtensionWizard(object):
         die("extension repository not found")
 
       xd = ExtensionDescription(repo=r)
-      name = ExtensionProject(r.working_tree_dir).project
+      name = ExtensionProject(localRoot(r)).project
       logging.debug("extension name: '%s'", name)
 
       # Validate that extension has a SCM URL
@@ -373,7 +376,7 @@ class ExtensionWizard(object):
 
       # Get (or create) the user's fork of the extension index
       logging.info("obtaining github repository information")
-      gh = GithubHelper.logIn(r)
+      gh = GithubHelper.logIn(r if xd.scm == "git" else None)
       upstreamRepo = GithubHelper.getRepo(gh, name="Slicer/ExtensionsIndex")
       if upstreamRepo is None:
         die("error accessing extension index upstream repository")
@@ -389,7 +392,7 @@ class ExtensionWizard(object):
       if args.index is not None:
         xip = args.index
       else:
-        xip = os.path.join(r.git_dir, "extension-index")
+        xip = os.path.join(vcsPrivateDirectory(r), "extension-index")
 
       xiRepo = getRepo(xip)
 
