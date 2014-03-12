@@ -31,6 +31,48 @@ class ExtensionProject(object):
       self._scriptContents = CMakeParser.CMakeScript(fp.read())
 
   #---------------------------------------------------------------------------
+  def project(self):
+    for t in self._scriptContents.tokens:
+      if _isCommand(t, "project") and len(t.arguments):
+        return t.arguments[0].text
+
+    raise EOFError("could not find project")
+
+  #---------------------------------------------------------------------------
+  def getValue(self, name, default=None):
+    for t in self._scriptContents.tokens:
+      if _isCommand(t, "set") and len(t.arguments) and \
+         t.arguments[0].text == name:
+        if len(t.arguments) < 2:
+          return None
+
+        return t.arguments[1].text
+
+    if default is not None:
+      return default
+
+    raise KeyError("script does not set %r" % name)
+
+  #---------------------------------------------------------------------------
+  def setValue(self, name, value):
+    for t in self._scriptContents.tokens:
+      if _isCommand(t, "set") and len(t.arguments) and \
+         t.arguments[0].text == name:
+        if len(t.arguments) < 2:
+          t.arguments.append(CMakeParser.String(text=value, indent=" ",
+                                                prefix="\"", suffix="\""))
+
+        else:
+          varg = t.arguments[1]
+          varg.text = value
+          varg.prefix = "\""
+          varg.suffix = "\""
+
+        return
+
+    raise KeyError("script does not set %r" % name)
+
+  #---------------------------------------------------------------------------
   def _addModuleToScript(self, name):
     indent = ""
     after = -1
@@ -60,5 +102,11 @@ class ExtensionProject(object):
   #---------------------------------------------------------------------------
   def addModule(self, name):
     self._addModuleToScript(name)
-    with open(self._scriptPath, "w") as fp:
+
+  #---------------------------------------------------------------------------
+  def save(self, destination=None):
+    if destination is None:
+      destination = self._scriptPath
+
+    with open(destination, "w") as fp:
       fp.write(str(self._scriptContents))

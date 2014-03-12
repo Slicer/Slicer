@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
 import argparse
+import git
 import os
 import re
 import sys
 
+from . import GithubHelper
+
 from .ExtensionProject import ExtensionProject
+from .GithubHelper import NotSet
 from .TemplateManager import TemplateManager
-from .Utilities import die
+from .Utilities import die, inquire, getRepo
 
 #=============================================================================
 class WizardHelpFormatter(argparse.HelpFormatter):
@@ -36,6 +40,7 @@ class SlicerWizard(object):
     try:
       p = ExtensionProject(path)
       p.addModule(name)
+      p.save()
 
     except:
       die("failed to add module to project '%s': %s" %
@@ -60,6 +65,85 @@ class SlicerWizard(object):
     print("created module '%s'" % name)
 
   #---------------------------------------------------------------------------
+  def publishExtension(self, args):
+    createdRepo = False
+    r = getRepo(args.destination)
+
+    if r is None:
+      # Create new git repository
+      r = git.Repo.init(args.destination)
+      createdRepo = True
+
+      # Prepare the initial commit
+      branch = "master"
+      r.git.checkout(b=branch)
+      r.git.add(":/")
+
+      print("Creating initial commit containing the following files:")
+      for e in r.index.entries:
+        print("  %s" % e[0])
+      print("")
+      if not inquire("Continue"):
+        prog = os.path.basename(sys.argv[0])
+        die("canceling at user request:"
+            " update your index and run %s again" % prog)
+
+    else:
+      # Check if repository is dirty
+      if r.is_dirty():
+        die("declined: working tree is dirty;"
+            " commit or stash your changes first")
+
+      # Check if a remote already exists
+      if len(r.remotes):
+        die("declined: publishing is only supported for repositories"
+            " with no pre-existing remotes")
+
+      branch = r.active_branch
+      if branch.name != "master":
+        print("You are currently on the '%s' branch." % branch)
+        print("It is strongly recommended to publish the 'master' branch.")
+        if not inquire("Continue anyway"):
+          die("canceled at user request")
+
+    try:
+      # Get extension name
+      p = ExtensionProject(args.destination)
+      name = p.project()
+
+      # Create github remote
+      gh = GithubHelper.logIn(r)
+      ghu = gh.get_user()
+      for ghr in ghu.get_repos():
+        if ghr.name == name:
+          die("declined: a github repository named '%s' already exists" % name)
+
+      description = p.getValue("EXTENSION_DESCRIPTION", default=NotSet)
+      ghr = ghu.create_repo(name, description=description)
+
+      # Set extension meta-information
+      raw_url = "%s/%s" % (ghr.html_url.replace("//", "//raw."), branch)
+      p.setValue("EXTENSION_HOMEPAGE", ghr.html_url)
+      p.setValue("EXTENSION_ICONURL", "%s/%s.png" % (raw_url, name))
+      p.save()
+
+      # Commit the initial commit or updated meta-information
+      r.git.add(":/CMakeLists.txt")
+      if createdRepo:
+        r.index.commit("ENH: Initial commit for %s" % name)
+      else:
+        r.index.commit("ENH: Update extension information\n\n"
+                       "Set %s information to reference"
+                       " new github repository." % name)
+
+      # Set up the remote and push
+      remote = r.create_remote("origin", ghr.clone_url)
+      remote.push(branch)
+
+    except:
+      die("failed to publish extension: %s" % sys.exc_info()[1])
+
+  #---------------------------------------------------------------------------
   def execute(self):
     # Set up arguments
     parser = argparse.ArgumentParser(description="Slicer Wizard",
@@ -73,6 +157,9 @@ class SlicerWizard(object):
                              " under the destination directory;"
                              " any modules are added to the new extension"
                              " (default type: 'default')")
+    parser.add_argument("--publishExtension", action="store_true",
+                        help="publish the extension in the destination"
+                             " directory to github (account required)")
     parser.add_argument("--templatePath", metavar="<CATEGORY=>PATH",
                         action="append",
                         help="add additional template path for specified"
@@ -115,6 +202,11 @@ class SlicerWizard(object):
     if args.addModule is not None:
       for module in args.addModule:
         self.addModule(args, *module.split(":"))
+      acted = True
+
+    # Publish extension if requested
+    if args.publishExtension:
+      self.publishExtension(args)
       acted = True
 
     # Check that we did something
