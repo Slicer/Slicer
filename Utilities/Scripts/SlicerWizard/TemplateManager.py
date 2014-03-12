@@ -128,7 +128,7 @@ class TemplateManager(object):
       logging.info("Available templates for category '%s':" % c)
 
       if len(self._paths[c]):
-        for t in self._paths[c]:
+        for t in sorted(self._paths[c].keys()):
           logging.info("  '%s' ('%s')" % (t, self._getKey(t)))
 
       else:
