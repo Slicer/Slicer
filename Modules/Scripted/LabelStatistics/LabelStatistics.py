@@ -213,14 +213,15 @@ class LabelStatisticsWidget:
       rgb = lut.GetTableValue(i)
       color.setRgb(rgb[0]*255,rgb[1]*255,rgb[2]*255)
       item = qt.QStandardItem()
-      item.setData(color,1)
+      item.setData(color,qt.Qt.DecorationRole)
       item.setToolTip(colorNode.GetColorName(i))
       self.model.setItem(row,0,item)
       self.items.append(item)
       col = 1
       for k in self.logic.keys:
         item = qt.QStandardItem()
-        item.setText(str(self.logic.labelStats[i,k]))
+        # set data as float with Qt::DisplayRole
+        item.setData(float(self.logic.labelStats[i,k]),qt.Qt.DisplayRole)
         item.setToolTip(colorNode.GetColorName(i))
         self.model.setItem(row,col,item)
         self.items.append(item)
