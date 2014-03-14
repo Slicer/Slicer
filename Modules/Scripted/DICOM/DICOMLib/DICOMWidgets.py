@@ -33,8 +33,21 @@ class DICOMDetailsPopup(object):
     self.setBrowserPersistence = setBrowserPersistence
     self.popupGeometry = qt.QRect()
     settings = qt.QSettings()
+
+    self.advancedViewCheckState = False
+
+    self.horizontalOrientation = 0x1
+    self.verticalOrientation = 0x2
+    self.tableOrientation = self.verticalOrientation
+
     if settings.contains('DICOM/detailsPopup.geometry'):
       self.popupGeometry = settings.value('DICOM/detailsPopup.geometry')
+    if settings.contains('DICOM/advancedViewToggled'):
+      self.advancedViewCheckState = True
+
+    if settings.contains('DICOM/tableOrientation'):
+      self.tableOrientation = int(settings.value('DICOM/tableOrientation'))
+
     self.create()
     self.popupPositioned = False
     self.pluginInstances = {}
@@ -53,6 +66,7 @@ class DICOMDetailsPopup(object):
     self.databaseDirectoryButton = slicer.util.findChildren(self.dicomBrowser, 'DirectoryButton')[0]
     #self.tables = self.dicomBrowser.tableManager
     self.tables = slicer.util.findChildren(self.dicomBrowser, 'dicomTableManager')[0]
+
     #self.userFrame = slicer.util.findChildren(self.dicomBrowser, 'UserFrame')[0]
     self.userFrame = qt.QWidget()
     #self.thumbs = slicer.util.findChildren(self.dicomBrowser, 'ThumbnailsWidget')[0]
@@ -80,34 +94,33 @@ class DICOMDetailsPopup(object):
     else:
       raise "Unknown widget type - should be dialog, window, dock or popup"
 
-    self.window.setWindowTitle('DICOM Details')
+    self.window.setWindowTitle('DICOM Browser')
 
-    self.layout = qt.QGridLayout()
+    self.layout = qt.QVBoxLayout()
     self.window.setLayout(self.layout)
 
-    # overall layout - tables on top, preview and selection below
-    toolRow = 0
-    tablesRow = 1
-    selectionRow = 2
-
     # tool row at top, with commands and database
-    self.toolLayout = qt.QHBoxLayout()
-    self.layout.addLayout(self.toolLayout,toolRow,0,1,2)
+    self.toolFrame = qt.QWidget()
+    self.toolLayout = qt.QHBoxLayout(self.toolFrame)
+    self.layout.addWidget(self.toolFrame)
     self.toolLayout.addWidget(self.toolBar)
     self.toolLayout.addWidget(self.databaseNameLabel)
     self.toolLayout.addWidget(self.databaseDirectoryButton)
 
     # tables goes next, spread across 1 row, 2 columns
-    qt_Horizontal = 0x1
-    qt_Vertical = 0x2
-    self.tables.tableOrientation = qt_Vertical
-    self.layout.addWidget(self.tables,tablesRow,0,1,3)
+    self.tables.tableOrientation = self.tableOrientation
+    self.tables.dynamicTableLayout = False
+    self.tablesExpandableWidget = ctk.ctkExpandableWidget()
+    self.layout.addWidget(self.tablesExpandableWidget)
+    self.tablesLayout = qt.QVBoxLayout(self.tablesExpandableWidget)
+
+    self.tablesLayout.addWidget(self.tables)
 
     #
     # preview related column
     #
     self.previewLayout = qt.QVBoxLayout()
-    self.layout.addLayout(self.previewLayout,selectionRow,0)
+    #self.layout.addLayout(self.previewLayout,selectionRow,0)
 
     #self.previewLayout.addWidget(self.thumbs)
     #self.previewLayout.addWidget(self.widthSlider)
@@ -119,21 +132,44 @@ class DICOMDetailsPopup(object):
     #
     # action related column (interacting with slicer)
     #
-    self.actionLayout = qt.QVBoxLayout()
-    self.layout.addLayout(self.actionLayout,selectionRow,1,2)
-    self.actionLayout.addWidget(self.userFrame)
+    self.loadableTableFrame = qt.QWidget()
+    self.loadableTableLayout = qt.QFormLayout(self.loadableTableFrame)
+    self.layout.addWidget(self.loadableTableFrame)
+
+    self.loadableTableLayout.addWidget(self.userFrame)
+    self.userFrame.hide()
 
     tableWidth = 350 if showHeader else 700
     self.loadableTable = DICOMLoadableTable(self.userFrame,width=tableWidth)
-    self.actionLayout.addWidget(self.loadableTable.widget)
+    #self.loadableTableLayout.addWidget(self.loadableTable.widget)
+    #self.loadableTable.widget.hide()
 
     #
     # button row for action column
     #
+    self.actionButtonsFrame = qt.QWidget()
+    self.layout.addWidget(self.actionButtonsFrame)
+    self.layout.addStretch(1)
     self.actionButtonLayout = qt.QHBoxLayout()
-    self.actionLayout.addLayout(self.actionButtonLayout)
+    self.actionButtonsFrame.setLayout(self.actionButtonLayout)
 
-    self.examineButton = qt.QPushButton('Examine for Loading')
+    self.loadButton = qt.QPushButton('Load')
+    self.loadButton.enabled = True
+    self.loadButton.toolTip = 'Load Selection to Slicer'
+    self.actionButtonLayout.addWidget(self.loadButton)
+    self.loadButton.connect('clicked()', self.loadCheckedLoadables)
+
+    self.headerPopup = DICOMLib.DICOMHeaderPopup()
+
+    self.viewMetadataButton = qt.QPushButton('Metadata')
+    self.viewMetadataButton.toolTip = 'Display Metadata of the Selected Series'
+    self.viewMetadataButton.enabled = True
+    self.actionButtonLayout.addWidget(self.viewMetadataButton)
+    self.viewMetadataButton.connect('clicked()', self.onViewHeaderButton)
+    self.viewMetadataButton.connect('clicked()', self.headerPopup.open)
+    self.actionButtonLayout.addStretch(1)
+
+    self.examineButton = qt.QPushButton('Examine')
     self.actionButtonLayout.addWidget(self.examineButton)
     self.examineButton.enabled = False
     self.examineButton.connect('clicked()', self.examineForLoading)
@@ -141,31 +177,38 @@ class DICOMDetailsPopup(object):
     self.uncheckAllButton = qt.QPushButton('Uncheck All')
     self.actionButtonLayout.addWidget(self.uncheckAllButton)
     self.uncheckAllButton.connect('clicked()', self.uncheckAllLoadables)
-
-    self.loadButton = qt.QPushButton('Load Selection to Slicer')
-    self.loadButton.enabled = False
-    self.actionButtonLayout.addWidget(self.loadButton)
-    self.loadButton.connect('clicked()', self.loadCheckedLoadables)
-
-    self.headerPopup = DICOMLib.DICOMHeaderPopup()
-
-    self.viewHeaderButton = qt.QPushButton('View Header')
-    self.viewHeaderButton.enabled = False
-    self.actionButtonLayout.addWidget(self.viewHeaderButton)
-    self.viewHeaderButton.connect('clicked()', self.onViewHeaderButton)
-    self.viewHeaderButton.connect('clicked()', self.headerPopup.open)
+    self.actionButtonLayout.addStretch(1)
 
     self.closeButton = qt.QPushButton('Close')
-    self.actionButtonLayout.addWidget(self.closeButton)
+    #self.actionButtonLayout.addWidget(self.closeButton)
     self.closeButton.connect('clicked()', self.close)
 
+    self.advancedViewButton = qt.QCheckBox('Advanced')
+    self.actionButtonLayout.addWidget(self.advancedViewButton)
+    self.advancedViewButton.enabled = True
+    self.advancedViewButton.checked = self.advancedViewCheckState
+    self.advancedViewButton.connect('stateChanged(int)', self.onAdvanedViewButton)
+
+    self.horizontalViewCheckBox = qt.QCheckBox('Horizontal Tables')
+    self.toolLayout.addWidget(self.horizontalViewCheckBox)
+    self.horizontalViewCheckBox.enabled = True
+    if self.tableOrientation == 1:
+      self.horizontalViewCheckBox.checked = True
+    self.horizontalViewCheckBox.connect('stateChanged(int)', self.onHorizontalViewCheckBox)
+
     if self.setBrowserPersistence:
-      self.browserPersistentButton = qt.QCheckBox('Make DICOM Browser Persistent')
+      self.browserPersistentButton = qt.QCheckBox('Browser Persistent')
       self.browserPersistentButton.toolTip = 'When enabled, DICOM Broswer remains open and usable after leaving DICOM module'
-      self.actionLayout.addWidget(self.browserPersistentButton)
+      self.actionButtonLayout.addWidget(self.browserPersistentButton)
       self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
 
 
+    if self.advancedViewCheckState == True:
+      self.loadableTableFrame.show()
+    else:
+      self.examineButton.hide()
+      self.uncheckAllButton.hide()
+      self.loadableTableFrame.hide()
     #
     # header related column (more details about the selected file)
     #
@@ -179,7 +222,49 @@ class DICOMDetailsPopup(object):
     # Plugin selection widget
     #
     self.pluginSelector = DICOMPluginSelector(self.window)
-    self.layout.addWidget(self.pluginSelector.widget,selectionRow,0)
+    self.loadableTableLayout.addRow(self.pluginSelector.widget,self.loadableTable.widget)
+
+  def onAdvanedViewButton (self,state):
+    settings = qt.QSettings()
+    self.advancedViewCheckState = self.advancedViewButton.checked
+
+    # if advanced mode is not toggled
+    if state == 0:
+      settings.remove('DICOM/advancedViewToggled')
+      self.loadableTableFrame.hide()
+      self.examineButton.hide()
+      self.uncheckAllButton.hide()
+      self.loadButton.enabled = True
+      for pluginClass in slicer.modules.dicomPlugins:
+        if pluginClass == 'DICOMScalarVolumePlugin':
+          self.pluginSelector.checkBoxByPlugin[pluginClass].checked = True
+        else:
+          self.pluginSelector.checkBoxByPlugin[pluginClass].checked = False
+
+    # if advanced mode is toggled
+    if state == 2:
+      settings.setValue('DICOM/advancedViewToggled', self.advancedViewCheckState )
+      self.loadableTableFrame.show()
+      for pluginClass in slicer.modules.dicomPlugins:
+        self.pluginSelector.checkBoxByPlugin[pluginClass].checked = True
+      self.examineButton.show()
+      self.uncheckAllButton.show()
+      self.loadButton.enabled = False
+
+  def onHorizontalViewCheckBox(self, direction):
+
+    settings = qt.QSettings()
+
+    # Horizontal checkbox is unchecked
+    if direction == 0:
+      self.tables.tableOrientation = self.verticalOrientation
+
+    # Horizontal checkbox is checked
+    elif direction == 2:
+      self.tables.tableOrientation = self.horizontalOrientation
+
+    self.tableOrientation = self.tables.tableOrientation
+    settings.setValue('DICOM/tableOrientation', self.tableOrientation)
 
   def onViewHeaderButton(self):
     self.headerPopup.setFileLists(self.fileLists)
@@ -246,7 +331,8 @@ class DICOMDetailsPopup(object):
     """Get all the loadable options at the currently selected level
     and present them in the loadable table"""
     self.loadableTable.setLoadables([])
-    self.loadButton.enabled = False
+    if self.advancedViewButton.checkState() == 2:
+      self.loadButton.enabled = False
     self.fileLists = []
     if role == "Series":
       self.fileLists.append(slicer.dicomDatabase.filesForSeries(uidArgument))
@@ -320,7 +406,7 @@ class DICOMDetailsPopup(object):
       step +=1
 
     self.loadButton.enabled = loadEnabled
-    self.viewHeaderButton.enabled = loadEnabled
+    #self.viewMetadataButton.enabled = loadEnabled
     self.organizeLoadables()
     self.loadableTable.setLoadables(self.loadablesByPlugin)
     self.progress.close()
@@ -329,6 +415,9 @@ class DICOMDetailsPopup(object):
   def loadCheckedLoadables(self):
     """Invoke the load method on each plugin for the DICOMLoadable
     instances that are selected"""
+    if self.advancedViewButton.checkState() == 0:
+      self.examineForLoading()
+
     self.loadableTable.updateSelectedFromCheckstate()
     loadableCount = 0
     for plugin in self.loadablesByPlugin:
@@ -379,7 +468,10 @@ class DICOMPluginSelector(object):
     self.checkBoxByPlugin = {}
     for pluginClass in slicer.modules.dicomPlugins:
       self.checkBoxByPlugin[pluginClass] = qt.QCheckBox(pluginClass)
-      self.checkBoxByPlugin[pluginClass].checked = True
+      if pluginClass == 'DICOMScalarVolumePlugin':
+        self.checkBoxByPlugin[pluginClass].checked = True
+      else:
+        self.checkBoxByPlugin[pluginClass].checked = False
       self.layout.addWidget(self.checkBoxByPlugin[pluginClass])
 
   def selectedPlugins(self):
@@ -942,7 +1034,7 @@ class DICOMHeaderPopup(object):
       self.popupGeometry = settings.value('DICOM/headerPopup.geometry')
     self.popupPositioned = False
     self.window = ctk.ctkDICOMObjectListWidget()
-    self.window.setWindowTitle('DICOM File Header')
+    self.window.setWindowTitle('DICOM File Metadata')
 
     self.layout = qt.QGridLayout()
     self.window.setLayout(self.layout)
