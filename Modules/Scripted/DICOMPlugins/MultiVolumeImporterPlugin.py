@@ -33,7 +33,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
     self.multiVolumeTags['SeriesTime'] = "0008,0031"
     # this one is GE-specific using the private tag
-    self.multiVolumeTags['GE B-value'] = "0043,1039"
+    self.multiVolumeTags['Siemens.B-value'] = "0019,100c"
+    self.multiVolumeTags['GE.B-value'] = "0043,1039"
     # used on some GE systems, with 2D acquisitions
     self.multiVolumeTags['TemporalPositionIdentifier'] = "0020,0100"
 
@@ -48,7 +49,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
     self.multiVolumeTagsUnits['SeriesTime'] = "ms"
     self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
-    self.multiVolumeTagsUnits['GE B-value'] = "mm2/s"
+    self.multiVolumeTagsUnits['Siemens.B-value'] = "mm2/s"
+    self.multiVolumeTagsUnits['GE.B-value'] = "mm2/s"
 
     self.epsilon = epsilon
 
@@ -346,12 +348,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
           tagValue = self.tm2ms(tagValueStr) # convert to ms
-        elif frameTag == "GE B-value":
-          # this is GE-specific and not reliable, since encoding of this tag seems to vary
-          # across versions of the scanner software.
-          # This particular way of handing this tag was tested for 
-          # GE Discovery MR750w
-          tagValue = int(tagValueStr.split('\\')[0]) % 10000
+        elif frameTag == "GE.B-value":
+          try:
+            # Parse this:
+            # (0043,1039) IS [1000001250\8\0\0] #  16, 4 Unknown Tag & Data
+            # GE Discovery w750
+            tagValue = float(int(tagValueStr.split('\\')[0]) % 100000)
+          except:
+            continue
         else:
           try:
             tagValue = float(tagValueStr)
