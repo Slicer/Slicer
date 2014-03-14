@@ -2,13 +2,6 @@ find_package( Doxygen QUIET)
 
 if( DOXYGEN_FOUND )
   if( DOXYGEN_DOT_FOUND )
-
-    # Automatically generate documentation at build time
-    set(all_arg)
-    if(DOCUMENTATION_TARGET_IN_ALL)
-      set(all_arg "ALL")
-    endif()
-
     #
     # User documentation
     #
@@ -36,8 +29,9 @@ if( DOXYGEN_FOUND )
               "${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt"
       )
 
-    add_custom_target(doc ${all_arg} DEPENDS ${userdoc_output})
-    set_target_properties(doc PROPERTIES LABELS Documentation)
+    add_custom_target(Base-cpp-doc DEPENDS ${userdoc_output})
+    set_target_properties(Base-cpp-doc PROPERTIES LABELS Documentation)
+    add_dependencies(doc Base-cpp-doc)
 
     #
     # Dev documentation
