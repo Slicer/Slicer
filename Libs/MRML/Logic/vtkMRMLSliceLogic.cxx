@@ -1345,7 +1345,9 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelTransformNode->SetSelectable(0);
     this->SliceModelTransformNode->SetSaveWithScene(0);
     // set the transform for the slice model for use by an image actor in the viewer
-    this->SliceModelTransformNode->GetMatrixTransformToParent()->Identity();
+    vtkNew<vtkMatrix4x4> identity;
+    identity->Identity();
+    this->SliceModelTransformNode->SetMatrixTransformToParent(identity.GetPointer());
 
     this->SliceModelTransformNode->SetDisableModifiedEvent(0);
 

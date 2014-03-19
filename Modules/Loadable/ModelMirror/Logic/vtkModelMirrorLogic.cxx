@@ -402,7 +402,7 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
         m->SetElement ( row, col, this->GetMirrorMatrix()->GetElement ( row, col ));
         }
       }
-    mirrorTransformNode->SetAndObserveMatrixTransformToParent(m);
+    mirrorTransformNode->SetMatrixTransformToParent(m);
     m->Delete();
     }
 

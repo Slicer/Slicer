@@ -28,11 +28,13 @@
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLBSplineTransformNode.h>
+#include <vtkMRMLGridTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLNRRDStorageNode.h>
-#include <vtkMRMLNonlinearTransformNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -846,8 +848,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
   vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
   vtkMRMLModelNode *mnd = 0;
+  vtkMRMLTransformNode *tnd = 0;
   vtkMRMLLinearTransformNode *ltnd = 0;
-  vtkMRMLNonlinearTransformNode *nltnd = 0;
+  vtkMRMLBSplineTransformNode *btnd = 0;
+  vtkMRMLGridTransformNode *gtnd = 0;
   vtkMRMLDisplayableNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
@@ -880,8 +884,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 
 
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
+  tnd   = vtkMRMLTransformNode::SafeDownCast(nd);
   ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
-  nltnd  = vtkMRMLNonlinearTransformNode::SafeDownCast(nd);
+  btnd  = vtkMRMLBSplineTransformNode::SafeDownCast(nd);
+  gtnd  = vtkMRMLGridTransformNode::SafeDownCast(nd);
   fbnd  = vtkMRMLDisplayableNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
@@ -1025,12 +1031,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           fson->Delete();
           }
         }
-    else if (ltnd || nltnd)
+    else if (ltnd || btnd || gtnd || tnd)
       {
-      // Load a linear transform node
+      // Load a transform node
 
-      // transforms can be communicated either using storage nodes or
-      // in scenes.  we handle the former here.  the latter is handled
+      // Transforms can be communicated either using storage nodes or
+      // in scenes. We handle the former here. The latter is handled
       // by ProcessReadSceneData()
 
       storageNode = vtkMRMLTransformStorageNode::New();
@@ -1196,7 +1202,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
       }
     }
-  else if (ltnd || nltnd)
+  else if (ltnd || btnd || gtnd || tnd)
     {
     // Linear transform node
     // (no display node)

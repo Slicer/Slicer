@@ -31,6 +31,7 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkTransform.h>
 #include <vtkImageData.h>
 
@@ -86,14 +87,15 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* tran
     return;
     }
 
-  vtkMatrix4x4 *matrix = transformNode->GetMatrixTransformToParent();
-  Q_ASSERT(matrix);
-  if (!matrix)
+  vtkNew<vtkMatrix4x4> matrix;
+  int matrixDefined=transformNode->GetMatrixTransformToParent(matrix.GetPointer());
+  Q_ASSERT(matrixDefined);
+  if (!matrixDefined)
     {
     return;
     }
 
-  transform->SetMatrix(matrix);
+  transform->SetMatrix(matrix.GetPointer());
 
   if ( global )
     {

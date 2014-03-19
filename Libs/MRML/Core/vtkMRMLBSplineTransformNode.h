@@ -15,7 +15,7 @@
 #ifndef __vtkMRMLBSplineTransformNode_h
 #define __vtkMRMLBSplineTransformNode_h
 
-#include "vtkMRMLNonlinearTransformNode.h"
+#include "vtkMRMLTransformNode.h"
 
 class vtkMRMLStorageNode;
 
@@ -24,11 +24,11 @@ class vtkMRMLStorageNode;
 ///
 /// MRML node for representing a nonlinear transformation to the parent
 /// node in the form of a vtkBSplineDeformableTransform.
-class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLNonlinearTransformNode
+class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLTransformNode
 {
   public:
   static vtkMRMLBSplineTransformNode *New();
-  vtkTypeMacro(vtkMRMLBSplineTransformNode,vtkMRMLNonlinearTransformNode);
+  vtkTypeMacro(vtkMRMLBSplineTransformNode,vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -55,22 +55,6 @@ class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLNonlinearTrans
     {
     return Superclass::CreateDefaultStorageNode();
     };
-
-  ///
-  /// vtkWarpTransform of this node to paren node
-  virtual vtkWarpTransform* GetWarpTransformToParent();
-
-  ///
-  /// vtkWarpTransform of this node from paren node
-  virtual vtkWarpTransform* GetWarpTransformFromParent();
-
-  ///
-  /// Deep copy input transform to this node transform to parent
-  virtual void DeepCopyTransformToParent(vtkWarpTransform *warp);
-
-  ///
-  /// Deep copy input transform to this node transform from parent
-  virtual void DeepCopyTransformFromParent(vtkWarpTransform *warp);
 
 protected:
   vtkMRMLBSplineTransformNode();

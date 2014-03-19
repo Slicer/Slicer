@@ -364,7 +364,6 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
   vtkNew<vtkMRMLLinearTransformNode> transformNode;
 
   //set matrix [$transformNode GetMatrixTransformToParent]
-  vtkMatrix4x4* matrix = transformNode->GetMatrixTransformToParent();
   //if { [info exists n(name)] } {
   //  $transformNode SetName $n(name)
   //} else {
@@ -385,8 +384,11 @@ void qSlicerSlicer2SceneReaderPrivate::importMatrixNode(NodeType& node)
     {
     elements[i++] = element.toDouble();
     }
+  vtkNew<vtkMatrix4x4> matrix;
   matrix->DeepCopy(elements);
-  
+  transformNode->SetMatrixTransformToParent(matrix.GetPointer());
+
+
   //$::slicer3::MRMLScene AddNode $transformNode
   q->mrmlScene()->AddNode(transformNode.GetPointer());
   this->LoadedNodes << transformNode->GetID();

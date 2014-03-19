@@ -15,17 +15,17 @@
 #ifndef __vtkMRMLGridTransformNode_h
 #define __vtkMRMLGridTransformNode_h
 
-#include "vtkMRMLNonlinearTransformNode.h"
+#include "vtkMRMLTransformNode.h"
 
 /// \brief MRML node for representing a nonlinear transformation to the parent node using a grid transform.
 ///
 /// MRML node for representing a nonlinear transformation to the parent
 /// node in the form of a vtkGridTransform.
-class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLNonlinearTransformNode
+class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLTransformNode
 {
 public:
   static vtkMRMLGridTransformNode *New();
-  vtkTypeMacro(vtkMRMLGridTransformNode,vtkMRMLNonlinearTransformNode);
+  vtkTypeMacro(vtkMRMLGridTransformNode,vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -45,23 +45,6 @@ public:
   /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "GridTransform";};
-
-  ///
-  /// vtkWarpTransform of this node to paren node
-  virtual vtkWarpTransform* GetWarpTransformToParent();
-
-  ///
-  /// vtkWarpTransform of this node from paren node
-  virtual vtkWarpTransform* GetWarpTransformFromParent();
-
-  ///
-  /// Deep copy input transform to this node transform to parent
-  virtual void DeepCopyTransformToParent(vtkWarpTransform *warp);
-
-  ///
-  /// Deep copy input transform to this node transform from parent
-  virtual void DeepCopyTransformFromParent(vtkWarpTransform *warp);
-
 
 protected:
   vtkMRMLGridTransformNode();

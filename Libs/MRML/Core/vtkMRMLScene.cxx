@@ -20,6 +20,7 @@ Version:   $Revision: 1.18 $
 #include "vtkDataIOManager.h"
 #include "vtkTagTable.h"
 
+#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLChartNode.h"
@@ -186,7 +187,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformStorageNode >::New() );
-  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLNonlinearTransformNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLGridTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLBSplineTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDoubleArrayNode >::New() );

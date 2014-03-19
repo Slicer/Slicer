@@ -259,5 +259,5 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
     }
   d->OldPosition = _sliderPosition;
 
-  d->MRMLTransformNode->SetAndObserveMatrixTransformToParent(transform->GetMatrix());
+  d->MRMLTransformNode->SetMatrixTransformToParent(transform->GetMatrix());
 }

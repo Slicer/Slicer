@@ -825,15 +825,15 @@
   {                                                                  \
     EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node );         \
     std::cout << "IsLinear = " << node->IsLinear()<< std:: endl;        \
-    vtkSmartPointer<vtkGeneralTransform> g =  vtkSmartPointer<vtkGeneralTransform>::New(); \
-    g = node->GetTransformToParent();                                   \
-    if (g == NULL)                                                     \
+    vtkAbstractTransform* gtp = node->GetTransformToParent();        \
+    if (gtp == NULL)                                                 \
       {                                                                 \
       std::cout << "Warning: transform node has a null transform to parent" << std::endl; \
       }                                                                 \
     std::cout << "IsTransformToWorldLinear = " << node->IsTransformToWorldLinear() << std::endl; \
     vtkSmartPointer < className > t = vtkSmartPointer < className >::New(); \
     std::cout << "IsTransformToNodeLinear = " << node->IsTransformToNodeLinear(t) << std::endl; \
+    vtkSmartPointer<vtkGeneralTransform> g =  vtkSmartPointer<vtkGeneralTransform>::New(); \
     node->GetTransformToWorld(g);                                    \
     node->GetTransformToNode(t, g);                                     \
     vtkSmartPointer<vtkMatrix4x4> m =  vtkSmartPointer<vtkMatrix4x4>::New(); \

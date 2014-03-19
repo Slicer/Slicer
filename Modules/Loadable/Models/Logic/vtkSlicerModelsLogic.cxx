@@ -416,7 +416,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 
   vtkMRMLTransformNode *mtnode = modelNode->GetParentTransformNode();
 
-  vtkGeneralTransform *transform = tnode->GetTransformToParent();
+  vtkAbstractTransform *transform = tnode->GetTransformToParent();
   modelOut->ApplyTransform(transform);
 
   if (transformNormals)

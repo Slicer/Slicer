@@ -163,11 +163,7 @@ vtkAbstractTransform*
 vtkITKBSplineTransform
 ::MakeTransform()
 {
-  vtkITKBSplineTransform* N = new vtkITKBSplineTransform;
-  if( Helper )
-  {
-    N->DeepCopy(this);
-  }
+  vtkITKBSplineTransform* N = vtkITKBSplineTransform::New();
   return N;
 }
 
@@ -175,6 +171,7 @@ vtkITKBSplineTransform
 ::vtkITKBSplineTransform() :
   Helper( 0 )
 {
+  SetSplineOrder(3);
 }
 
 vtkITKBSplineTransform
@@ -192,9 +189,13 @@ vtkITKBSplineTransform
     return;
   }
 
-  delete Helper;
+  delete this->Helper;
+  this->Helper=NULL;
   switch( order )
   {
+  case 0:
+    // just clear the helper
+    break;
   case 2:
     Helper = new vtkITKBSplineTransformHelperImpl< 2 >;
     break;
@@ -326,6 +327,29 @@ vtkITKBSplineTransform
     }
 }
 
+void
+vtkITKBSplineTransform
+::SetParameters( float const* param )
+{
+  if( Helper == NULL )
+    {
+    vtkErrorMacro( "need to call SetSplineOrder before SetParameters" );
+    return;
+    }
+  unsigned int N=Helper->GetNumberOfParameters();
+  if (N==0)
+    {
+    return;
+    }
+  double *paramDouble=new double[N];
+  for (int i=0; i<N; i++)
+  {
+    paramDouble[i]=param[i];
+  }
+  SetParameters(paramDouble);
+  delete[] paramDouble;
+}
+
 unsigned int
 vtkITKBSplineTransform
 ::GetNumberOfParameters() const
@@ -368,6 +392,23 @@ vtkITKBSplineTransform
     {
     vtkErrorMacro( "need to call SetSplineOrder before SetFixedParameters" );
     }
+}
+
+void
+vtkITKBSplineTransform
+::SetFixedParameters( float const* param, unsigned N )
+{
+  if (N==0)
+    {
+    return;
+    }
+  double *paramDouble=new double[N];
+  for (int i=0; i<N; i++)
+  {
+    paramDouble[i]=param[i];
+  }
+  SetFixedParameters(paramDouble, N);
+  delete[] paramDouble;
 }
 
 unsigned int
@@ -684,14 +725,29 @@ vtkITKBSplineTransformHelperImpl<O>
   BSpline->SetParameters( parameters );
 }
 
-void vtkITKBSplineTransform::DeepCopy(vtkITKBSplineTransform *xform)
+void vtkITKBSplineTransform::InternalDeepCopy(vtkAbstractTransform *abstractTransform)
 {
+  vtkITKBSplineTransform *xform = vtkITKBSplineTransform::SafeDownCast(abstractTransform);
+  if (xform==NULL)
+  {
+    vtkErrorMacro("vtkITKBSplineTransform::InternalDeepCopy failed: input transform type mismatch");
+    return;
+  }
+
+  Superclass::InternalDeepCopy(xform);
+
+  if (this->InverseFlag != xform->InverseFlag)
+    {
+    this->InverseFlag = xform->InverseFlag;
+    this->Modified();
+    }
+
+  this->SetSplineOrder( xform->GetSplineOrder() );
+
   if (xform->GetSplineOrder() == 0)
   {
     return;
   }
-
-  this->SetSplineOrder( xform->GetSplineOrder() );
 
   //double origin[3];
   //double spacing[3];
@@ -714,11 +770,6 @@ void vtkITKBSplineTransform::DeepCopy(vtkITKBSplineTransform *xform)
   this->SetFixedParameters( xform->GetFixedParameters(),
                          xform->GetNumberOfFixedParameters() );
   this->SetParameters( xform->GetParameters() );
-  if (xform->GetInverseFlag())
-    {
-    this->Inverse();
-    }
-  Superclass::DeepCopy(xform);
 }
 
 template< unsigned O >
@@ -1189,7 +1240,7 @@ vtkITKBSplineTransformHelperImpl<O>
   if (bulk)
     {
     matrix = bulk->GetMatrix();
-    BulkTransformType::OutputVectorType vector = bulk->GetOffset();
+    vector = bulk->GetOffset();
     }
 
   for (unsigned i=0; i<3; ++i)

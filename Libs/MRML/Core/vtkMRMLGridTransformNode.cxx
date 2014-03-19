@@ -16,6 +16,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLGridTransformNode.h"
 
 // VTK includes
+#include <vtkGeneralTransform.h>
 #include <vtkGridTransform.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
@@ -30,6 +31,9 @@ vtkMRMLNodeNewMacro(vtkMRMLGridTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLGridTransformNode::vtkMRMLGridTransformNode()
 {
+  this->ReadWriteAsTransformToParent = 0;
+  vtkNew<vtkGridTransform> warp;
+  this->SetAndObserveTransformFromParent(warp.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -42,16 +46,20 @@ void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  if (this->WarpTransformToParent != NULL)
+  vtkGridTransform* grid=NULL;
+
+  if (this->ReadWriteAsTransformToParent)
+    {
+    grid=vtkGridTransform::SafeDownCast(GetTransformToParentAs("vtkGridTransform"));
+    }
+  else
+    {
+    grid=vtkGridTransform::SafeDownCast(GetTransformFromParentAs("vtkGridTransform"));
+    }
+
+  if (grid != NULL)
     {
     // this transform should be a grid transform
-    vtkGridTransform *grid = dynamic_cast<vtkGridTransform*>(this->WarpTransformToParent);
-    if( grid == NULL )
-      {
-      vtkErrorMacro("Transform is not a GridTransform");
-      return;
-      }
-
     of << " interpolationMode=\"" << grid->GetInterpolationMode() << "\" ";
     of << " displacementScale=\"" << grid->GetDisplacementScale() << "\" ";
     of << " displacementShift=\"" << grid->GetDisplacementShift() << "\" ";
@@ -64,12 +72,16 @@ void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
     double* origin = image->GetOrigin();
     of << " origin=\"" << origin[0] << " " << origin[1] << " " << origin[2] << "\" ";
     }
+  else
+    {
+    vtkErrorMacro("vtkMRMLGridTransformNode::WriteXML failed: the transform is not a vtkGridTransform");
+    }
+
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 {
-
   Superclass::ReadXMLAttributes(atts);
 
   vtkNew<vtkGridTransform> vtkgrid;
@@ -215,8 +227,24 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
+
   vtkgrid->SetDisplacementGrid(image.GetPointer());
-  this->SetAndObserveWarpTransformFromParent(vtkgrid.GetPointer(), true);
+
+  if( vtkgrid.GetPointer() != 0 )
+    {
+    if (this->ReadWriteAsTransformToParent)
+      {
+      this->SetAndObserveTransformToParent(vtkgrid.GetPointer());
+      }
+    else
+      {
+      this->SetAndObserveTransformFromParent(vtkgrid.GetPointer());
+      }
+    }
+  else
+    {
+    vtkErrorMacro("vtkMRMLGridTransformNode::ReadXML failed: could not create a vtkGridTransform");
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -225,83 +253,12 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLGridTransformNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLGridTransformNode *node = vtkMRMLGridTransformNode::SafeDownCast(anode);
-  if (node)
-    {
-    if (this->WarpTransformToParent)
-      {
-      this->SetAndObserveWarpTransformToParent(node->GetWarpTransformToParent(), false);
-      }
-    if (this->WarpTransformFromParent)
-      {
-      this->SetAndObserveWarpTransformFromParent(node->GetWarpTransformFromParent(), false);
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLGridTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLGridTransformNode::DeepCopyTransformToParent(vtkWarpTransform *warp)
-{
-  vtkGridTransform *warp1 = vtkGridTransform::SafeDownCast(warp);
-  vtkGridTransform *warp2 = vtkGridTransform::SafeDownCast(this->GetWarpTransformToParent());
-  if (warp1 && warp2)
-    {
-    warp2->DeepCopy(warp1);
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLGridTransformNode::DeepCopyTransformFromParent(vtkWarpTransform *warp)
-{
-  vtkGridTransform *warp1 = vtkGridTransform::SafeDownCast(warp);
-  vtkGridTransform *warp2 = vtkGridTransform::SafeDownCast(this->GetWarpTransformFromParent());
-  if (warp1 && warp2)
-    {
-    warp2->DeepCopy(warp1);
-    }
-}
-
-
-//----------------------------------------------------------------------------
-vtkWarpTransform* vtkMRMLGridTransformNode::GetWarpTransformToParent()
-{
-  if (this->WarpTransformToParent == 0)
-    {
-    vtkGridTransform *warp = vtkGridTransform::New();
-
-    if (this->WarpTransformFromParent)
-      {
-      warp->DeepCopy(this->WarpTransformFromParent);
-      warp->Inverse();
-      }
-    this->SetAndObserveWarpTransformToParent(warp, false);
-    warp->Delete();
-    }
-  return this->WarpTransformToParent;
-}
-
-//----------------------------------------------------------------------------
-vtkWarpTransform* vtkMRMLGridTransformNode::GetWarpTransformFromParent()
-{
-  if (this->WarpTransformFromParent == 0)
-    {
-    vtkGridTransform *warp = vtkGridTransform::New();
-
-    if (this->WarpTransformToParent)
-      {
-      warp->DeepCopy(this->WarpTransformToParent);
-      warp->Inverse();
-      }
-    this->SetAndObserveWarpTransformFromParent(warp, false);
-    warp->Delete();
-    }
-  return this->WarpTransformFromParent;
 }
 
 // End

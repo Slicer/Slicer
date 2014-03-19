@@ -175,7 +175,6 @@ set(MRMLCore_SRCS
   vtkDataTransfer.cxx
   vtkMRMLBSplineTransformNode.cxx
   vtkMRMLGridTransformNode.cxx
-  vtkMRMLNonlinearTransformNode.cxx
   vtkPermissionPrompter.cxx
   vtkURIHandler.cxx
   vtkTagTableCollection.cxx

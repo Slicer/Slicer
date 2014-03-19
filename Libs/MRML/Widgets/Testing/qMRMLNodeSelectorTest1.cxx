@@ -156,10 +156,10 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
     }
 
   // Check hide child node type
-  sceneFactory.generateNode("vtkMRMLNonlinearTransformNode");
-  sceneFactory.generateNode("vtkMRMLNonlinearTransformNode");
+  sceneFactory.generateNode("vtMRMLTransformNode");
+  sceneFactory.generateNode("vtkMRMLTransformNode");
   sceneFactory.generateNode("vtkMRMLGridTransformNode");
-  nodeSelector.setNodeTypes(QStringList("vtkMRMLNonlinearTransformNode"));
+  nodeSelector.setNodeTypes(QStringList("vtkMRMLTransformNode"));
   if (nodeSelector.count() != 3)
     {
     nodeSelector.printAdditionalInfo();

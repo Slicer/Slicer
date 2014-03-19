@@ -163,10 +163,10 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
     }
 
   // Check hide child node type
-  sceneFactory.generateNode("vtkMRMLNonlinearTransformNode");
-  sceneFactory.generateNode("vtkMRMLNonlinearTransformNode");
+  sceneFactory.generateNode("vtkMRMLTransformNode");
+  sceneFactory.generateNode("vtkMRMLTransformNode");
   sceneFactory.generateNode("vtkMRMLGridTransformNode");
-  nodeSelector.setNodeTypes(QStringList("vtkMRMLNonlinearTransformNode"));
+  nodeSelector.setNodeTypes(QStringList("vtkMRMLTransformNode"));
   if (nodeSelector.nodeCount() != 3)
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector: node type filtering failed, expected 3 nodes, got " << nodeSelector.nodeCount() << "." << std::endl;

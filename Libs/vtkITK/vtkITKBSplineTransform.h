@@ -77,6 +77,8 @@ public:
   //
   void SetParameters( const double* param );
 
+  void SetParameters( const float* param );
+
   /// The number of elements in the parameter vector.
   //
   /// See SetParameters(double[]).
@@ -89,6 +91,9 @@ public:
   //
   /// These are the grid spacing, the grid origin, etc.
   void SetFixedParameters( const double* param, unsigned N );
+
+  /// These are the grid spacing, the grid origin, etc.
+  void SetFixedParameters( const float* param, unsigned N );
 
   /// The number of fixed parameters.
   unsigned int GetNumberOfFixedParameters() const;
@@ -121,7 +126,7 @@ public:
   itk::Transform<double,3,3>::Pointer GetITKTransform() const;
 
   /// copy underlying ITK transform
-  void DeepCopy(vtkITKBSplineTransform *xform);
+  void InternalDeepCopy(vtkAbstractTransform *abstractTransform);
 
 protected:
   vtkITKBSplineTransform();

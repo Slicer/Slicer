@@ -259,9 +259,13 @@ class EndoscopyWidget:
       self.camera.SetPosition(*p)
       foc = self.path[f+1]
       self.camera.SetFocalPoint(*foc)
-      self.transform.GetMatrixTransformToParent().SetElement(0 ,3, p[0])
-      self.transform.GetMatrixTransformToParent().SetElement(1, 3, p[1])
-      self.transform.GetMatrixTransformToParent().SetElement(2, 3, p[2])
+
+      toParent = vtk.vtkMatrix4x4()
+      self.transform.GetMatrixTransformToParent(toParent)
+      toParent.SetElement(0 ,3, p[0])
+      toParent.SetElement(1, 3, p[1])
+      toParent.SetElement(2, 3, p[2])
+      self.transform.SetMatrixTransformToParent(toParent)
 
 
 class EndoscopyComputePath:

@@ -89,7 +89,7 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
   vtkNew<vtkMRMLNodeCallback> callback;
   volumeNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 
-  linearTransformNode->GetMatrixTransformToParent()->Modified();
+  linearTransformNode->GetTransformToParent()->Modified();
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfModified() != 0 ||
       callback->GetNumberOfEvents(vtkMRMLTransformNode::TransformModifiedEvent) != 1)

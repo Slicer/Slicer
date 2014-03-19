@@ -14,61 +14,12 @@
 #include "vtkMRMLTransformNode.h"
 
 #include <vtkGeneralTransform.h>
-
-
-class vtkMRMLTransformNodeTestHelper1 : public vtkMRMLTransformNode
-{
-public:
-  // Provide a concrete New.
-  static vtkMRMLTransformNodeTestHelper1 *New(){return new vtkMRMLTransformNodeTestHelper1;};
-
-  vtkTypeMacro( vtkMRMLTransformNodeTestHelper1,vtkMRMLTransformNode);
-
-  virtual vtkMRMLNode* CreateNodeInstance()
-    {
-    return new vtkMRMLTransformNodeTestHelper1;
-    }
-
-  const char * GetTypeAsString()
-    {
-    return "vtkMRMLTransformNodeTestHelper1";
-    }
-
-  int ReadFile()
-    {
-    std::cout << "vtkMRMLTransformNodeTestHelper1 pretending to read a file " << std::endl;
-    return EXIT_SUCCESS;
-    }
-
-  virtual const char* GetNodeTagName() 
-    {
-    return "Testing is good";
-    }
-
-  virtual int IsLinear() { return 1; }
-
-  virtual int GetMatrixTransformToWorld(vtkMatrix4x4* vtkNotUsed(transformToWorld)) 
-    {
-    return 0;
-    }
-
-  // Description:
-  // Get concatenated transforms  between nodes
-  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* vtkNotUsed(node), 
-                                       vtkMatrix4x4* vtkNotUsed(transformToNode))
-    {
-    return 0;
-    } 
-
-};
  
 int vtkMRMLTransformNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLTransformNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLTransformNodeTestHelper1 >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLTransformNodeTestHelper1, node1);
+  vtkNew<vtkMRMLTransformNode> node1;
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLTransformNode, node1.GetPointer());
 
   return EXIT_SUCCESS;
 }

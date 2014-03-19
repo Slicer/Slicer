@@ -58,11 +58,13 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
   qSlicerTransformsModuleWidget* transformsWidget =
     dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
 
-  vtkMatrix4x4* matrix = transformNode->GetMatrixTransformToParent();
+  vtkNew<vtkMatrix4x4> matrix;
+  transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   matrix->SetElement(0,0, 10.);
   matrix->SetElement(1,0, 2.);
+  transformNode->SetMatrixTransformToParent(matrix.GetPointer());
   transformsWidget->identity();
-  matrix = transformNode->GetMatrixTransformToParent();
+  transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   QCOMPARE(matrix->GetElement(0,0), 1.);
   QCOMPARE(matrix->GetElement(1,0), 0.);
   //transformsWidget->show();
@@ -82,11 +84,13 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
   qSlicerTransformsModuleWidget* transformsWidget =
     dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
 
-  vtkMatrix4x4* matrix = transformNode->GetMatrixTransformToParent();
+  vtkNew<vtkMatrix4x4> matrix;
+  transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   matrix->SetElement(0,0, 10.);
   matrix->SetElement(1,0, 2.);
+  transformNode->SetMatrixTransformToParent(matrix.GetPointer());
   transformsWidget->invert();
-  matrix = transformNode->GetMatrixTransformToParent();
+  transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   QCOMPARE(matrix->GetElement(0,0), 0.1);
   QCOMPARE(matrix->GetElement(1,0), -0.2);
   //transformsWidget->show();

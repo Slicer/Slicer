@@ -5,5 +5,5 @@ Parameters: -0.0040388772276115726 -0.030971515682522315 -0.03906103884601552 -0
 FixedParameters: 8 8 8 -116.99999999999999 -180 -180 36.39999999999999 60 60 1 0 0 0 1 0 0 0 1
 #Transform 1
 Transform: AffineTransform_double_3_3
-Parameters: 1 0 0 0 1 0 0 0 1 0 0 0
+Parameters: 0.8 0.1 0.1 0.15 0.7 0.05 0.14 0.04 0.9 10 -5 7
 FixedParameters: 0 0 0

@@ -67,7 +67,7 @@ bool TestSetAndObserveTransformNodeID()
   scene->AddNode(transform.GetPointer());
   vtkNew<vtkMatrix4x4> matrix;
   matrix->SetElement(0,3, 1.);
-  transform->SetAndObserveMatrixTransformToParent(matrix.GetPointer());
+  transform->SetMatrixTransformToParent(matrix.GetPointer());
 
   transformable->SetAndObserveTransformNodeID(transform->GetID());
   if (transformable->GetParentTransformNode() != transform.GetPointer())

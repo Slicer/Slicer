@@ -58,9 +58,14 @@ def texturedPlane():
 
   modelNode,transformNode,imageSource = newPlane()
 
+  toParent = vtk.vtkMatrix4x4()
+  transformNode.GetMatrixTransformToParent(toParent)
   for i in xrange(steps):
     imageSource.SetInValue( 200*(i%2) )
-    transformNode.GetMatrixTransformToParent().SetElement(0, 3, i)
+
+    toParent.SetElement(0, 3, i)
+    transformNode.SetMatrixTransformToParent(toParent)
+
     modelNode.GetPolyData().Modified()
     Slicer.TkCall( "update" )
 

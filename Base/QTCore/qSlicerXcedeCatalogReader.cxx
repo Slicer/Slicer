@@ -1007,17 +1007,11 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
   //    tk_messageBox -message "XcedeCatalogImportSetMatrixFromURI: matrix for transform ID=$id not found. No elements set."
   //     return
   // }
-  vtkMatrix4x4* M = tnode->GetMatrixTransformToParent();
-  if (M == 0)
-    {
-    qDebug() << "matrix for transform ID=" << tid << " not found. No elements set.";
-    return;
-    }
 
   // $M DeepCopy $matrix
   // $matrix Delete
   // $tnode Delete
-  M->DeepCopy(matrix.GetPointer());
+  tnode->SetMatrixTransformToParent(matrix.GetPointer());
     
   // //--- this is for help with FIPS registration correction
   // if { $n(name) == "anat2exf" } {
@@ -1165,7 +1159,8 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
 
   //--- get FSregistration matrix from node
   //set anat2exf [ $anat2exfT GetMatrixTransformToParent ]
-  vtkMatrix4x4* anat2exf = anat2exfT->GetMatrixTransformToParent();
+  vtkNew<vtkMatrix4x4> anat2exf;
+  anat2exfT->GetMatrixTransformToParent(anat2exf.GetPointer());
 
   // //--- create a new node to hold the transform
   // set ras2rasT [ vtkMRMLLinearTransformNode New ]
@@ -1197,7 +1192,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
   vtkFSSurfaceHelper::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix(
     v1->GetSpacing(), v1->GetImageData()->GetDimensions(), ijkToRas.GetPointer(),
     v2->GetSpacing(), v2->GetImageData()->GetDimensions(), rasToIjk.GetPointer(),
-    anat2exf, mat.GetPointer());
+    anat2exf.GetPointer(), mat.GetPointer());
     
   //--- this inverse will register statistics to the brain.mgz
   //$mat Invert
@@ -1205,7 +1200,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
 
   //--- now have matrix. put it in transform.
   //[ $ras2rasT GetMatrixTransformToParent ] DeepCopy $mat
-  ras2rasT->GetMatrixTransformToParent()->DeepCopy(mat.GetPointer());
+  ras2rasT->SetMatrixTransformToParent(mat.GetPointer());
 
   //--- ok -- now manually put your volume in the ras2rasT transform node.
   //$mat Delete

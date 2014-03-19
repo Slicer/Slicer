@@ -19,6 +19,10 @@
 
 class vtkImageData;
 
+class vtkMRMLLinearTransformNode;
+class vtkMRMLBSplineTransformNode;
+class vtkMRMLGridTransformNode;
+
 /// \brief MRML node for transform storage on disk.
 ///
 /// Storage nodes has methods to read/write transforms to/from disk.
@@ -55,8 +59,16 @@ protected:
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
+  virtual int ReadLinearTransform(vtkMRMLNode *refNode);
+  virtual int ReadBSplineTransform(vtkMRMLNode *refNode);
+  virtual int ReadGridTransform(vtkMRMLNode *refNode);
+
   /// Write data from a referenced node
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
+
+  virtual int WriteLinearTransform(vtkMRMLLinearTransformNode *ln);
+  virtual int WriteBSplineTransform(vtkMRMLBSplineTransformNode *bs);
+  virtual int WriteGridTransform(vtkMRMLGridTransformNode *gd);
 
 };
 
