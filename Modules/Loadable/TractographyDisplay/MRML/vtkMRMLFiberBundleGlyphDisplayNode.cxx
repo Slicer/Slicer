@@ -28,7 +28,6 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiberBundleGlyphDisplayNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleGlyphDisplayNode::vtkMRMLFiberBundleGlyphDisplayNode()
 {
@@ -37,7 +36,6 @@ vtkMRMLFiberBundleGlyphDisplayNode::vtkMRMLFiberBundleGlyphDisplayNode()
   this->TwoDimensionalVisibility = 0;
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
 }
-
 
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleGlyphDisplayNode::~vtkMRMLFiberBundleGlyphDisplayNode()
@@ -50,14 +48,12 @@ vtkMRMLFiberBundleGlyphDisplayNode::~vtkMRMLFiberBundleGlyphDisplayNode()
 void vtkMRMLFiberBundleGlyphDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
   of << indent << " twoDimensionalVisibility=\"" << (this->TwoDimensionalVisibility ? "true" : "false") << "\"";
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleGlyphDisplayNode::ReadXMLAttributes(const char** atts)
@@ -68,13 +64,13 @@ void vtkMRMLFiberBundleGlyphDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "twoDimensionalVisibility")) 
+    if (!strcmp(attName, "twoDimensionalVisibility"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->TwoDimensionalVisibility  = 1;
         }
@@ -83,11 +79,10 @@ void vtkMRMLFiberBundleGlyphDisplayNode::ReadXMLAttributes(const char** atts)
         this->TwoDimensionalVisibility = 0;
         }
       }
-    }  
+    }
 
   this->EndModify(disabledModify);
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -121,7 +116,7 @@ vtkAlgorithmOutput* vtkMRMLFiberBundleGlyphDisplayNode::GetOutputPort()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 {
-  //this->Superclass::UpdatePolyDataPipeline();
+  this->Superclass::UpdatePolyDataPipeline();
 
   this->DiffusionTensorGlyphFilter->SetInputConnection(
     this->Superclass::GetOutputPort());
@@ -276,8 +271,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 
     //this->ScalarRange[0] = range[0];
     //this->ScalarRange[1] = range[1];
-    this->SetScalarRange(range);    
+    this->SetScalarRange(range);
     }
 }
-
 

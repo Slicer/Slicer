@@ -41,7 +41,6 @@ vtkMRMLFiberBundleLineDisplayNode::vtkMRMLFiberBundleLineDisplayNode()
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleLineDisplayNode::~vtkMRMLFiberBundleLineDisplayNode()
 {
@@ -109,7 +108,7 @@ vtkAlgorithmOutput* vtkMRMLFiberBundleLineDisplayNode::GetOutputPort()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
 {
-  //this->Superclass::UpdatePolyDataPipeline();
+  this->Superclass::UpdatePolyDataPipeline();
   this->TensorToColor->SetInputConnection(this->Superclass::GetOutputPort());
 
   if (!this->Visibility)

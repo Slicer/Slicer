@@ -23,6 +23,9 @@ Version:   $Revision: 1.3 $
 
 // VTK includes
 #include <vtkCommand.h>
+#include <vtkAssignAttribute.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
 
 // STD includes
 #include <sstream>
@@ -34,16 +37,18 @@ vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleDisplayNode, DiffusionTensorDisp
 vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 {
   this->BackfaceCulling = 0;
+  this->ActiveTensorName = 0;
 
   // Enumerated
   this->ColorMode = this->colorModeSolid;
-  this->SetColor(1,0.157,0);
 
   this->DiffusionTensorDisplayPropertiesNode = NULL;
   this->DiffusionTensorDisplayPropertiesNodeID = NULL;
 
   this->ScalarRange[0] = 0.;
   this->ScalarRange[1] = 1.;
+
+  this->SetColor(1,0.157,0);
 }
 
 //----------------------------------------------------------------------------
@@ -56,14 +61,19 @@ vtkMRMLFiberBundleDisplayNode::~vtkMRMLFiberBundleDisplayNode()
 void vtkMRMLFiberBundleDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
   of << indent << " colorMode =\"" << this->ColorMode << "\"";
 
-  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL) 
+  if (this->ActiveTensorName != NULL)
+    {
+    of << indent << " ActiveTensorName=\"" << this->ActiveTensorName << "\"";
+    }
+
+  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL)
     {
     of << indent << " DiffusionTensorDisplayPropertiesNodeRef=\"" << this->DiffusionTensorDisplayPropertiesNodeID << "\"";
     }
@@ -78,12 +88,12 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "colorMode")) 
+    if (!strcmp(attName, "colorMode"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -91,8 +101,11 @@ void vtkMRMLFiberBundleDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> colorMode;
       this->SetColorMode(colorMode);
       }
-
-    else if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef")) 
+    else if (!strcmp(attName, "ActiveTensorName"))
+      {
+      this->SetActiveTensorName(attValue);
+      }
+    else if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef"))
       {
       this->SetDiffusionTensorDisplayPropertiesNodeID(attValue);
       }
@@ -114,6 +127,7 @@ void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
+  this->SetActiveTensorName(node->ActiveTensorName);
 
   this->EndModify(disabledModify);
   }
@@ -122,9 +136,11 @@ void vtkMRMLFiberBundleDisplayNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLFiberBundleDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   //int idx;
-  
+
   Superclass::PrintSelf(os,indent);
   os << indent << "ColorMode:             " << this->ColorMode << "\n";
+  os << indent<< "ActiveTensorName: " <<
+    (this->ActiveTensorName ? this->ActiveTensorName : "(none)") << "\n";
 }
 
 //-----------------------------------------------------------
@@ -177,7 +193,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLFiberBundleDisplayNode::GetD
 void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *id )
 {
   if (
-      (id != this->GetDiffusionTensorDisplayPropertiesNodeID()) 
+      (id != this->GetDiffusionTensorDisplayPropertiesNodeID())
       && id != NULL && this->GetDiffusionTensorDisplayPropertiesNodeID() != NULL
       && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
       )
@@ -240,3 +256,19 @@ int vtkMRMLFiberBundleDisplayNode::GetNthScalarInvariant(int i)
   return modes[i];
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::UpdatePolyDataPipeline()
+{
+  if (this->GetActiveTensorName() &&
+    std::string(this->GetActiveTensorName()) != std::string("") &&
+    this->GetInputPolyData() &&
+    this->GetInputPolyData()->GetPointData() &&
+    this->GetInputPolyData()->GetPointData()->GetTensors() )
+  {
+    this->AssignAttribute->Assign(
+      this->GetActiveTensorName(),
+      this->GetActiveTensorName() ? vtkDataSetAttributes::TENSORS : -1,
+      vtkAssignAttribute::POINT_DATA);
+    this->AssignAttribute->Update();
+  }
+}

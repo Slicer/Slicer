@@ -106,6 +106,36 @@ QCheckBox::indicator:unchecked {
           </widget>
          </item>
          <item row="1" column="0" colspan="2">
+          <layout class="QHBoxLayout" name="Layout_TensorSelect">
+           <item>
+            <widget class="QLabel" name="ActiveTensorLabel">
+             <property name="text">
+               <string>Active Tensor:</string>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ctkVTKDataSetArrayComboBox" name="ActiveTensorComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="attributeTypes">
+              <set>ctkVTKDataSetModel::NoAttribute|ctkVTKDataSetModel::TensorsAttribute</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0" colspan="2">
           <layout class="QHBoxLayout" name="Layout_ScalarInvariantPropertySelect">
            <item>
             <widget class="QRadioButton" name="ColorByScalarInvariantRadioButton">
@@ -132,7 +162,7 @@ QCheckBox::indicator:unchecked {
            </item>
           </layout>
          </item>
-         <item row="2" column="0" colspan="2">
+         <item row="3" column="0" colspan="2">
           <layout class="QHBoxLayout" name="Layout_ScalarPropertySelect">
            <item>
             <widget class="QRadioButton" name="ColorByScalarRadioButton">
@@ -165,7 +195,7 @@ QCheckBox::indicator:unchecked {
            </item>
           </layout>
          </item>
-         <item row="3" column="0" colspan="2">
+         <item row="4" column="0" colspan="2">
           <widget class="QRadioButton" name="ColorByMeanFiberOrientationRadioButton">
            <property name="text">
             <string>Color Fibers By Mean Orientation</string>

@@ -48,7 +48,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML ( ostream& of, int indent );
 
-
   ///
   /// Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
@@ -73,7 +72,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
   //--------------------------------------------------------------------------
-
 
   //--------------------------------------------------------------------------
   /// Display Information: Color Mode
@@ -138,29 +136,34 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
     this->SetColorMode ( this->colorModeScalarData );
   };
 
-  /// 
+  ///
   /// Color according to the mean orientation of the fiber
   /// calculated from the orientation of the segment original fiber bundle node.
   void SetColorModeToMeanFiberOrientation ( ) {
     this->SetColorMode ( this->colorModeMeanFiberOrientation );
   };
 
-  /// 
+  ///
   /// Color according to the segment orientation of the fiber
   /// calculated from the orientation of the segment original fiber bundle node.
   void SetColorModeToPointFiberOrientation ( ) {
     this->SetColorMode ( this->colorModePointFiberOrientation );
   };
 
+  /// Set the active tensor name of the display node.
+  //virtual void SetActiveTensorName(const char *tensorName);
+
+  /// Return the name of the currently active scalar field for this model.
+  vtkGetStringMacro(ActiveTensorName);
+  vtkSetStringMacro(ActiveTensorName);
+
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
 
-
   //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
-
 
   /// Node reference to ALL DT nodes
 
@@ -176,9 +179,11 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
-
   static int GetNumberOfScalarInvariants();
   static int GetNthScalarInvariant(int i);
+
+  /// Update the pipeline based on this node attributes
+  virtual void UpdatePolyDataPipeline();
 
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
@@ -197,6 +202,9 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
 
   /// Enumerated
   int ColorMode;
+
+  /// Active Tensor Name
+  char *ActiveTensorName;
 
   /// Arrays
   //double ScalarRange[2];

@@ -34,7 +34,6 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiberBundleTubeDisplayNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleTubeDisplayNode::vtkMRMLFiberBundleTubeDisplayNode()
 {
@@ -61,7 +60,6 @@ vtkMRMLFiberBundleTubeDisplayNode::vtkMRMLFiberBundleTubeDisplayNode()
   this->UpdatePolyDataPipeline();
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleTubeDisplayNode::~vtkMRMLFiberBundleTubeDisplayNode()
 {
@@ -81,8 +79,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " tubeRadius =\"" << this->TubeRadius << "\"";
   of << indent << " tubeNumberOfSides =\"" << this->TubeNumberOfSides << "\"";
 }
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleTubeDisplayNode::ReadXMLAttributes(const char** atts)
@@ -114,9 +110,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::ReadXMLAttributes(const char** atts)
     }
 
   this->EndModify(disabledModify);
-
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -132,7 +126,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetTubeRadius(node->TubeRadius);
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -156,7 +149,7 @@ vtkAlgorithmOutput* vtkMRMLFiberBundleTubeDisplayNode::GetOutputPort()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
 {
-  //this->Superclass::UpdatePolyDataPipeline();
+  this->Superclass::UpdatePolyDataPipeline();
 
   this->ColorLinesByOrientation->SetInputConnection(
     this->Superclass::GetOutputPort());
@@ -343,7 +336,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
       }
     //this->ScalarRange[0] = range[0];
     //this->ScalarRange[1] = range[1];
-    this->SetScalarRange(range);    
+    this->SetScalarRange(range);
     }
 }
 
