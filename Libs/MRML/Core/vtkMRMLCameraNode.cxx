@@ -261,25 +261,15 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  int idx;
-  
-  Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
-  os << "Position:\n";
-  for (idx = 0; idx < 2; ++idx)
-    {
-    os << indent << ", " << (this->GetPosition())[idx];
-    }
-  os << "FocalPoint:\n";
-  for (idx = 0; idx < 2; ++idx)
-    {
-    os << indent << ", " << (this->GetFocalPoint())[idx];
-    }
-  os << "ViewUp:\n";
-  for (idx = 0; idx < 2; ++idx)
-    {
-    os << indent << ", " << (this->GetViewUp())[idx];
-    }
+  double v[3];
+  this->GetPosition(v);
+  os << indent << "Position:" << v[0] << ", " << v[1] << ", " << v[2] << '\n';
+  this->GetFocalPoint(v);
+  os << indent << "FocalPoint:" << v[0] << ", " << v[1] << ", " << v[2] << '\n';
+  this->GetViewUp(v);
+  os << indent << "ViewUp:" << v[0] << ", " << v[1] << ", " << v[2] << '\n';
   os << indent << "ActiveTag: " <<
     (this->GetActiveTag() ? this->GetActiveTag() : "(none)") << "\n";
   os << indent << "AppliedTransform: " ;
@@ -330,7 +320,7 @@ void vtkMRMLCameraNode::SetPosition(double position[3])
 {
   this->Camera->SetPosition(position);
 }
-  
+
 //---------------------------------------------------------------------------
 double *vtkMRMLCameraNode::GetPosition()
 {
@@ -338,11 +328,17 @@ double *vtkMRMLCameraNode::GetPosition()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLCameraNode::GetPosition(double position[3])
+{
+  this->Camera->GetPosition(position);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetFocalPoint(double focalPoint[3]) 
 {
   this->Camera->SetFocalPoint(focalPoint);
 }
-  
+
 //---------------------------------------------------------------------------
 double *vtkMRMLCameraNode::GetFocalPoint()
 {
@@ -350,15 +346,27 @@ double *vtkMRMLCameraNode::GetFocalPoint()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLCameraNode::GetFocalPoint(double focalPoint[3])
+{
+  this->Camera->GetFocalPoint(focalPoint);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetViewUp(double viewUp[3]) 
 {
   this->Camera->SetViewUp(viewUp);
 }
-  
+
 //---------------------------------------------------------------------------
 double *vtkMRMLCameraNode::GetViewUp()
 {
   return this->Camera->GetViewUp();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::GetViewUp(double viewUp[3])
+{
+  this->Camera->GetViewUp(viewUp);
 }
 
 //---------------------------------------------------------------------------
