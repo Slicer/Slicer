@@ -231,6 +231,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   else
     {
     vtkErrorMacro("Couldn't read file: " << filename);
+    return 0;
     }
 
   return modelNode.GetPointer();
