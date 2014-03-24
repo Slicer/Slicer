@@ -111,18 +111,19 @@ public:
       SlicerLayoutFourByTwoSliceView,
       SlicerLayoutFiveByTwoSliceView,
       SlicerLayoutThreeByThreeSliceView,
+      SlicerLayoutMaximizedView = 98,
       SlicerLayoutCustomView = 99,
       SlicerLayoutUserView = 100
     };
 
   /// Adds a layout description with integer identifier
   /// "layout". Returns false without making any modifications if the
-  /// integer identifier "layout" is already in use.
+  /// integer identifier "layout" has already been added.
   bool AddLayoutDescription(int layout, const char* layoutDescription);
 
   /// Modifies a layout description for integer identifier
   /// "layout". Returns false without making any modifications if the
-  /// integer identifier "layout" is NOT already in use.
+  /// integer identifier "layout" has NOT already been added.
   bool SetLayoutDescription(int layout, const char* layoutDescription);
 
   /// Query whether a layout exists with a specified integer identifier

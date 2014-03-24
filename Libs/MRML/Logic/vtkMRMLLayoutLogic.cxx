@@ -1538,6 +1538,47 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::MaximizeView(vtkMRMLAbstractViewNode* viewToMaximize)
+{
+  int layout = vtkMRMLLayoutNode::SlicerLayoutMaximizedView;
+  this->CreateMaximizedViewLayoutDescription( layout, viewToMaximize);
+  vtkMRMLLayoutNode* layoutNode = this->GetLayoutNode();
+  if (layoutNode)
+    {
+    layoutNode->SetViewArrangement(layout);
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic
+::CreateMaximizedViewLayoutDescription(int layout,
+                                       vtkMRMLAbstractViewNode* viewToMaximize)
+{
+  vtkMRMLLayoutNode* layoutNode = this->GetLayoutNode();
+  if (!layoutNode)
+    {
+    vtkErrorMacro( << "No layout node");
+    }
+  std::stringstream layoutDescription;
+  layoutDescription <<
+    "<layout type=\"horizontal\">"
+    " <item>"
+    "  <view class=\"" << viewToMaximize->GetClassName() << "\" "
+    "singletontag=\""<< viewToMaximize->GetSingletonTag() << "\">"
+    "  </view>"
+    " </item>"
+    "</layout>";
+  if (layoutNode->IsLayoutDescription(layout))
+    {
+    layoutNode->SetLayoutDescription(layout, layoutDescription.str().c_str());
+    }
+  else
+    {
+    layoutNode->AddLayoutDescription(layout, layoutDescription.str().c_str());
+    }
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLLayoutLogic::GetViewFromAttributes(const ViewAttributes& attributes)
 {
   vtkSmartPointer<vtkCollection> nodes;
@@ -1556,7 +1597,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
     {
     return NULL;
     }
-  // filter on the class name, that remove a lot of options
+  // filter on the class name to remove a lot of options.
   ViewAttributes::const_iterator it = attributes.find(std::string("class"));
   ViewAttributes::const_iterator end = attributes.end();
   if (it == end)
