@@ -2720,16 +2720,8 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
       }
     }
 
-  std::vector<std::string> components;
-  vtksys::SystemTools::SplitPath((const char*)filepath, components);
-  if (components[0] == "")
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  const bool absoluteFilePath = vtksys::SystemTools::FileIsFullPath(filepath);
+  return absoluteFilePath ? 0 : 1;
 }
 
 //------------------------------------------------------------------------------
