@@ -28,6 +28,9 @@ Version:   $Revision: 1.2 $
 // VNL includes
 #include <vnl/vnl_double_3.h>
 
+// STL includes
+#include <algorithm>
+
 //------------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLSliceNode, SliceToRAS, vtkMatrix4x4);
 
@@ -224,6 +227,106 @@ double* vtkMRMLSliceNode::grayColor()
                                 140. / 255.,
                                 140. / 255.};
   return grayColor;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLSliceNode::GetNumberOfThreeDViewIDs() const
+{
+  return static_cast<int>(this->ThreeDViewIDs.size());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::AddThreeDViewID(const char* viewNodeID)
+{
+  if (!viewNodeID)
+    {
+    return;
+    }
+
+  if (this->IsThreeDViewIDPresent(viewNodeID))
+    {
+    return; // already exists, do nothing
+    }
+
+  this->ThreeDViewIDs.push_back(std::string(viewNodeID));
+  if (this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(viewNodeID, this);
+    }
+
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
+{
+  if (viewNodeID == NULL)
+    {
+    return;
+    }
+  std::vector< std::string > viewNodeIDs;
+  for(unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+    {
+    if (std::string(viewNodeID) != this->ThreeDViewIDs[i])
+      {
+      viewNodeIDs.push_back(this->ThreeDViewIDs[i]);
+      }
+    }
+  if (viewNodeIDs.size() != this->ThreeDViewIDs.size())
+    {
+    this->Scene->RemoveReferencedNodeID(viewNodeID, this);
+    this->ThreeDViewIDs = viewNodeIDs;
+    this->Modified();
+    }
+  else
+    {
+    vtkErrorMacro("vtkMRMLDisplayNode::RemoveThreeDViewID() id "
+      << viewNodeID << " not found");
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::RemoveAllThreeDViewIDs()
+{
+  for(unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+    {
+    this->Scene->RemoveReferencedNodeID(ThreeDViewIDs[i].c_str(), this);
+    }
+  this->ThreeDViewIDs.clear();
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSliceNode::GetNthThreeDViewID(unsigned int index)
+{
+  if (index >= ThreeDViewIDs.size())
+    {
+    vtkErrorMacro("vtkMRMLDisplayNode::GetNthThreeDViewID() index "
+      << index << " outside the range 0-" << this->ThreeDViewIDs.size()-1 );
+    return NULL;
+    }
+  return ThreeDViewIDs[index].c_str();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
+{
+  if (viewNodeID == 0)
+    {
+    return false;
+    }
+  std::string value(viewNodeID);
+  std::vector< std::string >::const_iterator it =
+    std::find(this->ThreeDViewIDs.begin(), this->ThreeDViewIDs.end(), value);
+  return it != this->ThreeDViewIDs.end();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode
+::IsDisplayableInThreeDView(const char* viewNodeID)const
+{
+  return this->GetNumberOfThreeDViewIDs() == 0
+    || this->IsThreeDViewIDPresent(viewNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -676,6 +779,19 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
      << this->PrescribedSliceSpacing[1] << " "
      << this->PrescribedSliceSpacing[2] << "\"";
 
+  ss.clear();
+  for (unsigned int n = 0; n < this->ThreeDViewIDs.size(); ++n)
+    {
+    ss << this->ThreeDViewIDs[n];
+    if (n < this->ThreeDViewIDs.size()-1)
+      {
+      ss << " ";
+      }
+    }
+  if (this->ThreeDViewIDs.size() > 0)
+    {
+    of << indent << " threeDViewNodeRef=\"" << ss.str().c_str() << "\"";
+    }
 
 }
 
@@ -935,6 +1051,19 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 
       this->SetSliceSpacingMode( val );
       }
+
+    else if (!strcmp(attName, "threeDViewNodeRef"))
+      {
+      std::stringstream ss(attValue);
+      while (!ss.eof())
+        {
+        std::string id;
+        ss >> id;
+        this->AddThreeDViewID(id.c_str());
+        }
+      }
+
+
     }
   
   if (!layoutColorFound)

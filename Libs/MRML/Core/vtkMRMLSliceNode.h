@@ -72,6 +72,37 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkGetMacro ( WidgetVisible, int );
   vtkSetMacro ( WidgetVisible, int );
 
+  /// Add View Node ID for the view to display this node in.
+  /// \sa ViewNodeIDs, RemoveViewNodeID(), RemoveAllViewNodeIDs()
+  void AddThreeDViewID(const char* viewNodeID);
+  /// Remove View Node ID for the view to display this node in.
+  /// \sa ViewNodeIDs, AddViewNodeID(), RemoveAllViewNodeIDs()
+  void RemoveThreeDViewID(char* viewNodeID);
+  /// Remove All View Node IDs for the views to display this node in.
+  /// \sa ViewNodeIDs, AddThreeDViewID(), RemoveThreeDViewID()
+  void RemoveAllThreeDViewIDs();
+  /// Get number of View Node ID's for the view to display this node in.
+  /// If 0, display in all views
+  /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
+  inline int GetNumberOfThreeDViewIDs()const;
+  /// Get View Node ID's for the view to display this node in.
+  /// If NULL, display in all views
+  /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
+  const char* GetNthThreeDViewID(unsigned int index);
+  /// Get all View Node ID's for the view to display this node in.
+  /// If empty, display in all views
+  /// \sa ThreeDViewIDs, GetNthThreeDViewID(), AddThreeDViewID()
+  inline std::vector< std::string > GetThreeDViewIDs()const;
+  /// True if the view node id is present in the ThreeDViewid list
+  /// false if not found
+  /// \sa ThreeDViewIDs, IsDisplayableInView(), AddThreeDViewID()
+  bool IsThreeDViewIDPresent(const char* ThreeDViewID)const;
+  /// Returns true if the ThreeDViewID is present in the ThreeDViewId list
+  /// or there is no ThreeDViewId in the list (meaning all the views display the
+  /// node)
+  /// \sa ThreeDViewIDs, IsThreeDViewIDPresent(), AddThreeDViewID()
+  bool IsDisplayableInThreeDView(const char* viewNodeID)const;
+
   /// The ImpplicitePlane widget mode
   /// this lock the normal of the plane to the camera's one
   vtkGetMacro ( WidgetNormalLockedToCamera, int );
@@ -422,6 +453,8 @@ protected:
   unsigned int InteractionFlagsModifier;
 
   int IsUpdatingMatrices;
+
+  std::vector< std::string > ThreeDViewIDs;
 };
 
 #endif
