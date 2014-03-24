@@ -82,6 +82,18 @@ public:
   /// Set camera Parallel Scale   
   double GetParallelScale();
 
+  ///
+  /// Set the camera view angle
+  /// \sa GetViewAngle(), vtkCamera::SetViewAngle(), SetParallelScale(),
+  /// SetParallelProjection()
+  void SetViewAngle(double viewAngle);
+
+  ///
+  /// Get the camera view angle
+  /// \sa SetViewAngle(), vtkCamera::GetViewAngle(), GetParallelScale(),
+  /// GetParallelProjection()
+  double GetViewAngle();
+
   /// 
   /// Set the position of the camera in world coordinates.
   /// \sa GetPosition(), SetFocalPoint(), SetViewUp()

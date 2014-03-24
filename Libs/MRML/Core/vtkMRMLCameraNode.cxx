@@ -263,13 +263,16 @@ void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
+  os << indent << "Parallel projection: " << this->GetParallelProjection() << '\n';
+  os << indent << "Parallel scale: " << this->GetParallelScale() << '\n';
+  os << indent << "ViewAngle:" << this->GetViewAngle() << '\n';
   double v[3];
   this->GetPosition(v);
-  os << indent << "Position:" << v[0] << ", " << v[1] << ", " << v[2] << '\n';
+  os << indent << "Position: " << v[0] << ", " << v[1] << ", " << v[2] << '\n';
   this->GetFocalPoint(v);
-  os << indent << "FocalPoint:" << v[0] << ", " << v[1] << ", " << v[2] << '\n';
+  os << indent << "FocalPoint: " << v[0] << ", " << v[1] << ", " << v[2] << '\n';
   this->GetViewUp(v);
-  os << indent << "ViewUp:" << v[0] << ", " << v[1] << ", " << v[2] << '\n';
+  os << indent << "ViewUp: " << v[0] << ", " << v[1] << ", " << v[2] << '\n';
   os << indent << "ActiveTag: " <<
     (this->GetActiveTag() ? this->GetActiveTag() : "(none)") << "\n";
   os << indent << "AppliedTransform: " ;
@@ -367,6 +370,18 @@ double *vtkMRMLCameraNode::GetViewUp()
 void vtkMRMLCameraNode::GetViewUp(double viewUp[3])
 {
   this->Camera->GetViewUp(viewUp);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetViewAngle(double viewAngle)
+{
+  this->Camera->SetViewAngle(viewAngle);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLCameraNode::GetViewAngle()
+{
+  return this->Camera->GetViewAngle();
 }
 
 //---------------------------------------------------------------------------
