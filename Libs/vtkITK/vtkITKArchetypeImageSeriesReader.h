@@ -27,6 +27,7 @@ class vtkMatrix4x4;
 #include "itkSpatialOrientation.h"
 
 // STD includes
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -487,14 +488,10 @@ public:
 
   int ExistSliceLocation( float sliceLocation )
     {
-      for (unsigned int k = 0; k < GetNumberOfSliceLocation(); k++)
-        {
-        if ( this->SliceLocation[k] == sliceLocation )
-          {
-          return k;
-          }
-        }
-      return -1;
+    std::vector<float>::iterator iter =
+      std::find(this->SliceLocation.begin(), this->SliceLocation.end(), sliceLocation);
+    return iter != this->SliceLocation.end() ?
+      std::distance(this->SliceLocation.begin(), iter) : -1;
     }
 
   int ExistImageOrientationPatient( float * directionCosine )
@@ -717,6 +714,9 @@ public:
       return (this->DiffusionGradientOrientation.size()-1);
     }
 
+  /// Append the slice location a. Do nothing if the slice location has already
+  /// been added.
+  /// \sa InsertNextSliceLocation()
   int InsertSliceLocation ( float a )
     {
       int k = ExistSliceLocation( a );
@@ -727,6 +727,15 @@ public:
 
       this->SliceLocation.push_back( a );
       return (this->SliceLocation.size()-1);
+    }
+  /// Linearly insert the next slicer. This prevents a n*log(n) insertion
+  /// \sa InsertSliceLocation()
+  int InsertNextSliceLocation( )
+    {
+    int size = this->SliceLocation.size();
+    this->SliceLocation.push_back(
+      size > 0 ? this->SliceLocation.back() + 1 : 0.f);
+    return size;
     }
 
   int InsertImageOrientationPatient ( float *a )

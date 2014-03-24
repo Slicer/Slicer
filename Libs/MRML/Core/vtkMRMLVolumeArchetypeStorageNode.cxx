@@ -408,16 +408,25 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     {
     vtkDebugMacro("Number of file names = " << reader->GetNumberOfFileNames()
                   << ", number of slice location = " << reader->GetNumberOfSliceLocation());
-    // include the archtype, file 0, in the storage node's file list
-    for (unsigned int n = 0; n < reader->GetNumberOfFileNames(); n++)
+    if (this->FileNameList.size() == 0)
       {
-      const char *thisFileName = reader->GetFileName(n);
+      // It is safe to assume that the file names in reader are unique.
+      // Here we shortcut the n*log(n) unique insertion of  AddFileName().
+      this->FileNameList = reader->GetFileNames();
+      }
+    else
+      {
+      // include the archtype, file 0, in the storage node's file list
+      for (unsigned int n = 0; n < reader->GetNumberOfFileNames(); n++)
+        {
+        const char *thisFileName = reader->GetFileName(n);
 #ifndef NDEBUG
-      int currentSize =
+        int currentSize =
 #endif
-        this->AddFileName(thisFileName);
-      vtkDebugMacro("After adding file " << n << ", filename = " << thisFileName
-                    << " to this storage node's list, current size of the list = " << currentSize);
+          this->AddFileName(thisFileName);
+        vtkDebugMacro("After adding file " << n << ", filename = " << thisFileName
+                      << " to this storage node's list, current size of the list = " << currentSize);
+        }
       }
     }
 

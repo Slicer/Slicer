@@ -66,7 +66,7 @@ void vtkITKExecuteDataFromSeriesVector(
   typedef itk::ImageSource<image> FilterType;
   typename FilterType::Pointer filter;
   typename itk::ImageSeriesReader<image>::Pointer reader =
-  itk::ImageSeriesReader<image>::New();
+    itk::ImageSeriesReader<image>::New();
   itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New();
   pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&self->ReadProgressCallback);
   pcl->SetClientData(self);

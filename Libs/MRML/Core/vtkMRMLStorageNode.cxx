@@ -311,11 +311,7 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLStorageNode *node = (vtkMRMLStorageNode *) anode;
   this->SetFileName(node->FileName);
-  this->ResetFileNameList();
-  for (int i = 0; i < node->GetNumberOfFileNames(); i++)
-    {
-    this->AddFileName(node->GetNthFileName(i));
-    }
+  this->FileNameList = node->FileNameList; // a loop on AddFileName would be n log(n)
   this->SetURI(node->URI);
   this->ResetURIList();
   for (int i = 0; i < node->GetNumberOfURIs(); i++)

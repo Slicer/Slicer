@@ -1079,16 +1079,42 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
   if ( !gdcmIO->CanReadFile(this->Archetype) )
-  {
-    for (int f = 0; f < nFiles; f++)
     {
+    itk::ImageIOBase::Pointer lastImageIO;
+    for (int f = 0; f < nFiles; f++)
+      {
       itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
-      imageReader->SetFileName( this->AllFileNames[f] );
-      imageReader->UpdateOutputInformation();
+      const std::string& fileName = this->AllFileNames[f];
+      imageReader->SetFileName( fileName );
+      // Try first to reuse the same imageIO for each file. If it fails, then use
+      // the default imageIO
+      if (lastImageIO && (lastImageIO->CanReadFile(fileName.c_str())))
+        {
+        imageReader->SetImageIO(lastImageIO);
+        }
+      else
+        {
+        imageReader->UpdateOutputInformation();
+        lastImageIO = imageReader->GetImageIO();
+        }
+
+      // Don't read the image header if it is a 2D file type.
+      std::string IOType = imageReader->GetImageIO()->GetNameOfClass();
+      bool ioHas3DInformation =
+        IOType.find("BPMImageIO") != std::string::npos &&
+        IOType.find("JPEGImageIO") != std::string::npos &&
+        IOType.find("PNGImageIO") != std::string::npos &&
+        IOType.find("TIFFImageIO") != std::string::npos &&
+        IOType.find("RawImageIO") != std::string::npos;
+      if (ioHas3DInformation)
+        {
+        imageReader->UpdateOutputInformation();
+        lastImageIO = imageReader->GetImageIO();
+        }
 
       // insert series 
-      int idx = InsertSeriesInstanceUIDs( "Non-Dicom Series" );
+      int idx = this->InsertSeriesInstanceUIDs( "Non-Dicom Series" );
       this->IndexSeriesInstanceUIDs[f] = idx;
 
       // for now, assume ContentTime, TriggerTime, and DiffusionGradientOrientation do not exist
@@ -1098,36 +1124,35 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       this->IndexDiffusionGradientOrientation[f] = -1;
 
       // Slice Location
-      ImageType::PointType origin = imageReader->GetOutput()->GetOrigin();
-      std::string IOType = imageReader->GetImageIO()->GetNameOfClass();
-      if( IOType.find("BPMImageIO") == std::string::npos ||
-          IOType.find("JPEGImageIO") == std::string::npos ||
-          IOType.find("PNGImageIO") == std::string::npos ||
-          IOType.find("TIFFImageIO") == std::string::npos ||
-          IOType.find("RawImageIO") == std::string::npos )
-      {
-        idx = InsertSliceLocation( static_cast<float>(f) );
-        this->IndexSliceLocation[f] = idx;    
-      }
+      if (ioHas3DInformation)
+        {
+        ImageType::PointType origin = imageReader->GetOutput()->GetOrigin();
+        idx = this->InsertSliceLocation( origin[2] );
+        }
       else
-      {
-        idx = InsertSliceLocation( origin[2] );
-        this->IndexSliceLocation[f] = idx;    
-      }
+        {
+        idx = this->InsertNextSliceLocation();
+        }
+      this->IndexSliceLocation[f] = idx;
 
       // Orientation
-      ImageType::DirectionType orientation = imageReader->GetOutput()->GetDirection();
-      float a[6];
-      for (int k = 0; k < 3; k++)
-      {
-        a[k] = orientation[0][k];
-        a[k+3] = orientation[1][k];
+      float sliceOrientation[6] = {1., 0., 0.,
+                                   0., 1., 0.};
+      if (ioHas3DInformation)
+        {
+        ImageType::DirectionType orientation =
+          imageReader->GetOutput()->GetDirection();
+        for (int k = 0; k < 3; k++)
+          {
+          sliceOrientation[k] = orientation[0][k];
+          sliceOrientation[k+3] = orientation[1][k];
+          }
+        }
+      idx = this->InsertImageOrientationPatient( sliceOrientation );
+      this->IndexImageOrientationPatient[f] = idx;
       }
-      idx = InsertImageOrientationPatient( a );
-      this->IndexImageOrientationPatient[f] = idx;    
-    }
     return;
-  }
+    }
 
   // if Archetype is a Dicom File
   gdcmIO->SetFileName( this->Archetype );
