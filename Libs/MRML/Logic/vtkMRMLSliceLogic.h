@@ -371,6 +371,8 @@ protected:
   void SetupCrosshairNode();
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene,
+                                                          const char* layoutName);
 
   bool                        AddingSliceModelNodes;
   bool                        Initialized;
