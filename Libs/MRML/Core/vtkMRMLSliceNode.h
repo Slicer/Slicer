@@ -457,4 +457,10 @@ protected:
   std::vector< std::string > ThreeDViewIDs;
 };
 
+//----------------------------------------------------------------------------
+std::vector< std::string > vtkMRMLSliceNode::GetThreeDViewIDs()const
+{
+  return this->ThreeDViewIDs;
+}
+
 #endif

@@ -477,6 +477,7 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     if ( sliceDisplayNode)
       {
       sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
+      sliceDisplayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
       }
     }
   else if (node == this->SliceCompositeNode)
@@ -1107,10 +1108,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     vtkMRMLDisplayNode* displayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : 0;
     if ( displayNode && this->SliceNode )
       {
-      if (displayNode->GetVisibility() != this->SliceNode->GetSliceVisible() )
-        {
-        displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
-        }
+      displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
+      displayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
+
       if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
           !((backgroundImageUVW != 0) || (foregroundImageUVW != 0) || (labelImageUVW != 0) ) ) ||
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&

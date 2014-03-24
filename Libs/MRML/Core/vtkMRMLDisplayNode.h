@@ -420,6 +420,10 @@ public:
   /// node)
   /// \sa ViewNodeIDs, IsViewNodeIDPresent(), AddViewNodeID()
   bool IsDisplayableInView(const char* viewNodeID)const;
+  /// Set all the view node IDs at once. Only trigger Modified() if the
+  /// new vector is different from the existing vector.
+  /// \sa GetViewNodeIDs(), AddViewNodeID()
+  void SetViewNodeIDs(const std::vector< std::string >& viewNodeIDs);
 
 protected:
   vtkMRMLDisplayNode();

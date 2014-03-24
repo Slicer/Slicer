@@ -850,6 +850,42 @@ bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
 }
 
 //-------------------------------------------------------
+void vtkMRMLDisplayNode
+::SetViewNodeIDs(const std::vector<std::string>& viewNodeIDs)
+{
+  std::vector<std::string>::const_iterator sourceIt =
+    viewNodeIDs.begin();
+  std::vector<std::string>::iterator destIt =
+    this->ViewNodeIDs.begin();
+  bool different = false;
+  for (; sourceIt != viewNodeIDs.end(); ++sourceIt, ++destIt)
+    {
+    if (destIt == this->ViewNodeIDs.end())
+      {
+      different = true;
+      }
+    else if (*sourceIt != *destIt)
+      {
+      different = true;
+      destIt = this->ViewNodeIDs.erase(destIt);
+      }
+    if (different)
+      {
+      destIt = this->ViewNodeIDs.insert(destIt, *sourceIt);
+      }
+    }
+  if (destIt != this->ViewNodeIDs.end())
+    {
+    different = true;
+    this->ViewNodeIDs.erase(destIt, this->ViewNodeIDs.end());
+    }
+  if (different)
+    {
+    this->Modified();
+    }
+}
+
+//-------------------------------------------------------
 bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
 {
   bool res = this->GetVisibility() != 0;

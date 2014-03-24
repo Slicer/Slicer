@@ -1266,6 +1266,11 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
                                << this->PrescribedSliceSpacing[2] << ")\n";
   os << indent << "Interacting: " <<
     (this->Interacting ? "on" : "off") << "\n";
+  for (unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+    {
+    os << indent << "ThreeDViewIDs[" << i << "]: " <<
+      this->ThreeDViewIDs[i] << "\n";
+    }
 }
 
 void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
