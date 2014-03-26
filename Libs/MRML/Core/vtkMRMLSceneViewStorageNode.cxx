@@ -1,10 +1,10 @@
 /*=auto=========================================================================
 
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-  
+
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
-  
+
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLSceneViewStorageNode.cxx,v $
   Date:      $Date: 2006/03/17 15:10:09 $
@@ -71,7 +71,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLSceneViewNode *sceneViewNode = dynamic_cast <vtkMRMLSceneViewNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
@@ -118,7 +118,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         imageData->DeepCopy(reader->GetOutput());
         }
       }
-    else if (extension == std::string(".tiff")) 
+    else if (extension == std::string(".tiff"))
       {
       vtkNew<vtkTIFFReader> reader;
       reader->SetFileName(fullName.c_str());
@@ -127,8 +127,8 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         {
         imageData->DeepCopy(reader->GetOutput());
         }
-      }  
-    else if (extension == std::string(".bmp")) 
+      }
+    else if (extension == std::string(".bmp"))
       {
       vtkNew<vtkBMPReader> reader;
       reader->SetFileName(fullName.c_str());
@@ -138,7 +138,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         imageData->DeepCopy(reader->GetOutput());
         }
       }
-    else 
+    else
       {
       vtkDebugMacro("Cannot read scene view file '" << fullName.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
@@ -149,7 +149,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkWarningMacro("ReadData: error in read, setting result to 0");
     result = 0;
     }
-  
+
   sceneViewNode->SetScreenShot(imageData.GetPointer());
   sceneViewNode->GetScreenShot()->SetSpacing(1.0, 1.0, 1.0);
   sceneViewNode->GetScreenShot()->SetOrigin(0.0, 0.0, 0.0);
@@ -168,9 +168,9 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     // nothing to write
     return 1;
     }
-  
+
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
   {
     vtkErrorMacro("vtkMRMLSceneViewNode: File name not specified");
     return 0;

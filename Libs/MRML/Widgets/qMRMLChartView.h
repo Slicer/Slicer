@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLChartView : public QWebView
 public:
   /// Superclass typedef
   typedef QWebView Superclass;
-  
+
   /// Constructors
   explicit qMRMLChartView(QWidget* parent = 0);
   virtual ~qMRMLChartView();

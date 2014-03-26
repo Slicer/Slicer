@@ -25,28 +25,28 @@ class vtkMatrix4x4;
 /// \brief scale and orient glyph(s) according to tensor eigenvalues and eigenvectors.
 ///
 /// vtkDiffusionTensorGlyph is a filter that copies a geometric representation (specified
-/// as polygonal data) to every input point. The geometric representation, or 
-/// glyph, can be scaled and/or rotated according to the tensor at the input 
+/// as polygonal data) to every input point. The geometric representation, or
+/// glyph, can be scaled and/or rotated according to the tensor at the input
 /// point. Scaling and rotation is controlled by the eigenvalues/eigenvectors
 /// of the tensor as follows. For each tensor, the eigenvalues (and associated
-/// eigenvectors) are sorted to determine the major, medium, and minor 
-/// eigenvalues/eigenvectors. The major eigenvalue scales the glyph in the 
-/// x-direction, the medium in the y-direction, and the minor in the 
-/// z-direction. Then, the glyph is rotated so that the glyph's local x-axis 
+/// eigenvectors) are sorted to determine the major, medium, and minor
+/// eigenvalues/eigenvectors. The major eigenvalue scales the glyph in the
+/// x-direction, the medium in the y-direction, and the minor in the
+/// z-direction. Then, the glyph is rotated so that the glyph's local x-axis
 /// lies along the major eigenvector, y-axis along the medium eigenvector, and
 /// z-axis along the minor.
 ///
-/// A scale factor is provided to control the amount of scaling. Also, you 
-/// can turn off scaling completely if desired. The boolean variable 
+/// A scale factor is provided to control the amount of scaling. Also, you
+/// can turn off scaling completely if desired. The boolean variable
 /// ClampScaling controls the maximum scaling (in conjunction with
-/// MaxScaleFactor.) This is useful in certain applications where 
-/// singularities or large order of magnitude differences exist in 
+/// MaxScaleFactor.) This is useful in certain applications where
+/// singularities or large order of magnitude differences exist in
 /// the eigenvalues.
 ///
-/// Another instance variable, ExtractEigenvalues, has been provided to 
+/// Another instance variable, ExtractEigenvalues, has been provided to
 /// control extraction of eigenvalues/eigenvectors. If this boolean is false,
 /// then eigenvalues/eigenvectors are not extracted, and the columns of the
-/// tensor are taken as the eigenvectors (norm of column is eigenvalue). 
+/// tensor are taken as the eigenvectors (norm of column is eigenvalue).
 /// This allows additional capability over the vtkGlyph3D object. That is, the
 /// glyph can be oriented in three directions instead of one.
 ///
@@ -79,13 +79,13 @@ public:
   /// Glyphs are colored with FA scalar invariant.
   static vtkDiffusionTensorGlyph *New();
 
-  /// 
-  /// If MaskGlyphs is 1 (On), Mask is used to mask tensors. 
+  ///
+  /// If MaskGlyphs is 1 (On), Mask is used to mask tensors.
   vtkBooleanMacro(MaskGlyphs, int);
   vtkSetMacro(MaskGlyphs, int);
   vtkGetMacro(MaskGlyphs, int);
 
-  /// 
+  ///
   /// Input scalars are a binary mask: 0 prevents display
   /// of polydata at that point
   virtual void SetMask(vtkImageData*);
@@ -93,7 +93,7 @@ public:
 
   /// TO DO: make more of these
 
-  /// 
+  ///
   /// Output one component scalars according to scalar invariants
   void ColorGlyphsByLinearMeasure();
   void ColorGlyphsBySphericalMeasure();
@@ -105,13 +105,13 @@ public:
   void ColorGlyphsByFractionalAnisotropy();
   void ColorGlyphsByTrace();
 
-  /// 
+  ///
   /// Output R,G,B scalars according to orientation of max eigenvalue
   void ColorGlyphsByOrientation();
 
 
   /// Description
-  /// Transform output glyph locations (not orientations!) 
+  /// Transform output glyph locations (not orientations!)
   /// by this matrix.
   //
   /// Example usage is as follows:
@@ -120,9 +120,9 @@ public:
   ///    This is analogous to setting the actor's UserMatrix
   ///    to this matrix, which only works for scalar data.
   /// 3) The output glyphs are positioned correctly without
-  ///    incorrectly rotating the tensors, as would be the 
+  ///    incorrectly rotating the tensors, as would be the
   ///    case if positioning the scene's actor with this matrix.
-  /// 
+  ///
   virtual void SetVolumePositionMatrix(vtkMatrix4x4*);
   vtkGetObjectMacro(VolumePositionMatrix, vtkMatrix4x4);
 
@@ -136,7 +136,7 @@ public:
   ///    that is not IJK (array-based), and the whole volume is
   ///    being rotated, each tensor needs also to be rotated.
   ///    First find the matrix that positions your volume.
-  ///    This is how the entire volume is positioned, not 
+  ///    This is how the entire volume is positioned, not
   ///    the matrix that positions an arbitrary reformatted slice.
   /// 2) Remove scaling and translation from this matrix; we
   ///    just need to rotate each tensor.
@@ -145,15 +145,15 @@ public:
   virtual void SetTensorRotationMatrix(vtkMatrix4x4*);
   vtkGetObjectMacro(TensorRotationMatrix, vtkMatrix4x4);
 
-  /// 
+  ///
   /// Resolution of the output glyphs. This parameter is a integer value
   /// that sets the number of tensors (points) that are skipped before a glyph is rendered.
   /// 1 is the finest level meaning that every input point a glyph is rendered.
   vtkSetClampMacro(Resolution,int,1,VTK_LARGE_INTEGER);
   vtkGetMacro(Resolution,int);
 
-  /// 
-  /// Resolution of the output glyphs in each dimension. 
+  ///
+  /// Resolution of the output glyphs in each dimension.
   /// It is used only if Dimensions is set > 1 .
   /// This parameter is a integer value
   /// that sets the number of tensors (points) that are skipped before a glyph is rendered.
@@ -161,8 +161,8 @@ public:
   vtkGetVector2Macro(DimensionResolution, int);
   vtkSetVector2Macro(DimensionResolution, int);
 
-  /// 
-  /// When determining the modified time of the filter, 
+  ///
+  /// When determining the modified time of the filter,
   /// this checks the modified time of the mask input,
   /// if it exists.
   unsigned long int GetMTime();

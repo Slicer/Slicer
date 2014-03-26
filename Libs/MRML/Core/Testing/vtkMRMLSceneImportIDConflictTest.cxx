@@ -39,7 +39,7 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;
   scene->AddNode(modelDisplayNode.GetPointer());
   modelNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
-  
+
   if (scene->GetNumberOfNodes() != 2 ||
       (strcmp("vtkMRMLModelNode1", modelNode->GetID()) != 0) ||
       (strcmp("vtkMRMLModelDisplayNode1", modelDisplayNode->GetID()) != 0) ||

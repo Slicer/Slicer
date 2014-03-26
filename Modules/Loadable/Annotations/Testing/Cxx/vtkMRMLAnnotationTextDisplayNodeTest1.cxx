@@ -8,7 +8,7 @@ int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
   vtkSmartPointer< vtkMRMLAnnotationTextDisplayNode > node1 = vtkSmartPointer< vtkMRMLAnnotationTextDisplayNode >::New();
 
   EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLAnnotationTextDisplayNode, node1);
- 
+
   TEST_SET_GET_BOOLEAN(node1, UseLineWrap);
   TEST_SET_GET_BOOLEAN(node1, ShowBorder);
   TEST_SET_GET_BOOLEAN(node1, ShowLeader);
@@ -32,7 +32,7 @@ int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
   // test the line wrapping
 
   node1->UseLineWrapOn();
-  
+
   node1->SetMaxCharactersPerLine(3);
   std::string in1 = std::string("1 2 3 4 5 6");
   std::string exp1 = std::string("1 2\n3 4\n5 6");
@@ -69,6 +69,6 @@ int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   std::cout << "Success: wrapped string:\n'" << out3.c_str() << "'" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

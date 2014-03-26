@@ -63,7 +63,7 @@ public:
 protected:
   vtkSlicerOpenGLRayCastImageDisplayHelper();
   ~vtkSlicerOpenGLRayCastImageDisplayHelper();
-  
+
   void RenderTextureInternal( vtkVolume *vol, vtkRenderer *ren,
                               int imageMemorySize[2],
                               int imageViewportSize[2],

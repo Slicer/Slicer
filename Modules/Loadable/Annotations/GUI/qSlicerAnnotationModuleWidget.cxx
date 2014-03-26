@@ -101,7 +101,7 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->hierarchyTreeView->hideScene();
   // enable scrolling when drag past end of window
   this->hierarchyTreeView->setFitSizeToVisibleIndexes(false);
-  
+
   // connect the tree's edit property button to the widget's slot
   QObject::connect(this->hierarchyTreeView, SIGNAL(onPropertyEditButtonClicked(QString)),
                    q, SLOT(propertyEditButtonClicked(QString)));
@@ -318,7 +318,7 @@ void qSlicerAnnotationModuleWidget::propertyEditButtonClicked(QString mrmlId)
     // for now just make the dialog modal so can't change the annotations
     // while have the dialog open
     this->m_PropertyDialog->setModal(true);
-    
+
     this->m_PropertyDialog->setVisible(true);
 
     this->connect(this->m_PropertyDialog, SIGNAL(rejected()), this,

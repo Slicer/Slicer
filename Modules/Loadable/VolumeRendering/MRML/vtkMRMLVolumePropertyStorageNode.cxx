@@ -55,8 +55,8 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLVolumePropertyNode *vpNode =
     vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
-  std::string fullName = this->GetFullNameFromFileName(); 
-  if (fullName == std::string("")) 
+  std::string fullName = this->GetFullNameFromFileName();
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
@@ -80,7 +80,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     int value;
     std::stringstream ss;
@@ -90,7 +90,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     int value;
     std::stringstream ss;
@@ -100,7 +100,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     double value;
     std::stringstream ss;
@@ -110,7 +110,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     double value;
     std::stringstream ss;
@@ -120,7 +120,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     double value;
     std::stringstream ss;
@@ -130,7 +130,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     double value;
     std::stringstream ss;
@@ -141,17 +141,17 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     vtkPiecewiseFunction *scalarOpacity=vtkPiecewiseFunction::New();
-    vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity), 
+    vpNode->GetPiecewiseFunctionFromString(sline, scalarOpacity),
     vpNode->SetScalarOpacity(scalarOpacity);
     scalarOpacity->Delete();
     }
 
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     vtkPiecewiseFunction *gradientOpacity=vtkPiecewiseFunction::New();
     vpNode->GetPiecewiseFunctionFromString(sline, gradientOpacity);
@@ -161,7 +161,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   ifs.getline(line, 1024);
   sline = line;
-  if (!sline.empty()) 
+  if (!sline.empty())
     {
     vtkColorTransferFunction *colorTransfer=vtkColorTransferFunction::New();
     vpNode->GetColorTransferFunctionFromString(sline, colorTransfer);
@@ -179,7 +179,7 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
   std::string fullName =  this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("vtkMRMLVolumePropertyStorageNode: File name not specified");
     return 0;

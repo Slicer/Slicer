@@ -48,14 +48,14 @@ public:
   vtkMRMLColorNode* mrmlColorNode()const;
   qMRMLColorModel* colorModel()const;
   QSortFilterProxyModel* sortFilterProxyModel()const;
-  
+
   bool showOnlyNamedColors()const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);
   /// Utility function to simply connect signals/slots with Qt Designer
   void setMRMLColorNode(vtkMRMLNode* colorNode);
-  
+
   void setShowOnlyNamedColors(bool);
 
 protected:

@@ -42,7 +42,7 @@ vtkMRMLAnnotationTextDisplayNode::vtkMRMLAnnotationTextDisplayNode()
   this->UseLineWrap = 0;
   this->MaxCharactersPerLine = 20;
 
-  this->ShowArrowHead = 1;  
+  this->ShowArrowHead = 1;
   this->ShowBorder = 1;
   this->ShowLeader = 1;
   this->UseThreeDimensionalLeader = 1;
@@ -308,8 +308,8 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
 {
   std::string wrappedText;
   size_t maxCharPerLine = (size_t)(this->GetMaxCharactersPerLine());
-  
-  
+
+
   if (inputText.find_first_of(' ') == std::string::npos)
     {
     vtkDebugMacro("There are no spaces in the line '" << inputText.c_str() << "'" );
@@ -384,7 +384,7 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
           wrappedText.push_back(' ');
           spaceLeft--;
           }
-            
+
         }
       }
     else

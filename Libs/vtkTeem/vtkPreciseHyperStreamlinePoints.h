@@ -35,10 +35,10 @@ protected:
   ~vtkPreciseHyperStreamlinePoints();
 
   void Execute();
-  
+
   /// convenient pointers to PreciseHyperStreamline1 and PreciseHyperStreamline2
   vtkPoints *PreciseHyperStreamlines[2];
-  
+
   /// points calculated for first hyperstreamline
   vtkPoints *PreciseHyperStreamline0;
   /// points calculated for optional second hyperstreamline

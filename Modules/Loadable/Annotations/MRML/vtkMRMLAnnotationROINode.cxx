@@ -31,7 +31,7 @@ vtkMRMLAnnotationROINode::vtkMRMLAnnotationROINode()
   this->HideFromEditors = false;
   this->InsideOut = 0;
   this->InteractiveMode = 0;
-  
+
   // default placement of the widget as in Slicer3
   this->SetXYZ(0,0,0);
   this->SetRadiusXYZ(10,10,10);
@@ -218,7 +218,7 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
     }
 
   this->EndModify(disabledModify);
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -250,19 +250,19 @@ void vtkMRMLAnnotationROINode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
-  // Nothing to do at this point  bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode 
-  // => will be taken care of by vtkMRMLModelDisplayNode  
+  // Nothing to do at this point  bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode
+  // => will be taken care of by vtkMRMLModelDisplayNode
 
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  // Not necessary bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode 
+  // Not necessary bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of  in vtkMRMLModelNode
 }
 
@@ -270,11 +270,11 @@ void vtkMRMLAnnotationROINode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLAnnotationROINode::PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag)
 {
   //cout << "vtkMRMLAnnotationROINode::PrintAnnotationInfo" << endl;
-  if (titleFlag) 
+  if (titleFlag)
     {
-      
+
       os <<indent << "vtkMRMLAnnotationROINode: Annotation Summary";
-      if (this->GetName()) 
+      if (this->GetName())
     {
       os << " of " << this->GetName();
     }
@@ -324,7 +324,7 @@ double vtkMRMLAnnotationROINode::GetROIAnnotationScale()
 void vtkMRMLAnnotationROINode::SetROIAnnotationScale(double init)
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
-  
+
   if (!node)
     {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationTextDisplayNode");
@@ -378,11 +378,11 @@ int vtkMRMLAnnotationROINode::SetControlPoint(int id, double newControl[3])
   }
 
   int flag = Superclass::SetControlPoint(id, newControl,1,1);
-  if (!flag) 
+  if (!flag)
     {
       return 0;
     }
-  if (this->GetNumberOfControlPoints() < 2) 
+  if (this->GetNumberOfControlPoints() < 2)
     {
       return 1;
     }
@@ -548,14 +548,14 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
     transform->TransformPoint(p,p1);
     this->SetXYZ(p1);
     }
-  
+
   // second point radius, only use scale
   if (this->GetRadiusXYZ(p))
     {
     p[0] *= scale[0];
     p[1] *= scale[1];
     p[2] *= scale[2];
-    
+
     this->SetRadiusXYZ(p);
     }
 
@@ -625,7 +625,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 
   planes->SetPoints(points);
 
-    
+
   vtkDoubleArray *normals = vtkDoubleArray::New();
   normals->SetNumberOfComponents(3);
   normals->SetNumberOfTuples(6);
@@ -660,10 +660,10 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
     }
   planes->SetNormals(normals);
 
-  
+
   normals->Delete();
-  boxPoints->Delete();  
-  points->Delete();  
+  boxPoints->Delete();
+  points->Delete();
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode != NULL) // && tnode->IsLinear())
@@ -675,7 +675,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
 
     vtkGeneralTransform *transform = vtkGeneralTransform::New();
     tnode->GetTransformFromWorld(transform);
-   
+
     //transform->Inverse();
     planes->SetTransform(transform);
     transform->Delete();

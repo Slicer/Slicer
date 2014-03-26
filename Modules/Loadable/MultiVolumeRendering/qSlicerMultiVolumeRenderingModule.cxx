@@ -68,7 +68,7 @@ qSlicerMultiVolumeRenderingModule::~qSlicerMultiVolumeRenderingModule()
 //-----------------------------------------------------------------------------
 QString qSlicerMultiVolumeRenderingModule::helpText()const
 {
-  QString help = 
+  QString help =
     "This template module is meant to be used with the"
     "with the ModuleWizard.py script distributed with the"
     "Slicer source code (starting with version 4)."

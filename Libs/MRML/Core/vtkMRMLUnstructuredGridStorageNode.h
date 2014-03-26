@@ -30,11 +30,11 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "UnstructuredGridStorage";};
 
-  /// 
+  ///
   /// Return a defualt file extension for writting
   virtual const char* GetDefaultWriteFileExtension();
 

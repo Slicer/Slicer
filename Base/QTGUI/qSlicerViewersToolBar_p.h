@@ -97,7 +97,7 @@ public:
   /// Crosshair
   QToolButton *CrosshairToolButton;
   QMenu*        CrosshairMenu;
-  
+
   ctkSignalMapper* CrosshairMapper;
   QAction*      CrosshairNavigationAction;
   QAction*      CrosshairNoAction;

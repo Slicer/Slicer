@@ -18,13 +18,13 @@ int main(int argc, char * argv [])
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
-  
+
   ReaderType::Pointer readerImport = ReaderType::New();
   WriterType::Pointer writerImport = WriterType::New();
 
   ReaderType::Pointer readerExport = ReaderType::New();
   WriterType::Pointer writerExport = WriterType::New();
-  
+
   readerImport->SetFileName(inputFile);
   writerImport->SetFileName(outputTensor);
 

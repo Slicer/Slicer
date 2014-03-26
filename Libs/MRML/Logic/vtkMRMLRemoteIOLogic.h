@@ -41,7 +41,7 @@ public:
   void AddDataIOToScene();
   void RemoveDataIOFromScene();
 
-  /// 
+  ///
   /// Accessors for the comonents of the remote IO infrascucture
   /// Note that the internal instances are created in the constructor
   /// and used when calling AddDataIOToScene

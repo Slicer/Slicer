@@ -14,9 +14,9 @@ class VectorToScalarVolume:
     Make a scalar (1 component) volume from a vector volume
     """
     parent.acknowledgementText = """
-Developed by Steve Pieper, Isomics, Inc., 
-partially funded by NIH grant 3P41RR013218-12S1 (NAC) and is part of the National Alliance 
-for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the 
+Developed by Steve Pieper, Isomics, Inc.,
+partially funded by NIH grant 3P41RR013218-12S1 (NAC) and is part of the National Alliance
+for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the
 NIH Roadmap for Medical Research, Grant U54 EB005149."""
     self.parent = parent
 
@@ -100,7 +100,7 @@ class VectorToScalarVolumeWidget:
           'Vector to Scalar Volume', 'Input does not have enough components for conversion')
       return
     # run the filter
-    # - extract the RGB portions 
+    # - extract the RGB portions
     extract = vtk.vtkImageExtractComponents()
     extract.SetComponents(0,1,2)
     extract.SetInput(inputVolume.GetImageData())

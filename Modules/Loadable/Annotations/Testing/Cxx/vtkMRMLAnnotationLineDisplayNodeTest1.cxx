@@ -20,6 +20,6 @@ int vtkMRMLAnnotationLineDisplayNodeTest1(int , char * [] )
 
   TEST_SET_GET_BOOLEAN(node1, LabelVisibility);
   TEST_SET_GET_DOUBLE_RANGE(node1, TickSpacing, 0.0, 100.0);
-  
+
   return EXIT_SUCCESS;
 }

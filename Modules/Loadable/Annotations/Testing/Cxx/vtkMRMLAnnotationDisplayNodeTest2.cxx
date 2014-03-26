@@ -60,7 +60,7 @@ int vtkMRMLAnnotationDisplayNodeTest2(int , char * [] )
 
   // now try to propagate a supercolor to displaynode2 and 3
   displayNode1->SetAndPropagateSuperColor(testColor3[0], testColor3[1], testColor3[2]);
-  
+
   // also propagate the specular
   displayNode1->SetAndPropagateSuperSpecular(specular3);
 

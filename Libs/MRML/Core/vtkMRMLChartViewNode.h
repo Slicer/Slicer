@@ -26,27 +26,27 @@ public:
   static vtkMRMLChartViewNode *New();
   vtkTypeMacro(vtkMRMLChartViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
    virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
@@ -58,12 +58,12 @@ public:
   /// Get the Chart node id displayed in this Chart View
   vtkGetStringMacro(ChartNodeID);
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
@@ -73,7 +73,7 @@ public:
   {
     ChartNodeChangedEvent = 16000
   };
-  
+
 protected:
   vtkMRMLChartViewNode();
   ~vtkMRMLChartViewNode();

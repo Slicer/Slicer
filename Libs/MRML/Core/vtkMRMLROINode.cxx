@@ -16,7 +16,7 @@ vtkMRMLNodeNewMacro(vtkMRMLROINode);
 
 //----------------------------------------------------------------------------
 void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkObject::PrintSelf(os,indent);
 
   os << "XYZ:\n";
@@ -37,7 +37,7 @@ vtkMRMLROINode::vtkMRMLROINode()
   this->RadiusIJK[0] = this->RadiusIJK[1] = this->RadiusIJK[2] = 0;
   // so that the SetLabelText macro won't try to free memory
   this->LabelText = NULL;
-  this->SetLabelText(""); 
+  this->SetLabelText("");
   this->Selected = 0;
   this->VolumeNodeID = NULL;
   this->Visibility = 1;
@@ -84,10 +84,10 @@ void vtkMRMLROINode::WriteXML(ostream& of, int nIndent)
     of << indent << " labelText=\"" << this->LabelText << "\"";
     }
 
-  of << indent << " xyz=\"" 
+  of << indent << " xyz=\""
     << this->XYZ[0] << " " << this->XYZ[1] << " " << this->XYZ[2] << "\"";
 
-  of << indent << " radiusXYZ=\"" 
+  of << indent << " radiusXYZ=\""
     << this->RadiusXYZ[0] << " " << this->RadiusXYZ[1] << " " << this->RadiusXYZ[2] << "\"";
 
   of << indent << " insideOut=\"" << (this->InsideOut ? "true" : "false") << "\"";
@@ -110,36 +110,36 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
   const char* attName;
   const char* attValue;
 
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "XYZ") || !strcmp(attName, "xyz")) 
+    if (!strcmp(attName, "XYZ") || !strcmp(attName, "xyz"))
       {
       std::stringstream ss;
       double val;
       ss << attValue;
-      for(int i=0; i<3; i++) 
+      for(int i=0; i<3; i++)
         {
         ss >> val;
         this->XYZ[i] = val;
         }
       }
-    if (!strcmp(attName, "RadiusXYZ") || !strcmp(attName, "radiusXYZ")) 
+    if (!strcmp(attName, "RadiusXYZ") || !strcmp(attName, "radiusXYZ"))
       {
       std::stringstream ss;
       double val;
       ss << attValue;
-      for(int i=0; i<3; i++) 
+      for(int i=0; i<3; i++)
         {
         ss >> val;
         this->RadiusXYZ[i] = val;
         }
       }
-    if (!strcmp(attName, "Selected") || !strcmp(attName, "selected"))       
+    if (!strcmp(attName, "Selected") || !strcmp(attName, "selected"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->Selected = 1;
         }
@@ -148,7 +148,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->Selected = 0;
         }
       }
-    else if (!strcmp(attName, "VolumeNodeID") || !strcmp(attName, "volumeNodeID")) 
+    else if (!strcmp(attName, "VolumeNodeID") || !strcmp(attName, "volumeNodeID"))
       {
       this->SetVolumeNodeID(attValue);
       }
@@ -156,9 +156,9 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       {
       this->SetLabelText(attValue);
       }
-    else if (!strcmp(attName, "Visibility") || !strcmp(attName, "visibility")) 
+    else if (!strcmp(attName, "Visibility") || !strcmp(attName, "visibility"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->Visibility = 1;
         }
@@ -167,9 +167,9 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->Visibility = 0;
         }
       }
-    else if (!strcmp(attName, "InteractiveMode") || !strcmp(attName, "interactiveMode")) 
+    else if (!strcmp(attName, "InteractiveMode") || !strcmp(attName, "interactiveMode"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->InteractiveMode = 1;
         }
@@ -178,9 +178,9 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->InteractiveMode = 0;
         }
       }
-    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut")) 
+    else if (!strcmp(attName, "InsideOut") || !strcmp(attName, "insideOut"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->InsideOut = 1;
         }
@@ -189,7 +189,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
         this->InsideOut = 0;
         }
       }
- 
+
     }
 
   this->EndModify(disabledModify);
@@ -230,7 +230,7 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
     ss >> this->LabelText;
     vtkDebugMacro("ReadXMLString: got label text " << this->LabelText);
     }
-  
+
   // get the xyz key
   ss >> keyName;
   // now get the x, y, z values
@@ -291,7 +291,7 @@ void vtkMRMLROINode::UpdateReferences()
 
 //-----------------------------------------------------------------------------
 void vtkMRMLROINode::ProcessMRMLEvents ( vtkObject *caller,
-                                        unsigned long event, 
+                                        unsigned long event,
                                         void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -318,7 +318,7 @@ void vtkMRMLROINode::SetXYZ(double* xyz)
 
 //-----------------------------------------------------------------------------
 void vtkMRMLROINode::SetRadiusXYZ(double RadiusX, double RadiusY, double RadiusZ)
-{ 
+{
   this->RadiusXYZ[0] = RadiusX;
   this->RadiusXYZ[1] = RadiusY;
   this->RadiusXYZ[2] = RadiusZ;
@@ -341,7 +341,7 @@ void vtkMRMLROINode::SetIJK(double I, double J, double K)
   this->IJK[1] = J;
   this->IJK[2] = K;
 
-  //Update  
+  //Update
 
   return;
 }
@@ -462,7 +462,7 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
 
   planes->SetPoints(points);
 
-    
+
   vtkDoubleArray *normals = vtkDoubleArray::New();
   normals->SetNumberOfComponents(3);
   normals->SetNumberOfTuples(6);
@@ -497,10 +497,10 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
     }
   planes->SetNormals(normals);
 
-  
+
   normals->Delete();
-  boxPoints->Delete();  
-  points->Delete();  
+  boxPoints->Delete();
+  points->Delete();
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode != NULL) // && tnode->IsLinear())
@@ -512,7 +512,7 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
 
     vtkGeneralTransform *transform = vtkGeneralTransform::New();
     tnode->GetTransformFromWorld(transform);
-   
+
     //transform->Inverse();
     planes->SetTransform(transform);
   }

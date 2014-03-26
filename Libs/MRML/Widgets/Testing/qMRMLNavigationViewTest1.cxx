@@ -38,23 +38,23 @@
 int qMRMLNavigationViewTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   qMRMLNavigationView navigationView;
   navigationView.setWindowTitle("Navigation view");
 
   qMRMLThreeDView threeDView;
   threeDView.setWindowTitle("ThreeDView");
   navigationView.setRendererToListen(threeDView.renderer());
-  
+
   vtkNew<vtkMRMLScene> scene;
   navigationView.setMRMLScene(scene.GetPointer());
   threeDView.setMRMLScene(scene.GetPointer());
-  
+
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::New();
   viewNode->SetBoxVisible(true);
   scene->AddNode(viewNode);
   viewNode->Delete();
-  
+
   threeDView.setMRMLViewNode(viewNode);
   navigationView.setMRMLViewNode(viewNode);
 
@@ -66,6 +66,6 @@ int qMRMLNavigationViewTest1(int argc, char * argv [] )
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
-  
+
   return app.exec();
 }

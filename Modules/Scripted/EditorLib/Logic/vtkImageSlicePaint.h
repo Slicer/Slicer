@@ -15,8 +15,8 @@
 ///  vtkImageSlicePaint - Extract or Replace an arbitrary bilinear
 /// subvolume of an image and apply a paint operation to the subvolume
 //
-/// 
-/// vtkImageSlicePaint take the given TopLeft, TopRight, and BottomRight, 
+///
+/// vtkImageSlicePaint take the given TopLeft, TopRight, and BottomRight,
 /// and BottomLeft points to form a bilinear surface within the volume.
 /// If the ExtractImage is set, then it will be filled with copies of all
 /// pixels from this surface.
@@ -25,7 +25,7 @@
 /// of this surface.
 //
 /// The expected use is that the filter will be run once to get the ExtractImage
-/// which will then be processed (e.g. a paint brush applied) and then 
+/// which will then be processed (e.g. a paint brush applied) and then
 /// the image will be put back with the ReplaceImage.  The unmodified version
 /// of the ExtractImage can be saved together with the original coordinates
 /// in order to implement undo.
@@ -56,7 +56,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
 
-  /// 
+  ///
   /// Sets/Gets the PaintRegion in IJK (pixel) coordinates of the Working image
   vtkSetVector3Macro(TopLeft, int);
   vtkGetVector3Macro(TopLeft, int);
@@ -67,8 +67,8 @@ public:
   vtkSetVector3Macro(BottomRight, int);
   vtkGetVector3Macro(BottomRight, int);
 
-  /// 
-  /// The center and radius of the brush are in world space 
+  ///
+  /// The center and radius of the brush are in world space
   /// - ijk coordinates are mapped to work to see of pixels
   ///   are within the brush before applying the threshold/paint operation
   vtkSetVector3Macro(BrushCenter, double);
@@ -76,34 +76,34 @@ public:
   vtkSetMacro(BrushRadius, double);
   vtkGetMacro(BrushRadius, double);
 
-  /// 
+  ///
   /// The mask image: used instead of brush if non NULL
   /// - image corresponds to the PaintRegion but is
   ///   in World coordinates.
   vtkSetObjectMacro(MaskImage, vtkImageData);
   vtkGetObjectMacro(MaskImage, vtkImageData);
 
-  /// 
+  ///
   /// The reference image for threshold calculations
   vtkSetObjectMacro(BackgroundImage, vtkImageData);
   vtkGetObjectMacro(BackgroundImage, vtkImageData);
 
-  /// 
+  ///
   /// Image data to be painted into
   vtkSetObjectMacro(WorkingImage, vtkImageData);
   vtkGetObjectMacro(WorkingImage, vtkImageData);
 
-  /// 
+  ///
   /// The place to store data pulled out
   vtkSetObjectMacro(ExtractImage, vtkImageData);
   vtkGetObjectMacro(ExtractImage, vtkImageData);
 
-  /// 
+  ///
   /// The place to get data to be replaced
   vtkSetObjectMacro(ReplaceImage, vtkImageData);
   vtkGetObjectMacro(ReplaceImage, vtkImageData);
 
-  /// 
+  ///
   /// matrices to map from voxel coordinates (IJK) to world
   vtkSetObjectMacro(BackgroundIJKToWorld, vtkMatrix4x4);
   vtkGetObjectMacro(BackgroundIJKToWorld, vtkMatrix4x4);
@@ -112,33 +112,33 @@ public:
   vtkSetObjectMacro(MaskIJKToWorld, vtkMatrix4x4);
   vtkGetObjectMacro(MaskIJKToWorld, vtkMatrix4x4);
 
-  /// 
+  ///
   /// PaintLabel is the value that gets painted into the Working Image
-  vtkSetMacro(PaintLabel, double); 
-  vtkGetMacro(PaintLabel, double); 
+  vtkSetMacro(PaintLabel, double);
+  vtkGetMacro(PaintLabel, double);
 
-  /// 
-  /// PaintOver mode on means that the pixel value should be set in 
-  /// the working image even if it is non-zero. 
-  vtkSetMacro(PaintOver, int); 
-  vtkGetMacro(PaintOver, int); 
+  ///
+  /// PaintOver mode on means that the pixel value should be set in
+  /// the working image even if it is non-zero.
+  vtkSetMacro(PaintOver, int);
+  vtkGetMacro(PaintOver, int);
 
-  /// 
+  ///
   /// ThresholdPaint mode on means check the background value and
   /// only set the label map if the background is inside the range
   /// (also obeys the PaintOver flag)
-  vtkSetMacro(ThresholdPaint, int); 
-  vtkGetMacro(ThresholdPaint, int); 
+  vtkSetMacro(ThresholdPaint, int);
+  vtkGetMacro(ThresholdPaint, int);
 
-  /// 
+  ///
   /// Min/Max for the ThresholdPaint mode
   vtkSetVector2Macro(ThresholdPaintRange, double);
   vtkGetVector2Macro(ThresholdPaintRange, double);
 
-  /// 
+  ///
   /// Apply the paint operation
   void Paint();
- 
+
 protected:
   vtkImageSlicePaint();
   ~vtkImageSlicePaint();

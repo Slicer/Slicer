@@ -186,7 +186,7 @@ def versionDataModulesDirectory(sourceVersion, destVersion, token, communicator,
     if sourceIndex == -1:
       _error("No folder named " + sourceVersion + " in module: " + availableModulesFolders[num_module]["name"])
     sourceID = _getIDfromIndex(availableVersions, "folder", sourceIndex)
-    
+
     # Create a new folder for destination under the module folder
     print "Creating folder", destVersion, "under", availableModulesFolders[num_module]["name"], "module directory"
     dest_folder = communicator.create_folder(token, destVersion, moduleFolderID)

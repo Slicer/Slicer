@@ -39,7 +39,7 @@
 int main( int argc, char * argv[] )
 {
   PARSE_ARGS;
-  
+
   try
   {
 
@@ -99,7 +99,7 @@ int main( int argc, char * argv[] )
   // This assumes fibers are in RAS space of volume (i.e. RAS==world)
   vtkNew<vtkMatrix4x4> Label_A_RASToIJK;
   Label_A_RASToIJK->DeepCopy(readerLabel_A->GetRasToIjkMatrix());
-  
+
   //the volume we're probing knows its spacing so take this out of the matrix
   double sp[3];
   imageCastLabel_A->GetOutput()->GetSpacing(sp);
@@ -150,7 +150,7 @@ int main( int argc, char * argv[] )
   int *labelDims = imageCastLabel_A->GetOutput()->GetDimensions();
   // Check lines
   vtkIdType inCellId;
-  for (inCellId=0, inLines->InitTraversal(); 
+  for (inCellId=0, inLines->InitTraversal();
        inLines->GetNextCell(npts,pts); inCellId++)
     {
     if (npts < 2)
@@ -178,7 +178,7 @@ int main( int argc, char * argv[] )
         std::cerr << "point #" << j <<" on the line #" << inCellId << " is outside the label\n";
         continue;
         }
-        
+
       inPtr = (short *) imageCastLabel_A->GetOutput()->GetScalarPointer(pt);
 
       if (excludeOperation == 0) // OR
@@ -224,11 +224,11 @@ int main( int argc, char * argv[] )
               passAll[label] = true;
               break;
               }
-            } // for(label=0; 
+            } // for(label=0;
           } // else if (includeOperation == 1)
         } // if !(PassLabel.size() == 0)
       } //for (j=0; j < npts; j++)
-    
+
     if (includeOperation == 1 && PassLabel.size() > 0) // AND
       {
       pass = true;
@@ -246,8 +246,8 @@ int main( int argc, char * argv[] )
       numNewPts += npts;
       numNewCells++;
       }
-    } //for (inCellId=0, inLines->InitTraversal(); 
-  
+    } //for (inCellId=0, inLines->InitTraversal();
+
   // Add lines
 
   //Preallocate PolyData elements
@@ -282,7 +282,7 @@ int main( int argc, char * argv[] )
   vtkIdType ptId = 0;
   double tensor[9];
 
-  for (inCellId=0, inLines->InitTraversal(); 
+  for (inCellId=0, inLines->InitTraversal();
        inLines->GetNextCell(npts,pts); inCellId++)
     {
     if (addLines[inCellId])

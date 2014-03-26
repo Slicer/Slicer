@@ -644,7 +644,7 @@ char TestAngleWidget3DEventLog[] =
 class vtkAngleCallback : public vtkCommand
 {
 public:
-  static vtkAngleCallback *New() 
+  static vtkAngleCallback *New()
     { return new vtkAngleCallback; }
   virtual void Execute(vtkObject*, unsigned long eid, void*)
     {

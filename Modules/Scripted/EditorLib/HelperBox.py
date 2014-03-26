@@ -9,13 +9,13 @@ import EditUtil
 
 #########################################################
 #
-# 
+#
 comment = """
 
   HelperBox is a wrapper around a set of Qt widgets and other
-  structures to manage the slicer3 segmentation helper box.  
+  structures to manage the slicer3 segmentation helper box.
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -48,7 +48,7 @@ class HelperBox(object):
     self.colorSelect = None
     self.labelSelect = None
     self.labelSelector = None
-    # pseudo signals 
+    # pseudo signals
     # - python callable that gets True or False
     self.mergeValidCommand = None
     self.selectCommand = None
@@ -154,7 +154,7 @@ class HelperBox(object):
         mergeText = merge.GetName()
         self.merge = merge
     else:
-      # the master exists, but there is no merge volume yet 
+      # the master exists, but there is no merge volume yet
       # bring up dialog to create a merge with a user-selected color node
       if self.master:
         self.colorSelectDialog()
@@ -175,7 +175,7 @@ class HelperBox(object):
       self.selectCommand()
 
   def setVolumes(self,masterVolume,mergeVolume):
-    """set both volumes at the same time - trick the callback into 
+    """set both volumes at the same time - trick the callback into
     thinking that the merge volume is already set so it won't prompt for a new one"""
     self.merge = mergeVolume
     self.masterWhenMergeWasSet = masterVolume
@@ -354,7 +354,7 @@ class HelperBox(object):
       combiner.Update()
       merge.GetImageData().DeepCopy( combiner.GetOutput() )
 
-    # mark all volumes as modified so we will be able to tell if the 
+    # mark all volumes as modified so we will be able to tell if the
     # merged volume gets edited after these
     for row in xrange(rows):
       structureName = self.structures.item(row,2).text()
@@ -434,7 +434,7 @@ class HelperBox(object):
 
     # not needed: setting StartLabel and EndLabel instead
     #parameters['Labels'] = self.getPaintLabel()
-    
+
     parameters["JointSmoothing"] = True
     parameters["SplitNormals"] = True
     parameters["PointNormals"] = True
@@ -448,7 +448,7 @@ class HelperBox(object):
     parameters["Smooth"] = 10
 
     #
-    # output 
+    # output
     # - make a new hierarchy node if needed
     #
     numNodes = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelHierarchyNode" )
@@ -480,7 +480,7 @@ class HelperBox(object):
 
     try:
       modelMaker = slicer.modules.modelmaker
-      # 
+      #
       # run the task (in the background)
       # - use the GUI to provide progress feedback
       # - use the GUI's Logic to invoke the task
@@ -538,8 +538,8 @@ class HelperBox(object):
       return
 
     if self.setMergeButton.destroyed():
-      """ TODO: here the python class still exists but the 
-      Qt widgets are gone - need to figure out when to remove observers 
+      """ TODO: here the python class still exists but the
+      Qt widgets are gone - need to figure out when to remove observers
       and free python code - probably the destroyed() signal.
       """
       self.cleanup()
@@ -587,7 +587,7 @@ class HelperBox(object):
       color = qt.QColor()
       color.setRgb(structureColor[0]*255,structureColor[1]*255,structureColor[2]*255)
       brush.setColor(color)
-      
+
       # label index
       item = qt.QStandardItem()
       item.setEditable(False)
@@ -620,7 +620,7 @@ class HelperBox(object):
       self.items.append(item)
       self.row += 1
 
-    
+
     self.structuresView.setColumnWidth(0,70)
     self.structuresView.setColumnWidth(1,50)
     self.structuresView.setColumnWidth(2,60)
@@ -643,7 +643,7 @@ class HelperBox(object):
 
   def onStructuresClicked(self, modelIndex):
     self.edit(int(self.structures.item(modelIndex.row(),0).text()))
-    
+
   def onMergeAndBuild(self):
     self.mergeStructures()
     self.build()
@@ -654,7 +654,7 @@ class HelperBox(object):
 
     #
     # Master Frame
-    # 
+    #
     self.masterFrame = qt.QFrame(self.parent)
     self.masterFrame.setLayout(qt.QVBoxLayout())
     self.parent.layout().addWidget(self.masterFrame)
@@ -714,7 +714,7 @@ class HelperBox(object):
 
     #
     # Structures Frame
-    # 
+    #
 
     self.structuresFrame = ctk.ctkCollapsibleGroupBox(self.masterFrame)
     self.structuresFrame.objectName = 'PerStructureVolumesFrame'
@@ -723,7 +723,7 @@ class HelperBox(object):
     self.structuresFrame.setLayout(qt.QVBoxLayout())
     self.masterFrame.layout().addWidget(self.structuresFrame)
 
-    # buttons frame 
+    # buttons frame
 
     self.structureButtonsFrame = qt.QFrame(self.structuresFrame)
     self.structureButtonsFrame.objectName = 'ButtonsFrame'
@@ -751,7 +751,7 @@ class HelperBox(object):
     self.structuresView.sortingEnabled = True
     self.structuresFrame.layout().addWidget(self.structuresView)
 
-    # all buttons frame 
+    # all buttons frame
 
     self.allButtonsFrame = qt.QFrame(self.structuresFrame)
     self.allButtonsFrame.objectName = 'AllButtonsFrameButton'
@@ -798,10 +798,10 @@ class HelperBox(object):
     #
 
     # signals/slots on qt widgets are automatically when
-    # this class destructs, but observers of the scene must be explicitly 
+    # this class destructs, but observers of the scene must be explicitly
     # removed in the destuctor
 
-    # node selected 
+    # node selected
     self.masterSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
     # buttons pressed
     self.addStructureButton.connect("clicked()", self.addStructure)
@@ -975,8 +975,8 @@ class HelperBox(object):
     self.dialog.showMessage(message)
 
   def confirmDialog(self, message):
-    result = qt.QMessageBox.question(slicer.util.mainWindow(), 
-                    'Editor', message, 
+    result = qt.QMessageBox.question(slicer.util.mainWindow(),
+                    'Editor', message,
                     qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
     return result == qt.QMessageBox.Ok
 

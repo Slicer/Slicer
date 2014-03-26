@@ -10,6 +10,6 @@ int qMRMLMatrixWidgetTest1( int argc, char * argv [] )
   QWidget widget;
 
   qMRMLMatrixWidget   mrmlItem( &widget );
-  
+
   return EXIT_SUCCESS;
 }

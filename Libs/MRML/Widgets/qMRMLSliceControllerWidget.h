@@ -57,7 +57,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
 public:
   /// Superclass typedef
   typedef qMRMLViewControllerBar Superclass;
-  
+
   /// Constructors
   explicit qMRMLSliceControllerWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceControllerWidget();
@@ -188,7 +188,7 @@ public slots:
 
   /// Rotate to volume plane
   void rotateSliceToBackground();
-  
+
   void setLabelMapHidden(bool hide);
   void setForegroundHidden(bool hide);
   void setBackgroundHidden(bool hide);
@@ -197,7 +197,7 @@ public slots:
   void setLabelMapOpacity(double opacity);
   void setForegroundOpacity(double opacity);
   void setBackgroundOpacity(double opacity);
-  
+
   /// Label outline
   void showLabelOutline(bool show);
   /// Reformat widget
@@ -248,7 +248,7 @@ public slots:
   // interpolation
   void setForegroundInterpolation(bool nearestNeighbor);
   void setBackgroundInterpolation(bool nearestNeighbor);
-  
+
 signals:
 
   /// This signal is emitted when the given \a imageData is modified.

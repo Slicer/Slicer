@@ -627,7 +627,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeMapperComputeGradients( void *arg)
         me->InvokeEvent( vtkCommand::VolumeMapperComputeGradientsProgressEvent, args );
     }
   }
-    
+
   {
     float args[1] = {1.0f};
 
@@ -672,7 +672,7 @@ vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
     delete [] this->Volume1;
     this->Volume1 = NULL;
   }
-  
+
   if (this->Volume2)
   {
     delete [] this->Volume2;
@@ -874,7 +874,7 @@ int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 void vtkSlicerGPUVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
 {
   int scalarType = input->GetScalarType();
-  
+
   switch(scalarType)
   {
   case VTK_SIGNED_CHAR:
@@ -897,49 +897,49 @@ void vtkSlicerGPUVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* flo
       short* tempDataPtr = (short*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_UNSIGNED_SHORT:
     {
       unsigned short* tempDataPtr = (unsigned short*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_INT:
     {
       int* tempDataPtr = (int*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_UNSIGNED_INT:
     {
       unsigned int* tempDataPtr = (unsigned int*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_DOUBLE:
     {
       double* tempDataPtr = (double*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_FLOAT:
     {
       float* tempDataPtr = (float*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_LONG:
     {
       long* tempDataPtr = (long*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   }
 }

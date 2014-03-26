@@ -1,8 +1,8 @@
 // .NAME vtkMRMLAnnotationStickyNode - MRML node to represent a fiber bundle from tractography in DTI data.
 // .SECTION Description
 // Annotation nodes contains control points, internally represented as vtkPolyData.
-// A Annotation node contains many control points  and forms the smallest logical unit of tractography 
-// that MRML will manage/read/write. Each control point has accompanying data.  
+// A Annotation node contains many control points  and forms the smallest logical unit of tractography
+// that MRML will manage/read/write. Each control point has accompanying data.
 // Visualization parameters for these nodes are controlled by the vtkMRMLAnnotationTextDisplayNode class.
 //
 
@@ -10,7 +10,7 @@
 #define __vtkMRMLAnnotationStickyNode_h
 
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
-#include "vtkMRMLAnnotationNode.h" 
+#include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
 
 #include <vtkStdString.h>
@@ -46,7 +46,7 @@ public:
 
 
 protected:
-  vtkMRMLAnnotationStickyNode() { }; 
+  vtkMRMLAnnotationStickyNode() { };
   ~vtkMRMLAnnotationStickyNode() { };
   vtkMRMLAnnotationStickyNode(const vtkMRMLAnnotationStickyNode&);
   void operator=(const vtkMRMLAnnotationStickyNode&);

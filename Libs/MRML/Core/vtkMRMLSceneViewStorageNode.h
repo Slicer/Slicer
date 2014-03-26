@@ -29,7 +29,7 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "SceneViewStorage";};
 
@@ -51,12 +51,12 @@ protected:
   vtkMRMLSceneViewStorageNode(const vtkMRMLSceneViewStorageNode&);
   void operator=(const vtkMRMLSceneViewStorageNode&);
 
-  /// 
+  ///
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
-  /// 
+  ///
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
   virtual int WriteDataInternal(vtkMRMLNode *refNode);

@@ -116,7 +116,7 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
     vtkWarningMacro("vtkMRMLColorLogic::AddDefaultColorNodes: no scene to which to add nodes\n");
     return;
     }
-  
+
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   // add the labels first
@@ -129,11 +129,11 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
   this->AddDefaultProceduralNodes();
 
   // add freesurfer nodes
-  this->AddFreeSurferNodes(); 
-  
+  this->AddFreeSurferNodes();
+
   // add the PET nodes
   this->AddPETNodes();
-    
+
   // add the dGEMRIC nodes
   this->AddDGEMRICNodes();
 
@@ -141,12 +141,12 @@ void vtkMRMLColorLogic::AddDefaultColorNodes()
   // first check for any new ones
 
   // load the one from the default resources directory
-  this->AddDefaultFileNodes();  
+  this->AddDefaultFileNodes();
 
   // now add ones in files that the user pointed to, these ones are not hidden
   // from the editors
   this->AddUserFileNodes();
-   
+
   vtkDebugMacro("Done adding default color nodes");
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 }
@@ -213,14 +213,14 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
       this->GetMRMLScene()->RemoveNode(procNode);
       }
     }
-  
+
   // remove the fs lookup table node
   node = vtkMRMLColorTableNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID(this->GetDefaultFreeSurferLabelMapColorNodeID()));
   if (node != NULL)
     {
     this->GetMRMLScene()->RemoveNode(node);
     }
-  
+
   // remove the PET nodes
   vtkMRMLPETProceduralColorNode *basicPETNode = vtkMRMLPETProceduralColorNode::New();
   vtkMRMLPETProceduralColorNode *PETnode;
@@ -236,7 +236,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
       }
     }
   basicPETNode->Delete();
-  
+
   // remove the dGEMRIC nodes
   vtkMRMLdGEMRICProceduralColorNode *basicdGEMRICNode = vtkMRMLdGEMRICProceduralColorNode::New();
   vtkMRMLdGEMRICProceduralColorNode *dGEMRICnode;
@@ -416,13 +416,13 @@ void vtkMRMLColorLogic::AddColorFile(const char *fileName, std::vector<std::stri
 vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
 {
   vtkMRMLColorTableNode* node = this->CreateFileNode(fileName);
-  
+
   if (!node)
     {
     return 0;
     }
 
-  node->SetAttribute("Category", "File");  
+  node->SetAttribute("Category", "File");
   node->SaveWithSceneOn();
   node->GetStorageNode()->SaveWithSceneOn();
   node->HideFromEditorsOff();
@@ -435,8 +435,8 @@ vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const c
   vtkMRMLColorNode * singletonNode =
       vtkMRMLColorNode::SafeDownCast(this->GetMRMLScene()->AddNode(node));
   vtkDebugMacro("LoadColorFile: Done: Read and added file node: " <<  fileName);
-  node->Delete();  
-  
+  node->Delete();
+
   return singletonNode;
 }
 
@@ -567,7 +567,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFreeSurferFileNode(const char* f
     }
 
   vtkMRMLColorTableNode* node = this->CreateFileNode(fileName);
-  
+
   if (!node)
     {
     return 0;
@@ -589,7 +589,7 @@ vtkMRMLPETProceduralColorNode* vtkMRMLColorLogic::CreatePETColorNode(int type)
 
   if (nodepcn->GetTypeAsString() == NULL)
     {
-    vtkWarningMacro("Node type as string is null");      
+    vtkWarningMacro("Node type as string is null");
     nodepcn->SetName("NoName");
     }
   else
@@ -612,7 +612,7 @@ vtkMRMLdGEMRICProceduralColorNode* vtkMRMLColorLogic::CreatedGEMRICColorNode(int
   pcnode->SaveWithSceneOff();
   if (pcnode->GetTypeAsString() == NULL)
     {
-    vtkWarningMacro("Node type as string is null");      
+    vtkWarningMacro("Node type as string is null");
     pcnode->SetName("NoName");
     }
   else
@@ -630,13 +630,13 @@ vtkMRMLdGEMRICProceduralColorNode* vtkMRMLColorLogic::CreatedGEMRICColorNode(int
 vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateDefaultFileNode(const std::string& colorFileName)
 {
   vtkMRMLColorTableNode* ctnode = this->CreateFileNode(colorFileName.c_str());
-  
+
   if (!ctnode)
     {
     return 0;
     }
 
-  if (strcmp(ctnode->GetName(),"GenericColors") == 0 || 
+  if (strcmp(ctnode->GetName(),"GenericColors") == 0 ||
       strcmp(ctnode->GetName(),"GenericAnatomyColors") == 0)
     {
     vtkDebugMacro("Found default lut node");
@@ -647,7 +647,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateDefaultFileNode(const std::strin
     {
     ctnode->SetAttribute("Category", "Default Labels from File");
     }
-  
+
   return ctnode;
 }
 
@@ -662,20 +662,20 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateUserFileNode(const std::string& 
   ctnode->SetAttribute("Category", "Auto Loaded User Color Files");
   ctnode->SaveWithSceneOn();
   ctnode->HideFromEditorsOff();
-  
+
   return ctnode;
 }
 
 //--------------------------------------------------------------------------------
 std::vector<std::string> vtkMRMLColorLogic::FindDefaultColorFiles()
 {
-  return std::vector<std::string>();   
+  return std::vector<std::string>();
 }
 
 //--------------------------------------------------------------------------------
 std::vector<std::string> vtkMRMLColorLogic::FindUserColorFiles()
 {
-  return std::vector<std::string>();   
+  return std::vector<std::string>();
 }
 
 //--------------------------------------------------------------------------------
@@ -695,25 +695,25 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
     this->GetMRMLScene()->AddNode(colorStorageNode.GetPointer());
     ctnode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
     }
-  
+
   ctnode->GetStorageNode()->SetFileName(fileName);
   std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
   std::string uname( this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
   ctnode->SetName(uname.c_str());
-  
+
   vtkDebugMacro("AddDefaultColorFiles: About to read user file " << fileName);
 
   if (ctnode->GetStorageNode()->ReadData(ctnode) == 0)
     {
       vtkErrorMacro("Unable to read freesurfer colour file " << (ctnode->GetFileName() ? ctnode->GetFileName() : ""));
-      
+
     if (this->GetMRMLScene())
       {
       ctnode->SetAndObserveStorageNodeID(NULL);
       ctnode->SetScene(NULL);
       this->GetMRMLScene()->RemoveNode(colorStorageNode.GetPointer());
       }
-      
+
       ctnode->Delete();
       return 0;
     }
@@ -817,7 +817,7 @@ void vtkMRMLColorLogic::AddPETNode(int type)
   vtkMRMLPETProceduralColorNode *nodepcn = this->CreatePETColorNode(type);
   //if (this->GetMRMLScene()->GetNodeByID( nodepcn->GetSingletonTag() ) == NULL)
     {
-    //this->GetMRMLScene()->RequestNodeID(nodepcn, nodepcn->GetSingletonTag() );        
+    //this->GetMRMLScene()->RequestNodeID(nodepcn, nodepcn->GetSingletonTag() );
     this->GetMRMLScene()->AddNode(nodepcn);
     }
   nodepcn->Delete();
@@ -830,14 +830,14 @@ void vtkMRMLColorLogic::AddDGEMRICNode(int type)
   vtkMRMLdGEMRICProceduralColorNode *pcnode = this->CreatedGEMRICColorNode(type);
   //if (this->GetMRMLScene()->GetNodeByID(pcnode->GetSingletonTag()) == NULL)
     {
-    //this->GetMRMLScene()->RequestNodeID(pcnode, pcnode->GetSingletonTag());        
+    //this->GetMRMLScene()->RequestNodeID(pcnode, pcnode->GetSingletonTag());
     this->GetMRMLScene()->AddNode(pcnode);
     }
   pcnode->Delete();
 }
 
 //----------------------------------------------------------------------------------------
-void vtkMRMLColorLogic::AddDefaultFileNode(int i) 
+void vtkMRMLColorLogic::AddDefaultFileNode(int i)
 {
   vtkMRMLColorTableNode* ctnode =  this->CreateDefaultFileNode(this->ColorFiles[i]);
   if (ctnode)
@@ -904,7 +904,7 @@ void vtkMRMLColorLogic::AddDefaultTableNodes()
 
 //----------------------------------------------------------------------------------------
 void vtkMRMLColorLogic::AddFreeSurferNodes()
-{  
+{
   vtkDebugMacro("AddDefaultColorNodes: Adding Freesurfer nodes");
   vtkMRMLFreeSurferProceduralColorNode* basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
   vtkDebugMacro("AddDefaultColorNodes: first type = " <<  basicFSNode->GetFirstType() << ", last type = " <<  basicFSNode->GetLastType());
@@ -915,7 +915,7 @@ void vtkMRMLColorLogic::AddFreeSurferNodes()
 
   // add a regular colour tables holding the freesurfer volume file colours and
   // surface colours
-  this->AddFreeSurferFileNode(basicFSNode);  
+  this->AddFreeSurferFileNode(basicFSNode);
   basicFSNode->Delete();
 }
 
@@ -936,20 +936,20 @@ void vtkMRMLColorLogic::AddDGEMRICNodes()
   vtkMRMLdGEMRICProceduralColorNode* basicdGEMRICNode = vtkMRMLdGEMRICProceduralColorNode::New();
   for (int type = basicdGEMRICNode->GetFirstType(); type <= basicdGEMRICNode->GetLastType(); ++type)
     {
-    this->AddDGEMRICNode(type);    
+    this->AddDGEMRICNode(type);
     }
   basicdGEMRICNode->Delete();
 }
 
 //----------------------------------------------------------------------------------------
-void vtkMRMLColorLogic::AddDefaultFileNodes()  
+void vtkMRMLColorLogic::AddDefaultFileNodes()
 {
   this->ColorFiles = this->FindDefaultColorFiles();
   vtkDebugMacro("AddDefaultColorNodes: found " <<  this->ColorFiles.size() << " default color files");
   for (unsigned int i = 0; i < this->ColorFiles.size(); i++)
     {
-    this->AddDefaultFileNode(i);    
-    }  
+    this->AddDefaultFileNode(i);
+    }
 }
 
 //----------------------------------------------------------------------------------------

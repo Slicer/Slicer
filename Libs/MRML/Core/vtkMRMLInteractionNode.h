@@ -9,7 +9,7 @@ public:
   static vtkMRMLInteractionNode *New();
   vtkTypeMacro(vtkMRMLInteractionNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   virtual vtkMRMLNode* CreateNodeInstance();
 
   /// Read node attributes from XML file
@@ -23,7 +23,7 @@ public:
 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Interaction";};
-  
+
   /// Get/Set Current and Last mouse mode.
   vtkGetMacro(CurrentInteractionMode, int);
   void SetCurrentInteractionMode(int mode);

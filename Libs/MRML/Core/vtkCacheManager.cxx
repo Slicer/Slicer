@@ -35,7 +35,7 @@ vtkCacheManager::vtkCacheManager()
 //----------------------------------------------------------------------------
 vtkCacheManager::~vtkCacheManager()
 {
-   
+
   this->MRMLScene = NULL;
   this->uriMap.clear();
   if (this->CallbackCommand)
@@ -169,12 +169,12 @@ int vtkCacheManager::IsRemoteReference ( const char *uri )
       }
     else
       {
-      return (1);      
+      return (1);
       }
     }
   else
     {
-    vtkDebugMacro ( "URI " << uri << " contains no file:// or other prefix." );      
+    vtkDebugMacro ( "URI " << uri << " contains no file:// or other prefix." );
     //--- doesn't seem to be a :// in the string.
     return (0);
     }
@@ -205,14 +205,14 @@ int vtkCacheManager::IsLocalReference ( const char *uri )
       }
     else
       {
-      return (0);      
+      return (0);
       }
     }
   else
     {
-    vtkWarningMacro ( "URI " << uri << " contains no file:// or other prefix." );      
+    vtkWarningMacro ( "URI " << uri << " contains no file:// or other prefix." );
     return (0);
-    }  
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -240,7 +240,7 @@ int vtkCacheManager::LocalFileExists ( const char *uri )
     }
   else
     {
-    return (0);      
+    return (0);
     }
 }
 
@@ -283,7 +283,7 @@ int vtkCacheManager::GetCachedFileList ( const char *dirname )
     vtksys::Directory dir;
     dir.Load( dirname );
     size_t fileNum;
-    
+
     //--- get files in cache dir and add to vector of strings.
     for ( fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum )
       {
@@ -492,7 +492,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   vtksys::SystemTools::SplitPath( this->GetRemoteCacheDirectory(), pathComponents);
   pathComponents.push_back ( newFileName );
   fileName = vtksys::SystemTools::JoinPath ( pathComponents );
-  
+
   const char *inStr = fileName.c_str();
   char *returnString = NULL;
   size_t n = strlen(inStr) + 1;
@@ -501,7 +501,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   returnString = cp1;
   do { *cp1++ = *cp2++; } while ( --n );
   vtkDebugMacro("GetFilenameFromURI: returning " << returnString);
-  
+
   return returnString;
 }
 
@@ -527,7 +527,7 @@ void vtkCacheManager::UpdateCacheInformation ( )
 //----------------------------------------------------------------------------
 void vtkCacheManager::DeleteFromCachedFileList ( const char * target )
 {
-  
+
   std::string tstring = target;
   std::vector< std::string > tmp = this->CachedFileList;
   std::vector< std::string >::iterator it;
@@ -589,7 +589,7 @@ void vtkCacheManager::DeleteFromCache( const char *target )
       {
       if ( !vtksys::SystemTools::RemoveFile ( str.c_str()  ))
         {
-        vtkWarningMacro ( "Unable to remove cached file" << str.c_str() << "from disk." );      
+        vtkWarningMacro ( "Unable to remove cached file" << str.c_str() << "from disk." );
         }
       else
         {
@@ -636,7 +636,7 @@ int vtkCacheManager::ClearCache()
   //--- Careful! Before making this call, prompt user
   //--- with the RemoteCacheDirectory name and
   //--- ask for confirmation whether to delete the
-  //--- directory and all of its contents... 
+  //--- directory and all of its contents...
   //--- Removes the CacheDirectory all together
   //--- and then creates the directory again.
   if ( this->RemoteCacheDirectory.c_str() != NULL )
@@ -646,7 +646,7 @@ int vtkCacheManager::ClearCache()
     }
   if ( vtksys::SystemTools::MakeDirectory ( this->RemoteCacheDirectory.c_str() ) == false )
     {
-    vtkWarningMacro ( "Cache cleared: Error: unable to recreate cache directory after deleting its contents." );      
+    vtkWarningMacro ( "Cache cleared: Error: unable to recreate cache directory after deleting its contents." );
     return 0;
     }
   this->UpdateCacheInformation();
@@ -654,7 +654,7 @@ int vtkCacheManager::ClearCache()
   return 1;
 }
 
-  
+
 
 //----------------------------------------------------------------------------
 float vtkCacheManager::GetCurrentCacheSize ()
@@ -731,7 +731,7 @@ void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char *target )
         if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
             strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
           {
-          //--- test to see if the file is a directory;  
+          //--- test to see if the file is a directory;
           //--- if so, go inside and count up file sizes, return value
           subdirString = target;
           subdirString += "/";
@@ -785,14 +785,14 @@ float vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
     dir.Load( dirName );
     size_t fileNum;
     cachesize += vtksys::SystemTools::FileLength (dirName );
-    
+
     //--- get files in cache dir and add to vector of strings.
     for ( fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum )
       {
       if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
           strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
         {
-        //--- test to see if the file is a directory;  
+        //--- test to see if the file is a directory;
         //--- if so, go inside and count up file sizes, return value
         subdirString = dirName;
         subdirString += "/";
@@ -830,7 +830,7 @@ float vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
 //----------------------------------------------------------------------------
 void vtkCacheManager::CacheSizeCheck()
 {
-  
+
   //--- Compute size of the current cache
   this->ComputeCacheSize(this->RemoteCacheDirectory.c_str(), 0);
   //--- Invoke an event if cache size is exceeded.
@@ -901,12 +901,12 @@ const char* vtkCacheManager::FindCachedFile ( const char * target, const char *d
   size_t n;
   char *cp1;
   const char *cp2;
-  
+
   if (target == NULL || dirname == NULL)
     {
     vtkErrorMacro("FindCachedFile: target or dirname null");
     return ( NULL );
-    }   
+    }
 
   if ( vtksys::SystemTools::FileIsDirectory ( dirname ) )
     {

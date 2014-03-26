@@ -24,7 +24,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qSlicerTractographyEditorROIWidgetPrivate: 
+class qSlicerTractographyEditorROIWidgetPrivate:
   public Ui_qSlicerTractographyEditorROIWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTractographyEditorROIWidget);
@@ -189,10 +189,10 @@ void qSlicerTractographyEditorROIWidget::
       d->NegativeROI->setChecked(true);
     }
 
-    std::string fiberName = std::string("Update ") + std::string(d->FiberBundleNode->GetName()) + 
+    std::string fiberName = std::string("Update ") + std::string(d->FiberBundleNode->GetName()) +
                             std::string(" From ROI");
 
-    d->UpdateBundleFromSelection->setText(QApplication::translate("qSlicerTractographyEditorROIWidget", 
+    d->UpdateBundleFromSelection->setText(QApplication::translate("qSlicerTractographyEditorROIWidget",
                             fiberName.c_str(), 0, QApplication::UnicodeUTF8));
   }
 
@@ -351,15 +351,15 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
     {
       fiberBundleFromSelection->CreateDefaultDisplayNodes();
 
-      if (fiberBundleFromSelection->GetStorageNode() == NULL) 
+      if (fiberBundleFromSelection->GetStorageNode() == NULL)
         {
           fiberBundleFromSelection->CreateDefaultStorageNode();
         }
-      
+
       fiberBundleFromSelection->SetAndObserveTransformNodeID(d->FiberBundleNode->GetTransformNodeID());
       fiberBundleFromSelection->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
     }
-    
+
     fiberBundleFromSelection->GetLineDisplayNode()->SetOpacity(0.7);
 
   } else {

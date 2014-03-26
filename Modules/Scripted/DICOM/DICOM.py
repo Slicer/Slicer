@@ -85,7 +85,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
   def addMenu(self):
     """Add an action to the File menu that will go into
-    the DICOM module by selecting the module.  Note that 
+    the DICOM module by selecting the module.  Note that
     once the module is constructed (below in setup) another
     connection is made that will also cause the instance-created
     DICOM browser to be raised by this menu action"""

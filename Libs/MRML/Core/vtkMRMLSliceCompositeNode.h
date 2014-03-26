@@ -30,88 +30,88 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SliceComposite";};
 
   /// Set the volumes as reference in the scene
   virtual void SetSceneReferences();
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
+  ///
   /// the ID of a MRMLVolumeNode
   vtkGetStringMacro (BackgroundVolumeID);
   void SetBackgroundVolumeID(const char* id);
   void SetReferenceBackgroundVolumeID(const char *id) { this->SetBackgroundVolumeID(id); }
 
-  /// 
+  ///
   /// the ID of a MRMLVolumeNode
   /// TODO: make this an arbitrary list of layers
   vtkGetStringMacro (ForegroundVolumeID);
   void SetForegroundVolumeID(const char* id);
   void SetReferenceForegroundVolumeID(const char *id) { this->SetForegroundVolumeID(id); }
 
-  /// 
+  ///
   /// the ID of a MRMLVolumeNode
   /// TODO: make this an arbitrary list of layers
   vtkGetStringMacro (LabelVolumeID);
   void SetLabelVolumeID(const char* id);
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
 
-  /// 
+  ///
   /// Compositing mode for foreground and background can be alpha
   /// blending, reverse alpha blending, addition, or subtraction
   vtkGetMacro (Compositing, int);
   vtkSetMacro (Compositing, int);
-  
-  /// 
+
+  ///
   /// opacity of the Foreground for rendering over background
   /// TODO: make this an arbitrary list of layers
   /// TODO: make different composite types (checkerboard, etc)
   vtkGetMacro (ForegroundOpacity, double);
   vtkSetMacro (ForegroundOpacity, double);
 
-  /// 
+  ///
   /// opacity of the Label for rendering over background
   /// TODO: make this an arbitrary list of layers
   /// TODO: make different composite types (checkerboard, etc)
   vtkGetMacro (LabelOpacity, double);
   vtkSetMacro (LabelOpacity, double);
 
-  /// 
+  ///
   /// toggle that gangs control of slice viewers
   vtkGetMacro (LinkedControl, int );
   vtkSetMacro (LinkedControl, int );
   vtkBooleanMacro(LinkedControl, int);
 
-  /// 
+  ///
   /// toggle for whether linked behavior is immediate or waits until
   /// an interaction is finished
   vtkGetMacro (HotLinkedControl, int );
   vtkSetMacro (HotLinkedControl, int );
   vtkBooleanMacro(HotLinkedControl, int);
 
-  /// 
+  ///
   /// toggles for grid in different slice layers.
   vtkGetMacro (ForegroundGrid, int );
   vtkSetMacro (ForegroundGrid, int );
@@ -120,17 +120,17 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkGetMacro (LabelGrid, int );
   vtkSetMacro (LabelGrid, int );
 
-  /// 
+  ///
   /// toggles fiducial visibility in the slice viewer
   vtkGetMacro (FiducialVisibility, int );
   vtkSetMacro (FiducialVisibility, int );
   vtkGetMacro (FiducialLabelVisibility, int );
-  vtkSetMacro (FiducialLabelVisibility, int );  
+  vtkSetMacro (FiducialLabelVisibility, int );
 
-  /// 
+  ///
   /// toggles visibility of intersections of other slices in the slice viewer
   vtkGetMacro (SliceIntersectionVisibility, int );
-  vtkSetMacro (SliceIntersectionVisibility, int );  
+  vtkSetMacro (SliceIntersectionVisibility, int );
 
   /// Get annotation space.
   vtkGetMacro ( AnnotationSpace, int );
@@ -147,15 +147,15 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// Mode could be either NoAnnotation, All, LabelValuesOnly or LabelAndVoxelValuesOnly
   /// \sa GetAnnotationMode, AnnotationMode
   vtkSetMacro ( AnnotationMode, int );
-  
-  /// 
-  /// configures the behavior of PropagateVolumeSelection(): 
+
+  ///
+  /// configures the behavior of PropagateVolumeSelection():
   /// if set to false, the background/label for slice views
   /// will not be reset. Default value is true
   vtkSetMacro (DoPropagateVolumeSelection, bool );
   vtkGetMacro (DoPropagateVolumeSelection, bool );
-  
-  /// 
+
+  ///
   /// Name of the layout. Must be unique between all the slice composite
   /// nodes because it is used as a singleton tag.
   /// Must be the same than the slice node.
@@ -205,7 +205,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
 
-  /// Enum identifying the parameters being manipulated with calls to 
+  /// Enum identifying the parameters being manipulated with calls to
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
   /// two so they can be combined into a bitmask to manipulate
   /// multiple parameters.
@@ -217,8 +217,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   {
     None = 0,
     ForegroundVolumeFlag = 1,
-    BackgroundVolumeFlag = 2, 
-    LabelVolumeFlag = 4, 
+    BackgroundVolumeFlag = 2,
+    LabelVolumeFlag = 4,
     LabelOpacityFlag = 8,
     ForegroundOpacityFlag = 16
     // Next one needs to be 32
@@ -245,7 +245,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// broadcast when composite slice nodes are linked).
   void ResetInteractionFlagsModifier();
 
-  
+
 protected:
   vtkMRMLSliceCompositeNode();
   ~vtkMRMLSliceCompositeNode();
@@ -258,7 +258,7 @@ protected:
   double ForegroundOpacity;
 
   int Compositing;
-  
+
   double LabelOpacity;
   int LinkedControl;
   int HotLinkedControl;
@@ -266,15 +266,15 @@ protected:
   int ForegroundGrid;
   int BackgroundGrid;
   int LabelGrid;
-  
+
   int FiducialVisibility;
   int FiducialLabelVisibility;
 
   int SliceIntersectionVisibility;
-  
+
   int AnnotationSpace;
   int AnnotationMode;
-  
+
   bool DoPropagateVolumeSelection;
 
   int Interacting;

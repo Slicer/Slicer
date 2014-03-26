@@ -140,7 +140,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   double windowWidth = displayableManagerGroup->GetInteractor()->GetRenderWindow()->GetSize()[0];
   double windowHeight = displayableManagerGroup->GetInteractor()->GetRenderWindow()->GetSize()[1];
   std::cout << "Render window size: " << windowWidth << "x" << windowHeight << std::endl;
-  
+
   // change to place mode
   vtkMRMLNode *mrmlNode = scene->GetNodeByID("vtkMRMLInteractionNode1");
   vtkMRMLInteractionNode *interactionNode = NULL;
@@ -213,7 +213,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
 
   double d34 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords3, worldCoords4));
   std::cout << "Distance between world coords 3 and 4: " << d34 << std::endl;
-  
+
   // Interactor style should be vtkThreeDViewInteractorStyle
   vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
   if (!vtkThreeDViewInteractorStyle::SafeDownCast(currentInteractoryStyle))
@@ -251,7 +251,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
       std::cout << "\tcurrentSize = " << currentSize[0] << ", " << currentSize[1] << std::endl;
       }
     }
-  
+
   // check out the camera
   vtkCamera *cam = displayableManagerGroup->GetRenderer()->GetActiveCamera();
   if (cam)
@@ -272,7 +272,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
       {
       std::cout << "\tViewUp = " << camviewup[0] << ", " << camviewup[1] << ", " << camviewup[2] << std::endl;
       }
-    
+
     // compare to the current camera node?
     mrmlNode = scene->GetNodeByID("vtkMRMLCameraNode1");
     vtkMRMLCameraNode *camnode = NULL;
@@ -305,7 +305,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
         }
       }
     }
-  
+
   // try getting the world to display coords now for the last display point
   double worldCoords5[4];
   worldCoords5[0] = worldCoords5[1] = worldCoords5[2] = worldCoords5[3] = 0.0;
@@ -313,7 +313,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   std::cout << "Last Check: Display: " << dispCoords[0] << "," << dispCoords[1] << ". World: " << worldCoords5[0] << "," << worldCoords5[1] << "," << worldCoords5[2] << "," << worldCoords5[3] << std::endl;
   double d45 = sqrt(vtkMath::Distance2BetweenPoints(worldCoords4, worldCoords5));
   std::cout << "Distance between world coords 4 and 5 (should be < epsilon): " << d45 << std::endl;
-   
+
 
 
   renderRequestCallback->Delete();

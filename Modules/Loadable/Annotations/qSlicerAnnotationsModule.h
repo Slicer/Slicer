@@ -55,7 +55,7 @@ public slots:
   /// widget representation, then invoke this method
   /// \sa qSlicerIOManager::openScreenshotDialog
   void showScreenshotDialog();
-  
+
 protected:
   QScopedPointer<qSlicerAnnotationsModulePrivate> d_ptr;
 

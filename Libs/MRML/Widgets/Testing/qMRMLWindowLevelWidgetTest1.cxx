@@ -38,7 +38,7 @@
 int qMRMLWindowLevelWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   if( argc < 2 )
     {
     std::cerr << "Error: missing arguments" << std::endl;
@@ -63,10 +63,10 @@ int qMRMLWindowLevelWidgetTest1(int argc, char * argv [] )
     std::cerr << "Scene must contain a valid vtkMRMLVolumeNode:" << node << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   qMRMLWindowLevelWidget windowLevel;
   windowLevel.setMRMLVolumeNode(volumeNode);
-  
+
   windowLevel.show();
 
   QWidget topLevel;
@@ -75,7 +75,7 @@ int qMRMLWindowLevelWidgetTest1(int argc, char * argv [] )
   QHBoxLayout* l = new QHBoxLayout(&topLevel);
   l->addWidget(&windowLevel2);
   topLevel.show();
-  
+
   if (argc < 3 || QString(argv[2]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

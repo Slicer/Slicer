@@ -26,7 +26,7 @@ public:
     ~qSlicerAnnotationModuleWidget();
 
 
-  
+
 
 
     /// Different Annotation Types
@@ -51,7 +51,7 @@ public:
 protected:
 
 public slots:
-    /// a public slot that will refresh the tree view 
+    /// a public slot that will refresh the tree view
     void refreshTree();
     /// a public slot that will expand a newly added hierarchy node item
     void onHierarchyNodeAddedEvent(vtkObject *caller, vtkObject *obj);
@@ -71,7 +71,7 @@ protected slots:
 
     // Table and Property Modify
     void moveDownSelected();
-    void moveUpSelected();  
+    void moveUpSelected();
 
 
   //------------------------------------------------------------------

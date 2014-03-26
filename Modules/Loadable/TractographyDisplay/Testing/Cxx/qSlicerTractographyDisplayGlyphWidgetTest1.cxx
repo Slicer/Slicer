@@ -39,12 +39,12 @@ int qSlicerTractographyDisplayGlyphWidgetTest1( int argc, char * argv[] )
   QApplication app(argc, argv);
 
   vtkNew<vtkMRMLScene> scene;
-  
+
   vtkNew<vtkMRMLFiberBundleGlyphDisplayNode> fbDisplay;
   scene->AddNode(fbDisplay.GetPointer());
   vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNode> dtDisplayProperties;
   scene->AddNode(dtDisplayProperties.GetPointer());
-  
+
 
   qSlicerTractographyDisplayGlyphWidget widget;
   widget.setFiberBundleDisplayNode(static_cast<vtkMRMLNode*>(0));

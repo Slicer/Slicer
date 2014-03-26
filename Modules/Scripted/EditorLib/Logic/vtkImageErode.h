@@ -7,8 +7,8 @@
 
 =========================================================================auto=*/
 ///  vtkImageErode -  Performs erosion
-/// 
-/// Erodes pixels of specified Foreground value by setting them 
+///
+/// Erodes pixels of specified Foreground value by setting them
 /// to the Background value. Variable 3D connectivity (4- or 8-neighbor).
 
 #ifndef __vtkImageErode_h
@@ -25,8 +25,8 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageErode : public vtkImageNe
 public:
   static vtkImageErode *New();
   vtkTypeRevisionMacro(vtkImageErode,vtkImageNeighborhoodFilter);
-    
-  ///  
+
+  ///
   /// Background and foreground pixel values in the image.
   /// Usually 0 and some label value, respectively.
   vtkSetMacro(Background, float);
@@ -41,7 +41,7 @@ protected:
   float Background;
   float Foreground;
 
-  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 
+  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
     int extent[6], int id);
 };
 

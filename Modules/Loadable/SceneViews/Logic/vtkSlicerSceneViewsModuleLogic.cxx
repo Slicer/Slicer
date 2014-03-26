@@ -59,7 +59,7 @@ void vtkSlicerSceneViewsModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkDebugMacro("SetMRMLSceneInternal - listening to scene events");
-  
+
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
 //  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -80,7 +80,7 @@ void vtkSlicerSceneViewsModuleLogic::AddMissingHierarchyNodes()
     {
     return;
     }
-  
+
   // don't do anything if the scene is still updating
   if (this->GetMRMLScene() &&
       this->GetMRMLScene()->IsBatchProcessing())
@@ -135,7 +135,7 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     vtkDebugMacro("OnMRMLSceneNodeAddedEvent: updating, returning");
     return;
     }
-  
+
   vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
   if (!sceneViewNode)
     {
@@ -152,7 +152,7 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     return;
     }
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent: master scene view added");
-  
+
   int retval = this->AddHierarchyNodeForNode(sceneViewNode);
   vtkMRMLHierarchyNode* hierarchyNode = NULL;
   if (!retval)
@@ -200,7 +200,7 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     vtkDebugMacro("OnMRMLNodeModifiedEvent: updating, returning");
     return;
     }
-  
+
   vtkMRMLSceneViewNode * sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
   if (!sceneViewNode)
     {
@@ -637,7 +637,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
     hierarchyNode->SetAssociatedNodeID(node->GetID());
     vtkDebugMacro("AddHierarchyNodeForNode: added hierarchy node, id = " << (hierarchyNode->GetID() ? hierarchyNode->GetID() : "null") << ", set associated node id on the hierarchy node of " << (hierarchyNode->GetAssociatedNodeID() ? hierarchyNode->GetAssociatedNodeID() : "null"));
     }
-  
+
   hierarchyNode->Delete();
   return 1;
 }
@@ -663,7 +663,7 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
     vtkDebugMacro("GetTopLevelHierarchyNodeID: Scene is busy, returning null");
     return NULL;
     }
-  
+
   vtkMRMLNode *toplevelNode = this->GetMRMLScene()->GetSingletonNode(SCENE_VIEW_TOP_LEVEL_SINGLETON_TAG, "vtkMRMLHierarchyNode");
   if (!toplevelNode)
     {
@@ -697,7 +697,7 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
 
   // sanity check
   this->FlattenSceneViewsHierarchy(toplevelNodeID);
-  
+
   return toplevelNodeID;
 
 }
@@ -735,7 +735,7 @@ void vtkSlicerSceneViewsModuleLogic::FlattenSceneViewsHierarchy(const char *topl
     }
 }
 
-//--------------------------------------------------------------------------- 
+//---------------------------------------------------------------------------
 vtkMRMLHierarchyNode * vtkSlicerSceneViewsModuleLogic::GetActiveHierarchyNode()
 {
   if (!this->GetActiveHierarchyNodeID())

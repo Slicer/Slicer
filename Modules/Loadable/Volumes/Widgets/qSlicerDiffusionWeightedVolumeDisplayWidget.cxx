@@ -153,7 +153,7 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromVolumeNode()
   vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
 
-  int component = displayNode ? displayNode->GetDiffusionComponent() : d->DWIComponentSlider->value(); 
+  int component = displayNode ? displayNode->GetDiffusionComponent() : d->DWIComponentSlider->value();
   bool sliderWasBlocking = d->DWIComponentSlider->blockSignals(true);
   bool spinBoxWasBlocking = d->DWIComponentSpinBox->blockSignals(true);
   d->DWIComponentSlider->setRange(0, maxRange);

@@ -50,7 +50,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
   // with vtkclassname, and not the real name of the class
 #ifdef VTK_DEBUG_LEAKS
   vtkDebugLeaks::DestructClass(vtkclassname);
-#endif  
+#endif
 
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
   const char *rl = vtkGraphicsFactory::GetRenderLibrary();
@@ -67,7 +67,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
 #endif
       return vtkOpenGLVolumeTextureMapper2D::New();
       }
-    
+
     // 3D Volume Texture Mapper
     if(strcmp(vtkclassname, "vtkSlicerVolumeTextureMapper3D") == 0)
       {
@@ -106,7 +106,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
 #endif
         return vtkSlicerGPURayCastMultiVolumeMapper::New();
       }
-      
+
     // Ray Cast Image Display Helper
     if(strcmp(vtkclassname, "vtkSlicerRayCastImageDisplayHelper") == 0)
       {
@@ -120,7 +120,7 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
       }
     }
 #endif
-        
+
   return 0;
 }
 

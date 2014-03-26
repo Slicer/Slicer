@@ -35,7 +35,7 @@ vtkITKArchetypeImageSeriesVectorReaderFile::vtkITKArchetypeImageSeriesVectorRead
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesVectorReaderFile::~vtkITKArchetypeImageSeriesVectorReaderFile() 
+vtkITKArchetypeImageSeriesVectorReaderFile::~vtkITKArchetypeImageSeriesVectorReaderFile()
 {
 }
 

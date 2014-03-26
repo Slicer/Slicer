@@ -23,7 +23,7 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkObjectFactory.h"
 #include "vtkWidgetEventTranslator.h"
-#include "vtkWidgetCallbackMapper.h" 
+#include "vtkWidgetCallbackMapper.h"
 #include "vtkEvent.h"
 #include "vtkWidgetEvent.h"
 #include "vtkRenderWindow.h"
@@ -40,7 +40,7 @@ vtkAnnotationROIWidget2D::vtkAnnotationROIWidget2D()
 
 //----------------------------------------------------------------------------
 vtkAnnotationROIWidget2D::~vtkAnnotationROIWidget2D()
-{  
+{
 }
 
 //----------------------------------------------------------------------

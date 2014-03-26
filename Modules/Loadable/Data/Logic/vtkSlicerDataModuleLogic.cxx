@@ -95,7 +95,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     return;
     }
 
-  // Collect a list of storage and display nodes that are only 
+  // Collect a list of storage and display nodes that are only
   // referenced by the node to be removed.
   std::vector<vtkMRMLNode *> nodesToRemove;
 
@@ -110,7 +110,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     // make sure no other nodes reference this display node
     this->GetMRMLScene()->GetReferencingNodes(dnode, referencingNodes);
 
-    if (referencingNodes.size() == 0 || 
+    if (referencingNodes.size() == 0 ||
         (referencingNodes.size() == 1 && referencingNodes[0] == node) )
       {
       nodesToRemove.push_back(dnode);
@@ -124,7 +124,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     // make sure no other nodes reference this storage node
     this->GetMRMLScene()->GetReferencingNodes(snode, referencingNodes);
 
-    if (referencingNodes.size() == 0 || 
+    if (referencingNodes.size() == 0 ||
         (referencingNodes.size() == 1 && referencingNodes[0] == node) )
       {
       nodesToRemove.push_back(snode);

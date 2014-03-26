@@ -100,14 +100,14 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
   sliceLogic->SetName("Green");
   sliceLogic->SetMRMLScene(scene.GetPointer());
   sliceLogic->ResizeSliceNode(256, 256);
-  
+
   vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
   sliceNode->SetSliceResolutionMode(vtkMRMLSliceNode::SliceResolutionMatch2DView);
 
-  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode(); 
-  
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+
   vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
-  
+
   sliceLogic->SetBackgroundLayer(sliceLayerLogic.GetPointer());
 
   vtkMRMLScalarVolumeNode* scalarNode = vtkMRMLSliceLogicTest5_loadVolume(argv[1], scene.GetPointer());
@@ -144,15 +144,15 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
   //viewer->SetInput(sliceLogic->GetImageData());
   viewer->SetInput(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
   //viewer->SetInput(appendComponents->GetOutput());
-  
+
   // Renderer, RenderWindow and Interactor
   vtkRenderWindow* rw = viewer->GetRenderWindow();
   rw->SetSize(dims[0], dims[1]);
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
-  
+
   vtkRenderWindowInteractor* ri = vtkRenderWindowInteractor::New();
   viewer->SetupInteractor(ri);
-  
+
   rw->Render();
 
   for (int i = 0; i < 30; ++i)

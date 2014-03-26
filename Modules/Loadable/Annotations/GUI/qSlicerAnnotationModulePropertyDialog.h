@@ -79,11 +79,11 @@ protected slots:
   /// reset the hierarchy point glyph combo box to default glyph type
   void onHierarchyPointGlyphTypeDefaultButtonClicked();
 
-  
+
   void onSizeSmallPushButtonClicked();
   void onSizeMediumPushButtonClicked();
   void onSizeLargePushButtonClicked();
-  
+
     void onCoordinateChanged(QString text);
 
     void onPointsTableWidgetChanged(QTableWidgetItem *tableItem);
@@ -131,7 +131,7 @@ signals:
     void colorPropertyChanged(QColor, char*, int);
     void itemChanged(QTableWidgetItem *);
   void coordinatesChanged(double*);
-  
+
 private:
 
     void saveLinesNode(vtkMRMLAnnotationLinesNode* node);

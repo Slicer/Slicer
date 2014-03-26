@@ -28,7 +28,7 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
     std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // Test: setMRMLScene()/mrmlScene()
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
@@ -46,7 +46,7 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // no type has been given yet -> no item shoud be listed
   if (nodeSelector.count())
     {
@@ -76,7 +76,7 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // test nodeType
   sceneFactory.generateScene();
   sceneFactory.generateNode("vtkMRMLViewNode");
@@ -144,7 +144,7 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   node->SetAttribute("foo", "bar");
   node = sceneFactory.mrmlScene()->GetNthNode(1);
   node->SetAttribute("foo", "bar2");
-  
+
   nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.count() != 4)
@@ -193,7 +193,7 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   types << "vtkMRMLViewNode" << "vtkMRMLCameraNode";
   //test setNodeTypes()/nodeTypes()
   nodeSelector.setNodeTypes(types);
-  
+
   if (nodeSelector.nodeTypes() != types)
     {
     nodeSelector.printAdditionalInfo();
@@ -237,7 +237,7 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
   //
   // Let's connect the sceneFactory with the widget
   //
-  
+
   QObject::connect(&sceneFactory, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    &nodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -279,8 +279,8 @@ int qMRMLNodeSelectorTest1( int argc, char * argv [] )
                           << "Edit[" << editPushButtonEnabled << "]" << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   sceneFactory.deleteScene();
-  
+
   return EXIT_SUCCESS;
 }

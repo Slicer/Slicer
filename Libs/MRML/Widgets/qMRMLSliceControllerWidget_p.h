@@ -92,7 +92,7 @@ public:
   void setupMoreOptionsMenu();
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
-  
+
   void enableLayerWidgets();
 
   vtkMRMLSliceLogic* compositeNodeLogic(vtkMRMLSliceCompositeNode* node);

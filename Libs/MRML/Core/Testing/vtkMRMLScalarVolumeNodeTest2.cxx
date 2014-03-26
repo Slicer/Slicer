@@ -37,7 +37,7 @@ int vtkMRMLScalarVolumeNodeTest2(int , char * [] )
   imageData->SetNumberOfScalarComponents(1); // image holds one value intensities
   //imageData->SetSpacing(2., 2., 512.); not used by vtkMRMLVolumeNode
   //imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
-  imageData->AllocateScalars(); // allocate storage for image data  
+  imageData->AllocateScalars(); // allocate storage for image data
 
   vtkNew<vtkMRMLScene> scene;
 

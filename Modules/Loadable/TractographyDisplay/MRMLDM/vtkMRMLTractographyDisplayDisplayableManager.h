@@ -66,7 +66,7 @@ protected:
   void SelectPickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode, std::vector<vtkIdType> &cellIDs);
 
 protected:
-  
+
   int EnableFiberEdit;
   vtkMRMLFiberBundleNode* SelectedFiberBundleNode;
   std::map <vtkIdType, std::vector<double> > SelectedCells;

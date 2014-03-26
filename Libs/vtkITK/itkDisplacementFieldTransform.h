@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -29,7 +29,7 @@ namespace itk
  template <
      class TScalarType = double,          /// Data type for scalars
      unsigned int NDimensions = 3 >        /// Number of dimensions
- class DisplacementFieldTransform : 
+ class DisplacementFieldTransform :
            public Transform< TScalarType, NDimensions, NDimensions >
  {
  public:
@@ -97,9 +97,9 @@ namespace itk
    void SetParameters(const ParametersType & parameters);
 
    /** This method sets the fixed parameters of the transform.
-    * 
-    * Fixed Parameters store the following information: 
-    *    Grid Size 
+    *
+    * Fixed Parameters store the following information:
+    *    Grid Size
     *    Grid Origin
     *    Grid Spacing
     *    Grid Direction -- optional
@@ -116,7 +116,7 @@ namespace itk
    void SetFixedParameters(const ParametersType & parameters);
 
    /** This method sets the parameters of the transform.
-    * 
+    *
     * The parameters are (N * NDimension) number of N-D grid of
     * coefficients. Each N-D grid is represented as a flat array of
     * doubles (in the same configuration as an itk::VectorImage).  The
@@ -170,30 +170,30 @@ namespace itk
    typedef typename ContinuousIndex<ScalarType,
                                     itkGetStaticConstMacro(SpaceDimension)> ContinuousIndexType;
 
-   /** Method to transform a vector - 
+   /** Method to transform a vector -
     *  not applicable for this type of transform. */
    virtual OutputVectorType TransformVector(const InputVectorType &) const
-     { 
+     {
      itkExceptionMacro(<< "Method not applicable for deformable transform." );
-     return OutputVectorType(); 
+     return OutputVectorType();
      }
 
-   /** Method to transform a vnl_vector - 
+   /** Method to transform a vnl_vector -
     *  not applicable for this type of transform */
    virtual OutputVnlVectorType TransformVector(const InputVnlVectorType &) const
-     { 
+     {
      itkExceptionMacro(<< "Method not applicable for deformable transform. ");
-     return OutputVnlVectorType(); 
+     return OutputVnlVectorType();
      }
 
-   /** Method to transform a CovariantVector - 
+   /** Method to transform a CovariantVector -
     *  not applicable for this type of transform */
    virtual OutputCovariantVectorType TransformCovariantVector(
      const InputCovariantVectorType &) const
-     { 
+     {
      itkExceptionMacro(<< "Method not applicable for deformable transfrom. ");
-     return OutputCovariantVectorType(); 
-     } 
+     return OutputCovariantVectorType();
+     }
 
    /** Compute the Jacobian Matrix of the transformation at one point */
    virtual const JacobianType& GetJacobian(const InputPointType  &point );
@@ -222,7 +222,7 @@ namespace itk
    virtual ~DisplacementFieldTransform();
 
    /** Wrap flat array into images of coefficients. */
-   void WrapAsImages(); 
+   void WrapAsImages();
 
    /** Convert an input point to a continuous index inside the grid */
    void TransformPointToContinuousIndex(

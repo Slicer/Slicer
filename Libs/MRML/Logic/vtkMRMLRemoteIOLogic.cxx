@@ -67,7 +67,7 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
 {
   // TODO more of the cache and DataIOManager code
   // from qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
-  // should be moved to here so they can be used outside of the 
+  // should be moved to here so they can be used outside of the
   // context of a qSlicer based application
 
   if (!this->GetMRMLScene())

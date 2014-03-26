@@ -12,13 +12,13 @@ import IslandEffect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   ChangeIslandEffect is a subclass of IslandEffect
   to change the value of the island you click on
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -60,7 +60,7 @@ class ChangeIslandEffectOptions(IslandEffect.IslandEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -81,7 +81,7 @@ class ChangeIslandEffectOptions(IslandEffect.IslandEffectOptions):
 #
 # ChangeIslandEffectTool
 #
- 
+
 class ChangeIslandEffectTool(IslandEffect.IslandEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -96,7 +96,7 @@ class ChangeIslandEffectTool(IslandEffect.IslandEffectTool):
     super(ChangeIslandEffectTool,self).__init__(sliceWidget)
     # create a logic instance to do the non-gui work
     self.logic = ChangeIslandEffectLogic(self.sliceWidget.sliceLogic())
-    
+
   def cleanup(self):
     """
     call superclass to clean up actors
@@ -121,13 +121,13 @@ class ChangeIslandEffectTool(IslandEffect.IslandEffectTool):
 #
 # ChangeIslandEffectLogic
 #
- 
+
 class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an ChangeIslandEffectTool
   or ChangeIslandEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the ChangeIslandEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -158,7 +158,7 @@ class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
     connectivity.SetOutput( None )
 
 #
-# The ChangeIslandEffect class definition 
+# The ChangeIslandEffect class definition
 #
 
 class ChangeIslandEffect(IslandEffect.IslandEffect):

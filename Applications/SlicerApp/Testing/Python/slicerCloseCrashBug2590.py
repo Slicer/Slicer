@@ -109,8 +109,8 @@ class slicerCloseCrashBug2590Widget:
 #
 
 class slicerCloseCrashBug2590Logic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -119,7 +119,7 @@ class slicerCloseCrashBug2590Logic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -269,7 +269,7 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
       roi = changeTracker.defineROIStep._ChangeTrackerDefineROIStep__roi
       roi.SetXYZ(-2.81037, 28.7629, 28.4536)
       roi.SetRadiusXYZ(22.6467, 22.6804, 22.9897)
-    
+
       self.delayDisplay('Go Forward')
       changeTracker.workflow.goForward()
 
@@ -278,7 +278,7 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
 
       self.delayDisplay('Go Forward')
       changeTracker.workflow.goForward()
-        
+
       self.delayDisplay('Pick Metric')
       checkList = changeTracker.analyzeROIStep._ChangeTrackerAnalyzeROIStep__metricCheckboxList
       index = checkList.values().index('IntensityDifferenceMetric')

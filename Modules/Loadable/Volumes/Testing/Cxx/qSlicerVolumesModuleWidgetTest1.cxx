@@ -68,7 +68,7 @@ int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   module.setMRMLScene(scene.GetPointer());
-  
+
   dynamic_cast<QWidget*>(module.widgetRepresentation())->show();
 
   if (argc < 3 || QString(argv[2]) != "-I")

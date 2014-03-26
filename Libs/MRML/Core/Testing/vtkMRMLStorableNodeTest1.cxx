@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -38,7 +38,7 @@ public:
   // vtkMRMLStorageNode::New returns NULL
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLModelStorageNode::New(); }
 };
- 
+
 int vtkMRMLStorableNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLStorableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorableNodeTestHelper1 >::New();
@@ -46,6 +46,6 @@ int vtkMRMLStorableNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   EXERCISE_BASIC_STORABLE_MRML_METHODS(vtkMRMLStorableNodeTestHelper1, node1);
-  
+
   return EXIT_SUCCESS;
 }

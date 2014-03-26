@@ -82,10 +82,10 @@ int vtkMRMLModelHierarchyLogic::UpdateModelToHierarchyMap()
   else if (this->GetMRMLScene()->GetNodes()->GetMTime() > this->ModelHierarchyNodesMTime)
   {
     this->ModelHierarchyNodes.clear();
-    
+
     std::vector<vtkMRMLNode *> nodes;
     int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
-  
+
     for (int i=0; i<nnodes; i++)
       {
       vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);
@@ -111,9 +111,9 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(con
     return 0;
     }
   this->UpdateModelToHierarchyMap();
-  
+
   std::map<std::string, vtkMRMLModelHierarchyNode *>::iterator iter;
-  
+
   iter = this->ModelHierarchyNodes.find(modelNodeID);
   if (iter != this->ModelHierarchyNodes.end())
     {
@@ -123,7 +123,7 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(con
     {
     return 0;
     }
-  
+
 }
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(
@@ -135,10 +135,10 @@ void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(
     return;
     }
   this->UpdateHierarchyChildrenMap();
-  
-  HierarchyChildrenNodesType::iterator iter = 
+
+  HierarchyChildrenNodesType::iterator iter =
     this->HierarchyChildrenNodes.find(std::string(parentNode->GetID()));
-  if (iter == this->HierarchyChildrenNodes.end()) 
+  if (iter == this->HierarchyChildrenNodes.end())
     {
     return;
     }
@@ -158,13 +158,13 @@ vtkMRMLModelHierarchyNodeList vtkMRMLModelHierarchyLogic
   if (!parentNode)
     {
     return childrenNodes;
-    } 
+    }
 
   this->UpdateHierarchyChildrenMap();
-  
+
   HierarchyChildrenNodesType::iterator iter =
     this->HierarchyChildrenNodes.find(std::string(parentNode->GetID()));
-  if (iter == this->HierarchyChildrenNodes.end()) 
+  if (iter == this->HierarchyChildrenNodes.end())
     {
     return childrenNodes;
     }
@@ -190,7 +190,7 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
       }
     this->HierarchyChildrenNodes.clear();
     }
-    
+
   if (this->GetMRMLScene() &&
       (this->GetMRMLScene()->GetNodes()->GetMTime() > this->HierarchyChildrenNodesMTime))
     {
@@ -201,10 +201,10 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
       iter->second.clear();
       }
     this->HierarchyChildrenNodes.clear();
-    
+
     std::vector<vtkMRMLNode *> nodes;
     int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
-  
+
     for (int i=0; i<nnodes; i++)
       {
       vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);

@@ -53,20 +53,20 @@ public:
   void SetChangeIntegrationDirection(void);
   void SetIntegrationDirection(vtkFloatingPointType dir[3]);
 
-  /// 
+  ///
   /// Set/get lower bound bias. If fractional anisotropy falls below this value, no regularization is done
   /// ( should be set to the value of the terminal fractional anisotropy )
   vtkSetClampMacro(LowerBoundBias,vtkFloatingPointType,0.0,UpperBoundBias);
   vtkGetMacro(LowerBoundBias,vtkFloatingPointType);
 
-  /// 
+  ///
   /// Set/get upper bound bias. If fractional anisotropy falls below this value, regularization is done on the tensor
   vtkSetClampMacro(UpperBoundBias,vtkFloatingPointType,LowerBoundBias,1.0);
   vtkGetMacro(UpperBoundBias,vtkFloatingPointType);
 
   vtkGetMacro(LastFractionalAnisotropy,vtkFloatingPointType);
 
-  /// 
+  ///
   /// Set/get the magnitude of the correction bias
   vtkSetClampMacro(CorrectionBias,vtkFloatingPointType,0.0,UpperBoundBias);
   vtkGetMacro(CorrectionBias,vtkFloatingPointType);

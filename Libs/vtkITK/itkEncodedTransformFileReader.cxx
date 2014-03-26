@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -109,7 +109,7 @@ EncodedTransformFileReader
 /** Update the Reader */
 void EncodedTransformFileReader
 ::Update()
-{  
+{
   TransformPointer transform;
   std::ifstream in;
   in.open ( m_FileName.c_str(), std::ios::in | std::ios::binary );
@@ -133,8 +133,8 @@ void EncodedTransformFileReader
   // allocate memory to contain file data
   char* buffer=new char[size+1];
 
-  // get file data  
-  pbuf->sgetn (buffer,size); 
+  // get file data
+  pbuf->sgetn (buffer,size);
   buffer[size]='\0';
   itkDebugMacro ( "Read file transform Data" );
   InData << buffer;
@@ -146,7 +146,7 @@ void EncodedTransformFileReader
   // Read line by line
   vnl_vector<double> VectorBuffer;
   std::string::size_type position = 0;
-  
+
   Array<double> TmpParameterArray;
   Array<double> TmpFixedParameterArray;
   TmpParameterArray.clear();
@@ -154,7 +154,7 @@ void EncodedTransformFileReader
   bool haveFixedParameters = false;
   bool haveParameters = false;
   bool parametersAreEncoded = false;
- 
+
   TransformListType* transformList = Superclass::GetTransformList();
   while ( position < data.size() )
     {
@@ -183,7 +183,7 @@ void EncodedTransformFileReader
       }
     std::string Name = trim ( line.substr ( 0, end ) );
     std::string Value = trim ( line.substr ( end + 1, line.length() ) );
-    // Push back 
+    // Push back
     itkDebugMacro ( "Name: \"" << Name << "\"" );
     itkDebugMacro ( "Value: \"" << Value << "\"" );
     itksys_ios::istringstream parse ( Value );
@@ -253,7 +253,7 @@ void EncodedTransformFileReader
           transform->SetParametersByValue ( TmpParameterArray );
           itkDebugMacro ( "Set Transform Parameters" );
           TmpParameterArray.clear();
-          TmpFixedParameterArray.clear(); 
+          TmpFixedParameterArray.clear();
           haveFixedParameters = false;
           haveParameters = false;
           parametersAreEncoded = false;
@@ -261,7 +261,7 @@ void EncodedTransformFileReader
         else
           {
           haveParameters = true;
-          }   
+          }
         }
       else if ( Name == "FixedParameters" )
         {
@@ -280,7 +280,7 @@ void EncodedTransformFileReader
           transform->SetParametersByValue ( TmpParameterArray );
           itkDebugMacro ( "Set Transform Parameters" );
           TmpParameterArray.clear();
-          TmpFixedParameterArray.clear(); 
+          TmpFixedParameterArray.clear();
           haveFixedParameters = false;
           haveParameters = false;
           parametersAreEncoded = false;

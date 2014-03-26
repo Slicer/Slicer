@@ -24,7 +24,7 @@ vtkStandardNewMacro(vtkModelMirrorLogic);
 //----------------------------------------------------------------------------
 vtkModelMirrorLogic::vtkModelMirrorLogic()
 {
-   
+
    this->ModelMirrorNode = NULL;
    this->MirrorMatrix = NULL;
    this->MirrorTransformNode = NULL;
@@ -36,7 +36,7 @@ vtkModelMirrorLogic::vtkModelMirrorLogic()
 
 //----------------------------------------------------------------------------
 vtkModelMirrorLogic::~vtkModelMirrorLogic()
-{ 
+{
   this->SetModelMirrorNode(NULL);
   this->SetAndObserveMRMLScene ( NULL );
   if ( this->MirrorMatrix )
@@ -49,7 +49,7 @@ vtkModelMirrorLogic::~vtkModelMirrorLogic()
     this->MirrorTransformNode->Delete();
     this->MirrorTransformNode = NULL;
     }
-  this->Visited = false;  
+  this->Visited = false;
   this->Raised = false;
 }
 
@@ -125,7 +125,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     this->ModelMirrorNode->GetOutputModel()->Delete();
     }
 */
-  
+
   //---
   //--- Get the input model stuff
   //---
@@ -141,7 +141,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   //--- Set up the new output model
   //---
   vtkMRMLModelNode *mirrorModelNode = vtkMRMLModelNode::New();
-  this->ModelMirrorNode->SetOutputModel (mirrorModelNode); 
+  this->ModelMirrorNode->SetOutputModel (mirrorModelNode);
   vtkMRMLModelDisplayNode *displayNode = vtkMRMLModelDisplayNode::New();
   vtkMRMLModelStorageNode *mStorageNode = vtkMRMLModelStorageNode::New();
   vtkMRMLFreeSurferModelStorageNode *fsmStorageNode = vtkMRMLFreeSurferModelStorageNode::New();
@@ -187,7 +187,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     // the model name is based on the file name (itksys call should work even if
     // file is not on disk yet)
     name = itksys::SystemTools::GetFilenameName(fname);
-    
+
     // check to see which node can read this type of file
     if (mStorageNode->SupportedFileType(name.c_str()))
       {
@@ -221,11 +221,11 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     //---
     mirrorModelNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
-    displayNode->SetScene(this->GetMRMLScene()); 
+    displayNode->SetScene(this->GetMRMLScene());
     this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(displayNode);
     mirrorModelNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    mirrorModelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    mirrorModelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     this->GetMRMLScene()->AddNode(mirrorModelNode);
 
     //--- Note: model has no PolyData yet.
@@ -263,14 +263,14 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
 //  mirrorModelNode->GetDisplayNode()->SetPower (inputModelNode->GetDisplayNode()->GetPower() );
 //  mirrorModelNode->GetDisplayNode()->SetClipping (inputModelNode->GetDisplayNode()->GetClipping() );
 //  mirrorModelNode->GetDisplayNode()->SetSliceIntersectionVisibility (inputModelNode->GetDisplayNode()->GetSliceIntersectionVisibility() );
-  
+
   //---
   //--- disable backface culling on mirrored model
   //---
   mirrorModelNode->GetDisplayNode()->SetBackfaceCulling(0);
 
   //---
-  //--- clean up 
+  //--- clean up
   //---
   mirrorModelNode->Delete();
   mStorageNode->Delete();
@@ -281,7 +281,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
   mStorageNode = NULL;
   fsmStorageNode = NULL;
   displayNode = NULL;
-  
+
 }
 
 
@@ -305,7 +305,7 @@ void vtkModelMirrorLogic::CreateMirrorMatrix( )
     {
     this->MirrorMatrix->Identity();
     }
-  
+
   //---
   //--- Figure out which is which
   //---
@@ -370,7 +370,7 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
     this->GetMirrorTransformNode()->Delete();
     }
 */
-  
+
   //---
   //---  Create the transform node and accompaniments
   //---
@@ -424,7 +424,7 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
     mirrorTransformNode->Delete();
     mirrorTransformNode = NULL;
     }
-  
+
 }
 
 
@@ -464,7 +464,7 @@ int vtkModelMirrorLogic::HardenTransform()
     vtkErrorMacro ( << "Output model doesn't appear to be correctly constructed. Mirroring output may be incorrect." );
     return ( 0 );
     }
-    
+
   if (this->GetMirrorTransformNode()->IsTransformToWorldLinear())
     {
     vtkMatrix4x4* hardeningMatrix = vtkMatrix4x4::New();

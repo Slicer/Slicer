@@ -46,7 +46,7 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
     annNode->AddControlPoint(ctp,0,0);
   }
 
- 
+
   annNode->AddLine(0,1,1,0);
   annNode->AddLine(0,2,0,1);
   annNode->AddLine(1,2,0,0);
@@ -60,21 +60,21 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
     {
        std::cerr << "Error in vtkMRMLAnnotationNode::AnnotationTextDisplayNode() " << std::endl;
        return EXIT_FAILURE;
-    }  
+    }
 
   annNode->CreateAnnotationPointDisplayNode();
   if (!annNode->GetAnnotationPointDisplayNode())
     {
        std::cerr << "Error in vtkMRMLAnnotationControlPointsNode::AnnotationPointDisplayNode() " << std::endl;
        return EXIT_FAILURE;
-    } 
+    }
 
   annNode->CreateAnnotationLineDisplayNode();
   if (!annNode->GetAnnotationLineDisplayNode())
     {
        std::cerr << "Error in vtkMRMLAnnotationLineNode::AnnotationPointDisplayNode() " << std::endl;
        return EXIT_FAILURE;
-    } 
+    }
   cout << "AnnotationPointDisplayNode Passed" << endl;
 
   annNode->Modified();
@@ -91,7 +91,7 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
       return EXIT_FAILURE;
     }
   annNode->PrintAnnotationInfo(afterAnnotation,in);
-  if (initialAnnotation.str().compare(afterAnnotation.str())) 
+  if (initialAnnotation.str().compare(afterAnnotation.str()))
   {
     std::cerr << endl << "Error in WriteData() or ReadData()" << std::endl;
     std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
@@ -100,5 +100,5 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
   }
 
   return EXIT_SUCCESS;
-  
+
 }

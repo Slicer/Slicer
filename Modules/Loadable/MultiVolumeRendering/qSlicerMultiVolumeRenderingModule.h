@@ -39,7 +39,7 @@ public:
   virtual ~qSlicerMultiVolumeRenderingModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
+
   /// Help to use the module
   virtual QString helpText()const;
 
@@ -54,7 +54,7 @@ public:
 
   /// Return the categories for the module
   virtual QStringList categories()const;
-  
+
   virtual QStringList dependencies()const;
 
 protected:

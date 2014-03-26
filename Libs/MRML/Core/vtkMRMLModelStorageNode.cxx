@@ -107,14 +107,14 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadDataInternal: File name not specified");
     return 0;
     }
-  
+
   // check that the file exists
   if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
     vtkErrorMacro("ReadDataInternal: model file '" << fullName.c_str() << "' not found.");
     return 0;
     }
-      
+
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if( extension.empty() )

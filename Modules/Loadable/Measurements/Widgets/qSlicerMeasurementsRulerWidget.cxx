@@ -25,7 +25,7 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerMeasurementsRulerWidget.h" 
+#include "qSlicerMeasurementsRulerWidget.h"
 #include "ui_qSlicerMeasurementsRulerWidget.h"
 
 //-----------------------------------------------------------------------------

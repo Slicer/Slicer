@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -83,7 +83,7 @@ void EncodedTransformFileWriter::AddTransform(const TransformType* transform)
 /** Update the writer */
 void EncodedTransformFileWriter
 ::Update()
-{  
+{
   std::list<const TransformType *>::iterator it = m_TransformList.begin();
   vnl_vector<double> TempArray;
 #ifdef __sgi
@@ -91,18 +91,18 @@ void EncodedTransformFileWriter
   if (GetAppendMode())
     {
     std::ofstream tFile(m_FileName.c_str(),std::ios::out | std::ios::app);
-    tFile.close();   
+    tFile.close();
     }
   else
     {
     std::ofstream tFile(m_FileName.c_str(),std::ios::out);
-    tFile.close(); 
+    tFile.close();
     }
 #endif
   std::ofstream out;
   if (GetAppendMode())
     {
-    out.open(m_FileName.c_str(), std::ios::out | std::ios::app); 
+    out.open(m_FileName.c_str(), std::ios::out | std::ios::app);
     }
   else
     {

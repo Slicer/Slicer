@@ -10,14 +10,14 @@ import Effect
 
 #########################################################
 #
-# 
+#
 comment = """
 
-  MorphologyEffect is a subclass of Effect (for tools that plug into the 
+  MorphologyEffect is a subclass of Effect (for tools that plug into the
   slicer Editor module) and a superclass for tools that
   implement math morphology operations (erode, dilate)
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -122,7 +122,7 @@ class MorphologyEffectOptions(Effect.EffectOptions):
 #
 # MorphologyEffectTool
 #
- 
+
 class MorphologyEffectTool(Effect.EffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -142,13 +142,13 @@ class MorphologyEffectTool(Effect.EffectTool):
 #
 # MorphologyEffectLogic
 #
- 
+
 class MorphologyEffectLogic(Effect.EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an MorphologyEffectTool
   or MorphologyEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the MorphologyEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -158,7 +158,7 @@ class MorphologyEffectLogic(Effect.EffectLogic):
     super(MorphologyEffectLogic,self).__init__(sliceLogic)
 
 #
-# The MorphologyEffect class definition 
+# The MorphologyEffect class definition
 #
 
 class MorphologyEffect(Effect.Effect):

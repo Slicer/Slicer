@@ -45,7 +45,7 @@ qSlicerAnnotationsModule::~qSlicerAnnotationsModule()
 void qSlicerAnnotationsModule::setup()
 {
   /// Register Displayable Managers:
-  
+
   // 3D
   QStringList threeDdisplayableManagers;
   threeDdisplayableManagers

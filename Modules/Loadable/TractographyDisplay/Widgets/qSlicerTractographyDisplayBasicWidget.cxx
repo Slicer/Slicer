@@ -18,7 +18,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qSlicerTractographyDisplayBasicWidgetPrivate: 
+class qSlicerTractographyDisplayBasicWidgetPrivate:
   public Ui_qSlicerTractographyDisplayBasicWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTractographyDisplayBasicWidget);
@@ -117,7 +117,7 @@ void qSlicerTractographyDisplayBasicWidget::
   d->FiberBundleNode = fiberBundleNode;
 
   qvtkReconnect( oldNode, d->FiberBundleNode,
-                vtkCommand::ModifiedEvent, this, 
+                vtkCommand::ModifiedEvent, this,
                 SLOT(updateWidgetFromMRML()) );
 
   //if ( d->LineDN )
@@ -148,7 +148,7 @@ void qSlicerTractographyDisplayBasicWidget::
 
   if ( d->FiberBundleNode->GetLineDisplayNode() )
     {
-    d->LineVisibility->setChecked( 
+    d->LineVisibility->setChecked(
       d->FiberBundleNode->GetLineDisplayNode()->GetVisibility() );
     }
 
@@ -162,7 +162,7 @@ void qSlicerTractographyDisplayBasicWidget::
 
   if ( d->FiberBundleNode->GetGlyphDisplayNode() )
     {
-    d->GlyphVisibility->setChecked( 
+    d->GlyphVisibility->setChecked(
       d->FiberBundleNode->GetGlyphDisplayNode()->GetVisibility() );
     }
 }

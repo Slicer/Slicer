@@ -123,7 +123,7 @@ void vtkPichonFastMarching::setSeed( int index )
     {
       node[f.nodeIndex].status=fmsTRIAL;
       node[f.nodeIndex].T = (float) ( distanceNeighbor(n) / speed(f.nodeIndex) );
-      
+
       insert( f ); // insert in minheap
     }
     }
@@ -137,7 +137,7 @@ inline void vtkPichonFastMarching::getMedianInhomo( int index, int &med, int &in
   if( inh != (-1) )
     // then the values have already been computed
     {
-      med = median[index]; 
+      med = median[index];
       return;
     }
 
@@ -146,10 +146,10 @@ inline void vtkPichonFastMarching::getMedianInhomo( int index, int &med, int &in
       tmpNeighborhood[k] = (int)indata[index + arrayShiftNeighbor[k]];
 
   qsort( (void*)tmpNeighborhood, 27, sizeof(int), &compareInt );
-  
+
   inh = inhomo[ index ] = (tmpNeighborhood[21] - tmpNeighborhood[5]);
   med = median[ index ] = tmpNeighborhood[13];
-  
+
   /*
     // same thing for 125-neighbors
 
@@ -163,7 +163,7 @@ inline void vtkPichonFastMarching::getMedianInhomo( int index, int &med, int &in
     }
 
     qsort( (void*)tmpNeighborhood, 125, sizeof(int), &compareInt );
-  
+
     inh = inhomo[ index ] = (tmpNeighborhood[105] - tmpNeighborhood[20]);
     med = median[ index ] = tmpNeighborhood[63];
   */
@@ -180,8 +180,8 @@ void vtkPichonFastMarching::initNewExpansion( void )
   // empty interface points
   while(tree.size()>0)
     {
-      node[ tree[tree.size()-1].nodeIndex ].status=fmsFAR; 
-      node[ tree[tree.size()-1].nodeIndex ].T=(float)INF; 
+      node[ tree[tree.size()-1].nodeIndex ].status=fmsFAR;
+      node[ tree[tree.size()-1].nodeIndex ].T=(float)INF;
       tree.pop_back();
     }
 
@@ -191,7 +191,7 @@ void vtkPichonFastMarching::initNewExpansion( void )
       knownPoints.pop_back();
     }
   nEvolutions=-1;
-    
+
   firstCall=true;
 
   while(seedPoints.size()>0)
@@ -209,7 +209,7 @@ void vtkPichonFastMarching::initNewExpansion( void )
             if(outdata[index+shiftNeighbor(n)]==0)
               {
                 seedPoints.push_back( index+shiftNeighbor(n) );
-                }    
+                }
 
 /*
           bool hasIntensityZeroNeighbor = false;
@@ -255,7 +255,7 @@ int vtkPichonFastMarching::nKnownPoints(void)
 
 void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
                 vtkImageData *vtkNotUsed(inData), short *inPtr,
-                vtkImageData *vtkNotUsed(outData), short *outPtr, 
+                vtkImageData *vtkNotUsed(outData), short *outPtr,
                 int vtkNotUsed(outExt)[6])
 {
   if(self->somethingReallyWrong)
@@ -267,7 +267,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
   self->setOutData( (short *)outPtr );
 
   if( !self->initialized )
-    {      
+    {
     self->initialized = true;
 
     int index=0;
@@ -283,7 +283,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
 
           if(self->outdata[index]==0)
             self->node[index].status=fmsFAR;
-          else 
+          else
             self->node[index].status=fmsDONE;
 
           self->inhomo[index]=-1; // meaning inhomo and median have not been computed there
@@ -339,7 +339,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
 
   // reinitialize the points that were removed by the user
   if( self->nEvolutions>0 )
-    if( (self->knownPoints.size()>1) && 
+    if( (self->knownPoints.size()>1) &&
       ((signed)self->knownPoints.size()-1>self->nPointsBeforeLeakEvolution) )
       {
       // reinitialize all the points
@@ -349,7 +349,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
         self->node[ index ].status = fmsFAR;
         self->node[ index ].T = (float)INF;
 
-        /* 
+        /*
            we also want to remove the neighbors of these points that would be in TRIAL
            as it is not trivial to remove points from the minheap, we will just set their T
            to infinity to make sure they appear in the back of the heap
@@ -385,7 +385,7 @@ void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,
           FMleaf f;
 
           self->node[index].T=self->computeT(index);
-          self->node[index].status=fmsTRIAL;        
+          self->node[index].status=fmsTRIAL;
           f.nodeIndex=index;
 
           self->insert( f );
@@ -514,24 +514,24 @@ void vtkPichonFastMarching::ExecuteData(vtkDataObject *)
   int x1;
 
   x1 = GetInput()->GetNumberOfScalarComponents();
-  if (x1 != 1) 
+  if (x1 != 1)
     {
       vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");
       somethingReallyWrong = true;
       return;
     }
-  
+
   /* Need short data */
   s = inData->GetScalarType();
-  if (s != VTK_SHORT) 
+  if (s != VTK_SHORT)
     {
-      vtkErrorMacro("Input scalars are type "<< s 
+      vtkErrorMacro("Input scalars are type "<< s
             << " instead of "<< VTK_SHORT);
       somethingReallyWrong = true;
       return;
     }
 
-  vtkPichonFastMarchingExecute(this, inData, (short *)inPtr, 
+  vtkPichonFastMarchingExecute(this, inData, (short *)inPtr,
              outData, (short *)(outPtr), outExt);
 
 }
@@ -563,7 +563,7 @@ void vtkPichonFastMarching::insert(const FMleaf leaf) {
   tree.push_back( leaf );
   node[ leaf.nodeIndex ].leafIndex=(int)(tree.size()-1);
 
-  // trickle the element up until everything 
+  // trickle the element up until everything
   // is sorted again
   upTree( (int)(tree.size()-1) );
 }
@@ -578,7 +578,7 @@ bool vtkPichonFastMarching::minHeapIsSorted( void )
       if(node[tree[k].nodeIndex].leafIndex!=k)
     {
       vtkErrorMacro( "Error in vtkPichonFastMarching::minHeapIsSorted(): "
-             << "tree[" << k << "] : pb leafIndex/nodeIndex (size=" 
+             << "tree[" << k << "] : pb leafIndex/nodeIndex (size="
              << (unsigned int)tree.size() << ")" );
     }
     }
@@ -591,7 +591,7 @@ bool vtkPichonFastMarching::minHeapIsSorted( void )
       if( node[tree[k].nodeIndex].T<node[ (int)(tree[(k-1)/2].nodeIndex) ].T )
     {
       vtkErrorMacro( "Error in vtkPichonFastMarching::minHeapIsSorted(): "
-             << "minHeapIsSorted is false! : size=" << (unsigned int)tree.size() << "at leafIndex=" << k 
+             << "minHeapIsSorted is false! : size=" << (unsigned int)tree.size() << "at leafIndex=" << k
              << " node[tree[k].nodeIndex].T=" << node[tree[k].nodeIndex].T
              << "<node[ (int)(tree[(k-1)/2].nodeIndex) ].T=" << node[ (int)(tree[(k-1)/2].nodeIndex) ].T);
 
@@ -611,7 +611,7 @@ void vtkPichonFastMarching::downTree(int index) {
    */
   int LeftChild = 2 * index + 1;
   int RightChild = 2 * index + 2;
-  
+
   while (LeftChild < (int)tree.size())
     {
       /*
@@ -620,7 +620,7 @@ void vtkPichonFastMarching::downTree(int index) {
        * condition is forced.
        */
 
-      /* 
+      /*
        * Find the child with the smallest value. The node has at least
        * one child, and so has at least a left child.
        */
@@ -628,16 +628,16 @@ void vtkPichonFastMarching::downTree(int index) {
 
       /*
        * If the node has a right child, and if the right child
-       * has smaller crossing time than the left child, then the 
+       * has smaller crossing time than the left child, then the
        * right child is the MinChild.
        */
       if (RightChild < (int)tree.size()) {
-    
+
     if (node[tree[LeftChild].nodeIndex].T>
-        node[tree[RightChild].nodeIndex].T) 
+        node[tree[RightChild].nodeIndex].T)
       MinChild = RightChild;
       }
-    
+
       /*
        * If the MinChild has smaller T than the current leaf,
        * swap them, and move the current leaf to the MinChild.
@@ -652,9 +652,9 @@ void vtkPichonFastMarching::downTree(int index) {
       // make sure pointers remain correct
       node[ tree[MinChild].nodeIndex ].leafIndex = MinChild;
       node[ tree[index].nodeIndex ].leafIndex = index;
-      
+
       index = MinChild;
-     
+
       LeftChild = 2 * index + 1;
       RightChild =  LeftChild + 1;
     }
@@ -664,7 +664,7 @@ void vtkPichonFastMarching::downTree(int index) {
      * MinChild, the job is done, force a stop.
      */
     break;
-    } 
+    }
 }
 
 void vtkPichonFastMarching::upTree(int index) {
@@ -679,7 +679,7 @@ void vtkPichonFastMarching::upTree(int index) {
     {
       int upIndex = (int) (index-1)/2;
 
-      if( node[tree[index].nodeIndex].T < 
+      if( node[tree[index].nodeIndex].T <
       node[tree[upIndex].nodeIndex].T )
     {
       // then swap the 2 nodes
@@ -691,7 +691,7 @@ void vtkPichonFastMarching::upTree(int index) {
       // make sure pointers remain correct
       node[ tree[upIndex].nodeIndex ].leafIndex = upIndex;
       node[ tree[index].nodeIndex ].leafIndex = index;
-    
+
       index = upIndex;
     }
       else
@@ -716,7 +716,7 @@ FMleaf vtkPichonFastMarching::removeSmallest( void ) {
 
   tree.pop_back();
 
-  // trickle the element down until everything 
+  // trickle the element down until everything
   // is sorted again
   downTree( 0 );
 
@@ -726,9 +726,9 @@ FMleaf vtkPichonFastMarching::removeSmallest( void ) {
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-vtkPichonFastMarching::vtkPichonFastMarching() 
-{ 
-  initialized=false; 
+vtkPichonFastMarching::vtkPichonFastMarching()
+{
+  initialized=false;
   somethingReallyWrong=true;
 }
 
@@ -745,7 +745,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
   invDz2 = (float)(1.0/(dz*dz));
 
   nNeighbors=6; // 6 or 26
-  //note: there seem to be some problems with discr < 0 
+  //note: there seem to be some problems with discr < 0
   //and A==0 when 26
 
   nEvolutions=-1;
@@ -831,7 +831,7 @@ void vtkPichonFastMarching::init(int _dimX, int _dimY, int _dimZ, double _depth,
       vtkErrorMacro("Error in void vtkPichonFastMarching::init(), not enough memory for allocation of 'inhomo'");
       return;
     }
-  
+
   median = new int[ dimX*dimY*dimZ ];
   //  assert( median!=NULL );
   if(!(median!=NULL))
@@ -923,7 +923,7 @@ float vtkPichonFastMarching::step( void )
 
   int indexN;
   int n;
-  
+
   FMleaf min;
 
   /* find point in fmsTRIAL with smallest T, remove it from fmsTRIAL and put
@@ -941,14 +941,14 @@ float vtkPichonFastMarching::step( void )
     }
 
   min=removeSmallest();
-  
+
   if( node[min.nodeIndex].T>=INF )
     {
-      vtkErrorMacro( " node[min.nodeIndex].T>=INF " << endl );      
+      vtkErrorMacro( " node[min.nodeIndex].T>=INF " << endl );
 
       // this would happen if the only points left were artificially put back
       // by the user playing with the slider
-      // we do not want to consider those before the expansion has naturally 
+      // we do not want to consider those before the expansion has naturally
       // reachjed them.
       return (float)INF;
     }
@@ -961,20 +961,20 @@ float vtkPichonFastMarching::step( void )
 
   node[min.nodeIndex].status=fmsKNOWN;
   knownPoints.push_back(min.nodeIndex);
-      
+
   /* then we consider all the neighbors */
   for(n=1;n<=nNeighbors;n++)
     {
-      /* 'indexN' is the index of the nth neighbor 
+      /* 'indexN' is the index of the nth neighbor
      of node of index 'index' */
       indexN=min.nodeIndex+shiftNeighbor(n);
-      
+
       /*
        * Check the status of the neighbors. If
        * they are fmsTRIAL, recompute their crossing time values and
-       * adjust their position in the tree with an UpHeap (Note that 
-       * recomputed value must be less than or equal to the original). 
-       * If they are fmsFAR, recompute their crossing times, and move 
+       * adjust their position in the tree with an UpHeap (Note that
+       * recomputed value must be less than or equal to the original).
+       * If they are fmsFAR, recompute their crossing times, and move
        * them into fmsTRIAL.
        */
       if( node[indexN].status==fmsFAR )
@@ -1004,7 +1004,7 @@ float vtkPichonFastMarching::step( void )
     }
     }
 
-  return node[min.nodeIndex].T; 
+  return node[min.nodeIndex].T;
 }
 
 float vtkPichonFastMarching::computeT(int index )
@@ -1021,11 +1021,11 @@ float vtkPichonFastMarching::computeT(int index )
     and we don't want something not defined (Inf) or larger than our own INF
     ( because at low level the algo relies on Tij < INF to say that Tij is defined
     cf   if ((Dxm>0.0) || (Dxp<0.0)) ))
- 
+
     this should be cool with a volume of dimension less than 1e6, (volumes are typically 256~=1e2 to 1e3)
   */
 
-  C = -1.0/( s*s ); 
+  C = -1.0/( s*s );
 
   double Tij, Txm, Txp, Tym, Typ, Tzm, Tzp, TijNew;
 
@@ -1039,7 +1039,7 @@ float vtkPichonFastMarching::computeT(int index )
   Typ = node[index+shiftNeighbor(3)].T;
   Tzm = node[index+shiftNeighbor(5)].T;
   Tzp = node[index+shiftNeighbor(6)].T;
-  
+
   double Dxm, Dxp, Dym, Dyp, Dzm, Dzp;
 
   Dxm = Tij - Txm;
@@ -1089,7 +1089,7 @@ float vtkPichonFastMarching::computeT(int index )
     }
   }
 
-  
+
   Discr = B*B - 4.0*A*C;
 
   // cases when the quadratic equation is singular
@@ -1101,7 +1101,7 @@ float vtkPichonFastMarching::computeT(int index )
     for(int n=1;n<=nNeighbors;n++)
       {
     candidateIndex = index + shiftNeighbor(n);
-    if( (node[candidateIndex].status==fmsTRIAL) 
+    if( (node[candidateIndex].status==fmsTRIAL)
         || (node[candidateIndex].status==fmsKNOWN) )
       {
         candidateT = node[candidateIndex].T + distanceNeighbor(n)/s;
@@ -1117,7 +1117,7 @@ float vtkPichonFastMarching::computeT(int index )
     vtkErrorMacro("Error in vtkPichonFastMarching::computeT(...): !( Tij<INF )");
     return (float)INF;
       }
- 
+
    return (float)Tij;
   }
 
@@ -1129,7 +1129,7 @@ float vtkPichonFastMarching::computeT(int index )
    */
   TijNew = (-B + (float)sqrt(Discr))/((float)2.0*A);
 
-  return (float)TijNew; 
+  return (float)TijNew;
 }
 
 void vtkPichonFastMarching::setRAStoIJKmatrix
@@ -1183,7 +1183,7 @@ int vtkPichonFastMarching::addSeed( float r, float a, float s )
     collectInfoSeed( I+J*dimX+K*dimXY+shiftNeighbor(n) );
 
       // note: the neighbors will be put in TRIAL by setseed
-  
+
       return 1;
     } else {
       cout << "Point is outside image volume" << endl;
@@ -1211,7 +1211,7 @@ int vtkPichonFastMarching::addSeedIJK( int I, int J, int K )
         collectInfoSeed( I+J*dimX+K*dimXY+shiftNeighbor(n) );
 
       // note: the neighbors will be put in TRIAL by setseed
-  
+
       return 1;
     } else {
       cout << "Point is outside image volume" << endl;
@@ -1299,7 +1299,7 @@ void vtkPichonFastMarching::unInit( void )
 char *vtkPichonFastMarching::cxxVersionString(void)
 {
     char *text = new char[100];
-    
+
     sprintf(text,"%d.%d \t(%s)",MAJOR_VERSION,MINOR_VERSION,DATE_VERSION);
     return text;
 }

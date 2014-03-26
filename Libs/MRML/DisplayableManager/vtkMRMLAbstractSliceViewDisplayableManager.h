@@ -36,7 +36,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractSliceViewDisplayableMana
     public vtkMRMLAbstractDisplayableManager
 {
 public:
-  
+
   typedef vtkMRMLAbstractSliceViewDisplayableManager Self;
 
   static vtkMRMLAbstractSliceViewDisplayableManager *New();
@@ -74,7 +74,7 @@ public:
   /// Convenience function allowing to Convert XYZ (viewport) to RAS coordinates.
   /// Parameters \a ras and \a xyz are double[3]. \a xyz[2] is the lightbox id.
   static void ConvertXYZToRAS(vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3]);
-  
+
 protected:
 
   vtkMRMLAbstractSliceViewDisplayableManager();

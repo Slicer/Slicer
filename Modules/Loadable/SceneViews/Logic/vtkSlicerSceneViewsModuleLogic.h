@@ -142,7 +142,7 @@ private:
 
   vtkMRMLSceneViewNode* m_LastAddedSceneViewNode;
 
-  
+
   char *ActiveHierarchyNodeID;
 
   //

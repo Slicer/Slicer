@@ -29,7 +29,7 @@ class vtkMRMLTransformNode;
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstractLogic
 {
   public:
-  
+
   /// The Usual vtk class functions
   static vtkSlicerTransformLogic *New();
   vtkTypeRevisionMacro(vtkSlicerTransformLogic,vtkMRMLAbstractLogic);
@@ -38,12 +38,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.
   static bool hardenTransform(vtkMRMLTransformableNode* node);
-  
-  /// 
-  /// Read transform from file 
+
+  ///
+  /// Read transform from file
   vtkMRMLTransformNode* AddTransform (const char* filename, vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Write transform's data to a specified file
   int SaveTransform (const char* filename, vtkMRMLTransformNode *transformNode);
 

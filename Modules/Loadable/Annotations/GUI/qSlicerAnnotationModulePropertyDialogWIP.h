@@ -46,7 +46,7 @@ public:
 
 
 protected:
-  
+
 protected slots:
 
     void onCoordinateChanged(QString text);

@@ -61,21 +61,21 @@ public:
   explicit qMRMLTransformSliders(QWidget* parent);
   virtual ~qMRMLTransformSliders();
 
-  /// 
+  ///
   /// Set/Get Coordinate system
   /// By default, the selector coordinate system will be set to GLOBAL
   enum CoordinateReferenceType { GLOBAL, LOCAL };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
-  /// 
+  ///
   /// Set/Get TypeOfTransform
   /// By default, the selector coordinate system will be set to TRANSLATION
   enum TransformType { ROTATION, TRANSLATION };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
 
-  /// 
+  ///
   /// Set/Get Title of the group box
   void setTitle(const QString& title);
   QString title()const;
@@ -84,32 +84,32 @@ public:
   /// \sa decimals
   int decimals()const;
 
-  /// 
+  ///
   /// Get sliders range
   double minimum()const;
   double maximum()const;
 
-  /// 
+  ///
   /// Set sliders range
   void setMinimum(double min);
   void setMaximum(double max);
-  /// 
+  ///
   /// Utility function that set min/max in once
   void setRange(double min, double max);
 
-  /// 
+  ///
   /// Set the visibility property of the minimum QSpinBox and maximum QSpinBox.
   /// Note: If the QSpinBoxes are hidden, you can still can setMinimum() and
   /// setMaximum() manually
   void setMinMaxVisible(bool visible);
   bool isMinMaxVisible()const;
 
-  /// 
+  ///
   /// Set sliders single step
   double singleStep()const;
   void setSingleStep(double step);
 
-  /// 
+  ///
   /// Get/Set slider's label
   QString lrLabel()const;
   QString paLabel()const;
@@ -118,12 +118,12 @@ public:
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
 
-  /// 
+  ///
   /// Return the current MRML node of interest
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
 
 signals:
-  /// 
+  ///
   /// Signal sent if at least one of the slider's value is updated
   void valuesChanged();
 
@@ -135,12 +135,12 @@ signals:
   void decimalsChanged(int newDecimals);
 
 public slots:
-  /// 
+  ///
   /// Set the MRML node of interest
   void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
   void setMRMLTransformNode(vtkMRMLNode* node);
 
-  /// 
+  ///
   /// Reset all sliders to their 0 position and value.
   /// Note that it can change the transform node values.
   void reset();

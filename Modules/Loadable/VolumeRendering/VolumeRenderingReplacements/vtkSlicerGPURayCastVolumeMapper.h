@@ -132,7 +132,7 @@ protected:
 
   GLfloat          ParaMatrix[16];//4x4 matrix uniform for ray casting parameters
   GLfloat          ParaMatrix1[16];
-  
+
   float            RaySteps;
   float            DistanceColorBlending;
   float            DepthPeelingThreshold;

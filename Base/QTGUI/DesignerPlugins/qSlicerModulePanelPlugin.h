@@ -29,7 +29,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerModulePanelPlugin
   Q_OBJECT
 public:
   qSlicerModulePanelPlugin(QObject* parent = 0);
-  
+
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;
   QString includeFile() const;

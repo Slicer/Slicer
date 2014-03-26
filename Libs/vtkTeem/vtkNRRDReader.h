@@ -55,26 +55,26 @@ public:
 
   vtkTypeRevisionMacro(vtkNRRDReader,vtkMedicalImageReader2);
 
-  /// 
+  ///
   /// Returns a IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
 
-  /// 
+  ///
   /// Returns the measurement frame matrix used for tensor valued data.
   vtkMatrix4x4* GetMeasurementFrameMatrix();
 
-  /// 
+  ///
   /// Get a space separated list of all keys in the header
   /// the string is allocated and deleted in this object.  This method
   /// does not support spaces in key names.
   char* GetHeaderKeys();
 
-  /// 
+  ///
   /// Get a list of keys in the header. Preferred method to use as it
   /// supports spaces in key names.
   std::vector<std::string> GetHeaderKeysVector();
 
-  /// 
+  ///
   /// Get a value given a key in the header
   const char* GetHeaderValue(const char *key);
 
@@ -83,14 +83,14 @@ public:
   ///  is the given file name a NRRD file?
   virtual int CanReadFile(const char* filename);
 
-  /// 
+  ///
   /// Valid extentsions
   virtual const char* GetFileExtensions()
     {
       return ".nhdr .nrrd";
     }
 
-  ///  
+  ///
   /// A descriptive name for this format
   virtual const char* GetDescriptiveName()
     {
@@ -103,32 +103,32 @@ public:
   /// parsing the complete header information.
   vtkGetMacro(ReadStatus,int);
 
-  /// 
+  ///
   /// Point data field type
   vtkSetMacro(PointDataType,int);
   vtkGetMacro(PointDataType,int);
-  
-  /// 
+
+  ///
   /// Set the data type: int, float....
   vtkSetMacro(DataType,int);
   vtkGetMacro(DataType,int);
-  
-  /// 
+
+  ///
   //Number of components
   vtkSetMacro(NumberOfComponents,int);
   vtkGetMacro(NumberOfComponents,int);
-  
 
-  /// 
+
+  ///
   /// Use image origin from the file
-  void SetUseNativeOriginOn() 
+  void SetUseNativeOriginOn()
   {
     UseNativeOrigin = true;
   }
 
-  /// 
+  ///
   /// Use image center as origin
-  void SetUseNativeOriginOff() 
+  void SetUseNativeOriginOff()
   {
     UseNativeOrigin = false;
   }
@@ -226,7 +226,7 @@ void AllocatePointData(vtkImageData *out);
 protected:
   vtkNRRDReader();
   ~vtkNRRDReader();
-                         
+
   vtkMatrix4x4* RasToIjkMatrix;
   vtkMatrix4x4* MeasurementFrameMatrix;
   vtkMatrix4x4* NRRDWorldToRasMatrix;
@@ -237,7 +237,7 @@ protected:
   Nrrd *nrrd;
 
   int ReadStatus;
-  
+
   int PointDataType;
   int DataType;
   int NumberOfComponents;

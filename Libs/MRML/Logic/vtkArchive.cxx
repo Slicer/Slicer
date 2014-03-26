@@ -396,11 +396,11 @@ bool zip(const char* zipFileName, const char* directoryToZip)
     // use a relative path for the entry file name, including the top
     // directory so it unzips into a directory of it's own
     std::string relFileName = vtksys::SystemTools::RelativePath(
-              vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(), 
+              vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(),
               fileName);
     vtkArchiveTools::Message("Zip: adding rel:", relFileName.c_str());
     archive_entry_set_pathname(entry, relFileName.c_str());
-    // size is required, for now use the vtksys call though it uses struct stat 
+    // size is required, for now use the vtksys call though it uses struct stat
     // and may not be portable
     unsigned long fileLength = vtksys::SystemTools::FileLength(fileName);
     archive_entry_set_size(entry, fileLength);
@@ -524,8 +524,8 @@ bool unzip(const char* zipFileName, const char* destinationDirectory)
         {
         break;
         }
-      } 
-    else 
+      }
+    else
       {
       // copy data
       const void *buff;
@@ -536,7 +536,7 @@ bool unzip(const char* zipFileName, const char* destinationDirectory)
       off_t offset;
 #endif
 
-      for (;;) 
+      for (;;)
         {
         result = archive_read_data_block(zipArchive, &buff, &size, &offset);
         if (result == ARCHIVE_EOF)
@@ -549,7 +549,7 @@ bool unzip(const char* zipFileName, const char* destinationDirectory)
           break;
           }
         result = archive_write_data_block(diskDestination, buff, size, offset);
-        if (result != ARCHIVE_OK) 
+        if (result != ARCHIVE_OK)
           {
           vtkArchiveTools::Error("Unzip error:", archive_error_string(diskDestination));
           break;

@@ -40,7 +40,7 @@ public:
   vtkTypeRevisionMacro(vtkSlicerFixedPointVolumeRayCastMIPHelper,vtkSlicerFixedPointVolumeRayCastHelper);
   void PrintSelf( ostream& os, vtkIndent indent );
 
-  virtual void  GenerateImage( int threadID, 
+  virtual void  GenerateImage( int threadID,
                                int threadCount,
                                vtkVolume *vol,
                                vtkSlicerFixedPointVolumeRayCastMapper *mapper);

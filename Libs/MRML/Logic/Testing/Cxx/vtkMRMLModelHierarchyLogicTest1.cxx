@@ -52,11 +52,11 @@ int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
     std::cerr << "Getting hierarchy children nodes failed on null, returned size of " << nodeList.size() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   modelHierarchyLogic->HierarchyIsModified();
 
   std::cout << "Now adding a hierarchy and a node" << std::endl;
-  
+
   // now test with some nodes
   vtkNew<vtkMRMLModelHierarchyNode> mhnode;
   scene->AddNode(mhnode.GetPointer());
@@ -91,7 +91,7 @@ int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
     std::cerr << "Getting hierarchy children nodes failed on " << hnode->GetID() << ", returned size of " << nodeList.size() << " instead of " << hNumChildrenNodes << ", as the hierarchy node reports" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   modelHierarchyLogic->Delete();
 
   return EXIT_SUCCESS;

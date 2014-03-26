@@ -104,7 +104,7 @@ void qSlicerCropVolumeModule::setup()
     qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
   if (volumesModule)
     {
-    vtkSlicerVolumesLogic* volumesLogic = 
+    vtkSlicerVolumesLogic* volumesLogic =
       vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
     cropVolumeLogic->SetVolumesLogic(volumesLogic);
     }
@@ -117,7 +117,7 @@ void qSlicerCropVolumeModule::setup()
     qSlicerCoreApplication::application()->moduleManager()->module("ResampleScalarVectorDWIVolume");
   if (resampleModule)
     {
-    vtkSlicerCLIModuleLogic* resampleLogic = 
+    vtkSlicerCLIModuleLogic* resampleLogic =
       vtkSlicerCLIModuleLogic::SafeDownCast(resampleModule->logic());
     cropVolumeLogic->SetResampleLogic(resampleLogic);
     }

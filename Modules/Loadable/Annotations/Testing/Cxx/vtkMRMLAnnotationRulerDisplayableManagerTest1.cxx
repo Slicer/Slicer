@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -33,7 +33,7 @@
 #include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h> 
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkWindowToImageFilter.h>
 

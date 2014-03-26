@@ -36,7 +36,7 @@ class qMRMLEventLoggerWidgetPrivate: public Ui_qMRMLEventLoggerWidget
 public:
   void log(const QString& text);
   void log(const char* text);
-  
+
   qMRMLEventLogger* MRMLEventLogger;
 };
 
@@ -46,7 +46,7 @@ public:
 //
 #define QMRMLEVENTLOGGERWIDGET_CONNECT_SLOT_MACRO(_EVENT_NAME)               \
   QObject::connect(d->MRMLEventLogger, SIGNAL(signal##_EVENT_NAME##Event()), \
-    this, SLOT(on##_EVENT_NAME##Event()));                                   
+    this, SLOT(on##_EVENT_NAME##Event()));
 
 //------------------------------------------------------------------------------
 qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_parent)

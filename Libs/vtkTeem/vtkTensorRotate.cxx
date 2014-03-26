@@ -61,7 +61,7 @@ void vtkTensorRotate::ExecuteInformation(vtkImageData *inData,
 
 //----------------------------------------------------------------------------
 vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
-{ 
+{
   vtkImageData *output = vtkImageData::SafeDownCast(out);
   vtkImageData *input = this->GetInput();
   int inExt[6];
@@ -85,7 +85,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
   double *oOut = output->GetOrigin();
   double *sOut = output->GetSpacing();
   if (oIn[0] == oOut[0] && oIn[1] == oOut[1] && oIn[2] == oOut[2] &&
-      sIn[0] == sOut[0] && sIn[1] == sOut[1] && sIn[2] == sOut[2])   
+      sIn[0] == sOut[0] && sIn[1] == sOut[1] && sIn[2] == sOut[2])
     {
     output->GetPointData()->CopyAllOn();
     output->GetCellData()->CopyAllOn();
@@ -131,7 +131,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
           {
           tmp2 = output->GetPointData()->GetTensors();
           }
-        output->GetPointData()->CopyAllocate(input->GetPointData(), 
+        output->GetPointData()->CopyAllocate(input->GetPointData(),
                                              output->GetNumberOfPoints());
         if (tmp)
           { // Restore the array.
@@ -141,7 +141,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
           {
           output->GetPointData()->SetTensors(tmp2);
           }
-        // Now Copy The point data, but only if output is a subextent of the input.  
+        // Now Copy The point data, but only if output is a subextent of the input.
         if (outExt[0] >= inExt[0] && outExt[1] <= inExt[1] &&
             outExt[2] >= inExt[2] && outExt[3] <= inExt[3] &&
             outExt[4] >= inExt[4] && outExt[5] <= inExt[5])
@@ -153,8 +153,8 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
 
       if (input->GetCellData()->GetNumberOfArrays() > 0)
         {
-        output->GetCellData()->CopyAllocate(input->GetCellData(), 
-                                            output->GetNumberOfCells());  
+        output->GetCellData()->CopyAllocate(input->GetCellData(),
+                                            output->GetNumberOfCells());
         // Cell extent is one less than point extent.
         // Conditional to handle a colapsed axis (lower dimensional cells).
         if (inExt[0] < inExt[1]) {--inExt[1];}
@@ -164,7 +164,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
         if (outExt[0] < outExt[1]) {--outExt[1];}
         if (outExt[2] < outExt[3]) {--outExt[3];}
         if (outExt[4] < outExt[5]) {--outExt[5];}
-        // Now Copy The cell data, but only if output is a subextent of the input.  
+        // Now Copy The cell data, but only if output is a subextent of the input.
         if (outExt[0] >= inExt[0] && outExt[1] <= inExt[1] &&
             outExt[2] >= inExt[2] && outExt[3] <= inExt[3] &&
             outExt[4] >= inExt[4] && outExt[5] <= inExt[5])
@@ -175,7 +175,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
         }
       }
     }
-  
+
   // Now create the scalars and tensors array that will hold the output data.
   this->ExecuteInformation();
   output->AllocateScalars();
@@ -200,7 +200,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
 void vtkTensorRotate::AllocateTensors(vtkImageData *data)
 {
   vtkDataArray *tensors;
-  
+
 
   if (data == NULL)
     {
@@ -221,7 +221,7 @@ void vtkTensorRotate::AllocateTensors(vtkImageData *data)
   // if we currently have scalars then just adjust the size
   tensors = data->GetPointData()->GetTensors();
   if (tensors && tensors->GetDataType() == this->TensorType
-      && tensors->GetReferenceCount() == 1) 
+      && tensors->GetReferenceCount() == 1)
     {
     tensors->SetNumberOfComponents(9);
     tensors->SetNumberOfTuples((ext[1] - ext[0] + 1)*
@@ -232,7 +232,7 @@ void vtkTensorRotate::AllocateTensors(vtkImageData *data)
     tensors->Modified();
     return;
     }
-  
+
   // allocate the new scalars
   switch (this->TensorType)
     {
@@ -246,7 +246,7 @@ void vtkTensorRotate::AllocateTensors(vtkImageData *data)
       vtkErrorMacro("Could not allocate data type.");
       return;
     }
-  
+
   tensors->SetNumberOfComponents(9);
 
   // allocate enough memory
@@ -316,10 +316,10 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
 
   // Get information to march through data
   outData->GetContinuousIncrements(outExt, outInc0, outInc1, outInc2);
- 
+
   // find the output region to loop over
   int rowLength = (outExt[1] - outExt[0]+1);
-  maxY = outExt[3] - outExt[2]; 
+  maxY = outExt[3] - outExt[2];
   maxZ = outExt[5] - outExt[4];
   target = (unsigned long)((maxZ+1)*(maxY+1)/50.0);
   target++;
@@ -329,7 +329,7 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
     {
     for (idxY = 0; idxY <= maxY; idxY++)
       {
-      if (!id) 
+      if (!id)
         {
         if (!(count%target))
           {

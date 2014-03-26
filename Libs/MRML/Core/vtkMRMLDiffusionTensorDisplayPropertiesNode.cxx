@@ -81,11 +81,11 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::~vtkMRMLDiffusionTensorDisplayPrope
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
-  
+
   of << indent << " glyphGeometry=\"" << this->GlyphGeometry << "\"";
   of << indent << " colorGlyphBy=\"" << this->ColorGlyphBy << "\"";
   of << indent << " glyphScaleFactor=\"" << this->GlyphScaleFactor << "\"";
@@ -110,11 +110,11 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
   {
       attName = *(atts++);
       attValue = *(atts++);
-      if (!strcmp(attName, "glyphGeometry")) 
+      if (!strcmp(attName, "glyphGeometry"))
       {
       int glyphGeometry;
       std::stringstream ss;
@@ -122,73 +122,73 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
       ss >> glyphGeometry;
       this->SetGlyphGeometry(glyphGeometry);
       }
-      else if (!strcmp(attName, "colorGlyphBy")) 
+      else if (!strcmp(attName, "colorGlyphBy"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> ColorGlyphBy;
       }
-      else if (!strcmp(attName, "glyphScaleFactor")) 
+      else if (!strcmp(attName, "glyphScaleFactor"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> GlyphScaleFactor;
       }
-      else if (!strcmp(attName, "glyphEigenvector")) 
+      else if (!strcmp(attName, "glyphEigenvector"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> GlyphEigenvector;
       }
-      else if (!strcmp(attName, "glyphExtractEigenvalues")) 
+      else if (!strcmp(attName, "glyphExtractEigenvalues"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >>GlyphExtractEigenvalues ;
       }
-      else if (!strcmp(attName, "lineGlyphResolution")) 
+      else if (!strcmp(attName, "lineGlyphResolution"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> LineGlyphResolution;
       }
-      else if (!strcmp(attName, "tubeGlyphRadius")) 
+      else if (!strcmp(attName, "tubeGlyphRadius"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> TubeGlyphRadius;
       }
-      else if (!strcmp(attName, "tubeGlyphNumberOfSides")) 
+      else if (!strcmp(attName, "tubeGlyphNumberOfSides"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> TubeGlyphNumberOfSides;
       }
-      else if (!strcmp(attName, "ellipsoidGlyphThetaResolution")) 
+      else if (!strcmp(attName, "ellipsoidGlyphThetaResolution"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> EllipsoidGlyphThetaResolution;
-      }      
-      else if (!strcmp(attName, "ellipsoidGlyphPhiResolution")) 
+      }
+      else if (!strcmp(attName, "ellipsoidGlyphPhiResolution"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> EllipsoidGlyphPhiResolution;
-      }      
-      else if (!strcmp(attName, "superquadricGlyphGamma")) 
+      }
+      else if (!strcmp(attName, "superquadricGlyphGamma"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> SuperquadricGlyphGamma;
       }
-      else if (!strcmp(attName, "superquadricGlyphThetaResolution")) 
+      else if (!strcmp(attName, "superquadricGlyphThetaResolution"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> SuperquadricGlyphThetaResolution;
       }
-      else if (!strcmp(attName, "superquadricGlyphPhiResolution")) 
+      else if (!strcmp(attName, "superquadricGlyphPhiResolution"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -222,14 +222,14 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
   this->SetSuperquadricGlyphGamma(node->SuperquadricGlyphGamma);
   this->SetSuperquadricGlyphThetaResolution(node->SuperquadricGlyphThetaResolution);
   this->SetSuperquadricGlyphPhiResolution(node->SuperquadricGlyphPhiResolution);
-  
+
   this->EndModify(disabledModify);
   }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
   os << indent << "ScalarInvariant:             " << this->ScalarInvariant << "\n";
   os << indent << "GlyphGeometry:             " << this->GlyphGeometry << "\n";
@@ -259,7 +259,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
     this->GlyphSource->Delete();
     this->GlyphSource = NULL;
     }
-  
+
   // Create a new glyph source according to current settings
 
   switch ( this->GlyphGeometry )
@@ -268,8 +268,8 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
     case Tubes:
       {
       vtkLineSource *line = vtkLineSource::New();
-      
-      // Scaling along x-axis corresponds to major eigenvector, etc.   
+
+      // Scaling along x-axis corresponds to major eigenvector, etc.
       // Create a line along the proper axis for scaling:
       switch ( this->GlyphEigenvector )
         {

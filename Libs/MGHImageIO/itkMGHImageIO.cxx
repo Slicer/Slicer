@@ -942,11 +942,11 @@ MGHImageIO::GetComponentSize() const
     break;
   case INT:
       {
-      returnValue = sizeof(int); 
+      returnValue = sizeof(int);
       }
     break;
   case FLOAT:
-      { 
+      {
       returnValue = sizeof(float);
       }
     break;

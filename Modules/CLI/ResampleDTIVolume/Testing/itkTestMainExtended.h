@@ -68,10 +68,10 @@ std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
   extern int test(int, char * [] ); \
   StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage(const char *testImageFilename, 
+int RegressionTestImage(const char *testImageFilename,
                         const char *baselineImageFilename,
                         int reportErrors,
-                        double intensityTolerance = 2.0, 
+                        double intensityTolerance = 2.0,
                         ::itk::SizeValueType numberOfPixelsTolerance = 0,
                         unsigned int radiusTolerance = 0);
 

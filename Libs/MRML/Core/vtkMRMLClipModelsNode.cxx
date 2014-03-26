@@ -44,11 +44,11 @@ vtkMRMLClipModelsNode::~vtkMRMLClipModelsNode()
 void vtkMRMLClipModelsNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-  
+
   of << indent << " clipType=\"" << this->ClipType << "\"";
 
   of << indent << " redSliceClipState=\"" << this->RedSliceClipState << "\"";
@@ -66,35 +66,35 @@ void vtkMRMLClipModelsNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "yellowSliceClipState")) 
+    if (!strcmp(attName, "yellowSliceClipState"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> YellowSliceClipState;
       }
-    else if (!strcmp(attName, "redSliceClipState")) 
+    else if (!strcmp(attName, "redSliceClipState"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> RedSliceClipState;
       }
-    else if (!strcmp(attName, "greenSliceClipState")) 
+    else if (!strcmp(attName, "greenSliceClipState"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> GreenSliceClipState;
       }
-    else if (!strcmp(attName, "clipType")) 
+    else if (!strcmp(attName, "clipType"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> ClipType;
       }
-    } 
+    }
     this->EndModify(disabledModify);
 
 }
@@ -121,7 +121,7 @@ void vtkMRMLClipModelsNode::Copy(vtkMRMLNode *anode)
 
 //----------------------------------------------------------------------------
 void vtkMRMLClipModelsNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   Superclass::PrintSelf(os,indent);
 
   os << indent << "ClipType:        " << this->ClipType << "\n";

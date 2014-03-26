@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -24,8 +24,8 @@
 #include "math.h"
 
 namespace itk
-{ 
-    
+{
+
 /*
  * Constructor
  */
@@ -91,7 +91,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
     unsigned int binNumber;
     PixelType value = iter.Get();
 
-    if ( value == imageMin ) 
+    if ( value == imageMin )
       {
       binNumber = 0;
       }
@@ -108,7 +108,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
     ++iter;
 
     }
- 
+
   // normalize the frequencies
   double totalMean = 0.0;
   for ( j = 0; j < m_NumberOfHistogramBins; j++ )
@@ -134,7 +134,7 @@ NewOtsuThresholdImageCalculator<TInputImage>
   for ( j = 1; j < m_NumberOfHistogramBins; j++ )
     {
     freqLeft += relativeFrequency[j];
-    meanLeft = ( meanLeftOld * freqLeftOld + 
+    meanLeft = ( meanLeftOld * freqLeftOld +
                  (j+1) * relativeFrequency[j] ) / freqLeft;
     if (freqLeft == 1.0)
       {
@@ -142,12 +142,12 @@ NewOtsuThresholdImageCalculator<TInputImage>
       }
     else
       {
-      meanRight = ( totalMean - meanLeft * freqLeft ) / 
+      meanRight = ( totalMean - meanLeft * freqLeft ) /
         ( 1.0 - freqLeft );
       }
     double varBetween = freqLeft * ( 1.0 - freqLeft ) *
       pow(fabs( meanLeft - meanRight ),m_Omega);
-   
+
     if ( varBetween > maxVarBetween )
       {
       maxVarBetween = varBetween;
@@ -156,11 +156,11 @@ NewOtsuThresholdImageCalculator<TInputImage>
 
     // cache old values
     freqLeftOld = freqLeft;
-    meanLeftOld = meanLeft; 
+    meanLeftOld = meanLeft;
 
-    } 
+    }
 
-  m_Threshold = static_cast<PixelType>( imageMin + 
+  m_Threshold = static_cast<PixelType>( imageMin +
                                         ( maxBinNumber + 1 ) / binMultiplier );
 }
 

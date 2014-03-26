@@ -1,8 +1,8 @@
 // .NAME vtkMRMLAnnotationPointDisplayNode - MRML node to represent display properties for tractography.
 // .SECTION Description
-// vtkMRMLAnnotationPointDisplayNode nodes store display properties of trajectories 
-// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
-// or by scalar invariants), display on/off for tensor glyphs and display of 
+// vtkMRMLAnnotationPointDisplayNode nodes store display properties of trajectories
+// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
+// or by scalar invariants), display on/off for tensor glyphs and display of
 // trajectory as a line or tube.
 //
 
@@ -20,7 +20,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   static vtkMRMLAnnotationPointDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLAnnotationPointDisplayNode,vtkMRMLAnnotationDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
-  
+
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
-  
+
   // Description:
   // Get node XML tag name (like Volume, Annotation)
   virtual const char* GetNodeTagName() {return "AnnotationPointDisplay";};
@@ -50,8 +50,8 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
   /// Which kind of glyph should be used to display this fiducial?
@@ -78,7 +78,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   /// Return the min/max glyph types, for iterating over them in tcl
   int GetMinimumGlyphType() { return vtkMRMLAnnotationPointDisplayNode::GlyphMin; };
   int GetMaximumGlyphType() { return vtkMRMLAnnotationPointDisplayNode::GlyphMax; };
-  
+
   /// The glyph type used to display this fiducial
   void SetGlyphType(int type);
   vtkGetMacro(GlyphType, int);
@@ -109,7 +109,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   ///\sa SetProjectedColor
   inline void SliceProjectionUseFiducialColorOff();
 
-  /// Set projection's view different 
+  /// Set projection's view different
   /// if under/over/in the plane
   ///\sa SetProjectedColor
   inline void SliceProjectionOutlinedBehindSlicePlaneOn();
@@ -129,7 +129,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   ProjectionUseFiducialColor = 0x02,
   ProjectionOutlinedBehindSlicePlane = 0x04
   };
-  
+
  protected:
   vtkMRMLAnnotationPointDisplayNode();
   ~vtkMRMLAnnotationPointDisplayNode() { };
@@ -145,7 +145,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
 void vtkMRMLAnnotationPointDisplayNode
 ::SliceProjectionUseFiducialColorOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() | 
+  this->SetSliceProjection( this->GetSliceProjection() |
                             vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 }
 
@@ -153,7 +153,7 @@ void vtkMRMLAnnotationPointDisplayNode
 void vtkMRMLAnnotationPointDisplayNode
 ::SliceProjectionUseFiducialColorOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() & 
+  this->SetSliceProjection( this->GetSliceProjection() &
                             ~vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 }
 
@@ -161,7 +161,7 @@ void vtkMRMLAnnotationPointDisplayNode
 void vtkMRMLAnnotationPointDisplayNode
 ::SliceProjectionOutlinedBehindSlicePlaneOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() | 
+  this->SetSliceProjection( this->GetSliceProjection() |
                             vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 
@@ -169,7 +169,7 @@ void vtkMRMLAnnotationPointDisplayNode
 void vtkMRMLAnnotationPointDisplayNode
 ::SliceProjectionOutlinedBehindSlicePlaneOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() & 
+  this->SetSliceProjection( this->GetSliceProjection() &
                             ~vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 

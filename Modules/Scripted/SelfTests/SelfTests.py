@@ -6,7 +6,7 @@ from __main__ import slicer
 #
 # SelfTests
 #
-# This code includes the GUI for the slicer module.  
+# This code includes the GUI for the slicer module.
 # The purpose is to provide a BIST (http://en.wikipedia.org/wiki/Built-in_self-test)
 # framework for slicer as discussed here: http://na-mic.org/Bug/view.php?id=1922
 #
@@ -37,7 +37,7 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
     #parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadSelfTests.png')
     self.parent = parent
 
-    # 
+    #
     # slicer.selfTests is a dictionary of tests that are registered
     # here or in other parts of the code.  The key is the name of the test
     # and the value is a python callable that runs the test and returns
@@ -65,7 +65,7 @@ class SelfTestsWidget:
 
   def __init__(self, parent=None):
     self.logic = SelfTestsLogic(slicer.selfTests)
-    
+
     if not parent:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout(qt.QVBoxLayout())
@@ -89,7 +89,7 @@ class SelfTestsWidget:
   def setup(self):
 
     #
-    # test list 
+    # test list
     #
 
     self.testList = ctk.ctkCollapsibleButton(self.parent)
@@ -103,7 +103,7 @@ class SelfTestsWidget:
     self.runAll.connect('clicked()', self.onRunAll)
 
     self.testButtons = {}
-    self.testMapper = qt.QSignalMapper() 
+    self.testMapper = qt.QSignalMapper()
     self.testMapper.connect('mapped(const QString&)', self.onRun)
     testKeys = slicer.selfTests.keys()
     testKeys.sort()
@@ -152,7 +152,7 @@ class SelfTestsLogic:
     if testsRun == 0:
       return "No tests run"
     s = "%.0f%% passed (%d of %d)" % (
-        (100. * len(self.passed) / testsRun), 
+        (100. * len(self.passed) / testsRun),
         len(self.passed), testsRun )
     s +="\n---\n"
     for test in self.results:

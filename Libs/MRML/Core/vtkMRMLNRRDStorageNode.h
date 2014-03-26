@@ -32,32 +32,32 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "NRRDStorage";};
 
-  /// 
+  ///
   /// Center image on read
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
-  /// 
+  ///
   /// Access the nrrd header fields to create a diffusion gradient table
   int ParseDiffusionInformation(vtkNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
 
-  /// 
+  ///
   /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension();
 

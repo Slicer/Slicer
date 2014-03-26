@@ -31,14 +31,14 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qMRMLModelDisplayNodeWidg
 
 public:
   qMRMLModelDisplayNodeWidgetPlugin(QObject * newParent = 0);
-  
+
   QWidget *createWidget(QWidget *newParent);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;
   bool     isContainer() const;
   QString  name() const;
-  
+
 };
 
 #endif

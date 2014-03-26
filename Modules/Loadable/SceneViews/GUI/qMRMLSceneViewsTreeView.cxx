@@ -105,7 +105,7 @@ void qMRMLSceneViewsTreeViewPrivate::init()
         q,
         SLOT(onSelectionChanged(QItemSelection,QItemSelection)),
         Qt::DirectConnection );
-  
+
   q->setUniformRowHeights(true);
 
   // we need to enable mouse tracking to set the appropriate cursor while mouseMove occurs
@@ -185,7 +185,7 @@ void qMRMLSceneViewsTreeView::onClicked(const QModelIndex& index)
     {
     this->m_Logic->SetActiveHierarchyNodeID(d->SortFilterModel->mrmlNodeFromIndex(index)->GetID());
     }
-  
+
   // check if user clicked on icon, this can happen even after we marked a hierarchy as active
   if (index.column() == qMRMLSceneViewsModel::RestoreColumn)
     {
@@ -297,9 +297,9 @@ void qMRMLSceneViewsTreeView::deleteSelected()
       // there we only update once a row
       if (selected.at(i).column() ==  qMRMLSceneViewsModel::ThumbnailColumn)
         {
-        
+
         vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.at(i)));
-        
+
         if (sceneViewNode)
           {
           // we mark this one for deletion
@@ -307,7 +307,7 @@ void qMRMLSceneViewsTreeView::deleteSelected()
           }
         }
       } // for
-    
+
     // we parsed the complete selection and saved all mrmlIds to delete
     // now, it is safe to delete
     for (int j=0; j < markedForDeletion.size(); ++j)
@@ -394,7 +394,7 @@ void qMRMLSceneViewsTreeView::setRoot()
 
   // get the starting root so we don't reset it if the same
   QModelIndex startingRoot = this->rootIndex();
-  
+
   // first, we set the root index to the mrmlScene
   // this works also if the scene is not defined yet
   QModelIndex root = d->SceneModel->mrmlSceneIndex();

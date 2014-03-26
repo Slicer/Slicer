@@ -48,7 +48,7 @@ vtkMRMLTractographyInteractiveSeedingNode::vtkMRMLTractographyInteractiveSeeding
    this->SeedSpacing = 2.0;
    this->DisplayMode = 1;
    this->EnableSeeding = 1;
-  
+
    this->FilePrefix = NULL;
    this->FileDirectoryName = NULL;
    this->WriteToFile = 0;
@@ -100,7 +100,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::WriteXML(ostream& of, int nInden
     ss << this->IntegrationStep;
     of << indent << " IntegrationStep=\"" << ss.str() << "\"";
   }
-  { 
+  {
     std::stringstream ss;
     ss << this->MaximumPathLength;
     of << indent << " MaximumPathLength=\"" << ss.str() << "\"";
@@ -119,15 +119,15 @@ void vtkMRMLTractographyInteractiveSeedingNode::WriteXML(ostream& of, int nInden
     std::stringstream ss;
     ss << this->SeedingRegionStep;
     of << indent << " SeedingRegionStep=\"" << ss.str() << "\"";
-  }  
+  }
   {
     std::stringstream ss;
     ss << this->MaxNumberOfSeeds;
     of << indent << " MaxNumberOfSeeds=\"" << ss.str() << "\"";
   }
-    
+
   of << indent << " seedSelectedFiducials=\"" << (this->SeedSelectedFiducials ? "true" : "false") << "\"";
-  
+
   {
     std::stringstream ss;
     ss << this->DisplayMode;
@@ -139,7 +139,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::WriteXML(ostream& of, int nInden
     ss << this->ROILabelsToString();
     of << indent << " ROILabel=\"" << ss.str() << "\"";
   }
-    
+
   of << indent << " randomGrid=\"" << (this->RandomGrid ? "true" : "false") << "\"";
 
   of << indent << " useIndexSpace=\"" << (this->UseIndexSpace ? "true" : "false") << "\"";
@@ -191,7 +191,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::WriteXML(ostream& of, int nInden
       ss << this->InputFiducialRef;
       of << indent << " InputFiducialRef=\"" << ss.str() << "\"";
      }
-  }  
+  }
   {
     std::stringstream ss;
     if ( this->OutputFiberRef )
@@ -210,67 +210,67 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
   // Read all MRML node attributes from two arrays of names and values
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "StoppingValue")) 
+    if (!strcmp(attName, "StoppingValue"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->StoppingValue;
       }
-    else if (!strcmp(attName, "StoppingMode")) 
+    else if (!strcmp(attName, "StoppingMode"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->StoppingMode;
       }
-    else if (!strcmp(attName, "StoppingCurvature")) 
+    else if (!strcmp(attName, "StoppingCurvature"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->StoppingCurvature;
       }
-    else if (!strcmp(attName, "IntegrationStep")) 
+    else if (!strcmp(attName, "IntegrationStep"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->IntegrationStep;
       }
-    else if (!strcmp(attName, "MinimumPathLength")) 
+    else if (!strcmp(attName, "MinimumPathLength"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->MinimumPathLength;
       }
-    else if (!strcmp(attName, "MaximumPathLength")) 
+    else if (!strcmp(attName, "MaximumPathLength"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->MaximumPathLength;
       }
-    else if (!strcmp(attName, "SeedingRegionSize")) 
+    else if (!strcmp(attName, "SeedingRegionSize"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->SeedingRegionSize;
       }
-    else if (!strcmp(attName, "SeedingRegionStep")) 
+    else if (!strcmp(attName, "SeedingRegionStep"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->SeedingRegionStep;
       }
-    else if (!strcmp(attName, "MaxNumberOfSeeds")) 
+    else if (!strcmp(attName, "MaxNumberOfSeeds"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->MaxNumberOfSeeds;
       }
-    else if (!strcmp(attName, "seedSelectedFiducials")) 
+    else if (!strcmp(attName, "seedSelectedFiducials"))
       {
-     if (!strcmp(attValue,"true")) 
+     if (!strcmp(attValue,"true"))
         {
         this->SeedSelectedFiducials = 1;
         }
@@ -279,15 +279,15 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
         this->SeedSelectedFiducials = 0;
         }
       }
-    else if (!strcmp(attName, "ROILabel")) 
+    else if (!strcmp(attName, "ROILabel"))
       {
       std::stringstream ss;
       ss << attValue;
       this->StringToROILabels(ss.str());
       }
-    else if (!strcmp(attName, "randomGrid")) 
+    else if (!strcmp(attName, "randomGrid"))
       {
-     if (!strcmp(attValue,"true")) 
+     if (!strcmp(attValue,"true"))
         {
         this->RandomGrid = 1;
         }
@@ -296,9 +296,9 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
         this->RandomGrid = 0;
         }
       }
-    else if (!strcmp(attName, "useIndexSpace")) 
+    else if (!strcmp(attName, "useIndexSpace"))
       {
-     if (!strcmp(attValue,"true")) 
+     if (!strcmp(attValue,"true"))
         {
         this->UseIndexSpace = 1;
         }
@@ -307,21 +307,21 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
         this->UseIndexSpace = 0;
         }
       }
-    else if (!strcmp(attName, "linearMeasureStart")) 
+    else if (!strcmp(attName, "linearMeasureStart"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->LinearMeasureStart;
       }
-    else if (!strcmp(attName, "seedSpacing")) 
+    else if (!strcmp(attName, "seedSpacing"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->SeedSpacing;
       }
-    else if (!strcmp(attName, "enableSeeding")) 
+    else if (!strcmp(attName, "enableSeeding"))
       {
-     if (!strcmp(attValue,"true")) 
+     if (!strcmp(attValue,"true"))
         {
         this->EnableSeeding = 1;
         }
@@ -330,9 +330,9 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
         this->EnableSeeding = 0;
         }
       }
-    else if (!strcmp(attName, "writeToFile")) 
+    else if (!strcmp(attName, "writeToFile"))
       {
-     if (!strcmp(attValue,"true")) 
+     if (!strcmp(attValue,"true"))
         {
         this->WriteToFile = 1;
         }
@@ -341,7 +341,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
         this->WriteToFile = 0;
         }
       }
-    else if (!strcmp(attName, "DisplayMode")) 
+    else if (!strcmp(attName, "DisplayMode"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -365,7 +365,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
       {
       this->SetInputFiducialRef(attValue);
       this->Scene->AddReferencedNodeID(this->InputFiducialRef, this);
-      }    
+      }
     else if (!strcmp(attName, "OutputFiberRef"))
       {
       this->SetOutputFiberRef(attValue);
@@ -416,7 +416,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLTractographyInteractiveSeedingNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   vtkMRMLNode::PrintSelf(os,indent);
 
   os << indent << "StoppingValue:   " << this->StoppingValue << "\n";
@@ -438,16 +438,16 @@ void vtkMRMLTractographyInteractiveSeedingNode::PrintSelf(ostream& os, vtkIndent
   os << indent << "EnableSeeding:   " << this->EnableSeeding << "\n";
   os << indent << "WriteToFile:   " << this->WriteToFile << "\n";
 
-  os << indent << "FileDirectoryName:   " << 
+  os << indent << "FileDirectoryName:   " <<
    (this->FileDirectoryName ? this->FileDirectoryName : "(none)") << "\n";
-  os << indent << "FilePrefix:   " << 
+  os << indent << "FilePrefix:   " <<
    (this->FilePrefix ? this->FilePrefix : "(none)") << "\n";
 
-  os << indent << "InputVolumeRef:   " << 
+  os << indent << "InputVolumeRef:   " <<
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
-  os << indent << "InputFiducialRef:   " << 
-   (this->InputFiducialRef ? this->InputFiducialRef : "(none)") << "\n";  
-  os << indent << "OutputFiberRef:   " << 
+  os << indent << "InputFiducialRef:   " <<
+   (this->InputFiducialRef ? this->InputFiducialRef : "(none)") << "\n";
+  os << indent << "OutputFiberRef:   " <<
    (this->OutputFiberRef ? this->OutputFiberRef : "(none)") << "\n";
 }
 

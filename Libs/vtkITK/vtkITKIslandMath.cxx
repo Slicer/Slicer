@@ -55,8 +55,8 @@ void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 // Note: local function not method - conforms to signature in itkCommand.h
-void vtkITKIslandMathHandleProgressEvent (itk::Object *caller, 
-                                          const itk::EventObject& vtkNotUsed(eventObject), 
+void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
+                                          const itk::EventObject& vtkNotUsed(eventObject),
                                           void *clientdata)
 {
   itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
@@ -129,7 +129,7 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
 
 
 //
-// 
+//
 //
 void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
 {
@@ -193,7 +193,7 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
       } //switch
 #endif
     }
-  else 
+  else
     {
     vtkErrorMacro(<< "Only single component images supported.");
     }

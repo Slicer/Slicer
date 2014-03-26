@@ -31,7 +31,7 @@
 
 class qMRMLEventLoggerPrivate;
 class vtkMRMLScene;
-class vtkObject; 
+class vtkObject;
 
 class QMRML_WIDGETS_EXPORT qMRMLEventLogger: public QObject
 {
@@ -41,11 +41,11 @@ public:
   explicit qMRMLEventLogger(QObject* parent = 0);
   virtual ~qMRMLEventLogger();
 
-  /// 
+  ///
   /// Set the MRML \a scene that should be listened for events
   void setMRMLScene(vtkMRMLScene* scene);
 
-  /// 
+  ///
   /// Return true if the corresponding event if listened by the eventLogger
   bool listeningNodeAddedEvent();
   bool listeningNodeRemovedEvent();
@@ -61,7 +61,7 @@ public:
   bool listeningSceneRestoredEvent();
 
 public slots:
-  /// 
+  ///
   /// Allow to enable or disable the listening of specific event
   void listenNodeAddedEvent(bool listen);
   void listenNodeRemovedEvent(bool listen);
@@ -93,7 +93,7 @@ public slots:
   void setConsoleOutputEnabled(bool enabled);
 
 signals:
-  /// 
+  ///
   /// Emitted when the associated MRML scene event is fired
   void signalNodeAddedEvent(vtkObject* calle, vtkObject* call_data);
   void signalNodeRemovedEvent(vtkObject* caller, vtkObject* call_data);

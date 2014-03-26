@@ -257,7 +257,7 @@ void vtkMRMLModelDisplayableManager::AdditionalInitializeStep()
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelDisplayableManager::ActiveInteractionModes() 
+int vtkMRMLModelDisplayableManager::ActiveInteractionModes()
 {
   //return vtkMRMLInteractionNode::ViewTransform;
   return 0;

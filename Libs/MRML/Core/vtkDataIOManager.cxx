@@ -39,13 +39,13 @@ vtkDataIOManager::vtkDataIOManager()
 //----------------------------------------------------------------------------
 vtkDataIOManager::~vtkDataIOManager()
 {
-   
+
   if ( this->TransferUpdateCommand )
     {
     this->TransferUpdateCommand->Delete();
     this->TransferUpdateCommand = NULL;
     }
-  
+
   if ( this->DataTransferCollection )
     {
     this->DataTransferCollection->RemoveAllItems();
@@ -85,8 +85,8 @@ void vtkDataIOManager::TransferUpdateCallback ( vtkObject *caller,
 
 
 //----------------------------------------------------------------------------
-void vtkDataIOManager::ProcessTransferUpdates ( vtkObject * vtkNotUsed(caller), 
-                                                unsigned long vtkNotUsed(event), 
+void vtkDataIOManager::ProcessTransferUpdates ( vtkObject * vtkNotUsed(caller),
+                                                unsigned long vtkNotUsed(event),
                                                 void *vtkNotUsed(callData) )
 {
   vtkDebugMacro("ProcessTransferUpdates: invoking transfer update event.");
@@ -269,7 +269,7 @@ void vtkDataIOManager::RemoveDataTransfer ( int transferID )
 //----------------------------------------------------------------------------
 vtkDataTransfer * vtkDataIOManager::GetDataTransfer ( int transferID )
 {
-  
+
   vtkDataTransfer *dt;
 
   if ( this->DataTransferCollection == NULL )
@@ -354,7 +354,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
   //vtkURIHandler *handler = dnode->GetNthStorageNode(storageNodeIndex)->GetURIHandler();
   vtkDebugMacro("QueueRead: got the uri handler from the storage node");
   const char *source = dnode->GetNthStorageNode(storageNodeIndex)->GetURI();
-  const char *dest; 
+  const char *dest;
 
   if (source == NULL)
     {
@@ -376,7 +376,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       }
     //--- check to see if RemoteCacheLimit is exceeded
     //--- check to see if FreeBufferSize is exceeded.
-   
+
     //--- if force redownload is enabled, remove the old file from cache.
     if (cm->GetEnableForceRedownload () )
       {
@@ -396,7 +396,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
     //--- with multiple pop-up warnings if they are downloading
     //--- a large scene that consists of multiple datasets.
     //--- ***The risk with this implementation  is that they may
-    //--- forget to adjust the cache size, but aren't notified again... 
+    //--- forget to adjust the cache size, but aren't notified again...
     float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
     if ( (cm->GetCurrentCacheSize()*1000000.0) >= bufsize )
       {
@@ -421,7 +421,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
         cm->SetInsufficientFreeBufferNotificationFlag(0);
         }
       //---END WJPtest
-      
+
       //--- trigger logic to download, if there's cache space.
       //--- and signal this remote read event to Logic and GUI.
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
@@ -490,7 +490,7 @@ void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
     {
     vtkDebugMacro("QueueWrite: got destination: " << dest);
     }
- 
+
   vtkDebugMacro("QueueWrite: invoking a remote write event on the data io manager");
   //--- signal this remote write event to Logic and GUI.
   this->InvokeEvent ( vtkDataIOManager::RemoteWriteEvent, node);
@@ -500,12 +500,12 @@ void vtkDataIOManager::QueueWrite ( vtkMRMLNode *node )
 //----------------------------------------------------------------------------
 int vtkDataIOManager::GetUniqueTransferID ( )
 {
-  
+
   //--- keep looping until we find an id that is unique
   int id = 1;
   int exists = 0;
   vtkDataTransfer *dt;
-    
+
   if ( this->DataTransferCollection == NULL )
     {
     this->DataTransferCollection = vtkCollection::New();
@@ -514,7 +514,7 @@ int vtkDataIOManager::GetUniqueTransferID ( )
   // loop until found or return.
   while ( !exists )
     {
-    
+
     // loop thru the existing data transfers
     int n = this->DataTransferCollection->GetNumberOfItems();
     vtkDebugMacro("GetUniqueTransferID: in loop, id = " << id << ", n = " << n);

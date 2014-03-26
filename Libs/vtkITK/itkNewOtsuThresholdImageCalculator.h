@@ -11,10 +11,10 @@ namespace itk
 
 /** \class NewOtsuThresholdImageCalculator
  * \brief Computes the Otsu's threshold for an image.
- * 
+ *
  * This calculator computes the Otsu's threshold which separates an image
  * into foreground and background components. The method relies on a
- * histogram of image intensities. The basic idea is to maximize the 
+ * histogram of image intensities. The basic idea is to maximize the
  * between-class variance.
  *
  * This class is templated over the input image type.
@@ -24,8 +24,8 @@ namespace itk
  *
  * \ingroup Operators
  */
-template <class TInputImage>            
-class NewOtsuThresholdImageCalculator : public Object 
+template <class TInputImage>
+class NewOtsuThresholdImageCalculator : public Object
 {
 public:
   /** Standard class typedefs. */
@@ -45,13 +45,13 @@ public:
 
   /** Pointer type for the image. */
   typedef typename TInputImage::Pointer  ImagePointer;
-  
+
   /** Const Pointer type for the image. */
   typedef typename TInputImage::ConstPointer ImageConstPointer;
 
   /** Type definition for the input image pixel type. */
   typedef typename TInputImage::PixelType PixelType;
-  
+
   /** Set the input image. */
   itkSetConstObjectMacro(Image,ImageType);
 
@@ -60,9 +60,9 @@ public:
 
   /** Return the Otsu's threshold value. */
   itkGetMacro(Threshold,PixelType);
-  
+
   /** Set/Get the number of histogram bins. Default is 128. */
-  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1, 
+  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1,
                     NumericTraits<unsigned long>::max() );
   itkGetMacro( NumberOfHistogramBins, unsigned long );
 
@@ -77,7 +77,7 @@ protected:
 private:
   NewOtsuThresholdImageCalculator(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   PixelType            m_Threshold;
   unsigned long        m_NumberOfHistogramBins;
   double m_Omega;

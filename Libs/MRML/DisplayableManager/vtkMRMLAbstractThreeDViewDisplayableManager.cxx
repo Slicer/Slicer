@@ -91,7 +91,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
       interactorStyle->OnConfigure();
       break;
 
-    case vtkCommand::EnterEvent:  
+    case vtkCommand::EnterEvent:
       interactorStyle->OnEnter();
       break;
 
@@ -99,15 +99,15 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
         interactorStyle->OnLeave();
       break;
 
-    case vtkCommand::TimerEvent: 
+    case vtkCommand::TimerEvent:
         interactorStyle->OnTimer();
       break;
 
-    case vtkCommand::MouseMoveEvent: 
+    case vtkCommand::MouseMoveEvent:
         interactorStyle->OnMouseMove();
       break;
 
-    case vtkCommand::LeftButtonPressEvent: 
+    case vtkCommand::LeftButtonPressEvent:
         interactorStyle->OnLeftButtonDown();
       break;
 
@@ -127,7 +127,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
         interactorStyle->OnRightButtonDown();
       break;
 
-    case vtkCommand::RightButtonReleaseEvent: 
+    case vtkCommand::RightButtonReleaseEvent:
         interactorStyle->OnRightButtonUp();
       break;
 
@@ -135,7 +135,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
         interactorStyle->OnMouseWheelForward();
       break;
 
-    case vtkCommand::MouseWheelBackwardEvent: 
+    case vtkCommand::MouseWheelBackwardEvent:
         interactorStyle->OnMouseWheelBackward();
       break;
 
@@ -144,19 +144,19 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
         interactorStyle->OnKeyPress();
       break;
 
-    case vtkCommand::KeyReleaseEvent: 
+    case vtkCommand::KeyReleaseEvent:
         interactorStyle->OnKeyUp();
-        interactorStyle->OnKeyRelease(); 
+        interactorStyle->OnKeyRelease();
       break;
 
-    case vtkCommand::CharEvent:  
+    case vtkCommand::CharEvent:
         interactorStyle->OnChar();
       break;
 
     case vtkCommand::DeleteEvent:
       interactorStyle->SetInteractor(0);
       break;
-      
+
     case vtkCommand::TDxMotionEvent:
     case vtkCommand::TDxButtonPressEvent:
     case vtkCommand::TDxButtonReleaseEvent:

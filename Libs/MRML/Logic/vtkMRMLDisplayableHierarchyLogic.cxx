@@ -99,7 +99,7 @@ char *vtkMRMLDisplayableHierarchyLogic::AddDisplayableHierarchyNodeForNode(vtkMR
 
   // save the id for return
   hierarchyNodeID = hierarchyNode->GetID();
-  
+
   // clean up
   hierarchyNode->Delete();
 
@@ -147,7 +147,7 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
     vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the parent node " << parent->GetID() << ", so unable to place the child in a hierarchy");
     return false;
     }
-  
+
   // does the child already have a hierarchy node associated with it?
   vtkMRMLHierarchyNode *childHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID());
   if (!childHierarchyNode)
@@ -170,7 +170,7 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
     parentNode->SetDisableModifiedEvent(1);
     childHierarchyNode->SetParentNodeID(parentHierarchyNodeID);
     parentNode->SetDisableModifiedEvent(0);
-    
+
     return true;
     }
   else
@@ -239,9 +239,9 @@ bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDis
     }
   // and then delete itself
   this->GetMRMLScene()->RemoveNode(hnode);
-  
+
   // end batch processing
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
-  
+
   return retval;
 }

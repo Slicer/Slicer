@@ -55,7 +55,7 @@ public slots:
 
 protected:
   virtual void setup();
-  
+
 protected:
   QScopedPointer<qSlicerDataModuleWidgetPrivate> d_ptr;
 

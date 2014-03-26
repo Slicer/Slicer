@@ -115,7 +115,7 @@ class ScenePerformanceWidget:
       node = self.MRMLNodeComboBox.currentNode()
       results = tester.modifyNode(node)
       self.ResultsTextEdit.append(results)
-  
+
   def updateActionProperties(self):
     enableAddData = True if self.ActionComboBox.currentIndex == 0 else False
     self.ActionPathLineEdit.setEnabled(enableAddData)
@@ -155,7 +155,7 @@ class ScenePerformanceLogic:
   def __init__(self):
     pass
 
-  
+
   def hasImageData(self,volumeNode):
     if not volumeNode:
       print('no volume node')
@@ -169,7 +169,7 @@ class ScenePerformanceLogic:
     downloads = (
         (downloadURL, downloadFileName),
         )
-    
+
     import urllib
     for url,name in downloads:
       filePath = slicer.app.temporaryPath + '/' + name
@@ -180,7 +180,7 @@ class ScenePerformanceLogic:
   def startTiming(self):
     self.Timer = qt.QTime()
     self.Timer.start()
-  
+
   def stopTiming(self):
     return self.Timer.elapsed()
 
@@ -205,10 +205,10 @@ class ScenePerformanceTest(unittest.TestCase):
 
   def setRepeat(self, repeat):
     self.Repeat = repeat
-  
+
   def runTest(self):
     self.testAll()
-  
+
   def testAll(self):
     self.setUp()
 
@@ -242,7 +242,7 @@ class ScenePerformanceTest(unittest.TestCase):
     message = '%s (%s) took %s msecs ' % (action, property, time)
     self.delayDisplay(message)
     return message
-  
+
   def addURLData(self, url, file):
     logic = ScenePerformanceLogic()
     file = logic.downloadFile(url, file)
@@ -278,7 +278,7 @@ class ScenePerformanceTest(unittest.TestCase):
   def restoreSceneView(self, sceneViewIndex):
     node = slicer.mrmlScene.GetNthNodeByClass(sceneViewIndex, 'vtkMRMLSceneViewNode')
     return self.restoreSceneViewNode(node)
-  
+
   def restoreSceneViewNode(self, node):
     self.delayDisplay("Starting the Restore Scene test")
     logic = ScenePerformanceLogic()
@@ -309,7 +309,7 @@ class ScenePerformanceTest(unittest.TestCase):
   def addNodeByID(self, nodeID):
     node = slicer.mrmlScene.GetNodeByID(nodeID)
     return self.addNode(node)
-  
+
   def addNode(self, node):
     self.delayDisplay("Starting the add node test")
     logic = ScenePerformanceLogic()
@@ -329,7 +329,7 @@ class ScenePerformanceTest(unittest.TestCase):
   def modifyNodeByID(self, nodeID):
     node = slicer.mrmlScene.GetNodeByID(nodeID)
     return self.modifyNode(node)
-  
+
   def modifyNode(self, node):
     self.delayDisplay("Starting the modify node test")
     logic = ScenePerformanceLogic()

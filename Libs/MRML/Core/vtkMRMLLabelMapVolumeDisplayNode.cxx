@@ -53,13 +53,13 @@ void vtkMRMLLabelMapVolumeDisplayNode::SetDefaultColorMap()
 //----------------------------------------------------------------------------
 void vtkMRMLLabelMapVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);

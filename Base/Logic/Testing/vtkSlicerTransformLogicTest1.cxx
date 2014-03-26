@@ -33,9 +33,9 @@ int vtkSlicerTransformLogicTest1(int argc, char * argv [])
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   vtkMRMLScene* scene = vtkMRMLScene::New();
-  
+
   vtkSlicerTransformLogic* transformModuleLogic = vtkSlicerTransformLogic::New();
   transformModuleLogic->SetMRMLScene(scene);
   if (transformModuleLogic->GetMRMLScene() != scene)

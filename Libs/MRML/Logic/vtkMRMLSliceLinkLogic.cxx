@@ -112,7 +112,7 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (node->IsA("vtkMRMLSliceCompositeNode") 
+  if (node->IsA("vtkMRMLSliceCompositeNode")
       || node->IsA("vtkMRMLSliceNode"))
     {
     vtkEventBroker::GetInstance()->AddObservation(
@@ -132,7 +132,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (node->IsA("vtkMRMLSliceCompositeNode") 
+  if (node->IsA("vtkMRMLSliceCompositeNode")
       || node->IsA("vtkMRMLSliceNode"))
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
@@ -210,13 +210,13 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     }
 
   // Update from SliceCompositeNode
-  vtkMRMLSliceCompositeNode* compositeNode 
+  vtkMRMLSliceCompositeNode* compositeNode
     = vtkMRMLSliceCompositeNode::SafeDownCast(node);
   if (compositeNode && !this->GetMRMLScene()->IsBatchProcessing())
     {
 
     // if this is not the node that we are interacting with, short circuit
-    if (!compositeNode->GetInteracting() 
+    if (!compositeNode->GetInteracting()
         || !compositeNode->GetInteractionFlags())
       {
       return;
@@ -345,7 +345,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceNode::XYZOriginFlag)
             {
-            // Need to copy the SliceOrigin. 
+            // Need to copy the SliceOrigin.
             double *xyzOrigin = sliceNode->GetXYZOrigin();
             sNode->SetXYZOrigin( xyzOrigin[0], xyzOrigin[1], xyzOrigin[2] );
             }
@@ -427,7 +427,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           {
           sNode->SetUseLabelOutline( sliceNode->GetUseLabelOutline() );
           }
-        
+
         // Broadcasting the visibility of slice in 3D
         if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
           & vtkMRMLSliceNode::SliceVisibleFlag)
@@ -452,7 +452,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
               sNode->SetSliceVisible(sliceNode->GetSliceVisible());
               }
             }
-          }        
+          }
 
           // Setting the slice spacing
           if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
@@ -497,7 +497,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
       if (cNode != sliceCompositeNode)
         {
         // Foreground selection
-        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceCompositeNode::ForegroundVolumeFlag)
           {
           //std::cerr << "Broadcasting Foreground Volume " << sliceCompositeNode->GetForegroundVolumeID() << std::endl;
@@ -505,28 +505,28 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
           }
 
         // Background selection
-        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceCompositeNode::BackgroundVolumeFlag)
           {
           cNode->SetBackgroundVolumeID(sliceCompositeNode->GetBackgroundVolumeID());
           }
 
         // Labelmap selection
-        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceCompositeNode::LabelVolumeFlag)
           {
           cNode->SetLabelVolumeID(sliceCompositeNode->GetLabelVolumeID());
           }
 
         // Foreground opacity
-        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceCompositeNode::ForegroundOpacityFlag)
           {
           cNode->SetForegroundOpacity(sliceCompositeNode->GetForegroundOpacity());
           }
 
         // Labelmap opacity
-        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceCompositeNode::LabelOpacityFlag)
           {
           cNode->SetLabelOpacity(sliceCompositeNode->GetLabelOpacity());

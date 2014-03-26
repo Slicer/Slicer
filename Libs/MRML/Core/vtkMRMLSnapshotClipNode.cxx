@@ -39,7 +39,7 @@ vtkMRMLSnapshotClipNode::vtkMRMLSnapshotClipNode()
 //----------------------------------------------------------------------------
 vtkMRMLSnapshotClipNode::~vtkMRMLSnapshotClipNode()
 {
-  if (this->SceneSnapshotNodes) 
+  if (this->SceneSnapshotNodes)
     {
     this->SceneSnapshotNodes->RemoveAllItems();
     this->SceneSnapshotNodes->Delete();
@@ -56,7 +56,7 @@ void vtkMRMLSnapshotClipNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLSceneViewNode * node = NULL;
   std::stringstream ss;
   int n;
-  for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++) 
+  for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++)
     {
     node = vtkMRMLSceneViewNode::SafeDownCast(this->SceneSnapshotNodes->GetItemAsObject(n));
     ss << node->GetID();
@@ -79,11 +79,11 @@ void vtkMRMLSnapshotClipNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "sceneSnapshotIDs")) 
+    if (!strcmp(attName, "sceneSnapshotIDs"))
       {
       std::stringstream ss(attValue);
       while (!ss.eof())
@@ -114,7 +114,7 @@ void vtkMRMLSnapshotClipNode::Copy(vtkMRMLNode *anode)
     }
   vtkMRMLNode *node = NULL;
   int n;
-  for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++) 
+  for (n=0; n < this->SceneSnapshotNodes->GetNumberOfItems(); n++)
     {
     node = (vtkMRMLNode*)this->SceneSnapshotNodes->GetItemAsObject(n);
     if (node)
@@ -148,14 +148,14 @@ void vtkMRMLSnapshotClipNode::AddSceneSnapshotNode(vtkMRMLSceneViewNode * node)
   this->SceneSnapshotNodes->AddItem(node);
 }
 
-/// 
+///
 /// Get Numbre of SceneSnapshot nodes
 int vtkMRMLSnapshotClipNode::GetNumberOfSceneSnapshotNodes()
 {
   return this->SceneSnapshotNodes->GetNumberOfItems();
 }
 
-/// 
+///
 /// Get SceneSnapshot node
 vtkMRMLSceneViewNode* vtkMRMLSnapshotClipNode::GetSceneSnapshotNode(int index)
 {

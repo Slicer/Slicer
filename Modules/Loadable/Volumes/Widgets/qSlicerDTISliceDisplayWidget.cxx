@@ -246,7 +246,7 @@ void qSlicerDTISliceDisplayWidget::updateWidgetFromMRML()
 void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  
+
   if (!this->displayPropertiesNode())
     {
     return;
@@ -256,7 +256,7 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
   if ( d->DisplayNode && (
     this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
     this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
-    this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector 
+    this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector
     ) )
   {
     d->GlyphScalarColorTableComboBox->setEnabled(false);
@@ -270,7 +270,7 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
   {
     double scalarRange[2];
     d->DisplayNode->GetScalarRange(scalarRange);
-    
+
     this->setScalarRange(scalarRange[0], scalarRange[1]);
   }
 

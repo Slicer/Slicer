@@ -35,8 +35,8 @@ def newPlane():
   Slicer.slicer.MRMLScene.AddNode(modelNode)
 
   # need to invoke a NodeAddedEvent since some GUI elements
-  # don't respond to each event (for efficiency).  In C++ 
-  # you would use the vtkMRMLScene::NodeAddedEvent enum but 
+  # don't respond to each event (for efficiency).  In C++
+  # you would use the vtkMRMLScene::NodeAddedEvent enum but
   # it's not directly available from scripts
   Slicer.slicer.MRMLScene.InvokeEvent(66000)
 
@@ -45,7 +45,7 @@ def newPlane():
 
 def texturedPlane():
 
-  # create the plane and modify the texture and transform 
+  # create the plane and modify the texture and transform
   # every iteration.  Call Modified on the PolyData so the
   # viewer will know to update.  Call Tk's "update" to flush
   # the event queue so the Render will appear on screen
@@ -73,4 +73,4 @@ def texturedPlane():
   ellapsed = endTime - startTime
   hertz = steps/ellapsed
   print 'ran %d iterations in %g seconds (%g hertz)' % (steps, ellapsed, hertz)
-    
+

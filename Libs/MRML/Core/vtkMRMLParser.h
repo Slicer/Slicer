@@ -33,19 +33,19 @@ class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 public:
   static vtkMRMLParser *New();
   vtkTypeMacro(vtkMRMLParser,vtkXMLParser);
-  
+
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
   void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};
 
   vtkCollection* GetNodeCollection() {return this->NodeCollection;};
   void SetNodeCollection(vtkCollection* scene) {this->NodeCollection = scene;};
-  
+
 protected:
   vtkMRMLParser() : MRMLScene(NULL),NodeCollection(NULL){};
   ~vtkMRMLParser() {};
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
-  
+
   virtual void StartElement(const char* name, const char** atts);
   virtual void EndElement (const char *name);
 

@@ -221,8 +221,8 @@ public:
   /// \sa createNewWidgetRepresentation(), createWidgetRepresentation()
   qSlicerAbstractModuleRepresentation* widgetRepresentation();
 
-  /// Force the creation of a new widget representation. 
-  /// It does not return the widget of the module, but a new instance instead. 
+  /// Force the creation of a new widget representation.
+  /// It does not return the widget of the module, but a new instance instead.
   /// It can be useful when embedding a module widget into another module.
   /// \sa widgetRepresentation(), createWidgetRepresentation()
   qSlicerAbstractModuleRepresentation* createNewWidgetRepresentation();

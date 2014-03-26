@@ -40,7 +40,7 @@ void vtkMRMLModelMirrorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLModelMirrorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //TODO  
+  //TODO
   vtkMRMLNode::PrintSelf(os,indent);
 }
 

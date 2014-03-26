@@ -14,14 +14,14 @@ public:
   vtkTypeRevisionMacro(vtkXNATPermissionPrompter, vtkPermissionPrompter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Member for storing a host name, if required
   vtkGetStringMacro ( Host );
   vtkSetStringMacro ( Host );
 
  private:
   char *Host;
-  
+
  protected:
   vtkXNATPermissionPrompter();
   virtual ~vtkXNATPermissionPrompter();

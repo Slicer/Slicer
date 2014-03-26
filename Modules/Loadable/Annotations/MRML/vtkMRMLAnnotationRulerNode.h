@@ -2,7 +2,7 @@
 #define __vtkMRMLAnnotationRulerNode_h
 
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
-#include "vtkMRMLAnnotationLinesNode.h" 
+#include "vtkMRMLAnnotationLinesNode.h"
 
 class vtkMatrix4x4;
 class vtkAbstractTransform;
@@ -15,7 +15,7 @@ public:
   static vtkMRMLAnnotationRulerNode *New();
   vtkTypeMacro(vtkMRMLAnnotationRulerNode,vtkMRMLAnnotationLinesNode);
   // Description:
-  // Just prints short summary 
+  // Just prints short summary
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   //--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ public:
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
+
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -46,8 +46,8 @@ public:
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
 
@@ -66,27 +66,27 @@ public:
   // Legacy code
   // Description:
   // get/set the first point position
-  double* GetPosition1() 
+  double* GetPosition1()
     {
     return this->GetControlPointCoordinates(0);
     }
 
-  int SetPosition1(double newControl[3]) 
-    { 
-    return this->SetControlPoint(0, newControl) ; 
+  int SetPosition1(double newControl[3])
+    {
+    return this->SetControlPoint(0, newControl) ;
     }
 
-  int SetPositionWorldCoordinates1(double newControl[4]) 
-    { 
+  int SetPositionWorldCoordinates1(double newControl[4])
+    {
     double locPoint[4]={0,0,0,1};
     this->TransformPointFromWorld(newControl, locPoint);
-    return this->SetPosition1(locPoint) ; 
+    return this->SetPosition1(locPoint) ;
     }
 
-  int SetPosition1(double nC1, double nC2, double nC3) 
-    { 
+  int SetPosition1(double nC1, double nC2, double nC3)
+    {
     double newControl[3] = {nC1,nC2,nC3};
-    return this->SetPosition1(newControl) ; 
+    return this->SetPosition1(newControl) ;
     }
 
 
@@ -101,27 +101,27 @@ public:
     this->TransformPointToWorld(p,position);
     }
 
-  double* GetPosition2() 
+  double* GetPosition2()
     {
     return this->GetControlPointCoordinates(1);
     }
 
-  int SetPosition2(double newControl[3]) 
-    { 
+  int SetPosition2(double newControl[3])
+    {
     return this->SetControlPoint(1, newControl);
     }
 
-  int SetPositionWorldCoordinates2(double newControl[4]) 
-    { 
+  int SetPositionWorldCoordinates2(double newControl[4])
+    {
     double locPoint[4]={0,0,0,1};
     this->TransformPointFromWorld(newControl, locPoint);
-    return this->SetPosition2(locPoint) ; 
+    return this->SetPosition2(locPoint) ;
     }
 
-  int SetPosition2(double nC1, double nC2, double nC3) 
-    { 
+  int SetPosition2(double nC1, double nC2, double nC3)
+    {
     double newControl[3] = {nC1,nC2,nC3};
-    return this->SetPosition2(newControl) ; 
+    return this->SetPosition2(newControl) ;
     }
 
   // Description:
@@ -130,7 +130,7 @@ public:
   vtkSetStringMacro(DistanceAnnotationFormat);
 
   // Description:
-  // KP Define - should be part of AnnotationRulerDisplayNode 
+  // KP Define - should be part of AnnotationRulerDisplayNode
   double GetDistanceAnnotationScale();
   void SetDistanceAnnotationScale(double init);
 
@@ -139,7 +139,7 @@ public:
   int GetDistanceAnnotationVisibility();
   void SetDistanceAnnotationVisibility(int flag);
 
-  int SetRuler(vtkIdType line1Id, int sel, int vis);  
+  int SetRuler(vtkIdType line1Id, int sel, int vis);
 
   // Description:
   // get/set the resolution (number of subdivisions) of the line.
@@ -168,7 +168,7 @@ public:
 
   // Description:
   // Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
 //  void Initialize(vtkMRMLScene* mrmlScene);
 
@@ -199,7 +199,7 @@ protected:
   // number of subdivisions on the line
   int Resolution;
   char* DistanceAnnotationFormat;
- 
+
   int SetControlPoint(int id, double newControl[3]);
 
   int AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);

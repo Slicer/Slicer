@@ -342,10 +342,10 @@ def query_vcvarsall(version, arch="x86"):
         "include": "",
         "lib": "",
     }
-    
+
     versionstr = '%.1f' % version
     sdkver = WINSDK_VERSION_MAP[versionstr]
-    
+
     # set PATH to include:
     #   %VCINSTALLDIR%\bin
     #   %VCINSTALLDIR%\VCPackages
@@ -355,27 +355,27 @@ def query_vcvarsall(version, arch="x86"):
     #   %FrameworkDir%\%Framework35Version%
     #   %FrameworkDir%\%FrameworkVersion%
     #   %WindowsSdkDir%bin
-    
+
     vcpaths = Reg.read_values(_winreg.HKEY_LOCAL_MACHINE, VC_SXS_KEY)
     vcinstalldir = vcpaths[versionstr]
     vsinstalldir = Reg.read_values(_winreg.HKEY_LOCAL_MACHINE, VS_SXS_KEY).get(versionstr, vcinstalldir + "..")
-    
+
     if vcinstalldir:
         if arch == "x86":
             result["path"] += "%s\\bin;%s\\VCPackages;" % (vcinstalldir, vcinstalldir)
         else:
             result["path"] += "%s\\bin\\%s;%s\\VCPackages;" % (vcinstalldir, arch, vcinstalldir)
-    
+
     if vsinstalldir:
         result["path"] += "%s\\Common7\\IDE;%s\\Tools;%s\\Tools\\bin;" % (vsinstalldir, vsinstalldir, vsinstalldir)
-    
+
     frameworkdir = vcpaths.get("frameworkdir64" if arch == "amd64" else "frameworkdir32")
     if frameworkdir:
         result["path"] += frameworkdir + r"\v3.5;"
         frameworkver = vcpaths.get("frameworkver64" if arch == "amd64" else "frameworkdir32")
         if frameworkver:
             result["path"] += r"%s\%s;" % (frameworkdir, frameworkver)
-    
+
     for sdkkey in WINSDK_PATH_KEYS:
         try:
             sdk_install = Reg.get_value(sdkkey % sdkver, "installationfolder")
@@ -386,14 +386,14 @@ def query_vcvarsall(version, arch="x86"):
             break
     else:
         log.debug("no Windows SDK found")
-    
+
     # set INCLUDE to include:
     #   %WindowsSdkDir%include
     #   %VCINSTALLDIR%\include
     # and LIB to include
     #   %WindowsSdkDir%lib[\x64|\amd64|\ia64]
     #   %VCINSTALLDIR%\lib[\x64|\amd64|\ia64]
-    
+
     def _add_include_lib_paths(base):
         result["include"] += base + r"\include;"
         if arch.endswith("ia64"):
@@ -404,7 +404,7 @@ def query_vcvarsall(version, arch="x86"):
             result["lib"] += base + r"\lib\amd64;"
         else:
             result["lib"] += base + r"\lib;"
-    
+
     for sdkkey in WINSDK_INCLUDE_KEYS:
         try:
             sdk_install = Reg.get_value(sdkkey % sdkver, "installationfolder")
@@ -415,7 +415,7 @@ def query_vcvarsall(version, arch="x86"):
             break
     else:
         log.debug("no Windows SDK found")
-    
+
     if vcinstalldir:
         _add_include_lib_paths(vcinstalldir)
 

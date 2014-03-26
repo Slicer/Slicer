@@ -30,7 +30,7 @@ class qSlicerMeasurementsAngleWidgetPrivate;
 
 /// \ingroup Slicer_QtModules_Measurements
 class Q_SLICER_QTMODULES_MEASUREMENTS_EXPORT qSlicerMeasurementsAngleWidget : public qSlicerWidget
-{ 
+{
   Q_OBJECT
 
 public:
@@ -38,7 +38,7 @@ public:
   typedef qSlicerWidget Superclass;
   qSlicerMeasurementsAngleWidget(QWidget *parent=0);
   virtual ~qSlicerMeasurementsAngleWidget();
-  
+
   virtual void printAdditionalInfo();
 
 protected:

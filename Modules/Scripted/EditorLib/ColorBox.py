@@ -4,13 +4,13 @@ from __main__ import slicer
 
 #########################################################
 #
-# 
+#
 comment = """
 
   ColorBox is a wrapper around a set of Qt widgets and other
   structures to manage show a color picker
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################

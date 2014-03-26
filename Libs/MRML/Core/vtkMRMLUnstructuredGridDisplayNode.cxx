@@ -30,7 +30,7 @@ vtkMRMLUnstructuredGridDisplayNode::vtkMRMLUnstructuredGridDisplayNode()
 {
   this->GeometryFilter = vtkGeometryFilter::New();
   this->ShrinkPolyData = vtkShrinkPolyData::New();
-  
+
   this->ShrinkPolyData->SetInput( this->GeometryFilter->GetOutput());
   this->ShrinkFactor = 0.5;
   this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
@@ -49,7 +49,7 @@ vtkMRMLUnstructuredGridDisplayNode::~vtkMRMLUnstructuredGridDisplayNode()
 void vtkMRMLUnstructuredGridDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
@@ -68,18 +68,18 @@ void vtkMRMLUnstructuredGridDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "shrinkFactor")) 
+    if (!strcmp(attName, "shrinkFactor"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> ShrinkFactor;
       }
-    }  
+    }
 
   this->EndModify(disabledModify);
 
@@ -96,7 +96,7 @@ void vtkMRMLUnstructuredGridDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLUnstructuredGridDisplayNode *node = (vtkMRMLUnstructuredGridDisplayNode *) anode;
   this->SetShrinkFactor(node->ShrinkFactor);
-  
+
   this->EndModify(disabledModify);
 }
 
@@ -104,7 +104,7 @@ void vtkMRMLUnstructuredGridDisplayNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLUnstructuredGridDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   //int idx;
-  
+
   Superclass::PrintSelf(os,indent);
   os << indent << "ShrinkFactor:             " << this->ShrinkFactor << "\n";
 }
@@ -112,7 +112,7 @@ void vtkMRMLUnstructuredGridDisplayNode::PrintSelf(ostream& os, vtkIndent indent
 
 //---------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -141,9 +141,9 @@ vtkPolyData* vtkMRMLUnstructuredGridDisplayNode::GetPolyData()
     return NULL;
     }
 }
-   
+
 //---------------------------------------------------------------------------
-void vtkMRMLUnstructuredGridDisplayNode::UpdatePolyDataPipeline() 
+void vtkMRMLUnstructuredGridDisplayNode::UpdatePolyDataPipeline()
 {
   this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
 }

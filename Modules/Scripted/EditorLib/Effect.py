@@ -8,10 +8,10 @@ import EditUtil
 
 #########################################################
 #
-# 
+#
 comment = """
 
-  Effect is a superclass for tools that plug into the 
+  Effect is a superclass for tools that plug into the
   slicer Editor module.
 
   It consists of:
@@ -30,7 +30,7 @@ comment = """
 
   These classes are Abstract.
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -50,7 +50,7 @@ class EffectOptions(EditOptions):
     # options for operating only on a portion of the input volume
     # ('All' meaning the full volume or 'Visible' meaning defined by
     # the current slice node are supported)
-    # if a subclass provides a list of scope options 
+    # if a subclass provides a list of scope options
     # then a selection menu will be provided.
     #
     self.availableScopeOptions = ('All','Visible')
@@ -121,7 +121,7 @@ class EffectOptions(EditOptions):
     self.disconnectWidgets()
     self.scope = self.parameterNode.GetParameter("Effect,scope")
     scopeIndex = self.availableScopeOptions.index(self.scope)
-    self.scopeComboBox.currentIndex = scopeIndex 
+    self.scopeComboBox.currentIndex = scopeIndex
     self.connectWidgets()
 
   def onScopeChanged(self,index):
@@ -140,7 +140,7 @@ class EffectOptions(EditOptions):
 #
 # EffectTool
 #
- 
+
 class EffectTool(object):
   """
   One instance of this will be created per-view when the effect
@@ -207,7 +207,7 @@ class EffectTool(object):
       if key.lower() == 'backslash':
         xy = self.interactor.GetEventPosition()
         if self.interactor.FindPokedRenderer(*xy):
-          self.editUtil.setLabel(self.logic.labelAtXY(xy)) 
+          self.editUtil.setLabel(self.logic.labelAtXY(xy))
         else:
           print('not in viewport')
         self.abortEvent(event)
@@ -230,10 +230,10 @@ class EffectTool(object):
       self.sliceWidget.unsetCursor()
 
   def abortEvent(self,event):
-    """Set the AbortFlag on the vtkCommand associated 
-    with the event - causes other things listening to the 
+    """Set the AbortFlag on the vtkCommand associated
+    with the event - causes other things listening to the
     interactor not to receive the events"""
-    # TODO: make interactorObserverTags a map to we can 
+    # TODO: make interactorObserverTags a map to we can
     # explicitly abort just the event we handled - it will
     # be slightly more efficient
     for tag in self.interactorObserverTags:
@@ -255,13 +255,13 @@ class EffectTool(object):
 #
 # EffectLogic
 #
- 
+
 class EffectLogic(object):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an EffectTool
   or EffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the EffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -283,7 +283,7 @@ class EffectLogic(object):
 
   def rasToXY(self,rasPoint):
     return self.rasToXYZ()[0:2]
-    
+
   def rasToXYZ(self,rasPoint):
     """return x y for a give r a s"""
     sliceNode = self.sliceLogic.GetSliceNode()
@@ -337,7 +337,7 @@ class EffectLogic(object):
     return rast[:3]
 
   def getPaintColor(self):
-    """Return rgba for the current paint label in the current 
+    """Return rgba for the current paint label in the current
     label layers color table"""
     labelLogic = self.sliceLogic.GetLayerLogic()
     volumeDisplayNode = logic.GetVolumeDisplayNode()
@@ -392,7 +392,7 @@ class EffectLogic(object):
     return( self.scopedImageBuffer )
 
   def applyScopedLabel(self):
-    """Put the output label into the right spot depending on the 
+    """Put the output label into the right spot depending on the
     scope mode"""
     layerLogic = self.sliceLogic.GetLabelLayer()
     volumeNode = layerLogic.GetVolumeNode()
@@ -412,7 +412,7 @@ class EffectLogic(object):
 
   def getVisibleCorners(self,layerLogic,slicePaint=None):
     """return a nested list of ijk coordinates representing
-    the indices of the corners of the currently visible 
+    the indices of the corners of the currently visible
     slice view for the given layerLogic
     - optionally set those as the corners of a vtkImageSlicePaint"""
 
@@ -423,7 +423,7 @@ class EffectLogic(object):
     for xy in xyCorners:
       ijk = xyToIJK.TransformDoublePoint(xy + (0,))
       ijkCorners.append(map(round, ijk))
-      
+
     if slicePaint:
       slicePaint.SetTopLeft(ijkCorners[0])
       slicePaint.SetTopRight(ijkCorners[1])
@@ -433,7 +433,7 @@ class EffectLogic(object):
     return( ijkCorners )
 
 #
-# The Effect class definition 
+# The Effect class definition
 #
 
 class Effect(object):

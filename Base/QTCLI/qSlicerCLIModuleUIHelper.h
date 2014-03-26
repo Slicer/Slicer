@@ -36,7 +36,7 @@
 
 class QWidget;
 class qSlicerCLIModuleWidget;
-class vtkMRMLCommandLineModuleNode; 
+class vtkMRMLCommandLineModuleNode;
 class qSlicerCLIModuleUIHelperPrivate;
 
 //-----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public:
 
   static bool toBool(const QString& _value)
     {
-    return (_value.compare("true", Qt::CaseInsensitive) == 0); 
+    return (_value.compare("true", Qt::CaseInsensitive) == 0);
     }
 
   static int toInt(const QString& _value)
@@ -69,7 +69,7 @@ public:
 
   static double toDouble(const QString& _value)
     {
-    return _value.toDouble(); 
+    return _value.toDouble();
     }
 
 signals:
@@ -114,7 +114,7 @@ public:
   /// be responsible to delete the widget.
   QWidget* createTagWidget(const ModuleParameter& moduleParameter);
 
-  /// 
+  ///
   /// Update \a commandLineModuleNode properties using value entered from the UI
   void updateMRMLCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
 

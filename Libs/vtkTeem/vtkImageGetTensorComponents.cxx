@@ -47,7 +47,7 @@ void vtkImageGetTensorComponents::ExecuteInformation(
 //----------------------------------------------------------------------------
 template <class T>
 static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self,
-                                      vtkImageData *inData, 
+                                      vtkImageData *inData,
                                       vtkImageData *outData, T *outPtr,
                                       int outExt[6], int id)
 {
@@ -59,18 +59,18 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
   unsigned long count = 0;
   unsigned long target;
   vtkFloatingPointType tensor[3][3];
-  
+
   // find the region to loop over
   maxX = outExt[1] - outExt[0];
-  maxY = outExt[3] - outExt[2]; 
+  maxY = outExt[3] - outExt[2];
   maxZ = outExt[5] - outExt[4];
   target = (unsigned long)((maxZ+1)*(maxY+1)/50.0);
   target++;
-  
+
   vtkDataArray *inTensors;
   vtkPointData *pd;
   int numPts, inPtId;
-  
+
   pd = inData->GetPointData();
   inTensors = pd->GetTensors();
   numPts = inData->GetNumberOfPoints();
@@ -80,7 +80,7 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
       vtkGenericWarningMacro(<<"No input tensor data to filter!");
       return;
     }
-  // Get increments to march through data 
+  // Get increments to march through data
   inData->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
 
@@ -105,7 +105,7 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
     {
     for (idxY = 0; !self->AbortExecute && idxY <= maxY; idxY++)
       {
-      if (!id) 
+      if (!id)
         {
         if (!(count%target))
           {
@@ -116,24 +116,24 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
       for (idxR = 0; idxR <= maxX; idxR++)
         {
          inTensors->GetTuple(inPtId,(vtkFloatingPointType *)tensor);
-     *outPtr = (T)(tensor[0][0]); 
+     *outPtr = (T)(tensor[0][0]);
      outPtr++;
      *outPtr = (T)(tensor[1][0]);
      outPtr++;
-     *outPtr = (T)(tensor[2][0]); 
+     *outPtr = (T)(tensor[2][0]);
      outPtr++;
-     *outPtr = (T)(tensor[1][1]); 
+     *outPtr = (T)(tensor[1][1]);
      outPtr++;
-     *outPtr = (T)(tensor[1][2]); 
+     *outPtr = (T)(tensor[1][2]);
      outPtr++;
-     *outPtr = (T)(tensor[2][2]); 
+     *outPtr = (T)(tensor[2][2]);
      outPtr++;
 
-        if (inPtId > numPts) 
+        if (inPtId > numPts)
         {
           vtkGenericWarningMacro(<<"not enough input pts for output extent "<<numPts<<" "<<inPtId);
         }
-     
+
      inPtId++;
 
         }
@@ -148,8 +148,8 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
 
 //----------------------------------------------------------------------------
 // This method is passed input and output datas, and executes the
-// GetTensorComponents function on each line.  
-void vtkImageGetTensorComponents::ThreadedExecute(vtkImageData *inData, 
+// GetTensorComponents function on each line.
+void vtkImageGetTensorComponents::ThreadedExecute(vtkImageData *inData,
                                                 vtkImageData *outData,
                                                 int outExt[6], int id)
 {
@@ -158,10 +158,10 @@ void vtkImageGetTensorComponents::ThreadedExecute(vtkImageData *inData,
   void *outPtr = outData->GetScalarPointerForExtent(outExt);
   vtkPointData *pd;
   vtkDataArray *inTensors;
-  
-  vtkDebugMacro(<< "Execute: inData = " << inData 
+
+  vtkDebugMacro(<< "Execute: inData = " << inData
                 << ", outData = " << outData);
-  
+
   // this filter expects that input is the same type as output.
   if (inData->GetScalarType() != outData->GetScalarType())
     {
@@ -169,7 +169,7 @@ void vtkImageGetTensorComponents::ThreadedExecute(vtkImageData *inData,
     << ", must match out ScalarType " << outData->GetScalarType());
     return;
     }
-  
+
   // make sure we can get all of the components.
   pd = inData->GetPointData();
   inTensors = pd->GetTensors();
@@ -179,11 +179,11 @@ void vtkImageGetTensorComponents::ThreadedExecute(vtkImageData *inData,
       vtkErrorMacro("Execute: Number of Components is not 9.");
       return;
      }
-  
+
   // choose which templated function to call.
   switch (outData->GetScalarType())
     {
-    vtkTemplateMacro6(vtkImageGetTensorComponentsExecute, this, inData, 
+    vtkTemplateMacro6(vtkImageGetTensorComponentsExecute, this, inData,
                       outData, (VTK_TT *)(outPtr),
                       outExt, id);
     default:

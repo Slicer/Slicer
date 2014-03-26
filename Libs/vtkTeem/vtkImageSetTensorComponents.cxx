@@ -47,7 +47,7 @@ void vtkImageSetTensorComponents::ExecuteData(vtkDataObject *out)
 
   // set extent so we know how many tensors to allocate
   output->SetExtent(output->GetUpdateExtent());
-  
+
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
   int* dims = output->GetDimensions();
@@ -85,11 +85,11 @@ static void vtkImageSetTensorComponentsExecute(vtkImageSetTensorComponents *self
   int offset[9];
   unsigned long count = 0;
   unsigned long target;
-  
+
   vtkDataArray *outTensors;
   float outT[3][3];
   int ptId;
-  
+
   // Get information to march through output tensor data
   outTensors = self->GetOutput()->GetPointData()->GetTensors();
   // changed from arrays to pointers
@@ -100,20 +100,20 @@ static void vtkImageSetTensorComponentsExecute(vtkImageSetTensorComponents *self
          + (outExt[2] - outFullUpdateExt[2]) * outInc[1]
          + (outExt[4] - outFullUpdateExt[4]) * outInc[2]);
 
-  
+
   // find the region to loop over
   maxX = outExt[1] - outExt[0];
-  maxY = outExt[3] - outExt[2]; 
+  maxY = outExt[3] - outExt[2];
   maxZ = outExt[5] - outExt[4];
-  
+
   target = (unsigned long)((maxZ+1)*(maxY+1)/50.0);
   target++;
-  
-  // Get increments to march through data 
+
+  // Get increments to march through data
   inData->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
   self->GetOutput()->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
 
-  
+
   // Loop through output pixels
   // Extract from tensor components 1,2,3;2,4,5;3,5,6
   offset[0]=0;offset[1]=1;offset[2]=2;offset[3]=1;offset[4]=3;
@@ -122,7 +122,7 @@ static void vtkImageSetTensorComponentsExecute(vtkImageSetTensorComponents *self
     {
     for (idxY = 0; !self->AbortExecute && idxY <= maxY; idxY++)
       {
-      if (!id) 
+      if (!id)
         {
         if (!(count%target))
           {
@@ -134,27 +134,27 @@ static void vtkImageSetTensorComponentsExecute(vtkImageSetTensorComponents *self
         {
         //cout << idxR << " " << idxY << " " << idxZ << " " << ptId << endl;
       outT[0][0]=(float)*inPtr++;
-      
+
       outT[0][1]=(float)*inPtr;
       outT[1][0]=(float)*inPtr++;
-      
+
       outT[0][2]=(float)*inPtr;
       outT[2][0]=(float)*inPtr++;
-      
+
       outT[1][1]=(float)*inPtr++;
-      
+
       outT[1][2]=(float)*inPtr;
       outT[2][1]=(float)*inPtr++;
-      
+
       outT[2][2]=(float)*inPtr++;
 
           outTensors->SetTuple(ptId,(float *)outT);
       ptId++;
         }
-      ptId += outIncY; 
+      ptId += outIncY;
       inPtr += inIncY;
       }
-    ptId += outIncZ; 
+    ptId += outIncZ;
     inPtr += inIncZ;
     }
 
@@ -163,8 +163,8 @@ static void vtkImageSetTensorComponentsExecute(vtkImageSetTensorComponents *self
 
 //----------------------------------------------------------------------------
 // This method is passed input and output datas, and executes the
-// SetTensorComponents function on each line.  
-void vtkImageSetTensorComponents::ThreadedExecute(vtkImageData *inData, 
+// SetTensorComponents function on each line.
+void vtkImageSetTensorComponents::ThreadedExecute(vtkImageData *inData,
                                                 vtkImageData *outData,
                                                 int outExt[6], int id)
 {
@@ -174,9 +174,9 @@ void vtkImageSetTensorComponents::ThreadedExecute(vtkImageData *inData,
   vtkPointData *pd;
   vtkDataArray *inTensors;
 
-  vtkDebugMacro(<< "Execute: inData = " << inData 
+  vtkDebugMacro(<< "Execute: inData = " << inData
                 << ", outData = " << outData);
-  
+
   // this filter expects that input is the same type as output.
   if (inData->GetScalarType() != outData->GetScalarType())
     {
@@ -184,7 +184,7 @@ void vtkImageSetTensorComponents::ThreadedExecute(vtkImageData *inData,
     << ", must match out ScalarType " << outData->GetScalarType());
     return;
     }
-  
+
   // make sure we can get all of the components.
   pd = inData->GetPointData();
   inTensors = pd->GetScalars();
@@ -195,11 +195,11 @@ void vtkImageSetTensorComponents::ThreadedExecute(vtkImageData *inData,
       return;
      }
 
-  
+
   // choose which templated function to call.
   switch (inData->GetScalarType())
     {
-    vtkTemplateMacro7(vtkImageSetTensorComponentsExecute, this, inData, 
+    vtkTemplateMacro7(vtkImageSetTensorComponentsExecute, this, inData,
                       (VTK_TT *)(inPtr), outData, (VTK_TT *)(outPtr),
                       outExt, id);
     default:

@@ -38,7 +38,7 @@ class vtkMatrix4x4;
 /// filename, the archetype, is any one of the files in the series.
 ///
 /// \note
-/// This work is part of the National Alliance for Medical Image Computing 
+/// This work is part of the National Alliance for Medical Image Computing
 /// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
 /// for Medical Research, Grant U54 EB005149.
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
@@ -46,11 +46,11 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
 public:
   static vtkITKArchetypeImageSeriesReader *New();
   vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader,vtkImageSource);
-  void PrintSelf(ostream& os, vtkIndent indent);   
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
 
-  /// 
+  ///
   /// Specify the archetype filename for the series.
   vtkSetStringMacro(Archetype);
   vtkGetStringMacro(Archetype);
@@ -62,7 +62,7 @@ public:
   /// Return all the file names
   const std::vector<std::string>& GetFileNames();
 
-  /// 
+  ///
   /// Specify the file names to be used when looking for extra files
   /// that match the archetype in defining the volume to load (e.g.
   /// other canidate dicom files to look in for matching tags)
@@ -70,33 +70,33 @@ public:
   const char* GetFileName( unsigned int n );
   void ResetFileNames();
 
-  /// 
+  ///
   /// Set/Get the default spacing of the data in the file. This will be
   /// used if the reader provided spacing is 1.0. (Default is 1.0)
   vtkSetVector3Macro(DefaultDataSpacing,double);
   vtkGetVector3Macro(DefaultDataSpacing,double);
 
-  /// 
+  ///
   /// Set/Get the default origin of the data (location of first pixel
   /// in the file). This will be used if the reader provided origin is
   /// 0.0. (Default is 0.0)
   vtkSetVector3Macro(DefaultDataOrigin,double);
   vtkGetVector3Macro(DefaultDataOrigin,double);
 
-  /// 
+  ///
   /// When reading files which start at an unusual index, this can be added
   /// to the slice number when generating the file name (default = 0)
   vtkSetMacro(FileNameSliceOffset,int);
   vtkGetMacro(FileNameSliceOffset,int);
 
-  /// 
+  ///
   /// When reading files which have regular, but non contiguous slices
   /// (eg filename.1,filename.3,filename.5)
   /// a spacing can be specified to skip missing files (default = 1)
   vtkSetMacro(FileNameSliceSpacing,int);
   vtkGetMacro(FileNameSliceSpacing,int);
 
-  /// 
+  ///
   /// The maximum number of files to include in the series. If this is
   /// zero, then all files will be included. (Default is 0)
   vtkSetMacro(FileNameSliceCount,int);
@@ -105,7 +105,7 @@ public:
   ///  is the given file name a NRRD file?
   virtual int CanReadFile(const char* filename);
 
-  /// 
+  ///
   /// Set the orientation of the output image
   void SetDesiredCoordinateOrientationToAxial ()
     {
@@ -139,8 +139,8 @@ public:
   vtkGetMacro(DesiredCoordinateOrientation, CoordinateOrientationCode);
   vtkGetMacro(UseNativeCoordinateOrientation, char);
 
-  /// 
-  /// Set the data type of pixels in the file.  
+  ///
+  /// Set the data type of pixels in the file.
   /// If you want the output scalar type to have a different value, set it
   /// after this method is called.
   virtual void SetOutputScalarTypeToDouble()
@@ -199,50 +199,50 @@ public:
     this->Modified();
     }
 
-  /// 
+  ///
   /// Use image origin from the file
-  void SetUseNativeOriginOn() 
+  void SetUseNativeOriginOn()
     {
     UseNativeOrigin = true;
     }
 
-  /// 
+  ///
   /// Use image center as origin
-  void SetUseNativeOriginOff() 
+  void SetUseNativeOriginOff()
     {
     UseNativeOrigin = false;
     }
 
-  /// 
+  ///
   /// Get the file format.  Pixels are this type in the file.
   vtkSetMacro(OutputScalarType, int);
   vtkGetMacro(OutputScalarType, int);
 
-  /// 
+  ///
   /// Get number of scalars
   vtkSetMacro(NumberOfComponents, unsigned int);
   vtkGetMacro(NumberOfComponents, unsigned int);
 
-  /// 
+  ///
   /// Whether load in a single file or a series
   vtkSetMacro(SingleFile, int);
   vtkGetMacro(SingleFile, int);
 
-  /// 
+  ///
   /// Whether to use orientation from file
   vtkSetMacro(UseOrientationFromFile, int);
   vtkGetMacro(UseOrientationFromFile, int);
 
-  /// 
+  ///
   /// Returns an IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
 
-  /// 
+  ///
   /// Returns the Measurement frame matrix
   vtkMatrix4x4* GetMeasurementFrameMatrix();
 
 
-  /// 
+  ///
   /// ITK internally does not register all of the IO types that get built
   /// (possibly due to lingering bugs?) but many slicer users have
   /// GE5 (Signa - magic number: IMGF) files that they need to work
@@ -255,14 +255,14 @@ public:
   void RegisterExtraBuiltInFactories();
   void UnRegisterDeprecatedBuiltInFactories();
 
-  /// 
+  ///
   /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
   std::vector<std::string> Tags;
   std::vector<std::string> TagValues;
   void ParseDictionary();
 
-  unsigned int GetNumberOfItemsInDictionary(); 
+  unsigned int GetNumberOfItemsInDictionary();
   bool HasKey( char* tag );
   const char* GetNthKey( unsigned int n );
   const char* GetNthValue( unsigned int n );
@@ -332,7 +332,7 @@ public:
     SetGroupingByTagsOn();
     }
 
-  
+
   /// -------
   int GetSelectedDiffusion()
     {
@@ -388,7 +388,7 @@ public:
   unsigned int GetNumberOfEchoNumbers()
     {
     return this->EchoNumbers.size();
-    }  
+    }
 
   unsigned int GetNumberOfSliceLocation()
     {
@@ -466,7 +466,7 @@ public:
         {
         a += dgo[n]*dgo[n];
         }
-      
+
       for (unsigned int k = 0; k < GetNumberOfDiffusionGradientOrientation(); k++)
         {
         float b = 0;
@@ -477,7 +477,7 @@ public:
           c += this->DiffusionGradientOrientation[k][n] * dgo[n];
           }
         c = fabs(c)/sqrt(a*b);
-        
+
         if ( c > 0.99999 )
           {
           return k;
@@ -507,7 +507,7 @@ public:
         {
         directionCosine[k] /= a;
         }
-      
+
       for (unsigned int k = 0; k < GetNumberOfImageOrientationPatient(); k++)
         {
         std::vector<float> aVec = ImageOrientationPatient[k];
@@ -523,11 +523,11 @@ public:
         if ( b > 0.99999 )
           {
           return k;
-          } 
+          }
         }
       return -1;
     }
-  
+
   int ExistImagePositionPatient( float* ipp )
     {
       float a = 0;
@@ -553,14 +553,14 @@ public:
         }
       return -1;
     }
-    
+
   /// methods to get N-th discriminator
   const char* GetNthSeriesInstanceUID( unsigned int n )
     {
       if ( n >= this->GetNumberOfSeriesInstanceUIDs() )
         {
         return NULL;
-        } 
+        }
       return this->SeriesInstanceUIDs[n].c_str();
     }
 
@@ -569,16 +569,16 @@ public:
       if ( n >= this->GetNumberOfContentTime() )
         {
         return NULL;
-        } 
+        }
       return this->ContentTime[n].c_str();
     }
-  
+
   const char* GetNthTriggerTime( unsigned int n )
     {
       if ( n >= this->GetNumberOfTriggerTime() )
         {
         return NULL;
-        } 
+        }
       return this->TriggerTime[n].c_str();
     }
 
@@ -587,7 +587,7 @@ public:
       if ( n >= this->GetNumberOfEchoNumbers() )
         {
         return NULL;
-        } 
+        }
       return this->EchoNumbers[n].c_str();
     }
 
@@ -596,7 +596,7 @@ public:
       if ( n >= this->GetNumberOfDiffusionGradientOrientation() )
         {
         return NULL;
-        } 
+        }
       float *dgo = new float [3];
       for (int k = 0; k <3; k++)
         {
@@ -610,16 +610,16 @@ public:
       if ( n >= this->GetNumberOfSliceLocation() )
         {
         return this->SliceLocation[0];
-        } 
+        }
       return this->SliceLocation[0];
     }
-  
+
   float* GetNthImageOrientationPatient( unsigned int n )
     {
       if ( n >= this->GetNumberOfImageOrientationPatient() )
         {
         return NULL;
-        } 
+        }
       float *dgo = new float [6];
       for (int k = 0; k <6; k++)
         {
@@ -642,7 +642,7 @@ public:
       return ipp;
     }
 
-  /// insert unique item into array. Duplicate code for TCL wrapping. 
+  /// insert unique item into array. Duplicate code for TCL wrapping.
   /// TODO: need to clean up
   int InsertSeriesInstanceUIDs ( const char * aUID )
     {
@@ -651,7 +651,7 @@ public:
         {
         return k;
         }
-      
+
       std::string aVector(aUID);
       this->SeriesInstanceUIDs.push_back( aVector );
       return (this->SeriesInstanceUIDs.size()-1);
@@ -664,7 +664,7 @@ public:
         {
         return k;
         }
-      
+
       std::string aVector(aTime);
       this->ContentTime.push_back( aVector );
       return (this->ContentTime.size()-1);
@@ -677,7 +677,7 @@ public:
         {
         return k;
         }
-      
+
       std::string aVector(aTime);
       this->TriggerTime.push_back( aVector );
       return (this->TriggerTime.size()-1);
@@ -690,12 +690,12 @@ public:
         {
         return k;
         }
-      
+
       std::string aVector(aEcho);
       this->EchoNumbers.push_back( aVector );
       return (this->EchoNumbers.size()-1);
     }
-  
+
   int InsertDiffusionGradientOrientation ( float *a )
     {
       int k = ExistDiffusionGradientOrientation( a );
@@ -709,7 +709,7 @@ public:
         {
         aVector[k] = a[k]/aMag;
         }
-      
+
       this->DiffusionGradientOrientation.push_back( aVector );
       return (this->DiffusionGradientOrientation.size()-1);
     }
@@ -765,9 +765,9 @@ public:
         {
         return k;
         }
-      
+
       std::vector< float > aVector(3);
-      for ( unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i]; 
+      for ( unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i];
       this->ImagePositionPatient.push_back( aVector );
       return (this->ImagePositionPatient.size()-1);
     }
@@ -845,14 +845,14 @@ protected:
 
   /// The following variables provide support
   /// for reading a directory with multiple series/groups.
-  /// The current scheme is to check the following and see 
+  /// The current scheme is to check the following and see
   /// if multiple values exist:
-  /// 
+  ///
   /// SeriesInstanceUID              0020,000E
   /// ContentTime                    0008,0033
   /// TriggerTime                    0018,1060
   /// EchoNumbers                    0018,0086
-  /// DiffusionGradientOrientation   0018,9089 
+  /// DiffusionGradientOrientation   0018,9089
   /// SliceLocation                  0020,1041
   /// ImageOrientationPatient        0020,0037
   /// ImagePositionPatient           0020,0032
@@ -874,7 +874,7 @@ protected:
   std::vector<long int> IndexSeriesInstanceUIDs;
   std::vector<long int> IndexContentTime;
   std::vector<long int> IndexTriggerTime;
-  std::vector<long int> IndexEchoNumbers;  
+  std::vector<long int> IndexEchoNumbers;
   std::vector<long int> IndexDiffusionGradientOrientation;
   std::vector<long int> IndexSliceLocation;
   std::vector<long int> IndexImageOrientationPatient;

@@ -35,7 +35,7 @@ int qSlicerCLILoadableModuleFactoryTest1(int, char * [] )
                << "libThreshold.so"
                << "libThreshold.so.2.3"
                << "libThreshold.dylib";
-             
+
   QString expectedModuleName = "Threshold";
   qSlicerCLILoadableModuleFactory factory;
   foreach (const QString& libraryName, libraryNames)

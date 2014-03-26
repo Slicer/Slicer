@@ -38,7 +38,7 @@
 int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   vtkNew< vtkMRMLScalarVolumeNode > volumeNode;
 
   vtkNew< vtkImageData > imageData;
@@ -47,8 +47,8 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
   imageData->SetNumberOfScalarComponents(1); // image holds one value intensities
   //imageData->SetSpacing(2., 2., 512.); not used by vtkMRMLVolumeNode
   //imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
-  imageData->AllocateScalars(); // allocate storage for image data  
-  
+  imageData->AllocateScalars(); // allocate storage for image data
+
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   volumeNode->SetSpacing(2., 2., 512.);
   volumeNode->SetOrigin(0, 0, 0);
@@ -64,11 +64,11 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-  
+
   qMRMLVolumeInfoWidget volumeInfo;
   volumeInfo.setVolumeNode(volumeNode.GetPointer());
   volumeInfo.show();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

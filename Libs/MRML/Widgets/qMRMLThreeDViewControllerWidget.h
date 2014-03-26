@@ -70,7 +70,7 @@ public slots:
   void spinView(bool enabled);
   void rockView(bool enabled);
   void setAnimationMode(int newAnimationMode);
-  
+
   void resetFocalPoint();
   void set3DAxisVisible(bool visible);
   void set3DAxisLabelVisible(bool visible);

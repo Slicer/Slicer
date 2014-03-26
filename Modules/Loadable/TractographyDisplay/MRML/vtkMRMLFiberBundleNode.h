@@ -120,7 +120,7 @@ public:
   //--------------------------------------------------------------------------
   /// Interactive Selection Support
   //--------------------------------------------------------------------------
-  
+
   ///
   /// Enable or disable the selection with an annotation node
   virtual void SetSelectWithAnnotationNode(int);

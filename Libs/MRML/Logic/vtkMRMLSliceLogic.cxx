@@ -426,9 +426,9 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
     {
-    vtkMRMLCrosshairNode* crosshairNode = 
+    vtkMRMLCrosshairNode* crosshairNode =
       vtkMRMLCrosshairNode::SafeDownCast(node);
-    if (crosshairNode 
+    if (crosshairNode
         && crosshairNode->GetCrosshairName() == std::string("default"))
       {
       foundDefault = true;
@@ -734,8 +734,8 @@ void vtkMRMLSliceLogic::SetLabelOpacity(double labelOpacity)
 void vtkMRMLSliceLogic
 ::SetBackgroundWindowLevel(double newWindow, double newLevel)
 {
-  vtkMRMLScalarVolumeNode* volumeNode = 
-    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) ); 
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) );
     // 0 is background layer, defined in this::GetLayerVolumeNode
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
     volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : 0;

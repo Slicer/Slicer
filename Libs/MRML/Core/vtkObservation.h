@@ -28,28 +28,28 @@ class vtkCallbackCommand;
 
 /// \brief Stores information about the relationship between a Subject and an Observer.
 ///
-/// The Observation is a record of 
+/// The Observation is a record of
 /// - a subject  (vtkObject)
 /// - an event type (unsigned long)
 /// - an objserver (vtkObject)
 /// - a callback (vtkCallbackCommand)
 /// - optional comment strings
 /// This class can be used by the vtkEventBroker to keep track of the registered observers
-/// that it manages, and it can be used by the event queue to keep track of which 
+/// that it manages, and it can be used by the event queue to keep track of which
 /// events have been triggered so it can invoke them later
 //
 /// \note This class does not add or remove observers itself; it just keeps track of them
 /// for the event broker.
-class VTK_MRML_EXPORT vtkObservation : public vtkObject 
+class VTK_MRML_EXPORT vtkObservation : public vtkObject
 {
   public:
-  
+
   /// The Usual vtk class functions
   static vtkObservation *New();
   vtkTypeRevisionMacro(vtkObservation,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Accessors
   /// - note that AssignObject methods do not register the pointers
   /// - it is assumed that the EventBroker will attach DeleteEvent
@@ -104,53 +104,53 @@ protected:
   vtkObservation(const vtkObservation&);
   void operator=(const vtkObservation&);
 
-  /// 
+  ///
   /// EventBroker that 'owns' this observation
   vtkEventBroker *EventBroker;
 
-  /// 
+  ///
   /// Holder for callback that this object wants called when either
   /// the subject or the observer triggers and event
   vtkCallbackCommand *ObservationCallbackCommand;
 
-  /// 
-  /// Flag that tells the broker that this observation 
+  ///
+  /// Flag that tells the broker that this observation
   /// is already in the event queue and doesn't need
   /// to be re-added
   int InEventQueue;
 
-  /// 
+  ///
   /// Holder for Subject
   vtkObject *Subject;
 
-  /// 
+  ///
   /// Holder for Event
   unsigned long Event;
 
-  /// 
+  ///
   /// Holder for Observer
   vtkObject *Observer;
 
-  /// 
+  ///
   /// Holder for callback that the Observer wants to have run when Event happens
   vtkCallbackCommand *CallbackCommand;
 
-  /// 
+  ///
   /// data passed to the observation by the subject
   std::deque<CallType> CallDataList;
 
-  /// 
+  ///
   /// Holder for script as an alternative to the callback command
   char *Script;
 
-  /// 
+  ///
   /// Holder for comment string
   char *Comment;
-  
+
   /// Priority of the observer
   float Priority;
 
-  /// 
+  ///
   /// keep track of the tags returned by vtkObject::AddObserver so this
   /// observation will be easy to remove when the time comes
   unsigned long EventTag;

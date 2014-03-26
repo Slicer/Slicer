@@ -65,7 +65,7 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
 {
   Q_Q(qMRMLModelDisplayNodeWidget);
   this->setupUi(q);
-  
+
   QObject::connect(this->ScalarsVisibilityCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setScalarsVisibility(bool)));
   QObject::connect(this->ActiveScalarComboBox, SIGNAL(currentArrayChanged(QString)),
@@ -119,7 +119,7 @@ void qMRMLModelDisplayNodeWidget::setMRMLModelOrHierarchyNode(vtkMRMLNode* node)
     modelDisplayNode = hierarchyNode->GetModelDisplayNode();
     }
   this->setMRMLModelDisplayNode(modelDisplayNode);
-  
+
 }
 
 //------------------------------------------------------------------------------

@@ -32,8 +32,8 @@
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 
-#include <itksys/SystemTools.hxx> 
-#include <itksys/Directory.hxx> 
+#include <itksys/SystemTools.hxx>
+#include <itksys/Directory.hxx>
 
 vtkCxxRevisionMacro(vtkSlicerFiberBundleLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerFiberBundleLogic);
@@ -55,7 +55,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char*
   std::string ssuf = suffix;
   itksys::Directory dir;
   dir.Load(dirname);
- 
+
   int nfiles = dir.GetNumberOfFiles();
   int res = 1;
   for (int i=0; i<nfiles; i++) {
@@ -82,7 +82,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, std::vector
 {
   itksys::Directory dir;
   dir.Load(dirname);
- 
+
   int nfiles = dir.GetNumberOfFiles();
   int res = 1;
   for (int i=0; i<nfiles; i++) {
@@ -131,13 +131,13 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     itksys_stl::string name = itksys::SystemTools::GetFilenameWithoutExtension(fname);
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     fiberBundleNode->SetName(uname.c_str());
-   
+
     fiberBundleNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayLineNode->SetScene(this->GetMRMLScene());
     displayTubeNode->SetScene(this->GetMRMLScene());
     displayGlyphNode->SetScene(this->GetMRMLScene());
-  
+
     displayLineNode->SetVisibility(1);
     displayTubeNode->SetVisibility(0);
     displayGlyphNode->SetVisibility(0);
@@ -150,7 +150,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     displayLineNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(lineDTDPN->GetID());
     displayTubeNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(tubeDTDPN->GetID());
     displayGlyphNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
- 
+
     this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(displayLineNode);
     this->GetMRMLScene()->AddNode(displayTubeNode);
@@ -170,7 +170,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     // Set up display logic and any other logic classes in future
     //this->InitializeLogicForFiberBundleNode(fiberBundleNode);
 
-    //this->Modified();  
+    //this->Modified();
 
     fiberBundleNode->Delete();
     }
@@ -184,14 +184,14 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   displayLineNode->Delete();
   displayTubeNode->Delete();
   displayGlyphNode->Delete();
-  
+
   //displayLogic->Delete();
 
   lineDTDPN->Delete();
   tubeDTDPN->Delete();
   glyphDTDPN->Delete();
 
-  return fiberBundleNode;  
+  return fiberBundleNode;
 }
 //----------------------------------------------------------------------------
 int vtkSlicerFiberBundleLogic::SaveFiberBundle (const char* filename, vtkMRMLFiberBundleNode *fiberBundleNode)
@@ -200,7 +200,7 @@ int vtkSlicerFiberBundleLogic::SaveFiberBundle (const char* filename, vtkMRMLFib
     {
     return 0;
     }
-  
+
   vtkMRMLFiberBundleStorageNode *storageNode = NULL;
   vtkMRMLStorageNode *snode = fiberBundleNode->GetStorageNode();
   if (snode != NULL)
@@ -211,7 +211,7 @@ int vtkSlicerFiberBundleLogic::SaveFiberBundle (const char* filename, vtkMRMLFib
     {
     storageNode = vtkMRMLFiberBundleStorageNode::New();
     storageNode->SetScene(this->GetMRMLScene());
-    this->GetMRMLScene()->AddNode(storageNode);  
+    this->GetMRMLScene()->AddNode(storageNode);
     fiberBundleNode->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
     }
@@ -221,7 +221,7 @@ int vtkSlicerFiberBundleLogic::SaveFiberBundle (const char* filename, vtkMRMLFib
 
   int res = storageNode->WriteData(fiberBundleNode);
 
-  
+
   return res;
 
 }

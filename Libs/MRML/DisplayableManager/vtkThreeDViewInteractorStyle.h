@@ -58,7 +58,7 @@ public:
   virtual void OnChar();
   virtual void OnKeyPress();
 
-  /// 
+  ///
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.
   virtual void OnMouseMove();
@@ -83,7 +83,7 @@ public:
 
   virtual void OnExpose();
 
-  /// 
+  ///
   /// Get/Set the CameraNode
   vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
   vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
@@ -92,7 +92,7 @@ public:
   /// Reimplemented to set the default interactive update rate
   virtual void SetInteractor(vtkRenderWindowInteractor *interactor);
 
-  /// 
+  ///
   /// Get/Set the ModelDisplayableManager, for picking
   vtkGetObjectMacro(ModelDisplayableManager, vtkMRMLModelDisplayableManager);
   virtual void SetModelDisplayableManager(vtkMRMLModelDisplayableManager *modelDisplayableManager);
@@ -114,10 +114,10 @@ protected:
   /// Currently makes sense to set this to 1 -- but we can change it if appropriate.
   int NumberOfTransientPlaces;
 
-  /// 
+  ///
   /// A pointer back to the ModelDisplayableManager, useful for picking
   vtkMRMLModelDisplayableManager * ModelDisplayableManager;
-  
+
 private:
   vtkThreeDViewInteractorStyle(const vtkThreeDViewInteractorStyle&);  /// Not implemented.
   void operator=(const vtkThreeDViewInteractorStyle&);  /// Not implemented.

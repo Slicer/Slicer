@@ -28,6 +28,6 @@
 /// turns on exiting with an error if there are leaks
 #define DEBUG_LEAKS_ENABLE_EXIT_ERROR() \
   vtkDebugLeaks::SetExitError(true);
-  
+
 #endif
 

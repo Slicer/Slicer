@@ -28,7 +28,7 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   : public vtkSlicerModuleLogic
 {
   public:
-  
+
   /// The Usual vtk class functions
   static vtkSlicerModelsLogic *New();
   vtkTypeRevisionMacro(vtkSlicerModelsLogic, vtkSlicerModuleLogic);
@@ -40,8 +40,8 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkGetObjectMacro(ColorLogic, vtkMRMLColorLogic);
 
-  /// 
-  /// The currently active mrml volume node 
+  ///
+  /// The currently active mrml volume node
   vtkGetObjectMacro (ActiveModelNode, vtkMRMLModelNode);
   void SetActiveModelNode (vtkMRMLModelNode *ActiveModelNode);
 
@@ -51,33 +51,33 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   /// \tbd Add a storage node ?
   vtkMRMLModelNode* AddModel(vtkPolyData* polyData = 0);
 
-  /// 
+  ///
   /// Add into the scene a new mrml model node and
   /// read it's polydata from a specified file
   /// A display node and a storage node are also added into the scene
   vtkMRMLModelNode* AddModel (const char* filename);
 
-  /// 
+  ///
   /// Create model nodes and
   /// read their polydata from a specified directory
   int AddModels (const char* dirname, const char* suffix );
 
-  /// 
+  ///
   /// Write model's polydata  to a specified file
   int SaveModel (const char* filename, vtkMRMLModelNode *modelNode);
 
-  /// 
+  ///
   /// Read in a scalar overlay and add it to the model node
   vtkMRMLStorageNode* AddScalar(const char* filename, vtkMRMLModelNode *modelNode);
 
   /// Transfor models's polydata
-  static void TransformModel(vtkMRMLTransformNode *tnode, 
-                              vtkMRMLModelNode *modelNode, 
+  static void TransformModel(vtkMRMLTransformNode *tnode,
+                              vtkMRMLModelNode *modelNode,
                               int transformNormals,
                               vtkMRMLModelNode *modelOut);
 
   /// Iterate through all models in the scene, find all their display nodes
-  /// and set their visibility flag to flag. Does not touch model hierarchy 
+  /// and set their visibility flag to flag. Does not touch model hierarchy
   /// nodes with display nodes
   void SetAllModelsVisibility(int flag);
 

@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -60,7 +60,7 @@ int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
               << "id is null on hierarchy display node" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   vtkNew<vtkMRMLModelNode> mnode1;
   scene->AddNode(mnode1.GetPointer());
 
@@ -76,7 +76,7 @@ int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
     std::cerr << "Error setting up a display node for the first model node\n";
     return EXIT_FAILURE;
     }
-  
+
   vtkNew<vtkMRMLScalarVolumeNode> vnode1;
   scene->AddNode(vnode1.GetPointer());
 

@@ -52,25 +52,25 @@ int qMRMLSceneModelHierarchyModelTest1(int argc, char * argv [])
 
     sceneFactory.generateNode();
     sceneFactory.deleteNode();
-  
+
     sceneFactory.generateNode();
     sceneFactory.deleteNode();
-  
+
     sceneFactory.generateNode();
     sceneFactory.generateNode();
-  
+
     sceneFactory.deleteNode();
     sceneFactory.deleteNode();
-  
+
     sceneFactory.generateNode();
     sceneFactory.deleteNode();
-  
+
     sceneFactory.generateNode();
     sceneFactory.deleteNode();
-  
+
     sceneFactory.generateNode();
     sceneFactory.generateNode();
-  
+
     sceneFactory.deleteNode();
     sceneFactory.deleteNode();
 

@@ -1,8 +1,8 @@
 // .NAME vtkMRMLAnnotationNode - MRML node to represent a fiber bundle from tractography in DTI data.
 // .SECTION Description
 // Annotation nodes contains control points, internally represented as vtkPolyData.
-// A Annotation node contains many control points  and forms the smallest logical unit of tractography 
-// that MRML will manage/read/write. Each control point has accompanying data.  
+// A Annotation node contains many control points  and forms the smallest logical unit of tractography
+// that MRML will manage/read/write. Each control point has accompanying data.
 // Visualization parameters for these nodes are controlled by the vtkMRMLAnnotationTextDisplayNode class.
 //
 
@@ -32,7 +32,7 @@ public:
   vtkTypeMacro(vtkMRMLAnnotationNode,vtkMRMLModelNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   // Description:
-  // Just prints short summary 
+  // Just prints short summary
   virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   virtual const char* GetIcon() {return "";};
@@ -49,7 +49,7 @@ public:
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
+
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -64,27 +64,27 @@ public:
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
 
   // Description:
   // Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   /// Returns false since in general cannot apply non linear transforms
   /// \sa ApplyTransformMatrix, ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const {return false;};
 
-  int AddText(const char *newText,int selectedFlag, int visibleFlag); 
+  int AddText(const char *newText,int selectedFlag, int visibleFlag);
   void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
-  vtkStdString GetText(int id); 
-  int DeleteText(int id); 
+  vtkStdString GetText(int id);
+  int DeleteText(int id);
 
-  int GetNumberOfTexts(); 
+  int GetNumberOfTexts();
 
-  enum 
+  enum
   {
     TEXT_SELECTED = 0,
     TEXT_VISIBLE,
@@ -92,7 +92,7 @@ public:
      LockModifiedEvent,
   };
   virtual const char *GetAttributeTypesEnumAsString(int val);
-  vtkDataArray* GetAnnotationAttributes(int att); 
+  vtkDataArray* GetAnnotationAttributes(int att);
   int GetAnnotationAttribute(vtkIdType id, int att);
   void SetAnnotationAttribute(vtkIdType id, int att, double value);
   int DeleteAttribute(vtkIdType idAttEntry,  vtkIdType idAttType);
@@ -114,7 +114,7 @@ public:
 
 
   // Description:
-  // Reference of this annotation - can be an image, model, scene ,  ... 
+  // Reference of this annotation - can be an image, model, scene ,  ...
   vtkGetStringMacro (ReferenceNodeID);
   vtkSetStringMacro (ReferenceNodeID);
 
@@ -149,14 +149,14 @@ protected:
 
   // Description:
   // Initializes Text as  well as attributes
-  // void ResetAnnotations(); 
+  // void ResetAnnotations();
 
   // Description:
   // Only initializes attributes with ID
   void ResetAttributes(int id);
   // Description:
-  // Initializes all attributes 
-  void ResetTextAttributesAll(); 
+  // Initializes all attributes
+  void ResetTextAttributesAll();
   void SetAttributeSize(vtkIdType  id, vtkIdType n);
 
   void CreatePolyData();
@@ -164,7 +164,7 @@ protected:
   vtkCellArray* GetLines();
 
   vtkStringArray *TextList;
-  char *ReferenceNodeID; 
+  char *ReferenceNodeID;
 
   int Locked;
 

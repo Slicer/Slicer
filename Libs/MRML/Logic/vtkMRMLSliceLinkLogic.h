@@ -13,7 +13,7 @@
 =========================================================================auto=*/
 
 ///  vtkMRMLSliceLinkLogic - slicer logic class for linked slice manipulation
-/// 
+///
 /// This class manages the logic associated with linking the controls
 /// of multiple slice and slice composite nodes. It listens to the
 /// MRML scene for new slice and slice composite nodes and observes
@@ -36,10 +36,10 @@
 class vtkMRMLSliceNode;
 class vtkMRMLSliceCompositeNode;
 
-class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLinkLogic : public vtkMRMLAbstractLogic 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLinkLogic : public vtkMRMLAbstractLogic
 {
 public:
-  
+
   /// The Usual VTK class functions
   static vtkMRMLSliceLinkLogic *New();
   vtkTypeRevisionMacro(vtkMRMLSliceLinkLogic,vtkMRMLAbstractLogic);
@@ -68,8 +68,8 @@ protected:
   void BroadcastingEventsOn();
   void BroadcastingEventsOff();
   int GetBroadcastingEvents();
- 
-  /// Broadcast a slice node to other slice nodes. 
+
+  /// Broadcast a slice node to other slice nodes.
   void BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode);
 
   /// Broadcast a slice composite node to other slice composite nodes

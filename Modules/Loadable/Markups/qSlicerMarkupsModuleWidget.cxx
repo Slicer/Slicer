@@ -646,7 +646,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
         }
       }
     }
-  
+
   markupsNodeMRML = this->mrmlScene()->GetNodeByID(listID.c_str());
   vtkMRMLMarkupsNode *markupsNode = NULL;
   if (markupsNodeMRML)

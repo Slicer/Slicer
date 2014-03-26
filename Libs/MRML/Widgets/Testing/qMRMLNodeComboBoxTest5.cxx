@@ -47,13 +47,13 @@ int qMRMLNodeComboBoxTest5( int argc, char * argv [] )
   scene->AddNode(camNode.GetPointer());
 
   nodeSelector.setMRMLScene(scene.GetPointer());
-  
+
   if (nodeSelector.currentNode() != 0)
     {
     std::cerr << "qMRMLNodeComboBox::setMRMLScene() failed: " << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   QSignalSpy spy(&nodeSelector, SIGNAL(currentNodeChanged(bool)));
   nodeSelector.setCurrentNode(camNode.GetPointer());
   if (spy.count() != 1)

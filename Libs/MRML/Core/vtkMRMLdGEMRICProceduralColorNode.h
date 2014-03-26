@@ -28,34 +28,34 @@ public:
   static vtkMRMLdGEMRICProceduralColorNode *New();
   vtkTypeMacro(vtkMRMLdGEMRICProceduralColorNode,vtkMRMLProceduralColorNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
-  
-  /// 
+
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "dGEMRICProceduralColor";};
 
-  /// 
-  /// 
+  ///
+  ///
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Get/Set for Type. In SetType, set up the custom colour options for this
   /// set of colours
   virtual void SetType(int type);
@@ -65,7 +65,7 @@ public:
   /// The list of valid procedural types
   //enum
   //{
-  ///  
+  ///
   //};
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
@@ -74,7 +74,7 @@ public:
       DisplayModifiedEvent = 20000
     };
 
-  /// 
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
@@ -97,7 +97,7 @@ public:
   const char *GetTypeAsString();
   void SetTypeTo15T();
   void SetTypeTo3T();
-  
+
 protected:
   vtkMRMLdGEMRICProceduralColorNode();
   ~vtkMRMLdGEMRICProceduralColorNode();

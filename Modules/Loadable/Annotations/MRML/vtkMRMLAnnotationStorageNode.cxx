@@ -24,7 +24,7 @@ vtkMRMLAnnotationStorageNode::~vtkMRMLAnnotationStorageNode()
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
@@ -33,7 +33,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
 {
   if (annotationDisplayNode == NULL)
     {
-    vtkErrorMacro("ReadAnnotationDisplayProperties: null associated AnnotationDisplayNode"); 
+    vtkErrorMacro("ReadAnnotationDisplayProperties: null associated AnnotationDisplayNode");
     return -1;
     }
 
@@ -48,7 +48,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      annotationDisplayNode->SetVisibility(vis);
      return 1;
    }
-  
+
   if (lineString.find(preposition + "Color = ") != std::string::npos ||
       lineString.find(preposition + "SelectedColor = ") != std::string::npos)
    {
@@ -127,7 +127,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      annotationDisplayNode->SetSpecular(val);
      return 1;
    }
- 
+
  if (lineString.find(preposition + "Power = ") != std::string::npos)
    {
      std::string str = lineString.substr(10 + textOffset, std::string::npos);
@@ -154,7 +154,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnn
 {
   if (annotationDisplayNode == NULL)
     {
-      vtkErrorMacro("ReadAnnotationTextDisplayProperties: null associated AnnotationTextDisplayNode"); 
+      vtkErrorMacro("ReadAnnotationTextDisplayProperties: null associated AnnotationTextDisplayNode");
       return -1;
     }
 
@@ -166,7 +166,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnn
  size_t textOffset = preposition.size();
  preposition.insert(0,"# ");
 
- 
+
  if (lineString.find(preposition + "Scale = ") != std::string::npos)
    {
      std::string str = lineString.substr(10 + textOffset, std::string::npos);
@@ -185,13 +185,13 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
   // test whether refNode is a valid node to hold a text list
   if ( !refNode ||
        !( refNode->IsA("vtkMRMLAnnotationNode"))
-     ) 
+     )
     {
     vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationNode");
-    return 0;         
+    return 0;
     }
 
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
+  if (this->GetFileName() == NULL && this->GetURI() == NULL)
     {
     vtkErrorMacro("OpenFileToRead: file name and uri not set");
     return 0;
@@ -205,10 +205,10 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
     vtkWarningMacro("OpenFileToRead: Read state is pending, returning.");
     return 0;
     }
-  
-  std::string fullName = this->GetFullNameFromFileName(); 
 
-  if (fullName == std::string("")) 
+  std::string fullName = this->GetFullNameFromFileName();
+
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("vtkMRMLAnnotationStorageNode: File name not specified");
     return 0;
@@ -245,28 +245,28 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *
     vtkDebugMacro("Empty line, skipping:\n\"" << line << "\"");
     return 0;
     }
-  
+
   vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"\n\tAnnotation Storage type = " << this->GetAnnotationStorageType());
-  
+
   std::string attValue(line);
   size_t size = std::string(this->GetAnnotationStorageType()).size();
- 
+
   if (!attValue.compare(0,size,this->GetAnnotationStorageType()))
     {
     int sel = 1, vis = 1;
     std::string annotation;
-      
-    // Jump over type 
+
+    // Jump over type
     size_t  startPos =attValue.find("|",0) +1;
     size_t  endPos =attValue.find("|",startPos);
     int columnNumber = 1;
-    while (startPos != std::string::npos && (columnNumber < numColumns)) 
+    while (startPos != std::string::npos && (columnNumber < numColumns))
       {
-      if (startPos != endPos) 
+      if (startPos != endPos)
         {
         vtkDebugMacro("ReadAnnotationTextData: columnNumber = " << columnNumber << ", numColumns = " << numColumns << ", annotation column = " << annotationColumn);
         std::string tokenString;
-        if (endPos == std::string::npos) 
+        if (endPos == std::string::npos)
           {
           tokenString = attValue.substr(startPos,endPos);
           }
@@ -293,7 +293,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *
       columnNumber ++;
       }
     vtkDebugMacro("ReadAnnotationTextData: text string = " << annotation.c_str());
-    if (refNode->AddText(annotation.c_str(), sel, vis) < 0 ) 
+    if (refNode->AddText(annotation.c_str(), sel, vis) < 0 )
       {
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
       return 0;
@@ -306,31 +306,31 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *
   return 0;
 }
 //----------------------------------------------------------------------------
- 
-int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotationNode *refNode, char line[1024], int &typeColumn, 
+
+int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotationNode *refNode, char line[1024], int &typeColumn,
                                int& annotationColumn, int& selColumn, int& visColumn, int& numColumns)
 {
   if (!refNode)
     {
     return 0;
     }
-  if (line[0] != '#' || line[1] != ' ') 
+  if (line[0] != '#' || line[1] != ' ')
     {
       return 0;
     }
 
   int flag = this->ReadAnnotationTextDisplayProperties(refNode->GetAnnotationTextDisplayNode(), line,this->GetAnnotationStorageType());
-  if (flag) 
+  if (flag)
     {
     return flag;
-    } 
+    }
 
   vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
   // TODO: parse out the display node settings
   // if there's a space after the hash, try to find options
   std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
   vtkIdType  typeOffset = std::string(this->GetAnnotationStorageType()).size();;
-  
+
   vtkDebugMacro("Have a possible option in line " << line);
   std::string lineString = std::string(line);
   if (lineString.find("# Name = ") != std::string::npos)
@@ -339,12 +339,12 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
       vtkDebugMacro("Getting name, substr = " << str);
       refNode->SetName(str.c_str());
       return 1;
-    } 
+    }
 
   if (lineString.find(preposition + "Columns = ") != std::string::npos)
     {
       std::string str = lineString.substr(12 + typeOffset, std::string::npos);
-      
+
       vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
       // reset all of them
       typeColumn= annotationColumn = selColumn = visColumn = -1;
@@ -380,7 +380,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
 }
 
 //----------------------------------------------------------------------------
-// assumes that ResetAnnotations is executed 
+// assumes that ResetAnnotations is executed
 int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotationNode)
 {
   if (annotationNode == NULL)
@@ -411,15 +411,15 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
   while (fstr.good())
     {
     fstr.getline(line, 1024);
-    
+
     // does it start with a #?
         // Property
     if (line[0] == '#')
       {
-      if (line[1] == ' ') 
+      if (line[1] == ' ')
         {
         if (this->ReadAnnotationTextProperties(annotationNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns) < 0 )
-          { 
+          {
           annotationNode->SetDisableModifiedEvent(modFlag);
           return 0;
           }
@@ -429,9 +429,9 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
       {
       this->ReadAnnotationTextData(annotationNode, line, typeColumn, annotationColumn,  selColumn,  visColumn, numColumns);
       }
-    }         
+    }
   annotationNode->SetDisableModifiedEvent(modFlag);
- 
+
   fstr.close();
 
   return 1;
@@ -537,7 +537,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtk
     return 0;
     }
 
-  of << "# Name = " << refNode->GetName() << endl; 
+  of << "# Name = " << refNode->GetName() << endl;
   this->WriteAnnotationTextDisplayProperties(of, annDisNode,this->GetAnnotationStorageType());
   of << "# " << this->GetAnnotationStorageType() <<"Columns = type|annotation|sel|vis" << endl;
 
@@ -559,7 +559,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnota
     vtkDebugMacro("WriteAnnotationData: nodeText " << i << " is " << nodeText.c_str());
     int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_SELECTED);
     int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_VISIBLE);
-    of << this->GetAnnotationStorageType() << "|" << nodeText.c_str() << "|" << sel << "|" << vis << endl;   
+    of << this->GetAnnotationStorageType() << "|" << nodeText.c_str() << "|" << sel << "|" << vis << endl;
     }
 
   return 1;
@@ -568,14 +568,14 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnota
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 {
-  if (this->GetFileName() == NULL) 
+  if (this->GetFileName() == NULL)
     {
     vtkErrorMacro("OpenFileToWrite: file name is not set");
     return 0;
     }
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("OpenFileToWrite: File name not specified");
     return 0;
@@ -633,11 +633,11 @@ int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   // open the file for writing
   fstream of;
-  if (!this->OpenFileToWrite(of)) 
+  if (!this->OpenFileToWrite(of))
     {
     vtkWarningMacro("WriteDataInternal: unable to open file to write");
     return 0;
-    } 
+    }
 
   int flag = this->WriteAnnotationDataInternal(refNode,of);
 

@@ -41,7 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneViewMenu : public QMenu
 public:
   /// Superclass typedef
   typedef QMenu Superclass;
-  
+
   /// Constructors
   explicit qMRMLSceneViewMenu(QWidget* newParent = 0);
   virtual ~qMRMLSceneViewMenu();
@@ -52,7 +52,7 @@ public:
   /// This property holds the menu's text displayed when there are no scene views
   QString noSceneViewText()const;
   void setNoSceneViewText(const QString& newText);
-  
+
 public slots:
 
   /// Set the MRML \a scene associated with the widget

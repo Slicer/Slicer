@@ -47,7 +47,7 @@ class vtkMRMLCameraDisplayableManager::vtkInternal
 {
 public:
   vtkInternal();
-  
+
   vtkMRMLCameraNode* CameraNode;
   int UpdatingCameraNode;
 };
@@ -142,7 +142,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndRestore()
     nodeInScene = this->GetMRMLScene()->GetNodeByID(camera_node->GetID());
     if (!nodeInScene)
       {
-      // reset the internal camera node 
+      // reset the internal camera node
       camera_node = NULL;
       this->SetAndObserveCameraNode(0);
       }
@@ -313,12 +313,12 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
   const char * defaultCameraName = "Default Scene Camera";
   // how many camera and view nodes are in the scene?
   vtkDebugMacro("UpdateCamera: num camera nodes = :" << this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLCameraNode") << ", num view nodes = " << this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode"));
-  
+
   vtkMRMLCameraNode *camera_node = NULL;
   vtkMRMLCameraNode *unassignedCamera = NULL;
   vtkMRMLCameraNode  *pruneDefaultCamera = NULL;
   int foundDefaultCamera = 0;
-  
+
   vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
 
   if (viewNode && viewNode->GetName())
@@ -335,8 +335,8 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
         if (node->GetActiveTag())
           {
           if ( !strcmp(node->GetActiveTag(), viewNode->GetID()) &&
-               node->GetName() && 
-               !strcmp(node->GetName(), defaultCameraName) && 
+               node->GetName() &&
+               !strcmp(node->GetName(), defaultCameraName) &&
                !foundDefaultCamera)
             {
             // is this a default camera node that we created when the view

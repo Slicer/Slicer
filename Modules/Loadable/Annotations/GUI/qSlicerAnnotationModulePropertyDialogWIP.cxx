@@ -192,7 +192,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
         ui.pointsTableWidget->setItem(p,0,new QTableWidgetItem(name));
         }
       double *coord = pointsNode->GetControlPointCoordinates(p);
-      
+
       if (coord)
         {
         QString qnum;
@@ -207,8 +207,8 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     }
   if (pointDisplayNode)
     {
-    
-  
+
+
     // unselected color
     double *pointUnSelColor = pointDisplayNode->GetColor();
     QColor pointUnSelQColor;
@@ -216,7 +216,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.pointUnselectedColorPickerButton->setDisplayColorName(false);
     ui.pointUnselectedColorPickerButton->setColor(pointUnSelQColor);
     ui.pointUnselectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
-    
+
     // selected color
     double *pointSelColor = pointDisplayNode->GetSelectedColor();
     QColor pointSelQColor;
@@ -224,9 +224,9 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.pointSelectedColorPickerButton->setDisplayColorName(false);
     ui.pointSelectedColorPickerButton->setColor(pointSelQColor);
     ui.pointSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
-    
+
     // load the glyph type
-  
+
 
     // fill in the combo box with glyph types if not already done
     if (ui.pointGlyphTypeComboBox->count() == 0)
@@ -258,14 +258,14 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
       }
     // glyph size
     ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
-    
+
     // glyph material properties
     ui.pointOpacitySliderSpinBoxWidget->setValue(pointDisplayNode->GetOpacity());
     ui.pointAmbientSliderSpinBoxWidget->setValue(pointDisplayNode->GetAmbient());
     ui.pointDiffuseSliderSpinBoxWidget->setValue(pointDisplayNode->GetDiffuse());
     ui.pointSpecularSliderSpinBoxWidget->setValue(pointDisplayNode->GetSpecular());
     }
-    
+
   /// Lines
   // get the line version of the node
   vtkMRMLAnnotationLinesNode *linesNode = vtkMRMLAnnotationLinesNode::SafeDownCast(mrmlNode);
@@ -301,7 +301,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.lineSelectedColorPickerButton->setDisplayColorName(false);
     ui.lineSelectedColorPickerButton->setColor(lineSelQColor);
     ui.lineSelectedColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
-    
+
     // width
     ui.lineWidthSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetLineThickness());
     // label position
@@ -315,14 +315,14 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
     // max ticks
     ui.lineMaxTicksSliderSpinBoxWidget->setValue(lineDisplayNode->GetMaxTicks());
-    
+
     // line material properties
     ui.lineOpacitySliderSpinBoxWidget_2->setValue(lineDisplayNode->GetOpacity());
     ui.lineAmbientSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetAmbient());
     ui.lineDiffuseSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetDiffuse());
     ui.lineSpecularSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetSpecular());
     }
- 
+
   /// ROI
   // get the line version of the node
   vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(mrmlNode);
@@ -766,7 +766,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
 
   this->connect(ui.pointSizeSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
                 this, SLOT(onPointSizeChanged(double)));
-  
+
   this->connect(ui.pointGlyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
                 this, SLOT(onPointGlyphChanged(QString)));
 
@@ -778,7 +778,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
    //             this, SLOT(onPointDiffuseChanged(double)));
   //this->connect(ui.pointSpecularSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
   //              this, SLOT(onPointSpecularChanged(double)));
-  
+
   // line
   this->connect(ui.lineUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onLineColorChanged(QColor)));
@@ -804,7 +804,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
   //              this, SLOT(onLineDiffuseChanged(double)));
   //this->connect(ui.lineSpecularSliderSpinBoxWidget_2, SIGNAL(valueChanged(double)),
    //             this, SLOT(onLineSpecularChanged(double)));
-  
+
   this->connect(ui.lockUnlockButton, SIGNAL(clicked()), this, SLOT(onLockUnlockButtonClicked()));
   this->connect(ui.visibleInvisibleButton, SIGNAL(clicked()), this, SLOT(onVisibleInvisibleButtonClicked()));
    /*

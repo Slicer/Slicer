@@ -49,7 +49,7 @@ class vtkMRMLSceneViewNode;
 /// \sa vtkCollection
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 {
-  /// 
+  ///
   /// make the vtkMRMLSceneViewNode a friend since it has internal vtkMRMLScene
   /// so that it can call protected methods, for example UpdateNodeIDs()
   /// but that's the only class that is allowed to do so
@@ -349,7 +349,7 @@ public:
   vtkGetMacro(ErrorCode,unsigned long);
 
   /// This property controls whether Import() loads a scene from an XML string
-  /// or from an XML file 
+  /// or from an XML file
   /// If true, contents is loaded from SceneXMLString.
   /// If false, contents is loaded from the \a URL file.
   /// \sa Import(), SetSceneXMLString(), SetURL(), SetSaveToXMLString()
@@ -642,7 +642,7 @@ protected:
   std::map<std::string, int> UniqueIDs;
   std::map<std::string, int> UniqueNames;
   std::set<std::string>   ReservedIDs;
-  
+
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
 

@@ -27,7 +27,7 @@ def tcl(cmd):
   return _tpycl.tcl_eval(cmd)
 
 class _sliceWidget(object):
-  """ an empty class that can be instanced as a place to store 
+  """ an empty class that can be instanced as a place to store
   references to sliceWidget components
   """
   def __init__(self):

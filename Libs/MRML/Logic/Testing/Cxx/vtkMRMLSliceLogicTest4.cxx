@@ -102,7 +102,7 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
     }
 
   vtkImageData* img = scalarNode->GetImageData();
-  
+
   vtkNew<vtkImageReslice> resliceMask;
   resliceMask->SetOutputExtent(0, 400, 0, 500, 0, 0);
   resliceMask->SetInput(img);
@@ -129,6 +129,6 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
   //append->Update();
   resliceMask->SetOutputExtent(0, 400, 0, 300, 0, 0);
   colors->Update();
-  
+
   return EXIT_SUCCESS;
 }

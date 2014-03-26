@@ -9,7 +9,7 @@
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License.  
+  limitations under the License.
 
 ==============================================================================*/
 
@@ -45,7 +45,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
     std::cerr << "AddChildToParent did not fail for null nodes" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // make a couple of nodes
   vtkMRMLModelNode *m1 = vtkMRMLModelNode::New();
   scene->AddNode(m1);
@@ -112,10 +112,10 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
     std::cerr << "Failed to delete hierarchy node and children!" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   m1->Delete();
   m2->Delete();
-  
+
   displayableHierarchyLogic->Delete();
 
   return EXIT_SUCCESS;

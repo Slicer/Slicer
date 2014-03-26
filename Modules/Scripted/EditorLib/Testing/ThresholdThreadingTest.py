@@ -47,7 +47,7 @@ class ThresholdThreading(unittest.TestCase):
     # now, define an ROI in it
     #
     roi = slicer.vtkMRMLAnnotationROINode()
-    slicer.mrmlScene.AddNode(roi) 
+    slicer.mrmlScene.AddNode(roi)
     roi.SetXYZ(-2, 104, -80)
     roi.SetRadiusXYZ(30, 30, 30)
 

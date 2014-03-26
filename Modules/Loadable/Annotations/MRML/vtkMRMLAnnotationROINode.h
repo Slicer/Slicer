@@ -2,7 +2,7 @@
 #define __vtkMRMLAnnotationROINode_h
 
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
-#include "vtkMRMLAnnotationLinesNode.h" 
+#include "vtkMRMLAnnotationLinesNode.h"
 
 class vtkMatrix4x4;
 class vtkPlanes;
@@ -16,7 +16,7 @@ public:
   static vtkMRMLAnnotationROINode *New();
   vtkTypeMacro(vtkMRMLAnnotationROINode,vtkMRMLAnnotationLinesNode);
   /// Description:
-  /// Just prints short summary 
+  /// Just prints short summary
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   //--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ public:
   // Description:
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
+
   /// Description:
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -47,25 +47,25 @@ public:
 
   /// Description:
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
-  /// 
+  ///
   /// Indicates if the ROI is updated interactively
   vtkBooleanMacro(InteractiveMode, int);
   vtkGetMacro(InteractiveMode, int);
   vtkSetMacro(InteractiveMode, int);
 
 
-  /// 
+  ///
   /// Indicates if the ROI box is inside out
   vtkBooleanMacro(InsideOut, int);
   vtkGetMacro(InsideOut, int);
   vtkSetMacro(InsideOut, int);
 
   /// Description:
-  /// KP Define - should be part of AnnotationRulerDisplayNode 
+  /// KP Define - should be part of AnnotationRulerDisplayNode
   double GetROIAnnotationScale();
   void SetROIAnnotationScale(double init);
 
@@ -74,7 +74,7 @@ public:
   int GetROIAnnotationVisibility();
   void SetROIAnnotationVisibility(int flag);
 
-//  int SetROI(vtkIdType line1Id, int sel, int vis);  
+//  int SetROI(vtkIdType line1Id, int sel, int vis);
 
   /// Description:
   /// get/set the point representation color
@@ -101,7 +101,7 @@ public:
   /// Add ROI to scene and add display nodes
   void Initialize(vtkMRMLScene* mrmlScene);
 
-  /// 
+  ///
   /// Get/Set for ROI Position in RAS cooridnates
   /// Note: The ROI Postion is the center of the ROI
   /// Old API:
@@ -111,12 +111,12 @@ public:
   //double* GetXYZ() {return this->GetControlPointCoordinates(0);}
   /// returns true and control point coordinate 0 on success, false and 0,0,0 on failure
   bool GetXYZ(double point[3]);
-  int SetXYZ(double newControl[3]) 
-  { 
+  int SetXYZ(double newControl[3])
+  {
     return this->SetControlPoint(0, newControl);
   }
 
-  int SetXYZ(double nC1, double nC2, double nC3) 
+  int SetXYZ(double nC1, double nC2, double nC3)
   {
     double newControl[3] = {nC1,nC2,nC3};
     return this->SetXYZ(newControl) ;
@@ -129,12 +129,12 @@ public:
   /// vtkGetVectorMacro(RadiusXYZ,double,3);
   bool GetRadiusXYZ(double point[3]);
 
-  int SetRadiusXYZ(double newControl[3]) 
-  { 
+  int SetRadiusXYZ(double newControl[3])
+  {
     return this->SetControlPoint(1, newControl);
   }
 
-  int SetRadiusXYZ(double nC1, double nC2, double nC3) 
+  int SetRadiusXYZ(double nC1, double nC2, double nC3)
   {
     double newControl[3] = {nC1,nC2,nC3};
     return this->SetRadiusXYZ(newControl);
@@ -164,7 +164,7 @@ protected:
   void operator=(const vtkMRMLAnnotationROINode&);
 
   int InteractiveMode;
- 
+
   int SetControlPoint(int id, double newControl[3]);
 
   int AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);

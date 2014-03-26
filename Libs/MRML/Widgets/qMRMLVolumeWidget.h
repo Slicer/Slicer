@@ -46,7 +46,7 @@ public:
   explicit qMRMLVolumeWidget(QWidget* parentWidget = 0);
   virtual ~qMRMLVolumeWidget();
 
-  /// 
+  ///
   /// Return the current MRML node of interest
   vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
 

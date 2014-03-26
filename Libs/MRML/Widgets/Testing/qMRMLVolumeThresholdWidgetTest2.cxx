@@ -40,7 +40,7 @@
 int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   if( argc < 2 )
     {
     std::cerr << "Error: missing arguments" << std::endl;
@@ -82,7 +82,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << redSliceNode << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   QWidget topLevel;
   qMRMLVolumeThresholdWidget volumeThreshold;
   qMRMLSliceWidget sliceWidget;
@@ -95,7 +95,7 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
   sliceWidget.setMRMLScene(scene.GetPointer());
   sliceWidget.setMRMLSliceNode(redSliceNode);
   topLevel.show();
-  
+
   if (argc < 3 || QString(argv[2]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

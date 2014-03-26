@@ -63,7 +63,7 @@ void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToC
       scalarsToColors->GetNumberOfAvailableColors() <= 0)
     {
     return;
-    } 
+    }
   this->Pixmap = QPixmap::fromImage(ctk::scalarsToColorsImage( scalarsToColors, this->Pixmap.size() ));
   this->MTime = scalarsToColors->GetMTime();
 }

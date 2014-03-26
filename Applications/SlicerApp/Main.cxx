@@ -96,7 +96,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 int SlicerAppMain(int argc, char* argv[])
 {
 #if ITK_VERSION_MAJOR > 3
-  itk::itkFactoryRegistration(); 
+  itk::itkFactoryRegistration();
 #endif
 
 #if QT_VERSION >= 0x040803
@@ -109,7 +109,7 @@ int SlicerAppMain(int argc, char* argv[])
     }
 #endif
 #endif
-  
+
   QCoreApplication::setApplicationName("Slicer");
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
   //vtkObject::SetGlobalWarningDisplay(false);

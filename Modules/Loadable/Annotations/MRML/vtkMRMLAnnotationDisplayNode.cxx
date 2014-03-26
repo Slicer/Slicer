@@ -15,11 +15,11 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->SetVectorVisibility(0);
   this->SetScalarVisibility(0);
   this->SetTensorVisibility(0);
-  
+
   this->Color[0] = 0.7373;
   this->Color[1] = 0.2549;
   this->Color[2] = 0.1098;
-  
+
   this->SelectedColor[0] = 0.2667;
   this->SelectedColor[1] = 0.6745;
   this->SelectedColor[2] = 0.3922;
@@ -57,7 +57,7 @@ vtkMRMLAnnotationDisplayNode::~vtkMRMLAnnotationDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayNode::WriteXML(ostream& of, int nIndent)
 {
-  
+
   Superclass::WriteXML(of, nIndent);
 }
 
@@ -86,7 +86,7 @@ void vtkMRMLAnnotationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);

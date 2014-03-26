@@ -64,9 +64,9 @@ int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dlto
 {
     if(ultotal == 0)
     {
-    if(dltotal > 0) 
+    if(dltotal > 0)
       {
-      std::cout << "<filter-progress>" << dlnow/dltotal 
+      std::cout << "<filter-progress>" << dlnow/dltotal
                 << "</filter-progress>" << std::endl;
       }
     }
@@ -118,7 +118,7 @@ void vtkURIHandler::StageFileRead(const char * vtkNotUsed( source ),
                              const char * vtkNotUsed( username ),
                              const char * vtkNotUsed( password ),
                              const char * vtkNotUsed( hostname ) )
-{ 
+{
 }
 
 //----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void vtkURIHandler::StageFileWrite(const char * vtkNotUsed( source ),
                               const char * vtkNotUsed( password ),
                               const char * vtkNotUsed( hostname ),
                               const char * vtkNotUsed( sessionID ) )
-{ 
+{
 }
 
 //----------------------------------------------------------------------------

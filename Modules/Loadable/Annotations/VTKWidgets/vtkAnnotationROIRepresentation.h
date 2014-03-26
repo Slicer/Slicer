@@ -13,7 +13,7 @@
 
 =========================================================================*/
 ///  vtkAnnotationROIRepresentation - a class defining the representation for the vtkSlicerBoxWidget2
-/// 
+///
 /// This class is a concrete representation for the vtkSlicerBoxWidget2. It
 /// represents a box with seven handles: one on each of the six faces, plus a
 /// center handle. Through interaction with the widget, the box
@@ -61,18 +61,18 @@ vtkAnnotationROIRepresentation
   : public vtkWidgetRepresentation
 {
 public:
-  /// 
+  ///
   /// Instantiate the class.
   static vtkAnnotationROIRepresentation *New();
 
-  /// 
+  ///
   /// Standard methods for the class.
   vtkTypeRevisionMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static const int NUMBER_HANDLES = 7;
 
-  /// 
+  ///
   /// Get the planes describing the implicit function defined by the box
   /// widget. The user must provide the instance of the class vtkPlanes. Note
   /// that vtkPlanes is a subclass of vtkImplicitFunction, meaning that it can
@@ -81,7 +81,7 @@ public:
   /// reversed enabling the InsideOut flag.)
   void GetPlanes(vtkPlanes *planes);
 
-  /// 
+  ///
   /// Set/Get the InsideOut flag. This data memeber is used in conjunction
   /// with the GetPlanes() method. When off, the normals point out of the
   /// box. When on, the normals point into the hexahedron.  InsideOut is off
@@ -94,7 +94,7 @@ public:
   void SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix);
   vtkGetObjectMacro(WorldToLocalMatrix,vtkMatrix4x4);
 
-  /// 
+  ///
   /// Retrieve a linear transform characterizing the transformation of the
   /// box. Note that the transformation is relative to where PlaceWidget()
   /// was initially called. This method modifies the transform provided. The
@@ -102,14 +102,14 @@ public:
   /// other transformation operations (e.g., vtkTranformPolyData).
   virtual void GetTransform(vtkTransform *t);
 
-  /// 
+  ///
   /// Set the position, scale and orientation of the box widget using the
-  /// transform specified. Note that the transformation is relative to 
+  /// transform specified. Note that the transformation is relative to
   /// where PlaceWidget() was initially called (i.e., the original bounding
-  /// box). 
+  /// box).
   virtual void SetTransform(vtkTransform* t);
 
-  /// 
+  ///
   /// Grab the polydata (including points) that define the box widget. The
   /// polydata consists of 6 quadrilateral faces and 15 points. The first
   /// eight points define the eight corner vertices; the next six define the
@@ -120,28 +120,28 @@ public:
   /// vtkPolyData and the points and cells are added to it.
   void GetPolyData(vtkPolyData *pd);
 
-  /// 
-  /// Get the handle properties (the little balls are the handles). The 
-  /// properties of the handles, when selected or normal, can be 
+  ///
+  /// Get the handle properties (the little balls are the handles). The
+  /// properties of the handles, when selected or normal, can be
   /// specified.
   //vtkGetObjectMacro(HandleProperty,vtkProperty);
   vtkGetObjectMacro(SelectedHandleProperty,vtkProperty);
 
-  /// 
-  /// Get the face properties (the faces of the box). The 
-  /// properties of the face when selected and normal can be 
+  ///
+  /// Get the face properties (the faces of the box). The
+  /// properties of the face when selected and normal can be
   /// set.
   vtkGetObjectMacro(FaceProperty,vtkProperty);
   vtkGetObjectMacro(SelectedFaceProperty,vtkProperty);
-  
-  /// 
-  /// Get the outline properties (the outline of the box). The 
-  /// properties of the outline when selected and normal can be 
+
+  ///
+  /// Get the outline properties (the outline of the box). The
+  /// properties of the outline when selected and normal can be
   /// set.
   vtkGetObjectMacro(OutlineProperty,vtkProperty);
   vtkGetObjectMacro(SelectedOutlineProperty,vtkProperty);
-  
-  /// 
+
+  ///
   /// Control the representation of the outline. This flag enables
   /// face wires. By default face wires are off.
   void SetOutlineFaceWires(int);
@@ -149,7 +149,7 @@ public:
   void OutlineFaceWiresOn() {this->SetOutlineFaceWires(1);}
   void OutlineFaceWiresOff() {this->SetOutlineFaceWires(0);}
 
-  /// 
+  ///
   /// Control the representation of the outline. This flag enables
   /// the cursor lines running between the handles. By default cursor
   /// wires are on.
@@ -158,13 +158,13 @@ public:
   void OutlineCursorWiresOn() {this->SetOutlineCursorWires(1);}
   void OutlineCursorWiresOff() {this->SetOutlineCursorWires(0);}
 
-  /// 
+  ///
   /// Switches handles (the spheres) on or off by manipulating the underlying
   /// actor visibility.
   void HandlesOn();
   void HandlesOff();
-  
-  /// 
+
+  ///
   /// These are methods that satisfy vtkWidgetRepresentation's API.
   virtual void PlaceWidget(double bounds[6]);
   virtual void BuildRepresentation();
@@ -172,17 +172,17 @@ public:
   virtual void StartWidgetInteraction(double e[2]);
   virtual void WidgetInteraction(double e[2]);
   virtual double *GetBounds();
-  
-  /// 
+
+  ///
   /// Methods supporting, and required by, the rendering process.
   virtual void ReleaseGraphicsResources(vtkWindow*);
   virtual int RenderOpaqueGeometry(vtkViewport*);
   virtual int RenderTranslucentPolygonalGeometry(vtkViewport*);
   virtual int HasTranslucentPolygonalGeometry();
-  
+
   enum {Outside=0,MoveF0,MoveF1,MoveF2,MoveF3,MoveF4,MoveF5,Translating,Rotating,Scaling};
 
-  /// 
+  ///
   /// The interaction state may be set from a widget (e.g., vtkSlicerBoxWidget2) or
   /// other object. This controls how the interaction with the widget
   /// proceeds. Normally this method is used as part of a handshaking
@@ -192,12 +192,12 @@ public:
   /// further.
   virtual void SetInteractionState(int state);
 
-  /// 
+  ///
   /// get the center of the box
   void GetCenter(double center[]);
 
-  /// 
-  /// get 3 extents along sides of the box 
+  ///
+  /// get 3 extents along sides of the box
   void GetExtents(double bounds[]);
 
   virtual void GetActors(vtkPropCollection *actors);
@@ -209,7 +209,7 @@ protected:
 
   /// Manage how the representation appears
   double LastEventPosition[4];
-  
+
   /// the hexahedron (6 faces)
   vtkActor          *HexActor;
   vtkPolyDataMapper *HexMapper;
@@ -232,7 +232,7 @@ protected:
   void HighlightOutline(int highlight);
   void ComputeNormals();
   virtual void SizeHandles();
-  
+
   /// wireframe outline
   vtkActor          *HexOutline;
   vtkPolyDataMapper *OutlineMapper;
@@ -244,13 +244,13 @@ protected:
   vtkActor *CurrentHandle;
   int      CurrentHexFace;
   vtkCellPicker *LastPicker;
-  
+
   /// Transform the hexahedral points (used for rotations)
   vtkTransform *Transform;
-  
+
   /// Support GetBounds() method
   vtkBox *BoundingBox;
-  
+
   /// Properties used to control the appearance of selected objects and
   /// the manipulator in general.
   //vtkProperty *HandleProperty;
@@ -261,13 +261,13 @@ protected:
   vtkProperty *OutlineProperty;
   vtkProperty *SelectedOutlineProperty;
   virtual void CreateDefaultProperties();
-  
+
   /// Control the orientation of the normals
   int InsideOut;
   int OutlineFaceWires;
   int OutlineCursorWires;
   void GenerateOutline();
-  
+
   /// Helper methods
   virtual void Translate(double *p1, double *p2);
   virtual void Scale(double *p1, double *p2, int X, int Y);
@@ -288,12 +288,12 @@ protected:
 
   //"dir" is the direction in which the face can be moved i.e. the axis passing
   //through the center
-  void MoveFace(double *p1, double *p2, double *dir, 
+  void MoveFace(double *p1, double *p2, double *dir,
                 double *x1, double *x2, double *x3, double *x4,
                 double *x5);
   //Helper method to obtain the direction in which the face is to be moved.
   //Handles special cases where some of the scale factors are 0.
-  void GetDirection(const double Nx[3],const double Ny[3], 
+  void GetDirection(const double Nx[3],const double Ny[3],
                     const double Nz[3], double dir[3]);
 
 

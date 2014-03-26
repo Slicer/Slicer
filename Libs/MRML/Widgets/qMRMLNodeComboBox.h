@@ -295,7 +295,7 @@ signals:
 
   /// Advanced function.
   /// This signal is sent when the user chooses a node in the combobox.
-  /// The item's node is passed. Note that this signal is sent even when the 
+  /// The item's node is passed. Note that this signal is sent even when the
   /// choice is not changed. If you need to know when the choice actually
   /// changes, use signal currentNodeChanged().
   /// \sa QComboBox::activated.

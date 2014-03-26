@@ -35,58 +35,58 @@ public:
   static vtkMRMLFiducial *New();
   vtkTypeMacro(vtkMRMLFiducial,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRML methods
   //--------------------------------------------------------------------------
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Set node attributes from an unparsed string of keys and values
   virtual void ReadXMLString(const char *keyValuePairs);
-  
-  /// 
+
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkObject *node);
 
-  /// 
+  ///
   /// Get/Set for Point
   vtkSetVector3Macro(XYZ,float);
   vtkGetVectorMacro(XYZ,float,3);
 
-  /// 
-  /// Get/Set for orientation 
+  ///
+  /// Get/Set for orientation
   vtkSetVector4Macro(OrientationWXYZ,float);
   vtkGetVectorMacro(OrientationWXYZ,float,4);
   void SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat);
 
-  /// 
+  ///
   /// Get/Set for LabelText
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  /// 
+  ///
   /// Get/Set for ID
   vtkGetStringMacro(ID);
   vtkSetStringMacro(ID);
 
-  /// 
+  ///
   /// Get/Set for Selected
   vtkGetMacro(Selected, bool);
   vtkSetMacro(Selected, bool);
 
-  /// 
+  ///
   /// Get/Set for Visibility
   vtkGetMacro(Visibility, bool);
   vtkSetMacro(Visibility, bool);
-  
+
 protected:
   vtkMRMLFiducial();
   ~vtkMRMLFiducial();

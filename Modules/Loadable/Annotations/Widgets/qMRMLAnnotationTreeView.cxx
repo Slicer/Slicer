@@ -296,7 +296,7 @@ void qMRMLAnnotationTreeView::deleteSelected()
   // the selected count will be number of rows that are highlighted * number
   // of columns (each item in a row is selected when the row is highlighted),
   // so to check for one row being selected, the count has to be 1 * the
-  // columnCount 
+  // columnCount
   if (selected.count() == d->SceneModel->columnCount())
     {
     // only one item was selected, is this a hierarchy?
@@ -319,7 +319,7 @@ void qMRMLAnnotationTreeView::deleteSelected()
         this->mrmlScene()->StartState(vtkMRMLScene::BatchProcessState);
         hierarchyNode->DeleteDirectChildren();
         this->mrmlScene()->EndState(vtkMRMLScene::BatchProcessState);
-        
+
         this->mrmlScene()->RemoveNode(hierarchyNode);
 
         }
@@ -555,7 +555,7 @@ void qMRMLAnnotationTreeView::onLockColumnClicked(vtkMRMLNode* node)
   if (hierarchyNode)
     {
     this->m_Logic->SetHierarchyAnnotationsLockFlag(hierarchyNode, true);
-   
+
 
     } // if hierarchyNode
 */

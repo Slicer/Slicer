@@ -116,9 +116,9 @@ void vtkSlicerGPURayCastVolumeMapper::Render(vtkRenderer *ren, vtkVolume *vol)
   {
     this->TimeToDraw = 0.0001;
   }
-  
+
   this->AdaptivePerformanceControl();
-  
+
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
 
   //setup material based on volume property
@@ -167,9 +167,9 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
 
   if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
     return;
-  
+
   this->RaySteps *= targetTime/(this->TimeToDraw*1.5);
-  
+
   int dim[3];
   this->GetVolumeDimensions(dim);
 
@@ -179,7 +179,7 @@ void vtkSlicerGPURayCastVolumeMapper::AdaptivePerformanceControl()
   maxRaysteps *= 1.8f; //make sure we have enough sampling rate to recover details
 
 //  maxRaysteps = maxRaysteps < 1050.0f ? 1050.0f : maxRaysteps;//ensure high sampling rate on low resolution volumes
-  
+
   // add clamp
   if (this->RaySteps > maxRaysteps) this->RaySteps = maxRaysteps;
   if (this->RaySteps < 200.0f)       this->RaySteps = 200.0f;
@@ -439,7 +439,7 @@ void vtkSlicerGPURayCastVolumeMapper::SetupRayCastParameters(vtkRenderer *vtkNot
   this->ParaMatrix1[0] = 1.0f / dim[0];
   this->ParaMatrix1[1] = 1.0f / dim[1];
   this->ParaMatrix1[2] = 1.0f / dim[2];
-  
+
   GLint loc = vtkgl::GetUniformLocation(RayCastProgram, "ParaMatrix");
   if (loc >= 0)
     vtkgl::UniformMatrix4fv(loc, 1, false, this->ParaMatrix);
@@ -457,7 +457,7 @@ void vtkSlicerGPURayCastVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolume *v
   //force shader program reinit in dual 3D view mode
   if (vol->GetNumberOfConsumers() > 1)
     this->InitializeRayCast();
-    
+
   vtkgl::UseProgram(RayCastProgram);
 
   this->SetupTextures( ren, vol );
@@ -467,12 +467,12 @@ void vtkSlicerGPURayCastVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolume *v
 
   // Start the timer now
   this->Timer->StartTimer();
-  
+
   this->DrawVolumeBBox();
   glFinish();
 
   this->Timer->StopTimer();
-  
+
   vtkgl::UseProgram(0);
 }
 
@@ -967,7 +967,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShaders()
       "    return gl_TexCoord[0];                                                            \n"
       "}                                                                                     \n"
       "                                                                                      \n";
-  //color lookup    
+  //color lookup
   switch(this->GetInput()->GetNumberOfScalarComponents())
   {
   case 1:
@@ -1026,7 +1026,7 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShaders()
         "}                                                                                    \n";
       break;
   }
-  
+
   if (this->Technique != 2 && this->Technique != 3) //normal lookup (not needed for MIP and MINIP)
   {
     fp_oss <<
@@ -1099,8 +1099,8 @@ void vtkSlicerGPURayCastVolumeMapper::LoadFragmentShaders()
       "     return 1.0;                                                                         \n"
       "}                                                                                        \n";
   }
-      
-  fp_oss <<      
+
+  fp_oss <<
     "void main()                                                                            \n"
     "{                                                                                      \n"
     "  vec4 rayOrigin = computeRayOrigin();                                                 \n"

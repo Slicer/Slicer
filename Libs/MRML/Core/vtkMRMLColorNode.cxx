@@ -49,7 +49,7 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 vtkMRMLColorNode::~vtkMRMLColorNode()
 {
   if (this->FileName)
-    {  
+    {
     delete [] this->FileName;
     this->FileName = NULL;
     }
@@ -65,11 +65,11 @@ vtkMRMLColorNode::~vtkMRMLColorNode()
 void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
-  
+
   of << " type=\"" << this->GetType() << "\"";
 
   if (this->FileName != NULL)
@@ -87,7 +87,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -95,7 +95,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
       {
       this->SetName(attValue);
       }
-    else if (!strcmp(attName, "type")) 
+    else if (!strcmp(attName, "type"))
       {
       int type;
       std::stringstream ss;
@@ -122,7 +122,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
           {
           vtkErrorMacro("Unable to create or add to scene a new color storage node to read file " << attValue);
           }
-           
+
         }
       }
     }
@@ -163,7 +163,7 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 
   // copy names
   this->Names = node->Names;
-  
+
   this->NamesInitialised = node->NamesInitialised;
 
   this->EndModify(disabledModify);
@@ -173,12 +173,12 @@ void vtkMRMLColorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Name: " <<
       (this->Name ? this->Name : "(none)") << "\n";
-  
+
 
   os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
 
@@ -186,7 +186,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->NoName ? this->NoName : "(not set)") <<  "\n";
 
   os << indent << "Names array initialised: " << (this->GetNamesInitialised() ? "true" : "false") << "\n";
-  
+
   if (this->Names.size() > 0)
     {
     os << indent << "Color Names:\n";
@@ -211,13 +211,13 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
 void vtkMRMLColorNode::UpdateScene(vtkMRMLScene *scene)
 {
-    Superclass::UpdateScene(scene);    
+    Superclass::UpdateScene(scene);
 }
 
 
 //---------------------------------------------------------------------------
 void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -261,17 +261,17 @@ void vtkMRMLColorNode::SetType(int type)
     vtkDebugMacro("SetType: type is already set to " << type);
     return;
     }
-    
+
   this->Type = type;
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type);
 
   // subclass should over ride this and define colours according to the node
   // type
-  
+
   // invoke a modified event
   this->Modified();
-    
+
   // invoke a type  modified event
   this->InvokeEvent(vtkMRMLColorNode::TypeModifiedEvent);
 }
@@ -442,7 +442,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char *name)
 //---------------------------------------------------------------------------
 int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const char *subst)
 {
- 
+
   std::string nameString = std::string(name);
   std::string substString = std::string(subst);
    // does the input name have the subst character in it?

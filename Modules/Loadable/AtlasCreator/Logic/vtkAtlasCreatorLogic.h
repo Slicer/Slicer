@@ -41,7 +41,7 @@ class VTK_SLICER_ATLASCREATOR_MODULE_LOGIC_EXPORT vtkAtlasCreatorLogic :
 
   // The method that creates and runs VTK or ITK pipeline
   void Apply();
-  
+
 protected:
   vtkAtlasCreatorLogic();
   virtual ~vtkAtlasCreatorLogic();

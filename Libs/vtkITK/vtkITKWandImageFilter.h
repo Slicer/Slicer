@@ -25,7 +25,7 @@ public:
   /// dynamic range
   vtkSetClampMacro(DynamicRangePercentage, double, 0.0, 1.0);
   vtkGetMacro(DynamicRangePercentage, double);
-  
+
 protected:
   vtkITKWandImageFilter();
   ~vtkITKWandImageFilter();
@@ -34,7 +34,7 @@ protected:
 
   int Seed[3];
   double DynamicRangePercentage;
-  
+
 private:
   vtkITKWandImageFilter(const vtkITKWandImageFilter&);  /// Not implemented.
   void operator=(const vtkITKWandImageFilter&);  /// Not implemented.

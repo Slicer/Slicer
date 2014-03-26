@@ -31,7 +31,7 @@ class vtkMRMLVolumeNode;
 /// \ingroup Slicer_QtModules_CropVolume
 class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode : public vtkMRMLNode
 {
-  public:   
+  public:
 
   static vtkMRMLCropVolumeParametersNode *New();
   vtkTypeMacro(vtkMRMLCropVolumeParametersNode,vtkMRMLNode);
@@ -91,7 +91,7 @@ protected:
   char *InputVolumeNodeID;
   char *OutputVolumeNodeID;
   char *ROINodeID;
-  
+
   bool ROIVisibility;
   bool VoxelBased;
   int InterpolationMode;

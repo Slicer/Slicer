@@ -58,7 +58,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 
   this->HandleSizeInPixels = 4;
   this->HandlesVisibility = 1;
-  
+
   // Set up the initial properties
   this->CreateDefaultProperties();
 
@@ -110,14 +110,14 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 
   this->LastPicker2D = NULL;
   this->CurrentHandle2D = NULL;
-  
+
   this->PositionHandles();
 
 }
 
 //----------------------------------------------------------------------------
 vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
-{  
+{
   this->HandlePicker2D->Delete();
   this->HexFace2D->Delete();
   this->HexFaceMapper2D->Delete();
@@ -131,7 +131,7 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
   delete [] this->Handle2D;
   delete [] this->HandleMapper2D;
   delete [] this->HandleToPlaneTransformFilters;
- 
+
   this->IntersectionPlane->Delete();
   this->IntersectionPlaneTransform->Delete();
   for (i=0; i<6; i++)
@@ -306,7 +306,7 @@ void vtkAnnotationROIRepresentation2D::CreateDefaultProperties()
 
   this->SelectedHandleProperty2D = vtkProperty2D::New();
   this->SelectedHandleProperty2D->SetColor(.2,1,.2);
-  
+
   this->SelectedFaceProperty2D = vtkProperty2D::New();
   this->SelectedFaceProperty2D->SetColor(1,1,0);
   this->SelectedFaceProperty2D->SetOpacity(0.25);
@@ -320,7 +320,7 @@ void vtkAnnotationROIRepresentation2D::SetInteractionState(int state)
   // Clamp to allowable values
   state = ( state < vtkAnnotationROIRepresentation::Outside ? vtkAnnotationROIRepresentation::Outside :
             (state > vtkAnnotationROIRepresentation::Scaling ? vtkAnnotationROIRepresentation::Scaling : state) );
-  
+
   // Depending on state, highlight appropriate parts of representation
   int handle;
   this->InteractionState = state;
@@ -376,12 +376,12 @@ int vtkAnnotationROIRepresentation2D::HighlightHandle(vtkProp *prop)
         }
       }
     }
-  
+
   if ( this->CurrentHandle2D == this->Handle2D[6] )
     {
     return 6;
     }
-  
+
   return -1;
 }
 
@@ -454,7 +454,7 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
       this->Handle2D[i]->SetVisibility(0);
       }
     }
-    
+
   VTK_AVERAGE(p0,p6,x);
   this->Points->SetPoint(14, x);
   if (count)
@@ -544,7 +544,7 @@ void vtkAnnotationROIRepresentation2D::WidgetInteraction(double e[2])
 
   else if ( this->InteractionState == vtkAnnotationROIRepresentation::Scaling )
     {
-    this->Scale(prevPickPoint, pickPoint, 
+    this->Scale(prevPickPoint, pickPoint,
                 static_cast<int>(e[0]), static_cast<int>(e[1]));
     }
 
@@ -586,7 +586,7 @@ int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int 
     this->InteractionState = vtkAnnotationROIRepresentation::Outside;
     return this->InteractionState;
     }
-  
+
   vtkAssemblyPath *path;
   // Try and pick a handle first
   this->LastPicker2D = NULL;
@@ -636,7 +636,7 @@ int vtkAnnotationROIRepresentation2D::ComputeInteractionState(int X, int Y, int 
 double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(double radInPixels)
 {
   /*
-  double *center 
+  double *center
     = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(3*14);
 
   double radius =
@@ -644,7 +644,7 @@ double vtkAnnotationROIRepresentation2D::ComputeHandleRadiusInWorldCoordinates(d
   return radius;
   */
 
- 
+
   // Get transform from 2D image to world
   vtkNew<vtkMatrix4x4> XYtoWorldMatrix;
   XYtoWorldMatrix->DeepCopy(this->GetIntersectionPlaneTransform()->GetMatrix());
@@ -685,17 +685,17 @@ void vtkAnnotationROIRepresentation2D::PrintIntersections(ostream& os)
     vtkIdType ncpts;
     vtkIdType *cpts;
     this->IntersectionFaces[i]->GetCellPoints(0, ncpts, cpts);
-    os << "   Face[" << i << "]=(" << pts[3*cpts[0]] << ", " << pts[3*cpts[0]+1] << ", " << pts[3*cpts[0]+2] << 
-                             "), (" << pts[3*cpts[1]] << ", " << pts[3*cpts[1]+1] << ", " << pts[3*cpts[1]+2] << 
-                             "), (" << pts[3*cpts[2]] << ", " << pts[3*cpts[2]+1] << ", " << pts[3*cpts[2]+2] << 
-                             "), (" << pts[3*cpts[3]] << ", " << pts[3*cpts[3]+1] << ", " << pts[3*cpts[3]+2] << ")\n"; 
+    os << "   Face[" << i << "]=(" << pts[3*cpts[0]] << ", " << pts[3*cpts[0]+1] << ", " << pts[3*cpts[0]+2] <<
+                             "), (" << pts[3*cpts[1]] << ", " << pts[3*cpts[1]+1] << ", " << pts[3*cpts[1]+2] <<
+                             "), (" << pts[3*cpts[2]] << ", " << pts[3*cpts[2]+1] << ", " << pts[3*cpts[2]+2] <<
+                             "), (" << pts[3*cpts[3]] << ", " << pts[3*cpts[3]+1] << ", " << pts[3*cpts[3]+2] << ")\n";
 
     if (this->IntersectionCutters[i]->GetOutput()->GetNumberOfLines())
       {
       float *fpts = static_cast<vtkFloatArray *>(this->IntersectionCutters[i]->GetOutput()->GetPoints()->GetData())->GetPointer(0);
       this->IntersectionCutters[i]->GetOutput()->GetLines()->GetCell(0, ncpts, cpts);
-      os << "   Cutter[" << i <<"]=(" << fpts[3*cpts[0]] << ", " << fpts[3*cpts[0]+1] << ", " << fpts[3*cpts[0]+2] << 
-                               "), (" << fpts[3*cpts[1]] << ", " << fpts[3*cpts[1]+1] << ", " << fpts[3*cpts[1]+2] << ")\n"; 
+      os << "   Cutter[" << i <<"]=(" << fpts[3*cpts[0]] << ", " << fpts[3*cpts[0]+1] << ", " << fpts[3*cpts[0]+2] <<
+                               "), (" << fpts[3*cpts[1]] << ", " << fpts[3*cpts[1]+1] << ", " << fpts[3*cpts[1]+2] << ")\n";
       }
     else
       {

@@ -39,7 +39,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   : ctkRangeWidget(parentWidget)
 {
   this->setSlider(new qMRMLDoubleRangeSlider(0));
-  
+
   QWidget* rangeWidget = new QWidget(this);
   QHBoxLayout* rangeLayout = new QHBoxLayout;
   rangeWidget->setLayout(rangeLayout);
@@ -63,20 +63,20 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
 
   connect(this->slider(), SIGNAL(rangeChanged(double,double)),
           this, SLOT(updateSpinBoxRange(double,double)));
-  
+
   QWidgetAction* rangeAction = new QWidgetAction(this);
   rangeAction->setDefaultWidget(rangeWidget);
-  
+
   QAction* symmetricAction = new QAction(tr("Symmetric handles"),this);
   symmetricAction->setCheckable(true);
   connect(symmetricAction, SIGNAL(toggled(bool)),
           this, SLOT(updateSymmetricMoves(bool)));
   symmetricAction->setChecked(this->symmetricMoves());
-  
+
   QMenu* optionsMenu = new QMenu(this);
   optionsMenu->addAction(rangeAction);
   optionsMenu->addAction(symmetricAction);
-  
+
   QToolButton* optionsButton = new QToolButton(this);
   optionsButton->setIcon(QIcon(":Icons/SliceMoreOptions.png"));
   optionsButton->setMenu(optionsMenu);

@@ -95,7 +95,7 @@ vtkTagTable *vtkTagTableCollection::GetNextTable(vtkCollectionSimpleIterator &co
 {
   return vtkTagTable::SafeDownCast(this->GetNextItemAsObject(cookie));
 }
-  
+
 //---------------------------------------------------------------------------
 void vtkTagTableCollection::ClearAllTagTables ( )
 {

@@ -12,9 +12,9 @@
 
 =========================================================================auto=*/
 ///  itkMRMLIDIOWin32Header - manage Windows system differences
-/// 
+///
 /// The itkMRMLIDIOWin32Header captures some system differences between Unix
-/// and Windows operating systems. 
+/// and Windows operating systems.
 
 #ifndef __itkMRMLIDIOWin32Header_h
 #define __itkMRMLIDIOWin32Header_h
@@ -23,9 +23,9 @@
 
 #if defined(WIN32) && !defined(MRMLIDIO_STATIC)
 #if defined(MRMLIDIO_EXPORTS)
-#define MRMLIDImageIO_EXPORT __declspec( dllexport ) 
+#define MRMLIDImageIO_EXPORT __declspec( dllexport )
 #else
-#define MRMLIDImageIO_EXPORT __declspec( dllimport ) 
+#define MRMLIDImageIO_EXPORT __declspec( dllimport )
 #endif
 #else
 #define MRMLIDImageIO_EXPORT

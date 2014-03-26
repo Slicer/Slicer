@@ -44,7 +44,7 @@ public:
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
-  
+
   void insertHierarchyNode();
   void deleteMultipleModels();
   void renameMultipleModels();
@@ -57,7 +57,7 @@ public slots:
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
-  
+
   virtual void setup();
 
   void updateTreeViewModel();

@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -22,7 +22,7 @@ int vtkMRMLFiducialListNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   //EXERCISE_BASIC_MRML_METHODS(vtkMRMLFiducialListNode, node1);
-  
+
   // EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLFiducialListNode, node1);
 
   EXERCISE_BASIC_STORABLE_MRML_METHODS(vtkMRMLFiducialListNode, node1);

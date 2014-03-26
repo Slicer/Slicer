@@ -40,34 +40,34 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionWeightedVolume";};
 
-  /// 
+  ///
   void SetNumberOfGradients(int val);
   vtkGetMacro(NumberOfGradients,int);
 
-  /// 
+  ///
   void SetDiffusionGradient(int val, const double g[3]);
   void SetDiffusionGradients(vtkDoubleArray *grad);
   double *GetDiffusionGradient(int val);
-  void GetDiffusionGradient(int val, double g[3]);  
+  void GetDiffusionGradient(int val, double g[3]);
   vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
 
-  /// 
+  ///
   void SetBValue (int val, const double b);
   void SetBValues (vtkDoubleArray *bValue);
 /// Work around issue that GetBValue is defined as a macro in windows.h
@@ -87,12 +87,12 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
   void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
- 
-  /// 
+
+  ///
   /// Associated display MRML node
   virtual vtkMRMLDiffusionWeightedVolumeDisplayNode* GetDiffusionWeightedVolumeDisplayNode();
 
-  /// 
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
@@ -101,12 +101,12 @@ protected:
   ~vtkMRMLDiffusionWeightedVolumeNode();
   vtkMRMLDiffusionWeightedVolumeNode(const vtkMRMLDiffusionWeightedVolumeNode&);
   void operator=(const vtkMRMLDiffusionWeightedVolumeNode&);
-  
+
   double MeasurementFrameMatrix[3][3];
-  
+
   vtkDoubleArray *DiffusionGradients;
   vtkDoubleArray *BValues;
-  
+
   int NumberOfGradients;
 
   vtkImageExtractComponents *ExtractComponents;
@@ -116,5 +116,5 @@ protected:
 #endif
 
 
- 
+
 

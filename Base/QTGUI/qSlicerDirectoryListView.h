@@ -86,7 +86,7 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerDirectoryListView);
   Q_DISABLE_COPY(qSlicerDirectoryListView);
-  
+
 };
 
 #endif

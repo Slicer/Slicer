@@ -60,7 +60,7 @@ public:
   typedef MRMLIDImageIO            Self;
   typedef ImageIOBase  Superclass;
   typedef SmartPointer<Self>  Pointer;
-  
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -74,10 +74,10 @@ public:
   virtual bool CanUseOwnBuffer();
   virtual void ReadUsingOwnBuffer();
   virtual void * GetOwnBuffer();
-  
+
   /** Set the spacing and dimension information for the set filename. */
   virtual void ReadImageInformation();
-  
+
   /** Reads the data from disk into the memory buffer provided. */
   virtual void Read(void* buffer);
 
@@ -102,25 +102,25 @@ protected:
 
   /** Write the image information to the node and specified image */
   virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*);
-  
+
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */
-  void SetDWDictionaryValues(MetaDataDictionary &dict, 
+  void SetDWDictionaryValues(MetaDataDictionary &dict,
                              vtkMRMLDiffusionWeightedVolumeNode *dw);
 
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */
-  void SetDTDictionaryValues(MetaDataDictionary &dict, 
+  void SetDTDictionaryValues(MetaDataDictionary &dict,
                              vtkMRMLDiffusionImageVolumeNode *di);
 
   /** Take information from the MetaDataDictionary that is needed to
    *  transfer this volume to a Slicer node */
-  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw, 
+  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw,
                        MetaDataDictionary &dict);
 
   /** Take information from the MetaDataDictionary that is needed to
    *  transfer this volume to a Slicer node */
-  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di, 
+  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
                        MetaDataDictionary &dict);
 
 private:
@@ -134,7 +134,7 @@ private:
   std::string Authority;
   std::string SceneID;
   std::string NodeID;
-  
+
 };
 
 

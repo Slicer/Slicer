@@ -105,7 +105,7 @@ void qMRMLVolumeWidgetPrivate::init()
   QMargins margins = layout->contentsMargins();
   margins.setTop(0);
   layout->setContentsMargins(margins);
-  
+
   this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
   this->RangeWidget->setRange(-1000000., 1000000.);
   QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double,double)),

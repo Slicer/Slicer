@@ -28,7 +28,7 @@ public:
   void setMRMLColorNode(vtkMRMLColorNode *newMRMLColorNode);
 
   QColor colorFromIndex(int index) const;
-  
+
   ctkComboBox *       ComboBox;
   bool                NoneEnabled;
   vtkMRMLColorNode *  ColorNode;
@@ -110,7 +110,7 @@ qMRMLLabelComboBox::qMRMLLabelComboBox(QWidget* newParent)
   , d_ptr(new qMRMLLabelComboBoxPrivate(*this))
 {
   Q_D(qMRMLLabelComboBox);
-  
+
   d->ComboBox = new ctkComboBox(this);
   d->ComboBox->setDefaultText("None");
   this->setLayout(new QVBoxLayout);
@@ -174,7 +174,7 @@ void qMRMLLabelComboBox::setCurrentColor(int index)
       return;
       }
     }
-  
+
   // Will trigger onCurrentIndexChanged
   d->ComboBox->setCurrentIndex(index);
 }
@@ -279,7 +279,7 @@ void qMRMLLabelComboBox::onCurrentIndexChanged(int index)
     }
 
   d->CurrentColor = index;
- 
+
   emit currentColorChanged(d->colorFromIndex(index));
   emit currentColorChanged(d->ComboBox->itemText(index));
   emit currentColorChanged(index);
@@ -290,11 +290,11 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
 {
   Q_D(qMRMLLabelComboBox);
   Q_ASSERT(d->ColorNode);
-  
+
   //qDebug() << "qMRMLLabelComboBox::updateWidgetFromMRML";
 
   d->ComboBox->clear();
-  
+
   if (!d->ColorNode->GetNamesInitialised())
     {
     qCritical() << "qMRMLLabelComboBox::updateWidgetFromMRML - ColorNode names are NOT initialized !";
@@ -305,7 +305,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     {
     d->ComboBox->insertItem(0, "None");
     }
-  
+
   //LookUpTabletime.start();
   vtkLookupTable * lookupTable = d->ColorNode->GetLookupTable();
   Q_ASSERT(lookupTable);
@@ -318,9 +318,9 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
     {
     QString colorName = QLatin1String(d->ColorNode->GetColorName(i));
     //qDebug() << QString("updateWidgetFromMRML - Color(index:%1, name: %2)").arg(i).arg(colorName);
-    
+
     QIcon colorIcon(qMRMLUtils::createColorPixmap(this->style(), d->colorFromIndex(i)));
-    
+
     QString text = "";
 
     if (d->LabelValueVisible)

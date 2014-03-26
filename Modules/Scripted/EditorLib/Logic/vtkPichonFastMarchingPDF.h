@@ -54,7 +54,7 @@ public:
   double getMean( void ) { return mean; };
   double getSigma2( void ) { return sigma2; };
 
-  
+
   vtkPichonFastMarchingPDF(){};
   vtkPichonFastMarchingPDF( int realizationMax );
   ~vtkPichonFastMarchingPDF();
@@ -66,7 +66,7 @@ public:
 
   bool willUseGaussian( void );
 
-  void reset( void );  
+  void reset( void );
   void update( void );
 
   double value( int k );
@@ -99,12 +99,12 @@ public:
 
   double *smoothedBins;
 
-  double * coefGauss;  
+  double * coefGauss;
 
   std::deque<int> inBins;
   std::deque<int> toBeAdded;
 
-  /// first 2 moments (not centered, not divided by number of samples)  
+  /// first 2 moments (not centered, not divided by number of samples)
   double m1;
   double m2;
 

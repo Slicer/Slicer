@@ -99,7 +99,7 @@ bool ImportIDModelHierarchyParentIDConflictTestXMLString()
   /// vtkMRMLModelHierarchyNode3 with parent id vtkMRMLModelHierarchyNode2
   /// vtkMRMLModelHierarchyNode4 with parent id vtkMRMLModelHierarchyNode3
   /// vtkMRMLModelHierarchyNode5 with parent id vtkMRMLModelHierarchyNode4
- 
+
 
   const char scene1XML[] =
     "<MRML >"
@@ -127,7 +127,7 @@ bool ImportIDModelHierarchyParentIDConflictTestXMLString()
   /// vtkMRMLModelHierarchyNode8 with parent id vtkMRMLModelHierarchyNode7
   /// vtkMRMLModelHierarchyNode9 with parent id vtkMRMLModelHierarchyNode8
   /// vtkMRMLModelHierarchyNode10 with parent id vtkMRMLModelHierarchyNode9
-  
+
   scene->Import();
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
   if (numNodes != 10)
@@ -184,7 +184,7 @@ bool ImportIDModelHierarchyParentIDConflictTestXMLString()
 
 //---------------------------------------------------------------------------
 // The test makes sure the model hierarchy nodes correctly support node ID
-// conflict in the parent node id. 
+// conflict in the parent node id.
 // - populate a scene with one hierarchy node, save to disk
 // - populates a scene with a 5 deep model hierarchy, save to disk
 // - create new scene

@@ -175,7 +175,7 @@ void vtkMRMLVolumePropertyNode::Copy(vtkMRMLNode *anode)
   this->Superclass::Copy(anode);
 
   this->CopyParameterSet(anode);
-  
+
   this->EndModify(disabledModify);
 }
 

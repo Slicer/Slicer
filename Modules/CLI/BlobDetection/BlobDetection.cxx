@@ -29,12 +29,12 @@ template <class Tin>
 int DoIt( int argc, char * argv[])
 {
   PARSE_ARGS;
-  
+
   typedef Tin     InputPixelType;
 
   typedef itk::Image<InputPixelType, 3>                           InputImageType;
   typedef itk::Image<float, 3>                                    OutputImageType;
-  
+
   typedef itk::ImageFileReader<InputImageType>                    ReaderType;
   typedef itk::ImageFileWriter<OutputImageType>                   WriterType;
 
@@ -51,7 +51,7 @@ int DoIt( int argc, char * argv[])
 
   reader1->SetFileName( InputVolume.c_str() );
   reader1->Update();
-  
+
   typename ObjectnessFilterType::Pointer objectnessFilter =
       ObjectnessFilterType::New();
 
@@ -67,20 +67,20 @@ int DoIt( int argc, char * argv[])
   float sx = spacing[0];
   float sy = spacing[1];
   float sz = spacing[2];
-  
+
   float minScale = sx < sy ? sx : sy;
   minScale = minScale < sz ? minScale : sz;
-  
+
   if (minScale <= 0.0)
   {
     std::cerr << "!!! minimum image spacing can not be zero or negative !!!" << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   int autoSteps = (scale - minScale) / minScale;
-  
+
   autoSteps = autoSteps < 1 ? 1 : autoSteps;
-  
+
   typename MultiScaleEnhancementFilterType::Pointer multiScaleEnhancementFilter =
       MultiScaleEnhancementFilterType::New();
   itk::PluginFilterWatcher watchFilter(multiScaleEnhancementFilter,   "Processing", CLPProcessInformation);
@@ -91,7 +91,7 @@ int DoIt( int argc, char * argv[])
   multiScaleEnhancementFilter->SetNumberOfSigmaSteps(steps <= 0 ? autoSteps : steps);
   multiScaleEnhancementFilter->SetGenerateScalesOutput(false);
   multiScaleEnhancementFilter->SetHessianToMeasureFilter(objectnessFilter);
-  
+
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
@@ -163,6 +163,6 @@ int main( int argc, char* argv[] )
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   return EXIT_SUCCESS;
 }

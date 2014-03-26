@@ -9,7 +9,7 @@ int main(int argc, char * argv [])
 {
 
   PARSE_ARGS;
- 
+
 
   typedef itk::DiffusionTensor3D<float> PixelType;
   typedef itk::Image< PixelType, 3 >   ImageType;
@@ -18,16 +18,16 @@ int main(int argc, char * argv [])
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
-  
+
   ReaderType::Pointer readerImport = ReaderType::New();
   WriterType::Pointer writerImport = WriterType::New();
 
   ReaderType::Pointer readerExport = ReaderType::New();
   WriterType::Pointer writerExport = WriterType::New();
-  
+
   readerExport->SetFileName(inputTensor);
   writerExport->SetFileName(outputFile);
-  
+
   try
     {
       writerExport->SetInput(readerExport->GetOutput());

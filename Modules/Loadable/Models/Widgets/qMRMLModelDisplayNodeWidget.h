@@ -42,7 +42,7 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
 public:
   qMRMLModelDisplayNodeWidget(QWidget *parent=0);
   virtual ~qMRMLModelDisplayNodeWidget();
-  
+
   vtkMRMLModelDisplayNode* mrmlModelDisplayNode()const;
 
   bool scalarsVisibility()const;
@@ -58,7 +58,7 @@ public slots:
   /// it internally shows the 1st display node.
   /// can be set from a model node or a model hierarchy node
   void setMRMLModelOrHierarchyNode(vtkMRMLNode* modelNode);
-  
+
   void setScalarsVisibility(bool);
   void setActiveScalarName(const QString&);
   void setScalarsColorNode(vtkMRMLNode*);

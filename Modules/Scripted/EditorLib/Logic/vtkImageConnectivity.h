@@ -7,7 +7,7 @@
 
 =========================================================================auto=*/
 ///  vtkImageConnectivity - Identify and process islands of similar pixels
-/// 
+///
 ///  The input data type must be shorts.
 /// .SECTION Warning
 /// You need to explicitely call Update
@@ -55,7 +55,7 @@ public:
   vtkGetMacro(LargestIslandSize, int);
   vtkSetMacro(LargestIslandSize, int);
 
-  /// 
+  ///
   vtkGetMacro(SliceBySlice, int);
   vtkSetMacro(SliceBySlice, int);
   vtkBooleanMacro(SliceBySlice, int);

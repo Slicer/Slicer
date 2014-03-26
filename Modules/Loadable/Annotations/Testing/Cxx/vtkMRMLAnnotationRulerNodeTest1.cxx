@@ -12,7 +12,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 {
 
   // ======================
-  // Basic Setup 
+  // Basic Setup
   // ======================
 
   vtkNew<vtkMRMLAnnotationRulerNode> node2;
@@ -41,7 +41,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
   storNode->Delete();
 
   std::cout << "Passed StorageNode" << std::endl;
-  
+
   // ======================
   // Modify Properties
   // ======================
@@ -51,7 +51,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 
 
   node2->SetName("AnnotationRulerNodeTest") ;
-  
+
   std::string nodeTagName = node2->GetNodeTagName();
   std::cout << "Node Tag Name = " << nodeTagName << std::endl;
 
@@ -63,7 +63,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
     double ctp[3] = { 1, 2, 3};
     node2->SetPosition2(ctp);
   }
- 
+
    double *ctrlPointID = node2->GetPosition2();
 
    if (ctrlPointID[0]!= 1 || (ctrlPointID[1] != 2) || (ctrlPointID[2] != 3))
@@ -126,31 +126,31 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
   cout << "Passed CopyWithoutModifiedEvent" << endl;
 
   // ======================
-  // Test WriteXML and ReadXML 
+  // Test WriteXML and ReadXML
   // ======================
 
   mrmlScene->SetURL("AnnotationRulerNodeTest.mrml");
   mrmlScene->Commit();
 
-  // Now Read in File to see if ReadXML works - it first disconnects from node2 ! 
+  // Now Read in File to see if ReadXML works - it first disconnects from node2 !
   mrmlScene->Connect();
   vtkIndent ij;
 
-  if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationRulerNode") != 1) 
+  if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationRulerNode") != 1)
     {
         std::cerr << "Error in ReadXML() or WriteXML() - Did not create a class called vtkMRMLAnnotationRulerNode" << std::endl;
     return EXIT_FAILURE;
     }
 
   vtkMRMLAnnotationRulerNode *node3 = dynamic_cast < vtkMRMLAnnotationRulerNode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationRulerNode"));
-  if (!node3) 
+  if (!node3)
       {
     std::cerr << "Error in ReadXML() or WriteXML(): could not find vtkMRMLAnnotationRulerNode" << std::endl;
     return EXIT_FAILURE;
       }
 
   std::stringstream initialAnnotation, afterAnnotation;
-  
+
   //cout << " ================= " << endl;
   //mrmlScene->PrintSelf(cout,ind);
   //return 0;
@@ -159,7 +159,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
   node2->PrintAnnotationInfo(initialAnnotation,ind);
 
   node3->PrintAnnotationInfo(afterAnnotation,ind);
-  if (initialAnnotation.str().compare(afterAnnotation.str())) 
+  if (initialAnnotation.str().compare(afterAnnotation.str()))
   {
     std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
     std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
@@ -171,7 +171,7 @@ int vtkMRMLAnnotationRulerNodeTest1(int , char * [] )
 
 
   return EXIT_SUCCESS;
-  
+
 }
 
 

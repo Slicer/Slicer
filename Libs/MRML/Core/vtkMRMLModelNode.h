@@ -182,11 +182,11 @@ protected:
   virtual void UpdateDisplayNodePolyData(vtkMRMLDisplayNode *dnode);
 
   ///
-  /// Called when a node reference ID is added (list size increased). 
+  /// Called when a node reference ID is added (list size increased).
   virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
 
   ///
-  /// Called when a node reference ID is modified. 
+  /// Called when a node reference ID is modified.
   virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
 
 

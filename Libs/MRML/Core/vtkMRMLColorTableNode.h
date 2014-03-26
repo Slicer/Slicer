@@ -29,33 +29,33 @@ public:
   static vtkMRMLColorTableNode *New();
   vtkTypeMacro(vtkMRMLColorTableNode,vtkMRMLColorNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ColorTable";};
 
   vtkGetObjectMacro(LookupTable, vtkLookupTable);
   virtual void SetLookupTable(vtkLookupTable* newLookupTable);
 
-  /// 
+  ///
   /// Get/Set for Type
   void SetType(int type);
   vtkGetMacro(Type,int);
@@ -84,26 +84,26 @@ public:
   void SetTypeToWarm3();
   void SetTypeToCool1();
   void SetTypeToCool2();
-  void SetTypeToCool3();  
+  void SetTypeToCool3();
   void SetTypeToWarmShade1();
   void SetTypeToWarmShade2();
   void SetTypeToWarmShade3();
   void SetTypeToCoolShade1();
   void SetTypeToCoolShade2();
-  void SetTypeToCoolShade3();  
+  void SetTypeToCoolShade3();
   void SetTypeToWarmTint1();
   void SetTypeToWarmTint2();
   void SetTypeToWarmTint3();
   void SetTypeToCoolTint1();
   void SetTypeToCoolTint2();
-  void SetTypeToCoolTint3();  
+  void SetTypeToCoolTint3();
 
 
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  /// 
+  ///
   /// The list of valid table types
- 
+
   /// Grey - greyscale ramp
   /// Iron - neutral
   /// Rainbow - red-orange-yellow-blue-indigo-violet
@@ -125,14 +125,14 @@ public:
   /// Magenta - magenta ramp (complementary ramp to green, layering yeilds gray)
   /// Warm# - ramps of warm colors that are complimentary to Cool#
   /// WarmShade# - ramps of warm colors with variation in value that are
-  ///       complimentary to CoolShade# 
+  ///       complimentary to CoolShade#
   /// WarmTint# - ramps of warm colors with variation in saturation that are
-  ///       complimentary to CoolTint# 
+  ///       complimentary to CoolTint#
   /// Cool# - ramps of cool colors that are complimentary to Warm#
   /// CoolShade# - ramps of cool colors with variation in value that are
-  ///       complimentary to WarmShade# 
+  ///       complimentary to WarmShade#
   /// CoolTint# - ramps of cool colors with variation in saturation that are
-  ///       complimentary to WarmSTint# 
+  ///       complimentary to WarmSTint#
   enum
     {
       FullRainbow = 0,
@@ -176,32 +176,32 @@ public:
       CoolTint3 = 38
     };
 
-  /// 
+  ///
   /// Return the lowest and highest integers, for use in looping
   int GetFirstType () { return this->FullRainbow; };
   int GetLastType () { return this->CoolTint3; };
-  
-  /// 
+
+  ///
   /// return a text string describing the colour look up table type
   virtual const char * GetTypeAsString();
 
-  /// 
+  ///
   /// Set the size of the colour table if it's a User table
   void SetNumberOfColors(int n);
 
-  /// 
+  ///
   /// Set the size of the colour table if it's a User table
   virtual int GetNumberOfColors();
 
-  /// 
-  /// keep track of where we last added a colour 
+  ///
+  /// keep track of where we last added a colour
   int LastAddedColor;
 
-  /// 
+  ///
   /// Add a colour to the User colour table, at the end
   void AddColor(const char* name, double r, double g, double b, double a = 1.0);
 
-  /// 
+  ///
   /// Set a colour into the User colour table. Return 1 on success, 0 on failure.
   int SetColor(int entry, const char* name, double r, double g, double b, double a = 1.0);
 
@@ -209,25 +209,25 @@ public:
   int SetColor(int entry, double r, double g, double b, double a);
   int SetColor(int entry, double r, double g, double b);
   int SetOpacity(int entry, double opacity);
-  
+
   /// Retrieve the color associated to the index
   /// Return true if the color exists, false otherwise
   virtual bool GetColor(int entry, double* color);
 
-  /// 
+  ///
   /// clear out the names list
   void ClearNames();
 
-  /// 
+  ///
   /// reset when close the scene
   virtual void Reset();
 
-  /// 
+  ///
   /// return the index associated with this color name, which can then be used
   /// to get the colour. Returns -1 on failure.
   int GetColorIndexByName(const char *name);
- 
-  /// 
+
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
@@ -237,7 +237,7 @@ protected:
   vtkMRMLColorTableNode(const vtkMRMLColorTableNode&);
   void operator=(const vtkMRMLColorTableNode&);
 
-  ///  
+  ///
   /// The look up table, constructed according to the Type
   vtkLookupTable *LookupTable;
 

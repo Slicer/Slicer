@@ -10,14 +10,14 @@ import Effect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   ThresholdEffect is a subclass of Effect
   the global threshold operation
   in the slicer editor
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -102,7 +102,7 @@ class ThresholdEffectOptions(Effect.EffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -188,7 +188,7 @@ class ThresholdEffectOptions(Effect.EffectOptions):
 #
 # ThresholdEffectTool
 #
- 
+
 class ThresholdEffectTool(Effect.EffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -201,7 +201,7 @@ class ThresholdEffectTool(Effect.EffectTool):
 
   def __init__(self, sliceWidget):
     super(ThresholdEffectTool,self).__init__(sliceWidget)
-    
+
     # create a logic instance to do the non-gui work
     self.logic = ThresholdEffectLogic(self.sliceWidget.sliceLogic())
     self.logic.undoRedo = self.undoRedo
@@ -317,13 +317,13 @@ class ThresholdEffectTool(Effect.EffectTool):
 #
 # ThresholdEffectLogic
 #
- 
+
 class ThresholdEffectLogic(Effect.EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an ThresholdEffectTool
   or ThresholdEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the ThresholdEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -334,7 +334,7 @@ class ThresholdEffectLogic(Effect.EffectLogic):
 
 
 #
-# The ThresholdEffect class definition 
+# The ThresholdEffect class definition
 #
 
 class ThresholdEffect(Effect.Effect):

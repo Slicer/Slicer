@@ -88,11 +88,11 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "layoutLabel")) 
+    if (!strcmp(attName, "layoutLabel"))
       {
       this->SetLayoutLabel( attValue );
       }
@@ -129,9 +129,9 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
       ss >> val;
       this->BackgroundColor2[2] = val;
       }
-    else if (!strcmp(attName, "active")) 
+    else if (!strcmp(attName, "active"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->Active = 1;
         }
@@ -140,9 +140,9 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
         this->Active = 0;
         }
       }
-    else if (!strcmp(attName, "visibility")) 
+    else if (!strcmp(attName, "visibility"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->Visibility = 1;
         }

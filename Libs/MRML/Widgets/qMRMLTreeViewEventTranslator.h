@@ -46,9 +46,9 @@ public:
 private:
   qMRMLTreeViewEventTranslator(const qMRMLTreeViewEventTranslator&); // NOT implemented
   qMRMLTreeViewEventTranslator& operator=(const qMRMLTreeViewEventTranslator&); // NOT implemented
-  
+
   QObject* CurrentObject;
-  
+
 private slots:
   void onDestroyed(QObject*);
   void onCurrentNodeDeleted(const QModelIndex&);

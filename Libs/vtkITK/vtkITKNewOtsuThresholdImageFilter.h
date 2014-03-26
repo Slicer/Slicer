@@ -27,42 +27,42 @@ class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter : public vtkITKImageToIma
 public:
   static vtkITKNewOtsuThresholdImageFilter *New();
   vtkTypeRevisionMacro(vtkITKNewOtsuThresholdImageFilter, vtkITKImageToImageFilterSS);
-  
-  void SetNumberOfHistogramBins( unsigned long value) 
+
+  void SetNumberOfHistogramBins( unsigned long value)
   {
     DelegateITKInputMacro ( SetNumberOfHistogramBins, value );
   };
   unsigned long GetNumberOfHistogramBins ()
   { DelegateITKOutputMacro ( GetNumberOfHistogramBins ); };
-  
+
   void SetOmega (double value)
   {
     DelegateITKInputMacro( SetOmega, value);
-   }; 
-  
+   };
+
   double GetOmega()
   {
     DelegateITKOutputMacro( GetOmega );
-  }; 
-  
+  };
+
   void SetInsideValue (short value)
-  { 
+  {
     OutputImagePixelType d = static_cast<OutputImagePixelType> ( value );
     DelegateITKInputMacro (SetInsideValue,d);
   }
-  
+
   void SetOutsideValue (short value)
-  { 
+  {
     OutputImagePixelType d = static_cast<OutputImagePixelType> ( value );
     DelegateITKInputMacro (SetOutsideValue,d);
   }
-  
+
   short GetInsideValue ()
   { DelegateITKOutputMacro ( GetInsideValue ); };
-  
+
   short GetOutsideValue ()
   { DelegateITKOutputMacro ( GetOutsideValue ); };
- 
+
   short GetThreshold()
   { DelegateITKOutputMacro ( GetThreshold ); };
 
@@ -71,7 +71,7 @@ protected:
   vtkITKNewOtsuThresholdImageFilter() : Superclass ( ImageFilterType::New() ){};
   ~vtkITKNewOtsuThresholdImageFilter() {};
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-  
+
 private:
   vtkITKNewOtsuThresholdImageFilter(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.
   void operator=(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.

@@ -80,8 +80,8 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   displayNode->SetAndObserveColorNodeID( colorNode->GetID() );
 
   // read the data
-  storageNode->SetFileName( archetype ); 
-  storageNode->ReadData( volumeNode ); 
+  storageNode->SetFileName( archetype );
+  storageNode->ReadData( volumeNode );
 
 
   //
@@ -112,7 +112,7 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   vtkRenderer *renderer = vtkRenderer::New();
   renderer->AddActor2D( actor );
   rw->AddRenderer( renderer );
-  
+
   // clean up
   mapper->Delete();
   actor->Delete();
@@ -171,7 +171,7 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   qarchetype.append("share/MRML/Testing/TestData/fixed.nrrd");
   QByteArray archetype = qarchetype.toAscii();
 
-  vtkMRMLSliceLogic *sliceLogic = setupSliceDisplay( 
+  vtkMRMLSliceLogic *sliceLogic = setupSliceDisplay(
           scene, vtkWidget->GetRenderWindow(), archetype.data() );
 
   // quit after 5 seconds if the Quit button hasn't been clicked

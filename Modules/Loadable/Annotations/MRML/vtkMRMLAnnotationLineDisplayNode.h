@@ -1,8 +1,8 @@
 // .NAME vtkMRMLAnnotationLineDisplayNode - MRML node to represent display properties for tractography.
 // .SECTION Description
-// vtkMRMLAnnotationLineDisplayNode nodes store display properties of trajectories 
-// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
-// or by scalar invariants), display on/off for tensor glyphs and display of 
+// vtkMRMLAnnotationLineDisplayNode nodes store display properties of trajectories
+// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
+// or by scalar invariants), display on/off for tensor glyphs and display of
 // trajectory as a line or tube.
 //
 
@@ -20,7 +20,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   static vtkMRMLAnnotationLineDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLAnnotationLineDisplayNode,vtkMRMLAnnotationDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
-  
+
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
-  
+
   // Description:
   // Get node XML tag name (like Volume, Annotation)
   virtual const char* GetNodeTagName() {return "AnnotationLineDisplay";};
@@ -50,8 +50,8 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
   /// Get/Set for Symbol scale
@@ -75,7 +75,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   /// Get/Set for maximum number of ticks
   vtkSetMacro(MaxTicks, int);
   vtkGetMacro(MaxTicks, int);
-  
+
   /// Set SliceProjection to Dashed
   inline void SliceProjectionDashedOn();
 
@@ -138,7 +138,7 @@ protected:
   ~vtkMRMLAnnotationLineDisplayNode() { };
   vtkMRMLAnnotationLineDisplayNode( const vtkMRMLAnnotationLineDisplayNode& );
   void operator= ( const vtkMRMLAnnotationLineDisplayNode& );
-  
+
   double LineThickness;
   double LabelPosition;
   int LabelVisibility;
@@ -153,7 +153,7 @@ protected:
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionDashedOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() | 
+  this->SetSliceProjection( this->GetSliceProjection() |
                             vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }
 
@@ -161,7 +161,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionDashedOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() & 
+  this->SetSliceProjection( this->GetSliceProjection() &
                             ~vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }
 
@@ -169,7 +169,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionColoredWhenParallelOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() | 
+  this->SetSliceProjection( this->GetSliceProjection() |
                             vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
 }
 
@@ -177,7 +177,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionColoredWhenParallelOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() & 
+  this->SetSliceProjection( this->GetSliceProjection() &
                             ~vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
 }
 
@@ -185,7 +185,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionThickerOnTopOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() | 
+  this->SetSliceProjection( this->GetSliceProjection() |
                             vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
 }
 
@@ -193,7 +193,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionThickerOnTopOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() & 
+  this->SetSliceProjection( this->GetSliceProjection() &
                             ~vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
 }
 
@@ -201,7 +201,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionUseRulerColorOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() | 
+  this->SetSliceProjection( this->GetSliceProjection() |
                             vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
 }
 
@@ -209,7 +209,7 @@ void vtkMRMLAnnotationLineDisplayNode
 void vtkMRMLAnnotationLineDisplayNode
 ::SliceProjectionUseRulerColorOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() & 
+  this->SetSliceProjection( this->GetSliceProjection() &
                             ~vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
 }
 

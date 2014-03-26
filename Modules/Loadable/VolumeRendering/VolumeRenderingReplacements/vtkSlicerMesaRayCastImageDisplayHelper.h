@@ -58,11 +58,11 @@ public:
   void RenderTexture( vtkVolume *vol, vtkRenderer *ren,
                       vtkFixedPointRayCastImage *image,
                       float requestedDepth );
-  
+
 protected:
   vtkSlicerMesaRayCastImageDisplayHelper();
   ~vtkSlicerMesaRayCastImageDisplayHelper();
-  
+
   void RenderTextureInternal( vtkVolume *vol, vtkRenderer *ren,
                               int imageMemorySize[2],
                               int imageViewportSize[2],

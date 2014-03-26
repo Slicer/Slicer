@@ -34,62 +34,62 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   static vtkMRMLDiffusionTensorVolumeSliceDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLDiffusionTensorVolumeSliceDisplayNode,vtkMRMLGlyphableVolumeSliceDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent );
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance (  );
 
-  /// 
+  ///
   /// Read node attributes from XML (MRML) file
   virtual void ReadXMLAttributes ( const char** atts );
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML ( ostream& of, int indent );
 
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
   virtual const char* GetNodeTagName ( ) {return "DiffusionTensorVolumeSliceDisplayNode";};
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
-  /// 
+  ///
   /// Update the pipeline based on this node attributes
   virtual void UpdatePolyDataPipeline();
 
-  /// 
+  ///
   /// Set ImageData for a volume slice
   virtual void SetSliceImage(vtkImageData *image);
- 
-  /// 
+
+  ///
   /// Set slice to RAS transformation
   virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix);
 
-  /// 
+  ///
   /// Set slice to IJK transformation
   virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix);
 
@@ -100,7 +100,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
 
   //--------------------------------------------------------------------------
   /// Display Information: Color Mode
-  /// 0) solid color by group 1) color by scalar invariant 
+  /// 0) solid color by group 1) color by scalar invariant
   /// 2) color by avg scalar invariant 3) color by other
   //--------------------------------------------------------------------------
 
@@ -115,27 +115,27 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for ALL nodes
   //--------------------------------------------------------------------------
- 
-  /// 
+
+  ///
   /// Color by solid color (for example the whole fiber bundle red. blue, etc.)
   void SetColorModeToSolid ( ) {
     this->SetColorMode ( this->colorModeSolid );
   };
 
-  /// 
+  ///
   /// Color according to the tensors using various scalar invariants.
   void SetColorModeToScalar ( ) {
     this->SetColorMode ( this->colorModeScalar );
   };
 
-  /// 
+  ///
   /// Color according to the tensors using a function of scalar invariants along the tract.
   /// This enables coloring by average FA, for example.
   void SetColorModeToFunctionOfScalar ( ) {
     this->SetColorMode ( this->colorModeFunctionOfScalar );
   };
 
-  /// 
+  ///
   /// Use to color by the active cell scalars.  This is intended to support
   /// external processing of fibers, for example to label each with the distance
   /// of that fiber from an fMRI activation.  Then by making that information
@@ -151,32 +151,32 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
-  
+
 
   //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
-  
- 
+
+
   /// Node reference to ALL DT nodes
 
-  /// 
+  ///
   /// Get diffusion tensor display MRML object for fiber glyph.
   vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
 
-  /// 
+  ///
   /// Set diffusion tensor display MRML object for fiber glyph.
   void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
 
-  /// 
+  ///
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
-  /// 
+  ///
   /// Get the number of selected scalar invariants to color a Slice
   static int GetNumberOfScalarInvariants();
 
-  /// 
+  ///
   /// Get the nth scalar invariant to color a Slice
   static int GetNthScalarInvariant(int i);
 

@@ -23,7 +23,7 @@ def findSource(dir):
               fnmatch.fnmatch(file, "*.png") or \
               fnmatch.fnmatch(file, "*.dox"):
             file = os.path.join(root,file)
-            file = file[len(dir):] # strip common dir 
+            file = file[len(dir):] # strip common dir
             fileList.append(file)
   return fileList
 
@@ -33,7 +33,7 @@ def copyAndReplace(inFile, template, target, key, moduleName):
   path = os.path.dirname(newFile)
   if not os.path.exists(path):
       os.makedirs(path)
-  
+
   fp = open(os.path.join(template,inFile))
   contents = fp.read()
   fp.close()
@@ -42,7 +42,7 @@ def copyAndReplace(inFile, template, target, key, moduleName):
   fp = open(newFile, "w")
   fp.write(contents)
   fp.close()
-  
+
 
 def usage():
   print ("")
@@ -94,7 +94,7 @@ def main(argv):
 
   if templateKey == "":
     templateKey = os.path.split(template[:-1])[-1]
-  
+
   if target == "":
     target = "Modules/Loadable/" + moduleName
 
@@ -113,7 +113,7 @@ def main(argv):
 
   for file in sources:
     copyAndReplace(file, template, target, templateKey, moduleName)
-  
+
 
   print ('\nModule %s created!' % moduleName)
 

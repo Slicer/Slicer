@@ -20,10 +20,10 @@
 class vtkUnstructuredGrid;
 
 /// \brief MRML node to represent a fiber bundle from tractography in DTI data.
-/// 
+///
 /// UnstructuredGrid nodes contain trajectories ("fibers") from tractography, internally represented as vtkPolyData.
-/// A UnstructuredGrid node contains many fibers and forms the smallest logical unit of tractography 
-/// that MRML will manage/read/write. Each fiber has accompanying tensor data.  
+/// A UnstructuredGrid node contains many fibers and forms the smallest logical unit of tractography
+/// that MRML will manage/read/write. Each fiber has accompanying tensor data.
 /// Visualization parameters for these nodes are controlled by the vtkMRMLUnstructuredGridDisplayNode class.
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridNode : public vtkMRMLDisplayableNode
 {
@@ -32,7 +32,7 @@ public:
   vtkTypeMacro(vtkMRMLUnstructuredGridNode,vtkMRMLDisplayableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
@@ -42,31 +42,31 @@ public:
 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "UnstructuredGrid";};
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
 
-  /// 
+  ///
   /// Get associated model display MRML node
   /**
-  vtkMRMLUnstructuredGridDisplayNode* GetUnstructuredGridDisplayNode() 
+  vtkMRMLUnstructuredGridDisplayNode* GetUnstructuredGridDisplayNode()
   {
     return vtkMRMLUnstructuredGridDisplayNode::SafeDownCast(this->DisplayNode);
   };
   **/
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
-    /// 
+    ///
   /// Set and observe UnstructuredGrid  for this model
   vtkGetObjectMacro(UnstructuredGrid, vtkUnstructuredGrid);
   void SetAndObserveUnstructuredGrid(vtkUnstructuredGrid *UnstructuredGrid);
@@ -74,7 +74,7 @@ public:
   virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
-  /// 
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
@@ -89,7 +89,7 @@ protected:
 
   /// Data
   vtkUnstructuredGrid *UnstructuredGrid;
-  
+
 };
 
 #endif

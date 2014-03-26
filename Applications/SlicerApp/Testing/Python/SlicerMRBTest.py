@@ -142,7 +142,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     fa = slicer.util.getNode('FA')
     self.assertTrue( redComposite.GetBackgroundVolumeID() == fa.GetID() )
     self.delayDisplay('The FA volume is STILL in the background of the Red viewer')
-    
+
     #
     # save image, reload the scene and save image
     # then load mrb and save image
@@ -231,7 +231,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
       self.assertTrue( appLogic.PercentEncode(original) == encoded )
     self.delayDisplay("Test Finished")
 
-  def imageCompare(self,images,text='',prefWidth=1500): 
+  def imageCompare(self,images,text='',prefWidth=1500):
     """Show images in a window with a text message.
     """
     self.imageCompare = qt.QWidget()
@@ -251,30 +251,30 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
       hbox.addWidget(label)
     self.imageCompare.show()
 
-  def showOneTract(self,tracts,whichTract): 
+  def showOneTract(self,tracts,whichTract):
     """display the named tract's tubes but turn the others off"""
     for tractName in tracts:
       fiberNode = slicer.util.getNode(tractName)
       tubeDisplay = fiberNode.GetTubeDisplayNode()
       if tractName == whichTract:
         tubeDisplay.SetVisibility(1)
-        tubeDisplay.SetSliceIntersectionVisibility(1) 
+        tubeDisplay.SetSliceIntersectionVisibility(1)
       else:
         tubeDisplay.SetVisibility(0)
-        tubeDisplay.SetSliceIntersectionVisibility(0) 
+        tubeDisplay.SetSliceIntersectionVisibility(0)
 
   def storeSceneView(self,name,description=""):
     """  Store a scene view into the current scene.
     TODO: this might move to slicer.util
     """
     layoutManager = slicer.app.layoutManager()
-    
+
     sceneViewNode = slicer.vtkMRMLSceneViewNode()
     view1 = layoutManager.threeDWidget(0).threeDView()
-    
+
     w2i1 = vtk.vtkWindowToImageFilter()
     w2i1.SetInput(view1.renderWindow())
-    
+
     w2i1.Update()
     image1 = w2i1.GetOutput()
     sceneViewNode.SetScreenShot(image1)

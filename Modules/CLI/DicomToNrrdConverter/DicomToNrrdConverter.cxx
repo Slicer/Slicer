@@ -161,7 +161,7 @@ namespace {
   static bool ExtractBinValEntry( gdcm::File * const header, const uint16_t group, const uint16_t elem, std::string& tag )
     {
     tag.clear();
-     
+
     if ( header->GetBinEntry(group, elem) )
       {
       gdcm::BinEntry* binEntry = header->GetBinEntry(group, elem);
@@ -186,7 +186,7 @@ namespace {
   static unsigned int ExtractSiemensDiffusionInformation( const std::string tagString, const std::string nameString, std::vector<double>& valueArray )
     {
     ::size_t atPosition = tagString.find( nameString );
-      while( true )  // skip nameString inside a quotation 
+      while( true )  // skip nameString inside a quotation
         {
           std::string nextChar = tagString.substr( atPosition+nameString.size(), 1 );
           std::cout << nextChar << std::endl;
@@ -278,7 +278,7 @@ namespace {
       char c[4];
     } bint = {0x01020304};
 
-    return bint.c[0] == 1; 
+    return bint.c[0] == 1;
     }
 
   std::string endianAwareSwap(const std::string toBeSwapped, const bool swapByteOrder)
@@ -288,7 +288,7 @@ namespace {
     if (swapByteOrder)
       {
       // Swap bytes
-      std::string tmp = toBeSwapped; 
+      std::string tmp = toBeSwapped;
       reverse(tmp.begin(),tmp.end());
       return tmp;
       }
@@ -403,7 +403,7 @@ int main(int argc, char* argv[])
   const ReaderType::FileNamesContainer & filenamesInSeries =
     inputNames->GetInputFileNames();
 
-  if ( filenamesInSeries.size() < 1 ) 
+  if ( filenamesInSeries.size() < 1 )
     {
     std::cout << "Error: no DICOM files found in inputDirectory: " << inputDicomDirectory << std::endl;
     return EXIT_FAILURE;
@@ -615,7 +615,7 @@ int main(int argc, char* argv[])
   std::transform(transferSyntaxName.begin(), transferSyntaxName.end(), transferSyntaxName.begin(), ::tolower);
   bool swapByteOrder = false;
 
-  if ( transferSyntaxName.find("acr-nema") != std::string::npos ) 
+  if ( transferSyntaxName.find("acr-nema") != std::string::npos )
     {
     std::cout << "WARNING: Unknown transfer syntax, assuming little endian.  This may cause strange results, " <<
       "such as bizarre b-values and directions." << std::endl;
@@ -1022,7 +1022,7 @@ int main(int argc, char* argv[])
       vect3d.fill( 0 );
       //std::cout << "HACK: " << "DiffusionDirectionality=" << DiffusionDirectionality << ", k= " <<  k << std::endl;
       //std::cout << "HACK: " << "B0FieldFound=" << B0FieldFound << ", b=" << b << ", DiffusionDirectionality=" << DiffusionDirectionality << std::endl;
-      
+
       if ( DiffusionDirectionality.find("ISOTROPIC") != std::string::npos )
         { //Deal with images that are to be ignored
         //std::cout << " SKIPPING ISOTROPIC Diffusion. " << std::endl;
@@ -1208,7 +1208,7 @@ int main(int argc, char* argv[])
         }
       else
         {
-        // JTM - Patch from UNC: fill the nhdr header with the gradient directions and 
+        // JTM - Patch from UNC: fill the nhdr header with the gradient directions and
         // bvalues computed out of the BMatrix
         valueArray.resize(0);
         int nItems = ExtractSiemensDiffusionInformation(tag, "B_matrix", valueArray);
@@ -1218,7 +1218,7 @@ int main(int argc, char* argv[])
           {
           std::cout << "=============================================" << std::endl;
           std::cout << "BMatrix calculations..." << std::endl;
-          // UNC comments: We get the value of the b-value tag in the header. 
+          // UNC comments: We get the value of the b-value tag in the header.
           // We won't use it as is, but just to locate the B0 images.
           // This check must be added, otherwise the bmatrix of the B0 is not
           // read properly (it's not an actual field in the DICOM header of the B0).
@@ -1237,7 +1237,7 @@ int main(int argc, char* argv[])
 
           double bvalue = 0;
 
-          // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the 
+          // UNC comments: Fill out the 3x3 bmatrix with the 6 components read from the
           // DICOM header.
           bMatrix[0][0] = valueArray[0];
           bMatrix[0][1] = valueArray[1];
@@ -1302,16 +1302,16 @@ int main(int argc, char* argv[])
       }
 
 
-    // JTM - Create gradient scaling factor, which is determined by the largest b 
+    // JTM - Create gradient scaling factor, which is determined by the largest b
     // value in the scan
     std::vector<double> gradient_scaling_factor;
 
     if(useBMatrixGradientDirections == false)
       {
       for (unsigned int k = 0; k < nSlice; k+=nStride)
-        {    
+        {
         double scaling_factor = bValues[k / nStride] / max_bValue;
-        gradient_scaling_factor.push_back(scaling_factor); 
+        gradient_scaling_factor.push_back(scaling_factor);
         }
 
       for (unsigned int k = 0; k < nSlice; k += nStride )
@@ -1349,11 +1349,11 @@ int main(int argc, char* argv[])
           DiffusionVector_magnitude = sqrt((vect3d[0]*vect3d[0]) + (vect3d[1]*vect3d[1]) + (vect3d[2]*vect3d[2]));
 
           if (gradient_scaling_factor[k / nStride] != 0.0)
-            {          
+            {
             DiffusionVector_magnitude_difference = fabs(1.0 - (DiffusionVector_magnitude / gradient_scaling_factor[k / nStride]));
             std::cout << "DiffusionVector_magnitude_difference " << DiffusionVector_magnitude_difference << std::endl;
             std::cout << "gradient_scaling_factor " << gradient_scaling_factor[k / nStride] << std::endl;
-            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;    
+            std::cout << "DiffusionVector_magnitude " << DiffusionVector_magnitude << std::endl;
             if ((DiffusionVector_magnitude > 0.0) && (DiffusionVector_magnitude_difference > smallGradientThreshold) && (!useBMatrixGradientDirections))
               {
               std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
@@ -1361,8 +1361,8 @@ int main(int argc, char* argv[])
               //std::cout << "Please set smallGradientFix flag to either Rescale and/or Remove (please separate with comma) OR useBMatrixGradientDirections to calculate gradient directions from the scanner B Matrix to alleviate this problem." << std::endl;
               std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions from the scanner B Matrix to alleviate this problem." << std::endl;
               return EXIT_FAILURE;
-              }  
-            }  
+              }
+            }
 
           UnmodifiedDiffusionVectorsInDicomLPSCoordinateSystem.push_back(vect3d);
           // vect3d.normalize();

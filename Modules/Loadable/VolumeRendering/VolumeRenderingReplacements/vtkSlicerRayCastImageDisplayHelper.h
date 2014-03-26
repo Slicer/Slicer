@@ -64,7 +64,7 @@ public:
   vtkSetClampMacro( PreMultipliedColors, int, 0, 1 );
   vtkGetMacro( PreMultipliedColors, int );
   vtkBooleanMacro( PreMultipliedColors, int );
-  
+
 
   // Description:
   // Set / Get the pixel scale to be applied to the image before display.
@@ -73,18 +73,18 @@ public:
   // values so needs a scale of 2.0.
   vtkSetMacro( PixelScale, float );
   vtkGetMacro( PixelScale, float );
-  
-  
+
+
 protected:
   vtkSlicerRayCastImageDisplayHelper();
   ~vtkSlicerRayCastImageDisplayHelper();
-  
+
   // Description:
   // Have the colors already been multiplied by alpha?
   int PreMultipliedColors;
 
   float PixelScale;
-  
+
 private:
   vtkSlicerRayCastImageDisplayHelper(const vtkSlicerRayCastImageDisplayHelper&);  // Not implemented.
   void operator=(const vtkSlicerRayCastImageDisplayHelper&);  // Not implemented.

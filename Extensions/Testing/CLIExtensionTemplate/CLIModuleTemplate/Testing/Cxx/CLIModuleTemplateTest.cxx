@@ -6,7 +6,7 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "itkTestMain.h" 
+#include "itkTestMain.h"
 
 // STD includes
 #include <iostream>

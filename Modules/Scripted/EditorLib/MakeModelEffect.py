@@ -11,14 +11,14 @@ import Effect
 
 #########################################################
 #
-# 
+#
 comment = """
 
-  MakeModelEffect is a subclass of Effect (for tools that plug into the 
-  slicer Editor module) for making model nodes from the 
+  MakeModelEffect is a subclass of Effect (for tools that plug into the
+  slicer Editor module) for making model nodes from the
   current paint label
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -117,7 +117,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
 
   def onApply(self):
     if self.checkForModelMakerModule():
-      # 
+      #
       # run the task (in the background)
       # - use the GUI to provide progress feedback
       # - use the GUI's Logic to invoke the task
@@ -152,7 +152,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
 #
 # MakeModelEffectTool
 #
- 
+
 class MakeModelEffectTool(Effect.EffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -172,13 +172,13 @@ class MakeModelEffectTool(Effect.EffectTool):
 #
 # MakeModelEffectLogic
 #
- 
+
 class MakeModelEffectLogic(Effect.EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an MakeModelEffectTool
   or MakeModelEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the MakeModelEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -210,7 +210,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
     parameters['Labels'] = self.editUtil.getLabel()
     parameters["StartLabel"] = -1
     parameters["EndLabel"] = -1
-    
+
     parameters['GenerateAll'] = False
     parameters["JointSmoothing"] = False
     parameters["SplitNormals"] = True
@@ -225,7 +225,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
       parameters["Smooth"] = 0
 
     #
-    # output 
+    # output
     # - make a new hierarchy node if needed
     #
     numNodes = slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelHierarchyNode" )
@@ -246,7 +246,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
 
     modelMaker = slicer.modules.modelmaker
 
-    # 
+    #
     # run the task (in the background)
     # - use the GUI to provide progress feedback
     # - use the GUI's Logic to invoke the task
@@ -257,7 +257,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
     slicer.util.showStatusMessage( "Model Making Started...", 2000 )
 
 #
-# The MakeModelEffect class definition 
+# The MakeModelEffect class definition
 #
 
 class MakeModelEffect(Effect.Effect):

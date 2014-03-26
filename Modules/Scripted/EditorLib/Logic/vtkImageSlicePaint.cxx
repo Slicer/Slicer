@@ -29,7 +29,7 @@ vtkImageSlicePaint::vtkImageSlicePaint()
     {
     this->TopLeft[i] = this->TopLeft[i] = this->BottomLeft[i] = this->BottomRight[i] = 0;
     }
-  
+
   this->MaskImage = NULL;
   this->BackgroundImage = NULL;
   this->WorkingImage = NULL;
@@ -76,7 +76,7 @@ void transform3 (vtkMatrix4x4 *m, double *in, double *out)
     return;
     }
 
-  // otherwise to a homogeneous transform 
+  // otherwise to a homogeneous transform
   double in4[4], out4[4];
   for (i = 0; i < 3; i++) { in4[i] = in[i]; }
   in4[3] = 1.0;
@@ -162,7 +162,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
   double rowStart[3];
   double rowEnd[3];
   T label = (T) self->GetPaintLabel();
-  
+
   // now calculate the change in IJK coordinates per row step
   for (int i = 0; i < 3; i++)
     {
@@ -180,7 +180,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
   //   (not that this is linear, so deltas could be precomputed for
   //   efficiency, but probably aren't needed)
   // - cache some values to avoid call overhead per pixel
-  //    
+  //
   vtkMatrix4x4 *workingIJKToWorld = self->GetWorkingIJKToWorld();
   vtkMatrix4x4 *backgroundIJKToWorld = self->GetBackgroundIJKToWorld();
   vtkNew<vtkMatrix4x4> backgroundWorldToIJK;
@@ -216,9 +216,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
     for (int column = 0; column <= maxColumnDelta; column++)
       {
       // get coordinates in Working IJK space (intIJK)
-      for (int i = 0; i < 3; i++) 
-        { 
-        intIJK[i] = paintRound (ijk[i]); 
+      for (int i = 0; i < 3; i++)
+        {
+        intIJK[i] = paintRound (ijk[i]);
         if ( intIJK[i] < 0 )
           {
           intIJK[i] = 0;
@@ -226,8 +226,8 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
         }
 
       // check to see if we are inside working volume
-      if ( ijk[0] < workingExtent[0] || ijk[0] > workingExtent[1] || 
-           ijk[1] < workingExtent[2] || ijk[1] > workingExtent[3] || 
+      if ( ijk[0] < workingExtent[0] || ijk[0] > workingExtent[1] ||
+           ijk[1] < workingExtent[2] || ijk[1] > workingExtent[3] ||
            ijk[2] < workingExtent[4] || ijk[2] > workingExtent[5] )
         {
         workingPtr = NULL;
@@ -237,7 +237,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
         workingPtr = (T *)(self->GetWorkingImage()->GetScalarPointer(intIJK));
         }
 
-      if ( workingPtr ) 
+      if ( workingPtr )
         {
 
         oldValue = *workingPtr;
@@ -247,7 +247,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
 
         int pixelToPaint = 0;  // is this location something we should consider painting
 
-        if ( self->GetReplaceImage() ) 
+        if ( self->GetReplaceImage() )
           {
           // with replace image, just copy value into the working label map
           T *replacePtr = NULL;
@@ -260,11 +260,11 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
           if ( self->GetMaskImage() == NULL )
             {
             // no mask, so check brush radius
-            double distSquared = ((workingWorld[0] - brushCenter[0]) * 
+            double distSquared = ((workingWorld[0] - brushCenter[0]) *
                                   (workingWorld[0] - brushCenter[0])) +
-                                 ((workingWorld[1] - brushCenter[1]) * 
+                                 ((workingWorld[1] - brushCenter[1]) *
                                   (workingWorld[1] - brushCenter[1])) +
-                                 ((workingWorld[2] - brushCenter[2]) * 
+                                 ((workingWorld[2] - brushCenter[2]) *
                                   (workingWorld[2] - brushCenter[2]));
             if ( distSquared < radiusSquared )
               {
@@ -276,9 +276,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
             // check the mask image
             // note: k will always be zero for the mask since it is 2D...
             transform3(maskWorldToIJK.GetPointer(), workingWorld, maskIJK);
-            for (int i = 0; i < 2; i++) 
-              { 
-              intMaskIJK[i] = paintRound(maskIJK[i]); 
+            for (int i = 0; i < 2; i++)
+              {
+              intMaskIJK[i] = paintRound(maskIJK[i]);
               if ( intMaskIJK[i] < 0 )
                 {
                 intMaskIJK[i] = 0;
@@ -286,21 +286,21 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
               }
             intMaskIJK[2] = 0;
 
-            void *ptr1 = self->GetMaskImage()->GetScalarPointer ( 
+            void *ptr1 = self->GetMaskImage()->GetScalarPointer (
                             intMaskIJK[0], intMaskIJK[1], intMaskIJK[2] );
 
-            if ( ptr1 == NULL ) 
+            if ( ptr1 == NULL )
               {
               int dimensions[3];
               self->GetMaskImage()->GetDimensions(dimensions);
               // TODO: this will leak matrices...
               vtkErrorWithObjectMacro ( self, << "vtkImageSlicePaintPaint:\nCannot get mask pointer for pixel\n"
-                << "workingWorld = " << 
+                << "workingWorld = " <<
                 workingWorld[0] << " " <<  workingWorld[1] << " " << workingWorld[2] << "\n"
-                << "intMaskIJK = " << 
-                intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << intMaskIJK[2] << "\n" 
-                << "maskDimensions = " << 
-                dimensions[0] << " " <<  dimensions[1] << " " << dimensions[2] << "\n" 
+                << "intMaskIJK = " <<
+                intMaskIJK[0] << " " <<  intMaskIJK[1] << " " << intMaskIJK[2] << "\n"
+                << "maskDimensions = " <<
+                dimensions[0] << " " <<  dimensions[1] << " " << dimensions[2] << "\n"
                 );
               return;
               }
@@ -313,7 +313,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
               }
             }
 
-          }  
+          }
 
         if ( pixelToPaint )
           {
@@ -323,9 +323,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
           // - apply threshold rule to only paint where backround fits constraints
           if ( !paintOver && oldValue != 0 )
             {
-            // don't write 
+            // don't write
             }
-          else // okay to paint 
+          else // okay to paint
             {
             if ( thresholdPaint )
               {
@@ -334,9 +334,9 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
 
               // get the background pixel
               transform3(backgroundWorldToIJK.GetPointer(), workingWorld, bgIJK);
-              for (int i = 0; i < 3; i++) 
-                { 
-                intbgIJK[i] = paintRound(bgIJK[i]); 
+              for (int i = 0; i < 3; i++)
+                {
+                intbgIJK[i] = paintRound(bgIJK[i]);
                 if ( intbgIJK[i] < 0 )
                   {
                   intbgIJK[i] = 0;
@@ -360,7 +360,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
       if ( extracting )
         {
         extractPtr = (T *)(self->GetExtractImage()->GetScalarPointer(column, row, 0));
-        if ( extractPtr ) 
+        if ( extractPtr )
           {
           *extractPtr = oldValue;
           }
@@ -392,7 +392,7 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
 void vtkImageSlicePaint::Paint()
 {
   void *ptr = NULL;
-  
+
   if ( this->GetWorkingImage() == NULL )
     {
     vtkErrorMacro (<< "Working image cannot be NULL\n");
@@ -402,9 +402,9 @@ void vtkImageSlicePaint::Paint()
 
   switch (this->GetWorkingImage()->GetScalarType())
     {
-    vtkTemplateMacro( 
+    vtkTemplateMacro(
       vtkImageSlicePaintPaint (this, (VTK_TT *)ptr ) );
-    default: 
+    default:
       {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");
       return;
@@ -417,7 +417,7 @@ void vtkImageSlicePaint::Paint()
 void vtkImageSlicePaint::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  
+
   os << indent << "TopLeft : " << this->TopLeft[0] << " " << this->TopLeft[1] << " " << this->TopLeft[2] << "\n";
   os << indent << "TopRight : " << this->TopRight[0] << " " << this->TopRight[1] << " " << this->TopRight[2] << "\n";
   os << indent << "BottomLeft : " << this->BottomLeft[0] << " " << this->BottomLeft[1] << " " << this->BottomLeft[2] << "\n";

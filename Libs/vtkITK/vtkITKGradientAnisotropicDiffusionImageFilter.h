@@ -71,7 +71,7 @@ protected:
   ~vtkITKGradientAnisotropicDiffusionImageFilter() {};
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
-  
+
 private:
   vtkITKGradientAnisotropicDiffusionImageFilter(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.
   void operator=(const vtkITKGradientAnisotropicDiffusionImageFilter&);  /// Not implemented.

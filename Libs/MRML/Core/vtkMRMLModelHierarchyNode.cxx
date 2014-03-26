@@ -43,7 +43,7 @@ vtkMRMLModelHierarchyNode::~vtkMRMLModelHierarchyNode()
 void vtkMRMLModelHierarchyNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
 }
@@ -63,7 +63,7 @@ void vtkMRMLModelHierarchyNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -96,7 +96,7 @@ void vtkMRMLModelHierarchyNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   if (this->ModelDisplayNode)
@@ -116,7 +116,7 @@ void vtkMRMLModelHierarchyNode::UpdateScene(vtkMRMLScene *scene)
 //-----------------------------------------------------------
 void vtkMRMLModelHierarchyNode::UpdateReferences()
 {
-  Superclass::UpdateReferences();  
+  Superclass::UpdateReferences();
 }
 
 vtkMRMLModelNode* vtkMRMLModelHierarchyNode::GetModelNode()
@@ -142,7 +142,7 @@ vtkMRMLModelDisplayNode* vtkMRMLModelHierarchyNode::GetModelDisplayNode()
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -169,7 +169,7 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetCollapsedParentNode()
 }
 
 
-  
+
 //---------------------------------------------------------------------------
 void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
 {
@@ -180,7 +180,7 @@ void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
   vtkMRMLScene *scene = this->GetScene();
   vtkMRMLNode *mnode = NULL;
   vtkMRMLModelHierarchyNode *hnode = NULL;
-  for (int n=0; n < scene->GetNumberOfNodes(); n++) 
+  for (int n=0; n < scene->GetNumberOfNodes(); n++)
     {
     mnode = scene->GetNthNode(n);
     if (mnode->IsA("vtkMRMLModelNode"))
@@ -189,7 +189,7 @@ void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection *models)
           vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(scene, mnode->GetID()));
       while (hnode)
         {
-        if (hnode == this) 
+        if (hnode == this)
           {
           models->AddItem(mnode);
           break;

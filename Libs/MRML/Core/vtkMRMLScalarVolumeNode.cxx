@@ -41,7 +41,7 @@ vtkMRMLScalarVolumeNode::~vtkMRMLScalarVolumeNode()
 void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
   std::stringstream ss;
   ss << this->GetLabelMap();
@@ -58,11 +58,11 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "labelMap")) 
+    if (!strcmp(attName, "labelMap"))
       {
       std::stringstream ss;
       int val;
@@ -70,7 +70,7 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
       ss >> val;
       this->SetLabelMap(val);
       }
-    }  
+    }
 
   this->EndModify(disabledModify);
 }
@@ -126,7 +126,7 @@ vtkMRMLScalarVolumeDisplayNode* vtkMRMLScalarVolumeNode::GetScalarVolumeDisplayN
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 }
 
@@ -136,7 +136,7 @@ int vtkMRMLScalarVolumeNode::GetLabelMap()
     {
     return 0;
     }
-  
+
   std::string value = this->GetAttribute("LabelMap");
   if (value == "0")
     {
@@ -179,7 +179,7 @@ void vtkMRMLScalarVolumeNode::SetLabelMap(int flag)
     {
     return;
     }
-  
+
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LabelMap to " << flag);
 
   this->SetAttribute("LabelMap", value.c_str());

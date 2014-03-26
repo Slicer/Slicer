@@ -10,14 +10,14 @@ import LabelEffect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   RectangleEffect is a subclass of LabelEffect
   that implements the interactive paintbrush tool
   in the slicer editor
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -49,7 +49,7 @@ class RectangleEffectOptions(LabelEffect.LabelEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -75,7 +75,7 @@ class RectangleEffectOptions(LabelEffect.LabelEffectOptions):
 #
 # RectangleEffectTool
 #
- 
+
 class RectangleEffectTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -88,7 +88,7 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
 
   def __init__(self, sliceWidget):
     super(RectangleEffectTool,self).__init__(sliceWidget)
-    
+
     # create a logic instance to do the non-gui work
     self.logic = RectangleEffectLogic(self.sliceWidget.sliceLogic())
 
@@ -196,13 +196,13 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
 #
 # RectangleEffectLogic
 #
- 
+
 class RectangleEffectLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an RectangleEffectTool
   or RectangleEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the RectangleEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -213,7 +213,7 @@ class RectangleEffectLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The RectangleEffect class definition 
+# The RectangleEffect class definition
 #
 
 class RectangleEffect(LabelEffect.LabelEffect):

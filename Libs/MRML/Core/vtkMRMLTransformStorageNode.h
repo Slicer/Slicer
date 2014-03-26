@@ -35,15 +35,15 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Transform)
   virtual const char* GetNodeTagName()  {return "TransformStorage";};
 
-  /// 
+  ///
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  /// 
+  ///
   /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension();
 

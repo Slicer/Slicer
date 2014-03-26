@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -37,7 +37,7 @@ public:
   virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
   virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
 };
- 
+
 int vtkMRMLColorTableNodeTest1(int argc, char * argv[] )
 {
   vtkNew<vtkMRMLColorTableNodeTestHelper1> node1;
@@ -109,6 +109,6 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[] )
     }
   // clean up
   loadedScene->Delete();
-  
+
   return EXIT_SUCCESS;
 }

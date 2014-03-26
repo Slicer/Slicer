@@ -4,7 +4,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-/* this test has been adopted from vtkMRMLAnnotationAngleTest1 by 
+/* this test has been adopted from vtkMRMLAnnotationAngleTest1 by
  * Andrey Fedorov to demonstrate some of the problems observed with the ROI
  * annotation node
  */
@@ -13,7 +13,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 {
 
   // ======================
-  // Basic Setup 
+  // Basic Setup
   // ======================
 
   vtkSmartPointer< vtkMRMLAnnotationROINode > node2 = vtkSmartPointer< vtkMRMLAnnotationROINode >::New();
@@ -22,7 +22,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 
   {
 
-    vtkSmartPointer< vtkMRMLAnnotationROINode > node1 = vtkSmartPointer< vtkMRMLAnnotationROINode >::New();  
+    vtkSmartPointer< vtkMRMLAnnotationROINode > node1 = vtkSmartPointer< vtkMRMLAnnotationROINode >::New();
     // node1->Initialize(mrmlScene);
 
     EXERCISE_BASIC_OBJECT_METHODS( node1 );
@@ -55,7 +55,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 
 
   node2->SetName("AnnotationROINodeTest") ;
-  
+
   std::string nodeTagName = node2->GetNodeTagName();
   std::cout << "Node Tag Name = " << nodeTagName << std::endl;
 
@@ -73,7 +73,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
     node2->SetPositionCenter(ctp);
   }
 
- 
+
   int vis = 1;
   node2->SetRay1Visibility(vis);
 
@@ -82,7 +82,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 
   if (ctrlPointID[0]!= 1 || (ctrlPointID[1] != 2) || (ctrlPointID[2] != 3) ||  node2->GetRay1Visibility() != vis)
     {
-      std::cerr << "Error in Array Attributes: "  << ctrlPointID[0] << "!=1, " << ctrlPointID[1]<< "!=2" << ctrlPointID[2]<< "!=3, " 
+      std::cerr << "Error in Array Attributes: "  << ctrlPointID[0] << "!=1, " << ctrlPointID[1]<< "!=2" << ctrlPointID[2]<< "!=3, "
         << node2->GetRay1Visibility() <<"!="<< vis << std::endl;
       return EXIT_FAILURE;
     }
@@ -113,8 +113,8 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 
   cout << "Center: " << center[0] << ", " << center[1] << ", " << center[2] << std::endl;
   cout << "Radius: " << radius[0] << ", " << radius[1] << ", " << radius[2] << std::endl;
-  
-  if(center[0]!=3 || center[1]!=-5 || center[2]!=0 || 
+
+  if(center[0]!=3 || center[1]!=-5 || center[2]!=0 ||
      radius[0]!=100 || radius[1]!=200 || radius[2]!=-10)
     {
     std::cerr << "Error: Center and/or radius not as expected, should be 3,-5,0 and 100,200,-10" << std::endl;
@@ -125,39 +125,39 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   node2->Modified();
 
   // ======================
-  // Test WriteXML and ReadXML 
+  // Test WriteXML and ReadXML
   // ======================
 
   /*
   mrmlScene->SetURL("AnnotationROINodeTest.mrml");
   mrmlScene->Commit();
 
-  // Now Read in File to see if ReadXML works - it first disconnects from node2 ! 
+  // Now Read in File to see if ReadXML works - it first disconnects from node2 !
   mrmlScene->Connect();
   vtkIndent ij;
 
-  if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationROINode") != 1) 
+  if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationROINode") != 1)
     {
         std::cerr << "Error in ReadXML() or WriteXML() - Did not create a class called vtkMRMLAnnotationROINode" << std::endl;
     return EXIT_FAILURE;
     }
 
   vtkMRMLAnnotationROINode *node3 = dynamic_cast < vtkMRMLAnnotationROINode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationROINode"));
-  if (!node3) 
+  if (!node3)
       {
     std::cerr << "Error in ReadXML() or WriteXML(): could not find vtkMRMLAnnotationROINode" << std::endl;
     return EXIT_FAILURE;
       }
 
   std::stringstream initialAnnotation, afterAnnotation;
-  
+
 
   // node2->PrintSelf(cout,ind);
 
   node2->PrintAnnotationInfo(initialAnnotation,ind);
 
   node3->PrintAnnotationInfo(afterAnnotation,ind);
-  if (initialAnnotation.str().compare(afterAnnotation.str())) 
+  if (initialAnnotation.str().compare(afterAnnotation.str()))
   {
     std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
     std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
@@ -168,7 +168,7 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
   */
 
   return EXIT_SUCCESS;
-  
+
 }
 
 

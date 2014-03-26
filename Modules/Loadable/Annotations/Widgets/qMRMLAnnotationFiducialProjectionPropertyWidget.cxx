@@ -30,7 +30,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
-class qMRMLAnnotationFiducialProjectionPropertyWidgetPrivate 
+class qMRMLAnnotationFiducialProjectionPropertyWidgetPrivate
   : public Ui_qMRMLAnnotationFiducialProjectionPropertyWidget
 {
   Q_DECLARE_PUBLIC(qMRMLAnnotationFiducialProjectionPropertyWidget);
@@ -39,7 +39,7 @@ protected:
 public:
   qMRMLAnnotationFiducialProjectionPropertyWidgetPrivate(qMRMLAnnotationFiducialProjectionPropertyWidget& object);
   void init();
-  
+
   vtkMRMLAnnotationPointDisplayNode* FiducialDisplayNode;
 };
 
@@ -95,7 +95,7 @@ void qMRMLAnnotationFiducialProjectionPropertyWidget
 ::setMRMLFiducialNode(vtkMRMLAnnotationFiducialNode* fiducialNode)
 {
   Q_D(qMRMLAnnotationFiducialProjectionPropertyWidget);
-  vtkMRMLAnnotationPointDisplayNode* displayNode 
+  vtkMRMLAnnotationPointDisplayNode* displayNode
     = fiducialNode->GetAnnotationPointDisplayNode();
 
   qvtkReconnect(d->FiducialDisplayNode, displayNode, vtkCommand::ModifiedEvent,
@@ -191,7 +191,7 @@ void qMRMLAnnotationFiducialProjectionPropertyWidget
   // Update widget if different from MRML node
   // -- 2D Projection Visibility
   d->Point2DProjectionCheckBox->setChecked(
-    d->FiducialDisplayNode->GetSliceProjection() & 
+    d->FiducialDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationDisplayNode::ProjectionOn);
 
   // -- Projection Color
@@ -202,12 +202,12 @@ void qMRMLAnnotationFiducialProjectionPropertyWidget
 
   // -- Use Fiducial Color
   d->PointUseFiducialColorCheckBox->setChecked(
-    d->FiducialDisplayNode->GetSliceProjection() & 
+    d->FiducialDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 
   // -- Outlined Behind Slice Plane
   d->PointOutlinedBehindSlicePlaneCheckBox->setChecked(
-    d->FiducialDisplayNode->GetSliceProjection() & 
+    d->FiducialDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 

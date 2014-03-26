@@ -63,12 +63,12 @@ void saveScene(void* vtkNotUsed(data))
 int qMRMLUtf8Test1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   vtkNew<vtkMRMLScene> scene;
   myScene = scene.GetPointer();
   myScene->SetURL(argv[1]);
   myScene->Connect();
-  
+
   myNode = scene->GetNthNode(0);
 
   std::string cameraName = myNode->GetName();
@@ -77,17 +77,17 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
     std::cerr << "bad encoding." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   std::string newName = cameraName.erase(0, std::strlen("camera"));
   myNode->SetName(newName.c_str());
-  
+
   myLineEdit = new QLineEdit(0);
   myLineEdit->setText(QString::fromUtf8(myNode->GetName()));
   myLineEdit->show();
-  
+
   ctkCallback callback;
   callback.setCallback(saveScene);
-  
+
   QObject::connect(myLineEdit, SIGNAL(textChanged(QString)),
                    &callback, SLOT(invoke()));
   myLineEdit->setText(QString("cam") + myLineEdit->text());
@@ -96,7 +96,7 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-  
+
   return app.exec();
 }
 

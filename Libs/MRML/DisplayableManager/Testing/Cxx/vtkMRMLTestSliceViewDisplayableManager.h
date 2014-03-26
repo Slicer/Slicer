@@ -26,7 +26,7 @@
 
 class vtkMRMLCameraNode;
 
-class vtkMRMLTestSliceViewDisplayableManager : 
+class vtkMRMLTestSliceViewDisplayableManager :
   public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
@@ -54,12 +54,12 @@ protected:
   //  virtual void OnMRMLSceneRestoredEvent(){}
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   //  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
-  
+
 private:
 
   vtkMRMLTestSliceViewDisplayableManager(const vtkMRMLTestSliceViewDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLTestSliceViewDisplayableManager&);                     // Not Implemented
-  
+
   class vtkInternal;
   vtkInternal * Internal;
 

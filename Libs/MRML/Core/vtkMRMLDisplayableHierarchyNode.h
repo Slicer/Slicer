@@ -28,27 +28,27 @@ public:
   static vtkMRMLDisplayableHierarchyNode *New();
   vtkTypeMacro(vtkMRMLDisplayableHierarchyNode,vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, DisplayableHierarchy)
   virtual const char* GetNodeTagName() {return "DisplayableHierarchy";};
 
@@ -56,26 +56,26 @@ public:
   virtual void SetSceneReferences();
 
   ///
-  /// Updates this node if it depends on other nodes 
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Finds the Displayable node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
+  ///
   /// String ID of the corresponding displayable MRML node
   virtual char* GetDisplayableNodeID()
   {
     return this->GetAssociatedNodeID();
   }
 
-  virtual void SetDisplayableNodeID(const char* ref) 
+  virtual void SetDisplayableNodeID(const char* ref)
   {
     this->SetAssociatedNodeID(ref);
   }
@@ -84,30 +84,30 @@ public:
   vtkGetStringMacro(DisplayNodeID);
 
 
-  /// 
+  ///
   /// Get associated displayable MRML node
   vtkMRMLDisplayableNode* GetDisplayableNode();
 
-  /// 
+  ///
   /// Get associated display MRML node
   vtkMRMLDisplayNode* GetDisplayNode();
-    
 
-  /// 
+
+  ///
   /// Indicates if the node is expanded
   vtkBooleanMacro(Expanded, int);
   vtkGetMacro(Expanded, int);
   vtkSetMacro(Expanded, int);
 
-  /// 
+  ///
   /// Get the top parent node in the hierarchy which is not expanded
   vtkMRMLDisplayableHierarchyNode* GetCollapsedParentNode();
-  
-  /// 
+
+  ///
   /// Find all child displayable nodes in the hierarchy
   void GetChildrenDisplayableNodes(vtkCollection *children);
 
-  /// 
+  ///
   /// Get Hierarchy node for a given displayable node
   static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene *scene,
                                                                       const char *displayableNodeID);
@@ -122,10 +122,10 @@ public:
   void RemoveAllChildrenNodes();
 
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
   /// DisplayModifiedEvent is generated when display node parameters is changed

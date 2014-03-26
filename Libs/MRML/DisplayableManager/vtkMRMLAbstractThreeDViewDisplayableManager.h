@@ -36,7 +36,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableMan
     public vtkMRMLAbstractDisplayableManager
 {
 public:
-  
+
   static vtkMRMLAbstractThreeDViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractThreeDViewDisplayableManager,
@@ -56,7 +56,7 @@ protected:
   virtual void OnMRMLViewNodeModifiedEvent(){}
 
   virtual void PassThroughInteractorStyleEvent(int eventid);
-  
+
 private:
 
   vtkMRMLAbstractThreeDViewDisplayableManager(const vtkMRMLAbstractThreeDViewDisplayableManager&); // Not implemented

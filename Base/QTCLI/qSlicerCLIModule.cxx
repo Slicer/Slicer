@@ -88,7 +88,7 @@ qSlicerCLIModule::~qSlicerCLIModule()
 void qSlicerCLIModule::setup()
 {
   Q_D(qSlicerCLIModule);
-  
+
   // Temporary directory should be set before the module is initialized
   Q_ASSERT(!d->TempDirectory.isEmpty());
 }
@@ -166,14 +166,14 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
 
   // Set module type
   desc.SetType(this->moduleType().toStdString());
-  
+
   // Set module entry point
   desc.SetTarget(this->entryPoint().toStdString());
 
   // Register the module description in the master list
   vtkMRMLCommandLineModuleNode::RegisterModuleDescription(desc);
 
-  d->Desc = desc; 
+  d->Desc = desc;
 }
 
 //-----------------------------------------------------------------------------

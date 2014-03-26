@@ -15,10 +15,10 @@
 // .NAME vtkSlicerGPUVolumeTextureMapper3D - GPU volume render with 3D texture mapping (GLSL)
 
 // .SECTION Description
-// vtkSlicerGPUVolumeTextureMapper3D renders a volume using 3D texture mapping in fragment shader. 
+// vtkSlicerGPUVolumeTextureMapper3D renders a volume using 3D texture mapping in fragment shader.
 // This class is actually an abstract superclass - with all the actual
-// work done by vtkSlicerGPURayCastVolumeTextureMapper3D. 
-// 
+// work done by vtkSlicerGPURayCastVolumeTextureMapper3D.
+//
 // This mappers currently supports:
 //
 // - any data type as input
@@ -27,17 +27,17 @@
 // - intermixed opaque geometry
 // - multiple volumes can be rendered if they can
 //   be sorted into back-to-front order (use the vtkFrustumCoverageCuller)
-// 
+//
 // This mapper does not support:
 // - more than one independent component
 // - maximum intensity projection
-// 
+//
 // Internally, this mapper will potentially change the resolution of the
 // input data. The data will be resampled to be a power of two in each
-// direction, and also no greater than 128*256*256 voxels (any aspect) 
+// direction, and also no greater than 128*256*256 voxels (any aspect)
 // for one or two component data, or 128*128*256 voxels (any aspect)
-// for four component data. The limits are currently hardcoded after 
-// a check using the GL_PROXY_TEXTURE3D because some graphics drivers 
+// for four component data. The limits are currently hardcoded after
+// a check using the GL_PROXY_TEXTURE3D because some graphics drivers
 // were always responding "yes" to the proxy call despite not being
 // able to allocate that much texture memory.
 //
@@ -87,11 +87,11 @@ public:
   // Desired frame rate
   vtkSetMacro(Framerate, float);
   vtkGetMacro(Framerate, float);
-  
+
   // Description:
   // These are the dimensions of the 3D texture
   vtkGetVectorMacro( VolumeDimensions, int,   3 );
-  
+
   // Description:
   // This is the spacing of the 3D texture
   vtkGetVectorMacro( VolumeSpacing,    float, 3 );
@@ -108,7 +108,7 @@ public:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
   // DO NOT USE THIS METHOD OUTSIDE OF THE RENDERING PROCESS
   // Render the volume
-  virtual void Render(vtkRenderer *, vtkVolume *) {};   
+  virtual void Render(vtkRenderer *, vtkVolume *) {};
 
 protected:
   vtkSlicerGPUVolumeTextureMapper3D();
@@ -116,36 +116,36 @@ protected:
 
   float                     ScalarOffset;
   float                     ScalarScale;
-  
+
   float                     Framerate;
-  
+
   unsigned char            *Volume1;
   unsigned char            *Volume2;
   int                       VolumeSize;
   int                       VolumeComponents;
   int                       VolumeDimensions[3];
   float                     VolumeSpacing[3];
-  
+
   vtkImageData             *SavedTextureInput;
   vtkImageData             *SavedParametersInput;
-  
+
   vtkColorTransferFunction *SavedRGBFunction;
   vtkPiecewiseFunction     *SavedGrayFunction;
   vtkPiecewiseFunction     *SavedScalarOpacityFunction;
   vtkPiecewiseFunction     *SavedGradientOpacityFunction;
   int                       SavedColorChannels;
   float                     SavedScalarOpacityDistance;
-  
+
   unsigned char             ColorLookup[65536*4];
   float                     TempArray1[3*4096];
   float                     TempArray2[4096];
   int                       ColorTableSize;
-  
+
   vtkTimeStamp              SavedTextureMTime;
   vtkTimeStamp              SavedParametersMTime;
-  
+
   vtkMultiThreader          *Threader;
-  
+
   GradientsArgsType         *GradientsArgs;
 
   // Description:
@@ -155,13 +155,13 @@ protected:
   int    UpdateColorLookup( vtkVolume * );
 
   void CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize);
-  
+
   // Description:
   // Impemented in subclass - check is texture size is OK.
   virtual int IsTextureSizeSupported( int [3] ) {return 0;};
-  
+
   friend VTK_THREAD_RETURN_TYPE vtkSlicerGPUVolumeTextureMapper3DComputeGradients( void *arg );
-  
+
 private:
   vtkSlicerGPUVolumeTextureMapper3D(const vtkSlicerGPUVolumeTextureMapper3D&);  // Not implemented.
   void operator=(const vtkSlicerGPUVolumeTextureMapper3D&);  // Not implemented.

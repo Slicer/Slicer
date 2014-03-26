@@ -26,7 +26,7 @@
 #include "qMRMLNodeFactory.h"
 #include "ui_qMRMLSceneFactoryWidget.h"
 
-// MRML includes 
+// MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
@@ -39,7 +39,7 @@ public:
   qMRMLSceneFactoryWidgetPrivate(qMRMLSceneFactoryWidget& object);
   void init();
   void setNodeActionsEnabled(bool enable);
- 
+
   vtkMRMLScene*  MRMLScene;
 };
 
@@ -92,7 +92,7 @@ qMRMLSceneFactoryWidget::~qMRMLSceneFactoryWidget()
 void qMRMLSceneFactoryWidget::generateScene()
 {
   Q_D(qMRMLSceneFactoryWidget);
-  
+
   if (d->MRMLScene)
     {
     d->MRMLScene->Delete();
@@ -134,7 +134,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
   if (nodeClassName.isEmpty())
     {
     int numClasses = d->MRMLScene->GetNumberOfRegisteredNodeClasses();
-    int classNumber = rand() % numClasses; 
+    int classNumber = rand() % numClasses;
     vtkMRMLNode* node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
     Q_ASSERT(node);
     while (node->GetSingletonTag())
@@ -143,7 +143,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
       node = d->MRMLScene->GetNthRegisteredNodeClass(classNumber);
       Q_ASSERT(node);
       }
-    nodeClassName = QLatin1String(node->GetClassName()); 
+    nodeClassName = QLatin1String(node->GetClassName());
     if (nodeClassName.isEmpty())
       {
       qWarning() << "Class registered (#" << classNumber << "):"

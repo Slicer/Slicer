@@ -347,7 +347,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
-  
+
   // Scene Format
   QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
   int currentFormat = -1;
@@ -980,7 +980,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
     {
     return false;
     }
-  QTableWidgetItem* selectItem = 
+  QTableWidgetItem* selectItem =
     this->FileWidget->item(found[0].row(), SelectColumn);
 
   return selectItem->checkState() == Qt::Checked;
@@ -1027,7 +1027,7 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
   QFileInfo file = this->sceneFile();
   if (file.exists() && this->mustSceneBeSaved())
     {
-    QMessageBox::StandardButton answer = 
+    QMessageBox::StandardButton answer =
       QMessageBox::question(this, "Saving scene", "Scene file \""
                             + file.absoluteFilePath() +"\" already exists. "
                             "Do you want to replace it ?",

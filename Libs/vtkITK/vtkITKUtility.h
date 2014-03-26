@@ -93,12 +93,12 @@ if ( 1 ) { \
 /// struct vtkITKProgressDisplay
 /// {
 ///   ProgressDisplay(vtkObject* obj, itk::ProcessObject* process): m_Process(process), m_Object(obj) {}
-  
+
 ///   void Display()
 ///   {
 ///     m_Object->SetProgress ( m_Process->GetProgress() );
 ///     }
-  
+
 ///   itk::ProcessObject::Pointer m_Process;
 ///   vtkObject* m_Object();
 /// };

@@ -81,7 +81,7 @@ protected:
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLViewNode*                   MRMLViewNode;
-  
+
   QToolButton*                       PinButton;
   ctkPopupWidget*                    PopupWidget;
 };

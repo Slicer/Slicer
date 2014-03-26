@@ -93,7 +93,7 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
     d->UseCompressionCheckBox->setChecked(
       (storageNode->GetUseCompression() == 1));
     }
-  
+
   this->updateValid();
 }
 

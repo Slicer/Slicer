@@ -32,50 +32,50 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "VolumeHeaderlessStorage";};
 
-  /// 
+  ///
   /// Scan order in the file
   vtkGetStringMacro(FileScanOrder);
   vtkSetStringMacro(FileScanOrder);
 
-  /// 
+  ///
   /// Two numbers: the number of columns and rows of pixels in each image
   vtkGetVector3Macro(FileDimensions, int);
   vtkSetVector3Macro(FileDimensions, int);
 
-  /// 
+  ///
   /// Three numbers for the dimensions of each voxel, in millimeters
   vtkGetVector3Macro(FileSpacing, double);
   vtkSetVector3Macro(FileSpacing, double);
-  
-  /// 
-  /// The type of data in the file. One of: Char, UnsignedChar, Short, 
+
+  ///
+  /// The type of data in the file. One of: Char, UnsignedChar, Short,
   /// UnsignedShort, Int, UnsignedInt, Long, UnsignedLong, Float, Double
   vtkSetMacro(FileScalarType, int);
   vtkGetMacro(FileScalarType, int);
 
-  void SetFileScalarTypeToUnsignedChar() 
+  void SetFileScalarTypeToUnsignedChar()
     {this->SetFileScalarType(VTK_UNSIGNED_CHAR);};
-  void SetFileScalarTypeToChar() 
+  void SetFileScalarTypeToChar()
     {this->SetFileScalarType(VTK_CHAR);};
   void SetFileScalarTypeToShort() {
     this->SetFileScalarType(VTK_SHORT);};
-  void SetFileScalarTypeToUnsignedShort() 
+  void SetFileScalarTypeToUnsignedShort()
     {this->SetFileScalarType(VTK_UNSIGNED_SHORT);};
   void SetFileScalarTypeToInt() {
     this->SetFileScalarType(VTK_INT);};
@@ -93,22 +93,22 @@ public:
   const char* GetFileScalarTypeAsString();
 
   void SetFileScalarTypeAsString(const char* );
-  
-  /// 
-  /// The number of scalar components for each voxel. 
+
+  ///
+  /// The number of scalar components for each voxel.
   /// Gray-level data has 1. Color data has 3
   vtkGetMacro(FileNumberOfScalarComponents, int);
   vtkSetMacro(FileNumberOfScalarComponents, int);
 
-  /// 
-  /// Describes the order of bytes for each voxel.  Little endian 
-  /// positions the least-significant byte on the rightmost end, 
+  ///
+  /// Describes the order of bytes for each voxel.  Little endian
+  /// positions the least-significant byte on the rightmost end,
   /// and is true of data generated on a PC or SGI.
   vtkGetMacro(FileLittleEndian, int);
   vtkSetMacro(FileLittleEndian, int);
   vtkBooleanMacro(FileLittleEndian, int);
 
-  /// 
+  ///
   /// Center image on read
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);

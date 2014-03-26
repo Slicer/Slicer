@@ -41,15 +41,15 @@ int qMRMLThreeDWidgetTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLThreeDWidget widget;
   widget.show();
-  
+
   vtkNew<vtkMRMLViewNode> viewNode;
 
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(viewNode.GetPointer());
-  
+
   widget.setMRMLScene(scene.GetPointer());
   widget.setMRMLViewNode(viewNode.GetPointer());
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

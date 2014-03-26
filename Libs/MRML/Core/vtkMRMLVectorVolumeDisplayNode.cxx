@@ -136,7 +136,7 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -146,13 +146,13 @@ void vtkMRMLVectorVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->ScalarMode;
       }
-    else if (!strcmp(attName, "glyphMode")) 
+    else if (!strcmp(attName, "glyphMode"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GlyphMode;
       }
-    }     
+    }
 
   this->EndModify(disabledModify);
 
@@ -167,7 +167,7 @@ void vtkMRMLVectorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
   vtkMRMLVectorVolumeDisplayNode *node = (vtkMRMLVectorVolumeDisplayNode *) anode;
-  
+
   this->SetScalarMode(node->ScalarMode);
   this->SetGlyphMode(node->GlyphMode);
 
@@ -177,7 +177,7 @@ void vtkMRMLVectorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Scalar Mode:   " << this->ScalarMode << "\n";
@@ -188,7 +188,7 @@ void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //---------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);

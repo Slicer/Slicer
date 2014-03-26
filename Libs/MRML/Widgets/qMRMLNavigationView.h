@@ -31,7 +31,7 @@ class qMRMLNavigationViewPrivate;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 
-/// Specialized ctkVTKThumbnailView that recomputes its bounds when the mrml 
+/// Specialized ctkVTKThumbnailView that recomputes its bounds when the mrml
 /// scene is updated and changes its background color based on a mrml view node
 /// TODO: Add utility function setThreeDView to extract automatically the
 /// renderer, mrml scene and mrml view node.
@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNavigationView : public ctkVTKThumbnailView
 public:
   /// Superclass typedef
   typedef ctkVTKThumbnailView Superclass;
-  
+
   /// Constructors
   explicit qMRMLNavigationView(QWidget* parent = 0);
   virtual ~qMRMLNavigationView();

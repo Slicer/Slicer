@@ -49,12 +49,12 @@ vtkMRMLDisplayableHierarchyNode::~vtkMRMLDisplayableHierarchyNode()
 void vtkMRMLDisplayableHierarchyNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
-  if (this->DisplayNodeID != NULL) 
+  if (this->DisplayNodeID != NULL)
     {
     of << indent << " displayNodeID=\"" << this->DisplayNodeID << "\"";
     }
@@ -88,22 +88,22 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "displayableNodeID")) 
+    if (!strcmp(attName, "displayableNodeID"))
       {
       this->SetDisplayableNodeID(attValue);
       }
     else if (!strcmp(attName, "displayNodeRef") ||
-             !strcmp(attName, "displayNodeID")) 
+             !strcmp(attName, "displayNodeID"))
       {
       this->SetDisplayNodeID(attValue);
       }
-    else if (!strcmp(attName, "expanded")) 
+    else if (!strcmp(attName, "expanded"))
         {
-        if (!strcmp(attValue,"true")) 
+        if (!strcmp(attValue,"true"))
           {
           this->Expanded = 1;
           }
@@ -216,7 +216,7 @@ void vtkMRMLDisplayableHierarchyNode::SetAndObserveDisplayNodeID(const char *dis
 
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -239,7 +239,7 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetCollapsedPa
 
   // build up a vector of collapsed parents
   std::vector< vtkMRMLDisplayableHierarchyNode * > collapsedParents;
-  if (!this->GetExpanded()) 
+  if (!this->GetExpanded())
     {
     collapsedParents.push_back(this);
     }
@@ -330,7 +330,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableHierarchyNode* 
+vtkMRMLDisplayableHierarchyNode*
 vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(vtkMRMLScene *scene,
                                                              const char *displayableNodeID)
 {

@@ -62,7 +62,7 @@ int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
   sceneFactory.generateNode("vtkMRMLViewNode");
   sceneFactory.generateNode("vtkMRMLViewNode");
   sceneFactory.generateNode("vtkMRMLViewNode");
-  
+
   nodeSelector.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")

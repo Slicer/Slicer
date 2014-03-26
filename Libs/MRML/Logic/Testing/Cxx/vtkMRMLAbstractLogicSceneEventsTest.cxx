@@ -40,7 +40,7 @@ class vtkMRMLTestLogic: public vtkMRMLAbstractLogic
 public:
   vtkTypeMacro(vtkMRMLTestLogic, vtkMRMLAbstractLogic);
   static vtkMRMLTestLogic *New(){return new vtkMRMLTestLogic;}
-  
+
   virtual void SetMRMLSceneInternal(vtkMRMLScene* scene);
   virtual void UnobserveMRMLScene();
   virtual void ObserveMRMLScene();

@@ -283,7 +283,7 @@ void qMRMLSceneTractographyDisplayModel
 void qMRMLSceneTractographyDisplayModel
 ::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
- 
+
   //Q_D(qMRMLSceneTractographyDisplayModel);
 
   vtkMRMLFiberBundleNode *fbNode = vtkMRMLFiberBundleNode::SafeDownCast(node);

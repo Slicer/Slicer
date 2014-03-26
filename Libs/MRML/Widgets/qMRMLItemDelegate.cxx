@@ -144,7 +144,7 @@ QWidget *qMRMLItemDelegate
     popupWidget->setOrientation(Qt::Horizontal);
     popupWidget->setHorizontalDirection(Qt::RightToLeft);
     popupWidget->setBaseWidget(spinBox);
-    
+
     QObject::connect(spinBox, SIGNAL(destroyed(QObject*)),
                      popupWidget, SLOT(deleteLater()));
     */

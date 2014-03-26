@@ -47,7 +47,7 @@ vtkMRMLUnstructuredGridNode::~vtkMRMLUnstructuredGridNode()
 //-------------------------------
 void vtkMRMLUnstructuredGridNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
   if( this->UnstructuredGrid )
     {
@@ -74,7 +74,7 @@ void vtkMRMLUnstructuredGridNode::SetAndObserveUnstructuredGrid(vtkUnstructuredG
 {
 if (this->UnstructuredGrid != NULL)
     {
-    vtkEventBroker::GetInstance()->RemoveObservations( 
+    vtkEventBroker::GetInstance()->RemoveObservations(
       this->UnstructuredGrid, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
@@ -85,7 +85,7 @@ if (this->UnstructuredGrid != NULL)
 
   if (this->UnstructuredGrid != NULL)
     {
-    vtkEventBroker::GetInstance()->AddObservation( 
+    vtkEventBroker::GetInstance()->AddObservation(
       this->UnstructuredGrid, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
@@ -114,7 +114,7 @@ void vtkMRMLUnstructuredGridNode::UpdateScene(vtkMRMLScene *scene)
 
 //---------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);

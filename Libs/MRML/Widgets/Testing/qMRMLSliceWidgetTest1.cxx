@@ -98,7 +98,7 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
   sliceWidget.setMRMLScene(scene.GetPointer());
   sliceWidget.setMRMLSliceNode(redSliceNode);
   sliceWidget.show();
-  
+
   qMRMLNodeObject nodeObject(volumeNode, &sliceWidget);
   QTimer modifyTimer;
   modifyTimer.setInterval(2000);

@@ -352,10 +352,10 @@ vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic()
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller),
-                                            unsigned long event, 
+                                            unsigned long event,
                                             void *callData)
 {
-  if (event ==  vtkCommand::ProgressEvent) 
+  if (event ==  vtkCommand::ProgressEvent)
     {
     this->InvokeEvent ( vtkCommand::ProgressEvent,callData );
     }
@@ -553,7 +553,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
         }
       }
 
-    // 
+    //
     // Wasn't the right factory, so we need to clean up
     //
 
@@ -570,16 +570,16 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     {
     errorSink->DisplayErrors();
     }
-    
-  
+
+
   bool modified = false;
   if (volumeNode != NULL)
     {
     this->SetAndObserveColorToDisplayNode(displayNode, labelMap, filename);
-    
+
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
-        
+
     this->SetActiveVolumeNode(volumeNode);
 
     modified = true;
@@ -603,7 +603,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
     {
     return 0;
     }
-  
+
   vtkMRMLNRRDStorageNode *storageNode1 = NULL;
   vtkMRMLVolumeArchetypeStorageNode *storageNode2 = NULL;
   vtkMRMLStorageNode *storageNode = NULL;
@@ -621,7 +621,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     }
-  
+
   // Use NRRD writer if we are dealing with DWI, DTI or vector volumes
 
   if (volumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
@@ -864,7 +864,7 @@ vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::
 CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name)
 {
-  if ( scene == NULL || volumeNode == NULL ) 
+  if ( scene == NULL || volumeNode == NULL )
     {
     return NULL;
     }
@@ -892,8 +892,8 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
 
   // copy over the volume's data
- // Kilian: VTK crashes when volumeNode->GetImageData() = NULL 
-  if (volumeNode->GetImageData()) 
+ // Kilian: VTK crashes when volumeNode->GetImageData() = NULL
+  if (volumeNode->GetImageData())
     {
     vtkNew<vtkImageData> clonedVolumeData;
     clonedVolumeData->DeepCopy(volumeNode->GetImageData());
@@ -1039,7 +1039,7 @@ void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASTo
   if  ( V1Node  && V2Node && FSRegistrationMatrix  && RAS2RASMatrix )
     {
     RAS2RASMatrix->Zero();
-    
+
     //
     // Looking for RASv1_To_RASv2:
     //
@@ -1077,7 +1077,7 @@ void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASTo
     // handles scanOrder. The tkRegVox2RAS = IJKToRAS matrix for a coronal
     // volume. But for an Axial volume, these two matrices are different.
     // How do we compute the correct orientation for FreeSurfer Data?
-  
+
     vtkNew<vtkMatrix4x4> T;
     vtkNew<vtkMatrix4x4> S;
     vtkNew<vtkMatrix4x4> Sinv;
@@ -1119,7 +1119,7 @@ void
 vtkSlicerVolumesLogic
 ::RegisterArchetypeVolumeNodeSetFactory(ArchetypeVolumeNodeSetFactory factory)
 {
-  NodeSetFactoryRegistry::iterator 
+  NodeSetFactoryRegistry::iterator
     rit = std::find(this->VolumeRegistry.begin(), this->VolumeRegistry.end(), factory);
 
   if (rit == this->VolumeRegistry.end())
@@ -1133,7 +1133,7 @@ void
 vtkSlicerVolumesLogic
 ::PreRegisterArchetypeVolumeNodeSetFactory(ArchetypeVolumeNodeSetFactory factory)
 {
-  NodeSetFactoryRegistry::iterator 
+  NodeSetFactoryRegistry::iterator
     rit = std::find(this->VolumeRegistry.begin(), this->VolumeRegistry.end(), factory);
 
   if (rit == this->VolumeRegistry.end())

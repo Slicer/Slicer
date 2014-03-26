@@ -1,4 +1,4 @@
-/* 
+/*
  * Resource generated for file:
  *    ITKLogo.png (zlib, base64) (image file)
  */
@@ -8,7 +8,7 @@ static const unsigned int  image_ITKLogo_pixel_size     = 4;
 static const unsigned long image_ITKLogo_length         = 4988;
 static const unsigned long image_ITKLogo_decoded_length = 10080;
 
-static const unsigned char image_ITKLogo[] = 
+static const unsigned char image_ITKLogo[] =
   "eNrNWnlU1NcV/rXJ6enpH0nbc9omOU2b1iWNSZMaEzWapE2axdrGJafuacSkMQKyKmoERQ"
   "QRUBYXCIKAikQWZUdQBGFYVDYRZFUWEWZYBhxmGLZh+Hrvg0EwAook6TvnHua3v+/de7+7"
   "PABIINHr9SOkv79fSEZGhmRjYyOFhYVJgYGB0vbt26XIyEjp6NGjkqOjo7Rx40bp4MGDkq"

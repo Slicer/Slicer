@@ -7,8 +7,8 @@
 
 =========================================================================auto=*/
 ///  vtkImageLabelChange -  Change one label value to another
-/// 
-/// 
+///
+///
 //
 /// vtkImageLabelChange is will replace one voxel value with another.
 /// This is used for editing of labelmaps.
@@ -45,7 +45,7 @@ protected:
     float InputLabel;
     float OutputLabel;
 
-    void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 
+    void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
         int extent[6], int id);
 };
 

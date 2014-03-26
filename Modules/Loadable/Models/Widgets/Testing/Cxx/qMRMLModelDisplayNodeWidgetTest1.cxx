@@ -36,10 +36,10 @@
 int qMRMLModelDisplayNodeWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   vtkSmartPointer<vtkMRMLModelDisplayNode> modelDisplayNode =
     vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-  
+
   qMRMLModelDisplayNodeWidget modelDisplayNodeWidget;
   modelDisplayNodeWidget.setMRMLModelDisplayNode(modelDisplayNode);
   modelDisplayNodeWidget.show();

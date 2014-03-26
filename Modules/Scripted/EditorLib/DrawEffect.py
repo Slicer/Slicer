@@ -10,14 +10,14 @@ import LabelEffect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   DrawEffect is a subclass of LabelEffect
   that implements the interactive paintbrush tool
   in the slicer editor
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -61,7 +61,7 @@ class DrawEffectOptions(LabelEffect.LabelEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -87,7 +87,7 @@ class DrawEffectOptions(LabelEffect.LabelEffectOptions):
 #
 # DrawEffectTool
 #
- 
+
 class DrawEffectTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -106,7 +106,7 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     self.initialized = False
 
     super(DrawEffectTool,self).__init__(sliceWidget)
-    
+
     # create a logic instance to do the non-gui work
     self.logic = DrawEffectLogic(self.sliceWidget.sliceLogic())
 
@@ -192,7 +192,7 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
 
     # events from the slice node
     if caller and caller.IsA('vtkMRMLSliceNode'):
-      # 
+      #
       # make sure all points are on the current slice plane
       # - if the SliceToRAS has been modified, then we're on a different plane
       #
@@ -276,7 +276,7 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     if not self.activeSlice:
       self.activeSlice = currentSlice
       self.setLineMode("solid")
-    
+
     # don't allow adding points on except on the active slice (where
     # first point was laid down)
     if self.activeSlice != currentSlice: return
@@ -311,13 +311,13 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
 #
 # DrawEffectLogic
 #
- 
+
 class DrawEffectLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an DrawEffectTool
   or DrawEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the DrawEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -328,7 +328,7 @@ class DrawEffectLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The DrawEffect class definition 
+# The DrawEffect class definition
 #
 
 class DrawEffect(LabelEffect.LabelEffect):

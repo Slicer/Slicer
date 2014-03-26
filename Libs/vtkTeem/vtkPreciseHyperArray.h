@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 #ifndef __vtkPreciseHyperArray_h
-#define __vtkPreciseHyperArray_h 
+#define __vtkPreciseHyperArray_h
 
 #include "vtkPreciseHyperPoint.h"
 class VTK_Teem_EXPORT vtkPreciseHyperArray { //;prevent man page generation
@@ -27,7 +27,7 @@ public:
     };
   vtkIdType GetNumberOfPoints() {return this->MaxId + 1;};
   vtkPreciseHyperPoint *GetPreciseHyperPoint(vtkIdType i) {return this->Array + i;};
-  vtkPreciseHyperPoint *InsertNextPreciseHyperPoint() 
+  vtkPreciseHyperPoint *InsertNextPreciseHyperPoint()
     {
     if ( ++this->MaxId >= this->Size )
       {
@@ -45,8 +45,8 @@ public:
   vtkFloatingPointType Direction;       /// integration direction
   vtkIdType MaxAngleLastId;
   void IncrementMaxAngleLastId(void) { MaxAngleLastId++; }
-  vtkFloatingPointType DistanceSoFarMaxAngle(void) { 
-    if ( this->Array[MaxId].D == -1.0 && MaxId > 0 ) 
+  vtkFloatingPointType DistanceSoFarMaxAngle(void) {
+    if ( this->Array[MaxId].D == -1.0 && MaxId > 0 )
       return this->Array[MaxId-1].D - this->Array[MaxAngleLastId+1].D;
     else
       return this->Array[MaxId].D - this->Array[MaxAngleLastId+1].D;

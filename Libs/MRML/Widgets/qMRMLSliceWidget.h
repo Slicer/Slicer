@@ -130,7 +130,7 @@ public slots:
   /// \sa qMRMLSliceControllerWidget::setImageData()
   /// \sa imageData()
   void setImageData(vtkImageData* newImageData);
-  
+
   /// \sa qMRMLSliceControllerWidget::setSliceOrientation()
   /// \sa sliceOrientation()
   void setSliceOrientation(const QString& orienation);

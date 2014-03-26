@@ -87,7 +87,7 @@ int main( int, char** )
 
     itkBSplineType::InputPointType inputPoint;
     inputPoint[0] = 100; inputPoint[1] = 200; inputPoint[2] = 0;
-    itkOutputPoint = 
+    itkOutputPoint =
       bspline->TransformPoint( inputPoint );
     std::cout << " InputPoint: " << inputPoint << std::endl;
     std::cout << " outputPoint: " << itkOutputPoint << std::endl;
@@ -131,7 +131,7 @@ int main( int, char** )
 
     itk::Point<double,3> vtkInputPoint( inputPoint );
     itk::Point<double,3> vtkOutputPoint( outputPoint );
-    
+
     if( itkOutputPoint.EuclideanDistanceTo( vtkOutputPoint ) > 1e-6 )
     {
       std::cout << "Mismatch with ITK result\n";

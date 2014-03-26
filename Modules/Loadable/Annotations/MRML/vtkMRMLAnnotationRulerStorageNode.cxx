@@ -43,7 +43,7 @@ void vtkMRMLAnnotationRulerStorageNode::Copy(vtkMRMLNode *anode)
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerStorageNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
@@ -70,11 +70,11 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
       return 1;
     }
 
-  vtkDebugMacro("got a line: \n\"" << line << "\""); 
+  vtkDebugMacro("got a line: \n\"" << line << "\"");
 
   std::string attValue(line);
   size_t size = std::string(this->GetAnnotationStorageType()).size();
- 
+
   if (attValue.compare(0,size,this->GetAnnotationStorageType()))
     {
       return 0;
@@ -82,18 +82,18 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
 
   int sel = 1, vis = 1;
   std::string annotation;
-  
-  // Jump over type 
+
+  // Jump over type
   size_t  startPos =attValue.find("|",0) +1;
   size_t  endPos =attValue.find("|",startPos);
   int columnNumber = 1;
   vtkIdType lineID = -1;
-  while (startPos != std::string::npos && (columnNumber < numColumns)) 
+  while (startPos != std::string::npos && (columnNumber < numColumns))
     {
-    if (startPos != endPos) 
+    if (startPos != endPos)
       {
       std::string tokenString;
-      if (endPos == std::string::npos) 
+      if (endPos == std::string::npos)
         {
         tokenString = attValue.substr(startPos,endPos);
         }
@@ -101,7 +101,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
         {
         tokenString = attValue.substr(startPos,endPos-startPos);
         }
-      
+
       if (columnNumber == line1IDColumn)
         {
         lineID = atoi(tokenString.c_str());
@@ -120,7 +120,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
     columnNumber ++;
     }
 
-  if (refNode->SetRuler(lineID, sel, vis) < 0 ) 
+  if (refNode->SetRuler(lineID, sel, vis) < 0 )
     {
     vtkErrorMacro("Error setting angle , lineID = " << lineID);
     return -1;
@@ -131,11 +131,11 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn, 
+int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn,
                                      int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns)
 {
   // cout << "vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties " << line << endl;
- if (line[0] != '#' || line[1] != ' ') 
+ if (line[0] != '#' || line[1] != ' ')
     {
       return 0;
     }
@@ -144,10 +144,10 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
  std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
  size_t pointOffset = preposition.size();
 
- //this->DebugOn(); 
+ //this->DebugOn();
  vtkDebugMacro("Have a possible option in line " << line);
  std::string lineString = std::string(line);
- 
+
  if (lineString.find(preposition + "Resolution = ") != std::string::npos)
    {
      std::string str = lineString.substr(13 + pointOffset,std::string::npos);
@@ -165,11 +165,11 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
      refNode->SetDistanceAnnotationFormat(str.c_str());
      //this->DebugOff();
      return 1;
-   } 
+   }
  else if (lineString.find(preposition + "Columns = ") != std::string::npos)
     {
       std::string str = lineString.substr(10 + pointOffset, std::string::npos);
-      
+
       vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
       // reset all of them
       typeColumn= line1IDColumn = selColumn = visColumn = -1;
@@ -218,7 +218,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode
     return 0;
     }
 
-  if (!Superclass::ReadAnnotation(refNode)) 
+  if (!Superclass::ReadAnnotation(refNode))
     {
     return 0;
     }
@@ -245,22 +245,22 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode
   while (fstr.good())
     {
     fstr.getline(line, 1024);
-    
+
     // does it start with a #?
         // Property
-    if ((line[0] == '#') && (line[1] == ' ')) 
+    if ((line[0] == '#') && (line[1] == ' '))
       {
-        this->ReadAnnotationRulerProperties(refNode, line, typePointColumn, line1IDColumn, selPointColumn, visPointColumn, numPointColumns); 
+        this->ReadAnnotationRulerProperties(refNode, line, typePointColumn, line1IDColumn, selPointColumn, visPointColumn, numPointColumns);
       }
         else
           {
-        if (this->ReadAnnotationRulerData(refNode, line, typePointColumn, line1IDColumn, selPointColumn,  
-                          visPointColumn, numPointColumns) < 0 ) 
+        if (this->ReadAnnotationRulerData(refNode, line, typePointColumn, line1IDColumn, selPointColumn,
+                          visPointColumn, numPointColumns) < 0 )
           {
         return 0;
           }
       }
-    }   
+    }
     refNode->SetDisableModifiedEvent(modFlag);
 
     fstr.close();
@@ -323,11 +323,11 @@ int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnot
     return 0;
     }
 
-  
+
   vtkErrorMacro("ReadOneRuler: not implemented yet!");
   return 0;
 }
-                                                    
+
 
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
@@ -356,8 +356,8 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtk
     return 0;
     }
   int sel = refNode->GetSelected();
-  int vis = refNode->GetDisplayVisibility(); 
-  of << this->GetAnnotationStorageType() << "|" << 0  << "|" << sel << "|" << vis << endl;   
+  int vis = refNode->GetDisplayVisibility();
+  of << this->GetAnnotationStorageType() << "|" << 0  << "|" << sel << "|" << vis << endl;
 
   return 1;
 }
@@ -377,7 +377,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
   if ( !( refNode->IsA("vtkMRMLAnnotationRulerNode") ) )
     {
     vtkErrorMacro("WriteAnnotationDataInternal: Reference node is not a proper vtkMRMLAnnotationRulerNode");
-    return 0;         
+    return 0;
     }
 
 

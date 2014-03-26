@@ -284,7 +284,7 @@ int TestAnnotationWidgetsStandalone( int argc, char *argv[] )
   renderInteractor->Delete();
   renderWindow->Delete();
   renderer->Delete();
-  
+
   return !retVal;
 }
 

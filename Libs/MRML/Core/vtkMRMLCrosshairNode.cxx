@@ -78,7 +78,7 @@ void vtkMRMLCrosshairNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " crosshairMode=\"" << "ShowSmallIntersection" << "\"";
     }
-  
+
   of << indent << " navigation=\"" << (this->Navigation ? "true" : "false") << "\"";
 
   if ( this->CrosshairBehavior == vtkMRMLCrosshairNode::JumpSlice )
@@ -116,11 +116,11 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-  if (!strcmp(attName, "CrosshairName")) 
+  if (!strcmp(attName, "CrosshairName"))
       {
       this->SetCrosshairName( attValue );
       }
@@ -137,7 +137,7 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
       else if (!strcmp (attValue, "ShowIntersection"))
         {
         this->SetCrosshairMode (vtkMRMLCrosshairNode::ShowIntersection);
-        }      
+        }
       else if (!strcmp (attValue, "ShowHashmarks"))
         {
         this->SetCrosshairMode ( vtkMRMLCrosshairNode::ShowHashmarks);
@@ -198,14 +198,14 @@ void vtkMRMLCrosshairNode::ReadXMLAttributes(const char** atts)
       double val;
       ss << attValue;
       int i;
-      for (i=0; i<3; i++) 
+      for (i=0; i<3; i++)
         {
         ss >> val;
         this->CrosshairRAS[i] = val;
         }
       }
     }
-  
+
   this->EndModify(disabledModify);
 
 }
@@ -240,7 +240,7 @@ void vtkMRMLCrosshairNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "CrosshairBehavior: " << this->CrosshairBehavior << "\n";
   os << indent << "CrosshairThickness: " << this->CrosshairThickness << "\n";
   os << indent << "CrosshairRAS: \n";
-  for (unsigned int idx = 0; idx < 3; ++idx) 
+  for (unsigned int idx = 0; idx < 3; ++idx)
     {
     os << indent << indent<< " " << this->CrosshairRAS[idx];
     }

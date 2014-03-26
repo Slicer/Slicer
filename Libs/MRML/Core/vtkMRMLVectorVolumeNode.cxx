@@ -37,7 +37,7 @@ vtkMRMLVectorVolumeNode::~vtkMRMLVectorVolumeNode()
 void vtkMRMLVectorVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  
+
 }
 
 //----------------------------------------------------------------------------

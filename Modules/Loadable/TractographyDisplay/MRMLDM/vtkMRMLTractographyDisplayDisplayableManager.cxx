@@ -99,7 +99,7 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
 {
   //if (eventid == vtkCommand::LeftButtonReleaseEvent && keyPressed)
   if (this->GetEnableFiberEdit() &&
-      eventid == vtkCommand::KeyPressEvent && 
+      eventid == vtkCommand::KeyPressEvent &&
       (this->GetInteractor()->GetKeyCode() == 'd' ||
        this->GetInteractor()->GetKeyCode() == 'x' ||
        this->GetInteractor()->GetKeyCode() == 's') )
@@ -242,7 +242,7 @@ void vtkMRMLTractographyDisplayDisplayableManager::DeleteSelectedFibers()
   this->DeletePickedFibers(this->SelectedFiberBundleNode, cellIDs);
   // reset selection
 }
- 
+
 //---------------------------------------------------------------------------
 vtkMRMLFiberBundleNode*
 vtkMRMLTractographyDisplayDisplayableManager::GetPickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode,
@@ -276,7 +276,7 @@ vtkMRMLTractographyDisplayDisplayableManager::GetPickedFiber(vtkMRMLFiberBundleD
     }
 
   if(cellID >= 0)
-    {            
+    {
     fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(displayNode->GetDisplayableNode());
     cellID = fiberBundleNode->GetUnShuffledFiberID(cellID);
     }

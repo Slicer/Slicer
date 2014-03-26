@@ -103,16 +103,16 @@ bool vtkSlicerMultiVolumeRenderingLogic::IsDisplayNodeMatch(vtkMRMLMultiVolumeRe
 {
   if (!dnode)
     return false;
-    
+
   vtkMRMLVolumeNode *b, *f, *l;
-      
+
   b = dnode->GetBgVolumeNode();
   f = dnode->GetFgVolumeNode();
   l = dnode->GetLabelmapVolumeNode();
-      
+
   if (b == bg && f == fg && l == label)
     return true;
-  else   
+  else
     return false;
 }
 
@@ -121,12 +121,12 @@ vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
 {
   if (bg == NULL && fg == NULL && label == NULL)
     return NULL;
-  
+
   int ndnodes = 0;
-  
+
   if (bg)
     bg->GetNumberOfDisplayNodes();
-  
+
   for (int i=0; i<ndnodes; i++)
   {
     vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
@@ -134,12 +134,12 @@ vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
     if (dnode && this->IsDisplayNodeMatch(dnode, bg, fg, label) )
       return dnode;
   }
-  
+
   ndnodes = 0;
-  
+
   if (fg)
     ndnodes = fg->GetNumberOfDisplayNodes();
-  
+
   for (int i=0; i<ndnodes; i++)
   {
     vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
@@ -147,12 +147,12 @@ vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
     if (dnode && this->IsDisplayNodeMatch(dnode, bg, fg, label) )
       return dnode;
   }
-  
+
   ndnodes = 0;
-  
+
   if (label)
     ndnodes = label->GetNumberOfDisplayNodes();
-  
+
   for (int i=0; i<ndnodes; i++)
   {
     vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
@@ -160,7 +160,7 @@ vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
     if (dnode && this->IsDisplayNodeMatch(dnode, bg, fg, label) )
       return dnode;
   }
-  
+
   return NULL;
 }
 
@@ -172,9 +172,9 @@ vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic::Crea
   {
     return node;
   }
-  
+
   node = vtkMRMLMultiVolumeRenderingDisplayNode::New();
-  
+
   this->GetMRMLScene()->AddNode(node);
   node->Delete();
 
@@ -193,17 +193,17 @@ vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
   }
 
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  
+
   for (int i = 0; i < ndnodes; i++)
   {
     vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
                                                     volumeNode->GetNthDisplayNode(i));
-    
+
     if (dnode && !strcmp(displayNodeID, dnode->GetID()))
     {
       return dnode;
     }
   }
-  
+
   return NULL;
 }

@@ -30,7 +30,7 @@ vtkImageLabelChange::vtkImageLabelChange()
 template <class T>
 static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
                      vtkImageData *vtkNotUsed(inData), T *inPtr,
-                     vtkImageData *outData, 
+                     vtkImageData *outData,
                      int outExt[6], int vtkNotUsed(id))
 {
     T *outPtr = (T *)outData->GetScalarPointerForExtent(outExt);
@@ -41,12 +41,12 @@ static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
     T inLabel = (T) self->GetInputLabel();
     T outLabel = (T) self->GetOutputLabel();
 
-    // Get increments to march through data 
+    // Get increments to march through data
     outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
     maxX = outExt[1] - outExt[0];
-    maxY = outExt[3] - outExt[2]; 
+    maxY = outExt[3] - outExt[2];
     maxZ = outExt[5] - outExt[4];
-    
+
     // Loop through ouput pixels
     for (idxZ = 0; idxZ <= maxZ; idxZ++) {
         for (idxY = 0; !self->AbortExecute && idxY <= maxY; idxY++) {
@@ -73,7 +73,7 @@ static void vtkImageLabelChangeExecute(vtkImageLabelChange *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the datas data types.
-void vtkImageLabelChange::ThreadedExecute(vtkImageData *inData, 
+void vtkImageLabelChange::ThreadedExecute(vtkImageData *inData,
                     vtkImageData *outData,
                     int outExt[6], int id)
 {
@@ -86,47 +86,47 @@ void vtkImageLabelChange::ThreadedExecute(vtkImageData *inData,
     }
 
     void *inPtr = inData->GetScalarPointerForExtent(outExt);
-  
+
     switch (inData->GetScalarType())
     {
         case VTK_DOUBLE:
-        vtkImageLabelChangeExecute(this, inData, (double *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (double *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_FLOAT:
-        vtkImageLabelChangeExecute(this, inData, (float *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (float *)(inPtr),
             outData, outExt, id);
-        break;        
+        break;
     case VTK_LONG:
-        vtkImageLabelChangeExecute(this, inData, (long *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (long *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_UNSIGNED_LONG:
-        vtkImageLabelChangeExecute(this, inData, (unsigned long *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (unsigned long *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_INT:
-        vtkImageLabelChangeExecute(this, inData, (int *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (int *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_UNSIGNED_INT:
-        vtkImageLabelChangeExecute(this, inData, (unsigned int *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (unsigned int *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_SHORT:
-        vtkImageLabelChangeExecute(this, inData, (short *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (short *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_UNSIGNED_SHORT:
-        vtkImageLabelChangeExecute(this, inData, (unsigned short *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (unsigned short *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_CHAR:
-        vtkImageLabelChangeExecute(this, inData, (char *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (char *)(inPtr),
             outData, outExt, id);
         break;
     case VTK_UNSIGNED_CHAR:
-        vtkImageLabelChangeExecute(this, inData, (unsigned char *)(inPtr), 
+        vtkImageLabelChangeExecute(this, inData, (unsigned char *)(inPtr),
             outData, outExt, id);
         break;
     default:
@@ -139,7 +139,7 @@ void vtkImageLabelChange::ThreadedExecute(vtkImageData *inData,
 void vtkImageLabelChange::PrintSelf(ostream& os, vtkIndent indent)
 {
     Superclass::PrintSelf(os,indent);
-        
+
     os << indent << "InputLabel: " << this->InputLabel << "\n";
     os << indent << "OutputLabel: " << this->OutputLabel << "\n";
 }

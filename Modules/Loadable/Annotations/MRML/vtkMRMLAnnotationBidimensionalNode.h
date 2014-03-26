@@ -2,7 +2,7 @@
 #define __vtkMRMLAnnotationBidimensionalNode_h
 
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
-#include "vtkMRMLAnnotationLinesNode.h" 
+#include "vtkMRMLAnnotationLinesNode.h"
 
 class vtkMatrix4x4;
 class vtkAbstractTransform;
@@ -15,7 +15,7 @@ public:
   static vtkMRMLAnnotationBidimensionalNode *New();
   vtkTypeMacro(vtkMRMLAnnotationBidimensionalNode, vtkMRMLAnnotationLinesNode);
   // Description:
-  // Just prints short summary 
+  // Just prints short summary
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   //--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ public:
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
+
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -46,8 +46,8 @@ public:
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
 
@@ -97,7 +97,7 @@ protected:
 
   double measurement1;
   double measurement2;
- 
+
 };
 
 #endif

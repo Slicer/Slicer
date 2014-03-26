@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -36,13 +36,13 @@ public:
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLHierarchyNode> node1;
-  
+
   EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
 
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNode, node1.GetPointer());
 
   TEST_SET_GET_DOUBLE_RANGE(node1.GetPointer(), SortingValue, 0.0, 10.0);
-  
+
   TEST_SET_GET_STRING(node1.GetPointer(), ParentNodeID);
 
   vtkMRMLHierarchyNode* pnode = node1->GetParentNode();
@@ -86,7 +86,7 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
     std::cerr << "Error setting parent node id to a different valid string" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
 
 
   TEST_SET_GET_BOOLEAN(node1.GetPointer(), AllowMultipleChildren);

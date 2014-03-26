@@ -107,12 +107,12 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
   valueY.clear();
   valueYErr.clear();
 
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "valueX")) 
+    if (!strcmp(attName, "valueX"))
       {
       std::stringstream ss;
       std::string s;
@@ -206,7 +206,7 @@ void vtkMRMLDoubleArrayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   //vtkMRMLDoubleArrayNode *node = (vtkMRMLDoubleArrayNode *) anode;
   //int type = node->GetType();
-  
+
 }
 
 
@@ -263,7 +263,7 @@ double vtkMRMLDoubleArrayNode::GetYAxisValue(double vtkNotUsed(x), int vtkNotUse
 {
   // not implemented yet
   //  double xy[2];
-  //  
+  //
   //  this->Modified();
   //  return 1;
   return 0.0;
@@ -433,7 +433,7 @@ void vtkMRMLDoubleArrayNode::GetRange(double* rangeX, double* rangeY, int fInclu
     rangeX[1] = xy[0];
     rangeY[0] = xy[1] - c * xy[2];
     rangeY[1] = xy[1] + c * xy[2];
-    
+
     // Search the array
     for (int i = 1; i < nTuples; i ++)
       {
@@ -545,7 +545,7 @@ void vtkMRMLDoubleArrayNode::GetYRange(double* range, int fIncludeError)
     this->Array->GetTupleValue(0, xy);
     range[0] = xy[1] - c * xy[2];
     range[1] = xy[1] + c * xy[2];
-    
+
     // Search the array
     for (int i = 1; i < nTuples; i ++)
       {

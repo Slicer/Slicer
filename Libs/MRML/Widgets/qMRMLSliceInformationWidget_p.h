@@ -77,7 +77,7 @@ public slots:
 public:
   vtkMRMLSliceNode*                   MRMLSliceNode;
   QButtonGroup*                       SliceSpacingModeGroup;
-  
+
 };
 
 #endif

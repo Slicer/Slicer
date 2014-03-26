@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -94,7 +94,7 @@ void setErrorString(int line, const std::string& msg)
 }
 
 //---------------------------------------------------------------------------
-void mrmlEventCallback(vtkObject *vtkcaller, unsigned long eid, 
+void mrmlEventCallback(vtkObject *vtkcaller, unsigned long eid,
                          void *vtkNotUsed(clientdata), void *calldata)
 {
 
@@ -108,7 +108,7 @@ void mrmlEventCallback(vtkObject *vtkcaller, unsigned long eid,
     setErrorString(__LINE__, "mrmlEventCallback - scene != vtkMRMLScene::SafeDownCast(vtkcaller)");
     return;
     }
-    
+
   if (eid == vtkMRMLScene::NodeAboutToBeAddedEvent)
     {
     vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
@@ -252,7 +252,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
         "Scene should contains 0 nodes" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // Configure mrml event callback
   vtkNew<vtkCallbackCommand> callback;
   callback->SetCallback(mrmlEventCallback.GetPointer());
@@ -363,7 +363,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   // Check if the correct number of Events are sent - Also Keep track # of Singleton node
   //---------------------------------------------------------------------------
   resetNumberOfEventsVariables();
-  
+
   // Load the scene
   scene->SetURL( argv[1] );
 
@@ -491,15 +491,15 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     nodePtr = scene->GetNextNode();
     }
 #endif
-  
+
   //---------------------------------------------------------------------------
   // Check if the destructor remove all nodes by checking number of NodeRemovedEvent sent
   //---------------------------------------------------------------------------
   // Expected number of nodes that should removed
   int numberOfNodes = scene->GetNumberOfNodes();
-  
+
   resetNumberOfEventsVariables();
-  
+
   // Make sure scene destructor work properly
   scene->Delete();
   if (!checkErrorString())

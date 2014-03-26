@@ -114,8 +114,8 @@ class ChartingWidget:
 #
 
 class ChartingLogic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -124,7 +124,7 @@ class ChartingLogic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -203,7 +203,7 @@ class ChartingTest(unittest.TestCase):
 
     # Get the first ChartView node
     cvn = slicer.util.getNode(pattern='vtkMRMLChartViewNode*')
-    
+
     # Create arrays of data
     dn = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     a = dn.GetArray()
@@ -223,7 +223,7 @@ class ChartingTest(unittest.TestCase):
       a.SetComponent(i, 1, math.cos(x[i]/50.0))
       a.SetComponent(i, 2, 0)
 
-    # Create the ChartNode, 
+    # Create the ChartNode,
     cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
 
     # Add data to the Chart
@@ -335,10 +335,10 @@ class ChartingTest(unittest.TestCase):
     # Set the chart to display
     cvn.SetChartNodeID(cn.GetID())
     self.delayDisplay('A chart with dates')
-    
+
 
     # Test using a color table to look up label names
-    # 
+    #
     #
 
     # Create another data array
@@ -354,7 +354,7 @@ class ChartingTest(unittest.TestCase):
     a.SetComponent(2, 1, 20)
     a.SetComponent(3, 0, 5)
     a.SetComponent(3, 1, 6)
-    
+
 
     # Create another ChartNode
     cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
@@ -373,7 +373,7 @@ class ChartingTest(unittest.TestCase):
     # Set the chart to display
     cvn.SetChartNodeID(cn.GetID())
     self.delayDisplay('A chart with labels')
-    
+
     # Test box plots
     #
     #
@@ -410,7 +410,7 @@ class ChartingTest(unittest.TestCase):
     for i in range(5):
       a.SetComponent(20+i, 0, 2)
       a.SetComponent(20+i, 1, 10.0*(2.0*random.random()-1.0) + 24.0)
-    
+
     # Create another ChartNode
     cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
 

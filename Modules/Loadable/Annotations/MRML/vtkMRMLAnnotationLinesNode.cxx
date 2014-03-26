@@ -31,7 +31,7 @@ vtkMRMLAnnotationLinesNode::~vtkMRMLAnnotationLinesNode()
 void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
 
   int n = this->GetNumberOfLines();
@@ -53,7 +53,7 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
           of << " " ;
         }
         }
-      if (i < n-1) 
+      if (i < n-1)
         {
           of << "|" ;
         }
@@ -61,25 +61,25 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
       of << "\"";
 
 
-      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) 
+      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       of << indent << " " << this->GetAttributeTypesEnumAsString(j)<<"=\"";
-      for (int i = 0; i < n -1 ; i++ ) 
+      for (int i = 0; i < n -1 ; i++ )
         {
           of << this->GetAnnotationAttribute(i,j) << " " ;
         }
-      if (n) 
+      if (n)
         {
           of << this->GetAnnotationAttribute(n-1,j) ;
         }
 
       of << "\"";
-    }  
     }
-  else 
+    }
+  else
     {
       of << indent << "linePtsID=\"\"" ;
-      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) 
+      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       of << indent << " " << this->GetAttributeTypesEnumAsString(j) << "=\"\"";
     }
@@ -96,11 +96,11 @@ void vtkMRMLAnnotationLinesNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
-    if (!strcmp(attName, "linePtsID"))       
+    if (!strcmp(attName, "linePtsID"))
       {
     std::string valStr(attValue);
     std::replace(valStr.begin(), valStr.end(), '|', ' ');
@@ -114,18 +114,18 @@ void vtkMRMLAnnotationLinesNode::ReadXMLAttributes(const char** atts)
       tmpVec.push_back(d);
         }
 
-    for (int i = 0; i < int(tmpVec.size()); i += 2) 
+    for (int i = 0; i < int(tmpVec.size()); i += 2)
       {
         this->AddLine(tmpVec[i],tmpVec[i + 1],0,0);
       }
-       
+
       }
     else
       {
     int j = NUM_CP_ATTRIBUTE_TYPES;
-    while (j <  NUM_LINE_ATTRIBUTE_TYPES) 
-      {     
-        if (!strcmp(attName, this->GetAttributeTypesEnumAsString(j))) 
+    while (j <  NUM_LINE_ATTRIBUTE_TYPES)
+      {
+        if (!strcmp(attName, this->GetAttributeTypesEnumAsString(j)))
           {
         std::stringstream ss;
         ss << attValue;
@@ -150,8 +150,8 @@ void vtkMRMLAnnotationLinesNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
-  // Nothing to do at this point  bc vtkMRMLAnnotationLineDisplayNode is subclass of vtkMRMLModelDisplayNode 
-  // => will be taken care of by vtkMRMLModelDisplayNode  
+  // Nothing to do at this point  bc vtkMRMLAnnotationLineDisplayNode is subclass of vtkMRMLModelDisplayNode
+  // => will be taken care of by vtkMRMLModelDisplayNode
 
 }
 
@@ -164,22 +164,22 @@ void vtkMRMLAnnotationLinesNode::Copy(vtkMRMLNode *anode)
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  // Not necessary bc vtkMRMLAnnotationLineDisplayNode is subclass of vtkMRMLModelDisplayNode 
+  // Not necessary bc vtkMRMLAnnotationLineDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of  in vtkMRMLModelNode
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag)
 {
-  if (titleFlag) 
+  if (titleFlag)
     {
       os <<indent << "vtkMRMLAnnotationLinesNode: Annotation Summary";
-      if (this->GetName()) 
+      if (this->GetName())
     {
       os << " of " << this->GetName();
     }
@@ -203,7 +203,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
       if (!pts)
         {
           os << "Not Defined ";
-        } 
+        }
       else
         {
           for (int j= 0; j < npts ; j++)
@@ -215,27 +215,27 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
             }
         }
         }
-      if (i < n-1) 
+      if (i < n-1)
         {
           os << "|" ;
         }
     }
       os << endl;
 
-      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) 
+      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       os << indent << this->GetAttributeTypesEnumAsString(j) <<": ";
-      for (int i = 0; i < n; i++ ) 
+      for (int i = 0; i < n; i++ )
         {
           os << this->GetAnnotationAttribute(i,j) << " " ;
         }
       os << endl;
     }
-    } 
-  else 
+    }
+  else
     {
       os << indent << "linePtsID: None" << endl;
-      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) 
+      for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       os << indent << this->GetAttributeTypesEnumAsString(j) <<": None" << endl;
     }
@@ -249,8 +249,8 @@ vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLinesNode::GetAnnotationLineD
   for (int n=0; n<nnodes; n++)
     {
     vtkMRMLAnnotationLineDisplayNode * node = vtkMRMLAnnotationLineDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
-    
-    if (node && node->IsA("vtkMRMLAnnotationLineDisplayNode")) 
+
+    if (node && node->IsA("vtkMRMLAnnotationLineDisplayNode"))
       {
     return node;
       }
@@ -264,7 +264,7 @@ void vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode()
 {
   vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
   if (node) return;
-  if (!this->GetScene()) 
+  if (!this->GetScene())
     {
       vtkErrorMacro("vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode AnnotationLine: No scene defined" ) ;
       return;
@@ -275,7 +275,7 @@ void vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode()
   this->GetScene()->AddNode(node);
   node->Delete();
   this->AddAndObserveDisplayNodeID(node->GetID());
-  // This assumes I want to display the poly data, which I do not 
+  // This assumes I want to display the poly data, which I do not
   // node->SetPolyData(this->GetPolyData());
 }
 
@@ -340,7 +340,7 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
     }
 
 
-  // create event in hearder when deleted 
+  // create event in hearder when deleted
   lines->InitTraversal();
   // cellLine->SetTraversalLocation(id);
 
@@ -348,11 +348,11 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   vtkIdType cNpts = 0;
   vtkIdType *nPts = NULL;
   vtkIdType nNpts = 0;
-  for (int i = 0; i <= id; i++ ) 
+  for (int i = 0; i <= id; i++ )
     {
       lines->GetNextCell(cNpts, cPts);
     }
-  for (int i = id; i < n-1; i++ ) 
+  for (int i = id; i < n-1; i++ )
     {
       lines->GetNextCell(nNpts, nPts);
       if (nNpts != 2 || cNpts != 2)
@@ -365,16 +365,16 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
     }
   lines->SetNumberOfCells(n-1);
 
-  for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) 
+  for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
-      if (!dataArray || dataArray->GetSize() != n) 
+      if (!dataArray || dataArray->GetSize() != n)
         {
           vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j) << " is out of sync with number of lines" );
-        } 
-      else 
+        }
+      else
     {
-      this->DeleteAttribute(id,j); 
+      this->DeleteAttribute(id,j);
     }
     }
 }
@@ -389,34 +389,34 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
                   << " PolyData or PolyData->GetLines() is NULL" );
     return 0;
     }
-  
+
   if (id >= this->GetNumberOfLines())
     {
       vtkErrorMacro("Annotation: GetEndPointsId: id is out of range");
       return 0;
     }
- 
+
   vtkCellArray* lines = this->GetLines();
   lines->InitTraversal();
 
   vtkIdType npts = 0;
   vtkIdType *pts = NULL;
-  
-  for (int i = 0; i < id; i++ ) 
+
+  for (int i = 0; i < id; i++ )
     {
       lines->GetNextCell(npts, pts);
     }
 
   lines->GetNextCell(npts, pts);
-  
-  if (npts != 2) 
+
+  if (npts != 2)
     {
       vtkErrorMacro("Annotation: GetEndPointsId: line with id is not correctly defined");
       return 0;
     }
   ctrlPtsID[0] = pts[0];
   ctrlPtsID[1] = pts[1];
-  return 1; 
+  return 1;
 }
 
 
@@ -426,10 +426,10 @@ void vtkMRMLAnnotationLinesNode::ResetLinesAttributesAll() {
   for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) {
     this->ResetAttributes(j);
   }
-} 
+}
 
 //-------------------------------------------------------------------------
-const char *vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val) 
+const char *vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val)
 {
   if (val < vtkMRMLAnnotationControlPointsNode::NUM_CP_ATTRIBUTE_TYPES) {
     return vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(val);
@@ -449,7 +449,7 @@ vtkMRMLStorageNode* vtkMRMLAnnotationLinesNode::CreateDefaultStorageNode()
 //---------------------------------------------------------------------------
 int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtIdEnd,int selectedFlag, int visibleFlag)
 {
-  if (id < 0) 
+  if (id < 0)
   {
     vtkErrorMacro("Invalid ID");
     return 0;
@@ -469,20 +469,20 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
     return 0;
     }
 
-  // Define line 
+  // Define line
   vtkIdType lineIdList[2] = {ctrlPtIdStart, ctrlPtIdEnd} ;
 
   // Enter into Array, by creating cell array, traversing to the right location, and entering it
-  if (! this->GetNumberOfLines()) 
+  if (! this->GetNumberOfLines())
     {
       this->CreatePolyData();
     }
 
   vtkCellArray* cellLine = this->GetLines();
- 
-  if (cellLine->GetNumberOfCells() <= id ) 
+
+  if (cellLine->GetNumberOfCells() <= id )
     {
-      if (cellLine->GetNumberOfCells()) 
+      if (cellLine->GetNumberOfCells())
     {
       cellLine->SetTraversalLocation(cellLine->GetNumberOfCells()-1);
     }
@@ -491,16 +491,16 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
       for (int i=0; i< addCells; i++)
     {
       cellLine->InsertNextCell(0,0);
-    }  
+    }
       cellLine->InsertNextCell(2,lineIdList);
     }
-  else 
+  else
     {
       cellLine->InitTraversal();
       cellLine->ReplaceCell(id,2,lineIdList);
     }
 
-  for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++) 
+  for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
     {
       this->SetAttributeSize(j,this->GetNumberOfLines());
     }
@@ -533,7 +533,7 @@ int vtkMRMLAnnotationLinesNode::AddLine(int ctrlPtIdStart, int ctrlPtIdEnd,int s
       }
     }
 
-  if (this->SetLine(id,  ctrlPtIdStart, ctrlPtIdEnd,selectedFlag, visibleFlag)) 
+  if (this->SetLine(id,  ctrlPtIdStart, ctrlPtIdEnd,selectedFlag, visibleFlag))
     {
       return id;
     }
@@ -556,7 +556,7 @@ void vtkMRMLAnnotationLinesNode::Initialize(vtkMRMLScene* mrmlScene)
      vtkErrorMacro("Scene was null!")
      return;
    }
- 
+
    // we need to disable the modified event which would get fired when we set the new displayNode
    this->DisableModifiedEventOn();
    if (this->GetScene()!=mrmlScene)

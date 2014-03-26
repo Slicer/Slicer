@@ -46,7 +46,7 @@ void vtkMRMLScriptedModuleNode::WriteXML(ostream& of, int nIndent)
 
   // Write all MRML node attributes into output stream
 
-  vtkIndent indent(nIndent); 
+  vtkIndent indent(nIndent);
 
   if (this->ModuleName != 0)
     {

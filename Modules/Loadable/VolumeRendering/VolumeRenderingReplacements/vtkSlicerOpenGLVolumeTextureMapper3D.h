@@ -31,7 +31,7 @@
 #ifndef VTK_IMPLEMENT_MESA_CXX
 # include "vtkOpenGL.h" // GLfloat type is used in some method signatures.
 #endif
- 
+
 
 class vtkRenderWindow;
 class vtkVolumeProperty;
@@ -50,7 +50,7 @@ public:
   // more than one independent component, or if the hardware does
   // not support the required extensions
   int IsRenderSupported(vtkRenderWindow*,  vtkVolumeProperty *);
-  
+
 
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
@@ -58,19 +58,19 @@ public:
   // Render the volume
   virtual void Render(vtkRenderer *ren, vtkVolume *vol);
 
-  
+
   // Desciption:
   // Initialize when we go to render, or go to answer the
   // IsRenderSupported question. Don't call unless we have
-  // a valid OpenGL context! 
+  // a valid OpenGL context!
   vtkGetMacro( Initialized, int );
-  
+
   // Description:
   // Release any graphics resources that are being consumed by this texture.
   // The parameter window could be used to determine which graphic
   // resources to release.
   void ReleaseGraphicsResources(vtkWindow *);
-  
+
 protected:
   vtkSlicerOpenGLVolumeTextureMapper3D();
   ~vtkSlicerOpenGLVolumeTextureMapper3D();
@@ -82,8 +82,8 @@ protected:
                            GLfloat lightDiffuseColor[2][4],
                            GLfloat lightSpecularColor[2][4],
                            GLfloat halfwayVector[2][4],
-                           GLfloat *ambient );  
-   
+                           GLfloat *ambient );
+
   int              Initialized;
   GLuint           Volume1Index;
   GLuint           Volume2Index;
@@ -91,7 +91,7 @@ protected:
   GLuint           ColorLookupIndex;
   GLuint           AlphaLookupIndex;
   vtkRenderWindow *RenderWindow;
-  
+
   void Initialize(vtkRenderWindow*);
 
   virtual void RenderNV(vtkRenderer *ren, vtkVolume *vol);
@@ -111,7 +111,7 @@ protected:
   void RenderTwoDependentShadeNV( vtkRenderer *ren, vtkVolume *vol );
   void RenderFourDependentNoShadeNV( vtkRenderer *ren, vtkVolume *vol );
   void RenderFourDependentShadeNV( vtkRenderer *ren, vtkVolume *vol );
-  
+
   void SetupOneIndependentTextures( vtkRenderer *ren, vtkVolume *vol );
   void SetupTwoDependentTextures( vtkRenderer *ren, vtkVolume *vol );
   void SetupFourDependentTextures( vtkRenderer *ren, vtkVolume *vol );
@@ -126,13 +126,13 @@ protected:
 
   void DeleteTextureIndex( GLuint *index );
   void CreateTextureIndex( GLuint *index );
-  
+
   void RenderPolygons( vtkRenderer *ren,
                        vtkVolume *vol,
                        int stages[4] );
 
   void SetupProgramLocalsForShadingFP( vtkRenderer *ren, vtkVolume *vol );
-  
+
   // Description:
   // Check if we can support this texture size.
   int IsTextureSizeSupported( int size[3] );
@@ -140,7 +140,7 @@ protected:
   // Description:
   // Common code for setting up interpolation / clamping on 3D textures
   void Setup3DTextureParameters( vtkVolumeProperty *property );
-  
+
   void AdaptivePerformanceControl();
 
 private:

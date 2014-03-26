@@ -32,12 +32,12 @@ public:
   vtkTypeRevisionMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Set/Get the Operation to perform.
   vtkSetMacro(OverwriteInput,int);
   vtkGetMacro(OverwriteInput,int);
 
-  /// 
+  ///
   /// Set the two inputs to this filter
   virtual void SetInput1(vtkDataObject *in) { this->SetInput(0,in); }
   virtual void SetInput2(vtkDataObject *in) { this->SetInput(1,in); }
@@ -47,15 +47,15 @@ protected:
   ~vtkImageLabelCombine() {};
 
   int OverwriteInput;
-  
-  virtual int RequestInformation (vtkInformation *, 
+
+  virtual int RequestInformation (vtkInformation *,
                                   vtkInformationVector **,
                                   vtkInformationVector *);
-  
-  virtual void ThreadedRequestData(vtkInformation *request, 
-                                   vtkInformationVector **inputVector, 
+
+  virtual void ThreadedRequestData(vtkInformation *request,
+                                   vtkInformationVector **inputVector,
                                    vtkInformationVector *outputVector,
-                                   vtkImageData ***inData, 
+                                   vtkImageData ***inData,
                                    vtkImageData **outData,
                                    int extent[6], int threadId);
 

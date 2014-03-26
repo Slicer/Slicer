@@ -45,38 +45,38 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "DiffusionTensorVolumeDisplay";};
 
   //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* );
 
-  /// 
+  ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
@@ -90,17 +90,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
 
-  /// 
-  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  ///
+  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor
   /// rotation) selected for display.
   vtkGetMacro(ScalarInvariant, int);
 
-  /// 
-  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor 
+  ///
+  /// Get type of scalar invariant (tensor-derived scalar, invariant to tensor
   /// rotation) selected for display.
   vtkSetMacro(ScalarInvariant, int);
- 
-  /// 
+
+  ///
   /// Set scalar invariant to trace (sum of eigenvalues).
   void SetScalarInvariantToTrace() {
     this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
@@ -112,31 +112,31 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
     this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy);
   };
 
-  /// 
+  ///
   /// Set scalar invariant to FA (normalized variance of eigenvalues)
   void SetScalarInvariantToFractionalAnisotropy() {
     this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
   };
 
-  /// 
+  ///
   /// Set scalar invariant to C_L (Westin's linear measure)
   void SetScalarInvariantToLinearMeasure() {
     this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
   };
 
-  /// 
+  ///
   /// Set scalar invariant to C_P (Westin's planar measure)
   void SetScalarInvariantToPlanarMeasure() {
     this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure);
   };
 
-  /// 
+  ///
   /// Set scalar invariant to C_S (Westin's spherical measure)
   void SetScalarInvariantToSphericalMeasure() {
     this->SetScalarInvariant(vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure);
   };
 
-  /// 
+  ///
   /// Return a text string describing the ScalarInvariant variable
   virtual const char * GetScalarInvariantAsString()
     {
@@ -159,17 +159,17 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
 
 
-  /// 
+  ///
   /// get associated slice glyph display node or NULL if not set
   virtual std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
 
-  /// 
+  ///
   /// add slice glyph display nodes if not already present and return it
   virtual void  AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* node );
 
-  /// 
-  /// Defines the expected range of the output data for given imageData after 
+  ///
+  /// Defines the expected range of the output data for given imageData after
   /// having been mapped through the current display options
   virtual void GetDisplayScalarRange(double range[2]);
 

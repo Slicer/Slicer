@@ -293,8 +293,8 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
                         else if ( (cdptr+d*xstep) <= lastPixel && (cdptr-d*xstep) >= dataPtr )
                         {
                             n[0] = (float)*(cdptr-d*xstep) - (float)*(cdptr+d*xstep);
-                        } 
-                        else 
+                        }
+                        else
                         {
                             n[0] = 0;
                         }
@@ -311,8 +311,8 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
                         else if ( (cdptr+d*ystep) <= lastPixel && (cdptr-d*ystep) >= dataPtr )
                         {
                             n[1] = (float)*(cdptr-d*ystep) - (float)*(cdptr+d*ystep);
-                        } 
-                        else 
+                        }
+                        else
                         {
                             n[1] = 0;
                         }
@@ -329,8 +329,8 @@ void vtkSlicerFixedPointVolumeRayCastMapperComputeGradients( T *dataPtr,
                         else if ( (cdptr+d*zstep) <= lastPixel && (cdptr-d*zstep) >= dataPtr )
                         {
                             n[2] = (float)*(cdptr-d*zstep) - (float)*(cdptr+d*zstep);
-                        } 
-                        else 
+                        }
+                        else
                         {
                             n[2] = 0;
                         }

@@ -867,7 +867,7 @@ char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
   "LeaveEvent 604 592 0 0 0 0 0\n"
   ;
 
-namespace 
+namespace
 {
 //----------------------------------------------------------------------------
 class vtkAbortCommand: public vtkCommand

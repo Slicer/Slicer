@@ -32,32 +32,32 @@ public:
   vtkTypeMacro(vtkMRMLVolumeDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Sets ImageData for background mask
   /// Must be reimplemented in deriving class if they need it.
   /// GetBackgroundImageData() returns 0 if the background image data
@@ -91,16 +91,16 @@ public:
   /// Gets the pipeline output. To be reimplemented in subclasses.
   virtual vtkImageData* GetOutputImageData();
 
-  /// 
+  ///
   /// Update the pipeline based on this node attributes
   virtual void UpdateImageDataPipeline();
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
-  /// 
+  ///
   /// set gray colormap or override in subclass
   virtual void SetDefaultColorMap();
 
@@ -113,7 +113,7 @@ protected:
   ~vtkMRMLVolumeDisplayNode();
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
-  
+
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 };
 

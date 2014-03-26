@@ -47,7 +47,7 @@ protected:
 public:
   qMRMLChartWidgetPrivate(qMRMLChartWidget& object);
   ~qMRMLChartWidgetPrivate();
-  
+
   void init();
 
   qMRMLChartView*       ChartView;
@@ -72,7 +72,7 @@ qMRMLChartWidgetPrivate::~qMRMLChartWidgetPrivate()
 void qMRMLChartWidgetPrivate::init()
 {
   Q_Q(qMRMLChartWidget);
-  
+
   QVBoxLayout* layout = new QVBoxLayout(q);
   layout->setSpacing(0);
   layout->setContentsMargins(0, 0, 0, 0);
@@ -82,7 +82,7 @@ void qMRMLChartWidgetPrivate::init()
 
   this->ChartView = new qMRMLChartView;
   layout->addWidget(this->ChartView);
-  
+
   this->ChartController->setChartView(this->ChartView);
 
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),

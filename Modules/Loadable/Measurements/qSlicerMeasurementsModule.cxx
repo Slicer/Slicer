@@ -62,5 +62,5 @@ qSlicerAbstractModuleRepresentation* qSlicerMeasurementsModule::createWidgetRepr
 vtkSlicerLogic* qSlicerMeasurementsModule::createLogic()
 {
   //return new qSlicerMeasurementsModuleLogic;
-  return 0; 
+  return 0;
 }

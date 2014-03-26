@@ -51,7 +51,7 @@ vtkNRRDWriter::~vtkNRRDWriter()
   if (this->MeasurementFrameMatrix)
     {
     this->MeasurementFrameMatrix->Delete();
-    }      
+    }
   if (this->Attributes)
     {
     delete this->Attributes;
@@ -91,7 +91,7 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size
     numComp = array->GetNumberOfComponents();
     vtkType = array->GetDataType();
     (*buffer) = array->GetVoidPointer(0);
-    
+
     switch (numComp)
       {
       case 1:
@@ -139,8 +139,8 @@ void vtkNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size
      vtkType = array->GetDataType();
      kind = nrrdKind3DMatrix;
      numComp = array->GetNumberOfComponents();
-     }       
-} 
+     }
+}
 
 int vtkNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
   {
@@ -195,7 +195,7 @@ void vtkNRRDWriter::WriteData()
     vtkErrorMacro("FileName has not been set. Cannot save file");
     this->WriteErrorOn();
     return;
-    } 
+    }
 
   Nrrd *nrrd = nrrdNew();
   NrrdIoState *nio = nrrdIoStateNew();
@@ -206,14 +206,14 @@ void vtkNRRDWriter::WriteData()
   double origin[NRRD_DIM_MAX];
   void *buffer;
   int vtkType;
-  
+
     // Fill in image information.
   this->GetInput()->UpdateInformation();
-  
+
   //vtkImageData *input = this->GetInput();
 
   // Find Pixel type from data and select a buffer.
-  this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, &buffer); 
+  this->vtkImageDataInfoToNrrdInfo(this->GetInput(),kind[0],size[0],vtkType, &buffer);
 
   spaceDim = 3; // VTK is always 3D volumes.
   if (size[0] > 1)
@@ -230,7 +230,7 @@ void vtkNRRDWriter::WriteData()
     baseDim = 0;
     }
   nrrdDim = baseDim + spaceDim;
-  
+
   unsigned int axi;
   for (axi=0; axi < spaceDim; axi++)
     {
@@ -251,13 +251,13 @@ void vtkNRRDWriter::WriteData()
       || nrrdSpaceOriginSet(nrrd, origin))
     {
     char *err = biffGetDone(NRRD); // would be nice to free(err)
-    vtkErrorMacro("Write: Error wrapping nrrd for " 
+    vtkErrorMacro("Write: Error wrapping nrrd for "
                       << this->GetFileName() << ":\n" << err);
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
     nio = nrrdIoStateNix(nio);
     this->WriteErrorOn();
-    return; 
+    return;
     }
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoKind, kind);
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
@@ -352,7 +352,7 @@ void vtkNRRDWriter::WriteData()
   if (nrrdSave(this->GetFileName(), nrrd, nio))
     {
     char *err = biffGetDone(NRRD); // would be nice to free(err)
-    vtkErrorMacro("Write: Error writing " 
+    vtkErrorMacro("Write: Error writing "
                       << this->GetFileName() << ":\n" << err);
     this->WriteErrorOn();
     }

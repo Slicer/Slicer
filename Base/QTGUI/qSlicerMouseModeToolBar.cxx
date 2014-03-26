@@ -74,7 +74,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->PersistenceAction->setChecked(false);
   connect(this->PersistenceAction, SIGNAL(triggered(bool)),
           q, SLOT(setPersistence(bool)));
-  
+
   // popuplate the create and place menu, with persistence first
   this->CreateAndPlaceMenu = new QMenu(QObject::tr("Create and Place"), q);
   this->CreateAndPlaceMenu->setObjectName("CreateAndPlaceMenu");
@@ -82,7 +82,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->CreateAndPlaceMenu->addSeparator();
   this->CreateAndPlaceMenu->addActions(this->ActionGroup->actions());
   this->CreateAndPlaceMenu->addSeparator();
-  
+
 
   this->CreateAndPlaceToolButton = new QToolButton();
   this->CreateAndPlaceToolButton->setObjectName("CreateAndPlaceToolButton");
@@ -91,12 +91,12 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->CreateAndPlaceToolButton->setText(QObject::tr("Place"));
   this->CreateAndPlaceToolButton->setMenu(this->CreateAndPlaceMenu);
   this->CreateAndPlaceToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-  
+
   // set default action?
 
 
-  q->addWidget(this->CreateAndPlaceToolButton);  
-  
+  q->addWidget(this->CreateAndPlaceToolButton);
+
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                    this->CreateAndPlaceToolButton,
                    SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
@@ -451,7 +451,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     {
     return;
     }
- 
+
   // loop through all existing threeDViews
   for (int i=0; i < layoutManager->threeDViewCount(); ++i)
     {
@@ -474,7 +474,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
     // item 0 is usually a vtkMRMLViewNode for the 3d window
     vtkMRMLSliceNode *sliceNode = vtkMRMLSliceNode::SafeDownCast(visibleViews->GetItemAsObject(v));
     if (sliceNode)
-      {    
+      {
       qMRMLSliceWidget *sliceView = layoutManager->sliceWidget(sliceNode->GetName());
       if (sliceView)
         {

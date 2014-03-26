@@ -42,38 +42,38 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "TensorVolume";};
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences()
     { Superclass::UpdateReferences(); };
 
  /// Description:
  /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID) 
+  virtual void UpdateReferenceID(const char *oldID, const char *newID)
     { Superclass::UpdateReferenceID(oldID, newID); };
 
-  /// 
+  ///
   vtkGetMacro(Order,int);
   vtkSetMacro(Order,int);
-  
-  /// 
+
+  ///
   /// Set the Measurement frame matrix from 3x3 array
   void SetMeasurementFrameMatrix(const double mf[3][3]);
   /// Description
@@ -83,13 +83,13 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
                            const double zr, const double za, const double zs);
 
   void GetMeasurementFrameMatrix(double mf[3][3]);
-  
-  /// 
+
+  ///
   /// Set/Get the measurement frame matrix from a vtk 4x4 matrix
   void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
   void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
 
-  /// 
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
@@ -98,13 +98,13 @@ protected:
   ~vtkMRMLTensorVolumeNode();
   vtkMRMLTensorVolumeNode(const vtkMRMLTensorVolumeNode&);
   void operator=(const vtkMRMLTensorVolumeNode&);
-  
+
   double MeasurementFrameMatrix[3][3];
   int Order;
 
-  vtkDiffusionTensorMathematics *DTIMathematics;  
+  vtkDiffusionTensorMathematics *DTIMathematics;
   vtkAssignAttribute *AssignAttributeTensorsFromScalars ;
-  
+
 };
 
 #endif

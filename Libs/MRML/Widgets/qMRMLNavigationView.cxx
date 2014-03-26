@@ -67,8 +67,8 @@ qMRMLNavigationView::qMRMLNavigationView(QWidget* _parent) : Superclass(_parent)
 {
   // Set default background color
   this->setBackgroundColor(QColor::fromRgbF(
-    vtkMRMLViewNode::defaultBackgroundColor()[0], 
-    vtkMRMLViewNode::defaultBackgroundColor()[1], 
+    vtkMRMLViewNode::defaultBackgroundColor()[0],
+    vtkMRMLViewNode::defaultBackgroundColor()[1],
     vtkMRMLViewNode::defaultBackgroundColor()[2]));
 }
 

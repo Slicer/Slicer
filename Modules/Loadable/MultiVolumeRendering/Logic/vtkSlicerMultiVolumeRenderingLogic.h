@@ -55,7 +55,7 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeRe
   public vtkSlicerModuleLogic
 {
 public:
-  
+
   static vtkSlicerMultiVolumeRenderingLogic *New();
   vtkTypeMacro(vtkSlicerMultiVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -64,15 +64,15 @@ public:
   // Description:
   // Find first volume rendering display node matching bg, fg, and labelmap set
   vtkMRMLMultiVolumeRenderingDisplayNode* FindFirstMatchedDisplayNode(vtkMRMLVolumeNode *bg, vtkMRMLVolumeNode *fg, vtkMRMLVolumeNode *label);
-  
+
   // Description:
   // Create a new display node
   vtkMRMLMultiVolumeRenderingDisplayNode* CreateDisplayNode();
-  
+
   // Description:
   // Find volume rendering display node reference in the volume
   vtkMRMLMultiVolumeRenderingDisplayNode* GetDisplayNodeByID(vtkMRMLVolumeNode *volumeNode, char *displayNodeID);
-  
+
 protected:
   vtkSlicerMultiVolumeRenderingLogic();
   virtual ~vtkSlicerMultiVolumeRenderingLogic();
@@ -87,7 +87,7 @@ private:
 
   vtkSlicerMultiVolumeRenderingLogic(const vtkSlicerMultiVolumeRenderingLogic&); // Not implemented
   void operator=(const vtkSlicerMultiVolumeRenderingLogic&);               // Not implemented
-  
+
   bool IsDisplayNodeMatch(vtkMRMLMultiVolumeRenderingDisplayNode *dnode, vtkMRMLVolumeNode *bg, vtkMRMLVolumeNode *fg, vtkMRMLVolumeNode *label);
 };
 

@@ -30,9 +30,9 @@ vtkMRMLNodeNewMacro(vtkMRMLTensorVolumeNode);
 //----------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()
 {
-  for(int i=0; i<3; i++) 
+  for(int i=0; i<3; i++)
     {
-    for(int j=0; j<3; j++) 
+    for(int j=0; j<3; j++)
       {
       this->MeasurementFrameMatrix[i][j] = (i == j) ? 1.0 : 0.0;
       }
@@ -41,7 +41,7 @@ vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()
 
   this->DTIMathematics = NULL;
   this->AssignAttributeTensorsFromScalars = NULL;
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ vtkMRMLTensorVolumeNode::~vtkMRMLTensorVolumeNode()
 void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
   std::stringstream ss;
   for(int i=0; i<3; i++)
@@ -120,14 +120,14 @@ void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
   }
 
   this->EndModify(disabledModify);
-} 
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double mf[3][3])
 {
-  for (int i=0; i<3; i++) 
+  for (int i=0; i<3; i++)
     {
-    for (int j=0; j<3; j++) 
+    for (int j=0; j<3; j++)
       {
       this->MeasurementFrameMatrix[i][j] = mf[i][j];
       }
@@ -137,9 +137,9 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double mf[3][3])
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(double mf[3][3])
 {
-  for (int i=0; i<3; i++) 
+  for (int i=0; i<3; i++)
     {
-    for (int j=0; j<3; j++) 
+    for (int j=0; j<3; j++)
       {
       mf[i][j]= this->MeasurementFrameMatrix[i][j];
       }
@@ -197,9 +197,9 @@ void vtkMRMLTensorVolumeNode::Copy(vtkMRMLNode *anode)
   vtkMRMLTensorVolumeNode *node = (vtkMRMLTensorVolumeNode *) anode;
 
   // Matrices
-  for(int i=0; i<3; i++) 
+  for(int i=0; i<3; i++)
     {
-    for(int j=0; j<3; j++) 
+    for(int j=0; j<3; j++)
       {
       this->MeasurementFrameMatrix[i][j] = node->MeasurementFrameMatrix[i][j];
       }
@@ -215,9 +215,9 @@ void vtkMRMLTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
   os << "MeasurementFrameMatrix:\n";
-  for(int i=0; i<3; i++) 
+  for(int i=0; i<3; i++)
     {
-    for(int j=0; j<3; j++) 
+    for(int j=0; j<3; j++)
       {
       os << indent << " " << this->MeasurementFrameMatrix[i][j];
       }

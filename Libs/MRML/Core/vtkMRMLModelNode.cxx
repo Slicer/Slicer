@@ -63,7 +63,7 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   if (modelNode && modelNode->GetPolyData())
     {
     // Only copy bulk data if it exists - this handles the case
-    // of restoring from SceneViews, where the nodes will not 
+    // of restoring from SceneViews, where the nodes will not
     // have bulk data.
     this->SetAndObservePolyData(modelNode->GetPolyData());
     }
@@ -322,7 +322,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       {
       haveCurvScalars = true;
       }
-    
+
     // get the scalars to composite, putting any curv file in scalars 1
     vtkDataArray *scalars1, *scalars2;
     if (!haveCurvScalars ||
@@ -361,7 +361,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     composedScalars->SetName(composedName.c_str());
     composedScalars->Allocate( cValues );
     composedScalars->SetNumberOfComponents( 1 );
-   
+
     // For each value, check the overlay value. If it's < min, use
     // the background value. If we're reversing, reverse the overlay
     // value. If we're not showing one side, use the background
@@ -375,7 +375,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       {
       background = scalars1->GetTuple1(nValue);
       overlay = scalars2->GetTuple1(nValue);
-      
+
       if( reverseOverlay )
         {
         overlay = -overlay;
@@ -384,12 +384,12 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
         {
         overlay = 0;
         }
-      
+
       if( overlay < 0 && !showOverlayNegative )
         {
         overlay = 0;
         }
-      
+
       // Insert the appropriate color into the composed array.
       if( overlay < overlayMin &&
           overlay > -overlayMin )
@@ -401,7 +401,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
         composedScalars->InsertNextValue( overlay );
         }
       }
-    
+
     // set up a colour node
     vtkMRMLProceduralColorNode *colorNode = vtkMRMLProceduralColorNode::New();
     colorNode->SetName(composedName.c_str());
@@ -413,7 +413,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     // other heat overlay
     const double EPS = 0.00001; // epsilon
     double curvatureMin = 0;
-    
+
     if (haveCurvScalars)
       {
       curvatureMin = 0.5;
@@ -427,7 +427,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     func->AddRGBPoint( -overlayMax, 0, 1, 1 );
     func->AddRGBPoint( -overlayMid, 0, 0, 1 );
     func->AddRGBPoint( -overlayMin, 0, 0, 1 );
-    
+
     if( bUseGray && overlayMin != 0 )
       {
       func->AddRGBPoint( -overlayMin + EPS, 0.5, 0.5, 0.5 );
@@ -443,7 +443,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       func->AddRGBPoint(  EPS,          0.4, 0.4, 0.4 );
       func->AddRGBPoint(  curvatureMin, 0.4, 0.4, 0.4 );
       }
-    
+
     if ( bUseGray && overlayMin != 0 )
       {
       if( haveCurvScalars )
@@ -456,9 +456,9 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     func->AddRGBPoint( overlayMin, 1, 0, 0 );
     func->AddRGBPoint( overlayMid, 1, 0, 0 );
     func->AddRGBPoint( overlayMax, 1, 1, 0 );
-    
+
     func->Build();
-    
+
     // use the new colornode
     this->Scene->AddNode(colorNode);
     vtkDebugMacro("CompositeScalars: created color transfer function, and added proc color node to scene, id = " << colorNode->GetID());
@@ -467,7 +467,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       this->GetModelDisplayNode()->SetAndObserveColorNodeID(colorNode->GetID());
       this->GetModelDisplayNode()->SetScalarRange(-overlayMax, overlayMax);
       }
-    
+
     // add the new scalars
     this->AddPointScalars(composedScalars);
 
@@ -479,7 +479,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     colorNode = NULL;
     composedScalars->Delete();
     composedScalars = NULL;
-    
+
     return 1;
 }
 

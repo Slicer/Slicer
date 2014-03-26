@@ -31,7 +31,7 @@ PURPOSE.  See the above copyright notice for more information.
 vtkCxxRevisionMacro(vtkPolyDataColorLinesByOrientation, "$Revision: 1.41 $");
 vtkStandardNewMacro(vtkPolyDataColorLinesByOrientation);
 
-// Construct with lower threshold=0, upper threshold=1, and threshold 
+// Construct with lower threshold=0, upper threshold=1, and threshold
 // function=upper.
 vtkPolyDataColorLinesByOrientation::vtkPolyDataColorLinesByOrientation()
 {
@@ -83,7 +83,7 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
   outPD = output->GetPointData();
   outCD = output->GetCellData();
 
-  vtkCellArray *sourceCells, *cells;  
+  vtkCellArray *sourceCells, *cells;
   vtkCell *cell;
   vtkIdType cellId;
   vtkIdList *cellPts;
@@ -103,7 +103,7 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
     cells->Delete();
   }
   if ( (sourceCells=input->GetLines())->GetNumberOfCells() > 0 )
-  { 
+  {
     cells = vtkCellArray::New();
     cells->Allocate(sourceCells->GetSize());
     output->SetLines(cells);
@@ -148,7 +148,7 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
   vtkIdType progressInterval = numPts/20+1;
   vtkIdType ptOffset = 0;
 
-  newPoints = vtkPoints::New();  
+  newPoints = vtkPoints::New();
   for (ptId=0; ptId < numPts && !abort; ptId++)
   {
     if ( !(ptId % progressInterval) )
@@ -235,10 +235,10 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
         x[2] = x[2] / npts;
       }
     }
-  
+
 
     if (this->ColorMode == vtkPolyDataColorLinesByOrientation::colorModeMeanFiberOrientation)
-    { 
+    {
       vtkDiffusionTensorMathematics::RGBToIndex(x[0],x[1],x[2],color);
       for (i=0; i < npts; i++)
       {
@@ -257,7 +257,7 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
   pointMeanFiberColor->Delete();
 
   if (this->ColorMode == vtkPolyDataColorLinesByOrientation::colorModeMeanFiberOrientation)
-  { 
+  {
     idx = outCD->AddArray(cellColor);
     if (idx >= 0)
       outCD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);

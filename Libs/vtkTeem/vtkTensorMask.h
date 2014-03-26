@@ -50,14 +50,14 @@ protected:
   void operator=(const vtkTensorMask&);
 
   /// We override this in order to allocate output tensors
-  /// before threading happens.  This replaces the superclass 
+  /// before threading happens.  This replaces the superclass
   /// vtkImageMultipleInputFilter's Execute function.
   void ExecuteData(vtkDataObject *out);
 
-  virtual void ThreadedRequestData(vtkInformation *request, 
-                                   vtkInformationVector **inputVector, 
+  virtual void ThreadedRequestData(vtkInformation *request,
+                                   vtkInformationVector **inputVector,
                                    vtkInformationVector *outputVector,
-                                   vtkImageData ***inData, 
+                                   vtkImageData ***inData,
                                    vtkImageData **outData,
                                    int extent[6], int threadId);
 };

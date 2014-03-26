@@ -23,7 +23,7 @@ namespace itk {
       {
       public:
         typedef X element_type;
-        
+
         explicit counted_ptr(X* p = 0) /// allocate a new counter
           : itsCounter(0) {if (p) itsCounter = new counter(p);}
         ~counted_ptr()
@@ -38,7 +38,7 @@ namespace itk {
             }
             return *this;
           }
-        
+
 #ifndef NO_MEMBER_TEMPLATES
         template <class Y> friend class counted_ptr<Y>;
         template <class Y> counted_ptr(const counted_ptr<Y>& r) throw()
@@ -52,21 +52,21 @@ namespace itk {
             return *this;
           }
 #endif /// NO_MEMBER_TEMPLATES
-        
+
         X& operator*()  const throw()   {return *itsCounter->ptr;}
         X* operator->() const throw()   {return itsCounter->ptr;}
         X* get()        const throw()   {return itsCounter ? itsCounter->ptr : 0;}
         bool unique()   const throw()
         {return (itsCounter ? itsCounter->count == 1 : true);}
-        
+
       private:
-        
+
         struct counter {
         counter(X* p = 0, unsigned c = 1) : ptr(p), count(c) {}
           X*          ptr;
           unsigned    count;
         }* itsCounter;
-        
+
         void acquire(counter* c) throw()
         { /// increment the count
           itsCounter = c;
@@ -94,7 +94,7 @@ namespace itk {
 #define IF_DEBUG(x)
 #else
 #define IF_DEBUG(x) x
-#endif 
+#endif
 
 
     /// A cache class.
@@ -123,8 +123,8 @@ namespace itk {
       ///
       /// \param maxsize_ maximal size of the cache
       ///
-    LRUCache(unsigned maxsize_ = 100) 
-      : maxsize(maxsize_) 
+    LRUCache(unsigned maxsize_ = 100)
+      : maxsize(maxsize_)
       {
       }
 
@@ -136,7 +136,7 @@ namespace itk {
         return maxsize;
       }
 
-      ~LRUCache() 
+      ~LRUCache()
         {
           clear();
         }
@@ -175,7 +175,7 @@ namespace itk {
         //
         value_type* valptr = find(key);
 
-        /// Found ? 
+        /// Found ?
         //
         if (valptr)
           {
@@ -184,10 +184,10 @@ namespace itk {
             *valptr = value;
           }
         else
-          { 
+          {
             /// Add it to the table and to the front of the
             /// list (mark it MRU).
-            /// 
+            ///
             lru_list.push_front(key);
             cached_value cv(value, lru_list.begin());
             table.insert(make_pair(key, cv));
@@ -239,7 +239,7 @@ namespace itk {
       /// Useful for debugging. Expects key/value types to have
       /// an output operator (<<) defined.
       ///
-      void debug_dump(ostream& ostr = cerr) 
+      void debug_dump(ostream& ostr = cerr)
       {
         ostr << "Debug dump of LRUCache\n";
         ostr << "-------------------\n\n";

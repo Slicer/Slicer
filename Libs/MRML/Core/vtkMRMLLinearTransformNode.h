@@ -36,23 +36,23 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "LinearTransform";};
 
-  /// 
+  ///
   /// 1 if transfrom is linear, 0 otherwise
   virtual int IsLinear() {return 1;};
 
@@ -76,19 +76,19 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   /// Invokes a TransformModified event (does not invoke Modified).
   void SetMatrixTransformFromParent(vtkMatrix4x4 *matrix);
 
-  /// 
+  ///
   /// Get concatenated transforms to the top
   virtual int  GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld);
-  
-  /// 
+
+  ///
   /// Get concatenated transforms  bwetween nodes
-  virtual int  GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
+  virtual int  GetMatrixTransformToNode(vtkMRMLTransformNode* node,
                                         vtkMatrix4x4* transformToNode);
 
   virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
- 
-  /// 
+
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {

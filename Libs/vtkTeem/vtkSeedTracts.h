@@ -35,7 +35,7 @@
 #define USE_VTK_PRECISE_HYPERSTREAMLINE_POINTS 2
 #define USE_VTK_HYPERSTREAMLINE_TEEM 3
 
-/// Individual streamlines can be started at a point, or 
+/// Individual streamlines can be started at a point, or
 /// many can be started inside a region of interest.
 class VTK_Teem_EXPORT vtkSeedTracts : public vtkObject
 {
@@ -48,7 +48,7 @@ public:
   /// in the InputROI volume.  Streamlines are added to the vtkCollection
   /// this->Streamlines.
   void SeedStreamlinesInROI();
-  
+
   /// Description
   /// Start a streamline from each voxel which has the values stored in
   /// the vtkShortArray InputMultipleROIValues
@@ -115,7 +115,7 @@ public:
   vtkGetObjectMacro(ROIToWorld, vtkTransform);
 
   /// Description
-  /// Transformation used in seeding streamlines.  This is for the 
+  /// Transformation used in seeding streamlines.  This is for the
   /// second ROI volume.
   vtkSetObjectMacro(ROI2ToWorld, vtkTransform);
   vtkGetObjectMacro(ROI2ToWorld, vtkTransform);
@@ -127,13 +127,13 @@ public:
   vtkSetObjectMacro(WorldToTensorScaledIJK, vtkTransform);
   vtkGetObjectMacro(WorldToTensorScaledIJK, vtkTransform);
 
-  /// 
+  ///
   /// Example usage is as follows:
   /// 1) If tensors are to be saved in a coordinate system
   ///    that is not IJK (array-based), and the whole volume is
   ///    being rotated, each tensor needs also to be rotated.
   ///    First find the matrix that positions your tensor volume.
-  ///    This is how the entire volume is positioned, not 
+  ///    This is how the entire volume is positioned, not
   ///    the matrix that positions an arbitrary reformatted slice.
   /// 2) Remove scaling and translation from this matrix; we
   ///    just need to rotate each tensor.
@@ -144,19 +144,19 @@ public:
   vtkGetObjectMacro(TensorRotationMatrix, vtkMatrix4x4);
 
   /// Description
-  /// Whether to seed once in each voxel or isotropically 
+  /// Whether to seed once in each voxel or isotropically
   /// (evenly on a IsotropicSeedingResolution resolution grid)
   vtkSetMacro(IsotropicSeeding,int)
   vtkGetMacro(IsotropicSeeding,int)
   vtkBooleanMacro(IsotropicSeeding,int)
 
   /// Description
-  /// If IsotropicSeeding is true, seed in the ROI at this resolution. 
+  /// If IsotropicSeeding is true, seed in the ROI at this resolution.
   vtkSetMacro(IsotropicSeedingResolution,double)
   vtkGetMacro(IsotropicSeedingResolution,double)
 
-  /// 
-  /// Whether to randomly jitter seed points. 
+  ///
+  /// Whether to randomly jitter seed points.
   /// (They stay within same grid cube or voxel.)
   vtkSetMacro(RandomGrid,int)
   vtkGetMacro(RandomGrid,int)
@@ -203,7 +203,7 @@ public:
   /// Description
   /// Example objects whose settings will be used in creation
   /// of vtkHyperStreamline subclasses of that type.
-  /// This is an alternative to duplicating the parameters of 
+  /// This is an alternative to duplicating the parameters of
   /// these classes as parameters of this class.
   vtkSetObjectMacro(VtkHyperStreamlinePointsSettings,vtkHyperStreamlineDTMRI);
   vtkGetObjectMacro(VtkHyperStreamlinePointsSettings,vtkHyperStreamlineDTMRI);
@@ -218,7 +218,7 @@ public:
  /// Update all tracts with current parameters.
  /// Loop through all of the hyperstreamline objects and set their
  /// parameters according to the current vtkHyperStreamline*Settings object
- /// which the user can modify. 
+ /// which the user can modify.
  void UpdateAllHyperStreamlineSettings();
 
   /// Description
@@ -241,20 +241,20 @@ public:
  vtkGetMacro(StartingThreshold,double);
  vtkSetMacro(StartingThreshold,double);
 
-  /// 
-  /// Whether to randomly jitter seed points. 
+  ///
+  /// Whether to randomly jitter seed points.
   /// (They stay within same grid cube or voxel.)
   vtkSetMacro(UseStartingThreshold,int)
   vtkGetMacro(UseStartingThreshold,int)
   vtkBooleanMacro(UseStartingThreshold,int)
 
-  /// 
+  ///
   /// A file directory name for lines
   vtkSetStringMacro(FileDirectoryName);
   vtkGetStringMacro(FileDirectoryName);
 
-  /// 
-  /// A file name prefix in the lines file directory 
+  ///
+  /// A file name prefix in the lines file directory
   vtkSetStringMacro(FilePrefix);
   vtkGetStringMacro(FilePrefix);
 
@@ -283,11 +283,11 @@ protected:
   int InputROIValue;
   int InputROI2Value;
   vtkShortArray *InputMultipleROIValues;
-  
+
   double MinimumPathLength;
 
   int PointWithinTensorData(double *point, double *pointw);
-  
+
   int TypeOfHyperStreamline;
 
   char *FileDirectoryName;
@@ -298,7 +298,7 @@ protected:
 
   int UseStartingThreshold;
 
-  /// Here we have a representative accessible object 
+  /// Here we have a representative accessible object
   /// of each type, so that the user can modify it.
   /// We copy its settings to each new created streamline.
   vtkHyperStreamline *VtkHyperStreamlineSettings;

@@ -26,7 +26,7 @@ vtkFSSurfaceHelper::vtkFSSurfaceHelper()
 }
 
 //-------------------------------------------------------------------------
-void vtkFSSurfaceHelper::ComputeTkRegVox2RASMatrix ( double* spacing, 
+void vtkFSSurfaceHelper::ComputeTkRegVox2RASMatrix ( double* spacing,
                                                      int* dim,
                                                      vtkMatrix4x4 *M )
 {
@@ -57,7 +57,7 @@ void vtkFSSurfaceHelper::ComputeTkRegVox2RASMatrix ( double* spacing,
 
 //-------------------------------------------------------------------------
 void vtkFSSurfaceHelper
-::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( 
+::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix(
   double* V1Spacing, int* V1Dim, vtkMatrix4x4* V1IJKToRASMatrix,
   double* V2Spacing, int* V2Dim, vtkMatrix4x4* V2RASToIJKMatrix,
   vtkMatrix4x4 *FSRegistrationMatrix, vtkMatrix4x4 *RAS2RASMatrix)
@@ -68,9 +68,9 @@ void vtkFSSurfaceHelper
     {
     return;
     }
-  
+
   RAS2RASMatrix->Zero();
-    
+
   //
   // Looking for RASv1_To_RASv2:
   //
@@ -108,7 +108,7 @@ void vtkFSSurfaceHelper
   // handles scanOrder. The tkRegVox2RAS = IJKToRAS matrix for a coronal
   // volume. But for an Axial volume, these two matrices are different.
   // How do we compute the correct orientation for FreeSurfer Data?
-  
+
   vtkMatrix4x4 *T = vtkMatrix4x4::New();
   vtkMatrix4x4 *S = vtkMatrix4x4::New();
   vtkMatrix4x4 *Sinv = vtkMatrix4x4::New();
@@ -136,8 +136,8 @@ void vtkFSSurfaceHelper
   vtkMatrix4x4::Multiply4x4 ( T, Minv, RAS2RASMatrix );
   vtkMatrix4x4::Multiply4x4 ( FSRegistrationMatrix, RAS2RASMatrix, RAS2RASMatrix );
   vtkMatrix4x4::Multiply4x4 ( Sinv, RAS2RASMatrix, RAS2RASMatrix );
-  vtkMatrix4x4::Multiply4x4 ( Ninv, RAS2RASMatrix, RAS2RASMatrix );    
-  
+  vtkMatrix4x4::Multiply4x4 ( Ninv, RAS2RASMatrix, RAS2RASMatrix );
+
   // clean up
   Minv->Delete();
   Ninv->Delete();

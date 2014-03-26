@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -14,7 +14,7 @@
 #include "vtkMRMLTransformNode.h"
 
 #include <vtkGeneralTransform.h>
- 
+
 int vtkMRMLTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLTransformNode> node1;

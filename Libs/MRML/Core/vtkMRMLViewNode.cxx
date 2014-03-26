@@ -62,9 +62,9 @@ vtkMRMLViewNode::~vtkMRMLViewNode()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLViewNode::GetNodeTagName() 
+const char* vtkMRMLViewNode::GetNodeTagName()
 {
-  return "View"; 
+  return "View";
 }
 
 //----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " animationMode=\"" << "Rock" << "\"";
     }
-  
+
   if ( this->GetViewAxisMode() == vtkMRMLViewNode::LookFrom )
     {
     of << indent << " viewAxisMode=\"" << "LookFrom" << "\"";
@@ -106,7 +106,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " viewAxisMode=\"" << "RotateAround" << "\"";
     }
-  
+
   // configure spin
   of << indent << " spinDegrees=\"" << this->GetSpinDegrees() << "\"";
   of << indent << " spinMs=\"" << this->GetAnimationMs() << "\"";
@@ -136,23 +136,23 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     }
 
   of << indent << " rotateDegrees=\"" << this->GetRotateDegrees() << "\"";
-  
+
   // configure rock
   of << indent << " rockLength=\"" << this->GetRockLength() << "\"";
   of << indent << " rockCount=\"" << this->GetRockCount() << "\"";
-  
+
   // configure stereo
   if ( this->GetStereoType() == vtkMRMLViewNode::NoStereo )
     {
-    of << indent << " stereoType=\"" << "NoStereo" << "\"";    
+    of << indent << " stereoType=\"" << "NoStereo" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::RedBlue )
     {
-    of << indent << " stereoType=\"" << "RedBlue" << "\"";    
+    of << indent << " stereoType=\"" << "RedBlue" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::Anaglyph )
     {
-    of << indent << " stereoType=\"" << "Anaglyph" << "\"";    
+    of << indent << " stereoType=\"" << "Anaglyph" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::QuadBuffer )
     {
@@ -160,7 +160,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::Interlaced )
     {
-    of << indent << " stereoType=\"" << "Interlaced" << "\"";    
+    of << indent << " stereoType=\"" << "Interlaced" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::UserDefined_1 )
     {
@@ -198,11 +198,11 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "fieldOfView")) 
+    if (!strcmp(attName, "fieldOfView"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -210,7 +210,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss >> fov;
       this->FieldOfView = fov;
       }
-    else if (!strcmp(attName, "letterSize")) 
+    else if (!strcmp(attName, "letterSize"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -218,9 +218,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss >> fov;
       this->LetterSize = fov;
       }
-    else if (!strcmp(attName, "boxVisible")) 
+    else if (!strcmp(attName, "boxVisible"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->BoxVisible = 1;
         }
@@ -229,9 +229,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->BoxVisible = 0;
         }
       }
-    else if (!strcmp(attName, "fiducialsVisible")) 
+    else if (!strcmp(attName, "fiducialsVisible"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->FiducialsVisible = 1;
         }
@@ -240,9 +240,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->FiducialsVisible = 0;
         }
       }
-    else if (!strcmp(attName, "fiducialLabelsVisible")) 
+    else if (!strcmp(attName, "fiducialLabelsVisible"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->FiducialLabelsVisible = 1;
         }
@@ -251,9 +251,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->FiducialLabelsVisible = 0;
         }
       }
-    else if (!strcmp(attName, "axisLabelsVisible")) 
+    else if (!strcmp(attName, "axisLabelsVisible"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->AxisLabelsVisible = 1;
         }
@@ -262,9 +262,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->AxisLabelsVisible = 0;
         }
       }
-    else if (!strcmp(attName, "axisLabelsCameraDependent")) 
+    else if (!strcmp(attName, "axisLabelsCameraDependent"))
       {
-      if (!strcmp(attValue,"true")) 
+      if (!strcmp(attValue,"true"))
         {
         this->AxisLabelsCameraDependent = 1;
         }
@@ -273,9 +273,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->AxisLabelsCameraDependent = 0;
         }
       }
-    else if (!strcmp(attName, "stereoType")) 
+    else if (!strcmp(attName, "stereoType"))
       {
-      if (!strcmp(attValue,"NoStereo")) 
+      if (!strcmp(attValue,"NoStereo"))
         {
         this->StereoType = vtkMRMLViewNode::NoStereo;
         }
@@ -324,17 +324,17 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss >> count;
       this->RockCount = count;
       }
-    else if (!strcmp(attName, "animationMode")) 
+    else if (!strcmp(attName, "animationMode"))
       {
-      if (!strcmp(attValue,"Off")) 
+      if (!strcmp(attValue,"Off"))
         {
         this->AnimationMode = vtkMRMLViewNode::Off;
         }
-      else if (!strcmp(attValue,"Spin")) 
+      else if (!strcmp(attValue,"Spin"))
         {
         this->AnimationMode = vtkMRMLViewNode::Spin;
         }
-      else if (!strcmp(attValue,"Rock")) 
+      else if (!strcmp(attValue,"Rock"))
         {
         this->AnimationMode = vtkMRMLViewNode::Rock;
         }
@@ -374,9 +374,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss >> ms;
       this->AnimationMs = ms;
       }
-    else if (!strcmp(attName, "spinDirection")) 
+    else if (!strcmp(attName, "spinDirection"))
       {
-      if (!strcmp(attValue,"RollLeft")) 
+      if (!strcmp(attValue,"RollLeft"))
         {
         this->SpinDirection = vtkMRMLViewNode::RollLeft;
         }
@@ -384,7 +384,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         {
         this->SpinDirection = vtkMRMLViewNode::RollRight;
         }
-      else if (!strcmp(attValue,"YawLeft")) 
+      else if (!strcmp(attValue,"YawLeft"))
         {
         this->SpinDirection = vtkMRMLViewNode::YawLeft;
         }
@@ -401,9 +401,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->SpinDirection = vtkMRMLViewNode::PitchDown;
         }
       }
-    else if (!strcmp(attName, "renderMode")) 
+    else if (!strcmp(attName, "renderMode"))
       {
-      if (!strcmp(attValue,"Perspective")) 
+      if (!strcmp(attValue,"Perspective"))
         {
         this->RenderMode = vtkMRMLViewNode::Perspective;
         }
@@ -470,7 +470,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "FieldOfView:       " << this->FieldOfView << "\n";
   os << indent << "LetterSize:       " << this->LetterSize << "\n";
   os << indent << "SpinDirection:       " << this->SpinDirection << "\n";
-  os << indent << "AnimationMs:       " << this->AnimationMs << "\n";  
+  os << indent << "AnimationMs:       " << this->AnimationMs << "\n";
   os << indent << "SpinDegrees:       " << this->SpinDegrees << "\n";
   os << indent << "RotateDegrees:       " << this->RotateDegrees << "\n";
   os << indent << "AnimationMode:       " << this->AnimationMode << "\n";

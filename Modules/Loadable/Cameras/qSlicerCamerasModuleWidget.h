@@ -40,7 +40,7 @@ public:
   virtual ~qSlicerCamerasModuleWidget();
 
 public slots:
-  /// 
+  ///
   /// Inherited from qSlicerWidget. Reimplemented for refresh issues.
   virtual void setMRMLScene(vtkMRMLScene*);
 

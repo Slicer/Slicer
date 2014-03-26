@@ -33,11 +33,11 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Do a temp write to update the file list in this storage node with all
   /// file names that are written when write out the ref node
   /// If move is 1, return the directory that contains the written files and
@@ -45,34 +45,34 @@ public:
   /// write. Otherwise return an empty string.
   std::string UpdateFileList(vtkMRMLNode *refNode, int move = 0);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "VolumeArchetypeStorage";};
 
-  /// 
+  ///
   /// Center image on read
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
-  /// 
+  ///
   /// whether to read single file or the whole series
   vtkGetMacro(SingleFile, int);
   vtkSetMacro(SingleFile, int);
 
-  /// 
+  ///
   /// Whether to use orientation from file
   vtkSetMacro(UseOrientationFromFile, int);
   vtkGetMacro(UseOrientationFromFile, int);
 
-  /// 
+  ///
   /// Return a defualt file extension for writting
   virtual const char* GetDefaultWriteFileExtension();
 

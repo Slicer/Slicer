@@ -228,7 +228,7 @@ bool qSlicerIOManager::openAddSceneDialog()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, 
+bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
                                   qSlicerFileDialog::IOAction action,
                                   qSlicerIO::IOProperties properties,
                                   vtkCollection* loadedNodes)
@@ -244,7 +244,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
   if (dialog == 0)
     {
     deleteDialog = true;
-    qSlicerStandardFileDialog* standardDialog = 
+    qSlicerStandardFileDialog* standardDialog =
       new qSlicerStandardFileDialog(this);
     standardDialog->setFileType(fileType);
     standardDialog->setAction(action);

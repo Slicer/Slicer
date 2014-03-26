@@ -151,7 +151,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
     {
     // take a screen shot of the full layout
     sceneViewNode->SetScreenShotType(4);
-    QImage screenShot = properties["screenShot"].value<QImage>();  
+    QImage screenShot = properties["screenShot"].value<QImage>();
     // convert to vtkImageData
     vtkNew<vtkImageData> imageData;
     qMRMLUtils::qImageToVtkImageData(screenShot, imageData.GetPointer());
@@ -193,7 +193,7 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   // For now, create a named directory and use Qt calls to remove it
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QFileInfo pack(QDir(tempDir), //QDir::tempPath(),
-                 QString("__BundleSaveTemp-") + 
+                 QString("__BundleSaveTemp-") +
                   QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz"));
   qDebug() << "packing to " << pack.absoluteFilePath();
 

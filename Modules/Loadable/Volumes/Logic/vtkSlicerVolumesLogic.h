@@ -61,16 +61,16 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   public vtkSlicerModuleLogic
 {
 public:
-  
+
   static vtkSlicerVolumesLogic *New();
   vtkTypeRevisionMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef vtkSlicerVolumesLogic Self;
-  
+
   /// Loading options, bitfield
   enum LoadingOptions {
-    LabelMap = 1, 
+    LabelMap = 1,
     CenterImage = 2,
     SingleFile = 4,
     AutoWindowLevel = 8,
@@ -122,12 +122,12 @@ public:
   /// bit 3: calculate window level automatically
   /// bit 4: discard image orientation
   /// higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions) 
+  vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions)
     {
     return (this->AddArchetypeVolume( filename, volname, loadingOptions, NULL));
     }
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
-  vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname) 
+  vtkMRMLVolumeNode* AddArchetypeVolume (const char *filename, const char* volname)
     {
     return this->AddArchetypeVolume( filename, volname, 0, NULL);
     }
@@ -238,7 +238,7 @@ protected:
 
   vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
-  
+
   NodeSetFactoryRegistry VolumeRegistry;
 };
 

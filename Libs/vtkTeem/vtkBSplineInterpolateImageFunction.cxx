@@ -292,7 +292,7 @@ void vtkBSplineInterpolateImageFunction::ApplyMirrorBoundaryConditions(
       for (unsigned int k = 0; k <= splineOrder; k++)
         {
         // btw - Think about this couldn't this be replaced with a more elagent modulus method?
-        evaluateIndex[n][k] = (evaluateIndex[n][k] < 0L) ? 
+        evaluateIndex[n][k] = (evaluateIndex[n][k] < 0L) ?
           (-evaluateIndex[n][k] - dataLength2 * ((-evaluateIndex[n][k]) / dataLength2))
           : (evaluateIndex[n][k] - dataLength2 * (evaluateIndex[n][k] / dataLength2));
         if ((long) this->DataLength[n] <= evaluateIndex[n][k])
@@ -309,7 +309,7 @@ void vtkBSplineInterpolateImageFunction::PrintSelf(ostream& os, vtkIndent indent
   os << indent << "Spline Order: " << this->SplineOrder << std::endl;
 }
 
-vtkFloatingPointType vtkBSplineInterpolateImageFunction::EvaluateFunction( 
+vtkFloatingPointType vtkBSplineInterpolateImageFunction::EvaluateFunction(
   vtkFloatingPointType *x )
 {
   //  long evaluateIndex[this->SplineOrder + 1][ImageDimension];
@@ -338,7 +338,7 @@ vtkFloatingPointType vtkBSplineInterpolateImageFunction::EvaluateFunction(
   // Modify evaluateIndex at the boundaries using mirror boundary conditions
   this->ApplyMirrorBoundaryConditions(evaluateIndex, this->SplineOrder);
 
-  // perform interpolation 
+  // perform interpolation
   double interpolated = 0.0;
   int coefficientIndex[ImageDimension];
   // Step through eachpoint in the N-dimensional interpolation cube.

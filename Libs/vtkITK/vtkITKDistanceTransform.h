@@ -48,7 +48,7 @@ protected:
   int InsideIsPositive;
   int UseImageSpacing;
   double BackgroundValue;
-  
+
 private:
   vtkITKDistanceTransform(const vtkITKDistanceTransform&);  /// Not implemented.
   void operator=(const vtkITKDistanceTransform&);  /// Not implemented.

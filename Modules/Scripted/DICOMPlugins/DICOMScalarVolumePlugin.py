@@ -34,7 +34,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
   def examine(self,fileLists):
     """ Returns a sorted list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     fileLists parameter (list of file lists).
     """
     loadables = []
@@ -54,7 +54,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
   def examineFiles(self,files):
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     files parameter.
     """
 
@@ -119,9 +119,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if not subseriesFiles.has_key((tag,value)):
           subseriesFiles[tag,value] = []
         subseriesFiles[tag,value].append(file)
-    
+
     loadables = []
-    
+
     # Pixel data is available, so add the default loadable to the output
     loadables.append(loadable)
 
@@ -169,7 +169,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # - are the orientations the same for all slices?
     for loadable in loadables:
       #
-      # use the first file to get the ImageOrientationPatient for the 
+      # use the first file to get the ImageOrientationPatient for the
       # series and calculate the scan direction (assumed to be perpendicular
       # to the acquisition plane)
       #
@@ -269,7 +269,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     cmp = xNumber - yNumber
     return cmp
 
-  # 
+  #
   # math utilities for processing dicom volumes
   # TODO: there must be good replacements for these
   #
@@ -353,7 +353,7 @@ class DICOMScalarVolumePlugin:
     No module interface here, only in the DICOM module
     """
     parent.acknowledgementText = """
-    This DICOM Plugin was developed by 
+    This DICOM Plugin was developed by
     Steve Pieper, Isomics, Inc.
     and was partially funded by NIH grant 3P41RR013218.
     """
@@ -377,14 +377,14 @@ class DICOMScalarVolumePlugin:
 class DICOMScalarVolumeWidget:
   def __init__(self, parent = None):
     self.parent = parent
-    
+
   def setup(self):
     # don't display anything for this widget - it will be hidden anyway
     pass
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
 

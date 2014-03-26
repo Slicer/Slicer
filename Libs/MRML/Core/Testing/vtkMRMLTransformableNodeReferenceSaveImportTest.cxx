@@ -106,7 +106,7 @@ bool import()
     {
     std::cerr << __LINE__ << ": import failed." << std::endl
               << "    Transformable node references are not updated. "
-              << "Transform node ID reference is " 
+              << "Transform node ID reference is "
               << trnsformableNode->GetTransformNodeID()
               << " instead of " << trnsformNode->GetID() << std::endl;
     return false;

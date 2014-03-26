@@ -273,7 +273,7 @@ int main( int argc, char * argv[] )
           writer->SetInput(outFibers.GetPointer());
           writer->Write();
         }
-      else 
+      else
         {
         if (fileExtension != ".vtp")
           {

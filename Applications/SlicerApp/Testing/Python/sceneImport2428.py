@@ -122,8 +122,8 @@ class sceneImport2428Widget:
 #
 
 class sceneImport2428Logic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -132,7 +132,7 @@ class sceneImport2428Logic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -269,9 +269,9 @@ class sceneImport2428Test(unittest.TestCase):
       waitCount += 1
 
     self.delayDisplay("Models built")
-    
+
     success = self.verifyModels()
-    
+
     success = success and (slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelNode" ) > 3)
 
     self.delayDisplay("Test finished")
@@ -284,7 +284,7 @@ class sceneImport2428Test(unittest.TestCase):
     self.assertTrue(success)
 
   def verifyModels(self):
-    """Return True if the models have unique polydata and have the 
+    """Return True if the models have unique polydata and have the
     same polydata as their display nodes have.
 
 # paste this in the slicer console for testing/verifying any scene
@@ -301,7 +301,7 @@ verifyModels()
     """
 
     #
-    # now check that all models have the same poly data in the 
+    # now check that all models have the same poly data in the
     # model node as in the display node
     #
     polyDataInScene = []
@@ -325,7 +325,7 @@ verifyModels()
           success = False
 
 
-    # 
+    #
     # now check that each model has a unique polydata
     #
     for n in xrange(numModels):

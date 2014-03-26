@@ -7,7 +7,7 @@ import EditUtil
 
 #########################################################
 #
-# 
+#
 comment = """
 In this file:
 
@@ -17,7 +17,7 @@ In this file:
   Each effect interface is created when the corresponding
   editor effect is active on the slice views.  The main
   (only) responsibility of these GUIs is to set parameters
-  on the mrml node that influence the behavior of the 
+  on the mrml node that influence the behavior of the
   editor effects.
 
 """
@@ -29,7 +29,7 @@ In this file:
 #########################################################
 
 class HelpButton(object):
-  """ 
+  """
   Puts a button on the interface that pops up a message
   dialog for help when pressed
   """
@@ -172,7 +172,7 @@ class EditOptions(object):
       if backgroundImage:
         lo, hi = backgroundImage.GetScalarRange()
         success = True
-    return success, lo, hi    
+    return success, lo, hi
 
   def setRangeWidgetToBackgroundRange(self, rangeWidget):
     """Set the range widget based on current backgroun

@@ -13,12 +13,12 @@
 =========================================================================auto=*/
 
 ///  vtkMRMLSliceLayerLogic - slicer logic class for slice manipulation
-/// 
+///
 /// This class manages the logic associated with reslicing of volumes
 /// (but not the GUI).  Features of the class include:
 //
-/// - Reslicing 
-/// -- uses the vtkImageData and IJKToRAS transform from a vtkMRMLVolumeNode 
+/// - Reslicing
+/// -- uses the vtkImageData and IJKToRAS transform from a vtkMRMLVolumeNode
 /// -- disp
 /// -- uses a current slice view specification (typically set by vtkMRMLSliceLogic)
 /// - Outputs
@@ -60,68 +60,68 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic
   : public vtkMRMLAbstractLogic
 {
 public:
-  
+
   /// The Usual vtk class functions
   static vtkMRMLSliceLayerLogic *New();
   vtkTypeRevisionMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// The volume node to operate on
   vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
   void SetVolumeNode (vtkMRMLVolumeNode *VolumeNode);
 
-  /// 
+  ///
   /// The volume display node has the render properties of the volume
   /// - this node is set implicitly when the volume is set
   ///   and it is observed by this logic
   vtkGetObjectMacro (VolumeDisplayNode, vtkMRMLVolumeDisplayNode);
   vtkGetObjectMacro (VolumeDisplayNodeUVW, vtkMRMLVolumeDisplayNode);
 
-  /// 
-  /// The slice node that defines the view 
+  ///
+  /// The slice node that defines the view
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode *SliceNode);
 
-  /// 
+  ///
   /// The image reslice or slice being used
   vtkGetObjectMacro (Reslice, vtkImageResliceMask);
 
-  /// 
+  ///
   /// Select if this is a label layer or not (it currently determines if we use
   /// the label outline filter)
   vtkGetMacro (IsLabelLayer, int);
   vtkSetMacro (IsLabelLayer, int);
   vtkBooleanMacro (IsLabelLayer, int);
 
-  /// 
+  ///
   /// The filter that turns the label map into an outline
   vtkGetObjectMacro (LabelOutline, vtkImageLabelOutline);
-  
-  /// 
+
+  ///
   /// Get the output of the pipeline for this layer
   vtkImageData *GetImageData ();
 
-  /// 
+  ///
   /// Get the output of the texture UVW pipeline for this layer
   vtkImageData *GetImageDataUVW ();
 
   void UpdateImageDisplay();
 
-  /// 
+  ///
   /// set the Reslice transforms to reflect the current state
   /// of the VolumeNode and the SliceNode
   void UpdateTransforms();
 
-  void UpdateGlyphs(); 
+  void UpdateGlyphs();
 
 
-  /// 
+  ///
   /// Check that we are observing the correct display node
   /// (correct means the same one that the volume node is referencing)
-  void UpdateNodeReferences(); 
+  void UpdateNodeReferences();
 
-  /// 
+  ///
   /// The current reslice transform XYToIJK
   vtkGetObjectMacro (XYToIJKTransform, vtkGeneralTransform);
 
@@ -135,7 +135,7 @@ protected:
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  /// 
+  ///
   /// provide the virtual method that updates this Logic based
   /// on mrml changes
   virtual void ProcessMRMLSceneEvents(vtkObject* caller,
@@ -154,7 +154,7 @@ protected:
   // Copy VolumeDisplayNodeObserved into VolumeDisplayNode
   void UpdateVolumeDisplayNode();
 
-  /// 
+  ///
   /// the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
   vtkMRMLVolumeDisplayNode *VolumeDisplayNode;
@@ -162,7 +162,7 @@ protected:
   vtkMRMLVolumeDisplayNode *VolumeDisplayNodeObserved;
   vtkMRMLSliceNode *SliceNode;
 
-  /// 
+  ///
   /// the VTK class instances that implement this Logic's operations
   vtkImageResliceMask *Reslice;
   vtkImageResliceMask *ResliceUVW;

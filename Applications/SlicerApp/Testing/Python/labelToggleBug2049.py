@@ -110,8 +110,8 @@ class labelToggleBug2049Widget:
 #
 
 class labelToggleBug2049Logic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -120,7 +120,7 @@ class labelToggleBug2049Logic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -211,7 +211,7 @@ class labelToggleBug2049Test(unittest.TestCase):
 
     selector = slicer.util.findChildren(name='ActiveVolumeNodeSelector')[0]
     checkBox = slicer.util.findChildren(name='LabelMapCheckBox')[0]
-    
+
     selector.setCurrentNode(volumeNode)
     checkBox.checked = True
     self.delayDisplay("Made the volumeNode into a label map")

@@ -17,10 +17,10 @@
 // STD includes
 #include <sstream>
 
-// KPs Todos 
+// KPs Todos
 // - create specific event for node modification
-// - talk to Steve if we have to do anything when UpdatingScene 
-// - NumberingScheme should not be in annotation node - should be in fiducial nodes - just put it here right now 
+// - talk to Steve if we have to do anything when UpdatingScene
+// - NumberingScheme should not be in annotation node - should be in fiducial nodes - just put it here right now
 
 
 //----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
 vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
 {
   this->TextList->Delete();
-  if (this->ReferenceNodeID) 
+  if (this->ReferenceNodeID)
     {
       delete [] this->ReferenceNodeID;
     }
@@ -59,35 +59,35 @@ void vtkMRMLAnnotationNode::WriteXML(ostream& of, int nIndent)
   // cout << "vtkMRMLAnnotationNode::WriteXML(ostream& of, int nIndent) start" << endl;
   // vtkMRMLDisplayableNode::WriteXML(of,nIndent);
   Superclass::WriteXML(of,nIndent);
- 
+
   vtkIndent indent(nIndent);
- 
+
   of << indent << " referenceNodeID=\"" << (this->ReferenceNodeID ? this->GetReferenceNodeID() : "None") << "\"";
   of << indent << " locked=\"" << this->Locked << "\"";
-   
+
   int textLength = this->TextList->GetNumberOfValues();
   of << indent << " textList=\"";
 
   if (textLength)
     {
       for (int i = 0 ; i < textLength - 1; i++) {
-    of << this->TextList->GetValue(i) << "|"; 
+    of << this->TextList->GetValue(i) << "|";
       }
       of <<  this->TextList->GetValue(textLength -1);
     }
   of << "\"";
- 
-  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 
+
+  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++)
     {
       of << indent << " " << this->GetAttributeTypesEnumAsString(j) << "=\"";
       if (textLength && this->GetPolyData() && this->GetPolyData()->GetPointData())
     {
-      for (int i = 0 ; i < textLength - 1; i++) 
+      for (int i = 0 ; i < textLength - 1; i++)
         {
           of << this->GetAnnotationAttribute(i,j) << " " ;
         }
       of << this->GetAnnotationAttribute(textLength - 1,j);
-    }    
+    }
       of << "\"";
     }
 }
@@ -103,8 +103,8 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 
   // vtkMRMLDisplayableNode::ReadXMLAttributes(atts);
   Superclass::ReadXMLAttributes(atts);
-  
-  while (*atts != NULL) 
+
+  while (*atts != NULL)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
@@ -123,7 +123,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
       endPos =attValue.find("|",startPos);
     }
       this->AddText(attValue.substr(startPos,endPos).c_str(),1,1);
-      }  
+      }
     else if (!strcmp(attName, "referenceNodeID"))
       {
       this->SetReferenceNodeID(attValue.c_str());
@@ -132,7 +132,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
       {
       this->SetLocked(atof(attValue.c_str()));
       }
-    else 
+    else
       {
       int j = 0;
       while (j < NUM_TEXT_ATTRIBUTE_TYPES)
@@ -193,8 +193,8 @@ void vtkMRMLAnnotationNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
-  // Nothing to do at this point  bc vtkMRMLAnnotationTextDisplayNode is subclass of vtkMRMLModelDisplayNode 
-  // => will be taken care of by vtkMRMLModelDisplayNode  
+  // Nothing to do at this point  bc vtkMRMLAnnotationTextDisplayNode is subclass of vtkMRMLModelDisplayNode
+  // => will be taken care of by vtkMRMLModelDisplayNode
 
 }
 
@@ -211,7 +211,7 @@ void vtkMRMLAnnotationNode::ProcessMRMLEvents( vtkObject *caller,
     }
 
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  // Not necessary bc vtkMRMLAnnotationTextDisplayNode is subclass of vtkMRMLModelDisplayNode 
+  // Not necessary bc vtkMRMLAnnotationTextDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of  in vtkMRMLModelNode
 }
 
@@ -226,11 +226,11 @@ void vtkMRMLAnnotationNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag)
 {
-  if (titleFlag) 
+  if (titleFlag)
     {
-      
+
     os <<indent << "vtkMRMLAnnotationNode: Annotation Summary";
-    if (this->GetName()) 
+    if (this->GetName())
       {
       os << " of " << this->GetName();
       }
@@ -241,15 +241,15 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
   os << indent << "ReferenceNodeID: " << ( (this->ReferenceNodeID) ? this->ReferenceNodeID : "None" ) << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
   os << indent << "Locked: " << this->Locked << "\n";
-  os << indent << "textList: "; 
-  if  (!this->TextList || !this->GetNumberOfTexts()) 
+  os << indent << "textList: ";
+  if  (!this->TextList || !this->GetNumberOfTexts())
     {
     os << indent << "None"  << endl;
     }
-  else 
+  else
     {
     os << endl;
-    for (int i = 0 ; i < this->GetNumberOfTexts() ; i++) 
+    for (int i = 0 ; i < this->GetNumberOfTexts() ; i++)
       {
       os << indent << "  " << i <<": " <<  (TextList->GetValue(i) ? TextList->GetValue(i) : "(none)") << endl;
     }
@@ -276,17 +276,17 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::ResetAnnotations()
 {
-  if (!this->TextList) 
+  if (!this->TextList)
     {
     this->TextList = vtkStringArray::New();
     }
-  else 
+  else
     {
-    this->TextList->Initialize(); 
+    this->TextList->Initialize();
     }
 
   this->ResetTextAttributesAll();
-} 
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::CreatePolyData()
@@ -296,16 +296,16 @@ void vtkMRMLAnnotationNode::CreatePolyData()
       vtkPolyData *poly = vtkPolyData::New();
       this->SetAndObservePolyData(poly);
       // Releasing data for pipeline parallism.
-      // Filters will know it is empty. 
+      // Filters will know it is empty.
       poly->ReleaseData();
       poly->Delete();
-      
-      // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets 
+
+      // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets
       //if (this->GetAnnotationTextDisplayNode())
       //    {
-      //      this->GetAnnotationTextDisplayNode()->SetPolyData(poly); 
+      //      this->GetAnnotationTextDisplayNode()->SetPolyData(poly);
       //    }
-    } 
+    }
 
 }
 
@@ -328,7 +328,7 @@ void vtkMRMLAnnotationNode::ResetTextAttributesAll() {
   for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) {
     this->ResetAttributes(j);
   }
-} 
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::ResetAttributes(int id) {
@@ -341,7 +341,7 @@ void vtkMRMLAnnotationNode::ResetAttributes(int id) {
 
   if ((id < 0 ))
     {
-      vtkErrorMacro("Annotation: "<< this->GetName() << " ID is out of range"); 
+      vtkErrorMacro("Annotation: "<< this->GetName() << " ID is out of range");
       return;
     }
 
@@ -352,33 +352,33 @@ void vtkMRMLAnnotationNode::ResetAttributes(int id) {
     attArray->SetName(this->GetAttributeTypesEnumAsString(id));
     this->GetPolyData()->GetPointData()->AddArray(attArray);
     attArray->Delete();
-  } 
+  }
   attArray->Initialize();
-} 
+}
 
 
 
 //---------------------------------------------------------------------------
-vtkDataArray* vtkMRMLAnnotationNode::GetAnnotationAttributes(int att) 
+vtkDataArray* vtkMRMLAnnotationNode::GetAnnotationAttributes(int att)
 {
-  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData()) 
+  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData())
     {
-      vtkErrorMacro("Annotation: " << this->GetName() << " PolyData or  PolyData->GetPointData() is NULL" ); 
+      vtkErrorMacro("Annotation: " << this->GetName() << " PolyData or  PolyData->GetPointData() is NULL" );
       return 0;
     }
 
   return this->GetPolyData()->GetPointData()->GetScalars(this->GetAttributeTypesEnumAsString(att));
 }
- 
+
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationNode::GetAnnotationAttribute(vtkIdType id, int att)
 {
   vtkBitArray *attArray = dynamic_cast <  vtkBitArray *> (this->GetAnnotationAttributes(att));
-  if (attArray) 
+  if (attArray)
     {
       return attArray->GetValue(id);
     }
-  vtkErrorMacro("Annotation: " << this->GetName() << " Attributes for " << att << " are not defined"); 
+  vtkErrorMacro("Annotation: " << this->GetName() << " Attributes for " << att << " are not defined");
   return  -1;
 }
 
@@ -386,7 +386,7 @@ int vtkMRMLAnnotationNode::GetAnnotationAttribute(vtkIdType id, int att)
 void vtkMRMLAnnotationNode::SetAnnotationAttribute(vtkIdType id, int att, double value)
 {
   vtkBitArray *attArray = dynamic_cast <  vtkBitArray *> (this->GetAnnotationAttributes(att));
-  if (!attArray) 
+  if (!attArray)
     {
       return;
     }
@@ -399,26 +399,26 @@ void vtkMRMLAnnotationNode::SetAnnotationAttribute(vtkIdType id, int att, double
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt) 
+int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
 {
   vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(idAtt));
-  if (!dataArray) 
+  if (!dataArray)
     {
       vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist")
       return 0;
-    } 
+    }
   int n = dataArray->GetSize();
   if (idEntry < 0 || idEntry >= n)
     {
       vtkErrorMacro("Annotation " << this->GetName() << " Annotation out of range")
       return 0;
-    } 
+    }
 
-  for (int i = idEntry; i < n-1; i++ ) 
+  for (int i = idEntry; i < n-1; i++ )
     {
       dataArray->SetValue(i,dataArray->GetValue(i+1));
     }
-  // Every attribute has its own data array - that is why it works 
+  // Every attribute has its own data array - that is why it works
   dataArray->Resize(n-1);
 
   return 1;
@@ -429,12 +429,12 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag, int visibleFlag)
 {
-  if (id < 0) 
+  if (id < 0)
     {
     vtkErrorMacro("Invalid ID");
     return;
     }
-  if (!this->TextList) 
+  if (!this->TextList)
     {
     vtkErrorMacro("TextList is NULL");
     return;
@@ -448,7 +448,7 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
 
   // check if the same as before
   if (((this->TextList->GetNumberOfValues() == 0) && (newText == NULL || newString == "")) ||
-      ((this->TextList->GetNumberOfValues() > id) && 
+      ((this->TextList->GetNumberOfValues() > id) &&
        (this->TextList->GetValue(id) == newString) &&
        (this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag) &&
        (this->GetAnnotationAttribute(id, TEXT_VISIBLE) == visibleFlag) ) )
@@ -458,12 +458,12 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
 
   if (!this->GetPolyData() || !this->GetPolyData()->GetPointData())
     {
-    this->ResetTextAttributesAll(); 
+    this->ResetTextAttributesAll();
     }
 
   this->TextList->InsertValue(id,newString);
- 
-  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 
+
+  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++)
     {
     this->SetAttributeSize(j,this->GetNumberOfTexts());
     }
@@ -481,7 +481,7 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
 void vtkMRMLAnnotationNode::SetAttributeSize(vtkIdType  id, vtkIdType n)
 {
   vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(id));
-  if (!dataArray) 
+  if (!dataArray)
     {
       this->ResetAttributes(id);
       dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(id));
@@ -491,14 +491,14 @@ void vtkMRMLAnnotationNode::SetAttributeSize(vtkIdType  id, vtkIdType n)
 
 
 //-------------------------------------------------------------------------
-int vtkMRMLAnnotationNode::AddText(const char *newText,int selectedFlag, int visibleFlag) 
+int vtkMRMLAnnotationNode::AddText(const char *newText,int selectedFlag, int visibleFlag)
 {
   if (!this->TextList) {
-    vtkErrorMacro("Annotation: For " << this->GetName() << " text is not defined"); 
+    vtkErrorMacro("Annotation: For " << this->GetName() << " text is not defined");
     return -1 ;
   }
   int n = this->GetNumberOfTexts();
-  this->SetText(n,newText,selectedFlag, visibleFlag); 
+  this->SetText(n,newText,selectedFlag, visibleFlag);
 
   return n;
 }
@@ -510,7 +510,7 @@ vtkStdString  vtkMRMLAnnotationNode::GetText(int n)
     {
       return vtkStdString();
     }
-  return this->TextList->GetValue(n); 
+  return this->TextList->GetValue(n);
 }
 
 //-------------------------------------------------------------------------
@@ -522,34 +522,34 @@ int  vtkMRMLAnnotationNode::DeleteText(int id)
     }
 
   int n = this->GetNumberOfTexts();
-  if (id < 0 || id >= n) 
+  if (id < 0 || id >= n)
     {
       return -1;
     }
 
-  for (int i = id; id < n-1; i++ ) 
+  for (int i = id; id < n-1; i++ )
     {
       this->TextList->SetValue(i,this->GetText(i+1));
     }
 
   this->TextList->Resize(n-1);
 
-  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData()) 
+  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData())
     {
-      this->ResetTextAttributesAll(); 
+      this->ResetTextAttributesAll();
       return 1;
     }
 
-  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 
+  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++)
     {
       vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
-      if (!dataArray) 
+      if (!dataArray)
     {
       this->ResetAttributes(j);
       dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
       dataArray->Resize(this->GetNumberOfTexts());
     }
-      else 
+      else
     {
       this->DeleteAttribute(id,j);
     }
@@ -560,7 +560,7 @@ int  vtkMRMLAnnotationNode::DeleteText(int id)
 
 //-------------------------------------------------------------------------
 int vtkMRMLAnnotationNode::GetNumberOfTexts() {
-  if (!this->TextList) 
+  if (!this->TextList)
     {
       return -1;
     }
@@ -569,7 +569,7 @@ int vtkMRMLAnnotationNode::GetNumberOfTexts() {
 
 
 //-------------------------------------------------------------------------
-const char *vtkMRMLAnnotationNode::GetAttributeTypesEnumAsString(int val) 
+const char *vtkMRMLAnnotationNode::GetAttributeTypesEnumAsString(int val)
 {
   if (val == TEXT_SELECTED) return "textSelected";
   if (val == TEXT_VISIBLE) return "textVisible";
@@ -605,7 +605,7 @@ void vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode()
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
   if (node) return;
-  if (!this->GetScene()) 
+  if (!this->GetScene())
     {
       vtkErrorMacro("vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode Annotation: No scene defined" ) ;
       return;
@@ -616,7 +616,7 @@ void vtkMRMLAnnotationNode::CreateAnnotationTextDisplayNode()
   this->GetScene()->AddNode(node);
   node->Delete();
   this->AddAndObserveDisplayNodeID(node->GetID());
-  // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets 
+  // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets
   // node->SetPolyData(this->GetPolyData());
 }
 
@@ -658,7 +658,7 @@ void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)
     vtkErrorMacro("Scene was null!")
     return;
   }
-  
+
   // we need to disable the modified event which would get fired when we set the new displayNode
   this->DisableModifiedEventOn();
   this->CreateAnnotationTextDisplayNode();

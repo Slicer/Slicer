@@ -84,12 +84,12 @@ vtkMRMLFiberBundleNode::~vtkMRMLFiberBundleNode()
 void vtkMRMLFiberBundleNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
-  if (this->AnnotationNodeID != NULL) 
+  if (this->AnnotationNodeID != NULL)
     {
     of << indent << " AnnotationNodeRef=\"" << this->AnnotationNodeID << "\"";
     }
@@ -114,26 +114,26 @@ void vtkMRMLFiberBundleNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
 
-    if (!strcmp(attName, "AnnotationNodeRef")) 
+    if (!strcmp(attName, "AnnotationNodeRef"))
       {
       const size_t n = strlen(attValue) + 1;
       this->AnnotationNodeID = new char[n];
       strcpy(this->AnnotationNodeID, attValue);
       }
-    else if (!strcmp(attName, "SelectWithAnnotationNode")) 
+    else if (!strcmp(attName, "SelectWithAnnotationNode"))
       {
       this->SelectWithAnnotationNode = atoi(attValue);
       }
-    else if (!strcmp(attName, "SelectionWithAnnotationNodeMode")) 
+    else if (!strcmp(attName, "SelectionWithAnnotationNodeMode"))
       {
       this->SelectionWithAnnotationNodeMode = atoi(attValue);
       }
-    else if (!strcmp(attName, "SubsamplingRatio")) 
+    else if (!strcmp(attName, "SubsamplingRatio"))
       {
       this->SubsamplingRatio = atof(attValue);
       }
@@ -169,7 +169,7 @@ void vtkMRMLFiberBundleNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
 }
@@ -273,7 +273,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::GetLineDisplayNode()
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLFiberBundleLineDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
-    if (node) 
+    if (node)
       {
       break;
       }
@@ -289,7 +289,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::GetTubeDisplayNode()
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLFiberBundleTubeDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
-    if (node) 
+    if (node)
       {
       break;
       }
@@ -305,7 +305,7 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::GetGlyphDisplayNode()
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLFiberBundleGlyphDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
-    if (node) 
+    if (node)
       {
       break;
       }
@@ -471,9 +471,9 @@ void vtkMRMLFiberBundleNode::SetSelectWithAnnotationNode(int _arg)
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::SetSelectionWithAnnotationNodeMode(int _arg)
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SelectionWithAnnotationNodeMode  to " << _arg); 
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SelectionWithAnnotationNodeMode  to " << _arg);
   if (this->SelectionWithAnnotationNodeMode != _arg)
-    { 
+    {
     this->SelectionWithAnnotationNodeMode = _arg;
 
     if (_arg == vtkMRMLFiberBundleNode::PositiveAnnotationNodeSelection)
@@ -524,7 +524,7 @@ void vtkMRMLFiberBundleNode::SetAndObserveAnnotationNodeID ( const char *id )
 
   // Observe the node using the pointer.
   vtkSetAndObserveMRMLObjectMacro ( this->AnnotationNode , cnode );
-  
+
   this->UpdateROISelection();
 
 }
@@ -692,7 +692,7 @@ vtkMRMLStorageNode* vtkMRMLFiberBundleNode::CreateDefaultStorageNode()
 void vtkMRMLFiberBundleNode::CreateDefaultDisplayNodes()
 {
   vtkDebugMacro("vtkMRMLFiberBundleNode::CreateDefaultDisplayNodes");
-  
+
   vtkMRMLFiberBundleDisplayNode *fbdn = this->AddLineDisplayNode();
   fbdn->SetVisibility(1);
   fbdn = this->AddTubeDisplayNode();

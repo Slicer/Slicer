@@ -26,7 +26,7 @@
 
 class vtkMRMLCameraNode;
 
-class vtkMRMLTestCustomDisplayableManager : 
+class vtkMRMLTestCustomDisplayableManager :
   public vtkMRMLAbstractDisplayableManager
 {
 
@@ -55,7 +55,7 @@ private:
 
   vtkMRMLTestCustomDisplayableManager(const vtkMRMLTestCustomDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLTestCustomDisplayableManager&);                     // Not Implemented
-  
+
   class vtkInternal;
   vtkInternal * Internal;
 

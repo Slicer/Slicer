@@ -1515,7 +1515,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
           vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
           vtkMRMLDisplayableNode *roi = vtkMRMLDisplayableNode::SafeDownCast(node);
- 
+
           if (regions)
             {
             // check to see if module can handle more than one region
@@ -1588,7 +1588,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         }
       }
     }
-  
+
   // now tack on any parameters that are based on indices
   //
   // build a list of indices to traverse in order

@@ -64,8 +64,8 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName)cons
 {
   QStringList matchingNameFilters;
   QFileInfo file(fileName);
-  if (!file.isFile() || 
-      !file.isReadable() || 
+  if (!file.isFile() ||
+      !file.isReadable() ||
       file.suffix().contains('~')) //temporary file
     {
     return matchingNameFilters;

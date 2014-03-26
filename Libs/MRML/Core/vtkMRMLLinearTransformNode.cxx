@@ -106,11 +106,11 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "matrixTransformToParent")) 
+    if (!strcmp(attName, "matrixTransformToParent"))
       {
       vtkNew<vtkMatrix4x4> matrix;
       std::stringstream ss;
@@ -132,9 +132,9 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++) 
+      for (int row=0; row<4; row++)
         {
-        for (int col=0; col<4; col++) 
+        for (int col=0; col<4; col++)
           {
           ss >> val;
           matrix->SetElement(row, col, val);
@@ -142,7 +142,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
         }
       this->SetMatrixTransformFromParent(matrix.GetPointer());
       }
-    }  
+    }
   this->EndModify(disabledModify);
   this->EndTransformModify(oldTransformModify);
 }
@@ -239,7 +239,7 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transfo
   vtkMatrix4x4::Multiply4x4(matrixTransformToParent.GetPointer(), transformToWorld, transformToWorld);
 
   vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-  if (parent != NULL) 
+  if (parent != NULL)
     {
     vtkMRMLLinearTransformNode *lparent = vtkMRMLLinearTransformNode::SafeDownCast(parent);
     if (lparent)
@@ -260,25 +260,25 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transfo
 int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* node,
                                                           vtkMatrix4x4* transformToNode)
 {
-  if (node == NULL) 
+  if (node == NULL)
     {
     return this->GetMatrixTransformToWorld(transformToNode);
     }
-  if (this->IsTransformToNodeLinear(node) != 1) 
+  if (this->IsTransformToNodeLinear(node) != 1)
     {
     transformToNode->Identity();
     return 0;
     }
-  
-  if (this->IsTransformNodeMyParent(node)) 
+
+  if (this->IsTransformNodeMyParent(node))
     {
     vtkMRMLTransformNode *parent = this->GetParentTransformNode();
     vtkNew<vtkMatrix4x4> toParentMatrix;
     this->GetMatrixTransformToParent(toParentMatrix.GetPointer());
-    if (parent != NULL) 
+    if (parent != NULL)
       {
       vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
-      if (strcmp(parent->GetID(), node->GetID()) ) 
+      if (strcmp(parent->GetID(), node->GetID()) )
         {
         this->GetMatrixTransformToNode(node, transformToNode);
         }
@@ -288,16 +288,16 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
       }
     }
-  else if (this->IsTransformNodeMyChild(node)) 
+  else if (this->IsTransformNodeMyChild(node))
     {
     vtkMRMLLinearTransformNode *lnode = dynamic_cast <vtkMRMLLinearTransformNode *> (node);
     vtkMRMLLinearTransformNode *parent = dynamic_cast <vtkMRMLLinearTransformNode *> (node->GetParentTransformNode());
     vtkNew<vtkMatrix4x4> toParentMatrix;
     lnode->GetMatrixTransformToParent(toParentMatrix.GetPointer());
-    if (parent != NULL) 
+    if (parent != NULL)
       {
       vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
-      if (strcmp(parent->GetID(), this->GetID()) ) 
+      if (strcmp(parent->GetID(), this->GetID()) )
         {
         this->GetMatrixTransformToNode(this, transformToNode);
         }
@@ -307,14 +307,14 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
       vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
       }
     }
-  else 
+  else
     {
     this->GetMatrixTransformToWorld(transformToNode);
     vtkNew<vtkMatrix4x4> transformToWorld2;
-    
+
     node->GetMatrixTransformToWorld(transformToWorld2.GetPointer());
     transformToWorld2->Invert();
-    
+
     vtkMatrix4x4::Multiply4x4(transformToWorld2.GetPointer(), transformToNode, transformToNode);
     }
   return 1;

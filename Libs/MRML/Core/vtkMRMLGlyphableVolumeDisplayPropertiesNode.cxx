@@ -50,11 +50,11 @@ vtkMRMLGlyphableVolumeDisplayPropertiesNode::~vtkMRMLGlyphableVolumeDisplayPrope
 void vtkMRMLGlyphableVolumeDisplayPropertiesNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
-  
+
   of << indent << " glyphScaleFactor=\"" << this->GlyphScaleFactor << "\"";
 
 }
@@ -67,17 +67,17 @@ void vtkMRMLGlyphableVolumeDisplayPropertiesNode::ReadXMLAttributes(const char**
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
   {
       attName = *(atts++);
       attValue = *(atts++);
-      if (!strcmp(attName, "glyphScaleFactor")) 
+      if (!strcmp(attName, "glyphScaleFactor"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> GlyphScaleFactor;
       }
-      
+
   }
 
 }
@@ -89,7 +89,7 @@ void vtkMRMLGlyphableVolumeDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   vtkMRMLGlyphableVolumeDisplayPropertiesNode *node = (vtkMRMLGlyphableVolumeDisplayPropertiesNode *) anode;
-  
+
   this->SetGlyphScaleFactor(node->GlyphScaleFactor);
 
 }

@@ -130,7 +130,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
   rasw[0] = ras[0]; rasw[1] = ras[1]; rasw[2] = ras[2]; rasw[3] = 1.0;
   rasToXYZ->MultiplyPoint(rasw, xyzw);
   xyz[0] = xyzw[0]/xyzw[3]; xyz[1] = xyzw[1]/xyzw[3]; xyz[2] = xyzw[2]/xyzw[3];
-  
+
   rasToXYZ->Delete();
 }
 

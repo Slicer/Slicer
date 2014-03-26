@@ -45,7 +45,7 @@ int qSlicerTractographyInteractiveSeedingModuleWidgetTest2( int argc, char * arg
 
   qSlicerTractographyInteractiveSeedingModuleWidget* moduleWidget =
     dynamic_cast<qSlicerTractographyInteractiveSeedingModuleWidget*>(
-      module.widgetRepresentation()); 
+      module.widgetRepresentation());
 
   vtkMRMLVolumeNode* volumeNode = 0;
   bool fileNameInTheCommandLine = false;

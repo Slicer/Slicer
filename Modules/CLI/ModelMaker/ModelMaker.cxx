@@ -214,7 +214,7 @@ int main(int argc, char * argv[])
       {
       std::cerr << "Model hierarchy scene file doesn't exist, using a flat hieararchy" << std::endl;
       }
-    
+
     // make sure we have a new model hierarchy node
     vtkMRMLNode * mnode = modelScene->GetNthNodeByClass(1,"vtkMRMLModelHierarchyNode");
     if (mnode != NULL)
@@ -234,7 +234,7 @@ int main(int argc, char * argv[])
       }
     }
 
-  
+
   // if have a color hiearchy node, make it a child of the passed in model hiearchy
   if (topColorHierarchyNode != NULL)
     {
@@ -255,7 +255,7 @@ int main(int argc, char * argv[])
         }
       }
     }
-  
+
   vtkSmartPointer<vtkMRMLColorTableNode>        colorNode;
   vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode;
 
@@ -1663,7 +1663,7 @@ int main(int argc, char * argv[])
         mnode->SetAndObserveDisplayNodeID(dnode->GetID());
         modelScene->AddNode(mnode.GetPointer());
 
-        // put it in the hierarchy, either the flat one by default or 
+        // put it in the hierarchy, either the flat one by default or
         // try to find the matching color hierarchy node to make this an
         // associated node
         std::string colorName;

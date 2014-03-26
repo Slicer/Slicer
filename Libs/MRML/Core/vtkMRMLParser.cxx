@@ -32,21 +32,21 @@ vtkStandardNewMacro(vtkMRMLParser);
 //------------------------------------------------------------------------------
 void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 {
-  if (!strcmp(tagName, "MRML")) 
+  if (!strcmp(tagName, "MRML"))
     {
     //--- BEGIN test of user tags
     //--- pull out any tags describing the scene and fill the scene's tagtable.
     const char* attName;
     const char* attValue;
-    while (*atts != NULL) 
+    while (*atts != NULL)
       {
       attName = *(atts++);
-      attValue = *(atts++);  
-      if (!strcmp(attName, "version")) 
+      attValue = *(atts++);
+      if (!strcmp(attName, "version"))
         {
         this->GetMRMLScene()->SetLastLoadedVersion(attValue);
         }
-      else if (!strcmp(attName, "userTags")) 
+      else if (!strcmp(attName, "userTags"))
         {
         if ( this->MRMLScene->GetUserTagTable() == NULL )
           {
@@ -74,9 +74,9 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
                 this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
                 }
               }
-            }        
+            }
           }
-        } //--- END test of user tags. 
+        } //--- END test of user tags.
       } // while
     return;
     } // MRML
@@ -122,12 +122,12 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   // ID will be set by AddNode
   /*
-  if (node->GetID() == NULL) 
+  if (node->GetID() == NULL)
     {
     node->SetID(this->MRMLScene->GetUniqueIDByClass(className));
     }
   */
-  if (!this->NodeStack.empty()) 
+  if (!this->NodeStack.empty())
     {
     vtkMRMLNode* parentNode = this->NodeStack.top();
     parentNode->ProcessChildNode(node);
@@ -137,7 +137,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   if (this->NodeCollection)
     {
-    if (node->GetAddToScene()) 
+    if (node->GetAddToScene())
       {
       this->NodeCollection->vtkCollection::AddItem((vtkObject *)node);
       }
@@ -153,13 +153,13 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
 void vtkMRMLParser::EndElement (const char *name)
 {
-  if ( !strcmp(name, "MRML") || this->NodeStack.empty() ) 
+  if ( !strcmp(name, "MRML") || this->NodeStack.empty() )
     {
     return;
     }
 
   const char* className = this->MRMLScene->GetClassNameByTag(name);
-  if (className == NULL) 
+  if (className == NULL)
     {
     // check for a renamed node
     if (strcmp(name, "SceneSnapshot") == 0)

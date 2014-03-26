@@ -110,8 +110,8 @@ class ViewControllersSliceInterpolationBug1926Widget:
 #
 
 class ViewControllersSliceInterpolationBug1926Logic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -120,7 +120,7 @@ class ViewControllersSliceInterpolationBug1926Logic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -235,7 +235,7 @@ class ViewControllersSliceInterpolationBug1926Test(unittest.TestCase):
     self.assertTrue( compareCNode.GetBackgroundVolumeID() == tumor.GetID())
     self.assertTrue( compareCNode2.GetBackgroundVolumeID() == tumor.GetID())
     self.delayDisplay('All viewers configured properly')
-    
+
     # Switch to the View Controllers module
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('ViewControllers')

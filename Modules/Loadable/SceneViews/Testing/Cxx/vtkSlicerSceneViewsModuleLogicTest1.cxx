@@ -14,13 +14,13 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
 {
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer< vtkSlicerSceneViewsModuleLogic > node1 = vtkSmartPointer< vtkSlicerSceneViewsModuleLogic >::New();  
+  vtkSmartPointer< vtkSlicerSceneViewsModuleLogic > node1 = vtkSmartPointer< vtkSlicerSceneViewsModuleLogic >::New();
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   // should fail, no scene
   std::cout << "CreateSceneView with no mrml scene or screen shot" << std::endl;
   node1->CreateSceneView("SceneViewTest0", "this is a scene view", 0, NULL);
-  
+
   node1->SetMRMLScene(scene);
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
@@ -60,7 +60,7 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
   node1->RemoveSceneViewNode(NULL);
   // add a node to remove
   node1->CreateSceneView("SceneViewTestToRemove", "this is a scene view to remove", 0, screenShot);
-  vtkCollection *col = sceneRead->GetNodesByClassByName("vtkMRMLSceneViewNode", "SceneViewTestToRemove"); 
+  vtkCollection *col = sceneRead->GetNodesByClassByName("vtkMRMLSceneViewNode", "SceneViewTestToRemove");
   if (col && col->GetNumberOfItems() > 0)
     {
     vtkMRMLSceneViewNode *nodeToRemove = vtkMRMLSceneViewNode::SafeDownCast(col->GetItemAsObject(0));
@@ -76,15 +76,15 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
       std::cerr << "Error getting a scene view node to remove" << std::endl;
       return EXIT_FAILURE;
       }
-    } 
+    }
   else
     {
     std::cerr << "Error adding and finding a node to remove" << std::endl;
     return EXIT_FAILURE;
-    } 
+    }
    col->RemoveAllItems();
    col->Delete();
-  return EXIT_SUCCESS;  
+  return EXIT_SUCCESS;
 }
 
 

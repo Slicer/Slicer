@@ -7,7 +7,7 @@
 
 =========================================================================auto=*/
 ///  vtkImageFillROI - Paints on top of an image.
-/// 
+///
 /// vtkImageFillROI will draw a polygon, line, or points in an
 /// image.  As opposed to vtkImageDrawROI, which draws only outlines
 /// around these shapes, this filter will also fill the inside of

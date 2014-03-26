@@ -36,7 +36,7 @@ qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin
 QWidget *qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin
 ::createWidget(QWidget *_parent)
 {
-  qMRMLAnnotationFiducialProjectionPropertyWidget* _widget 
+  qMRMLAnnotationFiducialProjectionPropertyWidget* _widget
     = new qMRMLAnnotationFiducialProjectionPropertyWidget(_parent);
   return _widget;
 }

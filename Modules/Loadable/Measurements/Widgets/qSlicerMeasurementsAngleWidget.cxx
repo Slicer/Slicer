@@ -25,7 +25,7 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerMeasurementsAngleWidget.h" 
+#include "qSlicerMeasurementsAngleWidget.h"
 #include "ui_qSlicerMeasurementsAngleWidget.h"
 
 //-----------------------------------------------------------------------------

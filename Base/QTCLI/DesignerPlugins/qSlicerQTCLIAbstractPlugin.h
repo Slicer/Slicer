@@ -28,7 +28,7 @@
 // QTCLI includes
 #include "qSlicerBaseQTCLIPluginsExport.h"
 
-class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerQTCLIAbstractPlugin 
+class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerQTCLIAbstractPlugin
   : public QObject
   , public QDesignerCustomWidgetInterface
 {

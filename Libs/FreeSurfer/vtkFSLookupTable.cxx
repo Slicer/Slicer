@@ -66,7 +66,7 @@ const char *vtkFSLookupTable::GetLutTypeString ()
       return "FreeSurferLabels";
       break;
     case FSLUTHEAT:
-      return "Heat"; 
+      return "Heat";
       break;
     case FSLUTGREENRED:
       return "GreenRed";
@@ -95,7 +95,7 @@ void vtkFSLookupTable::SetLutTypeToLabels()
 //------------------------------------------------------------------------------
 void vtkFSLookupTable::SetLutTypeToHeat()
 {
-    this->LutType = this->FSLUTHEAT;   
+    this->LutType = this->FSLUTHEAT;
     this->FMid = 2.0;
     this->LowThresh = -100.0;
     this->HiThresh = 10000.0;
@@ -176,7 +176,7 @@ void vtkFSLookupTable::SetLutTypeToGreenRed()
 double *vtkFSLookupTable::GetRange()
 {
     //this->SetTableRange(this->LowThresh, this->HiThresh);
-    return this->GetTableRange();    
+    return this->GetTableRange();
 }
 
 //------------------------------------------------------------------------------
@@ -195,8 +195,8 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
     float f, ftmp, c1, c2, fcurv;
     /// variables for the green red colour scale
     float curv;
-    
-    /// the final calculated values, red, green, blue, alpha 
+
+    /// the final calculated values, red, green, blue, alpha
     float r, g, b, a;
 
     r = 0.0;
@@ -241,25 +241,25 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
         }
         if (f>=0)
         {
-            r = 
+            r =
                 this->Offset*((f < this->LowThresh)?1:(f < this->FMid)?1 - (f - this->LowThresh)/(this->FMid - this->LowThresh):0) +
                 ((f < this->LowThresh)?0:(f < this->FMid)?(f - this->LowThresh)/(this->FMid - this->LowThresh):1);
-            g = 
+            g =
                 this->Offset*((f < this->LowThresh)?1:(f < this->FMid)?1 - (f - this->LowThresh)/(this->FMid - this->LowThresh):0) +
                 ((f < this->FMid)?0:(f < this->FMid + 1.00/this->Slope)?1*(f - this->FMid)*this->Slope:1);
-            b = 
+            b =
                 this->Offset*((f < this->LowThresh)?1:(f < this->FMid)?1 - (f - this->LowThresh)/(this->FMid - this->LowThresh):0);
         }
         else
         {
             f = -f;
-            b = 
+            b =
                 this->Offset*((f < this->LowThresh)?1:(f < this->FMid)?1 - (f - this->LowThresh)/(this->FMid - this->LowThresh):0) +
                 ((f < this->LowThresh)?0:(f < this->FMid)?(f - this->LowThresh)/(this->FMid - this->LowThresh):1);
-            g = 
+            g =
                 this->Offset*((f < this->LowThresh)?1:(f < this->FMid)?1 - (f - this->LowThresh)/(this->FMid - this->LowThresh):0) +
                 ((f < this->FMid)?0:(f < this->FMid + 1.00/this->Slope)?1*(f - this->FMid)*this->Slope:1);
-            r = 
+            r =
                 this->Offset*((f < this->LowThresh)?1:(f < this->FMid)?1 - (f - this->LowThresh)/(this->FMid - this->LowThresh):0);
         }
 
@@ -270,7 +270,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
 
         break;
     case FSLUTGREENRED:
-        // 
+        //
         curv = val;
         if (curv < this->LowThresh)
         {
@@ -349,7 +349,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
     }
 
 //    vtkDebugMacro(<<"R = " << this->RGBA[1] << ", G = " <<  this->RGBA[2] << ", B = " <<  this->RGBA[3] << endl);
-    
+
     return this->RGBA;
 }
 
@@ -357,7 +357,7 @@ unsigned char *vtkFSLookupTable::MapValue(double val)
 void vtkFSLookupTable::GetColor(double val, double rgb[3])
 {
     unsigned char *rgb8 = this->MapValue(val);
-    
+
     rgb[0] = rgb8[0]/255.0;
     rgb[1] = rgb8[1]/255.0;
     rgb[2] = rgb8[2]/255.0;
@@ -371,8 +371,8 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
     int n;
     double rgb[3];
     double val;
-    
-    
+
+
     vtkDebugMacro( << "MapScalarsThroughTable2:\n");
     vtkDebugMacro( << "\tinputDataType = " << inputDataType << ", number of vals = " << numberOfValues << ", input incr = " << inputIncrement << ",\noutput incr = " << outputIncrement << ", VTK_RGBA data type = "<< VTK_RGBA << ", lut type = " << this->LutType << endl);
 
@@ -393,15 +393,15 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
       Superclass::MapScalarsThroughTable2(input, output, inputDataType, numberOfValues, inputIncrement, outputIncrement);
       return;
       }
-    
-    
+
+
     if (outputIncrement != VTK_RGBA &&
         outputIncrement != VTK_RGB)
       {
       vtkErrorMacro(<<"Output increment " << outputIncrement << " doesn't match VTK_RGBA data type ("<< VTK_RGBA << ") nor VTK_RGB data type ("<< VTK_RGB << "), returning");
       return;
       }
-    
+
 
     switch (inputDataType)
       {
@@ -430,7 +430,7 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
             }
           // now save it to the output - should loop 0 to
           // outputIncrement
-          
+
           output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
           output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
           output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
@@ -466,7 +466,7 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
             }
           // now save it to the output - should loop 0 to
           // outputIncrement
-          
+
           output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
           output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
           output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
@@ -502,7 +502,7 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
             }
           // now save it to the output - should loop 0 to
           // outputIncrement
-          
+
           output[n*outputIncrement*sizeof(unsigned char)] = (unsigned char)(rgb[0]*255.0);
           output[n*outputIncrement*sizeof(unsigned char) + 1] = (unsigned char)(rgb[1]*255.0);
           output[n*outputIncrement*sizeof(unsigned char) + 2] = (unsigned char)(rgb[2]*255.0);
@@ -523,7 +523,7 @@ void vtkFSLookupTable::MapScalarsThroughTable2(void *input, unsigned char *outpu
           ucPtr += n*inputIncrement;
           ucVal = *ucPtr;
           unsigned char *rgb8 = this->MapValue((double)ucVal);
-          
+
           // now save it to the output - unsigned char return guarantees it's 0-255
           output[n*outputIncrement*sizeof(unsigned char)] = rgb8[0];
           output[n*outputIncrement*sizeof(unsigned char) + 1] = rgb8[1];

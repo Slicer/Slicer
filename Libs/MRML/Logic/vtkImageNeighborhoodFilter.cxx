@@ -86,7 +86,7 @@ void vtkImageNeighborhoodFilter::SetNeighborTo4()
   this->SetKernelSize(3,3,3);
 
   this->Neighbor = 4;
-  
+
   // clear
   memset(this->Mask, 0, this->KernelSize[0]*this->KernelSize[1]*
      this->KernelSize[2]);

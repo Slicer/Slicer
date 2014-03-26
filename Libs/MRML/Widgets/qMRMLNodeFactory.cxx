@@ -64,12 +64,12 @@ CTK_GET_CPP(qMRMLNodeFactory, vtkMRMLScene*, mrmlScene, MRMLScene);
 vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 {
   Q_D(qMRMLNodeFactory);
-  
+
   if (!d->MRMLScene || className.isEmpty())
     {
-    return 0; 
+    return 0;
     }
-  vtkSmartPointer<vtkMRMLNode> node; 
+  vtkSmartPointer<vtkMRMLNode> node;
   node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1() ) );
 
   Q_ASSERT_X(node, "createNode",
@@ -79,13 +79,13 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     {
     return 0;
     }
-  
+
   emit this->nodeInstantiated(node);
   // Optionally adding the node into a scene must be done only in
   // signal nodeInitialized. It's a bit arbitrary and feel free to remove
   // the restriction.
   Q_ASSERT(node->GetScene() == 0);
-  
+
   QString baseName;
   if (d->BaseNames.contains(className) &&
       !d->BaseNames[className].isEmpty())
@@ -122,7 +122,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     }
   emit this->nodeAdded(node);
 
-  return node; 
+  return node;
 }
 
 //------------------------------------------------------------------------------

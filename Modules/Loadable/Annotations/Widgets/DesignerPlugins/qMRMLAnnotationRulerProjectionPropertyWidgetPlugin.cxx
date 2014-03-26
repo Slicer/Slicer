@@ -36,7 +36,7 @@ qMRMLAnnotationRulerProjectionPropertyWidgetPlugin
 QWidget *qMRMLAnnotationRulerProjectionPropertyWidgetPlugin
 ::createWidget(QWidget *_parent)
 {
-  qMRMLAnnotationRulerProjectionPropertyWidget* _widget 
+  qMRMLAnnotationRulerProjectionPropertyWidget* _widget
     = new qMRMLAnnotationRulerProjectionPropertyWidget(_parent);
   return _widget;
 }

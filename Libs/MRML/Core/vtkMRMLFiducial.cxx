@@ -63,10 +63,10 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 
   // Write all attributes, since the parsing of the string is dependent on the
   // order here
-  
+
   //Superclass::WriteXML(of, nIndent);
 
-  
+
   // now that it's not a first class node, write it out simply
   if (this->ID != NULL)
     {
@@ -76,16 +76,16 @@ void vtkMRMLFiducial::WriteXML(ostream& of, int vtkNotUsed(nIndent))
     {
     of << " labeltext " << this->LabelText;
     }
-  
-  of << " xyz " << this->XYZ[0] << " " << 
+
+  of << " xyz " << this->XYZ[0] << " " <<
                     this->XYZ[1] << " " <<
                     this->XYZ[2];
 
-  of << " orientationwxyz " << this->OrientationWXYZ[0] << " " << 
+  of << " orientationwxyz " << this->OrientationWXYZ[0] << " " <<
                                 this->OrientationWXYZ[1] << " " <<
-                                this->OrientationWXYZ[2] << " " << 
+                                this->OrientationWXYZ[2] << " " <<
                                 this->OrientationWXYZ[3];
-  
+
   of << " selected " << this->Selected;
   of << " visibility " << this->Visibility;
 }
@@ -96,13 +96,13 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
     // used because the fiducial list gloms together the point's key and
     // values into one long string, VERY dependent on the order it's written
     // out in when WriteXML is used
-    
+
     // insert the string into a stream
     std::stringstream ss;
     ss << keyValuePairs;
 
     std::string keyName;
-   
+
     // get out the id
     ss >> keyName;
     if (keyName == std::string("id"))
@@ -113,7 +113,7 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
 
       vtkDebugMacro("ReadXMLString: got id " << this->ID);
       }
-    
+
     // now get out the labeltext key
     ss >> keyName;
     bool emptyLabel = false;
@@ -137,8 +137,8 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
 
       vtkDebugMacro("ReadXMLString: got label text '" << this->LabelText << "'");
       }
-    
-   
+
+
 
     if (!emptyLabel)
       {
@@ -165,7 +165,7 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
       ss >> this->XYZ[2];
       vtkDebugMacro("ReadXMLString: got xyz: " <<  this->XYZ[0] << ", " << this->XYZ[1] << ", " <<  this->XYZ[2]);
       }
-    
+
     // get the orientation key
     ss >> keyName;
     vtkDebugMacro("ReadXMLString: got keyname " << keyName.c_str());
@@ -179,7 +179,7 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
       ss >> this->OrientationWXYZ[3];
       vtkDebugMacro("ReadXMLString: got wxyz: " <<  this->OrientationWXYZ[0] << ", " << this->OrientationWXYZ[1] << ", " <<  this->OrientationWXYZ[2] << ", " <<  this->OrientationWXYZ[3]);
       }
-      
+
     // get the selected flag
     ss >> keyName;
     if (keyName == std::string("selected"))
@@ -187,7 +187,7 @@ void vtkMRMLFiducial::ReadXMLString(const char *keyValuePairs)
       ss >> this->Selected;
       vtkDebugMacro("ReadXMLString: got keynamne = " << keyName.c_str() << ", selected = " << this->Selected );
       }
-        
+
     // get the visibility flag
     ss >> keyName;
     if (keyName == std::string("visibility"))
@@ -206,12 +206,12 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
   const char* attValue;
 
   //std::cout << "vtkMRMLFiducial::ReadXMLAttributes\n";
-  
-  while (*atts != NULL) 
+
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "xyz")) 
+    if (!strcmp(attName, "xyz"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -219,7 +219,7 @@ void vtkMRMLFiducial::ReadXMLAttributes(const char** atts)
       ss >> this->XYZ[1];
       ss >> this->XYZ[2];
       }
-    else if (!strcmp(attName, "orientationWxyz")) 
+    else if (!strcmp(attName, "orientationWxyz"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -295,12 +295,12 @@ void vtkMRMLFiducial::Copy(vtkObject *anode)
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkObject::PrintSelf(os,indent);
 
   // ID
   os << indent << "ID: " << (this->ID ? this->ID : "(none)") << "\n";
-  
+
   // LabelText:
   os << indent << "LabelText: " << (this->LabelText ? this->LabelText : "(none)") << "\n";
 
@@ -308,7 +308,7 @@ void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "XYZ: (";
   os << this->XYZ[0] << ", " << this->XYZ[1] << ", " << this->XYZ[2]
      << ") \n" ;
-  
+
   // OrientationWXYZ
   os << indent << "OrientationWXYZ: (";
   os << this->OrientationWXYZ[0] << ", " ;
@@ -326,7 +326,7 @@ void vtkMRMLFiducial::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
 {
-    // copied from: vtkTransform::GetOrientationWXYZ 
+    // copied from: vtkTransform::GetOrientationWXYZ
     int i;
 
 
@@ -341,7 +341,7 @@ void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
         ortho[2][i] = matrix[2][i];
     }
     if (vtkMath::Determinant3x3(ortho) < 0)
-    {   
+    {
       ortho[0][2] = -ortho[0][2];
       ortho[1][2] = -ortho[1][2];
       ortho[2][2] = -ortho[2][2];
@@ -369,7 +369,7 @@ void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
       wxyz[1] = 0.0;
       wxyz[2] = 0.0;
       wxyz[3] = 1.0;
-      } 
+      }
     this->OrientationWXYZ[0] = (float) wxyz[0];
     this->OrientationWXYZ[1] = (float) wxyz[1];
     this->OrientationWXYZ[2] = (float) wxyz[2];

@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -22,7 +22,7 @@ int vtkMRMLFiberBundleTubeDisplayNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
   // exercising the display mrml methods fails on the ScalarVisibility boolean test
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLFiberBundleTubeDisplayNode, node1.GetPointer());
-  
+
 
   return EXIT_SUCCESS;
 }

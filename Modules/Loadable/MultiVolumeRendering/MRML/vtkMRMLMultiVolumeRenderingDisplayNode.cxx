@@ -67,7 +67,7 @@ vtkMRMLMultiVolumeRenderingDisplayNode::vtkMRMLMultiVolumeRenderingDisplayNode()
 
   this->BgROINodeID = NULL;
   this->BgROINode = NULL;
-  
+
   this->FgROINodeID = NULL;
   this->FgROINode = NULL;
 
@@ -78,26 +78,26 @@ vtkMRMLMultiVolumeRenderingDisplayNode::vtkMRMLMultiVolumeRenderingDisplayNode()
 
   this->BgRaycastTechnique = vtkMRMLMultiVolumeRenderingDisplayNode::Composite;
   this->FgRaycastTechnique = vtkMRMLMultiVolumeRenderingDisplayNode::Composite;
-  
+
   this->BgCroppingEnabled = 0;//by default cropping is not enabled
   this->FgCroppingEnabled = 0;//by default cropping is not enabled
   this->LabelmapCroppingEnabled = 0;//by default cropping is not enabled
-  
+
   this->BgFgRatio = 0.5f;//default display bg volume
-  
+
   this->MultiVolumeFusionMethod = vtkMRMLMultiVolumeRenderingDisplayNode::AlphaBlendingOR;
   this->MultiVolumeRenderingMode = vtkMRMLMultiVolumeRenderingDisplayNode::Linked;
 
   this->BgFollowVolumeDisplayNode = 0;// by default do not follow volume display node
   this->BgIgnoreVolumeDisplayNodeThreshold = 0;
-  
+
   this->FgFollowVolumeDisplayNode = 0;// by default do not follow volume display node
   this->FgIgnoreVolumeDisplayNodeThreshold = 0;
-  
+
   this->PerformanceControl = 0;
 
   this->SetHideFromEditors(false);
-  
+
   this->BgVisibility = false;
   this->FgVisibility = false;
   this->LabelmapVisibility = false;
@@ -130,12 +130,12 @@ vtkMRMLMultiVolumeRenderingDisplayNode::~vtkMRMLMultiVolumeRenderingDisplayNode(
     {
     SetAndObserveFgVolumePropertyNodeID(NULL);
     }
-  
+
   if (this->FgROINodeID)
     {
     SetAndObserveFgROINodeID(NULL);
     }
-  
+
   if (this->LabelmapVolumeNodeID)
     {
     SetAndObserveLabelmapVolumeNodeID(NULL);
@@ -145,7 +145,7 @@ vtkMRMLMultiVolumeRenderingDisplayNode::~vtkMRMLMultiVolumeRenderingDisplayNode(
     {
     SetAndObserveLabelmapROINodeID(NULL);
     }
-      
+
   this->ObservedEvents->Delete();
 }
 
@@ -290,28 +290,28 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " bgVolumeNodeID=\"" << (this->BgVolumeNodeID ? this->BgVolumeNodeID : "NULL") << "\"";
   of << indent << " fgVolumeNodeID=\"" << (this->FgVolumeNodeID ? this->FgVolumeNodeID : "NULL") << "\"";
   of << indent << " labelmapVolumeNodeID=\"" << (this->LabelmapVolumeNodeID ? this->LabelmapVolumeNodeID : "NULL") << "\"";
-  
+
   of << indent << " bgCroppingEnabled=\""<< this->BgCroppingEnabled << "\"";
   of << indent << " fgCroppingEnabled=\""<< this->FgCroppingEnabled << "\"";
   of << indent << " labelmapCroppingEnabled=\""<< this->LabelmapCroppingEnabled << "\"";
-  
+
   of << indent << " bgROINodeID=\"" << (this->BgROINodeID ? this->BgROINodeID : "NULL") << "\"";
   of << indent << " fgROINodeID=\"" << (this->FgROINodeID ? this->FgROINodeID : "NULL") << "\"";
   of << indent << " labelmapROINodeID=\"" << (this->LabelmapROINodeID ? this->LabelmapROINodeID : "NULL") << "\"";
-  
+
   of << indent << " bgVolumePropertyNodeID=\"" << (this->BgVolumePropertyNodeID ? this->BgVolumePropertyNodeID : "NULL") << "\"";
   of << indent << " fgVolumePropertyNodeID=\"" << (this->FgVolumePropertyNodeID ? this->FgVolumePropertyNodeID : "NULL") << "\"";
-  
+
   of << indent << " bgRaycastTechnique=\"" << this->BgRaycastTechnique << "\"";
   of << indent << " fgRaycastTechnique=\"" << this->FgRaycastTechnique << "\"";
-  
+
   of << indent << " multiVolumeFusionMethod=\"" << this->MultiVolumeFusionMethod << "\"";
-  
+
   of << indent << " bgFgRatio=\"" << this->BgFgRatio << "\"";
-  
+
   of << indent << " bgFollowVolumeDisplayNode=\"" << this->BgFollowVolumeDisplayNode << "\"";
   of << indent << " bgIgnoreVolumeDisplayNodeThreshold=\"" << this->BgIgnoreVolumeDisplayNodeThreshold << "\"";
-  
+
   of << indent << " fgFollowVolumeDisplayNode=\"" << this->FgFollowVolumeDisplayNode << "\"";
   of << indent << " fgIgnoreVolumeDisplayNodeThreshold=\"" << this->FgIgnoreVolumeDisplayNodeThreshold << "\"";
 }
@@ -332,7 +332,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateReferenceID(const char *oldID
     {
     this->SetAndObserveLabelmapVolumeNodeID(newID);
     }
-    
+
   if (this->BgROINodeID && !strcmp(oldID, this->BgROINodeID))
     {
     this->SetAndObserveBgROINodeID(newID);
@@ -345,7 +345,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateReferenceID(const char *oldID
     {
     this->SetAndObserveLabelmapROINodeID(newID);
     }
-    
+
   if (this->BgVolumePropertyNodeID && !strcmp(oldID, this->BgVolumePropertyNodeID))
     {
     this->SetAndObserveBgVolumePropertyNodeID(newID);
@@ -373,7 +373,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateReferences()
     {
     this->SetAndObserveLabelmapVolumeNodeID(NULL);
     }
-    
+
   if (this->BgROINodeID != NULL && this->Scene->GetNodeByID(this->BgROINodeID) == NULL)
     {
     this->SetAndObserveBgROINodeID(NULL);
@@ -386,7 +386,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateReferences()
     {
     this->SetAndObserveLabelmapROINodeID(NULL);
     }
-    
+
   if (this->BgVolumePropertyNodeID != NULL && this->Scene->GetNodeByID(this->BgVolumePropertyNodeID) == NULL)
     {
     this->SetAndObserveBgVolumePropertyNodeID(NULL);
@@ -409,21 +409,21 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetBgVolumeNodeID(node->GetBgVolumeNodeID());
   this->SetFgVolumeNodeID(node->GetFgVolumeNodeID());
   this->SetLabelmapVolumeNodeID(node->GetLabelmapVolumeNodeID());
-  
+
   this->SetBgVolumePropertyNodeID(node->GetBgVolumePropertyNodeID());
   this->SetFgVolumePropertyNodeID(node->GetFgVolumePropertyNodeID());
-  
+
   this->SetBgROINodeID(node->GetBgROINodeID());
   this->SetFgROINodeID(node->GetFgROINodeID());
   this->SetLabelmapROINodeID(node->GetLabelmapROINodeID());
-  
+
   this->SetBgCroppingEnabled(node->GetBgCroppingEnabled());
   this->SetFgCroppingEnabled(node->GetFgCroppingEnabled());
   this->SetLabelmapCroppingEnabled(node->GetLabelmapCroppingEnabled());
-  
+
   this->SetGPUMemorySize(node->GetGPUMemorySize());
   this->SetEstimatedSampleDistance(node->GetEstimatedSampleDistance());
-  
+
   this->SetBgRaycastTechnique(node->GetBgRaycastTechnique());
   this->SetFgRaycastTechnique(node->GetFgRaycastTechnique());
 
@@ -432,10 +432,10 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 
   this->SetBgFollowVolumeDisplayNode(node->GetBgFollowVolumeDisplayNode());
   this->SetBgIgnoreVolumeDisplayNodeThreshold(node->GetBgIgnoreVolumeDisplayNodeThreshold());
-  
+
   this->SetFgFollowVolumeDisplayNode(node->GetFgFollowVolumeDisplayNode());
   this->SetFgIgnoreVolumeDisplayNodeThreshold(node->GetFgIgnoreVolumeDisplayNodeThreshold());
-  
+
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
 
@@ -531,7 +531,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode
 {
   this->SetFgVolumePropertyNodeID(VolumePropertyNodeID);
   vtkMRMLVolumePropertyNode *node = this->GetFgVolumePropertyNode();
-  
+
   if (node != this->FgVolumePropertyNode)
   {
     vtkSetAndObserveMRMLObjectEventsMacro(this->FgVolumePropertyNode, node, this->ObservedEvents);
@@ -673,9 +673,9 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateScene(vtkMRMLScene *scene)
   this->SetAndObserveBgVolumePropertyNodeID(this->BgVolumePropertyNodeID);
   this->SetAndObserveFgVolumeNodeID(this->FgVolumeNodeID);
   this->SetAndObserveFgVolumePropertyNodeID(this->FgVolumePropertyNodeID);
-  
+
   this->SetAndObserveLabelmapVolumeNodeID(this->LabelmapVolumeNodeID);
-  
+
   this->SetAndObserveBgROINodeID(this->BgROINodeID);
   this->SetAndObserveFgROINodeID(this->FgROINodeID);
   this->SetAndObserveLabelmapROINodeID(this->LabelmapROINodeID);
@@ -710,14 +710,14 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent in
   os << "BgVolumeNodeID: " << ( (this->BgVolumeNodeID) ? this->BgVolumeNodeID : "None" ) << "\n";
   os << "FgVolumeNodeID: " << ( (this->FgVolumeNodeID) ? this->FgVolumeNodeID : "None" ) << "\n";
   os << "LabelmapVolumeNodeID: " << ( (this->LabelmapVolumeNodeID) ? this->LabelmapVolumeNodeID : "None" ) << "\n";
-  
+
   os << "BgROINodeID: " << ( (this->BgVolumeNodeID) ? this->BgROINodeID : "None" ) << "\n";
   os << "FgROINodeID: " << ( (this->FgVolumeNodeID) ? this->FgROINodeID : "None" ) << "\n";
   os << "LabelmapROINodeID: " << ( (this->LabelmapVolumeNodeID) ? this->LabelmapROINodeID : "None" ) << "\n";
-  
+
   os << "BgVolumePropertyNodeID: " << ( (this->BgVolumePropertyNodeID) ? this->BgVolumePropertyNodeID : "None" ) << "\n";
   os << "FgVolumePropertyNodeID: " << ( (this->FgVolumePropertyNodeID) ? this->FgVolumePropertyNodeID : "None" ) << "\n";
-  
+
   os << "BgCroppingEnabled: " << this->BgCroppingEnabled << "\n";
   os << "FgCroppingEnabled: " << this->FgCroppingEnabled << "\n";
   os << "LabelmapCroppingEnabled: " << this->LabelmapCroppingEnabled << "\n";

@@ -46,16 +46,16 @@ class EndoscopyWidget:
       self.cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
       self.inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
       self.parent.show()
-    
+
   def setup(self):
     # Path collapsible button
     pathCollapsibleButton = ctk.ctkCollapsibleButton()
     pathCollapsibleButton.text = "Path"
     self.layout.addWidget(pathCollapsibleButton)
-    
+
     # Layout within the path collapsible button
     pathFormLayout = qt.QFormLayout(pathCollapsibleButton)
-    
+
     # Camera node selector
     cameraNodeSelector = slicer.qMRMLNodeComboBox()
     cameraNodeSelector.objectName = 'cameraNodeSelector'
@@ -67,9 +67,9 @@ class EndoscopyWidget:
     cameraNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
     cameraNodeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.setCameraNode)
     pathFormLayout.addRow("Camera:", cameraNodeSelector)
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', 
+    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)',
                         cameraNodeSelector, 'setMRMLScene(vtkMRMLScene*)')
-    
+
     # Input fiducials node selector
     inputFiducialsNodeSelector = slicer.qMRMLNodeComboBox()
     inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
@@ -80,32 +80,32 @@ class EndoscopyWidget:
     inputFiducialsNodeSelector.removeEnabled = False
     inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
     pathFormLayout.addRow("Input Fiducials:", inputFiducialsNodeSelector)
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', 
+    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)',
                         inputFiducialsNodeSelector, 'setMRMLScene(vtkMRMLScene*)')
-    
+
     # CreatePath button
     createPathButton = qt.QPushButton("Create path")
     createPathButton.toolTip = "Create the path."
     createPathButton.enabled = False
     pathFormLayout.addRow(createPathButton)
     createPathButton.connect('clicked()', self.onCreatePathButtonClicked)
-    
-    
+
+
     # Flythrough collapsible button
     flythroughCollapsibleButton = ctk.ctkCollapsibleButton()
     flythroughCollapsibleButton.text = "Flythrough"
     flythroughCollapsibleButton.enabled = False
     self.layout.addWidget(flythroughCollapsibleButton)
-    
+
     # Layout within the Flythrough collapsible button
     flythroughFormLayout = qt.QFormLayout(flythroughCollapsibleButton)
-    
+
     # Frame slider
     frameSlider = ctk.ctkSliderWidget()
     frameSlider.connect('valueChanged(double)', self.frameSliderValueChanged)
     frameSlider.decimals = 0
     flythroughFormLayout.addRow("Frame:", frameSlider)
-    
+
     # Frame skip slider
     frameSkipSlider = ctk.ctkSliderWidget()
     frameSkipSlider.connect('valueChanged(double)', self.frameSkipSliderValueChanged)
@@ -113,7 +113,7 @@ class EndoscopyWidget:
     frameSkipSlider.minimum = 0
     frameSkipSlider.maximum = 10
     flythroughFormLayout.addRow("Frame skip:", frameSkipSlider)
-    
+
     # Frame delay slider
     frameDelaySlider = ctk.ctkSliderWidget()
     frameDelaySlider.connect('valueChanged(double)', self.frameDelaySliderValueChanged)
@@ -123,7 +123,7 @@ class EndoscopyWidget:
     frameDelaySlider.suffix = " ms"
     frameDelaySlider.value = 20
     flythroughFormLayout.addRow("Frame delay:", frameDelaySlider)
-    
+
     # View angle slider
     viewAngleSlider = ctk.ctkSliderWidget()
     viewAngleSlider.connect('valueChanged(double)', self.viewAngleSliderValueChanged)
@@ -131,17 +131,17 @@ class EndoscopyWidget:
     viewAngleSlider.minimum = 30
     viewAngleSlider.maximum = 180
     flythroughFormLayout.addRow("View Angle:", viewAngleSlider)
-    
+
     # Play button
     playButton = qt.QPushButton("Play")
     playButton.toolTip = "Fly through path."
     playButton.checkable = True
     flythroughFormLayout.addRow(playButton)
     playButton.connect('toggled(bool)', self.onPlayButtonToggled)
-    
+
     # Add vertical spacer
     self.layout.addStretch(1)
-    
+
     # Set local var as instance attribute
     self.cameraNodeSelector = cameraNodeSelector
     self.inputFiducialsNodeSelector = inputFiducialsNodeSelector
@@ -150,17 +150,17 @@ class EndoscopyWidget:
     self.frameSlider = frameSlider
     self.viewAngleSlider = viewAngleSlider
     self.playButton = playButton
-  
+
   def setCameraNode(self, newCameraNode):
-    """Allow to set the current camera node. 
+    """Allow to set the current camera node.
     Connected to signal 'currentNodeChanged()' emitted by camera node selector."""
-    
+
     #  Remove previous observer
     if self.cameraNode and self.cameraNodeObserverTag:
       self.cameraNode.RemoveObserver(self.cameraNodeObserverTag)
     if self.camera and self.cameraObserverTag:
       self.camera.RemoveObserver(self.cameraObserverTag)
-    
+
     newCamera = None
     if newCameraNode:
       newCamera = newCameraNode.GetCamera()
@@ -168,74 +168,74 @@ class EndoscopyWidget:
       self.cameraNodeObserverTag = newCameraNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
       # Add Camera ModifiedEvent observer
       self.cameraObserverTag = newCamera.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
-      
+
     self.cameraNode = newCameraNode
     self.camera = newCamera
-    
+
     # Update UI
     self.updateWidgetFromMRML()
-  
+
   def updateWidgetFromMRML(self):
     if self.camera:
       self.viewAngleSlider.value = self.camera.GetViewAngle()
     if self.cameraNode:
       pass
-    
+
   def onCameraModified(self, observer, eventid):
     self.updateWidgetFromMRML()
-    
+
   def onCameraNodeModified(self, observer, eventid):
     self.updateWidgetFromMRML()
-    
-  
+
+
   def enableOrDisableCreateButton(self):
-    """Connected to both the fiducial and camera node selector. It allows to 
+    """Connected to both the fiducial and camera node selector. It allows to
     enable or disable the 'create path' button."""
     self.createPathButton.enabled = self.cameraNodeSelector.currentNode() != None and self.inputFiducialsNodeSelector.currentNode() != None
-    
+
   def onCreatePathButtonClicked(self):
     """Connected to 'create path' button. It allows to:
       - compute the path
       - create the associated model"""
-      
+
     fiducialsNode = self.inputFiducialsNodeSelector.currentNode();
     print "Calculating Path..."
     result = EndoscopyComputePath(fiducialsNode)
     print "-> Computed path contains %d elements" % len(result.path)
-    
+
     print "Create Model..."
     model = EndoscopyPathModel(result.path, fiducialsNode)
     print "-> Model created"
-    
+
     # Update frame slider range
     self.frameSlider.maximum = len(result.path) - 2
-    
+
     # Update flythrough variables
     self.camera = self.camera
     self.transform = model.transform
     self.path = result.path
-    
+
     # Enable / Disable flythrough button
     self.flythroughCollapsibleButton.enabled = len(result.path) > 0
-    
+
   def frameSliderValueChanged(self, newValue):
     #print "frameSliderValueChanged:", newValue
     self.flyTo(newValue)
-    
+
   def frameSkipSliderValueChanged(self, newValue):
     #print "frameSkipSliderValueChanged:", newValue
     self.skip = int(newValue)
-    
+
   def frameDelaySliderValueChanged(self, newValue):
     #print "frameDelaySliderValueChanged:", newValue
     self.timer.interval = newValue
-    
+
   def viewAngleSliderValueChanged(self, newValue):
     if not self.cameraNode:
       return
     #print "viewAngleSliderValueChanged:", newValue
     self.cameraNode.GetCamera().SetViewAngle(newValue)
-    
+
   def onPlayButtonToggled(self, checked):
     if checked:
       self.timer.start()
@@ -243,14 +243,14 @@ class EndoscopyWidget:
     else:
       self.timer.stop()
       self.playButton.text = "Play"
-  
+
   def flyToNext(self):
     currentStep = self.frameSlider.value
     nextStep = currentStep + self.skip + 1
     if nextStep > len(self.path) - 2:
       nextStep = 0
     self.frameSlider.value = nextStep
-    
+
   def flyTo(self, f):
     """ Apply the fth step in the path to the global camera"""
     if self.path:
@@ -269,15 +269,15 @@ class EndoscopyWidget:
 
 
 class EndoscopyComputePath:
-  """Compute path given a list of fiducials. 
+  """Compute path given a list of fiducials.
   A Hermite spline interpolation is used. See http://en.wikipedia.org/wiki/Cubic_Hermite_spline
-  
+
   Example:
     result = EndoscopyComputePath(fiducialListNode)
     print "computer path has %d elements" % len(result.path)
-    
+
   """
-  
+
   def __init__(self, fiducialListNode, dl = 0.5):
     import numpy
     self.dl = dl # desired world space step size (in mm)
@@ -297,7 +297,7 @@ class EndoscopyComputePath:
       collection = vtk.vtkCollection()
       self.fids.GetChildrenDisplayableNodes(collection)
       self.n = collection.GetNumberOfItems()
-      if self.n == 0: 
+      if self.n == 0:
         return
       self.p = numpy.zeros((self.n,3))
       for i in xrange(self.n):
@@ -370,15 +370,15 @@ class EndoscopyComputePath:
       self.path.append(p)
 
   def point(self,segment,t):
-    return (self.h00(t)*self.p[segment] + 
-              self.h10(t)*self.m[segment] + 
-              self.h01(t)*self.p[segment+1] + 
+    return (self.h00(t)*self.p[segment] +
+              self.h10(t)*self.m[segment] +
+              self.h01(t)*self.p[segment+1] +
               self.h11(t)*self.m[segment+1])
 
   def step(self,segment,t,dl):
     """ Take a step of dl and return the path point and new t
       return:
-      t = new parametric coordinate after step 
+      t = new parametric coordinate after step
       p = point after step
       remainder = if step results in parametic coordinate > 1.0, then
         this is the amount of world space not covered by step
@@ -413,10 +413,10 @@ class EndoscopyPathModel:
        - Add a single polyline
   """
   def __init__(self, path, fiducialListNode):
-  
+
     fids = fiducialListNode
     scene = slicer.mrmlScene
-    
+
     points = vtk.vtkPoints()
     polyData = vtk.vtkPolyData()
     polyData.SetPoints(points)
@@ -438,7 +438,7 @@ class EndoscopyPathModel:
       linesIDArray.InsertNextTuple1(pointIndex)
       linesIDArray.SetTuple1( 0, linesIDArray.GetNumberOfTuples() - 1 )
       lines.SetNumberOfCells(1)
-      
+
     # Create model node
     model = slicer.vtkMRMLModelNode()
     model.SetScene(scene)
@@ -459,7 +459,7 @@ class EndoscopyPathModel:
     # Camera cursor
     sphere = vtk.vtkSphereSource()
     sphere.Update()
-     
+
     # Create model node
     cursor = slicer.vtkMRMLModelNode()
     cursor.SetScene(scene)
@@ -482,5 +482,5 @@ class EndoscopyPathModel:
     transform.SetName(scene.GenerateUniqueName("Transform-%s" % fids.GetName()))
     scene.AddNode(transform)
     cursor.SetAndObserveTransformNodeID(transform.GetID())
-    
+
     self.transform = transform

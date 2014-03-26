@@ -107,11 +107,11 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::ReadXMLAttributes(const char** att
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "scalarInvariant")) 
+    if (!strcmp(attName, "scalarInvariant"))
       {
       int scalarInvariant;
       std::stringstream ss;
@@ -141,7 +141,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   os << indent << "ScalarInvariant:             " << this->ScalarInvariant << "\n";
@@ -243,7 +243,7 @@ std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> vtkMRMLDiffusionTensorVolu
   for (int n=0; n<nnodes; n++)
     {
     node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(n));
-    if (node) 
+    if (node)
       {
       nodes.push_back(node);
       }
@@ -263,21 +263,21 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
     glyphDTDPN->SetLineGlyphResolution(5);
     glyphDTDPN->EndModify(modifyState);
     glyphDTDPN->Delete();
-    
+
     for (int i=0; i<3; i++)
       {
       if (this->GetScene())
         {
         vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
-        if (i == 0) 
+        if (i == 0)
           {
           node->SetName("Red");
           }
-        else if (i == 1) 
+        else if (i == 1)
           {
           node->SetName("Yellow");
           }
-        else if (i == 2) 
+        else if (i == 2)
           {
           node->SetName("Green");
           }
@@ -285,17 +285,17 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::AddSliceGlyphDisplayNodes( vtkMRML
         this->GetScene()->AddNode(node);
         node->Delete();
 
-        int modifyState2 = node->StartModify();     
+        int modifyState2 = node->StartModify();
         node->SetVisibility(0);
 
         node->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
 
         node->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
-        
+
         node->EndModify(modifyState2);
 
         volumeNode->AddAndObserveDisplayNodeID(node->GetID());
-        
+
         }
       }
    }

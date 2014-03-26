@@ -75,17 +75,17 @@ static void vtkImageErodeExecute(vtkImageErode *self,
   tStart = clock();
 
   // Get information to march through data
-  inData->GetIncrements(inInc0, inInc1, inInc2); 
+  inData->GetIncrements(inInc0, inInc1, inInc2);
   self->GetInput()->GetWholeExtent(inImageMin0, inImageMax0, inImageMin1,
     inImageMax1, inImageMin2, inImageMax2);
-  outData->GetIncrements(outInc0, outInc1, outInc2); 
+  outData->GetIncrements(outInc0, outInc1, outInc2);
   outMin0 = outExt[0];   outMax0 = outExt[1];
   outMin1 = outExt[2];   outMax1 = outExt[3];
   outMin2 = outExt[4];   outMax2 = outExt[5];
   numComps = outData->GetNumberOfScalarComponents();
 
   // Neighborhood around current voxel
-  self->GetRelativeHoodExtent(hoodMin0, hoodMax0, hoodMin1, 
+  self->GetRelativeHoodExtent(hoodMin0, hoodMax0, hoodMin1,
     hoodMax1, hoodMin2, hoodMax2);
 
   // Set up mask info
@@ -110,7 +110,7 @@ static void vtkImageErodeExecute(vtkImageErode *self,
       {
       outPtr1 = outPtr2;
       inPtr1 = inPtr2;
-      for (outIdx1 = outMin1; 
+      for (outIdx1 = outMin1;
         !self->AbortExecute && outIdx1 <= outMax1; outIdx1++)
         {
         if (!id) {
@@ -130,7 +130,7 @@ static void vtkImageErodeExecute(vtkImageErode *self,
             {
             // Loop through neighborhood pixels (kernel radius=1)
             // Note: input pointer marches out of bounds.
-            hoodPtr2 = inPtr0 + inInc0*hoodMin0 + inInc1*hoodMin1 
+            hoodPtr2 = inPtr0 + inInc0*hoodMin0 + inInc1*hoodMin1
               + inInc2*hoodMin2;
             maskPtr2 = maskPtr;
             for (hoodIdx2 = hoodMin2; hoodIdx2 <= hoodMax2; ++hoodIdx2)
@@ -193,7 +193,7 @@ static void vtkImageErodeExecute(vtkImageErode *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the datas data types.
-void vtkImageErode::ThreadedExecute(vtkImageData *inData, 
+void vtkImageErode::ThreadedExecute(vtkImageData *inData,
                     vtkImageData *outData,
                     int outExt[6], int id)
 {
@@ -202,39 +202,39 @@ void vtkImageErode::ThreadedExecute(vtkImageData *inData,
   switch (inData->GetScalarType())
     {
   case VTK_DOUBLE:
-    vtkImageErodeExecute(this, inData, (double *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (double *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_FLOAT:
-    vtkImageErodeExecute(this, inData, (float *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (float *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_LONG:
-    vtkImageErodeExecute(this, inData, (long *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (long *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_INT:
-    vtkImageErodeExecute(this, inData, (int *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (int *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_INT:
-    vtkImageErodeExecute(this, inData, (unsigned int *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (unsigned int *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_SHORT:
-    vtkImageErodeExecute(this, inData, (short *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (short *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_SHORT:
-    vtkImageErodeExecute(this, inData, (unsigned short *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (unsigned short *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_CHAR:
-    vtkImageErodeExecute(this, inData, (char *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (char *)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_CHAR:
-    vtkImageErodeExecute(this, inData, (unsigned char *)(inPtr), 
+    vtkImageErodeExecute(this, inData, (unsigned char *)(inPtr),
       outData, outExt, id);
     break;
   default:

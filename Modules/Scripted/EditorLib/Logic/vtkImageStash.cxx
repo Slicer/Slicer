@@ -35,7 +35,7 @@ vtkImageStash::vtkImageStash()
 //----------------------------------------------------------------------------
 vtkImageStash::~vtkImageStash()
 {
-  
+
   if (this->Stashing)
     {
     this->MultiThreader->TerminateThread(this->StashingThreadID);
@@ -73,7 +73,7 @@ void vtkImageStash::ThreadedStash()
 {
   this->SetStashing(1);
   this->StashingThreadID = this->MultiThreader->SpawnThread(
-                                        (vtkThreadFunctionType) &vtkImageStash_ThreadFunction, 
+                                        (vtkThreadFunctionType) &vtkImageStash_ThreadFunction,
                                         static_cast<void *>(this));
 }
 
@@ -82,7 +82,7 @@ void vtkImageStash::ThreadedStash()
 void vtkImageStash::Stash()
 {
   //
-  // put a compressed version of the scalars into the compressed 
+  // put a compressed version of the scalars into the compressed
   // buffer, and then set the scalar size to zero
   //
   if (!this->GetStashImage())
@@ -91,7 +91,7 @@ void vtkImageStash::Stash()
     return;
     }
 
-  vtkDataArray *scalars = this->GetStashImage()->GetPointData()->GetScalars();  
+  vtkDataArray *scalars = this->GetStashImage()->GetPointData()->GetScalars();
   if (!scalars)
     {
     vtkErrorWithObjectMacro (this, "Cannot stash - image has no scalars");
@@ -110,7 +110,7 @@ void vtkImageStash::Stash()
   // and even if it uses less memory the buffer size is not reduced.
   // Call squeeze on the buffer to reclaim the unused memory space
   // (typically reduces memory consumption from hundreds of megabytes to under a megabyte)
-  compressedBuffer->Squeeze(); 
+  compressedBuffer->Squeeze();
   this->SetStashedScalars(compressedBuffer);
   compressedBuffer->Delete();
 
@@ -138,7 +138,7 @@ void vtkImageStash::Unstash()
     return;
     }
 
-  vtkDataArray *scalars = this->StashImage->GetPointData()->GetScalars();  
+  vtkDataArray *scalars = this->StashImage->GetPointData()->GetScalars();
   if (!scalars)
     {
     vtkErrorMacro ("Cannot unstash - image has no scalars");
@@ -162,9 +162,9 @@ void vtkImageStash::Unstash()
   // so we can uncompress directly into the buffer
   scalars->SetNumberOfTuples(this->GetNumberOfTuples());
   vtkIdType stashedSize = this->StashedScalars->GetNumberOfTuples();
-  unsigned char *scalar_p = 
+  unsigned char *scalar_p =
       static_cast<unsigned char *>(scalars->WriteVoidPointer(0, numPrims));
-  unsigned char *stash_p = 
+  unsigned char *stash_p =
       static_cast<unsigned char *>(this->StashedScalars->WriteVoidPointer(0, stashedSize));
   this->GetCompressor()->Uncompress(stash_p, stashedSize, scalar_p, scalarSize);
 }
@@ -173,7 +173,7 @@ void vtkImageStash::Unstash()
 void vtkImageStash::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  
+
   os << indent << "StashImage: " << this->GetStashImage() << "\n";
   os << indent << "Stashing: " << this->GetStashing() << "\n";
   os << indent << "Stashed Scalars: " << this->GetStashedScalars() << "\n";

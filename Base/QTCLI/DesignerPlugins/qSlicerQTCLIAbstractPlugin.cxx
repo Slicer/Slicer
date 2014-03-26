@@ -25,24 +25,24 @@ qSlicerQTCLIAbstractPlugin::qSlicerQTCLIAbstractPlugin(QObject* parent)
 {
 }
 
-QString qSlicerQTCLIAbstractPlugin::group() const 
-{ 
-  return "Slicer [CLI Widgets]"; 
+QString qSlicerQTCLIAbstractPlugin::group() const
+{
+  return "Slicer [CLI Widgets]";
 }
 
 QIcon qSlicerQTCLIAbstractPlugin::icon() const
 {
-  return QIcon(); 
+  return QIcon();
 }
 
-QString qSlicerQTCLIAbstractPlugin::toolTip() const 
-{ 
-  return QString(); 
-}
-
-QString qSlicerQTCLIAbstractPlugin::whatsThis() const 
+QString qSlicerQTCLIAbstractPlugin::toolTip() const
 {
-  return QString(); 
+  return QString();
+}
+
+QString qSlicerQTCLIAbstractPlugin::whatsThis() const
+{
+  return QString();
 }
 
 

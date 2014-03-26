@@ -30,7 +30,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
-class qMRMLAnnotationRulerProjectionPropertyWidgetPrivate 
+class qMRMLAnnotationRulerProjectionPropertyWidgetPrivate
   : public Ui_qMRMLAnnotationRulerProjectionPropertyWidget
 {
   Q_DECLARE_PUBLIC(qMRMLAnnotationRulerProjectionPropertyWidget);
@@ -39,7 +39,7 @@ protected:
 public:
   qMRMLAnnotationRulerProjectionPropertyWidgetPrivate(qMRMLAnnotationRulerProjectionPropertyWidget& object);
   void init();
-  
+
   vtkMRMLAnnotationLineDisplayNode* RulerDisplayNode;
 };
 
@@ -103,7 +103,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
 ::setMRMLRulerNode(vtkMRMLAnnotationRulerNode* rulerNode)
 {
   Q_D(qMRMLAnnotationRulerProjectionPropertyWidget);
-  vtkMRMLAnnotationLineDisplayNode* displayNode 
+  vtkMRMLAnnotationLineDisplayNode* displayNode
     = rulerNode->GetAnnotationLineDisplayNode();
   if (!displayNode)
     {
@@ -128,7 +128,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
     }
 
   if (showProjection)
-    { 
+    {
     d->RulerDisplayNode->SliceProjectionOn();
     }
   else
@@ -148,7 +148,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
     }
 
   if (useRulerColor)
-    { 
+    {
     d->RulerDisplayNode->SliceProjectionUseRulerColorOn();
     }
   else
@@ -213,7 +213,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
     }
 
   if (coloredWhenParallel)
-    { 
+    {
     d->RulerDisplayNode->SliceProjectionColoredWhenParallelOn();
     }
   else
@@ -237,7 +237,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
     d->RulerDisplayNode->SliceProjectionThickerOnTopOn();
     }
   else
-    { 
+    {
     d->RulerDisplayNode->SliceProjectionThickerOnTopOff();
     }
 }
@@ -253,7 +253,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
     }
 
   if (dashed)
-    { 
+    {
     d->RulerDisplayNode->SliceProjectionDashedOn();
     }
   else
@@ -278,7 +278,7 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
   // Update widget if different from MRML node
   // -- 2D Projection Visibility
   d->Line2DProjectionCheckBox->setChecked(
-    d->RulerDisplayNode->GetSliceProjection() & 
+    d->RulerDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationDisplayNode::ProjectionOn);
 
   // -- Projection Color
@@ -303,16 +303,16 @@ void qMRMLAnnotationRulerProjectionPropertyWidget
 
   // -- Colored When Parallel
   d->LineColoredWhenParallelCheckBox->setChecked(
-    d->RulerDisplayNode->GetSliceProjection() & 
+    d->RulerDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
 
   // -- Thicker On Top
   d->LineThickerOnTopCheckBox->setChecked(
-    d->RulerDisplayNode->GetSliceProjection() & 
+    d->RulerDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
 
   // -- Dashed
   d->LineDashedCheckBox->setChecked(
-    d->RulerDisplayNode->GetSliceProjection() & 
+    d->RulerDisplayNode->GetSliceProjection() &
     vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }

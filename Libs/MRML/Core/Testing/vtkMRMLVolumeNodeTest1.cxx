@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -61,7 +61,7 @@ public:
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLVolumeArchetypeStorageNode::New(); }
 };
- 
+
 int vtkMRMLVolumeNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLVolumeNodeTestHelper1> node1;
@@ -107,12 +107,12 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
       }
     }
   std::cout << "IJKToRASDirections passed" << std::endl;
-  
+
   TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, IToRASDirection, 10.0);
   TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, JToRASDirection, 5.0);
   TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, KToRASDirection, 25.0);
 
-  node1->SetIJKToRASDirections(-0.03164, -0.0606374, 5.92996, 
+  node1->SetIJKToRASDirections(-0.03164, -0.0606374, 5.92996,
                                -0.448103, 0.00428152, -0.418707,
                                0.0, -0.445087, -0.811908);
 
@@ -167,7 +167,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
         }
       }
     }
-  
+
   std::cout << "IJK to RAS direction matrix: " << std::endl;
   retIJKToRASDir->PrintSelf(std::cout, indent.GetNextIndent());
 
@@ -217,7 +217,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
   rasToIJK->SetElement(0,0,-0.03164);
   rasToIJK->SetElement(0,1,-0.0606374);
   rasToIJK->SetElement(0,2,5.92996);
-  rasToIJK->SetElement(0,3,-39.3579); 
+  rasToIJK->SetElement(0,3,-39.3579);
   rasToIJK->SetElement(1,0,-0.448103);
   rasToIJK->SetElement(1,1,0.00428152);
   rasToIJK->SetElement(1,2,-0.418707);
@@ -245,6 +245,6 @@ int vtkMRMLVolumeNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   std::cout << "\tDiff between RAS input and output via ijk = " << rasDif << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

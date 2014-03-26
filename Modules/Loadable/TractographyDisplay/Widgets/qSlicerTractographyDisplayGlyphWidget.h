@@ -43,8 +43,8 @@ public slots:
   void setGlyphType(int);
   void setGlyphEigenvector(int);
   void setTubeGlyphNumberOfSides(double);
-  void setTubeGlyphRadius(double);  
-  
+  void setTubeGlyphRadius(double);
+
 protected slots:
   void updateWidgetFromMRMLDisplayNode();
   void updateWidgetFromMRMLDisplayPropertiesNode();

@@ -40,7 +40,7 @@ class vtkRenderWindowInteractor;
 /// When the displayable managers in the group request the view to be
 /// refreshed, the group fires a vtkCommand::UpdateEvent event.
 /// This event can be observed and trigger a Render on the render window.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerGroup : public vtkObject 
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerGroup : public vtkObject
 {
 public:
 

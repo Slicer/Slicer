@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLAnnotationSnapshotStorageNode - MRML node for model storage on disk
-/// 
+///
 /// Storage nodes has methods to read/write vtkPolyData to/from disk
 
 #ifndef __vtkMRMLAnnotationSnapshotStorageNode_h

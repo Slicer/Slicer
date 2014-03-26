@@ -9,11 +9,11 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationStickyNode);
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationStickyNode::SetSticky(const char* text,int selectedFlag)
 {
-    if (text) 
+    if (text)
     {
         this->SetStickyText(text);
     }
-    else 
+    else
     {
         this->SetStickyText("");
     }

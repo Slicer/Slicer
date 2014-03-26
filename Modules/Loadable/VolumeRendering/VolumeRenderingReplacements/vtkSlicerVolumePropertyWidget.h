@@ -13,7 +13,7 @@
 =========================================================================*/
 // .NAME vtkSlicerVolumePropertyWidget - a transfer function widget
 // .SECTION Description
-// This class contains the UI components and methods to edit a 
+// This class contains the UI components and methods to edit a
 // ColorTransferFunction in concert with a PiecewiseFunction for opacity.
 // New control points can be added by clicking with the left mouse button
 // and they can be removed by dragging them out of the window.
@@ -55,7 +55,7 @@ public:
   virtual void SetVolumeProperty(vtkVolumeProperty*);
 
   // Description:
-  // The data this volume property is used for. 
+  // The data this volume property is used for.
   // Will be used to get the scalar range of the transfer functions for
   // example.
   vtkGetObjectMacro(DataSet, vtkDataSet);
@@ -151,7 +151,7 @@ public:
   virtual void SetMaterialPropertyPositionToBottomFrame();
   virtual void SetMaterialPropertyPositionToScalarOpacityUserFrame();
   virtual void SetMaterialPropertyPositionToScalarColorUserFrame();
-  
+
   // Description:
   // Set/Get the gradient opacity function visibility
   vtkBooleanMacro(GradientOpacityFunctionVisibility, int);
@@ -166,7 +166,7 @@ public:
 
   // Description:
   // If true, an "Enable Shading" checkbox will be displayed and will
-  // control the shading flag of all components at once 
+  // control the shading flag of all components at once
   // (based on the first one). If false, the shading flag will be available
   // on a per-component basis in the shading dialog.
   vtkBooleanMacro(EnableShadingForAllComponents, int);
@@ -180,7 +180,7 @@ public:
   // Description:
   // Set/Get if the scalar color transfer function should be used to color
   // each point in the scalar opacity editor. This also makes sure that
-  // any changes made to one or the other will be propagated accordingly. 
+  // any changes made to one or the other will be propagated accordingly.
   // This alszo enables the user to pick a color by double-clicking on
   // the scalar opacity points.
   vtkBooleanMacro(UseScalarColorFunctionInScalarOpacityEditor, int);
@@ -193,13 +193,13 @@ public:
   // color function in the editor will be hidden (only the color ramp will
   // remain), and the opacity editor will use the scalar color function
   // to color its points. Double clicking on a point will popup a color
-  // selector. 
+  // selector.
   virtual void MergeScalarOpacityAndColorEditors();
 
   // Description:
-  // Specifies commands to associate with the widget. 
+  // Specifies commands to associate with the widget.
   // 'VolumePropertyChangedCommand' is invoked when the volume property has
-  // changed (i.e. at the end of the user interaction), whereas 
+  // changed (i.e. at the end of the user interaction), whereas
   // 'VolumePropertyChangingCommand' is invoked when the volume property is
   // changing (i.e. during the user interaction itself).
   // The need for a '...ChangedCommand' and '...ChangingCommand' can be
@@ -216,7 +216,7 @@ public:
   // The 'object' argument is the object that will have the method called on
   // it. The 'method' argument is the name of the method to be called and any
   // arguments in string form. If the object is NULL, the method is still
-  // evaluated as a simple command. 
+  // evaluated as a simple command.
   virtual void SetVolumePropertyChangedCommand(
     vtkObject *object,const char *method);
   virtual void SetVolumePropertyChangingCommand(
@@ -232,8 +232,8 @@ public:
   // Set the method used to compute the whole range of the various transfer
   // function editors. If set to Data, the scalar range of the data is used.
   // If no data is available or set to FunctionPoints, the range of the
-  // function points already in the editor is used. If set to 
-  // DataAndFunctionPointsthe the largest of the two ranges mentioned 
+  // function points already in the editor is used. If set to
+  // DataAndFunctionPointsthe the largest of the two ranges mentioned
   // previously is used.
   enum
   {
@@ -246,7 +246,7 @@ public:
   virtual void SetWholeRangeComputationMethodToData();
   virtual void SetWholeRangeComputationMethodToFunctionPoints();
   virtual void SetWholeRangeComputationMethodToDataAndFunctionPoints();
-  
+
   // Description:
   // Access the objects
   vtkGetObjectMacro(ScalarOpacityFunctionEditor, vtkKWPiecewiseFunctionEditor);
@@ -255,14 +255,14 @@ public:
   vtkGetObjectMacro(ScalarOpacityUnitDistanceScale, vtkKWScaleWithEntry);
   vtkGetObjectMacro(HSVColorSelector, vtkKWHSVColorSelector);
   vtkGetObjectMacro(MaterialPropertyWidget, vtkKWVolumeMaterialPropertyWidget);
- 
+
   // Description:
   // Pack or repack the UI
   virtual void Pack();
 
   // Description:
   // Update the "enable" state of the object and its internal parts.
-  // Depending on different Ivars (this->Enabled, the application's 
+  // Depending on different Ivars (this->Enabled, the application's
   // Limited Edition Mode, etc.), the "enable" state of the object is updated
   // and propagated to its internal parts/subwidgets. This will, for example,
   // enable/disable parts of the widget UI, enable/disable the visibility
@@ -331,7 +331,7 @@ protected:
   virtual void InvokeObjectMethodCommand(const char *command);
   virtual void InvokeVolumePropertyChangedCommand();
   virtual void InvokeVolumePropertyChangingCommand();
-  
+
   // GUI
 
   vtkKWFrameWithLabel                 *EditorFrame;
@@ -357,7 +357,7 @@ protected:
   // Are the components independent of each other?
 
   virtual int GetIndependentComponents();
-  
+
   // Update HSV selector
 
   virtual void UpdateHSVColorSelectorFromScalarColorFunctionEditor();

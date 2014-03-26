@@ -11,7 +11,7 @@ namespace itk
 
 /** /class LevelTracingImageFilter
  * \brief Trace a level curve/surface given a seed point on the level curve/surface.
- * 
+ *
  * LevelTracingImageFilter traces a level curve (or surface) from a
  * seed point.  The pixels on this level curve "boundary" are labeled
  * as 1. Does nothing if seed is in uniform area.
@@ -23,7 +23,7 @@ namespace itk
  * For 2D images, the algorithm follows the boundary using 8-connected
  * neighbors.  For ND images, the algorithm traces the boundary using
  * face connected neighbors.
- *  
+ *
  */
 
 template <class TInputImage, class TOutputImage>
@@ -42,7 +42,7 @@ public:
   /** Run-time type information (and related methods).  */
   itkTypeMacro(LevelTracingImageFilter,
                ImageToImageFilter);
- 
+
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TInputImage::ImageDimension ) ;
@@ -50,14 +50,14 @@ public:
   typedef TInputImage InputImageType;
   typedef typename InputImageType::Pointer InputImagePointer;
   typedef typename InputImageType::ConstPointer InputImageConstPointer;
-  typedef typename InputImageType::RegionType InputImageRegionType; 
-  typedef typename InputImageType::PixelType InputImagePixelType; 
+  typedef typename InputImageType::RegionType InputImageRegionType;
+  typedef typename InputImageType::PixelType InputImagePixelType;
   typedef typename InputImageType::IndexType IndexType;
   typedef typename InputImageType::SizeType SizeType;
-  
+
   typedef TOutputImage OutputImageType;
   typedef typename OutputImageType::Pointer OutputImagePointer;
-  typedef typename OutputImageType::RegionType OutputImageRegionType; 
+  typedef typename OutputImageType::RegionType OutputImageRegionType;
   typedef typename OutputImageType::PixelType OutputImagePixelType;
 
   typedef ChainCodePath<ImageDimension> ChainCodePathType;
@@ -75,25 +75,25 @@ public:
                       TOutputImage::ImageDimension);
 
   void PrintSelf ( std::ostream& os, Indent indent ) const;
-  
+
   /// Set/Get the seed
-  itkSetMacro(Seed, IndexType); 
+  itkSetMacro(Seed, IndexType);
   itkGetMacro(Seed, IndexType);
 
   /// Did we move the seed point to put in on a boundary?
   itkGetMacro(MovedSeed, bool);
-  
+
   int GetThreshold();
   InputImagePixelType GetMaxIntensity() {return m_Max;}
   InputImagePixelType GetMinIntensity() {return m_Min;}
-  
+
   /// Get the output as a ChainCodePath.  This output is only generated in the 2D case.
   ChainCodePathType *GetPathOutput() { return static_cast<ChainCodePathType*>(this->ProcessObject::GetOutput(1)); }
 
 protected:
   LevelTracingImageFilter();
   ~LevelTracingImageFilter(){}
-   
+
   /// Override since the filter needs all the data for the algorithm
   void GenerateInputRequestedRegion();
 
@@ -109,10 +109,10 @@ protected:
   struct DispatchBase {};
   template<signed int VDimension>
   struct Dispatch : DispatchBase {};
-  
+
   /** This method traces the level curve/surface. */
   virtual void Trace( const Dispatch<2> & );
-  virtual void Trace( const DispatchBase &); 
+  virtual void Trace( const DispatchBase &);
 
 private:
   LevelTracingImageFilter(const Self&); //purposely not implemented

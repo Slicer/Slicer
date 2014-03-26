@@ -57,25 +57,25 @@ vtkMRMLDiffusionImageVolumeNode::~vtkMRMLDiffusionImageVolumeNode()
     delete [] this->DiffusionWeightedNodeID;
     this->DiffusionWeightedNodeID = NULL;
     }
-   this->SetAndObserveDisplayNodeID(NULL); 
+   this->SetAndObserveDisplayNodeID(NULL);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
- 
+
   vtkIndent indent(nIndent);
   std::stringstream ss;
-  if (this->BaselineNodeID != NULL) 
+  if (this->BaselineNodeID != NULL)
     {
     of << indent << " baselineNodeRef=\"" << this->BaselineNodeID << "\"";
     }
-  if (this->DiffusionWeightedNodeID != NULL) 
+  if (this->DiffusionWeightedNodeID != NULL)
     {
     of << indent << " diffusionWeightedNodeRef=\"" << this->DiffusionWeightedNodeID << "\"";
     }
-  if (this->MaskNodeID != NULL) 
+  if (this->MaskNodeID != NULL)
     {
     of << indent << " maskNodeRef=\"" << this->MaskNodeID << "\"";
     }
@@ -110,11 +110,11 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetMaskNodeID(attValue);
       }
-  }   
+  }
 
   this->EndModify(disabledModify);
 
-} 
+}
 
 
 //----------------------------------------------------------------------------
@@ -182,7 +182,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 //{
 //  Superclass::UpdateScene(scene);
 
-//  if (this->GetDiffusionWeightedNodeID()) 
+//  if (this->GetDiffusionWeightedNodeID())
 //    {
 //    this->SetAndObserveDisplayNodeID(this->GetDiffusionWeightedNodeID());
 //    }
@@ -227,7 +227,7 @@ if (this->DiffusionWeightedNodeID != NULL && this->Scene->GetNodeByID(this->Diff
 
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -237,7 +237,7 @@ void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLDiffusionImageVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  
+
   os << indent << "DiffusionWeightedNodeID: " <<
     (this->DiffusionWeightedNodeID ? this->DiffusionWeightedNodeID : "(none)") << "\n";
 
@@ -250,4 +250,4 @@ void vtkMRMLDiffusionImageVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 
- 
+

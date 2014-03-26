@@ -7,9 +7,9 @@
 
 =========================================================================auto=*/
 ///  vtkSlicerBaseLogicWin32Header - manage Windows system differences
-/// 
+///
 /// The vtkSlicerBaseLogicWin32Header captures some system differences between Unix
-/// and Windows operating systems. 
+/// and Windows operating systems.
 
 #ifndef __vtkSlicerBaseLogicWin32Header_h
 #define __vtkSlicerBaseLogicWin32Header_h
@@ -18,9 +18,9 @@
 
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
 #if defined(SlicerBaseLogic_EXPORTS)
-#define VTK_SLICER_BASE_LOGIC_EXPORT __declspec( dllexport ) 
+#define VTK_SLICER_BASE_LOGIC_EXPORT __declspec( dllexport )
 #else
-#define VTK_SLICER_BASE_LOGIC_EXPORT __declspec( dllimport ) 
+#define VTK_SLICER_BASE_LOGIC_EXPORT __declspec( dllimport )
 #endif
 #else
 #define VTK_SLICER_BASE_LOGIC_EXPORT

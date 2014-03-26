@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -24,6 +24,6 @@ int vtkMRMLDiffusionTensorVolumeNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
   EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLDiffusionTensorVolumeNode, node1.GetPointer());
-  
+
   return EXIT_SUCCESS;
 }

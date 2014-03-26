@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-/// Qt includes 
+/// Qt includes
 #include <QDebug>
 #include <QDir>
 
@@ -73,7 +73,7 @@ public:
   void    applyFIPS2SlicerTransformCorrection();
 
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
-  QStringList TransformIDStack; 
+  QStringList TransformIDStack;
   QString     Directory;
   //QString     ParentId;
   QString     MRMLIdFSBrain;
@@ -155,7 +155,7 @@ void qSlicerXcedeCatalogReaderPrivate::importElement(vtkXMLDataElement* element)
   //set parent $::XcedeCatalog_HParent_ID
   //QString parent = this->ParentID;
 
-  //--- update progress bar 
+  //--- update progress bar
   //set elementType [$element GetName]
   //$::XcedeCatalog_mainWindow SetStatusText "Parsing $elementType..."
 
@@ -163,9 +163,9 @@ void qSlicerXcedeCatalogReaderPrivate::importElement(vtkXMLDataElement* element)
   //$::XcedeCatalog_progressGauge SetValue [expr 100 * $::XcedeCatalog_WhichElement / (1. * $::XcedeCatalog_NumberOfElements)]
 
   // import this element if it contains an entry of the correct type
-  //XcedeCatalogImportGetEntry $element 
+  //XcedeCatalogImportGetEntry $element
   this->importEntry(element);
-  
+
   //---TODO: probably don't need this...
   // leave a place holder in case we are a group node
   //lappend ::XcedeCatalog(transformIDStack) "NestingMarker"
@@ -245,30 +245,30 @@ QString qSlicerXcedeCatalogReaderPrivate::nodeType(const QString& format)const
   if (format == "FreeSurfer:mgz-1" ||
       format == "nrrd:nrrd-1" ||
       format == "nifti:nii-1" ||
-      format == "FreeSurfer:mgh-1") 
+      format == "FreeSurfer:mgh-1")
     {
     return "Volume";
     }
-  else if ( format == "FreeSurfer:w-1" || 
+  else if ( format == "FreeSurfer:w-1" ||
             format == "FreeSurfer:thickness-1" ||
-            format == "FreeSurfer:curv-1" || 
-            format == "FreeSurfer:avg_curv-1" || 
+            format == "FreeSurfer:curv-1" ||
+            format == "FreeSurfer:avg_curv-1" ||
             format == "FreeSurfer:sulc-1" ||
             format == "FreeSurfer:area-1" ||
             format == "FreeSurfer:annot-1" ||
-            format == "FreeSurfer:overlay-1") 
+            format == "FreeSurfer:overlay-1")
     {
     return "Overlay";
     }
-  else if (format == "FreeSufer:mat-1" || 
-           format == "FreeSurfer:matrix-1") 
+  else if (format == "FreeSufer:mat-1" ||
+           format == "FreeSurfer:matrix-1")
     {
     return "Transform";
     }
-  else if (format == "FreeSurfer:surface-1") 
+  else if (format == "FreeSurfer:surface-1")
     {
     return "Model";
-    } 
+    }
   return "Unknown";
 }
 
@@ -284,7 +284,7 @@ int qSlicerXcedeCatalogReaderPrivate::checkFormat(const QString& format)const
     //--- matrix-1 and overlay-1 are made up!
     //--- TODO: Add more as we know what their
     //--- XCEDE definitions are (analyze, etc.)
-    
+
 // return 1 if have a valid storage node that can deal with remote uri's, return 2 if need to synch download
   if (format == "FreeSurfer:mgz-1" ||
       format == "nifti:nii-1" ||
@@ -300,13 +300,13 @@ int qSlicerXcedeCatalogReaderPrivate::checkFormat(const QString& format)const
       format == "FreeSurfer:overlay-1")
     {
     return 1;
-    } 
-  else if (format == "FreeSurfer:mgh-1" || 
+    }
+  else if (format == "FreeSurfer:mgh-1" ||
            format == "FreeSurfer:matrix-1")
     {
     return 2;
-    }  
-  else 
+    }
+  else
     {
     return 0;
     }
@@ -326,7 +326,7 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
   //set elementType [$element GetName]
   //if { $elementType != "entry" && $elementType != "Entry" } {
   //    //--- only process catalog entry tags
-  //    return 
+  //    return
   //}
   QString elementType = element->GetName();
   if (elementType.toLower() != "entry")
@@ -341,14 +341,14 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
   //for {set i 0} {$i < $nAtts} {incr i} {
   //    set attName [$element GetAttributeName $i]
   //    set node($attName) [$element GetAttributeValue $i]
-  //} 
+  //}
   int nAtts = element->GetNumberOfAttributes();
   for (int i=0; i < nAtts; ++i)
     {
     QString attributeName = element->GetAttributeName(i);
     node[attributeName] = element->GetAttributeValue(i);
     }
-  
+
   //--- make sure the entry has a "uri" attribute by searching
   //--- all attributes to find one with a name that matches "uri"
   //set hasuri 0
@@ -380,10 +380,10 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
     qDebug() << "can't find an attribute called URI in element";
     return;
     }
-  
+
   //$::XcedeCatalog_mainWindow SetStatusText "Loading $node(uri)..."
-  
-  //--- strip off the entry's relative path, and add the 
+
+  //--- strip off the entry's relative path, and add the
   //--- absolute path of the Xcede file to it.
   //set fname [ file normalize $node($uriAttName) ]
   //set plist [ file split $fname ]
@@ -406,7 +406,7 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
   //    set attName [$element GetAttributeName $i]
   //    if { $attName == "format" || $attName == "Format" } {
   //        //--- mark as found and capture its case (upper or lower)
-  //        set gotformat 1    
+  //        set gotformat 1
   //        set formatAttName $attName
   //    }
   //}
@@ -540,7 +540,7 @@ void qSlicerXcedeCatalogReaderPrivate::importEntry(vtkXMLDataElement* element)
 
   // //--- finally, create the node
   // set handler XcedeCatalogImportEntry$nodeType
-  
+
   // if { [info command $handler] == "" } {
   //     set err [$::slicer3::MRMLScene GetErrorMessagePointer]
   //     $::slicer3::MRMLScene SetErrorMessage "$err\nno handler for $nodeType"
@@ -611,7 +611,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     labelMap = true;
     autoLevel = false;
     }
-  
+
   qSlicerIO::IOProperties properties;
   //if { [ string first "stat" $n(uri) ] >= 0 } {
   //  // set autoLevel 0
@@ -621,7 +621,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
   properties["centered"] = QVariant(centered);
   properties["singleFile"] = QVariant(singleFile);
   properties["autoLevel"] = QVariant(autoLevel);
- 
+
   //set logic [$::slicer3::VolumesGUI GetLogic]
   //if { $logic == "" } {
   //  puts "XcedeCatalogImportEntryVolume: Unable to access Volumes Logic. $n(uri) not imported."
@@ -643,7 +643,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     qDebug() << "Unable to add Volume node for" << node["uri"];
     return;
     }
-  
+
   //set volumeNodeID [$volumeNode GetID]
   QString volumeNodeID = volumeNode->GetID();
   this->LoadedNodes << volumeNodeID;
@@ -666,9 +666,9 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
   //  puts "XcedeCatalogImportEntryVolume: Unable to access Volume Display Node for  $n(uri). Volume display not configured."
   //  return
   //}
-  vtkMRMLVolumeDisplayNode* volumeDisplayNode = 
+  vtkMRMLVolumeDisplayNode* volumeDisplayNode =
     vtkMRMLVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
-  
+
   //--- make some good guesses about what color node to set
   //--- and what window/level/threshold properties to set
   //if { [ string first "stat" $n(uri) ] >= 0 } {
@@ -704,7 +704,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     volumeDisplayNode->SetAndObserveColorNodeID(
       this->ColorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
     }
-        
+
     // } else {
     //     //--- assume this is a greyscale volume
     //     $volumeDisplayNode SetAndObserveColorNodeID "vtkMRMLColorTableNodeGrey"
@@ -724,7 +724,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     }
   //// puts "\tFor volume [$volumeNode GetName], on volume display node [$volumeDisplayNode GetID], observing colour node [$volumeDisplayNode GetColorNodeID]. Display node window = [$volumeDisplayNode GetWindow], level = [$volumeDisplayNode GetLevel]"
   //$logic SetActiveVolumeNode $volumeNode
-                              
+
   // //--- If volume freesurfer brain.mgz, set a global
   // //--- This global is used as a reference volume for any
   // //--- potential functional or statistical volumes
@@ -737,7 +737,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     {
     this->MRMLIdFSBrain = volumeNodeID;
     }
-  
+
   // //--- If volume is an example_func image (used for
   // //--- registration with the anatomical), set a global.
   // if { [ string first "example_func" $n(uri) ] >= 0 } {
@@ -918,7 +918,7 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
   //   }
   if (!node["uri"].startsWith("register.dat"))
     {
-    qDebug() << "Unknow file type from name:" << node["uri"] 
+    qDebug() << "Unknow file type from name:" << node["uri"]
              << "No transform imported";
     return;
     }
@@ -928,7 +928,7 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
   // $tnode SetName $n(name)
   // $::slicer3::MRMLScene AddNode $tnode
   // set tid [ $tnode GetID ]
-  
+
   // if { $tid == "" } {
   //     puts "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
   //    tk_messageBox -message "XcedeCatalogImportEntryTransform: unable to add Transform Node. No transform imported."
@@ -953,7 +953,7 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
     tnode->SetDescription(node["description"].toLatin1());
     }
 
-  // //--- open register.dat file and read 
+  // //--- open register.dat file and read
   // set matrix [ vtkMatrix4x4 New ]
   // set fid [ open $n(uri) r ]
   // set row 0
@@ -999,7 +999,7 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
         }
       }
     }
-    
+
   // //--- read the uri and translate matrix element values into place.
   // set M [ $tnode GetMatrixTransformToParent ]
   // if { $M == "" } {
@@ -1012,7 +1012,7 @@ void qSlicerXcedeCatalogReaderPrivate::importTransformNode(NodeType node)
   // $matrix Delete
   // $tnode Delete
   tnode->SetMatrixTransformToParent(matrix.GetPointer());
-    
+
   // //--- this is for help with FIPS registration correction
   // if { $n(name) == "anat2exf" } {
   //       set ::XcedeCatalog_MrmlID(anat2exf) $tid
@@ -1032,7 +1032,7 @@ void qSlicerXcedeCatalogReaderPrivate::importOverlayNode(NodeType node)
 
   // //--- not really a node, per se...
   // //--- ditch if there's no file in the uri
-  
+
   // if { ! [info exists n(uri) ] } {
   //     puts "XcedeCatalogImportEntryOverlay: no uri specified for node $n(name). No overlay imported."
   //     return
@@ -1042,7 +1042,7 @@ void qSlicerXcedeCatalogReaderPrivate::importOverlayNode(NodeType node)
     qDebug() << "qSlicerXCedeCatalogIO::importOverlayNode: no uri specified for node";
     return;
     }
-  
+
   // //--- what model node should these scalars be applied to?
   //   if { [ string first "lh." $n(uri) ] >= 0 } {
   //       if { ![info exists ::XcedeCatalogMrmlID(LHmodel) ] } {
@@ -1095,15 +1095,15 @@ void qSlicerXcedeCatalogReaderPrivate::importOverlayNode(NodeType node)
     qDebug() << "qSlicerXCedeCatalogIO::importOverlayNode: Model MRML node corresponding to ID: " << mid << "not found. No overlay imported.";
     return;
     }
-    
+
   // set logic [$::slicer3::ModelsGUI GetLogic]
   // if { $logic == "" } {
   //     puts "XcedeCatalogImportEntryOverlay: cannot access Models Logic class. No overlay imported."
   //     return
   // }
-    
+
   // //--- add the scalar to the node
-  // $logic AddScalar $n(uri) $mnode 
+  // $logic AddScalar $n(uri) $mnode
   //vtkSlicerModelsLogic* logic = this->modelsLogic();
   //logic->AddScalar(node["uri"].toLatin1(), mnode);
   qSlicerIO::IOProperties properties;
@@ -1136,7 +1136,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
   // if { $::XcedeCatalog_MrmlID(ExampleFunc) == "" } {
   //     return
   // }
-  if (this->MRMLIdAnat2Exf.isNull() || 
+  if (this->MRMLIdAnat2Exf.isNull() ||
       this->MRMLIdFSBrain.isNull() ||
       this->MRMLIdExampleFunc.isNull())
     {
@@ -1153,7 +1153,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
     q->mrmlScene()->GetNodeByID(this->MRMLIdFSBrain.toLatin1()));
   vtkMRMLVolumeNode* v2 = vtkMRMLVolumeNode::SafeDownCast(
     q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1()));
-  vtkMRMLLinearTransformNode* anat2exfT = 
+  vtkMRMLLinearTransformNode* anat2exfT =
     vtkMRMLLinearTransformNode::SafeDownCast(
       q->mrmlScene()->GetNodeByID(this->MRMLIdAnat2Exf.toLatin1()));
 
@@ -1170,7 +1170,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
   ras2rasT->SetName("StatisticsToBrainXform");
   q->mrmlScene()->AddNode(ras2rasT.GetPointer());
   this->LoadedNodes << ras2rasT->GetID();
-  
+
   //set ::XcedeCatalog_MrmlID(StatisticsToBrainXform) [ $ras2rasT GetID ]
   this->MRMLIdStatisticsToBrainXform = ras2rasT->GetID();
 
@@ -1193,7 +1193,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
     v1->GetSpacing(), v1->GetImageData()->GetDimensions(), ijkToRas.GetPointer(),
     v2->GetSpacing(), v2->GetImageData()->GetDimensions(), rasToIjk.GetPointer(),
     anat2exf.GetPointer(), mat.GetPointer());
-    
+
   //--- this inverse will register statistics to the brain.mgz
   //$mat Invert
   mat->Invert();
@@ -1206,7 +1206,7 @@ bool qSlicerXcedeCatalogReaderPrivate::computeFIPS2SlicerTransformCorrection()
   //$mat Delete
   //$ras2rasT Delete
 
-  //--- mark the transform as created 
+  //--- mark the transform as created
   //set ::XcedeCatalog_RAS2RASTransformCreated 1
   return true;
 }
@@ -1221,7 +1221,7 @@ void qSlicerXcedeCatalogReaderPrivate::applyFIPS2SlicerTransformCorrection()
   //--- move all the detected stats files under the new registration xform
   // foreach id  $::XcedeCatalog_MrmlID(StatFileList) {
   //     set vnode [ $::slicer3::MRMLScene GetNodeByID $id ]
-  //     $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
+  //     $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform)
   //     $vnode Modified
   // }
   foreach(QString id, this->MRMLIdStatFileList)
@@ -1233,7 +1233,7 @@ void qSlicerXcedeCatalogReaderPrivate::applyFIPS2SlicerTransformCorrection()
     }
   //--- move the example func also into the new registration xform
   // set vnode [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
-  // $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
+  // $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform)
   // $vnode Modified
   vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(
     q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1()));
@@ -1309,7 +1309,7 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
   //--- the MRML scene is cleared, and the node->Reset() call
   //--- has been made (which sets all orientations to Axial).
 
-  
+
   //--- create a parser and parse the file
   //set parser [vtkXMLDataParser New]
   //$parser SetFileName $xcedeFile
@@ -1375,12 +1375,12 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
   //d->NumberOfElements = 0;
   //d->WhichElement = 0;
   //d->MRMLId.clear();
-  
-  //--- recursively import cataloged datasets 
+
+  //--- recursively import cataloged datasets
   //XcedeCatalogImportGetNumberOfElements $root
   //d->NumberOfElements = d->GetNumberOfElements(root);
 
-  //--- recursively import cataloged datasets 
+  //--- recursively import cataloged datasets
   //set ::XcedeCatalog(transformIDStack) ""
   //set ::XcedeCatalog_HParent_ID ""
   //set root [$parser GetRootElement]
@@ -1391,7 +1391,7 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
   //--- if the catalog includes a brain.mgz, example_func.nii and
   //--- anat2exf.dat, we assume this is a FreeSurfer/FIPS catalog
   //--- and convert FreeSurfer tkRegister2's registration matrix
-  //--- to a Slicer RAS2RAS registration matrix. 
+  //--- to a Slicer RAS2RAS registration matrix.
   //XcedeCatalogImportComputeFIPS2SlicerTransformCorrection
   bool created = d->computeFIPS2SlicerTransformCorrection();
 
@@ -1402,16 +1402,16 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
     {
     d->applyFIPS2SlicerTransformCorrection();
     }
-  
+
   //--- reset the feedback things
   //$::XcedeCatalog_progressGauge SetValue 0
   //$::XcedeCatalog_mainWindow SetStatusText ""
-  
+
   //--- update main viewer and slice viewers.
   //$::slicer3::MRMLScene Modified
   this->mrmlScene()->Modified();
   // TODO: request a render...
-  
+
   //[$::slicer3::ApplicationGUI GetActiveViewerWidget ] RequestRender
   // set ns [[$::slicer3::ApplicationGUI GetSlicesGUI] GetNumberOfSliceGUI]
   // set slicesGUI [$::slicer3::ApplicationGUI GetSlicesGUI]
@@ -1424,7 +1424,7 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
   //         set layoutname [$slicesGUI  GetNextSliceGUILayoutName $layoutname ]
   //     }
   // }
-  
+
   //--- clean up.
   //$parser Delete
   //$::slicer3::MRMLScene SetErrorCode 0

@@ -28,13 +28,13 @@ class vtkMatrix4x4;
 
 /// \brief MRML node for representing a volume (image stack).
 ///
-/// Volume nodes describe data sets that can be thought of as stacks of 2D 
-/// images that form a 3D volume.  Volume nodes describe where the images 
-/// are stored on disk, how to render the data (window and level), and how 
-/// to read the files.  This information is extracted from the image 
-/// headers (if they exist) at the time the MRML file is generated.  
-/// Consequently, MRML files isolate MRML browsers from understanding how 
-/// to read the myriad of file formats for medical data. 
+/// Volume nodes describe data sets that can be thought of as stacks of 2D
+/// images that form a 3D volume.  Volume nodes describe where the images
+/// are stored on disk, how to render the data (window and level), and how
+/// to read the files.  This information is extracted from the image
+/// headers (if they exist) at the time the MRML file is generated.
+/// Consequently, MRML files isolate MRML browsers from understanding how
+/// to read the myriad of file formats for medical data.
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 {
 public:
@@ -43,28 +43,28 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   void CopyOrientation(vtkMRMLVolumeNode *node);
 
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
@@ -72,13 +72,13 @@ public:
   /// RAS->IJK Matrix Calculation
   //--------------------------------------------------------------------------
 
-  /// 
-  /// The order of slices in the volume. One of: LR (left-to-right), 
+  ///
+  /// The order of slices in the volume. One of: LR (left-to-right),
   /// RL, AP, PA, IS, SI. This information is encoded in the rasToIJKMatrix.
   /// This matrix can be computed either from corner points, or just he
   /// scanOrder.
   /// Return true on success, false otherwise
-  static bool ComputeIJKToRASFromScanOrder(const char *order, 
+  static bool ComputeIJKToRASFromScanOrder(const char *order,
                                            const double* spacing,
                                            const int *dims,
                                            bool centerImage,
@@ -99,7 +99,7 @@ public:
   void GetJToRASDirection(double dirs[3]);
   void GetKToRASDirection(double dirs[3]);
 
-  /// 
+  ///
   /// Spacing and Origin, with the Directions, are the independent
   /// parameters that go to make up the IJKToRAS matrix
   /// In setter methods, StorableModifiedTime may need to be updated,
@@ -119,7 +119,7 @@ public:
   /// Utility function that returns the max spacing between the 3 orientations
   double GetMaxSpacing();
 
-  /// 
+  ///
   /// Get the IJKToRAS Matrix that includes the spacing and origin
   /// information (assumes the image data is Origin 0 0 0 and Spacing 1 1 1)
   /// RASToIJK is the inverse of this
@@ -129,8 +129,8 @@ public:
   void GetIJKToRASDirectionMatrix(vtkMatrix4x4* mat);
   void SetIJKToRASDirectionMatrix(vtkMatrix4x4* mat);
 
-  /// 
-  /// Convenience methods to set the directions, spacing, and origin 
+  ///
+  /// Convenience methods to set the directions, spacing, and origin
   /// from a matrix
   void SetIJKToRASMatrix(vtkMatrix4x4* mat);
   void SetRASToIJKMatrix(vtkMatrix4x4* mat);
@@ -138,11 +138,11 @@ public:
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
 
-  /// 
+  ///
   /// Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode();
 
-  /// 
+  ///
   /// Associated ImageData
   vtkGetObjectMacro(ImageData, vtkImageData);
   /// The origin and spacing of the vtkImageData is ignored. Only
@@ -150,10 +150,10 @@ public:
   /// taken into account.
   void SetAndObserveImageData(vtkImageData *ImageData);
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
@@ -163,7 +163,7 @@ public:
       ImageDataModifiedEvent = 18001
     };
 
-  /// 
+  ///
   /// Set/Get the ITK MetaDataDictionary
   void SetMetaDataDictionary( const itk::MetaDataDictionary& );
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
@@ -188,11 +188,11 @@ protected:
   virtual void UpdateDisplayNodeImageData(vtkMRMLDisplayNode *dnode);
 
   ///
-  /// Called when a node reference ID is added (list size increased). 
+  /// Called when a node reference ID is added (list size increased).
   virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
 
   ///
-  /// Called when a node reference ID is modified. 
+  /// Called when a node reference ID is modified.
   virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
 
   virtual void SetImageData(vtkImageData* img);

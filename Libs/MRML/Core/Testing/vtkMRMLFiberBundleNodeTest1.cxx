@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -47,7 +47,7 @@ int vtkMRMLFiberBundleNodeTest1(int , char * [] )
     std::cerr << "Error in Set/GetAttribute() " << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   TEST_SET_GET_BOOLEAN( node1, HideFromEditors );
   TEST_SET_GET_BOOLEAN( node1, Selectable );
 

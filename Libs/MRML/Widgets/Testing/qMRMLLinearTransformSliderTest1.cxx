@@ -10,6 +10,6 @@ int qMRMLLinearTransformSliderTest1( int argc , char * argv [] )
   QWidget widget;
 
   qMRMLLinearTransformSlider   mrmlItem( &widget );
- 
+
   return EXIT_SUCCESS;
 }

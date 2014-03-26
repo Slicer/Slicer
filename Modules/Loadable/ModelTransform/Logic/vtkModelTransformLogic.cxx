@@ -13,12 +13,12 @@ vtkStandardNewMacro(vtkModelTransformLogic);
 //----------------------------------------------------------------------------
 vtkModelTransformLogic::vtkModelTransformLogic()
 {
-   
+
 }
 
 
 
 //----------------------------------------------------------------------------
 vtkModelTransformLogic::~vtkModelTransformLogic()
-{ 
+{
 }

@@ -161,7 +161,7 @@ bool import()
     {
     std::cerr << __LINE__ << ": import failed." << std::endl
               << "    Displayable node references are not updated. "
-              << "Displayable node display node ID is " 
+              << "Displayable node display node ID is "
               << sceneViewDisplayableNode->GetNthDisplayNodeID(0)
               << " instead of " << sceneViewDisplayNode->GetID() << std::endl;
     return false;

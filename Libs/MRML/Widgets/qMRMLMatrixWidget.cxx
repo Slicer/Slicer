@@ -44,7 +44,7 @@ public:
     this->MRMLTransformNode = 0;
     this->UserUpdates = true;
     }
-  
+
   qMRMLMatrixWidget::CoordinateReferenceType   CoordinateReference;
   vtkWeakPointer<vtkMRMLLinearTransformNode>   MRMLTransformNode;
   // Warning, this is not the real "transform, the real can be retrieved
@@ -99,18 +99,18 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLNode* node)
 void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
   Q_D(qMRMLMatrixWidget);
-  
-  if (d->MRMLTransformNode == transformNode) 
-    { 
-    return; 
+
+  if (d->MRMLTransformNode == transformNode)
+    {
+    return;
     }
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode,
-                      vtkMRMLTransformableNode::TransformModifiedEvent, 
-                      this, SLOT(updateMatrix())); 
+                      vtkMRMLTransformableNode::TransformModifiedEvent,
+                      this, SLOT(updateMatrix()));
 
   d->MRMLTransformNode = transformNode;
-  
+
   this->updateMatrix();
 }
 
@@ -132,11 +132,11 @@ void qMRMLMatrixWidget::updateMatrix()
     d->Transform = 0;
     return;
     }
-  
+
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(
     d->MRMLTransformNode,
-    d->CoordinateReference == qMRMLMatrixWidget::GLOBAL, 
+    d->CoordinateReference == qMRMLMatrixWidget::GLOBAL,
     transform.GetPointer());
   int oldUserUpdates = d->UserUpdates;
   d->UserUpdates = false;

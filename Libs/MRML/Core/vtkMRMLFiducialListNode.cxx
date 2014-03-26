@@ -57,7 +57,7 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 
   //this->GlyphType = this->Diamond3D;
   this->GlyphType = this->StarBurst2D;
-  
+
 //  this->DebugOn();
 }
 
@@ -65,8 +65,8 @@ vtkMRMLFiducialListNode::vtkMRMLFiducialListNode()
 vtkMRMLFiducialListNode::~vtkMRMLFiducialListNode()
 {
   if (this->FiducialList)
-    {    
-    this->FiducialList->RemoveAllItems();        
+    {
+    this->FiducialList->RemoveAllItems();
     this->FiducialList->Delete();
     this->FiducialList = NULL;
     }
@@ -81,18 +81,18 @@ vtkMRMLFiducialListNode::~vtkMRMLFiducialListNode()
 void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   // rest is saved in the storage node file, but it needs to be here as well
   // due to the way the scene snapshots are handled (storage nodes are not re-read)
   vtkIndent indent(nIndent);
-  
+
   of << " symbolScale=\"" << this->SymbolScale << "\"";
   of << " symbolType=\"" << this->GlyphType << "\"";
   of << " textScale=\"" << this->TextScale << "\"";
   of << " visibility=\"" << this->Visibility << "\"";
-  
+
   of << " color=\"" << this->Color[0] << " " <<
                        this->Color[1] << " " <<
                        this->Color[2] << "\"";
@@ -102,19 +102,19 @@ void vtkMRMLFiducialListNode::WriteXML(ostream& of, int nIndent)
                                this->SelectedColor[2] << "\"";
 
   of << " ambient=\"" << this->Ambient << "\"";
- 
+
   of << " diffuse=\"" << this->Diffuse << "\"";
- 
+
   of << " specular=\"" << this->Specular << "\"";
- 
-  of << " power=\"" << this->Power << "\""; 
- 
+
+  of << " power=\"" << this->Power << "\"";
+
   of << " locked=\"" << this->Locked << "\"";
 
   of << " numberingScheme=\"" << this->NumberingScheme << "\"";
 
   of << " opacity=\"" << this->Opacity << "\"";
- 
+
   if (this->GetNumberOfFiducials() > 0)
     {
     of << " fiducials=\"";
@@ -136,10 +136,10 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
-  
+
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
   {
       attName = *(atts++);
       attValue = *(atts++);
@@ -152,7 +152,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       // id is already set at the vtkMRMLNode level
       //    this->SetID(attValue);
       }
-      else  if (!strcmp(attName, "color")) 
+      else  if (!strcmp(attName, "color"))
       {
           std::stringstream ss;
           ss << attValue;
@@ -168,7 +168,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           ss >> this->SelectedColor[1];
           ss >> this->SelectedColor[2];
       }
-      else if (!strcmp(attName, "symbolScale")) 
+      else if (!strcmp(attName, "symbolScale"))
       {
           std::stringstream ss;
           ss << attValue;
@@ -213,56 +213,56 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           {
           vtkWarningMacro("No scene to check version against, assuming correct glyph type.");
           }
-        }      
-      else if (!strcmp(attName, "textScale")) 
+        }
+      else if (!strcmp(attName, "textScale"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->TextScale;
       }
-      else if (!strcmp(attName, "visibility")) 
+      else if (!strcmp(attName, "visibility"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->Visibility;
       }
-      else if (!strcmp(attName, "ambient")) 
+      else if (!strcmp(attName, "ambient"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->Ambient;
       }
-      else if (!strcmp(attName, "diffuse")) 
+      else if (!strcmp(attName, "diffuse"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->Diffuse;
       }
-      else if (!strcmp(attName, "specular")) 
+      else if (!strcmp(attName, "specular"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->Specular;
       }
-      else if (!strcmp(attName, "power")) 
+      else if (!strcmp(attName, "power"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->Power;
       }
-      else if (!strcmp(attName, "locked")) 
+      else if (!strcmp(attName, "locked"))
       {
           std::stringstream ss;
           ss << attValue;
           ss >> this->Locked;
       }
-      else if (!strcmp(attName, "numberingScheme")) 
+      else if (!strcmp(attName, "numberingScheme"))
         {
         std::stringstream ss;
         ss << attValue;
         ss >> this->NumberingScheme;
         }
-      else if (!strcmp(attName, "opacity")) 
+      else if (!strcmp(attName, "opacity"))
       {
           std::stringstream ss;
           ss << attValue;
@@ -270,7 +270,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
       }
       else if (!strcmp(attName, "fiducials"))
       {
-          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << attValue << endl);          
+          vtkDebugMacro("ReadXMLAttributes: found a fiducials list: " << attValue << endl);
           // need to add fiducials and parse out the list of fiducial points
           // assume labeltext is first, extract that part of the attValue
           char *fiducials = const_cast<char *>(attValue);
@@ -280,7 +280,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
           while (labelTextPtr != NULL)
           {
               vtkDebugMacro( "current label text pt = " << labelTextPtr << endl);
-          
+
               // find the end of this point, new line or end quote
               labelTextPtr = strstr (fiducials," id");
               if (labelTextPtr != NULL)
@@ -310,7 +310,7 @@ void vtkMRMLFiducialListNode::ReadXMLAttributes(const char** atts)
               }
               newPoint = NULL;
               labelTextPtr = strtok(NULL, "\n");
-          }          
+          }
       }
       else
       {
@@ -354,7 +354,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
   int numPoints = node->GetNumberOfFiducials();
   if (numPoints == this->GetNumberOfFiducials())
     {
-    
+
     for (int f=0; f < numPoints ; f++)
       {
       vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
@@ -363,7 +363,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       fidThis->Copy(fid);
       // Copy doesn't copy the ID, so check to see if the fiducial node in the
       // list to copy has a different id
-      if (fidThis->GetMTime() > mtime || 
+      if (fidThis->GetMTime() > mtime ||
           (fid->GetID() && fidThis->GetID() && strcmp(fid->GetID(), fidThis->GetID())) )
         {
         modified = true;
@@ -463,7 +463,7 @@ const char* vtkMRMLFiducialListNode::GetGlyphTypeAsString(int glyphType)
     }
 
   return "UNKNOWN";
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -594,7 +594,7 @@ void vtkMRMLFiducialListNode::SetNumberingSchemeFromString(const char *schemeStr
 void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
-  
+
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Symbol scale: (";
@@ -602,7 +602,7 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Symbol type: ";
   os << this->GetGlyphTypeAsString() << " (" << this->GlyphType << ")\n";
-    
+
   os << indent << "Text scale: (";
   os << this->TextScale << ")\n";
 
@@ -621,7 +621,7 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
         os << this->SelectedColor[idx];
         if (idx < 2) { os << ", "; } else { os << ")\n"; }
     }
-  
+
   os << indent << "Opacity:  (" << this->Opacity << ")\n";
   os << indent << "Ambient:  (" << this->Ambient << ")\n";
   os << indent << "Diffuse:  (" << this->Diffuse << ")\n";
@@ -629,7 +629,7 @@ void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Power:    (" << this->Power << ")\n";
   os << indent << "Locked:    (" << this->Locked << ")\n";
   os << indent << "Numbering scheme: " << this->GetNumberingSchemeAsString() << " (" << this->NumberingScheme << ")\n";
- 
+
   if (this->GetNumberOfFiducials() > 0)
   {
       os << indent << "Fiducial points:\n";
@@ -654,14 +654,14 @@ void vtkMRMLFiducialListNode::UpdateScene(vtkMRMLScene *scene)
 {
     Superclass::UpdateScene(scene);
     /*
-    if (this->GetStorageNodeID() == NULL) 
+    if (this->GetStorageNodeID() == NULL)
     {
         //vtkErrorMacro("No reference StorageNodeID found");
         return;
     }
 
     vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
-    if (mnode) 
+    if (mnode)
     {
         vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
         node->ReadData(this);
@@ -685,12 +685,12 @@ vtkMRMLFiducial* vtkMRMLFiducialListNode::GetNthFiducial(int n)
         vtkErrorMacro ("GetNthFiducial: ERROR: fiducial list is null\n");
         return NULL;
     }
-  if(n < 0 || n >= this->FiducialList->GetNumberOfItems()) 
+  if(n < 0 || n >= this->FiducialList->GetNumberOfItems())
     {
         vtkErrorMacro ("vtkMRMLFiducialListNode::GetNthFiducial: index out of bounds, " << n << " is less than zero or more than the number of items: " << this->FiducialList->GetNumberOfItems() << endl);
         return NULL;
     }
-  else 
+  else
     {
     return (vtkMRMLFiducial*)this->FiducialList->GetItemAsObject(n);
     }
@@ -716,7 +716,7 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZ(int n, float x, float y, float z)
         (fabs(oldXYZ[2] - z) > 0.001))))
     {
     node->SetXYZ(x,y,z);
-    
+
     // the list contents have been modified
     if (!this->GetDisableModifiedEvent())
       {
@@ -750,7 +750,7 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZWorld(int n, float x, float y, flo
   xyzw[2] = z;
   xyzw[3] = 1.0;
   double worldxyz[4], *worldp = &worldxyz[0];
-  transformToWorld->MultiplyPoint(xyzw, worldp); 
+  transformToWorld->MultiplyPoint(xyzw, worldp);
 
   tnode = NULL;
 
@@ -801,7 +801,7 @@ int vtkMRMLFiducialListNode::GetNthFiducialXYZWorld(int n, double *worldxyz)
   xyzw[2] = xyz[2];
   xyzw[3] = 1.0;
 
-  transformToWorld->MultiplyPoint(xyzw, worldxyz); 
+  transformToWorld->MultiplyPoint(xyzw, worldxyz);
 
   return 1;
 }
@@ -829,7 +829,7 @@ int vtkMRMLFiducialListNode::SetNthFiducialOrientation(int n, float w, float x, 
 }
 
 //----------------------------------------------------------------------------
-float * vtkMRMLFiducialListNode::GetNthFiducialOrientation(int n)    
+float * vtkMRMLFiducialListNode::GetNthFiducialOrientation(int n)
 {
     vtkMRMLFiducial *node = this->GetNthFiducial(n);
     if (node != NULL)
@@ -1071,7 +1071,7 @@ const char *vtkMRMLFiducialListNode::GetNthFiducialID(int n)
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::AddFiducial()
 {
-  if ( !this->Scene ) 
+  if ( !this->Scene )
     {
     vtkErrorMacro ( << "Attempt to add Fiducial, but no scene set yet");
     return (-1);
@@ -1088,8 +1088,8 @@ int vtkMRMLFiducialListNode::AddFiducial()
   std::string nameString;
   ss >> nameString;
   fiducial->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
- 
-  
+
+
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial.GetPointer());
   // set the label text now that the fid is in the list so it can be based on
@@ -1119,7 +1119,7 @@ int vtkMRMLFiducialListNode::AddFiducial()
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int selected)
 {
-  if ( !this->Scene ) 
+  if ( !this->Scene )
     {
     vtkErrorMacro ( << "Attempt to add Fiducial, but no scene set yet");
     return (-1);
@@ -1136,14 +1136,14 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
   std::string nameString;
   ss >> nameString;
   fiducial->SetID(this->GetScene()->GetUniqueNameByString(nameString.c_str()));
- 
-  
+
+
   fiducial->SetXYZ(x,y,z);
 
   fiducial->SetSelected((selected == 0 ? false : true));
 
   fiducial->SetVisibility(true);
-  
+
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial.GetPointer());
   // set the label text based on any previous item in the collection
@@ -1172,7 +1172,7 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
 //----------------------------------------------------------------------------
 int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const char *label, float x, float y, float z, int selected, int visibility)
 {
-  if ( !this->Scene ) 
+  if ( !this->Scene )
     {
     vtkErrorMacro ( << "Attempt to add Fiducial, but no scene set yet");
     return (-1);
@@ -1190,7 +1190,7 @@ int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const cha
   fiducial->SetSelected((selected == 0 ? false : true));
 
   fiducial->SetVisibility((visibility == 0 ? false : true));
-  
+
   // add it to the collection
   this->FiducialList->vtkCollection::AddItem(fiducial.GetPointer());
   int itemIndex = this->IsFiducialPresent(fiducial.GetPointer());
@@ -1316,7 +1316,7 @@ void vtkMRMLFiducialListNode::SetAndObserveDisplayNodeID(const char *displayNode
     }
   this->SetDisplayNodeID(displayNodeID);
   vtkMRMLFiducialListDisplayNode *dnode = this->GetDisplayNode();
-  if (dnode != NULL) 
+  if (dnode != NULL)
     {
     dnode->AddObserver ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
     }
@@ -1324,7 +1324,7 @@ void vtkMRMLFiducialListNode::SetAndObserveDisplayNodeID(const char *displayNode
 */
 //---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -1350,7 +1350,7 @@ void vtkMRMLFiducialListNode::SetColor(double r, double g, double b)
     {
         return;
     }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Color to " << r << " " << g << " " << b); 
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Color to " << r << " " << g << " " << b);
     this->Color[0] = r;
     this->Color[1] = g;
     this->Color[2] = b;
@@ -1373,7 +1373,7 @@ void vtkMRMLFiducialListNode::SetSelectedColor(double r, double g, double b)
     {
         return;
     }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SelectedColor to " << r << " " << g << " " << b); 
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SelectedColor to " << r << " " << g << " " << b);
     this->SelectedColor[0] = r;
     this->SelectedColor[1] = g;
     this->SelectedColor[2] = b;
@@ -1410,7 +1410,7 @@ void vtkMRMLFiducialListNode::SetTextScale(double scale)
     }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TextScale to " << scale);
     this->TextScale = scale;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1429,7 +1429,7 @@ void vtkMRMLFiducialListNode::SetSymbolScale(double scale)
     }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SymbolScale to " << scale);
     this->SymbolScale = scale;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1451,7 +1451,7 @@ int vtkMRMLFiducialListNode::GlyphTypeIs3D(int glyphType)
     return 0;
     }
 }
-                              
+
 //---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetGlyphType(int type)
 {
@@ -1461,7 +1461,7 @@ void vtkMRMLFiducialListNode::SetGlyphType(int type)
     }
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphType to " << type);
   this->GlyphType = type;
-  
+
   if (!this->GetDisableModifiedEvent())
     {
     // invoke a display modified event
@@ -1522,7 +1522,7 @@ void vtkMRMLFiducialListNode::SetOpacity(double opacity)
       }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Opacity to " << opacity);
     this->Opacity = opacity;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1545,7 +1545,7 @@ void vtkMRMLFiducialListNode::SetAmbient(double val)
       }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Ambient to " << val);
     this->Ambient = val;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1570,7 +1570,7 @@ void vtkMRMLFiducialListNode::SetDiffuse(double val)
 
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Diffuse to " << val);
     this->Diffuse = val;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1595,7 +1595,7 @@ void vtkMRMLFiducialListNode::SetSpecular(double val)
 
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Specular to " << val);
     this->Specular = val;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1620,7 +1620,7 @@ void vtkMRMLFiducialListNode::SetPower(double val)
 
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Power to " << val);
     this->Power = val;
-   
+
     if (!this->GetDisableModifiedEvent())
       {
       // invoke a display modified event
@@ -1719,7 +1719,7 @@ int vtkMRMLFiducialListNode::SetFiducialXYZ(std::string fiducialID, float x, flo
 {
   // find the index that corresponds to this id
   int n = this->GetFiducialIndex(fiducialID);
-  
+
   if (n != -1)
     {
     vtkDebugMacro("SetFiducialXYZ: found id " << fiducialID.c_str() << " at index " << n << ", setting xyz");
@@ -1781,12 +1781,12 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
   this->FiducialList->ReplaceItem(fidIndex, copyFidAbove.GetPointer());
 
   this->Modified();
-  
+
   // let any interested parties know that two fiducials have swapped indices
   FiducialListSwappedIndices swap;
   swap.first = fidIndex;
   swap.second = newIndex;
-  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap); 
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap);
 
   return newIndex;
 }
@@ -1811,7 +1811,7 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   // get this fiducial and the one below it
   vtkMRMLFiducial *thisFid = this->GetNthFiducial(fidIndex);
   vtkMRMLFiducial *fidBelow = this->GetNthFiducial(fidIndex + 1);
-  
+
   if (thisFid == NULL || fidBelow == NULL)
     {
     vtkErrorMacro("MoveFiducialUp: Failed to get both fiducial " << fidIndex << " and " << fidIndex+1);
@@ -1822,22 +1822,22 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   copyFidBelow->Copy(fidBelow);
   // the id isn't copied
   copyFidBelow->SetID(fidBelow->GetID());
-  
+
   newIndex = fidIndex + 1;
   // now replace the one below with this one
   this->FiducialList->ReplaceItem(newIndex, thisFid);
   // and replace this one with the one that was below it
   this->FiducialList->ReplaceItem(fidIndex, copyFidBelow.GetPointer());
-  
+
   // let any interested parties know that two fiducials have swapped indices
   FiducialListSwappedIndices swap;
   swap.first = fidIndex;
   swap.second = newIndex;
-  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap); 
+  this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap);
 
 
   this->Modified();
-  
+
   return newIndex;
 }
 
@@ -1849,7 +1849,7 @@ void vtkMRMLFiducialListNode::RenumberFiducials(int startFrom)
     // nothing to do
     return;
     }
-  
+
   // save state for undo
   if (this->GetScene())
     {
@@ -1880,7 +1880,7 @@ void vtkMRMLFiducialListNode::RenameFiducials(const char *newName)
     // nothing to do
     return;
     }
-  
+
   // save state for undo
   if (this->GetScene())
     {
@@ -1909,7 +1909,7 @@ void vtkMRMLFiducialListNode::SetFiducialLabelTextFromID(vtkMRMLFiducial *fid)
     return;
     }
   std::string id = fid->GetID();
- 
+
   if (this->NumberingScheme == vtkMRMLFiducialListNode::UseID)
     {
     fid->SetLabelText(fid->GetID());

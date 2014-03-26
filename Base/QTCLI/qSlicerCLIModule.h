@@ -43,7 +43,7 @@ public:
   qSlicerCLIModule(QWidget *parent=0);
   virtual ~qSlicerCLIModule();
 
-  /// 
+  ///
   /// Assign the module XML description.
   /// Note: That will also trigger the parsing of the XML structure
   void setXmlModuleDescription(const QString& xmlModuleDescription);
@@ -51,7 +51,7 @@ public:
   /// Optionally set in the module XML description
   virtual int index() const;
 
-  /// 
+  ///
   /// Return help/acknowledgement text
   virtual QString helpText() const;
   virtual QString acknowledgementText() const;
@@ -90,14 +90,14 @@ public:
   /// \todo: Find a better place for this util function
   static QImage moduleLogoToImage(const ModuleLogo& logo);
 protected:
-  /// 
+  ///
   virtual void setup();
 
-  /// 
+  ///
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-  /// 
+  ///
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 

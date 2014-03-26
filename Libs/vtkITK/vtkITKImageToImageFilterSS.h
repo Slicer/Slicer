@@ -33,7 +33,7 @@ public:
     os << m_Filter;
   };
 
-  /// 
+  ///
   /// Portion of the SetReleaseDataFlag implementation can be
   /// implemented at this level of the hierachy.
   virtual void SetReleaseDataFlag(int f)
@@ -43,7 +43,7 @@ public:
     }
 
 protected:
-  
+
   /// To/from ITK
   typedef short InputImagePixelType;
   typedef short OutputImagePixelType;
@@ -67,7 +67,7 @@ protected:
     ConnectPipelines(this->vtkExporter, this->itkImporter);
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     this->LinkITKProgressToVTKProgress ( m_Filter );
-    
+
     /// Set up the filter pipeline
     m_Filter->SetInput ( this->itkImporter->GetOutput() );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
@@ -77,7 +77,7 @@ protected:
   ~vtkITKImageToImageFilterSS()
   {
   };
-  
+
 private:
   vtkITKImageToImageFilterSS(const vtkITKImageToImageFilterSS&);  /// Not implemented.
   void operator=(const vtkITKImageToImageFilterSS&);  /// Not implemented.

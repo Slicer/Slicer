@@ -79,7 +79,7 @@ protected:
 
   vtkMRMLScriptedModuleNode(const vtkMRMLScriptedModuleNode&);
   void operator=(const vtkMRMLScriptedModuleNode&);
-  
+
   typedef std::map<std::string, std::string> ParameterMap;
   ParameterMap Parameters;
   char *ModuleName;

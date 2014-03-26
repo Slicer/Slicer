@@ -107,7 +107,7 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
 {
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
-  
+
   mrmlModel->setMRMLColorNode(node);
   this->sortFilterProxyModel()->invalidate();
 

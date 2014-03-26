@@ -8,7 +8,7 @@
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLSliceLogic.h,v $
   Date:      $Date$
-  Version:   $Revision: 18866 
+  Version:   $Revision: 18866
 
 =========================================================================auto=*/
 
@@ -50,7 +50,7 @@ class vtkTransform;
 /// which can be used by the vtkSlicerSliceGUI class to display the resulting
 /// composite image or it can be used as a texture map in a vtkSlicerView.
 /// This class can also be used for resampling volumes for further computation.
-class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic 
+class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic
 {
 public:
   /// The Usual VTK class functions
@@ -67,49 +67,49 @@ public:
   vtkSetStringMacro(Name);
   vtkGetStringMacro(Name);
 
-  /// 
+  ///
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode * newSliceNode);
 
-  /// 
+  ///
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
 
-  /// 
+  ///
   /// The background slice layer
   /// TODO: this will eventually be generalized to a list of layers
   vtkGetObjectMacro (BackgroundLayer, vtkMRMLSliceLayerLogic);
   void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
 
-  /// 
+  ///
   /// The forground slice layer
   /// TODO: this will eventually be generalized to a list of layers
   vtkGetObjectMacro (ForegroundLayer, vtkMRMLSliceLayerLogic);
   void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
 
-  /// 
+  ///
   /// The Label slice layer
   /// TODO: this will eventually be generalized to a list of layers
   vtkGetObjectMacro (LabelLayer, vtkMRMLSliceLayerLogic);
   void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
 
-  /// 
+  ///
   /// The opacity of the forground slice layer
   /// TODO: this will eventually be generalized to a per-layer compositing function
   /// -- could be checkerboard or other filter
   vtkGetMacro (ForegroundOpacity, double);
   void SetForegroundOpacity (double ForegroundOpacity);
 
-  /// 
+  ///
   /// The opacity of the Label slice layer
   /// TODO: this will eventually be generalized to a per-layer compositing function
   /// -- could be checkerboard or other filter
   vtkGetMacro(LabelOpacity, double);
   void SetLabelOpacity(double LabelOpacity);
 
-  /// 
+  ///
   /// Helper to set the background layer Window/Level
   void SetBackgroundWindowLevel(double window, double level);
 
@@ -118,47 +118,47 @@ public:
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
                                       double& rangeLow, double& rangeHigh);
 
-  /// 
-  /// Model slice plane 
+  ///
+  /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
 
-  /// 
+  ///
   /// Model slice plane display props
   vtkGetObjectMacro(SliceModelDisplayNode, vtkMRMLModelDisplayNode);
 
-  /// 
+  ///
   /// Model slice plane transform from xy to RAS
   vtkGetObjectMacro(SliceModelTransformNode, vtkMRMLLinearTransformNode);
 
-  /// 
+  ///
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro(Blend, vtkImageBlend);
   vtkGetObjectMacro(BlendUVW, vtkImageBlend);
 
-  /// 
+  ///
   /// The offset to the correct slice for lightbox mode
   vtkGetObjectMacro(ActiveSliceTransform, vtkTransform);
 
-  /// 
+  ///
   /// All the PolyData objects to render
   vtkGetObjectMacro(PolyDataCollection, vtkPolyDataCollection);
 
-  /// 
+  ///
   /// All the LookupTable objects to color the PolyData object
   vtkGetObjectMacro(LookupTableCollection, vtkCollection);
 
-  /// 
-  /// An image reslice instance to pull a single slice from the volume that 
+  ///
+  /// An image reslice instance to pull a single slice from the volume that
   /// represents the filmsheet display output
   vtkGetObjectMacro(ExtractModelTexture, vtkImageReslice);
 
-  /// 
+  ///
   /// the tail of the pipeline
   /// -- returns NULL if none of the inputs exist
   vtkImageData *GetImageData();
 
-  /// 
+  ///
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline();
 
@@ -169,72 +169,72 @@ public:
   /// MRMLModelNode into the scene
   virtual bool EnterMRMLCallback()const;
 
-  /// 
+  ///
   /// Manage and syncronise the SliceNode
   void UpdateSliceNode();
 
-  /// 
+  ///
   /// Update slicer node given a layout name
   void UpdateSliceNodeFromLayout();
 
-  /// 
+  ///
   /// Manage and syncronise the SliceCompositeNode
   void UpdateSliceCompositeNode();
 
-  /// 
+  ///
   /// Get the volume node corresponding to layer
   /// (0=background, 1=foreground, 2=label)
   vtkMRMLVolumeNode *GetLayerVolumeNode(int layer);
 
-  /// 
+  ///
   /// Get the size of the volume, transformed to RAS space
   static void GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double rasDimensions[3], double rasCenter[3]);
 
-  /// 
+  ///
   /// Get the size of the volume, transformed to slice space
   void GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, double sliceDimensions[3], double sliceCenter[3]);
 
-  /// 
-  /// Get the spacing of the volume, transformed to slice space 
-  /// - to be used, for example, to set the slice increment for stepping a single 
+  ///
+  /// Get the spacing of the volume, transformed to slice space
+  /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
   double *GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode);
 
-  /// 
+  ///
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   void GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6]);
 
-  /// 
+  ///
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height);
 
-  /// 
+  ///
   /// Get the size of the volume, transformed to RAS space
   void GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3]);
 
-  /// 
+  ///
   /// Get the size of the volume, transformed to slice space
   void GetBackgroundSliceDimensions(double sliceDimensions[3], double sliceCenter[3]);
 
-  /// 
-  /// Get the spacing of the volume, transformed to slice space 
-  /// - to be used, for example, to set the slice increment for stepping a single 
+  ///
+  /// Get the spacing of the volume, transformed to slice space
+  /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
   double *GetBackgroundSliceSpacing();
 
-  /// 
+  ///
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   void GetBackgroundSliceBounds(double sliceBounds[6]);
 
-  /// 
+  ///
   /// adjust the node's field of view to match the extent of current background volume
   void FitSliceToBackground(int width, int height);
 
-  /// 
+  ///
   /// adjust the node's field of view to match the extent of all volume layers
   ///  (fits to first non-null layer)
   void FitSliceToAll(int width = -1, int height = -1);
@@ -250,21 +250,21 @@ public:
   /// time the lightbox configuration is changed.
   void ResizeSliceNode(double newWidth, double newHeight);
 
-  /// 
-  /// Get the spacing of the volume, transformed to slice space 
-  /// - to be used, for example, to set the slice increment for stepping a single 
+  ///
+  /// Get the spacing of the volume, transformed to slice space
+  /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
   /// - returns first non-null layer
   double *GetLowestVolumeSliceSpacing();
 
-  /// 
+  ///
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   /// - returns first non-null layer
   void GetLowestVolumeSliceBounds(double sliceBounds[6]);
 
-  /// 
+  ///
   /// Get/Set the current distance from the origin to the slice plane
   double GetSliceOffset();
   void SetSliceOffset(double offset);
@@ -299,8 +299,8 @@ public:
   /// Indicate the slice offset value has completed its change
   void EndSliceOffsetInteraction();
 
-  /// 
-  /// Set the current distance so that it corresponds to the closest center of 
+  ///
+  /// Set the current distance so that it corresponds to the closest center of
   /// a voxel in IJK space (integer value)
   void SnapSliceOffsetToIJK();
 
@@ -325,12 +325,12 @@ public:
   /// SLICE_INDEX_NO_VOLUME=no volume is available
   int GetSliceIndexFromOffset(double sliceOffset);
 
-  /// 
+  ///
   /// Make a slice model with the current configuration
   void CreateSliceModel();
   void DeleteSliceModel();
-  
-  /// 
+
+  ///
   /// Get  all slice displaynodes creating PolyData models like glyphs etc.
   std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
   /// Return the associated slicerlayer nodes
@@ -353,7 +353,7 @@ protected:
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  /// 
+  ///
   /// process logic events
   virtual void ProcessMRMLLogicsEvents(vtkObject * caller,
                                        unsigned long event,
@@ -400,7 +400,7 @@ protected:
   vtkMRMLModelDisplayNode *     SliceModelDisplayNode;
   vtkMRMLLinearTransformNode *  SliceModelTransformNode;
   double                        SliceSpacing[3];
-  
+
 private:
 
   vtkMRMLSliceLogic(const vtkMRMLSliceLogic&);

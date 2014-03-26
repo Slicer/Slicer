@@ -155,7 +155,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer * renderer)
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6])
 {
-  //Bounds is x-min, x-max, y-min, y-max, z-min, z-max 
+  //Bounds is x-min, x-max, y-min, y-max, z-min, z-max
   vtkMath::UninitializeBounds(bounds);
 
   if (this->External->GetMRMLViewNode() == 0)

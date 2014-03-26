@@ -34,7 +34,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
-// VTK includes 
+// VTK includes
 #include <vtkNew.h>
 
 // STD includes

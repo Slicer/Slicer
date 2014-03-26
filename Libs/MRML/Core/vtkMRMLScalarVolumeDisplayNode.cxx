@@ -66,7 +66,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->ExtractAlpha = vtkImageExtractComponents::New();
   this->MultiplyAlpha = vtkImageMathematics::New();
 
-  
+
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
   this->MapToWindowLevelColors->SetOutputFormatToLuminance();
   this->MapToWindowLevelColors->SetWindow(256.);
@@ -107,7 +107,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->Bimodal = NULL;
   this->Accumulate = NULL;
   this->IsInCalculateAutoLevels = false;
-  
+
   vtkEventBroker::GetInstance()->AddObservation(
     this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand  , 10000.);
 }
@@ -217,12 +217,12 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   ss << this->GetUpperThreshold();
   of << indent << " upperThreshold=\"" << ss.str() << "\"";
   }
-  {    
+  {
   std::stringstream ss;
   ss << this->GetLowerThreshold();
   of << indent << " lowerThreshold=\"" << ss.str() << "\"";
   }
-  {   
+  {
   std::stringstream ss;
   ss << this->Interpolate;
   of << indent << " interpolate=\"" << ss.str() << "\"";
@@ -264,11 +264,11 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "window")) 
+    if (!strcmp(attName, "window"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -276,7 +276,7 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> window;
       this->SetWindow(window);
       }
-    else if (!strcmp(attName, "level")) 
+    else if (!strcmp(attName, "level"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -284,7 +284,7 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> level;
       this->SetLevel(level);
       }
-    else if (!strcmp(attName, "upperThreshold")) 
+    else if (!strcmp(attName, "upperThreshold"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -292,7 +292,7 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> threshold;
       this->SetUpperThreshold(threshold);
       }
-    else if (!strcmp(attName, "lowerThreshold")) 
+    else if (!strcmp(attName, "lowerThreshold"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -300,36 +300,36 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> threshold;
       this->SetLowerThreshold(threshold);
       }
-    else if (!strcmp(attName, "interpolate")) 
+    else if (!strcmp(attName, "interpolate"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->Interpolate;
       }
-    else if (!strcmp(attName, "autoWindowLevel")) 
+    else if (!strcmp(attName, "autoWindowLevel"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->AutoWindowLevel;
       }
-    else if (!strcmp(attName, "applyThreshold")) 
+    else if (!strcmp(attName, "applyThreshold"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->ApplyThreshold;
       }
-    else if (!strcmp(attName, "autoThreshold")) 
+    else if (!strcmp(attName, "autoThreshold"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->AutoThreshold;
       }
-    else if (!strncmp(attName, "windowLevelPreset", 17)) 
+    else if (!strncmp(attName, "windowLevelPreset", 17))
       {
       this->AddWindowLevelPresetFromString(attValue);
       }
-    }  
-    
+    }
+
   this->EndModify(disabledModify);
 }
 
@@ -342,7 +342,7 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
   vtkMRMLScalarVolumeDisplayNode *node = (vtkMRMLScalarVolumeDisplayNode *) anode;
-  
+
   this->SetAutoWindowLevel( node->GetAutoWindowLevel() );
   this->SetWindowLevel(node->GetWindow(), node->GetLevel());
   this->SetAutoThreshold( node->GetAutoThreshold() ); // don't want to run CalculateAutoLevel
@@ -355,13 +355,13 @@ void vtkMRMLScalarVolumeDisplayNode::Copy(vtkMRMLNode *anode)
     }
 
   this->EndModify(disabledModify);
-  
+
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   os << indent << "AutoWindowLevel:   " << this->AutoWindowLevel << "\n";
@@ -381,7 +381,7 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
@@ -419,7 +419,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetWindow(double window)
     {
     return;
     }
-  
+
   this->MapToWindowLevelColors->SetWindow(window);
   this->Modified();
 }
@@ -670,7 +670,7 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
   imageData->Update();
   imageData->GetScalarRange(range);
   if (imageData->GetNumberOfScalarComponents() >=3 &&
-      fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001) 
+      fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001)
     {
     range[0] = 0;
     range[1] = 255;
@@ -707,7 +707,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     {
     needAdHoc = 1;
     }
-  else if (scalarType != VTK_INT && 
+  else if (scalarType != VTK_INT &&
            scalarType != VTK_SHORT &&
            scalarType != VTK_CHAR &&
            scalarType != VTK_SIGNED_CHAR &&
@@ -716,9 +716,9 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
            scalarType != VTK_UNSIGNED_INT)
     {
     // if not an integer type, estimate with ad hoc method
-    needAdHoc = 1; 
+    needAdHoc = 1;
     }
-  else 
+  else
     {
     // data type is VTK_INT or similar, so calculate window/level
     // check the scalar type, bimodal analysis only works on int
@@ -745,10 +745,10 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     if ( this->Bimodal->GetWindow() == 0.0 &&
          this->Bimodal->GetLevel() == 0.0 )
       {
-      needAdHoc = 1; 
+      needAdHoc = 1;
       }
     }
-    
+
   if ( needAdHoc )
     {
     vtkDebugMacro("CalculateScalarAutoLevels: image data scalar type is not integer,"

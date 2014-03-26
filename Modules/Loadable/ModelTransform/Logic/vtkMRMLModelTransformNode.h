@@ -24,7 +24,7 @@ class VTK_SLICER_MODELTRANSFORM_MODULE_LOGIC_EXPORT vtkMRMLModelTransformNode : 
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Create instance 
+  // Create instance
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
@@ -38,11 +38,11 @@ class VTK_SLICER_MODELTRANSFORM_MODULE_LOGIC_EXPORT vtkMRMLModelTransformNode : 
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
+
   // Description:
   // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelTransformNode"; };
-  
+
   vtkGetStringMacro ( InputModelID );
   vtkSetStringMacro ( InputModelID );
 
@@ -57,7 +57,7 @@ class VTK_SLICER_MODELTRANSFORM_MODULE_LOGIC_EXPORT vtkMRMLModelTransformNode : 
 
   vtkGetMacro ( TransformNormals, int );
   vtkSetMacro ( TransformNormals, int );
-  
+
 
  protected:
   vtkMRMLModelTransformNode();

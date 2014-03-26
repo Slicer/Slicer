@@ -13,7 +13,7 @@ class RSNA2012ProstateDemo:
     parent.dependencies = []
     parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = """
-    This module was developed as a self test to perform the operations needed for the RSNA 2012 Prostate Demo 
+    This module was developed as a self test to perform the operations needed for the RSNA 2012 Prostate Demo
     """
     parent.acknowledgementText = """
     This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
@@ -90,8 +90,8 @@ class RSNA2012ProstateDemoWidget:
 #
 
 class RSNA2012ProstateDemoLogic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -100,7 +100,7 @@ class RSNA2012ProstateDemoLogic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -175,7 +175,7 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
         self.delayDisplay('Restoring scene view %s ...' % svname )
         svnode.RestoreScene()
         self.delayDisplay('OK')
-   
+
     self.delayDisplay('Done testing scene views, will clear the scene')
     slicer.mrmlScene.Clear(0)
     self.delayDisplay('Test passed')

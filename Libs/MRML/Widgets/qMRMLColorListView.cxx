@@ -55,13 +55,13 @@ void qMRMLColorListViewPrivate::init()
   QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
-  
+
   q->setEditTriggers(QAbstractItemView::NoEditTriggers);
   //q->setWrapping(true);
   //q->setResizeMode(QListView::Adjust);
   //q->setFlow(QListView::TopToBottom);
   //q->setRootIndex(sortFilterModel->mapFromSource(colorModel->mrmlColorNodeIndex()));
-  
+
   //QObject::connect(q, SIGNAL(activated(QModelIndex)),
   //                 q, SLOT(onItemActivated(QModelIndex)));
 }

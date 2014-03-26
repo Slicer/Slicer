@@ -41,7 +41,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   double ctp[3] = { 1, 2, 3};
   const char* text = "Test 1 2";
   annNode->SetFiducialLabel(text);
-  if (!annNode->SetFiducial(ctp,1,0)) 
+  if (!annNode->SetFiducial(ctp,1,0))
     {
     vtkIndent f;
     annNode->PrintSelf(cout,f);
@@ -51,7 +51,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   // changing to use the display node visibilty, update this to show the
   // control point visibility
   std::cout << "Set annNode visible to 0, GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
-  
+
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
   mrmlScene->AddNode(annNode);
 
@@ -109,12 +109,12 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   node2->ReadData(annNode);
   std::cout << "After ReadData, annNode GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
   annNode->PrintAnnotationInfo(afterAnnotation,in);
-  if (initialAnnotation.str().compare(afterAnnotation.str())) 
+  if (initialAnnotation.str().compare(afterAnnotation.str()))
   {
     std::cerr << endl << "Error in WriteData() or ReadData()" << std::endl;
     std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
     std::cerr << "After:" << std::endl << afterAnnotation.str() <<std::endl;
-    std::cerr << "KP : need to fix annText field ones we have AnnotationFiducials defined" <<std::endl; 
+    std::cerr << "KP : need to fix annText field ones we have AnnotationFiducials defined" <<std::endl;
     return EXIT_FAILURE;
   }
 
@@ -148,7 +148,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     std::cerr << "Error in retrieving the point display colour after write/read, expected " << pointColor[0] << ", " << pointColor[1] << ", " << pointColor[2] << ", but got " << afterPointColor[0] << ", " << afterPointColor[1] << ", " << afterPointColor[2] << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   return EXIT_SUCCESS;
-  
+
 }

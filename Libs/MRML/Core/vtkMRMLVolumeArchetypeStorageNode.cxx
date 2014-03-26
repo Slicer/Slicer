@@ -93,23 +93,23 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "centerImage")) 
+    if (!strcmp(attName, "centerImage"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->CenterImage;
       }
-    if (!strcmp(attName, "singleFile")) 
+    if (!strcmp(attName, "singleFile"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->SingleFile;
       }
-    if (!strcmp(attName, "UseOrientationFromFile")) 
+    if (!strcmp(attName, "UseOrientationFromFile"))
       {
       std::stringstream ss;
       ss << attValue;
@@ -139,7 +139,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkMRMLStorageNode::PrintSelf(os,indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
   os << indent << "SingleFile:   " << this->SingleFile << "\n";
@@ -232,17 +232,17 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storag
   // to it are a dimension smaller than the image it is asked to create
   // (i.e. a list of .jpg files that form a volume).
   // In our case though, we can have file lists that include both the
-  // header and bulk data, like .hdr/.img pairs.  So we need to 
-  // be careful not to send extra filenames to the reader if the 
+  // header and bulk data, like .hdr/.img pairs.  So we need to
+  // be careful not to send extra filenames to the reader if the
   // format is multi-file for the same volume
   //
-  // check for Analyze and similar format- if the archetype is 
+  // check for Analyze and similar format- if the archetype is
   // one of those, then don't send the rest of the list
   //
   std::string fileExt=vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if ( fileExt != std::string(".hdr") 
-      && fileExt != std::string(".img") 
-      && fileExt != std::string(".mhd") 
+  if ( fileExt != std::string(".hdr")
+      && fileExt != std::string(".img")
+      && fileExt != std::string(".mhd")
       && fileExt != std::string(".nhdr") )
     {
     for (int n = 0; n < storageNode->GetNumberOfFileNames(); n++)
@@ -469,18 +469,18 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
-  if (volNode->GetImageData() == NULL) 
+  if (volNode->GetImageData() == NULL)
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
     return 0;
     }
-  
+
   // update the file list
   std::string moveFromDir = this->UpdateFileList(refNode, 1);
 
- 
-  std::string fullName = this->GetFullNameFromFileName();  
-  if (fullName == std::string("")) 
+
+  std::string fullName = this->GetFullNameFromFileName();
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("WriteData: File name not specified");
     return 0;
@@ -545,7 +545,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       {
       vtkWarningMacro("Failed to remove temporary write directory " << moveFromDir);
       }
-    
+
     }
   else
     {
@@ -556,10 +556,10 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   if (!moveSucceeded)
     {
     vtkDebugMacro("WriteData: writing out file with archetype " << fullName);
-    
+
     vtkNew<vtkITKImageWriter> writer;
     writer->SetFileName(fullName.c_str());
-  
+
     writer->SetInput( volNode->GetImageData() );
     writer->SetUseCompression(this->GetUseCompression());
     if(this->WriteFileFormat)
@@ -568,12 +568,12 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
                                   this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
                                   GetClassNameFromFormatString(this->WriteFileFormat));
       }
-    
+
     // set volume attributes
     vtkNew<vtkMatrix4x4> mat;
     volNode->GetRASToIJKMatrix(mat.GetPointer());
     writer->SetRasToIJKMatrix(mat.GetPointer());
-    
+
     try
       {
       writer->Write();
@@ -618,7 +618,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   bool result = true;
   std::string returnString = "";
   // test whether refNode is a valid node to hold a volume
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode") )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
     return returnString;
@@ -626,25 +626,25 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
 
   vtkMRMLVolumeNode *volNode = NULL;
   volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-  
-  if (volNode == NULL || volNode->GetImageData() == NULL) 
+
+  if (volNode == NULL || volNode->GetImageData() == NULL)
     {
     vtkErrorMacro("UpdateFileList: cannot write ImageData, it's NULL");
     return returnString;
     }
 
-  std::string oldName = this->GetFileName();  
-  if (oldName == std::string("")) 
+  std::string oldName = this->GetFileName();
+  if (oldName == std::string(""))
     {
     vtkErrorMacro("UpdateFileList: File name not specified");
     return returnString;
     }
 
   vtkDebugMacro("UpdateFileList: old file name = " << oldName);
-  
+
   // clear out the old file list
   this->ResetFileNameList();
-  
+
   // make a new dir to write temporary stuff out to
 //  std::vector<std::string> pathComponents;
   // get the base dir of the destination
@@ -693,7 +693,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   // set up the writer and write
   vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(tempName.c_str());
-  
+
   writer->SetInput( volNode->GetImageData() );
   writer->SetUseCompression(this->GetUseCompression());
   if(this->WriteFileFormat)
@@ -743,7 +743,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   pathComponents.pop_back();
   std::string localDirectory = vtksys::SystemTools::JoinPath(pathComponents);
   std::string relativePath;
-  
+
   if (this->IsFilePathRelative(localDirectory.c_str()))
     {
     vtkDebugMacro("UpdateFileList: the local directory is already relative, use it " << localDirectory);
@@ -859,7 +859,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   // restore the old file name
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
   this->SetFileName(oldName.c_str());
-  
+
   if (move != 1)
     {
     // clean up temp directory

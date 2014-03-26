@@ -19,7 +19,7 @@
 
 #include "vtkSlicerAtlasCreatorModuleLogicExport.h"
 
-// Description: 
+// Description:
 // The atlas creator node is simply a MRMLNode container for
 // a configuration of the Atlas Creator module
 
@@ -222,7 +222,7 @@ protected:
   int DynamicTemplateIterations;
   char *FixedTemplateDefaultCaseFilePath;
   int IgnoreTemplateSegmentation;
-  
+
   char *LabelsList;
 
   char *RegistrationType;

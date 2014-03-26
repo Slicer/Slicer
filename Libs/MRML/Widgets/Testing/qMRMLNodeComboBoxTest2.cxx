@@ -46,7 +46,7 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
     std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // Test: setMRMLScene()/mrmlScene()
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.mrmlScene() != sceneFactory.mrmlScene())
@@ -91,7 +91,7 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // test nodeType
   sceneFactory.generateScene();
   sceneFactory.generateNode("vtkMRMLViewNode");
@@ -152,7 +152,7 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   node->SetAttribute("foo", "bar");
   node = sceneFactory.mrmlScene()->GetNthNode(1);
   node->SetAttribute("foo", "bar2");
-  
+
   nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.nodeCount() != 1)
@@ -197,7 +197,7 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   types << "vtkMRMLModelNode" << "vtkMRMLCameraNode";
   //test setNodeTypes()/nodeTypes()
   nodeSelector.setNodeTypes(types);
-  
+
   if (nodeSelector.nodeTypes() != types)
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::setNodeTypes() failed." << std::endl;
@@ -237,7 +237,7 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
   //
   // Let's connect the sceneFactory with the widget
   //
-  
+
   QObject::connect(&sceneFactory, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    &nodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
 
@@ -254,8 +254,8 @@ int qMRMLNodeComboBoxTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-      
+
   sceneFactory.deleteScene();
-  
+
   return EXIT_SUCCESS;
 }

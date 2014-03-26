@@ -154,7 +154,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   renderer->SetBackground2(0, 83. / 255, 155. /255);
   renderer->SetGradientBackground(true);
   renderer->ResetCamera();
-  
+
   // Event recorder
   bool disableReplay = false, record = false, screenshot = false;
   for (int i = 0; i < argc; i++)

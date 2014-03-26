@@ -11,7 +11,7 @@
 // VTK includes
 
 //------------------------------------------------------------------------------
-class qSlicerTractographyDisplayGlyphWidgetPrivate: 
+class qSlicerTractographyDisplayGlyphWidgetPrivate:
   public Ui_qSlicerTractographyDisplayGlyphWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTractographyDisplayGlyphWidget);
@@ -101,7 +101,7 @@ void qSlicerTractographyDisplayGlyphWidget::
   d->FiberBundleDisplayNode = fiberBundleDisplayNode;
 
   qvtkReconnect( oldDisplayNode, d->FiberBundleDisplayNode,
-                vtkCommand::ModifiedEvent, this, 
+                vtkCommand::ModifiedEvent, this,
                 SLOT(updateWidgetFromMRMLDisplayNode()) );
   this->updateWidgetFromMRMLDisplayNode();
 }
@@ -122,12 +122,12 @@ void qSlicerTractographyDisplayGlyphWidget::
   Q_D(qSlicerTractographyDisplayGlyphWidget);
 
   d->DiffusionTensorDisplayPropertiesNode = node;
-  
+
   d->GlyphTypeSelector->blockSignals(true);
   d->GlyphTypeSelector->clear();
   std::vector<int> supportedDisplayTypes;
   int i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphGeometry();
-  for (; i <= d->DiffusionTensorDisplayPropertiesNode->GetLastGlyphGeometry(); i++) 
+  for (; i <= d->DiffusionTensorDisplayPropertiesNode->GetLastGlyphGeometry(); i++)
     {
     d->GlyphTypeSelector->addItem(
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometryAsString(i), i);
@@ -138,7 +138,7 @@ void qSlicerTractographyDisplayGlyphWidget::
   d->GlyphEigenvectorSelector->clear();
   std::vector<int> supportedEigenVectorTypes;
   i = d->DiffusionTensorDisplayPropertiesNode->GetFirstGlyphEigenvector();
-  for (; i <= d->DiffusionTensorDisplayPropertiesNode->GetLastGlyphEigenvector(); i++) 
+  for (; i <= d->DiffusionTensorDisplayPropertiesNode->GetLastGlyphEigenvector(); i++)
     {
     d->GlyphEigenvectorSelector->addItem(
         d->DiffusionTensorDisplayPropertiesNode->GetGlyphEigenvectorAsString(i), i);
@@ -149,14 +149,14 @@ void qSlicerTractographyDisplayGlyphWidget::
 void qSlicerTractographyDisplayGlyphWidget::setGlyphType(int type)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  
+
   if (!d->DiffusionTensorDisplayPropertiesNode)
     {
     return;
     }
   d->DiffusionTensorDisplayPropertiesNode->SetGlyphGeometry(type);
   QWidget* widget = d->GlyphSubPropertiesWidget->
-    findChild<QWidget *>( 
+    findChild<QWidget *>(
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphGeometryAsString()
     );
   if (widget)
@@ -172,7 +172,7 @@ void qSlicerTractographyDisplayGlyphWidget::setGlyphType(int type)
 void qSlicerTractographyDisplayGlyphWidget::setGlyphEigenvector(int ev)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  
+
   if (!d->DiffusionTensorDisplayPropertiesNode)
     {
     return;
@@ -184,7 +184,7 @@ void qSlicerTractographyDisplayGlyphWidget::setGlyphEigenvector(int ev)
 void qSlicerTractographyDisplayGlyphWidget::setGlyphScaleFactor(double scale)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  
+
   if (!d->DiffusionTensorDisplayPropertiesNode)
     {
     return;
@@ -196,7 +196,7 @@ void qSlicerTractographyDisplayGlyphWidget::setGlyphScaleFactor(double scale)
 void qSlicerTractographyDisplayGlyphWidget::setGlyphSpacing(double spacing)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  
+
   if (!d->DiffusionTensorDisplayPropertiesNode)
     {
     return;
@@ -208,7 +208,7 @@ void qSlicerTractographyDisplayGlyphWidget::setGlyphSpacing(double spacing)
 void qSlicerTractographyDisplayGlyphWidget::setTubeGlyphNumberOfSides(double sides)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  
+
   if (!d->DiffusionTensorDisplayPropertiesNode)
     {
     return;
@@ -220,7 +220,7 @@ void qSlicerTractographyDisplayGlyphWidget::setTubeGlyphNumberOfSides(double sid
 void qSlicerTractographyDisplayGlyphWidget::setTubeGlyphRadius(double radius)
 {
   Q_D(qSlicerTractographyDisplayGlyphWidget);
-  
+
   if (!d->DiffusionTensorDisplayPropertiesNode)
     {
     return;
@@ -237,10 +237,10 @@ void qSlicerTractographyDisplayGlyphWidget::
     {
     return;
     }
-  if ( d->DiffusionTensorDisplayPropertiesNode != 
+  if ( d->DiffusionTensorDisplayPropertiesNode !=
        d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() )
     {
-    this->setDiffusionTensorDisplayPropertiesNode( 
+    this->setDiffusionTensorDisplayPropertiesNode(
       d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() );
     }
   this->updateWidgetFromMRMLDisplayPropertiesNode();
@@ -266,7 +266,7 @@ void qSlicerTractographyDisplayGlyphWidget::
   else
     d->GlyphEigenvectorSelector->setEnabled(true);
 
-  d->GlyphEigenvectorSelector->setCurrentIndex( 
+  d->GlyphEigenvectorSelector->setCurrentIndex(
     d->DiffusionTensorDisplayPropertiesNode->GetGlyphEigenvector() );
 
   d->ScaleFactorSlider->setValue(

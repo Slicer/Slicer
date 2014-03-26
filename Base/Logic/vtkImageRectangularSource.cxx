@@ -40,7 +40,7 @@ vtkImageRectangularSource::~vtkImageRectangularSource()
     this->Corners = NULL;
   }
 
-      
+
 }
 
 //----------------------------------------------------------------------------
@@ -49,10 +49,10 @@ void vtkImageRectangularSource::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
   os << indent << "Center: (" << this->Center[0] << ", "
      << this->Center[1] << ", " << this->Center[2] << ")\n";
-  
+
   os << indent << "Size: (" << this->Size[0] << ", "
      << this->Size[1] << ", " << this->Size[2] << ")\n";
-  
+
   os << indent << "InValue: " << this->InValue << "\n";
   os << indent << "OutValue: " << this->OutValue << "\n";
   os << indent << "InsideGraySlopeFlag: " << this->InsideGraySlopeFlag << "\n";
@@ -62,7 +62,7 @@ void vtkImageRectangularSource::PrintSelf(ostream& os, vtkIndent indent)
 void vtkImageRectangularSource::SetWholeExtent(int extent[6])
 {
   int idx;
-  
+
   for (idx = 0; idx < 6; ++idx)
     {
     if (this->WholeExtent[idx] != extent[idx])
@@ -74,12 +74,12 @@ void vtkImageRectangularSource::SetWholeExtent(int extent[6])
 }
 
 //----------------------------------------------------------------------------
-void vtkImageRectangularSource::SetWholeExtent(int minX, int maxX, 
+void vtkImageRectangularSource::SetWholeExtent(int minX, int maxX,
                                             int minY, int maxY,
                                             int minZ, int maxZ)
 {
   int extent[6];
-  
+
   extent[0] = minX;  extent[1] = maxX;
   extent[2] = minY;  extent[3] = maxY;
   extent[4] = minZ;  extent[5] = maxZ;
@@ -91,7 +91,7 @@ void vtkImageRectangularSource::SetWholeExtent(int minX, int maxX,
 void vtkImageRectangularSource::GetWholeExtent(int extent[6])
 {
   int idx;
-  
+
   for (idx = 0; idx < 6; ++idx)
     {
     extent[idx] = this->WholeExtent[idx];
@@ -102,7 +102,7 @@ void vtkImageRectangularSource::GetWholeExtent(int extent[6])
 void vtkImageRectangularSource::ExecuteInformation()
 {
   vtkImageData *data = this->GetOutput();
-  
+
   data->SetSpacing(1.0, 1.0, 1.0);
   data->SetWholeExtent(this->WholeExtent);
   data->SetNumberOfScalarComponents(1);
@@ -113,9 +113,9 @@ void vtkImageRectangularSource::ExecuteInformation()
 void vtkImageRectangularSource::SetCorners(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
   // Check if it is of dimension 4x2
   // Only set it once
- 
+
   assert(!this->Corners);
-  this->Corners = new int*[4]; 
+  this->Corners = new int*[4];
   for (int i = 0; i < 4 ; i++) this->Corners[i] = new int[2];
   this->Corners[0][0] = x1;
   this->Corners[0][1] = y1;
@@ -129,7 +129,7 @@ void vtkImageRectangularSource::SetCorners(int x1, int y1, int x2, int y2, int x
   this->Corners[3][0] = x4;
   this->Corners[3][1] = y4;
 
-} 
+}
 
 
 
@@ -167,24 +167,24 @@ void vtkImageRectangularSourceExecute(vtkImageRectangularSource *self,
   // z direction
   InFlag[2] = 0;
   for (idx2 = ext[4]; idx2 <= ext[5]; ++idx2) {
-    if (idx2 == Min[2]) InFlag[2] = 1; 
-    else if (idx2 == Max[2]) InFlag[2] = 0; 
+    if (idx2 == Min[2]) InFlag[2] = 1;
+    else if (idx2 == Max[2]) InFlag[2] = 0;
     InFlag[1] = 0;
     for (idx1 = ext[2]; !self->AbortExecute && idx1 <= ext[3]; ++idx1)
       {
       if (!(count%target)) self->UpdateProgress(count/(50.0*target));
       count++;
-      if (idx1 == Min[1]) InFlag[1] = InFlag[2]; 
-      else if (idx1 == Max[1]) InFlag[1] = 0; 
+      if (idx1 == Min[1]) InFlag[1] = InFlag[2];
+      else if (idx1 == Max[1]) InFlag[1] = 0;
       InFlag[0] = 0;
       for (idx0 =  ext[0]; idx0 <=  ext[1]; ++idx0) {
         // handle divide by zero
-        if (idx0 == Min[0]) InFlag[0] = InFlag[1]; 
-        else if (idx0 == Max[0]) InFlag[0] = 0; 
+        if (idx0 == Min[0]) InFlag[0] = InFlag[1];
+        else if (idx0 == Max[0]) InFlag[0] = 0;
         if (InFlag[0])  {
           if (InsideGraySlopeFlag && size[0]) {
-            grad = (2.0*abs(idx0 - center[0])) / double(size[0]); 
-            *ptr = T((1.0 - grad)*double(inVal)) + T(grad*double(outVal)); 
+            grad = (2.0*abs(idx0 - center[0])) / double(size[0]);
+            *ptr = T((1.0 - grad)*double(inVal)) + T(grad*double(outVal));
           }
           else *ptr = inVal;
         } else *ptr = outVal;
@@ -226,18 +226,18 @@ void Sort(int x1, int x2, int x3,int &xMin, int &xMean, int &xMax) {
 
 int DefineX(int *c1, int *c2, int y) {
   assert(c1[1] != c2[1]);
-  if ((Min(c1[1],c2[1]) > y )|| (Max(c1[1],c2[1]) < y )) return -1; 
+  if ((Min(c1[1],c2[1]) > y )|| (Max(c1[1],c2[1]) < y )) return -1;
 
   double lenY = c2[1] - c1[1];
-  int lenX    = c2[0] - c1[0];  
+  int lenX    = c2[0] - c1[0];
   double Scale =  double(lenX)/double(lenY);
 
   return int(c1[0] + double(y - c1[1])*Scale);
-} 
- 
+}
+
 template <class T> T CalculateGraySlope(int length, double center, int pos, T inVal, T outVal) {
   double grad = (2.0*fabs(float(pos - center))) / double(length);
-  return  T((1.0 - grad)*double(inVal)) + T(grad*double(outVal)); 
+  return  T((1.0 - grad)*double(inVal)) + T(grad*double(outVal));
 }
 
 template <class T>
@@ -260,7 +260,7 @@ void DefineLine(int MinInX, int MaxInX,int LineLength, T inVal, T outVal, int In
 
   for (int x = MinInX; x <= MaxInX; x ++) {
     if (InsideGraySlopeFlag) {
-      *Result ++ = CalculateGraySlope(inLength, inCenter, x, inVal, outVal); 
+      *Result ++ = CalculateGraySlope(inLength, inCenter, x, inVal, outVal);
     } else *Result ++ = inVal;
   }
 
@@ -279,36 +279,36 @@ void DefineLine(int MinInX, int MaxInX,int LineLength, T inVal, T outVal, int In
       return;
     }
     int x1 , x2 , x3;
-    // Check if it is on the line   
+    // Check if it is on the line
     if (c1[1] == c2[1]) {
       if (c1[1] == y) {
-        MaxX = Max(c1[0],c2[0]); 
-        MinX = Min(c1[0],c2[0]);  
-        return; 
+        MaxX = Max(c1[0],c2[0]);
+        MinX = Min(c1[0],c2[0]);
+        return;
       } else x1 = -1;
-    } else x1 = DefineX(c1, c2, y); 
-    
+    } else x1 = DefineX(c1, c2, y);
+
     if (c2[1] == c3[1]) {
       if (c2[1] == y) {
-        MaxX = Max(c2[0],c3[0]); 
-        MinX = Min(c2[0],c3[0]);  
-        return; 
+        MaxX = Max(c2[0],c3[0]);
+        MinX = Min(c2[0],c3[0]);
+        return;
       } else x2 = -1;
-    } else x2 = DefineX(c2, c3, y); 
-    
+    } else x2 = DefineX(c2, c3, y);
+
     if (c1[1] == c3[1]) {
       if (c1[1] == y) {
-        MaxX = Max(c1[0],c3[0]); 
-        MinX = Min(c1[0],c3[0]);  
-        return; 
+        MaxX = Max(c1[0],c3[0]);
+        MinX = Min(c1[0],c3[0]);
+        return;
       } else x3 = -1;
     } else x3 = DefineX(c1, c3, y);
     // One of them has to be -1
     int xBlub;
-  
+
     Sort(x1,x2,x3,xBlub,MinX,MaxX);
 
-    // Special Case when all three lines have input 
+    // Special Case when all three lines have input
     if ((MinX == MaxX) && (xBlub > -1)) MinX = xBlub;
   }
 
@@ -321,16 +321,16 @@ void DefineXMinMaxInTriangle(int *c1, int *c2, int *c3, int y, int &MinX, int &M
   DefineXMinMaxInTriangleNormal(c1, c2, c3, y +1, MinX1, MaxX1);
   if (MaxX1 < 0) DefineXMinMaxInTriangleNormal(c1, c2, c3, y -1, MinX1, MaxX1);
   if (MaxX1 < 0) return;
-  if (!(MaxX1 - MinX1)) return; 
+  if (!(MaxX1 - MinX1)) return;
 
   if (MinX < MinX1) {
     MaxX = MinX1  + 1;
     return;
   }
 
-  if (MaxX > MaxX1) MinX = MaxX1 - 1; 
+  if (MaxX > MaxX1) MinX = MaxX1 - 1;
   return;
-}  
+}
 
 template <class T>
 void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal, int InsideGraySlopeFlag, T* Result, int IncResultY) {
@@ -338,18 +338,18 @@ void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal
   int  MaxInY = Max(Corners[0][1],Corners[1][1], Corners[2][1], Corners[3][1]);
 
   if (MinInY >= RowLength || MaxInY < 0 || MinInY > MaxInY) MinInY = RowLength;
-  // Outside 
+  // Outside
   for (int y = 0; y < MinInY; y ++) {
-    DefineLine(LineLength, LineLength, LineLength, inVal, outVal, InsideGraySlopeFlag, Result); 
+    DefineLine(LineLength, LineLength, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
     Result += RowLength + IncResultY;
   }
   if (MinInY == RowLength) return;
- 
-  
+
+
   if (MinInY < 0) MinInY = 0;
   if (MaxInY >= RowLength) MaxInY = RowLength -1;
- 
-  int inMinX1, inMinX2, inMaxX1, inMaxX2; 
+
+  int inMinX1, inMinX2, inMaxX1, inMaxX2;
 
   // Area of interest
   for (int y = MinInY; y <= MaxInY; y ++) {
@@ -371,24 +371,24 @@ void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal
       } else {
         DefineLine(Min(inMinX1,inMinX2), Max(inMaxX1,inMaxX2), LineLength, inVal, outVal, InsideGraySlopeFlag,Result);
       }
-      
+
     }
     Result += RowLength + IncResultY;
   }
 
   // Outside
   for (int y =  MaxInY +1; y <  RowLength; y ++) {
-    DefineLine(LineLength, LineLength, LineLength, inVal, outVal, InsideGraySlopeFlag, Result); 
+    DefineLine(LineLength, LineLength, LineLength, inVal, outVal, InsideGraySlopeFlag, Result);
     Result += RowLength + IncResultY;
   }
 }
 
-} 
+}
 
 template <class T>
 void vtkImageRectangularSource_GeneralExecute(vtkImageRectangularSource *self, vtkImageData *data, int ext[6], int** Corners, T *ptr)
 {
-  // Currently only defined in 2D 
+  // Currently only defined in 2D
   assert(!(ext[5] - ext[4]));
 
   vtkIdType inc0, inc1, inc2;
@@ -403,12 +403,12 @@ void vtkImageRectangularSource::ExecuteData(vtkDataObject *output)
 {
   int *extent;
   void *ptr;
-  
+
   vtkImageData *data = this->AllocateOutputData(output);
-  
+
   extent = this->GetOutput()->GetUpdateExtent();
   ptr = data->GetScalarPointerForExtent(extent);
-  
+
   if (this->Corners ) {
     switch (data->GetScalarType()) {
       vtkTemplateMacro(vtkImageRectangularSource_GeneralExecute(this, data, extent, this->Corners, (VTK_TT *)ptr));

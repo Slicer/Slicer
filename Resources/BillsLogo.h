@@ -1,4 +1,4 @@
-/* 
+/*
  * Resource generated for file:
  *    BillsLogo.png (zlib, base64) (image file)
  */
@@ -8,7 +8,7 @@ static const unsigned int  image_BillsLogo_pixel_size     = 3;
 static const unsigned long image_BillsLogo_length         = 3080;
 static const unsigned long image_BillsLogo_decoded_length = 4800;
 
-static const unsigned char image_BillsLogo[] = 
+static const unsigned char image_BillsLogo[] =
   "eNrtmPlv2+YZx/+RYSgwYMC6Nk2XOE58KbZly5dsS9Zh3RIpUbxJ8RBFkRQP3dZt67Blx3"
   "KaOIfj1E6adl2bblj3j40Z9kuBrVDaoj8VeEBABKnP+zzv+zzf5yHFF6lf3Ui+QP3G/Y8x"
   "vEFzGslqBKuT3LjLS3H/NYrP02mDeve68V7copjVcCzudsxN3r73l4nl+7awO6zQmYd7nZ"

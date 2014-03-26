@@ -39,7 +39,7 @@ public:
   virtual ~qSlicerAnnotationsIOOptionsWidget();
 
   QButtonGroup* FileTypeButtonGroup;
-                                   
+
 public slots:
   virtual void setFileName(const QString& fileName);
   virtual void setFileNames(const QStringList& fileNames);

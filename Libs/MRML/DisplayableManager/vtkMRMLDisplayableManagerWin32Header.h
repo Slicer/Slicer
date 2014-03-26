@@ -12,9 +12,9 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLDisplayableManagerWin32Header - manage Windows system differences
-/// 
+///
 /// The vtkMRMLDisplayableManagerWin32Header captures some system differences between Unix
-/// and Windows operating systems. 
+/// and Windows operating systems.
 
 #ifndef __vtkMRMLDisplayableManagerWin32Header_h
 #define __vtkMRMLDisplayableManagerWin32Header_h
@@ -23,7 +23,7 @@
 
 #if defined(WIN32) && !defined(VTKMRMLDisplayableManager_STATIC)
 #if defined(MRMLDisplayableManager_EXPORTS)
-#define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec( dllexport ) 
+#define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec( dllexport )
 #else
 #define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec( dllimport )
 #endif

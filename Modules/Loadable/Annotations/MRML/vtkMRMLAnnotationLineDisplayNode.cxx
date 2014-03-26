@@ -19,12 +19,12 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LabelVisibility = 1;
   this->TickSpacing = 10.0;
   this->MaxTicks = 99;
-  this->SliceProjection = (vtkMRMLAnnotationDisplayNode::ProjectionOff | 
+  this->SliceProjection = (vtkMRMLAnnotationDisplayNode::ProjectionOff |
                            vtkMRMLAnnotationLineDisplayNode::ProjectionDashed |
                            vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel |
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop | 
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop |
                            vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
-  
+
   this->UnderLineThickness = 1.0;
   this->OverLineThickness = 3.0;
   /// bug 2375: don't show the slice intersection until it's correct
@@ -35,7 +35,7 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
 void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
@@ -66,7 +66,7 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -85,7 +85,7 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
         }
       else if (!strcmp(attName, "labelVisibility"))
         {
-        if (!strcmp(attValue,"true")) 
+        if (!strcmp(attValue,"true"))
           {
           this->LabelVisibility = 1;
           }
@@ -175,7 +175,7 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Tick Spacing     : " << this->TickSpacing << "\n";
   os << indent << "Max Ticks        : " << this->MaxTicks << "\n";
   os << indent << "Slice Projection : " << this->SliceProjection << "\n";
-  os << indent << "Projected Color : (" 
+  os << indent << "Projected Color : ("
      << this->ProjectedColor[0] << ","
      << this->ProjectedColor[1] << ","
      << this->ProjectedColor[2] << ")" << "\n";
@@ -186,7 +186,7 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -208,7 +208,7 @@ void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
       }
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LineThickness to " << thickness);
     this->LineThickness = thickness;
-   
+
     //if (!this->GetDisableModifiedEvent())
     //  {
       // invoke a display modified event

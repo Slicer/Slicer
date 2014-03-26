@@ -65,7 +65,7 @@ protected slots:
   void hardenSelectedNodes();
 
 protected:
-  /// 
+  ///
   /// Convenient method to return the coordinate system currently selected
   int coordinateReference()const;
 

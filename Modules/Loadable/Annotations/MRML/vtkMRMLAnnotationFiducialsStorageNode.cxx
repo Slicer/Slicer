@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationFiducialsStorageNode);
 
- 
+
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int labelColumn, int xColumn, int yColumn, int zColumn,  int selColumn,  int visColumn, int numColumns)
 {
@@ -35,10 +35,10 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
       return 1;
     }
 
-  vtkDebugMacro("got a line: \n\"" << line << "\""); 
+  vtkDebugMacro("got a line: \n\"" << line << "\"");
   std::string attValue(line);
   size_t size = std::string(this->GetAnnotationStorageType()).size();
- 
+
   if (attValue.compare(0,size,this->GetAnnotationStorageType()))
     {
       return 0;
@@ -52,12 +52,12 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
   size_t  endPos =attValue.find(separatorString,startPos);
   int columnNumber = 0;
   double coord[3];
-  while (startPos != std::string::npos && (columnNumber < numColumns)) 
+  while (startPos != std::string::npos && (columnNumber < numColumns))
     {
-    if (startPos != endPos) 
+    if (startPos != endPos)
       {
       std::string tokenString;
-      if (endPos == std::string::npos) 
+      if (endPos == std::string::npos)
         {
         tokenString = attValue.substr(startPos,endPos);
         }
@@ -65,7 +65,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
         {
         tokenString = attValue.substr(startPos,endPos-startPos);
         }
-      
+
       if (columnNumber == labelColumn)
         {
         // this isn't actually the label, it's the storage type
@@ -96,10 +96,10 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
     endPos =attValue.find(separatorString,startPos);
     columnNumber ++;
     }
-  
+
   // Add Fiducials
 
-  
+
   // refNode->SetFiducialLabel(label.c_str());
   if (refNode->SetFiducial(coord, sel, vis) < 0)
     {
@@ -107,15 +107,15 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
     return -1;
     }
   //newNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, newCPDisplayNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
-  
+
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int &labelColumn, 
+int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int &labelColumn,
                                     int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns)
 {
- if (line[0] != '#' || line[1] != ' ') 
+ if (line[0] != '#' || line[1] != ' ')
     {
     return 0;
     }
@@ -126,7 +126,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
   // if there's a space after the hash, try to find options
   std::string preposition = std::string("# ");
   vtkIdType  pointOffset = std::string(this->GetAnnotationStorageType()).size();;
-  
+
   vtkDebugMacro("Have a possible option in line " << line);
   std::string lineString = std::string(line);
 
@@ -140,11 +140,11 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
     refNode->SetNumberingScheme(val);
     return 1;
     }
-  
+
   if (lineString.find(preposition + "Columns = ") != std::string::npos)
     {
     std::string str = lineString.substr(12 + pointOffset, std::string::npos);
-    
+
     vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
     // reset all of them
     labelColumn= xColumn = yColumn = zColumn = selColumn = visColumn = -1;
@@ -213,13 +213,13 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
   int modFlag = refNode->GetDisableModifiedEvent();
   refNode->DisableModifiedEventOn();
   char line[1024];
-  // default column ordering for text annotation info 
+  // default column ordering for text annotation info
   int typeColumn = 0;
   int annotationColumn = 1;
   int selColumn  = 2;
   int visColumn  = 3;
   int numColumns = 4;
-  
+
   // default column ordering for point annotation info - this is exactly the same as for fiducial
   // first pass: line will have label,x,y,z,selected,visible
   int labelColumn = 0;
@@ -244,7 +244,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
         // Property
     if (line[0] == '#')
       {
-      if (line[1] == ' ') 
+      if (line[1] == ' ')
         {
         // it could be defining the text properties
         int retval =  this->ReadAnnotationTextProperties(refNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns);
@@ -272,8 +272,8 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
       if (!this->ReadAnnotationTextData(refNode, line, typeColumn, annotationColumn,  selColumn,  visColumn, numColumns))
         {
         // could be point data
-        if (this->ReadAnnotationFiducialsData(refNode, line, labelColumn, xPointColumn, yPointColumn, zPointColumn, selPointColumn,  
-                                              visPointColumn, numPointColumns) < 0 ) 
+        if (this->ReadAnnotationFiducialsData(refNode, line, labelColumn, xPointColumn, yPointColumn, zPointColumn, selPointColumn,
+                                              visPointColumn, numPointColumns) < 0 )
           {
           vtkDebugMacro("ReadAnnotation: read annotation text data and fids data both failed on line: '" << line << "'" );
           }
@@ -287,13 +287,13 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
         vtkDebugMacro("ReadAnnotation: read annotation text data succeeded on line: '" << line << "'" );
         }
       }
-    } 
+    }
     refNode->SetDisableModifiedEvent(modFlag);
-    
+
     fstr.close();
 
     vtkDebugMacro("ReadAnnotation: done" );
-    
+
     return 1;
 
 }
@@ -342,13 +342,13 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
   int modFlag = refNode->GetDisableModifiedEvent();
   refNode->DisableModifiedEventOn();
   char line[1024];
-  // default column ordering for text annotation info 
+  // default column ordering for text annotation info
   int typeColumn = 0;
   int annotationColumn = 1;
   int selColumn  = 2;
   int visColumn  = 3;
   int numColumns = 4;
-  
+
   // default column ordering for point annotation info - this is exactly the same as for fiducial
   // first pass: line will have label,x,y,z,selected,visible
   int labelColumn = 0;
@@ -361,7 +361,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 
   // go line by line through the file
   bool doneOne = false;
-  
+
   while (fstr.good() && !doneOne)
     {
     fstr.getline(line, 1024);
@@ -375,7 +375,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
         // Property
     if (line[0] == '#')
       {
-      if (line[1] == ' ') 
+      if (line[1] == ' ')
         {
         // it could be defining the text properties
         int retval =  this->ReadAnnotationTextProperties(refNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns);
@@ -403,8 +403,8 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
       if (!this->ReadAnnotationTextData(refNode, line, typeColumn, annotationColumn,  selColumn,  visColumn, numColumns))
         {
         // could be point data
-        if (this->ReadAnnotationFiducialsData(refNode, line, labelColumn, xPointColumn, yPointColumn, zPointColumn, selPointColumn,  
-                                              visPointColumn, numPointColumns) < 0 ) 
+        if (this->ReadAnnotationFiducialsData(refNode, line, labelColumn, xPointColumn, yPointColumn, zPointColumn, selPointColumn,
+                                              visPointColumn, numPointColumns) < 0 )
           {
           vtkDebugMacro("ReadOneFiducial: read annotation text data and fids data both failed on line: '" << line << "'" );
           }
@@ -421,56 +421,56 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
         }
       }
     }
-  
+
   refNode->SetDisableModifiedEvent(modFlag);
-  
+
   return 1;
 }
 
 //----------------------------------------------------------------------------
 // int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 // {
-//   std::string fullName = this->GetFullNameFromFileName(); 
-// 
-//   if (fullName == std::string("")) 
+//   std::string fullName = this->GetFullNameFromFileName();
+//
+//   if (fullName == std::string(""))
 //     {
 //     vtkErrorMacro("vtkMRMLAnnotationFiducialsStorageNode: File name not specified");
 //     return 0;
 //     }
-// 
+//
 //   // cast the input node
 //   vtkMRMLAnnotationFiducialsNode *annotationNode = NULL;
 //   if ( refNode->IsA("vtkMRMLAnnotationFiducialsNode") )
 //     {
 //     annotationNode = dynamic_cast <vtkMRMLAnnotationFiducialsNode *> (refNode);
 //     }
-// 
+//
 //   if (annotationNode == NULL)
 //     {
 //     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a annotation node");
 //     return 0;
 //     }
-// 
-//   
+//
+//
 //   // cast the input node
 //   vtkMRMLAnnotationTextDisplayNode *annotationDisplayNode = annotationNode->GetAnnotationTextDisplayNode();
 //   if (annotationDisplayNode == NULL)
 //     {
-//       vtkErrorMacro("ReadData: unable to get associated AnnotationTextDisplayNode"); 
+//       vtkErrorMacro("ReadData: unable to get associated AnnotationTextDisplayNode");
 //       return 0;
 //     }
-// 
-// 
+//
+//
 //   // open the file for reading input
 //   fstream fstr;
-// 
+//
 //   fstr.open(fullName.c_str(), fstream::in);
-// 
+//
 //   if (fstr.is_open())
 //     {
 //       // clear out the list
 //       annotationNode->ResetAnnotations();
-//       
+//
 //       // turn off modified events
 //       int modFlag = annotationNode->GetDisableModifiedEvent();
 //       annotationNode->DisableModifiedEventOn();
@@ -489,7 +489,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //       while (fstr.good())
 //       {
 //     fstr.getline(line, 1024);
-//       
+//
 //     // does it start with a #?
 //     if (line[0] == '#')
 //       {
@@ -747,9 +747,9 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //                 reTokenise = false;
 //                 }
 //               columnNumber++;
-//               } // end while over columns          
-//         //KP: label.c_str() currently leave it out -think about it later  
-//         if (annotationNode->AddControlPoint(coord, sel, vis) < 0 ) 
+//               } // end while over columns
+//         //KP: label.c_str() currently leave it out -think about it later
+//         if (annotationNode->AddControlPoint(coord, sel, vis) < 0 )
 //           {
 //         vtkErrorMacro("Error adding control point to list, label = " << label.c_str());
 //           }
@@ -765,7 +765,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //     vtkErrorMacro("ERROR opening annotation file " << this->FileName << endl);
 //     return 0;
 //     }
-//   
+//
 //   return 1;
 // }
 

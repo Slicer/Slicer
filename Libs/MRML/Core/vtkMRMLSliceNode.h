@@ -37,37 +37,37 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
   /// Reimplemented to preserve orientation when reset
   virtual void Reset();
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Slice";};
 
-  /// 
+  ///
   /// Mapping from RAS space onto the slice plane
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
   vtkGetObjectMacro (SliceToRAS, vtkMatrix4x4);
   virtual void SetSliceToRAS(vtkMatrix4x4* sliceToRAS);
 
-  /// 
+  ///
   /// The visibility of the slice in the 3DViewer.
   vtkGetMacro ( SliceVisible, int );
   vtkSetMacro ( SliceVisible, int );
 
-  /// 
+  ///
   /// The visibility of the slice plane widget in the 3DViewer.
   vtkGetMacro ( WidgetVisible, int );
   vtkSetMacro ( WidgetVisible, int );
@@ -108,21 +108,21 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkGetMacro ( WidgetNormalLockedToCamera, int );
   vtkSetMacro ( WidgetNormalLockedToCamera, int );
 
-  /// 
+  ///
   /// Use the label outline filter on this slice?
   vtkGetMacro ( UseLabelOutline, int );
   vtkSetMacro ( UseLabelOutline, int );
   vtkBooleanMacro ( UseLabelOutline, int );
-  
-  /// 
+
+  ///
   /// 'standard' radiological convention views of patient space
   /// these calls adjust the SliceToRAS matrix to position the slice
-  /// cutting plane 
+  /// cutting plane
   void SetOrientationToAxial();
   void SetOrientationToSagittal();
   void SetOrientationToCoronal();
 
-  /// 
+  ///
   /// General 'reformat' view that allows for multiplanar reformat
   void SetOrientationToReformat();
 
@@ -147,34 +147,34 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkGetStringMacro (OrientationReference);
   vtkSetStringMacro (OrientationReference);
 
-  /// 
+  ///
   /// Size of the slice plane in millimeters
   vtkGetVector3Macro (FieldOfView, double);
   void SetFieldOfView (double x, double y, double z);
 
-  /// 
+  ///
   /// Origin of XYZ window
   vtkGetVector3Macro (XYZOrigin, double);
   void SetXYZOrigin (double x, double y, double z);
 
-  /// 
+  ///
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVectorMacro(Dimensions,int,3)
   void SetDimensions (int x, int y, int z);
 
-  /// 
+  ///
   /// Number of samples in each direction for the reslice operation
   /// -- this is the resolution that each slice layer is resliced into
-  /// -- the outputs of the slice layers are then composited and upsampled 
+  /// -- the outputs of the slice layers are then composited and upsampled
   ///    to the full Dimensions
-  /// -- note that z, the number of slices, should be the same for both 
+  /// -- note that z, the number of slices, should be the same for both
   ///    Dimensions and UVWDimensions
   vtkGetVectorMacro(UVWDimensions,int,3)
   void SetUVWDimensions (int x, int y, int z);
   void SetUVWDimensions (int xyz[3]);
 
-  ///  
+  ///
   ///    maximum limit for  UVWDimensions
   vtkGetVectorMacro(UVWMaximumDimensions,int,3)
   void SetUVWMaximumDimensions (int x, int y, int z);
@@ -186,49 +186,49 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   void SetUVWExtents (double x, double y, double z);
   void SetUVWExtents (double xyz[3]);
 
-  /// 
+  ///
   /// Origin of UVW window
   vtkGetVector3Macro (UVWOrigin, double);
   void SetUVWOrigin (double x, double y, double z);
   void SetUVWOrigin (double xyz[3]);
 
-  /// 
+  ///
   /// Origin of slice in XYZ or UVW space depending on SliceResolutionMode
   void SetSliceOrigin (double xyz[3]);
   void SetSliceOrigin (double x, double y, double z);
 
   ///
-  /// Set UVW extents and dimensions, 
+  /// Set UVW extents and dimensions,
   /// produces less upadtes then calling both separately
   void SetUVWExtentsAndDimensions (double extents[3], int dimensions[3]);
 
 
-  /// 
-  /// Matrix mapping from XY pixel coordinates on an image window 
+  ///
+  /// Matrix mapping from XY pixel coordinates on an image window
   /// into slice coordinates in mm
   vtkGetObjectMacro (XYToSlice, vtkMatrix4x4);
 
-  /// 
-  /// Matrix mapping from XY pixel coordinates on an image window 
+  ///
+  /// Matrix mapping from XY pixel coordinates on an image window
   /// into RAS world coordinates
   vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
 
-  /// 
-  /// Matrix mapping from UVW texture coordinates 
+  ///
+  /// Matrix mapping from UVW texture coordinates
   /// into slice coordinates in mm
   vtkGetObjectMacro (UVWToSlice, vtkMatrix4x4);
 
-  /// 
+  ///
   /// Matrix mapping from UVW texture coordinates
   /// into RAS world coordinates
   vtkGetObjectMacro (UVWToRAS, vtkMatrix4x4);
 
-  /// 
+  ///
   /// helper for comparing to matrices
   /// TODO: is there a standard VTK method?
   int Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2);
 
-  /// 
+  ///
   /// Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   /// - called when any of the inputs change
   void UpdateMatrices();
@@ -243,33 +243,33 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   static double* compareColor();
   static double* grayColor();
 
-  /// 
+  ///
   /// Set the number of rows and columns to use in a LightBox display
   /// of the node
   void SetLayoutGrid( int rows, int columns );
 
-  /// 
+  ///
   /// Set/Get the number of rows to use ina LightBox display
   vtkGetMacro (LayoutGridRows, int);
   virtual void SetLayoutGridRows(int rows);
-  
-  /// 
+
+  ///
   /// Set/Get the number of columns to use ina LightBox display
   vtkGetMacro (LayoutGridColumns, int);
   virtual void SetLayoutGridColumns(int cols);
-  
-  /// 
+
+  ///
   /// Set the SliceToRAS matrix according to the position and orientation of the locator:
   /// N(x, y, z) - the direction vector of the locator
   /// T(x, y, z) - the transverse direction vector of the locator
   /// P(x, y, z) - the tip location of the locator
-  /// All the above values are in RAS space. 
+  /// All the above values are in RAS space.
   void SetSliceToRASByNTP (double Nx, double Ny, double Nz,
                            double Tx, double Ty, double Tz,
                            double Px, double Py, double Pz,
                            int Orientation);
 
-  /// 
+  ///
   /// Set the RAS offset of the Slice to the passed values. JumpSlice
   /// and JumpAllSlices use the JumpMode to determine how to jump.
   void JumpSlice(double r, double a, double s);
@@ -281,7 +281,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Enum to specify the method of jumping slices
   enum {CenteredJumpSlice=0, OffsetJumpSlice};
 
-  /// 
+  ///
   /// Control how JumpSlice operates. CenteredJumpMode puts the
   /// specified RAS position in the center of the slice. OffsetJumpMode
   /// does not change the slice position, merely adjusts the slice
@@ -290,12 +290,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkGetMacro(JumpMode, int);
   void SetJumpModeToCentered();
   void SetJumpModeToOffset();
-  
+
   /// Enum to specify whether the slice spacing is automatically
   /// determined or prescribed
   enum {AutomaticSliceSpacingMode=0, PrescribedSliceSpacingMode};
-  
-  /// 
+
+  ///
   /// Get/Set the slice spacing mode. Slice spacing can be
   /// automatically calculated using GetLowestVolumeSliceSpacing() or prescribed
   vtkGetMacro(SliceSpacingMode, int);
@@ -303,13 +303,13 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   void SetSliceSpacingModeToAutomatic();
   void SetSliceSpacingModeToPrescribed();
 
-  /// 
+  ///
   /// Set/get the slice spacing to use when the SliceSpacingMode is
   /// "Prescribed"
   vtkSetVector3Macro(PrescribedSliceSpacing, double);
   vtkGetVector3Macro(PrescribedSliceSpacing, double);
 
-  /// 
+  ///
   /// Get/Set the current distance from the origin to the slice plane
   double GetSliceOffset();
   void SetSliceOffset(double offset);
@@ -319,7 +319,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkSetMacro(ActiveSlice, int);
   vtkGetMacro(ActiveSlice, int);
 
-  /// adjusts the slice node to align with the 
+  /// adjusts the slice node to align with the
   /// native space of the image data so that no oblique resampling
   /// occurs when rendering (helps to see original acquisition data
   /// and for obluique volumes with few slices).
@@ -334,14 +334,14 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
 
-  /// Enum identifying the parameters being manipulated with calls to 
+  /// Enum identifying the parameters being manipulated with calls to
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
   /// two so they can be combined into a bitmask to manipulate
   /// multiple parameters.
   /// The meanings for the flags are:
   ///    SliceToRASFlag - broadcast the SliceToRAS matrix to all linked viewers
   ///    FieldOfViewFlag - broadcast a specific field of view setting
-  ///    OrientationFlag - broadcast the orientation 
+  ///    OrientationFlag - broadcast the orientation
   ///    ResetFieldOfViewFlag - broadcast a message to reset the field of view
   ///    MultiplanarReformatFlag - broadcast reformat widget transformation
   ///    XYZOriginFlag - broadcast the XYZOrigin to all linked viewers
@@ -384,20 +384,20 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   void ResetInteractionFlagsModifier();
 
 
-  
+
   /// Enum to specify the method for setting UVW extents
 
   enum SliceResolutionModeType
   {
-    SliceResolutionMatchVolumes=0, 
+    SliceResolutionMatchVolumes=0,
     SliceResolutionMatch2DView,
     SliceFOVMatch2DViewSpacingMatchVolumes,
     SliceFOVMatchVolumesSpacingMatch2DView,
     SliceResolutionCustom
   };
 
-  /// 
-  /// method for setting UVW space (extents, dimensions and spacing) 
+  ///
+  /// method for setting UVW space (extents, dimensions and spacing)
   virtual void SetSliceResolutionMode(int mode);
   vtkGetMacro(SliceResolutionMode, int);
 
@@ -419,7 +419,7 @@ protected:
 
 
   int JumpMode;
-  
+
   int SliceVisible;
   int WidgetVisible;
   int WidgetNormalLockedToCamera;

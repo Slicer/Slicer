@@ -207,7 +207,7 @@ bool TestCopy()
   originalNode->SetColor(4, "four", 0.75, 0.0, 1.0, 0.7);
   originalNode->SetColor(5, "five and done", 1.0, 1.0, 1.0, 1.0);
   originalNode->NamesInitialisedOn();
-  
+
   vtkMRMLColorTableNode *copiedNode = colorLogic->CopyNode(originalNode.GetPointer(), "Copied Generic");
   if (!copiedNode)
     {

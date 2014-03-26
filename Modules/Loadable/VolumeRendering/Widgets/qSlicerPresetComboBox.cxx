@@ -75,7 +75,7 @@ void qSlicerIconComboBox::showPopup()
   //int belowHeight = screen.bottom() - below.y();
   QPoint above = mapToGlobal(listRect.topLeft());
   //int aboveHeight = above.y() - screen.y();
-    
+
   // CustomSize
   //
   const int numberOfItems = this->count();
@@ -84,14 +84,14 @@ void qSlicerIconComboBox::showPopup()
   const int itemsPerColumns = itemsPerRow ? static_cast<int>(0.999 + static_cast<double>(numberOfItems) / itemsPerRow) : 0;
   listRect.setWidth( itemsPerRow * itemSize.width() );
   listRect.setHeight( itemsPerColumns * itemSize.height() );
-  
+
   int marginLeft, marginTop, marginRight, marginBottom;
   container->getContentsMargins(&marginLeft, &marginTop, &marginRight, &marginBottom);
   listRect.setWidth( listRect.width() + marginLeft + marginRight);
   listRect.setWidth( listRect.width() + container->frameWidth());
   listRect.setHeight( listRect.height() + marginTop + marginBottom);
   listRect.setHeight( listRect.height() + container->frameWidth());
-  
+
   // Position horizontally.
   listRect.moveLeft(above.x());
 
@@ -99,7 +99,7 @@ void qSlicerIconComboBox::showPopup()
   // with the combo box.
   const QRect currentItemRect = view()->visualRect(view()->currentIndex());
   const int offset = listRect.top() - currentItemRect.top();
-  listRect.moveTop(above.y() 
+  listRect.moveTop(above.y()
                    + offset
                    - listRect.top());
 
@@ -123,7 +123,7 @@ void qSlicerIconComboBox::showPopup()
                              : QAbstractItemView::EnsureVisible);
   container->update();
 }
-  
+
 //-----------------------------------------------------------------------------
 qSlicerPresetComboBoxPrivate::qSlicerPresetComboBoxPrivate(
   qSlicerPresetComboBox& object)
@@ -142,7 +142,7 @@ void qSlicerPresetComboBoxPrivate::init()
   q->setAddEnabled(false);
   q->setRemoveEnabled(false);
   q->setBaseName(q->tr("Preset"));
-  
+
   qSlicerIconComboBox* comboBox = new qSlicerIconComboBox;
   //comboBox->setDefaultIcon(QIcon());
   //comboBox->setDefaultText(q->tr("Select a Preset"));
@@ -150,7 +150,7 @@ void qSlicerPresetComboBoxPrivate::init()
   q->setComboBox(comboBox);
   q->updateComboBoxTitleAndIcon(0);
   //comboBox->setMaximumHeight(comboBox->sizeHint().height());
-  
+
   qMRMLSceneModel* sceneModel =
     qobject_cast<qMRMLSceneModel*>(q->sortFilterProxyModel()->sourceModel());
   sceneModel->setNameColumn(-1);
@@ -190,7 +190,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
   // Set icon
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sortFilterProxyModel()->sourceModel());
   sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
-  
+
   // Update icon size
   QList<QSize> iconSizes = presetIcon.availableSizes();
   if (iconSizes.count())
@@ -199,7 +199,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
     this->comboBox()->view()->setIconSize(QSize(qMax(iconSize.width(), iconSizes[0].width()),
                                                 qMax(iconSize.height(), iconSizes[0].height())));
     }
-  
+
   // Set toolTip
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(presetNode);
   if (volumePropertyNode)

@@ -35,7 +35,7 @@ void vtkTensorImplicitFunctionToFunctionSet::PrintSelf(ostream& os, vtkIndent in
 }
 
 int vtkTensorImplicitFunctionToFunctionSet::GetTensor(vtkFloatingPointType *x, vtkFloatingPointType * res) {
-    
+
   if ( TensorComponent[0] )
     res[0] = TensorComponent[0]->EvaluateFunction(x);
   else {
@@ -106,20 +106,20 @@ int vtkTensorImplicitFunctionToFunctionSet::FunctionValues(vtkFloatingPointType*
     }
     //vtkMath::Jacobi(val,eigVal,eigVec);
     vtkDiffusionTensorMathematics::TeemEigenSolver(val,eigVal,eigVec);
-    for ( i=0; i < 3 ; i++ ) 
+    for ( i=0; i < 3 ; i++ )
       {
     res[i] = eigVec[i][this->IntegrationDirection];
       }
     if (  vtkMath::Dot(Direction,res) < 0 )
       {
-    for ( i=0; i < 3 ; i++ ) 
+    for ( i=0; i < 3 ; i++ )
       {
         res[i] = -res[i];
       }
       }
     return 1;
-    
-  }  
+
+  }
   else {
     for ( i = 0 ; i < 3 ; i++ )
       res[i] = 0;

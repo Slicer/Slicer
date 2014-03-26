@@ -43,9 +43,9 @@ vtkMRMLChartViewNode::~vtkMRMLChartViewNode()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLChartViewNode::GetNodeTagName() 
+const char* vtkMRMLChartViewNode::GetNodeTagName()
 {
-  return "ChartView"; 
+  return "ChartView";
 }
 
 //----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void vtkMRMLChartViewNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
@@ -104,7 +104,7 @@ void vtkMRMLChartViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "ChartNodeID: " << 
+  os << indent << "ChartNodeID: " <<
    (this->ChartNodeID ? this->ChartNodeID : "(none)") << "\n";
 }
 

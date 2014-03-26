@@ -554,7 +554,7 @@ int bitwiseOr(int firstValue, int secondValue)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetStates()const
 {
-  
+
   return std::accumulate(this->States.begin(), this->States.end(),
                          0x0000, bitwiseOr);
 }
@@ -2955,7 +2955,7 @@ void vtkMRMLScene::ClearNodeIDs()
   if (this->Nodes)
     {
     this->NodeIDs.clear();
-    this->NodeIDsMTime = this->Nodes->GetMTime();    
+    this->NodeIDsMTime = this->Nodes->GetMTime();
   }
 }
 

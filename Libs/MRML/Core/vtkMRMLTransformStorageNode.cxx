@@ -595,7 +595,7 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
     }
-  
+
   if (refNode->IsA("vtkMRMLGridTransformNode"))
     {
     return ReadGridTransform(refNode);
@@ -643,7 +643,7 @@ int vtkMRMLTransformStorageNode::WriteLinearTransform(vtkMRMLLinearTransformNode
     //
     vtkmat->Invert();
     }
-    
+
   typedef AffineTransformType::MatrixType MatrixType;
   typedef AffineTransformType::OutputVectorType OffsetType;
 

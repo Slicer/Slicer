@@ -1428,9 +1428,9 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
         //
         // keep a map of model hierarchy node ids so that can update the parent node references
         std::map<std::string, std::string> parentNodeIDMapper;
-        // hopefully the parents will have been read first, but if not 
+        // hopefully the parents will have been read first, but if not
         // keep a list of model hierarchy nodes that failed to have their parent node reference remapped
-        std::vector<vtkMRMLModelHierarchyNode *> childNodesThatNeedParentsIDsRemapped; 
+        std::vector<vtkMRMLModelHierarchyNode *> childNodesThatNeedParentsIDsRemapped;
         for (int n=0;
              n<miniscene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
              n++)
@@ -1461,10 +1461,10 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 parentNodeIDMapper[std::string(mhnd->GetID())] = std::string(tchild->GetID());
                 vtkMRMLModelHierarchyNode *tcmhd
                   = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
-                // check for a parent node id in the mapper (as long as it doesn't already 
+                // check for a parent node id in the mapper (as long as it doesn't already
                 // point to the source node), default to the top level one though
                 std::string parentNodeID = std::string(tmhnd->GetID());
-                if (tcmhd->GetParentNodeID() != NULL && 
+                if (tcmhd->GetParentNodeID() != NULL &&
                     strcmp(tcmhd->GetParentNodeID(),smhnd->GetID()) != 0)
                   {
                   std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));

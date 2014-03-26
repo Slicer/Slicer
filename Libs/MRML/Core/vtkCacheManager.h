@@ -18,10 +18,10 @@ class vtkMRMLScene;
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
 
-class VTK_MRML_EXPORT vtkCacheManager : public vtkObject 
+class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 {
   public:
-  
+
   /// The Usual vtk class functions
   static vtkCacheManager *New();
   vtkTypeRevisionMacro(vtkCacheManager, vtkObject);
@@ -30,21 +30,21 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkGetMacro (InsufficientFreeBufferNotificationFlag, int );
   vtkSetMacro (InsufficientFreeBufferNotificationFlag, int );
 
-  /// 
+  ///
   /// Sets the name of the directory to use for local file caching
   /// Does some checking to make sure this is a valid directory
   /// on the local system. Makes sure there's NO "/" at the end
   /// of the string, or kwsys/SystemTools will not see as a valid dir.
   virtual void SetRemoteCacheDirectory (const char *dir );
 
-  /// 
+  ///
   /// Returns the name of the directory to use for local file caching
   const char *GetRemoteCacheDirectory ();
 
-  /// 
+  ///
   /// Called when a file is loaded or removed from the cache.
   void UpdateCacheInformation ( );
-  /// 
+  ///
   /// Removes a target from the list of locally cached files and directories
   void DeleteFromCachedFileList ( const char * target );
 
@@ -52,7 +52,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   /// Remove a target directory or file from the cache.
   void DeleteFromCache( const char *target );
 
-  /// 
+  ///
   /// Removes all files from the cachedir
   /// and removes all filenames from CachedFileList
   int ClearCache ( );
@@ -61,42 +61,42 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   /// If not, an event (CacheDirtyEvent) is invoked.
   int ClearCacheCheck ( );
 
-  /// 
+  ///
   /// Before a file or directory is deleted,
   /// Marks any nodes that hold the uri as
   /// a reference as modified since read.
   void MarkNodesBeforeDeletingDataFromCache (const char *);
 
-  /// 
+  ///
   /// Checks to see if a uri appears to point to remote location
   /// and returns true if so. Looks for a '://' and if present,
   /// checks to see if the prefix is 'file'. If not 'file' but the
   /// thing:/// pattern exists, then returns true.
   virtual int IsRemoteReference ( const char *uri );
-  /// 
+  ///
   /// Looks for a 'file://' in the uri and if present, returns true.
   virtual int IsLocalReference ( const char *uri );
 
-  /// 
-  /// Checks to see if a uri is a file on disk and returns 
+  ///
+  /// Checks to see if a uri is a file on disk and returns
   /// true if so. Strips off a file:/// prefix if present, and
   /// expects an absolute path.
   virtual int LocalFileExists ( const char *uri );
-    
-  /// 
+
+  ///
   /// Takes a filename and a dirname (usually called with the
   /// RemoteCachedDirectory) and returns the full path of
   /// the filename if it exists under the dirname.
   const char* FindCachedFile ( const char * target, const char *dirname );
 
-  /// 
+  ///
   /// Checks to see if the The uri provided exists on disk.
   /// If not, it appends the Remote Cache Directory path
   /// and checks again, in case no path was provided.
   /// If neither exists, returns 0. If one exists, returns 1.
   virtual int CachedFileExists ( const char *filename );
 
-  /// 
+  ///
   /// Extracts the filename from the URI and prepends the
   /// Remote Cache Directory path to it. Returns the full path.
   /// NOTE: this method looks at a filename's extension and
@@ -107,7 +107,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   const char* GetFilenameFromURI ( const char *uri );
   const char* AddCachePathToFilename ( const char *filename );
   const char* EncodeURI ( const char *uri );
-    
+
   void CacheSizeCheck();
   void FreeCacheBufferCheck();
   float ComputeCacheSize( const char *dirname, unsigned long size );
@@ -116,7 +116,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   std::vector< std::string > GetCachedFiles()const;
 
-  /// 
+  ///
   vtkGetMacro ( RemoteCacheLimit, int );
   vtkSetMacro ( RemoteCacheLimit, int );
   vtkSetMacro ( CurrentCacheSize, float );
@@ -153,7 +153,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   std::map<std::string, std::string> uriMap;
   const char *GetFileFromURIMap (const char *uri );
-  
+
  private:
   int InsufficientFreeBufferNotificationFlag;
   int RemoteCacheLimit;
@@ -178,7 +178,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkCacheManager(const vtkCacheManager&);
   void operator=(const vtkCacheManager&);
 
-  /// 
+  ///
   /// Holder for callback
   vtkCallbackCommand *CallbackCommand;
 

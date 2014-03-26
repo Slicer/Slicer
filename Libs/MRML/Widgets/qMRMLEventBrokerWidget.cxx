@@ -166,7 +166,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
 
   QTreeWidgetItem* subjectItem  = this->itemFromSubject(observation->GetSubject());
   QTreeWidgetItem* eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
-  
+
   for (int i = 0; i < eventItem->childCount(); ++i)
     {
     QTreeWidgetItem* observationItem = eventItem->child(i);
@@ -233,7 +233,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
 {
   // Observation
   QTreeWidgetItem* observationItem = new QTreeWidgetItem;
-  
+
   vtkObject* observer = observation->GetObserver();
   this->setObjectToItem(observationItem, observer);
 
@@ -259,7 +259,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
   observationItem->setFlags(observationItem->flags() | Qt::ItemIsEditable);
   // Comments
   observationItem->setText(CommentColumn, observation->GetComment());
-    
+
   // Event
   QTreeWidgetItem* subjectItem  = this->itemFromSubject(observation->GetSubject());
   QTreeWidgetItem* eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
@@ -284,7 +284,7 @@ void qMRMLEventBrokerWidgetPrivate::setupUi(QWidget* parentWidget)
   vBoxLayout->addWidget(this->ConnectionsTreeWidget);
   vBoxLayout->setContentsMargins(0, 0, 0, 0);
   parentWidget->setLayout(vBoxLayout);
-  
+
 }
 
 //------------------------------------------------------------------------------
@@ -314,7 +314,7 @@ void qMRMLEventBrokerWidget::refresh()
     }
   bool isSortingEnabled = d->ConnectionsTreeWidget->isSortingEnabled();
   d->ConnectionsTreeWidget->setSortingEnabled(false);
-  
+
   for (int i = 0; i < eventBroker->GetNumberOfObservations(); ++i)
     {
     vtkObservation* observation = eventBroker->GetNthObservation(i);
@@ -342,7 +342,7 @@ void qMRMLEventBrokerWidget::onItemChanged(QTreeWidgetItem* item, int column)
       newTotalTime.remove(newTotalTime.size() - 1, 1);
       }
     bool ok = false;
-    double newTotal = newTotalTime.toDouble(&ok); 
+    double newTotal = newTotalTime.toDouble(&ok);
     if (ok)
       {
       if ( column == TotalTimeColumn )

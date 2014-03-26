@@ -10,7 +10,7 @@
 #define MRMLIDIOPlugin_EXPORT __declspec(dllimport)
 #endif
 #else
-#define MRMLIDIOPlugin_EXPORT 
+#define MRMLIDIOPlugin_EXPORT
 #endif
 
 /**
@@ -21,5 +21,5 @@
  */
 extern "C" {
     MRMLIDIOPlugin_EXPORT itk::ObjectFactoryBase* itkLoad();
-} 
-#endif  
+}
+#endif

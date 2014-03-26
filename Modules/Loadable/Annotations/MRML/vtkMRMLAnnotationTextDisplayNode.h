@@ -1,8 +1,8 @@
 // .NAME vtkMRMLAnnotationTextDisplayNode - MRML node to represent display properties for tractography.
 // .SECTION Description
-// vtkMRMLAnnotationTextDisplayNode nodes store display properties of trajectories 
-// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
-// or by scalar invariants), display on/off for tensor glyphs and display of 
+// vtkMRMLAnnotationTextDisplayNode nodes store display properties of trajectories
+// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
+// or by scalar invariants), display on/off for tensor glyphs and display of
 // trajectory as a line or tube.
 //
 
@@ -20,7 +20,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   static vtkMRMLAnnotationTextDisplayNode *New (  );
   vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode )
   void PrintSelf ( ostream& os, vtkIndent indent );
-  
+
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
-  
+
   // Description:
   // Get node XML tag name (like Volume, Annotation)
   virtual const char* GetNodeTagName() {return "AnnotationTextDisplay";}
@@ -50,8 +50,8 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
   // Description:
@@ -116,7 +116,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   vtkSetMacro(AttachEdgeOnly,int);
   vtkGetMacro(AttachEdgeOnly,int);
   vtkBooleanMacro(AttachEdgeOnly,int);
- 
+
   /// Create a backup of this node and attach it.
   void CreateBackup();
   /// Restore an attached backup of this node.

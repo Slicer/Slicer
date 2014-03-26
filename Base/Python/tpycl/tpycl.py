@@ -4,7 +4,7 @@
 # tpycl.py is the python support code to allow calling of python-wrapped
 # vtk code from tcl scripts
 #
-# the main class is tpycl, and scripts can 
+# the main class is tpycl, and scripts can
 #
 
 import sys
@@ -69,7 +69,7 @@ class tpycl(object):
       print ""
 
   def py_package(self, packageName):
-    """ imports a vtk-wrapped python package 
+    """ imports a vtk-wrapped python package
     """
     self.dprint ("importing %s as a package" % packageName)
 
@@ -109,11 +109,11 @@ class tpycl(object):
   def py_del(self,instanceName):
     """ deletes a named instance
     """
-    
+
     # only delete if the instanceName exists
     if globals().has_key(instanceName):
       exec( "del(%s)"%instanceName, globals() )
-        
+
     return None
 
   def py_puts(self, noNewLine, message):
@@ -127,13 +127,13 @@ class tpycl(object):
     """ sets the QTimer to call the callback
     """
     self.timer.start()
-    
+
   def after_callback(self):
     """ what gets called when the after timeout happens
     """
     self.tcl.eval('::after_callback')
     self.timer.stop()
-    
+
   def py_eval(self,cmd):
     """ evaluated the python command string and returns the result
     - if the result is a vtk object instance, it is registered in the tcl interp

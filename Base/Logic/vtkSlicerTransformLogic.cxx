@@ -167,7 +167,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
   return tnode;
 }
 
-int vtkSlicerTransformLogic::SaveTransform (const char* vtkNotUsed(filename), 
+int vtkSlicerTransformLogic::SaveTransform (const char* vtkNotUsed(filename),
                                             vtkMRMLTransformNode *vtkNotUsed(transformNode))
 {
   return 1;

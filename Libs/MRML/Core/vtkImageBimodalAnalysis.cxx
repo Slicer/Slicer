@@ -33,7 +33,7 @@ vtkImageBimodalAnalysis::vtkImageBimodalAnalysis()
   this->Min       = 0;
   this->Max       = 0;
   this->Offset    = 0;
-  
+
   for (int i = 0; i < 2; ++i)
     {
     this->SignalRange[i] = 0;
@@ -108,7 +108,7 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
   // Smooth
   for (x = min; x <= max; x++)
     {
-    for (k=0; k < width; k++) 
+    for (k=0; k < width; k++)
       {
       if (x+k <= max0) // skip any that would be outside range of outPtr see Bug #3429
         {
@@ -134,7 +134,7 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
           }
         }
       }
-    else 
+    else
       {
       if (outPtr[x] < outPtr[x+1])
         {
@@ -191,14 +191,14 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
 
   // Threshold
   threshold = trough;
-  
+
   // Compute the window as twice the width as the smaller half
   // of the signal lobe
   if (centroid - noiseCentroid < max - centroid)
     {
     window = (centroid - noiseCentroid)*2;
     }
-  else 
+  else
     {
     window = (max - centroid)*2;
     }
@@ -218,7 +218,7 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
   self->SetClipExtent(clipExt);
 }
 
-    
+
 
 //----------------------------------------------------------------------------
 // This method is passed a input and output Data, and executes the filter
@@ -231,13 +231,13 @@ void vtkImageBimodalAnalysis::ExecuteData(vtkDataObject *out)
   vtkImageData *inData = this->GetInput();
   void *inPtr;
   float *outPtr;
-  
+
   outData->SetExtent(outData->GetWholeExtent());
   outData->AllocateScalars();
 
   inPtr  = inData->GetScalarPointer();
   outPtr = (float *)outData->GetScalarPointer();
-  
+
   // Components turned into x, y and z
   int c = inData->GetNumberOfScalarComponents();
   if (c > 1)
@@ -256,43 +256,43 @@ void vtkImageBimodalAnalysis::ExecuteData(vtkDataObject *out)
   switch (inData->GetScalarType())
   {
     case VTK_CHAR:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (char *)(inPtr), outData, outPtr);
       break;
     case VTK_UNSIGNED_CHAR:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (unsigned char *)(inPtr), outData, outPtr);
       break;
     case VTK_SHORT:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (short *)(inPtr), outData, outPtr);
       break;
     case VTK_UNSIGNED_SHORT:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (unsigned short *)(inPtr), outData, outPtr);
       break;
     case VTK_INT:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (int *)(inPtr), outData, outPtr);
       break;
     case VTK_UNSIGNED_INT:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (unsigned int *)(inPtr), outData, outPtr);
       break;
     case VTK_LONG:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (long *)(inPtr), outData, outPtr);
       break;
     case VTK_UNSIGNED_LONG:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (unsigned long *)(inPtr), outData, outPtr);
       break;
     case VTK_FLOAT:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (float *)(inPtr), outData, outPtr);
       break;
     case VTK_DOUBLE:
-      vtkImageBimodalAnalysisExecute(this, 
+      vtkImageBimodalAnalysisExecute(this,
               inData, (double *)(inPtr), outData, outPtr);
       break;
     default:
@@ -315,6 +315,6 @@ void vtkImageBimodalAnalysis::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Max: " << this->Max << "\n";
   os << indent << "ClipExtent: " << this->ClipExtent[0] << "," << this->ClipExtent[1] << "," << this->ClipExtent[2] << "," << this->ClipExtent[3] << "," << this->ClipExtent[4] << "," << this->ClipExtent[5] << "\n";
   os << indent << "SignalRange: " << this->SignalRange[0] << "," << this->SignalRange[1] << "\n";
-    
+
 }
 

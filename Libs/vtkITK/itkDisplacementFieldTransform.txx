@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -73,7 +73,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     m_JacobianImage[j]->SetSpacing( spacing );
     m_JacobianImage[j]->SetDirection( direction );
     }
-  
+
   /** Fixed Parameters store the following information:
    *     Grid Size
    *     Grid Origin
@@ -95,7 +95,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
       }
     }
 }
-    
+
 
 // Destructor
 template<class TScalarType, unsigned int NDimensions>
@@ -131,7 +131,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     parameters->Fill( 0.0 );
     this->Modified();
     }
-  else 
+  else
     {
     itkExceptionMacro( << "Input parameters for the DisplacementFieldTransform haven't been set ! "
        << "Set them using the SetParameters or SetImage method first." );
@@ -173,7 +173,7 @@ void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetFixedParameters( const ParametersType & passedParameters )
 {
- 
+
   ParametersType parameters( NDimensions * (3 + NDimensions) );
 
   // check if the number of parameters match the
@@ -193,7 +193,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   else if ( passedParameters.Size() != NDimensions * (3 + NDimensions) )
     {
     itkExceptionMacro(<< "Mismatched between parameters size "
-                      << passedParameters.size() 
+                      << passedParameters.size()
                       << " and number of fixed parameters "
                       << NDimensions * (3 + NDimensions) );
     }
@@ -205,7 +205,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
       }
     }
 
-  /********************************************************* 
+  /*********************************************************
     Fixed Parameters store the following information:
         Grid Size
         Grid Origin
@@ -213,7 +213,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
         Grid Direction
      The size of these is equal to the  NInputDimensions
   *********************************************************/
-  
+
   /** Set the Grid Parameters */
   SizeType   gridSize;
   for (unsigned int i=0; i<NDimensions; i++)
@@ -222,14 +222,14 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     }
   RegionType gridRegion;
   gridRegion.SetSize( gridSize );
-  
+
   /** Set the Origin Parameters */
   OriginType origin;
   for (unsigned int i=0; i<NDimensions; i++)
     {
     origin[i] = parameters[NDimensions+i];
     }
-  
+
   /** Set the Spacing Parameters */
   SpacingType spacing;
   for (unsigned int i=0; i<NDimensions; i++)
@@ -246,12 +246,12 @@ DisplacementFieldTransform<TScalarType, NDimensions>
       direction[di][dj] = parameters[3*NDimensions+(di*NDimensions+dj)];
       }
     }
-  
+
   m_CoefficientImage->SetRegions( gridRegion );
   m_CoefficientImage->SetSpacing( spacing.GetDataPointer() );
   m_CoefficientImage->SetDirection( direction );
   m_CoefficientImage->SetOrigin( origin.GetDataPointer() );
-  
+
   for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     m_JacobianImage[j]->SetRegions( gridRegion );
@@ -259,7 +259,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     m_JacobianImage[j]->SetDirection( direction );
     m_JacobianImage[j]->SetOrigin( origin.GetDataPointer() );
     }
-  
+
   if (m_InputParametersPointer == &m_InternalParametersBuffer)
     {
     // Check if we need to resize the default parameter buffer.
@@ -270,13 +270,13 @@ DisplacementFieldTransform<TScalarType, NDimensions>
       m_InternalParametersBuffer.Fill( 0 );
       }
     }
-  
+
   DirectionType scale;
   for( unsigned int i=0; i<SpaceDimension; i++)
     {
     scale[i][i] = spacing[i];
     }
-  
+
   m_IndexToPoint = m_CoefficientImage->GetDirection() * scale;
   m_PointToIndex = m_IndexToPoint.GetInverse();
 
@@ -354,17 +354,17 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
 // Get the parameters
 template<class TScalarType, unsigned int NDimensions>
-const 
+const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::ParametersType &
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::GetParameters( void ) const
 {
-  /** NOTE: For efficiency, this class does not keep a copy of the parameters - 
-   * it just keeps pointer to input parameters. 
+  /** NOTE: For efficiency, this class does not keep a copy of the parameters -
+   * it just keeps pointer to input parameters.
    */
   if( !m_InputParametersPointer )
-    { 
+    {
     itkExceptionMacro(<<"Parameters are not yet set. ");
     }
   return m_InternalParametersBuffer;
@@ -373,14 +373,14 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
 // Get the parameters
 template<class TScalarType, unsigned int NDimensions>
-const 
+const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::ParametersType &
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::GetFixedParameters( void ) const
 {
   RegionType resRegion = m_CoefficientImage->GetBufferedRegion();
-  
+
   for (unsigned int i=0; i<NDimensions; i++)
     {
     this->m_FixedParameters[i] = (resRegion.GetSize())[i];
@@ -388,7 +388,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   for (unsigned int i=0; i<NDimensions; i++)
     {
     this->m_FixedParameters[NDimensions+i] = (m_CoefficientImage->GetOrigin())[i];
-    } 
+    }
   for (unsigned int i=0; i<NDimensions; i++)
     {
     this->m_FixedParameters[2*NDimensions+i] =  (m_CoefficientImage->GetSpacing())[i];
@@ -400,15 +400,15 @@ DisplacementFieldTransform<TScalarType, NDimensions>
       this->m_FixedParameters[3*NDimensions+(di*NDimensions+dj)] = (m_CoefficientImage->GetDirection())[di][dj];
       }
     }
-  
+
   return (this->m_FixedParameters);
 }
 
 
-  
+
 // Set the coefficients using input images
 template<class TScalarType, unsigned int NDimensions>
-void 
+void
 DisplacementFieldTransform<TScalarType, NDimensions>
 ::SetImage( ImagePointer image )
 {
@@ -418,7 +418,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
     // Clean up buffered parameters
     unsigned int numberOfParameters = this->GetNumberOfParameters();
-    m_InternalParametersBuffer = ParametersType(image->GetPixelContainer()->GetImportPointer(), 
+    m_InternalParametersBuffer = ParametersType(image->GetPixelContainer()->GetImportPointer(),
                                                 numberOfParameters);
     m_InputParametersPointer = &m_InternalParametersBuffer;
 
@@ -430,19 +430,19 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     m_JacobianImage[j]->SetDirection( image->GetDirection() );
     m_JacobianImage[j]->SetOrigin( image->GetOrigin().GetDataPointer() );
     }
-  
+
     DirectionType scale;
     for( unsigned int i=0; i<SpaceDimension; i++)
       {
       scale[i][i] = spacing[i];
       }
-    
+
     m_IndexToPoint = image->GetDirection() * scale;
     m_PointToIndex = m_IndexToPoint.GetInverse();
 
     this->Modified();
     }
-}  
+}
 
 // Print self
 template<class TScalarType, unsigned int NDimensions>
@@ -455,15 +455,15 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
   os << indent << "CoefficientImage: " << m_CoefficientImage.GetPointer() << std::endl;
 
-  os << indent << "InputParametersPointer: " 
+  os << indent << "InputParametersPointer: "
      << m_InputParametersPointer << std::endl;
 }
 
 // Transform a point
 template<class TScalarType, unsigned int NDimensions>
-bool 
+bool
 DisplacementFieldTransform<TScalarType, NDimensions>
-::InsideValidRegion( 
+::InsideValidRegion(
   const ContinuousIndexType& index ) const
 {
   bool inside = true;
@@ -481,7 +481,7 @@ template<class TScalarType, unsigned int NDimensions>
 typename DisplacementFieldTransform<TScalarType, NDimensions>
 ::OutputPointType
 DisplacementFieldTransform<TScalarType, NDimensions>
-::TransformPoint(const InputPointType &point) const 
+::TransformPoint(const InputPointType &point) const
 {
   unsigned int j;
   OutputPointType outputPoint;
@@ -490,17 +490,17 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   transformedPoint = point;
 
   ContinuousIndexType index;
-  
+
   this->TransformPointToContinuousIndex( point, index );
-  
+
   // NOTE: if the support region does not lie totally within the grid
   // we assume zero displacement and return the input point
   bool inside = this->InsideValidRegion( index );
   if ( !inside )
     return transformedPoint;
-  
+
   outputPoint.Fill( NumericTraits<ScalarType>::Zero );
-  
+
   OutputVectorType displacement = LinearInterpolateAtIndex( index );
   for( j = 0; j < SpaceDimension; j++ )
     {
@@ -511,7 +511,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
 
 }
 
-// Compute the Jacobian in one position 
+// Compute the Jacobian in one position
 template<class TScalarType, unsigned int NDimensions>
 const
 typename DisplacementFieldTransform<TScalarType, NDimensions>
@@ -579,7 +579,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     }
 
   IndexType supportIndex;
-  for( unsigned int j = 0; j < SpaceDimension; j++ ) 
+  for( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     supportIndex[j] = (long) vcl_floor(index[j] );
     }
@@ -596,7 +596,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
   for ( unsigned int j = 0; j < SpaceDimension; j++ )
     {
     // set to zeros
-    p[j] = p0; 
+    p[j] = p0;
     }
 
   while ( ! m_Iterator[0].IsAtEnd() )
@@ -673,7 +673,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
     baseIndex[dim] = (long) vcl_floor(index[dim] );
     distance[dim] = index[dim] - double( baseIndex[dim] );
     }
-  
+
   /**
    * Interpolated value is the weight some of each of the surrounding
    * neighbors. The weight for each neighbour is the fraction overlap
@@ -710,7 +710,7 @@ DisplacementFieldTransform<TScalarType, NDimensions>
       upper >>= 1;
 
       }
-    
+
     // get neighbor value only if overlap is not zero
     if( overlap )
       {

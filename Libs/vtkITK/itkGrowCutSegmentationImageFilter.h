@@ -15,7 +15,7 @@
 
 
 #ifndef PixelState
-enum PixelState{ 
+enum PixelState{
     UNLABELED = 0,
     LABELED = 1,
     LOCALLY_SATURATED = 2,
@@ -34,8 +34,8 @@ namespace itk
  * additional gestures for editing a segmentation produced as a
  * result of the same or different algorithm.
  *
- * The filter is based on the paper "GrowCut:Interactive Multi-Label 
- * N-D Image Segmentation By Cellular Automata", Vladimir Vezhnevets, 
+ * The filter is based on the paper "GrowCut:Interactive Multi-Label
+ * N-D Image Segmentation By Cellular Automata", Vladimir Vezhnevets,
  * Vadim Konouchine
  *
  * Modified Version: The inputs consist of the input intensity image,
@@ -45,18 +45,18 @@ namespace itk
  *
  * This algorithm is implemented scalar images. Vector Images are not
  * supported.
- *    
- *        
+ *
+ *
 **/
 
 
 /* template<class TInputImage,  */
 /*   class TOutputImage, class TLabelPixelType = short,  */
 /*   class TWeightPixelType = float >  */
-template<class TInputImage, 
-  class TOutputImage, 
-  class TWeightPixelType = float> 
-  class GrowCutSegmentationImageFilter: public ImageToImageFilter<TInputImage,TOutputImage> 
+template<class TInputImage,
+  class TOutputImage,
+  class TWeightPixelType = float>
+  class GrowCutSegmentationImageFilter: public ImageToImageFilter<TInputImage,TOutputImage>
 {
 
  public:
@@ -72,7 +72,7 @@ template<class TInputImage,
   /** Run-time type information (and related methods).  */
   itkTypeMacro(GrowCutSegmentationImageFilter,
                ImageToImageFilter);
- 
+
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TInputImage::ImageDimension ) ;
@@ -81,17 +81,17 @@ template<class TInputImage,
   typedef typename InputImageType::Pointer InputImagePointer;
   typedef typename InputImageType::ConstPointer InputImageConstPointer;
 
-  typedef typename InputImageType::PixelType InputPixelType; 
+  typedef typename InputImageType::PixelType InputPixelType;
   typedef typename InputImageType::IndexType InputIndexType;
   typedef typename InputImageType::SizeType SizeType;
-  
+
   typedef TOutputImage OutputImageType;
   typedef typename OutputImageType::Pointer OutputImagePointer;
-  typedef typename OutputImageType::RegionType OutputImageRegionType; 
+  typedef typename OutputImageType::RegionType OutputImageRegionType;
   typedef typename OutputImageType::PixelType OutputPixelType;
   typedef typename OutputImageType::IndexType OutputIndexType;
   typedef typename InputImageType::SizeType OutputSizeType;
-  
+
 
   /** Smart Pointer type to a DataObject. */
   typedef typename DataObject::Pointer DataObjectPointer;
@@ -105,30 +105,30 @@ template<class TInputImage,
 
    /** Index typedef support. */
   typedef Index<itkGetStaticConstMacro(InputImageDimension)> IndexType;
-  
+
  /** InputSizeType typedef support **/
   typedef typename InputImageType::SizeType InputSizeType;
 
   /* NodeContainer typedef support for storing a set of seed points */
   typedef VectorContainer<unsigned int, IndexType> NodeContainer;
-  
+
   /* NodeContainer pointer support */
   typedef typename NodeContainer::Pointer NodeContainerPointer;
 
-  /** enum of the growcut segmentation. NoLabel represents points 
-    that have not been assigned any label. Object represents points 
-    that are assigned to foreground, and Background represents points 
+  /** enum of the growcut segmentation. NoLabel represents points
+    that have not been assigned any label. Object represents points
+    that are assigned to foreground, and Background represents points
     that are assigned to the background **/
   enum LabelType { NoLabel, ObjectLabel, BackgroundLabel };
 
-  
+
   /** WeightImage typedef support */
   /* indicates the strength of a label for a given cell */
   typedef Image<TWeightPixelType, itkGetStaticConstMacro(InputImageDimension) > WeightImageType;
-  
+
   /** WeightImagePointer typedef support. */
   typedef typename WeightImageType::Pointer WeightImagePointer;
-  
+
   typedef TWeightPixelType WeightPixelType;
 
   /** Set the Input Image **/
@@ -138,16 +138,16 @@ template<class TInputImage,
   }
 
   const InputImagePointer GetInputImage( );
-  
+
   /** Set/Get the Label Image **/
   void SetLabelImage( const OutputImageType *f)
   {
     this->ProcessObject::SetNthInput(1, const_cast< OutputImageType *>(f) );
     m_LabelImage = static_cast< OutputImageType *>(this->ProcessObject::GetInput(1));
   }
-  
+
   const OutputImagePointer GetLabelImage();
-  
+
   /** Get the Weight image **/
   const WeightImagePointer GetStrengthImage();
 
@@ -169,10 +169,10 @@ template<class TInputImage,
 
   void SetMaxSaturationImage( const WeightImageType *w);
   const WeightImagePointer GetMaxSaturationImage();
-  
-  /** Set the initial strength **/ 
+
+  /** Set the initial strength **/
   itkSetMacro( SeedStrength, double );
-  
+
   /** Get the seed strength **/
   itkGetConstMacro( SeedStrength, double );
 
@@ -190,13 +190,13 @@ template<class TInputImage,
 
   /** Set the number of iterations **/
   itkSetMacro( MaxIterations, unsigned int );
-  
+
   /** Get the number of iterations **/
   itkGetConstMacro( MaxIterations, unsigned int );
 
  /** Set the number of iterations **/
   itkSetMacro( ObjectRadius, unsigned int );
-  
+
   /** Get the number of iterations **/
   itkGetConstMacro( ObjectRadius, unsigned int );
 
@@ -216,7 +216,7 @@ template<class TInputImage,
   {
     m_roiEnd = end;
   }
-  
+
 
   OutputIndexType GetROIEnd() const
   {
@@ -225,7 +225,7 @@ template<class TInputImage,
 
   /** Set the radius of the neighborhood for processing. Default is 1 **/
   itkSetMacro( Radius, InputSizeType );
-  
+
   /** Get the radius of neighborhood used for processing **/
   itkGetConstMacro( Radius, InputSizeType );
 
@@ -245,24 +245,24 @@ template<class TInputImage,
   itkGetConstMacro(SetDistancesImage, bool);
   itkBooleanMacro(SetDistancesImage);
 
-  /**Set/Get whether the stateImage has already been set for the filter. 
-  * Default setting is off in which case the filter automatically initializes 
-  * the state image. 
+  /**Set/Get whether the stateImage has already been set for the filter.
+  * Default setting is off in which case the filter automatically initializes
+  * the state image.
   **/
   itkSetMacro(SetStateImage, bool);
   itkGetConstMacro(SetStateImage, bool);
   itkBooleanMacro(SetStateImage);
 
-  /**Set/Get whether the maxSaturationImage has already been set for the filter. 
-  * Default setting is off in which case the filter automatically initializes 
-  * the maxSaturationImage image. 
+  /**Set/Get whether the maxSaturationImage has already been set for the filter.
+  * Default setting is off in which case the filter automatically initializes
+  * the maxSaturationImage image.
   **/
   itkSetMacro(SetMaxSaturationImage, bool);
   itkGetConstMacro(SetMaxSaturationImage, bool);
   itkBooleanMacro(SetMaxSaturationImage);
 
  protected:
-  
+
   GrowCutSegmentationImageFilter();
   ~GrowCutSegmentationImageFilter() {};
 
@@ -272,8 +272,8 @@ template<class TInputImage,
    // Override since the filter produces the entire dataset
   void EnlargeOutputRequestedRegion(DataObject *output);
 
-  void GenerateData();  
- 
+  void GenerateData();
+
 #if ITK_VERSION_MAJOR < 4
   void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
                              int threadId ) ;
@@ -283,14 +283,14 @@ template<class TInputImage,
 #endif
 
   void AfterThreadedGenerateData();
- 
+
   void Initialize(OutputImageType* output);
-  
+
   void PrintSelf ( std::ostream& os, Indent indent ) const;
 
   void GrowCutSlowROI( TOutputImage *);
 
-  
+
  private:
 
   GrowCutSegmentationImageFilter(const Self&); //purposely not implemented
@@ -301,14 +301,14 @@ template<class TInputImage,
   void InitializeDistancesImage(TInputImage *input,WeightImageType *distance);
 
   void GetRegionOfInterest();
-  
+
   void ComputeLabelVolumes(TOutputImage *outputImage, vcl_vector< unsigned > &volumes, vcl_vector< unsigned > &phyVolumes);
 
   void MaskSegmentedImageByWeight(float upperThresh);
-  
-   
+
+
   WeightPixelType                            m_ConfThresh;
-  InputSizeType                              m_Radius; 
+  InputSizeType                              m_Radius;
   OutputImagePointer                         m_LabelImage;
   WeightImagePointer                         m_WeightImage;
   unsigned int                               m_Labeled;

@@ -30,13 +30,13 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Copy data from a  referenced node's filename to new location.
   /// NOTE: use this instead of Write Data in the Remote IO Pipeline
   /// until FreeSurferModel Writers are available.
   virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FreeSurferModelOverlayStorage";};
 
@@ -55,12 +55,12 @@ protected:
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  /// 
+  ///
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
-  
-  /// 
+
+  ///
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
   virtual int WriteDataInternal(vtkMRMLNode *refNode);

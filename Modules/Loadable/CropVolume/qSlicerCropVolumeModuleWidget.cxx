@@ -244,7 +244,7 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene)
   this->updateWidget();
 
   // observe close event
-  //qvtkReconnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, 
+  //qvtkReconnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent,
   //  this, SLOT(onEndCloseEvent()));
 }
 
@@ -284,8 +284,8 @@ void qSlicerCropVolumeModuleWidget::onApply(){
 
   Q_D(const qSlicerCropVolumeModuleWidget);
   vtkSlicerCropVolumeLogic *logic = d->logic();
-  
-  if(!this->parametersNode || !d->InputVolumeComboBox->currentNode() || 
+
+  if(!this->parametersNode || !d->InputVolumeComboBox->currentNode() ||
      !d->InputROIComboBox->currentNode())
     return;
 
@@ -333,7 +333,7 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged()
   Q_D(qSlicerCropVolumeModuleWidget);
   Q_ASSERT(d->VoxelBasedModeRadioButton);
 
-  vtkMRMLAnnotationROINode* node = 
+  vtkMRMLAnnotationROINode* node =
     vtkMRMLAnnotationROINode::SafeDownCast(d->InputROIComboBox->currentNode());
   if(node)
     {
@@ -352,7 +352,7 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged()
     return;
     }
   this->parametersNode->SetROIVisibility(d->VisibilityButton->isChecked());
-  vtkMRMLAnnotationROINode* node = 
+  vtkMRMLAnnotationROINode* node =
     vtkMRMLAnnotationROINode::SafeDownCast(d->InputROIComboBox->currentNode());
   if (node)
     {

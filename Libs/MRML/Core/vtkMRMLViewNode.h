@@ -28,26 +28,26 @@ public:
   static vtkMRMLViewNode *New();
   vtkTypeMacro(vtkMRMLViewNode,vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
@@ -55,22 +55,22 @@ public:
   static double* defaultBackgroundColor();
   static double* defaultBackgroundColor2();
 
-  /// 
+  ///
   /// Indicates if the box is visible
   vtkGetMacro(BoxVisible, int);
   vtkSetMacro(BoxVisible, int);
-  
-  /// 
+
+  ///
   /// Indicates if the axis labels are visible
   vtkGetMacro(AxisLabelsVisible, int);
   vtkSetMacro(AxisLabelsVisible, int);
 
-  /// 
+  ///
   /// Indicates if the axis labels visibility contolled by camera orientation
   vtkGetMacro(AxisLabelsCameraDependent, int);
   vtkSetMacro(AxisLabelsCameraDependent, int);
 
-  /// 
+  ///
   /// Toggles visibility of fiducial points in 3D viewer
   vtkGetMacro (FiducialsVisible, int );
   vtkSetMacro (FiducialsVisible, int );
@@ -78,59 +78,59 @@ public:
   vtkGetMacro (FiducialLabelsVisible, int );
   vtkSetMacro (FiducialLabelsVisible, int );
 
-  /// 
+  ///
   /// Field of view size
   vtkGetMacro(FieldOfView, double);
   vtkSetMacro(FieldOfView, double);
 
-  /// 
+  ///
   /// Axis label size
   vtkGetMacro(LetterSize, double);
   vtkSetMacro(LetterSize, double);
 
-  /// 
+  ///
   /// Turn on and off animated spinning or rocking.
   vtkGetMacro (AnimationMode, int );
   vtkSetMacro (AnimationMode, int );
 
-  /// 
+  ///
   vtkGetMacro (ViewAxisMode, int );
   vtkSetMacro (ViewAxisMode, int );
-  
-  /// 
+
+  ///
   /// Direction of animated spinning
   vtkGetMacro ( SpinDirection, int );
   vtkSetMacro ( SpinDirection, int );
 
-  /// 
+  ///
   /// Number of degrees in spin increment.
   vtkGetMacro ( SpinDegrees, double );
   vtkSetMacro ( SpinDegrees, double );
 
   vtkGetMacro ( RotateDegrees, double );
   vtkSetMacro ( RotateDegrees, double );
-  
-  /// 
+
+  ///
   /// Amount of wait time between spin increments
   vtkGetMacro ( AnimationMs, int );
   vtkSetMacro ( AnimationMs, int );
-    
-  /// 
+
+  ///
   /// Length of animated rocking
   vtkGetMacro ( RockLength, int );
   vtkSetMacro ( RockLength, int );
 
-  /// 
+  ///
   /// Increment of animated rock
   vtkGetMacro ( RockCount, int );
   vtkSetMacro ( RockCount, int );
 
-  /// 
+  ///
   /// stereo mode (including nostereo)
   vtkGetMacro ( StereoType, int );
   vtkSetMacro ( StereoType, int );
 
-  /// 
+  ///
   /// specifies orthographic or perspective rendering
   vtkGetMacro (RenderMode, int );
   vtkSetMacro (RenderMode, int );
@@ -145,13 +145,13 @@ public:
   vtkGetMacro ( FPSVisible, int );
   vtkSetMacro ( FPSVisible, int );
 
-  /// Modes for automatically controlling camera 
+  /// Modes for automatically controlling camera
   enum
     {
       RotateAround = 0,
       LookFrom
     };
-    
+
   /// Rotate camera directions
   enum
     {
@@ -162,7 +162,7 @@ public:
       YawLeft,
       YawRight
     };
-    
+
   /// Stereo modes
   enum
     {
@@ -212,32 +212,32 @@ protected:
   double FieldOfView;
   double LetterSize;
 
-  /// 
+  ///
   /// parameters of automatic spin
   int AnimationMode;
   int SpinDirection;
   double SpinDegrees;
   int AnimationMs;
 
-  /// 
+  ///
   /// parameters of automatic rock
   int RockLength;
   int RockCount;
 
-  /// 
+  ///
   /// Increment used to rotate the view
   /// once about an axis.
   double RotateDegrees;
-  
-  /// 
+
+  ///
   /// parameters for stereo viewing
   int StereoType;
 
-  /// 
+  ///
   /// Specifies orthographic or perspective rendering
   int RenderMode;
 
-  /// 
+  ///
   /// Parameters for look-from or rotate-around
   /// automatic view control
   int ViewAxisMode;

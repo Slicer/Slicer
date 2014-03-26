@@ -36,7 +36,7 @@ public:
   };
 
 protected:
-  
+
   /// To/from ITK
   typedef unsigned short InputImagePixelType;
   typedef unsigned short  OutputImagePixelType;
@@ -60,7 +60,7 @@ protected:
     ConnectPipelines(this->vtkExporter, this->itkImporter);
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     this->LinkITKProgressToVTKProgress ( m_Filter );
-    
+
     /// Set up the filter pipeline
     m_Filter->SetInput ( this->itkImporter->GetOutput() );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
@@ -70,7 +70,7 @@ protected:
   ~vtkITKImageToImageFilterUSUS()
   {
   };
-  
+
 private:
   vtkITKImageToImageFilterUSUS(const vtkITKImageToImageFilterUSUS&);  /// Not implemented.
   void operator=(const vtkITKImageToImageFilterUSUS&);  /// Not implemented.

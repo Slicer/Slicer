@@ -35,15 +35,15 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
@@ -51,14 +51,14 @@ public:
   /// Set a reference to transform node
   void SetAndObserveTransformNodeID(const char *transformNodeID);
 
-  /// 
+  ///
   /// Associated transform MRML node
   vtkMRMLTransformNode* GetParentTransformNode();
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Transform nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                  unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                  unsigned long /*event*/,
                                   void * /*callData*/ );
 
   /// TransformModifiedEvent is send when the parent transform is modidied

@@ -1,4 +1,4 @@
-/* 
+/*
  * Resource generated for file:
  *    MIT_NAMIC_PNL_Logo.png (zlib, base64) (image file)
  */
@@ -8,7 +8,7 @@ static const unsigned int  image_MIT_NAMIC_PNL_Logo_pixel_size     = 4;
 static const unsigned long image_MIT_NAMIC_PNL_Logo_length         = 6672;
 static const unsigned long image_MIT_NAMIC_PNL_Logo_decoded_length = 22880;
 
-static const unsigned char image_MIT_NAMIC_PNL_Logo[] = 
+static const unsigned char image_MIT_NAMIC_PNL_Logo[] =
   "eNrtnAlYjWkbx5vvG1vnPUWMGcsYM2bG0hiGqMxIGUIJZbRpL4QWWknJRKXFkoZKIVoU7a"
   "d9U2ml7HvZt8hgwliS//e8z0lKdc5pxmzfnOe67uvUe855cT0///t/P/fzPhIS4tFyQIRR"
   "9/gp0k/egnvyWcwOrMDwVXmQsc5Aj8UZ6GmVgS9X5tHrPunncez6fTS+akRnhngW/r/YaX"

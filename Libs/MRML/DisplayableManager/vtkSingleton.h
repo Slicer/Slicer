@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Library:   CTK
- 
+
   Copyright (c) 2010  Kitware Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- 
+
 =========================================================================*/
 
 #ifndef __vtkSingleton_h
@@ -39,7 +39,7 @@ static NAME* Instance;                    \
 static void classInitialize();            \
 static void classFinalize();              \
 friend class NAME##Initialize;
-  
+
 //-----------------------------------------------------------------------------
 /// Help macro allowing to declare the utility class to make sure
 /// NAME is initialized before it is used.
@@ -48,7 +48,7 @@ friend class NAME##Initialize;
 ///
 /// The instance (NAME##Initializer) will show up in any translation unit
 /// that uses NAME.  It will make sure NAME is initialized before it is used.
-/// 
+///
 #define VTK_SINGLETON_DECLARE_INITIALIZER(EXPORT_DIRECTIVE,NAME)   \
 class EXPORT_DIRECTIVE NAME##Initialize                            \
 {                                                                  \

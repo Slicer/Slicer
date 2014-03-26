@@ -354,7 +354,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       }
     pipeline->Cutter->SetInput(polyData);
 
-    // need this to update bounds of the locator, to avoid crash in the cutter 
+    // need this to update bounds of the locator, to avoid crash in the cutter
     polyData->Modified();
 
     // Update transform matrices
@@ -378,8 +378,8 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
                               pipeline->NodeToWorld, tempMat2.GetPointer());
     pipeline->TransformToSlice->SetMatrix(tempMat2.GetPointer());
 
-    pipeline->Plane->Modified(); 
-    
+    pipeline->Plane->Modified();
+
     // optimization for slice to slice intersections which are 1 quad polydatas
     // no need for 50^3 default locator divisons
     if (polyData->GetPoints() != NULL && polyData->GetNumberOfPoints() <= 4)
@@ -541,7 +541,7 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
 
   for (int i=0; i<nnodes; i++)
   {
-    vtkMRMLDisplayNode *dnode = node->GetNthDisplayNode(i);    
+    vtkMRMLDisplayNode *dnode = node->GetNthDisplayNode(i);
     if ( this->Internal->UseDisplayNode(dnode) )
       {
       this->Internal->ModelToDisplayNodes[node].insert(dnode);

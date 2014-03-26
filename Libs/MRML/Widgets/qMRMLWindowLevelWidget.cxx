@@ -190,11 +190,11 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
     d->PopupWidget->setAutoShow(false);
     d->PopupWidget->hidePopup();
     }
-  
+
   if (autoWindowLevel != oldAuto)
     {
     emit this->autoWindowLevelValueChanged(
-      autoWindowLevel == qMRMLWindowLevelWidget::Auto ? 
+      autoWindowLevel == qMRMLWindowLevelWidget::Auto ?
         qMRMLWindowLevelWidget::Auto : qMRMLWindowLevelWidget::Manual);
     }
 }

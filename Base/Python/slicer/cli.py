@@ -77,6 +77,6 @@ def run(module, node = None, parameters = None, wait_for_completion = False, del
   #widget.setCurrentCommandLineModuleNode(node)
   #widget.apply()
   return node
-  
+
 def cancel(node):
   print "Not yet implemented"

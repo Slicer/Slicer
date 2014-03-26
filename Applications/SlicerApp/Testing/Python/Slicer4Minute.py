@@ -110,8 +110,8 @@ class Slicer4MinuteWidget:
 #
 
 class Slicer4MinuteLogic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -120,7 +120,7 @@ class Slicer4MinuteLogic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -169,7 +169,7 @@ class Slicer4MinuteTest(unittest.TestCase):
   def test_Slicer4Minute1(self):
     """ Tests parts of the Slicer4Minute tutorial.
 
-    Currently testing 'Part 2' which covers volumes, models, visibility and clipping. 
+    Currently testing 'Part 2' which covers volumes, models, visibility and clipping.
     """
 
     self.delayDisplay("Starting the test")
@@ -195,7 +195,7 @@ class Slicer4MinuteTest(unittest.TestCase):
     #
     #
     self.delayDisplay('Testing Part 2 of the Tutorial')
-    
+
     # check volume is loaded out of scene
     volumeNode = slicer.util.getNode(pattern="grayscale")
     logic = Slicer4MinuteLogic()
@@ -237,7 +237,7 @@ class Slicer4MinuteTest(unittest.TestCase):
 
     # Can we make this more than just a Smoke Test?
     self.delayDisplay('Optic chiasm should be visible. Front part of white matter should be clipped.')
-    
+
     # Done
     #
     #

@@ -37,8 +37,8 @@ vtkInstantiatorNewMacro(vtkSlicerGPUMultiVolumeMapper);
 //
 //  1 component three input volumes (A, B, and LabelMap):
 //             R            G             B             A
-//  volume 1   scalar.A     scalar.B      Label              
-//  
+//  volume 1   scalar.A     scalar.B      Label
+//
 
 template <class T>
 void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
@@ -92,7 +92,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
         //0
         idx = static_cast<unsigned char>((*(inPtr++) + offset) * scale);
         *(outPtr++) = idx;
-        
+
         //1
         if (inPtr1)
         {
@@ -101,8 +101,8 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
         }
         else
             *(outPtr++) = 0;
-        
-        //2    
+
+        //2
         if (inPtr2)
         {
             idx = static_cast<unsigned char>((*(inPtr2++) + offset) * scale);
@@ -110,17 +110,17 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
         }
         else
             *(outPtr++) = 0;
-        
-        //3    
+
+        //3
         *(outPtr++) = 0;
-       } 
-     }  
+       }
+     }
   }
   // The sizes are different and interpolation is required
   else
   {
     outPtr  = volume1;
- 
+
     for ( k = 0; k < outputDimensions[2]; k++ )
       {
       fz = k * sampleRate[2];
@@ -147,7 +147,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
           inPtr2 = dataPtr2;
           if (inPtr2)
             inPtr2 += z*inputDimensions[0]*inputDimensions[1] + y*inputDimensions[0] + x;
-          
+
           {
             float A, B, C, D, E, F, G, H;
             A = static_cast<float>(*(inPtr));
@@ -159,7 +159,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
             G = static_cast<float>(*(inPtr+inputDimensions[0]*inputDimensions[1]+inputDimensions[0]));
             H = static_cast<float>(*(inPtr+inputDimensions[0]*inputDimensions[1]+inputDimensions[0]+1));
 
-            float val = 
+            float val =
               (1.0-wx)*(1.0-wy)*(1.0-wz)*A +
               (    wx)*(1.0-wy)*(1.0-wz)*B +
               (1.0-wx)*(    wy)*(1.0-wz)*C +
@@ -171,7 +171,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
 
             idx = static_cast<unsigned char>((val + offset)*scale);
             *(outPtr++) = idx;
-            
+
             if (inPtr1)
             {
                 A = static_cast<float>(*(inPtr1));
@@ -183,7 +183,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
                 G = static_cast<float>(*(inPtr1+inputDimensions[0]*inputDimensions[1]+inputDimensions[0]));
                 H = static_cast<float>(*(inPtr1+inputDimensions[0]*inputDimensions[1]+inputDimensions[0]+1));
 
-                val = 
+                val =
                   (1.0-wx)*(1.0-wy)*(1.0-wz)*A +
                   (    wx)*(1.0-wy)*(1.0-wz)*B +
                   (1.0-wx)*(    wy)*(1.0-wz)*C +
@@ -198,9 +198,9 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
             }
             else
                 *(outPtr++) = 0;
-            
+
             if (inPtr2)
-            {            
+            {
                 A = static_cast<float>(*(inPtr1));
                 B = static_cast<float>(*(inPtr1+1));
                 C = static_cast<float>(*(inPtr1+inputDimensions[0]));
@@ -210,7 +210,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
                 G = static_cast<float>(*(inPtr1+inputDimensions[0]*inputDimensions[1]+inputDimensions[0]));
                 H = static_cast<float>(*(inPtr1+inputDimensions[0]*inputDimensions[1]+inputDimensions[0]+1));
 
-                val = 
+                val =
                   (1.0-wx)*(1.0-wy)*(1.0-wz)*A +
                   (    wx)*(1.0-wy)*(1.0-wz)*B +
                   (1.0-wx)*(    wy)*(1.0-wz)*C +
@@ -225,7 +225,7 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
             }
             else
                 *(outPtr++) = 0;
-                
+
             *(outPtr++) = 0;
           }
         }
@@ -237,14 +237,14 @@ void vtkSlicerGPUMultiVolumeMapperComputeScalars( T *dataPtr,
 VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
 {
   GPUGradientsArgsType *pArgs = (GPUGradientsArgsType *)(((vtkMultiThreader::ThreadInfo *)arg)->UserData);
-  
+
   float *dataPtr = pArgs->dataPtr;
   vtkSlicerGPUMultiVolumeMapper *me = pArgs->me;
   double scalarRange[2];
   scalarRange[0] = pArgs->scalarRange[0];
   scalarRange[1] = pArgs->scalarRange[1];
   unsigned char *volume = pArgs->volume;
-  
+
   int                 x, y, z;
   int                 offset, outputOffset;
   int                 x_start, x_limit;
@@ -271,9 +271,9 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
   sampleRate[0] = (double)outputSpacing[0] / (double)spacing[0];
   sampleRate[1] = (double)outputSpacing[1] / (double)spacing[1];
   sampleRate[2] = (double)outputSpacing[2] / (double)spacing[2];
- 
+
   int components = me->GetInput()->GetNumberOfScalarComponents();
- 
+
   int dim[3];
   me->GetInput()->GetDimensions(dim);
 
@@ -281,19 +281,19 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
   me->GetVolumeDimensions( outputDim );
 
   double avgSpacing = ((double)spacing[0] +
-                       (double)spacing[1] + 
+                       (double)spacing[1] +
                        (double)spacing[2]) / 3.0;
 
   // adjust the aspect
   aspect[0] = (double)spacing[0] * 2.0 / avgSpacing;
   aspect[1] = (double)spacing[1] * 2.0 / avgSpacing;
   aspect[2] = (double)spacing[2] * 2.0 / avgSpacing;
-  
+
   //avoid division inside for loop
   aspect[0] = 1.0/aspect[0];
   aspect[1] = 1.0/aspect[1];
   aspect[2] = 1.0/aspect[2];
-  
+
   float               scale;
   scale = 255.0 / (0.25*(scalarRange[1] - scalarRange[0]));
 
@@ -303,7 +303,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
 
   int thread_id    = ((vtkMultiThreader::ThreadInfo *)(arg))->ThreadID;
   int thread_count = ((vtkMultiThreader::ThreadInfo *)(arg))->NumberOfThreads;
-  
+
   x_start = 0;
   x_limit = outputDim[0];
   y_start = 0;
@@ -325,7 +325,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
   z_limit = (z_limit>dim[2])?(outputDim[2]):(z_limit);
 
   normals = volume;
-  
+
   double wx, wy, wz;
 
   // Loop through all the data and compute the encoded normal and
@@ -388,7 +388,7 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
           G = static_cast<float>(*(samplePtr+components*dim[0]*dim[1]+components*dim[0]));
           H = static_cast<float>(*(samplePtr+components*dim[0]*dim[1]+components*dim[0]+components));
 
-          sample[i] = 
+          sample[i] =
             (1.0-wx)*(1.0-wy)*(1.0-wz)*A +
             (    wx)*(1.0-wy)*(1.0-wz)*B +
             (1.0-wx)*(    wy)*(1.0-wz)*C +
@@ -411,12 +411,12 @@ VTK_THREAD_RETURN_TYPE vtkSlicerGPUMultiVolumeMapperComputeGradients( void *arg)
         n[2] *= aspect[2];
 
         // Compute the gradient magnitude
-        t = sqrt( (double)( n[0]*n[0] + 
-                            n[1]*n[1] + 
+        t = sqrt( (double)( n[0]*n[0] +
+                            n[1]*n[1] +
                             n[2]*n[2] ) );
 
-        // Encode this into an 4 bit value 
-        gvalue = t * scale; 
+        // Encode this into an 4 bit value
+        gvalue = t * scale;
 
         gvalue = (gvalue<0.0)?(0.0):(gvalue);
         gvalue = (gvalue>255.0)?(255.0):(gvalue);
@@ -480,29 +480,29 @@ vtkSlicerGPUMultiVolumeMapper::vtkSlicerGPUMultiVolumeMapper()
   // The input used when creating the textures
   this->SavedTextureInput             = NULL;
   this->SavedTextureInput2nd          = NULL;
-  
+
   this->SavedRGBFunction              = NULL;
   this->SavedGrayFunction             = NULL;
   this->SavedScalarOpacityFunction    = NULL;
   this->SavedColorChannels            = 0;
   this->SavedScalarOpacityDistance    = 0;
-  
+
   this->SavedRGBFunction2nd              = NULL;
   this->SavedGrayFunction2nd             = NULL;
   this->SavedScalarOpacityFunction2nd    = NULL;
   this->SavedColorChannels2nd            = 0;
   this->SavedScalarOpacityDistance2nd    = 0;
-  
+
   this->Volume1                       = NULL;
   this->Volume2                       = NULL;
   this->Volume3                       = NULL;
-  
+
   this->VolumeSize                    = 0;
-  
+
   this->Framerate                    = 5.0f;
-  
+
   this->Threader               = vtkMultiThreader::New();
-  
+
   this->GradientsArgs                = NULL;
 }
 
@@ -519,19 +519,19 @@ vtkSlicerGPUMultiVolumeMapper::~vtkSlicerGPUMultiVolumeMapper()
     delete [] this->Volume2;
     this->Volume2 = NULL;
   }
-  
+
   if (this->Volume3)
   {
     delete [] this->Volume3;
     this->Volume3 = NULL;
   }
-        
+
   if (this->GradientsArgs)
   {
     delete this->GradientsArgs;
     this->GradientsArgs = NULL;
   }
-        
+
   if (this->Threader)
   {
     this->Threader->Delete();
@@ -542,7 +542,7 @@ vtkSlicerGPUMultiVolumeMapper::~vtkSlicerGPUMultiVolumeMapper()
 vtkSlicerGPUMultiVolumeMapper *vtkSlicerGPUMultiVolumeMapper::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = 
+  vtkObject* ret =
     vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUMultiVolumeMapper");
   return (vtkSlicerGPUMultiVolumeMapper*)ret;
 }
@@ -554,7 +554,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   // Get the image data
   vtkImageData *input = this->GetNthInput(0);
   input->Update();
-  
+
   vtkImageData *input1 = this->GetNthInput(1);
   unsigned long input1MTime = this->SavedTextureMTime2nd.GetMTime();
   if (input1)
@@ -562,32 +562,32 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     input1->Update();
     input1MTime = input1->GetMTime();
   }
-  
+
   // Has the volume changed in some way?
   if ( this->SavedTextureInput != input || this->SavedTextureMTime.GetMTime() < input->GetMTime() ||
        this->SavedTextureInput2nd != input1 || this->SavedTextureMTime2nd.GetMTime() < input1MTime )
     {
     needToUpdate = 1;
     }
- 
+
   if ( !needToUpdate )
     {
     return 0;
     }
- 
+
   this->SavedTextureInput = input;
   this->SavedTextureMTime.Modified();
-  
+
   this->SavedTextureInput2nd = input1;
   this->SavedTextureMTime2nd.Modified();
-  
+
   // How big does the Volume need to be?
   int dim[3];
   input->GetDimensions(dim);
 
   int powerOfTwoDim[3];
   input->GetDimensions(powerOfTwoDim);
-  
+
   //non-power-of-two texture offically supported since OpenGL 2.0
   while ( ! this->IsTextureSizeSupported( powerOfTwoDim ) )
   {
@@ -606,13 +606,13 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
       powerOfTwoDim[2]--;
     }
   }
-  
+
   int neededSize = powerOfTwoDim[0] * powerOfTwoDim[1] * powerOfTwoDim[2];
- 
+
   // What is the spacing?
   double spacing[3];
   input->GetSpacing(spacing);
- 
+
   // allocate memory
   {
     if (this->Volume1)
@@ -621,37 +621,37 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 //        delete [] this->Volume2;
 //    if (this->Volume3)
 //        delete [] this->Volume3;
-        
+
     this->Volume1 = new unsigned char [4*neededSize];
 //    this->Volume2 = new unsigned char [4*neededSize];
 //    this->Volume3 = new unsigned char [4*neededSize];
-    
+
     this->VolumeSize       = neededSize;
   }
- 
+
   // Find the scalar range
   double scalarRange[2];
   double scalarRange1[2];
 //  double scalarRange2[2];
-  
+
   input->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-  
+
   if (input1)
     input1->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
   else
     input->GetPointData()->GetScalars()->GetRange(scalarRange1, 0);
-  
+
   // Is the difference between max and min less than 4096? If so, and if
   // the data is not of float or double type, use a simple offset mapping.
   // If the difference between max and min is 4096 or greater, or the data
   // is of type float or double, we must use an offset / scaling mapping.
-  // In this case, the array size will be 4096 - we need to figure out the 
+  // In this case, the array size will be 4096 - we need to figure out the
   // offset and scale factor.
   float offset, offset1;
   float scale, scale1;
- 
+
   int arraySizeNeeded, arraySizeNeeded1;
- 
+
   int scalarType = input->GetScalarType();
 
   if ( scalarType == VTK_FLOAT ||
@@ -665,14 +665,14 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
   else
     {
     arraySizeNeeded = (int)(scalarRange[1] - scalarRange[0] + 1);
-    offset          = -scalarRange[0]; 
+    offset          = -scalarRange[0];
     scale           = 1.0;
    }
 
   arraySizeNeeded1 = arraySizeNeeded;
   offset1 = offset;
   scale1 = scale;
-  
+
   if (input1)
   {
     scalarType = input1->GetScalarType();
@@ -688,42 +688,42 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     else
      {
      arraySizeNeeded1 = (int)(scalarRange1[1] - scalarRange1[0] + 1);
-     offset1          = -scalarRange1[0]; 
+     offset1          = -scalarRange1[0];
      scale1           = 1.0;
-    } 
+    }
   }
-  
+
   this->ScalarOffset = offset;
   this->ScalarScale = scale;
-  
+
   this->ColorTableSize = arraySizeNeeded;
 
   this->ScalarOffset2nd = offset1;
   this->ScalarScale2nd = scale1;
-  
+
   this->ColorTableSize2nd = arraySizeNeeded1;
-  
+
   // Save the volume size
   this->VolumeDimensions[0] = powerOfTwoDim[0];
   this->VolumeDimensions[1] = powerOfTwoDim[1];
   this->VolumeDimensions[2] = powerOfTwoDim[2];
- 
+
   // Compute the new spacing
-  this->VolumeSpacing[0] = 
+  this->VolumeSpacing[0] =
     (static_cast<double>(dim[0])-1.01)*(double)spacing[0] / static_cast<double>(this->VolumeDimensions[0]-1);
-  this->VolumeSpacing[1] = 
+  this->VolumeSpacing[1] =
     (static_cast<double>(dim[1])-1.01)*(double)spacing[1] / static_cast<double>(this->VolumeDimensions[1]-1);
-  this->VolumeSpacing[2] = 
+  this->VolumeSpacing[2] =
     (static_cast<double>(dim[2])-1.01)*(double)spacing[2] / static_cast<double>(this->VolumeDimensions[2]-1);
 
   // Transfer the input volume to the RGBA volume
   void *dataPtr = input->GetScalarPointer();
   void *dataPtr1 = NULL;
   void *dataPtr2 = NULL;
-  
+
   if (input1)
      dataPtr1 = input1->GetScalarPointer();
-     
+
   switch ( scalarType )
     {
     vtkTemplateMacro(
@@ -734,29 +734,29 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     }
 /*
   int dataPtrSize = dim[0]*dim[1]*dim[2];
-  float* floatDataPtr = new float[dataPtrSize];  
-  
+  float* floatDataPtr = new float[dataPtrSize];
+
   //copy out scalar as float array for multithreading
   //or maybe later multithreading with template...
   CopyToFloatBuffer(input, floatDataPtr, dataPtrSize);
-  
+
   if (this->GradientsArgs)
         delete this->GradientsArgs;
-  
+
   this->GradientsArgs = new GPUGradientsArgsType;
-  
+
   this->GradientsArgs->dataPtr = floatDataPtr;
   this->GradientsArgs->me = this;
   this->GradientsArgs->scalarRange[0] = scalarRange[0];
   this->GradientsArgs->scalarRange[1] = scalarRange[1];
   this->GradientsArgs->volume = this->Volume2;
-  
+
   this->Threader->SetSingleMethod( vtkSlicerGPUMultiVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
   this->Threader->SingleMethodExecute();
 
   delete [] floatDataPtr;
   floatDataPtr = new float[dataPtrSize];
-  
+
   //handle second volume
   if (input1)
   {
@@ -764,20 +764,20 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
     this->GradientsArgs->scalarRange[0] = scalarRange1[0];
     this->GradientsArgs->scalarRange[1] = scalarRange1[1];
     this->GradientsArgs->volume = this->Volume3;
-    
+
     this->Threader->SetSingleMethod( vtkSlicerGPUMultiVolumeMapperComputeGradients, (void *)(this->GradientsArgs) );
     this->Threader->SingleMethodExecute();
   }
-  
+
   delete [] floatDataPtr;
-*/  
+*/
   return 1;
 }
 
 void vtkSlicerGPUMultiVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float* floatDataPtr, int dataPtrSize)
 {
   int scalarType = input->GetScalarType();
-  
+
   switch(scalarType)
   {
   case VTK_SIGNED_CHAR:
@@ -800,49 +800,49 @@ void vtkSlicerGPUMultiVolumeMapper::CopyToFloatBuffer(vtkImageData* input, float
       short* tempDataPtr = (short*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_UNSIGNED_SHORT:
     {
       unsigned short* tempDataPtr = (unsigned short*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_INT:
     {
       int* tempDataPtr = (int*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_UNSIGNED_INT:
     {
       unsigned int* tempDataPtr = (unsigned int*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_DOUBLE:
     {
       double* tempDataPtr = (double*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_FLOAT:
     {
       float* tempDataPtr = (float*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   case VTK_LONG:
     {
       long* tempDataPtr = (long*)input->GetScalarPointer();
       for (int i = 0; i < dataPtrSize; i++)
         floatDataPtr[i] = (float)tempDataPtr[i];
-    }    
+    }
     break;
   }
 }
@@ -854,7 +854,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   // Get the image data
   vtkImageData *input = this->GetNthInput(0);
   input->Update();
-  
+
   vtkImageData *input1 = this->GetNthInput(1);
   unsigned long input1MTime = this->SavedTextureMTime2nd.GetMTime();
   if (input1)
@@ -862,20 +862,20 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
     input1->Update();
     input1MTime = input1->GetMTime();
   }
-  
+
   // Has the volume changed in some way?
   if ( this->SavedTextureInput != input || this->SavedColorOpacityMTime.GetMTime() < input->GetMTime() ||
        this->SavedTextureInput2nd != input1 || this->SavedColorOpacityMTime2nd.GetMTime() < input1MTime )
   {
     needToUpdate = 1;
   }
-  
+
   vtkColorTransferFunction *rgbFunc  = NULL;
   vtkPiecewiseFunction     *grayFunc = NULL;
-  
+
   vtkColorTransferFunction *rgbFunc1  = NULL;
   vtkPiecewiseFunction     *grayFunc1 = NULL;
- 
+
   // How many color channels for this component?
   int colorChannels = vol->GetProperty()->GetColorChannels(0);
   int colorChannels1 = vol->GetProperty()->GetColorChannels(1);
@@ -909,7 +909,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
       needToUpdate = 1;
     }
   }
-  
+
   // Has the number of color channels changed?
   if ( this->SavedColorChannels2nd != colorChannels1 )
   {
@@ -924,7 +924,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
     unsigned long mtime = this->SavedColorOpacityMTime2nd.GetMTime();
     if (rgbFunc1)
         mtime = rgbFunc1->GetMTime();
-        
+
     if ( this->SavedRGBFunction2nd != rgbFunc1 || this->SavedColorOpacityMTime2nd.GetMTime() < mtime )
     {
       needToUpdate = 1;
@@ -939,13 +939,13 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
     unsigned long mtime = this->SavedColorOpacityMTime2nd.GetMTime();
     if (grayFunc1)
         mtime = grayFunc1->GetMTime();
-        
+
     if ( this->SavedGrayFunction2nd != grayFunc1 || this->SavedColorOpacityMTime2nd.GetMTime() < mtime )
     {
       needToUpdate = 1;
     }
   }
-    
+
   // Has the scalar opacity transfer function changed in some way?
   vtkPiecewiseFunction *scalarOpacityFunc = vol->GetProperty()->GetScalarOpacity(0);
   if ( this->SavedScalarOpacityFunction != scalarOpacityFunc ||
@@ -953,19 +953,19 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
     {
       needToUpdate = 1;
     }
-  
+
   vtkPiecewiseFunction *scalarOpacityFunc1 = vol->GetProperty()->GetScalarOpacity(1);
   {
     unsigned long mtime = this->SavedColorOpacityMTime2nd.GetMTime();
     if (scalarOpacityFunc1)
         mtime = scalarOpacityFunc1->GetMTime();
-        
+
     if ( this->SavedScalarOpacityFunction2nd != scalarOpacityFunc1 || this->SavedColorOpacityMTime2nd.GetMTime() < mtime )
     {
       needToUpdate = 1;
     }
   }
-    
+
   // Has the gradient opacity transfer function changed in some way?
   vtkPiecewiseFunction *gradientOpacityFunc = vol->GetProperty()->GetGradientOpacity(0);
   if ( this->SavedGradientOpacityFunction != gradientOpacityFunc ||
@@ -984,47 +984,47 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
       needToUpdate = 1;
     }
   }
-    
+
   double scalarOpacityDistance = vol->GetProperty()->GetScalarOpacityUnitDistance(0);
   if ( this->SavedScalarOpacityDistance != scalarOpacityDistance )
     {
     needToUpdate = 1;
     }
-  
+
   double scalarOpacityDistance1 = vol->GetProperty()->GetScalarOpacityUnitDistance(1);
   if ( this->SavedScalarOpacityDistance2nd != scalarOpacityDistance1 )
     {
     needToUpdate = 1;
     }
-    
+
   // If we have not found any need to update, return now
   if ( !needToUpdate )
     {
     return 0;
     }
-  
+
   this->SavedRGBFunction             = rgbFunc;
   this->SavedGrayFunction            = grayFunc;
   this->SavedScalarOpacityFunction   = scalarOpacityFunc;
   this->SavedGradientOpacityFunction = gradientOpacityFunc;
   this->SavedColorChannels           = colorChannels;
   this->SavedScalarOpacityDistance   = scalarOpacityDistance;
-  
+
   this->SavedColorOpacityMTime.Modified();
-  
+
   this->SavedRGBFunction2nd             = rgbFunc1;
   this->SavedGrayFunction2nd            = grayFunc1;
   this->SavedScalarOpacityFunction2nd   = scalarOpacityFunc1;
   this->SavedGradientOpacityFunction2nd = gradientOpacityFunc1;
   this->SavedColorChannels2nd           = colorChannels1;
   this->SavedScalarOpacityDistance2nd   = scalarOpacityDistance1;
-  
+
   this->SavedColorOpacityMTime2nd.Modified();
 
   // Find the scalar range
   double scalarRange[2];
   input->GetPointData()->GetScalars()->GetRange(scalarRange, 0);
-  
+
   int arraySizeNeeded = this->ColorTableSize;
   int arraySizeNeeded1 = this->ColorTableSize2nd;
 
@@ -1037,12 +1037,12 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   {
     rgbFunc->GetTable( scalarRange[0], scalarRange[1], arraySizeNeeded, this->TempArray1 );
   }
-  
+
   scalarOpacityFunc->GetTable( scalarRange[0], scalarRange[1], arraySizeNeeded, this->TempArray2 );
 
   float goArray[256];
   gradientOpacityFunc->GetTable( 0, (scalarRange[1] - scalarRange[0])*0.25, 256, goArray );
-                                 
+
 // Find the scalar range
   double scalarRange1[2];
   if (input1)
@@ -1052,19 +1052,19 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
 
   memset(this->TempArray11, 0, sizeof(float)*3*4096);
   memset(this->TempArray21, 0, sizeof(float)*4096);
-  
+
   // Sample the transfer functions between the min and max.
   if ( colorChannels1 == 1 )
   {
     if (grayFunc1)
-        grayFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray11 );      
+        grayFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray11 );
   }
   else
   {
     if (rgbFunc1)
         rgbFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray11 );
   }
-  
+
   if (scalarOpacityFunc1 && input1)
     scalarOpacityFunc1->GetTable( scalarRange1[0], scalarRange1[1], arraySizeNeeded1, this->TempArray21 );
 
@@ -1084,12 +1084,12 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
   int goLoop;
   unsigned char *ptr;
   float *fptr1, *fptr2;
-  
+
   unsigned char *ptr1;
   float *fptr11, *fptr21;
-  
+
   int i;
-  
+
   // Move the two temp float arrays into one RGBA unsigned char array
   ptr = this->ColorLookup;
   for ( goLoop = 0; goLoop < 256; goLoop++ )
@@ -1125,7 +1125,7 @@ int vtkSlicerGPUMultiVolumeMapper::UpdateColorLookup( vtkVolume *vol )
       *(ptr++) = 0;
     }
   }
-  
+
   // Move the two temp float arrays into one RGBA unsigned char array
   ptr1 = this->ColorLookup2nd;
   for ( goLoop = 0; goLoop < 256; goLoop++ )
@@ -1179,7 +1179,7 @@ void vtkSlicerGPUMultiVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
 void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkDataSet *genericInput)
 {
   vtkImageData *input = vtkImageData::SafeDownCast( genericInput );
-  
+
   if ( input )
     {
     this->SetNthInput( index, input);
@@ -1191,10 +1191,10 @@ void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkDataSet *genericI
 }
 
 void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkImageData *input )
-{ 
+{
   if (this->GetNumberOfInputPorts() < index + 1)
     this->SetNumberOfInputPorts(index + 1);
-  
+
   if(input)
     this->SetInputConnection(index, input->GetProducerPort());
   else
@@ -1205,12 +1205,12 @@ vtkImageData *vtkSlicerGPUMultiVolumeMapper::GetNthInput(int index)
 {
   if (this->GetNumberOfInputPorts() < index + 1)
     return 0;
-  
+
   if (this->GetNumberOfInputConnections(index) < 1)
     {
     return 0;
     }
-    
+
   return vtkImageData::SafeDownCast(this->GetExecutive()->GetInputData(index, 0));
 }
 

@@ -51,22 +51,22 @@ public:
   {
     itk::TimeSeriesDatabase<OutputImagePixelType>::CreateFromFileArchetype ( TSDFilename, ArchetypeFilename );
   };
-  
+
   /// Connect/Disconnect to a database
   /// void Connect ( const char* filename ) { this->m_Filter->Connect ( filename ); this->Modified(); };
   /// void Disconnect() { this->m_Filter->Disconnect(); }
 
-  /// Get/Set the current time stamp to read 
+  /// Get/Set the current time stamp to read
   void SetCurrentImage ( unsigned int value )
-  { DelegateITKInputMacro ( SetCurrentImage, value); }; 
+  { DelegateITKInputMacro ( SetCurrentImage, value); };
   unsigned int GetCurrentImage ( unsigned int vtkNotUsed(value) )
-  { DelegateITKOutputMacro ( GetCurrentImage ); }; 
+  { DelegateITKOutputMacro ( GetCurrentImage ); };
 
-  int GetNumberOfVolumes() 
-  { DelegateITKOutputMacro ( GetNumberOfVolumes ); }; 
-  
+  int GetNumberOfVolumes()
+  { DelegateITKOutputMacro ( GetNumberOfVolumes ); };
+
 protected:
-  vtkITKTimeSeriesDatabase() 
+  vtkITKTimeSeriesDatabase()
     {
     m_Filter = SourceType::New();
     this->itkExporter = ImageExportType::New();
@@ -74,7 +74,7 @@ protected:
     ConnectPipelines ( this->itkExporter, this->vtkImporter );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
     };
-  ~vtkITKTimeSeriesDatabase() 
+  ~vtkITKTimeSeriesDatabase()
     {
     this->vtkImporter->Delete();
     }
@@ -87,8 +87,8 @@ protected:
 
   SourceType::Pointer m_Filter;
   ImageExportType::Pointer itkExporter;
-  vtkImageImport* vtkImporter;  
-  
+  vtkImageImport* vtkImporter;
+
   virtual void ExecuteInformation();
   /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *output);

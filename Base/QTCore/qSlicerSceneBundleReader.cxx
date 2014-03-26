@@ -71,8 +71,8 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   // TODO: switch to QTemporaryDir in Qt5.
   // For now, create a named directory and use
   // kwsys calls to remove it
-  QString unpackPath( QDir::tempPath() + 
-                        QString("/__BundleLoadTemp") + 
+  QString unpackPath( QDir::tempPath() +
+                        QString("/__BundleLoadTemp") +
                           QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
 
   qDebug() << "Unpacking bundle to " << unpackPath;
@@ -92,7 +92,7 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
 
   vtkNew<vtkMRMLApplicationLogic> appLogic;
   appLogic->SetMRMLScene( this->mrmlScene() );
-  std::string mrmlFile = appLogic->UnpackSlicerDataBundle( 
+  std::string mrmlFile = appLogic->UnpackSlicerDataBundle(
                                           file.toLatin1(), unpackPath.toLatin1() );
 
   this->mrmlScene()->SetURL(mrmlFile.c_str());

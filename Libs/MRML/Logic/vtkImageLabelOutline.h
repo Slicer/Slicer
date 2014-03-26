@@ -32,12 +32,12 @@ public:
   vtkTypeRevisionMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// background pixel value in the image (usually 0)
   vtkSetMacro(Background, float);
   vtkGetMacro(Background, float);
 
-  /// 
+  ///
   /// not used (don't know what it was intended for)
   vtkSetMacro(Outline, int);
   vtkGetMacro(Outline, int);

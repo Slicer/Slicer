@@ -44,7 +44,7 @@ void vtkITKTimeSeriesDatabase::ExecuteInformation()
 
 
   // defined in the subclasses
-void  vtkITKTimeSeriesDatabase::ExecuteData(vtkDataObject *output) 
+void  vtkITKTimeSeriesDatabase::ExecuteData(vtkDataObject *output)
   {
     vtkImageData *data = vtkImageData::SafeDownCast(output);
     data->SetExtent(0,0,0,0,0,0);

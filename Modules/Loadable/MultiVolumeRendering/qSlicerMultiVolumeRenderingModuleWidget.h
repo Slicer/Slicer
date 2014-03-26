@@ -46,27 +46,27 @@ public:
   vtkMRMLScalarVolumeNode* getCurrentBgVolumeNode()const;
   vtkMRMLScalarVolumeNode* getCurrentFgVolumeNode()const;
   vtkMRMLScalarVolumeNode* getCurrentLabelmapVolumeNode()const;
-  
+
 public slots:
-  
+
   void setMRMLDisplayNode(vtkMRMLNode* node);
-  
+
 protected slots:
   void onVisibilityBgVolumeChanged(bool);
   void onVisibilityFgVolumeChanged(bool);
   void onVisibilityLabelmapVolumeChanged(bool);
-  
+
   void onCurrentBgVolumeMRMLImageNodeChanged(vtkMRMLNode* node);
   void onCurrentFgVolumeMRMLImageNodeChanged(vtkMRMLNode* node);
   void onCurrentLabelmapVolumeMRMLImageNodeChanged(vtkMRMLNode* node);
-  
+
   void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
-  
+
   void updateRenderingFromMRMLDisplayNode();
-  
+
 protected:
   QScopedPointer<qSlicerMultiVolumeRenderingModuleWidgetPrivate> d_ptr;
-  
+
   virtual void setup();
 
 private:

@@ -221,7 +221,7 @@ bool qMRMLTractographyDisplayTreeView::clickDecoration(const QModelIndex& index)
   vtkMRMLFiberBundleDisplayNode* glyphDisplayNode = fbNode->GetGlyphDisplayNode();
 
   qMRMLSceneTractographyDisplayModel* model = dynamic_cast< qMRMLSceneTractographyDisplayModel* >(this->sceneModel());
-  
+
   if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
     {
     res = false;

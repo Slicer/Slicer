@@ -770,7 +770,7 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
 
     }
  }
-  
+
 //----------------------------------------------------------------------------
 std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename)
 {

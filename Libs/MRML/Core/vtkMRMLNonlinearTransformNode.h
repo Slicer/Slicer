@@ -33,31 +33,31 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "NonlinearTransform";};
 
-  /// 
+  ///
   /// 1 if transfrom is linear, 0 otherwise
   virtual int IsLinear() {return 0;};
 
-  /// 
+  ///
   /// vtkGeneral transform of this node to paren node
   virtual vtkGeneralTransform* GetTransformToParent();
 
-  /// 
+  ///
   /// vtkGeneral transform of this node from paren node
   virtual vtkGeneralTransform* GetTransformFromParent();
 
@@ -92,25 +92,25 @@ class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNod
   void SetAndObserveWarpTransformFromParent(vtkWarpTransform *warp, bool updateTrasformToParent);
 
 
-  /// 
+  ///
   /// Get concatinated transforms to the top. This method is from
   /// the superclass and probably needs to be moved down a level in the
   /// hierarchy because this node cannot satisfy the call.
   virtual int  GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld);
-  
-  /// 
+
+  ///
   /// Get concatinated transforms between nodes. This method is from
   /// the superclass and probably needs to be moved down a level in the
   /// hierarchy because this node cannot satisfy the call.
-  virtual int  GetMatrixTransformToNode(vtkMRMLTransformNode* node, 
+  virtual int  GetMatrixTransformToNode(vtkMRMLTransformNode* node,
                                         vtkMatrix4x4* transformToNode);
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Transform nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
-  /// 
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {

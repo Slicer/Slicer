@@ -43,7 +43,7 @@ void vtkMRMLAnnotationLinesStorageNode::Copy(vtkMRMLNode *anode)
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesStorageNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
@@ -52,14 +52,14 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMR
 {
   if (refNode == NULL)
     {
-      vtkErrorMacro("ReadAnnotationLineDisplayProperties: unable to get associated AnnotationPointDisplayNode"); 
+      vtkErrorMacro("ReadAnnotationLineDisplayProperties: unable to get associated AnnotationPointDisplayNode");
       return -1;
     }
 
   int flag = Superclass::ReadAnnotationDisplayProperties(refNode, lineString, preposition);
   if (flag)
     {
-      return flag; 
+      return flag;
     }
 
   size_t pointOffset = preposition.size();
@@ -77,7 +77,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMR
   return 0;
 }
 
- 
+
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotationLinesNode *refNode, char line[1024],
                                    int typeColumn, int startIDColumn, int endIDColumn, int selColumn,  int visColumn, int numColumns)
@@ -104,7 +104,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
   vtkDebugMacro("got a line: \n\"" << line << "\"");
   std::string attValue(line);
   size_t size = std::string(this->GetAnnotationStorageType()).size();
- 
+
   if (attValue.compare(0,size,this->GetAnnotationStorageType()))
     {
       return 0;
@@ -112,18 +112,18 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
 
   int sel = 1, vis = 1;
   std::string annotation;
-  
-  // Jump over type 
+
+  // Jump over type
   size_t  startPos =attValue.find("|",0) +1;
   size_t  endPos =attValue.find("|",startPos);
   int columnNumber = 1;
   vtkIdType coordID[2] = {-1, -1};
-  while (startPos != std::string::npos && (columnNumber < numColumns)) 
+  while (startPos != std::string::npos && (columnNumber < numColumns))
     {
-    if (startPos != endPos) 
+    if (startPos != endPos)
       {
       std::string tokenString;
-      if (endPos == std::string::npos) 
+      if (endPos == std::string::npos)
         {
         tokenString = attValue.substr(startPos,endPos);
         }
@@ -131,7 +131,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
         {
         tokenString = attValue.substr(startPos,endPos-startPos);
         }
-      
+
       if (columnNumber == startIDColumn)
         {
         coordID[0] = atof(tokenString.c_str());
@@ -153,8 +153,8 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
     endPos =attValue.find("|",startPos);
     columnNumber ++;
     }
-  
-  if (refNode->AddLine(coordID[0],coordID[1], sel, vis) < 0 ) 
+
+  if (refNode->AddLine(coordID[0],coordID[1], sel, vis) < 0 )
     {
     vtkErrorMacro("Error adding list to list, coordID = " << coordID[0] << " " << coordID[1]);
     return -1;
@@ -166,7 +166,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
 int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode *vtkNotUsed(refNode), char line[1024], int &typeColumn,
                                     int& startIDColumn,    int& endIDColumn, int& selColumn, int& visColumn, int& numColumns)
 {
- if (line[0] != '#' || line[1] != ' ') 
+ if (line[0] != '#' || line[1] != ' ')
     {
       return 0;
     }
@@ -177,7 +177,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
   // if there's a space after the hash, try to find options
   std::string preposition = std::string("# ") + this->GetAnnotationStorageType();
   vtkIdType  pointOffset = std::string(this->GetAnnotationStorageType()).size();;
-  
+
   vtkDebugMacro("Have a possible option in line " << line);
   std::string lineString = std::string(line);
 
@@ -185,7 +185,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
   if (lineString.find(preposition + "Columns = ") != std::string::npos)
     {
       std::string str = lineString.substr(12 + pointOffset, std::string::npos);
-      
+
       vtkDebugMacro("Getting column order for the fids, substr = " << str.c_str());
       // reset all of them
       typeColumn= startIDColumn = endIDColumn = selColumn = visColumn = -1;
@@ -236,7 +236,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
       return 0;
     }
 
-  if (!Superclass::ReadAnnotation(refNode)) 
+  if (!Superclass::ReadAnnotation(refNode))
     {
       return 0;
     }
@@ -248,10 +248,10 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
       return 0;
     }
 
-  
+
  vtkMRMLAnnotationLineDisplayNode *aLineDisplayNode = refNode->GetAnnotationLineDisplayNode();
 
-  
+
   // turn off modified events
   int modFlag = refNode->GetDisableModifiedEvent();
   refNode->DisableModifiedEventOn();
@@ -268,12 +268,12 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
   while (fstr.good())
     {
     fstr.getline(line, 1024);
-    
+
     // does it start with a #?
         // Property
     if (line[0] == '#')
       {
-        if (line[1] == ' ') 
+        if (line[1] == ' ')
           {
             if (!this->ReadAnnotationLinesProperties(refNode, line, typePointColumn, startIDColumn, endIDColumn, selPointColumn, visPointColumn, numPointColumns))
               {
@@ -286,13 +286,13 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
       }
         else
           {
-        if (this->ReadAnnotationLinesData(refNode, line, typePointColumn, startIDColumn, endIDColumn, selPointColumn,  
-                              visPointColumn, numPointColumns) < 0 ) 
+        if (this->ReadAnnotationLinesData(refNode, line, typePointColumn, startIDColumn, endIDColumn, selPointColumn,
+                              visPointColumn, numPointColumns) < 0 )
           {
         return 0;
           }
       }
-    }   
+    }
     refNode->SetDisableModifiedEvent(modFlag);
 
     fstr.close();
@@ -384,7 +384,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtk
       refNode->GetEndPointsId(i,pointIDs);
       int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationLinesNode::LINE_SELECTED);
       int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationLinesNode::LINE_VISIBLE);
-      of << this->GetAnnotationStorageType() << "|" << pointIDs[0] << "|" <<  pointIDs[1]  << "|" << sel << "|" << vis << endl;   
+      of << this->GetAnnotationStorageType() << "|" << pointIDs[0] << "|" <<  pointIDs[1]  << "|" << sel << "|" << vis << endl;
     }
 
   return 1;

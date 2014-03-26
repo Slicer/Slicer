@@ -66,13 +66,13 @@ public:
   /// \sa SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *)
   virtual vtkMRMLLightBoxRendererManagerProxy* GetLightBoxRendererManagerProxy();
 
-  /// Get the default renderer for this displayable manager. 
+  /// Get the default renderer for this displayable manager.
   vtkRenderer* GetRenderer();
 
   /// Get the renderer for the ith lightbox pane. This method uses the
   /// LightBoxRendererManagerProxy if one has been configured for the
   /// DisplayableManager. If no LightBoxRendererManagerProxy has been
-  /// set, this method returns the default renderer by deferring to 
+  /// set, this method returns the default renderer by deferring to
   /// GetRenderer(),
   vtkRenderer* GetRenderer(int idx);
 

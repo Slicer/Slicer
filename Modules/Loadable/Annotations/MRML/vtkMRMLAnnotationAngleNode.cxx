@@ -33,20 +33,20 @@ vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
 //       vtkErrorMacro("Scene was null!");
 //       return;
 //     }
-//     
+//
 //   mrmlScene->AddNode(this);
 //   this->CreateAnnotationTextDisplayNode();
 //   this->CreateAnnotationPointDisplayNode();
 //   this->CreateAnnotationLineDisplayNode();
-// 
+//
 //   this->AddText(" ",1,1);
-// 
+//
 //   // default starting position
 //   {
 //     double pos[3] = {-100.0, 0.0, 50.0};
 //     this->SetPosition1(pos);
 //   }
-//   { 
+//   {
 //     double pos[3] = {100.0, 0.0, 50.0};
 //     this->SetPosition2(pos);
 //   }
@@ -54,25 +54,25 @@ vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
 //     double pos[3] = {0.0, 0.0, 0.0};
 //     this->SetPositionCenter(pos);
 //   }
-// 
+//
 //   // the annotation on the line
 //   this->SetLabelScale(10.0);
 //   this->SetLabelVisibility(1);
-// 
+//
 //   // visibility of elements of the widget
 //   this->SetRay1Visibility(1);
 //   this->SetRay2Visibility(1);
 //   this->SetArcVisibility(1);
-//   
+//
 //   // the end points of the lines are blue, they're cloned so can't have a
 //   // different colour for each end
 //   {
-//     double color[3] = { 0.0, 0.0, 1.0}; 
+//     double color[3] = { 0.0, 0.0, 1.0};
 //     this->SetPointColour(color);
 //   }
 //   // line colour
 //   {
-//     double color[3] = { 1.0, 1.0, 1.0}; 
+//     double color[3] = { 1.0, 1.0, 1.0};
 //     this->SetLineColour(color);
 //   }
 //   // text colour
@@ -80,12 +80,12 @@ vtkMRMLAnnotationAngleNode::vtkMRMLAnnotationAngleNode()
 //     double color[3] = { 1.0, 0.0, 0.0 } ;
 //     this->SetLabelTextColour(color);
 //   }
-// 
+//
 //   // default taken from vtkLineRepresentation
 //   this->SetResolution(5);
-//   
+//
 //   this->InvokeEvent(vtkMRMLAnnotationAngleNode::AngleNodeAddedEvent);
-// 
+//
 // }
 
 //----------------------------------------------------------------------------
@@ -118,15 +118,15 @@ vtkMRMLAnnotationAngleNode::~vtkMRMLAnnotationAngleNode()
 void vtkMRMLAnnotationAngleNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
 
   of << indent << " labelFormat=\"";
-  if (this->LabelFormat) 
+  if (this->LabelFormat)
     {
       of << this->LabelFormat << "\"";
     }
-  else 
+  else
     {
       of << "\"";
     }
@@ -158,14 +158,14 @@ void vtkMRMLAnnotationAngleNode::ReadXMLAttributes(const char** atts)
   this->ResetAnnotations();
 
   Superclass::ReadXMLAttributes(atts);
-  
-  while (*atts != NULL) 
+
+  while (*atts != NULL)
     {
     const char* attName = *(atts++);
     std::string attValue(*(atts++));
 
 
-    if (!strcmp(attName, "angleResolution"))       
+    if (!strcmp(attName, "angleResolution"))
       {
 
     std::stringstream ss;
@@ -210,7 +210,7 @@ void vtkMRMLAnnotationAngleNode::Copy(vtkMRMLNode *anode)
   //this->SetRay1Visibility(node->GetRay1Visibility());
   //this->SetRay2Visibility(node->GetRay2Visibility());
   //this->SetArcVisibility(node->GetArcVisibility());
-  
+
   //this->SetPointColour(node->GetPointColour());
   //this->SetLineColour(node->GetLineColour());
   //this->SetLabelTextColour(node->GetLabelTextColour());
@@ -230,19 +230,19 @@ void vtkMRMLAnnotationAngleNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
 
-  // Nothing to do at this point  bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode 
-  // => will be taken care of by vtkMRMLModelDisplayNode  
+  // Nothing to do at this point  bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode
+  // => will be taken care of by vtkMRMLModelDisplayNode
 
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationAngleNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  // Not necessary bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode 
+  // Not necessary bc vtkMRMLAnnotationDisplayNode is subclass of vtkMRMLModelDisplayNode
   // => will be taken care of  in vtkMRMLModelNode
 }
 
@@ -250,11 +250,11 @@ void vtkMRMLAnnotationAngleNode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLAnnotationAngleNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag)
 {
   //cout << "vtkMRMLAnnotationAngleNode::PrintAnnotationInfo" << endl;
-  if (titleFlag) 
+  if (titleFlag)
     {
-      
+
       os <<indent << "vtkMRMLAnnotationAngleNode: Annotation Summary";
-      if (this->GetName()) 
+      if (this->GetName())
     {
       os << " of " << this->GetName();
     }
@@ -264,11 +264,11 @@ void vtkMRMLAnnotationAngleNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
   os << indent << "angleLabelFormat: ";
-  if (this->LabelFormat) 
+  if (this->LabelFormat)
     {
       os  << this->LabelFormat << "\n";
     }
-  else 
+  else
     {
       os  << "(None)" << "\n";
     }
@@ -305,7 +305,7 @@ double vtkMRMLAnnotationAngleNode::GetLabelScale()
 void vtkMRMLAnnotationAngleNode::SetLabelScale(double init)
 {
   vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
-  
+
   if (!node)
     {
       vtkErrorMacro("AnnotationAngle: "<< this->GetName() << " cannot get AnnotationDisplayNode");
@@ -340,12 +340,12 @@ int vtkMRMLAnnotationAngleNode::SetAngle(vtkIdType line1Id, vtkIdType line2Id, i
     {
       vtkErrorMacro("Not valid line definition!");
       return -1;
-    }  
+    }
   //this->SetPosition1ByID();
   //this->SetPosition2ByID();
   //this->SetPositionCenterByID();
 
-  this->SetSelected(sel); 
+  this->SetSelected(sel);
   this->SetDisplayVisibility(vis);
 
   return 1;
@@ -359,11 +359,11 @@ int vtkMRMLAnnotationAngleNode::SetControlPoint(int id, double newControl[3])
   }
 
   int flag = Superclass::SetControlPoint(id, newControl,1,1);
-  if (!flag) 
+  if (!flag)
     {
       return 0;
     }
-  if (this->GetNumberOfControlPoints() < 3) 
+  if (this->GetNumberOfControlPoints() < 3)
     {
       return 1;
     }
@@ -372,7 +372,7 @@ int vtkMRMLAnnotationAngleNode::SetControlPoint(int id, double newControl[3])
   if (this->GetNumberOfLines() == 2)
     {
       return 1;
-    } 
+    }
 
   this->AddLine(0,1,1,1);
   this->AddLine(1,2,1,1);
@@ -463,7 +463,7 @@ void vtkMRMLAnnotationAngleNode::ApplyTransformMatrix(vtkMatrix4x4* transformMat
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
     xyzIn[2] = p[2];
-  
+
     xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
     xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
     xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
@@ -496,7 +496,7 @@ void vtkMRMLAnnotationAngleNode::ApplyTransformMatrix(vtkMatrix4x4* transformMat
     xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
     this->SetPositionCenter(xyzOut);
     }
-  
+
 }
 
 //---------------------------------------------------------------------------
@@ -513,11 +513,11 @@ void vtkMRMLAnnotationAngleNode::ApplyTransform(vtkAbstractTransform* transform)
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
     xyzIn[2] = p[2];
-    
+
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPosition1(xyzOut);
     }
-  
+
   // second point
   p = this->GetPosition2();
   if (p)
@@ -525,7 +525,7 @@ void vtkMRMLAnnotationAngleNode::ApplyTransform(vtkAbstractTransform* transform)
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
     xyzIn[2] = p[2];
-    
+
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPosition2(xyzOut);
     }
@@ -537,7 +537,7 @@ void vtkMRMLAnnotationAngleNode::ApplyTransform(vtkAbstractTransform* transform)
     xyzIn[0] = p[0];
     xyzIn[1] = p[1];
     xyzIn[2] = p[2];
-    
+
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetPositionCenter(xyzOut);
     }

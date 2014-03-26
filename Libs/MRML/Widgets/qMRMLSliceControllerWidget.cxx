@@ -592,7 +592,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   fovSliceModelAction->setDefaultWidget(fovSliceModel);
   fovSliceModelMenu->addAction(fovSliceModelAction);
   this->SliceModelMenu->addMenu(fovSliceModelMenu);
-  
+
   QMenu* dimesnionsSliceModelMenu = new QMenu(tr("Manual Dimensions"), this->SliceModelMenu);
   QWidget* dimesnionsSliceModel = new QWidget(this->SliceModelMenu);
   QHBoxLayout* dimesnionsSliceModelLayout = new QHBoxLayout(dimesnionsSliceModel);
@@ -617,7 +617,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   dimesnionsSliceModelAction->setDefaultWidget(dimesnionsSliceModel);
   dimesnionsSliceModelMenu->addAction(dimesnionsSliceModelAction);
   this->SliceModelMenu->addMenu(dimesnionsSliceModelMenu);
-  
+
   QMenu* originSliceModelMenu = new QMenu(tr("Manual Origin"), this->SliceModelMenu);
   QWidget* originSliceModel = new QWidget(this->SliceModelMenu);
   QHBoxLayout* originSliceModelLayout = new QHBoxLayout(originSliceModel);
@@ -642,7 +642,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   originSliceModelAction->setDefaultWidget(originSliceModel);
   originSliceModelMenu->addAction(originSliceModelAction);
   this->SliceModelMenu->addMenu(originSliceModelMenu);
-  
+
 }
 
 // --------------------------------------------------------------------------
@@ -891,7 +891,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
     return;
     }
   Q_ASSERT(this->MRMLSliceCompositeNode);
-  
+
   bool wasBlocked;
 
   // Update slice link toggle. Must be done first as its state controls
@@ -1626,7 +1626,7 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
     {
     return;
     }
-  
+
   d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceVisibleFlag);
   d->MRMLSliceNode->SetSliceVisible(visible);
   d->SliceLogic->EndSliceNodeInteraction();

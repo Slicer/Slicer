@@ -6,13 +6,13 @@ import EditUtil
 
 #########################################################
 #
-# 
+#
 comment = """
 
   EditColor is a wrapper around a set of Qt widgets and other
   structures to manage the current paint color
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -118,7 +118,7 @@ class EditColor(object):
       self.labelName.setText( self.colorNode.GetColorName( label ) )
       lut = self.colorNode.GetLookupTable()
       rgb = lut.GetTableValue( label )
-      self.colorPatch.setStyleSheet( 
+      self.colorPatch.setStyleSheet(
           "background-color: rgb(%s,%s,%s)" % (rgb[0]*255, rgb[1]*255, rgb[2]*255) )
       self.colorSpin.setMaximum( self.colorNode.GetNumberOfColors()-1 )
     else:
@@ -128,7 +128,7 @@ class EditColor(object):
       self.colorSpin.setValue(label)
     except ValueError:
       # TODO: why does the python class still exist if the widget is destroyed?
-      # - this only happens when reloading the module.  The owner of the 
+      # - this only happens when reloading the module.  The owner of the
       # instance is gone and the widgets are gone, but this instance still
       # has observer on the parameter node - this indicates memory leaks
       # that need to be fixed

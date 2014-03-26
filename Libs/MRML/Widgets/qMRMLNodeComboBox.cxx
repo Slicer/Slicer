@@ -588,7 +588,7 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qMRMLNodeComboBox);
 
   // Be careful when commenting that out. you really need a good reason for
-  // forcing a new set. You should probably expose 
+  // forcing a new set. You should probably expose
   // qMRMLSceneModel::UpdateScene() and make sure there is no nested calls
   if (d->MRMLSceneModel->mrmlScene() == scene)
     {
@@ -667,7 +667,7 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
     d->ComboBox->setRootModelIndex(sceneIndex);
     // The combobox updates the current index of the view only when he needs
     // it (in popup()), however we want the view to be always synchronized
-    // with the currentIndex as we use it to know if it has changed. This is 
+    // with the currentIndex as we use it to know if it has changed. This is
     // why we set it here.
     QModelIndex noneIndex = sceneIndex.child(0, d->ComboBox->modelColumn());
     d->ComboBox->view()->setCurrentIndex(

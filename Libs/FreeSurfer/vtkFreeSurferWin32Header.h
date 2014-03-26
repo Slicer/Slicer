@@ -14,7 +14,7 @@
 /// .NAME vtkFreeSurferWin32Header - manage Windows system differences
 /// .SECTION Description
 /// The vtkFreeSurferWin32Header captures some system differences between Unix
-/// and Windows operating systems. 
+/// and Windows operating systems.
 
 #ifndef __vtkFreeSurferWin32Header_h
 #define __vtkFreeSurferWin32Header_h
@@ -23,9 +23,9 @@
 
 #if defined(WIN32) && !defined(FreeSurfer_STATIC)
 #if defined(FreeSurfer_EXPORTS)
-#define VTK_FreeSurfer_EXPORT __declspec( dllexport ) 
+#define VTK_FreeSurfer_EXPORT __declspec( dllexport )
 #else
-#define VTK_FreeSurfer_EXPORT __declspec( dllimport ) 
+#define VTK_FreeSurfer_EXPORT __declspec( dllimport )
 #endif
 #else
 #define VTK_FreeSurfer_EXPORT

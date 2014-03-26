@@ -126,13 +126,13 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
-                                                  unsigned long event, 
+                                                  unsigned long event,
                                                   void *vtkNotUsed(callData) )
 {
   // as retrieving the parent transform node can be costly (browse the scene)
   // do some checks here to prevent retrieving the node for nothing.
   if (caller == NULL ||
-      (event != vtkCommand::ModifiedEvent && 
+      (event != vtkCommand::ModifiedEvent &&
       event != vtkMRMLTransformableNode::TransformModifiedEvent))
     {
     return;
@@ -197,7 +197,7 @@ void vtkMRMLTransformableNode::TransformPointToWorld(const double in[4], double 
       out[i] = in[i];
       }
     }
-  else 
+  else
     {
     vtkErrorMacro("TransformPointToWorld: not a linear transform");
     }
@@ -225,7 +225,7 @@ void vtkMRMLTransformableNode::TransformPointFromWorld(const double in[4], doubl
       out[i] = in[i];
       }
     }
-  else 
+  else
     {
     vtkErrorMacro("TransformPointToWorld: not a linear transform");
     }

@@ -24,7 +24,7 @@ vtkTractographyPoint::vtkTractographyPoint()
   this->T[1] = this->T1;
   this->T[2] = this->T2;
 
-  // init cell ID to 0 because this is the marker 
+  // init cell ID to 0 because this is the marker
   // for points unused during tractography.
   this->CellId = 0;
   this->S = 0;
@@ -36,7 +36,7 @@ vtkTractographyPoint& vtkTractographyPoint::operator=(const vtkTractographyPoint
 {
   int i, j;
 
-  for (i=0; i<3; i++) 
+  for (i=0; i<3; i++)
     {
     this->X[i] = hp.X[i];
     this->P[i] = hp.P[i];
@@ -60,7 +60,7 @@ vtkTractographyPoint& vtkTractographyPoint::operator=(const vtkTractographyPoint
 
 vtkTractographyArray::vtkTractographyArray()
 {
-  this->MaxId = -1; 
+  this->MaxId = -1;
   this->Array = new vtkTractographyPoint[1000];
   this->Size = 1000;
   this->Extend = 5000;
@@ -74,7 +74,7 @@ vtkTractographyPoint *vtkTractographyArray::Resize(vtkIdType sz)
 
   if (sz >= this->Size)
     {
-    newSize = this->Size + 
+    newSize = this->Size +
       this->Extend*(((sz-this->Size)/this->Extend)+1);
     }
   else

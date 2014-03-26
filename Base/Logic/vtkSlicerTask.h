@@ -14,16 +14,16 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
-  
-  /// 
+
+  ///
   /// Set the function and object to call for the task.
   void SetTaskFunction(vtkMRMLAbstractLogic*, TaskFunctionPointer, void *clientdata);
-  
-  /// 
+
+  ///
   /// Execute the task.
   virtual void Execute();
 
-  /// 
+  ///
   /// The type of task - this can be used, for example, to decide
   /// how many concurrent threads should be allowed
   enum
@@ -32,7 +32,7 @@ public:
     Processing,
     Networking
     };
- 
+
   vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
   vtkGetMacro (Type, int);
   void SetTypeToProcessing() {this->SetType(vtkSlicerTask::Processing);};
@@ -58,9 +58,9 @@ private:
   vtkSmartPointer<vtkMRMLAbstractLogic> TaskObject;
   vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunction;
   void *TaskClientData;
-  
+
   int Type;
-  
+
 };
 #endif
 

@@ -29,18 +29,18 @@ class VTK_Teem_EXPORT vtkHyperPoint { //;prevent man page generation
 public:
     vtkHyperPoint(); /// method sets up storage
     vtkHyperPoint &operator=(const vtkHyperPoint& hp); //for resizing
-    
-    vtkFloatingPointType   X[3];    /// position 
+
+    vtkFloatingPointType   X[3];    /// position
     vtkIdType     CellId;  /// cell
     int     SubId; /// cell sub id
-    vtkFloatingPointType   P[3];    /// parametric coords in cell 
+    vtkFloatingPointType   P[3];    /// parametric coords in cell
     vtkFloatingPointType   W[3];    /// eigenvalues (sorted in decreasing value)
     vtkFloatingPointType      *V[3];   /// pointers to eigenvectors (also sorted)
     vtkFloatingPointType   V0[3];   /// storage for eigenvectors
     vtkFloatingPointType   V1[3];
     vtkFloatingPointType   V2[3];
-    vtkFloatingPointType   S;       /// scalar value 
-    vtkFloatingPointType   D;       /// distance travelled so far 
+    vtkFloatingPointType   S;       /// scalar value
+    vtkFloatingPointType   D;       /// distance travelled so far
 };
 
 class VTK_Teem_EXPORT vtkHyperArray { //;prevent man page generation
@@ -55,7 +55,7 @@ public:
     };
   vtkIdType GetNumberOfPoints() {return this->MaxId + 1;};
   vtkHyperPoint *GetHyperPoint(vtkIdType i) {return this->Array + i;};
-  vtkHyperPoint *InsertNextHyperPoint() 
+  vtkHyperPoint *InsertNextHyperPoint()
     {
     if ( ++this->MaxId >= this->Size )
       {

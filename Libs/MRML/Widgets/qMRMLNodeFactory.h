@@ -42,19 +42,19 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
   Q_OBJECT
 public:
 
-  /// Convenient typedef 
+  /// Convenient typedef
   typedef QHash<QString,QString> AttributeType;
-  
+
   /// Constructors
   typedef QObject Superclass;
   explicit qMRMLNodeFactory(QObject* parent = 0);
   virtual ~qMRMLNodeFactory();
-  
+
   /// Get MRML scene.
   /// By default, there is no scene.
   vtkMRMLScene* mrmlScene()const;
 
-  /// 
+  ///
   /// Create and add a node given its \a className to the scene associated
   /// with the factory. The function will fire the signals:
   /// \a nodeInstantiated(vtkMRMLNode*),
@@ -65,19 +65,19 @@ public:
   /// No-op if the scene is 0 or if className is empty/null. However, if className
   /// is not empty but invalid (not an existing node), an assert throws an exception.
   /// Note: The attributes will be applied to the node before being added into
-  /// the scene. The scene takes the ownership of the node and is responsible 
+  /// the scene. The scene takes the ownership of the node and is responsible
   /// to delete it
   /// If the node is a singleton that already exists in the scene, the existing
   /// node is returned.
   /// \sa vtkMRMLScene::AddNode
   Q_INVOKABLE vtkMRMLNode* createNode(const QString& className);
 
-  /// 
+  ///
   /// Convenient method allowing to create a new node and add it to the \a scene
   static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
     const AttributeType& attributes = AttributeType());
 
-  /// 
+  ///
   /// Add attribute that will be passed to any new created node.
   /// TODO: Support attributes for more than 1 node class
   /// Note: If an attribute already exist, it's value will be overwritten.
@@ -90,7 +90,7 @@ public:
   Q_INVOKABLE QString baseName(const QString& className)const;
 
 public slots:
-  /// 
+  ///
   /// Set MRML scene
   void setMRMLScene(vtkMRMLScene* mrmlScene);
 
@@ -116,6 +116,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLNodeFactory);
   Q_DISABLE_COPY(qMRMLNodeFactory);
-}; 
+};
 
 #endif

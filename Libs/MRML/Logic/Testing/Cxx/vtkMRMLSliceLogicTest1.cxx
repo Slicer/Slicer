@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -49,7 +49,7 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
     std::cerr << "but got  " << object->Get##variable()<< std::endl; \
     return EXIT_FAILURE; \
     }
-    
+
   vtkNew<vtkMRMLScene> scene;
   node1->SetName("Green");
   node1->SetMRMLScene(scene.GetPointer());

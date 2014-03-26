@@ -30,54 +30,54 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Crosshair";};
 
-  /// 
+  ///
   /// configures the crosshair appearance and behavior
   vtkGetMacro (CrosshairMode, int );
-  vtkSetMacro (CrosshairMode, int );  
+  vtkSetMacro (CrosshairMode, int );
   vtkGetMacro (CrosshairBehavior, int );
-  vtkSetMacro (CrosshairBehavior, int );  
+  vtkSetMacro (CrosshairBehavior, int );
   vtkSetClampMacro (CrosshairThickness, int, 1, 3);
   vtkGetMacro (CrosshairThickness, int);
   void SetCrosshairToFine() { this->SetCrosshairThickness(1); }
   void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
   void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
-  
-  /// 
+
+  ///
   /// Set crosshair position
   vtkSetVector3Macro(CrosshairRAS, double);
   vtkGetVector3Macro(CrosshairRAS, double);
-  
+
   /// Set the crosshair position and cache which pane of lightbox that
   /// position was in
   void SetCrosshairRAS(double ras[3], int id);
-  
+
   /// Get the pane of the lightbox that was last cached
   vtkGetMacro(LightBoxPane, int);
 
 
-  /// 
+  ///
   /// Is the crosshair to be used for navigation or as just a cursor
   vtkSetMacro(Navigation, int);
   vtkGetMacro(Navigation, int);
   vtkBooleanMacro(Navigation, int);
 
-  /// 
+  ///
   /// Name of the layout
   void SetCrosshairName(const char *name) {
     this->SetSingletonTag(name);

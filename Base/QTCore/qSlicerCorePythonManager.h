@@ -51,7 +51,7 @@ public:
 
   /// List of directories containing Python modules.
   virtual QStringList pythonPaths();
-  
+
 protected:
 
   virtual void preInitialization();

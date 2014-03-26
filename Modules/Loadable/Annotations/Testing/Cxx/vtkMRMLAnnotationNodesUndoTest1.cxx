@@ -20,7 +20,7 @@
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h> 
+#include <vtkRenderWindowInteractor.h>
 #include <vtkCamera.h>
 
 // STD includes
@@ -115,7 +115,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
 
   // Assign ViewNode
   displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
-  
+
 
   // test undo/redo on the scene with a fiducial node
   vtkNew<vtkMRMLAnnotationFiducialNode> node1;
@@ -129,7 +129,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   node1->Initialize(scene);
   scene->Undo();
   std::cout << "After undo for fiducial" << std::endl;
-  
+
   // test undo/redo on the scene with a ruler node
   vtkNew<vtkMRMLAnnotationRulerNode> node2;
   scene->RegisterNodeClass(node2.GetPointer());
@@ -148,7 +148,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   if (node2->GetID())
     {
     std::cout << "Node2 added to scene, id = " << node2->GetID() << ", number of display nodes = " << node2->GetNumberOfDisplayNodes() << std::endl;
-    
+
     }
   std::cout << "Calling Scene Undo" << std::endl;
   scene->Undo();
@@ -182,7 +182,7 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   f1[2] = -5.4;
   doFid->SetFiducialWorldCoordinates(f1);
   std::cout << "After resetting the world position of the new fiducial" << std::endl;
-  
+
   renderRequestCallback->Delete();
   if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
   factory->Delete();
@@ -191,9 +191,9 @@ int vtkMRMLAnnotationNodesUndoTest1(int , char * [] )
   rr->Delete();
   rw->Delete();
   ri->Delete();
-  
+
   return EXIT_SUCCESS;
-  
+
 }
 
 

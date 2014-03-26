@@ -11,7 +11,7 @@ public:
   static vtkPluginWatcherStart *New()
   { return new vtkPluginWatcherStart; }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller), 
+  virtual void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long event,
                        void* vtkNotUsed(v))
   {
@@ -24,7 +24,7 @@ public:
         this->Watcher->GetProcessInformation()->StageProgress = 0;
         strncpy(this->Watcher->GetProcessInformation()->ProgressMessage,
                 this->Watcher->GetComment().c_str(), 1023);
-        
+
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
           {
@@ -70,7 +70,7 @@ public:
     return new vtkPluginWatcherEnd;
   }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller), 
+  virtual void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long event,
                        void* vtkNotUsed(v))
   {
@@ -119,7 +119,7 @@ public:
     return new vtkPluginWatcherProgress;
   }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller), 
+  virtual void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long event,
                        void* vtkNotUsed(v))
   {
@@ -130,12 +130,12 @@ public:
         {
         strncpy(this->Watcher->GetProcessInformation()->ProgressMessage,
                 this->Watcher->GetComment().c_str(), 1023);
-        this->Watcher->GetProcessInformation()->Progress = 
+        this->Watcher->GetProcessInformation()->Progress =
           (this->Watcher->GetProcess()->GetProgress() *
            this->Watcher->GetFraction() + this->Watcher->GetStart());
         if (this->Watcher->GetFraction() != 1.0)
           {
-          this->Watcher->GetProcessInformation()->StageProgress = 
+          this->Watcher->GetProcessInformation()->StageProgress =
             this->Watcher->GetProcess()->GetProgress();
           }
 
@@ -144,7 +144,7 @@ public:
           this->Watcher->GetProcessInformation()->Progress = 0;
           this->Watcher->GetProcessInformation()->StageProgress = 0;
           }
-          
+
         if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
           {
@@ -199,7 +199,7 @@ vtkPluginFilterWatcher
   // Initialize state
   this->Process = o;
   this->Process->Register(0);
-  
+
   this->Steps = 0;
   this->Comment = comment;
 #if defined(_COMPILER_VERSION) && (_COMPILER_VERSION == 730)
@@ -222,7 +222,7 @@ vtkPluginFilterWatcher
   this->ProgressFilterCommand = vtkPluginWatcherProgress::New();;
   this->ProgressFilterCommand->SetWatcher(this);
   this->ProgressFilterCommand->SetQuiet(this->GetQuiet());
-  
+
   // Add the commands as observers
   this->StartTag = this->Process->AddObserver(vtkCommand::StartEvent,
                                               this->StartFilterCommand);

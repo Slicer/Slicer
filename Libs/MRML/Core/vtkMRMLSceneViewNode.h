@@ -31,28 +31,28 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Write this node's body to a MRML file in XML format.
   virtual void WriteNodeBodyXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SceneView";};
 
-  /// 
-  /// Updates scene nodes 
+  ///
+  /// Updates scene nodes
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   ///
@@ -67,12 +67,12 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   /// \sa StoreScene() RestoreScene()
   vtkMRMLScene* GetStoredScene();
 
-  /// 
+  ///
   /// Store content of the scene
   /// \sa GetStoredScene() RestoreScene()
   void StoreScene();
 
-  /// 
+  ///
   /// Restore content of the scene from the node
   /// \sa GetStoredScene() StoreScene()
   void RestoreScene();
@@ -98,7 +98,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   vtkGetMacro(ScreenShotType, int);
 
 
-  /// 
+  ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 

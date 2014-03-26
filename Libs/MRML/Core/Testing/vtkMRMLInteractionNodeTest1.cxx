@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -27,7 +27,7 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   TEST_SET_GET_INT( node1, CurrentInteractionMode, vtkMRMLInteractionNode::ViewTransform);
   // test re-setting with same value
   TEST_SET_GET_INT( node1, CurrentInteractionMode, vtkMRMLInteractionNode::ViewTransform);
-  
+
   TEST_SET_GET_INT( node1, LastInteractionMode, vtkMRMLInteractionNode::Place);
   TEST_SET_GET_INT( node1, LastInteractionMode, vtkMRMLInteractionNode::ViewTransform);
   // test re-setting with same value
@@ -35,7 +35,7 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
 
   TEST_SET_GET_INT_RANGE( node1, PlaceModePersistence, 0, 1);
   TEST_SET_GET_INT_RANGE( node1, TransformModePersistence, 0, 1);
-  
+
   node1->NormalizeAllMouseModes();
 
   const char *modeStr = node1->GetInteractionModeAsString();
@@ -49,7 +49,7 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
   std::cout << "For null string, interaction mode = " << mode << std::endl;
   mode = node1->GetInteractionModeByString("invalid");
   std::cout << "For 'invalid' string, interaction mode = " << mode << std::endl;
-  
+
   node1->SwitchToPersistentPlaceMode();
   if (!node1->GetPlaceModePersistence())
     {

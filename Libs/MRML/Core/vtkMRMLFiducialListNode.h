@@ -52,7 +52,7 @@ public:
   static vtkMRMLFiducialListNode *New();
   vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   ///--------------------------------------------------------------------------
   /// MRMLNode methods
   ///--------------------------------------------------------------------------
@@ -68,23 +68,23 @@ public:
 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
+
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FiducialList";};
 
-  /// 
+  ///
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   /// update display node ids
   void UpdateReferences();
-  
+
   /// Get/Set for Symbol scale
 ///  vtkSetMacro(SymbolScale,double);
   void SetSymbolScale(double scale);
   vtkGetMacro(SymbolScale,double);
 
 
-  /// Get/Set for list visibility 
+  /// Get/Set for list visibility
   ///vtkSetMacro(Visibility,int);
   void SetVisibility(int visible);
   vtkGetMacro(Visibility,int);
@@ -93,7 +93,7 @@ public:
   ///vtkSetMacro(TextScale,double);
   void SetTextScale(double scale);
   vtkGetMacro(TextScale,double);
-  
+
   /// Get/Set for Glyph and Text color
   ///vtkSetVector3Macro(Color,double);
   void SetColor(double r, double g, double b);
@@ -108,7 +108,7 @@ public:
 
   /// Get the number of fiducials in the list
   int GetNumberOfFiducials();
-  
+
   /// Restrict access to the fiducial points, pass in a value via the list
   /// so that the appropriate events can be invoked. Returns 0 on success
   int SetNthFiducialXYZ(int n, float x, float y, float z);
@@ -124,7 +124,7 @@ public:
   /// to world for the list. Calls SetNthFiducialXYZ after transforming the
   /// passed in coordinates and returns the result of that call.
   int SetNthFiducialXYZWorld(int n, float x, float y, float z);
-  
+
   /// Restrict access to the fiducial points, access the fiducial by id (used
   /// by the vtkSlicerFiducialListWidget). Returns 0 on success.
   int SetFiducialXYZ(std::string fiducialID, float x, float y, float z);
@@ -132,13 +132,13 @@ public:
   /// zero based index. Useful when delete fiducials from the list, as the
   /// index will change. Returns -1 if none found.
   int GetFiducialIndex(std::string fiducialID);
-  
+
   /// Set all fiducials selected state to flag
   int SetAllFiducialsSelected(int flag);
 
   /// Set all fiducials visible state to flag
   int SetAllFiducialsVisibility(int flag);
-  
+
   /// Get the elements of the fiducial points
   /// Return a three element float holding the position
   float *GetNthFiducialXYZ(int n);
@@ -158,7 +158,7 @@ public:
   int GetNthFiducialVisibility(int n);
   /// get the id of the nth fiducial
   const char *GetNthFiducialID(int n);
-  
+
   /// Add a fiducial point to the list with default values
   int AddFiducial( );
 
@@ -196,11 +196,11 @@ public:
   /// Ambient of the fiducial surface expressed as a number from 0 to 1
   void SetAmbient(double val);
   vtkGetMacro(Ambient, double);
-  
+
   /// Diffuse of the fiducial surface expressed as a number from 0 to 1
   void SetDiffuse(double val);
   vtkGetMacro(Diffuse, double);
-  
+
   /// Specular of the fiducial surface expressed as a number from 0 to 1
   void SetSpecular(double val);
   vtkGetMacro(Specular, double);
@@ -238,7 +238,7 @@ public:
   /// Return the min/max glyph types, for iterating over them in tcl
   int GetMinimumGlyphType() { return vtkMRMLFiducialListNode::GlyphMin; };
   int GetMaximumGlyphType() { return vtkMRMLFiducialListNode::GlyphMax; };
-  
+
   /// The glyph type used to display this fiducial
   void SetGlyphType(int type);
   vtkGetMacro(GlyphType, int);
@@ -255,7 +255,7 @@ public:
   virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
-  
+
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
@@ -311,7 +311,7 @@ protected:
   /// disallow access to the fiducial points by outside classes, have them use
   /// SetNthFiducial
   vtkMRMLFiducial* GetNthFiducial(int n);
-  
+
   double SymbolScale;
   double TextScale;
   int Visibility;

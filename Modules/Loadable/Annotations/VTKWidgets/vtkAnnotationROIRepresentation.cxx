@@ -73,7 +73,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   this->Points = vtkPoints::New(VTK_DOUBLE);
   this->Points->SetNumberOfPoints(15);//8 corners; 6 faces; 1 center
   this->HexPolyData->SetPoints(this->Points);
-  
+
   // Construct connectivity for the faces. These are used to perform
   // the picking.
   int i;
@@ -95,7 +95,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   this->HexPolyData->SetPolys(cells);
   cells->Delete();
   this->HexPolyData->BuildCells();
-  
+
   // The face of the hexahedra
   cells = vtkCellArray::New();
   cells->Allocate(cells->EstimateSize(1,4));
@@ -141,7 +141,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
     this->Handle[i]->SetProperty(this->HandleProperties[i]);
     this->Handle[i]->SetMapper(this->HandleMapper[i]);
     }
-  
+
   // Define the point coordinates
   double bounds[6];
   bounds[0] = -0.5;
@@ -167,7 +167,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
   //this->HexPicker->SetTolerance(0.001);
   //this->HexPicker->AddPickList(HexActor);
   //this->HexPicker->PickFromListOn();
-  
+
   this->CurrentHandle = NULL;
 
   // Internal data memebers for performance
@@ -185,7 +185,7 @@ vtkAnnotationROIRepresentation::vtkAnnotationROIRepresentation()
 
 //----------------------------------------------------------------------------
 vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
-{  
+{
   this->HexActor->Delete();
   this->HexMapper->Delete();
   this->HexPolyData->Delete();
@@ -198,7 +198,7 @@ vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
   this->HexOutline->Delete();
   this->OutlineMapper->Delete();
   this->OutlinePolyData->Delete();
-  
+
   for (int i=0; i<7; i++)
     {
     this->HandleGeometry[i]->Delete();
@@ -208,7 +208,7 @@ vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
   delete [] this->Handle;
   delete [] this->HandleMapper;
   delete [] this->HandleGeometry;
-  
+
   this->HandlePicker->Delete();
   //  this->HexPicker->Delete();
 
@@ -217,7 +217,7 @@ vtkAnnotationROIRepresentation::~vtkAnnotationROIRepresentation()
   this->PlanePoints->Delete();
   this->PlaneNormals->Delete();
   this->Matrix->Delete();
-  
+
   //  this->HandleProperty->Delete();
  for(int i=0;i<NUMBER_HANDLES;i++)
   {
@@ -242,7 +242,7 @@ void vtkAnnotationROIRepresentation::GetActors(vtkPropCollection *actors)
   actors->AddItem(this->HexActor);
   actors->AddItem(this->HexFace);
   actors->AddItem(this->HexOutline);
-  
+
   for (int i=0; i<7; i++)
     {
     actors->AddItem(this->Handle[i]);
@@ -343,7 +343,7 @@ void vtkAnnotationROIRepresentation::WidgetInteraction(double e[2])
 
   else if ( this->InteractionState == vtkAnnotationROIRepresentation::Scaling )
     {
-    this->Scale(prevPickPoint, pickPoint, 
+    this->Scale(prevPickPoint, pickPoint,
                 static_cast<int>(e[0]), static_cast<int>(e[1]));
     }
 
@@ -374,11 +374,11 @@ void vtkAnnotationROIRepresentation::MoveFace(double *p1, double *p2, double *di
 
   vtkMath::Normalize(v2);
   double f = vtkMath::Dot(v,v2);
-  
+
   for (i=0; i<3; i++)
     {
     v[i] = f*v2[i];
-  
+
     x1[i] += v[i];
     x2[i] += v[i];
     x3[i] += v[i];
@@ -401,7 +401,7 @@ void vtkAnnotationROIRepresentation::GetDirection(const double Nx[3],const doubl
     dir[1] = Nx[1];
     dir[2] = Nx[2];
     }
-  else 
+  else
     {
     dotNy = vtkMath::Dot(Ny,Ny);
     dotNz = vtkMath::Dot(Nz,Nz);
@@ -411,7 +411,7 @@ void vtkAnnotationROIRepresentation::GetDirection(const double Nx[3],const doubl
       }
     else if(dotNy != 0)
       {
-      //dir must have been initialized to the 
+      //dir must have been initialized to the
       //corresponding coordinate direction before calling
       //this method
       vtkMath::Cross(Ny,dir,y);
@@ -419,7 +419,7 @@ void vtkAnnotationROIRepresentation::GetDirection(const double Nx[3],const doubl
       }
     else if(dotNz != 0)
       {
-      //dir must have been initialized to the 
+      //dir must have been initialized to the
       //corresponding coordinate direction before calling
       //this method
       vtkMath::Cross(Nz,dir,y);
@@ -440,7 +440,7 @@ void vtkAnnotationROIRepresentation::MovePlusXFace(double *p1, double *p2)
   double *x2 = pts + 3*2;
   double *x3 = pts + 3*5;
   double *x4 = pts + 3*6;
-  
+
   double dir[3] = { 1 , 0 , 0};
   this->ComputeNormals();
   this->GetDirection(this->N[1],this->N[3],this->N[5],dir);
@@ -459,7 +459,7 @@ void vtkAnnotationROIRepresentation::MoveMinusXFace(double *p1, double *p2)
   double *x2 = pts + 3*3;
   double *x3 = pts + 3*4;
   double *x4 = pts + 3*7;
-  
+
   double dir[3]={-1,0,0};
   this->ComputeNormals();
   this->GetDirection(this->N[0],this->N[4],this->N[2],dir);
@@ -479,7 +479,7 @@ void vtkAnnotationROIRepresentation::MovePlusYFace(double *p1, double *p2)
   double *x2 = pts + 3*3;
   double *x3 = pts + 3*6;
   double *x4 = pts + 3*7;
-  
+
   double dir[3]={0,1,0};
   this->ComputeNormals();
   this->GetDirection(this->N[3],this->N[5],this->N[1],dir);
@@ -558,7 +558,7 @@ void vtkAnnotationROIRepresentation::Translate(double *p1, double *p2)
   v[0] = p2[0] - p1[0];
   v[1] = p2[1] - p1[1];
   v[2] = p2[2] - p1[2];
-  
+
   // Move the corners
   for (int i=0; i<8; i++)
     {
@@ -577,7 +577,7 @@ void vtkAnnotationROIRepresentation::Scale(double *vtkNotUsed(p1),
 {
   double *pts =
       static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
-  double *center 
+  double *center
     = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(3*14);
   double sf;
 
@@ -589,7 +589,7 @@ void vtkAnnotationROIRepresentation::Scale(double *vtkNotUsed(p1),
     {
     sf = 0.97;
     }
-  
+
   // Move the corners
   for (int i=0; i<8; i++, pts+=3)
     {
@@ -610,7 +610,7 @@ void vtkAnnotationROIRepresentation::ComputeNormals()
   double *py = pts + 3*3;
   double *pz = pts + 3*4;
   int i;
-  
+
   for (i=0; i<3; i++)
     {
     this->N[0][i] = p0[i] - px[i];
@@ -635,7 +635,7 @@ void vtkAnnotationROIRepresentation::GetPlanes(vtkPlanes *planes)
     {
     return;
     }
-  
+
   this->ComputeNormals();
 
   // Set the normals and coordinate values
@@ -646,7 +646,7 @@ void vtkAnnotationROIRepresentation::GetPlanes(vtkPlanes *planes)
     this->PlaneNormals->SetTuple3(i, factor*this->N[i][0],
                                   factor*this->N[i][1], factor*this->N[i][2]);
     }
-    
+
   planes->SetPoints(this->PlanePoints);
   planes->SetNormals(this->PlaneNormals);
   planes->Modified();
@@ -701,7 +701,7 @@ void vtkAnnotationROIRepresentation::Rotate(int X,
   newPts->Delete();
   this->PositionHandles();
 }
-  
+
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation::CreateDefaultProperties()
 {
@@ -741,7 +741,7 @@ void vtkAnnotationROIRepresentation::CreateDefaultProperties()
   this->SelectedFaceProperty = vtkProperty::New();
   this->SelectedFaceProperty->SetColor(1,1,0);
   this->SelectedFaceProperty->SetOpacity(0.25);
-  
+
   // Outline properties
   this->OutlineProperty = vtkProperty::New();
   this->OutlineProperty->SetRepresentationToWireframe();
@@ -761,9 +761,9 @@ void vtkAnnotationROIRepresentation::PlaceWidget(double bds[6])
 {
   int i;
   double bounds[6], center[3];
-  
+
   this->AdjustBounds(bds,bounds,center);
-  
+
   this->Points->SetPoint(0, bounds[0], bounds[2], bounds[4]);
   this->Points->SetPoint(1, bounds[1], bounds[2], bounds[4]);
   this->Points->SetPoint(2, bounds[1], bounds[3], bounds[4]);
@@ -840,11 +840,11 @@ void vtkAnnotationROIRepresentation::GetTransform(vtkTransform *t)
   // The transformation is relative to the initial bounds.
   // Initial bounds are set when PlaceWidget() is invoked.
   t->Identity();
-  
+
   // Translation
   for (i=0; i<3; i++)
     {
-    InitialCenter[i] = 
+    InitialCenter[i] =
       (this->InitialBounds[2*i+1]+this->InitialBounds[2*i]) / 2.0;
     center[i] = p14[i] - InitialCenter[i];
     }
@@ -852,7 +852,7 @@ void vtkAnnotationROIRepresentation::GetTransform(vtkTransform *t)
   translate[1] = center[1] + InitialCenter[1];
   translate[2] = center[2] + InitialCenter[2];
   t->Translate(translate[0], translate[1], translate[2]);
-  
+
   // Orientation
   this->Matrix->Identity();
   this->PositionHandles();
@@ -889,7 +889,7 @@ void vtkAnnotationROIRepresentation::GetTransform(vtkTransform *t)
     scale[2] = scale[2] / (this->InitialBounds[5]-this->InitialBounds[4]);
     }
   t->Scale(scale[0],scale[1],scale[2]);
-  
+
   // Add back in the contribution due to non-origin center
   t->Translate(-InitialCenter[0], -InitialCenter[1], -InitialCenter[2]);
 }
@@ -1017,7 +1017,7 @@ void vtkAnnotationROIRepresentation::GenerateOutline()
     cells->InsertNextCell(2,pts);
     }
   this->OutlinePolyData->Modified();
-  if ( this->OutlineProperty) 
+  if ( this->OutlineProperty)
     {
     this->OutlineProperty->SetRepresentationToWireframe();
     this->SelectedOutlineProperty->SetRepresentationToWireframe();
@@ -1034,7 +1034,7 @@ int vtkAnnotationROIRepresentation::ComputeInteractionState(int X, int Y, int vt
     this->InteractionState = vtkAnnotationROIRepresentation::Outside;
     return this->InteractionState;
     }
-  
+
   vtkAssemblyPath *path;
   // Try and pick a handle first
   this->LastPicker = NULL;
@@ -1086,7 +1086,7 @@ void vtkAnnotationROIRepresentation::SetInteractionState(int state)
   // Clamp to allowable values
   state = ( state < vtkAnnotationROIRepresentation::Outside ? vtkAnnotationROIRepresentation::Outside :
             (state > vtkAnnotationROIRepresentation::Scaling ? vtkAnnotationROIRepresentation::Scaling : state) );
-  
+
   // Depending on state, highlight appropriate parts of representation
   int handle;
   this->InteractionState = state;
@@ -1161,7 +1161,7 @@ int vtkAnnotationROIRepresentation::RenderOpaqueGeometry(vtkViewport *v)
 {
   int count=0;
   this->BuildRepresentation();
-  
+
   count += this->HexActor->RenderOpaqueGeometry(v);
   count += this->HexOutline->RenderOpaqueGeometry(v);
   count += this->HexFace->RenderOpaqueGeometry(v);
@@ -1179,7 +1179,7 @@ int vtkAnnotationROIRepresentation::RenderTranslucentPolygonalGeometry(vtkViewpo
 {
   int count=0;
   this->BuildRepresentation();
-  
+
   count += this->HexActor->RenderTranslucentPolygonalGeometry(v);
   count += this->HexOutline->RenderTranslucentPolygonalGeometry(v);
   count += this->HexFace->RenderTranslucentPolygonalGeometry(v);
@@ -1279,7 +1279,7 @@ void vtkAnnotationROIRepresentation::HandlesOff()
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation::SizeHandles()
 {
-  double *center 
+  double *center
     = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(3*14);
   double radius =
       this->vtkWidgetRepresentation::SizeHandlesInPixels(1.5,center);
@@ -1312,13 +1312,13 @@ int vtkAnnotationROIRepresentation::HighlightHandle(vtkProp *prop)
         }
       }
     }
-  
+
   if ( this->CurrentHandle == this->Handle[6] )
     {
     this->HighlightOutline(1);
     return 6;
     }
-  
+
   return -1;
 }
 
@@ -1370,7 +1370,7 @@ void vtkAnnotationROIRepresentation::PrintSelf(ostream& os, vtkIndent indent)
   double *bounds=this->InitialBounds;
   os << indent << "Initial Bounds: "
      << "(" << bounds[0] << "," << bounds[1] << ") "
-     << "(" << bounds[2] << "," << bounds[3] << ") " 
+     << "(" << bounds[2] << "," << bounds[3] << ") "
      << "(" << bounds[4] << "," << bounds[5] << ")\n";
 
   if ( this->HandleProperties )
@@ -1386,7 +1386,7 @@ void vtkAnnotationROIRepresentation::PrintSelf(ostream& os, vtkIndent indent)
     }
   if ( this->SelectedHandleProperty )
     {
-    os << indent << "Selected Handle Property: " 
+    os << indent << "Selected Handle Property: "
        << this->SelectedHandleProperty << "\n";
     }
   else
@@ -1404,7 +1404,7 @@ void vtkAnnotationROIRepresentation::PrintSelf(ostream& os, vtkIndent indent)
     }
   if ( this->SelectedFaceProperty )
     {
-    os << indent << "Selected Face Property: " 
+    os << indent << "Selected Face Property: "
        << this->SelectedFaceProperty << "\n";
     }
   else
@@ -1422,7 +1422,7 @@ void vtkAnnotationROIRepresentation::PrintSelf(ostream& os, vtkIndent indent)
     }
   if ( this->SelectedOutlineProperty )
     {
-    os << indent << "Selected Outline Property: " 
+    os << indent << "Selected Outline Property: "
        << this->SelectedOutlineProperty << "\n";
     }
   else

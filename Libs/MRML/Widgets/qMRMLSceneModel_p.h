@@ -75,18 +75,18 @@ public:
   qMRMLSceneModel::NodeTypes ListenNodeModifiedEvent;
   bool LazyUpdate;
   int PendingItemModified;
-  
+
   int NameColumn;
   int IDColumn;
   int CheckableColumn;
   int VisibilityColumn;
   int ToolTipNameColumn;
   int ExtraItemColumn;
-  
+
   QIcon VisibleIcon;
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
-  
+
   vtkMRMLScene* MRMLScene;
   QStandardItem* DraggedItem;
   mutable QList<vtkMRMLNode*>  DraggedNodes;

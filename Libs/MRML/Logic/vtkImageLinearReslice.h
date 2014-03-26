@@ -48,14 +48,14 @@ public:
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// this is the IJKToIJK transform.  It tells you how to get from
   /// pixel space in the output image to pixel space in the input image
   vtkSetObjectMacro(SliceTransform, vtkAbstractTransform);
   vtkGetObjectMacro(SliceTransform, vtkAbstractTransform);
 
-  /// 
-  /// Set interpolation mode (default: nearest neighbor). 
+  ///
+  /// Set interpolation mode (default: nearest neighbor).
   vtkSetMacro(InterpolationMode, int);
   vtkGetMacro(InterpolationMode, int);
   void SetInterpolationModeToNearestNeighbor() {
@@ -66,45 +66,45 @@ public:
     this->SetInterpolationMode(VTK_SLICE_CUBIC); };
   const char *GetInterpolationModeAsString();
 
-  /// 
+  ///
   /// Set the background color (for multi-component images).
   vtkSetVector4Macro(BackgroundColor, double);
   vtkGetVector4Macro(BackgroundColor, double);
 
-  /// 
+  ///
   /// Set background grey level (for single-component images).
   void SetBackgroundLevel(double v) { this->SetBackgroundColor(v,v,v,v); };
   double GetBackgroundLevel() { return this->GetBackgroundColor()[0]; };
 
-  /// 
-  /// Set the spacing to be set in the output image.  It is not used 
+  ///
+  /// Set the spacing to be set in the output image.  It is not used
   /// in the calculation.  Default is 1, 1, 1.
   vtkSetVector3Macro(OutputSpacing, double);
   vtkGetVector3Macro(OutputSpacing, double);
   void SetOutputSpacingToDefault() {
     this->SetOutputSpacing(1., 1., 1.); };
 
-  /// 
-  /// Set the origin to be set in the output image.  It is not used 
+  ///
+  /// Set the origin to be set in the output image.  It is not used
   /// in the calculation.  Default is 0, 0, 0
   vtkSetVector3Macro(OutputOrigin, double);
   vtkGetVector3Macro(OutputOrigin, double);
   void SetOutputOriginToDefault() {
     this->SetOutputOrigin(0., 0., 0.); };
 
-  /// 
-  /// Set the Dimensions for the output data.  
+  ///
+  /// Set the Dimensions for the output data.
   /// This defines the pixels to be calculated by the filter.
   vtkSetVector3Macro(OutputDimensions, int);
   vtkGetVector3Macro(OutputDimensions, int);
 
-  ///  
+  ///
   /// customized MTime calculation that takes into account the input transform
   unsigned long int GetMTime();
 
-  /// 
+  ///
   /// Convenient methods for switching between nearest-neighbor and linear
-  /// interpolation.  
+  /// interpolation.
   /// InterpolateOn() is equivalent to SetInterpolationModeToLinear() and
   /// InterpolateOff() is equivalent to SetInterpolationModeToNearestNeighbor().
   /// You should not use these methods if you use the SetInterpolationMode
@@ -163,6 +163,6 @@ inline const char *vtkImageLinearReslice::GetInterpolationModeAsString()
     default:
       return "";
     }
-}  
+}
 
 #endif

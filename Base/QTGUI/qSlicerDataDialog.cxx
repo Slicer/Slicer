@@ -211,7 +211,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
     {
     qSlicerIO::IOProperties properties;
     QTableWidgetItem* fileItem = this->FileWidget->item(row, FileColumn);
-    QComboBox* descriptionComboBox = 
+    QComboBox* descriptionComboBox =
       qobject_cast<QComboBox*>(this->FileWidget->cellWidget(row, TypeColumn));
     Q_ASSERT(fileItem);
     Q_ASSERT(descriptionComboBox);

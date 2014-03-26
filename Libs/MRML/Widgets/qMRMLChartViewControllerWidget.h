@@ -90,7 +90,7 @@ public slots:
   /// \sa setYAxisLabel
   void showYAxisLabel(bool show);
 
-  /// Set the title. 
+  /// Set the title.
   /// \sa showTitle
   void setTitle(const QString&);
 

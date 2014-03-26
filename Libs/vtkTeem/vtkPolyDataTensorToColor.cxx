@@ -30,7 +30,7 @@ PURPOSE.  See the above copyright notice for more information.
 vtkCxxRevisionMacro(vtkPolyDataTensorToColor, "$Revision: 1.41 $");
 vtkStandardNewMacro(vtkPolyDataTensorToColor);
 
-// Construct with lower threshold=0, upper threshold=1, and threshold 
+// Construct with lower threshold=0, upper threshold=1, and threshold
 // function=upper.
 vtkPolyDataTensorToColor::vtkPolyDataTensorToColor()
 {
@@ -75,7 +75,7 @@ void vtkPolyDataTensorToColor::ColorGlyphsByOrientation() {
 
 
 void vtkPolyDataTensorToColor::ColorGlyphsBy(int invariant) {
-  if (this->ScalarInvariant != invariant) 
+  if (this->ScalarInvariant != invariant)
   {
     // superclass flag to output scalars
     // superclass flag to calculate scalars from tensors
@@ -127,7 +127,7 @@ int vtkPolyDataTensorToColor::RequestData(
 
   if (numPts > 0 && !inTensors)
   {
-    this->ColorMode = vtkTensorGlyph::COLOR_BY_SCALARS; 
+    this->ColorMode = vtkTensorGlyph::COLOR_BY_SCALARS;
     //this->ExtractScalarOff();
   }
 
@@ -139,7 +139,7 @@ int vtkPolyDataTensorToColor::RequestData(
 
   // Setting up for calls to PolyData::InsertNextCell()
 
-  vtkCellArray *sourceCells, *cells;  
+  vtkCellArray *sourceCells, *cells;
   vtkCell *cell;
   vtkIdType cellId;
   vtkIdList *cellPts;
@@ -179,7 +179,7 @@ int vtkPolyDataTensorToColor::RequestData(
 
   pts = new vtkIdType[input->GetMaxCellSize()];
 
-  // copy topology 
+  // copy topology
   for (cellId=0; cellId < numSourceCells; cellId++)
   {
     cell = input->GetCell(cellId);
@@ -202,10 +202,10 @@ int vtkPolyDataTensorToColor::RequestData(
   double xv[3], yv[3], zv[3];
 
   // set up working matrices
-  m[0] = m0; m[1] = m1; m[2] = m2; 
-  v[0] = v0; v[1] = v1; v[2] = v2; 
+  m[0] = m0; m[1] = m1; m[2] = m2;
+  v[0] = v0; v[1] = v1; v[2] = v2;
 
-  if (this->ExtractScalar && ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) || 
+  if (this->ExtractScalar && ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) ||
     (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))  )
   {
     newScalars = vtkFloatArray::New();
@@ -238,7 +238,7 @@ int vtkPolyDataTensorToColor::RequestData(
     input->GetPoint(ptId, x);
     pts[0] = newPoints->InsertNextPoint(x);
 
-    if (!this->ExtractScalar) 
+    if (!this->ExtractScalar)
     {
       continue;
     }
@@ -264,7 +264,7 @@ int vtkPolyDataTensorToColor::RequestData(
           for (i=0; i<3; i++)
           {
             // this line from vtkTensorGlyph actually transposes
-            //m[i][j] = tensor[i+3*j];  
+            //m[i][j] = tensor[i+3*j];
             // simpler code with 3x3 array:
             m[i][j] = tensor[j][i];
           }
@@ -284,7 +284,7 @@ int vtkPolyDataTensorToColor::RequestData(
         for (i=0; i<3; i++)
         {
           //xv[i] = tensor[i]; // from vtkTensorGlyph
-          //yv[i] = tensor[i+3]; 
+          //yv[i] = tensor[i+3];
           //zv[i] = tensor[i+6];
           xv[i] = tensor[0][i]; // with 3x3 matrix
           yv[i] = tensor[1][i];
@@ -295,23 +295,23 @@ int vtkPolyDataTensorToColor::RequestData(
         w[2] = vtkMath::Normalize(zv);
       }
 
-    } 
+    }
     // Calculate output scalars before computing glyph scale factors from eigenvalues.
     // First, pass through input scalars if requested.
-    if ( inScalars  && ( this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS ) ) 
+    if ( inScalars  && ( this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS ) )
     {
       // Copy point data from source
       s = inScalars->GetComponent(ptId, 0);
     }
 
-    // Output scalar invariants if requested 
-    else if (  this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES ) 
+    // Output scalar invariants if requested
+    else if (  this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES )
     {
 
       // Correct for negative eigenvalues: use logic coded in vtkDiffusionTensorMathematics
       vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w);
 
-      switch (this->ScalarInvariant) 
+      switch (this->ScalarInvariant)
       {
       case vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE:
         s = vtkDiffusionTensorMathematics::LinearMeasure(w);
@@ -329,7 +329,7 @@ int vtkPolyDataTensorToColor::RequestData(
         s = w[1];
         break;
       case vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE:
-        s = w[2]; 
+        s = w[2];
         break;
       case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION:
         double v_maj[3];
@@ -359,7 +359,7 @@ int vtkPolyDataTensorToColor::RequestData(
     if ( newScalars != NULL )
     {
       newScalars->InsertTuple(ptOffset, &s);
-    }        
+    }
     else
     {
       // TO DO: why does superclass have this if no scalar output?

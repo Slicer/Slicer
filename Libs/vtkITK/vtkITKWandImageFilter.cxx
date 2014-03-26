@@ -76,13 +76,13 @@ void vtkITKWandExecute(vtkITKWandImageFilter *self, vtkImageData* input,
        ind[1] < 0 || ind[1] >= dims[1] ||
        ind[2] < 0 || ind[2] >= dims[2] )
     {
-    vtkWarningWithObjectMacro(self, "Seed (" << ind[0] << ", " << ind[1] << ", " << ind[2] << ") is not in input region (" 
+    vtkWarningWithObjectMacro(self, "Seed (" << ind[0] << ", " << ind[1] << ", " << ind[2] << ") is not in input region ("
       << dims[0] << ", " << dims[1] << ", " << dims[2] << ")" );
     return;
     }
 
   // Segment using itk::WandImageFilter
-  typedef itk::Image<T,3> SegmentImageType;  
+  typedef itk::Image<T,3> SegmentImageType;
   typedef itk::ConnectedThresholdImageFilter<ImageType, SegmentImageType> WandType;
   typename WandType::Pointer wand = WandType::New();
 
@@ -109,7 +109,7 @@ void vtkITKWandExecute(vtkITKWandImageFilter *self, vtkImageData* input,
 
 
 //
-// 
+//
 //
 void vtkITKWandImageFilter::SimpleExecute(vtkImageData *input, vtkImageData *output)
 {
@@ -160,7 +160,7 @@ void vtkITKWandImageFilter::SimpleExecute(vtkImageData *input, vtkImageData *out
             static_cast<VTK_TT *>(outPtr)));
       } //switch
     }
-  else 
+  else
     {
     vtkErrorMacro(<< "Can only select scalar.");
     }
@@ -170,7 +170,7 @@ void vtkITKWandImageFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "Seed point location: [" 
+  os << indent << "Seed point location: ["
     << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]" << std::endl;
   os << indent << "Dynamic range percentage: " << DynamicRangePercentage << std::endl;
 }

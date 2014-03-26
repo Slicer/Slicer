@@ -20,7 +20,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   //QApplication app(argc, argv);
   qSlicerApplication app(argc, argv);
   qSlicerMouseModeToolBar mouseToolBar;
-  
+
   // set the scene without the app logic
   vtkMRMLScene* scene = vtkMRMLScene::New();
   mouseToolBar.setMRMLScene(scene);

@@ -31,29 +31,29 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Copy data from a  referenced node's filename to new location.
   /// NOTE: use this instead of Write Data in the Remote IO Pipeline
   /// until FreeSurferModel Writers are available.
   virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FreeSurferModelStorage";};
-  
-  /// 
+
+  ///
   /// Control use of the triangle stipper when reading the polydata
   vtkGetMacro(UseStripper, int);
   vtkSetMacro(UseStripper, int);

@@ -33,7 +33,7 @@ vtkITKArchetypeImageSeriesScalarReader::vtkITKArchetypeImageSeriesScalarReader()
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesScalarReader::~vtkITKArchetypeImageSeriesScalarReader() 
+vtkITKArchetypeImageSeriesScalarReader::~vtkITKArchetypeImageSeriesScalarReader()
 {
 }
 
@@ -137,7 +137,7 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
   // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
     {
-    if (this->GetNumberOfComponents() == 1) 
+    if (this->GetNumberOfComponents() == 1)
       {
       switch (this->OutputScalarType)
         {
@@ -155,14 +155,14 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
       }
-    else 
+    else
       {
         vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
       }
     }
   else
     {
-    if (this->GetNumberOfComponents() == 1) 
+    if (this->GetNumberOfComponents() == 1)
       {
       switch (this->OutputScalarType)
         {
@@ -180,7 +180,7 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
       }
-    else 
+    else
       {
         vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
       }

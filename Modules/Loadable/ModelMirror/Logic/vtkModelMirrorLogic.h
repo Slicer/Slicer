@@ -49,10 +49,10 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkModelMirrorLogic : public vt
       {
         vtkSetMRMLNodeMacro ( this->ModelMirrorNode, node );
       }
-  
+
   // Description:
   // Get/Set MRML node storing parameter values
-  void SetAndObserveModelMirrorNode(vtkMRMLModelMirrorNode *n) 
+  void SetAndObserveModelMirrorNode(vtkMRMLModelMirrorNode *n)
       {
       vtkSetAndObserveMRMLNodeMacro( this->ModelMirrorNode, n);
       }
@@ -64,7 +64,7 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkModelMirrorLogic : public vt
   vtkGetObjectMacro ( MirrorTransformNode, vtkMRMLLinearTransformNode );
   vtkSetObjectMacro ( MirrorTransformNode, vtkMRMLLinearTransformNode );
 
-  
+
   virtual void CreateMirrorModel ();
   virtual void CreateMirrorTransform ( );
   virtual void DeleteMirrorTransform ( );
@@ -84,7 +84,7 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkModelMirrorLogic : public vt
   vtkMRMLModelMirrorNode *ModelMirrorNode;
   vtkMRMLLinearTransformNode *MirrorTransformNode;
   vtkMatrix4x4 *MirrorMatrix;
-  
+
 };
 
 

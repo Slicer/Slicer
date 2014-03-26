@@ -226,7 +226,7 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
       {
       sPtr->X[i] = this->StartPosition[i];
       }
-    sPtr->CellId = input->FindCell(this->StartPosition, NULL, (-1), 0.0, 
+    sPtr->CellId = input->FindCell(this->StartPosition, NULL, (-1), 0.0,
                                    sPtr->SubId, sPtr->P, w);
     }
 
@@ -260,20 +260,20 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
     for (k=0; k < cell->GetNumberOfPoints(); k++)
       {
       tensor = cellTensors->GetTuple(k);
-      for (j=0; j<3; j++) 
+      for (j=0; j<3; j++)
         {
-        for (i=0; i<3; i++) 
+        for (i=0; i<3; i++)
           {
           m[i][j] += tensor[i+3*j] * w[k];
 
           }
         }
       }
-    
+
     // store tensor at start point
-    for (j=0; j<3; j++) 
+    for (j=0; j<3; j++)
       {
-      for (i=0; i<3; i++) 
+      for (i=0; i<3; i++)
         {
         sPtr->T[i][j] = m[i][j];
         }
@@ -347,7 +347,7 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
             // u1=v1/norm(v1);  % unit vector in the direction of v1
 
             // kn is curvature times the unit normal vector
-            // it's the change in the unit normal over half the distance 
+            // it's the change in the unit normal over half the distance
             // from p1 to p3
             // kn=2*(u2-u1)/(norm(v1)+norm(v2));
             // absk=norm(kn);  % absolute value of the curvature
@@ -382,17 +382,17 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
               }
             K=sqrt(K);
             // units are radians per mm.
-            // Convert to radius of curvature (in mm) 
+            // Convert to radius of curvature (in mm)
             // and compare to allowed radius.
             if (K != 0)
               {
-                if ((1/K) < this->RadiusOfCurvature) 
+                if ((1/K) < this->RadiusOfCurvature)
                   {
                     keepIntegrating=0;
                   }
               }
           }
-        else 
+        else
           {
           K=0;
           }
@@ -434,12 +434,12 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
       //now compute final position
       for (i=0; i<3; i++)
         {
-        xNext[i] = sPtr->X[i] + 
+        xNext[i] = sPtr->X[i] +
                    dir * (step/2.0) * (sPtr->V[i][iv] + v[i][iv]);
         }
       sNext = this->Streamers[ptId].InsertNextTractographyPoint();
 
-      if ( cell->EvaluatePosition(xNext, closestPoint, sNext->SubId, 
+      if ( cell->EvaluatePosition(xNext, closestPoint, sNext->SubId,
       sNext->P, dist2, w) )
         { //integration still in cell
         for (i=0; i<3; i++)
@@ -451,7 +451,7 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
         }
       else
         { //integration has passed out of cell
-        sNext->CellId = input->FindCell(xNext, cell, sPtr->CellId, tol2, 
+        sNext->CellId = input->FindCell(xNext, cell, sPtr->CellId, tol2,
                                         sNext->SubId, sNext->P, w);
         if ( sNext->CellId >= 0 ) //make sure not out of dataset
           {
@@ -479,9 +479,9 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
         for (k=0; k < cell->GetNumberOfPoints(); k++)
           {
           tensor = cellTensors->GetTuple(k);
-          for (j=0; j<3; j++) 
+          for (j=0; j<3; j++)
             {
-            for (i=0; i<3; i++) 
+            for (i=0; i<3; i++)
               {
               m[i][j] += tensor[i+3*j] * w[k];
               }
@@ -492,7 +492,7 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
         vtkDiffusionTensorMathematics::TeemEigenSolver(m,sNext->W,sNext->V);
         FixVectors(sPtr->V, sNext->V, iv, ix, iy);
 
-        // compute invariants at final position                                         
+        // compute invariants at final position
         switch (this->GetStoppingMode()) {
         case vtkDiffusionTensorMathematics::VTK_TENS_FRACTIONAL_ANISOTROPY:
             stop = vtkDiffusionTensorMathematics::FractionalAnisotropy(sNext->W);
@@ -529,9 +529,9 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
           }
 
         // output tensor at final position
-        for (j=0; j<3; j++) 
+        for (j=0; j<3; j++)
             {
-            for (i=0; i<3; i++) 
+            for (i=0; i<3; i++)
               {
                 sNext->T[i][j] = m[i][j];
               }
@@ -662,7 +662,7 @@ void vtkHyperStreamlineDTMRI::BuildLinesForTwoTrajectories(vtkDataSet *input, vt
                       tensor[idx] = sPtr->T[row][col];
                       idx++;
                     }
-                }  
+                }
 
               newTensors->InsertNextTuple(tensor);
             }
@@ -670,7 +670,7 @@ void vtkHyperStreamlineDTMRI::BuildLinesForTwoTrajectories(vtkDataSet *input, vt
           i++;
           sPtr=this->Streamers[ptId].GetTractographyPoint(i);
           strIdx++;
-          
+
         } //while
 
       // in case we ended earlier than numIntPts because sPtr->CellID=0
@@ -701,7 +701,7 @@ void vtkHyperStreamlineDTMRI::BuildLinesForTwoTrajectories(vtkDataSet *input, vt
 
   output->SetLines(newLines);
   newLines->Delete();
-    
+
   output->Squeeze();
 
 }
@@ -772,26 +772,26 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
   // if no points give up
   if ( (numIntPts=this->Streamers[streamerId].GetNumberOfPoints()) > 0 )
     {
-    
+
     // loop through all points on the path and make a line
     int i = numIntPts-1;
     sPtr=this->Streamers[streamerId].GetTractographyPoint(i);
     // > 0 skips initial (seed) point
     while (i > 0 )
       {
- 
+
       // if this was a good point add it
       if ( sPtr->CellId >= 0)
         {
         newPoints->InsertPoint(strIdx,sPtr->X);
         newLines->InsertCellPoint(strIdx);
-        
+
         if ( newScalars ) // add scalars at points
           {
           double s = sPtr->S;
           newScalars->InsertNextTuple(&s);
           }
-        
+
         if ( newTensors ) // add tensors at points
           {
           double tensor[9];
@@ -804,25 +804,25 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
               tensor[idx] = sPtr->T[row][col];
               idx++;
               }
-            }  
-          
+            }
+
           newTensors->InsertNextTuple(tensor);
           }
 
         // count of number of points added
         strIdx++;
-        
+
         }
-      
+
       i--;
       sPtr=this->Streamers[streamerId].GetTractographyPoint(i);
-        
+
       } //while
-    
+
 
 
     } //for this hyperstreamline
-  
+
   vtkDebugMacro("Handling second streamer");
 
   // go forwards through second streamer and include seed point
@@ -832,7 +832,7 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
   // if no points give up
   if ( (numIntPts=this->Streamers[streamerId].GetNumberOfPoints()) > 0 )
     {
-    
+
     // loop through all points on the path and make a line
     int i=0;
     sPtr=this->Streamers[streamerId].GetTractographyPoint(i);
@@ -840,13 +840,13 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
       {
       newPoints->InsertPoint(strIdx,sPtr->X);
       newLines->InsertCellPoint(strIdx);
-      
+
       if ( newScalars ) // add scalars at points
         {
         double s = sPtr->S;
         newScalars->InsertNextTuple(&s);
         }
-      
+
       if ( newTensors ) // add tensors at points
         {
         double tensor[9];
@@ -860,22 +860,22 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
             tensor[idx] = sPtr->T[row][col];
             idx++;
             }
-          }  
-        
+          }
+
         newTensors->InsertNextTuple(tensor);
         }
-      
+
       i++;
       sPtr=this->Streamers[streamerId].GetTractographyPoint(i);
       strIdx++;
-          
+
       }
     }
 
   // in case we ended earlier than numIntPts because sPtr->CellID=0
   // this gets rid of empty cell points at the end
   newLines->UpdateCellCount(strIdx);
-    
+
   vtkDebugMacro("Assigning output values");
 
   //
@@ -883,7 +883,7 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
   //
   output->SetPoints(newPoints);
   newPoints->Delete();
-  
+
   if ( newScalars )
     {
     int idx = outPD->AddArray(newScalars);
@@ -900,7 +900,7 @@ void vtkHyperStreamlineDTMRI::BuildLinesForSingleTrajectory(vtkDataSet *input, v
 
   output->SetLines(newLines);
   newLines->Delete();
-    
+
   output->Squeeze();
 
 }

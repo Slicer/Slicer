@@ -124,7 +124,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
   of << " version=\"" << this->URLEncodeString ( module.GetVersion().c_str() ) << "\"";
   of << " autorunmode=\"" << this->Internal->AutoRunMode << "\"";
   of << " autorun=\"" << this->Internal->AutoRun << "\"";
-  
+
   // Loop over the parameter groups, writing each parameter.  Note
   // that the parameter names are unique.
   std::vector<ModuleParameterGroup>::const_iterator pgbeginit
@@ -133,7 +133,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
     = module.GetParameterGroups().end();
   std::vector<ModuleParameterGroup>::const_iterator pgit;
 
-  
+
   for (pgit = pgbeginit; pgit != pgendit; ++pgit)
     {
     // iterate over each parameter in this group
@@ -152,7 +152,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
       of  << "=\"" << this->URLEncodeString ( (*pit).GetDefault().c_str() ) << "\"";
       }
     }
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   // Set an attribute on the node based on the module title so that
   // the node selectors can filter on it.
   this->SetAttribute("CommandLineModule", moduleTitle.c_str());
-  
+
   // look up the module description from the library
   if (vtkMRMLCommandLineModuleNode::HasRegisteredModule( moduleTitle ))
     {
@@ -233,10 +233,10 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
       + "\" but parameter set from MRML file is version \""
       + moduleVersion
       + "\". Parameter set may not load properly,";
-      
+
     vtkWarningMacro(<< msg.c_str());
     }
-  
+
   // run through the attributes and pull out any attributes for this
   // module
   tatts = atts;
@@ -966,7 +966,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterCoordinateSystem ( unsigne
 bool vtkMRMLCommandLineModuleNode::ReadParameterFile(const std::string& filename)
 {
   bool modified = this->Internal->ModuleDescriptionObject.ReadParameterFile(filename);
-  
+
   if (modified)
     {
     this->Modified();

@@ -61,7 +61,7 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self)
   typename ImageType::RegionType region;
   typename ImageType::IndexType index;
   typename ImageType::SizeType size;
-  index[0] = extent[0];   
+  index[0] = extent[0];
   index[1] = extent[2];
   index[2] = extent[4];
   region.SetIndex( index );
@@ -89,11 +89,11 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self)
   // Copy to the output
   memcpy(oscalars, tracing->GetOutput()->GetBufferPointer(),
          tracing->GetOutput()->GetBufferedRegion().GetNumberOfPixels());
-  
+
 }
 
 //
-// Contouring filter specialized for volumes and "short int" data values.  
+// Contouring filter specialized for volumes and "short int" data values.
 //
 int vtkITKLevelTracing3DImageFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
@@ -171,13 +171,13 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
         );
     } //switch
   }
-  else if (inScalars->GetNumberOfComponents() == 3) 
+  else if (inScalars->GetNumberOfComponents() == 3)
     {
     // RGB - convert for now...
     vtkSmartPointer<vtkUnsignedCharArray> grayScalars
       = vtkUnsignedCharArray::New();
     grayScalars->SetNumberOfTuples( inScalars->GetNumberOfTuples() );
-      
+
     double in[3];
     unsigned char out;
     for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
@@ -191,7 +191,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
 
     vtkITKLevelTracing3DTrace(this,
                               (unsigned char *)grayScalars->GetVoidPointer(0),
-                              dims, extent, origin, spacing, 
+                              dims, extent, origin, spacing,
                               (unsigned char *)os, this->Seed);
     }
   else
@@ -220,7 +220,7 @@ int vtkITKLevelTracing3DImageFilter::RequestInformation(
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),wholeExtent);
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                wholeExtent, 6);
-  
+
   return 1;
 }
 

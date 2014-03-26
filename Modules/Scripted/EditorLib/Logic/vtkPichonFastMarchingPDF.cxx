@@ -38,7 +38,7 @@ vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF( int _realizationMax )
       vtkErrorMacro("Error in vtkFastMarching, vtkPichonFastMarchingPDF::vtkPichonFastMarchingPDF(...), not enough memory for allocation of 'bins'");
       return;
     }
-  
+
   reset();
 
   // default values
@@ -72,7 +72,7 @@ void vtkPichonFastMarchingPDF::reset( void )
   sigma2=mean=0.0;
 
   for(int k=0;k<=realizationMax;k++)
-    bins[k]=0;  
+    bins[k]=0;
 
   nRealInBins=0;
 }
@@ -87,7 +87,7 @@ double vtkPichonFastMarchingPDF::value( int k )
   if( !( (k>=0) && (k<=realizationMax) ) )
     {
       vtkErrorMacro( "Error in vtkPichonFastMarchingPDF::value(k)!" << endl
-             << "k=" << k << " realizationMax=" 
+             << "k=" << k << " realizationMax="
              << realizationMax << endl );
 
       return valueGauss( k );
@@ -135,7 +135,7 @@ void vtkPichonFastMarchingPDF::update( void )
     {
       r=inBins[inBins.size()-1];
       inBins.pop_back();
-      
+
       bins[r]--;
       m1-=r;
       m2-=r*r;
@@ -158,7 +158,7 @@ void vtkPichonFastMarchingPDF::update( void )
 
   // create smoothed histogram
   double sigma2Smooth=sigma2SmoothPDF*sigma2;
-  
+
   // create lookup table for smoothing
   for(int k=0;k<=realizationMax;k++)
     coefGauss[k]=exp(-0.5*double(k*k)/sigma2Smooth);
@@ -204,8 +204,8 @@ void vtkPichonFastMarchingPDF::addRealization( int k )
   // - we have not been updated for updateRate rounds
   // - the number of points waiting to be taken into
   //   consideration  is more than half of our memory
-  if( (updateRate!=-1) && 
-      ( (counter%updateRate)==0 
+  if( (updateRate!=-1) &&
+      ( (counter%updateRate)==0
     || ((memorySize!=-1) && (toBeAdded.size()>((unsigned int)(memorySize/2)))) ) )
     update();
 }

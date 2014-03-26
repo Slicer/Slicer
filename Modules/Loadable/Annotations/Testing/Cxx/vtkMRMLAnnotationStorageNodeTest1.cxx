@@ -38,7 +38,7 @@ int vtkMRMLAnnotationStorageNodeTest1(int , char * [] )
     {
        std::cerr << "Error in vtkMRMLAnnotationNode::AnnotationTextDisplayNode() " << std::endl;
        return EXIT_FAILURE;
-    }  
+    }
 
   annNode->Modified();
 
@@ -62,19 +62,19 @@ int vtkMRMLAnnotationStorageNodeTest1(int , char * [] )
     std::cerr << "Error reading data from file " << node2->GetFileName() << ", result = " << readResult << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   annNode->PrintAnnotationInfo(afterAnnotation,in);
   std::cout << "afterAnnotation (after read data called):" << std::endl << afterAnnotation.str() << std::endl;
-    
-  if (initialAnnotation.str().compare(afterAnnotation.str())) 
+
+  if (initialAnnotation.str().compare(afterAnnotation.str()))
   {
     std::cerr << endl << "Error in WriteData() or ReadData()" << std::endl;
     std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
     std::cerr << "After:" << std::endl << afterAnnotation.str() <<std::endl;
-    std::cerr << "KP : need to fix annText field ones we have AnnotationFiducials defined" <<std::endl; 
+    std::cerr << "KP : need to fix annText field ones we have AnnotationFiducials defined" <<std::endl;
     return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
-  
+
 }

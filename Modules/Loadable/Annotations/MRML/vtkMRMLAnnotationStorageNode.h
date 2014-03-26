@@ -52,15 +52,15 @@ protected:
   int ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition);
   int ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition);
 
-  int ReadAnnotationTextData(vtkMRMLAnnotationNode *refNode, char line[1024], int typeColumn, int textColumn,  int selColumn, 
+  int ReadAnnotationTextData(vtkMRMLAnnotationNode *refNode, char line[1024], int typeColumn, int textColumn,  int selColumn,
               int visColumn, int numColumns);
   int ReadAnnotationTextProperties(vtkMRMLAnnotationNode *annotationNode, char line[1024], int &typeColumn, int& annotationColumn, int& selColumn, int& visColumn, int& columnNumber);
   // Description:
-  // assumes that ResetAnnotations is executed 
+  // assumes that ResetAnnotations is executed
   int ReadAnnotation(vtkMRMLAnnotationNode *refNode);
-  
+
   int OpenFileToRead(fstream& of, vtkMRMLNode *refNode);
-  const char* GetAnnotationStorageType() { return "text"; } 
+  const char* GetAnnotationStorageType() { return "text"; }
 
   /// Initialize all the supported read file types
   virtual void InitializeSupportedReadFileTypes();

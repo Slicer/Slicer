@@ -47,11 +47,11 @@ namespace itk
       GetImageType (fileNames[i],
                     pixelType,
                     componentType);
-      pixelTypes.push_back(pixelType);  
-      componentTypes.push_back(componentType);  
+      pixelTypes.push_back(pixelType);
+      componentTypes.push_back(componentType);
       }
     }
-  
+
   //-----------------------------------------------------------------------------
   template <class T>
   void AlignVolumeCenters(T *fixed, T *moving, typename T::PointType &origin)
@@ -64,7 +64,7 @@ namespace itk
     for (unsigned int i = 0; i < T::ImageDimension; i++)
       {
       centerIndex[i] = static_cast<double>((size[i]-1)/2.0);
-      }    
+      }
     fixed->TransformContinuousIndexToPhysicalPoint(centerIndex, fixedCenter);
     }
 
@@ -76,7 +76,7 @@ namespace itk
     for (unsigned i = 0; i < T::ImageDimension; i++)
       {
       centerIndex[i] = static_cast<double>((size[i]-1)/2.0);
-      }    
+      }
     moving->TransformContinuousIndexToPhysicalPoint(centerIndex, movingCenter);
     }
 

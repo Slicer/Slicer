@@ -40,8 +40,8 @@ class qMRMLViewControllerBarPrivate;
 //      Widget (BarWidget)
 //        HBoxLayout (BarLayout)
 //      Optional PopupWidget (can be statically displayed under BarWidget if ControllerBar is a panel)
-// 
-// 
+//
+//
 // To add widgets to the "bar" section, add them to the barLayout().
 // To add widgets to the "controller" section (when not using a
 // popup), add them to the layout().
@@ -59,7 +59,7 @@ public:
   virtual ~qMRMLViewControllerBar();
 
   enum LayoutBehavior {
-    Popup=0, 
+    Popup=0,
     Panel
   };
 

@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -38,7 +38,7 @@ int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
   scene->AddNode(dnode.GetPointer());
   node1->SetAndObserveDisplayNodeID(dnode->GetID());
   TEST_SET_GET_BOOLEAN(node1.GetPointer(), Expanded);
-  
+
   vtkNew<vtkMRMLModelNode> mnode;
   scene->AddNode(mnode.GetPointer());
   node1->SetModelNodeID(mnode->GetID());

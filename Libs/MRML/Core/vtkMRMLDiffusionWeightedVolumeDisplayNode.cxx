@@ -66,17 +66,17 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::ReadXMLAttributes(const char** a
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "diffusionComponent")) 
+    if (!strcmp(attName, "diffusionComponent"))
       {
       std::stringstream ss;
       ss << attValue;
       ss >> this->DiffusionComponent;
       }
-    }  
+    }
   this->EndModify(disabledModify);
 }
 
@@ -98,7 +98,7 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Diffusion Component:   " << this->DiffusionComponent << "\n";

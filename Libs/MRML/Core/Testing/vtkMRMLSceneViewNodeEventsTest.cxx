@@ -50,7 +50,7 @@ int vtkMRMLSceneViewNodeEventsTest(
   scene->Clear(0);
   // Change the interaction node
   interactionNode->SetPlaceModePersistence(1);
-  
+
   if (scene->GetNumberOfNodesByClass("vtkMRMLCameraNode") != 0 ||
       scene->GetNumberOfNodesByClass("vtkMRMLInteractionNode") != 1)
     {
@@ -75,7 +75,7 @@ int vtkMRMLSceneViewNodeEventsTest(
     std::cerr << "Camera or interaction nodes not restored " << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (callback->CalledEvents.size() != 6 ||
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
       callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||

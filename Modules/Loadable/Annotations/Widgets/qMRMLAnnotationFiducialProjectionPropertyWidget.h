@@ -36,8 +36,8 @@ class qMRMLAnnotationFiducialProjectionPropertyWidgetPrivate;
 class vtkMRMLAnnotationFiducialNode;
 
 /// \ingroup Slicer_QtModules_Annotations
-class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT 
-qMRMLAnnotationFiducialProjectionPropertyWidget 
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT
+qMRMLAnnotationFiducialProjectionPropertyWidget
   : public qMRMLWidget
 {
   Q_OBJECT

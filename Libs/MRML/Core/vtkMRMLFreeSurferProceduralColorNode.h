@@ -30,34 +30,34 @@ public:
   static vtkMRMLFreeSurferProceduralColorNode *New();
   vtkTypeMacro(vtkMRMLFreeSurferProceduralColorNode,vtkMRMLProceduralColorNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
-  
-  /// 
+
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FreeSurferProceduralColor";};
 
-  /// 
-  /// 
+  ///
+  ///
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Set the lookup table as a freesurfer lookup table, and get it as a
   /// vtkLookupTable or an vtkFSLookupTable
   vtkLookupTable *GetLookupTable();
@@ -65,7 +65,7 @@ public:
   virtual void SetLookupTable(vtkFSLookupTable* newLookupTable);
   virtual vtkScalarsToColors* GetScalarsToColors();
 
-  /// 
+  ///
   /// Get/Set for Type
   void SetType(int type);
   void SetTypeToHeat();
@@ -75,16 +75,16 @@ public:
   void SetTypeToGreenRed();
   void SetTypeToLabels();
   void SetTypeToCustom();
-  
+
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  /// 
+  ///
   /// The list of valid table types
- 
-  /// Heat - 
-  /// BlueRed - 
+
+  /// Heat -
+  /// BlueRed -
   /// RedBlue - reversed BlueRed
-  /// RedGreen - 
+  /// RedGreen -
   /// GreenRed - reversed RedGreen
   /// Labels - info not held in this node, used for creating ids when read
   /// labels file into a vtkMRMLColorTableNode
@@ -99,28 +99,28 @@ public:
     Custom = 7
   };
 
-  /// 
+  ///
   /// Return the lowest and the highest integers, for use in looping (don't
   /// create labels)
   int GetFirstType() { return this->Heat; };
   int GetLastType () { return this->GreenRed; };
-  
-  /// 
+
+  ///
   /// return a text string describing the colour look up table type
   const char * GetTypeAsString();
 
-  /// 
+  ///
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {
       DisplayModifiedEvent = 20000
     };
 
-  /// 
+  ///
   /// default file name for freesurfer labels
   vtkGetStringMacro(LabelsFileName);
   vtkSetStringMacro(LabelsFileName);
-  
+
   virtual int GetNumberOfColors();
   virtual bool GetColor(int entry, double* color);
 
@@ -130,12 +130,12 @@ protected:
   vtkMRMLFreeSurferProceduralColorNode(const vtkMRMLFreeSurferProceduralColorNode&);
   void operator=(const vtkMRMLFreeSurferProceduralColorNode&);
 
-  /// 
+  ///
   /// Set values in the names vector from the colour rgba entries in the colour
   /// table
   bool SetNameFromColor(int index);
 
-  /// 
+  ///
   /// a lookup table tailored with FreeSurfer colours, constructed according to Type
   vtkFSLookupTable *LookupTable;
 

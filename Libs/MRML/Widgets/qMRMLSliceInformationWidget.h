@@ -44,7 +44,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceInformationWidget : public qMRMLWidget
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
-  
+
   /// Constructors
   explicit qMRMLSliceInformationWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceInformationWidget();

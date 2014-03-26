@@ -78,7 +78,7 @@ int vtkMRMLAnnotationPointDisplayNodeTest1(int , char * [] )
     std::cerr << "Error: maximum glyph type " << node1->GetMaximumGlyphType() << " != Sphere3D: " << vtkMRMLAnnotationPointDisplayNode::Sphere3D << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // spot test int to string mapping
   node1->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);
   if (strcmp(node1->GetGlyphTypeAsString(), "Sphere3D") != 0)
@@ -102,6 +102,6 @@ int vtkMRMLAnnotationPointDisplayNodeTest1(int , char * [] )
     }
 
   TEST_SET_GET_DOUBLE_RANGE(node1, GlyphScale, -1.0, 25.6);
-  
+
   return EXIT_SUCCESS;
 }

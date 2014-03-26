@@ -26,21 +26,21 @@
 
 #include "qSlicerAnnotationModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT 
-qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin 
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT
+qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin
   : public QObject, public qSlicerAnnotationModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
   qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin(QObject *_parent = 0);
-  
+
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;
   QString includeFile() const;
   bool isContainer() const;
   QString name() const;
-  
+
 };
 
 #endif

@@ -38,12 +38,12 @@ vtkObserverManager::vtkObserverManager()
 vtkObserverManager::~vtkObserverManager()
 {
   // Remove all the observations associated to the callback
-  std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter; 
-  for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)  
-    { 
-    this->RemoveObjectEvents(iter->first); 
-    vtkUnsignedLongArray *objTags = iter->second; 
-    objTags->Delete(); 
+  std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter;
+  for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
+    {
+    this->RemoveObjectEvents(iter->first);
+    vtkUnsignedLongArray *objTags = iter->second;
+    objTags->Delete();
     }
 
   if (this->CallbackCommand)
@@ -64,11 +64,11 @@ vtkObserverManager::~vtkObserverManager()
 void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
-  
-  std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter; 
-  for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)  
-    { 
-    vtkUnsignedLongArray *objTags = iter->second; 
+
+  std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter;
+  for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
+    {
+    vtkUnsignedLongArray *objTags = iter->second;
     os << indent << "Observer tags:             " << objTags << "\n";
     }
 }
@@ -136,14 +136,14 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
 }
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr) 
+void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
 {
   if (nodePtr)
     {
-    std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr); 
+    std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
     vtkEventBroker *broker = vtkEventBroker::GetInstance();
-    if (it != this->ObserverTags.end()) 
-      { 
+    if (it != this->ObserverTags.end())
+      {
       vtkUnsignedLongArray* objTags = it->second;
       for (int i=0; i < objTags->GetNumberOfTuples(); i++)
         {
@@ -168,13 +168,13 @@ void vtkObserverManager::ObserveObject(vtkObject* node, float priority)
 }
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities) 
+void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities)
 {
   // check whether no priorities are provided or the same number of
   // events and priorities are provided
   if ( !((events && priorities && events->GetNumberOfTuples() == priorities->GetNumberOfTuples()) || (events && !priorities)))
     {
-    vtkWarningMacro(<< "Number of events (" << events->GetNumberOfTuples() 
+    vtkWarningMacro(<< "Number of events (" << events->GetNumberOfTuples()
                     << ") doesn't match number of priorities ("
                     << priorities->GetNumberOfTuples());
     return;
@@ -182,16 +182,16 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
 
   if (nodePtr)
     {
-    vtkUnsignedLongArray* objTags = NULL; 
-    std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr); 
-    if (it != this->ObserverTags.end()) 
-      { 
-      objTags = it->second; 
-      } 
-    else 
-      { 
-      objTags = vtkUnsignedLongArray::New(); 
-      this->ObserverTags[nodePtr] = objTags;  
+    vtkUnsignedLongArray* objTags = NULL;
+    std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
+    if (it != this->ObserverTags.end())
+      {
+      objTags = it->second;
+      }
+    else
+      {
+      objTags = vtkUnsignedLongArray::New();
+      this->ObserverTags[nodePtr] = objTags;
       }
 
     vtkEventBroker *broker = vtkEventBroker::GetInstance();
@@ -222,7 +222,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
           }
 
         unsigned long tag = observation->GetEventTag();
-        
+
         objTags->InsertNextValue(tag);
         }
       }

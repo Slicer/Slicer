@@ -64,7 +64,7 @@ vtkMRMLVolumeNode *
 MRMLIDImageIO
 ::FileNameToVolumeNodePtr(const char* filename)
 {
-  // if this is a MRML node, then filename will be encoded 
+  // if this is a MRML node, then filename will be encoded
   // with a "slicer" scheme.  There are two possibilities:
   //
   // slicer:<scene id>/<node id>                  - local slicer
@@ -78,7 +78,7 @@ MRMLIDImageIO
   this->Authority = "";
   this->SceneID = "";
   this->NodeID = "";
-  
+
   // check that the filename starts with the slicer3 scheme
   loc = fname.find("slicer:");
   if (loc != std::string::npos && (loc == 0))
@@ -86,7 +86,7 @@ MRMLIDImageIO
     this->Scheme = std::string(fname.begin(),
                                fname.begin() + std::string("slicer").size());
     loc = this->Scheme.size() + 1; // skip the colon
-    
+
     // now check whether we have a local or remote resource
     if (std::string(fname.begin()+loc,
                     fname.begin()+loc+2) == "//")
@@ -113,7 +113,7 @@ MRMLIDImageIO
     if (hloc >= loc)
       {
       this->SceneID = std::string(fname.begin()+loc, fname.begin()+hloc);
-      
+
       sscanf(this->SceneID.c_str(), "%p", &scene);
 
       if (!scene)
@@ -127,10 +127,10 @@ MRMLIDImageIO
       this->SceneID = "";
       }
     loc = hloc+1;   // skip the hash
-    
+
     // now pull off the node
     this->NodeID = std::string(fname.begin()+loc, fname.end());
-    
+
     // so far so good.  now lookup the node in the scene and see if we
     // can cast down to a MRMLVolumeNode
     //
@@ -139,7 +139,7 @@ MRMLIDImageIO
     if (node)
       {
       vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
-    
+
       if (vnode)
         {
         // we are indeed referencing a volume node
@@ -147,7 +147,7 @@ MRMLIDImageIO
         }
       }
     }
-  
+
   return 0;
 }
 
@@ -216,7 +216,7 @@ MRMLIDImageIO
     vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
     vtkMatrix4x4::Multiply4x4(ijkToRas, rasToLps, ijkToLps);
 
-    for ( i=0; i<3; i++) 
+    for ( i=0; i<3; i++)
       {
       m_Origin[i] =  ijkToRas->GetElement(3,i);
       m_Direction[i].resize(3);
@@ -241,7 +241,7 @@ MRMLIDImageIO
     this->SetDimensions(0, node->GetImageData()->GetDimensions()[0]);
     this->SetDimensions(1, node->GetImageData()->GetDimensions()[1]);
     this->SetDimensions(2, node->GetImageData()->GetDimensions()[2]);
-    
+
     // Number of components, PixelType
     if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
       {
@@ -281,7 +281,7 @@ MRMLIDImageIO
       // what should the mapping be for multi-component scalars?
       this->SetPixelType(VECTOR);
       }
-      
+
     // ComponentType
     switch (node->GetImageData()->GetScalarType())
       {
@@ -304,9 +304,9 @@ MRMLIDImageIO
     // diffusion gradients, and b-values
     if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != 0)
       {
-      vtkMRMLDiffusionImageVolumeNode *di 
+      vtkMRMLDiffusionImageVolumeNode *di
         = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
-      
+
       // throw the measurement frame into the meta-data dictionary
       // following NRRD conventions
       //
@@ -336,7 +336,7 @@ MRMLIDImageIO
     ijkToRas->Delete();
     rasToLps->Delete();
     ijkToLps->Delete();
-    }    
+    }
 }
 
 // Read from the MRML scene
@@ -353,14 +353,14 @@ MRMLIDImageIO
     if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) == 0)
       {
       // Scalar, Diffusion Weighted, or Vector image
-      memcpy(buffer, node->GetImageData()->GetScalarPointer(), 
+      memcpy(buffer, node->GetImageData()->GetScalarPointer(),
              this->GetImageSizeInBytes());
       }
     else
       {
       // Tensor image
-      memcpy(buffer, 
-             node->GetImageData()->GetPointData()->GetTensors()->GetVoidPointer(0), 
+      memcpy(buffer,
+             node->GetImageData()->GetPointData()->GetTensors()->GetVoidPointer(0),
              this->GetImageSizeInBytes());
       }
     }
@@ -432,11 +432,11 @@ MRMLIDImageIO
 ::WriteImageInformation(vtkMRMLVolumeNode *node, vtkImageData *img)
 {
   unsigned int i, j;
-  
+
   vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
   vtkMatrix4x4* rasToIjk = vtkMatrix4x4::New();
   vtkMatrix4x4* lpsToRas = vtkMatrix4x4::New();
-  
+
   rasToIjk->Identity();
   ijkToLps->Identity();
   lpsToRas->Identity();
@@ -449,7 +449,7 @@ MRMLIDImageIO
       ijkToLps->SetElement(j, i, m_Spacing[i]*this->GetDirection(i)[j]);
       }
     }
-    
+
   // Transform from LPS to RAS
   lpsToRas->SetElement(0,0,-1);
   lpsToRas->SetElement(1,1,-1);
@@ -468,7 +468,7 @@ MRMLIDImageIO
       }
     }
   rasToIjk->Invert();
-  
+
   rasToIjk->SetElement(3,3,1.0);
   node->SetRASToIJKMatrix(rasToIjk);
 
@@ -480,11 +480,11 @@ MRMLIDImageIO
     itkWarningMacro("Dimension of image is too high for VTK (Dimension = "
                     << this->GetNumberOfDimensions() << ")" );
     }
-  
+
   int dim[3];
   double origin[3];
   double spacing[3];
-  
+
   for (i=0; (i < this->GetNumberOfDimensions()) && (i < 3); ++i)
     {
     dim[i] = this->GetDimensions(i);
@@ -551,24 +551,24 @@ MRMLIDImageIO
   // diffusion gradients, and bvalues from values in the MetaDataDictionary
   if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != 0)
     {
-    vtkMRMLDiffusionImageVolumeNode *di 
+    vtkMRMLDiffusionImageVolumeNode *di
       = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
-    
+
     MetaDataDictionary &thisDic = this->GetMetaDataDictionary();
-    
+
     this->SetDTNodeValues(di, thisDic);
     }
   else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != 0)
     {
     vtkMRMLDiffusionWeightedVolumeNode *dw
       = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
-    
+
     MetaDataDictionary &thisDic = this->GetMetaDataDictionary();
-    
+
     this->SetDWNodeValues(dw, thisDic);
     }
 
-  
+
   // Cleanup
   lpsToRas->Delete();
   ijkToLps->Delete();
@@ -596,7 +596,7 @@ MRMLIDImageIO
         wereModifyingDisplayNodes[displayNode->GetID()] = displayNode->StartModify();
         }
       }
-    
+
     // Need to create a VTK ImageData to hang off the node if there is
     // not one already there
     //
@@ -620,7 +620,7 @@ MRMLIDImageIO
     //
     this->WriteImageInformation(node, img);
 
-    // Allocate the data, copy the data 
+    // Allocate the data, copy the data
     //
     //
     if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
@@ -694,12 +694,12 @@ MRMLIDImageIO
   os << indent << "Authority: " << this->Authority << std::endl;
   os << indent << "SceneID: " << this->SceneID << std::endl;
   os << indent << "NodeID: " << this->NodeID << std::endl;
-  
+
 }
 
 void
 MRMLIDImageIO
-::SetDWDictionaryValues(MetaDataDictionary &dict, 
+::SetDWDictionaryValues(MetaDataDictionary &dict,
                         vtkMRMLDiffusionWeightedVolumeNode *dw)
 {
   // Measurement frame
@@ -720,7 +720,7 @@ MRMLIDImageIO
 //      }
 
   // copy into something we can serialize, e.g. something with a
-  // copy constructor. 
+  // copy constructor.
   double rasToLPS[] = {-1.0, -1.0, 1.0};
   for (unsigned int i=0; i < 3; i++)
     {
@@ -747,7 +747,7 @@ MRMLIDImageIO
       maxBValue = dw->GetBValue(i);
       }
     }
-      
+
   // EncapsulateMetaData<double>(dict, bValueKey, maxBValue);
   std::stringstream bvaluess;
   bvaluess << maxBValue;
@@ -757,7 +757,7 @@ MRMLIDImageIO
   // would do so that programs can be written the same when using
   // itkNRRDImageIO or itkMRMLIDImageIO
   std::string diffusionGradientKey = "DWMRI_gradient_";
-      
+
   for (int i=0; i < dw->GetNumberOfGradients(); ++i)
     {
     std::vector<double> gradient(3);
@@ -787,7 +787,7 @@ MRMLIDImageIO
 
 void
 MRMLIDImageIO
-::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw, 
+::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw,
                   MetaDataDictionary &dict)
 {
   // Measurement frame
@@ -799,7 +799,7 @@ MRMLIDImageIO
     {
     measurementFrameValue[i].resize(3);
     }
-  
+
   ExposeMetaData<std::vector<std::vector<double> > >(dict,
                                                      measurementFrameKey,
                                                      measurementFrameValue);
@@ -832,10 +832,10 @@ MRMLIDImageIO
   // MRMLIDImageIO, just like it is for NRRDImageIO
   std::string bValueKey = "DWMRI_b-value";
   double maxBValue = 1.0;
-      
+
   // ExposeMetaData<double>(dict, bValueKey, maxBValue);
   std::string bValueString;
-  ExposeMetaData<std::string>(dict, bValueKey, bValueString);  
+  ExposeMetaData<std::string>(dict, bValueKey, bValueString);
   std::stringstream bValueSS;
   bValueSS << bValueString;
   bValueSS >> maxBValue;
@@ -903,7 +903,7 @@ MRMLIDImageIO
 
 void
 MRMLIDImageIO
-::SetDTDictionaryValues(MetaDataDictionary &dict, 
+::SetDTDictionaryValues(MetaDataDictionary &dict,
                         vtkMRMLDiffusionImageVolumeNode *di)
 {
   // Measurement frame
@@ -924,7 +924,7 @@ MRMLIDImageIO
 //      }
 
   // copy into something we can serialize, e.g. something with a
-  // copy constructor. 
+  // copy constructor.
   double rasToLPS[] = {-1.0, -1.0, 1.0};
   for (unsigned int i=0; i < 3; i++)
     {
@@ -942,7 +942,7 @@ MRMLIDImageIO
 
 void
 MRMLIDImageIO
-::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di, 
+::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
                   MetaDataDictionary &dict)
 {
   // Measurement frame
@@ -954,7 +954,7 @@ MRMLIDImageIO
     {
     measurementFrameValue[i].resize(3);
     }
-  
+
   ExposeMetaData<std::vector<std::vector<double> > >(dict,
                                                      measurementFrameKey,
                                                      measurementFrameValue);

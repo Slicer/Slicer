@@ -104,7 +104,7 @@ bool TestBatchRemoveDisplayNode()
 {
   vtkSmartPointer<vtkRenderWindow> renderWindow = CreateRenderWindow();
   vtkNew<vtkMRMLScene> scene;
-  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup = 
+  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup =
     CreateDisplayableManager(scene.GetPointer(),
                              renderWindow->GetRenderers()->GetFirstRenderer());
 

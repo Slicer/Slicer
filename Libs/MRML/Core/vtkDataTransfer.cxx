@@ -30,7 +30,7 @@ vtkDataTransfer::vtkDataTransfer()
 //----------------------------------------------------------------------------
 vtkDataTransfer::~vtkDataTransfer()
 {
-   
+
   this->SourceURI = NULL;
   this->DestinationURI = NULL;
   if ( this->Handler != NULL )

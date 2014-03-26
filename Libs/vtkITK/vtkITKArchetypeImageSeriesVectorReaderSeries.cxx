@@ -44,7 +44,7 @@ vtkITKArchetypeImageSeriesVectorReaderSeries::vtkITKArchetypeImageSeriesVectorRe
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesVectorReaderSeries::~vtkITKArchetypeImageSeriesVectorReaderSeries() 
+vtkITKArchetypeImageSeriesVectorReaderSeries::~vtkITKArchetypeImageSeriesVectorReaderSeries()
 {
 }
 
@@ -117,11 +117,11 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
   if (this->FileNames.size() == 1)
     {
     vtkErrorMacro("ImageSeriesVectorReaderSeries: only one file: " << this->FileNames[0].c_str() << " use the VectorReaderFile instead!");
-    }    
+    }
   else
     {
     // use the series reader
-    try 
+    try
       {
       switch (this->OutputScalarType)
         {

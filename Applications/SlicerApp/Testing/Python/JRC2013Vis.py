@@ -126,7 +126,7 @@ class JRC2013VisWidget:
     evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
     tester = eval(evalString)
     tester.runTest()
-  
+
   def onStartStopDicomPeer(self,flag):
     if flag:
       import os
@@ -145,11 +145,11 @@ class JRC2013VisWidget:
         configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'
         processCurrentPath = dicomFilesDirectory
       else:
-        downloads = ( 
+        downloads = (
           ('http://slicer.kitware.com/midas3/download?items=18822', 'Dcmtk-db.zip'),
           )
         print 'Downloading'
-      
+
         import urllib
         for url,name in downloads:
           filePath = slicer.app.temporaryPath + '/' + name
@@ -157,19 +157,19 @@ class JRC2013VisWidget:
             print 'Requesting download %s from %s...\n' % (name, url)
             urllib.urlretrieve(url, filePath)
         print 'Finished with download'
- 
+
         print 'Unzipping'
         qt.QDir().mkpath(dicomFilesDirectory)
         slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
-    
+
       import subprocess
       dcmqrscpExeOptions = (
-        '/bin', 
+        '/bin',
         '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
         '/../DCMTK-build/bin',
         )
-      
+
       dcmqrscpExePath = None
       dcmqrscpExeName = '/dcmqrscp'
       if slicer.app.os == 'win':
@@ -181,7 +181,7 @@ class JRC2013VisWidget:
           break
       if not dcmqrscpExePath:
         raise( UserWarning("Could not find dcmqrscp executable") )
-      
+
       args = (dcmqrscpExePath, '-c', configFilePath)
       print 'Start DICOM peer'
       self.popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
@@ -195,8 +195,8 @@ class JRC2013VisWidget:
 #
 
 class JRC2013VisLogic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -205,7 +205,7 @@ class JRC2013VisLogic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -310,7 +310,7 @@ class JRC2013VisTest(unittest.TestCase):
     # first, get the data - a zip file of dicom data
     #
     import urllib
-    downloads = ( 
+    downloads = (
         ('http://slicer.kitware.com/midas3/download?items=18822', 'Dcmtk-db.zip'),
         )
 
@@ -345,14 +345,14 @@ class JRC2013VisTest(unittest.TestCase):
       import os
       configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
       processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
-      
+
       dcmqrscpExeOptions = (
-        '/bin', 
+        '/bin',
         '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
         '/../DCMTK-build/bin',
         )
-      
+
       dcmqrscpExePath = None
       dcmqrscpExeName = '/dcmqrscp'
       if slicer.app.os == 'win':
@@ -364,8 +364,8 @@ class JRC2013VisTest(unittest.TestCase):
           break
       if not dcmqrscpExePath:
         raise( UserWarning("Could not find dcmqrscp executable") )
-      
-      args = (dcmqrscpExePath, '-c', configFilePath)  
+
+      args = (dcmqrscpExePath, '-c', configFilePath)
       popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=processCurrentPath)
 
       self.delayDisplay('Retrieve DICOM')

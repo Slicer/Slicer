@@ -46,7 +46,7 @@
 #include "vtkKWInternationalization.h"
 
 // STD includes
-#include <sstream> 
+#include <sstream>
 #include <string>
 
 #define VTK_KW_VPW_INTERPOLATION_LINEAR     "Linear"
@@ -80,9 +80,9 @@ vtkSlicerVolumePropertyWidget::vtkSlicerVolumePropertyWidget()
   this->MaterialPropertyVisibility        = 1;
   this->GradientOpacityFunctionVisibility = 1;
   this->ComponentWeightsVisibility        = 1;
-  this->MaterialPropertyPosition   = 
+  this->MaterialPropertyPosition   =
     vtkSlicerVolumePropertyWidget::MaterialPropertyPositionTop;
-  this->WholeRangeComputationMethod   = 
+  this->WholeRangeComputationMethod   =
     vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodData;
 
   this->UseScalarColorFunctionInScalarOpacityEditor        = 0;
@@ -110,19 +110,19 @@ vtkSlicerVolumePropertyWidget::vtkSlicerVolumePropertyWidget()
 
   this->ComponentWeightScaleSet         = vtkKWScaleWithEntrySetWithLabel::New();
 
-  this->ComponentSelectionWidget = 
+  this->ComponentSelectionWidget =
     vtkKWScalarComponentSelectionWidget::New();
 
-  this->MaterialPropertyWidget = 
+  this->MaterialPropertyWidget =
     vtkKWVolumeMaterialPropertyWidget::New();
 
-  this->ScalarOpacityFunctionEditor   = 
+  this->ScalarOpacityFunctionEditor   =
     vtkKWPiecewiseFunctionEditor::New();
 
-  this->GradientOpacityFunctionEditor = 
+  this->GradientOpacityFunctionEditor =
     vtkKWPiecewiseFunctionEditor::New();
 
-  this->ScalarColorFunctionEditor = 
+  this->ScalarColorFunctionEditor =
     vtkKWColorTransferFunctionEditor::New();
 
   this->BottomFrame                  = vtkKWFrame::New();
@@ -302,7 +302,7 @@ void vtkSlicerVolumePropertyWidget::CreateWidget()
   this->ComponentSelectionWidget->SetSelectedComponentChangedCommand(
     this, "SelectedComponentCallback");
 
-  vtkKWMenuButtonWithLabel *menubuttonwl = 
+  vtkKWMenuButtonWithLabel *menubuttonwl =
     this->ComponentSelectionWidget->GetSelectedComponentOptionMenu();
   menubuttonwl->SetLabelWidth(label_width);
   menubuttonwl->GetWidget()->SetWidth(menu_width);
@@ -493,8 +493,8 @@ void vtkSlicerVolumePropertyWidget::CreateWidget()
 
   this->LockOpacityAndColorCheckButton->SetImageToPredefinedIcon(
     vtkKWIcon::IconLock);
- 
-  tk_cmd << "pack " << this->LockOpacityAndColorCheckButton->GetWidgetName() 
+
+  tk_cmd << "pack " << this->LockOpacityAndColorCheckButton->GetWidgetName()
          << " -side left -fill both -padx 2" << endl;
 
   // --------------------------------------------------------------
@@ -549,13 +549,13 @@ void vtkSlicerVolumePropertyWidget::CreateWidget()
 
   menu = this->EnableGradientOpacityOptionMenu->GetMenu();
   menu->AddRadioButton(
-    ks_("Volume Property Editor|Enable Gradient|On"), 
+    ks_("Volume Property Editor|Enable Gradient|On"),
     this, "EnableGradientOpacityCallback 1");
   menu->AddRadioButton(
-    ks_("Volume Property Editor|Enable Gradient|Off"), 
+    ks_("Volume Property Editor|Enable Gradient|Off"),
     this, "EnableGradientOpacityCallback 0");
 
-  tk_cmd << "pack " << this->EnableGradientOpacityOptionMenu->GetWidgetName() 
+  tk_cmd << "pack " << this->EnableGradientOpacityOptionMenu->GetWidgetName()
          << " -side left -fill both -padx 0" << endl;
 
   // --------------------------------------------------------------
@@ -566,7 +566,7 @@ void vtkSlicerVolumePropertyWidget::CreateWidget()
   this->ComponentWeightScaleSet->SetLabelText(
     ks_("Volume Property Editor|Component Weights:"));
 
-  vtkKWScaleWithEntrySet *scaleset = 
+  vtkKWScaleWithEntrySet *scaleset =
     this->ComponentWeightScaleSet->GetWidget();
 
   scaleset->PackHorizontallyOn();
@@ -649,7 +649,7 @@ void vtkSlicerVolumePropertyWidget::Pack()
 
   // Pack the frame
 
-  tk_cmd << "pack " << this->EditorFrame->GetWidgetName() 
+  tk_cmd << "pack " << this->EditorFrame->GetWidgetName()
          << " -side top -fill both -expand y -pady 0 -padx 0 -ipady 0 -ipadx 0"
          << endl;
 
@@ -667,7 +667,7 @@ void vtkSlicerVolumePropertyWidget::Pack()
   const char *col1 = " -column 1 ";
   const char *pad = " -padx 2 -pady 2";
   const char *pad_ed = " -padx 2 -pady 3";
-  
+
   std::string in_frame(" -in ");
   in_frame += frame->GetWidgetName();
 
@@ -691,7 +691,7 @@ void vtkSlicerVolumePropertyWidget::Pack()
 
   tk_cmd << "grid " << this->InnerLeftFrame->GetWidgetName()
          << " -padx 0 -pady 0 -sticky nw " << col0 << " -row " << row << endl;
-  
+
   // HSV Color Selector (HSV)
 
   if (this->HSVColorSelectorVisibility)
@@ -723,17 +723,17 @@ void vtkSlicerVolumePropertyWidget::Pack()
     tk_cmd << "pack forget " << this->MaterialPropertyWidget->GetWidgetName()
            << endl;
     }
-  else 
+  else
     {
-    if (this->MaterialPropertyPosition == 
+    if (this->MaterialPropertyPosition ==
         vtkSlicerVolumePropertyWidget::MaterialPropertyPositionTop ||
-      this->MaterialPropertyPosition == 
+      this->MaterialPropertyPosition ==
         vtkSlicerVolumePropertyWidget::MaterialPropertyPositionBottomFrame)
       {
       this->MaterialPropertyWidget->GetPopupButton()->LabelVisibilityOn();
       tk_cmd << "pack " << this->MaterialPropertyWidget->GetWidgetName()
              << " -side top -anchor nw " << pad << " -in ";
-      if (this->MaterialPropertyPosition == 
+      if (this->MaterialPropertyPosition ==
           vtkSlicerVolumePropertyWidget::MaterialPropertyPositionTop)
         {
         tk_cmd << this->InnerLeftFrame->GetWidgetName() << endl;
@@ -748,21 +748,21 @@ void vtkSlicerVolumePropertyWidget::Pack()
       this->MaterialPropertyWidget->GetPopupButton()->LabelVisibilityOff();
       tk_cmd << "pack " << this->MaterialPropertyWidget->GetWidgetName()
              << " -side right -fill both -padx 2 -pady 0 -in ";
-      if (this->MaterialPropertyPosition == 
+      if (this->MaterialPropertyPosition ==
           vtkSlicerVolumePropertyWidget::MaterialPropertyPositionScalarOpacityUserFrame)
         {
-        tk_cmd << 
+        tk_cmd <<
           this->ScalarOpacityFunctionEditor->GetUserFrame()->GetWidgetName();
         }
       else
         {
-        tk_cmd << 
+        tk_cmd <<
           this->ScalarColorFunctionEditor->GetUserFrame()->GetWidgetName();
         }
       tk_cmd << endl;
       }
     }
-  
+
   // Enable Shading (ES)
 
   if (this->MaterialPropertyVisibility)
@@ -786,7 +786,7 @@ void vtkSlicerVolumePropertyWidget::Pack()
   // Scalar Opacity Function (SOF)
 
   tk_cmd << "grid " << this->ScalarOpacityFunctionEditor->GetWidgetName()
-         << " -sticky ew -column 0 -row " << row << colspan << pad_ed 
+         << " -sticky ew -column 0 -row " << row << colspan << pad_ed
          << in_frame.c_str();
   if (!this->ScalarColorFunctionEditor->GetCanvasVisibility())
     {
@@ -797,12 +797,12 @@ void vtkSlicerVolumePropertyWidget::Pack()
 
   if (this->ScalarOpacityUnitDistanceVisibility)
     {
-    tk_cmd << "pack " << this->ScalarOpacityUnitDistanceScale->GetWidgetName() 
+    tk_cmd << "pack " << this->ScalarOpacityUnitDistanceScale->GetWidgetName()
            << " -side right -fill both -padx 2 -pady 0" << endl;
     }
   else
     {
-    tk_cmd << "pack forget " 
+    tk_cmd << "pack forget "
            << this->ScalarOpacityUnitDistanceScale->GetWidgetName() << endl;
     }
 
@@ -845,9 +845,9 @@ void vtkSlicerVolumePropertyWidget::Pack()
 
   // Make sure it can resize
 
-  tk_cmd << "grid columnconfigure " 
+  tk_cmd << "grid columnconfigure "
          << frame->GetWidgetName() << " 0 -weight 1" << endl;
-  
+
   this->Script(tk_cmd.str().c_str());
 }
 
@@ -865,7 +865,7 @@ void vtkSlicerVolumePropertyWidget::Update()
   int nb_components = this->GetNumberOfComponents();
 
   char hist_name[1024];
-      
+
   std::ostringstream tk_cmd;
 
   // In the dependent case, everything is in the component 0
@@ -915,7 +915,7 @@ void vtkSlicerVolumePropertyWidget::Update()
       m->SetValue("");
       }
     }
-    
+
   // Lock opacity and color
 
   if (this->LockOpacityAndColorCheckButton)
@@ -951,7 +951,7 @@ void vtkSlicerVolumePropertyWidget::Update()
       if (this->EnableShadingForAllComponents)
         {
         tk_cmd << "pack "
-               << this->EnableShadingCheckButton->GetWidgetName() 
+               << this->EnableShadingCheckButton->GetWidgetName()
                << " -side top -anchor nw" << endl;
         }
       else
@@ -1000,16 +1000,16 @@ void vtkSlicerVolumePropertyWidget::Update()
 
   if (this->ScalarOpacityFunctionEditor)
     {
-    int scalar_field = this->GetIndependentComponents() 
+    int scalar_field = this->GetIndependentComponents()
       ? this->SelectedComponent : (nb_components - 1);
 
     if (has_prop)
       {
-      vtkPiecewiseFunction *ofun = 
+      vtkPiecewiseFunction *ofun =
         this->VolumeProperty->GetScalarOpacity(this->SelectedComponent);
       this->ScalarOpacityFunctionEditor->SetPiecewiseFunction(ofun);
 
-      has_scalar_range = 
+      has_scalar_range =
         this->GetDataSetAdjustedScalarRange(scalar_field, scalar_range);
       tfunc_range[0] = ofun->GetRange()[0];
       tfunc_range[1] = ofun->GetRange()[1];
@@ -1029,7 +1029,7 @@ void vtkSlicerVolumePropertyWidget::Update()
                 !has_scalar_range))
         {
         this->ScalarOpacityFunctionEditor->SetWholeParameterRange(tfunc_range);
-        } 
+        }
       else
         {
         this->ScalarOpacityFunctionEditor->SetWholeParameterRange(
@@ -1077,7 +1077,7 @@ void vtkSlicerVolumePropertyWidget::Update()
       }
     if (has_prop)
       {
-      int old_disable = 
+      int old_disable =
         this->ScalarOpacityUnitDistanceScale->GetDisableCommands();
       this->ScalarOpacityUnitDistanceScale->SetDisableCommands(1);
       this->ScalarOpacityUnitDistanceScale->SetValue(
@@ -1093,13 +1093,13 @@ void vtkSlicerVolumePropertyWidget::Update()
 
   if (this->ScalarColorFunctionEditor)
     {
-    int scalar_field = this->GetIndependentComponents() 
+    int scalar_field = this->GetIndependentComponents()
       ? this->SelectedComponent : 0;
 
-    if (!no_rgb && has_prop && 
+    if (!no_rgb && has_prop &&
         this->VolumeProperty->GetColorChannels(this->SelectedComponent) == 3)
       {
-      vtkColorTransferFunction *cfun = 
+      vtkColorTransferFunction *cfun =
         this->VolumeProperty->GetRGBTransferFunction(this->SelectedComponent);
       this->ScalarColorFunctionEditor->SetColorTransferFunction(cfun);
 
@@ -1112,7 +1112,7 @@ void vtkSlicerVolumePropertyWidget::Update()
         this->ScalarOpacityFunctionEditor->SetPointColorTransferFunction(NULL);
         }
 
-      has_scalar_range = 
+      has_scalar_range =
         this->GetDataSetAdjustedScalarRange(scalar_field, scalar_range);
       cfun->GetRange(tfunc_range);
       tfunc_size = this->ScalarColorFunctionEditor->GetFunctionSize();
@@ -1130,7 +1130,7 @@ void vtkSlicerVolumePropertyWidget::Update()
                 !has_scalar_range))
         {
         this->ScalarColorFunctionEditor->SetWholeParameterRange(tfunc_range);
-        } 
+        }
       else
         {
         this->ScalarColorFunctionEditor->SetWholeParameterRange(
@@ -1159,11 +1159,11 @@ void vtkSlicerVolumePropertyWidget::Update()
 
     this->ScalarColorFunctionEditor->Update();
 
-    // Disable the RGB tfunc editor if the color of the volume is set to 
+    // Disable the RGB tfunc editor if the color of the volume is set to
     // a gray level tfunc (not supported at the moment)
 
-    int rgb_out = no_rgb || 
-      (has_prop && 
+    int rgb_out = no_rgb ||
+      (has_prop &&
        this->VolumeProperty->GetColorChannels(this->SelectedComponent) != 3);
     if (rgb_out)
       {
@@ -1171,7 +1171,7 @@ void vtkSlicerVolumePropertyWidget::Update()
       }
     if (this->ScalarColorFunctionEditor->IsCreated())
       {
-      tk_cmd << "grid " << (rgb_out ? "remove" : "") << " " 
+      tk_cmd << "grid " << (rgb_out ? "remove" : "") << " "
              << this->ScalarColorFunctionEditor->GetWidgetName() << endl;
       }
     }
@@ -1198,7 +1198,7 @@ void vtkSlicerVolumePropertyWidget::Update()
       }
 
     // (un)Synchronize both opacity and color functions points
-    
+
     if (this->GetIndependentComponents() &&
         this->LockOpacityAndColor[this->SelectedComponent] && have_funcs)
       {
@@ -1238,8 +1238,8 @@ void vtkSlicerVolumePropertyWidget::Update()
     {
     this->EnableGradientOpacityOptionMenu->SetValue(
       this->VolumeProperty->GetDisableGradientOpacity(
-        this->SelectedComponent) 
-      ? ks_("Volume Property Editor|Enable Gradient|Off") 
+        this->SelectedComponent)
+      ? ks_("Volume Property Editor|Enable Gradient|Off")
       : ks_("Volume Property Editor|Enable Gradient|On"));
     }
 
@@ -1247,16 +1247,16 @@ void vtkSlicerVolumePropertyWidget::Update()
 
   if (this->GradientOpacityFunctionEditor)
     {
-    int scalar_field = this->GetIndependentComponents() 
+    int scalar_field = this->GetIndependentComponents()
       ? this->SelectedComponent : (nb_components - 1);
-    
+
     if (has_prop)
       {
-      vtkPiecewiseFunction *gfun = 
+      vtkPiecewiseFunction *gfun =
        this->VolumeProperty->GetStoredGradientOpacity(this->SelectedComponent);
       this->GradientOpacityFunctionEditor->SetPiecewiseFunction(gfun);
 
-      has_scalar_range = 
+      has_scalar_range =
         this->GetDataSetAdjustedScalarRange(scalar_field, scalar_range);
       if (has_scalar_range)
         {
@@ -1284,7 +1284,7 @@ void vtkSlicerVolumePropertyWidget::Update()
         {
         this->GradientOpacityFunctionEditor->SetWholeParameterRange(
           tfunc_range);
-        } 
+        }
       else
         {
         this->GradientOpacityFunctionEditor->SetWholeParameterRange(
@@ -1302,9 +1302,9 @@ void vtkSlicerVolumePropertyWidget::Update()
     if (this->HistogramSet)
       {
       if (this->HistogramSet->ComputeHistogramName(
-            this->GetDataSetScalarName(), 
-            this->GetIndependentComponents() ? this->SelectedComponent : 0, 
-            "gradient", 
+            this->GetDataSetScalarName(),
+            this->GetIndependentComponents() ? this->SelectedComponent : 0,
+            "gradient",
             hist_name))
         {
         this->GradientOpacityFunctionEditor->SetHistogram(
@@ -1323,7 +1323,7 @@ void vtkSlicerVolumePropertyWidget::Update()
 
   if (this->ComponentWeightScaleSet)
     {
-    vtkKWScaleWithEntrySet *scaleset = 
+    vtkKWScaleWithEntrySet *scaleset =
       this->ComponentWeightScaleSet->GetWidget();
     if (has_prop)
       {
@@ -1419,7 +1419,7 @@ void vtkSlicerVolumePropertyWidget::SetVolumeProperty(
     {
     this->VolumeProperty->UnRegister(this);
     }
-    
+
   this->VolumeProperty = arg;
 
   if (this->VolumeProperty)
@@ -1435,7 +1435,7 @@ void vtkSlicerVolumePropertyWidget::SetVolumeProperty(
 //----------------------------------------------------------------------------
 int vtkSlicerVolumePropertyWidget::GetIndependentComponents()
 {
-  return (this->VolumeProperty && 
+  return (this->VolumeProperty &&
           this->VolumeProperty->GetIndependentComponents());
 }
 
@@ -1453,7 +1453,7 @@ void vtkSlicerVolumePropertyWidget::SetDataSet(
     {
     this->DataSet->UnRegister(this);
     }
-    
+
   this->DataSet = arg;
 
   if (this->DataSet)
@@ -1506,12 +1506,12 @@ int vtkSlicerVolumePropertyWidget::GetDataSetAdjustedScalarRange(
     if (scalars)
       {
       // workaround assert() in GetAdjustedScalarRange for other data types
-      if (scalars->GetDataType() == VTK_UNSIGNED_CHAR || 
+      if (scalars->GetDataType() == VTK_UNSIGNED_CHAR ||
           scalars->GetDataType() == VTK_UNSIGNED_SHORT)
         {
         return vtkMath::GetAdjustedScalarRange(scalars, comp, range);
         }
-      else 
+      else
         {
         if (comp < 0 || comp >= scalars->GetNumberOfComponents())
           {
@@ -1570,16 +1570,16 @@ void vtkSlicerVolumePropertyWidget::SetHistogramSet(vtkKWHistogramSet *arg)
     {
     this->HistogramSet->UnRegister(this);
     }
-    
+
   this->HistogramSet = arg;
-  
+
   if (this->HistogramSet)
     {
     this->HistogramSet->Register(this);
     }
-  
+
   this->Modified();
-  
+
   this->Update();
 }
 
@@ -1695,7 +1695,7 @@ void vtkSlicerVolumePropertyWidget::SetMaterialPropertyPosition(int arg)
     {
     arg = vtkSlicerVolumePropertyWidget::MaterialPropertyPositionTop;
     }
-  else if (arg > 
+  else if (arg >
      vtkSlicerVolumePropertyWidget::MaterialPropertyPositionScalarColorUserFrame)
     {
     arg = vtkSlicerVolumePropertyWidget::MaterialPropertyPositionScalarColorUserFrame;
@@ -1715,30 +1715,30 @@ void vtkSlicerVolumePropertyWidget::SetMaterialPropertyPosition(int arg)
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetMaterialPropertyPositionToTop()
-{ 
+{
   this->SetMaterialPropertyPosition(
-    vtkSlicerVolumePropertyWidget::MaterialPropertyPositionTop); 
+    vtkSlicerVolumePropertyWidget::MaterialPropertyPositionTop);
 };
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetMaterialPropertyPositionToBottomFrame()
-{ 
+{
   this->SetMaterialPropertyPosition(
-    vtkSlicerVolumePropertyWidget::MaterialPropertyPositionBottomFrame); 
+    vtkSlicerVolumePropertyWidget::MaterialPropertyPositionBottomFrame);
 };
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetMaterialPropertyPositionToScalarOpacityUserFrame()
-{ 
+{
   this->SetMaterialPropertyPosition(
     vtkSlicerVolumePropertyWidget::MaterialPropertyPositionScalarOpacityUserFrame);
 };
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetMaterialPropertyPositionToScalarColorUserFrame()
-{ 
+{
 this->SetMaterialPropertyPosition(
-  vtkSlicerVolumePropertyWidget::MaterialPropertyPositionScalarColorUserFrame); 
+  vtkSlicerVolumePropertyWidget::MaterialPropertyPositionScalarColorUserFrame);
 };
 
 //----------------------------------------------------------------------------
@@ -1748,7 +1748,7 @@ void vtkSlicerVolumePropertyWidget::SetWholeRangeComputationMethod(int arg)
     {
     arg = vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodData;
     }
-  else if (arg > 
+  else if (arg >
      vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodDataAndFunctionPoints)
     {
     arg = vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodDataAndFunctionPoints;
@@ -1768,23 +1768,23 @@ void vtkSlicerVolumePropertyWidget::SetWholeRangeComputationMethod(int arg)
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetWholeRangeComputationMethodToData()
-{ 
+{
   this->SetWholeRangeComputationMethod(
-    vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodData); 
+    vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodData);
 };
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetWholeRangeComputationMethodToFunctionPoints()
-{ 
+{
   this->SetWholeRangeComputationMethod(
-    vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodFunctionPoints); 
+    vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodFunctionPoints);
 };
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::SetWholeRangeComputationMethodToDataAndFunctionPoints()
-{ 
+{
   this->SetWholeRangeComputationMethod(
-    vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodDataAndFunctionPoints); 
+    vtkSlicerVolumePropertyWidget::WholeRangeComputationMethodDataAndFunctionPoints);
 };
 
 
@@ -1858,7 +1858,7 @@ int vtkSlicerVolumePropertyWidget::IsInWindowLevelMode()
 {
   int res = 0;
 
-  if (this->ScalarOpacityFunctionEditor && 
+  if (this->ScalarOpacityFunctionEditor &&
       this->ScalarOpacityFunctionEditor->GetWindowLevelMode())
     {
     res = 1;
@@ -1972,7 +1972,7 @@ void vtkSlicerVolumePropertyWidget::SelectedComponentCallback(int n)
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::InterpolationTypeCallback(int type)
 {
-  if (this->VolumeProperty && 
+  if (this->VolumeProperty &&
       this->VolumeProperty->GetInterpolationType()!= type)
     {
     this->VolumeProperty->SetInterpolationType(type);
@@ -1983,7 +1983,7 @@ void vtkSlicerVolumePropertyWidget::InterpolationTypeCallback(int type)
 //----------------------------------------------------------------------------
 void vtkSlicerVolumePropertyWidget::EnableShadingCallback(int state)
 {
-  if (!this->VolumeProperty || 
+  if (!this->VolumeProperty ||
       !this->EnableShadingForAllComponents)
     {
     return;
@@ -1997,7 +1997,7 @@ void vtkSlicerVolumePropertyWidget::EnableShadingCallback(int state)
 
   // Update the others
 
-  int nb_shade_comp = this->GetIndependentComponents() 
+  int nb_shade_comp = this->GetIndependentComponents()
     ? this->GetNumberOfComponents() : 1;
   for (int i = 1; i < nb_shade_comp; i++)
     {
@@ -2113,7 +2113,7 @@ void vtkSlicerVolumePropertyWidget::DoubleClickOnScalarOpacityPointCallback(int 
     {
     return;
     }
-      
+
   // Change the point color
 
   double rgb[3];
@@ -2148,7 +2148,7 @@ void vtkSlicerVolumePropertyWidget::ScalarOpacityUnitDistanceChangedCallback(
 
   this->VolumeProperty->SetScalarOpacityUnitDistance(
     this->SelectedComponent, value);
-  
+
   this->InvokeVolumePropertyChangedCommand();
 }
 
@@ -2165,7 +2165,7 @@ void vtkSlicerVolumePropertyWidget::ScalarOpacityUnitDistanceChangingCallback(
     {
     this->VolumeProperty->SetScalarOpacityUnitDistance(
       this->SelectedComponent, value);
-  
+
     this->InvokeVolumePropertyChangingCommand();
     }
 }
@@ -2223,35 +2223,35 @@ void vtkSlicerVolumePropertyWidget::UpdateHSVColorSelectorFromScalarColorFunctio
     return;
     }
 
-  /* 
-     Here is the deal: 
+  /*
+     Here is the deal:
      - select a point in the scalar color mapping function,
      - using the HSV wheel/color selector, select a color, like yellow, and
        a value around 50% ,
      - now drop the value to 0% (black),
-     - the HS cursor will jump automatically to the center, where H = S = 0. 
-     Why ? Even if the color is selected in the HSV color selector, at the 
+     - the HS cursor will jump automatically to the center, where H = S = 0.
+     Why ? Even if the color is selected in the HSV color selector, at the
      end of the day the transfer function stores that color in RGB internally
-     using vtkMath::HSVToRGB. In vtkMath::HSVToRGB, all R, G, B components 
-     are multiplied by V. Thus, if V = 0 then RGB = (0, 0, 0), i.e. black, 
+     using vtkMath::HSVToRGB. In vtkMath::HSVToRGB, all R, G, B components
+     are multiplied by V. Thus, if V = 0 then RGB = (0, 0, 0), i.e. black,
      whatever the values of HS. Since the HSV color selector is automatically
-     updated to match the color of the selected point in the tfunc, it 
-     converts RGB (0, 0, 0) back to HSV, and loses the HS information 
+     updated to match the color of the selected point in the tfunc, it
+     converts RGB (0, 0, 0) back to HSV, and loses the HS information
      (thus jumping back to the center).
-         
+
      Among the possible hacks to volve this issue, we could have checked if
      the value was 0.0, and set it to something like 0.0001, which would still
      be very dark and would keep the HS close enough. I'm not confident with
-     that hack, and I have the feeling that even a close-enough-black on 
-     screen could be not-that-close when printing (for example). 
+     that hack, and I have the feeling that even a close-enough-black on
+     screen could be not-that-close when printing (for example).
 
      Instead, I did the following, under the assumption that if the user sets
      the V to 0, he really wants a "black", whatever the HS: I look at the HSV
-     of the selected tfunc point, and the HSV selected in the HSV color 
-     selector. If both have the same V = 0, and lead to the same RGB, I do 
-     not update the HSV color selector with the current selected point color. 
-     This allows the users to play with V while keeping the HS in the color 
-     selector, but the correct value is stored in the tfunc. 
+     of the selected tfunc point, and the HSV selected in the HSV color
+     selector. If both have the same V = 0, and lead to the same RGB, I do
+     not update the HSV color selector with the current selected point color.
+     This allows the users to play with V while keeping the HS in the color
+     selector, but the correct value is stored in the tfunc.
   */
 
   if (this->ScalarColorFunctionEditor->HasSelection())
@@ -2308,13 +2308,13 @@ void vtkSlicerVolumePropertyWidget::GradientOpacityFunctionChangingCallback()
 void vtkSlicerVolumePropertyWidget::HSVColorSelectionChangedCallback(
   double h, double s, double v)
 {
-  if (!this->ScalarColorFunctionEditor || 
-      !this->ScalarColorFunctionEditor->HasFunction() || 
+  if (!this->ScalarColorFunctionEditor ||
+      !this->ScalarColorFunctionEditor->HasFunction() ||
       !this->ScalarColorFunctionEditor->HasSelection())
     {
     return;
     }
-  
+
   this->ScalarColorFunctionEditor->SetPointColorAsHSV(
     this->ScalarColorFunctionEditor->GetSelectedPoint(), h, s, v);
 
@@ -2331,14 +2331,14 @@ void vtkSlicerVolumePropertyWidget::HSVColorSelectionChangedCallback(
 void vtkSlicerVolumePropertyWidget::HSVColorSelectionChangingCallback(
   double h, double s, double v)
 {
-  if (!this->ScalarColorFunctionEditor || 
-      !this->ScalarColorFunctionEditor->HasFunction() || 
+  if (!this->ScalarColorFunctionEditor ||
+      !this->ScalarColorFunctionEditor->HasFunction() ||
       !this->ScalarColorFunctionEditor->HasSelection())
     {
     return;
     }
 
-  unsigned long mtime = 
+  unsigned long mtime =
     this->ScalarColorFunctionEditor->GetColorTransferFunction()->GetMTime();
 
   this->ScalarColorFunctionEditor->SetPointColorAsHSV(
@@ -2369,7 +2369,7 @@ void vtkSlicerVolumePropertyWidget::ComponentWeightChangedCallback(
     }
 
   this->VolumeProperty->SetComponentWeight(index, value);
-  
+
   float fargs[2];
   fargs[0] = index;
   fargs[1] = value;
@@ -2383,7 +2383,7 @@ void vtkSlicerVolumePropertyWidget::ComponentWeightChangingCallback(
   int index, double value)
 {
   this->VolumeProperty->SetComponentWeight(index, value);
-  
+
   float fargs[2];
   fargs[0] = index;
   fargs[1] = value;
@@ -2399,8 +2399,8 @@ void vtkSlicerVolumePropertyWidget::ComponentWeightChangingCallback(
 void vtkSlicerVolumePropertyWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-  
-  os << indent << "SelectedComponent: " 
+
+  os << indent << "SelectedComponent: "
      << this->SelectedComponent << endl;
   os << indent << "DisableCommands: "
      << (this->DisableCommands ? "On" : "Off") << endl;
@@ -2418,9 +2418,9 @@ void vtkSlicerVolumePropertyWidget::PrintSelf(ostream& os, vtkIndent indent)
      << (this->HSVColorSelectorVisibility ? "On" : "Off") << endl;
   os << indent << "InterpolationTypeVisibility: "
      << (this->InterpolationTypeVisibility ? "On" : "Off") << endl;
-  os << indent << "MaterialPropertyPosition: " 
+  os << indent << "MaterialPropertyPosition: "
      << this->MaterialPropertyPosition << endl;
-  os << indent << "WholeRangeComputationMethod: " 
+  os << indent << "WholeRangeComputationMethod: "
      << this->WholeRangeComputationMethod << endl;
   os << indent << "MaterialPropertyVisibility: "
      << (this->MaterialPropertyVisibility ? "On" : "Off") << endl;

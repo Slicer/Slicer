@@ -28,7 +28,7 @@
 /// qSlicerSceneBundleReader is the IO class that handle MRML scene
 /// embedded in a zip file (called a Slicer Data Bundle).  The extension
 /// is mrb (for Medical Reality Bundle)
-/// It internally calls vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
+/// It internally calls vtkMRMLScene::Connect() or vtkMRMLScene::Import()
 /// depending on the clear flag.
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader
   : public qSlicerFileReader

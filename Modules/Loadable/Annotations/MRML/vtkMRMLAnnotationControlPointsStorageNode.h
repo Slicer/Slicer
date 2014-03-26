@@ -42,10 +42,10 @@ protected:
   int WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode);
 
   int ReadAnnotation(vtkMRMLAnnotationControlPointsNode *refNode);
-  int ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int typeColumn, int xColumn, int yColumn, int zColumn,  
+  int ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int typeColumn, int xColumn, int yColumn, int zColumn,
                       int selColumn,  int visColumn, int numColumns);
   int ReadAnnotationPointDisplayProperties(vtkMRMLAnnotationPointDisplayNode *refNode, std::string lineString, std::string preposition);
-  int ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int &typeColumn, 
+  int ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int &typeColumn,
                         int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node

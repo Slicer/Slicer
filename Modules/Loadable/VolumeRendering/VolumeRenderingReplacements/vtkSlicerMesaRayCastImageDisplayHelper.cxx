@@ -26,8 +26,8 @@
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 #include "vtkSlicerMesaRayCastImageDisplayHelper.h"
 
-// Make sure vtkSlicerMesaRayCastImageDisplayHelper is a copy of 
-// vtkSlicerOpenGLRayCastImageDisplayHelper with vtkSlicerOpenGLRayCastImageDisplayHelper 
+// Make sure vtkSlicerMesaRayCastImageDisplayHelper is a copy of
+// vtkSlicerOpenGLRayCastImageDisplayHelper with vtkSlicerOpenGLRayCastImageDisplayHelper
 // replaced with vtkSlicerMesaRayCastImageDisplayHelper
 #define vtkSlicerOpenGLRayCastImageDisplayHelper vtkSlicerMesaRayCastImageDisplayHelper
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.cxx"

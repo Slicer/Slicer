@@ -86,7 +86,7 @@ public:
   /// pane and the X and Y components of parameter xyz is the position
   /// in the LightBox pane.
   Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double> &xyz);
-  
+
 
 public slots:
 

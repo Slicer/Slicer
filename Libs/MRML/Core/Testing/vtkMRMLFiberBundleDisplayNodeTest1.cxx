@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -39,12 +39,12 @@ public:
     return EXIT_SUCCESS;
     }
 
-  virtual const char* GetNodeTagName() 
+  virtual const char* GetNodeTagName()
     {
     return "Testing is good";
     }
 };
- 
+
 int vtkMRMLFiberBundleDisplayNodeTest1(int , char * [] )
 {
 
@@ -53,6 +53,6 @@ int vtkMRMLFiberBundleDisplayNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
 
   EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLFiberBundleDisplayNodeTestHelper1, node1);
-  
+
   return EXIT_SUCCESS;
 }

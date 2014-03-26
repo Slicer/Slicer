@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -22,7 +22,7 @@ int vtkMRMLDiffusionTensorVolumeSliceDisplayNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS( node1 );
   // EXERCISE_BASIC_DISPLAY_MRML_METHODS is failing due to set/get ScalarVisibility
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLDiffusionTensorVolumeSliceDisplayNode, node1);
-  
+
 
   return EXIT_SUCCESS;
 }

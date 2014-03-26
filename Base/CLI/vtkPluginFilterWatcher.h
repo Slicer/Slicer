@@ -44,7 +44,7 @@
  *
  *
  * \todo Allow any stream object to be used for the output (not just std::cout)
- * 
+ *
  */
 
 class vtkPluginWatcherStart;

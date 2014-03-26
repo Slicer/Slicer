@@ -45,7 +45,7 @@ class QMRML_WIDGETS_EXPORT qMRMLChartWidget : public qMRMLWidget
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
-  
+
   /// Constructors
   explicit qMRMLChartWidget(QWidget* parent = 0);
   virtual ~qMRMLChartWidget();

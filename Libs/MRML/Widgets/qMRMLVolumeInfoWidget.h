@@ -44,11 +44,11 @@ public:
 
   qMRMLVolumeInfoWidget(QWidget *parent=0);
   virtual ~qMRMLVolumeInfoWidget();
-  
+
   vtkMRMLVolumeNode* volumeNode()const;
   // Depends on the dimension, spacing and origin of the volume
   bool isCentered()const;
-  
+
   // Disabled by default
   bool isDataTypeEditable()const;
   // Enabled by default
@@ -61,7 +61,7 @@ public slots:
   void setVolumeNode(vtkMRMLVolumeNode *node);
   void setDataTypeEditable(bool enable);
   void setLabelMapEditable(bool enable);
-  
+
   void setImageSpacing(double*);
   void setImageOrigin(double*);
   void center();

@@ -63,12 +63,12 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::WriteXML(ostream& of, int nIn
 {
 
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
-  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL) 
+  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL)
     {
     of << indent << " DiffusionTensorDisplayPropertiesNodeRef=\"" << this->DiffusionTensorDisplayPropertiesNodeID << "\"";
     }
@@ -86,15 +86,15 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef")) 
+    if (!strcmp(attName, "DiffusionTensorDisplayPropertiesNodeRef"))
       {
       this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(attValue);
       }
-    }  
+    }
 
   this->EndModify(disabledModify);
 }
@@ -106,7 +106,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::Copy(vtkMRMLNode *anode)
 {
   int disabledModify = this->StartModify();
-  
+
   Superclass::Copy(anode);
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = (vtkMRMLDiffusionTensorVolumeSliceDisplayNode *) anode;
 
@@ -119,7 +119,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
  //int idx;
-  
+
   Superclass::PrintSelf(os,indent);
 //  os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
@@ -157,7 +157,7 @@ vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetOutputPort(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline() 
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
 {
   // set display properties according to the tensor-specific display properties node for glyphs
   vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = this->GetDiffusionTensorDisplayPropertiesNode( );
@@ -325,7 +325,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
   vtkDebugMacro(<< this->GetClassName() << ": Setting and Observing Diffusion Tensor Display Properties ID: " << id  );
 
   if (
-      (id != this->GetDiffusionTensorDisplayPropertiesNodeID()) 
+      (id != this->GetDiffusionTensorDisplayPropertiesNodeID())
       && id != NULL && this->GetDiffusionTensorDisplayPropertiesNodeID() != NULL
       && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
       )
@@ -355,7 +355,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
 }
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   // Calls "UpdatePolyDataPipeline"

@@ -56,13 +56,13 @@ protected:
 public:
   qSlicerViewControllersModuleWidgetPrivate(qSlicerViewControllersModuleWidget& obj);
   virtual ~qSlicerViewControllersModuleWidgetPrivate();
-  
+
   /// Create a Controller for a Node and pack in the widget
   void createController(vtkMRMLNode *n, qSlicerLayoutManager *lm);
 
   /// Remove the Controller for a Node from the widget
   void removeController(vtkMRMLNode *n);
-  
+
   typedef std::map<vtkSmartPointer<vtkMRMLNode>, qMRMLViewControllerBar* > ControllerMapType;
   ControllerMapType ControllerMap;
 
@@ -81,7 +81,7 @@ qSlicerViewControllersModuleWidgetPrivate::~qSlicerViewControllersModuleWidgetPr
 }
 
 //-----------------------------------------------------------------------------
-void 
+void
 qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSlicerLayoutManager *layoutManager)
 {
   if (this->ControllerMap.find(n) != this->ControllerMap.end())
@@ -110,7 +110,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     qMRMLSliceWidget *sliceWidget = layoutManager->sliceWidget(sn->GetLayoutName());
     widget->setSliceLogics(layoutManager->mrmlSliceLogics());
     widget->setSliceLogic(sliceWidget->sliceController()->sliceLogic());
-    
+
     // add the widget to the display
     this->SliceControllersLayout->addWidget(widget);
 
@@ -125,17 +125,17 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     widget->setViewLabel( vn->GetLayoutLabel() );
     widget->setMRMLViewNode( vn );
     widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
-    
+
     // ThreeDViewController needs to now the ThreeDView
     qMRMLThreeDWidget *viewWidget = dynamic_cast<qMRMLThreeDWidget*>(layoutManager->viewWidget( vn ));
     if (viewWidget)
       {
       widget->setThreeDView( viewWidget->threeDView() );
       }
-    
+
     // add the widget to the display
     this->ThreeDViewControllersLayout->addWidget(widget);
-    
+
     barWidget = widget;
     }
 
@@ -144,7 +144,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
 }
 
 //-----------------------------------------------------------------------------
-void 
+void
 qSlicerViewControllersModuleWidgetPrivate::removeController(vtkMRMLNode *n)
 {
   // find the widget for the SliceNode
@@ -239,16 +239,16 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene *newScene)
     }
 
   // Need to listen for any new slice or view nodes being added
-  this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeAddedEvent, 
+  this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeAddedEvent,
                       this, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
 
   // Need to listen for any slice or view nodes being removed
-  this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeRemovedEvent, 
+  this->qvtkReconnect(oldScene, newScene, vtkMRMLScene::NodeRemovedEvent,
                       this, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
 
   // Listen to changes in the Layout so we only show controllers for
   // the visible nodes
-  QObject::connect(layoutManager, SIGNAL(layoutChanged(int)), this, 
+  QObject::connect(layoutManager, SIGNAL(layoutChanged(int)), this,
                    SLOT(onLayoutChanged(int)));
 
 }
@@ -310,7 +310,7 @@ void qSlicerViewControllersModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
     {
     QString layoutName = sliceNode->GetLayoutName();
     qDebug() << "qSlicerViewControllersModuleWidget::onNodeRemovedEvent - layoutName:" << layoutName;
-                                             
+
     // destroy the slice controller
     d->removeController(sliceNode);
     }
@@ -320,7 +320,7 @@ void qSlicerViewControllersModuleWidget::onNodeRemovedEvent(vtkObject*, vtkObjec
     {
     QString layoutName = viewNode->GetName();
     qDebug() << "qSlicerViewControllersModuleWidget::onNodeRemovedEvent - layoutName:" << layoutName;
-                                             
+
     // destroy the view controller
     d->removeController(viewNode);
     }
@@ -351,7 +351,7 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
     {
     return;
     }
-  
+
   vtkMRMLLayoutLogic *layoutLogic = layoutManager->layoutLogic();
   vtkCollection *visibleViews = layoutLogic->GetViewNodes();
   vtkObject *v;

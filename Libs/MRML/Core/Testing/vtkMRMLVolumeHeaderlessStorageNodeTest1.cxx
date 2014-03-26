@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -23,6 +23,6 @@ int vtkMRMLVolumeHeaderlessStorageNodeTest1(int , char * [] )
   EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
   EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLVolumeHeaderlessStorageNode, node1.GetPointer());
-  
+
   return EXIT_SUCCESS;
 }

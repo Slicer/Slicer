@@ -34,7 +34,7 @@ public:
   };
 
 protected:
-  
+
   /// To/from ITK
   typedef itk::Vector<float,3> InputImagePixelType;
   typedef itk::Vector<float,3> OutputImagePixelType;
@@ -58,7 +58,7 @@ protected:
     ConnectPipelines(this->vtkExporter, this->itkImporter);
     ConnectPipelines(this->itkExporter, this->vtkImporter);
     this->LinkITKProgressToVTKProgress ( m_Filter );
-    
+
     /// Set up the filter pipeline
     /// m_Filter->SetInput ( this->itkImporter->GetOutput() );
     this->itkExporter->SetInput ( m_Filter->GetOutput() );
@@ -67,7 +67,7 @@ protected:
   ~vtkITKImageToImageFilterF3F3()
   {
   };
-  
+
 private:
   vtkITKImageToImageFilterF3F3(const vtkITKImageToImageFilterF3F3&);  /// Not implemented.
   void operator=(const vtkITKImageToImageFilterF3F3&);  /// Not implemented.

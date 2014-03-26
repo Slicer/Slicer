@@ -3,8 +3,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -55,7 +55,7 @@ virtual void ShowProgress()
         {
         strncpy(m_ProcessInformation->ProgressMessage,
                 this->GetComment().c_str(), 1023);
-        m_ProcessInformation->Progress = 
+        m_ProcessInformation->Progress =
           (this->GetProcess()->GetProgress() * m_Fraction + m_Start);
         if (m_Fraction != 1.0)
           {
@@ -97,7 +97,7 @@ virtual void ShowProgress()
         if (m_Fraction != 1.0)
           {
           std::cout << "<filter-stage-progress>"
-                    << this->GetProcess()->GetProgress() 
+                    << this->GetProcess()->GetProgress()
                     << "</filter-stage-progress>"
                     << std::endl;
           }
@@ -122,7 +122,7 @@ virtual void StartFilter()
       m_ProcessInformation->StageProgress = 0;
       strncpy(m_ProcessInformation->ProgressMessage,
               this->GetComment().c_str(), 1023);
-      
+
       if (m_ProcessInformation->ProgressCallbackFunction
           && m_ProcessInformation->ProgressCallbackClientData)
         {
@@ -164,7 +164,7 @@ virtual void EndFilter()
       m_ProcessInformation->ElapsedTime
         = this->GetTimeProbe().GetMean()
         * this->GetTimeProbe().GetNumberOfStops();
-      
+
       if (m_ProcessInformation->ProgressCallbackFunction
           && m_ProcessInformation->ProgressCallbackClientData)
         {

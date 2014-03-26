@@ -118,9 +118,9 @@ void vtkSlicerGPURayCastMultiVolumeMapper::Render(vtkRenderer *ren, vtkVolume *v
   {
     this->TimeToDraw = 0.0001;
   }
-  
+
   this->AdaptivePerformanceControl();
-  
+
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
 
   //setup material based on volume property
@@ -166,7 +166,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::AdaptivePerformanceControl()
 
   if (fabs(targetTime - this->TimeToDraw) < 0.1*targetTime)
     return;
-    
+
   this->RaySteps *= targetTime/(this->TimeToDraw*1.5);
 
   int dim[3];
@@ -405,11 +405,11 @@ void vtkSlicerGPURayCastMultiVolumeMapper::SetupRayCastParameters(vtkRenderer *v
 
   int dim[3];
   this->GetVolumeDimensions(dim);
-  
+
   this->ParaMatrix1[0] = 1.0f / dim[0];
   this->ParaMatrix1[1] = 1.0f / dim[1];
   this->ParaMatrix1[2] = 1.0f / dim[2];
-  
+
   GLint loc = vtkgl::GetUniformLocation(RayCastProgram, "ParaMatrix");
   if (loc >= 0)
     vtkgl::UniformMatrix4fv(loc, 1, false, this->ParaMatrix);
@@ -426,7 +426,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolu
 {
   //force shader program reinit in dual 3D view mode
   if (vol->GetNumberOfConsumers() > 1)
-    this->InitializeRayCast(); 
+    this->InitializeRayCast();
 
   vtkgl::UseProgram(RayCastProgram);
 
@@ -437,12 +437,12 @@ void vtkSlicerGPURayCastMultiVolumeMapper::RenderGLSL( vtkRenderer *ren, vtkVolu
 
   // Start the timer now
   this->Timer->StartTimer();
-  
+
   this->DrawVolumeBBox();
   glFinish();
 
   this->Timer->StopTimer();
-  
+
   vtkgl::UseProgram(0);
 }
 
@@ -942,7 +942,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::LoadBgFgFragmentShader()
     "   normal = VolumeMatrix * normalize(normal);                                          \n"
     "   return vec4(gl_NormalMatrix * normal.xyz, length);                                  \n"
     "}                                                                                      \n";
-    
+
   //shading A
   if (this->Technique == 0 || this->Technique == 4 || this->Technique == 5)
   {
@@ -950,7 +950,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::LoadBgFgFragmentShader()
       "vec4 directionalLightA(vec3 coord, vec3 lightDir, vec4 color, vec4 normalIn)            \n"
       "{                                                                                       \n"
       "  if (length(normalIn.xyz) <= 0.001)                                                    \n"
-      "    return gl_FrontMaterial.ambient * color;                                            \n" 
+      "    return gl_FrontMaterial.ambient * color;                                            \n"
       "  vec3    normal = normalize(normalIn.xyz);                                             \n"
       "  float   NdotL = abs( dot( normal, lightDir ) );                                       \n"
       "  vec4    specular = vec4(0);                                                           \n"
@@ -969,7 +969,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::LoadBgFgFragmentShader()
       "vec4 edgeColoringA(vec3 coord, vec4 diffuse, vec4 normalIn)                             \n"
       "{                                                                                       \n"
       "  if (normalIn.w <= 0.001)                                                              \n"
-      "    return gl_FrontMaterial.ambient * color;                                            \n" 
+      "    return gl_FrontMaterial.ambient * color;                                            \n"
       "  vec3    normal = normalize(normalIn.xyz);                                             \n"
       "  float   NdotV = abs( dot( normal, normalize(-ViewDir) ) );                            \n"
       "  return diffuse*NdotV;                                                                 \n"
@@ -983,7 +983,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::LoadBgFgFragmentShader()
       "vec4 directionalLightB(vec3 coord, vec3 lightDir, vec4 color, vec4 normalIn)            \n"
       "{                                                                                       \n"
       "  if (length(normalIn.xyz) <= 0.001)                                                    \n"
-      "    return gl_FrontMaterial.ambient * color;                                            \n" 
+      "    return gl_FrontMaterial.ambient * color;                                            \n"
       "  vec3    normal = normalize(normalIn.xyz);                                             \n"
       "  float   NdotL = abs( dot( normal, lightDir ));                                        \n"
       "  vec4    specular = vec4(0);                                                           \n"
@@ -1002,7 +1002,7 @@ void vtkSlicerGPURayCastMultiVolumeMapper::LoadBgFgFragmentShader()
       "vec4 edgeColoringB(vec3 coord, vec4 diffuse, vec4 normalIn)                             \n"
       "{                                                                                       \n"
       "  if (normalIn.w <= 0.001)                                                               \n"
-      "    return gl_FrontMaterial.ambient * color;                                            \n" 
+      "    return gl_FrontMaterial.ambient * color;                                            \n"
       "  vec3    normal = normalize(normalIn.xyz);                                             \n"
       "  float   NdotV = abs( dot( normal, normalize(-ViewDir) ) );                            \n"
       "  return diffuse*NdotV;                                                                 \n"

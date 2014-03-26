@@ -12,14 +12,14 @@ import IslandEffect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   RemoveIslandsEffect is a subclass of IslandEffect
   to remove small islands that might, for example, be
   cause by noise after thresholding.
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -75,7 +75,7 @@ class RemoveIslandsEffectOptions(IslandEffect.IslandEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -96,7 +96,7 @@ class RemoveIslandsEffectOptions(IslandEffect.IslandEffectOptions):
 #
 # RemoveIslandsEffectTool
 #
- 
+
 class RemoveIslandsEffectTool(IslandEffect.IslandEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -109,7 +109,7 @@ class RemoveIslandsEffectTool(IslandEffect.IslandEffectTool):
 
   def __init__(self, sliceWidget):
     super(RemoveIslandsEffectTool,self).__init__(sliceWidget)
-    
+
   def cleanup(self):
     """
     call superclass to clean up actors
@@ -122,13 +122,13 @@ class RemoveIslandsEffectTool(IslandEffect.IslandEffectTool):
 #
 # RemoveIslandsEffectLogic
 #
- 
+
 class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an RemoveIslandsEffectTool
   or RemoveIslandsEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the RemoveIslandsEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -139,7 +139,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
 
 
   def findNonZeroBorderPixel(self, imageData):
-    """ search the border of the image data looking for the first 
+    """ search the border of the image data looking for the first
     - usually whole border will be nonzero, but in some cases
       it may not be.  So check corners first, and then
       if can't find it, give up and use 1 (to avoid exhaustive search)
@@ -213,7 +213,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
 
 
     if False:
-      # some code for debugging - leave it in 
+      # some code for debugging - leave it in
       layerLogic = self.sliceLogic.GetLabelLayer()
       labelNode = layerLogic.GetVolumeNode()
       volumesLogic = slicer.modules.volumes.logic()
@@ -373,7 +373,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
 
 
 #
-# The RemoveIslandsEffect class definition 
+# The RemoveIslandsEffect class definition
 #
 
 class RemoveIslandsEffect(IslandEffect.IslandEffect):

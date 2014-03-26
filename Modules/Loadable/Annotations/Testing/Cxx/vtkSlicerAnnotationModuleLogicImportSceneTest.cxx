@@ -63,7 +63,7 @@ bool ImportTwiceTest(bool verbose)
   /// At this point the following node id should be in the scene:
   ///   - vtkMRMLAnnotationHierarchyNode
   ///       - vtkMRMLAnnotationHierarchyNode -> vtkMRMLFiducialAnnotationNode -> vtkMRMLFiducialAnnotationDisplayNode
-  ///            - 
+  ///            -
   ///   - vtkMRMLModelHierarchyNode1 (pointing to vtkMRMLModelDisplayNode1 and vtkMRMLModelNode1)
   ///   - vtkMRMLModelHierarchyNode2 (parent of vtkMRMLModelHierarchyNode1)
   vtkMRMLAnnotationRulerNode* ruler1 = vtkMRMLAnnotationRulerNode::SafeDownCast(

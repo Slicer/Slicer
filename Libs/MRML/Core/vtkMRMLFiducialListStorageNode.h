@@ -37,11 +37,11 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FiducialListStorage";};
 
-  /// 
+  ///
   /// Return a default file extension for writing
   virtual const char* GetDefaultWriteFileExtension();
 

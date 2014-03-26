@@ -36,7 +36,7 @@ vtkMRMLPETProceduralColorNode::~vtkMRMLPETProceduralColorNode()
 void vtkMRMLPETProceduralColorNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
 }
@@ -46,7 +46,7 @@ void vtkMRMLPETProceduralColorNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
-  
+
 }
 
 
@@ -62,7 +62,7 @@ void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
   if (this->ColorTransferFunction != NULL)
     {
@@ -80,7 +80,7 @@ void vtkMRMLPETProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
 
 //---------------------------------------------------------------------------
 void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -136,11 +136,11 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     {
     this->ColorTransferFunction = vtkColorTransferFunction::New();
     }
-  
+
   // clear it out
   this->ColorTransferFunction->RemoveAllPoints();
   this->ColorTransferFunction->SetColorSpaceToRGB();
-  
+
   // Set up the custom colours here for this type
   if (this->Type == this->PETheat)
     {
@@ -218,10 +218,10 @@ void vtkMRMLPETProceduralColorNode::SetType(int type)
     }
 
   // build it
-  
+
   // invoke a modified event
   this->Modified();
-  
+
   // invoke a type  modified event
   this->InvokeEvent(vtkMRMLProceduralColorNode::TypeModifiedEvent);
 }

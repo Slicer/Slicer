@@ -66,35 +66,35 @@ public:
   vtkTypeRevisionMacro(vtkMRMLModelDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Get/Set the ClipModels Node
   vtkMRMLClipModelsNode* GetClipModelsNode();
   void SetClipModelsNode(vtkMRMLClipModelsNode *snode);
 
-  /// 
+  ///
   /// Return the current model actor corresponding to a give MRML ID
   vtkProp3D *GetActorByID(const char *id);
 
-  /// 
+  ///
   /// Return the current node ID corresponding to a given vtkProp3D
   const char *GetIDByActor(vtkProp3D *actor);
 
-  /// 
+  ///
   /// Get world point picker
   vtkWorldPointPicker* GetWorldPointPicker();
-  
-  /// 
+
+  ///
   /// Get property picker
   vtkPropPicker* GetPropPicker();
 
-  /// 
+  ///
   /// Get cell picker
   vtkCellPicker* GetCellPicker();
 
-  /// 
+  ///
   /// Get point picker
   vtkPointPicker* GetPointPicker();
-  
+
   /// Convert an x/y location to a mrml node, 3d RAS point, point id, cell id,
   /// as appropriate depending what's found under the xy.
   int Pick(int x, int y);
@@ -104,29 +104,29 @@ public:
   double GetPickTolerance();
   void SetPickTolerance(double tolerance);
 
-  /// 
+  ///
   /// Get the MRML ID of the picked node, returns empty string if no pick
   const char *GetPickedNodeID();
-  
-  /// 
+
+  ///
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick
   double* GetPickedRAS();
   void SetPickedRAS(double* newPickedRAS);
-  
+
   /// Get/Set the picked cell id, returns -1 if no pick
   vtkIdType GetPickedCellID();
   void SetPickedCellID(vtkIdType newCellID);
 
-  /// 
+  ///
   /// Get/Set the picked point id, returns -1 if no pick
   vtkIdType GetPickedPointID();
   void SetPickedPointID(vtkIdType newPointID);
-  
-  /// 
+
+  ///
   /// Get/Set vtkMRMLModelHierarchyLogic
   vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic();
 
-  void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, 
+  void SetClipPlaneFromMatrix(vtkMatrix4x4 *sliceMatrix,
                              int planeDirection,
                              vtkPlane *plane);
 
@@ -195,11 +195,11 @@ protected:
   void UpdateModelHierarchyDisplay(vtkMRMLDisplayableNode *model);
 
   vtkMRMLDisplayNode*  GetHierarchyDisplayNode(vtkMRMLDisplayableNode *model);
-  
+
   void RemoveDispalyedID(std::string &id);
-  
+
 private:
-  
+
   vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&); // Not implemented
   void operator=(const vtkMRMLModelDisplayableManager&);                 // Not Implemented
 

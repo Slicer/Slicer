@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2010 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2010 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -24,8 +24,8 @@ struct callBackDataStruct{
   std::string testString;
 };
 
-void TestCallback( vtkObject *caller, 
-                   unsigned long vtkNotUsed(eid), 
+void TestCallback( vtkObject *caller,
+                   unsigned long vtkNotUsed(eid),
                    void *clientData, void *vtkNotUsed(callData) )
 {
   std::cout << "TestCallback" << std::endl;
@@ -66,7 +66,7 @@ int vtkObserverManagerTest1(int , char * [] )
     std::cerr << "Error getting owner."  << std::endl;
     return EXIT_FAILURE;
     }
- 
+
   // get the call back
   vtkCallbackCommand* callbackCommand = observerManager->GetCallbackCommand();
   if (callbackCommand == NULL)
@@ -90,7 +90,7 @@ int vtkObserverManagerTest1(int , char * [] )
 
   // modify the observed
   observed->SetName("Testing Model Node");
-  
+
 
   // make a new node to observe
   vtkSmartPointer<vtkMRMLModelNode> observed2 = vtkSmartPointer<vtkMRMLModelNode>::New();
@@ -114,6 +114,6 @@ int vtkObserverManagerTest1(int , char * [] )
   observerManager->SetAndObserveObject(vtkObjectPointer(&(observed4)), NULL);
   // don't need to call delete, the prior command nulled it
   //observed4->Delete();
-  
+
   return EXIT_SUCCESS;
 }

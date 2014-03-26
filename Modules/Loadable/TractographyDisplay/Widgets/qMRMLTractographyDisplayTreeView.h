@@ -82,7 +82,7 @@ private:
   Q_DISABLE_COPY(qMRMLTractographyDisplayTreeView);
 
   vtkSlicerFiberBundleLogic* m_Logic;
-  
+
   // toggle the visibility of an TractographyDisplay
   void onVisibilityColumnClicked(vtkMRMLNode* node);
 

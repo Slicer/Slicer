@@ -41,7 +41,7 @@ class vtkMRMLSceneEventRecorder : public vtkCommand
 public:
   vtkTypeMacro(vtkMRMLSceneEventRecorder, vtkCommand);
   static vtkMRMLSceneEventRecorder *New();
-  virtual void Execute(vtkObject *caller, unsigned long eventId, 
+  virtual void Execute(vtkObject *caller, unsigned long eventId,
                        void *callData);
   // List of node that should be updated when NodeAddedEvent is catched
   std::map<unsigned long, unsigned int> CalledEvents;

@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkImageStash - 
+///  vtkImageStash -
 ///  Store an image data in a compressed form to save memory
 
 #ifndef __vtkImageStash_h
@@ -33,8 +33,8 @@ public:
   vtkTypeRevisionMacro(vtkImageStash,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
-  /// The stash image: 
+  ///
+  /// The stash image:
   /// This image data will have the Scalars removed
   /// and they will be stored in a local compressed data
   /// array inside this class when the Stash method is called.
@@ -43,7 +43,7 @@ public:
   vtkSetObjectMacro(StashImage, vtkImageData);
   vtkGetObjectMacro(StashImage, vtkImageData);
 
-  /// 
+  ///
   /// The stashed scalars:
   /// this is the zlib compressed image scalar data
   vtkSetObjectMacro(StashedScalars, vtkUnsignedCharArray);
@@ -54,20 +54,20 @@ public:
   vtkSetMacro(NumberOfTuples, vtkIdType);
   vtkGetMacro(NumberOfTuples, vtkIdType);
 
-  /// 
+  ///
   /// The multi-threader used when TreadedStash is called
   vtkSetObjectMacro(MultiThreader, vtkMultiThreader);
   vtkGetObjectMacro(MultiThreader, vtkMultiThreader);
-  
-  /// 
+
+  ///
   /// compress and strip the scalars
   void Stash();
 
-  /// 
+  ///
   /// compress and strip the scalars in a separate thread
   void ThreadedStash();
 
-  /// 
+  ///
   /// decompress and restore the scalars
   void Unstash();
 
@@ -85,7 +85,7 @@ public:
   // Check if compression thread is finished
   vtkSetMacro(Stashing, int);
   vtkGetMacro(Stashing, int);
- 
+
 protected:
   vtkImageStash();
   ~vtkImageStash();

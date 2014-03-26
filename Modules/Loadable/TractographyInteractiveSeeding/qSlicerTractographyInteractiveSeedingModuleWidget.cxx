@@ -231,7 +231,7 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setup()
   QObject::connect(d->FiberNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this,
                                          SLOT(setFiberBundleNode(vtkMRMLNode*)));
 
-  QObject::connect(d->PresetsComboBox, 
+  QObject::connect(d->PresetsComboBox,
                 SIGNAL(currentIndexChanged(int)),
                 SLOT(setParametersPreset(int)));
 
@@ -472,7 +472,7 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setSeedingNode(vtkMRMLNo
       std::stringstream ss;
       ss << label;
       QString str = QString::fromUtf8(ss.str().c_str());
-      d->ROILabelInput->setText(str); 
+      d->ROILabelInput->setText(str);
       }
     }
   else

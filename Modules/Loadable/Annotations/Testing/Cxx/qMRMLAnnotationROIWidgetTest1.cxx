@@ -29,9 +29,9 @@ int qMRMLAnnotationROIWidgetTest1(int argc, char * argv[] )
   widget.setMRMLAnnotationROINode(roi);
 
   qDebug() << "start edit";
-  
+
   roi->SetXYZ(1, 1, 1);
-  
+
   qDebug() << "end edit";
 
   widget.show();

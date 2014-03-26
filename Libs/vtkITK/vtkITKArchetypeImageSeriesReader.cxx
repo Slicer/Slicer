@@ -33,7 +33,7 @@
 // Commented out redefinition of ExceptionMacro
 #ifdef REDEFINE_EXCEPTION_MACROS
 // turn itk exceptions into vtk errors
-#undef itkExceptionMacro  
+#undef itkExceptionMacro
 #define itkExceptionMacro(x) \
   { \
   ::std::ostringstream message; \
@@ -42,7 +42,7 @@
   std::cout << message.str().c_str() << std::endl; \
   }
 
-#undef itkGenericExceptionMacro  
+#undef itkGenericExceptionMacro
 #define itkGenericExceptionMacro(x) \
   { \
   ::std::ostringstream message; \
@@ -136,7 +136,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 
 #if ITK_VERSION_MAJOR < 4
   // make sure ITK built-in factories are registered,
-  // then register the extra ones and unregister the 
+  // then register the extra ones and unregister the
   // ones we don't want
   itk::ImageIOFactory::RegisterBuiltInFactories();
 #endif
@@ -144,7 +144,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->UnRegisterDeprecatedBuiltInFactories();
 }
 
-// 
+//
 // ITK internally does not register all of the IO types that get built
 // (possibly due to lingering bugs?) but many slicer users have
 // GE5 (Signa - magic number: IMGF) files that they need to work
@@ -179,7 +179,7 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
 }
 
 //
-// ITK includes some old/unwanted IO Factories that cause 
+// ITK includes some old/unwanted IO Factories that cause
 // incorrect parsing of dicom files in some circumstances
 //
 void
@@ -216,7 +216,7 @@ vtkITKArchetypeImageSeriesReader::UnRegisterDeprecatedBuiltInFactories()
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
-{ 
+{
   if (this->Archetype)
     {
     delete [] this->Archetype;
@@ -232,7 +232,7 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
    MeasurementFrameMatrix->Delete();
    MeasurementFrameMatrix = NULL;
    }
- 
+
 }
 
 vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetRasToIjkMatrix()
@@ -251,17 +251,17 @@ vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetMeasurementFrameMatrix()
 void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
-  
+
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "Archetype: " <<
     (this->Archetype ? this->Archetype : "(none)") << "\n";
 
-  os << indent << "FileNameSliceOffset: " 
+  os << indent << "FileNameSliceOffset: "
      << this->FileNameSliceOffset << "\n";
-  os << indent << "FileNameSliceSpacing: " 
+  os << indent << "FileNameSliceSpacing: "
      << this->FileNameSliceSpacing << "\n";
-  os << indent << "FileNameSliceCount: " 
+  os << indent << "FileNameSliceCount: "
      << this->FileNameSliceCount << "\n";
 
   os << indent << "OutputScalarType: "
@@ -273,14 +273,14 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
     os << ", " << this->DefaultDataSpacing[idx];
     }
   os << ")\n";
-  
+
   os << indent << "DefaultDataOrigin: (" << this->DefaultDataOrigin[0];
   for (idx = 1; idx < 3; ++idx)
     {
     os << ", " << this->DefaultDataOrigin[idx];
     }
   os << ")\n";
-  
+
 }
 
 int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* vtkNotUsed(filename))
@@ -308,7 +308,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   vtkImageData *output = this->GetOutput();
   std::vector<std::string> candidateFiles;
   std::vector<std::string> candidateSeries;
-  int extent[6];  
+  int extent[6];
   std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
 
   if ( this->SingleFile )
@@ -330,7 +330,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     {
     vtkDebugMacro("File " << fileNameCollapsed.c_str() << " is a pointer to the mrml scene in memory, not checking for it on disk");
     }
-  else 
+  else
     {
     if (!itksys::SystemTools::FileExists (fileNameCollapsed.c_str()))
       {
@@ -348,7 +348,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   bool isDicomFile = dicomIO->CanReadFile(this->Archetype);
 
   // if user already set up FileNames, we do not try to find candidate files
-  if ( this->GetNumberOfFileNames() > 0 )  
+  if ( this->GetNumberOfFileNames() > 0 )
   {
     unsigned int nFiles = this->GetNumberOfFileNames();
     this->AllFileNames.resize( 0 );
@@ -357,7 +357,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       this->AllFileNames.push_back( this->FileNames[k] );
     }
     this->FileNames.resize( 0 );
-    
+
     // if this is the only file set by user
     if (nFiles == 1)
     {
@@ -388,11 +388,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       // Find the series that contains the archetype
       candidateSeries = inputImageFileGenerator->GetSeriesUIDs();
 
-      // Find all dicom files in the directory 
+      // Find all dicom files in the directory
       for (unsigned int s = 0; s < candidateSeries.size(); s++)
       {
         std::vector<std::string> seriesFileNames;
-        seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] ); 
+        seriesFileNames = inputImageFileGenerator->GetFileNames( candidateSeries[s] );
         for (unsigned int f = 0; f < seriesFileNames.size(); f++)
         {
           this->AllFileNames.push_back( seriesFileNames[f] );
@@ -406,7 +406,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         this->AnalyzeDicomHeaders();
       }
 
-      // the following for loop set up candidate files with same series number 
+      // the following for loop set up candidate files with same series number
       // that include the given Archetype;
       int found = 0;
       for (unsigned int s = 0; s < candidateSeries.size() && found == 0; s++)
@@ -429,11 +429,11 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         this->IsOnlyFile = true;
       }
     }
-    else if( !this->GetSingleFile() ) 
+    else if( !this->GetSingleFile() )
     { // not dicom
-      // check the dimensions of the archetype - if there 
+      // check the dimensions of the archetype - if there
       // is more then one slice, use only the archetype
-      // but if it is a single slice, try to generate a 
+      // but if it is a single slice, try to generate a
       // series of filenames
       itk::ImageFileReader<ImageType>::Pointer imageReader =
         itk::ImageFileReader<ImageType>::New();
@@ -496,7 +496,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     {
       AssembleVolumeContainingArchetype();
     }
-    else 
+    else
     {
     GroupFiles( SelectedUID,
                 SelectedContentTime,
@@ -513,7 +513,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     RasToIjkMatrix->Delete();
     }
   RasToIjkMatrix = vtkMatrix4x4::New();
-  
+
   vtkMatrix4x4* IjkToLpsMatrix = vtkMatrix4x4::New();
 
   RasToIjkMatrix->Identity();
@@ -521,7 +521,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
   double spacing[3];
   double origin[3];
-  
+
 
   itk::ImageIOBase::Pointer imageIO = NULL;
 
@@ -602,7 +602,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 
 
       imageIO = imageReader->GetImageIO();
-      if (imageIO.GetPointer() == NULL) 
+      if (imageIO.GetPointer() == NULL)
         {
           itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
           return;
@@ -619,7 +619,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         {
           seriesReader->SetImageIO(dicomIO);
         }
-      else 
+      else
         {
         itk::ImageFileReader<ImageType>::Pointer imageReader =
           itk::ImageFileReader<ImageType>::New();
@@ -916,7 +916,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       }
     }
 
-  if (imageIO.GetPointer() == NULL) 
+  if (imageIO.GetPointer() == NULL)
     {
     this->SetNumberOfComponents(1);
     }
@@ -1023,7 +1023,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
 void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
                                                     int idxContentTime,
                                                     int idxTriggerTime,
-                                                    int idxEchoNumbers,                                                    
+                                                    int idxEchoNumbers,
                                                     int idxDiffusionGradientOrientation,
                                                     int idxSliceLocation,
                                                     int idxImageOrientationPatient )
@@ -1113,7 +1113,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
         lastImageIO = imageReader->GetImageIO();
         }
 
-      // insert series 
+      // insert series
       int idx = this->InsertSeriesInstanceUIDs( "Non-Dicom Series" );
       this->IndexSeriesInstanceUIDs[f] = idx;
 
@@ -1210,7 +1210,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
     {
       this->IndexEchoNumbers[f] = -1;
     }
-    
+
     // diffision gradient orientation
     tagValue.clear(); itk::ExposeMetaData<std::string>( dict, "0010|9089", tagValue );
     if ( tagValue.length() > 0 )
@@ -1318,7 +1318,7 @@ unsigned int vtkITKArchetypeImageSeriesReader::GetNumberOfItemsInDictionary()
 
 bool vtkITKArchetypeImageSeriesReader::HasKey( char* tag )
 {
-  return this->Dictionary.HasKey( tag ); 
+  return this->Dictionary.HasKey( tag );
 }
 
 const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
@@ -1392,17 +1392,17 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   //   the files based on this information
   this->FileNames.resize(0);
 
-  // Note: Since IndexArchetype is unsigned int, it's always postive 
+  // Note: Since IndexArchetype is unsigned int, it's always postive
   if (this->IndexArchetype >= this->IndexSeriesInstanceUIDs.size()
       || this->IndexArchetype >= this->IndexTriggerTime.size()
       || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size()
       || this->IndexArchetype >= this->IndexImageOrientationPatient.size())
     {
-      vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype " 
+      vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype "
         << this->IndexArchetype << " is out of bounds 0-" << this->IndexSeriesInstanceUIDs.size());
       return 0;
     }
-      
+
 
   long int iArchetypeSeriesUID = this->IndexSeriesInstanceUIDs[this->IndexArchetype];
   long int iArchetypeEchoNumbers = this->IndexEchoNumbers[this->IndexArchetype];
@@ -1418,15 +1418,15 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
     {
     if (  (this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
-          this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0) 
+          this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0)
          ||
-          (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers && 
-           this->IndexEchoNumbers[k] >= 0 && iArchetypeEchoNumbers >= 0) 
+          (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers &&
+           this->IndexEchoNumbers[k] >= 0 && iArchetypeEchoNumbers >= 0)
          ||
-          (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  && 
-           this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0) 
+          (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  &&
+           this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0)
          ||
-          (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && 
+          (this->IndexImageOrientationPatient[k] != iArchetypeOrientation &&
            this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
       {
       // file doesn't match our criteria
@@ -1436,7 +1436,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       {
       // find the position and orientation corresponding to this
       // file - it could be that all files in the set have the same index
-      // (1) or that there is no position information, in which case the 
+      // (1) or that there is no position information, in which case the
       // position index will be -1
       int kth_orientation = -1;
       int kth_position = -1;

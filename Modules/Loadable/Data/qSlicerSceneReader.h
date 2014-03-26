@@ -31,7 +31,7 @@ class qSlicerSceneReaderPrivate;
 
 ///
 /// qSlicerSceneReader is the IO class that handle MRML scene
-/// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
+/// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import()
 /// depending on the clear flag.
 class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneReader
   : public qSlicerFileReader
@@ -41,7 +41,7 @@ public:
   typedef qSlicerFileReader Superclass;
   qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = 0);
   virtual ~qSlicerSceneReader();
-  
+
   virtual QString description()const;
   /// Support QString("SceneFile")
   virtual qSlicerIO::IOFileType fileType()const;

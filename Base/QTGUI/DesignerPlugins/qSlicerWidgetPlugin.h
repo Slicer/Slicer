@@ -29,7 +29,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerWidgetPlugin
   Q_OBJECT
 public:
   qSlicerWidgetPlugin(QObject* parent = 0);
-  
+
   QWidget *createWidget(QWidget* parentWidget);
   QString  domXml() const;
   QIcon    icon() const;

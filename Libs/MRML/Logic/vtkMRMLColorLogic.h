@@ -136,24 +136,24 @@ protected:
   vtkMRMLColorTableNode* CreateDefaultFileNode(const std::string& colorname);
   vtkMRMLColorTableNode* CreateUserFileNode(const std::string& colorname);
   vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
-  
+
   void AddLabelsNode();
   void AddDefaultTableNode(int i);
   void AddDefaultProceduralNodes();
   void AddFreeSurferNode(int type);
   void AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode);
   void AddPETNode(int type);
-  void AddDGEMRICNode(int type); 
-  void AddDefaultFileNode(int i);  
+  void AddDGEMRICNode(int type);
+  void AddDefaultFileNode(int i);
   void AddUserFileNode(int i);
 
   void AddDefaultTableNodes();
   void AddFreeSurferNodes();
   void AddPETNodes();
-  void AddDGEMRICNodes(); 
-  void AddDefaultFileNodes();  
+  void AddDGEMRICNodes();
+  void AddDefaultFileNodes();
   void AddUserFileNodes();
-  
+
   virtual std::vector<std::string> FindDefaultColorFiles();
   virtual std::vector<std::string> FindUserColorFiles();
 

@@ -50,7 +50,7 @@ vtkMRMLProceduralColorNode::~vtkMRMLProceduralColorNode()
 void vtkMRMLProceduralColorNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
 
 }
@@ -60,7 +60,7 @@ void vtkMRMLProceduralColorNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
-  
+
 }
 
 
@@ -76,7 +76,7 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
   if (this->ColorTransferFunction != NULL)
     {
@@ -94,7 +94,7 @@ void vtkMRMLProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
 
 //---------------------------------------------------------------------------
 void vtkMRMLProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);

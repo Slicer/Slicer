@@ -45,7 +45,7 @@ int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
   colorPickerWidget.setMRMLScene(scene.GetPointer());
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
-  
+
   colorPickerWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

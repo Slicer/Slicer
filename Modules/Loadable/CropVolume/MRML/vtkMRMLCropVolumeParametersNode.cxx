@@ -140,7 +140,7 @@ void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
   this->SetROINodeID(node->GetROINodeID());
   this->SetInterpolationMode(node->GetInterpolationMode());
   this->SetROIVisibility(node->GetROIVisibility());
-  
+
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
 }

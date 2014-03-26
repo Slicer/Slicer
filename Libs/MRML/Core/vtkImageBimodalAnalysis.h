@@ -38,14 +38,14 @@ public:
   vtkTypeMacro(vtkImageBimodalAnalysis,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Set the type of data, if known
   vtkSetMacro(Modality, int);
   vtkGetMacro(Modality, int);
   void SetModalityToMR() {this->SetModality(VTK_BIMODAL_MODALITY_MR);};
   void SetModalityToCT() {this->SetModality(VTK_BIMODAL_MODALITY_CT);};
- 
-  /// 
+
+  ///
   /// Get stats
   vtkGetMacro(Threshold, int);
   vtkGetMacro(Window, int);
@@ -57,8 +57,8 @@ public:
 
     vtkGetMacro(Offset, int);
     vtkSetMacro(Offset, int);
-    
-  /// 
+
+  ///
   /// Ideally this should not be public API
   vtkSetMacro(Threshold, int);
   vtkSetMacro(Window, int);

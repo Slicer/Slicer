@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -187,7 +187,7 @@ bool TestAddReferenceNodeID()
   returnNode = referencingNode->AddAndObserveNodeReferenceID(0, 0);
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 0 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 ||
       returnNode != 0)
     {
     std::cerr << __LINE__ << ": AddAndObserveNodeReferenceID failed" << std::endl;
@@ -198,7 +198,7 @@ bool TestAddReferenceNodeID()
   returnNode = referencingNode->AddAndObserveNodeReferenceID(role1.c_str(), 0);
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 0 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 ||
       returnNode != 0)
     {
     std::cerr << __LINE__ << ": AddAndObserveNodeReferenceID failed" << std::endl;
@@ -229,7 +229,7 @@ bool TestAddReferenceNodeID()
   returnNode = referencingNode->AddAndObserveNodeReferenceID(role1.c_str(), 0);
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 1 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 1) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 1) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 1) != 0 ||
       returnNode != 0)
     {
     std::cerr << __LINE__ << ": AddAndObserveNodeReferenceID failed" << std::endl;
@@ -527,7 +527,7 @@ bool TestRemoveReferencedNodeID()
 
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 0 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 ||
       referencingNode->GetNumberOfNodeReferences(role2.c_str()) != 1 ||
       referencingNode->GetNthNodeReferenceID(role2.c_str(), 0) == 0 ||
       strcmp(referencingNode->GetNthNodeReferenceID(role2.c_str(), 0), referencedNode2->GetID()))
@@ -1012,7 +1012,7 @@ bool TestReferenceNodeNoObservers()
   returnNode = referencingNode->AddNodeReferenceID(0, 0);
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 0 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 ||
       returnNode != 0)
     {
     std::cerr << __LINE__ << ": AddNodeReferenceID failed" << std::endl;
@@ -1023,7 +1023,7 @@ bool TestReferenceNodeNoObservers()
   returnNode = referencingNode->AddNodeReferenceID(role1.c_str(), 0);
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 0 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0 ||
       returnNode != 0)
     {
     std::cerr << __LINE__ << ": AddNodeReferenceID failed" << std::endl;
@@ -1054,7 +1054,7 @@ bool TestReferenceNodeNoObservers()
   returnNode = referencingNode->AddNodeReferenceID(role1.c_str(), 0);
   if (referencingNode->GetNumberOfNodeReferences(role1.c_str()) != 1 ||
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 1) != 0 ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 1) != 0 || 
+      referencingNode->GetNthNodeReference(role1.c_str(), 1) != 0 ||
       returnNode != 0)
     {
     std::cerr << __LINE__ << ": AddNodeReferenceID failed" << std::endl;
@@ -1175,7 +1175,7 @@ bool TestNodeReferenceSerialization()
   vtkNew<vtkMRMLNodeTestHelper1> referencedNode11;
   scene->AddNode(referencedNode11.GetPointer());
   referencingNode->AddNodeReferenceID(role1.c_str(), referencedNode11->GetID());
-  
+
   vtkNew<vtkMRMLNodeTestHelper1> referencedNode21;
   vtkNew<vtkMRMLNodeTestHelper1> referencedNode22;
   scene->AddNode(referencedNode21.GetPointer());
@@ -1199,7 +1199,7 @@ bool TestNodeReferenceSerialization()
   vtkMRMLNode* referencingNodeImported = NULL;
   if (scene2->GetNumberOfNodes() != 4 ||
       (referencingNodeImported = scene2->GetNodeByID(referencingNode->GetID())) == 0 ||
-      referencingNodeImported->GetNumberOfNodeReferences(role1.c_str()) != 1 || 
+      referencingNodeImported->GetNumberOfNodeReferences(role1.c_str()) != 1 ||
       referencingNodeImported->GetNumberOfNodeReferences(role2.c_str()) != 2 ||
       referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
       strcmp(referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0),

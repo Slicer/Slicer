@@ -113,7 +113,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
 
   // Since initialize has been called, the module manager should be available
   qSlicerModuleManager * moduleManager1 = app.moduleManager();
-  
+
   if( !moduleManager1 )
     {
     std::cerr << "Problem with moduleManager()" << std::endl;

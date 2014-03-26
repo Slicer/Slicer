@@ -64,7 +64,7 @@ public:
   qMRMLSceneTractographyDisplayModel(QObject *parent=0);
   virtual ~qMRMLSceneTractographyDisplayModel();
 
-  
+
   int colorColumn()const;
   void setColorColumn(int column);
 

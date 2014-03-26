@@ -90,7 +90,7 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
         {
         QImage qimage;
         if (viewNode->GetScreenShot())
-          {         
+          {
           qMRMLUtils::vtkImageDataToQImage(viewNode->GetScreenShot(),qimage);
           }
         else

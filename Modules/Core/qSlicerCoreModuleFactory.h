@@ -47,7 +47,7 @@ public:
   virtual QString objectNameToKey(const QString& objectName);
 
   /// Extract module name given a core module \a className
-  /// For example: 
+  /// For example:
   ///  qSlicerCamerasModule -> cameras
   ///  qSlicerTransformsModule -> transforms
   static QString extractModuleName(const QString& className);

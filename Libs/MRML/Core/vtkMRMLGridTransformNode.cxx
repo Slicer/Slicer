@@ -68,7 +68,7 @@ void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
     int* N = image->GetDimensions();
     of << " dimension=\"" << N[0] << " " << N[1] << " " << N[2] << "\" ";
     double* spacing = image->GetSpacing();
-    of << " spacing=\"" << spacing[0] << " " << spacing[1] << " " << spacing[2] << "\" ";    
+    of << " spacing=\"" << spacing[0] << " " << spacing[1] << " " << spacing[2] << "\" ";
     double* origin = image->GetOrigin();
     of << " origin=\"" << origin[0] << " " << origin[1] << " " << origin[2] << "\" ";
     }
@@ -93,7 +93,7 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);

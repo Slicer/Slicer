@@ -13,7 +13,7 @@
 
 =========================================================================*/
 ///  vtkAnnotationROIRepresentation2D - a class defining the representation for the vtkSlicerBoxWidget2
-/// 
+///
 /// This class is a concrete representation for the vtkSlicerBoxWidget2. It
 /// represents a box with seven handles: one on each of the six faces, plus a
 /// center handle. Through interaction with the widget, the box
@@ -64,16 +64,16 @@ vtkAnnotationROIRepresentation2D
   : public vtkAnnotationROIRepresentation
 {
 public:
-  /// 
+  ///
   /// Instantiate the class.
   static vtkAnnotationROIRepresentation2D *New();
 
-  /// 
+  ///
   /// Standard methods for the class.
   vtkTypeRevisionMacro(vtkAnnotationROIRepresentation2D,vtkAnnotationROIRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Get the intersecting plane;
   vtkGetObjectMacro(IntersectionPlane,vtkPlane);
 
@@ -89,7 +89,7 @@ public:
   virtual void WidgetInteraction(double e[2]);
   virtual void SetInteractionState(int state);
 
-  /// 
+  ///
   /// Methods supporting, and required by, the rendering process.
   virtual void ReleaseGraphicsResources(vtkWindow*);
   virtual int RenderOpaqueGeometry(vtkViewport*);
@@ -115,7 +115,7 @@ public:
 protected:
   vtkAnnotationROIRepresentation2D();
   ~vtkAnnotationROIRepresentation2D();
-  
+
   /// A face of the hexahedron
   vtkActor2D          *HexFace2D;
   vtkPolyDataMapper2D *HexFaceMapper2D;

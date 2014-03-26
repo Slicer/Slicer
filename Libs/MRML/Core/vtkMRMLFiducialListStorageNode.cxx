@@ -36,7 +36,7 @@ vtkMRMLFiducialListStorageNode::~vtkMRMLFiducialListStorageNode()
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListStorageNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
@@ -51,7 +51,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("vtkMRMLFiducialListStorageNode: File name not specified");
     return 0;
@@ -79,7 +79,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       // clear out the list
       fiducialListNode->RemoveAllFiducials();
       }
-    
+
     // turn off modified events
 //    int modFlag = fiducialListNode->GetDisableModifiedEvent();
 //    fiducialListNode->DisableModifiedEventOn();
@@ -98,7 +98,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     while (fstr.good())
       {
       fstr.getline(line, 1024);
-      
+
       // does it start with a #?
       if (line[0] == '#')
         {
@@ -363,7 +363,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               reTokenise = false;
               }
               columnNumber++;
-            } // end while over columns          
+            } // end while over columns
           int fidIndex = fiducialListNode->AddFiducialWithLabelXYZSelectedVisibility(label.c_str(), x, y, z, sel, vis);
           if (fidIndex == -1)
             {
@@ -403,7 +403,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           }
         }
       else
-        {        
+        {
         vtkDebugMacro("ReadData: no last loaded version number on scene, glyph type = " << glyphType);
         if (this->GetVersion() == -1)
           {
@@ -433,7 +433,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 int vtkMRMLFiducialListStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("vtkMRMLFiducialListStorageNode: File name not specified");
     return 0;
@@ -497,12 +497,12 @@ int vtkMRMLFiducialListStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     of << label;
     of << "," << xyz[0] << "," << xyz[1] << "," << xyz[2];
     of << "," << sel << "," << vis;
-    of << endl;   
+    of << endl;
     }
   of.close();
 
   return 1;
-  
+
 }
 
 //----------------------------------------------------------------------------

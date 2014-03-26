@@ -64,15 +64,15 @@ int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
       sceneFactory.generateNode("vtkMRMLHierarchyNode"));
     vtkMRMLNode* node3 = sceneFactory.generateNode("vtkMRMLViewNode");
 
-    //vtkMRMLHierarchyNode* hierarchyNode4 = 
+    //vtkMRMLHierarchyNode* hierarchyNode4 =
     vtkMRMLHierarchyNode::SafeDownCast(
       sceneFactory.generateNode("vtkMRMLHierarchyNode"));
 
     hierarchyNode1->SetAssociatedNodeID(node1->GetID());
     hierarchyNode2->SetAssociatedNodeID(node3->GetID());
     hierarchyNode3->SetAssociatedNodeID(node2->GetID());
-    
-    //vtkMRMLHierarchyNode* hierarchyNode5 = 
+
+    //vtkMRMLHierarchyNode* hierarchyNode5 =
     vtkMRMLHierarchyNode::SafeDownCast(
       sceneFactory.generateNode("vtkMRMLHierarchyNode"));
     //hierarchyNode5->SetParentNodeID(hierarchyNode4->GetID());

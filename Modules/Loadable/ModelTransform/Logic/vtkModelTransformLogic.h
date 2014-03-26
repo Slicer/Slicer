@@ -34,12 +34,12 @@ public:
   static vtkModelTransformLogic *New();
   vtkTypeMacro(vtkModelTransformLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent){ this->Superclass::PrintSelf(os, indent); }
-  
+
 protected:
   vtkModelTransformLogic();
   ~vtkModelTransformLogic();
   vtkModelTransformLogic(const vtkModelTransformLogic&);
-  void operator=(const vtkModelTransformLogic&);  
+  void operator=(const vtkModelTransformLogic&);
 };
 
 

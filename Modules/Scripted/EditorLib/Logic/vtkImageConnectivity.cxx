@@ -38,7 +38,7 @@ vtkImageConnectivity::vtkImageConnectivity()
 //----------------------------------------------------------------------------
 const char* vtkImageConnectivity::GetFunctionString()
 {
-  switch (this->Function) 
+  switch (this->Function)
     {
     case CONNECTIVITY_IDENTIFY:
       return "IdentifyIslands";
@@ -56,7 +56,7 @@ const char* vtkImageConnectivity::GetFunctionString()
 }
 
 //************************************************************************
-// The following procedures were written by Andre Robatino 
+// The following procedures were written by Andre Robatino
 // in November, 1999
 //
 // connect
@@ -182,7 +182,7 @@ static void recursive_copy(
 
 static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
                      vtkImageData *inData, short *inPtr,
-                     vtkImageData *outData, short *outPtr, 
+                     vtkImageData *outData, short *outPtr,
                      int outExt[6])
 {
   // For looping though output (and input) pixels.
@@ -246,7 +246,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   // Save, Change, Measure:
   // ----------------------
   // Get the seed
-  // 
+  //
   //   seedLabel = inData[xSeed,ySeed,zSeed]
   //
   // If the seed is out of bounds, return the input
@@ -368,7 +368,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   // Save, Change, Measure:
   // ----------------------
   //
-  // Create a mask where everything not equal to seedLabel is 
+  // Create a mask where everything not equal to seedLabel is
   // in the background.
   //
   //     conInput[i] = fgMask,  inData[i] == seedLabel
@@ -408,7 +408,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
   // Save, Change, Measure, Remove, Identify
   // ---------------------------------------
   // Run Connectivity
-  // 
+  //
   ///////////////////////////////////////////////////////////////
 
   if (saveIsland || changeIsland || measureIsland || removeIslands || identifyIslands)
@@ -425,7 +425,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
 
       for (z=0; z < nz; z++)
         {
-        connect(rank, axis_len, &conInput[nxy*z], inbackground, 
+        connect(rank, axis_len, &conInput[nxy*z], inbackground,
           &conOutput[nxy*z], &numIslands[z]);
         }
       axis_len[2] = axis_len2;
@@ -494,8 +494,8 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
             }//for0
           }//for1
         }//for2
-      } 
-    else 
+      }
+    else
       {
       dz = 0;
       i = 0;
@@ -564,7 +564,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
         inPtr0 += inInc2;
         }//for2
       }
-    else 
+    else
       {
       dz = 0;
       i = 0;
@@ -747,11 +747,11 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
         {
         for (outIdx0 = outMin0; outIdx0 <= outMax0; outIdx0++)
           {
-          if (conOutput[i] == conSeedLabel) 
+          if (conOutput[i] == conSeedLabel)
             {
             *outPtr0 = *inPtr0;
-            }        
-          else 
+            }
+          else
             {
             *outPtr0 = bg;
             }
@@ -785,7 +785,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
     i = 0;
     for (outIdx2 = outMin2; outIdx2 <= outMax2; outIdx2++)
       {
-      for (outIdx1 = outMin1; outIdx1 <= outMax1; outIdx1++) 
+      for (outIdx1 = outMin1; outIdx1 <= outMax1; outIdx1++)
         {
         for (outIdx0 = outMin0; outIdx0 <= outMax0; outIdx0++)
           {
@@ -841,7 +841,7 @@ void vtkImageConnectivity::ExecuteData(vtkDataObject *)
   int x1;
 
   x1 = inData->GetNumberOfScalarComponents();
-  if (x1 != 1) 
+  if (x1 != 1)
     {
     vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");
     return;
@@ -849,14 +849,14 @@ void vtkImageConnectivity::ExecuteData(vtkDataObject *)
 
   /* Need short data */
   s = inData->GetScalarType();
-  if (s != VTK_SHORT) 
+  if (s != VTK_SHORT)
     {
-    vtkErrorMacro("Warning: Input scalars are type "<<s 
+    vtkErrorMacro("Warning: Input scalars are type "<<s
       << " instead of "<<VTK_SHORT);
     return;
     }
 
-  vtkImageConnectivityExecute(this, inData, (short *)inPtr, 
+  vtkImageConnectivityExecute(this, inData, (short *)inPtr,
     outData, (short *)(outPtr), outExt);
 }
 
@@ -864,11 +864,11 @@ void vtkImageConnectivity::ExecuteData(vtkDataObject *)
 void vtkImageConnectivity::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  
+
   os << indent << "Background:        " << this->Background << "\n";
   os << indent << "MinForeground:     " << this->MinForeground << "\n";
-  os << indent << "MaxForeground:     " << this->MaxForeground << "\n"; 
-  os << indent << "LargestIslandSize: " << this->LargestIslandSize << "\n"; 
+  os << indent << "MaxForeground:     " << this->MaxForeground << "\n";
+  os << indent << "LargestIslandSize: " << this->LargestIslandSize << "\n";
   os << indent << "IslandSize:        " << this->IslandSize << "\n";
   os << indent << "MinSize:           " << this->MinSize << "\n";
   os << indent << "OutputLabel:       " << this->OutputLabel << "\n";

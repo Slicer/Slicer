@@ -41,9 +41,9 @@ class QMRML_WIDGETS_EXPORT qMRMLDisplayNodeWidget : public QWidget
 public:
   qMRMLDisplayNodeWidget(QWidget *parent=0);
   virtual ~qMRMLDisplayNodeWidget();
-  
+
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
-  
+
   bool visibility()const;
   bool selected()const;
   bool clipping()const;
@@ -65,7 +65,7 @@ public slots:
   void setSliceIntersectionVisible(bool);
   void setSliceIntersectionThickness(int);
 
-  /// Make checkboxes visible or invisible, for use with display nodes that don't 
+  /// Make checkboxes visible or invisible, for use with display nodes that don't
   /// need to control visibility, selected, clipping, slice intersection
   /// visibility, slice intersection thickness
   void setVisibilityVisible(bool);

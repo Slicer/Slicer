@@ -11,14 +11,14 @@ import Effect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   GrowCutEffect is a subclass of Effect
   that implements the grow cut segmentation
   in the slicer editor
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -62,7 +62,7 @@ class GrowCutEffectOptions(Effect.EffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -89,7 +89,7 @@ class GrowCutEffectOptions(Effect.EffectOptions):
 #
 # GrowCutEffectTool
 #
- 
+
 class GrowCutEffectTool(Effect.EffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -109,13 +109,13 @@ class GrowCutEffectTool(Effect.EffectTool):
 #
 # GrowCutEffectLogic
 #
- 
+
 class GrowCutEffectLogic(Effect.EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an GrowCutEffectTool
   or GrowCutEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the GrowCutEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -171,7 +171,7 @@ class GrowCutEffectLogic(Effect.EffectLogic):
     self.applyScopedLabel()
 
 #
-# The GrowCutEffect class definition 
+# The GrowCutEffect class definition
 #
 
 class GrowCutEffect(Effect.Effect):

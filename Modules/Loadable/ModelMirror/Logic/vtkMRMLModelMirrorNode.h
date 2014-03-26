@@ -23,7 +23,7 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Create instance 
+  // Create instance
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
@@ -37,11 +37,11 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-  
+
   // Description:
   // Get unique node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelMirrorNode"; };
-  
+
   vtkGetObjectMacro ( InputModel, vtkMRMLModelNode );
   vtkSetObjectMacro ( InputModel, vtkMRMLModelNode );
 
@@ -53,7 +53,7 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
 
   vtkGetStringMacro ( NewModelName );
   vtkSetStringMacro ( NewModelName );
-  
+
   enum
     {
       ModelAddedEvent = 11000,
@@ -68,7 +68,7 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
   vtkMRMLModelNode *OutputModel;
   char *NewModelName;
   int MirrorPlane;
-  
+
 
  protected:
   vtkMRMLModelMirrorNode();

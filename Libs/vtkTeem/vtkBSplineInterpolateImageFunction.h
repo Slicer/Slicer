@@ -44,7 +44,7 @@ class  VTK_Teem_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFu
 
   virtual vtkFloatingPointType EvaluateFunction (vtkFloatingPointType x[ImageDimension]);
 
-  virtual void EvaluateGradient (vtkFloatingPointType x[ImageDimension], 
+  virtual void EvaluateGradient (vtkFloatingPointType x[ImageDimension],
                                  vtkFloatingPointType g[ImageDimension]);
   void SetInput(vtkImageData* dataset);
 
@@ -61,7 +61,7 @@ protected:
   int                                 DataLength[ImageDimension];  /// Image size
   unsigned int                        SplineOrder;    /// User specified spline order (3rd or cubic is the default)
 
-  vtkImageData *                      Coefficients; /// Spline coefficients  
+  vtkImageData *                      Coefficients; /// Spline coefficients
   vtkFloatingPointType * Origin;
   vtkFloatingPointType * Spacing;
   int * Extent;
@@ -78,7 +78,7 @@ private:
   void SetDerivativeWeights( vtkFloatingPointType *x, long *evaluateIndex[ImageDimension],
     double *weights[ImageDimension], unsigned int splineOrder ) const;
 
-  /** Precomputation for converting the 1D index of the interpolation neighborhood 
+  /** Precomputation for converting the 1D index of the interpolation neighborhood
     * to an N-dimensional index. */
   void GeneratePointsToIndex();
 
@@ -86,9 +86,9 @@ private:
   void DetermineRegionOfSupport( long *evaluateIndex[ImageDimension],
     vtkFloatingPointType x[], unsigned int splineOrder ) const;
 
-  /** Set the indicies in evaluateIndex at the boundaries based on mirror 
+  /** Set the indicies in evaluateIndex at the boundaries based on mirror
     * boundary conditions. */
-  void ApplyMirrorBoundaryConditions(long *evaluateIndex[ImageDimension], 
+  void ApplyMirrorBoundaryConditions(long *evaluateIndex[ImageDimension],
     unsigned int splineOrder) const;
 
 

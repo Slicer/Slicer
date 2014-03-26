@@ -34,14 +34,14 @@ class vtkUnsignedLongArray;
 #endif
 
 /// \brief Manages adding and deleting of obserevers with events.
-/// 
+///
 /// Class that manages adding and deleting of obserevers with events
-/// This class keeps track of obserevers and events added to each vtk object 
+/// This class keeps track of obserevers and events added to each vtk object
 /// it caches tags returned by AddObserver method so that obserevers can be removed properly.
-class VTK_MRML_EXPORT vtkObserverManager : public vtkObject 
+class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
 {
   public:
-  
+
   /// The Usual vtk class functions
   static vtkObserverManager *New();
   vtkTypeRevisionMacro(vtkObserverManager,vtkObject);
@@ -68,7 +68,7 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   /// accessors for the owner class
   /// - note we do not hold a registered pointer to the owner
   ///   to avoid reference loops
-  /// - the owner must be careful to always clean up the 
+  /// - the owner must be careful to always clean up the
   ///   ObserverManager in the destructor (this is the standard use case)
   vtkGetObjectMacro (Owner, vtkObject);
   void AssignOwner (vtkObject *owner) { this->Owner = owner; };
@@ -86,11 +86,11 @@ protected:
   vtkObserverManager(const vtkObserverManager&);
   void operator=(const vtkObserverManager&);
 
-  /// 
+  ///
   /// The owner of the observer manager (e.g. the vtkMRMLNode)
   vtkObject *Owner;
 
-  /// 
+  ///
   /// Holder for callback
   vtkCallbackCommand *CallbackCommand;
 

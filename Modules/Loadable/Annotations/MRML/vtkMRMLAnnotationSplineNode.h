@@ -12,7 +12,7 @@ public:
   static vtkMRMLAnnotationSplineNode *New();
   vtkTypeMacro(vtkMRMLAnnotationSplineNode, vtkMRMLAnnotationLinesNode);
   // Description:
-  // Just prints short summary 
+  // Just prints short summary
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   //--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ public:
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
+
   // Description:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -41,8 +41,8 @@ public:
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
 
@@ -57,7 +57,7 @@ public:
   vtkSetStringMacro(DistanceAnnotationFormat);
 
   // Description:
-  // KP Define - should be part of AnnotationRulerDisplayNode 
+  // KP Define - should be part of AnnotationRulerDisplayNode
   double GetDistanceAnnotationScale();
   void SetDistanceAnnotationScale(double init);
 
@@ -66,7 +66,7 @@ public:
   int GetDistanceAnnotationVisibility();
   void SetDistanceAnnotationVisibility(int flag);
 
-  int SetRuler(vtkIdType line1Id, int sel, int vis);  
+  int SetRuler(vtkIdType line1Id, int sel, int vis);
 
   // Description:
   // get/set the resolution (number of subdivisions) of the line.
@@ -112,7 +112,7 @@ protected:
   // number of subdivisions on the line
   int Resolution;
   char* DistanceAnnotationFormat;
- 
+
   int AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
 
   double splineMeasurement;

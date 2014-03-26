@@ -36,14 +36,14 @@
 int qMRMLModelTreeViewTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   vtkNew<vtkMRMLModelNode> modelNode;
   vtkNew<vtkMRMLModelDisplayNode> displayModelNode;
 
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(modelNode.GetPointer());
   scene->AddNode(displayModelNode.GetPointer());
-  
+
   modelNode->SetAndObserveDisplayNodeID(displayModelNode->GetID());
 
   qMRMLTreeView modelView;

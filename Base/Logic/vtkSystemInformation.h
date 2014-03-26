@@ -34,7 +34,7 @@ public:
   int GetProcessorAPICID();
   int GetProcessorCacheXSize(long int);
   int DoesCPUSupportFeature(long int);
-  
+
   const char * GetOSName();
   const char * GetHostname();
   const char * GetOSRelease();
@@ -52,9 +52,9 @@ public:
   unsigned long GetTotalVirtualMemory();
   unsigned long GetAvailableVirtualMemory();
   unsigned long GetTotalPhysicalMemory();
-  unsigned long GetAvailablePhysicalMemory();  
+  unsigned long GetAvailablePhysicalMemory();
 
-  // Run the different checks 
+  // Run the different checks
   void RunCPUCheck();
   void RunOSCheck();
   void RunMemoryCheck();
@@ -65,7 +65,7 @@ protected:
   virtual ~vtkSystemInformation();
   vtkSystemInformation(const vtkSystemInformation&);
   void operator=(const vtkSystemInformation&);
-  
+
   //private:
 
   vtksys::SystemInformation SystemInformation;

@@ -72,7 +72,7 @@ qSlicerColorsModuleWidgetPrivate::qSlicerColorsModuleWidgetPrivate(qSlicerColors
   this->ScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(11);
   this->ScalarBarWidget->GetScalarBarActor()->SetTitle("(mm)");
   this->ScalarBarWidget->GetScalarBarActor()->SetLabelFormat(" %#8.3f");
-  
+
   // it's a 2d actor, position it in screen space by percentages
   this->ScalarBarWidget->GetScalarBarActor()->SetPosition(0.1, 0.1);
   this->ScalarBarWidget->GetScalarBarActor()->SetWidth(0.1);
@@ -93,7 +93,7 @@ qSlicerColorsModuleWidgetPrivate::~qSlicerColorsModuleWidgetPrivate()
 vtkSlicerColorLogic* qSlicerColorsModuleWidgetPrivate::colorLogic()const
 {
   Q_Q(const qSlicerColorsModuleWidget);
-  return vtkSlicerColorLogic::SafeDownCast(q->logic()); 
+  return vtkSlicerColorLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
@@ -243,7 +243,7 @@ void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
     {
     return;
     }
-  
+
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(currentNode);
   if (colorNode && colorNode->GetLookupTable())
     {
@@ -267,7 +267,7 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
     {
     return;
     }
-  
+
   vtkMRMLColorTableNode *colorNode = d->colorLogic()->CopyNode(currentNode, newColorName.toLatin1());
   this->mrmlScene()->AddNode(colorNode);
   colorNode->Delete();

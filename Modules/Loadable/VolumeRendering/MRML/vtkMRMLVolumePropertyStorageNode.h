@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLVolumePropertyStorageNode - MRML node for transform storage on disk
-/// 
+///
 /// Storage nodes has methods to read/write transforms to/from disk
 
 #ifndef __vtkMRMLVolumePropertyStorageNode_h
@@ -36,11 +36,11 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyStorage
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Transform)
   virtual const char* GetNodeTagName()  {return "VolumePropertyStorage";};
 
-  /// 
+  ///
   /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension();
 
@@ -53,7 +53,7 @@ protected:
   vtkMRMLVolumePropertyStorageNode(const vtkMRMLVolumePropertyStorageNode&);
   void operator=(const vtkMRMLVolumePropertyStorageNode&);
 
-  /// 
+  ///
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 

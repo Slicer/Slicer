@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkSlicerVolumeRenderingFactory - 
+// .NAME vtkSlicerVolumeRenderingFactory -
 // .SECTION Description
 
 #ifndef __vtkSlicerVolumeRenderingFactory_h
@@ -32,7 +32,7 @@ public:
   // Description:
   // Create and return an instance of the named vtk object.
   // This method first checks the vtkObjectFactory to support
-  // dynamic loading. 
+  // dynamic loading.
   static vtkObject* CreateInstance(const char* vtkclassname);
 
 protected:

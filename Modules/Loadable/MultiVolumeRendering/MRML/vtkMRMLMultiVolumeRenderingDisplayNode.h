@@ -87,7 +87,7 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
   // the ID of a MRMLVolumeNode (fg volume)
   vtkGetStringMacro (LabelmapVolumeNodeID);
   void SetAndObserveLabelmapVolumeNodeID(const char *volumeNodeID);
-  
+
   // Description:
   // Associated transform MRML node (bg volume)
   vtkMRMLVolumeNode* GetBgVolumeNode();
@@ -99,7 +99,7 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
   // Description:
   // Associated transform MRML node (labelmap volume)
   vtkMRMLVolumeNode* GetLabelmapVolumeNode();
-  
+
   // Description:
   // the ID of a parameter MRMLVolumePropertyNode (bg volume)
   vtkGetStringMacro (BgVolumePropertyNodeID);
@@ -127,12 +127,12 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
   // the ID of a parameter MRMLROINode (fg volume)
   vtkGetStringMacro (FgROINodeID);
   void SetAndObserveFgROINodeID(const char *rOINodeID);
-  
+
   // Description:
   // the ID of a parameter MRMLROINode (labelmap volume)
   vtkGetStringMacro (LabelmapROINodeID);
   void SetAndObserveLabelmapROINodeID(const char *rOINodeID);
-  
+
   // Description:
   // Associated ROI MRML node
   vtkMRMLAnnotationROINode* GetBgROINode();
@@ -144,19 +144,19 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
   vtkSetMacro(BgCroppingEnabled,int);
   vtkGetMacro(BgCroppingEnabled,int);
   vtkBooleanMacro(BgCroppingEnabled,int);
-  
+
   // Description:
   // Is cropping enabled?
   vtkSetMacro(FgCroppingEnabled,int);
   vtkGetMacro(FgCroppingEnabled,int);
   vtkBooleanMacro(FgCroppingEnabled,int);
-  
+
   // Description:
   // Is cropping enabled?
   vtkSetMacro(LabelmapCroppingEnabled,int);
   vtkGetMacro(LabelmapCroppingEnabled,int);
   vtkBooleanMacro(LabelmapCroppingEnabled,int);
-  
+
   // Description:
   // Estimated Sample Distance
   vtkSetMacro(EstimatedSampleDistance,double);
@@ -175,10 +175,10 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
     Linked = 0,
     Independent
   };
-  
+
   vtkSetMacro(MultiVolumeRenderingMode, int);
   vtkGetMacro(MultiVolumeRenderingMode, int);
-  
+
   vtkGetMacro (GPUMemorySize, int);
   vtkSetMacro (GPUMemorySize, int);
 
@@ -204,7 +204,7 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
     AlphaBlendingAND,
     AlphaBlendingNOT
   };
-  
+
   vtkGetMacro (MultiVolumeFusionMethod, int);
   vtkSetMacro (MultiVolumeFusionMethod, int);
 
@@ -213,29 +213,29 @@ class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLMultiVolumeRende
 
   vtkGetMacro(BgFollowVolumeDisplayNode, int);
   vtkSetMacro(BgFollowVolumeDisplayNode, int);
-  
+
   vtkGetMacro(FgFollowVolumeDisplayNode, int);
   vtkSetMacro(FgFollowVolumeDisplayNode, int);
 
   vtkGetMacro(BgIgnoreVolumeDisplayNodeThreshold, int);
   vtkSetMacro(BgIgnoreVolumeDisplayNodeThreshold, int);
-  
+
   vtkGetMacro(FgIgnoreVolumeDisplayNodeThreshold, int);
   vtkSetMacro(FgIgnoreVolumeDisplayNodeThreshold, int);
-  
+
   vtkGetMacro(BgVisibility, bool);
   vtkSetMacro(BgVisibility, bool);
-  
+
   vtkGetMacro(FgVisibility, bool);
   vtkSetMacro(FgVisibility, bool);
-  
+
   vtkGetMacro(LabelmapVisibility, bool);
   vtkSetMacro(LabelmapVisibility, bool);
-  
+
   //Description:
   //update display node visibility based on user settings for bg, fg and labelmap
   void UpdateVisibility();
-  
+
 protected:
   vtkMRMLMultiVolumeRenderingDisplayNode();
   ~vtkMRMLMultiVolumeRenderingDisplayNode();
@@ -251,11 +251,11 @@ protected:
   char *FgVolumeNodeID;
   virtual void SetFgVolumeNodeID(const char* arg);
   vtkMRMLVolumeNode* FgVolumeNode;
-  
+
   char *LabelmapVolumeNodeID;
   virtual void SetLabelmapVolumeNodeID(const char* arg);
   vtkMRMLVolumeNode* LabelmapVolumeNode;
-  
+
   char *BgVolumePropertyNodeID;
   virtual void SetBgVolumePropertyNodeID(const char* arg);
   vtkMRMLVolumePropertyNode* BgVolumePropertyNode;
@@ -263,19 +263,19 @@ protected:
   char *FgVolumePropertyNodeID;
   virtual void SetFgVolumePropertyNodeID(const char* arg);
   vtkMRMLVolumePropertyNode* FgVolumePropertyNode;
-  
+
   char *BgROINodeID;
   virtual void SetBgROINodeID(const char* arg);
   vtkMRMLAnnotationROINode* BgROINode;
-  
+
   char *FgROINodeID;
   virtual void SetFgROINodeID(const char* arg);
   vtkMRMLAnnotationROINode* FgROINode;
-  
+
   char *LabelmapROINodeID;
   virtual void SetLabelmapROINodeID(const char* arg);
   vtkMRMLAnnotationROINode* LabelmapROINode;
-  
+
   int BgCroppingEnabled;
   int FgCroppingEnabled;
   int LabelmapCroppingEnabled;
@@ -310,13 +310,13 @@ protected:
   int MultiVolumeFusionMethod;
 
   int MultiVolumeRenderingMode;
-  
+
   float BgFgRatio;
 
   //follow window/level and thresholding setting in volume display node
   int BgFollowVolumeDisplayNode;
   int BgIgnoreVolumeDisplayNodeThreshold;
-  
+
   int FgFollowVolumeDisplayNode;
   int FgIgnoreVolumeDisplayNodeThreshold;
 
@@ -327,7 +327,7 @@ protected:
    * 2: Fixed Framerate
    * */
   int PerformanceControl;
-  
+
   bool BgVisibility;
   bool FgVisibility;
   bool LabelmapVisibility;

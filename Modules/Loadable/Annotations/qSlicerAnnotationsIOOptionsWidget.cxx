@@ -67,7 +67,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   delete oldLayout;
   flowLayout->setContentsMargins(0,0,0,0);
   this->setLayout(flowLayout);
-  
+
   this->FileTypeButtonGroup = new QButtonGroup(flowLayout);
   this->FileTypeButtonGroup->addButton(d->FiducialRadioButton);
   this->FileTypeButtonGroup->addButton(d->RulerRadioButton);
@@ -76,7 +76,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   this->connect(this->FileTypeButtonGroup, SIGNAL(buttonClicked(int)),
                 this, SLOT(updateProperties()));
 
-  
+
   connect(d->NameLineEdit, SIGNAL(textChanged(QString)),
           this, SLOT(updateProperties()));
   /*

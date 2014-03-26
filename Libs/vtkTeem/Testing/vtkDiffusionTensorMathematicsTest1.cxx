@@ -102,7 +102,7 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
     {
     filter->SetOperation(i);
     filter->Update();
-    
+
     std::cout << "Operation " << i << ":" << std::endl;
     // Checkout the results
     vtkImageData* output = filter->GetOutput();

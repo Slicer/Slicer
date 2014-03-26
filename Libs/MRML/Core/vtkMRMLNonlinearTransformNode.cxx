@@ -144,7 +144,7 @@ vtkGeneralTransform* vtkMRMLNonlinearTransformNode::GetTransformFromParent()
 //----------------------------------------------------------------------------
 int  vtkMRMLNonlinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld)
 {
-  if (this->IsTransformToWorldLinear() != 1) 
+  if (this->IsTransformToWorldLinear() != 1)
     {
     transformToWorld->Identity();
     return 0;
@@ -158,13 +158,13 @@ int  vtkMRMLNonlinearTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* tran
 int  vtkMRMLNonlinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* node,
                                                           vtkMatrix4x4* transformToNode)
 {
-  if (this->IsTransformToNodeLinear(node) != 1) 
+  if (this->IsTransformToNodeLinear(node) != 1)
     {
     transformToNode->Identity();
     return 0;
     }
-  
-  
+
+
   // TODO: what does this return code mean?
   return 1;
 }
@@ -257,7 +257,7 @@ void vtkMRMLNonlinearTransformNode::SetAndObserveWarpTransformFromParent(vtkWarp
 
 //---------------------------------------------------------------------------
 void vtkMRMLNonlinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event, 
+                                                    unsigned long event,
                                                     void *callData )
 {
   Superclass::ProcessMRMLEvents ( caller, event, callData );

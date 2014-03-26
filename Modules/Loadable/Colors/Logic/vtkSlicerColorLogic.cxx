@@ -96,7 +96,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
   std::vector<std::string> DirectoriesToCheck;
 
   DirectoriesToCheck.push_back(resourcesDirString);
-  
+
   return this->FindColorFiles(DirectoriesToCheck);
 }
 
@@ -124,14 +124,14 @@ std::vector<std::string> vtkSlicerColorLogic::FindUserColorFiles()
       }
     } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
 
-  return this->FindColorFiles(DirectoriesToCheck);  
+  return this->FindColorFiles(DirectoriesToCheck);
 }
 
 //----------------------------------------------------------------------------
 std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<std::string>& directories)
 {
   std::vector<std::string> filenames;
-  
+
   // get the list of colour files in these dir
   for (unsigned int d = 0; d < directories.size(); d++)
     {
@@ -184,7 +184,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
             {
             vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
               // add it to the list
-              this->AddColorFile(fileToCheck.c_str(), &filenames);           
+              this->AddColorFile(fileToCheck.c_str(), &filenames);
             }
           else
             {

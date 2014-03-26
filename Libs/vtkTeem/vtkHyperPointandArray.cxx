@@ -25,7 +25,7 @@ vtkHyperPoint& vtkHyperPoint::operator=(const vtkHyperPoint& hp)
 {
   int i, j;
 
-  for (i=0; i<3; i++) 
+  for (i=0; i<3; i++)
     {
     this->X[i] = hp.X[i];
     this->P[i] = hp.P[i];
@@ -45,7 +45,7 @@ vtkHyperPoint& vtkHyperPoint::operator=(const vtkHyperPoint& hp)
 
 vtkHyperArray::vtkHyperArray()
 {
-  this->MaxId = -1; 
+  this->MaxId = -1;
   this->Array = new vtkHyperPoint[1000];
   this->Size = 1000;
   this->Extend = 5000;
@@ -59,7 +59,7 @@ vtkHyperPoint *vtkHyperArray::Resize(vtkIdType sz)
 
   if (sz >= this->Size)
     {
-    newSize = this->Size + 
+    newSize = this->Size +
       this->Extend*(((sz-this->Size)/this->Extend)+1);
     }
   else

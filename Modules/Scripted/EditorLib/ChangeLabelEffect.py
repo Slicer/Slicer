@@ -11,13 +11,13 @@ import Effect
 
 #########################################################
 #
-# 
+#
 comment = """
 
-  ChangeLabelEffect is a subclass of Effect (for tools that plug into the 
+  ChangeLabelEffect is a subclass of Effect (for tools that plug into the
   slicer Editor module) for changing one label to another
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -126,7 +126,7 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
 #
 # ChangeLabelEffectTool
 #
- 
+
 class ChangeLabelEffectTool(Effect.EffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -146,13 +146,13 @@ class ChangeLabelEffectTool(Effect.EffectTool):
 #
 # ChangeLabelEffectLogic
 #
- 
+
 class ChangeLabelEffectLogic(Effect.EffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an ChangeLabelEffectTool
   or ChangeLabelEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the ChangeLabelEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -187,7 +187,7 @@ class ChangeLabelEffectLogic(Effect.EffectLogic):
 
 
 #
-# The ChangeLabelEffect class definition 
+# The ChangeLabelEffect class definition
 #
 
 class ChangeLabelEffect(Effect.Effect):

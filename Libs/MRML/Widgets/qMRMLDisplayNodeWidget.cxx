@@ -61,7 +61,7 @@ void qMRMLDisplayNodeWidgetPrivate::init()
 {
   Q_Q(qMRMLDisplayNodeWidget);
   this->setupUi(q);
-  
+
   QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setVisibility(bool)));
   QObject::connect(this->SelectedCheckBox, SIGNAL(toggled(bool)),

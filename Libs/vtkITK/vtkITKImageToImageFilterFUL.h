@@ -35,7 +35,7 @@ public:
   };
 
 protected:
-  
+
   /// To/from ITK
   typedef itk::Image<float, 3> InputImageType;
   typedef itk::Image<unsigned long, 3> OutputImageType;
@@ -66,7 +66,7 @@ protected:
   ~vtkITKImageToImageFilterFUL()
   {
   };
-  
+
 private:
   vtkITKImageToImageFilterFUL(const vtkITKImageToImageFilterFUL&);  /// Not implemented.
   void operator=(const vtkITKImageToImageFilterFUL&);  /// Not implemented.

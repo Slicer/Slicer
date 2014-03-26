@@ -40,13 +40,13 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneFactoryWidget : public QWidget
 public:
   qMRMLSceneFactoryWidget(QWidget* parent = 0);
   ~qMRMLSceneFactoryWidget();
-  
+
   vtkMRMLScene* mrmlScene()const;
-  
+
 public slots:
   void generateScene();
   void deleteScene();
-  /// 
+  ///
   /// Create and add a node given its classname to the scene associated with the factory
   /// Note: The scene has the ownership of the node and is responsible to delete it.
   vtkMRMLNode* generateNode(const QString& mrmlNodeClassName);
@@ -54,7 +54,7 @@ public slots:
 
   vtkMRMLNode* generateNode();
   void deleteNode();
-  
+
 signals:
   void mrmlSceneChanged(vtkMRMLScene* scene);
   void mrmlNodeAdded(vtkMRMLNode* node);

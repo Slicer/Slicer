@@ -11,14 +11,14 @@ import LabelEffect
 
 #########################################################
 #
-# 
+#
 comment = """
 
   LevelTracingEffect is a subclass of LabelEffect
   that implements the interactive paintbrush tool
   in the slicer editor
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -54,7 +54,7 @@ class LevelTracingEffectOptions(LabelEffect.LabelEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -80,7 +80,7 @@ class LevelTracingEffectOptions(LabelEffect.LabelEffectOptions):
 #
 # LevelTracingEffectTool
 #
- 
+
 class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -93,7 +93,7 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
 
   def __init__(self, sliceWidget):
     super(LevelTracingEffectTool,self).__init__(sliceWidget)
-    
+
     # create a logic instance to do the non-gui work
     self.logic = LevelTracingEffectLogic(self.sliceWidget.sliceLogic())
 
@@ -199,13 +199,13 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
 #
 # LevelTracingEffectLogic
 #
- 
+
 class LevelTracingEffectLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an LevelTracingEffectTool
   or LevelTracingEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the LevelTracingEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -216,7 +216,7 @@ class LevelTracingEffectLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The LevelTracingEffect class definition 
+# The LevelTracingEffect class definition
 #
 
 class LevelTracingEffect(LabelEffect.LabelEffect):

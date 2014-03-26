@@ -35,12 +35,12 @@ public:
   vtkTypeMacro(vtkImageSetTensorComponents,vtkImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// 
+  ///
   /// Set/Get the components to extract.
   vtkGetVector3Macro(Components,int);
-  
-  /// 
-  /// Get the number of components to extract. This is set implicitly by the 
+
+  ///
+  /// Get the number of components to extract. This is set implicitly by the
   /// SetComponents() method.
   vtkGetMacro(NumberOfComponents,int);
 
@@ -53,11 +53,11 @@ protected:
 
   void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
   void ExecuteInformation(){this->vtkImageToImageFilter::ExecuteInformation();};
-  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 
+  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
                        int ext[6], int id);
 
   /// We override this in order to allocate output tensors
-  /// before threading happens.  This replaces the superclass 
+  /// before threading happens.  This replaces the superclass
   /// vtkImageMultipleInputFilter's Execute function.
   void ExecuteData(vtkDataObject *out);
 

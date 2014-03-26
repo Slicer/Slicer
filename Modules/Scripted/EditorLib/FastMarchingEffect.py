@@ -278,7 +278,7 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
 
     self.editUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
     self.editUtil.getLabelImage().Modified()
- 
+
     self.editUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
 
   def getLabelNode(self):

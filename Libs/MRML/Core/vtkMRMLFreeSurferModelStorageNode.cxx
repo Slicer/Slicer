@@ -34,8 +34,8 @@ Version:   $Revision: 1.2 $
 
 #include "vtkStringArray.h"
 
-// Initialize static member that controls resampling -- 
-// old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
+// Initialize static member that controls resampling --
+// old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer
 // development meeting, to move ijk coordinates to voxel centers."
 
 //------------------------------------------------------------------------------
@@ -64,15 +64,15 @@ void vtkMRMLFreeSurferModelStorageNode::WriteXML(ostream& of, int indent)
 void vtkMRMLFreeSurferModelStorageNode::ReadXMLAttributes(const char** atts)
 {
   vtkDebugMacro("ReadXMLAttributes called... calling superclass");
-  
+
   vtkMRMLStorageNode::ReadXMLAttributes(atts);
   const char* attName;
   const char* attValue;
-  while (*atts != NULL) 
+  while (*atts != NULL)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "useStripper")) 
+    if (!strcmp(attName, "useStripper"))
       {
       vtkDebugMacro("Got use stripper " << attValue);
       this->SetUseStripper(atoi(attValue));
@@ -98,7 +98,7 @@ void vtkMRMLFreeSurferModelStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   vtkMRMLStorageNode::PrintSelf(os,indent);
 
   os << indent << "Use Triangle Stripper: " << this->UseStripper << "\n";
@@ -109,18 +109,18 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("ReadDataInternal: File name not specified");
     return 0;
     }
 
   vtkDebugMacro("ReadDataInternal: reading " << fullName.c_str());
-  
+
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
-  
+
   int result = 1;
   try
     {
@@ -131,7 +131,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
     vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
     vtkStripper *stripper = vtkStripper::New();
-    
+
     reader->SetFileName(fullName.c_str());
     normals->SetSplitting(0);
     normals->SetInput( reader->GetOutput() );
@@ -164,17 +164,17 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         modelNode->SetAndObservePolyData(normals->GetOutput());
         }
       }
-      
+
     reader->Delete();
     normals->Delete();
-    stripper->Delete();    
+    stripper->Delete();
     }
   catch (...)
     {
     result = 0;
     }
-  
-  if (modelNode->GetPolyData() != NULL) 
+
+  if (modelNode->GetPolyData() != NULL)
     {
     //modelNode->GetPolyData()->Modified();
     }
@@ -186,20 +186,20 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
                                                 const char *newFileName)
 {
-  
+
   bool copyOK;
-  
+
   // test whether refNode is a valid node to hold a model
-  if (!refNode->IsA("vtkMRMLModelNode") ) 
+  if (!refNode->IsA("vtkMRMLModelNode") )
     {
     vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
     return 0;
     }
-  
+
   //vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
   std::string newName = newFileName;
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("vtkMRMLFreeSurferModelNode: File name not specified");
     return 0;
@@ -219,12 +219,12 @@ int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
   copyOK = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 1 );
   //--- try copying to destination if different
   //tst = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 0 );
-  
+
   if ( !copyOK )
     {
     return ( 0 );
     }
-  
+
   //--- if copy worked, change filename, then upload.
   this->SetFileName ( newName.c_str() );
   this->StageWriteData(refNode);

@@ -56,7 +56,7 @@ vtkStandardNewMacro(vtkMRMLAbstractDisplayableManager);
 vtkCxxRevisionMacro(vtkMRMLAbstractDisplayableManager, "$Revision: 13525 $");
 
 
-struct EventEquals 
+struct EventEquals
 {
   typedef int first_argument_type;
   typedef std::pair<int,float> second_argument_type;
@@ -670,7 +670,7 @@ vtkRenderer * vtkMRMLAbstractDisplayableManager::GetRenderer()
 //---------------------------------------------------------------------------
 vtkRenderWindowInteractor * vtkMRMLAbstractDisplayableManager::GetInteractor()
 {
-  
+
   if (!this->Internal->Interactor)
     {
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning Interactor address 0");

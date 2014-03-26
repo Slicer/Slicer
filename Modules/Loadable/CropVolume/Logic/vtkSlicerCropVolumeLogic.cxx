@@ -116,9 +116,9 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
   vtkMRMLScene *scene = this->GetMRMLScene();
 
-  vtkMRMLVolumeNode *inputVolume = 
+  vtkMRMLVolumeNode *inputVolume =
     vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(pnode->GetInputVolumeNodeID()));
-  vtkMRMLAnnotationROINode *inputROI = 
+  vtkMRMLAnnotationROINode *inputROI =
     vtkMRMLAnnotationROINode::SafeDownCast(scene->GetNodeByID(pnode->GetROINodeID()));
 
   if(!inputVolume || !inputROI)
@@ -147,7 +147,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       std::cerr << "CropVolume: ERROR: failed to get hold of Volumes logic" << std::endl;
       return -2;
     }
-  
+
   std::ostringstream outSS;
   double outputSpacing[3], spacingScaleConst = pnode->GetSpacingScalingConst();
   outSS << inputVolume->GetName() << "-subvolume-scale_" << spacingScaleConst;
@@ -178,7 +178,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
     outputVolume = outputDWVNode.GetPointer();
     }
   else if(vvnode)
-    {    
+    {
     vtkNew<vtkMRMLVectorVolumeNode> outputVVNode;
     outputVVNode->CopyWithScene(dwvnode);
     vtkNew<vtkMRMLVectorVolumeDisplayNode> vvDisplayNode;

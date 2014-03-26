@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLModelInfoWidget
 public:
   qMRMLModelInfoWidget(QWidget *parent=0);
   virtual ~qMRMLModelInfoWidget();
-  
+
   vtkMRMLModelNode* mrmlModelNode()const;
 
 public slots:

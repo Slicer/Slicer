@@ -34,22 +34,22 @@ int colorTest(double *incolor, double *outcolor)
     cout << "outcolor " << outcolor[0] << " " << outcolor[1] << " " << outcolor[2] << endl;
     return 1;
     }
-} 
+}
 
 int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
 {
 
   // ======================
-  // Basic Setup 
+  // Basic Setup
   // ======================
   vtkSmartPointer<vtkSlicerAnnotationModuleLogic > node2 = vtkSmartPointer< vtkSlicerAnnotationModuleLogic >::New();
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
   node2->SetMRMLScene(mrmlScene);
-  
+
   EXERCISE_BASIC_OBJECT_METHODS( node2 );
 
   node2->RegisterNodes();
-  
+
   node2->StartPlaceMode(true);
   node2->StartPlaceMode(false);
 
@@ -60,7 +60,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   node2->AddAnnotationNode("AnnotationTextNode", true);
 
   node2->AddNodeCompleted(NULL);
-  
+
   vtkSmartPointer<vtkMRMLAnnotationRulerNode> rnode1 = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
   mrmlScene->AddNode(rnode1);
   node2->AddNodeCompleted(rnode1);
@@ -103,7 +103,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
 
   vtkSmartPointer<vtkMRMLAnnotationRulerNode> rnode = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
   mrmlScene->AddNode(rnode);
-  
+
   node2->SetAnnotationTextUnselectedColor(rnode->GetID(), incolor1);
   double *outcolor1 = NULL;
   if (rnode->GetAnnotationTextDisplayNode())
@@ -113,7 +113,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   if ( colorTest(incolor1,outcolor1))
     {
     std::cout << "Setting Text Color Failed!" << std::endl;
-    //return EXIT_FAILURE;  
+    //return EXIT_FAILURE;
     }
   else
     {
@@ -128,7 +128,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   if ( colorTest(incolor2,outcolor2))
     {
     std::cout << "Setting Point Color Failed!" << std::endl;
-    //return EXIT_FAILURE;  
+    //return EXIT_FAILURE;
     }
   else
     {
@@ -143,20 +143,20 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   if ( colorTest(incolor3,outcolor3))
     {
     std::cout << "Setting Line Color Failed!" << std::endl;
-    //return EXIT_FAILURE;  
+    //return EXIT_FAILURE;
     }
   else
     {
     std::cout << "Setting Line Color Ok!" << std::endl;
     }
-  
+
   double* getcolor1 = node2->GetAnnotationLineColor(rnode->GetID());
 
   if (colorTest(incolor1, getcolor1))
     {
     cout << "Correct DisplayNode: " << rnode->GetAnnotationTextDisplayNode() << " " <<   rnode->GetAnnotationLineDisplayNode() << endl;
     std::cout << "Getting Text Color Failed!" << std::endl;
-//    return EXIT_FAILURE;  
+//    return EXIT_FAILURE;
     }
   else
     {
@@ -166,7 +166,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   if (colorTest(incolor2, getcolor2))
     {
     std::cout << "Getting Point Color Failed!" << std::endl;
-    //return EXIT_FAILURE;  
+    //return EXIT_FAILURE;
     }
   else
     {
@@ -176,29 +176,29 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   if (colorTest(incolor3, getcolor3))
     {
     std::cout << "Getting Line Color Failed!" << std::endl;
-    //return EXIT_FAILURE;  
+    //return EXIT_FAILURE;
     }
   else
     {
     std::cout << "Getting Line Color Ok!" << std::endl;
     }
-  
+
   // 1.) Test
   double ctp[3] = { 1, 1, 1};
 
   rnode->SetPosition1(ctp);
   rnode->SetPosition2(ctp);
- 
+
   // 2.) Text Display Node Test..
   double scale = 20;
   if (rnode->GetAnnotationTextDisplayNode())
     {
     rnode->GetAnnotationTextDisplayNode()->SetTextScale( scale );
     }
-  
+
   // test out hierarchy methods
   node2->AddHierarchy();
-  
+
   char *toplevelid = node2->GetTopLevelHierarchyNodeID();
   std::cout << "Top level id = " << (toplevelid ? toplevelid : "null") << std::endl;
   retval = node2->IsAnnotationHierarchyNode(toplevelid);
@@ -234,9 +234,9 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     std::cout << htmlRep << std::endl;
     }
   TEST_SET_GET_STRING(node2, ActiveHierarchyNodeID);
-  
+
   // test adding a display node for a hierarchy node
-  
+
   const char *dID = node2->AddDisplayNodeForHierarchyNode(NULL);
   if (dID != NULL)
     {
@@ -250,8 +250,8 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   std::cout << "Added a display node with id " << dID << std::endl;
-  
-  return EXIT_SUCCESS;  
+
+  return EXIT_SUCCESS;
 }
 
 

@@ -55,7 +55,7 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
 
   vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
-  
+
   ColorTableView.setMRMLColorNode(colorTableNode.GetPointer());
   if (ColorTableView.mrmlColorNode() != colorTableNode.GetPointer())
     {
@@ -65,7 +65,7 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
   // for some reasons it generate a warning if the type is changed.
   colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
-  
+
   vtkNew<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode;
   colorFreeSurferNode->SetTypeToRedBlue();
 
@@ -76,7 +76,7 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
     return EXIT_FAILURE;
     }
   colorFreeSurferNode->SetTypeToLabels();
-  
+
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
   ColorTableView2.setMRMLColorNode(colorPETNode.GetPointer());
@@ -86,7 +86,7 @@ int qMRMLColorTableViewTest1(int argc, char * argv [])
     return EXIT_FAILURE;
     }
   colorPETNode->SetTypeToMIP();
-  
+
   topLevel.show();
 
   vtkSmartPointer<vtkMRMLColorTableNode> userNode

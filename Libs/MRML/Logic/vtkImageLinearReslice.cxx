@@ -94,7 +94,7 @@ void vtkImageLinearReslice::PrintSelf(ostream& os, vtkIndent indent)
     this->OutputOrigin[1] << " " << this->OutputOrigin[2] << "\n";
   os << indent << "OutputDimensions: " << this->OutputDimensions[0] << " " <<
     this->OutputDimensions[1] << " " << this->OutputDimensions[2] << "\n";
-  os << indent << "InterpolationMode: " 
+  os << indent << "InterpolationMode: "
      << this->GetInterpolationModeAsString() << "\n";
   os << indent << "BackgroundColor: " <<
     this->BackgroundColor[0] << " " << this->BackgroundColor[1] << " " <<
@@ -118,7 +118,7 @@ unsigned long int vtkImageLinearReslice::GetMTime()
       time = ((vtkHomogeneousTransform *)this->SliceTransform)
         ->GetMatrix()->GetMTime();
       mTime = ( time > mTime ? time : mTime );
-      }    
+      }
     }
 
   return mTime;
@@ -192,10 +192,10 @@ int vtkImageLinearReslice::RequestInformation(
 }
 
 //----------------------------------------------------------------------------
-// This function executes the filter for any type of data.  
+// This function executes the filter for any type of data.
 template <class T>
 void vtkImageLinearResliceExecute(vtkImageLinearReslice *self,
-                            vtkImageData *inData, 
+                            vtkImageData *inData,
                             vtkImageData *outData, T *outPtr,
                             int outExt[6], int id)
 {
@@ -220,14 +220,14 @@ void vtkImageLinearResliceExecute(vtkImageLinearReslice *self,
   target = (unsigned long)
     ((outExt[5]-outExt[4]+1)*(outExt[3]-outExt[2]+1)/50.0);
   target++;
-  
-  // Get Increments to march through data 
+
+  // Get Increments to march through data
   inData->GetExtent(inExt);
   outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
   scalarSize = outData->GetScalarSize();
   numscalars = inData->GetNumberOfScalarComponents();
 
-//vtkDebugMacro( "id " << id << " ext " << outExt[0] << " " << outExt[1] << " " << outExt[2] << " " << outExt[3] << " " << outExt[4] << " " << outExt[5] << "\n"); 
+//vtkDebugMacro( "id " << id << " ext " << outExt[0] << " " << outExt[1] << " " << outExt[2] << " " << outExt[3] << " " << outExt[4] << " " << outExt[5] << "\n");
 
   double steps = (outExt[1] - outExt[0]);
   double invSteps = ( ( steps == 0.0 ) ? 1.0 : 1.0 / steps );
@@ -238,16 +238,16 @@ void vtkImageLinearResliceExecute(vtkImageLinearReslice *self,
     {
     for (idY = outExt[2]; idY <= outExt[3]; idY++)
       {
-      if (id == 0) 
+      if (id == 0)
         { // update the progress if this is the main thread
-        if (!(count%target)) 
+        if (!(count%target))
           {
           self->UpdateProgress(count/(50.0*target));
           }
         count++;
         }
 
-      // 
+      //
       // calculate the delta IJK with per step of X
       //
 
@@ -265,7 +265,7 @@ void vtkImageLinearResliceExecute(vtkImageLinearReslice *self,
         transform->InternalTransformPoint(ijkStart, ijkStart);
         transform->InternalTransformPoint(ijkEnd, ijkEnd);
         }
-      
+
       dIJKdX[0] = (ijkEnd[0] - ijkStart[0]) * invSteps;
       dIJKdX[1] = (ijkEnd[1] - ijkStart[1]) * invSteps;
       dIJKdX[2] = (ijkEnd[2] - ijkStart[2]) * invSteps;
@@ -275,7 +275,7 @@ void vtkImageLinearResliceExecute(vtkImageLinearReslice *self,
       ijk[2] = ijkStart[2];
       T *inPtr;
       T *baseInPtr = (T *) inScalars->GetVoidPointer(0);
-      
+
       for (idX = outExt[0]; idX <= outExt[1]; idX++)
         {
 
@@ -353,9 +353,9 @@ void vtkImageLinearReslice::ThreadedRequestData(
 
   switch (inData[0][0]->GetScalarType())
     {
-    vtkTemplateMacro( 
+    vtkTemplateMacro(
       vtkImageLinearResliceExecute(this, inData[0][0],  outData[0], (VTK_TT *)outPtr, outExt, id) );
-    default: 
+    default:
       {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");
       return;

@@ -47,7 +47,7 @@ int qMRMLColorPickerWidgetTest3(int argc, char * argv [])
   vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
   scene->AddNode(colorTableNode.GetPointer());
-  
+
   colorPickerWidget.setMRMLScene(scene.GetPointer());
 
   vtkNew<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode;
@@ -62,7 +62,7 @@ int qMRMLColorPickerWidgetTest3(int argc, char * argv [])
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
   scene->AddNode(colorPETNode.GetPointer());
-  
+
   colorPickerWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

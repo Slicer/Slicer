@@ -36,8 +36,8 @@ class qMRMLAnnotationRulerProjectionPropertyWidgetPrivate;
 class vtkMRMLAnnotationRulerNode;
 
 /// \ingroup Slicer_QtModules_Annotations
-class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT 
-qMRMLAnnotationRulerProjectionPropertyWidget 
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT
+qMRMLAnnotationRulerProjectionPropertyWidget
   : public qMRMLWidget
 {
   Q_OBJECT

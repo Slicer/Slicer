@@ -12,7 +12,7 @@ vtkSystemInformation::~vtkSystemInformation()
 {
 }
 
-const char * vtkSystemInformation::GetVendorString() 
+const char * vtkSystemInformation::GetVendorString()
 {
   return this->SystemInformation.GetVendorString();
 }
@@ -152,7 +152,7 @@ unsigned long vtkSystemInformation::GetAvailablePhysicalMemory()
   return this->SystemInformation.GetAvailablePhysicalMemory();
 }
 
-unsigned long vtkSystemInformation::GetTotalPhysicalMemory()  
+unsigned long vtkSystemInformation::GetTotalPhysicalMemory()
 {
   return this->SystemInformation.GetTotalPhysicalMemory();
 }
@@ -198,7 +198,7 @@ vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LogicalProcessorsPerPhysical: " << this->GetLogicalProcessorsPerPhysical() << "\n";
   os << indent << "ProcessorClockFrequency: " << this->GetProcessorClockFrequency() << "\n";
   os << indent << "ProcessorAPICID: " << this->GetProcessorAPICID() << "\n";
-  
+
   os << indent << "OSName: " << this->GetOSName() << "\n";
   os << indent << "Hostname: " << this->GetHostname() << "\n";
   os << indent << "OSRelease: " << this->GetOSRelease() << "\n";

@@ -55,7 +55,7 @@ protected:
   virtual void OnInteractorStyleEvent(int eventid);
 
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
-  
+
 private:
   vtkMRMLScriptedDisplayableManager(const vtkMRMLScriptedDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLScriptedDisplayableManager&);                   // Not Implemented
