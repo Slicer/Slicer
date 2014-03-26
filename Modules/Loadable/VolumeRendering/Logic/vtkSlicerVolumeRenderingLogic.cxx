@@ -71,10 +71,10 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
                                 "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
   this->RegisterRenderingMethod("VTK GPU Ray Casting",
                                 "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
-  this->RegisterRenderingMethod("VTK OpenGL 3D Texture Mapping",
-                                "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode");
-  this->RegisterRenderingMethod("NCI GPU Ray Casting",
-                                "vtkMRMLNCIRayCastVolumeRenderingDisplayNode");
+  //this->RegisterRenderingMethod("VTK OpenGL 3D Texture Mapping",
+  //                              "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode");
+  //this->RegisterRenderingMethod("NCI GPU Ray Casting",
+  //                              "vtkMRMLNCIRayCastVolumeRenderingDisplayNode");
   //this->RegisterRenderingMethod("NCI GPU MultiVolume Ray Casting",
   //                              "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode");
 }
