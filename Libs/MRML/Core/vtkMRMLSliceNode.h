@@ -84,7 +84,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Get number of View Node ID's for the view to display this node in.
   /// If 0, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
-  inline int GetNumberOfThreeDViewIDs()const;
+  int GetNumberOfThreeDViewIDs()const;
   /// Get View Node ID's for the view to display this node in.
   /// If NULL, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
