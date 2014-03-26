@@ -110,28 +110,26 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 #-----------------------------------------------------------------------------
-# See http://www.na-mic.org/Bug/view.php?id=3341
-# message(WARNING "warning: Test named 'itkTestMainExtendedScalarTest' associated with ResampleDTI should be reviewed !")
-# TODO The baseline associated with each command line module has been moved within
-#      the Data/Baseline subdirectory of each module. For that reason, ResampleDTI shouldn't
-#      reference the baseline 'AddTest_DOUBLE.mha' as input data.
 #Test itkTestMainExtended.h
 #copy scalar file to binary directory so that if an error occurs the output files will be created in the binary directory
-#set(SourceScalarFile ${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI/AddTest_DOUBLE.mha )
-#file( COPY ${SourceScalarFile} DESTINATION ${TEMP})
-#set( BinaryScalarFile ${TEMP}/AddTest_DOUBLE.mha)
-#set(TransformedImage ${TEMP}/dt-helix-transformed.nrrd)
-#set(testname itkTestMainExtendedScalarTest)
-#add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
-# --compare
-#   ${BinaryScalarFile}
-#   ${BinaryScalarFile}
-#  ModuleEntryPoint
-#    --interpolation nn
-#    ${OriginalImage}
-#    ${TransformedImage}
-#  )
-#set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+#We run ResampleDTIVolume and do not care about the result. What interests us in that test is to make sure that by extending
+#itkTestMainExtended.h to work with DTI, we did not break it and that it still works with scalar images too.
+#Therefore, we compare a scalar image with itself and verify that the test passes successfully.
+set(SourceScalarFile ${BASELINE}/Brain_slice.nrrd )
+file( COPY ${SourceScalarFile} DESTINATION ${TEMP})
+set( BinaryScalarFile ${TEMP}/Brain_slice.nrrd)
+set(testname itkTestMainExtendedScalarTest)
+set(TransformedImage7 ${TEMP}/dt-helix-transformed7.nrrd )
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
+ --compare
+   ${BinaryScalarFile}
+   ${BinaryScalarFile}
+  ModuleEntryPoint
+    --interpolation nn
+    ${OriginalImage}
+    ${TransformedImage7}
+  )
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(TransformedImage6 ${TEMP}/dt-helix-transformed6.nrrd )
