@@ -414,7 +414,9 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
       vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
       if (!dataArray || dataArray->GetSize() != n)
         {
-          vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j) << " is out of sync with PolyData->GetPoints()! Size of Attribute:" << dataArray->GetSize() << " Number of Points: " << n);
+          vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j)
+                        << " is out of sync with PolyData->GetPoints()! Size of Attribute:" << dataArray->GetSize()
+                        << " Number of Points: " << n);
         }
       else
     {

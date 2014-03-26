@@ -158,8 +158,10 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int &typeColumn,
-                                    int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns)
+int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode *refNode,
+                                    char line[1024], int &typeColumn,
+                                    int& xColumn,    int& yColumn,     int& zColumn,
+                                    int& selColumn, int& visColumn, int& numColumns)
 {
  if (line[0] != '#' || line[1] != ' ')
     {

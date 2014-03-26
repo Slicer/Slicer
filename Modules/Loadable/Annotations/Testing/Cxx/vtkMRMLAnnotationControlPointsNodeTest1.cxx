@@ -83,7 +83,8 @@ int vtkMRMLAnnotationControlPointsNodeTest1(int , char * [] )
    //     return EXIT_FAILURE;
    //   }
 
-    if (!node2->GetAnnotationAttribute(0, vtkMRMLAnnotationControlPointsNode::CP_VISIBLE) || !node2->GetAnnotationAttribute(0, vtkMRMLAnnotationControlPointsNode::CP_SELECTED))
+    if (!node2->GetAnnotationAttribute(0, vtkMRMLAnnotationControlPointsNode::CP_VISIBLE)
+        || !node2->GetAnnotationAttribute(0, vtkMRMLAnnotationControlPointsNode::CP_SELECTED))
       {
     std::cerr << "Error in AddControlPoint(): Attributes are not correct " << std::endl;
     return EXIT_FAILURE;
