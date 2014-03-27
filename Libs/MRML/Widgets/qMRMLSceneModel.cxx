@@ -1352,10 +1352,17 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
     return;
     }
 
-  // If there is an assert here that means the node has been removed from the
-  // scene but the scene model hasn't been notified or that the scene model is
-  // still observing the node (in a subclass)
-  Q_ASSERT(node && node->GetScene());
+  // If there is no node here or if the node has no scene. that means the node
+  // has been removed from the scene but the scene model hasn't been notified
+  // or that the scene model is still observing the node (in a subclass).
+  // Another reason is that the scene has been closed, and when triggering the
+  // SceneClosed event to all observers, one observer modifies the node and
+  // the scene model has not yet been notified the scene was closed.
+  Q_ASSERT(node);
+  if (!node || !node->GetScene())
+    {
+    return;
+    }
   //Q_ASSERT(node->GetScene()->IsNodePresent(node));
   QModelIndexList nodeIndexes = d->indexes(nodeUID);
   //qDebug() << "onMRMLNodeModified" << node->GetID() << nodeIndexes;
