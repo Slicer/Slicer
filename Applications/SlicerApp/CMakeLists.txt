@@ -377,8 +377,28 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
       if(Slicer_HAS_CONSOLE_IO_SUPPORT)
         install(PROGRAMS "${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
       else()
+        # Create command to update launcher icon
+        add_custom_command(
+          DEPENDS
+            ${CTKAPPLAUNCHER_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}
+          OUTPUT
+            ${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
+          COMMAND ${CMAKE_COMMAND} -E copy
+            ${CTKAPPLAUNCHER_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}
+            ${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
+          COMMAND
+            ${CTKResEdit_EXECUTABLE}
+              --update-resource-ico ${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
+              IDI_ICON1 ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${SlicerApp_APPLICATION_NAME}.ico
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          COMMEND ""
+          )
+        add_custom_target(${SlicerApp_APPLICATION_NAME}UpdateLauncherWIcon ALL
+          DEPENDS
+            ${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
+          )
         install(
-          PROGRAMS "${CTKAPPLAUNCHER_DIR}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}"
+          PROGRAMS "${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}"
           DESTINATION "."
           RENAME "${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
           )
@@ -394,6 +414,18 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
         RENAME ${SlicerApp_APPLICATION_NAME}LauncherSettings.ini
         )
     endif()
+
+    if(WIN32)
+      # Create target to update launcher icon
+      add_custom_target(${SlicerApp_APPLICATION_NAME}UpdateLauncherIcon ALL
+        COMMAND
+          ${CTKResEdit_EXECUTABLE}
+            --update-resource-ico ${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            IDI_ICON1 ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${SlicerApp_APPLICATION_NAME}.ico
+        )
+      add_dependencies(${SlicerApp_APPLICATION_NAME}UpdateLauncherIcon ${SlicerApp_APPLICATION_NAME}ConfigureLauncher)
+    endif()
+
   endif()
 endif()
 

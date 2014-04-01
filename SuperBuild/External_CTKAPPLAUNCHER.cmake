@@ -10,6 +10,9 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   # Set dependency list
   set(${proj}_DEPENDENCIES "")
+  if(WIN32)
+    set(${proj}_DEPENDENCIES CTKResEdit)
+  endif()
 
   # Include dependent projects if any
   ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
