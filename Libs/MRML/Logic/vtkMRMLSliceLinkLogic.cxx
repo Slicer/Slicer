@@ -112,6 +112,10 @@ void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
+  if (!node)
+    {
+    return;
+    }
   if (node->IsA("vtkMRMLSliceCompositeNode")
       || node->IsA("vtkMRMLSliceNode"))
     {
@@ -132,6 +136,10 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
+  if (!node)
+    {
+    return;
+    }
   if (node->IsA("vtkMRMLSliceCompositeNode")
       || node->IsA("vtkMRMLSliceNode"))
     {
