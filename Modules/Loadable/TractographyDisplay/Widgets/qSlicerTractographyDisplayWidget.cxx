@@ -30,6 +30,8 @@ public:
   void init();
   bool centeredOrigin(double* origin)const;
 
+  void getPolyDataTensors(vtkPolyData *polyData, QStringList &tensors);
+
   vtkMRMLFiberBundleNode* FiberBundleNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode;
   vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode;
@@ -51,7 +53,6 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   Q_Q(qSlicerTractographyDisplayWidget);
   this->setupUi(q);
 
-  this->ActiveTensorComboBox->setAttributeTypes(ctkVTKDataSetModel::NoAttribute|ctkVTKDataSetModel::TensorsAttribute);
   // TODO: a hack for now that show all components, it does not work as below,
   // this->ActiveTensorComboBox->setAttributeTypes(ctkVTKDataSetModel::TensorsAttribute);
 
@@ -64,7 +65,7 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
 
   this->ColorBySolidColorPicker->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
-  QObject::connect(this->ActiveTensorComboBox, SIGNAL(currentArrayChanged(QString)),
+  QObject::connect(this->ActiveTensorComboBox, SIGNAL(currentIndexChanged(QString)),
                    q, SLOT(setActiveTensorName(QString)));
   QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(bool)) );
   QObject::connect( this->ColorByCellScalarsRadioButton, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
@@ -109,6 +110,25 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
                   q, SLOT(setWindowLevel(double, double)));
   QObject::connect(this->FiberBundleColorRangeWidget, SIGNAL(rangeChanged(double, double)),
                   q, SLOT(setWindowLevelLimits(double, double)));
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidgetPrivate::getPolyDataTensors(vtkPolyData *polyData, QStringList &tensors)
+{
+  if (polyData == 0)
+    {
+    return;
+    }
+  if (polyData->GetPointData())
+    {
+    for (int i=0; i<polyData->GetPointData()->GetNumberOfArrays(); i++)
+      {
+      if (polyData->GetPointData()->GetArray(i)->GetNumberOfComponents() == 9)
+        {
+        tensors.append(QString(polyData->GetPointData()->GetArray(i)->GetName()));
+        }
+      }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -243,9 +263,7 @@ void qSlicerTractographyDisplayWidget::setActiveTensorName(const QString& arrayN
 QString qSlicerTractographyDisplayWidget::activeTensorName()const
 {
   Q_D(const qSlicerTractographyDisplayWidget);
-  // TODO: use currentArrayName()
-  vtkAbstractArray* array = d->ActiveTensorComboBox->currentArray();
-  return array ? array->GetName() : "";
+  return d->ActiveTensorComboBox->currentText();
 }
 
 //------------------------------------------------------------------------------
@@ -678,14 +696,18 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
 
   d->ActiveTensorComboBox->setEnabled(hasTensors);
   bool wasBlocking = d->ActiveTensorComboBox->blockSignals(true);
-  d->ActiveTensorComboBox->setDataSet(
-    d->FiberBundleDisplayNode->GetInputPolyData());
+
+  QStringList tensorItems;
+  d->getPolyDataTensors(d->FiberBundleDisplayNode->GetInputPolyData(), tensorItems);
+  d->ActiveTensorComboBox->clear();
+  d->ActiveTensorComboBox->addItems(tensorItems);
+
   d->ActiveTensorComboBox->blockSignals(wasBlocking);
-  if (d->ActiveTensorComboBox->currentArrayName() !=
+  if (d->ActiveTensorComboBox->currentText() !=
       d->FiberBundleDisplayNode->GetActiveTensorName())
     {
-    d->ActiveTensorComboBox->setCurrentArray(
-      d->FiberBundleDisplayNode->GetActiveTensorName());
+    d->ActiveTensorComboBox->setCurrentIndex(d->ActiveTensorComboBox->findText(
+      d->FiberBundleDisplayNode->GetActiveTensorName()));
     }
 
   d->ColorByScalarInvariantRadioButton->setEnabled(hasTensors);// && !colorSolid);

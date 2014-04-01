@@ -121,7 +121,7 @@ QCheckBox::indicator:unchecked {
             </widget>
            </item>
            <item>
-            <widget class="ctkVTKDataSetArrayComboBox" name="ActiveTensorComboBox">
+            <widget class="QComboBox" name="ActiveTensorComboBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
