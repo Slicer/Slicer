@@ -219,8 +219,15 @@ endif()
 # ENVVARS
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_BUILD
-  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/bin<PATHSEP>${CTK_DIR}/CTK-build/bin<PATHSEP>${QT_PLUGINS_DIR}"
   "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
+  )
+set(SLICER_QT_PLUGIN_PATH_BUILD
+  "<APPLAUNCHER_DIR>/bin"
+  "${CTK_DIR}/CTK-build/bin"
+  "${QT_PLUGINS_DIR}"
+  )
+set(SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
+  "QT_PLUGIN_PATH"
   )
 
 # Note: The addition of SLICER_HOME to the build environment has been motivated by
@@ -231,27 +238,34 @@ set(SLICER_ENVVARS_BUILD
 #       CMake refers to the variable as Slicer_HOME, and the tcl variable is SlicerHome.
 
 if(Slicer_USE_PYTHONQT)
-  set(PYTHONPATH "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
+  set(SLICER_PYTHONPATH_BUILD
+    "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>"
+    "<APPLAUNCHER_DIR>/bin/Python"
+    )
   if(NOT Slicer_USE_SYSTEM_python)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}")
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-dynload")
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
+    list(APPEND SLICER_PYTHONPATH_BUILD
+      "${SLICER_PYTHONHOME}/${pythonpath_subdir}"
+      "${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-dynload"
+      "${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages"
+      )
   endif()
 
   if(Slicer_BUILD_QTLOADABLEMODULES)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>")
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
+    list(APPEND SLICER_PYTHONPATH_BUILD
+      "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>"
+      "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
+      )
   endif()
 
   if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-tk")
+    list(APPEND SLICER_PYTHONPATH_BUILD
+      "${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-tk"
+      )
   endif()
 
   if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_ENVVARS_BUILD
-      "PYTHONHOME=${SLICER_PYTHONHOME}"
-      "PYTHONPATH=${PYTHONPATH}")
+    list(APPEND SLICER_ENVVARS_BUILD "PYTHONHOME=${SLICER_PYTHONHOME}")
+    list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_BUILD "PYTHONPATH")
   endif()
 endif()
 
@@ -363,33 +377,43 @@ set(SLICER_PATHS_INSTALLED
 # ENVVARS
 #-----------------------------------------------------------------------------
 set(SLICER_ENVVARS_INSTALLED
-  "QT_PLUGIN_PATH=<APPLAUNCHER_DIR>/${Slicer_INSTALL_QtPlugins_DIR}"
   # SLICER_HOME might already be set on the machine, overwrite it because it
   # could have unwanted side effects
   "SLICER_HOME=<APPLAUNCHER_DIR>"
   )
+set(SLICER_QT_PLUGIN_PATH_INSTALLED
+  "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QtPlugins_DIR}"
+  )
+set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
+  "QT_PLUGIN_PATH"
+  )
 
 if(Slicer_USE_PYTHONQT)
-  set(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
+  set(SLICER_PYTHONPATH_INSTALLED "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
   if(NOT Slicer_USE_SYSTEM_python)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload")
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
+    list(APPEND SLICER_PYTHONPATH_INSTALLED
+      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}"
+      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload"
+      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages"
+      )
   endif()
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/vtkTeem")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
-  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
+  list(APPEND SLICER_PYTHONPATH_INSTALLED
+    "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}"
+    "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
+    "<APPLAUNCHER_DIR>/lib/vtkTeem"
+    "<APPLAUNCHER_DIR>/bin/Python"
+    "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
+    )
 
   if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
+    list(APPEND SLICER_PYTHONPATH_INSTALLED
+      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk"
+      )
   endif()
 
   if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_ENVVARS_INSTALLED
-      "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python"
-      "PYTHONPATH=${PYTHONPATH}")
+    list(APPEND SLICER_ENVVARS_INSTALLED "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python")
+    list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED "PYTHONPATH")
   endif()
 endif()
 

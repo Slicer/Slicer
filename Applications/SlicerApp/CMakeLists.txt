@@ -361,6 +361,9 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
       LIBRARY_PATHS_INSTALLED "${SLICER_LIBRARY_PATHS_INSTALLED}"
       PATHS_INSTALLED "${SLICER_PATHS_INSTALLED}"
       ENVVARS_INSTALLED "${SLICER_ENVVARS_INSTALLED}"
+      ADDITIONAL_PATH_ENVVARS_BUILD "${SLICER_ADDITIONAL_PATH_ENVVARS_BUILD}"
+      ADDITIONAL_PATH_ENVVARS_INSTALLED "${SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED}"
+      ADDITIONAL_PATH_ENVVARS_PREFIX SLICER_
       )
     # HACK - Waiting "ctkAppLauncherConfigure" macro is updated so that it reconfigures the settings,
     #        if possible, only if "SlicerBlockCTKAppLauncherSettings.cmake" has been modified.
