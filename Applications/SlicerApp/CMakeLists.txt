@@ -365,16 +365,6 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
       ADDITIONAL_PATH_ENVVARS_INSTALLED "${SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED}"
       ADDITIONAL_PATH_ENVVARS_PREFIX SLICER_
       )
-    # HACK - Waiting "ctkAppLauncherConfigure" macro is updated so that it reconfigures the settings,
-    #        if possible, only if "SlicerBlockCTKAppLauncherSettings.cmake" has been modified.
-    #        Let's force a systematic reconfiguration of SlicerLauncherSettings.
-    add_custom_target(${SlicerApp_APPLICATION_NAME}RemoveLauncherSettings
-      COMMAND ${CMAKE_COMMAND} -E remove
-        ${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}LauncherSettings.ini
-        ${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}LauncherSettingsToInstall.ini
-      )
-    add_dependencies(${SlicerApp_APPLICATION_NAME}RemoveLauncherSettings ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX})
-    add_dependencies(${SlicerApp_APPLICATION_NAME}ConfigureLauncher ${SlicerApp_APPLICATION_NAME}RemoveLauncherSettings)
 
     if(NOT APPLE)
       if(Slicer_HAS_CONSOLE_IO_SUPPORT)
