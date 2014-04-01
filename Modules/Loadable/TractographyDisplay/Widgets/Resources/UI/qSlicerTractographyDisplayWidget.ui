@@ -128,9 +128,6 @@ QCheckBox::indicator:unchecked {
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="attributeTypes">
-              <set>ctkVTKDataSetModel::NoAttribute|ctkVTKDataSetModel::TensorsAttribute</set>
-             </property>
             </widget>
            </item>
           </layout>
