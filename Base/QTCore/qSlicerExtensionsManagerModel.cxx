@@ -26,6 +26,7 @@
 #include <QNetworkReply>
 #include <QSettings>
 #include <QStandardItemModel>
+#include <QTemporaryFile>
 #include <QTextStream>
 #include <QUrl>
 
@@ -1039,17 +1040,16 @@ void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
   QString extensionName = extensionMetadata.value("extensionname").toString();
   QString archiveName = extensionMetadata.value("archivename").toString();
 
-  QFileInfo fileInfo(QDir::tempPath(), archiveName);
-  QFile file(fileInfo.absoluteFilePath());
-  if (!file.open(QIODevice::WriteOnly))
+  QTemporaryFile file(QString("%1/%2.XXXXXX").arg(QDir::tempPath(), archiveName));
+  if (!file.open())
     {
-    d->critical(QString("Could not open %1 for writing: %2").arg(fileInfo.absoluteFilePath()).arg(file.errorString()));
+    d->critical(QString("Could not create temporary file for writing: %1").arg(file.errorString()));
     return;
     }
   file.write(reply->readAll());
   file.close();
 
-  this->installExtension(extensionName, extensionMetadata, fileInfo.absoluteFilePath());
+  this->installExtension(extensionName, extensionMetadata, file.fileName());
 }
 
 // --------------------------------------------------------------------------
