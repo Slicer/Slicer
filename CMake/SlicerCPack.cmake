@@ -9,7 +9,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
 endif()
 
 if(NOT Slicer_USE_SYSTEM_QT)
-  set(SlicerBlockInstallQtPlugins_subdirectories imageformats sqldrivers designer/*qwebview)
+  set(SlicerBlockInstallQtPlugins_subdirectories imageformats sqldrivers designer:qwebview)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 endif()
 
