@@ -241,7 +241,8 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
   QStringList extraItems;
   if (q->mrmlScene())
     {
-    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled || this->RenameEnabled)
+    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled
+        || this->RenameEnabled || !this->UserMenuActions.empty())
       {
       extraItems.append("separator");
       }
