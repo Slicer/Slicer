@@ -314,8 +314,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
     if (!stepAsStr.isEmpty()) { step = stepAsStr.toInt(); }
 
     ctkSliderWidget * slider = new ctkSliderWidget;
-    slider->spinBox()->setDecimalsOption(
-      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
+    slider->setDecimals(0);
     slider->setSingleStep(step);
     slider->setTickInterval(step);
     slider->setRange(min, max);
