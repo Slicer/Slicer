@@ -185,6 +185,9 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   /// Update the pipeline based on this node attributes
   virtual void UpdatePolyDataPipeline();
 
+  virtual void ProcessMRMLEvents ( vtkObject *caller,
+                                 unsigned long event,
+                                 void *callData );
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
   ~vtkMRMLFiberBundleDisplayNode ( );

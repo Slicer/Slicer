@@ -257,6 +257,20 @@ int vtkMRMLFiberBundleDisplayNode::GetNthScalarInvariant(int i)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+                                           unsigned long event,
+                                           void *callData )
+{
+  Superclass::ProcessMRMLEvents(caller, event, callData);
+  if (vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    this->Modified();
+    }
+  return;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdatePolyDataPipeline()
 {
   if (this->GetActiveTensorName() &&
