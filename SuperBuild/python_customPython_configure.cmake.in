@@ -5,11 +5,11 @@ set(ENV{CXXFLAGS} "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@")
 set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
 
 #
-# This script install a launcher named 'customPython' that will invoke
+# This script install a launcher named 'SlicerPython' that will invoke
 # the real python executable ensuring that appropriate python shared
 # library will be loaded.
 #
-# When executed, the launcher looks for a file named 'customLauncherSettings.ini',
+# When executed, the launcher looks for a file named 'SlicerPythonLauncherSettings.ini',
 # where it read the settings to initialize the environment with.
 #
 
@@ -18,11 +18,11 @@ set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE@")
 set(slicer_PYTHON_REAL_EXECUTABLE "@slicer_PYTHON_REAL_EXECUTABLE@")
 
-# Configure customPython launcher settings.
+# Configure SlicerPython launcher settings.
 get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
 configure_file(
   "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPythonLauncherSettings.ini.in"
-  ${python_bin_dir}/customPythonLauncherSettings.ini
+  ${python_bin_dir}/SlicerPythonLauncherSettings.ini
   @ONLY
   )
 
