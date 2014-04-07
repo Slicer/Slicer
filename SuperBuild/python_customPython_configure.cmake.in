@@ -5,30 +5,38 @@ set(ENV{CXXFLAGS} "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@")
 set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
 
 #
-# This script install a launcher named 'SlicerPython' that will invoke
-# the real python executable ensuring that appropriate python shared
-# library will be loaded.
+# This script configure a launcher named 'SlicerPython' that will invoke
+# the real python executable ensuring that:
+#  - appropriate python shared library are loaded
+#  - appropriate OpenSSL libraries are loaded
+#  - PYTHONPATH environment variable is set
 #
 # When executed, the launcher looks for a file named 'SlicerPythonLauncherSettings.ini',
 # where it read the settings to initialize the environment with.
 #
 
-
-set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE@")
 set(slicer_PYTHON_REAL_EXECUTABLE "@slicer_PYTHON_REAL_EXECUTABLE@")
+set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
+set(PYTHON_ENABLE_SSL @PYTHON_ENABLE_SSL@)
+set(CTKAPPLAUNCHER_DIR "@CTKAPPLAUNCHER_DIR@")
+set(python_DIR "@python_DIR@")
+set(Slicer_INSTALL_BIN_DIR "@Slicer_INSTALL_BIN_DIR@")
+set(Slicer_INSTALL_LIB_DIR "@Slicer_INSTALL_LIB_DIR@")
 
-# Configure SlicerPython launcher settings.
-get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
-configure_file(
-  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPythonLauncherSettings.ini.in"
-  ${python_bin_dir}/SlicerPythonLauncherSettings.ini
-  @ONLY
-  )
+set(python_version_dot "2.7")
+set(pythonpath_subdir lib/python${python_version_dot})
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(pythonpath_subdir Lib)
+endif()
+
+#-----------------------------------------------------------------------------
+# Copy and rename launcher
+#-----------------------------------------------------------------------------
 
 find_program(
   CTKAPPLAUNCHER_EXECUTABLE CTKAppLauncher
-  PATHS "@CTKAPPLAUNCHER_DIR@/bin" NO_DEFAULT_PATH
+  PATHS ${CTKAPPLAUNCHER_DIR}/bin NO_DEFAULT_PATH
   )
 if(NOT EXISTS ${CTKAPPLAUNCHER_EXECUTABLE})
   message(FATAL_ERROR "error: CTKAPPLAUNCHER_EXECUTABLE not found: ${CTKAPPLAUNCHER_EXECUTABLE}")
@@ -42,3 +50,83 @@ configure_file(
 if(NOT EXISTS ${PYTHON_EXECUTABLE})
   message(FATAL_ERROR "error: PYTHON_EXECUTABLE points to an inexistent file: ${PYTHON_EXECUTABLE}")
 endif()
+
+
+#-----------------------------------------------------------------------------
+function(_listToQtSettingsArray ITEMS ITEMNAME OUTPUTVAR)
+  set(idx 1)
+  set(SETTINGS_ARRAY)
+  list(LENGTH ITEMS item_count)
+  foreach(item ${ITEMS})
+    set(SETTINGS_ARRAY "${SETTINGS_ARRAY}${idx}\\${ITEMNAME}=${item}\n")
+    math(EXPR idx "${idx} + 1")
+  endforeach()
+  set(SETTINGS_ARRAY "${SETTINGS_ARRAY}size=${item_count}")
+  set(${OUTPUTVAR} ${SETTINGS_ARRAY} PARENT_SCOPE)
+endfunction()
+
+#-----------------------------------------------------------------------------
+# Settings specific to the build tree.
+#-----------------------------------------------------------------------------
+
+set(PYTHONHOME "${python_DIR}")
+
+set(_library_paths_build ${slicer_PYTHON_SHARED_LIBRARY_DIR})
+if(PYTHON_ENABLE_SSL)
+  list(APPEND _library_paths_build
+    ${OPENSSL_EXPORT_LIBRARY_DIR})
+endif()
+_listToQtSettingsArray("${_library_paths_build}" "path" PYTHONLAUNCHER_LIBRARY_PATHS)
+
+set(_pythonpath_paths_build
+  "${PYTHONHOME}/${pythonpath_subdir}"
+  "${PYTHONHOME}/${pythonpath_subdir}/lib-dynload"
+  "${PYTHONHOME}/${pythonpath_subdir}/site-packages"
+  )
+_listToQtSettingsArray("${_pythonpath_paths_build}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
+
+# Configure SlicerPython launcher settings.
+get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
+configure_file(
+  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPythonLauncherSettings.ini.in"
+  ${python_bin_dir}/SlicerPythonLauncherSettings.ini
+  @ONLY
+  )
+
+#-----------------------------------------------------------------------------
+# Settings specific to the install tree.
+#-----------------------------------------------------------------------------
+
+set(PYTHONHOME "<APPLAUNCHER_DIR>/../lib/Python")
+
+# Windows:
+#   Python library    -> Slicer_INSTALL_BIN_DIR
+#   OpenSSL libraries -> Slicer_INSTALL_BIN_DIR
+# Unix:
+#   Python library    -> lib/Python/lib
+#   OpenSSL libraries -> Slicer_INSTALL_LIB_DIR
+
+set(_library_paths_installed
+  <APPLAUNCHER_DIR>/../${Slicer_INSTALL_BIN_DIR}
+  <APPLAUNCHER_DIR>/../${Slicer_INSTALL_LIB_DIR}
+  <APPLAUNCHER_DIR>/../lib/Python/lib
+  )
+_listToQtSettingsArray("${_library_paths_installed}" "path" PYTHONLAUNCHER_LIBRARY_PATHS)
+
+set(_pythonpath_paths_installed
+  "${PYTHONHOME}/lib/Python/${pythonpath_subdir}"
+  "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/lib-dynload"
+  "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/site-packages"
+  )
+_listToQtSettingsArray("${_pythonpath_paths_installed}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
+
+# Configure SlicerPython launcher settings.
+get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
+configure_file(
+  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPythonLauncherSettings.ini.in"
+  ${python_bin_dir}/SlicerPythonLauncherSettingsToInstall.ini
+  @ONLY
+  )
+
+# Note: Install rules for SlicerPythonLauncherSettingsToInstall.ini and SlicerPython executable
+#       are specified in SlicerBlockInstallPython.cmake

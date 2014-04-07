@@ -51,6 +51,32 @@ if(Slicer_USE_PYTHONQT)
       COMPONENT Runtime)
   endif()
 
+  # Install interpreter
+  get_filename_component(python_bin_dir ${PYTHON_EXECUTABLE} PATH)
+  install(
+    PROGRAMS ${python_bin_dir}/python${CMAKE_EXECUTABLE_SUFFIX}
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    COMPONENT Runtime
+    )
+
+  # Install Slicer python launcher settings
+  install(
+    FILES ${python_bin_dir}/SlicerPythonLauncherSettingsToInstall.ini
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    RENAME SlicerPythonLauncherSettings.ini
+    )
+
+  # Install Slicer python launcher
+  set(_launcher CTKAppLauncher)
+  if(Slicer_BUILD_WIN32_CONSOLE)
+    set(_launcher CTKAppLauncherW)
+  endif()
+  install(
+    PROGRAMS ${CTKAPPLAUNCHER_DIR}/bin/${_launcher}${CMAKE_EXECUTABLE_SUFFIX}
+    DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    RENAME SlicerPython${CMAKE_EXECUTABLE_SUFFIX}
+    )
+
   # Install headers
   set(python_include_subdir /Include/)
   if(UNIX)

@@ -1,10 +1,15 @@
 [General]
 launcherNoSplashScreen=True
+additionalPathVariables=PYTHONPATH
 
 [Application]
-path=@slicer_PYTHON_REAL_EXECUTABLE@
+path=<APPLAUNCHER_DIR>/python
 
 [LibraryPaths]
-1\path=@slicer_PYTHON_SHARED_LIBRARY_DIR@
-2\path=@OPENSSL_EXPORT_LIBRARY_DIR@
-size=2
+@PYTHONLAUNCHER_LIBRARY_PATHS@
+
+[PYTHONPATH]
+@PYTHONLAUNCHER_PYTHONPATH_PATHS@
+
+[EnvironmentVariables]
+PYTHONHOME=@PYTHONHOME@
