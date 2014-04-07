@@ -4,7 +4,7 @@
 
 set(DCMTK_Apps storescu storescp dcmdump dump2dcm img2dcm dcmdjpeg dcmqrscp)
 set(int_dir "")
-if(WIN32)
+if(CMAKE_CONFIGURATION_TYPES)
   set(int_dir "Release/")
 endif()
 foreach(dcmtk_App ${DCMTK_Apps})
