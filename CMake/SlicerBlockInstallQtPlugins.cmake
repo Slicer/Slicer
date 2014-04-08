@@ -39,6 +39,7 @@ if(NOT "${QT_PLUGINS_DIR}" STREQUAL "")
     foreach(qpi ${qt_plugins})
       install(PROGRAMS ${qpi}
         DESTINATION ${Slicer_INSTALL_QtPlugins_DIR}/${plugins_subdirectory}
+        COMPONENT RuntimePlugins
         )
     endforeach()
 
