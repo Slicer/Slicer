@@ -3,7 +3,7 @@ launcherNoSplashScreen=True
 additionalPathVariables=PYTHONPATH
 
 [Application]
-path=<APPLAUNCHER_DIR>/python
+path=<APPLAUNCHER_DIR>/python@CMAKE_EXECUTABLE_SUFFIX@
 
 [LibraryPaths]
 @PYTHONLAUNCHER_LIBRARY_PATHS@
