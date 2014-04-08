@@ -50,30 +50,35 @@ if(NOT APPLE)
   macro(_remove_installed_dir dir_to_remove)
     set(_code "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove_directory")
     set(_code "${_code} \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${dir_to_remove}\")")
-    install(CODE "${_code}")
+    install(CODE "${_code}" COMPONENT Runtime)
   endmacro()
 
-  # Remove development files installed by teem. Ideally, teem project itself should be updated.
-  # See http://na-mic.org/Mantis/view.php?id=3455
-  set(dollar "$")
-  _remove_installed_dir("include/teem")
-  foreach(file
-    lib/Teem-1.10.0/TeemBuildSettings.cmake
-    lib/Teem-1.10.0/TeemConfig.cmake
-    lib/Teem-1.10.0/TeemLibraryDepends.cmake
-    lib/Teem-1.10.0/TeemUse.cmake
-    )
-    install(CODE "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${file}\")")
-  endforeach()
-  if(Slicer_USE_SimpleITK)
-    # HACK Version variable are not set after calling 'find_package(SimpleITK)'
-    # See https://issues.itk.org/jira/browse/SIMPLEITK-518
-    #find_package(SimpleITK REQUIRED)
-    set(SimpleITK_VERSION_MAJOR "0")
-    set(SimpleITK_VERSION_MINOR "8")
-    # Remove development files installed by SimpleITK.
-    # See https://issues.itk.org/jira/browse/SIMPLEITK-517
-    _remove_installed_dir("include/SimpleITK-${SimpleITK_VERSION_MAJOR}.${SimpleITK_VERSION_MINOR}")
+  if(Slicer_INSTALL_NO_DEVELOPMENT)
+    # Remove development files installed by teem. Ideally, teem project itself should be updated.
+    # See http://na-mic.org/Mantis/view.php?id=3455
+    set(dollar "$")
+    _remove_installed_dir("include/teem")
+    foreach(file
+      lib/Teem-1.10.0/TeemBuildSettings.cmake
+      lib/Teem-1.10.0/TeemConfig.cmake
+      lib/Teem-1.10.0/TeemLibraryDepends.cmake
+      lib/Teem-1.10.0/TeemUse.cmake
+      )
+      install(
+        CODE "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${file}\")"
+        COMPONENT Runtime
+        )
+    endforeach()
+    if(Slicer_USE_SimpleITK)
+      # HACK Version variable are not set after calling 'find_package(SimpleITK)'
+      # See https://issues.itk.org/jira/browse/SIMPLEITK-518
+      #find_package(SimpleITK REQUIRED)
+      set(SimpleITK_VERSION_MAJOR "0")
+      set(SimpleITK_VERSION_MINOR "8")
+      # Remove development files installed by SimpleITK.
+      # See https://issues.itk.org/jira/browse/SIMPLEITK-517
+      _remove_installed_dir("include/SimpleITK-${SimpleITK_VERSION_MAJOR}.${SimpleITK_VERSION_MINOR}")
+    endif()
   endif()
 else()
 

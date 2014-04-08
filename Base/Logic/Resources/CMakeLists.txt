@@ -16,4 +16,5 @@ endforeach()
 install(
   FILES ${COLORFILES}
   DESTINATION ${Slicer_INSTALL_SHARE_DIR}/ColorFiles
+  COMPONENT Runtime
   )

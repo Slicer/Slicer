@@ -153,6 +153,7 @@ endforeach()
 install(
   FILES ${RESFILES}
   DESTINATION ${${PROJECT_NAME}_INSTALL_SHARE_DIR}
+  COMPONENT Runtime
   )
 
 # --------------------------------------------------------------------------

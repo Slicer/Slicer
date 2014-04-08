@@ -368,7 +368,11 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
 
     if(NOT APPLE)
       if(Slicer_HAS_CONSOLE_IO_SUPPORT)
-        install(PROGRAMS "${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+        install(
+          PROGRAMS "${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+          DESTINATION "."
+          COMPONENT Runtime
+          )
       else()
         # Create command to update launcher icon
         add_custom_command(
@@ -394,17 +398,20 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
           PROGRAMS "${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}"
           DESTINATION "."
           RENAME "${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+          COMPONENT Runtime
           )
       endif()
 
       install(
         FILES ${splash_image_path}
         DESTINATION ${Slicer_INSTALL_BIN_DIR}
+        COMPONENT Runtime
         )
       install(
         FILES "${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}LauncherSettingsToInstall.ini"
         DESTINATION ${Slicer_INSTALL_BIN_DIR}
         RENAME ${SlicerApp_APPLICATION_NAME}LauncherSettings.ini
+        COMPONENT Runtime
         )
     endif()
 

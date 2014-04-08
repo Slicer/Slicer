@@ -25,6 +25,7 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   install(
     FILES ${PNGFILES}
     DESTINATION ${Slicer_INSTALL_SHARE_DIR}/Resources
+    COMPONENT Development
     )
 endif()
 
@@ -42,5 +43,6 @@ endforeach()
 install(
   FILES ${PARAMETERSETS}
   DESTINATION ${Slicer_INSTALL_SHARE_DIR}/ParameterSets
+  COMPONENT Runtime
   )
 

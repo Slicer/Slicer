@@ -32,6 +32,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     install(DIRECTORY
       ${Slicer_TCL_DIR}/
       DESTINATION ${TclTk_INSTALL_LIB_DIR}
+      COMPONENT Runtime
       USE_SOURCE_PERMISSIONS
       REGEX "/man" EXCLUDE
       REGEX "/include" EXCLUDE
