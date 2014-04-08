@@ -86,6 +86,8 @@ set(_pythonpath_paths_build
   )
 _listToQtSettingsArray("${_pythonpath_paths_build}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
+set(PYTHON_EXE_SUFFIX_CONFIG "")
+
 # Configure SlicerPython launcher settings.
 get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
 configure_file(
@@ -120,6 +122,8 @@ set(_pythonpath_paths_installed
   "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/site-packages"
   )
 _listToQtSettingsArray("${_pythonpath_paths_installed}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
+
+set(PYTHON_EXE_SUFFIX_CONFIG "-real")
 
 # Configure SlicerPython launcher settings.
 get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)

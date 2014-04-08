@@ -57,6 +57,7 @@ if(Slicer_USE_PYTHONQT)
   install(
     PROGRAMS ${python_bin_dir}/python${CMAKE_EXECUTABLE_SUFFIX}
     DESTINATION ${Slicer_INSTALL_BIN_DIR}
+    RENAME python-real${CMAKE_EXECUTABLE_SUFFIX}
     COMPONENT Runtime
     )
 
