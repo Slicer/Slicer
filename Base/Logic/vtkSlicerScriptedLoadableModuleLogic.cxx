@@ -199,13 +199,13 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& py
   if (!classToInstantiate)
     {
     PyObject * pyRes = 0;
-    if (newPythonSource.endsWith(".py"))
+    if (pythonSource.find(".py") != std::string::npos)
       {
       std::string pyRunStr = std::string("execfile('") + pythonSource + std::string("')");
       pyRes = PyRun_String(pyRunStr.c_str(),
                            Py_file_input, global_dict, global_dict);
       }
-    else if (newPythonSource.endsWith(".pyc"))
+    else if (pythonSource.find(".pyc") != std::string::npos)
       {
       std::string pyRunStr = std::string("with open('") + pythonSource +
           std::string("', 'rb') as f:import imp;imp.load_module('__main__', f, '") + pythonSource +
