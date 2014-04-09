@@ -114,10 +114,10 @@ if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
 endif()
 
 if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES GitPython)
+  #list(APPEND Slicer_DEPENDENCIES GitPython)
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
     # PyGithub requires SSL support in Python
-    list(APPEND Slicer_DEPENDENCIES PyGithub)
+    #list(APPEND Slicer_DEPENDENCIES PyGithub)
   else()
     message(WARNING "Python was built without SSL support; "
                     "github integration will not be available")
