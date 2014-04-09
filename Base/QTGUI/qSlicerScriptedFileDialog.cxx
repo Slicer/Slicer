@@ -134,7 +134,10 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
     return false;
     }
 
-  Q_ASSERT(newPythonSource.endsWith(".py"));
+  if(!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+    {
+    return false;
+    }
 
   // Extract moduleName from the provided filename
   QString classNameToLoad = className;

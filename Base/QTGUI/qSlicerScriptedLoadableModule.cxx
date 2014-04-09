@@ -131,7 +131,6 @@ QString qSlicerScriptedLoadableModule::pythonSource()const
   Q_D(const qSlicerScriptedLoadableModule);
   return d->PythonSource;
 }
-
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSource)
 {
@@ -142,7 +141,10 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
-  Q_ASSERT(newPythonSource.endsWith(".py"));
+  if (!newPythonSource.endsWith(".py") && !newPythonSource.endsWith(".pyc"))
+    {
+    return false;
+    }
 
   // Extract moduleName from the provided filename
   QString moduleName = QFileInfo(newPythonSource).baseName();
@@ -157,8 +159,18 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   if (!classToInstantiate)
     {
     PyDict_SetItemString(global_dict, "__name__", PyString_FromString(className.toLatin1()));
-    PyObject * pyRes = PyRun_String(QString("execfile('%1')").arg(newPythonSource).toLatin1(),
-                                    Py_file_input, global_dict, global_dict);
+    PyObject* pyRes = 0;
+    if (newPythonSource.endsWith(".py"))
+      {
+      pyRes = PyRun_String(QString("execfile('%1')").arg(newPythonSource).toLatin1(),
+                           Py_file_input, global_dict, global_dict);
+      }
+    else if (newPythonSource.endsWith(".pyc"))
+      {
+      pyRes = PyRun_String(
+            QString("with open('%1', 'rb') as f:import imp;imp.load_module('__main__', f, '%1', ('.pyc', 'rb', 2))").arg(newPythonSource).toLatin1(),
+            Py_file_input, global_dict, global_dict);
+      }
     if (!pyRes)
       {
       PythonQt::self()->handleError();
