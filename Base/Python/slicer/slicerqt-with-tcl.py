@@ -18,6 +18,7 @@ def tcl(cmd):
 
     import os
     tcl_dir = os.path.dirname(os.path.realpath(__file__)) + '/tcl/'
+    tcl_dir = tcl_dir.replace('\\','/')
     _tpycl.tcl_eval("""
         set dir \"%s\"
         source $dir/Slicer3Adapters.tcl
