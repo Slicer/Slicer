@@ -166,8 +166,5 @@ include(\"${_this_list_file}\")
 set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")
 
 set(ENV{VS_UNICODE_OUTPUT} \"\")
-
-set(ENV{LD_LIBRARY_PATH} \"${slicer_PYTHON_SHARED_LIBRARY_DIR}\")
-set(ENV{DYLD_LIBRARY_PATH} \"${slicer_PYTHON_SHARED_LIBRARY_DIR}\")
 ")
 endfunction()
