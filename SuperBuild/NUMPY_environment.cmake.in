@@ -64,3 +64,11 @@ macro(numpy_setup_command stepname)
 
   message("@proj@ ${stepname} worked.")
 endmacro()
+
+function(numpy_clean_logs)
+  foreach(stepname configure make install)
+    foreach(logtype error output)
+      file(REMOVE "@CMAKE_BINARY_DIR@/@proj@_${stepname}_step_${logtype}.txt")
+    endforeach()
+  endforeach()
+endfunction()

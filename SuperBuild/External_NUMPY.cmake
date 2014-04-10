@@ -29,17 +29,22 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_NUMPY)
     SuperBuild/${proj}_environment.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/${proj}_environment.cmake @ONLY)
 
-  configure_file(
-    SuperBuild/${proj}_configure_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${proj}_configure_step.cmake @ONLY)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${proj}_configure_step.cmake
+"include(\"${CMAKE_BINARY_DIR}/${proj}_environment.cmake\")
+numpy_clean_logs()
+file(WRITE \"${NUMPY_DIR}/site.cfg\" \"\")
+numpy_setup_command(\"configure\" config)
+")
 
-  configure_file(
-    SuperBuild/NUMPY_make_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${proj}_make_step.cmake @ONLY)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${proj}_make_step.cmake
+"include(\"${CMAKE_BINARY_DIR}/${proj}_environment.cmake\")
+numpy_setup_command(\"make\" build --fcompiler=none)
+")
 
-  configure_file(
-    SuperBuild/${proj}_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${proj}_install_step.cmake @ONLY)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${proj}_install_step.cmake
+"include(\"${CMAKE_BINARY_DIR}/${proj}_environment.cmake\")
+numpy_setup_command(\"install\" install)
+")
 
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
