@@ -18,11 +18,21 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  configure_file(SuperBuild/SimpleITK_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake
-    @ONLY)
+  include(ExternalProjectForNonCMakeProject)
 
-  set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
+  # environment
+  set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+  ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script})
+
+  # install step - the working path must be set to the location of the SimpleITK.py
+  # file so that it will be picked up by distuils setup, and installed
+  set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
+  file(WRITE ${_install_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}-build/Wrapping\")
+ExternalProject_Remove_Execute_Logs(${proj} \"install\")
+ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" PythonPackage/setup.py install)
+")
 
   set(SimpleITK_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
   set(SimpleITK_GIT_TAG v0.8.0)
@@ -61,7 +71,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
       -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON # Shorten version and install path removing -g{GIT-HASH} suffix.
     #
-    INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
+    INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
     #
     DEPENDS ${${proj}_DEPENDENCIES}
     )
