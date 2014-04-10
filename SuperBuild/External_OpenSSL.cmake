@@ -49,9 +49,40 @@ if((NOT DEFINED OPENSSL_LIBRARIES
     #------------------------------------------------------------------------------
     set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
-    configure_file(
-      SuperBuild/${proj}_patch_and_configure_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/${proj}_patch_and_configure_step.cmake @ONLY)
+    include(ExternalProjectForNonCMakeProject)
+
+    # environment
+    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
+    file(WRITE ${_env_script}
+"#------------------------------------------------------------------------------
+# Added by '${CMAKE_CURRENT_LIST_FILE}'
+include(\"${${CMAKE_PROJECT_NAME}_CMAKE_DIR}/ExternalProjectForNonCMakeProject.cmake\")
+set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")
+set(ENV{VS_UNICODE_OUTPUT} \"\")
+")
+    if(APPLE)
+      file(APPEND ${_env_script}
+"# Hint OpenSSL that we prefer a 64-bit build.
+  set(ENV{KERNEL_BITS} \"64\")
+  # Allow 'sysctl' executable used in OpenSSL config script to be found.
+  # This is required when building Slicer using a cronjob where the
+  # default environement is restricted.
+  set(ENV{PATH} \"/usr/sbin:\$ENV{PATH}\")
+")
+    endif()
+
+    get_filename_component(_zlib_library_dir ${ZLIB_LIBRARY} PATH)
+
+    # configure step
+    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+    file(WRITE ${_configure_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
+ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
+ExternalProject_Execute(${proj} \"configure\" sh config zlib -lzlib -L${_zlib_library_dir} shared
+  )
+")
 
     #------------------------------------------------------------------------------
     ExternalProject_Add(${proj}
@@ -61,8 +92,7 @@ if((NOT DEFINED OPENSSL_LIBRARIES
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       BUILD_IN_SOURCE 1
-      PATCH_COMMAND ${CMAKE_COMMAND}
-        -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_patch_and_configure_step.cmake
+      PATCH_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND make -j1 build_libs
       INSTALL_COMMAND ""
