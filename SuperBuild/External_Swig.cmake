@@ -73,7 +73,6 @@ set(ENV{YFLAGS} \"${BISON_FLAGS}\")
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${swig_binary_dir}\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure\")
 ExternalProject_Execute(${proj} \"configure\" sh ${swig_source_dir}/configure
     --prefix=${swig_install_dir}
     --with-pcre-prefix=${pcre_install_dir}

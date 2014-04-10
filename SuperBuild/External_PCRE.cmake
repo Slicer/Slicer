@@ -44,7 +44,6 @@ set(ENV{YFLAGS} \"${BISON_FLAGS}\")
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${pcre_binary_dir}\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure\")
 ExternalProject_Execute(${proj} \"configure\" sh ${pcre_source_dir}/configure
     --prefix=${pcre_install_dir} --disable-shared)
 ")

@@ -79,7 +79,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${tcl_base}/tcl/unix\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
 ExternalProject_Execute(${proj} \"configure\" sh configure
   --prefix=${tcl_build} --with-cflags=${_configure_cflags}
   )

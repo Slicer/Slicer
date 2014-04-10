@@ -30,7 +30,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}-build/Wrapping\")
-ExternalProject_Remove_Execute_Logs(${proj} \"install\")
 ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" PythonPackage/setup.py install)
 ")
 

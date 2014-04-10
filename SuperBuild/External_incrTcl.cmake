@@ -44,7 +44,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${tcl_base}/incrTcl\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
 ExternalProject_Execute(${proj} \"configure\" sh configure
   --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build}
   )

@@ -79,7 +79,6 @@ set(ENV{VS_UNICODE_OUTPUT} \"\")
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
 ExternalProject_Execute(${proj} \"configure\" sh config zlib -lzlib -L${_zlib_library_dir} shared
   )
 ")

@@ -46,7 +46,6 @@ set(ENV{MKL} \"None\")
   file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
 file(WRITE \"${CMAKE_BINARY_DIR}/${proj}/site.cfg\" \"\")
 ExternalProject_Execute(${proj} \"configure\" \"${PYTHON_EXECUTABLE}\" setup.py config)
 ")

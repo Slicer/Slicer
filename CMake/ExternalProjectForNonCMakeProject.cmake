@@ -48,6 +48,7 @@ set(_this_list_file ${CMAKE_CURRENT_LIST_FILE})
 #!
 function(ExternalProject_Execute proj stepname)
   set(cmd ${ARGN})
+  ExternalProject_Remove_Execute_Logs(${proj} ${stepname})
   message(STATUS "${proj}: ${proj}_WORKING_DIR: ${${proj}_WORKING_DIR}")
   message(STATUS "${proj}: ${cmd}")
   if(NOT DEFINED ${proj}_WORKING_DIR)

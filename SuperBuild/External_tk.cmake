@@ -41,7 +41,6 @@ if(NOT WIN32)
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${tcl_base}/tk/unix\")
-ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
 ExternalProject_Execute(${proj} \"configure\" sh configure
   --with-tcl=${tcl_build}/lib --prefix=${tcl_build} ${_configure_extra_args} --with-cflags=${_configure_cflags}
   )
