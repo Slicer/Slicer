@@ -17,7 +17,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(INCR_TCL_VERSION "32")
   set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
   set(incrTcl_SVN_REVISION -r "4")
-  set(incrTcl_BUILD_IN_SOURCE 1)
   set(incrTcl_PATCH_COMMAND "")
 
   if(APPLE)
@@ -32,37 +31,52 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(incrTcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${incrTcl_configure_find} -Dreplace=${incrTcl_configure_replace} -P ${script})
   endif()
 
-  configure_file(
-    SuperBuild/incrTcl_configure_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake
-    @ONLY)
-  set(incrTcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_configure_step.cmake)
+  if(UNIX)
 
-  configure_file(
-    SuperBuild/incrTcl_make_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_make_step.cmake
-    @ONLY)
-  set(incrTcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_make_step.cmake)
+    include(ExternalProjectForNonCMakeProject)
 
-  configure_file(
-    SuperBuild/incrTcl_install_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_install_step.cmake
-    @ONLY)
-  set(incrTcl_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/incrTcl_install_step.cmake)
+    # environment
+    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
 
+    # configure step
+    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+    file(WRITE ${_configure_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/incrTcl\")
+ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
+ExternalProject_Execute(${proj} \"configure\" sh configure
+  --with-tcl=${tcl_build}/lib --with-tk=${tcl_build}/lib --prefix=${tcl_build}
+  )
+")
 
-  if(NOT WIN32)
+    # build step
+    set(_build_script ${CMAKE_BINARY_DIR}/${proj}_build_step.cmake)
+    file(WRITE ${_build_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/incrTcl\")
+ExternalProject_Execute(${proj} \"build\" make)
+")
+
+    # install step
+    set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
+    file(WRITE ${_install_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/incrTcl\")
+ExternalProject_Execute(${proj} \"install\" make install)
+")
+
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
       SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
       SVN_REVISION ${incrTcl_SVN_REVISION}
       UPDATE_COMMAND "" # Disable update
       SOURCE_DIR tcl/incrTcl
-      BUILD_IN_SOURCE ${incrTcl_BUILD_IN_SOURCE}
+      BUILD_IN_SOURCE 1
       PATCH_COMMAND ${incrTcl_PATCH_COMMAND}
-      CONFIGURE_COMMAND ${incrTcl_CONFIGURE_COMMAND}
-      BUILD_COMMAND ${incrTcl_BUILD_COMMAND}
-      INSTALL_COMMAND ${incrTcl_INSTALL_COMMAND}
+      CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
+      BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}
+      INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
       DEPENDS
         ${${proj}_DEPENDENCIES}
     )

@@ -55,16 +55,36 @@ if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(swig_source_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig)
     set(swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig)
 
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/swig_configure_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/swig_configure_step.cmake
-      @ONLY)
-    set ( swig_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/swig_configure_step.cmake )
+    include(ExternalProjectForNonCMakeProject)
+
+    # environment
+    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
+    file(APPEND ${_env_script}
+"#------------------------------------------------------------------------------
+# Added by '${CMAKE_CURRENT_LIST_FILE}'
+
+set(ENV{YACC} \"${BISON_EXECUTABLE}\")
+set(ENV{YFLAGS} \"${BISON_FLAGS}\")
+")
+
+    # configure step
+    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+    file(WRITE ${_configure_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${swig_binary_dir}\")
+ExternalProject_Remove_Execute_Logs(${proj} \"configure\")
+ExternalProject_Execute(${proj} \"configure\" sh ${swig_source_dir}/configure
+    --prefix=${swig_install_dir}
+    --with-pcre-prefix=${pcre_install_dir}
+    --without-octave
+    --with-python=${PYTHON_EXECUTABLE})
+")
 
     ExternalProject_add(Swig
       URL http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${SWIG_DOWNLOAD_SOURCE_HASH}&name=swig-${SWIG_TARGET_VERSION}.tar.gz
       URL_MD5 ${SWIG_DOWNLOAD_SOURCE_HASH}
-      CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
+      CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
       DEPENDS ${${proj}_DEPENDENCIES}
       )
 

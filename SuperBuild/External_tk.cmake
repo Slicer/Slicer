@@ -15,53 +15,64 @@ if(NOT WIN32)
 
   if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_tk)
 
-    set(tk_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk")
-    set(tk_SVN_REVISION -r "114")
-    set(tk_SOURCE_DIR "")
-    set(tk_BINARY_DIR "")
-    set(tk_BUILD_IN_SOURCE 0)
-    set(tk_CONFIGURE_COMMAND "")
-    set(tk_BUILD_COMMAND "")
-    set(tk_INSTALL_COMMAND "")
+    include(ExternalProjectForNonCMakeProject)
 
-    set(tk_SOURCE_DIR tcl/tk)
-    set(tk_BUILD_IN_SOURCE 1)
+    # environment
+    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
 
-    # configure, make and make install all need to be executed in tk/unix. External_Project
-    # doesn't provide any way to set the working directory for each step so we do so by
-    # configuring a script that has an execute_process command that has the correct working
-    # directory
-    configure_file(
-      SuperBuild/tk_configure_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/tk_configure_step.cmake
-      @ONLY)
+    set(_configure_cflags)
+    #
+    # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
+    # used when making a shared object; recompile with -fPIC
+    # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
+    #
+    if( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+      set(_configure_cflags "-fPIC")
+    endif()
 
-    set(tk_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_configure_step.cmake)
+    set(_configure_extra_args)
+    if(APPLE)
+      set(_configure_extra_args --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x)
+    endif()
 
-    configure_file(
-      SuperBuild/tk_make_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/tk_make_step.cmake
-      @ONLY)
+    # configure step
+    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+    file(WRITE ${_configure_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/tk/unix\")
+ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
+ExternalProject_Execute(${proj} \"configure\" sh configure
+  --with-tcl=${tcl_build}/lib --prefix=${tcl_build} ${_configure_extra_args} --with-cflags=${_configure_cflags}
+  )
+")
 
-    set(tk_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_make_step.cmake)
+    # build step
+    set(_build_script ${CMAKE_BINARY_DIR}/${proj}_build_step.cmake)
+    file(WRITE ${_build_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/tk/unix\")
+ExternalProject_Execute(${proj} \"build\" make)
+")
 
-    configure_file(
-      SuperBuild/tk_install_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake
-      @ONLY)
-
-    set(tk_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tk_install_step.cmake)
+    # install step
+    set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
+    file(WRITE ${_install_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/tk/unix\")
+ExternalProject_Execute(${proj} \"install\" make install)
+")
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      SVN_REPOSITORY ${tk_SVN_REPOSITORY}
-      SVN_REVISION ${tk_SVN_REVISION}
+      SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk"
+      SVN_REVISION -r "114"
       UPDATE_COMMAND "" # Disable update
-      SOURCE_DIR ${tk_SOURCE_DIR}
-      BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
-      CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
-      BUILD_COMMAND ${tk_BUILD_COMMAND}
-      INSTALL_COMMAND ${tk_INSTALL_COMMAND}
+      SOURCE_DIR tcl/tk
+      BUILD_IN_SOURCE 1
+      CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
+      BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}
+      INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
       DEPENDS
         ${${proj}_DEPENDENCIES}
       )

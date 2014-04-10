@@ -26,18 +26,35 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(pcre_source_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE)
   set(pcre_install_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/pcre_configure_step.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pcre_configure_step.cmake
-    @ONLY)
-  set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pcre_configure_step.cmake)
+    include(ExternalProjectForNonCMakeProject)
+
+    # environment
+    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
+    file(APPEND ${_env_script}
+"#------------------------------------------------------------------------------
+# Added by '${CMAKE_CURRENT_LIST_FILE}'
+
+set(ENV{YACC} \"${BISON_EXECUTABLE}\")
+set(ENV{YFLAGS} \"${BISON_FLAGS}\")
+")
+
+    # configure step
+    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+    file(WRITE ${_configure_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${pcre_binary_dir}\")
+ExternalProject_Remove_Execute_Logs(${proj} \"configure\")
+ExternalProject_Execute(${proj} \"configure\" sh ${pcre_source_dir}/configure
+    --prefix=${pcre_install_dir} --disable-shared)
+")
 
   ExternalProject_add(PCRE
     ${${proj}_EP_ARGS}
     URL http://downloads.sourceforge.net/project/pcre/pcre/8.12/pcre-8.12.tar.gz
     URL_MD5 fa69e4c5d8971544acd71d1f10d59193
     UPDATE_COMMAND "" # Disable update
-    CONFIGURE_COMMAND ${pcre_CONFIGURE_COMMAND}
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )

@@ -58,30 +58,51 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(tcl_SOURCE_DIR tcl/tcl)
     set(tcl_BUILD_IN_SOURCE 1)
 
-    # configure, make and make install all need to be executed in tcl/unix. External_Project
-    # doesn't provide any way to set the working directory for each step so we do so by
-    # configuring a script that has an execute_process command that has the correct working
-    # directory
-    configure_file(
-      SuperBuild/tcl_configure_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake
-      @ONLY)
+    include(ExternalProjectForNonCMakeProject)
 
-    set(tcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_configure_step.cmake)
+    # environment
+    set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+    ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
 
-    configure_file(
-      SuperBuild/tcl_make_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/tcl_make_step.cmake
-      @ONLY)
+    set(_configure_cflags)
+    #
+    # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
+    # used when making a shared object; recompile with -fPIC
+    # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
+    #
+    if( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+      set(_configure_cflags "-fPIC")
+    endif()
 
-    set(tcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_make_step.cmake)
+    # configure step
+    set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
+    file(WRITE ${_configure_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/tcl/unix\")
+ExternalProject_Remove_Execute_Logs(${proj} \"configure;build;install\")
+ExternalProject_Execute(${proj} \"configure\" sh configure
+  --prefix=${tcl_build} --with-cflags=${_configure_cflags}
+  )
+")
+    set(tcl_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script})
 
-    configure_file(
-      SuperBuild/tcl_install_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/tcl_install_step.cmake
-      @ONLY)
+    # build step
+    set(_build_script ${CMAKE_BINARY_DIR}/${proj}_build_step.cmake)
+    file(WRITE ${_build_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/tcl/unix\")
+ExternalProject_Execute(${proj} \"build\" make)
+")
+    set(tcl_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
 
-    set(tcl_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/tcl_install_step.cmake)
+    # install step
+    set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
+    file(WRITE ${_install_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${tcl_base}/tcl/unix\")
+ExternalProject_Execute(${proj} \"install\" make install)
+")
+    set(tcl_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script})
   endif()
 
   ExternalProject_Add(${proj}
