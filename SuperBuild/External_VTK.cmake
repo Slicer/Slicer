@@ -83,24 +83,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       )
   endif()
 
-  set(CUSTOM_BUILD_COMMAND)
-  if(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
-    # Use $(MAKE) as build command to propagate parallel make option
-    set(CUSTOM_BUILD_COMMAND BUILD_COMMAND "$(MAKE)")
-    set(make_command_definition -DMAKE_COMMAND=$(MAKE) )
-  else()
-    set(make_command_definition -DMAKE_COMMAND=${CMAKE_MAKE_PROGRAM})
-  endif()
-
-  if(UNIX)
-    configure_file(SuperBuild/VTK_build_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake
-      @ONLY)
-    set(CUSTOM_BUILD_COMMAND BUILD_COMMAND ${CMAKE_COMMAND}
-      ${make_command_definition}
-      -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
-  endif()
-
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "d8540e7ee356bbc025cb9917a41b7c7fa0548d4b" CACHE STRING "VTK git tag to use" FORCE)
 
@@ -116,7 +98,6 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     BINARY_DIR ${proj}-build
     GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
-    ${CUSTOM_BUILD_COMMAND}
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
