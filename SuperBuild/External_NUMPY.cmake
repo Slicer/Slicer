@@ -19,9 +19,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_NUMPY)
 
   ExternalProject_Message(${proj} "${proj} - Building without Fortran compiler - Non-optimized code will be built !")
 
-  set(numpy_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz)
-  set(numpy_MD5 5c7b5349dc3161763f7f366ceb96516b)
-
   #------------------------------------------------------------------------------
   set(NUMPY_DIR "${CMAKE_BINARY_DIR}/${proj}")
 
@@ -49,8 +46,8 @@ numpy_setup_command(\"install\" install)
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL ${numpy_URL}
-    URL_MD5 ${numpy_MD5}
+    URL "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz"
+    URL_MD5 "5c7b5349dc3161763f7f366ceb96516b"
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
