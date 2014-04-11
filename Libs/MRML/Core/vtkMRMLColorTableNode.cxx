@@ -259,22 +259,9 @@ void vtkMRMLColorTableNode::SetTypeToRandom()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorTableNode::SetTypeToUser()
-{
-  this->SetType(this->User);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLColorTableNode::SetTypeToFile()
-{
-    this->SetType(this->File);
-}
-
-
-//----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetTypeToRed()
 {
-    this->SetType(this->Red);
+  this->SetType(this->Red);
 }
 
 //----------------------------------------------------------------------------
@@ -414,6 +401,11 @@ void vtkMRMLColorTableNode::SetTypeToCoolTint3()
 //----------------------------------------------------------------------------
 const char* vtkMRMLColorTableNode::GetTypeAsString()
 {
+  const char *type = Superclass::GetTypeAsString();
+  if (type && strcmp(type,"(unknown)") != 0)
+    {
+      return type;
+    }
   if (this->Type == this->FullRainbow)
     {
     return "FullRainbow";
@@ -461,14 +453,6 @@ const char* vtkMRMLColorTableNode::GetTypeAsString()
   if (this->Type == this->Random)
     {
     return "Random";
-    }
-  if (this->Type == this->User)
-    {
-      return "UserDefined";
-    }
-  if (this->Type == this->File)
-    {
-    return "File";
     }
   if (this->Type == this->Red)
     {

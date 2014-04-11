@@ -89,15 +89,18 @@ public:
   /// Get for Type
   vtkGetMacro(Type,int);
 
+  /// Set the type to User or File, ones that don't require building
+  /// data structures, just setting flags
+  void SetTypeToUser();
+  void SetTypeToFile();
+
   void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  ///
-  /// Return the lowest and the highest type integers (defined in enum in
-  /// subclass), for use in looping
-  virtual int GetFirstType();
-  virtual int GetLastType ();
+  /// Return the lowest and highest integers, for use in looping.
+  /// Override in subclasses when more enums are added.
+  virtual int GetFirstType () { return this->User; };
+  virtual int GetLastType () { return this->File; };
 
-  ///
   /// return a text string describing the colour look up table type
   virtual const char * GetTypeAsString();
 
@@ -179,6 +182,19 @@ public:
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
   virtual bool GetModifiedSinceRead();
+
+  /// The list of valid color node types, added to in subclasses
+  /// For backward compatibility, User and File keep the numbers that
+  /// were in the ColorTable node
+  ///
+  /// User - user defined in the GUI
+  /// File - read in from file
+  enum
+  {
+    User = 13,
+    File = 14,
+  };
+
 protected:
   vtkMRMLColorNode();
   virtual ~vtkMRMLColorNode();
@@ -195,8 +211,7 @@ protected:
   /// \sa GetNoName()
   virtual bool HasNameFromColor(int index);
 
-  ///
-  /// Which type of look up table does this node hold?
+  /// Which type of color information does this node hold?
   /// Valid values are in the enumerated list
   int Type;
 

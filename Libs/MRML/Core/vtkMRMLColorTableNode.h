@@ -71,8 +71,6 @@ public:
   void SetTypeToFMRIPA();
   void SetTypeToLabels();
   void SetTypeToRandom();
-  void SetTypeToUser();
-  void SetTypeToFile();
   void SetTypeToRed();
   void SetTypeToGreen();
   void SetTypeToBlue();
@@ -115,14 +113,12 @@ public:
   /// FMRIPA - fMRI Positive Activation map
   /// Labels - the Slicer2 FullRainbow editor labels
   /// Random - 255 random colors
-  /// User - user defined in the GUI
-  /// File - read in from file
   /// Red - red ramp (like greyscale but with red, meant for layering with cyan)
   /// Green - green ramp (like greyscale but with green, layering with magenta)
   /// Blue - blue ramp (like greyscale but with blue, layering with yellow)
-  /// Yellow - yellow ramp (complementary ramp to blue, layering yeilds gray)
-  /// Cyan - cyan ramp (complementary ramp to red, layering yeilds gray)
-  /// Magenta - magenta ramp (complementary ramp to green, layering yeilds gray)
+  /// Yellow - yellow ramp (complementary ramp to blue, layering yields gray)
+  /// Cyan - cyan ramp (complementary ramp to red, layering yields gray)
+  /// Magenta - magenta ramp (complementary ramp to green, layering yields gray)
   /// Warm# - ramps of warm colors that are complimentary to Cool#
   /// WarmShade# - ramps of warm colors with variation in value that are
   ///       complimentary to CoolShade#
@@ -148,8 +144,6 @@ public:
       Labels = 10,
       Obsolete = 11,
       Random = 12,
-      User = 13,
-      File = 14,
       Red = 15,
       Green = 16,
       Blue = 17,

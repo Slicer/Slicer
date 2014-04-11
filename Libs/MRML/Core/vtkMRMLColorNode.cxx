@@ -233,24 +233,29 @@ void vtkMRMLColorNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNode::GetFirstType()
-{
-  vtkErrorMacro("Subclass has not over ridden this method");
-  return -1;
-}
-
-//---------------------------------------------------------------------------
-int vtkMRMLColorNode::GetLastType()
-{
-  vtkErrorMacro("Subclass has not over ridden this method");
-  return -1;
-}
-
-//---------------------------------------------------------------------------
 const char * vtkMRMLColorNode::GetTypeAsString()
 {
-  vtkErrorMacro("Subclass has not over ridden this method");
+  if (this->Type == this->User)
+    {
+    return "UserDefined";
+    }
+  if (this->Type == this->File)
+    {
+    return "File";
+    }
   return "(unknown)";
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToUser()
+{
+  this->SetType(this->User);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLColorNode::SetTypeToFile()
+{
+  this->SetType(this->File);
 }
 
 //---------------------------------------------------------------------------
