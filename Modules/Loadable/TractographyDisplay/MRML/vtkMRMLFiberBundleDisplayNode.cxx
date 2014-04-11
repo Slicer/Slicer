@@ -48,7 +48,7 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
   this->ScalarRange[0] = 0.;
   this->ScalarRange[1] = 1.;
 
-  this->SetColor(1,0.157,0);
+  this->SetColor(250.0/255,250.0/255,210.0/255);
 }
 
 //----------------------------------------------------------------------------
