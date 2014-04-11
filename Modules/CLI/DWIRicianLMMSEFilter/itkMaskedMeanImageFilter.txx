@@ -65,13 +65,8 @@ throw (InvalidRequestedRegionError)
 }
 
 template <class TInputImage, class TOutputImage>
-#if ITK_VERSION_MAJOR < 4
-void MaskedMeanImageFilter<TInputImage, TOutputImage>
-::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
-#else
 void MaskedMeanImageFilter<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId )
-#endif
 {
 
   unsigned int i;

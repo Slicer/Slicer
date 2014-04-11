@@ -286,23 +286,7 @@ option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
 mark_as_advanced(Slicer_USE_QtTesting)
 mark_as_superbuild(Slicer_USE_QtTesting)
 
-set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
-# Set the possible values of ITK major version for cmake-gui
-set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "3" "4")
-if(NOT "${ITK_VERSION_MAJOR}" STREQUAL "3" AND NOT "${ITK_VERSION_MAJOR}" STREQUAL "4")
-  set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4)." FORCE)
-  message(WARNING "Setting ITK_VERSION_MAJOR to '3' as an valid value was specified.")
-endif()
-mark_as_superbuild(ITK_VERSION_MAJOR)
-
-set(USE_ITKv3 OFF)
-set(USE_ITKv4 ON)
-if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  set(USE_ITKv3 ON)
-  set(USE_ITKv4 OFF)
-endif()
-
-CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF "USE_ITKv4" OFF)
+option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
 #
@@ -506,81 +490,78 @@ endif()
 #-----------------------------------------------------------------------------
 # ITKv4 - Slicer_ITK_COMPONENTS
 #-----------------------------------------------------------------------------
-set(Slicer_ITK_COMPONENTS "")
-if(${ITK_VERSION_MAJOR} GREATER 3)
-  set(ITK_IO_MODULES_USED
-    ITKIOJPEG
-    ITKIOGDCM
-    ITKIOBMP
-    ITKIOLSM
-    ITKIOPNG
-    ITKIOTIFF
-    ITKIOVTK
-    ITKIOStimulate
-    ITKIOBioRad
-    ITKIOMeta
-    ITKIONIFTI
-    ITKIONRRD
-    ITKIOGIPL
-    )
-  if(Slicer_BUILD_DICOM_SUPPORT)
-    list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
-  endif()
-  set(Slicer_ITK_COMPONENTS
-    ITKAnisotropicSmoothing
-    ITKAntiAlias
-    ITKBiasCorrection
-    ITKBinaryMathematicalMorphology
-    ITKCommon
-    ITKConnectedComponents
-    ITKCurvatureFlow
-    ITKDeprecated
-    ITKDiffusionTensorImage
-    ITKDisplacementField
-    ITKDistanceMap
-    ITKFastMarching
-    ITKHDF5
-    ITKIOImageBase
-    ITKIOSpatialObjects
-    ITKIOStimulate
-    ITKIOTransformBase
-    ITKImageAdaptors
-    ITKImageCompare
-    ITKImageCompose
-    ITKImageFeature
-    ITKImageFilterBase
-    ITKImageFunction
-    ITKImageFusion
-    ITKImageGradient
-    ITKImageGrid
-    ITKImageIntensity
-    ITKImageSources
-    ITKImageStatistics
-    ITKLabelVoting
-    ITKLevelSets
-    ITKMathematicalMorphology
-    ITKMesh
-    ITKOptimizers
-    ITKPDEDeformableRegistration
-    ITKPath
-    ITKQuadEdgeMesh
-    ITKQuadEdgeMeshFiltering
-    ITKRegionGrowing
-    ITKRegistrationCommon
-    ITKReview
-    ITKSmoothing
-    ITKSpatialObjects
-    ITKStatistics
-    ITKTestKernel
-    ITKThresholding
-    ITKTransform
-    ITKV3Compatibility
-    ITKVTK
-    #    ITKVtkGlue
-    ITKZLIB
-    ${ITK_IO_MODULES_USED}
-    )
+set(ITK_IO_MODULES_USED
+  ITKIOJPEG
+  ITKIOGDCM
+  ITKIOBMP
+  ITKIOLSM
+  ITKIOPNG
+  ITKIOTIFF
+  ITKIOVTK
+  ITKIOStimulate
+  ITKIOBioRad
+  ITKIOMeta
+  ITKIONIFTI
+  ITKIONRRD
+  ITKIOGIPL
+  )
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
 endif()
+set(Slicer_ITK_COMPONENTS
+  ITKAnisotropicSmoothing
+  ITKAntiAlias
+  ITKBiasCorrection
+  ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKConnectedComponents
+  ITKCurvatureFlow
+  ITKDeprecated
+  ITKDiffusionTensorImage
+  ITKDisplacementField
+  ITKDistanceMap
+  ITKFastMarching
+  ITKHDF5
+  ITKIOImageBase
+  ITKIOSpatialObjects
+  ITKIOStimulate
+  ITKIOTransformBase
+  ITKImageAdaptors
+  ITKImageCompare
+  ITKImageCompose
+  ITKImageFeature
+  ITKImageFilterBase
+  ITKImageFunction
+  ITKImageFusion
+  ITKImageGradient
+  ITKImageGrid
+  ITKImageIntensity
+  ITKImageSources
+  ITKImageStatistics
+  ITKLabelVoting
+  ITKLevelSets
+  ITKMathematicalMorphology
+  ITKMesh
+  ITKOptimizers
+  ITKPDEDeformableRegistration
+  ITKPath
+  ITKQuadEdgeMesh
+  ITKQuadEdgeMeshFiltering
+  ITKRegionGrowing
+  ITKRegistrationCommon
+  ITKReview
+  ITKSmoothing
+  ITKSpatialObjects
+  ITKStatistics
+  ITKTestKernel
+  ITKThresholding
+  ITKTransform
+  ITKV3Compatibility
+  ITKVTK
+  #    ITKVtkGlue
+  ITKZLIB
+  ${ITK_IO_MODULES_USED}
+  )
 
 #-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_MODULES
@@ -746,31 +727,13 @@ endif()
 #-----------------------------------------------------------------------------
 # ITK
 #-----------------------------------------------------------------------------
-set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
-set(Slicer_ITK_COMPONENTS "")
-if(${ITK_VERSION_MAJOR} GREATER 3)
-  find_package(ITK COMPONENTS ${Slicer_ITK_COMPONENTS})
-else()
-  find_package(ITK REQUIRED)
-endif()
-
-if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
-  # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
-  #       explicitly instead of passing the version as an argument to find_package() command.
-  message(FATAL_ERROR "Could not find a configuration file for package \"ITK\" that is compatible "
-                      "with requested version \"${expected_ITK_VERSION_MAJOR}\".\n"
-                      "The following configuration files were considered but not accepted:\n"
-                      "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
-endif()
-
-if(${ITK_VERSION_MAJOR} GREATER 3)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-  list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-  list(APPEND ITK_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Libs/ITKFactoryRegistration
-    ${CMAKE_CURRENT_BINARY_DIR}/Libs/ITKFactoryRegistration
-    )
-endif()
+find_package(ITK 4.5 COMPONENTS ${Slicer_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}/Libs/ITKFactoryRegistration
+  ${CMAKE_CURRENT_BINARY_DIR}/Libs/ITKFactoryRegistration
+  )
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------

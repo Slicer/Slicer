@@ -48,11 +48,6 @@ public:
   itkNewMacro( Self );
 // /Set the transform
   itkSetObjectMacro( Transform, TransformType );
-#if 0 // HACK ITK_VERSION_MAJOR < 4
-// /Set the input deformation field
-  void SetInput( const InputDeformationFieldType * inputDeformationField );
-
-#endif
 
 // /Get the time of the last modification of the object
   unsigned long GetMTime() const;
@@ -67,13 +62,9 @@ public:
 #endif
 protected:
   TransformDeformationFieldFilter();
-#if ITK_VERSION_MAJOR < 4
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
 
-#else
   void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
 
-#endif
   void BeforeThreadedGenerateData();
 
   void GenerateOutputInformation();

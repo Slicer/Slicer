@@ -171,9 +171,7 @@ int RegressionTestImage(const char *testImageFilename, const char *baselineImage
 
     typedef itk::ExtractImageFilter<OutputType, DiffOutputType> ExtractType;
     ExtractType::Pointer extract = ExtractType::New();
-#if  ITK_VERSION_MAJOR >= 4
     extract->SetDirectionCollapseToGuess(); // ITKv3 compatible, but not recommended
-#endif
     extract->SetInput(rescale->GetOutput() );
     extract->SetExtractionRegion(region);
 

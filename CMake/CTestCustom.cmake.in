@@ -120,13 +120,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Uu]tilities.gdcm"
   "[Uu]tilities.vxl"
   "[Uu]tilities.itktiff"
-  "([Ii]nsight|ITKv3).[Cc]ode.[Cc]ommon"
-  "([Ii]nsight|ITKv3).[Cc]ode.[Nn]umerics"
-  "([Ii]nsight|ITKv3).[Cc]ode.(IO|io)"
-  "([Ii]nsight|ITKv3).[Cc]ode.[Ss]patial[Oo]bject"
-  "([Ii]nsight|ITKv3).[Uu]tilities.[Nn]rrd(IO|io)"
-  "([Ii]nsight|ITKv3).[Uu]tilities.(openjpeg|nifti)"
-  "([Ii]nsight|ITKv3|BRAINSFit).*Informational: catch(...) semantics changed since Visual C\\+\\+ 7.1; structured exceptions (SEH) are no longer caught"
 
   # VTK suppressions
   "vtkfreetype"

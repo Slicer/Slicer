@@ -304,19 +304,11 @@ ComputeLabelVolumes(TOutputImage *outputImage, vcl_vector< unsigned > &volumes,
   physicalVolumes.resize((const int)numObjects);
   for (unsigned n = 0; n < numObjects; n++)
     {
-#if ITK_VERSION_MAJOR < 4
-    volumes[n] = labelFilter->GetOutput()->
-      GetNthLabelObject(n)->GetSize();
-    physicalVolumes[n] = (unsigned int)
-      (labelFilter->GetOutput()->
-       GetNthLabelObject(n)->GetSize()/1000.0);
-#else
     volumes[n] = labelFilter->GetOutput()->
       GetNthLabelObject(n)->GetNumberOfPixels();
     physicalVolumes[n] = (unsigned int)
       (labelFilter->GetOutput()->
        GetNthLabelObject(n)->GetNumberOfPixels()/1000.0);
-#endif
     }
 #endif
 }
@@ -760,16 +752,9 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
 
 template <class TInputImage, class TOutputImage, class TWeightPixelType>
-void
-#if ITK_VERSION_MAJOR < 4
-GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
-::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
-                        int itkNotUsed(threadId))
-#else
-  GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
+void GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
                           ThreadIdType itkNotUsed(threadId))
-#endif
 {
   // make a shallow copy of the image to break the pipeline from re-executing in each thread
   typename InputImageType::Pointer inputImage = InputImageType::New();

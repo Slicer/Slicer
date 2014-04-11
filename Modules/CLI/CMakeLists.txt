@@ -92,12 +92,6 @@ if (Slicer_BUILD_EMSegment)
   endif()
 endif()
 
-if("${ITK_VERSION_MAJOR}" LESS 4)
-  if(Slicer_BUILD_DICOM_SUPPORT)
-    list(APPEND cli_modules DicomToNrrdConverter)
-  endif()
-endif()
-
 if(Slicer_USE_MIDAS)
   list(APPEND cli_modules MIDASApplications)
 endif()

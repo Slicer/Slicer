@@ -7,16 +7,14 @@
 // VTK includes
 #include <vtkImageData.h>
 
-#if ITK_VERSION_MAJOR >= 4
-#endif
+// ITK includes
+#include <itkFloatingPointExceptions.h>
 
 #include "DiffusionTensorScalarMeasurementsCLP.h"
 
 int main( int argc, char * argv[] )
 {
-#if ITK_VERSION_MAJOR >= 4
   itk::FloatingPointExceptions::Disable();
-#endif
 
   PARSE_ARGS;
 

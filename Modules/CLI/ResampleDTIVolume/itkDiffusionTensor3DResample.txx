@@ -80,30 +80,11 @@ DiffusionTensor3DResample<TInput, TOutput>
     }*/
 }
 
-#if 0 // ITK_VERSION_MAJOR < 4
 template <class TInput, class TOutput>
 void
-DiffusionTensor3DResample<TInput, TOutput>
-::SetInput( const InputImageType * inputImage )
-{
-  this->Superclass::SetInput( 0, inputImage );
-}
-
-#else
-// Just use the default
-#endif
-
-template <class TInput, class TOutput>
-void
-#if ITK_VERSION_MAJOR < 4
-DiffusionTensor3DResample<TInput, TOutput>
-::ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread,
-                        int itkNotUsed(threadId) )
-#else
 DiffusionTensor3DResample<TInput, TOutput>
 ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
                         ThreadIdType itkNotUsed(threadId) )
-#endif
   {
   OutputImagePointerType outputImagePtr = this->GetOutput( 0 );
   IteratorType           it( outputImagePtr, outputRegionForThread );

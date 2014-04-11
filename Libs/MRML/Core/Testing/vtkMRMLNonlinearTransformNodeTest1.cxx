@@ -12,9 +12,7 @@
 
 // ITK includes
 #include <itkConfigure.h>
-#if ITK_VERSION_MAJOR > 3
 #include <itkFactoryRegistration.h>
-#endif
 
 #include "vtkITKBSplineTransform.h"
 #include "vtkGridTransform.h"
@@ -33,9 +31,7 @@ bool TestCompositeTransform(const char *filename);
 
 int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
 {
-#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
-#endif
 
   bool res = true;
   const char *filename = 0;

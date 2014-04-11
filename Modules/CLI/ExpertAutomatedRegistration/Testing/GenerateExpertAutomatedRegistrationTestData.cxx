@@ -8,10 +8,7 @@
 #include <itkResampleImageFilter.h>
 #include <itkTransformFactory.h>
 #include <itkTransformFileReader.h>
-#include <itkConfigure.h> // For ITK_VERSION_MAJOR
-#if ITK_VERSION_MAJOR > 3
-#  include <itkFactoryRegistration.h>
-#endif
+#include <itkFactoryRegistration.h>
 
 // STD includes
 #include <list>
@@ -22,9 +19,7 @@
 
 int main(int argc, char * * argv)
 {
-#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
-#endif
 
   if( argc < 3 )
     {

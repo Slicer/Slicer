@@ -16,14 +16,8 @@
 
 #include "itkDiffusionTensor3DWrite.h"
 
-#if ITK_VERSION_MAJOR < 4
-/* This is a bug in ITKv3 that can cause conflicts when linking ITKv3 and teem with an executable */
-/* ITKv4 has mangled the items taken from teem so that they do not conflict*/
-#else
-/* Thus requiring explicit inclusion of teem headers  (or better yet, using the ITK mangled version of these enumerations)*/
 #ifndef NRRD_SPACE_MAX
 #include <NrrdIO.h>
-#endif
 #endif
 
 namespace itk

@@ -76,13 +76,8 @@ void OtsuStatistics<TInputImage, TOutputImage>
 }
 
 template <class TInputImage, class TOutputImage>
-#if ITK_VERSION_MAJOR < 4
-void OtsuStatistics<TInputImage, TOutputImage>
-::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, int threadId )
-#else
 void OtsuStatistics<TInputImage, TOutputImage>
 ::ThreadedGenerateData( const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId )
-#endif
 {
   // Boundary conditions for this filter; Neumann conditions are fine
   ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;

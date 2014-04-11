@@ -28,11 +28,7 @@ namespace itk
 template <class TScalarType>
 AnisotropicSimilarity3DTransform<TScalarType>
 ::AnisotropicSimilarity3DTransform() :
-#if ITK_VERSION_MAJOR >= 4
   Superclass(ParametersDimension)
-#else
-  Superclass(OutputSpaceDimension, ParametersDimension)
-#endif
 {
   m_Scale[0] = 1.0;
   m_Scale[1] = 1.0;
@@ -42,11 +38,7 @@ AnisotropicSimilarity3DTransform<TScalarType>
 // Constructor with arguments
 template <class TScalarType>
 AnisotropicSimilarity3DTransform<TScalarType>::AnisotropicSimilarity3DTransform(unsigned int paramDim) :
-#if ITK_VERSION_MAJOR >= 4
   Superclass(paramDim)
-#else
-  Superclass(OutputSpaceDimension, paramDim)
-#endif
 {
 }
 

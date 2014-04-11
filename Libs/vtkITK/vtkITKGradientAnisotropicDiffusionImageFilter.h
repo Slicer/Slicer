@@ -39,20 +39,12 @@ class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkI
 
   unsigned int GetNumberOfIterations ()
   {
-#if (ITK_VERSION_MAJOR == 1 && ITK_VERSION_MINOR == 2 && ITK_VERSION_PATCH == 0)
-    DelegateITKOutputMacro ( GetIterations );
-#else
     DelegateITKOutputMacro ( GetNumberOfIterations );
-#endif
   };
 
   void SetNumberOfIterations( unsigned int value )
   {
-#if (ITK_VERSION_MAJOR == 1 && ITK_VERSION_MINOR == 2 && ITK_VERSION_PATCH == 0)
-    DelegateITKInputMacro ( SetIterations, value );
-#else
     DelegateITKInputMacro ( SetNumberOfIterations, value );
-#endif
   };
 
   void SetTimeStep ( double value )

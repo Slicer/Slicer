@@ -11,20 +11,14 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-if(${ITK_VERSION_MAJOR} GREATER 3)
-  set(${CMAKE_PROJECT_NAME}_ITK_COMPONENTS
-    ITKCommon
-    ITKIOImageBase
-    )
-  find_package(ITK COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS})
-else()
-  find_package(ITK REQUIRED)
-endif()
-if(${ITK_VERSION_MAJOR} GREATER 3)
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-  list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-  list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
-endif()
+set(${CMAKE_PROJECT_NAME}_ITK_COMPONENTS
+  ITKCommon
+  ITKIOImageBase
+  )
+find_package(ITK 4.5 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
 include(${ITK_USE_FILE})
 
 find_package(VTK REQUIRED)

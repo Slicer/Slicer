@@ -68,12 +68,7 @@ DiffusionTensor3DNonRigidTransform<TData>
     MatrixTransformType matrix;
     matrix.SetIdentity();
     typename TransformType::JacobianType jacobian;
-#if ITK_VERSION_MAJOR >= 4
     m_Transform->ComputeJacobianWithRespectToParameters( outputPosition, jacobian );
-#else
-    m_LockGetJacobian->Lock();
-    jacobian = m_Transform->GetJacobian( outputPosition );
-#endif
     for( int i = 0; i < 3; i++ )
       {
       for( int j = 0; j < 3; j++ )
@@ -81,11 +76,7 @@ DiffusionTensor3DNonRigidTransform<TData>
         matrix[i][j] = jacobian[i][j] + matrix[i][j];
         }
       }
-#if ITK_VERSION_MAJOR >= 4
     // ITKv4 does not require locking, because ComputeJacobianWithRespectToParameters is thread-safe
-#else
-    m_LockGetJacobian->Unlock();
-#endif
     LightObject::Pointer newTransform = m_Affine->CreateAnother();
     typename AffineTransform::Pointer newAffine = dynamic_cast<AffineTransform *>( newTransform.GetPointer() );
     /*m_Affine->SetMatrix3x3( matrix ) ;

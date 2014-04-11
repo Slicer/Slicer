@@ -164,8 +164,6 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
     void* inPtr = input->GetScalarPointer();
     void* outPtr = output->GetScalarPointer();
 
-#if (ITK_VERSION_MAJOR > 3) || \
-      ((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR >= 14))
     switch (inScalars->GetDataType())
       {
       vtkTemplateMacroCase(VTK_LONG, long, CALL);                               \
@@ -182,16 +180,6 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
         vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
         }
       } //switch
-#else
-    switch (inScalars->GetDataType())
-      {
-      vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);             \
-      default:
-        {
-        vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
-        }
-      } //switch
-#endif
     }
   else
     {

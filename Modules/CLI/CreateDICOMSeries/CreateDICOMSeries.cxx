@@ -251,9 +251,7 @@ int DoIt( int argc, char * argv[])
 
     typedef itk::ExtractImageFilter<Image3DType, Image2DType> ExtractType;
     typename ExtractType::Pointer extract = ExtractType::New();
-#if  ITK_VERSION_MAJOR >= 4
     extract->SetDirectionCollapseToGuess();  // ITKv3 compatible, but not recommended
-#endif
     extract->SetInput(image );
     extract->SetExtractionRegion(extractRegion);
     extract->GetOutput()->SetMetaDataDictionary(dictionary);

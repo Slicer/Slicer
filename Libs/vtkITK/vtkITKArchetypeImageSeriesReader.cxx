@@ -58,10 +58,7 @@
 // reading directions from the file.
 // The GE5 reader was fixed just after the itk 3.2 release
 //
-#if (ITK_VERSION_MAJOR > 3) || \
-((ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR >= 2))
 #define USE_ITKGE5READER
-#endif
 
 #ifdef USE_ITKGE5READER
 #include "itkImageIOFactory.h"
@@ -70,16 +67,11 @@
 #include "itkGE5ImageIOFactory.h"
 #endif
 
-
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkGDCMImageIO.h"
-#if ITK_VERSION_MAJOR < 4
-#include "itkBrains2MaskImageIOFactory.h"
-#include "itkDICOMImageIO2Factory.h"
-#endif
 #ifdef ITKV3_COMPATIBILITY
 #include "itkAnalyzeImageIOFactory.h"
 #include "itkAnalyzeImageIO.h"
@@ -134,12 +126,6 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SelectedSlice = -1;
   this->SelectedOrientation = -1;
 
-#if ITK_VERSION_MAJOR < 4
-  // make sure ITK built-in factories are registered,
-  // then register the extra ones and unregister the
-  // ones we don't want
-  itk::ImageIOFactory::RegisterBuiltInFactories();
-#endif
   this->RegisterExtraBuiltInFactories();
   this->UnRegisterDeprecatedBuiltInFactories();
 }
@@ -163,9 +149,6 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
   itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
   if( firstTime )
     {
-#if ITK_VERSION_MAJOR < 4
-    itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
-#endif
 #ifdef ITKV3_COMPATIBILITY
     itk::AnalyzeImageIOFactory::Pointer analyzeFactory = itk::AnalyzeImageIOFactory::New();
     itk::ObjectFactoryBase::RegisterFactory( analyzeFactory.GetPointer() );
@@ -191,27 +174,6 @@ vtkITKArchetypeImageSeriesReader::UnRegisterDeprecatedBuiltInFactories()
     return;
     }
   firstTime = false;
-#if ITK_VERSION_MAJOR < 4
-  std::list<itk::ObjectFactoryBase*> registeredFactories = itk::ObjectFactoryBase::GetRegisteredFactories();
-  itk::DICOMImageIO2Factory *dicomIO = NULL;
-  for ( std::list<itk::ObjectFactoryBase*>::iterator i = registeredFactories.begin();
-        i != registeredFactories.end(); ++i )
-    {
-    dicomIO = dynamic_cast<itk::DICOMImageIO2Factory*>(*i);
-    if ( dicomIO )
-      {
-      break;
-      }
-    }
-  if ( dicomIO )
-    {
-    itk::ObjectFactoryBase::UnRegisterFactory( dicomIO );
-    }
-  else
-    {
-    vtkErrorMacro("Could not find dicomIO factory to unregister");
-    }
-#endif
 }
 
 //----------------------------------------------------------------------------

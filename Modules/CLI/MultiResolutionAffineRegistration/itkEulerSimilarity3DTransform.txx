@@ -26,11 +26,7 @@ namespace itk
 template <class TScalarType>
 EulerSimilarity3DTransform<TScalarType>
 ::EulerSimilarity3DTransform() :
-#if ITK_VERSION_MAJOR >= 4
   Superclass(ParametersDimension)
-#else
-  Superclass(OutputSpaceDimension, ParametersDimension)
-#endif
 {
   m_Scale = 1.0;
 }
@@ -38,11 +34,7 @@ EulerSimilarity3DTransform<TScalarType>
 // Constructor with arguments
 template <class TScalarType>
 EulerSimilarity3DTransform<TScalarType>::EulerSimilarity3DTransform(unsigned int parametersDimension) :
-#if ITK_VERSION_MAJOR >= 4
   Superclass(parametersDimension)
-#else
-  Superclass(OutputSpaceDimension, parametersDimension)
-#endif
 {
   m_Scale = 1.0;
 }

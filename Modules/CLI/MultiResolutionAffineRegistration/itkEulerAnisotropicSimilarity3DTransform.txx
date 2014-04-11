@@ -26,11 +26,7 @@ namespace itk
 template <class TScalarType>
 EulerAnisotropicSimilarity3DTransform<TScalarType>
 ::EulerAnisotropicSimilarity3DTransform() :
-#if ITK_VERSION_MAJOR >= 4
   Superclass(ParametersDimension)
-#else
-  Superclass(OutputSpaceDimension, ParametersDimension)
-#endif
 {
   m_Scale.Fill( 1.0 );
 }
@@ -39,11 +35,7 @@ EulerAnisotropicSimilarity3DTransform<TScalarType>
 template <class TScalarType>
 EulerAnisotropicSimilarity3DTransform<TScalarType>::EulerAnisotropicSimilarity3DTransform(
   unsigned int parametersDimension) :
-#if ITK_VERSION_MAJOR >= 4
   Superclass(parametersDimension)
-#else
-  Superclass(OutputSpaceDimension, parametersDimension)
-#endif
 {
   m_Scale.Fill( 1.0 );
 }

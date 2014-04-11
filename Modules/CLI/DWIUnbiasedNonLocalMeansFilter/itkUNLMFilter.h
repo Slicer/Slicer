@@ -161,13 +161,8 @@ protected:
   {
   }
   // Threaded filter!
-#if ITK_VERSION_MAJOR < 4
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
-
-#else
   void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
 
-#endif
   void BeforeThreadedGenerateData();
 
   void GenerateInputRequestedRegion();

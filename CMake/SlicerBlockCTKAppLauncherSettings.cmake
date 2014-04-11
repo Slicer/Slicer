@@ -92,18 +92,10 @@ endif()
 if(NOT Slicer_USE_SYSTEM_Teem)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>)
 endif()
-if(${ITK_VERSION_MAJOR} GREATER 3)
-  if(NOT Slicer_USE_SYSTEM_ITKv3)
-    list(APPEND SLICER_LIBRARY_PATHS_BUILD
-      ${ITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
-      )
-  endif()
-else()
-  if(NOT Slicer_USE_SYSTEM_ITKv4)
-    list(APPEND SLICER_LIBRARY_PATHS_BUILD
-      ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
-      )
-  endif()
+if(NOT Slicer_USE_SYSTEM_ITKv4)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${ITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
+    )
 endif()
 
 if(Slicer_BUILD_CLI_SUPPORT AND NOT Slicer_USE_SYSTEM_SlicerExecutionModel)

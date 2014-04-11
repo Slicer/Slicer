@@ -19,9 +19,7 @@
 #include <vtkNew.h>
 
 // ITK includes
-#if ITK_VERSION_MAJOR >= 4
 #include "itkFloatingPointExceptions.h"
-#endif
 
 // XXX # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
 //     # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
@@ -36,9 +34,7 @@
 int main( int argc, char * argv[] )
 {
 
-#if ITK_VERSION_MAJOR >= 4
   itk::FloatingPointExceptions::Disable();
-#endif
 
   PARSE_ARGS;
     {

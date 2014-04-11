@@ -178,13 +178,8 @@ protected:
   }
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-#if ITK_VERSION_MAJOR < 4
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
-
-#else
   void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
 
-#endif
   void BeforeThreadedGenerateData( void );
 
   virtual void GenerateInputRequestedRegion()

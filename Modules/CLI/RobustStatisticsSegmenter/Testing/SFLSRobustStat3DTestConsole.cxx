@@ -8,9 +8,7 @@
 
 // ITK includes
 #include <itkConfigure.h>
-#if ITK_VERSION_MAJOR > 3
-#  include <itkFactoryRegistration.h>
-#endif
+#include <itkFactoryRegistration.h>
 
 
 #include "labelMapPreprocessor.h"
@@ -21,9 +19,7 @@ getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixe
 
 int main(int argc, char* * argv)
 {
-#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
-#endif
 
   if( argc != 7 )
     {

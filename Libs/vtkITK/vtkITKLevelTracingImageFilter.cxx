@@ -78,9 +78,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
   typedef itk::Image<T,2> Image2DType;
   typedef itk::ExtractImageFilter<ImageType, Image2DType> ExtractType;
   typename ExtractType::Pointer extract = ExtractType::New();
-#if  ITK_VERSION_MAJOR >=4
   extract->SetDirectionCollapseToIdentity(); //If you don't care about resulting image dimension
-#endif
 
   typedef typename ExtractType::InputImageRegionType ExtractionRegionType;
   ExtractionRegionType extractRegion;

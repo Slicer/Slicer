@@ -67,12 +67,6 @@ public:
 // /Set the interpolation
   itkSetObjectMacro( Interpolator, InterpolatorType );
 
-#if 0 // ITK_VERSION_MAJOR < 4
-// /Set the input image
-  void SetInput( const InputImageType * inputImage );
-
-#endif
-
 // /Set the output parameters (size, spacing, origin, orientation) from a reference image
   void SetOutputParametersFromImage( InputImagePointerType Image );
 
@@ -94,13 +88,9 @@ public:
   itkGetMacro( OutputDirection, typename OutputImageType::DirectionType );
 protected:
   DiffusionTensor3DResample();
-#if ITK_VERSION_MAJOR < 4
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, int threadId );
 
-#else
   void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
 
-#endif
   void BeforeThreadedGenerateData();
 
   void GenerateOutputInformation();

@@ -64,59 +64,6 @@ public:
 };
 #endif
 
-#if ITK_VERSION_MAJOR < 4
-#if defined(VTK_TYPE_USE_LONG_LONG) && !defined(ITK_TYPE_USE_LONG_LONG)
-template <>
-class NumericTraits<long long> : public vcl_numeric_limits<long long> {
-public:
-  typedef long long ValueType;
-  typedef long long PrintType;
-  typedef unsigned long long AbsType;
-  typedef long long AccumulateType;
-  typedef double RealType;
-  typedef RealType ScalarRealType;
-  typedef float FloatType;
-  static const long long VTK_ITK_EXPORT Zero;
-  static const long long VTK_ITK_EXPORT One;
-
-  static long long min( ) { return vcl_numeric_limits<long long>::min(); }
-  static long long max( ) { return vcl_numeric_limits<long long>::max(); }
-  static long long min( long long ) { return vcl_numeric_limits<long long>::min(); }
-  static long long max( long long ) { return vcl_numeric_limits<long long>::max(); }
-  static long long NonpositiveMin() { return vcl_numeric_limits<long long>::min(); }
-  static bool IsPositive(long long val) { return val > Zero; }
-  static bool IsNonpositive(long long val) { return val <= Zero; }
-  static bool IsNegative(long long val) { return val < Zero; }
-  static bool IsNonnegative(long long val) {return val >= Zero; }
-  static long long  ZeroValue() { return Zero; }
-};
-
-template <>
-class NumericTraits<unsigned long long> : public vcl_numeric_limits<unsigned long long> {
-public:
-  typedef unsigned long long ValueType;
-  typedef unsigned long long PrintType;
-  typedef unsigned long long AbsType;
-  typedef unsigned long long AccumulateType;
-  typedef double RealType;
-  typedef RealType ScalarRealType;
-  typedef float FloatType;
-  static const unsigned long long VTK_ITK_EXPORT Zero;
-  static const unsigned long long VTK_ITK_EXPORT One;
-
-  static unsigned long long min( ) { return vcl_numeric_limits<unsigned long long>::min(); }
-  static unsigned long long max( ) { return vcl_numeric_limits<unsigned long long>::max(); }
-  static unsigned long long min( unsigned long long ) { return vcl_numeric_limits<unsigned long long>::min(); }
-  static unsigned long long max( unsigned long long ) { return vcl_numeric_limits<unsigned long long>::max(); }
-  static unsigned long long NonpositiveMin() { return vcl_numeric_limits<unsigned long long>::min(); }
-  static bool IsPositive(unsigned long long val) { return val != Zero; }
-  static bool IsNonpositive(unsigned long long val) { return val == Zero; }
-  static bool IsNegative(unsigned long long) { return false; }
-  static bool IsNonnegative(unsigned long long) {return true; }
-  static unsigned long long  ZeroValue() { return Zero; }
-};
-#endif
-#endif
 }
 
 #endif /// namespace

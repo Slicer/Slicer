@@ -19,18 +19,14 @@
 #include <vtkNew.h>
 
 // ITK includes
-#if ITK_VERSION_MAJOR >= 4
 #include <itkFloatingPointExceptions.h>
-#endif
 
 #define MAT_TOL 1e-6
 bool transformsNotEqual(const vtkMatrix4x4* mat1, const vtkMatrix4x4* mat2);
 
 int main( int argc, char * argv[] )
 {
-#if ITK_VERSION_MAJOR >= 4
   itk::FloatingPointExceptions::Disable();
-#endif
   bool applyMask = false;
 
   PARSE_ARGS;

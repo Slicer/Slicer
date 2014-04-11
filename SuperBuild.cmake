@@ -26,31 +26,6 @@ option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this of
 set(git_protocol "git")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
   set(git_protocol "http")
-
-  # Verify that the global git config has been updated with the expected "insteadOf" option.
-  function(_check_for_required_git_config_insteadof base insteadof)
-    execute_process(
-      COMMAND ${GIT_EXECUTABLE} config --global --get "url.${base}.insteadof"
-      OUTPUT_VARIABLE output
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      RESULT_VARIABLE error_code
-      )
-    if(error_code OR NOT "${output}" STREQUAL "${insteadof}")
-      message(FATAL_ERROR
-"Since the ExternalProject modules doesn't provide a mechanism to customize the clone step by "
-"adding 'git config' statement between the 'git checkout' and the 'submodule init', it is required "
-"to manually update your global git config to successfully build ${CMAKE_PROJECT_NAME} with "
-"option ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL set to FALSE. "
-"See http://na-mic.org/Mantis/view.php?id=2731"
-"\nYou could do so by running the command:\n"
-"  ${GIT_EXECUTABLE} config --global url.\"${base}\".insteadOf \"${insteadof}\"\n")
-    endif()
-  endfunction()
-
-  if("${ITK_VERSION_MAJOR}" LESS 4)
-    _check_for_required_git_config_insteadof("http://itk.org/" "git://itk.org/")
-  endif()
-
 endif()
 
 #-----------------------------------------------------------------------------
@@ -83,7 +58,7 @@ mark_as_superbuild(
 # Slicer dependency list
 #------------------------------------------------------------------------------
 
-set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
+set(ITK_EXTERNAL_NAME ITKv4)
 
 set(Slicer_DEPENDENCIES curl teem VTK ${ITK_EXTERNAL_NAME} CTK LibArchive)
 
@@ -244,18 +219,9 @@ set(BRAINSTools_options
   USE_BRAINSPosteriorToContinuousClass:BOOL=OFF
   USE_DebugImageViewer:BOOL=OFF
   BRAINS_DEBUG_IMAGE_WRITE:BOOL=OFF
+  USE_BRAINSTransformConvert:BOOL=ON
+  USE_DWIConvert:BOOL=${Slicer_BUILD_DICOM_SUPPORT} ## Need to figure out library linking
   )
-if("${ITK_VERSION_MAJOR}" GREATER 3)
-  list(APPEND BRAINSTools_options
-    USE_BRAINSTransformConvert:BOOL=ON
-    USE_DWIConvert:BOOL=${Slicer_BUILD_DICOM_SUPPORT} ## Need to figure out library linking
-    )
-else()
-  list(APPEND BRAINSTools_options
-    USE_BRAINSTransformConvert:BOOL=OFF
-    USE_DWIConvert:BOOL=OFF
-    )
-endif()
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git"
   GIT_TAG "bd755e2d82b7b8b8454fcb579d416e39b16dff80"

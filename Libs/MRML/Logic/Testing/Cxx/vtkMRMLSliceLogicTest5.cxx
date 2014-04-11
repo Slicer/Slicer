@@ -39,9 +39,7 @@
 
 // ITK includes
 #include <itkConfigure.h>
-#if ITK_VERSION_MAJOR > 3
-#  include <itkFactoryRegistration.h>
-#endif
+#include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, vtkMRMLScene* scene)
@@ -83,9 +81,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
 //-----------------------------------------------------------------------------
 int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
 {
-#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
-#endif
 
   if( argc < 2 )
     {

@@ -50,9 +50,7 @@
 #include "itksys/SystemTools.hxx"
 #include "itkIntTypes.h"
 #include "itkFloatingPointExceptions.h"
-#if ITK_VERSION_MAJOR > 3
-#  include <itkFactoryRegistration.h>
-#endif
+#include <itkFactoryRegistration.h>
 
 #define ITK_TEST_DIMENSION_MAX 6
 
@@ -98,9 +96,7 @@ int main(int ac, char *av[])
   typedef std::pair<char *, char *> ComparePairType;
   std::vector<ComparePairType> compareList;
 
-#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
-#endif
 
   RegisterTests();
   std::string testToRun;
@@ -355,9 +351,7 @@ int RegressionTestImage(const char *testImageFilename,
 
     typedef itk::ExtractImageFilter<OutputType, DiffOutputType> ExtractType;
     ExtractType::Pointer extract = ExtractType::New();
-#if  ITK_VERSION_MAJOR >= 4
     extract->SetDirectionCollapseToGuess(); // ITKv3 compatible, but not recommended
-#endif
     extract->SetInput( rescale->GetOutput() );
     extract->SetExtractionRegion(region);
 

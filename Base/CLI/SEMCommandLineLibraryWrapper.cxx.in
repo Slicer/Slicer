@@ -26,18 +26,12 @@
 #define MODULE_IMPORT
 #endif
 
-#define ITK_VERSION_MAJOR @ITK_VERSION_MAJOR@
-
-#if ITK_VERSION_MAJOR > 3
-#  include <itkFactoryRegistration.h>
-#endif
+#include <itkFactoryRegistration.h>
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);
 
 int main(int argc, char** argv)
 {
-#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
-#endif
   return ModuleEntryPoint(argc, argv);
 }
