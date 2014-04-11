@@ -287,22 +287,31 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self, vtkITKBSplineTr
   if( bulkItk )
     {
     typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;
+    typedef vtkITKBSplineTransform::IdentityBulkTransformType IdentityBulkTransformType;
     BulkTransformType* bulkItkAffine = dynamic_cast<BulkTransformType*> (bulkItk.GetPointer());
-    if (!bulkItkAffine)
+    IdentityBulkTransformType* bulkItkIdentity = dynamic_cast<IdentityBulkTransformType*> (bulkItk.GetPointer());
+    double linear[VTKDimension][VTKDimension] = { {1,0,0}, {0,1,0}, {0,0,1}};
+    double offset[VTKDimension] = {0,0,0};
+    if (bulkItkAffine)
       {
-      vtkErrorWithObjectMacro(self,"Cannot read the 2nd transform in BSplineTransform (expected AffineTransform_double_3_3)" );
-      return false;
-      }
-    double linear[VTKDimension][VTKDimension];
-    double offset[VTKDimension];
-    for (int i=0; i < VTKDimension; i++)
-      {
-      for (int j=0; j < VTKDimension; j++)
+      for (int i=0; i < VTKDimension; i++)
         {
-        linear[i][j] = bulkItkAffine->GetMatrix()[i][j];
+        for (int j=0; j < VTKDimension; j++)
+          {
+          linear[i][j] = bulkItkAffine->GetMatrix()[i][j];
+          }
+        offset[i] = bulkItkAffine->GetOffset()[i];
         }
-      offset[i] = bulkItkAffine->GetOffset()[i];
       }
+    else if (bulkItkIdentity)
+      {
+      // already initialized to identity
+      }
+    else
+      {
+      vtkErrorWithObjectMacro(self,"Cannot read the 2nd transform in BSplineTransform (expected AffineTransform_double_3_3 or IdentityTransform)" );
+      return false;
+      }    
     bsplineVtk->SetBulkTransform( linear, offset );
     }
 

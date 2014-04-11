@@ -20,6 +20,7 @@ class VTK_ITK_EXPORT vtkITKBSplineTransform : public vtkWarpTransform
 {
 public:
   typedef itk::AffineTransform<double,3> BulkTransformType;
+  typedef itk::IdentityTransform<double,3> IdentityBulkTransformType;
   static vtkITKBSplineTransform *New();
   vtkTypeRevisionMacro( vtkITKBSplineTransform, vtkWarpTransform );
   virtual void PrintSelf( ostream& os, vtkIndent indent );
