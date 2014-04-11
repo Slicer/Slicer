@@ -26,7 +26,7 @@
 
 // MRML includes
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLViewNode.h>
+#include <vtkMRMLAbstractViewNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -55,7 +55,7 @@ qMRMLDisplayNodeViewComboBoxPrivate
 void qMRMLDisplayNodeViewComboBoxPrivate::init()
 {
   Q_Q(qMRMLDisplayNodeViewComboBox);
-  q->setNodeTypes(QStringList(QString("vtkMRMLViewNode")));
+  q->setNodeTypes(QStringList(QString("vtkMRMLAbstractViewNode")));
   q->setBaseName("View");
   QObject::connect(q, SIGNAL(checkedNodesChanged()),
                    q, SLOT(updateMRMLFromWidget()));
@@ -155,11 +155,11 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
     }
   else
     {
-    foreach (vtkMRMLViewNode* viewNode, this->checkedViewNodes())
+    foreach (vtkMRMLAbstractViewNode* viewNode, this->checkedViewNodes())
       {
       d->MRMLDisplayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
       }
-    foreach (vtkMRMLViewNode* viewNode, this->uncheckedViewNodes())
+    foreach (vtkMRMLAbstractViewNode* viewNode, this->uncheckedViewNodes())
       {
       d->MRMLDisplayNode->RemoveViewNodeID(viewNode ? viewNode->GetID() : 0);
       }
@@ -169,23 +169,23 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()const
+QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()const
 {
-  QList<vtkMRMLViewNode*> res;
+  QList<vtkMRMLAbstractViewNode*> res;
   foreach(vtkMRMLNode* checkedNode, this->checkedNodes())
     {
-    res << vtkMRMLViewNode::SafeDownCast(checkedNode);
+    res << vtkMRMLAbstractViewNode::SafeDownCast(checkedNode);
     }
   return res;
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes()const
+QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes()const
 {
-  QList<vtkMRMLViewNode*> res;
-  foreach(vtkMRMLNode* checkedNode, this->uncheckedNodes())
+  QList<vtkMRMLAbstractViewNode*> res;
+  foreach(vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
     {
-    res << vtkMRMLViewNode::SafeDownCast(checkedNode);
+    res << vtkMRMLAbstractViewNode::SafeDownCast(uncheckedNode);
     }
   return res;
 }

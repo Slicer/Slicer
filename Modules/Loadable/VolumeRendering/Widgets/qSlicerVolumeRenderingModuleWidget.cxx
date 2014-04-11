@@ -220,6 +220,10 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->ExpandSynchronizeWithVolumesButton->setChecked(false);
 
   this->AdvancedTabWidget->setCurrentWidget(this->VolumePropertyTab);
+
+  // ensure that the view node combo box only shows view nodes,
+  // not slice nodes or chart nodes
+  this->ViewCheckableNodeComboBox->setNodeTypes(QStringList(QString("vtkMRMLViewNode")));
 }
 
 // --------------------------------------------------------------------------
@@ -249,7 +253,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
     this->IgnoreVolumesThresholdCheckBox->isChecked());
   bool wasLastVolumeVisible = this->VisibilityCheckBox->isChecked();
   displayNode->SetVisibility(wasLastVolumeVisible);
-  foreach (vtkMRMLViewNode* viewNode,
+  foreach (vtkMRMLAbstractViewNode* viewNode,
            this->ViewCheckableNodeComboBox->checkedViewNodes())
     {
     displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);

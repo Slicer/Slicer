@@ -29,6 +29,7 @@
 #include "qMRMLDisplayNodeViewComboBox.h"
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -63,6 +64,8 @@ void qMRMLDisplayNodeViewComboBoxTester::init()
   scene->AddNode(node.GetPointer());
   vtkNew<vtkMRMLViewNode> node2;
   scene->AddNode(node2.GetPointer());
+  vtkNew<vtkMRMLSliceNode> sliceNode;
+  scene->AddNode(sliceNode.GetPointer());
   vtkNew<vtkMRMLModelDisplayNode> displayNode;
   scene->AddNode(displayNode.GetPointer());
   this->ComboBox->setMRMLDisplayNode(displayNode.GetPointer());
@@ -93,7 +96,7 @@ vtkMRMLNode* qMRMLDisplayNodeViewComboBoxTester::node(int index)
     return 0;
     }
   vtkMRMLScene* scene = this->ComboBox->mrmlScene();
-  return scene->GetNthNodeByClass(index, "vtkMRMLViewNode");
+  return scene->GetNthNodeByClass(index, "vtkMRMLAbstractViewNode");
 }
 
 // ----------------------------------------------------------------------------
@@ -110,11 +113,12 @@ void qMRMLDisplayNodeViewComboBoxTester::testDefaults()
 // ----------------------------------------------------------------------------
 void qMRMLDisplayNodeViewComboBoxTester::testSetScene()
 {
-  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 2);
+  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 3);
   QCOMPARE(this->ComboBox->allChecked(), true);
   QCOMPARE(this->ComboBox->noneChecked(), false);
   QCOMPARE(this->ComboBox->checkState(this->node(0)), Qt::Checked);
   QCOMPARE(this->ComboBox->checkState(this->node(1)), Qt::Checked);
+  QCOMPARE(this->ComboBox->checkState(this->node(2)), Qt::Checked);
 }
 
 // ----------------------------------------------------------------------------
@@ -123,10 +127,11 @@ void qMRMLDisplayNodeViewComboBoxTester::testUncheck()
   this->ComboBox->uncheck(this->node());
   QCOMPARE(this->ComboBox->allChecked(), false);
   QCOMPARE(this->ComboBox->noneChecked(), false);
-  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 1);
+  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 2);
   if (this->ComboBox->checkedViewNodes().count())
     {
     QCOMPARE(this->ComboBox->checkedViewNodes()[0], this->node(1));
+    QCOMPARE(this->ComboBox->checkedViewNodes()[1], this->node(2));
     }
   QCOMPARE(this->ComboBox->uncheckedViewNodes().count(), 1);
   if (this->ComboBox->uncheckedViewNodes().count())
@@ -147,10 +152,11 @@ void qMRMLDisplayNodeViewComboBoxTester::testObserveNode()
     {
     QCOMPARE(this->ComboBox->checkedViewNodes()[0], this->node(0));
     }
-  QCOMPARE(this->ComboBox->uncheckedViewNodes().count(), 1);
+  QCOMPARE(this->ComboBox->uncheckedViewNodes().count(), 2);
   if (this->ComboBox->uncheckedViewNodes().count())
     {
     QCOMPARE(this->ComboBox->uncheckedViewNodes()[0], this->node(1));
+    QCOMPARE(this->ComboBox->uncheckedViewNodes()[1], this->node(2));
     }
 }
 
@@ -162,7 +168,7 @@ void qMRMLDisplayNodeViewComboBoxTester::testAddNode()
   scene->AddNode(viewNode.GetPointer());
   QCOMPARE(this->ComboBox->allChecked(), true);
   QCOMPARE(this->ComboBox->noneChecked(), false);
-  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 3);
+  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 4);
   for (int i = 0; i < this->ComboBox->checkedViewNodes().count(); ++i)
     {
     QCOMPARE(this->ComboBox->checkedViewNodes()[i], this->node(i));

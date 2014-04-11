@@ -30,11 +30,12 @@ class qMRMLDisplayNodeViewComboBoxPrivate;
 
 // VTK includes
 class vtkMRMLDisplayNode;
-class vtkMRMLViewNode;
+class vtkMRMLAbstractViewNode;
 
 /// \brief Combobox of display node view nodes.
 /// Observe the view nodes of a display node and mark them as checked in the
-/// scene view node list.
+/// scene view node list. View nodes can be vtkMRMLViewNode for the 3D view
+/// or vtkMRMLSliceNode for the 2d case, or vtkMRMLChartViewNodes for charts
 /// \sa vtkMRMLDisplayNode::GetNthViewNodeID()
 class QMRML_WIDGETS_EXPORT qMRMLDisplayNodeViewComboBox
   : public qMRMLCheckableNodeComboBox
@@ -53,9 +54,9 @@ public:
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
 
   /// Return a list of view nodes the display node is visible into.
-  QList<vtkMRMLViewNode*> checkedViewNodes()const;
+  QList<vtkMRMLAbstractViewNode*> checkedViewNodes()const;
   /// Return a list of view nodes the display node is not visible into.
-  QList<vtkMRMLViewNode*> uncheckedViewNodes()const;
+  QList<vtkMRMLAbstractViewNode*> uncheckedViewNodes()const;
 
 public slots:
   /// Set the display node to observe.
