@@ -88,7 +88,6 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
     }
     of << indent << " ijkToRASDirections=\"" << ss.str() << "\"";
 
-
   of << indent << " spacing=\""
     << this->Spacing[0] << " " << this->Spacing[1] << " " << this->Spacing[2] << "\"";
 
@@ -908,7 +907,6 @@ void vtkMRMLVolumeNode::ApplyTransform(vtkAbstractTransform* transform)
   else
     {
     this->ApplyNonLinearTransform(transform);
-
     }
   return;
 }
@@ -930,7 +928,6 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   // 1. Convert the slice image to a polydata
   // 2. Transform polydata
   // Then uppend all poly datas and compute RAS extents
-
 
   vtkNew<vtkImageDataGeometryFilter> imageDataGeometryFilter;
   imageDataGeometryFilter->SetInput(this->GetImageData());
@@ -1021,16 +1018,14 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   reslice->SetResliceTransform(resampleXform.GetPointer());
 
   reslice->SetInput(this->GetImageData());
-  reslice->SetInterpolationModeToNearestNeighbor();
+  reslice->SetInterpolationModeToLinear();
   reslice->SetBackgroundColor(0, 0, 0, 0);
   reslice->AutoCropOutputOff();
   reslice->SetOptimization(1);
 
-
   reslice->SetOutputOrigin( this->GetImageData()->GetOrigin() );
   reslice->SetOutputSpacing( this->GetImageData()->GetSpacing() );
   reslice->SetOutputDimensionality( 3 );
-
 
   /***
   double spacing[3];
