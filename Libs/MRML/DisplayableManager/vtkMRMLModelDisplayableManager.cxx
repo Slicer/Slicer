@@ -49,6 +49,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
+#include <vtkPointData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindowInteractor.h>
@@ -1474,7 +1475,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *thisDisplayNode = model->GetNthDisplayNode(i);
-    vtkMRMLDisplayNode *modelDisplayNode = thisDisplayNode;
+    vtkMRMLDisplayNode *mrmlDisplayNode = thisDisplayNode;
+    vtkMRMLModelDisplayNode *modelDisplayNode =
+      vtkMRMLModelDisplayNode::SafeDownCast(mrmlDisplayNode);
     if (thisDisplayNode != 0)
       {
       vtkProp3D *prop = this->GetActorByID(thisDisplayNode->GetID());
@@ -1486,74 +1489,221 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       if (hierarchyDisplayNode)
         {
         thisDisplayNode = hierarchyDisplayNode;
-        modelDisplayNode = hierarchyDisplayNode;
+        mrmlDisplayNode = hierarchyDisplayNode;
         }
 
       vtkActor *actor = vtkActor::SafeDownCast(prop);
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(matrixTransformToWorld.GetPointer());
 
-      bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
+      bool visible = mrmlDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
       prop->SetVisibility(visible);
-      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visible;
+      this->Internal->DisplayedVisibility[mrmlDisplayNode->GetID()] = visible;
 
       if (actor)
         {
-        actor->GetMapper()->SetScalarVisibility(modelDisplayNode->GetScalarVisibility());
+        actor->GetMapper()->SetScalarVisibility(mrmlDisplayNode->GetScalarVisibility());
         // if the scalars are visible, set active scalars, try to get the lookup
         // table
-        if (modelDisplayNode->GetScalarVisibility())
+        if (mrmlDisplayNode->GetScalarVisibility())
           {
-          if (modelDisplayNode->GetColorNode() != 0)
+          if (mrmlDisplayNode->GetColorNode() != 0)
             {
             vtkMRMLProceduralColorNode* proceduralColorNode =
-              vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode());
+              vtkMRMLProceduralColorNode::SafeDownCast(mrmlDisplayNode->GetColorNode());
+            // FreeSurfer procedural color nodes are a special case, they're
+            // color tables that have been defined procedurally, so the nodes
+            // don't have valid color transfer functions (ctf is non null, but
+            // aren't initialized)
             if (proceduralColorNode &&
-                proceduralColorNode->GetColorTransferFunction() != 0)
+                proceduralColorNode->GetColorTransferFunction() != 0 &&
+                !proceduralColorNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
               {
-              // \tbd maybe the trick below should be applied here too
-              vtkNew<vtkColorTransferFunction> ctf;
-              ctf->DeepCopy(proceduralColorNode->GetColorTransferFunction());
-              actor->GetMapper()->SetLookupTable(ctf.GetPointer());
+              if (0)
+                {
+                // setting the range on a color transfer function will not work
+                // so stub out this code and copy into a look up table
+                vtkNew<vtkColorTransferFunction> ctf;
+                ctf->DeepCopy(proceduralColorNode->GetColorTransferFunction());
+                actor->GetMapper()->SetLookupTable(ctf.GetPointer());
+                }
+              else
+                {
+                // since setting the range is a no-op on color transfer functions,
+                // copy into a color look up table with, for now 256 entries
+                int numEntries = 256;
+                vtkColorTransferFunction *ctf = NULL;
+                ctf = proceduralColorNode->GetColorTransferFunction();
+                double *ctfRange = ctf->GetRange();
+                double bareTable[numEntries*3];
+                ctf->GetTable(ctfRange[0], ctfRange[1], numEntries, bareTable);
+                vtkDebugMacro("Changing a color xfer function to a lut, range used = " << ctfRange[0] << ", " << ctfRange[1]);
+                vtkNew<vtkLookupTable> lut;
+                lut->SetNumberOfTableValues(numEntries);
+                for (vtkIdType i = 0; i < numEntries; ++i)
+                  {
+                  int baseIndex = i * 3;
+                  lut->SetTableValue(i,
+                                     bareTable[baseIndex],
+                                     bareTable[baseIndex + 1],
+                                     bareTable[baseIndex + 2],
+                                     1.0);
+                  }
+                actor->GetMapper()->SetLookupTable(lut.GetPointer());
+                }
               }
-            else if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
+            else if (mrmlDisplayNode->GetColorNode()->GetLookupTable() != 0)
               {
               // \tbd: Could slow down if done too often
               // copy lut so that they are not shared between the mappers
               // vtk sets scalar range on lut while rendering
               // that may cause performance problem if lut's are shared
               vtkNew<vtkLookupTable> lut;
-              lut->DeepCopy( modelDisplayNode->GetColorNode()->GetLookupTable());
+              lut->DeepCopy( mrmlDisplayNode->GetColorNode()->GetLookupTable());
               actor->GetMapper()->SetLookupTable(lut.GetPointer());
               }
-            }
+            // the mapper uses the lookup table scalar range so that
+            // it doesn't reset the table range from it's own scalar
+            // range value. An alternate implementation is to do the
+            // deep copy, keep the use lookup table scalar range off
+            // on the mapper, and set the scalar range on the mapper
+            // and let it do the setting in vtkMapper.cxx
 
-          actor->GetMapper()->SelectColorArray(
-            this->GetActiveScalarName(modelDisplayNode,
-                                      vtkMRMLModelNode::SafeDownCast(model)));
-          bool cellScalarsActive = this->IsCellScalarsActive(modelDisplayNode,
-                                                             vtkMRMLModelNode::SafeDownCast(model));
-          if (!cellScalarsActive)
-            {
-            // set the scalar range
-            actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
-            //if (!(thisDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode")))
-            //  {
-            // WHY need this, does not show glyph colors otherwise
-            //actor->GetMapper()->SetScalarModeToUsePointFieldData();
-            // }
-            actor->GetMapper()->SetScalarModeToUsePointData();
-            actor->GetMapper()->SetColorModeToMapScalars();
-            }
-          else
-            {
-            actor->GetMapper()->SetScalarModeToUseCellFieldData();
-            actor->GetMapper()->SetColorModeToDefault();
-            }
-          actor->GetMapper()->UseLookupTableScalarRangeOff();
-          actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
-          }
-          //// }
+            // figure out which scalar range to use
+            int scalarRangeFlag = mrmlDisplayNode->GetScalarRangeFlag();
+
+            double *mapperTableRange = actor->GetMapper()->GetLookupTable()->GetRange();
+            // start with the new mapper range as the current mapper table range
+            double newMapperRange[2];
+            newMapperRange[0] = mapperTableRange[0];
+            newMapperRange[1] = mapperTableRange[1];
+            // use the scalar range set on the display node
+            if (scalarRangeFlag ==
+                vtkMRMLDisplayNode::UseDisplayNodeScalarRange)
+              {
+              double *range = modelDisplayNode->GetScalarRange();
+              if (range &&
+                  (range[0] != mapperTableRange[0] ||
+                   range[1] != mapperTableRange[1]))
+                {
+                newMapperRange[0] = range[0];
+                newMapperRange[1] = range[1];
+                }
+              }
+            // use the scalar range of the data array
+            else if (scalarRangeFlag ==
+                     vtkMRMLDisplayNode::UseDataScalarRange)
+              {
+              vtkPointData *pointData = NULL;
+              if (modelDisplayNode->GetInputPolyData())
+                {
+                pointData = modelDisplayNode->GetInputPolyData()->GetPointData();
+                }
+              if (pointData &&
+                  pointData->GetArray(modelDisplayNode->GetActiveScalarName()))
+                {
+                double *range = pointData->GetArray(
+                  modelDisplayNode->GetActiveScalarName())->GetRange();
+                if (range)
+                  {
+                  newMapperRange[0] = range[0];
+                  newMapperRange[1] = range[1];
+                  }
+                }
+              }
+            // use the scalar range of the data type used in the array
+            else if (scalarRangeFlag ==
+                     vtkMRMLDisplayNode::UseDataTypeScalarRange)
+              {
+              vtkPointData *pointData = NULL;
+              if (modelDisplayNode->GetInputPolyData())
+                {
+                pointData = modelDisplayNode->GetInputPolyData()->GetPointData();
+                }
+              vtkDataArray *dataArray;
+              if (pointData)
+                {
+                dataArray = pointData->GetArray(modelDisplayNode->GetActiveScalarName());
+                }
+              if (dataArray)
+                {
+                double min = dataArray->GetDataTypeMin();
+                double max = dataArray->GetDataTypeMax();
+                if (min != mapperTableRange[0] ||
+                    max != mapperTableRange[1])
+                  {
+                  newMapperRange[0] = min;
+                  newMapperRange[1] = max;
+                  }
+                }
+              }
+            // default case, use the range from the scalars to colors
+            else
+              // if (scalarRangeFlag ==
+              // vtkMRMLDisplayNode::UseColorNodeScalarRange)
+              {
+              // tbd: may not be required due to the deep copy
+              double *lutRange = NULL;
+              // make the exception for the freesurfer nodes
+              if (proceduralColorNode &&
+                  proceduralColorNode->GetColorTransferFunction() != 0 &&
+                  !proceduralColorNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
+                {
+                lutRange =  proceduralColorNode->GetColorTransferFunction()->GetRange();
+                }
+              else if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
+                {
+                lutRange = modelDisplayNode->GetColorNode()->GetLookupTable()->GetRange();
+                }
+              if (lutRange &&
+                  (lutRange[0] != mapperTableRange[0] ||
+                   lutRange[1] != mapperTableRange[1]))
+                {
+                newMapperRange[0] = lutRange[0];
+                newMapperRange[1] = lutRange[1];
+                }
+              } // default scalar range flag
+
+            actor->GetMapper()->SelectColorArray(
+              this->GetActiveScalarName(modelDisplayNode,
+                                        vtkMRMLModelNode::SafeDownCast(model)));
+            bool cellScalarsActive = this->IsCellScalarsActive(modelDisplayNode,
+                                                               vtkMRMLModelNode::SafeDownCast(model));
+            if (!cellScalarsActive)
+              {
+              // set the scalar range
+              //actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
+              //if (!(thisDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode")))
+              //  {
+              // WHY need this, does not show glyph colors otherwise
+              //actor->GetMapper()->SetScalarModeToUsePointFieldData();
+              // }
+              actor->GetMapper()->SetScalarModeToUsePointData();
+              actor->GetMapper()->SetColorModeToMapScalars();
+              }
+            else
+              {
+              actor->GetMapper()->SetScalarModeToUseCellFieldData();
+              actor->GetMapper()->SetColorModeToDefault();
+              }
+            actor->GetMapper()->UseLookupTableScalarRangeOn();
+            if  (newMapperRange[0] != mapperTableRange[0] ||
+                 newMapperRange[1] != mapperTableRange[1])
+              {
+              actor->GetMapper()->SetScalarRange(newMapperRange);
+              if (actor->GetMapper()->GetLookupTable()->IsA("vtkColorTransferFunction"))
+                {
+                vtkWarningMacro("Setting the range on a color transfer function will not work!");
+                }
+              actor->GetMapper()->GetLookupTable()->SetRange(newMapperRange);
+              vtkDebugMacro("Mapper use lookup table scalar range = "
+                            << actor->GetMapper()->GetUseLookupTableScalarRange()
+                            << ", newMapperRange = "
+                            << newMapperRange[0] << ", " << newMapperRange[1]);
+              }
+            } // Color node
+          } // scalar visibility
+
         actor->GetProperty()->SetRepresentation(modelDisplayNode->GetRepresentation());
         actor->GetProperty()->SetPointSize(modelDisplayNode->GetPointSize());
         actor->GetProperty()->SetLineWidth(modelDisplayNode->GetLineWidth());
@@ -1614,7 +1764,6 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         }
       }
     }
-
 }
 
 //---------------------------------------------------------------------------

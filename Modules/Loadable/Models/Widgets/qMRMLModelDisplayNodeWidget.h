@@ -39,7 +39,14 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
 {
   Q_OBJECT
   QVTK_OBJECT
+
+  Q_PROPERTY(ControlMode autoScalarRange READ autoScalarRange WRITE setAutoScalarRange)
+  Q_PROPERTY(double minimumValue READ minimumValue WRITE setMinimumValue)
+  Q_PROPERTY(double maximumValue READ maximumValue WRITE setMaximumValue)
+  Q_ENUMS(ControlMode)
+
 public:
+
   qMRMLModelDisplayNodeWidget(QWidget *parent=0);
   virtual ~qMRMLModelDisplayNodeWidget();
 
@@ -48,6 +55,30 @@ public:
   bool scalarsVisibility()const;
   QString activeScalarName()const;
   vtkMRMLColorNode* scalarsColorNode()const;
+
+  enum ControlMode
+  {
+    Auto = 0,
+    Manual = 1
+  };
+
+  /// Set Auto/Manual mode
+  void setAutoScalarRange(ControlMode autoScalarRange);
+  ControlMode autoScalarRange() const;
+
+  /// Get minimum of the scalar display range
+  double minimumValue()const;
+
+  /// Get maximum of the scalar display range
+  double maximumValue()const;
+
+signals:
+  ///
+  /// Signal sent if the min/max value is updated
+  void minMaxValuesChanged(double min, double max);
+  ///
+  /// Signal sent if the auto/manual value is updated
+  void autoScalarRangeValueChanged(ControlMode value);
 
 public slots:
   /// Set the volume node to display
@@ -63,6 +94,15 @@ public slots:
   void setActiveScalarName(const QString&);
   void setScalarsColorNode(vtkMRMLNode*);
   void setScalarsColorNode(vtkMRMLColorNode*);
+  void setScalarsDisplayRange(double min, double max);
+  void setScalarsScalarRangeFlag();
+
+  /// Set Auto/Manual mode
+  void setAutoScalarRange(int autoScalarRange);
+
+  /// Set min/max range
+  void setMinimumValue(double min);
+  void setMaximumValue(double max);
 
 protected slots:
   void updateWidgetFromMRML();

@@ -30,6 +30,11 @@ vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
   this->PassThrough = vtkPassThrough::New();
   this->AssignAttribute = vtkAssignAttribute::New();
+
+  // the default behavior for models is to use the scalar range of the data
+  // to reset the display scalar range, so use the Data flag
+  this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseDataScalarRange);
+
   // Be careful, virtualization doesn't work in constructors
   this->UpdatePolyDataPipeline();
 }
@@ -132,9 +137,13 @@ void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
     this->GetActiveScalarName(),
     this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
     this->GetActiveAttributeLocation());
-  if (this->GetAutoScalarRange() && this->GetOutputPolyData())
+  if (this->GetOutputPolyData())
     {
     this->GetOutputPolyData()->Update();
-    this->SetScalarRange(this->GetOutputPolyData()->GetScalarRange());
+    if (this->GetAutoScalarRange())
+      {
+      vtkDebugMacro("UpdatePolyDataPipeline: Auto flag is on, resetting scalar range!");
+      this->SetScalarRange(this->GetOutputPolyData()->GetScalarRange());
+      }
     }
 }

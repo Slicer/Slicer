@@ -65,7 +65,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->VectorVisibility = 0;
   this->TensorVisibility = 0;
   this->InterpolateTexture = 0;
-
+  this->ScalarRangeFlag = this->UseColorNodeScalarRange;
   this->AutoScalarRange = 1;
 
   // Arrays
@@ -167,6 +167,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " tensorVisibility=\"" << (this->TensorVisibility ? "true" : "false") << "\"";
 
   of << indent << " interpolateTexture=\"" << (this->InterpolateTexture ? "true" : "false") << "\"";
+
+  of << indent << " scalarRangeFlag=\"" << this->ScalarRangeFlag << "\"";
 
   of << indent << " autoScalarRange=\"" << (this->AutoScalarRange ? "true" : "false") << "\"";
 
@@ -486,6 +488,10 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
         this->InterpolateTexture = 0;
         }
       }
+    else if (!strcmp(attName, "scalarRangeFlag"))
+      {
+      this->SetScalarRangeFlag(atoi(attValue));
+      }
     else if (!strcmp(attName, "autoScalarRange"))
       {
       if (!strcmp(attValue,"true"))
@@ -552,6 +558,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetVectorVisibility(node->VectorVisibility);
   this->SetTensorVisibility(node->TensorVisibility);
   this->SetInterpolateTexture(node->InterpolateTexture);
+  this->SetScalarRangeFlag(node->ScalarRangeFlag);
   this->SetAutoScalarRange(node->AutoScalarRange);
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
@@ -591,6 +598,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "VectorVisibility:  " << this->VectorVisibility << "\n";
   os << indent << "TensorVisibility:  " << this->TensorVisibility << "\n";
   os << indent << "InterpolateTexture:" << this->InterpolateTexture << "\n";
+  os << indent << "ScalarRangeFlag:   " << this->ScalarRangeFlag << "\n";
   os << indent << "AutoScalarRange:   " << this->AutoScalarRange << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";

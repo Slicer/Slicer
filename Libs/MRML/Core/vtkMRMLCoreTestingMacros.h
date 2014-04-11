@@ -655,6 +655,7 @@
       std::cerr << "ERROR getting range" << std::endl;                  \
       return EXIT_FAILURE;                                              \
       }                                                                 \
+    TEST_SET_GET_INT_RANGE(node1.GetPointer(), ScalarRangeFlag, 0, 3);  \
   }
 
 // ----------------------------------------------------------------------------

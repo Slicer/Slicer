@@ -55,6 +55,24 @@ public:
     PhongInterpolation
   } InterpolationType;
 
+  /// Scalar range options for displaying data associated with this display
+  /// node, this setting determines if the display node, color node, or ?
+  /// determine the mapping range between the data and the colors used to
+  /// display it. Not all are currently supported.
+  /// UseColorNodeScalarRange - use the range from the associated color node
+  /// UseDisplayNodeScalarRange - use the ScalarRange from this display node
+  /// UseDataScalarRange - use the current min/max of the data
+  /// UseDataTypeScalarRange - use the min/max of the numerical type of the
+  /// data, for example minimum integer to maximum integer
+  /// \sa ScalarRangeFlag, GetScalarRangeFlag(), SetScalarRangeFlag(),
+  /// SetScalarRange(), GetScalarRange()
+  typedef enum {
+    UseColorNodeScalarRange = 0,
+    UseDisplayNodeScalarRange,
+    UseDataScalarRange,
+    UseDataTypeScalarRange
+  } ScalarRangeFlagType;
+
   /// Returns the first displayable node that is associated to this display node
   /// Warning: This function is slow as it browses the entire scene to find the
   /// displayable node.
@@ -339,6 +357,13 @@ public:
   /// Get the scalar range of the display node.
   /// \sa ScalarRange, SetScalarRange()
   vtkGetVector2Macro(ScalarRange, double);
+
+  /// Set the scalar range to use with color mapping
+  /// \sa ScalarRangeFlag, GetScalarRangeFlag()
+  vtkSetMacro(ScalarRangeFlag, int);
+  /// Get the interpolation of the surface.
+  /// \sa ScalarRangeFlag, SetScalarRangeFlag()
+  vtkGetMacro(ScalarRangeFlag, int);
 
   /// Set and observe the texture image data.
   /// \sa TextureImageData, GetTextureImageData()
@@ -663,6 +688,12 @@ protected:
   /// vtkMRMLAbstractDisplayableManager
   std::vector< std::string > ViewNodeIDs;
 
+  /// A flag to determine which scalar range will be used when mapping
+  /// scalars to colors.
+  /// UseColorNodeScalarRange by default.
+  /// \sa ScalarRangeFlagType,GetScalarRangeFlag(), SetScalarRangeFlag(),
+  /// ScalarRange, SetScalarRange(), GetScalarRange()
+  int ScalarRangeFlag;
 private:
   void SetColorNodeID(const char* id);
 };
