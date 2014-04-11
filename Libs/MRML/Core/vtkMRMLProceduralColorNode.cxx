@@ -12,7 +12,9 @@ Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
 
+// MRML includes
 #include "vtkMRMLProceduralColorNode.h"
+#include "vtkMRMLProceduralColorStorageNode.h"
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
@@ -65,12 +67,17 @@ void vtkMRMLProceduralColorNode::ReadXMLAttributes(const char** atts)
 
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, ID
+// Copy the anode's attributes to this object.
 void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLProceduralColorNode *node = (vtkMRMLProceduralColorNode *) anode;
+  vtkMRMLProceduralColorNode *node = (vtkMRMLProceduralColorNode *) anode;
+  if (!node)
+    {
+    vtkWarningMacro("Copy: Input node is not a procedural color node!");
+    return;
+    }
+  this->ColorTransferFunction->DeepCopy(node->GetColorTransferFunction());
 }
 
 //----------------------------------------------------------------------------
@@ -110,6 +117,11 @@ vtkScalarsToColors* vtkMRMLProceduralColorNode::GetScalarsToColors()
 //---------------------------------------------------------------------------
 const char * vtkMRMLProceduralColorNode::GetTypeAsString()
 {
+  const char *type = Superclass::GetTypeAsString();
+  if (type && strcmp(type,"(unknown)") != 0)
+    {
+    return type;
+    }
   return this->GetName();
 }
 
@@ -181,4 +193,10 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double* color)
   color[2] = val[3]; // b
   color[3] = this->ColorTransferFunction->GetAlpha();
   return true;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLStorageNode * vtkMRMLProceduralColorNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLProceduralColorStorageNode::New();
 }

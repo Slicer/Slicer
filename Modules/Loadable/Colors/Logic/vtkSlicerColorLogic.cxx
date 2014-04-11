@@ -15,6 +15,7 @@
 
 // MRML
 #include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLProceduralColorStorageNode.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -178,9 +179,11 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
         if (fileType == vtksys::SystemTools::FileTypeText)
           {
           // check that it's a supported file type
-          // create a storage node so can check for supported file types
+          // create storage nodes so can check for supported file types
           vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
-          if (colorStorageNode->SupportedFileType(fileToCheck.c_str()))
+          vtkNew<vtkMRMLProceduralColorStorageNode> procColorStorageNode;
+          if (colorStorageNode->SupportedFileType(fileToCheck.c_str()) ||
+              procColorStorageNode->SupportedFileType(fileToCheck.c_str()))
             {
             vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);
               // add it to the list

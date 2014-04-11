@@ -19,18 +19,24 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
-     <property name="text">
-      <string>Display</string>
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="contentsFrameShape">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="ColorTableLabel">
         <property name="text">
-         <string>Color Tables:</string>
+         <string>Colors:</string>
         </property>
        </widget>
       </item>
@@ -49,7 +55,7 @@
         <item>
          <widget class="QToolButton" name="CopyColorNodeButton">
           <property name="toolTip">
-           <string>Duplicate the current color table to edit the color entrees as built-in color tables don't allow user edition.</string>
+           <string>Duplicate the current color node to allow editing colors, scalar range, size.</string>
           </property>
           <property name="text">
            <string/>
@@ -58,6 +64,21 @@
         </item>
        </layout>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
+     <property name="text">
+      <string>Color Table Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
       <item row="1" column="0">
        <widget class="QLabel" name="NumberOfColorsLabel">
         <property name="sizePolicy">
@@ -107,7 +128,7 @@
       <item row="3" column="0">
        <widget class="QLabel" name="LUTRangeLabel">
         <property name="text">
-         <string>Lookup Range:</string>
+         <string>Scalar Range:</string>
         </property>
        </widget>
       </item>
@@ -117,7 +138,7 @@
          <bool>false</bool>
         </property>
         <property name="toolTip">
-         <string>Only change the display range, not the values in the table.</string>
+         <string>The range of scalars that are mapped to the full range of colors.</string>
         </property>
         <property name="singleStep">
          <double>1.000000000000000</double>
@@ -140,6 +161,31 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="ContinuousDisplayCollapsibleButton">
+     <property name="text">
+      <string>Continuous Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="ctkVTKScalarsToColorsWidget" name="ContinuousScalarsToColorsWidget">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>120</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -178,27 +224,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkVTKScalarBarWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkVTKScalarBarWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDynamicSpacer</class>
-   <extends>QWidget</extends>
-   <header>ctkDynamicSpacer.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkRangeWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkRangeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLColorTableComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLColorTableComboBox.h</header>
@@ -218,6 +243,32 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkVTKScalarBarWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkVTKScalarBarWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkVTKScalarsToColorsWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkVTKScalarsToColorsWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDynamicSpacer</class>
+   <extends>QWidget</extends>
+   <header>ctkDynamicSpacer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

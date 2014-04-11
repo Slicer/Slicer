@@ -50,6 +50,7 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
 
   qSlicerColorsModuleWidget* colorsWidget =
     dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());
+  colorsWidget->show();
   scene->InitTraversal();
   vtkMRMLNode* node = scene->GetNextNodeByClass("vtkMRMLColorNode");
   while (node)
@@ -58,7 +59,7 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
     node = scene->GetNextNodeByClass("vtkMRMLColorNode");
     }
 
-  colorsWidget->show();
+  // colorsWidget->show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

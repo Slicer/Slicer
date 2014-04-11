@@ -111,6 +111,13 @@ public:
   /// responsible for deleting it.
   static vtkMRMLColorTableNode* CopyNode(vtkMRMLColorNode* colorNode, const char* copyName);
 
+  /// Returns a vtkMRMLProceduralColorNode copy (type = vtkMRMLColorTableNode::User)
+  /// of the \a color node. The node is not added to the scene and you are
+  /// responsible for deleting it. If there is no color transfer function on the
+  /// input node, for example if it's a color table node, it will return a
+  /// procedural node with a blank color transfer function.
+  static vtkMRMLProceduralColorNode* CopyProceduralNode(vtkMRMLColorNode* colorNode, const char* copyName);
+
 protected:
   vtkMRMLColorLogic();
   virtual ~vtkMRMLColorLogic();
@@ -136,6 +143,7 @@ protected:
   vtkMRMLColorTableNode* CreateDefaultFileNode(const std::string& colorname);
   vtkMRMLColorTableNode* CreateUserFileNode(const std::string& colorname);
   vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
+  vtkMRMLProceduralColorNode* CreateProceduralFileNode(const char* fileName);
 
   void AddLabelsNode();
   void AddDefaultTableNode(int i);

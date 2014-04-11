@@ -90,6 +90,9 @@ public:
   virtual int GetNumberOfColors();
   virtual bool GetColor(int entry, double* color);
 
+  /// Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
 protected:
   vtkMRMLProceduralColorNode();
   ~vtkMRMLProceduralColorNode();

@@ -47,6 +47,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLNonlinearTransformNodeTest1.cxx
   vtkMRMLPETProceduralColorNodeTest1.cxx
   vtkMRMLProceduralColorNodeTest1.cxx
+  vtkMRMLProceduralColorStorageNodeTest1.cxx
   vtkMRMLROIListNodeTest1.cxx
   vtkMRMLROINodeTest1.cxx
   vtkMRMLScalarVolumeDisplayNodeTest1.cxx
@@ -146,6 +147,7 @@ simple_test( vtkMRMLNonlinearTransformNodeTest1 ${CMAKE_CURRENT_SOURCE_DIR}/NonL
 simple_test( vtkMRMLNRRDStorageNodeTest1 )
 simple_test( vtkMRMLPETProceduralColorNodeTest1 )
 simple_test( vtkMRMLProceduralColorNodeTest1 )
+simple_test( vtkMRMLProceduralColorStorageNodeTest1 )
 simple_test( vtkMRMLROIListNodeTest1 )
 simple_test( vtkMRMLROINodeTest1 )
 simple_test( vtkMRMLScalarVolumeDisplayNodeTest1 )
