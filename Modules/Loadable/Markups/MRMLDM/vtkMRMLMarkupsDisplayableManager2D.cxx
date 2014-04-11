@@ -730,7 +730,15 @@ void vtkMRMLMarkupsDisplayableManager2D::UpdateWidgetVisibility(vtkMRMLMarkupsNo
    bool visibleOnNode = true;
    if (displayNode)
      {
-     visibleOnNode = (displayNode->GetVisibility()== 1 ? true : false);
+     vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+     if (sliceNode)
+       {
+       visibleOnNode = (displayNode->GetVisibility(sliceNode->GetID()) == 1 ? true : false);
+       }
+     else
+       {
+       visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
+       }
      }
    // check if the widget is visible according to the widget state
    bool visibleOnWidget = (widget->GetEnabled() == 1 ? true : false);

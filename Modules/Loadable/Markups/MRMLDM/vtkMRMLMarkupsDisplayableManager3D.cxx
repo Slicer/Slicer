@@ -697,7 +697,16 @@ void vtkMRMLMarkupsDisplayableManager3D::UpdateWidgetVisibility(vtkMRMLMarkupsNo
    bool visibleOnNode = true;
    if (displayNode)
      {
-     visibleOnNode = (displayNode->GetVisibility()== 1 ? true : false);
+     vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
+     if (viewNode)
+       {
+       // use the view information to get the visibility
+       visibleOnNode = (displayNode->GetVisibility(viewNode->GetID()) == 1 ? true : false);
+       }
+     else
+       {
+       visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
+       }
      }
    // check if the widget is visible according to the widget state
    bool visibleOnWidget = (widget->GetEnabled() == 1 ? true : false);

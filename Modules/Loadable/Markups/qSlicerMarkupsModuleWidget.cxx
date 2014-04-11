@@ -748,6 +748,10 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromDisplayNode()
 
   if (displayNode)
     {
+    // views
+    d->listDisplayNodeViewComboBox->setEnabled(true);
+    d->listDisplayNodeViewComboBox->setMRMLDisplayNode(displayNode);
+
     // selected color
     color = displayNode->GetSelectedColor();
     qMRMLUtils::colorToQColor(color, qColor);
@@ -808,6 +812,9 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromDisplayNode()
     }
   else
     {
+    // disable the views combo box for now
+    d->listDisplayNodeViewComboBox->setEnabled(false);
+
     // reset to defaults from logic
     if (this->markupsLogic())
       {
@@ -2570,12 +2577,10 @@ void qSlicerMarkupsModuleWidget::observeMarkupsNode(vtkMRMLNode *markupsNode)
         vtkMRMLMarkupsNode *displayableNode = vtkMRMLMarkupsNode::SafeDownCast(node);
         if (displayableNode)
           {
-          vtkMRMLDisplayNode *displayNode = displayableNode->GetDisplayNode();
-          if (displayNode)
-            {
-            this->qvtkDisconnect(displayNode, vtkCommand::ModifiedEvent,
-                                 this, SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
-            }
+          this->qvtkDisconnect(displayableNode,
+                               vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                               this,
+                               SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
           }
         }
       }
@@ -2614,12 +2619,10 @@ void qSlicerMarkupsModuleWidget::observeMarkupsNode(vtkMRMLNode *markupsNode)
       vtkMRMLMarkupsNode *displayableNode = vtkMRMLMarkupsNode::SafeDownCast(markupsNode);
       if (displayableNode)
         {
-        vtkMRMLDisplayNode *displayNode = displayableNode->GetDisplayNode();
-        if (displayNode)
-          {
-          this->qvtkConnect(displayNode, vtkCommand::ModifiedEvent,
-                            this, SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
-          }
+        this->qvtkConnect(displayableNode,
+                          vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                          this,
+                          SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
         }
       }
     }
@@ -2632,6 +2635,10 @@ void qSlicerMarkupsModuleWidget::clearGUI()
 
   d->activeMarkupTableWidget->clearContents();
   d->activeMarkupTableWidget->setRowCount(0);
+
+  // setting a null node requires casting (and triggers a memory leak),
+  // so disable it instead
+  d->listDisplayNodeViewComboBox->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------

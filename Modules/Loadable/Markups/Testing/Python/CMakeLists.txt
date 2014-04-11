@@ -32,3 +32,12 @@ slicerMacroBuildScriptedModule(
   RESOURCES ${MARKUPS_PYTHON_RESOURCES}
   )
 slicer_add_python_unittest(SCRIPT MarkupsInCompareViewersSelfTest.py)
+
+# Test fiducials in different views
+slicerMacroBuildScriptedModule(
+  NAME MarkupsInViewsSelfTest
+  SCRIPTS MarkupsInViewsSelfTest.py
+  RESOURCES ${MARKUPS_PYTHON_RESOURCES}
+  )
+slicer_add_python_unittest(SCRIPT MarkupsInViewsSelfTest.py
+                           SLICER_ARGS --disable-cli-modules)

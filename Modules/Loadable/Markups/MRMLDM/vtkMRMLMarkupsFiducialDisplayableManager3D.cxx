@@ -33,6 +33,7 @@
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>
@@ -344,10 +345,11 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
     handleRep->SetLabelText(textString.c_str());
     }
   // visibility for this handle, hide it if the whole list is invisible,
-  // this fid is invisible, or it's a 2d manager and the fids isn't
-  // visible on this slice
+  // this fid is invisible, or the list isn't visible in this view
   bool fidVisible = true;
-  if (displayNode->GetVisibility() == 0 ||
+  vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
+  if ((viewNode && displayNode->GetVisibility(viewNode->GetID()) == 0) ||
+      displayNode->GetVisibility() == 0 ||
       fiducialNode->GetNthFiducialVisibility(n) == 0)
     {
     fidVisible = false;
