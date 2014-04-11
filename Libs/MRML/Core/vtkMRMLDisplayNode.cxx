@@ -809,10 +809,6 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
     this->ViewNodeIDs = viewNodeIDs;
     this->Modified();
     }
-  else
-    {
-    vtkErrorMacro("vtkMRMLDisplayNode::RemoveViewNodeID() id " << viewNodeID << " not found");
-    }
 }
 
 //-------------------------------------------------------
