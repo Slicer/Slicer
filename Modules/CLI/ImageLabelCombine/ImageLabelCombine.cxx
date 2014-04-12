@@ -86,7 +86,7 @@ int main( int argc, char * argv[] )
   const ImageType::SizeType inputSize = input->GetLargestPossibleRegion().GetSize();
   const ImageType::SizeType outputSize = output->GetLargestPossibleRegion().GetSize();
   bool dimCheck = true;
-  for (int i=0; i<inputDim; i++)
+  for (unsigned int i=0; i<inputDim; i++)
     {
     dimCheck = dimCheck && (inputSize[i] == outputSize[i]);
     }
