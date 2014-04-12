@@ -69,16 +69,6 @@ if(NOT APPLE)
         COMPONENT Runtime
         )
     endforeach()
-    if(Slicer_USE_SimpleITK)
-      # HACK Version variable are not set after calling 'find_package(SimpleITK)'
-      # See https://issues.itk.org/jira/browse/SIMPLEITK-518
-      #find_package(SimpleITK REQUIRED)
-      set(SimpleITK_VERSION_MAJOR "0")
-      set(SimpleITK_VERSION_MINOR "8")
-      # Remove development files installed by SimpleITK.
-      # See https://issues.itk.org/jira/browse/SIMPLEITK-517
-      _remove_installed_dir("include/SimpleITK-${SimpleITK_VERSION_MAJOR}.${SimpleITK_VERSION_MINOR}")
-    endif()
   endif()
 else()
 
