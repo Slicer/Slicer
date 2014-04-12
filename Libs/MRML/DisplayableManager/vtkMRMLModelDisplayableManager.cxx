@@ -1531,7 +1531,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
                 {
                 // since setting the range is a no-op on color transfer functions,
                 // copy into a color look up table with, for now 256 entries
-                int numEntries = 256;
+                const int numEntries = 256;
                 vtkColorTransferFunction *ctf = NULL;
                 ctf = proceduralColorNode->GetColorTransferFunction();
                 double *ctfRange = ctf->GetRange();
