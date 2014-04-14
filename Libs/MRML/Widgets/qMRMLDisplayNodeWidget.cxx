@@ -261,6 +261,7 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
     return;
     }
   d->VisibilityCheckBox->setChecked(d->MRMLDisplayNode->GetVisibility());
+  d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->MRMLDisplayNode);
   d->SelectedCheckBox->setEnabled(d->MRMLDisplayNode->GetSelectable());
   d->SelectedCheckBox->setChecked(d->MRMLDisplayNode->GetSelected());
   d->ClippingCheckBox->setChecked(d->MRMLDisplayNode->GetClipping());

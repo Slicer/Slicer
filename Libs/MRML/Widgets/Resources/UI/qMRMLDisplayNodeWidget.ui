@@ -40,7 +40,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="SelectedLabel">
         <property name="text">
          <string>&amp;Selected:</string>
@@ -50,14 +50,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QCheckBox" name="SelectedCheckBox">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="ClippingLabel">
         <property name="text">
          <string>&amp;Clip:</string>
@@ -67,14 +67,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QCheckBox" name="ClippingCheckBox">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="SliceIntersectionVisibilityLabel">
         <property name="text">
          <string>Slice &amp;Intersections Visible:</string>
@@ -84,14 +84,14 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QCheckBox" name="SliceIntersectionVisibilityCheckBox">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="SliceIntersectionThicknessLabel">
         <property name="text">
          <string>Slice Intersections &amp;Thickness:</string>
@@ -101,7 +101,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
         <property name="suffix">
          <string> px</string>
@@ -117,6 +117,20 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox">
+        <property name="toolTip">
+         <string>Select views in which to show this node. All unchecked shows in all 3D and 2D views.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="DisplayNodeViewLabel">
+        <property name="text">
+         <string>View:</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -126,6 +140,21 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkVTKPropertyWidget</class>
    <extends>QWidget</extends>

@@ -149,7 +149,21 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::IsVisible(vtkMRMLDisplayNode* displayNode)
 {
-  return displayNode && (displayNode->GetSliceIntersectionVisibility() != 0);
+  if (!displayNode)
+    {
+    return 0;
+    }
+  bool visibleOnNode = true;
+  vtkMRMLSliceNode *sliceNode = this->SliceNode;
+  if (sliceNode)
+    {
+    visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
+    }
+  else
+    {
+    visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
+    }
+  return visibleOnNode && (displayNode->GetSliceIntersectionVisibility() != 0);
 }
 
 //---------------------------------------------------------------------------
