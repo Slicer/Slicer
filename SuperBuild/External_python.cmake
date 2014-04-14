@@ -47,7 +47,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   endif()
 
   ExternalProject_Add(python-source
-    URL "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz"
+    URL "https://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz"
     URL_MD5 "2cf641732ac23b18d139be077bd906cd"
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
