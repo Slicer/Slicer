@@ -1532,12 +1532,10 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
                 // since setting the range is a no-op on color transfer functions,
                 // copy into a color look up table with, for now 256 entries
                 const int numEntries = 256;
-                const int tableSize = numEntries * 3;
                 vtkColorTransferFunction *ctf = NULL;
                 ctf = proceduralColorNode->GetColorTransferFunction();
                 double *ctfRange = ctf->GetRange();
-                double *bareTable;
-                bareTable = new double[tableSize];
+                double bareTable[numEntries*3];
                 ctf->GetTable(ctfRange[0], ctfRange[1], numEntries, bareTable);
                 vtkDebugMacro("Changing a color xfer function to a lut, range used = " << ctfRange[0] << ", " << ctfRange[1]);
                 vtkNew<vtkLookupTable> lut;
@@ -1552,7 +1550,6 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
                                      1.0);
                   }
                 actor->GetMapper()->SetLookupTable(lut.GetPointer());
-                delete[] bareTable;
                 }
               }
             else if (mrmlDisplayNode->GetColorNode()->GetLookupTable() != 0)
