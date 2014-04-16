@@ -2,6 +2,8 @@ project(ITKFactoryRegistration)
 
 cmake_minimum_required(VERSION 2.8.4)
 
+list(REMOVE_ITEM ITK_LIBRARIES ITKFactoryRegistration)
+
 find_package(ITK REQUIRED)
 
 # This is the Slicer library in charge of registering the default ITK factories.

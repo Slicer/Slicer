@@ -1,5 +1,11 @@
 
 cmake_minimum_required(VERSION 2.8.9)
+if(POLICY CMP0048)
+  cmake_policy(SET CMP0048 OLD)
+endif()
+if(POLICY CMP0017)
+  cmake_policy(SET CMP0017 OLD)
+endif()
 
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
@@ -18,13 +24,6 @@ if(APPLE)
 endif()
 
 project(Slicer)
-
-#-----------------------------------------------------------------------------
-# See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
-#-----------------------------------------------------------------------------
-if(POLICY CMP0017)
-  cmake_policy(SET CMP0017 OLD)
-endif()
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
