@@ -79,6 +79,13 @@
       <element>bs</element>
       <default>linear</default>
     </string-enumeration>
+    <boolean>
+      <name>noMeasurementFrame</name>
+      <longflag>--noMeasurementFrame</longflag>
+      <description><![CDATA[Do not use the measurement frame that is in the input image to transform the tensors. Uses the image orientation instead]]></description>
+      <label>No Measurement Frame</label>
+      <default>false</default>
+    </boolean>
     <string-enumeration>
       <name>correction</name>
       <longflag>--correction</longflag>

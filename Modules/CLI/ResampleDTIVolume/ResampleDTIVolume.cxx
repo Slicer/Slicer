@@ -71,6 +71,7 @@ struct parameters
   std::string imageCenter;
   std::string transformsOrder;
   bool notbulk;
+  bool noMeasurementFrame ;
   };
 
 // Verify if some input parameters are null
@@ -791,6 +792,7 @@ int Do( parameters list )
   typedef typename WriterType::Pointer           WriterTypePointer;
   WriterTypePointer         writer = WriterType::New();
   itk::Matrix<double, 3, 3> measurementFrame;
+  bool hasMeasurementFrame ;
   try
     {
     typedef itk::DiffusionTensor3DRead<PixelType> ReaderType;
@@ -805,6 +807,11 @@ int Do( parameters list )
     image = reader->GetOutput();
     writer->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
     measurementFrame = reader->GetMeasurementFrame();
+    hasMeasurementFrame = reader->GetHasMeasurementFrame() ;
+    if( !hasMeasurementFrame || list.noMeasurementFrame )
+    {
+      measurementFrame = reader->GetOutput()->GetDirection() ;
+    }
     }
   catch( itk::ExceptionObject & Except )
     {
@@ -1127,6 +1134,7 @@ int main( int argc, char * argv[] )
   list.imageCenter = imageCenter;
   list.transformsOrder = transformsOrder;
   list.notbulk = notbulk;
+  list.noMeasurementFrame = noMeasurementFrame;
   // verify if all the vector parameters have the good length
   if( list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
       || ( list.outputImageOrigin.size() != 3
