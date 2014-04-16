@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+	<file>Icons/GlyphIcon.png</file>
+	<file>Icons/GridIcon.png</file>
+	<file>Icons/ContourIcon.png</file>
+  </qresource>
+</RCC>

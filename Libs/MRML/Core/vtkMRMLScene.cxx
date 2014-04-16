@@ -48,6 +48,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
+#include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 #include "vtkMRMLUnstructuredGridNode.h"
@@ -190,6 +191,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorTableStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLProceduralColorNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLProceduralColorStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTransformNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLGridTransformNode >::New() );

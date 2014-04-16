@@ -84,6 +84,7 @@ set(SlicerBaseLogic_SRCS
   # slicer's vtk extensions (filters)
   vtkSlicerGlyphSource2D.cxx
   vtkSlicerTransformLogic.cxx
+  vtkTransformVisualizerGlyph3D.cxx
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx
   )

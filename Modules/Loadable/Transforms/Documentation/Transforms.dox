@@ -1,8 +1,8 @@
 /**
 \defgroup Slicer_QtModules_Transforms Transforms
 \ingroup Slicer_QtModules
-This module is used for creating and editing transformation matrices.
-Transformation nodes are used in Slicer to define spacial relationships between different nodes (such as volumes, models, fiducials, ROI's, or other Transform nodes) or between the nodes and the global RAS space. 
+This module is used for creating, editing, and displaying transformations.
+Transformation nodes are used in Slicer to define spacial relationships between different nodes (such as volumes, models, markups, ROI's, or other transform nodes) or between the nodes and the global RAS space.
 You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.
 
 */

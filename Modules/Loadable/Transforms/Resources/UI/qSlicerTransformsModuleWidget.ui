@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>391</width>
-    <height>927</height>
+    <height>1223</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,6 +41,9 @@
        <property name="nodeTypes">
         <stringlist>
          <string>vtkMRMLLinearTransformNode</string>
+         <string>vtkMRMLBSplineTransformNode</string>
+         <string>vtkMRMLGridTransformNode</string>
+         <string>vtkMRMLTransformNode</string>
         </stringlist>
        </property>
        <property name="renameEnabled">
@@ -51,6 +54,33 @@
     </layout>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="InfoCollapsibleWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Information</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <property name="collapsedHeight">
+      <number>14</number>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_8">
+      <item>
+       <widget class="qMRMLTransformInfoWidget" name="TransformInfoWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -59,7 +89,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Display &amp;&amp; Edit</string>
+      <string>Edit</string>
      </property>
      <property name="contentsLineWidth">
       <number>0</number>
@@ -146,6 +176,39 @@
          <number>2</number>
         </property>
         <item>
+         <widget class="QPushButton" name="IdentityPushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Identity</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="InvertPushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Invert</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QGroupBox" name="CoordinateReferenceGroupBox">
           <property name="enabled">
            <bool>false</bool>
@@ -174,40 +237,31 @@
           </layout>
          </widget>
         </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="IdentityPushButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Identity</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="InvertPushButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Invert</string>
-          </property>
-         </widget>
-        </item>
        </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Display</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="qMRMLTransformDisplayNodeWidget" name="TransformDisplayNodeWidget"/>
       </item>
      </layout>
     </widget>
@@ -223,128 +277,143 @@
      <property name="text">
       <string>Apply transform</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0" rowspan="3">
-       <widget class="qMRMLTreeView" name="TransformableTreeView">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::ExtendedSelection</enum>
-        </property>
-        <property name="headerHidden">
-         <bool>true</bool>
-        </property>
-        <property name="nodeTypes">
-         <stringlist>
-          <string>vtkMRMLTransformableNode</string>
-         </stringlist>
-        </property>
-        <property name="fitSizeToVisibleIndexes">
-         <bool>false</bool>
-        </property>
-       </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="TransformableLabel">
+          <property name="text">
+           <string>Transformable:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="qMRMLTreeView" name="TransformableTreeView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="headerHidden">
+           <bool>true</bool>
+          </property>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLTransformableNode</string>
+           </stringlist>
+          </property>
+          <property name="fitSizeToVisibleIndexes">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="1" column="1">
-       <widget class="QToolButton" name="TransformToolButton">
-        <property name="toolTip">
-         <string>Apply the active transform to the selected transformable nodes</string>
-        </property>
-        <property name="text">
-         <string>&gt;</string>
-        </property>
-       </widget>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QToolButton" name="TransformToolButton">
+          <property name="toolTip">
+           <string>Apply the active transform to the selected transformable nodes</string>
+          </property>
+          <property name="text">
+           <string>&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="UntransformToolButton">
+          <property name="toolTip">
+           <string>Remove the active transform from the selected transformed nodes</string>
+          </property>
+          <property name="text">
+           <string>&lt;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="HardenToolButton">
+          <property name="toolTip">
+           <string>Harden transform</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../qSlicerTransformsModule.qrc">
+            <normaloff>:/Icons/Transforms.png</normaloff>:/Icons/Transforms.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="1" column="2" rowspan="3">
-       <widget class="qMRMLTreeView" name="TransformedTreeView">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::ExtendedSelection</enum>
-        </property>
-        <property name="headerHidden">
-         <bool>true</bool>
-        </property>
-        <property name="fitSizeToVisibleIndexes">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QToolButton" name="UntransformToolButton">
-        <property name="toolTip">
-         <string>Remove the active transform from the selected transformed nodes</string>
-        </property>
-        <property name="text">
-         <string>&lt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="TransformableLabel">
-        <property name="text">
-         <string>Transformable:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="TransformedLabel">
-        <property name="text">
-         <string>Transformed:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QToolButton" name="HardenToolButton">
-        <property name="toolTip">
-         <string>Harden transform</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../qSlicerTransformsModule.qrc">
-          <normaloff>:/Icons/Transforms.png</normaloff>:/Icons/Transforms.png</iconset>
-        </property>
-       </widget>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QLabel" name="TransformedLabel">
+          <property name="text">
+           <string>Transformed:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="qMRMLTreeView" name="TransformedTreeView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="headerHidden">
+           <bool>true</bool>
+          </property>
+          <property name="fitSizeToVisibleIndexes">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
+    <spacer name="BottomSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -361,6 +430,7 @@
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLTransformSliders</class>
@@ -374,10 +444,26 @@
    <header>qMRMLTreeView.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTransformDisplayNodeWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLTransformDisplayNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTransformInfoWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLTransformInfoWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
@@ -412,8 +498,8 @@
      <y>502</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
-     <y>816</y>
+     <x>177</x>
+     <y>789</y>
     </hint>
    </hints>
   </connection>
@@ -428,8 +514,8 @@
      <y>501</y>
     </hint>
     <hint type="destinationlabel">
-     <x>553</x>
-     <y>816</y>
+     <x>381</x>
+     <y>789</y>
     </hint>
    </hints>
   </connection>
@@ -444,8 +530,8 @@
      <y>6</y>
     </hint>
     <hint type="destinationlabel">
-     <x>349</x>
-     <y>90</y>
+     <x>389</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -456,12 +542,12 @@
    <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>244</x>
-     <y>90</y>
+     <x>336</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>154</x>
-     <y>318</y>
+     <x>163</x>
+     <y>315</y>
     </hint>
    </hints>
   </connection>
@@ -472,8 +558,8 @@
    <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>420</x>
-     <y>90</y>
+     <x>389</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
      <x>341</x>
@@ -488,12 +574,12 @@
    <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>273</x>
-     <y>90</y>
+     <x>365</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>200</x>
-     <y>197</y>
+     <x>212</x>
+     <y>171</y>
     </hint>
    </hints>
   </connection>
@@ -516,96 +602,16 @@
   <connection>
    <sender>TransformNodeSelector</sender>
    <signal>currentNodeChanged(bool)</signal>
-   <receiver>MatrixViewGroupBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>221</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>128</x>
-     <y>138</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>TranslationSliders</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>313</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>223</x>
-     <y>265</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>RotationSliders</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>325</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>289</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>CoordinateReferenceGroupBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>332</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>557</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>IdentityPushButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>449</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>475</x>
-     <y>543</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(bool)</signal>
    <receiver>InvertPushButton</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>404</x>
-     <y>90</y>
+     <x>389</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>552</x>
-     <y>543</y>
+     <x>380</x>
+     <y>473</y>
     </hint>
    </hints>
   </connection>
@@ -616,12 +622,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>80</y>
+     <x>389</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>282</x>
-     <y>684</y>
+     <x>204</x>
+     <y>646</y>
     </hint>
    </hints>
   </connection>
@@ -632,12 +638,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>494</x>
-     <y>77</y>
+     <x>389</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>285</x>
-     <y>783</y>
+     <x>204</x>
+     <y>716</y>
     </hint>
    </hints>
   </connection>
@@ -664,12 +670,12 @@
    <slot>setDecimals(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>189</x>
-     <y>344</y>
+     <x>198</x>
+     <y>315</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>436</y>
+     <x>201</x>
+     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -680,12 +686,60 @@
    <slot>setDecimals(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>448</y>
+     <x>60</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel">
      <x>60</x>
      <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>TransformDisplayNodeWidget</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>240</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>535</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TransformDisplayNodeWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>535</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>TransformInfoWidget</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>240</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>

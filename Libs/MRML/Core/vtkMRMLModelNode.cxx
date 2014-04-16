@@ -28,7 +28,9 @@ Version:   $Revision: 1.3 $
 #include <vtkCellData.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkFloatArray.h>
+#include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
@@ -531,57 +533,63 @@ void vtkMRMLModelNode::GetRASBounds(double bounds[6])
   double boundsLocal[6];
   this->PolyData->GetBounds(boundsLocal);
 
-  vtkMatrix4x4 *localToRas = vtkMatrix4x4::New();
-  localToRas->Identity();
+  this->TransformBoundsToRAS(boundsLocal, bounds);
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6])
+{
   vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
-  if ( transformNode )
+  if ( !transformNode )
     {
-    vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();;
-    transformNode->GetMatrixTransformToWorld(rasToRAS);
-    vtkMatrix4x4::Multiply4x4(rasToRAS, localToRas, localToRas);
-    rasToRAS->Delete();
+    // node is not transformed, therefore RAS=local
+    for (int i=0; i<6; i++)
+      {
+      outputBounds_RAS[i]=inputBounds_Local[i];
+      }
+    return;
     }
 
-  double minBounds[3], maxBounds[3];
-  int i;
-  for ( i=0; i<3; i++)
+  vtkNew<vtkGeneralTransform> transformLocalToRAS;
+  transformNode->GetTransformToWorld(transformLocalToRAS.GetPointer());
+
+  double cornerPoints_Local[8][4] =
     {
-    minBounds[i] = 1.0e10;
-    maxBounds[i] = -1.0e10;
+    {inputBounds_Local[0], inputBounds_Local[2], inputBounds_Local[4], 1},
+    {inputBounds_Local[0], inputBounds_Local[3], inputBounds_Local[4], 1},
+    {inputBounds_Local[0], inputBounds_Local[2], inputBounds_Local[5], 1},
+    {inputBounds_Local[0], inputBounds_Local[3], inputBounds_Local[5], 1},
+    {inputBounds_Local[1], inputBounds_Local[2], inputBounds_Local[4], 1},
+    {inputBounds_Local[1], inputBounds_Local[3], inputBounds_Local[4], 1},
+    {inputBounds_Local[1], inputBounds_Local[2], inputBounds_Local[5], 1},
+    {inputBounds_Local[1], inputBounds_Local[3], inputBounds_Local[5], 1}
+    };
+
+  // initialize bounds with point 0
+  double* cornerPoint_RAS = transformLocalToRAS->TransformDoublePoint(cornerPoints_Local[0]);
+  for ( int i=0; i<3; i++)
+    {
+    outputBounds_RAS[2*i]   = cornerPoint_RAS[i];
+    outputBounds_RAS[2*i+1] = cornerPoint_RAS[i];
     }
 
-  double ras[4];
-  double pnts[8][4] = {
-    {boundsLocal[0], boundsLocal[2], boundsLocal[4], 1},
-    {boundsLocal[0], boundsLocal[3], boundsLocal[4], 1},
-    {boundsLocal[0], boundsLocal[2], boundsLocal[5], 1},
-    {boundsLocal[0], boundsLocal[3], boundsLocal[5], 1},
-    {boundsLocal[1], boundsLocal[2], boundsLocal[4], 1},
-    {boundsLocal[1], boundsLocal[3], boundsLocal[4], 1},
-    {boundsLocal[1], boundsLocal[2], boundsLocal[5], 1},
-    {boundsLocal[1], boundsLocal[3], boundsLocal[5], 1}
-  };
-
-  for ( i=0; i<8; i++)
+  // update bounds with the rest of the points
+  for ( int i=1; i<8; i++)
     {
-    localToRas->MultiplyPoint( pnts[i], ras );
-    for (int n=0; n<3; n++) {
-      if (ras[n] < minBounds[n])
+    cornerPoint_RAS = transformLocalToRAS->TransformPoint( cornerPoints_Local[i] );
+    for (int n=0; n<3; n++)
+      {
+      if (cornerPoint_RAS[n] < outputBounds_RAS[2*n]) // min bound
         {
-        minBounds[n] = ras[n];
+        outputBounds_RAS[2*n] = cornerPoint_RAS[n];
         }
-      if (ras[n] > maxBounds[n])
+      if (cornerPoint_RAS[n] > outputBounds_RAS[2*n+1]) // max bound
         {
-        maxBounds[n] = ras[n];
+        outputBounds_RAS[2*n+1] = cornerPoint_RAS[n];
         }
       }
-     }
-   localToRas->Delete();
-   for ( i=0; i<3; i++)
-    {
-    bounds[2*i]   = minBounds[i];
-    bounds[2*i+1] = maxBounds[i];
-    }
+   }
 }
 
 //---------------------------------------------------------------------------

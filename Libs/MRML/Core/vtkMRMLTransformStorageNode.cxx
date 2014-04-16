@@ -311,7 +311,7 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self, vtkITKBSplineTr
       {
       vtkErrorWithObjectMacro(self,"Cannot read the 2nd transform in BSplineTransform (expected AffineTransform_double_3_3 or IdentityTransform)" );
       return false;
-      }    
+      }
     bsplineVtk->SetBulkTransform( linear, offset );
     }
 

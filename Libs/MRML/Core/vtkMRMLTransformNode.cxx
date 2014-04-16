@@ -12,9 +12,14 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-// MRML includes
 #include "vtkMRMLTransformNode.h"
+
+// MRML includes
+#include "vtkMRMLScene.h"
 #include "vtkMRMLTransformStorageNode.h"
+#include "vtkMRMLTransformDisplayNode.h"
+
+#include "vtkITKBSplineTransform.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -576,6 +581,24 @@ vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
   return vtkMRMLTransformStorageNode::New();
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::CreateDefaultDisplayNodes()
+{
+  if (vtkMRMLTransformDisplayNode::SafeDownCast(this->GetDisplayNode())!=NULL)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene()==NULL)
+    {
+    vtkErrorMacro("vtkMRMLTransformNode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkNew<vtkMRMLTransformDisplayNode> dispNode;
+  this->GetScene()->AddNode(dispNode.GetPointer());
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
+}
+
 //---------------------------------------------------------------------------
 bool vtkMRMLTransformNode::GetModifiedSinceRead()
 {
@@ -865,4 +888,170 @@ void vtkMRMLTransformNode::Inverse()
   this->StorableModifiedTime.Modified();
   this->Modified();
   this->TransformModified();
+}
+
+//----------------------------------------------------------------------------
+unsigned long vtkMRMLTransformNode::GetTransformToWorldMTime()
+{
+  unsigned long latestMTime=0;
+  vtkAbstractTransform* transformToParent=this->GetTransformToParent();
+  if (transformToParent!=NULL)
+    {
+    latestMTime=transformToParent->GetMTime();
+    }
+
+  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
+  if (parent != NULL)
+    {
+    unsigned long parentMTime=parent->GetTransformToWorldMTime();
+    if (parentMTime>latestMTime)
+      {
+      latestMTime=parentMTime;
+      }
+    }
+  return latestMTime;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformNode::GetTransformToParentInfo()
+{
+  if (this->TransformToParent==NULL)
+    {
+    if (this->TransformFromParent==NULL)
+      {
+      this->TransformInfo="Not specified";
+      }
+    else
+      {
+      this->TransformInfo="Computed by inverting transform from parent.";
+      }
+    return this->TransformInfo.c_str();
+    }
+  return GetTransformInfo(this->TransformToParent);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformNode::GetTransformFromParentInfo()
+{
+  if (this->TransformFromParent==NULL)
+    {
+    if (this->TransformToParent==NULL)
+      {
+      this->TransformInfo="Not specified";
+      }
+    else
+      {
+      this->TransformInfo="Computed by inverting transform to parent.";
+      }
+    return this->TransformInfo.c_str();
+    }
+  return this->GetTransformInfo(this->TransformFromParent);
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTransform)
+{
+  this->TransformInfo="Not specified";
+  if (inputTransform==NULL)
+    {
+    // invalid
+    return this->TransformInfo.c_str();
+    }
+  vtkNew<vtkCollection> transformList;
+  this->FlattenGeneralTransform(transformList.GetPointer(), inputTransform);
+
+  if (transformList->GetNumberOfItems()==0)
+    {
+    // empty generic transform
+    return this->TransformInfo.c_str();
+    }
+
+  std::stringstream ss;
+  vtkAbstractTransform* concatenatedTransform = NULL;
+  for (int i=0; i<transformList->GetNumberOfItems(); i++)
+    {
+    if (transformList->GetNumberOfItems()>1)
+      {
+      if (i>0)
+        {
+        ss << std::endl;
+        }
+      ss << "Transform "<<i+1<<":";
+      }
+    vtkObject* transform=transformList->GetItemAsObject(i);
+
+    vtkMatrixToLinearTransform* linearTransform=vtkMatrixToLinearTransform::SafeDownCast(transform);
+    vtkITKBSplineTransform* bsplineTransform=vtkITKBSplineTransform::SafeDownCast(transform);
+    vtkGridTransform* gridTransform=vtkGridTransform::SafeDownCast(transform);
+    if (linearTransform!=NULL)
+      {
+      ss << " Linear";
+      }
+    else if (bsplineTransform!=NULL)
+      {
+      ss << " B-spline:";
+      unsigned int gridSize[3]={0};
+      bsplineTransform->GetGridSize(gridSize);
+      ss << std::endl << "  Grid size: " << gridSize[0] << " " << gridSize[1] << " " <<gridSize[2] <<".";
+      double gridOrigin[3]={0,0,0};
+      bsplineTransform->GetGridOrigin(gridOrigin);
+      ss << std::endl << "  Grid origin: " << gridOrigin[0] << " " << gridOrigin[1] << " " <<gridOrigin[2] <<".";
+      double gridSpacing[3]={1,1,1};
+      bsplineTransform->GetGridSpacing(gridSpacing);
+      ss << std::endl << "  Grid spacing: " << gridSpacing[0] << " " << gridSpacing[1] << " " <<gridSpacing[2] <<".";
+      const vtkITKBSplineTransform::BulkTransformType* bulkTransform=bsplineTransform->GetBulkTransform();
+      if (bulkTransform!=0)
+        {
+        ss << std::endl << "  Bulk transform:";
+        vtkITKBSplineTransform::BulkTransformType::ParametersType params = bulkTransform->GetParameters();
+        if (params.size()==12)
+          {
+          // affine transform
+          ss << std::endl <<"    "<<params.get(0)<<"  "<<params.get(1)<<"  "<<params.get(2)<<"  "<<params.get(9);
+          ss << std::endl <<"    "<<params.get(3)<<"  "<<params.get(4)<<"  "<<params.get(5)<<"  "<<params.get(10);
+          ss << std::endl <<"    "<<params.get(6)<<"  "<<params.get(7)<<"  "<<params.get(8)<<"  "<<params.get(11);
+          }
+        else
+          {
+          ss << " present";
+          }
+        }
+      if (bsplineTransform->GetInverseFlag())
+        {
+        ss << std::endl << "  Computed from its inverse.";
+        }
+      }
+    else if (gridTransform!=NULL)
+      {
+      ss << " Displacement field:";
+      vtkImageData* displacementField=gridTransform->GetDisplacementGrid();
+      if (displacementField!=NULL)
+        {
+        int* extent=displacementField->GetExtent();
+        ss << std::endl << "  Grid size: " << extent[1]-extent[0] << " " << extent[3]-extent[2] << " " << extent[5]-extent[4]<<".";
+        double* origin=displacementField->GetOrigin();
+        ss << std::endl << "  Grid origin: " << origin[0] << " " << origin[1] << " " << origin[2]<<".";
+        double* spacing=displacementField->GetSpacing();
+        ss << std::endl << "  Grid spacing: " << spacing[0] << " " << spacing[1] << " " << spacing[2]<<".";
+        }
+      else
+        {
+        ss << std::endl << "  Displacement field is invalid.";
+        }
+      if (gridTransform->GetInverseFlag())
+        {
+        ss << std::endl << "  Computed from its inverse.";
+        }
+      }
+    else
+      {
+      const char* className=transform->GetClassName();
+      ss << " " << (className?className:"invalid");
+      }
+    }
+
+  ss << std::ends;
+  this->TransformInfo=ss.str();
+  return this->TransformInfo.c_str();
 }

@@ -79,6 +79,15 @@ public:
   /// Get the color transfer function for this node
   vtkGetObjectMacro(ColorTransferFunction, vtkColorTransferFunction);
 
+  ///
+  /// Set the color transfer function
+  virtual void SetAndObserveColorTransferFunction(vtkColorTransferFunction *ctf);
+
+  ///
+  /// Compare two color transfer functions
+  /// Only compares the color map (x->RGB mapping)
+  static bool IsColorMapEqual(vtkColorTransferFunction* tf1, vtkColorTransferFunction* tf2);
+
   /// Reimplemented vtkMRMLColorNode::GetScalarsToColors() to return the
   /// transfer function instead of the empty lookuptable
   virtual vtkScalarsToColors* GetScalarsToColors();

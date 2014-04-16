@@ -157,6 +157,12 @@ public:
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
 
+  /// Transforms bounds from the local coordinate system to the RAS (world)
+  /// coordinate system. Only the corner points are used for determining the
+  /// new bounds, therefore in case of non-linear transforms the transformed
+  /// bounds may not fully contain the transformed model points.
+  virtual void TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6]);
+
   virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 

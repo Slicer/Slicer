@@ -15,7 +15,7 @@
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
 
-#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLDisplayableNode.h"
 
 class vtkCollection;
 class vtkAbstractTransform;
@@ -29,11 +29,11 @@ class vtkMatrix4x4;
 /// A vtkMRMLTransformableNode::TransformModifiedEvent is called if the transforms
 /// are changed. ModifiedEvent is called if either transforms or other properties
 /// of the object are changed.
-class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
+class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLDisplayableNode
 {
 public:
   static vtkMRMLTransformNode *New();
-  vtkTypeMacro(vtkMRMLTransformNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLTransformNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -70,8 +70,16 @@ public:
   virtual vtkAbstractTransform* GetTransformToParent();
 
   ///
+  /// Get a human-readable description of the transform
+  virtual const char* GetTransformToParentInfo();
+
+  ///
   /// Transform of this node from parent
   virtual vtkAbstractTransform* GetTransformFromParent();
+
+  ///
+  /// Get a human-readable description of the transform
+  virtual const char* GetTransformFromParentInfo();
 
   ///
   /// 1 if all the transforms to the top are linear, 0 otherwise
@@ -126,6 +134,10 @@ public:
   ///
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
+  ///
+  /// Create and observe default display node
+  virtual void CreateDefaultDisplayNodes();
 
   /// Get/Set for ReadWriteAsTransformToParent
   /// Typically only a non-inverse transform can be written to file,
@@ -274,6 +286,14 @@ public:
   /// The flag is set so that the ReadWriteAsTransformToParent points to the forward transform
   void SetReadWriteAsTransformToParentAuto();
 
+  /// Get the latest modification time of the stored transform
+  unsigned long GetTransformToWorldMTime();
+
+  /// Get a human-readable description of the transformation
+  /// The returned string is stored in a shared buffer therefore the text
+  /// has to be copied.
+  const char* GetTransformInfo(vtkAbstractTransform* inputTransform);
+
 protected:
   vtkMRMLTransformNode();
   ~vtkMRMLTransformNode();
@@ -304,6 +324,9 @@ protected:
 
   int DisableTransformModifiedEvent;
   int TransformModifiedEventPending;
+
+  // Temporary buffers used for returning transform info as char*
+  std::string TransformInfo;
 };
 
 #endif

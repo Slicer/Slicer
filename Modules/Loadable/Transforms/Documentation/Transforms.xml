@@ -16,7 +16,18 @@
     </parameter>
   </parameters>
   <parameters>
-    <label><![CDATA[Display &amp; Edit]]></label>
+    <label><![CDATA[Information]]></label>
+    <parameter>
+      <label>Transform to parent:</label>
+      <description><![CDATA[Description of the transform that is applied to transform points to the coordinate system of the parent transform node.]]></description>
+    </parameter>
+    <parameter>
+      <label>Transform from parent:</label>
+      <description><![CDATA[Description of the transform that is applied to transform points from the coordinate system of the parent transform node.]]></description>
+    </parameter>
+  </parameters>
+  <parameters>
+    <label><![CDATA[Edit]]></label>
     <parameter>
       <label>Transform Matrix</label>
       <description><![CDATA[4x4 matrix. Each element is editable on double click. Type Enter to validate change, Escape to cancel or Tab to edit the next element.]]></description>
@@ -41,6 +52,74 @@
       <label>Invert</label>
       <description><![CDATA[Inverts the transformation matrix.]]></description>
     </parameter>
+  </parameters>
+  <parameters>
+    <label><![CDATA[Display]]></label>
+    <parameter>
+      <label>Visible in slice view</label>
+      <description><![CDATA[Show the transform in the slice viewers.]]></description>
+    </parameter>
+    <parameter>
+      <label>Visible in 3D view</label>
+      <description><![CDATA[Show the transform in the 3D viewers.]]></description>
+    </parameter>
+    <parameter>
+      <label>Region</label>
+      <description><![CDATA[Region where the transform is shown in the 3D view. It can be a slice viewer, volume, model, or a region of interest (ROI) node.]]></description>
+    </parameter>
+    <parameter>
+      <label>Visualization mode</label>
+      <description><![CDATA[Glyph: Show displacement at each point using an oriented scaled object. Grid: Show displacement as a deformed grid. Contour: Show isolines/isosurfaces corresponding to the specified displacement magnitudes.]]></description>
+    </parameter>
+    <parameter>
+      <label>Colors</label>
+      <description><![CDATA[Assign a color depending on the displacement magnitude.]]></description>
+    </parameter>
+    <parameter>
+      <label>Glyph mode: Spacing</label>
+      <description><![CDATA[Distance between glyphs.]]></description>
+    </parameter>
+    <parameter>
+      <label>Glyph mode: Scale factor</label>
+      <description><![CDATA[Percentage of displacement used for setting the glyph size. 100% means the glyph size equals the actual displacement. Does not affect coloring and visible range.]]></description>
+    </parameter>
+    <parameter>
+      <label>Glyph mode: Visible range</label>
+      <description><![CDATA[Only those glyphs are shown that have displacement magnitude within this range.]]></description>
+    </parameter>
+    <parameter>
+      <label>Glyph mode: Glyph type</label>
+      <description><![CDATA[Arrow: the arrow length and direction match the displacement vector (in 3D) or the displacement vector projection to the slice (in 2D) at the needle starting point. Cone: the cone length and direction match the the displacement vector (in 3D) or the displacement vector projection to the slice (in 2D) at the center of the cone. Sphere: the sphere/circle radius equals the displacement vector magnitude in the center of the sphere (same in 2D and 3D).]]></description>
+    </parameter>
+    <parameter>
+      <label>Grid mode: Spacing</label>
+      <description><![CDATA[Distance between the gridlines.]]></description>
+    </parameter>
+    <parameter>
+      <label>Grid mode: Scale factor</label>
+      <description><![CDATA[Percentage of displacement applied to the gridpoints. 100% means that the grid is deformed with the actual displacement.]]></description>
+    </parameter>
+    <parameter>
+      <label>Grid mode: Show original grid</label>
+      <description><![CDATA[Show non-warped grid in the slice view.]]></description>
+    </parameter>
+    <parameter>
+      <label>Grid mode: 3D gridline diameter</label>
+      <description><![CDATA[Thickness of the gridlines in the 3D view.]]></description>
+    </parameter>
+    <parameter>
+      <label>Grid mode: Resolution</label>
+      <description><![CDATA[Distance between sample points along the gridlines. Lower values result in gridlines that follow more closely the actual displacement vectors, but require more computation time.]]></description>
+    </parameter>
+    <parameter>
+      <label>Contour mode: Levels (mm)</label>
+      <description><![CDATA[Values defining the isolines and isosurfaces to contour. Values are separated by spaces.]]></description>
+    </parameter>
+    <parameter>
+      <label>Contour mode: 3D opacity</label>
+      <description><![CDATA[Opacity of the contour isosurfaces in the 3D view.]]></description>
+    </parameter>
+
   </parameters>
   <parameters>
     <label>Transformed nodes</label>
