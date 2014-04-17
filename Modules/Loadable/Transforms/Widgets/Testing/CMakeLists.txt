@@ -23,5 +23,5 @@ macro(SCENE_TEST TESTNAME SCENEFILENAME)
     )
 endmacro()
 
-simple_test( qMRMLModelInfoWidgetTest1 )
+simple_test( qMRMLTransformInfoWidgetTest1 )
 simple_test( qMRMLTransformDisplayNodeWidgetTest1 )
