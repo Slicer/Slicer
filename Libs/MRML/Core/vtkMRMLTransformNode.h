@@ -237,13 +237,13 @@ public:
   ///
   /// Retrieves the transform as the specified transform class.
   /// Returns NULL if the transform is not a kind of transform that was requested.
-  /// Example usage: vtkWarpTransform* warpTransform=vtkWarpTransform::SafeDownCast(GetTransformToParentAs("vtkWarpTransform"));
+  /// Example usage: vtkITKBSplineTransform* bsplineTransform=vtkITKBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkITKBSplineTransform"));
   vtkAbstractTransform* GetTransformToParentAs(const char* transformType, bool logErrorIfFails=true);
 
   ///
   /// Retrieves the transform as the specified transform class.
   /// Returns NULL if the transform is not a kind of transform that was requested.
-  /// Example usage: vtkWarpTransform* warpTransform=vtkWarpTransform::SafeDownCast(GetTransformFromParentAs("vtkWarpTransform"));
+  /// Example usage: vtkITKBSplineTransform* bsplineTransform=vtkITKBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkITKBSplineTransform"));
   vtkAbstractTransform* GetTransformFromParentAs(const char* transformType, bool logErrorIfFails=true);
 
   /// Set and observe a new transform of this node to parent node.

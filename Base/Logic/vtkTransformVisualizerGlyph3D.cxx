@@ -69,7 +69,6 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 
   vtkPolyData *output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPointData* outputPD = output->GetPointData();
-  vtkCellData* outputCD = output->GetCellData();
 
   vtkDataArray *inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS,inputVector);
   vtkDataArray *inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS,inputVector);; // Scalars for Coloring

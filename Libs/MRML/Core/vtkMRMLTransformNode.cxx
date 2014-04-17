@@ -633,7 +633,7 @@ int  vtkMRMLTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transformToWo
 }
 
 //----------------------------------------------------------------------------
-int  vtkMRMLTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* node,
+int  vtkMRMLTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* vtkNotUsed(node),
                                                           vtkMatrix4x4* transformToNode)
 {
   // The fact that this method is called means that this is a non-linear transform,
@@ -968,7 +968,6 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
     }
 
   std::stringstream ss;
-  vtkAbstractTransform* concatenatedTransform = NULL;
   for (int i=0; i<transformList->GetNumberOfItems(); i++)
     {
     if (transformList->GetNumberOfItems()>1)

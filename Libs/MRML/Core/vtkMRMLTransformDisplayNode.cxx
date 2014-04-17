@@ -453,7 +453,7 @@ bool vtkMRMLTransformDisplayNode::IsContourLevelEqual(const std::vector<double>&
     return false;
     }
   const double COMPARISON_TOLERANCE=0.01;
-  for (int i=0; i<levels1.size(); i++)
+  for (unsigned int i=0; i<levels1.size(); i++)
   {
     if (fabs(levels1[i]-levels2[i])>COMPARISON_TOLERANCE)
       {

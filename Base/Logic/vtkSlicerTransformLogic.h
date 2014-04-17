@@ -92,9 +92,15 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   vtkMRMLScalarVolumeNode* CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude=true);
 
   /// Take samples from the displacement field and store the magnitude in an image volume
+  /// The extents of the output image must be set before calling this method.
+  /// The origin and spacing attributes of the output image are ignored (origin, spacing, and axis directions
+  /// are all specified by ijkToRAS).
   static void GetTransformedPointSamplesAsMagnitudeImage(vtkImageData* outputMagnitudeImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS);
 
   /// Take samples from the displacement field and store the vector components in an image volume
+  /// The extents of the output image must be set before calling this method.
+  /// The origin and spacing attributes of the output image are ignored (origin, spacing, and axis directions
+  /// are all specified by ijkToRAS).
   static void GetTransformedPointSamplesAsVectorImage(vtkImageData* outputVectorImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS);
 
 

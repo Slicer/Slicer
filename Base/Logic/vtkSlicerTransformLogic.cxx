@@ -339,18 +339,6 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
   int* extent=magnitudeImage->GetExtent();
   int imageSize[3]={extent[1]-extent[0]+1, extent[3]-extent[2]+1, extent[5]-extent[4]+1};
 
-  double spacing[3]=
-    {
-    sqrt(ijkToRAS->Element[0][0]*ijkToRAS->Element[0][0]+ijkToRAS->Element[1][0]*ijkToRAS->Element[1][0]+ijkToRAS->Element[2][0]*ijkToRAS->Element[2][0]),
-    sqrt(ijkToRAS->Element[0][1]*ijkToRAS->Element[0][1]+ijkToRAS->Element[1][1]*ijkToRAS->Element[1][1]+ijkToRAS->Element[2][1]*ijkToRAS->Element[2][1]),
-    sqrt(ijkToRAS->Element[0][2]*ijkToRAS->Element[0][2]+ijkToRAS->Element[1][2]*ijkToRAS->Element[1][2]+ijkToRAS->Element[2][2]*ijkToRAS->Element[2][2])
-    };
-  double origin[3]=
-    {
-    ijkToRAS->Element[0][3],
-    ijkToRAS->Element[1][3],
-    ijkToRAS->Element[2][3]
-    };
   // The orientation of the volume cannot be set in the image
   // therefore the volume will not appear in the correct position
   // if the direction matrix is not identity.
@@ -460,18 +448,6 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageDa
   int* extent=vectorImage->GetExtent();
   int imageSize[3]={extent[1]-extent[0]+1, extent[3]-extent[2]+1, extent[5]-extent[4]+1};
 
-  double spacing[3]=
-    {
-    sqrt(ijkToRAS->Element[0][0]*ijkToRAS->Element[0][0]+ijkToRAS->Element[1][0]*ijkToRAS->Element[1][0]+ijkToRAS->Element[2][0]*ijkToRAS->Element[2][0]),
-    sqrt(ijkToRAS->Element[0][1]*ijkToRAS->Element[0][1]+ijkToRAS->Element[1][1]*ijkToRAS->Element[1][1]+ijkToRAS->Element[2][1]*ijkToRAS->Element[2][1]),
-    sqrt(ijkToRAS->Element[0][2]*ijkToRAS->Element[0][2]+ijkToRAS->Element[1][2]*ijkToRAS->Element[1][2]+ijkToRAS->Element[2][2]*ijkToRAS->Element[2][2])
-    };
-  double origin[3]=
-    {
-    ijkToRAS->Element[0][3],
-    ijkToRAS->Element[1][3],
-    ijkToRAS->Element[2][3]
-    };
   // The orientation of the volume cannot be set in the image
   // therefore the volume will not appear in the correct position
   // if the direction matrix is not identity.
@@ -481,7 +457,6 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageDa
 
   double point_RAS[4] = {0,0,0,1};
   double transformedPoint_RAS[4] = {0,0,0,1};
-  double pointDislocationVector_RAS[4] = {0,0,0,1};
   double point_IJK[4]={0,0,0,1};
   float* voxelPtr=static_cast<float*>(vectorImage->GetScalarPointer());
   for (point_IJK[2]=0; point_IJK[2]<imageSize[2]; point_IJK[2]++)
@@ -873,7 +848,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output, vtk
 
   vtkNew<vtkContourFilter> contourFilter;
   double* levels=displayNode->GetContourLevelsMm();
-  for (int i=0; i<displayNode->GetNumberOfContourLevels(); i++)
+  for (unsigned int i=0; i<displayNode->GetNumberOfContourLevels(); i++)
    {
     contourFilter->SetValue(i, levels[i]);
    }
@@ -937,7 +912,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
   // Contput contours
   vtkNew<vtkContourFilter> contourFilter;
   double* levels=displayNode->GetContourLevelsMm();
-  for (int i=0; i<displayNode->GetNumberOfContourLevels(); i++)
+  for (unsigned int i=0; i<displayNode->GetNumberOfContourLevels(); i++)
     {
     contourFilter->SetValue(i, levels[i]);
     }
