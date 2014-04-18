@@ -141,7 +141,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::PrintSelf(ostream& os, vtkInden
 /// Create a new widget.
 vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager3D::CreateWidget(vtkMRMLMarkupsNode* node)
 {
-
   if (!node)
     {
     vtkErrorMacro("CreateWidget: Node not set!")
@@ -173,9 +172,7 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager3D::CreateWidget(vtk
   glyphSource->SetScale(1.0);
   handle->SetHandle(glyphSource->GetOutput());
 
-
   rep->SetHandleRepresentation(handle.GetPointer());
-
 
   //seed widget
   vtkSeedWidget * seedWidget = vtkSeedWidget::New();
@@ -191,14 +188,12 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager3D::CreateWidget(vtk
   seedWidget->CompleteInteraction();
 
   return seedWidget;
-
   }
 
 //---------------------------------------------------------------------------
 /// Tear down the widget creation
 void vtkMRMLMarkupsFiducialDisplayableManager3D::OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLMarkupsNode * node)
 {
-
   if (!widget)
     {
     vtkErrorMacro("OnWidgetCreated: Widget was null!")
@@ -219,7 +214,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::OnWidgetCreated(vtkAbstractWidg
   widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
-
 }
 
 //---------------------------------------------------------------------------
@@ -277,7 +271,6 @@ bool vtkMRMLMarkupsFiducialDisplayableManager3D::UpdateNthSeedPositionFromMRML(i
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkupsFiducialNode* fiducialNode, vtkSeedWidget *seedWidget)
 {
-
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
   if (!seedRepresentation)
@@ -372,7 +365,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
     seedWidget->GetSeed(n)->EnabledOff();
     }
 
-
   // update locked
   int listLocked = fiducialNode->GetLocked();
   int seedLocked = fiducialNode->GetNthMarkupLocked(n);
@@ -395,7 +387,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
     {
     seedWidget->GetSeed(n)->ProcessEventsOn();
     }
-
 
   // set the glyph type if a new handle was created, or the glyph type changed
   int oldGlyphType = this->Helper->GetNodeGlyphType(displayNode, n);
@@ -496,7 +487,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::SetNthSeed(int n, vtkMRMLMarkup
     }
 
   handleRep->SetUniformScale(displayNode->GetGlyphScale());
-
 }
 
 //---------------------------------------------------------------------------
@@ -536,7 +526,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::PropagateMRMLToWidget(vtkMRMLMa
   // disable processing of modified events
   this->Updating = 1;
 
-
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkMRMLMarkupsDisplayNode *displayNode = fiducialNode->GetMarkupsDisplayNode();
 
@@ -575,7 +564,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::PropagateMRMLToWidget(vtkMRMLMa
 /// Propagate properties of widget to MRML node.
 void vtkMRMLMarkupsFiducialDisplayableManager3D::PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLMarkupsNode* node)
 {
-
   if (!widget)
     {
     vtkErrorMacro("PropagateWidgetToMRML: Widget was null!")
@@ -646,12 +634,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::PropagateWidgetToMRML(vtkAbstra
     newCoords[2] = worldCoordinates1[2];
     if (this->GetWorldCoordinatesChanged(currentCoords, newCoords))
       {
-      vtkDebugMacro("PropagateWidgetToMRML: position changed.");
       positionChanged = true;
-      }
-
-    if (positionChanged)
-      {
       vtkDebugMacro("PropagateWidgetToMRML: position changed, setting fiducial coordinates");
       fiducialNode->SetNthFiducialWorldCoordinates(n,worldCoordinates1);
       }
@@ -687,7 +670,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::OnClickInRenderWindow(double x,
   double displayCoordinates1[2];
   displayCoordinates1[0] = x;
   displayCoordinates1[1] = y;
-
 
   double worldCoordinates1[4];
 
@@ -798,7 +780,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::AdditionnalInitializeStep()
   //vtkDebugMacro("Adding an observer on the key press event");
   this->AddInteractorStyleObservableEvent(vtkCommand::KeyPressEvent);
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialDisplayableManager3D::OnInteractorStyleEvent(int eventid)
