@@ -61,6 +61,11 @@ protected:
 
   virtual int ReadLinearTransform(vtkMRMLNode *refNode);
   virtual int ReadBSplineTransform(vtkMRMLNode *refNode);
+
+  /// Read displacement field transform from a 3-component scalar image.
+  /// The 3 scalar components in the file specify the displacement
+  /// in LPS coordinate system. When the transform is read into Slicer, the
+  /// displacement vectors are converted to RAS coordinate system.
   virtual int ReadGridTransform(vtkMRMLNode *refNode);
 
   /// Write data from a referenced node
@@ -68,6 +73,11 @@ protected:
 
   virtual int WriteLinearTransform(vtkMRMLLinearTransformNode *ln);
   virtual int WriteBSplineTransform(vtkMRMLBSplineTransformNode *bs);
+
+  /// Write displacement field transform from a 3-component scalar image.
+  /// The 3 scalar components in Slicer specify the displacement
+  /// in RAS coordinate system. When the transform is written to file then the
+  /// displacement vectors are converted to LPS coordinate system.
   virtual int WriteGridTransform(vtkMRMLGridTransformNode *gd);
 
 };
