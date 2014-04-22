@@ -163,7 +163,7 @@ class DICOMDetailsPopup(object):
 
     self.viewMetadataButton = qt.QPushButton('Metadata')
     self.viewMetadataButton.toolTip = 'Display Metadata of the Selected Series'
-    self.viewMetadataButton.enabled = True
+    self.viewMetadataButton.enabled = False
     self.actionButtonLayout.addWidget(self.viewMetadataButton)
     self.viewMetadataButton.connect('clicked()', self.onViewHeaderButton)
     self.viewMetadataButton.connect('clicked()', self.headerPopup.open)
@@ -223,6 +223,26 @@ class DICOMDetailsPopup(object):
     #
     self.pluginSelector = DICOMPluginSelector(self.window)
     self.loadableTableLayout.addRow(self.pluginSelector.widget,self.loadableTable.widget)
+    self.checkBoxByPlugins = []
+
+    for pluginClass in slicer.modules.dicomPlugins:
+      self.checkBox = self.pluginSelector.checkBoxByPlugin[pluginClass]
+      self.checkBox.connect('stateChanged(int)', self.onPluginStateChanged)
+      self.checkBoxByPlugins.append(self.checkBox)
+
+  def onPluginStateChanged(self,state):
+    settings = qt.QSettings()
+    settings.beginWriteArray('DICOM/disabledPlugins')
+
+    plugins = self.pluginSelector.selectedPlugins()
+    arrayIndex = 0
+    for  pluginClass in slicer.modules.dicomPlugins:
+      if pluginClass not in plugins:
+        settings.setArrayIndex(arrayIndex)
+        settings.setValue(pluginClass,'disabled')
+        arrayIndex += 1
+
+    settings.endArray()
 
   def onAdvanedViewButton (self,state):
     settings = qt.QSettings()
@@ -235,18 +255,11 @@ class DICOMDetailsPopup(object):
       self.examineButton.hide()
       self.uncheckAllButton.hide()
       self.loadButton.enabled = True
-      for pluginClass in slicer.modules.dicomPlugins:
-        if pluginClass == 'DICOMScalarVolumePlugin':
-          self.pluginSelector.checkBoxByPlugin[pluginClass].checked = True
-        else:
-          self.pluginSelector.checkBoxByPlugin[pluginClass].checked = False
 
     # if advanced mode is toggled
     if state == 2:
       settings.setValue('DICOM/advancedViewToggled', self.advancedViewCheckState )
       self.loadableTableFrame.show()
-      for pluginClass in slicer.modules.dicomPlugins:
-        self.pluginSelector.checkBoxByPlugin[pluginClass].checked = True
       self.examineButton.show()
       self.uncheckAllButton.show()
       self.loadButton.enabled = False
@@ -352,6 +365,7 @@ class DICOMDetailsPopup(object):
           fileList = slicer.dicomDatabase.filesForSeries(serie)
           self.fileLists.append(fileList)
     self.examineButton.enabled = len(self.fileLists) != 0
+    self.viewMetadataButton.enabled = len(self.fileLists) != 0
 
   def uncheckAllLoadables(self):
     self.loadableTable.uncheckAll()
@@ -466,13 +480,36 @@ class DICOMPluginSelector(object):
     self.layout = qt.QVBoxLayout()
     self.widget.setLayout(self.layout)
     self.checkBoxByPlugin = {}
+    settings = qt.QSettings()
+
+    slicerPlugins = slicer.modules.dicomPlugins
+
     for pluginClass in slicer.modules.dicomPlugins:
       self.checkBoxByPlugin[pluginClass] = qt.QCheckBox(pluginClass)
-      if pluginClass == 'DICOMScalarVolumePlugin':
-        self.checkBoxByPlugin[pluginClass].checked = True
-      else:
-        self.checkBoxByPlugin[pluginClass].checked = False
       self.layout.addWidget(self.checkBoxByPlugin[pluginClass])
+
+    if settings.contains('DICOM/disabledPlugins/size'):
+      size = settings.beginReadArray('DICOM/disabledPlugins')
+      disabledPlugins = []
+
+      for i in xrange(size):
+        settings.setArrayIndex(i)
+        disabledPlugins.append(str(settings.allKeys()[0]))
+      settings.endArray()
+
+      for pluginClass in slicer.modules.dicomPlugins:
+        if pluginClass in disabledPlugins:
+          self.checkBoxByPlugin[pluginClass].checked = False
+        else:
+          # Activate plugins for the ones who are not in the disabled list
+          # and also plugins installed with extensions
+          self.checkBoxByPlugin[pluginClass].checked = True
+
+    else:
+
+      # All DICOM plugins would be enabled by defualt
+      for pluginClass in slicer.modules.dicomPlugins:
+        self.checkBoxByPlugin[pluginClass].checked = True
 
   def selectedPlugins(self):
     """Return a list of selected plugins"""
@@ -481,7 +518,6 @@ class DICOMPluginSelector(object):
       if self.checkBoxByPlugin[pluginClass].checked:
         selectedPlugins.append(pluginClass)
     return selectedPlugins
-
 
 class DICOMLoadableTable(object):
   """Implement the Qt code for a table of
