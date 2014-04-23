@@ -100,7 +100,7 @@ private:
 qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMarkupsModuleWidget& object)
   : q_ptr(&object)
 {
-  this->columnLabels << "Selected" << "Locked" << "Visible" << "Name" << "Description" << "X" << "Y" << "Z";
+  this->columnLabels << "Selected" << "Locked" << "Visible" << "Name" << "Description" << "R" << "A" << "S";
 
   this->newMarkupWithCurrentDisplayPropertiesAction = 0;
   this->visibilityMenu = 0;
@@ -382,9 +382,9 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // adjust the column widths
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Name"), 60);
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Description"), 120);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("X"), 65);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Y"), 65);
-  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Z"), 65);
+  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("R"), 65);
+  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("A"), 65);
+  this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("S"), 65);
 
   // show/hide the coordinate columns
   QObject::connect(this->hideCoordinateColumnsCheckBox,
@@ -1033,15 +1033,15 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
    // point
    double point[3];
   markupsNode->GetMarkupPoint(m, 0, point);
-  int xColumnIndex = d->columnIndex("X");
+  int rColumnIndex = d->columnIndex("R");
   for (int p = 0; p < 3; p++)
     {
     // last argument to number sets the precision
     QString coordinate = QString::number(point[p], 'f', 3);
-    if (d->activeMarkupTableWidget->item(m,xColumnIndex + p) == NULL ||
-        d->activeMarkupTableWidget->item(m,xColumnIndex + p)->text() != coordinate)
+    if (d->activeMarkupTableWidget->item(m,rColumnIndex + p) == NULL ||
+        d->activeMarkupTableWidget->item(m,rColumnIndex + p)->text() != coordinate)
       {
-      d->activeMarkupTableWidget->setItem(m,xColumnIndex + p,new QTableWidgetItem(coordinate));
+      d->activeMarkupTableWidget->setItem(m,rColumnIndex + p,new QTableWidgetItem(coordinate));
       }
     }
 
@@ -2097,22 +2097,22 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     std::string description = std::string(item->text().toLatin1());
     listNode->SetNthMarkupDescription(n, description);
     }
-  else if (column == d->columnIndex("X") ||
-           column == d->columnIndex("Y") ||
-           column == d->columnIndex("Z"))
+  else if (column == d->columnIndex("R") ||
+           column == d->columnIndex("A") ||
+           column == d->columnIndex("S"))
     {
     // get the new value
     double newPoint[3] = {0.0, 0.0, 0.0};
-    if (d->activeMarkupTableWidget->item(row, d->columnIndex("X")) == NULL ||
-        d->activeMarkupTableWidget->item(row, d->columnIndex("Y")) == NULL ||
-        d->activeMarkupTableWidget->item(row, d->columnIndex("Z")) == NULL)
+    if (d->activeMarkupTableWidget->item(row, d->columnIndex("R")) == NULL ||
+        d->activeMarkupTableWidget->item(row, d->columnIndex("A")) == NULL ||
+        d->activeMarkupTableWidget->item(row, d->columnIndex("S")) == NULL)
       {
       // init state, return
       return;
       }
-    newPoint[0] = d->activeMarkupTableWidget->item(row, d->columnIndex("X"))->text().toDouble();
-    newPoint[1] = d->activeMarkupTableWidget->item(row, d->columnIndex("Y"))->text().toDouble();
-    newPoint[2] = d->activeMarkupTableWidget->item(row, d->columnIndex("Z"))->text().toDouble();
+    newPoint[0] = d->activeMarkupTableWidget->item(row, d->columnIndex("R"))->text().toDouble();
+    newPoint[1] = d->activeMarkupTableWidget->item(row, d->columnIndex("A"))->text().toDouble();
+    newPoint[2] = d->activeMarkupTableWidget->item(row, d->columnIndex("S"))->text().toDouble();
 
     // get the old value
     double point[3];
@@ -3019,9 +3019,9 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(bool checked)
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("X"), checked);
-  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("Y"), checked);
-  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("Z"), checked);
+  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("R"), checked);
+  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("A"), checked);
+  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("S"), checked);
 
   if (!checked)
     {
