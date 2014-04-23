@@ -3128,7 +3128,7 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(bool checked)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onTransformedCoordinatesToggled(bool checked)
 {
-  Q_D(qSlicerMarkupsModuleWidget);
+  Q_UNUSED(checked);
 
   // update the GUI
   // tbd: only update the coordinates
