@@ -349,6 +349,36 @@
        </property>
       </widget>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="checkBoxesHorizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="transformedCoordinatesCheckBox">
+       <property name="toolTip">
+        <string>Check to show the transformed coordinates in the table.</string>
+       </property>
+       <property name="text">
+        <string>Transformed</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QCheckBox" name="hideCoordinateColumnsCheckBox">
        <property name="toolTip">
@@ -366,6 +396,12 @@
    </item>
    <item>
     <widget class="QTableWidget" name="activeMarkupTableWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>

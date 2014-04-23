@@ -219,6 +219,8 @@ public slots:
   void onActiveMarkupsNodeNthMarkupModifiedEvent(vtkObject *caller, vtkObject *callData);
   /// Update the display properties widgets when the display node is modified
   void onActiveMarkupsNodeDisplayModifiedEvent();
+  /// Update the transform related elemetns of the gui when the transform node is modified
+  void onActiveMarkupsNodeTransformModifiedEvent();
 
   /// Create a new markups node and copy the display node settings from the
   /// current markups node if set, otherwise just uses the defaults.
@@ -229,8 +231,11 @@ public slots:
   /// \sa sliceIntersectionsVisible()
   void onSliceIntersectionsVisibilityToggled(bool checked);
 
-  // update visibility of the coordinate columns in the table
+  /// update visibility of the coordinate columns in the table
   void onHideCoordinateColumnsToggled(bool checked);
+
+  /// update the coordinates shown in the table to be either the transformed coordiantes (checked) or the untransformed coordiantes (unchecked)
+  void onTransformedCoordinatesToggled(bool checked);
 
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;

@@ -390,6 +390,10 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->hideCoordinateColumnsCheckBox,
                    SIGNAL(toggled(bool)),
                    q, SLOT(onHideCoordinateColumnsToggled(bool)));
+  // show transformed/untransformed coordinates
+  QObject::connect(this->transformedCoordinatesCheckBox,
+                   SIGNAL(toggled(bool)),
+                   q, SLOT(onTransformedCoordinatesToggled(bool)));
 
   // use an icon for some column headers
   // selected is a check box
@@ -718,6 +722,34 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
   QString nameFormat = QString(markupsNode->GetMarkupLabelFormat().c_str());
   d->nameFormatLineEdit->setText(nameFormat);
 
+  // update the transform checkbox label to reflect current transform node name
+  const char *transformNodeID = markupsNode->GetTransformNodeID();
+  if (transformNodeID == NULL)
+    {
+    d->transformedCoordinatesCheckBox->setText("Transformed");
+    }
+  else
+    {
+    const char *xformName = NULL;
+    if (this->mrmlScene() &&
+        this->mrmlScene()->GetNodeByID(transformNodeID))
+      {
+      xformName = this->mrmlScene()->GetNodeByID(transformNodeID)->GetName();
+      }
+    if (xformName)
+      {
+      d->transformedCoordinatesCheckBox->setText(QString("Transformed (") +
+                                                 QString(xformName) +
+                                                 QString(")"));
+      }
+    else
+      {
+      d->transformedCoordinatesCheckBox->setText(QString("Transformed (") +
+                                                 QString(transformNodeID) +
+                                                 QString(")"));
+      }
+    }
+
   // update the table
   int numberOfMarkups = markupsNode->GetNumberOfMarkups();
   if (d->activeMarkupTableWidget->rowCount() != numberOfMarkups)
@@ -1032,7 +1064,14 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
 
    // point
    double point[3];
-  markupsNode->GetMarkupPoint(m, 0, point);
+   if (d->transformedCoordinatesCheckBox->isChecked())
+     {
+     markupsNode->GetMarkupPointWorld(m, 0, point);
+     }
+   else
+     {
+     markupsNode->GetMarkupPoint(m, 0, point);
+     }
   int rColumnIndex = d->columnIndex("R");
   for (int p = 0; p < 3; p++)
     {
@@ -2116,7 +2155,14 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
 
     // get the old value
     double point[3];
-    listNode->GetMarkupPoint(n, 0, point);
+    if (d->transformedCoordinatesCheckBox->isChecked())
+      {
+      listNode->GetMarkupPointWorld(n, 0, point);
+      }
+    else
+      {
+      listNode->GetMarkupPoint(n, 0, point);
+      }
 
     // changed?
     double minChange = 0.001;
@@ -2127,7 +2173,14 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
       vtkMRMLMarkupsFiducialNode *fidList = vtkMRMLMarkupsFiducialNode::SafeDownCast(listNode);
       if (fidList)
         {
-        fidList->SetNthFiducialWorldCoordinates(n, newPoint);
+        if (d->transformedCoordinatesCheckBox->isChecked())
+          {
+          fidList->SetNthFiducialWorldCoordinates(n, newPoint);
+          }
+        else
+          {
+          fidList->SetNthFiducialPositionFromArray(n, newPoint);
+          }
         }
       }
     else
@@ -2302,7 +2355,14 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
     for (int p = 0; p < numPoints; ++p)
       {
       double point[3];
-      markupsNode->GetMarkupPoint(row, p, point);
+      if (d->transformedCoordinatesCheckBox->isChecked())
+        {
+        markupsNode->GetMarkupPointWorld(row, p, point);
+        }
+      else
+        {
+        markupsNode->GetMarkupPoint(row, p, point);
+        }
       // format the coordinates
       QString coordinate =
         QString::number(point[0]) + QString(",") +
@@ -2654,6 +2714,16 @@ void qSlicerMarkupsModuleWidget::observeMarkupsNode(vtkMRMLNode *markupsNode)
                                this,
                                SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
           }
+        // transforms
+        vtkMRMLTransformableNode *transformableNode =
+          vtkMRMLTransformableNode::SafeDownCast(node);
+        if (transformableNode)
+          {
+          this->qvtkDisconnect(transformableNode,
+                               vtkMRMLTransformableNode::TransformModifiedEvent,
+                               this,
+                               SLOT(onActiveMarkupsNodeTransformModifiedEvent()));
+          }
         }
       }
     col->RemoveAllItems();
@@ -2695,6 +2765,16 @@ void qSlicerMarkupsModuleWidget::observeMarkupsNode(vtkMRMLNode *markupsNode)
                           vtkMRMLDisplayableNode::DisplayModifiedEvent,
                           this,
                           SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
+        }
+      // transforms
+      vtkMRMLTransformableNode *transformableNode =
+        vtkMRMLTransformableNode::SafeDownCast(markupsNode);
+      if (transformableNode)
+        {
+        this->qvtkConnect(transformableNode,
+                          vtkMRMLTransformableNode::TransformModifiedEvent,
+                          this,
+                          SLOT(onActiveMarkupsNodeTransformModifiedEvent()));
         }
       }
     }
@@ -2842,6 +2922,14 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeDisplayModifiedEvent()
 {
   // update the display properties
   this->updateWidgetFromDisplayNode();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeTransformModifiedEvent()
+{
+  // update the transform check box label
+  // update the coordinates in the table
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------
@@ -3035,4 +3123,14 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(bool checked)
     d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Name"), 120);
     d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Description"), 240);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onTransformedCoordinatesToggled(bool checked)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  // update the GUI
+  // tbd: only update the coordinates
+  this->updateWidgetFromMRML();
 }
