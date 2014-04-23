@@ -349,6 +349,19 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="hideCoordinateColumnsCheckBox">
+       <property name="toolTip">
+        <string>Check to hide the coordinate columns in the table, uncheck to show them. Right click in rows to see coordinates.</string>
+       </property>
+       <property name="text">
+        <string>Hide XYZ</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

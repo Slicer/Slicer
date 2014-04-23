@@ -229,6 +229,9 @@ public slots:
   /// \sa sliceIntersectionsVisible()
   void onSliceIntersectionsVisibilityToggled(bool checked);
 
+  // update visibility of the coordinate columns in the table
+  void onHideCoordinateColumnsToggled(bool checked);
+
 protected:
   QScopedPointer<qSlicerMarkupsModuleWidgetPrivate> d_ptr;
 

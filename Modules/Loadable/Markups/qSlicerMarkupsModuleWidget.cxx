@@ -386,6 +386,11 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Y"), 65);
   this->activeMarkupTableWidget->setColumnWidth(this->columnIndex("Z"), 65);
 
+  // show/hide the coordinate columns
+  QObject::connect(this->hideCoordinateColumnsCheckBox,
+                   SIGNAL(toggled(bool)),
+                   q, SLOT(onHideCoordinateColumnsToggled(bool)));
+
   // use an icon for some column headers
   // selected is a check box
   QTableWidgetItem *selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(this->columnIndex("Selected"));
@@ -427,6 +432,7 @@ int qSlicerMarkupsModuleWidgetPrivate::numberOfColumns()
 {
   return this->columnLabels.size();
 }
+
 //-----------------------------------------------------------------------------
 // qSlicerMarkupsModuleWidget methods
 
@@ -3005,5 +3011,28 @@ bool qSlicerMarkupsModuleWidget::sliceIntersectionsVisible()
     {
     // if all or some are visible, return true
     return true;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(bool checked)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("X"), checked);
+  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("Y"), checked);
+  d->activeMarkupTableWidget->setColumnHidden(d->columnIndex("Z"), checked);
+
+  if (!checked)
+    {
+    // back to default column widths
+    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Name"), 60);
+    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Description"), 120);
+    }
+  else
+    {
+    // expand the name and description columns
+    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Name"), 120);
+    d->activeMarkupTableWidget->setColumnWidth(d->columnIndex("Description"), 240);
     }
 }
