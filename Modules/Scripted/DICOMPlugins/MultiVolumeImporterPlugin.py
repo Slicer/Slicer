@@ -409,7 +409,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           frameFileListStr = frameFileListStr+file+','
 
         # if mv was parsed by series time, probably makes sense to start from 0
-        if frameTag == 'SeriesTime':
+        if frameTag == 'SeriesTime' or frameTag == 'AcquisitionTime':
           frameLabelsArray.InsertNextValue(tagValue-tagValue0)
           frameLabelsStr = frameLabelsStr+str(tagValue-tagValue0)+','
         else:
