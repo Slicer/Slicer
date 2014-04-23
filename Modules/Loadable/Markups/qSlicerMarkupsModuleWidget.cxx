@@ -2208,6 +2208,7 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
   // qDebug() << "onRightClickActiveMarkupTableWidget: pos = " << pos;
 
   QMenu menu;
+  this->addSelectedCoordinatesToMenu(&menu);
 
   // Delete
   QAction *deleteFiducialAction =
@@ -2241,6 +2242,71 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
                      this, SLOT(onMoveToOtherListActionTriggered()));
     }
   menu.exec(QCursor::pos());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+
+  // get the selected rows
+  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+
+  // first, check if nothing is selected
+  if (selectedItems.isEmpty())
+    {
+    return;
+    }
+
+  // get the active node
+  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
+  if (!markupsNode)
+    {
+    return;
+    }
+
+  // get the list of selected rows to sort them in index order
+  QList<int> rows;
+  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+    {
+    // get the row
+    int row = selectedItems.at(i)->row();
+    rows << row;
+    }
+  // sort the list
+  qSort(rows);
+
+  // loop over the selected rows
+  for (int i = 0; i < rows.size() ; i++)
+    {
+    int row = rows.at(i);
+    int numPoints = markupsNode->GetNumberOfPointsInNthMarkup(row);
+    // label this selected markup if more than one
+    if (rows.size() > 1)
+      {
+      QString indexString =  QString(markupsNode->GetNthMarkupLabel(row).c_str()) +
+        QString(":");
+      menu->addAction(indexString);
+      }
+    for (int p = 0; p < numPoints; ++p)
+      {
+      double point[3];
+      markupsNode->GetMarkupPoint(row, p, point);
+      // format the coordinates
+      QString coordinate =
+        QString::number(point[0]) + QString(",") +
+        QString::number(point[1]) + QString(",") +
+        QString::number(point[2]);
+      menu->addAction(coordinate);
+      }
+    }
+
+  menu->addSeparator();
 }
 
 //-----------------------------------------------------------------------------

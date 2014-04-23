@@ -23,6 +23,7 @@
 
 #include "qSlicerMarkupsModuleExport.h"
 
+class QMenu;
 class QModelIndex;
 class QTableWidgetItem;
 class QShortcut;
@@ -184,6 +185,8 @@ public slots:
                                              int previousRow, int previousColumn);
   /// Provide a right click menu in the table
   void onRightClickActiveMarkupTableWidget(QPoint pos);
+  /// Add the coordinates of the currently selected markups as strings to the given menu, then add a separator
+  void addSelectedCoordinatesToMenu(QMenu *menu);
   /// Jump slices action slot
   void onJumpSlicesActionTriggered();
   /// Build a string list of the names of other nodes with the same
