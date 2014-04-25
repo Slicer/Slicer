@@ -233,7 +233,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 
       #set(label Slicer)
 
-      set_property(GLOBAL PROPERTY SubProject ${label})
+      #set_property(GLOBAL PROPERTY SubProject ${label})
       set_property(GLOBAL PROPERTY Label ${label})
 
       ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
