@@ -4,6 +4,7 @@ set(module_mrml_name "${PROJECT_NAME}")
 
 set(module_mrml_include_directory
   )
+include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
 
 set(module_mrml_SRCS
   vtkMRMLMultiVolumeNode.cxx
@@ -24,7 +25,7 @@ set(module_mrml_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXP
 
 set(module_mrml_target_libraries
   ${MRML_LIBRARIES}
-  ${VTK_LIBRARIES}
+  ${vtkTeem_LIBRARIES}
   )
 
 SlicerMacroBuildModuleMRML(

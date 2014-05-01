@@ -16,6 +16,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLMultiVolumeDisplayNode.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageData.h>
 #include <vtkImageExtractComponents.h>
@@ -35,8 +36,13 @@ vtkMRMLMultiVolumeDisplayNode::vtkMRMLMultiVolumeDisplayNode()
   // Strings
   this->FrameComponent = 0;
   this->ExtractComponent = vtkImageExtractComponents::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->Threshold->SetInput( this->ExtractComponent->GetOutput());
   this->MapToWindowLevelColors->SetInput( this->ExtractComponent->GetOutput());
+#else
+  this->Threshold->SetInputConnection(this->ExtractComponent->GetOutputPort());
+  this->MapToWindowLevelColors->SetInputConnection(this->ExtractComponent->GetOutputPort());
+#endif
 
 }
 
@@ -107,23 +113,45 @@ void vtkMRMLMultiVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLMultiVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
   this->ExtractComponent->SetInput(imageData);
 }
+#else
+void vtkMRMLMultiVolumeDisplayNode
+::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+{
+  this->ExtractComponent->SetInputConnection(imageDataConnection);
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLMultiVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->ExtractComponent->GetInput());
 }
+#else
+vtkAlgorithmOutput* vtkMRMLMultiVolumeDisplayNode::GetInputImageDataConnection()
+{
+  return this->ExtractComponent->GetInputConnection(0,0);
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLMultiVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkAlgorithmOutput* vtkMRMLMultiVolumeDisplayNode::GetOutputImageDataConnection()
+{
+  return this->AppendComponents->GetOutputPort();
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLMultiVolumeDisplayNode::GetScalarImageData()

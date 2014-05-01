@@ -31,6 +31,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
 // VTK includes
+class vtkAlgorithmOutput;
 class vtkImageData;
 class vtkImageExtractComponents;
 
@@ -61,12 +62,20 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeDispla
 
   /// 
   /// Get the pipeline input
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetInputImageData();
-
+#else
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection();
+#endif
   /// 
   /// Get the pipeline output
+#if (VTK_MAJOR_VERSION <= 5)
+  //BTX
   virtual vtkImageData* GetOutputImageData();
-
+  //ETX
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
+#endif
   virtual void UpdateImageDataPipeline();
 
   //--------------------------------------------------------------------------
@@ -86,7 +95,11 @@ protected:
 
   /// 
   /// Set the input of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+#else
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
+#endif
 
   virtual vtkImageData* GetScalarImageData();
 
