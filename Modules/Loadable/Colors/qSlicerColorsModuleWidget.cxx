@@ -215,8 +215,10 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     // procedurally, but provide a look up table rather than a
     // color transfer function
     d->ContinuousDisplayCollapsibleButton->setCollapsed(true);
+    d->ContinuousDisplayCollapsibleButton->setEnabled(false);
     d->ContinuousScalarsToColorsWidget->setEnabled(false);
     d->DisplayCollapsibleButton->setCollapsed(false);
+    d->DisplayCollapsibleButton->setEnabled(true);
 
     // number of colors
     d->NumberOfColorsSpinBox->setEnabled(
@@ -257,7 +259,9 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->LUTRangeWidget->setEnabled(false);
     d->LUTRangeWidget->setValues(0.,0.);
     d->DisplayCollapsibleButton->setCollapsed(true);
+    d->DisplayCollapsibleButton->setEnabled(false);
     d->ContinuousDisplayCollapsibleButton->setCollapsed(false);
+    d->ContinuousDisplayCollapsibleButton->setEnabled(true);
 
     // set the color transfer function to the widget
     d->ContinuousScalarsToColorsWidget->view()->setColorTransferFunctionToPlots(procColorNode->GetColorTransferFunction());
