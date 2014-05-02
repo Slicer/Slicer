@@ -63,22 +63,26 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 //---------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLModelDisplayNode::SetInputPolyData(vtkPolyData* polyData)
-#else
-void vtkMRMLModelDisplayNode::SetInputPolyData(vtkAlgorithm* polyDataFilter,
-                                               vtkPolyData* polyData)
-#endif
 {
-   if (this->GetInputPolyData() == polyData)
-     {
-     return;
-     }
-#if (VTK_MAJOR_VERSION <= 5)
-   this->SetInputToPolyDataPipeline(polyData);
-#else
-   this->SetInputToPolyDataPipeline(polyDataFilter, polyData);
-#endif
-   this->Modified();
+  if (this->GetInputPolyData() == polyData)
+    {
+    return;
+    }
+  this->SetInputToPolyDataPipeline(polyData);
+  this->Modified();
 }
+#else
+void vtkMRMLModelDisplayNode
+::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
+{
+  if (this->GetInputPolyDataConnection() == polyDataConnection)
+    {
+    return;
+    }
+  this->SetInputToPolyDataPipeline(polyDataConnection);
+  this->Modified();
+}
+#endif
 
 //---------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
@@ -88,19 +92,11 @@ void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkPolyData* polyData)
   this->AssignAttribute->SetInput(polyData);
 }
 #else
-void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkAlgorithm* polyDataFilter,
-                                                         vtkPolyData* polyData)
+void vtkMRMLModelDisplayNode
+::SetInputToPolyDataPipeline(vtkAlgorithmOutput* polyDataConnection)
 {
-  if (polyDataFilter != NULL)
-    {
-    this->PassThrough->SetInputConnection(polyDataFilter->GetOutputPort());
-    this->AssignAttribute->SetInputConnection(polyDataFilter->GetOutputPort());
-    }
-  else
-    {
-    this->PassThrough->SetInputData(polyData);
-    this->AssignAttribute->SetInputData(polyData);
-    }
+  this->PassThrough->SetInputConnection(polyDataConnection);
+  this->AssignAttribute->SetInputConnection(polyDataConnection);
 }
 #endif
 
@@ -111,16 +107,18 @@ vtkPolyData* vtkMRMLModelDisplayNode::GetInputPolyData()
 }
 
 #if (VTK_MAJOR_VERSION > 5)
-vtkAlgorithm* vtkMRMLModelDisplayNode::GetInputFilter()
+//---------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputPolyDataConnection()
 {
-  return vtkAlgorithm::SafeDownCast(this->AssignAttribute);
+  return this->AssignAttribute->GetNumberOfInputConnections(0) ?
+    this->AssignAttribute->GetInputConnection(0,0) : 0;
 }
 #endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
 {
-  if (!this->GetOutputPort())
+  if (!this->GetOutputPolyDataConnection())
     {
     return 0;
     }
@@ -129,26 +127,12 @@ vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
     return 0;
     }
   return vtkPolyData::SafeDownCast(
-    this->GetOutputPort()->GetProducer()->GetOutputDataObject(
-      this->GetOutputPort()->GetIndex()));
+    this->GetOutputPolyDataConnection()->GetProducer()->GetOutputDataObject(
+      this->GetOutputPolyDataConnection()->GetIndex()));
 }
-
-#if (VTK_MAJOR_VERSION > 5)
-vtkAlgorithm* vtkMRMLModelDisplayNode::GetOutputFilter()
-{
-  if (this->GetActiveScalarName())
-    {
-    return vtkAlgorithm::SafeDownCast(this->AssignAttribute);
-    }
-  else
-    {
-    return vtkAlgorithm::SafeDownCast(this->PassThrough);
-    }
-}
-#endif
 
 //---------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPort()
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
 {
   if (this->GetActiveScalarName())
     {
@@ -190,7 +174,7 @@ void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
 #if (VTK_MAJOR_VERSION <= 5)
     this->GetOutputPolyData()->Update();
 #else
-    this->GetOutputFilter()->Update();
+    this->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
     if (this->GetAutoScalarRange())
       {

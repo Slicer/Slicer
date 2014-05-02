@@ -80,10 +80,17 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
                                    unsigned long /*event*/,
                                    void * /*callData*/ );
 
+
+  /// Return the output of the glyph producer for the input image data.
+  /// The output is connected as the input of the slice transform.
+  /// It must be reimplemented in subclasses.
+  /// \sa GetOutputPolyData(), GetSliceOutputPort()
+  virtual vtkAlgorithmOutput* GetOutputPolyDataConnection();
+
   /// Return the glyph polydata for the input slice image.
   /// This is the polydata to use in a 3D view.
   /// Reimplemented to by-pass the check on the input polydata.
-  /// \sa GetSliceOutputPolyData(), GetOutputPort()
+  /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
   virtual vtkPolyData* GetOutputPolyData();
 
   /// Return the glyph polyData transfomed to slice XY.
@@ -106,6 +113,10 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort);
   vtkGetObjectMacro(SliceImagePort, vtkAlgorithmOutput);
 #endif
+  /// Return the glyph output transfomed to slice XY.
+  /// Return the output of the glyph producer for the entire volume.
+  /// \sa GetSliceOutputPolyData(), GetOutputPolyDataConnection()
+  virtual vtkAlgorithmOutput* GetSliceOutputPort();
 
   ///
   /// Set slice to RAS transformation
@@ -193,19 +204,9 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToPolyDataPipeline(vtkPolyData *glyphPolyData);
 #else
-  virtual void SetInputToPolyDataPipeline(vtkAlgorithm* polyDataFilter, vtkPolyData *glyphPolyData);
+  virtual void SetInputToPolyDataPipeline(vtkAlgorithmOutput* glyphPolyData);
 #endif
 
-  /// Return the output of the glyph producer for the input image data.
-  /// The output is connected as the input of the slice transform.
-  /// It must be reimplemented in subclasses.
-  /// \sa GetOutputPolyData(), GetSliceOutputPort()
-  virtual vtkAlgorithmOutput* GetOutputPort();
-
-  /// Return the glyph output transfomed to slice XY.
-  /// Return the output of the glyph producer for the entire volume.
-  /// \sa GetSliceOutputPolyData(), GetOutputPort()
-  virtual vtkAlgorithmOutput* GetSliceOutputPort();
 #if (VTK_MAJOR_VERSION <= 5)
     vtkImageData             *SliceImage;
 #else

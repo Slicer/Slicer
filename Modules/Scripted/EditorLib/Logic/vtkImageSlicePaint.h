@@ -95,11 +95,6 @@ public:
   vtkSetObjectMacro(WorkingImage, vtkImageData);
   vtkGetObjectMacro(WorkingImage, vtkImageData);
 
-#if (VTK_MAJOR_VERSION > 5)
-  vtkSetObjectMacro(WorkingImageFilter, vtkImageAlgorithm);
-  vtkGetObjectMacro(WorkingImageFilter, vtkImageAlgorithm);
-#endif
-
   ///
   /// The place to store data pulled out
   vtkSetObjectMacro(ExtractImage, vtkImageData);
@@ -158,9 +153,6 @@ protected:
   vtkImageData *MaskImage;
   vtkImageData *BackgroundImage;
   vtkImageData *WorkingImage;
-#if (VTK_MAJOR_VERSION > 5)
-  vtkImageAlgorithm *WorkingImageFilter;
-#endif
   vtkImageData *ExtractImage;
   vtkImageData *ReplaceImage;
 

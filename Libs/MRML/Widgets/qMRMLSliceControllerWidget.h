@@ -82,7 +82,7 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* imageData()const;
 #else
-  vtkAlgorithmOutput* imageDataPort()const;
+  vtkAlgorithmOutput* imageDataConnection()const;
 #endif
 
   /// Get \a sliceNode
@@ -154,7 +154,7 @@ public slots:
 #if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData* newImageData);
 #else
-  void setImageDataPort(vtkAlgorithmOutput* newImageDataPort);
+  void setImageDataConnection(vtkAlgorithmOutput* newImageDataConnection);
 #endif
 
   /// \sa fitSliceToBackground();
@@ -265,7 +265,7 @@ signals:
 #if (VTK_MAJOR_VERSION <= 5)
   void imageDataChanged(vtkImageData * imageData);
 #else
-  void imageDataPortChanged(vtkAlgorithmOutput * imageDataPort);
+  void imageDataConnectionChanged(vtkAlgorithmOutput * imageDataConnection);
 #endif
   void renderRequested();
 

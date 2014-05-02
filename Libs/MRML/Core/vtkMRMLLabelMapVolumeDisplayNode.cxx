@@ -73,9 +73,9 @@ void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData
   this->MapToColors->SetInput(imageData);
 }
 #else
-void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort)
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
-  this->MapToColors->SetInputConnection(imageDataPort);
+  this->MapToColors->SetInputConnection(imageDataConnection);
 }
 #endif
 
@@ -89,7 +89,7 @@ vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
 #if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
 #else
-vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataPort()
+vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataConnection()
 #endif
 {
   assert(!this->MapToColors->GetLookupTable() ||

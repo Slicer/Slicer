@@ -51,6 +51,9 @@ vtkSeedTracts::vtkSeedTracts()
   this->InputROIValue = -1;
   this->InputMultipleROIValues = NULL;
   this->InputROI2 = NULL;
+#if VTK_MAJOR_VERSION > 5
+  this->InputROIPipelineInfo = NULL;
+#endif
   this->IsotropicSeeding = 0;
   this->IsotropicSeedingResolution = 2;
   this->RandomGrid = 0;
@@ -91,6 +94,9 @@ vtkSeedTracts::~vtkSeedTracts()
   if (this->InputTensorField) this->InputTensorField->Delete();
   if (this->InputROI) this->InputROI->Delete();
   if (this->InputROI2) this->InputROI2->Delete();
+#if VTK_MAJOR_VERSION > 5
+  if (this->InputROIPipelineInfo) this->InputROIPipelineInfo->Delete();
+#endif
 
   // settings
   if (this->VtkHyperStreamlineSettings)

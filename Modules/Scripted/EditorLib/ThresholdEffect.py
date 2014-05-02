@@ -216,11 +216,14 @@ class ThresholdEffectTool(Effect.EffectTool):
     self.map = None
 
     # feedback actor
-    self.cursorDummyImage = vtk.vtkImageData()
-#VTK6 TODO - need to use AllocateScalars(int dataType, int numComponents)
-    self.cursorDummyImage.AllocateScalars()
     self.cursorMapper = vtk.vtkImageMapper()
-    self.cursorMapper.SetInput( self.cursorDummyImage )
+    self.cursorDummyImage = vtk.vtkImageData()
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      self.cursorDummyImage.AllocateScalars()
+      self.cursorMapper.SetInput( self.cursorDummyImage )
+    else:
+      self.cursorDummyImage.AllocateScalars(vtk.VTK_UNSIGNED_INT, 1)
+      self.cursorMapper.SetInputData( self.cursorDummyImage )
     self.cursorActor = vtk.vtkActor2D()
     self.cursorActor.VisibilityOff()
     self.cursorActor.SetMapper( self.cursorMapper )
@@ -256,7 +259,10 @@ class ThresholdEffectTool(Effect.EffectTool):
     self.undoRedo.saveState()
 
     thresh = vtk.vtkImageThreshold()
-    thresh.SetInput( self.editUtil.getBackgroundImage() )
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      thresh.SetInput( self.editUtil.getBackgroundImage() )
+    else:
+      thresh.SetInputData( self.editUtil.getBackgroundImage() )
     thresh.ThresholdBetween(self.min, self.max)
     thresh.SetInValue( self.editUtil.getLabel() )
     thresh.SetOutValue( 0 )
@@ -301,16 +307,22 @@ class ThresholdEffectTool(Effect.EffectTool):
       self.thresh = vtk.vtkImageThreshold()
     sliceLogic = self.sliceWidget.sliceLogic()
     backgroundLogic = sliceLogic.GetBackgroundLayer()
-    self.thresh.SetInput( backgroundLogic.GetReslice().GetOutput() )
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      self.thresh.SetInput( backgroundLogic.GetReslice().GetOutput() )
+    else:
+      self.thresh.SetInputConnection( backgroundLogic.GetReslice().GetOutputPort() )
     self.thresh.ThresholdBetween( self.min, self.max )
     self.thresh.SetInValue( 1 )
     self.thresh.SetOutValue( 0 )
     self.thresh.SetOutputScalarTypeToUnsignedChar()
-    self.map.SetInput( self.thresh.GetOutput() )
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      self.map.SetInput( self.thresh.GetOutput() )
+      self.map.Update()
+      self.cursorMapper.SetInput( self.map.GetOutput() )
+    else:
+      self.map.SetInputConnection( self.thresh.GetOutputPort() )
+      self.cursorMapper.SetInputConnection( self.map.GetOutputPort() )
 
-    self.map.Update()
-
-    self.cursorMapper.SetInput( self.map.GetOutput() )
     self.cursorActor.VisibilityOn()
 
     self.sliceView.scheduleRender()

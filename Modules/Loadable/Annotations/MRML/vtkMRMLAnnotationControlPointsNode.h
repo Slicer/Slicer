@@ -14,7 +14,8 @@
 class vtkMRMLAnnotationPointDisplayNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsNode : public vtkMRMLAnnotationNode
+class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsNode
+  : public vtkMRMLAnnotationNode
 {
 public:
   static vtkMRMLAnnotationControlPointsNode *New();

@@ -335,13 +335,13 @@ vtkITKBSplineTransform
     vtkErrorMacro( "need to call SetSplineOrder before SetParameters" );
     return;
     }
-  unsigned int N=Helper->GetNumberOfParameters();
+  size_t N=Helper->GetNumberOfParameters();
   if (N==0)
     {
     return;
     }
   double *paramDouble=new double[N];
-  for (unsigned int i=0; i<N; i++)
+  for (size_t i=0; i<N; i++)
   {
     paramDouble[i]=param[i];
   }
@@ -402,7 +402,7 @@ vtkITKBSplineTransform
     return;
     }
   double *paramDouble=new double[N];
-  for (unsigned int i=0; i<N; i++)
+  for (size_t i=0; i<N; i++)
   {
     paramDouble[i]=param[i];
   }

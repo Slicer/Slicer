@@ -152,9 +152,6 @@ void vtkMRMLScalarVolumeDisplayNode::SetDefaultColorMap()
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLScalarVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
-#else
-void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort)
-#endif
 {
   if (this->GetInputImageData() != NULL)
     {
@@ -162,11 +159,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataPort(vtkAlgorithmOutput *i
       this->GetInputImageData(), vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
   this->Superclass::SetInputImageData(imageData);
-#else
-  this->Superclass::SetInputImageDataPort(imageDataPort);
-#endif
 
   if (this->GetInputImageData() != NULL)
     {
@@ -174,6 +167,33 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataPort(vtkAlgorithmOutput *i
       this->GetInputImageData(), vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
+#else
+void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+{
+  if (this->GetInputImageDataConnection() == imageDataConnection)
+    {
+    return;
+    }
+  vtkAlgorithm* oldInputImageDataAlgorithm = this->GetInputImageDataConnection() ?
+    this->GetInputImageDataConnection()->GetProducer() : 0;
+
+  if (oldInputImageDataAlgorithm != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      oldInputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  this->Superclass::SetInputImageDataConnection(imageDataConnection);
+
+  vtkAlgorithm* inputImageDataAlgorithm = this->GetInputImageDataConnection() ?
+    this->GetInputImageDataConnection()->GetProducer() : 0;
+  if (inputImageDataAlgorithm != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      inputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+}
+#endif
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
@@ -183,10 +203,11 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *i
   this->MapToWindowLevelColors->SetInput(imageData);
 }
 #else
-void vtkMRMLScalarVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+void vtkMRMLScalarVolumeDisplayNode
+::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
 {
-  this->Threshold->SetInputConnection(imageDataPort);
-  this->MapToWindowLevelColors->SetInputConnection(imageDataPort);
+  this->Threshold->SetInputConnection(imageDataConnection);
+  this->MapToWindowLevelColors->SetInputConnection(imageDataConnection);
 }
 #endif
 
@@ -196,29 +217,36 @@ void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 {
   this->ResliceAlphaCast->SetInput(imageData);
 }
-#else
-void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageDataPort(vtkAlgorithmOutput *imageDataPort)
-{
-  this->ResliceAlphaCast->SetInputConnection(imageDataPort);
-}
-#endif
-
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageData()
 {
   return vtkImageData::SafeDownCast(this->ResliceAlphaCast->GetInput());
 }
+#else
+void vtkMRMLScalarVolumeDisplayNode
+::SetBackgroundImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+{
+  this->ResliceAlphaCast->SetInputConnection(imageDataConnection);
+}
+//----------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageDataConnection()
+{
+  return this->ResliceAlphaCast->GetNumberOfInputConnections(0) ?
+    this->ResliceAlphaCast->GetInputConnection(0,0) : 0;
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
 }
-
-#if (VTK_MAJOR_VERSION > 5)
-vtkImageAlgorithm* vtkMRMLScalarVolumeDisplayNode::GetInputImageFilter()
+#else
+vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetInputImageDataConnection()
 {
-  return vtkImageAlgorithm::SafeDownCast(this->MapToWindowLevelColors);
+  return this->MapToWindowLevelColors->GetNumberOfInputConnections(0) ?
+    this->MapToWindowLevelColors->GetInputConnection(0,0) : 0;
 }
 #endif
 
@@ -229,7 +257,7 @@ vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetOutputImageData()
   return this->AppendComponents->GetOutput();
 }
 #else
-vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetOutputImageDataPort()
+vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetOutputImageDataConnection()
 {
   return this->AppendComponents->GetOutputPort();
 }
@@ -686,8 +714,21 @@ void vtkMRMLScalarVolumeDisplayNode::ResetWindowLevelPresets()
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetScalarImageData()
 {
+#if VTK_MAJOR_VERSION <= 5
   return this->GetInputImageData();
 }
+#else
+  vtkAlgorithm* producer = this->GetScalarImageDataConnection() ?
+    this->GetScalarImageDataConnection()->GetProducer() : 0;
+  return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : 0);
+}
+
+//---------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetScalarImageDataConnection()
+{
+  return this->GetInputImageDataConnection();
+}
+#endif
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
@@ -710,7 +751,7 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
 #if (VTK_MAJOR_VERSION <= 5)
   imageData->Update();
 #else
-  this->GetInputImageFilter()->Update();
+  this->GetScalarImageDataConnection()->GetProducer()->Update();
 #endif
   imageData->GetScalarRange(range);
   if (imageData->GetNumberOfScalarComponents() >=3 &&

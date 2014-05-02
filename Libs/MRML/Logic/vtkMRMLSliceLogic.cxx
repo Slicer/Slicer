@@ -105,7 +105,7 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 #if (VTK_MAJOR_VERSION <= 5)
   this->ImageData = 0;
 #else
-  this->ImageDataPort = 0;
+  this->ImageDataConnection = 0;
 #endif
   this->SliceSpacing[0] = this->SliceSpacing[1] = this->SliceSpacing[2] = 1;
   this->AddingSliceModelNodes = false;
@@ -124,9 +124,9 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     this->ImageData = 0;
     }
 #else
-  if (this->ImageDataPort)
+  if (this->ImageDataConnection)
     {
-    this->ImageDataPort = 0;
+    this->ImageDataConnection = 0;
     }
 #endif
 
@@ -532,7 +532,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       && this->GetMRMLScene()->GetNodeByID( this->SliceModelNode->GetID() ) != 0
       && this->SliceModelNode->GetPolyData() != 0 )
     {
-
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
 
     int *dims1=0;
@@ -587,7 +586,7 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 #if (VTK_MAJOR_VERSION <= 5)
       if (this->LabelLayer && this->LabelLayer->GetImageDataUVW())
 #else
-      if (this->LabelLayer && this->LabelLayer->GetImageDataPortUVW())
+      if (this->LabelLayer && this->LabelLayer->GetImageDataConnectionUVW())
 #endif
         {
         modelDisplayNode->SetInterpolateTexture(0);
@@ -813,18 +812,21 @@ vtkImageData * vtkMRMLSliceLogic::GetImageData()
     }
 }
 #else
-vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataPort()
+vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataConnection()
 {
-   if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataPort() != 0) ||
-       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataPort() != 0) ||
-       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataPort() != 0) )
+/*   if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataConnection() != 0) ||
+       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataConnection() != 0) ||
+       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataConnection() != 0) )
     {
-    return this->ImageDataPort;
+*/
+    return this->ImageDataConnection;
+/*
     }
    else
     {
     return 0;
     }
+*/
 }
 #endif
 
@@ -890,7 +892,7 @@ void vtkMRMLSliceLogic::UpdateImageData ()
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
     this->ExtractModelTexture->SetInputConnection( this->Blend->GetOutputPort() );
-    this->ImageDataPort = this->Blend->GetOutputPort();
+    this->ImageDataConnection = this->Blend->GetOutputPort();
     }
   else
     {
@@ -899,21 +901,21 @@ void vtkMRMLSliceLogic::UpdateImageData ()
   // It seems very strange that the imagedata can be null.
   // It should probably be always a valid imagedata with invalid bounds if needed
 
-  if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataPort() != 0) ||
-       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataPort() != 0) ||
-       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataPort() != 0) )
+  if ( (this->GetBackgroundLayer() != 0 && this->GetBackgroundLayer()->GetImageDataConnection() != 0) ||
+       (this->GetForegroundLayer() != 0 && this->GetForegroundLayer()->GetImageDataConnection() != 0) ||
+       (this->GetLabelLayer() != 0 && this->GetLabelLayer()->GetImageDataConnection() != 0) )
     {
-    if (this->ImageDataPort == 0 || this->Blend->GetOutputPort()->GetMTime() > this->ImageDataPort->GetMTime())
+    if (this->ImageDataConnection == 0 || this->Blend->GetOutputPort()->GetMTime() > this->ImageDataConnection->GetMTime())
       {
-      this->ImageDataPort = this->Blend->GetOutputPort();
+      this->ImageDataConnection = this->Blend->GetOutputPort();
       }
     }
   else
     {
-    this->ImageDataPort = 0;
+    this->ImageDataConnection = 0;
     if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
-      this->ExtractModelTexture->SetInputConnection( this->ImageDataPort );
+      this->ExtractModelTexture->SetInputConnection( this->ImageDataConnection );
       }
     else
       {
@@ -1020,11 +1022,11 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     vtkImageData* backgroundImageUVW = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataUVW() : 0;
     vtkImageData* foregroundImageUVW = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataUVW() : 0;
 #else
-    vtkAlgorithmOutput* backgroundImagePort = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataPort() : 0;
-    vtkAlgorithmOutput* foregroundImagePort = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataPort() : 0;
+    vtkAlgorithmOutput* backgroundImagePort = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataConnection() : 0;
+    vtkAlgorithmOutput* foregroundImagePort = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataConnection() : 0;
 
-    vtkAlgorithmOutput* backgroundImagePortUVW = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataPortUVW() : 0;
-    vtkAlgorithmOutput* foregroundImagePortUVW = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataPortUVW() : 0;
+    vtkAlgorithmOutput* backgroundImagePortUVW = this->BackgroundLayer ? this->BackgroundLayer->GetImageDataConnectionUVW() : 0;
+    vtkAlgorithmOutput* foregroundImagePortUVW = this->ForegroundLayer ? this->ForegroundLayer->GetImageDataConnectionUVW() : 0;
 #endif
 
     if (!alphaBlending)
@@ -1253,8 +1255,8 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         }
       }
     // always blending the label layer
-    vtkAlgorithmOutput* labelImagePort = this->LabelLayer ? this->LabelLayer->GetImageDataPort() : 0;
-    vtkAlgorithmOutput* labelImagePortUVW = this->LabelLayer ? this->LabelLayer->GetImageDataPortUVW() : 0;
+    vtkAlgorithmOutput* labelImagePort = this->LabelLayer ? this->LabelLayer->GetImageDataConnection() : 0;
+    vtkAlgorithmOutput* labelImagePortUVW = this->LabelLayer ? this->LabelLayer->GetImageDataConnectionUVW() : 0;
     if ( labelImagePort )
       {
       this->Blend->AddInputConnection( labelImagePort );
@@ -1313,13 +1315,13 @@ void vtkMRMLSliceLogic::UpdatePipeline()
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
           !((backgroundImagePort != 0) || (foregroundImagePort != 0) || (labelImagePort != 0) ) ))
         {
-        displayNode->SetAndObserveTextureImageDataPort(0);
+        displayNode->SetTextureImageDataConnection(0);
         }
-      else if (displayNode->GetTextureImageDataPort() != this->ExtractModelTexture->GetOutputPort())
+      else if (displayNode->GetTextureImageDataConnection() != this->ExtractModelTexture->GetOutputPort())
         {
-        displayNode->SetAndObserveTextureImageDataPort(this->ExtractModelTexture->GetOutputPort());
+        displayNode->SetTextureImageDataConnection(this->ExtractModelTexture->GetOutputPort());
         }
-        if ( this->LabelLayer && this->LabelLayer->GetImageDataPort())
+        if ( this->LabelLayer && this->LabelLayer->GetImageDataConnection())
 #endif
           {
           modelDisplayNode->SetInterpolateTexture(0);
@@ -1439,7 +1441,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
 #if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelNode->SetAndObservePolyData(0);
 #else
-    this->SliceModelNode->SetAndObservePolyFilterAndData(0);
+    this->SliceModelNode->SetPolyDataConnection(0);
 #endif
     }
   if (this->SliceModelDisplayNode != 0)
@@ -1447,7 +1449,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
 #if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(0);
 #else
-    this->SliceModelDisplayNode->SetAndObserveTextureImageDataPort(0);
+    this->SliceModelDisplayNode->SetTextureImageDataConnection(0);
 #endif
     }
 
@@ -1512,7 +1514,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetAndObservePolyData(planeSource->GetOutput());
 #else
     planeSource->Update();
-    this->SliceModelNode->SetAndObservePolyFilterAndData(planeSource.GetPointer());
+    this->SliceModelNode->SetPolyDataConnection(planeSource->GetOutputPort());
 #endif
     this->SliceModelNode->SetDisableModifiedEvent(0);
 
@@ -1536,7 +1538,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 #if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
 #else
-    this->SliceModelDisplayNode->SetAndObserveTextureImageDataPort(this->ExtractModelTexture->GetOutputPort());
+    this->SliceModelDisplayNode->SetTextureImageDataConnection(this->ExtractModelTexture->GetOutputPort());
 #endif
     this->SliceModelDisplayNode->SetSaveWithScene(0);
     this->SliceModelDisplayNode->SetDisableModifiedEvent(0);
@@ -1577,7 +1579,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 #if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
 #else
-    this->SliceModelDisplayNode->SetAndObserveTextureImageDataPort(this->ExtractModelTexture->GetOutputPort());
+    this->SliceModelDisplayNode->SetTextureImageDataConnection(this->ExtractModelTexture->GetOutputPort());
 #endif
     this->SliceModelNode->SetAndObserveTransformNodeID(this->SliceModelTransformNode->GetID());
     }

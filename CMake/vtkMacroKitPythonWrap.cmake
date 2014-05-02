@@ -49,7 +49,11 @@ macro(vtkMacroKitPythonWrap)
     include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
 
     set(TMP_WRAP_FILES ${MY_KIT_SRCS} ${MY_KIT_WRAP_HEADERS})
+    set(old_VTK_WRAP_INCLUDE_DIRS ${VTK_WRAP_INCLUDE_DIRS})
+    get_property(local_include_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+    set(VTK_WRAP_INCLUDE_DIRS ${local_include_dirs} ${VTK_INCLUDE_DIRS})
     VTK_WRAP_PYTHON3(${MY_KIT_NAME}Python KitPython_SRCS "${TMP_WRAP_FILES}")
+    set(VTK_WRAP_INCLUDE_DIRS ${old_VTK_WRAP_INCLUDE_DIRS})
 
     include_directories("${PYTHON_INCLUDE_PATH}")
 
@@ -60,10 +64,11 @@ macro(vtkMacroKitPythonWrap)
     # Not all the vtk libraries have their python wrapping
     if(${VTK_VERSION_MAJOR} GREATER 5)
        set(VTK_NO_PYTHON_WRAP_LIBRARIES
-         vtksys
          vtkexpat
-         vtkjsoncpp
          vtkexoIIc
+         vtkjsoncpp
+         vtkpng
+         vtksys
          vtkNetCDF
          vtkNetCDF_cxx
          vtkhdf5_hl
@@ -86,12 +91,15 @@ macro(vtkMacroKitPythonWrap)
          vtkViewsQt
          vtkGUISupportQtWebkit
          vtkGUISupportQtSQL
-         vtkRenderingFreeTypeFontConfig
          vtkGUISupportQtOpenGL
          )
-       else()
-         set(VTK_NO_PYTHON_WRAP_LIBRARIES "")
-       endif()
+      if (NOT WIN32)
+        list(APPEND VTK_NO_PYTHON_WRAP_LIBRARIES
+          vtkRenderingFreeTypeFontConfig)
+      endif()
+    else()
+      set(VTK_NO_PYTHON_WRAP_LIBRARIES "")
+    endif()
     foreach(lib ${VTK_NO_PYTHON_WRAP_LIBRARIES})
       list(REMOVE_ITEM VTK_LIBRARIES ${lib})
     endforeach()

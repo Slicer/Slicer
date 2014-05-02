@@ -450,6 +450,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateVolumeDisplay
     {
     return;
     }
+  std::cout << "vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateVolumeDisplayNode()" << std::endl;
   if (it == this->Actors.end())
     {
     this->AddActor(displayNode);
@@ -484,15 +485,15 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
     {
     vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dtiDisplayNode =
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(displayNode);
-    vtkPolyData* polyData = dtiDisplayNode->GetSliceOutputPolyData();
 
     vtkActor2D* actor2D = vtkActor2D::SafeDownCast(actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
       actor2D->GetMapper());
 #if (VTK_MAJOR_VERSION <= 5)
+    vtkPolyData* polyData = dtiDisplayNode->GetSliceOutputPolyData();
     mapper->SetInput( polyData );
 #else
-    mapper->SetInputData( polyData );
+    mapper->SetInputConnection( dtiDisplayNode->GetSliceOutputPort() );
 #endif
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
                             dtiDisplayNode->GetColorNode()->GetScalarsToColors() : 0);

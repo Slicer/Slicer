@@ -33,8 +33,6 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData);
-#else
-vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageDataPort, vtkAlgorithmOutput);
 #endif
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ActiveScalarName);
@@ -92,7 +90,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 #if (VTK_MAJOR_VERSION <= 5)
   this->TextureImageData = NULL;
 #else
-  this->TextureImageDataPort = NULL;
+  this->TextureImageDataConnection = NULL;
 #endif
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
@@ -111,7 +109,7 @@ vtkMRMLDisplayNode::~vtkMRMLDisplayNode()
 #if (VTK_MAJOR_VERSION <= 5)
   this->SetAndObserveTextureImageData(NULL);
 #else
-  this->SetAndObserveTextureImageDataPort(NULL);
+  this->SetTextureImageDataConnection(NULL);
 #endif
   this->SetAndObserveColorNodeID( NULL);
 }
@@ -580,7 +578,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
 #if (VTK_MAJOR_VERSION <= 5)
   this->SetAndObserveTextureImageData(node->TextureImageData);
 #else
-  this->SetAndObserveTextureImageDataPort(node->TextureImageDataPort);
+  this->SetTextureImageDataConnection(node->TextureImageDataConnection);
 #endif
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
@@ -681,20 +679,38 @@ void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
     }
 }
 #else
-void vtkMRMLDisplayNode::SetAndObserveTextureImageDataPort(vtkAlgorithmOutput *ImageDataPort)
+void vtkMRMLDisplayNode
+::SetTextureImageDataConnection(vtkAlgorithmOutput* newTextureImageDataConnection)
 {
-  if (this->TextureImageDataPort != NULL)
+   if (newTextureImageDataConnection == this->TextureImageDataConnection)
     {
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->TextureImageDataPort, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    return;
     }
 
-  this->SetTextureImageDataPort(ImageDataPort);
-  if (this->TextureImageDataPort != NULL)
+  vtkAlgorithm* oldTextureImageDataAlgorithm = this->TextureImageDataConnection ?
+    this->TextureImageDataConnection->GetProducer() : 0;
+
+  this->TextureImageDataConnection = newTextureImageDataConnection;
+
+  vtkAlgorithm* textureImageDataAlgorithm = this->TextureImageDataConnection ?
+    this->TextureImageDataConnection->GetProducer() : 0;
+
+  if (textureImageDataAlgorithm != NULL)
     {
     vtkEventBroker::GetInstance()->AddObservation(
-      this->TextureImageDataPort, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+      this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
+      this, this->MRMLCallbackCommand );
+    textureImageDataAlgorithm->Register(this);
     }
+
+  if (oldTextureImageDataAlgorithm != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
+      this, this->MRMLCallbackCommand );
+    oldTextureImageDataAlgorithm->UnRegister(this);
+    }
+  this->Modified();
 }
 #endif
 
@@ -789,8 +805,9 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   if (this->TextureImageData != NULL && this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
 #else
-  if (this->TextureImageDataPort != NULL && this->TextureImageDataPort == vtkAlgorithmOutput::SafeDownCast(caller) &&
-    event ==  vtkCommand::ModifiedEvent)
+  if (this->TextureImageDataConnection != NULL &&
+      this->TextureImageDataConnection == vtkAlgorithmOutput::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
 #endif
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);

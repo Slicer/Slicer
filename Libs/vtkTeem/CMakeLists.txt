@@ -11,6 +11,10 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
+
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
@@ -29,15 +33,6 @@ set(Teem_LIBRARIES teem)
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
-
-# --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
-set(include_dirs
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-include_directories(${include_dirs})
 
 # --------------------------------------------------------------------------
 # Configure headers
@@ -65,8 +60,6 @@ endif()
 # Sources
 # --------------------------------------------------------------------------
 set(vtkTeem_SRCS
-  vtkNRRDReader.cxx
-  vtkNRRDWriter.cxx
   vtkDiffusionTensorMathematics.cxx
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
@@ -76,6 +69,8 @@ set(vtkTeem_SRCS
   vtkHyperPointandArray.cxx
   vtkHyperStreamlineDTMRI.cxx
   vtkHyperStreamlineTeem.cxx
+  vtkNRRDReader.cxx
+  vtkNRRDWriter.cxx
   vtkPreciseHyperStreamline.cxx
   vtkPreciseHyperStreamlinePoints.cxx
   vtkSeedTracts.cxx
@@ -99,6 +94,14 @@ set_source_files_properties(
   vtkTractographyPointAndArray.cxx
   WRAP_EXCLUDE
   )
+# --------------------------------------------------------------------------
+# Include dirs
+# --------------------------------------------------------------------------
+set(include_dirs
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+include_directories(BEFORE ${include_dirs})
 
 # --------------------------------------------------------------------------
 # Build library
@@ -123,6 +126,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkIOImage
     vtkIOLegacy
     vtkImagingCore
+    vtksys
   )
 else()
   set(VTK_LIBRARIES

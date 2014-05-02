@@ -593,6 +593,16 @@ protected:
         this->Events->Delete();
         this->Events = 0;
         }
+      if (this->ReferenceRole)
+        {
+        delete [] this->ReferenceRole;
+        this->ReferenceRole = 0;
+        }
+      if (this->ReferencedNodeID)
+        {
+        delete [] this->ReferencedNodeID;
+        this->ReferencedNodeID = 0;
+        }
       };
     vtkMRMLNodeReference(const vtkMRMLNodeReference&);
     void operator=(const vtkMRMLNodeReference&);

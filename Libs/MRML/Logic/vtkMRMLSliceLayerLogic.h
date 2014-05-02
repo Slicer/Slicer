@@ -43,8 +43,9 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 
 // VTK includes
-#include "vtkImageLogic.h"
-#include "vtkImageExtractComponents.h"
+#include <vtkImageLogic.h>
+#include <vtkImageExtractComponents.h>
+#include <vtkVersion.h>
 
 class vtkAssignAttribute;
 class vtkImageResliceMask;
@@ -100,22 +101,16 @@ public:
 
   ///
   /// Get the output of the pipeline for this layer
-#if (VTK_MAJOR_VERSION <= 5)
-  //BTX
   vtkImageData *GetImageData();
-  //ETX
-#else
-  vtkAlgorithmOutput *GetImageDataPort();
+#if (VTK_MAJOR_VERSION > 5)
+  vtkAlgorithmOutput *GetImageDataConnection();
 #endif
 
   ///
   /// Get the output of the texture UVW pipeline for this layer
-#if (VTK_MAJOR_VERSION <= 5)
-  //BTX
   vtkImageData *GetImageDataUVW();
-  //ETX
-#else
-  vtkAlgorithmOutput *GetImageDataPortUVW();
+#if (VTK_MAJOR_VERSION > 5)
+  vtkAlgorithmOutput *GetImageDataConnectionUVW();
 #endif
 
   void UpdateImageDisplay();
@@ -162,8 +157,8 @@ protected:
   vtkImageData* GetSliceImageData();
   vtkImageData* GetSliceImageDataUVW();
 #else
-  vtkAlgorithmOutput* GetSliceImageDataPort();
-  vtkAlgorithmOutput* GetSliceImageDataPortUVW();
+  vtkAlgorithmOutput* GetSliceImageDataConnection();
+  vtkAlgorithmOutput* GetSliceImageDataConnectionUVW();
 #endif
 
   // Copy VolumeDisplayNodeObserved into VolumeDisplayNode

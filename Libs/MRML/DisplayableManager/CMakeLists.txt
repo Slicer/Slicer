@@ -138,48 +138,22 @@ add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
   set(VTK_LIBRARIES
-    #vtkCommonCore # Provided by MRMLCore, MRMLLogic
-    #vtkCommonDataModel # Provided by MRMLCore, MRMLLogic
-    #vtkCommonMath # Provided by MRMLCore, MRMLLogic
-    #vtkCommonMisc # Provided by MRMLCore, MRMLLogic
     vtkCommonTransforms
-    #vtkFiltersCore # Provided by MRMLCore, MRMLLogic
-    #vtkFiltersGeneral # Provided by MRMLCore, MRMLLogic
-    #vtkFiltersSources # Provided by MRMLCore, MRMLLogic
-    #vtkIOImage # Provided by MRMLCore, MRMLLogic
-    #vtkInteractionStyle # Provided by MRMLCore, MRMLLogic
     vtkInteractionWidgets
     vtkRenderingFreeType
-    #vtkRenderingCore # Provided by MRMLCore, MRMLLogic
-    #vtkRenderingFreeTypeOpenGL # Provided by MRMLCore, MRMLLogic
-    #vtkRenderingOpenGL # Provided by MRMLCore, MRMLLogic
     vtkTestingRendering
     )
 else()
   set(VTK_LIBRARIES
-    #vtkCommon # Provided by MRMLCore, MRMLLogic
-    #vtkFiltering # Provided by MRMLCore, MRMLLogic
-    #vtkGraphics # Provided by MRMLCore, MRMLLogic
-    #vtkHybrid # Provided by MRMLCore
-    #vtkIO # Provided by MRMLCore
-    #vtkRendering # Provided by MRMLCore, MRMLLogic
     vtkWidgets
     )
 endif()
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(libs
-    ${VTK_LIBRARIES}
-    vtkRenderingFreeTypeFontConfig
-    MRMLCore
-    MRMLLogic
-   )
-else()
-  set(libs
-    ${VTK_LIBRARIES}
-    MRMLCore
-    MRMLLogic
-   )
-endif()
+
+set(libs
+  ${VTK_LIBRARIES}
+  MRMLCore
+  MRMLLogic
+  )
 
 if(MRMLDisplayableManager_USE_PYTHON)
   if(${VTK_VERSION_MAJOR} GREATER 5)

@@ -92,12 +92,12 @@ public:
 
   ///
   /// Get X and Y values at the data point specified by 'index'
-  int GetXYAxisValue(int index, double* x, double* y);
+  /// \fixme int GetXYAxisValue(int index, double* x, double* y);
 
   ///
   /// Get X and Y values with error (or standard deviation) of Y,
   /// at the data point specified by 'index'
-  int GetXYAxisValue(int index, double* x, double* y, double*  yerr);
+  /// \fixme int GetXYAxisValue(int index, double* x, double* y, double*  yerr);
 
   ///
   /// Set X and Y values at he data point specified by 'index'

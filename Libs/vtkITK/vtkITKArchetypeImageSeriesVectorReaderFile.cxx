@@ -18,6 +18,7 @@
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
+#include <vtkDataArrayTemplate.h>
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
@@ -77,8 +78,9 @@ void vtkITKExecuteDataFromFileVector(
   typename itk::ImportImageContainer<unsigned long, T>::Pointer PixelContainer2;
   PixelContainer2 = filter->GetOutput()->GetPixelContainer();
   void *ptr = static_cast<void *> (PixelContainer2->GetBufferPointer());
-  data->GetPointData()->GetScalars()
-    ->SetVoidArray(ptr, PixelContainer2->Size(), 0);
+  dynamic_cast<vtkDataArrayTemplate<T>* >(data->GetPointData()->GetScalars())
+    ->SetVoidArray(ptr, PixelContainer2->Size(), 0,
+                   vtkDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
   PixelContainer2->ContainerManageMemoryOff();
 }
 

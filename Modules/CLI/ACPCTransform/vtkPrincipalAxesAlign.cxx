@@ -32,7 +32,7 @@ int vtkPrincipalAxesAlign::RequestData(vtkInformation* vtkNotUsed(request),
       vtkInformationVector** inInfoVec,
       vtkInformationVector* vtkNotUsed(outInfoVec))
 {
-  vtkPolyData *         input = (vtkPolyData *)vtkImageData::GetData(inInfoVec[0]);
+  vtkPolyData *         input = vtkPolyData::GetData(inInfoVec[0]);
 #endif
 
   vtkIdType             nr_points = input->GetNumberOfPoints();

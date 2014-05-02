@@ -288,7 +288,7 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
-set(VTK_VERSION_MAJOR 6 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
+set(VTK_VERSION_MAJOR 5 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
 # Set the possible values of VTK major version for cmake-gui
 set_property(CACHE VTK_VERSION_MAJOR PROPERTY STRINGS "5" "6")
 if(NOT "${VTK_VERSION_MAJOR}" STREQUAL "5" AND NOT "${VTK_VERSION_MAJOR}" STREQUAL "6")
@@ -297,11 +297,11 @@ if(NOT "${VTK_VERSION_MAJOR}" STREQUAL "5" AND NOT "${VTK_VERSION_MAJOR}" STREQU
 endif()
 mark_as_superbuild(VTK_VERSION_MAJOR)
 
-set(USE_VTKv5 OFF)
-set(USE_VTKv6 ON)
-if(${VTK_VERSION_MAJOR} STREQUAL "5")
-  set(USE_VTKv5 ON)
-  set(USE_VTKv6 OFF)
+set(USE_VTKv5 ON)
+set(USE_VTKv6 OFF)
+if(${VTK_VERSION_MAJOR} STREQUAL "6")
+  set(USE_VTKv5 OFF)
+  set(USE_VTKv6 ON)
 endif()
 
 #
@@ -755,7 +755,7 @@ include(${ITK_USE_FILE})
 # VTK
 #-----------------------------------------------------------------------------
 if(${VTK_VERSION_MAJOR} STREQUAL "6")
-  find_package(VTK 6.0 REQUIRED NO_MODULE)
+  find_package(VTK 6.1 REQUIRED NO_MODULE)
   if(NOT TARGET vtkGUISupportQt)
     message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
                       "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "

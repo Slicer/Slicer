@@ -26,8 +26,11 @@
 #ifndef __vtkDiffusionTensorMathematics_h
 #define __vtkDiffusionTensorMathematics_h
 
+// vtkTeem includes
 #include "vtkTeemConfigure.h"
-#include "vtkThreadedImageAlgorithm.h"
+
+// VTK includes
+#include <vtkThreadedImageAlgorithm.h>
 
 class vtkMatrix4x4;
 class vtkImageData;

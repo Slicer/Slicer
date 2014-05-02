@@ -59,6 +59,7 @@ const int minimumWidth = 500;
 //-----------------------------------------------------------------------------
 int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 {
+  bool res = true;
   qSlicerApplication app(argc, argv);
   app.errorLogModel()->setTerminalOutputs(ctkErrorLogModel::All);
 
@@ -179,7 +180,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
               << " qSlicer@MODULENAME@Module widget has a minimum size hint width"
               << " of " << widget->minimumSizeHint().width() << "px. It is wider"
               << " than the max width of " << minimumWidth << "px." << std::endl;
-    return EXIT_FAILURE;
+    res = false;
     }
 
   widget->enter();
@@ -193,7 +194,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 #ifdef Slicer_USE_PYTHONQT
   if (pythonManager->pythonErrorOccured())
     {
-    return EXIT_FAILURE;
+    res = false;
     }
 #endif
 
@@ -201,5 +202,5 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-  return app.exec();
+  return (app.exec() == EXIT_SUCCESS && res) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -66,7 +66,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
 #if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
 #else
-  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
 #endif
 
   virtual void UpdateImageDataPipeline();
@@ -91,16 +91,18 @@ protected:
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 #else
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
 #endif
 
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetScalarImageData();
+#else
+  virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
+#endif
 
+  /// This property holds the current diffusion component used for display.
   int DiffusionComponent;
-
   vtkImageExtractComponents *ExtractComponent;
-
-
 };
 
 #endif

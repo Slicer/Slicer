@@ -98,7 +98,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
 #if (VTK_MAJOR_VERSION <= 5)
   modelNode->SetAndObservePolyData(sphereSource->GetOutput());
 #else
-  modelNode->SetAndObservePolyFilterAndData(sphereSource.GetPointer());
+  modelNode->SetPolyDataConnection(sphereSource->GetOutputPort());
 #endif
 
   scene->AddNode(modelNode.GetPointer());

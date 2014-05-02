@@ -122,7 +122,10 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
 
     self.mapper = vtk.vtkPolyDataMapper2D()
     self.actor = vtk.vtkActor2D()
-    self.mapper.SetInput(self.polyData)
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      self.mapper.SetInput(self.polyData)
+    else:
+      self.mapper.SetInputData(self.polyData)
     self.actor.SetMapper(self.mapper)
     property_ = self.actor.GetProperty()
     property_.SetColor(1,1,0)

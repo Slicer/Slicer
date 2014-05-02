@@ -18,14 +18,17 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include "vtkDebugLeaks.h"
-#include "vtkXMLPolyDataReader.h"
-#include "vtkXMLPolyDataWriter.h"
-#include "vtkPolyDataReader.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkAppendPolyData.h"
-#include <vtkVersion.h>
 #include "MergeModelsCLP.h"
+
+// VTK includes
+#include <vtkAlgorithmOutput.h>
+#include <vtkAppendPolyData.h>
+#include <vtkDebugLeaks.h>
+#include <vtkPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkVersion.h>
 #include <vtksys/SystemTools.hxx>
 
 int main( int argc, char * argv[] )
@@ -34,15 +37,19 @@ int main( int argc, char * argv[] )
 
   vtkDebugLeaks::SetExitError(true);
 
-  vtkPolyData *         model1 = NULL;
-  vtkPolyDataReader *   pdReader1 = NULL;
-  vtkXMLPolyDataReader *pdxReader1 = NULL;
-  vtkPolyData *         model2 = NULL;
-  vtkPolyDataReader *   pdReader2 = NULL;
-  vtkXMLPolyDataReader *pdxReader2 = NULL;
+#if (VTK_MAJOR_VERSION <= 5)
+  vtkPolyData* model1 = NULL;
+  vtkPolyData* model2 = NULL;
+  vtkAlgorithm* reader1 = NULL;
+  vtkAlgorithm* reader2 = NULL;
+#else
+  vtkAlgorithmOutput* reader1 = NULL;
+  vtkAlgorithmOutput* reader2 = NULL;
+#endif
 
   // do we have vtk or vtp models?
-  std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(Model1) );
+  std::string extension = vtksys::SystemTools::LowerCase(
+    vtksys::SystemTools::GetFilenameLastExtension(Model1) );
   if( extension.empty() )
     {
     std::cerr << "Failed to find an extension for " << Model1 << std::endl;
@@ -52,20 +59,33 @@ int main( int argc, char * argv[] )
   // read the first poly data
   if( extension == std::string(".vtk") )
     {
-    pdReader1 = vtkPolyDataReader::New();
+    vtkPolyDataReader* pdReader1 = vtkPolyDataReader::New();
     pdReader1->SetFileName(Model1.c_str() );
     pdReader1->Update();
+#if (VTK_MAJOR_VERSION <= 5)
     model1 = pdReader1->GetOutput();
-
+    reader1 = pdReader1;
+#else
+    reader1 = pdReader1->GetOutputPort();
+#endif
     }
   else if( extension == std::string(".vtp") )
     {
-    pdxReader1 = vtkXMLPolyDataReader::New();
+    vtkXMLPolyDataReader* pdxReader1 = vtkXMLPolyDataReader::New();
     pdxReader1->SetFileName(Model1.c_str() );
     pdxReader1->Update();
+#if (VTK_MAJOR_VERSION <= 5)
     model1 = pdxReader1->GetOutput();
+    reader1 = pdxReader1;
+#else
+    reader1 = pdxReader1->GetOutputPort();
+#endif
     }
+#if (VTK_MAJOR_VERSION <= 5)
   if( model1 == NULL )
+#else
+  if( reader1->GetProducer()->GetErrorCode() != 0 )
+#endif
     {
     std::cerr << "Failed to read model 1 " << Model1 << std::endl;
     return EXIT_FAILURE;
@@ -80,19 +100,33 @@ int main( int argc, char * argv[] )
     }
   if( extension == std::string(".vtk") )
     {
-    pdReader2 = vtkPolyDataReader::New();
+    vtkPolyDataReader* pdReader2 = vtkPolyDataReader::New();
     pdReader2->SetFileName(Model2.c_str() );
     pdReader2->Update();
+#if (VTK_MAJOR_VERSION <= 5)
     model2 = pdReader2->GetOutput();
+    reader2 = pdReader2;
+#else
+    reader2 = pdReader2->GetOutputPort();
+#endif
     }
   else if( extension == std::string(".vtp") )
     {
-    pdxReader2 = vtkXMLPolyDataReader::New();
+    vtkXMLPolyDataReader* pdxReader2 = vtkXMLPolyDataReader::New();
     pdxReader2->SetFileName(Model2.c_str() );
     pdxReader2->Update();
+#if (VTK_MAJOR_VERSION <= 5)
     model2 = pdxReader2->GetOutput();
+    reader2 = pdxReader2;
+#else
+    reader2 = pdxReader2->GetOutputPort();
+#endif
     }
+#if (VTK_MAJOR_VERSION <= 5)
   if( model2 == NULL )
+#else
+  if( reader2->GetProducer()->GetErrorCode() != 0 )
+#endif
     {
     std::cerr << "Failed to read model 1 " << Model2 << std::endl;
     return EXIT_FAILURE;
@@ -103,8 +137,8 @@ int main( int argc, char * argv[] )
   add->AddInput(model1);
   add->AddInput(model2);
 #else
-  add->AddInputConnection(pdxReader1->GetOutputPort());
-  add->AddInputConnection(pdxReader2->GetOutputPort());
+  add->AddInputConnection(reader1);
+  add->AddInputConnection(reader2);
 #endif
   add->Update();
 
@@ -143,21 +177,12 @@ int main( int argc, char * argv[] )
 
   // clean up
   add->Delete();
-  if( pdReader1 )
-    {
-    pdReader1->Delete();
-    }
-  if( pdReader2 )
-    {
-    pdReader2->Delete();
-    }
-  if( pdxReader1 )
-    {
-    pdxReader1->Delete();
-    }
-  if( pdxReader2 )
-    {
-    pdxReader2->Delete();
-    }
+#if (VTK_MAJOR_VERSION <= 5)
+  reader1->Delete();
+  reader2->Delete();
+#else
+  reader1->GetProducer()->Delete();
+  reader2->GetProducer()->Delete();
+#endif
   return EXIT_SUCCESS;
 }

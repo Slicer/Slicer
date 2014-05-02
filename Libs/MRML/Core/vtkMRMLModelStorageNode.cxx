@@ -138,7 +138,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
 #else
-      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+      modelNode->SetPolyDataConnection(reader->GetOutputPort());
 #endif
       }
     else if (extension == std::string(".vtk"))
@@ -177,7 +177,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(output);
 #else
-        modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+        modelNode->SetPolyDataConnection(reader->GetOutputPort());
 #endif
         }
       }
@@ -189,7 +189,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
 #else
-      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+      modelNode->SetPolyDataConnection(reader->GetOutputPort());
 #endif
       }
     else if (extension == std::string(".stl"))
@@ -200,7 +200,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
 #else
-      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+      modelNode->SetPolyDataConnection(reader->GetOutputPort());
 #endif
       }
     else if (extension == std::string(".ply"))
@@ -211,7 +211,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
 #else
-      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+      modelNode->SetPolyDataConnection(reader->GetOutputPort());
 #endif
       }
     else if (extension == std::string(".obj"))
@@ -222,7 +222,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
 #else
-      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+      modelNode->SetPolyDataConnection(reader->GetOutputPort());
 #endif
       }
     else if (extension == std::string(".meta"))  // model in meta format
@@ -337,7 +337,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( modelNode->GetPolyData() );
 #else
-    writer->SetInputData( modelNode->GetPolyData() );
+    writer->SetInputConnection( modelNode->GetPolyDataConnection() );
 #endif
     try
       {
@@ -359,7 +359,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( modelNode->GetPolyData() );
 #else
-    writer->SetInputData( modelNode->GetPolyData() );
+    writer->SetInputConnection( modelNode->GetPolyDataConnection() );
 #endif
     try
       {
@@ -380,7 +380,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     triangulator->SetInput( modelNode->GetPolyData() );
     writer->SetInput( triangulator->GetOutput() );
 #else
-    triangulator->SetInputData( modelNode->GetPolyData() );
+    triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
     writer->SetInputConnection( triangulator->GetOutputPort() );
 #endif
     try
@@ -402,7 +402,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     triangulator->SetInput( modelNode->GetPolyData() );
     writer->SetInput( triangulator->GetOutput() );
 #else
-    triangulator->SetInputData( modelNode->GetPolyData() );
+    triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
     writer->SetInputConnection( triangulator->GetOutputPort() );
 #endif
     try

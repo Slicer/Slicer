@@ -148,7 +148,7 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   vtkWeakPointer<vtkImageData>        ImageData;
 #else
-  vtkWeakPointer<vtkAlgorithmOutput>  ImageDataPort;
+  vtkWeakPointer<vtkAlgorithmOutput>  ImageDataConnection;
 #endif
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;

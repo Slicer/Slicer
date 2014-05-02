@@ -87,9 +87,11 @@ protected:
   int Radius;
   int Shape;
 
-  /// not threaded because too simple a filter
-  virtual int RequestUpdateExtent(vtkInformation *,
-          vtkInformationVector **, vtkInformationVector *);
+  /// Reimplemented.
+  /// Not threaded because too simple a filter
+  virtual int RequestData(vtkInformation* request,
+                          vtkInformationVector** inputVectors,
+                          vtkInformationVector* outputVector);
 
 private:
   vtkImageFillROI(const vtkImageFillROI&);

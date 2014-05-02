@@ -42,9 +42,8 @@ vtkStandardNewMacro(vtkSlicerDataModuleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerDataModuleLogic::vtkSlicerDataModuleLogic()
 {
-  this->SceneChangedOff();
+  this->SceneChanged = false;
   this->AutoRemoveDisplayAndStorageNodes = true;
-
 }
 
 //----------------------------------------------------------------------------

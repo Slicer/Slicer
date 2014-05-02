@@ -61,35 +61,39 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
   # Not all the vtk libraries have their python wrapping
   if(${VTK_VERSION_MAJOR} GREATER 5)
     set(VTK_NO_PYTHON_WRAP_LIBRARIES
-      vtksys
-      vtkexpat
-      vtkjsoncpp
-      vtkexoIIc
+      vtkDICOMParser
+      vtkGUISupportQt
+      vtkGUISupportQtOpenGL
+      vtkGUISupportQtSQL
+      vtkGUISupportQtWebkit
       vtkNetCDF
       vtkNetCDF_cxx
-      vtkhdf5_hl
-      vtkhdf5
+      vtkViewsQt
+      vtkWrappingPythonCore
+      vtkWrappingTools
       vtkalglib
-      vtkDICOMParser
-      vtkmetaio
-      vtkjpeg
-      vtktiff
+      vtkexoIIc
+      vtkexpat
       vtkfreetype
       vtkftgl
       vtkgl2ps
-      vtksqlite
-      vtkoggtheora
-      vtkWrappingPythonCore
-      vtkWrappingTools
-      vtkGUISupportQt
+      vtkhdf5
+      vtkhdf5_hl
+      vtkjpeg
+      vtkjsoncpp
       vtklibxml2
+      vtkmetaio
+      vtkoggtheora
+      vtkpng
       vtkproj4
-      vtkViewsQt
-      vtkGUISupportQtWebkit
-      vtkGUISupportQtSQL
-      vtkRenderingFreeTypeFontConfig
-      vtkGUISupportQtOpenGL
+      vtksqlite
+      vtksys
+      vtktiff
       )
+    if (NOT WIN32)
+      list(APPEND VTK_NO_PYTHON_WRAP_LIBRARIES
+        vtkRenderingFreeTypeFontConfig)
+    endif()
   else()
     set(VTK_NO_PYTHON_WRAP_LIBRARIES "")
   endif()

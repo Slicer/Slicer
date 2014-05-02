@@ -26,6 +26,7 @@
 
 #include "qSlicerBaseQTCoreExport.h"
 
+class ctkVTKPythonQtWrapperFactory;
 class PythonQtObjectPtr;
 class vtkObject;
 
@@ -55,6 +56,7 @@ public:
 protected:
 
   virtual void preInitialization();
+  ctkVTKPythonQtWrapperFactory* Factory;
 
 };
 

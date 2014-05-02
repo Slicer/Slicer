@@ -3254,7 +3254,7 @@ const char* vtkMRMLScene::GetNthReferencedID(int n)
     {
     if (n<static_cast<int>(referenceIt->second.size()))
       {
-      NodeReferencesType::value_type::second_type::iterator referringNodesIt=referenceIt->second.begin();
+      //NodeReferencesType::value_type::second_type::iterator referringNodesIt=referenceIt->second.begin();
       return referenceIt->first.c_str();
       }
     n-=referenceIt->second.size();

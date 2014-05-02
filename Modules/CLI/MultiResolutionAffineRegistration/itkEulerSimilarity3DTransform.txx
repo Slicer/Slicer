@@ -219,7 +219,6 @@ EulerSimilarity3DTransform<TScalarType>::ComputeJacobianWithRespectToParameters(
 
   jacobian.SetSize(OutputSpaceDimension, ParametersDimension);
   jacobian.Fill(0.0);
-  const InputVectorType pp = p - this->GetCenter();
 
   const double px = p[0] - this->GetCenter()[0];
   const double py = p[1] - this->GetCenter()[1];

@@ -9,6 +9,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLLayoutLogicTest1.cxx
   vtkMRMLLayoutLogicTest2.cxx
   vtkMRMLModelHierarchyLogicTest1.cxx
+  vtkMRMLSliceLayerLogicTest.cxx
   vtkMRMLSliceLogicTest1.cxx
   vtkMRMLSliceLogicTest2.cxx
   vtkMRMLSliceLogicTest3.cxx
@@ -35,6 +36,7 @@ simple_test( vtkMRMLModelHierarchyLogicTest1 )
 simple_test( vtkMRMLLayoutLogicCompareTest )
 simple_test( vtkMRMLLayoutLogicTest1 )
 simple_test( vtkMRMLLayoutLogicTest2 )
+simple_test( vtkMRMLSliceLayerLogicTest )
 simple_test( vtkMRMLSliceLogicTest1 )
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest2 fixed.nrrd)
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest3 fixed.nrrd)

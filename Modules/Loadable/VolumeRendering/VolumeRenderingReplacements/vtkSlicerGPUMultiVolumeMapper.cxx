@@ -1192,6 +1192,7 @@ void vtkSlicerGPUMultiVolumeMapper::PrintSelf(ostream& os, vtkIndent indent)
      << this->VolumeSpacing[1] << " " << this->VolumeSpacing[2] << endl;
 }
 
+#if VTK_MAJOR_VERSION <= 5
 void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkDataSet *genericInput)
 {
   vtkImageData *input = vtkImageData::SafeDownCast( genericInput );
@@ -1211,15 +1212,17 @@ void vtkSlicerGPUMultiVolumeMapper::SetNthInput( int index, vtkImageData *input 
   if (this->GetNumberOfInputPorts() < index + 1)
     this->SetNumberOfInputPorts(index + 1);
 
-  if(input)
-#if (VTK_MAJOR_VERSION <= 5)
-    this->SetInputConnection(index, input->GetProducerPort());
-#else
-    this->SetInputData(index, input);
-#endif
-  else
-    this->SetInputConnection(index, 0);
+  this->SetInputConnection(index, input ? input->GetProducerPort() : 0);
 }
+#else
+void vtkSlicerGPUMultiVolumeMapper
+::SetInputConnection( int port, vtkAlgorithmOutput * inputPort)
+{
+  if (this->GetNumberOfInputPorts() < port + 1)
+    this->SetNumberOfInputPorts(port + 1);
+  this->Superclass::SetInputConnection(port, inputPort);
+}
+#endif
 
 vtkImageData *vtkSlicerGPUMultiVolumeMapper::GetNthInput(int index)
 {

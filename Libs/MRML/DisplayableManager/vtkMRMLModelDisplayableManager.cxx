@@ -1775,7 +1775,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 #if (VTK_MAJOR_VERSION <= 5)
         if (modelDisplayNode->GetTextureImageData() != 0)
 #else
-        if (modelDisplayNode->GetTextureImageDataPort() != 0)
+        if (modelDisplayNode->GetTextureImageDataConnection() != 0)
 #endif
           {
           if (actor->GetTexture() == 0)
@@ -1787,7 +1787,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 #if (VTK_MAJOR_VERSION <= 5)
           actor->GetTexture()->SetInput(modelDisplayNode->GetTextureImageData());
 #else
-          actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataPort());
+          actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
 #endif
           actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
           actor->GetProperty()->SetColor(1., 1., 1.);
@@ -1809,9 +1809,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           imageActor->SetInput(0);
           }
 #else
-        if (modelDisplayNode->GetTextureImageDataPort() != 0)
+        if (modelDisplayNode->GetTextureImageDataConnection() != 0)
           {
-          imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataPort());
+          imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
           }
         else
           {
@@ -1838,7 +1838,7 @@ const char* vtkMRMLModelDisplayableManager
 #if (VTK_MAJOR_VERSION <= 5)
       modelDisplayNode->GetOutputPolyData()->Update();
 #else
-      modelDisplayNode->GetOutputFilter()->Update();
+      modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
       }
     activeScalarName = displayNode->GetActiveScalarName();
@@ -1854,10 +1854,10 @@ const char* vtkMRMLModelDisplayableManager
 #if (VTK_MAJOR_VERSION <= 5)
       modelNode->GetPolyData()->Update();
 #else
-     vtkAlgorithm *polyDataFilter = modelNode->GetPolyDataFilter();
-     if (polyDataFilter != NULL)
+     vtkAlgorithmOutput *polyDataConnection = modelNode->GetPolyDataConnection();
+     if (polyDataConnection != NULL)
        {
-       polyDataFilter->Update();
+       polyDataConnection->GetProducer()->Update();
        }
 #endif
 

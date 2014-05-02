@@ -129,11 +129,16 @@ class FastMarchingEffectOptions(Effect.EffectOptions):
   def percentMaxChanged(self, val):
     labelNode = self.logic.getLabelNode()
     labelImage = self.editUtil.getLabelImage()
-#VTK6 TODO - need to get the WholeExtent from pipeline
-    dim = labelImage.GetWholeExtent()
     spacing = labelNode.GetSpacing()
-    totalVolume = spacing[0]*(dim[1]+1)+spacing[1]*(dim[3]+1)+spacing[2]*(dim[5]+1)
-    percentVolumeStr = "%.5f" % (totalVolume*val/100.)
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      dim = labelImage.GetDimensions()
+      totalVolume = spacing[0]*(dim[1]+1)+spacing[1]*(dim[3]+1)+spacing[2]*(dim[5]+1)
+    else:
+      dim = labelImage.GetDimensions()
+      print dim
+      totalVolume = spacing[0]*dim[0]+spacing[1]*dim[1]+spacing[2]*dim[2]
+
+      percentVolumeStr = "%.5f" % (totalVolume*val/100.)
     self.percentVolume.text = '(maximum total volume: '+percentVolumeStr+' mL)'
 
   def updateMRMLFromGUI(self):
@@ -202,7 +207,11 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
     labelImage = self.editUtil.getLabelImage()
 
     # collect seeds
-    dim = bgImage.GetWholeExtent()
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      dim = bgImage.GetWholeExtent()
+    else:
+      dim = bgImage.GetDimensions()
+      print dim
     # initialize the filter
     self.fm = slicer.vtkPichonFastMarching()
     scalarRange = bgImage.GetScalarRange()
@@ -220,7 +229,10 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
 
     if scaleValue or shiftValue:
       rescale = vtk.vtkImageShiftScale()
-      rescale.SetInput(bgImage)
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        rescale.SetInput(bgImage)
+      else:
+        rescale.SetInputData(bgImage)
       rescale.SetScale(scaleValue)
       rescale.SetShift(shiftValue)
       rescale.Update()
@@ -229,17 +241,27 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
       depth = scalarRange[1]-scalarRange[0]
 
     print('Input scalar range: '+str(depth))
-    self.fm.init(dim[1]+1, dim[3]+1, dim[5]+1, depth, 1, 1, 1)
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      self.fm.init(dim[1]+1, dim[3]+1, dim[5]+1, depth, 1, 1, 1)
+    else:
+      self.fm.init(dim[0], dim[1], dim[2], depth, 1, 1, 1)
 
     caster = vtk.vtkImageCast()
     caster.SetOutputScalarTypeToShort()
-    caster.SetInput(bgImage)
-    caster.Update()
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      caster.SetInput(bgImage)
+      caster.Update()
+      self.fm.SetInput(caster.GetOutput())
+    else:
+      caster.SetInputData(bgImage)
+      self.fm.SetInputConnection(caster.GetOutputPort())
 
-    self.fm.SetInput(caster.GetOutput())
     # self.fm.SetOutput(labelImage)
 
-    npoints = int((dim[1]+1)*(dim[3]+1)*(dim[5]+1)*percentMax/100.)
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      npoints = int((dim[1]+1)*(dim[3]+1)*(dim[5]+1)*percentMax/100.)
+    else:
+      npoints = int(dim[0]*dim[1]*dim[2]*percentMax/100.)
 
     self.fm.setNPointsEvolution(npoints)
     print('Setting active label to '+str(self.editUtil.getLabel()))

@@ -109,11 +109,6 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
-#if (VTK_MAJOR_VERSION <= 5)
-  sliceLogic->GetImageData();
-#else
-  sliceLogic->GetImageDataPort();
-#endif
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
   vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
@@ -137,7 +132,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
     sliceLayerLogic->GetImageData();
 #else
-    sliceLayerLogic->GetImageDataPort();
+    sliceLayerLogic->GetImageDataConnection();
 #endif
     timerLog->StopTimer();
     std::cout << "vtkMRMLSliceLayerLogic::UpdateImageData(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
@@ -264,7 +259,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   viewer->SetInput(sliceLogic->GetImageData());
 #else
-  viewer->SetInputConnection(sliceLogic->GetImageDataPort());
+  viewer->SetInputConnection(sliceLogic->GetImageDataConnection());
 #endif
   //viewer->SetInput(appendComponents->GetOutput());
 

@@ -123,7 +123,7 @@ bool TestBatchRemoveDisplayNode()
 #if (VTK_MAJOR_VERSION <= 5)
   modelNode->SetAndObservePolyData(sphereSource->GetOutput());
 #else
-  modelNode->SetAndObservePolyFilterAndData(sphereSource.GetPointer());
+  modelNode->SetPolyDataConnection(sphereSource->GetOutputPort());
 #endif
   modelNode->AddAndObserveDisplayNodeID(modelDisplayNode->GetID());
   scene->AddNode(modelNode);

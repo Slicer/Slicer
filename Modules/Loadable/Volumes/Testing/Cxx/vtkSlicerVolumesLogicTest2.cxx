@@ -26,6 +26,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkDataSetAttributes.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
@@ -49,28 +50,39 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
+#if VTK_MAJOR_VERSION <= 5
 bool isImageDataValid(vtkImageData* imageData)
 {
   if (!imageData)
     {
     return false;
     }
-#if (VTK_MAJOR_VERSION <= 5)
   imageData->GetProducerPort();
   vtkInformation* info = imageData->GetPipelineInformation();
+  info = imageData->GetPipelineInformation();
 #else
-  vtkNew<vtkTrivialProducer> tp;
-  tp->SetOutput(imageData);
-  vtkInformation* info = tp->GetExecutive()->GetOutputInformation(0);
+bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
+{
+  if (!imageDataConnection ||
+      !imageDataConnection->GetProducer())
+    {
+    std::cout << "No image data port" << std::endl;
+    return false;
+    }
+  imageDataConnection->GetProducer()->Update();
+  vtkInformation* info =
+    imageDataConnection->GetProducer()->GetOutputInformation(0);
 #endif
   if (!info)
     {
+    std::cout << "No output information" << std::endl;
     return false;
     }
   vtkInformation *scalarInfo = vtkDataObject::GetActiveFieldInformation(info,
     vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
   if (!scalarInfo)
     {
+    std::cout << "No scalar information" << std::endl;
     return false;
     }
   return true;
@@ -126,7 +138,11 @@ int main( int argc, char * argv[] )
       logic->AddArchetypeVolume(fileNameList->GetValue(0), "rgbVolume", 0, fileNameList));
 
   if (!vectorVolume ||
+#if VTK_MAJOR_VERSION <= 5
       !isImageDataValid(vectorVolume->GetImageData()))
+#else
+      !isImageDataValid(vectorVolume->GetImageDataConnection()))
+#endif
     {
     std::cerr << "Failed to load RGB image." << std::endl;
     return EXIT_FAILURE;

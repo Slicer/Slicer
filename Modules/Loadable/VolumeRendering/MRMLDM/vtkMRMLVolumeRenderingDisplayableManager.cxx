@@ -662,10 +662,16 @@ int vtkMRMLVolumeRenderingDisplayableManager
   if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper) &&
       vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode))
     {
+#if VTK_MAJOR_VERSION <= 5
     vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->SetNthInput(
       1, vtkMRMLScalarVolumeNode::SafeDownCast(
         vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode)
                                               ->GetFgVolumeNode())->GetImageData());
+#else
+    vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->SetInputConnection(
+      1, vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(
+        vspNode)->GetFgVolumeNode()->GetImageDataConnection());
+#endif
     }
   int supported = 0;
   if (volumeMapper->IsA("vtkFixedPointVolumeRayCastMapper"))
@@ -767,14 +773,15 @@ void vtkMRMLVolumeRenderingDisplayableManager
                             vtkVolumeMapper* volumeMapper,
                             int index)
 {
-  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
   if (volumeMapper &&
       volumeMapper->GetNumberOfInputPorts() > index)
     {
 #if (VTK_MAJOR_VERSION <= 5)
+    vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
     volumeMapper->SetInputConnection(index, imageData ? imageData->GetProducerPort() : 0);
 #else
-    volumeMapper->SetInputData(index, imageData ? imageData : 0);
+    volumeMapper->SetInputConnection(
+      index, volumeNode ? volumeNode->GetImageDataConnection() : 0);
 #endif
     }
 }

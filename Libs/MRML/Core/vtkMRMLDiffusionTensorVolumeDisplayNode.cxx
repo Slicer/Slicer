@@ -344,18 +344,27 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkIma
   //this->ShiftScale->SetInput(0, imageData );
 }
 #else
-void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+void vtkMRMLDiffusionTensorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
 {
-  this->DTIMathematics->SetInputConnection(imageDataPort);
-  this->DTIMathematicsAlpha->SetInputConnection(imageDataPort);
+  this->DTIMathematics->SetInputConnection(imageDataConnection);
+  this->DTIMathematicsAlpha->SetInputConnection(imageDataConnection);
 }
 #endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->DTIMathematics->GetInput());
 }
+#else
+vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode
+::GetInputImageDataConnection()
+{
+  return this->DTIMathematics->GetNumberOfInputConnections(0) ?
+    this->DTIMathematics->GetInputConnection(0, 0) : 0;
+}
+#endif
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
@@ -364,7 +373,7 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
   return this->AppendComponents->GetOutput();
 }
 #else
-vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageDataPort()
+vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageDataConnection()
 {
   return this->AppendComponents->GetOutputPort();
 }
@@ -388,24 +397,34 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageData()
 }
 
 //---------------------------------------------------------------------------
+#if VTK_MAJOR_VERSION <= 5
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetScalarImageData()
 {
   return vtkImageData::SafeDownCast(this->DTIMathematics->GetOutput());
 }
+#else
+vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetScalarImageDataConnection()
+{
+  return this->DTIMathematics->GetOutputPort();
+}
+#endif
 
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode
 ::GetDisplayScalarRange(double range[2])
 {
   const int ScalarInvariant = this->GetScalarInvariant();
-  if (vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
-  {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, range);
-  } else {
+  if (vtkMRMLDiffusionTensorDisplayPropertiesNode::
+      ScalarInvariantHasKnownScalarRange(ScalarInvariant))
+    {
+    vtkMRMLDiffusionTensorDisplayPropertiesNode
+      ::ScalarInvariantKnownScalarRange(ScalarInvariant, range);
+    }
+  else
+    {
     this->DTIMathematics->Update();
-    return this->GetScalarImageData()->GetScalarRange(range);
-  }
-
+    this->GetScalarImageData()->GetScalarRange(range);
+    }
 }
 
 //----------------------------------------------------------------------------

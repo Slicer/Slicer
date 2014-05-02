@@ -131,7 +131,10 @@ class ErodeEffectLogic(MorphologyEffect.MorphologyEffectLogic):
   def erode(self,fill,neighborMode,iterations):
 
     eroder = slicer.vtkImageErode()
-    eroder.SetInput( self.getScopedLabelInput() )
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      eroder.SetInput( self.getScopedLabelInput() )
+    else:
+      eroder.SetInputData( self.getScopedLabelInput() )
     eroder.SetOutput( self.getScopedLabelOutput() )
 
     eroder.SetForeground( self.editUtil.getLabel() )

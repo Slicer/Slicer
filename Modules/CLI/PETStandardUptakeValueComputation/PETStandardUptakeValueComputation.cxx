@@ -148,12 +148,10 @@ double ConvertTimeToSeconds(const char *time )
   // --- convert to a double count of seconds.
   // ---
   std::string timeStr = time;
-  size_t      i = timeStr.find_first_of(":");
   h = timeStr.substr( 0, 2 );
   hours = atof( h.c_str() );
 
   minAndsecStr = timeStr.substr( 3 );
-  i = minAndsecStr.find_first_of( ":" );
   m = minAndsecStr.substr(0, 2 );
   minutes = atof( m.c_str() );
 
@@ -791,6 +789,10 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   vtkImageData *                    voiVolume;
   vtkITKArchetypeImageSeriesReader *reader1 = NULL;
   vtkITKArchetypeImageSeriesReader *reader2 = NULL;
+#if VTK_MAJOR_VERSION > 5
+  vtkAlgorithmOutput* petVolumeConnection = 0;
+  vtkAlgorithmOutput* voiVolumeConnection = 0;
+#endif
 
   // check for the input files
   FILE * petfile;
@@ -834,18 +836,16 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::cout << "Done reading the file " << list.VOIVolumeName.c_str() << endl;
 
   // stuff the images.
-//  reader1->Update();
-//  reader2->Update();
 #if (VTK_MAJOR_VERSION <= 5)
   petVolume = reader1->GetOutput();
   petVolume->Update();
   voiVolume = reader2->GetOutput();
   voiVolume->Update();
 #else
-  reader1->Update();
   petVolume = reader1->GetOutput();
-  reader2->Update();
+  petVolumeConnection = reader1->GetOutputPort();
   voiVolume = reader2->GetOutput();
+  voiVolumeConnection = reader2->GetOutputPort();
 #endif
 
 
@@ -1378,7 +1378,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 #if (VTK_MAJOR_VERSION <= 5)
   stataccum->SetInput( voiVolume );
 #else
-  stataccum->SetInputData( voiVolume );
+  stataccum->SetInputConnection( voiVolumeConnection );
 #endif
   stataccum->Update();
   int lo = static_cast<int>(stataccum->GetMin()[0]);
@@ -1414,7 +1414,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 #if (VTK_MAJOR_VERSION <= 5)
     thresholder->SetInput(voiVolume);
 #else
-    thresholder->SetInputData(voiVolume);
+    thresholder->SetInputConnection(voiVolumeConnection);
 #endif
     thresholder->SetInValue(1);
     thresholder->SetOutValue(0);
@@ -1437,8 +1437,8 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     labelstat->SetInput(petVolume);
     labelstat->SetStencil(stencil->GetOutput() );
 #else
-    labelstat->SetInputData(petVolume);
-    labelstat->SetStencilData(stencil->GetOutput() );
+    labelstat->SetInputConnection(petVolumeConnection);
+    labelstat->SetInputConnection(1, stencil->GetOutputPort() ); // == SetStencilData()
 #endif
     labelstat->Update();
 

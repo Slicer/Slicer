@@ -838,8 +838,6 @@ protected:
   std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  /// defined in the subclasses
-  virtual void ExecuteData(vtkDataObject *data);
 
   itk::MetaDataDictionary Dictionary;
 

@@ -17,6 +17,7 @@
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
+#include <vtkDataArrayTemplate.h>
 #include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
@@ -67,10 +68,10 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
 
   vtkDataObject * output = outInfo->Get(vtkDataObject::DATA_OBJECT());
   vtkImageData *data = vtkImageData::SafeDownCast(output);
-// removed UpdateInformation: generates an error message
-//   from VTK and doesn't appear to be needed...
-//data->UpdateInformation();
-data->SetExtent(0,0,0,0,0,0);
+  // removed UpdateInformation: generates an error message
+  //   from VTK and doesn't appear to be needed...
+  //data->UpdateInformation();
+  data->SetExtent(0,0,0,0,0,0);
 #if (VTK_MAJOR_VERSION <= 5)
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
@@ -113,7 +114,9 @@ data->SetExtent(0,0,0,0,0,0);
       itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer##typeN;\
       PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
-      (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0);\
+      dynamic_cast<vtkDataArrayTemplate<type>* >(data->GetPointData()->GetScalars())\
+        ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
+                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer##typeN->ContainerManageMemoryOff();\
     }\
     break
@@ -145,7 +148,9 @@ data->SetExtent(0,0,0,0,0,0);
       itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer2##typeN;\
       PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
-      (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0);\
+      dynamic_cast<vtkDataArrayTemplate<type>*>(data->GetPointData()->GetScalars())\
+        ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
+                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer2##typeN->ContainerManageMemoryOff();\
     }\
     break

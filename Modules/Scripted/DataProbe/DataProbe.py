@@ -426,15 +426,18 @@ class CalculateTensorScalars:
 
         self.single_pixel_image = vtk.vtkImageData()
         self.single_pixel_image.SetExtent(0, 0, 0, 0, 0, 0)
-#VTK6 TODO - need to use AllocateScalars(int dataType, int numComponents)
-        self.single_pixel_image.AllocateScalars()
+        if vtk.VTK_MAJOR_VERSION <= 5:
+          self.single_pixel_image.AllocateScalars()
 
         self.tensor_data = vtk.vtkFloatArray()
         self.tensor_data.SetNumberOfComponents(9)
         self.tensor_data.SetNumberOfTuples(self.single_pixel_image.GetNumberOfPoints())
         self.single_pixel_image.GetPointData().SetTensors(self.tensor_data)
 
-        self.dti_math.SetInput(self.single_pixel_image)
+        if vtk.VTK_MAJOR_VERSION <= 5:
+          self.dti_math.SetInput(self.single_pixel_image)
+        else:
+          self.dti_math.SetInputData(self.single_pixel_image)
 
     def __call__(self, tensor, operation=None):
         if len(tensor) != 9:

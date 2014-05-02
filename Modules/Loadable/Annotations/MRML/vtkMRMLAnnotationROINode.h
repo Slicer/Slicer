@@ -10,7 +10,8 @@ class vtkAbstractTransform;
 class vtkMRMLScene;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode : public vtkMRMLAnnotationLinesNode
+class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode
+  : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationROINode *New();

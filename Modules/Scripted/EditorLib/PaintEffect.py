@@ -304,7 +304,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     self.createGlyph(self.brush)
     self.mapper = vtk.vtkPolyDataMapper2D()
     self.actor = vtk.vtkActor2D()
-    self.mapper.SetInput(self.brush)
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      self.mapper.SetInput(self.brush)
+    else:
+      self.mapper.SetInputData(self.brush)
     self.actor.SetMapper(self.mapper)
     self.actor.VisibilityOff()
 
@@ -646,7 +649,6 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     self.painter.SetBackgroundImage(backgroundImage)
     self.painter.SetBackgroundIJKToWorld(backgroundIJKToRAS)
     self.painter.SetWorkingImage(labelImage)
-#  VTK6 TODO - self.painter.SetWorkingImageFilter( labelImageFilter )
     self.painter.SetWorkingIJKToWorld(labelIJKToRAS)
     self.painter.SetTopLeft( tl[0], tl[1], tl[2] )
     self.painter.SetTopRight( tr[0], tr[1], tr[2] )

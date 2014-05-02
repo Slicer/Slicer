@@ -9,6 +9,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkFiltersCore
     vtkIOLegacy
     vtkIOXML
+    vtksys
     )
 else()
   set(VTK_LIBRARIES

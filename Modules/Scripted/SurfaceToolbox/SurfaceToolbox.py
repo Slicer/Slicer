@@ -402,63 +402,95 @@ class SurfaceToolboxLogic:
 
   def applyFilters(self, state):
 
-    surface = state.inputModelNode.GetPolyData()
+    surface = None
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      surface = state.inputModelNode.GetPolyData()
+    else:
+      surface = state.inputModelNode.GetPolyDataConnection()
 
     if state.decimation:
       triangle = vtk.vtkTriangleFilter()
-      triangle.SetInput(surface)
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        triangle.SetInput(surface)
+      else:
+        triangle.SetInputConnection(surface)
       decimation = vtk.vtkDecimatePro()
-      decimation.SetInput(triangle.GetOutput())
       decimation.SetTargetReduction(state.reduction)
       decimation.SetBoundaryVertexDeletion(state.boundaryDeletion)
       decimation.PreserveTopologyOn()
-      decimation.Update()
-      surface = decimation.GetOutput()
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        decimation.SetInput(triangle.GetOutput())
+        decimation.Update()
+        surface = decimation.GetOutput()
+      else:
+        decimation.SetInputConnection(triangle.GetOutputPort())
+        surface = decimation.GetOutputPort()
 
     if state.smoothing:
       if state.smoothingMethod == "Laplace":
         smoothing = vtk.vtkSmoothPolyDataFilter()
-        smoothing.SetInput(surface)
         smoothing.SetBoundarySmoothing(state.boundarySmoothing)
         smoothing.SetNumberOfIterations(state.laplaceIterations)
         smoothing.SetRelaxationFactor(state.laplaceRelaxation)
-        smoothing.Update()
-        surface = smoothing.GetOutput()
+        if vtk.VTK_MAJOR_VERSION <= 5:
+          smoothing.SetInput(surface)
+          smoothing.Update()
+        else:
+          smoothing.SetInputConnection(surface)
+          surface = smoothing.GetOutputPort()
       elif state.smoothingMethod == "Taubin":
         smoothing = vtk.vtkWindowedSincPolyDataFilter()
-        smoothing.SetInput(surface)
         smoothing.SetBoundarySmoothing(state.boundarySmoothing)
         smoothing.SetNumberOfIterations(state.taubinIterations)
         smoothing.SetPassBand(state.taubinPassBand)
-        smoothing.Update()
-        surface = smoothing.GetOutput()
+        if vtk.VTK_MAJOR_VERSION <= 5:
+          smoothing.SetInput(surface)
+          smoothing.Update()
+          surface = smoothing.GetOutput()
+        else:
+          smoothing.SetInputConnection(surface)
+          surface = smoothing.GetOutputPort()
 
     if state.normals:
       normals = vtk.vtkPolyDataNormals()
-      normals.SetInput(surface)
       normals.AutoOrientNormalsOn()
       normals.SetFlipNormals(state.flipNormals)
       normals.SetSplitting(state.splitting)
       normals.SetFeatureAngle(state.featureAngle)
       normals.ConsistencyOn()
-      normals.Update()
-      surface = normals.GetOutput()
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        normals.SetInput(surface)
+        normals.Update()
+        surface = normals.GetOutput()
+      else:
+        normals.SetInputConnection(surface)
+        surface = normals.GetOutputPort()
 
     if state.cleaner:
       cleaner = vtk.vtkCleanPolyData()
-      cleaner.SetInput(surface)
-      cleaner.Update()
-      surface = cleaner.GetOutput()
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        cleaner.SetInput(surface)
+        cleaner.Update()
+        surface = cleaner.GetOutput()
+      else:
+        cleaner.SetInputConnection(surface)
+        surface = cleaner.GetOutputPort()
 
     if state.connectivity:
       connectivity = vtk.vtkPolyDataConnectivityFilter()
-      connectivity.SetInput(surface)
       connectivity.SetExtractionModeToLargestRegion()
-      connectivity.Update()
-      surface = connectivity.GetOutput()
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        connectivity.SetInput(surface)
+        connectivity.Update()
+        surface = connectivity.GetOutput()
+      else:
+        connectivity.SetInputConnection(surface)
+        surface = connectivity.GetOutputPort()
 
-    state.outputModelNode.SetAndObservePolyData(surface)
-
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      state.outputModelNode.SetAndObservePolyData(surface)
+    else:
+      state.outputModelNode.SetPolyDataConnection(surface)
     return True
 
 

@@ -63,7 +63,6 @@ int DoIt( int argc, char * argv[], PixelType )
 
   itk::MetaDataDictionary            imgMetaDictionary = reader->GetMetaDataDictionary();
   std::vector<std::string>           imgMetaKeys = imgMetaDictionary.GetKeys();
-  std::vector<std::string>::iterator itKey = imgMetaKeys.begin();
   std::string                        metaString;
 
   std::cout << "Number of keys = " << imgMetaKeys.size() << std::endl;

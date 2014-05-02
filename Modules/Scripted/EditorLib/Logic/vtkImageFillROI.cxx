@@ -745,7 +745,7 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
 }
 
 //----------------------------------------------------------------------------
-int vtkImageFillROI::RequestUpdateExtent(
+int vtkImageFillROI::RequestData(
    vtkInformation *vtkNotUsed(request),
    vtkInformationVector **inputVector,
    vtkInformationVector *outputVector)
@@ -753,8 +753,14 @@ int vtkImageFillROI::RequestUpdateExtent(
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
+  // Get the image data.
+  vtkImageData *input = vtkImageData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkImageData *output = vtkImageData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   // Make sure the Input has been set.
-  if ( this->GetInput() == NULL )
+  if ( input == NULL )
     {
     vtkErrorMacro(<< "ExecuteData: Input is not set.");
     return 0;
@@ -763,22 +769,21 @@ int vtkImageFillROI::RequestUpdateExtent(
 #if (VTK_MAJOR_VERSION <= 5)
   this->AllocateOutputData(this->GetOutput());
 #else
-  this->AllocateOutputData(this->GetOutput(), outInfo);
+  this->AllocateOutputData(output, outInfo);
 #endif
 
-  if ( this->GetInput()->GetDataObjectType() != VTK_IMAGE_DATA )
+  if ( !input ||
+       input->GetDataObjectType() != VTK_IMAGE_DATA )
     {
     vtkWarningMacro ("was sent non-image data data object");
     return 0;
     }
 
-  vtkImageData *inData = (vtkImageData *) this->GetInput();
-
   void *ptr = NULL;
   int x1, inExt[6];
 
   // ensure 1 component data
-  x1 = inData->GetNumberOfScalarComponents();
+  x1 = input->GetNumberOfScalarComponents();
   if (x1 != 1)
     {
     vtkErrorMacro("Input has "<<x1<<" components instead of 1.");
@@ -793,9 +798,9 @@ int vtkImageFillROI::RequestUpdateExtent(
     return 0;
     }
 
-  switch (this->GetOutput()->GetScalarType())
+  switch (output->GetScalarType())
     {
-    vtkTemplateMacro( vtkImageFillROIExecute ( this, this->GetOutput(), static_cast<VTK_TT*>(ptr) ) );
+    vtkTemplateMacro( vtkImageFillROIExecute ( this, output, static_cast<VTK_TT*>(ptr) ) );
     default:
       {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");

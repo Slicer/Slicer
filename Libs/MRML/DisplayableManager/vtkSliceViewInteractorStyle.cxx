@@ -42,15 +42,30 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
 {
   this->ActionState = vtkSliceViewInteractorStyle::None;
 
-  this->ActionStartSliceToRAS = vtkMatrix4x4::New();
-  this->ActionStartXYToRAS = vtkMatrix4x4::New();
-  this->ScratchMatrix = vtkMatrix4x4::New();
-
+  this->ActionStartRAS[0] = 0.;
+  this->ActionStartRAS[1] = 0.;
+  this->ActionStartRAS[2] = 0.;
+  this->ActionStartFOV[0] = 0.;
+  this->ActionStartFOV[1] = 0.;
+  this->ActionStartFOV[2] = 0.;
+  this->ActionStartWindow[0] = 0;
+  this->ActionStartWindow[1] = 0;
   this->LastActionWindow[0] = 0;
   this->LastActionWindow[1] = 0;
 
   this->ActionStartForegroundOpacity = 0;
   this->ActionStartLabelOpacity = 0;
+  this->ActionStartVolumeWindow = 0;
+  this->ActionStartVolumeLevel = 0;
+  this->ActionStartVolumeRangeLow = 0;
+  this->ActionStartVolumeRangeHigh = 0;
+
+  this->ActionStartSliceToRAS = vtkMatrix4x4::New();
+  this->ActionStartXYToRAS = vtkMatrix4x4::New();
+  this->ScratchMatrix = vtkMatrix4x4::New();
+
+  this->LastLabelOpacity = 0.;
+  this->LastForegroundOpacity = 0.;
 
   this->SliceLogic = 0;
 }

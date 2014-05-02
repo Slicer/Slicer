@@ -6,6 +6,7 @@
 
 // MRML includes
 #include <vtkAlgorithm.h>
+#include <vtkAlgorithmOutput.h>
 #include <vtkDataSet.h>
 #include <vtkPolyData.h>
 #include <vtkPointData.h>
@@ -170,9 +171,9 @@ vtkMRMLFiberBundleDisplayNode* qSlicerTractographyDisplayWidget::FiberBundleDisp
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerTractographyDisplayWidget::DiffusionTensorDisplayPropertiesNode()const
+vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerTractographyDisplayWidget
+::DiffusionTensorDisplayPropertiesNode()const
 {
-  Q_D(const qSlicerTractographyDisplayWidget);
   return this->FiberBundleDisplayNode() ?
     this->FiberBundleDisplayNode()->GetDiffusionTensorDisplayPropertiesNode() : 0;
 }
@@ -642,35 +643,35 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
     return;
     }
 
- double range[2];
- bool was_updating = this->m_updating;
- this->m_updating = true;
+  double range[2];
+  bool was_updating = this->m_updating;
+  this->m_updating = true;
 
 #if (VTK_MAJOR_VERSION <= 5)
- d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
+  d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
 #else
- d->FiberBundleDisplayNode->GetOutputFilter()->Update();
+  d->FiberBundleDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
- d->FiberBundleDisplayNode->GetScalarRange(range);
- if (d->FiberBundleDisplayNode->GetAutoScalarRange())
- {
-   d->FiberBundleColorRangeWidget->setMinimumValue(range[0]);
-   d->FiberBundleColorRangeWidget->setMaximumValue(range[1]);
-   d->FiberBundleColorRangeWidget->setRange(range[0], range[1]);
- }
- else
- {
-  d->FiberBundleColorRangeWidget->setMinimumValue(range[0]);
-  d->FiberBundleColorRangeWidget->setMaximumValue(range[1]);
-
-  if ((d->FiberBundleColorRangeWidget->minimum() > range[0]) ||
-      (d->FiberBundleColorRangeWidget->maximum() < range[1]))
+  d->FiberBundleDisplayNode->GetScalarRange(range);
+  if (d->FiberBundleDisplayNode->GetAutoScalarRange())
+    {
+    d->FiberBundleColorRangeWidget->setMinimumValue(range[0]);
+    d->FiberBundleColorRangeWidget->setMaximumValue(range[1]);
     d->FiberBundleColorRangeWidget->setRange(range[0], range[1]);
-  }
- const double step = (range[1] - range[0]) / 100.;
- d->FiberBundleColorRangeWidget->setSingleStep(step);
- d->FiberBundleColorRangeWidget->setDecimals(ceil(fabs(log10(step))));
- this->m_updating = was_updating;
+    }
+  else
+    {
+    d->FiberBundleColorRangeWidget->setMinimumValue(range[0]);
+    d->FiberBundleColorRangeWidget->setMaximumValue(range[1]);
+
+    if ((d->FiberBundleColorRangeWidget->minimum() > range[0]) ||
+        (d->FiberBundleColorRangeWidget->maximum() < range[1]))
+      d->FiberBundleColorRangeWidget->setRange(range[0], range[1]);
+    }
+  const double step = (range[1] - range[0]) / 100.;
+  d->FiberBundleColorRangeWidget->setSingleStep(step);
+  d->FiberBundleColorRangeWidget->setDecimals(ceil(fabs(log10(step))));
+  this->m_updating = was_updating;
 }
 
 //------------------------------------------------------------------------------

@@ -32,11 +32,6 @@ vtkMRMLNodeNewMacro(vtkMRMLProceduralColorNode);
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
 {
-
-  this->Name = NULL;
-  this->SetName("");
-  this->FileName = NULL;
-
   this->ColorTransferFunction = NULL;
   vtkColorTransferFunction* ctf=vtkColorTransferFunction::New();
   this->SetAndObserveColorTransferFunction(ctf);

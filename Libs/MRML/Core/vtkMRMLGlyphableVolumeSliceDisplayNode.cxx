@@ -181,7 +181,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode
 }
 #else
 void vtkMRMLGlyphableVolumeSliceDisplayNode
-::SetInputToPolyDataPipeline(vtkAlgorithm *vtkNotUsed(polyDataFilter), vtkPolyData *vtkNotUsed(glyphPolyData))
+::SetInputToPolyDataPipeline(vtkAlgorithmOutput *vtkNotUsed(glyphPolyData))
 {
   vtkErrorMacro(<< this->GetClassName() <<" ("<<this
                     <<"): SetInputPolyData method should not be used");
@@ -191,36 +191,41 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPolyData()
 {
-  if (!this->GetOutputPort())
-    {
-    return 0;
-    }
   // Don't check input polydata as it is not used, but the image data instead.
 #if (VTK_MAJOR_VERSION <= 5)
   if (!this->GetSliceImage())
 #else
-  if (!this->GetSliceImagePort())
+  if (!this->GetOutputPolyDataConnection())
 #endif
     {
     return 0;
     }
   return vtkPolyData::SafeDownCast(
-    this->GetOutputPort()->GetProducer()->GetOutputDataObject(
-      this->GetOutputPort()->GetIndex()));
+    this->GetOutputPolyDataConnection()->GetProducer()->GetOutputDataObject(
+      this->GetOutputPolyDataConnection()->GetIndex()));
+}
+//----------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode
+::GetOutputPolyDataConnection()
+{
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdatePolyDataPipeline()
+{
+  this->SliceToXYTransformer->SetInputConnection(
+    this->GetOutputPolyDataConnection());
 }
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPolyData()
 {
-  if (!this->GetSliceOutputPort())
-    {
-    return 0;
-    }
   // Don't check input polydata as it is not used, but the image data instead.
 #if (VTK_MAJOR_VERSION <= 5)
   if (!this->GetSliceImage())
 #else
-  if (!this->GetSliceImagePort())
+  if (!this->GetSliceOutputPort())
 #endif
     {
     return 0;
@@ -231,22 +236,9 @@ vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPolyData()
 }
 
 //----------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPort()
-{
-  return 0;
-}
-
-//----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPort()
 {
   return this->SliceToXYTransformer->GetOutputPort();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdatePolyDataPipeline()
-{
-  this->SliceToXYTransformer->SetInputConnection(
-    this->GetOutputPort());
 }
 
 //---------------------------------------------------------------------------

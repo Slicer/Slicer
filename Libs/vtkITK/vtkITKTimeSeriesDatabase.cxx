@@ -14,6 +14,7 @@
 #include "vtkITKTimeSeriesDatabase.h"
 
 #include <vtkDataArray.h>
+#include <vtkDataArrayTemplate.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
@@ -66,6 +67,9 @@ void vtkITKTimeSeriesDatabase::ExecuteDataWithInformation(vtkDataObject *output,
     itk::ImportImageContainer<unsigned long, OutputImagePixelType>::Pointer PixelContainerShort;
     PixelContainerShort = this->m_Filter->GetOutput()->GetPixelContainer();
     void *ptr = static_cast<void *> (PixelContainerShort->GetBufferPointer());
-    (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainerShort->Size(), 0);
+    dynamic_cast<vtkDataArrayTemplate<unsigned long>* >(
+      vtkImageData::SafeDownCast(output)->GetPointData()->GetScalars())
+      ->SetVoidArray(ptr, PixelContainerShort->Size(), 0,
+                     vtkDataArrayTemplate<unsigned long>::VTK_DATA_ARRAY_DELETE);
     PixelContainerShort->ContainerManageMemoryOff();
   };

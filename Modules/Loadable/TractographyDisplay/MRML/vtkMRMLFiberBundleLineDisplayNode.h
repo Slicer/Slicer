@@ -59,7 +59,7 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDi
   void operator= ( const vtkMRMLFiberBundleLineDisplayNode& );
 
   /// Reimplemented to return the output of the display pipeline
-  virtual vtkAlgorithmOutput* GetOutputPort();
+  virtual vtkAlgorithmOutput* GetOutputPolyDataConnection();
 
   /// display pipeline
   vtkPolyDataTensorToColor *TensorToColor;

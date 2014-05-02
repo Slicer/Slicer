@@ -25,30 +25,30 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+// vtkTeem includes
 #include "vtkNRRDReader.h"
 
-
-#include "vtkMath.h"
-#include "vtkObjectFactory.h"
-#include "vtkImageData.h"
-
-
+// VTK includes
 #include "vtkBitArray.h"
-#include "vtkUnsignedCharArray.h"
 #include "vtkCharArray.h"
-#include "vtkUnsignedShortArray.h"
-#include "vtkShortArray.h"
-#include "vtkUnsignedIntArray.h"
+#include "vtkDoubleArray.h"
+#include "vtkFloatArray.h"
+#include "vtkImageData.h"
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include "vtkIntArray.h"
-#include "vtkUnsignedLongArray.h"
 #include "vtkLongArray.h"
-#include "vtkDoubleArray.h"
-#include "vtkFloatArray.h"
-#include <vtksys/SystemTools.hxx>
+#include "vtkMath.h"
+#include "vtkObjectFactory.h"
+#include "vtkShortArray.h"
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include "vtkUnsignedCharArray.h"
+#include "vtkUnsignedShortArray.h"
+#include "vtkUnsignedIntArray.h"
+#include "vtkUnsignedLongArray.h"
+#include <vtksys/SystemTools.hxx>
 
+// Teem includes
 #include "teem/ten.h"
 
 vtkStandardNewMacro(vtkNRRDReader);

@@ -282,17 +282,17 @@ int main( int argc, char * argv[] )
     // 5. Run the thing
     seed->SeedStreamlinesInROI();
 
-    // 6. Extra5ct PolyData in RAS
-    vtkNew<vtkPolyData> outFibers;
-
     // Save result
     if ( !WriteToFile )
       {
+      // 6. Extra5ct PolyData in RAS
+      vtkNew<vtkPolyData> outFibers;
+      seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
+
       std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str()) );
       if (fileExtension == ".vtk")
         {
           vtkNew<vtkPolyDataWriter> writer;
-          seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
           writer->SetFileName(OutputFibers.c_str());
           writer->SetFileTypeToBinary();
 #if (VTK_MAJOR_VERSION <= 5)
@@ -309,7 +309,6 @@ int main( int argc, char * argv[] )
           cerr << "Extension not recognize, saving the information in VTP format" << endl;
           }
         vtkNew<vtkXMLPolyDataWriter> writer;
-        seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
         writer->SetFileName(OutputFibers.c_str() );
 #if (VTK_MAJOR_VERSION <= 5)
         writer->SetInput(outFibers.GetPointer());

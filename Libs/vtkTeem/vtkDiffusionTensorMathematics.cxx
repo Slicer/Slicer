@@ -836,13 +836,13 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
 
   if (inData[0][0] == NULL)
     {
-      vtkErrorMacro(<< "Input " << 0 << " must be specified.");
-      return;
+    vtkErrorMacro(<< "Input " << 0 << " must be specified.");
+    return;
     }
   if (inData[0][0]->GetPointData() == NULL || inData[0][0]->GetPointData()->GetTensors() == NULL)
     {
-      vtkErrorMacro(<< "Input " << 0 << " must have tensors.");
-      return;
+    vtkErrorMacro(<< "Input " << 0 << " must have tensors. PointData: " << inData[0][0]->GetPointData());
+    return;
     }
 
   outPtr = outData[0]->GetScalarPointerForExtent(outExt);

@@ -33,7 +33,6 @@ vtkMRMLNodeNewMacro(vtkMRMLColorNode);
 //----------------------------------------------------------------------------
 vtkMRMLColorNode::vtkMRMLColorNode()
 {
-  this->Name = NULL;
   this->SetName("");
   this->FileName = NULL;
   this->Type = -1;
@@ -304,7 +303,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::SetNameFromColor(int index)
 {
-  double rgba[4];
+  double rgba[4] = {-1.,-1.,-1.,-1.};
   bool res = this->GetColor(index, rgba);
   std::stringstream ss;
   ss.precision(3);

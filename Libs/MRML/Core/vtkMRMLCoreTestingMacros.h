@@ -668,8 +668,8 @@
       std::cerr << "Error getting null displayable node" << std::endl;  \
       return EXIT_FAILURE;                                      \
       }                                                         \
-    node->SetAndObserveTextureImageDataPort(NULL);                  \
-    if (node->GetTextureImageDataPort() != NULL)                    \
+    node->SetTextureImageDataConnection(NULL);                  \
+    if (node->GetTextureImageDataConnection() != NULL)                    \
       {                                                                 \
       std::cerr << "Error getting null texture image data " << std::endl; \
       return EXIT_FAILURE;                                              \

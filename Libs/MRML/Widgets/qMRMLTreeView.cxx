@@ -845,8 +845,6 @@ bool qMRMLTreeView::clickDecoration(const QModelIndex& index)
 //------------------------------------------------------------------------------
 void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
 {
-  Q_D(qMRMLTreeView);
-
   vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
   vtkMRMLDisplayNode* displayNode =
     vtkMRMLDisplayNode::SafeDownCast(node);

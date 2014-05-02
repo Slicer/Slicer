@@ -61,12 +61,13 @@ public:
   ///
   /// Sets ImageData for background mask
   /// Must be reimplemented in deriving class if they need it.
-  /// GetBackgroundImageData() returns 0 if the background image data
+  /// GetBackgroundImageDataConnection() returns 0 if the background image data
   /// is not used.
 #if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetBackgroundImageData(vtkImageData * vtkNotUsed(imageData));
+  virtual void SetBackgroundImageData(vtkImageData* imageData);
 #else
-  virtual void SetBackgroundImageDataPort(vtkAlgorithmOutput * vtkNotUsed(imageDataPort));
+  virtual void SetBackgroundImageDataConnection(vtkAlgorithmOutput * imageDataConnection);
+  virtual vtkAlgorithmOutput* GetBackgroundImageDataConnection();
 #endif
   virtual vtkImageData* GetBackgroundImageData();
 
@@ -79,7 +80,7 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetImageData();
 #else
-  virtual vtkAlgorithmOutput* GetImageDataPort();
+  virtual vtkAlgorithmOutput* GetImageDataConnection();
 #endif
 
   /// Gets ImageData and ensure it's up-to-date by calling Update() on the
@@ -97,17 +98,17 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputImageData(vtkImageData *imageData);
 #else
-  virtual void SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort);
+  virtual void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection);
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection();
 #endif
 
   /// Gets the pipeline input. To be reimplemented in subclasses.
   virtual vtkImageData* GetInputImageData();
 
   /// Gets the pipeline output. To be reimplemented in subclasses.
-#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
-#else
-  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
 #endif
 
   ///
@@ -136,7 +137,7 @@ protected:
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 #else
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
 #endif
 };
 

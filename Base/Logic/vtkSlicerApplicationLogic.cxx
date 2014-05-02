@@ -1191,7 +1191,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 #if (VTK_MAJOR_VERSION <= 5)
       modelDisplayNode->SetInputPolyData(mnd->GetPolyData());
 #else
-      modelDisplayNode->SetInputPolyData(mnd->GetPolyDataFilter());
+      modelDisplayNode->SetInputPolyDataConnection(mnd->GetPolyDataConnection());
 #endif
       }
     if (mnd->GetPolyData() &&

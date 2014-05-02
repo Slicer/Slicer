@@ -2,6 +2,9 @@
 #-----------------------------------------------------------------------------
 set(MODULE_NAME ProbeVolumeWithModel)
 
+# HACK until each project find_package's required projects.
+include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
+
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
@@ -9,8 +12,8 @@ SEMMacroBuildCLI(
   TARGET_LIBRARIES MRMLCore vtkTeem
   INCLUDE_DIRECTORIES
     ${vtkITK_INCLUDE_DIRS}
-    ${MRMLCore_INCLUDE_DIRS}
     ${vtkTeem_INCLUDE_DIRS}
+    ${MRMLCore_INCLUDE_DIRS}
   EXECUTABLE_ONLY
   )
 

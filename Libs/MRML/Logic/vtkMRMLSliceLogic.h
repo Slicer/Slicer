@@ -162,7 +162,7 @@ public:
   vtkImageData *GetImageData();
   //ETX
 #else
-  vtkAlgorithmOutput *GetImageDataPort();
+  vtkAlgorithmOutput *GetImageDataConnection();
 #endif
 
   ///
@@ -400,7 +400,7 @@ protected:
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *    ImageData;
 #else
-  vtkAlgorithmOutput *    ImageDataPort;
+  vtkAlgorithmOutput *    ImageDataConnection;
 #endif
   vtkTransform *    ActiveSliceTransform;
 

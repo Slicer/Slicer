@@ -115,9 +115,9 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode
 }
 #else
 void vtkMRMLDiffusionWeightedVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
 {
-  this->ExtractComponent->SetInputConnection(imageDataPort);
+  this->ExtractComponent->SetInputConnection(imageDataConnection);
 }
 #endif
 
@@ -134,17 +134,24 @@ vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
   return this->AppendComponents->GetOutput();
 }
 #else
-vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageDataPort()
+vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageDataConnection()
 {
   return this->AppendComponents->GetOutputPort();
 }
 #endif
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetScalarImageData()
 {
   return vtkImageData::SafeDownCast(this->ExtractComponent->GetOutput());
 }
+#else
+vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetScalarImageDataConnection()
+{
+  return this->ExtractComponent->GetOutputPort();
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeDisplayNode::UpdateImageDataPipeline()

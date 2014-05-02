@@ -61,7 +61,7 @@ set(include_dirs
 if(MRML_USE_vtkTeem)
   list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
 endif()
-include_directories(${include_dirs})
+include_directories(BEFORE ${include_dirs})
 
 # --------------------------------------------------------------------------
 # Configure headers
@@ -254,6 +254,12 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkRenderingOpenGL
     vtkRenderingFreeTypeOpenGL
     )
+  if (UNIX AND NOT APPLE)
+    find_package(FontConfig QUIET)
+    if (FONTCONFIG_FOUND)
+      list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeFontConfig)
+    endif()
+  endif()
 else()
   set(VTK_LIBRARIES
     #vtkCommon # Provided by vtkITK, FreeSurfer

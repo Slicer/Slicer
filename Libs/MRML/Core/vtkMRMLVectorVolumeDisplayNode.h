@@ -98,21 +98,27 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
                                    void * /*callData*/ );
 
   /// Get the input of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetInputImageData();
+#else
+  virtual vtkAlgorithmOutput* GetInputImageDataConnection();
+#endif
 
   /// Get the output of the pipeline
 #if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
 #else
-  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
 #endif
 
   /// 
   /// Sets ImageData for background mask
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetBackgroundImageData(vtkImageData *imageData);
+  virtual vtkImageData* GetBackgroundImageData();
 #else
-  virtual void SetBackgroundImageDataPort(vtkAlgorithmOutput *imageDataPort);
+  virtual void SetBackgroundImageDataConnection(vtkAlgorithmOutput *imageDataConnection);
+  virtual vtkAlgorithmOutput* GetBackgroundImageDataConnection();
 #endif
 
   virtual void UpdateImageDataPipeline();
@@ -140,13 +146,16 @@ protected:
   vtkMRMLVectorVolumeDisplayNode(const vtkMRMLVectorVolumeDisplayNode&);
   void operator=(const vtkMRMLVectorVolumeDisplayNode&);
 
-  vtkImageData* GetScalarImageData();
-
   /// Set the input of the pipeline
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 #else
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
+#endif
+#if (VTK_MAJOR_VERSION <= 5)
+  virtual vtkImageData* GetScalarImageData();
+#else
+  virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
 #endif
 
   int ScalarMode;

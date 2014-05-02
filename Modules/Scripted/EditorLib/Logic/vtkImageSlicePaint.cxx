@@ -25,9 +25,9 @@ vtkStandardNewMacro(vtkImageSlicePaint);
 //----------------------------------------------------------------------------
 vtkImageSlicePaint::vtkImageSlicePaint()
 {
-  for (int i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
     {
-    this->TopLeft[i] = this->TopLeft[i] = this->BottomLeft[i] = this->BottomRight[i] = 0;
+    this->TopLeft[i] = this->TopRight[i] = this->BottomLeft[i] = this->BottomRight[i] = 0;
     }
 
   this->MaskImage = NULL;
@@ -57,9 +57,6 @@ vtkImageSlicePaint::~vtkImageSlicePaint()
   this->SetMaskImage (NULL);
   this->SetBackgroundImage (NULL);
   this->SetWorkingImage (NULL);
-#if (VTK_MAJOR_VERSION > 5)
-  this->SetWorkingImageFilter (NULL);
-#endif
   this->SetExtractImage (NULL);
   this->SetReplaceImage (NULL);
 
@@ -407,8 +404,6 @@ void vtkImageSlicePaint::Paint()
     }
 #if (VTK_MAJOR_VERSION <= 5)
   this->GetWorkingImage()->Update();
-#else
-  this->GetWorkingImageFilter()->Update();
 #endif
 
   switch (this->GetWorkingImage()->GetScalarType())

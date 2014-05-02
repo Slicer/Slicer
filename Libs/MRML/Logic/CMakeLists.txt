@@ -90,53 +90,26 @@ add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
   set(VTK_LIBRARIES
-    #vtkCommonCore # Provided by MRMLCore
-    #vtkCommonDataModel # Provided by MRMLCore
-    #vtkCommonExecutionModel # Provided by MRMLCore
-    #vtkCommonMath # Provided by MRMLCore
-    #vtkCommonSystem # Provided by MRMLCore
-    #vtkCommonTransforms # Provided by MRMLCore
-    #vtkFiltersCore # Provided by MRMLCore
-    #vtkFiltersSources # Provided by MRMLCore
-    #vtkImagingColor # Provided by MRMLCore
-    #vtkImagingCore # Provided by MRMLCore
     vtkImagingGeneral
-    #vtkImagingMath # Provided by MRMLCore
     vtkInteractionImage
     vtkRenderingFreeType
-    #vtkRenderingCore # Provided by MRMLCore
-    #vtkRenderingOpenGL # Provided by MRMLCore
     vtkRenderingVolumeOpenGL
     )
 else()
   set(VTK_LIBRARIES
-    #Common # Provided by MRMLCore, vtkTeem, RemoteIO
-    #Filtering # Provided by MRMLCore, vtkTeem
-    #Graphics # Provided by MRMLCore, vtkTeem
-    #Imaging # Provided by MRMLCore, vtkTeem
-    #Rendering # Provided by MRMLCore
     "" # Since no direct dependency to VTK libraries are required, let's explicitly set
     # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
   )
 endif()
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(libs
-    MRMLCore
-    vtkTeem
-    vtkRenderingFreeTypeFontConfig
-    RemoteIO
-    ${VTK_LIBRARIES}
-    ${LibArchive_LIBRARY}
-    )
-else()
-  set(libs
-    MRMLCore
-    vtkTeem
-    RemoteIO
-    ${VTK_LIBRARIES}
-    ${LibArchive_LIBRARY}
-    )
-endif()
+
+set(libs
+  MRMLCore
+  vtkTeem
+  RemoteIO
+  ${VTK_LIBRARIES}
+  ${LibArchive_LIBRARY}
+  )
+
 target_link_libraries(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.

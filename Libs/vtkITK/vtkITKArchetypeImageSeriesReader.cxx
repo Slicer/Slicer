@@ -249,6 +249,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+//----------------------------------------------------------------------------
 int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* vtkNotUsed(filename))
 {
   if (this->Archetype == NULL)
@@ -1022,6 +1023,7 @@ void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
   return;
 }
 
+//----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 {
   itk::TimeProbe AnalyzeTime;
@@ -1247,14 +1249,6 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 }
 
 //----------------------------------------------------------------------------
-// This function reads a data from a file.  The datas extent/axes
-// are assumed to be the same as the file extent/order.
-// implemented in the Scalar and Vector subclasses
-void vtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *vtkNotUsed(output))
-{
-  // vtkWarningMacro(<<"The subclass has not defined anything for ExecuteData!\n");
-}
-
 const itk::MetaDataDictionary&
 vtkITKArchetypeImageSeriesReader
 ::GetMetaDataDictionary() const
@@ -1262,6 +1256,7 @@ vtkITKArchetypeImageSeriesReader
   return this->Dictionary;
 }
 
+//----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::ParseDictionary()
 {
   int nItems = this->Dictionary.GetKeys().size();
@@ -1283,16 +1278,19 @@ void vtkITKArchetypeImageSeriesReader::ParseDictionary()
   }
 }
 
+//----------------------------------------------------------------------------
 unsigned int vtkITKArchetypeImageSeriesReader::GetNumberOfItemsInDictionary()
 {
   return this->Tags.size();
 }
 
+//----------------------------------------------------------------------------
 bool vtkITKArchetypeImageSeriesReader::HasKey( char* tag )
 {
   return this->Dictionary.HasKey( tag );
 }
 
+//----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
 {
   if (n >= this->Tags.size())
@@ -1302,7 +1300,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthKey( unsigned int n )
   return this->Tags[n].c_str();
 }
 
-
+//----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetNthValue( unsigned int n )
 {
   if (n >= this->TagValues.size())
@@ -1312,6 +1310,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthValue( unsigned int n )
   return this->TagValues[n].c_str();
 }
 
+//----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
 {
   std::string tagstr (tag);
@@ -1325,6 +1324,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
   return NULL;
 }
 
+//----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
 {
   if ( n >= this->GetNumberOfFileNames() )
@@ -1336,6 +1336,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
 
 }
 
+//----------------------------------------------------------------------------
 unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( const char* filename )
 {
   std::string filenamestr (filename);
@@ -1343,6 +1344,7 @@ unsigned int vtkITKArchetypeImageSeriesReader::AddFileName( const char* filename
   return this->FileNames.size();
 }
 
+//----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
 {
   this->FileNames.resize( 0 );
@@ -1356,6 +1358,7 @@ void vtkITKArchetypeImageSeriesReader::ResetFileNames( )
   this->ImageOrientationPatient.resize( 0 );
 }
 
+//----------------------------------------------------------------------------
 int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
 {
   // we will set FileNames to have only volumes that match the archetype

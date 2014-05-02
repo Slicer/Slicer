@@ -192,7 +192,10 @@ class EditUtil(object):
     Note that this call will typically schedule a render operation to be
     performed the next time the event loop is idle.
     """
-    volumeNode.GetImageData().GetPointData().GetScalars().Modified()
+    if vtk.VTK_MAJOR_VERSION > 5 and volumeNode.GetImageDataConnection():
+      volumeNode.GetImageDataConnection().GetProducer().Update()
+    if volumeNode.GetImageData().GetPointData().GetScalars() != None:
+      volumeNode.GetImageData().GetPointData().GetScalars().Modified()
     volumeNode.GetImageData().Modified()
     volumeNode.Modified()
 

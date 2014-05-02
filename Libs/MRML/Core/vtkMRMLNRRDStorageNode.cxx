@@ -12,7 +12,6 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
-
 // MRML includes
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
@@ -21,16 +20,17 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeNode.h"
 
+// vtkTeem includes
+#include <vtkNRRDReader.h>
+#include <vtkNRRDWriter.h>
+
 // VTK includes
 #include <vtkImageChangeInformation.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
-#include <vtkNRRDReader.h>
-#include <vtkNRRDWriter.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
 #include <vtkVersion.h>
-
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLNRRDStorageNode);
@@ -296,7 +296,11 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
+#if (VTK_MAJOR_VERSION <= 5)
   volNode->SetAndObserveImageData (ici->GetOutput());
+#else
+  volNode->SetImageDataConnection(ici->GetOutputPort());
+#endif
   return 1;
 }
 
@@ -372,7 +376,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
   writer->SetInput(volNode->GetImageData() );
 #else
-  writer->SetInputData(volNode->GetImageData() );
+  writer->SetInputConnection(volNode->GetImageDataConnection());
 #endif
   writer->SetUseCompression(this->GetUseCompression());
 

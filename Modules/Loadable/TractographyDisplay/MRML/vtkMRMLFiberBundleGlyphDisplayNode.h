@@ -79,7 +79,7 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleGlyphD
   void operator= ( const vtkMRMLFiberBundleGlyphDisplayNode& );
 
   /// Gets result in glyph PolyData
-  virtual vtkAlgorithmOutput* GetOutputPort();
+  virtual vtkAlgorithmOutput* GetOutputPolyDataConnection();
 
   /// Enumerated
 

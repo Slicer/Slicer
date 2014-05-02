@@ -97,8 +97,6 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->LayoutGridColumns = 1;
   this->LayoutGridRows = 1;
 
-  this->SetOrientationToAxial();
-
   this->PrescribedSliceSpacing[0] = this->PrescribedSliceSpacing[1] = this->PrescribedSliceSpacing[2] = 1;
   this->SliceSpacingMode = AutomaticSliceSpacingMode;
 
@@ -114,6 +112,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->LayoutColor[1] = vtkMRMLSliceNode::grayColor()[1];
   this->LayoutColor[2] = vtkMRMLSliceNode::grayColor()[2];
 
+  this->SetOrientationToAxial();
   this->SetLayoutLabel("");
 }
 

@@ -28,7 +28,8 @@ class vtkPolyData;
 /// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
 /// or by scalar invariants), display on/off for tensor glyphs and display of
 /// trajectory as a line or tube.
-class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkMRMLGlyphableVolumeSliceDisplayNode
+class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
+  : public vtkMRMLGlyphableVolumeSliceDisplayNode
 {
  public:
   static vtkMRMLDiffusionTensorVolumeSliceDisplayNode *New (  );
@@ -76,6 +77,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ );
+
+  /// Return the glyph producer output for the input image data.
+  /// \sa GetOutputPolyData()
+  virtual vtkAlgorithmOutput* GetOutputPolyDataConnection();
 
   ///
   /// Update the pipeline based on this node attributes
@@ -190,19 +195,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
 
-  /// Return the glyph producer output for the input image data.
-  /// \sa GetOutputPolyData()
-  virtual vtkAlgorithmOutput* GetOutputPort();
+  vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
 
-    vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
+  /// ALL MRML nodes
+  vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
+  char *DiffusionTensorDisplayPropertiesNodeID;
 
-    /// ALL MRML nodes
-    vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
-    char *DiffusionTensorDisplayPropertiesNodeID;
+  void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
-    void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
-
-    static std::vector<int> GetSupportedColorModes();
+  static std::vector<int> GetSupportedColorModes();
 
 };
 

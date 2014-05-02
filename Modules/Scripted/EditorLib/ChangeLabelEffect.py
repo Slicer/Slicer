@@ -173,7 +173,10 @@ class ChangeLabelEffectLogic(Effect.EffectLogic):
     outputColor = int(parameterNode.GetParameter("ChangeLabelEffect,outputColor"))
 
     change = slicer.vtkImageLabelChange()
-    change.SetInput( self.getScopedLabelInput() )
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      change.SetInput( self.getScopedLabelInput() )
+    else:
+      change.SetInputData( self.getScopedLabelInput() )
     change.SetOutput( self.getScopedLabelOutput() )
     change.SetInputLabel( inputColor )
     change.SetOutputLabel( outputColor )

@@ -253,7 +253,7 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
   // When there are many child nodes in a hierarchy then show/hide is much more efficient if batch processing is enabled.
   // However, if there are few nodes only then a full refresh at the end of a batch processing takes longer than doing
   // the update on each node separately.
-  bool batchProcess = (children.size() > static_cast<unsigned int>(vtkMRMLModelHierarchyLogic::ChildrenVisibilitySetBatchUpdateThreshold));
+  bool batchProcess = (static_cast<int>(children.size()) > vtkMRMLModelHierarchyLogic::ChildrenVisibilitySetBatchUpdateThreshold);
   vtkMRMLScene* scene=NULL;
   if (batchProcess)
     {

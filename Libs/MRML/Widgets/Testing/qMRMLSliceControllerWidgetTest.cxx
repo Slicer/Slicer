@@ -120,7 +120,7 @@ void qMRMLSliceControllerWidgetTester::testDefaults()
 #if (VTK_MAJOR_VERSION <= 5)
   QCOMPARE(sliceControllerWidget.imageData(), nullPtr);
 #else
-  QCOMPARE(sliceControllerWidget.imageDataPort(), nullPtr);
+  QCOMPARE(sliceControllerWidget.imageDataConnection(), nullPtr);
 #endif
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode(), nullPtr);
 
@@ -149,7 +149,7 @@ void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
 #if (VTK_MAJOR_VERSION <= 5)
   QCOMPARE(sliceControllerWidget.imageData(), nullPtr);
 #else
-  QCOMPARE(sliceControllerWidget.imageDataPort(), nullPtr);
+  QCOMPARE(sliceControllerWidget.imageDataConnection(), nullPtr);
 #endif
 
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode()->GetBackgroundVolumeID(), nullPtr);

@@ -33,27 +33,25 @@ set(${KIT}_SRCS
   )
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(${KIT}_TARGET_LIBRARIES
-    ${ITK_LIBRARIES}
-    ${MRML_LIBRARIES}
+  set(${KIT}_VTK_LIBRARIES
     vtkRenderingVolume
     vtkRenderingVolumeOpenGL
-    vtkSlicerAnnotationsModuleMRML
-    vtkSlicer${MODULE_NAME}ModuleLogic
-    vtkSlicer${MODULE_NAME}ModuleMRML
-    VolumeRenderingReplacements
     )
 else()
   set(${KIT}_TARGET_LIBRARIES
-    ${ITK_LIBRARIES}
-    ${MRML_LIBRARIES}
     vtkRendering
-    vtkSlicerAnnotationsModuleMRML
-    vtkSlicer${MODULE_NAME}ModuleLogic
-    vtkSlicer${MODULE_NAME}ModuleMRML
-    VolumeRenderingReplacements
     )
 endif()
+
+set(${KIT}_TARGET_LIBRARIES
+  vtkSlicerAnnotationsModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleMRML
+  VolumeRenderingReplacements
+  ${MRML_LIBRARIES}
+  ${ITK_LIBRARIES}
+  ${${KIT}_VTK_LIBRARIES}
+  )
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(

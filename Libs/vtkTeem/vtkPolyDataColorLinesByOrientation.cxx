@@ -36,7 +36,7 @@ vtkPolyDataColorLinesByOrientation::vtkPolyDataColorLinesByOrientation()
 {
   this->ScalarArrayName = NULL;
   this->SetScalarArrayName("MeanOrientation");
-  this->CopyOriginalDataOff();
+  this->CopyOriginalData = 0;
   this->ColorMode = vtkPolyDataColorLinesByOrientation::colorModeMeanFiberOrientation;
 }
 

@@ -95,6 +95,11 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
     delete [] this->WriteFileFormat;
     this->WriteFileFormat = NULL;
     }
+  if (this->StoredTime)
+    {
+    this->StoredTime->Delete();
+    this->StoredTime = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------

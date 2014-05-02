@@ -105,7 +105,7 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *slice = sliceLogic->GetImageData();
 #else
-  vtkAlgorithmOutput *slicePort = sliceLogic->GetImageDataPort();
+  vtkAlgorithmOutput *slicePort = sliceLogic->GetImageDataConnection();
 #endif
 
   vtkImageMapper *mapper = vtkImageMapper::New();

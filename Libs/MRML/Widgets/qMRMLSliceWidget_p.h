@@ -68,7 +68,7 @@ public slots:
 #if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData * imageData);
 #else
-  void setImageDataPort(vtkAlgorithmOutput * imageDataPort);
+  void setImageDataConnection(vtkAlgorithmOutput * imageDataConnection);
 #endif
 
 

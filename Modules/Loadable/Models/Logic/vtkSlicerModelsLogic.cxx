@@ -23,6 +23,7 @@
 #include <vtkMRMLTransformNode.h>
 
 /// VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkGeneralTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
@@ -101,16 +102,33 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
   this->GetMRMLScene()->AddNode(display.GetPointer());
 
   vtkNew<vtkMRMLModelNode> model;
-#if (VTK_MAJOR_VERSION <= 5)
   model->SetAndObservePolyData(polyData);
-#else
-  model->SetAndObservePolyFilterAndData(NULL, polyData);
-#endif
   model->SetAndObserveDisplayNodeID(display->GetID());
   this->GetMRMLScene()->AddNode(model.GetPointer());
 
   return model.GetPointer();
 }
+
+//----------------------------------------------------------------------------
+#if VTK_MAJOR_VERSION >5
+vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
+{
+  if (this->GetMRMLScene() == 0)
+    {
+    return 0;
+    }
+
+  vtkNew<vtkMRMLModelDisplayNode> display;
+  this->GetMRMLScene()->AddNode(display.GetPointer());
+
+  vtkNew<vtkMRMLModelNode> model;
+  model->SetPolyDataConnection(polyData);
+  model->SetAndObserveDisplayNodeID(display->GetID());
+  this->GetMRMLScene()->AddNode(model.GetPointer());
+
+  return model.GetPointer();
+}
+#endif
 
 //----------------------------------------------------------------------------
 int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
@@ -452,7 +470,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 #if (VTK_MAJOR_VERSION <= 5)
     modelOut->SetAndObservePolyData(normals->GetOutput());
 #else
-    modelOut->SetAndObservePolyFilterAndData(normals.GetPointer());
+    modelOut->SetPolyDataConnection(normals->GetOutputPort());
 #endif
    }
 

@@ -70,7 +70,11 @@ void vtkMRMLAnnotationROINode::Initialize(vtkMRMLScene* mrmlScene)
 vtkMRMLAnnotationROINode::~vtkMRMLAnnotationROINode()
 {
   vtkDebugMacro("Destructing...." << (this->GetID() != NULL ? this->GetID() : "null id"));
-
+  if (this->LabelText)
+    {
+    delete [] this->LabelText;
+    this->LabelText = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -689,7 +693,7 @@ void vtkMRMLAnnotationROINode::GetRASBounds(double bounds[6])
 {
   double bounds_Local[6]={0};
   vtkMath::UninitializeBounds(bounds_Local);
-  if (this->PolyData == NULL)
+  if (this->GetPolyData() == NULL)
     {
     return;
     }

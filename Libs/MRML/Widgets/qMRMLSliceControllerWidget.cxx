@@ -1045,7 +1045,8 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 #if (VTK_MAJOR_VERSION <= 5)
   q->setImageData(this->SliceLogic ? this->SliceLogic->GetImageData() : 0);
 #else
-  q->setImageDataPort(this->SliceLogic ? this->SliceLogic->GetImageDataPort() : 0);
+  q->setImageDataConnection(
+    this->SliceLogic ? this->SliceLogic->GetImageDataConnection() : 0);
 #endif
 
   if (!this->SliceLogic)
@@ -1534,18 +1535,19 @@ void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
   emit this->imageDataChanged(d->ImageData);
 }
 #else
-void qMRMLSliceControllerWidget::setImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+void qMRMLSliceControllerWidget
+::setImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
 {
   Q_D(qMRMLSliceControllerWidget);
 
-  if (d->ImageDataPort == newImageDataPort)
+  if (d->ImageDataConnection == newImageDataConnection)
     {
     return;
     }
 
-  d->ImageDataPort = newImageDataPort;
+  d->ImageDataConnection = newImageDataConnection;
 
-  emit this->imageDataPortChanged(d->ImageDataPort);
+  emit this->imageDataConnectionChanged(d->ImageDataConnection);
 }
 #endif
 
@@ -1553,7 +1555,7 @@ void qMRMLSliceControllerWidget::setImageDataPort(vtkAlgorithmOutput* newImageDa
 #if (VTK_MAJOR_VERSION <= 5)
 CTK_GET_CPP(qMRMLSliceControllerWidget, vtkImageData*, imageData, ImageData);
 #else
-CTK_GET_CPP(qMRMLSliceControllerWidget, vtkAlgorithmOutput*, imageDataPort, ImageDataPort);
+CTK_GET_CPP(qMRMLSliceControllerWidget, vtkAlgorithmOutput*, imageDataConnection, ImageDataConnection);
 #endif
 
 //---------------------------------------------------------------------------

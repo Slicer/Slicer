@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include "vtkDiffusionTensorGlyph.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
@@ -109,7 +110,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::PrintSelf(ostream& os, vtkIndent indent
 }
 
 //----------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLFiberBundleGlyphDisplayNode::GetOutputPort()
+vtkAlgorithmOutput* vtkMRMLFiberBundleGlyphDisplayNode::GetOutputPolyDataConnection()
 {
   return this->DiffusionTensorGlyphFilter->GetOutputPort();
 }
@@ -120,41 +121,49 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
   this->Superclass::UpdatePolyDataPipeline();
 
   this->DiffusionTensorGlyphFilter->SetInputConnection(
-    this->Superclass::GetOutputPort());
+    this->Superclass::GetOutputPolyDataConnection());
+
+  // set display properties according to the tensor-specific display properties node for glyphs
+  vtkMRMLDiffusionTensorDisplayPropertiesNode * diffusionTensorDisplayNode =
+    this->GetDiffusionTensorDisplayPropertiesNode( );
+
+  if (diffusionTensorDisplayNode)
+    {
+#if (VTK_MAJOR_VERSION <= 5)
+    this->DiffusionTensorGlyphFilter->SetSource(
+      diffusionTensorDisplayNode->GetGlyphSource() );
+#else
+    // Need to set the input connection to prevent unnecessary error messages
+    // complaining about missing input port 1.
+    this->DiffusionTensorGlyphFilter->SetSourceConnection(
+      diffusionTensorDisplayNode->GetGlyphConnection() );
+#endif
+    }
 
   if (!this->Visibility)
     {
+    std::cout << "no visibility" << std::endl;
     return;
     }
 
-  // set display properties according to the tensor-specific display properties node for glyphs
-  vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode =
-    this->GetDiffusionTensorDisplayPropertiesNode( );
-
-  if (DiffusionTensorDisplayNode != NULL)
+  if (diffusionTensorDisplayNode != NULL)
     {
     // TO DO: need filter to calculate FA, average FA, etc. as requested
 
     // get tensors from the fiber bundle node and glyph them
     // TO DO: include superquadrics
     // if glyph type is other than superquadrics, get glyph source
-    if (DiffusionTensorDisplayNode->GetGlyphGeometry( ) !=
+    if (diffusionTensorDisplayNode->GetGlyphGeometry( ) !=
         vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
       {
       this->DiffusionTensorGlyphFilter->ClampScalingOff();
       // TO DO: implement max # ellipsoids, random sampling features
       this->DiffusionTensorGlyphFilter->SetResolution(
-        DiffusionTensorDisplayNode->GetLineGlyphResolution());
+        diffusionTensorDisplayNode->GetLineGlyphResolution());
       this->DiffusionTensorGlyphFilter->SetScaleFactor(
-        DiffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
-#if (VTK_MAJOR_VERSION <= 5)
-      this->DiffusionTensorGlyphFilter->SetSource(
-#else
-      this->DiffusionTensorGlyphFilter->SetSourceData(
-#endif
-        DiffusionTensorDisplayNode->GetGlyphSource( ) );
+        diffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
 
-      vtkDebugMacro("setting glyph geometry" << DiffusionTensorDisplayNode->GetGlyphGeometry( ) );
+      vtkDebugMacro("setting glyph geometry" << diffusionTensorDisplayNode->GetGlyphGeometry( ) );
 
       // set glyph coloring
       if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
@@ -169,7 +178,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         {
         this->ScalarVisibilityOn( );
 
-        switch ( DiffusionTensorDisplayNode->GetColorGlyphBy( ))
+        switch ( diffusionTensorDisplayNode->GetColorGlyphBy( ))
           {
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
             {
@@ -272,7 +281,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 #if (VTK_MAJOR_VERSION <= 5)
         this->GetOutputPolyData()->Update();
 #else
-        this->GetOutputFilter()->Update();
+        this->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
         this->GetOutputPolyData()->GetScalarRange(range);
         }

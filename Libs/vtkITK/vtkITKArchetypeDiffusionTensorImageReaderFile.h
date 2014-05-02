@@ -20,7 +20,8 @@
 
 #include "itkImageFileReader.h"
 
-class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile : public vtkITKArchetypeImageSeriesReader
+class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
+  : public vtkITKArchetypeImageSeriesReader
 {
  public:
   static vtkITKArchetypeDiffusionTensorImageReaderFile *New();
@@ -34,7 +35,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile : public vtkI
 #if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
 #else
-  void ExecuteDataWithInformation(vtkDataObject *out, vtkInformation* outInfo);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 #endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:

@@ -39,8 +39,10 @@
 #include <vtkVersion.h>
 
 //-----------------------------------------------------------------------------
-qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
+qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
+  : Superclass(_parent)
 {
+  this->Factory = 0;
   int flags = this->initializationFlags();
   flags &= ~(PythonQt::IgnoreSiteModule); // Clear bit
   this->setInitializationFlags(flags);
@@ -49,6 +51,11 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclas
 //-----------------------------------------------------------------------------
 qSlicerCorePythonManager::~qSlicerCorePythonManager()
 {
+  if (this->Factory)
+    {
+    delete this->Factory;
+    this->Factory = 0;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -136,7 +143,8 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 void qSlicerCorePythonManager::preInitialization()
 {
   Superclass::preInitialization();
-  this->addWrapperFactory(new ctkVTKPythonQtWrapperFactory);
+  this->Factory = new ctkVTKPythonQtWrapperFactory;
+  this->addWrapperFactory(this->Factory);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (app)
     {

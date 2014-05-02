@@ -20,6 +20,7 @@
 class vtkMRMLVolumeDisplayNode;
 
 // VTK includes
+class vtkAlgorithmOutput;
 class vtkImageData;
 class vtkMatrix4x4;
 
@@ -142,13 +143,22 @@ public:
   /// Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode();
 
-  ///
-  /// Associated ImageData
-  vtkGetObjectMacro(ImageData, vtkImageData);
   /// The origin and spacing of the vtkImageData is ignored. Only
   /// vtkMRMLVolumeNode::Spacing and vtkMRMLVolumeNode::Origin is
   /// taken into account.
+  /// \sa GetImageData(), SetImageDataConnection()
   void SetAndObserveImageData(vtkImageData *ImageData);
+#if (VTK_MAJOR_VERSION <= 5)
+  vtkGetObjectMacro(ImageData, vtkImageData);
+#else
+  virtual vtkImageData* GetImageData();
+  /// Set and observe image data pipeline.
+  /// It is propagated to the display nodes.
+  /// \sa GetImageDataConnection()
+  virtual void SetImageDataConnection(vtkAlgorithmOutput *inputPort);
+  /// Return the input image data pipeline.
+  vtkGetObjectMacro(ImageDataConnection, vtkAlgorithmOutput);
+#endif
 
   ///
   /// alternative method to propagate events generated in Display nodes
@@ -157,10 +167,10 @@ public:
                                    void * /*callData*/ );
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
-  /// PolyDataModifiedEvent is generated when PloyData is changed
+  /// ImageDataModifiedEvent is generated when image data is changed
   enum
     {
-      ImageDataModifiedEvent = 18001
+    ImageDataModifiedEvent = 18001
     };
 
   ///
@@ -183,6 +193,10 @@ protected:
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
+  /// Set the image data pipeline to all the display nodes.
+  void SetImageDataToDisplayNodes();
+  void SetImageDataToDisplayNode(vtkMRMLVolumeDisplayNode* displayNode);
+
   /// Called when a display node is added/removed/modified. Propagate the polydata
   /// to the new display node.
   virtual void UpdateDisplayNodeImageData(vtkMRMLDisplayNode *dnode);
@@ -195,8 +209,6 @@ protected:
   /// Called when a node reference ID is modified.
   virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
 
-  virtual void SetImageData(vtkImageData* img);
-
   /// these are unit length direction cosines
   double IJKToRASDirections[3][3];
 
@@ -204,7 +216,12 @@ protected:
   double Spacing[3];
   double Origin[3];
 
-  vtkImageData               *ImageData;
+#if (VTK_MAJOR_VERSION <= 5)
+  virtual void SetImageData(vtkImageData* img);
+  vtkImageData* ImageData;
+#else
+  vtkAlgorithmOutput* ImageDataConnection;
+#endif
 
   itk::MetaDataDictionary Dictionary;
 };

@@ -11,17 +11,24 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
+// VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkLineSource.h>
-#include <vtkTubeFilter.h>
+#include <vtkObjectFactory.h>
 #include <vtkSphereSource.h>
+#include <vtkTubeFilter.h>
 
+// STD includes
+#include <sstream>
+
+
+#if VTK_MAJOR_VERSION <= 5
 vtkCxxSetObjectMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode, GlyphSource, vtkPolyData);
+#endif
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode);
@@ -57,7 +64,11 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
   this->SuperquadricGlyphPhiResolution = 6; // was 12
 
   // VTK Objects
+#if VTK_MAJOR_VERSION <= 5
   this->GlyphSource = NULL;
+#else
+  this->GlyphConnection = NULL;
+#endif
   this->UpdateGlyphSource();
 
   // set the type to user
@@ -71,10 +82,14 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode::~vtkMRMLDiffusionTensorDisplayPropertiesNode()
 {
+#if VTK_MAJOR_VERSION <= 5
   if ( this->GlyphSource != NULL )
     {
     this->GlyphSource->Delete();
     }
+#else
+  this->SetGlyphConnection(0);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -247,6 +262,33 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkInde
   os << indent << "SuperquadricGlyphPhiResolution:             " << this->SuperquadricGlyphPhiResolution << "\n";
 }
 
+#if VTK_MAJOR_VERSION > 5
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorDisplayPropertiesNode
+::SetGlyphConnection(vtkAlgorithmOutput* newGlyphConnection)
+{
+  if (newGlyphConnection == this->GlyphConnection)
+    {
+    return;
+    }
+
+  vtkAlgorithm* oldGlyphAlgorithm = this->GlyphConnection ?
+    this->GlyphConnection->GetProducer() : 0;
+
+  this->GlyphConnection = newGlyphConnection;
+
+  vtkAlgorithm* glyphAlgorithm = this->GlyphConnection ?
+    this->GlyphConnection->GetProducer() : 0;
+  if (glyphAlgorithm != NULL)
+    {
+    glyphAlgorithm->Register(this);
+    }
+  if (oldGlyphAlgorithm != NULL)
+    {
+    oldGlyphAlgorithm->UnRegister(this);
+    }
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
@@ -254,11 +296,15 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
   vtkDebugMacro("Get Glyph Source");
 
   // Get rid of any old glyph source
+#if VTK_MAJOR_VERSION <= 5
   if ( this->GlyphSource != NULL )
     {
     this->GlyphSource->Delete();
     this->GlyphSource = NULL;
     }
+#else
+  this->SetGlyphConnection(0);
+#endif
 
   // Create a new glyph source according to current settings
 
@@ -289,7 +335,6 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 
       line->SetResolution( this->LineGlyphResolution );
 
-      line->Update( );
 
       // if we are doing tubes, put a tube on the line
       if (this->GlyphGeometry == Tubes)
@@ -302,9 +347,13 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 #endif
         tube->SetRadius( this->TubeGlyphRadius );
         tube->SetNumberOfSides( this->TubeGlyphNumberOfSides );
-        tube->Update( );
 
+#if (VTK_MAJOR_VERSION <= 5)
+        tube->Update( );
         this->SetGlyphSource( tube->GetOutput( ) );
+#else
+        this->SetGlyphConnection( tube->GetOutputPort( ) );
+#endif
         tube->Delete( );
 
         vtkDebugMacro("Get Glyph Source: Tubes");
@@ -313,7 +362,12 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
         {
         vtkDebugMacro("Get Glyph Source: Lines");
         // here we are just displaying lines
+#if (VTK_MAJOR_VERSION <= 5)
+        line->Update( );
         this->SetGlyphSource( line->GetOutput( ) );
+#else
+        this->SetGlyphConnection( line->GetOutputPort( ) );
+#endif
 
         }
 
@@ -329,8 +383,12 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
       sphere->SetThetaResolution( this->EllipsoidGlyphThetaResolution );
       sphere->SetPhiResolution( this->EllipsoidGlyphPhiResolution );
 
+#if (VTK_MAJOR_VERSION <= 5)
       sphere->Update( );
       this->SetGlyphSource( sphere->GetOutput( ) );
+#else
+      this->SetGlyphConnection( sphere->GetOutputPort( ) );
+#endif
       sphere->Delete( );
 
       vtkDebugMacro("Get Glyph Source: Ellipsoids");

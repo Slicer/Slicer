@@ -100,11 +100,25 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
     it( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
   tensors->SetNumberOfComponents(9);
   tensors->SetNumberOfTuples(data->GetNumberOfPoints());
-  tensors->Modified();
+  //tensors->Modified();
   for ( it.GoToBegin(); !it.IsAtEnd() ; ++it )
     {
     const itk::Index<3u> index = it.GetIndex();
+#if VTK_MAJOR_VERSION <= 5
     vtkIdType position = data->FindPoint(index[0], index[1], index[2]);
+#else
+    vtkIdType position = index[0] +
+      index[1] * data->GetDimensions()[0] +
+      index[2] * data->GetDimensions()[0] * data->GetDimensions()[1];
+#endif
+    if (position == static_cast<vtkIdType>(-1) ||
+        position >= tensors->GetNumberOfTuples())
+      {
+      std::cout << "bad position" << position << " for index " << index <<std::endl;
+      itkGenericExceptionMacro(<< "Can't find index " << index
+                               << " in output image data.");
+      continue;
+      }
     float value[9];
     const DiffusionTensor3DPixelType tensor = it.Get();
     for (int i=0; i<3; i++)
@@ -124,26 +138,36 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 #if (VTK_MAJOR_VERSION <= 5)
 void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *output)
 #else
-void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteDataWithInformation(
-  vtkDataObject *output, vtkInformation* outInfo)
+int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **vtkNotUsed(inputVector),
+  vtkInformationVector *outputVector)
 #endif
 {
   if (!this->Superclass::Archetype)
     {
     vtkErrorMacro("An Archetype must be specified.");
+#if (VTK_MAJOR_VERSION <= 5)
     return;
+#else
+    return 1;
+#endif
     }
 
+  int extent[6] = {0,-1,0,-1,0,-1};
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *data = vtkImageData::SafeDownCast(output);
   //data->UpdateInformation();
-  data->SetExtent(0,0,0,0,0,0);
-#if (VTK_MAJOR_VERSION <= 5)
-  data->SetExtent(data->GetWholeExtent());
-#else
-  data->SetExtent(outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
-#endif
+  data->GetWholeExtent(extent);
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1, 1, 1);
+#else
+  vtkImageData* data = vtkImageData::GetData(outputVector);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  outInfo->Get
+    (vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), extent);
+#endif
+  data->SetExtent(extent);
   vtkNew<vtkFloatArray> tensors;
   tensors->SetName("ArchetypeReader");
 
@@ -165,11 +189,18 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteDataWithInformation(
     // ERROR - should have used the series reader
     vtkErrorMacro("There is more than one file, use the vtkITKArchetypeImageSeriesReader instead");
     }
+#if (VTK_MAJOR_VERSION > 5)
+  return 1;
+#endif
 }
 
-void vtkITKArchetypeDiffusionTensorImageReaderFile::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+//----------------------------------------------------------------------------
+void vtkITKArchetypeDiffusionTensorImageReaderFile
+::ReadProgressCallback(itk::ProcessObject* obj,
+                       const itk::ProgressEvent&,void* data)
 {
-  vtkITKArchetypeDiffusionTensorImageReaderFile* me=reinterpret_cast<vtkITKArchetypeDiffusionTensorImageReaderFile*>(data);
+  vtkITKArchetypeDiffusionTensorImageReaderFile* me =
+    reinterpret_cast<vtkITKArchetypeDiffusionTensorImageReaderFile*>(data);
   me->Progress=obj->GetProgress();
   me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

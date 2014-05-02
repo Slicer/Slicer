@@ -49,7 +49,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
 #if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputImageData(vtkImageData *imageData);
 #else
-  virtual void SetInputImageDataPort(vtkAlgorithmOutput *imageDataPort);
+  virtual void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection);
 #endif
 
   /// Get the pipeline input
@@ -59,7 +59,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
 #if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
 #else
-  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
+  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
 #endif
 
   virtual void UpdateImageDataPipeline();

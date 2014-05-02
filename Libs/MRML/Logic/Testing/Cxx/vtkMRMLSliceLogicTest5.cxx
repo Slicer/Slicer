@@ -122,7 +122,7 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* textureImage = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData();
 #else
-  vtkAlgorithmOutput* textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataPort();
+  vtkAlgorithmOutput* textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection();
   vtkImageData* textureImage = vtkImageData::SafeDownCast(textureImagePort->GetProducer()->GetOutputDataObject(textureImagePort->GetIndex()));
 #endif
   int* tdims = textureImage->GetDimensions();
@@ -131,7 +131,7 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* img = sliceLogic->GetImageData();
 #else
-  vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataPort();
+  vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
 #endif
   int* dims = img->GetDimensions();
@@ -153,7 +153,7 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   viewer->SetInput(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
 #else
-  viewer->SetInputConnection(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataPort());
+  viewer->SetInputConnection(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection());
 #endif
   //viewer->SetInputConnection(appendComponents->GetOutputPort());
 

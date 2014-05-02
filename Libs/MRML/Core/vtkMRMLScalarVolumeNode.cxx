@@ -114,7 +114,7 @@ void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
   id->GetPointData()->GetScalars()->FillComponent(2, 0.0);
   id->GetPointData()->GetScalars()->FillComponent(3, 0.0);
 
-  n->SetImageData(id);
+  n->SetAndObserveImageData(id);
   scene->AddNode(n);
 
   n->Delete();

@@ -232,6 +232,8 @@ bool TestChangeImageData(int copyBehavior, vtkImageData* screenShot)
   changeImageCallback->Interactor = renderWindow->GetInteractor();
   changeImageCallback->ChangeImageBehavior = copyBehavior;
 
+  renderer->ResetCamera();
+
   renderWindow->GetInteractor()->AddObserver(
     vtkCommand::KeyPressEvent, changeImageCallback.GetPointer());
   displayableManagerGroup->AddObserver(

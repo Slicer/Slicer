@@ -38,9 +38,10 @@
 #ifndef __vtkSlicerGPUMultiVolumeMapper_h
 #define __vtkSlicerGPUMultiVolumeMapper_h
 
-#include "vtkVolumeMapper.h"
+// VTK includes
+#include <vtkVersion.h>
+#include <vtkVolumeMapper.h>
 #include "VolumeRenderingReplacementsExport.h"
-
 
 class vtkMultiThreader;
 class vtkImageData;
@@ -75,8 +76,13 @@ public:
 
   // Description:
   // Set/Get the nth input data, could be label map or just another volume
+#if VTK_MAJOR_VERSION <= 5
   virtual void SetNthInput( int index, vtkImageData *);
   virtual void SetNthInput( int index, vtkDataSet *);
+#else
+  using vtkVolumeMapper::SetInputConnection;
+  virtual void SetInputConnection( int port, vtkAlgorithmOutput *);
+#endif
   vtkImageData *GetNthInput(int index);
 
   // Description:

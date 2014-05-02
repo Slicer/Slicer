@@ -567,7 +567,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 #if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( volNode->GetImageData() );
 #else
-    writer->SetInputData( volNode->GetImageData() );
+    writer->SetInputConnection( volNode->GetImageDataConnection() );
 #endif
     writer->SetUseCompression(this->GetUseCompression());
     if(this->WriteFileFormat)

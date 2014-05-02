@@ -21,7 +21,7 @@ class vtkMRMLModelDisplayNode;
 class vtkMRMLStorageNode;
 
 // VTK includes
-class vtkAlgorithm;
+class vtkAlgorithmOutput;
 class vtkAssignAttributes;
 class vtkDataArray;
 class vtkPolyData;
@@ -63,14 +63,22 @@ public:
   /// Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
-  /// Set and observe poly data for this model
-  vtkGetObjectMacro(PolyData, vtkPolyData);
+  /// Set and observe poly data for this model.
+  /// \obsolete
+  /// \sa GetPolyData()
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
-#if (VTK_MAJOR_VERSION > 5)
-  vtkGetObjectMacro(PolyDataFilter, vtkAlgorithm);
-  virtual void SetAndObservePolyFilterAndData(vtkAlgorithm *filter, vtkPolyData *PolyData);
-  virtual void SetAndObservePolyFilterAndData(vtkAlgorithm *filter) {
-      return SetAndObservePolyFilterAndData(filter, NULL); }
+  /// Return the input poly data
+  /// \sa SetAndObservePolyData()
+#if (VTK_MAJOR_VERSION <= 5)
+  vtkGetObjectMacro(PolyData, vtkPolyData);
+#else
+  virtual vtkPolyData* GetPolyData();
+  /// Set and observe poly data pipeline.
+  /// It is propagated to the display nodes.
+  /// \sa GetPolyDataConnection()
+  virtual void SetPolyDataConnection(vtkAlgorithmOutput *inputPort);
+  /// Return the input polydata pipeline.
+  vtkGetObjectMacro(PolyDataConnection, vtkAlgorithmOutput);
 #endif
 
   /// PolyDataModifiedEvent is fired when PolyData is changed.
@@ -212,10 +220,11 @@ protected:
   virtual void SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode);
 
   /// Data
+#if (VTK_MAJOR_VERSION <= 5)
   vtkPolyData *PolyData;
-
-  /// Filter
-  vtkAlgorithm *PolyDataFilter;
+#else
+  vtkAlgorithmOutput* PolyDataConnection;
+#endif
 };
 
 #endif

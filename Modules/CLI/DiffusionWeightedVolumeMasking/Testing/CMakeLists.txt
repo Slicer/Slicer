@@ -7,9 +7,17 @@ include_directories(
   ${vtkITK_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS})
+
+set(VTK_LIBRARIES)
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  list(APPEND VTK_LIBRARIES
+    vtkImagingMorphological
+    )
+endif()
+
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
-target_link_libraries(${CLP}Test MRMLCore vtkTeem vtkSlicerEditorLibModuleLogic)
+target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)

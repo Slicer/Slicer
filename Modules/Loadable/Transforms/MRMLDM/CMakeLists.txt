@@ -33,11 +33,14 @@ set(${KIT}_SRCS
   ${displayable_manager_SRCS}
   )
 
+set(${KIT}_VTK_LIBRARIES)
+if(${VTK_VERSION_MAJOR} LESS 6)
+  set(${KIT}_VTK_LIBRARIES vtkRendering)
+endif()
+
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
-  vtkRendering
-  #vtkSlicer${MODULE_NAME}ModuleLogic
-
+  ${${KIT}_VTK_LIBRARIES}
   )
 
 #-----------------------------------------------------------------------------

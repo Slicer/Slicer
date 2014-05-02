@@ -68,8 +68,8 @@ void qMRMLSliceWidgetPrivate::init()
   connect(this->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
           this, SLOT(setImageData(vtkImageData*)));
 #else
-  connect(this->SliceController, SIGNAL(imageDataPortChanged(vtkAlgorithmOutput*)),
-          this, SLOT(setImageDataPort(vtkAlgorithmOutput*)));
+  connect(this->SliceController, SIGNAL(imageDataConnectionChanged(vtkAlgorithmOutput*)),
+          this, SLOT(setImageDataConnection(vtkAlgorithmOutput*)));
 #endif
   connect(this->SliceController, SIGNAL(renderRequested()),
           this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
@@ -92,10 +92,10 @@ void qMRMLSliceWidgetPrivate::setImageData(vtkImageData * imageData)
   this->SliceView->setImageData(imageData);
 }
 #else
-void qMRMLSliceWidgetPrivate::setImageDataPort(vtkAlgorithmOutput * imageDataPort)
+void qMRMLSliceWidgetPrivate::setImageDataConnection(vtkAlgorithmOutput * imageDataConnection)
 {
-  //qDebug() << "qMRMLSliceWidgetPrivate::setImageDataPort";
-  this->SliceView->setImageDataPort(imageDataPort);
+  //qDebug() << "qMRMLSliceWidgetPrivate::setImageDataConnection";
+  this->SliceView->setImageDataConnection(imageDataConnection);
 }
 #endif
 
@@ -218,10 +218,10 @@ void qMRMLSliceWidget::setImageData(vtkImageData* newImageData)
   d->SliceController->setImageData(newImageData);
 }
 #else
-void qMRMLSliceWidget::setImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+void qMRMLSliceWidget::setImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
 {
   Q_D(qMRMLSliceWidget);
-  d->SliceController->setImageDataPort(newImageDataPort);
+  d->SliceController->setImageDataConnection(newImageDataConnection);
 }
 #endif
 
@@ -233,10 +233,10 @@ vtkImageData* qMRMLSliceWidget::imageData() const
   return d->SliceController->imageData();
 }
 #else
-vtkAlgorithmOutput* qMRMLSliceWidget::imageDataPort() const
+vtkAlgorithmOutput* qMRMLSliceWidget::imageDataConnection() const
 {
   Q_D(const qMRMLSliceWidget);
-  return d->SliceController->imageDataPort();
+  return d->SliceController->imageDataConnection();
 }
 #endif
 

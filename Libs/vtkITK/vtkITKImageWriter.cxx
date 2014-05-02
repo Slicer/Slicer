@@ -314,9 +314,12 @@ void vtkITKImageWriter::SetFileName(const char *name)
 void vtkITKImageWriter::Write()
 {
   vtkImageData *inputImage = this->GetImageDataInput(0);
+  vtkPointData* pointData = inputImage->GetPointData();
 
-  if ( inputImage == NULL )
+  if ( inputImage == NULL ||
+       pointData == NULL )
     {
+    vtkErrorMacro(<<"vtkITKImageWriter: No image to write");
     return;
     }
   if ( ! this->FileName )
@@ -333,12 +336,23 @@ void vtkITKImageWriter::Write()
   this->SetUpdateExtent(this->GetOutputInformation(0)->Get(
                         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
 #endif
-  int inputNumberOfScalarComponents = inputImage->GetNumberOfScalarComponents();
+  int inputDataType =
+    pointData->GetScalars() ? pointData->GetScalars()->GetDataType() :
+    pointData->GetTensors() ? pointData->GetTensors()->GetDataType() :
+    pointData->GetVectors() ? pointData->GetVectors()->GetDataType() :
+    pointData->GetNormals() ? pointData->GetNormals()->GetDataType() :
+    0;
+  int inputNumberOfScalarComponents =
+    pointData->GetScalars() ? pointData->GetScalars()->GetNumberOfComponents() :
+    pointData->GetTensors() ? pointData->GetTensors()->GetNumberOfComponents() :
+    pointData->GetVectors() ? pointData->GetVectors()->GetNumberOfComponents() :
+    pointData->GetNormals() ? pointData->GetNormals()->GetNumberOfComponents() :
+    0;
 
   if (inputNumberOfScalarComponents == 1)
     {
     // take into consideration the scalar type
-    switch (inputImage->GetScalarType())
+    switch (inputDataType)
       {
       case VTK_DOUBLE:
         {
@@ -398,7 +412,7 @@ void vtkITKImageWriter::Write()
   else if (inputNumberOfScalarComponents == 3)
     {
     // take into consideration the scalar type
-    switch (inputImage->GetScalarType())
+    switch (inputDataType)
       {
       case VTK_DOUBLE:
         {
@@ -432,7 +446,7 @@ void vtkITKImageWriter::Write()
   else if (inputNumberOfScalarComponents == 4)
     {
     // take into consideration the scalar type
-    switch (inputImage->GetScalarType())
+    switch (inputDataType)
       {
       case VTK_DOUBLE:
         {
@@ -466,7 +480,7 @@ void vtkITKImageWriter::Write()
   else if (inputNumberOfScalarComponents == 9)
     {
     // take into consideration the scalar type
-    switch (inputImage->GetScalarType())
+    switch (inputDataType)
       {
       case VTK_FLOAT:
         {

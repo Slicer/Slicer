@@ -36,7 +36,7 @@ class vtkPolyData;
 #if (VTK_MAJOR_VERSION <= 5)
 /// \sa vtkMRMLDisplayableNode, TextureImageData, ColorNode
 #else
-/// \sa vtkMRMLDisplayableNode, TextureImageDataPort, ColorNode
+/// \sa vtkMRMLDisplayableNode, TextureImageDataConnection, ColorNode
 #endif
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
@@ -100,7 +100,7 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   /// \sa TextureImageData, ColorNode
 #else
-  /// \sa TextureImageDataPort, ColorNode
+  /// \sa TextureImageDataConnection, ColorNode
 #endif
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event,
                                  void *callData);
@@ -383,11 +383,11 @@ public:
   vtkGetObjectMacro(TextureImageData, vtkImageData);
 #else
   /// Set and observe the texture image data port.
-  /// \sa TextureImageDataPort, GetTextureImageDataPort()
-  void SetAndObserveTextureImageDataPort(vtkAlgorithmOutput *ImageDataPort);
+  /// \sa TextureImageDataConnection, GetTextureImageDataConnection()
+  virtual void SetTextureImageDataConnection(vtkAlgorithmOutput *ImageDataConnection);
   /// Get the texture image data port.
-  /// \sa TextureImageDataPort, SetAndObserveTextureImageDataPort()
-  vtkGetObjectMacro(TextureImageDataPort, vtkAlgorithmOutput);
+  /// \sa TextureImageDataConnection, SetTextureImageDataConnection()
+  vtkGetObjectMacro(TextureImageDataConnection, vtkAlgorithmOutput);
 #endif
 
   /// Set the texture interpolation of the display node.
@@ -493,17 +493,12 @@ protected:
   /// InterpolateTexture
   vtkImageData    *TextureImageData;
 #else
-  /// Internal function to set the texture image data port. Called by
-  /// \a SetAndObserveTextureImageDataPort().
-  /// \sa TextureImageDataPort, SetAndObserveTextureImageDataPort()
-  virtual void SetTextureImageDataPort(vtkAlgorithmOutput* imageDataPort);
-
-  /// Associated ImageDataPort to apply as texture. The image data port is
+  /// Associated ImageDataConnection to apply as texture. The image data port is
   /// observed and when modified, vtkMRMLDisplayNode fires a ModifiedEvent too.
   /// No texture (NULL) by default.
-  /// \sa SetAndObserveTextureImageDataPort(), GetTextureImageDataPort()
+  /// \sa SetTextureImageDataConnection(), GetTextureImageDataConnection()
   /// InterpolateTexture
-  vtkAlgorithmOutput    *TextureImageDataPort;
+  vtkAlgorithmOutput    *TextureImageDataConnection;
 #endif
 
   /// String ID of the color MRML node. The color node LUT or Color transfer
@@ -685,7 +680,7 @@ protected:
 #if (VTK_MAJOR_VERSION <= 5)
   /// TextureImageData
 #else
-  /// TextureImageDataPort
+  /// TextureImageDataConnection
 #endif
   int InterpolateTexture;
 
