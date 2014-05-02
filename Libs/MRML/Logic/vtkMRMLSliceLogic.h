@@ -30,6 +30,7 @@ class vtkMRMLSliceLayerLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLVolumeNode;
 
+class vtkAlgorithmOutput;
 class vtkCollection;
 class vtkImageBlend;
 class vtkTransform;
@@ -55,7 +56,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual VTK class functions
   static vtkMRMLSliceLogic *New();
-  vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Convenient methods allowing to initialize SliceLogic given \a newSliceNode
@@ -156,7 +157,13 @@ public:
   ///
   /// the tail of the pipeline
   /// -- returns NULL if none of the inputs exist
+#if (VTK_MAJOR_VERSION <= 5)
+  //BTX
   vtkImageData *GetImageData();
+  //ETX
+#else
+  vtkAlgorithmOutput *GetImageDataPort();
+#endif
 
   ///
   /// update the pipeline to reflect the current state of the nodes
@@ -390,7 +397,11 @@ protected:
   vtkImageBlend *   Blend;
   vtkImageBlend *   BlendUVW;
   vtkImageReslice * ExtractModelTexture;
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *    ImageData;
+#else
+  vtkAlgorithmOutput *    ImageDataPort;
+#endif
   vtkTransform *    ActiveSliceTransform;
 
   vtkPolyDataCollection * PolyDataCollection;

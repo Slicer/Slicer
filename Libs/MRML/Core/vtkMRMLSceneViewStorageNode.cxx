@@ -30,6 +30,7 @@
 #include <vtkStringArray.h>
 #include <vtkTIFFReader.h>
 #include <vtkTIFFWriter.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itksys/SystemTools.hxx>
@@ -153,7 +154,9 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   sceneViewNode->SetScreenShot(imageData.GetPointer());
   sceneViewNode->GetScreenShot()->SetSpacing(1.0, 1.0, 1.0);
   sceneViewNode->GetScreenShot()->SetOrigin(0.0, 0.0, 0.0);
+#if (VTK_MAJOR_VERSION <= 5)
   sceneViewNode->GetScreenShot()->SetScalarType(VTK_UNSIGNED_CHAR);
+#endif
 
   return result;
 }
@@ -183,7 +186,11 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();
@@ -197,7 +204,11 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkNew<vtkJPEGWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();
@@ -211,7 +222,11 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkNew<vtkTIFFWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();
@@ -225,7 +240,11 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkNew<vtkBMPWriter> writer;
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( sceneViewNode->GetScreenShot() );
+#else
+    writer->SetInputData( sceneViewNode->GetScreenShot() );
+#endif
     try
       {
       writer->Write();

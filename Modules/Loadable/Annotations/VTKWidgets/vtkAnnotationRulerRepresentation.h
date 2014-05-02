@@ -29,7 +29,7 @@ vtkAnnotationRulerRepresentation
 public:
 
   static vtkAnnotationRulerRepresentation *New();
-  vtkTypeRevisionMacro(vtkAnnotationRulerRepresentation, vtkDistanceRepresentation2D);
+  vtkTypeMacro(vtkAnnotationRulerRepresentation, vtkDistanceRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void SetDistance(double distance);

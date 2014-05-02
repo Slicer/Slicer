@@ -16,6 +16,7 @@
  * This is needed for loading mrml code as module.
  */
 
+#include <vtkVersion.h>
 
 //
 /// use an ifdef on MRML_VTK5 to flag code that won't

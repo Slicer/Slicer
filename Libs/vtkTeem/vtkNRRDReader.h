@@ -31,6 +31,7 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 
 #include "vtkTeemConfigure.h"
 #include "vtkMedicalImageReader2.h"
@@ -40,6 +41,7 @@
 
 #include <vtkMatrix4x4.h>
 #include <vtkPointData.h>
+#include <vtkVersion.h>
 
 #include "teem/nrrd.h"
 
@@ -53,7 +55,7 @@ class VTK_Teem_EXPORT vtkNRRDReader : public vtkMedicalImageReader2
 public:
   static vtkNRRDReader *New();
 
-  vtkTypeRevisionMacro(vtkNRRDReader,vtkMedicalImageReader2);
+  vtkTypeMacro(vtkNRRDReader,vtkMedicalImageReader2);
 
   ///
   /// Returns a IJK to RAS transformation matrix
@@ -217,11 +219,17 @@ public:
       break;
     }
   }
-
-vtkImageData * AllocateOutputData(vtkDataObject *out);
+#if (VTK_MAJOR_VERSION <= 5)
+virtual vtkImageData * AllocateOutputData(vtkDataObject *out);
 virtual void AllocateOutputData(vtkImageData *out, int *uExtent)
-  { Superclass::AllocateOutputData(out, uExtent); }
+    { Superclass::AllocateOutputData(out, uExtent); }
 void AllocatePointData(vtkImageData *out);
+#else
+virtual vtkImageData * AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo);
+virtual void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent)
+    { Superclass::AllocateOutputData(out, outInfo, uExtent); }
+void AllocatePointData(vtkImageData *out, vtkInformation* outInfo);
+#endif
 
 protected:
   vtkNRRDReader();
@@ -246,7 +254,11 @@ protected:
   std::map <std::string, std::string> HeaderKeyValue;
 
   virtual void ExecuteInformation();
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void ExecuteData(vtkDataObject *out);
+#else
+  virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo);
+#endif
 
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 

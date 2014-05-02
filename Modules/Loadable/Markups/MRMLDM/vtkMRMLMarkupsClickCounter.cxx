@@ -24,7 +24,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLMarkupsClickCounter);
-vtkCxxRevisionMacro (vtkMRMLMarkupsClickCounter, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsClickCounter::PrintSelf(ostream& os, vtkIndent indent)

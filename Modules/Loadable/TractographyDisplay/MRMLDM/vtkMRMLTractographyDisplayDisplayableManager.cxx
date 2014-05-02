@@ -53,7 +53,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLTractographyDisplayDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLTractographyDisplayDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 

@@ -20,9 +20,12 @@
 #include <vtkDataArray.h>
 #include <vtkFloatArray.h>
 #include <vtkImageData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 // ITK includes
 #include <itkDiffusionTensor3D.h>
@@ -30,7 +33,6 @@
 #include <itkOrientImageFilter.h>
 
 vtkStandardNewMacro(vtkITKArchetypeDiffusionTensorImageReaderFile);
-vtkCxxRevisionMacro(vtkITKArchetypeDiffusionTensorImageReaderFile, "$Revision: 4068 $");
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeDiffusionTensorImageReaderFile::vtkITKArchetypeDiffusionTensorImageReaderFile()
@@ -119,7 +121,12 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *output)
+#else
+void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteDataWithInformation(
+  vtkDataObject *output, vtkInformation* outInfo)
+#endif
 {
   if (!this->Superclass::Archetype)
     {
@@ -130,7 +137,11 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *o
   vtkImageData *data = vtkImageData::SafeDownCast(output);
   //data->UpdateInformation();
   data->SetExtent(0,0,0,0,0,0);
+#if (VTK_MAJOR_VERSION <= 5)
   data->SetExtent(data->GetWholeExtent());
+#else
+  data->SetExtent(outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+#endif
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1, 1, 1);
   vtkNew<vtkFloatArray> tensors;

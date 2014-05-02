@@ -11,7 +11,7 @@ class VTK_MRML_EXPORT vtkUserTagTable : public vtkTable
 public:
   /// The Usual vtk class functions
   static vtkUserTagTable *New();
-  vtkTypeRevisionMacro(vtkUserTagTable, vtkTable);
+  vtkTypeMacro(vtkUserTagTable, vtkTable);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

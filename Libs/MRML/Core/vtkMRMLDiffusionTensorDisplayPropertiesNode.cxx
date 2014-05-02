@@ -295,7 +295,11 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
       if (this->GlyphGeometry == Tubes)
         {
         vtkTubeFilter *tube = vtkTubeFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
         tube->SetInput( line->GetOutput( ) );
+#else
+        tube->SetInputConnection( line->GetOutputPort( ) );
+#endif
         tube->SetRadius( this->TubeGlyphRadius );
         tube->SetNumberOfSides( this->TubeGlyphNumberOfSides );
         tube->Update( );

@@ -32,7 +32,7 @@ class vtkMRMLTestSliceViewDisplayableManager :
 
 public:
   static vtkMRMLTestSliceViewDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLTestSliceViewDisplayableManager,vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLTestSliceViewDisplayableManager,vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // For testing

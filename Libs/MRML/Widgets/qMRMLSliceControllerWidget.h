@@ -23,9 +23,11 @@
 
 // qMRMLWidget includes
 #include "qMRMLViewControllerBar.h"
+#include <vtkVersion.h>
 
 class QButtonGroup;
 class qMRMLSliceControllerWidgetPrivate;
+class vtkAlgorithmOutput;
 class vtkCollection;
 class vtkImageData;
 class vtkMRMLNode;
@@ -77,7 +79,11 @@ public:
   /// Background, Foreground or LabelMap.
   /// Or if the only volume assigned doesn't have have
   /// a display node or its display node image data is 0.
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* imageData()const;
+#else
+  vtkAlgorithmOutput* imageDataPort()const;
+#endif
 
   /// Get \a sliceNode
   /// \sa setMRMLSliceCompositeNode();
@@ -145,7 +151,11 @@ public slots:
   void setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode);
 
   /// Set a new imageData.
+#if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData* newImageData);
+#else
+  void setImageDataPort(vtkAlgorithmOutput* newImageDataPort);
+#endif
 
   /// \sa fitSliceToBackground();
   void setSliceViewSize(const QSize& newSize);
@@ -252,7 +262,11 @@ public slots:
 signals:
 
   /// This signal is emitted when the given \a imageData is modified.
+#if (VTK_MAJOR_VERSION <= 5)
   void imageDataChanged(vtkImageData * imageData);
+#else
+  void imageDataPortChanged(vtkAlgorithmOutput * imageDataPort);
+#endif
   void renderRequested();
 
 private:

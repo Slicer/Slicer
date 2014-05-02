@@ -11,7 +11,7 @@ class VTK_MRML_EXPORT vtkXNATPermissionPrompter : public vtkPermissionPrompter
 public:
   /// The Usual vtk class functions
   static vtkXNATPermissionPrompter *New();
-  vtkTypeRevisionMacro(vtkXNATPermissionPrompter, vtkPermissionPrompter);
+  vtkTypeMacro(vtkXNATPermissionPrompter, vtkPermissionPrompter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

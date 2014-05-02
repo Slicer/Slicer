@@ -21,7 +21,6 @@
 
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 
-vtkCxxRevisionMacro(vtkITKDistanceTransform, "$Revision: 1900 $");
 vtkStandardNewMacro(vtkITKDistanceTransform);
 
 vtkITKDistanceTransform::vtkITKDistanceTransform()

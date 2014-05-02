@@ -19,7 +19,7 @@ class VTK_SLICER_MODELMIRROR_MODULE_LOGIC_EXPORT vtkMRMLModelMirrorNode : public
 {
   public:
   static vtkMRMLModelMirrorNode *New();
-  vtkTypeRevisionMacro(vtkMRMLModelMirrorNode, vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLModelMirrorNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

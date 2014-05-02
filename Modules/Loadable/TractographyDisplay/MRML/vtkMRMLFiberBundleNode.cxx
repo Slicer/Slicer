@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 #include <vtkPlanes.h>
 #include <vtkSelection.h>
 #include <vtkSelectionNode.h>
+#include <vtkVersion.h>
 
 // TractographyMRML includes
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
@@ -253,6 +254,7 @@ void vtkMRMLFiberBundleNode::UpdateReferenceID(const char *oldID, const char *ne
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
 {
   if (this->SelectWithAnnotationNode)
@@ -264,6 +266,23 @@ vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
     return this->CleanPolyDataPostSubsampling->GetOutput();
     }
 }
+#else
+vtkAlgorithm* vtkMRMLFiberBundleNode::GetFilteredPolyDataFilter()
+{
+  if (this->SelectWithAnnotationNode)
+    {
+    return this->CleanPolyDataPostROISelection;
+    }
+  else
+    {
+    return this->CleanPolyDataPostSubsampling;
+    }
+}
+vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData()
+{
+  return vtkPolyData::SafeDownCast(this->GetFilteredPolyDataFilter()->GetOutputDataObject(0));
+}
+#endif
 
 //----------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::GetLineDisplayNode()
@@ -389,7 +408,11 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::SetAndObservePolyData(vtkPolyData* polyData)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractSelectedPolyDataIds->SetInput(0, polyData);
+#else
+  this->ExtractSelectedPolyDataIds->SetInputData(0, polyData);
+#endif
   this->Superclass::SetAndObservePolyData(polyData);
 
   if (polyData)
@@ -437,7 +460,11 @@ void vtkMRMLFiberBundleNode
 ::SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
 {
   assert(modelDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode"));
+#if (VTK_MAJOR_VERSION <= 5)
   modelDisplayNode->SetInputPolyData(this->GetFilteredPolyData());
+#else
+  modelDisplayNode->SetInputPolyData(this->GetFilteredPolyDataFilter());
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -550,7 +577,11 @@ void vtkMRMLFiberBundleNode::PrepareSubsampling()
   arr->SetNumberOfTuples(0);
   node->SetSelectionList(arr);
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->ExtractSelectedPolyDataIds->SetInput(1, sel);
+#else
+  this->ExtractSelectedPolyDataIds->SetInputData(1, sel);
+#endif
 
   this->CleanPolyDataPostSubsampling = vtkCleanPolyData::New();
   this->CleanPolyDataPostSubsampling->ConvertLinesToPointsOff();

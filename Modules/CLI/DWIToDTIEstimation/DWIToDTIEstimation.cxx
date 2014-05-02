@@ -17,6 +17,7 @@
 // VTK includes
 #include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkFloatingPointExceptions.h>
@@ -51,7 +52,7 @@ int main( int argc, char * argv[] )
       }
     vtkNew<vtkTeemEstimateDiffusionTensor> estim;
 
-    estim->SetInput(reader->GetOutput() );
+    estim->SetInputConnection(reader->GetOutputPort() );
     estim->SetNumberOfGradients(grads->GetNumberOfTuples() );
     estim->SetDiffusionGradients(grads.GetPointer());
     estim->SetBValues(bValues.GetPointer());
@@ -123,7 +124,7 @@ int main( int argc, char * argv[] )
         }
 
       vtkNew<vtkImageCast> cast;
-      cast->SetInput(maskReader->GetOutput() );
+      cast->SetInputConnection(maskReader->GetOutputPort() );
       cast->SetOutputScalarTypeToUnsignedChar();
       cast->Update();
 
@@ -141,8 +142,13 @@ int main( int argc, char * argv[] )
     if( applyMask )
       {
       tensorMask->SetMaskAlpha(0.0);
+#if (VTK_MAJOR_VERSION <= 5)
       tensorMask->SetInput(tensorImage);
       tensorMask->SetMaskInput(mask.GetPointer());
+#else
+      tensorMask->SetInputData(tensorImage);
+      tensorMask->SetMaskInputData(mask.GetPointer());
+#endif
       tensorMask->Update();
       tensorImage = tensorMask->GetOutput();
       }
@@ -154,7 +160,11 @@ int main( int argc, char * argv[] )
     // Save tensor
     vtkNew<vtkNRRDWriter> writer;
     tensorImage->GetPointData()->SetScalars(NULL);
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput(tensorImage);
+#else
+    writer->SetInputData(tensorImage);
+#endif
     writer->SetFileName( outputTensor.c_str() );
     writer->UseCompressionOn();
     writer->SetIJKToRASMatrix( ijkToRasMatrix );
@@ -166,7 +176,11 @@ int main( int argc, char * argv[] )
 
     // Save baseline
     vtkNew<vtkNRRDWriter> writer2;
+#if (VTK_MAJOR_VERSION <= 5)
     writer2->SetInput(estim->GetBaseline() );
+#else
+    writer2->SetInputData(estim->GetBaseline() );
+#endif
     writer2->SetFileName( outputBaseline.c_str() );
     writer2->UseCompressionOn();
     writer2->SetIJKToRASMatrix( ijkToRasMatrix );

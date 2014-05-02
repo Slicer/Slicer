@@ -209,7 +209,6 @@ public:
 class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerApplicationLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
 
 //----------------------------------------------------------------------------
@@ -1189,7 +1188,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     disp = modelDisplayNode;
     if (mnd->GetPolyData())
       {
+#if (VTK_MAJOR_VERSION <= 5)
       modelDisplayNode->SetInputPolyData(mnd->GetPolyData());
+#else
+      modelDisplayNode->SetInputPolyData(mnd->GetPolyDataFilter());
+#endif
       }
     if (mnd->GetPolyData() &&
         mnd->GetPolyData()->GetPointData() &&

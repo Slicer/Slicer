@@ -9,7 +9,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerWidget);
-vtkCxxRevisionMacro (vtkAnnotationRulerWidget, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkAnnotationRulerWidget::PrintSelf(ostream& os, vtkIndent indent)

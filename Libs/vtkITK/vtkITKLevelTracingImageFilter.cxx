@@ -26,7 +26,6 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "itkExtractImageFilter.h"
 
-vtkCxxRevisionMacro(vtkITKLevelTracingImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracingImageFilter);
 
 // Description:

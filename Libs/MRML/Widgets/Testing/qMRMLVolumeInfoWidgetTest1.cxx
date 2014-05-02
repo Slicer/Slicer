@@ -34,6 +34,7 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkNew.h>
+#include <vtkVersion.h>
 
 int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
 {
@@ -43,12 +44,13 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
 
   vtkNew< vtkImageData > imageData;
   imageData->SetDimensions(256, 256, 1);
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->SetScalarTypeToUnsignedShort();
   imageData->SetNumberOfScalarComponents(1); // image holds one value intensities
-  //imageData->SetSpacing(2., 2., 512.); not used by vtkMRMLVolumeNode
-  //imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
   imageData->AllocateScalars(); // allocate storage for image data
-
+#else
+  imageData->AllocateScalars(VTK_UNSIGNED_SHORT, 1); // allocate storage for image data
+#endif
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   volumeNode->SetSpacing(2., 2., 512.);
   volumeNode->SetOrigin(0, 0, 0);

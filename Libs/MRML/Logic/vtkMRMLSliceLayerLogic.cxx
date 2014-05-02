@@ -28,6 +28,7 @@
 #include <vtkAssignAttribute.h>
 #include <vtkDiffusionTensorMathematics.h>
 #include <vtkFloatArray.h>
+#include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
 #include <vtkImageLinearReslice.h>
 #include <vtkImageResliceMask.h>
@@ -37,14 +38,14 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkTrivialProducer.h>
 #include <vtkTransform.h>
-#include <vtkGeneralTransform.h>
+#include <vtkVersion.h>
 
 //
 #include "vtkImageLabelOutline.h"
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLSliceLayerLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
 bool AreMatricesEqual(const vtkMatrix4x4* first, const vtkMatrix4x4* second)
@@ -139,10 +140,17 @@ vtkMRMLSliceLayerLogic::~vtkMRMLSliceLayerLogic()
   this->XYToIJKTransform->Delete();
   this->UVWToIJKTransform->Delete();
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->Reslice->SetInput( 0 );
   this->ResliceUVW->SetInput( 0 );
   this->LabelOutline->SetInput( 0 );
   this->LabelOutlineUVW->SetInput( 0 );
+#else
+  this->Reslice->SetInputConnection( 0 );
+  this->ResliceUVW->SetInputConnection( 0 );
+  this->LabelOutline->SetInputConnection( 0 );
+  this->LabelOutlineUVW->SetInputConnection( 0 );
+#endif
 
   this->Reslice->Delete();
   this->ResliceUVW->Delete();
@@ -572,6 +580,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLSliceLayerLogic::GetImageData()
 {
   if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNode() == NULL)
@@ -580,8 +589,19 @@ vtkImageData* vtkMRMLSliceLayerLogic::GetImageData()
     }
   return this->GetVolumeDisplayNode()->GetImageData();
 }
+#else
+vtkAlgorithmOutput* vtkMRMLSliceLayerLogic::GetImageDataPort()
+{
+  if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNode() == NULL)
+    {
+    return NULL;
+    }
+  return this->GetVolumeDisplayNode()->GetImageDataPort();
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLSliceLayerLogic::GetImageDataUVW()
 {
   if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNodeUVW() == NULL)
@@ -590,6 +610,16 @@ vtkImageData* vtkMRMLSliceLayerLogic::GetImageDataUVW()
     }
   return this->GetVolumeDisplayNodeUVW()->GetImageData();
 }
+#else
+vtkAlgorithmOutput* vtkMRMLSliceLayerLogic::GetImageDataPortUVW()
+{
+  if ( this->GetVolumeNode() == NULL || this->GetVolumeDisplayNodeUVW() == NULL)
+    {
+    return NULL;
+    }
+  return this->GetVolumeDisplayNodeUVW()->GetImageDataPort();
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
@@ -641,6 +671,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 
       image->GetPointData()->SetTensors(tensors.GetPointer());
       */
+#if (VTK_MAJOR_VERSION <= 5)
       /// HACK !
       /// vtkAssignAttribute is not able to set these values automatically,
       /// we do it manually instead.
@@ -654,7 +685,6 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       vtkNew<vtkAssignAttribute> assign;
       assign->Assign(vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);
       assign->SetInput(image);
-
       vtkDataObject::SetActiveAttributeInfo(image->GetPipelineInformation(),
                                             vtkDataObject::FIELD_ASSOCIATION_POINTS,
                                             vtkDataSetAttributes::TENSORS,
@@ -696,22 +726,50 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
         tensors->GetName(), tensors->GetDataType(),
         tensors->GetNumberOfComponents(), tensors->GetNumberOfTuples());
       /// End of HACK !
-      }
-    this->Reslice->SetInput( this->AssignAttributeTensorsToScalars->GetImageDataOutput() );
-    this->ResliceUVW->SetInput( this->AssignAttributeTensorsToScalars->GetImageDataOutput() );
+        }
+      this->Reslice->SetInput( this->AssignAttributeTensorsToScalars->GetImageDataOutput() );
+      this->ResliceUVW->SetInput( this->AssignAttributeTensorsToScalars->GetImageDataOutput() );
+      this->AssignAttributeScalarsToTensors->SetInput(this->Reslice->GetOutput() );
+      // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
+      if (this->SliceNode && this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
+        {
+          this->AssignAttributeScalarsToTensorsUVW->SetInput(this->ResliceUVW->GetOutput() );
+        }
+      else
+        {
+          this->AssignAttributeScalarsToTensorsUVW->SetInput(0);
+        }
+#else
 
-    this->AssignAttributeScalarsToTensors->SetInput(this->Reslice->GetOutput() );
+      if (image)
+        {
+          vtkNew<vtkTrivialProducer> tp;
+          tp->SetOutput(image);
+          vtkDataObject::SetPointDataActiveScalarInfo(
+            tp->GetOutputInformation(0),
+            tensors ? tensors->GetDataType() : VTK_FLOAT,
+            tensors ? tensors->GetNumberOfComponents() : 1);
 
-    // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
-    if (this->SliceNode && this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
-      {
-      this->AssignAttributeScalarsToTensorsUVW->SetInput(this->ResliceUVW->GetOutput() );
-      }
-    else
-      {
-      this->AssignAttributeScalarsToTensorsUVW->SetInput(0);
-      }
-
+          this->AssignAttributeTensorsToScalars->SetInputConnection(tp->GetOutputPort());
+          vtkDataObject::SetActiveAttributeInfo(
+            tp->GetOutputInformation(0),
+            vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::TENSORS,
+            tensors->GetName(), tensors->GetDataType(),
+            tensors->GetNumberOfComponents(), tensors->GetNumberOfTuples());
+        }
+      this->Reslice->SetInputConnection( this->AssignAttributeTensorsToScalars->GetOutputPort() );
+      this->ResliceUVW->SetInputConnection( this->AssignAttributeTensorsToScalars->GetOutputPort() );
+      this->AssignAttributeScalarsToTensors->SetInputConnection(this->Reslice->GetOutputPort() );
+      // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
+      if (this->SliceNode && this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
+        {
+          this->AssignAttributeScalarsToTensorsUVW->SetInputConnection(this->ResliceUVW->GetOutputPort() );
+        }
+      else
+        {
+          this->AssignAttributeScalarsToTensorsUVW->SetInputConnection(0);
+        }
+#endif
     bool verbose = false;
     if (image && verbose)
       {
@@ -735,8 +793,18 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     }
   else if (volumeNode)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     this->Reslice->SetInput( volumeNode->GetImageData());
     this->ResliceUVW->SetInput( volumeNode->GetImageData());
+#else
+    //std::cout << "volumeNode->GetImageData()" << volumeNode->GetImageData() << std::endl;
+//    if (volumeNode->GetImageData())
+//      {
+//      volumeNode->GetImageData()->Print(std::cout);
+//      }
+    this->Reslice->SetInputData(volumeNode->GetImageData());
+    this->ResliceUVW->SetInputData(volumeNode->GetImageData());
+#endif
     // use the label outline if we have a label map volume, this is the label
     // layer (turned on in slice logic when the label layer is instantiated)
     // and the slice node is set to use it.
@@ -745,22 +813,39 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
         this->SliceNode && this->SliceNode->GetUseLabelOutline() )
       {
       vtkDebugMacro("UpdateImageDisplay: volume node (not diff tensor), using label outline");
-      this->LabelOutline->SetInput( this->Reslice->GetOutput() );
+#if (VTK_MAJOR_VERSION <= 5)
+     this->LabelOutline->SetInput( this->Reslice->GetOutput() );
+#else
+      this->LabelOutline->SetInputConnection( this->Reslice->GetOutputPort() );
+#endif
 
       // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
       if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
         {
+#if (VTK_MAJOR_VERSION <= 5)
         this->LabelOutlineUVW->SetInput( this->ResliceUVW->GetOutput() );
+#else
+        this->LabelOutlineUVW->SetInputConnection( this->ResliceUVW->GetOutputPort() );
+#endif
         }
       else
         {
+#if (VTK_MAJOR_VERSION <= 5)
         this->LabelOutlineUVW->SetInput( 0 );
+#else
+        this->LabelOutlineUVW->SetInputConnection( 0 );
+#endif
         }
       }
     else
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->LabelOutline->SetInput(0);
       this->LabelOutlineUVW->SetInput(0);
+#else
+        this->LabelOutline->SetInputConnection(0);
+        this->LabelOutlineUVW->SetInputConnection(0);
+#endif
       }
     }
 
@@ -769,17 +854,31 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     if (volumeNode != 0 && volumeNode->GetImageData() != 0)
       {
       //int wasModifying = volumeDisplayNode->StartModify();
+#if (VTK_MAJOR_VERSION <= 5)
       volumeDisplayNode->SetInputImageData(this->GetSliceImageData());
       volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
+#else
+      volumeDisplayNode->SetInputImageDataPort(this->GetSliceImageDataPort());
+      volumeDisplayNode->SetBackgroundImageDataPort(this->Reslice->GetBackgroundMaskPort());
+#endif
       // If the background mask is not used, make sure the update extent of the
       // background mask is set to the whole extent so the reslice filter can write
       // into the entire extent instead of trying to access an update extent that won't
       // be up-to-date because not connected to a pipeline.
+#if (VTK_MAJOR_VERSION <= 5)
       if (volumeDisplayNode->GetBackgroundImageData() == 0 &&
           this->Reslice->GetBackgroundMask() != 0)
         {
         this->Reslice->GetBackgroundMask()->SetUpdateExtentToWholeExtent();
         }
+#else
+      if (volumeDisplayNode->GetBackgroundImageData() == 0 &&
+         this->Reslice->GetBackgroundMaskPort() != 0)
+        {
+        this->Reslice->UpdateInformation();
+        this->Reslice->SetUpdateExtentToWholeExtent(1);
+        }
+#endif
       //volumeDisplayNode->EndModify(wasModifying);
       }
     }
@@ -788,8 +887,13 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     if (volumeNode != 0 && volumeNode->GetImageData() != 0)
       {
       //int wasModifying = volumeDisplayNode->StartModify();
+#if (VTK_MAJOR_VERSION <= 5)
       volumeDisplayNodeUVW->SetInputImageData(this->GetSliceImageDataUVW());
       volumeDisplayNodeUVW->SetBackgroundImageData(this->ResliceUVW->GetBackgroundMask());
+#else
+      volumeDisplayNodeUVW->SetInputImageDataPort(this->GetSliceImageDataPortUVW());
+      volumeDisplayNodeUVW->SetBackgroundImageDataPort(this->ResliceUVW->GetBackgroundMaskPort());
+#endif
       //volumeDisplayNode->EndModify(wasModifying);
       }
     }
@@ -809,6 +913,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageData()
 {
   if (this->GetIsLabelLayer() &&
@@ -823,9 +928,29 @@ vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageData()
     }
   return this->Reslice->GetOutput();
 }
-
+#else
+vtkAlgorithmOutput* vtkMRMLSliceLayerLogic::GetSliceImageDataPort()
+{
+  if (this->GetIsLabelLayer() &&
+      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode)&&
+      this->SliceNode && this->SliceNode->GetUseLabelOutline() )
+    {
+    return this->LabelOutline->GetOutputPort();
+    }
+  if (this->VolumeNode && this->VolumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
+    {
+    return this->AssignAttributeScalarsToTensors->GetOutputPort();
+    }
+  return this->Reslice->GetOutputPort();
+}
+#endif
+    
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageDataUVW()
+#else
+vtkAlgorithmOutput* vtkMRMLSliceLayerLogic::GetSliceImageDataPortUVW()
+#endif
 {
   // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
   if (this->SliceNode == NULL || this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
@@ -837,13 +962,25 @@ vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageDataUVW()
       vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNodeUVW)&&
       this->SliceNode && this->SliceNode->GetUseLabelOutline() )
     {
+#if (VTK_MAJOR_VERSION <= 5)
     return this->LabelOutlineUVW->GetOutput();
+#else
+    return this->LabelOutlineUVW->GetOutputPort();
+#endif
     }
   if (this->VolumeNode && this->VolumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
+#if (VTK_MAJOR_VERSION <= 5)
     return this->AssignAttributeScalarsToTensorsUVW->GetImageDataOutput();
+#else
+    return this->AssignAttributeScalarsToTensorsUVW->GetOutputPort();
+#endif
     }
+#if (VTK_MAJOR_VERSION <= 5)
   return this->ResliceUVW->GetOutput();
+#else
+  return this->ResliceUVW->GetOutputPort();
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -853,7 +990,11 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
     {
     return;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *sliceImage = this->GetSliceImageData();
+#else
+  vtkAlgorithmOutput *sliceImagePort = this->GetSliceImageDataPort();
+#endif
 
   vtkMRMLGlyphableVolumeDisplayNode *displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( this->VolumeNode->GetDisplayNode() );
   if ( !displayNode )
@@ -896,7 +1037,11 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       // would update the glyph filter twice. Fire a modified() event only
       // once
       int blocked = dnode->StartModify();
+#if (VTK_MAJOR_VERSION <= 5)
       dnode->SetSliceImage(sliceImage);
+#else
+      dnode->SetSliceImagePort(sliceImagePort);
+#endif
       dnode->SetSlicePositionMatrix(transformToWorld.GetPointer());
       dnode->SetSliceGlyphRotationMatrix(trot.GetPointer());
       displayNodesModified += dnode->EndModify(blocked);

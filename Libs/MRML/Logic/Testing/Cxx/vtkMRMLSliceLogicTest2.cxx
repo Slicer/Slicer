@@ -29,6 +29,7 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageData.h>
 #include <vtkImageCast.h>
@@ -43,6 +44,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkScalarsToColors.h>
 #include <vtkTimerLog.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkConfigure.h>
@@ -107,7 +109,11 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
+#if (VTK_MAJOR_VERSION <= 5)
   sliceLogic->GetImageData();
+#else
+  sliceLogic->GetImageDataPort();
+#endif
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
   vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
@@ -128,7 +134,11 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     std::cout << "vtkMRMLSliceLogic::UpdatePipeline(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     timerLog->StartTimer();
     sliceLayerLogic->UpdateImageDisplay();
+#if (VTK_MAJOR_VERSION <= 5)
     sliceLayerLogic->GetImageData();
+#else
+    sliceLayerLogic->GetImageDataPort();
+#endif
     timerLog->StopTimer();
     std::cout << "vtkMRMLSliceLayerLogic::UpdateImageData(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     }
@@ -149,10 +159,18 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   reslice->SetOutputExtent( 0, dimensions[0]-1,
                             0, dimensions[1]-1,
                             0, dimensions[2]-1);
+#if (VTK_MAJOR_VERSION <= 5)
   reslice->SetInput(imageData.GetPointer());
+#else
+  reslice->SetInputData(imageData.GetPointer());
+#endif
   //reslice->SetResliceTransform(sliceLayerLogic->GetXYToIJKTransform());
   vtkNew<vtkImageMapToWindowLevelColors> mapToWindow;
+#if (VTK_MAJOR_VERSION <= 5)
   mapToWindow->SetInput(reslice->GetOutput());
+#else
+  mapToWindow->SetInputConnection(reslice->GetOutputPort());
+#endif
 
   vtkNew<vtkImageMapToColors> mapToColors;
   mapToColors->SetOutputFormatToRGB();
@@ -161,12 +179,20 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   mapToColors->SetLookupTable(colorNode->GetLookupTable());
+#if (VTK_MAJOR_VERSION <= 5)
   mapToColors->SetInput(mapToWindow->GetOutput());
+#else
+  mapToColors->SetInputConnection(mapToWindow->GetOutputPort());
+#endif
   //mapToWindow->Update();
 
   vtkNew<vtkImageThreshold> threshold;
   threshold->SetOutputScalarTypeToUnsignedChar();
+#if (VTK_MAJOR_VERSION <= 5)
   threshold->SetInput(reslice->GetOutput());
+#else
+  threshold->SetInputConnection(reslice->GetOutputPort());
+#endif
   threshold->ThresholdBetween( 1, 0 );
   threshold->ReplaceInOn();
   threshold->SetInValue(255);
@@ -174,19 +200,33 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   threshold->SetOutValue(255);
 
   vtkNew<vtkImageCast> resliceAlphaCast;
+#if (VTK_MAJOR_VERSION <= 5)
   resliceAlphaCast->SetInput(reslice->GetBackgroundMask());
+#else
+  resliceAlphaCast->SetInputConnection(reslice->GetBackgroundMaskPort());
+#endif
   resliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
 
   vtkNew<vtkImageLogic> alphaLogic;
   alphaLogic->SetOperationToAnd();
   alphaLogic->SetOutputTrueValue(255);
+#if (VTK_MAJOR_VERSION <= 5)
   alphaLogic->SetInput1(threshold->GetOutput());
   alphaLogic->SetInput2(resliceAlphaCast->GetOutput());
+#else
+  alphaLogic->SetInputConnection(0, threshold->GetOutputPort());
+  alphaLogic->SetInputConnection(1, resliceAlphaCast->GetOutputPort());
+#endif
 
   vtkNew<vtkImageAppendComponents> appendComponents;
   appendComponents->RemoveAllInputs();
+#if (VTK_MAJOR_VERSION <= 5)
   appendComponents->AddInputConnection(0, mapToColors->GetOutput()->GetProducerPort() );
   appendComponents->AddInputConnection(0, alphaLogic->GetOutput()->GetProducerPort() );
+#else
+  appendComponents->AddInputConnection(0, mapToColors->GetOutputPort() );
+  appendComponents->AddInputConnection(0, alphaLogic->GetOutputPort() );
+#endif
 
   //displayNode2->GetInput()->SetScalarComponentFromFloat(0, 0, 0, 0, 10.);
   vtkNew<vtkTimerLog> timerLog;
@@ -221,7 +261,11 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
     std::cout << "vtkMRMLScalarVolumeDisplayNode::alpha updated: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     }
   vtkNew<vtkImageViewer2> viewer;
+#if (VTK_MAJOR_VERSION <= 5)
   viewer->SetInput(sliceLogic->GetImageData());
+#else
+  viewer->SetInputConnection(sliceLogic->GetImageDataPort());
+#endif
   //viewer->SetInput(appendComponents->GetOutput());
 
   // Renderer, RenderWindow and Interactor

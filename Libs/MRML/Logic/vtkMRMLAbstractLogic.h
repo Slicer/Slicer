@@ -144,7 +144,7 @@ public:
 
   static vtkMRMLAbstractLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLAbstractLogic, vtkObject);
+  vtkTypeMacro(vtkMRMLAbstractLogic, vtkObject);
 
   /// Get access to overall application state
   virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;

@@ -18,11 +18,21 @@ set(${KIT}_SRCS
   vtkPichonFastMarchingPDF.cxx
   )
 
-set(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  vtkIO
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonExecutionModel
+    vtkCommonMath
+    vtkIOCore
+    )
+else()
+  set(VTK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkIO
+    )
+endif()
 
 set(${KIT}_TARGET_LIBRARIES
   ${VTK_LIBRARIES}

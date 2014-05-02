@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 #include <vtkObjectFactory.h>
 #include <vtkPassThrough.h>
 #include <vtkPolyData.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelDisplayNode);
@@ -60,28 +61,61 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLModelDisplayNode::SetInputPolyData(vtkPolyData* polyData)
+#else
+void vtkMRMLModelDisplayNode::SetInputPolyData(vtkAlgorithm* polyDataFilter,
+                                               vtkPolyData* polyData)
+#endif
 {
    if (this->GetInputPolyData() == polyData)
      {
      return;
      }
+#if (VTK_MAJOR_VERSION <= 5)
    this->SetInputToPolyDataPipeline(polyData);
+#else
+   this->SetInputToPolyDataPipeline(polyDataFilter, polyData);
+#endif
    this->Modified();
 }
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkPolyData* polyData)
 {
   this->PassThrough->SetInput(polyData);
   this->AssignAttribute->SetInput(polyData);
 }
+#else
+void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkAlgorithm* polyDataFilter,
+                                                         vtkPolyData* polyData)
+{
+  if (polyDataFilter != NULL)
+    {
+    this->PassThrough->SetInputConnection(polyDataFilter->GetOutputPort());
+    this->AssignAttribute->SetInputConnection(polyDataFilter->GetOutputPort());
+    }
+  else
+    {
+    this->PassThrough->SetInputData(polyData);
+    this->AssignAttribute->SetInputData(polyData);
+    }
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelDisplayNode::GetInputPolyData()
 {
   return vtkPolyData::SafeDownCast(this->AssignAttribute->GetInput());
 }
+
+#if (VTK_MAJOR_VERSION > 5)
+vtkAlgorithm* vtkMRMLModelDisplayNode::GetInputFilter()
+{
+  return vtkAlgorithm::SafeDownCast(this->AssignAttribute);
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
@@ -98,6 +132,20 @@ vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
     this->GetOutputPort()->GetProducer()->GetOutputDataObject(
       this->GetOutputPort()->GetIndex()));
 }
+
+#if (VTK_MAJOR_VERSION > 5)
+vtkAlgorithm* vtkMRMLModelDisplayNode::GetOutputFilter()
+{
+  if (this->GetActiveScalarName())
+    {
+    return vtkAlgorithm::SafeDownCast(this->AssignAttribute);
+    }
+  else
+    {
+    return vtkAlgorithm::SafeDownCast(this->PassThrough);
+    }
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPort()
@@ -139,7 +187,11 @@ void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
     this->GetActiveAttributeLocation());
   if (this->GetOutputPolyData())
     {
+#if (VTK_MAJOR_VERSION <= 5)
     this->GetOutputPolyData()->Update();
+#else
+    this->GetOutputFilter()->Update();
+#endif
     if (this->GetAutoScalarRange())
       {
       vtkDebugMacro("UpdatePolyDataPipeline: Auto flag is on, resetting scalar range!");

@@ -14,6 +14,8 @@ endif()
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
+find_package(ZLIB REQUIRED)
+
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
@@ -24,6 +26,7 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${ZLIB_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
 
@@ -76,7 +79,21 @@ set(srcs ${FreeSurfer_SRCS})
 
 add_library(${lib_name} ${srcs})
 
-set(VTK_LIBRARIES vtkCommon vtkFiltering vtkIO)
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonExecutionModel
+    vtkCommonMath
+    vtkIOLegacy
+    )
+else()
+  set(VTK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkIO
+    )
+endif()
 
 set(libs
   ${VTK_LIBRARIES}

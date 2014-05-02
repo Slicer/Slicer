@@ -20,7 +20,6 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 
 
-vtkCxxRevisionMacro(vtkImageLabelCombine, "$Revision: 1.53 $");
 vtkStandardNewMacro(vtkImageLabelCombine);
 
 //----------------------------------------------------------------------------

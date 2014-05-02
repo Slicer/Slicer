@@ -29,7 +29,7 @@ vtkAnnotationBidimensionalWidget
 public:
 
   static vtkAnnotationBidimensionalWidget *New();
-  vtkTypeRevisionMacro(vtkAnnotationBidimensionalWidget, vtkBiDimensionalWidget);
+  vtkTypeMacro(vtkAnnotationBidimensionalWidget, vtkBiDimensionalWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void CreateDefaultRepresentation();

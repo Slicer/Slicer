@@ -37,7 +37,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationTextDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationTextDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationTextDisplayableManager Callback

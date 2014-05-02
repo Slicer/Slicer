@@ -58,7 +58,6 @@
 //--------------------------------------------------------------------------
 // vtkInternalLightBoxRendereManagerProxy methods
 //vtkStandardNewMacro(qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy );
-vtkCxxRevisionMacro(qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 // Using the vtkStandardNewMacro results in a compiler error about

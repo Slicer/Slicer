@@ -37,9 +37,11 @@
 
 // VTK includes
 #include <vtkDataArray.h>
+#include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkTrivialProducer.h>
 #include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
@@ -422,7 +424,15 @@ void qMRMLVolumeInfoWidget::setNumberOfScalars(int number)
     {
     return;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->SetNumberOfScalarComponents(number);
+#else
+  vtkNew<vtkTrivialProducer> tp;
+  tp->SetOutput(imageData);
+  vtkInformation* outInfo = tp->GetOutputInformation(0);
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
+      vtkImageData::GetScalarType(outInfo), number);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -435,7 +445,15 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
     return;
     }
   int type = d->ScalarTypeComboBox->itemData(index).toInt();
+#if (VTK_MAJOR_VERSION <= 5)
   imageData->SetScalarType(type);
+#else
+  vtkNew<vtkTrivialProducer> tp;
+  tp->SetOutput(imageData);
+  vtkInformation* outInfo = tp->GetOutputInformation(0);
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, type,
+    vtkImageData::GetNumberOfScalarComponents(outInfo));
+#endif
 }
 
 //------------------------------------------------------------------------------

@@ -21,7 +21,7 @@ class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler
 
   /// The Usual vtk class functions
   static vtkHTTPHandler *New();
-  vtkTypeRevisionMacro(vtkHTTPHandler, vtkURIHandler);
+  vtkTypeMacro(vtkHTTPHandler, vtkURIHandler);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

@@ -71,7 +71,6 @@ typedef void (*fp)(void);
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManager3D);
-vtkCxxRevisionMacro (vtkMRMLMarkupsDisplayableManager3D, "$Revision: 1.2 $");
 
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayableManager3D::vtkMRMLMarkupsDisplayableManager3D()

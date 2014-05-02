@@ -43,7 +43,7 @@ public:
 
   // The Usual vtk class functions
   static vtkSlicerTractographyInteractiveSeedingLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerTractographyInteractiveSeedingLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerTractographyInteractiveSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void ProcessMRMLNodesEvents(vtkObject* caller,

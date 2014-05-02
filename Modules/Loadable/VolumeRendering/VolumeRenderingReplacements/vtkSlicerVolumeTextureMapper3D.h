@@ -81,7 +81,7 @@ class vtkVolumeProperty;
 class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerVolumeTextureMapper3D : public vtkVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerVolumeTextureMapper3D,vtkVolumeMapper);
+  vtkTypeMacro(vtkSlicerVolumeTextureMapper3D,vtkVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerVolumeTextureMapper3D *New();

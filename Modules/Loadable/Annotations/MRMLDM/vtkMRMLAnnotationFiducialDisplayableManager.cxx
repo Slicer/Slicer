@@ -48,7 +48,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationFiducialDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationFiducialDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationFiducialDisplayableManager Callback

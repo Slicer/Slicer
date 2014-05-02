@@ -24,7 +24,6 @@
 #include "vtkSlicerFixedPointRayCastImage.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastMIPHelper, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastMIPHelper);
 
 // Construct a new vtkSlicerFixedPointVolumeRayCastMIPHelper with default values

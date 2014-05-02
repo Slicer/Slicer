@@ -36,7 +36,7 @@ class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsFidu
 public:
 
   static vtkMRMLMarkupsFiducialDisplayableManager2D *New();
-  vtkTypeRevisionMacro(vtkMRMLMarkupsFiducialDisplayableManager2D, vtkMRMLMarkupsDisplayableManager2D);
+  vtkTypeMacro(vtkMRMLMarkupsFiducialDisplayableManager2D, vtkMRMLMarkupsDisplayableManager2D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Update a single seed position from the node, return true if the position changed

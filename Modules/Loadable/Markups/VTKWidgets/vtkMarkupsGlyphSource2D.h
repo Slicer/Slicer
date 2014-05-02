@@ -49,7 +49,7 @@ class vtkCellArray;
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkMarkupsGlyphSource2D : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkMarkupsGlyphSource2D,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkMarkupsGlyphSource2D,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Construct a vertex glyph centered at the origin, scale 1.0, white in

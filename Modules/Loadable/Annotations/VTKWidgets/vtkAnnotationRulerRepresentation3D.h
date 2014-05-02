@@ -29,7 +29,7 @@ vtkAnnotationRulerRepresentation3D
 public:
 
   static vtkAnnotationRulerRepresentation3D *New();
-  vtkTypeRevisionMacro(vtkAnnotationRulerRepresentation3D, vtkDistanceRepresentation3D);
+  vtkTypeMacro(vtkAnnotationRulerRepresentation3D, vtkDistanceRepresentation3D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void SetDistance(double distance);

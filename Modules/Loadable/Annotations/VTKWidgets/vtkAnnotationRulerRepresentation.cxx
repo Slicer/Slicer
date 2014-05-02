@@ -13,7 +13,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationRulerRepresentation);
-vtkCxxRevisionMacro (vtkAnnotationRulerRepresentation, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkAnnotationRulerRepresentation::PrintSelf(ostream& os, vtkIndent indent)

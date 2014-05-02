@@ -46,6 +46,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
+#include <vtkVersion.h>
 
 
 // VTK includes: customization
@@ -59,7 +60,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLModelSliceDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLModelSliceDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLModelSliceDisplayableManager::vtkInternal
@@ -366,7 +366,11 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       {
       return;
       }
+#if (VTK_MAJOR_VERSION <= 5)
     pipeline->Cutter->SetInput(polyData);
+#else
+    pipeline->Cutter->SetInputData(polyData);
+#endif
 
     // need this to update bounds of the locator, to avoid crash in the cutter
     polyData->Modified();

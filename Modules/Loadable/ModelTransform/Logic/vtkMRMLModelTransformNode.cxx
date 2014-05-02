@@ -4,7 +4,6 @@
 #include "vtkMRMLModelTransformNode.h"
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro ( vtkMRMLModelTransformNode, "$Revision: 1.0 $");
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelTransformNode);

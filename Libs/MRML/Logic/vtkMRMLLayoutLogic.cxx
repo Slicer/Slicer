@@ -921,7 +921,6 @@ const char* threeByThreeSliceView =
 
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
 
 //----------------------------------------------------------------------------

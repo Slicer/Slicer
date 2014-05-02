@@ -48,7 +48,6 @@
 #endif
 
 vtkStandardNewMacro ( vtkDataIOManagerLogic );
-vtkCxxRevisionMacro(vtkDataIOManagerLogic, "$Revision$");
 
 typedef std::pair< vtkDataTransfer *, vtkMRMLNode * > TransferNodePair;
 

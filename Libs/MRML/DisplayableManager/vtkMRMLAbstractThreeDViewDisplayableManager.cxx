@@ -34,7 +34,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractThreeDViewDisplayableManager);
-vtkCxxRevisionMacro(vtkMRMLAbstractThreeDViewDisplayableManager, "$Revision: 13525 $");
 
 //----------------------------------------------------------------------------
 // vtkMRMLAbstractThreeDViewDisplayableManager methods

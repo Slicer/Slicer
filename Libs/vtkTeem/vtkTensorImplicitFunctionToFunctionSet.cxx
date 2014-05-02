@@ -20,7 +20,6 @@
 #include "vtkTensorImplicitFunctionToFunctionSet.h"
 
 
-vtkCxxRevisionMacro(vtkTensorImplicitFunctionToFunctionSet, "$Revision: 1.8 $");
 vtkStandardNewMacro(vtkTensorImplicitFunctionToFunctionSet);
 
 void vtkTensorImplicitFunctionToFunctionSet::PrintSelf(ostream& os, vtkIndent indent)
@@ -34,7 +33,7 @@ void vtkTensorImplicitFunctionToFunctionSet::PrintSelf(ostream& os, vtkIndent in
   }
 }
 
-int vtkTensorImplicitFunctionToFunctionSet::GetTensor(vtkFloatingPointType *x, vtkFloatingPointType * res) {
+int vtkTensorImplicitFunctionToFunctionSet::GetTensor(double *x, double * res) {
 
   if ( TensorComponent[0] )
     res[0] = TensorComponent[0]->EvaluateFunction(x);
@@ -79,11 +78,11 @@ int vtkTensorImplicitFunctionToFunctionSet::GetTensor(vtkFloatingPointType *x, v
   return 1;
 }
 
-int vtkTensorImplicitFunctionToFunctionSet::FunctionValues(vtkFloatingPointType* x, vtkFloatingPointType* res){
-  vtkFloatingPointType f[9];
-  vtkFloatingPointType * val[3];
-  vtkFloatingPointType trace;
-  vtkFloatingPointType correction;
+int vtkTensorImplicitFunctionToFunctionSet::FunctionValues(double* x, double* res){
+  double f[9];
+  double * val[3];
+  double trace;
+  double correction;
   int i,j;
 
   for ( i=0 ; i < 3 ; i++ )
@@ -148,19 +147,19 @@ void vtkTensorImplicitFunctionToFunctionSet::SetChangeIntegrationDirection(void)
   this->Direction[2] = -this->Direction[2];
 }
 
-void vtkTensorImplicitFunctionToFunctionSet::SetIntegrationDirection(vtkFloatingPointType dir[3]) {
+void vtkTensorImplicitFunctionToFunctionSet::SetIntegrationDirection(double dir[3]) {
   this->Direction[0] = dir[0];
   this->Direction[1] = dir[1];
   this->Direction[2] = dir[2];
   this->DirectionValid = 1;
 }
 
-int vtkTensorImplicitFunctionToFunctionSet::IsInsideImage(vtkFloatingPointType x[3]) {
-  vtkFloatingPointType temp;
+int vtkTensorImplicitFunctionToFunctionSet::IsInsideImage(double x[3]) {
+  double temp;
   int i;
   for ( i = 0 ; i < 3 ; i++ ) {
     temp = (x[i] - DataOrigin[i])/DataSpacing[i];
-    if ( temp < ((vtkFloatingPointType)this->DataExtent[2*i]) || temp > ((vtkFloatingPointType)this->DataExtent[2*i+1]) )
+    if ( temp < ((double)this->DataExtent[2*i]) || temp > ((double)this->DataExtent[2*i+1]) )
       return 0;
   }
   return 1;

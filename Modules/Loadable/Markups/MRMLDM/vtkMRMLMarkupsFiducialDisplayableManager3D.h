@@ -36,7 +36,7 @@ class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsFidu
 public:
 
   static vtkMRMLMarkupsFiducialDisplayableManager3D *New();
-  vtkTypeRevisionMacro(vtkMRMLMarkupsFiducialDisplayableManager3D, vtkMRMLMarkupsDisplayableManager3D);
+  vtkTypeMacro(vtkMRMLMarkupsFiducialDisplayableManager3D, vtkMRMLMarkupsDisplayableManager3D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

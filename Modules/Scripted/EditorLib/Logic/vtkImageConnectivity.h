@@ -19,6 +19,7 @@
 
 // VTK includes
 #include <vtkImageAlgorithm.h>
+#include <vtkVersion.h>
 
 #define CONNECTIVITY_IDENTIFY 1
 #define CONNECTIVITY_REMOVE 2
@@ -30,7 +31,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtk
 {
 public:
   static vtkImageConnectivity *New();
-  vtkTypeRevisionMacro(vtkImageConnectivity,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageConnectivity,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Function
@@ -89,7 +90,11 @@ protected:
   int Function;
   int SliceBySlice;
 
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *);
+#endif
 
 private:
   vtkImageConnectivity(const vtkImageConnectivity&);

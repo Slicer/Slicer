@@ -40,7 +40,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerFact
 {
 public:
 
-  vtkTypeRevisionMacro(vtkMRMLThreeDViewDisplayableManagerFactory,
+  vtkTypeMacro(vtkMRMLThreeDViewDisplayableManagerFactory,
                        vtkMRMLDisplayableManagerFactory);
   void PrintSelf(ostream& os, vtkIndent indent);
 

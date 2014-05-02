@@ -18,7 +18,6 @@
 #include <vtkInformationVector.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
-vtkCxxRevisionMacro(vtkITKTimeSeriesDatabase, "$Revision: 6383 $");
 vtkStandardNewMacro(vtkITKTimeSeriesDatabase);
 int vtkITKTimeSeriesDatabase::RequestInformation(
   vtkInformation * vtkNotUsed(request),
@@ -52,12 +51,18 @@ int vtkITKTimeSeriesDatabase::RequestInformation(
 
 
   // defined in the subclasses
+#if (VTK_MAJOR_VERSION <= 5)
 void  vtkITKTimeSeriesDatabase::ExecuteData(vtkDataObject *output)
   {
     vtkImageData *data = vtkImageData::SafeDownCast(output);
     data->SetExtent(0,0,0,0,0,0);
     data->AllocateScalars();
     data->SetExtent(data->GetWholeExtent());
+#else
+void vtkITKTimeSeriesDatabase::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+  {
+    this->AllocateOutputData(output, outInfo);
+#endif
     itk::ImportImageContainer<unsigned long, OutputImagePixelType>::Pointer PixelContainerShort;
     PixelContainerShort = this->m_Filter->GetOutput()->GetPixelContainer();
     void *ptr = static_cast<void *> (PixelContainerShort->GetBufferPointer());

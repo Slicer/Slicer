@@ -55,7 +55,6 @@
     }}
 
 //#ifndef VTK_IMPLEMENT_MESA_CXX
-vtkCxxRevisionMacro(vtkSlicerOpenGLVolumeTextureMapper3D, "$Revision: 1.7.2.2 $");
 vtkStandardNewMacro(vtkSlicerOpenGLVolumeTextureMapper3D);
 //#endif
 

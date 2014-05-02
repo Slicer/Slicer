@@ -24,6 +24,7 @@
 #include "vtkPolyDataReader.h"
 #include "vtkPolyDataWriter.h"
 #include "vtkAppendPolyData.h"
+#include <vtkVersion.h>
 #include "MergeModelsCLP.h"
 #include <vtksys/SystemTools.hxx>
 
@@ -98,8 +99,13 @@ int main( int argc, char * argv[] )
     }
   // add them together
   vtkAppendPolyData *add = vtkAppendPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
   add->AddInput(model1);
   add->AddInput(model2);
+#else
+  add->AddInputConnection(pdxReader1->GetOutputPort());
+  add->AddInputConnection(pdxReader2->GetOutputPort());
+#endif
   add->Update();
 
   // write the output
@@ -113,7 +119,11 @@ int main( int argc, char * argv[] )
     {
     vtkPolyDataWriter *pdWriter = vtkPolyDataWriter::New();
     pdWriter->SetFileName(ModelOutput.c_str() );
+#if (VTK_MAJOR_VERSION <= 5)
     pdWriter->SetInput(add->GetOutput() );
+#else
+    pdWriter->SetInputConnection(add->GetOutputPort() );
+#endif
     pdWriter->Write();
     pdWriter->Delete();
     }
@@ -122,7 +132,11 @@ int main( int argc, char * argv[] )
     vtkXMLPolyDataWriter *pdWriter = vtkXMLPolyDataWriter::New();
     pdWriter->SetIdTypeToInt32();
     pdWriter->SetFileName(ModelOutput.c_str() );
+#if (VTK_MAJOR_VERSION <= 5)
     pdWriter->SetInput(add->GetOutput() );
+#else
+    pdWriter->SetInputConnection(add->GetOutputPort() );
+#endif
     pdWriter->Write();
     pdWriter->Delete();
     }

@@ -45,14 +45,16 @@
 #include "vtkSlicerEditorLibModuleLogicExport.h"
 
 // VTK includes
+#include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
+#include <vtkVersion.h>
 
 class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageSlicePaint : public vtkObject
 {
 public:
   static vtkImageSlicePaint *New();
-  vtkTypeRevisionMacro(vtkImageSlicePaint,vtkObject);
+  vtkTypeMacro(vtkImageSlicePaint,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 
@@ -92,6 +94,11 @@ public:
   /// Image data to be painted into
   vtkSetObjectMacro(WorkingImage, vtkImageData);
   vtkGetObjectMacro(WorkingImage, vtkImageData);
+
+#if (VTK_MAJOR_VERSION > 5)
+  vtkSetObjectMacro(WorkingImageFilter, vtkImageAlgorithm);
+  vtkGetObjectMacro(WorkingImageFilter, vtkImageAlgorithm);
+#endif
 
   ///
   /// The place to store data pulled out
@@ -151,6 +158,9 @@ protected:
   vtkImageData *MaskImage;
   vtkImageData *BackgroundImage;
   vtkImageData *WorkingImage;
+#if (VTK_MAJOR_VERSION > 5)
+  vtkImageAlgorithm *WorkingImageFilter;
+#endif
   vtkImageData *ExtractImage;
   vtkImageData *ReplaceImage;
 
@@ -170,9 +180,4 @@ private:
   void operator=(const vtkImageSlicePaint&);  /// Not implemented.
 };
 
-
-
 #endif
-
-
-

@@ -51,7 +51,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationRulerDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationRulerDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationRulerDisplayableManager Callback

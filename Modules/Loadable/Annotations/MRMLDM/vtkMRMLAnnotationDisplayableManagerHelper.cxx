@@ -28,7 +28,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManagerHelper);
-vtkCxxRevisionMacro (vtkMRMLAnnotationDisplayableManagerHelper, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent indent)

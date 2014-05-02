@@ -26,8 +26,8 @@
 #include "vtkVolumeProperty.h"
 #include "vtkMatrix4x4.h"
 #include "vtkCommand.h"
+#include <vtkVersion.h>
 
-vtkCxxRevisionMacro(vtkSlicerVolumeTextureMapper3D, "$Revision: 1.6 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
@@ -1025,7 +1025,11 @@ int vtkSlicerVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))
 
   // Get the image data
   vtkImageData *input = this->GetInput();
+#if (VTK_MAJOR_VERSION <= 5)
   input->Update();
+#else
+  this->Update();
+#endif
 
   // Has the volume changed in some way?
   if ( this->SavedTextureInput != input ||
@@ -1199,7 +1203,11 @@ int vtkSlicerVolumeTextureMapper3D::UpdateColorLookup( vtkVolume *vol )
 
   // Get the image data
   vtkImageData *input = this->GetInput();
+#if (VTK_MAJOR_VERSION <= 5)
   input->Update();
+#else
+  this->Update();
+#endif
 
   // Has the volume changed in some way?
   if ( this->SavedParametersInput != input ||

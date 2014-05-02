@@ -32,7 +32,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLTestSliceViewDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLTestSliceViewDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 int vtkMRMLTestSliceViewDisplayableManager::NodeAddedCount = 0;

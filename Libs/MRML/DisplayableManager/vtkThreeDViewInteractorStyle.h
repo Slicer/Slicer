@@ -51,7 +51,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkThreeDViewInteractorStyle :
 {
 public:
   static vtkThreeDViewInteractorStyle *New();
-  vtkTypeRevisionMacro(vtkThreeDViewInteractorStyle,vtkInteractorStyle);
+  vtkTypeMacro(vtkThreeDViewInteractorStyle,vtkInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Reimplemented for camera orientation

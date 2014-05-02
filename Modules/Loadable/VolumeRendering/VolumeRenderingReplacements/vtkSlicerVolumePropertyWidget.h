@@ -47,7 +47,7 @@ public:
   static vtkSlicerVolumePropertyWidget* New();
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeMacro(vtkSlicerVolumePropertyWidget,vtkSlicerWidget);
-//  vtkTypeRevisionMacro(vtkSlicerVolumePropertyWidget,vtkKWCompositeWidget);
+//  vtkTypeMacro(vtkSlicerVolumePropertyWidget,vtkKWCompositeWidget);
 
   // Description:
   // Get/Set the transfer function mapping scalar value to color

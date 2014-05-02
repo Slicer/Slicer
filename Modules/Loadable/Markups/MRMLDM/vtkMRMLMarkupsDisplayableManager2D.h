@@ -44,7 +44,7 @@ class  VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDis
 public:
 
   static vtkMRMLMarkupsDisplayableManager2D *New();
-  vtkTypeRevisionMacro(vtkMRMLMarkupsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLMarkupsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Hide/Show a widget so that the node's display node visibility setting

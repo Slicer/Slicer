@@ -45,6 +45,7 @@
 #include <vtkMRMLSliceLogic.h>
 
 /// VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
@@ -144,7 +145,11 @@ public:
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
   vtkCollection*                      SliceLogics;
+#if (VTK_MAJOR_VERSION <= 5)
   vtkWeakPointer<vtkImageData>        ImageData;
+#else
+  vtkWeakPointer<vtkAlgorithmOutput>  ImageDataPort;
+#endif
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;

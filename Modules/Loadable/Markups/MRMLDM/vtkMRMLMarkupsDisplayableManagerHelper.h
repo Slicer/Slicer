@@ -51,7 +51,7 @@ class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisp
 public:
 
   static vtkMRMLMarkupsDisplayableManagerHelper *New();
-  vtkTypeRevisionMacro(vtkMRMLMarkupsDisplayableManagerHelper, vtkObject);
+  vtkTypeMacro(vtkMRMLMarkupsDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Lock/Unlock all widgets based on the state of the nodes

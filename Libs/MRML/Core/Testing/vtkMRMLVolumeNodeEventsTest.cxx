@@ -67,6 +67,7 @@ int vtkMRMLVolumeNodeEventsTest(int , char * [] )
 
   // Set the same image data:
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
+
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 0 ||
       callback->GetNumberOfEvents(vtkMRMLVolumeNode::ImageDataModifiedEvent) != 0)

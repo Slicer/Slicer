@@ -11,8 +11,10 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
+
 #include "vtkPreciseHyperStreamlinePoints.h"
 #include "vtkObjectFactory.h"
+#include <vtkVersion.h>
 // is there any problem with including a cxx file?
 // this is done for class vtkPreciseHyperPoint which is defined here
 // otherwise we cannot access the points calculated by superclass
@@ -92,7 +94,13 @@ vtkPreciseHyperStreamlinePoints::~vtkPreciseHyperStreamlinePoints()
 }
 
 //------------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkPreciseHyperStreamlinePoints::Execute()
+#else
+int vtkPreciseHyperStreamlinePoints::RequestData(vtkInformation* request,
+                                                 vtkInformationVector** inInfoVec,
+                                                 vtkInformationVector* outInfoVec)
+#endif
 {
   vtkPreciseHyperPoint *sPtr;
   vtkIdType i, npts;
@@ -102,8 +110,11 @@ void vtkPreciseHyperStreamlinePoints::Execute()
   vtkDebugMacro(<<"Calling superclass execute");
 
   // default superclass behavior
+#if (VTK_MAJOR_VERSION <= 5)
   vtkPreciseHyperStreamline::Execute();
-
+#else
+  vtkPreciseHyperStreamline::RequestData(request, inInfoVec, outInfoVec);
+#endif
   vtkDebugMacro(<<"Grabbing superclass output points.");
 
   // just grab points of output to make them available to user
@@ -139,6 +150,9 @@ void vtkPreciseHyperStreamlinePoints::Execute()
     } //for this hyperstreamline
 
   vtkDebugMacro(<<"Done Grabbing superclass output points.");
+#if (VTK_MAJOR_VERSION > 5)
+  return 1;
+#endif
 }
 
 //------------------------------------------------------------------------------

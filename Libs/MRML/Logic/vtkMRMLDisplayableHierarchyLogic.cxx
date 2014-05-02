@@ -25,7 +25,6 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
-vtkCxxRevisionMacro(vtkMRMLDisplayableHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLDisplayableHierarchyLogic);
 
 //----------------------------------------------------------------------------

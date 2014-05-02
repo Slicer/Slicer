@@ -70,7 +70,7 @@ public:
 
   ///
   /// Standard methods for the class.
-  vtkTypeRevisionMacro(vtkAnnotationROIRepresentation2D,vtkAnnotationROIRepresentation);
+  vtkTypeMacro(vtkAnnotationROIRepresentation2D,vtkAnnotationROIRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

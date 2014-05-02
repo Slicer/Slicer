@@ -39,7 +39,7 @@ public:
 
   static vtkMRMLAbstractThreeDViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLAbstractThreeDViewDisplayableManager,
+  vtkTypeMacro(vtkMRMLAbstractThreeDViewDisplayableManager,
                        vtkMRMLAbstractDisplayableManager);
 
   /// Get MRML ViewNode

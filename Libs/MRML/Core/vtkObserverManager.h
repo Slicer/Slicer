@@ -44,7 +44,7 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
 
   /// The Usual vtk class functions
   static vtkObserverManager *New();
-  vtkTypeRevisionMacro(vtkObserverManager,vtkObject);
+  vtkTypeMacro(vtkObserverManager,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// set vtkObject to a specified pointer and remove all observers for all events

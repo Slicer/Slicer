@@ -30,7 +30,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractLogic);
-vtkCxxRevisionMacro(vtkMRMLAbstractLogic, "$Revision: 13525 $");
 
 //----------------------------------------------------------------------------
 class vtkMRMLAbstractLogic::vtkInternal

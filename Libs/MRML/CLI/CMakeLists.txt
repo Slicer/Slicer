@@ -71,6 +71,7 @@ add_library(${lib_name} ${srcs})
 set(libs
   MRMLCore
   ModuleDescriptionParser
+  ${VTK_LIBRARIES}
   )
 target_link_libraries(${lib_name} ${libs})
 

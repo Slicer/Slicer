@@ -119,7 +119,12 @@ bool TestBatchRemoveDisplayNode()
   vtkNew<vtkSphereSource> sphereSource;
   sphereSource->SetRadius(10.);
   sphereSource->Update();
+
+#if (VTK_MAJOR_VERSION <= 5)
   modelNode->SetAndObservePolyData(sphereSource->GetOutput());
+#else
+  modelNode->SetAndObservePolyFilterAndData(sphereSource.GetPointer());
+#endif
   modelNode->AddAndObserveDisplayNodeID(modelDisplayNode->GetID());
   scene->AddNode(modelNode);
   modelNode->Delete();

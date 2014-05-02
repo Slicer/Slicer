@@ -10,7 +10,6 @@
 #include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro ( vtkUserTagTable );
-vtkCxxRevisionMacro ( vtkUserTagTable, "$Revision: 1.0 $" );
 
 //----------------------------------------------------------------------------
 vtkUserTagTable::vtkUserTagTable()

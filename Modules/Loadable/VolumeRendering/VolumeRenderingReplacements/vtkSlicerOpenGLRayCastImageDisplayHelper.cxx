@@ -19,6 +19,7 @@
 #include "vtkTransform.h"
 #include "vtkCamera.h"
 #include "vtkSlicerFixedPointRayCastImage.h"
+#include <vtkVersion.h>
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
 # include "vtkOpenGL.h"
@@ -26,7 +27,6 @@
 
 
 #ifndef VTK_IMPLEMENT_MESA_CXX
-vtkCxxRevisionMacro(vtkSlicerOpenGLRayCastImageDisplayHelper, "$Revision: 1.4 $");
 vtkStandardNewMacro(vtkSlicerOpenGLRayCastImageDisplayHelper);
 #endif
 

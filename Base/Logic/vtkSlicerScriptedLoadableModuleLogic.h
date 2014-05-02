@@ -35,7 +35,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerScriptedLoadableModuleLogic :
 public:
 
   static vtkSlicerScriptedLoadableModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerScriptedLoadableModuleLogic, vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerScriptedLoadableModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   bool SetPythonSource(const std::string& pythonSource);

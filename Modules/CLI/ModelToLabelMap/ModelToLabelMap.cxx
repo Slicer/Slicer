@@ -38,6 +38,7 @@
 #include <vtkPolyDataPointSampler.h>
 #include <vtkPolyDataReader.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkVersion.h>
 
 typedef itk::Image<unsigned char, 3> LabelImageType;
 
@@ -171,7 +172,11 @@ int DoIt( int argc, char * argv[])
   // do it
   vtkNew<vtkPolyDataPointSampler> sampler;
 
+#if (VTK_MAJOR_VERSION <= 5)
   sampler->SetInput( polyData );
+#else
+  sampler->SetInputData( polyData );
+#endif
   sampler->SetDistance( sampleDistance );
   sampler->GenerateEdgePointsOn();
   sampler->GenerateInteriorPointsOn();

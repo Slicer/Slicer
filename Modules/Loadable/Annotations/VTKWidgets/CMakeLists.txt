@@ -34,10 +34,16 @@ set(${KIT}_SRCS
   vtkAnnotationROIWidget2D.h
   vtkAnnotationROIWidget2D.cxx
   )
-
-set(${KIT}_TARGET_LIBRARIES
-  vtkRendering
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(${KIT}_TARGET_LIBRARIES
+    vtkRenderingAnnotation
+    vtkSlicer${MODULE_NAME}ModuleMRML
+    )
+else()
+  set(${KIT}_TARGET_LIBRARIES
+    vtkRendering
   )
+endif()
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(

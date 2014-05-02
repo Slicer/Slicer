@@ -34,7 +34,6 @@
 #include <cstdlib>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerScriptedLoadableModuleLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerScriptedLoadableModuleLogic);
 
 //---------------------------------------------------------------------------

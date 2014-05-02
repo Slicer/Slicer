@@ -11,6 +11,7 @@ proc newSphere { {name ""} } {
   $modelDisplayNode SetColor [expr rand()] [expr rand()] [expr rand()] 
   $::slicer3::MRMLScene AddNode $modelDisplayNode
   set modelNode [vtkMRMLModelNode New]
+# VTK6 TODO
   $modelNode SetAndObservePolyData [$sphere GetOutput]
   $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]
   $modelNode SetName $name

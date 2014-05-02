@@ -25,7 +25,6 @@
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLThreeDViewDisplayableManagerFactory, "$Revision: 13859 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.

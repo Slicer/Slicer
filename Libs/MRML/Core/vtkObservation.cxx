@@ -20,7 +20,6 @@
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 
-vtkCxxRevisionMacro(vtkObservation, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkObservation);
 vtkCxxSetObjectMacro(vtkObservation, CallbackCommand, vtkCallbackCommand);
 vtkCxxSetObjectMacro(vtkObservation, EventBroker, vtkEventBroker);

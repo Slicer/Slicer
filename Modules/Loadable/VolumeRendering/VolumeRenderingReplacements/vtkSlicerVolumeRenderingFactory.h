@@ -26,7 +26,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerVolumeRend
 {
 public:
   static vtkSlicerVolumeRenderingFactory *New();
-  vtkTypeRevisionMacro(vtkSlicerVolumeRenderingFactory,vtkObject);
+  vtkTypeMacro(vtkSlicerVolumeRenderingFactory,vtkObject);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

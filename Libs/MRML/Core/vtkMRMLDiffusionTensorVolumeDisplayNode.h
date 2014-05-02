@@ -19,6 +19,7 @@
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 class vtkMRMLGlyphableVolumeSliceDisplayNode;
 
+class vtkAlgorithmOutput;
 class vtkDiffusionTensorMathematics;
 class vtkDiffusionTensorGlyph;
 class vtkImageCast;
@@ -147,7 +148,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   virtual vtkImageData* GetInputImageData();
 
   /// Get the output of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
+#endif
 
   /// Reimplemented to return 0 when the background mask is not used.
   virtual vtkImageData* GetBackgroundImageData();
@@ -183,7 +188,11 @@ protected:
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
 
   /// Set the input of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+#else
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   virtual vtkImageData* GetScalarImageData();
 

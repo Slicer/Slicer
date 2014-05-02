@@ -29,7 +29,7 @@ vtkMRMLAnnotationClickCounter
 public:
 
   static vtkMRMLAnnotationClickCounter *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationClickCounter, vtkObject);
+  vtkTypeMacro(vtkMRMLAnnotationClickCounter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Increase the click counter and return the number of clicks.

@@ -25,7 +25,6 @@
 #include <vtksys/SystemTools.hxx>
 
 
-vtkCxxRevisionMacro(vtkSlicerFiducialsLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerFiducialsLogic);
 
 //----------------------------------------------------------------------------

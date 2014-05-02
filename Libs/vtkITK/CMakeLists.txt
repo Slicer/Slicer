@@ -182,7 +182,23 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${vtkITK_SRCS})
 add_library(${lib_name} ${srcs})
 
-set(VTK_LIBRARIES vtkCommon vtkFiltering vtkImaging)
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonExecutionModel
+    vtkCommonMath
+    vtkCommonTransforms
+    vtkIOImage
+    vtkImagingCore
+    )
+else()
+  set(VTK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkImaging
+    )
+endif()
 
 set(libs
   ${ITK_LIBRARIES}

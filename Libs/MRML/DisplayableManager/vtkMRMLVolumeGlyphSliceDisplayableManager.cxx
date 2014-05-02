@@ -37,6 +37,7 @@
 #include <vtkPolyDataMapper2D.h>
 #include <vtkRenderer.h>
 #include <vtkWeakPointer.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <algorithm>
@@ -44,7 +45,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLVolumeGlyphSliceDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLVolumeGlyphSliceDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
@@ -489,8 +489,11 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
     vtkActor2D* actor2D = vtkActor2D::SafeDownCast(actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
       actor2D->GetMapper());
-
+#if (VTK_MAJOR_VERSION <= 5)
     mapper->SetInput( polyData );
+#else
+    mapper->SetInputData( polyData );
+#endif
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
                             dtiDisplayNode->GetColorNode()->GetScalarsToColors() : 0);
     mapper->SetScalarRange(dtiDisplayNode->GetScalarRange());

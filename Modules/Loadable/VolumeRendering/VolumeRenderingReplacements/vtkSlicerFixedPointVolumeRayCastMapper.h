@@ -100,7 +100,7 @@ public:
   //ENDSLICERADD
 
   static vtkSlicerFixedPointVolumeRayCastMapper *New();
-  vtkTypeRevisionMacro(vtkSlicerFixedPointVolumeRayCastMapper,vtkVolumeMapper);
+  vtkTypeMacro(vtkSlicerFixedPointVolumeRayCastMapper,vtkVolumeMapper);
   void PrintSelf( ostream& os, vtkIndent indent );
 
   // Description:

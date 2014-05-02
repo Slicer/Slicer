@@ -15,17 +15,28 @@
 #include "vtkPrincipalAxesAlign.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkPrincipalAxesAlign::Execute()
 {
-  vtkPolyData *         input = this->GetPolyDataInput(0);
+  vtkPolyData *         input = (vtkPolyData *)this->GetExecutive()->GetInputData(0,0);
+#else
+int vtkPrincipalAxesAlign::RequestData(vtkInformation* vtkNotUsed(request),
+      vtkInformationVector** inInfoVec,
+      vtkInformationVector* vtkNotUsed(outInfoVec))
+{
+  vtkPolyData *         input = (vtkPolyData *)vtkImageData::GetData(inInfoVec[0]);
+#endif
+
   vtkIdType             nr_points = input->GetNumberOfPoints();
-  vtkFloatingPointType* x;
+  double* x;
 
   int i;
 
@@ -109,6 +120,9 @@ void vtkPrincipalAxesAlign::Execute()
   ZAxis[0] = eigenvectors[0][2];
   ZAxis[1] = eigenvectors[1][2];
   ZAxis[2] = eigenvectors[2][2];
+#if (VTK_MAJOR_VERSION > 5)
+  return 1;
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -117,22 +131,22 @@ vtkStandardNewMacro(vtkPrincipalAxesAlign);
 //----------------------------------------------------------------------------
 vtkPrincipalAxesAlign::vtkPrincipalAxesAlign()
 {
-  Center = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  Center = (double *) malloc(3 * sizeof(double) );
   Center[0] = 0;
   Center[1] = 0;
   Center[2] = 0;
 
-  XAxis = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  XAxis = (double *) malloc(3 * sizeof(double) );
   XAxis[0] = 1;
   XAxis[1] = 0;
   XAxis[2] = 0;
 
-  YAxis = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  YAxis = (double *) malloc(3 * sizeof(double) );
   YAxis[0] = 0;
   YAxis[1] = 1;
   YAxis[2] = 0;
 
-  ZAxis = (vtkFloatingPointType *) malloc(3 * sizeof(vtkFloatingPointType) );
+  ZAxis = (double *) malloc(3 * sizeof(double) );
   ZAxis[0] = 0;
   ZAxis[1] = 0;
   ZAxis[2] = 1;

@@ -21,8 +21,8 @@
 #include "vtkImageExport.h"
 #include "vtkImageData.h"
 
-#ifndef vtkFloatingPointType
-#define vtkFloatingPointType float
+#ifndef double
+#define double float
 #endif
 
 namespace itk

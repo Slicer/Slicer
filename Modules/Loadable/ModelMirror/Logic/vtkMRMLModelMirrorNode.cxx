@@ -3,7 +3,6 @@
 #include "vtkMRMLModelMirrorNode.h"
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro ( vtkMRMLModelMirrorNode, "$Revision: 1.0 $");
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelMirrorNode);

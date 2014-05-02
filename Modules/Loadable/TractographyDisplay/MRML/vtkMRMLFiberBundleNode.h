@@ -153,6 +153,9 @@ public:
   ///
   /// Gets the subsampled PolyData converted from the real data in the node
   virtual vtkPolyData* GetFilteredPolyData();
+#if (VTK_MAJOR_VERSION > 5)
+  virtual vtkAlgorithm* GetFilteredPolyDataFilter();
+#endif
 
   ///
   /// get associated line display node or NULL if not set

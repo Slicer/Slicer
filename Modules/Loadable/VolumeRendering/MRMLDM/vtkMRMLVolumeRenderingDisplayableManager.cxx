@@ -68,6 +68,7 @@
 #include "vtkRenderer.h"
 #include "vtkVolume.h"
 #include "vtkVolumeProperty.h"
+#include <vtkVersion.h>
 
 // ITKSys includes
 //#include <itksys/SystemTools.hxx>
@@ -80,7 +81,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLVolumeRenderingDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLVolumeRenderingDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 bool vtkMRMLVolumeRenderingDisplayableManager::First = true;
@@ -305,7 +305,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetupHistograms(vtkMRMLVolumeRend
   //gradient histogram
   vtkImageGradientMagnitude *grad = vtkImageGradientMagnitude::New();
   grad->SetDimensionality(3);
+#if (VTK_MAJOR_VERSION <= 5)
   grad->SetInput(input);
+#else
+  grad->SetInputData(input);
+#endif
   grad->Update();
 
   vtkKWHistogram *gradHisto = vtkKWHistogram::New();
@@ -344,7 +348,11 @@ void vtkMRMLVolumeRenderingDisplayableManager
   //gradient histogram
   vtkImageGradientMagnitude *grad = vtkImageGradientMagnitude::New();
   grad->SetDimensionality(3);
+#if (VTK_MAJOR_VERSION <= 5)
   grad->SetInput(input);
+#else
+  grad->SetInputData(input);
+#endif
   grad->Update();
 
   vtkKWHistogram *gradHisto = vtkKWHistogram::New();
@@ -644,8 +652,13 @@ int vtkMRMLVolumeRenderingDisplayableManager
     }
   vtkRenderWindow* window = this->GetRenderer()->GetRenderWindow();
 
+#if (VTK_MAJOR_VERSION <= 5)
   volumeMapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(
                            vspNode->GetVolumeNode())->GetImageData() );
+#else
+  volumeMapper->SetInputData(vtkMRMLScalarVolumeNode::SafeDownCast(
+                           vspNode->GetVolumeNode())->GetImageData() );
+#endif
   if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper) &&
       vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode))
     {
@@ -758,7 +771,11 @@ void vtkMRMLVolumeRenderingDisplayableManager
   if (volumeMapper &&
       volumeMapper->GetNumberOfInputPorts() > index)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     volumeMapper->SetInputConnection(index, imageData ? imageData->GetProducerPort() : 0);
+#else
+    volumeMapper->SetInputData(index, imageData ? imageData : 0);
+#endif
     }
 }
 

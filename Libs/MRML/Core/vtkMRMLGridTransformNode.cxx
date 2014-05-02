@@ -82,13 +82,16 @@ void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 {
+
   Superclass::ReadXMLAttributes(atts);
 
   vtkNew<vtkGridTransform> vtkgrid;
   vtkNew<vtkImageData> image;
   image->Initialize();
-  image->SetNumberOfScalarComponents( 3 );
+#if (VTK_MAJOR_VERSION <= 5)
   image->SetScalarTypeToDouble();
+  image->SetNumberOfScalarComponents( 3 );
+#endif
   int num_of_displacement = 0;
 
   const char* attName;
@@ -160,7 +163,11 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
         }
       num_of_displacement = vals[0] * vals[1] * vals[2] * 3;
       image->SetDimensions( vals[0], vals[1], vals[2] );
+#if (VTK_MAJOR_VERSION <= 5)
       image->AllocateScalars();
+#else
+      image->AllocateScalars(VTK_DOUBLE, 3);
+#endif
       }
     else if (!strcmp(attName, "spacing"))
       {
@@ -227,9 +234,11 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
-
+#if (VTK_MAJOR_VERSION <= 5)
   vtkgrid->SetDisplacementGrid(image.GetPointer());
-
+#else
+  vtkgrid->SetDisplacementGridData(image.GetPointer());
+#endif
   if( vtkgrid.GetPointer() != 0 )
     {
     if (this->ReadWriteAsTransformToParent)

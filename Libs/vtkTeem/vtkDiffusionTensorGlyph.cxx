@@ -21,6 +21,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include "vtkTransform.h"
 
 #include "vtkImageData.h"
@@ -33,7 +34,6 @@ vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,VolumePositionMatrix,vtkMatrix4x4);
 vtkCxxSetObjectMacro(vtkDiffusionTensorGlyph,TensorRotationMatrix,vtkMatrix4x4);
 
 
-vtkCxxRevisionMacro(vtkDiffusionTensorGlyph, "$Revision: 1.57.12.1 $");
 vtkStandardNewMacro(vtkDiffusionTensorGlyph);
 
 
@@ -235,7 +235,11 @@ int vtkDiffusionTensorGlyph::RequestData(
   int col = 0;
   // TODO: use UpdateExtent not WholeExtent
   int inWholeExtent[6];
+#if (VTK_MAJOR_VERSION <= 5)
   input->GetWholeExtent(inWholeExtent);
+#else
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inWholeExtent);
+#endif
   int dimensions[3];
   dimensions[0] = inWholeExtent[1] - inWholeExtent[0] + 1;
   dimensions[1] = inWholeExtent[3] - inWholeExtent[2] + 1;
@@ -380,9 +384,9 @@ int vtkDiffusionTensorGlyph::RequestData(
     // progress notification
     if ( ! (inPtId % 10000) )
       {
-      this->UpdateProgress ((vtkFloatingPointType)inPtId/numPts);
+      this->UpdateProgress ((double)inPtId/numPts);
 
-      vtkDebugMacro(<<"Generating diffusion tensor glyphs: PROGRESS" << (vtkFloatingPointType)inPtId/numPts);
+      vtkDebugMacro(<<"Generating diffusion tensor glyphs: PROGRESS" << (double)inPtId/numPts);
       if (this->GetAbortExecute())
         {
         break;

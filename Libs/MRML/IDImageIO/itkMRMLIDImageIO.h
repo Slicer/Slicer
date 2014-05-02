@@ -19,6 +19,8 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include <vtkVersion.h>
+
 #include "itkMRMLIDIOWin32Header.h"
 
 #include "itkImageIOBase.h"
@@ -101,7 +103,12 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
   /** Write the image information to the node and specified image */
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*);
+#else
+  virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*,
+                                     int *scalarType, int *numberOfScalarComponents);
+#endif
 
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */

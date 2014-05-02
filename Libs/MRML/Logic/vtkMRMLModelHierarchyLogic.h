@@ -38,7 +38,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractL
 public:
   /// The Usual vtk class functions
   static vtkMRMLModelHierarchyLogic *New();
-  vtkTypeRevisionMacro(vtkMRMLModelHierarchyLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLModelHierarchyLogic,vtkMRMLAbstractLogic);
 
   ///
   /// Given model id return it's hierarchy

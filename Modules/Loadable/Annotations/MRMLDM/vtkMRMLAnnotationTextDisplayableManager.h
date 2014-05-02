@@ -35,7 +35,7 @@ vtkMRMLAnnotationTextDisplayableManager
 public:
 
   static vtkMRMLAnnotationTextDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationTextDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

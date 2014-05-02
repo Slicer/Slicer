@@ -24,7 +24,7 @@ class VTK_Teem_EXPORT vtkPolyDataColorLinesByOrientation : public vtkPolyDataAlg
 {
 public:
   static vtkPolyDataColorLinesByOrientation *New();
-  vtkTypeRevisionMacro(vtkPolyDataColorLinesByOrientation,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkPolyDataColorLinesByOrientation,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

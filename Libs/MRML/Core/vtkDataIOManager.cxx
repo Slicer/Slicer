@@ -14,7 +14,6 @@
 // STD includes
 
 vtkStandardNewMacro ( vtkDataIOManager );
-vtkCxxRevisionMacro(vtkDataIOManager, "$Revision: 1.9.12.1 $");
 vtkCxxSetObjectMacro(vtkDataIOManager, CacheManager, vtkCacheManager);
 vtkCxxSetObjectMacro(vtkDataIOManager, DataTransferCollection, vtkCollection);
 vtkCxxSetObjectMacro(vtkDataIOManager, FileFormatHelper, vtkDataFileFormatHelper);

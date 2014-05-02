@@ -23,9 +23,9 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkStructuredPoints.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkSmartPointer.h"
+#include <vtkVersion.h>
 
 
-vtkCxxRevisionMacro(vtkITKLevelTracing3DImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKLevelTracing3DImageFilter);
 
 // Description:
@@ -112,7 +112,11 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
 
   output->SetExtent(
     outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+#if (VTK_MAJOR_VERSION <= 5)
   output->AllocateScalars();
+#else
+  output->AllocateScalars(outInfo);
+#endif
 
   vtkUnsignedCharArray *oScalars
     = vtkUnsignedCharArray::SafeDownCast(output->GetPointData()->GetScalars());

@@ -24,7 +24,6 @@
 #include "vtkCellData.h"
 
 
-vtkCxxRevisionMacro(vtkTensorRotate, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkTensorRotate);
 
 
@@ -70,7 +69,11 @@ int vtkTensorRotate::RequestInformation (
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
+#else
+vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out, vtkInformation *outInfo)
+#endif
 {
   vtkImageData *output = vtkImageData::SafeDownCast(out);
   vtkImageData *input = vtkImageData::SafeDownCast(this->GetInput());
@@ -81,7 +84,11 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
   vtkDataArray *outArray;
 
   input->GetExtent(inExt);
+#if (VTK_MAJOR_VERSION <= 5)
   output->SetExtent(output->GetUpdateExtent());
+#else
+  output->SetExtent(this->GetUpdateExtent());
+#endif
   output->GetExtent(outExt);
 
   // Do not copy the array we will be generating.
@@ -187,8 +194,12 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
     }
 
   // Now create the scalars and tensors array that will hold the output data.
-  output->CopyTypeSpecificInformation( input );
+//  output->CopyTypeSpecificInformation( input );
+#if (VTK_MAJOR_VERSION <= 5)
   output->AllocateScalars();
+#else
+  output->AllocateScalars(outInfo);
+#endif
   this->AllocateTensors(output);
 
   outArray = output->GetPointData()->GetScalars();
@@ -319,7 +330,11 @@ static void vtkTensorRotateExecute(vtkTensorRotate *self, int outExt[6],
 
 
   inData->GetIncrements(inInc);
+#if (VTK_MAJOR_VERSION <= 5)
   inData->GetUpdateExtent(inFullUpdateExt); //We are only working over the update extent
+#else
+  self->GetUpdateExtent(inFullUpdateExt);
+#endif
   ptId = ((outExt[0] - inFullUpdateExt[0]) * inInc[0]
         + (outExt[2] - inFullUpdateExt[2]) * inInc[1]
         + (outExt[4] - inFullUpdateExt[4]) * inInc[2]);

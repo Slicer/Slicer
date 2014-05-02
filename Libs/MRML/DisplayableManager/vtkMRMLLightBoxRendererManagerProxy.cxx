@@ -25,7 +25,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLLightBoxRendererManagerProxy );
-vtkCxxRevisionMacro(vtkMRMLLightBoxRendererManagerProxy, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 vtkMRMLLightBoxRendererManagerProxy::vtkMRMLLightBoxRendererManagerProxy()

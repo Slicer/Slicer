@@ -32,7 +32,6 @@
 
 // STD includes
 
-vtkCxxRevisionMacro(vtkImageLinearReslice, "$Revision$");
 vtkStandardNewMacro(vtkImageLinearReslice);
 //
 // TODO: why?

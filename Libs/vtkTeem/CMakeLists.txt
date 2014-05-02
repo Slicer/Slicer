@@ -108,13 +108,31 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
 
-set(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  vtkGraphics
-  vtkIO
-  vtkImaging
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonExecutionModel
+    vtkCommonMath
+    vtkCommonSystem
+    vtkCommonTransforms
+    vtkFiltersCore
+    vtkFiltersFlowPaths
+    vtkFiltersGeneral
+    vtkIOCore
+    vtkIOImage
+    vtkIOLegacy
+    vtkImagingCore
   )
+else()
+  set(VTK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkGraphics
+    vtkIO
+    vtkImaging
+  )
+endif()
 
 set(libs
   ${Teem_LIBRARIES}

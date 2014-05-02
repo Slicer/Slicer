@@ -16,6 +16,8 @@
 #ifndef __vtkImageLabelCombine_h
 #define __vtkImageLabelCombine_h
 
+#include <vtkVersion.h>
+
 #include "vtkTeemConfigure.h"
 
 #include "vtkThreadedImageAlgorithm.h"
@@ -29,7 +31,7 @@ class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageLabelCombine *New();
-  vtkTypeRevisionMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
@@ -39,8 +41,22 @@ public:
 
   ///
   /// Set the two inputs to this filter
-  virtual void SetInput1(vtkDataObject *in) { this->SetInput(0,in); }
-  virtual void SetInput2(vtkDataObject *in) { this->SetInput(1,in); }
+  virtual void SetInput1(vtkDataObject *in)
+  {
+#if (VTK_MAJOR_VERSION <= 5)
+      this->SetInput(0,in);
+#else
+      this->SetInputData(0,in);
+#endif
+  }
+  virtual void SetInput2(vtkDataObject *in)
+  {
+#if (VTK_MAJOR_VERSION <= 5)
+      this->SetInput(1,in);
+#else
+      this->SetInputData(1,in);
+#endif
+  }
 
 protected:
   vtkImageLabelCombine();

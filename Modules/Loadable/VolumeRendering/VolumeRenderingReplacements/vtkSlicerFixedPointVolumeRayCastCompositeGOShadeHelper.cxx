@@ -27,7 +27,6 @@
 #include "vtkSlicerFixedPointRayCastImage.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper, "$Revision: 1.5 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper);
 
 // Construct a new vtkSlicerFixedPointVolumeRayCastCompositeGOShadeHelper with default values

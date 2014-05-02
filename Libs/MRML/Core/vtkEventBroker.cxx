@@ -60,7 +60,6 @@ vtkEventBrokerInitialize::~vtkEventBrokerInitialize()
 vtkInstantiatorNewMacro(vtkEventBroker);
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkEventBroker, "$Revision: 1.9.12.1 $");
 
 //----------------------------------------------------------------------------
 // Up the reference count so it behaves like New

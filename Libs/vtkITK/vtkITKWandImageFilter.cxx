@@ -22,7 +22,6 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "itkConnectedThresholdImageFilter.h"
 
-vtkCxxRevisionMacro(vtkITKWandImageFilter, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkITKWandImageFilter);
 
 // Description:

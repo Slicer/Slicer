@@ -177,7 +177,11 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
       {
       vtkNew<vtkImageData> dstDisplacementGrid;
       dstDisplacementGrid->DeepCopy(srcDisplacementGrid);
+#if (VTK_MAJOR_VERSION <= 5)
       vtkGridTransform::SafeDownCast(dst)->SetDisplacementGrid(dstDisplacementGrid.GetPointer());
+#else
+      vtkGridTransform::SafeDownCast(dst)->SetDisplacementGridData(dstDisplacementGrid.GetPointer());
+#endif
       }
     }
   else

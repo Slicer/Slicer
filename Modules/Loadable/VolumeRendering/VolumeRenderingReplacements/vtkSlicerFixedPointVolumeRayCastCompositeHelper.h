@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerFixedPoint
 {
 public:
   static vtkSlicerFixedPointVolumeRayCastCompositeHelper *New();
-  vtkTypeRevisionMacro(vtkSlicerFixedPointVolumeRayCastCompositeHelper,vtkSlicerFixedPointVolumeRayCastHelper);
+  vtkTypeMacro(vtkSlicerFixedPointVolumeRayCastCompositeHelper,vtkSlicerFixedPointVolumeRayCastHelper);
   void PrintSelf( ostream& os, vtkIndent indent );
 
   virtual void  GenerateImage( int threadID,

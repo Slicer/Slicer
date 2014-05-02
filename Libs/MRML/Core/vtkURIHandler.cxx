@@ -6,7 +6,6 @@
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro ( vtkURIHandler );
-vtkCxxRevisionMacro ( vtkURIHandler, "$Revision: 1.0 $" );
 vtkCxxSetObjectMacro( vtkURIHandler, PermissionPrompter, vtkPermissionPrompter );
 //----------------------------------------------------------------------------
 vtkURIHandler::vtkURIHandler()

@@ -169,9 +169,15 @@ int vtkMRMLMarkupsFiducialNode::AddFiducialFromArray(double pos[3])
 void vtkMRMLMarkupsFiducialNode::GetNthFiducialPosition(int n, double pos[3])
 {
   vtkVector3d point= this->GetMarkupPointVector(n, 0);
+#if (VTK_MAJOR_VERSION <= 5)
   pos[0] = point.X();
   pos[1] = point.Y();
   pos[2] = point.Z();
+#else
+  pos[0] = point.GetX();
+  pos[1] = point.GetY();
+  pos[2] = point.GetZ();
+#endif
 }
 
 //-------------------------------------------------------------------------

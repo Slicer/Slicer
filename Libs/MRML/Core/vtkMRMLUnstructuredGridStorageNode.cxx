@@ -21,6 +21,7 @@ Version:   $Revision: 1.2 $
 #include "vtkUnstructuredGrid.h"
 #include "vtkUnstructuredGridReader.h"
 #include "vtkUnstructuredGridWriter.h"
+#include <vtkVersion.h>
 
 #include "itksys/SystemTools.hxx"
 
@@ -117,7 +118,11 @@ int vtkMRMLUnstructuredGridStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkUnstructuredGridWriter *writer = vtkUnstructuredGridWriter::New();
     writer->SetFileName(fullName.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( modelNode->GetUnstructuredGrid() );
+#else
+    writer->SetInputData( modelNode->GetUnstructuredGrid() );
+#endif
     try
       {
       writer->Write();

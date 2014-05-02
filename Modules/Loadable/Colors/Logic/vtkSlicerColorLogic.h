@@ -26,7 +26,7 @@ class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic
 
   /// The Usual vtk class functions
   static vtkSlicerColorLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerColorLogic,vtkMRMLColorLogic);
+  vtkTypeMacro(vtkSlicerColorLogic,vtkMRMLColorLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Return a default color node id for a label map

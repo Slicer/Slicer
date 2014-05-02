@@ -15,6 +15,7 @@
 #define __vtk_principal_axes_align_h
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSetGet.h>
+#include <vtkVersion.h>
 // ---------------------------------------------------------
 // Author: Axel Krauth
 //
@@ -29,11 +30,15 @@ public:
 
   vtkTypeMacro(vtkPrincipalAxesAlign, vtkPolyDataAlgorithm);
 
-  vtkGetVector3Macro(Center, vtkFloatingPointType);
-  vtkGetVector3Macro(XAxis, vtkFloatingPointType);
-  vtkGetVector3Macro(YAxis, vtkFloatingPointType);
-  vtkGetVector3Macro(ZAxis, vtkFloatingPointType);
+  vtkGetVector3Macro(Center, double);
+  vtkGetVector3Macro(XAxis, double);
+  vtkGetVector3Macro(YAxis, double);
+  vtkGetVector3Macro(ZAxis, double);
+#if (VTK_MAJOR_VERSION <= 5)
   void Execute();
+#else
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+#endif
 
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -44,10 +49,10 @@ private:
   vtkPrincipalAxesAlign(vtkPrincipalAxesAlign &);
   void operator=(const vtkPrincipalAxesAlign &);
 
-  vtkFloatingPointType* Center;
-  vtkFloatingPointType* XAxis;
-  vtkFloatingPointType* YAxis;
-  vtkFloatingPointType* ZAxis;
+  double* Center;
+  double* XAxis;
+  double* YAxis;
+  double* ZAxis;
 
   // a matrix of the eigenvalue problem
   double* * eigenvalueProblem;

@@ -41,7 +41,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual vtk class functions
   static vtkMRMLColorLogic *New();
-  vtkTypeRevisionMacro(vtkMRMLColorLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLColorLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Add a series of color nodes, setting the types to the defaults, so that

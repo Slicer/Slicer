@@ -20,7 +20,7 @@ class VTK_ITK_EXPORT vtkITKLevelTracingImageFilter : public vtkPolyDataAlgorithm
 {
 public:
   static vtkITKLevelTracingImageFilter *New();
-  vtkTypeRevisionMacro(vtkITKLevelTracingImageFilter, vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkITKLevelTracingImageFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).

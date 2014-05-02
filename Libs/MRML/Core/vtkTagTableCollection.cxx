@@ -7,7 +7,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkTagTableCollection );
-vtkCxxRevisionMacro(vtkTagTableCollection, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 vtkTagTableCollection::vtkTagTableCollection ( ) {

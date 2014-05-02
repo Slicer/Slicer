@@ -35,7 +35,6 @@
 #include <itksys/SystemTools.hxx>
 #include <itksys/Directory.hxx>
 
-vtkCxxRevisionMacro(vtkSlicerFiberBundleLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerFiberBundleLogic);
 
 //----------------------------------------------------------------------------

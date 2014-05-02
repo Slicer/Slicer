@@ -426,10 +426,16 @@ MRMLIDImageIO
 {
 }
 
-
+#if (VTK_MAJOR_VERSION <= 5)
 void
 MRMLIDImageIO
 ::WriteImageInformation(vtkMRMLVolumeNode *node, vtkImageData *img)
+#else
+void
+MRMLIDImageIO
+::WriteImageInformation(vtkMRMLVolumeNode *node, vtkImageData *img,
+                        int *scalarType, int *numberOfScalarComponents)
+#endif
 {
   unsigned int i, j;
 
@@ -508,6 +514,7 @@ MRMLIDImageIO
   // ComponentType
   switch (this->GetComponentType())
     {
+#if (VTK_MAJOR_VERSION <= 5)
     case FLOAT: img->SetScalarTypeToFloat(); break;
     case DOUBLE: img->SetScalarTypeToDouble(); break;
     case INT: img->SetScalarTypeToInt(); break;
@@ -523,13 +530,34 @@ MRMLIDImageIO
       itkWarningMacro("Unknown scalar type.");
       img->SetScalarTypeToShort();
       break;
+#else
+  case FLOAT: *scalarType = VTK_FLOAT; break;
+  case DOUBLE: *scalarType = VTK_DOUBLE; break;
+  case INT: *scalarType = VTK_INT; break;
+  case UINT: *scalarType = VTK_UNSIGNED_INT; break;
+  case SHORT: *scalarType = VTK_SHORT; break;
+  case USHORT: *scalarType = VTK_UNSIGNED_SHORT; break;
+  case LONG: *scalarType = VTK_LONG; break;
+  case ULONG: *scalarType = VTK_UNSIGNED_LONG; break;
+  case CHAR: *scalarType = VTK_CHAR; break;
+  case UCHAR: *scalarType = VTK_UNSIGNED_CHAR; break;
+  default:
+    // What should we do?
+    itkWarningMacro("Unknown scalar type.");
+   *scalarType = VTK_SHORT;
+    break;
+#endif
     }
 
   // Number of components, PixelType
   if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
     {
     // Scalar, Diffusion Weighted, or Vector image
+#if (VTK_MAJOR_VERSION <= 5)
     img->SetNumberOfScalarComponents(this->GetNumberOfComponents());
+#else
+    *numberOfScalarComponents = GetNumberOfComponents();
+#endif
     }
   else
     {
@@ -618,7 +646,13 @@ MRMLIDImageIO
     // Configure the information on the node/image data
     //
     //
+#if (VTK_MAJOR_VERSION <= 5)
     this->WriteImageInformation(node, img);
+#else
+    int scalarType = VTK_SHORT;
+    int numberOfScalarComponents = 1;
+    this->WriteImageInformation(node, img, &scalarType, &numberOfScalarComponents);
+#endif
 
     // Allocate the data, copy the data
     //
@@ -626,7 +660,11 @@ MRMLIDImageIO
     if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node) == 0)
       {
       // Everything but tensor images are passed in the scalars
+#if (VTK_MAJOR_VERSION <= 5)
       img->AllocateScalars();
+#else
+      img->AllocateScalars(scalarType, numberOfScalarComponents);
+#endif
 
       memcpy(img->GetScalarPointer(), buffer,
              img->GetPointData()->GetScalars()->GetNumberOfComponents() *

@@ -70,7 +70,6 @@
 #include "itkTranslationTransform.h"
 #include "itkTransformFactory.h"
 
-vtkCxxRevisionMacro(vtkSlicerTransformLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerTransformLogic);
 
 //----------------------------------------------------------------------------

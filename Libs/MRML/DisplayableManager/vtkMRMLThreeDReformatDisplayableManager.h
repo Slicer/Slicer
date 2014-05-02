@@ -34,7 +34,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDReformatDisplayableManager
 
 public:
   static vtkMRMLThreeDReformatDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLThreeDReformatDisplayableManager,
+  vtkTypeMacro(vtkMRMLThreeDReformatDisplayableManager,
                        vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 

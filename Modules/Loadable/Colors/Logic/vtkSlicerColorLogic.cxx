@@ -29,7 +29,6 @@
 #include <cerrno>
 #endif
 
-vtkCxxRevisionMacro(vtkSlicerColorLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerColorLogic);
 
 //----------------------------------------------------------------------------

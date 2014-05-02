@@ -11,7 +11,6 @@
 #include "vtkImageData.h"
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageLabelChange, "$Revision$");
 vtkStandardNewMacro(vtkImageLabelChange);
 
 

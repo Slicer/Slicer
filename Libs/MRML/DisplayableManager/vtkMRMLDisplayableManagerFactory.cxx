@@ -39,7 +39,6 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLDisplayableManagerFactory);
-vtkCxxRevisionMacro(vtkMRMLDisplayableManagerFactory, "$Revision: 13859 $");
 
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayableManagerFactory::vtkInternal

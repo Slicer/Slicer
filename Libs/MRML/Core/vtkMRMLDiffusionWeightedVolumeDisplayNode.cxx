@@ -22,6 +22,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <sstream>
@@ -106,11 +107,19 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLDiffusionWeightedVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
   this->ExtractComponent->SetInput(imageData);
 }
+#else
+void vtkMRMLDiffusionWeightedVolumeDisplayNode
+::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+{
+  this->ExtractComponent->SetInputConnection(imageDataPort);
+}
+#endif
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
@@ -119,10 +128,17 @@ vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageDataPort()
+{
+  return this->AppendComponents->GetOutputPort();
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetScalarImageData()

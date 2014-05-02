@@ -99,8 +99,13 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// Set imageData of a volume slice. This is used as the input of the display
   /// pipeline instead of SetInputPolyData().
   /// \sa GetOutputPolyData(), SetInputPolyData()
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetSliceImage(vtkImageData *image);
   vtkGetObjectMacro(SliceImage, vtkImageData);
+#else
+  virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort);
+  vtkGetObjectMacro(SliceImagePort, vtkAlgorithmOutput);
+#endif
 
   ///
   /// Set slice to RAS transformation
@@ -185,7 +190,11 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
 
   /// Ignore input polydata as it takes a volume slice as input.
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToPolyDataPipeline(vtkPolyData *glyphPolyData);
+#else
+  virtual void SetInputToPolyDataPipeline(vtkAlgorithm* polyDataFilter, vtkPolyData *glyphPolyData);
+#endif
 
   /// Return the output of the glyph producer for the input image data.
   /// The output is connected as the input of the slice transform.
@@ -197,7 +206,11 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// Return the output of the glyph producer for the entire volume.
   /// \sa GetSliceOutputPolyData(), GetOutputPort()
   virtual vtkAlgorithmOutput* GetSliceOutputPort();
+#if (VTK_MAJOR_VERSION <= 5)
     vtkImageData             *SliceImage;
+#else
+    vtkAlgorithmOutput       *SliceImagePort;
+#endif
     vtkTransform             *SliceToXYTransform;
     vtkTransformPolyDataFilter *SliceToXYTransformer;
     vtkMatrix4x4             *SliceToXYMatrix;

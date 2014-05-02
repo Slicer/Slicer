@@ -19,6 +19,7 @@
 #include "vtkThreadedImageAlgorithm.h"
 #include "vtkDoubleArray.h"
 #include "vtkTransform.h"
+#include <vtkVersion.h>
 #include "teem/nrrd.h"
 
 /* avoid name conflicts with symbols from python */
@@ -41,12 +42,12 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkThreadedImageAl
 
   ///
   /// Set the 3-vectors describing the gradient directions
-  void SetDiffusionGradient(int num, vtkFloatingPointType gradient[3])
+  void SetDiffusionGradient(int num, double gradient[3])
     {
     this->DiffusionGradients->SetTuple(num,gradient);
     this->Modified();
     }
-  void SetDiffusionGradient(int num, vtkFloatingPointType g0, vtkFloatingPointType g1, vtkFloatingPointType g2)
+  void SetDiffusionGradient(int num, double g0, double g1, double g2)
     {
       this->DiffusionGradients->SetComponent(num,0,g0);
       this->DiffusionGradients->SetComponent(num,1,g1);

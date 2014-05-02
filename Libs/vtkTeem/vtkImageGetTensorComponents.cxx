@@ -78,7 +78,7 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
   int offset[6];
   unsigned long count = 0;
   unsigned long target;
-  vtkFloatingPointType tensor[3][3];
+  double tensor[3][3];
 
   // find the region to loop over
   maxX = outExt[1] - outExt[0];
@@ -135,7 +135,7 @@ static void vtkImageGetTensorComponentsExecute(vtkImageGetTensorComponents *self
         }
       for (idxR = 0; idxR <= maxX; idxR++)
         {
-         inTensors->GetTuple(inPtId,(vtkFloatingPointType *)tensor);
+         inTensors->GetTuple(inPtId,(double *)tensor);
      *outPtr = (T)(tensor[0][0]);
      outPtr++;
      *outPtr = (T)(tensor[1][0]);

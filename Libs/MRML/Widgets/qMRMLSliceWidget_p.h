@@ -65,7 +65,12 @@ public:
 public slots:
   void endProcessing();
   /// Set the image data to the slice view
+#if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData * imageData);
+#else
+  void setImageDataPort(vtkAlgorithmOutput * imageDataPort);
+#endif
+
 
 };
 

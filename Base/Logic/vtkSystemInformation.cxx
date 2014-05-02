@@ -1,7 +1,6 @@
 #include "vtkSystemInformation.h"
 #include <vtkObjectFactory.h>
 
-vtkCxxRevisionMacro(vtkSystemInformation, "$Revision: $");
 vtkStandardNewMacro(vtkSystemInformation);
 
 vtkSystemInformation::vtkSystemInformation()

@@ -19,9 +19,13 @@
 #include <vtkFloatArray.h>
 #include <vtkImageExport.h>
 #include <vtkImageFlip.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkITKUtility.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
@@ -36,7 +40,6 @@
 
 
 vtkStandardNewMacro(vtkITKImageWriter);
-vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision$")
 
 // helper function
 template <class  TPixelType, int Dimension>
@@ -145,11 +148,15 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 
 
   // set pipeline for the image
+#if (VTK_MAJOR_VERSION <= 5)
   vtkFlip->SetInput( inputImage );
+  vtkExporter->SetInput ( inputImage );
+#else
+  vtkFlip->SetInputData( inputImage );
+  vtkExporter->SetInputData ( inputImage );
+#endif
   vtkFlip->SetFilteredAxis(1);
   vtkFlip->FlipAboutOriginOn();
-
-  vtkExporter->SetInput ( inputImage );
 
   ConnectPipelines(vtkExporter, itkImporter);
 
@@ -318,9 +325,14 @@ void vtkITKImageWriter::Write()
     return;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   inputImage->UpdateInformation();
   inputImage->SetUpdateExtent(inputImage->GetWholeExtent());
-
+#else
+  this->UpdateInformation();
+  this->SetUpdateExtent(this->GetOutputInformation(0)->Get(
+                        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+#endif
   int inputNumberOfScalarComponents = inputImage->GetNumberOfScalarComponents();
 
   if (inputNumberOfScalarComponents == 1)
@@ -461,12 +473,16 @@ void vtkITKImageWriter::Write()
         typedef itk::DiffusionTensor3D<float> TensorPixelType;
         vtkNew<vtkImageData> outImage;
         outImage->SetDimensions(inputImage->GetDimensions());
-        outImage->SetWholeExtent(inputImage->GetWholeExtent());
         outImage->SetOrigin(0, 0, 0);
         outImage->SetSpacing(1, 1, 1);
+#if (VTK_MAJOR_VERSION <= 5)
+        outImage->SetWholeExtent(inputImage->GetWholeExtent());
         outImage->SetNumberOfScalarComponents(6);
         outImage->SetScalarTypeToFloat();
         outImage->AllocateScalars();
+#else
+        outImage->AllocateScalars(VTK_FLOAT, 6);
+#endif
         vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
         vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
         float inValue[9];

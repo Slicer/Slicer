@@ -110,6 +110,7 @@ class VectorToScalarVolumeWidget:
     ijkToRAS = vtk.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRAS)
     outputVolume.SetIJKToRASMatrix(ijkToRAS)
+# VTK6 TODO
     outputVolume.SetAndObserveImageData(luminance.GetOutput())
 
     # make the output volume appear in all the slice views

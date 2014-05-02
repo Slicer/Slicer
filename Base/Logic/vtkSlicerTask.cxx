@@ -4,7 +4,6 @@
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerTask, "$Revision$");
 vtkStandardNewMacro(vtkSlicerTask);
 
 //----------------------------------------------------------------------------

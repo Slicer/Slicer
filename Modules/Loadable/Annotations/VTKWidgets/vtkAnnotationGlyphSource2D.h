@@ -61,7 +61,7 @@ vtkAnnotationGlyphSource2D
   : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkAnnotationGlyphSource2D,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkAnnotationGlyphSource2D,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

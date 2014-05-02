@@ -33,7 +33,6 @@
 #include "vtkMesaVolumeTextureMapper2D.h"
 #endif
 
-vtkCxxRevisionMacro(vtkSlicerVolumeRenderingFactory, "$Revision: 1.7 $");
 vtkStandardNewMacro(vtkSlicerVolumeRenderingFactory);
 
 

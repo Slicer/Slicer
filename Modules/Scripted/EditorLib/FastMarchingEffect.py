@@ -129,6 +129,7 @@ class FastMarchingEffectOptions(Effect.EffectOptions):
   def percentMaxChanged(self, val):
     labelNode = self.logic.getLabelNode()
     labelImage = self.editUtil.getLabelImage()
+#VTK6 TODO - need to get the WholeExtent from pipeline
     dim = labelImage.GetWholeExtent()
     spacing = labelNode.GetSpacing()
     totalVolume = spacing[0]*(dim[1]+1)+spacing[1]*(dim[3]+1)+spacing[2]*(dim[5]+1)

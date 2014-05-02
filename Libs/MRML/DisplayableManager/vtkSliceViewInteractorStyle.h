@@ -38,7 +38,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle : public vt
 {
 public:
   static vtkSliceViewInteractorStyle *New();
-  vtkTypeRevisionMacro(vtkSliceViewInteractorStyle,vtkInteractorStyleUser);
+  vtkTypeMacro(vtkSliceViewInteractorStyle,vtkInteractorStyleUser);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

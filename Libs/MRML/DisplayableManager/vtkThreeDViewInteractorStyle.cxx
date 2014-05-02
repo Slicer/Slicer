@@ -28,7 +28,6 @@
 #include <vtkMRMLInteractionNode.h>
 
 
-vtkCxxRevisionMacro(vtkThreeDViewInteractorStyle, "$Revision: 13328 $");
 vtkStandardNewMacro(vtkThreeDViewInteractorStyle);
 
 //----------------------------------------------------------------------------

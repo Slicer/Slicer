@@ -36,6 +36,7 @@
 
 // VTK includes
 #include <vtkPythonUtil.h>
+#include <vtkVersion.h>
 
 //-----------------------------------------------------------------------------
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
@@ -92,10 +93,15 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   if (!app->isInstalled())
     {
     // Add here python path specific to the BUILD tree
-#ifdef CMAKE_INTDIR
-    paths << VTK_DIR "/bin/" CMAKE_INTDIR "/";
+#if (VTK_MAJOR_VERSION <= 5)
+      QString vtkLibSubDir("bin");
 #else
-    paths << VTK_DIR "/bin/";
+      QString vtkLibSubDir("lib");
+#endif
+#ifdef CMAKE_INTDIR
+    paths << VTK_DIR "/" + vtkLibSubDir + "/" CMAKE_INTDIR "/";
+#else
+    paths << VTK_DIR "/" + vtkLibSubDir + "/";
 #endif
     paths << QString("%1/Wrapping/Python").arg(VTK_DIR);
 #ifdef CMAKE_INTDIR

@@ -67,7 +67,7 @@ public:
 
   ///
   /// Standard methods for the class.
-  vtkTypeRevisionMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
+  vtkTypeMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static const int NUMBER_HANDLES = 7;

@@ -24,7 +24,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageErode : public vtkImageNe
 {
 public:
   static vtkImageErode *New();
-  vtkTypeRevisionMacro(vtkImageErode,vtkImageNeighborhoodFilter);
+  vtkTypeMacro(vtkImageErode,vtkImageNeighborhoodFilter);
 
   ///
   /// Background and foreground pixel values in the image.

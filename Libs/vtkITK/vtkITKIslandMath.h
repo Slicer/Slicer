@@ -18,7 +18,7 @@ class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkITKIslandMath *New();
-  vtkTypeRevisionMacro(vtkITKIslandMath, vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkITKIslandMath, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

@@ -42,7 +42,7 @@ public:
 
   /// The Usual VTK class functions
   static vtkMRMLSliceLinkLogic *New();
-  vtkTypeRevisionMacro(vtkMRMLSliceLinkLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLSliceLinkLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

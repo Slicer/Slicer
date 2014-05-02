@@ -14,7 +14,7 @@ public:
   /// The Usual vtk class functions
   //static vtkURIHandler *New() { return NULL; };
     static vtkURIHandler *New();
-  vtkTypeRevisionMacro(vtkURIHandler, vtkObject);
+  vtkTypeMacro(vtkURIHandler, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkGetStringMacro (HostName);

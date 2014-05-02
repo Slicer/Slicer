@@ -158,10 +158,18 @@ set(KIT_resources
 
 # Python wrap
 if(Slicer_USE_PYTHONQT)
-
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_COMMON_PYTHON_LIBRARY
+      vtkCommonCorePythonD # For vtkPythonUtils
+      )
+  else()
+    set(VTK_COMMON_PYTHON_LIBRARY
+      vtkCommonPythonD # For vtkPythonUtils
+      )
+  endif()
   list(APPEND KIT_target_libraries
     CTKScriptingPythonCore
-    vtkCommonPythonD # For vtkPythonUtils
+    ${VTK_COMMON_PYTHON_LIBRARY} # For vtkPythonUtils
     )
   if(WIN32)
     # TODO: this resolves link errors on windows, but shouldn't be

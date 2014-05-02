@@ -29,7 +29,7 @@ class VTK_ITK_EXPORT vtkITKImageWriter : public vtkImageAlgorithm
 {
 public:
   static vtkITKImageWriter *New();
-  vtkTypeRevisionMacro(vtkITKImageWriter,vtkImageAlgorithm);
+  vtkTypeMacro(vtkITKImageWriter,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

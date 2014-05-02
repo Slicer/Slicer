@@ -148,7 +148,11 @@ int main(int argc, char * argv[])
       {
       std::cout << "Set Input to PrincipalAxesAlign\n";
       }
+#if (VTK_MAJOR_VERSION <= 5)
     pa->SetInput(polydata.GetPointer());
+#else
+    pa->SetInputData(polydata.GetPointer());
+#endif
     if( debugSwitch )
       {
       std::cout << "Executing PrincipalAxesAlign\n";
@@ -161,16 +165,16 @@ int main(int argc, char * argv[])
     currentFilterOffset++;
     pa->Update();
 
-    vtkFloatingPointType *normal = pa->GetZAxis();
-    vtkFloatingPointType  nx = normal[0];
-    vtkFloatingPointType  ny = normal[1];
-    vtkFloatingPointType  nz = normal[2];
+    double *normal = pa->GetZAxis();
+    double  nx = normal[0];
+    double  ny = normal[1];
+    double  nz = normal[2];
     if( debugSwitch )
       {
       std::cout << "Normal " << nx << " " << ny << " " << nz << std::endl;
       }
 
-    vtkFloatingPointType Max = nx;
+    double Max = nx;
     if( ny * ny > Max * Max )
       {
       Max = ny;
@@ -179,7 +183,7 @@ int main(int argc, char * argv[])
       {
       Max = nz;
       }
-    vtkFloatingPointType sign = 1.0;
+    double sign = 1.0;
     if( Max < 0 )
       {
       sign = -1.0;
@@ -190,10 +194,10 @@ int main(int argc, char * argv[])
     mat->Identity();
     for( size_t p = 0; p < 4; p++ )
       {
-      vtkFloatingPointType point = normal[p];
+      double point = normal[p];
       mat->SetElement(static_cast<int>(p), 0, (sign * point) );
       }
-    vtkFloatingPointType oneAndAlpha = 1.0 + mat->GetElement(0, 0);
+    double oneAndAlpha = 1.0 + mat->GetElement(0, 0);
     mat->SetElement(0, 1, -1.0 * mat->GetElement(1, 0) );
     mat->SetElement(0, 2, (-1.0 * (mat->GetElement(2, 0) ) ) );
     mat->SetElement(2, 1, (-1.0 * (mat->GetElement(1, 0) * (mat->GetElement(2, 0) / oneAndAlpha) ) ) );
@@ -220,9 +224,9 @@ int main(int argc, char * argv[])
       {
       std::cout << "Doing ACPC, size = " << ACPC.size() << "\n";
       }
-    vtkFloatingPointType top = ACPC[0][2] - ACPC[1][2];
-    vtkFloatingPointType bot = ACPC[0][1] - ACPC[1][1];
-    vtkFloatingPointType tangent = atan(top / bot) * (180.0 / (4.0 * atan(1.0) ) );
+    double top = ACPC[0][2] - ACPC[1][2];
+    double bot = ACPC[0][1] - ACPC[1][1];
+    double tangent = atan(top / bot) * (180.0 / (4.0 * atan(1.0) ) );
     if( debugSwitch )
       {
       std::cout << "Tangent (top = " << top << ", bot = " << bot << ") = " << tangent << endl;

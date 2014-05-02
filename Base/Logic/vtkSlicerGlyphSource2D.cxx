@@ -23,8 +23,8 @@
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
-vtkCxxRevisionMacro(vtkSlicerGlyphSource2D, "$Revision$");
 vtkStandardNewMacro(vtkSlicerGlyphSource2D);
 
 //----------------------------------------------------------------------------

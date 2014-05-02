@@ -32,7 +32,11 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
   this->ColorMode = this->colorModeScalar;
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->SliceImage = NULL;
+#else
+  this->SliceImagePort = NULL;
+#endif
 
   this->SliceToXYTransformer = vtkTransformPolyDataFilter::New();
 
@@ -57,7 +61,11 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 vtkMRMLGlyphableVolumeSliceDisplayNode::~vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
+#if (VTK_MAJOR_VERSION <= 5)
   this->SetSliceImage(NULL);
+#else
+  this->SetSliceImagePort(NULL);
+#endif
   this->SliceToXYMatrix->Delete();
   this->SliceToXYTransform->Delete();
   this->SliceToXYTransformer->Delete();
@@ -151,18 +159,34 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 {
    vtkSetObjectBodyMacro(SliceImage,vtkImageData,image);
 }
+#else
+void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImagePort(vtkAlgorithmOutput *imagePort)
+{
+   vtkSetObjectBodyMacro(SliceImagePort,vtkAlgorithmOutput,imagePort);
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLGlyphableVolumeSliceDisplayNode
 ::SetInputToPolyDataPipeline(vtkPolyData *vtkNotUsed(glyphPolyData))
 {
   vtkErrorMacro(<< this->GetClassName() <<" ("<<this
                     <<"): SetInputPolyData method should not be used");
 }
+#else
+void vtkMRMLGlyphableVolumeSliceDisplayNode
+::SetInputToPolyDataPipeline(vtkAlgorithm *vtkNotUsed(polyDataFilter), vtkPolyData *vtkNotUsed(glyphPolyData))
+{
+  vtkErrorMacro(<< this->GetClassName() <<" ("<<this
+                    <<"): SetInputPolyData method should not be used");
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPolyData()
@@ -172,7 +196,11 @@ vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPolyData()
     return 0;
     }
   // Don't check input polydata as it is not used, but the image data instead.
+#if (VTK_MAJOR_VERSION <= 5)
   if (!this->GetSliceImage())
+#else
+  if (!this->GetSliceImagePort())
+#endif
     {
     return 0;
     }
@@ -189,7 +217,11 @@ vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPolyData()
     return 0;
     }
   // Don't check input polydata as it is not used, but the image data instead.
+#if (VTK_MAJOR_VERSION <= 5)
   if (!this->GetSliceImage())
+#else
+  if (!this->GetSliceImagePort())
+#endif
     {
     return 0;
     }

@@ -29,21 +29,21 @@ public:
     vtkTractographyPoint(); /// method sets up storage
     vtkTractographyPoint &operator=(const vtkTractographyPoint& hp); //for resizing
 
-    vtkFloatingPointType   X[3];    /// position
+    double   X[3];    /// position
     vtkIdType     CellId;  /// cell
     int     SubId; /// cell sub id
-    vtkFloatingPointType   P[3];    /// parametric coords in cell
-    vtkFloatingPointType   W[3];    /// eigenvalues (sorted in decreasing value)
-    vtkFloatingPointType      *V[3];   /// pointers to eigenvectors (also sorted)
-    vtkFloatingPointType   V0[3];   /// storage for eigenvectors
-    vtkFloatingPointType   V1[3];
-    vtkFloatingPointType   V2[3];
-    vtkFloatingPointType   S;       /// scalar value
-    vtkFloatingPointType   D;       /// distance travelled so far
-    vtkFloatingPointType      *T[3];   /// pointers to tensor
-    vtkFloatingPointType   T0[3];   /// storage for tensor
-    vtkFloatingPointType   T1[3];
-    vtkFloatingPointType   T2[3];
+    double   P[3];    /// parametric coords in cell
+    double   W[3];    /// eigenvalues (sorted in decreasing value)
+    double      *V[3];   /// pointers to eigenvectors (also sorted)
+    double   V0[3];   /// storage for eigenvectors
+    double   V1[3];
+    double   V2[3];
+    double   S;       /// scalar value
+    double   D;       /// distance travelled so far
+    double      *T[3];   /// pointers to tensor
+    double   T0[3];   /// storage for tensor
+    double   T1[3];
+    double   T2[3];
 };
 
 class VTK_Teem_EXPORT vtkTractographyArray { //;prevent man page generation
@@ -73,7 +73,7 @@ public:
   vtkIdType MaxId;             /// maximum index inserted thus far
   vtkIdType Size;              /// allocated size of data
   vtkIdType Extend;            /// grow array by this amount
-  vtkFloatingPointType Direction;       /// integration direction
+  double Direction;       /// integration direction
 };
 
 #define VTK_START_FROM_POSITION 0

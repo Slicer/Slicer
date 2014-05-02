@@ -38,7 +38,6 @@
 
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLSliceLinkLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLSliceLinkLogic);
 
 //----------------------------------------------------------------------------

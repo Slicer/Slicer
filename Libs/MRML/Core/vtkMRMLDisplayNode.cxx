@@ -20,6 +20,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
@@ -30,7 +31,11 @@ Version:   $Revision: 1.3 $
 #include <sstream>
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData);
+#else
+vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageDataPort, vtkAlgorithmOutput);
+#endif
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ActiveScalarName);
 
@@ -84,7 +89,11 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->SelectedAmbient = 0.4;
   this->SelectedSpecular = 0.5;
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->TextureImageData = NULL;
+#else
+  this->TextureImageDataPort = NULL;
+#endif
   this->ColorNodeID = NULL;
   this->ColorNode = NULL;
 
@@ -99,7 +108,11 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::~vtkMRMLDisplayNode()
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->SetAndObserveTextureImageData(NULL);
+#else
+  this->SetAndObserveTextureImageDataPort(NULL);
+#endif
   this->SetAndObserveColorNodeID( NULL);
 }
 
@@ -564,7 +577,11 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetClipping(node->Clipping);
   this->SetSliceIntersectionVisibility(node->SliceIntersectionVisibility);
   this->SetSliceIntersectionThickness(node->SliceIntersectionThickness);
+#if (VTK_MAJOR_VERSION <= 5)
   this->SetAndObserveTextureImageData(node->TextureImageData);
+#else
+  this->SetAndObserveTextureImageDataPort(node->TextureImageDataPort);
+#endif
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
 
@@ -647,6 +664,7 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
 {
   if (this->TextureImageData != NULL)
@@ -662,6 +680,23 @@ void vtkMRMLDisplayNode::SetAndObserveTextureImageData(vtkImageData *ImageData)
       this->TextureImageData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
+#else
+void vtkMRMLDisplayNode::SetAndObserveTextureImageDataPort(vtkAlgorithmOutput *ImageDataPort)
+{
+  if (this->TextureImageDataPort != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      this->TextureImageDataPort, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  this->SetTextureImageDataPort(ImageDataPort);
+  if (this->TextureImageDataPort != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      this->TextureImageDataPort, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+}
+#endif
 
 //-----------------------------------------------------------
 void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene *scene)
@@ -750,8 +785,13 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (this->TextureImageData != NULL && this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
+#else
+  if (this->TextureImageDataPort != NULL && this->TextureImageDataPort == vtkAlgorithmOutput::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+#endif
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }

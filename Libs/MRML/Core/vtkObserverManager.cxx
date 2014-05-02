@@ -24,7 +24,6 @@
 #include "vtkObservation.h"
 #include "vtkObserverManager.h"
 
-vtkCxxRevisionMacro(vtkObserverManager, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkObserverManager);
 
 //----------------------------------------------------------------------------

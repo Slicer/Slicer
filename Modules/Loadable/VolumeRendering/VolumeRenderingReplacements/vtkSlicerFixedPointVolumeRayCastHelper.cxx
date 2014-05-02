@@ -16,7 +16,6 @@
 #include "vtkObjectFactory.h"
 
 
-vtkCxxRevisionMacro(vtkSlicerFixedPointVolumeRayCastHelper, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkSlicerFixedPointVolumeRayCastHelper);
 
 vtkSlicerFixedPointVolumeRayCastHelper::vtkSlicerFixedPointVolumeRayCastHelper()

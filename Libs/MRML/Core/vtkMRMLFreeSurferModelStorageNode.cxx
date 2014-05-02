@@ -134,10 +134,18 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
     reader->SetFileName(fullName.c_str());
     normals->SetSplitting(0);
+#if (VTK_MAJOR_VERSION <= 5)
     normals->SetInput( reader->GetOutput() );
+#else
+    normals->SetInputConnection( reader->GetOutputPort() );
+#endif
     if ( this->GetUseStripper() )
       {
+#if (VTK_MAJOR_VERSION <= 5)
       stripper->SetInput( normals->GetOutput() );
+#else
+      stripper->SetInputConnection( normals->GetOutputPort() );
+#endif
       stripper->Update();
       if (stripper->GetOutput() == NULL ||
           stripper->GetOutput()->GetNumberOfCells() == 0)
@@ -147,7 +155,11 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
+#if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(stripper->GetOutput());
+#else
+        modelNode->SetAndObservePolyFilterAndData(stripper);
+#endif
         }
       }
     else
@@ -161,7 +173,11 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
+#if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(normals->GetOutput());
+#else
+        modelNode->SetAndObservePolyFilterAndData(normals);
+#endif
         }
       }
 

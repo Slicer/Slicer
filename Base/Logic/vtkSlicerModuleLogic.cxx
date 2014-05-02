@@ -14,7 +14,6 @@
 #include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerModuleLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModuleLogic);
 
 //----------------------------------------------------------------------------

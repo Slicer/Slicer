@@ -17,6 +17,7 @@
 
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
 
+class vtkAlgorithmOutput;
 class vtkImageData;
 class vtkImageShiftScale;
 class vtkImageExtractComponents;
@@ -100,11 +101,19 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   virtual vtkImageData* GetInputImageData();
 
   /// Get the output of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual vtkImageData* GetOutputImageData();
+#else
+  virtual vtkAlgorithmOutput* GetOutputImageDataPort();
+#endif
 
-  ///
+  /// 
   /// Sets ImageData for background mask
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetBackgroundImageData(vtkImageData *imageData);
+#else
+  virtual void SetBackgroundImageDataPort(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   virtual void UpdateImageDataPipeline();
 
@@ -134,7 +143,11 @@ protected:
   vtkImageData* GetScalarImageData();
 
   /// Set the input of the pipeline
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
+#else
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort);
+#endif
 
   int ScalarMode;
   int GlyphMode;

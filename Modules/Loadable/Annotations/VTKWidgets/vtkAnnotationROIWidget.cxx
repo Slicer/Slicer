@@ -30,7 +30,6 @@
 #include "vtkRenderer.h"
 
 
-vtkCxxRevisionMacro(vtkAnnotationROIWidget, "$Revision: 12141 $");
 vtkStandardNewMacro(vtkAnnotationROIWidget);
 
 //----------------------------------------------------------------------------

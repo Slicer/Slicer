@@ -49,7 +49,7 @@ public:
 
   static vtkMRMLApplicationLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
   /// Get current Selection node
   vtkMRMLSelectionNode * GetSelectionNode()const;

@@ -49,7 +49,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
 
   /// The Usual vtk class functions
   static vtkSlicerApplicationLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerApplicationLogic, vtkMRMLApplicationLogic);
+  vtkTypeMacro(vtkSlicerApplicationLogic, vtkMRMLApplicationLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Perform the default behaviour related to selecting a fiducial list

@@ -46,7 +46,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManagerHelper);
-vtkCxxRevisionMacro (vtkMRMLMarkupsDisplayableManagerHelper, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent indent)

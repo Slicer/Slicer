@@ -46,7 +46,6 @@
 #include <vector>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLDisplayableManagerGroup, "$Revision: 13859 $");
 vtkStandardNewMacro(vtkMRMLDisplayableManagerGroup);
 
 //----------------------------------------------------------------------------

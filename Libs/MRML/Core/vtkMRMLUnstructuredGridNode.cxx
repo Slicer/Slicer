@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkTransformFilter.h"
 #include "vtkUnstructuredGrid.h"
+#include <vtkVersion.h>
 
 // STD includes
 
@@ -130,7 +131,11 @@ bool vtkMRMLUnstructuredGridNode::CanApplyNonLinearTransforms()const
 void vtkMRMLUnstructuredGridNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   vtkTransformFilter* transformFilter = vtkTransformFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   transformFilter->SetInput(this->GetUnstructuredGrid());
+#else
+  transformFilter->SetInputData(this->GetUnstructuredGrid());
+#endif
   transformFilter->SetTransform(transform);
   transformFilter->Update();
 

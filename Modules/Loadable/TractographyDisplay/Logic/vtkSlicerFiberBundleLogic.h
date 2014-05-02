@@ -36,7 +36,7 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLog
 
   // The Usual vtk class functions
   static vtkSlicerFiberBundleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerFiberBundleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerFiberBundleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

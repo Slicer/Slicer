@@ -26,7 +26,7 @@ class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter : public vtkITKImageToIma
 {
 public:
   static vtkITKNewOtsuThresholdImageFilter *New();
-  vtkTypeRevisionMacro(vtkITKNewOtsuThresholdImageFilter, vtkITKImageToImageFilterSS);
+  vtkTypeMacro(vtkITKNewOtsuThresholdImageFilter, vtkITKImageToImageFilterSS);
 
   void SetNumberOfHistogramBins( unsigned long value)
   {
@@ -77,7 +77,6 @@ private:
   void operator=(const vtkITKNewOtsuThresholdImageFilter&);  /// Not implemented.
 };
 
-//vtkCxxRevisionMacro(vtkITKNewOtsuThresholdImageFilter, "$Revision: 1.1.2.1 $");
 //vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);
 
 #endif

@@ -11,7 +11,6 @@
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro ( vtkCacheManager );
-vtkCxxRevisionMacro ( vtkCacheManager, "$Revision: 1.0 $" );
 
 #define MB 1000000.0
 

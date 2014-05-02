@@ -33,5 +33,4 @@
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.cxx"
 #undef vtkSlicerOpenGLRayCastImageDisplayHelper
 
-vtkCxxRevisionMacro(vtkSlicerMesaRayCastImageDisplayHelper, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkSlicerMesaRayCastImageDisplayHelper);

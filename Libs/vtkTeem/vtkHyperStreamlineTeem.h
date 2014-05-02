@@ -7,6 +7,7 @@
 #include "vtkHyperStreamlineDTMRI.h"
 #include "vtkDiffusionTensorMathematics.h"
 #include "vtkFloatArray.h"
+#include <vtkVersion.h>
 
 /* avoid name conflicts with symbols from python */
 #undef ECHO
@@ -19,7 +20,7 @@ class VTK_Teem_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
 {
 
  public:
-  vtkTypeRevisionMacro(vtkHyperStreamlineTeem,vtkHyperStreamlineDTMRI);
+  vtkTypeMacro(vtkHyperStreamlineTeem,vtkHyperStreamlineDTMRI);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkHyperStreamlineTeem *New();
@@ -28,8 +29,12 @@ class VTK_Teem_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
   vtkHyperStreamlineTeem();
   ~vtkHyperStreamlineTeem();
 
+#if (VTK_MAJOR_VERSION <= 5)
   void Execute();
-  void StartFiberFrom( const vtkFloatingPointType position[3], tenFiberContext *fibercontext );
+#else
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+#endif
+  void StartFiberFrom( const double position[3], tenFiberContext *fibercontext );
   void VisualizeFibers( const Nrrd *fibers );
 
  private:

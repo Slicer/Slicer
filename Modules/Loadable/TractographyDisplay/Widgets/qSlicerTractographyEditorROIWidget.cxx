@@ -342,10 +342,14 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
   if (d->FiberBundleNode && fiberBundleFromSelection && (d->FiberBundleNode != fiberBundleFromSelection))
   {
     //if (mrmlScene()) mrmlScene()->SaveStateForUndo();
+#if (VTK_MAJOR_VERSION <= 5)
     vtkPolyData *FilteredPolyData = vtkPolyData::New();
     FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
     fiberBundleFromSelection->SetAndObservePolyData(FilteredPolyData);
     FilteredPolyData->Delete();
+#else
+    fiberBundleFromSelection->SetAndObservePolyFilterAndData(d->FiberBundleNode->GetFilteredPolyDataFilter());
+#endif
 
     if (!fiberBundleFromSelection->GetDisplayNode())
     {
@@ -398,10 +402,14 @@ void qSlicerTractographyEditorROIWidget::updateBundleFromSelection()
     if (proceedWithUpdate || (d->ConfirmFiberBundleUpdate->checkState() != Qt::Checked))
     {
       d->FiberBundleNode->GetScene()->SaveStateForUndo();
+#if (VTK_MAJOR_VERSION <= 5)
       vtkPolyData *FilteredPolyData = vtkPolyData::New();
       FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
       d->FiberBundleNode->SetAndObservePolyData(FilteredPolyData);
       FilteredPolyData->Delete();
+#else
+      d->FiberBundleNode->SetAndObservePolyFilterAndData(d->FiberBundleNode->GetFilteredPolyDataFilter());
+#endif
       d->FiberBundleNode->SetSubsamplingRatio(1);
     }
 }

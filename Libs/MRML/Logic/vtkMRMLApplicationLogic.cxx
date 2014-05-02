@@ -62,7 +62,6 @@
 #endif
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkMRMLApplicationLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLApplicationLogic);
 
 //----------------------------------------------------------------------------

@@ -40,7 +40,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceViewDisplayableManagerFacto
 {
 public:
 
-  vtkTypeRevisionMacro(vtkMRMLSliceViewDisplayableManagerFactory,
+  vtkTypeMacro(vtkMRMLSliceViewDisplayableManagerFactory,
                        vtkMRMLDisplayableManagerFactory);
   void PrintSelf(ostream& os, vtkIndent indent);
 

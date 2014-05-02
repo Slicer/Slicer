@@ -25,6 +25,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTransform.h>
+#include <vtkVersion.h>
 
 #include <vtkTemplateAliasMacro.h>
 // turn off 64-bit ints when templating over all types
@@ -36,7 +37,6 @@
 // STD includes
 #include <cassert>
 
-vtkCxxRevisionMacro(vtkImageResliceMask, "$Revision$");
 vtkStandardNewMacro(vtkImageResliceMask);
 vtkCxxSetObjectMacro(vtkImageResliceMask, InformationInput, vtkImageData);
 vtkCxxSetObjectMacro(vtkImageResliceMask,ResliceAxes,vtkMatrix4x4);
@@ -248,7 +248,11 @@ void vtkImageResliceMask::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkImageResliceMask::SetStencil(vtkImageStencilData *stencil)
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->SetInput(1, stencil);
+#else
+  this->SetInputData(1, stencil);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -691,10 +695,18 @@ void vtkImageResliceMask::GetAutoCroppedOutputBounds(vtkInformation *inInfo,
     }
 }
 
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData *vtkImageResliceMask::GetBackgroundMask()
 {
   return this->GetOutput(1);
 }
+#else
+vtkAlgorithmOutput *vtkImageResliceMask::GetBackgroundMaskPort()
+{
+  return this->GetOutputPort(1);
+}
+#endif
+
 
 /*
 {// cout <<"//----------------------------------------------------------------------------Calling vtkImageResliceMask::GetBackgroundMask"<<endl;
@@ -732,8 +744,13 @@ int vtkImageResliceMask::RequestInformation(
 
   if (this->InformationInput)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     this->InformationInput->UpdateInformation();
     this->InformationInput->GetWholeExtent(inWholeExt);
+#else
+    this->UpdateInformation();
+    inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inWholeExt);
+#endif
     this->InformationInput->GetSpacing(inSpacing);
     this->InformationInput->GetOrigin(inOrigin);
     }
@@ -3361,7 +3378,11 @@ vtkMatrix4x4 *vtkImageResliceMask::GetIndexMatrix(vtkInformation *inInfo,
 void vtkImageResliceMask::ThreadedRequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **vtkNotUsed(inputVector),
+#if (VTK_MAJOR_VERSION <= 5)
   vtkInformationVector *vtkNotUsed(outputVector),
+#else
+  vtkInformationVector *outputVector,
+#endif
   vtkImageData ***inData,
   vtkImageData **outData,
   int outExt[6], int id)
@@ -3404,9 +3425,17 @@ void vtkImageResliceMask::ThreadedRequestData(
   void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
 
   int wholeExtent0[6];
-  outData[0]->GetWholeExtent(wholeExtent0);
   int wholeExtent1[6];
+#if (VTK_MAJOR_VERSION <= 5)
+  outData[0]->GetWholeExtent(wholeExtent0);
   outData[1]->GetWholeExtent(wholeExtent1);
+#else
+  vtkInformation *firstOutInfo =  outputVector->GetInformationObject(0);
+  firstOutInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent0);
+  vtkInformation *secondOutInfo =  outputVector->GetInformationObject(1);
+  secondOutInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent1);
+#endif
 
   assert( wholeExtent0[0] <= outExt[0] && wholeExtent0[1] >= outExt[1] &&
           wholeExtent0[2] <= outExt[2] && wholeExtent0[3] >= outExt[3] &&

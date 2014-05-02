@@ -27,7 +27,6 @@
 #include <itkOrientImageFilter.h>
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderFile);
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderFile, "$Revision: 4068 $");
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderFile::vtkITKArchetypeImageSeriesVectorReaderFile()
@@ -86,6 +85,7 @@ void vtkITKExecuteDataFromFileVector(
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteData(vtkDataObject *output)
 {
   if (!this->Superclass::Archetype)
@@ -99,6 +99,16 @@ void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteData(vtkDataObject *outp
   data->SetExtent(0,0,0,0,0,0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
+#else
+void vtkITKArchetypeImageSeriesVectorReaderFile::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+{
+    if (!this->Superclass::Archetype)
+      {
+        vtkErrorMacro("An Archetype must be specified.");
+        return;
+      }
+    vtkImageData *data = this->AllocateOutputData(output, outInfo);
+#endif
 
     // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)

@@ -16,11 +16,14 @@
 #ifndef __vtkImageResliceMask_h
 #define __vtkImageResliceMask_h
 
-#include "vtkMRMLWin32Header.h"
+// MRML includes
+#include "vtkMRML.h"
 
 // VTK includes
 #include <vtkImageReslice.h> // for VTK_RESLICE_NEAREST, LINEAR, CUBIC
 #include <vtkThreadedImageAlgorithm.h>
+#include <vtkVersion.h>
+class vtkAlgorithmOutput;
 class vtkAbstractTransform;
 class vtkImageData;
 class vtkImageStencilData;
@@ -69,7 +72,7 @@ class VTK_MRML_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageResliceMask *New();
-  vtkTypeRevisionMacro(vtkImageResliceMask, vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkImageResliceMask, vtkThreadedImageAlgorithm);
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -292,7 +295,11 @@ public:
   void SetStencil(vtkImageStencilData *stencil);
   vtkImageStencilData *GetStencil();
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *GetBackgroundMask();
+#else
+  vtkAlgorithmOutput *GetBackgroundMaskPort();
+#endif
 protected:
   vtkImageResliceMask();
   ~vtkImageResliceMask();

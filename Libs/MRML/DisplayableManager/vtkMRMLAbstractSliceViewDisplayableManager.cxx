@@ -36,7 +36,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLAbstractSliceViewDisplayableManager);
-vtkCxxRevisionMacro(vtkMRMLAbstractSliceViewDisplayableManager, "$Revision: 13525 $");
 
 //----------------------------------------------------------------------------
 // vtkMRMLAbstractSliceViewDisplayableManager methods

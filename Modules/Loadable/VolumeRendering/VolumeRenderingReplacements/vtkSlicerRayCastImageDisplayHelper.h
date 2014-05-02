@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerRayCastIma
 {
 public:
   static vtkSlicerRayCastImageDisplayHelper *New();
-  vtkTypeRevisionMacro(vtkSlicerRayCastImageDisplayHelper,vtkObject);
+  vtkTypeMacro(vtkSlicerRayCastImageDisplayHelper,vtkObject);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void RenderTexture( vtkVolume *vol, vtkRenderer *ren,

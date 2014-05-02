@@ -3,7 +3,6 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkHTTPHandler );
-vtkCxxRevisionMacro ( vtkHTTPHandler, "$Revision: 1.0 $" );
 
 //----------------------------------------------------------------------------
 size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)

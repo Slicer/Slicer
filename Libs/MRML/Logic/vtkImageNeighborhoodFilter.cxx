@@ -16,7 +16,6 @@
 #include "vtkObjectFactory.h"
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageNeighborhoodFilter, "$Revision$");
 vtkStandardNewMacro(vtkImageNeighborhoodFilter);
 
 //----------------------------------------------------------------------------

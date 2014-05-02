@@ -40,7 +40,7 @@ class vtkVolumeProperty;
 class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerOpenGLVolumeTextureMapper3D : public vtkSlicerVolumeTextureMapper3D
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerOpenGLVolumeTextureMapper3D,vtkSlicerVolumeTextureMapper3D);
+  vtkTypeMacro(vtkSlicerOpenGLVolumeTextureMapper3D,vtkSlicerVolumeTextureMapper3D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerOpenGLVolumeTextureMapper3D *New();

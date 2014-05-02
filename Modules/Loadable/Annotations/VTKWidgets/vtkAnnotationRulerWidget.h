@@ -28,7 +28,7 @@ class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT vtkAnnotationRulerWidget
 public:
 
   static vtkAnnotationRulerWidget *New();
-  vtkTypeRevisionMacro(vtkAnnotationRulerWidget, vtkDistanceWidget);
+  vtkTypeMacro(vtkAnnotationRulerWidget, vtkDistanceWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void CreateDefaultRepresentation();

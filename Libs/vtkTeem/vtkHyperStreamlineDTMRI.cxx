@@ -20,6 +20,7 @@
 #include "vtkPointData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include <vtkVersion.h>
 
 // the superclass had these classes in the vtkHyperStreamline.cxx
 // file: being compiled via CMakeListsLocal.txt
@@ -27,7 +28,6 @@
 //#include "vtkHyperPointandArray.cxx"
 #endif
 
-vtkCxxRevisionMacro(vtkHyperStreamlineDTMRI, "$Revision: 1.32.2.1 $");
 vtkStandardNewMacro(vtkHyperStreamlineDTMRI);
 
 vtkHyperStreamlineDTMRI::vtkHyperStreamlineDTMRI()
@@ -67,11 +67,11 @@ vtkHyperStreamlineDTMRI::~vtkHyperStreamlineDTMRI()
 
 // copied from superclass
 // Make sure coordinate systems are consistent
-static void FixVectors(vtkFloatingPointType **prev, vtkFloatingPointType **current, int iv, int ix, int iy)
+static void FixVectors(double **prev, double **current, int iv, int ix, int iy)
 {
-  vtkFloatingPointType p0[3], p1[3], p2[3];
-  vtkFloatingPointType v0[3], v1[3], v2[3];
-  vtkFloatingPointType temp[3];
+  double p0[3], p1[3], p2[3];
+  double v0[3], v1[3], v2[3];
+  double temp[3];
   int i;
 
   for (i=0; i<3; i++)
@@ -143,24 +143,24 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
   vtkPointData *pd=input->GetPointData();
   vtkDataArray *inScalars;
   vtkDataArray *inTensors;
-  vtkFloatingPointType *tensor;
+  double *tensor;
   vtkTractographyPoint *sNext, *sPtr;
   int i, j, k, ptId, subId, iv, ix, iy;
   vtkCell *cell;
-  vtkFloatingPointType ev[3];
-  vtkFloatingPointType xNext[3];
-  vtkFloatingPointType d, step, dir, tol2, p[3];
-  vtkFloatingPointType *w;
-  vtkFloatingPointType dist2;
-  vtkFloatingPointType closestPoint[3];
-  vtkFloatingPointType *m[3], *v[3];
-  vtkFloatingPointType m0[3], m1[3], m2[3];
-  vtkFloatingPointType v0[3], v1[3], v2[3];
+  double ev[3];
+  double xNext[3];
+  double d, step, dir, tol2, p[3];
+  double *w;
+  double dist2;
+  double closestPoint[3];
+  double *m[3], *v[3];
+  double m0[3], m1[3], m2[3];
+  double v0[3], v1[3], v2[3];
   vtkDataArray *cellTensors = 0;
   vtkDataArray *cellScalars = 0;
   int pointCount;
   vtkTractographyPoint *sPrev, *sPrevPrev;
-  vtkFloatingPointType kv1[3], kv2[3], ku1[3], ku2[3], kl1, kl2, kn[3], K = 0.0;
+  double kv1[3], kv2[3], ku1[3], ku2[3], kl1, kl2, kn[3], K = 0.0;
   // set up working matrices
   v[0] = v0; v[1] = v1; v[2] = v2;
   m[0] = m0; m[1] = m1; m[2] = m2;
@@ -176,7 +176,7 @@ vtkPolyData *output = vtkPolyData::SafeDownCast(
     vtkErrorMacro(<<"No tensor data defined!");
     return 0;
     }
-  w = new vtkFloatingPointType[input->GetMaxCellSize()];
+  w = new double[input->GetMaxCellSize()];
 
   inScalars = pd->GetScalars();
   if (inTensors)

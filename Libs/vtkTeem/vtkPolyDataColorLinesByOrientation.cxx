@@ -28,7 +28,6 @@ PURPOSE.  See the above copyright notice for more information.
 
 
 
-vtkCxxRevisionMacro(vtkPolyDataColorLinesByOrientation, "$Revision: 1.41 $");
 vtkStandardNewMacro(vtkPolyDataColorLinesByOrientation);
 
 // Construct with lower threshold=0, upper threshold=1, and threshold

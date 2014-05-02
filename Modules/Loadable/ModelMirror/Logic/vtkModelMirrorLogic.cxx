@@ -547,7 +547,19 @@ int vtkModelMirrorLogic::FlipNormals()
   //--- Triangle strips are broken up into triangle polygons.
   //--- Polygons are not automatically re-stripped.
   vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+#if (VTK_MAJOR_VERSION <= 5)
   normals->SetInput ( surface );
+#else
+  vtkAlgorithm *polyDataFilter = this->ModelMirrorNode->GetOutputModel()->GetPolyDataFilter();
+  if (polyDataFilter != NULL)
+    {
+    normals->SetInputConnection(polyDataFilter->GetOutputPort());
+    }
+  else
+    {
+    normals->SetInputData(surface);
+    }
+#endif
   //--- NOTE: This assumes a completely closed surface
   //---(i.e. no boundary edges) and no non-manifold edges.
   //--- If these constraints do not hold, the AutoOrientNormals
@@ -569,11 +581,19 @@ int vtkModelMirrorLogic::FlipNormals()
   if ( surface )
     {
     vtkCleanPolyData *cleaner = vtkCleanPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     cleaner->SetInput ( surface );
+#else
+    cleaner->SetInputConnection( normals->GetOutputPort() );
+#endif
     cleaner->Update();
 
     //--- refresh polydata
+#if (VTK_MAJOR_VERSION <= 5)
     this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData ( cleaner->GetOutput() );
+#else
+    this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyFilterAndData ( cleaner );
+#endif
     cleaner->Delete();
     cleaner= NULL;
     }

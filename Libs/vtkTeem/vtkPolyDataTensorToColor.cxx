@@ -27,7 +27,6 @@ PURPOSE.  See the above copyright notice for more information.
 
 
 
-vtkCxxRevisionMacro(vtkPolyDataTensorToColor, "$Revision: 1.41 $");
 vtkStandardNewMacro(vtkPolyDataTensorToColor);
 
 // Construct with lower threshold=0, upper threshold=1, and threshold

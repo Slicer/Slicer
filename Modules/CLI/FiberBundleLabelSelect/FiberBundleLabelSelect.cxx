@@ -17,6 +17,7 @@
 // VTK includes
 #include <vtkCellArray.h>
 #include <vtkFloatArray.h>
+#include <vtkInformation.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkMath.h>
@@ -25,11 +26,13 @@
 #include <vtkPolyData.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTimerLog.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <iostream>
@@ -86,7 +89,11 @@ int main( int argc, char * argv[] )
   readerLabel_A->Update();
 
   imageCastLabel_A->SetOutputScalarTypeToShort();
+#if (VTK_MAJOR_VERSION <= 5)
   imageCastLabel_A->SetInput(readerLabel_A->GetOutput() );
+#else
+  imageCastLabel_A->SetInputConnection(readerLabel_A->GetOutputPort() );
+#endif
   imageCastLabel_A->Update();
 
   // Read in fiber bundle input to be selected.
@@ -119,7 +126,12 @@ int main( int argc, char * argv[] )
 
   // 2. Find polylines
   int inExt[6];
+#if (VTK_MAJOR_VERSION <= 5)
   imageCastLabel_A->GetOutput()->GetWholeExtent(inExt);
+#else
+  imageCastLabel_A->GetOutputInformation(0)->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+#endif
 
   vtkPolyData *input = vtkPolyData::SafeDownCast(readerPD->GetOutput());
 
@@ -306,7 +318,11 @@ int main( int argc, char * argv[] )
   //3. Save the output
   vtkNew<vtkXMLPolyDataWriter> writer;
   writer->SetFileName(OutputFibers.c_str());
+#if (VTK_MAJOR_VERSION <= 5)
   writer->SetInput(outFibers.GetPointer());
+#else
+  writer->SetInputData(outFibers.GetPointer());
+#endif
   writer->Write();
   }
   catch ( ... )

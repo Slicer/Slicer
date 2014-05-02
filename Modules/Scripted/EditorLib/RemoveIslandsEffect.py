@@ -224,11 +224,13 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
       cast.SetOutputScalarTypeToShort()
       cast.SetInput(preThresh.GetOutput())
       cast.Update()
+# VTK6 TODO
       thresh1.SetAndObserveImageData(cast.GetOutput())
       cast2 = vtk.vtkImageCast()
       cast2.SetOutputScalarTypeToShort()
       cast2.SetInput(islandMath.GetOutput())
       cast2.Update()
+# VTK6 TODO
       islands.SetAndObserveImageData(cast2.GetOutput())
       thresh2.SetAndObserveImageData(postThresh.GetOutput())
 

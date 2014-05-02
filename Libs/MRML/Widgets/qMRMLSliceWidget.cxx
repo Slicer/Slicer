@@ -64,8 +64,13 @@ void qMRMLSliceWidgetPrivate::init()
   connect(this->SliceView, SIGNAL(resized(QSize)),
           this->SliceController, SLOT(setSliceViewSize(QSize)));
 
+#if (VTK_MAJOR_VERSION <= 5)
   connect(this->SliceController, SIGNAL(imageDataChanged(vtkImageData*)),
           this, SLOT(setImageData(vtkImageData*)));
+#else
+  connect(this->SliceController, SIGNAL(imageDataPortChanged(vtkAlgorithmOutput*)),
+          this, SLOT(setImageDataPort(vtkAlgorithmOutput*)));
+#endif
   connect(this->SliceController, SIGNAL(renderRequested()),
           this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
 }
@@ -80,11 +85,19 @@ void qMRMLSliceWidgetPrivate::endProcessing()
 }
 
 // --------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void qMRMLSliceWidgetPrivate::setImageData(vtkImageData * imageData)
 {
   //qDebug() << "qMRMLSliceWidgetPrivate::setImageData";
   this->SliceView->setImageData(imageData);
 }
+#else
+void qMRMLSliceWidgetPrivate::setImageDataPort(vtkAlgorithmOutput * imageDataPort)
+{
+  //qDebug() << "qMRMLSliceWidgetPrivate::setImageDataPort";
+  this->SliceView->setImageDataPort(imageDataPort);
+}
+#endif
 
 // --------------------------------------------------------------------------
 // qMRMLSliceView methods
@@ -198,18 +211,34 @@ QString qMRMLSliceWidget::sliceOrientation()const
 }
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void qMRMLSliceWidget::setImageData(vtkImageData* newImageData)
 {
   Q_D(qMRMLSliceWidget);
   d->SliceController->setImageData(newImageData);
 }
+#else
+void qMRMLSliceWidget::setImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+{
+  Q_D(qMRMLSliceWidget);
+  d->SliceController->setImageDataPort(newImageDataPort);
+}
+#endif
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* qMRMLSliceWidget::imageData() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->imageData();
 }
+#else
+vtkAlgorithmOutput* qMRMLSliceWidget::imageDataPort() const
+{
+  Q_D(const qMRMLSliceWidget);
+  return d->SliceController->imageDataPort();
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkInteractorObserver* qMRMLSliceWidget::interactorStyle()const

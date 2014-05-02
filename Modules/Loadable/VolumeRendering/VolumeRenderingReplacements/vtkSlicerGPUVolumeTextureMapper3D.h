@@ -78,7 +78,7 @@ struct GradientsArgsType
 class VTK_VOLUMERENDERINGREPLACEMENTS_EXPORT vtkSlicerGPUVolumeTextureMapper3D : public vtkVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPUVolumeTextureMapper3D,vtkVolumeMapper);
+  vtkTypeMacro(vtkSlicerGPUVolumeTextureMapper3D,vtkVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerGPUVolumeTextureMapper3D *New();

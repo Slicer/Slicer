@@ -49,7 +49,7 @@ class vtkObservation;
 class VTK_MRML_EXPORT vtkEventBroker : public vtkObject
 {
 public:
-  vtkTypeRevisionMacro(vtkEventBroker, vtkObject);
+  vtkTypeMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef std::set< vtkObservation * > ObservationVector;

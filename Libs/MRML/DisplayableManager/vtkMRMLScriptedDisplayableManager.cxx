@@ -38,7 +38,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLScriptedDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLScriptedDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLScriptedDisplayableManager::vtkInternal

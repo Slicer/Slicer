@@ -26,6 +26,31 @@ option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this of
 set(git_protocol "git")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
   set(git_protocol "http")
+
+  # Verify that the global git config has been updated with the expected "insteadOf" option.
+  function(_check_for_required_git_config_insteadof base insteadof)
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} config --global --get "url.${base}.insteadof"
+      OUTPUT_VARIABLE output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE error_code
+      )
+    if(error_code OR NOT "${output}" STREQUAL "${insteadof}")
+      message(FATAL_ERROR
+"Since the ExternalProject modules doesn't provide a mechanism to customize the clone step by "
+"adding 'git config' statement between the 'git checkout' and the 'submodule init', it is required "
+"to manually update your global git config to successfully build ${CMAKE_PROJECT_NAME} with "
+"option ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL set to FALSE. "
+"See http://na-mic.org/Mantis/view.php?id=2731"
+"\nYou could do so by running the command:\n"
+"  ${GIT_EXECUTABLE} config --global url.\"${base}\".insteadOf \"${insteadof}\"\n")
+    endif()
+  endfunction()
+
+  if("${ITK_VERSION_MAJOR}" LESS 4)
+    _check_for_required_git_config_insteadof("http://itk.org/" "git://itk.org/")
+  endif()
+
 endif()
 
 #-----------------------------------------------------------------------------
@@ -146,8 +171,8 @@ Slicer_Remote_Add(jqPlot
 list(APPEND Slicer_REMOTE_DEPENDENCIES jqPlot)
 
 Slicer_Remote_Add(OpenIGTLinkIF
-  GIT_REPOSITORY ${git_protocol}://github.com/openigtlink/OpenIGTLinkIF.git
-  GIT_TAG 24ae5443ecb633a54ab7b7b8178da53d1c5e2f74
+  GIT_REPOSITORY ${git_protocol}://github.com/finetjul/OpenIGTLinkIF.git
+  GIT_TAG 22e0c45b92a103fea198492530163789344a4fb8
   OPTION_NAME Slicer_BUILD_OpenIGTLinkIF
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_USE_OpenIGTLink"
   LABELS REMOTE_MODULE
@@ -158,8 +183,8 @@ option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
 mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
 Slicer_Remote_Add(MultiVolumeExplorer
-  GIT_REPOSITORY ${git_protocol}://github.com/fedorov/MultiVolumeExplorer.git
-  GIT_TAG 1f297b515366e67608d908c80b28c481f7994fc4
+  GIT_REPOSITORY ${git_protocol}://github.com/yuzhengZ/MultiVolumeExplorer.git
+  GIT_TAG 134df48672acd204a98c091ff15aa19098a916e9
   OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE

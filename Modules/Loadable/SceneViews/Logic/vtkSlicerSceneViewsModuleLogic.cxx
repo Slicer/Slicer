@@ -19,7 +19,6 @@
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSlicerSceneViewsModuleLogic, "$Revision: 1.0$")
 vtkStandardNewMacro(vtkSlicerSceneViewsModuleLogic)
 
 const char SCENE_VIEW_TOP_LEVEL_SINGLETON_TAG[] = "SceneViewTopLevel";

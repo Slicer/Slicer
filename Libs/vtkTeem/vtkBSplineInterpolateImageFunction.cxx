@@ -15,12 +15,12 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"  // for storing output of vtk/itk filter
+#include <vtkVersion.h>
 
-vtkCxxRevisionMacro(vtkBSplineInterpolateImageFunction, "$Revision: 1.7 $");
 vtkStandardNewMacro(vtkBSplineInterpolateImageFunction);
 
 void vtkBSplineInterpolateImageFunction::SetInterpolationWeights(
-  vtkFloatingPointType *x, long * evaluateIndex[ImageDimension],
+  double *x, long * evaluateIndex[ImageDimension],
   double * weights[ImageDimension], unsigned int splineOrder ) const
 {
   // For speed improvements we could make each case a separate function and use
@@ -114,7 +114,7 @@ void vtkBSplineInterpolateImageFunction::SetInterpolationWeights(
 }
 
 void vtkBSplineInterpolateImageFunction::SetDerivativeWeights(
-  vtkFloatingPointType *x, long *evaluateIndex[ImageDimension],
+  double *x, long *evaluateIndex[ImageDimension],
   double *weights[ImageDimension], unsigned int splineOrder ) const
 {
   // For speed improvements we could make each case a separate function and use
@@ -244,7 +244,7 @@ void vtkBSplineInterpolateImageFunction::GeneratePointsToIndex()
 }
 
 void vtkBSplineInterpolateImageFunction::DetermineRegionOfSupport(
-  long *evaluateIndex[ImageDimension], vtkFloatingPointType x[],
+  long *evaluateIndex[ImageDimension], double x[],
   unsigned int splineOrder ) const
 {
   long indx;
@@ -309,22 +309,22 @@ void vtkBSplineInterpolateImageFunction::PrintSelf(ostream& os, vtkIndent indent
   os << indent << "Spline Order: " << this->SplineOrder << std::endl;
 }
 
-vtkFloatingPointType vtkBSplineInterpolateImageFunction::EvaluateFunction(
-  vtkFloatingPointType *x )
+double vtkBSplineInterpolateImageFunction::EvaluateFunction(
+  double *x )
 {
   //  long evaluateIndex[this->SplineOrder + 1][ImageDimension];
   //  double weights[this->SplineOrder + 1][ImageDimension];
   long * evaluateIndex[ImageDimension];
   double * weights[ImageDimension];
-  vtkFloatingPointType index[ImageDimension];
+  double index[ImageDimension];
   int i;
   for ( i = 0 ; i < ImageDimension ; i++ )
     {
     evaluateIndex[i] = new long[this->SplineOrder + 1];
     weights[i] = new double[this->SplineOrder + 1];
     index[i] = (x[i] - Origin[i])/Spacing[i];
-    if ( index[i] < ((vtkFloatingPointType)this->Extent[2*i])
-      || index[i] > ((vtkFloatingPointType)this->Extent[2*i+1]) )
+    if ( index[i] < ((double)this->Extent[2*i])
+      || index[i] > ((double)this->Extent[2*i+1]) )
       {
       return 0.0;
       }
@@ -372,12 +372,12 @@ vtkFloatingPointType vtkBSplineInterpolateImageFunction::EvaluateFunction(
 }
 
 void vtkBSplineInterpolateImageFunction::EvaluateGradient(
-  vtkFloatingPointType *x, vtkFloatingPointType *derivativeValue )
+  double *x, double *derivativeValue )
 {
   //  long evaluateIndex[this->SplineOrder + 1][ImageDimension];
   //  double weights[this->SplineOrder + 1][ImageDimension];
   //  double weightsDerivative [this->SplineOrder + 1][ImageDimension];
-  vtkFloatingPointType index[3];
+  double index[3];
   long * evaluateIndex[ImageDimension];
   double * weights[ImageDimension];
   double * weightsDerivative[ImageDimension];

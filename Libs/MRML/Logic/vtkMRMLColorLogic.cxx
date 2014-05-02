@@ -38,7 +38,6 @@
 
 std::string vtkMRMLColorLogic::TempColorNodeID;
 
-vtkCxxRevisionMacro(vtkMRMLColorLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLColorLogic);
 
 //----------------------------------------------------------------------------

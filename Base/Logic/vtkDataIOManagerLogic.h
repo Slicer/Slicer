@@ -27,7 +27,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkDataIOManagerLogic : public vtkSlicerModul
 
   /// The Usual vtk class functions
   static vtkDataIOManagerLogic *New();
-  vtkTypeRevisionMacro(vtkDataIOManagerLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkDataIOManagerLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );

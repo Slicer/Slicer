@@ -14,7 +14,7 @@ class VTK_ITK_EXPORT vtkITKWandImageFilter : public vtkSimpleImageToImageFilter
 {
 public:
   static vtkITKWandImageFilter *New();
-  vtkTypeRevisionMacro(vtkITKWandImageFilter, vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkITKWandImageFilter, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Methods to set/get seeds.  Seeds are specified in IJK (not XYZ).

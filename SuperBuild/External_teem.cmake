@@ -4,7 +4,7 @@ set(proj teem)
 # Set dependency list
 set(${proj}_DEPENDENCIES zlib)
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_teem)
-  list(APPEND ${proj}_DEPENDENCIES VTK)
+  list(APPEND teem_DEPENDENCIES ${VTK_EXTERNAL_NAME})
 endif()
 
 # Include dependent projects if any
@@ -67,7 +67,7 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DTeem_PTHREAD:BOOL=OFF
       -DTeem_BZIP2:BOOL=OFF
       -DTeem_ZLIB:BOOL=ON
-      -DTeem_PNG:BOOL=ON
+      -DTeem_PNG:BOOL=OFF
       -DZLIB_ROOT:PATH=${ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}

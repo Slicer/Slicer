@@ -70,7 +70,6 @@ typedef void (*fp)(void);
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationDisplayableManager, "$Revision: 1.2 $");
 
 //---------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()

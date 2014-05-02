@@ -32,7 +32,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLTestThreeDViewDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLTestThreeDViewDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 int vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount = 0;

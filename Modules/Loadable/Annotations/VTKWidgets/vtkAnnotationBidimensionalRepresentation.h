@@ -29,7 +29,7 @@ vtkAnnotationBidimensionalRepresentation
 public:
 
   static vtkAnnotationBidimensionalRepresentation *New();
-  vtkTypeRevisionMacro(vtkAnnotationBidimensionalRepresentation, vtkBiDimensionalRepresentation2D);
+  vtkTypeMacro(vtkAnnotationBidimensionalRepresentation, vtkBiDimensionalRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void SetDistance1(double distance);

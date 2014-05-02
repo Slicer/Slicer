@@ -16,8 +16,8 @@
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
+#include <vtkVersion.h>
 
-vtkCxxRevisionMacro(vtkTensorMask, "$Revision: 1.28 $");
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTensorMask);
@@ -45,7 +45,11 @@ void vtkTensorMask::ExecuteData(vtkDataObject *out)
   vtkImageData *output = vtkImageData::SafeDownCast(out);
 
   // set extent so we know how many tensors to allocate
+#if (VTK_MAJOR_VERSION <= 5)
   output->SetExtent(output->GetUpdateExtent());
+#else
+  output->SetExtent(this->GetUpdateExtent());
+#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
@@ -77,7 +81,7 @@ static void vtkTensorMaskExecute(vtkTensorMask *self, int ext[6],
   vtkIdType in2Inc0, in2Inc1, in2Inc2;
   vtkIdType outInc0, outInc1, outInc2;
   T *maskedValue;
-  vtkFloatingPointType *v;
+  double *v;
   int nv;
   int maskState;
   unsigned long count = 0;
@@ -176,8 +180,8 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
 
   vtkDataArray *inTensors;
   vtkDataArray *outTensors;
-  vtkFloatingPointType inT[3][3];
-  vtkFloatingPointType outT[3][3];
+  double inT[3][3];
+  double outT[3][3];
 
   int ptId;
 
@@ -202,7 +206,11 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
   vtkIdType outInc[3];
   int outFullUpdateExt[6];
   self->GetOutput()->GetIncrements(outInc);
+#if (VTK_MAJOR_VERSION <= 5)
   self->GetOutput()->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
+#else
+  self->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
+#endif
   ptId = ((ext[0] - outFullUpdateExt[0]) * outInc[0]
          + (ext[2] - outFullUpdateExt[2]) * outInc[1]
          + (ext[4] - outFullUpdateExt[4]) * outInc[2]);
@@ -233,7 +241,7 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
         }
       for (idx0 = 0; idx0 < num0; ++idx0)
         {
-          inTensors->GetTuple(ptId,(vtkFloatingPointType *)inT);
+          inTensors->GetTuple(ptId,(double *)inT);
           //outTensors->GetTuple(ptId,outT);
 
           // Pixel operation: clear or copy
@@ -272,7 +280,7 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
         }
 
           // set the output tensor to the calculated one
-          outTensors->SetTuple(ptId,(vtkFloatingPointType *)outT);
+          outTensors->SetTuple(ptId,(double *)outT);
 
           ptId += 1;
           in2Ptr += 1;

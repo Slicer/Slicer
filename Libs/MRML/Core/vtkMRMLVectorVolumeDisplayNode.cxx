@@ -24,6 +24,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageRGBToHSI.h>
 #include <vtkImageShiftScale.h>
 #include <vtkImageThreshold.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <sstream>
@@ -67,18 +68,34 @@ vtkMRMLVectorVolumeDisplayNode::~vtkMRMLVectorVolumeDisplayNode()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
 {
   this->ShiftScale->SetInput( imageData );
   this->RGBToHSI->SetInput( imageData );
 }
+#else
+void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataPort)
+{
+  this->ShiftScale->SetInputConnection(imageDataPort);
+  this->RGBToHSI->SetInputConnection(imageDataPort);
+}
+#endif
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageData)
 {
   /// TODO: what is this for?  The comment above is unhelpful!
   this->ResliceAlphaCast->SetInput(imageData);
 }
+#else
+void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageDataPort(vtkAlgorithmOutput *imageDataPort)
+{
+  /// TODO: what is this for?  The comment above is unhelpful!
+  this->ResliceAlphaCast->SetInputConnection(imageDataPort);
+}
+#endif
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
@@ -87,10 +104,17 @@ vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
 }
+#else
+vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetOutputImageDataPort()
+{
+  return this->AppendComponents->GetOutputPort();
+}
+#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetScalarImageData()

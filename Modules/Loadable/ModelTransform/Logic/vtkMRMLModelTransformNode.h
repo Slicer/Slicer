@@ -20,7 +20,7 @@ class VTK_SLICER_MODELTRANSFORM_MODULE_LOGIC_EXPORT vtkMRMLModelTransformNode : 
 {
   public:
   static vtkMRMLModelTransformNode *New();
-  vtkTypeRevisionMacro(vtkMRMLModelTransformNode, vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLModelTransformNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

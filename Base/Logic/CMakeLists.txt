@@ -147,8 +147,17 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 if(Slicer_USE_PYTHONQT)
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_COMMON_PYTHON_LIBRARY
+      vtkCommonCorePythonD # For vtkPythonUtils
+      )
+  else()
+    set(VTK_COMMON_PYTHON_LIBRARY
+      vtkCommonPythonD # For vtkPythonUtils
+      )
+  endif()
   list(APPEND libs
-    vtkCommonPythonD # For vtkPythonUtils
+    ${VTK_COMMON_PYTHON_LIBRARY}
     ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
     )
 endif()

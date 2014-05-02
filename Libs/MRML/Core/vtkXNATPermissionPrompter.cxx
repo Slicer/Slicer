@@ -4,7 +4,6 @@
 
 
 vtkStandardNewMacro ( vtkXNATPermissionPrompter );
-vtkCxxRevisionMacro ( vtkXNATPermissionPrompter, "$Revision: 1.0 $" );
 
 //----------------------------------------------------------------------------
 vtkXNATPermissionPrompter::vtkXNATPermissionPrompter()

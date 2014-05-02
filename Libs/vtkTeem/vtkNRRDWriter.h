@@ -22,7 +22,7 @@ class VTK_Teem_EXPORT vtkNRRDWriter : public vtkWriter
 {
 public:
 
-  vtkTypeRevisionMacro(vtkNRRDWriter,vtkWriter);
+  vtkTypeMacro(vtkNRRDWriter,vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkNRRDWriter *New();

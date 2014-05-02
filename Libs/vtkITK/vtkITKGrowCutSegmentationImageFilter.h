@@ -6,6 +6,7 @@
 
 // VTK includes
 #include <vtkImageAlgorithm.h>
+#include <vtkVersion.h>
 
 class vtkImageData;
 
@@ -28,7 +29,7 @@ class VTK_ITK_EXPORT vtkITKGrowCutSegmentationImageFilter : public vtkImageAlgor
 public:
 
   static vtkITKGrowCutSegmentationImageFilter *New();
-  vtkTypeRevisionMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageAlgorithm );
+  vtkTypeMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageAlgorithm );
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Methods to set/get objectSize
@@ -53,7 +54,11 @@ protected:
   vtkITKGrowCutSegmentationImageFilter();
   ~vtkITKGrowCutSegmentationImageFilter(){}
 
+#if (VTK_MAJOR_VERSION <= 5)
   virtual void ExecuteData(vtkDataObject *outData);
+#else
+  virtual void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo);
+#endif
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
 private:

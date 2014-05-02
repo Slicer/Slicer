@@ -45,7 +45,7 @@ vtkMRMLAnnotationDisplayableManager
 public:
 
   static vtkMRMLAnnotationDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // the following functions must be public to be accessible by the callback

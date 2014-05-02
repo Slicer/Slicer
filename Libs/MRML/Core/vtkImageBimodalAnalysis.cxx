@@ -73,10 +73,10 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
   int noise = 1, width = 5;
   float fwidth = 1.0 / 5.0;
   T tmp, minSignal, maxSignal;
-  vtkFloatingPointType sum, wsum;
+  double sum, wsum;
   int ct = (self->GetModality() == VTK_BIMODAL_MODALITY_CT) ? 1 : 0;
   int centroid, noiseCentroid, trough, window, threshold, min, max;
-  vtkFloatingPointType origin[3], spacing[3];
+  double origin[3], spacing[3];
 
   // Process x dimension only
   outData->GetExtent(min0, max0, min1, max1, min2, max2);
@@ -161,8 +161,8 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
   for (x=min; x <= trough; x++)
     {
     tmp = inPtr[x];
-    wsum += (vtkFloatingPointType)x*tmp;
-    sum  += (vtkFloatingPointType)  tmp;
+    wsum += (double)x*tmp;
+    sum  += (double)  tmp;
     }
   if (sum)
     {
@@ -188,8 +188,8 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
       {
       minSignal = tmp;
       }
-    wsum += (vtkFloatingPointType)x*tmp;
-    sum  += (vtkFloatingPointType)  tmp;
+    wsum += (double)x*tmp;
+    sum  += (double)  tmp;
     }
   if (sum)
     {
@@ -236,6 +236,7 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the Datas data types.
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkImageBimodalAnalysis::ExecuteData(vtkDataObject *out)
 {
   vtkImageData *outData = vtkImageData::SafeDownCast(out);
@@ -245,6 +246,14 @@ void vtkImageBimodalAnalysis::ExecuteData(vtkDataObject *out)
 
   outData->SetExtent(outData->GetWholeExtent());
   outData->AllocateScalars();
+#else
+void vtkImageBimodalAnalysis::ExecuteDataWithInformation(vtkDataObject *out, vtkInformation* outInfo)
+{
+    vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
+    void *inPtr;
+    float *outPtr;
+    vtkImageData *outData = this->AllocateOutputData(out, outInfo);
+#endif
 
   inPtr  = inData->GetScalarPointer();
   outPtr = (float *)outData->GetScalarPointer();

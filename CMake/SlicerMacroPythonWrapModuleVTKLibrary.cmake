@@ -58,9 +58,50 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
     endif()
   endforeach()
 
+  # Not all the vtk libraries have their python wrapping
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_NO_PYTHON_WRAP_LIBRARIES
+      vtksys
+      vtkexpat
+      vtkjsoncpp
+      vtkexoIIc
+      vtkNetCDF
+      vtkNetCDF_cxx
+      vtkhdf5_hl
+      vtkhdf5
+      vtkalglib
+      vtkDICOMParser
+      vtkmetaio
+      vtkjpeg
+      vtktiff
+      vtkfreetype
+      vtkftgl
+      vtkgl2ps
+      vtksqlite
+      vtkoggtheora
+      vtkWrappingPythonCore
+      vtkWrappingTools
+      vtkGUISupportQt
+      vtklibxml2
+      vtkproj4
+      vtkViewsQt
+      vtkGUISupportQtWebkit
+      vtkGUISupportQtSQL
+      vtkRenderingFreeTypeFontConfig
+      vtkGUISupportQtOpenGL
+      )
+  else()
+    set(VTK_NO_PYTHON_WRAP_LIBRARIES "")
+  endif()
+  foreach(lib ${VTK_NO_PYTHON_WRAP_LIBRARIES})
+    list(REMOVE_ITEM VTK_LIBRARIES ${lib})
+  endforeach()
+
   set(VTK_PYTHON_WRAPPED_LIBRARIES)
   foreach(lib ${VTK_LIBRARIES})
-    list(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    if(${lib} MATCHES "^vtk.+") # exclude system libraries
+      list(APPEND VTK_PYTHON_WRAPPED_LIBRARIES ${lib}PythonD)
+    endif()
   endforeach()
 
   set(Slicer_Libs_VTK_PYTHON_WRAPPED_LIBRARIES)

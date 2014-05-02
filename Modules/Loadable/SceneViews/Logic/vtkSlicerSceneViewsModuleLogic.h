@@ -48,7 +48,7 @@ class VTK_SLICER_SCENEVIEWS_MODULE_LOGIC_EXPORT vtkSlicerSceneViewsModuleLogic :
 public:
 
   static vtkSlicerSceneViewsModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerSceneViewsModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerSceneViewsModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Initialize listening to MRML events

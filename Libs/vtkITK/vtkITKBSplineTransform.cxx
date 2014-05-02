@@ -128,7 +128,6 @@ public:
 // Implementation of main class.
 // This mostly just forwards everything to the helper class.
 
-vtkCxxRevisionMacro(vtkITKBSplineTransform, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkITKBSplineTransform);
 
 void

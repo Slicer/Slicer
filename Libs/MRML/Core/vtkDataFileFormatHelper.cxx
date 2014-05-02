@@ -76,7 +76,6 @@ ITKImageFileFormat FileFormatTable[] =
 #endif
 
 vtkStandardNewMacro ( vtkDataFileFormatHelper );
-vtkCxxRevisionMacro ( vtkDataFileFormatHelper, "$Revision: 1.0 $" );
 
 //----------------------------------------------------------------------------
 vtkDataFileFormatHelper::vtkDataFileFormatHelper()

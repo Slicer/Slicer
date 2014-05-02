@@ -26,7 +26,6 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
-vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLModelHierarchyLogic);
 
 // The number should large enough so smaller branches can be shown/hidden

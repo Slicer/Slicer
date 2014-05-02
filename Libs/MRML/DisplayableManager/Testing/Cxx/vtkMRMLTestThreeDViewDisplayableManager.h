@@ -32,7 +32,7 @@ class vtkMRMLTestThreeDViewDisplayableManager :
 
 public:
   static vtkMRMLTestThreeDViewDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLTestThreeDViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLTestThreeDViewDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // For testing

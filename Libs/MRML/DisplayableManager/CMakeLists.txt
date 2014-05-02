@@ -115,6 +115,9 @@ endif()
 
 # Create the instantiator for DisplayableManager classes.
 set(VTK_USE_INSTANTIATOR_NEW 1)
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  include(${VTK_CMAKE_DIR}/vtkMakeInstantiator.cmake)
+endif()
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
   DisplayableManagerInstantiator_SRCS
   "${DisplayableManager_SRCS}"
@@ -133,25 +136,63 @@ set(srcs
 set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
-set(VTK_LIBRARIES
-  #vtkCommon # Provided by MRMLCore, MRMLLogic
-  #vtkFiltering # Provided by MRMLCore, MRMLLogic
-  #vtkGraphics # Provided by MRMLCore, MRMLLogic
-  #vtkHybrid # Provided by MRMLCore
-  #vtkIO # Provided by MRMLCore
-  #vtkRendering # Provided by MRMLCore, MRMLLogic
-  vtkWidgets
-  )
-
-set(libs
-  ${VTK_LIBRARIES}
-  MRMLCore
-  MRMLLogic
- )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    #vtkCommonCore # Provided by MRMLCore, MRMLLogic
+    #vtkCommonDataModel # Provided by MRMLCore, MRMLLogic
+    #vtkCommonMath # Provided by MRMLCore, MRMLLogic
+    #vtkCommonMisc # Provided by MRMLCore, MRMLLogic
+    vtkCommonTransforms
+    #vtkFiltersCore # Provided by MRMLCore, MRMLLogic
+    #vtkFiltersGeneral # Provided by MRMLCore, MRMLLogic
+    #vtkFiltersSources # Provided by MRMLCore, MRMLLogic
+    #vtkIOImage # Provided by MRMLCore, MRMLLogic
+    #vtkInteractionStyle # Provided by MRMLCore, MRMLLogic
+    vtkInteractionWidgets
+    vtkRenderingFreeType
+    #vtkRenderingCore # Provided by MRMLCore, MRMLLogic
+    #vtkRenderingFreeTypeOpenGL # Provided by MRMLCore, MRMLLogic
+    #vtkRenderingOpenGL # Provided by MRMLCore, MRMLLogic
+    vtkTestingRendering
+    )
+else()
+  set(VTK_LIBRARIES
+    #vtkCommon # Provided by MRMLCore, MRMLLogic
+    #vtkFiltering # Provided by MRMLCore, MRMLLogic
+    #vtkGraphics # Provided by MRMLCore, MRMLLogic
+    #vtkHybrid # Provided by MRMLCore
+    #vtkIO # Provided by MRMLCore
+    #vtkRendering # Provided by MRMLCore, MRMLLogic
+    vtkWidgets
+    )
+endif()
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(libs
+    ${VTK_LIBRARIES}
+    vtkRenderingFreeTypeFontConfig
+    MRMLCore
+    MRMLLogic
+   )
+else()
+  set(libs
+    ${VTK_LIBRARIES}
+    MRMLCore
+    MRMLLogic
+   )
+endif()
 
 if(MRMLDisplayableManager_USE_PYTHON)
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_COMMON_PYTHON_LIBRARY
+      vtkCommonCorePythonD # For vtkPythonUtils
+      )
+  else()
+    set(VTK_COMMON_PYTHON_LIBRARY
+      vtkCommonPythonD # For vtkPythonUtils
+      )
+  endif()
   list(APPEND libs
-    vtkCommonPythonD # For vtkPythonUtils
+    ${VTK_COMMON_PYTHON_LIBRARY} # For vtkPythonUtils
     ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
     )
 endif()

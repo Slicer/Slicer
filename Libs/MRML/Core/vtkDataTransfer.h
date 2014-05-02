@@ -14,7 +14,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
 
   /// The Usual vtk class functions
   static vtkDataTransfer *New();
-  vtkTypeRevisionMacro(vtkDataTransfer, vtkObject);
+  vtkTypeMacro(vtkDataTransfer, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkGetStringMacro ( SourceURI );
   vtkSetStringMacro ( SourceURI );

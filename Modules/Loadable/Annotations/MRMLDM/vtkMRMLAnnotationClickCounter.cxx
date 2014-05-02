@@ -7,7 +7,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationClickCounter);
-vtkCxxRevisionMacro (vtkMRMLAnnotationClickCounter, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationClickCounter::PrintSelf(ostream& os, vtkIndent indent)

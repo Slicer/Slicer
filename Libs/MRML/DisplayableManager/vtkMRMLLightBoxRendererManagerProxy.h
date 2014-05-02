@@ -34,7 +34,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLLightBoxRendererManagerProxy
 {
 public:
   static vtkMRMLLightBoxRendererManagerProxy* New();
-  vtkTypeRevisionMacro(vtkMRMLLightBoxRendererManagerProxy,
+  vtkTypeMacro(vtkMRMLLightBoxRendererManagerProxy,
                        vtkMRMLAbstractLogic);
 
   /// Method to query the mapping from an id of a LightBox frame to

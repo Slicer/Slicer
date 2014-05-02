@@ -22,12 +22,13 @@
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkOrientImageFilter.h>
 #include <itkImageSeriesReader.h>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
 
@@ -52,8 +53,8 @@ void vtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent in
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
 int vtkITKArchetypeImageSeriesScalarReader::RequestData(
-  vtkInformation* request,
-  vtkInformationVector** vtkNotUsed( inputVector ),
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector),
   vtkInformationVector* outputVector)
 {
   if (!this->Superclass::Archetype)
@@ -69,9 +70,15 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
 // removed UpdateInformation: generates an error message
 //   from VTK and doesn't appear to be needed...
 //data->UpdateInformation();
-  data->SetExtent(0,0,0,0,0,0);
+data->SetExtent(0,0,0,0,0,0);
+#if (VTK_MAJOR_VERSION <= 5)
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
+#else
+  data->AllocateScalars(outInfo);
+  data->SetExtent(outInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+#endif
 
   /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \

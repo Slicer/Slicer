@@ -34,7 +34,7 @@ vtkMRMLAnnotationAngleDisplayableManager
 public:
 
   static vtkMRMLAnnotationAngleDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationAngleDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationAngleDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // the following functions must be public to be accessible by the callback

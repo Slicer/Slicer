@@ -59,7 +59,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLMarkupsFiducialDisplayableManager3D);
-vtkCxxRevisionMacro (vtkMRMLMarkupsFiducialDisplayableManager3D, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 // vtkMRMLMarkupsFiducialDisplayableManager3D Callback

@@ -18,19 +18,24 @@
 #include "vtkITKArchetypeImageSeriesReader.h"
 
 #include "itkImageFileReader.h"
+#include <vtkVersion.h>
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKArchetypeImageSeriesReader
 {
  public:
   static vtkITKArchetypeImageSeriesVectorReaderFile *New();
-  vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderFile,vtkITKArchetypeImageSeriesReader);
+  vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderFile,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
  protected:
   vtkITKArchetypeImageSeriesVectorReaderFile();
   ~vtkITKArchetypeImageSeriesVectorReaderFile();
 
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
+#endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:
 };

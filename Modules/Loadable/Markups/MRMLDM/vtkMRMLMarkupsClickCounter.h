@@ -31,7 +31,7 @@ class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsClic
 public:
 
   static vtkMRMLMarkupsClickCounter *New();
-  vtkTypeRevisionMacro(vtkMRMLMarkupsClickCounter, vtkObject);
+  vtkTypeMacro(vtkMRMLMarkupsClickCounter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Check if enough clicks are counted

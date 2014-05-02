@@ -41,7 +41,7 @@ public:
 
   static vtkMRMLAbstractSliceViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLAbstractSliceViewDisplayableManager,
+  vtkTypeMacro(vtkMRMLAbstractSliceViewDisplayableManager,
                        vtkMRMLAbstractDisplayableManager);
 
   /// Get MRML SliceNode

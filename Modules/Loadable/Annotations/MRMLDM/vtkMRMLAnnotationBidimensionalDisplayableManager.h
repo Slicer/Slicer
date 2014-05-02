@@ -35,7 +35,7 @@ vtkMRMLAnnotationBidimensionalDisplayableManager
 public:
 
   static vtkMRMLAnnotationBidimensionalDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationBidimensionalDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationBidimensionalDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // the following functions must be public to be accessible by the callback

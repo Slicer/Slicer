@@ -81,7 +81,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPUVolumeM
   : public vtkVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPUVolumeMapper,vtkVolumeMapper);
+  vtkTypeMacro(vtkSlicerGPUVolumeMapper,vtkVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerGPUVolumeMapper *New();

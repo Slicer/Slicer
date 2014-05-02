@@ -36,11 +36,11 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageFillROI : public vtkImage
 {
 public:
   static vtkImageFillROI *New();
-  vtkTypeRevisionMacro(vtkImageFillROI,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageFillROI,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkSetMacro(Value, vtkFloatingPointType);
-  vtkGetMacro(Value, vtkFloatingPointType);
+  vtkSetMacro(Value, double);
+  vtkGetMacro(Value, double);
 
   void SetShapeToPolygon() {this->Shape = SHAPE_POLYGON;};
   void SetShapeToLines() {this->Shape = SHAPE_LINES;};
@@ -83,7 +83,7 @@ protected:
   ~vtkImageFillROI();
 
   vtkPoints *Points;
-  vtkFloatingPointType Value;
+  double Value;
   int Radius;
   int Shape;
 

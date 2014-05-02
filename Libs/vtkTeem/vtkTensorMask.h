@@ -38,7 +38,7 @@ class VTK_Teem_EXPORT vtkTensorMask : public vtkImageMask
 {
 public:
 
-  vtkTypeRevisionMacro(vtkTensorMask,vtkImageMask);
+  vtkTypeMacro(vtkTensorMask,vtkImageMask);
 
   static vtkTensorMask *New();
   void PrintSelf(ostream& os, vtkIndent indent);

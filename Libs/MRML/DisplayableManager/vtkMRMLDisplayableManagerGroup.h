@@ -45,7 +45,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerGroup : public
 public:
 
   static vtkMRMLDisplayableManagerGroup *New();
-  vtkTypeRevisionMacro(vtkMRMLDisplayableManagerGroup,vtkObject);
+  vtkTypeMacro(vtkMRMLDisplayableManagerGroup,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Convenient method equivalent to call SetAndObserveDisplayableManagerFactory, SetRenderer,

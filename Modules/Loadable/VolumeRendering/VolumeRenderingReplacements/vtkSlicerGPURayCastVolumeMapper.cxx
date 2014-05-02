@@ -32,7 +32,6 @@
 
 
 //#ifndef VTK_IMPLEMENT_MESA_CXX
-vtkCxxRevisionMacro(vtkSlicerGPURayCastVolumeMapper, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkSlicerGPURayCastVolumeMapper);
 //#endif
 

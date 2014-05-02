@@ -28,7 +28,6 @@
 #include "vtkCommand.h"
 #include "vtkMultiThreader.h"
 
-vtkCxxRevisionMacro(vtkSlicerGPUVolumeTextureMapper3D, "$Revision: 1.6 $");
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.

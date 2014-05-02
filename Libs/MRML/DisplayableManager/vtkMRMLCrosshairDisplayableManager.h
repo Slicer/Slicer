@@ -33,7 +33,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCrosshairDisplayableManager :
 {
 public:
   static vtkMRMLCrosshairDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLCrosshairDisplayableManager,
+  vtkTypeMacro(vtkMRMLCrosshairDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 

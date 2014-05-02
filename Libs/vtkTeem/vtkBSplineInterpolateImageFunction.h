@@ -39,13 +39,13 @@ class  VTK_Teem_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFu
 {
  public:
   static vtkBSplineInterpolateImageFunction *New();
-  vtkTypeRevisionMacro(vtkBSplineInterpolateImageFunction, vtkImplicitFunction );
+  vtkTypeMacro(vtkBSplineInterpolateImageFunction, vtkImplicitFunction );
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  virtual vtkFloatingPointType EvaluateFunction (vtkFloatingPointType x[ImageDimension]);
+  virtual double EvaluateFunction (double x[ImageDimension]);
 
-  virtual void EvaluateGradient (vtkFloatingPointType x[ImageDimension],
-                                 vtkFloatingPointType g[ImageDimension]);
+  virtual void EvaluateGradient (double x[ImageDimension],
+                                 double g[ImageDimension]);
   void SetInput(vtkImageData* dataset);
 
   unsigned int GetSplineOrder() { return this->SplineOrder; }
@@ -62,8 +62,8 @@ protected:
   unsigned int                        SplineOrder;    /// User specified spline order (3rd or cubic is the default)
 
   vtkImageData *                      Coefficients; /// Spline coefficients
-  vtkFloatingPointType * Origin;
-  vtkFloatingPointType * Spacing;
+  double * Origin;
+  double * Spacing;
   int * Extent;
 private:
   int Initialized;
@@ -71,11 +71,11 @@ private:
   void operator=(const vtkBSplineInterpolateImageFunction&);  /// Not implemented.
 
   /** Determines the weights for interpolation of the value x */
-  void SetInterpolationWeights( vtkFloatingPointType *x, long *evaluateIndex[ImageDimension],
+  void SetInterpolationWeights( double *x, long *evaluateIndex[ImageDimension],
     double *weights[ImageDimension],unsigned int splineOrder ) const;
 
   /** Determines the weights for the derivative portion of the value x */
-  void SetDerivativeWeights( vtkFloatingPointType *x, long *evaluateIndex[ImageDimension],
+  void SetDerivativeWeights( double *x, long *evaluateIndex[ImageDimension],
     double *weights[ImageDimension], unsigned int splineOrder ) const;
 
   /** Precomputation for converting the 1D index of the interpolation neighborhood
@@ -84,7 +84,7 @@ private:
 
   /** Determines the indicies to use give the splines region of support */
   void DetermineRegionOfSupport( long *evaluateIndex[ImageDimension],
-    vtkFloatingPointType x[], unsigned int splineOrder ) const;
+    double x[], unsigned int splineOrder ) const;
 
   /** Set the indicies in evaluateIndex at the boundaries based on mirror
     * boundary conditions. */

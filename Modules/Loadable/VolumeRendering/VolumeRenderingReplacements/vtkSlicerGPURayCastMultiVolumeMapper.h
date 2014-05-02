@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPURayCast
   : public vtkSlicerGPUMultiVolumeMapper
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGPURayCastMultiVolumeMapper,vtkSlicerGPUMultiVolumeMapper);
+  vtkTypeMacro(vtkSlicerGPURayCastMultiVolumeMapper,vtkSlicerGPUMultiVolumeMapper);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkSlicerGPURayCastMultiVolumeMapper *New();

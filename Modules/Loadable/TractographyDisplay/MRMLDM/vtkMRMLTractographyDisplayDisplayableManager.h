@@ -39,7 +39,7 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRM
 {
 public:
   static vtkMRMLTractographyDisplayDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLTractographyDisplayDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLTractographyDisplayDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkGetMacro(EnableFiberEdit, int);

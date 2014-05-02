@@ -34,7 +34,7 @@ vtkMRMLAnnotationROIDisplayableManager
 public:
 
   static vtkMRMLAnnotationROIDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationROIDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationROIDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

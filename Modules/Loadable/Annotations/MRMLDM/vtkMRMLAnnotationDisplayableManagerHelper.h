@@ -42,7 +42,7 @@ vtkMRMLAnnotationDisplayableManagerHelper
 public:
 
   static vtkMRMLAnnotationDisplayableManagerHelper *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
+  vtkTypeMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Lock/Unlock all widgets based on the state of the nodes

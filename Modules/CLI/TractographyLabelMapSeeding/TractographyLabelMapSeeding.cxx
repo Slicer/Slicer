@@ -19,6 +19,7 @@
 #include <vtkSmartPointer.h>
 #include <vtksys/SystemTools.hxx>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <string>
@@ -45,6 +46,9 @@ int main( int argc, char * argv[] )
 
 
     vtkSmartPointer<vtkImageData> ROI;
+#if (VTK_MAJOR_VERSION > 5)
+    vtkSmartPointer<vtkInformation> ROIPipelineInfo;
+#endif
     vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader2;
     vtkNew<vtkImageCast> imageCast;
     vtkNew<vtkDiffusionTensorMathematics> math;
@@ -69,10 +73,17 @@ int main( int argc, char * argv[] )
 
       // cast roi to short data type
       imageCast->SetOutputScalarTypeToShort();
+#if (VTK_MAJOR_VERSION <=5)
       imageCast->SetInput(reader2->GetOutput() );
+#else
+      imageCast->SetInputConnection(reader2->GetOutputPort() );
+#endif
       imageCast->Update();
 
       ROI = imageCast->GetOutput();
+#if (VTK_MAJOR_VERSION > 5)
+      ROIPipelineInfo = imageCast->GetOutputInformation(0);
+#endif
 
       // Set up the matrix that will take points in ROI
       // to RAS space.  Code assumes this is world space
@@ -82,7 +93,11 @@ int main( int argc, char * argv[] )
       //
       ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix() );
     } else { // If the mask does not exist, create one
+#if (VTK_MAJOR_VERSION <=5)
       math->SetInput(0, reader->GetOutput());
+#else
+      math->SetInputConnection(0, reader->GetOutputPort());
+#endif
 
       if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
         {
@@ -103,7 +118,11 @@ int main( int argc, char * argv[] )
         }
       math->Update();
 
+#if (VTK_MAJOR_VERSION <=5)
       th->SetInput(math->GetOutput());
+#else
+      th->SetInputConnection(math->GetOutputPort());
+#endif
       th->ThresholdBetween(ClTh,1);
       th->SetInValue(ROIlabel);
       th->SetOutValue(0);
@@ -112,6 +131,9 @@ int main( int argc, char * argv[] )
       th->SetOutputScalarTypeToShort();
       th->Update();
       ROI = th->GetOutput();
+#if (VTK_MAJOR_VERSION > 5)
+      ROIPipelineInfo = th->GetOutputInformation(0);
+#endif
 
       // Set up the matrix that will take points in ROI
       // to RAS space.  Code assumes this is world space
@@ -197,6 +219,9 @@ int main( int argc, char * argv[] )
     // PENDING: Do merging with input ROI
 
     seed->SetInputROI(ROI);
+#if (VTK_MAJOR_VERSION > 5)
+    seed->SetInputROIPipelineInfo(ROIPipelineInfo);
+#endif
     seed->SetInputROIValue(ROIlabel);
     seed->UseStartingThresholdOn();
     seed->SetStartingThreshold(ClTh);
@@ -270,7 +295,11 @@ int main( int argc, char * argv[] )
           seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
           writer->SetFileName(OutputFibers.c_str());
           writer->SetFileTypeToBinary();
+#if (VTK_MAJOR_VERSION <= 5)
           writer->SetInput(outFibers.GetPointer());
+#else
+          writer->SetInputData(outFibers.GetPointer());
+#endif
           writer->Write();
         }
       else
@@ -282,7 +311,11 @@ int main( int argc, char * argv[] )
         vtkNew<vtkXMLPolyDataWriter> writer;
         seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
         writer->SetFileName(OutputFibers.c_str() );
+#if (VTK_MAJOR_VERSION <= 5)
         writer->SetInput(outFibers.GetPointer());
+#else
+        writer->SetInputData(outFibers.GetPointer());
+#endif
         writer->Write();
         }
       }

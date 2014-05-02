@@ -33,7 +33,7 @@ class VTK_Teem_EXPORT vtkPolyDataTensorToColor : public vtkPolyDataAlgorithm
 {
 public:
   static vtkPolyDataTensorToColor *New();
-  vtkTypeRevisionMacro(vtkPolyDataTensorToColor,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkPolyDataTensorToColor,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetClampMacro(ColorMode, int, vtkTensorGlyph::COLOR_BY_SCALARS, vtkTensorGlyph::COLOR_BY_EIGENVALUES);

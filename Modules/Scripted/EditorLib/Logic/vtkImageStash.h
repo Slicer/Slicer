@@ -30,7 +30,7 @@ class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageStash : public vtkObject
 {
 public:
   static vtkImageStash *New();
-  vtkTypeRevisionMacro(vtkImageStash,vtkObject);
+  vtkTypeMacro(vtkImageStash,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

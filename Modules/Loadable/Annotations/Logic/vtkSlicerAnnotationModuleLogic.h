@@ -25,7 +25,7 @@ public:
     HierarchyNodeAddedEvent
   };
   static vtkSlicerAnnotationModuleLogic *New();
-  vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   // Start the place mode for annotations

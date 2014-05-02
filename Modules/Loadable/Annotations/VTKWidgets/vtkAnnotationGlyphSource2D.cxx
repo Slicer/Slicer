@@ -33,7 +33,6 @@
 #include <vtkPolyData.h>
 #include <vtkUnsignedCharArray.h>
 
-vtkCxxRevisionMacro(vtkAnnotationGlyphSource2D, "$Revision: 12554 $");
 vtkStandardNewMacro(vtkAnnotationGlyphSource2D);
 
 //----------------------------------------------------------------------------

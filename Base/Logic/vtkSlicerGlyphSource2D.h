@@ -52,7 +52,7 @@ class vtkCellArray;
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerGlyphSource2D : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkSlicerGlyphSource2D,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkSlicerGlyphSource2D,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///

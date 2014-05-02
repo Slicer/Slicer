@@ -34,7 +34,7 @@ vtkMRMLAnnotationSplineDisplayableManager
 public:
 
   static vtkMRMLAnnotationSplineDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationSplineDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationSplineDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

@@ -16,6 +16,7 @@
 #define __vtkITKArchetypeDiffusionTensorImageReaderFile_h
 
 #include "vtkITKArchetypeImageSeriesReader.h"
+#include <vtkVersion.h>
 
 #include "itkImageFileReader.h"
 
@@ -23,14 +24,18 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile : public vtkI
 {
  public:
   static vtkITKArchetypeDiffusionTensorImageReaderFile *New();
-  vtkTypeRevisionMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
+  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
  protected:
   vtkITKArchetypeDiffusionTensorImageReaderFile();
   ~vtkITKArchetypeDiffusionTensorImageReaderFile();
 
+#if (VTK_MAJOR_VERSION <= 5)
   void ExecuteData(vtkDataObject *data);
+#else
+  void ExecuteDataWithInformation(vtkDataObject *out, vtkInformation* outInfo);
+#endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:
 };

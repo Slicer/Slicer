@@ -13,7 +13,6 @@
 ==========================================================================*/
 #include "vtkITKGradientAnisotropicDiffusionImageFilter.h"
 
-vtkCxxRevisionMacro(vtkITKGradientAnisotropicDiffusionImageFilter, "$Revision$");
 vtkStandardNewMacro(vtkITKGradientAnisotropicDiffusionImageFilter);
 
 

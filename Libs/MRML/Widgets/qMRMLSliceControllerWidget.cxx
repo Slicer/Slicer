@@ -515,7 +515,11 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
   this->SliceSpacingSpinBox = new ctkDoubleSpinBox(sliceSpacingManualMode);
   this->SliceSpacingSpinBox->setDecimals(3);
+#if (VTK_MAJOR_VERSION <= 5)
   this->SliceSpacingSpinBox->setRange(0.001, VTK_LARGE_FLOAT);
+#else
+  this->SliceSpacingSpinBox->setRange(0.001, VTK_FLOAT_MAX);
+#endif
   this->SliceSpacingSpinBox->setSingleStep(0.1);
   this->SliceSpacingSpinBox->setValue(1.);
   QObject::connect(this->SliceSpacingSpinBox, SIGNAL(valueChanged(double)),
@@ -1038,7 +1042,11 @@ void qMRMLSliceControllerWidgetPrivate::onSliceLogicModifiedEvent()
 
   // no op if they are the same
   // The imagedata of SliceLogic can change !?!?! it should probably not
+#if (VTK_MAJOR_VERSION <= 5)
   q->setImageData(this->SliceLogic ? this->SliceLogic->GetImageData() : 0);
+#else
+  q->setImageDataPort(this->SliceLogic ? this->SliceLogic->GetImageDataPort() : 0);
+#endif
 
   if (!this->SliceLogic)
     {
@@ -1511,6 +1519,7 @@ QColor qMRMLSliceControllerWidget::sliceViewColor()const
 }
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
 {
   Q_D(qMRMLSliceControllerWidget);
@@ -1524,9 +1533,28 @@ void qMRMLSliceControllerWidget::setImageData(vtkImageData* newImageData)
 
   emit this->imageDataChanged(d->ImageData);
 }
+#else
+void qMRMLSliceControllerWidget::setImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+{
+  Q_D(qMRMLSliceControllerWidget);
+
+  if (d->ImageDataPort == newImageDataPort)
+    {
+    return;
+    }
+
+  d->ImageDataPort = newImageDataPort;
+
+  emit this->imageDataPortChanged(d->ImageDataPort);
+}
+#endif
 
 //---------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 CTK_GET_CPP(qMRMLSliceControllerWidget, vtkImageData*, imageData, ImageData);
+#else
+CTK_GET_CPP(qMRMLSliceControllerWidget, vtkAlgorithmOutput*, imageDataPort, ImageDataPort);
+#endif
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceOffsetRange(double min, double max)

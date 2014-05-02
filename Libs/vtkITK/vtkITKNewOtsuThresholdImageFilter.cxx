@@ -32,5 +32,4 @@
 #include "vtkITKNewOtsuThresholdImageFilter.h"
 #endif
 
-vtkCxxRevisionMacro(vtkITKNewOtsuThresholdImageFilter, "$Revision: 1.1.2.1 $");
 vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);

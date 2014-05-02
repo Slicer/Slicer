@@ -30,7 +30,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationSplineDisplayableManager);
-vtkCxxRevisionMacro (vtkMRMLAnnotationSplineDisplayableManager, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 // vtkMRMLAnnotationSplineDisplayableManager Callback

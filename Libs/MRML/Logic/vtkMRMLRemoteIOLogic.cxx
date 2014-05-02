@@ -27,7 +27,6 @@
 
 #include "vtkMRMLRemoteIOLogic.h"
 
-vtkCxxRevisionMacro(vtkMRMLRemoteIOLogic, "$Revision: 16232 $");
 vtkStandardNewMacro(vtkMRMLRemoteIOLogic);
 
 vtkCxxSetObjectMacro(vtkMRMLRemoteIOLogic, CacheManager, vtkCacheManager);

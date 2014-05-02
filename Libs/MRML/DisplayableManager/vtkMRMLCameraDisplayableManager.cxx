@@ -40,7 +40,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLCameraDisplayableManager );
-vtkCxxRevisionMacro(vtkMRMLCameraDisplayableManager, "$Revision: 13525 $");
 
 //---------------------------------------------------------------------------
 class vtkMRMLCameraDisplayableManager::vtkInternal

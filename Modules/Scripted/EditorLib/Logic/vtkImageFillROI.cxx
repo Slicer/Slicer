@@ -8,17 +8,18 @@
 =========================================================================auto=*/
 #include "vtkImageFillROI.h"
 
-#include "vtkObjectFactory.h"
-#include "vtkImageData.h"
-#include "vtkPoints.h"
+// VTK includes
+#include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
+#include <vtkObjectFactory.h>
+#include <vtkPoints.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 vtkCxxSetObjectMacro(vtkImageFillROI,Points,vtkPoints);
 
 //------------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkImageFillROI, "$Revision$");
 vtkStandardNewMacro(vtkImageFillROI);
 
 //----------------------------------------------------------------------------
@@ -669,7 +670,7 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
   int r = self->GetRadius();
   int i, j, x, y, z, nPts, nx, ny, outExt[6];
   int *xPts, *yPts;
-  vtkFloatingPointType *pt;
+  double *pt;
 
   vtkPoints *points = self->GetPoints();
   if (points == NULL)
@@ -747,9 +748,10 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
 int vtkImageFillROI::RequestUpdateExtent(
    vtkInformation *vtkNotUsed(request),
    vtkInformationVector **inputVector,
-   vtkInformationVector *vtkNotUsed(outputVector))
+   vtkInformationVector *outputVector)
 {
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   // Make sure the Input has been set.
   if ( this->GetInput() == NULL )
@@ -758,7 +760,11 @@ int vtkImageFillROI::RequestUpdateExtent(
     return 0;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->AllocateOutputData(this->GetOutput());
+#else
+  this->AllocateOutputData(this->GetOutput(), outInfo);
+#endif
 
   if ( this->GetInput()->GetDataObjectType() != VTK_IMAGE_DATA )
     {

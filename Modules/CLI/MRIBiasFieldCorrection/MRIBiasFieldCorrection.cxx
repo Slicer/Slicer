@@ -24,6 +24,8 @@
 #include "vtkImageResample.h"
 #include "vtkImageAccumulate.h"
 #include "vtkImageGaussianSmooth.h"
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
 #include "itkPluginUtilities.h"
 #include "MRIBiasFieldCorrectionCLP.h"
@@ -84,7 +86,12 @@ int L1BiasFieldCorrection( int argc, char *argv[],
     double bounds[6], range[2];
 
     convertITKtoVTK->GetOutput()->GetDimensions(dim);
+#if (VTK_MAJOR_VERSION <= 5)
     convertITKtoVTK->GetOutput()->GetWholeExtent(wholeExtent);
+#else
+    convertITKtoVTK->GetOutputInformation(0)->Get(
+      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent);
+#endif
 
     convertITKtoVTK->GetOutput()->GetOrigin(origin);
     convertITKtoVTK->GetOutput()->GetSpacing(spacing);
@@ -227,16 +234,24 @@ int L1BiasFieldCorrection( int argc, char *argv[],
     meanImage->SetDimensions(outDim);
     meanImage->SetOrigin(outOrigin);
     meanImage->SetSpacing(outSpacing);
+#if (VTK_MAJOR_VERSION <= 5)
     meanImage->SetScalarTypeToDouble();
     meanImage->AllocateScalars();
+#else
+    meanImage->AllocateScalars(VTK_DOUBLE, 1);
+#endif
     meanImage->Update();
 
     vtkImageData *stdDevImage = vtkImageData::New();
     stdDevImage->SetDimensions(outDim);
     stdDevImage->SetOrigin(outOrigin);
     stdDevImage->SetSpacing(outSpacing);
+#if (VTK_MAJOR_VERSION <= 5)
     stdDevImage->SetScalarTypeToDouble();
     stdDevImage->AllocateScalars();
+#else
+    stdDevImage->AllocateScalars(VTK_DOUBLE, 1);
+#endif
     stdDevImage->Update();
 
     double *ptrMean = static_cast<double *>(meanImage->GetScalarPointer() );
@@ -391,7 +406,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
           double scale = 256.0 / (range[1] - range[0]);
 
           vtkImageAccumulate *imageAccumulate = vtkImageAccumulate::New();
+#if (VTK_MAJOR_VERSION <= 5)
           imageAccumulate->SetInput(imageClip->GetOutput() );
+#else
+          imageAccumulate->SetInputConnection(imageClip->GetOutputPort() );
+#endif
           imageClip->Delete();
           imageAccumulate->SetComponentExtent(0, 255, 0, 0, 0, 0);
           imageAccumulate->SetComponentOrigin(range[0], 0.0, 0.0);
@@ -443,7 +462,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
                                                      << outSpacing[0] << " " << outSpacing[1] << " " << outSpacing[2]);
 
       vtkImageReslice *meanReslice = vtkImageReslice::New();
+#if (VTK_MAJOR_VERSION <= 5)
       meanReslice->SetInput(meanImage);
+#else
+      meanReslice->SetInputData(meanImage);
+#endif
       meanImage->Delete();
       meanReslice->SetOutputExtent(0, outDim[0] - 1, 0, outDim[1] - 1, 0,
                                    outDim[2] - 1);
@@ -452,7 +475,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
       meanReslice->Update();
 
       vtkImageGaussianSmooth *meanGaussian = vtkImageGaussianSmooth::New();
+#if (VTK_MAJOR_VERSION <= 5)
       meanGaussian->SetInput(meanReslice->GetOutput() );
+#else
+      meanGaussian->SetInputConnection(meanReslice->GetOutputPort() );
+#endif
       meanReslice->Delete();
       meanGaussian->Update();
 
@@ -461,7 +488,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
       meanGaussian->Delete();
 
       vtkImageReslice *stdDevReslice = vtkImageReslice::New();
+#if (VTK_MAJOR_VERSION <= 5)
       stdDevReslice->SetInput(stdDevImage);
+#else
+      stdDevReslice->SetInputData(stdDevImage);
+#endif
       stdDevImage->Delete();
       stdDevReslice->SetOutputExtent(0, outDim[0] - 1, 0, outDim[1] - 1, 0,
                                      outDim[2] - 1);
@@ -471,7 +502,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
 
       vtkImageGaussianSmooth *stdDevGaussian =
         vtkImageGaussianSmooth::New();
+#if (VTK_MAJOR_VERSION <= 5)
       stdDevGaussian->SetInput(stdDevReslice->GetOutput() );
+#else
+      stdDevGaussian->SetInputConnection(stdDevReslice->GetOutputPort() );
+#endif
       stdDevReslice->Delete();
       stdDevGaussian->Update();
 
@@ -481,7 +516,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
       }
 
     vtkImageReslice *meanReslice = vtkImageReslice::New();
+#if (VTK_MAJOR_VERSION <= 5)
     meanReslice->SetInput(meanImage);
+#else
+    meanReslice->SetInputData(meanImage);
+#endif
     meanImage->Delete();
     meanReslice->SetOutputExtent(wholeExtent);
     meanReslice->SetOutputSpacing(spacing);
@@ -506,14 +545,22 @@ int L1BiasFieldCorrection( int argc, char *argv[],
 
     vtkImageResample *imageResample = vtkImageResample::New();
     imageResample = vtkImageResample::New();
+#if (VTK_MAJOR_VERSION <= 5)
     imageResample->SetInput(meanReslice->GetOutput() );
+#else
+    imageResample->SetInputConnection(meanReslice->GetOutputPort() );
+#endif
     imageResample->SetAxisMagnificationFactor(0, resampleFactorX);
     imageResample->SetAxisMagnificationFactor(1, resampleFactorY);
     imageResample->SetAxisMagnificationFactor(2, resampleFactorZ);
     imageResample->Update();
 
     vtkImageReslice *stdDevReslice = vtkImageReslice::New();
+#if (VTK_MAJOR_VERSION <= 5)
     stdDevReslice->SetInput(stdDevImage);
+#else
+    stdDevReslice->SetInputData(stdDevImage);
+#endif
     stdDevImage->Delete();
     stdDevReslice->SetOutputExtent(wholeExtent);
     stdDevReslice->SetOutputSpacing(spacing);
@@ -537,7 +584,11 @@ int L1BiasFieldCorrection( int argc, char *argv[],
       }
 
     imageResample = vtkImageResample::New();
+#if (VTK_MAJOR_VERSION <= 5)
     imageResample->SetInput(stdDevReslice->GetOutput() );
+#else
+    imageResample->SetInputConnection(stdDevReslice->GetOutputPort() );
+#endif
     imageResample->SetAxisMagnificationFactor(0, resampleFactorX);
     imageResample->SetAxisMagnificationFactor(1, resampleFactorY);
     imageResample->SetAxisMagnificationFactor(2, resampleFactorZ);

@@ -35,7 +35,6 @@
 vtkCxxSetObjectMacro(vtkSliceViewInteractorStyle, SliceLogic, vtkMRMLSliceLogic);
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkSliceViewInteractorStyle, "$Revision$");
 vtkStandardNewMacro(vtkSliceViewInteractorStyle);
 
 //----------------------------------------------------------------------------

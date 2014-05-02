@@ -15,6 +15,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include <vtkImageData.h>
+#include <vtkVersion.h>
 
 #include "vtkDiffusionTensorGlyph.h"
 
@@ -41,7 +42,11 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
 
 
   this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
+#if (VTK_MAJOR_VERSION <= 5)
   this->DiffusionTensorGlyphFilter->SetInput(this->SliceImage);
+#else
+  this->DiffusionTensorGlyphFilter->SetInputConnection(this->SliceImagePort);
+#endif
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
   this->ColorMode = this->colorModeScalar;
@@ -142,6 +147,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 {
   this->DiffusionTensorGlyphFilter->SetInput(image);
@@ -149,6 +155,13 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *i
 
   Superclass::SetSliceImage(image);
 }
+#else
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImagePort(vtkAlgorithmOutput *imagePort)
+  {
+    this->DiffusionTensorGlyphFilter->SetInputConnection(imagePort);
+    Superclass::SetSliceImagePort(imagePort);
+  }
+#endif
 
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetOutputPort()
@@ -165,7 +178,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
   this->Superclass::UpdatePolyDataPipeline();
 
   if (DiffusionTensorDisplayNode == NULL ||
+#if (VTK_MAJOR_VERSION <= 5)
       this->SliceImage == NULL ||
+#else
+      this->SliceImagePort == NULL ||
+#endif
       DiffusionTensorDisplayNode->GetGlyphGeometry( ) == vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
     {
     this->ScalarVisibilityOff();
@@ -184,7 +201,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
   this->DiffusionTensorGlyphFilter->SetDimensionResolution( DiffusionTensorDisplayNode->GetLineGlyphResolution(), DiffusionTensorDisplayNode->GetLineGlyphResolution());
   this->DiffusionTensorGlyphFilter->SetScaleFactor( DiffusionTensorDisplayNode->GetGlyphScaleFactor( ) );
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->DiffusionTensorGlyphFilter->SetSource( DiffusionTensorDisplayNode->GetGlyphSource( ) );
+#else
+  this->DiffusionTensorGlyphFilter->SetSourceData( DiffusionTensorDisplayNode->GetGlyphSource( ) );
+#endif
 
   vtkDebugMacro("setting glyph geometry" << DiffusionTensorDisplayNode->GetGlyphGeometry( ) );
 
@@ -283,7 +304,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
   if (this->GetVisibility() &&
       this->GetScalarVisibility() &&
       this->GetAutoScalarRange() &&
+#if (VTK_MAJOR_VERSION <= 5)
       this->SliceImage != NULL)
+#else
+      this->SliceImagePort != NULL)
+#endif
     {
           int ScalarInvariant =  0;
           if ( DiffusionTensorDisplayPropertiesNode )
@@ -347,7 +372,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
 
   //The new DiffusionTensorDisplayPropertiesNode can have a different setting on the properties
   //so we emit the event that the polydata has been modified
+#if (VTK_MAJOR_VERSION <= 5)
   if (cnode && this->SliceImage)
+#else
+  if (cnode && this->SliceImagePort)
+#endif
     {
     this->Modified();
     }

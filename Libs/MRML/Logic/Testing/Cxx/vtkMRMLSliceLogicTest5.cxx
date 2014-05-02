@@ -30,12 +30,14 @@
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkImageData.h>
 #include <vtkImageViewer2.h>
 #include <vtkNew.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTimerLog.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkConfigure.h>
@@ -117,11 +119,21 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* textureImage = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData();
+#else
+  vtkAlgorithmOutput* textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataPort();
+  vtkImageData* textureImage = vtkImageData::SafeDownCast(textureImagePort->GetProducer()->GetOutputDataObject(textureImagePort->GetIndex()));
+#endif
   int* tdims = textureImage->GetDimensions();
   std::cout << "Texture dimension"  << tdims[0] << " " << tdims[1] << " " << tdims[2] << std::endl;
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* img = sliceLogic->GetImageData();
+#else
+  vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataPort();
+  vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
+#endif
   int* dims = img->GetDimensions();
   std::cout << "Logic dimension"  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
@@ -137,9 +149,13 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
               << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     }
   vtkNew<vtkImageViewer2> viewer;
-  //viewer->SetInput(sliceLogic->GetImageData());
-  viewer->SetInput(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
   //viewer->SetInput(appendComponents->GetOutput());
+#if (VTK_MAJOR_VERSION <= 5)
+  viewer->SetInput(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
+#else
+  viewer->SetInputConnection(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataPort());
+#endif
+  //viewer->SetInputConnection(appendComponents->GetOutputPort());
 
   // Renderer, RenderWindow and Interactor
   vtkRenderWindow* rw = viewer->GetRenderWindow();

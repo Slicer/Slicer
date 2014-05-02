@@ -36,7 +36,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManag
 
 public:
   static vtkMRMLVolumeGlyphSliceDisplayableManager* New();
-  vtkTypeRevisionMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
+  vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 

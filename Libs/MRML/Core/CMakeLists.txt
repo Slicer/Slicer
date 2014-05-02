@@ -224,16 +224,47 @@ set(srcs ${MRMLCore_SRCS} ${MRMLCore_SRCS_HEADERS})
 set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
-
-set(VTK_LIBRARIES
-  #vtkCommon # Provided by vtkITK, FreeSurfer
-  #vtkFiltering # Provided by vtkITK, FreeSurfer
-  vtkGraphics
-  vtkHybrid
-  vtkInfovis
-  #vtkIO # Provided by FreeSurfer
-  #vtkImaging # Provided by vtkITK
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    #vtkCommonCore # Provided by vtkITK, FreeSurfer
+    #vtkCommonDataModel # Provided by vtkITK, FreeSurfer
+    #vtkCommonExecutionModel # Provided by vtkITK, FreeSurfer
+    #vtkCommonMath # Provided by vtkITK, FreeSurfer
+    vtkCommonMisc
+    vtkCommonSystem
+    #vtkCommonTransforms # Provided by vtkITK
+    vtkFiltersCore
+    vtkFiltersGeneral
+    vtkFiltersGeometry
+    vtkFiltersHybrid
+    vtkFiltersSources
+    vtkIOCore
+    vtkIOGeometry
+    #vtkIOImage # Provided by vtkITK
+    #vtkIOLegacy # Provided by FreeSurfer
+    vtkIOPLY
+    vtkIOXML
+    vtkIOXMLParser
+    vtkImagingColor
+    #vtkImagingCore # Provided by FreeSurfer
+    vtkImagingMath
+    vtkImagingStatistics
+    vtkRenderingCore
+    vtkInteractionStyle
+    vtkRenderingOpenGL
+    vtkRenderingFreeTypeOpenGL
+    )
+else()
+  set(VTK_LIBRARIES
+    #vtkCommon # Provided by vtkITK, FreeSurfer
+    #vtkFiltering # Provided by vtkITK, FreeSurfer
+    vtkGraphics
+    vtkHybrid
+    vtkInfovis
+    #vtkIO # Provided by FreeSurfer
+    #vtkImaging # Provided by vtkITK
+    )
+endif()
 
 set(libs
   vtkITK

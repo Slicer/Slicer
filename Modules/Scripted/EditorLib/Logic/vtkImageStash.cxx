@@ -17,7 +17,6 @@
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkImageStash, "$Revision: 12690 $");
 vtkStandardNewMacro(vtkImageStash);
 
 //----------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 #include "vtkTeemConfigure.h"
 
 #include "vtkImageData.h"
+#include <vtkInformation.h>
 #include "vtkTransform.h"
 #include "vtkCollection.h"
 #include "vtkShortArray.h"
@@ -99,6 +100,13 @@ public:
   /// Input ROI volume describing where to start streamlines
   vtkSetObjectMacro(InputROI, vtkImageData);
   vtkGetObjectMacro(InputROI, vtkImageData);
+
+ #if (VTK_MAJOR_VERSION > 5)
+  /// Description
+  /// Input ROI volume's output pipeline information
+  vtkSetObjectMacro(InputROIPipelineInfo, vtkInformation);
+  vtkGetObjectMacro(InputROIPipelineInfo, vtkInformation);
+#endif
 
   /// Description
   /// Input ROI volume to select streamlines (those that begin
@@ -279,6 +287,9 @@ protected:
   vtkImageData *InputTensorField;
   vtkImageData *InputROI;
   vtkImageData *InputROI2;
+#if (VTK_MAJOR_VERSION > 5)
+  vtkInformation *InputROIPipelineInfo;
+#endif
 
   int InputROIValue;
   int InputROI2Value;

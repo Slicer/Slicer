@@ -45,7 +45,7 @@
 class VTK_Teem_EXPORT vtkHyperStreamlineDTMRI : public vtkHyperStreamline
 {
 public:
-  vtkTypeRevisionMacro(vtkHyperStreamlineDTMRI,vtkHyperStreamline);
+  vtkTypeMacro(vtkHyperStreamlineDTMRI,vtkHyperStreamline);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
@@ -59,8 +59,8 @@ public:
   /// This is how tight of a turn is allowed.
   /// The units are degrees per mm. (Actually per units of measurement
   /// in your data).
-  vtkGetMacro(RadiusOfCurvature,vtkFloatingPointType);
-  vtkSetMacro(RadiusOfCurvature,vtkFloatingPointType);
+  vtkGetMacro(RadiusOfCurvature,double);
+  vtkSetMacro(RadiusOfCurvature,double);
 
   ///
   /// This is in mm, unlike superclass value which is a fraction of a cell.
@@ -82,8 +82,8 @@ public:
 
   /// If StoppingMode criterion becomes smaller than this number,
   /// tracking stops.
-  vtkGetMacro(StoppingThreshold,vtkFloatingPointType);
-  vtkSetMacro(StoppingThreshold,vtkFloatingPointType);
+  vtkGetMacro(StoppingThreshold,double);
+  vtkSetMacro(StoppingThreshold,double);
 
   ///
   /// Whether to output the interpolated tensor at each point
@@ -110,9 +110,9 @@ protected:
   void BuildLinesForSingleTrajectory(vtkDataSet *input, vtkPolyData *output);
   void BuildLinesForTwoTrajectories(vtkDataSet *input, vtkPolyData *output);
 
-  vtkFloatingPointType RadiusOfCurvature;
+  double RadiusOfCurvature;
   int StoppingMode;
-  vtkFloatingPointType StoppingThreshold;
+  double StoppingThreshold;
 
   int OutputTensors;
 

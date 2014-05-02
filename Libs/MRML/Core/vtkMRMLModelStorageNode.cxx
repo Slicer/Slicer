@@ -27,6 +27,7 @@
 #include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
 #include <vtkPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
 #include <vtkSTLReader.h>
 #include <vtkSTLWriter.h>
 #include <vtkStringArray.h>
@@ -36,14 +37,15 @@
 #include <vtkUnstructuredGridReader.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkVersion.h>
 
 // ITK includes
 #include <itkDefaultDynamicMeshTraits.h>
 #include <itkSpatialObjectReader.h>
 #include <itkSpatialObjectWriter.h>
 
-typedef itk::DefaultDynamicMeshTraits< vtkFloatingPointType , 3, 3, double > MeshTrait;
-typedef itk::Mesh<vtkFloatingPointType,3,MeshTrait> floatMesh;
+typedef itk::DefaultDynamicMeshTraits< double , 3, 3, double > MeshTrait;
+typedef itk::Mesh<double,3,MeshTrait> floatMesh;
 
 /** Hold on to the type information specified by the template parameters. */
 typedef  floatMesh::Pointer             MeshPointer;
@@ -62,8 +64,8 @@ typedef  floatMesh::CellType             CellType;
 typedef  itk::TriangleCell<CellType>   TriangleType;
 
 typedef itk::MeshSpatialObject<floatMesh> MeshSpatialObjectType;
-typedef itk::SpatialObjectReader<3,vtkFloatingPointType,MeshTrait> MeshReaderType;
-typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterType;
+typedef itk::SpatialObjectReader<3,double,MeshTrait> MeshReaderType;
+typedef itk::SpatialObjectWriter<3,double,MeshTrait> MeshWriterType;
 
 
 
@@ -133,7 +135,11 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkNew<vtkBYUReader> reader;
       reader->SetGeometryFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".vtk"))
       {
@@ -152,9 +158,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       else if (unstructuredGridReader->IsFileUnstructuredGrid())
         {
         unstructuredGridReader->Update();
-        surfaceFilter->SetInput(unstructuredGridReader->GetOutput());
+        surfaceFilter->SetInputConnection(unstructuredGridReader->GetOutputPort());
         surfaceFilter->Update();
-        output = surfaceFilter->GetOutput();
+        output = reader->GetOutput();
         }
       else
         {
@@ -168,7 +174,11 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
+#if (VTK_MAJOR_VERSION <= 5)
         modelNode->SetAndObservePolyData(output);
+#else
+        modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
         }
       }
     else if (extension == std::string(".vtp"))
@@ -176,28 +186,44 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkNew<vtkXMLPolyDataReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
       modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".stl"))
       {
       vtkNew<vtkSTLReader> reader;
       reader->SetFileName(fullName.c_str());
-      modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".ply"))
       {
       vtkNew<vtkPLYReader> reader;
       reader->SetFileName(fullName.c_str());
-      modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".obj"))
       {
       vtkNew<vtkOBJReader> reader;
       reader->SetFileName(fullName.c_str());
-      modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+#else
+      modelNode->SetAndObservePolyFilterAndData(reader.GetPointer());
+#endif
       }
     else if (extension == std::string(".meta"))  // model in meta format
       {
@@ -236,7 +262,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         {
         // Get the point index from the point container iterator
         int idx = i->Index();
-        vpoints->SetPoint(idx, const_cast<vtkFloatingPointType*>(i->Value().GetDataPointer()));
+        vpoints->SetPoint(idx, const_cast<double*>(i->Value().GetDataPointer()));
         }
       vtkMesh->SetPoints(vpoints.GetPointer());
 
@@ -308,7 +334,11 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkPolyDataWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( modelNode->GetPolyData() );
+#else
+    writer->SetInputData( modelNode->GetPolyData() );
+#endif
     try
       {
       writer->Write();
@@ -326,7 +356,11 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       this->GetUseCompression() ? vtkXMLWriter::ZLIB : vtkXMLWriter::NONE);
     writer->SetDataMode(
       this->GetUseCompression() ? vtkXMLWriter::Appended : vtkXMLWriter::Ascii);
+#if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput( modelNode->GetPolyData() );
+#else
+    writer->SetInputData( modelNode->GetPolyData() );
+#endif
     try
       {
       writer->Write();
@@ -342,8 +376,13 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkSTLWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
+#if (VTK_MAJOR_VERSION <= 5)
     triangulator->SetInput( modelNode->GetPolyData() );
     writer->SetInput( triangulator->GetOutput() );
+#else
+    triangulator->SetInputData( modelNode->GetPolyData() );
+    writer->SetInputConnection( triangulator->GetOutputPort() );
+#endif
     try
       {
       writer->Write();
@@ -359,8 +398,13 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkPLYWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
+#if (VTK_MAJOR_VERSION <= 5)
     triangulator->SetInput( modelNode->GetPolyData() );
     writer->SetInput( triangulator->GetOutput() );
+#else
+    triangulator->SetInputData( modelNode->GetPolyData() );
+    writer->SetInputConnection( triangulator->GetOutputPort() );
+#endif
     try
       {
       writer->Write();

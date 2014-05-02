@@ -95,7 +95,7 @@ class qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy
 {
 public:
   static vtkInternalLightBoxRendererManagerProxy* New();
-  vtkTypeRevisionMacro(vtkInternalLightBoxRendererManagerProxy,
+  vtkTypeMacro(vtkInternalLightBoxRendererManagerProxy,
                        vtkMRMLLightBoxRendererManagerProxy);
 
 

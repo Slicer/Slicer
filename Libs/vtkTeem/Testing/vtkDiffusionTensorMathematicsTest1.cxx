@@ -27,6 +27,7 @@
 #include <vtkMultiThreader.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -71,9 +72,13 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   maskImage->SetDimensions(dimensions);
   maskImage->SetSpacing(1.5, 10., 100.);
   maskImage->SetOrigin(-10., 40, 0.1);
-  maskImage->SetScalarTypeToShort();
+#if (VTK_MAJOR_VERSION <= 5)
   maskImage->SetNumberOfScalarComponents(9);
+  maskImage->SetScalarTypeToShort();
   maskImage->AllocateScalars();
+#else
+  maskImage->AllocateScalars(VTK_SHORT, 9);
+#endif
 
   short* maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
   for (int z=0; z < dimensions[2]; ++z )
@@ -92,7 +97,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
 
   // Execute the filter
   vtkNew<vtkDiffusionTensorMathematics> filter;
+#if (VTK_MAJOR_VERSION <= 5)
   filter->SetInput(tensorImage.GetPointer());
+#else
+  filter->SetInputData(tensorImage.GetPointer());
+#endif
   filter->SetScalarMask(maskImage.GetPointer());
   filter->SetMaskLabelValue(0);  // mask all the labels different from 0
   filter->SetMaskWithScalars(1); // turn on masking

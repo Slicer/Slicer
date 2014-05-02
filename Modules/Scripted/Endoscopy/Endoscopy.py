@@ -453,6 +453,7 @@ class EndoscopyPathModel:
     model.SetAndObserveDisplayNodeID(modelDisplay.GetID())
 
     # Add to scene
+#VTK6 TODO
     modelDisplay.SetInputPolyData(model.GetPolyData())
     scene.AddNode(model)
 
@@ -464,6 +465,7 @@ class EndoscopyPathModel:
     cursor = slicer.vtkMRMLModelNode()
     cursor.SetScene(scene)
     cursor.SetName(scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
+# VTK6 TODO
     cursor.SetAndObservePolyData(sphere.GetOutput())
 
     # Create display node

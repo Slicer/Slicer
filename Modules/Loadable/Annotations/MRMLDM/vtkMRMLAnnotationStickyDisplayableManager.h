@@ -34,7 +34,7 @@ vtkMRMLAnnotationStickyDisplayableManager
 public:
 
   static vtkMRMLAnnotationStickyDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationStickyDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  vtkTypeMacro(vtkMRMLAnnotationStickyDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

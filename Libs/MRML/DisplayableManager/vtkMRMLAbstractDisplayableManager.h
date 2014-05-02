@@ -49,7 +49,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager
 public:
   static vtkMRMLAbstractDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
 
   /// Return True if Create() method has been invoked
   /// \sa CreateIfPossible() Create()

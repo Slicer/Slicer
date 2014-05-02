@@ -288,6 +288,22 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
+set(VTK_VERSION_MAJOR 6 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
+# Set the possible values of VTK major version for cmake-gui
+set_property(CACHE VTK_VERSION_MAJOR PROPERTY STRINGS "5" "6")
+if(NOT "${VTK_VERSION_MAJOR}" STREQUAL "5" AND NOT "${VTK_VERSION_MAJOR}" STREQUAL "6")
+  set(VTK_VERSION_MAJOR 5 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6)." FORCE)
+  message(WARNING "Setting VTK_VERSION_MAJOR to '5' as an valid value was specified.")
+endif()
+mark_as_superbuild(VTK_VERSION_MAJOR)
+
+set(USE_VTKv5 OFF)
+set(USE_VTKv6 ON)
+if(${VTK_VERSION_MAJOR} STREQUAL "5")
+  set(USE_VTKv5 ON)
+  set(USE_VTKv6 OFF)
+endif()
+
 #
 # SimpleITK has large internal libraries, which take an extremely long
 # time to link on windows when they are static. Creating shared
@@ -738,12 +754,22 @@ include(${ITK_USE_FILE})
 #-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
-find_package(VTK REQUIRED)
-if(NOT VTK_USE_QVTK)
-  message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
+if(${VTK_VERSION_MAJOR} STREQUAL "6")
+  find_package(VTK 6.0 REQUIRED NO_MODULE)
+  if(NOT TARGET vtkGUISupportQt)
+    message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
+                      "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
+                      "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. "
+                      "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
+  endif()
+else()
+  find_package(VTK REQUIRED)
+  if(NOT VTK_USE_QVTK)
+    message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
                       "to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, "
                       "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. "
                       "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
+  endif()
 endif()
 include(${VTK_USE_FILE})
 

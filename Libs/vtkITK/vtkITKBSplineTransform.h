@@ -22,7 +22,7 @@ public:
   typedef itk::AffineTransform<double,3> BulkTransformType;
   typedef itk::IdentityTransform<double,3> IdentityBulkTransformType;
   static vtkITKBSplineTransform *New();
-  vtkTypeRevisionMacro( vtkITKBSplineTransform, vtkWarpTransform );
+  vtkTypeMacro( vtkITKBSplineTransform, vtkWarpTransform );
   virtual void PrintSelf( ostream& os, vtkIndent indent );
 
   vtkAbstractTransform* MakeTransform();

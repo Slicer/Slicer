@@ -18,7 +18,6 @@
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationBidimensionalRepresentation);
-vtkCxxRevisionMacro (vtkAnnotationBidimensionalRepresentation, "$Revision: 1.0 $");
 
 //---------------------------------------------------------------------------
 void vtkAnnotationBidimensionalRepresentation::PrintSelf(ostream& os, vtkIndent indent)
