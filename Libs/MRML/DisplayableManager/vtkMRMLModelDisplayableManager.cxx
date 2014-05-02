@@ -1478,6 +1478,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     vtkMRMLDisplayNode *mrmlDisplayNode = thisDisplayNode;
     vtkMRMLModelDisplayNode *modelDisplayNode =
       vtkMRMLModelDisplayNode::SafeDownCast(mrmlDisplayNode);
+    bool isFiberDisplayNode = mrmlDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode");
     if (thisDisplayNode != 0)
       {
       vtkProp3D *prop = this->GetActorByID(thisDisplayNode->GetID());
@@ -1686,20 +1687,29 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               actor->GetMapper()->SetScalarModeToUseCellFieldData();
               actor->GetMapper()->SetColorModeToDefault();
               }
-            actor->GetMapper()->UseLookupTableScalarRangeOn();
-            if  (newMapperRange[0] != mapperTableRange[0] ||
-                 newMapperRange[1] != mapperTableRange[1])
+            if (isFiberDisplayNode)
               {
-              actor->GetMapper()->SetScalarRange(newMapperRange);
-              if (actor->GetMapper()->GetLookupTable()->IsA("vtkColorTransferFunction"))
+              // for fiber bundle display nodes, don't use the new scalar range options
+              actor->GetMapper()->UseLookupTableScalarRangeOff();
+              actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
+              }
+            else
+              {
+              actor->GetMapper()->UseLookupTableScalarRangeOn();
+              if  (newMapperRange[0] != mapperTableRange[0] ||
+                   newMapperRange[1] != mapperTableRange[1])
                 {
-                vtkWarningMacro("Setting the range on a color transfer function will not work!");
+                actor->GetMapper()->SetScalarRange(newMapperRange);
+                if (actor->GetMapper()->GetLookupTable()->IsA("vtkColorTransferFunction"))
+                  {
+                  vtkWarningMacro("Setting the range on a color transfer function will not work!");
+                  }
+                actor->GetMapper()->GetLookupTable()->SetRange(newMapperRange);
+                vtkDebugMacro("Mapper use lookup table scalar range = "
+                              << actor->GetMapper()->GetUseLookupTableScalarRange()
+                              << ", newMapperRange = "
+                              << newMapperRange[0] << ", " << newMapperRange[1]);
                 }
-              actor->GetMapper()->GetLookupTable()->SetRange(newMapperRange);
-              vtkDebugMacro("Mapper use lookup table scalar range = "
-                            << actor->GetMapper()->GetUseLookupTableScalarRange()
-                            << ", newMapperRange = "
-                            << newMapperRange[0] << ", " << newMapperRange[1]);
               }
             } // Color node
           } // scalar visibility
