@@ -90,7 +90,7 @@ vtkTeemEstimateDiffusionTensor::~vtkTeemEstimateDiffusionTensor()
 //----------------------------------------------------------------------------
 void vtkTeemEstimateDiffusionTensor::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkImageAlgorithm::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
   os << indent << "NumberOfGradients: " << this->NumberOfGradients << "\n";
   double g[3];
@@ -231,22 +231,32 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
 // as well as scalars.  This gets called before multithreader starts
 // (after which we can't allocate, for example in ThreadedExecute).
 // Note we return to the regular pipeline at the end of this function.
-void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
+int vtkTeemEstimateDiffusionTensor::RequestData(
+  vtkInformation* request,
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
-  vtkImageData *output = vtkImageData::SafeDownCast(out);
-  vtkImageData *inData = (vtkImageData *) this->GetInput();
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
+  vtkImageData *inData = vtkImageData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkImageData *output = vtkImageData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   //Check inputs numbertenEstimateMethodLLS
-  if (inData == NULL) {
+  if (inData == NULL)
+    {
     vtkErrorMacro("Input with DWIs has not been assigned");
-    return;
-  }
+    return 0;
+    }
 
   //Check if this input is multicomponent and match the number of  gradients
   int ncomp = inData->GetPointData()->GetScalars()->GetNumberOfComponents();
-  if (ncomp != this->NumberOfGradients) {
-      vtkErrorMacro("The input has to have a number of components equal to the number of gradients");
-      return;
+  if (ncomp != this->NumberOfGradients)
+    {
+    vtkErrorMacro("The input has to have a number of components equal to the number of gradients");
+    return 0;
     }
 
   // set extent so we know how many tensors to allocate
@@ -277,11 +287,8 @@ void vtkTeemEstimateDiffusionTensor::ExecuteData(vtkDataObject *out)
 
   // jump back into normal pipeline: call standard superclass method here
   //Do not jump to do the proper allocation of output data
-  this->vtkImageAlgorithm::ExecuteData(out);
-
+  return this->Superclass::RequestData(request, inputVector, outputVector);
 }
-
-
 
 //----------------------------------------------------------------------------
 // This templated function executes the filter for any type of data.
@@ -428,7 +435,6 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
       averageDWIPtr += outIncZ;
       inPtr += inIncZ;
     }
-
   delete [] dwi;
   // Delete Context
   tenEstimateContextNix(tec);
@@ -436,6 +442,7 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
   nrrdNuke(nbmat);
 }
 
+//----------------------------------------------------------------------------
 int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat)
 {
   char *err = NULL;
@@ -474,7 +481,9 @@ int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *te
   return 0;
 }
 
-int vtkTeemEstimateDiffusionTensor::SetTenContext(  tenEstimateContext *tec,Nrrd* ngrad, Nrrd* nbmat )
+//----------------------------------------------------------------------------
+int vtkTeemEstimateDiffusionTensor
+::SetTenContext(  tenEstimateContext *tec,Nrrd* ngrad, Nrrd* nbmat )
 {
     tec->progress = AIR_TRUE;
 

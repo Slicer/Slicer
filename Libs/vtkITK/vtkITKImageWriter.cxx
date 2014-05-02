@@ -281,19 +281,6 @@ void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-vtkImageData *vtkITKImageWriter::GetInput()
-{
-  if (this->GetNumberOfOutputPorts() < 1)
-    {
-    return NULL;
-    }
-
-  return (vtkImageData *)(this->vtkImageAlgorithm::GetInput());
-}
-
-
-
-//----------------------------------------------------------------------------
 // This function sets the name of the file.
 void vtkITKImageWriter::SetFileName(const char *name)
 {
@@ -319,7 +306,7 @@ void vtkITKImageWriter::SetFileName(const char *name)
 // Writes all the data from the input.
 void vtkITKImageWriter::Write()
 {
-  vtkImageData *inputImage = this->GetInput();
+  vtkImageData *inputImage = this->GetImageDataInput(0);
 
   if ( inputImage == NULL )
     {

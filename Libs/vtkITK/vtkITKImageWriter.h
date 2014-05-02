@@ -49,10 +49,6 @@ public:
   vtkBooleanMacro(UseCompression, int);
 
   ///
-  /// Get the input object from the image pipeline.
-  vtkImageData *GetInput();
-
-  ///
   /// Set/Get the ImageIO class name.
   vtkGetStringMacro (ImageIOClassName);
   vtkSetStringMacro (ImageIOClassName);

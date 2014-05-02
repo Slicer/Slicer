@@ -55,13 +55,13 @@ int vtkTensorRotate::RequestInformation (
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
 
   int ext[6];
-  vtkImageData *inData = (vtkImageData *) this->GetInput();
+  vtkImageData *inData = this->GetImageDataInput(0);
   vtkDataArray *tensorArray = inData->GetPointData()->GetTensors();
   // Make sure the Input has been set.
   if ( tensorArray == NULL)
     {
     vtkErrorMacro(<< "ExecuteInformation: Input does not contain a Tensor field.");
-    return 1;
+    return 0;
     }
 
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext);
@@ -85,7 +85,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
   output->GetExtent(outExt);
 
   // Do not copy the array we will be generating.
-  inArray = input->GetPointData()->GetScalars(0);
+  inArray = input->GetPointData()->GetScalars();
   inTensor = input->GetPointData()->GetTensors();
 
   // Conditionally copy point and cell data.

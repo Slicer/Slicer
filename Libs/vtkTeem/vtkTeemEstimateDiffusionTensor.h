@@ -178,9 +178,10 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkThreadedImageAl
 
   /// We override this in order to allocate output tensors
   /// before threading happens.  This replaces the superclass
-  /// vtkImageAlgorithm's Execute function.
-  void ExecuteData(vtkDataObject *out);
-
+  /// vtkImageAlgorithm's RequestData function.
+  virtual int RequestData(vtkInformation* request,
+                          vtkInformationVector** inputVector,
+                          vtkInformationVector* outputVector);
 };
 
 #endif

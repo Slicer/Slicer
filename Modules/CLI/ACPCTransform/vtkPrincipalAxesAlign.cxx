@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 void vtkPrincipalAxesAlign::Execute()
 {
-  vtkPolyData *         input = (vtkPolyData *)this->GetExecutive()->GetInputData(0,0);
+  vtkPolyData *         input = this->GetPolyDataInput(0);
   vtkIdType             nr_points = input->GetNumberOfPoints();
   vtkFloatingPointType* x;
 

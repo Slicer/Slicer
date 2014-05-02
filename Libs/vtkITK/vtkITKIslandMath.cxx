@@ -59,8 +59,8 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
                                           const itk::EventObject& vtkNotUsed(eventObject),
                                           void *clientdata)
 {
-  itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
-  vtkAlgorithm *vtkFilter = static_cast<vtkAlgorithm*>(clientdata);
+  itk::ProcessObject *itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
+  vtkAlgorithm *vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
   if ( itkFilter && vtkFilter )
     {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );

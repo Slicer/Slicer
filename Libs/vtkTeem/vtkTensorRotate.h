@@ -56,9 +56,8 @@ protected:
         int extent[6], int id);
 
   /// This also copies other arrays from point and cell data from input to output.
+  using Superclass::AllocateOutputData;
   vtkImageData *AllocateOutputData(vtkDataObject *out);
-  virtual void AllocateOutputData(vtkImageData *out, int *uExtent)
-    { Superclass::AllocateOutputData(out, uExtent); }
   void AllocateTensors(vtkImageData *data);
 
   int TensorType;

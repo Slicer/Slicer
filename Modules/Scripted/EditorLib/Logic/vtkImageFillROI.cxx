@@ -755,7 +755,7 @@ int vtkImageFillROI::RequestUpdateExtent(
   if ( this->GetInput() == NULL )
     {
     vtkErrorMacro(<< "ExecuteData: Input is not set.");
-    return 1;
+    return 0;
     }
 
   this->AllocateOutputData(this->GetOutput());
@@ -763,7 +763,7 @@ int vtkImageFillROI::RequestUpdateExtent(
   if ( this->GetInput()->GetDataObjectType() != VTK_IMAGE_DATA )
     {
     vtkWarningMacro ("was sent non-image data data object");
-    return 1;
+    return 0;
     }
 
   vtkImageData *inData = (vtkImageData *) this->GetInput();
@@ -776,7 +776,7 @@ int vtkImageFillROI::RequestUpdateExtent(
   if (x1 != 1)
     {
     vtkErrorMacro("Input has "<<x1<<" components instead of 1.");
-    return 1;
+    return 0;
     }
 
   // Ensure intput is 2D
@@ -784,7 +784,7 @@ int vtkImageFillROI::RequestUpdateExtent(
   if (inExt[5] != inExt[4])
     {
     vtkErrorMacro("Input must be 2D.");
-    return 1;
+    return 0;
     }
 
   switch (this->GetOutput()->GetScalarType())
@@ -793,7 +793,7 @@ int vtkImageFillROI::RequestUpdateExtent(
     default:
       {
       vtkErrorMacro(<< "Execute: Unknown ScalarType\n");
-      return 1;
+      return 0;
       }
     }
   return 1;
