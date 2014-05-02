@@ -17,7 +17,7 @@
 
 #include "vtkTeemConfigure.h"
 
-#include "vtkImageToImageFilter.h"
+#include "vtkThreadedImageAlgorithm.h"
 
 /// \brief Six scalar components from tensor.
 ///
@@ -28,11 +28,11 @@
 /// 3 5 6
 ///
 /// \sa vtkImageSetTensorComponents
-class VTK_Teem_EXPORT vtkImageGetTensorComponents : public vtkImageToImageFilter
+class VTK_Teem_EXPORT vtkImageGetTensorComponents : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageGetTensorComponents *New();
-  vtkTypeMacro(vtkImageGetTensorComponents,vtkImageToImageFilter);
+  vtkTypeMacro(vtkImageGetTensorComponents,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
@@ -51,8 +51,8 @@ protected:
   int NumberOfComponents;
   int Components[3];
 
-  void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageToImageFilter::ExecuteInformation();};
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
                        int ext[6], int id);
 private:

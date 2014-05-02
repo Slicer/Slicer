@@ -18,7 +18,7 @@
 #include "vtkSlicerEditorLibModuleLogicExport.h"
 
 // VTK includes
-#include <vtkImageToImageFilter.h>
+#include <vtkImageAlgorithm.h>
 
 #define CONNECTIVITY_IDENTIFY 1
 #define CONNECTIVITY_REMOVE 2
@@ -26,11 +26,11 @@
 #define CONNECTIVITY_MEASURE 4
 #define CONNECTIVITY_SAVE 5
 
-class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtkImageAlgorithm
 {
 public:
   static vtkImageConnectivity *New();
-  vtkTypeRevisionMacro(vtkImageConnectivity,vtkImageToImageFilter);
+  vtkTypeRevisionMacro(vtkImageConnectivity,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Function

@@ -16,7 +16,7 @@
 #define __vtkITKImageToImageFilterF2F2_h
 
 #include "vtkITKImageToImageFilter.h"
-#include "vtkImageToImageFilter.h"
+#include "vtkImageAlgorithm.h"
 #include "vtkImageAppendComponents.h"
 #include "itkImageToImageFilter.h"
 #include "itkSplitImageFilter.h"
@@ -44,7 +44,7 @@ public:
   };
   virtual void SetInput2(vtkImageData *Input)
   {
-    this->vtkProcessObject::SetNthInput(1, Input);
+    this->vtkImageAlgorithm::SetInput(1, Input);
     this->vtkExporter1->SetInput(Input);
   };
 

@@ -18,7 +18,7 @@
 #include "vtkDataArray.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"
-#include "vtkProcessObject.h"
+#include "vtkAlgorithm.h"
 
 #include "itkConnectedComponentImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
@@ -60,7 +60,7 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
                                           void *clientdata)
 {
   itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
-  vtkProcessObject *vtkFilter = static_cast<vtkProcessObject*>(clientdata);
+  vtkAlgorithm *vtkFilter = static_cast<vtkAlgorithm*>(clientdata);
   if ( itkFilter && vtkFilter )
     {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );

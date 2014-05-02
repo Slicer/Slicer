@@ -19,7 +19,10 @@
 #include <vtkImageData.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 // ITK includes
 #include <itkMetaDataDictionary.h>
@@ -128,6 +131,8 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 
   this->RegisterExtraBuiltInFactories();
   this->UnRegisterDeprecatedBuiltInFactories();
+  this->SetNumberOfInputPorts(0);
+  this->SetNumberOfOutputPorts(1);
 }
 
 //
@@ -265,9 +270,14 @@ int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* vtkNotUsed(filenam
 
 //----------------------------------------------------------------------------
 // This method returns the largest data that can be generated.
-void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
+int vtkITKArchetypeImageSeriesReader::RequestInformation(
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **vtkNotUsed(inputVector),
+  vtkInformationVector *outputVector)
 {
-  vtkImageData *output = this->GetOutput();
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
   std::vector<std::string> candidateFiles;
   std::vector<std::string> candidateSeries;
   int extent[6];
@@ -297,7 +307,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     if (!itksys::SystemTools::FileExists (fileNameCollapsed.c_str()))
       {
       itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
-      return;
+      return 1;
       }
     }
 
@@ -567,7 +577,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       if (imageIO.GetPointer() == NULL)
         {
           itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
-          return;
+          return 1;
         }
       }
     else
@@ -629,7 +639,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     {
     IjkToLpsMatrix->Delete();
     itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ".");
-    return;
+    return 1;
     }
   // Transform from LPS to RAS
   vtkMatrix4x4* LpsToRasMatrix = vtkMatrix4x4::New();
@@ -679,8 +689,8 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         }
     }
 
-  output->SetSpacing(spacing);
-  output->SetOrigin(origin);
+  outInfo->Set(vtkDataObject::SPACING(), spacing, 3);
+  outInfo->Set(vtkDataObject::ORIGIN(), origin, 3);
   RasToIjkMatrix->SetElement(3,3,1.0);
   IjkToLpsMatrix->Delete();
 
@@ -693,7 +703,8 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     }
   }
 
-  output->SetWholeExtent(extent);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent, 6);
+  int scalarType = this->OutputScalarType;
   if (this->UseNativeScalarType)
     {
     // If there is only one file in the series
@@ -701,47 +712,47 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       {
       if (imageIO.GetPointer() == NULL)
         {
-        this->SetOutputScalarType(VTK_SHORT); // TODO - figure out why multi-file series doen't have an imageIO
+        scalarType = VTK_SHORT; // TODO - figure out why multi-file series doen't have an imageIO
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::UCHAR)
         {
-        this->SetOutputScalarType(VTK_UNSIGNED_CHAR);
+        scalarType = VTK_UNSIGNED_CHAR;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::CHAR)
         {
-        this->SetOutputScalarType(VTK_CHAR);
+        scalarType = VTK_CHAR;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::USHORT)
         {
-        this->SetOutputScalarType(VTK_UNSIGNED_SHORT);
+        scalarType = VTK_UNSIGNED_SHORT;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::SHORT)
         {
-        this->SetOutputScalarType(VTK_SHORT);
+        scalarType = VTK_SHORT;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::UINT)
         {
-        this->SetOutputScalarType(VTK_UNSIGNED_INT);
+        scalarType = VTK_UNSIGNED_INT;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::INT)
         {
-        this->SetOutputScalarType(VTK_INT);
+        scalarType = VTK_INT;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::ULONG)
         {
-        this->SetOutputScalarType(VTK_UNSIGNED_LONG);
+        scalarType = VTK_UNSIGNED_LONG;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::LONG)
         {
-        this->SetOutputScalarType(VTK_LONG);
+        scalarType = VTK_LONG;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::FLOAT)
         {
-        this->SetOutputScalarType(VTK_FLOAT);
+        scalarType = VTK_FLOAT;
         }
       else if (imageIO->GetComponentType() == itk::ImageIOBase::DOUBLE)
         {
-        this->SetOutputScalarType(VTK_DOUBLE);
+        scalarType = VTK_DOUBLE;
         }
       }
     else
@@ -811,27 +822,27 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         {
         if( max <= std::numeric_limits<uint8_t>::max() )
           {
-          this->SetOutputScalarType(VTK_UNSIGNED_CHAR);
+          scalarType = VTK_UNSIGNED_CHAR;
           }
         else if( max <= std::numeric_limits<uint16_t>::max() )
           {
-          this->SetOutputScalarType(VTK_UNSIGNED_SHORT);
+          scalarType = VTK_UNSIGNED_SHORT;
           }
         else if( max <= std::numeric_limits<uint32_t>::max() )
           {
-          this->SetOutputScalarType(VTK_UNSIGNED_INT);
+          scalarType = VTK_UNSIGNED_INT;
           }
         else if( max <= std::numeric_limits<uint64_t>::max() )
           {
-          this->SetOutputScalarType(VTK_UNSIGNED_LONG);
+          scalarType = VTK_UNSIGNED_LONG;
           }
         else if( max <= std::numeric_limits<float>::max() )
           {
-          this->SetOutputScalarType(VTK_FLOAT);
+          scalarType = VTK_FLOAT;
           }
         else if( max <= std::numeric_limits<double>::max() )
           {
-          this->SetOutputScalarType(VTK_DOUBLE);
+          scalarType = VTK_DOUBLE;
           }
         else
           {
@@ -843,32 +854,32 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
         if( max <= std::numeric_limits<int8_t>::max()
           && min >= std::numeric_limits<int8_t>::min() )
           {
-          this->SetOutputScalarType(VTK_CHAR);
+          scalarType = VTK_CHAR;
           }
         else if( max <= std::numeric_limits<int16_t>::max()
           && min >= std::numeric_limits<int16_t>::min() )
           {
-          this->SetOutputScalarType(VTK_SHORT);
+          scalarType = VTK_SHORT;
           }
         else if( max <= std::numeric_limits<int32_t>::max()
           && min >= std::numeric_limits<int32_t>::min() )
           {
-          this->SetOutputScalarType(VTK_INT);
+          scalarType = VTK_INT;
           }
         else if( max <= std::numeric_limits<int64_t>::max()
           && min >= std::numeric_limits<int64_t>::min() )
           {
-          this->SetOutputScalarType(VTK_LONG);
+          scalarType = VTK_LONG;
           }
         else if ( max <= std::numeric_limits<float>::max()
           && min >= -std::numeric_limits<float>::max() )
           {
-          this->SetOutputScalarType(VTK_FLOAT);
+          scalarType = VTK_FLOAT;
           }
         else if( max <= std::numeric_limits<double>::max()
           && min >= -std::numeric_limits<double>::max() )
           {
-          this->SetOutputScalarType(VTK_DOUBLE);
+          scalarType = VTK_DOUBLE;
           }
         else
           {
@@ -878,17 +889,17 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       }
     }
 
-  if (imageIO.GetPointer() == NULL)
+  int numberOfComponents = 1;
+  if (imageIO.GetPointer() != NULL)
     {
-    this->SetNumberOfComponents(1);
+    numberOfComponents = imageIO->GetNumberOfComponents();
     }
-  else
-    {
-    this->SetNumberOfComponents(imageIO->GetNumberOfComponents());
-    }
+  this->SetNumberOfComponents(numberOfComponents);
+  this->SetOutputScalarType(scalarType);
 
-  output->SetScalarType(this->OutputScalarType);
-  output->SetNumberOfScalarComponents(this->GetNumberOfComponents());
+
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
+                                              scalarType, numberOfComponents);
 
   // Copy the MetaDataDictionary from the ITK layer to the VTK layer
   if (imageIO.GetPointer() != NULL)
@@ -900,7 +911,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     this->Dictionary = itk::MetaDataDictionary();
     }
   ParseDictionary();
-
+  return 1;
 }
 
 //----------------------------------------------------------------------------

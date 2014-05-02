@@ -15,7 +15,7 @@
 #ifndef __vtkITKImageToImageFilterUSUL_h
 #define __vtkITKImageToImageFilterUSUL_h
 
-#include "vtkImageToImageFilter.h"
+#include "vtkImageAlgorithm.h"
 #include "vtkITKImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"

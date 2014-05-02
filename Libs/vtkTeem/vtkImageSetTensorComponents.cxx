@@ -15,7 +15,10 @@
 #include "vtkFloatArray.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkMath.h"
 #include <vtkStructuredPointsWriter.h>
 
@@ -57,17 +60,36 @@ void vtkImageSetTensorComponents::ExecuteData(vtkDataObject *out)
   data->Delete();
 
   // jump back into normal pipeline: call standard superclass method here
-  this->vtkImageToImageFilter::ExecuteData(out);
+  this->vtkImageAlgorithm::ExecuteData(out);
 }
 
 //----------------------------------------------------------------------------
-void vtkImageSetTensorComponents::ExecuteInformation(
-                   vtkImageData *inData, vtkImageData *outData)
+int vtkImageSetTensorComponents::RequestInformation(
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+
   int ext[6];
-  outData->SetNumberOfScalarComponents(this->NumberOfComponents);
-  inData->GetWholeExtent(ext);
-  outData->SetWholeExtent(ext);
+  int scalarType = VTK_INT;
+
+  vtkInformation *inScalarInfo =
+    vtkDataObject::GetActiveFieldInformation(inInfo,
+      vtkDataObject::FIELD_ASSOCIATION_POINTS,
+      vtkDataSetAttributes::SCALARS);
+  if (inScalarInfo)
+    {
+    scalarType = inScalarInfo->Get(vtkDataObject::FIELD_ARRAY_TYPE());
+    }
+
+  vtkDataObject::SetPointDataActiveScalarInfo(
+    outInfo, this->OutputScalarType, this->NumberOfComponents);
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext, 6);
+  return 1;
 }
 
 

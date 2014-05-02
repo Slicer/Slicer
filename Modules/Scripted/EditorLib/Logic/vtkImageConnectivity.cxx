@@ -828,7 +828,7 @@ static void vtkImageConnectivityExecute(vtkImageConnectivity *self,
 // the datas data types.
 void vtkImageConnectivity::ExecuteData(vtkDataObject *)
 {
-  vtkImageData *inData = this->GetInput();
+  vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
   vtkImageData *outData = this->GetOutput();
   outData->SetExtent(outData->GetWholeExtent());
   outData->AllocateScalars();

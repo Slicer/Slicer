@@ -24,7 +24,7 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamlinePoints : public vtkPreciseHyperSt
 {
 public:
   static vtkPreciseHyperStreamlinePoints *New();
-  vtkTypeMacro(vtkPreciseHyperStreamlinePoints,vtkDataSetToPolyDataFilter);
+  vtkTypeMacro(vtkPreciseHyperStreamlinePoints,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkGetObjectMacro(PreciseHyperStreamline0,vtkPoints);

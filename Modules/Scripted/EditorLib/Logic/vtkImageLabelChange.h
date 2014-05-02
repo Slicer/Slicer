@@ -20,14 +20,14 @@
 #include "vtkSlicerEditorLibModuleLogicExport.h"
 
 // VTK includes
-#include <vtkImageToImageFilter.h>
+#include <vtkThreadedImageAlgorithm.h>
 
 class vtkImageData;
-class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageLabelChange : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageLabelChange : public vtkThreadedImageAlgorithm
 {
 public:
     static vtkImageLabelChange *New();
-    vtkTypeRevisionMacro(vtkImageLabelChange,vtkImageToImageFilter);
+    vtkTypeRevisionMacro(vtkImageLabelChange,vtkThreadedImageAlgorithm);
     void PrintSelf(ostream& os, vtkIndent indent);
 
     vtkSetMacro(InputLabel, float);

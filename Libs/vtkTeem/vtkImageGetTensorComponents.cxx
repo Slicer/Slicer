@@ -14,7 +14,10 @@
 #include "vtkImageGetTensorComponents.h"
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkPointData.h"
 #include "vtkMath.h"
 #include <vtkStructuredPointsWriter.h>
@@ -35,13 +38,30 @@ vtkImageGetTensorComponents::vtkImageGetTensorComponents()
 
 
 //----------------------------------------------------------------------------
-void vtkImageGetTensorComponents::ExecuteInformation(
-                   vtkImageData *inData, vtkImageData *outData)
+int vtkImageGetTensorComponents::RequestInformation(
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+
+  int scalarType = VTK_INT;
   int ext[6];
-  outData->SetNumberOfScalarComponents(6);
-  inData->GetWholeExtent(ext);
-  outData->SetWholeExtent(ext);
+  vtkInformation *inScalarInfo =
+    vtkDataObject::GetActiveFieldInformation(inInfo,
+      vtkDataObject::FIELD_ASSOCIATION_POINTS,
+      vtkDataSetAttributes::SCALARS);
+  if (inScalarInfo)
+    {
+    scalarType = inScalarInfo->Get(vtkDataObject::FIELD_ARRAY_TYPE());
+    }
+
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, scalarType, 6);
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext, 6);
+  return 1;
 }
 
 //----------------------------------------------------------------------------

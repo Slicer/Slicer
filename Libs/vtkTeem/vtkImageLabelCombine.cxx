@@ -38,13 +38,13 @@ int vtkImageLabelCombine::RequestInformation (
   vtkInformationVector *outputVector)
 {
   // get the info objects
-  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *inInfo2 = inputVector[1]->GetInformationObject(0);
 
   int ext[6], ext2[6], idx;
 
-  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext);
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext);
 
   // two input take intersection
   if (!inInfo2)
@@ -53,7 +53,7 @@ int vtkImageLabelCombine::RequestInformation (
     return 1;
     }
 
-  inInfo2->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext2);
+  inInfo2->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext2);
   for (idx = 0; idx < 3; ++idx)
     {
     if (ext2[idx*2] > ext[idx*2])
@@ -66,7 +66,7 @@ int vtkImageLabelCombine::RequestInformation (
       }
     }
 
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),ext,6);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext, 6);
 
   return 1;
 }

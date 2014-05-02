@@ -19,7 +19,7 @@
 
 #include "vtkImageData.h"
 #include "vtkPointData.h"
-#include "vtkImageSource.h"
+#include "vtkImageAlgorithm.h"
 #include "itkTimeSeriesDatabase.h"
 #include "vtkImageImport.h"
 #include "itkVTKImageExport.h"
@@ -37,13 +37,13 @@
 /// This work is part of the National Alliance for Medical Image Computing
 /// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
 /// for Medical Research, Grant U54 EB005149.
-class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageSource
+class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageAlgorithm
 {
 public:
   /// vtkStandardNewMacro ( vtkITKTimeSeriesDatabase );
   static vtkITKTimeSeriesDatabase *New();
   void PrintSelf(ostream& os, vtkIndent indent){ Superclass::PrintSelf(os, indent);};
-  vtkTypeRevisionMacro(vtkITKTimeSeriesDatabase,vtkImageSource);
+  vtkTypeRevisionMacro(vtkITKTimeSeriesDatabase,vtkImageAlgorithm);
 
 public:
   /// Create a TimeSeriesDatabase from a series of volumes
@@ -89,7 +89,7 @@ protected:
   ImageExportType::Pointer itkExporter;
   vtkImageImport* vtkImporter;
 
-  virtual void ExecuteInformation();
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *output);
 

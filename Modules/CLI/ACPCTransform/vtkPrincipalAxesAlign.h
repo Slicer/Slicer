@@ -13,7 +13,7 @@
 ==========================================================================*/
 #ifndef __vtk_principal_axes_align_h
 #define __vtk_principal_axes_align_h
-#include <vtkPolyDataToPolyDataFilter.h>
+#include <vtkPolyDataAlgorithm.h>
 #include <vtkSetGet.h>
 // ---------------------------------------------------------
 // Author: Axel Krauth
@@ -22,12 +22,12 @@
 // The direction of the eigenvector for the largest eigenvalue is the XAxis,
 // the direction of the eigenvector for the smallest eigenvalue is the ZAxis,
 // and the YAxis the the eigenvector for the remaining eigenvalue.
-class vtkPrincipalAxesAlign : public vtkPolyDataToPolyDataFilter
+class vtkPrincipalAxesAlign : public vtkPolyDataAlgorithm
 {
 public:
   static vtkPrincipalAxesAlign * New();
 
-  vtkTypeMacro(vtkPrincipalAxesAlign, vtkPolyDataToPolyDataFilter);
+  vtkTypeMacro(vtkPrincipalAxesAlign, vtkPolyDataAlgorithm);
 
   vtkGetVector3Macro(Center, vtkFloatingPointType);
   vtkGetVector3Macro(XAxis, vtkFloatingPointType);

@@ -211,7 +211,7 @@ int vtkITKLevelTracing3DImageFilter::RequestInformation(
 {
   this->Superclass::RequestInformation(request, inputVector, outputVector);
 
-  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
 
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_UNSIGNED_CHAR, 1);

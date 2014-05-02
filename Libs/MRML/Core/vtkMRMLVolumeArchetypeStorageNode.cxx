@@ -431,7 +431,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
 
   vtkNew<vtkImageChangeInformation> ici;
-  ici->SetInput(reader->GetOutput());
+  ici->SetInputConnection(reader->GetOutputPort());
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();

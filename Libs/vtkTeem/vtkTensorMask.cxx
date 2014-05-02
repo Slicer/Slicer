@@ -56,7 +56,7 @@ void vtkTensorMask::ExecuteData(vtkDataObject *out)
   data->Delete();
 
   // jump back into normal pipeline: call standard superclass method here
-  //  this->vtkImageMultipleInputFilter::ExecuteData(out);
+  //  this->vtkImageAlgorithm::ExecuteData(out);
   this->vtkImageMask::ExecuteData(out);
 }
 

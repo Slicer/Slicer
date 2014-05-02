@@ -500,7 +500,7 @@ void vtkPichonFastMarching::setActiveLabel(int _label)
 // the datas data types.
 void vtkPichonFastMarching::ExecuteData(vtkDataObject *)
 {
-  vtkImageData *inData = this->GetInput();
+  vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
   vtkImageData *outData = this->GetOutput();
 
   outData->SetExtent(this->GetOutput()->GetWholeExtent());
@@ -513,7 +513,7 @@ void vtkPichonFastMarching::ExecuteData(vtkDataObject *)
 
   int x1;
 
-  x1 = GetInput()->GetNumberOfScalarComponents();
+  x1 = vtkImageData::SafeDownCast(GetInput())->GetNumberOfScalarComponents();
   if (x1 != 1)
     {
       vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");
@@ -543,7 +543,7 @@ void vtkPichonFastMarching::setNPointsEvolution( int n )
 
 void vtkPichonFastMarching::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkImageToImageFilter::PrintSelf(os,indent);
+  vtkImageAlgorithm::PrintSelf(os,indent);
 
   os << indent << "dimX: " << this->dimX << "\n";
   os << indent << "dimY: " << this->dimY << "\n";

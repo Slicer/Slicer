@@ -9,7 +9,10 @@
 // VTK includes
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 // ITK includes
 #include <itkGrowCutSegmentationImageFilter.h>
@@ -43,7 +46,7 @@ void vtkITKImageGrowCutHandleProgressEvent(itk::Object *caller,
 {
 
   itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
-  vtkProcessObject *vtkFilter = static_cast<vtkProcessObject*>(clientdata);
+  vtkAlgorithm *vtkFilter = static_cast<vtkAlgorithm*>(clientdata);
   if (itkFilter && vtkFilter )
     {
     vtkFilter->UpdateProgress( itkFilter->GetProgress() );
@@ -325,6 +328,8 @@ vtkITKGrowCutSegmentationImageFilter::vtkITKGrowCutSegmentationImageFilter()
   this->ObjectSize = 20;
   this->ContrastNoiseRatio = 1.0;
   this->PriorSegmentConfidence = 0.003;
+  this->SetNumberOfInputPorts(3);
+  this->SetNumberOfOutputPorts(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -565,9 +570,9 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
 void vtkITKGrowCutSegmentationImageFilter::ExecuteData(
         vtkDataObject *outData)
 {
-  vtkImageData *input1 = GetInput(0);
-  vtkImageData *input2 = GetInput(1);
-  vtkImageData *input3 = GetInput(2);
+  vtkImageData *input1 = vtkImageData::SafeDownCast(GetInput(0));
+  vtkImageData *input2 = vtkImageData::SafeDownCast(GetInput(1));
+  vtkImageData *input3 = vtkImageData::SafeDownCast(GetInput(2));
 
   vtkImageData * out = vtkImageData::SafeDownCast(outData);
 
@@ -580,21 +585,19 @@ void vtkITKGrowCutSegmentationImageFilter::ExecuteData(
 }
 
 //-----------------------------------------------------------------------------
-void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation()
+int vtkITKGrowCutSegmentationImageFilter::RequestInformation(
+  vtkInformation * request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  this->Superclass::ExecuteInformation();
-}
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(1);
 
-//-----------------------------------------------------------------------------
-void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation(
-  vtkImageData **inputs, vtkImageData *output)
-{
-  if (inputs[1] == NULL)
+  if (inInfo != NULL)
     {
-    return;
+    this->Superclass::RequestInformation(request, inputVector, outputVector);
     }
-
-  output->CopyTypeSpecificInformation(inputs[1]);
+  return 1;
 }
 
 //-----------------------------------------------------------------------------

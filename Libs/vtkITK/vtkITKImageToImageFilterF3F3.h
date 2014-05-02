@@ -16,7 +16,7 @@
 #define __vtkITKImageToImageFilterF3F3_h
 
 #include "vtkITKImageToImageFilter.h"
-#include "vtkImageToImageFilter.h"
+#include "vtkImageAlgorithm.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"

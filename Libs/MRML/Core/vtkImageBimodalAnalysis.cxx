@@ -13,7 +13,11 @@
 =========================================================================auto=*/
 #include "vtkImageBimodalAnalysis.h"
 
+#include "vtkDataSetAttributes.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkImageData.h"
 
 //#include <math.h>
@@ -45,9 +49,16 @@ vtkImageBimodalAnalysis::vtkImageBimodalAnalysis()
 }
 
 //----------------------------------------------------------------------------
-void vtkImageBimodalAnalysis::ExecuteInformation(vtkImageData *, vtkImageData *output)
+int vtkImageBimodalAnalysis::RequestInformation(
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **vtkNotUsed(inputVector),
+  vtkInformationVector *outputVector)
 {
-  output->SetScalarType(VTK_FLOAT);
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_FLOAT, 1);
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -228,7 +239,7 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
 void vtkImageBimodalAnalysis::ExecuteData(vtkDataObject *out)
 {
   vtkImageData *outData = vtkImageData::SafeDownCast(out);
-  vtkImageData *inData = this->GetInput();
+  vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
   void *inPtr;
   float *outPtr;
 

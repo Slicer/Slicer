@@ -18,11 +18,12 @@
 #include <vtkMath.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 //----------------------------------------------------------------------------
 void vtkPrincipalAxesAlign::Execute()
 {
-  vtkPolyData *         input = (vtkPolyData *)this->Inputs[0];
+  vtkPolyData *         input = (vtkPolyData *)this->GetExecutive()->GetInputData(0,0);
   vtkIdType             nr_points = input->GetNumberOfPoints();
   vtkFloatingPointType* x;
 

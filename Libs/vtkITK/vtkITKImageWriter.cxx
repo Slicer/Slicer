@@ -281,20 +281,14 @@ void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkITKImageWriter::SetInput(vtkImageData *input)
-{
-  this->vtkProcessObject::SetNthInput(0, input);
-}
-
-//----------------------------------------------------------------------------
 vtkImageData *vtkITKImageWriter::GetInput()
 {
-  if (this->NumberOfInputs < 1)
+  if (this->GetNumberOfOutputPorts() < 1)
     {
     return NULL;
     }
 
-  return (vtkImageData *)(this->Inputs[0]);
+  return (vtkImageData *)(this->vtkImageAlgorithm::GetInput());
 }
 
 

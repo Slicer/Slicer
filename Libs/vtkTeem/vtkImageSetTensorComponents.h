@@ -17,7 +17,7 @@
 
 #include "vtkTeemConfigure.h"
 
-#include "vtkImageToImageFilter.h"
+#include "vtkThreadedImageAlgorithm.h"
 
 /// \brief Six scalar components to tensor.
 ///
@@ -28,11 +28,11 @@
 /// 3 5 6
 ///
 /// \sa vtkImageGetTensorComponents
-class VTK_TEEM_EXPORT vtkImageSetTensorComponents : public vtkImageToImageFilter
+class VTK_TEEM_EXPORT vtkImageSetTensorComponents : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageSetTensorComponents *New();
-  vtkTypeMacro(vtkImageSetTensorComponents,vtkImageToImageFilter);
+  vtkTypeMacro(vtkImageSetTensorComponents,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
@@ -51,14 +51,14 @@ protected:
   int NumberOfComponents;
   int Components[3];
 
-  void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageToImageFilter::ExecuteInformation();};
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
                        int ext[6], int id);
 
   /// We override this in order to allocate output tensors
   /// before threading happens.  This replaces the superclass
-  /// vtkImageMultipleInputFilter's Execute function.
+  /// vtkImageAlgorithm's Execute function.
   void ExecuteData(vtkDataObject *out);
 
 //private:

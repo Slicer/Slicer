@@ -14,7 +14,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkImageToImageFilter.h>
+#include <vtkImageAlgorithm.h>
 
 // STD includes
 #include <vector>
@@ -57,11 +57,11 @@ typedef std::vector<int> VecInt;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageAlgorithm
 {
 public:
   static vtkPichonFastMarching *New();
-  vtkTypeRevisionMacro(vtkPichonFastMarching,vtkImageToImageFilter);
+  vtkTypeRevisionMacro(vtkPichonFastMarching,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   void vtkErrorWrapper( const char* s)

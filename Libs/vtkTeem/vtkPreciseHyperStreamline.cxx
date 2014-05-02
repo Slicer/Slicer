@@ -322,7 +322,7 @@ static void FixVectors(vtkFloatingPointType **prev, vtkFloatingPointType **curre
 
 void vtkPreciseHyperStreamline::Execute()
 {
-  vtkDataSet *input = this->GetInput();
+  vtkPolyData *input = vtkPolyData::SafeDownCast(this->GetInput());
   vtkPointData *pd=input->GetPointData();
   vtkDataArray *inScalars;
   vtkDataArray *inTensors;
@@ -586,7 +586,7 @@ void vtkPreciseHyperStreamline::BuildTube()
   vtkFloatingPointType xT[3], sFactor, normal[3], w[3];
   vtkFloatingPointType theta=2.0*vtkMath::Pi()/this->NumberOfSides;
   vtkPointData *outPD;
-  vtkDataSet *input = this->GetInput();
+  vtkPolyData *input = vtkPolyData::SafeDownCast(this->GetInput());
   vtkPolyData *output = this->GetOutput();
   int iv, ix, iy;
   vtkIdType numIntPts;

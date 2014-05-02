@@ -13,7 +13,10 @@
 =========================================================================auto=*/
 #include "vtkTensorRotate.h"
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 #include "vtkFloatArray.h"
@@ -42,28 +45,35 @@ vtkTensorRotate::~vtkTensorRotate()
 
 //----------------------------------------------------------------------------
 //
-void vtkTensorRotate::ExecuteInformation(vtkImageData *inData,
-                                       vtkImageData *outData)
+int vtkTensorRotate::RequestInformation (
+  vtkInformation * vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  int ext[6];
+  // get the info objects
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
 
+  int ext[6];
+  vtkImageData *inData = (vtkImageData *) this->GetInput();
   vtkDataArray *tensorArray = inData->GetPointData()->GetTensors();
   // Make sure the Input has been set.
   if ( tensorArray == NULL)
     {
     vtkErrorMacro(<< "ExecuteInformation: Input does not contain a Tensor field.");
-    return;
+    return 1;
     }
 
-  inData->GetWholeExtent(ext);
-  outData->SetWholeExtent(ext);
+  inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), ext, 6);
+  return 1;
 }
 
 //----------------------------------------------------------------------------
 vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
 {
   vtkImageData *output = vtkImageData::SafeDownCast(out);
-  vtkImageData *input = this->GetInput();
+  vtkImageData *input = vtkImageData::SafeDownCast(this->GetInput());
   int inExt[6];
   int outExt[6];
   vtkDataArray *inArray;
@@ -75,7 +85,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
   output->GetExtent(outExt);
 
   // Do not copy the array we will be generating.
-  inArray = input->GetPointData()->GetScalars(this->InputScalarsSelection);
+  inArray = input->GetPointData()->GetScalars(0);
   inTensor = input->GetPointData()->GetTensors();
 
   // Conditionally copy point and cell data.
@@ -96,7 +106,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
       }
     else
       {
-      output->GetPointData()->CopyFieldOff(this->InputScalarsSelection);
+      output->GetPointData()->CopyFieldOff(0);
       }
     if (inTensor == input->GetPointData()->GetTensors())
       {
@@ -177,7 +187,7 @@ vtkImageData *vtkTensorRotate::AllocateOutputData(vtkDataObject *out)
     }
 
   // Now create the scalars and tensors array that will hold the output data.
-  this->ExecuteInformation();
+  output->CopyTypeSpecificInformation( input );
   output->AllocateScalars();
   this->AllocateTensors(output);
 

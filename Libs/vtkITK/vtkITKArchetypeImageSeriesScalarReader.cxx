@@ -14,14 +14,18 @@
 
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 
-#include "vtkDataArray.h"
-#include "vtkImageData.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
+// VTK includes
 #include <vtkCommand.h>
+#include <vtkDataArray.h>
+#include <vtkImageData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 
-#include "itkOrientImageFilter.h"
-#include "itkImageSeriesReader.h"
+// ITK includes
+#include <itkOrientImageFilter.h>
+#include <itkImageSeriesReader.h>
 
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision$");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
@@ -47,14 +51,20 @@ void vtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent in
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
+int vtkITKArchetypeImageSeriesScalarReader::RequestData(
+  vtkInformation* request,
+  vtkInformationVector** vtkNotUsed( inputVector ),
+  vtkInformationVector* outputVector)
 {
   if (!this->Superclass::Archetype)
     {
       vtkErrorMacro("An Archetype must be specified.");
-      return;
+      return 0;
     }
 
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  vtkDataObject * output = outInfo->Get(vtkDataObject::DATA_OBJECT());
   vtkImageData *data = vtkImageData::SafeDownCast(output);
 // removed UpdateInformation: generates an error message
 //   from VTK and doesn't appear to be needed...
@@ -185,6 +195,7 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
         vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
       }
     }
+  return 1;
 }
 
 

@@ -17,7 +17,7 @@
 
 #include "vtkTeemConfigure.h"
 
-#include "vtkDataSetToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 #include "vtkInitialValueProblemSolver.h" /// to get the function set
 
 #define VTK_INTEGRATE_FORWARD 0
@@ -60,10 +60,10 @@ class vtkPreciseHyperArray;
 ///
 /// \sa vtkTensorGlyph
 /// \sa vtkStreamer
-class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFilter
+class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkPolyDataAlgorithm
 {
  public:
-  vtkTypeRevisionMacro(vtkPreciseHyperStreamline,vtkDataSetToPolyDataFilter);
+  vtkTypeRevisionMacro(vtkPreciseHyperStreamline,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///
