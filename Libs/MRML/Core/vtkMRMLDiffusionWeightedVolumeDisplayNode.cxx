@@ -88,10 +88,10 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
   int disabledModify = this->StartModify();
 
-  Superclass::Copy(anode);
   vtkMRMLDiffusionWeightedVolumeDisplayNode *node = (vtkMRMLDiffusionWeightedVolumeDisplayNode *) anode;
-
   this->SetDiffusionComponent(node->DiffusionComponent);
+  this->Superclass::Copy(anode);
+
 
   this->EndModify(disabledModify);
 }
@@ -113,13 +113,6 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode
 {
   this->ExtractComponent->SetInput(imageData);
 }
-#else
-void vtkMRMLDiffusionWeightedVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
-{
-  this->ExtractComponent->SetInputConnection(imageDataConnection);
-}
-#endif
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
@@ -127,16 +120,27 @@ vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageData()
   return vtkImageData::SafeDownCast(this->ExtractComponent->GetInput());
 }
 
+#else
+void vtkMRMLDiffusionWeightedVolumeDisplayNode
+::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+{
+  this->ExtractComponent->SetInputConnection(imageDataConnection);
+}
+
 //----------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetInputImageDataConnection()
+{
+  return this->ExtractComponent->GetNumberOfInputConnections(0) ?
+    this->ExtractComponent->GetInputConnection(0,0) : 0;;
+}
+
+#endif
+
 #if (VTK_MAJOR_VERSION <= 5)
+//----------------------------------------------------------------------------
 vtkImageData* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
-}
-#else
-vtkAlgorithmOutput* vtkMRMLDiffusionWeightedVolumeDisplayNode::GetOutputImageDataConnection()
-{
-  return this->AppendComponents->GetOutputPort();
 }
 #endif
 
