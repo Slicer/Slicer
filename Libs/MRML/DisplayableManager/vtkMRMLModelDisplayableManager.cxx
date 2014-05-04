@@ -1492,7 +1492,6 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
 
   vtkNew<vtkMatrix4x4> matrixTransformToWorld;
-  matrixTransformToWorld->Identity();
   if (tnode != 0 && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
@@ -1508,7 +1507,6 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     vtkMRMLDisplayNode *mrmlDisplayNode = thisDisplayNode;
     vtkMRMLModelDisplayNode *modelDisplayNode =
       vtkMRMLModelDisplayNode::SafeDownCast(mrmlDisplayNode);
-    bool isFiberDisplayNode = mrmlDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode");
     if (thisDisplayNode != 0)
       {
       vtkProp3D *prop = this->GetActorByID(thisDisplayNode->GetID());
@@ -1717,6 +1715,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               actor->GetMapper()->SetScalarModeToUseCellFieldData();
               actor->GetMapper()->SetColorModeToDefault();
               }
+            bool isFiberDisplayNode = mrmlDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode");
             if (isFiberDisplayNode)
               {
               // for fiber bundle display nodes, don't use the new scalar range options
@@ -1809,14 +1808,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           imageActor->SetInput(0);
           }
 #else
-        if (modelDisplayNode->GetTextureImageDataConnection() != 0)
-          {
-          imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
-          }
-        else
-          {
-          imageActor->GetMapper()->SetInputConnection(0);
-          }
+        imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
 #endif
         imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
         }
