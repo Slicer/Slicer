@@ -106,7 +106,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   searchLayout->addWidget(configureButton);
 
   this->searchText = new ctkSearchBox;
-  this->searchText->setClearIcon(QIcon::fromTheme("edit-clear-locationbar-rtl"));
+  this->searchText->setClearIcon(QIcon::fromTheme("edit-clear-locationbar-rtl", this->searchText->clearIcon()));
   this->searchText->setSearchIcon(QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png")));
   this->searchText->setShowSearchIcon(true);
   searchLayout->addWidget(this->searchText);
