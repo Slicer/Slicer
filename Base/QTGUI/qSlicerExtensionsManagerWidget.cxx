@@ -260,6 +260,7 @@ void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
       d->ExtensionsInstallWidget->webView()->page()->mainFrame()->evaluateJavaScript(
         "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
         "midas.slicerappstore.applyFilter();");
+      d->lastSearchText = searchText;
       }
     this->killTimer(d->searchTimerId);
     d->searchTimerId = 0;
