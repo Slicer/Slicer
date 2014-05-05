@@ -111,6 +111,8 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   this->searchText->setShowSearchIcon(true);
   searchLayout->addWidget(this->searchText);
 
+  searchWidget->setEnabled(false);
+
   this->tabWidget->setCornerWidget(searchWidget, Qt::TopRightCorner);
 
   QObject::connect(this->searchText, SIGNAL(textEdited(QString)),
@@ -210,14 +212,25 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
   Q_D(qSlicerExtensionsManagerWidget);
   d->tabWidget->cornerWidget(Qt::TopLeftCorner)->setEnabled(
         d->tabWidget->widget(index) == d->InstallExtensionsTab);
+  d->tabWidget->cornerWidget(Qt::TopRightCorner)->setEnabled(
+        d->tabWidget->widget(index) == d->InstallExtensionsTab);
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::onUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  d->lastSearchText = newUrl.queryItemValue("search");
-  d->searchText->setText(d->lastSearchText);
+
+  if (newUrl.path().endsWith("/slicerappstore"))
+    {
+    d->searchText->setEnabled(true);
+    d->lastSearchText = newUrl.queryItemValue("search");
+    d->searchText->setText(d->lastSearchText);
+    }
+  else
+    {
+    d->searchText->setEnabled(false);
+    }
 }
 
 // --------------------------------------------------------------------------
