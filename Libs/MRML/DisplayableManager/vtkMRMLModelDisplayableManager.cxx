@@ -1644,16 +1644,10 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             else if (scalarRangeFlag ==
                      vtkMRMLDisplayNode::UseDataTypeScalarRange)
               {
-              vtkPointData *pointData = NULL;
-              if (modelDisplayNode->GetInputPolyData())
-                {
-                pointData = modelDisplayNode->GetInputPolyData()->GetPointData();
-                }
-              vtkDataArray *dataArray;
-              if (pointData)
-                {
-                dataArray = pointData->GetArray(modelDisplayNode->GetActiveScalarName());
-                }
+              vtkPointData *pointData = modelDisplayNode->GetInputPolyData() ?
+                modelDisplayNode->GetInputPolyData()->GetPointData() : NULL;
+              vtkDataArray *dataArray = pointData ?
+                pointData->GetArray(modelDisplayNode->GetActiveScalarName()) : NULL;
               if (dataArray)
                 {
                 double min = dataArray->GetDataTypeMin();
