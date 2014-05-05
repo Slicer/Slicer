@@ -19,13 +19,32 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QTimerEvent>
 #include <QToolButton>
+#include <QWebFrame>
 #include <QWebView>
+
+// CTK includes
+#include <ctkSearchBox.h>
 
 // QtGUI includes
 #include "qSlicerExtensionsManagerWidget.h"
 #include "qSlicerExtensionsManagerModel.h"
 #include "ui_qSlicerExtensionsManagerWidget.h"
+
+// --------------------------------------------------------------------------
+namespace
+{
+
+QString jsQuote(QString text)
+{
+  // NOTE: This assumes that 'text' does not contain '\r' or other control characters
+  static QRegExp reSpecialCharacters("([\'\"\\\\])");
+  text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
+  return QString("\'%1\'").arg(text);
+}
+
+}
 
 //-----------------------------------------------------------------------------
 class qSlicerExtensionsManagerWidgetPrivate: public Ui_qSlicerExtensionsManagerWidget
@@ -37,11 +56,15 @@ protected:
 public:
   qSlicerExtensionsManagerWidgetPrivate(qSlicerExtensionsManagerWidget& object);
   void init();
+
+  ctkSearchBox* searchText;
+  QString lastSearchText;
+  int searchTimerId;
 };
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerWidgetPrivate::qSlicerExtensionsManagerWidgetPrivate(qSlicerExtensionsManagerWidget& object)
-  :q_ptr(&object)
+  :q_ptr(&object), searchTimerId(0)
 {
 }
 
@@ -54,14 +77,14 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   // Back and forward buttons
   QWidget * actionsWidget = new QWidget;
-  QHBoxLayout * hLayout = new QHBoxLayout(actionsWidget);
-  hLayout->setContentsMargins(0, 0, 0, 0);
+  QHBoxLayout * actionsLayout = new QHBoxLayout(actionsWidget);
+  actionsLayout->setContentsMargins(0, 0, 0, 0);
   QToolButton * backButton = new QToolButton;
   backButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Back));
-  hLayout->addWidget(backButton);
+  actionsLayout->addWidget(backButton);
   QToolButton * forwardButton = new QToolButton;
   forwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Forward));
-  hLayout->addWidget(forwardButton);
+  actionsLayout->addWidget(forwardButton);
 
   int size = this->tabWidget->height();
   backButton->setIconSize(QSize(size, size));
@@ -70,6 +93,32 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   actionsWidget->setEnabled(false);
 
   this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
+
+  // Search field
+  QWidget * searchWidget = new QWidget;
+  QHBoxLayout * searchLayout = new QHBoxLayout(searchWidget);
+  searchLayout->setContentsMargins(0, 0, 0, 0);
+
+  QToolButton * configureButton = new QToolButton; // needed for vertical alignment
+  configureButton->setMinimumSize(forwardButton->sizeHint());
+  configureButton->setAutoRaise(true);
+  configureButton->setEnabled(false);
+  searchLayout->addWidget(configureButton);
+
+  this->searchText = new ctkSearchBox;
+  this->searchText->setClearIcon(QIcon::fromTheme("edit-clear-locationbar-rtl"));
+  this->searchText->setSearchIcon(QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png")));
+  this->searchText->setShowSearchIcon(true);
+  searchLayout->addWidget(this->searchText);
+
+  this->tabWidget->setCornerWidget(searchWidget, Qt::TopRightCorner);
+
+  QObject::connect(this->searchText, SIGNAL(textEdited(QString)),
+                   q, SLOT(onSearchTextChanged(QString)));
+
+  QObject::connect(this->ExtensionsInstallWidget->webView(),
+                   SIGNAL(urlChanged(QUrl)),
+                   q, SLOT(onUrlChanged(QUrl)));
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    q, SLOT(onCurrentTabChanged(int)));
@@ -161,4 +210,46 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
   Q_D(qSlicerExtensionsManagerWidget);
   d->tabWidget->cornerWidget(Qt::TopLeftCorner)->setEnabled(
         d->tabWidget->widget(index) == d->InstallExtensionsTab);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onUrlChanged(const QUrl& newUrl)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  d->lastSearchText = newUrl.queryItemValue("search");
+  d->searchText->setText(d->lastSearchText);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onSearchTextChanged(const QString& newText)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  if (d->searchTimerId)
+    {
+    this->killTimer(d->searchTimerId);
+    d->searchTimerId = 0;
+    }
+  if (newText != d->lastSearchText)
+    {
+    d->searchTimerId = this->startTimer(200);
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  if (e->timerId() == d->searchTimerId)
+    {
+    const QString& searchText = d->searchText->text();
+    if (searchText != d->lastSearchText)
+      {
+      d->ExtensionsInstallWidget->webView()->page()->mainFrame()->evaluateJavaScript(
+        "midas.slicerappstore.search = " + jsQuote(searchText) + ";"
+        "midas.slicerappstore.applyFilter();");
+      }
+    this->killTimer(d->searchTimerId);
+    d->searchTimerId = 0;
+    }
+  QObject::timerEvent(e);
 }

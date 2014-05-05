@@ -97,6 +97,7 @@
     <file alias="Icons/ExtensionError.png">Icons/gtk-dialog-warning.png</file>
 
     <file>Icons/Go.png</file>
+    <file>Icons/Search.png</file>
 
     <file>Icons/MousePickMode.png</file>
     <file>Icons/MouseSinglePickMode.png</file>

@@ -22,6 +22,7 @@
 #define __qSlicerExtensionsManagerWidget_h
 
 // Qt includes
+#include <QUrl>
 #include <QWidget>
 
 // QtGUI includes
@@ -53,8 +54,12 @@ public slots:
 protected slots:
   void onModelUpdated();
   void onCurrentTabChanged(int index);
+  void onUrlChanged(const QUrl& newUrl);
+  void onSearchTextChanged(const QString& newText);
 
 protected:
+  virtual void timerEvent(QTimerEvent*);
+
   QScopedPointer<qSlicerExtensionsManagerWidgetPrivate> d_ptr;
 
 private:
