@@ -128,6 +128,9 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkImagingCore
     vtksys
   )
+  # Teem vtkNRRDReader overwrites VTK vtkNrrdReader
+  set(VTK_WRAP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${VTK_INCLUDE_DIRS}
+      CACHE INTERNAL "VTK wrap include dirs" FORCE)
 else()
   set(VTK_LIBRARIES
     vtkCommon

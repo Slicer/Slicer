@@ -48,13 +48,7 @@ macro(vtkMacroKitPythonWrap)
     set(VTK_WRAP_PYTHON_FIND_LIBS 1)
     include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
 
-    set(TMP_WRAP_FILES ${MY_KIT_SRCS} ${MY_KIT_WRAP_HEADERS})
-    set(old_VTK_WRAP_INCLUDE_DIRS ${VTK_WRAP_INCLUDE_DIRS})
-    get_property(local_include_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-    set(VTK_WRAP_INCLUDE_DIRS ${local_include_dirs} ${VTK_INCLUDE_DIRS})
-    list(REMOVE_DUPLICATES VTK_WRAP_INCLUDE_DIRS)
     VTK_WRAP_PYTHON3(${MY_KIT_NAME}Python KitPython_SRCS "${TMP_WRAP_FILES}")
-    set(VTK_WRAP_INCLUDE_DIRS ${old_VTK_WRAP_INCLUDE_DIRS})
 
     include_directories("${PYTHON_INCLUDE_PATH}")
 
