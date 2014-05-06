@@ -29,6 +29,20 @@
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderFile);
 
+namespace {
+
+template <class T>
+vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
+{
+#if VTK_MAJOR_VERSION <= 5
+  return static_cast<vtkDataArrayTemplate<T>*>(a);
+#else
+  return vtkDataArrayTemplate<T>::FastDownCast(a);
+#endif
+}
+
+};
+
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReaderFile::vtkITKArchetypeImageSeriesVectorReaderFile()
 {
@@ -78,7 +92,7 @@ void vtkITKExecuteDataFromFileVector(
   typename itk::ImportImageContainer<unsigned long, T>::Pointer PixelContainer2;
   PixelContainer2 = filter->GetOutput()->GetPixelContainer();
   void *ptr = static_cast<void *> (PixelContainer2->GetBufferPointer());
-  dynamic_cast<vtkDataArrayTemplate<T>* >(data->GetPointData()->GetScalars())
+  DownCast<T>(data->GetPointData()->GetScalars())
     ->SetVoidArray(ptr, PixelContainer2->Size(), 0,
                    vtkDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
   PixelContainer2->ContainerManageMemoryOff();

@@ -32,6 +32,19 @@
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 
+namespace {
+
+template <class T>
+vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
+{
+#if VTK_MAJOR_VERSION <= 5
+  return static_cast<vtkDataArrayTemplate<T>*>(a);
+#else
+  return vtkDataArrayTemplate<T>::FastDownCast(a);
+#endif
+}
+
+};
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesScalarReader::vtkITKArchetypeImageSeriesScalarReader()
@@ -81,7 +94,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
 #endif
 
-  /// SCALAR MACRO
+/// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \
     case typeN: \
     {\
@@ -114,7 +127,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer##typeN;\
       PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
-      dynamic_cast<vtkDataArrayTemplate<type>* >(data->GetPointData()->GetScalars())\
+      DownCast<type>(data->GetPointData()->GetScalars())                \
         ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
                        vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer##typeN->ContainerManageMemoryOff();\
@@ -148,7 +161,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer2##typeN;\
       PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
-      dynamic_cast<vtkDataArrayTemplate<type>*>(data->GetPointData()->GetScalars())\
+      DownCast<type>(data->GetPointData()->GetScalars())                \
         ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
                        vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer2##typeN->ContainerManageMemoryOff();\
