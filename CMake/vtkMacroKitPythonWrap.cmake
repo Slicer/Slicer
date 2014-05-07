@@ -48,6 +48,7 @@ macro(vtkMacroKitPythonWrap)
     set(VTK_WRAP_PYTHON_FIND_LIBS 1)
     include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
 
+    set(TMP_WRAP_FILES ${MY_KIT_SRCS} ${MY_KIT_WRAP_HEADERS})
     VTK_WRAP_PYTHON3(${MY_KIT_NAME}Python KitPython_SRCS "${TMP_WRAP_FILES}")
 
     include_directories("${PYTHON_INCLUDE_PATH}")
