@@ -96,25 +96,30 @@ class DICOMDetailsPopup(object):
 
     self.window.setWindowTitle('DICOM Browser')
 
-    self.layout = qt.QVBoxLayout()
-    self.window.setLayout(self.layout)
+    self.layout = qt.QVBoxLayout(self.window)
 
     # tool row at top, with commands and database
     self.toolFrame = qt.QWidget()
+    self.toolFrame.setMaximumHeight(40)
     self.toolLayout = qt.QHBoxLayout(self.toolFrame)
     self.layout.addWidget(self.toolFrame)
     self.toolLayout.addWidget(self.toolBar)
     self.toolLayout.addWidget(self.databaseNameLabel)
+    self.databaseNameLabel.visible = False
     self.toolLayout.addWidget(self.databaseDirectoryButton)
+    self.databaseDirectoryButton.visible = False
+    self.settingsButton = ctk.ctkExpandButton()
+    self.toolBar.addWidget(self.settingsButton)
+    self.settingsButton.connect('toggled(bool)', self.onSettingsButton)
 
     # tables goes next, spread across 1 row, 2 columns
     self.tables.tableOrientation = self.tableOrientation
     self.tables.dynamicTableLayout = False
     self.tablesExpandableWidget = ctk.ctkExpandableWidget()
-    self.layout.addWidget(self.tablesExpandableWidget)
     self.tablesLayout = qt.QVBoxLayout(self.tablesExpandableWidget)
-
     self.tablesLayout.addWidget(self.tables)
+    self.tablesExpandableWidget.setMinimumHeight(400)
+    self.layout.addWidget(self.tablesExpandableWidget)
 
     #
     # preview related column
@@ -139,7 +144,7 @@ class DICOMDetailsPopup(object):
     self.loadableTableLayout.addWidget(self.userFrame)
     self.userFrame.hide()
 
-    tableWidth = 350 if showHeader else 700
+    tableWidth = 350 if showHeader else 600
     self.loadableTable = DICOMLoadableTable(self.userFrame,width=tableWidth)
     #self.loadableTableLayout.addWidget(self.loadableTable.widget)
     #self.loadableTable.widget.hide()
@@ -148,8 +153,9 @@ class DICOMDetailsPopup(object):
     # button row for action column
     #
     self.actionButtonsFrame = qt.QWidget()
+    self.actionButtonsFrame.setMaximumHeight(40)
     self.layout.addWidget(self.actionButtonsFrame)
-    self.layout.addStretch(1)
+    #self.layout.addStretch(1)
     self.actionButtonLayout = qt.QHBoxLayout()
     self.actionButtonsFrame.setLayout(self.actionButtonLayout)
 
@@ -187,9 +193,10 @@ class DICOMDetailsPopup(object):
     self.actionButtonLayout.addWidget(self.advancedViewButton)
     self.advancedViewButton.enabled = True
     self.advancedViewButton.checked = self.advancedViewCheckState
-    self.advancedViewButton.connect('stateChanged(int)', self.onAdvanedViewButton)
+    self.advancedViewButton.connect('clicked()', self.onAdvanedViewButton)
 
     self.horizontalViewCheckBox = qt.QCheckBox('Horizontal Tables')
+    self.horizontalViewCheckBox.visible = False
     self.toolLayout.addWidget(self.horizontalViewCheckBox)
     self.horizontalViewCheckBox.enabled = True
     if self.tableOrientation == 1:
@@ -205,10 +212,12 @@ class DICOMDetailsPopup(object):
 
     if self.advancedViewCheckState == True:
       self.loadableTableFrame.show()
+      self.window.adjustSize()
     else:
       self.examineButton.hide()
       self.uncheckAllButton.hide()
       self.loadableTableFrame.hide()
+      self.window.adjustSize()
     #
     # header related column (more details about the selected file)
     #
@@ -234,6 +243,9 @@ class DICOMDetailsPopup(object):
     settings = qt.QSettings()
     settings.beginWriteArray('DICOM/disabledPlugins')
 
+    for key in settings.allKeys():
+      settings.remove(key)
+
     plugins = self.pluginSelector.selectedPlugins()
     arrayIndex = 0
     for  pluginClass in slicer.modules.dicomPlugins:
@@ -244,25 +256,32 @@ class DICOMDetailsPopup(object):
 
     settings.endArray()
 
-  def onAdvanedViewButton (self,state):
+  def onSettingsButton(self, status):
+    print 'toggled'
+    settingWidgets = [self.databaseNameLabel, self.databaseDirectoryButton,
+        self.horizontalViewCheckBox]
+    for widget in settingWidgets:
+      widget.visible = self.settingsButton.checked
+
+  def onAdvanedViewButton (self):
     settings = qt.QSettings()
     self.advancedViewCheckState = self.advancedViewButton.checked
 
-    # if advanced mode is not toggled
-    if state == 0:
+    if self.advancedViewButton.checked :
+      settings.setValue('DICOM/advancedViewToggled',
+          self.advancedViewCheckState )
+      self.loadableTableFrame.show()
+      self.examineButton.show()
+      self.uncheckAllButton.show()
+      self.loadButton.enabled = False
+      self.window.adjustSize()
+    else:
       settings.remove('DICOM/advancedViewToggled')
       self.loadableTableFrame.hide()
       self.examineButton.hide()
       self.uncheckAllButton.hide()
       self.loadButton.enabled = True
-
-    # if advanced mode is toggled
-    if state == 2:
-      settings.setValue('DICOM/advancedViewToggled', self.advancedViewCheckState )
-      self.loadableTableFrame.show()
-      self.examineButton.show()
-      self.uncheckAllButton.show()
-      self.loadButton.enabled = False
+      self.window.adjustSize()
 
   def onHorizontalViewCheckBox(self, direction):
 
@@ -525,7 +544,7 @@ class DICOMLoadableTable(object):
   the given dicom files
   """
 
-  def __init__(self,parent, width=350,height=200):
+  def __init__(self,parent, width=350,height=100):
     self.widget = qt.QTableWidget(parent)
     self.widget.setMinimumHeight(height)
     self.widget.setMinimumWidth(width)
