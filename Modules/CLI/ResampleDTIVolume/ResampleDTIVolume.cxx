@@ -414,7 +414,6 @@ SetTransformAndOrder( parameters & list,
   typedef itk::DiffusionTensor3DTransform<PixelType> TransformType;
   typedef itk::DiffusionTensor3DNonRigidTransform<PixelType>
   NonRigidTransformType;
-  typedef typename TransformType::Pointer                 TransformTypePointer;
   typedef itk::DiffusionTensor3DRigidTransform<PixelType> RigidTransformType;
   typedef itk::DiffusionTensor3DFSAffineTransform<PixelType>
   FSAffineTransformType;

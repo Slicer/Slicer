@@ -20,7 +20,6 @@ scheduleImagePyramid(PyramidFilterType* pyramid)
   // concept check 3D image
 
   typedef typename RegionType::SizeType      SizeType;
-  typedef typename RegionType::SizeValueType SizeValueType;
 
   const SizeType size = region.GetSize();
 

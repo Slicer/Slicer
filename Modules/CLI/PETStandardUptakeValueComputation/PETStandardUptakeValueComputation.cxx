@@ -774,10 +774,6 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   typedef    T                           OutputPixelType;
   typedef itk::Image<OutputPixelType, 3> OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileReader<LabelImageType>  LabelReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
-
   //
   // for writing csv output files
   //
@@ -872,10 +868,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   typedef itk::Image< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > VolumeReaderType;
   typedef itk::Image< PixelValueType, 2 > SliceType;
-  typedef itk::ImageFileReader< SliceType > SliceReaderType;
-  typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
-  typedef itk::VectorImage< PixelValueType, 3 > NRRDImageType;
 
   if ( !list.PETDICOMPath.compare(""))
     {

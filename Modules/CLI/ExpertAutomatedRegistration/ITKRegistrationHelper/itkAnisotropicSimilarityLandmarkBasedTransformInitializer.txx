@@ -114,7 +114,6 @@ AnisotropicSimilarityLandmarkBasedTransformInitializer<TTransform, TFixedImage, 
 
       typedef typename AnisotropicSimilarity3DTransformType::OutputVectorType VectorType;
       typedef typename AnisotropicSimilarity3DTransformType::OutputPointType  PointType;
-      typedef typename AnisotropicSimilarity3DTransformType::CenterType       RotationCenterType;
 
       // Compute the centroids
       PointType fixedCentroid;

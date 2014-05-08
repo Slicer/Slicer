@@ -209,7 +209,6 @@ int main( int argc, char * argv[] )
   fpyramid->Update();
 
   ImagePyramid::Pointer mpyramid = ImagePyramid::New();
-  typedef ImagePyramid::ScheduleType Schedule;
   mpyramid->UseShrinkImageFilterOff();
   // hard code for now
   mpyramid->SetInput(mreader->GetOutput() );

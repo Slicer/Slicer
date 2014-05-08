@@ -173,7 +173,6 @@ int DoIt2( int argc, char * argv[], const T1 &, const T2 & )
   typedef itk::ResampleImageFilter<MovingImageType, MovingImageType>                      ResampleType;             // ##
   typedef itk::LinearInterpolateImageFunction<MovingImageType, double>                    ResampleInterpolatorType; // ##
   typedef itk::ImageFileWriter<MovingImageType>                                           WriterType;               // ##
-  typedef itk::ImageFileWriter<FixedImageType>                                            FixedWriterType;          // ##
   typedef itk::ContinuousIndex<double, 3>                                                 ContinuousIndexType;
 
   // bool DoInitializeTransform = false;

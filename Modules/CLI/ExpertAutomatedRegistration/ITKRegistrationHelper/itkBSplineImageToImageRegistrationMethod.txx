@@ -824,7 +824,6 @@ BSplineImageToImageRegistrationMethod<TImage>
   typedef BSplineResampleImageFunction<ParametersImageType, double>
   FunctionType;
   typedef IdentityTransform<double, ImageDimension> IdentityTransformType;
-  typedef itk::ImageFileWriter<ParametersImageType> WriterType;
   for( unsigned int k = 0; k < ImageDimension; k++ )
     {
     typename ResamplerType::Pointer upsampler = ResamplerType::New();

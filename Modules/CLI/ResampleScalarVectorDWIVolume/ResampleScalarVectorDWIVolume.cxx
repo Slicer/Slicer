@@ -271,7 +271,6 @@ SetTransformAndOrder( parameters & list,
 {
   typedef itk::AffineTransform<double, 3>        AffineTransformType;
   typedef itk::MatrixOffsetTransformBase<double> RotationType;
-  typedef itk::Transform<double, 3, 3>           TransformType;
   if( list.transformationFile.compare( "" ) ) // Get transformation matrix from command line if no file given
     {
     list.transformMatrix.resize( 0 );
@@ -1173,7 +1172,6 @@ template <class PixelType>
 int Rotate( parameters & list )
 {
   typedef itk::Image<PixelType, 3>                         ImageType;
-  typedef itk::ImageFileReader<ImageType>                  FileReaderType;
   typedef itk::InterpolateImageFunction<ImageType, double> InterpolatorType;
   typedef itk::ResampleImageFilter<ImageType, ImageType>   ResampleType;
   typedef itk::Transform<double, 3, 3>                     TransformType;
