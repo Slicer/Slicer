@@ -13,8 +13,11 @@
 
 =========================================================================*/
 #include "vtkSlicerRayCastImageDisplayHelper.h"
-#include "vtkSlicerVolumeRenderingFactory.h"
+#include <vtkObjectFactory.h>
+#include <vtkVersion.h>
 
+#if VTK_MAJOR_VERSION <= 5
+#include "vtkSlicerVolumeRenderingFactory.h"
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
@@ -27,7 +30,9 @@ vtkSlicerRayCastImageDisplayHelper* vtkSlicerRayCastImageDisplayHelper::New()
   vtkObject* ret=vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerRayCastImageDisplayHelper");
   return (vtkSlicerRayCastImageDisplayHelper*)ret;
 }
-
+#else
+vtkAbstractObjectFactoryNewMacro(vtkSlicerRayCastImageDisplayHelper);
+#endif
 
 // Construct a new vtkSlicerRayCastImageDisplayHelper with default values
 vtkSlicerRayCastImageDisplayHelper::vtkSlicerRayCastImageDisplayHelper()

@@ -13,7 +13,6 @@
 
 =========================================================================*/
 #include "vtkSlicerGPUVolumeTextureMapper3D.h"
-#include "vtkSlicerVolumeRenderingFactory.h"
 
 #include "vtkRenderer.h"
 #include "vtkVolume.h"
@@ -29,10 +28,24 @@
 #include "vtkMultiThreader.h"
 
 
+#if VTK_MAJOR_VERSION <= 5
+#include "vtkSlicerVolumeRenderingFactory.h"
+
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
 vtkInstantiatorNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
+
 //----------------------------------------------------------------------------
+vtkSlicerGPUVolumeTextureMapper3D *vtkSlicerGPUVolumeTextureMapper3D::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret =
+    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeTextureMapper3D");
+  return (vtkSlicerGPUVolumeTextureMapper3D*)ret;
+}
+#else
+vtkStandardNewMacro(vtkSlicerGPUVolumeTextureMapper3D);
+#endif
 
 // This method moves the scalars from the input volume into volume1 (and
 // possibly volume2) which are the 3D texture maps used for rendering.
@@ -691,15 +704,6 @@ vtkSlicerGPUVolumeTextureMapper3D::~vtkSlicerGPUVolumeTextureMapper3D()
     this->Threader->Delete();
     this->Threader = NULL;
   }
-}
-
-
-vtkSlicerGPUVolumeTextureMapper3D *vtkSlicerGPUVolumeTextureMapper3D::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
-    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeTextureMapper3D");
-  return (vtkSlicerGPUVolumeTextureMapper3D*)ret;
 }
 
 int vtkSlicerGPUVolumeTextureMapper3D::UpdateVolumes(vtkVolume *vtkNotUsed(vol))

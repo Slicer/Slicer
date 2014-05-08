@@ -28,19 +28,15 @@ set(${KIT}_SRCS
   vtkMRML${MODULE_NAME}ScenarioNode.h
   )
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(${KIT}_TARGET_LIBRARIES
-    ${ITK_LIBRARIES}
-    ${MRML_LIBRARIES}
-    vtkSlicerAnnotationsModuleMRML
-    )
-else()
-  set(${KIT}_TARGET_LIBRARIES
-    ${ITK_LIBRARIES}
-    ${MRML_LIBRARIES}
-    vtkRendering
-    vtkSlicerAnnotationsModuleMRML
-    )
+set(${KIT}_TARGET_LIBRARIES
+  ${ITK_LIBRARIES}
+  ${MRML_LIBRARIES}
+  vtkSlicerAnnotationsModuleMRML
+  )
+if(${VTK_VERSION_MAJOR} LESS 6)
+  list(APPEND ${KIT}_TARGET_LIBRARIES
+       vtkRendering
+       )
 endif()
 
 #-----------------------------------------------------------------------------

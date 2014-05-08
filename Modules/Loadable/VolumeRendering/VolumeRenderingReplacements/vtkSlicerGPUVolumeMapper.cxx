@@ -13,25 +13,40 @@
 
 =========================================================================*/
 #include "vtkSlicerGPUVolumeMapper.h"
-#include "vtkSlicerVolumeRenderingFactory.h"
 
-#include "vtkDataArray.h"
-#include "vtkVolume.h"
-#include "vtkMath.h"
-#include "vtkPointData.h"
-#include "vtkImageData.h"
 #include "vtkColorTransferFunction.h"
-#include "vtkPiecewiseFunction.h"
-#include "vtkVolumeProperty.h"
 #include "vtkCommand.h"
+#include "vtkDataArray.h"
+#include "vtkImageData.h"
+#include "vtkMath.h"
 #include "vtkMultiThreader.h"
+#include <vtkObjectFactory.h>
+#include "vtkPiecewiseFunction.h"
+#include "vtkPointData.h"
+#include "vtkVolume.h"
+#include "vtkVolumeProperty.h"
 #include <vtkVersion.h>
 
+#if VTK_MAJOR_VERSION <= 5
+#include "vtkSlicerVolumeRenderingFactory.h"
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
 vtkInstantiatorNewMacro(vtkSlicerGPUVolumeMapper);
+
 //----------------------------------------------------------------------------
+vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret =
+    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeMapper");
+  return (vtkSlicerGPUVolumeMapper*)ret;
+}
+#else
+vtkStandardNewMacro(vtkSlicerGPUVolumeMapper);
+#endif
+
+
 
 // This method moves the scalars from the input volume into volume1 (and
 // possibly volume2) which are the 3D texture maps used for rendering.
@@ -690,15 +705,6 @@ vtkSlicerGPUVolumeMapper::~vtkSlicerGPUVolumeMapper()
     this->Threader->Delete();
     this->Threader = NULL;
   }
-}
-
-
-vtkSlicerGPUVolumeMapper *vtkSlicerGPUVolumeMapper::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
-    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerGPUVolumeMapper");
-  return (vtkSlicerGPUVolumeMapper*)ret;
 }
 
 int vtkSlicerGPUVolumeMapper::UpdateVolumes(vtkVolume *vtkNotUsed(vol))

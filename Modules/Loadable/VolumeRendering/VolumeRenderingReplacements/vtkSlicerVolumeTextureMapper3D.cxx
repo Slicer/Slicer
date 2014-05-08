@@ -13,26 +13,40 @@
 
 =========================================================================*/
 #include "vtkSlicerVolumeTextureMapper3D.h"
-#include "vtkSlicerVolumeRenderingFactory.h"
 
-#include "vtkDataArray.h"
-#include "vtkRenderer.h"
 #include "vtkCamera.h"
-#include "vtkMath.h"
-#include "vtkPointData.h"
-#include "vtkImageData.h"
 #include "vtkColorTransferFunction.h"
-#include "vtkPiecewiseFunction.h"
-#include "vtkVolumeProperty.h"
-#include "vtkMatrix4x4.h"
 #include "vtkCommand.h"
+#include "vtkDataArray.h"
+#include "vtkImageData.h"
+#include "vtkMath.h"
+#include "vtkMatrix4x4.h"
+#include <vtkObjectFactory.h>
+#include "vtkPiecewiseFunction.h"
+#include "vtkPointData.h"
+#include "vtkRenderer.h"
+#include "vtkVolumeProperty.h"
 #include <vtkVersion.h>
 
+
+#if VTK_MAJOR_VERSION <= 5
+#include "vtkSlicerVolumeRenderingFactory.h"
 
 //----------------------------------------------------------------------------
 // Needed when we don't use the vtkStandardNewMacro.
 vtkInstantiatorNewMacro(vtkSlicerVolumeTextureMapper3D);
+
 //----------------------------------------------------------------------------
+vtkSlicerVolumeTextureMapper3D *vtkSlicerVolumeTextureMapper3D::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret =
+    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerVolumeTextureMapper3D");
+  return (vtkSlicerVolumeTextureMapper3D*)ret;
+}
+#else
+vtkStandardNewMacro(vtkSlicerVolumeTextureMapper3D);
+#endif
 
 // This method moves the scalars from the input volume into volume1 (and
 // possibly volume2) which are the 3D texture maps used for rendering.
@@ -688,15 +702,6 @@ vtkSlicerVolumeTextureMapper3D::~vtkSlicerVolumeTextureMapper3D()
     delete [] this->Volume1;
     delete [] this->Volume2;
     delete [] this->Volume3;
-}
-
-
-vtkSlicerVolumeTextureMapper3D *vtkSlicerVolumeTextureMapper3D::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret =
-    vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerVolumeTextureMapper3D");
-  return (vtkSlicerVolumeTextureMapper3D*)ret;
 }
 
 void vtkSlicerVolumeTextureMapper3D::ComputePolygons( vtkRenderer *ren,
