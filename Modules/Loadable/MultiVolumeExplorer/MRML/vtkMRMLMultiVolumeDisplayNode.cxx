@@ -136,7 +136,8 @@ vtkImageData* vtkMRMLMultiVolumeDisplayNode::GetInputImageData()
 #else
 vtkAlgorithmOutput* vtkMRMLMultiVolumeDisplayNode::GetInputImageDataConnection()
 {
-  return this->ExtractComponent->GetInputConnection(0,0);
+  return this->ExtractComponent->GetNumberOfInputConnections(0) ?
+    this->ExtractComponent->GetInputConnection(0,0) : 0;
 }
 #endif
 
