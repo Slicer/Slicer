@@ -764,16 +764,6 @@ const char * MapLabelIDtoColorName( int id, std::string colorFile )
 template <class T>
 int LoadImagesAndComputeSUV( parameters & list, T )
 {
-
-
-  typedef    T                           InputPixelType;
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-
-  typedef itk::Image<unsigned char, 3> LabelImageType;
-
-  typedef    T                           OutputPixelType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
-
   //
   // for writing csv output files
   //
@@ -867,7 +857,6 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   typedef short PixelValueType;
   typedef itk::Image< PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > VolumeReaderType;
-  typedef itk::Image< PixelValueType, 2 > SliceType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
   if ( !list.PETDICOMPath.compare(""))

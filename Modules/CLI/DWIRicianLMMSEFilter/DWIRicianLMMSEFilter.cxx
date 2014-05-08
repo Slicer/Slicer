@@ -41,8 +41,6 @@ int DoIt( int argc, char * argv[], PixelType )
   typedef double                                       PixelTypeDouble;
   typedef itk::VectorImage<PixelTypeDouble, DIMENSION> DoubleDiffusionImageType;
 
-  typedef itk::Image<PixelTypeDouble, DIMENSION> ScalarDoubleImageType;
-
   typedef itk::CovariantVector<double, DIMENSION> CovariantVectorType;
 
   std::vector<CovariantVectorType> diffusionDirections;

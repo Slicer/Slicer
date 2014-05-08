@@ -44,7 +44,6 @@ int DoIt( int argc, char * argv[], T )
 
   typedef T InputPixelType;
   typedef T OutputPixelType;
-  typedef T WritePixelType;
 
   typedef itk::Image<InputPixelType,  Dimension> InputImageType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;

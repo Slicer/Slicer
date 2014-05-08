@@ -31,8 +31,6 @@ int main( int argc, char * argv[] )
   typedef itk::MetaDataDictionary DictionaryType;
   const DictionaryType & dictionary = reader->GetMetaDataDictionary();
 
-  typedef itk::MetaDataObject<std::string> MetaDataStringType;
-
   DictionaryType::ConstIterator itr = dictionary.Begin();
   DictionaryType::ConstIterator end = dictionary.End();
 

@@ -66,7 +66,6 @@ void vtkITKExecuteDataFromFileVector(
   vtkITKArchetypeImageSeriesVectorReaderFile* self,
   vtkImageData *data)
 {
-  typedef itk::Vector<T, 3> VectorPixelType;
   typedef itk::VectorImage<T,3> image2;
   typedef itk::ImageSource<image2> FilterType;
   typename FilterType::Pointer filter;

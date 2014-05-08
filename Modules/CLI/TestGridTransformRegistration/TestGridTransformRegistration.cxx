@@ -45,18 +45,10 @@ int DoIt( int argc, char * argv[], T )
   // typedefs
   const    unsigned int ImageDimension = 3;
   typedef  T                                          PixelType;
-  typedef  T                                          OutputPixelType;
   typedef itk::Image<PixelType, ImageDimension>       InputImageType;
-  typedef itk::Image<OutputPixelType, ImageDimension> OutputImageType;
 
   typedef itk::ImageFileReader<InputImageType>  FixedImageReaderType;
   typedef itk::ImageFileReader<InputImageType>  MovingImageReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
-
-  typedef itk::OrientImageFilter<InputImageType, InputImageType> OrientFilterType;
-  typedef itk::ResampleImageFilter<
-    InputImageType,
-    OutputImageType>    ResampleFilterType;
 
   typedef itk::VectorImage<double, ImageDimension> GridType;
 
