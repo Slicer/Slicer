@@ -103,7 +103,11 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 #if (VTK_MAJOR_VERSION <= 5)
       QString vtkLibSubDir("bin");
 #else
+#if defined(Q_WS_WIN)
+      QString vtkLibSubDir("bin");
+#else
       QString vtkLibSubDir("lib");
+#endif
 #endif
 #ifdef CMAKE_INTDIR
     paths << VTK_DIR "/" + vtkLibSubDir + "/" CMAKE_INTDIR "/";
