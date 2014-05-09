@@ -154,7 +154,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Return a text string describing the ScalarInvariant variable
   virtual const char * GetScalarInvariantAsString();
 
-
   //--------------------------------------------------------------------------
   /// Display Information: Types of glyph geometry that can be displayed
   //--------------------------------------------------------------------------
@@ -180,7 +179,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(GlyphGeometry, int);
   /// Also update the glyph polydata source
   void SetGlyphGeometry( int geometry ) {
-
     if ( this->GlyphGeometry != geometry )
       {
       this->GlyphGeometry = geometry;
@@ -201,7 +199,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   void SetGlyphGeometryToSuperquadrics() {
     this->SetGlyphGeometry(this->Superquadrics);
   };
-
 
   ///
   /// Return the lowest and highest integers, for use in looping
@@ -237,9 +234,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   enum
   {
-    Major = 1,
-    Middle = 2,
-    Minor = 3
+    Major = 0,
+    Middle = 1,
+    Minor = 2
   };
 
   /// Description
@@ -254,7 +251,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(GlyphGeometry, int);
   /// Also update the glyph polydata source
   void SetGlyphEigenvector( int eigenvector ) {
-
     if ( this->GlyphEigenvector != eigenvector )
       {
       this->GlyphEigenvector = eigenvector;
@@ -296,7 +292,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   virtual const char * GetGlyphEigenvectorAsString();
   virtual const char * GetGlyphEigenvectorAsString(int);
 
-
   //--------------------------------------------------------------------------
   /// Display Information: Parameters of Lines glyph geometry
   //--------------------------------------------------------------------------
@@ -306,7 +301,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   vtkGetMacro(LineGlyphResolution, int);
   //vtkSetMacro(LineGlyphResolution, int);
   void SetLineGlyphResolution( int resolution ) {
-
     if ( this->LineGlyphResolution != resolution )
       {
       this->LineGlyphResolution = resolution;
@@ -332,7 +326,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Set the radius of the tube glyph
   //vtkSetMacro(TubeGlyphRadius, double);
   void SetTubeGlyphRadius( double radius ) {
-
     if ( this->TubeGlyphRadius != radius )
       {
       this->TubeGlyphRadius = radius;
@@ -351,7 +344,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   vtkGetMacro(TubeGlyphNumberOfSides, int);
   //vtkSetMacro(TubeGlyphNumberOfSides, int);
   void SetTubeGlyphNumberOfSides( int numberOfSides ) {
-
     if ( this->TubeGlyphNumberOfSides != numberOfSides )
       {
       this->TubeGlyphNumberOfSides = numberOfSides;
@@ -496,8 +488,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   /// ---- End of parameters that should be written to MRML --- //
 
-
-
   /// This is used internally to set a pointer to this polydata
   /// and reference count it.
   /// TO DO: is this causing an extra modified event?
@@ -514,7 +504,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// for scalar invariants with those ranges
 
   /// TO DO: read/write MRML for all parameters
-
 };
 
 #endif
