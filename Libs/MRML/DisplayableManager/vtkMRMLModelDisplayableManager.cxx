@@ -923,31 +923,53 @@ void vtkMRMLModelDisplayableManager
       }
 
     vtkProp3D* prop = 0;
-    bool hasPolyData = true;
 
     int clipping = displayNode->GetClipping();
     int visibility = displayNode->GetVisibility();
+#if (VTK_MAJOR_VERSION <= 5)
     vtkPolyData *polyData = NULL;
+#else
+    vtkAlgorithmOutput *polyDataConnection = NULL;
+#endif
     if (this->IsModelDisplayable(modelDisplayNode))
       {
+#if (VTK_MAJOR_VERSION <= 5)
       polyData = modelDisplayNode->GetOutputPolyData();
+#else
+      polyDataConnection = modelDisplayNode->GetOutputPolyDataConnection();
+#endif
       }
     if (hdnode)
       {
       clipping = hdnode->GetClipping();
       //visibility = hdnode->GetVisibility();
+#if (VTK_MAJOR_VERSION <= 5)
       polyData = hierarchyModelDisplayNode ?
         hierarchyModelDisplayNode->GetPolyData() : NULL;
+#else
+      polyDataConnection = hierarchyModelDisplayNode ?
+        hierarchyModelDisplayNode->GetPolyDataConnection() : NULL;
+#endif
       }
     // hierarchy display nodes may not have poly data pointer
-    if (polyData == 0 && this->IsModelDisplayable(modelNode))
+#if (VTK_MAJOR_VERSION <= 5)
+    if (polyData == 0 &&
+#else
+    if (polyDataConnection == 0 &&
+#endif
+        this->IsModelDisplayable(modelNode))
       {
+#if (VTK_MAJOR_VERSION <= 5)
       polyData = modelNode ? modelNode->GetPolyData() : NULL;
+#else
+      polyDataConnection = modelNode ? modelNode->GetPolyDataConnection() : NULL;
+#endif
       }
-    if (polyData == 0)
-      {
-      hasPolyData = false;
-      }
+#if (VTK_MAJOR_VERSION <= 5)
+    bool hasPolyData = (polyData != 0);
+#else
+    bool hasPolyData = (polyDataConnection != 0);
+#endif
 
     if (!hasPolyData)
       {
@@ -971,12 +993,14 @@ void vtkMRMLModelDisplayableManager
         }
       }
 
+#if (VTK_MAJOR_VERSION <= 5)
     if (transformFilter && polyData)
       {
-#if (VTK_MAJOR_VERSION <= 5)
       transformFilter->SetInput(polyData);
 #else
-      transformFilter->SetInputData(polyData);
+    if (transformFilter)
+      {
+      transformFilter->SetInputConnection(polyDataConnection);
 #endif
       transformFilter->SetTransform(worldTransform);
       }
@@ -985,15 +1009,6 @@ void vtkMRMLModelDisplayableManager
     ait = this->Internal->DisplayedActors.find(displayNode->GetID());
     if (ait == this->Internal->DisplayedActors.end() )
       {
-      if(polyData)
-        {
-#ifdef USE_IMAGE_ACTOR
-        if ( polyData->GetNumberOfCells() == 1 )
-          {
-          prop = vtkImageActor::New();
-          }
-#endif
-        }
       if (!prop)
         {
         prop = vtkActor::New();
@@ -1015,20 +1030,25 @@ void vtkMRMLModelDisplayableManager
           {
           vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
 
+#if (VTK_MAJOR_VERSION <= 5)
           if (transformFilter && polyData)
             {
-#if (VTK_MAJOR_VERSION <= 5)
             mapper->SetInput(transformFilter->GetOutput());
 #else
+          if (transformFilter)
+            {
             mapper->SetInputConnection(transformFilter->GetOutputPort());
 #endif
             }
-          else if (mapper && mapper->GetInput() != polyData && !(this->Internal->ClippingOn && clipping))
-            {
 #if (VTK_MAJOR_VERSION <= 5)
+          else if (mapper && mapper->GetInput() != polyData
+                   && !(this->Internal->ClippingOn && clipping))
+            {
             mapper->SetInput(polyData);
 #else
-            mapper->SetInputData(polyData);
+          else if (mapper && !(this->Internal->ClippingOn && clipping))
+            {
+            mapper->SetInputConnection(polyDataConnection);
 #endif
             }
           }
@@ -1060,8 +1080,7 @@ void vtkMRMLModelDisplayableManager
         clipper->Update();
         mapper->SetInput(clipper->GetOutput());
 #else
-        clipper->SetInputData(polyData);
-        clipper->Update();
+        clipper->SetInputConnection(polyDataConnection);
         mapper->SetInputConnection(clipper->GetOutputPort());
 #endif
         }
@@ -1079,7 +1098,7 @@ void vtkMRMLModelDisplayableManager
 #if (VTK_MAJOR_VERSION <= 5)
         mapper->SetInput(polyData);
 #else
-        mapper->SetInputData(polyData);
+        mapper->SetInputConnection(polyDataConnection);
 #endif
         }
 
