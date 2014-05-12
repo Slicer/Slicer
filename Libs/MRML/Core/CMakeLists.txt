@@ -180,6 +180,8 @@ set(MRMLCore_SRCS
   # Classes for 2D Plotting
   vtkMRMLDoubleArrayNode.cxx
   vtkMRMLDoubleArrayStorageNode.cxx
+  # Classes for transforms computation
+  vtkOrientedBSplineTransform.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )

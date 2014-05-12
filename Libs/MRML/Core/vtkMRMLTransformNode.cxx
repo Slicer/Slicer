@@ -19,7 +19,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 
-#include "vtkITKBSplineTransform.h"
+#include "vtkOrientedBSplineTransform.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -985,39 +985,48 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
     vtkObject* transform=transformList->GetItemAsObject(i);
 
     vtkMatrixToLinearTransform* linearTransform=vtkMatrixToLinearTransform::SafeDownCast(transform);
-    vtkITKBSplineTransform* bsplineTransform=vtkITKBSplineTransform::SafeDownCast(transform);
+    vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(transform);
     vtkGridTransform* gridTransform=vtkGridTransform::SafeDownCast(transform);
     if (linearTransform!=NULL)
       {
       ss << " Linear";
+      vtkMatrix4x4* m=linearTransform->GetMatrix();
+      ss << std::endl <<"    "<<m->GetElement(0,0)<<"  "<<m->GetElement(0,1)<<"  "<<m->GetElement(0,2)<<"  "<<m->GetElement(0,3);
+      ss << std::endl <<"    "<<m->GetElement(1,0)<<"  "<<m->GetElement(1,1)<<"  "<<m->GetElement(1,2)<<"  "<<m->GetElement(1,3);
+      ss << std::endl <<"    "<<m->GetElement(2,0)<<"  "<<m->GetElement(2,1)<<"  "<<m->GetElement(2,2)<<"  "<<m->GetElement(2,3);
+      ss << std::endl <<"    "<<m->GetElement(3,0)<<"  "<<m->GetElement(3,1)<<"  "<<m->GetElement(3,2)<<"  "<<m->GetElement(3,3);
       }
     else if (bsplineTransform!=NULL)
       {
       ss << " B-spline:";
-      unsigned int gridSize[3]={0};
-      bsplineTransform->GetGridSize(gridSize);
-      ss << std::endl << "  Grid size: " << gridSize[0] << " " << gridSize[1] << " " <<gridSize[2] <<".";
-      double gridOrigin[3]={0,0,0};
-      bsplineTransform->GetGridOrigin(gridOrigin);
-      ss << std::endl << "  Grid origin: " << gridOrigin[0] << " " << gridOrigin[1] << " " <<gridOrigin[2] <<".";
-      double gridSpacing[3]={1,1,1};
-      bsplineTransform->GetGridSpacing(gridSpacing);
-      ss << std::endl << "  Grid spacing: " << gridSpacing[0] << " " << gridSpacing[1] << " " <<gridSpacing[2] <<".";
-      const vtkITKBSplineTransform::BulkTransformType* bulkTransform=bsplineTransform->GetBulkTransform();
-      if (bulkTransform!=0)
+      vtkImageData* coefficients=bsplineTransform->GetCoefficients();
+      if (coefficients!=NULL)
+        {
+        int* extent = coefficients->GetExtent();
+        unsigned int gridSize[3]={extent[1]-extent[0]-1, extent[3]-extent[2]-1, extent[5]-extent[4]-1};
+        ss << std::endl << "  Grid size: " << gridSize[0] << " " << gridSize[1] << " " <<gridSize[2] <<".";
+        double* gridOrigin = coefficients->GetOrigin();
+        ss << std::endl << "  Grid origin: " << gridOrigin[0] << " " << gridOrigin[1] << " " <<gridOrigin[2] <<".";
+        double* gridSpacing = coefficients->GetSpacing();
+        ss << std::endl << "  Grid spacing: " << gridSpacing[0] << " " << gridSpacing[1] << " " <<gridSpacing[2] <<".";
+        vtkMatrix4x4* gridOrientation = bsplineTransform->GetGridDirectionMatrix();
+        if (gridOrientation!=NULL)
+          {
+          ss << std::endl << "  Grid orientation:";
+          for (int i=0; i<3; i++)
+            {
+            ss << std::endl <<"    "<<gridOrientation->GetElement(i,0)<<"  "<<gridOrientation->GetElement(i,1)<<"  "<<gridOrientation->GetElement(i,2);
+            }
+          }
+        }
+      vtkMatrix4x4* bulkTransform = bsplineTransform->GetBulkTransformMatrix();
+      if (bulkTransform!=NULL)
         {
         ss << std::endl << "  Bulk transform:";
-        vtkITKBSplineTransform::BulkTransformType::ParametersType params = bulkTransform->GetParameters();
-        if (params.size()==12)
+        for (int i=0; i<4; i++)
           {
-          // affine transform
-          ss << std::endl <<"    "<<params.get(0)<<"  "<<params.get(1)<<"  "<<params.get(2)<<"  "<<params.get(9);
-          ss << std::endl <<"    "<<params.get(3)<<"  "<<params.get(4)<<"  "<<params.get(5)<<"  "<<params.get(10);
-          ss << std::endl <<"    "<<params.get(6)<<"  "<<params.get(7)<<"  "<<params.get(8)<<"  "<<params.get(11);
-          }
-        else
-          {
-          ss << " present";
+          ss << std::endl <<"    "<<bulkTransform->GetElement(i,0)
+            <<"  "<<bulkTransform->GetElement(i,1)<<"  "<<bulkTransform->GetElement(i,2)<<"  "<<bulkTransform->GetElement(i,3);
           }
         }
       if (bsplineTransform->GetInverseFlag())

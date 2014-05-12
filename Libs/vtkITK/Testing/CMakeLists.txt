@@ -14,14 +14,5 @@ add_test(
     ${MRML_TEST_DATA_DIR}/fixed.nrrd
   )
 
-set(VTKITKBSPLINETRANSFORM_SOURCE VTKITKBSplineTransform.cxx)
-add_executable(VTKITKBSplineTransform ${VTKITKBSPLINETRANSFORM_SOURCE})
-target_link_libraries(VTKITKBSplineTransform
-  vtkITK)
-add_test(
-  NAME VTKITKBSplineTransform
-  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:VTKITKBSplineTransform> VTKITKBSplineTransform
-  )
-
 slicer_add_python_unittest(SCRIPT vtkITKArchetypeDiffusionTensorReaderFile.py)
 slicer_add_python_unittest(SCRIPT vtkITKArchetypeScalarReaderFile.py)

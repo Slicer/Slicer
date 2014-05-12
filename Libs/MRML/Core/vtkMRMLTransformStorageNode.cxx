@@ -18,9 +18,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
-
-// VTKITK includes
-#include <vtkITKBSplineTransform.h>
+#include <vtkOrientedBSplineTransform.h>
 
 // VTK includes
 #include <vtkGeneralTransform.h>
@@ -33,6 +31,9 @@ Version:   $Revision: 1.2 $
 #include <vtkVersion.h>
 
 // ITK includes
+#include <itkAffineTransform.h>
+#include <itkBSplineDeformableTransform.h>
+#include <itkIdentityTransform.h>
 #include <itkTransformFileWriter.h>
 #include <itkTransformFileReader.h>
 #include <itkImageFileReader.h>
@@ -42,9 +43,13 @@ Version:   $Revision: 1.2 $
 
 static const int VTKDimension = 3;
 
-typedef itk::TransformFileReader TransformReader;
-typedef TransformReader::TransformListType TransformListType;
-typedef TransformReader::TransformType TransformType;
+static const int BSPLINE_TRANSFORM_ORDER = 3;
+
+typedef itk::TransformFileReader TransformReaderType;
+typedef TransformReaderType::TransformListType TransformListType;
+typedef TransformReaderType::TransformType TransformType;
+
+typedef itk::TransformFileWriter TransformWriterType;
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
@@ -73,7 +78,7 @@ bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
 {
-  TransformReader::Pointer reader = itk::TransformFileReader::New();
+  TransformReaderType::Pointer reader = itk::TransformFileReader::New();
   std::string fullName =  this->GetFullNameFromFileName();
   reader->SetFileName( fullName );
   try
@@ -262,62 +267,282 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-template <typename T> bool SetVTKBSplineFromITK(vtkObject* self, vtkITKBSplineTransform* bsplineVtk, TransformType::Pointer bsplineItk, TransformType::Pointer bulkItk)
+template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
+  vtkOrientedBSplineTransform* bsplineVtk,
+  TransformType::Pointer warpTransformItk, TransformType::Pointer bulkTransformItk)
 {
-  typedef itk::BSplineDeformableTransform< T,VTKDimension,VTKDimension > BSplineTransformType;
+  if (bsplineVtk==NULL)
+    {
+    vtkErrorWithObjectMacro(self, "vtkMRMLTransformStorageNode::SetVTKBSplineFromITK failed: bsplineVtk is invalid");
+    return false;
+    }
+  bool isDoublePrecisionInput=true;
+  if (sizeof(T)==sizeof(float))
+    {
+    isDoublePrecisionInput=false;
+    }
+  else if (sizeof(T)==sizeof(double))
+    {
+    isDoublePrecisionInput=true;
+    }
+  else
+    {
+    vtkErrorWithObjectMacro(self,"Unsupported scalar type in BSpline transform file (only float and double are supported)");
+    return false;
+    }
 
-  typename BSplineTransformType::Pointer bst = dynamic_cast< BSplineTransformType* >( bsplineItk.GetPointer() );
-  if (!bst)
+  typedef itk::BSplineDeformableTransform< T,VTKDimension,BSPLINE_TRANSFORM_ORDER > BSplineTransformType;
+  typename BSplineTransformType::Pointer bsplineItk = dynamic_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
+  if (!bsplineItk)
     {
     return false;
     }
 
-  bsplineVtk->SetSplineOrder( 3 );
-  typename BSplineTransformType::ParametersType const& fp = bst->GetFixedParameters();
-  bsplineVtk->SetFixedParameters( fp.data_block(), fp.GetSize() );
+  typename BSplineTransformType::ParametersType const& transformFixedParamsItk = bsplineItk->GetFixedParameters();
 
-  if( bst->GetNumberOfParameters() != bsplineVtk->GetNumberOfParameters() )
+  // Fixed parameters:
+  // * mesh size X, Y, Z (including the BSPLINE_TRANSFORM_ORDER=3 boundary nodes, 1 before and 2 after the grid)
+  // * mesh origin X, Y, Z (position of the boundary node before the grid)
+  // * mesh spacing X, Y, Z
+  // * mesh direction 3x3 matrix (first row, second row, third row)
+  const int expectedNumberOfFixedParameters=VTKDimension*(VTKDimension+3);
+  if (expectedNumberOfFixedParameters!=transformFixedParamsItk.size())
     {
-    vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline parameters in the transform file and the MRML node");
-    return 0;
+    vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline fixed parameters in the transform file and the MRML node");
+    return false;
     }
 
-  typename BSplineTransformType::ParametersType const& param = bst->GetParameters();
-  bsplineVtk->SetParameters( param.data_block() );
-
-  if( bulkItk )
+  // Get grid parameters from the fixed parameters
+  const int gridSize[3]={transformFixedParamsItk[0], transformFixedParamsItk[1], transformFixedParamsItk[2]};
+  double gridSpacing[3]={transformFixedParamsItk[6], transformFixedParamsItk[7], transformFixedParamsItk[8]};
+  double gridOrigin_LPS[3]={transformFixedParamsItk[3], transformFixedParamsItk[4], transformFixedParamsItk[5]};
+  vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
+  int fpIndex=9;
+  for (int row=0; row<VTKDimension; row++)
     {
-    typedef vtkITKBSplineTransform::BulkTransformType BulkTransformType;
-    typedef vtkITKBSplineTransform::IdentityBulkTransformType IdentityBulkTransformType;
-    BulkTransformType* bulkItkAffine = dynamic_cast<BulkTransformType*> (bulkItk.GetPointer());
-    IdentityBulkTransformType* bulkItkIdentity = dynamic_cast<IdentityBulkTransformType*> (bulkItk.GetPointer());
+    for (int column=0; column<VTKDimension; column++)
+      {
+      gridDirectionMatrix_LPS->SetElement(row,column,transformFixedParamsItk[fpIndex++]);
+      }
+    }
+
+  // Set bspline grid and coefficients
+  bsplineVtk->SetBorderModeToZero();
+
+  vtkNew<vtkImageData> bsplineCoefficients;
+
+  bsplineCoefficients->SetExtent(0, gridSize[0]-1, 0, gridSize[1]-1, 0, gridSize[2]-1);
+  bsplineCoefficients->SetSpacing(gridSpacing);
+
+  vtkNew<vtkMatrix4x4> lpsToRas;
+  lpsToRas->SetElement(0,0,-1);
+  lpsToRas->SetElement(1,1,-1);
+
+  vtkNew<vtkMatrix4x4> rasToLps;
+  rasToLps->SetElement(0,0,-1);
+  rasToLps->SetElement(1,1,-1);
+
+  vtkNew<vtkMatrix4x4> gridDirectionMatrix_RAS;
+
+  vtkMatrix4x4::Multiply4x4(lpsToRas.GetPointer(), gridDirectionMatrix_LPS.GetPointer(), gridDirectionMatrix_RAS.GetPointer());
+  bsplineVtk->SetGridDirectionMatrix(gridDirectionMatrix_RAS.GetPointer());
+
+  double gridOrigin_RAS[3]={-gridOrigin_LPS[0], -gridOrigin_LPS[1], gridOrigin_LPS[2]};
+  bsplineCoefficients->SetOrigin(gridOrigin_RAS);
+
+  bsplineCoefficients->SetNumberOfScalarComponents(3);
+  int bsplineCoefficientsScalarType=VTK_FLOAT;
+  if (isDoublePrecisionInput)
+    {
+    bsplineCoefficientsScalarType=VTK_DOUBLE;
+    }
+
+#if (VTK_MAJOR_VERSION <= 5)
+  bsplineCoefficients->SetScalarType(bsplineCoefficientsScalarType);
+  bsplineCoefficients->SetNumberOfScalarComponents(3);
+  bsplineCoefficients->AllocateScalars();
+#else
+  bsplineCoefficients->AllocateScalars(bsplineCoefficientsScalarType, 3);
+#endif
+
+  const int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
+  const int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
+  if( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
+    {
+    vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline parameters in the transform file and the MRML node");
+    return false;
+    }
+  const T* itkBSplineParams_LPS = static_cast<const T*>(bsplineItk->GetParameters().data_block());
+  T* vtkBSplineParams_RAS=static_cast<T*>(bsplineCoefficients->GetScalarPointer());
+  for (int i=0; i<expectedNumberOfVectors; i++)
+    {
+    *(vtkBSplineParams_RAS++) =  - (*(itkBSplineParams_LPS                          ));
+    *(vtkBSplineParams_RAS++) =  - (*(itkBSplineParams_LPS+expectedNumberOfVectors  ));
+    *(vtkBSplineParams_RAS++) =    (*(itkBSplineParams_LPS+expectedNumberOfVectors*2));
+    itkBSplineParams_LPS++;
+    }
+  bsplineVtk->SetCoefficients(bsplineCoefficients.GetPointer());
+
+  // Set the bulk transform
+  if( bulkTransformItk )
+    {
+    typedef itk::AffineTransform<T,3> BulkTransformType;
+    typedef itk::IdentityTransform<T,3> IdentityBulkTransformType;
+    typename BulkTransformType* bulkItkAffine = dynamic_cast<BulkTransformType*> (bulkTransformItk.GetPointer());
+    typename IdentityBulkTransformType* bulkItkIdentity = dynamic_cast<IdentityBulkTransformType*> (bulkTransformItk.GetPointer());
     double linear[VTKDimension][VTKDimension] = { {1,0,0}, {0,1,0}, {0,0,1}};
     double offset[VTKDimension] = {0,0,0};
     if (bulkItkAffine)
       {
+      vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
       for (int i=0; i < VTKDimension; i++)
         {
         for (int j=0; j < VTKDimension; j++)
           {
-          linear[i][j] = bulkItkAffine->GetMatrix()[i][j];
+          bulkMatrix_LPS->SetElement(i,j, bulkItkAffine->GetMatrix()[i][j]);
           }
-        offset[i] = bulkItkAffine->GetOffset()[i];
+        bulkMatrix_LPS->SetElement(i,VTKDimension, bulkItkAffine->GetOffset()[i]);
         }
+      vtkNew<vtkMatrix4x4> bulkMatrix_RAS; // bulk_RAS = lpsToRas * bulk_LPS * rasToLps
+      vtkMatrix4x4::Multiply4x4(lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer(), bulkMatrix_RAS.GetPointer());
+      vtkMatrix4x4::Multiply4x4(bulkMatrix_RAS.GetPointer(), rasToLps.GetPointer(), bulkMatrix_RAS.GetPointer());
+      bsplineVtk->SetBulkTransformMatrix(bulkMatrix_RAS.GetPointer());
       }
     else if (bulkItkIdentity)
       {
-      // already initialized to identity
+      // bulk transform is identity, which is equivalent to no bulk transform
       }
     else
       {
       vtkErrorWithObjectMacro(self,"Cannot read the 2nd transform in BSplineTransform (expected AffineTransform_double_3_3 or IdentityTransform)" );
       return false;
       }
-    bsplineVtk->SetBulkTransform( linear, offset );
     }
 
-  // Convert from LPS (in ITK tansformation file) to RAS (Slicer)
-  bsplineVtk->SetSwitchCoordinateSystem( true );
+  // Success
+  return true;
+}
+
+//----------------------------------------------------------------------------
+template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
+  typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk,
+  typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& bulkTransformItk,
+  vtkOrientedBSplineTransform* bsplineVtk)
+{
+  if (bsplineVtk==NULL)
+    {
+    vtkErrorWithObjectMacro(self, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: bsplineVtk is invalid");
+    return false;
+    }
+  vtkImageData* bsplineCoefficients_RAS=bsplineVtk->GetCoefficients();
+  if (bsplineCoefficients_RAS==NULL)
+    {
+    vtkErrorWithObjectMacro(self, "Cannot write an inverse BSpline transform to file: coefficients are not specified");
+    return false;
+    }
+
+  typedef itk::BSplineDeformableTransform< T,VTKDimension,BSPLINE_TRANSFORM_ORDER > BSplineTransformType;
+  typename BSplineTransformType::Pointer bsplineItk = BSplineTransformType::New();
+  warpTransformItk = bsplineItk;
+
+  // Fixed parameters:
+  // * mesh size X, Y, Z (including the BSPLINE_TRANSFORM_ORDER=3 boundary nodes, 1 before and 2 after the grid)
+  // * mesh origin X, Y, Z (position of the boundary node before the grid)
+  // * mesh spacing X, Y, Z
+  // * mesh direction 3x3 matrix (first row, second row, third row)
+  typename BSplineTransformType::ParametersType transformFixedParamsItk;
+  const int numberOfFixedParameters=VTKDimension*(VTKDimension+3);
+  transformFixedParamsItk.SetSize(numberOfFixedParameters);
+
+  int *gridExtent=bsplineCoefficients_RAS->GetExtent();
+  int gridSize[3]={gridExtent[1]-gridExtent[0]+1, gridExtent[3]-gridExtent[2]+1, gridExtent[5]-gridExtent[4]+1};
+  transformFixedParamsItk[0]=gridSize[0];
+  transformFixedParamsItk[1]=gridSize[1];
+  transformFixedParamsItk[2]=gridSize[2];
+
+  double* gridOrigin_RAS=bsplineCoefficients_RAS->GetOrigin();
+  double gridOrigin_LPS[3]={-gridOrigin_RAS[0], -gridOrigin_RAS[1], gridOrigin_RAS[2]};
+  transformFixedParamsItk[3]=gridOrigin_LPS[0];
+  transformFixedParamsItk[4]=gridOrigin_LPS[1];
+  transformFixedParamsItk[5]=gridOrigin_LPS[2];
+
+  double* gridSpacing=bsplineCoefficients_RAS->GetSpacing();
+  transformFixedParamsItk[6]=gridSpacing[0];
+  transformFixedParamsItk[7]=gridSpacing[1];
+  transformFixedParamsItk[8]=gridSpacing[2];
+
+  vtkMatrix4x4* gridDirectionMatrix_RAS=bsplineVtk->GetGridDirectionMatrix();
+  vtkNew<vtkMatrix4x4> lpsToRas;
+  lpsToRas->SetElement(0,0,-1);
+  lpsToRas->SetElement(1,1,-1);
+  vtkNew<vtkMatrix4x4> rasToLps;
+  rasToLps->SetElement(0,0,-1);
+  rasToLps->SetElement(1,1,-1);
+  vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
+  vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), gridDirectionMatrix_RAS, gridDirectionMatrix_LPS.GetPointer());
+  int fpIndex=9;
+  for (int row=0; row<VTKDimension; row++)
+    {
+    for (int column=0; column<VTKDimension; column++)
+      {
+      transformFixedParamsItk[fpIndex++]=gridDirectionMatrix_LPS->GetElement(row,column);
+      }
+    }
+
+  bsplineItk->SetFixedParameters(transformFixedParamsItk);
+
+  // BSpline coefficients
+
+  const int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
+  const int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
+  if( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
+    {
+    vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline parameters in the ITK transform and the VTK transform");
+    return false;
+    }
+
+  typename BSplineTransformType::ParametersType transformParamsItk(expectedNumberOfParameters);
+  T* itkBSplineParams_LPS = static_cast<T*>(transformParamsItk.data_block());
+  T* vtkBSplineParams_RAS=static_cast<T*>(bsplineCoefficients_RAS->GetScalarPointer());
+  for (int i=0; i<expectedNumberOfVectors; i++)
+    {
+    *(itkBSplineParams_LPS                          ) = - (*(vtkBSplineParams_RAS++));
+    *(itkBSplineParams_LPS+expectedNumberOfVectors  ) = - (*(vtkBSplineParams_RAS++));
+    *(itkBSplineParams_LPS+expectedNumberOfVectors*2) =   (*(vtkBSplineParams_RAS++));
+    itkBSplineParams_LPS++;
+    }
+
+  bsplineItk->SetParameters(transformParamsItk);
+
+  vtkMatrix4x4* bulkMatrix_RAS=bsplineVtk->GetBulkTransformMatrix();
+  if (bulkMatrix_RAS)
+    {
+    vtkNew<vtkMatrix4x4> bulkMatrix_LPS; // bulk_LPS = rasToLps * bulk_RAS * lpsToRas
+    vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), bulkMatrix_RAS, bulkMatrix_LPS.GetPointer());
+    vtkMatrix4x4::Multiply4x4(bulkMatrix_LPS.GetPointer(), lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer());
+
+    typedef itk::AffineTransform<T,VTKDimension> BulkTransformType;
+    typename BulkTransformType::Pointer affineItk = BulkTransformType::New();
+    bulkTransformItk = affineItk;
+
+    typename BulkTransformType::MatrixType affineMatrix;
+    typename BulkTransformType::OffsetType affineOffset;
+    for (int i=0; i < VTKDimension; i++)
+      {
+      for (int j=0; j < VTKDimension; j++)
+        {
+        affineMatrix[i][j]=bulkMatrix_LPS->GetElement(i,j);
+        }
+      affineOffset[i]=bulkMatrix_LPS->GetElement(i,VTKDimension);
+      }
+
+    affineItk->SetMatrix(affineMatrix);
+    affineItk->SetOffset(affineOffset);
+    }
+  else
+    {
+    bulkTransformItk=NULL;
+    }
 
   return true;
 }
@@ -325,7 +550,7 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self, vtkITKBSplineTr
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadBSplineTransform(vtkMRMLNode *refNode)
 {
-  TransformReader::Pointer reader = itk::TransformFileReader::New();
+  TransformReaderType::Pointer reader = itk::TransformFileReader::New();
   std::string fullName =  this->GetFullNameFromFileName();
   reader->SetFileName( fullName );
   try
@@ -375,12 +600,10 @@ int vtkMRMLTransformStorageNode::ReadBSplineTransform(vtkMRMLNode *refNode)
 
   vtkMRMLBSplineTransformNode *btn = vtkMRMLBSplineTransformNode::SafeDownCast(refNode);
 
-  vtkNew<vtkITKBSplineTransform> bsplineVtk;
-
+  vtkNew<vtkOrientedBSplineTransform> bsplineVtk;
   if (SetVTKBSplineFromITK<double>(this, bsplineVtk.GetPointer(), transform, transform2)
     || SetVTKBSplineFromITK<float>(this, bsplineVtk.GetPointer(), transform, transform2) )
     {
-
     if (btn->GetReadWriteAsTransformToParent())
       {
       // Convert the sense of the transform (from an ITK resampling
@@ -680,7 +903,7 @@ int vtkMRMLTransformStorageNode::WriteLinearTransform(vtkMRMLLinearTransformNode
   affine->SetMatrix(itkmat);
   affine->SetOffset(itkoffset);
 
-  itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
+  TransformWriterType::Pointer writer = TransformWriterType::New();
   writer->SetInput( affine );
   std::string fullName =  this->GetFullNameFromFileName();
   writer->SetFileName( fullName );
@@ -705,45 +928,80 @@ int vtkMRMLTransformStorageNode::WriteLinearTransform(vtkMRMLLinearTransformNode
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteBSplineTransform(vtkMRMLBSplineTransformNode *bs)
+int vtkMRMLTransformStorageNode::WriteBSplineTransform(vtkMRMLBSplineTransformNode *bsplineTransformNode)
 {
-  vtkITKBSplineTransform* vtkTrans = NULL;
+  vtkOrientedBSplineTransform* bsplineVtk = NULL;
 
-  if (bs->GetReadWriteAsTransformToParent())
+  if (bsplineTransformNode->GetReadWriteAsTransformToParent())
     {
-    vtkTrans=vtkITKBSplineTransform::SafeDownCast(bs->GetTransformToParentAs("vtkITKBSplineTransform"));
+    bsplineVtk=vtkOrientedBSplineTransform::SafeDownCast(bsplineTransformNode->GetTransformToParentAs("vtkOrientedBSplineTransform"));
     }
   else
     {
-    vtkTrans=vtkITKBSplineTransform::SafeDownCast(bs->GetTransformFromParentAs("vtkITKBSplineTransform"));
+    bsplineVtk=vtkOrientedBSplineTransform::SafeDownCast(bsplineTransformNode->GetTransformFromParentAs("vtkOrientedBSplineTransform"));
     }
 
-  if (vtkTrans==NULL)
+  if (bsplineVtk==NULL)
     {
     vtkErrorMacro("Cannot retrieve BSpline transform from node");
     return 0;
     }
 
   // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-  vtkTrans->Update();
-  if (vtkTrans->GetInverseFlag())
+  bsplineVtk->Update();
+  if (bsplineVtk->GetInverseFlag())
     {
     vtkErrorMacro("Cannot write an inverse BSpline transform to file");
     return 0;
     }
 
-  // get the itkBSplineDeformableTransform directly. No need to
-  // convert the coordinate from RAS to LPS.
-  typedef itk::Transform<double, VTKDimension, VTKDimension > ITKTransformType;
-
-  ITKTransformType::Pointer itkTrans = vtkTrans->GetITKTransform();
-  vtkITKBSplineTransform::BulkTransformType const* bulk = vtkTrans->GetBulkTransform();
-  itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
-  writer->SetInput( itkTrans );
-  if( bulk )
+  vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficients();
+  if (bsplineCoefficients==NULL)
     {
-    writer->AddTransform( bulk );
+    vtkErrorMacro("Cannot write an inverse BSpline transform to file: coefficients are not specified");
+    return 0;
     }
+
+  TransformWriterType::Pointer writer = TransformWriterType::New();
+
+  if (bsplineCoefficients->GetScalarType()==VTK_FLOAT)
+    {
+    typedef itk::Transform<float, VTKDimension, VTKDimension > ITKTransformType;
+    ITKTransformType::Pointer warpTransformItk;
+    ITKTransformType::Pointer bulkTransformItk;
+    if (!SetITKBSplineFromVTK<float>(this, warpTransformItk, bulkTransformItk, bsplineVtk))
+      {
+      vtkErrorMacro("Cannot write an inverse BSpline transform to file");
+      return 0;
+      }
+    writer->SetInput( warpTransformItk );
+    if( bulkTransformItk )
+      {
+      writer->AddTransform( bulkTransformItk );
+      }
+    }
+  else if (bsplineCoefficients->GetScalarType()==VTK_DOUBLE)
+    {
+    typedef itk::Transform<double, VTKDimension, VTKDimension > ITKTransformType;
+    ITKTransformType::Pointer warpTransformItk;
+    ITKTransformType::Pointer bulkTransformItk;
+    if (!SetITKBSplineFromVTK<double>(this, warpTransformItk, bulkTransformItk, bsplineVtk))
+      {
+      vtkErrorMacro("Cannot write an inverse BSpline transform to file");
+      return 0;
+      }
+    writer->SetInput( warpTransformItk );
+    if( bulkTransformItk )
+      {
+      writer->AddTransform( bulkTransformItk );
+      }
+    }
+  else
+    {
+    vtkErrorMacro("Cannot write an inverse BSpline transform to file: only float and double coefficient types are supported");
+    return 0;
+    }
+
   std::string fullName =  this->GetFullNameFromFileName();
   writer->SetFileName( fullName );
   try

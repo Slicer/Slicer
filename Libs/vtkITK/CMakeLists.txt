@@ -162,7 +162,6 @@ set(vtkITK_SRCS
   vtkITKLevelTracing3DImageFilter.cxx
   vtkITKWandImageFilter.cxx
   vtkITKNewOtsuThresholdImageFilter.cxx
-  vtkITKBSplineTransform.cxx
   vtkITKTimeSeriesDatabase.cxx
   vtkITKIslandMath.cxx
   vtkITKGrowCutSegmentationImageFilter.cxx

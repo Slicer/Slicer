@@ -56,6 +56,8 @@ void qMRMLTransformInfoWidgetPrivate::init()
   Q_Q(qMRMLTransformInfoWidget);
   this->setupUi(q);
   q->setEnabled(this->MRMLTransformNode != 0);
+  this->TransformToParentInfoTextBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  this->TransformFromParentInfoTextBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse);
 }
 
 //------------------------------------------------------------------------------

@@ -237,13 +237,13 @@ public:
   ///
   /// Retrieves the transform as the specified transform class.
   /// Returns NULL if the transform is not a kind of transform that was requested.
-  /// Example usage: vtkITKBSplineTransform* bsplineTransform=vtkITKBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkITKBSplineTransform"));
+  /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkOrientedBSplineTransform"));
   vtkAbstractTransform* GetTransformToParentAs(const char* transformType, bool logErrorIfFails=true);
 
   ///
   /// Retrieves the transform as the specified transform class.
   /// Returns NULL if the transform is not a kind of transform that was requested.
-  /// Example usage: vtkITKBSplineTransform* bsplineTransform=vtkITKBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkITKBSplineTransform"));
+  /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkOrientedBSplineTransform"));
   vtkAbstractTransform* GetTransformFromParentAs(const char* transformType, bool logErrorIfFails=true);
 
   /// Set and observe a new transform of this node to parent node.

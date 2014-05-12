@@ -14,7 +14,7 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
-#include "vtkITKBSplineTransform.h"
+#include "vtkOrientedBSplineTransform.h"
 #include "vtkGridTransform.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
@@ -69,10 +69,8 @@ bool TestBSplineTransform(const char *filename)
     }
 
   // Test if both the transform and its inverse are available
-  vtkITKBSplineTransform *xfp = vtkITKBSplineTransform::SafeDownCast(
-    bsplineTransformNode->GetTransformFromParentAs("vtkITKBSplineTransform"));
-  vtkITKBSplineTransform *xtp = vtkITKBSplineTransform::SafeDownCast(
-    bsplineTransformNode->GetTransformToParentAs("vtkITKBSplineTransform"));
+  vtkAbstractTransform *xfp = bsplineTransformNode->GetTransformFromParentAs("vtkOrientedBSplineTransform");
+  vtkAbstractTransform *xtp = bsplineTransformNode->GetTransformToParentAs("vtkOrientedBSplineTransform");
 
   if (xfp == 0 || xtp == 0)
     {
@@ -81,7 +79,7 @@ bool TestBSplineTransform(const char *filename)
     }
 
   // Test if the transform actually changes point positions
-  double inp[3] = {0,0,0};
+  double inp[3] = {10,20,30};
   double outp[3] = {0,0,0};
   xfp->TransformPoint(inp, outp);
   if (fabs(outp[0]-inp[0]) < 0.1 || fabs(outp[1]-inp[1]) < 0.1 || fabs(outp[2]-inp[2]) < 0.1)
@@ -103,12 +101,12 @@ bool TestBSplineTransform(const char *filename)
   vtkNew<vtkMRMLBSplineTransformNode> bsplineTransformNodeCopy;
   bsplineTransformNodeCopy->Copy(bsplineTransformNode);
   // Reset the original transform to make sure that it was not a shallow copy (transforms from the original transforms are not reused)
-  vtkITKBSplineTransform* emptyTransform=vtkITKBSplineTransform::New();
+  vtkOrientedBSplineTransform* emptyTransform=vtkOrientedBSplineTransform::New();
   bsplineTransformNode->SetAndObserveTransformToParent(emptyTransform);
   emptyTransform->Delete();
 
-  vtkITKBSplineTransform *xfpCopy = vtkITKBSplineTransform::SafeDownCast(bsplineTransformNodeCopy->GetTransformFromParentAs("vtkITKBSplineTransform"));
-  vtkITKBSplineTransform *xtpCopy = vtkITKBSplineTransform::SafeDownCast(bsplineTransformNodeCopy->GetTransformToParentAs("vtkITKBSplineTransform"));
+  vtkOrientedBSplineTransform *xfpCopy = vtkOrientedBSplineTransform::SafeDownCast(bsplineTransformNodeCopy->GetTransformFromParentAs("vtkOrientedBSplineTransform"));
+  vtkOrientedBSplineTransform *xtpCopy = vtkOrientedBSplineTransform::SafeDownCast(bsplineTransformNodeCopy->GetTransformToParentAs("vtkOrientedBSplineTransform"));
 
   // Test if the copied transform gives the same results as the original
   double outpCopy[3] = {0,0,0};
@@ -143,23 +141,19 @@ bool TestGridTransform(const char *filename)
   scene->SetURL(filename);
   scene->Import();
 
-  vtkMRMLGridTransformNode *gridTransformNode = vtkMRMLGridTransformNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLGridTransformNode1"));
-
+  vtkMRMLGridTransformNode *gridTransformNode = vtkMRMLGridTransformNode::SafeDownCast(scene->GetNodeByID("vtkMRMLGridTransformNode1"));
   if (gridTransformNode == 0)
     {
-    std::cout << __LINE__ << ": TestBSplineTransform failed" << std::endl;
+    std::cout << __LINE__ << ": TestGridTransform failed" << std::endl;
     return false;
     }
 
-  vtkGridTransform *xfp = vtkGridTransform::SafeDownCast(
-    gridTransformNode->GetTransformFromParentAs("vtkGridTransform"));
-  vtkGridTransform *xtp = vtkGridTransform::SafeDownCast(
-    gridTransformNode->GetTransformToParentAs("vtkGridTransform"));
+  vtkAbstractTransform *xfp = gridTransformNode->GetTransformFromParentAs("vtkGridTransform");
+  vtkAbstractTransform *xtp = gridTransformNode->GetTransformToParentAs("vtkGridTransform");
 
   if (xfp == 0 || xtp == 0)
     {
-    std::cout << __LINE__ << ": TestBSplineTransform failed" << std::endl;
+    std::cout << __LINE__ << ": TestGridTransform failed" << std::endl;
     return false;
     }
 
@@ -168,14 +162,14 @@ bool TestGridTransform(const char *filename)
   xfp->TransformPoint(inp, outp);
   if (fabs(outp[0]) < 0.1 || fabs(outp[1]) < 0.1 || fabs(outp[2]) < 0.1)
     {
-    std::cout << __LINE__ << ": TestBSplineTransform failed" << std::endl;
+    std::cout << __LINE__ << ": TestGridTransform failed" << std::endl;
     return false;
     }
 
   xtp->TransformPoint(outp, inp);
   if (fabs(inp[0]) > 0.1 || fabs(inp[1]) > 0.1 || fabs(inp[2]) > 0.1)
     {
-    std::cout << __LINE__ << ": TestBSplineTransform failed" << std::endl;
+    std::cout << __LINE__ << ": TestGridTransform failed" << std::endl;
     return false;
     }
 
