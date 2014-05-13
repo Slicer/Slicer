@@ -80,6 +80,12 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       )
   endif()
 
+  if(APPLE)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON
+      )
+  endif()
+
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   # Force Python build to "Release".
