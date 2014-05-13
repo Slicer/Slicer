@@ -66,7 +66,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__mvSelector = slicer.qMRMLNodeComboBox()
     self.__mvSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
     self.__mvSelector.setMRMLScene(slicer.mrmlScene)
-    self.__mvSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
     self.__mvSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
     self.__mvSelector.addEnabled = 0
 
