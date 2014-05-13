@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QLabel>
+#include <QListWidget>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QSignalMapper>
@@ -29,10 +30,9 @@
 #include "qSlicerExtensionsManagerModel.h"
 #include "qSlicerExtensionsManageWidget.h"
 #include "ui_qSlicerExtensionsButtonBox.h"
-#include "ui_qSlicerExtensionsManageWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerExtensionsManageWidgetPrivate: public Ui_qSlicerExtensionsManageWidget
+class qSlicerExtensionsManageWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsManageWidget);
 protected:
@@ -41,19 +41,18 @@ protected:
 public:
   typedef qSlicerExtensionsManageWidgetPrivate Self;
   typedef qSlicerExtensionsManagerModel::ExtensionMetadataType ExtensionMetadataType;
+
+
+  enum DataRoles
+    {
+    IconRole = Qt::DecorationRole,
+    NameRole = Qt::UserRole,
+    };
+
   qSlicerExtensionsManageWidgetPrivate(qSlicerExtensionsManageWidget& object);
   void init();
 
-  enum ColumnsIds
-    {
-    IconColumn = 0,
-    NameColumn,
-    TextColumn,
-    ButtonsColumn,
-    ColumnCount
-    };
-
-  QTreeWidgetItem * extensionItem(const QString &extensionName)const;
+  QListWidgetItem * extensionItem(const QString &extensionName) const;
 
   void addExtensionItem(const ExtensionMetadataType &metadata);
 
@@ -101,16 +100,10 @@ void qSlicerExtensionsManageWidgetPrivate::init()
 {
   Q_Q(qSlicerExtensionsManageWidget);
 
-  this->setupUi(q);
-
-  this->ExtensionList->setColumnCount(Self::ColumnCount);
-  this->ExtensionList->setColumnHidden(Self::NameColumn, true);
-  this->ExtensionList->setRootIsDecorated(false);
-  this->ExtensionList->setIconSize(QSize(64, 64));
-  this->ExtensionList->header()->setResizeMode(Self::TextColumn, QHeaderView::Stretch);
-  this->ExtensionList->setAllColumnsShowFocus(true);
-  this->ExtensionList->setAlternatingRowColors(true);
-  this->ExtensionList->setSelectionMode(QAbstractItemView::NoSelection);
+  q->setAlternatingRowColors(true);
+  q->setSelectionMode(QAbstractItemView::NoSelection);
+  q->setIconSize(QSize(64, 64));
+  q->setSpacing(1);
 
   QObject::connect(&this->EnableButtonMapper, SIGNAL(mapped(QString)),
                    q, SLOT(setExtensionEnabled(QString)));
@@ -126,14 +119,19 @@ void qSlicerExtensionsManageWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-QTreeWidgetItem * qSlicerExtensionsManageWidgetPrivate::extensionItem(const QString& extensionName)const
+QListWidgetItem * qSlicerExtensionsManageWidgetPrivate::extensionItem(const QString& extensionName) const
 {
-  QList<QTreeWidgetItem*> items =
-      this->ExtensionList->findItems(extensionName, Qt::MatchExactly, Self::NameColumn);
-  Q_ASSERT(items.count() < 2);
-  if (items.count() == 1)
+  Q_Q(const qSlicerExtensionsManageWidget);
+
+  QAbstractItemModel* model = q->model();
+  const QModelIndexList indices =
+    model->match(model->index(0, 0, QModelIndex()), Self::NameRole,
+                 extensionName, 2, Qt::MatchExactly);
+
+  Q_ASSERT(indices.count() < 2);
+  if (indices.count() == 1)
     {
-    return items.at(0);
+    return q->item(indices.first().row());
     }
   return 0;
 }
@@ -167,24 +165,25 @@ public:
   // --------------------------------------------------------------------------
   QString incompatibleExtensionText()
   {
-    int imgHeight = this->fontMetrics().size(Qt::TextSingleLine, "XXXX").height();
-    return QString("<small><img height=\"%1\" src=\":/Icons/ExtensionIncompatible.png\"/>"
-                   " <font color=\"%2\">Incompatible with Slicer r%3 [built for r%4]</font></small><br>").
-        arg(imgHeight).arg(this->WarningColor).
-        arg(this->SlicerRevision).arg(this->ExtensionSlicerVersion);
+    return QString("<p style=\"font-weight: bold; font-size: 80%; color: %2;\">"
+                   "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> "
+                   "Incompatible with Slicer r%3 [built for r%4]</p>").
+        arg(this->WarningColor, this->SlicerRevision, this->ExtensionSlicerVersion);
   }
 
   // --------------------------------------------------------------------------
   QString descriptionAsRichText(const QString& extensionDescription)
   {
-    //
-    QString warningMessage;
+    static const QString format = "%1<h2>%2</h2><p>%3%4</p>";
+
+    QString linkText;
+    QString warningText;
     if (this->WarningType == INCOMPATIBLE)
       {
-      warningMessage = this->incompatibleExtensionText();
+      warningText = this->incompatibleExtensionText();
       }
-    //  <a href=\"slicer:%1\">More</a>
-    return warningMessage + QString("<b>%1</b><br><br>%2").arg(this->ExtensionName).arg(extensionDescription);
+    // linkText = QString(" <a href=\"slicer:%1\">More</a>").arg();
+    return format.arg(warningText, this->ExtensionName, extensionDescription, linkText);
   }
 
   // --------------------------------------------------------------------------
@@ -196,7 +195,7 @@ public:
       lineCount++;
       }
     QSize hint = this->Superclass::sizeHint();
-    hint.setHeight(this->fontMetrics().size(Qt::TextSingleLine, "XXXX").height() * lineCount + this->margin() * 2 + 2);
+    hint.setHeight(this->fontMetrics().lineSpacing() * lineCount + this->margin() * 2 + 2);
     return hint;
   }
 
@@ -214,6 +213,7 @@ public:
                                                      /* - this->fontMetrics().size(Qt::TextSingleLine, " More").width()*/)));
       }
   }
+
   QString ExtensionSlicerVersion;
   QString SlicerRevision;
   int PreviousWidth;
@@ -222,6 +222,26 @@ public:
   QString ExtensionDescription;
   QString WarningColor;
   int WarningType;
+};
+
+// --------------------------------------------------------------------------
+class qSlicerExtensionsItemWidget : public QWidget
+{
+public:
+  qSlicerExtensionsItemWidget(qSlicerExtensionsDescriptionLabel * label, QWidget* parent = 0)
+    : QWidget(parent), Label(label)
+  {
+    QHBoxLayout * layout = new QHBoxLayout;
+    layout->addWidget(label, 1);
+    layout->addWidget(this->ButtonBox = new qSlicerExtensionsButtonBox);
+    layout->setContentsMargins(0, 0, 0, 0);
+    this->setLayout(layout);
+
+    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+  }
+
+  qSlicerExtensionsDescriptionLabel * Label;
+  qSlicerExtensionsButtonBox * ButtonBox;
 };
 
 } // end of anonymous namespace
@@ -242,15 +262,13 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
   bool enabled = QVariant::fromValue(metadata.value("enabled")).toBool();
 
-  QTreeWidgetItem * item = new QTreeWidgetItem();
+  QListWidgetItem * item = new QListWidgetItem();
 
-  item->setIcon(qSlicerExtensionsManageWidgetPrivate::IconColumn,
-                extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
+  item->setIcon(extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
 
-  // See extensionItem(...) - Allow findItems() to work as expected
-  item->setText(qSlicerExtensionsManageWidgetPrivate::NameColumn, extensionName);
+  item->setData(Self::NameRole, extensionName); // See extensionItem(...)
 
-  this->ExtensionList->addTopLevelItem(item);
+  q->addItem(item);
 
   bool isExtensionCompatible =
       q->extensionsManagerModel()->isExtensionCompatible(extensionName).isEmpty();
@@ -267,31 +285,30 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
         extensionName, description, warningType);
   label->setOpenExternalLinks(true);
   label->setMargin(9);
-  this->ExtensionList->setItemWidget(item, qSlicerExtensionsManageWidgetPrivate::TextColumn, label);
   this->LabelLinkMapper.setMapping(label, extensionName);
   QObject::connect(label, SIGNAL(linkActivated(QString)), &this->LabelLinkMapper, SLOT(map()));
 
-  qSlicerExtensionsButtonBox * buttonBox = new qSlicerExtensionsButtonBox();
-  this->ExtensionList->setItemWidget(item, qSlicerExtensionsManageWidgetPrivate::ButtonsColumn, buttonBox);
+  qSlicerExtensionsItemWidget * widget = new qSlicerExtensionsItemWidget(label);
+  q->setItemWidget(item, widget);
 
-  this->EnableButtonMapper.setMapping(buttonBox->EnableButton, extensionName);
-  QObject::connect(buttonBox->EnableButton, SIGNAL(clicked()), &this->EnableButtonMapper, SLOT(map()));
-  buttonBox->EnableButton->setVisible(!enabled);
-  buttonBox->EnableButton->setEnabled(isExtensionCompatible);
+  this->EnableButtonMapper.setMapping(widget->ButtonBox->EnableButton, extensionName);
+  QObject::connect(widget->ButtonBox->EnableButton, SIGNAL(clicked()), &this->EnableButtonMapper, SLOT(map()));
+  widget->ButtonBox->EnableButton->setVisible(!enabled);
+  widget->ButtonBox->EnableButton->setEnabled(isExtensionCompatible);
 
-  this->DisableButtonMapper.setMapping(buttonBox->DisableButton, extensionName);
-  QObject::connect(buttonBox->DisableButton, SIGNAL(clicked()), &this->DisableButtonMapper, SLOT(map()));
-  buttonBox->DisableButton->setVisible(enabled);
+  this->DisableButtonMapper.setMapping(widget->ButtonBox->DisableButton, extensionName);
+  QObject::connect(widget->ButtonBox->DisableButton, SIGNAL(clicked()), &this->DisableButtonMapper, SLOT(map()));
+  widget->ButtonBox->DisableButton->setVisible(enabled);
 
   bool scheduledForUninstall = this->ExtensionsManagerModel->isExtensionScheduledForUninstall(extensionName);
 
-  this->ScheduleUninstallButtonMapper.setMapping(buttonBox->ScheduleForUninstallButton, extensionName);
-  QObject::connect(buttonBox->ScheduleForUninstallButton, SIGNAL(clicked()), &this->ScheduleUninstallButtonMapper, SLOT(map()));
-  buttonBox->ScheduleForUninstallButton->setVisible(!scheduledForUninstall);
+  this->ScheduleUninstallButtonMapper.setMapping(widget->ButtonBox->ScheduleForUninstallButton, extensionName);
+  QObject::connect(widget->ButtonBox->ScheduleForUninstallButton, SIGNAL(clicked()), &this->ScheduleUninstallButtonMapper, SLOT(map()));
+  widget->ButtonBox->ScheduleForUninstallButton->setVisible(!scheduledForUninstall);
 
-  this->CancelScheduledUninstallButtonMapper.setMapping(buttonBox->CancelScheduledForUninstallButton, extensionName);
-  QObject::connect(buttonBox->CancelScheduledForUninstallButton, SIGNAL(clicked()), &this->CancelScheduledUninstallButtonMapper, SLOT(map()));
-  buttonBox->CancelScheduledForUninstallButton->setVisible(scheduledForUninstall);
+  this->CancelScheduledUninstallButtonMapper.setMapping(widget->ButtonBox->CancelScheduledForUninstallButton, extensionName);
+  QObject::connect(widget->ButtonBox->CancelScheduledForUninstallButton, SIGNAL(clicked()), &this->CancelScheduledUninstallButtonMapper, SLOT(map()));
+  widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(scheduledForUninstall);
 }
 
 // --------------------------------------------------------------------------
@@ -406,41 +423,40 @@ void qSlicerExtensionsManageWidget::onExtensionInstalled(const QString& extensio
 void qSlicerExtensionsManageWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManageWidget);
-  QTreeWidgetItem * item = d->extensionItem(extensionName);
+  QListWidgetItem * item = d->extensionItem(extensionName);
   Q_ASSERT(item);
-  qSlicerExtensionsButtonBox * buttonBox =
-      dynamic_cast<qSlicerExtensionsButtonBox*>(d->ExtensionList->itemWidget(item, qSlicerExtensionsManageWidgetPrivate::ButtonsColumn));
-  Q_ASSERT(buttonBox);
-  buttonBox->CancelScheduledForUninstallButton->setVisible(true);
-  buttonBox->ScheduleForUninstallButton->setVisible(false);
+  qSlicerExtensionsItemWidget * widget =
+      dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+  widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(true);
+  widget->ButtonBox->ScheduleForUninstallButton->setVisible(false);
 }
 
 // -------------------------------------------------------------------------
 void qSlicerExtensionsManageWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManageWidget);
-  QTreeWidgetItem * item = d->extensionItem(extensionName);
+  QListWidgetItem * item = d->extensionItem(extensionName);
   Q_ASSERT(item);
-  qSlicerExtensionsButtonBox * buttonBox =
-      dynamic_cast<qSlicerExtensionsButtonBox*>(d->ExtensionList->itemWidget(item, qSlicerExtensionsManageWidgetPrivate::ButtonsColumn));
-  Q_ASSERT(buttonBox);
-  buttonBox->CancelScheduledForUninstallButton->setVisible(false);
-  buttonBox->ScheduleForUninstallButton->setVisible(true);
+  qSlicerExtensionsItemWidget * widget =
+      dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+  widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(false);
+  widget->ButtonBox->ScheduleForUninstallButton->setVisible(true);
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManageWidget::onModelExtensionEnabledChanged(const QString &extensionName, bool enabled)
 {
   Q_D(qSlicerExtensionsManageWidget);
-  QTreeWidgetItem * item = d->extensionItem(extensionName);
+  QListWidgetItem * item = d->extensionItem(extensionName);
   Q_ASSERT(item);
-  qSlicerExtensionsButtonBox * buttonBox =
-      dynamic_cast<qSlicerExtensionsButtonBox*>(d->ExtensionList->itemWidget(item, qSlicerExtensionsManageWidgetPrivate::ButtonsColumn));
-  Q_ASSERT(buttonBox);
-  buttonBox->EnableButton->setVisible(!enabled);
-  buttonBox->DisableButton->setVisible(enabled);
-  item->setIcon(qSlicerExtensionsManageWidgetPrivate::IconColumn,
-                extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
+  qSlicerExtensionsItemWidget * widget =
+      dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+  widget->ButtonBox->EnableButton->setVisible(!enabled);
+  widget->ButtonBox->DisableButton->setVisible(enabled);
+  item->setIcon(extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
 
 }
 
@@ -448,7 +464,7 @@ void qSlicerExtensionsManageWidget::onModelExtensionEnabledChanged(const QString
 void qSlicerExtensionsManageWidget::onModelUpdated()
 {
   Q_D(qSlicerExtensionsManageWidget);
-  d->ExtensionList->clear();
+  this->clear();
   foreach(const QString& extensionName, d->ExtensionsManagerModel->installedExtensions())
     {
     d->addExtensionItem(d->ExtensionsManagerModel->extensionMetadata(extensionName));

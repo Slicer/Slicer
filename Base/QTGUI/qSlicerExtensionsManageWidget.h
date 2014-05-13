@@ -22,7 +22,7 @@
 #define __qSlicerExtensionsManageWidget_h
 
 // Qt includes
-#include <QWidget>
+#include <QListWidget>
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
@@ -31,12 +31,12 @@ class qSlicerExtensionsManagerModel;
 class qSlicerExtensionsManageWidgetPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManageWidget
-  : public QWidget
+  : public QListWidget
 {
   Q_OBJECT
 public:
   /// Superclass typedef
-  typedef QWidget Superclass;
+  typedef QListWidget Superclass;
 
   /// Constructor
   explicit qSlicerExtensionsManageWidget(QWidget* parent = 0);

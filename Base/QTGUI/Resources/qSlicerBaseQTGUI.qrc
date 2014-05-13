@@ -92,9 +92,8 @@
     <file>Icons/DownloadExtension.png</file>
     <file>Icons/Extension.png</file>
     <file>Icons/ExtensionDefaultIcon.png</file>
-    <!-- Source: http://openclipart.org/detail/14428/signs-hazard-warning-by-h0us3s-14428 -->
-    <file alias="Icons/ExtensionIncompatible.png">Icons/warning-17.png</file>
-    <file alias="Icons/ExtensionError.png">Icons/gtk-dialog-warning.png</file>
+    <file>Icons/ExtensionIncompatible.svg</file>
+    <file>Icons/ExtensionError.svg</file>
 
     <file>Icons/Go.png</file>
     <file>Icons/Search.png</file>
