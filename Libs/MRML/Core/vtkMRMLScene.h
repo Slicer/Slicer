@@ -383,8 +383,6 @@ public:
   void SetErrorMessage(const char * message);
   const char *GetErrorMessagePointer();
 
-  void Edited();
-
   vtkGetObjectMacro ( CacheManager, vtkCacheManager );
   virtual void SetCacheManager(vtkCacheManager* );
   vtkGetObjectMacro ( DataIOManager, vtkDataIOManager );
@@ -505,8 +503,7 @@ public:
     NodeRemovedEvent,
 
     NewSceneEvent = 66030,
-    SceneEditedEvent,
-    MetadataAddedEvent,
+    MetadataAddedEvent = 66032, // ### Slicer 4.5: Simplify - Do not explicitly set for backward compat. See issue #3472
     ImportProgressFeedbackEvent,
     SaveProgressFeedbackEvent,
 

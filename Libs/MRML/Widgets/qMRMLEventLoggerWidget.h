@@ -57,7 +57,6 @@ protected slots:
   virtual void onNewSceneEvent();
   virtual void onSceneClosedEvent();
   virtual void onSceneAboutToBeClosedEvent();
-  virtual void onSceneEditedEvent();
   virtual void onMetadataAddedEvent();
   virtual void onImportProgressFeedbackEvent();
   virtual void onSaveProgressFeedbackEvent();

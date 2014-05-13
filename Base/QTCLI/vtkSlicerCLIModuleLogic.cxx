@@ -209,7 +209,6 @@ public:
     if (tnd)
     {
       tnd->SetAndObserveTransformNodeID(this->TransformNodeID.c_str());
-      this->CLIModuleLogic->GetMRMLScene()->Edited();
     }
   }
 

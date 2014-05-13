@@ -3171,12 +3171,6 @@ const char * vtkMRMLScene::GetErrorMessagePointer()
   }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLScene::Edited()
-{
-  this->InvokeEvent(vtkMRMLScene::SceneEditedEvent);
-}
-
-//-----------------------------------------------------------------------------
 bool vtkMRMLScene::GetModifiedSinceRead()
 {
   int hideFromEditors = 0;

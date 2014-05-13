@@ -36,7 +36,6 @@ void qMRMLEventLoggerPrivate::init()
   q->listenNewSceneEvent(true);
   q->listenSceneClosedEvent(true);
   q->listenSceneAboutToBeClosedEvent(true);
-  q->listenSceneEditedEvent(true);
   q->listenMetadataAddedEvent(true);
   q->listenImportProgressFeedbackEvent(true);
   q->listenSaveProgressFeedbackEvent(true);
@@ -90,10 +89,6 @@ void qMRMLEventLoggerPrivate::setMRMLScene(vtkMRMLScene* scene)
   this->EventNameToConnectionIdMap["SceneAboutToBeClosed"] = this->qvtkReconnect(
     this->MRMLScene, scene,
     vtkMRMLScene::StartCloseEvent, q, SLOT(onSceneAboutToBeClosedEvent()), priority);
-
-  this->EventNameToConnectionIdMap["SceneEdited"] = this->qvtkReconnect(
-    this->MRMLScene, scene,
-    vtkMRMLScene::SceneEditedEvent, q, SLOT(onSceneEditedEvent()), priority);
 
   this->EventNameToConnectionIdMap["MetadataAdded"] = this->qvtkReconnect(
     this->MRMLScene, scene,
@@ -162,7 +157,6 @@ QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NodeRemoved);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(NewScene);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneAboutToBeClosed);
-QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(MetadataAdded);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(ImportProgressFeedback);
 QMRMLEVENTLOGGER_LISTENING_EVENT_MACRO(SaveProgressFeedback);
@@ -204,7 +198,6 @@ QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NodeRemoved);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(NewScene);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneAboutToBeClosed);
-QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(MetadataAdded);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(ImportProgressFeedback);
 QMRMLEVENTLOGGER_LISTEN_EVENT_MACRO(SaveProgressFeedback);
@@ -258,7 +251,6 @@ void qMRMLEventLogger::on##_EVENT_NAME##Event()             \
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(NewScene);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneClosed);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneAboutToBeClosed);
-QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SceneEdited);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(MetadataAdded);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(ImportProgressFeedback);
 QMRMLEVENTLOGGER_ONEVENT_SLOT_MACRO(SaveProgressFeedback);
