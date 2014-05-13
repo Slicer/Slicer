@@ -37,7 +37,6 @@ class vtkMRMLSceneViewNode;
 
 // VTK includes
 class vtkImageData;
-class vtkMRMLHierarchyNode;
 
 #include <string>
 
@@ -53,9 +52,6 @@ public:
 
   /// Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
-
-  /// After a node was added, save it as the last added one
-  void AddNodeCompleted(vtkMRMLHierarchyNode* hierarchyNode);
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
@@ -90,38 +86,6 @@ public:
   /// Remove a scene view node
   void RemoveSceneViewNode(vtkMRMLSceneViewNode *sceneViewNode);
 
-  //
-  // Hierarchy functionality
-  //
-  /// Add a new visible hierarchy.
-  /// The active hierarchy node will be the parent. If there is no
-  /// active hierarchy node, use the top-level hierarchy node as the parent.
-  /// If there is no top-level hierarchy node, create additionally a top-level hierarchy node which serves as
-  /// a parent to the new hierarchy node. Return 1 on sucess 0 on failure.
-  int AddHierarchy();
-
-  /// Return the toplevel hierarchy node ID or create one and add it to the
-  /// scene if there is none:
-  /// If an optional node is given, insert the new toplevel hierarchy before it. If not,
-  /// just add the new toplevel hierarchy node.
-  char * GetTopLevelHierarchyNodeID(vtkMRMLNode* node=0);
-
-  /// Get the active hierarchy node which will be used as a parent for new
-  /// scene views
-  vtkMRMLHierarchyNode *GetActiveHierarchyNode();
-
-  /// get/set the id of the currently active hierarchy node
-  vtkGetStringMacro(ActiveHierarchyNodeID);
-  vtkSetStringMacro(ActiveHierarchyNodeID);
-
-  /// Scan through the current mrml scene and make sure all scene view nodes
-  /// have hierarchy nodes, adding them if missing
-  void AddMissingHierarchyNodes();
-
-  /// Flatten the hierarchy enforcing all scene view hierarchy nodes to point
-  /// to the singleton top level node
-  void FlattenSceneViewsHierarchy(const char *toplevelNodeID);
-
 protected:
 
   vtkSlicerSceneViewsModuleLogic();
@@ -139,22 +103,6 @@ private:
 
   std::string m_StringHolder;
 
-
-  vtkMRMLSceneViewNode* m_LastAddedSceneViewNode;
-
-
-  char *ActiveHierarchyNodeID;
-
-  //
-  // Private hierarchy functionality.
-  //
-  /// Add a new hierarchy node for a given node.
-  /// If there is an optional node, insert the new hierarchy node before it else just add it.
-  /// The active hierarchy node will be the parent. If there is no
-  /// active hierarchy node, use the top-level hierarchy node as the parent.
-  /// If there is no top-level hierarchy node, create additionally a top-level hierarchy node which serves as
-  /// a parent to the new hierarchy node. Return 1 on success, 0 on failure.
-  int AddHierarchyNodeForNode(vtkMRMLNode* annotationNode=0);
 };
 
 #endif

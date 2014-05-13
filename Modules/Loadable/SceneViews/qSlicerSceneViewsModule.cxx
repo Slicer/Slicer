@@ -61,7 +61,17 @@ vtkMRMLAbstractLogic* qSlicerSceneViewsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerSceneViewsModule::helpText() const
 {
-  return "The SceneViews module. Still under heavy development. For feedback please contact the Slicer mailing list (slicer-users@bwh.harvard.edu).";
+  QString help =
+    "The SceneViews module. Create, edit, restore, delete scene views. Scene "
+    "views capture the state of the MRML scene at a given point. The "
+    "recommended way to use them is to load all of your data and then adjust "
+    "visibility of the elements and capture interesting scene views. "
+    "Unexpected behavior may occur if you add or delete data from the scene "
+    "while saving and restoring scene views.\n"
+    "<a href=\"%1/Documentation/%2.%3/Modules/SceneViews\">"
+    "%1/Documentation/%2.%3/Modules/SceneViews</a>\n";
+
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

@@ -173,6 +173,9 @@ set(MRMLWidgets_SRCS
   qMRMLVolumeThresholdWidget.h
   qMRMLVolumeWidget.cxx
   qMRMLVolumeWidget.h
+  qMRMLExpandingWebView.cxx
+  qMRMLExpandingWebView.h
+  qMRMLExpandingWebView_p.h
   qMRMLWidget.cxx
   qMRMLWidget.h
   qMRMLWindowLevelWidget.cxx
@@ -255,6 +258,8 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLVolumeThresholdWidget.h
   qMRMLVolumeWidget.h
   qMRMLVolumeWidget_p.h
+  qMRMLExpandingWebView.h
+  qMRMLExpandingWebView_p.h
   qMRMLWidget.h
   qMRMLWindowLevelWidget.h
   )

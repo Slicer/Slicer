@@ -5,28 +5,36 @@
 #include "ctkCollapsibleButton.h"
 
 // QT includes
+#include <QBuffer>
 #include <QButtonGroup>
-#include <QList>
-#include <QFontMetrics>
-#include <QMessageBox>
-#include <QTextBrowser>
+#include <QDebug>
 #include <QFile>
-#include <QLineEdit>
 #include <QFileDialog>
-#include <QPrintDialog>
-#include <QPrinter>
+#include <QFontMetrics>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
-#include <QBuffer>
 #include <QImageWriter>
+#include <QLineEdit>
+#include <QList>
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QPrintDialog>
+#include <QPrinter>
 #include <QStatusBar>
+#include <QTextBrowser>
+#include <QWebFrame>
+#include <QUrl>
 
 // MRML includes
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
 #include "vtkCollection.h"
+#include "vtkImageData.h"
+#include "vtkImageResize.h"
+#include "vtkNew.h"
+#include "vtkPNGWriter.h"
 #include "vtkSmartPointer.h"
 
 // GUI includes
@@ -54,6 +62,8 @@ public:
   qSlicerSceneViewsModuleDialog* sceneViewDialog();
 
   QPointer<qSlicerSceneViewsModuleDialog> SceneViewDialog;
+
+  QString htmlFromSceneView(vtkMRMLSceneViewNode *sceneView);
 };
 
 //-----------------------------------------------------------------------------
@@ -76,12 +86,6 @@ qSlicerSceneViewsModuleDialog* qSlicerSceneViewsModuleWidgetPrivate::sceneViewDi
 
     // pass a pointer to the logic class
     this->SceneViewDialog->setLogic(this->logic());
-
-    // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    //this->connect(this->SceneViewDialog, SIGNAL(rejected()),
-    //              this->SceneViewDialog, SLOT(hide()));
-    //this->connect(this->SceneViewDialog, SIGNAL(accepted()),
-    //              this->SceneViewDialog, SLOT(hide()));
     }
   return this->SceneViewDialog;
 }
@@ -109,40 +113,95 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   Q_Q(qSlicerSceneViewsModuleWidget);
   this->Ui_qSlicerSceneViewsModuleWidget::setupUi(widget);
 
-  QObject::connect(this->hierarchyTreeView,
-                   SIGNAL(restoreSceneViewRequested(QString)),
-                   q, SLOT(restoreSceneView(QString)));
-  QObject::connect(this->hierarchyTreeView,
-                   SIGNAL(editSceneViewRequested(QString)),
-                   q, SLOT(editSceneView(QString)));
+  this->sceneViewsWebView->setMRMLScene(q->mrmlScene());
+  this->sceneViewsWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
 
-  // setup the hierarchy treeWidget
-  this->hierarchyTreeView->setLogic(this->logic());
-  this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
-  // setMRMLScene calls setRoot
+  // capture link clicked
+  this->sceneViewsWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  QObject::connect(this->sceneViewsWebView, SIGNAL(linkClicked(const QUrl &)),
+                    q, SLOT(captureLinkClicked(QUrl)));
+  // restore scroll bar position when the contents have been changed
+  QObject::connect(this->sceneViewsWebView->page()->mainFrame(),
+                   SIGNAL(contentsSizeChanged(const QSize &)),
+                   q, SLOT(restoreScrollPosition(QSize)));
+}
 
-  q->connect(this->moveDownSelectedButton, SIGNAL(clicked()),
-             q, SLOT(moveDownSelected()));
-  q->connect(this->moveUpSelectedButton, SIGNAL(clicked()),
-             q, SLOT(moveUpSelected()));
+//-----------------------------------------------------------------------------
+QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneViewNode *sceneView)
+{
+  QString html;
 
-  QObject::connect(this->deleteSelectedButton, SIGNAL(clicked()),
-                   this->hierarchyTreeView, SLOT(deleteSelected()));
+  if (!sceneView)
+    {
+    return html;
+    }
+  QString name = sceneView->GetName();
+  QString id = sceneView->GetID();
+  QString description = sceneView->GetSceneViewDescription().c_str();
+  // replace any carriage returns with html line breaks
+  description.replace(QString("\n"),
+                      QString("<br>\n"));
+  QString tempDir = qSlicerApplication::application()->defaultTemporaryPath();
+  QString thumbnailPath = tempDir + "/" + id + ".png";
+  /// tbd: always write out the image?
+  if (!QFile::exists(thumbnailPath))
+    {
+    vtkNew<vtkPNGWriter> writer;
+    writer->SetFileName(thumbnailPath.toLatin1());
+    vtkNew<vtkImageResize> resizeFilter;
+    resizeFilter->SetResizeMethodToOutputDimensions();
+#if (VTK_MAJOR_VERSION <= 5)
+    resizeFilter->SetInput(sceneView->GetScreenShot());
+#else
+    resizeFilter->SetInputConnection(sceneView->GetScreenShot());
+#endif
+    // try to keep the aspect ratio while setting a height
+    int dims[3];
+    sceneView->GetScreenShot()->GetDimensions(dims);
+    float newHeight = 200;
+    float newWidth = (newHeight/(float)(dims[0])) * (float)(dims[1]);
+    resizeFilter->SetOutputDimensions(newHeight, newWidth, 1);
+#if (VTK_MAJOR_VERSION <= 5)
+    writer->SetInput(resizeFilter->GetOutput());
+#else
+    writer->SetInputConnection(resizeFilter->GetOutputPort()));
+#endif
+    try
+      {
+      writer->Write();
+      }
+    catch (...)
+      {
+      qWarning() << "Unable to write file " << thumbnailPath;
+      }
+    }
+  QString restoreImagePath = QString("qrc:///Icons/Restore.png");
+  QString deleteImagePath = QString("qrc:///Icons/Delete.png");
 
-  QObject::connect(this->sceneView, SIGNAL(clicked()),
-                   q, SLOT(showSceneViewDialog()));
+  html = "<li>";
+  html += " <div style=\"width:100%;overflow-x:hidden;overflow-y:hidden;background-image:none;\">\n";
+  html += "  <div style=\"float:left; width:200px; margin:5px;\">\n";
+  html += "   <a href=\"Edit " + id + "\">\n";
+  html += "    <img src=\"file://" + thumbnailPath + "\" ";
+  html += "style=\"visibility:visible; max-width:200; max-height:none; ";
+  html += "display:block; image-rendering:auto; width:auto; height:auto; ";
+  html += "margin-left:10px; margin-top:0px; opacity:1;\">\n";
+  html += "   </a>\n";
+  html += "  </div>\n";
+  html += "  <div style=\"margin-left: 240px;\">";
+  html += "   <h3><a href=\"Restore " + id  + "\"><img src=\"" + restoreImagePath + "\"></a> ";
+  html += "   " + name;
+  html += "    <a href=\"Delete " + id  + "\"><img src=\"" + deleteImagePath + "\"></a> ";
+  html += "   </h3>\n";
+  // don't underline the link
+  html += "   <a href=\"Edit " + id + "\" style=\"text-decoration:none;\">\n";
+  html += "   " + description + "\n";
+  html += "   </a>\n";
+  html += "  </div>\n";
+  html += " </div>\n";
+  html += "</li>\n";
 
-  q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-             this->hierarchyTreeView, SLOT(setMRMLScene(vtkMRMLScene*)));
-
-  // listen to some mrml events
-  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndImportEvent,
-                 this->hierarchyTreeView, SLOT(onSceneEndImportEvent()));
-  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndRestoreEvent,
-                 this->hierarchyTreeView, SLOT(onSceneEndRestoreEvent()));
-  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndBatchProcessEvent,
-                 this->hierarchyTreeView, SLOT(onSceneEndBatchProcessEvent()));
-
+  return html;
 }
 
 //-----------------------------------------------------------------------------
@@ -153,6 +212,7 @@ qSlicerSceneViewsModuleWidget::qSlicerSceneViewsModuleWidget(QWidget* parent) :
   qSlicerAbstractModuleWidget(parent)
   , d_ptr(new qSlicerSceneViewsModuleWidgetPrivate(*this))
 {
+  this->savedScrollPosition = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -167,31 +227,26 @@ void qSlicerSceneViewsModuleWidget::setup()
   this->Superclass::setup();
   d->setupUi(this);
 
-  this->updateTreeViewModel();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::moveDownSelected()
+void qSlicerSceneViewsModuleWidget::moveDownSelected(QString mrmlId)
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  const char* id = d->logic()->MoveSceneViewDown(
-    d->hierarchyTreeView->firstSelectedNode().toLatin1());
+  const char* id = d->logic()->MoveSceneViewDown(mrmlId.toLatin1());
 
-  d->hierarchyTreeView->clearSelection();
-  d->hierarchyTreeView->setSelectedNode(id);
+  this->updateFromMRMLScene();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::moveUpSelected()
+void qSlicerSceneViewsModuleWidget::moveUpSelected(QString mrmlId)
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  const char* id = d->logic()->MoveSceneViewUp(
-    d->hierarchyTreeView->firstSelectedNode().toLatin1());
+  const char* id = d->logic()->MoveSceneViewUp(mrmlId.toLatin1());
 
-  d->hierarchyTreeView->clearSelection();
-  d->hierarchyTreeView->setSelectedNode(id);
+  this->updateFromMRMLScene();
 }
 
 //-----------------------------------------------------------------------------
@@ -210,38 +265,192 @@ void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
   Q_D(qSlicerSceneViewsModuleWidget);
   d->sceneViewDialog()->loadNode(mrmlId);
   d->sceneViewDialog()->exec();
+  this->updateFromMRMLScene();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
 {
-  // logic will be listening for this event as well and filling in missing
-  // hierarchy nodes, so just refresh the tree
-  this->updateTreeViewModel();
+  Q_D(qSlicerSceneViewsModuleWidget);
+
+  // clear the cache so new thumbnails will be used
+  d->sceneViewsWebView->settings()->clearMemoryCaches();
+
+  int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
+  QString createImagePath = QString("qrc:///Icons/Camera.png");
+
+  QString headerHtml;
+  headerHtml = "<html>";
+  headerHtml += "<head></head>";
+  headerHtml += "<body link=\"000000\">";
+  headerHtml += " <div>";
+  headerHtml += "  <a href=\"Create\"><img src=\"" + createImagePath + "\"></a> ";
+  headerHtml += "   Scene Views ("
+    + QString::number(numSceneViews) + "):</div>";
+  headerHtml += "   <div style=\"width:100%;\">";
+  headerHtml += "    <ul>";
+
+  QString htmlPage = headerHtml;
+
+  for (int i = 0; i < numSceneViews; ++i)
+    {
+    vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNthNodeByClass(i, "vtkMRMLSceneViewNode");
+    if (!mrmlNode)
+      {
+      continue;
+      }
+    vtkMRMLSceneViewNode *sceneView = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
+    QString sceneViewHtml = d->htmlFromSceneView(sceneView);
+    htmlPage += sceneViewHtml;
+    }
+  QString footerHtml;
+  footerHtml = "    </ul>\n";
+  footerHtml += "  </div>\n";
+  footerHtml += " </body>\n";
+  footerHtml += "</html>\n";
+  htmlPage += footerHtml;
+
+  QString baseURL;
+  // save the scroll bar position so can restore it once the html
+  // has been rendered
+  this->savedScrollPosition = d->sceneViewsWebView->page()->mainFrame()->scrollBarValue(Qt::Vertical);
+
+  d->sceneViewsWebView->setHtml(htmlPage, baseURL);
+  d->sceneViewsWebView->show();
+
 }
 
 //-----------------------------------------------------------------------------
-// Refresh the hierarchy tree after an sceneView was added or modified.
+void qSlicerSceneViewsModuleWidget::enter()
+{
+  this->Superclass::enter();
+
+  // set up mrml scene observations so that the GUI gets updated
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent,
+                    this, SLOT(onMRMLSceneEvent(vtkObject*, vtkObject*)));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeRemovedEvent,
+                    this, SLOT(onMRMLSceneEvent(vtkObject*, vtkObject*)));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent,
+                    this, SLOT(onMRMLSceneReset()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndImportEvent,
+                    this, SLOT(onMRMLSceneReset()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent,
+                    this, SLOT(onMRMLSceneReset()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent,
+                    this, SLOT(onMRMLSceneReset()));
+
+  // this call needed for the case of a scene with scene views having been
+  // loaded while not in the scene views module, clear out the old thumbnails.
+  this->removeTemporaryFiles();
+
+  // and update the web view
+  this->updateFromMRMLScene();
+}
+
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleWidget::updateTreeViewModel()
+void qSlicerSceneViewsModuleWidget::exit()
+{
+  this->Superclass::exit();
+
+  // qDebug() << "exit widget";
+
+  // remove mrml scene observations, don't need to update the GUI while the
+  // module is not showing
+  this->qvtkDisconnectAll();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onMRMLSceneEvent(vtkObject*, vtkObject* node)
+{
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
+    {
+    return;
+    }
+  vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(node);
+  if (sceneViewNode)
+    {
+    this->updateFromMRMLScene();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::onMRMLSceneReset()
+{
+  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
+    {
+    return;
+    }
+
+  // clear temp files to avoid thumbnail clashes with reused node ids
+  this->removeTemporaryFiles();
+
+  // update the web view
+  this->updateFromMRMLScene();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::removeTemporaryFiles()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
 
-  if (d->logic() && d->logic()->GetMRMLScene() &&
-      d->logic()->GetMRMLScene()->IsBatchProcessing())
+  QString tempDirectoryPath = qSlicerApplication::application()->defaultTemporaryPath();
+  // look for files with vtkMRMLSceneViewNodeX.png file names
+  QDir tempDir = QDir(tempDirectoryPath);
+  QStringList filters;
+  filters << "vtkMRMLSceneViewNode*.png";
+  tempDir.setNameFilters(filters);
+  QStringList fileList = tempDir.entryList();
+  for (int i = 0; i < fileList.size(); ++i)
     {
-    // scene is updating, return
-    return;
+    QString imagePath = tempDir.absoluteFilePath(fileList.at(i));
+    if (!QFile::remove(imagePath))
+      {
+      qWarning() << "Error removing scene view thumbnail file " << imagePath;
+      }
     }
-  //qDebug("updateTreeViewModel");
-
-  // use lazy update to trigger a refresh after batch processing
-  d->hierarchyTreeView->sceneModel()->setLazyUpdate(true);
-
-  // set mrml scene calls expand all and set root
-  d->hierarchyTreeView->setMRMLScene(d->logic()->GetMRMLScene());
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::captureLinkClicked(const QUrl &url)
+{
+  QString toParse = url.toString();
+
+  QStringList operationAndID = toParse.split(" ");
+  QString operation = operationAndID[0];
+  QString id;
+  if (operationAndID.size() > 1)
+    {
+    // Create doesn't need an id
+    id = operationAndID[1];
+    }
+  if (operation == QString("Edit"))
+    {
+    this->editSceneView(id);
+    }
+  else if (operation == QString("Restore"))
+    {
+    this->restoreSceneView(id);
+    }
+  else if (operation == QString("Delete"))
+    {
+    this->mrmlScene()->RemoveNode(this->mrmlScene()->GetNodeByID(id.toLatin1()));
+    }
+  else if (operation == QString("Create"))
+    {
+    this->showSceneViewDialog();
+    }
+  else
+    {
+    qWarning() << "captureLinkClicked: unsupported operation: " << operation;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSceneViewsModuleWidget::restoreScrollPosition(const QSize &size)
+{
+  Q_D(qSlicerSceneViewsModuleWidget);
+  d->sceneViewsWebView->page()->mainFrame()->setScrollBarValue(Qt::Vertical, this->savedScrollPosition);
+}
 //-----------------------------------------------------------------------------
 // SceneView functionality
 //-----------------------------------------------------------------------------

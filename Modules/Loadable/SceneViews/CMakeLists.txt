@@ -20,10 +20,6 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(GUI_SRCS
-  GUI/qMRML${MODULE_NAME}Model.cxx
-  GUI/qMRML${MODULE_NAME}Model.h
-  GUI/qMRML${MODULE_NAME}TreeView.cxx
-  GUI/qMRML${MODULE_NAME}TreeView.h
   GUI/qSlicer${MODULE_NAME}ModuleWidget.cxx
   GUI/qSlicer${MODULE_NAME}ModuleWidget.h
   GUI/qSlicer${MODULE_NAME}ModuleDialog.cxx
@@ -38,8 +34,6 @@ set(MODULE_SRCS
 
 set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}Module.h
-  GUI/qMRML${MODULE_NAME}Model.h
-  GUI/qMRML${MODULE_NAME}TreeView.h
   GUI/qSlicer${MODULE_NAME}ModuleWidget.h
   GUI/qSlicer${MODULE_NAME}ModuleDialog.h
   )

@@ -37,6 +37,8 @@ set(${KIT}_SRCS
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.cxx
   qMRMLEventBrokerWidgetPlugin.h
+  qMRMLExpandingWebViewPlugin.cxx
+  qMRMLExpandingWebViewPlugin.h
   qMRMLLabelComboBoxPlugin.cxx
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.cxx
@@ -102,6 +104,7 @@ set(${KIT}_MOC_SRCS
   qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.h
+  qMRMLExpandingWebViewPlugin.h
   qMRMLLabelComboBoxPlugin.h
   qMRMLLayoutWidgetPlugin.h
   qMRMLLinearTransformSliderPlugin.h

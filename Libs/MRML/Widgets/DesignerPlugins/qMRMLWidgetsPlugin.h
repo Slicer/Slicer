@@ -35,6 +35,7 @@
 #include "qMRMLDisplayNodeViewComboBoxPlugin.h"
 #include "qMRMLDisplayNodeWidgetPlugin.h"
 #include "qMRMLEventBrokerWidgetPlugin.h"
+#include "qMRMLExpandingWebViewPlugin.h"
 #include "qMRMLLabelComboBoxPlugin.h"
 #include "qMRMLLayoutWidgetPlugin.h"
 #include "qMRMLLinearTransformSliderPlugin.h"
@@ -83,6 +84,7 @@ public:
             << new qMRMLDisplayNodeViewComboBoxPlugin
             << new qMRMLDisplayNodeWidgetPlugin
             << new qMRMLEventBrokerWidgetPlugin
+            << new qMRMLExpandingWebViewPlugin
             << new qMRMLLabelComboBoxPlugin
             << new qMRMLLayoutWidgetPlugin
             << new qMRMLLinearTransformSliderPlugin

@@ -16,6 +16,8 @@ class qSlicerSceneViewsModuleWidgetPrivate;
 
 class vtkMRMLNode;
 
+class QUrl;
+
 /// \ingroup Slicer_QtModules_SceneViews
 class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -26,6 +28,11 @@ public:
     typedef qSlicerAbstractModuleWidget Superclass;
     qSlicerSceneViewsModuleWidget(QWidget *parent=0);
     ~qSlicerSceneViewsModuleWidget();
+
+  /// Set up the GUI from mrml when entering
+  virtual void enter();
+  /// Disconnect from scene when exiting
+  virtual void exit();
 
 public slots:
     /// a public slot allowing other modules to open up the scene view capture
@@ -39,25 +46,40 @@ public slots:
     /// User clicked on property edit button
     void editSceneView(const QString& mrmlId);
 
-    /// Update the scene view model
-    void updateTreeViewModel();
+    /// scene was closed or imported or restored or finished batch
+    /// processing, reset as necessary
+    void onMRMLSceneReset();
 
 protected slots:
 
-  void moveDownSelected();
-  void moveUpSelected();
+  void moveDownSelected(QString mrmlId);
+  void moveUpSelected(QString mrmlId);
+
+  /// Respond to scene events
+  void onMRMLSceneEvent(vtkObject*, vtkObject* node);
 
   /// respond to mrml events
   void updateFromMRMLScene();
+
+  void captureLinkClicked(const QUrl &url);
+
+  /// When the html changes, try to go back to any previous scroll position.
+  /// Connected to contents size changed signal.
+  /// /sa savedScrollPosition
+  void restoreScrollPosition(const QSize &size);
 
 protected:
   QScopedPointer<qSlicerSceneViewsModuleWidgetPrivate> d_ptr;
 
   virtual void setup();
 
+  void removeTemporaryFiles();
+
 private:
   Q_DECLARE_PRIVATE(qSlicerSceneViewsModuleWidget);
   Q_DISABLE_COPY(qSlicerSceneViewsModuleWidget);
+
+  int savedScrollPosition;
 
 };
 
