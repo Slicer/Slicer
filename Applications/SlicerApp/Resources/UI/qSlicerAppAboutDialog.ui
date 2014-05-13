@@ -553,7 +553,6 @@
  </customwidgets>
  <resources>
   <include location="../SlicerApp.qrc"/>
-  <include location="../../../../../../../.designer/SlicerApp.qrc"/>
  </resources>
  <connections/>
 </ui>
