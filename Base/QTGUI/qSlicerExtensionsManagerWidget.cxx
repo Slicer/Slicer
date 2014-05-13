@@ -22,6 +22,7 @@
 #include <QTimerEvent>
 #include <QToolButton>
 #include <QWebFrame>
+#include <QWebHistory>
 #include <QWebView>
 
 // CTK includes
@@ -234,7 +235,11 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
   d->tabWidget->cornerWidget(Qt::TopRightCorner)->setEnabled(
         d->tabWidget->widget(index) == d->InstallExtensionsTab);
 
-  // TODO navigate 'manage browser' back to first page
+  QWebHistory* history = d->ExtensionsManageBrowser->webView()->history();
+  if (history->canGoBack())
+    {
+    history->goToItem(history->items().first());
+    }
 }
 
 // --------------------------------------------------------------------------
