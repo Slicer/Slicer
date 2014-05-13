@@ -22,9 +22,11 @@
 #include <QDebug>
 #include <QLabel>
 #include <QListWidget>
+#include <QPainter>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QTextDocument>
 
 // Slicer includes
 #include "qSlicerExtensionsManagerModel.h"
@@ -156,9 +158,14 @@ public:
                                     const QString& extensionName, const QString& extensionDescription,
                                     int warningType = NOWARNING)
     : QLabel(), ExtensionSlicerVersion(extensionSlicerVersion), SlicerRevision(slicerRevision),
-      PreviousWidth(0), ExtensionName(extensionName), ExtensionDescription(extensionDescription),
-      WarningColor("#bd8530"), WarningType(warningType)
+      ExtensionName(extensionName), ExtensionDescription(extensionDescription),
+      WarningColor("#bd8530"), WarningType(warningType), LastWidth(0)
   {
+    QTextOption textOption = this->Text.defaultTextOption();
+    textOption.setWrapMode(QTextOption::NoWrap);
+    this->Text.setDefaultTextOption(textOption);
+
+    this->prepareText(extensionDescription); // Ensure reasonable initial height for size hint
     this->setToolTip(extensionDescription);
   }
 
@@ -172,7 +179,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  QString descriptionAsRichText(const QString& extensionDescription)
+  QString descriptionAsRichText(const QString& elidedDescription)
   {
     static const QString format = "%1<h2>%2</h2><p>%3%4</p>";
 
@@ -183,45 +190,60 @@ public:
       warningText = this->incompatibleExtensionText();
       }
     // linkText = QString(" <a href=\"slicer:%1\">More</a>").arg();
-    return format.arg(warningText, this->ExtensionName, extensionDescription, linkText);
+    return format.arg(warningText, this->ExtensionName, elidedDescription, linkText);
+  }
+
+  // --------------------------------------------------------------------------
+  void prepareText(const QString& elidedDescription)
+  {
+    this->Text.setHtml(this->descriptionAsRichText(elidedDescription));
   }
 
   // --------------------------------------------------------------------------
   virtual QSize sizeHint() const
   {
-    int lineCount = 3; // Corresponds to the number of line within the default description text
-    if (this->WarningType != NOWARNING)
-      {
-      lineCount++;
-      }
     QSize hint = this->Superclass::sizeHint();
-    hint.setHeight(this->fontMetrics().lineSpacing() * lineCount + this->margin() * 2 + 2);
+    hint.setHeight(qRound(this->Text.size().height() + 0.5) +
+                   this->margin() * 2);
     return hint;
   }
 
   // --------------------------------------------------------------------------
   virtual void paintEvent(QPaintEvent * event)
   {
-    this->Superclass::paintEvent(event);
-    if (this->rect().width() != this->PreviousWidth)
+    QPainter painter(this);
+    const QRect cr = this->contentsRect();
+
+    if (this->LastWidth != cr.width())
       {
-      this->PreviousWidth = this->rect().width();
-      this->setText(this->descriptionAsRichText(
-                      this->fontMetrics().elidedText(this->ExtensionDescription, Qt::ElideRight,
-                                                     this->rect().width()
-                                                     - this->margin() * 2
-                                                     /* - this->fontMetrics().size(Qt::TextSingleLine, " More").width()*/)));
+      int margin = this->margin() * 2;
+      if (!this->ExtensionId.isEmpty())
+        {
+        margin += this->fontMetrics().width(" More");
+        }
+      this->prepareText(
+        this->fontMetrics().elidedText(this->ExtensionDescription,
+                                       Qt::ElideRight, cr.width() - margin));
+      this->Text.setTextWidth(this->LastWidth = cr.width());
       }
+
+    painter.translate(cr.topLeft());
+    painter.setPen(this->palette().text().color());
+    this->Text.drawContents(&painter);
   }
 
   QString ExtensionSlicerVersion;
   QString SlicerRevision;
-  int PreviousWidth;
+
   bool ExtensionIncompatible;
   QString ExtensionName;
   QString ExtensionDescription;
   QString WarningColor;
   int WarningType;
+
+  QTextDocument Text;
+
+  int LastWidth;
 };
 
 // --------------------------------------------------------------------------
@@ -284,9 +306,13 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
         q->extensionsManagerModel()->slicerRevision(),
         extensionName, description, warningType);
   label->setOpenExternalLinks(true);
-  label->setMargin(9);
+  label->setMargin(6);
   this->LabelLinkMapper.setMapping(label, extensionName);
   QObject::connect(label, SIGNAL(linkActivated(QString)), &this->LabelLinkMapper, SLOT(map()));
+
+  QSize hint = label->sizeHint();
+  hint.setWidth(hint.width() + 64);
+  item->setSizeHint(hint);
 
   qSlicerExtensionsItemWidget * widget = new qSlicerExtensionsItemWidget(label);
   q->setItemWidget(item, widget);
