@@ -153,7 +153,7 @@ QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneView
 #if (VTK_MAJOR_VERSION <= 5)
     resizeFilter->SetInput(sceneView->GetScreenShot());
 #else
-    resizeFilter->SetInputConnection(sceneView->GetScreenShot());
+    resizeFilter->SetInputData(sceneView->GetScreenShot());
 #endif
     // try to keep the aspect ratio while setting a height
     int dims[3];
@@ -164,7 +164,7 @@ QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneView
 #if (VTK_MAJOR_VERSION <= 5)
     writer->SetInput(resizeFilter->GetOutput());
 #else
-    writer->SetInputConnection(resizeFilter->GetOutputPort()));
+    writer->SetInputConnection(resizeFilter->GetOutputPort());
 #endif
     try
       {
