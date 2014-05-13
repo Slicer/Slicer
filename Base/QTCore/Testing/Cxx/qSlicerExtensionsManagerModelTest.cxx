@@ -458,7 +458,7 @@ void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore_data()
   QTest::addColumn<QStringList>("expectedServerKeysToIgnore");
 
   QTest::newRow("0") << (QStringList()
-                         << "item_id" << "extension_id" << "bitstream_id"
+                         << "item_id" << "bitstream_id"
                          << "submissiontype" << "codebase" << "package"
                          << "size" << "date_creation");
 }
