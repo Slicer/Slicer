@@ -34,6 +34,7 @@
 #  <var-prefix>_WC_REVISION_NAME - Name associated with <var-prefix>_WC_REVISION_HASH
 #  <var-prefix>_WC_URL - output of command `git config --get remote.origin.url'
 #  <var-prefix>_WC_ROOT - Same value as working copy URL
+#  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
 #  <var-prefix>_WC_GITSVN - Set to false
 #
 # ... and also the following ones if it's a git-svn repository:
@@ -102,6 +103,13 @@ if(GIT_EXECUTABLE)
        WORKING_DIRECTORY ${dir}
        OUTPUT_VARIABLE ${prefix}_WC_URL
        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    execute_process(COMMAND ${GIT_EXECUTABLE} show -s --format="%ci" ${${prefix}_WC_REVISION_HASH}
+       WORKING_DIRECTORY ${dir}
+       OUTPUT_VARIABLE ${prefix}_show_output
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX REPLACE "^([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*"
+      "\\1" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_show_output}")
 
     set(${prefix}_WC_GITSVN False)
 
