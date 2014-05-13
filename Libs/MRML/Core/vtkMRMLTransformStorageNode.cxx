@@ -313,7 +313,7 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
     }
 
   // Get grid parameters from the fixed parameters
-  const int gridSize[3]={transformFixedParamsItk[0], transformFixedParamsItk[1], transformFixedParamsItk[2]};
+  const double gridSize[3]={transformFixedParamsItk[0], transformFixedParamsItk[1], transformFixedParamsItk[2]};
   double gridSpacing[3]={transformFixedParamsItk[6], transformFixedParamsItk[7], transformFixedParamsItk[8]};
   double gridOrigin_LPS[3]={transformFixedParamsItk[3], transformFixedParamsItk[4], transformFixedParamsItk[5]};
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
