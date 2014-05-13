@@ -1414,15 +1414,10 @@ QStringList qSlicerExtensionsManagerModel::serverKeysToIgnore()
 qSlicerExtensionsManagerModel::ExtensionMetadataType
 qSlicerExtensionsManagerModel::filterExtensionMetadata(const ExtensionMetadataType& extensionMetadata)
 {
-  QStringList keysToIgnore(Self::serverKeysToIgnore());
-  ExtensionMetadataType filteredExtensionMetadata;
-  foreach(const QString& key, extensionMetadata.keys())
+  ExtensionMetadataType filteredExtensionMetadata = extensionMetadata;
+  foreach(const QString& key, Self::serverKeysToIgnore())
     {
-    if (keysToIgnore.contains(key))
-      {
-      continue;
-      }
-    filteredExtensionMetadata.insert(key, extensionMetadata.value(key));
+    filteredExtensionMetadata.remove(key);
     }
   return filteredExtensionMetadata;
 }
