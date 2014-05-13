@@ -38,6 +38,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsInstallWidget
   Q_PROPERTY(QString slicerRevision READ slicerRevision WRITE setSlicerRevision)
   Q_PROPERTY(QString slicerOs READ slicerOs WRITE setSlicerOs)
   Q_PROPERTY(QString slicerArch READ slicerArch WRITE setSlicerArch)
+  Q_PROPERTY(bool browsingEnabled READ isBrowsingEnabled WRITE setBrowsingEnabled)
 public:
   /// Superclass typedef
   typedef qSlicerWebWidget Superclass;
@@ -59,6 +60,9 @@ public:
 
   QString slicerArch()const;
   void setSlicerArch(const QString& arch);
+
+  bool isBrowsingEnabled() const;
+  void setBrowsingEnabled(bool state);
 
 public slots:
   /// Refresh the web page associated with the widget

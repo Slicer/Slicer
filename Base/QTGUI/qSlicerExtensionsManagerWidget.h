@@ -54,7 +54,9 @@ public slots:
 protected slots:
   void onModelUpdated();
   void onCurrentTabChanged(int index);
-  void onUrlChanged(const QUrl& newUrl);
+  void onManageLinkActivated(const QUrl& link);
+  void onManageUrlChanged(const QUrl& newUrl);
+  void onInstallUrlChanged(const QUrl& newUrl);
   void onSearchTextChanged(const QString& newText);
 
 protected:

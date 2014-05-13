@@ -390,7 +390,7 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
         extensionSlicerRevision, q->extensionsManagerModel()->slicerRevision(),
         extensionId, extensionName, description, enabled, isExtensionCompatible);
   label->setMargin(6);
-//   QObject::connect(label, SIGNAL(linkActivated(QString)), &this->LabelLinkMapper, SLOT(map()));
+  QObject::connect(label, SIGNAL(linkActivated(QString)), q, SLOT(onLinkActivated(QString)));
 
   QSize hint = label->sizeHint();
   hint.setWidth(hint.width() + 64);
@@ -578,4 +578,18 @@ void qSlicerExtensionsManageWidget::onModelUpdated()
     {
     d->addExtensionItem(d->ExtensionsManagerModel->extensionMetadata(extensionName));
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::onLinkActivated(const QString& link)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+
+  QUrl url = d->ExtensionsManagerModel->serverUrl();
+  url.setPath(url.path() + "/slicerappstore/extension/view");
+  url.addQueryItem("extensionId", link.mid(7)); // remove leading "slicer:"
+  url.addQueryItem("breadcrumbs", "none");
+  url.addQueryItem("layout", "empty");
+
+  emit this->linkActivated(url);
 }

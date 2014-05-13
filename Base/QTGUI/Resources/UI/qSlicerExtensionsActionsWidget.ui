@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerExtensionsActionsWidget</class>
+ <widget class="QStackedWidget" name="qSlicerExtensionsActionsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>153</width>
+    <height>59</height>
+   </rect>
+  </property>
+  <widget class="QWidget" name="ManagePage">
+   <layout class="QHBoxLayout" name="ManageLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QToolButton" name="ManageBackButton"/>
+    </item>
+    <item>
+     <widget class="QToolButton" name="ManageForwardButton"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="InstallPage">
+   <layout class="QHBoxLayout" name="InstallLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QToolButton" name="InstallBackButton"/>
+    </item>
+    <item>
+     <widget class="QToolButton" name="InstallForwardButton"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

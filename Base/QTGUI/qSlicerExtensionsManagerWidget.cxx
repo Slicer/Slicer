@@ -30,6 +30,7 @@
 // QtGUI includes
 #include "qSlicerExtensionsManagerWidget.h"
 #include "qSlicerExtensionsManagerModel.h"
+#include "ui_qSlicerExtensionsActionsWidget.h"
 #include "ui_qSlicerExtensionsManagerWidget.h"
 
 // --------------------------------------------------------------------------
@@ -43,6 +44,16 @@ QString jsQuote(QString text)
   text.replace(reSpecialCharacters, "\\\\1").replace("\n", "\\n");
   return QString("\'%1\'").arg(text);
 }
+
+// --------------------------------------------------------------------------
+class qSlicerExtensionsActionsWidget : public QStackedWidget, public Ui_qSlicerExtensionsActionsWidget
+{
+public:
+  qSlicerExtensionsActionsWidget(QWidget * parent = 0) : QStackedWidget(parent)
+  {
+    this->setupUi(this);
+  }
+};
 
 }
 
@@ -75,22 +86,20 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   this->setupUi(q);
 
+  this->ExtensionsManageBrowser->setBrowsingEnabled(false);
+
   // Back and forward buttons
-  QWidget * actionsWidget = new QWidget;
-  QHBoxLayout * actionsLayout = new QHBoxLayout(actionsWidget);
-  actionsLayout->setContentsMargins(0, 0, 0, 0);
-  QToolButton * backButton = new QToolButton;
-  backButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Back));
-  actionsLayout->addWidget(backButton);
-  QToolButton * forwardButton = new QToolButton;
-  forwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Forward));
-  actionsLayout->addWidget(forwardButton);
+  qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
+  actionsWidget->ManageBackButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebPage::Back));
+  actionsWidget->ManageForwardButton->setDefaultAction(this->ExtensionsManageBrowser->webView()->pageAction(QWebPage::Forward));
+  actionsWidget->InstallBackButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Back));
+  actionsWidget->InstallForwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Forward));
 
-  int size = this->tabWidget->height();
-  backButton->setIconSize(QSize(size, size));
-  forwardButton->setIconSize(QSize(size, size));
-
-  actionsWidget->setEnabled(false);
+  const QSize iconSize = this->tabWidget->iconSize();
+  actionsWidget->ManageBackButton->setIconSize(iconSize);
+  actionsWidget->ManageForwardButton->setIconSize(iconSize);
+  actionsWidget->InstallBackButton->setIconSize(iconSize);
+  actionsWidget->InstallForwardButton->setIconSize(iconSize);
 
   this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
 
@@ -100,7 +109,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   searchLayout->setContentsMargins(0, 0, 0, 0);
 
   QToolButton * configureButton = new QToolButton; // needed for vertical alignment
-  configureButton->setMinimumSize(forwardButton->sizeHint());
+  configureButton->setMinimumSize(actionsWidget->InstallForwardButton->sizeHint());
   configureButton->setAutoRaise(true);
   configureButton->setEnabled(false);
   searchLayout->addWidget(configureButton);
@@ -115,12 +124,22 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   this->tabWidget->setCornerWidget(searchWidget, Qt::TopRightCorner);
 
+  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
+                   actionsWidget, SLOT(setCurrentIndex(int)));
+
+  QObject::connect(this->ExtensionsManageWidget, SIGNAL(linkActivated(QUrl)),
+                   q, SLOT(onManageLinkActivated(QUrl)));
+
+  QObject::connect(this->ExtensionsManageBrowser->webView(),
+                   SIGNAL(urlChanged(QUrl)),
+                   q, SLOT(onManageUrlChanged(QUrl)));
+
   QObject::connect(this->searchText, SIGNAL(textEdited(QString)),
                    q, SLOT(onSearchTextChanged(QString)));
 
   QObject::connect(this->ExtensionsInstallWidget->webView(),
                    SIGNAL(urlChanged(QUrl)),
-                   q, SLOT(onUrlChanged(QUrl)));
+                   q, SLOT(onInstallUrlChanged(QUrl)));
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    q, SLOT(onCurrentTabChanged(int)));
@@ -163,6 +182,7 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
   disconnect(this, SLOT(onModelUpdated()));
 
   d->ExtensionsManageWidget->setExtensionsManagerModel(model);
+  d->ExtensionsManageBrowser->setExtensionsManagerModel(model);
   d->ExtensionsInstallWidget->setExtensionsManagerModel(model);
 
   if (model)
@@ -210,14 +230,31 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
 {
   Q_D(qSlicerExtensionsManagerWidget);
-  d->tabWidget->cornerWidget(Qt::TopLeftCorner)->setEnabled(
-        d->tabWidget->widget(index) == d->InstallExtensionsTab);
+
   d->tabWidget->cornerWidget(Qt::TopRightCorner)->setEnabled(
         d->tabWidget->widget(index) == d->InstallExtensionsTab);
+
+  // TODO navigate 'manage browser' back to first page
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerWidget::onUrlChanged(const QUrl& newUrl)
+void qSlicerExtensionsManagerWidget::onManageLinkActivated(const QUrl& link)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+
+  d->ManageExtensionsPager->setCurrentIndex(1);
+  d->ExtensionsManageBrowser->webView()->load(link);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onManageUrlChanged(const QUrl& newUrl)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  d->ManageExtensionsPager->setCurrentIndex(newUrl.scheme() == "about" ? 0 : 1);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 {
   Q_D(qSlicerExtensionsManagerWidget);
 

@@ -41,7 +41,10 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="qSlicerExtensionsManageWidget" name="ExtensionsManageWidget" native="true"/>
+        <widget class="QStackedWidget" name="ManageExtensionsPager">
+         <widget class="qSlicerExtensionsManageWidget" name="ExtensionsManageWidget"/>
+         <widget class="qSlicerExtensionsInstallWidget" name="ExtensionsManageBrowser"/>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -52,11 +52,13 @@ public:
   QString SlicerRevision;
   QString SlicerOs;
   QString SlicerArch;
+
+  bool BrowsingEnabled;
 };
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object)
-  :q_ptr(&object)
+  : q_ptr(&object), BrowsingEnabled(true)
 {
   this->ExtensionsManagerModel = 0;
 }
@@ -216,6 +218,10 @@ CTK_GET_CPP(qSlicerExtensionsInstallWidget, QString, slicerArch, SlicerArch)
 CTK_SET_CPP(qSlicerExtensionsInstallWidget, const QString&, setSlicerArch, SlicerArch)
 
 // --------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerExtensionsInstallWidget, bool, isBrowsingEnabled, BrowsingEnabled)
+CTK_SET_CPP(qSlicerExtensionsInstallWidget, bool, setBrowsingEnabled, BrowsingEnabled)
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::refresh()
 {
   Q_D(qSlicerExtensionsInstallWidget);
@@ -253,10 +259,15 @@ void qSlicerExtensionsInstallWidget::onExtensionCancelledScheduleForUninstall(co
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onSlicerRequirementsChanged(const QString& revision,const QString& os,const QString& arch)
 {
+  Q_D(qSlicerExtensionsInstallWidget);
+
   this->setSlicerRevision(revision);
   this->setSlicerOs(os);
   this->setSlicerArch(arch);
-  this->refresh();
+  if (d->BrowsingEnabled)
+    {
+    this->refresh();
+    }
 }
 
 // --------------------------------------------------------------------------

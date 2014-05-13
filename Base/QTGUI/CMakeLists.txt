@@ -279,6 +279,7 @@ set(KIT_UI_SRCS
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_UI_SRCS
+    Resources/UI/qSlicerExtensionsActionsWidget.ui
     Resources/UI/qSlicerExtensionsButtonBox.ui
     Resources/UI/qSlicerExtensionsManagerDialog.ui
     Resources/UI/qSlicerExtensionsManagerWidget.ui

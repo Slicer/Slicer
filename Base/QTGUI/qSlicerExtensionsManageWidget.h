@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QListWidget>
+#include <QUrl>
 
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
@@ -47,6 +48,9 @@ public:
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
+signals:
+  void linkActivated(const QUrl& link);
+
 public slots:
   void displayExtensionDetails(const QString& extensionName);
 
@@ -56,6 +60,7 @@ protected slots:
   void scheduleExtensionForUninstall(const QString& extensionName);
   void cancelExtensionScheduledForUninstall(const QString& extensionName);
   void onModelUpdated();
+  void onLinkActivated(const QString& link);
   void onExtensionInstalled(const QString& extensionName);
   void onExtensionScheduledForUninstall(const QString& extensionName);
   void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
