@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAbstractTextDocumentLayout>
 #include <QDebug>
 #include <QLabel>
 #include <QListWidget>
@@ -147,19 +148,15 @@ class qSlicerExtensionsDescriptionLabel : public QLabel
 public:
   typedef QLabel Superclass;
 
-  enum
-  {
-    NOWARNING = 0,
-    INCOMPATIBLE
-  };
-
   // --------------------------------------------------------------------------
   qSlicerExtensionsDescriptionLabel(const QString& extensionSlicerVersion, const QString& slicerRevision,
                                     const QString& extensionName, const QString& extensionDescription,
-                                    int warningType = NOWARNING)
+                                    bool extensionEnabled, bool extensionCompatible)
     : QLabel(), ExtensionSlicerVersion(extensionSlicerVersion), SlicerRevision(slicerRevision),
+      ExtensionIncompatible(!extensionCompatible), WarningColor("#bd8530"),
+      ExtensionDisabled(!extensionEnabled),
       ExtensionName(extensionName), ExtensionDescription(extensionDescription),
-      WarningColor("#bd8530"), WarningType(warningType), LastWidth(0)
+      LastWidth(0), LastElidedDescription(extensionDescription)
   {
     QTextOption textOption = this->Text.defaultTextOption();
     textOption.setWrapMode(QTextOption::NoWrap);
@@ -167,6 +164,17 @@ public:
 
     this->prepareText(extensionDescription); // Ensure reasonable initial height for size hint
     this->setToolTip(extensionDescription);
+  }
+
+  // --------------------------------------------------------------------------
+  void setExtensionDisabled(bool state)
+  {
+    if (this->ExtensionDisabled != state)
+      {
+      this->ExtensionDisabled = state;
+      this->prepareText(this->LastElidedDescription);
+      this->update();
+      }
   }
 
   // --------------------------------------------------------------------------
@@ -181,21 +189,24 @@ public:
   // --------------------------------------------------------------------------
   QString descriptionAsRichText(const QString& elidedDescription)
   {
-    static const QString format = "%1<h2>%2</h2><p>%3%4</p>";
+    static const QString format = "%1<h2>%2%3</h2><p>%4%5</p>";
 
     QString linkText;
     QString warningText;
-    if (this->WarningType == INCOMPATIBLE)
+    QString enabledText = (this->ExtensionDisabled ? " (disabled)" : "");
+    if (this->ExtensionIncompatible)
       {
       warningText = this->incompatibleExtensionText();
+      enabledText = " (disabled)";
       }
     // linkText = QString(" <a href=\"slicer:%1\">More</a>").arg();
-    return format.arg(warningText, this->ExtensionName, elidedDescription, linkText);
+    return format.arg(warningText, this->ExtensionName, enabledText, elidedDescription, linkText);
   }
 
   // --------------------------------------------------------------------------
   void prepareText(const QString& elidedDescription)
   {
+    this->LastElidedDescription = elidedDescription;
     this->Text.setHtml(this->descriptionAsRichText(elidedDescription));
   }
 
@@ -209,7 +220,7 @@ public:
   }
 
   // --------------------------------------------------------------------------
-  virtual void paintEvent(QPaintEvent * event)
+  virtual void paintEvent(QPaintEvent *)
   {
     QPainter painter(this);
     const QRect cr = this->contentsRect();
@@ -227,23 +238,32 @@ public:
       this->Text.setTextWidth(this->LastWidth = cr.width());
       }
 
+    QAbstractTextDocumentLayout::PaintContext context;
+    context.palette = this->palette();
+    if (this->ExtensionIncompatible || this->ExtensionDisabled)
+      {
+      context.palette.setCurrentColorGroup(QPalette::Disabled);
+      }
+
     painter.translate(cr.topLeft());
-    painter.setPen(this->palette().text().color());
-    this->Text.drawContents(&painter);
+    this->Text.documentLayout()->draw(&painter, context);
   }
 
   QString ExtensionSlicerVersion;
   QString SlicerRevision;
 
   bool ExtensionIncompatible;
+  QString WarningColor;
+
+  bool ExtensionDisabled;
+
   QString ExtensionName;
   QString ExtensionDescription;
-  QString WarningColor;
-  int WarningType;
 
   QTextDocument Text;
 
   int LastWidth;
+  QString LastElidedDescription;
 };
 
 // --------------------------------------------------------------------------
@@ -295,16 +315,9 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   bool isExtensionCompatible =
       q->extensionsManagerModel()->isExtensionCompatible(extensionName).isEmpty();
 
-  int warningType = qSlicerExtensionsDescriptionLabel::NOWARNING;
-  if (!isExtensionCompatible)
-    {
-    warningType = qSlicerExtensionsDescriptionLabel::INCOMPATIBLE;
-    }
-
   qSlicerExtensionsDescriptionLabel * label = new qSlicerExtensionsDescriptionLabel(
-        extensionSlicerRevision,
-        q->extensionsManagerModel()->slicerRevision(),
-        extensionName, description, warningType);
+        extensionSlicerRevision, q->extensionsManagerModel()->slicerRevision(),
+        extensionName, description, enabled, isExtensionCompatible);
   label->setOpenExternalLinks(true);
   label->setMargin(6);
   this->LabelLinkMapper.setMapping(label, extensionName);
@@ -480,6 +493,7 @@ void qSlicerExtensionsManageWidget::onModelExtensionEnabledChanged(const QString
   qSlicerExtensionsItemWidget * widget =
       dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
   Q_ASSERT(widget);
+  widget->Label->setExtensionDisabled(!enabled);
   widget->ButtonBox->EnableButton->setVisible(!enabled);
   widget->ButtonBox->DisableButton->setVisible(enabled);
   item->setIcon(extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
