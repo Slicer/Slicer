@@ -104,10 +104,10 @@ if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
 endif()
 
 #-----------------------------------------------------------------------------
-# Get today's date
+# Associate package name with date of last commit
 #-----------------------------------------------------------------------------
-include(SlicerFunctionToday)
-TODAY(${EXTENSION_NAME}_BUILDDATE)
+string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
+  ${EXTENSION_NAME}_BUILDDATE "${${EXTENSION_NAME}_WC_LAST_CHANGED_DATE}")
 
 # -------------------------------------------------------------------------
 # Package properties

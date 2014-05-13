@@ -78,7 +78,7 @@ macro(SlicerMacroExtractRepositoryInfo)
   set(${wc_info_prefix}_WC_ROOT "NA")
   set(${wc_info_prefix}_WC_REVISION 0)
   set(${wc_info_prefix}_WC_LAST_CHANGED_AUTHOR)
-  set(${wc_info_prefix}_WC_LAST_CHANGED_DATE)
+  set(${wc_info_prefix}_WC_LAST_CHANGED_DATE "0000-00-00")
   set(${wc_info_prefix}_WC_LAST_CHANGED_REV)
   # Clear GIT specific variables
   set(${wc_info_prefix}_WC_REVISION_NAME "NA")
