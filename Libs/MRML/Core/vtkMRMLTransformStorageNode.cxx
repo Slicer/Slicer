@@ -391,8 +391,8 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
     {
     typedef itk::AffineTransform<T,3> BulkTransformType;
     typedef itk::IdentityTransform<T,3> IdentityBulkTransformType;
-    typename BulkTransformType* bulkItkAffine = dynamic_cast<BulkTransformType*> (bulkTransformItk.GetPointer());
-    typename IdentityBulkTransformType* bulkItkIdentity = dynamic_cast<IdentityBulkTransformType*> (bulkTransformItk.GetPointer());
+    BulkTransformType* bulkItkAffine = dynamic_cast<BulkTransformType*> (bulkTransformItk.GetPointer());
+    IdentityBulkTransformType* bulkItkIdentity = dynamic_cast<IdentityBulkTransformType*> (bulkTransformItk.GetPointer());
     double linear[VTKDimension][VTKDimension] = { {1,0,0}, {0,1,0}, {0,0,1}};
     double offset[VTKDimension] = {0,0,0};
     if (bulkItkAffine)
