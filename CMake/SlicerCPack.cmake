@@ -99,7 +99,7 @@ Plugins = ${Slicer_QtPlugins_DIR}
   #        let's make sure the following install rule is evaluated within its own directory.
   #        Otherwise, the associated script will be executed before any other relevant install rules.
   file(WRITE ${slicer_cpack_bundle_fixup_directory}/CMakeLists.txt
-    "install(SCRIPT \"${slicer_cpack_bundle_fixup_directory}/SlicerCPackBundleFixup.cmake\")")
+    "install(SCRIPT \"${slicer_cpack_bundle_fixup_directory}/SlicerCPackBundleFixup.cmake\" COMPONENT Runtime)")
   add_subdirectory(${slicer_cpack_bundle_fixup_directory} ${slicer_cpack_bundle_fixup_directory}-binary)
 
 endif()

@@ -97,7 +97,9 @@ if(BatchMake_DIR)
       "${CMAKE_CURRENT_SOURCE_DIR}/${Slicer3BatchModule}.xml"
       "${BatchMake_WRAPPED_APPLICATION_DIR}/${Slicer3ExeModule}.bmm")
     install(FILES ${RUNTIME_SUPPORT_FILES}
-      DESTINATION ${Slicer_INSTALL_CLIMODULES_SHARE_DIR}/${PROJECT_NAME})
+      DESTINATION ${Slicer_INSTALL_CLIMODULES_SHARE_DIR}/${PROJECT_NAME}
+      COMPONENT Runtime
+      )
 
   endif(Slicer_SOURCE_DIR)
 

@@ -106,6 +106,7 @@ macro(SlicerMacroTranslation)
   install(
     FILES ${QM_OUTPUT_FILES}
     DESTINATION ${Slicer_INSTALL_QM_DIR}
+    COMPONENT Runtime
   )
 
   # ---------------------------------------------------------------------------------
