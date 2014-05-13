@@ -57,7 +57,7 @@ void vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
+void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
 {
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
 }
@@ -75,7 +75,7 @@ void vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndRestore()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* node)
+void vtkSlicerSceneViewsModuleLogic::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
@@ -155,7 +155,12 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSceneViewsModuleLogic::ModifySceneView(vtkStdString id, const char* name, const char* description, int screenshotType, vtkImageData* screenshot)
+void vtkSlicerSceneViewsModuleLogic::
+         ModifySceneView(vtkStdString id,
+                         const char* name,
+                         const char* description,
+                         int vtkNotUsed(screenshotType),
+                         vtkImageData* screenshot)
 {
   if (!this->GetMRMLScene())
     {
@@ -301,7 +306,7 @@ void vtkSlicerSceneViewsModuleLogic::RestoreSceneView(const char* id)
 }
 
 //---------------------------------------------------------------------------
-const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewUp(const char* id)
+const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewUp(const char* vtkNotUsed(id))
 {
   // reset stringHolder
   this->m_StringHolder = "";
@@ -311,7 +316,7 @@ const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewUp(const char* id)
 }
 
 //---------------------------------------------------------------------------
-const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewDown(const char* id)
+const char* vtkSlicerSceneViewsModuleLogic::MoveSceneViewDown(const char* vtkNotUsed(id))
 {
   // reset stringHolder
   this->m_StringHolder = "";

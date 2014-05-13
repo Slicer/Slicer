@@ -168,7 +168,6 @@ void qMRMLExpandingWebView::updateWidgetFromMRML()
 {
   //qDebug() << "qMRMLExpandingWebView::updateWidgetFromMRML()";
 
-  Q_D(qMRMLExpandingWebView);
   if (!this->mrmlScene())
     {
     return;

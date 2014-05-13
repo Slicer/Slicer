@@ -236,7 +236,11 @@ void qSlicerSceneViewsModuleWidget::moveDownSelected(QString mrmlId)
 
   const char* id = d->logic()->MoveSceneViewDown(mrmlId.toLatin1());
 
-  this->updateFromMRMLScene();
+  if (id != NULL &&
+      strcmp(id, "") != 0)
+    {
+    this->updateFromMRMLScene();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -246,7 +250,11 @@ void qSlicerSceneViewsModuleWidget::moveUpSelected(QString mrmlId)
 
   const char* id = d->logic()->MoveSceneViewUp(mrmlId.toLatin1());
 
-  this->updateFromMRMLScene();
+  if (id != NULL &&
+      strcmp(id, "") != 0)
+    {
+    this->updateFromMRMLScene();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -391,8 +399,6 @@ void qSlicerSceneViewsModuleWidget::onMRMLSceneReset()
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleWidget::removeTemporaryFiles()
 {
-  Q_D(qSlicerSceneViewsModuleWidget);
-
   QString tempDirectoryPath = qSlicerApplication::application()->defaultTemporaryPath();
   // look for files with vtkMRMLSceneViewNodeX.png file names
   QDir tempDir = QDir(tempDirectoryPath);
@@ -448,6 +454,7 @@ void qSlicerSceneViewsModuleWidget::captureLinkClicked(const QUrl &url)
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModuleWidget::restoreScrollPosition(const QSize &size)
 {
+  Q_UNUSED(size);
   Q_D(qSlicerSceneViewsModuleWidget);
   d->sceneViewsWebView->page()->mainFrame()->setScrollBarValue(Qt::Vertical, this->savedScrollPosition);
 }
