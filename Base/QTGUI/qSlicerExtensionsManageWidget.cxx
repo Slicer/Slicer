@@ -23,10 +23,12 @@
 #include <QDebug>
 #include <QLabel>
 #include <QListWidget>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QTextBlock>
 #include <QTextDocument>
 
 // Slicer includes
@@ -59,7 +61,6 @@ public:
 
   void addExtensionItem(const ExtensionMetadataType &metadata);
 
-  QSignalMapper LabelLinkMapper;
   QSignalMapper EnableButtonMapper;
   QSignalMapper DisableButtonMapper;
   QSignalMapper ScheduleUninstallButtonMapper;
@@ -150,11 +151,12 @@ public:
 
   // --------------------------------------------------------------------------
   qSlicerExtensionsDescriptionLabel(const QString& extensionSlicerVersion, const QString& slicerRevision,
-                                    const QString& extensionName, const QString& extensionDescription,
-                                    bool extensionEnabled, bool extensionCompatible)
+                                    const QString& extensionId, const QString& extensionName,
+                                    const QString& extensionDescription, bool extensionEnabled,
+                                    bool extensionCompatible)
     : QLabel(), ExtensionSlicerVersion(extensionSlicerVersion), SlicerRevision(slicerRevision),
       ExtensionIncompatible(!extensionCompatible), WarningColor("#bd8530"),
-      ExtensionDisabled(!extensionEnabled),
+      ExtensionDisabled(!extensionEnabled), ExtensionId(extensionId),
       ExtensionName(extensionName), ExtensionDescription(extensionDescription),
       LastWidth(0), LastElidedDescription(extensionDescription)
   {
@@ -164,6 +166,8 @@ public:
 
     this->prepareText(extensionDescription); // Ensure reasonable initial height for size hint
     this->setToolTip(extensionDescription);
+
+    this->setMouseTracking(!extensionId.isEmpty());
   }
 
   // --------------------------------------------------------------------------
@@ -199,7 +203,10 @@ public:
       warningText = this->incompatibleExtensionText();
       enabledText = " (disabled)";
       }
-    // linkText = QString(" <a href=\"slicer:%1\">More</a>").arg();
+    if (!this->ExtensionId.isEmpty())
+      {
+      linkText = QString(" <a href=\"slicer:%1\">More</a>").arg(this->ExtensionId);
+      }
     return format.arg(warningText, this->ExtensionName, enabledText, elidedDescription, linkText);
   }
 
@@ -249,6 +256,66 @@ public:
     this->Text.documentLayout()->draw(&painter, context);
   }
 
+  // --------------------------------------------------------------------------
+  QString linkUnderCursor(const QPoint& pos)
+  {
+    const int caretPos =
+      this->Text.documentLayout()->hitTest(pos, Qt::FuzzyHit);
+    if (caretPos < 0)
+      {
+      return QString();
+      }
+
+    const QTextBlock& block = this->Text.findBlock(caretPos);
+    for (QTextBlock::iterator iter = block.begin(); !iter.atEnd(); ++iter)
+      {
+      const QTextFragment& fragment = iter.fragment();
+      const int fp = fragment.position();
+      if (fp <= caretPos && fp + fragment.length() > caretPos)
+        {
+        return fragment.charFormat().anchorHref();
+        }
+      }
+
+    return QString();
+  }
+
+  // --------------------------------------------------------------------------
+  virtual void mouseMoveEvent(QMouseEvent * e)
+  {
+    Superclass::mouseMoveEvent(e);
+
+    QString href = this->linkUnderCursor(e->pos());
+    if (href != this->LinkUnderCursor)
+      {
+      this->LinkUnderCursor = href;
+      if (href.isEmpty())
+        {
+        this->unsetCursor();
+        }
+      else
+        {
+        this->setCursor(Qt::PointingHandCursor);
+        emit this->linkHovered(href);
+        }
+      }
+  }
+
+  // --------------------------------------------------------------------------
+  virtual void mouseReleaseEvent(QMouseEvent * e)
+  {
+    Superclass::mouseReleaseEvent(e);
+
+    if (e->button() == Qt::LeftButton)
+      {
+      QString href = this->linkUnderCursor(e->pos());
+      if (!href.isEmpty())
+        {
+        emit this->linkActivated(href);
+        }
+      }
+  }
+
   QString ExtensionSlicerVersion;
   QString SlicerRevision;
 
@@ -257,6 +324,7 @@ public:
 
   bool ExtensionDisabled;
 
+  QString ExtensionId;
   QString ExtensionName;
   QString ExtensionDescription;
 
@@ -264,6 +332,8 @@ public:
 
   int LastWidth;
   QString LastElidedDescription;
+
+  QString LinkUnderCursor;
 };
 
 // --------------------------------------------------------------------------
@@ -293,6 +363,7 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
 {
   Q_Q(qSlicerExtensionsManageWidget);
 
+  QString extensionId = metadata.value("extension_id").toString();
   QString extensionName = metadata.value("extensionname").toString();
   if (extensionName.isEmpty())
     {
@@ -317,11 +388,9 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
 
   qSlicerExtensionsDescriptionLabel * label = new qSlicerExtensionsDescriptionLabel(
         extensionSlicerRevision, q->extensionsManagerModel()->slicerRevision(),
-        extensionName, description, enabled, isExtensionCompatible);
-  label->setOpenExternalLinks(true);
+        extensionId, extensionName, description, enabled, isExtensionCompatible);
   label->setMargin(6);
-  this->LabelLinkMapper.setMapping(label, extensionName);
-  QObject::connect(label, SIGNAL(linkActivated(QString)), &this->LabelLinkMapper, SLOT(map()));
+//   QObject::connect(label, SIGNAL(linkActivated(QString)), &this->LabelLinkMapper, SLOT(map()));
 
   QSize hint = label->sizeHint();
   hint.setWidth(hint.width() + 64);
