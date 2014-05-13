@@ -41,7 +41,7 @@ Version:   $Revision: 1.2 $
 #include <itkTranslationTransform.h>
 #include <itkScaleTransform.h>
 
-static const int VTKDimension = 3;
+static const unsigned int VTKDimension = 3;
 
 static const int BSPLINE_TRANSFORM_ORDER = 3;
 
@@ -117,7 +117,7 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
 
   vtkMRMLLinearTransformNode *ltn = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
 
-  static const int D = VTKDimension;
+  static const unsigned int D = VTKDimension;
   typedef itk::MatrixOffsetTransformBase<double,D,D> DoubleLinearTransformType;
   typedef itk::MatrixOffsetTransformBase<float,D,D> FloatLinearTransformType;
   typedef itk::IdentityTransform<double, D> DoubleIdentityTransformType;
@@ -138,9 +138,9 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   if (dlt)
     {
     convertedToVtkMatrix=true;
-    for (int i=0; i < D; i++)
+    for (unsigned int i=0; i < D; i++)
       {
-      for (int j=0; j < D; j++)
+      for (unsigned int j=0; j < D; j++)
         {
         (*vtkmat)[i][j] = dlt->GetMatrix()[i][j];
         }
@@ -154,9 +154,9 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   if (flt)
     {
     convertedToVtkMatrix=true;
-    for (int i=0; i < D; i++)
+    for (unsigned int i=0; i < D; i++)
       {
-      for (int j=0; j < D; j++)
+      for (unsigned int j=0; j < D; j++)
         {
         (*vtkmat)[i][j] = flt->GetMatrix()[i][j];
         }
@@ -188,7 +188,7 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   if (dst)
     {
     convertedToVtkMatrix=true;
-    for (int i=0; i < D; i++)
+    for (unsigned int i=0; i < D; i++)
       {
       (*vtkmat)[i][i] = dst->GetScale()[i];
       }
@@ -200,7 +200,7 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   if (fst)
     {
     convertedToVtkMatrix=true;
-    for (int i=0; i < D; i++)
+    for (unsigned int i=0; i < D; i++)
       {
       (*vtkmat)[i][i] = fst->GetScale()[i];
       }
@@ -212,7 +212,7 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   if (dtt)
     {
     convertedToVtkMatrix=true;
-    for (int i=0; i < D; i++)
+    for (unsigned int i=0; i < D; i++)
       {
       (*vtkmat)[i][D] = dtt->GetOffset()[i];
       }
@@ -224,7 +224,7 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   if (ftt)
     {
     convertedToVtkMatrix=true;
-    for (int i=0; i < D; i++)
+    for (unsigned int i=0; i < D; i++)
       {
       (*vtkmat)[i][i] = ftt->GetOffset()[i];
       }
@@ -305,7 +305,7 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
   // * mesh origin X, Y, Z (position of the boundary node before the grid)
   // * mesh spacing X, Y, Z
   // * mesh direction 3x3 matrix (first row, second row, third row)
-  const int expectedNumberOfFixedParameters=VTKDimension*(VTKDimension+3);
+  const unsigned int expectedNumberOfFixedParameters=VTKDimension*(VTKDimension+3);
   if (expectedNumberOfFixedParameters!=transformFixedParamsItk.size())
     {
     vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline fixed parameters in the transform file and the MRML node");
@@ -313,14 +313,17 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
     }
 
   // Get grid parameters from the fixed parameters
-  const double gridSize[3]={transformFixedParamsItk[0], transformFixedParamsItk[1], transformFixedParamsItk[2]};
+  int gridSize[3]={0};
+  gridSize[0]=static_cast<int>(transformFixedParamsItk[0]);
+  gridSize[1]=static_cast<int>(transformFixedParamsItk[1]);
+  gridSize[2]=static_cast<int>(transformFixedParamsItk[2]);
   double gridSpacing[3]={transformFixedParamsItk[6], transformFixedParamsItk[7], transformFixedParamsItk[8]};
   double gridOrigin_LPS[3]={transformFixedParamsItk[3], transformFixedParamsItk[4], transformFixedParamsItk[5]};
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
   int fpIndex=9;
-  for (int row=0; row<VTKDimension; row++)
+  for (unsigned int row=0; row<VTKDimension; row++)
     {
-    for (int column=0; column<VTKDimension; column++)
+    for (unsigned int column=0; column<VTKDimension; column++)
       {
       gridDirectionMatrix_LPS->SetElement(row,column,transformFixedParamsItk[fpIndex++]);
       }
@@ -364,8 +367,8 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
   bsplineCoefficients->AllocateScalars(bsplineCoefficientsScalarType, 3);
 #endif
 
-  const int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
-  const int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
+  const unsigned int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
+  const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
   if( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
     {
     vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline parameters in the transform file and the MRML node");
@@ -373,7 +376,7 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
     }
   const T* itkBSplineParams_LPS = static_cast<const T*>(bsplineItk->GetParameters().data_block());
   T* vtkBSplineParams_RAS=static_cast<T*>(bsplineCoefficients->GetScalarPointer());
-  for (int i=0; i<expectedNumberOfVectors; i++)
+  for (unsigned int i=0; i<expectedNumberOfVectors; i++)
     {
     *(vtkBSplineParams_RAS++) =  - (*(itkBSplineParams_LPS                          ));
     *(vtkBSplineParams_RAS++) =  - (*(itkBSplineParams_LPS+expectedNumberOfVectors  ));
@@ -396,9 +399,9 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
     if (bulkItkAffine)
       {
       vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
-      for (int i=0; i < VTKDimension; i++)
+      for (unsigned int i=0; i < VTKDimension; i++)
         {
-        for (int j=0; j < VTKDimension; j++)
+        for (unsigned int j=0; j < VTKDimension; j++)
           {
           bulkMatrix_LPS->SetElement(i,j, bulkItkAffine->GetMatrix()[i][j]);
           }
@@ -456,7 +459,7 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
   // * mesh spacing X, Y, Z
   // * mesh direction 3x3 matrix (first row, second row, third row)
   typename BSplineTransformType::ParametersType transformFixedParamsItk;
-  const int numberOfFixedParameters=VTKDimension*(VTKDimension+3);
+  const unsigned int numberOfFixedParameters=VTKDimension*(VTKDimension+3);
   transformFixedParamsItk.SetSize(numberOfFixedParameters);
 
   int *gridExtent=bsplineCoefficients_RAS->GetExtent();
@@ -486,9 +489,9 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
   vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), gridDirectionMatrix_RAS, gridDirectionMatrix_LPS.GetPointer());
   int fpIndex=9;
-  for (int row=0; row<VTKDimension; row++)
+  for (unsigned int row=0; row<VTKDimension; row++)
     {
-    for (int column=0; column<VTKDimension; column++)
+    for (unsigned int column=0; column<VTKDimension; column++)
       {
       transformFixedParamsItk[fpIndex++]=gridDirectionMatrix_LPS->GetElement(row,column);
       }
@@ -498,8 +501,8 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
 
   // BSpline coefficients
 
-  const int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
-  const int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
+  const unsigned int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
+  const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
   if( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
     {
     vtkErrorWithObjectMacro(self,"Mismatch in number of BSpline parameters in the ITK transform and the VTK transform");
@@ -509,7 +512,7 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
   typename BSplineTransformType::ParametersType transformParamsItk(expectedNumberOfParameters);
   T* itkBSplineParams_LPS = static_cast<T*>(transformParamsItk.data_block());
   T* vtkBSplineParams_RAS=static_cast<T*>(bsplineCoefficients_RAS->GetScalarPointer());
-  for (int i=0; i<expectedNumberOfVectors; i++)
+  for (unsigned int i=0; i<expectedNumberOfVectors; i++)
     {
     *(itkBSplineParams_LPS                          ) = - (*(vtkBSplineParams_RAS++));
     *(itkBSplineParams_LPS+expectedNumberOfVectors  ) = - (*(vtkBSplineParams_RAS++));
@@ -532,9 +535,9 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
 
     typename BulkTransformType::MatrixType affineMatrix;
     typename BulkTransformType::OffsetType affineOffset;
-    for (int i=0; i < VTKDimension; i++)
+    for (unsigned int i=0; i < VTKDimension; i++)
       {
-      for (int j=0; j < VTKDimension; j++)
+      for (unsigned int j=0; j < VTKDimension; j++)
         {
         affineMatrix[i][j]=bulkMatrix_LPS->GetElement(i,j);
         }
@@ -896,9 +899,9 @@ int vtkMRMLTransformStorageNode::WriteLinearTransform(vtkMRMLLinearTransformNode
   MatrixType itkmat;
   OffsetType itkoffset;
 
-  for (int i=0; i < VTKDimension; i++)
+  for (unsigned int i=0; i < VTKDimension; i++)
     {
-    for (int j=0; j < VTKDimension; j++)
+    for (unsigned int j=0; j < VTKDimension; j++)
       {
       itkmat[i][j] = (*vtkmat)[i][j];
       }

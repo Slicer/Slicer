@@ -149,8 +149,8 @@ itkBSplineType::Pointer CreateBSplineItk(
   const unsigned int numberOfParameters = bspline->GetNumberOfParameters();
   typedef itkBSplineType::ParametersType ParametersType;
   ParametersType parameters( numberOfParameters );
-  const unsigned int numberOfNodes = numberOfParameters / 3;
-  assert( numberOfNodes == dims[0] * dims[1] * dims[2] );
+  // Check if numberOfNodes = numberOfParameters / 3;
+  assert( (numberOfParameters / 3) == dims[0] * dims[1] * dims[2] );
   parameters.Fill( 0.0 );
 
   bspline->SetParameters( parameters );
@@ -240,7 +240,7 @@ double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], 
 
 //----------------------------------------------------------------------------
 // Compute the error of derivative computation in VTK BSpline implementation
-double getDerivativeErrorVtk(const double inputPoint[3], itkBSplineType::Pointer bsplineItk, vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
+double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
@@ -423,10 +423,10 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
           numberOfSingleDoubleVtkPointMismatches++;
           }
         // Verify VTK derivative
-        double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), false);
+        double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
         if ( derivativeError > 1e-6 )
           {
-          getDerivativeErrorVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), true);
+          getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);
           std::cout << "ERROR: Transform derivative result mismatch between VTK and numerical approximation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfDerivativeMismatches++;
           }
