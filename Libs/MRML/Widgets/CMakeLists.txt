@@ -374,6 +374,11 @@ set(MRMLWidgets_LIBRARIES
   MRMLLogic
   MRMLDisplayableManager
   )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  list(APPEND MRMLWidgets_LIBRARIES
+    vtkRenderingQt
+    )
+endif()
 
 target_link_libraries(${lib_name} ${MRMLWidgets_LIBRARIES})
 
