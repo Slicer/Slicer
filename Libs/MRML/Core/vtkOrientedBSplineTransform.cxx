@@ -145,7 +145,12 @@ void vtkOrientedBSplineTransform::ForwardTransformPoint(const double inPointTemp
     outPoint[2] = inPoint[2];
     }
 
+  
+#if (VTK_MAJOR_VERSION <= 5)
   if (!this->Coefficients || !this->CalculateSpline)
+#else
+  if (!this->GridPointer || !this->CalculateSpline)
+#endif
     {
     return;
     }
@@ -192,7 +197,11 @@ void vtkOrientedBSplineTransform::ForwardTransformDerivative(const double inPoin
     vtkMath::Identity3x3(derivative);
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (!this->Coefficients || !this->CalculateSpline)
+#else
+  if (!this->GridPointer || !this->CalculateSpline)
+#endif
     {
     return;
     }
@@ -258,7 +267,11 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
     vtkMath::Identity3x3(derivative);
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (!this->Coefficients || !this->CalculateSpline)
+#else
+  if (!this->GridPointer || !this->CalculateSpline)
+#endif
     {
     return;
     }
@@ -361,7 +374,7 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
                      errorVector[2]*errorVector[2]);
 
     // if the function value is decreasing, do next Newton step
-    if (functionValue < lastFunctionValue)
+    if (iteration == 0 || functionValue < lastFunctionValue)
       {
       // here is the critical step in Newton's method
       vtkMath::LinearSolve3x3(derivative,errorVector,deltaI);

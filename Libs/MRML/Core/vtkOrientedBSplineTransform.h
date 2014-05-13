@@ -73,12 +73,15 @@ protected:
   // Description:
   // Internal functions for calculating the transformation.
   void ForwardTransformPoint(const double in[3], double out[3]);
+  using Superclass::ForwardTransformPoint; // Inherit the float version from parent
 
   void ForwardTransformDerivative(const double in[3], double out[3],
                                   double derivative[3][3]);
+  using Superclass::ForwardTransformDerivative; // Inherit the float version from parent
 
   void InverseTransformDerivative(const double in[3], double out[3],
                                   double derivative[3][3]);
+  using Superclass::InverseTransformDerivative; // Inherit the float version from parent
 
   // Description:
   // Grid axis direction vectors (i, j, k) in the output space

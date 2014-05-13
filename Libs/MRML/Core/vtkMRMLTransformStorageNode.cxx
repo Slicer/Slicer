@@ -350,7 +350,6 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
   double gridOrigin_RAS[3]={-gridOrigin_LPS[0], -gridOrigin_LPS[1], gridOrigin_LPS[2]};
   bsplineCoefficients->SetOrigin(gridOrigin_RAS);
 
-  bsplineCoefficients->SetNumberOfScalarComponents(3);
   int bsplineCoefficientsScalarType=VTK_FLOAT;
   if (isDoublePrecisionInput)
     {
@@ -381,7 +380,11 @@ template <typename T> bool SetVTKBSplineFromITK(vtkObject* self,
     *(vtkBSplineParams_RAS++) =    (*(itkBSplineParams_LPS+expectedNumberOfVectors*2));
     itkBSplineParams_LPS++;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   bsplineVtk->SetCoefficients(bsplineCoefficients.GetPointer());
+#else
+  bsplineVtk->SetCoefficientData(bsplineCoefficients.GetPointer());
+#endif
 
   // Set the bulk transform
   if( bulkTransformItk )
@@ -434,7 +437,11 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
     vtkErrorWithObjectMacro(self, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: bsplineVtk is invalid");
     return false;
     }
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* bsplineCoefficients_RAS=bsplineVtk->GetCoefficients();
+#else
+  vtkImageData* bsplineCoefficients_RAS=bsplineVtk->GetCoefficientData();
+#endif
   if (bsplineCoefficients_RAS==NULL)
     {
     vtkErrorWithObjectMacro(self, "Cannot write an inverse BSpline transform to file: coefficients are not specified");
@@ -955,7 +962,12 @@ int vtkMRMLTransformStorageNode::WriteBSplineTransform(vtkMRMLBSplineTransformNo
     return 0;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficients();
+#else
+  vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficientData();
+#endif
+  
   if (bsplineCoefficients==NULL)
     {
     vtkErrorMacro("Cannot write an inverse BSpline transform to file: coefficients are not specified");

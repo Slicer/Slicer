@@ -70,8 +70,11 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
     }
 
   bsplineTransform->SetGridDirectionMatrix(gridOrientation.GetPointer());
-
+#if (VTK_MAJOR_VERSION <= 5)
   bsplineTransform->SetCoefficients(bsplineCoefficients.GetPointer());
+#else
+  bsplineTransform->SetCoefficientData(bsplineCoefficients.GetPointer());
+#endif  
   bsplineTransform->SetBulkTransformMatrix(bulkTransform.GetPointer());
 
   bsplineTransform->SetBorderModeToZero();
@@ -80,7 +83,12 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
 //----------------------------------------------------------------------------
 void SetBSplineNodeVtk(vtkOrientedBSplineTransform* bsplineTransform,int nodeIndex[3], double nodeValue[3])
 {
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* bsplineCoefficients=bsplineTransform->GetCoefficients();
+#else
+  vtkImageData* bsplineCoefficients=bsplineTransform->GetCoefficientData();
+#endif
+
   bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],0, nodeValue[0]);
   bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],1, nodeValue[1]);
   bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],2, nodeValue[2]);
@@ -166,6 +174,7 @@ void SetBSplineNodeItk(itkBSplineType::Pointer bspline,int nodeIndex[3], double 
 }
 
 //----------------------------------------------------------------------------
+// Compute transformed point differences between ITK and VTK BSpline implementations
 double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplineType::Pointer bsplineItk, vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
 {
   // ITK
@@ -180,9 +189,9 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplin
   double outputPoint[3]={0};
   bsplineVtk->TransformPoint( inputPoint, outputPoint );
 
-  itk::Point<double,3> vtkInputPoint( inputPoint );
-  itk::Point<double,3> vtkOutputPoint( outputPoint );
-  double difference = outputPointItk.EuclideanDistanceTo( vtkOutputPoint );
+  itk::Point<double,3> inputPointVtk( inputPoint );
+  itk::Point<double,3> outputPointVtk( outputPoint );
+  double difference = outputPointItk.EuclideanDistanceTo( outputPointVtk );
 
   if (logDetails)
     {
@@ -190,13 +199,47 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplin
     std::cout << " Input point: " << inputPoint[0] << " " << inputPoint[1] << " " << inputPoint[2] << std::endl;
     std::cout << " Output point (transformed by ITK): " << outputPointItk << std::endl;
     std::cout << " Output point (transformed by VTK): " << outputPoint[0] << " " << outputPoint[1] << " " << outputPoint[2] << std::endl;
-    std::cout << " Difference between ITK and VTK transform results: "<<difference << std::endl;
+    std::cout << " Difference between ITK and VTK transform results: " << difference << std::endl;
     }
 
   return difference;
 }
 
 //----------------------------------------------------------------------------
+// Compute transformed point differences between single-precision and double-precision VTK BSpline implementations
+double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
+{
+  double outputPoint[3]={0};
+  bsplineVtk->TransformPoint( inputPoint, outputPoint );
+
+  float floatInputPoint[3]={0};
+  floatInputPoint[0]=static_cast<float>(inputPoint[0]);
+  floatInputPoint[1]=static_cast<float>(inputPoint[1]);
+  floatInputPoint[2]=static_cast<float>(inputPoint[2]);
+  float floatOutputPoint[3]={0};
+  bsplineVtk->TransformPoint( floatInputPoint, floatOutputPoint );
+
+  itk::Point<double,3> outputPointVtk( outputPoint );
+  itk::Point<double,3> floatOutputPointVtk;
+  floatOutputPointVtk[0] = floatOutputPoint[0];
+  floatOutputPointVtk[1] = floatOutputPoint[1];
+  floatOutputPointVtk[2] = floatOutputPoint[2];
+  double difference = outputPointVtk.EuclideanDistanceTo( floatOutputPointVtk );
+
+  if (logDetails)
+    {
+    std::cout << "Compare single-precision and double-precision VTK transform results" << std::endl;
+    std::cout << " Input point: " << inputPoint[0] << " " << inputPoint[1] << " " << inputPoint[2] << std::endl;
+    std::cout << " Output point (transformed by VTK, double-precision): " << outputPoint[0] << " " << outputPoint[1] << " " << outputPoint[2] << std::endl;
+    std::cout << " Output point (transformed by VTK, single-precision): " << floatOutputPoint[0] << " " << floatOutputPoint[1] << " " << floatOutputPoint[2] << std::endl;
+    std::cout << " Difference between single-precision and double-precision VTK transform results: " << difference << std::endl;
+    }
+
+  return difference;
+}
+
+//----------------------------------------------------------------------------
+// Compute the error of derivative computation in VTK BSpline implementation
 double getDerivativeErrorVtk(const double inputPoint[3], itkBSplineType::Pointer bsplineItk, vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
 {
   // Jacobian estimated using central difference
@@ -251,6 +294,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], itkBSplineType::Pointer
 }
 
 //----------------------------------------------------------------------------
+// Compute the error of inverse computation in VTK BSpline implementation
 double getInverseErrorVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
 {
   double outputPoint[3] = { -1, -1, -1 };
@@ -333,6 +377,7 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
 
   int numberOfPointsTested=0;
   int numberOfItkVtkPointMismatches=0;
+  int numberOfSingleDoubleVtkPointMismatches=0;
   int numberOfDerivativeMismatches=0;
   int numberOfInverseMismatches=0;
 
@@ -370,6 +415,13 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
           std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfItkVtkPointMismatches++;
           }
+        double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), false);
+        if ( differenceSingleDoubleVtk > 1e-4 )
+          {
+          getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), true);
+          std::cout << "ERROR: Point transfom result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
+          numberOfSingleDoubleVtkPointMismatches++;
+          }
         // Verify VTK derivative
         double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), false);
         if ( derivativeError > 1e-6 )
@@ -392,6 +444,7 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
 
   std::cout << "Number of points tested: " << numberOfPointsTested << std::endl;
   std::cout << "Number of ITK/VTK mismatches: " << numberOfItkVtkPointMismatches << std::endl;
+  std::cout << "Number of single/double precision mismatches: " << numberOfSingleDoubleVtkPointMismatches << std::endl;
   std::cout << "Number of derivative mismatches: " << numberOfDerivativeMismatches << std::endl;
   std::cout << "Number of inverse mismatches: " << numberOfInverseMismatches << std::endl;
 

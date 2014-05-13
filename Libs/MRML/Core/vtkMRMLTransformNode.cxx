@@ -999,11 +999,15 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
     else if (bsplineTransform!=NULL)
       {
       ss << " B-spline:";
+#if (VTK_MAJOR_VERSION <= 5)
       vtkImageData* coefficients=bsplineTransform->GetCoefficients();
+#else
+      vtkImageData* coefficients=bsplineTransform->GetCoefficientData();
+#endif
       if (coefficients!=NULL)
         {
         int* extent = coefficients->GetExtent();
-        unsigned int gridSize[3]={extent[1]-extent[0]-1, extent[3]-extent[2]-1, extent[5]-extent[4]-1};
+        int gridSize[3]={extent[1]-extent[0]-1, extent[3]-extent[2]-1, extent[5]-extent[4]-1};
         ss << std::endl << "  Grid size: " << gridSize[0] << " " << gridSize[1] << " " <<gridSize[2] <<".";
         double* gridOrigin = coefficients->GetOrigin();
         ss << std::endl << "  Grid origin: " << gridOrigin[0] << " " << gridOrigin[1] << " " <<gridOrigin[2] <<".";
