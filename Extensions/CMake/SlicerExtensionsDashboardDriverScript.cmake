@@ -297,6 +297,7 @@ setIfNotDefined(run_ctest_with_update TRUE)
 setIfNotDefined(run_ctest_with_configure TRUE)
 setIfNotDefined(run_ctest_with_build TRUE)
 setIfNotDefined(run_ctest_with_notes TRUE)
+setIfNotDefined(Slicer_UPLOAD_EXTENSIONS TRUE)
 
 #
 # run_ctest macro
@@ -345,7 +346,7 @@ MIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}
 MIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
 MIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
 Slicer_DIR:PATH=${Slicer_DIR}
-Slicer_UPLOAD_EXTENSIONS:BOOL=TRUE
+Slicer_UPLOAD_EXTENSIONS:BOOL=${Slicer_UPLOAD_EXTENSIONS}
 ${Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
