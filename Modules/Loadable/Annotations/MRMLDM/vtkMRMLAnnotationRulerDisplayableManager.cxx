@@ -36,6 +36,9 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkObject.h>
+#if (VTK_MAJOR_VERSION >= 6)
+#include <vtkPickingManager.h>
+#endif
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkProperty2D.h>
@@ -184,6 +187,18 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     }
 
   vtkAnnotationRulerWidget * rulerWidget = vtkAnnotationRulerWidget::New();
+
+#if (VTK_MAJOR_VERSION >= 6)
+  if (this->GetInteractor()->GetPickingManager())
+    {
+    if (!(this->GetInteractor()->GetPickingManager()->GetEnabled()))
+      {
+      // if the picking manager is not already turned on for this
+      // interactor, enable it
+      this->GetInteractor()->GetPickingManager()->EnabledOn();
+      }
+    }
+#endif
 
   rulerWidget->SetInteractor(this->GetInteractor());
   rulerWidget->SetCurrentRenderer(this->GetRenderer());
