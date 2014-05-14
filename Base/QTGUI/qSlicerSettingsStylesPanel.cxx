@@ -79,8 +79,6 @@ void qSlicerSettingsStylesPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
-
   // General appearance settings
   QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
                    q, SLOT(onFontChanged(QFont)));

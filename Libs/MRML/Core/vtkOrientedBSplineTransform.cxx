@@ -209,7 +209,6 @@ void vtkOrientedBSplineTransform::ForwardTransformDerivative(const double inPoin
   void *gridPtr = this->GridPointer;
   int *extent = this->GridExtent;
   vtkIdType *increments = this->GridIncrements;
-  double *spacing = this->GridSpacing;
   double scale = this->DisplacementScale;
 
   double point[3];
@@ -277,14 +276,13 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
     }
 
   void *gridPtr = this->GridPointer;
-  double *spacing = this->GridSpacing;
   int *extent = this->GridExtent;
   vtkIdType *increments = this->GridIncrements;
 
   double scale = this->DisplacementScale;
 
   double inverse_IJK[3], lastInverse[3], inverse[3];
-  double deltaP[3], errorVector[3], deltaP_IJK[3], deltaI[3];
+  double deltaP[3], errorVector[3], deltaI[3];
 
   double functionValue = 0;
   double functionDerivative = 0;
@@ -297,7 +295,6 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
   double a;
 
   double inPoint_IJK[3];
-  double pointDiff_IJK[3], pointDiff[3];
   // Convert the inPoint to i,j,k indices into the deformation grid
   // plus fractions
   vtkLinearTransformPoint(this->OutputToGridIndexTransformMatrixCached->Element, inPoint, inPoint_IJK);
