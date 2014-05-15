@@ -3,34 +3,6 @@ project(qSlicerBaseQTGUI)
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
-if({VTK_VERSION_MAJOR} GREATER 5)
-  find_package(VTK 6.0 REQUIRED COMPONENTS
-    vtkChartsCore
-    vtkCommonCore
-    vtkCommonDataModel
-    vtkCommonExecutionModel
-    vtkCommonMath
-    vtkCommonTransforms
-    vtkCommonSystem
-    vtkFiltersSources
-    vtkImagingGeneral
-    vtkImagingStatistics
-    vtkInteractionStyle
-    vtkInteractionWidgets
-    vtkIOImage
-    vtkIOXMLParser
-    vtkRenderingAnnotation
-    vtkRenderingContext2D
-    vtkRenderingCore
-    vtkRenderingFreeTypeOpenGL
-    vtkRenderingOpenGL
-    vtkViewsContext2D
-    vtkWrappingPythonCore
-    vtkGUISupportQt
-    NO_MODULE
-    )
-  include(${VTK_USE_FILE})
-endif()
 
 set(KIT_export_directive "Q_SLICER_BASE_QTGUI_EXPORT")
 
