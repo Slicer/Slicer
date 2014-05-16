@@ -96,6 +96,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLdGEMRICProceduralColorNodeTest1.cxx
   vtkObserverManagerTest1.cxx
   vtkOrientedBSplineTransformTest1.cxx
+  vtkOrientedGridTransformTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 

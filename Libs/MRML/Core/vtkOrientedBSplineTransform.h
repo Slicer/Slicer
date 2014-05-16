@@ -58,6 +58,13 @@ public:
   virtual void SetBulkTransformMatrix(vtkMatrix4x4*);
   vtkGetObjectMacro(BulkTransformMatrix,vtkMatrix4x4);
 
+  // Description:
+  // Get a scale to apply to the transformation.
+  // This method is just added because it is missing from the
+  // superclass by mistake, so this method can be removed if
+  // the GetDisplacementScale method is added to the superclass.
+  vtkGetMacro(DisplacementScale,double);
+
 protected:
   vtkOrientedBSplineTransform();
   ~vtkOrientedBSplineTransform();

@@ -182,6 +182,7 @@ set(MRMLCore_SRCS
   vtkMRMLDoubleArrayStorageNode.cxx
   # Classes for transforms computation
   vtkOrientedBSplineTransform.cxx
+  vtkOrientedGridTransform.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )

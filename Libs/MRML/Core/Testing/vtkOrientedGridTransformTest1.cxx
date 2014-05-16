@@ -12,38 +12,38 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkOrientedBSplineTransform.h"
+#include "vtkOrientedGridTransform.h"
 
 // ITK includes
 #include <itkAffineTransform.h>
-#include <itkBSplineDeformableTransform.h>
+#include <itkDisplacementFieldTransform.h>
 
 // VTK includes
 #include "vtkImageData.h"
 #include "vtkNew.h"
 
-typedef itk::BSplineDeformableTransform<double,3,3> itkBSplineType;
+typedef double itkVectorComponentType;
+typedef itk::Vector<itkVectorComponentType, 3> itkVectorPixelType;
+typedef itk::Image<itkVectorPixelType,  3> itkDisplacementFieldType;
+typedef itk::DisplacementFieldTransform<itkVectorComponentType,3> itkGridTransformType;
 
-double DisplacementScale=0.63;
 
 //----------------------------------------------------------------------------
-void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
-  double origin[3], double spacing[3], double direction[3][3], double dims[3],
-  const double bulkMatrix[3][3], const double bulkOffset[3])
+void CreateGridTransformVtk(vtkOrientedGridTransform* gridTransform,
+  double origin[3], double spacing[3], double direction[3][3], double dims[3])
 {
-  vtkNew<vtkImageData> bsplineCoefficients;
-  bsplineCoefficients->SetExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1);
-  bsplineCoefficients->SetOrigin(origin);
-  bsplineCoefficients->SetSpacing(spacing);
+  vtkNew<vtkImageData> gridCoefficients;
+  gridCoefficients->SetExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1);
+  gridCoefficients->SetOrigin(origin);
+  gridCoefficients->SetSpacing(spacing);
 
 #if (VTK_MAJOR_VERSION <= 5)
-  bsplineCoefficients->SetScalarType(VTK_DOUBLE);
-  bsplineCoefficients->SetNumberOfScalarComponents(3);
-  bsplineCoefficients->AllocateScalars();
+  gridCoefficients->SetScalarType(VTK_DOUBLE);
+  gridCoefficients->SetNumberOfScalarComponents(3);
+  gridCoefficients->AllocateScalars();
 #else
-  bsplineCoefficients->AllocateScalars(VTK_DOUBLE, 3);
+  gridCoefficients->AllocateScalars(VTK_DOUBLE, 3);
 #endif
-
 
   // Fill with 0
   for (int z = 0; z < dims[2]; z++)
@@ -52,65 +52,53 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
     {
     for (int x = 0; x < dims[0]; x++)
       {
-      bsplineCoefficients->SetScalarComponentFromDouble(x,y,z,0, 0.0);
-      bsplineCoefficients->SetScalarComponentFromDouble(x,y,z,1, 0.0);
-      bsplineCoefficients->SetScalarComponentFromDouble(x,y,z,2, 0.0);
+      gridCoefficients->SetScalarComponentFromDouble(x,y,z,0, 0.0);
+      gridCoefficients->SetScalarComponentFromDouble(x,y,z,1, 0.0);
+      gridCoefficients->SetScalarComponentFromDouble(x,y,z,2, 0.0);
       }
     }
   }
 
-  vtkNew<vtkMatrix4x4> bulkTransform;
   vtkNew<vtkMatrix4x4> gridOrientation;
   for (int row=0; row<3; row++)
     {
     for (int col=0; col<3; col++)
       {
-      bulkTransform->SetElement(row,col,bulkMatrix[row][col]);
       gridOrientation->SetElement(row,col,direction[row][col]);
       }
-    bulkTransform->SetElement(row,3,bulkOffset[row]);
     }
 
-  bsplineTransform->SetGridDirectionMatrix(gridOrientation.GetPointer());
+  gridTransform->SetGridDirectionMatrix(gridOrientation.GetPointer());
 #if (VTK_MAJOR_VERSION <= 5)
-  bsplineTransform->SetCoefficients(bsplineCoefficients.GetPointer());
+  gridTransform->SetDisplacementGrid(gridCoefficients.GetPointer());
 #else
-  bsplineTransform->SetCoefficientData(bsplineCoefficients.GetPointer());
-#endif  
-  bsplineTransform->SetBulkTransformMatrix(bulkTransform.GetPointer());
-
-  bsplineTransform->SetBorderModeToZero();
-  bsplineTransform->SetDisplacementScale(DisplacementScale);
-}
-
-//----------------------------------------------------------------------------
-void SetBSplineNodeVtk(vtkOrientedBSplineTransform* bsplineTransform,int nodeIndex[3], double nodeValue[3])
-{
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* bsplineCoefficients=bsplineTransform->GetCoefficients();
-#else
-  vtkImageData* bsplineCoefficients=bsplineTransform->GetCoefficientData();
+  gridTransform->SetDisplacementGridData(gridCoefficients.GetPointer());
 #endif
 
-  bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],0, nodeValue[0]);
-  bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],1, nodeValue[1]);
-  bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],2, nodeValue[2]);
+  gridTransform->SetInterpolationModeToCubic();
 }
 
 //----------------------------------------------------------------------------
-itkBSplineType::Pointer CreateBSplineItk(
-  const double origin[3], const double spacing[3], double direction[3][3], const double dims[3],
-  const double bulkMatrix[3][3], const double bulkOffset[3])
+void SetGridNodeVtk(vtkOrientedGridTransform* gridTransform,int nodeIndex[3], double nodeValue[3])
 {
-  itkBSplineType::RegionType region;
-  itkBSplineType::OriginType originItk;
-  itkBSplineType::SpacingType spacinItk;
-  itkBSplineType::RegionType::SizeType sz;
-  itkBSplineType::DirectionType directionItk;
+  vtkImageData* gridCoefficients=gridTransform->GetDisplacementGrid();
+
+  gridCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],0, nodeValue[0]);
+  gridCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],1, nodeValue[1]);
+  gridCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],2, nodeValue[2]);
+}
+
+//----------------------------------------------------------------------------
+itkGridTransformType::Pointer CreateGridTransformItk(
+  const double origin[3], const double spacing[3], double direction[3][3], const double dims[3])
+{
+  itkDisplacementFieldType::RegionType region;
+  itkDisplacementFieldType::SpacingType spacinItk;
+  itkDisplacementFieldType::RegionType::SizeType sz;
+  itkDisplacementFieldType::DirectionType directionItk;
 
   for (int i=0; i<3; i++)
     {
-    originItk[i] = origin[i];
     spacinItk[i] = spacing[i];
     sz[i]=dims[i];
     directionItk(i,0)=direction[i][0];
@@ -120,77 +108,60 @@ itkBSplineType::Pointer CreateBSplineItk(
 
   region.SetSize( sz );
 
-  itkBSplineType::RegionType::IndexType idx;
+  itkGridTransformType::RegionType::IndexType idx;
   idx[0] = idx[1] = idx[2] = 0;
   region.SetIndex( idx );
 
-  itkBSplineType::Pointer bspline = itkBSplineType::New();
-  bspline->SetGridRegion( region );
-  bspline->SetGridOrigin( originItk );
-  bspline->SetGridSpacing( spacinItk );
-  bspline->SetGridDirection( directionItk );
+  itkDisplacementFieldType::Pointer displacementField = itkDisplacementFieldType::New();
 
-  typedef itk::AffineTransform< double,3 > BulkTransformType;
-  const BulkTransformType::Pointer bulkTransform = BulkTransformType::New();
-  BulkTransformType::MatrixType m;
-  for (int row=0; row<3; row++)
-    {
-    for (int col=0; col<3; col++)
-      {
-      m[row][col]=bulkMatrix[row][col];
-      }
-    }
-  bulkTransform->SetMatrix(m);
-  BulkTransformType::OffsetType v;
-  v[0]=bulkOffset[0];
-  v[1]=bulkOffset[1];
-  v[2]=bulkOffset[2];
-  bulkTransform->SetOffset(v);
+  displacementField->SetRegions( region );
+  displacementField->SetOrigin( origin );
+  displacementField->SetSpacing( spacinItk );
+  displacementField->SetDirection( directionItk );
+  displacementField->Allocate();
+  itkVectorPixelType zeroDisplacement;
+  zeroDisplacement.Fill(0.0);
+  displacementField->FillBuffer(zeroDisplacement);
 
-  bspline->SetBulkTransform(bulkTransform);
+  itkGridTransformType::Pointer grid = itkGridTransformType::New();
+  grid->SetDisplacementField(displacementField.GetPointer());
 
-  const unsigned int numberOfParameters = bspline->GetNumberOfParameters();
-  typedef itkBSplineType::ParametersType ParametersType;
-  ParametersType parameters( numberOfParameters );
-  // Check if numberOfNodes = numberOfParameters / 3;
-  assert( (numberOfParameters / 3) == dims[0] * dims[1] * dims[2] );
-  parameters.Fill( 0.0 );
-
-  bspline->SetParameters( parameters );
-
-  return bspline;
+  return grid;
 }
 
 //----------------------------------------------------------------------------
-void SetBSplineNodeItk(itkBSplineType::Pointer bspline,int nodeIndex[3], double nodeValue[3])
+void SetGridNodeItk(itkGridTransformType::Pointer grid,int nodeIndex[3], double nodeValue[3])
 {
-  itkBSplineType::RegionType region = bspline->GetGridRegion();
-  itkBSplineType::RegionType::SizeType dims = region.GetSize();
-  itkBSplineType::ParametersType parameters = bspline->GetParameters();
+  itkDisplacementFieldType::Pointer displacementField = grid->GetDisplacementField();
 
-  const unsigned int numberOfNodes = dims[0] * dims[1] * dims[2];
-  parameters.SetElement( numberOfNodes*0 + nodeIndex[0] + nodeIndex[1]*dims[0] + nodeIndex[2]*dims[0]*dims[1], DisplacementScale*nodeValue[0] );
-  parameters.SetElement( numberOfNodes*1 + nodeIndex[0] + nodeIndex[1]*dims[0] + nodeIndex[2]*dims[0]*dims[1], DisplacementScale*nodeValue[1] );
-  parameters.SetElement( numberOfNodes*2 + nodeIndex[0] + nodeIndex[1]*dims[0] + nodeIndex[2]*dims[0]*dims[1], DisplacementScale*nodeValue[2] );
+  itkGridTransformType::IndexType pixelIndex;
+  pixelIndex[0] = nodeIndex[0];
+  pixelIndex[1] = nodeIndex[1];
+  pixelIndex[2] = nodeIndex[2];
 
-  bspline->SetParameters( parameters );
+  itkVectorPixelType pixelValue;
+  pixelValue[0]=nodeValue[0];
+  pixelValue[1]=nodeValue[1];
+  pixelValue[2]=nodeValue[2];
+
+  displacementField->SetPixel(pixelIndex, pixelValue);
 }
 
 //----------------------------------------------------------------------------
-// Compute transformed point differences between ITK and VTK BSpline implementations
-double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplineType::Pointer bsplineItk, vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
+// Compute transformed point differences between ITK and VTK grid transform implementations
+double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkGridTransformType::Pointer gridItk, vtkOrientedGridTransform* gridVtk, bool logDetails)
 {
   // ITK
-  itkBSplineType::InputPointType inputPointItk;
+  itkGridTransformType::InputPointType inputPointItk;
   inputPointItk[0] = inputPoint[0];
   inputPointItk[1] = inputPoint[1];
   inputPointItk[2] = inputPoint[2];
-  itkBSplineType::OutputPointType outputPointItk;
-  outputPointItk = bsplineItk->TransformPoint( inputPointItk );
+  itkGridTransformType::OutputPointType outputPointItk;
+  outputPointItk = gridItk->TransformPoint( inputPointItk );
 
   // VTK
   double outputPoint[3]={0};
-  bsplineVtk->TransformPoint( inputPoint, outputPoint );
+  gridVtk->TransformPoint( inputPoint, outputPoint );
 
   itk::Point<double,3> inputPointVtk( inputPoint );
   itk::Point<double,3> outputPointVtk( outputPoint );
@@ -209,18 +180,18 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplin
 }
 
 //----------------------------------------------------------------------------
-// Compute transformed point differences between single-precision and double-precision VTK BSpline implementations
-double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
+// Compute transformed point differences between single-precision and double-precision VTK grid transform implementations
+double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], vtkOrientedGridTransform* gridVtk, bool logDetails)
 {
   double outputPoint[3]={0};
-  bsplineVtk->TransformPoint( inputPoint, outputPoint );
+  gridVtk->TransformPoint( inputPoint, outputPoint );
 
   float floatInputPoint[3]={0};
   floatInputPoint[0]=static_cast<float>(inputPoint[0]);
   floatInputPoint[1]=static_cast<float>(inputPoint[1]);
   floatInputPoint[2]=static_cast<float>(inputPoint[2]);
   float floatOutputPoint[3]={0};
-  bsplineVtk->TransformPoint( floatInputPoint, floatOutputPoint );
+  gridVtk->TransformPoint( floatInputPoint, floatOutputPoint );
 
   itk::Point<double,3> outputPointVtk( outputPoint );
   itk::Point<double,3> floatOutputPointVtk;
@@ -242,12 +213,12 @@ double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], 
 }
 
 //----------------------------------------------------------------------------
-// Compute the error of derivative computation in VTK BSpline implementation
-double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
+// Compute the error of derivative computation in VTK grid transform implementation
+double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransform* gridVtk, bool logDetails)
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
-  double eps=1e-3; // step size
+  double eps=1e-1; // step size
   for (int row=0; row<3; row++)
     {
     double xMinus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
@@ -255,9 +226,9 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
     xMinus1[row]-=eps;
     xPlus1[row]+=eps;
     double xMinus1Transformed[3]={0};
-    bsplineVtk->TransformPoint( xMinus1, xMinus1Transformed);
+    gridVtk->TransformPoint( xMinus1, xMinus1Transformed);
     double xPlus1Transformed[3]={0};
-    bsplineVtk->TransformPoint( xPlus1, xPlus1Transformed);
+    gridVtk->TransformPoint( xPlus1, xPlus1Transformed);
     for (int col=0; col<3; col++)
       {
       jacobianEstimation[col][row] = (xPlus1Transformed[col]-xMinus1Transformed[col])/(2*eps);
@@ -267,7 +238,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
   // Jacobian computed by the transform class
   double outputPoint[3]={0};
   double jacobianVtk[3][3];
-  bsplineVtk->InternalTransformDerivative( inputPoint, outputPoint, jacobianVtk );
+  gridVtk->InternalTransformDerivative( inputPoint, outputPoint, jacobianVtk );
 
   if (logDetails)
     {
@@ -297,16 +268,16 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
 }
 
 //----------------------------------------------------------------------------
-// Compute the error of inverse computation in VTK BSpline implementation
-double getInverseErrorVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
+// Compute the error of inverse computation in VTK grid transform implementation
+double getInverseErrorVtk(const double inputPoint[3], vtkOrientedGridTransform* gridVtk, bool logDetails)
 {
   double outputPoint[3] = { -1, -1, -1 };
-  bsplineVtk->TransformPoint( inputPoint, outputPoint);
+  gridVtk->TransformPoint( inputPoint, outputPoint);
 
   double inversePoint[3] = { -1, -1, -1 };
-  bsplineVtk->Inverse();
-  bsplineVtk->TransformPoint( outputPoint, inversePoint );
-  bsplineVtk->Inverse();
+  gridVtk->Inverse();
+  gridVtk->TransformPoint( outputPoint, inversePoint );
+  gridVtk->Inverse();
 
   itk::Point<double,3> inputPointVtk( inputPoint );
   itk::Point<double,3> inversePointVtk( inversePoint );
@@ -325,58 +296,37 @@ double getInverseErrorVtk(const double inputPoint[3], vtkOrientedBSplineTransfor
 }
 
 //----------------------------------------------------------------------------
-int vtkOrientedBSplineTransformTest1(int , char * [] )
+int vtkOrientedGridTransformTest1(int , char * [] )
 {
-  // we want to transform a 300x400x300 image, with grid points 100
-  // pixels apart. So, we need 4x5x4 "interior" grid points. Since the
-  // spline order is 3, we need 1 exterior node on the "left" and 2
-  // exterior nodes on the "right".  So, we need a spline grid of
-  // 7x8x7. We want to transform the whole image, so the origin should
-  // be set to spline grid location (0,0).
-
-
-  //  B--o--o--o--o--o--o   A = image(0,0)       A = spline_grid(1,1)
-  //  |  |  |  |  |  |  |   B = image(-100,-100) B = spline_grid(0,0)
-  //  o--A--+--+--+--o--o
-  //  |  |  |  |  |  |  |
-  //  o--+--+--+--+--o--o   origin should be set to (-100,-100)
-  //  |  |  |  |  |  |  |
-  //  o--+--+--+--+--o--o
-  //  |  |  |  |  |  |  |
-  //  o--o--o--o--o--o--o
-  //  |  |  |  |  |  |  |
-  //  o--o--o--o--o--o--o
-
+  double averageSpacing=100;
   double origin[3] = {-100, -100, -100};
-  double spacing[3] = {100, 100, 100};
+  double spacing[3] = {averageSpacing, averageSpacing, averageSpacing};
   double direction[3][3] = {{0.92128500, -0.36017075, -0.146666625}, {0.31722386, 0.91417248, -0.25230478}, {0.22495105, 0.18591857, 0.95646814}};
+  //double direction[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
   double dims[3] = {7,8,7};
 
-  const double bulkMatrix[3][3]={ { 0.7, 0.2, 0.1 }, { 0.1, 0.8, 0.1 }, { 0.05, 0.2, 0.9 }};
-  const double bulkOffset[3]={-5, 3, 6};
-
   // Modify a few nodes
-  int modifiedBSplineNodeIndex1[3] = {2, 3, 5};
-  double modifiedBSplineNodeValue1[3] = {20.0, -30.0, 60.0};
-  int modifiedBSplineNodeIndex2[3] = {4, 4, 3};
-  double modifiedBSplineNodeValue2[3] = {-20.0, 40.0, 20.0};
-  int modifiedBSplineNodeIndex3[3] = {0, 0, 6};
-  double modifiedBSplineNodeValue3[3] = {50.0, 70.0, -60.0};
+  int modifiedGridNodeIndex1[3] = {2, 3, 5};
+  double modifiedGridNodeValue1[3] = {20.0, -30.0, 60.0};
+  int modifiedGridNodeIndex2[3] = {4, 4, 3};
+  double modifiedGridNodeValue2[3] = {-20.0, 40.0, 20.0};
+  int modifiedGridNodeIndex3[3] = {0, 0, 6};
+  double modifiedGridNodeValue3[3] = {50.0, 70.0, -60.0};
 
-  // Create an ITK BSpline transform. It'll serve as the reference.
-  itkBSplineType::Pointer bsplineItk=CreateBSplineItk(origin, spacing, direction, dims, bulkMatrix, bulkOffset);
-  // Modify a BSpline node
-  SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex1, modifiedBSplineNodeValue1);
-  SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex2, modifiedBSplineNodeValue2);
-  SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex3, modifiedBSplineNodeValue3);
+  // Create an ITK grid transform. It'll serve as the reference.
+  itkGridTransformType::Pointer gridItk=CreateGridTransformItk(origin, spacing, direction, dims);
+  // Modify a grid node
+  SetGridNodeItk(gridItk, modifiedGridNodeIndex1, modifiedGridNodeValue1);
+  SetGridNodeItk(gridItk, modifiedGridNodeIndex2, modifiedGridNodeValue2);
+  SetGridNodeItk(gridItk, modifiedGridNodeIndex3, modifiedGridNodeValue3);
 
-  // Create a VTK BSpline transform with the same parameters.
-  vtkNew<vtkOrientedBSplineTransform> bsplineVtk;
-  CreateBSplineVtk(bsplineVtk.GetPointer(), origin, spacing, direction, dims, bulkMatrix, bulkOffset);
-  // Modify a BSpline node
-  SetBSplineNodeVtk(bsplineVtk.GetPointer(), modifiedBSplineNodeIndex1, modifiedBSplineNodeValue1);
-  SetBSplineNodeVtk(bsplineVtk.GetPointer(), modifiedBSplineNodeIndex2, modifiedBSplineNodeValue2);
-  SetBSplineNodeVtk(bsplineVtk.GetPointer(), modifiedBSplineNodeIndex3, modifiedBSplineNodeValue3);
+  // Create a VTK grid transform with the same parameters.
+  vtkNew<vtkOrientedGridTransform> gridVtk;
+  CreateGridTransformVtk(gridVtk.GetPointer(), origin, spacing, direction, dims);
+  // Modify a grid node
+  SetGridNodeVtk(gridVtk.GetPointer(), modifiedGridNodeIndex1, modifiedGridNodeValue1);
+  SetGridNodeVtk(gridVtk.GetPointer(), modifiedGridNodeIndex2, modifiedGridNodeValue2);
+  SetGridNodeVtk(gridVtk.GetPointer(), modifiedGridNodeIndex3, modifiedGridNodeValue3);
 
   int numberOfPointsTested=0;
   int numberOfItkVtkPointMismatches=0;
@@ -384,12 +334,12 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
   int numberOfDerivativeMismatches=0;
   int numberOfInverseMismatches=0;
 
-  // We take samples in the bspline region (first node + 2 < node < last node - 1)
+  // We take samples in the grid region (first node + 2 < node < last node - 1)
   // because the boundaries are handled differently in ITK and VTK (in ITK there is an
   // abrupt change to 0, while in VTK it is smoothly converges to zero)
   const int numberOfSamplesPerAxis=25;
-  const double startMargin=2;
-  const double endMargin=1;
+  const double startMargin=0.5;
+  const double endMargin=0.5;
   const double startI = startMargin;
   const double endI = (dims[0]-1)-endMargin;
   const double startJ = startMargin;
@@ -399,6 +349,9 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
   const double incI=(endI-startI)/numberOfSamplesPerAxis;
   const double incJ=(endJ-startJ)/numberOfSamplesPerAxis;
   const double incK=(endK-startK)/numberOfSamplesPerAxis;
+
+  // The default ITK interpolator is linear, compare the results to that
+  gridVtk->SetInterpolationModeToLinear();
   for (double k=startK+incK; k<=endK-incK; k+=incK)
     {
     for (double j=startJ+incJ; j<=endJ-incJ; j+=incJ)
@@ -411,33 +364,62 @@ int vtkOrientedBSplineTransformTest1(int , char * [] )
         inputPoint[1] = origin[1]+direction[1][0]*spacing[0]*i+direction[1][1]*spacing[1]*j+direction[1][2]*spacing[2]*k;
         inputPoint[2] = origin[2]+direction[2][0]*spacing[0]*i+direction[2][1]*spacing[1]*j+direction[2][2]*spacing[2]*k;
         // Compare transformation results computed by ITK and VTK.
-        double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), false);
-        if ( differenceItkVtk > 1e-6 )
+        double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
+        if ( differenceItkVtk > 1e-2 )
           {
-          getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), true);
-          std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
+          getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
+          std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with linear interpolation"<< std::endl;
           numberOfItkVtkPointMismatches++;
           }
-        double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), false);
+        }
+      }
+    }
+
+  gridVtk->SetInterpolationModeToCubic();
+  for (double k=startK+incK; k<=endK-incK; k+=incK)
+    {
+    for (double j=startJ+incJ; j<=endJ-incJ; j+=incJ)
+      {
+      for (double i=startI+incI; i<=endI-incI; i+=incI)
+        {
+        numberOfPointsTested++;
+        double inputPoint[3];
+        inputPoint[0] = origin[0]+direction[0][0]*spacing[0]*i+direction[0][1]*spacing[1]*j+direction[0][2]*spacing[2]*k;
+        inputPoint[1] = origin[1]+direction[1][0]*spacing[0]*i+direction[1][1]*spacing[1]*j+direction[1][2]*spacing[2]*k;
+        inputPoint[2] = origin[2]+direction[2][0]*spacing[0]*i+direction[2][1]*spacing[1]*j+direction[2][2]*spacing[2]*k;
+        // Compare transformation results computed by ITK and VTK.
+        double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
+        // the larger the distance between the grid points, the larger difference is expected between ITK's linear and VTK's cubic
+        // interpolation, therefore make the threshold the 20% of the spacing
+        if ( differenceItkVtk > averageSpacing*0.20 )
+          {
+          getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
+          std::cout << "ERROR: Point transfom result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with cubic interpolation"<< std::endl;
+          numberOfItkVtkPointMismatches++;
+          }
+        // Verify single/double-precision computation difference
+        double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), false);
         if ( differenceSingleDoubleVtk > 1e-4 )
           {
-          getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), true);
+          getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Point transfom result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfSingleDoubleVtkPointMismatches++;
           }
         // Verify VTK derivative
-        double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
-        if ( derivativeError > 1e-6 )
+        double derivativeError = getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), false);
+        if ( derivativeError > 1e-2 )
           {
-          getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);
+          getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Transform derivative result mismatch between VTK and numerical approximation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfDerivativeMismatches++;
           }
         // Verify VTK inverse transform
-        double inverseError = getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
-        if ( inverseError > 1e-3 )
+        double inverseError = getInverseErrorVtk(inputPoint, gridVtk.GetPointer(), false);
+        // add 10% to the inverse tolerance, as the point is transformed twice, so the error can be slightly higher
+        // than a single inverse computation
+        if ( inverseError > gridVtk->GetInverseTolerance()*1.10 )
           {
-          getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);
+          getInverseErrorVtk(inputPoint, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Point transformed by forward and inverse transform does not match the original point" << std::endl;
           numberOfInverseMismatches++;
           }

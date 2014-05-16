@@ -15,7 +15,7 @@
 #include <itkFactoryRegistration.h>
 
 #include "vtkOrientedBSplineTransform.h"
-#include "vtkGridTransform.h"
+#include "vtkOrientedGridTransform.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLGridTransformNode.h"
@@ -148,8 +148,8 @@ bool TestGridTransform(const char *filename)
     return false;
     }
 
-  vtkAbstractTransform *xfp = gridTransformNode->GetTransformFromParentAs("vtkGridTransform");
-  vtkAbstractTransform *xtp = gridTransformNode->GetTransformToParentAs("vtkGridTransform");
+  vtkAbstractTransform *xfp = gridTransformNode->GetTransformFromParentAs("vtkOrientedGridTransform");
+  vtkAbstractTransform *xtp = gridTransformNode->GetTransformToParentAs("vtkOrientedGridTransform");
 
   if (xfp == 0 || xtp == 0)
     {
