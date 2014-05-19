@@ -23,20 +23,19 @@
 
 // Qt includes
 #include <QPair>
-#include <QWidget>
 
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-#include "qMRMLWidgetsExport.h"
+// MRML includes
+#include "qMRMLWidget.h"
 
 class vtkMRMLNode;
 class vtkMRMLLinearTransformNode;
 class vtkMatrix4x4;
 class qMRMLTransformSlidersPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -57,7 +56,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
 
 public:
   /// Constructors
-  typedef QWidget Superclass;
+  typedef qMRMLWidget Superclass;
   explicit qMRMLTransformSliders(QWidget* parent);
   virtual ~qMRMLTransformSliders();
 

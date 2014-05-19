@@ -140,7 +140,7 @@
             <bool>true</bool>
            </property>
            <property name="decimalsOption">
-            <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+            <set>ctkDoubleSpinBox::DecimalsByShortcuts</set>
            </property>
           </widget>
          </item>
@@ -434,7 +434,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLTransformSliders</class>
-   <extends>QWidget</extends>
+   <extends>qMRMLWidget</extends>
    <header>qMRMLTransformSliders.h</header>
    <container>1</container>
   </customwidget>
@@ -498,8 +498,8 @@
      <y>502</y>
     </hint>
     <hint type="destinationlabel">
-     <x>177</x>
-     <y>789</y>
+     <x>169</x>
+     <y>1206</y>
     </hint>
    </hints>
   </connection>
@@ -514,8 +514,8 @@
      <y>501</y>
     </hint>
     <hint type="destinationlabel">
-     <x>381</x>
-     <y>789</y>
+     <x>380</x>
+     <y>1206</y>
     </hint>
    </hints>
   </connection>
@@ -610,8 +610,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>380</x>
-     <y>473</y>
+     <x>161</x>
+     <y>516</y>
     </hint>
    </hints>
   </connection>
@@ -626,8 +626,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>646</y>
+     <x>198</x>
+     <y>907</y>
     </hint>
    </hints>
   </connection>
@@ -642,56 +642,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>716</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MatrixWidget</sender>
-   <signal>decimalsChanged(int)</signal>
-   <receiver>TranslationSliders</receiver>
-   <slot>setDecimals(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>252</x>
-     <y>136</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>226</x>
-     <y>248</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TranslationSliders</sender>
-   <signal>decimalsChanged(int)</signal>
-   <receiver>RotationSliders</receiver>
-   <slot>setDecimals(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
      <x>198</x>
-     <y>315</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>201</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>RotationSliders</sender>
-   <signal>decimalsChanged(int)</signal>
-   <receiver>MatrixWidget</receiver>
-   <slot>setDecimals(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>60</x>
-     <y>430</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>60</x>
-     <y>131</y>
+     <y>1014</y>
     </hint>
    </hints>
   </connection>
@@ -706,8 +658,8 @@
      <y>10</y>
     </hint>
     <hint type="destinationlabel">
-     <x>195</x>
-     <y>535</y>
+     <x>204</x>
+     <y>758</y>
     </hint>
    </hints>
   </connection>
@@ -722,8 +674,8 @@
      <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>195</x>
-     <y>535</y>
+     <x>204</x>
+     <y>758</y>
     </hint>
    </hints>
   </connection>
@@ -738,8 +690,24 @@
      <y>10</y>
     </hint>
     <hint type="destinationlabel">
-     <x>195</x>
-     <y>152</y>
+     <x>222</x>
+     <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TranslationSliders</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>357</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>257</y>
     </hint>
    </hints>
   </connection>

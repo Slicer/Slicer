@@ -52,9 +52,14 @@ qMRMLLinearTransformSliderPrivate::qMRMLLinearTransformSliderPrivate()
 }
 
 // --------------------------------------------------------------------------
-qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* _parent) : Superclass(_parent)
+qMRMLLinearTransformSlider::qMRMLLinearTransformSlider(QWidget* sliderParent)
+  : Superclass(sliderParent)
   , d_ptr(new qMRMLLinearTransformSliderPrivate)
 {
+  this->setQuantity("length");
+  this->setUnitAwareProperties(
+    qMRMLSliderWidget::Precision | qMRMLSliderWidget::Prefix |
+    qMRMLSliderWidget::Scaling | qMRMLSliderWidget::Suffix);
 }
 
 // --------------------------------------------------------------------------
@@ -67,6 +72,10 @@ void qMRMLLinearTransformSlider::setTypeOfTransform(TransformType _typeOfTransfo
 {
   Q_D(qMRMLLinearTransformSlider);
   d->TypeOfTransform = _typeOfTransform;
+  if (this->isRotation())
+    {
+    this->setSuffix("°");
+    }
   this->onMRMLTransformNodeModified(d->MRMLTransformNode);
 }
 

@@ -50,7 +50,8 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_parent)
+qMRMLTransformSliders::qMRMLTransformSliders(QWidget* slidersParent)
+  : Superclass(slidersParent)
   , d_ptr(new qMRMLTransformSlidersPrivate)
 {
   Q_D(qMRMLTransformSliders);
@@ -62,6 +63,9 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
     ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
   d->ISSlider->spinBox()->setDecimalsOption(
     ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
+  d->LRSlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeDecimals);
+  d->PASlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeDecimals);
+  d->ISSlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeDecimals);
 
   this->setCoordinateReference(qMRMLTransformSliders::GLOBAL);
   this->setTypeOfTransform(qMRMLTransformSliders::TRANSLATION);

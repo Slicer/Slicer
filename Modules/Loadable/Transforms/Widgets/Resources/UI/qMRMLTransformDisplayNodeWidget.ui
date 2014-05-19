@@ -319,7 +319,7 @@
           </widget>
          </item>
          <item row="0" column="1" colspan="2">
-          <widget class="ctkSliderWidget" name="GlyphSpacingMm">
+          <widget class="qMRMLSliderWidget" name="GlyphSpacingMm">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -347,8 +347,11 @@
            <property name="value">
             <double>10.000000000000000</double>
            </property>
-           <property name="suffix">
-            <string> mm</string>
+           <property name="quantity">
+            <string>length</string>
+           </property>
+           <property name="unitAwareProperties">
+            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
            </property>
           </widget>
          </item>
@@ -392,7 +395,7 @@
           </widget>
          </item>
          <item row="1" column="1" colspan="2">
-          <widget class="ctkSliderWidget" name="GlyphScalePercent">
+          <widget class="qMRMLSliderWidget" name="GlyphScalePercent">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -507,7 +510,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="ctkSliderWidget" name="GlyphDiameterMm">
+             <widget class="qMRMLSliderWidget" name="GlyphDiameterMm">
               <property name="toolTip">
                <string>Base diameter of the widget</string>
               </property>
@@ -526,8 +529,11 @@
               <property name="value">
                <double>5.000000000000000</double>
               </property>
-              <property name="suffix">
-               <string> mm</string>
+              <property name="quantity">
+               <string>length</string>
+              </property>
+              <property name="unitAwareProperties">
+               <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
               </property>
              </widget>
             </item>
@@ -659,7 +665,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="ctkSliderWidget" name="GridSpacingMm">
+          <widget class="qMRMLSliderWidget" name="GridSpacingMm">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -687,8 +693,11 @@
            <property name="value">
             <double>10.000000000000000</double>
            </property>
-           <property name="suffix">
-            <string> mm</string>
+           <property name="quantity">
+            <string>length</string>
+           </property>
+           <property name="unitAwareProperties">
+            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
            </property>
           </widget>
          </item>
@@ -744,7 +753,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="ctkSliderWidget" name="GridLineDiameterMm">
+          <widget class="qMRMLSliderWidget" name="GridLineDiameterMm">
            <property name="toolTip">
             <string>Thickness of the gridlines in the 3D view</string>
            </property>
@@ -766,8 +775,11 @@
            <property name="value">
             <double>1.000000000000000</double>
            </property>
-           <property name="suffix">
-            <string> mm</string>
+           <property name="quantity">
+            <string>length</string>
+           </property>
+           <property name="unitAwareProperties">
+            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
            </property>
           </widget>
          </item>
@@ -782,7 +794,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="ctkSliderWidget" name="GridResolutionMm">
+          <widget class="qMRMLSliderWidget" name="GridResolutionMm">
            <property name="toolTip">
             <string>Distance between sample points along the gridlines. Lower values result in gridlines that follow more closely the actual displacement vectors, but require more computation time.</string>
            </property>
@@ -804,8 +816,11 @@
            <property name="value">
             <double>5.000000000000000</double>
            </property>
-           <property name="suffix">
-            <string> mm</string>
+           <property name="quantity">
+            <string>length</string>
+           </property>
+           <property name="unitAwareProperties">
+            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
            </property>
           </widget>
          </item>
@@ -881,7 +896,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="ctkSliderWidget" name="ContourResolutionMm">
+          <widget class="qMRMLSliderWidget" name="ContourResolutionMm">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -909,8 +924,11 @@
            <property name="value">
             <double>5.000000000000000</double>
            </property>
-           <property name="suffix">
-            <string>mm</string>
+           <property name="quantity">
+            <string>length</string>
+           </property>
+           <property name="unitAwareProperties">
+            <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Scaling|qMRMLSliderWidget::Suffix</set>
            </property>
           </widget>
          </item>
@@ -995,6 +1013,11 @@
    <header>qMRMLRangeWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
@@ -1043,12 +1066,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>67</x>
-     <y>129</y>
+     <x>71</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>162</y>
+     <x>189</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -1059,12 +1082,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>67</x>
-     <y>129</y>
+     <x>71</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>167</y>
+     <x>189</x>
+     <y>460</y>
     </hint>
    </hints>
   </connection>
@@ -1075,12 +1098,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>67</x>
-     <y>129</y>
+     <x>71</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>171</y>
+     <x>189</x>
+     <y>648</y>
     </hint>
    </hints>
   </connection>
@@ -1091,12 +1114,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>220</x>
-     <y>129</y>
+     <x>204</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>162</y>
+     <x>189</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -1107,12 +1130,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>220</x>
-     <y>129</y>
+     <x>204</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>167</y>
+     <x>189</x>
+     <y>460</y>
     </hint>
    </hints>
   </connection>
@@ -1123,12 +1146,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>220</x>
-     <y>129</y>
+     <x>204</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>171</y>
+     <x>189</x>
+     <y>648</y>
     </hint>
    </hints>
   </connection>
@@ -1139,12 +1162,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>129</y>
+     <x>309</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>162</y>
+     <x>189</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -1155,12 +1178,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>129</y>
+     <x>309</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>167</y>
+     <x>189</x>
+     <y>460</y>
     </hint>
    </hints>
   </connection>
@@ -1171,12 +1194,12 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>331</x>
-     <y>129</y>
+     <x>309</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>175</x>
-     <y>171</y>
+     <x>189</x>
+     <y>648</y>
     </hint>
    </hints>
   </connection>
@@ -1191,8 +1214,104 @@
      <y>450</y>
     </hint>
     <hint type="destinationlabel">
+     <x>308</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GlyphSpacingMm</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>267</x>
+     <y>648</y>
+    </hint>
+    <hint type="destinationlabel">
      <x>223</x>
-     <y>53</y>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GridSpacingMm</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>242</x>
+     <y>613</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>245</x>
+     <y>440</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GridLineDiameterMm</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>610</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>513</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GridResolutionMm</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>602</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>540</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ContourResolutionMm</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>594</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>126</x>
+     <y>607</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLTransformDisplayNodeWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>GlyphDiameterMm</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>663</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>183</x>
+     <y>316</y>
     </hint>
    </hints>
   </connection>
