@@ -4,6 +4,7 @@ if(SPHINX_BUILD_EXECUTABLE)
   # Set output directory
   set(pkg Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR})
   set(docdir "${CMAKE_BINARY_DIR}/share/doc/${pkg}/SlicerWizard")
+  set(tarball "${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}/SlicerWizard.tar.gz")
 
   # Determine wiki documentation version string
   set(doc_version "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
@@ -21,8 +22,20 @@ if(SPHINX_BUILD_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}"
             "${docdir}"
     )
-  set_target_properties(SlicerWizard-doc PROPERTIES LABELS Documentation)
   add_dependencies(doc SlicerWizard-doc)
+
+  # Create documentation tarball
+  add_custom_target(SlicerWizard-doc-tarball
+    DEPENDS SlicerWizard-doc
+    COMMAND "${CMAKE_COMMAND}"
+            "-DINPUT_PATH:PATH=${docdir}"
+            "-DOUTPUT_FILE:FILEPATH=${tarball}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/create_doc_tarball.cmake"
+    )
+
+  set_target_properties(SlicerWizard-doc SlicerWizard-doc-tarball
+    PROPERTIES LABELS Documentation)
+
 else()
   message(WARNING "Warning: sphinx-build not found:"
                   " Python documentation will not be created")
