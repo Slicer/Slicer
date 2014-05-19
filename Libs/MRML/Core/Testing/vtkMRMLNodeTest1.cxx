@@ -548,6 +548,36 @@ bool TestSetAndObserveNodeReferenceID()
     return false;
     }
 
+  /// Set Nth reference to 0
+  std::vector<int> referenceIndices;
+  referenceIndices.push_back(20);
+  referenceIndices.push_back(30);
+  referenceIndices.push_back(31);
+  referenceIndices.push_back(32);
+  referenceIndices.push_back(21);
+  referenceIndices.push_back(10);
+  referenceIndices.push_back(0);
+  referenceIndices.push_back(-1);
+  for (std::vector<int>::iterator it = referenceIndices.begin();
+       it != referenceIndices.end();
+       ++it)
+    {
+    int nth = *it;
+    referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+    returnNode = referencingNode->SetAndObserveNthNodeReferenceID(role3.c_str(), nth, 0);
+
+    if (!CheckNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", scene.GetPointer(),
+                             referencingNode.GetPointer(), role3.c_str(),
+                             /* n = */ nth,
+                             /* expectedNodeReference = */ 0,
+                             /* expectedNumberOfNodeReferences = */ 1,
+                             /* expectedReferencedNodesCount = */ referencedNodesCount,
+                             /* currentReturnNode = */ returnNode))
+      {
+      return false;
+      }
+    }
+
   return true;
 }
 
@@ -1462,6 +1492,36 @@ bool TestSetNodeReferenceID()
                            /* currentReturnNode = */ returnNode))
     {
     return false;
+    }
+
+  /// Set Nth reference to 0
+  std::vector<int> referenceIndices;
+  referenceIndices.push_back(20);
+  referenceIndices.push_back(30);
+  referenceIndices.push_back(31);
+  referenceIndices.push_back(32);
+  referenceIndices.push_back(21);
+  referenceIndices.push_back(10);
+  referenceIndices.push_back(0);
+  referenceIndices.push_back(-1);
+  for (std::vector<int>::iterator it = referenceIndices.begin();
+       it != referenceIndices.end();
+       ++it)
+    {
+    int nth = *it;
+    referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+    returnNode = referencingNode->SetNthNodeReferenceID(role3.c_str(), nth, 0);
+
+    if (!CheckNodeReferences(__LINE__, "SetNthNodeReferenceID", scene.GetPointer(),
+                             referencingNode.GetPointer(), role3.c_str(),
+                             /* n = */ nth,
+                             /* expectedNodeReference = */ 0,
+                             /* expectedNumberOfNodeReferences = */ 1,
+                             /* expectedReferencedNodesCount = */ referencedNodesCount,
+                             /* currentReturnNode = */ returnNode))
+      {
+      return false;
+      }
     }
 
   return true;

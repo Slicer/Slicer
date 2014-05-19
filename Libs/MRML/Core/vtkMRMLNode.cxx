@@ -1145,7 +1145,8 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
                                                  int n,
                                                  const char* referencedNodeID)
 {
-  if (referenceRole == 0)
+  if (referenceRole == 0 ||
+      n < 0)
     {
     return 0;
     }
@@ -1174,14 +1175,14 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   NodeReferenceListType::iterator referencedNodesIt = referencedNodes.begin() + n;
 
   vtkMRMLNodeReference * reference = 0;
-  if (referencedNodesIt != referencedNodes.end())
+  if (referencedNodesIt < referencedNodes.end())
     {
     reference = (*referencedNodesIt);
     }
-  // Extend the list if needed. But don't do it if the node ID to add is null
+  // Extend the list if needed.
   if (!reference)
     {
-    if (referencedNodesIt == referencedNodes.end())
+    if (referencedNodesIt >= referencedNodes.end())
       {
       referencedNodes.resize(n + 1);
       }
@@ -1208,17 +1209,11 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 
   // if we dont find the node or they have the same id
   // update the references
-  if (referencedNodesIt == referencedNodes.end() ||
-     (reference->GetReferencedNodeID() &&
-       std::string(reference->GetReferencedNodeID()) == newReferencedNodeID ))
+  if (reference->GetReferencedNodeID() &&
+       std::string(reference->GetReferencedNodeID()) == newReferencedNodeID )
     {
-
-    if (n < static_cast<int>(referencedNodes.size()))
-      {
-      this->UpdateNthNodeReference(*referencedNodesIt, n);
-      }
-    return referencedNodesIt == referencedNodes.end() ?
-      0 : reference->ReferencedNode;
+    this->UpdateNthNodeReference(reference, n);
+    return reference->ReferencedNode;
     }
 
   // node id is different, remove reference from scene
@@ -1280,7 +1275,8 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
                                                            const char* referencedNodeID,
                                                            vtkIntArray *events)
 {
-  if (referenceRole == 0)
+  if (referenceRole == 0 ||
+      n < 0)
     {
     return 0;
     }
@@ -1310,14 +1306,14 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   NodeReferenceListType::iterator referencedNodesIt = referencedNodes.begin() + n;
 
   vtkMRMLNodeReference * reference = 0;
-  if (referencedNodesIt != referencedNodes.end())
+  if (referencedNodesIt < referencedNodes.end())
     {
     reference = (*referencedNodesIt);
     }
-  // Extend the list if needed. But don't do it if the node ID to add is null
+  // Extend the list if needed.
   if (!reference)
     {
-    if (referencedNodesIt == referencedNodes.end())
+    if (referencedNodesIt >= referencedNodes.end())
       {
       referencedNodes.resize(n + 1);
       }
@@ -1345,17 +1341,12 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 
   // if we dont find the node or they have the same id and events
   // just update the references
-  if (referencedNodesIt == referencedNodes.end() ||
-     (reference->GetReferencedNodeID() &&
+  if (reference->GetReferencedNodeID() &&
        std::string(reference->GetReferencedNodeID()) == newReferencedNodeID &&
-       reference->Events == events) )
+       reference->Events == events)
     {
-    if (n < static_cast<int>(referencedNodes.size()))
-      {
-      this->UpdateNthNodeReference(*referencedNodesIt, n);
-      }
-    return referencedNodesIt == referencedNodes.end() ?
-      0 : reference->ReferencedNode;
+    this->UpdateNthNodeReference(reference, n);
+    return reference->ReferencedNode;
     }
 
   // node id is different, unobserve the old node
@@ -1392,7 +1383,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     // Update events
     reference->Events = events;
 
-    this->UpdateNthNodeReference(*referencedNodesIt, n);
+    this->UpdateNthNodeReference(reference, n);
     referencedNode =  reference->ReferencedNode;
     }
 
