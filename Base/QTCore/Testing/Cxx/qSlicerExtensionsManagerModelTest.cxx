@@ -488,6 +488,7 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_da
   expected.insert("repository_type", "scm");
   expected.insert("repository_url", "scmurl");
   expected.insert("development_status", "status");
+  expected.insert("icon_url", "iconurl");
 
   QTest::newRow("0") << expected.keys() << expected.values();
 }

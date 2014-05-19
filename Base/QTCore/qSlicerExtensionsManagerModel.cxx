@@ -80,12 +80,13 @@ public:
     NameColumn,
     ScmColumn,
     ScmUrlColumn,
+    DependsColumn,
     SlicerRevisionColumn,
     RevisionColumn,
     ReleaseColumn,
     ArchColumn,
     OsColumn,
-    DependsColumn,
+    IconUrlColumn,
     HomepageColumn,
     CategoryColumn,
     StatusColumn,
@@ -108,6 +109,7 @@ public:
     ReleaseRole,
     ArchRole,
     OsRole,
+    IconUrlRole,
     HomepageRole,
     CategoryRole,
     StatusRole,
@@ -216,6 +218,7 @@ void qSlicerExtensionsManagerModelPrivate::init()
   this->initializeColumnIdToNameMap(Self::OsColumn, "os");
   this->initializeColumnIdToNameMap(Self::DependsColumn, "depends");
   this->initializeColumnIdToNameMap(Self::HomepageColumn, "homepage");
+  this->initializeColumnIdToNameMap(Self::IconUrlColumn, "iconurl");
   this->initializeColumnIdToNameMap(Self::CategoryColumn, "category");
   this->initializeColumnIdToNameMap(Self::StatusColumn, "status");
   this->initializeColumnIdToNameMap(Self::ContributorsColumn, "contributors");
@@ -1398,6 +1401,7 @@ QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescript
   serverToExtensionDescriptionKey.insert("repository_type", "scm");
   serverToExtensionDescriptionKey.insert("repository_url", "scmurl");
   serverToExtensionDescriptionKey.insert("development_status", "status");
+  serverToExtensionDescriptionKey.insert("icon_url", "iconurl");
   return serverToExtensionDescriptionKey;
 }
 
