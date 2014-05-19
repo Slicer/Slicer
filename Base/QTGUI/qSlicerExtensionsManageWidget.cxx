@@ -172,6 +172,8 @@ QString qSlicerExtensionsManageWidgetPrivate::extensionIconPath(
 QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
   const QString& extensionName, const QUrl& extensionIconUrl)
 {
+  Q_Q(qSlicerExtensionsManageWidget);
+
   if (extensionIconUrl.isValid())
     {
     const QString iconPath = this->extensionIconPath(extensionName,
@@ -179,6 +181,8 @@ QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
     if (QFileInfo(iconPath).exists())
       {
       QPixmap pixmap(iconPath);
+      pixmap = pixmap.scaled(q->iconSize(), Qt::KeepAspectRatio,
+                             Qt::SmoothTransformation);
 
       if (pixmap.isNull())
         {
@@ -194,7 +198,7 @@ QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
       painter.setPen(Qt::NoPen);
       painter.setBrush(pixmap);
       painter.setRenderHint(QPainter::Antialiasing, true);
-      painter.drawRoundedRect(QRect(QPoint(0, 0), pixmap.size()), 10, 10);
+      painter.drawRoundedRect(QRect(QPoint(0, 0), pixmap.size()), 5, 5);
       painter.end();
 
       return QIcon(canvas);
