@@ -22,6 +22,7 @@
 
 // CTK includes
 #include <ctkLinearValueProxy.h>
+#include <ctkUtils.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -203,7 +204,6 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
       if (d->Flags.testFlag(qMRMLSliderWidget::Precision))
         {
         this->setDecimals(unitNode->GetPrecision());
-        this->setSingleStep(pow(10.0, -unitNode->GetPrecision()));
         }
       if (d->Flags.testFlag(qMRMLSliderWidget::Prefix))
         {
@@ -224,6 +224,17 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
       if (d->Flags.testFlag(qMRMLSliderWidget::Scaling))
         {
         d->updateValueProxy(unitNode);
+        }
+      if (d->Flags.testFlag(qMRMLSliderWidget::Precision))
+        {
+        double range = this->maximum() - this->minimum();
+        if (d->Flags.testFlag(qMRMLSliderWidget::Scaling))
+          {
+          range = unitNode->GetDisplayValueFromValue(this->maximum()) -
+                  unitNode->GetDisplayValueFromValue(this->minimum());
+          }
+        double powerOfTen = ctk::closestPowerOfTen(range);
+        this->setSingleStep(powerOfTen / 100);
         }
       }
     }
