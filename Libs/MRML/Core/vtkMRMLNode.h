@@ -26,6 +26,8 @@ class vtkMRMLScene;
 
 // VTK includes
 #include <vtkObject.h>
+#include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 class vtkCallbackCommand;
 
 // STD includes
@@ -571,39 +573,27 @@ protected:
     vtkSetStringMacro(ReferencedNodeID);
     vtkGetStringMacro(ReferencedNodeID);
 
-    vtkMRMLNode*    ReferencingNode;
-    vtkMRMLNode*    ReferencedNode;
-    vtkIntArray*    Events;
+    vtkWeakPointer<vtkMRMLNode> ReferencingNode;
+    vtkSmartPointer<vtkMRMLNode> ReferencedNode;
+    vtkSmartPointer<vtkIntArray> Events;
 
   protected:
 
     vtkMRMLNodeReference()
       {
-      this->ReferencedNode = 0;
-      this->ReferencingNode = 0;
-      this->Events = 0;
       this->ReferencedNodeID = 0;
       this->ReferenceRole = 0;
       }
 
     ~vtkMRMLNodeReference()
       {
-      if (this->Events)
-        {
-        this->Events->Delete();
-        this->Events = 0;
-        }
-      if (this->ReferenceRole)
-        {
-        delete [] this->ReferenceRole;
-        this->ReferenceRole = 0;
-        }
       if (this->ReferencedNodeID)
         {
         delete [] this->ReferencedNodeID;
         this->ReferencedNodeID = 0;
         }
-      };
+      }
+
     vtkMRMLNodeReference(const vtkMRMLNodeReference&);
     void operator=(const vtkMRMLNodeReference&);
 
@@ -614,12 +604,14 @@ protected:
 
   /// NodeReferences is a map that stores vector of refererences for each referenceRole,
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  typedef std::map< std::string, std::vector< vtkMRMLNodeReference *> > NodeReferencesType;
+  typedef std::vector< vtkSmartPointer<vtkMRMLNodeReference> > NodeReferenceListType;
+  typedef std::map< std::string, NodeReferenceListType > NodeReferencesType;
   NodeReferencesType NodeReferences;
 
   std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
 
-  std::map< std::string, vtkIntArray*> NodeReferenceEvents;
+  typedef std::map< std::string, vtkSmartPointer<vtkIntArray> > NodeReferenceEventsType;
+  NodeReferenceEventsType NodeReferenceEvents;
 
 protected:
 
