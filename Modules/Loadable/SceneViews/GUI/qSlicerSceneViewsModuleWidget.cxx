@@ -154,36 +154,40 @@ QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneView
                       QString("<br>\n"));
   QString tempDir = qSlicerApplication::application()->defaultTemporaryPath();
   QString thumbnailPath = tempDir + "/" + id + ".png";
-  /// tbd: always write out the image?
-  if (!QFile::exists(thumbnailPath))
+  // the scene view node might have been added to the scene without a screen shot
+  if (sceneView->GetScreenShot())
     {
-    vtkNew<vtkPNGWriter> writer;
-    writer->SetFileName(thumbnailPath.toLatin1());
-    vtkNew<vtkImageResize> resizeFilter;
-    resizeFilter->SetResizeMethodToOutputDimensions();
-#if (VTK_MAJOR_VERSION <= 5)
-    resizeFilter->SetInput(sceneView->GetScreenShot());
-#else
-    resizeFilter->SetInputData(sceneView->GetScreenShot());
-#endif
-    // try to keep the aspect ratio while setting a height
-    int dims[3];
-    sceneView->GetScreenShot()->GetDimensions(dims);
-    float newHeight = 200;
-    float newWidth = (newHeight/(float)(dims[0])) * (float)(dims[1]);
-    resizeFilter->SetOutputDimensions(newHeight, newWidth, 1);
-#if (VTK_MAJOR_VERSION <= 5)
-    writer->SetInput(resizeFilter->GetOutput());
-#else
-    writer->SetInputConnection(resizeFilter->GetOutputPort());
-#endif
-    try
+    /// tbd: always write out the image?
+    if (!QFile::exists(thumbnailPath))
       {
-      writer->Write();
-      }
-    catch (...)
-      {
-      qWarning() << "Unable to write file " << thumbnailPath;
+      vtkNew<vtkPNGWriter> writer;
+      writer->SetFileName(thumbnailPath.toLatin1());
+      vtkNew<vtkImageResize> resizeFilter;
+      resizeFilter->SetResizeMethodToOutputDimensions();
+#if (VTK_MAJOR_VERSION <= 5)
+      resizeFilter->SetInput(sceneView->GetScreenShot());
+#else
+      resizeFilter->SetInputData(sceneView->GetScreenShot());
+#endif
+      // try to keep the aspect ratio while setting a height
+      int dims[3];
+      sceneView->GetScreenShot()->GetDimensions(dims);
+      float newHeight = 200;
+      float newWidth = (newHeight/(float)(dims[0])) * (float)(dims[1]);
+      resizeFilter->SetOutputDimensions(newHeight, newWidth, 1);
+#if (VTK_MAJOR_VERSION <= 5)
+      writer->SetInput(resizeFilter->GetOutput());
+#else
+      writer->SetInputConnection(resizeFilter->GetOutputPort());
+#endif
+      try
+        {
+        writer->Write();
+        }
+      catch (...)
+        {
+        qWarning() << "Unable to write file " << thumbnailPath;
+        }
       }
     }
   QString restoreImagePath = QString("qrc:///Icons/Restore.png");
@@ -193,10 +197,13 @@ QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneView
   html += " <div style=\"width:100%;overflow-x:hidden;overflow-y:hidden;background-image:none;\">\n";
   html += "  <div style=\"float:left; width:200px; margin:5px;\">\n";
   html += "   <a href=\"Edit " + id + "\">\n";
-  html += "    <img src=\"file://" + thumbnailPath + "\" ";
-  html += "style=\"visibility:visible; max-width:200; max-height:none; ";
-  html += "display:block; image-rendering:auto; width:auto; height:auto; ";
-  html += "margin-left:10px; margin-top:0px; opacity:1;\">\n";
+  if (sceneView->GetScreenShot())
+    {
+    html += "    <img src=\"file://" + thumbnailPath + "\" ";
+    html += "style=\"visibility:visible; max-width:200; max-height:none; ";
+    html += "display:block; image-rendering:auto; width:auto; height:auto; ";
+    html += "margin-left:10px; margin-top:0px; opacity:1;\">\n";
+    }
   html += "   </a>\n";
   html += "  </div>\n";
   html += "  <div style=\"margin-left: 240px;\">";
