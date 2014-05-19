@@ -102,7 +102,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="9" column="1">
-    <widget class="QDoubleSpinBox" name="MaximumSpinBox">
+    <widget class="ctkDoubleSpinBox" name="MaximumSpinBox">
      <property name="toolTip">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -113,6 +113,9 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="decimals">
       <number>3</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::InsertDecimals</set>
      </property>
      <property name="minimum">
       <double>-10000.000000000000000</double>
@@ -158,7 +161,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="8" column="1">
-    <widget class="QDoubleSpinBox" name="MinimumSpinBox">
+    <widget class="ctkDoubleSpinBox" name="MinimumSpinBox">
      <property name="toolTip">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -169,6 +172,9 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="decimals">
       <number>3</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::InsertDecimals</set>
      </property>
      <property name="minimum">
       <double>-10000.000000000000000</double>
@@ -217,7 +223,10 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="10" column="1">
-    <widget class="QDoubleSpinBox" name="CoefficientSpinBox">
+    <widget class="ctkDoubleSpinBox" name="CoefficientSpinBox">
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals</set>
+     </property>
      <property name="minimum">
       <double>-10000.000000000000000</double>
      </property>
@@ -237,7 +246,13 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item row="11" column="1">
-    <widget class="QDoubleSpinBox" name="OffsetSpinBox">
+    <widget class="ctkDoubleSpinBox" name="OffsetSpinBox">
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue|ctkDoubleSpinBox::InsertDecimals</set>
+     </property>
      <property name="minimum">
       <double>-10000.000000000000000</double>
      </property>
@@ -258,6 +273,12 @@ p, li { white-space: pre-wrap; }
    <class>qMRMLWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
