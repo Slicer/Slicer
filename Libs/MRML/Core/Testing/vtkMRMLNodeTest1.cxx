@@ -502,7 +502,51 @@ bool TestSetAndObserveNodeReferenceID()
     return false;
     }
 
+  /// (1) set first reference, (2) set first reference to null and (3) set second reference
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode31;
+  scene->AddNode(referencedNode31.GetPointer());
 
+  referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+  returnNode = referencingNode->SetAndObserveNthNodeReferenceID(role3.c_str(), 0, referencedNode31->GetID());
+
+  if (!CheckNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", scene.GetPointer(),
+                           referencingNode.GetPointer(), role3.c_str(),
+                           /* n = */ 0,
+                           /* expectedNodeReference = */ referencedNode31.GetPointer(),
+                           /* expectedNumberOfNodeReferences = */ 1,
+                           /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
+                           /* currentReturnNode = */ returnNode))
+    {
+    return false;
+    }
+
+  referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+  returnNode = referencingNode->SetAndObserveNthNodeReferenceID(role3.c_str(), 0, 0);
+
+  if (!CheckNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", scene.GetPointer(),
+                           referencingNode.GetPointer(), role3.c_str(),
+                           /* n = */ 0,
+                           /* expectedNodeReference = */ 0,
+                           /* expectedNumberOfNodeReferences = */ 0,
+                           /* expectedReferencedNodesCount = */ referencedNodesCount -1,
+                           /* currentReturnNode = */ returnNode))
+    {
+    return false;
+    }
+
+  referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+  returnNode = referencingNode->SetAndObserveNthNodeReferenceID(role3.c_str(), 1, referencedNode31->GetID());
+
+  if (!CheckNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", scene.GetPointer(),
+                           referencingNode.GetPointer(), role3.c_str(),
+                           /* n = */ 1,
+                           /* expectedNodeReference = */ referencedNode31.GetPointer(),
+                           /* expectedNumberOfNodeReferences = */ 1,
+                           /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
+                           /* currentReturnNode = */ returnNode))
+    {
+    return false;
+    }
 
   return true;
 }
@@ -815,7 +859,6 @@ bool TestRemoveReferencingNode()
 bool TestNodeReferences()
 {
   std::string role1("refrole1");
-  std::string role2("refrole2");
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
@@ -884,13 +927,16 @@ bool TestNodeReferences()
 
   referencedNodes.TakeReference(
     scene->GetReferencedNodes(referencingNode));
-  if (referencedNodes->GetNumberOfItems() != 3 ||
+  int expectedNumberOfItems = 3;
+  if (referencedNodes->GetNumberOfItems() != expectedNumberOfItems ||
       referencedNodes->GetItemAsObject(0) != referencingNode.GetPointer() ||
       referencedNodes->GetItemAsObject(1) != referencedNode1.GetPointer() ||
       referencedNodes->GetItemAsObject(2) != referencedNode2.GetPointer())
     {
-    std::cerr << __LINE__ << ": SetAndObserveNodeReferenceID failed:" << std::endl
-              << referencedNodes->GetNumberOfItems() << std::endl;
+    std::cerr << "Line " << __LINE__ << " : SetAndObserveNodeReferenceID failed"
+              << "\n\tcurrent NumberOfItems:" << referencedNodes->GetNumberOfItems()
+              << "\n\texpected NumberOfItems:" << expectedNumberOfItems
+              << std::endl;
     return false;
     }
 
@@ -1174,6 +1220,7 @@ bool TestSetNodeReferenceID()
 
   std::string role1("refrole1");
   std::string role2("refrole2");
+  std::string role3("refrole3");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
   scene->AddNode(referencingNode.GetPointer());
@@ -1367,6 +1414,52 @@ bool TestSetNodeReferenceID()
                                role1.c_str(),
                                /* n = */ 0,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
+    {
+    return false;
+    }
+
+  /// (1) set first reference, (2) set first reference to null and (3) set second reference
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode31;
+  scene->AddNode(referencedNode31.GetPointer());
+
+  referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+  returnNode = referencingNode->SetNthNodeReferenceID(role3.c_str(), 0, referencedNode31->GetID());
+
+  if (!CheckNodeReferences(__LINE__, "SetNthNodeReferenceID", scene.GetPointer(),
+                           referencingNode.GetPointer(), role3.c_str(),
+                           /* n = */ 0,
+                           /* expectedNodeReference = */ referencedNode31.GetPointer(),
+                           /* expectedNumberOfNodeReferences = */ 1,
+                           /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
+                           /* currentReturnNode = */ returnNode))
+    {
+    return false;
+    }
+
+  referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+  returnNode = referencingNode->SetNthNodeReferenceID(role3.c_str(), 0, 0);
+
+  if (!CheckNodeReferences(__LINE__, "SetNthNodeReferenceID", scene.GetPointer(),
+                           referencingNode.GetPointer(), role3.c_str(),
+                           /* n = */ 0,
+                           /* expectedNodeReference = */ 0,
+                           /* expectedNumberOfNodeReferences = */ 0,
+                           /* expectedReferencedNodesCount = */ referencedNodesCount -1,
+                           /* currentReturnNode = */ returnNode))
+    {
+    return false;
+    }
+
+  referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+  returnNode = referencingNode->SetNthNodeReferenceID(role3.c_str(), 1, referencedNode31->GetID());
+
+  if (!CheckNodeReferences(__LINE__, "SetNthNodeReferenceID", scene.GetPointer(),
+                           referencingNode.GetPointer(), role3.c_str(),
+                           /* n = */ 1,
+                           /* expectedNodeReference = */ referencedNode31.GetPointer(),
+                           /* expectedNumberOfNodeReferences = */ 1,
+                           /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
+                           /* currentReturnNode = */ returnNode))
     {
     return false;
     }
