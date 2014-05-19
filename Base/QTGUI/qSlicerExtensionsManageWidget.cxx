@@ -28,6 +28,7 @@
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QStyledItemDelegate>
 #include <QTextBlock>
 #include <QTextDocument>
 
@@ -50,8 +51,8 @@ public:
 
   enum DataRoles
     {
-    IconRole = Qt::DecorationRole,
     NameRole = Qt::UserRole,
+    EnabledRole,
     };
 
   qSlicerExtensionsManageWidgetPrivate(qSlicerExtensionsManageWidget& object);
@@ -60,6 +61,8 @@ public:
   QListWidgetItem * extensionItem(const QString &extensionName) const;
 
   void addExtensionItem(const ExtensionMetadataType &metadata);
+
+  QIcon extensionIcon(const QString& extensionName);
 
   QSignalMapper EnableButtonMapper;
   QSignalMapper DisableButtonMapper;
@@ -91,13 +94,32 @@ public:
   }
 };
 
-// --------------------------------------------------------------------------
-QIcon extensionIcon(const QString& path, bool enabled)
-{
-  return  QIcon(QIcon(path).pixmap(QSize(64, 64), enabled ? QIcon::Normal : QIcon::Disabled));
-}
-
 } // end of anonymous namespace
+
+// --------------------------------------------------------------------------
+class qSlicerExtensionsItemDelegate : public QStyledItemDelegate
+{
+public:
+  qSlicerExtensionsItemDelegate(qSlicerExtensionsManageWidget * list,
+                                QObject * parent = 0)
+    : QStyledItemDelegate(parent), List(list) {}
+
+  // --------------------------------------------------------------------------
+  virtual void paint(QPainter * painter, const QStyleOptionViewItem& option,
+                     const QModelIndex& index) const
+  {
+    QStyleOptionViewItem modifiedOption = option;
+    QListWidgetItem * const item = this->List->itemFromIndex(index);
+    if (item && !item->data(qSlicerExtensionsManageWidgetPrivate::EnabledRole).toBool())
+      {
+      modifiedOption.state &= ~QStyle::State_Enabled;
+      }
+    QStyledItemDelegate::paint(painter, modifiedOption, index);
+  }
+
+protected:
+  qSlicerExtensionsManageWidget * const List;
+};
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManageWidgetPrivate::init()
@@ -108,6 +130,7 @@ void qSlicerExtensionsManageWidgetPrivate::init()
   q->setSelectionMode(QAbstractItemView::NoSelection);
   q->setIconSize(QSize(64, 64));
   q->setSpacing(1);
+  q->setItemDelegate(new qSlicerExtensionsItemDelegate(q, q));
 
   QObject::connect(&this->EnableButtonMapper, SIGNAL(mapped(QString)),
                    q, SLOT(setExtensionEnabled(QString)));
@@ -120,6 +143,13 @@ void qSlicerExtensionsManageWidgetPrivate::init()
 
   QObject::connect(&this->CancelScheduledUninstallButtonMapper, SIGNAL(mapped(QString)),
                    q, SLOT(cancelExtensionScheduledForUninstall(QString)));
+}
+
+// --------------------------------------------------------------------------
+QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
+  const QString& extensionName)
+{
+  return QIcon(":/Icons/ExtensionDefaultIcon.png");
 }
 
 // --------------------------------------------------------------------------
@@ -377,9 +407,10 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
 
   QListWidgetItem * item = new QListWidgetItem();
 
-  item->setIcon(extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
+  item->setIcon(this->extensionIcon(extensionName));
 
   item->setData(Self::NameRole, extensionName); // See extensionItem(...)
+  item->setData(Self::EnabledRole, enabled);
 
   q->addItem(item);
 
@@ -558,6 +589,7 @@ void qSlicerExtensionsManageWidget::onModelExtensionEnabledChanged(const QString
 {
   Q_D(qSlicerExtensionsManageWidget);
   QListWidgetItem * item = d->extensionItem(extensionName);
+  item->setData(qSlicerExtensionsManageWidgetPrivate::EnabledRole, enabled);
   Q_ASSERT(item);
   qSlicerExtensionsItemWidget * widget =
       dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
@@ -565,7 +597,6 @@ void qSlicerExtensionsManageWidget::onModelExtensionEnabledChanged(const QString
   widget->Label->setExtensionDisabled(!enabled);
   widget->ButtonBox->EnableButton->setVisible(!enabled);
   widget->ButtonBox->DisableButton->setVisible(enabled);
-  item->setIcon(extensionIcon(":/Icons/ExtensionDefaultIcon.png", enabled));
 
 }
 

@@ -28,6 +28,7 @@
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
+class qSlicerExtensionsItemDelegate;
 class qSlicerExtensionsManagerModel;
 class qSlicerExtensionsManageWidgetPrivate;
 
@@ -72,6 +73,8 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerExtensionsManageWidget);
   Q_DISABLE_COPY(qSlicerExtensionsManageWidget);
+
+  friend class qSlicerExtensionsItemDelegate;
 };
 
 #endif
