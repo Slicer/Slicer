@@ -66,7 +66,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSliderWidget : public ctkSliderWidget
   /// Get/Set the properties that will be determined by units.
   /// If a property is aware of units, it will update itself to the unit's
   /// property value automaticaly. Otherwise, this property is left to be
-  /// changed by its accessors. All flags are on by default.
+  /// changed by its accessors. All flags except MinimumValue and MaximumValue
+  /// are on by default.
   /// \sa setQuantity(), quantity()
   // \sa setUnitAwareProperties(), unitAwareProperties()
   Q_FLAGS(UnitAwareProperty UnitAwareProperties)

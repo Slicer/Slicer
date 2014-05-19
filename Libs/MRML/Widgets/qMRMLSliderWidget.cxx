@@ -63,8 +63,7 @@ qMRMLSliderWidgetPrivate::qMRMLSliderWidgetPrivate(qMRMLSliderWidget& object)
   this->MRMLScene = 0;
   this->SelectionNode = 0;
   this->Flags = qMRMLSliderWidget::Prefix | qMRMLSliderWidget::Suffix
-    | qMRMLSliderWidget::Precision
-    | qMRMLSliderWidget::MinimumValue | qMRMLSliderWidget::MaximumValue;
+    | qMRMLSliderWidget::Precision | qMRMLSliderWidget::Scaling;
   this->Proxy = new ctkLinearValueProxy;
 }
 
