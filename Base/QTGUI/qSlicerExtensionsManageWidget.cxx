@@ -25,6 +25,9 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QMouseEvent>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPushButton>
@@ -72,6 +75,10 @@ public:
   QSignalMapper DisableButtonMapper;
   QSignalMapper ScheduleUninstallButtonMapper;
   QSignalMapper CancelScheduledUninstallButtonMapper;
+
+  QNetworkAccessManager DownloadManager;
+  QSignalMapper DownloadMapper;
+  QHash<QString, QNetworkReply*> Downloads;
 
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
 };
@@ -147,6 +154,9 @@ void qSlicerExtensionsManageWidgetPrivate::init()
 
   QObject::connect(&this->CancelScheduledUninstallButtonMapper, SIGNAL(mapped(QString)),
                    q, SLOT(cancelExtensionScheduledForUninstall(QString)));
+
+  QObject::connect(&this->DownloadMapper, SIGNAL(mapped(QString)),
+                   q, SLOT(onIconDownloadComplete(QString)));
 }
 
 // --------------------------------------------------------------------------
@@ -190,7 +200,17 @@ QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
       return QIcon(canvas);
       }
 
-    // TODO download icon
+    Q_ASSERT(!this->Downloads.contains(extensionName));
+
+    // Try to download icon
+    QNetworkReply* const reply =
+      this->DownloadManager.get(QNetworkRequest(extensionIconUrl));
+
+    this->Downloads.insert(extensionName, reply);
+    this->DownloadMapper.setMapping(reply, extensionName);
+
+    QObject::connect(reply, SIGNAL(finished()),
+                     &this->DownloadMapper, SLOT(map()));
     }
 
   return QIcon(":/Icons/ExtensionDefaultIcon.png");
@@ -668,4 +688,32 @@ void qSlicerExtensionsManageWidget::onLinkActivated(const QString& link)
   url.addQueryItem("layout", "empty");
 
   emit this->linkActivated(url);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::onIconDownloadComplete(
+  const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+
+  QNetworkReply* const reply = d->Downloads.take(extensionName);
+  Q_ASSERT(reply);
+
+  if (reply->error() == QNetworkReply::NoError)
+    {
+    QFile iconFile(d->extensionIconPath(extensionName, reply->url()));
+    if (iconFile.open(QIODevice::WriteOnly))
+      {
+      iconFile.write(reply->readAll());
+      iconFile.close(); // Ensure file written to disk before we try to load it
+
+      QListWidgetItem* item = d->extensionItem(extensionName);
+      if (item)
+        {
+        item->setIcon(d->extensionIcon(extensionName, reply->url()));
+        }
+      }
+    }
+
+  reply->deleteLater();
 }

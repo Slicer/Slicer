@@ -61,6 +61,7 @@ protected slots:
   void scheduleExtensionForUninstall(const QString& extensionName);
   void cancelExtensionScheduledForUninstall(const QString& extensionName);
   void onModelUpdated();
+  void onIconDownloadComplete(const QString& extensionName);
   void onLinkActivated(const QString& link);
   void onExtensionInstalled(const QString& extensionName);
   void onExtensionScheduledForUninstall(const QString& extensionName);
