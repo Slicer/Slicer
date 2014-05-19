@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAbstractTextDocumentLayout>
 #include <QDebug>
+#include <QFileInfo>
 #include <QLabel>
 #include <QListWidget>
 #include <QMouseEvent>
@@ -62,7 +63,10 @@ public:
 
   void addExtensionItem(const ExtensionMetadataType &metadata);
 
-  QIcon extensionIcon(const QString& extensionName);
+  QString extensionIconPath(const QString& extensionName,
+                            const QUrl& extensionIconUrl);
+  QIcon extensionIcon(const QString& extensionName,
+                      const QUrl& extensionIconUrl);
 
   QSignalMapper EnableButtonMapper;
   QSignalMapper DisableButtonMapper;
@@ -146,9 +150,49 @@ void qSlicerExtensionsManageWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
-  const QString& extensionName)
+QString qSlicerExtensionsManageWidgetPrivate::extensionIconPath(
+  const QString& extensionName, const QUrl& extensionIconUrl)
 {
+  return QString("%1/%2-icon.%3").arg(
+    this->ExtensionsManagerModel->extensionsInstallPath(),
+    extensionName, QFileInfo(extensionIconUrl.path()).suffix());
+}
+
+// --------------------------------------------------------------------------
+QIcon qSlicerExtensionsManageWidgetPrivate::extensionIcon(
+  const QString& extensionName, const QUrl& extensionIconUrl)
+{
+  if (extensionIconUrl.isValid())
+    {
+    const QString iconPath = this->extensionIconPath(extensionName,
+                                                     extensionIconUrl);
+    if (QFileInfo(iconPath).exists())
+      {
+      QPixmap pixmap(iconPath);
+
+      if (pixmap.isNull())
+        {
+        // Use default icon if unable to load extension icon
+        return this->extensionIcon(QString(), QUrl());
+        }
+
+      QPixmap canvas(pixmap.size());
+      canvas.fill(Qt::transparent);
+
+      QPainter painter;
+      painter.begin(&canvas);
+      painter.setPen(Qt::NoPen);
+      painter.setBrush(pixmap);
+      painter.setRenderHint(QPainter::Antialiasing, true);
+      painter.drawRoundedRect(QRect(QPoint(0, 0), pixmap.size()), 10, 10);
+      painter.end();
+
+      return QIcon(canvas);
+      }
+
+    // TODO download icon
+    }
+
   return QIcon(":/Icons/ExtensionDefaultIcon.png");
 }
 
@@ -407,7 +451,8 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
 
   QListWidgetItem * item = new QListWidgetItem();
 
-  item->setIcon(this->extensionIcon(extensionName));
+  item->setIcon(this->extensionIcon(extensionName,
+                                    metadata.value("iconurl").toUrl()));
 
   item->setData(Self::NameRole, extensionName); // See extensionItem(...)
   item->setData(Self::EnabledRole, enabled);
