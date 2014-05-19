@@ -20,9 +20,11 @@
 #include <QMessageBox>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QSettings>
 #include <QStatusBar>
 #include <QTextBrowser>
 #include <QWebFrame>
+#include <QWebSettings>
 #include <QUrl>
 
 // MRML includes
@@ -115,6 +117,15 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->sceneViewsWebView->setMRMLScene(q->mrmlScene());
   this->sceneViewsWebView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
+
+  // propagate fonts from the application
+  QSettings *settings =
+    qSlicerApplication::application()->settingsDialog()->settings();
+  QFont currentFont = settings->value("Font").value<QFont>();
+  this->sceneViewsWebView->settings()->setFontFamily(QWebSettings::StandardFont,
+                                                     currentFont.family());
+  this->sceneViewsWebView->settings()->setFontSize(QWebSettings::DefaultFontSize,
+                                                   currentFont.pointSize());
 
   // capture link clicked
   this->sceneViewsWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
