@@ -112,15 +112,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   vtkBooleanMacro(HotLinkedControl, int);
 
   ///
-  /// toggles for grid in different slice layers.
-  vtkGetMacro (ForegroundGrid, int );
-  vtkSetMacro (ForegroundGrid, int );
-  vtkGetMacro (BackgroundGrid, int );
-  vtkSetMacro (BackgroundGrid, int );
-  vtkGetMacro (LabelGrid, int );
-  vtkSetMacro (LabelGrid, int );
-
-  ///
   /// toggles fiducial visibility in the slice viewer
   vtkGetMacro (FiducialVisibility, int );
   vtkSetMacro (FiducialVisibility, int );

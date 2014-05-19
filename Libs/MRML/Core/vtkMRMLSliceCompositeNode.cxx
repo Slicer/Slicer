@@ -41,9 +41,6 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->ForegroundOpacity = 0.0; // start by showing only the background volume
   this->LabelOpacity = 1.0; // Show the label if there is one
   this->LinkedControl = 0;
-  this->ForegroundGrid = 0;
-  this->BackgroundGrid = 0;
-  this->LabelGrid = 1;
   this->FiducialVisibility = 1;
   this->FiducialLabelVisibility = 1;
   this->AnnotationSpace = vtkMRMLSliceCompositeNode::IJKAndRAS;
@@ -91,9 +88,6 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
   of << indent << " foregroundOpacity=\"" << this->ForegroundOpacity << "\"";
   of << indent << " labelOpacity=\"" << this->LabelOpacity << "\"";
   of << indent << " linkedControl=\"" << this->LinkedControl << "\"";
-  of << indent << " foregroundGrid=\"" << this->ForegroundGrid << "\"";
-  of << indent << " backgroundGrid=\"" << this->BackgroundGrid << "\"";
-  of << indent << " labelGrid=\"" << this->LabelGrid << "\"";
   of << indent << " fiducialVisibility=\"" << this->FiducialVisibility << "\"";
   of << indent << " fiducialLabelVisibility=\"" << this->FiducialLabelVisibility << "\"";
   of << indent << " sliceIntersectionVisibility=\"" << this->SliceIntersectionVisibility << "\"";
@@ -282,18 +276,6 @@ void vtkMRMLSliceCompositeNode::ReadXMLAttributes(const char** atts)
       {
       this->SetHotLinkedControl( atoi(attValue) );
       }
-    else if (!strcmp(attName, "foregroundGrid"))
-      {
-      this->SetForegroundGrid( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "backGrid"))
-      {
-      this->SetBackgroundGrid( atoi(attValue) );
-      }
-    else if (!strcmp(attName, "labelGrid"))
-      {
-      this->SetLabelGrid( atoi(attValue) );
-      }
     else if (!strcmp(attName, "fiducialVisibility"))
       {
       this->SetFiducialVisibility( atoi(attValue) );
@@ -376,9 +358,6 @@ void vtkMRMLSliceCompositeNode::Copy(vtkMRMLNode *anode)
   this->SetLabelOpacity(node->GetLabelOpacity());
   this->SetLinkedControl (node->GetLinkedControl());
   this->SetHotLinkedControl (node->GetHotLinkedControl());
-  this->SetForegroundGrid ( node->GetForegroundGrid());
-  this->SetBackgroundGrid ( node->GetBackgroundGrid());
-  this->SetLabelGrid ( node->GetLabelGrid());
   this->SetFiducialVisibility ( node->GetFiducialVisibility ( ) );
   this->SetFiducialLabelVisibility ( node->GetFiducialLabelVisibility ( ) );
   this->SetAnnotationSpace ( node->GetAnnotationSpace() );
@@ -404,9 +383,6 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
   os << indent << "LinkedControl: " << this->LinkedControl << "\n";
   os << indent << "HotLinkedControl: " << this->HotLinkedControl << "\n";
-  os << indent << "ForegroundGrid: " << this->ForegroundGrid << "\n";
-  os << indent << "BackgroundGrid: " << this->BackgroundGrid << "\n";
-  os << indent << "LabelGrid: " << this->LabelGrid << "\n";
   os << indent << "FiducialVisibility: " << this->FiducialVisibility << "\n";
   os << indent << "FiducialLabelVisibility: " << this->FiducialLabelVisibility << "\n";
   os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
