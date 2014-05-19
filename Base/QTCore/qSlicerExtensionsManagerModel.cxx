@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
+#include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -170,6 +171,9 @@ public:
   static bool validateExtensionMetadata(const ExtensionMetadataType &extensionMetadata);
 
   void saveExtensionDescription(const QString& extensionDescriptionFile, const ExtensionMetadataType &allExtensionMetadata);
+
+  qSlicerExtensionsManagerModel::ExtensionMetadataType retrieveExtensionMetadata(
+    const qMidasAPI::ParametersType& parameters);
 
   void initializeColumnIdToNameMap(int columnIdx, const char* columnName);
   QHash<int, QString> ColumnIdToName;
@@ -713,6 +717,38 @@ void qSlicerExtensionsManagerModelPrivate::initializeColumnIdToNameMap(int colum
 }
 
 // --------------------------------------------------------------------------
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModelPrivate
+::retrieveExtensionMetadata(const qMidasAPI::ParametersType& parameters)
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+
+  bool ok = false;
+  QList<QVariantMap> results = qMidasAPI::synchronousQuery(
+        ok, q->serverUrl().toString(),
+        "midas.slicerpackages.extension.list", parameters);
+  if (!ok || results.count() != 1)
+    {
+    this->critical(results[0]["queryError"].toString());
+    return ExtensionMetadataType();
+    }
+  ExtensionMetadataType result = results.at(0);
+
+  if (!qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(result))
+    {
+    return ExtensionMetadataType();
+    }
+
+  ExtensionMetadataType updatedExtensionMetadata;
+  foreach(const QString& key, result.keys())
+    {
+    updatedExtensionMetadata.insert(
+      q->serverToExtensionDescriptionKey().value(key, key), result.value(key));
+    }
+
+  return updatedExtensionMetadata;
+}
+
+// --------------------------------------------------------------------------
 // qSlicerExtensionsManagerModel methods
 
 // --------------------------------------------------------------------------
@@ -965,31 +1001,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
   qMidasAPI::ParametersType parameters;
   parameters["extension_id"] = extensionId;
 
-  bool ok = false;
-  QList<QVariantMap> results = qMidasAPI::synchronousQuery(
-        ok, this->serverUrl().toString(),
-        "midas.slicerpackages.extension.list", parameters);
-  Q_ASSERT(results.count() == 1);
-  if (!ok)
-    {
-    d->critical(results[0]["queryError"].toString());
-    return ExtensionMetadataType();
-    }
-  ExtensionMetadataType result = results.at(0);
-
-  if (!qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(result))
-    {
-    return ExtensionMetadataType();
-    }
-
-  ExtensionMetadataType updatedExtensionMetadata;
-  foreach(const QString& key, result.keys())
-    {
-    updatedExtensionMetadata.insert(
-          this->serverToExtensionDescriptionKey().value(key, key), result.value(key));
-    }
-
-  return updatedExtensionMetadata;
+  return d->retrieveExtensionMetadata(parameters);
 }
 
 // --------------------------------------------------------------------------
@@ -1101,6 +1113,78 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     return false;
     }
 
+  // Read description file provided by the extension itself, in order to obtain
+  // reported dependency information (which is not provided by the extension
+  // server)
+  const QString& extensionIndexDescriptionFile =
+    this->extensionsInstallPath() + "/" + extensionName + "/" + Slicer_SHARE_DIR + "/" + extensionName + ".s4ext";
+  const ExtensionMetadataType& extensionIndexMetadata =
+    Self::parseExtensionDescriptionFile(extensionIndexDescriptionFile);
+
+  // Gather information on dependency extensions
+  const QStringList dependencies = extensionIndexMetadata.value("depends").toStringList();
+  QHash<QString, ExtensionMetadataType> dependenciesMetadata;
+  QStringList unresolvedDependencies;
+  foreach (const QString& dependencyName, dependencies)
+    {
+    if (!dependencyName.isEmpty() && dependencyName != "NA")
+      {
+      qMidasAPI::ParametersType parameters;
+      parameters["productname"] = dependencyName;
+      parameters["slicer_revision"] = this->slicerRevision();
+      parameters["os"] = this->slicerOs();
+      parameters["arch"] = this->slicerArch();
+
+      const ExtensionMetadataType& dependencyMetadata =
+        d->retrieveExtensionMetadata(parameters);
+      if (dependencyMetadata.contains("extension_id"))
+        {
+        dependenciesMetadata.insert(dependencyName, dependencyMetadata);
+        }
+      else
+        {
+        unresolvedDependencies.append(dependencyName);
+        }
+      }
+    }
+
+  // Warn about unresolved dependencies
+  if (!unresolvedDependencies.isEmpty())
+    {
+    QString msg = QString("<p>%1 depends on the following extensions, which could not be found:</p><ul>").arg(extensionName);
+    foreach (const QString& dependencyName, unresolvedDependencies)
+      {
+      msg += QString("<li>%1</li>").arg(dependencyName);
+      }
+    msg += "</ul><p>The extension may not function properly.</p>";
+    QMessageBox::warning(0, "Unresolved dependencies", msg);
+    }
+
+  // Prompt to install dependencies (if any)
+  qDebug() << dependenciesMetadata;
+  if (!dependenciesMetadata.isEmpty())
+    {
+    QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
+    foreach (const QString& dependencyName, dependenciesMetadata.keys())
+      {
+      msg += QString("<li>%1</li>").arg(dependencyName);
+      }
+    msg += "</ul><p>Would you like to install them now?</p>";
+    const QMessageBox::StandardButton result =
+      QMessageBox::question(0, "Install dependencies", msg,
+                            QMessageBox::Yes | QMessageBox::No);
+
+    if (result == QMessageBox::Yes)
+      {
+      // Install dependencies
+      foreach (const ExtensionMetadataType& dependency, dependenciesMetadata)
+        {
+        this->downloadAndInstallExtension(dependency.value("extension_id").toString());
+        }
+      }
+    }
+
+  // Finish installing the extension
   d->saveExtensionDescription(extensionDescriptionFile, extensionMetadata);
   d->addExtensionSettings(extensionName);
   d->addExtensionModelRow(Self::parseExtensionDescriptionFile(extensionDescriptionFile));
