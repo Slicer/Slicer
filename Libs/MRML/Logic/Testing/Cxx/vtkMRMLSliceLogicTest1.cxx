@@ -58,8 +58,6 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceCompositeNode, SliceCompositeNode);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, ForegroundLayer);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, BackgroundLayer);
-  TEST_SET_GET_VALUE(node1, ForegroundOpacity, .5);
-  TEST_SET_GET_VALUE(node1, LabelOpacity, .5);
   // TODO: need to fix the test.
   // The problem here is that the current node of the logic is wrong
   // it hasn't been added to the mrml scene. So when modified,

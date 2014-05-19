@@ -97,20 +97,6 @@ public:
   void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
 
   ///
-  /// The opacity of the forground slice layer
-  /// TODO: this will eventually be generalized to a per-layer compositing function
-  /// -- could be checkerboard or other filter
-  vtkGetMacro (ForegroundOpacity, double);
-  void SetForegroundOpacity (double ForegroundOpacity);
-
-  ///
-  /// The opacity of the Label slice layer
-  /// TODO: this will eventually be generalized to a per-layer compositing function
-  /// -- could be checkerboard or other filter
-  vtkGetMacro(LabelOpacity, double);
-  void SetLabelOpacity(double LabelOpacity);
-
-  ///
   /// Helper to set the background layer Window/Level
   void SetBackgroundWindowLevel(double window, double level);
 
@@ -391,8 +377,6 @@ protected:
   vtkMRMLSliceLayerLogic *    ForegroundLayer;
   vtkMRMLSliceLayerLogic *    LabelLayer;
 
-  double ForegroundOpacity;
-  double LabelOpacity;
 
   vtkImageBlend *   Blend;
   vtkImageBlend *   BlendUVW;
