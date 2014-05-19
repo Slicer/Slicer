@@ -48,7 +48,7 @@ if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallCMakeProjects.cmake)
 
   macro(_remove_installed_dir dir_to_remove)
-    set(_code "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove_directory")
+    set(_code "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E remove_directory")
     set(_code "${_code} \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${dir_to_remove}\")")
     install(CODE "${_code}" COMPONENT Runtime)
   endmacro()
@@ -65,7 +65,7 @@ if(NOT APPLE)
       lib/Teem-1.10.0/TeemUse.cmake
       )
       install(
-        CODE "execute_process(COMMAND \"@CMAKE_COMMAND@\" -E remove \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${file}\")"
+        CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E remove \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${file}\")"
         COMPONENT Runtime
         )
     endforeach()
