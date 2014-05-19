@@ -7,7 +7,7 @@ if( DOXYGEN_FOUND )
     #
     set(userdoc_doxyfile ${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt)
     set(userdoc_tarball
-      ${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}/Slicer-Base-cpp.tar.gz
+      ${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}/Slicer-cpp.tar.gz
       )
 
     set( Slicer_USER_DOCUMENTATION "NO" )
@@ -16,25 +16,25 @@ if( DOXYGEN_FOUND )
     configure_file(Doxyfile.txt.in ${userdoc_doxyfile})
 
     # Generate doxygen documentation
-    add_custom_target(Base-cpp-doc
+    add_custom_target(cpp-doc
       COMMAND ${DOXYGEN_EXECUTABLE} ${userdoc_doxyfile}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-    add_dependencies(doc Base-cpp-doc)
+    add_dependencies(doc cpp-doc)
 
     # Create documentation tarball
-    add_custom_target(Base-cpp-doc-tarball-clean
+    add_custom_target(cpp-doc-tarball-clean
       COMMAND ${CMAKE_COMMAND} -E remove ${userdoc_tarball}
       )
 
-    add_custom_target(Base-cpp-doc-tarball
-      DEPENDS Base-cpp-doc Base-cpp-doc-tarball-clean
+    add_custom_target(cpp-doc-tarball
+      DEPENDS cpp-doc cpp-doc-tarball-clean
       COMMAND ${CMAKE_COMMAND} -E tar cfz ${userdoc_tarball} html
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-    add_dependencies(doc-tarballs Base-cpp-doc-tarball)
+    add_dependencies(doc-tarballs cpp-doc-tarball)
 
-    set_target_properties(Base-cpp-doc Base-cpp-doc-tarball
+    set_target_properties(cpp-doc cpp-doc-tarball
       PROPERTIES LABELS Documentation)
 
     #
