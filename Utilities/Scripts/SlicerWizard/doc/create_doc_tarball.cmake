@@ -6,6 +6,7 @@ foreach(excluded_file ${excluded_files})
 endforeach()
 
 execute_process(
+  COMMAND ${CMAKE_COMMAND} -E remove ${OUTPUT_FILE}
   COMMAND ${CMAKE_COMMAND} -E tar cfz ${OUTPUT_FILE} ${files}
   WORKING_DIRECTORY ${INPUT_PATH}
   RESULT_VARIABLE result

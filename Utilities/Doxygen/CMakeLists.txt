@@ -5,33 +5,37 @@ if( DOXYGEN_FOUND )
     #
     # User documentation
     #
+    set(userdoc_doxyfile ${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt)
+    set(userdoc_tarball
+      ${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}/Slicer-Base-cpp.tar.gz
+      )
+
     set( Slicer_USER_DOCUMENTATION "NO" )
     set( Slicer_ADDITIONAL_EXCLUDE_PATTERN "*_p.h\  *Private.*" )
-    set( Slicer_DOCUMENTATION_HTML_TARZ TRUE)
 
-    configure_file( Doxyfile.txt.in
-      ${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt
+    configure_file(Doxyfile.txt.in ${userdoc_doxyfile})
+
+    # Generate doxygen documentation
+    add_custom_target(Base-cpp-doc
+      COMMAND ${DOXYGEN_EXECUTABLE} ${userdoc_doxyfile}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/generate_doc.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/generate_userdoc.cmake
-      @ONLY
-      )
-
-    set(userdoc_output "${CMAKE_CURRENT_BINARY_DIR}/doc/html/index.html")
-
-    # Run doxygen as a custom command driven by a custom target.
-    add_custom_command(
-      OUTPUT ${userdoc_output}
-      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/generate_userdoc.cmake"
-      DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/generate_userdoc.cmake"
-              "${CMAKE_CURRENT_BINARY_DIR}/UserDoxyfile.txt"
-      )
-
-    add_custom_target(Base-cpp-doc DEPENDS ${userdoc_output})
-    set_target_properties(Base-cpp-doc PROPERTIES LABELS Documentation)
     add_dependencies(doc Base-cpp-doc)
+
+    # Create documentation tarball
+    add_custom_target(Base-cpp-doc-tarball-clean
+      COMMAND ${CMAKE_COMMAND} -E remove ${userdoc_tarball}
+      )
+
+    add_custom_target(Base-cpp-doc-tarball
+      DEPENDS Base-cpp-doc Base-cpp-doc-tarball-clean
+      COMMAND ${CMAKE_COMMAND} -E tar cfz ${userdoc_tarball} html
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+    add_dependencies(doc-tarballs Base-cpp-doc-tarball)
+
+    set_target_properties(Base-cpp-doc Base-cpp-doc-tarball
+      PROPERTIES LABELS Documentation)
 
     #
     # Dev documentation

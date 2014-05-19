@@ -32,6 +32,7 @@ if(SPHINX_BUILD_EXECUTABLE)
             "-DOUTPUT_FILE:FILEPATH=${tarball}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/create_doc_tarball.cmake"
     )
+  add_dependencies(doc-tarballs SlicerWizard-doc-tarball)
 
   set_target_properties(SlicerWizard-doc SlicerWizard-doc-tarball
     PROPERTIES LABELS Documentation)
