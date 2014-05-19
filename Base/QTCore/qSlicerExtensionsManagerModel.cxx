@@ -1197,6 +1197,13 @@ bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& ext
   success = success && QFile::remove(q->extensionDescriptionFile(extensionName));
   success = success && this->Model.removeRow(item->row());
 
+  const QDir installDir(q->extensionsInstallPath());
+  const QFileInfoList& iconEntries = installDir.entryInfoList(QStringList() << extensionName + "-icon.*");
+  foreach (const QFileInfo& iconEntry, iconEntries)
+    {
+    success = success && QFile::remove(iconEntry.absoluteFilePath());
+    }
+
   if (success)
     {
     this->removeExtensionSettings(extensionName);
