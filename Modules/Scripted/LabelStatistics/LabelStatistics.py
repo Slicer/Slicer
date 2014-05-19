@@ -355,6 +355,9 @@ class LabelStatisticsLogic:
           tuple += 1
 
     chartNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
+
+    state = chartNode.StartModify()
+
     chartNode.AddArray(valueToPlot, arrayNode.GetID())
 
     chartViewNode.SetChartNodeID(chartNode.GetID())
@@ -370,6 +373,7 @@ class LabelStatisticsLogic:
     if labelNode.GetDisplayNode() != None and labelNode.GetDisplayNode().GetColorNode() != None:
       chartNode.SetProperty(valueToPlot, 'lookupTable', labelNode.GetDisplayNode().GetColorNodeID());
 
+    chartNode.EndModify(state)
 
   def statsAsCSV(self):
     """
