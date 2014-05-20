@@ -498,8 +498,12 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
         it->second.size() > 0)
       {
       // there is only one referenced node per reference role
-      units.push_back(
-        vtkMRMLUnitNode::SafeDownCast(it->second[0]->ReferencedNode));
+      vtkMRMLNodeReference * reference = it->second[0];
+      if (reference)
+        {
+        units.push_back(
+          vtkMRMLUnitNode::SafeDownCast(reference->ReferencedNode));
+        }
       }
     }
 }
