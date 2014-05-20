@@ -272,7 +272,7 @@ def createEmptyRepo(path, tool=None):
   """
 
   # Check that the requested tool is supported
-  if not _haveGit or tool not in { None, "git" }:
+  if not _haveGit or tool not in (None, "git"):
     raise Exception("unable to create %r repository" % tool)
 
   # Create a repository at the specified location
@@ -317,7 +317,7 @@ def getRepo(path, tool=None, create=False):
   from . import Subversion
 
   # Try to obtain git repository
-  if _haveGit and tool in { None, "git" }:
+  if _haveGit and tool in (None, "git"):
     try:
       repo = git.Repo(path)
       return repo
@@ -326,7 +326,7 @@ def getRepo(path, tool=None, create=False):
       logging.debug("%r is not a git repository" % path)
 
   # Try to obtain subversion repository
-  if tool in { None, "svn" }:
+  if tool in (None, "svn"):
     try:
       repo = Subversion.Repository(path)
       return repo
@@ -340,7 +340,7 @@ def getRepo(path, tool=None, create=False):
     if callable(create):
       return create(path, tool)
 
-    elif _haveGit and tool in { None, "git" }:
+    elif _haveGit and tool in (None, "git"):
       return git.Repo.init(path)
 
     else:
