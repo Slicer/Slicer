@@ -43,11 +43,11 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
+#include <vtkGeneralTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
 #include <vtkVersion.h>
-
 
 // VTK includes: customization
 #include <vtkCutter.h>
@@ -67,8 +67,9 @@ class vtkMRMLModelSliceDisplayableManager::vtkInternal
 public:
   struct Pipeline
     {
-    vtkSmartPointer<vtkMatrix4x4> NodeToWorld;
-    vtkSmartPointer<vtkTransform> TransformToSlice;
+    vtkSmartPointer<vtkGeneralTransform> NodeToWorld;
+    vtkSmartPointer<vtkGeneralTransform> NodeFromWorld;
+    vtkSmartPointer<vtkGeneralTransform> TransformToSlice;
     vtkSmartPointer<vtkTransformPolyDataFilter> Transformer;
     vtkSmartPointer<vtkPlane> Plane;
     vtkSmartPointer<vtkCutter> Cutter;
@@ -83,12 +84,13 @@ public:
 
   // Transforms
   void UpdateDisplayableTransforms(vtkMRMLDisplayableNode *node);
-  void GetNodeMatrixToWorld(vtkMRMLTransformableNode* node, vtkMatrix4x4* matrixOut);
-
+  void GetNodeTransformToWorld(vtkMRMLTransformableNode* node,
+                              vtkGeneralTransform* transformToWorld,
+                              vtkGeneralTransform* transformFromWorld);
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
   void UpdateSliceNode();
-  void SetSlicePlaneFromMatrix(vtkMatrix4x4* matrix, vtkPlane* plane);
+  void SetSlicePlaneFromMatrix(vtkGeneralTransform* matrix, vtkPlane* plane);
 
   // Display Nodes
   void AddDisplayNode(vtkMRMLDisplayableNode*, vtkMRMLDisplayNode*);
@@ -195,17 +197,26 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::SetSlicePlaneFromMatrix(vtkMatrix4x4 *sliceMatrix, vtkPlane* plane)
+::SetSlicePlaneFromMatrix(vtkGeneralTransform *sliceMatrix, vtkPlane* plane)
 {
   double normal[3];
   double origin[3];
-
-  // +/-1: orientation of the normal
-  const int planeOrientation = 1;
-  for (int i = 0; i < 3; i++)
+  double *val;
+  val = sliceMatrix->TransformDoublePoint(0,0,0);
+  for (int i=0; i<3; i++)
     {
-    normal[i] = planeOrientation * sliceMatrix->GetElement(i,2);
-    origin[i] = sliceMatrix->GetElement(i,3);
+    origin[i] = val[i];
+    }
+
+  normal[0]=0;
+  normal[1]=0;
+  normal[2]=1;
+
+  val = sliceMatrix->TransformDoubleNormalAtPoint(origin, normal);
+
+  for (int i=0; i<3; i++)
+    {
+    normal[i] = val[i];
     }
 
   plane->SetNormal(normal);
@@ -214,24 +225,25 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::GetNodeMatrixToWorld(vtkMRMLTransformableNode* node, vtkMatrix4x4* outMat)
+::GetNodeTransformToWorld(vtkMRMLTransformableNode* node,
+                          vtkGeneralTransform* transformToWorld,
+                          vtkGeneralTransform* transformFromWorld)
 {
-  vtkNew<vtkMatrix4x4> nodeMatrixToWorld;
-  nodeMatrixToWorld->Identity();
-
-  if (!node || !outMat)
+  if (!node || !transformToWorld || !transformFromWorld)
     {
     return;
     }
 
   vtkMRMLTransformNode* tnode =
     node->GetParentTransformNode();
-  if (tnode != 0 && tnode->IsLinear())
+
+  transformToWorld->Identity();
+  transformFromWorld->Identity();
+  if (tnode)
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(nodeMatrixToWorld.GetPointer());
+    tnode->GetTransformFromWorld(transformFromWorld);
+    tnode->GetTransformToWorld(transformToWorld);
     }
-  outMat->DeepCopy(nodeMatrixToWorld.GetPointer());
 }
 
 //---------------------------------------------------------------------------
@@ -247,7 +259,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
       {
-      this->GetNodeMatrixToWorld( mNode, pipelinesIter->second->NodeToWorld );
+      this->GetNodeTransformToWorld( mNode,
+                                    pipelinesIter->second->NodeToWorld,
+                                    pipelinesIter->second->NodeFromWorld);
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
       }
     }
@@ -298,8 +312,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   Pipeline* pipeline = new Pipeline();
   pipeline->Actor = actor.GetPointer();
   pipeline->Cutter = vtkSmartPointer<vtkCutter>::New();
-  pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
-  pipeline->NodeToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  pipeline->TransformToSlice = vtkSmartPointer<vtkGeneralTransform>::New();
+  pipeline->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
+  pipeline->NodeFromWorld = vtkSmartPointer<vtkGeneralTransform>::New();
   pipeline->Transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   pipeline->Plane = vtkSmartPointer<vtkPlane>::New();
 
@@ -375,26 +390,22 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     // need this to update bounds of the locator, to avoid crash in the cutter
     polyData->Modified();
 
-    // Update transform matrices
+    //  Set Plane Transform
+    vtkNew<vtkGeneralTransform> xform;
+    xform->Identity();
+    xform->Concatenate(pipeline->NodeFromWorld);
+    xform->Concatenate(this->SliceXYToRAS);
 
+    this->SetSlicePlaneFromMatrix(xform.GetPointer(), pipeline->Plane);
+
+    //  Set PolyData Transform
     vtkNew<vtkMatrix4x4> tempMat1;
-    vtkNew<vtkMatrix4x4> tempMat2;
-    tempMat1->Identity();
-    tempMat2->Identity();
-
-    //    Set Plane Transform
-    tempMat1->Identity();
-    tempMat1->DeepCopy(pipeline->NodeToWorld);
-    tempMat1->Invert();
-    vtkMatrix4x4::Multiply4x4(tempMat1.GetPointer(), this->SliceXYToRAS, tempMat2.GetPointer());
-    this->SetSlicePlaneFromMatrix(tempMat2.GetPointer(), pipeline->Plane);
-
-    //    Set PolyData Transform
     tempMat1->DeepCopy(this->SliceXYToRAS);
     tempMat1->Invert();
-    vtkMatrix4x4::Multiply4x4(tempMat1.GetPointer(),
-                              pipeline->NodeToWorld, tempMat2.GetPointer());
-    pipeline->TransformToSlice->SetMatrix(tempMat2.GetPointer());
+
+    pipeline->TransformToSlice->Identity();
+    pipeline->TransformToSlice->Concatenate(tempMat1.GetPointer());
+    pipeline->TransformToSlice->Concatenate(pipeline->NodeToWorld);
 
     pipeline->Plane->Modified();
 
