@@ -97,9 +97,20 @@ public:
   /// \sa setMRMLScene()
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
+  /// Get the quantity property value.
+  /// \sa quantity
   QString quantity()const;
 
+  /// Get the unitAwareProperties property value.
+  /// \sa unitAwareProperties
   UnitAwareProperties unitAwareProperties()const;
+
+  /// Reimplemented for internal reasons.
+  /// \sa ctkSliderWidget::setMinimum(), ctkSliderWidget::setMaximum(),
+  /// ctkSliderWidget::setRange()
+  virtual void setMinimum(double);
+  virtual void setMaximum(double);
+  virtual void setRange(double, double);
 
 public slots:
   void setQuantity(const QString& baseName);

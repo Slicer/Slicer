@@ -234,8 +234,41 @@ void qMRMLSliderWidget::updateWidgetFromUnitNode()
                   unitNode->GetDisplayValueFromValue(this->minimum());
           }
         double powerOfTen = ctk::closestPowerOfTen(range);
-        this->setSingleStep(powerOfTen / 100);
+        if (powerOfTen != 0.)
+          {
+          this->setSingleStep(powerOfTen / 100);
+          }
         }
       }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliderWidget::setMinimum(double newMinimumValue)
+{
+  this->Superclass::setMinimum(newMinimumValue);
+  if (this->unitAwareProperties().testFlag(qMRMLSliderWidget::Precision))
+    {
+    this->updateWidgetFromUnitNode();
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliderWidget::setMaximum(double newMaximumValue)
+{
+  this->Superclass::setMaximum(newMaximumValue);
+  if (this->unitAwareProperties().testFlag(qMRMLSliderWidget::Precision))
+    {
+    this->updateWidgetFromUnitNode();
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliderWidget::setRange(double newMinimumValue, double newMaximumValue)
+{
+  this->Superclass::setRange(newMinimumValue, newMaximumValue);
+  if (this->unitAwareProperties().testFlag(qMRMLSliderWidget::Precision))
+    {
+    this->updateWidgetFromUnitNode();
     }
 }
