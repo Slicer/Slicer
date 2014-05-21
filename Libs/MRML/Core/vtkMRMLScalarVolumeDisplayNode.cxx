@@ -34,6 +34,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkLookupTable.h>
+#include <vtkPointData.h>
 #include <vtkImageMathematics.h>
 #include <vtkVersion.h>
 
@@ -774,7 +775,9 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
 
   vtkImageData *imageDataScalar = this->GetScalarImageData();
 
-  if (!imageDataScalar)
+  if (!imageDataScalar
+      || !(imageDataScalar->GetPointData())
+      || !(imageDataScalar->GetPointData()->GetScalars()))
     {
     vtkDebugMacro("CalculateScalarAutoLevels: input image data is null");
     return;
