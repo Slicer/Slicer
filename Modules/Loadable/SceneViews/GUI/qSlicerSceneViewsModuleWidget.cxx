@@ -328,6 +328,13 @@ void qSlicerSceneViewsModuleWidget::updateFromMRMLScene()
     vtkMRMLSceneViewNode *sceneView = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
     QString sceneViewHtml = d->htmlFromSceneView(sceneView);
     htmlPage += sceneViewHtml;
+    // separarate scene views with a line
+    if (i < numSceneViews - 1)
+      {
+      QString lineHtml;
+      lineHtml = "<hr>\n";
+      htmlPage += lineHtml;
+      }
     }
   QString footerHtml;
   footerHtml = "    </ul>\n";
