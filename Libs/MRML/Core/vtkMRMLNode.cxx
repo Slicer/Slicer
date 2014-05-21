@@ -1016,6 +1016,24 @@ void vtkMRMLNode::GetNodeReferences(const char* referenceRole, std::vector<vtkMR
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNode::GetNodeReferenceIDs(const char* referenceRole,
+                                      std::vector<const char*> &nodeIDs)
+{
+  if (!referenceRole)
+    {
+    return;
+    }
+
+  NodeReferenceListType &references =
+    this->NodeReferences[std::string(referenceRole)];
+  for (unsigned int i=0; i<references.size(); ++i)
+    {
+    nodeIDs.push_back(references[i] ? references[i]->GetReferencedNodeID() : 0);
+    }
+}
+
+
+//----------------------------------------------------------------------------
 const char * vtkMRMLNode::GetNthNodeReferenceID(const char* referenceRole, int n)
 {
   if (!referenceRole || n < 0)

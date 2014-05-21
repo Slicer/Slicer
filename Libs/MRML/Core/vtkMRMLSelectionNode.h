@@ -183,8 +183,13 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 
   /// Get all the unit node currently observed by the selection node.
   /// \sa GetReferenceNodes()
-  /// \sa GetUnitNodeID(), SetUnitNodeID()
+  /// \sa GetUnitNodeID(), SetUnitNodeID(), GetUnitNodeIDs()
   void GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units);
+
+  /// Get all the unit node IDs currently observed by the selection node.
+  /// \sa GetUnitNodes()
+  void GetUnitNodeIDs(std::vector<const char*>& quantities,
+                      std::vector<const char*>& unitIDs);
 
   /// Method to propagate events generated in units nodes.
   /// \sa GetNodeReferenceID(), SetAndObserveNodeReferenceID()

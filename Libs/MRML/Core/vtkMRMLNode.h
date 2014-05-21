@@ -542,6 +542,14 @@ public:
   /// \sa GetNthNodeReference
   void GetNodeReferences(const char* referenceRole, std::vector<vtkMRMLNode*> &nodes);
 
+  ///
+  /// Return a list of the referenced node IDs. Some IDs may be null and nodes
+  /// for valid IDs may not yet be in the scene.
+  /// \sa GetNodeReferences(), GetNodeReferenceID()
+  void GetNodeReferenceIDs(const char* referenceRole,
+                           std::vector<const char*> &nodeIDs);
+
+
   /// HierarchyModifiedEvent is generated when the hierarchy node with which
   /// this node is associated changes
   enum

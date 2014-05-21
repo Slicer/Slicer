@@ -214,7 +214,10 @@ void vtkSlicerUnitsLogic::RegisterNodesInternal(vtkMRMLScene* scene)
 //-----------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::OnMRMLSceneStartBatchProcess()
 {
+  // We save the units so that they can be restored when the singleton gets
+  // reset (scene is cleared/closed...).
   this->SaveDefaultUnits();
+  this->Superclass::OnMRMLSceneStartBatchProcess();
 }
 
 //-----------------------------------------------------------------------------
@@ -225,26 +228,35 @@ void vtkSlicerUnitsLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     {
     this->RestoreDefaultUnits();
     }
+  this->Superclass::OnMRMLNodeModified(node);
 }
 
 //-----------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::SaveDefaultUnits()
 {
   // Save selection node units.
-  std::vector<vtkMRMLUnitNode*> units;
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
     this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  std::vector<const char *> quantities;
+  std::vector<const char *> unitIDs;
   if (selectionNode)
     {
-    selectionNode->GetUnitNodes(units);
+    selectionNode->GetUnitNodeIDs(quantities, unitIDs);
     }
   this->CachedDefaultUnits.clear();
-  std::vector<vtkMRMLUnitNode*>::const_iterator it;
-  for ( it = units.begin(); it != units.end(); ++it)
+  std::vector<const char*>::const_iterator qIt;
+  std::vector<const char*>::const_iterator uIt;
+  for (qIt = quantities.begin(), uIt = unitIDs.begin();
+       uIt != unitIDs.end(); ++qIt, ++uIt)
     {
-    vtkMRMLUnitNode* unit = (*it);
-    assert(unit);
-    this->CachedDefaultUnits[unit->GetQuantity()] = unit->GetID();
+    assert(qIt != quantities.end());
+    const char* quantity = *qIt;
+    const char* unitID = *uIt;
+    assert( (quantity != 0) == (unitID != 0) );
+    if (quantity && unitID)
+      {
+      this->CachedDefaultUnits[quantity] = unitID;
+      }
     }
 }
 
