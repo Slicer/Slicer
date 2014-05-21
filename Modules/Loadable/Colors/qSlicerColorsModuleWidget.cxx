@@ -136,8 +136,7 @@ void qSlicerColorsModuleWidget::setup()
 
   d->setupUi(this);
 
-  QIcon copyIcon = this->style()->standardIcon(QStyle::SP_FileDialogNewFolder);
-  d->CopyColorNodeButton->setIcon(copyIcon);
+  d->CopyColorNodeButton->setIcon(QIcon(":Icons/SlicerCopyColor.png"));
 
   d->VTKScalarBar->setScalarBarWidget(d->ScalarBarWidget);
 
