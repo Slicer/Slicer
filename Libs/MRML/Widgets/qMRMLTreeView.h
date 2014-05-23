@@ -212,8 +212,8 @@ public:
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
   /// The returned value can't be null.
-  qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
-  qMRMLSceneModel* sceneModel()const;
+  Q_INVOKABLE qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLSceneModel* sceneModel()const;
 
   /// When true, the tree widget resize itself so that
   /// it's sizeHint is right for the visible indexes
