@@ -1161,7 +1161,6 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     }
 
   // Prompt to install dependencies (if any)
-  qDebug() << dependenciesMetadata;
   if (!dependenciesMetadata.isEmpty())
     {
     QString msg = QString("<p>%1 depends on the following extensions:</p><ul>").arg(extensionName);
