@@ -157,8 +157,8 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, 
     PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedFileWriter::setPythonSource - "
-                            "Failed to load scripted pythonqt module class definition"
-                            " %1 from %2").arg(className).arg(newPythonSource).toLatin1());
+                            "Failed to load scripted file writer: "
+                            "class %1 was not found in file %2").arg(className).arg(newPythonSource).toLatin1());
     return false;
     }
 

@@ -187,8 +187,8 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModule::setPythonSource - "
-                            "Failed to load scripted pythonqt module class definition"
-                            " %1 from %2").arg(className).arg(newPythonSource).toLatin1());
+                            "Failed to load scripted loadable module: "
+                            "class %1 was not found in file %2").arg(className).arg(newPythonSource).toLatin1());
     PythonQt::self()->handleError();
     return false;
     }
