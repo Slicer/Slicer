@@ -481,7 +481,8 @@ class DICOMDetailsPopup(object):
           slicer.app.processEvents()
     self.progress.close()
     self.progress = None
-    self.close()
+    if not self.setBrowserPersistence:
+      self.close()
 
 class DICOMPluginSelector(object):
   """Implement the Qt code for a table of
