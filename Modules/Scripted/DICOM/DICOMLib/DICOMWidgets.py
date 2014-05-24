@@ -463,6 +463,7 @@ class DICOMDetailsPopup(object):
     self.progress.setValue(0)
     self.progress.setMaximum(loadableCount)
     step = 0
+    loadingResult = ''
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
         if self.progress.wasCanceled:
@@ -474,13 +475,14 @@ class DICOMDetailsPopup(object):
           self.progress.labelText = '\nLoading %s' % loadable.name
           slicer.app.processEvents()
           if not plugin.load(loadable):
-            qt.QMessageBox.warning(slicer.util.mainWindow(),
-                'Load', 'Could not load: %s as a %s' % (loadable.name,plugin.loadType))
+            loadingResult = '%s\nCould not load: %s as a %s' % (loadingResult,loadable.name,plugin.loadType)
           step += 1
           self.progress.setValue(step)
           slicer.app.processEvents()
     self.progress.close()
     self.progress = None
+    if loadingResult:
+      qt.QMessageBox.warning(slicer.util.mainWindow(), 'DICOM loading', loadingResult)
     if not self.setBrowserPersistence:
       self.close()
 
