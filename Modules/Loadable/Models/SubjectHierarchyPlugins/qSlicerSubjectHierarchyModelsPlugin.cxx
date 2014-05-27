@@ -123,7 +123,7 @@ double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
     }
 
   // Model
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLModelNode"))
     {
     return 0.5; // There may be other plugins that can handle special charts better
@@ -175,10 +175,10 @@ void qSlicerSubjectHierarchyModelsPlugin::editProperties(vtkMRMLSubjectHierarchy
     {
     // Get filter search box
     QLineEdit* searchBox = moduleWidget->findChild<QLineEdit*>("ScrollToModelSearchBox");
-    if (searchBox && node->GetAssociatedDataNode())
+    if (searchBox && node->GetAssociatedNode())
       {
       // Enter node name in the filter box to select it
-      searchBox->setText(node->GetAssociatedDataNode()->GetName());
+      searchBox->setText(node->GetAssociatedNode()->GetName());
       }
     }
 }

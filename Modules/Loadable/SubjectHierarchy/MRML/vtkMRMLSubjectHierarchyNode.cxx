@@ -301,16 +301,16 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetAssociatedDataNode()
+vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetAssociatedNode()
 {
-  vtkMRMLNode* firstAssociatedNode = this->GetAssociatedNode();
+  vtkMRMLNode* firstAssociatedNode = vtkMRMLHierarchyNode::GetAssociatedNode();
   if (!firstAssociatedNode)
     {
     return NULL;
     }
   else if (firstAssociatedNode->IsA("vtkMRMLSubjectHierarchyNode"))
     {
-    vtkErrorMacro("GetAssociatedDataNode: Subject hierarchy node '" << this->Name << "' is associated to another subject hierarchy node! This is not permitted.");
+    vtkErrorMacro("GetAssociatedNode: Subject hierarchy node '" << this->Name << "' is associated to another subject hierarchy node! This is not permitted.");
     return NULL;
     }
   // Handle nested associations. If a subject hierarchy node is associated to another hierarchy
@@ -321,7 +321,7 @@ vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetAssociatedDataNode()
     vtkMRMLNode* secondAssociatedNode = firstAssociatedHierarchyNode->GetAssociatedNode();
     if (secondAssociatedNode->IsA("vtkMRMLHierarchyNode"))
       {
-      vtkErrorMacro("GetAssociatedDataNode: Subject hierarchy node '" << this->Name << "' has double-nested association! This is not permitted.");
+      vtkErrorMacro("GetAssociatedNode: Subject hierarchy node '" << this->Name << "' has double-nested association! This is not permitted.");
       return NULL;
       }
     else
@@ -713,7 +713,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
 bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkMRMLTransformNode* exceptionNode/*=NULL*/)
 {
   // Check data node first
-  vtkMRMLTransformableNode* transformableDataNode = vtkMRMLTransformableNode::SafeDownCast(this->GetAssociatedDataNode());
+  vtkMRMLTransformableNode* transformableDataNode = vtkMRMLTransformableNode::SafeDownCast(this->GetAssociatedNode());
   if ( transformableDataNode && transformableDataNode->GetParentTransformNode()
     && transformableDataNode->GetParentTransformNode() != exceptionNode)
     {

@@ -308,7 +308,7 @@ namespace
 
     // Get associated data node simple case
     vtkMRMLScalarVolumeNode* volume1Node = vtkMRMLScalarVolumeNode::SafeDownCast(
-      volume1ShNode->GetAssociatedDataNode() );
+      volume1ShNode->GetAssociatedNode() );
     if (!volume1Node)
       {
       std::cout << "Failed to get associated volume node (simple association)" << std::endl;
@@ -335,7 +335,7 @@ namespace
 
     // Get associated data node nested case
     vtkMRMLModelNode* model21Node = vtkMRMLModelNode::SafeDownCast(
-      model21ShNode->GetAssociatedDataNode() );
+      model21ShNode->GetAssociatedNode() );
     if (!model21Node)
       {
       std::cout << "Failed to get associated model node (nested association)" << std::endl;
@@ -604,25 +604,25 @@ namespace
       std::cout << "Failed to get nodes by UID" << std::endl;
       return false;
       }
-    if ( !volume1ShNode->GetAssociatedDataNode() || !volume1ShNode->GetAssociatedDataNode()->IsA("vtkMRMLScalarVolumeNode")
-      || !model1ShNode->GetAssociatedDataNode() || !model1ShNode->GetAssociatedDataNode()->IsA("vtkMRMLModelNode")
-      || !volume2ShNode->GetAssociatedDataNode() || !volume2ShNode->GetAssociatedDataNode()->IsA("vtkMRMLScalarVolumeNode")
-      || !model21ShNode->GetAssociatedDataNode() || !model21ShNode->GetAssociatedDataNode()->IsA("vtkMRMLModelNode")
-      || !model22ShNode->GetAssociatedDataNode() || !model22ShNode->GetAssociatedDataNode()->IsA("vtkMRMLModelNode") )
+    if ( !volume1ShNode->GetAssociatedNode() || !volume1ShNode->GetAssociatedNode()->IsA("vtkMRMLScalarVolumeNode")
+      || !model1ShNode->GetAssociatedNode() || !model1ShNode->GetAssociatedNode()->IsA("vtkMRMLModelNode")
+      || !volume2ShNode->GetAssociatedNode() || !volume2ShNode->GetAssociatedNode()->IsA("vtkMRMLScalarVolumeNode")
+      || !model21ShNode->GetAssociatedNode() || !model21ShNode->GetAssociatedNode()->IsA("vtkMRMLModelNode")
+      || !model22ShNode->GetAssociatedNode() || !model22ShNode->GetAssociatedNode()->IsA("vtkMRMLModelNode") )
       {
       std::cout << "Unable to get data nodes" << std::endl;
       return false;
       }
     vtkMRMLScalarVolumeDisplayNode* volume1DisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      vtkMRMLScalarVolumeNode::SafeDownCast(volume1ShNode->GetAssociatedDataNode())->GetDisplayNode() );
+      vtkMRMLScalarVolumeNode::SafeDownCast(volume1ShNode->GetAssociatedNode())->GetDisplayNode() );
     vtkMRMLModelDisplayNode* model1DisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
-      vtkMRMLModelNode::SafeDownCast(model1ShNode->GetAssociatedDataNode())->GetDisplayNode() );
+      vtkMRMLModelNode::SafeDownCast(model1ShNode->GetAssociatedNode())->GetDisplayNode() );
     vtkMRMLScalarVolumeDisplayNode* volume2DisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      vtkMRMLScalarVolumeNode::SafeDownCast(volume2ShNode->GetAssociatedDataNode())->GetDisplayNode() );
+      vtkMRMLScalarVolumeNode::SafeDownCast(volume2ShNode->GetAssociatedNode())->GetDisplayNode() );
     vtkMRMLModelDisplayNode* model21DisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
-      vtkMRMLModelNode::SafeDownCast(model21ShNode->GetAssociatedDataNode())->GetDisplayNode() );
+      vtkMRMLModelNode::SafeDownCast(model21ShNode->GetAssociatedNode())->GetDisplayNode() );
     vtkMRMLModelDisplayNode* model22DisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
-      vtkMRMLModelNode::SafeDownCast(model22ShNode->GetAssociatedDataNode())->GetDisplayNode() );
+      vtkMRMLModelNode::SafeDownCast(model22ShNode->GetAssociatedNode())->GetDisplayNode() );
     if (!volume1DisplayNode || !model1DisplayNode || !volume2DisplayNode || !model21DisplayNode || !model22DisplayNode)
       {
       std::cout << "Unable to get display nodes" << std::endl;
@@ -715,8 +715,8 @@ namespace
     vtkSmartPointer<vtkPolyData> model22PolyData = vtkSmartPointer<vtkPolyData>::New();
     model22PolyData->SetPoints(model22Points);
 
-    vtkMRMLModelNode* model21Node = vtkMRMLModelNode::SafeDownCast(model21ShNode->GetAssociatedDataNode());
-    vtkMRMLModelNode* model22Node = vtkMRMLModelNode::SafeDownCast(model22ShNode->GetAssociatedDataNode());
+    vtkMRMLModelNode* model21Node = vtkMRMLModelNode::SafeDownCast(model21ShNode->GetAssociatedNode());
+    vtkMRMLModelNode* model22Node = vtkMRMLModelNode::SafeDownCast(model22ShNode->GetAssociatedNode());
     if (!model21Node || !model22Node)
       {
       std::cout << "Failed to get model data nodes" << std::endl;

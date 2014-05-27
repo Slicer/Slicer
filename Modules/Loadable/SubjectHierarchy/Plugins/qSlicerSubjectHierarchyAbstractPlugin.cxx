@@ -207,7 +207,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkMRMLSubjectHierarchyNo
 
   // Display node type and level in the tooltip
   QString tooltipString("");
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode)
     {
     tooltipString.append(associatedNode->GetNodeTagName());

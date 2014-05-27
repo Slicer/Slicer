@@ -1082,7 +1082,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
         }
       // now get the fiducials in this annotation hierarchy
       vtkCollection *children = vtkCollection::New();
-      hierarchyNode->GetAssociatedChildrendNodes(children, "vtkMRMLAnnotationFiducialNode");
+      hierarchyNode->GetAssociatedChildrenNodes(children, "vtkMRMLAnnotationFiducialNode");
       vtkDebugMacro("Found " << children->GetNumberOfItems() << " annot fids in this hierarchy");
       for (int c = 0; c < children->GetNumberOfItems(); ++c)
         {

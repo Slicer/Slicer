@@ -146,7 +146,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
     return;
     }
 
-  vtkMRMLNode* associatedDataNode = currentNode->GetAssociatedDataNode();
+  vtkMRMLNode* associatedDataNode = currentNode->GetAssociatedNode();
   if (associatedDataNode)
     {
     // Clone data node

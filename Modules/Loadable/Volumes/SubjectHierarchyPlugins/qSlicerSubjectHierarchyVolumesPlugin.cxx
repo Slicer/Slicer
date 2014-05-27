@@ -131,6 +131,23 @@ qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin()
 {
 }
 
+//----------------------------------------------------------------------------
+double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
+{
+  if (!node)
+  {
+    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
+    return 0.0;
+  }
+  else if (node->IsA("vtkMRMLScalarVolumeNode"))
+  {
+    // Node is a model
+    return 0.5;
+  }
+
+  return 0.0;
+}
+
 //---------------------------------------------------------------------------
 double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node)const
 {
@@ -141,7 +158,7 @@ double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyNode(vtkMRMLS
     }
 
   // Volume
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLScalarVolumeNode"))
     {
     return 0.5; // There are other plugins that can handle special volume nodes better, thus the relatively low value
@@ -168,7 +185,7 @@ bool qSlicerSubjectHierarchyVolumesPlugin::setIcon(vtkMRMLSubjectHierarchyNode* 
     }
 
   // Volume
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLScalarVolumeNode"))
     {
     const char* labelmapAttribute = associatedNode->GetAttribute("LabelMap");
@@ -206,7 +223,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::setVisibilityIcon(vtkMRMLSubjectHiera
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
 
   // Volume
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLScalarVolumeNode"))
     {
     if (this->getDisplayVisibility(node) == 1)
@@ -237,7 +254,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility(vtkMRMLSubjectHi
     return;
     }
 
-  vtkMRMLScalarVolumeNode* associatedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedDataNode());
+  vtkMRMLScalarVolumeNode* associatedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
   // Volume
   if (associatedVolumeNode)
     {
@@ -266,7 +283,7 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkMRMLSubjectHie
     }
 
   // Sanity checks for volume
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedDataNode());
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
   if (!volumeNode)
     {
     return -1;
@@ -562,7 +579,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForNode(vtkMRML
   // Volume
   if (this->canOwnSubjectHierarchyNode(node))
     {
-    vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+    vtkMRMLNode* associatedNode = node->GetAssociatedNode();
     const char* labelmapAttribute = associatedNode->GetAttribute("LabelMap");
     if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
       {
@@ -711,7 +728,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::editProperties(vtkMRMLSubjectHierarch
     // Choose current data node
     if (nodeSelector)
       {
-      nodeSelector->setCurrentNode(node->GetAssociatedDataNode());
+      nodeSelector->setCurrentNode(node->GetAssociatedNode());
       }
     }
 }

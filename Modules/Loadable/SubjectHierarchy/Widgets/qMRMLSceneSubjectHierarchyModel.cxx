@@ -203,7 +203,7 @@ int qMRMLSceneSubjectHierarchyModel::nodeIndex(vtkMRMLNode* node)const
         ++index;
         }
       vtkMRMLSubjectHierarchyNode* hierarchy = vtkMRMLSubjectHierarchyNode::SafeDownCast(n);
-      if (hierarchy && hierarchy->GetAssociatedDataNode())
+      if (hierarchy && hierarchy->GetAssociatedNode())
         {
         // if the current node is a hierarchy node associated with the node,
         // then it should have been caught at the beginning of the function
@@ -355,7 +355,7 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
       item->setData( "Transform", Qt::WhatsThisRole );
       }
 
-    vtkMRMLNode* associatedNode = subjectHierarchyNode->GetAssociatedDataNode();
+    vtkMRMLNode* associatedNode = subjectHierarchyNode->GetAssociatedNode();
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(associatedNode);
     if (transformableNode)
       {
@@ -396,7 +396,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
     subjectHierarchyNode->SetName(item->text().append(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX.c_str()).toLatin1().constData());
 
     // Rename data node too
-    vtkMRMLNode* associatedDataNode = subjectHierarchyNode->GetAssociatedDataNode();
+    vtkMRMLNode* associatedDataNode = subjectHierarchyNode->GetAssociatedNode();
     if (associatedDataNode)
       {
       associatedDataNode->SetName(item->text().toLatin1().constData());
@@ -430,7 +430,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
 
     // No action if the chosen transform is the same as the applied one
     vtkMRMLTransformableNode* dataNode = vtkMRMLTransformableNode:: SafeDownCast(
-      subjectHierarchyNode->GetAssociatedDataNode() );
+      subjectHierarchyNode->GetAssociatedNode() );
     if (dataNode && dataNode->GetParentTransformNode() == newParentTransformNode)
       {
       return;
@@ -590,7 +590,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
     if (foundPlugins.size() > 1)
       {
       // Let the user choose a plugin if more than one returned the same non-zero confidence value
-      vtkMRMLNode* associatedNode = (subjectHierarchyNode->GetAssociatedDataNode() ? subjectHierarchyNode->GetAssociatedDataNode() : subjectHierarchyNode);
+      vtkMRMLNode* associatedNode = (subjectHierarchyNode->GetAssociatedNode() ? subjectHierarchyNode->GetAssociatedNode() : subjectHierarchyNode);
       QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for reparenting.\n\nSelect plugin to reparent node named\n'%1'\n(type %2)\nParent node: %3").arg(associatedNode->GetName()).arg(associatedNode->GetNodeTagName()).arg(parentSubjectHierarchyNode->GetName());
       selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
       }

@@ -125,7 +125,7 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyNode(vtkMRMLS
     }
 
   // Chart
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsFiducialNode"))
     {
     return 0.5; // There may be other plugins that can handle special charts better
@@ -181,7 +181,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::editProperties(vtkMRMLSubjectHierarch
     // Choose current data node
     if (nodeSelector)
       {
-      nodeSelector->setCurrentNode(node->GetAssociatedDataNode());
+      nodeSelector->setCurrentNode(node->GetAssociatedNode());
       }
     }
 }

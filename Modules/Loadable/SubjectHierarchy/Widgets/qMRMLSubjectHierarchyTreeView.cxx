@@ -369,7 +369,7 @@ void qMRMLSubjectHierarchyTreeView::openModuleForSubjectHierarchyNode(vtkMRMLNod
     qCritical() << "qMRMLSubjectHierarchyTreeView::openModuleForSubjectHierarchyNode: Invalid node!";
     return;
     }
-  vtkMRMLNode* associatedNode = subjectHierarchyNode->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = subjectHierarchyNode->GetAssociatedNode();
   if (!associatedNode)
     {
     qCritical() << "qMRMLSubjectHierarchyTreeView::openModuleForSubjectHierarchyNode: Invalid associated node!";

@@ -133,7 +133,7 @@ double qSlicerSubjectHierarchyChartsPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
     }
 
   // Chart
-  vtkMRMLNode* associatedNode = node->GetAssociatedDataNode();
+  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLChartNode"))
     {
     return 0.5; // There may be other plugins that can handle special charts better
@@ -231,7 +231,7 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkMRMLSubjectHie
 
   vtkMRMLChartViewNode* chartViewNode = this->getChartViewNode();
 
-  vtkMRMLChartNode* associatedChartNode = vtkMRMLChartNode::SafeDownCast(node->GetAssociatedDataNode());
+  vtkMRMLChartNode* associatedChartNode = vtkMRMLChartNode::SafeDownCast(node->GetAssociatedNode());
   if (associatedChartNode && visible)
     {
     // Switch to four-up quantitative layout
@@ -297,7 +297,7 @@ int qSlicerSubjectHierarchyChartsPlugin::getDisplayVisibility(vtkMRMLSubjectHier
     }
 
   // Return shown if chart in chart view is the examined node's associated data node
-  vtkMRMLChartNode* associatedChartNode = vtkMRMLChartNode::SafeDownCast(node->GetAssociatedDataNode());
+  vtkMRMLChartNode* associatedChartNode = vtkMRMLChartNode::SafeDownCast(node->GetAssociatedNode());
   if ( associatedChartNode && chartViewNode->GetChartNodeID()
     && !strcmp(chartViewNode->GetChartNodeID(), associatedChartNode->GetID()) )
     {

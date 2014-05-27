@@ -205,7 +205,7 @@ void qSlicerSubjectHierarchyModule::onNodeAboutToBeRemoved(vtkObject* sceneObjec
   if (subjectHierarchyNode)
     {
     // Remove associated data node if any
-    vtkMRMLNode* associatedDataNode = subjectHierarchyNode->GetAssociatedDataNode();
+    vtkMRMLNode* associatedDataNode = subjectHierarchyNode->GetAssociatedNode();
     if (associatedDataNode && !subjectHierarchyNode->GetDisableModifiedEvent())
       {
       subjectHierarchyNode->DisableModifiedEventOn();

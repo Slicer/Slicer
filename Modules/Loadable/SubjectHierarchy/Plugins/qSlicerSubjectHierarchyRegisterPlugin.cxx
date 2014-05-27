@@ -207,7 +207,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentNodeTo()
   this->m_RegisterFromNode = currentNode;
 
   d->RegisterToAction->setText( QString("Register %1 to this using...").arg(
-    currentNode->GetAssociatedDataNode()->GetName() ) );
+    currentNode->GetAssociatedNode()->GetName() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -223,8 +223,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
     }
 
   // Get volume nodes from selected subject hierarchy nodes
-  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedDataNode();
-  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedDataNode();
+  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedNode();
+  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
     qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerImageBasedRigid: Unable to get input volume nodes from the selected subject hierarchy nodes!";
@@ -289,8 +289,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
     }
 
   // Get volume nodes from selected subject hierarchy nodes
-  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedDataNode();
-  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedDataNode();
+  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedNode();
+  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
     qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerImageBasedBSpline: Unable to get input volume nodes from the selected subject hierarchy nodes!";
@@ -355,8 +355,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
     }
 
   // Get volume nodes from selected subject hierarchy nodes
-  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedDataNode();
-  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedDataNode();
+  vtkMRMLNode* registerFromVolumeNode = this->m_RegisterFromNode->GetAssociatedNode();
+  vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
     qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerInteractiveLandmark: Unable to get input volume nodes from the selected subject hierarchy nodes!";

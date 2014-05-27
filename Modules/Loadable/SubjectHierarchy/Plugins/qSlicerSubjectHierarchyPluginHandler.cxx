@@ -268,7 +268,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::fin
   if (mostSuitablePlugins.size() > 1)
     {
     // Let the user choose a plugin if more than one returned the same non-zero confidence value
-    vtkMRMLNode* associatedNode = (node->GetAssociatedDataNode() ? node->GetAssociatedDataNode() : node);
+    vtkMRMLNode* associatedNode = (node->GetAssociatedNode() ? node->GetAssociatedNode() : node);
     QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin.\n\nSelect plugin to own node named\n'%1'\n(type %2):").arg(associatedNode->GetName()).arg(associatedNode->GetNodeTagName());
     ownerPlugin = this->selectPluginFromDialog(textToDisplay, mostSuitablePlugins);
     }

@@ -263,7 +263,7 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetCollapsedPa
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::GetChildrenDisplayableNodes(vtkCollection *children)
 {
-  this->GetAssociatedChildrendNodes(children, "vtkMRMLDisplayableNode");
+  this->GetAssociatedChildrenNodes(children, "vtkMRMLDisplayableNode");
 }
 
 //----------------------------------------------------------------------------

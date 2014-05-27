@@ -50,6 +50,15 @@ public:
   virtual ~qSlicerSubjectHierarchyVolumesPlugin();
 
 public:
+  /// Determines if a non subject hierarchy node can be placed in the hierarchy, and gets a confidence
+  ///   value for a certain MRML node (usually the type and possibly attributes are checked)
+  /// \param node Node to be added to the hierarchy
+  /// \param parent Prospective parent of the node to add.
+  ///   Default value is NULL. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by type or identifier attribute)
+  virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parent=NULL)const;
+
   /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
   /// the highest confidence number will "own" the node in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)
