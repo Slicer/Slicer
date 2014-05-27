@@ -1,0 +1,36 @@
+
+set(KIT ${PROJECT_NAME}Plugins)
+
+set(${KIT}_EXPORT "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_PLUGINS_EXPORT")
+
+set(${KIT}_SRCS
+  qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin.cxx
+  qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin.h
+  qSlicerSubjectHierarchyModuleWidgetsPlugin.cxx
+  qSlicerSubjectHierarchyModuleWidgetsPlugin.h
+  qMRMLSubjectHierarchyTreeViewPlugin.cxx
+  qMRMLSubjectHierarchyTreeViewPlugin.h
+  qMRMLPotentialSubjectHierarchyListViewPlugin.cxx
+  qMRMLPotentialSubjectHierarchyListViewPlugin.h
+  )
+
+set(${KIT}_MOC_SRCS
+  qSlicerSubjectHierarchyModuleWidgetsPlugin.h
+  qMRMLSubjectHierarchyTreeViewPlugin.h
+  qMRMLPotentialSubjectHierarchyListViewPlugin.h
+  )
+
+set(${KIT}_TARGET_LIBRARIES
+  qSlicerSubjectHierarchyModuleWidgets
+  )
+
+#-----------------------------------------------------------------------------
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Slicer_DIR}/bin)
+
+ctkMacroBuildQtDesignerPlugin(
+  NAME ${KIT}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT}
+  SRCS ${${KIT}_SRCS}
+  MOC_SRCS ${${KIT}_MOC_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
+  )
