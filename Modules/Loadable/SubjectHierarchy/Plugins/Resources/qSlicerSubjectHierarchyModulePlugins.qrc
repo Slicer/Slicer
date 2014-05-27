@@ -11,6 +11,6 @@
     <file>Icons/Volume.png</file>
     <file>Icons/VolumeVisibilityOff.png</file>
     <file>Icons/VolumeVisibilityOn.png</file>
-  <file>Icons/Warning.png</file>
+    <file>Icons/Warning.png</file>
   </qresource>
 </RCC>

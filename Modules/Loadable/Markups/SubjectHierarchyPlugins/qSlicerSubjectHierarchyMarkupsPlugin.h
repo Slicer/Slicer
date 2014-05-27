@@ -19,33 +19,34 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyModelsPlugin_h
-#define __qSlicerSubjectHierarchyModelsPlugin_h
+#ifndef __qSlicerSubjectHierarchyMarkupsPlugin_h
+#define __qSlicerSubjectHierarchyMarkupsPlugin_h
 
-// SlicerRt includes
+// SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
-#include "qSlicerSubjectHierarchyModulePluginsExport.h"
+#include "qSlicerMarkupsSubjectHierarchyPluginsExport.h"
 
-class qSlicerSubjectHierarchyModelsPluginPrivate;
+class qSlicerSubjectHierarchyMarkupsPluginPrivate;
 class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 
 // Due to some reason the Python wrapping of this class fails, therefore
 // put everything between BTX/ETX to exclude from wrapping.
-// TODO #210: investigate why the wrapping fails
+// TODO investigate why the wrapping fails:
+//   https://www.assembla.com/spaces/slicerrt/tickets/210-python-wrapping-error-when-starting-up-slicer-with-slicerrt
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
-class Q_SLICER_SUBJECTHIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyModelsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MARKUPS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyMarkupsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyModelsPlugin(QObject* parent = NULL);
-  virtual ~qSlicerSubjectHierarchyModelsPlugin();
+  qSlicerSubjectHierarchyMarkupsPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyMarkupsPlugin();
 
 public:
   /// Determines if a non subject hierarchy node can be placed in the hierarchy, and gets a confidence
@@ -80,11 +81,11 @@ public:
   virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyModelsPluginPrivate> d_ptr;
+  QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyModelsPlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyModelsPlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyMarkupsPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyMarkupsPlugin);
 };
 
 //ETX

@@ -4,16 +4,12 @@ set(KIT ${PROJECT_NAME})
 
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_${MODULE_NAME_UPPER}_PLUGINS_EXPORT")
 
-#TODO: Replace with MRMLWidgets_INCLUDE_DIRS when available
-list(GET MRMLCore_INCLUDE_DIRS 0 MRMLCore_DIR)
-list(GET MRMLCore_INCLUDE_DIRS 1 MRMLCore_BIN_DIR)
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSubjectHierarchyModuleMRML_INCLUDE_DIRS}
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${qMRMLWidgets_INCLUDE_DIRS}
-  ${MRMLCore_DIR}/../CLI
-  ${MRMLCore_BIN_DIR}/../CLI
+  ${MRMLCLI_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -29,12 +25,6 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyDICOMPlugin.h
   qSlicerSubjectHierarchyChartsPlugin.cxx
   qSlicerSubjectHierarchyChartsPlugin.h
-  qSlicerSubjectHierarchyMarkupsPlugin.cxx
-  qSlicerSubjectHierarchyMarkupsPlugin.h
-  qSlicerSubjectHierarchyModelsPlugin.cxx
-  qSlicerSubjectHierarchyModelsPlugin.h
-  qSlicerSubjectHierarchyVolumesPlugin.cxx
-  qSlicerSubjectHierarchyVolumesPlugin.h
   qSlicerSubjectHierarchyParseLocalDataPlugin.cxx
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
   qSlicerSubjectHierarchyRegisterPlugin.cxx
@@ -48,9 +38,6 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyCloneNodePlugin.h
   qSlicerSubjectHierarchyDICOMPlugin.h
   qSlicerSubjectHierarchyChartsPlugin.h
-  qSlicerSubjectHierarchyMarkupsPlugin.h
-  qSlicerSubjectHierarchyModelsPlugin.h
-  qSlicerSubjectHierarchyVolumesPlugin.h
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
   qSlicerSubjectHierarchyRegisterPlugin.h
   )

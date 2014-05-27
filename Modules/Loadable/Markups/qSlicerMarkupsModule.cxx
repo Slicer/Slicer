@@ -33,6 +33,10 @@
 #include <qSlicerIOManager.h>
 #include <qSlicerNodeWriter.h>
 
+// SubjectHierarchy Plugins includes
+#include "qSlicerSubjectHierarchyPluginHandler.h"
+#include "qSlicerSubjectHierarchyMarkupsPlugin.h"
+
 // Markups includes
 #include "MarkupsInstantiator.h"
 #include "qSlicerMarkupsModule.h"
@@ -155,6 +159,9 @@ void qSlicerMarkupsModule::setup()
     {
     moduleWidget->updateLogicFromSettings();
     }
+
+  // Register Subject Hierarchy core plugins
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyMarkupsPlugin());
 }
 
 

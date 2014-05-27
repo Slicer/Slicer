@@ -34,9 +34,6 @@
 #include "qSlicerSubjectHierarchyDICOMPlugin.h"
 #include "qSlicerSubjectHierarchyCloneNodePlugin.h"
 #include "qSlicerSubjectHierarchyChartsPlugin.h"
-#include "qSlicerSubjectHierarchyMarkupsPlugin.h"
-#include "qSlicerSubjectHierarchyModelsPlugin.h"
-#include "qSlicerSubjectHierarchyVolumesPlugin.h"
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 
@@ -129,9 +126,6 @@ void qSlicerSubjectHierarchyModule::setup()
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyDICOMPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyCloneNodePlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyChartsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyMarkupsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyModelsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyVolumesPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyParseLocalDataPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyRegisterPlugin());
 }

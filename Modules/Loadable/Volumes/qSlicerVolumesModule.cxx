@@ -41,6 +41,10 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 
+// SubjectHierarchy Plugins includes
+#include "qSlicerSubjectHierarchyPluginHandler.h"
+#include "qSlicerSubjectHierarchyVolumesPlugin.h"
+
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
@@ -146,6 +150,9 @@ void qSlicerVolumesModule::setup()
   ioManager->registerIO(new qSlicerNodeWriter(
     "Volumes", QString("VolumeFile"),
     QStringList() << "vtkMRMLVolumeNode", this));
+
+  // Register Subject Hierarchy core plugins
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyVolumesPlugin());
 }
 
 //-----------------------------------------------------------------------------
