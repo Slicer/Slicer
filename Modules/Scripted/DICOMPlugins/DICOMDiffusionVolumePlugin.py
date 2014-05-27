@@ -130,6 +130,10 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     if cliNode.GetStatusString() == "Completing" or cliNode.GetStatusString() == "Completed":
       if diffusionNode.GetImageData():
         success = True
+
+    # create Subject Hierarchy nodes for the loaded series
+    self.addSeriesInSubjectHierarchy(loadable,diffusionNode)
+
     return success
 
 
