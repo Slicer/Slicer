@@ -53,6 +53,10 @@ set(${KIT}_SRCS
   qMRMLModelInfoWidgetPlugin.h
   qMRMLNavigationViewPlugin.cxx
   qMRMLNavigationViewPlugin.h
+  qMRMLNodeAttributeTableViewPlugin.cxx
+  qMRMLNodeAttributeTableViewPlugin.h
+  qMRMLNodeAttributeTableWidgetPlugin.cxx
+  qMRMLNodeAttributeTableWidgetPlugin.h
   qMRMLNodeComboBoxPlugin.cxx
   qMRMLNodeComboBoxPlugin.h
   qMRMLRangeWidgetPlugin.cxx
@@ -112,6 +116,8 @@ set(${KIT}_MOC_SRCS
   qMRMLMatrixWidgetPlugin.h
   qMRMLModelInfoWidgetPlugin.h
   qMRMLNavigationViewPlugin.h
+  qMRMLNodeAttributeTableViewPlugin.h
+  qMRMLNodeAttributeTableWidgetPlugin.h
   qMRMLNodeComboBoxPlugin.h
   qMRMLRangeWidgetPlugin.h
   qMRMLROIWidgetPlugin.h

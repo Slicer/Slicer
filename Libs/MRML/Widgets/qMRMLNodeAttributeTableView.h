@@ -25,8 +25,8 @@
 // Qt includes
 #include <QWidget>
 
-// DataWidgets includes
-#include "qSlicerDataModuleWidgetsExport.h"
+// MRMLWidgets includes
+#include "qMRMLWidgetsExport.h"
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -37,7 +37,7 @@ class qMRMLNodeAttributeTableViewPrivate;
 class QTableWidgetItem;
 class QItemSelectionModel;
 
-class Q_SLICER_MODULE_DATA_WIDGETS_EXPORT qMRMLNodeAttributeTableView : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLNodeAttributeTableView : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT

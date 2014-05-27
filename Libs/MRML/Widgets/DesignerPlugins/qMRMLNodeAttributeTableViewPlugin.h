@@ -17,27 +17,26 @@
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
 
-==============================================================================*/\
+==============================================================================*/
 
-#ifndef __qSlicerDataModuleWidgetsAbstractPlugin_h
-#define __qSlicerDataModuleWidgetsAbstractPlugin_h
+#ifndef __qMRMLNodeAttributeTableViewPlugin_h
+#define __qMRMLNodeAttributeTableViewPlugin_h
 
-#include <QDesignerCustomWidgetInterface>
-#include "qSlicerDataModuleWidgetsPluginsExport.h"
+#include "qMRMLWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_DATA_WIDGETS_PLUGINS_EXPORT qSlicerDataModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNodeAttributeTableViewPlugin
+    : public QObject, public qMRMLWidgetsAbstractPlugin
 {
-  Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
+  Q_OBJECT
 
-  qSlicerDataModuleWidgetsAbstractPlugin();
-  // Don't reimplement this method.
-  QString group() const;
-  // You can reimplement these methods
-  virtual QIcon icon() const;
-  virtual QString toolTip() const;
-  virtual QString whatsThis() const;
+public:
+  qMRMLNodeAttributeTableViewPlugin(QObject *_parent = 0);
+
+  QWidget *createWidget(QWidget *_parent);
+  QString  domXml() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
 
 };
 

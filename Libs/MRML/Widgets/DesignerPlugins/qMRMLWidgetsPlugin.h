@@ -43,6 +43,8 @@
 #include "qMRMLMatrixWidgetPlugin.h"
 #include "qMRMLModelInfoWidgetPlugin.h"
 #include "qMRMLNavigationViewPlugin.h"
+#include "qMRMLNodeAttributeTableViewPlugin.h"
+#include "qMRMLNodeAttributeTableWidgetPlugin.h"
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLROIWidgetPlugin.h"
@@ -92,6 +94,8 @@ public:
             << new qMRMLMatrixWidgetPlugin
             << new qMRMLModelInfoWidgetPlugin
             << new qMRMLNavigationViewPlugin
+            << new qMRMLNodeAttributeTableViewPlugin
+            << new qMRMLNodeAttributeTableWidgetPlugin
             << new qMRMLNodeComboBoxPlugin
             << new qMRMLRangeWidgetPlugin
             << new qMRMLROIWidgetPlugin

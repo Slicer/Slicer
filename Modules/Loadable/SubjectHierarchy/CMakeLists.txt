@@ -39,7 +39,6 @@ set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicer${MODULE_NAME}ModuleWidgets
   qSlicer${MODULE_NAME}ModulePlugins
-  qSlicerDataModuleWidgets
   )
 
 set(MODULE_RESOURCES

@@ -19,25 +19,45 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLNodeAttributeTableViewPlugin_h
-#define __qMRMLNodeAttributeTableViewPlugin_h
+#ifndef __qMRMLNodeAttributeTableWidget_h
+#define __qMRMLNodeAttributeTableWidget_h
 
-#include "qSlicerDataModuleWidgetsAbstractPlugin.h"
+// Qt includes
+#include <QWidget>
 
-class Q_SLICER_MODULE_DATA_WIDGETS_PLUGINS_EXPORT qMRMLNodeAttributeTableViewPlugin
-    : public QObject, public qSlicerDataModuleWidgetsAbstractPlugin
+// MRMLWidgets includes
+#include "qMRMLWidgetsExport.h"
+
+// CTK includes
+#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
+
+class vtkMRMLNode;
+class qMRMLNodeAttributeTableWidgetPrivate;
+class qMRMLNodeAttributeTableView;
+
+class QMRML_WIDGETS_EXPORT qMRMLNodeAttributeTableWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  qMRMLNodeAttributeTableViewPlugin(QObject *_parent = 0);
+  /// Constructors
+  explicit qMRMLNodeAttributeTableWidget(QWidget* parent = 0);
+  virtual ~qMRMLNodeAttributeTableWidget();
 
-  QWidget *createWidget(QWidget *_parent);
-  QString  domXml() const;
-  QString  includeFile() const;
-  bool     isContainer() const;
-  QString  name() const;
+  /// Get node attribute table view
+  qMRMLNodeAttributeTableView* tableView();
 
+public slots:
+  /// Set the inspected MRML node
+  void setMRMLNode(vtkMRMLNode* node);
+
+protected:
+  QScopedPointer<qMRMLNodeAttributeTableWidgetPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qMRMLNodeAttributeTableWidget);
+  Q_DISABLE_COPY(qMRMLNodeAttributeTableWidget);
 };
 
 #endif

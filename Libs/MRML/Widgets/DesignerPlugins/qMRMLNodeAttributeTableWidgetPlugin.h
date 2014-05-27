@@ -19,8 +19,25 @@
 
 ==============================================================================*/
 
-#include "qSlicerDataModuleWidgetsPlugin.h"
+#ifndef __qMRMLNodeAttributeTableWidgetPlugin_h
+#define __qMRMLNodeAttributeTableWidgetPlugin_h
 
-#include <QtPlugin>
+#include "qMRMLWidgetsAbstractPlugin.h"
 
-Q_EXPORT_PLUGIN2(customwidgetplugin, qSlicerDataModuleWidgetsPlugin);
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNodeAttributeTableWidgetPlugin
+    : public QObject, public qMRMLWidgetsAbstractPlugin
+{
+  Q_OBJECT
+
+public:
+  qMRMLNodeAttributeTableWidgetPlugin(QObject *_parent = 0);
+
+  QWidget *createWidget(QWidget *_parent);
+  QString  domXml() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
+
+};
+
+#endif

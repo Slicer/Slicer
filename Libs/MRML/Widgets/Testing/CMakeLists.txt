@@ -27,6 +27,8 @@ set(TEST_SOURCES
   qMRMLModelTreeViewTest1.cxx
   qMRMLLabelComboBoxTest.cxx
   qMRMLNavigationViewTest1.cxx
+  qMRMLNodeAttributeTableViewTest.cxx
+  qMRMLNodeAttributeTableWidgetTest.cxx
   qMRMLNodeComboBoxTest1.cxx
   qMRMLNodeComboBoxTest2.cxx
   qMRMLNodeComboBoxTest3.cxx
@@ -115,6 +117,8 @@ QT4_GENERATE_MOCS(
   qMRMLColorModelTest.cxx
   qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLLabelComboBoxTest.cxx
+  qMRMLNodeAttributeTableViewTest.cxx
+  qMRMLNodeAttributeTableWidgetTest.cxx
   qMRMLSceneModelTest.cxx
   qMRMLSliceControllerWidgetTest.cxx
   )
@@ -156,6 +160,8 @@ simple_test( qMRMLModelTest1 )
 simple_test( qMRMLModelTreeViewTest1 )
 simple_test( qMRMLLabelComboBoxTest )
 simple_test( qMRMLNavigationViewTest1 )
+simple_test( qMRMLNodeAttributeTableViewTest )
+simple_test( qMRMLNodeAttributeTableWidgetTest )
 simple_test( qMRMLNodeComboBoxTest1 )
 simple_test( qMRMLNodeComboBoxTest2 )
 SCENE_TEST(  qMRMLNodeComboBoxTest3 diffusionEditor.mrml )

@@ -93,6 +93,10 @@ set(MRMLWidgets_SRCS
   qMRMLModelInfoWidget.h
   qMRMLNavigationView.cxx
   qMRMLNavigationView.h
+  qMRMLNodeAttributeTableView.cxx
+  qMRMLNodeAttributeTableView.h
+  qMRMLNodeAttributeTableWidget.cxx
+  qMRMLNodeAttributeTableWidget.h
   qMRMLNodeComboBox.cxx
   qMRMLNodeComboBox.h
   qMRMLNodeComboBoxDelegate.cxx
@@ -215,6 +219,8 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLMatrixWidget.h
   qMRMLModelInfoWidget.h
   qMRMLNavigationView.h
+  qMRMLNodeAttributeTableView.h
+  qMRMLNodeAttributeTableWidget.h
   qMRMLNodeComboBox.h
   qMRMLNodeComboBoxDelegate.h
   qMRMLNodeComboBoxMenuDelegate.h
@@ -272,6 +278,8 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
   Resources/UI/qMRMLModelInfoWidget.ui
+  Resources/UI/qMRMLNodeAttributeTableView.ui
+  Resources/UI/qMRMLNodeAttributeTableWidget.ui
   Resources/UI/qMRMLROIWidget.ui
   Resources/UI/qMRMLSceneFactoryWidget.ui
   Resources/UI/qMRMLScreenShotDialog.ui
