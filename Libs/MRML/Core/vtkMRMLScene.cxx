@@ -855,7 +855,7 @@ int vtkMRMLScene::Commit(const char* url)
       {
       vtkErrorMacro("Commit: URL is not set");
       this->SetErrorCode(vtkErrorCode::GetErrorCodeFromString("CannotOpenFileError"));
-      return 1;
+      return 0;
       }
     }
 
@@ -887,7 +887,7 @@ int vtkMRMLScene::Commit(const char* url)
 #else
      this->SetErrorCode(vtkErrorCode::GetErrorCodeFromString("CannotOpenFileError"));
 #endif
-      return 1;
+      return 0;
       }
     }
 

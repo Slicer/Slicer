@@ -1091,6 +1091,18 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
     {
     this->LastMRMLSceneFileFormat = this->sceneFileFormat();
     }
+  else
+    {
+    QMessageBox::StandardButton answer =
+      QMessageBox::question(this, tr("Saving scene..."),
+                            tr("Cannot write scene file: %1.\n"
+                               "Do you want to ignore this error and close saving?").arg(file.absoluteFilePath()),
+                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if (answer == QMessageBox::Yes)
+      {
+      res = true;
+      }
+    }
 
   return res;
 }

@@ -471,6 +471,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters);
 
   QStringList nodes;
+  bool writeSuccess=false;
   foreach (qSlicerFileWriter* writer, writers)
     {
     writer->setMRMLScene(d->currentScene());
@@ -479,23 +480,24 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
       continue;
       }
     nodes << writer->writtenNodes();
+    writeSuccess = true;
     break;
+    }
+
+  if (!writeSuccess)
+    {
+    // no appropriate writer was found
+    return false;
     }
 
   if (nodes.count() == 0 &&
       fileType != QString("SceneFile"))
     {
+    // the writer did not report error
+    // but did not report any successfully written nodes either
     return false;
     }
 
-  //if (savedNodes)
-  //{
-  //foreach(const QString& node, nodes)
-  //{
-  //loadedNodes->AddItem(
-  //d->currentScene()->GetNodeByID(node.toLatin1()));
-  //}
-  //}
   return true;
 }
 
