@@ -150,12 +150,38 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin()const
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
 {
-  return QString("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">Create new Subject from scratch</span></p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">Right-click on the top-level item 'Scene' and select 'Create new subject'</span></p>"
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">Rename Subject hierarchy node</span></p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">Right-click on the node and select 'Rename'</span></p>"
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">Deform any branch using a transform (registration result)</span></p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Make sure the transform column is shown using the 'Display transforms' checkbox. To transform a branch, double click on the cell in the transform column of the row in question, and choose a transform.</span></p></body></html>");
+  return QString(
+    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+    "Create new Subject from scratch"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+    "Right-click on the top-level item 'Scene' and select 'Create new subject'"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+    "Rename Subject hierarchy node"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+    "Right-click on the node and select 'Rename'"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+    "Deform any branch using a transform (registration result)"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-size:8pt;\">"
+    "Make sure the transform column is shown using the 'Display transforms' checkbox. "
+    "To transform a branch, double click on the cell in the transform column of the row in question, and choose a transform."
+    "</span>"
+    "</p>");
 }
 
 //---------------------------------------------------------------------------

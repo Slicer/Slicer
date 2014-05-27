@@ -25,7 +25,7 @@
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
-#include "qSlicerSubjectHierarchyModulePluginsExport.h"
+#include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class qSlicerSubjectHierarchyDICOMPluginPrivate;
 class vtkMRMLNode;
@@ -37,8 +37,8 @@ class vtkMRMLSubjectHierarchyNode;
 //   https://www.assembla.com/spaces/slicerrt/tickets/210-python-wrapping-error-when-starting-up-slicer-with-slicerrt
 //BTX
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
-class Q_SLICER_SUBJECTHIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDICOMPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyDICOMPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT

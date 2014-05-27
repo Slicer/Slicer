@@ -133,7 +133,8 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
     {
     if (pluginToRegister->name().compare(currentPlugin->name()) == 0)
       {
-      qWarning() << "qSlicerSubjectHierarchyPluginHandler::RegisterPlugin: SubjectHierarchy plugin " << pluginToRegister->name() << " is already registered";
+      qWarning() << "qSlicerSubjectHierarchyPluginHandler::RegisterPlugin: "
+                    "SubjectHierarchy plugin " << pluginToRegister->name() << " is already registered";
       return false;
       }
     }
@@ -186,7 +187,8 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::plu
 }
 
 //---------------------------------------------------------------------------
-QList<qSlicerSubjectHierarchyAbstractPlugin*> qSlicerSubjectHierarchyPluginHandler::pluginsForAddingToSubjectHierarchyForNode(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)
+QList<qSlicerSubjectHierarchyAbstractPlugin*> qSlicerSubjectHierarchyPluginHandler::pluginsForAddingToSubjectHierarchyForNode(
+  vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)
 {
   QList<qSlicerSubjectHierarchyAbstractPlugin*> mostSuitablePlugins;
   double bestConfidence = 0.0;
@@ -213,7 +215,8 @@ QList<qSlicerSubjectHierarchyAbstractPlugin*> qSlicerSubjectHierarchyPluginHandl
 }
 
 //---------------------------------------------------------------------------
-QList<qSlicerSubjectHierarchyAbstractPlugin*> qSlicerSubjectHierarchyPluginHandler::pluginsForReparentingInsideSubjectHierarchyForNode(vtkMRMLSubjectHierarchyNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/) //TODO is NULL possible?
+QList<qSlicerSubjectHierarchyAbstractPlugin*> qSlicerSubjectHierarchyPluginHandler::pluginsForReparentingInsideSubjectHierarchyForNode(
+  vtkMRMLSubjectHierarchyNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/) //TODO is NULL possible?
 {
   QList<qSlicerSubjectHierarchyAbstractPlugin*> mostSuitablePlugins;
   double bestConfidence = 0.0;
@@ -269,7 +272,8 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::fin
     {
     // Let the user choose a plugin if more than one returned the same non-zero confidence value
     vtkMRMLNode* associatedNode = (node->GetAssociatedNode() ? node->GetAssociatedNode() : node);
-    QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin.\n\nSelect plugin to own node named\n'%1'\n(type %2):").arg(associatedNode->GetName()).arg(associatedNode->GetNodeTagName());
+    QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin.\n\n"
+                                    "Select plugin to own node named\n'%1'\n(type %2):").arg(associatedNode->GetName()).arg(associatedNode->GetNodeTagName());
     ownerPlugin = this->selectPluginFromDialog(textToDisplay, mostSuitablePlugins);
     }
   else if (mostSuitablePlugins.size() == 1)
@@ -308,7 +312,8 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::get
 }
 
 //---------------------------------------------------------------------------
-qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::selectPluginFromDialog(QString textToDisplay, QList<qSlicerSubjectHierarchyAbstractPlugin*> candidatePlugins)
+qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::selectPluginFromDialog(
+  QString textToDisplay, QList<qSlicerSubjectHierarchyAbstractPlugin*> candidatePlugins)
 {
   if (candidatePlugins.empty())
     {

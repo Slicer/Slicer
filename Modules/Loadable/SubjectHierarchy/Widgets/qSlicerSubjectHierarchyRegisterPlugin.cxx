@@ -117,7 +117,8 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyRegisterPlugin);
 
   this->RegisterThisAction = new QAction("Register this...",q);
-  this->RegisterThisAction->setToolTip(tr("Select volume as moving image for registration. Second volume can be selected from context menu after the first one has been set."));
+  this->RegisterThisAction->setToolTip(tr("Select volume as moving image for registration. "
+                                          "Second volume can be selected from context menu after the first one has been set."));
   QObject::connect(this->RegisterThisAction, SIGNAL(triggered()), q, SLOT(registerCurrentNodeTo()));
 
   this->RegisterToAction = new QAction("Register * to this using...",q);
@@ -227,7 +228,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
   vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerImageBasedRigid: Unable to get input volume nodes from the selected subject hierarchy nodes!";
+    qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerImageBasedRigid: "
+                   "Unable to get input volume nodes from the selected subject hierarchy nodes!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -293,7 +295,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
   vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerImageBasedBSpline: Unable to get input volume nodes from the selected subject hierarchy nodes!";
+    qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerImageBasedBSpline: "
+                   "Unable to get input volume nodes from the selected subject hierarchy nodes!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -359,7 +362,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
   vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerInteractiveLandmark: Unable to get input volume nodes from the selected subject hierarchy nodes!";
+    qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerInteractiveLandmark: "
+                   "Unable to get input volume nodes from the selected subject hierarchy nodes!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -398,7 +402,8 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
       }
     else
       {
-      qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerInteractiveLandmark: Failed to get volume selector dialog for landmark registration module!";
+      qCritical() << "qSlicerSubjectHierarchyContourSetsPlugin::registerInteractiveLandmark: "
+                     "Failed to get volume selector dialog for landmark registration module!";
       }
     }
 

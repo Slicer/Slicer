@@ -22,8 +22,8 @@
 #ifndef __qSlicerSubjectHierarchyPluginHandler_h
 #define __qSlicerSubjectHierarchyPluginHandler_h
 
-// Subject Hierarchy includes
-#include "qSlicerSubjectHierarchyModulePluginsExport.h"
+// SubjectHierarchy includes
+#include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 // Qt includes
 #include <QObject>
@@ -39,10 +39,11 @@ class qSlicerSubjectHierarchyDefaultPlugin;
 class qSlicerSubjectHierarchyPluginHandlerCleanup;
 
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
+///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
 /// \class qSlicerSubjectHierarchyPluginHandler
 /// \brief Singleton class managing Subject Hierarchy plugins
-class Q_SLICER_SUBJECTHIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyPluginHandler : public QObject
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginHandler : public QObject
 {
   Q_OBJECT
 
@@ -97,7 +98,8 @@ public:
   /// \param node Node to be reparented in the hierarchy
   /// \param parent Prospective parent of the node to reparent.
   /// \return The most suitable plugins if found, empty list otherwise
-  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingInsideSubjectHierarchyForNode(vtkMRMLSubjectHierarchyNode* node, vtkMRMLSubjectHierarchyNode* parent);
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingInsideSubjectHierarchyForNode(vtkMRMLSubjectHierarchyNode* node,
+                                                                                                   vtkMRMLSubjectHierarchyNode* parent);
 
   /// Find plugin that is most suitable to own a subject hierarchy node.
   /// This method does not set it to the node!

@@ -19,34 +19,46 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyDefaultPlugin_h
-#define __qSlicerSubjectHierarchyDefaultPlugin_h
-
-// Qt includes
-#include <QObject>
+#ifndef __qSlicerSubjectHierarchyChartsPlugin_h
+#define __qSlicerSubjectHierarchyChartsPlugin_h
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
-class qSlicerSubjectHierarchyDefaultPluginPrivate;
+#include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
+
+class qSlicerSubjectHierarchyChartsPluginPrivate;
 class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
-class QIcon;
+class vtkMRMLChartViewNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
-/// \brief Default Subject Hierarchy plugin to exercise features of the abstract plugin.
-///   This plugin must not be registered as this is the fall back plugin called when there is none found
-class Q_SLICER_SUBJECTHIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyDefaultPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+// Due to some reason the Python wrapping of this class fails, therefore
+// put everything between BTX/ETX to exclude from wrapping.
+// TODO investigate why the wrapping fails:
+//   https://www.assembla.com/spaces/slicerrt/tickets/210-python-wrapping-error-when-starting-up-slicer-with-slicerrt
+//BTX
+
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyChartsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyDefaultPlugin(QObject* parent = NULL);
-  virtual ~qSlicerSubjectHierarchyDefaultPlugin();
+  qSlicerSubjectHierarchyChartsPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyChartsPlugin();
 
 public:
+  /// Determines if a non subject hierarchy node can be placed in the hierarchy, and gets a confidence
+  ///   value for a certain MRML node (usually the type and possibly attributes are checked)
+  /// \param node Node to be added to the hierarchy
+  /// \param parent Prospective parent of the node to add.
+  ///   Default value is NULL. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by type or identifier attribute)
+  virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parent=NULL)const;
+
   /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
   /// the highest confidence number will "own" the node in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)
@@ -59,9 +71,6 @@ public:
   ///   Each plugin should provide only one role.
   Q_INVOKABLE virtual const QString roleForPlugin()const;
 
-  /// Get help text for plugin to be added in subject hierarchy module widget help box
-  virtual const QString helpText()const;
-
   /// Set icon of a owned subject hierarchy node
   /// \return Flag indicating whether setting an icon was successful
   virtual bool setIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item);
@@ -72,30 +81,25 @@ public:
   /// Open module belonging to node and set inputs in opened module
   virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
 
-  /// Get node context menu item actions to add to tree view
-  /// Separate method is needed for the scene, as its actions are set to the
-  /// tree by a different method \sa sceneContextMenuActions
-  Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
+  /// Set display visibility of a owned subject hierarchy node
+  virtual void setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible);
 
-  /// Get scene context menu item actions to add to tree view
-  /// Separate method is needed for the scene, as its actions are set to the
-  /// tree by a different method \sa nodeContextMenuActions
-  virtual QList<QAction*> sceneContextMenuActions()const;
-
-  /// Show context menu actions valid for  given subject hierarchy node.
-  /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
-  virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node);
-
-public:
-  /// Set default visibility icons owned by the scene model so that the default plugin can set them
-  void setDefaultVisibilityIcons(QIcon visibleIcon, QIcon hiddenIcon, QIcon partiallyVisibleIcon);
+  /// Get display visibility of a owned subject hierarchy node
+  /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
+  virtual int getDisplayVisibility(vtkMRMLSubjectHierarchyNode* node)const;
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyDefaultPluginPrivate> d_ptr;
+  /// Return the chart view node object from the layout
+  vtkMRMLChartViewNode* getChartViewNode()const;
+
+protected:
+  QScopedPointer<qSlicerSubjectHierarchyChartsPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyDefaultPlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyDefaultPlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyChartsPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyChartsPlugin);
 };
+
+//ETX
 
 #endif

@@ -184,8 +184,18 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDICOMPlugin::helpText()const
 {
-  return QString("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">Create new generic Subject hierarchy node from scratch</span></p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">Right-click on an existing node and select 'Create generic child node'. The level of the child node will be one under the parent node if available (e.g. 'Subject' -&gt; 'Study', 'Subseries' -&gt; 'Subseries').</span></p>");
+  return QString(
+    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+    "Create new generic Subject hierarchy node from scratch"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+    "Right-click on an existing node and select 'Create generic child node'. "
+    "The level of the child node will be one under the parent node if available (e.g. 'Subject' -&gt; 'Study', 'Subseries' -&gt; 'Subseries')."
+    "</span>"
+    "</p>");
 }
 
 //---------------------------------------------------------------------------

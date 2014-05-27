@@ -7,7 +7,6 @@ string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 #-----------------------------------------------------------------------------
 add_subdirectory(MRML)
 add_subdirectory(Logic)
-add_subdirectory(Plugins)
 add_subdirectory(Widgets)
 
 #-----------------------------------------------------------------------------
@@ -15,7 +14,7 @@ set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 set(MODULE_INCLUDE_DIRECTORIES
   ${Slicer_ModuleWidgets_INCLUDE_DIRS}
-  ${qSlicerSubjectHierarchyModulePlugins_INCLUDE_DIRS}
+  ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   )
 
   set(MODULE_SRCS
@@ -38,7 +37,6 @@ set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicer${MODULE_NAME}ModuleWidgets
-  qSlicer${MODULE_NAME}ModulePlugins
   )
 
 set(MODULE_RESOURCES

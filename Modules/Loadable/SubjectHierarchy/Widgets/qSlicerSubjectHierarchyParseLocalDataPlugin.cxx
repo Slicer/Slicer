@@ -200,7 +200,8 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocal
     // If first component matches through all file paths, remove it
     if (firstComponentMatch)
       {
-      qDebug() << "qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocalDirectories: First component (" << firstComponent << ") matches in all paths, removing";
+      qDebug() << "qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocalDirectories: "
+                  "First component (" << firstComponent << ") matches in all paths, removing";
       for (int i=0; i<loadedFilePaths.count(); ++i)
         {
         QStringList currentFilePath = loadedFilePaths[i];

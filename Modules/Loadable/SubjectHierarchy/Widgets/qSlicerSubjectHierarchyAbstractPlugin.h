@@ -27,8 +27,8 @@
 #include <QMap>
 #include <QStringList>
 
-// SubjectHierarchy Plugins includes
-#include "qSlicerSubjectHierarchyModulePluginsExport.h"
+// SubjectHierarchy includes
+#include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class vtkObject;
 class vtkMRMLNode;
@@ -37,7 +37,8 @@ class QStandardItem;
 class QAction;
 class qSlicerAbstractModuleWidget;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
+///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
 /// \brief Abstract plugin for handling Subject Hierarchy nodes
 ///
 /// This class provides an interface and some default implementations for the common operations on
@@ -56,7 +57,7 @@ class qSlicerAbstractModuleWidget;
 /// - Plugins providing roles: qSubjectHierarchy[Role name, noun]Plugin
 /// - Plugins providing functions: qSubjectHierarchy[Function name, verb]Plugin
 ///
-class Q_SLICER_SUBJECTHIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyAbstractPlugin : public QObject
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyAbstractPlugin : public QObject
 {
   Q_OBJECT
 

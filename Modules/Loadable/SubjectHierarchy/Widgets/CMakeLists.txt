@@ -7,7 +7,6 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSubjectHierarchyModuleMRML_INCLUDE_DIRS}
   ${vtkSlicerSubjectHierarchyModuleLogic_INCLUDE_DIRS}
-  ${qSlicerSubjectHierarchyModulePlugins_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -27,6 +26,22 @@ set(${KIT}_SRCS
   qMRMLSortFilterPotentialSubjectHierarchyProxyModel.h
   qMRMLTransformItemDelegate.cxx
   qMRMLTransformItemDelegate.h
+  qSlicerSubjectHierarchyAbstractPlugin.cxx
+  qSlicerSubjectHierarchyAbstractPlugin.h
+  qSlicerSubjectHierarchyPluginHandler.cxx
+  qSlicerSubjectHierarchyPluginHandler.h
+  qSlicerSubjectHierarchyDefaultPlugin.cxx
+  qSlicerSubjectHierarchyDefaultPlugin.h
+  qSlicerSubjectHierarchyCloneNodePlugin.cxx
+  qSlicerSubjectHierarchyCloneNodePlugin.h
+  qSlicerSubjectHierarchyDICOMPlugin.cxx
+  qSlicerSubjectHierarchyDICOMPlugin.h
+  qSlicerSubjectHierarchyChartsPlugin.cxx
+  qSlicerSubjectHierarchyChartsPlugin.h
+  qSlicerSubjectHierarchyParseLocalDataPlugin.cxx
+  qSlicerSubjectHierarchyParseLocalDataPlugin.h
+  qSlicerSubjectHierarchyRegisterPlugin.cxx
+  qSlicerSubjectHierarchyRegisterPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -37,20 +52,37 @@ set(${KIT}_MOC_SRCS
   qMRMLScenePotentialSubjectHierarchyModel.h
   qMRMLSortFilterPotentialSubjectHierarchyProxyModel.h
   qMRMLTransformItemDelegate.h
+  qSlicerSubjectHierarchyAbstractPlugin.h
+  qSlicerSubjectHierarchyPluginHandler.h
+  qSlicerSubjectHierarchyDefaultPlugin.h
+  qSlicerSubjectHierarchyCloneNodePlugin.h
+  qSlicerSubjectHierarchyDICOMPlugin.h
+  qSlicerSubjectHierarchyChartsPlugin.h
+  qSlicerSubjectHierarchyParseLocalDataPlugin.h
+  qSlicerSubjectHierarchyRegisterPlugin.h
   )
 
 set(${KIT}_UI_SRCS
   )
 
 set(${KIT}_RESOURCES
-  # Resources/${KIT}.qrc
+  Resources/${KIT}.qrc
   )
+
+#-----------------------------------------------------------------------------
+set_source_files_properties( qSlicerSubjectHierarchyAbstractPlugin.h WRAP_EXCLUDE )
+
+SET (${KIT}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
 
 set(${KIT}_TARGET_LIBRARIES
   qMRMLWidgets
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
-  qSlicer${MODULE_NAME}ModulePlugins
+  MRMLCore
+  MRMLLogic
+  MRMLCLI
+  qMRMLWidgets
+  ${QT_LIBRARIES}
   )
 
 #-----------------------------------------------------------------------------
