@@ -208,7 +208,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
 
     markupsShNode = slicer.util.getNode(self.sampleMarkupName + '_SubjectHierarchy')
     self.assertTrue( markupsShNode != None )
-    markupsNode = markupsShNode.GetAssociatedDataNode()
+    markupsNode = markupsShNode.GetAssociatedNode()
     self.assertTrue( markupsNode != None )
 
     # Add storage node for markups node to test cloning those
@@ -217,7 +217,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
     markupsNode.SetAndObserveStorageNodeID(markupsStorageNode.GetID())
 
     # Get clone node plugin
-    import qSlicerSubjectHierarchyModulePluginsPythonQt
     import qSlicerSubjectHierarchyModuleWidgetsPythonQt
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
     self.assertTrue( subjectHierarchyWidget != None )
@@ -237,7 +236,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
 
     clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + ' Copy_SubjectHierarchy')
     self.assertTrue( clonedMarkupShNode != None )
-    clonedMarkupNode = clonedMarkupShNode.GetAssociatedDataNode()
+    clonedMarkupNode = clonedMarkupShNode.GetAssociatedNode()
     self.assertTrue( clonedMarkupNode != None )
     self.assertTrue( clonedMarkupNode.GetName != self.sampleMarkupName + ' Copy' )
     self.assertTrue( clonedMarkupNode.GetDisplayNode() != None )
