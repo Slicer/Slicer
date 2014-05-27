@@ -271,5 +271,6 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForNode(vtkMRMLSu
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
 {
+  Q_UNUSED(node);
   //TODO: Show DICOM tag editor when implemented
 }

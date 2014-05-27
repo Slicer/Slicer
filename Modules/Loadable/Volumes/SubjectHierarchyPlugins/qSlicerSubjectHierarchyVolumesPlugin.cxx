@@ -134,17 +134,17 @@ qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin()
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
 {
+  Q_UNUSED(parent);
   if (!node)
-  {
+    {
     qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
     return 0.0;
-  }
+    }
   else if (node->IsA("vtkMRMLScalarVolumeNode"))
-  {
+    {
     // Node is a model
     return 0.5;
-  }
-
+    }
   return 0.0;
 }
 

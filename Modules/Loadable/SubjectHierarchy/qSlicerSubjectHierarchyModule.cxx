@@ -176,7 +176,7 @@ void qSlicerSubjectHierarchyModule::onNodeAdded(vtkObject* sceneObject, vtkObjec
     // Find plugin for current subject hierarchy node and "claim" it
     if (!scene->IsImporting())
       {
-      qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyNode(subjectHierarchyNode);
+      qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyNode(subjectHierarchyNode);
       }
 
     // See if owner plugin has to be changed when a note is modified

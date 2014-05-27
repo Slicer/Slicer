@@ -102,8 +102,8 @@ qSlicerSubjectHierarchyRegisterPluginPrivate::~qSlicerSubjectHierarchyRegisterPl
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyRegisterPlugin::qSlicerSubjectHierarchyRegisterPlugin(QObject* parent)
  : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyRegisterPluginPrivate(*this) )
  , m_RegisterFromNode(NULL)
+ , d_ptr( new qSlicerSubjectHierarchyRegisterPluginPrivate(*this) )
 {
   this->m_Name = QString("Register");
 

@@ -99,6 +99,7 @@ qSlicerSubjectHierarchyModelsPlugin::~qSlicerSubjectHierarchyModelsPlugin()
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
 {
+  Q_UNUSED(parent);
   if (!node)
     {
     qCritical() << "qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
@@ -109,7 +110,6 @@ double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(vtkMRML
     // Node is a model
     return 0.5;
     }
-
   return 0.0;
 }
 

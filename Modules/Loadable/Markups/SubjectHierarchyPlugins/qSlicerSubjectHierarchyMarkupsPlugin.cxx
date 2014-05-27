@@ -101,6 +101,7 @@ qSlicerSubjectHierarchyMarkupsPlugin::~qSlicerSubjectHierarchyMarkupsPlugin()
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
 {
+  Q_UNUSED(parent);
   if (!node)
     {
     qCritical() << "qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
@@ -111,7 +112,6 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(vtkMRM
     // Node is a markup fiducial
     return 0.5;
     }
-
   return 0.0;
 }
 

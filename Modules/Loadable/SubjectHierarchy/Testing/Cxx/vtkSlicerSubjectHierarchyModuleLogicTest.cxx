@@ -467,7 +467,7 @@ namespace
 
     const char* attributeValueStudyLevel =
       volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
-    if (!attributeValueAnyLevel || strcmp(attributeValueAnyLevel, STUDY_ATTRIBUTE_VALUE))
+    if (!attributeValueStudyLevel || strcmp(attributeValueStudyLevel, STUDY_ATTRIBUTE_VALUE))
       {
       std::cout << "Failed to find attribute from ancestor in study level" << std::endl;
       return false;
@@ -555,7 +555,7 @@ namespace
       scene, NULL, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES, "Series");
     seriesShNode->AddUID(UID_NAME, seriesUid);
 
-    vtkMRMLSubjectHierarchyNode* insertedSeriesNode = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
+    vtkMRMLSubjectHierarchyNode* insertedSeriesNode =  vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
       scene, SUBJECT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
 
     // Check if series was inserted under the desired study
@@ -569,6 +569,11 @@ namespace
     if (seriesShNode->GetParentNode() != studyShNode)
       {
       std::cout << "DICOM series node not correctly inserted under study node" << std::endl;
+      return false;
+      }
+    if (insertedSeriesNode != studyShNode)
+      {
+      std::cout << "Insert study does not match retrieved study" << std::endl;
       return false;
       }
 

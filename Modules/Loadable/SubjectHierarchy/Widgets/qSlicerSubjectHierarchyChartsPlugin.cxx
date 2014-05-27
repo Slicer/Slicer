@@ -109,6 +109,7 @@ qSlicerSubjectHierarchyChartsPlugin::~qSlicerSubjectHierarchyChartsPlugin()
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyChartsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent/*=NULL*/)const
 {
+  Q_UNUSED(parent);
   if (!node)
     {
     qCritical() << "qSlicerSubjectHierarchyChartsPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
@@ -312,6 +313,7 @@ int qSlicerSubjectHierarchyChartsPlugin::getDisplayVisibility(vtkMRMLSubjectHier
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyChartsPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
 {
+  Q_UNUSED(node);
   // No module to edit Charts, just switch layout
 }
 
