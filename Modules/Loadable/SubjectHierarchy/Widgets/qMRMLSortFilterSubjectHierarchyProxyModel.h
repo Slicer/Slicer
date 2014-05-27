@@ -22,7 +22,7 @@
 #ifndef __qMRMLSortFilterSubjectHierarchyProxyModel_h
 #define __qMRMLSortFilterSubjectHierarchyProxyModel_h
 
-// SlicerRt includes
+// SubjectHierarchy Widgets includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 // MRMLWidgets includes

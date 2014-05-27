@@ -27,7 +27,7 @@
 #include <QMap>
 #include <QStringList>
 
-// SlicerRt includes
+// SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyModulePluginsExport.h"
 
 class vtkObject;

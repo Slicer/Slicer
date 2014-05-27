@@ -22,7 +22,7 @@
 #ifndef __qMRMLScenePotentialSubjectHierarchyModel_h
 #define __qMRMLScenePotentialSubjectHierarchyModel_h
 
-// SlicerRt includes
+// SubjectHierarchy Widgets includes
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 // MRMLWidgets includes

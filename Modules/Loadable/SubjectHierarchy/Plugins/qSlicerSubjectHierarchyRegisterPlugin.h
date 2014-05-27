@@ -22,7 +22,7 @@
 #ifndef __qSlicerSubjectHierarchyRegisterPlugin_h
 #define __qSlicerSubjectHierarchyRegisterPlugin_h
 
-// SlicerRt includes
+// SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 #include "qSlicerSubjectHierarchyModulePluginsExport.h"
