@@ -499,8 +499,13 @@ class ExtensionWizard(object):
       # Try to add compare URL to pull request message, if applicable
       if update and oldRef is not None:
         extensionRepo = GithubHelper.getRepo(gh, url=xd.scmurl)
+
         if extensionRepo is not None:
           logging.info("building compare URL for update")
+          logging.debug("  repository: %s", extensionRepo.url)
+          logging.debug("     old SHA: %s", oldRef)
+          logging.debug("     new SHA: %s", xd.scmrevision)
+
           try:
             c = extensionRepo.compare(oldRef, xd.scmrevision)
 
@@ -514,6 +519,14 @@ class ExtensionWizard(object):
         msg.append("")
         msg.append("THIS PULL REQUEST WAS MACHINE GENERATED"
                    " FOR TESTING PURPOSES. DO NOT MERGE.")
+
+      if args.dryRun:
+        if pullRequest is not None:
+          logging.info("updating pull request %s", pullRequest.html_url)
+
+        logging.info("prepared pull request message:\n%s", "\n".join(msg))
+
+        return
 
       # Create or update the pull request
       if pullRequest is None:
@@ -547,6 +560,8 @@ class ExtensionWizard(object):
 
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--test", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--dryRun", action="store_true", help=argparse.SUPPRESS)
+
     parser.add_argument("--create", metavar="<TYPE:>NAME",
                         help="create TYPE extension NAME"
                              " under the destination directory;"
