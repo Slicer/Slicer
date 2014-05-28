@@ -1129,6 +1129,12 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     {
     if (!dependencyName.isEmpty() && dependencyName != "NA")
       {
+      if (this->isExtensionInstalled(dependencyName))
+        {
+        // Dependency is already installed
+        continue;
+        }
+
       qMidasAPI::ParametersType parameters;
       parameters["productname"] = dependencyName;
       parameters["slicer_revision"] = this->slicerRevision();
