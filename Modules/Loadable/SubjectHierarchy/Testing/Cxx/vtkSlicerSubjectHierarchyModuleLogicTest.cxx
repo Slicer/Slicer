@@ -429,19 +429,27 @@ namespace
     vtkNew<vtkCollection> childNodes;
 
     subjectShNode->GetAssociatedChildrenNodes(childNodes.GetPointer());
-    childNodes->InitTraversal();
-    if (childNodes->GetNumberOfItems() != 5)
+    int expectedChildCount = 5;
+    int currentChildCount = childNodes->GetNumberOfItems();
+    if (currentChildCount != expectedChildCount)
       {
-      std::cout << "Failed to find associated children nodes" << std::endl;
+      std::cout << "Line " << __LINE__ << " - Failed to find associated children nodes:\n"
+                << "\tcurrent count: " << currentChildCount << "\n"
+                << "\texpected count: " << expectedChildCount
+                << std::endl;
       return false;
       }
 
     childNodes->RemoveAllItems();
     subjectShNode->GetAssociatedChildrenNodes(childNodes.GetPointer(), "vtkMRMLScalarVolumeNode");
-    childNodes->InitTraversal();
-    if (childNodes->GetNumberOfItems() != 2)
+    expectedChildCount = 2;
+    currentChildCount = childNodes->GetNumberOfItems();
+    if (currentChildCount != expectedChildCount)
       {
-      std::cout << "Failed to find associated children volume nodes" << std::endl;
+      std::cout << "Line " << __LINE__ << " - Failed to find associated children volume nodes:\n"
+                << "\tcurrent count: " << currentChildCount << "\n"
+                << "\texpected count: " << expectedChildCount
+                << std::endl;
       return false;
       }
 
