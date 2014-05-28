@@ -800,9 +800,16 @@ namespace
 
     // Transform model21 using transform1
     model21ShNode->TransformBranch(transformNode1.GetPointer());
-    if (model21Node->GetParentTransformNode() != transformNode1.GetPointer())
+    vtkMRMLTransformNode * currentTransformNode = model21Node->GetParentTransformNode();
+    vtkMRMLTransformNode * expectedTransformNode = transformNode1.GetPointer();
+    if (currentTransformNode != expectedTransformNode)
       {
-      std::cout << "Failed to apply transform1 on model1" << std::endl;
+      std::cout << "Line " << __LINE__ << " - Failed to apply transform1 on model1:\n"
+                << "\tcurrentTransformNode: "
+                << (currentTransformNode ? currentTransformNode->GetID() : "<null>") << "\n"
+                << "\texpectedTransformNode: "
+                << (expectedTransformNode ? expectedTransformNode->GetID() : "<null>")
+                << std::endl;
       return false;
       }
     if (!study2ShNode->IsAnyNodeInBranchTransformed())
@@ -830,7 +837,9 @@ namespace
     model21PolyData->GetPoint(0, model21PointsArray);
     if (model21PointsArray[0] != 100.0 || model21PointsArray[1] != 0.0 || model21PointsArray[2] != 0.0)
       {
-      std::cout << "Transform1 was not hardened on model21 when applying transform2 on study2" << std::endl;
+      std::cout << transformNode2->GetName()
+                << " was not hardened on model21 when applying "
+                << transformNode2->GetName() << " on " << study2ShNode->GetName() << std::endl;
       return false;
       }
 
