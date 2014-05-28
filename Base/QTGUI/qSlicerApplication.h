@@ -44,6 +44,7 @@ class qSlicerPythonManager;
 class qSlicerLayoutManager;
 class qSlicerWidget;
 
+class ctkErrorLogModel;
 #ifdef Slicer_USE_QtTesting
 class ctkQtTestingUtility;
 #endif
@@ -76,6 +77,8 @@ public:
   ///
   virtual bool notify(QObject * receiver, QEvent * event);
 
+  /// Get errorLogModel
+  Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
 
   /// Get commandOptions
   Q_INVOKABLE qSlicerCommandOptions* commandOptions();

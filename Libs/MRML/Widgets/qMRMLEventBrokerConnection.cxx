@@ -41,10 +41,7 @@ qMRMLEventBrokerConnection::qMRMLEventBrokerConnection(QObject* parent)
 //------------------------------------------------------------------------------
 qMRMLEventBrokerConnection::~qMRMLEventBrokerConnection()
 {
-  if (this->deletionObserved())
-    {
-    this->disconnect();
-    }
+  this->disconnect();
 }
 
 //-----------------------------------------------------------------------------

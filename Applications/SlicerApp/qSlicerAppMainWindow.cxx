@@ -420,7 +420,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   this->ErrorLogWidget = new ctkErrorLogWidget;
   this->ErrorLogWidget->setErrorLogModel(
-    qSlicerCoreApplication::application()->errorLogModel());
+    qSlicerApplication::application()->errorLogModel());
 }
 
 //-----------------------------------------------------------------------------
@@ -589,7 +589,7 @@ void qSlicerAppMainWindowPrivate::setupStatusBar()
   this->ErrorLogToolButton->setDefaultAction(this->WindowErrorLogAction);
   q->statusBar()->addPermanentWidget(this->ErrorLogToolButton);
 
-  QObject::connect(qSlicerCoreApplication::application()->errorLogModel(),
+  QObject::connect(qSlicerApplication::application()->errorLogModel(),
                    SIGNAL(entryAdded(ctkErrorLogLevel::LogLevel)),
                    q, SLOT(onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel)));
 }

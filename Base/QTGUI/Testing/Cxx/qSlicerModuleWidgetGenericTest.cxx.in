@@ -61,7 +61,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 {
   bool res = true;
   qSlicerApplication app(argc, argv);
-  app.errorLogModel()->setTerminalOutputs(ctkErrorLogModel::All);
+  app.errorLogModel()->setTerminalOutputs(ctkErrorLogTerminalOutput::All);
 
   qSlicer@MODULENAME@Module module(0);
   module.setName("@MODULENAME@");

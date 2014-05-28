@@ -31,13 +31,6 @@
 #include <QSettings>
 #include <QTranslator>
 
-// CTK includes
-#include <ctkErrorLogFDMessageHandler.h>
-#include <ctkErrorLogQtMessageHandler.h>
-#include <ctkErrorLogStreamMessageHandler.h>
-#include <ctkITKErrorLogMessageHandler.h>
-#include <ctkVTKErrorLogMessageHandler.h>
-
 // For:
 //  - Slicer_QTLOADABLEMODULES_LIB_DIR
 //  - Slicer_CLIMODULES_BIN_DIR
@@ -211,21 +204,6 @@ void qSlicerCoreApplicationPrivate::init()
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
   this->setPythonEnvironmentVariables();
   this->setTclEnvironmentVariables();
-
-  // Instantiate ErrorLogModel
-  this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
-  this->ErrorLogModel->setLogEntryGrouping(true);
-  this->ErrorLogModel->setTerminalOutputs(
-        this->CoreCommandOptions->disableTerminalOutputs() ? ctkErrorLogModel::None : ctkErrorLogModel::All);
-#if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
-#else
-  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
-#endif
-  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
-  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
-  this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
-  this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
-  this->ErrorLogModel->setAllMsgHandlerEnabled(true);
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
@@ -1260,13 +1238,6 @@ qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CoreCommandOptions.data();
-}
-
-//-----------------------------------------------------------------------------
-ctkErrorLogModel* qSlicerCoreApplication::errorLogModel()const
-{
-  Q_D(const qSlicerCoreApplication);
-  return d->ErrorLogModel.data();
 }
 
 //-----------------------------------------------------------------------------

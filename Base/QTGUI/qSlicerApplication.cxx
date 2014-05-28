@@ -28,6 +28,10 @@
 // CTK includes
 #include <ctkColorDialog.h>
 #include <ctkErrorLogModel.h>
+#include <ctkErrorLogFDMessageHandler.h>
+#include <ctkErrorLogQtMessageHandler.h>
+#include <ctkErrorLogStreamMessageHandler.h>
+#include <ctkITKErrorLogMessageHandler.h>
 #include <ctkMessageBox.h>
 #include <ctkSettings.h>
 #ifdef Slicer_USE_QtTesting
@@ -36,6 +40,7 @@
 #include <ctkXMLEventSource.h>
 #endif
 #include <ctkToolTipTrapper.h>
+#include <ctkVTKErrorLogMessageHandler.h>
 
 // QTGUI includes
 #include "qSlicerAbstractModule.h"
@@ -105,6 +110,9 @@ public:
 
   virtual QSettings* newSettings();
 
+  /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
+  QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
+
   qSlicerLayoutManager*   LayoutManager;
   ctkToolTipTrapper*      ToolTipTrapper;
   ctkSettingsDialog*      SettingsDialog;
@@ -152,6 +160,22 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
+
+  // Instantiate ErrorLogModel
+  this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
+  this->ErrorLogModel->setLogEntryGrouping(true);
+  this->ErrorLogModel->setTerminalOutputs(
+        this->CoreCommandOptions->disableTerminalOutputs() ?
+          ctkErrorLogTerminalOutput::None : ctkErrorLogTerminalOutput::All);
+#if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
+#else
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
+#endif
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
+  this->ErrorLogModel->setAllMsgHandlerEnabled(true);
 
   ctkVTKConnectionFactory::setInstance(new qMRMLConnectionFactory);
 
@@ -315,6 +339,12 @@ bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
   return false;
 }
 
+//-----------------------------------------------------------------------------
+ctkErrorLogModel* qSlicerApplication::errorLogModel()const
+{
+  Q_D(const qSlicerApplication);
+  return d->ErrorLogModel.data();
+}
 
 //-----------------------------------------------------------------------------
 qSlicerCommandOptions* qSlicerApplication::commandOptions()

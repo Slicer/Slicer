@@ -59,7 +59,7 @@
 int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
-  app.errorLogModel()->setTerminalOutputs(ctkErrorLogModel::All);
+  app.errorLogModel()->setTerminalOutputs(ctkErrorLogTerminalOutput::All);
 
   qSlicer@MODULENAME@Module * module = new qSlicer@MODULENAME@Module;
   module->setName("@MODULENAME@");

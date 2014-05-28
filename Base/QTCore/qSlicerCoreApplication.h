@@ -33,7 +33,6 @@
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 #include "qSlicerBaseQTCoreExport.h"
 
-class ctkErrorLogModel;
 #ifdef Slicer_BUILD_DICOM_SUPPORT
 class ctkDICOMDatabase;
 #endif
@@ -224,9 +223,6 @@ public:
   /// Set coreCommandOptions
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
-
-  /// Get errorLogModel
-  Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
 
   /// Get slicer application user settings
   /// \note It will also instantiate a QSettings object if required.

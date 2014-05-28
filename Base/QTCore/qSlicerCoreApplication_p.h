@@ -142,9 +142,6 @@ public:
   /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
   QSharedPointer<qSlicerCoreCommandOptions>   CoreCommandOptions;
 
-  /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
-  QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
-
   /// ReturnCode flag
   int                                         ReturnCode;
 

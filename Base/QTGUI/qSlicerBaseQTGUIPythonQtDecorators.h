@@ -16,6 +16,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+
 #include "vtkSlicerConfigure.h" // For Slicer_USE_QtTesting
 
 // CTK includes
@@ -54,6 +57,8 @@ public:
 #ifdef Slicer_USE_QtTesting
     PythonQt::self()->registerClass(&ctkQtTestingUtility::staticMetaObject);
 #endif
+    PythonQt::self()->registerClass(&ctkErrorLogModel::staticMetaObject);
+    PythonQt::self()->registerClass(&ctkErrorLogTerminalOutput::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 
