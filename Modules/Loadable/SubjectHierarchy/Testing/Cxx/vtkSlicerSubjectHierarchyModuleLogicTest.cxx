@@ -47,7 +47,7 @@
 
 namespace
 {
-  void PopulateScene(vtkMRMLScene* scene);
+  bool PopulateScene(vtkMRMLScene* scene);
 
   bool TestExpand();
   bool TestNodeAccess();
@@ -106,7 +106,7 @@ namespace
   //         +- ModelHierarchyNode -- SubjectHierarchyNode -- ModelNode (model22)
   //           (nested association)         (Series)              > DisplayNode
   //
-  void PopulateScene(vtkMRMLScene* scene)
+  bool PopulateScene(vtkMRMLScene* scene)
     {
     // Create subject and studies
     vtkMRMLSubjectHierarchyNode* subjectShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
@@ -204,7 +204,40 @@ namespace
       model22Node->GetName(), model22ModelHierarchyNode.GetPointer());
     model22SeriesShNode->AddUID(UID_NAME, MODEL22_UID_VALUE);
 
-    assert(scene->GetNumberOfNodes() == 20);
+    int currentNodeCount = scene->GetNumberOfNodes();
+    int expectedNodeCount = 20;
+    if (expectedNodeCount != currentNodeCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with PopulateScene\n"
+                << "\tcurrentNodeCount: " << currentNodeCount << "\n"
+                << "\texpectedNodeCount: " << expectedNodeCount
+                << std::endl;
+      return false;
+      }
+
+    currentNodeCount = scene->GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode");
+    expectedNodeCount = 2;
+    if (expectedNodeCount != currentNodeCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with PopulateScene\n"
+                << "\tcurrentNodeCount: " << currentNodeCount << "\n"
+                << "\texpectedNodeCount: " << expectedNodeCount
+                << std::endl;
+      return false;
+      }
+
+    currentNodeCount = scene->GetNumberOfNodesByClass("vtkMRMLModelNode");
+    expectedNodeCount = 3;
+    if (expectedNodeCount != currentNodeCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with PopulateScene\n"
+                << "\tcurrentNodeCount: " << currentNodeCount << "\n"
+                << "\texpectedNodeCount: " << expectedNodeCount
+                << std::endl;
+      return false;
+      }
+
+    return true;
     }
 
   //---------------------------------------------------------------------------
@@ -252,7 +285,10 @@ namespace
   bool TestNodeAccess()
     {
     vtkNew<vtkMRMLScene> scene;
-    PopulateScene(scene.GetPointer());
+    if (!PopulateScene(scene.GetPointer()))
+      {
+      return false;
+      }
 
     // Get node by UID
     vtkMRMLSubjectHierarchyNode* subjectNode =
@@ -284,7 +320,10 @@ namespace
   bool TestNodeAssociations()
     {
     vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-    PopulateScene(scene);
+    if (!PopulateScene(scene))
+      {
+      return false;
+      }
 
     // Get volume node for testing simple association
     vtkMRMLSubjectHierarchyNode* volume1ShNode =
@@ -356,7 +395,10 @@ namespace
   bool TestTreeOperations()
     {
     vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-    PopulateScene(scene);
+    if (!PopulateScene(scene))
+      {
+      return false;
+      }
 
     // Get nodes used in this test case
     vtkMRMLSubjectHierarchyNode* subjectShNode =
@@ -544,7 +586,10 @@ namespace
   bool TestInsertDicomSeriesPopulatedScene()
     {
     vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-    PopulateScene(scene);
+    if (!PopulateScene(scene))
+      {
+      return false;
+      }
 
     // Create series node to insert
     const char* seriesUid = "NEW_SERIES";
@@ -581,7 +626,10 @@ namespace
   bool TestVisibilityOperations()
     {
     vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-    PopulateScene(scene);
+    if (!PopulateScene(scene))
+      {
+      return false;
+      }
 
     // Get nodes used in this test case
     vtkMRMLSubjectHierarchyNode* subjectShNode =
@@ -691,7 +739,10 @@ namespace
   bool TestTransformBranch()
     {
     vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-    PopulateScene(scene);
+    if (!PopulateScene(scene))
+      {
+      return false;
+      }
 
     // Get nodes used in this test case
     vtkMRMLSubjectHierarchyNode* study2ShNode =
