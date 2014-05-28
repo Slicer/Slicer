@@ -433,13 +433,15 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     sphere = vtk.vtkSphereSource()
     sphere.SetCenter(x, y, z)
     sphere.SetRadius(radius)
-    sphere.GetOutput().Update()
 
     modelNode = slicer.vtkMRMLModelNode()
     modelNode = slicer.mrmlScene.AddNode(modelNode)
     modelNodeName = slicer.mrmlScene.GenerateUniqueName(name)
     modelNode.SetName(modelNodeName)
-    modelNode.SetAndObservePolyData(sphere.GetOutput())
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      modelNode.SetAndObservePolyData(sphere.GetOutput())
+    else:
+      modelNode.SetPolyDataConnection(sphere.GetOutputPort())
     modelNode.SetHideFromEditors(0)
 
     displayNode = slicer.vtkMRMLModelDisplayNode()
