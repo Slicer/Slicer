@@ -34,6 +34,7 @@
 
 // VTK includes
 #include <vtkCollection.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
@@ -408,13 +409,17 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(int visible)
     return;
     }
 
-  vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
-  this->GetAssociatedChildrenNodes(childDisplayableNodes, "vtkMRMLDisplayableNode");
+  vtkNew<vtkCollection> childDisplayableNodes;
+  this->GetAssociatedChildrenNodes(childDisplayableNodes.GetPointer(), "vtkMRMLDisplayableNode");
+
   childDisplayableNodes->InitTraversal();
   std::set<vtkMRMLSubjectHierarchyNode*> parentNodes;
-  for (int childNodeIndex=0; childNodeIndex<childDisplayableNodes->GetNumberOfItems(); ++childNodeIndex)
+  for (int childNodeIndex = 0;
+       childNodeIndex < childDisplayableNodes->GetNumberOfItems();
+       ++childNodeIndex)
     {
-    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(childNodeIndex));
+    vtkMRMLDisplayableNode* displayableNode =
+        vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(childNodeIndex));
     if (displayableNode)
       {
       displayableNode->SetDisplayVisibility(visible);
@@ -746,11 +751,13 @@ bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(vtkMRMLTransformN
 void vtkMRMLSubjectHierarchyNode::TransformBranch(vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms/*=true*/)
 {
   // Get all associated data nodes from children nodes (and itself)
-  vtkSmartPointer<vtkCollection> childTransformableNodes = vtkSmartPointer<vtkCollection>::New();
-  this->GetAssociatedChildrenNodes(childTransformableNodes, "vtkMRMLTransformableNode");
-  childTransformableNodes->InitTraversal();
+  vtkNew<vtkCollection> childTransformableNodes;
+  this->GetAssociatedChildrenNodes(childTransformableNodes.GetPointer(), "vtkMRMLTransformableNode");
 
-  for (int childNodeIndex=0; childNodeIndex<childTransformableNodes->GetNumberOfItems(); ++childNodeIndex)
+  childTransformableNodes->InitTraversal();
+  for (int childNodeIndex = 0;
+       childNodeIndex < childTransformableNodes->GetNumberOfItems();
+       ++childNodeIndex)
     {
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
       childTransformableNodes->GetItemAsObject(childNodeIndex) );
