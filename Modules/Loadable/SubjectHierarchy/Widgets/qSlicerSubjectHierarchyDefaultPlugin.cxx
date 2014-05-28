@@ -284,5 +284,6 @@ void qSlicerSubjectHierarchyDefaultPlugin::showContextMenuActionsForNode(vtkMRML
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDefaultPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
 {
+  Q_UNUSED(node);
   // No role, no edit properties
 }
