@@ -98,15 +98,8 @@ const char* vtkMRMLTransformableNode::GetTransformNodeID()
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 {
-  vtkMRMLTransformNode* node = NULL;
-  const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
-
-  if (this->GetScene() && transformNodeID != NULL )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(transformNodeID);
-    node = vtkMRMLTransformNode::SafeDownCast(snode);
-    }
-  return node;
+  return vtkMRMLTransformNode::SafeDownCast(
+        this->GetNodeReference(this->GetTransformNodeReferenceRole()));
 }
 
 //----------------------------------------------------------------------------
