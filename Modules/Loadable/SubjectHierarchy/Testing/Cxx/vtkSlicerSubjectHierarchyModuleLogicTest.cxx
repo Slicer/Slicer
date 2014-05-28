@@ -29,6 +29,7 @@
 #include <vtkPolyData.h>
 #include <vtkPoints.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
 // MRML includes
@@ -93,7 +94,7 @@ namespace
   //     +- SubjectHierarchyNode
   //     |   |    (Study)
   //     |   +- SubjectHierarchyNode -- ScalarVolumeNode (volume1)
-  //     |   |        (Series)                  > DisplayNode
+  //     |   |        (Series)            > DisplayNode
   //     |   +- SubjectHierarchyNode -- ModelNode (model1)
   //     |            (Series)            > DisplayNode
   //     +- SubjectHierarchyNode
@@ -122,97 +123,85 @@ namespace
     study2ShNode->SetAttribute(STUDY_ATTRIBUTE_NAME, STUDY_ATTRIBUTE_VALUE);
 
     // Create volume series in study 1
-    vtkSmartPointer<vtkMRMLScalarVolumeNode> volume1Node =
-      vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    vtkNew<vtkMRMLScalarVolumeNode> volume1Node;
     volume1Node->SetName("Volume1");
-    scene->AddNode(volume1Node);
+    scene->AddNode(volume1Node.GetPointer());
 
-    vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> volume1DisplayNode =
-      vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-    scene->AddNode(volume1DisplayNode);
+    vtkNew<vtkMRMLScalarVolumeDisplayNode> volume1DisplayNode;
+    scene->AddNode(volume1DisplayNode.GetPointer());
     volume1Node->SetAndObserveDisplayNodeID(volume1DisplayNode->GetID());
 
     vtkMRMLSubjectHierarchyNode* volume1SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
       scene, study1ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
-      volume1Node->GetName(), volume1Node);
+      volume1Node->GetName(), volume1Node.GetPointer());
     volume1SeriesShNode->AddUID(UID_NAME, VOLUME1_UID_VALUE);
 
     // Create model1 series in study 1
-    vtkSmartPointer<vtkMRMLModelNode> model1Node =
-      vtkSmartPointer<vtkMRMLModelNode>::New();
+    vtkNew<vtkMRMLModelNode> model1Node;
     model1Node->SetName("Model1");
-    scene->AddNode(model1Node);
+    scene->AddNode(model1Node.GetPointer());
 
-    vtkSmartPointer<vtkMRMLModelDisplayNode> model1DisplayNode =
-      vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-    scene->AddNode(model1DisplayNode);
+    vtkNew<vtkMRMLModelDisplayNode> model1DisplayNode;
+    scene->AddNode(model1DisplayNode.GetPointer());
     model1Node->SetAndObserveDisplayNodeID(model1DisplayNode->GetID());
 
     vtkMRMLSubjectHierarchyNode* model1SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
       scene, study1ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
-      model1Node->GetName(), model1Node);
+      model1Node->GetName(), model1Node.GetPointer());
     model1SeriesShNode->AddUID(UID_NAME, MODEL1_UID_VALUE);
 
     // Create volume series in study 2
-    vtkSmartPointer<vtkMRMLScalarVolumeNode> volume2Node =
-      vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    vtkNew<vtkMRMLScalarVolumeNode> volume2Node;
     volume2Node->SetName("Volume2");
-    scene->AddNode(volume2Node);
+    scene->AddNode(volume2Node.GetPointer());
 
-    vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> volume2DisplayNode =
-      vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-    scene->AddNode(volume2DisplayNode);
+    vtkNew<vtkMRMLScalarVolumeDisplayNode> volume2DisplayNode;
+    scene->AddNode(volume2DisplayNode.GetPointer());
     volume2Node->SetAndObserveDisplayNodeID(volume2DisplayNode->GetID());
 
     vtkMRMLSubjectHierarchyNode* volume2SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
       scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
-      volume2Node->GetName(), volume2Node);
+      volume2Node->GetName(), volume2Node.GetPointer());
     volume2SeriesShNode->AddUID(UID_NAME, VOLUME2_UID_VALUE);
 
     // Create model21 series in study 2 with nested association
-    vtkSmartPointer<vtkMRMLModelNode> model21Node =
-      vtkSmartPointer<vtkMRMLModelNode>::New();
+    vtkNew<vtkMRMLModelNode> model21Node;
     model21Node->SetName("Model21");
-    scene->AddNode(model21Node);
+    scene->AddNode(model21Node.GetPointer());
 
-    vtkSmartPointer<vtkMRMLModelDisplayNode> model21DisplayNode =
-      vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-    scene->AddNode(model21DisplayNode);
+    vtkNew<vtkMRMLModelDisplayNode> model21DisplayNode;
+    scene->AddNode(model21DisplayNode.GetPointer());
     model21Node->SetAndObserveDisplayNodeID(model21DisplayNode->GetID());
 
-    vtkSmartPointer<vtkMRMLModelHierarchyNode> model21ModelHierarchyNode =
-      vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+    vtkNew<vtkMRMLModelHierarchyNode> model21ModelHierarchyNode;
     model21ModelHierarchyNode->SetName("Model21_Hierarchy");
     model21ModelHierarchyNode->SetDisplayableNodeID(model21Node->GetID());
     //model21ModelHierarchyNode->SetParentNodeID(modelHierarchyRootNode->GetID()); // No parent node needed to test nested associations
-    scene->AddNode(model21ModelHierarchyNode);
+    scene->AddNode(model21ModelHierarchyNode.GetPointer());
 
     vtkMRMLSubjectHierarchyNode* model21SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
       scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
-      model21Node->GetName(), model21ModelHierarchyNode);
+      model21Node->GetName(), model21ModelHierarchyNode.GetPointer());
     model21SeriesShNode->AddUID(UID_NAME, MODEL21_UID_VALUE);
 
     // Create model22 series in study 2 with nested association
-    vtkSmartPointer<vtkMRMLModelNode> model22Node =
-      vtkSmartPointer<vtkMRMLModelNode>::New();
+    vtkNew<vtkMRMLModelNode> model22Node;
     model22Node->SetName("Model22");
-    scene->AddNode(model22Node);
+    scene->AddNode(model22Node.GetPointer());
 
-    vtkSmartPointer<vtkMRMLModelDisplayNode> model22DisplayNode =
-      vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
-    scene->AddNode(model22DisplayNode);
+    vtkNew<vtkMRMLModelDisplayNode> model22DisplayNode;
+    scene->AddNode(model22DisplayNode.GetPointer());
     model22Node->SetAndObserveDisplayNodeID(model22DisplayNode->GetID());
 
-    vtkSmartPointer<vtkMRMLModelHierarchyNode> model22ModelHierarchyNode =
-      vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+    vtkNew<vtkMRMLModelHierarchyNode> model22ModelHierarchyNode;
     model22ModelHierarchyNode->SetName("Model22_Hierarchy");
     model22ModelHierarchyNode->SetDisplayableNodeID(model22Node->GetID());
     //model22ModelHierarchyNode->SetParentNodeID(modelHierarchyRootNode->GetID()); // No parent node needed to test nested associations
-    scene->AddNode(model22ModelHierarchyNode);
+    scene->AddNode(model22ModelHierarchyNode.GetPointer());
 
     vtkMRMLSubjectHierarchyNode* model22SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
       scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
-      model22Node->GetName(), model22ModelHierarchyNode);
+      model22Node->GetName(), model22ModelHierarchyNode.GetPointer());
     model22SeriesShNode->AddUID(UID_NAME, MODEL22_UID_VALUE);
 
     assert(scene->GetNumberOfNodes() == 20);
@@ -262,12 +251,12 @@ namespace
   //---------------------------------------------------------------------------
   bool TestNodeAccess()
     {
-    vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-    PopulateScene(scene);
+    vtkNew<vtkMRMLScene> scene;
+    PopulateScene(scene.GetPointer());
 
     // Get node by UID
     vtkMRMLSubjectHierarchyNode* subjectNode =
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, SUBJECT_UID_VALUE);
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene.GetPointer(), UID_NAME, SUBJECT_UID_VALUE);
     if (!subjectNode)
       {
       std::cout << "Failed to get subject by UID" << std::endl;
@@ -437,9 +426,9 @@ namespace
       }
 
     // GetAssociatedChildrenNodes utility method in node class
-    vtkSmartPointer<vtkCollection> childNodes = vtkSmartPointer<vtkCollection>::New();
+    vtkNew<vtkCollection> childNodes;
 
-    subjectShNode->GetAssociatedChildrenNodes(childNodes);
+    subjectShNode->GetAssociatedChildrenNodes(childNodes.GetPointer());
     childNodes->InitTraversal();
     if (childNodes->GetNumberOfItems() != 5)
       {
@@ -448,7 +437,7 @@ namespace
       }
 
     childNodes->RemoveAllItems();
-    subjectShNode->GetAssociatedChildrenNodes(childNodes, "vtkMRMLScalarVolumeNode");
+    subjectShNode->GetAssociatedChildrenNodes(childNodes.GetPointer(), "vtkMRMLScalarVolumeNode");
     childNodes->InitTraversal();
     if (childNodes->GetNumberOfItems() != 2)
       {
@@ -555,7 +544,7 @@ namespace
       scene, NULL, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES, "Series");
     seriesShNode->AddUID(UID_NAME, seriesUid);
 
-    vtkMRMLSubjectHierarchyNode* insertedSeriesNode =  vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
+    vtkMRMLSubjectHierarchyNode* insertedSeriesNode = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
       scene, SUBJECT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
 
     // Check if series was inserted under the desired study
@@ -710,15 +699,15 @@ namespace
       }
 
     // Set non-empty poly data to model21 and model22 to be able to check transform hardening
-    vtkSmartPointer<vtkPoints> model21Points = vtkSmartPointer<vtkPoints>::New();
+    vtkNew<vtkPoints> model21Points;
     model21Points->InsertNextPoint(0.0, 0.0, 0.0);
-    vtkSmartPointer<vtkPolyData> model21PolyData = vtkSmartPointer<vtkPolyData>::New();
-    model21PolyData->SetPoints(model21Points);
+    vtkNew<vtkPolyData> model21PolyData;
+    model21PolyData->SetPoints(model21Points.GetPointer());
 
-    vtkSmartPointer<vtkPoints> model22Points = vtkSmartPointer<vtkPoints>::New();
+    vtkNew<vtkPoints> model22Points;
     model22Points->InsertNextPoint(0.0, 0.0, 0.0);
-    vtkSmartPointer<vtkPolyData> model22PolyData = vtkSmartPointer<vtkPolyData>::New();
-    model22PolyData->SetPoints(model22Points);
+    vtkNew<vtkPolyData> model22PolyData;
+    model22PolyData->SetPoints(model22Points.GetPointer());
 
     vtkMRMLModelNode* model21Node = vtkMRMLModelNode::SafeDownCast(model21ShNode->GetAssociatedNode());
     vtkMRMLModelNode* model22Node = vtkMRMLModelNode::SafeDownCast(model22ShNode->GetAssociatedNode());
@@ -727,25 +716,21 @@ namespace
       std::cout << "Failed to get model data nodes" << std::endl;
       return false;
       }
-    model21Node->SetAndObservePolyData(model21PolyData);
-    model22Node->SetAndObservePolyData(model22PolyData);
+    model21Node->SetAndObservePolyData(model21PolyData.GetPointer());
+    model22Node->SetAndObservePolyData(model22PolyData.GetPointer());
 
     // Create transforms to use in this test case
-    vtkSmartPointer<vtkMatrix4x4> transformMatrix1 =
-      vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> transformMatrix1;
     transformMatrix1->SetElement(0,3,100.0); // Translation along X by 100 mm
-    vtkSmartPointer<vtkMRMLLinearTransformNode> transformNode1 =
-      vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
-    transformNode1->SetMatrixTransformToParent(transformMatrix1);
-    scene->AddNode(transformNode1);
+    vtkNew<vtkMRMLLinearTransformNode> transformNode1;
+    transformNode1->SetMatrixTransformToParent(transformMatrix1.GetPointer());
+    scene->AddNode(transformNode1.GetPointer());
 
-    vtkSmartPointer<vtkMatrix4x4> transformMatrix2 =
-      vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkNew<vtkMatrix4x4> transformMatrix2;
     transformMatrix2->SetElement(1,3,50.0); // Translation along Y by 50 mm
-    vtkSmartPointer<vtkMRMLLinearTransformNode> transformNode2 =
-      vtkSmartPointer<vtkMRMLLinearTransformNode>::New(); // Second transform is identity
-    transformNode2->SetMatrixTransformToParent(transformMatrix2);
-    scene->AddNode(transformNode2);
+    vtkNew<vtkMRMLLinearTransformNode> transformNode2; // Second transform is identity
+    transformNode2->SetMatrixTransformToParent(transformMatrix2.GetPointer());
+    scene->AddNode(transformNode2.GetPointer());
 
     // Check transformed nodes
     if (study2ShNode->IsAnyNodeInBranchTransformed())
@@ -755,7 +740,7 @@ namespace
       }
 
     // Transform model21 using transform1
-    model21ShNode->TransformBranch(transformNode1);
+    model21ShNode->TransformBranch(transformNode1.GetPointer());
     if (model21Node->GetParentTransformNode() != transformNode1.GetPointer())
       {
       std::cout << "Failed to apply transform1 on model1" << std::endl;
@@ -766,14 +751,14 @@ namespace
       std::cout << "Wrong inquiry about transformed nodes in study2" << std::endl;
       return false;
       }
-    if (study2ShNode->IsAnyNodeInBranchTransformed(transformNode1))
+    if (study2ShNode->IsAnyNodeInBranchTransformed(transformNode1.GetPointer()))
       {
       std::cout << "Wrong inquiry about transformed nodes in study2 with exception transform set" << std::endl;
       return false;
       }
 
     // Transform study2 using transform2, harden transform on model21
-    study2ShNode->TransformBranch(transformNode2);
+    study2ShNode->TransformBranch(transformNode2.GetPointer());
     if ( model21Node->GetParentTransformNode() != transformNode2.GetPointer()
       || model22Node->GetParentTransformNode() != transformNode2.GetPointer() )
       {
@@ -791,7 +776,7 @@ namespace
       }
 
     // Set transform1 on study2 without hardening
-    study2ShNode->TransformBranch(transformNode1, false);
+    study2ShNode->TransformBranch(transformNode1.GetPointer(), false);
     if ( model21Node->GetParentTransformNode() != transformNode1.GetPointer()
       || model22Node->GetParentTransformNode() != transformNode1.GetPointer() )
       {
@@ -806,7 +791,7 @@ namespace
       }
 
     // Harden transform2 on model22
-    study2ShNode->TransformBranch(transformNode2, false);
+    study2ShNode->TransformBranch(transformNode2.GetPointer(), false);
     study2ShNode->HardenTransformOnBranch();
 
     model21PolyData->GetPoint(0, model21PointsArray);
@@ -825,7 +810,7 @@ namespace
       }
 
     // Remove transforms from study
-    study2ShNode->TransformBranch(transformNode1);
+    study2ShNode->TransformBranch(transformNode1.GetPointer());
     study2ShNode->TransformBranch(NULL);
     if (study2ShNode->IsAnyNodeInBranchTransformed())
       {
