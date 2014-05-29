@@ -316,7 +316,7 @@ if(Slicer_USE_BatchMake AND NOT Slicer_USE_SYSTEM_BatchMake)
 endif()
 
 if(UNIX AND Slicer_USE_PYTHONQT)
-  # On windows, both pythonQt and python libraries are installed allong with the executable
+  # On windows, both pythonQt and python libraries are installed along with the executable
   if(NOT Slicer_USE_SYSTEM_python)
     list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
       <APPLAUNCHER_DIR>/lib/Python/lib
@@ -387,6 +387,7 @@ if(Slicer_USE_PYTHONQT)
       "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}"
       "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload"
       "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages"
+      "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}/python${Slicer_PYTHON_VERSION_DOT}/site-packages"
       )
   endif()
   list(APPEND SLICER_PYTHONPATH_INSTALLED
