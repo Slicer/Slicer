@@ -130,20 +130,19 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
     newNode.SetAndObserveDisplayNodeID(newDisplayNode.GetID())
     myNodeFullITKAddress = GetSlicerITKReadWriteAddress(newNode.GetName())
     sitk.WriteImage(sitkimage, myNodeFullITKAddress)
-    compositeNodes = slicer.util.getNodes("vtkMRMLSliceCompositeNode*")
-    for node in compositeNodes.values():
-        if imageType == 'foreground':
-            node.SetForegroundVolumeID(newNode.GetID())
-            newDisplayNode.SetAndObserveColorNodeID('vtkMRMLColorTableNodeGrey')
-        elif imageType == 'background':
-            node.SetBackgroundVolumeID(newNode.GetID())
-            newDisplayNode.SetAndObserveColorNodeID('vtkMRMLColorTableNodeGrey')
-        elif imageType == 'label':
-            newNode.SetLabelMap(True)
-            node.SetLabelVolumeID(newNode.GetID())
-            node.SetLabelOpacity(1.0)
-            newDisplayNode.SetAndObserveColorNodeID('vtkMRMLColorTableNodeFileGenericColors.txt')
+    writtenNode = slicer.util.getNode(newNode.GetName())
+    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+    if imageType == 'foreground':
+        selectionNode.SetReferenceSecondaryVolumeID(writtenNode.GetID())
+    elif imageType == 'background':
+        selectionNode.SetReferenceActiveVolumeID(writtenNode.GetID())
+    elif imageType == 'label':
+        vl = slicer.modules.volumes.logic()
+        vl.SetVolumeAsLabelMap(writtenNode, True)
+        selectionNode.SetReferenceActiveLabelVolumeID(writtenNode.GetID())
+
     applicationLogic = slicer.app.applicationLogic()
+    applicationLogic.PropagateVolumeSelection(0)
     applicationLogic.FitSliceToAll()
 
 # Helper functions
