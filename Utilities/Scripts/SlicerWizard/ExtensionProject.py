@@ -3,6 +3,8 @@ import re
 
 from . import CMakeParser
 
+from .Utilities import detectEncoding
+
 #-----------------------------------------------------------------------------
 def _isCommand(token, name):
   return isinstance(token, CMakeParser.Command) and token.text.lower() == name
@@ -32,10 +34,15 @@ class ExtensionProject(object):
   _moduleInsertPlaceholder = "# NEXT_MODULE"
 
   #---------------------------------------------------------------------------
-  def __init__(self, path):
+  def __init__(self, path, encoding=None):
     """
     :param path: Top level directory of the extension project.
     :type path: :class:`basestring`
+    :param encoding: Encoding of extension CMakeLists.txt.
+    :type encoding: :class:`basestring` or ``None``
+
+    If ``encoding`` is ``None``, the encoding will be guessed using
+    :meth:`~SlicerWizard.Utilities.detectEncoding`.
     """
 
     cmakeFile = os.path.join(path, "CMakeLists.txt")
@@ -45,7 +52,29 @@ class ExtensionProject(object):
     self._scriptPath = cmakeFile
 
     with open(cmakeFile) as fp:
-      self._scriptContents = CMakeParser.CMakeScript(fp.read())
+      contents = fp.read()
+
+      if encoding is None:
+        encoding, confidence = detectEncoding(contents)
+
+        if encoding is not None:
+          if confidence < 0.5:
+            logging.warning("%s: encoding detection confidence is %f:"
+                            " project contents might be corrupt" %
+                            (path, confidence))
+
+      if encoding is None:
+        # If unable to determine encoding, skip unicode conversion... users
+        # must not feed any unicode into the script or things will likely break
+        # later (e.g. when trying to save the project)
+        self._scriptContents = CMakeParser.CMakeScript(contents)
+
+      else:
+        # Otherwise, decode the contents into unicode
+        contents = contents.decode(encoding)
+        self._scriptContents = CMakeParser.CMakeScript(contents)
+
+      self._encoding = encoding
 
   #---------------------------------------------------------------------------
   def __enter__(self):
@@ -54,6 +83,28 @@ class ExtensionProject(object):
   #---------------------------------------------------------------------------
   def __exit__(self, exc_type, exc_value, traceback):
     self.save()
+
+
+  #---------------------------------------------------------------------------
+  @property
+  def encoding(self):
+    """Character encoding of the extension project CMakeLists.txt.
+
+    :type: :class:`str` or ``None``
+
+    This provides the character encoding of the CMakeLists.txt file from which
+    the project instance was created. If the encoding cannot be determined, the
+    property will have the value ``None``.
+
+    .. 'note' directive needs '\' to span multiple lines!
+    .. note:: If ``encoding`` is ``None``, the project information is stored \
+              as raw bytes using :class:`str`. In such case, passing a \
+              non-ASCII :class:`unicode` to  any method or property \
+              assignment that modifies the project may  make it impossible to \
+              write the project back to disk.
+    """
+
+    return self._encoding
 
   #---------------------------------------------------------------------------
   @property
@@ -189,10 +240,12 @@ class ExtensionProject(object):
     self._scriptContents.tokens.insert(after, t)
 
   #---------------------------------------------------------------------------
-  def save(self, destination=None):
+  def save(self, destination=None, encoding=None):
     """Save the project.
 
     :param destination: Location to which to write the build script.
+    :type destination: :class:`basestring` or ``None``
+    :param encoding: Encoding with which to write the build script.
     :type destination: :class:`basestring` or ``None``
 
     This saves the extension project CMake script to the specified file:
@@ -209,11 +262,26 @@ class ExtensionProject(object):
       p.save()
 
     If ``destination`` is ``None``, the CMakeLists.txt file from which the
-    project instance was created is overwritten.
+    project instance was created is overwritten. Similarly, if ``encoding`` is
+    ``None``, the file is written with the original encoding of the
+    CMakeLists.txt file from which the project instance was created, if such
+    encoding is other than ASCII; otherwise the file is written in UTF-8.
     """
 
     if destination is None:
       destination = self._scriptPath
 
-    with open(destination, "w") as fp:
-      fp.write(str(self._scriptContents))
+    if encoding is None and self.encoding is not None:
+      encoding = self.encoding if self.encoding.lower() != "ascii" else "utf-8"
+
+    if encoding is None:
+      # If no encoding is specified and we don't know the original encoding,
+      # perform no conversion and hope for the best (will only work if there
+      # are no unicode instances in the script)
+      with open(destination, "w") as fp:
+        fp.write(str(self._scriptContents))
+
+    else:
+      # Otherwise, write the file using full encoding conversion
+      with open(destination, "w") as fp:
+        fp.write(unicode(self._scriptContents).encode(encoding))
