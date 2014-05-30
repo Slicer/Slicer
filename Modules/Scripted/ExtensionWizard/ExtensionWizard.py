@@ -270,19 +270,78 @@ class ExtensionWizardWidget:
 
   #---------------------------------------------------------------------------
   def loadModules(self, path, depth=1):
+    # Get list of modules in specified path
     modules = ModuleInfo.findModules(path, depth)
 
+    # Determine which modules in above are not already loaded
     factory = slicer.app.moduleManager().factoryManager()
     loadedModules = factory.instantiatedModuleNames()
 
     candidates = [m for m in modules if m.key not in loadedModules]
 
+    # Prompt to load additional module(s)
     if len(candidates):
       dlg = LoadModulesDialog(self.parent.window())
       dlg.setModules(candidates)
 
       if dlg.exec_() == qt.QDialog.Accepted:
-        pass # TODO
+        modulesToLoad = dlg.selectedModules
+
+        # Add module(s) to permanent search paths, if requested
+        if dlg.addToSearchPaths:
+          settings = slicer.app.revisionUserSettings()
+          rawSearchPaths = list(settings.value("Modules/AdditionalPaths"))
+          searchPaths = [qt.QDir(path) for path in rawSearchPaths]
+          modified = False
+
+          for module in modulesToLoad:
+            rawPath = os.path.dirname(module.path)
+            path = qt.QDir(rawPath)
+            if not path in searchPaths:
+              searchPaths.append(path)
+              rawSearchPaths.append(rawPath)
+              modified = True
+
+          if modified:
+            settings.setValue("Modules/AdditionalPaths", rawSearchPaths)
+
+        # Register requested module(s)
+        failed = []
+
+        for module in modulesToLoad:
+          factory.registerModule(qt.QFileInfo(module.path))
+          if not factory.isRegistered(module.key):
+            failed.append(module)
+
+        if len(failed):
+          md = qt.QMessageBox(self.parent.window())
+          md.icon = qt.QMessageBox.Critical
+          md.standardButtons = qt.QMessageBox.Close
+          md.windowTitle = "Module loading failed"
+
+          if len(failed) > 1:
+            md.text = "The following modules could not be registered:"
+
+          else:
+            md.text = "The '%s' module could not be registered:" % failed[0].key
+
+          failedFormat = "<ul><li>%(key)s<br/>(%(path)s)</li></ul>"
+          md.informativeText = "".join(
+            [failedFormat % m.__dict__ for m in failed])
+
+          md.exec_()
+          return
+
+        # Instantiate and load requested module(s)
+        if not factory.loadModules([module.key for module in modulesToLoad]):
+          md = qt.QMessageBox(self.parent.window())
+          md.icon = qt.QMessageBox.Critical
+          md.standardButtons = qt.QMessageBox.Close
+          md.windowTitle = "Error loading module(s)"
+          md.text = ("The module factory manager reported an error. "
+                     "One or more of the requested module(s) and/or "
+                     "dependencies thereof may not have been loaded.")
+          md.exec_()
 
   #---------------------------------------------------------------------------
   def createExtensionModule(self):
