@@ -164,6 +164,9 @@ public:
   /// Application-wide database instance
   ctkDICOMDatabase*                           DICOMDatabase;
 #endif
+
+  QHash<int, QByteArray>                      LoadedResources;
+  int                                         NextResourceHandle;
 };
 
 #endif

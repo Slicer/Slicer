@@ -306,11 +306,15 @@ public:
   /// \sa QSslSocket::defaultCaCertificates()
   static bool loadCaCertificates();
 
+  Q_INVOKABLE int registerResource(const QByteArray& data);
+
 public slots:
 
   /// Restart the application with the arguments passed at startup time
   /// \sa QCoreApplication::arguments()
   static void restart();
+
+  bool unregisterResource(int handle);
 
 protected:
   ///

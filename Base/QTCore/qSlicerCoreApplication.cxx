@@ -28,6 +28,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QNetworkProxyFactory>
+#include <QResource>
 #include <QSettings>
 #include <QTranslator>
 
@@ -118,6 +119,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
 #ifdef Slicer_BUILD_DICOM_SUPPORT
   this->DICOMDatabase = 0;
 #endif
+  this->NextResourceHandle = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1560,4 +1562,39 @@ bool qSlicerCoreApplication::loadCaCertificates()
 #else
   return false;
 #endif
+}
+
+//----------------------------------------------------------------------------
+int qSlicerCoreApplication::registerResource(const QByteArray& data)
+{
+  Q_D(qSlicerCoreApplication);
+
+  const int handle = d->NextResourceHandle++;
+  d->LoadedResources.insert(handle, data);
+
+  uchar* pdata = reinterpret_cast<uchar*>(d->LoadedResources[handle].data());
+
+  if (!QResource::registerResource(pdata))
+    {
+    d->LoadedResources.remove(handle);
+    return -1;
+    }
+
+  return handle;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerCoreApplication::unregisterResource(int handle)
+{
+  Q_D(qSlicerCoreApplication);
+
+  if (d->LoadedResources.contains(handle))
+    {
+    uchar* pdata = reinterpret_cast<uchar*>(d->LoadedResources[handle].data());
+    const bool result = QResource::unregisterResource(pdata);
+    d->LoadedResources.remove(handle);
+    return result;
+    }
+
+  return false;
 }

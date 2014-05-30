@@ -381,7 +381,7 @@ if(Slicer_BUILD_I18N_SUPPORT)
   include(SlicerMacroTranslation)
 endif()
 include(SlicerFunctionInstallLibrary)
-
+include(SlicerFunctionAddPythonQtResources)
 
 #-----------------------------------------------------------------------------
 # Internationalization
@@ -1159,7 +1159,11 @@ ExternalData_Add_Target(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
 #-----------------------------------------------------------------------------
 # Create targets CopySlicerPython{Resource, Script}Files, CompileSlicerPythonFiles
 if(Slicer_USE_PYTHONQT)
-  ctkFunctionAddCompilePythonScriptTargets(${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME})
+  slicerFunctionAddPythonQtResourcesTargets(SlicerPythonResources)
+  ctkFunctionAddCompilePythonScriptTargets(
+    ${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}
+    DEPENDS SlicerPythonResources
+    )
 endif()
 
 #-----------------------------------------------------------------------------
