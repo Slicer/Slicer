@@ -1,4 +1,5 @@
 from CreateComponentDialog import CreateComponentDialog
+from DirectoryListWidget import DirectoryListWidget
 from EditableTreeWidget import EditableTreeWidget
 from EditExtensionMetadataDialog import EditExtensionMetadataDialog
 from LoadModulesDialog import LoadModulesDialog
