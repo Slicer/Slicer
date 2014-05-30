@@ -16,6 +16,9 @@ set(MODULE_PYTHON_SCRIPTS
   )
 
 set(MODULE_PYTHON_RESOURCES
+  Resources/Icons/XSmall/${MODULE_NAME}.png
+  Resources/Icons/Medium/${MODULE_NAME}.png
+  Resources/Icons/XLarge/${MODULE_NAME}.png
   )
 
 #-----------------------------------------------------------------------------
