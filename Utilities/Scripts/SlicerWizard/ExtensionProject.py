@@ -111,15 +111,36 @@ class ExtensionProject(object):
   def project(self):
     """Name of extension project.
 
-    :type: :class:`str`
+    :type: :class:`basestring`
+
+    :raises:
+      :exc:`~exceptions.EOFError` if no ``project()`` command is present in the
+      build script.
 
     This provides the name of the extension project, i.e. the identifier passed
     to ``project()`` in the extension's build script.
+
+    Assigning the property modifies the build script.
     """
 
     for t in self._scriptContents.tokens:
       if _isCommand(t, "project") and len(t.arguments):
         return t.arguments[0].text
+
+    raise EOFError("could not find project")
+
+  #---------------------------------------------------------------------------
+  @project.setter
+  def project(self, value):
+
+    for t in self._scriptContents.tokens:
+      if _isCommand(t, "project"):
+        if len(t.arguments):
+          t.arguments[0].text = value
+        else:
+          t.arguments.append(CMakeParser.String(text=value))
+
+        return
 
     raise EOFError("could not find project")
 
