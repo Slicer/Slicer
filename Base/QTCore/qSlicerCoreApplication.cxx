@@ -1027,6 +1027,12 @@ QString qSlicerCoreApplication::slicerHome() const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::slicerSharePath() const
+{
+  return Slicer_SHARE_DIR;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)const
 {
   QString slicerRevision = this->repositoryRevision();

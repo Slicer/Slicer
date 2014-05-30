@@ -62,6 +62,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   /// "C:\Program Files (x86)\Slicer 4.3.0\".
   /// \sa slicerHome(), temporaryPath, isInstalled
   Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
+  Q_PROPERTY(QString slicerSharePath READ slicerSharePath CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
@@ -142,6 +143,14 @@ public:
   /// Get slicer home directory
   /// \sa slicerHome
   QString slicerHome() const;
+
+  /// Get slicer share directory
+  ///
+  /// This returns the partial path where slicer resources are located, which
+  /// is normally of the form <code>"share/Slicer-<i>version</i>"</code>.
+  ///
+  /// \sa slicerSharePath, slicerHome()
+  QString slicerSharePath() const;
 
   /// Returns True if module identified by \a moduleFileName is a descendant of slicer home.
   /// \sa slicerHome()
