@@ -4,4 +4,5 @@
 eval $("@Slicer_BINARY_DIR@/Slicer" --launcher-show-set-environment-commands)
 
 # Run the Python launcher
-"@PYTHON@" "@Slicer_BINARY_DIR@/libexec/ExtensionWizard.py" "$@"
+"@PYTHON@" "@Slicer_BINARY_DIR@/libexec/ExtensionWizard.py" \
+  --templatePath "@Slicer_SOURCE_DIR@"/Utilities/Templates "$@"
