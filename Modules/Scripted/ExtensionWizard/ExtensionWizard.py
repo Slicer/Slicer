@@ -4,6 +4,7 @@ import traceback
 
 from __main__ import qt, ctk, slicer
 
+import SlicerWizard.ExtensionDescription
 import SlicerWizard.ExtensionProject
 import SlicerWizard.TemplateManager
 import SlicerWizard.Utilities
@@ -74,6 +75,13 @@ class ExtensionWizardWidget:
 
       return tb
 
+    def createReadOnlyLineEdit():
+      le = qt.QLineEdit()
+      le.readOnly = True
+      le.frame = False
+      le.styleSheet = "QLineEdit { background:transparent; }"
+      return le
+
     #
     # Tools Area
     #
@@ -87,9 +95,9 @@ class ExtensionWizardWidget:
     self.selectExtensionButton = createToolButton("Select Extension")
     self.selectExtensionButton.connect('clicked(bool)', self.selectExtension)
 
-    toolsFormLayout = qt.QVBoxLayout(self.toolsCollapsibleButton)
-    toolsFormLayout.addWidget(self.createExtensionButton)
-    toolsFormLayout.addWidget(self.selectExtensionButton)
+    toolsLayout = qt.QVBoxLayout(self.toolsCollapsibleButton)
+    toolsLayout.addWidget(self.createExtensionButton)
+    toolsLayout.addWidget(self.selectExtensionButton)
 
     #
     # Editor Area
@@ -99,6 +107,27 @@ class ExtensionWizardWidget:
     self.editorCollapsibleButton.enabled = False
     self.editorCollapsibleButton.collapsed = True
     self.layout.addWidget(self.editorCollapsibleButton)
+
+    self.extensionNameField = createReadOnlyLineEdit()
+    self.extensionLocationField = createReadOnlyLineEdit()
+    self.extensionRepositoryField = createReadOnlyLineEdit()
+
+    self.extensionContentsModel = qt.QFileSystemModel()
+    self.extensionContentsView = qt.QTreeView()
+    self.extensionContentsView.setModel(self.extensionContentsModel)
+    self.extensionContentsView.sortingEnabled = True
+    self.extensionContentsView.hideColumn(3)
+
+    self.editExtensionMetadataButton = createToolButton("Edit Extension Metadata")
+    self.editExtensionMetadataButton.connect('clicked(bool)',
+                                             self.editExtensionMetadata)
+
+    editorLayout = qt.QFormLayout(self.editorCollapsibleButton)
+    editorLayout.addRow("Name:", self.extensionNameField)
+    editorLayout.addRow("Location:", self.extensionLocationField)
+    editorLayout.addRow("Repository:", self.extensionRepositoryField)
+    editorLayout.addRow("Contents:", self.extensionContentsView)
+    editorLayout.addRow(self.editExtensionMetadataButton)
 
     # Add vertical spacer
     self.layout.addStretch(1)
@@ -154,10 +183,74 @@ class ExtensionWizardWidget:
 
         continue
 
-      self.selectExtension(path)
+      if self.selectExtension(path):
+        self.editExtensionMetadata()
+
       return
 
   #---------------------------------------------------------------------------
   def selectExtension(self, path=None):
+    if path is None or isinstance(path, bool):
+      path = qt.QFileDialog.getExistingDirectory(
+               self.parent.window(), "Select Extension...")
+
+    if not len(path):
+      return False
+
+    # Attempt to open extension
+    try:
+      repo = SlicerWizard.Utilities.getRepo(path)
+
+      if repo is None:
+        xd = SlicerWizard.ExtensionDescription(sourcedir=path)
+
+      else:
+        xd = SlicerWizard.ExtensionDescription(repo=repo)
+        path = SlicerWizard.Utilities.localRoot(repo)
+
+      xp = SlicerWizard.ExtensionProject(path)
+
+    except:
+      md = qt.QMessageBox(self.parent.window())
+      md.icon = qt.QMessageBox.Critical
+      md.text = "Failed to open extension '%s'." % path
+      md.detailedText = traceback.format_exc()
+      md.standardButtons = qt.QMessageBox.Close
+      md.exec_()
+      return False
+
+
+    self.editorCollapsibleButton.enabled = True
+    self.editorCollapsibleButton.collapsed = False
+
+    self.extensionNameField.text = xp.project
+    self.extensionLocationField.text = path
+
+    if xd.scmurl == "NA":
+      if repo is None:
+        repoText = "(none)"
+      elif hasattr(repo, "remotes"):
+        repoText = "(local git repository)"
+      else:
+        repoText = "(unknown local repository)"
+
+      self.extensionRepositoryField.clear()
+      self.extensionRepositoryField.placeholderText = repoText
+
+    else:
+      self.extensionRepositoryField.text = xd.scmurl
+
+    ri = self.extensionContentsModel.setRootPath(path)
+    self.extensionContentsView.setRootIndex(ri)
+
+    w = self.extensionContentsView.width
+    self.extensionContentsView.setColumnWidth(0, (w * 4) / 9)
+
+    self.extensionDescription = xd
+    self.extensionLocation = path
+    return True
+
+  #---------------------------------------------------------------------------
+  def editExtensionMetadata(self):
     # TODO
     pass
