@@ -26,7 +26,6 @@ def _newItemPlaceholderItem(parent):
 
   item = qt.QTreeWidgetItem()
   item.setText(0, "(New item)")
-  item.setFlags(item.flags() | qt.Qt.ItemIsEditable)
   item.setForeground(0, qt.QBrush(color))
 
   return item
@@ -39,11 +38,11 @@ def _newItemPlaceholderItem(parent):
 class EditableTreeWidget(qt.QTreeWidget):
   #---------------------------------------------------------------------------
   def __init__(self, *args, **kwargs):
-    super(EditableTreeWidget, self).__init__(*args, **kwargs)
+    qt.QTreeWidget.__init__(self, *args, **kwargs)
 
     # Create initial placeholder item
     self._items = []
-    self.addItem(_newItemPlaceholderItem(self))
+    self.addItem(_newItemPlaceholderItem(self), placeholder=True)
 
     # Set up context menu
     self._shiftUpAction = _makeAction(self, text="Move &Up",
@@ -66,9 +65,27 @@ class EditableTreeWidget(qt.QTreeWidget):
     self.connect('itemSelectionChanged()', self.updateActions)
 
   #---------------------------------------------------------------------------
-  def addItem(self, item):
-    self._items.append(item)
-    self.addTopLevelItem(item)
+  def addItem(self, item, placeholder=False):
+    item.setFlags(item.flags() | qt.Qt.ItemIsEditable)
+
+    if placeholder:
+      self._items.append(item)
+      self.addTopLevelItem(item)
+    else:
+      pos = len(self._items) - 1
+      self._items.insert(pos, item)
+      self.insertTopLevelItem(pos, item)
+
+  #---------------------------------------------------------------------------
+  def clear(self):
+    # Delete all but placeholder item
+    while len(self._items) > 1:
+      del self._items[0]
+
+  #---------------------------------------------------------------------------
+  @property
+  def itemCount(self):
+    return self.topLevelItemCount - 1
 
   #---------------------------------------------------------------------------
   def selectedRows(self):
@@ -101,7 +118,7 @@ class EditableTreeWidget(qt.QTreeWidget):
   def updateItemData(self, item, column):
     # Create new placeholder item if edited item is current placeholder
     if item is self._items[-1]:
-      self.addItem(_newItemPlaceholderItem(self))
+      self.addItem(_newItemPlaceholderItem(self), placeholder=True)
 
       # Remove placeholder effect from new item
       item.setData(0, qt.Qt.ForegroundRole, None)

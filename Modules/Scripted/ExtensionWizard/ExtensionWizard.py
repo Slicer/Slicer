@@ -219,10 +219,11 @@ class ExtensionWizardWidget:
       md.exec_()
       return False
 
-
+    # Enable and show edit section
     self.editorCollapsibleButton.enabled = True
     self.editorCollapsibleButton.collapsed = False
 
+    # Populate edit information
     self.extensionNameField.text = xp.project
     self.extensionLocationField.text = path
 
@@ -246,11 +247,35 @@ class ExtensionWizardWidget:
     w = self.extensionContentsView.width
     self.extensionContentsView.setColumnWidth(0, (w * 4) / 9)
 
+    # Store extension location, project and description for later use
+    self.extensionProject = xp
     self.extensionDescription = xd
     self.extensionLocation = path
     return True
 
   #---------------------------------------------------------------------------
   def editExtensionMetadata(self):
-    # TODO
-    pass
+    xd = self.extensionDescription
+    xp = self.extensionProject
+
+    dlg = EditExtensionMetadataDialog(self.parent.window())
+    dlg.project = xp.project
+    dlg.category = xd.category
+    dlg.description = xd.description
+    dlg.contributors = xd.contributors
+
+    if dlg.exec_() == qt.QDialog.Accepted:
+      # Update cached metadata
+      xd.category = dlg.category
+      xd.description = dlg.description
+      xd.contributors = dlg.contributors
+
+      # Write changes to extension project file (CMakeLists.txt)
+      xp.project = dlg.project
+      xp.setValue("EXTENSION_CATEGORY", xd.category)
+      xp.setValue("EXTENSION_DESCRIPTION", xd.description)
+      xp.setValue("EXTENSION_CONTRIBUTORS", xd.contributors)
+      xp.save()
+
+      # Update the displayed extension name
+      self.extensionNameField.text = xp.project

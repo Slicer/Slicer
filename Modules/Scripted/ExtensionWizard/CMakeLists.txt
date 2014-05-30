@@ -7,6 +7,7 @@ set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}Lib/__init__.py
   ${MODULE_NAME}Lib/CreateExtensionDialog.py
   ${MODULE_NAME}Lib/EditableTreeWidget.py
+  ${MODULE_NAME}Lib/EditExtensionMetadataDialog.py
   )
 
 set(MODULE_PYTHON_RESOURCES
