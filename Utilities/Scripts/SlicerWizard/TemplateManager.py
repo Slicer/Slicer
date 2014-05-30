@@ -209,11 +209,57 @@ class TemplateManager(object):
     self._keys[name] = value
 
   #---------------------------------------------------------------------------
+  @classmethod
+  def categories(cls):
+    """Get list of known template categories.
+
+    :rtype: :class:`list` of :class:`str`.
+
+    .. seealso:: :meth:`templates`, :meth:`.listTemplates`
+    """
+
+    return list(_templateCategories);
+
+  #---------------------------------------------------------------------------
+  def templates(self, category=None):
+    """Get collection of available templates.
+
+    :param category: Category of templates to query.
+    :type name: :class:`str`
+
+    :return:
+      List of templates for the specified category, or a dictionary of such
+      (keyed by category name) if ``category`` is ``None``.
+    :rtype:
+      :class:`list` of :class:`basestring`, or :class:`dict` of
+      :class:`str` |rarr| (:class:`list` of :class:`basestring`).
+
+    :raises:
+      :exc:`~exceptions.KeyError` if ``category`` is not ``None`` or a known
+      template category.
+
+    .. seealso:: :func:`~SlicerWizard.TemplateManager.categories`,
+                 :meth:`.listTemplates`
+    """
+
+    if category is None:
+      result = {}
+      for c in _templateCategories:
+        result[c] = self._paths[c].keys()
+      return result
+
+    else:
+      return tuple(self._paths[category].keys())
+
+  #---------------------------------------------------------------------------
   def listTemplates(self):
     """List available templates.
 
     This displays a list of all available templates, using :func:`logging.info`,
     organized by category.
+
+    .. seealso:: :func:`~SlicerWizard.TemplateManager.categories`,
+                 :meth:`.templates`
     """
 
     for c in _templateCategories:
