@@ -20,6 +20,7 @@ class ExtensionWizard:
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     parent.title = "Extension Wizard"
+    parent.icon = qt.QIcon(":/Icons/Medium/ExtensionWizard.png")
     parent.categories = ["Developer Tools"]
     parent.dependencies = []
     parent.contributors = ["Matthew Woehlke (Kitware)"]

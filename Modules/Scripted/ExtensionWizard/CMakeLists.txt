@@ -15,16 +15,13 @@ set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}Lib/TemplatePathUtilities.py
   )
 
-set(MODULE_PYTHON_RESOURCES
-  Resources/Icons/XSmall/${MODULE_NAME}.png
-  Resources/Icons/Medium/${MODULE_NAME}.png
-  Resources/Icons/XLarge/${MODULE_NAME}.png
+slicerFunctionAddPythonQtResources(MODULE_PYTHON_RESOURCES
+  ${MODULE_NAME}Lib/${MODULE_NAME}.qrc
   )
 
 #-----------------------------------------------------------------------------
 slicerMacroBuildScriptedModule(
   NAME ${MODULE_NAME}
-  SCRIPTS ${MODULE_PYTHON_SCRIPTS}
-  RESOURCES ${MODULE_PYTHON_RESOURCES}
+  SCRIPTS ${MODULE_PYTHON_SCRIPTS} ${MODULE_PYTHON_RESOURCES}
   WITH_GENERIC_TESTS
   )
