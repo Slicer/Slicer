@@ -12,6 +12,11 @@ set(modules
   SurfaceToolbox
   VectorToScalarVolume
   )
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND modules
+    ExtensionWizard
+    )
+endif()
 if(Slicer_USE_NUMPY)
   list(APPEND modules
     Endoscopy
