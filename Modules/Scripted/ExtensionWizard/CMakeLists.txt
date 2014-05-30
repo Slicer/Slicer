@@ -11,6 +11,7 @@ set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}Lib/EditExtensionMetadataDialog.py
   ${MODULE_NAME}Lib/LoadModulesDialog.py
   ${MODULE_NAME}Lib/ModuleInfo.py
+  ${MODULE_NAME}Lib/SettingsPanel.py
   )
 
 set(MODULE_PYTHON_RESOURCES

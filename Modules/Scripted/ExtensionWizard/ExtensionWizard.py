@@ -31,6 +31,9 @@ class ExtensionWizard:
     See <a>http://www.slicer.org</a> for details."""
     self.parent = parent
 
+    self.settingsPanel = SettingsPanel()
+    slicer.app.settingsDialog().addPanel("Extension Wizard", self.settingsPanel)
+
 #=============================================================================
 #
 # ExtensionWizardWidget
@@ -42,9 +45,12 @@ class ExtensionWizardWidget:
     if not parent:
       self.parent = qt.QWidget()
       self.parent.setLayout(qt.QVBoxLayout())
+
     else:
       self.parent = parent
+
     self.layout = self.parent.layout()
+
     if not parent:
       self.setup()
       self.parent.show()
@@ -151,25 +157,37 @@ class ExtensionWizardWidget:
   def setupTemplates(self):
     self.templateManager = SlicerWizard.TemplateManager()
 
+    # Read base template paths
     s = qt.QSettings()
-    s.beginGroup("ExtensionWizard/TemplatePaths")
+    s.beginGroup("ExtensionWizard")
+    paths = s.value("TemplatePaths")
 
-    for k in s.allKeys():
-      path = s.value(k)
-      if "/" in k:
-        c = k.split("/")[0]
+    print 'add generic template paths', paths
+    if paths is not None:
+      if isinstance(paths, basestring):
+        paths = [paths]
+
+      for path in paths:
+        try:
+          self.templateManager.addPath(path)
+        except:
+          qt.qWarning("failed to add template path %r" % path)
+          qt.qWarning(traceback.format_exc())
+
+    # Read per-category template paths
+    s.beginGroup("TemplatePaths")
+    for c in s.allKeys():
+      paths = s.value(c)
+      if isinstance(paths, basestring):
+        paths = [paths]
+
+      print 'add paths', paths, 'for', c
+      for path in paths:
         try:
           self.templateManager.addCategoryPath(c, path)
         except:
           mp = (c, path)
           qt.qWarning("failed to add template path %r for category %r" % mp)
-          qt.qWarning(traceback.format_exc())
-
-      else:
-        try:
-          self.templateManager.addPath(path)
-        except:
-          qt.qWarning("failed to add template path %r" % path)
           qt.qWarning(traceback.format_exc())
 
   #---------------------------------------------------------------------------
