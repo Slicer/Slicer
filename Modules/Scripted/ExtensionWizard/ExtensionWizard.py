@@ -49,6 +49,10 @@ class ExtensionWizardWidget:
       self.setup()
       self.parent.show()
 
+    self.extensionProject = None
+    self.extensionDescription = None
+    self.extensionLocation = None
+
     self.templateManager = None
     self.setupTemplates()
 
@@ -194,7 +198,8 @@ class ExtensionWizardWidget:
   def selectExtension(self, path=None):
     if path is None or isinstance(path, bool):
       path = qt.QFileDialog.getExistingDirectory(
-               self.parent.window(), "Select Extension...")
+               self.parent.window(), "Select Extension...",
+               self.extensionLocation)
 
     if not len(path):
       return False
