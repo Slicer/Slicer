@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Get Slicer bin directory (a.k.a. location of this script)
+bin="$(dirname "$0")"
+
+# Determine if we are using Slicer's or system's Python interpreter
+python="$bin/python-real"
+[ -x "$python" ] || python=python
+
+# Set up environment
+eval $("$bin/../Slicer" --launcher-show-set-environment-commands)
+
+# Run the Python launcher
+"$python" "$bin/../@Slicer_LIBEXEC_DIR@/ExtensionWizard.py" "$@"

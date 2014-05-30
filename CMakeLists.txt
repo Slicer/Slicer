@@ -462,6 +462,7 @@ set(Slicer_BIN_DIR "bin")
 set(Slicer_LIB_DIR "lib/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_SHARE_DIR "share/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
+set(Slicer_LIBEXEC_DIR "libexec/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
 set(Slicer_QM_DIR "${Slicer_BIN_DIR}/Translations")
 
@@ -493,6 +494,7 @@ set(Slicer_INSTALL_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BIN_DIR}")
 set(Slicer_INSTALL_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_LIB_DIR}")
 set(Slicer_INSTALL_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_INCLUDE_DIR}")
 set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR}")
+set(Slicer_INSTALL_LIBEXEC_DIR "${Slicer_INSTALL_ROOT}${Slicer_LIBEXEC_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
 set(Slicer_INSTALL_QM_DIR "${Slicer_INSTALL_ROOT}${Slicer_QM_DIR}")
 
@@ -995,6 +997,7 @@ include_directories(
 add_subdirectory(Libs)
 add_subdirectory(Base)
 add_subdirectory(Resources)
+add_subdirectory(Utilities/Scripts)
 add_subdirectory(Utilities/Scripts/SlicerWizard)
 add_subdirectory(Utilities/Templates)
 
