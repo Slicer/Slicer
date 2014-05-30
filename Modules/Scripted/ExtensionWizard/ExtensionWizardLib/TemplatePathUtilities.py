@@ -13,6 +13,21 @@ def userTemplatePathKey(category=None):
 
 #-----------------------------------------------------------------------------
 def builtinTemplatePath():
+  # Look for templates in source directory first
+  path = slicer.util.sourceDir()
+
+  if path is not None:
+    path = os.path.join(path, "Utilities", "Templates")
+
+    if os.path.exists(path):
+      return path
+
+  # Look for installed templates
   path = os.path.join(slicer.app.slicerHome, slicer.app.slicerSharePath,
                       "Wizard", "Templates")
-  return path if os.path.exists(path) else None
+
+  if os.path.exists(path):
+    return path
+
+  # No templates found
+  return None

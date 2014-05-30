@@ -19,6 +19,35 @@ def restart():
   from slicer import app
   app.restart()
 
+def _readCMakeCache(var):
+  import os
+  from slicer import app
+
+  prefix = var + ":"
+
+  try:
+    with open(os.path.join(app.slicerHome, "CMakeCache.txt")) as cache:
+      for line in cache:
+        if line.startswith(prefix):
+          return line.split("=", 1)[1].rstrip()
+
+  except:
+    pass
+
+  return None
+
+def sourceDir():
+  """Location of the Slicer source directory.
+
+  :type: :class:`str` or ``None``
+
+  This provides the location of the Slicer source directory, if Slicer is being
+  run from a CMake build directory. If the Slicer home directory does not
+  contain a ``CMakeCache.txt`` (e.g. for an installed Slicer), the property
+  will have the value ``None``.
+  """
+  return _readCMakeCache('Slicer_SOURCE_DIR')
+
 #
 # Custom Import
 #
