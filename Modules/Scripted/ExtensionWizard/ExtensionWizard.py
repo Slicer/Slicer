@@ -55,6 +55,25 @@ class ExtensionWizardWidget:
   def setup(self):
     # Instantiate and connect widgets ...
 
+    icon = self.parent.style().standardIcon(qt.QStyle.SP_ArrowForward)
+    iconSize = qt.QSize(22, 22)
+    def createToolButton(text):
+      tb = qt.QToolButton()
+
+      tb.text = text
+      tb.icon = icon
+
+      font = tb.font
+      font.setBold(True)
+      font.setPixelSize(14)
+      tb.font = font
+
+      tb.iconSize = iconSize
+      tb.toolButtonStyle = qt.Qt.ToolButtonTextBesideIcon
+      tb.autoRaise = True
+
+      return tb
+
     #
     # Tools Area
     #
@@ -62,11 +81,10 @@ class ExtensionWizardWidget:
     self.toolsCollapsibleButton.text = "Extension Tools"
     self.layout.addWidget(self.toolsCollapsibleButton)
 
-    # Layout within the dummy collapsible button
-    self.createExtensionButton = qt.QPushButton("Create Extension")
+    self.createExtensionButton = createToolButton("Create Extension")
     self.createExtensionButton.connect('clicked(bool)', self.createExtension)
 
-    self.selectExtensionButton = qt.QPushButton("Select Extension")
+    self.selectExtensionButton = createToolButton("Select Extension")
     self.selectExtensionButton.connect('clicked(bool)', self.selectExtension)
 
     toolsFormLayout = qt.QVBoxLayout(self.toolsCollapsibleButton)
