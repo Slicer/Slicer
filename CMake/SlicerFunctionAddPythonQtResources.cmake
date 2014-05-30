@@ -7,15 +7,15 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
   foreach(in_path ${ARGN})
     set(rc_depends)
     if(IS_ABSOLUTE ${in_path})
-      file(RELATIVE_PATH out_path ${CMAKE_CURRENT_SOURCE_DIR} ${in_path})
-      get_filename_component(out_path ${CMAKE_CURRENT_BINARY_DIR}/${out_path} PATH)
+      file(RELATIVE_PATH out_dir ${CMAKE_CURRENT_SOURCE_DIR} ${in_path})
+      get_filename_component(out_dir ${CMAKE_CURRENT_BINARY_DIR}/${out_dir} PATH)
     else()
-      get_filename_component(out_path ${CMAKE_CURRENT_BINARY_DIR}/${in_path} PATH)
+      get_filename_component(out_dir ${CMAKE_CURRENT_BINARY_DIR}/${in_path} PATH)
       get_filename_component(in_path ${in_path} ABSOLUTE)
     endif()
     get_filename_component(out_name ${in_path} NAME_WE)
     get_filename_component(rc_path ${in_path} PATH)
-    set(out_path ${out_path}/${out_name}Resources.py)
+    set(out_path ${out_dir}/${out_name}Resources.py)
 
     if(EXISTS ${in_path})
       # Parse file for dependencies
@@ -41,6 +41,7 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
     # Create command to generate the compiled resource script
     add_custom_command(
       OUTPUT ${out_path}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${out_dir}
       COMMAND ${PYTHON_EXECUTABLE}
         ${Slicer_SOURCE_DIR}/Utilities/Scripts/qrcc.py
         --rcc ${QT_RCC_EXECUTABLE}
