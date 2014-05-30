@@ -117,7 +117,7 @@ public:
   /// types/modules
   QString nodeModule(vtkMRMLNode* node)const;
 
-  ctkSettingsDialog* settingsDialog()const;
+  Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
 
 public slots:
 
