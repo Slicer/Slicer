@@ -64,6 +64,13 @@ class ExtensionDescription(object):
         remote = None
         svnRemote = None
 
+        # Get SHA of HEAD (may not exist if no commit has been made yet!)
+        try:
+          sha = repo.head.commit.hexsha
+
+        except ValueError:
+          sha = "NA"
+
         # Try to get git remote
         try:
           remote = repo.remotes.origin
@@ -80,7 +87,14 @@ class ExtensionDescription(object):
               break
 
           if svnRemote is None:
-            raise Exception("unable to determine repository's primary remote")
+            # Do we have any remotes?
+            if len(repo.remotes) == 0:
+              setattr(self, "scm", "git")
+              setattr(self, "scmurl", "NA")
+              setattr(self, "scmrevision", sha)
+
+            else:
+              raise Exception("unable to determine repository's primary remote")
 
           else:
             si = self._gitSvnInfo(repo, svnRemote)
@@ -91,7 +105,7 @@ class ExtensionDescription(object):
         else:
           setattr(self, "scm", "git")
           setattr(self, "scmurl", self._remotePublicUrl(remote))
-          setattr(self, "scmrevision", repo.head.commit.hexsha)
+          setattr(self, "scmrevision", sha)
 
         sourcedir = repo.working_tree_dir
 
