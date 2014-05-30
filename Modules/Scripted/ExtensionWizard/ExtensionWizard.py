@@ -162,7 +162,6 @@ class ExtensionWizardWidget:
     s.beginGroup("ExtensionWizard")
     paths = s.value("TemplatePaths")
 
-    print 'add generic template paths', paths
     if paths is not None:
       if isinstance(paths, basestring):
         paths = [paths]
@@ -178,10 +177,13 @@ class ExtensionWizardWidget:
     s.beginGroup("TemplatePaths")
     for c in s.allKeys():
       paths = s.value(c)
+
+      if paths is None:
+        continue
+
       if isinstance(paths, basestring):
         paths = [paths]
 
-      print 'add paths', paths, 'for', c
       for path in paths:
         try:
           self.templateManager.addCategoryPath(c, path)
