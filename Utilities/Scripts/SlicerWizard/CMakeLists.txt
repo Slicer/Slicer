@@ -10,3 +10,26 @@ endif()
 # at the same time. This is mainly to ensure that __version__.py is kept in
 # sync.
 configure_file("__version__.py.in" "__version__.py" @ONLY)
+
+set(SlicerWizard_PYTHON_SCRIPTS
+  __init__.py
+  __version__.py
+  CMakeParser.py
+  ExtensionDescription.py
+  ExtensionProject.py
+  ExtensionWizard.py
+  GithubHelper.py
+  Subversion.py
+  TemplateManager.py
+  Utilities.py
+  WizardHelpFormatter.py
+  )
+
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  ctkMacroCompilePythonScript(
+    TARGET_NAME SlicerWizard
+    SCRIPTS "${SlicerWizard_PYTHON_SCRIPTS}"
+    DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python/SlicerWizard
+    INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}/Python
+    )
+endif()
