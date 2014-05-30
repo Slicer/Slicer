@@ -169,8 +169,8 @@ class ExtensionWizardWidget:
     while dlg.exec_() == qt.QDialog.Accepted:
       try:
         path = self.templateManager.copyTemplate(
-                dlg.destination(), "extensions", dlg.extensionType(),
-                dlg.extensionName())
+                dlg.destination, "extensions", dlg.extensionType,
+                dlg.extensionName)
 
       except:
         md = qt.QMessageBox(self.parent.window())

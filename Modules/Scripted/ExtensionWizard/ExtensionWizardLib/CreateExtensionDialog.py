@@ -7,7 +7,7 @@ from __main__ import qt, ctk
 # _ui_CreateExtensionDialog
 #
 #=============================================================================
-class _ui_CreateExtensionDialog:
+class _ui_CreateExtensionDialog(object):
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     vLayout = qt.QVBoxLayout(parent)
@@ -36,7 +36,7 @@ class _ui_CreateExtensionDialog:
 # CreateExtensionDialog
 #
 #=============================================================================
-class CreateExtensionDialog:
+class CreateExtensionDialog(object):
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     self.dialog = qt.QDialog(parent)
@@ -47,12 +47,12 @@ class CreateExtensionDialog:
 
   #---------------------------------------------------------------------------
   def accept(self):
-    if not len(self.extensionName()):
+    if not len(self.extensionName):
       qt.QMessageBox.critical(self.dialog, "Cannot create extension",
                               "Extension name may not be empty.")
       return
 
-    dest = self.destination()
+    dest = self.destination
     if not len(dest) or not os.path.exists(dest):
       qt.QMessageBox.critical(self.dialog, "Cannot create extension",
                               "Destination must be an existing directory.")
@@ -75,13 +75,16 @@ class CreateExtensionDialog:
     return self.dialog.exec_()
 
   #---------------------------------------------------------------------------
+  @property
   def extensionName(self):
     return self.ui.extensionName.text
 
   #---------------------------------------------------------------------------
+  @property
   def extensionType(self):
     return self.ui.extensionType.currentText
 
   #---------------------------------------------------------------------------
+  @property
   def destination(self):
     return self.ui.destination.currentPath
