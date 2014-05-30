@@ -19,7 +19,7 @@ try:
 except ImportError:
   _haveGit = False
 
-from . import __version__
+from . import __version__, __version_info__
 
 from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
@@ -603,8 +603,14 @@ class ExtensionWizard(object):
 
     # Add built-in templates
     scriptPath = os.path.dirname(os.path.realpath(__file__))
-    self._templateManager.addPath(
+
+    self._templateManager.addPath( # Run from source directory
       os.path.join(scriptPath, "..", "..", "Templates"))
+
+    self._templateManager.addPath( # Run from install
+      os.path.join(scriptPath, "..", "..", "..", "share",
+                   "Slicer-%s.%s" % tuple(__version_info__[:2]),
+                   "Wizard", "Templates"))
 
     # Add user-specified template paths and keys
     self._templateManager.parseArguments(args)
