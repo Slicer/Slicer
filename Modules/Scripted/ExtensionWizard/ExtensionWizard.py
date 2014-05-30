@@ -58,6 +58,7 @@ class ExtensionWizardWidget:
 
     icon = self.parent.style().standardIcon(qt.QStyle.SP_ArrowForward)
     iconSize = qt.QSize(22, 22)
+
     def createToolButton(text):
       tb = qt.QToolButton()
 
@@ -80,6 +81,7 @@ class ExtensionWizardWidget:
       le.readOnly = True
       le.frame = False
       le.styleSheet = "QLineEdit { background:transparent; }"
+      le.cursor = qt.QCursor(qt.Qt.IBeamCursor)
       return le
 
     #
