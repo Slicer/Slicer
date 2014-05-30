@@ -13,11 +13,19 @@ try:
 except ImportError:
   _haveGit = False
 
+try:
+  import chardet
+  _haveCharDet = True
+
+except ImportError:
+  _haveCharDet = False
+
 __all__ = [
   'warn',
   'die',
   'inquire',
   'initLogging',
+  'detectEncoding',
   'buildProcessArgs',
   'createEmptyRepo',
   'getRepo',
@@ -198,6 +206,36 @@ def initLogging(logger, args):
   # Turn of github debugging
   ghLogger = logging.getLogger("github")
   ghLogger.setLevel(logging.WARNING)
+
+#-----------------------------------------------------------------------------
+def detectEncoding(data):
+  """Attempt to determine the encoding of a byte sequence.
+
+  :param data: Input data on which to perform encoding detection.
+  :type data: :class:`str`
+
+  :return: Tuple of (encoding name, detection confidence).
+  :rtype: :class:`tuple` of (:class:`str` or ``None``, :class:`float`)
+
+  This function attempts to determine the character encoding of the input data.
+  It returns a tuple with the most likely encoding (or ``None`` if the input
+  data is not text) and the confidence of the detection.
+
+  This function uses the :mod:`chardet` module, if it is available. Otherwise,
+  only ``'ascii'`` is detected, and ``None`` is returned for any non-ASCII
+  input.
+  """
+
+  if _haveCharDet:
+    result = chardet.detect(data)
+    return result["encoding"], result["confidence"]
+
+  else:
+    chars = ''.join(map(chr, range(7,14) + range(32, 128)))
+    if len(data.translate(None, chars)):
+      return None, 0.0
+
+    return "ascii", 1.0
 
 #-----------------------------------------------------------------------------
 def buildProcessArgs(*args, **kwargs):

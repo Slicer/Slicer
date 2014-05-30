@@ -2,7 +2,7 @@ import fnmatch
 import logging
 import os
 
-from .Utilities import die
+from .Utilities import die, detectEncoding
 
 _sourcePatterns = [
   "*.h",
@@ -80,10 +80,37 @@ class TemplateManager(object):
     if not os.path.exists(path):
       os.makedirs(path)
 
-    with open(os.path.join(template, inFile)) as fp:
+    # Read file contents
+    p = os.path.join(template, inFile)
+    with open(p) as fp:
       contents = fp.read()
-    contents = contents.replace(key, name)
-    contents = contents.replace(key.upper(), name.upper())
+
+    # Replace template key with copy name
+    if type(name) is str:
+      # If replacement is just bytes, we can just do the replacement...
+      contents = contents.replace(key, name)
+      contents = contents.replace(key.upper(), name.upper())
+
+    else:
+      # ...else we have to try to guess the template file encoding in order to
+      # convert it to unicode and back
+      encoding, confidence = detectEncoding(contents)
+
+      if encoding is not None:
+        if confidence < 0.5:
+          logging.warning("%s: encoding detection confidence is %f:"
+                          " copied file might be corrupt" % (p, confidence))
+
+        contents = contents.decode(encoding)
+        contents = contents.replace(key, name)
+        contents = contents.replace(key.upper(), name.upper())
+        contents = contents.encode(encoding)
+
+      else:
+        # Looks like a binary file; don't perform replacement
+        pass
+
+    # Write adjusted contents
     with open(outFile, "w") as fp:
       fp.write(contents)
 
