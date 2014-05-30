@@ -259,11 +259,30 @@ class ExtensionWizardWidget:
     w = self.extensionContentsView.width
     self.extensionContentsView.setColumnWidth(0, (w * 4) / 9)
 
+    # Prompt to load scripted modules from extension
+    self.loadModules(path)
+
     # Store extension location, project and description for later use
     self.extensionProject = xp
     self.extensionDescription = xd
     self.extensionLocation = path
     return True
+
+  #---------------------------------------------------------------------------
+  def loadModules(self, path, depth=1):
+    modules = ModuleInfo.findModules(path, depth)
+
+    factory = slicer.app.moduleManager().factoryManager()
+    loadedModules = factory.instantiatedModuleNames()
+
+    candidates = [m for m in modules if m.key not in loadedModules]
+
+    if len(candidates):
+      dlg = LoadModulesDialog(self.parent.window())
+      dlg.setModules(candidates)
+
+      if dlg.exec_() == qt.QDialog.Accepted:
+        pass # TODO
 
   #---------------------------------------------------------------------------
   def createExtensionModule(self):
@@ -312,6 +331,7 @@ class ExtensionWizardWidget:
         md.standardButtons = qt.QMessageBox.Close
         md.exec_()
 
+      self.loadModules(os.path.join(self.extensionLocation, name), depth=0)
       return
 
   #---------------------------------------------------------------------------

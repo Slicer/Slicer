@@ -8,6 +8,8 @@ set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}Lib/CreateComponentDialog.py
   ${MODULE_NAME}Lib/EditableTreeWidget.py
   ${MODULE_NAME}Lib/EditExtensionMetadataDialog.py
+  ${MODULE_NAME}Lib/LoadModulesDialog.py
+  ${MODULE_NAME}Lib/ModuleInfo.py
   )
 
 set(MODULE_PYTHON_RESOURCES
