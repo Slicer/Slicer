@@ -145,6 +145,8 @@ public:
   /// using one of the registered factories.
   void registerModules();
 
+  Q_INVOKABLE void registerModule(const QFileInfo& file);
+
   /// Convenient method returning the list of all registered module names
   Q_INVOKABLE QStringList registeredModuleNames() const;
 
@@ -209,7 +211,6 @@ protected:
   QScopedPointer<qSlicerAbstractModuleFactoryManagerPrivate> d_ptr;
 
   void registerModules(const QString& directoryPath);
-  void registerModule(const QFileInfo& file);
 
   /// Instantiate a module given its \a name
   qSlicerAbstractCoreModule* instantiateModule(const QString& name);

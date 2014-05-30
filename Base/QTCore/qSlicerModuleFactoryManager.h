@@ -78,6 +78,12 @@ public:
   /// Return the mrml scene passed to loaded modules
   vtkMRMLScene* mrmlScene()const;
 
+  /// Load specified modules.
+  ///
+  /// This attempts to load the specified modules, instantiating them first if
+  /// necessary.
+  Q_INVOKABLE bool loadModules(const QStringList& modules);
+
   /// Load module identified by \a name
   /// \todo move it as protected
   bool loadModule(const QString& name);

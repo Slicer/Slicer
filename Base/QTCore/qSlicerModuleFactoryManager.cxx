@@ -84,6 +84,27 @@ int qSlicerModuleFactoryManager::loadModules()
 }
 
 //---------------------------------------------------------------------------
+bool qSlicerModuleFactoryManager::loadModules(const QStringList& modules)
+{
+  // Ensure requested modules are instantiated
+  foreach(const QString& moduleKey, modules)
+    {
+    this->instantiateModule(moduleKey);
+    }
+
+  // Load requested modules
+  foreach(const QString& moduleKey, modules)
+    {
+    if (!this->loadModule(moduleKey))
+      {
+      return false;
+      }
+    }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
 bool qSlicerModuleFactoryManager::loadModule(const QString& name)
 {
   return this->loadModule(name, QString());
