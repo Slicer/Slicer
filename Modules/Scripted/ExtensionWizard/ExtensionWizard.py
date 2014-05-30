@@ -124,6 +124,10 @@ class ExtensionWizardWidget:
     self.extensionContentsView.sortingEnabled = True
     self.extensionContentsView.hideColumn(3)
 
+    self.createExtensionModuleButton = createToolButton("Add Module to Extension")
+    self.createExtensionModuleButton.connect('clicked(bool)',
+                                             self.createExtensionModule)
+
     self.editExtensionMetadataButton = createToolButton("Edit Extension Metadata")
     self.editExtensionMetadataButton.connect('clicked(bool)',
                                              self.editExtensionMetadata)
@@ -133,6 +137,7 @@ class ExtensionWizardWidget:
     editorLayout.addRow("Location:", self.extensionLocationField)
     editorLayout.addRow("Repository:", self.extensionRepositoryField)
     editorLayout.addRow("Contents:", self.extensionContentsView)
+    editorLayout.addRow(self.createExtensionModuleButton)
     editorLayout.addRow(self.editExtensionMetadataButton)
 
     # Add vertical spacer
@@ -169,14 +174,14 @@ class ExtensionWizardWidget:
 
   #---------------------------------------------------------------------------
   def createExtension(self):
-    dlg = CreateExtensionDialog(self.parent.window())
+    dlg = CreateComponentDialog("extension", self.parent.window())
     dlg.setTemplates(self.templateManager.templates("extensions"))
 
     while dlg.exec_() == qt.QDialog.Accepted:
       try:
         path = self.templateManager.copyTemplate(
-                dlg.destination, "extensions", dlg.extensionType,
-                dlg.extensionName)
+                 dlg.destination, "extensions",
+                 dlg.componentType, dlg.componentName)
 
       except:
         md = qt.QMessageBox(self.parent.window())
@@ -259,6 +264,55 @@ class ExtensionWizardWidget:
     self.extensionDescription = xd
     self.extensionLocation = path
     return True
+
+  #---------------------------------------------------------------------------
+  def createExtensionModule(self):
+    if (self.extensionLocation is None):
+      # Action shouldn't be enabled if no extension is selected, but guard
+      # against that just in case...
+      return
+
+    dlg = CreateComponentDialog("module", self.parent.window())
+    dlg.setTemplates(self.templateManager.templates("modules"),
+                     default="scripted")
+    dlg.showDestination = False
+
+    while dlg.exec_() == qt.QDialog.Accepted:
+      name = dlg.componentName
+
+      try:
+        self.templateManager.copyTemplate(self.extensionLocation, "modules",
+                                          dlg.componentType, name)
+
+      except:
+        md = qt.QMessageBox(self.parent.window())
+        md.icon = qt.QMessageBox.Critical
+        md.text = "An error occurred while trying to create the module."
+        md.detailedText = traceback.format_exc()
+        md.standardButtons = qt.QMessageBox.Retry | qt.QMessageBox.Close
+        if md.exec_() != qt.QMessageBox.Retry:
+          return
+
+        continue
+
+      try:
+        self.extensionProject.addModule(name)
+        self.extensionProject.save()
+
+      except:
+        md = qt.QMessageBox(self.parent.window())
+        md.icon = qt.QMessageBox.Critical
+        md.text = "An error occurred while adding the module to the extension."
+        md.informativeText = "The module has been created, but the extension" \
+                             " CMakeLists.txt could not be updated. In order" \
+                             " to include the module in the extension build," \
+                             " you will need to update the extension" \
+                             " CMakeLists.txt by hand."
+        md.detailedText = traceback.format_exc()
+        md.standardButtons = qt.QMessageBox.Close
+        md.exec_()
+
+      return
 
   #---------------------------------------------------------------------------
   def editExtensionMetadata(self):
