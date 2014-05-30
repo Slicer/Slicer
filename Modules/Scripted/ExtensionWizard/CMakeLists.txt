@@ -12,6 +12,7 @@ set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}Lib/LoadModulesDialog.py
   ${MODULE_NAME}Lib/ModuleInfo.py
   ${MODULE_NAME}Lib/SettingsPanel.py
+  ${MODULE_NAME}Lib/TemplatePathUtilities.py
   )
 
 set(MODULE_PYTHON_RESOURCES

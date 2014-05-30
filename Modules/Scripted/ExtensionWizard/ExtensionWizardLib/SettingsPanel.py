@@ -3,6 +3,7 @@ from __main__ import qt, ctk
 import SlicerWizard.TemplateManager
 
 from .DirectoryListWidget import DirectoryListWidget
+from .TemplatePathUtilities import *
 
 #=============================================================================
 #
@@ -13,6 +14,16 @@ class _ui_SettingsPanel(object):
   #---------------------------------------------------------------------------
   def __init__(self, parent):
     self.formLayout = qt.QFormLayout(parent)
+
+    self.builtinPath = qt.QLineEdit()
+    builtinPath = builtinTemplatePath()
+    if (builtinPath):
+      self.builtinPath.text = builtinPath
+    else:
+      self.builtinPath.text = "(Unavailable)"
+      self.builtinPath.enabled = False
+    self.builtinPath.readOnly = True
+    self.addRow("Built-in template path:", self.builtinPath)
 
     self.genericPaths = DirectoryListWidget()
     self.addRow("Additional template\npaths:", self.genericPaths)
@@ -42,14 +53,13 @@ class SettingsPanel(ctk.ctkSettingsPanel):
     self.ui = _ui_SettingsPanel(self)
 
     self.registerProperty(
-      "ExtensionWizard/TemplatePaths", self.ui.genericPaths.ui.pathList,
+      userTemplatePathKey(), self.ui.genericPaths.ui.pathList,
       "directoryList", qt.SIGNAL("directoryListChanged()"),
       "Additional template paths", ctk.ctkSettingsPanel.OptionRequireRestart)
 
     for category in self.ui.paths.keys():
       self.registerProperty(
-        "ExtensionWizard/TemplatePaths/%s" % category,
-        self.ui.paths[category].ui.pathList,
+        userTemplatePathKey(category), self.ui.paths[category].ui.pathList,
         "directoryList", qt.SIGNAL("directoryListChanged()"),
         "Additional template paths for %s" % category,
         ctk.ctkSettingsPanel.OptionRequireRestart)

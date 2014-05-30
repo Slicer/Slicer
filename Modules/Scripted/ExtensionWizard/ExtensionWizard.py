@@ -157,10 +157,17 @@ class ExtensionWizardWidget:
   def setupTemplates(self):
     self.templateManager = SlicerWizard.TemplateManager()
 
+    builtinPath = builtinTemplatePath()
+    if builtinPath is not None:
+      try:
+        self.templateManager.addPath(builtinPath)
+      except:
+        qt.qWarning("failed to add built-in template path %r" % builtinPath)
+        qt.qWarning(traceback.format_exc())
+
     # Read base template paths
     s = qt.QSettings()
-    s.beginGroup("ExtensionWizard")
-    paths = s.value("TemplatePaths")
+    paths = s.value(userTemplatePathKey())
 
     if paths is not None:
       if isinstance(paths, basestring):
@@ -174,7 +181,7 @@ class ExtensionWizardWidget:
           qt.qWarning(traceback.format_exc())
 
     # Read per-category template paths
-    s.beginGroup("TemplatePaths")
+    s.beginGroup(userTemplatePathKey())
     for c in s.allKeys():
       paths = s.value(c)
 
