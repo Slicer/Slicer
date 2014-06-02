@@ -161,22 +161,6 @@ void qSlicerApplicationPrivate::init()
 {
   Q_Q(qSlicerApplication);
 
-  // Instantiate ErrorLogModel
-  this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
-  this->ErrorLogModel->setLogEntryGrouping(true);
-  this->ErrorLogModel->setTerminalOutputs(
-        this->CoreCommandOptions->disableTerminalOutputs() ?
-          ctkErrorLogTerminalOutput::None : ctkErrorLogTerminalOutput::All);
-#if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
-#else
-  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
-#endif
-  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
-  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
-  this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
-  this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
-  this->ErrorLogModel->setAllMsgHandlerEnabled(true);
-
   ctkVTKConnectionFactory::setInstance(new qMRMLConnectionFactory);
 
 #ifdef Slicer_USE_PYTHONQT
@@ -195,6 +179,24 @@ void qSlicerApplicationPrivate::init()
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
   this->ToolTipTrapper->setToolTipsTrapped(false);
   this->ToolTipTrapper->setToolTipsWordWrapped(true);
+
+  //----------------------------------------------------------------------------
+  // Instantiate ErrorLogModel
+  //----------------------------------------------------------------------------
+  this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
+  this->ErrorLogModel->setLogEntryGrouping(true);
+  this->ErrorLogModel->setTerminalOutputs(
+        this->CoreCommandOptions->disableTerminalOutputs() ?
+          ctkErrorLogTerminalOutput::None : ctkErrorLogTerminalOutput::All);
+#if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
+#else
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogFDMessageHandler);
+#endif
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogQtMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkErrorLogStreamMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkITKErrorLogMessageHandler);
+  this->ErrorLogModel->registerMsgHandler(new ctkVTKErrorLogMessageHandler);
+  this->ErrorLogModel->setAllMsgHandlerEnabled(true);
 
   //----------------------------------------------------------------------------
   // Settings Dialog
