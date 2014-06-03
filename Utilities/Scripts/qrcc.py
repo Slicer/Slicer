@@ -2,6 +2,7 @@
 
 import argparse
 import base64
+import os
 import subprocess
 import sys
 
@@ -28,13 +29,42 @@ qInitResources()
 """
 
 def compileResources(in_path, out_file, args):
-  command = [args.rcc, "-binary", in_path]
+  # Determine command line for rcc
+  if sys.platform.startswith("win") or sys.platform.startswith("cygwin"):
+    # On Windows, rcc performs LF -> CRLF conversion when writing to stdout,
+    # resulting in corrupt data that can cause Qt to crash when loading the
+    # resources. To work around this, we must instead write to a temporary
+    # file.
+    if args.out_path == "-":
+      import tempfile
+      tmp_file, tmp_path = tempfile.mkstemp()
+      os.close(tmp_file)
+
+    else:
+      tmp_path = args.out_path + ".rcctmp"
+
+    command = [args.rcc, "-binary", "-o", tmp_path, in_path]
+
+  else:
+    tmp_path = None
+    command = [args.rcc, "-binary", in_path]
+
+  # Run rcc
   proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr)
   data, err = proc.communicate()
 
+  # Check that rcc ran successfully
   if proc.returncode != 0:
     sys.exit(proc.returncode)
 
+  # Read data, if using a temporary file (see above)
+  if tmp_path is not None:
+    with open(tmp_path,"rb") as tmp_file:
+      data = tmp_file.read()
+
+    os.remove(tmp_path)
+
+  # Write output script
   out_file.write(_header)
   out_file.write(base64.encodestring(data).rstrip())
   out_file.write(_footer)
