@@ -1148,7 +1148,16 @@ void qSlicerAppMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_EditApplicationSettingsAction_triggered()
 {
-  qSlicerApplication::application()->settingsDialog()->exec();
+  ctkSettingsDialog* const settingsDialog =
+    qSlicerApplication::application()->settingsDialog();
+
+  // Reload settings to apply any changes that have been made outside of the
+  // dialog (e.g. changes to module paths due to installing extensions). See
+  // http://na-mic.org/Mantis/view.php?id=3658.
+  settingsDialog->reloadSettings();
+
+  // Now show the dialog
+  settingsDialog->exec();
 }
 
 //---------------------------------------------------------------------------
