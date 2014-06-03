@@ -1572,7 +1572,8 @@ int qSlicerCoreApplication::registerResource(const QByteArray& data)
   const int handle = d->NextResourceHandle++;
   d->LoadedResources.insert(handle, data);
 
-  uchar* pdata = reinterpret_cast<uchar*>(d->LoadedResources[handle].data());
+  const uchar* pdata =
+    reinterpret_cast<const uchar*>(d->LoadedResources[handle].constData());
 
   if (!QResource::registerResource(pdata))
     {
@@ -1590,7 +1591,8 @@ bool qSlicerCoreApplication::unregisterResource(int handle)
 
   if (d->LoadedResources.contains(handle))
     {
-    uchar* pdata = reinterpret_cast<uchar*>(d->LoadedResources[handle].data());
+    const uchar* pdata =
+      reinterpret_cast<const uchar*>(d->LoadedResources[handle].constData());
     const bool result = QResource::unregisterResource(pdata);
     d->LoadedResources.remove(handle);
     return result;
