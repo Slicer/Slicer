@@ -14,7 +14,7 @@ set(modules
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND modules
-    #ExtensionWizard
+    ExtensionWizard
     )
 endif()
 if(Slicer_USE_NUMPY)
