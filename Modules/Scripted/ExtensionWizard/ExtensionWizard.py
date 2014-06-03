@@ -11,6 +11,17 @@ import SlicerWizard.Utilities
 
 from ExtensionWizardLib import *
 
+#-----------------------------------------------------------------------------
+def _settingsList(settings, key):
+  # Return a settings value as a list (even if empty or a single value)
+
+  value = settings.value(key)
+
+  if isinstance(value, basestring):
+    return [value]
+
+  return [] if value is None else value
+
 #=============================================================================
 #
 # ExtensionWizard
@@ -168,31 +179,17 @@ class ExtensionWizardWidget:
 
     # Read base template paths
     s = qt.QSettings()
-    paths = s.value(userTemplatePathKey())
-
-    if paths is not None:
-      if isinstance(paths, basestring):
-        paths = [paths]
-
-      for path in paths:
-        try:
-          self.templateManager.addPath(path)
-        except:
-          qt.qWarning("failed to add template path %r" % path)
-          qt.qWarning(traceback.format_exc())
+    for path in _settingsList(s, userTemplatePathKey()):
+      try:
+        self.templateManager.addPath(path)
+      except:
+        qt.qWarning("failed to add template path %r" % path)
+        qt.qWarning(traceback.format_exc())
 
     # Read per-category template paths
     s.beginGroup(userTemplatePathKey())
     for c in s.allKeys():
-      paths = s.value(c)
-
-      if paths is None:
-        continue
-
-      if isinstance(paths, basestring):
-        paths = [paths]
-
-      for path in paths:
+      for path in _settingsList(s, c):
         try:
           self.templateManager.addCategoryPath(c, path)
         except:
@@ -318,7 +315,7 @@ class ExtensionWizardWidget:
         # Add module(s) to permanent search paths, if requested
         if dlg.addToSearchPaths:
           settings = slicer.app.revisionUserSettings()
-          rawSearchPaths = list(settings.value("Modules/AdditionalPaths"))
+          rawSearchPaths = _settingsList(settings, "Modules/AdditionalPaths")
           searchPaths = [qt.QDir(path) for path in rawSearchPaths]
           modified = False
 
