@@ -297,6 +297,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
       this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
 #endif
   // Layout manager should also listen the MRML scene
+  // Note: This creates the OpenGL context for each view, so things like
+  // multisampling should probably be configured before this line is executed.
   this->LayoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   QObject::connect(qSlicerApplication::application(),
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),

@@ -82,6 +82,8 @@ set(KIT_SRCS
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsStylesPanel.cxx
   qSlicerSettingsStylesPanel.h
+  qSlicerSettingsViewsPanel.cxx
+  qSlicerSettingsViewsPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerViewersToolBar.cxx
@@ -190,6 +192,7 @@ set(KIT_MOC_SRCS
   qSlicerSettingsGeneralPanel.h
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsStylesPanel.h
+  qSlicerSettingsViewsPanel.h
   qSlicerStyle.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
@@ -247,6 +250,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerSettingsInternationalizationPanel.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
   Resources/UI/qSlicerSettingsStylesPanel.ui
+  Resources/UI/qSlicerSettingsViewsPanel.ui
   Resources/UI/qSlicerWebWidget.ui
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
