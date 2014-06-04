@@ -76,7 +76,7 @@
       <longflag>iterations</longflag>
       <label>Number of iterations</label>
       <description><![CDATA[Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results.]]></description>
-      <default>500,400,300</default>
+      <default>50,40,30</default>
     </integer-vector>
     <float>
       <name>convergenceThreshold</name>
