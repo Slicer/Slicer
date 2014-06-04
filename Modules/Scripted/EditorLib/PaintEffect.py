@@ -611,6 +611,26 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
       if br[i] > dims[i]:
         br[i] = dims[i] - 1
 
+    # If the region is smaller than a pixel then paint it using paintPixel mode,
+    # to make sure at least one pixel is filled on each click
+    maxRowDelta = 0
+    maxColumnDelta = 0
+    for i in xrange(3):
+      d = abs(tr[i] - tl[i])
+      if d > maxColumnDelta:
+        maxColumnDelta = d
+      d = abs(br[i] - bl[i])
+      if d > maxColumnDelta:
+        maxColumnDelta = d
+      d = abs(bl[i] - tl[i])
+      if d > maxRowDelta:
+        maxRowDelta = d
+      d = abs(br[i] - tr[i])
+      if d > maxRowDelta:
+        maxRowDelta = d
+    if maxRowDelta<=1 or maxColumnDelta<=1 :
+      self.paintPixel(x,y)
+      return
 
     #
     # get the layers and nodes
