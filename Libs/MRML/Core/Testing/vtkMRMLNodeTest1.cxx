@@ -172,7 +172,8 @@ namespace
 //----------------------------------------------------------------------------
 bool CheckNthNodeReferenceID(int line, const char* function,
                              vtkMRMLNode* referencingNode, const char* role, int n,
-                             vtkMRMLNode* expectedNodeReference)
+                             vtkMRMLNode* expectedNodeReference,
+                             bool referencingNodeAddedToScene = true)
 {
   const char* currentNodeReferenceID = referencingNode->GetNthNodeReferenceID(role, n);
   const char* expectedNodeReferenceID = expectedNodeReference ? expectedNodeReference->GetID() : 0;
@@ -196,6 +197,10 @@ bool CheckNthNodeReferenceID(int line, const char* function,
     return false;
     }
 
+  if (!referencingNodeAddedToScene)
+    {
+    expectedNodeReference = 0;
+    }
   vtkMRMLNode* currentNodeReference = referencingNode->GetNthNodeReference(role, n);
   if (currentNodeReference!= expectedNodeReference)
     {
@@ -587,7 +592,6 @@ bool TestAddRefrencedNodeIDWithNoScene()
   vtkNew<vtkMRMLScene> scene;
 
   std::string role1("refrole1");
-  std::string role2("refrole2");
 
   vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
 
@@ -597,11 +601,13 @@ bool TestAddRefrencedNodeIDWithNoScene()
   /// Add referenced node
   referencingNode->SetAndObserveNodeReferenceID(role1.c_str(), referencedNode1->GetID());
 
-  if (referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 0), referencedNode1->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0)
+  if (!CheckNthNodeReferenceID(__LINE__, "SetAndObserveNodeReferenceID",
+                               referencingNode.GetPointer(),
+                               role1.c_str(),
+                               /* n = */ 0,
+                               /* expectedNodeReference = */ referencedNode1.GetPointer(),
+                               /* referencingNodeAddedToScene = */ false))
     {
-    std::cerr << __LINE__ << ": SetAndObserveNodeReferenceID failed" << std::endl;
     return false;
     }
 
@@ -611,11 +617,13 @@ bool TestAddRefrencedNodeIDWithNoScene()
 
   referencingNode->SetAndObserveNodeReferenceID(role1.c_str(), referencedNode2->GetID());
 
-  if (referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 0), referencedNode2->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0)
+  if (!CheckNthNodeReferenceID(__LINE__, "SetAndObserveNodeReferenceID",
+                               referencingNode.GetPointer(),
+                               role1.c_str(),
+                               /* n = */ 0,
+                               /* expectedNodeReference = */ referencedNode2.GetPointer(),
+                               /* referencingNodeAddedToScene = */ false))
     {
-    std::cerr << __LINE__ << ": SetAndObserveNodeReferenceID failed" << std::endl;
     return false;
     }
 
@@ -625,15 +633,24 @@ bool TestAddRefrencedNodeIDWithNoScene()
 
   referencingNode->AddAndObserveNodeReferenceID(role1.c_str(), referencedNode3->GetID());
 
-  if (referencingNode->GetNthNodeReferenceID(role1.c_str(), 1) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 1), referencedNode3->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 1) != 0 ||
-      // make sure it didn't change the first referenced node ID
-      referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 0), referencedNode2->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != 0)
+  if (!CheckNthNodeReferenceID(__LINE__, "AddAndObserveNodeReferenceID",
+                               referencingNode.GetPointer(),
+                               role1.c_str(),
+                               /* n = */ 1,
+                               /* expectedNodeReference = */ referencedNode3.GetPointer(),
+                               /* referencingNodeAddedToScene = */ false))
     {
-    std::cerr << __LINE__ << ": AddAndObserveNodeReferenceID failed" << std::endl;
+    return false;
+    }
+
+  // make sure it didn't change the first referenced node ID
+  if (!CheckNthNodeReferenceID(__LINE__, "AddAndObserveNodeReferenceID",
+                               referencingNode.GetPointer(),
+                               role1.c_str(),
+                               /* n = */ 0,
+                               /* expectedNodeReference = */ referencedNode2.GetPointer(),
+                               /* referencingNodeAddedToScene = */ false))
+    {
     return false;
     }
 
@@ -641,18 +658,25 @@ bool TestAddRefrencedNodeIDWithNoScene()
   // in the scene.
   scene->AddNode(referencingNode.GetPointer());
 
-  if (
-      referencingNode->GetNthNodeReferenceID(role1.c_str(), 1) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 1), referencedNode3->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 1) != referencedNode3.GetPointer() ||
-      // make sure it didn't change the first referenced node ID
-      referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 0), referencedNode2->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != referencedNode2.GetPointer())
+  if (!CheckNthNodeReferenceID(__LINE__, "vtkMRMLScene::AddNode",
+                               referencingNode.GetPointer(),
+                               role1.c_str(),
+                               /* n = */ 1,
+                               /* expectedNodeReference = */ referencedNode3.GetPointer()))
     {
-    std::cerr << __LINE__ << ": AddNode failed" << std::endl;
     return false;
     }
+
+  // make sure it didn't change the first referenced node ID
+  if (!CheckNthNodeReferenceID(__LINE__, "vtkMRMLScene::AddNode",
+                               referencingNode.GetPointer(),
+                               role1.c_str(),
+                               /* n = */ 0,
+                               /* expectedNodeReference = */ referencedNode2.GetPointer()))
+    {
+    return false;
+    }
+
   return true;
 }
 
