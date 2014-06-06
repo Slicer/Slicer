@@ -62,6 +62,7 @@ bool TestReferencesWithEvent();
 bool TestAddReferencedNodeIDEventsWithNoScene();
 bool TestSetNodeReferenceID();
 bool TestNodeReferenceSerialization();
+bool TestClearScene();
 
 
 //---------------------------------------------------------------------------
@@ -88,6 +89,7 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = TestAddReferencedNodeIDEventsWithNoScene() && res;
   res = TestSetNodeReferenceID() && res;
   res = TestNodeReferenceSerialization() && res;
+  res = TestClearScene() && res;
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -169,6 +171,21 @@ bool TestAttribute()
 
 namespace
 {
+
+//----------------------------------------------------------------------------
+bool CheckInt(int line, const std::string& function, int current, int expected)
+{
+  if(current != expected)
+    {
+    std::cerr << "Line " << line << " - " << function << " : CheckInt failed"
+              << "\n\tcurrent:" << current
+              << "\n\texpected:" << expected
+              << std::endl;
+    return false;
+    }
+  return true;
+}
+
 //----------------------------------------------------------------------------
 bool CheckNthNodeReferenceID(int line, const char* function,
                              vtkMRMLNode* referencingNode, const char* role, int n,
@@ -1815,5 +1832,250 @@ bool TestNodeReferenceSerialization()
         << referencingNodeImported->GetNumberOfNodeReferences(role2.c_str());
     return false;
     }
+  return true;
+}
+
+namespace
+{
+
+//----------------------------------------------------------------------------
+bool TestClearScene_CheckNumberOfEvents(const char* description,
+                                        int removeSingleton,
+                                        bool referencingNodeIsSingleton,
+                                        bool referencedNodeIsSingleton,
+                                        int expectedTotalNumberOfEventsForReferencingNode,
+                                        int expectedNumberOfReferenceRemovedEventsForReferencingNode,
+                                        int expectedTotalNumberOfEventsForReferencedNode,
+                                        int expectedNumberOfReferenceRemovedEventsForReferencedNode)
+{
+  vtkNew<vtkMRMLScene> scene;
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
+
+  std::string role1("refrole1");
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
+  if (referencingNodeIsSingleton)
+    {
+    std::string tag("ReferencingNodeSingleton-");
+    tag += description;
+    referencingNode->SetSingletonTag(tag.c_str());
+    }
+  scene->AddNode(referencingNode.GetPointer());
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode;
+  if (referencedNodeIsSingleton)
+    {
+    std::string tag("ReferencedNodeSingleton-");
+    tag += description;
+    referencedNode->SetSingletonTag(tag.c_str());
+    }
+  scene->AddNode(referencedNode.GetPointer());
+  referencingNode->AddNodeReferenceID(role1.c_str(), referencedNode->GetID());
+
+  vtkNew<vtkMRMLNodeCallback> referencingNodeSpy;
+  vtkNew<vtkMRMLNodeCallback> referencedNodeSpy;
+
+  referencingNode->AddObserver(vtkCommand::AnyEvent, referencingNodeSpy.GetPointer());
+  referencedNode->AddObserver(vtkCommand::AnyEvent, referencedNodeSpy.GetPointer());
+
+  if (!CheckInt(__LINE__,
+                std::string("TestClearScene_AddNodes-TotalNumberOfEvents-ReferencingNode_") + description,
+                referencingNodeSpy->GetTotalNumberOfEvents(), 0))
+    {
+    referencingNodeSpy->Print(std::cerr);
+    return false;
+    }
+
+  if (!CheckInt(__LINE__,
+                std::string("TestClearScene_AddNodes-TotalNumberOfEvents-ReferencedNode_") + description,
+                referencedNodeSpy->GetTotalNumberOfEvents(), 0))
+    {
+    referencedNodeSpy->Print(std::cerr);
+    return false;
+    }
+
+  scene->Clear(removeSingleton);
+
+  // ReferencingNode
+
+  if (!CheckInt(__LINE__,
+                std::string("TestClearScene-TotalNumberOfEvents-for-ReferencingNode_") + description,
+                referencingNodeSpy->GetTotalNumberOfEvents(),
+                expectedTotalNumberOfEventsForReferencingNode))
+    {
+    referencingNodeSpy->Print(std::cerr);
+    return false;
+    }
+
+  if (!CheckInt(__LINE__,
+                std::string("TestClearScene-NumberOfReferenceRemovedEvents-for-ReferencingNode_") + description,
+                referencingNodeSpy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent),
+                expectedNumberOfReferenceRemovedEventsForReferencingNode))
+    {
+    referencingNodeSpy->Print(std::cerr);
+    return false;
+    }
+
+  if (!CheckInt(__LINE__,
+
+  // ReferencedNode
+
+                std::string("TestClearScene-TotalNumberOfEvents-for-ReferencedNode_") + description,
+                referencedNodeSpy->GetTotalNumberOfEvents(),
+                expectedTotalNumberOfEventsForReferencedNode))
+    {
+    referencedNodeSpy->Print(std::cerr);
+    return false;
+    }
+
+  if (!CheckInt(__LINE__,
+                std::string("TestClearScene-NumberOfReferenceRemovedEvents-for-ReferencedNode_") + description,
+                referencedNodeSpy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent),
+                expectedNumberOfReferenceRemovedEventsForReferencedNode))
+    {
+    referencedNodeSpy->Print(std::cerr);
+    return false;
+    }
+
+  referencingNodeSpy->ResetNumberOfEvents();
+  referencedNodeSpy->ResetNumberOfEvents();
+
+  return true;
+}
+
+} // end of anonymous namespace
+
+//----------------------------------------------------------------------------
+bool TestClearScene()
+{
+
+  // removeSingleton OFF
+  int removeSingleton = 0;
+
+  // "referencingNode" references "referencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[referencingNode-referencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ false,
+        /* referencedNodeIsSingleton = */ false,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 0,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+  // "referencingNode" references "singletonReferencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[referencingNode-singletonReferencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ false,
+        /* referencedNodeIsSingleton = */ true,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 0,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+
+  // "singletonReferencingNode" references "referencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[singletonReferencingNode-referencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ true,
+        /* referencedNodeIsSingleton = */ false,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 1,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 1,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+  // "singletonReferencingNode" references "singletonReferencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[singletonReferencingNode-singletonReferencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ true,
+        /* referencedNodeIsSingleton = */ true,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 1,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 1,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+  // removeSingleton ON
+  removeSingleton = 1;
+
+  // "referencingNode" references "referencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[referencingNode-referencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ false,
+        /* referencedNodeIsSingleton = */ false,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 0,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+  // "referencingNode" references "singletonReferencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[referencingNode-singletonReferencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ false,
+        /* referencedNodeIsSingleton = */ true,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 0,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+
+  // "singletonReferencingNode" references "referencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[singletonReferencingNode-referencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ true,
+        /* referencedNodeIsSingleton = */ false,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 0,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
+  // "singletonReferencingNode" references "singletonReferencedNode"
+  if (!TestClearScene_CheckNumberOfEvents(
+        "[singletonReferencingNode-singletonReferencedNode]",
+        /* removeSingleton = */ removeSingleton,
+        /* referencingNodeIsSingleton = */ true,
+        /* referencedNodeIsSingleton = */ true,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 0,
+        /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
+        /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
+        ))
+    {
+    return false;
+    }
+
   return true;
 }
