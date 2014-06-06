@@ -74,6 +74,41 @@ int vtkMRMLNodeCallback::GetTotalNumberOfEvents()
 }
 
 //---------------------------------------------------------------------------
+std::vector<unsigned long> vtkMRMLNodeCallback::GetReceivedEvents()
+{
+  std::vector<unsigned long> receivedEvents;
+  for(std::map<unsigned long,unsigned int>::iterator it = this->ReceivedEvents.begin();
+      it != this->ReceivedEvents.end();
+      ++it)
+    {
+    unsigned long event = it->first;
+    if (this->GetNumberOfEvents(event) > 0)
+      {
+      receivedEvents.push_back(event);
+      }
+    }
+  return receivedEvents;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLNodeCallback::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->vtkCallbackCommand::PrintSelf(os,indent);
+
+  os << indent << "ErrorString: " << this->GetErrorString() << "\n";
+  os << indent << "TotalNumberOfEvents: " << this->GetTotalNumberOfEvents() << "\n";
+  os << indent << "NumberOfModified: " << this->GetNumberOfModified() << "\n";
+  std::vector<unsigned long> receivedEvent = this->GetReceivedEvents();
+  os << indent << "ReceivedEvents: \n";
+  for(std::vector<unsigned long>::iterator it = receivedEvent.begin();
+      it != receivedEvent.end();
+      ++it)
+    {
+    os << indent.GetNextIndent() << *it << " \n";
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLNodeCallback::Execute(vtkObject *vtkcaller,
   unsigned long eid, void *vtkNotUsed(calldata))
 {

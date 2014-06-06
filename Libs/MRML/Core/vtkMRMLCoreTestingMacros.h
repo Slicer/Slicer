@@ -22,6 +22,9 @@
 #include <vtkMath.h>
 #include <vtkNew.h>
 
+// STD includes
+#include <vector>
+
 // ----------------------------------------------------------------------------
 /// tests basic vtkObject methods
 #define EXERCISE_BASIC_OBJECT_METHODS( object ) \
@@ -918,7 +921,8 @@
 class VTK_MRML_EXPORT vtkMRMLNodeCallback : public vtkCallbackCommand
 {
 public:
-  static vtkMRMLNodeCallback *New() {return new vtkMRMLNodeCallback;};
+  static vtkMRMLNodeCallback *New() {return new vtkMRMLNodeCallback;}
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void Execute(vtkObject* caller, unsigned long eid, void *callData);
   virtual void ResetNumberOfEvents();
@@ -929,6 +933,7 @@ public:
   int GetNumberOfModified();
   int GetNumberOfEvents(unsigned long event);
   int GetTotalNumberOfEvents();
+  std::vector<unsigned long> GetReceivedEvents();
 
 protected:
   vtkMRMLNodeCallback();
