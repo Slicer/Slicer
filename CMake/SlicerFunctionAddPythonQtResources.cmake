@@ -50,7 +50,7 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
       VERBATIM
       WORKING_DIRECTORY ${rc_path}
       MAIN_DEPENDENCY ${in_path}
-      DEPENDS ${rc_depends}
+      DEPENDS ${Slicer_SOURCE_DIR}/Utilities/Scripts/qrcc.py ${rc_depends}
       )
 
     list(APPEND out_paths ${out_path})
