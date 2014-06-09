@@ -82,6 +82,17 @@
 // VTK includes
 #include <vtkCollection.h>
 
+namespace
+{
+
+//-----------------------------------------------------------------------------
+void setThemeIcon(QAction* action, const QString& name)
+{
+  action->setIcon(QIcon::fromTheme(name, action->icon()));
+}
+
+} // end of anonymous namespace
+
 //-----------------------------------------------------------------------------
 // qSlicerAppMainWindowPrivate methods
 
@@ -413,9 +424,20 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->HelpBrowseTutorialsAction->setIcon(networkIcon);
   this->HelpInterfaceDocumentationAction->setIcon(networkIcon);
   this->HelpSlicerPublicationsAction->setIcon(networkIcon);
-  this->HelpAboutSlicerAppAction->setIcon(QIcon::fromTheme("help-about", informationIcon));
-  this->HelpReportBugOrFeatureRequestAction->setIcon(QIcon::fromTheme("tools-report-bug", questionIcon));
+  this->HelpAboutSlicerAppAction->setIcon(informationIcon);
+  this->HelpReportBugOrFeatureRequestAction->setIcon(questionIcon);
   this->HelpVisualBlogAction->setIcon(networkIcon);
+
+  setThemeIcon(this->FileExitAction, "application-exit");
+  setThemeIcon(this->EditUndoAction, "edit-undo");
+  setThemeIcon(this->EditRedoAction, "edit-redo");
+  setThemeIcon(this->CutAction, "edit-cut");
+  setThemeIcon(this->CopyAction, "edit-copy");
+  setThemeIcon(this->PasteAction, "edit-paste");
+  setThemeIcon(this->EditApplicationSettingsAction, "preferences-system");
+  setThemeIcon(this->HelpAboutSlicerAppAction, "help-about");
+  setThemeIcon(this->HelpReportBugOrFeatureRequestAction, "tools-report-bug");
+  setThemeIcon(this->ModuleHomeAction, "go-home");
 
   //----------------------------------------------------------------------------
   // Error log widget
