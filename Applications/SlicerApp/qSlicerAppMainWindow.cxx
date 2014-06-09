@@ -413,8 +413,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->HelpBrowseTutorialsAction->setIcon(networkIcon);
   this->HelpInterfaceDocumentationAction->setIcon(networkIcon);
   this->HelpSlicerPublicationsAction->setIcon(networkIcon);
-  this->HelpAboutSlicerAppAction->setIcon(informationIcon);
-  this->HelpReportBugOrFeatureRequestAction->setIcon(questionIcon);
+  this->HelpAboutSlicerAppAction->setIcon(QIcon::fromTheme("help-about", informationIcon));
+  this->HelpReportBugOrFeatureRequestAction->setIcon(QIcon::fromTheme("tools-report-bug", questionIcon));
   this->HelpVisualBlogAction->setIcon(networkIcon);
 
   //----------------------------------------------------------------------------

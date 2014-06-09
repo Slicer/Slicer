@@ -483,6 +483,11 @@
    </property>
   </action>
   <action name="FileExitAction">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>E&amp;xit</string>
    </property>
@@ -492,8 +497,8 @@
   </action>
   <action name="EditUndoAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Undo.png</normaloff>:/Icons/Undo.png</iconset>
+    <iconset theme="edit-undo" resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerUndo.png</normaloff>:/Icons/Small/SlicerUndo.png</iconset>
    </property>
    <property name="text">
     <string>Undo</string>
@@ -507,8 +512,8 @@
   </action>
   <action name="EditRedoAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Redo.png</normaloff>:/Icons/Redo.png</iconset>
+    <iconset theme="edit-redo" resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerRedo.png</normaloff>:/Icons/Small/SlicerRedo.png</iconset>
    </property>
    <property name="text">
     <string>Redo</string>
@@ -566,6 +571,9 @@
    </property>
   </action>
   <action name="EditApplicationSettingsAction">
+   <property name="icon">
+    <iconset theme="preferences-system"/>
+   </property>
    <property name="text">
     <string>Application Settings</string>
    </property>
@@ -578,7 +586,7 @@
   </action>
   <action name="CutAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset theme="edit-cut" resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditCut.png</normaloff>:/Icons/Small/SlicerEditCut.png</iconset>
    </property>
    <property name="text">
@@ -593,7 +601,7 @@
   </action>
   <action name="CopyAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset theme="edit-copy" resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditCopy.png</normaloff>:/Icons/Small/SlicerEditCopy.png</iconset>
    </property>
    <property name="text">
@@ -608,7 +616,7 @@
   </action>
   <action name="PasteAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset theme="edit-paste" resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerEditPaste.png</normaloff>:/Icons/Small/SlicerEditPaste.png</iconset>
    </property>
    <property name="text">
@@ -702,6 +710,9 @@
    </property>
   </action>
   <action name="HelpAboutSlicerAppAction">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
    <property name="text">
     <string>About 3D Slicer</string>
    </property>
@@ -710,6 +721,9 @@
    </property>
   </action>
   <action name="HelpReportBugOrFeatureRequestAction">
+   <property name="icon">
+    <iconset theme="tools-report-bug"/>
+   </property>
    <property name="text">
     <string>Report a bug</string>
    </property>
@@ -934,7 +948,7 @@
   </action>
   <action name="ModuleHomeAction">
    <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+    <iconset theme="go-home" resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Medium/SlicerHome.png</normaloff>:/Icons/Medium/SlicerHome.png</iconset>
    </property>
    <property name="text">
@@ -1188,7 +1202,7 @@
   <action name="ViewLayoutFourByThreeSliceAction">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutFourByThreeSliceView.png</normaloff>:/Icons/LayoutFourByThreeThreeSliceView.png</iconset>
+     <normaloff>:/Icons/LayoutFourByThreeSliceView.png</normaloff>:/Icons/LayoutFourByThreeSliceView.png</iconset>
    </property>
    <property name="text">
     <string>Four by three slice</string>
