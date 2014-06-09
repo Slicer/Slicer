@@ -1763,12 +1763,16 @@ void qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked()
   // don't show again check box conflicts with informative text, so use
   // a long text
   deleteAllMsgBox.setText(labelText);
-  deleteAllMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-  deleteAllMsgBox.setDefaultButton(QMessageBox::Yes);
+
+  QPushButton *deleteButton =
+    deleteAllMsgBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
+  deleteAllMsgBox.addButton(QMessageBox::Cancel);
+  deleteAllMsgBox.setDefaultButton(deleteButton);
+  deleteAllMsgBox.setIcon(QMessageBox::Question);
   deleteAllMsgBox.setDontShowAgainVisible(true);
   deleteAllMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysDeleteMarkups");
-  int ret = deleteAllMsgBox.exec();
-  if (ret == QMessageBox::Yes)
+  deleteAllMsgBox.exec();
+  if (deleteAllMsgBox.clickedButton() == deleteButton)
     {
     // delete from the end
     for (int i = rows.size() - 1; i >= 0; --i)
@@ -1806,12 +1810,16 @@ void qSlicerMarkupsModuleWidget::onDeleteAllMarkupsInListPushButtonClicked()
     // don't show again check box conflicts with informative text, so use
     // a long text
     deleteAllMsgBox.setText(labelText);
-    deleteAllMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    deleteAllMsgBox.setDefaultButton(QMessageBox::Yes);
+
+    QPushButton *deleteButton =
+      deleteAllMsgBox.addButton(tr("Delete All"), QMessageBox::AcceptRole);
+    deleteAllMsgBox.addButton(QMessageBox::Cancel);
+    deleteAllMsgBox.setDefaultButton(deleteButton);
+    deleteAllMsgBox.setIcon(QMessageBox::Question);
     deleteAllMsgBox.setDontShowAgainVisible(true);
     deleteAllMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysDeleteAllMarkups");
-    int ret = deleteAllMsgBox.exec();
-    if (ret == QMessageBox::Yes)
+    deleteAllMsgBox.exec();
+    if (deleteAllMsgBox.clickedButton() == deleteButton)
       {
       listNode->RemoveAllMarkups();
       }
