@@ -1318,7 +1318,7 @@ bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions(QStringList& un
   bool success = true;
   foreach(const QString& extensionName, this->scheduledForUninstallExtensions())
     {
-    success = success && d->uninstallExtension(extensionName);
+    success = d->uninstallExtension(extensionName) && success;
     if(success)
       {
       uninstalledExtensions << extensionName;
