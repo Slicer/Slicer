@@ -31,7 +31,7 @@
 class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModuleWidget
 {
 public:
-  virtual void setupUi(qSlicerWidget* widget);
+  void setupUi(qSlicerWidget* widget);
 };
 
 //-----------------------------------------------------------------------------

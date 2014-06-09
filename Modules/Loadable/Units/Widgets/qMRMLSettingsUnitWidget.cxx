@@ -52,7 +52,7 @@ protected:
 
 public:
   qMRMLSettingsUnitWidgetPrivate(qMRMLSettingsUnitWidget& obj);
-  virtual void setupUi(qMRMLSettingsUnitWidget*);
+  void setupUi(qMRMLSettingsUnitWidget*);
 
   vtkSlicerUnitsLogic* Logic;
 };

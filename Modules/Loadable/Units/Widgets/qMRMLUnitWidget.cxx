@@ -40,7 +40,7 @@ protected:
 public:
   qMRMLUnitWidgetPrivate(qMRMLUnitWidget& obj);
 
-  virtual void setupUi(qMRMLUnitWidget*);
+  void setupUi(qMRMLUnitWidget*);
   void clear();
   void updatePropertyWidgets();
 

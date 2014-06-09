@@ -40,7 +40,7 @@ protected:
 
 public:
   qMRMLDisplayNodeViewComboBoxPrivate(qMRMLDisplayNodeViewComboBox& object);
-  virtual void init();
+  void init();
   vtkSmartPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
 };
 
