@@ -282,7 +282,18 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
 #else
           this->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
-          this->GetOutputPolyData()->GetScalarRange(range);
+          vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
+          if (pointData &&
+              pointData->GetArray(this->GetActiveScalarName()))
+            {
+            double *activeScalarRange = pointData->GetArray(
+              this->GetActiveScalarName())->GetRange();
+            if (activeScalarRange)
+              {
+              range[0] = activeScalarRange[0];
+              range[1] = activeScalarRange[1];
+              }
+            }
           }
         }
       if ((this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation) ||
@@ -299,7 +310,18 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
 #else
         this->GetInputPolyDataConnection()->GetProducer()->Update();
 #endif
-        this->GetInputPolyData()->GetScalarRange(range);
+        vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
+        if (pointData &&
+            pointData->GetArray(this->GetActiveScalarName()))
+          {
+          double *activeScalarRange = pointData->GetArray(
+            this->GetActiveScalarName())->GetRange();
+          if (activeScalarRange)
+            {
+            range[0] = activeScalarRange[0];
+            range[1] = activeScalarRange[1];
+            }
+          }
         }
       //this->ScalarRange[0] = range[0];
       //this->ScalarRange[1] = range[1];

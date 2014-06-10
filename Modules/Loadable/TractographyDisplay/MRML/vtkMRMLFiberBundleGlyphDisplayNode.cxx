@@ -25,6 +25,7 @@ Version:   $Revision: 1.3 $
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 #include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
@@ -142,7 +143,6 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 
   if (!this->Visibility)
     {
-    std::cout << "no visibility" << std::endl;
     return;
     }
 
@@ -283,7 +283,18 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 #else
         this->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
-        this->GetOutputPolyData()->GetScalarRange(range);
+        vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
+        if (pointData &&
+            pointData->GetArray(this->GetActiveScalarName()))
+          {
+          double *activeScalarRange = pointData->GetArray(
+            this->GetActiveScalarName())->GetRange();
+          if (activeScalarRange)
+            {
+            range[0] = activeScalarRange[0];
+            range[1] = activeScalarRange[1];
+            }
+          }
         }
       }
 
