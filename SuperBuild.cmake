@@ -278,7 +278,7 @@ list_conditional_append(Slicer_BUILD_DataStore Slicer_REMOTE_DEPENDENCIES DataSt
 
 Slicer_Remote_Add(CompareVolumes
   GIT_REPOSITORY "${git_protocol}://github.com/pieper/CompareVolumes"
-  GIT_TAG "2a44722ee1cf907945123c1bb7bffdb4073879ca"
+  GIT_TAG "db50d7d81ab1b98586161849dd82df5715a411a0"
   OPTION_NAME Slicer_BUILD_CompareVolumes
   OPTION_DEPENDS "Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
