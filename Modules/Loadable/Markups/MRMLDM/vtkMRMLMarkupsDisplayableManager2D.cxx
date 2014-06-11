@@ -399,7 +399,10 @@ void vtkMRMLMarkupsDisplayableManager2D::OnMRMLSceneEndClose()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayableManager2D::UpdateFromMRMLScene()
 {
-  this->UpdateFromMRML();
+  if (this->GetSliceNode())
+    {
+    this->UpdateFromMRML();
+    }
 }
 
 //---------------------------------------------------------------------------
