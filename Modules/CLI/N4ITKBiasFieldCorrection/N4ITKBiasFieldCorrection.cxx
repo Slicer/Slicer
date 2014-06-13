@@ -48,18 +48,11 @@ public:
 
 };
 
-template <class T>
-int SaveIt(ImageType::Pointer img, const char* fname, T)
+int SaveIt(ImageType::Pointer img, const char* fname)
 {
-  typedef itk::Image<T, 3>                                 OutputImageType;
-  typedef itk::CastImageFilter<ImageType, OutputImageType> CastType;
-
-  typename CastType::Pointer caster = CastType::New();
-  caster->SetInput(img);
-
-  typedef  itk::ImageFileWriter<OutputImageType> WriterType;
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( caster->GetOutput() );
+  typedef  itk::ImageFileWriter<ImageType> WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetInput( img );
   writer->SetFileName( fname );
   writer->SetUseCompression(1);
   writer->Update();
@@ -408,45 +401,7 @@ int main(int argc, char* * argv)
       // signed types
       const char *fname = outputImageName.c_str();
 
-      switch( componentType )
-        {
-        case itk::ImageIOBase::UCHAR:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned char>(0) );
-          break;
-        case itk::ImageIOBase::CHAR:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<char>(0) );
-          break;
-        case itk::ImageIOBase::USHORT:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned short>(0) );
-          break;
-        case itk::ImageIOBase::SHORT:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<short>(0) );
-          break;
-        case itk::ImageIOBase::UINT:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned int>(0) );
-          break;
-        case itk::ImageIOBase::INT:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<int>(0) );
-          break;
-        case itk::ImageIOBase::ULONG:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<unsigned long>(0) );
-          break;
-        case itk::ImageIOBase::LONG:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<long>(0) );
-          break;
-        case itk::ImageIOBase::FLOAT:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<float>(0) );
-          break;
-        case itk::ImageIOBase::DOUBLE:
-          return SaveIt( cropper->GetOutput(), fname, static_cast<double>(0) );
-          break;
-        case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
-          std::cerr << "Cannot saved the result using the requested pixel type" << std::endl;
-          return EXIT_FAILURE;
-        default:
-          std::cout << "unknown component type" << std::endl;
-          break;
-        }
+      return SaveIt(cropper->GetOutput(), fname);
       }
     catch( itk::ExceptionObject & e )
       {
