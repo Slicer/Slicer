@@ -19,6 +19,8 @@
 ==============================================================================*/
 
 // QtCore includes
+#include <QMessageBox>
+
 #include "qSlicerSceneReader.h"
 #include "qSlicerSceneIOOptionsWidget.h"
 
@@ -94,5 +96,19 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
     res = this->mrmlScene()->Import();
     d->CamerasLogic->SetCopyImportedCameras(wasCopying);
     }
+
+  if (this->mrmlScene()->GetLastLoadedVersion() &&
+     this->mrmlScene()->GetVersion() &&
+      strcmp(this->mrmlScene()->GetLastLoadedVersion(),
+             this->mrmlScene()->GetVersion()) > 0 )
+    {
+      std::string msg = "Warning: scene file " + file.toStdString() + " has version " +
+        std::string(this->mrmlScene()->GetLastLoadedVersion()) + " greater than Slicer4 version " +
+        std::string(this->mrmlScene()->GetVersion()) + ".";
+
+      QMessageBox::warning(0, tr("Reading MRML Scene..."),
+                              tr(msg.c_str()) );
+    }
+
   return res;
 }

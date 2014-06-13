@@ -12,7 +12,6 @@ Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
 
-
 #include "vtkMRMLScene.h"
 #include "vtkMRMLParser.h"
 
@@ -128,6 +127,7 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->LastLoadedVersion = NULL;
   this->Version = NULL;
+  this->SetVersion(CURRENT_MRML_VERSION);
 
   this->DeleteEventCallback = vtkCallbackCommand::New();
   this->DeleteEventCallback->SetClientData( reinterpret_cast<void *>(this) );
@@ -225,7 +225,6 @@ vtkMRMLScene::~vtkMRMLScene()
     {
     this->RegisteredNodeClasses[n]->Delete();
     }
-
 
   if ( this->CacheManager != NULL )
     {
@@ -359,7 +358,6 @@ void vtkMRMLScene::ResetNodes()
     {
     nodes[i]->Reset();
     }
-
 }
 
 //----------------------------------------------------------------------------
@@ -560,7 +558,6 @@ int bitwiseOr(int firstValue, int secondValue)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetStates()const
 {
-
   return std::accumulate(this->States.begin(), this->States.end(),
                          0x0000, bitwiseOr);
 }
@@ -893,7 +890,6 @@ int vtkMRMLScene::Commit(const char* url)
 
   int indent=0, deltaIndent;
 
-
     // this event is being detected by GUI to provide feedback during load
     // of data. But,
     // commented out for now because CLI modules are using MRML to write
@@ -1150,7 +1146,6 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
 #endif
   return node;
 }
-
 
 //------------------------------------------------------------------------------
 void vtkMRMLScene::NodeAdded(vtkMRMLNode *n)
@@ -1465,7 +1460,6 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
   classes.sort();
   classes.unique();
   return classes;
-
 }
 
 //------------------------------------------------------------------------------
@@ -1557,7 +1551,6 @@ vtkMRMLNode* vtkMRMLScene::GetSingletonNode(vtkMRMLNode* n)
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNthNode(int n)
 {
-
   if(n < 0 || n >= this->Nodes->GetNumberOfItems())
     {
     return NULL;
@@ -1598,7 +1591,6 @@ vtkMRMLNode* vtkMRMLScene::GetNthNodeByClass(int n, const char *className)
 //------------------------------------------------------------------------------
 vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
 {
-
   vtkCollection* nodes = vtkCollection::New();
 
   if (!name)
@@ -1753,7 +1745,6 @@ int  vtkMRMLScene::GetTransformBetweenNodes(vtkMRMLNode * vtkNotUsed(node1),
   vtkErrorMacro("NOT IMPLEMENTEED YET");
   return 1;
 }
-
 
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
@@ -2274,7 +2265,6 @@ void vtkMRMLScene::PushIntoUndoStack()
     {
     return;
     }
-
 
   vtkCollection* newScene = vtkCollection::New();
 
@@ -3015,9 +3005,7 @@ vtkURIHandler * vtkMRMLScene::FindURIHandlerByName(const char *name)
     }
   vtkWarningMacro("FindURIHandlerByName: unable to find a URI handler in the collection of " << this->GetURIHandlerCollection()->GetNumberOfItems() << " handlers to match the name " << name);
   return NULL;
-
 }
-
 
 //------------------------------------------------------------------------------
 vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
@@ -3046,7 +3034,6 @@ vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
   return NULL;
 }
 
-
 //-----------------------------------------------------------------------------
 void vtkMRMLScene
 ::GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
@@ -3055,7 +3042,6 @@ void vtkMRMLScene
   // clear scene
   //
   newScene->Clear(1);
-
 
   if (rnode == NULL)
     {
@@ -3100,7 +3086,6 @@ void vtkMRMLScene
   // clear scene
   //
   newScene->Clear(1);
-
 
   //
   // copy over nodes from the current scene to the new scene

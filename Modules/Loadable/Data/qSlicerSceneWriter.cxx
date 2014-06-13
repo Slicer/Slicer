@@ -108,7 +108,6 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
   return res;
 }
 
-
 //----------------------------------------------------------------------------
 bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 {
@@ -166,7 +165,6 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   QString fileName = properties["fileName"].toString();
 
   this->mrmlScene()->SetURL(fileName.toLatin1());
-  this->mrmlScene()->SetVersion("Slicer4");
   bool res = this->mrmlScene()->Commit();
   return res;
 }
@@ -261,7 +259,6 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   qDebug() << "saved " << fileInfo.absoluteFilePath();
   return true;
 }
-
 
 //---------------------------------------------------------------------------
 bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& properties)

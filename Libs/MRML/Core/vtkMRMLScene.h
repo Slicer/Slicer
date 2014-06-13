@@ -15,6 +15,10 @@ Version:   $Revision: 1.18 $
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
 
+/// Current MRML version
+/// needs to be changed when incompatible MRML changes introduced
+#define CURRENT_MRML_VERSION "Slicer4.4.0"
+
 // MRML includes
 #include "vtkMRML.h"
 
@@ -335,13 +339,11 @@ public:
   /// Get vector of nodes containing references to an input node
   void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode *> &referencingNodes);
 
-
   /// Get a sub-scene containing all nodes directly or indirectly referenced by
   /// the input node.
   /// GetReferencedNodes() is internally called.
   /// \sa AddReferencedNodeID(), GetReferencedNodes()
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
-
 
   int IsFilePathRelative(const char * filepath);
 
@@ -631,7 +633,6 @@ protected:
 
   std::list< vtkCollection* >  UndoStack;
   std::list< vtkCollection* >  RedoStack;
-
 
   std::string                 URL;
   std::string                 RootDirectory;
