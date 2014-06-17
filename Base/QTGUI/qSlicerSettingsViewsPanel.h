@@ -34,6 +34,10 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsViewsPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
+  /// Holds the current MSAA's name for the settings.
+  /// The current MSAA setting can be accessed using qSlicerApplication
+  /// \sa currentMSAA(), setCurrentMSAA()
+  Q_PROPERTY(QString currentMSAA READ currentMSAA WRITE setCurrentMSAA NOTIFY currentMSAAChanged)
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -44,10 +48,21 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsViewsPanel();
 
+  /// \sa currentMSAA
+  QString currentMSAA() const;
+
 public slots:
+  /// Change the current MSAA based on its name
+  /// \sa currentMSAA
+  void setCurrentMSAA(const QString&);
+
+signals:
+  /// Signal emitted when the current MSAA is changed
+  /// \sa currentMSAA
+  void currentMSAAChanged(const QString&);
 
 protected slots:
-  void onFSAAToggled(bool useFSAA);
+  void onMSAAChanged(const QString&);
 
 protected:
   QScopedPointer<qSlicerSettingsViewsPanelPrivate> d_ptr;

@@ -60,19 +60,27 @@ void qSlicerSettingsViewsPanelPrivate::init()
 
   this->setupUi(q);
 
-  // Default values
-  this->FSAACheckBox->setChecked(false);
-
-  // Register settings
-  q->registerProperty("Views/FSAA",
-                      this->FSAACheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      "Multisampling (FSAA)",
-                      ctkSettingsPanel::OptionRequireRestart);
+  // MSAA Setting
+  // "Off" is the default, and should be the zeroth index to ensure that
+  // poorly-formatted (or old) entries in the .ini default to "Off"
+  // (toInt() returns zero when formatting is bad).
+  this->MSAAComboBox->addItem("Off", 0);
+  this->MSAAComboBox->addItem("Auto", -1);
+  this->MSAAComboBox->addItem("2x", 2);
+  this->MSAAComboBox->addItem("4x", 4);
+  this->MSAAComboBox->addItem("8x", 8);
+  this->MSAAComboBox->addItem("16x", 16);
+  this->MSAAComboBox->setCurrentIndex(this->MSAAComboBox->findText("Off"));
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->FSAACheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(onFSAAToggled(bool)));
+  QObject::connect(this->MSAAComboBox, SIGNAL(currentIndexChanged(QString)),
+                   q, SLOT(onMSAAChanged(QString)));
+  QObject::connect(this->MSAAComboBox, SIGNAL(currentIndexChanged(QString)),
+                   q, SIGNAL(currentMSAAChanged(QString)));
+  q->registerProperty("Views/MSAA", q,
+                      "currentMSAA", SIGNAL(currentMSAAChanged(QString)),
+                      "Multisampling (MSAA)",
+                      ctkSettingsPanel::OptionRequireRestart);
 }
 
 // --------------------------------------------------------------------------
@@ -93,12 +101,12 @@ qSlicerSettingsViewsPanel::~qSlicerSettingsViewsPanel()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsViewsPanel::onFSAAToggled(bool useFSAA)
+void qSlicerSettingsViewsPanel::onMSAAChanged(const QString& text)
 {
   /// For "ctkVTKAbstractView"s (the main data views for the program),
   /// the multisampling properties should be set *before* creating any
   /// OpenGL contexts, otherwise the setting may have no effect. This
-  /// means that we must read in the user's FSAA settings from QSettings
+  /// means that we must read in the user's MSAA settings from QSettings
   /// before setting up the MainWindow UI, since setting up the UI
   /// creates all the view panels (and their associated OpenGL contexts).
   ///
@@ -106,5 +114,24 @@ void qSlicerSettingsViewsPanel::onFSAAToggled(bool useFSAA)
   /// main settings dialog, . If the saved value is true (the default is
   /// false), this triggers this method to be called, allowing it to be
   /// set prior to creation of the OpenGL contexts.
-  ctkVTKAbstractView::setUseMultiSamples(useFSAA);
+
+  Q_D(const qSlicerSettingsViewsPanel);
+  const int index = d->MSAAComboBox->findText(text);
+  const int nSamples = d->MSAAComboBox->itemData(index).toInt();
+  ctkVTKAbstractView::setMultiSamples(nSamples);
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerSettingsViewsPanel::currentMSAA() const
+{
+  Q_D(const qSlicerSettingsViewsPanel);
+  return d->MSAAComboBox->currentText();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsViewsPanel::setCurrentMSAA(const QString& text)
+{
+  Q_D(qSlicerSettingsViewsPanel);
+  // default to "Off" (0) if conversion fails
+  d->MSAAComboBox->setCurrentIndex(qMax(d->MSAAComboBox->findText(text), 0));
 }
