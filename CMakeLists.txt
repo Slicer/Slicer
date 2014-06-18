@@ -288,7 +288,14 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
-set(VTK_VERSION_MAJOR 6 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
+# XXX Waiting issue #3741 is solved, on MacOSX, force VTK version to 5.10
+#     See http://na-mic.org/Mantis/view.php?id=3741
+set(default_vtk_version_major 6)
+if(APPLE)
+  set(default_vtk_version_major 5)
+endif()
+
+set(VTK_VERSION_MAJOR ${default_vtk_version_major} CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
 # Set the possible values of VTK major version for cmake-gui
 set_property(CACHE VTK_VERSION_MAJOR PROPERTY STRINGS "5" "6")
 if(NOT "${VTK_VERSION_MAJOR}" STREQUAL "5" AND NOT "${VTK_VERSION_MAJOR}" STREQUAL "6")
