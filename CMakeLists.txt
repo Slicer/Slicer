@@ -288,7 +288,7 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
-set(VTK_VERSION_MAJOR 5 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
+set(VTK_VERSION_MAJOR 6 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
 # Set the possible values of VTK major version for cmake-gui
 set_property(CACHE VTK_VERSION_MAJOR PROPERTY STRINGS "5" "6")
 if(NOT "${VTK_VERSION_MAJOR}" STREQUAL "5" AND NOT "${VTK_VERSION_MAJOR}" STREQUAL "6")
