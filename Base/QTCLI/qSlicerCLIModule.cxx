@@ -87,10 +87,11 @@ qSlicerCLIModule::~qSlicerCLIModule()
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setup()
 {
+#ifndef QT_NO_DEBUG
   Q_D(qSlicerCLIModule);
-
   // Temporary directory should be set before the module is initialized
   Q_ASSERT(!d->TempDirectory.isEmpty());
+#endif
 }
 
 //-----------------------------------------------------------------------------

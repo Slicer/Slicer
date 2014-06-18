@@ -284,7 +284,6 @@ int qMRMLSceneSubjectHierarchyModel::maxColumnId()const
 //------------------------------------------------------------------------------
 QFlags<Qt::ItemFlag> qMRMLSceneSubjectHierarchyModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
-  Q_D(const qMRMLSceneSubjectHierarchyModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
 
   if (column == this->transformColumn() && node)

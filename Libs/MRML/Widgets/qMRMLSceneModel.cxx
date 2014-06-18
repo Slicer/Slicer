@@ -1483,7 +1483,6 @@ void qMRMLSceneModel::onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 {
-  Q_D(qMRMLSceneModel);
   Q_UNUSED(scene);
   this->updateScene();
 }
