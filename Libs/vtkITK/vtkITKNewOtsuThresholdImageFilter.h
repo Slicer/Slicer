@@ -22,7 +22,8 @@
 #include "vtkObjectFactory.h"
 
 /// \brief Wrapper class around itk::NewOtsuThresholdImageFilter.
-class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter : public vtkITKImageToImageFilterSS
+class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter
+  : public vtkITKImageToImageFilterSS
 {
 public:
   static vtkITKNewOtsuThresholdImageFilter *New();
