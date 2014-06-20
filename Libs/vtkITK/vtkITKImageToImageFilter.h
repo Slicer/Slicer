@@ -15,17 +15,20 @@
 #ifndef __vtkITKImageToImageFilter_h
 #define __vtkITKImageToImageFilter_h
 
-#include "itkCommand.h"
-#include "vtkCommand.h"
-#include "itkProcessObject.h"
-#include "vtkImageAlgorithm.h"
-#include "vtkImageCast.h"
-#include "vtkImageData.h"
-#include "vtkImageExport.h"
-#include "vtkImageImport.h"
-#include <vtkVersion.h>
-
 #include "vtkITK.h"
+
+// ITK includes
+#include <itkCommand.h>
+#include <itkProcessObject.h>
+
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkImageAlgorithm.h>
+#include <vtkImageCast.h>
+#include <vtkImageData.h>
+#include <vtkImageExport.h>
+#include <vtkImageImport.h>
+#include <vtkVersion.h>
 
 #undef itkExceptionMacro
 #define itkExceptionMacro(x) \
@@ -47,7 +50,8 @@
 /// \brief Abstract base class for connecting ITK and VTK.
 ///
 /// vtkITKImageToImageFilter provides a foo.
-class VTK_ITK_EXPORT vtkITKImageToImageFilter : public vtkImageAlgorithm
+class VTK_ITK_EXPORT vtkITKImageToImageFilter
+  : public vtkImageAlgorithm
 {
 public:
   static vtkITKImageToImageFilter *New()
@@ -145,6 +149,16 @@ public:
 #endif
   };
 
+  virtual void SetInputConnection(vtkAlgorithmOutput* input)
+  {
+    this->vtkCast->SetInputConnection(input);
+  };
+
+  virtual void SetInputConnection(int port, vtkAlgorithmOutput* input)
+  {
+    this->vtkCast->SetInputConnection(port, input);
+  };
+
   ///
   /// Return the input to the filter
   virtual vtkDataObject* GetInput()
@@ -166,6 +180,17 @@ public:
           }
         }
     }
+#else
+  virtual void Update()
+    {
+      this->vtkCast->Update();
+      this->vtkImporter->Update();
+    }
+  virtual void Update(int port)
+    {
+      this->vtkCast->Update();
+      this->vtkImporter->Update(port);
+   }
 #endif
   void HandleProgressEvent ()
   {
