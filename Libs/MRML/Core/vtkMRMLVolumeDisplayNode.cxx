@@ -76,11 +76,11 @@ void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject *caller,
                                                  unsigned long event,
                                                  void *callData)
 {
-  this->Superclass::ProcessMRMLEvents(caller, event, callData);
   if (event ==  vtkCommand::ModifiedEvent)
     {
     this->UpdateImageDataPipeline();
     }
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //----------------------------------------------------------------------------

@@ -458,7 +458,12 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdateLookupTable(cnode);
     }
+#if (VTK_MAJOR_VERSION <= 5)
   if (vtkImageData::SafeDownCast(caller) == this->GetScalarImageData() &&
+#else
+  if (vtkAlgorithmOutput::SafeDownCast(caller) == this->GetScalarImageDataConnection() &&
+      this->GetScalarImageDataConnection() &&
+#endif
       event == vtkCommand::ModifiedEvent)
     {
     this->CalculateAutoLevels();
@@ -774,10 +779,23 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     }
 
   vtkImageData *imageDataScalar = this->GetScalarImageData();
+  if (!imageDataScalar)
+    {
+    vtkDebugMacro("CalculateScalarAutoLevels: input image data is null");
+    return;
+    }
+  // Make sure the point data is up to date.
+  // Remember, the display node pipeline is not connected to a consumer (volume
+  // display nodes are cloned by the slice logic) therefore no-one has run the
+  // filters.
+#if (VTK_MAJOR_VERSION <= 5)
+  imageDataScalar->Update();
+#else
+  this->GetScalarImageDataConnection()->GetProducer()->Update();
+#endif
 
-  if (!imageDataScalar
-      || !(imageDataScalar->GetPointData())
-      || !(imageDataScalar->GetPointData()->GetScalars()))
+  if (!(imageDataScalar->GetPointData()) ||
+      !(imageDataScalar->GetPointData()->GetScalars()))
     {
     vtkDebugMacro("CalculateScalarAutoLevels: input image data is null");
     return;
