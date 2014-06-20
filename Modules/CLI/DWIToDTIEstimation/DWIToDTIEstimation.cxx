@@ -101,8 +101,9 @@ int main( int argc, char * argv[] )
       }
     estim->Update();
     vtkImageData *tensorImage = estim->GetOutput();
+#if (VTK_MAJOR_VERSION <= 5)
     tensorImage->GetPointData()->SetScalars(NULL);
-
+#endif
     // Read the tensor mask
     vtkNew<vtkImageData> mask;
     if( strlen(inputMaskVolume.c_str() ) > 0 )
@@ -146,7 +147,7 @@ int main( int argc, char * argv[] )
       tensorMask->SetInput(tensorImage);
       tensorMask->SetMaskInput(mask.GetPointer());
 #else
-      tensorMask->SetInputData(tensorImage);
+      tensorMask->SetInputConnection(estim->GetOutputPort());
       tensorMask->SetMaskInputData(mask.GetPointer());
 #endif
       tensorMask->Update();
@@ -157,6 +158,7 @@ int main( int argc, char * argv[] )
     vtkMatrix4x4* ijkToRasMatrix = reader->GetRasToIjkMatrix();
     ijkToRasMatrix->Invert();
 
+    // Don't save the scalars array, only the tensor array.
     // Save tensor
     vtkNew<vtkNRRDWriter> writer;
     tensorImage->GetPointData()->SetScalars(NULL);

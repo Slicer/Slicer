@@ -79,6 +79,7 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkThreadedImageAl
   vtkSetMacro(MaxB, double);
   vtkGetMacro(MaxB, double);
 
+#if (VTK_MAJOR_VERSION <= 5)
   ///
   /// Get Baseline Image
   vtkGetObjectMacro(Baseline,vtkImageData);
@@ -86,6 +87,16 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkThreadedImageAl
   ///
   /// Get Average of all DWI images
   vtkGetObjectMacro(AverageDWI,vtkImageData);
+#else
+  ///
+  /// Get Baseline Image
+  vtkImageData* GetBaseline();
+
+  ///
+  /// Get Average of all DWI images
+  vtkImageData* GetAverageDWI();
+
+#endif
 
   enum
     {
@@ -145,8 +156,10 @@ class VTK_Teem_EXPORT vtkTeemEstimateDiffusionTensor : public vtkThreadedImageAl
   /// Maximum of the B values
   double MaxB;
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *Baseline;
   vtkImageData *AverageDWI;
+#endif
 
   /// for transforming tensors
   vtkTransform *Transform;

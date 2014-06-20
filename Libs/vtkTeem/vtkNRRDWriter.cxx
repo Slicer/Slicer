@@ -211,7 +211,6 @@ void vtkNRRDWriter::WriteData()
 #if (VTK_MAJOR_VERSION <= 5)
   this->GetInput()->UpdateInformation();
 #else
-  this->UpdateInformation();
 #endif
 
   //vtkImageData *input = this->GetInput();

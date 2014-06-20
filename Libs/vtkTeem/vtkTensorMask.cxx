@@ -18,7 +18,6 @@
 #include "vtkPointData.h"
 #include <vtkVersion.h>
 
-
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTensorMask);
 
@@ -32,8 +31,6 @@ vtkTensorMask::~vtkTensorMask()
 {
 
 }
-
-
 
 //----------------------------------------------------------------------------
 // Replace superclass Execute with a function that allocates tensors
@@ -61,7 +58,7 @@ void vtkTensorMask::ExecuteData(vtkDataObject *out)
 
   // jump back into normal pipeline: call standard superclass method here
   //  this->vtkImageAlgorithm::ExecuteData(out);
-  this->vtkImageMask::ExecuteData(out);
+  this->Superclass::ExecuteData(out);
 }
 
 

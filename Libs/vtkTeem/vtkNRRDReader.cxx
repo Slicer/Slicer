@@ -428,6 +428,9 @@ void vtkNRRDReader::ExecuteInformation()
 
    // Set type information
    this->SetDataType(this->NrrdToVTKScalarType(this->nrrd->type) );
+#if (VTK_MAJOR_VERSION > 5)
+   this->SetDataScalarType( this->NrrdToVTKScalarType(this->nrrd->type) );
+#endif
 
    // Set axis information
    int dataExtent[6];

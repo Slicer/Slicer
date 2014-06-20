@@ -58,8 +58,12 @@ vtkTeemEstimateDiffusionTensor::vtkTeemEstimateDiffusionTensor()
   this->ShiftNegativeEigenvalues = 0;
 
   // Output images beside the estimated tensor
+#if (VTK_MAJOR_VERSION <= 5)
   this->Baseline = vtkImageData::New();
   this->AverageDWI = vtkImageData::New();
+#else
+  this->SetNumberOfOutputPorts(3);
+#endif
 
   // defaults are from DT-MRI
   // (from Processing and Visualization for
@@ -76,12 +80,16 @@ vtkTeemEstimateDiffusionTensor::vtkTeemEstimateDiffusionTensor()
   this->SetDiffusionGradient(6,-1,0,1);
 
 }
+
+//----------------------------------------------------------------------------
 vtkTeemEstimateDiffusionTensor::~vtkTeemEstimateDiffusionTensor()
 {
   this->BValues->Delete();
   this->DiffusionGradients->Delete();
+#if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->Delete();
   this->AverageDWI->Delete();
+#endif
   if (this->Transform)
     {
     this->Transform->Delete();
@@ -129,6 +137,19 @@ void vtkTeemEstimateDiffusionTensor::CalculateMaxB()
 {
   this->SetMaxB( this->BValues->GetRange()[1] );
 }
+
+#if (VTK_MAJOR_VERSION >= 6)
+//----------------------------------------------------------------------------
+vtkImageData* vtkTeemEstimateDiffusionTensor::GetBaseline()
+{
+  return this->GetOutput(1);
+}
+//----------------------------------------------------------------------------
+vtkImageData* vtkTeemEstimateDiffusionTensor::GetAverageDWI()
+{
+  return this->GetOutput(2);
+}
+#endif
 
 //----------------------------------------------------------------------------
 void vtkTeemEstimateDiffusionTensor::TransformDiffusionGradients()
@@ -225,8 +246,10 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
   this->Baseline->SetNumberOfScalarComponents(1);
   this->AverageDWI->SetNumberOfScalarComponents(1);
 #else
-//  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
-//  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
+  vtkInformation* baselineOutInfo = outputVector->GetInformationObject(1);
+  vtkInformation* averageDWIOutInfo = outputVector->GetInformationObject(2);
+  vtkDataObject::SetPointDataActiveScalarInfo(baselineOutInfo, scalarType, 1);
+  vtkDataObject::SetPointDataActiveScalarInfo(averageDWIOutInfo, scalarType, 1);
 #endif
 
   return 1;
@@ -283,19 +306,30 @@ int vtkTeemEstimateDiffusionTensor::RequestData(
   data->Delete();
 
   // Allocate baseline and averageDWI images
+  vtkImageData* baseline = 0;
+  vtkImageData* averageDWI = 0;
 #if (VTK_MAJOR_VERSION <= 5)
-  this->Baseline->SetExtent(output->GetUpdateExtent());
-  this->AverageDWI->SetExtent(output->GetUpdateExtent());
-  this->Baseline->AllocateScalars();
-  this->AverageDWI->AllocateScalars();
+  baseline = this->Baseline;
+  averageDWI = this->AverageDWI;
+  baseline->SetExtent(output->GetUpdateExtent());
+  averageDWI->SetExtent(output->GetUpdateExtent());
+  baseline->AllocateScalars();
+  averageDWI->AllocateScalars();
 #else
-  this->Baseline->SetExtent(this->GetUpdateExtent());
-  this->AverageDWI->SetExtent(this->GetUpdateExtent());
-  this->Baseline->AllocateScalars(outInfo);
-  this->AverageDWI->AllocateScalars(outInfo);
+  vtkInformation* baselineOutInfo = outputVector->GetInformationObject(1);
+  vtkInformation* averageDWIOutInfo = outputVector->GetInformationObject(2);
+
+  baseline = vtkImageData::SafeDownCast(
+    baselineOutInfo->Get(vtkDataObject::DATA_OBJECT()));
+  averageDWI = vtkImageData::SafeDownCast(
+    averageDWIOutInfo->Get(vtkDataObject::DATA_OBJECT()));
+  baseline->SetExtent(this->GetUpdateExtent());
+  averageDWI->SetExtent(this->GetUpdateExtent());
+  baseline->AllocateScalars(baselineOutInfo);
+  averageDWI->AllocateScalars(averageDWIOutInfo);
 #endif
-  this->Baseline->GetPointData()->GetScalars()->SetName("Baseline");
-  this->AverageDWI->GetPointData()->GetScalars()->SetName("AverageDWI");
+  baseline->GetPointData()->GetScalars()->SetName("Baseline");
+  averageDWI->GetPointData()->GetScalars()->SetName("AverageDWI");
 
   // make sure our gradient matrix is up to date
   //This update is not thread safe and it has to be performed outside
