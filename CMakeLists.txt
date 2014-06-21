@@ -833,12 +833,6 @@ if(Slicer_USE_QtTesting)
 endif()
 
 #-----------------------------------------------------------------------------
-# ZLIB
-#-----------------------------------------------------------------------------
-find_package(ZLIB REQUIRED)
-include_directories(${ZLIB_INCLUDE_DIRS})
-
-#-----------------------------------------------------------------------------
 # qRestAPI
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -905,35 +899,11 @@ endif()
 #-----------------------------------------------------------------------------
 # Teem
 #-----------------------------------------------------------------------------
+# XXX Waiting teem provide a correct TeemConfig.cmake exporting targets, this is needed
+#     to ensure the link_directories for teem is defined and avoid error like:
+#     warning: libteem.so.1, needed by ../../../../bin/libvtkTeem.so, may conflict with libteem.so.2
 find_package(Teem REQUIRED)
 include(${Teem_USE_FILE})
-
-#-----------------------------------------------------------------------------
-# SlicerLibCurl
-#-----------------------------------------------------------------------------
-find_package(CURL REQUIRED)
-include_directories(${CURL_INCLUDE_DIRS})
-
-#-----------------------------------------------------------------------------
-# LibArchive
-#-----------------------------------------------------------------------------
-find_package(LibArchive REQUIRED MODULE)
-
-#-----------------------------------------------------------------------------
-# BatchMake
-#-----------------------------------------------------------------------------
-if(Slicer_USE_BatchMake)
-  find_package(BatchMake REQUIRED)
-  include(${BatchMake_USE_FILE})
-endif()
-
-#-----------------------------------------------------------------------------
-# OpenIGTLink
-#-----------------------------------------------------------------------------
-if(Slicer_USE_OpenIGTLink)
-  find_package(OpenIGTLink REQUIRED)
-  include(${OpenIGTLink_USE_FILE})
-endif()
 
 #-----------------------------------------------------------------------------
 # SlicerExecutionModel settings

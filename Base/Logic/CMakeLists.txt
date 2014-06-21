@@ -7,6 +7,11 @@ if(Slicer_BUILD_CLI_SUPPORT)
   find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
 endif()
 
+#
+# LibArchive
+#
+find_package(LibArchive REQUIRED MODULE)
+
 # --------------------------------------------------------------------------
 # Subdirectories
 # --------------------------------------------------------------------------

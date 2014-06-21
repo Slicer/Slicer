@@ -11,9 +11,21 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
+# --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
+
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
+
+#
+# LibArchive
+#
+find_package(LibArchive REQUIRED MODULE)
 
 # --------------------------------------------------------------------------
 # Include dirs
