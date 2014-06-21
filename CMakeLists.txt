@@ -588,6 +588,41 @@ set(Slicer_ITK_COMPONENTS
   )
 
 #-----------------------------------------------------------------------------
+# VTKv6 - Slicer_VTK_COMPONENTS
+#-----------------------------------------------------------------------------
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(Slicer_VTK_COMPONENTS
+    vtkFiltersExtraction
+    vtkFiltersFlowPaths
+    vtkFiltersGeometry
+    vtkIOImage
+    vtkIOLegacy
+    vtkIOPLY
+    vtkIOXML
+    vtkImagingMath
+    vtkImagingMorphological
+    vtkImagingStatistics
+    vtkImagingStencil
+    vtkInteractionImage
+    vtkRenderingFreeTypeOpenGL
+    vtkRenderingQt
+    vtkRenderingVolumeOpenGL
+    vtkTestingRendering
+    vtkzlib
+    )
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND Slicer_VTK_COMPONENTS
+      vtkWrappingPythonCore
+      )
+  endif()
+  if(UNIX AND NOT APPLE)
+    list(APPEND Slicer_VTK_COMPONENTS
+      vtkRenderingFreeTypeFontConfig
+      )
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_MODULES
 #-----------------------------------------------------------------------------
 # Module name should be specified as they appear in FindQt4.cmake
@@ -764,7 +799,7 @@ include(${ITK_USE_FILE})
 # VTK
 #-----------------------------------------------------------------------------
 if(${VTK_VERSION_MAJOR} STREQUAL "6")
-  find_package(VTK 6.1 REQUIRED NO_MODULE)
+  find_package(VTK 6.1 COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
   if(NOT TARGET vtkGUISupportQt)
     message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
                       "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
