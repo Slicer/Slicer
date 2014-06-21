@@ -833,14 +833,6 @@ if(Slicer_USE_QtTesting)
 endif()
 
 #-----------------------------------------------------------------------------
-# qRestAPI
-#-----------------------------------------------------------------------------
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  find_package(qRestAPI REQUIRED)
-  include(${qRestAPI_USE_FILE})
-endif()
-
-#-----------------------------------------------------------------------------
 # Update CMake module path
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH

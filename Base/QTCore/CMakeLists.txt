@@ -1,12 +1,22 @@
 project(qSlicerBaseQTCore)
 
 #
-# Third party library
+# Dependencies
 #
 
+
+#
+# ModuleDescriptionParser - Required to define ModuleDescriptionParser_INCLUDE_DIRS
+#
 if(Slicer_BUILD_CLI_SUPPORT)
-  # Required to define ModuleDescriptionParser_INCLUDE_DIRS
   find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+endif()
+#
+# qRestAPI
+#
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  find_package(qRestAPI REQUIRED)
+  include(${qRestAPI_USE_FILE})
 endif()
 
 #
