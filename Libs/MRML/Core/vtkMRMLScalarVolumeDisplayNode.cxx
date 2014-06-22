@@ -789,7 +789,10 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
   // display nodes are cloned by the slice logic) therefore no-one has run the
   // filters.
 #if (VTK_MAJOR_VERSION <= 5)
-  imageDataScalar->Update();
+  if (this->GetInputImageData())
+    {
+    imageDataScalar->Update();
+    }
 #else
   this->GetScalarImageDataConnection()->GetProducer()->Update();
 #endif
