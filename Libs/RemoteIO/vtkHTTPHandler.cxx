@@ -1,5 +1,47 @@
+
+// RemoteIO includes
 #include "vtkHTTPHandler.h"
+
+// MRML includes
 #include <vtkPermissionPrompter.h>
+
+// CURL includes
+#include <curl/curl.h>
+
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4786 )
+#endif
+
+//----------------------------------------------------------------------------
+class vtkHTTPHandler::vtkInternal
+{
+public:
+  vtkInternal(vtkHTTPHandler* external);
+  ~vtkInternal();
+
+  vtkHTTPHandler* External;
+  CURL* CurlHandle;
+  int ForbidReuse;
+};
+
+//----------------------------------------------------------------------------
+// vtkInternal methods
+
+//----------------------------------------------------------------------------
+vtkHTTPHandler::vtkInternal::vtkInternal(vtkHTTPHandler* external):External(external)
+{
+  this->CurlHandle = NULL;
+  this->ForbidReuse = 0;
+}
+
+//-----------------------------------------------------------------------------
+vtkHTTPHandler::vtkInternal::~vtkInternal()
+{
+  this->CurlHandle = NULL;
+}
+
+//----------------------------------------------------------------------------
+// vtkHTTPHandler methods
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro ( vtkHTTPHandler );
@@ -52,25 +94,20 @@ size_t ProgressCallback(FILE* vtkNotUsed( outputFile ), double dltotal, double d
 //----------------------------------------------------------------------------
 vtkHTTPHandler::vtkHTTPHandler()
 {
-  this->CurlHandle = NULL;
-  this->ForbidReuse = 0;
+  this->Internal = new vtkInternal(this);
 }
-
 
 //----------------------------------------------------------------------------
 vtkHTTPHandler::~vtkHTTPHandler()
 {
-  this->CurlHandle = NULL;
+  delete this->Internal;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkHTTPHandler::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf ( os, indent );
 }
-
-
 
 //----------------------------------------------------------------------------
 int vtkHTTPHandler::CanHandleURI ( const char *uri )
@@ -108,15 +145,30 @@ int vtkHTTPHandler::CanHandleURI ( const char *uri )
   return ( 0 );
 }
 
+//----------------------------------------------------------------------------
+void vtkHTTPHandler::SetForbidReuse(int value)
+{
+  if (this->Internal->ForbidReuse == value)
+    {
+    return;
+    }
+  this->Internal->ForbidReuse = value;
+  this->Modified();
+}
 
+//----------------------------------------------------------------------------
+int vtkHTTPHandler::GetForbidReuse()
+{
+  return this->Internal->ForbidReuse;
+}
 
 //----------------------------------------------------------------------------
 void vtkHTTPHandler::InitTransfer( )
 {
   curl_global_init(CURL_GLOBAL_ALL);
   vtkDebugMacro("vtkHTTPHandler: InitTransfer: initialising CurlHandle");
-  this->CurlHandle = curl_easy_init();
-  if (this->CurlHandle == NULL)
+  this->Internal->CurlHandle = curl_easy_init();
+  if (this->Internal->CurlHandle == NULL)
     {
     vtkErrorMacro("InitTransfer: unable to initialise");
     }
@@ -125,7 +177,7 @@ void vtkHTTPHandler::InitTransfer( )
 //----------------------------------------------------------------------------
 int vtkHTTPHandler::CloseTransfer( )
 {
-  curl_easy_cleanup(this->CurlHandle);
+  curl_easy_cleanup(this->Internal->CurlHandle);
   return EXIT_SUCCESS;
 }
 
@@ -150,27 +202,27 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
   this->InitTransfer( );
 
 
-  if ( this->ForbidReuse )
+  if ( this->Internal->ForbidReuse )
     {
-    curl_easy_setopt(this->CurlHandle, CURLOPT_FORBID_REUSE, 1);
+    curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FORBID_REUSE, 1);
     }
-  curl_easy_setopt(this->CurlHandle, CURLOPT_HTTPGET, 1);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, source);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_HTTPGET, 1);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_URL, source);
+//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_NOPROGRESS, false);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
   // use the default curl write call back
-  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_WRITEFUNCTION, NULL); // write_callback);
   this->LocalFile = fopen(destination, "wb");
   // output goes into LocalFile, must be  FILE*
-  curl_easy_setopt(this->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_WRITEDATA, this->LocalFile);
+//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
+//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
 
   // quick timeout during connection phase if URL is not accessible (e.g. blocked by a firewall)
-  curl_easy_setopt(this->CurlHandle, CURLOPT_CONNECTTIMEOUT, 3); // in seconds (type long)
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_CONNECTTIMEOUT, 3); // in seconds (type long)
 
   vtkDebugMacro("StageFileRead: about to do the curl download... source = " << source << ", dest = " << destination);
-  CURLcode retval = curl_easy_perform(this->CurlHandle);
+  CURLcode retval = curl_easy_perform(this->Internal->CurlHandle);
 
   if (retval == CURLE_OK)
     {
@@ -228,15 +280,15 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
 
   this->InitTransfer( );
 
-  curl_easy_setopt(this->CurlHandle, CURLOPT_PUT, 1);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_URL, destination);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_NOPROGRESS, false);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_READFUNCTION, read_callback);
-  curl_easy_setopt(this->CurlHandle, CURLOPT_READDATA, this->LocalFile);
-//  curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
-  //curl_easy_setopt(this->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
-  CURLcode retval = curl_easy_perform(this->CurlHandle);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PUT, 1);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_URL, destination);
+//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_NOPROGRESS, false);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FOLLOWLOCATION, true);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_READFUNCTION, read_callback);
+  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_READDATA, this->LocalFile);
+//  curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSDATA, NULL);
+  //curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+  CURLcode retval = curl_easy_perform(this->Internal->CurlHandle);
 
    if (retval == CURLE_OK)
     {
