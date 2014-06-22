@@ -42,6 +42,13 @@ set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 include(SlicerCheckSourceTree)
 
 #-----------------------------------------------------------------------------
+# Superbuild Option - Enabled by default
+#-----------------------------------------------------------------------------
+option(Slicer_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ON)
+mark_as_advanced(Slicer_SUPERBUILD)
+set(Slicer_BINARY_INNER_SUBDIR Slicer-build)
+
+#-----------------------------------------------------------------------------
 include(CTestUseLaunchers OPTIONAL)
 if(${CTEST_USE_LAUNCHERS})
   message(STATUS "CTest launchers enabled")
@@ -51,27 +58,12 @@ endif()
 # Sanity checks
 #------------------------------------------------------------------------------
 if(WIN32)
-  option(Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK "Skip root directory length check" OFF)
-  mark_as_advanced(Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK)
-  if(NOT Slicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK)
-    set(root_directory_max_length 40)
-    string(LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n)
-    if(n GREATER ${root_directory_max_length})
-      message(
-        FATAL_ERROR
-        "Source tree directory of ${PROJECT_NAME} is too deep (${n} > ${root_directory_max_length})."
-        "Please use a shorter root directory for the ${PROJECT_NAME} source tree."
-        )
-    endif()
-    string(LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n)
-    if(n GREATER ${root_directory_max_length})
-      message(
-        FATAL_ERROR
-        "Binary tree directory of ${PROJECT_NAME} is too deep (${n} > ${root_directory_max_length})."
-        "Please use a shorter root directory for the ${PROJECT_NAME} binary tree."
-        )
-    endif()
+  set(${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH 40)
+  if(NOT ${PROJECT_NAME}_SUPERBUILD)
+    string(LENGTH ${Slicer_BINARY_INNER_SUBDIR} _inner_subdir_length)
+    math(EXPR ${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH "${${PROJECT_NAME}_ROOT_DIR_MAX_LENGTH} + ${_inner_subdir_length}")
   endif()
+  include(PreventDirWithTooManyChars)
 endif()
 include(PreventInSourceBuilds)
 include(PreventInBuildInstalls)
@@ -154,14 +146,6 @@ if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
   set(Slicer_REQUIRED_QT_VERSION "4.7.4" CACHE STRING "Minimum required Qt version" FORCE)
 endif()
 mark_as_superbuild(Slicer_REQUIRED_QT_VERSION)
-
-#-----------------------------------------------------------------------------
-# Superbuild Option - Enabled by default
-#-----------------------------------------------------------------------------
-option(Slicer_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ON)
-mark_as_advanced(Slicer_SUPERBUILD)
-
-set(Slicer_BINARY_INNER_SUBDIR Slicer-build)
 
 #-----------------------------------------------------------------------------
 # Build shared lib by default
