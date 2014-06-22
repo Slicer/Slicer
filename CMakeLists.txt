@@ -75,13 +75,8 @@ if(WIN32)
 endif()
 include(PreventInSourceBuilds)
 include(PreventInBuildInstalls)
-
-if(NOT DEFINED Slicer_SKIP_DIR_WITH_SPACES_CHECK)
-  set(Slicer_SKIP_DIR_WITH_SPACES_CHECK FALSE)
-endif()
-if(NOT Slicer_SKIP_DIR_WITH_SPACES_CHECK)
-  include(PreventDirWithSpaces)
-endif()
+include(PreventDirWithSpaces)
+mark_as_superbuild(${PROJECT_NAME}_SKIP_DIR_WITH_SPACES_CHECK:BOOL)
 
 #-----------------------------------------------------------------------------
 # Overwrite default options

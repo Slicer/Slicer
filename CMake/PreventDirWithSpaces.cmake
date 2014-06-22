@@ -1,5 +1,10 @@
 #
 # This function will prevent building the project from a source or build directory having spaces
+#
+# To allow directory with spaces, the project can be configured with:
+#
+#   -D<PROJECT_NAME>_SKIP_DIR_WITH_SPACES_CHECK:BOOL=TRUE
+#
 function(AssureNoSpacesForSourceOrBuildDir)
 
   function(_check_path path description)
@@ -17,7 +22,10 @@ function(AssureNoSpacesForSourceOrBuildDir)
       message(FATAL_ERROR
         "The current ${description} directory contains spaces:\n"
         "  ${real_path}\n"
-        "This is not supported.\n"
+        "Building the project from a source or build directory having spaces is NOT recommended or tested !\n"
+        ""
+        "To ignore this error, reconfigure with the following option:\n"
+        "  -D${PROJECT_NAME}_SKIP_DIR_WITH_SPACES_CHECK:BOOL=TRUE\n"
         )
     endif()
 
@@ -28,4 +36,9 @@ function(AssureNoSpacesForSourceOrBuildDir)
 
 endfunction()
 
-AssureNoSpacesForSourceOrBuildDir()
+if(NOT DEFINED ${PROJECT_NAME}_SKIP_DIR_WITH_SPACES_CHECK)
+  set(${PROJECT_NAME}_SKIP_DIR_WITH_SPACES_CHECK FALSE)
+endif()
+if(NOT ${PROJECT_NAME}_SKIP_DIR_WITH_SPACES_CHECK)
+  AssureNoSpacesForSourceOrBuildDir()
+endif()
