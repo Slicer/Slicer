@@ -58,7 +58,6 @@ set(KIT_target_libraries
 
 # Resources
 set(KIT_resources
-  Resources/qSlicerModulesCore.qrc
   )
 
 SlicerMacroBuildBaseQtLibrary(
