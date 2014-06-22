@@ -185,11 +185,6 @@ int vtkSlicerMultiVolumeExplorerLogic
   // Returns the number of frames sved, and the array of extracted tag values
   // associated with each frame for the MV node.
 
-  typedef itk::GDCMImageIO ImageIOType;
-  typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
-  typedef short PixelValueType;
-  typedef itk::Image< PixelValueType, 3 > VolumeType;
-  typedef itk::ImageSeriesReader< VolumeType > ReaderType;
   std::string result = "";
   std::vector<DcmDataset*> dcmDatasetVector;
 
