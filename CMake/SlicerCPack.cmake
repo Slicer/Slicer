@@ -78,6 +78,14 @@ else()
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
   endif()
 
+  # Calling find_package will ensure the *_LIBRARY_DIRS expected by the fixup script are set.
+  if(Slicer_USE_OpenIGTLink)
+    find_package(OpenIGTLink REQUIRED)
+  endif()
+  if(Slicer_USE_BatchMake)
+    find_package(BatchMake REQUIRED)
+  endif()
+
   # Generate qt.conf
   file(WRITE ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
 "[Paths]
