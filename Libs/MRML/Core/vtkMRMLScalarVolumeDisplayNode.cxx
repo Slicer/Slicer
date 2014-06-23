@@ -788,14 +788,14 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
   // Remember, the display node pipeline is not connected to a consumer (volume
   // display nodes are cloned by the slice logic) therefore no-one has run the
   // filters.
-#if (VTK_MAJOR_VERSION <= 5)
   if (this->GetInputImageData())
     {
+#if (VTK_MAJOR_VERSION <= 5)
     imageDataScalar->Update();
-    }
 #else
-  this->GetScalarImageDataConnection()->GetProducer()->Update();
+    this->GetScalarImageDataConnection()->GetProducer()->Update();
 #endif
+    }
 
   if (!(imageDataScalar->GetPointData()) ||
       !(imageDataScalar->GetPointData()->GetScalars()))
