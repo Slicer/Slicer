@@ -247,7 +247,8 @@ class DICOMPlugin(object):
       studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, 'DICOM', studyInstanceUid)
       if studyNode != None:
         studyDescription = slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription'])
+        studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate'])
         if studyDescription == '':
           studyDescription = 'No study description'
         studyDescription = studyDescription.encode('UTF-8', 'ignore')
-        studyNode.SetName(studyDescription + '_SubjectHierarchy')
+        studyNode.SetName(studyDescription + ' (' + studyDate + ')_SubjectHierarchy')
