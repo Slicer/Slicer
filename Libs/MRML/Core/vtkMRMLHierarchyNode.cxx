@@ -753,7 +753,7 @@ int vtkMRMLHierarchyNode::UpdateAssociatedToHierarchyMap(vtkMRMLScene *scene)
       vtkMRMLHierarchyNode *node =  vtkMRMLHierarchyNode::SafeDownCast(nodes[i]);
       if (node)
         {
-        vtkMRMLNode *mnode = node->GetAssociatedNode();
+        vtkMRMLNode *mnode = node->vtkMRMLHierarchyNode::GetAssociatedNode();
         if (mnode)
           {
           siter->second[std::string(mnode->GetID())] = node;

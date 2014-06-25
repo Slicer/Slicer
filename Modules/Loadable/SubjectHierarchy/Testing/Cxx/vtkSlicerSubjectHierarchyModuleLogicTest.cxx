@@ -101,10 +101,10 @@ namespace
   //         |    (Study)
   //         +- SubjectHierarchyNode -- ScalarVolumeNode (volume2)
   //         |        (Series)                  > DisplayNode
-  //         +- ModelHierarchyNode -- SubjectHierarchyNode -- ModelNode (model21)
-  //         | (nested association)         (Series)              > DisplayNode
-  //         +- ModelHierarchyNode -- SubjectHierarchyNode -- ModelNode (model22)
-  //           (nested association)         (Series)              > DisplayNode
+  //         +- SubjectHierarchyNode -- ModelHierarchyNode -- ModelNode (model21)
+  //         |       (Series)          (nested association)       > DisplayNode
+  //         +- SubjectHierarchyNode -- ModelHierarchyNode -- ModelNode (model22)
+  //                 (Series)          (nested association)       > DisplayNode
   //
   bool PopulateScene(vtkMRMLScene* scene)
     {
@@ -613,9 +613,9 @@ namespace
       std::cout << "DICOM series node not correctly inserted under study node" << std::endl;
       return false;
       }
-    if (insertedSeriesNode != studyShNode)
+    if (insertedSeriesNode != seriesShNode)
       {
-      std::cout << "Insert study does not match retrieved study" << std::endl;
+      std::cout << "Inserted series does not match retrieved series" << std::endl;
       return false;
       }
 
@@ -833,7 +833,7 @@ namespace
       }
 
     // Check whether transform1 was hardened on model21
-    double model21PointsArray[3] =   {0.0, 0.0, 0.0};
+    double model21PointsArray[3] = {0.0, 0.0, 0.0};
     model21PolyData->GetPoint(0, model21PointsArray);
     if (model21PointsArray[0] != 100.0 || model21PointsArray[1] != 0.0 || model21PointsArray[2] != 0.0)
       {
