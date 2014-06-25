@@ -138,6 +138,7 @@ public:
         {
         this->Node->GetScene()->SaveStateForUndo(this->Node);
         }
+      this->Node->InvokeEvent(vtkMRMLMarkupsNode::PointEndInteractionEvent, callData);
       }
     else if (event == vtkCommand::InteractionEvent)
       {
