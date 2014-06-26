@@ -57,8 +57,6 @@ public:
   int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
                          std::string dcmTag, vtkDoubleArray*);
 
-  int InitializeMultivolumeNode(vtkStringArray*, vtkMRMLMultiVolumeNode*);
-
   /// Register the factory that the MultiVolume needs to manage nrrd
   /// file with the specified volumes logic
   void RegisterArchetypeVolumeNodeSetFactory(vtkSlicerVolumesLogic* volumesLogic);
