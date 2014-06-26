@@ -219,23 +219,13 @@ int qMRMLSceneSubjectHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 //------------------------------------------------------------------------------
 bool qMRMLSceneSubjectHierarchyModel::canBeAChild(vtkMRMLNode* node)const
 {
-  vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
-  if ( hnode && hnode->IsA("vtkMRMLSubjectHierarchyNode") )
-    {
-    return true;
-    }
-  return false;
+  return node && node->IsA("vtkMRMLSubjectHierarchyNode");
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneSubjectHierarchyModel::canBeAParent(vtkMRMLNode* node)const
 {
-  vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
-  if ( hnode && hnode->IsA("vtkMRMLSubjectHierarchyNode") )
-    {
-    return true;
-    }
-  return false;
+  return node && node->IsA("vtkMRMLSubjectHierarchyNode");
 }
 
 //------------------------------------------------------------------------------

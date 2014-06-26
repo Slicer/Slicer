@@ -109,33 +109,14 @@ bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node)const
     {
     return false;
     }
-  if (node->IsA("vtkMRMLDisplayableNode"))
-    {
-    return true;
-    }
-  if (node->IsA("vtkMRMLDisplayableHierarchyNode"))
-    {
-    return true;
-    }
-  return false;
+  return node->IsA("vtkMRMLDisplayableNode") ||
+         node->IsA("vtkMRMLDisplayableHierarchyNode");
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node)const
 {
-  if (!node)
-    {
-    return false;
-    }
-  if (node->IsA("vtkMRMLDisplayableNode"))
-    {
-    return true;
-    }
-  if (node->IsA("vtkMRMLDisplayableHierarchyNode"))
-    {
-    return true;
-    }
-  return false;
+  return this->canBeAChild(node);
 }
 
 //------------------------------------------------------------------------------

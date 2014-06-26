@@ -240,33 +240,13 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 //------------------------------------------------------------------------------
 bool qMRMLSceneHierarchyModel::canBeAChild(vtkMRMLNode* node)const
 {
-  if (!node)
-    {
-    return false;
-    }
-  if (node->IsA("vtkMRMLNode"))
-    {
-    return true;
-    }
-  if (node->IsA("vtkMRMLHierarchyNode"))
-    {
-    return true;
-    }
-  return false;
+  return node != 0;
 }
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneHierarchyModel::canBeAParent(vtkMRMLNode* node)const
 {
-  if (!node)
-    {
-    return false;
-    }
-  if (node->IsA("vtkMRMLHierarchyNode"))
-    {
-    return true;
-    }
-  return false;
+  return node && node->IsA("vtkMRMLHierarchyNode");
 }
 
 //------------------------------------------------------------------------------
