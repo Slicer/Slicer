@@ -428,6 +428,10 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->HelpReportBugOrFeatureRequestAction->setIcon(questionIcon);
   this->HelpVisualBlogAction->setIcon(networkIcon);
 
+  this->CutAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  this->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  this->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
   setThemeIcon(this->FileExitAction, "application-exit");
   setThemeIcon(this->EditUndoAction, "edit-undo");
   setThemeIcon(this->EditRedoAction, "edit-redo");
