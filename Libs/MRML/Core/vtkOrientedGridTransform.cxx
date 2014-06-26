@@ -112,8 +112,6 @@ void vtkOrientedGridTransform::ForwardTransformPoint(const double inPoint[3],
   void *gridPtr = this->GridPointer;
   int gridType = this->GridScalarType;
 
-  double *spacing = this->GridSpacing;
-  double *origin = this->GridOrigin;
   int *extent = this->GridExtent;
   vtkIdType *increments = this->GridIncrements;
 
@@ -153,8 +151,6 @@ void vtkOrientedGridTransform::ForwardTransformDerivative(const double inPoint[3
   void *gridPtr = this->GridPointer;
   int gridType = this->GridScalarType;
 
-  double *spacing = this->GridSpacing;
-  double *origin = this->GridOrigin;
   int *extent = this->GridExtent;
   vtkIdType *increments = this->GridIncrements;
 
@@ -202,8 +198,6 @@ void vtkOrientedGridTransform::InverseTransformDerivative(const double inPoint[3
   void *gridPtr = this->GridPointer;
   int gridType = this->GridScalarType;
 
-  double *spacing = this->GridSpacing;
-  double *origin = this->GridOrigin;
   int *extent = this->GridExtent;
   vtkIdType *increments = this->GridIncrements;
 
