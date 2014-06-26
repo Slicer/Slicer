@@ -170,10 +170,20 @@ class SampleDataLogic:
         ('MRBrainTumor1', 'http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
         ('MRBrainTumor2', 'http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
         ('BaselineVolume', 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume'),
-        ('DTIVolume', ('http://slicer.kitware.com/midas3/download/?items=2011,1', 'http://slicer.kitware.com/midas3/download/?items=2010,1', ), ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
+        ('DTIVolume',
+          ('http://slicer.kitware.com/midas3/download/?items=2011,1',
+            'http://slicer.kitware.com/midas3/download/?items=2010,1', ),
+          ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
         ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'), ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
         ('Panoramix', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
-        ('CBCTDentalSurgery', ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz', 'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',), ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery')),
+        ('CBCTDentalSurgery',
+          ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz',
+            'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',),
+          ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery')),
+        ('MR-US Prostate',
+          ('http://slicer.kitware.com/midas3/download/item/142475/Case10-MR.nrrd',
+            'http://slicer.kitware.com/midas3/download/item/142476/case10_US_resampled.nrrd',),
+          ('Case10-MR.nrrd', 'case10_US_resampled.nrrd'), ('MRProstate', 'USProstate')),
         )
 
     if not slicer.modules.sampleDataSources.has_key('BuiltIn'):
@@ -260,6 +270,10 @@ class SampleDataLogic:
   def downloadDentalSurgery(self):
     # returns list since that's what earlier method did
     return self.downloadSample('CBCTDentalSurgery')
+
+  def downloadMRUSPostate(self):
+    # returns list since that's what earlier method did
+    return self.downloadSample('MR-US Prostate')
 
   def humanFormatSize(self,size):
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
