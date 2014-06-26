@@ -637,7 +637,21 @@ void vtkMRMLSceneViewNode::SetScreenShotType(int newScreenShotType)
 //----------------------------------------------------------------------------
 int vtkMRMLSceneViewNode::GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes)
 {
+  if (!this->SnapshotScene)
+    {
+    return 0;
+    }
   return this->SnapshotScene->GetNodesByClass(className, nodes);
+}
+
+//------------------------------------------------------------------------------
+vtkCollection* vtkMRMLSceneViewNode::GetNodesByClass(const char *className)
+{
+  if (!this->SnapshotScene)
+    {
+    return NULL;
+    }
+  return this->SnapshotScene->GetNodesByClass(className);
 }
 
 //----------------------------------------------------------------------------

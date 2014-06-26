@@ -19,6 +19,7 @@
 
 // VTK includes
 #include <vtkStdString.h>
+class vtkCollection;
 class vtkImageData;
 
 class vtkMRMLStorageNode;
@@ -102,8 +103,15 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
- /// Get vector of nodes of a specified class in the scene
+  /// Get vector of nodes of a specified class in the scene.
+  /// Returns 0 on failure, number of nodes on success.
+  /// \sa vtkMRMLScene;:GetNodesByClass
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
+  /// Get a collection of nodes of a specified class (for python access)
+  /// You are responsible for deleting the returned collection.
+  /// Returns NULL on failure.
+  /// \sa vtkMRMLScene::GetNodesByClass
+  vtkCollection* GetNodesByClass(const char *className);
 
   /// check if a node should be included in the save/restore cycle. Returns
   /// false if it's a scene view node, scene view storage node, scene view

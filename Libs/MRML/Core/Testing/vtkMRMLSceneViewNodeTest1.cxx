@@ -16,6 +16,7 @@
 #include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkNew.h>
 
@@ -31,6 +32,12 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
   // test with null scene
   node1->StoreScene();
   node1->SetAbsentStorageFileNames();
+  vtkCollection *col = node1->GetNodesByClass(NULL);
+  if (col != NULL)
+    {
+    std::cout << "Failed to get empty collection" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // make a scene and test again
   vtkNew<vtkMRMLScene> scene;
@@ -57,6 +64,15 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
   imageData = node1->GetScreenShot();
 
   TEST_SET_GET_INT_RANGE(node1.GetPointer(), ScreenShotType, 0, 4);
+
+  col = node1->GetNodesByClass("vtkMRMLNode");
+  if (!col)
+    {
+    std::cerr << "Failed to get mrml nodes from scene view snapshot scene" << std::endl;
+    return EXIT_FAILURE;
+    }
+  col->RemoveAllItems();
+  col->Delete();
 
   return EXIT_SUCCESS;
 }
