@@ -126,6 +126,7 @@ public:
   /// Invoke the lock modified event when a markup's lock status is changed.
   /// Invoke the label format modified event when markup label format changes.
   /// Invoke the point modified event when a markup's location changes.
+  /// Invoke the point end interaction event when an interaction process finishes.
   /// Invoke the NthMarkupModifiedEvent event when a markup's non location value.
   /// Invoke the markup added event when adding a new markup to a markups node.
   /// Invoke the markup removed event when removing one or all markups from a node
