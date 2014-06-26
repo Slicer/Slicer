@@ -654,9 +654,9 @@ void SetVTKOrientedGridTransformFromITK(vtkObject* self, vtkOrientedGridTransfor
 
   // Direction
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
-  for (int row=0; row<VTKDimension; row++)
+  for (unsigned int row=0; row<VTKDimension; row++)
     {
-    for (int column=0; column<VTKDimension; column++)
+    for (unsigned int column=0; column<VTKDimension; column++)
       {
       gridDirectionMatrix_LPS->SetElement(row,column,gridImage_Lps->GetDirection()(row,column));
       }
@@ -753,9 +753,9 @@ void SetITKOrientedGridTransformFromVTK(vtkObject* self, vtkOrientedGridTransfor
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_Lps;
   vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), gridDirectionMatrix_Ras.GetPointer(), gridDirectionMatrix_Lps.GetPointer());
   GridImageType::DirectionType gridDirectionMatrixItk_Lps;
-  for (int row=0; row<VTKDimension; row++)
+  for (unsigned int row=0; row<VTKDimension; row++)
     {
-    for (int column=0; column<VTKDimension; column++)
+    for (unsigned int column=0; column<VTKDimension; column++)
       {
       gridDirectionMatrixItk_Lps(row,column) = gridDirectionMatrix_Lps->GetElement(row,column);
       }
