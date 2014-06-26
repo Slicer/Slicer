@@ -121,8 +121,8 @@ public:
     };
 
   /// 0 by default
-  virtual void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);
+  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
   /// 0 until a valid scene is set
   QStandardItem* mrmlSceneItem()const;
