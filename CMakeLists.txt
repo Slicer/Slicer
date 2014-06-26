@@ -566,6 +566,10 @@ set(Slicer_ITK_COMPONENTS
   ${ITK_IO_MODULES_USED}
   )
 
+if(Slicer_BUILD_BRAINSTOOLS)
+  list(APPEND Slicer_ITK_COMPONENTS ITKOptimizersv4)
+endif()
+
 #-----------------------------------------------------------------------------
 # VTKv6 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
