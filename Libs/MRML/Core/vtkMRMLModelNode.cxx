@@ -287,7 +287,6 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
     }
 }
 
-
 //---------------------------------------------------------------------------
 const char * vtkMRMLModelNode::GetActivePointScalarName(int type)
 {
@@ -394,7 +393,6 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
                                        int showOverlayPositive, int showOverlayNegative,
                                        int reverseOverlay)
 {
-
     if (backgroundName == NULL || overlayName == NULL)
       {
       vtkErrorMacro("CompositeScalars: one of the input array names is null");
@@ -596,7 +594,7 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
     this->GetPolyData() ? this->GetPolyData()->GetProducerPort()->GetProducer() : 0);
 #else
-  bool isInPipeline = vtkTrivialProducer::SafeDownCast(
+  bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
     this->PolyDataConnection ? this->PolyDataConnection->GetProducer() : 0);
 #endif
   vtkSmartPointer<vtkPolyData> polyData;
@@ -636,7 +634,6 @@ void vtkMRMLModelNode::GetRASBounds(double bounds[6])
   this->GetPolyData()->GetBounds(boundsLocal);
 
   this->TransformBoundsToRAS(boundsLocal, bounds);
-
 }
 
 //---------------------------------------------------------------------------
