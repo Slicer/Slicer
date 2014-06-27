@@ -711,5 +711,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TransformInfoWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>611</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>59</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

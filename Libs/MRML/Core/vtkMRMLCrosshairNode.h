@@ -16,6 +16,7 @@
 #define __vtkMRMLCrosshairNode_h
 
 #include "vtkMRMLNode.h"
+#include "vtkMRMLSliceNode.h"
 
 /// \brief MRML node for storing a crosshair through RAS space
 ///
@@ -27,6 +28,13 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   static vtkMRMLCrosshairNode *New();
   vtkTypeMacro(vtkMRMLCrosshairNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  /// CursorPositionModifiedEvent is invoked when the cursor position is modified,
+  /// for example a mouse pointer is moved in a slice view.
+  enum
+    {
+      CursorPositionModifiedEvent = 22000
+    };
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
@@ -57,6 +65,36 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   void SetCrosshairToFine() { this->SetCrosshairThickness(1); }
   void SetCrosshairToMedium() { this->SetCrosshairThickness(2); }
   void SetCrosshairToThick() { this->SetCrosshairThickness(3); }
+
+  ///
+  /// Set cursor position in 3D.
+  /// This should be called whenever the cursor is moved by using a 3D positioning device
+  /// (that does not have an associated slice viewer).
+  /// GetCursorPositionXYZ returns with NULL if SetCursorPositionRAS is used for setting the
+  /// cursor position, so if slice position is available then SetCursorPositionXYZ method should
+  /// be used instead (it sets both XYZ and RAS position, too).
+  void SetCursorPositionRAS(double ras[3]);
+
+  ///
+  /// Set cursor position in a 2D slice view.
+  /// The method also computes the RAS position.
+  /// This method should be called whenever the mouse moves in a slice viewer.
+  void SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode *sliceNode);
+
+  /// Invalidates the cursor position. This should be called whenever the mouse moves out of a view.
+  void SetCursorPositionInvalid();
+
+  /// Get the position of the cursor in the current view in RAS coordinate system.
+  /// Returns false if the cursor position is unknown.
+  /// This is typically called by other classes to get the current cursor position after receiving
+  /// CursorPositionModifiedEvent event.
+  bool GetCursorPositionRAS(double ras[3]);
+
+  /// Get the position of the cursor in the current view in XYZ coordinate system.
+  /// Returns NULL if the cursor is not in a slice viewer.
+  /// This is typically called by other classes to get the current cursor position after receiving
+  /// CursorPositionModifiedEvent event.
+  vtkMRMLSliceNode* GetCursorPositionXYZ(double xyz[3]);
 
   ///
   /// Set crosshair position
@@ -123,6 +161,20 @@ protected:
 
   double CrosshairRAS[3];
   int LightBoxPane;
+
+  /// Last known cursor position in RAS coordinate system.
+  /// If CursorPositionValid is false then this position is not up-to-date anymore.
+  double CursorPositionRAS[3];
+  /// Last known cursor position in XYZ coordinate system.
+  /// If CursorSliceNode is NULL then this position is not up-to-date anymore.
+  double CursorPositionXYZ[3];
+  /// CursorSliceNode points to the slice where the cursor is. It is not stored as a MRML node reference
+  /// as its value is not saved with the scene and also it changes frequently therefore it is better
+  /// to keep a lightweight reference.
+  vtkWeakPointer<vtkMRMLSliceNode> CursorSliceNode;
+
+  /// Set to false if the cursor is not in a view
+  bool CursorPositionRASValid;
 };
 
 #endif

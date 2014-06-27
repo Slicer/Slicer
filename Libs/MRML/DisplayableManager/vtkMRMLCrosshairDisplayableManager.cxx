@@ -685,13 +685,15 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
 
   this->Superclass::OnInteractorStyleEvent(eventid);
 
-  if (this->Internal->CrosshairNode && this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
+  if (this->Internal->CrosshairNode)
     {
     switch (eventid)
       {
       case vtkCommand::LeaveEvent:
+        this->Internal->CrosshairNode->SetCursorPositionInvalid();
         // If we are not Navigating, reposition the crosshair to the center
-        if (this->Internal->CrosshairNode->GetNavigation() == 0)
+        if (this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair
+            && this->Internal->CrosshairNode->GetNavigation() == 0)
           {
           double xyz[3], ras[3];
           vtkRenderer *renderer
@@ -704,10 +706,23 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
           this->Internal->CrosshairNode->SetCrosshairRAS(ras[0], ras[1],ras[2]);
           }
         break;
-
+      // When we switch to the Slicer window and the mouse is already over a view
+      // then only OnInteractorStyleEvent is called with vtkCommand::EnterEvent,
+      // (OnInteractorEvent is not called) therefore we need to handle EnterEvent here
+      case vtkCommand::EnterEvent:
+          {
+          // On a mouse move, determine which lightbox is under the mouse
+          // and the RAS position of the mouse
+          int *pos = this->GetInteractor()->GetEventPosition();
+          double xyz[3];
+          this->ConvertDeviceToXYZ(pos[0], pos[1], xyz);
+          this->Internal->CrosshairNode->SetCursorPositionXYZ(xyz, this->GetMRMLSliceNode());
+          }
+        break;
       case vtkCommand::LeftButtonReleaseEvent:
         // Button release is only meaningful in navigation mode
-        if (this->Internal->CrosshairNode->GetNavigation())
+        if (this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair
+            && this->Internal->CrosshairNode->GetNavigation())
           {
           this->Internal->PickState = vtkInternal::NoPick;
           this->Internal->ActionState = vtkInternal::NoAction;
@@ -731,14 +746,15 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
 
   this->Superclass::OnInteractorEvent(eventid);
 
-  if (this->Internal->CrosshairNode && this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
+  if (this->Internal->CrosshairNode)
     {
     bool renderNeeded = false;
     switch (eventid)
       {
       case vtkCommand::LeftButtonPressEvent:
         // Button press is only meaningful in navigation mode
-        if (this->Internal->CrosshairNode->GetNavigation())
+        if (this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair
+            && this->Internal->CrosshairNode->GetNavigation())
           {
           // check whether we are close enough to navigate
           if (this->Internal->PickState == vtkInternal::Over)
@@ -751,21 +767,27 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
             }
           }
         break;
-
+      case vtkCommand::LeaveEvent:
+        this->Internal->CrosshairNode->SetCursorPositionInvalid();
+        break;
       case vtkCommand::MouseMoveEvent:
+      case vtkCommand::EnterEvent:
         // On a mouse move, determine which lightbox is under the mouse
         // and the RAS position of the mouse
-        int *pos =  this->GetInteractor()->GetEventPosition();
+        int *pos = this->GetInteractor()->GetEventPosition();
 
         double xyz[3];
         this->ConvertDeviceToXYZ(pos[0], pos[1], xyz);
+
+        this->Internal->CrosshairNode->SetCursorPositionXYZ(xyz, this->GetMRMLSliceNode());
 
         double ras[3];
         this->ConvertXYZToRAS(xyz, ras);
 
         // Navigation mode and Cross-referencing mode handle the
         // information differently
-        if (this->Internal->CrosshairNode->GetNavigation())
+        if (this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair
+            && this->Internal->CrosshairNode->GetNavigation())
           {
           // Navigation mode.
           switch (this->Internal->ActionState)
@@ -840,7 +862,7 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
               break;
             }
           }
-        else
+        else if (this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
           {
           // Cross-referencing mode. Set the new position on the crosshair
           // modifying the CrosshairRAS will trigger a render
@@ -914,5 +936,3 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLSliceNodeModifiedEvent()
       this->RequestRender();
     }
 }
-
-

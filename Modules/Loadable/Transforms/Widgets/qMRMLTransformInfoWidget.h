@@ -52,18 +52,26 @@ public:
 
   vtkMRMLTransformNode* mrmlTransformNode()const;
 
+  vtkMRMLScene* mrmlScene()const;
+
 public slots:
 
   /// Set the MRML node of interest
   /// Note that setting transformNode to 0 will disable the widget
   void setMRMLTransformNode(vtkMRMLTransformNode* transformNode);
 
+  void setMRMLScene(vtkMRMLScene* scene);
+
   /// Utility function that calls setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
   /// It's useful to connect to vtkMRMLNode* signals
   void setMRMLTransformNode(vtkMRMLNode* node);
 
+  /// Process event function
+  void processEvent(vtkObject* sender, void* callData, unsigned long eventId, void* clientData);
+
 protected slots:
   void updateWidgetFromMRML();
+  void updateTransformVectorDisplayFromMRML();
 
 protected:
   QScopedPointer<qMRMLTransformInfoWidgetPrivate> d_ptr;
