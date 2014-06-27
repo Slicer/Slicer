@@ -22,8 +22,8 @@ set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(PYTHON_ENABLE_SSL @PYTHON_ENABLE_SSL@)
 set(CTKAPPLAUNCHER_DIR "@CTKAPPLAUNCHER_DIR@")
 set(python_DIR "@python_DIR@")
-set(Slicer_INSTALL_BIN_DIR "@Slicer_INSTALL_BIN_DIR@")
-set(Slicer_INSTALL_LIB_DIR "@Slicer_INSTALL_LIB_DIR@")
+set(Slicer_BIN_DIR "@Slicer_BIN_DIR@")
+set(Slicer_LIB_DIR "@Slicer_LIB_DIR@")
 
 set(python_version_dot "2.7")
 set(pythonpath_subdir lib/python${python_version_dot})
@@ -103,15 +103,15 @@ configure_file(
 set(PYTHONHOME "<APPLAUNCHER_DIR>/../lib/Python")
 
 # Windows:
-#   Python library    -> Slicer_INSTALL_BIN_DIR
-#   OpenSSL libraries -> Slicer_INSTALL_BIN_DIR
+#   Python library    -> Slicer_BIN_DIR
+#   OpenSSL libraries -> Slicer_BIN_DIR
 # Unix:
 #   Python library    -> lib/Python/lib
-#   OpenSSL libraries -> Slicer_INSTALL_LIB_DIR
+#   OpenSSL libraries -> Slicer_LIB_DIR
 
 set(_library_paths_installed
-  <APPLAUNCHER_DIR>/../${Slicer_INSTALL_BIN_DIR}
-  <APPLAUNCHER_DIR>/../${Slicer_INSTALL_LIB_DIR}
+  <APPLAUNCHER_DIR>/../${Slicer_BIN_DIR}
+  <APPLAUNCHER_DIR>/../${Slicer_LIB_DIR}
   <APPLAUNCHER_DIR>/../lib/Python/lib
   )
 _listToQtSettingsArray("${_library_paths_installed}" "path" PYTHONLAUNCHER_LIBRARY_PATHS)
@@ -120,6 +120,7 @@ set(_pythonpath_paths_installed
   "${PYTHONHOME}/lib/Python/${pythonpath_subdir}"
   "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/lib-dynload"
   "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/site-packages"
+  "<APPLAUNCHER_DIR>/../${Slicer_BIN_DIR}/Python"
   )
 _listToQtSettingsArray("${_pythonpath_paths_installed}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
