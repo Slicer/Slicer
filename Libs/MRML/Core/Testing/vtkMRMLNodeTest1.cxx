@@ -576,7 +576,7 @@ bool TestSetAndObserveNodeReferenceID()
 
   if (!CheckNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", scene.GetPointer(),
                            referencingNode.GetPointer(), role3.c_str(),
-                           /* n = */ 1,
+                           /* n = */ 0,
                            /* expectedNodeReference = */ referencedNode31.GetPointer(),
                            /* expectedNumberOfNodeReferences = */ 1,
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
@@ -593,7 +593,7 @@ bool TestSetAndObserveNodeReferenceID()
   referenceIndices.push_back(32);
   referenceIndices.push_back(21);
   referenceIndices.push_back(10);
-  referenceIndices.push_back(0);
+  referenceIndices.push_back(3);
   referenceIndices.push_back(-1);
   for (std::vector<int>::iterator it = referenceIndices.begin();
        it != referenceIndices.end();
@@ -1748,7 +1748,7 @@ bool TestSetNodeReferenceID()
   referenceIndices.push_back(32);
   referenceIndices.push_back(21);
   referenceIndices.push_back(10);
-  referenceIndices.push_back(0);
+  referenceIndices.push_back(3);
   referenceIndices.push_back(-1);
   for (std::vector<int>::iterator it = referenceIndices.begin();
        it != referenceIndices.end();
