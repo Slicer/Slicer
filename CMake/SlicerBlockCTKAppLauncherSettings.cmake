@@ -141,12 +141,6 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
   endif()
 endif()
 
-if(Slicer_USE_BatchMake AND NOT Slicer_USE_SYSTEM_BatchMake)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${BatchMake_DIR}/bin/<CMAKE_CFG_INTDIR>
-    )
-endif()
-
 if(Slicer_USE_OpenIGTLink AND NOT Slicer_USE_SYSTEM_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${OpenIGTLink_DIR}
@@ -305,13 +299,6 @@ if(Slicer_USE_OpenIGTLink AND NOT Slicer_USE_SYSTEM_OpenIGTLink)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
     # External projects
     <APPLAUNCHER_DIR>/lib/igtl
-    )
-endif()
-
-if(Slicer_USE_BatchMake AND NOT Slicer_USE_SYSTEM_BatchMake)
-  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    <APPLAUNCHER_DIR>/lib/BatchMake
-    <APPLAUNCHER_DIR>/lib/bmModuleDescriptionParser
     )
 endif()
 

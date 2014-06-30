@@ -147,9 +147,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
 
-  # Batchmake
-  "BatchMake.Utilities.Zip.(zip|unzipcmd|zipcmd).*warning"
-
   # Libs/tclap
   "tclap.include.tclap.*Arg.h.*warning C4512"
 

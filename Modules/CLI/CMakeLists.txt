@@ -92,14 +92,6 @@ if (Slicer_BUILD_EMSegment)
   endif()
 endif()
 
-if(Slicer_USE_MIDAS)
-  list(APPEND cli_modules MIDASApplications)
-endif()
-
-if(Slicer_USE_BatchMake)
-  list(APPEND cli_modules BatchMakeApplications)
-endif()
-
 if(BUILD_TESTING)
   # TODO Since the following snippet have been moved from CLI/Testing/CMakeLists.txt into
   # CLI/CMakeLists.txt, the variable SLICER_BRAINWEB_DATA_ROOT won't be set properly.

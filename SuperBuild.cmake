@@ -126,10 +126,6 @@ if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND NOT WIN32)
   endif()
 endif()
 
-if(Slicer_USE_BatchMake)
-  list(APPEND Slicer_DEPENDENCIES BatchMake)
-endif()
-
 if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND Slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()

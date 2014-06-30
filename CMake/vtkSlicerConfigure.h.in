@@ -27,9 +27,7 @@
 #define VTKSLICER_STATIC
 #endif
 
-#cmakedefine Slicer_USE_BatchMake
 #cmakedefine Slicer_USE_IGSTK
-#cmakedefine Slicer_USE_MIDAS
 #cmakedefine Slicer_USE_NAVITRACK
 #cmakedefine Slicer_USE_NUMPY
 #cmakedefine Slicer_USE_PYTHONQT

@@ -43,14 +43,6 @@ if(NOT "${Teem_DIR}" STREQUAL "" AND EXISTS "${Teem_DIR}/CMakeCache.txt")
 endif()
 
 # -------------------------------------------------------------------------
-# Install BatchMake
-# -------------------------------------------------------------------------
-if(Slicer_USE_BatchMake
-  AND NOT "${BatchMake_DIR}" STREQUAL "" AND EXISTS "${BatchMake_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${BatchMake_DIR};BatchMake;Runtime;/")
-endif()
-
-# -------------------------------------------------------------------------
 # Install OpenIGTLink
 # -------------------------------------------------------------------------
 if(Slicer_USE_OpenIGTLink

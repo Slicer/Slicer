@@ -247,12 +247,6 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_USE_PYTHONQT" OFF)
 mark_as_superbuild(Slicer_USE_NUMPY)
 
-set(Slicer_USE_BatchMake OFF CACHE INTERNAL "Build Slicer with BatchMake support." FORCE)
-mark_as_superbuild(Slicer_USE_BatchMake:BOOL)
-
-option(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
-mark_as_superbuild(Slicer_USE_MIDAS)
-
 option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." ON)
 mark_as_superbuild(Slicer_USE_OpenIGTLink)
 
