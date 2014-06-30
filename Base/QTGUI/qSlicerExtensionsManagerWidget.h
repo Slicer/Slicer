@@ -53,11 +53,15 @@ public slots:
 
 protected slots:
   void onModelUpdated();
+
   void onCurrentTabChanged(int index);
+
   void onManageLinkActivated(const QUrl& link);
   void onManageUrlChanged(const QUrl& newUrl);
   void onInstallUrlChanged(const QUrl& newUrl);
   void onSearchTextChanged(const QString& newText);
+
+  void onInstallFromFileTriggered();
 
 protected:
   virtual void timerEvent(QTimerEvent*);

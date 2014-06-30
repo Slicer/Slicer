@@ -1071,9 +1071,42 @@ void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionName,
-                                                     const ExtensionMetadataType& extensionMetadata,
-                                                     const QString& archiveFile)
+bool qSlicerExtensionsManagerModel::installExtension(
+  const QString& archiveFile)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  std::vector<std::string> archiveContents;
+  if (!list_archive(qPrintable(archiveFile), archiveContents))
+    {
+    d->critical(
+      QString("Failed to list extension archive '%1'").arg(archiveFile));
+    return false;
+    }
+
+  for (size_t n = 0; n < archiveContents.size(); ++n)
+    {
+    const std::string& s = archiveContents[n];
+    const QString& fileName =
+      QString::fromLocal8Bit(s.data(), static_cast<int>(s.size()));
+
+    if (fileName.endsWith(".s4ext"))
+      {
+      const QFileInfo fi(fileName);
+      return this->installExtension(fi.completeBaseName(),
+                                    ExtensionMetadataType(), archiveFile);
+      }
+    }
+
+  d->critical(
+    QString("No extension description found in archive '%1'").arg(archiveFile));
+  return false;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::installExtension(
+  const QString& extensionName, ExtensionMetadataType extensionMetadata,
+  const QString& archiveFile)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
@@ -1120,6 +1153,39 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     this->extensionsInstallPath() + "/" + extensionName + "/" + Slicer_SHARE_DIR + "/" + extensionName + ".s4ext";
   const ExtensionMetadataType& extensionIndexMetadata =
     Self::parseExtensionDescriptionFile(extensionIndexDescriptionFile);
+
+  // Copy metadata if not provided from server (e.g. installing from file)
+  if (extensionMetadata.isEmpty())
+    {
+    extensionMetadata.insert("archivename", QFileInfo(archiveFile).fileName());
+    extensionMetadata.insert("enabled", d->NewExtensionEnabledByDefault);
+
+    // Copy expected keys from archive description
+    QStringList expectedKeys;
+    expectedKeys << "category" << "contributors" << "description" << "homepage"
+                 << "iconurl" << "screenshots" << "status";
+
+    const ExtensionMetadataType::const_iterator notFound =
+      extensionIndexMetadata.constEnd();
+    foreach (const QString& key, expectedKeys)
+      {
+      const ExtensionMetadataType::const_iterator iter =
+        extensionIndexMetadata.constFind(key);
+      if (iter != notFound)
+        {
+        extensionMetadata.insert(key, iter.value());
+        }
+      }
+
+    extensionMetadata.insert("scm",      extensionIndexMetadata.value("scm",         "NA"));
+    extensionMetadata.insert("scmurl",   extensionIndexMetadata.value("scmurl",      "NA"));
+    extensionMetadata.insert("revision", extensionIndexMetadata.value("scmrevision", "NA"));
+
+    // Fill in keys related to the target Slicer platform
+    extensionMetadata.insert("os", this->slicerOs());
+    extensionMetadata.insert("arch", this->slicerArch());
+    extensionMetadata.insert("slicer_revision", this->slicerRevision());
+    }
 
   // Gather information on dependency extensions
   const QStringList dependencies = extensionIndexMetadata.value("depends").toStringList();

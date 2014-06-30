@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QFileDialog>
 #include <QMenu>
 #include <QTimerEvent>
 #include <QToolButton>
@@ -209,6 +210,10 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    q, SLOT(onCurrentTabChanged(int)));
+
+  QObject::connect(this->toolsWidget->InstallFromFileAction,
+                   SIGNAL(triggered(bool)),
+                   q, SLOT(onInstallFromFileTriggered()));
 }
 
 // --------------------------------------------------------------------------
@@ -370,4 +375,19 @@ void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
     d->searchTimerId = 0;
     }
   QObject::timerEvent(e);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
+{
+  const QString& archiveName =
+    QFileDialog::getOpenFileName(
+      this, "Select extension archive file...", QString(),
+      "Archives (*.zip *.7z *.tar *.tar.gz *.tgz *.tar.bz2 *.tar.xz);;"
+      "All files (*)");
+
+  if (!archiveName.isEmpty())
+    {
+    this->extensionsManagerModel()->installExtension(archiveName);
+    }
 }

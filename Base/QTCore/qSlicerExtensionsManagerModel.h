@@ -154,9 +154,24 @@ public:
   /// \sa setServerUrl
   Q_INVOKABLE ExtensionMetadataType retrieveExtensionMetadata(const QString& extensionId);
 
+  /// Install extension from the specified archive file.
+  ///
+  /// This attempts to install an extension given only the archive file
+  /// containing the extension. The archive file is inspected in order to
+  /// determine the extension name.
+  ///
+  /// \sa installExtension(const QString&,ExtensionMetadataType,const QString&)
+  Q_INVOKABLE bool installExtension(const QString &archiveFile);
+
+  /// Install extension.
+  ///
+  /// This attempts to install an extension with the specified name and
+  /// metadata from the specified archive file. If the metadata is empty, the
+  /// metadata from the extension description contained in the archive is used.
+  ///
   /// \sa downloadExtension, isExtensionScheduledForUninstall, extensionScheduledForUninstall
   Q_INVOKABLE bool installExtension(const QString& extensionName,
-                                    const ExtensionMetadataType &extensionMetadata,
+                                    ExtensionMetadataType extensionMetadata,
                                     const QString &archiveFile);
 
   /// \brief Extract \a archiveFile into \a destinationPath/extensionName directory
