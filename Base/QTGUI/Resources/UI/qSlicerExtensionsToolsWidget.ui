@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerExtensionsToolsWidget</class>
+ <widget class="QStackedWidget" name="qSlicerExtensionsToolsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>208</width>
+    <height>32</height>
+   </rect>
+  </property>
+  <property name="currentIndex">
+   <number>0</number>
+  </property>
+  <widget class="QWidget" name="ManagePage">
+   <layout class="QHBoxLayout" name="ManageLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
+    <item>
+     <widget class="QToolButton" name="ManageConfigureButton">
+      <property name="icon">
+       <iconset resource="../qSlicerBaseQTGUI.qrc">
+        <normaloff>:/Icons/Small/SlicerConfigure.png</normaloff>:/Icons/Small/SlicerConfigure.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::InstantPopup</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="ctkSearchBox" name="ManageSearchBox">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="InstallPage">
+   <layout class="QHBoxLayout" name="InstallLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
+    <item>
+     <widget class="QToolButton" name="InstallConfigureButton">
+      <property name="icon">
+       <iconset resource="../qSlicerBaseQTGUI.qrc">
+        <normaloff>:/Icons/Small/SlicerConfigure.png</normaloff>:/Icons/Small/SlicerConfigure.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::InstantPopup</enum>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="ctkSearchBox" name="InstallSearchBox">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <action name="CheckForUpdatesAction">
+   <property name="icon">
+    <iconset resource="../qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/XSmall/SlicerCheckForUpdates.png</normaloff>:/Icons/XSmall/SlicerCheckForUpdates.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Check for Updates</string>
+   </property>
+  </action>
+  <action name="AutoUpdateAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Install Updates &amp;Automatically</string>
+   </property>
+  </action>
+  <action name="InstallFromFileAction">
+   <property name="text">
+    <string>&amp;Install Extension from File...</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header location="global">ctkSearchBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../qSlicerBaseQTGUI.qrc"/>
+ </resources>
+ <connections/>
+</ui>

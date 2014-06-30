@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QMenu>
 #include <QTimerEvent>
 #include <QToolButton>
 #include <QWebFrame>
@@ -33,6 +34,7 @@
 #include "qSlicerExtensionsManagerModel.h"
 #include "ui_qSlicerExtensionsActionsWidget.h"
 #include "ui_qSlicerExtensionsManagerWidget.h"
+#include "ui_qSlicerExtensionsToolsWidget.h"
 
 // --------------------------------------------------------------------------
 namespace
@@ -47,12 +49,94 @@ QString jsQuote(QString text)
 }
 
 // --------------------------------------------------------------------------
+void invalidateSizeHint(QToolButton * button)
+{
+  // Invalidate cached size hint of QToolButton... this seems to be necessary
+  // to get the initially visible button to have the correct hint for having a
+  // menu indicator included; otherwise the configure buttons end up with
+  // different sizes, causing the UI to "jump" when switching tabs
+  //
+  // NOTE: This depends on some knowledge of the QToolButton internals;
+  //       specifically, that changing the toolButtonStyle will invalidate the
+  //       hint (given that we are toggling visibility of the text, it seems
+  //       pretty safe to assume this will always do the trick)
+  //
+  // See https://bugreports.qt-project.org/browse/QTBUG-38949
+  button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+  button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+}
+
+//---------------------------------------------------------------------------
+void setThemeIcon(QAbstractButton* button, const QString& name)
+{
+  // TODO: Can do this in the .ui once Qt 4.8 is required
+  button->setIcon(QIcon::fromTheme(name, button->icon()));
+}
+
+//---------------------------------------------------------------------------
+void setThemeIcon(QAction* action, const QString& name)
+{
+  // TODO: Can do this in the .ui once Qt 4.8 is required
+  action->setIcon(QIcon::fromTheme(name, action->icon()));
+}
+
+// --------------------------------------------------------------------------
 class qSlicerExtensionsActionsWidget : public QStackedWidget, public Ui_qSlicerExtensionsActionsWidget
 {
 public:
   qSlicerExtensionsActionsWidget(QWidget * parent = 0) : QStackedWidget(parent)
   {
     this->setupUi(this);
+  }
+};
+
+// --------------------------------------------------------------------------
+class qSlicerExtensionsToolsWidget : public QStackedWidget, public Ui_qSlicerExtensionsToolsWidget
+{
+public:
+  qSlicerExtensionsToolsWidget(QWidget * parent = 0) : QStackedWidget(parent)
+  {
+    this->setupUi(this);
+
+    setThemeIcon(this->ManageConfigureButton, "configure");
+    setThemeIcon(this->InstallConfigureButton, "configure");
+    setThemeIcon(this->CheckForUpdatesAction, "view-refresh");
+
+    const QIcon searchIcon =
+      QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
+    const QIcon clearIcon =
+      QIcon::fromTheme(this->layoutDirection() == Qt::LeftToRight
+                       ? "edit-clear-locationbar-rtl"
+                       : "edit-clear-locationbar-ltr",
+                       this->ManageSearchBox->clearIcon());
+
+    const QFontMetrics fm = this->ManageSearchBox->fontMetrics();
+    const int searchWidth = 24 * fm.averageCharWidth() + 40;
+
+    this->ManageSearchBox->setClearIcon(clearIcon);
+    this->ManageSearchBox->setSearchIcon(searchIcon);
+    this->ManageSearchBox->setShowSearchIcon(true);
+    this->ManageSearchBox->setFixedWidth(searchWidth);
+
+    this->InstallSearchBox->setClearIcon(clearIcon);
+    this->InstallSearchBox->setSearchIcon(searchIcon);
+    this->InstallSearchBox->setShowSearchIcon(true);
+    this->InstallSearchBox->setFixedWidth(searchWidth);
+
+    QMenu * manageConfigureMenu = new QMenu(this);
+    manageConfigureMenu->addAction(this->CheckForUpdatesAction);
+    manageConfigureMenu->addAction(this->AutoUpdateAction);
+    manageConfigureMenu->addSeparator();
+    manageConfigureMenu->addAction(this->InstallFromFileAction);
+
+    this->ManageConfigureButton->setMenu(manageConfigureMenu);
+    invalidateSizeHint(this->ManageConfigureButton);
+
+    QMenu * installConfigureMenu = new QMenu(this);
+    manageConfigureMenu->addAction(this->InstallFromFileAction);
+
+    this->InstallConfigureButton->setMenu(installConfigureMenu);
+    invalidateSizeHint(this->InstallConfigureButton);
   }
 };
 
@@ -69,7 +153,7 @@ public:
   qSlicerExtensionsManagerWidgetPrivate(qSlicerExtensionsManagerWidget& object);
   void init();
 
-  ctkSearchBox* searchText;
+  qSlicerExtensionsToolsWidget* toolsWidget;
   QString lastSearchText;
   int searchTimerId;
 };
@@ -96,37 +180,17 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   actionsWidget->InstallBackButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Back));
   actionsWidget->InstallForwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Forward));
 
-  const QSize iconSize = this->tabWidget->iconSize();
-  actionsWidget->ManageBackButton->setIconSize(iconSize);
-  actionsWidget->ManageForwardButton->setIconSize(iconSize);
-  actionsWidget->InstallBackButton->setIconSize(iconSize);
-  actionsWidget->InstallForwardButton->setIconSize(iconSize);
-
   this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
 
-  // Search field
-  QWidget * searchWidget = new QWidget;
-  QHBoxLayout * searchLayout = new QHBoxLayout(searchWidget);
-  searchLayout->setContentsMargins(0, 0, 0, 0);
+  // Search field and configure button
+  this->toolsWidget = new qSlicerExtensionsToolsWidget;
 
-  QToolButton * configureButton = new QToolButton; // needed for vertical alignment
-  configureButton->setMinimumSize(actionsWidget->InstallForwardButton->sizeHint());
-  configureButton->setAutoRaise(true);
-  configureButton->setEnabled(false);
-  searchLayout->addWidget(configureButton);
-
-  this->searchText = new ctkSearchBox;
-  this->searchText->setClearIcon(QIcon::fromTheme("edit-clear-locationbar-rtl", this->searchText->clearIcon()));
-  this->searchText->setSearchIcon(QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png")));
-  this->searchText->setShowSearchIcon(true);
-  searchLayout->addWidget(this->searchText);
-
-  searchWidget->setEnabled(false);
-
-  this->tabWidget->setCornerWidget(searchWidget, Qt::TopRightCorner);
+  this->tabWidget->setCornerWidget(this->toolsWidget, Qt::TopRightCorner);
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    actionsWidget, SLOT(setCurrentIndex(int)));
+  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
+                   this->toolsWidget, SLOT(setCurrentIndex(int)));
 
   QObject::connect(this->ExtensionsManageWidget, SIGNAL(linkActivated(QUrl)),
                    q, SLOT(onManageLinkActivated(QUrl)));
@@ -135,7 +199,8 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
                    SIGNAL(urlChanged(QUrl)),
                    q, SLOT(onManageUrlChanged(QUrl)));
 
-  QObject::connect(this->searchText, SIGNAL(textEdited(QString)),
+  QObject::connect(this->toolsWidget->InstallSearchBox,
+                   SIGNAL(textEdited(QString)),
                    q, SLOT(onSearchTextChanged(QString)));
 
   QObject::connect(this->ExtensionsInstallWidget->webView(),
@@ -232,9 +297,6 @@ void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
 {
   Q_D(qSlicerExtensionsManagerWidget);
 
-  d->tabWidget->cornerWidget(Qt::TopRightCorner)->setEnabled(
-        d->tabWidget->widget(index) == d->InstallExtensionsTab);
-
   QWebHistory* history = d->ExtensionsManageBrowser->webView()->history();
   if (history->canGoBack())
     {
@@ -265,13 +327,13 @@ void qSlicerExtensionsManagerWidget::onInstallUrlChanged(const QUrl& newUrl)
 
   if (newUrl.path().endsWith("/slicerappstore"))
     {
-    d->searchText->setEnabled(true);
+    d->toolsWidget->InstallSearchBox->setEnabled(true);
     d->lastSearchText = newUrl.queryItemValue("search");
-    d->searchText->setText(d->lastSearchText);
+    d->toolsWidget->InstallSearchBox->setText(d->lastSearchText);
     }
   else
     {
-    d->searchText->setEnabled(false);
+    d->toolsWidget->InstallSearchBox->setEnabled(false);
     }
 }
 
@@ -296,7 +358,7 @@ void qSlicerExtensionsManagerWidget::timerEvent(QTimerEvent* e)
   Q_D(qSlicerExtensionsManagerWidget);
   if (e->timerId() == d->searchTimerId)
     {
-    const QString& searchText = d->searchText->text();
+    const QString& searchText = d->toolsWidget->InstallSearchBox->text();
     if (searchText != d->lastSearchText)
       {
       d->ExtensionsInstallWidget->webView()->page()->mainFrame()->evaluateJavaScript(

@@ -12,27 +12,85 @@
   </property>
   <widget class="QWidget" name="ManagePage">
    <layout class="QHBoxLayout" name="ManageLayout">
-    <property name="margin">
+    <property name="leftMargin">
      <number>0</number>
     </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
     <item>
-     <widget class="QToolButton" name="ManageBackButton"/>
+     <widget class="QToolButton" name="ManageBackButton">
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
-     <widget class="QToolButton" name="ManageForwardButton"/>
+     <widget class="QToolButton" name="ManageForwardButton">
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
   <widget class="QWidget" name="InstallPage">
    <layout class="QHBoxLayout" name="InstallLayout">
-    <property name="margin">
+    <property name="leftMargin">
      <number>0</number>
     </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
     <item>
-     <widget class="QToolButton" name="InstallBackButton"/>
+     <widget class="QToolButton" name="InstallBackButton">
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
-     <widget class="QToolButton" name="InstallForwardButton"/>
+     <widget class="QToolButton" name="InstallForwardButton">
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

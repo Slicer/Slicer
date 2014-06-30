@@ -259,6 +259,7 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     Resources/UI/qSlicerExtensionsButtonBox.ui
     Resources/UI/qSlicerExtensionsManagerDialog.ui
     Resources/UI/qSlicerExtensionsManagerWidget.ui
+    Resources/UI/qSlicerExtensionsToolsWidget.ui
     Resources/UI/qSlicerSettingsExtensionsPanel.ui
     )
 endif()
