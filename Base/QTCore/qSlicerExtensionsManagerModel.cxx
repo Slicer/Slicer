@@ -128,6 +128,7 @@ public:
   void init();
 
   void debug(const QString& text) const;
+  void info(const QString& text) const;
   void warning(const QString& text) const;
   void critical(const QString& text) const;
   void log(const QString& text, ctkErrorLogLevel::LogLevels level) const;
@@ -259,6 +260,12 @@ void qSlicerExtensionsManagerModelPrivate::debug(const QString& text) const
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::info(const QString& text) const
+{
+  this->log(text, ctkErrorLogLevel::Info);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::warning(const QString& text) const
 {
   this->log(text, ctkErrorLogLevel::Warning);
@@ -274,17 +281,21 @@ void qSlicerExtensionsManagerModelPrivate::critical(const QString& text) const
 void qSlicerExtensionsManagerModelPrivate::log(const QString& text, ctkErrorLogLevel::LogLevels level) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
-  if(level == ctkErrorLogLevel::Debug)
+  if(level == ctkErrorLogLevel::Fatal)
     {
-    qDebug() << text;
+    qFatal("%s", qPrintable(text));
+    }
+  else if (level == ctkErrorLogLevel::Critical)
+    {
+    qCritical() << text;
     }
   else if (level == ctkErrorLogLevel::Warning)
     {
     qWarning() << text;
     }
-  else if (level == ctkErrorLogLevel::Critical)
+  else
     {
-    qCritical() << text;
+    qDebug() << text;
     }
   emit q->messageLogged(text, level);
 }
@@ -1261,6 +1272,23 @@ bool qSlicerExtensionsManagerModel::installExtension(
   d->addExtensionModelRow(Self::parseExtensionDescriptionFile(extensionDescriptionFile));
 
   emit this->extensionInstalled(extensionName);
+
+  // Log notice that extension was installed
+  const QString& extensionId =
+    extensionMetadata.value("extension_id").toString();
+  const QString& extensionRevision =
+    extensionMetadata.value("revision").toString();
+
+  QString msg = "Installed extension " + extensionName;
+  if (!extensionId.isEmpty())
+    {
+    msg += QString(" (%1)").arg(extensionId);
+    }
+  if (!extensionRevision.isEmpty())
+    {
+    msg += QString(" revision %1").arg(extensionRevision);
+    }
+  d->info(msg);
 
   return true;
 }
