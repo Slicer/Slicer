@@ -16,3 +16,6 @@ CMakeLists.txt.user*
 
 # Ignore ctags file
 tags
+
+# Ignore pyc files ...
+*.pyc
