@@ -302,6 +302,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
 {
   Q_D(qSlicerExtensionsManagerWidget);
+  Q_UNUSED(index);
 
   QWebHistory* history = d->ExtensionsManageBrowser->webView()->history();
   if (history->canGoBack())
