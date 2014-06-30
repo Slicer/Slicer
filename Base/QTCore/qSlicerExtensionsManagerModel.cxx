@@ -601,7 +601,7 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
   ctkScopedCurrentDir scopedCurrentDir(extensionsDir.absolutePath());
 
   std::vector<std::string> extracted_files;
-  bool success = extract_tar(archiveFile.toLatin1(), /* verbose */ false, /* extract */ true, &extracted_files);
+  bool success = extract_tar(qPrintable(archiveFile), /* verbose */ false, /* extract */ true, &extracted_files);
   if(!success)
     {
     this->critical(QString("Failed to extract %1 into %2").arg(archiveFile).arg(extensionsDir.absolutePath()));
