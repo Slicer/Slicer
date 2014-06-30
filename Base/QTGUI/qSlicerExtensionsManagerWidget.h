@@ -21,6 +21,9 @@
 #ifndef __qSlicerExtensionsManagerWidget_h
 #define __qSlicerExtensionsManagerWidget_h
 
+// CTK includes
+#include <ctkErrorLogLevel.h>
+
 // Qt includes
 #include <QUrl>
 #include <QWidget>
@@ -62,6 +65,7 @@ protected slots:
   void onSearchTextChanged(const QString& newText);
 
   void onInstallFromFileTriggered();
+  void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
 
 protected:
   virtual void timerEvent(QTimerEvent*);

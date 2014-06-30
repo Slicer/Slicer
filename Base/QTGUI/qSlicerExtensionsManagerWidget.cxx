@@ -21,6 +21,7 @@
 // Qt includes
 #include <QFileDialog>
 #include <QMenu>
+#include <QMessageBox>
 #include <QTimerEvent>
 #include <QToolButton>
 #include <QWebFrame>
@@ -388,6 +389,31 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 
   if (!archiveName.isEmpty())
     {
+    qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
+
+    connect(model, SIGNAL(messageLogged(QString,ctkErrorLogLevel::LogLevels)),
+            this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
     this->extensionsManagerModel()->installExtension(archiveName);
+
+    disconnect(model, SIGNAL(messageLogged(QString,ctkErrorLogLevel::LogLevels)),
+               this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onMessageLogged(
+  const QString& text, ctkErrorLogLevel::LogLevels levels)
+{
+  if (levels >= ctkErrorLogLevel::Error)
+    {
+    QMessageBox::critical(this, "Install extension", text);
+    }
+  else if (levels >= ctkErrorLogLevel::Warning)
+    {
+    QMessageBox::warning(this, "Install extension", text);
+    }
+  else
+    {
+    QMessageBox::information(this, "Install extension", text);
     }
 }
