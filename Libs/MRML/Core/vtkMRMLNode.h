@@ -477,6 +477,9 @@ public:
 
   ///
   /// Set and observe the Nth node ID for a specific reference role.
+  /// If n is larger than the number of reference nodes, the node ID
+  /// is added at the end of the list. If nodeReferenceID is 0, the node ID is
+  /// removed from the list.
   /// When a node ID is set (added or changed), its corresponding node is
   /// searched (slow) into the scene and cached for fast future access.
   /// It is possible however that the node is not yet into the scene (due to

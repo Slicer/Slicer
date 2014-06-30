@@ -1731,7 +1731,7 @@ bool TestSetNodeReferenceID()
 
   if (!CheckNodeReferences(__LINE__, "SetNthNodeReferenceID", scene.GetPointer(),
                            referencingNode.GetPointer(), role3.c_str(),
-                           /* n = */ 1,
+                           /* n = */ 0,
                            /* expectedNodeReference = */ referencedNode31.GetPointer(),
                            /* expectedNumberOfNodeReferences = */ 1,
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
@@ -1989,7 +1989,7 @@ bool TestClearScene()
         /* removeSingleton = */ removeSingleton,
         /* referencingNodeIsSingleton = */ true,
         /* referencedNodeIsSingleton = */ false,
-        /* expectedTotalNumberOfEventsForReferencingNode= */ 1,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 2,
         /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 1,
         /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
         /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
@@ -2004,7 +2004,7 @@ bool TestClearScene()
         /* removeSingleton = */ removeSingleton,
         /* referencingNodeIsSingleton = */ true,
         /* referencedNodeIsSingleton = */ true,
-        /* expectedTotalNumberOfEventsForReferencingNode= */ 1,
+        /* expectedTotalNumberOfEventsForReferencingNode= */ 2,
         /* expectedNumberOfReferenceRemovedEventsForReferencingNode= */ 1,
         /* expectedTotalNumberOfEventsForReferencedNode= */ 0,
         /* expectedNumberOfReferenceRemovedEventsForReferencedNode= */ 0
