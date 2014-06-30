@@ -133,7 +133,7 @@ public:
     invalidateSizeHint(this->ManageConfigureButton);
 
     QMenu * installConfigureMenu = new QMenu(this);
-    manageConfigureMenu->addAction(this->InstallFromFileAction);
+    installConfigureMenu->addAction(this->InstallFromFileAction);
 
     this->InstallConfigureButton->setMenu(installConfigureMenu);
     invalidateSizeHint(this->InstallConfigureButton);

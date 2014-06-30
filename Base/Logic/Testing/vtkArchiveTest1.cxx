@@ -42,6 +42,25 @@ int vtkArchiveTest1(int argc, char * argv[] )
     }
 
   //
+  // list files in the archive
+  //
+  std::vector<std::string> files;
+  if (!list_archive(argv[1], files) || files.size() != 2)
+    {
+    std::cerr << "failed to list archive: " << argv[1] << std::endl;
+    return EXIT_FAILURE;
+    }
+  for (size_t n = 0; n < files.size(); ++n)
+    {
+    if (!validFile(files[n].c_str()))
+      {
+      std::cerr << "unexpected file in archive listing: " << files[n]
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+  //
   // unzip test file to local directory
   //
   if ( vtksys::SystemTools::FileExists("archiveTest") )

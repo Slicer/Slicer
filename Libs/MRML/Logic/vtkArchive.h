@@ -26,10 +26,14 @@ extern "C" {
 // TODO: this should really be a vtk class that has configuration options
 // and progress events.
 
+VTK_MRML_LOGIC_EXPORT bool list_archive(
+  const char* archiveFileNameFileName,
+  std::vector<std::string>& files);
+
 // Warning, it extracts the archive into the current directory
 // With Qt, you can change the current directory using QDir::setCurrent()
-VTK_MRML_LOGIC_EXPORT bool extract_tar(const char* outFileName, bool verbose, bool extract,
-                                              std::vector<std::string> * extracted_files = 0);
+VTK_MRML_LOGIC_EXPORT bool extract_tar(const char* tarFileName, bool verbose, bool extract,
+                                       std::vector<std::string> * extracted_files = 0);
 
 // creates a zip file with the full contents of the directory (recurses)
 // zip entries will include relative path of including tail of directoryToZip
