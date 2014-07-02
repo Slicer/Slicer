@@ -203,7 +203,7 @@ void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLSubjectHierarchyNode::SetOwnerPluginName(const char* pluginName)
 {
   // Mostly copied from vtkSetStringMacro() in vtkSetGet.cxx
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting OwnerPluginName to " << (pluginName?pluginName:"(null)") );
+  //vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting OwnerPluginName to " << (pluginName?pluginName:"(null)") );
   if ( this->OwnerPluginName == NULL && pluginName == NULL)   { return;}
   if ( this->OwnerPluginName && pluginName && (!strcmp(this->OwnerPluginName,pluginName)))   { return;}
   char* oldPluginName = this->OwnerPluginName;
@@ -400,12 +400,12 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(int visible)
 {
   if (visible != 0 && visible != 1)
     {
-    vtkDebugMacro("SetDisplayVisibilityForBranch: Invalid visibility value to set: " << visible);
+    vtkErrorMacro("SetDisplayVisibilityForBranch: Invalid visibility value to set: " << visible);
     return;
     }
   if (this->Scene->IsBatchProcessing())
     {
-    vtkDebugMacro("SetDisplayVisibilityForBranch: Batch processing is on, returning");
+    //vtkDebugMacro("SetDisplayVisibilityForBranch: Batch processing is on, returning");
     return;
     }
 
@@ -773,13 +773,13 @@ void vtkMRMLSubjectHierarchyNode::TransformBranch(vtkMRMLTransformNode* transfor
       // Do nothing if the parent transform matches the specified transform to apply
       if (parentTransformNode == transformNode)
         {
-        vtkDebugMacro("TransformBranch: Specified transform " << transformNode->GetName() << " already applied on data node belonging to subject hierarchy node " << this->Name);
+        //vtkDebugMacro("TransformBranch: Specified transform " << transformNode->GetName() << " already applied on data node belonging to subject hierarchy node " << this->Name);
         continue;
         }
       // Harden existing parent transform if this option was chosen
       if (hardenExistingTransforms)
         {
-        vtkDebugMacro("TransformBranch: Hardening transform " << transformNode->GetName() << " on node " << transformableNode->GetName());
+        //vtkDebugMacro("TransformBranch: Hardening transform " << transformNode->GetName() << " on node " << transformableNode->GetName());
         vtkSlicerTransformLogic::hardenTransform(transformableNode);
         }
       }

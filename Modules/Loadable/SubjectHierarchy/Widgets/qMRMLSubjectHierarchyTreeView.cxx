@@ -316,8 +316,8 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode()
 
   // Set new owner plugin
   currentNode->SetOwnerPluginName(selectedPluginName.toLatin1().constData());
-  qDebug() << "qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode: Owner plugin of subject hierarchy node '"
-    << currentNode->GetName() << "' has been manually changed to '" << d->SelectPluginActionGroup->checkedAction()->data().toString() << "'";
+  //qDebug() << "qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode: Owner plugin of subject hierarchy node '"
+  //  << currentNode->GetName() << "' has been manually changed to '" << d->SelectPluginActionGroup->checkedAction()->data().toString() << "'";
 }
 
 //--------------------------------------------------------------------------

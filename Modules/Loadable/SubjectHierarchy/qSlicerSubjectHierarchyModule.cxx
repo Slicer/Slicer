@@ -243,11 +243,11 @@ void qSlicerSubjectHierarchyModule::onSubjectHierarchyNodeModified(vtkObject* no
     QString pluginBefore( subjectHierarchyNode->GetOwnerPluginName() );
     qSlicerSubjectHierarchyPluginHandler::instance()->findAndSetOwnerPluginForSubjectHierarchyNode(subjectHierarchyNode);
     QString pluginAfter( subjectHierarchyNode->GetOwnerPluginName() );
-    if (pluginBefore.compare(pluginAfter))
-      {
-      qDebug() << "qSlicerSubjectHierarchyModule::onSubjectHierarchyNodeModified: Subject hierarchy node '" <<
-        subjectHierarchyNode->GetName() << "' has been modified, plugin search performed, and owner plugin changed from '" <<
-        pluginBefore << "' to '" << pluginAfter << "'";
-      }
+    //if (pluginBefore.compare(pluginAfter))
+    //  {
+    //  qDebug() << "qSlicerSubjectHierarchyModule::onSubjectHierarchyNodeModified: Subject hierarchy node '" <<
+    //    subjectHierarchyNode->GetName() << "' has been modified, plugin search performed, and owner plugin changed from '" <<
+    //    pluginBefore << "' to '" << pluginAfter << "'";
+    //  }
     }
 }
