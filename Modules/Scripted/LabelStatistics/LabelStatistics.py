@@ -1,3 +1,4 @@
+import unittest
 from __main__ import vtk, qt, ctk, slicer
 
 #
@@ -146,23 +147,15 @@ class LabelStatisticsWidget:
     self.labelNode = node
     self.applyButton.enabled = bool(self.grayscaleNode) and bool(self.labelNode)
 
-  def volumesAreValid(self):
-    """Verify that volumes are compatible with label calculation
-    algorithm assumptions"""
-    if not self.grayscaleNode or not self.labelNode:
-      return False
-    if not self.grayscaleNode.GetImageData() or not self.labelNode.GetImageData():
-      return False
-    if self.grayscaleNode.GetImageData().GetDimensions() != self.labelNode.GetImageData().GetDimensions():
-      return False
-    return True
-
   def onApply(self):
     """Calculate the label statistics
     """
-    if not self.volumesAreValid():
+
+    volumesLogic = slicer.modules.volumes.logic()
+    warnings = volumesLogic.CheckForLabelVolumeValidity(self.grayscaleNode, self.labelNode)
+    if warnings != "":
       qt.QMessageBox.warning(slicer.util.mainWindow(),
-          "Label Statistics", "Volumes do not have the same geometry.")
+          "Label Statistics", "Volumes do not have the same geometry.\n%s" % warnings)
       return
 
     self.applyButton.text = "Working..."
@@ -398,6 +391,71 @@ class LabelStatisticsLogic:
     fp.write(self.statsAsCSV())
     fp.close()
 
+class LabelStatisticsTest(unittest.TestCase):
+  """
+  This is the test case.
+  """
+
+  def delayDisplay(self,message,msec=1000):
+    """This utility method displays a small dialog and waits.
+    This does two things: 1) it lets the event loop catch up
+    to the state of the test so that rendering and widget updates
+    have all taken place before the test continues and 2) it
+    shows the user/developer/tester the state of the test
+    so that we'll know when it breaks.
+    """
+    print(message)
+    self.info = qt.QDialog()
+    self.infoLayout = qt.QVBoxLayout()
+    self.info.setLayout(self.infoLayout)
+    self.label = qt.QLabel(message,self.info)
+    self.infoLayout.addWidget(self.label)
+    qt.QTimer.singleShot(msec, self.info.close)
+    self.info.exec_()
+
+  def setUp(self):
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+    """
+    slicer.mrmlScene.Clear(0)
+
+  def runTest(self,scenario=None):
+    """Run as few or as many tests as needed here.
+    """
+    self.setUp()
+    self.test_LabelStatisticsBasic()
+
+  def test_LabelStatisticsBasic(self):
+    """
+    This tests some aspects of the label statistics
+    """
+
+    self.delayDisplay("Starting test_LabelStatisticsBasic")
+    #
+    # first, get some data
+    #
+    import SampleData
+    sampleDataLogic = SampleData.SampleDataLogic()
+    mrHead = sampleDataLogic.downloadMRHead()
+    ctChest = sampleDataLogic.downloadCTChest()
+    self.delayDisplay('Two data sets loaded')
+
+    volumesLogic = slicer.modules.volumes.logic()
+
+    mrHeadLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, mrHead, "mrHead-label" )
+
+    warnings = volumesLogic.CheckForLabelVolumeValidity(ctChest, mrHeadLabel)
+
+    self.delayDisplay("Warnings for mismatch:\n%s" % warnings)
+
+    self.assertTrue( warnings != "" )
+
+    warnings = volumesLogic.CheckForLabelVolumeValidity(mrHead, mrHeadLabel)
+
+    self.delayDisplay("Warnings for match:\n%s" % warnings)
+
+    self.assertTrue( warnings == "" )
+
+    self.delayDisplay('test_LabelStatisticsBasic passed!')
 
 class Slicelet(object):
   """A slicer slicelet is a module widget that comes up in stand alone mode

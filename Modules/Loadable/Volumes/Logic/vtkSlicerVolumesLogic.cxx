@@ -863,6 +863,84 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
 }
 
 //----------------------------------------------------------------------------
+std::string
+vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volumeNode,
+                                          vtkMRMLScalarVolumeNode *labelNode)
+{
+  std::stringstream warnings;
+  warnings << "";
+  if (!volumeNode || !labelNode)
+    {
+    warnings << "Null volume node pointer\n";
+    }
+  else
+    {
+    if (!labelNode->GetLabelMap())
+      {
+      warnings << "Label node volume does not have LabelMap property\n";
+      }
+    else
+      {
+      vtkImageData *volumeImage = volumeNode->GetImageData();
+      vtkImageData *labelImage  = labelNode->GetImageData();
+      if (!volumeImage || !labelImage)
+        {
+        warnings << "Null image data pointer\n";
+        }
+      else
+        {
+        int row, column;
+        double volumeValue, labelValue;
+        for (row = 0; row < 3; row++)
+          {
+          volumeValue = volumeImage->GetDimensions()[row];
+          labelValue = labelImage->GetDimensions()[row];
+
+          if (volumeValue != labelValue)
+            {
+            warnings << "Dimension mismatch at row [" << row << "] (" << volumeValue << " != " << labelValue << ")\n";
+            }
+
+          volumeValue = volumeImage->GetSpacing()[row];
+          labelValue = labelImage->GetSpacing()[row];
+          if (volumeValue != labelValue)
+            {
+            warnings << "Spacing mismatch at row [" << row << "] (" << volumeValue << " != " << labelValue << ")\n";
+            }
+
+          volumeValue = volumeImage->GetOrigin()[row];
+          labelValue = labelImage->GetOrigin()[row];
+          if (volumeValue != labelValue)
+            {
+            warnings << "Origin mismatch at row [" << row << "] (" << volumeValue << " != " << labelValue << ")\n";
+            }
+
+          }
+        vtkMatrix4x4 *volumeIJKToRAS = vtkMatrix4x4::New();
+        vtkMatrix4x4 *labelIJKToRAS = vtkMatrix4x4::New();
+        volumeNode->GetIJKToRASMatrix(volumeIJKToRAS);
+        labelNode->GetIJKToRASMatrix(labelIJKToRAS);
+        for (row = 0; row < 4; row++)
+          {
+          for (column = 0; column < 4; column++)
+            {
+            volumeValue = volumeIJKToRAS->GetElement(row,column);
+            labelValue = labelIJKToRAS->GetElement(row,column);
+            if (volumeValue != labelValue)
+              {
+              warnings << "IJKToRAS mismatch at [" << row << ", " << column << "] (" << volumeValue << " != " << labelValue << ")\n";
+              }
+            }
+          }
+        volumeIJKToRAS->Delete();
+        labelIJKToRAS->Delete();
+        }
+      }
+    }
+  return (warnings.str());
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::CloneVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
 {
