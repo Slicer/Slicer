@@ -76,6 +76,8 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" PythonPacka
     )
   set(SimpleITK_DIR ${CMAKE_BINARY_DIR}/SimpleITK-build)
 
+  set(_EP_${proj}_SETUPTOOLS_LOCK 1)
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

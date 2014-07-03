@@ -362,6 +362,60 @@ ExternalProject_Add_Step(${proj} forcebuild
   )
 
 #-----------------------------------------------------------------------------
+# Project that can NOT be built in parallel should set the
+# variable _EP_<projectName>_<lockname>_LOCK to 1.
+#
+# For example, to address issue #3757 and ensure that project
+# building and python module are not updating the file 'easy-install.pth'
+# concurrently, these project are setting the variable:
+#
+#    set(_EP_${proj}_SETUPTOOLS_LOCK 1)
+#
+# Then, by calling the function "_ep_setup_lock", we ensure
+# that the "locked" target won't be built in parallel.
+#
+# Internally, the function _ep_setup_lock recusively go through
+# all dependencies and add explicit dependencies between all targets
+# that (1) should be locked  and (2) belong to the same "level".
+#
+function(_ep_get_lock_list lockname depends output_var)
+  set(lock_list)
+  foreach(dep IN LISTS depends)
+    if(_EP_${dep}_${lockname}_LOCK)
+      list(APPEND lock_list ${dep})
+    endif()
+  endforeach()
+  set(${output_var} ${lock_list} PARENT_SCOPE)
+endfunction()
+
+function(_ep_add_lock_dependencies proj lock_list)
+  set(prev )
+  #message("_ep_add_lock_dependencies - ${proj} [lock_list:${lock_list}]")
+  foreach(dep IN LISTS lock_list)
+    if(NOT ${prev} STREQUAL "")
+      #message("${prev} -> ${dep}")
+      add_dependencies(${prev} ${dep})
+    endif()
+    set(prev ${dep})
+  endforeach()
+endfunction()
+
+function(_ep_setup_lock lockname proj)
+  get_property(${proj}_depends TARGET ${proj} PROPERTY _EP_DEPENDS)
+  if(${proj}_depends)
+    _ep_get_lock_list(${lockname} "${${proj}_depends}" ${proj}_lock_list)
+    if(${proj}_lock_list)
+      _ep_add_lock_dependencies(${proj} "${${proj}_lock_list}")
+    endif()
+  endif()
+  foreach(${proj}_dep ${${proj}_depends})
+    _ep_setup_lock(${lockname} ${${proj}_dep})
+  endforeach()
+endfunction()
+
+_ep_setup_lock("SETUPTOOLS" ${proj})
+
+#-----------------------------------------------------------------------------
 # Slicer extensions
 #-----------------------------------------------------------------------------
 add_subdirectory(Extensions/CMake)
