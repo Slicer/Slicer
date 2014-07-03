@@ -143,9 +143,15 @@ public:
   /// Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode();
 
-  /// The origin and spacing of the vtkImageData is ignored. Only
-  /// vtkMRMLVolumeNode::Spacing and vtkMRMLVolumeNode::Origin is
-  /// taken into account.
+  /// In the ImageData object origin must be set to (0,0,0) and spacing must be set
+  /// to (1,1,1). If the variables are set to different values then the application's
+  /// behavior is undefined.
+  /// The reason for not using origin and spacing in vtkImageData is that vtkImageData
+  /// cannot store image orientation, and so it cannot store all the information that
+  /// is necessary to compute the mapping between voxel (IJK) and  physical (RAS) coordinate systems.
+  /// Instead of storing some information in vtkImageData and some outside, the decision was
+  /// made to store all information in the MRML node (vtkMRMLVolumeNode::Origin,
+  /// vtkMRMLVolumeNode::Spacing, and vtkMRMLVolumeNode::IJKToRASDirections).
   /// \sa GetImageData(), SetImageDataConnection()
   void SetAndObserveImageData(vtkImageData *ImageData);
 #if (VTK_MAJOR_VERSION <= 5)
