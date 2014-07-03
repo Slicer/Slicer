@@ -1,3 +1,7 @@
+#-----------------------------------------------------------------------------
+set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
+#-----------------------------------------------------------------------------
+
 slicer_add_python_test(SCRIPT AnnotationsTestingAddManyFiducials.py 
   SLICER_ARGS --disable-cli-modules)
 
@@ -11,6 +15,7 @@ slicer_add_python_test(SCRIPT RemoveAnnotationsIDFromSelectionNode.py
   SLICER_ARGS --disable-cli-modules)
 
 slicer_add_python_test(SCRIPT LoadAnnotationRulerScene.py
+  SCRIPT_ARGS ${INPUT}/ruler.mrml
   SLICER_ARGS --disable-cli-modules)
 
 slicer_add_python_test(SCRIPT AnnotationsTestingFiducialWithSceneViewRestore.py
