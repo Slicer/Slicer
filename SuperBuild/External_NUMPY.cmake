@@ -2,7 +2,7 @@
 set(proj NUMPY)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES python)
+set(${proj}_DEPENDENCIES python python-setuptools)
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
