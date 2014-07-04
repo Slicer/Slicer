@@ -74,6 +74,7 @@ endif()
 #  (3) if none of the above, the value passed as a parameter.
 macro(setOnlyIfNotDefined var defaultvalue)
   if(DEFINED ENV{${var}})
+    message(STATUS "Setting '${var}' variable with environment variable value '$ENV{${var}}'")
     set(${var} $ENV{${var}})
   endif()
   if(NOT DEFINED ${var})
