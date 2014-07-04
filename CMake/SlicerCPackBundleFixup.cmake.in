@@ -310,7 +310,7 @@ function(fixup_bundle_with_plugins app)
   set(inner_re "1|a|bat|bmp|c|cc|cfg|cmake|conf|css|ctypes|cxx|dat|def|doc|dylib|egg-info|enc")
   set(inner_re "${inner_re}|eps|example|f|f90|fits|gif|gz|h|hxx|i|icns|ico|in|ini|itk|log|md5")
   set(inner_re "${inner_re}|mhd|mrml|mrml_remote|msg|nhdr|nib|nrrd|pkl|plist|png|ps|py|pyc|pyf")
-  set(inner_re "${inner_re}|pyw|pyx|raw|sample|so|supp|tcl|txt|ui|xml")
+  set(inner_re "${inner_re}|pyw|pyx|raw|sample|so|supp|tcl|txt|ui|xml|exe")
   set(GP_IS_FILE_EXECUTABLE_EXCLUDE_REGEX "\\.(${inner_re})$")
 
   fixup_bundle(
