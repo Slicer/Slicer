@@ -18,8 +18,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/source/s/setuptools/setuptools-1.4.2.tar.gz"
-    URL_MD5 "13951be6711438073fbe50843e7f141f"
+    URL "https://pypi.python.org/packages/source/s/setuptools/setuptools-5.3.zip"
+    URL_MD5 "1464c0da4425b0846ae842d52e5eb1dd"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""

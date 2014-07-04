@@ -1,5 +1,28 @@
 set(proj pydicom)
 
+#------------------------------------------------------------------------------
+#
+# cmake -DSOURCE_DIR:PATH=/path/to/${proj} -DPATCH_${proj}:BOOL=ON -P /path/to/External_${proj}.cmake
+#
+if(PATCH_${proj})
+  # See issue #3763
+  cmake_minimum_required(VERSION 2.8.9)
+  set(_file ${SOURCE_DIR}/setup.py)
+
+  message(STATUS "Computing offset for ${_file}")
+  file(STRINGS ${_file} _lines LIMIT_COUNT 3)
+  string(LENGTH "${_lines}" _offset)
+
+  message(STATUS "Reading  ${_file} using offset: ${_offset}")
+  file(READ ${_file} _content OFFSET ${_offset})
+
+  message(STATUS "Writting ${_file}")
+  file(WRITE ${_file} ${_content})
+
+  return()
+endif()
+
+#------------------------------------------------------------------------------
 # Set dependency list
 set(${proj}_DEPENDENCIES python python-setuptools)
 
@@ -22,6 +45,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     URL_MD5 "e344ab5b38abeaa462ee79fa04c1c25f"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
+    PATCH_COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR:PATH=${CMAKE_BINARY_DIR}/${proj}
+                                   -DPATCH_${proj}:BOOL=ON
+                                   -P ${CMAKE_CURRENT_LIST_FILE}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ${PYTHON_EXECUTABLE} setup.py install
