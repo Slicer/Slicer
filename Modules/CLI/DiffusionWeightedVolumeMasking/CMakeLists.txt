@@ -5,15 +5,15 @@ set(MODULE_NAME DiffusionWeightedVolumeMasking)
 # HACK until each project find_package's required projects.
 include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
 
-find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
+#find_package(VTK REQUIRED)
+#include(${VTK_USE_FILE})
 
-set(VTK_LIBRARIES)
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  list(APPEND VTK_LIBRARIES
-    vtkImagingMorphological
-    )
-endif()
+#set(VTK_LIBRARIES)
+#if(${VTK_VERSION_MAJOR} GREATER 5)
+#  list(APPEND VTK_LIBRARIES
+#    vtkImagingMorphological
+#    )
+#endif()
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

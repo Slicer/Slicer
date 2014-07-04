@@ -15,8 +15,8 @@ endif()
 # Dependencies
 # --------------------------------------------------------------------------
 
-find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
+#find_package(VTK REQUIRED)
+#include(${VTK_USE_FILE})
 
 find_package(Teem REQUIRED NO_MODULE)
 # XXX Since no TeemConfigVersion.cmake is configured, let's check the version explicitly

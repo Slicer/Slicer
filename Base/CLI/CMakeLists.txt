@@ -76,9 +76,9 @@ set(SlicerBaseCLI_LIBS
   ModuleDescriptionParser
   )
 
-find_package(VTK)
+#find_package(VTK)
 if(VTK_FOUND)
-  include(${VTK_USE_FILE})
+  #include(${VTK_USE_FILE})
   list(APPEND SlicerBaseCLI_SRCS vtkPluginFilterWatcher.cxx)
   list(APPEND SlicerBaseCLI_LIBS ${VTK_LIBRARIES})
 endif()
