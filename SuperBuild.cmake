@@ -366,8 +366,9 @@ ExternalProject_Add_Step(${proj} forcebuild
 # variable _EP_<projectName>_<lockname>_LOCK to 1.
 #
 # For example, to address issue #3757 and ensure that project
-# building and python module are not updating the file 'easy-install.pth'
-# concurrently, these project are setting the variable:
+# building a python module are not updating the file 'easy-install.pth'
+# concurrently, a "lock" variable can be set in the associated
+# "External_<proj>.cmake" file:
 #
 #    set(_EP_${proj}_SETUPTOOLS_LOCK 1)
 #
