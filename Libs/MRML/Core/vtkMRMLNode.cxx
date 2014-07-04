@@ -25,7 +25,6 @@ Version:   $Revision: 1.11 $
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
-#include <cassert>
 #include <iostream>
 #include <sstream>
 
@@ -765,10 +764,18 @@ void vtkMRMLNode::UpdateReferenceID(const char *oldID, const char *newID)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::SetAttribute(const char* name, const char* value)
 {
+  if (!name)
+    {
+    vtkErrorMacro(<< "SetAttribute: Name parameter is expected to be non NULL.");
+    return;
+    }
+  if (strlen(name) == 0)
+    {
+    vtkErrorMacro(<< "SetAttribute: Name parameter is expected to have at least one character.");
+    return;
+    }
   const char* oldValue = this->GetAttribute(name);
-  if (name == 0 ||
-      strlen(name) == 0 ||
-      (!oldValue && !value) ||
+  if ((!oldValue && !value) ||
       (oldValue && value && !strcmp(oldValue, value)))
     {
     return;
@@ -787,16 +794,31 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::RemoveAttribute(const char* name)
 {
-  assert(name != 0);
+  if (!name)
+    {
+    vtkErrorMacro(<< "RemoveAttribute: Name parameter is expected to be non NULL.");
+    return;
+    }
+  if (strlen(name) == 0)
+    {
+    vtkErrorMacro(<< "RemoveAttribute: Name parameter is expected to have at least one character.");
+    return;
+    }
   this->SetAttribute(name, 0);
 }
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLNode::GetAttribute(const char* name)
 {
-  if ( name == NULL )
+  if (!name)
     {
-    return NULL;
+    vtkErrorMacro(<< "GetAttribute: Name parameter is expected to be non NULL.");
+    return 0;
+    }
+  if (strlen(name) == 0)
+    {
+    vtkErrorMacro(<< "GetAttribute: Name parameter is expected to have at least one character.");
+    return 0;
     }
   AttributesType::const_iterator iter =
     this->Attributes.find(std::string(name));

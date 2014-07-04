@@ -94,11 +94,54 @@ int vtkMRMLNodeTest1(int , char * [] )
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
+namespace
+{
+
+//----------------------------------------------------------------------------
+bool CheckInt(int line, const std::string& function, int current, int expected)
+{
+  if(current != expected)
+    {
+    std::cerr << "Line " << line << " - " << function << " : CheckInt failed"
+              << "\n\tcurrent:" << current
+              << "\n\texpected:" << expected
+              << std::endl;
+    return false;
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool CheckString(int line, const std::string& function, const char* current, const char* expected)
+{
+  bool different = true;
+  if (current == 0 || expected == 0)
+    {
+    different = !(current == 0 && expected == 0);
+    }
+  else if(strcmp(current, expected) == 0)
+    {
+    different = false;
+    }
+  if(different)
+    {
+    std::cerr << "Line " << line << " - " << function << " : CheckString failed"
+              << "\n\tcurrent:" << (current ? current : "<null>")
+              << "\n\texpected:" << (expected ? expected : "<null>")
+              << std::endl;
+    return false;
+    }
+  return true;
+}
+
+}
+
 //---------------------------------------------------------------------------
-bool TestSetAttribute(const char* attribute, const char* value,
+bool TestSetAttribute(int line, const char* attribute, const char* value,
                       const char* expectedValue,
                       size_t expectedSize = 1,
-                      int expectedModified = 0)
+                      int expectedModified = 0,
+                      int totalNumberOfEvent = -1)
 {
   vtkNew<vtkMRMLNodeTestHelper1> node;
   node->SetAttribute("Attribute0", "Value0");
@@ -107,30 +150,29 @@ bool TestSetAttribute(const char* attribute, const char* value,
   node->AddObserver(vtkCommand::AnyEvent, spy.GetPointer());
 
   node->SetAttribute(attribute, value);
-  if ((expectedValue == 0 && node->GetAttribute(attribute) != 0) ||
-      (expectedValue != 0 && strcmp(expectedValue, node->GetAttribute(attribute)) != 0))
+
+  if (!CheckString(line, "GetAttribute",
+      node->GetAttribute(attribute), expectedValue))
     {
-    std::cerr << __LINE__ << ": TestSetAttribute failed: "
-              << "attribute: " << (attribute ? attribute : "null") << " "
-              << "value: " << (value ? value : "null")
-              << std::endl;
     return false;
     }
-  if (node->GetAttributeNames().size() != expectedSize)
+  if (!CheckInt(line, "GetAttributeNames",
+      node->GetAttributeNames().size(), expectedSize))
     {
-    std::cerr << __LINE__ << ": TestSetAttribute failed: "
-              << "attribute: " << (attribute ? attribute : "null") << " "
-              << "value: " << (value ? value : "null")
-              << std::endl;
     return false;
     }
-  if (spy->GetTotalNumberOfEvents() != expectedModified ||
-    spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != expectedModified)
+  if (totalNumberOfEvent == -1)
     {
-    std::cerr << __LINE__ << ": SetViewArrangement failed. "
-              << spy->GetTotalNumberOfEvents() << " events, "
-              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " modified events"
-              << std::endl;
+    totalNumberOfEvent = expectedModified;
+    }
+  if (!CheckInt(line, "GetTotalNumberOfEvents",
+      spy->GetTotalNumberOfEvents(), totalNumberOfEvent))
+    {
+    return false;
+    }
+  if (!CheckInt(line, "GetNumberOfEvents(vtkCommand::ModifiedEvent)",
+      spy->GetNumberOfEvents(vtkCommand::ModifiedEvent), expectedModified))
+    {
     return false;
     }
   spy->ResetNumberOfEvents();
@@ -153,38 +195,28 @@ bool TestAttribute()
 
   // Test sets
   bool res = true;
-  res = TestSetAttribute(0,0,0) && res;
-  res = TestSetAttribute(0,"",0) && res;
-  res = TestSetAttribute(0,"Value1",0) && res;
-  res = TestSetAttribute("",0,0) && res;
-  res = TestSetAttribute("","",0) && res;
-  res = TestSetAttribute("","Value1",0) && res;
-  res = TestSetAttribute("Attribute1",0,0) && res;
-  res = TestSetAttribute("Attribute1","","",2,1) && res;
-  res = TestSetAttribute("Attribute1","Value1","Value1",2,1) && res;
-  res = TestSetAttribute("Attribute0",0,0,0,1) && res;
-  res = TestSetAttribute("Attribute0","","",1,1) && res;
-  res = TestSetAttribute("Attribute0","Value1","Value1",1,1) && res;
-  res = TestSetAttribute("Attribute0","Value0","Value0",1,0) && res;
+  //                                                                 A: expectedSize
+  //                                                                 B: expectedModified
+  //                                                                 C: totalNumberOfEvent
+  //                    (line    , attribute   , value   , expected, A, B, C
+  res = TestSetAttribute(__LINE__, 0           , 0       , 0       , 1, 0, 2) && res;
+  res = TestSetAttribute(__LINE__, 0           , ""      , 0       , 1, 0, 2) && res;
+  res = TestSetAttribute(__LINE__, 0           , "Value1", 0       , 1, 0, 2) && res;
+  res = TestSetAttribute(__LINE__, ""          , 0       , 0       , 1, 0, 2) && res;
+  res = TestSetAttribute(__LINE__, ""          , ""      , 0       , 1, 0, 2) && res;
+  res = TestSetAttribute(__LINE__, ""          , "Value1", 0       , 1, 0, 2) && res;
+  res = TestSetAttribute(__LINE__, "Attribute1", 0       , 0) && res;
+  res = TestSetAttribute(__LINE__, "Attribute1", ""      , ""      , 2, 1) && res;
+  res = TestSetAttribute(__LINE__, "Attribute1", "Value1", "Value1", 2, 1) && res;
+  res = TestSetAttribute(__LINE__, "Attribute0", 0       , 0       , 0, 1) && res;
+  res = TestSetAttribute(__LINE__, "Attribute0", ""      , ""      , 1, 1) && res;
+  res = TestSetAttribute(__LINE__, "Attribute0", "Value1", "Value1", 1, 1) && res;
+  res = TestSetAttribute(__LINE__, "Attribute0", "Value0", "Value0", 1, 0) && res;
   return res;
 }
 
 namespace
 {
-
-//----------------------------------------------------------------------------
-bool CheckInt(int line, const std::string& function, int current, int expected)
-{
-  if(current != expected)
-    {
-    std::cerr << "Line " << line << " - " << function << " : CheckInt failed"
-              << "\n\tcurrent:" << current
-              << "\n\texpected:" << expected
-              << std::endl;
-    return false;
-    }
-  return true;
-}
 
 //----------------------------------------------------------------------------
 bool CheckNthNodeReferenceID(int line, const char* function,
