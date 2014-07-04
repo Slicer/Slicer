@@ -12,12 +12,25 @@ if(POLICY CMP0017)
 endif()
 
 # --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif()
+
+# --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------
 
+#
+# VTK
+#
 #find_package(VTK REQUIRED)
 #include(${VTK_USE_FILE})
 
+#
+# Teem
+#
 find_package(Teem REQUIRED NO_MODULE)
 # XXX Since no TeemConfigVersion.cmake is configured, let's check the version explicitly
 if(${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH} VERSION_LESS 1.10)
@@ -37,10 +50,6 @@ cmake_policy(POP)
 # XXX Teem 1.11.0 or Teem >= 4168 - This variable won't be needed anymore.
 #     See http://sourceforge.net/p/teem/code/4168/
 set(Teem_LIBRARIES teem)
-
-if(NOT DEFINED BUILD_SHARED_LIBS)
-  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif()
 
 # --------------------------------------------------------------------------
 # Configure headers
@@ -120,22 +129,8 @@ set(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkCommonCore
-    vtkCommonDataModel
-    vtkCommonExecutionModel
-    vtkCommonMath
-    vtkCommonSystem
-    vtkCommonTransforms
-    vtkFiltersCore
-    vtkFiltersFlowPaths
-    vtkFiltersGeneral
-    vtkIOCore
-    vtkIOImage
-    vtkIOLegacy
-    vtkImagingCore
-    vtksys
-  )
+  # Minimum set of libraries already specified using components
+
   # Teem vtkNRRDReader overwrites VTK vtkNrrdReader
   set(VTK_WRAP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${VTK_INCLUDE_DIRS}
       CACHE INTERNAL "VTK wrap include dirs" FORCE)

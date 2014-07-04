@@ -1,9 +1,22 @@
 project(SlicerBaseCLI)
 
 # --------------------------------------------------------------------------
-# Third party library
+# Dependencies
 # --------------------------------------------------------------------------
+
+#
+# ModuleDescriptionParser
+#
 find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+
+
+#
+# ITK - Import ITK targets required by ModuleDescriptionParser
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ${ModuleDescriptionParser_ITK_COMPONENTS}
+  )
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -73,7 +86,7 @@ endif()
 set(SlicerBaseCLI_SRCS
   )
 set(SlicerBaseCLI_LIBS
-  ModuleDescriptionParser
+  ModuleDescriptionParser ${ITK_LIBRARIES}
   )
 
 #find_package(VTK)

@@ -11,29 +11,9 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
-
-set(${CMAKE_PROJECT_NAME}_ITK_COMPONENTS
-  ITKCommon
-  ITKIOImageBase
-  ITKIOSpatialObjects
-  ITKIOTransformBase
-  ITKTransform
-  )
-find_package(ITK 4.5 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
-set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
-include(${ITK_USE_FILE})
-
-option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
-mark_as_advanced(MRML_USE_vtkTeem)
-if(MRML_USE_vtkTeem)
-  find_package(Teem REQUIRED)
-  include(${Teem_USE_FILE})
-endif()
-
+# --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
@@ -48,6 +28,43 @@ endif()
 # Supports Slicer3 and Slicer4 scenes by default.
 set(MRML_SUPPORT_VERSION 0x030000 CACHE STRING "MRML scene version to support " )
 mark_as_advanced(MRML_SUPPORT_VERSION)
+
+option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
+mark_as_advanced(MRML_USE_vtkTeem)
+
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
+
+#
+# VTK
+#
+#find_package(VTK REQUIRED)
+#include(${VTK_USE_FILE})
+
+#
+# ITK
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKCommon
+  ITKIOImageBase
+  ITKIOSpatialObjects
+  ITKIOTransformBase
+  ITKTransform
+  )
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
+include(${ITK_USE_FILE})
+
+#
+# vtkTeem
+#
+if(MRML_USE_vtkTeem)
+  find_package(Teem REQUIRED)
+  include(${Teem_USE_FILE})
+endif()
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -228,41 +245,7 @@ set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    #vtkCommonCore # Provided by vtkITK, FreeSurfer
-    #vtkCommonDataModel # Provided by vtkITK, FreeSurfer
-    #vtkCommonExecutionModel # Provided by vtkITK, FreeSurfer
-    #vtkCommonMath # Provided by vtkITK, FreeSurfer
-    vtkCommonMisc
-    vtkCommonSystem
-    #vtkCommonTransforms # Provided by vtkITK
-    vtkFiltersCore
-    vtkFiltersGeneral
-    vtkFiltersGeometry
-    vtkFiltersHybrid
-    vtkFiltersSources
-    vtkIOCore
-    vtkIOGeometry
-    #vtkIOImage # Provided by vtkITK
-    #vtkIOLegacy # Provided by FreeSurfer
-    vtkIOPLY
-    vtkIOXML
-    vtkIOXMLParser
-    vtkImagingColor
-    #vtkImagingCore # Provided by FreeSurfer
-    vtkImagingMath
-    vtkImagingStatistics
-    vtkRenderingCore
-    vtkInteractionStyle
-    vtkRenderingOpenGL
-    vtkRenderingFreeTypeOpenGL
-    )
-  if (UNIX AND NOT APPLE)
-    find_package(FontConfig QUIET)
-    if (FONTCONFIG_FOUND)
-      list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeFontConfig)
-    endif()
-  endif()
+  # Minimum set of libraries already specified using components
 else()
   set(VTK_LIBRARIES
     #vtkCommon # Provided by vtkITK, FreeSurfer

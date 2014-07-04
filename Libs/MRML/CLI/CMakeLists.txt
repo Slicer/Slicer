@@ -11,14 +11,37 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
+# --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
 
 # --------------------------------------------------------------------------
-# Third party library
+# Dependencies
 # --------------------------------------------------------------------------
+
+#
+# ModuleDescriptionParser
+#
 find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+
+#
+# ITK - Import ITK targets required by ModuleDescriptionParser
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ${ModuleDescriptionParser_ITK_COMPONENTS}
+  )
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+
+#
+# VTK
+#
+if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
+  message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
+                      "Re-configure VTK with python wrapping.")
+endif()
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -70,7 +93,7 @@ add_library(${lib_name} ${srcs})
 
 set(libs
   MRMLCore
-  ModuleDescriptionParser
+  ModuleDescriptionParser ${ITK_LIBRARIES}
   )
 target_link_libraries(${lib_name} ${libs})
 
@@ -107,6 +130,8 @@ install(TARGETS ${lib_name}
 # Python Wrapping
 # --------------------------------------------------------------------------
 if(VTK_WRAP_PYTHON)
+  include(vtkMacroKitPythonWrap)
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${MRMLCLI_SRCS}

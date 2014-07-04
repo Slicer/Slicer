@@ -3,6 +3,32 @@
 set(MODULE_NAME MRIBiasFieldCorrection)
 
 #-----------------------------------------------------------------------------
+
+#
+# SlicerExecutionModel
+#
+find_package(SlicerExecutionModel REQUIRED)
+include(${SlicerExecutionModel_USE_FILE})
+
+#
+# ITK
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKCommon
+  ITKIOImageBase
+  ITKImageGrid
+  ITKImageIntensity
+  ITKOptimizers
+  ITKTestKernel
+  ITKThresholding
+  ITKVTK
+  ITKVtkGlue
+  )
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+include(${ITK_USE_FILE})
+
+#-----------------------------------------------------------------------------
 # Disable MSVC 8 warnings
 
 if(WIN32)

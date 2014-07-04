@@ -2,9 +2,39 @@ project(ITKFactoryRegistration)
 
 cmake_minimum_required(VERSION 2.8.4)
 
-list(REMOVE_ITEM ITK_LIBRARIES ITKFactoryRegistration)
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
 
-find_package(ITK REQUIRED)
+#
+# ITK
+#
+set(ITK_IO_MODULES_USED
+  ITKIOJPEG
+  ITKIOGDCM
+  ITKIOBMP
+  ITKIOLSM
+  ITKIOPNG
+  ITKIOTIFF
+  ITKIOVTK
+  ITKIOStimulate
+  ITKIOBioRad
+  ITKIOMeta
+  ITKIONIFTI
+  ITKIONRRD
+  ITKIOGIPL
+  ITKIOTransformInsightLegacy
+  )
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
+endif()
+
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKIOImageBase
+  ITKIOTransformBase
+  ${ITK_IO_MODULES_USED}
+  )
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
 
 # This is the Slicer library in charge of registering the default ITK factories.
 set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 0)

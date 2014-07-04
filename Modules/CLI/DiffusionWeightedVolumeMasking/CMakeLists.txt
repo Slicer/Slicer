@@ -2,18 +2,24 @@
 #-----------------------------------------------------------------------------
 set(MODULE_NAME DiffusionWeightedVolumeMasking)
 
-# HACK until each project find_package's required projects.
-include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
+#-----------------------------------------------------------------------------
 
+#
+# SlicerExecutionModel
+#
+find_package(SlicerExecutionModel REQUIRED)
+include(${SlicerExecutionModel_USE_FILE})
+
+#
+# VTK
+#
 #find_package(VTK REQUIRED)
 #include(${VTK_USE_FILE})
 
-#set(VTK_LIBRARIES)
-#if(${VTK_VERSION_MAJOR} GREATER 5)
-#  list(APPEND VTK_LIBRARIES
-#    vtkImagingMorphological
-#    )
-#endif()
+#-----------------------------------------------------------------------------
+set(${MODULE_NAME}_TARGET_LIBRARIES
+  MRMLCore vtkTeem vtkSlicerEditorLibModuleLogic ${VTK_LIBRARIES}
+  )
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
@@ -25,7 +31,7 @@ SEMMacroBuildCLI(
     ${vtkTeem_INCLUDE_DIRS}
     ${vtkSlicerEditorLibModuleLogic_SOURCE_DIR}
     ${vtkSlicerEditorLibModuleLogic_BINARY_DIR}
-  TARGET_LIBRARIES MRMLCore vtkTeem vtkSlicerEditorLibModuleLogic ${VTK_LIBRARIES}
+  TARGET_LIBRARIES ${${MODULE_NAME}_TARGET_LIBRARIES}
   EXECUTABLE_ONLY
   )
 

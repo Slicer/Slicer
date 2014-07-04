@@ -11,6 +11,9 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
+# --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT AND VTK_WRAP_PYTHON)
   set(MRMLDisplayableManager_USE_PYTHON ON)
 else()
@@ -19,6 +22,18 @@ endif()
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif()
+
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
+
+#
+# VTK
+#
+if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
+  message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
+                      "Re-configure VTK with python wrapping.")
 endif()
 
 # --------------------------------------------------------------------------
@@ -137,12 +152,7 @@ set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkCommonTransforms
-    vtkInteractionWidgets
-    vtkRenderingFreeType
-    vtkTestingRendering
-    )
+  # Minimum set of libraries already specified using components
 else()
   set(VTK_LIBRARIES
     vtkWidgets
@@ -206,6 +216,8 @@ install(TARGETS ${lib_name}
 # Python Wrapping
 # --------------------------------------------------------------------------
 if(MRMLDisplayableManager_USE_PYTHON)
+  include(vtkMacroKitPythonWrap)
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${KIT_SRCS}

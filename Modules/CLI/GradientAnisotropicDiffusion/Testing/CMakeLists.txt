@@ -5,7 +5,7 @@ set(CLP ${MODULE_NAME})
 
 #-----------------------------------------------------------------------------
 add_executable(${CLP}TestWithImageSpacingOff ${CLP}Test.cxx)
-target_link_libraries(${CLP}TestWithImageSpacingOff ${CLP}Lib)
+target_link_libraries(${CLP}TestWithImageSpacingOff ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${CLP}TestWithImageSpacingOff PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}TestWithImageSpacingOff)
@@ -24,7 +24,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 add_executable(${CLP}TestWithImageSpacingOn ${CLP}Test.cxx)
-target_link_libraries(${CLP}TestWithImageSpacingOn ${CLP}Lib)
+target_link_libraries(${CLP}TestWithImageSpacingOn ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${CLP}TestWithImageSpacingOn PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}TestWithImageSpacingOn)

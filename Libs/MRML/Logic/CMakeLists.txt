@@ -23,6 +23,14 @@ endif()
 # --------------------------------------------------------------------------
 
 #
+# VTK
+#
+if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
+  message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
+                      "Re-configure VTK with python wrapping.")
+endif()
+
+#
 # LibArchive
 #
 find_package(LibArchive REQUIRED MODULE)
@@ -101,12 +109,7 @@ set(srcs ${MRMLLogic_SRCS})
 add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkImagingGeneral
-    vtkInteractionImage
-    vtkRenderingFreeType
-    vtkRenderingVolumeOpenGL
-    )
+  # Minimum set of libraries already specified using components
 else()
   set(VTK_LIBRARIES
     "" # Since no direct dependency to VTK libraries are required, let's explicitly set
@@ -157,6 +160,8 @@ install(TARGETS ${lib_name}
 # Python Wrapping
 # --------------------------------------------------------------------------
 if(VTK_WRAP_PYTHON)
+  include(vtkMacroKitPythonWrap)
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${MRMLLogic_SRCS}

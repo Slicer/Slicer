@@ -4,13 +4,33 @@ project(qSlicerBaseQTCore)
 # Dependencies
 #
 
+#
+# DCMTK
+#
+if(Slicer_BUILD_DICOM_SUPPORT)
+  find_package(DCMTK REQUIRED)
+endif()
 
 #
 # ModuleDescriptionParser - Required to define ModuleDescriptionParser_INCLUDE_DIRS
 #
 if(Slicer_BUILD_CLI_SUPPORT)
   find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+
+  #
+  # ITK
+  #
+  set(${PROJECT_NAME}_ITK_COMPONENTS
+    # Import ITK targets required by ModuleDescriptionParser
+    ${ModuleDescriptionParser_ITK_COMPONENTS}
+    # Import ITK targets required by CTKImageProcessingITKCore
+    ITKCommon
+    )
+  find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+  include(${ITK_USE_FILE})
 endif()
+
 #
 # qRestAPI
 #
@@ -141,10 +161,12 @@ set(KIT_target_libraries
   CTKCore
   CTKImageProcessingITKCore
   CTKVisualizationVTKCore
+  ${ITK_LIBRARIES}
   )
 
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND KIT_target_libraries
+    ${DCMTK_LIBRARIES}
     CTKDICOMCore
     )
 endif()
@@ -157,6 +179,7 @@ endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND KIT_target_libraries
+    ${ITK_LIBRARIES}
     ModuleDescriptionParser
     )
 endif()

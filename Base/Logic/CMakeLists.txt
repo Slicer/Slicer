@@ -1,11 +1,42 @@
 project(SlicerBaseLogic)
 
 # --------------------------------------------------------------------------
-# Third party library
+# Dependencies
 # --------------------------------------------------------------------------
+
+#
+# ModuleDescriptionParser
+#
 if(Slicer_BUILD_CLI_SUPPORT)
   find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
 endif()
+
+#
+# VTK
+#
+if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
+  message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
+                      "Re-configure VTK with python wrapping.")
+endif()
+
+#
+# ITK
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKCommon
+  ITKIOTransformBase
+  ITKTransform
+  )
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND ${PROJECT_NAME}_ITK_COMPONENTS ${ModuleDescriptionParser_ITK_COMPONENTS})
+endif()
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS
+  ${ITKFactoryRegistration_INCLUDE_DIRS}
+  )
+include(${ITK_USE_FILE})
 
 #
 # LibArchive
@@ -125,15 +156,19 @@ set(srcs ${SlicerBaseLogic_SRCS})
 
 add_library(${lib_name} ${srcs})
 
-set(VTK_LIBRARIES
-  #vtkCommon # Provided by MRMLLogic
-  #vtkFiltering # Provided by MRMLLogic
-  #vtkGraphics # Provided by MRMLLogic
-  #vtkHybrid # Provided by MRMLLogic
-  #vtkIO # Provided by MRMLLogic
-  "" # Since no direct dependency to VTK libraries are required, let's explicitly set
-     # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  # Minimum set of libraries already specified using components
+else()
+  set(VTK_LIBRARIES
+    #vtkCommon # Provided by MRMLLogic
+    #vtkFiltering # Provided by MRMLLogic
+    #vtkGraphics # Provided by MRMLLogic
+    #vtkHybrid # Provided by MRMLLogic
+    #vtkIO # Provided by MRMLLogic
+    "" # Since no direct dependency to VTK libraries are required, let's explicitly set
+       # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
+    )
+endif()
 
 set(libs
   MRMLLogic
@@ -193,6 +228,8 @@ install(TARGETS ${lib_name}
 # Python Wrapping
 # --------------------------------------------------------------------------
 if(VTK_WRAP_PYTHON)
+  include(vtkMacroKitPythonWrap)
+
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${SlicerBaseLogic_SRCS}

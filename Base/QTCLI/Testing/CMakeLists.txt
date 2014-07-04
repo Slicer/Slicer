@@ -1,11 +1,23 @@
+
+#-----------------------------------------------------------------------------
 set(KIT ${PROJECT_NAME})
 
+#-----------------------------------------------------------------------------
+
+#
+# SlicerExecutionModel
+#
+find_package(SlicerExecutionModel REQUIRED)
+include(${SlicerExecutionModel_USE_FILE})
+
+#-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
   NAME CLIModule4Test
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   NO_INSTALL
   )
 
+#-----------------------------------------------------------------------------
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qSlicerCLIExecutableModuleFactoryTest1.cxx

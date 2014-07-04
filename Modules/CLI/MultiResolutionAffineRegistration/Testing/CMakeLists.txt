@@ -18,7 +18,7 @@ create_test_sourcelist(Tests ${CLP}CxxTests.cxx
   )
 
 add_executable(${CLP}CxxTests ${Tests})
-target_link_libraries(${CLP}CxxTests ${CLP}Lib)
+target_link_libraries(${CLP}CxxTests ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${CLP}CxxTests PROPERTIES LABELS ${CLP})
 
 simple_test( FixedRotationSimilarity3DTransformTest )
@@ -31,7 +31,7 @@ simple_test( ConvertSlicerROIToRegionTest )
 simple_test( CountSamplesTest )
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test ${CLP}Lib)
+target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)

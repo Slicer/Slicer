@@ -12,7 +12,9 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-
+# --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
@@ -20,13 +22,36 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
 include(CheckIncludeFiles)
 check_include_files("stdint.h" HAVE_STDINT_H)
 
+# CMake module
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MRMLWidgets_SOURCE_DIR}/CMake")
+
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
+
+
+#
+# CTK
+#
+set(CTK_LIBRARIES CTKVisualizationVTKWidgets)
+if(Slicer_USE_PYTHONQT)
+  list(APPEND CTK_LIBRARIES
+    CTKScriptingPythonWidgets
+    )
+endif()
+if(Slicer_USE_QtTesting)
+  list(APPEND CTK_LIBRARIES
+    CTKQtTesting
+    )
+endif()
+
+# --------------------------------------------------------------------------
+# Configure headers
+# --------------------------------------------------------------------------
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/qMRMLWidgetsConfigure.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/qMRMLWidgetsConfigure.h
   )
-
-# CMake module
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MRMLWidgets_SOURCE_DIR}/CMake")
 
 #-----------------------------------------------------------------------------
 # Sources
@@ -378,7 +403,6 @@ add_library(${lib_name}
 set(MRMLWidgets_LIBRARIES
   ${QT_LIBRARIES}
   ${CTK_LIBRARIES}
-  ${CTK_EXTERNAL_LIBRARIES}
   MRMLLogic
   MRMLDisplayableManager
   )

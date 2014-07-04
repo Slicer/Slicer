@@ -41,6 +41,11 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
     ${ARGN}
     )
 
+  if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
+    message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
+                        "Re-configure VTK with python wrapping.")
+  endif()
+
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
@@ -90,7 +95,7 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
       vtksys
       vtktiff
       )
-    if (NOT WIN32)
+    if(NOT WIN32)
       list(APPEND VTK_NO_PYTHON_WRAP_LIBRARIES
         vtkRenderingFreeTypeFontConfig)
     endif()

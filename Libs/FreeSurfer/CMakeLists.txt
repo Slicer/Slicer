@@ -11,14 +11,27 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
-
-find_package(ZLIB REQUIRED)
-
+# --------------------------------------------------------------------------
+# Options
+# --------------------------------------------------------------------------
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
+
+# --------------------------------------------------------------------------
+# Dependencies
+# --------------------------------------------------------------------------
+
+#
+# VTK
+#
+#find_package(VTK REQUIRED)
+#include(${VTK_USE_FILE})
+
+#
+# ZLIB
+#
+find_package(ZLIB REQUIRED)
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -80,13 +93,7 @@ set(srcs ${FreeSurfer_SRCS})
 add_library(${lib_name} ${srcs})
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkCommonCore
-    vtkCommonDataModel
-    vtkCommonExecutionModel
-    vtkCommonMath
-    vtkIOLegacy
-    )
+  # Minimum set of libraries already specified using components
 else()
   set(VTK_LIBRARIES
     vtkCommon

@@ -210,8 +210,6 @@ macro(SlicerMacroBuildBaseQtLibrary)
   endif()
 
   target_link_libraries(${lib_name}
-    ${QT_LIBRARIES}
-    ${CTK_EXTERNAL_LIBRARIES}
     ${SLICERQTBASELIB_TARGET_LIBRARIES}
     )
 

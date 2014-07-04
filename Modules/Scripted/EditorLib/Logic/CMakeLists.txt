@@ -19,13 +19,7 @@ set(${KIT}_SRCS
   )
 
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkCommonCore
-    vtkCommonDataModel
-    vtkCommonExecutionModel
-    vtkCommonMath
-    vtkIOCore
-    )
+  # Minimum set of libraries already specified using components
 else()
   set(VTK_LIBRARIES
     vtkCommon

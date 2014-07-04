@@ -5,7 +5,7 @@
 
 #-----------------------------------------------------------------------------
 #add_executable(${CLP}Test ${CLP}Test.cxx)
-#target_link_libraries(${CLP}Test ${CLP}Lib)
+#target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 
 #set(testname ${CLP}Test)
 #add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>

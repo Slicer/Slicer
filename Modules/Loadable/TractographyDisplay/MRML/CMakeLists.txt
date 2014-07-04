@@ -33,12 +33,6 @@ endif()
 #find_package(VTK REQUIRED)
 #include(${VTK_USE_FILE})
 
-#if(${VTK_VERSION_MAJOR} GREATER 5)
-#  set(VTK_LIBRARIES
-#    vtkFiltersExtraction
-#    )
-#endif()
-
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
   ${VTK_LIBRARIES}

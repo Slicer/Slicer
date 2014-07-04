@@ -3,10 +3,20 @@
 set(MODULE_NAME ExecutionModelTour)
 
 #-----------------------------------------------------------------------------
+
+#
+# SlicerExecutionModel
+#
+find_package(SlicerExecutionModel REQUIRED)
+include(${SlicerExecutionModel_USE_FILE})
+
+#-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/BillsLogo.h
-  TARGET_LIBRARIES MRMLCore
+  TARGET_LIBRARIES
+    # ${VTK_LIBRARIES} # Not needed: All dependencies are transitively satisfied by other targets
+    MRMLCore
   INCLUDE_DIRECTORIES
     ${MRMLCore_INCLUDE_DIRS}
   )

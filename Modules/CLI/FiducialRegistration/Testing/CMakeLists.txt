@@ -9,7 +9,7 @@ set(TEMP ${Slicer_BINARY_DIR}/Testing/Temporary)
 
 #-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test  ${CLP}Lib)
+target_link_libraries(${CLP}Test ${CLP}Lib ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)

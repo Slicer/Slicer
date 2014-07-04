@@ -1,5 +1,18 @@
 set(KIT ${PROJECT_NAME})
 
+#-----------------------------------------------------------------------------
+set(${KIT}Testing_ITK_COMPONENTS
+  ITKCommon
+  )
+find_package(ITK 4.5 COMPONENTS ${${KIT}Testing_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS
+  ${ITKFactoryRegistration_INCLUDE_DIRS}
+  )
+include(${ITK_USE_FILE})
+
+#-----------------------------------------------------------------------------
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLAbstractLogicSceneEventsTest.cxx
@@ -20,7 +33,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 
 add_executable(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${KIT})
+target_link_libraries(${KIT}CxxTests ${KIT} ${ITK_LIBRARIES})
 
 macro(SIMPLE_FILE_TEST TESTNAME FILE)
   add_test(

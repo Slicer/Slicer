@@ -3,19 +3,41 @@
 set(MODULE_NAME ModelToLabelMap)
 
 #-----------------------------------------------------------------------------
+
+#
+# SlicerExecutionModel
+#
+find_package(SlicerExecutionModel REQUIRED)
+include(${SlicerExecutionModel_USE_FILE})
+
+#
+# ITK
+#
+set(${PROJECT_NAME}_ITK_COMPONENTS
+  ITKBinaryMathematicalMorphology
+  ITKCommon
+  ITKDeprecated
+  ITKIOImageBase
+  ITKImageFunction
+  ITKMathematicalMorphology
+  )
+find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+include(${ITK_USE_FILE})
+
+#
+# VTK
+#
 if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(VTK_LIBRARIES
-    vtkCommonCore
-    vtkFiltersModeling
-    vtkIOLegacy
-    vtkIOXML
-    )
+  # Minimum set of libraries already specified using components
 else()
   set(VTK_LIBRARIES
     vtkIO
     vtkGraphics
     )
 endif()
+
+#-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
