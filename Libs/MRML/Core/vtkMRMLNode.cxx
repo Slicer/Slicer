@@ -136,7 +136,7 @@ void vtkMRMLNode::DeleteAllReferences(bool callOnNodeReferenceRemoved)
     for (it1 = it->second.begin(); it1 != it->second.end(); it1++)
       {
       vtkMRMLNodeReference* reference = *it1;
-      if (reference && callOnNodeReferenceRemoved)
+      if (callOnNodeReferenceRemoved)
         {
         this->OnNodeReferenceRemoved(reference);
         }
@@ -218,9 +218,14 @@ void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
     for (it1 = it->second.begin(); it1 != it->second.end(); it1++)
       {
       vtkMRMLNodeReference* reference = *it1;
+      if (!reference)
+        {
+        vtkErrorMacro(<< "CopyReferences: Reference is expected to be non NULL.");
+        return;
+        }
       this->SetNthNodeReferenceID(referenceRole.c_str(),
                                   std::distance(it->second.begin(), it1),
-                                  reference ? reference->GetReferencedNodeID() : 0);
+                                  reference->GetReferencedNodeID());
       }
     }
 }
@@ -708,7 +713,11 @@ bool vtkMRMLNode::IsReferenceRoleGeneric(const char* refRole)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::SetSceneReferences()
 {
-  assert(this->Scene); // must always have a valid scene when called.
+  if (!this->Scene)
+    {
+    vtkErrorMacro(<< "SetSceneReferences: Scene is expected to be non NULL.");
+    return;
+    }
 
   NodeReferencesType::iterator it;
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
@@ -718,7 +727,8 @@ void vtkMRMLNode::SetSceneReferences()
       vtkMRMLNodeReference* reference = it->second[i];
       if (!reference)
         {
-        continue;
+        vtkErrorMacro(<< "SetSceneReferences: Reference " << i << " is expected to be non NULL.");
+        return;
         }
       this->Scene->AddReferencedNodeID(reference->GetReferencedNodeID(), this);
       }
@@ -739,7 +749,8 @@ void vtkMRMLNode::UpdateReferenceID(const char *oldID, const char *newID)
       vtkMRMLNodeReference* reference = it->second[i];
       if (!reference)
         {
-        continue;
+        vtkErrorMacro(<< "UpdateReferenceID: Reference " << i << " is expected to be non NULL.");
+        return;
         }
       if (std::string(oldID) == std::string( (reference->GetReferencedNodeID()) ) )
         {
@@ -962,8 +973,7 @@ void vtkMRMLNode::UpdateReferences()
     for (unsigned int i=0; i<it->second.size();)
       {
       vtkMRMLNodeReference* reference = it->second[i];
-      if (reference &&
-          reference->GetReferencedNodeID() &&
+      if (reference->GetReferencedNodeID() &&
           std::string(reference->GetReferencedNodeID()) != "" &&
           this->Scene->GetNodeByID(reference->GetReferencedNodeID()) == NULL)
         {
@@ -1010,7 +1020,7 @@ void vtkMRMLNode::GetNodeReferences(const char* referenceRole, std::vector<vtkMR
     NodeReferenceListType &references = this->NodeReferences[std::string(referenceRole)];
     for (unsigned int i=0; i<references.size(); i++)
       {
-      nodes.push_back(references[i] ? references[i]->ReferencedNode : 0);
+      nodes.push_back(references[i]->ReferencedNode);
       }
     }
 }
@@ -1042,12 +1052,15 @@ const char * vtkMRMLNode::GetNthNodeReferenceID(const char* referenceRole, int n
     }
 
   NodeReferenceListType &references = this->NodeReferences[std::string(referenceRole)];
-
-  if (n >= static_cast<int>(references.size()) || !references[n])
+  if (n >= static_cast<int>(references.size()))
     {
     return NULL;
     }
-
+  if (!references[n])
+    {
+    vtkErrorMacro(<< "GetNthNodeReferenceID: Reference " << n << "shoult NOT be NULL.");
+    return NULL;
+    }
   return references[n]->GetReferencedNodeID();
 }
 
@@ -1066,13 +1079,7 @@ vtkMRMLNode* vtkMRMLNode::GetNthNodeReference(const char* referenceRole, int n)
     return NULL;
     }
 
-  vtkMRMLNodeReference * reference = references[n];
-  if (!reference)
-    {
-    return NULL;
-    }
-
-  vtkMRMLNode* node = reference->ReferencedNode;
+  vtkMRMLNode* node = references[n]->ReferencedNode;
   // Maybe the node was not yet in the scene when the node ID was set.
   // Check to see if it's now there.
   // Similarly, if the scene is 0, clear the node if not already null.
@@ -1080,7 +1087,8 @@ vtkMRMLNode* vtkMRMLNode::GetNthNodeReference(const char* referenceRole, int n)
       (node && this->GetScene() == 0))
     {
     this->UpdateNthNodeReference(referenceRole, n);
-    node = reference->ReferencedNode;
+    NodeReferenceListType &references = this->NodeReferences[std::string(referenceRole)];
+    node = references[n]->ReferencedNode;
     }
   return node;
 }
@@ -1121,8 +1129,12 @@ void vtkMRMLNode::UpdateNodeReferences(const char* referenceRole)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::UpdateNthNodeReference(vtkMRMLNodeReference *reference, int n)
 {
-  if (!reference ||
-      reference->GetReferenceRole() == 0 ||
+  if (!reference)
+    {
+    vtkErrorMacro(<< "UpdateNthNodeReference: Non-null reference is expected.");
+    return;
+    }
+  if (reference->GetReferenceRole() == 0 ||
       std::string(reference->GetReferenceRole()) == "")
     {
     return;
@@ -1153,7 +1165,12 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 
   NodeReferenceListType &references = this->NodeReferences[std::string(referenceRole)];
 
-  assert( references.size() > (unsigned int)(n));
+  if (n >= static_cast<int>(references.size()))
+    {
+    vtkErrorMacro(<< "UpdateNthNodeReference: n is " << n << "."
+        << " Value is expected to be smaller than " << references.size());
+    return;
+    }
 
   this->UpdateNthNodeReference(references[n], n);
 }
@@ -1173,15 +1190,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   // No event
   //
 
-  NodeReferenceListType referencedNodes;
-  if (referenceRole)
-    {
-    referencedNodes = this->NodeReferences[std::string(referenceRole)];
-    }
-  else
-    {
-    // TODO maybe create a dummy role?
-    }
+  NodeReferenceListType &referencedNodes = this->NodeReferences[std::string(referenceRole)];
 
   std::string newReferencedNodeID;
 
@@ -1190,52 +1199,33 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     newReferencedNodeID = referencedNodeID;
     }
 
+  // Extend the list if needed. But don't do it if the node ID to add is null.
+  if (n >= static_cast<int>(referencedNodes.size()) &&
+      referencedNodeID != 0)
+    {
+    vtkNew<vtkMRMLNodeReference> reference;
+    reference->ReferencingNode = this;
+    reference->ReferencedNode = 0;
+    reference->SetReferencedNodeID("");
+    reference->SetReferenceRole(referenceRole);
+    referencedNodes.push_back(reference.GetPointer());
+    n = referencedNodes.size() - 1;
+    this->NodeReferences[std::string(referenceRole)] = referencedNodes;
+    }
+
   NodeReferenceListType::iterator referencedNodesIt = referencedNodes.begin() + n;
-
-  vtkMRMLNodeReference * reference = 0;
-  if (referencedNodesIt < referencedNodes.end())
-    {
-    reference = (*referencedNodesIt);
-    }
-  // Extend the list if needed.
-  if (!reference)
-    {
-    if (referencedNodesIt >= referencedNodes.end())
-      {
-      // Limit extend by one position
-      if (n > static_cast<int>(referencedNodes.size()))
-        {
-        n = referencedNodes.size();
-        }
-      referencedNodes.resize(n + 1);
-      }
-    if (referencedNodeID != 0)
-      {
-      vtkNew<vtkMRMLNodeReference> referencedNode;
-      referencedNode->ReferencingNode = this;
-      referencedNode->ReferencedNode = 0;
-      referencedNode->SetReferencedNodeID("");
-      referencedNode->SetReferenceRole(referenceRole);
-      referencedNodes.at(n) = referencedNode.GetPointer();
-      this->NodeReferences[std::string(referenceRole)] = referencedNodes;
-      }
-    else
-      {
-      referencedNodes.at(n) = 0;
-      this->NodeReferences[std::string(referenceRole)] = referencedNodes;
-      return 0;
-      }
-    }
-
-  referencedNodesIt = referencedNodes.begin() + n;
-  reference = (*referencedNodesIt);
-
   // if we dont find the node or they have the same id
-  // update the references
-  if (reference->GetReferencedNodeID() &&
-       std::string(reference->GetReferencedNodeID()) == newReferencedNodeID )
+  // just return null
+  if (referencedNodesIt >= referencedNodes.end())
     {
-    this->UpdateNthNodeReference(reference, n);
+    return 0;
+    }
+  vtkMRMLNodeReference * reference = (*referencedNodesIt);
+
+  // if the node has the same id and events
+  if (reference->GetReferencedNodeID() &&
+      std::string(reference->GetReferencedNodeID()) == newReferencedNodeID)
+    {
     return reference->ReferencedNode;
     }
 
@@ -1250,14 +1240,17 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 
   vtkMRMLNode* referencedNode = 0;
 
-  // Clear and delete the reference if the new value is 0.
+  // Delete the reference if the new value is 0.
   if (newReferencedNodeID.empty())
     {
-    reference->SetReferencedNodeID(0);
+    reference->SetReferencedNodeID(0); // Need to unobserve
     this->OnNodeReferenceRemoved(reference);
-    (*referencedNodesIt) = 0;
-    // Delete the reference
-    referencedNodes.erase(referencedNodesIt);
+    if (!reference)
+      {
+      vtkErrorMacro(<< "SetNthNodeReferenceID: Reference " << n << " is expected to be non NULL.");
+      return 0;
+      }
+    referencedNodes.erase(referencedNodesIt); // Delete the reference
     this->NodeReferences[std::string(referenceRole)] = referencedNodes;
     }
   else
@@ -1269,12 +1262,11 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     if (this->Scene)
       {
       this->Scene->AddReferencedNodeID(newReferencedNodeID.c_str(), this);
+      referencedNode = this->Scene->GetNodeByID(newReferencedNodeID.c_str());
       }
 
-    // No event update
 
-    referencedNode = this->Scene ?
-      this->Scene->GetNodeByID(reference->GetReferencedNodeID()) : 0;
+    // No event update
 
     // Adapted from UpdateNthNodeReference
     vtkMRMLNode *oldReferencedNode = reference->ReferencedNode;
@@ -1285,6 +1277,12 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     else if (oldReferencedNode == 0 && referencedNode != 0)
       {
       this->OnNodeReferenceAdded(reference);
+      }
+
+    if (!reference)
+      {
+      vtkErrorMacro(<< "SetNthNodeReferenceID: Reference " << n << " is expected to be non NULL.");
+      return 0;
       }
     reference->ReferencedNode = referencedNode;
     }
@@ -1311,15 +1309,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     events = NodeReferenceEvents[referenceRole];
     }
 
-  NodeReferenceListType referencedNodes;
-  if (referenceRole)
-    {
-    referencedNodes = this->NodeReferences[std::string(referenceRole)];
-    }
-  else
-    {
-    // TODO maybe create a dummy role?
-    }
+  NodeReferenceListType &referencedNodes = this->NodeReferences[std::string(referenceRole)];
 
   std::string newReferencedNodeID;
 
@@ -1328,54 +1318,43 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     newReferencedNodeID = referencedNodeID;
     }
 
+  // Extend the list if needed. But don't do it if the node ID to add is null.
+  if (n >= static_cast<int>(referencedNodes.size()) &&
+      referencedNodeID != 0)
+    {
+    vtkNew<vtkMRMLNodeReference> reference;
+    reference->ReferencingNode = this;
+    reference->ReferencedNode = 0;
+    reference->SetReferencedNodeID("");
+    reference->SetReferenceRole(referenceRole);
+    referencedNodes.push_back(reference.GetPointer());
+    n = referencedNodes.size() - 1;
+    this->NodeReferences[std::string(referenceRole)] = referencedNodes;
+    reference->Events = events;
+    }
+
   NodeReferenceListType::iterator referencedNodesIt = referencedNodes.begin() + n;
 
-  vtkMRMLNodeReference * reference = 0;
-  if (referencedNodesIt < referencedNodes.end())
+  // if we dont find the node just return null
+  if (referencedNodesIt >= referencedNodes.end())
     {
-    reference = (*referencedNodesIt);
-    }
-  // Extend the list if needed.
-  if (!reference)
-    {
-    if (referencedNodesIt >= referencedNodes.end())
-      {
-      // Limit extend by one position
-      if (n > static_cast<int>(referencedNodes.size()))
-        {
-        n = referencedNodes.size();
-        }
-      referencedNodes.resize(n + 1);
-      }
-    if (referencedNodeID != 0)
-      {
-      vtkNew<vtkMRMLNodeReference> referencedNode;
-      referencedNode->ReferencingNode = this;
-      referencedNode->ReferencedNode = 0;
-      referencedNode->SetReferencedNodeID("");
-      referencedNode->SetReferenceRole(referenceRole);
-      referencedNodes.at(n) = referencedNode.GetPointer();
-      this->NodeReferences[std::string(referenceRole)] = referencedNodes;
-      referencedNode->Events = events;
-      }
-    else
-      {
-      referencedNodes.at(n) = 0;
-      this->NodeReferences[std::string(referenceRole)] = referencedNodes;
-      return 0;
-      }
+    return 0;
     }
 
-  referencedNodesIt = referencedNodes.begin() + n;
-  reference = (*referencedNodesIt);
+  vtkMRMLNodeReference * reference = (*referencedNodesIt);
 
-  // if we dont find the node or they have the same id and events
+  // if the node has the same id and events
   // just update the references
   if (reference->GetReferencedNodeID() &&
        std::string(reference->GetReferencedNodeID()) == newReferencedNodeID &&
        reference->Events == events)
     {
     this->UpdateNthNodeReference(reference, n);
+    if (!reference)
+      {
+      vtkErrorMacro(<< "SetAndObserveNthNodeReferenceID: Reference " << n << " is expected to be non NULL.");
+      return 0;
+      }
     return reference->ReferencedNode;
     }
 
@@ -1388,17 +1367,14 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
       reference->GetReferencedNodeID(), this);
     }
 
-  vtkMRMLNode* referencedNode = 0;
+  vtkMRMLNode* referencedNode = NULL;
 
-  // Clear and delete the reference if the new value is 0.
+  // Delete the reference if the new value is 0.
   if (newReferencedNodeID.empty())
     {
-    /// Need to unobserve
-    reference->SetReferencedNodeID(0);
+    reference->SetReferencedNodeID(0); // Need to unobserve
     this->SetAndObserveNthNodeReference(referenceRole, n, 0, reference->Events);
-    (*referencedNodesIt) = 0;
-    // Delete the reference
-    referencedNodes.erase(referencedNodesIt);
+    referencedNodes.erase(referencedNodesIt); // Delete the reference
     this->NodeReferences[std::string(referenceRole)] = referencedNodes;
     }
   else
@@ -1416,6 +1392,11 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     reference->Events = events;
 
     this->UpdateNthNodeReference(reference, n);
+    if (!reference)
+      {
+      vtkErrorMacro(<< "SetAndObserveNthNodeReferenceID: Reference " << n << " is expected to be non NULL.");
+      return 0;
+      }
     referencedNode =  reference->ReferencedNode;
     }
 
@@ -1469,7 +1450,8 @@ bool vtkMRMLNode::HasNodeReferenceID(const char* referenceRole, const char* Node
   std::string sID(NodeReferenceID);
   for (it=references.begin(); it!=references.end(); it++)
     {
-    if ((*it) && sID == std::string((*it)->GetReferencedNodeID()) )
+    vtkMRMLNodeReference* reference = *it;
+    if (sID == std::string(reference->GetReferencedNodeID()))
       {
       return true;
       }
@@ -1487,10 +1469,6 @@ void vtkMRMLNode::RemoveAllReferencedNodes()
     for (it1 = it->second.begin(); it1 != it->second.end(); it1++)
       {
       vtkMRMLNodeReference* reference = *it1;
-      if (!reference)
-        {
-        continue;
-        }
       reference->Events = 0;
       reference->ReferencedNode = 0;
       }
@@ -1549,7 +1527,8 @@ int vtkMRMLNode::GetNumberOfNodeReferences(const char* referenceRole)
     NodeReferenceListType::iterator it;
     for (it = references.begin(); it != references.end(); it++)
       {
-      if ((*it) && (*it)->GetReferencedNodeID() != 0)
+      vtkMRMLNodeReference* reference = *it;
+      if (reference->GetReferencedNodeID() != 0)
         {
         n++;
         }
