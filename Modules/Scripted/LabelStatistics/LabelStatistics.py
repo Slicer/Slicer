@@ -294,9 +294,12 @@ class LabelStatisticsLogic:
       stat1 = vtk.vtkImageAccumulate()
       if vtk.VTK_MAJOR_VERSION <= 5:
         stat1.SetInput(grayscaleNode.GetImageData())
+        stat1.SetStencil(stencil.GetOutput())
       else:
         stat1.SetInputConnection(grayscaleNode.GetImageDataConnection())
-      stat1.SetStencil(stencil.GetOutput())
+        stencil.Update()
+        stat1.SetStencilData(stencil.GetOutput())
+
       stat1.Update()
 
       # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.75")
