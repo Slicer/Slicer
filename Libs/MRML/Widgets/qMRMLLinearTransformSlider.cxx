@@ -30,6 +30,7 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkTransform.h>
+#include <vtkWeakPointer.h>
 
 //-----------------------------------------------------------------------------
 class qMRMLLinearTransformSliderPrivate
@@ -38,7 +39,7 @@ public:
   qMRMLLinearTransformSliderPrivate();
   qMRMLLinearTransformSlider::TransformType            TypeOfTransform;
   qMRMLLinearTransformSlider::CoordinateReferenceType  CoordinateReference;
-  vtkMRMLLinearTransformNode*                          MRMLTransformNode;
+  vtkWeakPointer<vtkMRMLLinearTransformNode>           MRMLTransformNode;
   double                                               OldPosition;
 };
 
@@ -156,8 +157,11 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
   Q_ASSERT(d->MRMLTransformNode == transformNode);
 
   vtkNew<vtkTransform> transform;
-  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
+  if (d->MRMLTransformNode.GetPointer() != NULL)
+    {
+    qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
+      d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
+    }
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
@@ -202,7 +206,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
   Q_D(qMRMLLinearTransformSlider);
 
-  if (d->MRMLTransformNode == NULL)
+  if (d->MRMLTransformNode.GetPointer() == NULL)
     {
     return;
     }
