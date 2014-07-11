@@ -251,13 +251,14 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   vtkMatrix4x4::Multiply4x4(lps2ras, vtkmat, vtkmat);
   vtkMatrix4x4::Multiply4x4(vtkmat, ras2lps, vtkmat);
 
+  // Convert the sense of the transform (from an ITK resampling
+  // transform to a Slicer modeling transform)
+  //
+  vtkmat->Invert();
+
   // Set the matrix on the node
   if (ltn->GetReadWriteAsTransformToParent())
     {
-    // Convert the sense of the transform (from an ITK resampling
-    // transform to a Slicer modeling transform)
-    //
-    vtkmat->Invert();
     ltn->SetMatrixTransformToParent( vtkmat );
     }
   else
