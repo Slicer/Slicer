@@ -1049,7 +1049,7 @@ void vtkMRMLNode::GetNodeReferences(const char* referenceRole, std::vector<vtkMR
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::GetNodeReferenceIDs(const char* referenceRole,
-                                      std::vector<const char*> &nodeIDs)
+                                      std::vector<const char*> &referencedNodeIDs)
 {
   if (!referenceRole)
     {
@@ -1060,7 +1060,7 @@ void vtkMRMLNode::GetNodeReferenceIDs(const char* referenceRole,
     this->NodeReferences[std::string(referenceRole)];
   for (unsigned int i=0; i<references.size(); ++i)
     {
-    nodeIDs.push_back(references[i] ? references[i]->GetReferencedNodeID() : 0);
+    referencedNodeIDs.push_back(references[i] ? references[i]->GetReferencedNodeID() : 0);
     }
 }
 
@@ -1460,16 +1460,16 @@ void vtkMRMLNode::SetAndObserveNthNodeReference(const char* referenceRole, int n
 
 
 //----------------------------------------------------------------------------
-bool vtkMRMLNode::HasNodeReferenceID(const char* referenceRole, const char* NodeReferenceID)
+bool vtkMRMLNode::HasNodeReferenceID(const char* referenceRole, const char* referencedNodeID)
 {
-  if (NodeReferenceID == 0)
+  if (referencedNodeID == 0)
     {
     return false;
     }
 
   NodeReferenceListType &references = this->NodeReferences[std::string(referenceRole)];
   NodeReferenceListType::iterator it;
-  std::string sID(NodeReferenceID);
+  std::string sID(referencedNodeID);
   for (it=references.begin(); it!=references.end(); it++)
     {
     vtkMRMLNodeReference* reference = *it;
@@ -1522,15 +1522,15 @@ vtkMRMLNode* vtkMRMLNode::GetNodeReference(const char* referenceRole)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::SetAndObserveNodeReferenceID(const char* referenceRole, const char *NodeReferenceID, vtkIntArray *events)
+vtkMRMLNode* vtkMRMLNode::SetAndObserveNodeReferenceID(const char* referenceRole, const char *referencedNodeID, vtkIntArray *events)
 {
-  return this->SetAndObserveNthNodeReferenceID(referenceRole, 0, NodeReferenceID, events);
+  return this->SetAndObserveNthNodeReferenceID(referenceRole, 0, referencedNodeID, events);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::AddAndObserveNodeReferenceID(const char* referenceRole, const char *NodeReferenceID, vtkIntArray *events)
+vtkMRMLNode* vtkMRMLNode::AddAndObserveNodeReferenceID(const char* referenceRole, const char *referencedNodeID, vtkIntArray *events)
 {
-  return this->SetAndObserveNthNodeReferenceID(referenceRole, this->GetNumberOfNodeReferences(referenceRole), NodeReferenceID, events);
+  return this->SetAndObserveNthNodeReferenceID(referenceRole, this->GetNumberOfNodeReferences(referenceRole), referencedNodeID, events);
 }
 
 //----------------------------------------------------------------------------

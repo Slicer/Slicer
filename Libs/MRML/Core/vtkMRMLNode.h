@@ -489,7 +489,7 @@ public:
   /// scan the scene if the node was not yet cached.
   /// \sa SetAndObserveNodeReferenceID(const char*),
   /// AddAndObserveNodeReferenceID(const char *), RemoveNthNodeReferenceID(int)
-  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *nodeReferenceID, vtkIntArray *events=0);
+  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *referencedNodeID, vtkIntArray *events=0);
 
   ///
   /// Convenience method that removes the Nth node ID from the list
@@ -503,7 +503,7 @@ public:
 
   ///
   /// Return true if NodeReferenceID is in the node ID list for a specific reference role.
-  bool HasNodeReferenceID(const char* referenceRole, const char* NodeReferenceID);
+  bool HasNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
 
   ///
   /// Return the number of node IDs for a specific reference role(and nodes as they always
@@ -550,7 +550,7 @@ public:
   /// for valid IDs may not yet be in the scene.
   /// \sa GetNodeReferences(), GetNodeReferenceID()
   void GetNodeReferenceIDs(const char* referenceRole,
-                           std::vector<const char*> &nodeIDs);
+                           std::vector<const char*> &referencedNodeIDs);
 
 
   /// HierarchyModifiedEvent is generated when the hierarchy node with which
