@@ -44,6 +44,15 @@ public:
     {
     return "vtkMRMLNodeTestHelper1";
     }
+
+  int GetNumberOfNodeReferenceObjects(const char* refrole)
+    {
+    if (!refrole)
+      {
+      return 0;
+      }
+    return this->NodeReferences[std::string(refrole)].size();
+    }
 };
 vtkStandardNewMacro(vtkMRMLNodeTestHelper1);
 
@@ -61,6 +70,7 @@ bool TestReferenceModifiedEvent();
 bool TestReferencesWithEvent();
 bool TestAddReferencedNodeIDEventsWithNoScene();
 bool TestSetNodeReferenceID();
+bool TestSetNodeReferenceIDToZeroOrEmptyString();
 bool TestNodeReferenceSerialization();
 bool TestClearScene();
 
@@ -88,6 +98,7 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = TestReferencesWithEvent() && res;
   res = TestAddReferencedNodeIDEventsWithNoScene() && res;
   res = TestSetNodeReferenceID() && res;
+  res = TestSetNodeReferenceIDToZeroOrEmptyString() && res;
   res = TestNodeReferenceSerialization() && res;
   res = TestClearScene() && res;
 
@@ -283,6 +294,19 @@ int CheckNumberOfNodeReferences(int line, const char* function,
               << "\n\texpected NumberOfNodeReferences:" << expected
               << std::endl;
     return false;
+    }
+  vtkMRMLNodeTestHelper1 * referencingNodeTest = vtkMRMLNodeTestHelper1::SafeDownCast(referencingNode);
+  if (referencingNodeTest)
+    {
+    current = referencingNodeTest->GetNumberOfNodeReferenceObjects(role);
+    if (current != expected)
+      {
+      std::cerr << "Line " << line << " - " << function << " : CheckNumberOfNodeReferenceObjects failed"
+                << "\n\tcurrent NumberOfNodeReferences:" << current
+                << "\n\texpected NumberOfNodeReferences:" << expected
+                << std::endl;
+      return false;
+      }
     }
   return true;
 }
@@ -1800,6 +1824,95 @@ bool TestSetNodeReferenceID()
       {
       return false;
       }
+    }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestSetNodeReferenceIDToZeroOrEmptyString()
+{
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkMRMLNode *returnNode = 0;
+  int referencedNodesCount = -1;
+
+  std::string role1("refrole1");
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
+  scene->AddNode(referencingNode.GetPointer());
+
+  // The following code adds 8 referenced nodes
+
+  std::vector< vtkWeakPointer<vtkMRMLNodeTestHelper1> > referencingNodes;
+
+  int referencingNodeCount = 8;
+  for (int idx = 0; idx < referencingNodeCount; idx++)
+    {
+    vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
+    scene->AddNode(referencingNode.GetPointer());
+    referencingNodes.push_back(referencingNode.GetPointer());
+    }
+
+  for (int idx = 0; idx < referencingNodeCount; ++idx)
+    {
+    vtkMRMLNodeTestHelper1 * referencedNode = referencingNodes.at(idx);
+
+    referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+    returnNode = referencingNode->AddNodeReferenceID(role1.c_str(), referencedNode->GetID());
+    if (!CheckNodeReferences(__LINE__, "AddNodeReferenceID", scene.GetPointer(),
+                             referencingNode.GetPointer(), role1.c_str(),
+                             /* n = */ idx,
+                             /* expectedNodeReference = */ referencedNode,
+                             /* expectedNumberOfNodeReferences = */ idx + 1,
+                             /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
+                             /* currentReturnNode = */ returnNode))
+      {
+      return false;
+      }
+    }
+
+  int expectedReferencedNodesCount = referencedNodesCount;
+
+  if (!CheckNumberOfNodeReferences(__LINE__, "TestSetNodeReferenceIDToZeroOrEmptyString", role1.c_str(),
+                                   referencingNode.GetPointer(), expectedReferencedNodesCount))
+    {
+    return false;
+    }
+
+  // The code below checks that setting a reference to either 0 or an empty string removes
+  // the reference from the underlying vector.
+
+  expectedReferencedNodesCount = expectedReferencedNodesCount - 1;
+  referencingNode->SetNthNodeReferenceID(role1.c_str(), 1, "");
+  if (!CheckNumberOfNodeReferences(__LINE__, "TestSetNodeReferenceIDToZeroOrEmptyString", role1.c_str(),
+                                   referencingNode.GetPointer(), expectedReferencedNodesCount))
+    {
+    return false;
+    }
+
+  expectedReferencedNodesCount = expectedReferencedNodesCount - 1;
+  referencingNode->SetNthNodeReferenceID(role1.c_str(), 1, 0);
+  if (!CheckNumberOfNodeReferences(__LINE__, "TestSetNodeReferenceIDToZeroOrEmptyString", role1.c_str(),
+                                   referencingNode.GetPointer(), expectedReferencedNodesCount))
+    {
+    return false;
+    }
+
+  expectedReferencedNodesCount = expectedReferencedNodesCount - 1;
+  referencingNode->SetAndObserveNthNodeReferenceID(role1.c_str(), 1, "");
+  if (!CheckNumberOfNodeReferences(__LINE__, "TestSetNodeReferenceIDToZeroOrEmptyString", role1.c_str(),
+                                   referencingNode.GetPointer(), expectedReferencedNodesCount))
+    {
+    return false;
+    }
+
+  expectedReferencedNodesCount = expectedReferencedNodesCount - 1;
+  referencingNode->SetAndObserveNthNodeReferenceID(role1.c_str(), 1, 0);
+  if (!CheckNumberOfNodeReferences(__LINE__, "TestSetNodeReferenceIDToZeroOrEmptyString", role1.c_str(),
+                                   referencingNode.GetPointer(), expectedReferencedNodesCount))
+    {
+    return false;
     }
 
   return true;
