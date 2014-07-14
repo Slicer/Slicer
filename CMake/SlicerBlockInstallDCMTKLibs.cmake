@@ -2,6 +2,7 @@
 # Find and install DCMTK Libs
 # -------------------------------------------------------------------------
 
+find_package(DCMTK REQUIRED)
 foreach(dcmtk_Lib ${DCMTK_LIBRARIES})
   if(WIN32)
     install(FILES ${DCMTK_DIR}/bin/Release/${dcmtk_Lib}.dll
