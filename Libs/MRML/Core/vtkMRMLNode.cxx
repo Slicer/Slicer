@@ -1174,6 +1174,7 @@ void vtkMRMLNode::UpdateNthNodeReference(vtkMRMLNodeReference *reference, int n)
 
   this->SetAndObserveNthNodeReference(reference->GetReferenceRole(), n, node, events);
   reference->ReferencedNode = node;
+  reference->ReferencingNode = this;
 }
 
 
@@ -1550,7 +1551,7 @@ int vtkMRMLNode::GetNumberOfNodeReferences(const char* referenceRole)
     for (it = references.begin(); it != references.end(); it++)
       {
       vtkMRMLNodeReference* reference = *it;
-      if (reference->GetReferencedNodeID() != 0)
+      if (reference->GetReferencedNodeID() && strlen(reference->GetReferencedNodeID()) > 0)
         {
         n++;
         }
