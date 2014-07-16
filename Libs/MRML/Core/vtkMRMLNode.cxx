@@ -1174,7 +1174,6 @@ void vtkMRMLNode::UpdateNthNodeReference(vtkMRMLNodeReference *reference, int n)
 
   this->SetAndObserveNthNodeReference(reference->GetReferenceRole(), n, node, events);
   reference->ReferencedNode = node;
-  reference->ReferencingNode = this;
 }
 
 
