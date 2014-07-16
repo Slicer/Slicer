@@ -21,9 +21,10 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
-class vtkMRMLDisplayableNodeTestHelper1;
+class vtkMRMLDisplayableHierarchyNodeTestHelper1;
 
 //----------------------------------------------------------------------------
 namespace
@@ -56,23 +57,24 @@ int vtkMRMLDisplayableHierarchyNodeTest1(int vtkNotUsed(argc),
 }
 
 //----------------------------------------------------------------------------
-class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
+class vtkMRMLDisplayableHierarchyNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayableNodeTestHelper1 *New(){return new vtkMRMLDisplayableNodeTestHelper1;};
+  static vtkMRMLDisplayableHierarchyNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLDisplayableNodeTestHelper1, vtkMRMLDisplayableNode);
+  vtkTypeMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1, vtkMRMLDisplayableNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLDisplayableNodeTestHelper1;
+    return vtkMRMLDisplayableHierarchyNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
     return "vtkMRMLNodeTestHelper1";
     }
 };
+vtkStandardNewMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1);
 
 namespace
 {
@@ -148,7 +150,7 @@ bool TestHierarchyNodeCount()
     return EXIT_FAILURE;
     }
   // now add a real child
-  vtkNew<vtkMRMLDisplayableNodeTestHelper1> displayableNode;
+  vtkNew<vtkMRMLDisplayableHierarchyNodeTestHelper1> displayableNode;
   scene->AddNode(displayableNode.GetPointer());
 
   node1->SetDisplayableNodeID(displayableNode->GetID());

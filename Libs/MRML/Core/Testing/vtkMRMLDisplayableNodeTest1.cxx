@@ -19,6 +19,7 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
@@ -26,9 +27,9 @@ class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayableNodeTestHelper1 *New(){return new vtkMRMLDisplayableNodeTestHelper1;};
+  static vtkMRMLDisplayableNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLDisplayableNodeTestHelper1, vtkMRMLDisplayableNode);
+  vtkTypeMacro(vtkMRMLDisplayableNodeTestHelper1, vtkMRMLDisplayableNode);
 
   // Return the raw list of display nodes. Elements can be 0 even if the node
   // associated to the node ID exists in the scene.
@@ -44,32 +45,35 @@ public:
     }
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLDisplayableNodeTestHelper1;
+    return vtkMRMLDisplayableNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
     return "vtkMRMLDisplayableNodeTestHelper1";
     }
 };
+vtkStandardNewMacro(vtkMRMLDisplayableNodeTestHelper1);
 
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayNodeTestHelper : public vtkMRMLDisplayNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayNodeTestHelper *New(){return new vtkMRMLDisplayNodeTestHelper;};
+  static vtkMRMLDisplayNodeTestHelper *New();
 
-  vtkTypeMacro( vtkMRMLDisplayNodeTestHelper, vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLDisplayNodeTestHelper, vtkMRMLDisplayNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLDisplayNodeTestHelper;
+    return vtkMRMLDisplayNodeTestHelper::New();
     }
   virtual const char* GetNodeTagName()
     {
     return "vtkMRMLDisplayNodeTestHelper";
     }
+
 };
+vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper);
 
 bool TestAddDisplayNodeID();
 bool TestAddDisplayNodeIDWithNoScene();
