@@ -38,28 +38,6 @@ public:
     return "vtkMRMLVolumeNodeTestHelper1";
     }
 
-  double *GetIToRASDirection()
-    {
-    double dir[3];
-    vtkMRMLVolumeNode::GetIToRASDirection(dir);
-    double *retdir = dir;
-    return retdir;
-    }
-  double *GetJToRASDirection()
-    {
-    double dir[3];
-    vtkMRMLVolumeNode::GetJToRASDirection(dir);
-    double *retdir = dir;
-    return retdir;
-    }
-  double *GetKToRASDirection()
-    {
-    double dir[3];
-    vtkMRMLVolumeNode::GetKToRASDirection(dir);
-    double *retdir = dir;
-    return retdir;
-    }
-
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLVolumeArchetypeStorageNode::New(); }
 };
 vtkStandardNewMacro(vtkMRMLVolumeNodeTestHelper1);

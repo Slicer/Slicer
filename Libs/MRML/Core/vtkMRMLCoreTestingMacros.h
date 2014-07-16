@@ -288,8 +288,9 @@
     double y = vtkMath::Random() * max;                              \
     double z = vtkMath::Random() * max;                              \
     object->Set##variable( x, y, z );                                \
-    double *val = object->Get##variable();                           \
-    if( val == NULL || val[0] != x || val[1] != y || val[2] != z )  \
+    double val[3] = {0.0, 0.0, 0.0};                                 \
+    object->Get##variable(val);                                      \
+    if( val[0] != x || val[1] != y || val[2] != z )                  \
       {                                                             \
       std::cerr << "Error in Set/Get"#variable << " with " << x << ", " << y << ", " << z << std::endl; \
       return EXIT_FAILURE;                                          \
