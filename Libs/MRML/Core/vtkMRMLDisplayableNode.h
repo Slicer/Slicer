@@ -79,33 +79,21 @@ public:
   ///
   /// Convenience method that sets the first display node ID.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  inline void SetAndObserveDisplayNodeID(const char *displayNodeID)
-  {
-    this->SetAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
-  }
+  void SetAndObserveDisplayNodeID(const char *displayNodeID);
 
   ///
   /// Convenience method that adds a display node ID at the end of the list.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  inline void AddAndObserveDisplayNodeID(const char *displayNodeID)
-  {
-    this->AddAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
-  }
+  void AddAndObserveDisplayNodeID(const char *displayNodeID);
 
   ///
   /// Convenience method that removes the Nth display node ID from the list
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  inline void RemoveNthDisplayNodeID(int n)
-  {
-    this->RemoveNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n);
-  }
+  void RemoveNthDisplayNodeID(int n);
 
   ///
   /// Remove all display node IDs and associated display nodes.
-  inline void RemoveAllDisplayNodeIDs()
-  {
-    this->RemoveAllNodeReferenceIDs(this->GetDisplayNodeReferenceRole());
-  }
+  void RemoveAllDisplayNodeIDs();
 
   ///
   /// Set and observe the Nth display node ID in the list.
@@ -121,43 +109,28 @@ public:
   /// scan the scene if the node was not yet cached.
   /// \sa SetAndObserveDisplayNodeID(const char*),
   /// AddAndObserveDisplayNodeID(const char *), RemoveNthDisplayNodeID(int)
-  inline void SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID)
-  {
-    this->SetAndObserveNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n, displayNodeID);
-  }
+  void SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID);
 
   ///
   /// Return true if displayNodeID is in the display node ID list.
-  inline bool HasDisplayNodeID(const char* displayNodeID)
-  {
-    return this->HasNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
-  }
+  bool HasDisplayNodeID(const char* displayNodeID);
 
   ///
   /// Return the number of display node IDs (and display nodes as they always
   /// have the same size).
-  inline int GetNumberOfDisplayNodes()
-  {
-    return this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
-  }
+  int GetNumberOfDisplayNodes();
 
   ///
   /// Return the string of the Nth display node ID. Or 0 if no such
   /// node exist.
   /// Warning, a temporary char generated from a std::string::c_str()
   /// is returned.
-  inline const char *GetNthDisplayNodeID(int n)
-  {
-    return this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n);
-  }
+  const char *GetNthDisplayNodeID(int n);
 
   ///
   /// Utility function that returns the first display node id.
   /// \sa GetNthDisplayNodeID(int), GetDisplayNode()
-  inline const char *GetDisplayNodeID()
-  {
-    return this->GetNthDisplayNodeID(0);
-  }
+  const char *GetDisplayNodeID();
 
   ///
   /// Get associated display MRML node. Can be 0 in temporary states; e.g. if
@@ -174,10 +147,7 @@ public:
   ///
   /// Utility function that returns the first display node.
   /// \sa GetNthDisplayNode(int), GetDisplayNodeID()
-  inline vtkMRMLDisplayNode* GetDisplayNode()
-  {
-    return this->GetNthDisplayNode(0);
-  }
+  vtkMRMLDisplayNode* GetDisplayNode();
 
   /// \deprecated GetDisplayNodes
   /// Obsolete utility function that provides an unsafe API.
@@ -235,41 +205,19 @@ public:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
-  {
-    Superclass::OnNodeReferenceAdded(reference);
-    if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
-      {
-      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
-      }
-  }
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
 
   ///
   /// Called when a node reference ID is modified.
-  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
-  {
-    Superclass::OnNodeReferenceModified(reference);
-    if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
-    {
-      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
-    }
-  }
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
-  {
-    Superclass::OnNodeReferenceRemoved(reference);
-    if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
-    {
-      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
-    }
-  }
-
+  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference);
 
  private:
-  ///
-   /// Internally cached list of display nodes used ONLY to return the vector of node in GetDisplayNodes()
+
+  /// Internally cached list of display nodes used ONLY to return the vector of node in GetDisplayNodes()
   /// DON'T USE this variable anywhere else
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;
 };
