@@ -73,20 +73,9 @@ public:
 
   ///
   /// String ID of the storage MRML node
-  void SetAndObserveStorageNodeID(const char *storageNodeID)
-  {
-    this->SetAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
-  }
-
-  void AddAndObserveStorageNodeID(const char *storageNodeID)
-  {
-    this->AddAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
-  }
-
-  void SetAndObserveNthStorageNodeID(int n, const char *storageNodeID)
-  {
-    this->SetAndObserveNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n, storageNodeID);
-  }
+  void SetAndObserveStorageNodeID(const char *storageNodeID);
+  void AddAndObserveStorageNodeID(const char *storageNodeID);
+  void SetAndObserveNthStorageNodeID(int n, const char *storageNodeID);
 
   ///
   /// This is describes the type of data stored in the nodes storage node(s).
@@ -99,28 +88,14 @@ public:
   void SetSlicerDataType ( const char *type );
   const char *GetSlicerDataType ();
 
-  int GetNumberOfStorageNodes()
-  {
-    return this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
-  }
-
-  const char *GetNthStorageNodeID(int n)
-  {
-    return this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n);
-  }
-
-  const char *GetStorageNodeID()
-  {
-  return this->GetNthStorageNodeID(0);
-  }
+  int GetNumberOfStorageNodes();
+  const char *GetNthStorageNodeID(int n);
+  const char *GetStorageNodeID();
 
   ///
   /// Get associated display MRML node
   vtkMRMLStorageNode* GetNthStorageNode(int n);
-
   vtkMRMLStorageNode* GetStorageNode();
-
-  //std::vector<vtkMRMLStorageNode*> GetStorageNodes()const;
 
   /// Create a storage node for this node type or NULL if it doesn't have one.
   /// Null by default.
@@ -145,7 +120,7 @@ public:
   /// Allows external code to mark that the storable has been modified
   /// and should therefore be selected for saving by default.
   /// \sa GetStoredTime() StorableModifiedTime Modified() GetModifiedSinceRead()
-  virtual void StorableModified() {this->StorableModifiedTime.Modified();};
+  virtual void StorableModified();
 
  protected:
   vtkMRMLStorableNode();

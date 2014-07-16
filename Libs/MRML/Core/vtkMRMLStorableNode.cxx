@@ -61,6 +61,24 @@ const char* vtkMRMLStorableNode::GetStorageNodeReferenceMRMLAttributeName()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLStorableNode::SetAndObserveStorageNodeID(const char *storageNodeID)
+{
+  this->SetAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLStorableNode::AddAndObserveStorageNodeID(const char *storageNodeID)
+{
+  this->AddAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLStorableNode::SetAndObserveNthStorageNodeID(int n, const char *storageNodeID)
+{
+  this->SetAndObserveNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n, storageNodeID);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLStorableNode::SetSlicerDataType ( const char *type )
 {
   this->SlicerDataType.clear();
@@ -78,6 +96,23 @@ const char* vtkMRMLStorableNode::GetSlicerDataType ()
   return ( this->SlicerDataType.c_str() );
 }
 
+//----------------------------------------------------------------------------
+int vtkMRMLStorableNode::GetNumberOfStorageNodes()
+{
+  return this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLStorableNode::GetNthStorageNodeID(int n)
+{
+  return this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLStorableNode::GetStorageNodeID()
+{
+return this->GetNthStorageNodeID(0);
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
@@ -344,6 +379,12 @@ bool vtkMRMLStorableNode::GetModifiedSinceRead()
 {
   vtkTimeStamp storedTime = this->GetStoredTime();
   return storedTime < this->StorableModifiedTime;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLStorableNode::StorableModified()
+{
+  this->StorableModifiedTime.Modified();
 }
 
 //---------------------------------------------------------------------------
