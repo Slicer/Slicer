@@ -103,11 +103,15 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
 target_link_libraries(${KIT}CxxTests ${KIT})
 
+#-----------------------------------------------------------------------------
+set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
+
+#-----------------------------------------------------------------------------
 simple_test( vtkMRMLBSplineTransformNodeTest1 )
 simple_test( vtkMRMLCameraNodeTest1 )
 simple_test( vtkMRMLClipModelsNodeTest1 )
 simple_test( vtkMRMLColorNodeTest1 )
-simple_test( vtkMRMLColorTableNodeTest1 ${CMAKE_BINARY_DIR}/Testing/Temporary/colorNamesTicksTest.mrml)
+simple_test( vtkMRMLColorTableNodeTest1 ${TEMP})
 simple_test( vtkMRMLColorTableStorageNodeTest1 )
 simple_test( vtkMRMLCrosshairNodeTest1 )
 simple_test( vtkMRMLdGEMRICProceduralColorNodeTest1 )
