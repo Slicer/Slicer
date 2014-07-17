@@ -18,19 +18,20 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
 class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLStorageNodeTestHelper1 *New(){return new vtkMRMLStorageNodeTestHelper1;};
+  static vtkMRMLStorageNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLStorageNodeTestHelper1;
+    return vtkMRMLStorageNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
@@ -57,6 +58,7 @@ protected:
     ,ReadDataReturnValue(0)
   {}
 };
+vtkStandardNewMacro(vtkMRMLStorageNodeTestHelper1);
 
 //---------------------------------------------------------------------------
 int TestBasics();

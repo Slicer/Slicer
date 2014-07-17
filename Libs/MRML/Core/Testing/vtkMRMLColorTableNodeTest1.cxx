@@ -10,24 +10,27 @@
 
 =========================================================================auto=*/
 
+// MRML includes
 #include "vtkMRMLColorTableNode.h"
-
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLParser.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkMRMLCoreTestingMacros.h"
+// VTK includes
+#include <vtkObjectFactory.h>
 
+//---------------------------------------------------------------------------
 class vtkMRMLColorTableNodeTestHelper1 : public vtkMRMLColorTableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLColorTableNodeTestHelper1 *New(){return new vtkMRMLColorTableNodeTestHelper1;};
+  static vtkMRMLColorTableNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLColorTableNodeTestHelper1,vtkMRMLColorTableNode);
+  vtkTypeMacro(vtkMRMLColorTableNodeTestHelper1,vtkMRMLColorTableNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLColorTableNodeTestHelper1;
+    return vtkMRMLColorTableNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
@@ -37,7 +40,9 @@ public:
   virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
   virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
 };
+vtkStandardNewMacro(vtkMRMLColorTableNodeTestHelper1);
 
+//---------------------------------------------------------------------------
 int vtkMRMLColorTableNodeTest1(int argc, char * argv[] )
 {
   vtkNew<vtkMRMLColorTableNodeTestHelper1> node1;

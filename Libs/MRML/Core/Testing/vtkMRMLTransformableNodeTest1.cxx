@@ -19,25 +19,27 @@
 // VTK includes
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
 class vtkMRMLTransformableNodeTestHelper1 : public vtkMRMLTransformableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLTransformableNodeTestHelper1 *New(){return new vtkMRMLTransformableNodeTestHelper1;};
+  static vtkMRMLTransformableNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLTransformableNodeTestHelper1;
+    return vtkMRMLTransformableNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
     return "vtkMRMLTransformableNodeTestHelper1";
     }
 };
+vtkStandardNewMacro(vtkMRMLTransformableNodeTestHelper1);
 
 //---------------------------------------------------------------------------
 bool TestSetAndObserveTransformNodeID();

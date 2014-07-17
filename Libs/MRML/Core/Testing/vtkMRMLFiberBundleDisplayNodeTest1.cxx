@@ -10,22 +10,25 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
 
-#include "vtkMRMLCoreTestingMacros.h"
-
+//---------------------------------------------------------------------------
 class vtkMRMLFiberBundleDisplayNodeTestHelper1 : public vtkMRMLFiberBundleDisplayNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLFiberBundleDisplayNodeTestHelper1 *New(){return new vtkMRMLFiberBundleDisplayNodeTestHelper1;};
+  static vtkMRMLFiberBundleDisplayNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLFiberBundleDisplayNodeTestHelper1,vtkMRMLFiberBundleDisplayNode);
+  vtkTypeMacro(vtkMRMLFiberBundleDisplayNodeTestHelper1,vtkMRMLFiberBundleDisplayNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLFiberBundleDisplayNodeTestHelper1;
+    return vtkMRMLFiberBundleDisplayNodeTestHelper1::New();
     }
 
   const char * GetTypeAsString()
@@ -44,7 +47,9 @@ public:
     return "Testing is good";
     }
 };
+vtkStandardNewMacro(vtkMRMLFiberBundleDisplayNodeTestHelper1);
 
+//---------------------------------------------------------------------------
 int vtkMRMLFiberBundleDisplayNodeTest1(int , char * [] )
 {
 

@@ -10,24 +10,26 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLStorableNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
 
-#include "vtkMRMLCoreTestingMacros.h"
-
-#include "vtkMRMLModelStorageNode.h"
-
+//---------------------------------------------------------------------------
 class vtkMRMLStorableNodeTestHelper1 : public vtkMRMLStorableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLStorableNodeTestHelper1 *New(){return new vtkMRMLStorableNodeTestHelper1;};
+  static vtkMRMLStorableNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLStorableNodeTestHelper1,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLStorableNodeTestHelper1,vtkMRMLStorableNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLStorableNodeTestHelper1;
+    return vtkMRMLStorableNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
@@ -38,7 +40,9 @@ public:
   // vtkMRMLStorageNode::New returns NULL
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return vtkMRMLModelStorageNode::New(); }
 };
+vtkStandardNewMacro(vtkMRMLStorableNodeTestHelper1);
 
+//---------------------------------------------------------------------------
 int vtkMRMLStorableNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLStorableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorableNodeTestHelper1 >::New();

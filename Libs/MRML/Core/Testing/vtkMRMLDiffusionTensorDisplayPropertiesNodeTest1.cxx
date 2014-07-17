@@ -10,22 +10,25 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
 
-#include "vtkMRMLCoreTestingMacros.h"
-
+//---------------------------------------------------------------------------
 class vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 : public vtkMRMLDiffusionTensorDisplayPropertiesNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 *New(){return new vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1;};
+  static vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1,vtkMRMLDiffusionTensorDisplayPropertiesNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1,vtkMRMLDiffusionTensorDisplayPropertiesNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1;
+    return vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
@@ -35,7 +38,9 @@ public:
   virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
   virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
 };
+vtkStandardNewMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1);
 
+//---------------------------------------------------------------------------
 int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 >::New();

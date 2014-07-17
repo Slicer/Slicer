@@ -46,7 +46,6 @@ bool TestUnitNodeAttribute(vtkMRMLScene* scene);
 int vtkMRMLUnitNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLUnitNode> node1;
-  node1->DebugOn();
 
   EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 

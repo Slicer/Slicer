@@ -14,18 +14,22 @@
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
 
+// VTK includes
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+
 /// \brief Concrete implementation of vtkMRMLColorNode
 class vtkMRMLColorNodeTestHelper1 : public vtkMRMLColorNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLColorNodeTestHelper1 *New(){return new vtkMRMLColorNodeTestHelper1;};
+  static vtkMRMLColorNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
+  vtkTypeMacro(vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLColorNodeTestHelper1;
+    return vtkMRMLColorNodeTestHelper1::New();
     }
 
   const char * GetTypeAsString()
@@ -39,23 +43,30 @@ public:
     return EXIT_SUCCESS;
     }
   virtual int GetNumberOfColors(){return 1;}
-  virtual bool GetColor(int vtkNotUsed(ind), double* color) {color[0] = 10; color[1] = 100; color[2] = 200; return true;}
+  virtual bool GetColor(int vtkNotUsed(ind), double* color)
+    {
+    color[0] = 10;
+    color[1] = 100;
+    color[2] = 200;
+    return true;
+    }
 };
+vtkStandardNewMacro(vtkMRMLColorNodeTestHelper1);
 
 //---------------------------------------------------------------------------
 bool TestGetColorNameAsFileName();
-bool TestGetColorNameAsFileName(const char* colorName, const char* expectedColorFileName, const char* substr = "_");
+bool TestGetColorNameAsFileName(const char* colorName,
+                                const char* expectedColorFileName,
+                                const char* substr = "_");
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLColorNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLColorNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLColorNodeTestHelper1> node1;
 
-  node1->DebugOn();
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( vtkMRMLColorNodeTestHelper1, node1);
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( vtkMRMLColorNodeTestHelper1, node1.GetPointer());
 
   bool res = true;
   res = TestGetColorNameAsFileName() && res;

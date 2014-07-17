@@ -25,17 +25,20 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkNew.h>
+#include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
 class vtkMRMLTestVolumeNode
   : public vtkMRMLVolumeNode
 {
 public:
-  static vtkMRMLTestVolumeNode *New(){return new vtkMRMLTestVolumeNode;}
-  virtual vtkMRMLNode* CreateNodeInstance(){return new vtkMRMLTestVolumeNode;}
+  // Provide a concrete New.
+  static vtkMRMLTestVolumeNode *New();
+  vtkTypeMacro(vtkMRMLTestVolumeNode,vtkMRMLVolumeNode);
+  virtual vtkMRMLNode* CreateNodeInstance(){return  vtkMRMLTestVolumeNode::New();}
   virtual const char* GetNodeTagName(){return "vtkMRMLTestVolumeNode";}
-  vtkMRMLTestVolumeNode(){}
 };
+vtkStandardNewMacro(vtkMRMLTestVolumeNode);
 
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeNodeEventsTest(int , char * [] )

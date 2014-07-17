@@ -14,17 +14,21 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLHierarchyNode.h"
 
+// VTK includes
+#include <vtkObjectFactory.h>
+
+//---------------------------------------------------------------------------
 class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLHierarchyNodeTestHelper1 *New(){return new vtkMRMLHierarchyNodeTestHelper1;};
+  static vtkMRMLHierarchyNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLHierarchyNodeTestHelper1,vtkMRMLHierarchyNode);
+  vtkTypeMacro(vtkMRMLHierarchyNodeTestHelper1,vtkMRMLHierarchyNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLHierarchyNodeTestHelper1;
+    return vtkMRMLHierarchyNodeTestHelper1::New();
     }
   virtual const char* GetNodeTagName()
     {
@@ -32,7 +36,9 @@ public:
     }
   virtual bool CanApplyNonLinearTransforms() { return false; }
 };
+vtkStandardNewMacro(vtkMRMLHierarchyNodeTestHelper1);
 
+//---------------------------------------------------------------------------
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLHierarchyNode> node1;

@@ -10,22 +10,25 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDisplayNode.h"
 
-#include "vtkMRMLCoreTestingMacros.h"
+// VTK includes
+#include <vtkObjectFactory.h>
 
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayNodeTestHelper1 *New(){return new vtkMRMLDisplayNodeTestHelper1;};
+  static vtkMRMLDisplayNodeTestHelper1 *New();
 
-  vtkTypeMacro( vtkMRMLDisplayNodeTestHelper1,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1,vtkMRMLDisplayNode);
 
   virtual vtkMRMLNode* CreateNodeInstance()
     {
-    return new vtkMRMLDisplayNodeTestHelper1;
+    return vtkMRMLDisplayNodeTestHelper1::New();
     }
 
   const char * GetTypeAsString()
@@ -44,6 +47,7 @@ public:
     return "Testing is good";
     }
 };
+vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper1);
 
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayNodeTest1(int , char * [])
