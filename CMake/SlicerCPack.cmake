@@ -82,6 +82,9 @@ else()
   if(Slicer_USE_OpenIGTLink)
     find_package(OpenIGTLink REQUIRED)
   endif()
+  if(Slicer_BUILD_CLI_SUPPORT)
+    find_package(SlicerExecutionModel REQUIRED)
+  endif()
 
   # Generate qt.conf
   file(WRITE ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
