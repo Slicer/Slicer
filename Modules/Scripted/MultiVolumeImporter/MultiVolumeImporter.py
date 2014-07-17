@@ -220,15 +220,13 @@ class MultiVolumeImporterWidget:
 
     # allocate multivolume
     mvImage = vtk.vtkImageData()
-    mvImage.SetScalarType(frame0.GetImageData().GetScalarType())
     mvImage.SetExtent(frame0Extent)
-    mvImage.SetNumberOfScalarComponents(nFrames)
+    mvImage.AllocateScalars(frame0.GetImageData().GetScalarType(), nFrames)
 
     extent = frame0.GetImageData().GetExtent()
     numPixels = float(extent[1]+1)*(extent[3]+1)*(extent[5]+1)*nFrames
     scalarType = frame0.GetImageData().GetScalarType()
     print('Will now try to allocate memory for '+str(numPixels)+' pixels of VTK scalar type'+str(scalarType))
-    mvImage.AllocateScalars()
     print('Memory allocated successfully')
     mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
