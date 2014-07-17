@@ -193,7 +193,7 @@ int vtkMRMLProceduralColorNode::GetNumberOfColors()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLProceduralColorNode::GetColor(int entry, double* color)
+bool vtkMRMLProceduralColorNode::GetColor(int entry, double color[4])
 {
   if (entry < 0 || entry >= this->GetNumberOfColors())
     {

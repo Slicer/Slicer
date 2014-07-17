@@ -43,7 +43,7 @@ public:
     return EXIT_SUCCESS;
     }
   virtual int GetNumberOfColors(){return 1;}
-  virtual bool GetColor(int vtkNotUsed(ind), double* color)
+  virtual bool GetColor(int vtkNotUsed(ind), double color[4])
     {
     color[0] = 10;
     color[1] = 100;

@@ -450,7 +450,7 @@ int vtkMRMLFreeSurferProceduralColorNode::GetNumberOfColors()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLFreeSurferProceduralColorNode::GetColor(int entry, double* color)
+bool vtkMRMLFreeSurferProceduralColorNode::GetColor(int entry, double color[4])
 {
   if (entry < 0 || entry >= this->GetNumberOfColors())
     {

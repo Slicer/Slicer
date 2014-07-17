@@ -122,7 +122,7 @@ public:
   vtkSetStringMacro(LabelsFileName);
 
   virtual int GetNumberOfColors();
-  virtual bool GetColor(int entry, double* color);
+  virtual bool GetColor(int entry, double color[4]);
 
 protected:
   vtkMRMLFreeSurferProceduralColorNode();

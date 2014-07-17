@@ -1364,7 +1364,7 @@ int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLColorTableNode::GetColor(int entry, double* color)
+bool vtkMRMLColorTableNode::GetColor(int entry, double color[4])
 {
   if (entry < 0 || entry >= this->GetNumberOfColors())
     {

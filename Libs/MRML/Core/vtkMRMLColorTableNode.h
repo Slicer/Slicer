@@ -206,7 +206,7 @@ public:
 
   /// Retrieve the color associated to the index
   /// Return true if the color exists, false otherwise
-  virtual bool GetColor(int entry, double* color);
+  virtual bool GetColor(int entry, double color[4]);
 
   ///
   /// clear out the names list

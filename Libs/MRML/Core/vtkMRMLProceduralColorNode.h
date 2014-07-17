@@ -97,7 +97,7 @@ public:
   bool SetNameFromColor(int index);
 
   virtual int GetNumberOfColors();
-  virtual bool GetColor(int entry, double* color);
+  virtual bool GetColor(int entry, double color[4]);
 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();

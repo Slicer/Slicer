@@ -147,7 +147,7 @@ public:
   /// Retrieve the color associated to the index
   /// Must be reimplemented in the derived classes
   /// Return 1 if the color exists, 0 otherwise
-  virtual bool GetColor(int ind, double* color);
+  virtual bool GetColor(int ind, double color[4]);
 
   ///
   /// Name of the file name from which to read color information

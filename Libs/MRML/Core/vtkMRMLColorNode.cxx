@@ -469,7 +469,7 @@ int vtkMRMLColorNode::GetNumberOfColors()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLColorNode::GetColor(int vtkNotUsed(index), double* vtkNotUsed(color))
+bool vtkMRMLColorNode::GetColor(int vtkNotUsed(index), double vtkNotUsed(color)[4])
 {
   return false;
 }
