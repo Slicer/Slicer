@@ -1235,9 +1235,14 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
       return;
     }
 
-  if (this->GetLookupTable()->GetNumberOfTableValues() != n)
+  int numberOfTableValues = this->GetLookupTable()->GetNumberOfTableValues();
+  if (numberOfTableValues != n)
     {
     this->GetLookupTable()->SetNumberOfTableValues(n);
+    for (int indx = numberOfTableValues; indx < n; indx++)
+      {
+      this->GetLookupTable()->SetTableValue(indx, 0.0, 0.0, 0.0);
+      }
     }
 
   if (this->Names.size() != (unsigned int)n)
