@@ -45,8 +45,9 @@ vtkMRMLVolumeHeaderlessStorageNode::vtkMRMLVolumeHeaderlessStorageNode()
   this->FileScalarType = VTK_SHORT;
   this->FileNumberOfScalarComponents = 0;
   this->FileLittleEndian = 0;
-  memset(this->FileDimensions,0,2*sizeof(int));
+  memset(this->FileDimensions,0,3*sizeof(int));
   memset(this->FileSpacing,0,3*sizeof(double));
+  this->CenterImage = 0;
 
   // ScanOrder can never be NULL
   this->FileScanOrder = new char[3];
