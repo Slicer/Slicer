@@ -945,12 +945,14 @@ MRMLIDImageIO
     }
 
   // convert gradients
+  int disabledModify = dw->StartModify();
   dw->SetNumberOfGradients( gradients.size() );
   for (unsigned int i=0; i < gradients.size(); ++i)
     {
     dw->SetBValue(i, bvalues[i]);
     dw->SetDiffusionGradient(i, &gradients[i][0]);
     }
+  dw->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
