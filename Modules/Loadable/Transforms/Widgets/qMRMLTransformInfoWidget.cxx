@@ -110,7 +110,6 @@ qMRMLTransformInfoWidget::~qMRMLTransformInfoWidget()
 void qMRMLTransformInfoWidget::processEvent(
   vtkObject* caller, void* callData, unsigned long eventId, void* clientData)
 {
-  Q_D(qMRMLTransformInfoWidget);
   Q_UNUSED(caller);
   Q_UNUSED(callData);
   Q_UNUSED(clientData);
