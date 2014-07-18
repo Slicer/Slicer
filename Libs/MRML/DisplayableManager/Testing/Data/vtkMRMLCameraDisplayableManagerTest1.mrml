@@ -1,4 +1,4 @@
-<MRML >
+<MRML  version="Slicer4.4.0" >
 <Selection
   id="vtkMRMLSelectionNodeSingleton"  name="Selection"  hideFromEditors="true"  selectable="true"  selected="false"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activePlaceNodeID="NULL"  activePlaceNodeClassName="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="NULL"></Selection>
  <Interaction
