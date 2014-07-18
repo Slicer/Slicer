@@ -115,7 +115,7 @@ if(Slicer_BUILD_DICOM_SUPPORT AND Slicer_USE_PYTHONQT_WITH_OPENSSL)
   list(APPEND Slicer_DEPENDENCIES pydicom)
 endif()
 
-if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND NOT WIN32)
+if(Slicer_USE_PYTHONQT AND Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES GitPython python-chardet)
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL OR Slicer_USE_SYSTEM_python)
     # PyGithub requires SSL support in Python

@@ -29,6 +29,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  # See #3749 - Delete test files causing packaging to fail on windows
+  ExternalProject_PythonModule_InstallTreeCleanup(${proj} "git" "test")
+
   set(_EP_${proj}_SETUPTOOLS_LOCK 1)
 
 else()

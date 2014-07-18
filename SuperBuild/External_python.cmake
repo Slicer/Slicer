@@ -190,3 +190,39 @@ if(WIN32)
   mark_as_superbuild(VARS PYTHON_DEBUG_LIBRARY LABELS "FIND_PACKAGE")
   ExternalProject_Message(${proj} "PYTHON_DEBUG_LIBRARY:${PYTHON_DEBUG_LIBRARY}")
 endif()
+
+#!
+#! ExternalProject_PythonModule_InstallTreeCleanup(<proj> <modname> "[<dirname1>;[<dirname2>;[...]]]"))
+#!
+#! Add post-install cleanup step to project <proj>. For each <dirname>, this step will
+#! import the module <modname> and delete the <dirname> folder located in the module
+#! directory.
+#!
+#! This function is particularly useful to remove option and too long directories
+#! from python module install tree. This function was first developer to address
+#! issue #3749.
+#!
+function(ExternalProject_PythonModule_InstallTreeCleanup proj modname dirnames)
+  ExternalProject_Get_Property(${proj} tmp_dir)
+  set(_file "${tmp_dir}/${proj}_install_tree_cleanup.py")
+  set(_content
+"import ${modname}
+import os.path
+import shutil
+")
+  foreach(dirname ${dirnames})
+    set(_content "${_content}
+dir=os.path.join(os.path.dirname(${modname}.__file__), '${dirname}')
+print('Removing %s' % dir)
+shutil.rmtree(dir, True)
+print('Removing %s [done]' % dir)
+")
+  endforeach()
+  file(WRITE ${_file} ${_content})
+
+  ExternalProject_Add_Step(${proj} install_tree_cleanup
+    COMMAND ${PYTHON_EXECUTABLE} ${_file}
+    COMMENT "Performing install tree cleanup for '${proj}'"
+    DEPENDEES install
+    )
+endfunction()
