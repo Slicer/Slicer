@@ -58,7 +58,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   ///
   void SetNumberOfGradients(int val);
-  vtkGetMacro(NumberOfGradients,int);
+  int GetNumberOfGradients();
 
   ///
   void SetDiffusionGradient(int val, const double g[3]);
@@ -102,12 +102,12 @@ protected:
   vtkMRMLDiffusionWeightedVolumeNode(const vtkMRMLDiffusionWeightedVolumeNode&);
   void operator=(const vtkMRMLDiffusionWeightedVolumeNode&);
 
+  void SetNumberOfGradientsInternal(int val);
+
   double MeasurementFrameMatrix[3][3];
 
   vtkDoubleArray *DiffusionGradients;
   vtkDoubleArray *BValues;
-
-  int NumberOfGradients;
 
   vtkImageExtractComponents *ExtractComponents;
 

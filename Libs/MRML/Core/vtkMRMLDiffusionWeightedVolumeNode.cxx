@@ -29,13 +29,11 @@ vtkMRMLNodeNewMacro(vtkMRMLDiffusionWeightedVolumeNode);
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode::vtkMRMLDiffusionWeightedVolumeNode()
 {
-  this->NumberOfGradients = 7; //6 gradients + 1 baseline
   this->DiffusionGradients = vtkDoubleArray::New();
   this->DiffusionGradients->SetNumberOfComponents(3);
-  this->DiffusionGradients->SetNumberOfTuples(this->NumberOfGradients);
-
   this->BValues = vtkDoubleArray::New();
-  this->BValues->SetNumberOfTuples(this->NumberOfGradients);
+
+  this->SetNumberOfGradientsInternal(7); //6 gradients + 1 baseline
 
   for(int i=0; i<3; i++)
     {
@@ -146,7 +144,6 @@ void vtkMRMLDiffusionWeightedVolumeNode::ReadXMLAttributes(const char** atts)
           }
         this->DiffusionGradients->InsertNextTuple(g);
         }
-      this->NumberOfGradients = this->DiffusionGradients->GetNumberOfTuples();
       }
     if (!strcmp(attName, "bValues"))
       {
@@ -243,18 +240,39 @@ void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetNumberOfGradients(int val)
 {
-  if (this->NumberOfGradients != val)
+  if (this->GetNumberOfGradients() == val)
     {
-    this->DiffusionGradients->Reset();
-    this->BValues->Reset();
-    vtkDebugMacro ("setting num gradients to " << val);
-    // internal array for storage of gradient vectors
-    this->DiffusionGradients->SetNumberOfTuples(val);
-    this->BValues->SetNumberOfTuples(val);
-    // this class's info
-    this->NumberOfGradients = val;
-    this->Modified();
+    return;
     }
+  this->SetNumberOfGradientsInternal(val);
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionWeightedVolumeNode::SetNumberOfGradientsInternal(int val)
+{
+  vtkDebugMacro(<< "setting num gradients to " << val);
+  this->DiffusionGradients->Reset();
+  this->BValues->Reset();
+  // internal array for storage of gradient vectors
+  this->DiffusionGradients->SetNumberOfTuples(val);
+  this->BValues->SetNumberOfTuples(val);
+  for (int tupleIdx = 0; tupleIdx < val; ++tupleIdx)
+    {
+    for (int componentIdx = 0;
+         componentIdx < this->DiffusionGradients->GetNumberOfComponents();
+         ++componentIdx)
+      {
+      this->DiffusionGradients->SetComponent(tupleIdx, componentIdx, 0.0);
+      }
+    this->BValues->SetValue(tupleIdx, 0.0);
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionWeightedVolumeNode::GetNumberOfGradients()
+{
+  return this->DiffusionGradients->GetNumberOfTuples();
 }
 
 //----------------------------------------------------------------------------
@@ -276,7 +294,6 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num,const doub
 void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray *grad)
 {
   this->DiffusionGradients->DeepCopy(grad);
-  this->NumberOfGradients = this->DiffusionGradients->GetNumberOfTuples();
   this->Modified();
 }
 
@@ -362,10 +379,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode *anode)
     {
     this->BValues->DeepCopy(node->BValues);
     }
-  this->NumberOfGradients= node->NumberOfGradients;
-
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -387,7 +401,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::PrintSelf(ostream& os, vtkIndent indent
   os << "Gradients:\n";
   for (int g =0; g < this->DiffusionGradients->GetNumberOfTuples(); g++)
     {
-    for(int j=0; j<3; j++)
+    for(int j=0; j < this->DiffusionGradients->GetNumberOfComponents(); j++)
       {
       os << indent << " " << this->DiffusionGradients->GetComponent(g,j);
       }
