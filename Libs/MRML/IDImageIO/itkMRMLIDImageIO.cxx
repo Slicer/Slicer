@@ -22,6 +22,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
 #include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
@@ -30,6 +31,7 @@ Version:   $Revision: 1.18 $
 
 namespace itk {
 
+//----------------------------------------------------------------------------
 MRMLIDImageIO
 ::MRMLIDImageIO()
 {
@@ -39,11 +41,13 @@ MRMLIDImageIO
   this->NodeID = "";
 }
 
+//----------------------------------------------------------------------------
 MRMLIDImageIO
 ::~MRMLIDImageIO()
 {
 }
 
+//----------------------------------------------------------------------------
 bool
 MRMLIDImageIO
 ::IsAVolumeNode(const char* filename)
@@ -60,6 +64,7 @@ MRMLIDImageIO
   return false;
 }
 
+//----------------------------------------------------------------------------
 vtkMRMLVolumeNode *
 MRMLIDImageIO
 ::FileNameToVolumeNodePtr(const char* filename)
@@ -151,7 +156,7 @@ MRMLIDImageIO
   return 0;
 }
 
-
+//----------------------------------------------------------------------------
 bool
 MRMLIDImageIO
 ::CanReadFile(const char* filename)
@@ -159,6 +164,7 @@ MRMLIDImageIO
   return this->IsAVolumeNode(filename);
 }
 
+//----------------------------------------------------------------------------
 void
 MRMLIDImageIO
 ::ReadImageInformation()
@@ -346,6 +352,7 @@ MRMLIDImageIO
     }
 }
 
+//----------------------------------------------------------------------------
 // Read from the MRML scene
 void
 MRMLIDImageIO
@@ -373,6 +380,7 @@ MRMLIDImageIO
     }
 }
 
+//----------------------------------------------------------------------------
 // Read from the MRML scene
 bool
 MRMLIDImageIO
@@ -381,6 +389,7 @@ MRMLIDImageIO
   return true;
 }
 
+//----------------------------------------------------------------------------
 // Read from the MRML scene
 void
 MRMLIDImageIO
@@ -389,8 +398,7 @@ MRMLIDImageIO
   return;
 }
 
-
-
+//----------------------------------------------------------------------------
 // Read from the MRML scene
 void *
 MRMLIDImageIO
@@ -418,6 +426,7 @@ MRMLIDImageIO
   return static_cast< void * >( 0 );
 }
 
+//----------------------------------------------------------------------------
 bool
 MRMLIDImageIO
 ::CanWriteFile(const char* filename)
@@ -425,14 +434,15 @@ MRMLIDImageIO
   return this->IsAVolumeNode(filename);
 }
 
+//----------------------------------------------------------------------------
 // Write to the MRML scene
-
 void
 MRMLIDImageIO
 ::WriteImageInformation()
 {
 }
 
+//----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 void
 MRMLIDImageIO
@@ -603,15 +613,14 @@ MRMLIDImageIO
     this->SetDWNodeValues(dw, thisDic);
     }
 
-
   // Cleanup
   lpsToRas->Delete();
   ijkToLps->Delete();
   rasToIjk->Delete();
 }
 
+//----------------------------------------------------------------------------
 // Write to the MRML scene
-
 void
 MRMLIDImageIO
 ::Write(const void *buffer)
@@ -728,7 +737,7 @@ MRMLIDImageIO
     }
 }
 
-
+//----------------------------------------------------------------------------
 void
 MRMLIDImageIO
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -742,6 +751,7 @@ MRMLIDImageIO
 
 }
 
+//----------------------------------------------------------------------------
 void
 MRMLIDImageIO
 ::SetDWDictionaryValues(MetaDataDictionary &dict,
@@ -830,6 +840,7 @@ MRMLIDImageIO
     }
 }
 
+//----------------------------------------------------------------------------
 void
 MRMLIDImageIO
 ::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw,
@@ -942,10 +953,7 @@ MRMLIDImageIO
     }
 }
 
-
-
-
-
+//----------------------------------------------------------------------------
 void
 MRMLIDImageIO
 ::SetDTDictionaryValues(MetaDataDictionary &dict,
@@ -985,6 +993,7 @@ MRMLIDImageIO
                                          measurementFrameValue);
 }
 
+//----------------------------------------------------------------------------
 void
 MRMLIDImageIO
 ::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
