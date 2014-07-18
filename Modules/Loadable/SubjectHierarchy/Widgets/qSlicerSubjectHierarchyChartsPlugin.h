@@ -52,7 +52,7 @@ public:
 public:
   /// Determines if a non subject hierarchy node can be placed in the hierarchy, and gets a confidence
   ///   value for a certain MRML node (usually the type and possibly attributes are checked)
-  /// \param node Node to be added to the hierarchy
+  /// \param nodeToAdd Node to be added to the hierarchy
   /// \param parent Prospective parent of the node to add.
   ///   Default value is NULL. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the

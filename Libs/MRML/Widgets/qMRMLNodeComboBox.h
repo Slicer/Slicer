@@ -258,7 +258,7 @@ public slots:
   /// Use setCurrentNodeID instead
   void setCurrentNode(const QString& nodeID);
 
-  /// Select the node to be current. If \nodeId is invalid (or can't be found
+  /// Select the node to be current. If \a nodeID is invalid (or can't be found
   /// in the scene), the current node becomes 0.
   void setCurrentNodeID(const QString& nodeID);
 

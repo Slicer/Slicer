@@ -156,10 +156,7 @@ public:
   virtual bool GetModifiedSinceRead();
 
 protected:
-  /// Use ::New() to get a new instance.
   vtkMRMLVolumePropertyNode(void);
-
-  /// Use ->Delete() to delete object
   ~vtkMRMLVolumePropertyNode(void);
 
   static int NodesFromString(const std::string& dataString, double* &data, int nodeSize);

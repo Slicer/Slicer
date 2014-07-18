@@ -738,13 +738,14 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = "@Slicer_BINARY_DIR@" \
-                         "@Slicer_SOURCE_DIR@/Base/GUI" \
+EXCLUDE                = "@Slicer_SOURCE_DIR@/Base/Python" \
+                         "@Slicer_SOURCE_DIR@/Modules/Scripted" \
                          "@Slicer_SOURCE_DIR@/CMake" \
                          "@Slicer_SOURCE_DIR@/Extensions" \
                          "@Slicer_SOURCE_DIR@/Resources" \
                          "@Slicer_SOURCE_DIR@/SuperBuild" \
-                         "@Slicer_SOURCE_DIR@/Utilities/Scripts"
+                         "@Slicer_SOURCE_DIR@/Utilities/Scripts" \
+                         "@Slicer_SOURCE_DIR@/Utilities/Templates"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -765,6 +766,8 @@ EXCLUDE_PATTERNS       = moc_*.cxx \
                          */Testing/* \
                          */Plugins/* \
                          */CMake/* \
+                         q*Export.h \
+                         vtk*Win32Header.h \
                          @Slicer_ADDITIONAL_EXCLUDE_PATTERN@
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names

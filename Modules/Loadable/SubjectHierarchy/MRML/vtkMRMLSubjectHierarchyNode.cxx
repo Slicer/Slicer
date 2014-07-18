@@ -692,7 +692,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetChildWithName(vtkMR
 
 //---------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-  vtkMRMLScene* scene, vtkMRMLSubjectHierarchyNode* parentNode, const char* level, const char* nodeName, vtkMRMLNode* associatedNode/*=NULL*/)
+  vtkMRMLScene* scene, vtkMRMLSubjectHierarchyNode* parent, const char* level, const char* nodeName, vtkMRMLNode* associatedNode/*=NULL*/)
 {
   // Create subject hierarchy node
   vtkSmartPointer<vtkMRMLSubjectHierarchyNode> childSubjectHierarchyNode =
@@ -702,9 +702,9 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
   std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX;
   childSubjectHierarchyNode->SetName(shNodeName.c_str());
   scene->AddNode(childSubjectHierarchyNode);
-  if (parentNode)
+  if (parent)
     {
-    childSubjectHierarchyNode->SetParentNodeID(parentNode->GetID());
+    childSubjectHierarchyNode->SetParentNodeID(parent->GetID());
     }
   if (associatedNode)
     {

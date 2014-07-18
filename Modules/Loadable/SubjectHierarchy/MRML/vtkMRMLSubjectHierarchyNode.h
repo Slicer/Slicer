@@ -89,23 +89,28 @@ public:
   static vtkMRMLSubjectHierarchyNode* GetChildWithName(vtkMRMLSubjectHierarchyNode* parent, const char* name, vtkMRMLScene* scene=NULL);
 
   /// Create subject hierarchy node in the scene under a specified parent
-  /// \scene MRML scene
-  /// \parent Parent node under which the created node is put. If NULL, then the child will be a top-level node
-  /// \level Level string of the created node
-  /// \nodeName Name of the node (subject hierarchy postfix is added to it)
-  /// \associatedNode Data node to associate with the created subject hierarchy node. If NULL, then no node will be associated
-  static vtkMRMLSubjectHierarchyNode* CreateSubjectHierarchyNode(vtkMRMLScene* scene, vtkMRMLSubjectHierarchyNode* parentNode, const char* level, const char* nodeName, vtkMRMLNode* associatedNode=NULL);
+  /// \param scene MRML scene
+  /// \param parent Parent node under which the created node is put. If NULL, then the child will be a top-level node
+  /// \param level Level string of the created node
+  /// \param nodeName Name of the node (subject hierarchy postfix is added to it)
+  /// \param associatedNode Data node to associate with the created subject hierarchy node. If NULL, then no node will be associated
+  static vtkMRMLSubjectHierarchyNode* CreateSubjectHierarchyNode(vtkMRMLScene* scene,
+                                                                 vtkMRMLSubjectHierarchyNode* parent,
+                                                                 const char* level,
+                                                                 const char* nodeName,
+                                                                 vtkMRMLNode* associatedNode=NULL);
 
 public:
   /// Get node associated with this hierarchy node.
   /// Note: Override of vtkMRMLHierarchyNode::GetAssociatedNode to handle nested associations to avoid conflicts.
   /// E.g. a data node is associated to both a ModelHierarchy and a SubjectHierarchy node. In that case the first associated hierarchy
   /// node is returned by the utility function, which is a non-deterministic behavior. To avoid this we use nested associations. In the
-  /// example case the associations are as follows: SubjectHierarchy -> ModelHierarchy -> DataNode
+  /// example case the associations are as follows: <pre>SubjectHierarchy -> ModelHierarchy -> DataNode</pre>
   virtual vtkMRMLNode* GetAssociatedNode();
 
   /// Find all associated children nodes of a specified class in the hierarchy.
   /// Re-implemented to handle nested associations \sa GetAssociatedNode
+  /// \param children Collection updated with the list of children nodes.
   /// \param childClass Name of the class we are looking for. NULL returns all associated children nodes.
   virtual void GetAssociatedChildrenNodes(vtkCollection *children, const char* childClass=NULL);
 
@@ -122,13 +127,13 @@ public:
   bool IsLevel(const char* level);
 
   /// Get attribute value for a node from an upper level in the subject hierarchy
-  /// \attributeName Name of the requested attribute
-  /// \level Level of the ancestor node we look for the attribute in (e.g. SubjectHierarchy_LEVEL_STUDY). If NULL, then look all the way up to the subject
+  /// \param attributeName Name of the requested attribute
+  /// \param level Level of the ancestor node we look for the attribute in (e.g. SubjectHierarchy_LEVEL_STUDY). If NULL, then look all the way up to the subject
   /// \return Attribute value from the lowest level ancestor where the attribute can be found
   const char* GetAttributeFromAncestor(const char* attributeName, const char* level=NULL);
 
   /// Get ancestor subject hierarchy node at a certain level
-  /// \param sourceNode Node where we start searching. Can be subject hierarchy or associated node
+  /// \param level Level of the ancestor node we start searching.
   vtkMRMLSubjectHierarchyNode* GetAncestorAtLevel(const char* level);
 
   /// Get node name without the subject hierarchy postfix

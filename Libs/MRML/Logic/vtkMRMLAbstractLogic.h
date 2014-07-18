@@ -156,16 +156,17 @@ public:
   /// Set and observe the MRMLScene
   void SetMRMLScene(vtkMRMLScene * newScene);
 
-  /// <HACK> Still here for EMSegment </HACK>
+  /// @cond
+  /// \deprecated Still here for EMSegment
   /// Set and observe MRML Scene. In order to provide a single method to set
   /// the scene, consider overloading SetMRMLSceneInternal().
   /// \note After each module are ported to Qt, these methods will be removed.
   ///  Use SetMRMLScene() instead.
-  /// \deprecated
   /// \sa SetMRMLSceneInternal()
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   void SetAndObserveMRMLScene(vtkMRMLScene * newScene);
   void SetAndObserveMRMLSceneEvents(vtkMRMLScene * newScene, vtkIntArray * events, vtkFloatArray* priorities=0);
+  /// @endcond
 
 protected:
 
@@ -324,9 +325,12 @@ protected:
   /// \sa UpdateFromMRMLScene()
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
+  /// @cond
   /// Convenient method to set and observe the scene.
-  /// \obsolete The Modified event on the scene is deprecated.
+  /// \deprecated The ModifiedEvent on the scene is deprecated.
   void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
+  /// @endcond
+
   /// Typically called by a subclass in the derived SetMRMLSceneInternal to
   /// observe specific node events.
   /// \code

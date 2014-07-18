@@ -30,7 +30,7 @@
 namespace itk
 {
 
-/** \class N4MRIBiasFieldCorrectionImageFilter.h
+/** \class N4MRIBiasFieldCorrectionImageFilter
  * \brief Implementation of the N4 MRI bias field correction algorithm.
  *
  * The nonparametric nonuniform intensity normalization (N4) algorithm

@@ -24,7 +24,9 @@
 namespace itk
 {
 
-/** \class ImageToImageRegistrationMethod base class for the registration methods.
+/** \class ImageToImageRegistrationMethod
+ *
+ * This is the base class for the registration methods.
  *
  * This class has a separate hierarchy from the ImageRegistrationMethod defined
  * in ITK.  The purpose of this class is to provide the common functionalities

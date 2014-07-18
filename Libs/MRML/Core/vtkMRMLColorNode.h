@@ -126,7 +126,7 @@ public:
   /// \sa GetColorNameWithoutSpaces
   std::string GetColorNameAsFileName(int colorIndex, const char *subst = "_");
 
-  /// \obsolete GetColorNameWithoutSpaces
+  /// \deprecated GetColorNameWithoutSpaces
   /// Get the 0th based nth name of this colour, replacing the spaces with
   /// subst
   /// \sa GetColorNameAsFileName

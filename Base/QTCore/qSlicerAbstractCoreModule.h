@@ -133,7 +133,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 
   /// This property holds the URL of the module for the Slicer wiki.
   /// It can be used in the help/ackknowledgement.
-  /// \tbd: obsolete ? should be static ?
+  /// \todo Is the slicerWikiUrl module property obsolete ? should it be static ?
   Q_PROPERTY(QString slicerWikiUrl READ slicerWikiUrl)
 
   /// This property holds the module name list of the module dependencies.

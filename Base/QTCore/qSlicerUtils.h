@@ -85,7 +85,7 @@ public:
   /// expected "IntDir".
   /// \a subDirWithoutIntDir corresponds to N last compononent of the path excluding
   /// the "IntDir".
-  /// \example
+  ///
   /// <table border="1">
   ///   <tr>
   ///     <td><b>Path</b></td>

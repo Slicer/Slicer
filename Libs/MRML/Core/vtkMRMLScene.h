@@ -114,7 +114,7 @@ public:
   ///
   /// The signature with tagName != 0 is useful to add support for
   /// scene backward compatibility. Calls with an obsolete tag should be
-  /// wrapped with: "#if MRML_SUPPORT_VERSION < 0x0X0Y0Z"/"#endif
+  /// wrapped with: <code>\#if MRML_SUPPORT_VERSION < 0x0X0Y0Z</code> and <code>\#endif</code>
   /// where X is the major version of Slicer scene to support, Y the minor and
   /// Z the patch version.
   ///
@@ -486,7 +486,7 @@ public:
   /// \sa EndState, GetStates
   void StartState(unsigned long state, int anticipatedMaxProgress = 0);
 
-  /// Unflag the scene as being in a \state mode.
+  /// Unflag the scene as being in a \a state mode.
   /// EndState() fires the state end event if the scene is no longer
   /// in the \a state mode.
   /// A matching StartState(\a state) must be called prior.

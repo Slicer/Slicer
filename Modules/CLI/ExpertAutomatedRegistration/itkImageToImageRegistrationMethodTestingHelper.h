@@ -23,8 +23,7 @@
 namespace itk
 {
 
-/** \class ImageToImageRegistrationMethodTestingHelper auxiliary class for
- * factorizing testing tasks.
+/** \class ImageToImageRegistrationMethodTestingHelper
  *
  *  This class provides common tasks required to test all registration methods.
  *

@@ -30,15 +30,13 @@ public:
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Get node XML tag name (like Storage, Model)
+  /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "DoubleArrayStorage";};
 
-  // Description:
-  // Return a default file extension for writting
+  /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension();
 
-  // Return true if the node can be read in
+  /// Return true if the node can be read in
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 
 protected:
@@ -47,10 +45,10 @@ protected:
   vtkMRMLDoubleArrayStorageNode(const vtkMRMLDoubleArrayStorageNode&);
   void operator=(const vtkMRMLDoubleArrayStorageNode&);
 
-  // Initialize all the supported write file types
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedReadFileTypes();
 
-  // Initialize all the supported write file types
+  /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
   /// Read data and set it in the referenced node

@@ -190,7 +190,7 @@ signals:
 
   /// Signal that is emitted when a node changes owner plugin
   /// \param node Subject hierarchy node changing owner plugin
-  /// \callData Name of the old plugin (the name of the new plugin can be get from the node)
+  /// \param callData Name of the old plugin (the name of the new plugin can be get from the node)
   void ownerPluginChanged(vtkObject* node, void* callData);
 
 protected:

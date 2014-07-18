@@ -52,14 +52,14 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   ///
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
-  /// \tbd Add a storage node ?
+  /// \todo Should the function AddModel also add a storage node ?
   vtkMRMLModelNode* AddModel(vtkPolyData* polyData = 0);
 
 #if VTK_MAJOR_VERSION > 5
   ///
   /// Add into the scene a new mrml model node with an existing polydata
   /// A display node is also added into the scene.
-  /// \tbd Add a storage node ?
+  /// \todo Should the function AddModel also add a storage node ?
   vtkMRMLModelNode* AddModel(vtkAlgorithmOutput* polyData = 0);
 #endif
 

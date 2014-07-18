@@ -29,7 +29,7 @@
 namespace itk
 {
 
-/** \class N3MRIBiasFieldCorrectionImageFilter.h
+/** \class N3MRIBiasFieldCorrectionImageFilter
  * \brief Implementation of the N3 MRI bias field correction algorithm.
  *
  * The nonparametric nonuniform intensity normalization (N3) algorithm

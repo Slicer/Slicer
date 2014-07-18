@@ -172,8 +172,7 @@ public:
   //
   // SnapShot functionality
   //
-  /// Create a snapShot. This includes a screenshot of a specific view (see \ref GrabScreenShot(int screenshotWindow)),
-  /// a multiline text description and the creation of a Scene SnapShot.
+  /// Create a snapShot.
   void CreateSnapShot(const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
 
   /// Modify an existing snapShot.

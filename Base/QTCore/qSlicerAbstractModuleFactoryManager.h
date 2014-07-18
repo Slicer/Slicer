@@ -71,8 +71,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModuleFactoryManager : public Q
   /// A module can be a library (dll, so),
   /// an executable (exe), a python file (py) or any other file type supported
   /// by the registered factories.
-  /// The search is not recursive (\tdb?), you need to provide each subdirectory
+  /// The search is not recursive, you need to provide each subdirectory
   /// manually.
+  ///
+  /// \todo In qSlicerAbstractModuleFactoryManager, should the module search recursively descend \a searchPaths
   Q_PROPERTY(QStringList searchPaths READ searchPaths WRITE setSearchPaths)
 
   /// This property holds the name of the modules to ignore at registration time.
