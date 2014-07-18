@@ -36,6 +36,7 @@ vtkMRMLGlyphableVolumeDisplayNode::vtkMRMLGlyphableVolumeDisplayNode()
 
   this->GlyphColorNodeID = NULL;
   this->GlyphColorNode = NULL;
+  this->VisualizationMode = vtkMRMLGlyphableVolumeDisplayNode::visModeScalar;
   // try setting a default greyscale color map
   //this->SetDefaultColorMap(0);
 }

@@ -70,9 +70,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode
  this->DiffusionTensorGlyphFilter->SetSourceConnection( sphere->GetOutputPort() );
  sphere->Delete();
 
- this->VisualizationMode = 0;
  this->AutoScalarRange = 1;
-
 }
 
 //----------------------------------------------------------------------------

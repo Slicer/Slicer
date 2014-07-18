@@ -35,7 +35,6 @@ vtkMRMLNodeNewMacro(vtkMRMLVectorVolumeDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
 {
- this->VisualizationMode = this->visModeScalar;
  this->ScalarMode = this->scalarModeMagnitude;
  this->GlyphMode = this->glyphModeLines;
 
