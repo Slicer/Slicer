@@ -703,7 +703,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
         if distanceSpannedBy100Slices==0:
             zVoxelSize_mm=1
         else:
-            zVoxelSize_mm = 100/distanceSpannedBy100Slices
+            zVoxelSize_mm = distanceSpannedBy100Slices/100
         # --
         # Compute number of slices spanned by sphere
         nNumSlicesInEachDirection=brushRadius / zVoxelSize_mm;
