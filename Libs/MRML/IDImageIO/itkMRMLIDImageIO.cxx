@@ -12,7 +12,6 @@ Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
 
-
 #include "itkMRMLIDImageIO.h"
 #include "itkMetaDataObject.h"
 
@@ -28,9 +27,7 @@ Version:   $Revision: 1.18 $
 #include <vtkMatrix4x4.h>
 #include <vtkPointData.h>
 
-
 namespace itk {
-
 //----------------------------------------------------------------------------
 MRMLIDImageIO
 ::MRMLIDImageIO()
@@ -278,7 +275,7 @@ MRMLIDImageIO
       {
       // raw DWI
       this->SetPixelType(VECTOR);
-      dataType = node->GetImageData()->GetPointData()->GetTensors()->GetDataType();
+      dataType = node->GetImageData()->GetScalarType();
       }
     else if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != 0)
       {
@@ -748,7 +745,6 @@ MRMLIDImageIO
   os << indent << "Authority: " << this->Authority << std::endl;
   os << indent << "SceneID: " << this->SceneID << std::endl;
   os << indent << "NodeID: " << this->NodeID << std::endl;
-
 }
 
 //----------------------------------------------------------------------------
@@ -881,7 +877,6 @@ MRMLIDImageIO
 //        }
 //      std::cout << std::endl;
 //      }
-
 
   // B value, just get it from the dictionary for now
   // B value is stored as a string in the MetaDataDictionary in
@@ -1037,5 +1032,4 @@ MRMLIDImageIO
 //      std::cout << std::endl;
 //      }
 }
-
 } // end namespace itk
