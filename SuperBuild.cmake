@@ -221,6 +221,7 @@ set(BRAINSTools_options
   USE_BRAINSDemonWarp:BOOL=ON
   # BRAINSTools comes with some extra tool that should not be compiled by default
   USE_AutoWorkup:BOOL=OFF
+  USE_ReferenceAtlas:BOOL=OFF
   USE_ANTS:BOOL=OFF
   USE_GTRACT:BOOL=OFF
   USE_BRAINSABC:BOOL=OFF
@@ -246,8 +247,8 @@ set(BRAINSTools_options
   USE_DWIConvert:BOOL=${Slicer_BUILD_DICOM_SUPPORT} ## Need to figure out library linking
   )
 Slicer_Remote_Add(BRAINSTools
-  GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
-  GIT_TAG "94d53a640b398c6b4e50335082bfa34eb8adf35b" # Version f82a01b with Slicer patches
+  GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git"
+  GIT_TAG "e5c9c8ca6214cf814ba3a28f809bab32cae8a759" # Version ITKv4 registration fixes & DWIConvert GUI updates
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
