@@ -523,3 +523,13 @@ class VTKObservationMixin(object):
       if e == event and m == method:
         return o
     return None
+
+#
+# Misc. Utility methods
+#
+def unicodeify(s):
+  """
+  Avoid UnicodeEncodeErrors using the technique described here:
+  http://stackoverflow.com/questions/9942594/unicodeencodeerror-ascii-codec-cant-encode-character-u-xa0-in-position-20
+  """
+  return u' '.join(s).encode('utf-8').strip()

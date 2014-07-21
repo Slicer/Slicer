@@ -259,8 +259,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     """
     if not (hasattr(x,'name') and hasattr(y,'name')):
         return 0
-    xName = str(x.name)
-    yName = str(y.name)
+    xName = slicer.util.unicodeify(x.name)
+    yName = slicer.util.unicodeify(y.name)
     try:
       xNumber = int(xName[:xName.index(':')])
       yNumber = int(yName[:yName.index(':')])
@@ -289,6 +289,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     using the volume logic helper class
     and the vtkITK archetype helper code
     """
+    name = slicer.util.unicodeify(name)
     fileList = vtk.vtkStringArray()
     for f in files:
       fileList.InsertNextValue(f)
