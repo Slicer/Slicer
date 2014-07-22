@@ -16,10 +16,14 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "https://pypi.python.org/packages/source/s/setuptools/setuptools-5.3.zip"
-    URL_MD5 "1464c0da4425b0846ae842d52e5eb1dd"
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/setuptools.git"
+    GIT_TAG "ca727b48c1d6477cb691db77e22435f99c032457"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
