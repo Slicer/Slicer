@@ -334,7 +334,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       frameId = newValue
 
       extract = vtk.vtkImageExtractComponents()
-      extract.SetInput(mvImage)
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        extract.SetInput(mvImage)
+      else:
+        extract.SetInputData(mvImage)
       extract.SetComponents(frameId)
       extract.Update()
 
@@ -419,7 +422,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.__mvRange = [0,0]
       for f in range(nFrames):
         extract = vtk.vtkImageExtractComponents()
-        extract.SetInput(mvi)
+        if vtk.VTK_MAJOR_VERSION <= 5:
+          extract.SetInput(mvi)
+        else:
+          extract.SetInputData(mvi)
         extract.SetComponents(f)
         extract.Update()
 
@@ -633,12 +639,21 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
     if useFg:
       plot = self.__chart.AddPlot(vtk.vtkChart.POINTS)
-      plot.SetInput(self.__chartTable, 0, 1)
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        plot.SetInput(self.__chartTable, 0, 1)
+      else:
+        plot.SetInputData(self.__chartTable, 0, 1)
       fgplot = self.__chart.AddPlot(vtk.vtkChart.LINE)
-      fgplot.SetInput(fgChartTable, 0, 1)
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        fgplot.SetInput(fgChartTable, 0, 1)
+      else:
+        fgplot.SetInputData(fgChartTable, 0, 1)
     else:
       plot = self.__chart.AddPlot(vtk.vtkChart.LINE)
-      plot.SetInput(self.__chartTable, 0, 1)
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        plot.SetInput(self.__chartTable, 0, 1)
+      else:
+        plot.SetInputData(self.__chartTable, 0, 1)
       
     if self.xLogScaleCheckBox.checkState() == 2:
       title = self.__chart.GetAxis(1).GetTitle()
