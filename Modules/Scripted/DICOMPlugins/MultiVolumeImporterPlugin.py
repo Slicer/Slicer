@@ -86,15 +86,19 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       orderedFiles = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
 
       desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['studyDescription']) # SeriesDescription
+      num = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['seriesNumber'])
+      if num != "":
+        name = num+": "+desc
+      else:
+        name = desc
 
       if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
         continue
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name =  str(nFrames) + ' frames MultiVolume by ' + tagName
-      mvNode.SetName(desc)
-      loadable.tooltip = loadable.name
+      loadable.tooltip =  name+' - '+str(nFrames) + ' frames MultiVolume by ' + tagName
+      loadable.name = name
       loadable.selected = True
       loadable.multivolume = mvNode
       loadable.confidence = 0.9
