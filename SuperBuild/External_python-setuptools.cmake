@@ -20,6 +20,21 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(git_protocol "git")
   endif()
 
+  include(ExternalProjectForNonCMakeProject)
+
+  # environment
+  set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
+  ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
+  ExternalProject_Write_SetPythonSetupEnv_Commands(${_env_script} APPEND)
+
+  # install step
+  set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
+  file(WRITE ${_install_script}
+"include(\"${_env_script}\")
+set(${proj}_WORKING_DIR \"${CMAKE_BINARY_DIR}/${proj}\")
+ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py install)
+")
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/setuptools.git"
@@ -28,7 +43,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${PYTHON_EXECUTABLE} setup.py install
+    INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
