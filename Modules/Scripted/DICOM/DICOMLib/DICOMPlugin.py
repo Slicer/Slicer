@@ -213,7 +213,6 @@ class DICOMPlugin(object):
       return
 
     # Specify details of series node
-    seriesDescriptionUtf = slicer.util.unicodeify(seriesDescription)
     seriesNode.SetName(seriesDescription.encode('latin1', 'ignore'))
     seriesNode.SetAssociatedNodeID(dataNode.GetID())
     seriesNode.SetLevel('Series')
@@ -247,8 +246,6 @@ class DICOMPlugin(object):
     if studyNode == None:
       studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, 'DICOM', studyInstanceUid)
       if studyNode != None:
-        studyDescription = slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription'])
-        studyDescriptionUtf = slicer.util.unicodeify(studyDescription)
         studyDescription = slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription']).encode('latin1', 'ignore')
         studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate']).encode('latin1', 'ignore')
         if studyDescription == '':
