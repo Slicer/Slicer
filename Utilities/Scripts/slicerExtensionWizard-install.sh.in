@@ -10,5 +10,7 @@ python="$bin/python-real"
 # Set up environment
 eval $("$bin/SlicerPython" --launcher-show-set-environment-commands)
 
+@EXPORT_GIT_PYTHON_GIT_EXECUTABLE_CONFIG@
+
 # Run the Python launcher
 "$python" "$bin/../@Slicer_LIBEXEC_DIR@/ExtensionWizard.py" "$@"

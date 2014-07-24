@@ -12,6 +12,12 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
       )
   endif()
 
+  if(WIN32)
+    set(EXPORT_GIT_PYTHON_GIT_EXECUTABLE_CONFIG
+"\# Export path to git executable provided by Git Bash
+export GIT_PYTHON_GIT_EXECUTABLE=/bin/git")
+  endif()
+
   # Configure and Extension Wizard launcher scripts
   configure_file(
     slicerExtensionWizard.sh.in

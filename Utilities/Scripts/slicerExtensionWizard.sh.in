@@ -3,6 +3,8 @@
 # Set up environment
 eval $("@Slicer_BINARY_DIR@/Slicer" --launcher-show-set-environment-commands)
 
+@EXPORT_GIT_PYTHON_GIT_EXECUTABLE_CONFIG@
+
 # Run the Python launcher
 "@PYTHON@" "@Slicer_BINARY_DIR@/libexec/ExtensionWizard.py" \
   --templatePath "@Slicer_SOURCE_DIR@"/Utilities/Templates "$@"
