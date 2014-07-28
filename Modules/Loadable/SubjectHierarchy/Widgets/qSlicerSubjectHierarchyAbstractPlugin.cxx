@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -88,24 +89,21 @@ const QString qSlicerSubjectHierarchyAbstractPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::setIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item)
+QIcon qSlicerSubjectHierarchyAbstractPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
 {
   Q_UNUSED(node);
-  Q_UNUSED(item);
 
   // Default implementation applies to plugins that do not define roles, only functions and/or levels
   // If there is no role, then there is no icon to set
-  return false;
+  return QIcon();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::setVisibilityIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item)
+QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIcon(int visible)
 {
-  Q_UNUSED(node);
-  Q_UNUSED(item);
-
   // Default implementation applies to plugins that do not define roles, only functions and/or levels
   // If there is no role, then there is no visibility icon to set
+  return QIcon();
 }
 
 //---------------------------------------------------------------------------
@@ -183,7 +181,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canReparentNodeInsideSubjectHierar
 bool qSlicerSubjectHierarchyAbstractPlugin::reparentNodeInsideSubjectHierarchy(vtkMRMLSubjectHierarchyNode* nodeToReparent,
                                                                                vtkMRMLSubjectHierarchyNode* parentNode)
 {
-  nodeToReparent->SetParentNodeID(parentNode->GetID());
+  nodeToReparent->SetParentNodeID(parentNode ? parentNode->GetID() : NULL);
   return true;
 }
 
@@ -307,6 +305,9 @@ void qSlicerSubjectHierarchyAbstractPlugin::createChildForCurrentNode()
 
   // Create child subject hierarchy node
   std::string childNodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + childLevel.toLatin1().constData();
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  childNodeName = scene->GenerateUniqueName(childNodeName);
+
   this->createChildNode(currentNode, childNodeName.c_str());
 }
 

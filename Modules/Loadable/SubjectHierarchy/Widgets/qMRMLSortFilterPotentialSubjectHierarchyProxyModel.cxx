@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -39,13 +40,10 @@ class qMRMLSortFilterPotentialSubjectHierarchyProxyModelPrivate
 {
 public:
   qMRMLSortFilterPotentialSubjectHierarchyProxyModelPrivate();
-
-  bool includeHiddenNodes;
 };
 
 // -----------------------------------------------------------------------------
 qMRMLSortFilterPotentialSubjectHierarchyProxyModelPrivate::qMRMLSortFilterPotentialSubjectHierarchyProxyModelPrivate()
-: includeHiddenNodes(false)
 {
 }
 
@@ -83,7 +81,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterPotentialSubjectHierarchyPr
 
   // Show only nodes that do not have a subject hierarchy node associated
   vtkMRMLSubjectHierarchyNode* possibleShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(node);
-  if (!possibleShNode && (d->includeHiddenNodes || !node->GetHideFromEditors()))
+  if (!possibleShNode && !node->GetHideFromEditors())
     {
     if (node->GetAttribute(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME.c_str()))
       {

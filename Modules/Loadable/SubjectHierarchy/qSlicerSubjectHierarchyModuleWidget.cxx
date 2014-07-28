@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Portions (c) Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -133,9 +134,10 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
   d->setupUi(this);
   this->Superclass::setup();
 
-  // Make connection for the show columns checkboxes
+  // Make connection for the checkboxes
   connect( d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)), this, SLOT(setMRMLIDsVisible(bool)) );
   connect( d->DisplayTransformsCheckBox, SIGNAL(toggled(bool)), this, SLOT(setTransformsVisible(bool)) );
+  connect( d->PotentialNodesCheckBox, SIGNAL(toggled(bool)), this, SLOT(setPotentialNodesVisible(bool)) );
 
   // Set up tree view
   d->SubjectHierarchyTreeView->expandToDepth(4);
@@ -148,17 +150,12 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
   connect( d->SubjectHierarchyTreeView->sceneModel(), SIGNAL(invalidateModels()), d->SubjectHierarchyTreeView->model(), SLOT(invalidate()) );
 
   // Connect logic custom event for scene update
-  qMRMLSceneSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSceneSubjectHierarchyModel*>(d->SubjectHierarchyTreeView->sceneModel());
-  sceneModel->setObjectName("SceneSubjectHierarchyModel"); // Set object name for debugging purposes
-  qvtkConnect( d->logic(), vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent, sceneModel, SLOT( forceUpdateScene() ) );
-
-  qMRMLSortFilterPotentialSubjectHierarchyProxyModel* potentialProxyModel = qobject_cast<qMRMLSortFilterPotentialSubjectHierarchyProxyModel*>(d->PotentialSubjectHierarchyListView->model());
-  qMRMLScenePotentialSubjectHierarchyModel* potentialSceneModel = qobject_cast<qMRMLScenePotentialSubjectHierarchyModel*>(potentialProxyModel->sourceModel());
-  potentialSceneModel->setObjectName("ScenePotentialSubjectHierarchyModel"); // Set object name for debugging purposes
-  qvtkConnect( d->logic(), vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent, potentialSceneModel, SLOT( invalidate() ) );
+  qvtkConnect( d->logic(), vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent, d->SubjectHierarchyTreeView->model(), SLOT( invalidate() ) );
+  qvtkConnect( d->logic(), vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent, d->PotentialSubjectHierarchyListView->model(), SLOT( invalidate() ) );
 
   this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
   this->setTransformsVisible(d->DisplayTransformsCheckBox->isChecked());
+  this->setPotentialNodesVisible(d->PotentialNodesCheckBox->isChecked());
 
   // Assemble help text for question mark tooltip
   QString aggregatedHelpText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">    <html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">    p, li   { white-space: pre-wrap;   }  </style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">");
@@ -173,6 +170,10 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
     }
   aggregatedHelpText.append(QString("</body></html>"));
   d->label_Help->setToolTip(aggregatedHelpText);
+
+  // Disable and hide potential nodes list (TODO: remove it completely when it is surely not needed any more)
+  d->PotentialSubjectHierarchyListView->setEnabled(false);
+  d->CollapsibleButton_PotentialNodes->setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -182,7 +183,6 @@ void qSlicerSubjectHierarchyModuleWidget::updateWidgetFromMRML()
 
   //d->SubjectHierarchyTreeView->sortFilterProxyModel()->invalidate();
   qMRMLSceneSubjectHierarchyModel* sceneModel = (qMRMLSceneSubjectHierarchyModel*)d->SubjectHierarchyTreeView->sceneModel();
-  sceneModel->forceUpdateScene();
   d->SubjectHierarchyTreeView->header()->resizeSection(sceneModel->transformColumn(), 60);
   d->SubjectHierarchyTreeView->expandToDepth(4);
 
@@ -213,6 +213,20 @@ void qSlicerSubjectHierarchyModuleWidget::setTransformsVisible(bool visible)
   d->DisplayTransformsCheckBox->blockSignals(true);
   d->DisplayTransformsCheckBox->setChecked(visible);
   d->DisplayTransformsCheckBox->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::setPotentialNodesVisible(bool visible)
+{
+  Q_D(qSlicerSubjectHierarchyModuleWidget);
+
+  qMRMLSortFilterSubjectHierarchyProxyModel* proxyModel = qobject_cast<qMRMLSortFilterSubjectHierarchyProxyModel*>(d->SubjectHierarchyTreeView->model());
+  proxyModel->setPotentialNodesVisible(visible);
+  proxyModel->invalidate();
+
+  d->PotentialNodesCheckBox->blockSignals(true);
+  d->PotentialNodesCheckBox->setChecked(visible);
+  d->PotentialNodesCheckBox->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------

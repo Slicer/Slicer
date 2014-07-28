@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -142,7 +143,7 @@ double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(vtkMRM
     }
   else if (node->IsA("vtkMRMLScalarVolumeNode"))
     {
-    // Node is a model
+    // Node is a volume
     return 0.5;
     }
   return 0.0;
@@ -174,14 +175,14 @@ const QString qSlicerSubjectHierarchyVolumesPlugin::roleForPlugin()const
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyVolumesPlugin::setIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item)
+QIcon qSlicerSubjectHierarchyVolumesPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
 {
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
 
-  if (!node || !item)
+  if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::setIcon: NULL node or item given!";
-    return false;
+    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::icon: NULL node given!";
+    return QIcon();
     }
 
   // Volume
@@ -191,57 +192,36 @@ bool qSlicerSubjectHierarchyVolumesPlugin::setIcon(vtkMRMLSubjectHierarchyNode* 
     const char* labelmapAttribute = associatedNode->GetAttribute("LabelMap");
     if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
       {
-      item->setIcon(d->LabelmapIcon);
+      return d->LabelmapIcon;
       }
     else
       {
-      item->setIcon(d->VolumeIcon);
+      return d->VolumeIcon;
       }
-    return true;
     }
 
   // Study level
   if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
     {
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("DICOM")->setIcon(node, item);
-    return true;
+    return qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("DICOM")->icon(node);
     }
 
   // Node unknown by plugin
-  return false;
+  return QIcon();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::setVisibilityIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item)
+QIcon qSlicerSubjectHierarchyVolumesPlugin::visibilityIcon(int visible)
 {
-  if (!node || !item)
-    {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::setVisibilityIcon: NULL node or item given!";
-    return;
-    }
-
   Q_D(qSlicerSubjectHierarchyVolumesPlugin);
 
-  // Volume
-  vtkMRMLNode* associatedNode = node->GetAssociatedNode();
-  if (associatedNode && associatedNode->IsA("vtkMRMLScalarVolumeNode"))
+  if (visible == 1)
     {
-    if (this->getDisplayVisibility(node) == 1)
-      {
-      item->setIcon(d->VolumeVisibilityOnIcon);
-      }
-    else
-      {
-      item->setIcon(d->VolumeVisibilityOffIcon);
-      }
-    return;
+    return d->VolumeVisibilityOnIcon;
     }
-
-  // Study level
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
+  else
     {
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("DICOM")->setVisibilityIcon(node, item);
-    return;
+    return d->VolumeVisibilityOffIcon;
     }
 }
 

@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -29,7 +30,7 @@
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX = "_SubjectHierarchy";
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_PREFIX = "SubjectHierarchy.";
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_PREFIX + "ExcludeFromPotentialNodesList"; // Identifier
-const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX = "NewSubjectHierarchyNode_";
+const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX = "New";
 
 const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT = "Subject";
 const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY = "Study";

@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -22,7 +23,10 @@
 #include "qMRMLSortFilterSubjectHierarchyProxyModel.h"
 
 // Subject Hierarchy MRML includes
-#include <vtkMRMLSubjectHierarchyNode.h>
+#include "vtkMRMLSubjectHierarchyNode.h"
+#include "vtkMRMLSubjectHierarchyConstants.h"
+#include "qSlicerSubjectHierarchyPluginHandler.h"
+#include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 // MRML Widgets includes
 #include "qMRMLSceneModel.h"
@@ -36,10 +40,13 @@ class qMRMLSortFilterSubjectHierarchyProxyModelPrivate
 {
 public:
   qMRMLSortFilterSubjectHierarchyProxyModelPrivate();
+
+  bool showPotentialNodes;
 };
 
 // -----------------------------------------------------------------------------
 qMRMLSortFilterSubjectHierarchyProxyModelPrivate::qMRMLSortFilterSubjectHierarchyProxyModelPrivate()
+: showPotentialNodes(true)
 {
 }
 
@@ -59,6 +66,14 @@ qMRMLSortFilterSubjectHierarchyProxyModel::~qMRMLSortFilterSubjectHierarchyProxy
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSortFilterSubjectHierarchyProxyModel::setPotentialNodesVisible(bool visible)
+{
+  Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+
+  d->showPotentialNodes = visible;
+}
+
+//------------------------------------------------------------------------------
 qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterSubjectHierarchyProxyModel
 ::filterAcceptsNode(vtkMRMLNode* node)const
 {
@@ -73,13 +88,33 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterSubjectHierarchyProxyModel
     return res;
     }
 
-  vtkMRMLSubjectHierarchyNode* hNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
-  if (hNode)
-    {
-    // Observe node in the model so that the item is updated on node changes
-    this->sceneModel()->observeNode(node);
+  Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
 
+  // Show all subject hierarchy nodes and potential subject hierarchy nodes (regular data nodes
+  // for which there is a subject hierarchy plugin that can add it to the subject hierarchy tree)
+  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
+  if (subjectHierarchyNode)
+    {
     return Accept;
+    }
+  else if (!node->GetHideFromEditors() && d->showPotentialNodes)
+    {
+    // Hide the node if it's explicitly excluded from the tree as a potential node,
+    // or if there is a subject hierarchy node associated to it (i.e. it is in the hierarchy already)
+    vtkMRMLSubjectHierarchyNode* associatedShNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(node);
+    if ( associatedShNode
+      || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME.c_str()) )
+      {
+      return Reject;
+      }
+
+    // Show only if the node is a potential subject hierarchy node according the the plugins
+    QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins
+      = qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(node);
+    if (!foundPlugins.empty())
+      {
+      return Accept;
+      }
     }
 
   return Reject;

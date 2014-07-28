@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -35,6 +36,7 @@ class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 class QStandardItem;
 class QAction;
+class QIcon;
 class qSlicerAbstractModuleWidget;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -89,12 +91,12 @@ public:
   /// Get help text for plugin to be added in subject hierarchy module widget help box
   virtual const QString helpText()const;
 
-  /// Set icon of a owned subject hierarchy node
-  /// \return Flag indicating whether setting an icon was successful
-  virtual bool setIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item);
+  /// Get icon of an owned subject hierarchy node
+  /// \return Icon to set, NULL if nothing to set
+  virtual QIcon icon(vtkMRMLSubjectHierarchyNode* node);
 
-  /// Set visibility icon of a owned subject hierarchy node
-  virtual void setVisibilityIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item);
+  /// Get visibility icon for a visibility state
+  virtual QIcon visibilityIcon(int visible);
 
   /// Open module belonging to node and set inputs in opened module
   virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);

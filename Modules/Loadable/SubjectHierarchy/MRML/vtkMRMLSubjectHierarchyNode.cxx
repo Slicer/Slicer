@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -220,7 +221,7 @@ void vtkMRMLSubjectHierarchyNode::SetOwnerPluginName(const char* pluginName)
     this->OwnerPluginName = NULL;
     }
   this->InvokeEvent(vtkMRMLSubjectHierarchyNode::OwnerPluginChangedEvent, oldPluginName);
-  if (oldPluginName)   { delete [] oldPluginName;   }
+  if (oldPluginName) { delete [] oldPluginName; }
   this->Modified();
 }
 

@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -185,12 +186,12 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyDefaultPlugin::setIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item)
+QIcon qSlicerSubjectHierarchyDefaultPlugin::icon(vtkMRMLSubjectHierarchyNode* node)
 {
-  if (!node || !item)
+  if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyDefaultPlugin::setIcon: NULL node or item given!";
-    return false;
+    qCritical() << "qSlicerSubjectHierarchyDefaultPlugin::icon: NULL node given!";
+    return QIcon();
     }
 
   Q_D(qSlicerSubjectHierarchyDefaultPlugin);
@@ -198,48 +199,33 @@ bool qSlicerSubjectHierarchyDefaultPlugin::setIcon(vtkMRMLSubjectHierarchyNode* 
   // Subject and Study icons
   if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT))
     {
-    item->setIcon(d->SubjectIcon);
-    return true;
+    return d->SubjectIcon;
     }
   else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
     {
-    item->setIcon(d->StudyIcon);
-    return true;
+    return d->StudyIcon;
     }
 
   // Node unknown by plugin
-  return false;
+  return QIcon();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDefaultPlugin::setVisibilityIcon(vtkMRMLSubjectHierarchyNode* node, QStandardItem* item)
+QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
 {
   Q_D(qSlicerSubjectHierarchyDefaultPlugin);
 
-  // Default is the eye icon that shows the visibility of the whole branch
-  int visible = this->getDisplayVisibility(node);
-
-  // It should be fine to set the icon even if it is the same, but due
-  // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
-  // it would fire a superflous itemChanged() signal.
-  if (item->data(qMRMLSceneModel::VisibilityRole).isNull()
-    || item->data(qMRMLSceneModel::VisibilityRole).toInt() != visible)
+  // Default icon is the eye icon that shows the visibility of the whole branch
+  switch (visible)
     {
-    item->setData(visible, qMRMLSceneModel::VisibilityRole);
-    switch (visible)
-      {
-    case 0:
-      item->setIcon(d->HiddenIcon);
-      break;
-    case 1:
-      item->setIcon(d->VisibleIcon);
-      break;
-    case 2:
-      item->setIcon(d->PartiallyVisibleIcon);
-      break;
-    default:
-      break;
-      }
+  case 0:
+    return d->HiddenIcon;
+  case 1:
+    return d->VisibleIcon;
+  case 2:
+    return d->PartiallyVisibleIcon;
+  default:
+    return QIcon();
     }
 }
 

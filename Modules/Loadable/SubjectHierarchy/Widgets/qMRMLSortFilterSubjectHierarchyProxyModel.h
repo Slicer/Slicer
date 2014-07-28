@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -39,6 +40,9 @@ public:
   typedef qMRMLSortFilterProxyModel Superclass;
   qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=0);
   virtual ~qMRMLSortFilterSubjectHierarchyProxyModel();
+
+  /// Set whether potential nodes are shown or filtered out
+  void setPotentialNodesVisible(bool visible);
 
 protected:
   /// Filters nodes to decide which to display in the view

@@ -77,7 +77,7 @@
      <item row="0" column="0">
       <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
        <property name="text">
-        <string>Display MRML ID's</string>
+        <string>MRML ID's</string>
        </property>
       </widget>
      </item>
@@ -89,7 +89,17 @@
        <item>
         <widget class="QCheckBox" name="DisplayTransformsCheckBox">
          <property name="text">
-          <string>Display transforms</string>
+          <string>Transforms</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="PotentialNodesCheckBox">
+         <property name="text">
+          <string>Potential nodes</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -170,6 +180,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLNodeAttributeTableWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeAttributeTableWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
    <header>qMRMLTreeView.h</header>
@@ -182,11 +197,6 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeAttributeTableWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeAttributeTableWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLSubjectHierarchyTreeView</class>
@@ -212,6 +222,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
