@@ -761,7 +761,16 @@ void vtkMRMLMarkupsDisplayableManager2D::UpdateWidgetVisibility(vtkMRMLMarkupsNo
    // second case: the node says it is visible, but the widget is not
    else if (visibleOnNode && !visibleOnWidget)
      {
-     widget->SetEnabled(1);
+     if (widget->GetRepresentation() &&
+         widget->GetRepresentation()->GetRenderer() &&
+         widget->GetRepresentation()->GetRenderer()->IsActiveCameraCreated())
+       {
+       widget->SetEnabled(1);
+       }
+     else
+       {
+       vtkDebugMacro("UpdateWidgetVisibility: seed widget representation doesn't have an active camera, delaying enabling it");
+       }
      //this->PropagateMRMLToWidget(markupsNode, widget);
      vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
      if (seedWidget)

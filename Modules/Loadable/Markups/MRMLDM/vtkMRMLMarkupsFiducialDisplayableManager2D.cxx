@@ -442,8 +442,18 @@ bool vtkMRMLMarkupsFiducialDisplayableManager2D::UpdateNthSeedPositionFromMRML(i
                   << ": display coordinates changed:\n\tseed display = "
                   << displayCoordinatesBuffer1[0] << ", " << displayCoordinatesBuffer1[1]
                   << "\n\tfid display =  " << displayCoordinates1[0] << ", " << displayCoordinates1[1] );
-    seedRepresentation->SetSeedDisplayPosition(n,displayCoordinates1);
-    positionChanged = true;
+    if (seedRepresentation->GetRenderer() != NULL &&
+        seedRepresentation->GetRenderer()->IsActiveCameraCreated())
+      {
+      seedRepresentation->SetSeedDisplayPosition(n,displayCoordinates1);
+      positionChanged = true;
+      }
+    else
+      {
+      vtkDebugMacro("UpdateNthSeedPositionFromMRML: " <<
+                    "No active camera on seed representation, " <<
+                    "delaying updating position");
+      }
     }
   else
     {
@@ -495,8 +505,17 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       newhandle->ManagesCursorOff();
       if (newhandle->GetEnabled() == 0)
         {
-        vtkDebugMacro("turning on the new handle");
-        newhandle->EnabledOn();
+        // only enable the handle if there is an active camera
+        if (newhandle->GetRepresentation() &&
+            newhandle->GetRepresentation()->GetRenderer() &&
+            newhandle->GetRepresentation()->GetRenderer()->IsActiveCameraCreated())
+          {
+          newhandle->EnabledOn();
+          }
+        else
+          {
+          vtkDebugMacro("SetNthSeed: no active camera, delaying enabling the handle");
+          }
         }
       }
     }
