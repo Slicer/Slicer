@@ -44,6 +44,9 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
+QMap<QString, QString> qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap = QMap<QString, QString>();
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QObject *parent)
   : Superclass(parent)
   , m_Name(QString())
@@ -250,20 +253,17 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkMRMLSubjectHi
 QString qSlicerSubjectHierarchyAbstractPlugin::childLevel(QString parentLevel)
 {
   // Get child level from this plugin
-  QString childLevel;
-  if (this->m_ChildLevelMap.contains(parentLevel))
+  if (qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.contains(parentLevel))
     {
-    childLevel = this->m_ChildLevelMap[parentLevel];
+    return qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap[parentLevel];
     }
   // If this plugin does not have child level for this parent level, then log a warning
   else
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::childLevel: Could not get child level for level '"
+    qWarning() << "qSlicerSubjectHierarchyAbstractPlugin::childLevel: Could not get child level for level '"
       << parentLevel << "'!";
-    return QString();
+    return QString("Invalid");
     }
-
-  return childLevel;
 }
 
 //--------------------------------------------------------------------------

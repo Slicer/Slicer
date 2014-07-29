@@ -31,7 +31,6 @@
 class vtkMRMLSubjectHierarchyNode;
 class qSlicerSubjectHierarchyModuleWidgetPrivate;
 class qMRMLSceneSubjectHierarchyModel;
-class qMRMLScenePotentialSubjectHierarchyModel;
 class qSlicerSubjectHierarchyAbstractPlugin;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -66,9 +65,6 @@ protected slots:
 public:
   /// Assessor function for subject hierarchy scene model (for python)
   Q_INVOKABLE qMRMLSceneSubjectHierarchyModel* subjectHierarchySceneModel()const;
-
-  /// Assessor function for potential subject hierarchy scene model (for python)
-  Q_INVOKABLE qMRMLScenePotentialSubjectHierarchyModel* potentialSubjectHierarchySceneModel()const;
 
   /// Assessor function for getting subject hierarchy plugin by name (for python)
   Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name)const;

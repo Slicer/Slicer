@@ -17,13 +17,6 @@ set(${KIT}_SRCS
   qMRMLSceneSubjectHierarchyModel_p.h
   qMRMLSortFilterSubjectHierarchyProxyModel.cxx
   qMRMLSortFilterSubjectHierarchyProxyModel.h
-  qMRMLPotentialSubjectHierarchyListView.cxx
-  qMRMLPotentialSubjectHierarchyListView.h
-  qMRMLScenePotentialSubjectHierarchyModel.cxx
-  qMRMLScenePotentialSubjectHierarchyModel.h
-  qMRMLScenePotentialSubjectHierarchyModel_p.h
-  qMRMLSortFilterPotentialSubjectHierarchyProxyModel.cxx
-  qMRMLSortFilterPotentialSubjectHierarchyProxyModel.h
   qMRMLTransformItemDelegate.cxx
   qMRMLTransformItemDelegate.h
   qSlicerSubjectHierarchyAbstractPlugin.cxx
@@ -48,9 +41,6 @@ set(${KIT}_MOC_SRCS
   qMRMLSubjectHierarchyTreeView.h
   qMRMLSceneSubjectHierarchyModel.h
   qMRMLSortFilterSubjectHierarchyProxyModel.h
-  qMRMLPotentialSubjectHierarchyListView.h
-  qMRMLScenePotentialSubjectHierarchyModel.h
-  qMRMLSortFilterPotentialSubjectHierarchyProxyModel.h
   qMRMLTransformItemDelegate.h
   qSlicerSubjectHierarchyAbstractPlugin.h
   qSlicerSubjectHierarchyPluginHandler.h

@@ -10,14 +10,11 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyModuleWidgetsPlugin.h
   qMRMLSubjectHierarchyTreeViewPlugin.cxx
   qMRMLSubjectHierarchyTreeViewPlugin.h
-  qMRMLPotentialSubjectHierarchyListViewPlugin.cxx
-  qMRMLPotentialSubjectHierarchyListViewPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyModuleWidgetsPlugin.h
   qMRMLSubjectHierarchyTreeViewPlugin.h
-  qMRMLPotentialSubjectHierarchyListViewPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

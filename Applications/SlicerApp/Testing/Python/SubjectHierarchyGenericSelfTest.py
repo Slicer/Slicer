@@ -145,7 +145,7 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.assertTrue( slicer.modules.subjecthierarchy )
 
     # TODO: Uncomment when #598 is fixed
-    # slicer.util.selectModule('SubjectHierarchy')
+    slicer.util.selectModule('SubjectHierarchy')
 
     self.section_SetupPathsAndNames()
     self.section_LoadInputData()
@@ -262,7 +262,6 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
 
     # Create sample labelmap and model and add them in subject hierarchy
     sampleLabelmapNode = self.createSampleLabelmapVolumeNode(ctVolumeNode, self.sampleLabelmapName, 2)
-
     sampleModelColor = [0.0, 1.0, 0.0]
     sampleModelNode = self.createSampleModelVolume(ctVolumeNode, self.sampleModelName, sampleModelColor)
 
@@ -350,31 +349,12 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
   def section_LoadScene(self):
     self.delayDisplay("Load scene",self.delayMs)
 
-    # TODO: Scene clear crashes here. After a ResetNode call from Scene::Clear(), the sort filter proxy
-    # model of a slice control volume combobox in filterAcceptsNode at an invalid pointer of a model display node
-    # That node was most probably deleted at the previous RemoveAllNodes call in scene clear. Why that proxy model
-    # has to accept that node?
-    # Test code to list all node pointers in the scene to find the invalid one that causes the crash
-    # import qSlicerSubjectHierarchyModuleWidgetsPythonQt
-    # subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
-    # subjectHierarchyWidget.subjectHierarchyPluginByName('DICOM')
-    # Test code in subjectHierarchyPluginByName to list all node pointers
-    # ofstream test;
-    # test.open("D:\\log.txt", ios::app);
-    # for (int n=0; n < this->mrmlScene()->GetNodes()->GetNumberOfItems(); n++)
-    # {
-     # vtkMRMLNode* node = (vtkMRMLNode*)this->mrmlScene()->GetNodes()->GetItemAsObject(n);
-     # test << QString::number((qulonglong)node,16).toLatin1().constData() << "\t" << node->GetID() << "\t" << node->GetName() << "\n";
-    # }
-    # test.close();
-    return
-
     slicer.mrmlScene.Clear(0)
 
     slicer.util.loadScene(self.sceneFileName)
 
     self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode') == 2 )
-    self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode') == 1 )
+    self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode') == 4 ) # 1 + slice models
     self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode') == 9 )
 
   # ------------------------------------------------------------------------------
@@ -385,7 +365,7 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.assertTrue( label > 0 )
 
     sampleLabelmapNode = slicer.vtkMRMLScalarVolumeNode()
-    sampleLabelmapNode = slicer.mrmlScene.CopyNode(volumeNode)
+    sampleLabelmapNode.Copy(volumeNode)
     imageData = vtk.vtkImageData()
     imageData.DeepCopy(volumeNode.GetImageData())
     sampleLabelmapNode.SetAndObserveImageData(imageData)

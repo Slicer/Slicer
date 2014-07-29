@@ -108,10 +108,10 @@ qSlicerSubjectHierarchyDefaultPlugin::qSlicerSubjectHierarchyDefaultPlugin(QObje
   this->m_Name = QString("Default");
 
   // Scene -> Subject
-  this->m_ChildLevelMap.insert( QString(),
+  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( QString(),
     vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT );
   // Subject -> Study
-  this->m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT,
+  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT,
     vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY );
 
   Q_D(qSlicerSubjectHierarchyDefaultPlugin);

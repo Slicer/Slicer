@@ -214,7 +214,7 @@ protected:
   QString m_Name;
 
   /// Map assigning a child level to a parent level for the plugin
-  QMap<QString, QString> m_ChildLevelMap;
+  static QMap<QString, QString> m_ChildLevelMap;
 
 private:
   qSlicerSubjectHierarchyAbstractPlugin(const qSlicerSubjectHierarchyAbstractPlugin&); // Not implemented

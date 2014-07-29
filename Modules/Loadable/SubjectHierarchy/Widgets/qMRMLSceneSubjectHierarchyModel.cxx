@@ -260,7 +260,7 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
     // then show as any node, except for a tooltip explaining how to add it to subject hierarchy
     if (column == this->nameColumn())
       {
-      QString text = QString(node->GetName()) + QString(" (potential)");
+      QString text = QString(node->GetName());
       item->setText(text);
       item->setToolTip(tr("To add into subject hierarchy, drag&drop under a subject hierarchy node"));
       }
@@ -295,8 +295,8 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
   else
     {
     // Owner plugin name is not set for subject hierarchy node. Show it as a regular node
-    qDebug() << "qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode: No owner plugin defined for subject hierarchy node '" << subjectHierarchyNode->GetName() << "'!";
-    Superclass::updateItemDataFromNode(item,node,column);
+    //qDebug() << "qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode: No owner plugin defined for subject hierarchy node '" << subjectHierarchyNode->GetName() << "'!";
+    //Superclass::updateItemDataFromNode(item,node,column);
     return;
     }
 
@@ -388,7 +388,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
   if (!subjectHierarchyNode)
     {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData: Invalid node in subject hierarchy tree! Nodes must all be subject hierarchy nodes";
+    Superclass::updateNodeFromItemData(node, item);
     return;
     }
   qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
