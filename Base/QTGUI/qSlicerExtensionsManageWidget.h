@@ -58,14 +58,21 @@ public slots:
 protected slots:
   void setExtensionEnabled(const QString& extensionName);
   void setExtensionDisabled(const QString& extensionName);
+  void setExtensionUpdateAvailable(const QString& extensionName);
   void scheduleExtensionForUninstall(const QString& extensionName);
   void cancelExtensionScheduledForUninstall(const QString& extensionName);
+  void scheduleExtensionForUpdate(const QString& extensionName);
+  void cancelExtensionScheduledForUpdate(const QString& extensionName);
   void onModelUpdated();
   void onIconDownloadComplete(const QString& extensionName);
   void onLinkActivated(const QString& link);
   void onExtensionInstalled(const QString& extensionName);
   void onExtensionScheduledForUninstall(const QString& extensionName);
   void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
+  void setExtensionUpdateScheduled(const QString& extensionName);
+  void setExtensionUpdateCanceled(const QString& extensionName);
+  void setExtensionUpdateDownloadProgress(
+    const QString& extensionName, qint64 received, qint64 total);
   void onModelExtensionEnabledChanged(const QString& extensionName, bool enabled);
 
 protected:

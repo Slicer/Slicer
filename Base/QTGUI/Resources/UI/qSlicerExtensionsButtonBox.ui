@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>263</width>
-    <height>88</height>
+    <width>363</width>
+    <height>92</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,10 +22,67 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>33</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="QWidget" name="UpdateOptionsWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>20</height>
+      </size>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,0">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="UpdateProgress"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ScheduleForUpdateButton">
+        <property name="toolTip">
+         <string>Tell the application to update this extension on restart.</string>
+        </property>
+        <property name="text">
+         <string>Update</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="CancelScheduledForUpdateButton">
+        <property name="toolTip">
+         <string>Tell the application to keep the currently installed version of this extension.</string>
+        </property>
+        <property name="text">
+         <string>Cancel Update</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

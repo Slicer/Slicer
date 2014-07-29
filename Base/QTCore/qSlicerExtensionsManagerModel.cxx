@@ -179,7 +179,7 @@ public:
 
   QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
 
-  void downloadExtension(const QString& extensionId, const char* completionSlot);
+  qSlicerExtensionDownloadTask* downloadExtension(const QString& extensionId);
 
   /// Update (reinstall) specified extension.
   ///
@@ -1084,8 +1084,9 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelPrivate::downloadExtension(
-  const QString& extensionId, const char* completionSlot)
+qSlicerExtensionDownloadTask*
+qSlicerExtensionsManagerModelPrivate::downloadExtension(
+  const QString& extensionId)
 {
   Q_Q(qSlicerExtensionsManagerModel);
 
@@ -1093,7 +1094,7 @@ void qSlicerExtensionsManagerModelPrivate::downloadExtension(
   ExtensionMetadataType extensionMetadata = q->retrieveExtensionMetadata(extensionId);
   if (extensionMetadata.count() == 0)
     {
-    return;
+    return 0;
     }
 
   QString itemId = extensionMetadata["item_id"].toString();
@@ -1109,11 +1110,10 @@ void qSlicerExtensionsManagerModelPrivate::downloadExtension(
   qSlicerExtensionDownloadTask* const task =
     new qSlicerExtensionDownloadTask(reply);
 
-  QObject::connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)),
-                   q, completionSlot);
-
   task->setMetadata(extensionMetadata);
   emit q->downloadStarted(reply);
+
+  return task;
 }
 
 // --------------------------------------------------------------------------
@@ -1128,9 +1128,9 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
     return;
     }
 
-  d->downloadExtension(
-    extensionId,
-    SLOT(onInstallDownloadFinished(qSlicerExtensionDownloadTask*)));
+  qSlicerExtensionDownloadTask* const task = d->downloadExtension(extensionId);
+  connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)),
+          this, SLOT(onInstallDownloadFinished(qSlicerExtensionDownloadTask*)));
 }
 
 // --------------------------------------------------------------------------
@@ -1478,6 +1478,8 @@ void qSlicerExtensionsManagerModel::onUpdateCheckComplete(
         {
         this->scheduleExtensionForUpdate(updateInfo.ExtensionName);
         }
+
+      emit this->extensionUpdateAvailable(updateInfo.ExtensionName);
       }
     }
 }
@@ -1487,6 +1489,28 @@ void qSlicerExtensionsManagerModel::onUpdateCheckFailed(const QUuid& requestId)
 {
   Q_D(qSlicerExtensionsManagerModel);
   d->CheckForUpdatesRequests.remove(requestId);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::onUpdateDownloadProgress(
+  qSlicerExtensionDownloadTask* task, qint64 received, qint64 total)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  // Look up the update information
+  const QString& extensionName = task->extensionName();
+  const QHash<QString, UpdateDownloadInformation>::iterator iter =
+    d->AvailableUpdates.find(extensionName);
+
+  // Update internal progress tracking
+  if (iter != d->AvailableUpdates.end())
+    {
+    iter->DownloadProgress = received;
+    iter->DownloadSize = total;
+    }
+
+  // Notify observers of download progress
+  emit this->updateDownloadProgress(extensionName, received, total);
 }
 
 // --------------------------------------------------------------------------
@@ -1590,7 +1614,8 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
     {
     if (updateInfo.ExtensionId.isEmpty())
       {
-      d->critical(QString("Missing download information for extension %1").arg(extensionName));
+      d->critical("Missing download information for extension " +
+                  extensionName);
       return false;
       }
 
@@ -1600,11 +1625,21 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
       return true;
       }
 
-    d->downloadExtension(
-      updateInfo.ExtensionId,
-      SLOT(onUpdateDownloadFinished(qSlicerExtensionDownloadTask*)));
-    // TODO hook up progress reporting
-    updateInfo.DownloadSize = -1;
+    qSlicerExtensionDownloadTask* const task =
+      d->downloadExtension(updateInfo.ExtensionId);
+    if (!task)
+      {
+      d->critical("Failed to retrieve metadata for extension " +
+                  updateInfo.ExtensionId);
+      return false;
+      }
+
+    connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)),
+            this, SLOT(onUpdateDownloadFinished(qSlicerExtensionDownloadTask*)));
+    connect(task, SIGNAL(progress(qSlicerExtensionDownloadTask*,qint64,qint64)),
+            this, SLOT(onUpdateDownloadProgress(qSlicerExtensionDownloadTask*,qint64,qint64)));
+
+    this->onUpdateDownloadProgress(task, 0, -1);
     return true;
     }
 

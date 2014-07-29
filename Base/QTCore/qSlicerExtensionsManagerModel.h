@@ -314,6 +314,9 @@ signals:
 
   void downloadFinished(QNetworkReply * reply);
 
+  void updateDownloadProgress(const QString& extensionName,
+                              qint64 received, qint64 total);
+
   void modelUpdated();
 
   void extensionUpdateAvailable(const QString& extensionName);
@@ -345,6 +348,9 @@ protected slots:
 
   /// \sa scheduleExtensionForUpdate
   void onUpdateDownloadFinished(qSlicerExtensionDownloadTask* task);
+
+  void onUpdateDownloadProgress(qSlicerExtensionDownloadTask* task,
+                                qint64 received, qint64 total);
 
   void onUpdateCheckComplete(const QUuid& requestId,
                              const QList<QVariantMap>& results);

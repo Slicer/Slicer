@@ -75,6 +75,8 @@ public:
   QSignalMapper DisableButtonMapper;
   QSignalMapper ScheduleUninstallButtonMapper;
   QSignalMapper CancelScheduledUninstallButtonMapper;
+  QSignalMapper ScheduleUpdateButtonMapper;
+  QSignalMapper CancelScheduledUpdateButtonMapper;
 
   QNetworkAccessManager DownloadManager;
   QSignalMapper DownloadMapper;
@@ -154,6 +156,14 @@ void qSlicerExtensionsManageWidgetPrivate::init()
 
   QObject::connect(&this->CancelScheduledUninstallButtonMapper, SIGNAL(mapped(QString)),
                    q, SLOT(cancelExtensionScheduledForUninstall(QString)));
+
+  QObject::connect(&this->ScheduleUpdateButtonMapper,
+                   SIGNAL(mapped(QString)),
+                   q, SLOT(scheduleExtensionForUpdate(QString)));
+
+  QObject::connect(&this->CancelScheduledUpdateButtonMapper,
+                   SIGNAL(mapped(QString)),
+                   q, SLOT(cancelExtensionScheduledForUpdate(QString)));
 
   QObject::connect(&this->DownloadMapper, SIGNAL(mapped(QString)),
                    q, SLOT(onIconDownloadComplete(QString)));
@@ -254,6 +264,7 @@ public:
                                     bool extensionCompatible)
     : QLabel(), ExtensionSlicerVersion(extensionSlicerVersion), SlicerRevision(slicerRevision),
       ExtensionIncompatible(!extensionCompatible), WarningColor("#bd8530"),
+      ExtensionUpdateAvailable(false), InfoColor("#2c70c8"),
       ExtensionDisabled(!extensionEnabled), ExtensionId(extensionId),
       ExtensionName(extensionName), ExtensionDescription(extensionDescription),
       LastWidth(0), LastElidedDescription(extensionDescription)
@@ -280,12 +291,34 @@ public:
   }
 
   // --------------------------------------------------------------------------
+  void setExtensionUpdateAvailable(bool state)
+  {
+    if (this->ExtensionUpdateAvailable != state)
+      {
+      this->ExtensionUpdateAvailable = state;
+      this->prepareText(this->LastElidedDescription);
+      this->update();
+      }
+  }
+
+  // --------------------------------------------------------------------------
   QString incompatibleExtensionText()
   {
     return QString("<p style=\"font-weight: bold; font-size: 80%; color: %2;\">"
                    "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> "
                    "Incompatible with Slicer r%3 [built for r%4]</p>").
         arg(this->WarningColor, this->SlicerRevision, this->ExtensionSlicerVersion);
+  }
+
+  // --------------------------------------------------------------------------
+  QString extensionUpdateAvailableText()
+  {
+    static const char* const text =
+      "<p style=\"font-weight: bold; font-size: 80%; color: %2;\">"
+      "<img style=\"float: left\""
+      " src=\":/Icons/ExtensionUpdateAvailable.svg\"/> "
+      "An update is available</p>";
+    return QString(text).arg(this->InfoColor);
   }
 
   // --------------------------------------------------------------------------
@@ -298,8 +331,12 @@ public:
     QString enabledText = (this->ExtensionDisabled ? " (disabled)" : "");
     if (this->ExtensionIncompatible)
       {
-      warningText = this->incompatibleExtensionText();
+      warningText += this->incompatibleExtensionText();
       enabledText = " (disabled)";
+      }
+    if (this->ExtensionUpdateAvailable)
+      {
+      warningText += this->extensionUpdateAvailableText();
       }
     if (!this->ExtensionId.isEmpty())
       {
@@ -418,7 +455,10 @@ public:
   QString SlicerRevision;
 
   bool ExtensionIncompatible;
-  QString WarningColor;
+  const QString WarningColor;
+
+  bool ExtensionUpdateAvailable;
+  const QString InfoColor;
 
   bool ExtensionDisabled;
 
@@ -492,9 +532,9 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   label->setMargin(6);
   QObject::connect(label, SIGNAL(linkActivated(QString)), q, SLOT(onLinkActivated(QString)));
 
-  QSize hint = label->sizeHint();
-  hint.setWidth(hint.width() + 64);
-  item->setSizeHint(hint);
+  const bool isExtensionUpdateAvailable =
+    q->extensionsManagerModel()->isExtensionUpdateAvailable(extensionName);
+  label->setExtensionUpdateAvailable(isExtensionUpdateAvailable);
 
   qSlicerExtensionsItemWidget * widget = new qSlicerExtensionsItemWidget(label);
   q->setItemWidget(item, widget);
@@ -517,6 +557,31 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   this->CancelScheduledUninstallButtonMapper.setMapping(widget->ButtonBox->CancelScheduledForUninstallButton, extensionName);
   QObject::connect(widget->ButtonBox->CancelScheduledForUninstallButton, SIGNAL(clicked()), &this->CancelScheduledUninstallButtonMapper, SLOT(map()));
   widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(scheduledForUninstall);
+
+  const bool scheduledForUpdate =
+    this->ExtensionsManagerModel->isExtensionScheduledForUpdate(extensionName);
+
+  widget->ButtonBox->UpdateOptionsWidget->setVisible(isExtensionUpdateAvailable);
+  widget->ButtonBox->UpdateProgress->setVisible(false);
+
+  this->ScheduleUpdateButtonMapper.setMapping(
+    widget->ButtonBox->ScheduleForUpdateButton, extensionName);
+  QObject::connect(
+    widget->ButtonBox->ScheduleForUpdateButton, SIGNAL(clicked()),
+    &this->ScheduleUpdateButtonMapper, SLOT(map()));
+  widget->ButtonBox->ScheduleForUpdateButton->setVisible(!scheduledForUpdate);
+
+  this->CancelScheduledUpdateButtonMapper.setMapping(
+    widget->ButtonBox->CancelScheduledForUpdateButton, extensionName);
+  QObject::connect(
+    widget->ButtonBox->CancelScheduledForUpdateButton, SIGNAL(clicked()),
+    &this->CancelScheduledUpdateButtonMapper, SLOT(map()));
+  widget->ButtonBox->CancelScheduledForUpdateButton->setVisible(scheduledForUpdate);
+
+  QSize hint = label->sizeHint();
+  hint.setWidth(hint.width() + 64);
+  hint.setHeight(qMax(hint.height(), widget->ButtonBox->minimumSizeHint().height()));
+  item->setSizeHint(hint);
 }
 
 // --------------------------------------------------------------------------
@@ -571,6 +636,19 @@ void qSlicerExtensionsManageWidget::setExtensionsManagerModel(qSlicerExtensionsM
             this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionEnabledChanged(QString,bool)),
             this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
+    connect(d->ExtensionsManagerModel,
+            SIGNAL(extensionUpdateAvailable(QString)),
+            this, SLOT(setExtensionUpdateAvailable(QString)));
+    connect(d->ExtensionsManagerModel,
+            SIGNAL(extensionScheduledForUpdate(QString)),
+            this, SLOT(setExtensionUpdateScheduled(QString)));
+    connect(d->ExtensionsManagerModel,
+            SIGNAL(extensionCancelledScheduleForUpdate(QString)),
+            this, SLOT(setExtensionUpdateCanceled(QString)));
+    connect(d->ExtensionsManagerModel,
+            SIGNAL(updateDownloadProgress(QString,qint64,qint64)),
+            this,
+            SLOT(setExtensionUpdateDownloadProgress(QString,qint64,qint64)));
     }
 }
 
@@ -651,6 +729,135 @@ void qSlicerExtensionsManageWidget::onExtensionCancelledScheduleForUninstall(con
   Q_ASSERT(widget);
   widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(false);
   widget->ButtonBox->ScheduleForUninstallButton->setVisible(true);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::setExtensionUpdateAvailable(
+  const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+  QListWidgetItem* const item = d->extensionItem(extensionName);
+  Q_ASSERT(item);
+  qSlicerExtensionsItemWidget* const widget =
+    dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+  widget->Label->setExtensionUpdateAvailable(true);
+
+  widget->ButtonBox->UpdateOptionsWidget->setVisible(true);
+  if (!widget->ButtonBox->UpdateProgress->isVisible())
+    {
+    const bool scheduled =
+      d->ExtensionsManagerModel &&
+      d->ExtensionsManagerModel->isExtensionScheduledForUpdate(extensionName);
+
+    widget->ButtonBox->ScheduleForUpdateButton->setVisible(!scheduled);
+    widget->ButtonBox->CancelScheduledForUpdateButton->setVisible(scheduled);
+    }
+
+  QSize hint = widget->Label->sizeHint();
+  hint.setWidth(hint.width() + 64);
+  hint.setHeight(qMax(hint.height(), widget->sizeHint().height()));
+  item->setSizeHint(hint);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::scheduleExtensionForUpdate(
+  const QString& extensionName)
+{
+  qSlicerExtensionsManagerModel* const model =
+    this->extensionsManagerModel();
+  if (!model)
+    {
+    return;
+    }
+  model->scheduleExtensionForUpdate(extensionName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::cancelExtensionScheduledForUpdate(
+  const QString& extensionName)
+{
+  qSlicerExtensionsManagerModel* const model =
+    this->extensionsManagerModel();
+  if (!model)
+    {
+    return;
+    }
+  model->cancelExtensionScheduledForUpdate(extensionName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::setExtensionUpdateScheduled(
+  const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+  QListWidgetItem* const item = d->extensionItem(extensionName);
+  Q_ASSERT(item);
+  qSlicerExtensionsItemWidget* const widget =
+    dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+  widget->ButtonBox->ScheduleForUpdateButton->setVisible(false);
+  widget->ButtonBox->CancelScheduledForUpdateButton->setVisible(true);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::setExtensionUpdateCanceled(
+  const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+  QListWidgetItem* const item = d->extensionItem(extensionName);
+  Q_ASSERT(item);
+  qSlicerExtensionsItemWidget* const widget =
+    dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+  widget->ButtonBox->ScheduleForUpdateButton->setVisible(true);
+  widget->ButtonBox->CancelScheduledForUpdateButton->setVisible(false);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::setExtensionUpdateDownloadProgress(
+  const QString& extensionName, qint64 received, qint64 total)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+  QListWidgetItem* const item = d->extensionItem(extensionName);
+  Q_ASSERT(item);
+  qSlicerExtensionsItemWidget* const widget =
+    dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
+  Q_ASSERT(widget);
+
+  if (total < 0)
+    {
+    widget->ButtonBox->UpdateProgress->setRange(0, 0);
+    widget->ButtonBox->UpdateProgress->setValue(0);
+    }
+  else
+    {
+    while (total > (1LL << 31))
+      {
+      total >>= 1;
+      received >>= 1;
+      }
+
+    widget->ButtonBox->UpdateProgress->setRange(0, static_cast<int>(total));
+    widget->ButtonBox->UpdateProgress->setValue(static_cast<int>(received));
+    }
+
+  if (received == total)
+    {
+    const bool scheduled =
+      d->ExtensionsManagerModel &&
+      d->ExtensionsManagerModel->isExtensionScheduledForUpdate(extensionName);
+
+    widget->ButtonBox->UpdateProgress->setVisible(false);
+    widget->ButtonBox->ScheduleForUpdateButton->setVisible(!scheduled);
+    widget->ButtonBox->CancelScheduledForUpdateButton->setVisible(scheduled);
+    }
+  else
+    {
+    widget->ButtonBox->UpdateProgress->setVisible(true);
+    widget->ButtonBox->ScheduleForUpdateButton->setVisible(false);
+    widget->ButtonBox->CancelScheduledForUpdateButton->setVisible(false);
+    }
 }
 
 // --------------------------------------------------------------------------
