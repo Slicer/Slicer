@@ -187,6 +187,10 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   // Search field and configure button
   this->toolsWidget = new qSlicerExtensionsToolsWidget;
 
+  QSettings settings;
+  this->toolsWidget->AutoUpdateAction->setChecked(
+    settings.value("Extensions/AutoUpdate", false).toBool());
+
   this->tabWidget->setCornerWidget(this->toolsWidget, Qt::TopRightCorner);
 
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
@@ -232,6 +236,11 @@ qSlicerExtensionsManagerWidget::qSlicerExtensionsManagerWidget(QWidget* _parent)
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerWidget::~qSlicerExtensionsManagerWidget()
 {
+  Q_D(qSlicerExtensionsManagerWidget);
+
+  QSettings settings;
+  settings.setValue("Extensions/AutoUpdate",
+                    d->toolsWidget->AutoUpdateAction->isChecked());
 }
 
 // --------------------------------------------------------------------------
