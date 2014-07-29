@@ -160,7 +160,7 @@ class LabelStatisticsWidget:
     resampledLabelNode = None
     if warnings != "":
       if 'mismatch' in warnings:
-        resampledLabelNode = volumesLogic.ResampleInputVolumeNodeToReferenceVolumeNode(self.labelNode, self.grayscaleNode)
+        resampledLabelNode = volumesLogic.ResampleVolumeToReferenceVolume(self.labelNode, self.grayscaleNode)
         self.logic = LabelStatisticsLogic(self.grayscaleNode, resampledLabelNode)
       else:
         qt.QMessageBox.warning(slicer.util.mainWindow(),
