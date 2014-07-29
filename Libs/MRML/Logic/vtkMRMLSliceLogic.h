@@ -338,6 +338,11 @@ public:
   /// node name suffix, false otherwise
   /// \sa SLICE_MODEL_NODE_NAME_SUFFIX
   static bool IsSliceModelNode(vtkMRMLNode *mrmlNode);
+  /// Return true if the display node is a volume slice node display node
+  /// by checking the attribute SliceLogic.IsSliceModelDiplayNode
+  /// Returns false if the attribute is not present, true if the attribute
+  /// is present and not equal to zero
+  static bool IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode);
 
 protected:
 

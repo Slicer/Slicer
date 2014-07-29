@@ -1509,7 +1509,10 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 #endif
     this->SliceModelDisplayNode->SetSaveWithScene(0);
     this->SliceModelDisplayNode->SetDisableModifiedEvent(0);
-
+    // set an attribute to distinguish this from regular model display nodes
+    this->SliceModelDisplayNode->SetAttribute("SliceLogic.IsSliceModelDiplayNode", "True");
+    std::string displayName = std::string(this->Name) + std::string(" Display");
+    this->SliceModelDisplayNode->SetName(displayName.c_str());
     // Turn slice intersection off by default - there is a higher level GUI control
     // in the SliceCompositeNode that tells if slices should be enabled for a given
     // slice viewer
@@ -2582,6 +2585,23 @@ bool vtkMRMLSliceLogic::IsSliceModelNode(vtkMRMLNode *mrmlNode)
       strstr(mrmlNode->GetName(), vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX.c_str()) != NULL)
     {
     return true;
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode)
+{
+  if (mrmlDisplayNode != NULL &&
+      mrmlDisplayNode->IsA("vtkMRMLModelDisplayNode"))
+    {
+    const char *attrib = mrmlDisplayNode->GetAttribute("SliceLogic.IsSliceModelDiplayNode");
+    // allow the attribute to be set to anything but 0
+    if (attrib != NULL &&
+        strcmp(attrib, "0") != 0)
+      {
+      return true;
+      }
     }
   return false;
 }

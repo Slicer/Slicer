@@ -27,6 +27,7 @@
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
 
@@ -156,14 +157,21 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
     return 0;
     }
   bool visibleOnNode = true;
-  vtkMRMLSliceNode *sliceNode = this->SliceNode;
-  if (sliceNode)
+  // for volume slice model display nodes, don't want to only show the slice
+  // intersection if the slice is visible in 3d, but do want to do the check for
+  // other types of models
+  bool isSliceModel = vtkMRMLSliceLogic::IsSliceModelDisplayNode(displayNode);
+  if (!isSliceModel)
     {
-    visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
-    }
-  else
-    {
-    visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
+    vtkMRMLSliceNode *sliceNode = this->SliceNode;
+    if (sliceNode)
+      {
+      visibleOnNode = displayNode->GetVisibility(sliceNode->GetID());
+      }
+    else
+      {
+      visibleOnNode = (displayNode->GetVisibility() == 1 ? true : false);
+      }
     }
   return visibleOnNode && (displayNode->GetSliceIntersectionVisibility() != 0);
 }
