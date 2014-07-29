@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <QSettings>
+#include <QUuid>
 #include <QVariantMap>
 
 // CTK includes
@@ -111,6 +112,14 @@ public:
   /// \sa scheduleExtensionForUpdate, isExtensionScheduledForUpdate,
   ///     extensionScheduledForUpdate
   QStringList scheduledForUpdateExtensions() const;
+
+  /// Check if an update is known to be available for the specified extension.
+  ///
+  /// \return \c true if a previous check for updates has determined that an
+  ///         update is available for the specified extension.
+  ///
+  /// \sa checkForUpdates
+  Q_INVOKABLE bool isExtensionUpdateAvailable(const QString& extensionName)const;
 
   /// Test if extension is scheduled to be updated.
   ///
@@ -306,6 +315,8 @@ signals:
 
   void modelUpdated();
 
+  void extensionUpdateAvailable(const QString& extensionName);
+
   void extensionInstalled(const QString& extensionName);
 
   void extensionScheduledForUninstall(const QString& extensionName);
@@ -330,6 +341,10 @@ protected slots:
 
   /// \sa downloadAndInstallExtension
   void onDownloadFinished(QNetworkReply* reply);
+
+  void onUpdateCheckComplete(const QUuid& requestId,
+                             const QList<QVariantMap>& results);
+  void onUpdateCheckFailed(const QUuid& requestId);
 
 protected:
   QScopedPointer<qSlicerExtensionsManagerModelPrivate> d_ptr;
