@@ -1552,6 +1552,12 @@ void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
       return;
       }
 
+    // Save update metadata
+    const QString& metadataPath =
+      QString("%1/.updates/%2.s4ext").arg(this->extensionsInstallPath(),
+                                          extensionName);
+    Self::writeExtensionDescriptionFile(metadataPath, task->metadata());
+
     // Create update archive
     const QString& archiveName = task->archiveName();
     const QString& archivePath =
@@ -1680,7 +1686,66 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUpdate(
 bool qSlicerExtensionsManagerModelPrivate::updateExtension(
   const QString& extensionName, const QString& archiveFile)
 {
-  return false; // FIXME TODO
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  QString error;
+  if (!this->checkExtensionSettingsPermissions(error))
+    {
+    this->critical(error);
+    return false;
+    }
+
+  QStandardItem * item = this->extensionItem(extensionName);
+  if (!item)
+    {
+    qCritical() << "Failed to update extension" << extensionName;
+    return false;
+    }
+
+  if (!q->isExtensionScheduledForUpdate(extensionName))
+    {
+    qCritical() << "Failed to update extension" << extensionName
+                << "- Extension is NOT 'scheduled for update'";
+    return false;
+    }
+
+  // Prepare to remove old version
+  const QString& installPath = q->extensionInstallPath(extensionName);
+  const QString& descriptionFile = q->extensionDescriptionFile(extensionName);
+  bool success = true;
+
+  // Remove old version
+  if (QFile::exists(installPath))
+    {
+    success = ctk::removeDirRecursively(installPath);
+    }
+  if (QFile::exists(descriptionFile))
+    {
+    success = success && QFile::remove(descriptionFile);
+    }
+  success = success && this->Model.removeRow(item->row());
+
+  // Read metadata for new version
+  const QString& metadataPath =
+    QString("%1/.updates/%2.s4ext").arg(q->extensionsInstallPath(),
+                                        extensionName);
+  const ExtensionMetadataType extensionMetadata =
+    qSlicerExtensionsManagerModel::parseExtensionDescriptionFile(metadataPath);
+
+  // Install new version
+  success = success &&
+            q->installExtension(extensionName, extensionMetadata, archiveFile);
+
+  if (success)
+    {
+    success = success && QFile::remove(archiveFile);
+    success = success && QFile::remove(metadataPath);
+    this->removeExtensionFromScheduledForUpdateList(extensionName);
+    }
+
+  emit q->extensionUpdated(extensionName);
+
+  return success;
 }
 
 // --------------------------------------------------------------------------

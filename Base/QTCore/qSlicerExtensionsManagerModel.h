@@ -323,6 +323,8 @@ signals:
 
   void extensionInstalled(const QString& extensionName);
 
+  void extensionUpdated(const QString& extensionName);
+
   void extensionScheduledForUninstall(const QString& extensionName);
 
   void extensionCancelledScheduleForUninstall(const QString& extensionName);
