@@ -106,6 +106,19 @@ public:
   /// \sa setExtensionEnabled, extensionEnabledChanged, enabledExtensions
   Q_INVOKABLE bool isExtensionEnabled(const QString& extensionName)const;
 
+  /// Get the names of all extensions scheduled for update.
+  ///
+  /// \sa scheduleExtensionForUpdate, isExtensionScheduledForUpdate,
+  ///     extensionScheduledForUpdate
+  QStringList scheduledForUpdateExtensions() const;
+
+  /// Test if extension is scheduled to be updated.
+  ///
+  /// \return \c true if \p extensionName is scheduled to be updated.
+  ///
+  /// \sa updateScheduledExtensions();
+  Q_INVOKABLE bool isExtensionScheduledForUpdate(const QString& extensionName)const;
+
   /// \brief Return names of all extensions scheduled for uninstall
   /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall, extensionScheduledForUninstall
   QStringList scheduledForUninstallExtensions() const;
@@ -223,9 +236,59 @@ public slots:
   /// \sa scheduleExtensionForUninstall
   bool cancelExtensionScheduledForUninstall(const QString& extensionName);
 
-  /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall
-  bool uninstallScheduledExtensions();
+  /// Check for updates to installed extensions.
+  ///
+  /// This checks each installed extension to see if it is the latest version.
+  /// If \p installUpdates is \c true, available updates will be automatically
+  /// scheduled for installation.
+  void checkForUpdates(bool installUpdates);
+
+  /// Schedule \p extensionName to be updated (reinstalled).
+  ///
+  /// This records \p extensionName in the list of extensions scheduled to be
+  /// updated (which is done by reinstalling the extension at next startup).
+  ///
+  /// \sa isExtensionScheduledForUpdate, updateScheduledExtensions
+  bool scheduleExtensionForUpdate(const QString& extensionName);
+
+  /// \brief Cancel the uninstallation of \a extensionName
+  /// Tell the application to keep \a extensionName installed
+  /// \sa scheduleExtensionForUninstall
+  bool cancelExtensionScheduledForUpdate(const QString& extensionName);
+
+  /// Update extensions scheduled for update.
+  ///
+  /// \param updatedExtensions
+  ///   QStringList which received the list of extensions which are
+  ///   successfully updated.
+  /// \return \c true if all scheduled extensions are successfully updated.
+  ///
+  /// \sa scheduleExtensionForUpdate, isExtensionScheduledForUpdate
+  bool updateScheduledExtensions(QStringList &updatedExtensions);
+
+  /// Update extensions scheduled for update.
+  ///
+  /// \return \c true if all scheduled extensions are successfully updated.
+  ///
+  /// \sa scheduleExtensionForUpdate, isExtensionScheduledForUpdate
+  bool updateScheduledExtensions();
+
+  /// Uninstall extensions scheduled for uninstall.
+  ///
+  /// \param uninstalledExtensions
+  ///   QStringList which received the list of extensions which are
+  ///   successfully uninstalled.
+  /// \return \c true if all scheduled extensions are successfully uninstalled.
+  ///
+  /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall,
   bool uninstallScheduledExtensions(QStringList &uninstalledExtensions);
+
+  /// Uninstall extensions scheduled for uninstall.
+  ///
+  /// \return \c true if all scheduled extensions are successfully uninstalled.
+  ///
+  /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall,
+  bool uninstallScheduledExtensions();
 
   void identifyIncompatibleExtensions();
 
@@ -248,6 +311,10 @@ signals:
   void extensionScheduledForUninstall(const QString& extensionName);
 
   void extensionCancelledScheduleForUninstall(const QString& extensionName);
+
+  void extensionScheduledForUpdate(const QString& extensionName);
+
+  void extensionCancelledScheduleForUpdate(const QString& extensionName);
 
   void extensionUninstalled(const QString& extensionName);
 

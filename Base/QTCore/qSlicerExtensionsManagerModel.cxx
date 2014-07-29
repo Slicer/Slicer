@@ -154,9 +154,19 @@ public:
   void addExtensionSettings(const QString& extensionName);
   void removeExtensionSettings(const QString& extensionName);
 
+  void removeExtensionFromScheduledForUpdateList(const QString& extensionName);
   void removeExtensionFromScheduledForUninstallList(const QString& extensionName);
 
   QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
+
+  /// Update (reinstall) specified extension.
+  ///
+  /// This updates the specified extension
+  ///
+  /// \param extensionName Name of the extension.
+  /// \param
+  /// \sa downloadExtension, installExtension
+  bool updateExtension(const QString& extensionName);
 
   /// \brief Uninstall \a extensionName
   /// \note The directory containing the extension will be deleted.
@@ -595,6 +605,20 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionSettings(const QString
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate
+::removeExtensionFromScheduledForUpdateList(const QString& extensionName)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QVariantMap scheduled =
+    settings.value("Extensions/ScheduledForUpdate").toMap();
+
+  scheduled.remove(extensionName);
+  settings.setValue("Extensions/ScheduledForUpdate", scheduled);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::removeExtensionFromScheduledForUninstallList(const QString& extensionName)
 {
   Q_Q(qSlicerExtensionsManagerModel);
@@ -968,6 +992,20 @@ bool qSlicerExtensionsManagerModel::isExtensionEnabled(const QString& extensionN
 }
 
 // --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::scheduledForUpdateExtensions() const
+{
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  return settings.value("Extensions/ScheduledForUpdate").toMap().keys();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::isExtensionScheduledForUpdate(
+  const QString& extensionName)const
+{
+  return this->scheduledForUpdateExtensions().contains(extensionName);
+}
+
+// --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::scheduledForUninstallExtensions() const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
@@ -975,10 +1013,10 @@ QStringList qSlicerExtensionsManagerModel::scheduledForUninstallExtensions() con
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::isExtensionScheduledForUninstall(const QString& extensionName)const
+bool qSlicerExtensionsManagerModel::isExtensionScheduledForUninstall(
+  const QString& extensionName)const
 {
-  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
-  return settings.value("Extensions/ScheduledForUninstall").toStringList().contains(extensionName);
+  return this->scheduledForUninstallExtensions().contains(extensionName);
 }
 
 // --------------------------------------------------------------------------
@@ -1293,6 +1331,87 @@ bool qSlicerExtensionsManagerModel::installExtension(
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::checkForUpdates(bool installUpdates)
+{
+  // FIXME TODO
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
+  const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+    {
+    d->critical(error);
+    return false;
+    }
+
+  if (!this->isExtensionInstalled(extensionName))
+    {
+    // Cannot update unknown extension
+    return false;
+    }
+  if (this->isExtensionScheduledForUninstall(extensionName))
+    {
+    // Cannot update if scheduled to be uninstalled
+    return false;
+    }
+
+  // Get current mapping of scheduled updates
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QVariantMap scheduled =
+    settings.value("Extensions/ScheduledForUpdate").toMap();
+
+  if (scheduled.contains(extensionName))
+    {
+    // Already scheduled for update
+    return true;
+    }
+
+  // Add to scheduled updates
+  const ExtensionMetadataType metadata = this->extensionMetadata(extensionName);
+  scheduled[extensionName] = metadata.value("extension_id");
+  settings.setValue("Extensions/ScheduledForUpdate", scheduled);
+
+  emit this->extensionScheduledForUpdate(extensionName);
+
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUpdate(
+  const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+    {
+    d->critical(error);
+    return false;
+    }
+  if (!this->isExtensionScheduledForUpdate(extensionName))
+    {
+    return false;
+    }
+  d->removeExtensionFromScheduledForUpdateList(extensionName);
+
+  emit this->extensionCancelledScheduleForUpdate(extensionName);
+
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::updateExtension(
+  const QString& extensionName)
+{
+  return false; // FIXME TODO
+}
+
+// --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManagerModel);
@@ -1306,17 +1425,27 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString&
 
   if (!this->isExtensionInstalled(extensionName))
     {
+    // Cannot uninstall unknown extension
     return false;
     }
 
-  if (this->isExtensionScheduledForUninstall(extensionName))
+  // Get current list of scheduled uninstalls
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QStringList scheduled =
+    settings.value("Extensions/ScheduledForUninstall").toStringList();
+
+  if (scheduled.contains(extensionName))
     {
+    // Already scheduled for uninstall; nothing to do
     return true;
     }
-  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
-  settings.setValue(
-        "Extensions/ScheduledForUninstall",
-        settings.value("Extensions/ScheduledForUninstall").toStringList() << extensionName);
+
+  // Ensure extension not scheduled for update; cancel update if needed
+  this->cancelExtensionScheduledForUpdate(extensionName);
+
+  // Add to scheduled uninstalls
+  scheduled.append(extensionName);
+  settings.setValue("Extensions/ScheduledForUninstall", scheduled);
 
   d->removeExtensionSettings(extensionName);
 
@@ -1394,6 +1523,31 @@ bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& ext
 
   emit q->extensionUninstalled(extensionName);
 
+  return success;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::updateScheduledExtensions()
+{
+  QStringList updatedExtensions;
+  return this->updateScheduledExtensions(updatedExtensions);
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::updateScheduledExtensions(
+  QStringList& updatedExtensions)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  bool success = true;
+  // FIXME need map
+  foreach(const QString& extensionName, this->scheduledForUpdateExtensions())
+    {
+    success = d->updateExtension(extensionName) && success;
+    if(success)
+      {
+      updatedExtensions << extensionName;
+      }
+    }
   return success;
 }
 

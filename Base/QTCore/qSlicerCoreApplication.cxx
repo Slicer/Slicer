@@ -298,6 +298,13 @@ void qSlicerCoreApplicationPrivate::init()
 
   model->updateModel();
 
+  QStringList updatedExtensions;
+  model->updateScheduledExtensions(updatedExtensions);
+  foreach(const QString& extensionName, updatedExtensions)
+    {
+    qDebug() << "Successfully updated extension" << extensionName;
+    }
+
   QStringList uninstalledExtensions;
   model->uninstallScheduledExtensions(uninstalledExtensions);
   foreach(const QString& extensionName, uninstalledExtensions)

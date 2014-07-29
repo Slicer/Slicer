@@ -216,6 +216,10 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
                    q, SLOT(onCurrentTabChanged(int)));
 
+  QObject::connect(this->toolsWidget->CheckForUpdatesAction,
+                   SIGNAL(triggered(bool)),
+                   q, SLOT(onCheckForUpdatesTriggered()));
+
   QObject::connect(this->toolsWidget->InstallFromFileAction,
                    SIGNAL(triggered(bool)),
                    q, SLOT(onInstallFromFileTriggered()));
@@ -305,6 +309,15 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
     {
     d->tabWidget->setTabEnabled(manageExtensionsTabIndex, true);
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onCheckForUpdatesTriggered()
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+
+  const bool autoUpdate = d->toolsWidget->AutoUpdateAction->isChecked();
+  this->extensionsManagerModel()->checkForUpdates(autoUpdate);
 }
 
 // --------------------------------------------------------------------------

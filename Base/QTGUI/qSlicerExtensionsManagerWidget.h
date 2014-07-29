@@ -64,6 +64,7 @@ protected slots:
   void onInstallUrlChanged(const QUrl& newUrl);
   void onSearchTextChanged(const QString& newText);
 
+  void onCheckForUpdatesTriggered();
   void onInstallFromFileTriggered();
   void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
 
