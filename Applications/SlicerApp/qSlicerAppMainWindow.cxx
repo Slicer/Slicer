@@ -508,7 +508,10 @@ void qSlicerAppMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO:
     {
     qSlicerIO::IOProperties filePropertie = iterator.previous();
     QString fileName = filePropertie.value("fileName").toString();
-    Q_ASSERT(!fileName.isEmpty());
+    if (fileName.isEmpty())
+      {
+      continue;
+      }
     QAction * action = this->RecentlyLoadedMenu->addAction(
       fileName, q, SLOT(onFileRecentLoadedActionTriggered()));
     action->setProperty("fileParameters", filePropertie);

@@ -62,12 +62,10 @@
 #ifdef Slicer_BUILD_I18N_SUPPORT
 # include "qSlicerSettingsInternationalizationPanel.h"
 #endif
-#ifdef Slicer_USE_QtTesting
-# include "qSlicerSettingsQtTestingPanel.h"
-#endif
 #include "qSlicerSettingsModulesPanel.h"
 #include "qSlicerSettingsStylesPanel.h"
 #include "qSlicerSettingsViewsPanel.h"
+#include "qSlicerSettingsDeveloperPanel.h"
 
 // qMRMLWidget includes
 #include "qMRMLEventBrokerConnection.h"
@@ -233,10 +231,8 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel("Internationalization", qtInternationalizationPanel);
 #endif
 
-#ifdef Slicer_USE_QtTesting
-  qSlicerSettingsQtTestingPanel* qtTestingPanel = new qSlicerSettingsQtTestingPanel;
-  this->SettingsDialog->addPanel("QtTesting", qtTestingPanel);
-#endif
+  qSlicerSettingsDeveloperPanel* developerPanel = new qSlicerSettingsDeveloperPanel;
+  this->SettingsDialog->addPanel("Developer", developerPanel);
 
   QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
                    q, SLOT(restart()));

@@ -23,43 +23,53 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
-#include "qSlicerSettingsQtTestingPanel.h"
-#include "ui_qSlicerSettingsQtTestingPanel.h"
+#include "qSlicerSettingsDeveloperPanel.h"
+#include "ui_qSlicerSettingsDeveloperPanel.h"
 
 // --------------------------------------------------------------------------
-// qSlicerSettingsQtTestingPanelPrivate
+// qSlicerSettingsDeveloperPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsQtTestingPanelPrivate: public Ui_qSlicerSettingsQtTestingPanel
+class qSlicerSettingsDeveloperPanelPrivate: public Ui_qSlicerSettingsDeveloperPanel
 {
-  Q_DECLARE_PUBLIC(qSlicerSettingsQtTestingPanel);
+  Q_DECLARE_PUBLIC(qSlicerSettingsDeveloperPanel);
 protected:
-  qSlicerSettingsQtTestingPanel* const q_ptr;
+  qSlicerSettingsDeveloperPanel* const q_ptr;
 
 public:
-  qSlicerSettingsQtTestingPanelPrivate(qSlicerSettingsQtTestingPanel& object);
+  qSlicerSettingsDeveloperPanelPrivate(qSlicerSettingsDeveloperPanel& object);
   void init();
 };
 
 // --------------------------------------------------------------------------
-// qSlicerSettingsQtTestingPanelPrivate methods
+// qSlicerSettingsDeveloperPanelPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerSettingsQtTestingPanelPrivate
-::qSlicerSettingsQtTestingPanelPrivate(qSlicerSettingsQtTestingPanel& object)
+qSlicerSettingsDeveloperPanelPrivate
+::qSlicerSettingsDeveloperPanelPrivate(qSlicerSettingsDeveloperPanel& object)
   :q_ptr(&object)
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsQtTestingPanelPrivate::init()
+void qSlicerSettingsDeveloperPanelPrivate::init()
 {
-  Q_Q(qSlicerSettingsQtTestingPanel);
+  Q_Q(qSlicerSettingsDeveloperPanel);
 
   this->setupUi(q);
 
   // Default values
+  this->DeveloperModeEnabledCheckBox->setChecked(false);
   this->QtTestingEnabledCheckBox->setChecked(false);
+#ifndef Slicer_USE_QtTesting
+  this->QtTestingEnabledCheckBox->hide();
+  this->QtTestingEnabledLabel->hide();
+#endif
+
+  // Register settings
+  q->registerProperty("Developer/DeveloperMode", this->DeveloperModeEnabledCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Enable/Disable developer mode", ctkSettingsPanel::OptionRequireRestart);
 
   // Register settings
   q->registerProperty("QtTesting/Enabled", this->QtTestingEnabledCheckBox,
@@ -67,29 +77,38 @@ void qSlicerSettingsQtTestingPanelPrivate::init()
                       "Enable/Disable QtTesting", ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
+  QObject::connect(this->DeveloperModeEnabledCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(enableDeveloperMode(bool)));
   QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableQtTesting(bool)));
+
 }
 
 // --------------------------------------------------------------------------
-// qSlicerSettingsQtTestingPanel methods
+// qSlicerSettingsDeveloperPanel methods
 
 // --------------------------------------------------------------------------
-qSlicerSettingsQtTestingPanel::qSlicerSettingsQtTestingPanel(QWidget* _parent)
+qSlicerSettingsDeveloperPanel::qSlicerSettingsDeveloperPanel(QWidget* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerSettingsQtTestingPanelPrivate(*this))
+  , d_ptr(new qSlicerSettingsDeveloperPanelPrivate(*this))
 {
-  Q_D(qSlicerSettingsQtTestingPanel);
+  Q_D(qSlicerSettingsDeveloperPanel);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-qSlicerSettingsQtTestingPanel::~qSlicerSettingsQtTestingPanel()
+qSlicerSettingsDeveloperPanel::~qSlicerSettingsDeveloperPanel()
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerSettingsQtTestingPanel::enableQtTesting(bool value)
+void qSlicerSettingsDeveloperPanel::enableDeveloperMode(bool value)
+{
+  Q_UNUSED(value);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsDeveloperPanel::enableQtTesting(bool value)
 {
   Q_UNUSED(value);
 }

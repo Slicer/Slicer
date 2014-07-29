@@ -2,39 +2,25 @@ import os
 import unittest
 import string
 from __main__ import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
-class SurfaceToolbox:
+class SurfaceToolbox(ScriptedLoadableModule):
   def __init__(self, parent):
-    parent.title = "Surface Toolbox"
-    parent.categories = ["Surface Models"]
-    parent.dependencies = []
-    parent.contributors = ["Luca Antiga (Orobix), Ron Kikinis (Brigham and Women's Hospital)"] # replace with "Firstname Lastname (Org)"
-    parent.helpText = string.Template("""
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "Surface Toolbox"
+    self.parent.categories = ["Surface Models"]
+    self.parent.dependencies = []
+    self.parent.contributors = ["Luca Antiga (Orobix), Ron Kikinis (Brigham and Women's Hospital)"] # replace with "Firstname Lastname (Org)"
+    self.parent.helpText = string.Template("""
     This module supports various cleanup and optimization processes on surface models.
     Select the input and output models, and then enable the stages of the pipeline by selecting the buttons.
     Stages that include parameters will open up when they are enabled.
     Click apply to activate the pipeline and then click the Toggle button to compare the model before and after the operation.
     See <a href=\"$a/Documentation/$b.$c/Modules/SurfaceToolbox\">$a/Documentation/$b.$c/Modules/SurfaceToolbox</a> for more information.
     """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
-    parent.acknowledgementText = """
+    self.parent.acknowledgementText = """
     This module was developed by Luca Antiga, Orobix Srl, with a little help from Steve Pieper, Isomics, Inc.
     """
-
-    self.parent = parent
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['SurfaceToolbox'] = self.runTest
-
-  def runTest(self):
-    tester = SurfaceToolboxTest()
-    tester.runTest()
-
 
 def numericInputFrame(parent, label, tooltip, minimum, maximum, step, decimals):
   inputFrame = qt.QFrame(parent)
@@ -59,34 +45,12 @@ def numericInputFrame(parent, label, tooltip, minimum, maximum, step, decimals):
   return inputFrame, inputSlider, inputSpinBox
 
 
-class SurfaceToolboxWidget:
-  def __init__(self, parent = None):
-    self.developerMode = False # change this to true to get reload and test
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
 
-    if self.developerMode:
-      self.reloadButton = qt.QPushButton("Reload")
-      self.reloadButton.toolTip = "Reload this module."
-      self.reloadButton.name = "SurfaceToolbox Reload"
-      self.layout.addWidget(self.reloadButton)
-      self.reloadButton.connect('clicked()', self.onReload)
-
-      self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-      self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-      self.layout.addWidget(self.reloadAndTestButton)
-      self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
-
+    # Instantiate and connect widgets ...
 
     inputModelSelectorFrame = qt.QFrame(self.parent)
     inputModelSelectorFrame.setLayout(qt.QHBoxLayout())
@@ -378,27 +342,9 @@ class SurfaceToolboxWidget:
     self.updateGUI = updateGUI
 
 
-
-
-  def onReload(self,moduleName="SurfaceToolbox"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="SurfaceToolbox"):
-    self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-    tester = eval(evalString)
-    tester.runTest()
-
-
-
-class SurfaceToolboxLogic:
+class SurfaceToolboxLogic(ScriptedLoadableModuleLogic):
   """Perform filtering
   """
-  def __init__(self):
-    pass
 
   def applyFilters(self, state):
 
@@ -495,27 +441,10 @@ class SurfaceToolboxLogic:
 
 
 
-class SurfaceToolboxTest(unittest.TestCase):
+class SurfaceToolboxTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
@@ -561,5 +490,5 @@ class SurfaceToolboxTest(unittest.TestCase):
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = SurfaceToolboxLogic()
-    self.assertTrue( logic.hasImageData(volumeNode) )
+    self.assertTrue( logic != None )
     self.delayDisplay('Test passed!')

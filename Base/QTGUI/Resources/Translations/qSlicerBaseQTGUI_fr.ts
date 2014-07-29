@@ -868,14 +868,14 @@ Do you want to continue saving?</source>
     </message>
 </context>
 <context>
-    <name>qSlicerSettingsQtTestingPanel</name>
+    <name>qSlicerSettingsDeveloperPanel</name>
     <message>
-        <location filename="../UI/qSlicerSettingsQtTestingPanel.ui" line="14"/>
-        <source>QtTesting</source>
+        <location filename="../UI/qSlicerSettingsDeveloperPanel.ui" line="14"/>
+        <source>Developer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../UI/qSlicerSettingsQtTestingPanel.ui" line="20"/>
+        <location filename="../UI/qSlicerSettingsDeveloperPanel.ui" line="20"/>
         <source>Enable QtTesting:</source>
         <translation type="unfinished"></translation>
     </message>

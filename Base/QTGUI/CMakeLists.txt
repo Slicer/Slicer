@@ -84,6 +84,8 @@ set(KIT_SRCS
   qSlicerSettingsStylesPanel.h
   qSlicerSettingsViewsPanel.cxx
   qSlicerSettingsViewsPanel.h
+  qSlicerSettingsDeveloperPanel.cxx
+  qSlicerSettingsDeveloperPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerViewersToolBar.cxx
@@ -137,13 +139,6 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-if(Slicer_USE_QtTesting)
-  list(APPEND KIT_SRCS
-    qSlicerSettingsQtTestingPanel.cxx
-    qSlicerSettingsQtTestingPanel.h
-    )
-endif()
-
 # Since the wrapper doesn't consider hierarchy of classes, let's exclude
 # classes deriving from pure abstract class and remaining abstract pure
 set_source_files_properties(
@@ -193,6 +188,7 @@ set(KIT_MOC_SRCS
   qSlicerSettingsModulesPanel.h
   qSlicerSettingsStylesPanel.h
   qSlicerSettingsViewsPanel.h
+  qSlicerSettingsDeveloperPanel.h
   qSlicerStyle.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
@@ -231,12 +227,6 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-if(Slicer_USE_QtTesting)
-  list(APPEND KIT_MOC_SRCS
-    qSlicerSettingsQtTestingPanel.h
-    )
-endif()
-
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui
@@ -251,6 +241,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerSettingsModulesPanel.ui
   Resources/UI/qSlicerSettingsStylesPanel.ui
   Resources/UI/qSlicerSettingsViewsPanel.ui
+  Resources/UI/qSlicerSettingsDeveloperPanel.ui
   Resources/UI/qSlicerWebWidget.ui
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -268,12 +259,6 @@ endif()
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_UI_SRCS
     Resources/UI/qSlicerSettingsPythonPanel.ui
-  )
-endif()
-
-if(Slicer_USE_QtTesting)
-  list(APPEND KIT_UI_SRCS
-    Resources/UI/qSlicerSettingsQtTestingPanel.ui
   )
 endif()
 

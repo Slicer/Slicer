@@ -1,6 +1,7 @@
 
 set(Slicer_PYTHON_SCRIPTS
   slicer/logic
+  slicer/ScriptedLoadableModule
   slicer/slicerqt
   slicer/testing
   slicer/util

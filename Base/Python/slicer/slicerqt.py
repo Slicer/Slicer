@@ -1,6 +1,5 @@
 import vtk, qt, ctk
 import slicer
-
 from slicer.util import *
 del print_function
 

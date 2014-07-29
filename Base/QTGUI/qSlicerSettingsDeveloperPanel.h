@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSettingsQtTestingPanel_h
-#define __qSlicerSettingsQtTestingPanel_h
+#ifndef __qSlicerSettingsDeveloperPanel_h
+#define __qSlicerSettingsDeveloperPanel_h
 
 // Qt includes
 #include <QWidget>
@@ -31,9 +31,9 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class QSettings;
-class qSlicerSettingsQtTestingPanelPrivate;
+class qSlicerSettingsDeveloperPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsQtTestingPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsDeveloperPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
@@ -42,22 +42,23 @@ public:
   typedef ctkSettingsPanel Superclass;
 
   /// Constructor
-  explicit qSlicerSettingsQtTestingPanel(QWidget* parent = 0);
+  explicit qSlicerSettingsDeveloperPanel(QWidget* parent = 0);
 
   /// Destructor
-  virtual ~qSlicerSettingsQtTestingPanel();
+  virtual ~qSlicerSettingsDeveloperPanel();
 
 public slots:
 
 protected slots:
+  void enableDeveloperMode(bool value);
   void enableQtTesting(bool value);
 
 protected:
-  QScopedPointer<qSlicerSettingsQtTestingPanelPrivate> d_ptr;
+  QScopedPointer<qSlicerSettingsDeveloperPanelPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSettingsQtTestingPanel);
-  Q_DISABLE_COPY(qSlicerSettingsQtTestingPanel);
+  Q_DECLARE_PRIVATE(qSlicerSettingsDeveloperPanel);
+  Q_DISABLE_COPY(qSlicerSettingsDeveloperPanel);
 };
 
 #endif
