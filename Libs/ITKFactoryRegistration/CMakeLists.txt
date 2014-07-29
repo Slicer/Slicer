@@ -23,7 +23,9 @@ set(ITK_IO_MODULES_USED
   ITKIONIFTI
   ITKIONRRD
   ITKIOGIPL
+  ITKIOTransformHDF5
   ITKIOTransformInsightLegacy
+  ITKIOTransformMatlab
   )
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
@@ -125,4 +127,3 @@ install(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)
-
