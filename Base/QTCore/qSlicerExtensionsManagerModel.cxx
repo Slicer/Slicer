@@ -179,6 +179,8 @@ public:
 
   QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
 
+  void downloadExtension(const QString& extensionId, const char* completionSlot);
+
   /// Update (reinstall) specified extension.
   ///
   /// This updates the specified extension
@@ -276,9 +278,6 @@ void qSlicerExtensionsManagerModelPrivate::init()
     ++columnIdx;
     }
   this->Model.setRoleNames(roleNames);
-
-  QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
-                   q, SLOT(onDownloadFinished(QNetworkReply*)));
 
   QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
                    q, SLOT(identifyIncompatibleExtensions()));
@@ -1085,6 +1084,39 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::downloadExtension(
+  const QString& extensionId, const char* completionSlot)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  this->debug(QString("Retrieving extension metadata [ extensionId: %1]").arg(extensionId));
+  ExtensionMetadataType extensionMetadata = q->retrieveExtensionMetadata(extensionId);
+  if (extensionMetadata.count() == 0)
+    {
+    return;
+    }
+
+  QString itemId = extensionMetadata["item_id"].toString();
+
+  this->debug(QString("Downloading extension [ itemId: %1]").arg(itemId));
+  QUrl downloadUrl(q->serverUrl());
+  downloadUrl.setPath(downloadUrl.path() + "/download");
+  downloadUrl.setQueryItems(
+        QList<QPair<QString, QString> >() << QPair<QString, QString>("items", itemId));
+
+  QNetworkReply* const reply =
+    this->NetworkManager.get(QNetworkRequest(downloadUrl));
+  qSlicerExtensionDownloadTask* const task =
+    new qSlicerExtensionDownloadTask(reply);
+
+  QObject::connect(task, SIGNAL(finished(qSlicerExtensionDownloadTask*)),
+                   q, completionSlot);
+
+  task->setMetadata(extensionMetadata);
+  emit q->downloadStarted(reply);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& extensionId)
 {
   Q_D(qSlicerExtensionsManagerModel);
@@ -1096,31 +1128,20 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
     return;
     }
 
-  d->debug(QString("Retrieving extension metadata [ extensionId: %1]").arg(extensionId));
-  ExtensionMetadataType extensionMetadata = this->retrieveExtensionMetadata(extensionId);
-  if (extensionMetadata.count() == 0)
-    {
-    return;
-    }
-
-  QString itemId = extensionMetadata["item_id"].toString();
-
-  d->debug(QString("Downloading extension [ itemId: %1]").arg(itemId));
-  QUrl downloadUrl(this->serverUrl());
-  downloadUrl.setPath(downloadUrl.path() + "/download");
-  downloadUrl.setQueryItems(
-        QList<QPair<QString, QString> >() << QPair<QString, QString>("items", itemId));
-
-  QNetworkReply * reply = d->NetworkManager.get(QNetworkRequest(downloadUrl));
-  reply->setProperty("extension_metadata", extensionMetadata);
-  emit this->downloadStarted(reply);
+  d->downloadExtension(
+    extensionId,
+    SLOT(onInstallDownloadFinished(qSlicerExtensionDownloadTask*)));
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
+void qSlicerExtensionsManagerModel::onInstallDownloadFinished(
+  qSlicerExtensionDownloadTask* task)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
+  task->deleteLater();
+
+  QNetworkReply* const reply = task->reply();
   QUrl downloadUrl = reply->url();
   Q_ASSERT(downloadUrl.hasQueryItem("items"));
 
@@ -1132,11 +1153,8 @@ void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
     return;
     }
 
-  ExtensionMetadataType extensionMetadata =
-      this->filterExtensionMetadata(reply->property("extension_metadata").toMap());
-
-  QString extensionName = extensionMetadata.value("extensionname").toString();
-  QString archiveName = extensionMetadata.value("archivename").toString();
+  const QString& extensionName = task->extensionName();
+  const QString& archiveName = task->archiveName();
 
   QTemporaryFile file(QString("%1/%2.XXXXXX").arg(QDir::tempPath(), archiveName));
   if (!file.open())
@@ -1147,6 +1165,8 @@ void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
   file.write(reply->readAll());
   file.close();
 
+  const ExtensionMetadataType& extensionMetadata =
+    this->filterExtensionMetadata(task->metadata());
   this->installExtension(extensionName, extensionMetadata, file.fileName());
 }
 
@@ -1470,6 +1490,66 @@ void qSlicerExtensionsManagerModel::onUpdateCheckFailed(const QUuid& requestId)
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModel::onUpdateDownloadFinished(
+  qSlicerExtensionDownloadTask* task)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  // Mark task for clean-up
+  task->deleteLater();
+
+  // Get network reply
+  QNetworkReply* const reply = task->reply();
+  QUrl downloadUrl = reply->url();
+  Q_ASSERT(downloadUrl.hasQueryItem("items"));
+
+  // Notify observers of event
+  emit this->downloadFinished(reply);
+
+  // Did the download succeed?
+  if (reply->error())
+    {
+    d->critical("Failed downloading: " + downloadUrl.toString());
+    return;
+    }
+
+  // Look up the update information
+  const QString& extensionName = task->extensionName();
+  const QHash<QString, UpdateDownloadInformation>::iterator iter =
+    d->AvailableUpdates.find(extensionName);
+
+  if (iter != d->AvailableUpdates.end())
+    {
+    // Create directory for update archives (a persistent location is desired,
+    // since we won't be installing the update Immediately)
+    if (!QDir(this->extensionsInstallPath()).mkpath(".updates"))
+      {
+      d->critical("Could not create directory for update archive");
+      return;
+      }
+
+    // Create update archive
+    const QString& archiveName = task->archiveName();
+    const QString& archivePath =
+      QString("%1/.updates/%2").arg(this->extensionsInstallPath(), archiveName);
+
+    QFile file(archivePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+      {
+      d->critical("Could not create file for writing: " + file.errorString());
+      return;
+      }
+
+    file.write(reply->readAll());
+    file.close();
+
+    // Schedule install of update
+    iter->ArchiveName = archivePath;
+    this->scheduleExtensionForUpdate(extensionName);
+    }
+}
+
+// --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
   const QString& extensionName)
 {
@@ -1504,7 +1584,7 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
     return true;
     }
 
-  const UpdateDownloadInformation& updateInfo =
+  UpdateDownloadInformation& updateInfo =
     d->AvailableUpdates[extensionName];
   if (updateInfo.ArchiveName.isEmpty())
     {
@@ -1520,7 +1600,11 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
       return true;
       }
 
-    // TODO FIXME download update
+    d->downloadExtension(
+      updateInfo.ExtensionId,
+      SLOT(onUpdateDownloadFinished(qSlicerExtensionDownloadTask*)));
+    // TODO hook up progress reporting
+    updateInfo.DownloadSize = -1;
     return true;
     }
 

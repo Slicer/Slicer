@@ -34,6 +34,7 @@
 
 // QtGUI includes
 #include "qSlicerBaseQTCoreExport.h"
+#include "qSlicerExtensionDownloadTask.h"
 
 class QNetworkReply;
 class qSlicerExtensionsManagerModelPrivate;
@@ -340,7 +341,10 @@ signals:
 protected slots:
 
   /// \sa downloadAndInstallExtension
-  void onDownloadFinished(QNetworkReply* reply);
+  void onInstallDownloadFinished(qSlicerExtensionDownloadTask* task);
+
+  /// \sa scheduleExtensionForUpdate
+  void onUpdateDownloadFinished(qSlicerExtensionDownloadTask* task);
 
   void onUpdateCheckComplete(const QUuid& requestId,
                              const QList<QVariantMap>& results);

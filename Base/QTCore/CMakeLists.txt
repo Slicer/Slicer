@@ -105,6 +105,8 @@ set(KIT_SRCS
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
+    qSlicerExtensionDownloadTask.cxx
+    qSlicerExtensionDownloadTask.h
     qSlicerExtensionsManagerModel.cxx
     qSlicerExtensionsManagerModel.h
     )
@@ -144,6 +146,7 @@ set(KIT_MOC_SRCS
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_MOC_SRCS
+    qSlicerExtensionDownloadTask.h
     qSlicerExtensionsManagerModel.h
     )
 endif()
