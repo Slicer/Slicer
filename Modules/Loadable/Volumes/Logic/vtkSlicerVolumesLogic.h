@@ -221,6 +221,10 @@ public:
   /// \sa CenterVolume()
   void GetVolumeCenteredOrigin(vtkMRMLVolumeNode *volumeNode, double* origin);
 
+  ///  Convenience method to resample input volume using reference volume info
+  vtkMRMLScalarVolumeNode* ResampleInputVolumeNodeToReferenceVolumeNode(vtkMRMLVolumeNode *inVolumeNode,
+                                                                        vtkMRMLVolumeNode *refVolumeNode);
+
 protected:
   vtkSlicerVolumesLogic();
   virtual ~vtkSlicerVolumesLogic();

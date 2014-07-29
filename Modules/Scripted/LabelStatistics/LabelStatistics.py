@@ -151,19 +151,26 @@ class LabelStatisticsWidget:
     """Calculate the label statistics
     """
 
-    volumesLogic = slicer.modules.volumes.logic()
-    warnings = volumesLogic.CheckForLabelVolumeValidity(self.grayscaleNode, self.labelNode)
-    if warnings != "":
-      qt.QMessageBox.warning(slicer.util.mainWindow(),
-          "Label Statistics", "Volumes do not have the same geometry.\n%s" % warnings)
-      return
-
     self.applyButton.text = "Working..."
     # TODO: why doesn't processEvents alone make the label text change?
     self.applyButton.repaint()
     slicer.app.processEvents()
-    self.logic = LabelStatisticsLogic(self.grayscaleNode, self.labelNode)
+    volumesLogic = slicer.modules.volumes.logic()
+    warnings = volumesLogic.CheckForLabelVolumeValidity(self.grayscaleNode, self.labelNode)
+    resampledLabelNode = None
+    if warnings != "":
+      if 'mismatch' in warnings:
+        resampledLabelNode = volumesLogic.ResampleInputVolumeNodeToReferenceVolumeNode(self.labelNode, self.grayscaleNode)
+        self.logic = LabelStatisticsLogic(self.grayscaleNode, resampledLabelNode)
+      else:
+        qt.QMessageBox.warning(slicer.util.mainWindow(),
+            "Label Statistics", "Volumes do not have the same geometry.\n%s" % warnings)
+        return
+    else:
+      self.logic = LabelStatisticsLogic(self.grayscaleNode, self.labelNode)
     self.populateStats()
+    if resampledLabelNode:
+      slicer.mrmlScene.RemoveNode(resampledLabelNode)
     self.chartFrame.enabled = True
     self.saveButton.enabled = True
     self.applyButton.text = "Apply"

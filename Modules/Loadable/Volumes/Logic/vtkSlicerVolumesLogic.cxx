@@ -35,6 +35,7 @@
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -49,6 +50,11 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtkVersion.h>
 #include <vtkWeakPointer.h>
+#include <vtkImageReslice.h>
+#include <vtkTransform.h>
+
+
+
 
 //----------------------------------------------------------------------------
 namespace
@@ -1234,4 +1240,93 @@ vtkSlicerVolumesLogic
     this->VolumeRegistry.erase(rit);
     this->VolumeRegistry.push_front(factory);
     }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode*
+vtkSlicerVolumesLogic
+::ResampleInputVolumeNodeToReferenceVolumeNode(vtkMRMLVolumeNode* inVolumeNode,
+                                               vtkMRMLVolumeNode* refVolumeNode)
+{
+  int dimensions[3] = {0, 0, 0};
+
+  vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(refVolumeNode);
+  vtkMRMLVolumeNode* inputVolumeNode = vtkMRMLVolumeNode::SafeDownCast(inVolumeNode);
+  vtkMRMLScene* scene = inputVolumeNode->GetScene();
+
+  // Make sure inputs are initialized
+  if (!inputVolumeNode || !referenceVolumeNode || !scene)
+  {
+    return false;
+  }
+
+  // Clone the display node
+  vtkSmartPointer<vtkMRMLDisplayNode> outputVolumeDisplayNode;
+  vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode =
+    vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(inputVolumeNode->GetDisplayNode());
+  if ( labelDisplayNode )
+    {
+    outputVolumeDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
+    }
+  else
+    {
+    outputVolumeDisplayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
+    }
+  outputVolumeDisplayNode->CopyWithScene(inputVolumeNode->GetDisplayNode());
+  scene->AddNode(outputVolumeDisplayNode);
+
+  vtkSmartPointer<vtkMatrix4x4> inputVolumeIJK2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  inputVolumeNode->GetIJKToRASMatrix(inputVolumeIJK2RASMatrix);
+  vtkSmartPointer<vtkMatrix4x4> referenceVolumeRAS2IJKMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  referenceVolumeNode->GetRASToIJKMatrix(referenceVolumeRAS2IJKMatrix);
+  referenceVolumeNode->GetImageData()->GetDimensions(dimensions);
+
+  vtkSmartPointer<vtkTransform> outputVolumeResliceTransform = vtkSmartPointer<vtkTransform>::New();
+  outputVolumeResliceTransform->Identity();
+  outputVolumeResliceTransform->PostMultiply();
+  outputVolumeResliceTransform->SetMatrix(inputVolumeIJK2RASMatrix);
+
+  vtkSmartPointer<vtkMRMLTransformNode> inputVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
+    scene->GetNodeByID(inputVolumeNode->GetTransformNodeID()));
+  vtkSmartPointer<vtkMatrix4x4> inputVolumeRAS2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  if (inputVolumeNodeTransformNode!=NULL)
+  {
+    inputVolumeNodeTransformNode->GetMatrixTransformToWorld(inputVolumeRAS2RASMatrix);
+    outputVolumeResliceTransform->Concatenate(inputVolumeRAS2RASMatrix);
+  }
+  vtkSmartPointer<vtkMRMLTransformNode> referenceVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
+    scene->GetNodeByID(referenceVolumeNode->GetTransformNodeID()));
+  vtkSmartPointer<vtkMatrix4x4> referenceVolumeRAS2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  if (referenceVolumeNodeTransformNode!=NULL)
+  {
+    inputVolumeNodeTransformNode->GetMatrixTransformToWorld(referenceVolumeRAS2RASMatrix);
+    referenceVolumeRAS2RASMatrix->Invert();
+    outputVolumeResliceTransform->Concatenate(referenceVolumeRAS2RASMatrix);
+  }
+  outputVolumeResliceTransform->Concatenate(referenceVolumeRAS2IJKMatrix);
+  outputVolumeResliceTransform->Inverse();
+
+  vtkSmartPointer<vtkImageReslice> resliceFilter = vtkSmartPointer<vtkImageReslice>::New();
+#if (VTK_MAJOR_VERSION <= 5)
+  resliceFilter->SetInput(inputVolumeNode->GetImageData());
+#else
+  resliceFilter->SetInputData(inputVolumeNode->GetImageData());
+#endif
+  resliceFilter->SetOutputOrigin(0, 0, 0);
+  resliceFilter->SetOutputSpacing(1, 1, 1);
+  resliceFilter->SetOutputExtent(0, dimensions[0]-1, 0, dimensions[1]-1, 0, dimensions[2]-1);
+  resliceFilter->SetResliceTransform(outputVolumeResliceTransform);
+  resliceFilter->SetInterpolationModeToLinear();
+  resliceFilter->Update();
+
+  vtkNew<vtkMRMLScalarVolumeNode> outputVolumeNode;
+  outputVolumeNode->CopyOrientation(referenceVolumeNode);
+  outputVolumeNode->SetAndObserveImageData(resliceFilter->GetOutput());
+  outputVolumeNode->SetAndObserveStorageNodeID(NULL);
+  outputVolumeNode->SetAndObserveDisplayNodeID(outputVolumeDisplayNode->GetID());
+
+  // add the cloned volume to the scene
+  scene->AddNode(outputVolumeNode.GetPointer());
+
+  return outputVolumeNode.GetPointer();
 }
