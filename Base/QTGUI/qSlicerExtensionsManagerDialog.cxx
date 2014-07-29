@@ -43,6 +43,7 @@ public:
 
   QStringList PreviousModulesAdditionalPaths;
   QStringList PreviousExtensionsScheduledForUninstall;
+  QVariantMap PreviousExtensionsScheduledForUpdate;
 };
 
 // --------------------------------------------------------------------------
@@ -70,6 +71,7 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   QSettings * settings = qSlicerCoreApplication::application()->revisionUserSettings();
   this->PreviousModulesAdditionalPaths = settings->value("Modules/AdditionalPaths").toStringList();
   this->PreviousExtensionsScheduledForUninstall = settings->value("Extensions/ScheduledForUninstall").toStringList();
+  this->PreviousExtensionsScheduledForUpdate = settings->value("Extensions/ScheduledForUpdate").toMap();
 
   qSlicerSettingsExtensionsPanel * extensionsPanel =
       qobject_cast<qSlicerSettingsExtensionsPanel*>(
@@ -131,6 +133,10 @@ void qSlicerExtensionsManagerDialog::setExtensionsManagerModel(qSlicerExtensions
             this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
             this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionScheduledForUpdate(QString)),
+            this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionCancelledScheduleForUpdate(QString)),
+            this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionEnabledChanged(QString,bool)),
             this, SLOT(onModelUpdated()));
     }
@@ -162,7 +168,9 @@ void qSlicerExtensionsManagerDialog::onModelUpdated()
   if (d->PreviousModulesAdditionalPaths
       != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||
       d->PreviousExtensionsScheduledForUninstall
-      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList())
+      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList() ||
+      d->PreviousExtensionsScheduledForUpdate
+      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUpdate").toMap())
     {
     shouldRestart = true;
     }

@@ -714,6 +714,7 @@ void qSlicerExtensionsManageWidget::onExtensionScheduledForUninstall(const QStri
   qSlicerExtensionsItemWidget * widget =
       dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
   Q_ASSERT(widget);
+  widget->ButtonBox->ScheduleForUpdateButton->setEnabled(false);
   widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(true);
   widget->ButtonBox->ScheduleForUninstallButton->setVisible(false);
 }
@@ -727,6 +728,7 @@ void qSlicerExtensionsManageWidget::onExtensionCancelledScheduleForUninstall(con
   qSlicerExtensionsItemWidget * widget =
       dynamic_cast<qSlicerExtensionsItemWidget*>(this->itemWidget(item));
   Q_ASSERT(widget);
+  widget->ButtonBox->ScheduleForUpdateButton->setEnabled(true);
   widget->ButtonBox->CancelScheduledForUninstallButton->setVisible(false);
   widget->ButtonBox->ScheduleForUninstallButton->setVisible(true);
 }
