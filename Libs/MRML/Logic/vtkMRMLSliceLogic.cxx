@@ -528,8 +528,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       && this->GetMRMLScene()->GetNodeByID( this->SliceModelNode->GetID() ) != 0
       && this->SliceModelNode->GetPolyData() != 0 )
     {
-    vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
-
     int *dims1=0;
     int dims[3];
     vtkMatrix4x4 *textureToRAS = 0;
@@ -547,7 +545,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       dims[0] = dims1[0];
       dims[1] = dims1[1];
       }
-
     // set the plane corner point for use in a model
     double inPt[4]={0,0,0,1};
     double outPt[4];
@@ -556,26 +553,53 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     // set the z position to be the active slice (from the lightbox)
     inPt[2] = this->SliceNode->GetActiveSlice();
 
-    textureToRAS->MultiplyPoint(inPt, outPt);
-    points->SetPoint(0, outPt3);
+#if (VTK_MAJOR_VERSION <= 5)
+    vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
+#else
+    vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(
+      this->SliceModelNode->GetPolyDataConnection()->GetProducer());
+#endif
 
+    textureToRAS->MultiplyPoint(inPt, outPt);
+#if (VTK_MAJOR_VERSION <= 5)
+    points->SetPoint(0, outPt3);
+#else
+    plane->SetOrigin(outPt3);
+#endif
     inPt[0] = dims[0];
     textureToRAS->MultiplyPoint(inPt, outPt);
+#if (VTK_MAJOR_VERSION <= 5)
     points->SetPoint(1, outPt3);
+#else
+    plane->SetPoint1(outPt3);
+#endif
 
     inPt[0] = 0;
     inPt[1] = dims[1];
     textureToRAS->MultiplyPoint(inPt, outPt);
+#if (VTK_MAJOR_VERSION <= 5)
     points->SetPoint(2, outPt3);
+#else
+    plane->SetPoint2(outPt3);
+#endif
 
+#if (VTK_MAJOR_VERSION <= 5)
     inPt[0] = dims[0];
     inPt[1] = dims[1];
     textureToRAS->MultiplyPoint(inPt, outPt);
     points->SetPoint(3, outPt3);
+#endif
 
     this->UpdatePipeline();
+#if (VTK_MAJOR_VERSION <= 5)
     points->Modified();
     this->SliceModelNode->GetPolyData()->Modified();
+#else
+    /// \tbd Ideally it should not be fired if the output polydata is not
+    /// modified.
+    plane->Modified();
+#endif
+
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )
       {
