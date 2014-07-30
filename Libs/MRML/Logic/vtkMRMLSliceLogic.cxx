@@ -1510,7 +1510,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetSaveWithScene(0);
     this->SliceModelDisplayNode->SetDisableModifiedEvent(0);
     // set an attribute to distinguish this from regular model display nodes
-    this->SliceModelDisplayNode->SetAttribute("SliceLogic.IsSliceModelDiplayNode", "True");
+    this->SliceModelDisplayNode->SetAttribute("SliceLogic.IsSliceModelDisplayNode", "True");
     std::string displayName = std::string(this->Name) + std::string(" Display");
     this->SliceModelDisplayNode->SetName(displayName.c_str());
     // Turn slice intersection off by default - there is a higher level GUI control
@@ -2595,7 +2595,7 @@ bool vtkMRMLSliceLogic::IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayN
   if (mrmlDisplayNode != NULL &&
       mrmlDisplayNode->IsA("vtkMRMLModelDisplayNode"))
     {
-    const char *attrib = mrmlDisplayNode->GetAttribute("SliceLogic.IsSliceModelDiplayNode");
+    const char *attrib = mrmlDisplayNode->GetAttribute("SliceLogic.IsSliceModelDisplayNode");
     // allow the attribute to be set to anything but 0
     if (attrib != NULL &&
         strcmp(attrib, "0") != 0)
