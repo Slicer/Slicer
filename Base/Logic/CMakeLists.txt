@@ -131,21 +131,6 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-#set_source_files_properties(
-  #vtkPichonFastMarchingPDF.cxx
-#  WRAP_EXCLUDE
-#  )
-
-# --------------------------------------------------------------------------
-## Create an instantiator for these classes
-# set(VTK_USE_INSTANTIATOR_NEW 1)
-# VTK_MAKE_INSTANTIATOR3("${lib_name}Instantiator"
-#   Instantiator_SRCS
-#   "${SlicerBaseLogic_SRCS}"
-#   "VTK_SLICER_BASE_LOGIC_EXPORT"
-#   ${Slicer_BINARY_DIR}
-#   "vtkSlicerBaseLogic.h")
-
 # --------------------------------------------------------------------------
 # Build library
 # --------------------------------------------------------------------------
