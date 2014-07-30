@@ -14,9 +14,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(displayable_manager_SRCS
   vtkMRML${MODULE_NAME}DisplayableManager2D.cxx
-  vtkMRML${MODULE_NAME}DisplayableManager2D.h
   vtkMRML${MODULE_NAME}DisplayableManager3D.cxx
-  vtkMRML${MODULE_NAME}DisplayableManager3D.h
   )
 
 set(VTK_USE_INSTANTIATOR_NEW 1)

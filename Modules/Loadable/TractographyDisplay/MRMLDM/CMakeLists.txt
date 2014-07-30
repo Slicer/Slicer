@@ -13,7 +13,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(displayable_manager_SRCS
   vtkMRMLTractographyDisplayDisplayableManager.cxx
-  vtkMRMLTractographyDisplayDisplayableManager.h
   )
 
 set(VTK_USE_INSTANTIATOR_NEW 1)

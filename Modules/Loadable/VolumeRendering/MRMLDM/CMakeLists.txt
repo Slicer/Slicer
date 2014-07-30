@@ -15,7 +15,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(displayable_manager_SRCS
   vtkMRMLVolumeRenderingDisplayableManager.cxx
-  vtkMRMLVolumeRenderingDisplayableManager.h
   )
 
 set(VTK_USE_INSTANTIATOR_NEW 1)

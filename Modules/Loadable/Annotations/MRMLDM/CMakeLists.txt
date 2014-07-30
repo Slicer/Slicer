@@ -15,23 +15,14 @@ set(${KIT}_INCLUDE_DIRECTORIES
 
 set(displayable_manager_SRCS
   vtkMRMLAnnotationDisplayableManager.cxx
-  vtkMRMLAnnotationDisplayableManager.h
   vtkMRMLAnnotationTextDisplayableManager.cxx
-  vtkMRMLAnnotationTextDisplayableManager.h
   vtkMRMLAnnotationFiducialDisplayableManager.cxx
-  vtkMRMLAnnotationFiducialDisplayableManager.h
   #vtkMRMLAnnotationStickyDisplayableManager.cxx
-  #vtkMRMLAnnotationStickyDisplayableManager.h
   #vtkMRMLAnnotationAngleDisplayableManager.cxx
-  #vtkMRMLAnnotationAngleDisplayableManager.h
   #vtkMRMLAnnotationSplineDisplayableManager.cxx
-  #vtkMRMLAnnotationSplineDisplayableManager.h
   vtkMRMLAnnotationRulerDisplayableManager.cxx
-  vtkMRMLAnnotationRulerDisplayableManager.h
   vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
-  vtkMRMLAnnotationBidimensionalDisplayableManager.h
   vtkMRMLAnnotationROIDisplayableManager.cxx
-  vtkMRMLAnnotationROIDisplayableManager.h
   )
 
 set(VTK_USE_INSTANTIATOR_NEW 1)
