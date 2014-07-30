@@ -43,7 +43,7 @@ if((NOT DEFINED OPENSSL_LIBRARIES
    OR ${_no_openssl_libraries}) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(UNIX)
-    set(OpenSSL_URL http://www.openssl.org/source/openssl-1.0.1e.tar.gz)
+    set(OpenSSL_URL http://packages.kitware.com/download/item/6172/openssl-1.0.1e.tar.gz)
     set(OpenSSL_MD5 66bf6f10f060d561929de96f9dfe5b8c)
 
     #------------------------------------------------------------------------------
