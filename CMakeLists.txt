@@ -261,18 +261,17 @@ mark_as_superbuild(Slicer_USE_QtTesting)
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" OFF)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
-# XXX Waiting issue #3741 is solved, on MacOSX, force VTK version to 5.10
-#     See http://na-mic.org/Mantis/view.php?id=3741
 set(default_vtk_version_major 6)
 set(VTK_ENABLE_KITS OFF)
 if(APPLE)
-  if(CMAKE_VERSION VERSION_LESS "3.0.0"
-     AND ${DARWIN_MAJOR_VERSION}.${DARWIN_MINOR_VERSION} VERSION_LESS "12.0")
+  if(${DARWIN_MAJOR_VERSION}.${DARWIN_MINOR_VERSION} VERSION_LESS "12.0")
+    if(CMAKE_VERSION VERSION_LESS "3.0.0")
+      # For details, see issue #3741
+      # If for some reason, you still want to build using using the VTK5 (that will be removed
+      # without notice), you could configure passing the option -DVTK_VERSION_MAJOR:STRING=5
+      message(FATAL_ERROR "On MacOSX 10.{6|7}, building Slicer with VTK6 support requires CMake >= 3.0.0")
+    endif()
     set(VTK_ENABLE_KITS ON)
-    # For details, see issue #3741
-    # If for some reason, you still want to build using using the VTK5 (that will be removed
-    # without notice), you could configure passing the option -DVTK_VERSION_MAJOR:STRING=5
-    message(FATAL_ERROR "On MacOSX 10.{6|7}, building Slicer with VTK6 support requires CMake >= 3.0.0")
   endif()
 endif()
 
