@@ -315,7 +315,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     if self.__mvNode != None:
       mvDisplayNode = self.__mvNode.GetDisplayNode()
-      mvDisplayNode.SetFrameComponent(newValue)
+      mvDisplayNode.SetFrameComponent(int(newValue))
     else:
       return
 
