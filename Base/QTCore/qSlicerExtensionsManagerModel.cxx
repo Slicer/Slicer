@@ -1446,7 +1446,19 @@ void qSlicerExtensionsManagerModel::onUpdateCheckComplete(
     d->CheckForUpdatesRequests.take(requestId);
 
   // Parse server response
-  if (!results.isEmpty() && !updateInfo.ExtensionName.isEmpty())
+  if (updateInfo.ExtensionName.isEmpty())
+    {
+    const QString msg(
+      "Received response to query %1 with no associated request?");
+    d->info(msg.arg(requestId.toString()));
+    }
+  else if (results.isEmpty())
+    {
+    const QString msg("Update check for %1 failed: no response from server"
+                      " (no such extension known?)");
+    d->warning(msg.arg(updateInfo.ExtensionName));
+    }
+  else
     {
     // Check for valid response (expecting exactly one result)
     if (results.count() > 1)
@@ -1464,6 +1476,11 @@ void qSlicerExtensionsManagerModel::onUpdateCheckComplete(
       extensionMetadata.value("extension_id").toString();
     const QString& extensionRevision =
       extensionMetadata.value("revision").toString();
+
+    const QString msg("update check for %1 complete:"
+                      " '%2' available, '%3' installed");
+    d->info(msg.arg(updateInfo.ExtensionName, extensionRevision,
+                    updateInfo.InstalledVersion));
 
     // Check if update is available
     if (!extensionRevision.isEmpty() &&
@@ -1654,6 +1671,7 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUpdate(
   scheduled[extensionName] = updateInfo.ArchiveName;
   settings.setValue("Extensions/ScheduledForUpdate", scheduled);
 
+  d->info(extensionName + " scheduled for update");
   emit this->extensionScheduledForUpdate(extensionName);
 
   return true;
