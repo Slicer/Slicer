@@ -22,6 +22,7 @@ Version:   $Revision: 1.14 $
 #include <vtkAlgorithmOutput.h>
 #include <vtkAppendPolyData.h>
 #include <vtkCallbackCommand.h>
+#include <vtkEventForwarderCommand.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
 #include <vtkImageData.h>
@@ -67,6 +68,7 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
   this->ImageData = NULL;
 #else
   this->ImageDataConnection = NULL;
+  this->DataEventForwarder = NULL;
 #endif
 }
 
@@ -74,6 +76,12 @@ vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 vtkMRMLVolumeNode::~vtkMRMLVolumeNode()
 {
   this->SetAndObserveImageData(NULL);
+#if (VTK_MAJOR_VERSION > 5)
+  if (this->DataEventForwarder)
+    {
+    this->DataEventForwarder->Delete();
+    }
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -740,8 +748,27 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
     }
   else
     {
+    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
+      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : 0);
+    if (oldProducer && oldProducer->GetOutputDataObject(0) == imageData)
+      {
+      return;
+      }
+    else if (oldProducer && oldProducer->GetOutputDataObject(0))
+      {
+      oldProducer->GetOutputDataObject(0)->RemoveObservers(
+        vtkCommand::ModifiedEvent, this->DataEventForwarder);
+      }
     vtkNew<vtkTrivialProducer> tp;
     tp->SetOutput(imageData);
+    // Propagate ModifiedEvent onto the trivial producer to make sure
+    // PolyDataModifiedEvent is triggered.
+    if (!this->DataEventForwarder)
+      {
+      this->DataEventForwarder = vtkEventForwarderCommand::New();
+      }
+    this->DataEventForwarder->SetTarget(tp.GetPointer());
+    imageData->AddObserver(vtkCommand::ModifiedEvent, this->DataEventForwarder);
     this->SetImageDataConnection(tp->GetOutputPort());
     }
 }

@@ -23,6 +23,7 @@ class vtkMRMLStorageNode;
 // VTK includes
 class vtkAlgorithmOutput;
 class vtkAssignAttributes;
+class vtkEventForwarderCommand;
 class vtkDataArray;
 class vtkPolyData;
 class vtkMRMLDisplayNode;
@@ -225,6 +226,7 @@ protected:
   vtkPolyData *PolyData;
 #else
   vtkAlgorithmOutput* PolyDataConnection;
+  vtkEventForwarderCommand* DataEventForwarder;
 #endif
 };
 

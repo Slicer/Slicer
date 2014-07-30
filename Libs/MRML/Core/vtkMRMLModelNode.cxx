@@ -27,6 +27,7 @@ Version:   $Revision: 1.3 $
 #include <vtkCallbackCommand.h>
 #include <vtkCellData.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkEventForwarderCommand.h>
 #include <vtkFloatArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
@@ -52,6 +53,7 @@ vtkMRMLModelNode::vtkMRMLModelNode()
   this->PolyData = NULL;
 #else
   this->PolyDataConnection = NULL;
+  this->DataEventForwarder = NULL;
 #endif
 }
 
@@ -59,6 +61,12 @@ vtkMRMLModelNode::vtkMRMLModelNode()
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
   this->SetAndObservePolyData(NULL);
+#if (VTK_MAJOR_VERSION > 5)
+  if (this->DataEventForwarder)
+    {
+    this->DataEventForwarder->Delete();
+    }
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -164,8 +172,28 @@ void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
     }
   else
     {
+    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
+      this->GetPolyDataConnection() ? this->GetPolyDataConnection()->GetProducer() : 0);
+    if (oldProducer && oldProducer->GetOutputDataObject(0) == polyData)
+      {
+      return;
+      }
+    else if (oldProducer && oldProducer->GetOutputDataObject(0))
+      {
+      oldProducer->GetOutputDataObject(0)->RemoveObservers(
+        vtkCommand::ModifiedEvent, this->DataEventForwarder);
+      }
+
     vtkNew<vtkTrivialProducer> tp;
     tp->SetOutput(polyData);
+    // Propagate ModifiedEvent onto the trivial producer to make sure
+    // PolyDataModifiedEvent is triggered.
+    if (!this->DataEventForwarder)
+      {
+      this->DataEventForwarder = vtkEventForwarderCommand::New();
+      }
+    this->DataEventForwarder->SetTarget(tp.GetPointer());
+    polyData->AddObserver(vtkCommand::ModifiedEvent, this->DataEventForwarder);
     this->SetPolyDataConnection(tp->GetOutputPort());
     }
 }

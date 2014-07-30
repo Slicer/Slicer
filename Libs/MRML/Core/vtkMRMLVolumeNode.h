@@ -21,6 +21,7 @@ class vtkMRMLVolumeDisplayNode;
 
 // VTK includes
 class vtkAlgorithmOutput;
+class vtkEventForwarderCommand;
 class vtkImageData;
 class vtkMatrix4x4;
 
@@ -227,6 +228,7 @@ protected:
   vtkImageData* ImageData;
 #else
   vtkAlgorithmOutput* ImageDataConnection;
+  vtkEventForwarderCommand* DataEventForwarder;
 #endif
 
   itk::MetaDataDictionary Dictionary;
