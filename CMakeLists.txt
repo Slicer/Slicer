@@ -697,7 +697,7 @@ endif()
 # VTK
 #-----------------------------------------------------------------------------
 if(${VTK_VERSION_MAJOR} STREQUAL "6")
-  find_package(VTK 6.1 COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
+  find_package(VTK 6.2 COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
   if(NOT TARGET vtkGUISupportQt)
     message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
                       "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
@@ -1068,4 +1068,3 @@ endif()
 # the end of the whole configuration process, as a "last step".
 # This directory is typically the last add_subdirectory in the main CMakeLists.txt.
 add_subdirectory(CMake/LastConfigureStep)
-
