@@ -61,20 +61,9 @@ public:
   static vtkMRMLSubjectHierarchyNode* AreNodesInSameBranch(
     vtkMRMLNode* node1, vtkMRMLNode* node2, const char* lowestCommonLevel );
 
-public:
-  /// Custom events
-  enum
-  {
-    /// Event fired when complete scene update is needed (end import, end batch processing)
-    SceneUpdateNeededEvent = 20000,
-  };
-
 protected:
   /// Called each time a new scene is set
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
-
-  virtual void OnMRMLSceneEndBatchProcess();
-  virtual void OnMRMLSceneEndImport();
 
   /// Called every time the scene has been significantly changed.
   virtual void UpdateFromMRMLScene();

@@ -86,18 +86,6 @@ void vtkSlicerSubjectHierarchyModuleLogic::UpdateFromMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSubjectHierarchyModuleLogic::OnMRMLSceneEndBatchProcess()
-{
-  this->InvokeEvent(vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent);
-}
-
-//---------------------------------------------------------------------------
-void vtkSlicerSubjectHierarchyModuleLogic::OnMRMLSceneEndImport()
-{
-  this->InvokeEvent(vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent);
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
   vtkMRMLScene *scene, const char* patientId, const char* studyInstanceUID, const char* seriesInstanceUID )
 {

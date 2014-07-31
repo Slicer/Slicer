@@ -173,9 +173,15 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.tempDir = subjectHierarchyGenericSelfTestDir + '/Temp'
     self.sceneFileName = self.tempDir + '/SubjectHierarchyGenericSelfTestScene.mrml'
 
+    self.patientNodeName = '' # To be filled in after loading
+    self.studyNodeName = '' # To be filled in after loading
+    self.ctVolumeShNodeName = '' # To be filled in after loading
     self.sampleLabelmapName = 'SampleLabelmap'
     self.sampleModelName = 'SampleModel'
+    self.patient2Name = 'Patient2'
     self.study2Name = 'Study2'
+    self.testSeriesName = 'TestSeries_Empty'
+    self.testSubseriesName = 'TestSuberies_Empty'
 
   # ------------------------------------------------------------------------------
   def section_LoadInputData(self):
@@ -277,6 +283,11 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     studyNode = ctVolumeShNode.GetParentNode()
     self.assertTrue( studyNode != None )
 
+    # Save node names for scene load testing
+    self.patientNodeName = studyNode.GetParentNode().GetName()
+    self.studyNodeName = studyNode.GetName()
+    self.ctVolumeShNodeName = ctVolumeShNode.GetName()
+    
     # Verify DICOM levels
     self.assertTrue( studyNode.GetParentNode().GetLevel() == 'Subject' )
     self.assertTrue( studyNode.GetLevel() == 'Study' )
@@ -302,10 +313,15 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
 
     from vtkSlicerSubjectHierarchyModuleMRML import vtkMRMLSubjectHierarchyNode
 
-    patientNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, 'Subject', 'Patient2')
-    studyNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, patientNode, 'Study', self.study2Name)
-    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, studyNode, 'Series', 'TestSeries_Empty')
-    subseriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, seriesNode, 'Subseries', 'TestSuberies_Empty')
+    patient2Node = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, 'Subject', self.patient2Name)
+    study2Node = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, patient2Node, 'Study', self.study2Name)
+    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, study2Node, 'Series', self.testSeriesName)
+    subseriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, seriesNode, 'Subseries', self.testSubseriesName)
+
+    # Check if the created nodes have the right parents
+    self.assertTrue( study2Node.GetParentNode() == patient2Node )
+    self.assertTrue( seriesNode.GetParentNode() == study2Node )
+    self.assertTrue( subseriesNode.GetParentNode() == seriesNode )
 
   # ------------------------------------------------------------------------------
   def section_ReparentNodeInSubjectHierarchy(self):
@@ -353,9 +369,47 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
 
     slicer.util.loadScene(self.sceneFileName)
 
+    # Check number of nodes in the scene
     self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode') == 2 )
     self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode') == 4 ) # 1 + slice models
     self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode') == 9 )
+    
+    # Check if the nodes have the right parents
+    patientNode = slicer.util.getNode(self.patientNodeName)
+    self.assertTrue( patientNode != None )
+    self.assertTrue( patientNode.GetParentNode() == None )
+    
+    studyNode = slicer.util.getNode(self.studyNodeName)
+    self.assertTrue( studyNode != None )
+    self.assertTrue( studyNode.GetParentNode() == patientNode )
+    
+    ctVolumeShNode = slicer.util.getNode(self.ctVolumeShNodeName)
+    self.assertTrue( ctVolumeShNode != None )
+    self.assertTrue( ctVolumeShNode.GetParentNode() == studyNode )
+    
+    sampleModelShNode = slicer.util.getNode(self.sampleModelName + '_SubjectHierarchy')
+    self.assertTrue( sampleModelShNode != None )
+    self.assertTrue( sampleModelShNode.GetParentNode() == studyNode )
+    
+    patient2Node = slicer.util.getNode(self.patient2Name + '_SubjectHierarchy')
+    self.assertTrue( patient2Node != None )
+    self.assertTrue( patient2Node.GetParentNode() == None )
+
+    study2Node = slicer.util.getNode(self.study2Name + '_SubjectHierarchy')
+    self.assertTrue( study2Node != None )
+    self.assertTrue( study2Node.GetParentNode() == patient2Node )
+
+    sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + '_SubjectHierarchy')
+    self.assertTrue( sampleLabelmapShNode != None )
+    self.assertTrue( sampleLabelmapShNode.GetParentNode() == study2Node )
+
+    testSeriesNode = slicer.util.getNode(self.testSeriesName + '_SubjectHierarchy')
+    self.assertTrue( testSeriesNode != None )
+    self.assertTrue( testSeriesNode.GetParentNode() == study2Node )
+
+    testSubseriesNode = slicer.util.getNode(self.testSubseriesName + '_SubjectHierarchy')
+    self.assertTrue( testSubseriesNode != None )
+    self.assertTrue( testSubseriesNode.GetParentNode() == testSeriesNode )
 
   # ------------------------------------------------------------------------------
   # Create sample labelmap with same geometry as input volume
@@ -365,6 +419,7 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.assertTrue( label > 0 )
 
     sampleLabelmapNode = slicer.vtkMRMLScalarVolumeNode()
+    sampleLabelmapNode = slicer.mrmlScene.AddNode(sampleLabelmapNode)
     sampleLabelmapNode.Copy(volumeNode)
     imageData = vtk.vtkImageData()
     imageData.DeepCopy(volumeNode.GetImageData())
@@ -387,7 +442,6 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
       self.assertTrue( colorNode != None )
     labelmapVolumeDisplayNode.SetAndObserveColorNodeID(colorNode.GetID())
     labelmapVolumeDisplayNode.VisibilityOn()
-    sampleLabelmapNode = slicer.mrmlScene.AddNode(sampleLabelmapNode)
     sampleLabelmapNodeName = slicer.mrmlScene.GenerateUniqueName(name)
     sampleLabelmapNode.SetName(sampleLabelmapNodeName)
     sampleLabelmapNode.SetLabelMap(1)

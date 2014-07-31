@@ -144,9 +144,6 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
   connect( d->SubjectHierarchyTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->MRMLNodeAttributeTableWidget, SLOT(setMRMLNode(vtkMRMLNode*)) );
   connect( d->SubjectHierarchyTreeView->sceneModel(), SIGNAL(invalidateModels()), d->SubjectHierarchyTreeView->model(), SLOT(invalidate()) );
 
-  // Connect logic custom event for scene update
-  qvtkConnect( d->logic(), vtkSlicerSubjectHierarchyModuleLogic::SceneUpdateNeededEvent, d->SubjectHierarchyTreeView->model(), SLOT( invalidate() ) );
-
   this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
   this->setTransformsVisible(d->DisplayTransformsCheckBox->isChecked());
   this->setPotentialNodesVisible(d->PotentialNodesCheckBox->isChecked());
