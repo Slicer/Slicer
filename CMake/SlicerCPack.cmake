@@ -85,6 +85,9 @@ else()
   if(Slicer_BUILD_CLI_SUPPORT)
     find_package(SlicerExecutionModel REQUIRED)
   endif()
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_LIBRARY_DIRS "${VTK_DIR}/lib")
+  endif()
 
   # Generate qt.conf
   file(WRITE ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
