@@ -237,8 +237,11 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocal
     loadedNodes[nodeIndex]->Modified();
     }
 
+  // Expand generated branches
   foreach(vtkMRMLSubjectHierarchyNode* createdNode, createdNodes)
     {
     emit requestExpandNode(createdNode);
     }
+  // Trigger filter updating so that original data nodes disappear from the tree
+  emit requestInvalidateFilter();
 }

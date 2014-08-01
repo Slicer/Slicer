@@ -22,23 +22,17 @@
    </property>
    <item>
     <widget class="qMRMLSubjectHierarchyTreeView" name="SubjectHierarchyTreeView">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>3</verstretch>
-      </sizepolicy>
-     </property>
      <property name="acceptDrops">
       <bool>true</bool>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="dragDropMode">
       <enum>QAbstractItemView::DragDrop</enum>
      </property>
      <property name="indentation">
       <number>12</number>
-     </property>
-     <property name="nodeTypes">
-      <stringlist/>
      </property>
      <property name="editMenuActionVisible">
       <bool>true</bool>
@@ -174,6 +168,9 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
+  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
+  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
