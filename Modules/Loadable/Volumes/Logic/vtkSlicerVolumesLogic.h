@@ -228,7 +228,7 @@ public:
   void GetVolumeCenteredOrigin(vtkMRMLVolumeNode *volumeNode, double* origin);
 
   ///  Convenience method to resample input volume using reference volume info
-  vtkMRMLScalarVolumeNode* ResampleVolumeToReferenceVolume(vtkMRMLVolumeNode *inputVolumeNode,
+  static vtkMRMLScalarVolumeNode* ResampleVolumeToReferenceVolume(vtkMRMLVolumeNode *inputVolumeNode,
                                                            vtkMRMLVolumeNode *referenceVolumeNode);
 
 protected:
