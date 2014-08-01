@@ -1,21 +1,41 @@
 
+#-----------------------------------------------------------------------------
 # Sanity checks
-set(expected_defined_vars Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR CMAKE_GENERATOR Slicer_EXTENSIONS_TRACK_QUALIFIER)
+set(expected_defined_vars
+  CMAKE_GENERATOR
+  QT_VERSION_MAJOR
+  QT_VERSION_MINOR
+  Slicer_EXTENSIONS_TRACK_QUALIFIER
+  Slicer_WC_REVISION
+  )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
   endif()
 endforeach()
 
-set(expected_existing_vars GIT_EXECUTABLE Subversion_SVN_EXECUTABLE Slicer_DIR Slicer_EXTENSION_DESCRIPTION_DIR Slicer_CMAKE_DIR Slicer_LOCAL_EXTENSIONS_DIR)
+set(expected_existing_vars
+  GIT_EXECUTABLE
+  Slicer_CMAKE_DIR
+  Slicer_DIR
+  Slicer_EXTENSION_DESCRIPTION_DIR
+  Slicer_LOCAL_EXTENSIONS_DIR
+  Subversion_SVN_EXECUTABLE
+  )
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS "${${var}}")
     message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
   endif()
 endforeach()
 
+#-----------------------------------------------------------------------------
 # Convert to absolute path
-foreach(varname Slicer_DIR Slicer_EXTENSION_DESCRIPTION_DIR Slicer_CMAKE_DIR Slicer_LOCAL_EXTENSIONS_DIR)
+foreach(varname
+  Slicer_CMAKE_DIR
+  Slicer_DIR
+  Slicer_EXTENSION_DESCRIPTION_DIR
+  Slicer_LOCAL_EXTENSIONS_DIR
+  )
   if(NOT IS_ABSOLUTE ${${varname}})
     set(${varname} "${CMAKE_CURRENT_BINARY_DIR}/${${varname}}")
   endif()

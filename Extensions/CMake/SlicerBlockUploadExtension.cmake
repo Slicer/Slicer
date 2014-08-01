@@ -1,13 +1,38 @@
 #-----------------------------------------------------------------------------
 # Sanity checks
-set(expected_defined_vars CMAKE_CTEST_COMMAND GIT_EXECUTABLE Subversion_SVN_EXECUTABLE EXTENSION_NAME EXTENSION_SOURCE_DIR EXTENSION_SUPERBUILD_BINARY_DIR EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED Slicer_CMAKE_DIR Slicer_EXTENSIONS_CMAKE_DIR Slicer_DIR EXTENSION_COMPILER EXTENSION_BITNESS Slicer_EXTENSION_CMAKE_GENERATOR Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR)
+set(expected_defined_vars
+  CMAKE_CTEST_COMMAND
+  EXTENSION_BITNESS
+  EXTENSION_BUILD_SUBDIRECTORY
+  EXTENSION_COMPILER
+  EXTENSION_ENABLED
+  EXTENSION_NAME
+  EXTENSION_SOURCE_DIR
+  EXTENSION_SUPERBUILD_BINARY_DIR
+  GIT_EXECUTABLE
+  QT_VERSION_MAJOR
+  QT_VERSION_MINOR
+  Slicer_CMAKE_DIR
+  Slicer_DIR
+  Slicer_EXTENSION_CMAKE_GENERATOR
+  Slicer_EXTENSIONS_CMAKE_DIR
+  Slicer_WC_REVISION
+  Subversion_SVN_EXECUTABLE
+  )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
   endif()
 endforeach()
 
-set(expected_existing_vars CMAKE_CTEST_COMMAND GIT_EXECUTABLE Subversion_SVN_EXECUTABLE Slicer_CMAKE_DIR Slicer_EXTENSIONS_CMAKE_DIR Slicer_DIR)
+set(expected_existing_vars
+  CMAKE_CTEST_COMMAND
+  GIT_EXECUTABLE
+  Slicer_CMAKE_DIR
+  Slicer_DIR
+  Slicer_EXTENSIONS_CMAKE_DIR
+  Subversion_SVN_EXECUTABLE
+  )
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS "${${var}}")
     message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
