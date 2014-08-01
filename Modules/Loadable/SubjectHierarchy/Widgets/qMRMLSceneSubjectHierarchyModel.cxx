@@ -52,9 +52,6 @@ qMRMLSceneSubjectHierarchyModelPrivate::qMRMLSceneSubjectHierarchyModelPrivate(q
 
   this->UnknownIcon = QIcon(":Icons/Unknown.png");
   this->WarningIcon = QIcon(":Icons/Warning.png");
-
-  // Switch on LazyUpdate so that the scene is updated once after importing/restoring
-  this->LazyUpdate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -249,6 +246,13 @@ QFlags<Qt::ItemFlag> qMRMLSceneSubjectHierarchyModel::nodeFlags(vtkMRMLNode* nod
     }
 
   return flags;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneSubjectHierarchyModel::onMRMLSceneImported(vtkMRMLScene* scene)
+{
+  Q_UNUSED(scene);
+  this->updateScene();
 }
 
 //------------------------------------------------------------------------------
@@ -566,7 +570,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
 
     // Trigger updating item of reparented data node. Without this, the potential data node does not disappear
     // from the tree when doing the reparenting programatically (however it does when doing drag&drop from UI)
-    emit invalidateModels();
+    emit invalidateFilter();
     }
 
   return true;

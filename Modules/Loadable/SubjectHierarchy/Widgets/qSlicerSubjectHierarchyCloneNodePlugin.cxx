@@ -216,7 +216,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
 
     // Trigger update
     clonedSubjectHierarchyNode->Modified();
-    emit requestInvalidateModels();
+    emit requestInvalidateFilter();
     }
   else // No associated node
     {

@@ -93,7 +93,7 @@ public slots:
 signals:
   void saveTreeExpandState();
   void loadTreeExpandState();
-  void invalidateModels();
+  void invalidateFilter();
 
 protected:
   /// Get the largest column ID
@@ -107,6 +107,9 @@ protected:
 
   /// Overridden function to handle node update from tree view item
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
+
+protected slots:
+  virtual void onMRMLSceneImported(vtkMRMLScene* scene);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneSubjectHierarchyModel);

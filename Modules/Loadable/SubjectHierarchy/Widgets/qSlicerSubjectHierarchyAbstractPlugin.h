@@ -187,8 +187,9 @@ signals:
   /// Signal requesting expanding of the subject hierarchy tree item belonging to a node
   void requestExpandNode(vtkMRMLSubjectHierarchyNode* node);
 
-  /// Signal requesting invalidating the models for the tree view and the potential nodes list
-  void requestInvalidateModels()const;
+  /// Signal requesting invalidating the filter model for the tree view
+  /// (e.g. when a node is added or removed by the plugin)
+  void requestInvalidateFilter()const;
 
   /// Signal that is emitted when a node changes owner plugin
   /// \param node Subject hierarchy node changing owner plugin
