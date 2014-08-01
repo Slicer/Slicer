@@ -32,10 +32,13 @@
 // MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLModelNode.h>
+#include <vtkMRMLModelDisplayNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
 
 // Qt includes
 #include <QDebug>
@@ -182,3 +185,45 @@ void qSlicerSubjectHierarchyModelsPlugin::editProperties(vtkMRMLSubjectHierarchy
       }
     }
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkMRMLSubjectHierarchyNode* node)const
+{
+  if (!node)
+    {
+    qCritical() << "qSlicerSubjectHierarchyModelsPlugin::tooltip: Subject hierarchy node is NULL!";
+    return QString("Invalid!");
+    }
+
+  // Get basic tooltip from abstract plugin
+  QString tooltipString = Superclass::tooltip(node);
+
+  vtkMRMLModelNode* modelNode =
+    vtkMRMLModelNode::SafeDownCast(node->GetAssociatedNode());
+  vtkPolyData* polyData = modelNode->GetPolyData();
+  if (modelNode && modelNode->GetDisplayNode() && polyData)
+    {
+    vtkMRMLModelDisplayNode* displayNode =
+      vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+    bool visible = (displayNode->GetVisibility() > 0);
+    tooltipString.append( QString(" (Points: %1  Cells: %2  Visible: %3")
+      .arg(polyData->GetNumberOfPoints()).arg(polyData->GetNumberOfCells())
+      .arg(visible ? "YES" : "NO") );
+    if (visible)
+      {
+        double color[3] = {0.0,0.0,0.0};
+        displayNode->GetColor(color);
+      tooltipString.append( QString("  Color: %4,%5,%6  Opacity: %7%")
+        .arg(int(color[0]*255.0)).arg(int(color[1]*255.0)).arg(int(color[2]*255.0))
+        .arg(int(displayNode->GetOpacity()*100.0)) );
+      }
+    tooltipString.append(QString(")"));
+    }
+  else
+    {
+    tooltipString.append(" !Invalid model!");
+    }
+
+  return tooltipString;
+}
+

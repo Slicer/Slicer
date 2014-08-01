@@ -45,6 +45,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkCollection.h>
+#include <vtkImageData.h>
 
 // Qt includes
 #include <QDebug>
@@ -172,6 +173,39 @@ double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyNode(vtkMRMLS
 const QString qSlicerSubjectHierarchyVolumesPlugin::roleForPlugin()const
 {
   return "Scalar volume";
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkMRMLSubjectHierarchyNode* node)const
+{
+  if (!node)
+    {
+    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::tooltip: Subject hierarchy node is NULL!";
+    return QString("Invalid!");
+    }
+
+  // Get basic tooltip from abstract plugin
+  QString tooltipString = Superclass::tooltip(node);
+
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
+  vtkImageData* imageData = volumeNode->GetImageData();
+  if (volumeNode && imageData)
+    {
+    int dimensions[3] = {0,0,0};
+    imageData->GetDimensions(dimensions);
+    double spacing[3] = {0.0,0.0,0.0};
+    volumeNode->GetSpacing(spacing);
+    tooltipString.append( QString(" (Dimensions: %1x%2x%3  Spacing: %4mm x %5mm x %6mm)")
+      .arg(dimensions[0]).arg(dimensions[1]).arg(dimensions[2])
+      .arg(spacing[0],0,'g',3).arg(spacing[1],0,'g',3).arg(spacing[2],0,'g',3) );
+    }
+  else
+    {
+    tooltipString.append(" !Invalid volume!");
+    }
+
+  return tooltipString;
 }
 
 //---------------------------------------------------------------------------

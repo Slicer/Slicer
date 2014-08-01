@@ -82,6 +82,9 @@ public:
   /// Open module belonging to node and set inputs in opened module
   virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
 
+  /// Generate tooltip for a owned subject hierarchy node
+  virtual QString tooltip(vtkMRMLSubjectHierarchyNode* node)const;
+
   /// Set display visibility of a owned subject hierarchy node
   virtual void setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible);
 
