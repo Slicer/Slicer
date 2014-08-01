@@ -104,6 +104,8 @@ QIcon qSlicerSubjectHierarchyAbstractPlugin::icon(vtkMRMLSubjectHierarchyNode* n
 //---------------------------------------------------------------------------
 QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIcon(int visible)
 {
+  Q_UNUSED(visible);
+
   // Default implementation applies to plugins that do not define roles, only functions and/or levels
   // If there is no role, then there is no visibility icon to set
   return QIcon();
