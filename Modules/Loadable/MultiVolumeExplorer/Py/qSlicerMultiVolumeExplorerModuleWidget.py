@@ -311,7 +311,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     return '#%02X%02X%02X' % (r,g,b)
 
   def onSliderChanged(self, newValue):
-    value = self.__mdSlider.value
+    newValue = int(newValue)
 
     if self.__mvNode != None:
       mvDisplayNode = self.__mvNode.GetDisplayNode()
