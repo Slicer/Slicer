@@ -21,6 +21,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     self.tags['seriesInstanceUID'] = "0020,000E"
     self.tags['seriesDescription'] = "0008,103E"
+    self.tags['instanceUID'] = "0008,0018"
     self.tags['position'] = "0020,0032"
     self.tags['studyDescription'] = "0008,1030"
 
@@ -226,6 +227,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     mvImageArray = None
 
     scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+    instanceUIDs = ""
+    for file in files:
+      uid = slicer.dicomDatabase.fileValue(file,self.tags['instanceUID'])
+      if uid == "":
+        uid = "Unknown"
+      instanceUIDs += uid+" "
+    instanceUIDs = instanceUIDs[:-1]
+    mvNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
 
     # read each frame into scalar volume
     for frameNumber in range(nFrames):
