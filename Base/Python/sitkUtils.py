@@ -51,6 +51,8 @@ def CreateNewDisplayNode(nodeName='default'):
     newNode = scene.CreateNodeByClass(nodeType)
     newNode.UnRegister(scene)
     AddNodeToMRMLScene(newNode, nodeName + '_Display', False)
+    colorLogic = slicer.modules.colors.logic()
+    newNode.SetAndObserveColorNodeID(colorLogic.GetDefaultVolumeColorNodeID())
     return newNode
 
 def removeOldMRMLNode(node):
