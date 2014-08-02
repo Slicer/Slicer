@@ -39,6 +39,9 @@
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include <vtkNew.h>
+
 #include <vtkMRMLDisplayableHierarchyLogic.h>
 
 //-----------------------------------------------------------------------------
@@ -160,18 +163,15 @@ void qSlicerModelsModuleWidget::insertHierarchyNode()
 {
   Q_D(qSlicerModelsModuleWidget);
 
-  vtkMRMLModelHierarchyNode *modelHierarchyNode = vtkMRMLModelHierarchyNode::New();
+  vtkNew<vtkMRMLModelHierarchyNode> modelHierarchyNode;
   modelHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString("Model Hierarchy"));
 
   // also add a display node to the hierarchy node for use when the hierarchy is collapsed
-  vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
-  if (modelDisplayNode)
-    {
-    this->mrmlScene()->AddNode(modelDisplayNode);
-    // qDebug() << "insertHierarchyNode: added a display node for hierarchy node, with id = " << modelDisplayNode->GetID();
-    }
+  vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;
+  this->mrmlScene()->AddNode(modelDisplayNode.GetPointer());
+  // qDebug() << "insertHierarchyNode: added a display node for hierarchy node, with id = " << modelDisplayNode->GetID();
 
-  this->mrmlScene()->AddNode(modelHierarchyNode);
+  this->mrmlScene()->AddNode(modelHierarchyNode.GetPointer());
 
   vtkMRMLNode* parent = vtkMRMLNode::SafeDownCast(d->ModelHierarchyTreeView->currentNode());
   if (parent)
@@ -189,16 +189,13 @@ void qSlicerModelsModuleWidget::insertHierarchyNode()
   // Expand the newly added hierarchy node
   QModelIndex modelHierarchyIndex = d->ModelHierarchyTreeView->
                                     sortFilterProxyModel()->
-                                    indexFromMRMLNode(modelHierarchyNode);
+                                    indexFromMRMLNode(modelHierarchyNode.GetPointer());
   d->ModelHierarchyTreeView->expand(modelHierarchyIndex);
 
-  if (modelDisplayNode)
+  if (modelDisplayNode.GetPointer())
     {
     modelHierarchyNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
-    modelDisplayNode->Delete();
     }
-
-  modelHierarchyNode->Delete();
 }
 
 //-----------------------------------------------------------------------------
@@ -262,14 +259,13 @@ void qSlicerModelsModuleWidget::deleteMultipleModels()
         case QMessageBox::Ok :
           {
           // delete
-          vtkMRMLDisplayableHierarchyLogic *hierarchyLogic = vtkMRMLDisplayableHierarchyLogic::New();
+          vtkNew<vtkMRMLDisplayableHierarchyLogic> hierarchyLogic;
           hierarchyLogic->SetMRMLScene(this->mrmlScene());
           bool retval = hierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(mrmlNode));
           if (!retval)
             {
             qWarning() << "Failed to delete hierarchy and children!";
             }
-          hierarchyLogic->Delete();
           break;
           }
         default:
