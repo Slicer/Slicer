@@ -123,7 +123,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->FavoritesModulesListView->setFactoryManager( factoryManager );
   this->ModulesMenu->setCurrentModule("Welcome");
   QStringList favorites;
-  favorites  << "Volumes" << "Models" << "Transforms" << "Markups" << "Editor";
+  favorites  << "SubjectHierarchy" << "Volumes" << "Models" << "Transforms" << "Markups" << "Editor";
   this->FavoritesModulesListView->filterModel()->setShowModules(favorites);
 
   // Register settings
