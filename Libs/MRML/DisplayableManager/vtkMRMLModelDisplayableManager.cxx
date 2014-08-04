@@ -1538,6 +1538,15 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         {
         thisDisplayNode = hierarchyDisplayNode;
         mrmlDisplayNode = hierarchyDisplayNode;
+        modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(hierarchyDisplayNode);
+        if (!modelDisplayNode)
+          {
+          vtkErrorMacro("Unable to convert hierarchy display node "
+                        << " to a model display node, at the "
+                        << i << "th display node on model "
+                        << model->GetName());
+          continue;
+          }
         }
 
       vtkActor *actor = vtkActor::SafeDownCast(prop);
