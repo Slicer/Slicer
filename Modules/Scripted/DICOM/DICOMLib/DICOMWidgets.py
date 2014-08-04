@@ -480,8 +480,8 @@ class DICOMDetailsPopup(object):
           self.progress.setValue(step)
           slicer.app.processEvents()
         try:
-          indexer = ctk.ctkDICOMIndexer()
           for derivedItem in loadable.derivedItems:
+            indexer = ctk.ctkDICOMIndexer()
             self.progress.labelText = '\nIndexing %s' % derivedItem
             slicer.app.processEvent()
             indexer.addFile(slicer.dicomDatabase, derivedItem)
