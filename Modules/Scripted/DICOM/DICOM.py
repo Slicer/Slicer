@@ -160,9 +160,6 @@ class DICOMWidget:
     self.testingServer = None
     self.dicomBrowser = None
 
-    # options for browser
-    self.browserPersistent = False
-
     # TODO: are these wrapped so we can avoid magic numbers?
     self.dicomModelUIDRole = 32
     self.dicomModelTypeRole = self.dicomModelUIDRole + 1
@@ -194,7 +191,7 @@ class DICOMWidget:
     self.detailsPopup.open()
 
   def exit(self):
-    if not self.browserPersistent:
+    if not self.detailsPopup.browserPersistent:
       self.detailsPopup.close()
 
   def updateGUIFromMRML(self, caller, event):
@@ -264,7 +261,7 @@ class DICOMWidget:
     self.dicomBrowser = ctk.ctkDICOMBrowser()
     DICOM.setDatabasePrecacheTags(self.dicomBrowser)
 
-    self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomBrowser,setBrowserPersistence=self.setBrowserPersistence)
+    self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomBrowser)
 
     self.tables = self.detailsPopup.tables
 
@@ -486,10 +483,6 @@ class DICOMWidget:
       files += slicer.dicomDatabase.filesForSeries(serie)
     sendDialog = DICOMLib.DICOMSendDialog(files)
     sendDialog.open()
-
-  def setBrowserPersistence(self,onOff):
-    self.detailsPopup.setModality(not onOff)
-    self.browserPersistent = onOff
 
   def onToggleListener(self):
     if hasattr(slicer, 'dicomListener'):

@@ -28,11 +28,14 @@ class DICOMDetailsPopup(object):
   This is a helper used in the DICOMWidget class.
   """
 
-  def __init__(self,dicomBrowser,setBrowserPersistence=None):
+  def __init__(self,dicomBrowser):
     self.dicomBrowser = dicomBrowser
-    self.setBrowserPersistence = setBrowserPersistence
     self.popupGeometry = qt.QRect()
     settings = qt.QSettings()
+
+    self.browserPersistent = False
+    if settings.contains('DICOM/BrowserPersistent'):
+      self.browserPersistent = settings.value('DICOM/BrowserPersistent').lower() == 'true'
 
     self.advancedViewCheckState = False
 
@@ -93,6 +96,8 @@ class DICOMDetailsPopup(object):
       self.dock.setWidget(self.window)
     else:
       raise "Unknown widget type - should be dialog, window, dock or popup"
+
+    self.setModality(not self.browserPersistent)
 
     self.window.setWindowTitle('DICOM Browser')
 
@@ -203,11 +208,11 @@ class DICOMDetailsPopup(object):
       self.horizontalViewCheckBox.checked = True
     self.horizontalViewCheckBox.connect('stateChanged(int)', self.onHorizontalViewCheckBox)
 
-    if self.setBrowserPersistence:
-      self.browserPersistentButton = qt.QCheckBox('Browser Persistent')
-      self.browserPersistentButton.toolTip = 'When enabled, DICOM Broswer remains open and usable after leaving DICOM module'
-      self.actionButtonLayout.addWidget(self.browserPersistentButton)
-      self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
+    self.browserPersistentButton = qt.QCheckBox('Browser Persistent')
+    self.browserPersistentButton.toolTip = 'When enabled, DICOM Browser remains open after loading data or switching to another module'
+    self.browserPersistentButton.checked = self.browserPersistent
+    self.actionButtonLayout.addWidget(self.browserPersistentButton)
+    self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
 
 
     if self.advancedViewCheckState == True:
@@ -255,6 +260,13 @@ class DICOMDetailsPopup(object):
         arrayIndex += 1
 
     settings.endArray()
+
+  def setBrowserPersistence(self,state):
+    self.browserPersistent = state
+    self.setModality(not self.browserPersistent)
+    settings = qt.QSettings()
+    browserPersistentSettingString = 'true' if self.browserPersistent else 'false'
+    settings.setValue('DICOM/BrowserPersistent', browserPersistentSettingString)
 
   def onSettingsButton(self, status):
     print 'toggled'
@@ -492,7 +504,7 @@ class DICOMDetailsPopup(object):
     self.progress = None
     if loadingResult:
       qt.QMessageBox.warning(slicer.util.mainWindow(), 'DICOM loading', loadingResult)
-    if not self.setBrowserPersistence:
+    if not self.browserPersistent:
       self.close()
 
 class DICOMPluginSelector(object):
