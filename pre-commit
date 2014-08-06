@@ -191,7 +191,7 @@ while read src_mode dst_mode src_obj dst_obj status file; do
   if test "$dst_mode" != "160000" -a "$dst_mode" != '000000'; then
     check_size
     #Exclude some files from line lengths check
-    check_line_lengths_extension_to_exclude="^(ui|xml|xml\\.in|mrml|html|json)$"
+    check_line_lengths_extension_to_exclude="^(crt|ui|xml|xml\\.in|mrml|html|json)$"
     if [[ ! ${file#*.} =~ $check_line_lengths_extension_to_exclude ]]; then
       check_line_lengths
     fi
