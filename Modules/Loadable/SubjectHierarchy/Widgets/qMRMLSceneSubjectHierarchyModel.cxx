@@ -31,7 +31,6 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes

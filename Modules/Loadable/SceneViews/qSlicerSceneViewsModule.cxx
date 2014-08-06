@@ -13,6 +13,10 @@
 #include <qSlicerSceneViewsModuleWidget.h>
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
+// SubjectHierarchy Plugins includes
+#include "qSlicerSubjectHierarchyPluginHandler.h"
+#include "qSlicerSubjectHierarchySceneViewsPlugin.h"
+
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerSceneViewsModule, qSlicerSceneViewsModule);
 
@@ -43,6 +47,10 @@ void qSlicerSceneViewsModule::setup()
   ioManager->registerIO(new qSlicerNodeWriter(
     "SceneViews", QString("SceneViewFile"),
     QStringList() << "vtkMRMLSceneViewNode", this));
+
+  // Register Subject Hierarchy core plugins
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchySceneViewsPlugin());
 }
 
 //-----------------------------------------------------------------------------

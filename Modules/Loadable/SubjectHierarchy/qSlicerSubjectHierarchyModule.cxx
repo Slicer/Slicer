@@ -38,6 +38,7 @@
 #include "qSlicerSubjectHierarchyChartsPlugin.h"
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
+#include "qSlicerSubjectHierarchySegmentPlugin.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -128,11 +129,18 @@ void qSlicerSubjectHierarchyModule::setup()
   qvtkConnect( this->mrmlScene(), vtkMRMLScene::NodeAboutToBeRemovedEvent, this, SLOT( onNodeAboutToBeRemoved(vtkObject*,vtkObject*) ) );
 
   // Register Subject Hierarchy core plugins
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyDICOMPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyCloneNodePlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyChartsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyParseLocalDataPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyRegisterPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyDICOMPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyCloneNodePlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyChartsPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyParseLocalDataPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyRegisterPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchySegmentPlugin());
 }
 
 //-----------------------------------------------------------------------------

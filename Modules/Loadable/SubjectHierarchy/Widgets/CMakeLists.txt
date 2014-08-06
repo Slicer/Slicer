@@ -35,6 +35,8 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
   qSlicerSubjectHierarchyRegisterPlugin.cxx
   qSlicerSubjectHierarchyRegisterPlugin.h
+  qSlicerSubjectHierarchySegmentPlugin.cxx
+  qSlicerSubjectHierarchySegmentPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -50,6 +52,7 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyChartsPlugin.h
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
   qSlicerSubjectHierarchyRegisterPlugin.h
+  qSlicerSubjectHierarchySegmentPlugin.h
   )
 
 set(${KIT}_UI_SRCS

@@ -55,7 +55,7 @@
 const std::string qSlicerSubjectHierarchyCloneNodePlugin::CLONE_NODE_NAME_POSTFIX = std::string(" Copy");
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchyCloneNodePluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyCloneNodePlugin);

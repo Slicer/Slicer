@@ -51,7 +51,7 @@
 #include "qSlicerLayoutManager.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchyChartsPluginPrivate: public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyChartsPlugin);

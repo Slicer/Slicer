@@ -40,7 +40,7 @@
 qSlicerSubjectHierarchyPluginHandler *qSlicerSubjectHierarchyPluginHandler::m_Instance = NULL;
 
 //----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
+/// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchyPluginHandlerCleanup
 {
 public:
