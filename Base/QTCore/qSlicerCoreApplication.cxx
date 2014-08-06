@@ -178,9 +178,12 @@ void qSlicerCoreApplicationPrivate::init()
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (!QSslSocket::supportsSsl())
     {
-    qDebug() << "[SSL] SSL support disabled - Failed to load SSL library !";
+    qWarning() << "[SSL] SSL support disabled - Failed to load SSL library !";
     }
-  qSlicerCoreApplication::loadCaCertificates();
+  if (!qSlicerCoreApplication::loadCaCertificates())
+    {
+    qWarning() << "[SSL] Failed to load Slicer.crt";
+    }
 #endif
 
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
@@ -1560,9 +1563,8 @@ void qSlicerCoreApplication::loadLanguage()
 bool qSlicerCoreApplication::loadCaCertificates()
 {
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
-  if (QSslSocket::supportsSsl() && QSslSocket::defaultCaCertificates().empty())
+  if (QSslSocket::supportsSsl())
     {
-    qDebug() << "[SSL] No default CA certificates found - Loading Slicer.crt";
     QSslSocket::setDefaultCaCertificates(QSslCertificate::fromPath(":/Certs/Slicer.crt"));
     }
   return !QSslSocket::defaultCaCertificates().empty();
