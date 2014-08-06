@@ -118,7 +118,6 @@ void qSlicerModulePanel::setModule(qSlicerAbstractCoreModule* module)
 
   if (module)
     {
-    qDebug() << "Show module (name):" << module->name();
     // Add the new module
     this->addModule(module);
     }
