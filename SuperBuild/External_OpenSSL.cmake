@@ -42,6 +42,7 @@ endif()
 if((NOT DEFINED OPENSSL_LIBRARIES
    OR ${_no_openssl_libraries}) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
+  #------------------------------------------------------------------------------
   if(UNIX)
     set(OpenSSL_URL http://packages.kitware.com/download/item/6172/openssl-1.0.1e.tar.gz)
     set(OpenSSL_MD5 66bf6f10f060d561929de96f9dfe5b8c)
@@ -122,13 +123,86 @@ ExternalProject_Execute(${proj} \"configure\" sh config zlib -lzlib -L${_zlib_li
     ExternalProject_Message(${proj} "OPENSSL_CRYPTO_LIBRARY:${OPENSSL_CRYPTO_LIBRARY}")
     ExternalProject_Message(${proj} "OPENSSL_SSL_LIBRARY:${OPENSSL_SSL_LIBRARY}")
 
+  #------------------------------------------------------------------------------
   elseif(WIN32)
-    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-      set(OpenSSL_URL http://packages.kitware.com/download/item/3877/OpenSSL_1_0_1e-install-32.tar.gz)
-      set(OpenSSL_MD5 aedd620319a0d3c87b03a92e2fad8f96)
-    elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-      set(OpenSSL_URL http://packages.kitware.com/download/item/3876/OpenSSL_1_0_1e-install-64.tar.gz)
-      set(OpenSSL_MD5 d57a52c20253723c17bf39594a0ebb96)
+    set(_qt_version "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
+
+    # Starting with Qt 4.8.6, we compiled [1] OpenSSL binaries specifically for each
+    # version of Microsoft Visual Studio. To understand the motivation, read below.
+    #
+    # As explained in [2][3], if a library meets these two conditions:
+    #   (a) exposes a pure C interface
+    #   (b) is linked against static version of the CRT
+    # the version of the compiler and runtime used to build the library
+    # shouldn't matter.
+    #
+    # That said, since OpenSSL is built as a shared library using the '/MD' [4]
+    # flag, it is not possible to use the same library with different runtime
+    # libraries.
+    #
+    # We found out that '/MD' was used by inspecting the the file 'ms/ntdll.mak'
+    # generated atfer configuring OpenSSL.
+    #
+    # If you find mistake in this explanation, do not hesitate to submit a patch
+    # to fix this text. Thanks.
+    #
+    # [1] Script used to compile OpenSSL: https://gist.github.com/jcfr/6030240
+    # [2] http://siomsystems.com/mixing-visual-studio-versions/
+    # [3] http://bytes.com/topic/net/answers/505515-compile-different-versions-visual-studio
+    # [4] http://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx
+
+    set(_error_msg "There is no pre-compiled version of OpenSSL available for
+this version of visual studio [${MSVC_VERSION}]. You could either:
+ (1) disable SSL support configuring with option Slicer_USE_PYTHONQT_WITH_OPENSSL:BOOL=OFF
+ or
+ (2) configure Slicer providing your own version of OpenSSL that matches the version
+     of OpenSSL also used to compile Qt library.
+     The option to specify are OPENSSL_INCLUDE_DIR, LIB_EAY_DEBUG, LIB_EAY_RELEASE,
+     SSL_EAY_DEBUG and SSL_EAY_RELEASE.")
+
+    #--------------------
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
+
+      if(_qt_version VERSION_EQUAL "4.8.5" OR _qt_version VERSION_LESS "4.8.5")
+        # OpenSSL 1.0.1e - Used to compile Qt 4.8.5
+        set(OpenSSL_URL http://packages.kitware.com/download/item/3877/OpenSSL_1_0_1e-install-32.tar.gz)
+        set(OpenSSL_MD5 aedd620319a0d3c87b03a92e2fad8f96)
+      else()
+        # OpenSSL 1.0.1h - Used to compile Qt 4.8.6
+        if(MSVC_VERSION VERSION_EQUAL "1500")
+          set(OPENSSL_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
+          set(OPENSSL_MD5 8b110bb48063223c3b9f3a99f1fa9067)
+        elseif(MSVC_VERSION VERSION_EQUAL "1600")
+          set(OPENSSL_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
+          set(OPENSSL_MD5 e80269ae7969276977a342cccc1df5c5)
+        else()
+          message(FATAL_ERROR ${_error_msg})
+        endif()
+      endif()
+
+    #--------------------
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+
+      if(_qt_version VERSION_EQUAL "4.8.5" OR _qt_version VERSION_LESS "4.8.5")
+        # OpenSSL 1.0.1e - Used to compile Qt 4.8.5
+        set(OpenSSL_URL http://packages.kitware.com/download/item/3876/OpenSSL_1_0_1e-install-64.tar.gz)
+        set(OpenSSL_MD5 d57a52c20253723c17bf39594a0ebb96)
+      else()
+        # OpenSSL 1.0.1h - Used to compile Qt 4.8.6
+        if(MSVC_VERSION VERSION_EQUAL "1500")
+          set(OPENSSL_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
+          set(OPENSSL_MD5 dab0c026ab56fd0fbfe2843d14218fad)
+        else(MSVC_VERSION VERSION_EQUAL "1600")
+          set(OPENSSL_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
+          set(OPENSSL_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
+        else()
+          message(FATAL_ERROR ${_error_msg})
+        endif()
+      endif()
+
+    endif()
+    if(MSVC_VERSION VERSION_GREATER "1600")
+      message(WARNING "Using OpenSSL 1.0.1h compiled with Visual Studio 2010")
     endif()
 
     #------------------------------------------------------------------------------
