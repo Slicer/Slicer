@@ -975,8 +975,11 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
     {
     clonedDisplayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
     }
-  clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
-  scene->AddNode(clonedDisplayNode);
+  if ( volumeNode->GetDisplayNode() )
+    {
+    clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
+    scene->AddNode(clonedDisplayNode);
+    }
 
   // clone the volume node
   vtkNew<vtkMRMLScalarVolumeNode> clonedVolumeNode;
@@ -984,7 +987,10 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
   std::string uname = scene->GetUniqueNameByString(name);
   clonedVolumeNode->SetName(uname.c_str());
-  clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+  if ( volumeNode->GetDisplayNode() )
+    {
+    clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+    }
 
   // copy over the volume's data
  // Kilian: VTK crashes when volumeNode->GetImageData() = NULL
