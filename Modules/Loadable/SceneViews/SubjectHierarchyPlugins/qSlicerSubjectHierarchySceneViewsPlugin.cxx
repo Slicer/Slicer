@@ -190,6 +190,12 @@ void qSlicerSubjectHierarchySceneViewsPlugin::showContextMenuActionsForNode(vtkM
   Q_D(qSlicerSubjectHierarchySceneViewsPlugin);
   this->hideAllContextMenuActions();
 
+  if (!node)
+    {
+    // There are no scene actions in this plugin
+    return;
+    }
+
   // Show restore scene view action for all scene views
   if (this->canOwnSubjectHierarchyNode(node))
     {
