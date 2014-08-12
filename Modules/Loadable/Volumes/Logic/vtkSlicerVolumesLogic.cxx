@@ -1033,8 +1033,11 @@ CloneVolumeWithoutImageData(vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, 
     {
     clonedDisplayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
     }
-  clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
-  scene->AddNode(clonedDisplayNode);
+  if ( volumeNode->GetDisplayNode() )
+    {
+    clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
+    scene->AddNode(clonedDisplayNode);
+    }
 
   // clone the volume node
   vtkNew<vtkMRMLScalarVolumeNode> clonedVolumeNode;
@@ -1042,7 +1045,10 @@ CloneVolumeWithoutImageData(vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, 
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
   std::string uname = scene->GetUniqueNameByString(name);
   clonedVolumeNode->SetName(uname.c_str());
-  clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+  if ( volumeNode->GetDisplayNode() )
+    {
+    clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+    }
 
   // add the cloned volume to the scene
   scene->AddNode(clonedVolumeNode.GetPointer());
