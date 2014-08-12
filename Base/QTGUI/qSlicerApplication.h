@@ -141,6 +141,10 @@ protected:
   virtual void handleCommandLineArguments();
   virtual void onSlicerApplicationLogicModified();
 
+  /// Set up file logging. Creates and sets new log file and deletes the oldest
+  /// one from the stored queue
+  void setupFileLogging();
+
 private:
   Q_DECLARE_PRIVATE(qSlicerApplication);
   Q_DISABLE_COPY(qSlicerApplication);
