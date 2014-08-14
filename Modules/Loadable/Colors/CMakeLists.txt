@@ -6,6 +6,7 @@ set(MODULE_TITLE "${MODULE_NAME}")
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
+add_subdirectory(VTKWidgets)
 add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
@@ -37,6 +38,7 @@ set(MODULE_UI_SRCS
   )
 
 set(MODULE_TARGET_LIBRARIES
+  vtkSlicer${MODULE_NAME}ModuleVTKWidgets
   vtkSlicer${MODULE_NAME}ModuleLogic
   )
 

@@ -205,6 +205,19 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
+       <widget class="QCheckBox" name="UseColorNameAsLabelCheckBox">
+        <property name="toolTip">
+         <string>Toggle between using the names of color table colors and the scalar values for the labels in the scalar bar widget.</string>
+        </property>
+        <property name="text">
+         <string>Use color names for labels</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+       </property>
+       </widget>
+      </item>
+      <item>
        <widget class="ctkVTKScalarBarWidget" name="VTKScalarBar"/>
       </item>
      </layout>

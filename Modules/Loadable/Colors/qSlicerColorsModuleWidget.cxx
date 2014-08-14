@@ -37,6 +37,7 @@
 
 // Slicer logic includes
 #include <vtkSlicerColorLogic.h>
+#include <vtkSlicerScalarBarActor.h>
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
@@ -49,7 +50,6 @@
 #include <vtkLookupTable.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkScalarBarActor.h>
 #include <vtkScalarBarWidget.h>
 
 //-----------------------------------------------------------------------------
@@ -66,6 +66,7 @@ public:
   void setDefaultColorNode();
 
   vtkScalarBarWidget* ScalarBarWidget;
+  vtkSlicerScalarBarActor* ScalarBarActor;
 };
 
 //-----------------------------------------------------------------------------
@@ -73,15 +74,16 @@ qSlicerColorsModuleWidgetPrivate::qSlicerColorsModuleWidgetPrivate(qSlicerColors
   : q_ptr(&object)
 {
   this->ScalarBarWidget = vtkScalarBarWidget::New();
-  this->ScalarBarWidget->GetScalarBarActor()->SetOrientationToVertical();
-  this->ScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(11);
-  this->ScalarBarWidget->GetScalarBarActor()->SetTitle("(mm)");
-  this->ScalarBarWidget->GetScalarBarActor()->SetLabelFormat(" %#8.3f");
+  this->ScalarBarActor = vtkSlicerScalarBarActor::New();
+  this->ScalarBarWidget->SetScalarBarActor(this->ScalarBarActor);
+  this->ScalarBarActor->SetOrientationToVertical();
+  this->ScalarBarActor->SetNumberOfLabels(11);
+  this->ScalarBarActor->SetTitle("(mm)");
 
   // it's a 2d actor, position it in screen space by percentages
-  this->ScalarBarWidget->GetScalarBarActor()->SetPosition(0.1, 0.1);
-  this->ScalarBarWidget->GetScalarBarActor()->SetWidth(0.1);
-  this->ScalarBarWidget->GetScalarBarActor()->SetHeight(0.8);
+  this->ScalarBarActor->SetPosition(0.1, 0.1);
+  this->ScalarBarActor->SetWidth(0.1);
+  this->ScalarBarActor->SetHeight(0.8);
 }
 
 //-----------------------------------------------------------------------------
@@ -92,6 +94,11 @@ qSlicerColorsModuleWidgetPrivate::~qSlicerColorsModuleWidgetPrivate()
     this->ScalarBarWidget->Delete();
     this->ScalarBarWidget = 0;
     }
+  if (this->ScalarBarActor)
+  {
+    this->ScalarBarActor->Delete();
+    this->ScalarBarActor = 0;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -149,6 +156,22 @@ void qSlicerColorsModuleWidget::setup()
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
           this, SLOT(copyCurrentColorNode()));
 
+#if (VTK_MAJOR_VERSION > 5)
+  if (d->UseColorNameAsLabelCheckBox->isChecked())
+    {
+    // string format
+    d->ScalarBarActor->SetLabelFormat(" %.8s");
+    }
+  else
+    {
+    // number format
+    d->ScalarBarActor->SetLabelFormat(" %#8.3f");
+    }
+  connect(d->UseColorNameAsLabelCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(setUseColorNameAsLabel(bool)));
+#else
+  d->UseColorNameAsLabelCheckBox->SetEnabled(0);
+#endif
   qSlicerApplication * app = qSlicerApplication::application();
   if (app && app->layoutManager())
     {
@@ -185,9 +208,31 @@ void qSlicerColorsModuleWidget::setCurrentColorNode(vtkMRMLNode* colorNode)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerColorsModuleWidget::setUseColorNameAsLabel(bool useColorName)
+{
+  Q_D(qSlicerColorsModuleWidget);
+#if (VTK_MAJOR_VERSION <= 5)
+  d->ScalarBarActor->SetUseColorNameAsLabel(useColorName);
+#else
+  if (useColorName)
+    {
+    // text string format
+    d->ScalarBarActor->SetLabelFormat(" %.8s");
+    }
+  else
+    {
+    // number format
+    d->ScalarBarActor->SetLabelFormat(" %#8.3f");
+    }
+  d->ScalarBarActor->SetUseAnnotationAsLabel(useColorName);
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode)
 {
   Q_D(qSlicerColorsModuleWidget);
+
   vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(newColorNode);
   if (!colorNode)
     {
@@ -231,12 +276,12 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     if (colorTableNode && colorTableNode->GetLookupTable())
       {
       range = colorTableNode->GetLookupTable()->GetRange();
-      d->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(colorTableNode->GetLookupTable());
+      d->ScalarBarActor->SetLookupTable(colorTableNode->GetLookupTable());
       }
     else if (fsColorNode && fsColorNode->GetLookupTable())
       {
       range = fsColorNode->GetScalarsToColors()->GetRange();
-      d->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(fsColorNode->GetScalarsToColors());
+      d->ScalarBarActor->SetLookupTable(fsColorNode->GetScalarsToColors());
       }
     if (range)
       {
@@ -249,6 +294,23 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
       d->LUTRangeWidget->setEnabled(false);
       d->LUTRangeWidget->setValues(0.,0.);
       }
+#if (VTK_MAJOR_VERSION > 5)
+    // update the annotations from the superclass color node since this is a
+    // color table or freesurfer color node
+    int numberOfColors = colorNode->GetNumberOfColors();
+    vtkIntArray* indexArray = vtkIntArray::New();
+    indexArray->SetNumberOfValues(numberOfColors);
+    vtkStringArray* stringArray = vtkStringArray::New();
+    stringArray->SetNumberOfValues(numberOfColors);
+    for (int colorIndex=0; colorIndex<numberOfColors; ++colorIndex)
+      {
+      indexArray->SetValue(colorIndex, colorIndex);
+      stringArray->SetValue(colorIndex, colorNode->GetColorName(colorIndex));
+      }
+    d->ScalarBarActor->GetLookupTable()->SetAnnotations(indexArray, stringArray);
+    indexArray->Delete();
+    stringArray->Delete();
+#endif
     }
   else if (procColorNode != NULL)
     {
@@ -272,7 +334,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     // set the lookup table on the scalar bar widget actor
     if (procColorNode->GetColorTransferFunction())
       {
-      d->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(procColorNode->GetColorTransferFunction());
+      d->ScalarBarActor->SetLookupTable(procColorNode->GetColorTransferFunction());
       }
     }
   else
