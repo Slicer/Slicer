@@ -26,6 +26,7 @@
 #include "qSlicerAbstractCoreModule.h"
 
 // STD includes
+#include <csignal>
 #include <typeinfo>
 
 //-----------------------------------------------------------------------------
@@ -356,6 +357,17 @@ void qSlicerAbstractModuleFactoryManager::instantiateModules()
     {
     this->instantiateModule(moduleName);
     }
+
+  // XXX See issue #3804
+  // Python maps SIGINT (control-c) to its own handler.  We will remap it
+  // to the default so that control-c works. Note that this is already done in
+  // "ctkAbstractPythonManager::initPythonQt" but the import of 'async'
+  // module by 'gitdb' module (itself imported by the SlicerExtensionWizard)
+  // resets the handler.
+  #ifdef SIGINT
+  signal(SIGINT, SIG_DFL);
+  #endif
+
   emit this->modulesInstantiated(this->instantiatedModuleNames());
 }
 
