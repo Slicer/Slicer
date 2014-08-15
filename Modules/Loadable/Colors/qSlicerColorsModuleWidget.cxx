@@ -170,7 +170,7 @@ void qSlicerColorsModuleWidget::setup()
   connect(d->UseColorNameAsLabelCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setUseColorNameAsLabel(bool)));
 #else
-  d->UseColorNameAsLabelCheckBox->SetEnabled(0);
+  d->UseColorNameAsLabelCheckBox->setEnabled(0);
 #endif
   qSlicerApplication * app = qSlicerApplication::application();
   if (app && app->layoutManager())
