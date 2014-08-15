@@ -33,6 +33,7 @@
 
 // VTK includes
 #include <vtkActor2D.h>
+#include <vtkAlgorithmOutput.h>
 #include <vtkCallbackCommand.h>
 #include <vtkEventBroker.h>
 #include <vtkMatrix4x4.h>
@@ -391,12 +392,13 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       }
 #if (VTK_MAJOR_VERSION <= 5)
     pipeline->Cutter->SetInput(polyData);
-#else
-    pipeline->Cutter->SetInputData(polyData);
-#endif
-
     // need this to update bounds of the locator, to avoid crash in the cutter
     polyData->Modified();
+#else
+    pipeline->Cutter->SetInputData(polyData);
+    // need this to update bounds of the locator, to avoid crash in the cutter
+    modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
+#endif
 
     //  Set Plane Transform
     vtkNew<vtkGeneralTransform> xform;
