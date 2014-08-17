@@ -22,6 +22,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QSettings>
 
 // CTK includes
 #include <ctkWidgetsUtils.h>
@@ -106,6 +107,15 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
   Q_D(qSlicerCLIModule);
   vtkSlicerCLIModuleLogic* logic = vtkSlicerCLIModuleLogic::New();
   logic->SetDefaultModuleDescription(d->Desc);
+
+  // In developer mode keep the CLI modules input and output files
+  QSettings settings;
+  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  if (developerModeEnabled)
+    {
+    logic->DeleteTemporaryFilesOff();
+    }
+
   return logic;
 }
 
