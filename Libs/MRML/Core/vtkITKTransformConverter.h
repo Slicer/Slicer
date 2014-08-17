@@ -61,7 +61,6 @@ typedef itk::BSplineTransform< double, VTKDimension, VTKDimension > BSplineTrans
 typedef itk::CompositeTransform< double > CompositeTransformType;
 
 typedef itk::AffineTransform<double, VTKDimension> AffineTransformType;
-  AffineTransformType::Pointer affine = AffineTransformType::New();
 
 #include "vtkITKTransformInverse.h"
 
@@ -259,10 +258,6 @@ bool vtkITKTransformConverter::SetITKLinearTransformFromVTK(vtkObject* loggerObj
   lps2ras->SetElement(1,1,-1);
   vtkMatrix4x4* ras2lps = lps2ras; // lps2ras is diagonal therefore the inverse is identical
 
-  typedef itk::AffineTransform<double, VTKDimension> AffineTransformType;
-  AffineTransformType::Pointer affine = AffineTransformType::New();
-
-
   // Convert from RAS (Slicer) to LPS (ITK)
   //
   // Tlps = ras2lps * Tras * lps2ras
@@ -287,6 +282,7 @@ bool vtkITKTransformConverter::SetITKLinearTransformFromVTK(vtkObject* loggerObj
     itkoffset[i] = (*vtkmat)[i][VTKDimension];
     }
 
+  AffineTransformType::Pointer affine = AffineTransformType::New();
   affine->SetMatrix(itkmat);
   affine->SetOffset(itkoffset);
 
