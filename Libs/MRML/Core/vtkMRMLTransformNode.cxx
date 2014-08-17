@@ -27,7 +27,7 @@ Version:   $Revision: 1.14 $
 #include <vtkCollectionIterator.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
-#include <vtkMatrixToLinearTransform.h>
+#include <vtkHomogeneousTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
@@ -945,7 +945,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
       }
     vtkObject* transform=transformList->GetItemAsObject(i);
 
-    vtkMatrixToLinearTransform* linearTransform=vtkMatrixToLinearTransform::SafeDownCast(transform);
+    vtkHomogeneousTransform* linearTransform=vtkHomogeneousTransform::SafeDownCast(transform);
     vtkBSplineTransform* bsplineTransform=vtkBSplineTransform::SafeDownCast(transform);
     vtkGridTransform* gridTransform=vtkGridTransform::SafeDownCast(transform);
     if (linearTransform!=NULL)

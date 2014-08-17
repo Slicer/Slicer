@@ -20,7 +20,7 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
-#include <vtkMatrixToLinearTransform.h>
+#include <vtkTransform.h>
 #include <vtkMatrix4x4.h>
 
 const char* vtkMRMLTransformableNode::TransformNodeReferenceRole = "transform";
@@ -147,8 +147,8 @@ bool vtkMRMLTransformableNode::CanApplyNonLinearTransforms()const
 //-----------------------------------------------------------
 void vtkMRMLTransformableNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
-  vtkMatrixToLinearTransform* transform = vtkMatrixToLinearTransform::New();
-  transform->SetInput(transformMatrix);
+  vtkTransform* transform = vtkTransform::New();
+  transform->SetMatrix(transformMatrix);
   this->ApplyTransform(transform);
   transform->Delete();
 }

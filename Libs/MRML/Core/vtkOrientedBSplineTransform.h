@@ -31,8 +31,6 @@
 
 #include "vtkBSplineTransform.h"
 
-class vtkMatrixToLinearTransform;
-
 class VTK_MRML_EXPORT vtkOrientedBSplineTransform : public vtkBSplineTransform
 {
 public:
@@ -96,7 +94,6 @@ protected:
 
   // Description:
   // Bulk linear transform that is added to the b-spline transform
-  //vtkMatrixToLinearTransform* BulkTransform;
   vtkMatrix4x4* BulkTransformMatrix;
 
   vtkMatrix4x4* GridIndexToOutputTransformMatrixCached;

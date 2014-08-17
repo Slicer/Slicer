@@ -21,7 +21,6 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
-#include <vtkMatrixToLinearTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
@@ -441,7 +440,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   gridTransform_Ras->Update();
   if (gridTransform_Ras->GetInverseFlag())
     {
-    vtkErrorMacro("Cannot write an inverse grid transform to image file. Either save the transform in a transform file or invert the transform before saving it into an image file.");
+    vtkErrorMacro("Cannot write inverse grid transform to image file. Either save the transform in a transform file (.h5) or invert the transform before saving it into an image file.");
     return 0;
     }
 
@@ -531,13 +530,22 @@ bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
     }
 
   if ( !extension.compare(".nrrd")
-    || !extension.compare(".nhdr")
-    || !extension.compare(".mha")
-    || !extension.compare(".mhd")
-    || !extension.compare(".nii")
-    || !extension.compare(".nii.gz")
-    )
+      || !extension.compare(".nhdr")
+      || !extension.compare(".mha")
+      || !extension.compare(".mhd")
+      || !extension.compare(".nii") )
     {
+    return true;
+    }
+
+  // extension may contain only the last extension, which is not enough if we want to detect .nii.gz,
+  // so handle that case separately here
+  std::string filenameLowercase = vtksys::SystemTools::LowerCase(filename);
+  std::string ending=".nii.gz";
+  if (filenameLowercase.length() > ending.length()
+      && (0 == filenameLowercase.compare (filenameLowercase.length() - ending.length(), ending.length(), ending)) )
+    {
+    // filename ends with .nii.gz
     return true;
     }
 

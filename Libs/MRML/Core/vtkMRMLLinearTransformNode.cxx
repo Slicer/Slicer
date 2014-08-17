@@ -18,7 +18,7 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkGeneralTransform.h>
-#include <vtkMatrixToLinearTransform.h>
+#include <vtkTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
@@ -31,11 +31,12 @@ vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
+  this->CachedMatrixTransformToParent=vtkMatrix4x4::New();
+  this->CachedMatrixTransformFromParent=vtkMatrix4x4::New();
+
   vtkNew<vtkMatrix4x4> matrix;
   this->SetMatrixTransformToParent(matrix.GetPointer());
 
-  this->CachedMatrixTransformToParent=vtkMatrix4x4::New();
-  this->CachedMatrixTransformFromParent=vtkMatrix4x4::New();
 }
 
 //----------------------------------------------------------------------------
@@ -126,26 +127,14 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       this->SetMatrixTransformFromParent(matrix.GetPointer());
       }
 
-    // For backward compatibility only
-    if (!strcmp(attName, "readWriteAsTransformToParent"))
-      {
-      // There was a bug in the scene writing for linear transforms
-      // which caused readWriteAsTransformToParent to be written incorrectly.
-      // We correct it here by setting ReadAsToParent to 0 if readWriteAsTransformToParent is true
-      // In the long term (when backward compatibility with old scenes is not a strong requirement
-      // anymore) vtkMRMLLinearTransformNode and readWriteAsTransformToParent attribute management
-      // can be completely removed.
-      if (!strcmp(attValue,"true"))
-        {
-        this->ReadAsTransformToParent = 0;
-        }
-      else
-        {
-        this->ReadAsTransformToParent = 1;
-        }
-      }
-
     }
+
+  // For legacy scenes only
+  // Old scene files (that still had readWriteAsTransformToParent) was saved incorrectly for linear transforms:
+  // the transform file was always transformFromParent, regardless of the readWriteAsTransformToParent value.
+  // We set it this->ReadAsTransformToParent accordingly (to maintain compatibility with earlier scenes).
+  this->ReadAsTransformToParent = 0;
+
   this->EndModify(disabledModify);
   this->EndTransformModify(oldTransformModify);
 }
@@ -193,7 +182,7 @@ int vtkMRMLLinearTransformNode::GetMatrixTransformToParent(vtkMatrix4x4* matrix)
     vtkErrorMacro("vtkMRMLLinearTransformNode::GetMatrixTransformToParent failed: matrix is invalid");
     return 0;
     }
-  vtkMatrixToLinearTransform* transform=vtkMatrixToLinearTransform::SafeDownCast(GetTransformToParentAs("vtkMatrixToLinearTransform"));
+  vtkTransform* transform=vtkTransform::SafeDownCast(GetTransformToParentAs("vtkTransform"));
   if (transform==NULL)
     {
     matrix->Identity();
@@ -206,11 +195,6 @@ int vtkMRMLLinearTransformNode::GetMatrixTransformToParent(vtkMatrix4x4* matrix)
 //----------------------------------------------------------------------------
 int vtkMRMLLinearTransformNode::GetMatrixTransformFromParent(vtkMatrix4x4* matrix)
 {
-  if (matrix==NULL)
-  {
-    vtkErrorMacro("vtkMRMLLinearTransformNode::GetMatrixTransformFromParent failed: matrix is invalid");
-    return 0;
-  }
   vtkNew<vtkMatrix4x4> transformToParentMatrix;
   int result = GetMatrixTransformToParent(transformToParentMatrix.GetPointer());
   vtkMatrix4x4::Invert(transformToParentMatrix.GetPointer(), matrix);
@@ -323,57 +307,45 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 {
-  vtkMatrix4x4* currentInputMatrix=NULL; // input matrix of the linear transform
-  bool currentTransformInverseFlag=false;
-  if (this->TransformToParent!=NULL)
-    {
-    vtkMatrixToLinearTransform* currentTransform=vtkMatrixToLinearTransform::SafeDownCast(GetTransformToParentAs("vtkMatrixToLinearTransform"));
-    vtkNew<vtkMatrix4x4> currentOutputMatrix;
-    currentTransform->GetMatrix(currentOutputMatrix.GetPointer());
-    if (Matrix4x4AreEqual(matrix, currentOutputMatrix.GetPointer()))
-      {
-      // transform is not changed
-      return;
-      }
-    if (currentTransform!=NULL)
-      {
-      currentInputMatrix=currentTransform->GetInput();
-      // unfortunately, there is no GetInverseFlag() in vtkMatrixToLinearTransform, so we have to detect it like this:
-      currentTransformInverseFlag=!Matrix4x4AreEqual(currentInputMatrix, currentOutputMatrix.GetPointer());
-      }
-    }
-
   // Temporarily disable all Modified and TransformModified events to make sure that
   // the operations are performed without interruption.
   int oldTransformModify=this->StartTransformModify();
   int oldModify=this->StartModify();
 
-  // If the transform already exists and it is not inverted then we update it.
-  // If the transform is inverted then we recreate it from scratch because
-  // even if we set Inverse() on the transform it would still depend on its inverse,
-  // so we could not update it easily.
-  if (currentInputMatrix!=NULL && !currentTransformInverseFlag)
+  vtkTransform* currentTransform = NULL;
+  if (this->TransformToParent!=NULL)
     {
-    if (matrix!=NULL)
+    currentTransform = vtkTransform::SafeDownCast(GetTransformToParentAs("vtkTransform"));
+    }
+
+  if (currentTransform)
+    {
+    // Reset InverseFlag (in case an external module has changed it)
+    if (currentTransform->GetInverseFlag())
       {
-      currentInputMatrix->DeepCopy(matrix);
+      currentTransform->Inverse();
+      }
+    // Set matrix
+    if (matrix)
+      {
+      currentTransform->SetMatrix(matrix);
       }
     else
       {
-      currentInputMatrix->Identity();
+      currentTransform->Identity();
       }
     }
   else
     {
-    vtkNew<vtkMatrixToLinearTransform> transform;
-    vtkNew<vtkMatrix4x4> newMatrix;
-    if (matrix!=NULL)
+    // Transform does not exist or not the right type, replace it with a new one
+    vtkNew<vtkTransform> transform;
+    if (matrix)
       {
-      newMatrix->DeepCopy(matrix);
+      transform->SetMatrix(matrix);
       }
-    transform->SetInput(newMatrix.GetPointer());
     this->SetAndObserveTransformToParent(transform.GetPointer());
     }
+
   this->TransformToParent->Modified();
   this->EndModify(oldModify);
   this->EndTransformModify(oldTransformModify);
@@ -441,30 +413,3 @@ vtkMatrix4x4* vtkMRMLLinearTransformNode::GetMatrixTransformFromParent()
   GetMatrixTransformFromParent(this->CachedMatrixTransformFromParent);
   return this->CachedMatrixTransformFromParent;
 }
-
-//----------------------------------------------------------------------------
-// Local helper to compare matrices -- TODO: is there a standard version of this?
-int vtkMRMLLinearTransformNode::Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2)
-{
-  if (m1==m2)
-    {
-    return 1;
-    }
-  if (m1==NULL || m2==NULL)
-    {
-    return 0;
-    }
-  int i,j;
-  for (i = 0; i < 4; i++)
-    {
-    for (j = 0; j < 4; j++)
-      {
-      if ( m1->GetElement(i, j) != m2->GetElement(i, j) )
-        {
-        return 0;
-        }
-      }
-    }
-    return 1;
-}
-

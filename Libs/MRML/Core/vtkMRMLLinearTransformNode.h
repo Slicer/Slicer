@@ -20,6 +20,8 @@
 #include "vtkMRMLTransformNode.h"
 
 class vtkMRMLStorageNode;
+class vtkTransform;
+class InternalTransformToParentMatrix;
 
 /// \brief MRML node for representing a linear transformation.
 ///
@@ -123,11 +125,6 @@ protected:
   ~vtkMRMLLinearTransformNode();
   vtkMRMLLinearTransformNode(const vtkMRMLLinearTransformNode&);
   void operator=(const vtkMRMLLinearTransformNode&);
-
-  ///
-  /// helper for comparing to matrices
-  /// TODO: is there a standard VTK method?
-  int Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2);
 
   /// These variables are only for supporting the deprecated
   /// GetMatrixTransformToParent and GetMatrixFromParent methods

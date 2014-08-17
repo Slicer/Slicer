@@ -20,6 +20,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkTransform.h>
 
 // ITK includes
 #include <itkAffineTransform.h>
@@ -1103,8 +1104,8 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
   conversionSuccess = SetVTKLinearTransformFromITK(loggerObject, transformMatrixVtk.GetPointer(), transformItk);
   if (conversionSuccess)
     {
-    vtkNew<vtkMatrixToLinearTransform> linearTransformVtk;
-    linearTransformVtk->SetInput(transformMatrixVtk.GetPointer());
+    vtkNew<vtkTransform> linearTransformVtk;
+    linearTransformVtk->SetMatrix(transformMatrixVtk.GetPointer());
     linearTransformVtk->Register(NULL);
     return linearTransformVtk.GetPointer();
     }

@@ -42,7 +42,7 @@
 #include <vtkLine.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
-#include <vtkMatrixToLinearTransform.h>
+#include <vtkTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkOrientedBSplineTransform.h>
@@ -1143,7 +1143,7 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
 
   // Check if it is a simple transform
   vtkAbstractTransform* inputTransform = transformNode->GetTransformToParent();
-  if (vtkMatrixToLinearTransform::SafeDownCast(inputTransform))
+  if (vtkTransform::SafeDownCast(inputTransform))
     {
     return TRANSFORM_LINEAR;
     }
@@ -1167,7 +1167,7 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
   vtkMRMLTransformNode::FlattenGeneralTransform(transformList.GetPointer(), generalTransform);
   if (transformList->GetNumberOfItems()==1)
     {
-    if (vtkMatrixToLinearTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+    if (vtkTransform::SafeDownCast(transformList->GetItemAsObject(0)))
       {
       return TRANSFORM_LINEAR;
       }
@@ -1182,7 +1182,7 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
     }
   else if (transformList->GetNumberOfItems()==2)
     {
-    if (vtkMatrixToLinearTransform::SafeDownCast(transformList->GetItemAsObject(1))
+    if (vtkTransform::SafeDownCast(transformList->GetItemAsObject(1))
       && vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
       {
       // B-spline and bulk transform embedded in a general transform
