@@ -31,7 +31,7 @@ vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLLinearTransformNode::vtkMRMLLinearTransformNode()
 {
-  this->ReadWriteAsTransformToParent = 1;
+  this->ReadWriteAsTransformToParent = 0;
   vtkNew<vtkMatrix4x4> matrix;
   this->SetMatrixTransformToParent(matrix.GetPointer());
 

@@ -15,51 +15,19 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLLinearTransformNode.h"
-#include "vtkMRMLGridTransformNode.h"
-#include "vtkMRMLBSplineTransformNode.h"
 #include "vtkOrientedBSplineTransform.h"
 #include "vtkOrientedGridTransform.h"
 
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
-#include <vtkImageData.h>
 #include <vtkMatrixToLinearTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkVersion.h>
-// ITK includes
-#include <itkAffineTransform.h>
-#include <itkBSplineDeformableTransform.h> // ITKv3 style
-#include <itkBSplineTransform.h> // ITKv4 style
-#include <itkCompositeTransform.h>
-#include <itkCompositeTransformIOHelper.h>
-#include <itkDisplacementFieldTransform.h>
-#include <itkIdentityTransform.h>
-#include <itkTransformFileWriter.h>
-#include <itkTransformFileReader.h>
-#include <itkImageFileReader.h>
-#include <itkImageFileWriter.h>
-#include <itkTranslationTransform.h>
-#include <itkScaleTransform.h>
-
-static const unsigned int VTKDimension = 3;
-
-static const int BSPLINE_TRANSFORM_ORDER = 3;
-
-typedef itk::TransformFileReader TransformReaderType;
-typedef TransformReaderType::TransformListType TransformListType;
-typedef TransformReaderType::TransformType TransformType;
-
-typedef itk::TransformFileWriter TransformWriterType;
-
-typedef itk::DisplacementFieldTransform< double, 3 > DisplacementFieldTransformType;
-typedef DisplacementFieldTransformType::DisplacementFieldType GridImageType;
-
-typedef itk::CompositeTransform< double > CompositeTransformType;
+#include "vtksys/SystemTools.hxx"
 
 #include "vtkITKTransformConverter.h"
 
@@ -87,79 +55,16 @@ bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
   return refNode->IsA("vtkMRMLTransformNode");
 }
 
-
-
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *refNode)
 {
-  TransformReaderType::Pointer reader = itk::TransformFileReader::New();
-  std::string fullName =  this->GetFullNameFromFileName();
-  reader->SetFileName( fullName );
-  try
+  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode==NULL)
     {
-    reader->Update();
-    }
-  catch (itk::ExceptionObject &exc)
-    {
-    vtkErrorMacro("ITK exception caught reading transform file: "<< fullName.c_str() << "\n" << exc);
-    return 0;
-    }
-  catch (...)
-    {
-    vtkErrorMacro("Unknown exception caught while reading transform file: "<< fullName.c_str());
+    vtkErrorMacro("vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile failed: expected a transform node as input");
     return 0;
     }
 
-  // For now, grab the first transform from the file.
-  TransformListType *transforms = reader->GetTransformList();
-  if (transforms->size() == 0)
-    {
-    vtkErrorMacro("Could not find a transform in file: " << fullName.c_str());
-    return 0;
-    }
-  if (transforms->size() > 1)
-    {
-    vtkWarningMacro(<< "More than one transform in the file: "<< fullName.c_str()<< ". Using only the first transform.");
-    }
-  TransformListType::iterator it = (*transforms).begin();
-  TransformType::Pointer transform = (*it);
-  if (!transform)
-    {
-    vtkErrorMacro(<< "No transforms in the file: "<< fullName.c_str()<< ", (" << transforms->size() << ")");
-    return 0;
-    }
-
-  vtkSmartPointer<vtkMatrix4x4> transformVtk_RAS = vtkSmartPointer<vtkMatrix4x4>::New();
-  bool convertedToVtkMatrix = vtkITKTransformConverter::SetVTKLinearTransformFromITK(this, transformVtk_RAS, transform);
-  if (!convertedToVtkMatrix)
-    {
-    vtkDebugMacro(<< "Could not convert the transform in the file to a linear transform: "<< fullName.c_str());
-    return 0;
-    }
-
-  // Convert the sense of the transform (from an ITK resampling
-  // transform to a Slicer modeling transform)
-  //
-  transformVtk_RAS->Invert();
-
-  // Set the matrix on the node
-  vtkMRMLLinearTransformNode *ltn = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
-  if (ltn->GetReadWriteAsTransformToParent())
-    {
-    ltn->SetMatrixTransformToParent( transformVtk_RAS );
-    }
-  else
-    {
-    ltn->SetMatrixTransformFromParent( transformVtk_RAS );
-    }
-
-  return 1;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadBSplineTransformITKv3(vtkMRMLNode *refNode)
-{
   // Note: this method is hard coded to only be used with legacy ITKv3
   // BSpline files.  It creates a vtkOrientedBSpline with unfortunate
   // mathematical properties as described in the vtkOrientedBSpline
@@ -212,90 +117,29 @@ int vtkMRMLTransformStorageNode::ReadBSplineTransformITKv3(vtkMRMLNode *refNode)
       }
     }
 
-  vtkMRMLBSplineTransformNode *btn = vtkMRMLBSplineTransformNode::SafeDownCast(refNode);
-
   vtkNew<vtkOrientedBSplineTransform> bsplineVtk;
-  if (vtkITKTransformConverter::SetVTKBSplineFromITKv3(this, bsplineVtk.GetPointer(), transform, transform2))
-    {
-    if (btn->GetReadWriteAsTransformToParent())
-      {
-      // Convert the sense of the transform (from an ITK resampling
-      // transform to a Slicer modeling transform)
-      btn->SetAndObserveTransformToParent( bsplineVtk.GetPointer() );
-      }
-    else
-      {
-      btn->SetAndObserveTransformFromParent( bsplineVtk.GetPointer() );
-      }
-    return 1;
-
-    }
-  else
+  if (!vtkITKTransformConverter::SetVTKBSplineFromITKv3(this, bsplineVtk.GetPointer(), transform, transform2))
     {
     // Log only at debug level because trial-and-error method is used for finding out what node can be retrieved
     // from a transform file
     vtkDebugMacro("Failed to retrieve BSpline transform from file: "<< fullName.c_str());
     return 0;
     }
+  if (transformNode->GetReadWriteAsTransformToParent())
+    {
+    // Convert the sense of the transform (from an ITK resampling
+    // transform to a Slicer modeling transform)
+    transformNode->SetAndObserveTransformToParent( bsplineVtk.GetPointer() );
+    }
+  else
+    {
+    transformNode->SetAndObserveTransformFromParent( bsplineVtk.GetPointer() );
+    }
+  return 1;
 }
 
-
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadBSplineTransform(vtkMRMLNode *refNode)
-{
-  int success = this->ReadBSplineTransformITKv3(refNode);
-  if (success)
-    {
-    return success;
-    }
-  // If a composite transform only contains a BSpline and a linear transform then consider it as a BSpline transform
-  // (the vtkMRMLTransformNode base class could handle everything, specialized BSpline node is only created for backward
-  // compatibility, e.g., to allow filtering of transform nodes based on node type)
-  success = ReadCompositeTransform(refNode);
-  if (success)
-    {
-    // check if it is really a BSpline transform (contains a single BSpline or composite of linear and BSpline)
-    vtkMRMLTransformNode *tn = vtkMRMLTransformNode::SafeDownCast(refNode);
-    vtkAbstractTransform* inputTransform = tn->GetTransformToParent();
-    bool isBSpline = false;
-    if (vtkOrientedBSplineTransform::SafeDownCast(inputTransform))
-      {
-      isBSpline = true;
-      }
-    else
-      {
-      vtkGeneralTransform* generalTransform = vtkGeneralTransform::SafeDownCast(inputTransform);
-      if (generalTransform!=NULL)
-        {
-        vtkNew<vtkCollection> transformList;
-        vtkMRMLTransformNode::FlattenGeneralTransform(transformList.GetPointer(), generalTransform);
-        if (transformList->GetNumberOfItems()==1)
-          {
-          if (vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
-            {
-            isBSpline = true;
-            }
-          }
-        else if (transformList->GetNumberOfItems()==2)
-          {
-          if (vtkMatrixToLinearTransform::SafeDownCast(transformList->GetItemAsObject(0))
-            && vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(1)))
-            {
-            isBSpline = true;
-            }
-          }
-        }
-      }
-    // return with failure if not a bspline
-    return isBSpline ? 1 : 0;
-    }
-  return 0;
-}
-
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadGridTransform(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
 {
   vtkMRMLTransformNode *tn = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (tn==NULL)
@@ -303,15 +147,6 @@ int vtkMRMLTransformStorageNode::ReadGridTransform(vtkMRMLNode *refNode)
     vtkErrorMacro("vtkMRMLTransformStorageNode::ReadGridTransform failed: expected a transform node as input");
     return 0;
     }
-
-  // Grid transforms are not currently supported as ITK transforms but
-  // rather as vector images. This is subject to change whereby an ITK transform
-  // for displacement fields will provide a standard transform API
-  // but will reference a vector image to store the displacements.
-
-  // As a grid transform is not a itk::Transform, we do not read it
-  // by using itk::TransformFileReader (as it is done for other transforms)
-  // It is instead transferred as an itk::VectorImage.
 
   GridImageType::Pointer gridImage_Lps = 0;
 
@@ -361,15 +196,16 @@ int vtkMRMLTransformStorageNode::ReadGridTransform(vtkMRMLNode *refNode)
   return 1;
 }
 
-
-
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadCompositeTransform(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
 {
-  // Note: this method reads composite transforms (as of Slicer 4.4, these will
-  // come from .h5 files).  While the format of h5 files can be very general,
-  // here we only deal with certain combinations that are used by existing
-  // CLI code (BRAINSFit, for example)
+  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == NULL)
+    {
+    vtkErrorMacro("Unexpected node type, cannot read transform from file");
+    return 0;
+    }
+
   TransformReaderType::Pointer reader = TransformReaderType::New();
   std::string fullName =  this->GetFullNameFromFileName();
   reader->SetFileName( fullName );
@@ -388,83 +224,90 @@ int vtkMRMLTransformStorageNode::ReadCompositeTransform(vtkMRMLNode *refNode)
     return 0;
     }
 
-  // Based on personal communication with the ITK developer group (Brad and Hans) the
-  // transform list will contain only one transform, which is a composite transform.
   TransformListType *transforms = reader->GetTransformList();
-  TransformType *compositeTransform = transforms->front();
-
-  std::string compositeTransformType = compositeTransform->GetTransformTypeAsString();
-  if( compositeTransformType.find("CompositeTransform") == std::string::npos )
+  if (transforms==NULL || transforms->empty())
     {
-    // It is not a composite transform. It may be still a list of transforms, but
-    // when a list of transforms is stored in a file then there is no rule how to interpret them.
+    vtkErrorMacro("Transforms not found in transform file: "<< fullName.c_str());
+    return 0;
+    }
+  if (transforms->size()>1)
+    {
+    // When a list of transforms is stored in a file then there is no rule how to interpret them.
     // It is not necessarily a compositing, for example: in ITKv3 the list was used to store additive
     // bulk transform for BSpline deformable transform. Therefore, if the file contains a transform list
     // then we do not interpret it as a composite/ transform.
-    vtkDebugMacro("Cannot read composite transform from file: "<< fullName.c_str());
+    vtkErrorMacro("Multiple transforms are defined in the transform file but only one is allowed (composite transforms has to be stored as a single CompositeTransform). In file: "<< fullName.c_str());
     return 0;
     }
-
-  if (transforms->size()>1)
+  TransformType *firstTransform = transforms->front();
+  if (firstTransform==NULL)
     {
-    vtkWarningMacro("Additional transform(s) are defined after a composite transform. Only the composite transform will be used from file: "<< fullName.c_str());
-    }
-
-  // the composite transform is itself a list of transforms.  There is a
-  // helper class in ITK to convert the internal transform list into a
-  // list that is possible to iterate over.  So we get this transformList.
-  typedef const itk::CompositeTransformIOHelper::TransformType ComponentTransformType;
-  itk::CompositeTransformIOHelper compositeTransformIOHelper;
-
-  // if the first transform in the list is a
-  // composite transform, use its internal list
-  // instead of the IO
-  typedef itk::CompositeTransformIOHelper::ConstTransformListType ConstTransformListType;
-  ConstTransformListType transformList =
-    compositeTransformIOHelper.GetTransformList(compositeTransform);
-
-  if (transformList.empty())
-    {
-    // Log only at debug level because trial-and-error method is used for finding out
-    // what node can be retrieved from a transform file
-    vtkDebugMacro("Failed to retrieve any transform transform from file: "<< fullName.c_str());
+    vtkErrorMacro("Transforms not found in transform file: "<< fullName.c_str());
     return 0;
     }
 
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
-
-  ConstTransformListType::const_iterator end = transformList.end();
-  if (transformList.size()==1)
+  std::string firstTransformType = firstTransform->GetTransformTypeAsString();
+  if( firstTransformType.find("CompositeTransform") == std::string::npos )
     {
-    // there is only one single transform, so we create a specific VTK transform type instead of a general transform
-    TransformType::Pointer transformComponentItk = const_cast< TransformType* >(transformList.front().GetPointer());
-    transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(vtkITKTransformConverter::CreateVTKTransformFromITK(this, transformComponentItk));
+    // just a single transform
+    transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(vtkITKTransformConverter::CreateVTKTransformFromITK(this, firstTransform));
     }
   else
     {
-    // we have multiple transforms, so we create a general transform that can hold a list of transforms
-    vtkNew<vtkGeneralTransform> generalTransform;
-    //generalTransform->PostMultiply();
-    for( ConstTransformListType::const_iterator it = transformList.begin();
-      it != end; ++it )
+    // The composite transform is itself a list of transforms.  There is a
+    // helper class in ITK to convert the internal transform list into a
+    // list that is possible to iterate over.  So we get this transformList.
+    typedef const itk::CompositeTransformIOHelper::TransformType ComponentTransformType;
+    itk::CompositeTransformIOHelper compositeTransformIOHelper;
+
+    // if the first transform in the list is a
+    // composite transform, use its internal list
+    // instead of the IO
+    typedef itk::CompositeTransformIOHelper::ConstTransformListType ConstTransformListType;
+    ConstTransformListType transformList =
+      compositeTransformIOHelper.GetTransformList(firstTransform);
+
+    if (transformList.empty())
       {
-      TransformType::Pointer transformComponentItk = const_cast< TransformType* >((*it).GetPointer());
-      vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK(this, transformComponentItk);
-      if (transformComponent!=NULL)
-        {
-        generalTransform->Concatenate(transformComponent);
-        transformComponent->Delete();
-        }
+      // Log only at debug level because trial-and-error method is used for finding out
+      // what node can be retrieved from a transform file
+      vtkDebugMacro("Failed to retrieve any transform transform from file: "<< fullName.c_str());
+      return 0;
       }
-    transformVtk = generalTransform.GetPointer();
+
+    ConstTransformListType::const_iterator end = transformList.end();
+    if (transformList.size()==1)
+      {
+      // there is only one single transform, so we create a specific VTK transform type instead of a general transform
+      TransformType::Pointer transformComponentItk = const_cast< TransformType* >(transformList.front().GetPointer());
+      transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(vtkITKTransformConverter::CreateVTKTransformFromITK(this, transformComponentItk));
+      }
+    else
+      {
+      // we have multiple transforms, so we create a general transform that can hold a list of transforms
+      vtkNew<vtkGeneralTransform> generalTransform;
+      //generalTransform->PostMultiply();
+      for( ConstTransformListType::const_iterator it = transformList.begin();
+        it != end; ++it )
+        {
+        TransformType::Pointer transformComponentItk = const_cast< TransformType* >((*it).GetPointer());
+        vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK(this, transformComponentItk);
+        if (transformComponent!=NULL)
+          {
+          generalTransform->Concatenate(transformComponent);
+          transformComponent->Delete();
+          }
+        }
+      transformVtk = generalTransform.GetPointer();
+      }
     }
 
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
-  if (transformNode == NULL)
-    {
-    vtkErrorMacro("Unexpected node type, cannot read transform from file: "<< fullName.c_str());
-    return 0;
-    }
+  if (transformVtk.GetPointer()==NULL)
+      {
+      vtkErrorMacro("Failed to read transform from file: "<< fullName.c_str());
+      return 0;
+      }
   if (transformNode->GetReadWriteAsTransformToParent())
     {
     // Convert the sense of the transform (from an ITK resampling
@@ -488,31 +331,39 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
     }
-
-  if (refNode->IsA("vtkMRMLGridTransformNode"))
+  // check that the file exists
+  if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
     {
-    return ReadGridTransform(refNode);
-    }
-  else if (refNode->IsA("vtkMRMLBSplineTransformNode"))
-    {
-    return ReadBSplineTransform(refNode);
-    }
-  else if (refNode->IsA("vtkMRMLLinearTransformNode"))
-    {
-    return ReadLinearTransform(refNode);
-    }
-  else if (refNode->IsA("vtkMRMLTransformNode"))
-    {
-    return ReadCompositeTransform(refNode);
+    vtkErrorMacro("ReadDataInternal: transform file '" << fullName.c_str() << "' not found.");
+    return 0;
     }
 
-  vtkErrorMacro("ReadData: failed, transform node type is not supported for reading");
-  return 0;
+  // We support reading of grid transforms directly from a vector image
+  if (IsImageFile(fullName))
+  {
+    return ReadFromImageFile(refNode);
+  }
+
+  // For ITKv3 backward compatibility
+  int success = this->ReadFromITKv3BSplineTransformFile(refNode);
+  if (success)
+    {
+    return success;
+    }
+
+  return ReadFromTransformFile(refNode);
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteTransform(vtkMRMLTransformNode *transformNode)
+int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
 {
+  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == NULL)
+    {
+    vtkErrorMacro("Unexpected node type, cannot read transform from file");
+    return 0;
+    }
+
   // Get VTK transform from the transform node
   vtkAbstractTransform* transformVtk = NULL;
   if (transformNode->GetReadWriteAsTransformToParent())
@@ -570,17 +421,23 @@ int vtkMRMLTransformStorageNode::WriteTransform(vtkMRMLTransformNode *transformN
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteGridTransform(vtkMRMLGridTransformNode *gd)
+int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
 {
-  vtkOrientedGridTransform* gridTransform_Ras = NULL;
-
-  if (gd->GetReadWriteAsTransformToParent())
+  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == NULL)
     {
-    gridTransform_Ras=vtkOrientedGridTransform::SafeDownCast(gd->GetTransformToParentAs("vtkOrientedGridTransform"));
+    vtkErrorMacro("Unexpected node type, cannot read transform from file");
+    return 0;
+    }
+
+  vtkOrientedGridTransform* gridTransform_Ras = NULL;
+  if (transformNode->GetReadWriteAsTransformToParent())
+    {
+    gridTransform_Ras=vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformToParentAs("vtkOrientedGridTransform"));
     }
   else
     {
-    gridTransform_Ras=vtkOrientedGridTransform::SafeDownCast(gd->GetTransformFromParentAs("vtkOrientedGridTransform"));
+    gridTransform_Ras=vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformFromParentAs("vtkOrientedGridTransform"));
     }
 
   if (gridTransform_Ras==NULL)
@@ -640,7 +497,14 @@ int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("vtkMRMLTransformNode write data failed: invalid transform node");
     return 0;
     }
-  return WriteTransform(transformNode);
+  if (IsImageFile(fullName))
+    {
+    return WriteToImageFile(transformNode);
+    }
+  else
+    {
+    return WriteToTransformFile(transformNode);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -662,4 +526,30 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
 const char* vtkMRMLTransformStorageNode::GetDefaultWriteFileExtension()
 {
   return "h5";
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
+{
+  // determine file type
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
+  if( extension.empty() )
+    {
+    vtkErrorMacro("ReadData: no file extension specified: " << filename.c_str());
+    return false;
+    }
+
+  if ( !extension.compare(".nrrd")
+    || !extension.compare(".nhdr")
+    || !extension.compare(".mha")
+    || !extension.compare(".mhd")
+    || !extension.compare(".nii")
+    || !extension.compare(".nii.gz")
+    )
+    {
+    return true;
+    }
+
+  // All other file extensions are transforms
+  return false;
 }

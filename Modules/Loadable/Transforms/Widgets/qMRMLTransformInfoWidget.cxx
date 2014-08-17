@@ -161,6 +161,8 @@ void qMRMLTransformInfoWidget::setMRMLTransformNode(vtkMRMLTransformNode* transf
 
   qvtkReconnect(d->TransformNode.GetPointer(), transformNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->TransformNode.GetPointer(), transformNode, vtkMRMLTransformableNode::TransformModifiedEvent,
+                this, SLOT(updateWidgetFromMRML()));
   d->TransformNode = transformNode;
 
   this->updateWidgetFromMRML();

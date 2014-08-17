@@ -43,7 +43,7 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
 {
   this->TransformToParent=NULL;
   this->TransformFromParent=NULL;
-  this->ReadWriteAsTransformToParent = 1;
+  this->ReadWriteAsTransformToParent = 0;
   this->DisableTransformModifiedEvent=0;
   this->TransformModifiedEventPending=0;
 }

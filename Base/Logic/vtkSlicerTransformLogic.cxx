@@ -30,6 +30,7 @@
 
 // VTK includes
 #include <vtkAppendPolyData.h>
+#include <vtkCollection.h>
 #include <vtkArrowSource.h>
 #include <vtkConeSource.h>
 #include <vtkContourFilter.h>
@@ -41,8 +42,11 @@
 #include <vtkLine.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
+#include <vtkMatrixToLinearTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkOrientedBSplineTransform.h>
+#include <vtkOrientedGridTransform.h>
 #include <vtkPoints.h>
 #include <vtkPointSet.h>
 #include <vtkPointData.h>
@@ -113,10 +117,11 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
 {
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
 
-  if(scene == NULL){
+  if(scene == NULL)
+    {
     vtkErrorMacro("scene == NULL in vtkSlicerTransformLogic::AddTransform");
     return NULL;
-  }
+    }
 
   // check for local or remote files
   int useURI = 0; // false;
@@ -145,58 +150,58 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
   // file is not on disk yet)
   name = itksys::SystemTools::GetFilenameName(fname);
 
+  if (!storageNode->SupportedFileType(name.c_str()))
+    {
+    vtkErrorMacro("Unsupported transform file format: " << filename);
+    return NULL;
+    }
+
   // check to see which node can read this type of file
   vtkSmartPointer<vtkMRMLTransformNode> tnode;
 
-  if (storageNode->SupportedFileType(name.c_str()))
+  scene->SaveStateForUndo();
+  storageNode->SetScene(scene);
+
+  vtkNew<vtkMRMLTransformNode> generalTransform;
+  generalTransform->SetScene(scene);
+  if (!storageNode->ReadData(generalTransform.GetPointer()))
     {
-    scene->SaveStateForUndo();
-    storageNode->SetScene(scene);
-
-    // now set up the reading
-    vtkNew<vtkMRMLGridTransformNode>    gridTfm;
-    vtkNew<vtkMRMLBSplineTransformNode> bsplineTfm;
-    vtkNew<vtkMRMLLinearTransformNode>  linearTfm;
-    vtkNew<vtkMRMLTransformNode>        generalTfm;
-
-    gridTfm->SetScene(scene);
-    bsplineTfm->SetScene(scene);
-    linearTfm->SetScene(scene);
-    generalTfm->SetScene(scene);
-
-    if (storageNode->ReadData(gridTfm.GetPointer()))
-      {
-      tnode = gridTfm.GetPointer();
-      }
-    else if (storageNode->ReadData(bsplineTfm.GetPointer()))
-      {
-      tnode = bsplineTfm.GetPointer();
-      }
-    else if (storageNode->ReadData(linearTfm.GetPointer()))
-      {
-      tnode = linearTfm.GetPointer();
-      }
-    else if (storageNode->ReadData(generalTfm.GetPointer()))
-      {
-      tnode = generalTfm.GetPointer();
-      }
-
-    if (tnode)
-      {
-      const itksys_stl::string basename(
-        itksys::SystemTools::GetFilenameWithoutExtension(fname));
-      const std::string uname( scene->GetUniqueNameByString(basename.c_str()));
-      tnode->SetName(uname.c_str());
-      scene->AddNode(storageNode.GetPointer());
-      scene->AddNode(tnode);
-
-      tnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      }
+    vtkErrorMacro("Failed to read transform from file: " << filename);
+    return NULL;
     }
-  else
+
+  // If we can create a specialized transform type then do it, otherwise just use
+  // the generic transform node.
+  // Specialized transforms are mainly used for filtering for transform type in node
+  // selectors but that could be achieved by using node attributes. So, in the long
+  // term we should get rid of specialized transform node classes and just use
+  // vtkMRMLTransformNode (anyway, transform classes are not meaningful when transforms
+  // are composited by hardening and we have mixed transforms).
+  switch (GetTransformKind(generalTransform.GetPointer()))
     {
-    vtkErrorMacro("Unsupported transform file format: " << filename);
+    case TRANSFORM_LINEAR:
+      tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLLinearTransformNode::New());
+      storageNode->ReadData(tnode.GetPointer());
+      break;
+    case TRANSFORM_BSPLINE:
+      tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLBSplineTransformNode::New());
+      storageNode->ReadData(tnode.GetPointer());
+      break;
+    case TRANSFORM_GRID:
+      tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLGridTransformNode::New());
+      storageNode->ReadData(tnode.GetPointer());
+      break;
+    default:
+      tnode =  generalTransform.GetPointer();
     }
+
+  const itksys_stl::string basename(itksys::SystemTools::GetFilenameWithoutExtension(fname));
+  const std::string uname( scene->GetUniqueNameByString(basename.c_str()));
+  tnode->SetName(uname.c_str());
+  scene->AddNode(storageNode.GetPointer());
+  scene->AddNode(tnode);
+
+  tnode->SetAndObserveStorageNodeID(storageNode->GetID());
 
   return tnode;
 }
@@ -1126,4 +1131,64 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
   displayNode->EndModify(oldModify);
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind(vtkMRMLTransformNode *transformNode)
+{
+  if (transformNode==NULL)
+    {
+    return TRANSFORM_OTHER;
+    }
+
+  // Check if it is a simple transform
+  vtkAbstractTransform* inputTransform = transformNode->GetTransformToParent();
+  if (vtkMatrixToLinearTransform::SafeDownCast(inputTransform))
+    {
+    return TRANSFORM_LINEAR;
+    }
+  else if (vtkOrientedBSplineTransform::SafeDownCast(inputTransform))
+    {
+    return TRANSFORM_BSPLINE;
+    }
+  else if (vtkOrientedGridTransform::SafeDownCast(inputTransform))
+    {
+    return TRANSFORM_GRID;
+    }
+
+  // Check if it is a simple transform embedded into a general transform
+  vtkGeneralTransform* generalTransform = vtkGeneralTransform::SafeDownCast(inputTransform);
+  if (generalTransform==NULL)
+    {
+    // it's not a general transform, so we cannot decompose it
+    return TRANSFORM_OTHER;
+    }
+  vtkNew<vtkCollection> transformList;
+  vtkMRMLTransformNode::FlattenGeneralTransform(transformList.GetPointer(), generalTransform);
+  if (transformList->GetNumberOfItems()==1)
+    {
+    if (vtkMatrixToLinearTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+      {
+      return TRANSFORM_LINEAR;
+      }
+    else if (vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+      {
+      return TRANSFORM_BSPLINE;
+      }
+    else if (vtkOrientedGridTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+      {
+      return TRANSFORM_GRID;
+      }
+    }
+  else if (transformList->GetNumberOfItems()==2)
+    {
+    if (vtkMatrixToLinearTransform::SafeDownCast(transformList->GetItemAsObject(1))
+      && vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+      {
+      // B-spline and bulk transform embedded in a general transform
+      // BRAINS returns bspline+bulk transform this way, so we consider it as a bspline transform
+      return TRANSFORM_BSPLINE;
+      }
+    }
+  return TRANSFORM_OTHER;
 }
