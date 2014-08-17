@@ -126,16 +126,18 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
     vtkDebugMacro("Failed to retrieve BSpline transform from file: "<< fullName.c_str());
     return 0;
     }
-  if (transformNode->GetReadWriteAsTransformToParent())
+
+  // Backward compatibility
+  if (transformNode->GetReadAsTransformToParent())
     {
+    // For backward compatibility only (now all the transforms are saved as TransformFromParent)
     // Convert the sense of the transform (from an ITK resampling
     // transform to a Slicer modeling transform)
-    transformNode->SetAndObserveTransformToParent( bsplineVtk.GetPointer() );
+    bsplineVtk->Inverse();
+    transformNode->SetReadAsTransformToParent(0);
     }
-  else
-    {
-    transformNode->SetAndObserveTransformFromParent( bsplineVtk.GetPointer() );
-    }
+
+  SetAndObserveTransformFromParentAutoInvert(transformNode, bsplineVtk.GetPointer());
   return 1;
 }
 
@@ -185,15 +187,18 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
 
   vtkNew<vtkOrientedGridTransform> gridTransform_Ras;
   vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(this, gridTransform_Ras.GetPointer(), gridImage_Lps);
-  // Set the matrix on the node
-  if (tn->GetReadWriteAsTransformToParent())
+
+  // Backward compatibility
+  if (tn->GetReadAsTransformToParent())
     {
-    tn->SetAndObserveTransformToParent( gridTransform_Ras.GetPointer() );
+    // For backward compatibility only (now all the transforms are saved as TransformFromParent)
+    // Convert the sense of the transform (from an ITK resampling
+    // transform to a Slicer modeling transform)
+    gridTransform_Ras->Inverse();
+    tn->SetReadAsTransformToParent(0);
     }
-  else
-    {
-    tn->SetAndObserveTransformFromParent( gridTransform_Ras.GetPointer() );
-    }
+
+  SetAndObserveTransformFromParentAutoInvert(tn, gridTransform_Ras.GetPointer());
   return 1;
 }
 
@@ -309,16 +314,18 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
       vtkErrorMacro("Failed to read transform from file: "<< fullName.c_str());
       return 0;
       }
-  if (transformNode->GetReadWriteAsTransformToParent())
+
+  // Backward compatibility
+  if (transformNode->GetReadAsTransformToParent())
     {
+    // For backward compatibility only (now all the transforms are saved as TransformFromParent)
     // Convert the sense of the transform (from an ITK resampling
     // transform to a Slicer modeling transform)
-    transformNode->SetAndObserveTransformToParent( transformVtk.GetPointer() );
+    transformVtk->Inverse();
+    transformNode->SetReadAsTransformToParent(0);
     }
-  else
-    {
-    transformNode->SetAndObserveTransformFromParent( transformVtk.GetPointer() );
-    }
+
+  SetAndObserveTransformFromParentAutoInvert(transformNode, transformVtk.GetPointer());
 
   return 1;
 }
@@ -366,15 +373,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
     }
 
   // Get VTK transform from the transform node
-  vtkAbstractTransform* transformVtk = NULL;
-  if (transformNode->GetReadWriteAsTransformToParent())
-    {
-    transformVtk = transformNode->GetTransformToParent();
-    }
-  else
-    {
-    transformVtk = transformNode->GetTransformFromParent();
-    }
+  vtkAbstractTransform* transformVtk = transformNode->GetTransformFromParent();
   if (transformVtk==NULL)
     {
     vtkErrorMacro("WriteTransform failed: cannot get VTK transform");
@@ -431,16 +430,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkOrientedGridTransform* gridTransform_Ras = NULL;
-  if (transformNode->GetReadWriteAsTransformToParent())
-    {
-    gridTransform_Ras=vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformToParentAs("vtkOrientedGridTransform"));
-    }
-  else
-    {
-    gridTransform_Ras=vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformFromParentAs("vtkOrientedGridTransform"));
-    }
-
+  vtkOrientedGridTransform* gridTransform_Ras =  vtkOrientedGridTransform::SafeDownCast(transformNode->GetTransformFromParentAs("vtkOrientedGridTransform"));
   if (gridTransform_Ras==NULL)
     {
     vtkErrorMacro("Cannot retrieve grid transform from node");
@@ -451,7 +441,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   gridTransform_Ras->Update();
   if (gridTransform_Ras->GetInverseFlag())
     {
-    vtkErrorMacro("Cannot write an inverse grid transform to image file");
+    vtkErrorMacro("Cannot write an inverse grid transform to image file. Either save the transform in a transform file or invert the transform before saving it into an image file.");
     return 0;
     }
 
@@ -553,4 +543,43 @@ bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
 
   // All other file extensions are transforms
   return false;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformStorageNode::SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode, vtkAbstractTransform *transform)
+{
+  bool allInvertedTransforms = true;
+
+  // Flatten the transform list to make the interpretation simpler
+  vtkNew<vtkCollection> sourceTransformList;
+  vtkMRMLTransformNode::FlattenGeneralTransform(sourceTransformList.GetPointer(), transform);
+  // Check if they are all inverse, if they are, then it indicates that this transform is computed from its inverse
+  vtkCollectionSimpleIterator it;
+  vtkWarpTransform* concatenatedTransform = NULL;
+  for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkWarpTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it))) ;)
+    {
+    if (concatenatedTransform)
+      {
+      // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+      concatenatedTransform->Update();
+      if (!concatenatedTransform->GetInverseFlag())
+        {
+        // found a non-inverse transform, so it's not allInvertedTransforms
+        allInvertedTransforms = false;
+        break;
+        }
+      }
+    }
+
+  if (allInvertedTransforms)
+    {
+    // we invert the transform to store the forward transform
+    transform->Inverse();
+    transformNode->SetAndObserveTransformToParent(transform);
+    }
+  else
+    {
+    // this is a forward (or mixed) transform already so store it as is
+    transformNode->SetAndObserveTransformFromParent(transform);
+    }
 }

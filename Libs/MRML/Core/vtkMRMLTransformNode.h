@@ -139,19 +139,16 @@ public:
   /// Create and observe default display node
   virtual void CreateDefaultDisplayNodes();
 
-  /// Get/Set for ReadWriteAsTransformToParent
-  /// Typically only a non-inverse transform can be written to file,
-  /// so this flag should be set to read/write the forward transform.
-  /// The flag is set automatically when a transform is set by SetAndObserveTransformToParent
-  /// or SetAndObserveTransformFromParent and also inverted if the transform is inverted,
-  /// so most of the cases it should be not necessary to manually change this flag.
-  /// In the future it could be useful to be able to read/write both the toParent
-  /// and fromParent transforms (if they are both specified).
-  /// Note: When a transform is opened using AddData, the stored transform is assumed
-  /// to be FromParent, as this is the ITK convention for transform storage in files.
-  vtkGetMacro(ReadWriteAsTransformToParent, int);
-  vtkSetMacro(ReadWriteAsTransformToParent, int);
-  vtkBooleanMacro(ReadWriteAsTransformToParent, int);
+  /// Get/Set for ReadAsTransformToParent
+  /// Indicates that the transform in the storage node has to be interpreted as
+  /// a transformToParent (as opposed to the default ITK-style transformFromParent).
+  /// Since writing of ITK inverse transform is implemented, this option is not needed anymore
+  /// and kept only for backward compatibility: when a transform is read from an old scene file
+  /// that has ReadWriteAsTransformToParent="1" then the transform is interpreted as such.
+  /// Transforms are now always written as transformFromParent.
+  vtkGetMacro(ReadAsTransformToParent, int);
+  vtkSetMacro(ReadAsTransformToParent, int);
+  vtkBooleanMacro(ReadAsTransformToParent, int);
 
   ///
   /// Start modifying the transform in the node.
@@ -281,11 +278,6 @@ public:
   /// Internally it does not perform any actual computation just switches ToParent and FromParent.
   void Inverse();
 
-  ///
-  /// Sets the ReadWriteAsTransformToParent flag automatically
-  /// The flag is set so that the ReadWriteAsTransformToParent points to the forward transform
-  void SetReadWriteAsTransformToParentAuto();
-
   /// Get the latest modification time of the stored transform
   unsigned long GetTransformToWorldMTime();
 
@@ -320,7 +312,7 @@ protected:
   vtkAbstractTransform* TransformToParent;
   vtkAbstractTransform* TransformFromParent;
 
-  int ReadWriteAsTransformToParent;
+  int ReadAsTransformToParent;
 
   int DisableTransformModifiedEvent;
   int TransformModifiedEventPending;

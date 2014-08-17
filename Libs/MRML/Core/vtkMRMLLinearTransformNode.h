@@ -21,12 +21,11 @@
 
 class vtkMRMLStorageNode;
 
-/// \brief MRML node for representing a linear transformation to the parent
-/// node.
+/// \brief MRML node for representing a linear transformation.
 ///
-/// MRML node for representing
-/// a linear transformation to the parent node in the form vtkMatrix4x4
-/// MatrixTransformToParent.
+/// Internally, always the TransformToParent matrix is stored and TransformFromParent is computed by inverting
+/// the matrix. It makes the code simpler and faster to hardcode this. ToParent is stored because this is what
+/// we usually display to the user (it is more intuitive than the FromParent resampling transform).
 class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
 {
   public:
@@ -124,6 +123,11 @@ protected:
   ~vtkMRMLLinearTransformNode();
   vtkMRMLLinearTransformNode(const vtkMRMLLinearTransformNode&);
   void operator=(const vtkMRMLLinearTransformNode&);
+
+  ///
+  /// helper for comparing to matrices
+  /// TODO: is there a standard VTK method?
+  int Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2);
 
   /// These variables are only for supporting the deprecated
   /// GetMatrixTransformToParent and GetMatrixFromParent methods

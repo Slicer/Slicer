@@ -30,8 +30,6 @@ vtkMRMLNodeNewMacro(vtkMRMLGridTransformNode);
 //----------------------------------------------------------------------------
 vtkMRMLGridTransformNode::vtkMRMLGridTransformNode()
 {
-  this->ReadWriteAsTransformToParent = 0;
-
   // Set up the node with a dummy displacement field (that contains one single
   // null-vector) to make sure the node is valid and can be saved
   vtkNew<vtkImageData> emptyDisplacementField;

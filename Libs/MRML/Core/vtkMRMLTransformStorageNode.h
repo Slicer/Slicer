@@ -17,6 +17,9 @@
 
 #include "vtkMRMLStorageNode.h"
 
+class vtkAbstractTransform;
+class vtkMRMLTransformNode;
+
 /// \brief MRML node for transform storage on disk.
 ///
 /// Storage nodes has methods to read/write transforms to/from disk.
@@ -54,6 +57,14 @@ protected:
   /// (then it is assumed to be a grid transform and the displacement
   /// field is read/written with an image reader/writer class)
   virtual bool IsImageFile(const std::string &filename);
+
+  /// The method calls SetAndObserveTransformFromParent or SetAndObserveTransformToParent, depending on
+  /// which one will result in storing a transform that is not inverted (Inverse flag is false).
+  /// For example, if it the transform's Inverse flag is false then it is saved by using SetAndObserveTransformFromParent as is;
+  /// if transform's Inverse flag is true, then the transform is inverted (so that its Inverse flag becomes false)
+  /// and the resulting transform is saved in SetAndObserveTransformToParent.
+  /// It makes the displayed transform information more intuitive.
+  virtual void SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode, vtkAbstractTransform *transform);
 
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);

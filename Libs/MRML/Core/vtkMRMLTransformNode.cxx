@@ -43,7 +43,7 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
 {
   this->TransformToParent=NULL;
   this->TransformFromParent=NULL;
-  this->ReadWriteAsTransformToParent = 0;
+  this->ReadAsTransformToParent=0;
   this->DisableTransformModifiedEvent=0;
   this->TransformModifiedEventPending=0;
 }
@@ -59,9 +59,7 @@ vtkMRMLTransformNode::~vtkMRMLTransformNode()
 void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 {
   vtkIndent indent(nIndent);
-
   Superclass::WriteXML(of, nIndent);
-  of << indent << " readWriteAsTransformToParent=\"" << (this->ReadWriteAsTransformToParent ? "true" : "false") << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -78,17 +76,20 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
+
+    // For backward compatibility only
     if (!strcmp(attName, "readWriteAsTransformToParent"))
       {
       if (!strcmp(attValue,"true"))
         {
-        this->ReadWriteAsTransformToParent = 1;
+        this->ReadAsTransformToParent = 1;
         }
       else
         {
-        this->ReadWriteAsTransformToParent = 0;
+        this->ReadAsTransformToParent = 0;
         }
       }
+
     }
 
   this->EndModify(disabledModify);
@@ -229,7 +230,7 @@ void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
     return;
     }
 
-  this->SetReadWriteAsTransformToParent(node->GetReadWriteAsTransformToParent());
+  this->SetReadAsTransformToParent(node->GetReadAsTransformToParent());
 
   // Unfortunately VTK transform DeepCopy actually performs a shallow copy (only data object
   // pointers are copied, but not the contents itself), so we have to apply our custom DeepCopy
@@ -260,7 +261,7 @@ void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  os << indent << "ReadWriteAsTransformToParent: " << this->ReadWriteAsTransformToParent << "\n";
+  os << indent << "ReadAsTransformToParent: " << this->ReadAsTransformToParent << "\n";
 
   // Flatten the transform list to make the copying simpler
   if (this->TransformToParent)
@@ -630,19 +631,13 @@ bool vtkMRMLTransformNode::GetModifiedSinceRead()
     {
     return true;
     }
-  if (ReadWriteAsTransformToParent)
+  if (this->TransformToParent && this->TransformToParent->GetMTime() > this->GetStoredTime())
     {
-    if (this->TransformToParent && this->TransformToParent->GetMTime() > this->GetStoredTime())
-      {
-      return true;
-      }
+    return true;
     }
-  else
+  if (this->TransformFromParent && this->TransformFromParent->GetMTime() > this->GetStoredTime())
     {
-    if (this->TransformFromParent && this->TransformFromParent->GetMTime() > this->GetStoredTime())
-      {
-      return true;
-      }
+    return true;
     }
   return false;
 }
@@ -801,63 +796,11 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
   // We set the inverse to NULL, which means that it's unknown and will be computed atuomatically from the original transform
   vtkSetAndObserveMRMLObjectMacro((*inverseTransformPtr), NULL);
 
-  SetReadWriteAsTransformToParentAuto();
-
   this->StorableModifiedTime.Modified();
   this->TransformModified();
 
   this->EndModify(disabledModify);
   this->EndTransformModify(disabledTransformModify);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformNode::SetReadWriteAsTransformToParentAuto()
-{
-  bool isToParentForward=false;
-  bool isFromParentForward=false;
-
-  // We don't care about linear transforms (as they can be written in any direction) and we cannot
-  // do anything about unknown transform types, so just handle warp transforms (such as bspline and grid)
-
-  if (this->TransformToParent)
-    {
-    vtkWarpTransform* warpTransformToParent=vtkWarpTransform::SafeDownCast(this->GetTransformToParentAs("vtkWarpTransform", false));
-    if (warpTransformToParent)
-      {
-      // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-      warpTransformToParent->Update();
-      isToParentForward = !warpTransformToParent->GetInverseFlag();
-      }
-    }
-  if (this->TransformFromParent)
-    {
-    vtkWarpTransform* warpTransformFromParent=vtkWarpTransform::SafeDownCast(this->GetTransformFromParentAs("vtkWarpTransform", false));
-    if (warpTransformFromParent)
-      {
-      // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-      warpTransformFromParent->Update();
-      isFromParentForward = !warpTransformFromParent->GetInverseFlag();
-      }
-    }
-
-  if (this->TransformToParent==NULL && this->TransformToParent!=NULL)
-    {
-    // toParent is computed automatically as inv(fromParent)
-    isToParentForward=!isFromParentForward;
-    }
-  else if (this->TransformToParent!=NULL && this->TransformToParent==NULL)
-    {
-    // fromParent is computed automatically as inv(toParent)
-    isFromParentForward=!isToParentForward;
-    }
-
-  if (isToParentForward==isFromParentForward)
-    {
-    // if both transform are forward (or both inverse or unavailable) then don't make any changes
-    return;
-    }
-
-  SetReadWriteAsTransformToParent(isToParentForward);
 }
 
 //----------------------------------------------------------------------------
@@ -906,8 +849,6 @@ void vtkMRMLTransformNode::Inverse()
   vtkAbstractTransform* oldTransformFromParent=this->TransformFromParent;
   this->TransformToParent=oldTransformFromParent;
   this->TransformFromParent=oldTransformToParent;
-
-  this->ReadWriteAsTransformToParent = !this->ReadWriteAsTransformToParent;
 
   this->StorableModifiedTime.Modified();
   this->Modified();

@@ -1041,7 +1041,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
 
     vtkMRMLTransformNode *tnd = vtkMRMLTransformNode::SafeDownCast(nd);
-    int oldReadWriteAsTransformToParent = 0;
     if (tnd)
       {
       // Transform nodes will use either a storage node OR a miniscene
@@ -1062,13 +1061,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // Keep track what scene node corresponds to what miniscene node
           sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
           }
-        }
-
-      if (out)
-        {
-        // CLI always expects the transform from parent (resampling transform, as per ITK convention)
-        oldReadWriteAsTransformToParent = tnd->GetReadWriteAsTransformToParent();
-        tnd->SetReadWriteAsTransformToParent(0);
         }
       }
 
@@ -1104,13 +1096,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         {
         vtkErrorMacro("ERROR writing file " << out->GetFileName());
         }
-
-      if (tnd)
-        {
-        // restore the original ReadWriteAsTransformToParent flag
-        tnd->SetReadWriteAsTransformToParent(oldReadWriteAsTransformToParent);
-        }
-
       out = 0;
       }
     }
