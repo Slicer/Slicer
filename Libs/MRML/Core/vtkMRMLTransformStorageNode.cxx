@@ -82,48 +82,10 @@ bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
   return refNode->IsA("vtkMRMLTransformNode");
 }
 
+
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
+bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer transform)
 {
-  TransformReaderType::Pointer reader = itk::TransformFileReader::New();
-  std::string fullName =  this->GetFullNameFromFileName();
-  reader->SetFileName( fullName );
-  try
-    {
-    reader->Update();
-    }
-  catch (itk::ExceptionObject &exc)
-    {
-    vtkErrorMacro("ITK exception caught reading transform file: "<< fullName.c_str() << "\n" << exc);
-    return 0;
-    }
-  catch (...)
-    {
-    vtkErrorMacro("Unknown exception caught while reading transform file: "<< fullName.c_str());
-    return 0;
-    }
-
-  // For now, grab the first transform from the file.
-  TransformListType *transforms = reader->GetTransformList();
-  if (transforms->size() == 0)
-    {
-    vtkErrorMacro("Could not find a transform in file: " << fullName.c_str());
-    return 0;
-    }
-  if (transforms->size() > 1)
-    {
-    vtkWarningMacro(<< "More than one transform in the file: "<< fullName.c_str()<< ". Using only the first transform.");
-    }
-  TransformListType::iterator it = (*transforms).begin();
-  TransformType::Pointer transform = (*it);
-  if (!transform)
-    {
-    vtkErrorMacro(<< "No transforms in the file: "<< fullName.c_str()<< ", (" << transforms->size() << ")");
-    return 0;
-    }
-
-  vtkMRMLLinearTransformNode *ltn = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
-
   static const unsigned int D = VTKDimension;
   typedef itk::MatrixOffsetTransformBase<double,D,D> DoubleLinearTransformType;
   typedef itk::MatrixOffsetTransformBase<float,D,D> FloatLinearTransformType;
@@ -134,7 +96,6 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   typedef itk::TranslationTransform<double, D> DoubleTranslateTransformType;
   typedef itk::TranslationTransform<float, D> FloatTranslateTransformType;
 
-  vtkSmartPointer<vtkMatrix4x4> vtkmat = vtkSmartPointer<vtkMatrix4x4>::New();
   vtkmat->Identity();
 
   bool convertedToVtkMatrix=false;
@@ -237,6 +198,70 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
       }
     }
 
+  return convertedToVtkMatrix;
+}
+
+//----------------------------------------------------------------------------
+bool vtkIsIdentityMatrix2(vtkMatrix4x4 *matrix)
+{
+  static double identity[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+  int i,j;
+
+  for (i = 0; i < 4; i++)
+    {
+    for (j = 0; j < 4; j++)
+      {
+      if (matrix->GetElement(i,j) != identity[4*i+j])
+        {
+        return false;
+        }
+      }
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
+{
+  TransformReaderType::Pointer reader = itk::TransformFileReader::New();
+  std::string fullName =  this->GetFullNameFromFileName();
+  reader->SetFileName( fullName );
+  try
+    {
+    reader->Update();
+    }
+  catch (itk::ExceptionObject &exc)
+    {
+    vtkErrorMacro("ITK exception caught reading transform file: "<< fullName.c_str() << "\n" << exc);
+    return 0;
+    }
+  catch (...)
+    {
+    vtkErrorMacro("Unknown exception caught while reading transform file: "<< fullName.c_str());
+    return 0;
+    }
+
+  // For now, grab the first transform from the file.
+  TransformListType *transforms = reader->GetTransformList();
+  if (transforms->size() == 0)
+    {
+    vtkErrorMacro("Could not find a transform in file: " << fullName.c_str());
+    return 0;
+    }
+  if (transforms->size() > 1)
+    {
+    vtkWarningMacro(<< "More than one transform in the file: "<< fullName.c_str()<< ". Using only the first transform.");
+    }
+  TransformListType::iterator it = (*transforms).begin();
+  TransformType::Pointer transform = (*it);
+  if (!transform)
+    {
+    vtkErrorMacro(<< "No transforms in the file: "<< fullName.c_str()<< ", (" << transforms->size() << ")");
+    return 0;
+    }
+
+  vtkSmartPointer<vtkMatrix4x4> vtkmat = vtkSmartPointer<vtkMatrix4x4>::New();
+  bool convertedToVtkMatrix = SetVTKLinearTransformFromITK(vtkmat, transform);
   if (!convertedToVtkMatrix)
     {
     vtkErrorMacro(<< "Could not convert the transform in the file to a linear transform: "<< fullName.c_str());
@@ -262,6 +287,7 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
   vtkmat->Invert();
 
   // Set the matrix on the node
+  vtkMRMLLinearTransformNode *ltn = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
   if (ltn->GetReadWriteAsTransformToParent())
     {
     ltn->SetMatrixTransformToParent( vtkmat );
@@ -437,7 +463,7 @@ template <typename T> bool SetVTKBSplineFromITKv3(vtkObject* self,
 
 //----------------------------------------------------------------------------
 template <typename T> bool SetVTKBSplineFromITKv4(vtkObject* self,
-  vtkOrientedBSplineTransform* bsplineVtk,
+  vtkOrientedBSplineTransform* bsplineVtk, // TODO: this should be a general transform!
   TransformType::Pointer warpTransformItk, TransformType::Pointer bulkTransformItk)
 {
   //
@@ -576,29 +602,21 @@ template <typename T> bool SetVTKBSplineFromITKv4(vtkObject* self,
   // Set the bulk transform
   if( bulkTransformItk )
     {
-    typedef itk::AffineTransform<T,3> BulkTransformType;
-    typedef itk::IdentityTransform<T,3> IdentityBulkTransformType;
-    BulkTransformType* bulkItkAffine = dynamic_cast<BulkTransformType*> (bulkTransformItk.GetPointer());
-    IdentityBulkTransformType* bulkItkIdentity = dynamic_cast<IdentityBulkTransformType*> (bulkTransformItk.GetPointer());
-    if (bulkItkAffine)
+    vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
+    bool convertedToVtk = SetVTKLinearTransformFromITK(bulkMatrix_LPS.GetPointer(), bulkTransformItk);
+    if (convertedToVtk)
       {
-      vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
-      for (unsigned int i=0; i < VTKDimension; i++)
+      if (vtkIsIdentityMatrix2(bulkMatrix_LPS.GetPointer()))
         {
-        for (unsigned int j=0; j < VTKDimension; j++)
-          {
-          bulkMatrix_LPS->SetElement(i,j, bulkItkAffine->GetMatrix()[i][j]);
-          }
-        bulkMatrix_LPS->SetElement(i,VTKDimension, bulkItkAffine->GetOffset()[i]);
+        // bulk transform is identity, which is equivalent to no bulk transform
         }
-      vtkNew<vtkMatrix4x4> bulkMatrix_RAS; // bulk_RAS = lpsToRas * bulk_LPS * rasToLps
-      vtkMatrix4x4::Multiply4x4(lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer(), bulkMatrix_RAS.GetPointer());
-      vtkMatrix4x4::Multiply4x4(bulkMatrix_RAS.GetPointer(), rasToLps.GetPointer(), bulkMatrix_RAS.GetPointer());
-      bsplineVtk->SetBulkTransformMatrix(bulkMatrix_RAS.GetPointer());
-      }
-    else if (bulkItkIdentity)
-      {
-      // bulk transform is identity, which is equivalent to no bulk transform
+      else
+        {
+        vtkNew<vtkMatrix4x4> bulkMatrix_RAS; // bulk_RAS = lpsToRas * bulk_LPS * rasToLps
+        vtkMatrix4x4::Multiply4x4(lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer(), bulkMatrix_RAS.GetPointer());
+        vtkMatrix4x4::Multiply4x4(bulkMatrix_RAS.GetPointer(), rasToLps.GetPointer(), bulkMatrix_RAS.GetPointer());
+        bsplineVtk->SetBulkTransformMatrix(bulkMatrix_RAS.GetPointer());
+        }
       }
     else
       {
@@ -1438,6 +1456,7 @@ int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.h5)");
+  this->SupportedWriteFileTypes->InsertNextValue("Transform (.tfm)");
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.mat)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.*)");
