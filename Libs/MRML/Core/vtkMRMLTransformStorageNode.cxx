@@ -37,6 +37,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 {
+  vtkITKTransformConverter::RegisterInverseTransformTypes();
 }
 
 //----------------------------------------------------------------------------
@@ -450,7 +451,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   gridTransform_Ras->Update();
   if (gridTransform_Ras->GetInverseFlag())
     {
-    vtkErrorMacro("Cannot write an inverse grid transform to file");
+    vtkErrorMacro("Cannot write an inverse grid transform to image file");
     return 0;
     }
 

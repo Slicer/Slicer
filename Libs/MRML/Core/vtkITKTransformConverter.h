@@ -35,6 +35,7 @@
 #include <itkImageFileWriter.h>
 #include <itkTranslationTransform.h>
 #include <itkScaleTransform.h>
+#include <itkTransformFactory.h>
 
 // Constants and typedefs
 
@@ -51,12 +52,23 @@ typedef itk::TransformFileWriter TransformWriterType;
 typedef itk::DisplacementFieldTransform< double, 3 > DisplacementFieldTransformType;
 typedef DisplacementFieldTransformType::DisplacementFieldType GridImageType;
 
+typedef itk::BSplineDeformableTransform< float, VTKDimension, VTKDimension > BSplineTransformFloatITKv3Type;
+typedef itk::BSplineDeformableTransform< double, VTKDimension, VTKDimension > BSplineTransformDoubleITKv3Type;
+typedef itk::BSplineTransform< float, VTKDimension, VTKDimension > BSplineTransformFloatITKv4Type;
+typedef itk::BSplineTransform< double, VTKDimension, VTKDimension > BSplineTransformDoubleITKv4Type;
+
 typedef itk::CompositeTransform< double > CompositeTransformType;
 
+typedef itk::AffineTransform<double, VTKDimension> AffineTransformType;
+  AffineTransformType::Pointer affine = AffineTransformType::New();
+
+#include "vtkITKTransformInverse.h"
 
 class vtkITKTransformConverter
 {
 public:
+
+  static void RegisterInverseTransformTypes();
 
   static vtkAbstractTransform* CreateVTKTransformFromITK(vtkObject* loggerObject, TransformType::Pointer transformItk);
   static itk::Object::Pointer CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk);
@@ -81,17 +93,25 @@ protected:
 
   static bool IsIdentityMatrix(vtkMatrix4x4 *matrix);
 
-//  template <typename BSplineTransformType> static bool SetVTKBSplineParametersFromITKGeneric(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, typename BSplineTransformType::Pointer warpTransformItk);
   template <typename BSplineTransformType> static bool SetVTKBSplineParametersFromITKGeneric(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk);
   template <typename T> static bool SetVTKBSplineFromITKv3Generic(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk, TransformType::Pointer bulkTransformItk);
   template <typename T> static bool SetVTKBSplineFromITKv4Generic(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk);
 
-//   template <typename BSplineTransformType> static bool SetITKBSplineParametersFromVTKGeneric(vtkObject* loggerObject, typename BSplineTransformType::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
   template <typename BSplineTransformType> static bool SetITKBSplineParametersFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform< typename BSplineTransformType::ScalarType,VTKDimension,VTKDimension>::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
   template <typename T> static bool SetITKv3BSplineFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
   template <typename T> static bool SetITKv4BSplineFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
 
 };
+
+//----------------------------------------------------------------------------
+void vtkITKTransformConverter::RegisterInverseTransformTypes()
+{
+  itk::TransformFactory<InverseDisplacementFieldTransformType>::RegisterTransform();
+  itk::TransformFactory<InverseBSplineTransformFloatITKv3Type>::RegisterTransform();
+  itk::TransformFactory<InverseBSplineTransformFloatITKv4Type>::RegisterTransform();
+  itk::TransformFactory<InverseBSplineTransformDoubleITKv3Type>::RegisterTransform();
+  itk::TransformFactory<InverseBSplineTransformDoubleITKv4Type>::RegisterTransform();
+}
 
 //----------------------------------------------------------------------------
 bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(vtkObject* /*loggerObject*/, vtkMatrix4x4* transformVtk_RAS, TransformType::Pointer transformItk_LPS)
@@ -320,8 +340,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetVTKBS
     return false;
     }
 
-  typename BSplineTransformType::Pointer bsplineItk =
-    dynamic_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
+  typename BSplineTransformType::Pointer bsplineItk = dynamic_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
   if (!bsplineItk.GetPointer())
     {
     return false;
@@ -444,7 +463,17 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
     return false;
     }
 
-  if (!SetVTKBSplineParametersFromITKGeneric< itk::BSplineDeformableTransform< T, VTKDimension, VTKDimension > >(loggerObject, bsplineVtk, warpTransformItk))
+  bool inverse = false;
+  // inverse class is derived from forward class, so it has to be checked first
+  if (SetVTKBSplineParametersFromITKGeneric< itk::InverseBSplineDeformableTransform< T, VTKDimension, VTKDimension > >(loggerObject, bsplineVtk, warpTransformItk))
+    {
+    inverse = true;
+    }
+  else if (SetVTKBSplineParametersFromITKGeneric< itk::BSplineDeformableTransform< T, VTKDimension, VTKDimension > >(loggerObject, bsplineVtk, warpTransformItk))
+    {
+    inverse = false;
+    }
+  else
     {
     vtkDebugWithObjectMacro(loggerObject, "Not an ITKv3 BSpline transform");
     return false;
@@ -490,6 +519,11 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
       }
     }
 
+  if (inverse)
+    {
+    bsplineVtk->Inverse();
+    }
+
   // Success
   return true;
 }
@@ -498,10 +532,24 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
 template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv4Generic(vtkObject* loggerObject,
   vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk)
 {
-  if (!SetVTKBSplineParametersFromITKGeneric< itk::BSplineTransform< T, VTKDimension, VTKDimension > >(loggerObject, bsplineVtk, warpTransformItk))
+  bool inverse = false;
+  // inverse class is derived from forward class, so it has to be checked first
+  if (SetVTKBSplineParametersFromITKGeneric< itk::InverseBSplineTransform< T, VTKDimension, VTKDimension > >(loggerObject, bsplineVtk, warpTransformItk))
     {
-    vtkDebugWithObjectMacro(loggerObject, "Not a BSpline transform");
+    inverse = true;
+    }
+  else if (SetVTKBSplineParametersFromITKGeneric< itk::BSplineTransform< T, VTKDimension, VTKDimension > >(loggerObject, bsplineVtk, warpTransformItk))
+    {
+    inverse = false;
+    }
+  else
+    {
+    vtkDebugWithObjectMacro(loggerObject, "Not an ITKv4 BSpline transform");
     return false;
+    }
+  if (inverse)
+    {
+    bsplineVtk->Inverse();
     }
   return true;
 }
@@ -644,8 +692,18 @@ template <typename T> bool vtkITKTransformConverter::SetITKv3BSplineFromVTKGener
     vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: bsplineVtk is invalid");
     return false;
     }
-
-  if (!SetITKBSplineParametersFromVTKGeneric< itk::BSplineDeformableTransform< T, VTKDimension, VTKDimension > >(loggerObject, warpTransformItk, bsplineVtk))
+  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+  bsplineVtk->Update();
+  bool itkTransformSetSuccessfully = false;
+  if (bsplineVtk->GetInverseFlag())
+    {
+    itkTransformSetSuccessfully = SetITKBSplineParametersFromVTKGeneric< itk::InverseBSplineDeformableTransform< T, VTKDimension, VTKDimension > >(loggerObject, warpTransformItk, bsplineVtk);
+    }
+  else
+    {
+    itkTransformSetSuccessfully = SetITKBSplineParametersFromVTKGeneric< itk::BSplineDeformableTransform< T, VTKDimension, VTKDimension > >(loggerObject, warpTransformItk, bsplineVtk);
+    }
+  if (!itkTransformSetSuccessfully)
     {
     vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: cannot determine BSpline parameters");
     return false;
@@ -695,9 +753,20 @@ template <typename T> bool vtkITKTransformConverter::SetITKv4BSplineFromVTKGener
   typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk,
   vtkOrientedBSplineTransform* bsplineVtk)
 {
-  if (!SetITKBSplineParametersFromVTKGeneric< itk::BSplineTransform< T, VTKDimension, VTKDimension > >(loggerObject, warpTransformItk, bsplineVtk))
+  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+  bsplineVtk->Update();
+  bool itkTransformSetSuccessfully = false;
+  if (bsplineVtk->GetInverseFlag())
     {
-    vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: cannot determine BSpline parameters");
+    itkTransformSetSuccessfully = SetITKBSplineParametersFromVTKGeneric< itk::InverseBSplineTransform< T, VTKDimension, VTKDimension > >(loggerObject, warpTransformItk, bsplineVtk);
+    }
+  else
+    {
+    itkTransformSetSuccessfully = SetITKBSplineParametersFromVTKGeneric< itk::BSplineTransform< T, VTKDimension, VTKDimension > >(loggerObject, warpTransformItk, bsplineVtk);
+    }
+  if (!itkTransformSetSuccessfully)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetITKv4BSplineFromVTKGeneric failed: cannot determine BSpline parameters");
     return false;
     }
   return true;
@@ -710,14 +779,6 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
   if (bsplineVtk==NULL)
     {
     vtkErrorWithObjectMacro(loggerObject, "Cannot retrieve BSpline transform from node");
-    return false;
-    }
-
-  // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-  bsplineVtk->Update();
-  if (bsplineVtk->GetInverseFlag())
-    {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file");
     return false;
     }
 
@@ -777,14 +838,6 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
     return false;
     }
 
-  // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-  bsplineVtk->Update();
-  if (bsplineVtk->GetInverseFlag())
-    {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file");
-    return false;
-    }
-
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficients();
 #else
@@ -831,15 +884,34 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
 //----------------------------------------------------------------------------
 bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(vtkObject* loggerObject, vtkOrientedGridTransform* transformVtk_RAS, TransformType::Pointer transformItk_LPS)
 {
-    // Linear transform of doubles, dimension 3
   DisplacementFieldTransformType* displacementFieldTransform = dynamic_cast<DisplacementFieldTransformType*>( transformItk_LPS.GetPointer() );
-  if (displacementFieldTransform==NULL)
+  DisplacementFieldTransformType* inverseDisplacementFieldTransform = dynamic_cast<InverseDisplacementFieldTransformType*>( transformItk_LPS.GetPointer() );
+  bool inverse = false;
+  DisplacementFieldTransformType::DisplacementFieldType* gridImageItk_Lps = NULL;
+  if (inverseDisplacementFieldTransform!=NULL) // inverse class is derived from forward class, so it has to be checked first
+    {
+    inverse = true;
+    gridImageItk_Lps = inverseDisplacementFieldTransform->GetDisplacementField();
+    }
+  else if (displacementFieldTransform!=NULL)
+    {
+    inverse = false;
+    gridImageItk_Lps = displacementFieldTransform->GetDisplacementField();
+    }
+  else
     {
     vtkDebugWithObjectMacro(loggerObject, "Not a grid transform");
     return false;
     }
-  DisplacementFieldTransformType::DisplacementFieldType* gridImageItk_Lps = displacementFieldTransform->GetDisplacementField();
-  return SetVTKOrientedGridTransformFromITKImage(loggerObject, transformVtk_RAS, gridImageItk_Lps);
+  if (!SetVTKOrientedGridTransformFromITKImage(loggerObject, transformVtk_RAS, gridImageItk_Lps))
+    {
+    return false;
+    }
+  if (inverse)
+    {
+    transformVtk_RAS->Inverse();
+    }
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -851,10 +923,20 @@ bool vtkITKTransformConverter::SetITKOrientedGridTransformFromVTK(vtkObject* log
     vtkErrorWithObjectMacro(loggerObject, "vtkITKTransformConverter::SetITKOrientedGridTransformFromVTK failed: input transform is invalid");
     return false;
     }
-
-  DisplacementFieldTransformType::Pointer gridTransformItk = DisplacementFieldTransformType::New();
-  gridTransformItk->SetDisplacementField(gridImageItk_Lps);
-  transformItk_LPS = gridTransformItk;
+  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+  transformVtk_RAS->Update();
+  if (transformVtk_RAS->GetInverseFlag())
+    {
+    InverseDisplacementFieldTransformType::Pointer gridTransformItk = InverseDisplacementFieldTransformType::New();
+    gridTransformItk->SetDisplacementField(gridImageItk_Lps);
+    transformItk_LPS = gridTransformItk;
+    }
+  else
+    {
+    DisplacementFieldTransformType::Pointer gridTransformItk = DisplacementFieldTransformType::New();
+    gridTransformItk->SetDisplacementField(gridImageItk_Lps);
+    transformItk_LPS = gridTransformItk;
+    }
   return true;
 }
 
@@ -933,14 +1015,6 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   if (grid_Ras==NULL)
     {
     vtkErrorWithObjectMacro(loggerObject, "Cannot save grid transform: the input vtkOrientedGridTransform is invalid");
-    return false;
-    }
-
-  // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-  grid_Ras->Update();
-  if (grid_Ras->GetInverseFlag())
-    {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse grid transform to file");
     return false;
     }
 
