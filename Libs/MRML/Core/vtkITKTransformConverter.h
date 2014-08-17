@@ -550,7 +550,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
 #endif
   if (bsplineCoefficients_RAS==NULL)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file: coefficients are not specified");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: coefficients are not specified");
     return false;
     }
 
@@ -729,7 +729,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
 
   if (bsplineCoefficients==NULL)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file: coefficients are not specified");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: coefficients are not specified");
     return false;
     }
 
@@ -740,7 +740,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     ITKTransformType::Pointer floatBulkTransformItk;
     if (!SetITKv3BSplineFromVTKGeneric<float>(loggerObject, floatWarpTransformItk, floatBulkTransformItk, bsplineVtk))
       {
-      vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file");
+      vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file");
       return false;
       }
     warpTransformItk = floatWarpTransformItk.GetPointer();
@@ -753,7 +753,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     ITKTransformType::Pointer doubleBulkTransformItk;
     if (!SetITKv3BSplineFromVTKGeneric<double>(loggerObject, doubleWarpTransformItk, doubleBulkTransformItk, bsplineVtk))
       {
-      vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file");
+      vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file");
       return false;
       }
     warpTransformItk = doubleWarpTransformItk;
@@ -761,7 +761,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     }
   else
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file: only float and double coefficient types are supported");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: only float and double coefficient types are supported");
     return false;
     }
 
@@ -793,7 +793,7 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
 
   if (bsplineCoefficients==NULL)
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file: coefficients are not specified");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: coefficients are not specified");
     return false;
     }
 
@@ -803,7 +803,7 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
     ITKTransformType::Pointer floatWarpTransformItk;
     if (!SetITKv4BSplineFromVTKGeneric<float>(loggerObject, floatWarpTransformItk, bsplineVtk))
       {
-      vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file");
+      vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file");
       return false;
       }
     warpTransformItk = floatWarpTransformItk.GetPointer();
@@ -814,14 +814,14 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
     ITKTransformType::Pointer doubleWarpTransformItk;
     if (!SetITKv4BSplineFromVTKGeneric<double>(loggerObject, doubleWarpTransformItk, bsplineVtk))
       {
-      vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file");
+      vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file");
       return false;
       }
     warpTransformItk = doubleWarpTransformItk;
     }
   else
     {
-    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse BSpline transform to file: only float and double coefficient types are supported");
+    vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: only float and double coefficient types are supported");
     return false;
     }
 
@@ -935,6 +935,15 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
     vtkErrorWithObjectMacro(loggerObject, "Cannot save grid transform: the input vtkOrientedGridTransform is invalid");
     return false;
     }
+
+  // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+  grid_Ras->Update();
+  if (grid_Ras->GetInverseFlag())
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot write an inverse grid transform to file");
+    return false;
+    }
+
   vtkImageData* gridImage_Ras = grid_Ras->GetDisplacementGrid();
   if (gridImage_Ras==NULL)
     {
