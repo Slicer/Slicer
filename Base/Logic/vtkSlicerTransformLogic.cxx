@@ -157,10 +157,12 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
     vtkNew<vtkMRMLGridTransformNode>    gridTfm;
     vtkNew<vtkMRMLBSplineTransformNode> bsplineTfm;
     vtkNew<vtkMRMLLinearTransformNode>  linearTfm;
+    vtkNew<vtkMRMLTransformNode>        generalTfm;
 
     gridTfm->SetScene(scene);
     bsplineTfm->SetScene(scene);
     linearTfm->SetScene(scene);
+    generalTfm->SetScene(scene);
 
     if (storageNode->ReadData(gridTfm.GetPointer()))
       {
@@ -173,6 +175,10 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
     else if (storageNode->ReadData(linearTfm.GetPointer()))
       {
       tnode = linearTfm.GetPointer();
+      }
+    else if (storageNode->ReadData(generalTfm.GetPointer()))
+      {
+      tnode = generalTfm.GetPointer();
       }
 
     if (tnode)

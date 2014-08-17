@@ -1048,7 +1048,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
           vtkMatrix4x4* bulkTransform = orientedBsplineTransform->GetBulkTransformMatrix();
           if (bulkTransform!=NULL)
             {
-            ss << std::endl << "  Bulk transform:";
+            ss << std::endl << "  Additive bulk transform:";
             for (int i=0; i<4; i++)
               {
               ss << std::endl <<"    "<<bulkTransform->GetElement(i,0)

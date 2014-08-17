@@ -65,6 +65,9 @@ protected:
   /// by legacy versions of BRAINSFit (see slicer issue #3788).
   /// This generates the vtkOrientedBSplineTransform to match
   /// the unusual mathematics of the ITKv3 bspline transform.
+  virtual int ReadBSplineTransformITKv3(vtkMRMLNode *refNode);
+
+  /// This method reads an ITKv3 or ITKv4 BSpline transform.
   virtual int ReadBSplineTransform(vtkMRMLNode *refNode);
 
   /// This method uses ITK's transform reading infrastucture to

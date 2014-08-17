@@ -22,14 +22,15 @@ Version:   $Revision: 1.2 $
 #include "vtkOrientedGridTransform.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
+#include <vtkMatrixToLinearTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkVersion.h>
-
 // ITK includes
 #include <itkAffineTransform.h>
 #include <itkBSplineDeformableTransform.h> // ITKv3 style
@@ -82,9 +83,8 @@ bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
   return refNode->IsA("vtkMRMLTransformNode");
 }
 
-
 //----------------------------------------------------------------------------
-bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer transform)
+bool SetVTKLinearTransformFromITK(vtkObject* /*self*/, vtkMatrix4x4* transformVtk_RAS, TransformType::Pointer transformItk_LPS)
 {
   static const unsigned int D = VTKDimension;
   typedef itk::MatrixOffsetTransformBase<double,D,D> DoubleLinearTransformType;
@@ -96,13 +96,13 @@ bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer t
   typedef itk::TranslationTransform<double, D> DoubleTranslateTransformType;
   typedef itk::TranslationTransform<float, D> FloatTranslateTransformType;
 
-  vtkmat->Identity();
+  vtkSmartPointer<vtkMatrix4x4> transformVtk_LPS = vtkSmartPointer<vtkMatrix4x4>::New();
 
   bool convertedToVtkMatrix=false;
 
   // Linear transform of doubles, dimension 3
   DoubleLinearTransformType::Pointer dlt
-    = dynamic_cast<DoubleLinearTransformType*>( transform.GetPointer() );
+    = dynamic_cast<DoubleLinearTransformType*>( transformItk_LPS.GetPointer() );
   if (dlt)
     {
     convertedToVtkMatrix=true;
@@ -110,15 +110,15 @@ bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer t
       {
       for (unsigned int j=0; j < D; j++)
         {
-        (*vtkmat)[i][j] = dlt->GetMatrix()[i][j];
+        (*transformVtk_LPS)[i][j] = dlt->GetMatrix()[i][j];
         }
-      (*vtkmat)[i][D] = dlt->GetOffset()[i];
+      (*transformVtk_LPS)[i][D] = dlt->GetOffset()[i];
       }
     }
 
   // Linear transform of floats, dimension 3
   FloatLinearTransformType::Pointer flt
-    = dynamic_cast<FloatLinearTransformType*>( transform.GetPointer() );
+    = dynamic_cast<FloatLinearTransformType*>( transformItk_LPS.GetPointer() );
   if (flt)
     {
     convertedToVtkMatrix=true;
@@ -126,15 +126,15 @@ bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer t
       {
       for (unsigned int j=0; j < D; j++)
         {
-        (*vtkmat)[i][j] = flt->GetMatrix()[i][j];
+        (*transformVtk_LPS)[i][j] = flt->GetMatrix()[i][j];
         }
-      (*vtkmat)[i][D] = flt->GetOffset()[i];
+      (*transformVtk_LPS)[i][D] = flt->GetOffset()[i];
       }
     }
 
   // Identity transform of doubles, dimension 3
   DoubleIdentityTransformType::Pointer dit
-    = dynamic_cast<DoubleIdentityTransformType*>( transform.GetPointer() );
+    = dynamic_cast<DoubleIdentityTransformType*>( transformItk_LPS.GetPointer() );
   if (dit)
     {
     // nothing to do, matrix is already the identity
@@ -143,7 +143,7 @@ bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer t
 
   // Identity transform of floats, dimension 3
   FloatIdentityTransformType::Pointer fit
-    = dynamic_cast<FloatIdentityTransformType*>( transform.GetPointer() );
+    = dynamic_cast<FloatIdentityTransformType*>( transformItk_LPS.GetPointer() );
   if (fit)
     {
     // nothing to do, matrix is already the identity
@@ -152,51 +152,64 @@ bool SetVTKLinearTransformFromITK(vtkMatrix4x4* vtkmat, TransformType::Pointer t
 
   // Scale transform of doubles, dimension 3
   DoubleScaleTransformType::Pointer dst
-    = dynamic_cast<DoubleScaleTransformType*>( transform.GetPointer() );
+    = dynamic_cast<DoubleScaleTransformType*>( transformItk_LPS.GetPointer() );
   if (dst)
     {
     convertedToVtkMatrix=true;
     for (unsigned int i=0; i < D; i++)
       {
-      (*vtkmat)[i][i] = dst->GetScale()[i];
+      (*transformVtk_LPS)[i][i] = dst->GetScale()[i];
       }
     }
 
   // Scale transform of floats, dimension 3
   FloatScaleTransformType::Pointer fst
-    = dynamic_cast<FloatScaleTransformType*>( transform.GetPointer() );
+    = dynamic_cast<FloatScaleTransformType*>( transformItk_LPS.GetPointer() );
   if (fst)
     {
     convertedToVtkMatrix=true;
     for (unsigned int i=0; i < D; i++)
       {
-      (*vtkmat)[i][i] = fst->GetScale()[i];
+      (*transformVtk_LPS)[i][i] = fst->GetScale()[i];
       }
     }
 
   // Translate transform of doubles, dimension 3
   DoubleTranslateTransformType::Pointer dtt
-    = dynamic_cast<DoubleTranslateTransformType*>( transform.GetPointer());
+    = dynamic_cast<DoubleTranslateTransformType*>( transformItk_LPS.GetPointer());
   if (dtt)
     {
     convertedToVtkMatrix=true;
     for (unsigned int i=0; i < D; i++)
       {
-      (*vtkmat)[i][D] = dtt->GetOffset()[i];
+      (*transformVtk_LPS)[i][D] = dtt->GetOffset()[i];
       }
     }
 
   // Translate transform of floats, dimension 3
   FloatTranslateTransformType::Pointer ftt
-    = dynamic_cast<FloatTranslateTransformType*>( transform.GetPointer() );
+    = dynamic_cast<FloatTranslateTransformType*>( transformItk_LPS.GetPointer() );
   if (ftt)
     {
     convertedToVtkMatrix=true;
     for (unsigned int i=0; i < D; i++)
       {
-      (*vtkmat)[i][i] = ftt->GetOffset()[i];
+      (*transformVtk_LPS)[i][i] = ftt->GetOffset()[i];
       }
     }
+
+  // Convert from LPS (ITK) to RAS (Slicer)
+  //
+  // Tras = lps2ras * Tlps * ras2lps
+  //
+
+  vtkSmartPointer<vtkMatrix4x4> lps2ras = vtkSmartPointer<vtkMatrix4x4>::New();
+  lps2ras->SetElement(0,0,-1);
+  lps2ras->SetElement(1,1,-1);
+  vtkMatrix4x4* ras2lps = lps2ras; // lps2ras is diagonal therefore the inverse is identical
+
+  vtkMatrix4x4::Multiply4x4(lps2ras, transformVtk_LPS, transformVtk_LPS);
+  vtkMatrix4x4::Multiply4x4(transformVtk_LPS, ras2lps, transformVtk_RAS);
 
   return convertedToVtkMatrix;
 }
@@ -260,41 +273,28 @@ int vtkMRMLTransformStorageNode::ReadLinearTransform(vtkMRMLNode *refNode)
     return 0;
     }
 
-  vtkSmartPointer<vtkMatrix4x4> vtkmat = vtkSmartPointer<vtkMatrix4x4>::New();
-  bool convertedToVtkMatrix = SetVTKLinearTransformFromITK(vtkmat, transform);
+  vtkSmartPointer<vtkMatrix4x4> transformVtk_RAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  bool convertedToVtkMatrix = SetVTKLinearTransformFromITK(this, transformVtk_RAS, transform);
   if (!convertedToVtkMatrix)
     {
-    vtkErrorMacro(<< "Could not convert the transform in the file to a linear transform: "<< fullName.c_str());
+    vtkDebugMacro(<< "Could not convert the transform in the file to a linear transform: "<< fullName.c_str());
     return 0;
     }
-
-  // Convert from LPS (ITK) to RAS (Slicer)
-  //
-  // Tras = lps2ras * Tlps * ras2lps
-  //
-
-  vtkSmartPointer<vtkMatrix4x4> lps2ras = vtkSmartPointer<vtkMatrix4x4>::New();
-  lps2ras->SetElement(0,0,-1);
-  lps2ras->SetElement(1,1,-1);
-  vtkMatrix4x4* ras2lps = lps2ras; // lps2ras is diagonal therefore the inverse is identical
-
-  vtkMatrix4x4::Multiply4x4(lps2ras, vtkmat, vtkmat);
-  vtkMatrix4x4::Multiply4x4(vtkmat, ras2lps, vtkmat);
 
   // Convert the sense of the transform (from an ITK resampling
   // transform to a Slicer modeling transform)
   //
-  vtkmat->Invert();
+  transformVtk_RAS->Invert();
 
   // Set the matrix on the node
   vtkMRMLLinearTransformNode *ltn = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
   if (ltn->GetReadWriteAsTransformToParent())
     {
-    ltn->SetMatrixTransformToParent( vtkmat );
+    ltn->SetMatrixTransformToParent( transformVtk_RAS );
     }
   else
     {
-    ltn->SetMatrixTransformFromParent( vtkmat );
+    ltn->SetMatrixTransformFromParent( transformVtk_RAS );
     }
 
   return 1;
@@ -462,9 +462,8 @@ template <typename T> bool SetVTKBSplineFromITKv3(vtkObject* self,
 }
 
 //----------------------------------------------------------------------------
-template <typename T> bool SetVTKBSplineFromITKv4(vtkObject* self,
-  vtkOrientedBSplineTransform* bsplineVtk, // TODO: this should be a general transform!
-  TransformType::Pointer warpTransformItk, TransformType::Pointer bulkTransformItk)
+template <typename T> bool SetVTKBSplineFromITKv4Generic(vtkObject* self,
+  vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk)
 {
   //
   // this version uses the itk::BSplineTransform not the itk::BSplineDeformableTransform
@@ -599,35 +598,23 @@ template <typename T> bool SetVTKBSplineFromITKv4(vtkObject* self,
   bsplineVtk->SetCoefficientData(bsplineCoefficients.GetPointer());
 #endif
 
-  // Set the bulk transform
-  if( bulkTransformItk )
-    {
-    vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
-    bool convertedToVtk = SetVTKLinearTransformFromITK(bulkMatrix_LPS.GetPointer(), bulkTransformItk);
-    if (convertedToVtk)
-      {
-      if (vtkIsIdentityMatrix2(bulkMatrix_LPS.GetPointer()))
-        {
-        // bulk transform is identity, which is equivalent to no bulk transform
-        }
-      else
-        {
-        vtkNew<vtkMatrix4x4> bulkMatrix_RAS; // bulk_RAS = lpsToRas * bulk_LPS * rasToLps
-        vtkMatrix4x4::Multiply4x4(lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer(), bulkMatrix_RAS.GetPointer());
-        vtkMatrix4x4::Multiply4x4(bulkMatrix_RAS.GetPointer(), rasToLps.GetPointer(), bulkMatrix_RAS.GetPointer());
-        bsplineVtk->SetBulkTransformMatrix(bulkMatrix_RAS.GetPointer());
-        }
-      }
-    else
-      {
-      vtkErrorWithObjectMacro(self,"Cannot read the 2nd transform in BSplineTransform (expected AffineTransform_double_3_3 or IdentityTransform)" );
-      return false;
-      }
-    }
-
   // Success
   return true;
 }
+//----------------------------------------------------------------------------
+bool SetVTKBSplineFromITKv4(vtkObject* self, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk)
+{
+  if (SetVTKBSplineFromITKv4Generic<double>(self, bsplineVtk, warpTransformItk))
+  {
+    return true;
+  }
+  if (SetVTKBSplineFromITKv4Generic<float>(self, bsplineVtk, warpTransformItk))
+  {
+    return true;
+  }
+  return false;
+}
+
 //----------------------------------------------------------------------------
 template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
   typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk,
@@ -762,7 +749,7 @@ template <typename T> bool SetITKBSplineFromVTK(vtkObject* self,
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadBSplineTransform(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadBSplineTransformITKv3(vtkMRMLNode *refNode)
 {
   // Note: this method is hard coded to only be used with legacy ITKv3
   // BSpline files.  It creates a vtkOrientedBSpline with unfortunate
@@ -842,6 +829,59 @@ int vtkMRMLTransformStorageNode::ReadBSplineTransform(vtkMRMLNode *refNode)
     vtkDebugMacro("Failed to retrieve BSpline transform from file: "<< fullName.c_str());
     return 0;
     }
+}
+
+
+//----------------------------------------------------------------------------
+int vtkMRMLTransformStorageNode::ReadBSplineTransform(vtkMRMLNode *refNode)
+{
+  int success = this->ReadBSplineTransformITKv3(refNode);
+  if (success)
+    {
+    return success;
+    }
+  // If a composite transform only contains a BSpline and a linear transform then consider it as a BSpline transform
+  // (the vtkMRMLTransformNode base class could handle everything, specialized BSpline node is only created for backward
+  // compatibility, e.g., to allow filtering of transform nodes based on node type)
+  success = ReadCompositeTransform(refNode);
+  if (success)
+    {
+    // check if it is really a BSpline transform (contains a single BSpline or composite of linear and BSpline)
+    vtkMRMLTransformNode *tn = vtkMRMLTransformNode::SafeDownCast(refNode);
+    vtkAbstractTransform* inputTransform = tn->GetTransformToParent();
+    bool isBSpline = false;
+    if (vtkOrientedBSplineTransform::SafeDownCast(inputTransform))
+      {
+      isBSpline = true;
+      }
+    else
+      {
+      vtkGeneralTransform* generalTransform = vtkGeneralTransform::SafeDownCast(inputTransform);
+      if (generalTransform!=NULL)
+        {
+        vtkNew<vtkCollection> transformList;
+        vtkMRMLTransformNode::FlattenGeneralTransform(transformList.GetPointer(), generalTransform);
+        if (transformList->GetNumberOfItems()==1)
+          {
+          if (vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+            {
+            isBSpline = true;
+            }
+          }
+        else if (transformList->GetNumberOfItems()==2)
+          {
+          if (vtkMatrixToLinearTransform::SafeDownCast(transformList->GetItemAsObject(0))
+            && vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(1)))
+            {
+            isBSpline = true;
+            }
+          }
+        }
+      }
+
+    return isBSpline ? 1 : 0;
+    }
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -1070,6 +1110,42 @@ int vtkMRMLTransformStorageNode::ReadGridTransform(vtkMRMLNode *refNode)
   return 1;
 }
 
+vtkAbstractTransform* CreateVTKTransformFromITK(vtkObject* self, TransformType::Pointer transformItk)
+{
+  bool conversionSuccess = false;
+
+  // Linear
+  vtkNew<vtkMatrix4x4> transformMatrixVtk;
+  conversionSuccess = SetVTKLinearTransformFromITK(self, transformMatrixVtk.GetPointer(), transformItk);
+  if (conversionSuccess)
+    {
+    vtkNew<vtkMatrixToLinearTransform> linearTransformVtk;
+    linearTransformVtk->SetInput(transformMatrixVtk.GetPointer());
+    linearTransformVtk->Register(NULL);
+    return linearTransformVtk.GetPointer();
+    }
+  // Grid
+  /* TODO: implement this
+  vtkNew<vtkOrientedGridTransform> gridTransformVtk;
+  conversionSuccess = SetVTKOrientedGridTransformFromITK(self, gridTransformVtk.GetPointer(), transformItk);
+  if (conversionSuccess)
+    {
+    gridTransformVtk->Register(NULL);
+    return gridTransformVtk.GetPointer();
+    }
+  */
+  // BSpline
+  vtkNew<vtkOrientedBSplineTransform> bsplineTransformVtk;
+  conversionSuccess = SetVTKBSplineFromITKv4(self, bsplineTransformVtk.GetPointer(), transformItk);
+  if (conversionSuccess)
+    {
+    bsplineTransformVtk->Register(NULL);
+    return bsplineTransformVtk.GetPointer();
+    }
+
+  return false;
+}
+
 //----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::ReadCompositeTransform(vtkMRMLNode *refNode)
 {
@@ -1098,8 +1174,24 @@ int vtkMRMLTransformStorageNode::ReadCompositeTransform(vtkMRMLNode *refNode)
   // Based on personal communication with the ITK developer group (Brad and Hans) the
   // transform list will contain only one transform, which is a composite transform.
   TransformListType *transforms = reader->GetTransformList();
-  TransformListType::iterator transformsIT = (*transforms).begin();
-  TransformType *compositeTransform = (*transformsIT);
+  TransformType *compositeTransform = transforms->front();
+
+  std::string compositeTransformType = compositeTransform->GetTransformTypeAsString();
+  if( compositeTransformType.find("CompositeTransform") == std::string::npos )
+    {
+    // It is not a composite transform. It may be still a list of transforms, but
+    // when a list of transforms is stored in a file then there is no rule how to interpret them.
+    // It is not necessarily a compositing, for example: in ITKv3 the list was used to store additive
+    // bulk transform for BSpline deformable transform. Therefore, if the file contains a transform list
+    // then we do not interpret it as a composite/ transform.
+    vtkDebugMacro("Cannot read composite transform from file: "<< fullName.c_str());
+    return 0;
+    }
+
+  if (transforms->size()>1)
+    {
+    vtkWarningMacro("Additional transform(s) are defined after a composite transform. Only the composite transform will be used from file: "<< fullName.c_str());
+    }
 
   // the composite transform is itself a list of transforms.  There is a
   // helper class in ITK to convert the internal transform list into a
@@ -1107,57 +1199,67 @@ int vtkMRMLTransformStorageNode::ReadCompositeTransform(vtkMRMLNode *refNode)
   typedef const itk::CompositeTransformIOHelper::TransformType ComponentTransformType;
   itk::CompositeTransformIOHelper compositeTransformIOHelper;
 
+  // if the first transform in the list is a
+  // composite transform, use its internal list
+  // instead of the IO
   typedef itk::CompositeTransformIOHelper::ConstTransformListType ConstTransformListType;
   ConstTransformListType transformList =
     compositeTransformIOHelper.GetTransformList(compositeTransform);
 
-  ConstTransformListType::iterator compositeIT = transformList.begin();
-  ++compositeIT; // skip first element of list, which is duplicate of individual
-                 // transforms that are included in the list
-
-
-  // Now we have the iterator (compositeIT) pointing to the first real transform
-  // in the list.  While in the general case this could itself be a composite transform
-  // and create a hierarchy, for now the only existing use case that we will support
-  // is a pair of transforms that a linear and a bspline, that are just like the
-  // ones that had been stored in the tfm bspline files from ITKv3.
-
-  TransformType::Pointer componentTransform0, componentTransform1;
-  componentTransform0 = const_cast<TransformType *>((*compositeIT).GetPointer());
-  ++compositeIT;
-  componentTransform1 = const_cast<TransformType *>((*compositeIT).GetPointer());
-
-  if( !componentTransform0 || !componentTransform1 )
-    {
-    vtkErrorMacro("Could not find valid transforms in composite file: "<< fullName.c_str());
-    return 0;
-    }
-
-  vtkMRMLBSplineTransformNode *btn = vtkMRMLBSplineTransformNode::SafeDownCast(refNode);
-
-  vtkNew<vtkOrientedBSplineTransform> bsplineVtk;
-  if (SetVTKBSplineFromITKv4<double>(this, bsplineVtk.GetPointer(), componentTransform1, componentTransform0)
-    || SetVTKBSplineFromITKv4<float>(this, bsplineVtk.GetPointer(), componentTransform1, componentTransform0) )
-    {
-    if (btn->GetReadWriteAsTransformToParent())
-      {
-      // Convert the sense of the transform (from an ITK resampling
-      // transform to a Slicer modeling transform)
-      btn->SetAndObserveTransformToParent( bsplineVtk.GetPointer() );
-      }
-    else
-      {
-      btn->SetAndObserveTransformFromParent( bsplineVtk.GetPointer() );
-      }
-    return 1;
-    }
-  else
+  if (transformList.empty())
     {
     // Log only at debug level because trial-and-error method is used for finding out
     // what node can be retrieved from a transform file
-    vtkDebugMacro("Failed to retrieve BSpline transform from file: "<< fullName.c_str());
+    vtkDebugMacro("Failed to retrieve any transform transform from file: "<< fullName.c_str());
     return 0;
     }
+
+  vtkSmartPointer<vtkAbstractTransform> transformVtk;
+
+  ConstTransformListType::const_iterator end = transformList.end();
+  if (transformList.size()==1)
+    {
+    // there is only one single transform, so we create a specific VTK transform type instead of a general transform
+    TransformType::Pointer transformComponentItk = const_cast< TransformType* >(transformList.front().GetPointer());
+    transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(CreateVTKTransformFromITK(this, transformComponentItk));
+    }
+  else
+    {
+    // we have multiple transforms, so we create a general transform that can hold a list of transforms
+    vtkNew<vtkGeneralTransform> generalTransform;
+    //generalTransform->PostMultiply();
+    for( ConstTransformListType::const_iterator it = transformList.begin();
+      it != end; ++it )
+      {
+      TransformType::Pointer transformComponentItk = const_cast< TransformType* >((*it).GetPointer());
+      vtkAbstractTransform* transformComponent = CreateVTKTransformFromITK(this, transformComponentItk);
+      if (transformComponent!=NULL)
+        {
+        generalTransform->Concatenate(transformComponent);
+        transformComponent->Delete();
+        }
+      }
+    transformVtk = generalTransform.GetPointer();
+    }
+
+  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == NULL)
+    {
+    vtkErrorMacro("Unexpected node type, cannot read transform from file: "<< fullName.c_str());
+    return 0;
+    }
+  if (transformNode->GetReadWriteAsTransformToParent())
+    {
+    // Convert the sense of the transform (from an ITK resampling
+    // transform to a Slicer modeling transform)
+    transformNode->SetAndObserveTransformToParent( transformVtk.GetPointer() );
+    }
+  else
+    {
+    transformNode->SetAndObserveTransformFromParent( transformVtk.GetPointer() );
+    }
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -1176,15 +1278,15 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   else if (refNode->IsA("vtkMRMLBSplineTransformNode"))
     {
-    int returnCode = ReadBSplineTransform(refNode);
-    if (returnCode == 0)
-      {
-      return ReadCompositeTransform(refNode);
-      }
+    return ReadBSplineTransform(refNode);
     }
   else if (refNode->IsA("vtkMRMLLinearTransformNode"))
     {
     return ReadLinearTransform(refNode);
+    }
+  else if (refNode->IsA("vtkMRMLTransformNode"))
+    {
+    return ReadCompositeTransform(refNode);
     }
 
   vtkErrorMacro("ReadData: failed, transform node type is not supported for reading");
