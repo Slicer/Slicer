@@ -641,20 +641,17 @@ MRMLIDImageIO
     // Need to create a VTK ImageData to hang off the node if there is
     // not one already there
     //
-    vtkImageData *img = 0;
-    img = node->GetImageData();
+    vtkImageData *img = node->GetImageData();
     if (!img)
       {
       img = vtkImageData::New();
-      node->SetAndObserveImageData(img);
-      img->Delete();
       }
-
-    // Disconnect the observers from the image
-    //
-    //
-    img->Register(NULL);  // keep a handle
-    node->SetAndObserveImageData(NULL);
+    else
+      {
+      // Disconnect the observers from the image to prevent calling events on the main thread
+      img->Register(NULL);  // keep a handle
+      node->SetAndObserveImageData(NULL);
+      }
 
     // Configure the information on the node/image data
     //
@@ -724,12 +721,16 @@ MRMLIDImageIO
       vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
       if (displayNode)
         {
+        // WARNING! node->EndModify() may call methods on the main thread (and we are in another thread now), which can lead to crashes or other unpredictable behavior
+        // TODO: instead of modifying the scene from this thread, a request should be sent to the main thread to read the data
         displayNode->EndModify(
           wereModifyingDisplayNodes[displayNode->GetID()]);
         }
       }
     // Enable Modified events
     //
+    // WARNING! node->EndModify() may call methods on the main thread (and we are in another thread now), which can lead to crashes or other unpredictable behavior
+    // TODO: instead of modifying the scene from this thread, a request should be sent to the main thread to read the data
     node->EndModify(wasModifying);
     }
 }
