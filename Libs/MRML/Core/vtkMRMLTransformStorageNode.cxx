@@ -37,6 +37,7 @@ Version:   $Revision: 1.2 $
 #include <itkBSplineTransform.h> // ITKv4 style
 #include <itkCompositeTransform.h>
 #include <itkCompositeTransformIOHelper.h>
+#include <itkDisplacementFieldTransform.h>
 #include <itkIdentityTransform.h>
 #include <itkTransformFileWriter.h>
 #include <itkTransformFileReader.h>
@@ -55,7 +56,8 @@ typedef TransformReaderType::TransformType TransformType;
 
 typedef itk::TransformFileWriter TransformWriterType;
 
-typedef itk::VectorImage< double, 3 > GridImageType;
+typedef itk::DisplacementFieldTransform< double, 3 > DisplacementFieldTransformType;
+typedef DisplacementFieldTransformType::DisplacementFieldType GridImageType;
 
 typedef itk::CompositeTransform< double > CompositeTransformType;
 
@@ -321,14 +323,6 @@ int vtkMRMLTransformStorageNode::ReadGridTransform(vtkMRMLNode *refNode)
     {
     reader->Update();
     gridImage_Lps = reader->GetOutput();
-
-    if( gridImage_Lps->GetVectorLength() != 3 )
-      {
-      vtkErrorMacro( "The deformable vector field must contain 3-D vectors;"
-                     " instead, it contains " << gridImage_Lps->GetVectorLength()
-                     << "-D vectors\n" );
-      return 0;
-      }
     }
   catch (itk::ExceptionObject &
 #ifndef NDEBUG
@@ -354,7 +348,7 @@ int vtkMRMLTransformStorageNode::ReadGridTransform(vtkMRMLNode *refNode)
     }
 
   vtkNew<vtkOrientedGridTransform> gridTransform_Ras;
-  vtkITKTransformConverter::SetVTKOrientedGridTransformFromITK(this, gridTransform_Ras.GetPointer(), gridImage_Lps);
+  vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(this, gridTransform_Ras.GetPointer(), gridImage_Lps);
   // Set the matrix on the node
   if (tn->GetReadWriteAsTransformToParent())
     {
@@ -517,80 +511,6 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteLinearTransform(vtkMRMLLinearTransformNode *ln)
-{
-  vtkSmartPointer<vtkMatrix4x4> lps2ras = vtkSmartPointer<vtkMatrix4x4>::New();
-  lps2ras->SetElement(0,0,-1);
-  lps2ras->SetElement(1,1,-1);
-  vtkMatrix4x4* ras2lps = lps2ras; // lps2ras is diagonal therefore the inverse is identical
-
-  typedef itk::AffineTransform<double, VTKDimension> AffineTransformType;
-  AffineTransformType::Pointer affine = AffineTransformType::New();
-
-  vtkSmartPointer<vtkMatrix4x4> mat2parent=vtkSmartPointer<vtkMatrix4x4>::New();
-  ln->GetMatrixTransformToParent(mat2parent);
-
-  // Convert from RAS (Slicer) to LPS (ITK)
-  //
-  // Tlps = ras2lps * Tras * lps2ras
-  //
-  vtkSmartPointer<vtkMatrix4x4> vtkmat = vtkSmartPointer<vtkMatrix4x4>::New();
-
-  vtkMatrix4x4::Multiply4x4(ras2lps, mat2parent, vtkmat);
-  vtkMatrix4x4::Multiply4x4(vtkmat, lps2ras, vtkmat);
-
-  if (ln->GetReadWriteAsTransformToParent())
-    {
-    // Convert the sense of the transform (from a Slicer modeling
-    // transform to an ITK resampling transform)
-    //
-    vtkmat->Invert();
-    }
-
-  typedef AffineTransformType::MatrixType MatrixType;
-  typedef AffineTransformType::OutputVectorType OffsetType;
-
-  MatrixType itkmat;
-  OffsetType itkoffset;
-
-  for (unsigned int i=0; i < VTKDimension; i++)
-    {
-    for (unsigned int j=0; j < VTKDimension; j++)
-      {
-      itkmat[i][j] = (*vtkmat)[i][j];
-      }
-    itkoffset[i] = (*vtkmat)[i][VTKDimension];
-    }
-
-  affine->SetMatrix(itkmat);
-  affine->SetOffset(itkoffset);
-
-  TransformWriterType::Pointer writer = TransformWriterType::New();
-  writer->SetInput( affine );
-  std::string fullName =  this->GetFullNameFromFileName();
-  writer->SetFileName( fullName );
-  try
-    {
-    writer->Update();
-    }
-  catch (itk::ExceptionObject &exc)
-    {
-    vtkErrorMacro("ITK exception caught writing transform file: "
-                  << fullName.c_str() << "\n" << exc);
-    return 0;
-    }
-  catch (...)
-    {
-    vtkErrorMacro("Unknown exception caught while writing transform file: "
-                  << fullName.c_str());
-    return 0;
-    }
-
-  return 1;
-}
-
-
-//----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::WriteTransform(vtkMRMLTransformNode *transformNode)
 {
   // Get VTK transform from the transform node
@@ -650,12 +570,6 @@ int vtkMRMLTransformStorageNode::WriteTransform(vtkMRMLTransformNode *transformN
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteBSplineTransform(vtkMRMLBSplineTransformNode *bsplineTransformNode)
-{
-  return WriteTransform(bsplineTransformNode);
-}
-
-//----------------------------------------------------------------------------
 int vtkMRMLTransformStorageNode::WriteGridTransform(vtkMRMLGridTransformNode *gd)
 {
   vtkOrientedGridTransform* gridTransform_Ras = NULL;
@@ -684,7 +598,7 @@ int vtkMRMLTransformStorageNode::WriteGridTransform(vtkMRMLGridTransformNode *gd
     }
 
   GridImageType::Pointer gridImage_Lps;
-  vtkITKTransformConverter::SetITKOrientedGridTransformFromVTK(this, gridTransform_Ras, gridImage_Lps);
+  vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(this, gridImage_Lps, gridTransform_Ras);
 
   itk::ImageFileWriter<GridImageType>::Pointer writer = itk::ImageFileWriter<GridImageType>::New();
   writer->SetInput( gridImage_Lps );
@@ -717,28 +631,16 @@ int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName.empty())
     {
-    vtkErrorMacro("vtkMRMLTransformNode: File name not specified");
+    vtkErrorMacro("vtkMRMLTransformNode write data failed: file name not specified");
     return 0;
     }
-
-  vtkMRMLLinearTransformNode *ln = vtkMRMLLinearTransformNode::SafeDownCast(refNode);
-  if (ln!=NULL)
-  {
-    return WriteLinearTransform(ln);
-  }
-  vtkMRMLBSplineTransformNode *bs = vtkMRMLBSplineTransformNode::SafeDownCast(refNode);
-  if (bs!=NULL)
-  {
-    return WriteBSplineTransform(bs);
-  }
-  vtkMRMLGridTransformNode *gd = vtkMRMLGridTransformNode::SafeDownCast(refNode);
-  if (gd!=NULL)
-  {
-    return WriteGridTransform(gd);
-  }
-
-  vtkErrorMacro("Writing of the transform node to file failed: unsupported node type");
-  return 0;
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == NULL)
+    {
+    vtkErrorMacro("vtkMRMLTransformNode write data failed: invalid transform node");
+    return 0;
+    }
+  return WriteTransform(transformNode);
 }
 
 //----------------------------------------------------------------------------

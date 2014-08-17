@@ -93,9 +93,6 @@ protected:
   /// Write data from a referenced node
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
-  virtual int WriteLinearTransform(vtkMRMLLinearTransformNode *ln);
-  virtual int WriteBSplineTransform(vtkMRMLBSplineTransformNode *bs);
-
   virtual int WriteTransform(vtkMRMLTransformNode *transformNode);
 
 
