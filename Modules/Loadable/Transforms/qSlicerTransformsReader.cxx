@@ -83,7 +83,7 @@ qSlicerIO::IOFileType qSlicerTransformsReader::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsReader::extensions()const
 {
-  return QStringList() << "Transform (*.tfm *.mat *.nrrd *.nhdr *.mha *.mhd *.nii *.nii.gz *.txt)";
+  return QStringList() << "Transform (*.h5 *.tfm *.mat *.nrrd *.nhdr *.mha *.mhd *.nii *.nii.gz *.txt)";
 }
 
 //-----------------------------------------------------------------------------

@@ -60,7 +60,25 @@ protected:
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
   virtual int ReadLinearTransform(vtkMRMLNode *refNode);
+
+  /// This method is specialized for ITKv3 tfm files as generated
+  /// by legacy versions of BRAINSFit (see slicer issue #3788).
+  /// This generates the vtkOrientedBSplineTransform to match
+  /// the unusual mathematics of the ITKv3 bspline transform.
   virtual int ReadBSplineTransform(vtkMRMLNode *refNode);
+
+  /// This method uses ITK's transform reading infrastucture to
+  /// read composite transforms.  The composite transform can
+  /// contain nested transforms in any order coming in theory
+  /// from any file type.  In practice, as of Slicer 4.4, only HDF5 (.h5)
+  /// files can support composite transforms and the only composite
+  /// transform in general use is one which includes a linear component
+  /// and a bspline component.  Because this method is used to fill a
+  /// single MRML transform node, it maps the linear+bpline itk composite
+  /// transform into a single vtkGeneralTransform that can include
+  /// the linear and nonlinear components.
+  /// (see slicer issue #3788).
+  virtual int ReadCompositeTransform(vtkMRMLNode *refNode);
 
   /// Read displacement field transform from a 3-component scalar image.
   /// The 3 scalar components in the file specify the displacement
