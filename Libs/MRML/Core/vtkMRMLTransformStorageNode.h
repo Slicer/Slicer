@@ -19,6 +19,7 @@
 
 class vtkImageData;
 
+class vtkMRMLTransformNode;
 class vtkMRMLLinearTransformNode;
 class vtkMRMLBSplineTransformNode;
 class vtkMRMLGridTransformNode;
@@ -94,6 +95,9 @@ protected:
 
   virtual int WriteLinearTransform(vtkMRMLLinearTransformNode *ln);
   virtual int WriteBSplineTransform(vtkMRMLBSplineTransformNode *bs);
+
+  virtual int WriteTransform(vtkMRMLTransformNode *transformNode);
+
 
   /// Write displacement field transform from a 3-component scalar image.
   /// The 3 scalar components in Slicer specify the displacement
