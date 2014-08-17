@@ -1222,9 +1222,12 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     }
 
   // Extend the list if needed. But don't do it if the node ID to add is null.
-  if (n >= static_cast<int>(referencedNodes.size()) &&
-      referencedNodeID != 0)
+  if (n >= static_cast<int>(referencedNodes.size()))
     {
+    if (referencedNodeID == 0)
+      {
+      return 0;
+      }
     vtkNew<vtkMRMLNodeReference> reference;
     reference->ReferencingNode = this;
     reference->ReferencedNode = 0;
@@ -1236,12 +1239,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     }
 
   NodeReferenceListType::iterator referencedNodesIt = referencedNodes.begin() + n;
-  // if we dont find the node or they have the same id
-  // just return null
-  if (referencedNodesIt >= referencedNodes.end())
-    {
-    return 0;
-    }
+
   vtkMRMLNodeReference * reference = (*referencedNodesIt);
 
   // if the node has the same id and events
@@ -1341,9 +1339,12 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     }
 
   // Extend the list if needed. But don't do it if the node ID to add is null.
-  if (n >= static_cast<int>(referencedNodes.size()) &&
-      referencedNodeID != 0)
+  if (n >= static_cast<int>(referencedNodes.size()))
     {
+    if (referencedNodeID == 0)
+      {
+      return 0;
+      }
     vtkNew<vtkMRMLNodeReference> reference;
     reference->ReferencingNode = this;
     reference->ReferencedNode = 0;
@@ -1356,12 +1357,6 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
     }
 
   NodeReferenceListType::iterator referencedNodesIt = referencedNodes.begin() + n;
-
-  // if we dont find the node just return null
-  if (referencedNodesIt >= referencedNodes.end())
-    {
-    return 0;
-    }
 
   vtkMRMLNodeReference * reference = (*referencedNodesIt);
 
