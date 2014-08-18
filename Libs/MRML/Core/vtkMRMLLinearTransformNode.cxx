@@ -127,14 +127,28 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       this->SetMatrixTransformFromParent(matrix.GetPointer());
       }
 
+    // For backward compatibility only (because readWriteAsTransformToParent
+    // is not present anymore in current scenes, because transforms are always
+    // written as TransformFromParent)
+    if (!strcmp(attName, "readWriteAsTransformToParent"))
+      {
+      // There was a bug in the scene writing for linear transforms
+      // which caused readWriteAsTransformToParent to be written incorrectly.
+      // We correct it here by setting ReadAsToParent to 0 if readWriteAsTransformToParent is true
+      // In the long term (when backward compatibility with old scenes is not a strong requirement
+      // anymore) vtkMRMLLinearTransformNode and readWriteAsTransformToParent attribute management
+      // can be completely removed.
+      if (!strcmp(attValue,"true"))
+        {
+        this->ReadAsTransformToParent = 0;
+        }
+      else
+        {
+        this->ReadAsTransformToParent = 1;
+        }
+      }
+
     }
-
-  // For legacy scenes only
-  // Old scene files (that still had readWriteAsTransformToParent) was saved incorrectly for linear transforms:
-  // the transform file was always transformFromParent, regardless of the readWriteAsTransformToParent value.
-  // We set it this->ReadAsTransformToParent accordingly (to maintain compatibility with earlier scenes).
-  this->ReadAsTransformToParent = 0;
-
   this->EndModify(disabledModify);
   this->EndTransformModify(oldTransformModify);
 }
