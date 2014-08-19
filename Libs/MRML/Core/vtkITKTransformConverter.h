@@ -71,7 +71,14 @@ public:
   static void RegisterInverseTransformTypes();
 
   static vtkAbstractTransform* CreateVTKTransformFromITK(vtkObject* loggerObject, TransformType::Pointer transformItk);
-  static itk::Object::Pointer CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk);
+
+  ///
+  /// Create an ITK transform from a VTK transform.
+  /// secondaryTransformItk: Only for backward compatibility. For BSpline transforms that have an additive bulk component, the bulk component is saved
+  ///   in the secondary transform.
+  /// preferITKv3CompatibleTransforms: If true then BSpline transform will created as BSplineDeformableTransform and additive bulk transform component is always written
+  ///   in the secondary transform. If false then BSpline transform will be written as BSplineTransform (multiplicative bulk component is saved in a composite transform).
+  static itk::Object::Pointer CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms);
 
   static bool SetVTKBSplineFromITKv3(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk, TransformType::Pointer bulkTransformItk);
 
@@ -87,7 +94,7 @@ protected:
   static bool SetITKOrientedGridTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkOrientedGridTransform* transformVtk_RAS);
 
   static bool SetVTKBSplineFromITKv4(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk);
-  static bool SetITKv3BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, itk::Object::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
+  static bool SetITKv3BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, itk::Object::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk, bool alwaysAddBulkTransform);
   static bool SetITKv4BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
 
 
@@ -98,7 +105,7 @@ protected:
   template <typename T> static bool SetVTKBSplineFromITKv4Generic(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, TransformType::Pointer warpTransformItk);
 
   template <typename BSplineTransformType> static bool SetITKBSplineParametersFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform< typename BSplineTransformType::ScalarType,VTKDimension,VTKDimension>::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
-  template <typename T> static bool SetITKv3BSplineFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
+  template <typename T> static bool SetITKv3BSplineFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk, bool alwaysAddBulkTransform);
   template <typename T> static bool SetITKv4BSplineFromVTKGeneric(vtkObject* loggerObject, typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
 
 };
@@ -682,7 +689,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
 template <typename T> bool vtkITKTransformConverter::SetITKv3BSplineFromVTKGeneric(vtkObject* loggerObject,
   typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& warpTransformItk,
   typename itk::Transform<T,VTKDimension,VTKDimension>::Pointer& bulkTransformItk,
-  vtkOrientedBSplineTransform* bsplineVtk)
+  vtkOrientedBSplineTransform* bsplineVtk, bool alwaysAddBulkTransform)
 {
   if (bsplineVtk==NULL)
     {
@@ -707,7 +714,7 @@ template <typename T> bool vtkITKTransformConverter::SetITKv3BSplineFromVTKGener
     }
 
   vtkMatrix4x4* bulkMatrix_RAS=bsplineVtk->GetBulkTransformMatrix();
-  if (bulkMatrix_RAS)
+  if (bulkMatrix_RAS || alwaysAddBulkTransform)
     {
     vtkNew<vtkMatrix4x4> lpsToRas;
     lpsToRas->SetElement(0,0,-1);
@@ -716,9 +723,13 @@ template <typename T> bool vtkITKTransformConverter::SetITKv3BSplineFromVTKGener
     rasToLps->SetElement(0,0,-1);
     rasToLps->SetElement(1,1,-1);
     vtkNew<vtkMatrix4x4> bulkMatrix_LPS; // bulk_LPS = rasToLps * bulk_RAS * lpsToRas
-    vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), bulkMatrix_RAS, bulkMatrix_LPS.GetPointer());
-    vtkMatrix4x4::Multiply4x4(bulkMatrix_LPS.GetPointer(), lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer());
-
+    // If bulk transform is available then use it, otherwise just write an identity matrix (we just write it because
+    // alwaysAddBulkTransform was requested, due to backward compatibility reasons)
+    if (bulkMatrix_RAS!=NULL)
+      {
+      vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), bulkMatrix_RAS, bulkMatrix_LPS.GetPointer());
+      vtkMatrix4x4::Multiply4x4(bulkMatrix_LPS.GetPointer(), lpsToRas.GetPointer(), bulkMatrix_LPS.GetPointer());
+      }
     typedef itk::AffineTransform<T,VTKDimension> BulkTransformType;
     typename BulkTransformType::Pointer affineItk = BulkTransformType::New();
     bulkTransformItk = affineItk;
@@ -771,7 +782,7 @@ template <typename T> bool vtkITKTransformConverter::SetITKv4BSplineFromVTKGener
 
 //----------------------------------------------------------------------------
 bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk,
-  itk::Object::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk)
+  itk::Object::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk, bool alwaysAddBulkTransform)
 {
   if (bsplineVtk==NULL)
     {
@@ -796,7 +807,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     typedef itk::Transform<float, VTKDimension, VTKDimension > ITKTransformType;
     ITKTransformType::Pointer floatWarpTransformItk;
     ITKTransformType::Pointer floatBulkTransformItk;
-    if (!SetITKv3BSplineFromVTKGeneric<float>(loggerObject, floatWarpTransformItk, floatBulkTransformItk, bsplineVtk))
+    if (!SetITKv3BSplineFromVTKGeneric<float>(loggerObject, floatWarpTransformItk, floatBulkTransformItk, bsplineVtk, alwaysAddBulkTransform))
       {
       vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file");
       return false;
@@ -809,7 +820,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     typedef itk::Transform<double, VTKDimension, VTKDimension > ITKTransformType;
     ITKTransformType::Pointer doubleWarpTransformItk;
     ITKTransformType::Pointer doubleBulkTransformItk;
-    if (!SetITKv3BSplineFromVTKGeneric<double>(loggerObject, doubleWarpTransformItk, doubleBulkTransformItk, bsplineVtk))
+    if (!SetITKv3BSplineFromVTKGeneric<double>(loggerObject, doubleWarpTransformItk, doubleBulkTransformItk, bsplineVtk, alwaysAddBulkTransform))
       {
       vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file");
       return false;
@@ -1126,7 +1137,7 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
 }
 
 //----------------------------------------------------------------------------
-itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk)
+itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms)
 {
   if (transformVtk==NULL)
     {
@@ -1163,9 +1174,9 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
       {
       vtkOrientedBSplineTransform* bsplineTransformVtk = vtkOrientedBSplineTransform::SafeDownCast(singleTransformVtk);
       vtkMatrix4x4* bulkMatrix = bsplineTransformVtk->GetBulkTransformMatrix(); // non-zero for ITKv3 bspline transform only
-      if (bulkMatrix!=NULL && !IsIdentityMatrix(bulkMatrix))
+      if (preferITKv3CompatibleTransforms || (bulkMatrix!=NULL && !IsIdentityMatrix(bulkMatrix)))
         {
-        if (!SetITKv3BSplineFromVTK(loggerObject, primaryTransformItk, secondaryTransformItk, bsplineTransformVtk))
+        if (!SetITKv3BSplineFromVTK(loggerObject, primaryTransformItk, secondaryTransformItk, bsplineTransformVtk, preferITKv3CompatibleTransforms))
           {
           // conversion failed
           return 0;
@@ -1215,7 +1226,10 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
       {
       vtkAbstractTransform* singleTransformVtk = vtkAbstractTransform::SafeDownCast(transformList->GetItemAsObject(transformIndex));
       itk::Object::Pointer secondaryTransformItk;
-      itk::Object::Pointer singleTransformItk = CreateITKTransformFromVTK(loggerObject, singleTransformVtk, secondaryTransformItk);
+      // We use ITKv4 format (PreferITKv3Transform format is set to false), because
+      // legacy ITKv3 code does not know how to interpret composite transforms,
+      // and also ITKv3 bspline transform with bulk component cannot be saved in a composite transform
+      itk::Object::Pointer singleTransformItk = CreateITKTransformFromVTK(loggerObject, singleTransformVtk, secondaryTransformItk, false );
       if (secondaryTransformItk.IsNotNull())
         {
         vtkErrorWithObjectMacro(loggerObject, "vtkITKTransformConverter::CreateITKTransformFromVTK failed: composite transforms cannot contain legacy transforms (that contains secondary transforms). Do not harden transforms on legacy ITK transforms to avoid this error.");

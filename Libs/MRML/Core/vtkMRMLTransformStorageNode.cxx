@@ -36,6 +36,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 {
+  this->PreferITKv3CompatibleTransforms = 1;
   vtkITKTransformConverter::RegisterInverseTransformTypes();
 }
 
@@ -43,10 +44,70 @@ vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 vtkMRMLTransformStorageNode::~vtkMRMLTransformStorageNode()
 {
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformStorageNode::WriteXML(ostream& of, int nIndent)
+{
+  Superclass::WriteXML(of, nIndent);
+  vtkIndent indent(nIndent);
+  of << indent << " preferITKv3CompatibleTransforms=\"" << (this->PreferITKv3CompatibleTransforms ? "true" : "false") << "\"";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformStorageNode::ReadXMLAttributes(const char** atts)
+{
+  int disabledModify = this->StartModify();
+
+  Superclass::ReadXMLAttributes(atts);
+
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL)
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "preferITKv3CompatibleTransforms"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->PreferITKv3CompatibleTransforms = 1;
+        }
+      else
+        {
+        this->PreferITKv3CompatibleTransforms = 0;
+        }
+      }
+    }
+
+  this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+// Copy the node\"s attributes to this object.
+// Does NOT copy: ID, FilePrefix, Name, SliceID
+void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode *anode)
+{
+  if (!anode)
+    {
+    return;
+    }
+  int disabledModify = this->StartModify();
+
+  Superclass::Copy(anode);
+  vtkMRMLTransformStorageNode *node = vtkMRMLTransformStorageNode::SafeDownCast(anode);
+
+  this->SetPreferITKv3CompatibleTransforms(node->GetPreferITKv3CompatibleTransforms());
+
+  this->EndModify(disabledModify);
+
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLTransformStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
+  os << indent << "PreferITKv3CompatibleTransforms: " <<
+    (this->PreferITKv3CompatibleTransforms ? "true" : "false") << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -381,7 +442,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
 
   // Convert VTK transform to ITK transform
   itk::Object::Pointer secondaryTransformItk; // only used for ITKv3 compatibility
-  itk::Object::Pointer transformItk = vtkITKTransformConverter::CreateITKTransformFromVTK(this, transformVtk, secondaryTransformItk);
+  itk::Object::Pointer transformItk = vtkITKTransformConverter::CreateITKTransformFromVTK(this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms);
   if (transformItk.IsNull())
     {
     vtkErrorMacro("WriteTransform failed: cannot to convert VTK transform to ITK transform");

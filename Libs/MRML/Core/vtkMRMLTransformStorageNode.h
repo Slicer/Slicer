@@ -33,8 +33,20 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
   virtual vtkMRMLNode* CreateNodeInstance();
 
   ///
+  /// Set node attributes
+  virtual void ReadXMLAttributes( const char** atts);
+
+  ///
+  /// Write this node's information to a MRML file in XML format.
+  virtual void WriteXML(ostream& of, int indent);
+
+  ///
   /// Get node XML tag name (like Storage, Transform)
   virtual const char* GetNodeTagName()  {return "TransformStorage";};
+
+  ///
+  /// Copy the node's attributes to this object
+  virtual void Copy(vtkMRMLNode *node);
 
   ///
   /// Initialize all the supported write file types
@@ -46,6 +58,15 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 
   /// Support only transform nodes
   virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
+
+  ///
+  /// If true then BSpline transforms will be written as deprecated but ITKv3-compatible
+  /// itk::BSplineDeformableTransform (instead of current itk::BSplineTransform).
+  /// If a transform cannot be written to ITKv3 format, then this flag is ignored and the transform
+  /// is written in ITKv4 format.
+  vtkGetMacro ( PreferITKv3CompatibleTransforms, int );
+  vtkSetMacro ( PreferITKv3CompatibleTransforms, int );
+  vtkBooleanMacro ( PreferITKv3CompatibleTransforms, int );
 
 protected:
   vtkMRMLTransformStorageNode();
@@ -104,6 +125,9 @@ protected:
   /// displacement vectors are converted to LPS coordinate system.
   virtual int WriteToImageFile(vtkMRMLNode* refNode);
 
+protected:
+
+  int PreferITKv3CompatibleTransforms;
 };
 
 #endif
