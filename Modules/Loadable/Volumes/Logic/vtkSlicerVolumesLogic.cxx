@@ -964,36 +964,101 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
     return NULL;
     }
 
-  // clone the display node
+  // TODO: this code should be made run-time polymorphic so in order
+  // to avoid explicit instantiation here.  Probably the solution is
+  // to provide static New methods for each concrete subclass of
+  // vtkMRMLNode, but that has not been tested.
+  // At this point, we check all the current subclasses
+  // http://slicer.org/doc/html/classvtkMRMLVolumeNode.html
+  // http://slicer.org/doc/html/classvtkMRMLVolumeDisplayNode.html
+
+  // clone the display node if possible
   vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
-  vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
-  if ( labelDisplayNode )
-    {
-    clonedDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
-    }
-  else
-    {
-    clonedDisplayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-    }
   if ( volumeNode->GetDisplayNode() )
     {
-    clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
-    scene->AddNode(clonedDisplayNode);
+    vtkMRMLLabelMapVolumeDisplayNode          *labelDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+    vtkMRMLDiffusionWeightedVolumeDisplayNode *dwvDisplayNode   = vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+    vtkMRMLDiffusionTensorVolumeDisplayNode   *dtvDisplayNode   = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+    vtkMRMLVectorVolumeDisplayNode            *vvDisplayNode    = vtkMRMLVectorVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+    vtkMRMLScalarVolumeDisplayNode            *svDisplayNode    = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(volumeNode->GetDisplayNode());
+
+    if ( labelDisplayNode )
+      {
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
+      }
+    else if ( dwvDisplayNode )
+      {
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode>::New();
+      }
+    else if ( dwvDisplayNode )
+      {
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode>::New();
+      }
+    else if ( dtvDisplayNode )
+      {
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode>::New();
+      }
+    else if ( vvDisplayNode )
+      {
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode>::New();
+      }
+    else if ( svDisplayNode )
+      {
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
+      }
+
+    if (clonedDisplayNode)
+      {
+      clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
+      scene->AddNode(clonedDisplayNode);
+      }
     }
 
   // clone the volume node
-  vtkNew<vtkMRMLScalarVolumeNode> clonedVolumeNode;
+  vtkSmartPointer<vtkMRMLScalarVolumeNode> clonedVolumeNode;
+  vtkMRMLDiffusionWeightedVolumeNode *dwvNode   = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volumeNode);
+  vtkMRMLDiffusionTensorVolumeNode   *dtvNode   = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(volumeNode);
+  vtkMRMLVectorVolumeNode            *vvNode    = vtkMRMLVectorVolumeNode::SafeDownCast(volumeNode);
+  vtkMRMLScalarVolumeNode            *svNode    = vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+
+    if ( dwvNode )
+      {
+      clonedVolumeNode = vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeNode>::New();
+      }
+    else if ( dwvNode )
+      {
+      clonedVolumeNode = vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeNode>::New();
+      }
+    else if ( dtvNode )
+      {
+      clonedVolumeNode = vtkSmartPointer<vtkMRMLDiffusionTensorVolumeNode>::New();
+      }
+    else if ( vvNode )
+      {
+      clonedVolumeNode = vtkSmartPointer<vtkMRMLVectorVolumeNode>::New();
+      }
+    else if ( svNode )
+      {
+      clonedVolumeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+      }
+
+  if ( !clonedVolumeNode )
+    {
+    vtkErrorWithObjectMacro(volumeNode, "Could not clone volume!");
+    return NULL;
+    }
+
   clonedVolumeNode->CopyWithScene(volumeNode);
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
   std::string uname = scene->GetUniqueNameByString(name);
   clonedVolumeNode->SetName(uname.c_str());
-  if ( volumeNode->GetDisplayNode() )
+  if ( clonedDisplayNode )
     {
     clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
     }
 
   // copy over the volume's data
- // Kilian: VTK crashes when volumeNode->GetImageData() = NULL
+  // Kilian: VTK crashes when volumeNode->GetImageData() = NULL
   if (volumeNode->GetImageData())
     {
     vtkNew<vtkImageData> clonedVolumeData;
