@@ -25,5 +25,6 @@ SEMMacroBuildCLI(
     ${MRMLCore_INCLUDE_DIRS}
     ${vtkITK_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
+  NO_INSTALL
   )
 
