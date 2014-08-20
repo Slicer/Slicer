@@ -50,6 +50,7 @@ namespace itk
 
     /** Define all computation methods as unimplemented to make sure they are not used
     (the inherited implementations are for the forward transform, so they would not give correct results) */
+    using Superclass::TransformPoint;
     virtual typename Superclass::OutputPointType TransformPoint(
         const typename Superclass::InputPointType&) const
       {
@@ -116,6 +117,7 @@ namespace itk
 
     /** Define all computation methods as unimplemented to make sure they are not used
     (the inherited implementations are for the forward transform, so they would not give correct results) */
+    using Superclass::TransformPoint;
     virtual typename Superclass::OutputPointType TransformPoint(
         const typename Superclass::InputPointType&) const
       {
