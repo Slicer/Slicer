@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
+#include <QFile>
 #include <QMainWindow>
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
