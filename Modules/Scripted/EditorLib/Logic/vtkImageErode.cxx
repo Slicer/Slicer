@@ -12,7 +12,9 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkVersion.h>
 
+#ifndef NDEBUG
 #include <ctime>
+#endif
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkImageErode);
@@ -73,8 +75,10 @@ static void vtkImageErodeExecute(vtkImageErode *self,
   unsigned long count = 0;
   unsigned long target;
 
+#ifndef NDEBUG
   clock_t tStart, tEnd, tDiff;
   tStart = clock();
+#endif
 
   // Get information to march through data
   inData->GetIncrements(inInc0, inInc1, inInc2);
@@ -193,8 +197,10 @@ static void vtkImageErodeExecute(vtkImageErode *self,
     outPtr++;
     }
 
+#ifndef NDEBUG
   tEnd = clock();
   tDiff = tEnd - tStart;
+#endif
   vtkDebugWithObjectMacro(self, << "tDiff:" << tDiff);
 }
 
