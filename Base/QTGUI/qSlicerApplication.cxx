@@ -624,7 +624,7 @@ void qSlicerApplication::setupFileLogging()
   // written out along with the new log file name.
   QList<QString> logFilePaths;
   revisionUserSettings->beginGroup("LogFiles");
-  for (unsigned int fileNumber=0; fileNumber<numberOfFilesToKeep; ++fileNumber)
+  for (int fileNumber = 0; fileNumber < numberOfFilesToKeep; ++fileNumber)
     {
     QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
     QString filePath = revisionUserSettings->value(paddedFileNumber, "").toString();
