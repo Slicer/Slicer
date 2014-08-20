@@ -71,7 +71,6 @@ if(Slicer_BUILD_LEGACY_CLI)
     OtsuThresholdImageFilter
     OtsuThresholdSegmentation
     ResampleScalarVolume
-    RigidRegistration
     )
   if(BUILD_TESTING)
     list(APPEND legacy_cli_modules
