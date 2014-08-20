@@ -324,7 +324,6 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
     // The composite transform is itself a list of transforms.  There is a
     // helper class in ITK to convert the internal transform list into a
     // list that is possible to iterate over.  So we get this transformList.
-    typedef const itk::CompositeTransformIOHelper::TransformType ComponentTransformType;
     itk::CompositeTransformIOHelper compositeTransformIOHelper;
 
     // if the first transform in the list is a
