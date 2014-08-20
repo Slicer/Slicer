@@ -67,7 +67,6 @@ if(Slicer_BUILD_LEGACY_CLI)
     BSplineToDeformationField
     ExpertAutomatedRegistration
     FiducialRegistration
-    LinearRegistration
     MultiResolutionAffineRegistration
     OtsuThresholdImageFilter
     OtsuThresholdSegmentation
