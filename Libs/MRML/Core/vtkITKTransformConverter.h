@@ -377,7 +377,6 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetVTKBS
     coefficientImages[0]->GetDirection();
 
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
-  int fpIndex=9;
   for (unsigned int row=0; row<VTKDimension; row++)
     {
     for (unsigned int column=0; column<VTKDimension; column++)
