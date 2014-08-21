@@ -33,7 +33,17 @@ if(NOT WIN32)
 
     set(_configure_extra_args)
     if(APPLE)
-      set(_configure_extra_args --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x)
+      set(x_libraries /usr/X11R6/lib)
+      set(x_includes /usr/X11R6/include)
+      if(DARWIN_MAJOR_VERSION GREATER 11)
+        # With version of MacOSX > 11.x (Lion), Apple has dropped dedicated support
+        # for X11.app, with users directed to the open source XQuartz project instead.
+        # See http://en.wikipedia.org/wiki/XQuartz
+        # Headers and libraries provided by XQuartz are located in '/opt/X11'
+        set(x_libraries /opt/X11/lib)
+        set(x_includes /opt/X11/include)
+      endif()
+      set(_configure_extra_args --disable-corefoundation --x-libraries=${x_libraries} --x-includes=${x_includes} --with-x)
     endif()
 
     # configure step
