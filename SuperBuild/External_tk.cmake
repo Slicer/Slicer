@@ -74,8 +74,8 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tk"
-      SVN_REVISION -r "114"
+      URL "http://slicer.kitware.com/midas3/download/item/155631/tk8.6.1-src.tar.gz"
+      URL_MD5 "63f21c3a0e0cefbd854b4eb29b129ac6"
       UPDATE_COMMAND "" # Disable update
       SOURCE_DIR tcl/tk
       BUILD_IN_SOURCE 1

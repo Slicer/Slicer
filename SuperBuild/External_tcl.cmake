@@ -30,8 +30,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(tcl_base ${CMAKE_CURRENT_BINARY_DIR}/tcl)
   set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
 
-  set(TCL_TK_VERSION_DOT "8.4")
-  set(TCL_TK_VERSION "84")
+  set(tcl_DOWNLOAD_COMMAND)
 
   if(WIN32)
     if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
@@ -42,21 +41,32 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl85-x64-build")
       set(tcl_SVN_REVISION -r "184")
     else()
+      set(TCL_TK_VERSION_DOT "8.4")
+      set(TCL_TK_VERSION "84")
       set(INCR_TCL_VERSION_DOT "3.2")
       set(INCR_TCL_VERSION "32")
       set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
       set(tcl_SVN_REVISION -r "176")
     endif()
+    set(tcl_DOWNLOAD_COMMAND
+      SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
+      SVN_REVISION ${tcl_SVN_REVISION}
+      )
     set(tcl_SOURCE_DIR tcl-build)
     mark_as_superbuild(
       INCR_TCL_VERSION_DOT:STRING
       INCR_TCL_VERSION:STRING
       )
   else()
-    set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/tcl")
-    set(tcl_SVN_REVISION -r "81")
+    set(TCL_TK_VERSION_DOT "8.6")
+    set(TCL_TK_VERSION "86")
     set(tcl_SOURCE_DIR tcl/tcl)
     set(tcl_BUILD_IN_SOURCE 1)
+
+    set(tcl_DOWNLOAD_COMMAND
+      URL "http://slicer.kitware.com/midas3/download/item/155630/tcl8.6.1-src.tar.gz"
+      URL_MD5 "aae4b701ee527c6e4e1a6f9c7399882e"
+      )
 
     include(ExternalProjectForNonCMakeProject)
 
@@ -106,8 +116,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
-    SVN_REVISION ${tcl_SVN_REVISION}
+    ${tcl_DOWNLOAD_COMMAND}
     UPDATE_COMMAND "" # Disable update
     SOURCE_DIR ${tcl_SOURCE_DIR}
     BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}

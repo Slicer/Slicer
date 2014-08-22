@@ -13,23 +13,12 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(INCR_TCL_VERSION_DOT "3.2")
-  set(INCR_TCL_VERSION "32")
-  set(incrTcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/tcl/incrTcl")
-  set(incrTcl_SVN_REVISION -r "4")
-  set(incrTcl_PATCH_COMMAND "")
-
-  if(APPLE)
-    set(incrTcl_configure ${tcl_base}/incrTcl/itcl/configure)
-    set(incrTcl_configure_find "*.c | *.o | *.obj) \;\;")
-    set(incrTcl_configure_replace "*.c | *.o | *.obj | *.dSYM | *.gnoc ) \;\;")
-
-    set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/SlicerBlockStringFindReplace.cmake)
-    set(in ${incrTcl_configure})
-    set(out ${incrTcl_configure})
-
-    set(incrTcl_PATCH_COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=${incrTcl_configure_find} -Dreplace=${incrTcl_configure_replace} -P ${script})
-  endif()
+  set(INCR_TCL_VERSION_DOT "4.0")
+  set(INCR_TCL_VERSION "40")
+  set(incrTcl_DOWNLOAD_COMMAND
+    URL "http://slicer.kitware.com/midas3/download/item/155632/itcl4.0.1.tar.gz"
+    URL_MD5 "8d71d4247b19ad5d6bcbb776590ced55"
+    )
 
   if(UNIX)
 
@@ -67,12 +56,10 @@ ExternalProject_Execute(${proj} \"install\" make install)
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
-      SVN_REVISION ${incrTcl_SVN_REVISION}
+      ${incrTcl_DOWNLOAD_COMMAND}
       UPDATE_COMMAND "" # Disable update
       SOURCE_DIR tcl/incrTcl
       BUILD_IN_SOURCE 1
-      PATCH_COMMAND ${incrTcl_PATCH_COMMAND}
       CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script}
       BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script}
       INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script}
