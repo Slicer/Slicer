@@ -791,6 +791,32 @@ void vtkMRMLSliceLogic
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
+::GetForegroundWindowLevelAndRange(double& window, double& level,
+                                         double& rangeLow, double& rangeHigh)
+{
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (1) );
+    // 0 is background layer, definied in this::GetLayerVolumeNode
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
+  if (volumeNode)
+    {
+     volumeDisplayNode =
+      vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
+    }
+  vtkImageData* imageData;
+  if (volumeDisplayNode && (imageData = volumeNode->GetImageData()) )
+    {
+    window = volumeDisplayNode->GetWindow();
+    level = volumeDisplayNode->GetLevel();
+    double range[2];
+    imageData->GetScalarRange(range);
+    rangeLow = range[0];
+    rangeHigh = range[1];
+    }
+}
+
+//----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 vtkImageData * vtkMRMLSliceLogic::GetImageData()
 {

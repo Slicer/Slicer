@@ -105,6 +105,11 @@ public:
   void GetBackgroundWindowLevelAndRange(double& window, double& level,
                                       double& rangeLow, double& rangeHigh);
 
+
+  ///
+  /// Helper to aget the foreground layer Window/Level
+  void GetForegroundWindowLevelAndRange(double& window, double& level,
+                                      double& rangeLow, double& rangeHigh);
   ///
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);

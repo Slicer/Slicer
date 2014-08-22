@@ -135,6 +135,9 @@ protected:
   /// Open a popup to warn the user Slicer is not for clinical use.
   virtual void disclaimer();
 
+    /// Open a popup to notify the user that slicer has the new feature for displaying annotations on the slice views.
+  virtual void sliceViewAnnotationsNotification();
+
   /// Forward the dragEnterEvent to the IOManager which will
   /// decide if it could accept a drag/drop or not.
   /// \sa dropEvent()
