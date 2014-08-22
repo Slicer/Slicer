@@ -66,12 +66,6 @@ ExternalProject_Execute(${proj} \"install\" make install)
       DEPENDS
         ${${proj}_DEPENDENCIES}
     )
-
-    ExternalProject_Add_Step(${proj} CHMOD_incrTcl_configure
-      COMMAND chmod +x ${tcl_base}/incrTcl/configure
-      DEPENDEES patch
-      DEPENDERS configure
-      )
   endif()
 
   mark_as_superbuild(
