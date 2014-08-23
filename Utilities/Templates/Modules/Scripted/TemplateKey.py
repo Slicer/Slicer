@@ -26,7 +26,7 @@ class TemplateKey(ScriptedLoadableModule):
 # TemplateKeyWidget
 #
 
-class TemplateKeyWidget(ScriptedLoadableModuleWidget)::
+class TemplateKeyWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
