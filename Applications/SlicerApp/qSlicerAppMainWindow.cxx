@@ -1033,7 +1033,7 @@ void qSlicerAppMainWindow::showEvent(QShowEvent *event)
   this->Superclass::showEvent(event);
   if (!event->spontaneous())
     {
-    this->sliceViewAnnotationsNotification();
+    //this->sliceViewAnnotationsNotification();
     this->disclaimer();
     }
 }
