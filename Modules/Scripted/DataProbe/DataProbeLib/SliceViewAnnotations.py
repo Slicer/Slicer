@@ -580,6 +580,7 @@ class SliceAnnotations(object):
     scalarBar.SetLookupTable(lookupTable)
     scalarBarWidget = vtk.vtkScalarBarWidget()
     scalarBarWidget.SetScalarBarActor(scalarBar)
+    scalarBarWidget.RepositionableOff()
     self.colorScalarBarWidgets[sliceViewName] = scalarBarWidget
     return scalarBar
 
