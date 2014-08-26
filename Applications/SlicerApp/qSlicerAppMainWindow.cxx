@@ -1033,7 +1033,6 @@ void qSlicerAppMainWindow::showEvent(QShowEvent *event)
   this->Superclass::showEvent(event);
   if (!event->spontaneous())
     {
-    //this->sliceViewAnnotationsNotification();
     this->disclaimer();
     }
 }
@@ -1057,28 +1056,6 @@ void qSlicerAppMainWindow::disclaimer()
   disclaimerMessage->setText(message);
   disclaimerMessage->setIcon(QMessageBox::Information);
   disclaimerMessage->setDontShowAgainSettingsKey("MainWindow/DontShowDisclaimerMessage");
-  QTimer::singleShot(0, disclaimerMessage, SLOT(exec()));
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerAppMainWindow::sliceViewAnnotationsNotification()
-{
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) ||
-      !app->coreCommandOptions()->pythonCode().isEmpty() ||
-      !app->coreCommandOptions()->pythonScript().isEmpty())
-    {
-    return;
-    }
-  QString message = QString("Slicer has a new feature for displaying\n"
-                              "annotations on the slice views.\n\n"
-                            "Controls for this features can be accessed \n"
-                              "using the gear icon of the DataProbe.");
-  ctkMessageBox* disclaimerMessage = new ctkMessageBox(this);
-  disclaimerMessage->setAttribute( Qt::WA_DeleteOnClose, true );
-  disclaimerMessage->setText(message);
-  disclaimerMessage->setIcon(QMessageBox::Information);
-  disclaimerMessage->setDontShowAgainSettingsKey("MainWindow/DontShowSliceViewAnnotationsNotification");
   QTimer::singleShot(0, disclaimerMessage, SLOT(exec()));
 }
 
