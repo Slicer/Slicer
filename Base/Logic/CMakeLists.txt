@@ -174,7 +174,7 @@ endif()
 if(Slicer_USE_PYTHONQT)
   if(${VTK_VERSION_MAJOR} GREATER 5)
     set(VTK_COMMON_PYTHON_LIBRARY
-      vtkCommonCorePythonD # For vtkPythonUtils
+      vtkWrappingPythonCore # For vtkPythonUtil
       )
   else()
     set(VTK_COMMON_PYTHON_LIBRARY
