@@ -496,7 +496,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkImagingStatistics
     vtkImagingStencil
     vtkInteractionImage
-    vtkRenderingFreeTypeOpenGL
+    vtkRenderingContextOpenGL
     vtkRenderingQt
     vtkRenderingVolumeOpenGL
     vtkTestingRendering
@@ -510,6 +510,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
   if(UNIX AND NOT APPLE)
     list(APPEND Slicer_VTK_COMPONENTS
       vtkRenderingFreeTypeFontConfig
+      vtkRenderingFreeTypeOpenGL
       )
   endif()
 endif()

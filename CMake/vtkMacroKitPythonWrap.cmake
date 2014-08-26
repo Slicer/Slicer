@@ -57,52 +57,23 @@ macro(vtkMacroKitPythonWrap)
     # the shared library containing the wrappers for this kit.
     add_library(${MY_KIT_NAME}PythonD ${KitPython_SRCS} ${MY_KIT_PYTHON_EXTRA_SRCS})
 
-    # Not all the vtk libraries have their python wrapping
-    if(${VTK_VERSION_MAJOR} GREATER 5)
-       set(VTK_NO_PYTHON_WRAP_LIBRARIES
-         vtkexpat
-         vtkexoIIc
-         vtkjsoncpp
-         vtkpng
-         vtksys
-         vtkNetCDF
-         vtkNetCDF_cxx
-         vtkhdf5_hl
-         vtkhdf5
-         vtkalglib
-         vtkDICOMParser
-         vtkmetaio
-         vtkjpeg
-         vtktiff
-         vtkfreetype
-         vtkftgl
-         vtkgl2ps
-         vtksqlite
-         vtkoggtheora
-         vtkWrappingPythonCore
-         vtkWrappingTools
-         vtkGUISupportQt
-         vtklibxml2
-         vtkproj4
-         vtkViewsQt
-         vtkGUISupportQtWebkit
-         vtkGUISupportQtSQL
-         vtkGUISupportQtOpenGL
-         )
-      if(NOT WIN32)
-        list(APPEND VTK_NO_PYTHON_WRAP_LIBRARIES
-          vtkRenderingFreeTypeFontConfig)
-      endif()
-    else()
-      set(VTK_NO_PYTHON_WRAP_LIBRARIES "")
-    endif()
-    foreach(lib ${VTK_NO_PYTHON_WRAP_LIBRARIES})
-      list(REMOVE_ITEM VTK_LIBRARIES ${lib})
-    endforeach()
-
     set(VTK_KIT_PYTHON_LIBRARIES)
-    foreach(c ${VTK_LIBRARIES})
-      if(${c} MATCHES "^vtk.+") # exclude system libraries
+    # XXX Hard-coded list of VTK kits available when building
+    #     with VTK_ENABLE_KITS set to 1
+    set(vtk_kits
+      vtkCommonKit
+      vtkFiltersKit
+      vtkImagingKit
+      vtkRenderingKit
+      vtkIOKit
+      vtkOpenGLKit
+      vtkInteractionKit
+      vtkViewsKit
+      vtkParallelKit
+      vtkWrappingKit
+      )
+    foreach(c ${VTK_LIBRARIES} ${vtk_kits})
+      if(${c} MATCHES "^vtk.+" AND TARGET ${c}PythonD) # exclude system libraries
         list(APPEND VTK_KIT_PYTHON_LIBRARIES ${c}PythonD)
       endif()
     endforeach()
