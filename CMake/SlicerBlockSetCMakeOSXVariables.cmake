@@ -58,7 +58,12 @@ if(APPLE)
     /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
     /Developer/SDKs
     )
-  set(SDK_VERSIONS_TO_CHECK 10.9 10.8 10.7 10.6 10.5)
+  # XXX Since (1) the default runtime associated with 10.9 is libc++ [1]
+  #     and (2) qt support for 'macx-clang-libc++' is listed as 'unsupported' mkspecs
+  #     and (3) Qt binaries are (as expected) build against 'libstdc++', we
+  #     are removing 10.9 from the list of version to check.
+  #     [1] http://stackoverflow.com/questions/19637164/c-linking-error-after-upgrading-to-mac-os-x-10-9-xcode-5-0-1/19637199#19637199
+  set(SDK_VERSIONS_TO_CHECK 10.8 10.7 10.6 10.5)
   foreach(SDK_VERSION ${SDK_VERSIONS_TO_CHECK})
     if(NOT CMAKE_OSX_DEPLOYMENT_TARGET OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" STREQUAL "")
       foreach(SDK_ROOT ${OSX_SDK_ROOTS})
