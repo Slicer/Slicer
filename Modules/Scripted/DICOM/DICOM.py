@@ -272,7 +272,7 @@ class DICOMWidget:
     # connect to the main window's dicom button
     mw = slicer.util.mainWindow()
     try:
-      action = slicer.util.findChildren(mw,name='actionLoadDICOM')[0]
+      action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
       action.connect('triggered()',self.detailsPopup.open)
     except IndexError:
       print('Could not connect to the main window DICOM button')
