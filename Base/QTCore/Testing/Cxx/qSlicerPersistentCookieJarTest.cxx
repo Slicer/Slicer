@@ -42,7 +42,7 @@ void qSlicerPersistentCookieJarTester::testDefaults()
 {
   qSlicerPersistentCookieJar cookieJar;
   // No initialization required
-  QVERIFY(QFileInfo(cookieJar.filePath()).dir().exists());
+  QVERIFY(cookieJar.filePath().endsWith("cookies.ini"));
 }
 
 // ----------------------------------------------------------------------------
