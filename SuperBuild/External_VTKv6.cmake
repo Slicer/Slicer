@@ -89,12 +89,12 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
 
   # Enable VTK_ENABLE_KITS only if CMake >= 3.0 is used
   set(VTK_ENABLE_KITS 0)
-  if(CMAKE_MAJOR_VERSION EQUAL 3 AND APPLE)
+  if(CMAKE_MAJOR_VERSION EQUAL 3)
     set(VTK_ENABLE_KITS 1)
   endif()
 
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "e59c76cb601322562329420dc174ccab0db4e3ce" CACHE STRING "VTK git tag to use" FORCE)
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "898e51ab37d6bdaf23aba14617467b7e5ced8163" CACHE STRING "VTK git tag to use" FORCE)
 
   mark_as_advanced(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG)
 
