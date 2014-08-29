@@ -201,6 +201,12 @@ if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcls)
     )
 endif()
 
+if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
+  list(APPEND SLICER_PATHS_BUILD
+    ${SLICER_PYTHONHOME}/bin/<CMAKE_CFG_INTDIR>
+    )
+endif()
+
 #-----------------------------------------------------------------------------
 # ENVVARS
 #-----------------------------------------------------------------------------
