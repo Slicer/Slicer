@@ -452,6 +452,17 @@ def getFirstNodeByClassByName(className, name):
     return nodes.GetItemAsObject(0)
   return None
 
+class NodeModify:
+  """Context manager to conveniently compress mrml node modified event.
+  """
+  def __init__(self, node):
+    self.node = node
+  def __enter__(self):
+    self.wasModifying = self.node.StartModify()
+    return self.node
+  def __exit__(self, type, value, traceback):
+    self.node.EndModify(self.wasModifying)
+
 #
 # MRML-numpy
 #
