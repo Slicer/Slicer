@@ -1,6 +1,8 @@
 import vtk
 import slicer
 
+from slicer.util import NodeModify
+
 #########################################################
 #
 #
@@ -43,11 +45,25 @@ class EditUtil(object):
     node.SetSingletonTag( "Editor" )
     node.SetModuleName( "Editor" )
     node.SetParameter( "label", "1" )
+    node.SetParameter( "effect", "DefaultTool" )
     slicer.mrmlScene.AddNode(node)
     # Since we are a singleton, the scene won't add our node into the scene,
     # but will instead insert a copy, so we find that and return it
     node = self._findParameterNodeInScene()
     return node
+
+  def getCurrentEffect(self):
+    """return effect associated with the editor parameter node.
+    """
+    return self.getParameterNode().GetParameter('effect')
+
+  def setCurrentEffect(self, name):
+    """set current effect on the editor parameter node.
+    """
+    if name != 'EraseLabel':
+      self.getParameterNode().SetParameter('effect', name)
+    else:
+      self.toggleLabel()
 
   def getCompositeNode(self,layoutName='Red'):
     """ use the Red slice composite node to define the active volumes """
@@ -128,11 +144,22 @@ class EditUtil(object):
 
   def toggleLabel(self):
     """toggle the current label map in the editor parameter node"""
-    if self.getLabel() == 0:
+    if self.isEraseEffectEnabled():
       self.restoreLabel()
     else:
       self.backupLabel()
       self.setLabel(0)
+
+  def isEraseEffectEnabled(self):
+      return self.getLabel() == 0;
+
+  def setEraseEffectEnabled(self, enabled):
+    with NodeModify(self.getParameterNode()):
+      if enabled and not self.isEraseEffectEnabled():
+        self.backupLabel()
+        self.setLabel(0)
+      elif not enabled and self.isEraseEffectEnabled():
+        self.restoreLabel()
 
   def getLabelColor(self):
     """returns rgba tuple for the current paint color """

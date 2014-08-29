@@ -3,6 +3,7 @@ from __main__ import qt
 from EditOptions import *
 import EditUtil
 import EditorLib
+from slicer.util import VTKObservationMixin
 
 #########################################################
 #
@@ -28,8 +29,10 @@ class EditBox(VTKObservationMixin):
     self.effects = []
     self.effectButtons = {}
     self.effectCursors = {}
-    self.effectMapper = qt.QSignalMapper()
-    self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
+    self.effectActionGroup = qt.QActionGroup(parent)
+    self.effectActionGroup.connect('triggered(QAction*)', self._onEffectActionTriggered)
+    self.effectActionGroup.exclusive = True
+    self.currentEffect = None
     self.editUtil = EditUtil.EditUtil()
     self.undoRedo = EditUtil.UndoRedo()
     self.undoRedo.stateChangedCallback = self.updateUndoRedoButtons
@@ -87,6 +90,9 @@ class EditBox(VTKObservationMixin):
     interactionNode = slicer.app.applicationLogic().GetInteractionNode()
     self.addObserver(interactionNode, interactionNode.InteractionModeChangedEvent, self.onInteractionModeChanged)
 
+    # Listen for changed on the Parameter node
+    self.addObserver(self.editUtil.getParameterNode(), vtk.vtkCommand.ModifiedEvent, self._onParameterNodeModified)
+
   def __del__(self):
     self.removeObservers()
 
@@ -94,6 +100,12 @@ class EditBox(VTKObservationMixin):
     if caller.IsA('vtkMRMLInteractionNode'):
       if caller.GetCurrentInteractionMode() != caller.ViewTransform:
         self.defaultEffect()
+
+  def _onParameterNodeModified(self, caller, event=-1):
+    self._onEffectChanged(caller.GetParameter("effect"))
+    self.editUtil.setEraseEffectEnabled(self.editUtil.isEraseEffectEnabled())
+    self.actions["EraseLabel"].checked = self.editUtil.isEraseEffectEnabled()
+    self.actions[self.editUtil.getCurrentEffect()].checked = True
 
   #
   # Public lists of the available effects provided by the editor
@@ -201,12 +213,28 @@ class EditBox(VTKObservationMixin):
           b.setToolTip(EditBox.displayNames[effect])
         hbox.addWidget(b)
 
-        # Setup the mapping between button and its associated effect name
-        self.effectMapper.setMapping(self.buttons[effect], effect)
-        # Connect button with signal mapper
-        self.buttons[effect].connect('clicked()', self.effectMapper, 'map()')
+        if effect not in ('EraseLabel', 'PreviousCheckPoint', 'NextCheckPoint'):
+          # Mapping between action and its associated effect, is done
+          # in function'_onEffectActionTriggered' by retrieving the 'effectName'
+          # property.
+          a.checkable = True
+          a.setProperty('effectName', effect)
+          self.effectActionGroup.addAction(a)
+        elif effect == 'EraseLabel':
+          a.checkable = True
+          a.connect('triggered(bool)', self._onEraseLabelActionTriggered)
+        elif effect == 'PreviousCheckPoint':
+          a.connect('triggered(bool)', self.undoRedo.undo)
+        elif effect == 'NextCheckPoint':
+          a.connect('triggered(bool)', self.undoRedo.redo)
 
     hbox.addStretch(1)
+
+  def _onEffectActionTriggered(self, action):
+    self.selectEffect(action.property('effectName'))
+
+  def _onEraseLabelActionTriggered(self, enabled):
+    self.editUtil.setEraseEffectEnabled(enabled)
 
   # create the edit box
   def create(self):
@@ -258,6 +286,7 @@ class EditBox(VTKObservationMixin):
     vbox.addStretch(1)
 
     self.updateUndoRedoButtons()
+    self._onParameterNodeModified(self.editUtil.getParameterNode())
 
   def setActiveToolLabel(self,name):
     if EditBox.displayNames.has_key(name):
@@ -270,23 +299,16 @@ class EditBox(VTKObservationMixin):
   def defaultEffect(self):
     self.selectEffect("DefaultTool")
 
+  def selectEffect(self, effectName):
+      self.editUtil.setCurrentEffect(effectName)
+
   #
   # manage the editor effects
   #
-  def selectEffect(self, effectName):
+  def _onEffectChanged(self, effectName):
 
-    if effectName != "EraseLabel":
-        self.editUtil.restoreLabel()
-
-    if effectName ==  "EraseLabel":
-        self.editUtil.toggleLabel()
-        return
-    elif effectName ==  "PreviousCheckPoint":
-        self.undoRedo.undo()
-        return
-    elif effectName == "NextCheckPoint":
-        self.undoRedo.redo()
-        return
+    if self.currentEffect == effectName:
+      return
 
     #
     # If there is no background volume or label map, do nothing
@@ -295,6 +317,13 @@ class EditBox(VTKObservationMixin):
       return
     if not self.editUtil.getLabelVolume():
       return
+
+    self.currentEffect = effectName
+
+    self.editUtil.restoreLabel()
+
+    # Update action
+    self.actions[effectName].checked = True
 
     #
     # an effect was selected, so build an options GUI
