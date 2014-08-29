@@ -499,9 +499,9 @@ class VTKObservationMixin(object):
     super(VTKObservationMixin, self).__init__()
     self.Observations = []
 
-  def removeObservers(self, method):
+  def removeObservers(self, method=None):
     for o, e, m, g, t in self.Observations:
-      if method == m:
+      if method == m or method is None:
         o.RemoveObserver(t)
         self.Observations.remove([o, e, m, g, t])
 
