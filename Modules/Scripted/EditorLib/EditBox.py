@@ -21,9 +21,10 @@ comment = """
 # The parent class definition
 #
 
-class EditBox(object):
+class EditBox(VTKObservationMixin):
 
   def __init__(self, parent=None, optionsFrame=None):
+    VTKObservationMixin.__init__(self)
     self.effects = []
     self.effectButtons = {}
     self.effectCursors = {}
@@ -83,14 +84,11 @@ class EditBox(object):
     self.currentTools = []
 
     # listen for changes in the Interaction Mode
-    appLogic = slicer.app.applicationLogic()
-    interactionNode = appLogic.GetInteractionNode()
-    self.interactionNodeTag = interactionNode.AddObserver(interactionNode.InteractionModeChangedEvent, self.onInteractionModeChanged)
+    interactionNode = slicer.app.applicationLogic().GetInteractionNode()
+    self.addObserver(interactionNode, interactionNode.InteractionModeChangedEvent, self.onInteractionModeChanged)
 
   def __del__(self):
-    appLogic = slicer.app.applicationLogic()
-    interactionNode = appLogic.GetInteractionNode()
-    interactionNode.RemoveObserver(self.interactionNodeTag)
+    self.removeObservers()
 
   def onInteractionModeChanged(self, caller, event):
     if caller.IsA('vtkMRMLInteractionNode'):
