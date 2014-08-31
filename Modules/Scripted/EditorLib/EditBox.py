@@ -64,15 +64,6 @@ class EditBox(VTKObservationMixin):
     self.editorBuiltins["FastMarchingEffect"] = EditorLib.FastMarchingEffect
     self.editorBuiltins["WandEffect"] = EditorLib.WandEffect
 
-    if not parent:
-      self.parent = qt.QFrame()
-      self.parent.setLayout( qt.QVBoxLayout() )
-      self.create()
-      self.parent.show()
-    else:
-      self.parent = parent
-      self.create()
-
     # frame that holds widgets specific for each effect
     if not optionsFrame:
       self.optionsFrame = qt.QFrame(self.parent)
@@ -92,6 +83,15 @@ class EditBox(VTKObservationMixin):
 
     # Listen for changed on the Parameter node
     self.addObserver(self.editUtil.getParameterNode(), vtk.vtkCommand.ModifiedEvent, self._onParameterNodeModified)
+
+    if not parent:
+      self.parent = qt.QFrame()
+      self.parent.setLayout( qt.QVBoxLayout() )
+      self.create()
+      self.parent.show()
+    else:
+      self.parent = parent
+      self.create()
 
   def __del__(self):
     self.removeObservers()
