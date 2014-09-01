@@ -42,9 +42,51 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="RecentLogFilesLabel">
+     <property name="text">
+      <string>Recent log files:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="ctkComboBox" name="RecentLogFilesComboBox"/>
+     </item>
+     <item>
+      <widget class="ctkPushButton" name="RecentLogFilesCopyPushButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Copy selected log file contents to clipboard</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/Icons/Small/SlicerEditCopy.png</normalon>
+        </iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkSettingsPanel</class>
    <extends>QWidget</extends>
@@ -52,6 +94,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../qSlicerBaseQTGUI.qrc"/>
+ </resources>
  <connections/>
 </ui>

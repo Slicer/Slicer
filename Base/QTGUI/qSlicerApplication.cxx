@@ -597,11 +597,9 @@ void qSlicerApplication::openExtensionsManagerDialog()
 #endif
 
 // --------------------------------------------------------------------------
-void qSlicerApplication::setupFileLogging()
+int qSlicerApplication::numberOfRecentLogFilesToKeep()
 {
   Q_D(qSlicerApplication);
-
-  d->ErrorLogModel->setFileLoggingEnabled(true);
 
   QSettings* revisionUserSettings = this->revisionUserSettings();
 
@@ -612,7 +610,7 @@ void qSlicerApplication::setupFileLogging()
     "LogFiles/NumberOfFilesToKeep").toInt(&groupExists);
   if (!groupExists)
     {
-    // Set default value if not set in settings
+    // Get default value from the ErrorLogModel if value is not set in settings
     numberOfFilesToKeep = d->ErrorLogModel->numberOfFilesToKeep();
     }
   else
@@ -620,10 +618,16 @@ void qSlicerApplication::setupFileLogging()
     d->ErrorLogModel->setNumberOfFilesToKeep(numberOfFilesToKeep);
     }
 
-  // Read saved log file paths into a list so that it can be shifted and
-  // written out along with the new log file name.
-  QList<QString> logFilePaths;
+  return numberOfFilesToKeep;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerApplication::recentLogFiles()
+{
+  QSettings* revisionUserSettings = this->revisionUserSettings();
+  QStringList logFilePaths;
   revisionUserSettings->beginGroup("LogFiles");
+  int numberOfFilesToKeep = numberOfRecentLogFilesToKeep();
   for (int fileNumber = 0; fileNumber < numberOfFilesToKeep; ++fileNumber)
     {
     QString paddedFileNumber = QString("%1").arg(fileNumber, 3, 10, QChar('0')).toUpper();
@@ -634,6 +638,21 @@ void qSlicerApplication::setupFileLogging()
       }
     }
   revisionUserSettings->endGroup();
+  return logFilePaths;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerApplication::setupFileLogging()
+{
+  Q_D(qSlicerApplication);
+
+  d->ErrorLogModel->setFileLoggingEnabled(true);
+
+  int numberOfFilesToKeep = numberOfRecentLogFilesToKeep();
+
+  // Read saved log file paths into a list so that it can be shifted and
+  // written out along with the new log file name.
+  QStringList logFilePaths = recentLogFiles();
 
   // Add new log file path for the current session
   QString tempDir = this->temporaryPath();
@@ -645,6 +664,7 @@ void qSlicerApplication::setupFileLogging()
 
   // Save settings
   int fileNumber = 0;
+  QSettings* revisionUserSettings = this->revisionUserSettings();
   revisionUserSettings->beginGroup("LogFiles");
   revisionUserSettings->setValue("NumberOfFilesToKeep", numberOfFilesToKeep);
   foreach (QString filePath, logFilePaths)

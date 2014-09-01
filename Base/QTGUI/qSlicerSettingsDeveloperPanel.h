@@ -52,6 +52,7 @@ public slots:
 protected slots:
   void enableDeveloperMode(bool value);
   void enableQtTesting(bool value);
+  void onRecentLogFilePathCopy();
 
 protected:
   QScopedPointer<qSlicerSettingsDeveloperPanelPrivate> d_ptr;

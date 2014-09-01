@@ -136,6 +136,12 @@ public slots:
   void openExtensionsManagerDialog();
 #endif
 
+  /// Number of recent log files to keep. Older log files are deleted automatically.
+  int numberOfRecentLogFilesToKeep();
+
+  /// Paths of recent log files
+  QStringList recentLogFiles();
+
 protected:
   /// Reimplemented from qSlicerCoreApplication
   virtual void handleCommandLineArguments();
