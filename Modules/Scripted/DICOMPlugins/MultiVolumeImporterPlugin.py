@@ -24,6 +24,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.tags['instanceUID'] = "0008,0018"
     self.tags['position'] = "0020,0032"
     self.tags['studyDescription'] = "0008,1030"
+    self.tags['seriesNumber'] = "0020,0011"
 
     # tags used to identify multivolumes
     self.multiVolumeTags = {}
