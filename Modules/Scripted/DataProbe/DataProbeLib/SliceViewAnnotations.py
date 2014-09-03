@@ -973,6 +973,8 @@ class SliceAnnotations(object):
             if (cornerText[key]['category'] == 'A'):
               cornerAnnotation = cornerAnnotation+ text + '\n'
       sliceCornerAnnotation = self.sliceCornerAnnotations[self.currentSliceViewName]
+      # encode to avoid 'unicode conversion error' for patient names containing international characters
+      cornerAnnotation = cornerAnnotation.encode('latin1', 'ignore')
       sliceCornerAnnotation.SetText(i, cornerAnnotation)
       textProperty = sliceCornerAnnotation.GetTextProperty()
       textProperty.SetShadow(1)
