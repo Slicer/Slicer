@@ -36,6 +36,8 @@ endif()
 set(SlicerApp_SRCS
   qSlicerAppAboutDialog.cxx
   qSlicerAppAboutDialog.h
+  qSlicerAppErrorReportDialog.cxx
+  qSlicerAppErrorReportDialog.h
   qSlicerAppMainWindow.cxx
   qSlicerAppMainWindow.h
   qSlicerAppMainWindow_p.h
@@ -43,11 +45,13 @@ set(SlicerApp_SRCS
 
 set(SlicerApp_MOC_SRCS
   qSlicerAppAboutDialog.h
+  qSlicerAppErrorReportDialog.h
   qSlicerAppMainWindow.h
   )
 
 set(SlicerApp_UI_SRCS
   Resources/UI/qSlicerAppAboutDialog.ui
+  Resources/UI/qSlicerAppErrorReportDialog.ui
   Resources/UI/qSlicerAppMainWindow.ui
   )
 

@@ -18,47 +18,40 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSettingsDeveloperPanel_h
-#define __qSlicerSettingsDeveloperPanel_h
+#ifndef __qSlicerAppErrorReportDialog_h
+#define __qSlicerAppErrorReportDialog_h
 
 // Qt includes
-#include <QWidget>
+#include <QDialog>
 
 // CTK includes
-#include <ctkSettingsPanel.h>
+#include <ctkPimpl.h>
 
-// QtGUI includes
-#include "qSlicerBaseQTGUIExport.h"
+// SlicerApp includes
+#include "qSlicerAppExport.h"
 
-class QSettings;
-class qSlicerSettingsDeveloperPanelPrivate;
+class qSlicerAppErrorReportDialogPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsDeveloperPanel
-  : public ctkSettingsPanel
+/// Pre-request that a qSlicerApplication has been instanced
+class Q_SLICER_APP_EXPORT qSlicerAppErrorReportDialog :
+  public QDialog
 {
   Q_OBJECT
 public:
-  /// Superclass typedef
-  typedef ctkSettingsPanel Superclass;
-
-  /// Constructor
-  explicit qSlicerSettingsDeveloperPanel(QWidget* parent = 0);
-
-  /// Destructor
-  virtual ~qSlicerSettingsDeveloperPanel();
-
-public slots:
+  qSlicerAppErrorReportDialog(QWidget *parentWidget = 0);
+  virtual ~qSlicerAppErrorReportDialog();
 
 protected slots:
-  void enableDeveloperMode(bool value);
-  void enableQtTesting(bool value);
+  void onLogFileOpen();
+  void onLogCopy();
+  void onLogFileSelectionChanged();
 
 protected:
-  QScopedPointer<qSlicerSettingsDeveloperPanelPrivate> d_ptr;
+  QScopedPointer<qSlicerAppErrorReportDialogPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSettingsDeveloperPanel);
-  Q_DISABLE_COPY(qSlicerSettingsDeveloperPanel);
+  Q_DECLARE_PRIVATE(qSlicerAppErrorReportDialog);
+  Q_DISABLE_COPY(qSlicerAppErrorReportDialog);
 };
 
 #endif

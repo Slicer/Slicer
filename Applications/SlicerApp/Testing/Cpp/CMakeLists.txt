@@ -13,6 +13,7 @@ endif()
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
   qSlicerAppAboutDialogTest1.cxx
+  qSlicerAppErrorReportDialogTest1.cxx
   qSlicerAppMainWindowTest1.cxx
   qSlicerModuleFactoryManagerTest1.cxx
   )

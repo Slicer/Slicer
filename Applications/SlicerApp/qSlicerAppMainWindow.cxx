@@ -55,6 +55,7 @@
 #include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
 #include "qSlicerAppAboutDialog.h"
+#include "qSlicerAppErrorReportDialog.h"
 #include "qSlicerAbstractModule.h"
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
 #include "qSlicerCLIModuleWidgetEventPlayer.h"
@@ -967,7 +968,8 @@ void qSlicerAppMainWindow::on_HelpAboutSlicerAppAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpReportBugOrFeatureRequestAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
+  qSlicerAppErrorReportDialog errorReport(this);
+  errorReport.exec();
 }
 
 //---------------------------------------------------------------------------

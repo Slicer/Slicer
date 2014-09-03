@@ -19,12 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QClipboard>
-#include <QDesktopServices>
-#include <QFile>
 #include <QSettings>
-#include <QTextStream>
-#include <QUrl>
 
 // QtGUI includes
 #include "qSlicerApplication.h"
@@ -71,9 +66,6 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
   this->QtTestingEnabledLabel->hide();
 #endif
 
-  QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
-  this->RecentLogFilesComboBox->addItems(logFilePaths);
-
   // Register settings
   q->registerProperty("Developer/DeveloperMode", this->DeveloperModeEnabledCheckBox,
                       "checked", SIGNAL(toggled(bool)),
@@ -89,9 +81,6 @@ void qSlicerSettingsDeveloperPanelPrivate::init()
                    q, SLOT(enableDeveloperMode(bool)));
   QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableQtTesting(bool)));
-
-  QObject::connect(this->RecentLogFilesCopyPushButton, SIGNAL(clicked()),
-                   q, SLOT(onRecentLogFilePathCopy()));
 
 }
 
@@ -122,25 +111,4 @@ void qSlicerSettingsDeveloperPanel::enableDeveloperMode(bool value)
 void qSlicerSettingsDeveloperPanel::enableQtTesting(bool value)
 {
   Q_UNUSED(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsDeveloperPanel::onRecentLogFilePathCopy()
-{
-  Q_D(qSlicerSettingsDeveloperPanel);
-
-  // Alternative actions that we could do here:
-  // - Copy filename to clipboard:
-  //    QApplication::clipboard()->setText(d->RecentLogFilesComboBox->currentText());
-  // - Open file in editor: (a problem is that on Windows .log files are opened in Notepad and in the log file the
-  //   end of line is not CR/LF and so the log is displayed as one very long line)
-  //    QDesktopServices::openUrl(QUrl("file:///"+d->RecentLogFilesComboBox->currentText(), QUrl::TolerantMode));
-
-  QFile f(d->RecentLogFilesComboBox->currentText());
-  if (f.open(QFile::ReadOnly | QFile::Text))
-  {
-    QTextStream in(&f);
-    QString logText = in.readAll();
-    QApplication::clipboard()->setText(logText);
-  }
 }
