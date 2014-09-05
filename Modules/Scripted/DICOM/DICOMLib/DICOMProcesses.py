@@ -1,4 +1,4 @@
-import os
+import os, subprocess
 import slicer
 from __main__ import qt
 from __main__ import ctk
@@ -151,16 +151,37 @@ class DICOMListener(DICOMProcess):
   def start(self):
     self.storeSCPExecutable = self.exeDir+'/storescp'+self.exeExtension
     dcmdumpExecutable = self.exeDir+'/dcmdump'+self.exeExtension
-    # start the server!
-    onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
-    args = [str(self.port),
-        '--output-directory' , self.incomingDir,
-        '--exec-sync', '--exec-on-reception', onReceptionCallback]
-    print("starting DICOM listener")
-    super(DICOMListener,self).start(self.storeSCPExecutable, args)
 
-    self.process.connect('readyReadStandardOutput()', self.readFromListener)
+    uniqueListener = True
+    # kill previous executables
+    osName = os.name
+    if osName  == 'nt':
+      cmd = 'WMIC PROCESS get Caption'
+      proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+      processList = []
+      for line in proc.stdout:
+        processList.append(line.strip())
+      if any("storescp.exe" in process for process in processList):
+        uniqueListener = self.killOtherListeners(osName)
 
+    elif osName == 'posix':
+      p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+      out, err = p.communicate()
+      for line in out.splitlines():
+        if 'storescp' in line:
+          pid = int(line.split(None, 1)[0])
+          uniqueListener = self.killOtherListeners(osName,pid)
+
+    if uniqueListener:
+      # start the server!
+      onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
+      args = [str(self.port),
+          '--output-directory' , self.incomingDir,
+          '--exec-sync', '--exec-on-reception', onReceptionCallback]
+      print("starting DICOM listener")
+      super(DICOMListener,self).start(self.storeSCPExecutable, args)
+
+      self.process.connect('readyReadStandardOutput()', self.readFromListener)
 
   def readFromListener(self):
     print('================ready to read from listener===================')
@@ -189,6 +210,21 @@ class DICOMListener(DICOMProcess):
           print ("no callback")
     stdErr = str(self.process.readAllStandardError())
     print ("processed stderr")
+
+  def killOtherListeners(self, osName, pid= None):
+    msgBox = qt.QMessageBox()
+    msgBox.setText('There are other DICOM listeners running.\n Do you want to end them?')
+    msgBox.setStandardButtons(qt.QMessageBox.Yes | qt.QMessageBox.No)
+    val = msgBox.exec_()
+    if(val == qt.QMessageBox.Yes):
+      if osName == 'nt':
+        os.popen('taskkill /f /im storescp.exe')
+      elif osName == 'posix':
+        import signal
+        os.kill(pid, signal.SIGKILL)
+      return True
+    else:
+      return False
 
 class DICOMSender(DICOMProcess):
   """Code to send files to a remote host

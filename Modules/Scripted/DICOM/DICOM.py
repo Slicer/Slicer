@@ -227,6 +227,7 @@ class DICOMWidget:
 
     settings = qt.QSettings()
     self.toggleListener = qt.QPushButton()
+    self.toggleListener.checkable = True
     if hasattr(slicer, 'dicomListener'):
       self.toggleListener.text = "Stop Listener"
       slicer.dicomListener.process.connect('stateChanged(int)',self.onListenerStateChanged)
@@ -485,19 +486,20 @@ class DICOMWidget:
     sendDialog.open()
 
   def onToggleListener(self):
+    self.toggleListener.checked = False
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.stop()
       del slicer.dicomListener
-      self.toggleListener.text = "Start Listener"
     else:
       try:
-        slicer.dicomListener = DICOMLib.DICOMListener(database=slicer.dicomDatabase)
-        slicer.dicomListener.start()
-        self.onListenerStateChanged(slicer.dicomListener.process.state())
-        slicer.dicomListener.process.connect('stateChanged(QProcess::ProcessState)',self.onListenerStateChanged)
-        slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
-        slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
-        self.toggleListener.text = "Stop Listener"
+        dicomListener = DICOMLib.DICOMListener(database=slicer.dicomDatabase)
+        dicomListener.start()
+        if dicomListener.process:
+          self.onListenerStateChanged(dicomListener.process.state())
+          dicomListener.process.connect('stateChanged(QProcess::ProcessState)',self.onListenerStateChanged)
+          dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
+          dicomListener.fileAddedCallback = self.onListenerAddedFile
+          slicer.dicomListener = dicomListener
       except UserWarning as message:
         self.messageBox(self,"Could not start listener:\n %s" % message,title='DICOM')
 
@@ -507,10 +509,15 @@ class DICOMWidget:
     """
     if newState == 0:
       slicer.util.showStatusMessage("DICOM Listener not running")
+      self.toggleListener.text = "Start Listener"
+      self.toggleListener.checked = False
+      del slicer.dicomListener
     if newState == 1:
       slicer.util.showStatusMessage("DICOM Listener starting")
     if newState == 2:
       slicer.util.showStatusMessage("DICOM Listener running")
+      self.toggleListener.text = "Stop Listener"
+      self.toggleListener.checked = True
 
   def onListenerToAddFile(self):
     """ Called when the indexer is about to add a file to the database.
@@ -560,7 +567,7 @@ class DICOMWidget:
 
       # now start the server
       self.testingServer.start(verbose=self.verboseServer.checked,initialFiles=files)
-      self.toggleServer.text = "Stop Testing Server"
+      #self.toggleServer.text = "Stop Testing Server"
 
   def onRunListenerAtStart(self):
     settings = qt.QSettings()
