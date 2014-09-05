@@ -148,7 +148,7 @@ public:
       vtkSeedRepresentation * representation = vtkSeedRepresentation::SafeDownCast(this->Widget->GetRepresentation());
       if (!representation)
         {
-        std::cerr << "Representation is null.\n";
+        vtkErrorWithObjectMacro(this->Widget, "Representation is null.");
         return;
         }
 
@@ -254,6 +254,9 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager2D::CreateWidget(vtk
     }
 
   vtkNew<vtkSeedRepresentation> rep;
+
+  vtkDebugMacro("making handle for fiducialNode " << fiducialNode->GetName());
+  vtkDebugMacro(" for sliceNode " << this->GetSliceNode()->GetName());
 
   if (!this->IsInLightboxMode())
     {
@@ -670,6 +673,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       {
       handleRep->VisibilityOn();
       handleRep->HandleVisibilityOn();
+      handleRep->EnablePicking();
       if (textString.compare("") != 0)
         {
         handleRep->LabelVisibilityOn();
@@ -687,7 +691,12 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       handleRep->VisibilityOff();
       handleRep->HandleVisibilityOff();
       handleRep->LabelVisibilityOff();
-      seedWidget->GetSeed(n)->EnabledOff();
+      handleRep->DisablePicking();
+      vtkSeedRepresentation *seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
+      if (seedRepresentation)
+        {
+        seedRepresentation->GetHandleRepresentation()->DisablePicking();
+        }
 
       // if the widget is not shown on the slice, show the intersection
       if (fiducialNode &&
@@ -778,6 +787,8 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
 
               if (handleRep)
                 {
+                handleRep->DisablePicking();
+
                 vtkNew<vtkMarkupsGlyphSource2D> glyphSource;
                 glyphSource->SetGlyphType(glyphType);
                 glyphSource->SetScale(glyphScale);
@@ -862,6 +873,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
     }
   else if (pointHandleRep)
     {
+    pointHandleRep->DisablePicking();
     // set the glyph type - TBD, swapping isn't working
     // set the color
     if (fiducialNode->GetNthFiducialSelected(n))
@@ -992,11 +1004,30 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
 
   vtkDebugMacro("Fids PropagateMRMLToWidget, node num markups = " << numberOfFiducials);
 
+
+  if (numberOfFiducials == 0)
+    {
+    handleRep->DisablePicking();
+    int seed = 0;
+    vtkHandleWidget *handleWidget;
+    while ( (handleWidget = seedWidget->GetSeed(seed)) )
+      {
+      vtkHandleRepresentation *handleRepresentation = handleWidget->GetHandleRepresentation();
+      handleRepresentation->DisablePicking();
+      seed++;
+      }
+    }
+  else
+    {
+    handleRep->EnablePicking();
+    }
+
   for (int n = 0; n < numberOfFiducials; n++)
     {
     // std::cout << "Fids PropagateMRMLToWidget: n = " << n << std::endl;
     this->SetNthSeed(n, fiducialNode, seedWidget);
     }
+
 
   // now update the position of all the seeds - done in SetNthSeed now
   //this->UpdatePosition(widget, node);
