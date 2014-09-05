@@ -117,6 +117,45 @@ class ScriptedLoadableModuleLogic():
     qt.QTimer.singleShot(msec, self.info.close)
     self.info.exec_()
 
+  def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
+    """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
+    button : "Left", "Middle", "Right", or "None"
+    start, end : window coordinates for action
+    steps : number of steps to move in
+    modifiers : list containing zero or more of "Shift" or "Control"
+    """
+    style = widget.interactorStyle()
+    interator = style.GetInteractor()
+    if button == 'Left':
+      down = style.OnLeftButtonDown
+      up = style.OnLeftButtonUp
+    elif button == 'Right':
+      down = style.OnRightButtonDown
+      up = style.OnRightButtonUp
+    elif button == 'Middle':
+      down = style.OnMiddleButtonDown
+      up = style.OnMiddleButtonUp
+    elif button == 'None' or not button:
+      down = lambda : None
+      up = lambda : None
+    else:
+      raise Exception("Bad button - should be Left or Right, not %s" % button)
+    if 'Shift' in modifiers:
+      interator.SetShiftKey(1)
+    if 'Control' in modifiers:
+      interator.SetControlKey(1)
+    interator.SetEventPosition(*start)
+    down()
+    for step in xrange(steps):
+      frac = float(step)/steps
+      x = int(start[0] + frac*(end[0]-start[0]))
+      y = int(start[1] + frac*(end[1]-start[1]))
+      interator.SetEventPosition(x,y)
+      style.OnMouseMove()
+    up()
+    interator.SetShiftKey(0)
+    interator.SetControlKey(0)
+
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """
   Base class for module tester class.
