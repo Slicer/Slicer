@@ -856,7 +856,7 @@ BSplineImageToImageRegistrationMethod<TImage>
     */
 
     upsampler->SetInput( this->GetTypedTransform()
-                         ->GetCoefficientImage()[k] );
+                         ->GetCoefficientImages()[k] );
     upsampler->SetInterpolator( function );
     upsampler->SetTransform( identity );
     upsampler->SetSize( gridSize );
