@@ -23,7 +23,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkResampleImageFilter.h"
-#include "itkDifferenceImageFilter.h"
+#include "itkTestingComparisonImageFilter.h"
 #include "itkInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkLinearInterpolateImageFunction.h"
@@ -1043,7 +1043,7 @@ ImageToImageRegistrationHelper<TImage>
     return;
     }
 
-  typedef DifferenceImageFilter<TImage, TImage> DifferenceFilterType;
+  typedef itk::Testing::ComparisonImageFilter<TImage, TImage> DifferenceFilterType;
 
   typename TImage::ConstPointer imTemp = this->GetFixedImage();
   this->SetFixedImage( this->m_BaselineImage );

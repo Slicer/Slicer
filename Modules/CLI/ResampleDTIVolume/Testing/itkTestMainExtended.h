@@ -46,7 +46,7 @@
 #include "itkSubtractImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkExtractImageFilter.h"
-#include "itkDifferenceImageFilter.h"
+#include "itkTestingComparisonImageFilter.h"
 #include "itkDifferenceDiffusionTensor3DImageFilter.h"
 #include "itkDiffusionTensor3D.h"
 #include "itkImageRegion.h"
@@ -345,7 +345,7 @@ int RegressionTestImage(const char *testImageFilename,
   DiffusionImageType::Pointer diffusionBaselineImage;
   DiffusionImageType::Pointer diffusionTestImage;
   unsigned long               status = 0;
-  typedef itk::DifferenceImageFilter<ImageType, ImageType> DiffType;
+  typedef itk::Testing::ComparisonImageFilter<ImageType, ImageType> DiffType;
   DiffType::Pointer diff;
   typedef itk::DifferenceDiffusionTensor3DImageFilter<DiffusionImageType, ImageType> DiffusionDiffType;
   DiffusionDiffType::Pointer diffusiondiff;
