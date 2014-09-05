@@ -58,6 +58,14 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 # SampleDataSource
 #
 class SampleDataSource:
+  """Can be a passed a simple strings
+  or lists as used in the logic below.
+  e.g.
+
+    dataSource = SampleData.SampleDataSource('fixed', 'http://slicer.kitware.com/midas3/download/item/157188/small-mr-eye-fixed.nrrd', 'fixed.nrrd', 'fixed')
+    fixed = sampleDataLogic.downloadFromSource(dataSource)[0]
+  """
+
   def __init__(self,sampleName=None,uris=None,fileNames=None,nodeNames=None,customDownloader=None):
     self.sampleName = sampleName
     if isinstance(uris, basestring):
