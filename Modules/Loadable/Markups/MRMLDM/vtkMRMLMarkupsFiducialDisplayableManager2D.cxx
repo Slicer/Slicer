@@ -1007,19 +1007,28 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
 
   if (numberOfFiducials == 0)
     {
-    handleRep->DisablePicking();
+    if (handleRep)
+      {
+      handleRep->DisablePicking();
+      }
     int seed = 0;
     vtkHandleWidget *handleWidget;
     while ( (handleWidget = seedWidget->GetSeed(seed)) )
       {
       vtkHandleRepresentation *handleRepresentation = handleWidget->GetHandleRepresentation();
-      handleRepresentation->DisablePicking();
+      if (handleRepresentation)
+        {
+        handleRepresentation->DisablePicking();
+        }
       seed++;
       }
     }
   else
     {
-    handleRep->EnablePicking();
+    if (handleRep)
+      {
+      handleRep->EnablePicking();
+      }
     }
 
   for (int n = 0; n < numberOfFiducials; n++)
