@@ -1,4 +1,4 @@
-import os
+import os, string
 import unittest
 from __main__ import qt, ctk, slicer
 
@@ -8,7 +8,16 @@ class ScriptedLoadableModule:
     parent.categories = []
     parent.dependencies = []
     parent.contributors = []
-    parent.helpText = ""
+    parent.helpText = string.Template("""
+This module was created from a template and the help section has not yet been updated.
+
+Please refer to <a href=\"$a/Documentation/$b.$c/Modules/ScriptedLoadableModule\">the documentation</a>.
+
+    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
+    parent.acknowledgementText = """
+This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
+This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=http://www.slicer.org>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
+    """
     parent.acknowledgementText = ""
     self.parent = parent
 
@@ -30,7 +39,7 @@ class ScriptedLoadableModule:
 
 class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
-    # Get module name by strippint 'Widget' from the class name
+    # Get module name by stripping 'Widget' from the class name
     self.moduleName = self.__class__.__name__
     if self.moduleName.endswith('Widget'):
       self.moduleName = self.moduleName[:-6]
