@@ -417,13 +417,14 @@ def resetSliceViews():
 # MRML
 #
 
-def getNodes(pattern = ""):
+def getNodes(pattern = "", scene=None):
     """Return a dictionary of nodes where the name or id matches the 'pattern'.
     Providing an empty 'pattern' string will return all nodes.
     """
     import slicer, fnmatch
     nodes = {}
-    scene = slicer.mrmlScene
+    if scene is None:
+      scene = slicer.mrmlScene
     count = scene.GetNumberOfNodes()
     for idx in range(count):
       node = scene.GetNthNode(idx)
@@ -433,20 +434,22 @@ def getNodes(pattern = ""):
         nodes[node.GetName()] = node
     return nodes
 
-def getNode(pattern = "", index = 0):
+def getNode(pattern = "", index = 0, scene=None):
     """Return the indexth node where name or id matches 'pattern'.
     Providing an empty 'pattern' string will return all nodes.
     """
-    nodes = getNodes(pattern)
+    nodes = getNodes(pattern, scene)
     try:
       if nodes.keys():
         return nodes.values()[index]
     except IndexError:
       return None
 
-def getFirstNodeByClassByName(className, name):
+def getFirstNodeByClassByName(className, name, scene=None):
   import slicer
-  nodes = slicer.mrmlScene.GetNodesByClassByName(className, name)
+  if scene is None:
+      scene = slicer.mrmlScene
+  nodes = scene.GetNodesByClassByName(className, name)
   nodes.UnRegister(nodes)
   if nodes.GetNumberOfItems() > 0:
     return nodes.GetItemAsObject(0)
