@@ -503,6 +503,11 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     const char* filename, const char* volname, int loadingOptions,
     vtkStringArray *fileList)
 {
+  if (this->GetMRMLScene() == 0)
+    {
+    vtkErrorMacro("AddArchetypeVolume: Failed to add volume - MRMLScene is null");
+    return 0;
+    }
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   bool labelMap = false;
