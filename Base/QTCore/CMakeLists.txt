@@ -26,7 +26,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     # Import ITK targets required by CTKImageProcessingITKCore
     ITKCommon
     )
-  find_package(ITK 4.5 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+  find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
   set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
   include(${ITK_USE_FILE})
 endif()

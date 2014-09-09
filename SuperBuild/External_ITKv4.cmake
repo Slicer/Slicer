@@ -12,7 +12,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
-  find_package(ITK 4.5 REQUIRED NO_MODULE)
+  find_package(ITK 4.6 REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks

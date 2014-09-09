@@ -4,7 +4,7 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}Testing_ITK_COMPONENTS
   ITKCommon
   )
-find_package(ITK 4.5 COMPONENTS ${${KIT}Testing_ITK_COMPONENTS} REQUIRED)
+find_package(ITK 4.6 COMPONENTS ${${KIT}Testing_ITK_COMPONENTS} REQUIRED)
 set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
 list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
 list(APPEND ITK_INCLUDE_DIRS
