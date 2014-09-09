@@ -108,33 +108,8 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SelectedSlice = -1;
   this->SelectedOrientation = -1;
 
-  this->RegisterExtraBuiltInFactories();
-  this->UnRegisterDeprecatedBuiltInFactories();
   this->SetNumberOfInputPorts(0);
   this->SetNumberOfOutputPorts(1);
-}
-
-//
-// ITK internally does not register all of the IO types that get built
-//
-void
-vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
-{
-}
-
-//
-// ITK includes some old/unwanted IO Factories that cause
-// incorrect parsing of dicom files in some circumstances
-//
-void
-vtkITKArchetypeImageSeriesReader::UnRegisterDeprecatedBuiltInFactories()
-{
-  static bool firstTime = true;
-  if (!firstTime)
-    {
-    return;
-    }
-  firstTime = false;
 }
 
 //----------------------------------------------------------------------------

@@ -241,17 +241,6 @@ public:
   /// Returns the Measurement frame matrix
   vtkMatrix4x4* GetMeasurementFrameMatrix();
 
-
-  ///
-  /// ITK internally does not register all of the IO types that get built
-  //
-  /// In addition, ITK does register an older dicom parser that incorrectly
-  /// report success when reading ill-formed dicom files so we turn that old
-  /// parser off.
-  //
-  void RegisterExtraBuiltInFactories();
-  void UnRegisterDeprecatedBuiltInFactories();
-
   ///
   /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
