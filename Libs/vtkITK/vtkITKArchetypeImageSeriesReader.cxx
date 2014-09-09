@@ -54,22 +54,6 @@
   }
 #endif
 
-
-//
-// uncomment the define below to enable use of the GE5 (Signa) reader
-// this is not on by default because the reader does not support
-// reading directions from the file.
-// The GE5 reader was fixed just after the itk 3.2 release
-//
-#define USE_ITKGE5READER
-
-#ifdef USE_ITKGE5READER
-#include "itkImageIOFactory.h"
-#include "itkMutexLock.h"
-#include "itkMutexLockHolder.h"
-#include "itkGE5ImageIOFactory.h"
-#endif
-
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
@@ -132,29 +116,10 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 
 //
 // ITK internally does not register all of the IO types that get built
-// (possibly due to lingering bugs?) but many slicer users have
-// GE5 (Signa - magic number: IMGF) files that they need to work
-// with so we register the factory explictly here
 //
 void
 vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
 {
-#ifdef USE_ITKGE5READER
-  static bool firstTime = true;
-
-  static itk::SimpleMutexLock mutex;
-  {
-  // This helper class makes sure the Mutex is unlocked
-  // in the event an exception is thrown.
-  itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
-  if( firstTime )
-    {
-    itk::GE5ImageIOFactory::Pointer ge5Factory = itk::GE5ImageIOFactory::New();
-    itk::ObjectFactoryBase::RegisterFactory( ge5Factory.GetPointer() );
-    firstTime = false;
-    }
-  }
-#endif
 }
 
 //
