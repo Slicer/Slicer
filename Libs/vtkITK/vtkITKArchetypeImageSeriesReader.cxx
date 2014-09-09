@@ -75,10 +75,6 @@
 #include "itkImageSeriesReader.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkGDCMImageIO.h"
-#ifdef ITKV3_COMPATIBILITY
-#include "itkAnalyzeImageIOFactory.h"
-#include "itkAnalyzeImageIO.h"
-#endif
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
 
@@ -153,10 +149,6 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
   itk::MutexLockHolder<itk::SimpleMutexLock> mutexHolder( mutex );
   if( firstTime )
     {
-#ifdef ITKV3_COMPATIBILITY
-    itk::AnalyzeImageIOFactory::Pointer analyzeFactory = itk::AnalyzeImageIOFactory::New();
-    itk::ObjectFactoryBase::RegisterFactory( analyzeFactory.GetPointer() );
-#endif
     itk::GE5ImageIOFactory::Pointer ge5Factory = itk::GE5ImageIOFactory::New();
     itk::ObjectFactoryBase::RegisterFactory( ge5Factory.GetPointer() );
     firstTime = false;

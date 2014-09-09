@@ -26,9 +26,6 @@
 #include "itkFloodFilledImageFunctionConditionalIterator.h"
 #include "itkImageFileWriter.h"
 #include "itkPluginUtilities.h"
-#ifdef ITKV3_COMPATIBILITY
-#include "itkAnalyzeImageIOFactory.h"
-#endif
 #include <itksys/SystemTools.hxx>
 
 // VTK includes
@@ -263,9 +260,7 @@ int main( int argc, char * argv[] )
 
   itk::ImageIOBase::IOPixelType     pixelType;
   itk::ImageIOBase::IOComponentType componentType;
-#ifdef ITKV3_COMPATIBILITY
-  itk::ObjectFactoryBase::RegisterFactory( itk::AnalyzeImageIOFactory::New() );
-#endif
+
   try
     {
     itk::GetImageType(InputVolume, pixelType, componentType);
