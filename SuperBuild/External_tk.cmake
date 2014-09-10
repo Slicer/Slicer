@@ -97,17 +97,29 @@ ExternalProject_Execute(${proj} \"install\" make install)
       )
 
     #-----------------------------------------------------------------------------
-    # Since fixup_bundle expects the library to be writable, let's add an extra step
-    # to make sure it's the case.
+    # Extra steps to work-around tk build system issues
     if(APPLE)
       foreach(var tcl_build TCL_TK_VERSION_DOT)
         if(NOT DEFINED ${var})
           message(FATAL_ERROR "error: ${var} is not defined !")
         endif()
       endforeach()
+      set(_tk_library ${tcl_build}/lib/libtk${TCL_TK_VERSION_DOT}.dylib)
+      # XXX Since fixup_bundle expects the library to be writable, let's add an
+      # extra step to make sure it's the case.
       ExternalProject_Add_Step(${proj} tk_install_chmod_library
-        COMMAND chmod u+xw ${tcl_build}/lib/libtk${TCL_TK_VERSION_DOT}.dylib
+        COMMAND chmod u+xw ${_tk_library}
         DEPENDEES install
+        )
+      # XXX Tk build system has a known problem building the tk shared library.
+      # To ensure fixup_bundle properly process the _tkinter.so python module,
+      # we implemented the following workaround to fix the library id.
+      # For more details
+      #   http://sourceforge.net/p/tcl/mailman/message/30354096/
+      #   http://na-mic.org/Mantis/view.php?id=3822
+      ExternalProject_Add_Step(${proj} tk_install_fix_library_id
+        COMMAND install_name_tool -id ${_tk_library} ${_tk_library}
+        DEPENDEES tk_install_chmod_library
         )
     endif()
 
