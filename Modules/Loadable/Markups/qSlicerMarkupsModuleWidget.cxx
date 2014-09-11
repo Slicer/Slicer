@@ -1065,10 +1065,15 @@ void qSlicerMarkupsModuleWidget::updateRow(int m)
      }
 
    // point
-   double point[3];
+   double point[3] = {0.0, 0.0, 0.0};
    if (d->transformedCoordinatesCheckBox->isChecked())
      {
-     markupsNode->GetMarkupPointWorld(m, 0, point);
+     double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
+     markupsNode->GetMarkupPointWorld(m, 0, worldPoint);
+     for (int p = 0; p < 3; ++p)
+       {
+       point[p] = worldPoint[p];
+       }
      }
    else
      {
@@ -2164,10 +2169,15 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     newPoint[2] = d->activeMarkupTableWidget->item(row, d->columnIndex("S"))->text().toDouble();
 
     // get the old value
-    double point[3];
+    double point[3] = {0.0, 0.0, 0.0};
     if (d->transformedCoordinatesCheckBox->isChecked())
       {
-      listNode->GetMarkupPointWorld(n, 0, point);
+      double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
+      listNode->GetMarkupPointWorld(n, 0, worldPoint);
+      for (int p = 0; p < 3; ++p)
+       {
+       point[p] = worldPoint[p];
+       }
       }
     else
       {
@@ -2364,10 +2374,15 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
       }
     for (int p = 0; p < numPoints; ++p)
       {
-      double point[3];
+      double point[3] = {0.0, 0.0, 0.0};
       if (d->transformedCoordinatesCheckBox->isChecked())
         {
-        markupsNode->GetMarkupPointWorld(row, p, point);
+        double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
+        markupsNode->GetMarkupPointWorld(row, p, worldPoint);
+        for (int p = 0; p < 3; ++p)
+          {
+          point[p] = worldPoint[p];
+          }
         }
       else
         {
