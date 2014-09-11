@@ -838,6 +838,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
                 glyphSource->SetColor(projectionColor);
                 handleRep->GetProperty()->SetColor(projectionColor);
                 handleRep->GetProperty()->SetOpacity(projectionOpacity);
+                // call update to update the points array and avoid a
+                // null pointer crash
+                glyphSource->Update();
                 handleRep->SetCursorShape(glyphSource->GetOutput());
                 handleRep->SetDisplayPosition(displayP1);
                 projectionSeed->On();
@@ -1414,6 +1417,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::UpdatePosition(vtkAbstractWidge
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialDisplayableManager2D::OnMRMLSceneEndClose()
 {
+  // make sure to delete widgets and projections
+  this->Superclass::OnMRMLSceneEndClose();
+
   // clear out the map of glyph types
   this->Helper->ClearNodeGlyphTypes();
 }
