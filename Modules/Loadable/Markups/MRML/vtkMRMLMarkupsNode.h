@@ -171,8 +171,9 @@ public:
   Markup * GetNthMarkup(int n);
   /// Initialise a markup to default values
   void InitMarkup(Markup *markup);
-  /// Add a markup to the end of the list
-  void AddMarkup(Markup markup);
+  /// Add a markup to the end of the list. Return index
+  /// of new markup, -1 on failure.
+  int AddMarkup(Markup markup);
   /// Create a new markup with n points, init points to (0,0,0). Return index
   /// of new markup, -1 on failure.
   int AddMarkupWithNPoints(int n);
