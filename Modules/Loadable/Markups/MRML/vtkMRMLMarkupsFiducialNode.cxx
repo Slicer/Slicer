@@ -152,17 +152,32 @@ vtkMRMLMarkupsDisplayNode *vtkMRMLMarkupsFiducialNode::GetMarkupsDisplayNode()
 //-------------------------------------------------------------------------
 int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z)
 {
+  return this->AddFiducial(x, y, z, std::string());
+}
+
+//-------------------------------------------------------------------------
+int vtkMRMLMarkupsFiducialNode::AddFiducial(double x, double y, double z,
+                                            std::string label)
+{
   vtkVector3d point;
   point.SetX(x);
   point.SetY(y);
   point.SetZ(z);
-  return this->AddPointToNewMarkup(point);
+  return this->AddPointToNewMarkup(point, label);
 }
 
 //-------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION < 6)
 int vtkMRMLMarkupsFiducialNode::AddFiducialFromArray(double pos[3])
 {
-  return this->AddFiducial(pos[0], pos[1], pos[2]);
+  return this->AddFiducialFromArray(pos, std::string());
+}
+#endif
+
+//-------------------------------------------------------------------------
+int vtkMRMLMarkupsFiducialNode::AddFiducialFromArray(double pos[3], std::string label)
+{
+  return this->AddFiducial(pos[0], pos[1], pos[2], label);
 }
 
 //-------------------------------------------------------------------------

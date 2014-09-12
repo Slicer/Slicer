@@ -81,8 +81,14 @@ public:
   int GetNumberOfFiducials() { return this->GetNumberOfMarkups(); } ;
   /// Add a new fiducial from x,y,z coordinates and return the fiducial index
   int AddFiducial(double x, double y, double z);
+  int AddFiducial(double x, double y, double z, std::string label);
   /// Add a new fiducial from an array and return the fiducial index
+#if (VTK_MAJOR_VERSION >= 6)
+  int AddFiducialFromArray(double pos[3], std::string label = std::string());
+#else
   int AddFiducialFromArray(double pos[3]);
+  int AddFiducialFromArray(double pos[3], std::string label);
+#endif
   /// Get the position of the nth fiducial, returning it in the pos array
   void GetNthFiducialPosition(int n, double pos[3]);
   /// Set the position of the nth fiducial from x, y, z coordinates

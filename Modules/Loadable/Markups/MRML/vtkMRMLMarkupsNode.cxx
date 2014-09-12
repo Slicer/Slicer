@@ -442,11 +442,14 @@ void vtkMRMLMarkupsNode::InitMarkup(Markup *markup)
   markup->ID = id;
 
   // set a default label with a number higher than others in the list
-  int number = this->MaximumNumberOfMarkups + 1;
-  std::string formatString = this->ReplaceListNameInMarkupLabelFormat();
-  char buff[MARKUPS_BUFFER_SIZE];
-  sprintf(buff, formatString.c_str(), number);
-  markup->Label = std::string(buff);
+  if (markup->Label.empty())
+    {
+    int number = this->MaximumNumberOfMarkups + 1;
+    std::string formatString = this->ReplaceListNameInMarkupLabelFormat();
+    char buff[MARKUPS_BUFFER_SIZE];
+    sprintf(buff, formatString.c_str(), number);
+    markup->Label = std::string(buff);
+    }
 
   // use an empty description
   markup->Description = std::string("");
@@ -482,7 +485,15 @@ int vtkMRMLMarkupsNode::AddMarkup(Markup markup)
 }
 
 //-----------------------------------------------------------
+#if (VTK_MAJOR_VERSION < 6)
 int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n)
+{
+  return this->AddMarkupWithNPoints(n, std::string());
+}
+#endif
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label)
 {
   int markupIndex = -1;
   if (n < 0)
@@ -491,6 +502,7 @@ int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n)
     return markupIndex;
     }
   Markup markup;
+  markup.Label = label;
   this->InitMarkup(&markup);
   for (int i = 0; i < n; i++)
     {
@@ -515,11 +527,20 @@ int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n)
 }
 
 //-----------------------------------------------------------
+#if (VTK_MAJOR_VERSION < 6)
 int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point)
+{
+  return this->AddPointToNewMarkup(point, std::string());
+}
+#endif
+
+//-----------------------------------------------------------
+int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point, std::string label)
 {
   int markupIndex = 0;
 
   Markup newmarkup;
+  newmarkup.Label = label;
   this->InitMarkup(&newmarkup);
   newmarkup.points.push_back(point);
   this->Markups.push_back(newmarkup);
