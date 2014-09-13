@@ -469,6 +469,12 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   // HACK - See http://www.na-mic.org/Bug/view.php?id=3322
   //        Sort writers to ensure generic ones are last.
   const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters);
+  if (writers.isEmpty())
+    {
+    qWarning() << "No writer found to write file" << parameters.value("fileName")
+               << "of type" << fileType;
+    return false;
+    }
 
   QStringList nodes;
   bool writeSuccess=false;
