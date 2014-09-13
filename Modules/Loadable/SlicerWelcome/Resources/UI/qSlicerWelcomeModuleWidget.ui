@@ -513,7 +513,7 @@
   </customwidgets>
   <resources>
     <include location="../qSlicerWelcomeModule.qrc"/>
-    <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
-    <include location="../../../../Resources/qSlicer.qrc"/>
+    <include location="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+    <include location="../../../../../Resources/qSlicer.qrc"/>
   </resources>
 </ui>
