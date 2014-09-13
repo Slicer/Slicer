@@ -15,6 +15,7 @@ class SliceAnnotations(object):
 
     self.dataProbeUtil = DataProbeUtil.DataProbeUtil()
 
+    self.dicomVolumeNode = 0
     self.sliceViewNames = []
     self.popupGeometry = qt.QRect()
     self.cornerTexts =[]
@@ -573,14 +574,14 @@ class SliceAnnotations(object):
     textProperty = textActor.GetTextProperty()
 
   def createColorScalarBar(self, sliceViewName):
-    scalarBar = vtk.vtkScalarBarActor()
+    scalarBar = slicer.vtkPVScalarBarActor()
     scalarBar.SetTitle("")
     # adjust text property
+    scalarBar.SetRangeLabelFormat('%.0f')
     lookupTable = vtk.vtkLookupTable()
     scalarBar.SetLookupTable(lookupTable)
     scalarBarWidget = vtk.vtkScalarBarWidget()
     scalarBarWidget.SetScalarBarActor(scalarBar)
-    scalarBarWidget.RepositionableOff()
     self.colorScalarBarWidgets[sliceViewName] = scalarBarWidget
     return scalarBar
 
@@ -712,8 +713,7 @@ class SliceAnnotations(object):
 
       scalarBar = self.colorScalarBars[sliceViewName]
       scalarBar.SetTextPositionToPrecedeScalarBar()
-
-      scalarBar.SetMaximumWidthInPixels(int(self.colorScalarBarMaxWidthSlider.value))
+      scalarBar.SetAddRangeAnnotations(0)
 
       renderWindow = renderer.GetRenderWindow()
       interactor = renderWindow.GetInteractor()
@@ -726,15 +726,14 @@ class SliceAnnotations(object):
       ## Adjusting the maximum height of the scalar color bar based on view height
       viewHeight = self.sliceViews[sliceViewName].height
       if viewHeight > 200:
-        if self.topRightAnnotationDisplay:
+        if self.topRightAnnotationDisplay and self.dicomVolumeNode:
           scalarBar.SetMaximumHeightInPixels(int(viewHeight/2 - 30))
         else:
-          scalarBar.SetMaximumHeightInPixels(int(viewHeight-30))
+          scalarBar.SetMaximumHeightInPixels(int(viewHeight))
       else:
-        scalarBar.SetMaximumHeightInPixels(int(viewHeight-30))
+        scalarBar.SetMaximumHeightInPixels(int(viewHeight))
 
       if self.showColorScalarBar:
-        #if (backgroundVolume != None and foregroundVolume == None):
         if (backgroundVolume != None and self.colorbarSelectedLayer == 'background'):
           self.updateScalarBarRange(sliceLogic, backgroundVolume, scalarBar, self.colorbarSelectedLayer)
           scalarBarWidget.On()
@@ -778,20 +777,23 @@ class SliceAnnotations(object):
         foregroundVolumeName = foregroundVolume.GetName()
         self.cornerTexts[0]['3-Background']['text'] = 'B: ' + backgroundVolumeName
         self.cornerTexts[0]['2-Foreground']['text'] = 'F: ' + foregroundVolumeName +  ' (' + str(
-                      "%.1f"%foregroundOpacity) + ')'
+                 "%d"%(foregroundOpacity*100)) + '%)'
 
         bgUids = backgroundVolume.GetAttribute('DICOM.instanceUIDs')
         fgUids = foregroundVolume.GetAttribute('DICOM.instanceUIDs')
         if (bgUids and fgUids):
           bgUid = bgUids.partition(' ')[0]
           fgUid = fgUids.partition(' ')[0]
+          self.dicomVolumeNode = 1
           self.makeDicomAnnotation(bgUid,fgUid)
         elif (bgUids and self.backgroundDicomAnnotationsPersistence):
           uid = bgUids.partition(' ')[0]
+          self.dicomVolumeNode = 1
           self.makeDicomAnnotation(uid,None)
         else:
           for key in self.cornerTexts[2]:
             self.cornerTexts[2][key]['text'] = ''
+          self.dicomVolumeNode = 0
 
       # Case II: Only background
       elif (backgroundVolume != None):
@@ -803,6 +805,9 @@ class SliceAnnotations(object):
         if uids:
           uid = uids.partition(' ')[0]
           self.makeDicomAnnotation(uid,None)
+          self.dicomVolumeNode = 1
+        else:
+          self.dicomVolumeNode = 0
 
       # Case III: Only foreground
       elif (foregroundVolume != None):
@@ -815,12 +820,16 @@ class SliceAnnotations(object):
           uid = uids.partition(' ')[0]
           # passed UID as bg
           self.makeDicomAnnotation(uid,None)
+          self.dicomVolumeNode = 1
+        else:
+          self.dicomVolumeNode = 0
+
 
       if (labelVolume != None):
         labelOpacity = sliceCompositeNode.GetLabelOpacity()
         labelVolumeName = labelVolume.GetName()
         self.cornerTexts[0]['1-Label']['text'] = 'L: ' + labelVolumeName + ' (' + str(
-                      "%.1f"%labelOpacity) + ')'
+                 "%d"%(labelOpacity*100)) + '%)'
 
       self.drawCornerAnnotations()
 
@@ -841,10 +850,12 @@ class SliceAnnotations(object):
         sliceLogic.GetForegroundWindowLevelAndRange(width,level,rangeLow,rangeHigh)
       lut2.SetRange(int(level-width/2),int(level+width/2))
       scalarBar.SetLookupTable(lut2)
+      '''
       if width < 5 and np.abs(level)<10 :
         scalarBar.SetLabelFormat("%4.2f")
       else:
         scalarBar.SetLabelFormat("%4.0f")
+      '''
 
   def makeDicomAnnotation(self,bgUid,fgUid):
     viewHeight = self.sliceViews[self.currentSliceViewName].height
