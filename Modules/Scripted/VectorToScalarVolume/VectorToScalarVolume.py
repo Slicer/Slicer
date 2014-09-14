@@ -4,40 +4,31 @@ from __main__ import vtk, qt, ctk, slicer
 # VectorToScalarVolume
 #
 
-class VectorToScalarVolume:
+class VectorToScalarVolume(ScriptedLoadableModule):
   def __init__(self, parent):
-    parent.title = "Vector to Scalar Volume"
-    parent.categories = ["Converters"]
-    parent.dependencies = []
-    parent.contributors = ["Steve Pieper (Isomics)",]
-    parent.helpText = """
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "Vector to Scalar Volume"
+    self.parent.categories = ["Converters"]
+    self.parent.dependencies = []
+    self.parent.contributors = ["Steve Pieper (Isomics)",]
+    self.parent.helpText = """
     Make a scalar (1 component) volume from a vector volume
     """
-    parent.acknowledgementText = """
+    self.parent.acknowledgementText = """
 Developed by Steve Pieper, Isomics, Inc.,
 partially funded by NIH grant 3P41RR013218-12S1 (NAC) and is part of the National Alliance
 for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the
 NIH Roadmap for Medical Research, Grant U54 EB005149."""
-    self.parent = parent
 
 #
 # VectorToScalarVolumeWidget
 #
 
-class VectorToScalarVolumeWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
+class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     # Collapsible button
     self.selectionCollapsibleButton = ctk.ctkCollapsibleButton()
     self.selectionCollapsibleButton.text = "Selection"

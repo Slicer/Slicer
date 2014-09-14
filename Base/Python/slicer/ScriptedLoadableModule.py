@@ -4,24 +4,31 @@ from __main__ import qt, ctk, slicer
 
 class ScriptedLoadableModule:
   def __init__(self, parent):
+    self.parent = parent
+    self.moduleName = self.__class__.__name__
+
     parent.title = ""
     parent.categories = []
     parent.dependencies = []
     parent.contributors = []
+
     parent.helpText = string.Template("""
 This module was created from a template and the help section has not yet been updated.
 
 Please refer to <a href=\"$a/Documentation/$b.$c/Modules/ScriptedLoadableModule\">the documentation</a>.
 
     """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
+
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
 This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=http://www.slicer.org>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
     """
-    parent.acknowledgementText = ""
-    self.parent = parent
 
-    self.moduleName = self.__class__.__name__
+    # Set module icon from Resources/Icons/<ModuleName>.png
+    moduleDir = os.path.dirname(self.parent.path)
+    iconPath = os.path.join(moduleDir, 'Resources/Icons', self.moduleName+'.png')
+    if os.path.isfile(iconPath):
+      parent.icon = qt.QIcon(iconPath)
 
     # Add this test to the SelfTest module's list for discovery when the module
     # is created.  Since this module may be discovered before SelfTests itself,
