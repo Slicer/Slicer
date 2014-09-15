@@ -534,8 +534,15 @@ void vtkSeedTracts::SeedStreamlinesInROI()
 #if (VTK_MAJOR_VERSION <= 5)
   this->InputROI->GetWholeExtent(inExt);
 #else
-  this->InputROIPipelineInfo->Get(
-    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+  if (this->InputROIPipelineInfo)
+    {
+    this->InputROIPipelineInfo->Get(
+      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
+    }
+  else
+  {
+  return;
+  }
 #endif
 
   // find the region to loop over
