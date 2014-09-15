@@ -36,6 +36,7 @@
 
 class vtkMRMLNode;
 class vtkMRMLStorableNode;
+class vtkMRMLStorageNode;
 class vtkCollection;
 class vtkObject;
 class qSlicerCoreIOManagerPrivate;
@@ -128,6 +129,9 @@ public:
   /// Register the reader/writer \a io
   /// Note also that the IOManager takes ownership of \a io
   void registerIO(qSlicerIO* io);
+
+  /// Create and add default storage node
+  Q_INVOKABLE static vtkMRMLStorageNode* createAndAddDefaultStorageNode(vtkMRMLStorableNode* node);
 
 signals:
 

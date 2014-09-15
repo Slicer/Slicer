@@ -35,6 +35,7 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorableNode.h>
+#include <vtkMRMLStorageNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -456,6 +457,24 @@ vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
   Q_ASSERT(node);
 
   return node;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLStorageNode* qSlicerCoreIOManager::createAndAddDefaultStorageNode(
+    vtkMRMLStorableNode* node)
+{
+  vtkMRMLStorageNode* snode = node ? node->GetStorageNode() : 0;
+  if (snode == 0 && node != 0)
+    {
+    snode = node->CreateDefaultStorageNode();
+    if (snode != 0)
+      {
+      node->GetScene()->AddNode(snode);
+      snode->Delete();
+      node->SetAndObserveStorageNodeID(snode->GetID());
+      }
+    }
+  return snode;
 }
 
 //-----------------------------------------------------------------------------
