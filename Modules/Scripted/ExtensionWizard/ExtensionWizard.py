@@ -315,7 +315,7 @@ class ExtensionWizardWidget:
         # Add module(s) to permanent search paths, if requested
         if dlg.addToSearchPaths:
           settings = slicer.app.revisionUserSettings()
-          rawSearchPaths = _settingsList(settings, "Modules/AdditionalPaths")
+          rawSearchPaths = list(_settingsList(settings, "Modules/AdditionalPaths"))
           searchPaths = [qt.QDir(path) for path in rawSearchPaths]
           modified = False
 
