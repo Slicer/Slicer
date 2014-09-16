@@ -16,7 +16,6 @@ include(${SlicerExecutionModel_USE_FILE})
 set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKBinaryMathematicalMorphology
   ITKCommon
-  ITKDeprecated
   ITKIOImageBase
   ITKImageFunction
   ITKMathematicalMorphology
