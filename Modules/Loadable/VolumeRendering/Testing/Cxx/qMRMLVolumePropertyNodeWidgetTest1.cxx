@@ -31,6 +31,9 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingContextOpenGL);
+
 // STD includes
 
 int qMRMLVolumePropertyNodeWidgetTest1(int argc, char * argv [] )
