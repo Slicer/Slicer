@@ -20,7 +20,6 @@
 #include <itkInterpolateImageFunction.h>
 #include "itkSeparateComponentsOfADiffusionTensorImage.h"
 // #include <itkMutexLock.h>
-// #include <itkSemaphore.h>
 
 namespace itk
 {

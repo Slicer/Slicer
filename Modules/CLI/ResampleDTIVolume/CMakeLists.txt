@@ -15,7 +15,6 @@ include(${SlicerExecutionModel_USE_FILE})
 #
 set(${PROJECT_NAME}_ITK_COMPONENTS
   ITKCommon
-  ITKDeprecated
   ITKDiffusionTensorImage
   ITKIOImageBase
   ITKIONRRD
