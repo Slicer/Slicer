@@ -120,6 +120,60 @@ class ScriptedLoadableModuleWidget:
 
 class ScriptedLoadableModuleLogic():
 
+  def __init__(self, parent = None):
+    # Get module name by stripping 'Logic' from the class name
+    self.moduleName = self.__class__.__name__
+    if self.moduleName.endswith('Logic'):
+      self.moduleName = self.moduleName[:-5]
+
+    # If parameter node is singleton then only one parameter node
+    # is allowed in a scene.
+    # Derived classes can set self.isSingletonParameterNode = False
+    # to allow having multiple parameter nodes in the scene.
+    self.isSingletonParameterNode = True
+
+  def getParameterNode(self):
+    """return the first available parameter node for this module
+    If no parameter nodes are available for this module then a new one is created.
+    """
+    numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+    for nodeIndex in xrange(numberOfScriptedModuleNodes):
+      parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
+      if parameterNode.GetAttribute("ModuleName") == self.moduleName:
+        return parameterNode
+    # no parameter node was found for this module, therefore we add a new one now
+    parameterNode = self.createParameterNode()
+    slicer.mrmlScene.AddNode(parameterNode)
+    return parameterNode
+
+  def getAllParameterNodes(self):
+    """return a list of all parameter nodes for this module
+    Multiple parameter nodes are useful for storing multiple parameter sets in a single scene.
+    """
+    foundParameterNodes = []
+    numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
+    for nodeIndex in xrange(numberOfScriptedModuleNodes):
+      parameterNode  = slicer.mrmlScene.GetNthNodeByClass( nodeIndex, "vtkMRMLScriptedModuleNode" )
+      if parameterNode.GetAttribute("ModuleName") == self.moduleName:
+        foundParameterNodes.append(parameterNode)
+    return foundParameterNodes
+
+  def createParameterNode(self):
+    """create a new parameter node
+    The node is of vtkMRMLScriptedModuleNode class. Module name is added as an attribute to allow filtering
+    in node selector widgets (attribute name: ModuleName, attribute value: the module's name).
+    This method can be overridden in derived classes to create a default parameter node with all
+    parameter values set to their default.
+    """
+    node = slicer.vtkMRMLScriptedModuleNode()
+    if self.isSingletonParameterNode:
+      node.SetSingletonTag( self.moduleName )
+    # Add module name in an attribute to allow filtering in node selector widgets
+    # Note that SetModuleName is not used anymore as it would be redundant with the ModuleName attribute.
+    node.SetAttribute( "ModuleName", self.moduleName )
+    node.SetName(slicer.mrmlScene.GenerateUniqueName(self.moduleName))
+    return node
+
   def delayDisplay(self,message,msec=1000):
     #
     # logic version of delay display
