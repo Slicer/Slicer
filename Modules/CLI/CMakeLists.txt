@@ -93,11 +93,6 @@ if(BUILD_TESTING)
     DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
   mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
-  set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})
-  if(USE_VALGRIND)
-    set(SEM_LAUNCH_COMMAND "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
-  endif()
-
   set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
   set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
   set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData")

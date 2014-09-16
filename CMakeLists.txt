@@ -669,6 +669,13 @@ if(BUILD_TESTING)
     COPYONLY)
 
   add_subdirectory(CMake/Testing)
+
+  if(Slicer_BUILD_CLI_SUPPORT)
+    set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})
+    if(USE_VALGRIND)
+      set(SEM_LAUNCH_COMMAND "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+    endif()
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------
