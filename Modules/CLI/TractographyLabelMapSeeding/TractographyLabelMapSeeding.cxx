@@ -278,9 +278,6 @@ int main( int argc, char * argv[] )
     streamer->SetRadiusOfCurvature(StoppingCurvature);
     streamer->SetIntegrationStepLength(IntegrationStepLength);
 
-    // Temp fix to provide a scalar
-    // seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
-
     // 5. Run the thing
     seed->SeedStreamlinesInROI();
 

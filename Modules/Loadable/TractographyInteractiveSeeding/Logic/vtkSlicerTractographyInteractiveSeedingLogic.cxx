@@ -1067,9 +1067,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
   streamer->SetRadiusOfCurvature(stoppingCurvature);
   streamer->SetIntegrationStepLength(integrationStepLength);
 
-  // Temp fix to provide a scalar
-  // seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
-
   // 5. Run the thing
   seed->SeedStreamlinesInROI();
 
