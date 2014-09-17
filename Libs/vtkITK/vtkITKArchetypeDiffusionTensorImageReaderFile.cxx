@@ -152,14 +152,14 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
   vtkImageData *data = vtkImageData::SafeDownCast(output);
   //data->UpdateInformation();
   data->GetWholeExtent(extent);
-  data->SetOrigin(0, 0, 0);
-  data->SetSpacing(1, 1, 1);
 #else
   vtkImageData* data = vtkImageData::GetData(outputVector);
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   outInfo->Get
     (vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), extent);
 #endif
+  data->SetOrigin(0, 0, 0);
+  data->SetSpacing(1, 1, 1);
   data->SetExtent(extent);
   vtkNew<vtkFloatArray> tensors;
   tensors->SetName("ArchetypeReader");
