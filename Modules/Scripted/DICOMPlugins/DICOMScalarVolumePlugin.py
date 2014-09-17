@@ -70,7 +70,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     loadable = DICOMLib.DICOMLoadable()
     loadable.files = files
     loadable.name = name
-    loadable.tooltip = "First file: " + loadable.files[0]
+    loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
     loadable.selected = True
     # add it to the list of loadables later, if pixel data is available in at least one file
 
@@ -137,7 +137,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable = DICOMLib.DICOMLoadable()
           loadable.files = subseriesFiles[tag,value]
           loadable.name = name + " for %s of %s" % (tag,value)
-          loadable.tooltip = "First file: " + loadable.files[0]
+          loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
           loadable.selected = False
           loadables.append(loadable)
 
@@ -155,7 +155,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         # here all files in have no pixel data, so they might be
         # secondary capture images which will read, so let's pass
         # them through with a warning and low confidence
-        loadable.warning = "There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images"
+        loadable.warning += "There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images.  "
         loadable.confidence = 0.2
         newLoadables.append(loadable)
     loadables = newLoadables
@@ -176,14 +176,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       #
       value = slicer.dicomDatabase.fileValue(loadable.files[0], self.tags['numberOfFrames'])
       if value != "":
-        loadable.warning = "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution."
+        loadable.warning += "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution.  "
 
       validGeometry = True
       ref = {}
       for tag in [self.tags['position'], self.tags['orientation']]:
         value = slicer.dicomDatabase.fileValue(loadable.files[0], tag)
         if not value or value == "":
-          loadable.warning = "Reference image in series does not contain geometry information.  Please use caution."
+          loadable.warning += "Reference image in series does not contain geometry information.  Please use caution.  "
           validGeometry = False
           loadable.confidence = 0.2
           break
@@ -216,7 +216,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         sortList.append((file, dist))
 
       if missingGeometry:
-        loadable.warning = "One or more images is missing geometry information"
+        loadable.warning += "One or more images is missing geometry information.  "
       else:
         sortedFiles = sorted(sortList, key=lambda x: x[1])
         distances = {}
@@ -245,7 +245,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             spaceError = spacingN - spacing0
             if abs(spaceError) > self.epsilon:
               spaceWarnings += 1
-              loadable.warning = "Images are not equally spaced (a difference of %g in spacings was detected).  Slicer will load this series as if it had a spacing of %g.  Please use caution." % (spaceError, spacing0)
+              loadable.warning += "Images are not equally spaced (a difference of %g in spacings was detected).  Slicer will load this series as if it had a spacing of %g.  Please use caution.  " % (spaceError, spacing0)
               break
             n += 1
 
