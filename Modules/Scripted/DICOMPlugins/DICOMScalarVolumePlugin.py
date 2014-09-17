@@ -112,6 +112,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # check for subseries values
       for tag in subseriesTags:
         value = slicer.dicomDatabase.fileValue(file,self.tags[tag])
+        value = value.replace(",","_") # remove commas so it can be used as an index
         if not subseriesValues.has_key(tag):
           subseriesValues[tag] = []
         if not subseriesValues[tag].__contains__(value):
