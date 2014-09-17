@@ -143,7 +143,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
 #if (VTK_MAJOR_VERSION <= 5)
     return;
 #else
-    return 1;
+    return 0;
 #endif
     }
 
