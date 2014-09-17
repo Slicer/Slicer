@@ -21,7 +21,7 @@
 #include "vtkTeemConfigure.h"
 
 #include "vtkImageData.h"
-#include <vtkInformation.h>
+#include <vtkAlgorithmOutput.h>
 #include "vtkTransform.h"
 #include "vtkCollection.h"
 #include "vtkShortArray.h"
@@ -75,8 +75,13 @@ public:
 
   /// Description
   /// Input tensor field in which to seed streamlines
+ #if (VTK_MAJOR_VERSION <= 5)
   vtkSetObjectMacro(InputTensorField, vtkImageData);
   vtkGetObjectMacro(InputTensorField, vtkImageData);
+#else
+  vtkSetObjectMacro(InputTensorFieldConnection, vtkAlgorithmOutput);
+  vtkGetObjectMacro(InputTensorFieldConnection, vtkAlgorithmOutput);
+#endif
 
   /// Description
   /// Streamlines will be started at locations with this value in the InputROI.
@@ -98,22 +103,25 @@ public:
 
   /// Description
   /// Input ROI volume describing where to start streamlines
+ #if (VTK_MAJOR_VERSION <= 5)
   vtkSetObjectMacro(InputROI, vtkImageData);
   vtkGetObjectMacro(InputROI, vtkImageData);
-
- #if (VTK_MAJOR_VERSION > 5)
-  /// Description
-  /// Input ROI volume's output pipeline information
-  vtkSetObjectMacro(InputROIPipelineInfo, vtkInformation);
-  vtkGetObjectMacro(InputROIPipelineInfo, vtkInformation);
+#else
+  vtkSetObjectMacro(InputROIConnection, vtkAlgorithmOutput);
+  vtkGetObjectMacro(InputROIConnection, vtkAlgorithmOutput);
 #endif
 
   /// Description
   /// Input ROI volume to select streamlines (those that begin
   /// within InputROI and pass through InputROI2
   /// will be displayed).
+ #if (VTK_MAJOR_VERSION <= 5)
   vtkSetObjectMacro(InputROI2, vtkImageData);
   vtkGetObjectMacro(InputROI2, vtkImageData);
+#else
+  vtkSetObjectMacro(InputROIConnection2, vtkAlgorithmOutput);
+  vtkGetObjectMacro(InputROIConnection2, vtkAlgorithmOutput);
+#endif
 
   /// Description
   /// Transformation used in seeding streamlines.  Their start
@@ -284,11 +292,14 @@ protected:
 
   int RandomGrid;
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkImageData *InputTensorField;
   vtkImageData *InputROI;
   vtkImageData *InputROI2;
-#if (VTK_MAJOR_VERSION > 5)
-  vtkInformation *InputROIPipelineInfo;
+#else
+  vtkAlgorithmOutput *InputTensorFieldConnection;
+  vtkAlgorithmOutput *InputROIConnection;
+  vtkAlgorithmOutput *InputROIConnection2;
 #endif
 
   int InputROIValue;

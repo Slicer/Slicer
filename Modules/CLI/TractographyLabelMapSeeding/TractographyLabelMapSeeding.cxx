@@ -45,9 +45,10 @@ int main( int argc, char * argv[] )
       }
 
 
+#if (VTK_MAJOR_VERSION <= 5)
     vtkSmartPointer<vtkImageData> ROI;
-#if (VTK_MAJOR_VERSION > 5)
-    vtkSmartPointer<vtkInformation> ROIPipelineInfo;
+#else
+    vtkSmartPointer<vtkAlgorithmOutput> ROIConnection;
 #endif
     vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader2;
     vtkNew<vtkImageCast> imageCast;
@@ -75,14 +76,11 @@ int main( int argc, char * argv[] )
       imageCast->SetOutputScalarTypeToShort();
 #if (VTK_MAJOR_VERSION <=5)
       imageCast->SetInput(reader2->GetOutput() );
+      imageCast->Update();
+      ROI = imageCast->GetOutput();
 #else
       imageCast->SetInputConnection(reader2->GetOutputPort() );
-#endif
-      imageCast->Update();
-
-      ROI = imageCast->GetOutput();
-#if (VTK_MAJOR_VERSION > 5)
-      ROIPipelineInfo = imageCast->GetOutputInformation(0);
+      ROIConnection = imageCast->GetOutputPort();
 #endif
 
       // Set up the matrix that will take points in ROI
@@ -96,7 +94,7 @@ int main( int argc, char * argv[] )
 #if (VTK_MAJOR_VERSION <=5)
       math->SetInput(0, reader->GetOutput());
 #else
-      math->SetInputConnection(0, reader->GetOutputPort());
+      math->SetInputConnection(reader->GetOutputPort());
 #endif
 
       if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
@@ -116,9 +114,9 @@ int main( int argc, char * argv[] )
         std::cerr << "Mode " << StoppingMode << " is not supported" << endl;
         return EXIT_FAILURE;
         }
-      math->Update();
 
 #if (VTK_MAJOR_VERSION <=5)
+      math->Update();
       th->SetInput(math->GetOutput());
 #else
       th->SetInputConnection(math->GetOutputPort());
@@ -129,10 +127,11 @@ int main( int argc, char * argv[] )
       th->ReplaceInOn();
       th->ReplaceOutOn();
       th->SetOutputScalarTypeToShort();
+#if (VTK_MAJOR_VERSION <=5)
       th->Update();
       ROI = th->GetOutput();
-#if (VTK_MAJOR_VERSION > 5)
-      ROIPipelineInfo = th->GetOutputInformation(0);
+#else
+      ROIConnection = th->GetOutputPort();
 #endif
 
       // Set up the matrix that will take points in ROI
@@ -143,11 +142,14 @@ int main( int argc, char * argv[] )
       ROIRASToIJK->DeepCopy(reader->GetRasToIjkMatrix() );
     }
 
-
     vtkNew<vtkSeedTracts> seed;
 
     // 1. Set Input
+#if (VTK_MAJOR_VERSION <=5)
     seed->SetInputTensorField(reader->GetOutput() );
+#else
+    seed->SetInputTensorFieldConnection(reader->GetOutputPort());
+#endif
 
     // 2. Set Up matrices
     vtkNew<vtkMatrix4x4> TensorRASToIJK;
@@ -215,12 +217,12 @@ int main( int argc, char * argv[] )
     trans2->Inverse();
     seed->SetROIToWorld(trans2.GetPointer());
 
-
     // PENDING: Do merging with input ROI
 
+#if (VTK_MAJOR_VERSION <=5)
     seed->SetInputROI(ROI);
-#if (VTK_MAJOR_VERSION > 5)
-    seed->SetInputROIPipelineInfo(ROIPipelineInfo);
+#else
+    seed->SetInputROIConnection(ROIConnection);
 #endif
     seed->SetInputROIValue(ROIlabel);
     seed->UseStartingThresholdOn();
