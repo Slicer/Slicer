@@ -1050,7 +1050,7 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
   vtkHyperStreamlineDTMRI *newStreamline;
 
   // time
-  vtkTimerLog *timer = vtkTimerLog::New();
+  vtkNew<vtkTimerLog> timer;
   timer->StartTimer();
 
 #if (VTK_MAJOR_VERSION <= 5)
@@ -1119,10 +1119,10 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   // Create transformation matrices to go backwards from streamline points to ROI space
   // This is used to access ROI2.
-  vtkTransform *WorldToROI2 = vtkTransform::New();
+  vtkNew<vtkTransform> WorldToROI2;
   WorldToROI2->SetMatrix(this->ROI2ToWorld->GetMatrix());
   WorldToROI2->Inverse();
-  vtkTransform *TensorScaledIJKToWorld = vtkTransform::New();
+  vtkNew<vtkTransform> TensorScaledIJKToWorld;
   TensorScaledIJKToWorld->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
   TensorScaledIJKToWorld->Inverse();
 
@@ -1315,7 +1315,6 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   timer->StopTimer();
   std::cout << "Tractography in ROI time: " << timer->GetElapsedTime() << endl;
-  timer->Delete();
 }
 
 //----------------------------------------------------------------------------

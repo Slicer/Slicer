@@ -840,7 +840,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     //Do scale IJK
     double sp[3];
     seedingNode->GetSpacing(sp);
-    vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+    vtkNew<vtkImageChangeInformation> ici;
     ici->SetOutputSpacing(sp);
 #if (VTK_MAJOR_VERSION <= 5)
     ici->SetInput(imageCast->GetOutput());

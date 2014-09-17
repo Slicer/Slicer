@@ -19,6 +19,7 @@
 #include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include <vtkNew.h>
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include <vtkStreamingDemandDrivenPipeline.h>
@@ -511,10 +512,9 @@ int vtkDiffusionTensorGlyph::RequestData(
             v_maj[2]=v[2][0];
             if (this->TensorRotationMatrix)
               {
-              vtkTransform *rotate = vtkTransform::New();
+              vtkNew<vtkTransform> rotate;
               rotate->SetMatrix(this->TensorRotationMatrix);
               rotate->TransformPoint(v_maj,v_maj);
-              rotate->Delete();
               }
             // TO DO: here output as RGB. Need to allocate 3-component scalars first.
             s = 0;

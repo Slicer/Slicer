@@ -571,9 +571,9 @@ void vtkMRMLFiberBundleNode::SetAndObserveAnnotationNodeID ( const char *id )
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::PrepareSubsampling()
 {
-  vtkSelection* sel = vtkSelection::New();
-  vtkSelectionNode* node = vtkSelectionNode::New();
-  vtkIdTypeArray* arr = vtkIdTypeArray::New();
+  vtkNew<vtkSelection> sel;
+  vtkNew<vtkSelectionNode> node;
+  vtkNew<vtkIdTypeArray> arr;
 
   this->SubsamplingRatio = 1.;
 
@@ -581,18 +581,18 @@ void vtkMRMLFiberBundleNode::PrepareSubsampling()
 
   this->ExtractSelectedPolyDataIds = vtkExtractSelectedPolyDataIds::New();
 
-  sel->AddNode(node);
+  sel->AddNode(node.GetPointer());
 
   node->GetProperties()->Set(vtkSelectionNode::CONTENT_TYPE(), vtkSelectionNode::INDICES);
   node->GetProperties()->Set(vtkSelectionNode::FIELD_TYPE(), vtkSelectionNode::CELL);
 
   arr->SetNumberOfTuples(0);
-  node->SetSelectionList(arr);
+  node->SetSelectionList(arr.GetPointer());
 
 #if (VTK_MAJOR_VERSION <= 5)
-  this->ExtractSelectedPolyDataIds->SetInput(1, sel);
+  this->ExtractSelectedPolyDataIds->SetInput(1, sel.GetPointer());
 #else
-  this->ExtractSelectedPolyDataIds->SetInputData(1, sel);
+  this->ExtractSelectedPolyDataIds->SetInputData(1, sel.GetPointer());
 #endif
 
   this->CleanPolyDataPostSubsampling = vtkCleanPolyData::New();
@@ -603,10 +603,6 @@ void vtkMRMLFiberBundleNode::PrepareSubsampling()
 
   this->CleanPolyDataPostSubsampling->SetInputConnection(
     this->ExtractSelectedPolyDataIds->GetOutputPort());
-
-  arr->Delete();
-  node->Delete();
-  sel->Delete();
 }
 
 //----------------------------------------------------------------------------
