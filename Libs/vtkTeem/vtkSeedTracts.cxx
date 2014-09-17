@@ -901,7 +901,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
   vtkHyperStreamline *streamline;
   int npts = 0;
   int ncells = 0;
-  //Loop throgh the collection and gather total number of points
+  //Loop through the collection and gather total number of points
   for (int i=0; i<this->Streamlines->GetNumberOfItems(); i++)
     {
     streamline = static_cast<vtkHyperStreamline*> (this->Streamlines->GetItemAsObject(i));
@@ -914,24 +914,21 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
     }
 
   //Preallocate PolyData elements
-  vtkPoints *points = vtkPoints::New();
-  outFibers->SetPoints(points);
-  points->Delete();
+  vtkNew<vtkPoints> points;
+  outFibers->SetPoints(points.GetPointer());
   //outFibers->GetPoints()->SetNumberOfPoints(npts);
-  vtkIdTypeArray *cellArray;
-  vtkCellArray *outFibersCellArray = vtkCellArray::New();
-  outFibers->SetLines(outFibersCellArray);
-  outFibersCellArray->Delete();
+
+  vtkNew<vtkCellArray> outFibersCellArray;
+  outFibers->SetLines(outFibersCellArray.GetPointer());
   outFibersCellArray->SetNumberOfCells(this->Streamlines->GetNumberOfItems());
-  outFibersCellArray = outFibers->GetLines();
-  cellArray=outFibersCellArray->GetData();
+
+  vtkIdTypeArray *cellArray = outFibersCellArray->GetData();
   cellArray->SetNumberOfTuples(npts+ncells);
-  vtkFloatArray *newTensors = vtkFloatArray::New();
+
+  vtkNew<vtkFloatArray> newTensors;
   newTensors->SetNumberOfComponents(9);
   newTensors->Allocate(9*npts);
-  outFibers->GetPointData()->SetTensors(newTensors);
-  newTensors->Delete();
-  newTensors = static_cast<vtkFloatArray *> (outFibers->GetPointData()->GetTensors());
+  outFibers->GetPointData()->SetTensors(newTensors.GetPointer());
 
   int ptId=0;
   int cellId=0;
@@ -972,9 +969,6 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
     // -------------------------------------------------
     vtkDebugMacro("Rotating tensors");
     int numPts = transformer->GetOutput()->GetNumberOfPoints();
-    //vtkFloatArray *newTensors = vtkFloatArray::New();
-    //newTensors->SetNumberOfComponents(9);
-    //newTensors->Allocate(9*numPts);
 
     vtkDebugMacro("Rotating tensors: init");
     double (*matrix)[4] = this->TensorRotationMatrix->Element;
@@ -1025,8 +1019,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
     // End of tensor rotation code.
     // -------------------------------------------------
     }
-  outFibers->SetLines(outFibersCellArray);
-  outFibers->GetPointData()->SetTensors(newTensors);
+
   // Remove the scalars if any, we don't need
   // to save anything but the tensors
   outFibers->GetPointData()->SetScalars(NULL);
