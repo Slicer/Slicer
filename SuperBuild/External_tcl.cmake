@@ -38,19 +38,19 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(TCL_TK_VERSION "85")
       set(INCR_TCL_VERSION_DOT "3.4")
       set(INCR_TCL_VERSION "34")
-      set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl85-x64-build")
-      set(tcl_SVN_REVISION -r "184")
+      set(tcl_URL "http://slicer.kitware.com/midas3/download/item/159433/tcl85-x64-build.zip")
+      set(tcl_MD5 "10f0a12590acaaef924dc22e80c9d70a")
     else()
       set(TCL_TK_VERSION_DOT "8.4")
       set(TCL_TK_VERSION "84")
       set(INCR_TCL_VERSION_DOT "3.2")
       set(INCR_TCL_VERSION "32")
-      set(tcl_SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Binaries/Windows/tcl-build")
-      set(tcl_SVN_REVISION -r "176")
+      set(tcl_URL "http://slicer.kitware.com/midas3/download/item/159432/tcl85-build.zip")
+      set(tcl_MD5 "07401cf7128a9a79403c8d9b745024a6")
     endif()
     set(tcl_DOWNLOAD_COMMAND
-      SVN_REPOSITORY ${tcl_SVN_REPOSITORY}
-      SVN_REVISION ${tcl_SVN_REVISION}
+      URL ${tcl_URL}
+      URL_MD5 ${tcl_MD5}
       )
     set(tcl_SOURCE_DIR tcl-build)
     mark_as_superbuild(
