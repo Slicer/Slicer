@@ -301,14 +301,11 @@ void vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForOneSeed(vtkSee
   streamer->SetRadiusOfCurvature(stoppingCurvature);
   streamer->SetIntegrationStepLength(integrationStepLength);
 
-  // Temp fix to provide a scalar
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* inputTensorField = seed->GetInputTensorField();
-#else
-  vtkImageData* inputTensorField = vtkImageData::SafeDownCast(
-        seed->GetInputTensorFieldConnection()->GetProducer()->GetOutputDataObject(0));
+  // Temp fix to provide a scalar
+  seed->GetInputTensorField()->GetPointData()->SetScalars(
+        volumeNode->GetImageData()->GetPointData()->GetScalars());
 #endif
-  inputTensorField->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
 
   vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(transformableNode);
   vtkMRMLMarkupsFiducialNode *markupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(transformableNode);
