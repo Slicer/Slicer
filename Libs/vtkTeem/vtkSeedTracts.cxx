@@ -521,12 +521,6 @@ void vtkSeedTracts::SeedStreamlinesInROI()
  
   double spacing[3];
 
-  // extent is not used in the function?
-#if (VTK_MAJOR_VERSION <= 5)
-  int extent[6];
-
-  this->InputTensorField->GetWholeExtent(extent);
-#endif
   this->InputTensorField->GetSpacing(spacing);
 
   // currently this filter is not multithreaded, though in the future
