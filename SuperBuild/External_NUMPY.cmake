@@ -69,7 +69,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" setup.py in
   #------------------------------------------------------------------------------
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/numpy-1.4.1.tar.gz"
+    URL "http://slicer.kitware.com/midas3/download/item/159430/numpy-1.4.1.tar.gz"
     URL_MD5 "5c7b5349dc3161763f7f366ceb96516b"
     SOURCE_DIR ${proj}
     BUILD_IN_SOURCE 1

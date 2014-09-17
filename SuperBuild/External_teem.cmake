@@ -44,7 +44,7 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
-  set(teem_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/teem-1.10.0-src.tar.gz)
+  set(teem_URL http://slicer.kitware.com/midas3/download/item/159431/teem-1.10.0-src.tar.gz)
   set(teem_MD5 efe219575adc89f6470994154d86c05b)
 
   ExternalProject_Add(${proj}
