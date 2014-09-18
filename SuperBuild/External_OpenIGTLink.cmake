@@ -14,7 +14,7 @@ endif()
 
 # Sanity checks
 if(DEFINED OpenIGTLink_DIR AND NOT EXISTS ${OpenIGTLink_DIR})
-  message(FATAL_ERROR "OpenIGTLink_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "OpenIGTLink_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})

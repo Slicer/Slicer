@@ -7,7 +7,7 @@ endif()
 
 # Sanity checks
 if(DEFINED CTKResEdit_EXECUTABLE AND NOT EXISTS ${CTKResEdit_EXECUTABLE})
-  message(FATAL_ERROR "CTKResEdit_EXECUTABLE variable is defined but corresponds to non-existing file")
+  message(FATAL_ERROR "CTKResEdit_EXECUTABLE variable is defined but corresponds to nonexistent file")
 endif()
 
 # Set dependency list

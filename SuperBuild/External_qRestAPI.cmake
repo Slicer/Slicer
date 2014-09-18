@@ -13,7 +13,7 @@ endif()
 
 # Sanity checks
 if(DEFINED qRestAPI_DIR AND NOT EXISTS ${qRestAPI_DIR})
-  message(FATAL_ERROR "qRestAPI_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "qRestAPI_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT DEFINED qRestAPI_DIR)

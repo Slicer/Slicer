@@ -5,7 +5,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   # Sanity checks
   if(DEFINED CTKAPPLAUNCHER_DIR AND NOT EXISTS ${CTKAPPLAUNCHER_DIR})
-    message(FATAL_ERROR "CTKAPPLAUNCHER_DIR variable is defined but corresponds to non-existing directory")
+    message(FATAL_ERROR "CTKAPPLAUNCHER_DIR variable is defined but corresponds to nonexistent directory")
   endif()
 
   # Set dependency list

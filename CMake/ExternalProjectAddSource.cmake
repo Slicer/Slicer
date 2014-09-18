@@ -58,7 +58,7 @@ function(ExternalProject_Add_Source projectname)
 
   # Sanity checks
   if(DEFINED ${_ep_SOURCE_DIR_VAR} AND NOT EXISTS ${${_ep_SOURCE_DIR_VAR}})
-    message(FATAL_ERROR "${_ep_SOURCE_DIR_VAR} variable is defined but corresponds to non-existing directory")
+    message(FATAL_ERROR "${_ep_SOURCE_DIR_VAR} variable is defined but corresponds to nonexistent directory")
   endif()
 
   if(NOT DEFINED ${_ep_SOURCE_DIR_VAR})

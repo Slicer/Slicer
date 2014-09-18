@@ -284,7 +284,7 @@ def buildProcessArgs(*args, **kwargs):
 
 #-----------------------------------------------------------------------------
 def createEmptyRepo(path, tool=None):
-  """Create a repository in an empty or non-existing location.
+  """Create a repository in an empty or nonexistent location.
 
   :param path:
     Location which should contain the newly created repository.

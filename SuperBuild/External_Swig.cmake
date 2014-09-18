@@ -7,7 +7,7 @@ endif()
 
 # Sanity checks
 if(DEFINED Swig_DIR AND NOT EXISTS ${Swig_DIR})
-  message(FATAL_ERROR "Swig_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "Swig_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})

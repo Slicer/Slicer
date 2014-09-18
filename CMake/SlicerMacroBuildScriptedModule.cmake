@@ -76,7 +76,7 @@ macro(slicerMacroBuildScriptedModule)
         get_source_file_property(is_generated ${value_absolute} GENERATED)
         if(NOT is_generated)
           message(FATAL_ERROR
-            "slicerMacroBuildScriptedModule(${var}) given non-existing"
+            "slicerMacroBuildScriptedModule(${var}) given nonexistent"
             " file or directory '${value}'")
         endif()
       endif()

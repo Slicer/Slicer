@@ -139,7 +139,7 @@ function(fixup_bundle_with_plugins app)
   # Sanity checks
   foreach(path Slicer_BUILD_DIR Slicer_SUPERBUILD_DIR)
     if(NOT EXISTS ${${path}})
-      message(FATAL_ERROR "${path} variable is defined but corresponds to non-existing directory: ${${path}}")
+      message(FATAL_ERROR "${path} variable is defined but corresponds to nonexistent directory: ${${path}}")
     endif()
   endforeach()
 

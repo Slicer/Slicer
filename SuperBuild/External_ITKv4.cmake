@@ -17,7 +17,7 @@ endif()
 
 # Sanity checks
 if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
-  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
+  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
