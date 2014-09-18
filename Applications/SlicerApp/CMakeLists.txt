@@ -1,10 +1,10 @@
 project(SlicerApp)
 
 # --------------------------------------------------------------------------
-# It's possible to build more than one applications (i.e. an application "OtherApp"
-# in addition to "Slicer").
+# Slicer supports more than one application (i.e. an application
+# "OtherApp" in addition to "APPLICATION_NAMEApp").
 #
-# In that specific case, it's required to differentiate the two applications
+# In that specific case, it is required to differentiate the two applications
 # and specify which one should be considered as the *Main* one.
 #
 # This is usually done within the top level CMakeLists.txt file by setting the variable
