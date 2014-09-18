@@ -741,129 +741,92 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
     return;
     }
 
+  vtkMRMLScene *scene = this->GetMRMLScene();
+
   //
   // The core nodes
   //
 
   // base nodes
-  vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationNode);
-  annotationNode->Delete();
+  vtkNew<vtkMRMLAnnotationNode> annotationNode;
+  scene->RegisterNodeClass(annotationNode.GetPointer());
 
-  vtkMRMLAnnotationDisplayNode* annotationDisplayNode =
-      vtkMRMLAnnotationDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationDisplayNode);
-  annotationDisplayNode->Delete();
+  vtkNew<vtkMRMLAnnotationDisplayNode> annotationDisplayNode;
+  scene->RegisterNodeClass(annotationDisplayNode.GetPointer());
 
-  vtkMRMLAnnotationStorageNode* annotationStorageNode =
-      vtkMRMLAnnotationStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationStorageNode);
-  annotationStorageNode->Delete();
+  vtkNew<vtkMRMLAnnotationStorageNode> annotationStorageNode;
+  scene->RegisterNodeClass(annotationStorageNode.GetPointer());
 
   // Control Points
-  vtkMRMLAnnotationControlPointsNode* annotationControlPointsNode =
-      vtkMRMLAnnotationControlPointsNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationControlPointsNode);
-  annotationControlPointsNode->Delete();
+  vtkNew<vtkMRMLAnnotationControlPointsNode> annotationControlPointsNode;
+  scene->RegisterNodeClass(annotationControlPointsNode.GetPointer());
 
-  vtkMRMLAnnotationControlPointsStorageNode
-      * annotationControlPointsStorageNode =
-          vtkMRMLAnnotationControlPointsStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationControlPointsStorageNode);
-  annotationControlPointsStorageNode->Delete();
+  vtkNew<vtkMRMLAnnotationControlPointsStorageNode> annotationControlPointsStorageNode;
+  scene->RegisterNodeClass(annotationControlPointsStorageNode.GetPointer());
 
-  vtkMRMLAnnotationPointDisplayNode* annotationControlPointsDisplayNode =
-      vtkMRMLAnnotationPointDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationControlPointsDisplayNode);
-  annotationControlPointsDisplayNode->Delete();
+  vtkNew<vtkMRMLAnnotationPointDisplayNode> annotationControlPointsDisplayNode;
+  scene->RegisterNodeClass(annotationControlPointsDisplayNode.GetPointer());
 
   // Lines
-  vtkMRMLAnnotationLinesNode* annotationLinesNode =
-      vtkMRMLAnnotationLinesNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationLinesNode);
-  annotationLinesNode->Delete();
+  vtkNew<vtkMRMLAnnotationLinesNode> annotationLinesNode;
+  scene->RegisterNodeClass(annotationLinesNode.GetPointer());
 
-  vtkMRMLAnnotationLinesStorageNode* annotationLinesStorageNode =
-      vtkMRMLAnnotationLinesStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationLinesStorageNode);
-  annotationLinesStorageNode->Delete();
+  vtkNew<vtkMRMLAnnotationLinesStorageNode> annotationLinesStorageNode;
+  scene->RegisterNodeClass(annotationLinesStorageNode.GetPointer());
 
-  vtkMRMLAnnotationLineDisplayNode* annotationLinesDisplayNode =
-      vtkMRMLAnnotationLineDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationLinesDisplayNode);
-  annotationLinesDisplayNode->Delete();
+  vtkNew<vtkMRMLAnnotationLineDisplayNode> annotationLinesDisplayNode;
+  scene->RegisterNodeClass(annotationLinesDisplayNode.GetPointer());
 
   // Text
-  vtkMRMLAnnotationTextDisplayNode* annotationTextDisplayNode =
-      vtkMRMLAnnotationTextDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationTextDisplayNode);
-  annotationTextDisplayNode->Delete();
+  vtkNew<vtkMRMLAnnotationTextDisplayNode> annotationTextDisplayNode;
+  scene->RegisterNodeClass(annotationTextDisplayNode.GetPointer());
 
   //
   // Now the actual Annotation tool nodes
   //
 
   // Snapshot annotation
-  vtkMRMLAnnotationSnapshotNode* annotationSnapshotNode =
-      vtkMRMLAnnotationSnapshotNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationSnapshotNode);
-  annotationSnapshotNode->Delete();
+  vtkNew<vtkMRMLAnnotationSnapshotNode> annotationSnapshotNode;
+  scene->RegisterNodeClass(annotationSnapshotNode.GetPointer());
 
-  vtkMRMLAnnotationSnapshotStorageNode* annotationSnapshotStorageNode =
-      vtkMRMLAnnotationSnapshotStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationSnapshotStorageNode);
-  annotationSnapshotStorageNode->Delete();
+  vtkNew<vtkMRMLAnnotationSnapshotStorageNode> annotationSnapshotStorageNode;
+  scene->RegisterNodeClass(annotationSnapshotStorageNode.GetPointer());
 
   // Text annotation
-  vtkMRMLAnnotationTextNode* annotationTextNode =
-      vtkMRMLAnnotationTextNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationTextNode);
-  annotationTextNode->Delete();
+  vtkNew<vtkMRMLAnnotationTextNode> annotationTextNode;
+  scene->RegisterNodeClass(annotationTextNode.GetPointer());
 
   // Ruler annotation
-  vtkMRMLAnnotationRulerNode* annotationRulerNode =
-      vtkMRMLAnnotationRulerNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationRulerNode);
-  annotationRulerNode->Delete();
+  vtkNew<vtkMRMLAnnotationRulerNode> annotationRulerNode;
+  scene->RegisterNodeClass(annotationRulerNode.GetPointer());
 
-  vtkMRMLAnnotationRulerStorageNode* annotationRulerStorageNode =
-      vtkMRMLAnnotationRulerStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationRulerStorageNode);
-  annotationRulerStorageNode->Delete();
+  vtkNew<vtkMRMLAnnotationRulerStorageNode> annotationRulerStorageNode;
+  scene->RegisterNodeClass(annotationRulerStorageNode.GetPointer());
 
   // ROI annotation
-  vtkMRMLAnnotationROINode* annotationROINode = vtkMRMLAnnotationROINode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationROINode);
+  vtkNew<vtkMRMLAnnotationROINode> annotationROINode;
+  scene->RegisterNodeClass(annotationROINode.GetPointer());
   // ROI annotation backwards compatibility
 #if MRML_SUPPORT_VERSION < 0x040000
-  this->GetMRMLScene()->RegisterNodeClass(annotationROINode, "ROI");
+  scene->RegisterNodeClass(annotationROINode.GetPointer(), "ROI");
 #endif
-  annotationROINode->Delete();
 
   // Bidimensional annotation
-  vtkMRMLAnnotationBidimensionalNode* annotationBidimensionalNode =
-      vtkMRMLAnnotationBidimensionalNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationBidimensionalNode);
-  annotationBidimensionalNode->Delete();
+  vtkNew<vtkMRMLAnnotationBidimensionalNode> annotationBidimensionalNode;
+  scene->RegisterNodeClass(annotationBidimensionalNode.GetPointer());
 
   // Fiducial annotation
-  vtkMRMLAnnotationFiducialNode* annotationFiducialNode =
-      vtkMRMLAnnotationFiducialNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationFiducialNode);
-  annotationFiducialNode->Delete();
+  vtkNew<vtkMRMLAnnotationFiducialNode> annotationFiducialNode;
+  scene->RegisterNodeClass(annotationFiducialNode.GetPointer());
 
-  vtkMRMLAnnotationFiducialsStorageNode* annotationFiducialsStorageNode =
-      vtkMRMLAnnotationFiducialsStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationFiducialsStorageNode);
-  annotationFiducialsStorageNode->Delete();
+  vtkNew<vtkMRMLAnnotationFiducialsStorageNode> annotationFiducialsStorageNode;
+  scene->RegisterNodeClass(annotationFiducialsStorageNode.GetPointer());
 
   //
   // Annotation hierarchies
   //
-  vtkMRMLAnnotationHierarchyNode* annotationHierarchyNode =
-      vtkMRMLAnnotationHierarchyNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
-  annotationHierarchyNode->Delete();
+  vtkNew<vtkMRMLAnnotationHierarchyNode> annotationHierarchyNode;
+  scene->RegisterNodeClass(annotationHierarchyNode.GetPointer());
 }
 
 //---------------------------------------------------------------------------

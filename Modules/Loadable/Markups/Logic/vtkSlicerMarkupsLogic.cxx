@@ -89,10 +89,9 @@ vtkSlicerMarkupsLogic::vtkSlicerMarkupsLogic()
   // link an observation of the modified event on the display node to trigger
   // a modified event on the logic so any settings panel can get updated
   // first, create the callback
-  vtkSlicerMarkupsLogicCallback *myCallback = vtkSlicerMarkupsLogicCallback::New();
+  vtkNew<vtkSlicerMarkupsLogicCallback> myCallback;
   myCallback->SetLogic(this);
-  this->DefaultMarkupsDisplayNode->AddObserver(vtkCommand::ModifiedEvent, myCallback);
-  myCallback->Delete();
+  this->DefaultMarkupsDisplayNode->AddObserver(vtkCommand::ModifiedEvent, myCallback.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -173,28 +172,18 @@ void vtkSlicerMarkupsLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != 0);
 
-  // Nodes
-  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(markupsNode);
-  markupsNode->Delete();
+  vtkMRMLScene *scene = this->GetMRMLScene();
 
-  vtkMRMLMarkupsFiducialNode* fidNode = vtkMRMLMarkupsFiducialNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(fidNode);
-  fidNode->Delete();
+  // Nodes
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New());
 
   // Display nodes
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode = vtkMRMLMarkupsDisplayNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(markupsDisplayNode);
-  markupsDisplayNode->Delete();
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsDisplayNode>::New());
 
   // Storage Nodes
-  vtkMRMLMarkupsStorageNode* markupsStorageNode = vtkMRMLMarkupsStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(markupsStorageNode);
-  markupsStorageNode->Delete();
-
-  vtkMRMLMarkupsFiducialStorageNode* markupsFiducialStorageNode = vtkMRMLMarkupsFiducialStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(markupsFiducialStorageNode);
-  markupsFiducialStorageNode->Delete();
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsStorageNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFiducialStorageNode>::New());
 }
 
 //---------------------------------------------------------------------------
