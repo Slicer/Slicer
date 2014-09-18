@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-# Git protocole option
+# Git protocol option
 #-----------------------------------------------------------------------------
 option(Slicer_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
 
