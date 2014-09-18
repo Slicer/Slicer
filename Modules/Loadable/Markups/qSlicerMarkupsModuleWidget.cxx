@@ -625,6 +625,12 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
 
   // std::cout << "updateWidgetFromMRML" << std::endl;
 
+  if (!this->mrmlScene())
+    {
+    this->clearGUI();
+    return;
+    }
+
   // get the active markup
   vtkMRMLNode *markupsNodeMRML = NULL;
   std::string listID = (this->markupsLogic() ?
@@ -1840,27 +1846,28 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeChanged(vtkMRMLNode *mark
 
   //qDebug() << "onActiveMarkupMRMLNodeChanged, markupsNode is " << (markupsNode ? markupsNode->GetID() : "null");
 
-  // get the current node from the combo box
-  QString activeMarkupsNodeID = d->activeMarkupMRMLNodeComboBox->currentNodeID();
-  const char *activeID = NULL;
-  if (markupsNode)
-    {
-    activeID = markupsNode->GetID();
-    }
-
-  //qDebug() << "setActiveMarkupsNode: combo box says: " << qPrintable(activeMarkupsNodeID) << ", input node says " << (activeID ? activeID : "null");
   // update the selection node
-  std::string selectionNodeID = (this->markupsLogic() ? this->markupsLogic()->GetSelectionNodeID() : std::string(""));
-  vtkMRMLNode *node = this->mrmlScene()->GetNodeByID(selectionNodeID.c_str());
   vtkMRMLSelectionNode *selectionNode = NULL;
-  if (node)
+  if (this->mrmlScene() && this->markupsLogic())
     {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(node);
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+          this->mrmlScene()->GetNodeByID(this->markupsLogic()->GetSelectionNodeID().c_str()));
     }
   if (selectionNode)
     {
     // check if changed
     const char *selectionNodeActivePlaceNodeID = selectionNode->GetActivePlaceNodeID();
+
+    const char *activeID = NULL;
+    if (markupsNode)
+      {
+      activeID = markupsNode->GetID();
+      }
+
+    // get the current node from the combo box
+    //QString activeMarkupsNodeID = d->activeMarkupMRMLNodeComboBox->currentNodeID();
+    //qDebug() << "setActiveMarkupsNode: combo box says: " << qPrintable(activeMarkupsNodeID) << ", input node says " << (activeID ? activeID : "null");
+
     // don't update the selection node if the active ID is null (can happen
     // when entering the module)
     if (activeID != NULL)
@@ -1879,10 +1886,6 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeChanged(vtkMRMLNode *mark
         d->activeMarkupMRMLNodeComboBox->setCurrentNodeID(selectionNodeActivePlaceNodeID);
         }
       }
-    }
-  else
-    {
-    qDebug() << "On Active MRML node changed: Failed to change active markups node id on selection node '" << selectionNodeID.c_str() << "'";
     }
 
   // update the GUI
