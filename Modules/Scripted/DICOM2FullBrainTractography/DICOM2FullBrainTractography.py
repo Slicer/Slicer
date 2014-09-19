@@ -43,7 +43,7 @@ class DICOM2FullBrainTractographyWidget:
 
     self.full_tractography_workflow = DICOM2FullBrainTractographyLib.Workflow(
         DICOM2FullBrainTractographyLib.WorkflowConfiguration(),
-        self.layout
+        self.parent
     )
 
   def enter(self):
