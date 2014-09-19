@@ -50,11 +50,13 @@ class WorkflowConfiguration:
 
     def __init__(self):
         self.slicerVolumesLogic = slicer.vtkSlicerVolumesLogic()
-        self.slicerVolumesLogic.SetMRMLScene(slicer.mrmlScene)
         self.dwiconvert_parameter_node = None
         self.diffusionweightedvolumemasking_parameter_node = None
         self.diffusiontensorestimation_parameter_node = None
         self.seeding_parameter_node = None
+
+    def setMRMLScene(self, mrmlScene):
+        self.slicerVolumesLogic.SetMRMLScene(mrmlScene)
 
     def post_widget_init(self, widget_name, widget):
         if widget_name == 'dicom2nrrd':

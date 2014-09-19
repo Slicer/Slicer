@@ -21,6 +21,9 @@ class Workflow:
 
         self.workflow_configuration = workflow_configuration
 
+        parent.connect(parent, 'mrmlSceneChanged(vtkMRMLScene*)', self.workflow_configuration.setMRMLScene)
+        self.workflow_configuration.setMRMLScene(slicer.mrmlScene)
+
         loader = qt.QUiLoader()
 
         self.steps = []
@@ -70,6 +73,7 @@ class Workflow:
             widget = loader.load( qfile )
 
             if hasattr(widget, 'setMRMLScene'):
+                widget.connect(parent, 'mrmlSceneChanged(vtkMRMLScene*)',widget.setMRMLScene)
                 widget.setMRMLScene(slicer.mrmlScene)
 
             if hasattr(self.workflow_configuration, 'post_widget_init'):
