@@ -83,7 +83,7 @@ class Workflow:
             self.steps.append((step_widget_file, step))
 
 
-        self.workflow = ctk.ctkWorkflow()
+        self.workflow = ctk.ctkWorkflow(self.parent)
         self.workflowWidget = ctk.ctkWorkflowStackedWidget()
 
         self.workflowWidget.setWorkflow(self.workflow)
