@@ -183,17 +183,18 @@ int main(int argc, char* * argv)
   if( splineDistance )
     {
 
-    unsigned long lowerBound[ImageDimension];
-    unsigned long upperBound[ImageDimension];
+    itk::SizeValueType lowerBound[ImageDimension];
+    itk::SizeValueType upperBound[ImageDimension];
     for( unsigned  d = 0; d < 3; d++ )
       {
       float domain = static_cast<RealType>( inputImage->
                                             GetLargestPossibleRegion().GetSize()[d] - 1 ) * inputImage->GetSpacing()[d];
       unsigned int  numberOfSpans = static_cast<unsigned int>( vcl_ceil( domain / splineDistance ) );
-      unsigned long extraPadding = static_cast<unsigned long>( ( numberOfSpans
-                                                                 * splineDistance
-                                                                 - domain ) / inputImage->GetSpacing()[d] + 0.5 );
-      lowerBound[d] = static_cast<unsigned long>( 0.5 * extraPadding );
+      itk::SizeValueType extraPadding =
+          static_cast<itk::SizeValueType>( ( numberOfSpans
+                                             * splineDistance
+                                             - domain ) / inputImage->GetSpacing()[d] + 0.5 );
+      lowerBound[d] = static_cast<itk::SizeValueType>( 0.5 * extraPadding );
       upperBound[d] = extraPadding - lowerBound[d];
       newOrigin[d] -= ( static_cast<RealType>( lowerBound[d] )
                         * inputImage->GetSpacing()[d] );
