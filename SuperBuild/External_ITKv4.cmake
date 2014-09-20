@@ -27,7 +27,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
-  set(ITKv4_GIT_TAG c768e9b87c255f803e4ee9eeb34c21add6e97bad) # slicer-v4.6.0-2014-09-16-c768e9b
+  set(ITKv4_GIT_TAG 056d97b66a1ddbae77e2217c5bd96e436c7e44fc) # slicer-v4.6.0-2014-09-19-056d97b
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
