@@ -30,12 +30,15 @@ bool TimeSeriesDatabase<TPixel>::CalculateIntersection ( Size<3> BlockIndex,
   bool IsFullBlock = true;
   for ( unsigned int i = 0; i < 3; i++ )
   {
-    ImageRegion.SetIndex ( i, TSD_MAX<itk::IndexValueType> ( RequestedRegion.GetIndex ( i ), TimeSeriesBlockSize * BlockIndex[i] ) );
+    ImageRegion.SetIndex ( i, TSD_MAX<itk::IndexValueType> (
+                             RequestedRegion.GetIndex ( i ),
+                             static_cast<IndexValueType>( TimeSeriesBlockSize * BlockIndex[i] ) ) );
     BlockRegion.SetIndex ( i, ImageRegion.GetIndex(i) % TimeSeriesBlockSize );
 
     // This is the end index
     long unsigned int Tmp = RequestedRegion.GetIndex ( i ) + RequestedRegion.GetSize ( i );
-    Tmp = TSD_MIN<itk::IndexValueType> ( Tmp, TimeSeriesBlockSize * (BlockIndex[i]+1) );
+    Tmp = TSD_MIN<itk::IndexValueType> (
+          Tmp, static_cast<IndexValueType>( TimeSeriesBlockSize * (BlockIndex[i]+1) ) );
     Tmp = Tmp - ImageRegion.GetIndex(i);
 
     ImageRegion.SetSize ( i, Tmp );
