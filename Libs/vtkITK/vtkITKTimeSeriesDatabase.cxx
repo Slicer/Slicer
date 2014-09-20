@@ -63,7 +63,7 @@ void vtkITKTimeSeriesDatabase::ExecuteDataWithInformation(vtkDataObject *output,
   {
     this->AllocateOutputData(output, outInfo);
 #endif
-    itk::ImportImageContainer<unsigned long, OutputImagePixelType>::Pointer PixelContainerShort;
+    itk::ImportImageContainer<itk::SizeValueType, OutputImagePixelType>::Pointer PixelContainerShort;
     PixelContainerShort = this->m_Filter->GetOutput()->GetPixelContainer();
     void *ptr = static_cast<void *> (PixelContainerShort->GetBufferPointer());
     vtkUnsignedLongArray::SafeDownCast(

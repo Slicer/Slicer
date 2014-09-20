@@ -88,7 +88,7 @@ void vtkITKExecuteDataFromFileVector(
     filter = orient2;
     }
    filter->UpdateLargestPossibleRegion();
-  typename itk::ImportImageContainer<unsigned long, T>::Pointer PixelContainer2;
+  typename itk::ImportImageContainer<itk::SizeValueType, T>::Pointer PixelContainer2;
   PixelContainer2 = filter->GetOutput()->GetPixelContainer();
   void *ptr = static_cast<void *> (PixelContainer2->GetBufferPointer());
   DownCast<T>(data->GetPointData()->GetScalars())

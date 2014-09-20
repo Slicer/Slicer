@@ -124,7 +124,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         filter = orient##typeN; \
         }\
       filter->UpdateLargestPossibleRegion(); \
-      itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer##typeN;\
+      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer##typeN;\
       PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
       DownCast<type>(data->GetPointData()->GetScalars())                \
@@ -157,8 +157,8 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
         orient2##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
         filter = orient2##typeN; \
         } \
-       filter->UpdateLargestPossibleRegion();\
-      itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer2##typeN;\
+      filter->UpdateLargestPossibleRegion();\
+      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer2##typeN;\
       PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
       DownCast<type>(data->GetPointData()->GetScalars())                \

@@ -100,7 +100,7 @@ void vtkITKExecuteDataFromSeriesVector(
     filter = orient;
     }
   filter->UpdateLargestPossibleRegion();
-  typename itk::ImportImageContainer<unsigned long, VectorPixelType>::Pointer PixelContainer;
+  typename itk::ImportImageContainer<itk::SizeValueType, VectorPixelType>::Pointer PixelContainer;
   PixelContainer = filter->GetOutput()->GetPixelContainer();
   void *ptr = static_cast<void *> (PixelContainer->GetBufferPointer());
   DownCast<T>(data->GetPointData()->GetScalars())
