@@ -519,8 +519,8 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
     this->GetScene()->RemoveNode(child);
     }
 }
-//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
 {
   if (this->GetScene() == NULL)
@@ -537,6 +537,7 @@ void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
       {
       childChildern[j]->RemoveAllHierarchyChildrenNodes();
       }
+    this->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent, child);
     this->GetScene()->RemoveNode(child);
     }
 }
