@@ -115,7 +115,7 @@ public:
   /// Removes immediate children nodes, their children are reparented to this parent node.
   void RemoveHierarchyChildrenNodes();
 
-  /// Removes all children hierarchy nodes including children of childern, etc.
+  /// Removes all children hierarchy nodes including children of children, etc.
   void RemoveAllHierarchyChildrenNodes();
 
   /// ChildNodeAddedEvent is send when a child node added to this parent

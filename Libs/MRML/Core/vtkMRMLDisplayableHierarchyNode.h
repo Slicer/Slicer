@@ -118,7 +118,7 @@ public:
   void RemoveChildrenNodes();
 
   /// Removes all children hierarchy nodes both hierarchy and corresponding displayable/display nodes,
-  /// including children of childern, etc.
+  /// including children of children, etc.
   void RemoveAllChildrenNodes();
 
 
