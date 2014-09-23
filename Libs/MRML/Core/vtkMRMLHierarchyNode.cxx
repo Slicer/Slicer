@@ -511,10 +511,10 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
     for (unsigned int j=0; i<childChildern.size(); j++)
       {
       childChildern[j]->SetParentNodeID(parentID);
-      if (parentNode)
-        {
-        parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
-        }
+      }
+    if (parentNode)
+      {
+      parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent, child);
       }
     this->GetScene()->RemoveNode(child);
     }
