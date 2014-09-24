@@ -153,6 +153,12 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocal
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
     if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
       {
+      // Exclude nodes that are already in subject hierarchy
+      if (vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(storableNode))
+        {
+        continue;
+        }
+      // Add storable node to the list if there is a subject hierarchy plugin that can add it to the tree
       QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
         qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(storableNode);
       if (!foundPlugins.empty())
@@ -213,7 +219,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocal
     }
   while (firstComponentMatch);
 
-  // Create hierarchy
+  // Create subject hierarchy
   QList<vtkMRMLSubjectHierarchyNode*> createdNodes;
   for (int nodeIndex=0; nodeIndex<loadedNodes.count(); ++nodeIndex)
     {
@@ -232,9 +238,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocal
         }
       }
     parent->SetAssociatedNodeID(loadedNodes[nodeIndex]->GetID());
-
-    // Have it removed from potential list if added
-    loadedNodes[nodeIndex]->Modified();
+    parent->Modified(); // Have the subject hierarchy node update its items in the tree
     }
 
   // Expand generated branches
@@ -242,6 +246,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedLocal
     {
     emit requestExpandNode(createdNode);
     }
+
   // Trigger filter updating so that original data nodes disappear from the tree
   emit requestInvalidateFilter();
 }
