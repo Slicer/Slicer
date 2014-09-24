@@ -153,6 +153,30 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
 #    set(PNG_LIBRARY ${PNG_LIBRARY_DIR}/libvtkpng-6.0.so)
 #  endif()
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # pythonpath
+  if(NOT APPLE)
+    set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+      <APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}/python2.7/site-packages
+      )
+    mark_as_superbuild(
+      VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+      LABELS "PYTHONPATH_LAUNCHER_INSTALLED"
+      )
+  endif()
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

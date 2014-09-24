@@ -47,6 +47,29 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/OpenIGTLink-build)
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    ${OpenIGTLink_DIR}
+    ${OpenIGTLink_DIR}/bin/<CMAKE_CFG_INTDIR>
+    )
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  if(UNIX AND NOT APPLE)
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/igtl)
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+  endif()
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

@@ -169,6 +169,83 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
   endif()
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(_lib_subdir lib)
+  if(WIN32)
+    set(_lib_subdir bin)
+  endif()
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${python_DIR}/${_lib_subdir})
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  # paths
+  set(${proj}_PATHS_LAUNCHER_BUILD ${python_DIR}/bin/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_PATHS_LAUNCHER_BUILD
+    LABELS "PATHS_LAUNCHER_BUILD"
+    )
+
+  # pythonpath
+  set(_pythonhome ${CMAKE_BINARY_DIR}/python-install)
+  set(pythonpath_subdir lib/python2.7)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir Lib)
+  endif()
+
+  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+    ${_pythonhome}/${pythonpath_subdir}
+    ${_pythonhome}/${pythonpath_subdir}/lib-dynload
+    ${_pythonhome}/${pythonpath_subdir}/site-packages
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
+    LABELS "PYTHONPATH_LAUNCHER_BUILD"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_BUILD "PYTHONHOME=${python_DIR}")
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_BUILD
+    LABELS "ENVVARS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # library paths
+  if(UNIX)
+    # On windows, python libraries are installed along with the executable
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/Python/lib)
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+  endif()
+
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+    LABELS "PYTHONPATH_LAUNCHER_INSTALLED"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python")
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
+    LABELS "ENVVARS_LAUNCHER_INSTALLED"
+    )
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

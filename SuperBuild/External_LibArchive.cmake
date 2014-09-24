@@ -89,6 +89,20 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
   endif()
 
+  set(_lib_subdir lib)
+  if(WIN32)
+    set(_lib_subdir bin)
+  endif()
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${LibArchive_DIR}/${_lib_subdir})
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

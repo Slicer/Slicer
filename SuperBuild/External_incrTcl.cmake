@@ -66,6 +66,41 @@ ExternalProject_Execute(${proj} \"install\" make install)
       DEPENDS
         ${${proj}_DEPENDENCIES}
     )
+
+    #-----------------------------------------------------------------------------
+    # Launcher setting specific to build tree
+
+    # Note: Search locations for TCL packages - space separated list
+    set(TCLLIBPATH "${tcl_build}/lib/itcl4.0.1")
+
+    # environment variables
+    set(${proj}_ENVVARS_LAUNCHER_BUILD "TCLLIBPATH=${TCLLIBPATH}")
+    mark_as_superbuild(
+      VARS ${proj}_ENVVARS_LAUNCHER_BUILD
+      LABELS "ENVVARS_LAUNCHER_BUILD"
+      )
+
+    #-----------------------------------------------------------------------------
+    # Launcher setting specific to install tree
+
+    # library paths
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl4.0.1
+      )
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+
+    # Note: Search locations for TCL packages - space separated list
+    set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl4.0.1")
+
+    # environment variables
+    set(${proj}_ENVVARS_LAUNCHER_INSTALLED "TCLLIBPATH=${TCLLIBPATH}")
+    mark_as_superbuild(
+      VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
+      LABELS "ENVVARS_LAUNCHER_INSTALLED"
+      )
   endif()
 
   mark_as_superbuild(

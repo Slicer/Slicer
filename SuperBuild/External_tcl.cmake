@@ -57,6 +57,55 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       INCR_TCL_VERSION_DOT:STRING
       INCR_TCL_VERSION:STRING
       )
+
+    #-----------------------------------------------------------------------------
+    # Launcher setting specific to build tree
+
+    # library paths
+    set(${proj}_incrTcl_LIBRARY_PATHS_LAUNCHER_BUILD
+      ${tcl_build}/lib/itcl${INCR_TCL_VERSION_DOT}
+      ${tcl_build}/lib/itk${INCR_TCL_VERSION_DOT}
+      )
+    mark_as_superbuild(
+      VARS ${proj}_incrTcl_LIBRARY_PATHS_LAUNCHER_BUILD
+      LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+      )
+
+    # Note: Search locations for TCL packages - space separated list
+    set(TCLLIBPATH "${tcl_build}/lib/itcl${INCR_TCL_VERSION_DOT}")
+    set(TCLLIBPATH "${TCLLIBPATH} ${tcl_build}/lib/itk${INCR_TCL_VERSION_DOT}")
+
+    # environment variables
+    set(${proj}_incrTcl_ENVVARS_LAUNCHER_BUILD "TCLLIBPATH=${TCLLIBPATH}")
+    mark_as_superbuild(
+      VARS ${proj}_incrTcl_ENVVARS_LAUNCHER_BUILD
+      LABELS "ENVVARS_LAUNCHER_BUILD"
+      )
+
+    #-----------------------------------------------------------------------------
+    # Launcher setting specific to install tree
+
+    # library paths
+    set(${proj}_incrTcl_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
+      <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
+      )
+    mark_as_superbuild(
+      VARS ${proj}_incrTcl_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+
+    # Note: Search locations for TCL packages - space separated list
+    set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
+    set(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")
+
+    # environment variables
+    set(${proj}_incrTcl_ENVVARS_LAUNCHER_INSTALLED "TCLLIBPATH=${TCLLIBPATH}")
+    mark_as_superbuild(
+      VARS ${proj}_incrTcl_ENVVARS_LAUNCHER_INSTALLED
+      LABELS "ENVVARS_LAUNCHER_INSTALLED"
+      )
+
   else()
     set(TCL_TK_VERSION_DOT "8.6")
     set(TCL_TK_VERSION "86")
@@ -140,12 +189,89 @@ ExternalProject_Execute(${proj} \"install\" make install)
   if(WIN32)
     set(TCL_LIBRARY ${tcl_build}/lib/tcl${TCL_TK_VERSION}.lib)
     set(TK_LIBRARY ${tcl_build}/lib/tk${TCL_TK_VERSION}.lib)
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${tcl_build}/bin)
   else()
     set(TCL_LIBRARY ${tcl_build}/lib/libtcl${TCL_TK_VERSION_DOT}${CMAKE_SHARED_LIBRARY_SUFFIX})
     set(TK_LIBRARY ${tcl_build}/lib/libtk${TCL_TK_VERSION_DOT}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${tcl_build}/lib)
   endif()
 
   set(Slicer_TCL_DIR ${tcl_build})
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  # library paths
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  # paths
+  set(${proj}_PATHS_LAUNCHER_BUILD ${tcl_build}/bin)
+  mark_as_superbuild(
+    VARS ${proj}_PATHS_LAUNCHER_BUILD
+    LABELS "PATHS_LAUNCHER_BUILD"
+    )
+
+  set(_pythonhome ${CMAKE_BINARY_DIR}/python-install)
+  set(pythonpath_subdir lib/python2.7)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir Lib)
+  endif()
+
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+    ${_pythonhome}/${pythonpath_subdir}/lib-tk
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
+    LABELS "PYTHONPATH_LAUNCHER_BUILD"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_BUILD
+    "TCL_LIBRARY=${tcl_build}/lib/tcl${TCL_TK_VERSION_DOT}"
+    "TK_LIBRARY=${tcl_build}/lib/tk${TCL_TK_VERSION_DOT}"
+    )
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_BUILD
+    LABELS "ENVVARS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  set(tcllib_subdir lib)
+  if(WIN32)
+    set(tcllib_subdir bin)
+  endif()
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/TclTk/${tcllib_subdir})
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+    LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+    )
+
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+    LABELS "PYTHONPATH_LAUNCHER_INSTALLED"
+    )
+
+  # environment variables
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED
+    "TCL_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tcl${TCL_TK_VERSION_DOT}"
+    "TK_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tk${TCL_TK_VERSION_DOT}"
+    )
+  mark_as_superbuild(
+    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
+    LABELS "ENVVARS_LAUNCHER_INSTALLED"
+    )
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

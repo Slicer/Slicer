@@ -96,6 +96,37 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(CTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>)
+  if(Slicer_USE_QtTesting)
+    list(APPEND ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+      ${CTK_DIR}/QtTesting-build/<CMAKE_CFG_INTDIR>
+      )
+  endif()
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+      ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
+      )
+  endif()
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to installed tree
+
+  if(UNIX AND NOT APPLE)
+    # On windows, pythonQt libraries are installed along with the executable
+    set(${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED <APPLAUNCHER_DIR>/lib/PythonQt)
+    mark_as_superbuild(
+      VARS ${proj}_LIBRARY_PATHS_LAUNCHER_INSTALLED
+      LABELS "LIBRARY_PATHS_LAUNCHER_INSTALLED"
+      )
+  endif()
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

@@ -55,13 +55,6 @@
 # It means you could manually trigger the reconfiguration of the launcher settings file
 # by building that target.
 
-# Convenient variable set to the subdirectory containing the libraries.
-# Set to 'lib' on Linux and Darwin, set to 'bin' on Windows
-set(LIB_SUBDIR lib)
-if(WIN32)
-  set(LIB_SUBDIR bin)
-endif()
-
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 # Settings specific to the build tree.
@@ -74,34 +67,9 @@ endif()
 set(SLICER_LIBRARY_PATHS_BUILD
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
   )
-if(NOT Slicer_USE_SYSTEM_DCMTK)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${DCMTK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>)
-endif()
-if(NOT Slicer_USE_SYSTEM_VTK)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>)
-endif()
-if(NOT Slicer_USE_SYSTEM_CTK)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>)
-endif()
+
 if(NOT Slicer_USE_SYSTEM_QT)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD ${QT_LIBRARY_DIR})
-endif()
-if(NOT Slicer_USE_SYSTEM_LibArchive)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${LibArchive_DIR}/${LIB_SUBDIR})
-endif()
-if(NOT Slicer_USE_SYSTEM_Teem)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>)
-endif()
-if(NOT Slicer_USE_SYSTEM_ITKv4)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${ITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
-    )
-endif()
-
-if(Slicer_BUILD_CLI_SUPPORT AND NOT Slicer_USE_SYSTEM_SlicerExecutionModel)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${SlicerExecutionModel_DIR}/ModuleDescriptionParser/bin/<CMAKE_CFG_INTDIR>
-    )
 endif()
 
 # The following lines allow Slicer to load a CLI module extension that depends
@@ -123,69 +91,16 @@ if(Slicer_BUILD_QTLOADABLEMODULES)
     )
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_OPENSSL AND NOT Slicer_USE_SYSTEM_OpenSSL)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${OPENSSL_EXPORT_LIBRARY_DIR}
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${Slicer_TCL_DIR}/lib
-    )
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    list(APPEND SLICER_LIBRARY_PATHS_BUILD
-      ${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}
-      ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}
-      )
-  endif()
-endif()
-
-if(Slicer_USE_OpenIGTLink AND NOT Slicer_USE_SYSTEM_OpenIGTLink)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${OpenIGTLink_DIR}
-    ${OpenIGTLink_DIR}/bin/<CMAKE_CFG_INTDIR>
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
-  set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-install)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
-    ${PYTHON_LIBRARY_PATH}
-    )
-
-  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir Lib)
-  endif()
-endif()
-
-if(Slicer_USE_QtTesting AND NOT Slicer_USE_SYSTEM_CTK)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${CTK_DIR}/QtTesting-build/<CMAKE_CFG_INTDIR>
-    )
-endif()
-
-if(Slicer_USE_NUMPY AND NOT Slicer_USE_SYSTEM_NUMPY)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/core
-    ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/lib
-    )
-endif()
-
-if(Slicer_USE_SimpleITK AND NOT Slicer_USE_SYSTEM_SimpleITK)
-  list(APPEND SLICER_LIBRARY_PATHS_BUILD
-    ${SimpleITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
-    )
-endif()
+# External projects
+foreach(varname IN LISTS Slicer_EP_LABEL_LIBRARY_PATHS_LAUNCHER_BUILD)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_PATHS_BUILD
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
-  ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${QT_BINARY_DIR}
   )
 
@@ -195,17 +110,10 @@ if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
     )
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcls)
-  list(APPEND SLICER_PATHS_BUILD
-    ${Slicer_TCL_DIR}/bin
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
-  list(APPEND SLICER_PATHS_BUILD
-    ${SLICER_PYTHONHOME}/bin/<CMAKE_CFG_INTDIR>
-    )
-endif()
+# External projects
+foreach(varname IN LISTS Slicer_EP_LABEL_PATHS_LAUNCHER_BUILD)
+  list(APPEND SLICER_PATHS_BUILD ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # ENVVARS
@@ -230,18 +138,15 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
 #       CMake refers to the variable as Slicer_HOME, and the tcl variable is SlicerHome.
 
 if(Slicer_USE_PYTHONQT)
+
+  list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_BUILD
+    "PYTHONPATH"
+    )
+
   set(SLICER_PYTHONPATH_BUILD
     "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>"
     "<APPLAUNCHER_DIR>/bin/Python"
     )
-  if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_PYTHONPATH_BUILD
-      "${SLICER_PYTHONHOME}/${pythonpath_subdir}"
-      "${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-dynload"
-      "${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages"
-      )
-  endif()
-
   if(Slicer_BUILD_QTLOADABLEMODULES)
     list(APPEND SLICER_PYTHONPATH_BUILD
       "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>"
@@ -249,29 +154,17 @@ if(Slicer_USE_PYTHONQT)
       )
   endif()
 
-  if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-    list(APPEND SLICER_PYTHONPATH_BUILD
-      "${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-tk"
-      )
-  endif()
+  # External projects - pythonpath
+  foreach(varname IN LISTS Slicer_EP_LABEL_PYTHONPATH_LAUNCHER_BUILD)
+    list(APPEND SLICER_PYTHONPATH_BUILD ${${varname}})
+  endforeach()
 
-  if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_ENVVARS_BUILD "PYTHONHOME=${SLICER_PYTHONHOME}")
-    list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_BUILD "PYTHONPATH")
-  endif()
+  # External projects - environment variables
+  foreach(varname IN LISTS Slicer_EP_LABEL_ENVVARS_LAUNCHER_BUILD)
+    list(APPEND SLICER_ENVVARS_BUILD ${${varname}})
+  endforeach()
 endif()
 
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-  # Search locations for TCL packages - space separated list
-  set(TCLLIBPATH "${Slicer_TCL_DIR}/lib/itcl${INCR_TCL_VERSION_DOT}")
-  set(TCLLIBPATH "${TCLLIBPATH} ${Slicer_TCL_DIR}/lib/itk${INCR_TCL_VERSION_DOT}")
-
-  list(APPEND SLICER_ENVVARS_BUILD
-    "TCL_LIBRARY=${Slicer_TCL_DIR}/lib/tcl${TCL_TK_VERSION_DOT}"
-    "TK_LIBRARY=${Slicer_TCL_DIR}/lib/tk${TCL_TK_VERSION_DOT}"
-    "TCLLIBPATH=${TCLLIBPATH}"
-    )
-endif()
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
@@ -288,11 +181,6 @@ set(SLICER_LIBRARY_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_CLIMODULES_LIB_DIR}
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
   )
-if(NOT Slicer_USE_SYSTEM_Teem)
-  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Teem-${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH}
-    )
-endif()
 
 # The following lines allow Slicer to load a CLI module extension that depends
 # on libraries (i.e a logic class) provided by a loadable module extension.
@@ -301,52 +189,10 @@ if(CMAKE_CONFIGURATION_TYPES)
   list(APPEND SLICER_LIBRARY_PATHS_INSTALLED ../${Slicer_QTLOADABLEMODULES_LIB_DIR}/<CMAKE_CFG_INTDIR>)
 endif()
 
-if(Slicer_USE_OpenIGTLink AND NOT Slicer_USE_SYSTEM_OpenIGTLink)
-  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    # External projects
-    <APPLAUNCHER_DIR>/lib/igtl
-    )
-endif()
-
-if(UNIX AND Slicer_USE_PYTHONQT)
-  # On windows, both pythonQt and python libraries are installed along with the executable
-  if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-      <APPLAUNCHER_DIR>/lib/Python/lib
-      )
-  endif()
-  if(NOT Slicer_USE_SYSTEM_CTK)
-    list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-      <APPLAUNCHER_DIR>/lib/PythonQt
-      )
-  endif()
-endif()
-
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-  set(tcllib_subdir lib)
-  if(WIN32)
-    set(tcllib_subdir bin)
-  endif()
-  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    <APPLAUNCHER_DIR>/lib/TclTk/${tcllib_subdir}
-    <APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}
-    <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}
-    )
-endif()
-
-if(Slicer_USE_PYTHONQT)
-  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir Lib)
-  endif()
-endif()
-
-if(Slicer_USE_NUMPY AND NOT Slicer_USE_SYSTEM_NUMPY)
-  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/core
-    <APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages/numpy/lib
-    )
-endif()
+# External projects
+foreach(varname IN LISTS Slicer_EP_LABEL_LIBRARY_PATHS_LAUNCHER_INSTALLED)
+  list(APPEND SLICER_LIBRARY_PATHS_INSTALLED ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # PATHS
@@ -357,6 +203,10 @@ set(SLICER_PATHS_INSTALLED
   <APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR}
   )
 
+# External projects
+foreach(varname IN LISTS Slicer_EP_LABEL_PATHS_LAUNCHER_INSTALLED)
+  list(APPEND SLICER_PATHS_INSTALLED ${${varname}})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # ENVVARS
@@ -374,16 +224,8 @@ set(SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
   )
 
 if(Slicer_USE_PYTHONQT)
-  set(SLICER_PYTHONPATH_INSTALLED "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
-  if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_PYTHONPATH_INSTALLED
-      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}"
-      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload"
-      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages"
-      "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}/python${Slicer_PYTHON_VERSION_DOT}/site-packages"
-      )
-  endif()
-  list(APPEND SLICER_PYTHONPATH_INSTALLED
+  set(SLICER_PYTHONPATH_INSTALLED
+    "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}"
     "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}"
     "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}"
     "<APPLAUNCHER_DIR>/lib/vtkTeem"
@@ -391,27 +233,19 @@ if(Slicer_USE_PYTHONQT)
     "<APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}"
     )
 
-  if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-    list(APPEND SLICER_PYTHONPATH_INSTALLED
-      "<APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk"
-      )
-  endif()
+  # External projects - pythonpath
+  foreach(varname IN LISTS Slicer_EP_LABEL_PYTHONPATH_LAUNCHER_INSTALLED)
+    list(APPEND SLICER_PYTHONPATH_INSTALLED ${${varname}})
+  endforeach()
 
-  if(NOT Slicer_USE_SYSTEM_python)
-    list(APPEND SLICER_ENVVARS_INSTALLED "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python")
-    list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED "PYTHONPATH")
-  endif()
-endif()
-
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT Slicer_USE_SYSTEM_tcl)
-  # Search locations for TCL packages - space separated list
-  set(TCLLIBPATH "<APPLAUNCHER_DIR>/lib/TclTk/lib/itcl${INCR_TCL_VERSION_DOT}")
-  set(TCLLIBPATH "${TCLLIBPATH} <APPLAUNCHER_DIR>/lib/TclTk/lib/itk${INCR_TCL_VERSION_DOT}")
-
-  list(APPEND SLICER_ENVVARS_INSTALLED
-    "TCL_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tcl${TCL_TK_VERSION_DOT}"
-    "TK_LIBRARY=<APPLAUNCHER_DIR>/lib/TclTk/lib/tk${TCL_TK_VERSION_DOT}"
-    "TCLLIBPATH=${TCLLIBPATH}"
+  list(APPEND SLICER_ADDITIONAL_PATH_ENVVARS_INSTALLED
+    "PYTHONPATH"
     )
+
+  # External projects - environment variables
+  foreach(varname IN LISTS Slicer_EP_LABEL_ENVVARS_LAUNCHER_INSTALLED)
+    list(APPEND SLICER_ENVVARS_INSTALLED ${${varname}})
+  endforeach()
+
 endif()
 
