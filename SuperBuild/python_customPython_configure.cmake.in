@@ -77,14 +77,14 @@ if(PYTHON_ENABLE_SSL)
   list(APPEND _library_paths_build
     ${OPENSSL_EXPORT_LIBRARY_DIR})
 endif()
-_listToQtSettingsArray("${_library_paths_build}" "path" PYTHONLAUNCHER_LIBRARY_PATHS)
+_listToQtSettingsArray("${_library_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
 
 set(_pythonpath_paths_build
   "${PYTHONHOME}/${pythonpath_subdir}"
   "${PYTHONHOME}/${pythonpath_subdir}/lib-dynload"
   "${PYTHONHOME}/${pythonpath_subdir}/site-packages"
   )
-_listToQtSettingsArray("${_pythonpath_paths_build}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
+_listToQtSettingsArray("${_pythonpath_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
 set(PYTHON_EXE_SUFFIX_CONFIG "")
 
@@ -114,7 +114,7 @@ set(_library_paths_installed
   <APPLAUNCHER_DIR>/../${Slicer_LIB_DIR}
   <APPLAUNCHER_DIR>/../lib/Python/lib
   )
-_listToQtSettingsArray("${_library_paths_installed}" "path" PYTHONLAUNCHER_LIBRARY_PATHS)
+_listToQtSettingsArray("${_library_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_LIBRARY_PATHS)
 
 set(_pythonpath_paths_installed
   "${PYTHONHOME}/lib/Python/${pythonpath_subdir}"
@@ -122,7 +122,7 @@ set(_pythonpath_paths_installed
   "${PYTHONHOME}/lib/Python/${pythonpath_subdir}/site-packages"
   "<APPLAUNCHER_DIR>/../${Slicer_BIN_DIR}/Python"
   )
-_listToQtSettingsArray("${_pythonpath_paths_installed}" "path" PYTHONLAUNCHER_PYTHONPATH_PATHS)
+_listToQtSettingsArray("${_pythonpath_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
 set(PYTHON_EXE_SUFFIX_CONFIG "-real")
 
