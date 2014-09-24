@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>SubjectHierarchy</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../qSlicerSubjectHierarchyModule.qrc">
+    <normaloff>:/Icons/SubjectHierarchy.png</normaloff>:/Icons/SubjectHierarchy.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>4</number>
@@ -22,14 +26,8 @@
    </property>
    <item>
     <widget class="qMRMLSubjectHierarchyTreeView" name="SubjectHierarchyTreeView">
-     <property name="acceptDrops">
-      <bool>true</bool>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
      <property name="dragDropMode">
-      <enum>QAbstractItemView::DragDrop</enum>
+      <enum>QAbstractItemView::InternalMove</enum>
      </property>
      <property name="indentation">
       <number>12</number>
@@ -168,6 +166,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
