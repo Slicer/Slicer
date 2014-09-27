@@ -249,11 +249,12 @@ set(BRAINSTools_options
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
   # Version BRAINSia/BRAINSTools@411dee9 with find_package(VTK..) tweaks reverted,
+  # ITKDeprecated dependency removed (See https://github.com/BRAINSia/BRAINSTools/issues/154),
   # and the following changes backported from BRAINSia/BRAINSTools@master:
   #  * ITKv3 compatibility removed
   #  * Tweaks to BRAINSFit.xml
   #  * Fixes for shadowed declarations
-  GIT_TAG "6f998666e273ffc1b6e0953df20b0d15475c1f03"
+  GIT_TAG "b82c7c841dcc9e7335c20a134ff97897e808e91d"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
