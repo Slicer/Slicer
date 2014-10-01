@@ -68,9 +68,6 @@ public:
 
   qMRMLSceneAnnotationModel* annotationModel()const;
 
-public slots:
-  void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
-
 signals:
   void onPropertyEditButtonClicked(QString id);
 
@@ -87,9 +84,12 @@ protected:
 
   virtual void toggleVisibility(const QModelIndex& index);
 
-  /// Set the active hierarchy node when the current index changes.
-  /// \sa vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeID()
-  virtual void onCurrentRowChanged(const QModelIndex& index);
+  /// Reimplemented to also set the active hierarchy node when the current
+  /// index changes.
+  /// \sa qMRMLTreeView::onSelectionChanged(),
+  /// vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeID()
+  virtual void onSelectionChanged(const QItemSelection & selected,
+                                  const QItemSelection & deselected);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationTreeView);

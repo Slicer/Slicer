@@ -297,7 +297,11 @@ signals:
   void decorationClicked(const QModelIndex&);
 
 protected slots:
-  virtual void onCurrentRowChanged(const QModelIndex& index);
+  /// This slot is being triggered when the current node has changed.
+  /// \sa currentNodeChanged()
+  virtual void onSelectionChanged(const QItemSelection & selected,
+                                  const QItemSelection & deselected);
+
   void onNumberOfVisibleIndexChanged();
 
   void updateRootNode(vtkObject* modifiedRootNode);

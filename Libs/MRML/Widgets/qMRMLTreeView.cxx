@@ -167,9 +167,10 @@ void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* ne
   q->QTreeView::setModel(this->SortFilterModel
     ? static_cast<QAbstractItemModel*>(this->SortFilterModel)
     : static_cast<QAbstractItemModel*>(this->SceneModel));
-  // Setting a new model to the view resets the selection model
-  QObject::connect(q->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-                   q, SLOT(onCurrentRowChanged(QModelIndex)));
+  // Setting a new model to the view resets the selection model. Reobserve
+  // the selectionChanged signal. Observing currentRowChanged() is discouraged.
+  QObject::connect(q->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                   q, SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
   if (!this->SortFilterModel)
     {
     return;
@@ -424,12 +425,16 @@ void qMRMLTreeView::setCurrentNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
+void qMRMLTreeView::onSelectionChanged(const QItemSelection & selected,
+                                       const QItemSelection & deselected)
 {
   Q_D(qMRMLTreeView);
-  Q_ASSERT(d->SortFilterModel);
-  Q_ASSERT(this->currentNode() == d->SortFilterModel->mrmlNodeFromIndex(index));
-  emit currentNodeChanged(d->SortFilterModel->mrmlNodeFromIndex(index));
+  vtkMRMLNode* newCurrentNode = 0;
+  if (selected.indexes().count() > 0)
+    {
+    newCurrentNode = d->SortFilterModel->mrmlNodeFromIndex(selected.indexes()[0]);
+    }
+  emit currentNodeChanged(newCurrentNode);
 }
 
 //------------------------------------------------------------------------------

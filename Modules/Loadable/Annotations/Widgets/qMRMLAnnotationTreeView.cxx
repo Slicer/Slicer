@@ -95,11 +95,6 @@ void qMRMLAnnotationTreeViewPrivate::init()
   QObject::connect(q, SIGNAL(clicked(QModelIndex)),
                    q, SLOT(onClicked(QModelIndex)));
 
-  QObject::connect( q->selectionModel(),
-        SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-        q,
-        SLOT(onSelectionChanged(QItemSelection,QItemSelection)),
-        Qt::DirectConnection );
 }
 
 //------------------------------------------------------------------------------
@@ -125,36 +120,26 @@ qMRMLAnnotationTreeView::~qMRMLAnnotationTreeView()
 //
 //------------------------------------------------------------------------------
 
-
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex)
-{
-  Q_UNUSED(beforeIndex)
-
-  if (index.size() == 0)
-    {
-
-    // the user clicked in empty space of the treeView
-    // so we set the active hierarchy to the top level one
-    this->m_Logic->SetActiveHierarchyNodeID(NULL);
-    }
-}
-
-//------------------------------------------------------------------------------
-void qMRMLAnnotationTreeView::onCurrentRowChanged(const QModelIndex& index)
+void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection & selected,
+                                                 const QItemSelection & deselected)
 {
   Q_D(qMRMLAnnotationTreeView);
 
   // if the user clicked on a hierarchy, set this as the active one
   // this means, new annotations or new user-created hierarchies will be created
   // as childs of this one
-  vtkMRMLNode *mrmlNode = d->SortFilterModel->mrmlNodeFromIndex(index);
-  vtkMRMLNode* activeNode =
-    this->annotationModel()->activeHierarchyNode(mrmlNode);
+  vtkMRMLNode* newCurrentNode = 0;
+  if (selected.indexes().count() > 0)
+    {
+    newCurrentNode = d->SortFilterModel->mrmlNodeFromIndex(selected.indexes()[0]);
+    }
+  vtkMRMLNode* newActiveNode =
+    this->annotationModel()->activeHierarchyNode(newCurrentNode);
   this->m_Logic->SetActiveHierarchyNodeID(
-    activeNode ? activeNode->GetID() : 0);
+    newActiveNode ? newActiveNode->GetID() : 0);
 
-  this->Superclass::onCurrentRowChanged(index);
+  this->Superclass::onSelectionChanged(selected, deselected);
 }
 
 //------------------------------------------------------------------------------
