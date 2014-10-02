@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QPushButton.h>
 
 // CTK includes
 #include <ctkTest.h>
