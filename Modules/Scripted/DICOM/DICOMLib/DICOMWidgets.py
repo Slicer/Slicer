@@ -522,10 +522,10 @@ class DICOMDetailsPopup(object):
           for derivedItem in loadable.derivedItems:
             indexer = ctk.ctkDICOMIndexer()
             self.progress.labelText = '\nIndexing %s' % derivedItem
-            slicer.app.processEvent()
+            slicer.app.processEvents()
             indexer.addFile(slicer.dicomDatabase, derivedItem)
         except AttributeError:
-          # no derived items
+          # no derived items or some other attribute error
           pass
     self.progress.close()
     self.progress = None
