@@ -219,7 +219,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     labelID = labelNode.GetID()
     img = labelNode.GetImageData()
-    extent = img.GetWholeExtent()
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      extent = img.GetWholeExtent()
+    else:
+      extent = img.GetExtent()
     labeledVoxels = {}
     for i in range(extent[1]):
       for j in range(extent[3]):
@@ -287,6 +290,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     # add initialized data nodes to the chart
     chartNode.ClearArrays()
     for k in labeledVoxels.keys():
+      k = int(k)
       name = colorNode.GetColorName(k)
       chartNode.AddArray(name, dataNodes[k].GetID())
       rgb = lut.GetTableValue(int(k))
