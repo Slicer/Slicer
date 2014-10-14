@@ -8,6 +8,10 @@ from slicer.ScriptedLoadableModule import *
 #
 
 class TemplateKey(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "TemplateKey" # TODO make this more human readable by adding spaces
@@ -27,6 +31,9 @@ class TemplateKey(ScriptedLoadableModule):
 #
 
 class TemplateKeyWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
@@ -132,7 +139,9 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
   computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
-  requiring an instance of the Widget
+  requiring an instance of the Widget.
+  Uses ScriptedLoadableModuleLogic base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
   def hasImageData(self,volumeNode):
@@ -204,6 +213,8 @@ class TemplateKeyLogic(ScriptedLoadableModuleLogic):
 class TemplateKeyTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
   def setUp(self):

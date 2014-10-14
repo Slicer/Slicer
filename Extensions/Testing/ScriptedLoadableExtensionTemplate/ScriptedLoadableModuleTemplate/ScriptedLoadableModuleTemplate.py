@@ -8,6 +8,10 @@ from slicer.ScriptedLoadableModule import *
 #
 
 class ScriptedLoadableModuleTemplate(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "ScriptedLoadableModuleTemplate" # TODO make this more human readable by adding spaces
@@ -26,6 +30,9 @@ class ScriptedLoadableModuleTemplate(ScriptedLoadableModule):
 #
 
 class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
 
   def setup(self):
     ScriptedLoadableModuleWidget.setup(self)
@@ -132,7 +139,9 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
   computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
-  requiring an instance of the Widget
+  requiring an instance of the Widget.
+  Uses ScriptedLoadableModuleLogic base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
   def hasImageData(self,volumeNode):
@@ -204,6 +213,8 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
 class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
   def setUp(self):
