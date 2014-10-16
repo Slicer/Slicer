@@ -640,7 +640,10 @@ class SliceAnnotations(object):
       scalingFactor = math.sqrt( rasToXY.GetElement(0,0)**2 +
           rasToXY.GetElement(0,1)**2 +rasToXY.GetElement(0,2) **2 )
 
-      rulerArea = viewWidth/scalingFactor/4
+      if scalingFactor != 0:
+        rulerArea = viewWidth/scalingFactor/4
+      else:
+        rulerArea = viewWidth/4
 
       if self.showScalingRuler and \
           viewWidth > self.minimumWidthForScalingRuler and\
