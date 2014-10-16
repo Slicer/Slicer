@@ -98,10 +98,11 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
     if vtk.VTK_MAJOR_VERSION <= 5:
       extract.SetInput(inputVolume.GetImageData())
       luminance.SetInput(extract.GetOutput())
+      luminance.GetOutput().Update()
     else:
       extract.SetInputConnection(inputVolume.GetImageDataConnection())
       luminance.SetInputConnection(extract.GetOutputPort())
-    luminance.GetOutput().Update()
+      luminance.Update()
     ijkToRAS = vtk.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRAS)
     outputVolume.SetIJKToRASMatrix(ijkToRAS)
