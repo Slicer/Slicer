@@ -526,6 +526,12 @@ class VTKObservationMixin(object):
     tag = object.AddObserver(event, method)
     self.Observations.append([object, event, method, group, tag])
 
+  def removeObserver(self, object, event, method):
+    for o, e, m, g, t in self.Observations:
+      if o == object and e == event and m == method:
+        o.RemoveObserver(t)
+        self.Observations.remove([o, e, m, g, t])
+
   def hasObserver(self, object, event, method):
     for o, e, m, g, t in self.Observations:
       if o == object and e == event and m == method:
