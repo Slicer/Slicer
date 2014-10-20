@@ -215,6 +215,7 @@ class LabelStatisticsWidget:
       item = qt.QStandardItem()
       item.setData(color,qt.Qt.DecorationRole)
       item.setToolTip(colorNode.GetColorName(i))
+      item.setEditable(False)
       self.model.setItem(row,0,item)
       self.items.append(item)
       col = 1
@@ -223,6 +224,7 @@ class LabelStatisticsWidget:
         # set data as float with Qt::DisplayRole
         item.setData(float(self.logic.labelStats[i,k]),qt.Qt.DisplayRole)
         item.setToolTip(colorNode.GetColorName(i))
+        item.setEditable(False)
         self.model.setItem(row,col,item)
         self.items.append(item)
         col += 1
