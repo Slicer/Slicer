@@ -39,7 +39,7 @@
       <double>0.000000000000000</double>
      </property>
      <property name="maximum">
-      <double>100000.000000000000000</double>
+      <double>1000000.000000000000000</double>
      </property>
      <property name="coordinates" stdset="0">
       <string>1,1,1</string>
