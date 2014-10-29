@@ -966,6 +966,8 @@ class SliceAnnotations(object):
     return text
 
   def drawCornerAnnotations(self):
+    if not self.showSliceViewAnnotations:
+      return
     # Auto-Adjust
     # adjust maximum text length based on fontsize and view width
     viewWidth = self.sliceViews[self.currentSliceViewName].width
