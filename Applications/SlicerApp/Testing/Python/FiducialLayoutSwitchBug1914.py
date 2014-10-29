@@ -188,26 +188,26 @@ class FiducialLayoutSwitchBug1914Logic:
     lm = slicer.app.layoutManager()
     # switch on the type to get the requested window
     widget = 0
-    if type == slicer.qMRMLScreenShotDialog().FullLayout:
+    if type == slicer.qMRMLScreenShotDialog.FullLayout:
       # full layout
       widget = lm.viewport()
-    elif type == slicer.qMRMLScreenShotDialog().ThreeD:
+    elif type == slicer.qMRMLScreenShotDialog.ThreeD:
       # just the 3D window
       widget = lm.threeDWidget(0).threeDView()
-    elif type == slicer.qMRMLScreenShotDialog().Red:
+    elif type == slicer.qMRMLScreenShotDialog.Red:
       # red slice window
       widget = lm.sliceWidget("Red")
-    elif type == slicer.qMRMLScreenShotDialog().Yellow:
+    elif type == slicer.qMRMLScreenShotDialog.Yellow:
       # yellow slice window
       widget = lm.sliceWidget("Yellow")
-    elif type == slicer.qMRMLScreenShotDialog().Green:
+    elif type == slicer.qMRMLScreenShotDialog.Green:
       # green slice window
       widget = lm.sliceWidget("Green")
     else:
       # default to using the full window
       widget = slicer.util.mainWindow()
       # reset the type so that the node is set correctly
-      type = slicer.qMRMLScreenShotDialog().FullLayout
+      type = slicer.qMRMLScreenShotDialog.FullLayout
 
     # grab and convert to vtk image data
     qpixMap = qt.QPixmap().grabWidget(widget)
@@ -278,7 +278,7 @@ class FiducialLayoutSwitchBug1914Logic:
      handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
      startingSeedDisplayCoords = handleRep.GetDisplayPosition()
      print('Starting seed display coords = %d, %d, %d' % (startingSeedDisplayCoords[0], startingSeedDisplayCoords[1], startingSeedDisplayCoords[2]))
-    self.takeScreenshot('FiducialLayoutSwitchBug1914-StartingPosition','Fiducial starting position',slicer.qMRMLScreenShotDialog().Red)
+    self.takeScreenshot('FiducialLayoutSwitchBug1914-StartingPosition','Fiducial starting position',slicer.qMRMLScreenShotDialog.Red)
 
     # Switch to red slice only
     lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpRedSliceView)
@@ -297,7 +297,7 @@ class FiducialLayoutSwitchBug1914Logic:
      handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
      endingSeedDisplayCoords = handleRep.GetDisplayPosition()
      print('Ending seed display coords = %d, %d, %d' % (endingSeedDisplayCoords[0], endingSeedDisplayCoords[1], endingSeedDisplayCoords[2]))
-    self.takeScreenshot('FiducialLayoutSwitchBug1914-EndingPosition','Fiducial ending position',slicer.qMRMLScreenShotDialog().Red)
+    self.takeScreenshot('FiducialLayoutSwitchBug1914-EndingPosition','Fiducial ending position',slicer.qMRMLScreenShotDialog.Red)
 
     # Compare to original seed widget location
     diff = math.pow((startingSeedDisplayCoords[0] - endingSeedDisplayCoords[0]),2) + math.pow((startingSeedDisplayCoords[1] - endingSeedDisplayCoords[1]),2) + math.pow((startingSeedDisplayCoords[2] - endingSeedDisplayCoords[2]),2)
@@ -324,7 +324,7 @@ class FiducialLayoutSwitchBug1914Logic:
       shotDiff = imageMath.GetOutput()
       # save it as a scene view
       annotationLogic = slicer.modules.annotations.logic()
-      annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending fiducial seed positions",slicer.qMRMLScreenShotDialog().Red, screenshotScaleFactor, shotDiff)
+      annotationLogic.CreateSnapShot("FiducialLayoutSwitchBug1914-Diff", "Difference between starting and ending fiducial seed positions",slicer.qMRMLScreenShotDialog.Red, screenshotScaleFactor, shotDiff)
       # calculate the image difference
       imageStats = vtk.vtkImageHistogramStatistics()
       imageStats.SetInput(shotDiff)
