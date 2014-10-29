@@ -239,7 +239,10 @@
              <item>
               <widget class="QCheckBox" name="backgroundLayerPersistenceCheckbox">
                <property name="text">
-                <string>Background DICOM annotations Persistence</string>
+                <string>Background DICOM annotations persistence</string>
+               </property>
+               <property name="toolTip">
+                <string>Show background volume DICOM annotations if foreground volume is non-DICOM.</string>
                </property>
               </widget>
              </item>

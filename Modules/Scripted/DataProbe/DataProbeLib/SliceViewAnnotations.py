@@ -944,6 +944,9 @@ class SliceAnnotations(object):
 
 
   def formatDICOMTime(self, time):
+    if time == '':
+      # time field is empty
+      return ''
     studyH = time[:2]
     if int(studyH) > 12 :
       studyH = str (int(studyH) - 12)
