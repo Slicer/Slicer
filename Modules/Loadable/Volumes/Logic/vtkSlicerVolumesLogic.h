@@ -198,7 +198,7 @@ public:
   ///  Same spacing.
   ///  Same origin.
   ///  Same IJKtoRAS.
-  /// \sa CheckForLabelVolumeValidity
+  /// \sa CheckForLabelVolumeValidity, ResampleVolumeToReferenceVolume
   std::string CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode1,
                                     vtkMRMLScalarVolumeNode *volumeNode2);
 
@@ -238,6 +238,7 @@ public:
   void GetVolumeCenteredOrigin(vtkMRMLVolumeNode *volumeNode, double* origin);
 
   ///  Convenience method to resample input volume using reference volume info
+  /// \sa CompareVolumeGeometry
   static vtkMRMLScalarVolumeNode* ResampleVolumeToReferenceVolume(vtkMRMLVolumeNode *inputVolumeNode,
                                                            vtkMRMLVolumeNode *referenceVolumeNode);
 

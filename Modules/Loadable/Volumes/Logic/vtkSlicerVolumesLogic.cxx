@@ -877,7 +877,7 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
 //----------------------------------------------------------------------------
 std::string
 vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volumeNode,
-                                          vtkMRMLScalarVolumeNode *labelNode)
+                                                   vtkMRMLScalarVolumeNode *labelNode)
 {
   std::stringstream warnings;
   warnings << "";
@@ -887,7 +887,7 @@ vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volu
       {
       warnings << "Null volume node pointer\n";
       }
-    else
+    if (!labelNode)
       {
       warnings << "Null label volume node pointer\n";
       }
