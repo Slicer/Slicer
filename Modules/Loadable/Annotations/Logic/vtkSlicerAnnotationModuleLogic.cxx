@@ -942,7 +942,7 @@ vtkStdString vtkSlicerAnnotationModuleLogic::GetAnnotationText(const char* id)
       vtkMRMLAnnotationSnapshotNode::SafeDownCast(node);
   if (snapshotNode)
     {
-    return snapshotNode->GetName();
+    return snapshotNode->GetSnapshotDescription();
     }
   // end of special case for annotation snapShots
 

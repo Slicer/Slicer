@@ -76,6 +76,14 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
   int screenshotType = this->m_Logic->GetSnapShotScreenshotType(nodeId);
 
   // ..and set it in the GUI
+  // double check that the screen shot type is in range
+  if (screenshotType < qMRMLScreenShotDialog::ThreeD ||
+      screenshotType > qMRMLScreenShotDialog::FullLayout)
+    {
+    // reset to full layout
+    qErrnoWarning("Screen shot type is out of range, resetting to full layout");
+    screenshotType = qMRMLScreenShotDialog::FullLayout;
+    }
   this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
   double scaleFactor = this->m_Logic->GetSnapShotScaleFactor(nodeId);

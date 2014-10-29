@@ -167,10 +167,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     lm = slicer.app.layoutManager()
     # switch on the type to get the requested window
     widget = 0
-    if type == -1:
-      # full window
-      widget = slicer.util.mainWindow()
-    elif type == slicer.qMRMLScreenShotDialog().FullLayout:
+    if type == slicer.qMRMLScreenShotDialog().FullLayout:
       # full layout
       widget = lm.viewport()
     elif type == slicer.qMRMLScreenShotDialog().ThreeD:
@@ -185,6 +182,11 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     elif type == slicer.qMRMLScreenShotDialog().Green:
       # green slice window
       widget = lm.sliceWidget("Green")
+    else:
+      # default to using the full window
+      widget = slicer.util.mainWindow()
+      # reset the type so that the node is set correctly
+      type = slicer.qMRMLScreenShotDialog().FullLayout
 
     # grab and convert to vtk image data
     qpixMap = qt.QPixmap().grabWidget(widget)

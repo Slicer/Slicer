@@ -103,7 +103,11 @@ void qMRMLScreenShotDialogPrivate::setCheckedRadioButton(int type)
 {
   QRadioButton* widgetButton =
     qobject_cast<QRadioButton*>(this->WidgetTypeGroup->button(type));
-  widgetButton->setChecked(true);
+  if (widgetButton)
+    {
+    // this can crash if an invalid type is passed in
+    widgetButton->setChecked(true);
+    }
 }
 
 //-----------------------------------------------------------------------------
