@@ -575,7 +575,7 @@ class SliceAnnotations(object):
 
   def createColorScalarBar(self, sliceViewName):
     scalarBar = slicer.vtkPVScalarBarActor()
-    scalarBar.SetTitle("")
+    scalarBar.SetTitle(" ")
     # adjust text property
     scalarBar.SetRangeLabelFormat('%.0f')
     lookupTable = vtk.vtkLookupTable()
@@ -592,6 +592,7 @@ class SliceAnnotations(object):
         self.sliceViewNames.append(sliceViewName)
         self.addObserver(sliceViewName)
         self.createActors(sliceViewName)
+        self.updateSliceViewFromGUI()
     self.makeAnnotationText(caller)
     self.makeScalingRuler(caller)
     self.makeColorScalarBar(caller)
