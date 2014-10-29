@@ -883,7 +883,14 @@ vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volu
   warnings << "";
   if (!volumeNode || !labelNode)
     {
-    warnings << "Null volume node pointer\n";
+    if (!volumeNode)
+      {
+      warnings << "Null volume node pointer\n";
+      }
+    else
+      {
+      warnings << "Null label volume node pointer\n";
+      }
     }
   else
     {
@@ -893,60 +900,92 @@ vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volu
       }
     else
       {
-      vtkImageData *volumeImage = volumeNode->GetImageData();
-      vtkImageData *labelImage  = labelNode->GetImageData();
-      if (!volumeImage || !labelImage)
+      warnings << this->CompareVolumeGeometry(volumeNode, labelNode);
+      }
+    }
+  return (warnings.str());
+}
+
+//----------------------------------------------------------------------------
+std::string
+vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode1,
+                                             vtkMRMLScalarVolumeNode *volumeNode2)
+{
+  std::stringstream warnings;
+  warnings << "";
+  if (!volumeNode1 || !volumeNode2)
+    {
+    if (!volumeNode1)
+      {
+      warnings << "Null first volume node pointer\n";
+      }
+    else
+      {
+      warnings << "Null second volume node pointer\n";
+      }
+    }
+  else
+    {
+    vtkImageData *volumeImage1 = volumeNode1->GetImageData();
+    vtkImageData *volumeImage2  = volumeNode2->GetImageData();
+    if (!volumeImage1 || !volumeImage2)
+      {
+      if (!volumeImage1)
         {
-        warnings << "Null image data pointer\n";
+        warnings << "Null first image data pointer\n";
         }
-      else
+      if (!volumeImage2)
         {
-        int row, column;
-        double volumeValue, labelValue;
-        for (row = 0; row < 3; row++)
-          {
-          volumeValue = volumeImage->GetDimensions()[row];
-          labelValue = labelImage->GetDimensions()[row];
-
-          if (volumeValue != labelValue)
-            {
-            warnings << "Dimension mismatch at row [" << row << "] (" << volumeValue << " != " << labelValue << ")\n";
-            }
-
-          volumeValue = volumeImage->GetSpacing()[row];
-          labelValue = labelImage->GetSpacing()[row];
-          if (volumeValue != labelValue)
-            {
-            warnings << "Spacing mismatch at row [" << row << "] (" << volumeValue << " != " << labelValue << ")\n";
-            }
-
-          volumeValue = volumeImage->GetOrigin()[row];
-          labelValue = labelImage->GetOrigin()[row];
-          if (volumeValue != labelValue)
-            {
-            warnings << "Origin mismatch at row [" << row << "] (" << volumeValue << " != " << labelValue << ")\n";
-            }
-
-          }
-        vtkMatrix4x4 *volumeIJKToRAS = vtkMatrix4x4::New();
-        vtkMatrix4x4 *labelIJKToRAS = vtkMatrix4x4::New();
-        volumeNode->GetIJKToRASMatrix(volumeIJKToRAS);
-        labelNode->GetIJKToRASMatrix(labelIJKToRAS);
-        for (row = 0; row < 4; row++)
-          {
-          for (column = 0; column < 4; column++)
-            {
-            volumeValue = volumeIJKToRAS->GetElement(row,column);
-            labelValue = labelIJKToRAS->GetElement(row,column);
-            if (!vtkMathUtilities::FuzzyCompare<double>(volumeValue, labelValue))
-              {
-              warnings << "IJKToRAS mismatch at [" << row << ", " << column << "] (" << volumeValue << " != " << labelValue << ")\n";
-              }
-            }
-          }
-        volumeIJKToRAS->Delete();
-        labelIJKToRAS->Delete();
+        warnings << "Null second image data pointer\n";
         }
+      }
+    else
+      {
+      int row, column;
+      double volumeValue1, volumeValue2;
+      for (row = 0; row < 3; row++)
+        {
+        volumeValue1 = volumeImage1->GetDimensions()[row];
+        volumeValue2 = volumeImage2->GetDimensions()[row];
+
+        if (volumeValue1 != volumeValue2)
+          {
+          warnings << "Dimension mismatch at row [" << row << "] (" << volumeValue1 << " != " << volumeValue2 << ")\n";
+          }
+
+        volumeValue1 = volumeImage1->GetSpacing()[row];
+        volumeValue2 = volumeImage2->GetSpacing()[row];
+        if (volumeValue1 != volumeValue2)
+          {
+          warnings << "Spacing mismatch at row [" << row << "] (" << volumeValue1 << " != " << volumeValue2 << ")\n";
+          }
+
+        volumeValue1 = volumeImage1->GetOrigin()[row];
+        volumeValue2 = volumeImage2->GetOrigin()[row];
+        if (volumeValue1 != volumeValue2)
+          {
+          warnings << "Origin mismatch at row [" << row << "] (" << volumeValue1 << " != " << volumeValue2 << ")\n";
+          }
+        }
+
+      vtkMatrix4x4 *volumeIJKToRAS1 = vtkMatrix4x4::New();
+      vtkMatrix4x4 *volumeIJKToRAS2 = vtkMatrix4x4::New();
+      volumeNode1->GetIJKToRASMatrix(volumeIJKToRAS1);
+      volumeNode2->GetIJKToRASMatrix(volumeIJKToRAS2);
+      for (row = 0; row < 4; row++)
+        {
+        for (column = 0; column < 4; column++)
+          {
+          volumeValue1 = volumeIJKToRAS1->GetElement(row,column);
+          volumeValue2 = volumeIJKToRAS2->GetElement(row,column);
+          if (!vtkMathUtilities::FuzzyCompare<double>(volumeValue1, volumeValue2))
+            {
+            warnings << "IJKToRAS mismatch at [" << row << ", " << column << "] (" << volumeValue1 << " != " << volumeValue2 << ")\n";
+            }
+          }
+        }
+      volumeIJKToRAS1->Delete();
+      volumeIJKToRAS2->Delete();
       }
     }
   return (warnings.str());

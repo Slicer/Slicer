@@ -180,17 +180,27 @@ public:
                                                        vtkMRMLScalarVolumeNode *labelNode,
                                                        vtkMRMLVolumeNode *templateNode);
 
-  /// Generate a string listing any warnings about the spatial validity of
+  /// Return a string listing any warnings about the spatial validity of
   /// the labelmap with respect to the volume.  An empty string indicates
-  /// that the two volumes are identical samplings of the same spatial region.
+  /// that the two volumes are identical samplings of the same spatial
+  /// region and that the second volume input is a label map.
+  /// \sa CompareVolumeGeometry
+  std::string CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volumeNode,
+                                          vtkMRMLScalarVolumeNode *labelNode);
+
+  /// Generate a string listing any warnings about the spatial validity of
+  /// the second volume with respect to the first volume.  An empty string
+  /// indicates that the two volumes are identical samplings of the same
+  /// spatial region.
   /// Checks include:
   ///  Valid image data.
   ///  Same dimensions.
   ///  Same spacing.
   ///  Same origin.
   ///  Same IJKtoRAS.
-  std::string CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volumeNode,
-                                          vtkMRMLScalarVolumeNode *labelNode);
+  /// \sa CheckForLabelVolumeValidity
+  std::string CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode1,
+                                    vtkMRMLScalarVolumeNode *volumeNode2);
 
 
   /// Create a deep copy of a \a volumeNode and add it to the current scene
