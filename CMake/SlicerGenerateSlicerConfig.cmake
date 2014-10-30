@@ -124,6 +124,10 @@ slicer_config_set_ep(
 ")
 endforeach()
 
+# Slicer external project component variables
+set(Slicer_EP_COMPONENT_VARS_CONFIG
+  "set(Slicer_VTK_COMPONENTS \"${Slicer_VTK_COMPONENTS}\")")
+
 # List all required external project
 set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK ITK CURL Teem VTK)
 set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG CURL)

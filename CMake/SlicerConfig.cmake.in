@@ -425,9 +425,15 @@ endif()
 set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
 set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
 
+@Slicer_EP_COMPONENT_VARS_CONFIG@
+
 # Include external projects
 foreach(proj ${Slicer_EXTERNAL_PROJECTS})
-  find_package(${proj} REQUIRED)
+  set(_component_args)
+  if(DEFINED Slicer_${proj}_COMPONENTS)
+    set(_component_args COMPONENTS ${Slicer_${proj}_COMPONENTS})
+  endif()
+  find_package(${proj} ${_component_args} REQUIRED)
   # Add project CMake dir to module path
   if(DEFINED ${proj}_CMAKE_DIR)
     set(CMAKE_MODULE_PATH
