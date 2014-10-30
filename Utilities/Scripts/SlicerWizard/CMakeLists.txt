@@ -25,7 +25,7 @@ set(SlicerWizard_PYTHON_SCRIPTS
   WizardHelpFormatter.py
   )
 
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
   ctkMacroCompilePythonScript(
     TARGET_NAME SlicerWizard
     SCRIPTS "${SlicerWizard_PYTHON_SCRIPTS}"
