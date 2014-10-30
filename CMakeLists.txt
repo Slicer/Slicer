@@ -512,10 +512,13 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
       )
   endif()
   if(UNIX AND NOT APPLE)
-    list(APPEND Slicer_VTK_COMPONENTS
-      vtkRenderingFreeTypeFontConfig
-      vtkRenderingFreeTypeOpenGL
-      )
+    find_package(FontConfig QUIET)
+    if(FONTCONFIG_FOUND)
+      list(APPEND Slicer_VTK_COMPONENTS
+        vtkRenderingFreeTypeFontConfig
+        vtkRenderingFreeTypeOpenGL
+        )
+    endif()
   endif()
 endif()
 
