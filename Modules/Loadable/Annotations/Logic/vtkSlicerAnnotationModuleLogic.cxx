@@ -40,6 +40,7 @@
 #include <vtkVersion.h>
 
 // STD includes
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include <sstream>

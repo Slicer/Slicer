@@ -13,6 +13,7 @@
 #include <vtkVolumeProperty.h>
 
 // STD includes
+#include <algorithm>
 #include <cassert>
 #include <limits>
 #include <sstream>

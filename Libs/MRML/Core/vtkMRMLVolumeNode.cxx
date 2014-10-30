@@ -34,6 +34,7 @@ Version:   $Revision: 1.14 $
 #include <vtkSmartPointer.h>
 #include <vtkTrivialProducer.h>
 
+#include <algorithm> // For std::min
 #include <cassert>
 
 //----------------------------------------------------------------------------

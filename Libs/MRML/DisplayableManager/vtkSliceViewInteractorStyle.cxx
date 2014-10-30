@@ -30,6 +30,8 @@
 #include "vtkCommand.h"
 #include "vtkNew.h"
 
+//STL includes
+#include <algorithm>
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkSliceViewInteractorStyle, SliceLogic, vtkMRMLSliceLogic);
