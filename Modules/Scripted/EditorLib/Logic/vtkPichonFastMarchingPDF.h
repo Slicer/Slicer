@@ -14,7 +14,6 @@
 #ifdef _WIN32 /// WINDOWS
 
 #include <float.h>
-#define isnan(x) _isnan(x)
 #define finite(x) _finite(x)
 
 #ifndef min
