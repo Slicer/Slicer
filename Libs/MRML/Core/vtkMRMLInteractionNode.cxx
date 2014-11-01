@@ -159,6 +159,8 @@ void vtkMRMLInteractionNode::WriteXML(ostream& of, int nIndent)
 //    of << indent << " currentInteractionMode=\"" << "LassoRegion" << "\"";
 //    }
 
+  of << indent << " placeModePersistence=\"" << (this->PlaceModePersistence ? "true" : "false") << "\"";
+
   if ( this->GetLastInteractionMode() == vtkMRMLInteractionNode::Place )
     {
     of << indent << " lastInteractionMode=\"" << "Place" << "\"";
@@ -211,6 +213,17 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 //        this->CurrentInteractionMode = vtkMRMLInteractionNode::LassoRegion;
 //        }
       }
+    else if (!strcmp(attName, "placeModePersistence"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->PlaceModePersistence = 1;
+        }
+      else
+        {
+        this->PlaceModePersistence = 0;
+        }
+      }
     else if (!strcmp(attName, "lastInteractionMode"))
       {
       if ( !strcmp (attValue, "Place" ))
@@ -246,6 +259,7 @@ void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
   vtkMRMLInteractionNode *node = (vtkMRMLInteractionNode *) anode;
 
   this->SetCurrentInteractionMode (node->GetCurrentInteractionMode());
+  this->SetPlaceModePersistence (node->GetPlaceModePersistence());
 
   this->SetLastInteractionMode ( node->GetLastInteractionMode());
 
