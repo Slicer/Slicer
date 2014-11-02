@@ -10,7 +10,7 @@
 Fiber bundle label select allows a user to select tracts passing or not passing through a single or multiple labels. The label is defined as a labelmap and has to be provided by the user. One approach to generate the labeled volume is by means of the Editor module.
   </description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/FiberBundleLabelSelect</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/FiberBundleLabelSelect</documentation-url>
   <license></license>
   <contributor>Demian Wassermann, Lauren O'Donnell</contributor>
   <acknowledgements>BWH, NCIGT/LMI</acknowledgements>

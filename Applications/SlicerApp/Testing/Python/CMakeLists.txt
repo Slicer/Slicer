@@ -183,7 +183,7 @@ slicer_add_python_unittest(
 
 #
 # SelfTests
-# see http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Developers/Tutorials/SelfTestModule
+# see http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Developers/Tutorials/SelfTestModule
 #
 
 if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)

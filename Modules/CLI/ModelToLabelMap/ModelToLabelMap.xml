@@ -4,7 +4,7 @@
   <title>Model To Label Map</title>
   <description><![CDATA[Intersects an input model with an reference volume and produces an output label map. The algorithm uses flood fill from the model's center of mass, open models or ones with multiple pieces will not work well. The label map is constrained to be unsigned char, so the input label value is only valid in the range 0-255.]]></description>
   <version>$Revision: 8643 $</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/ModelToLabelMap</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/ModelToLabelMap</documentation-url>
   <license/>
   <contributor>Nicole Aucoin (SPL, BWH), Xiaodong Tao (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

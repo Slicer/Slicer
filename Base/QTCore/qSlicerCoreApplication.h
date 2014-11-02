@@ -59,7 +59,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 
   /// This property holds the path where the Slicer application is.
   /// For example, for an installed Slicer on Windows, the path can be
-  /// "C:\Program Files (x86)\Slicer 4.3.0\".
+  /// "C:\Program Files (x86)\Slicer 4.4.0\".
   /// \sa slicerHome(), temporaryPath, isInstalled
   Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
   Q_PROPERTY(QString slicerSharePath READ slicerSharePath CONSTANT)
