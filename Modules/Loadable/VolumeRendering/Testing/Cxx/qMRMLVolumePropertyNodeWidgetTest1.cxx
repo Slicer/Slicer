@@ -18,6 +18,7 @@
 
 ==============================================================================*/
 
+
 // QT includes
 #include <QApplication>
 #include <QTimer>
@@ -30,6 +31,14 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+
+// this test only works on VTKv6 and later
+#if VTK_MAJOR_VERSION <= 5
+int qMRMLVolumePropertyNodeWidgetTest1(int argc, char * argv [] )
+{
+  return -1;
+}
+#else
 
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingContextOpenGL);
@@ -55,3 +64,4 @@ int qMRMLVolumePropertyNodeWidgetTest1(int argc, char * argv [] )
   return app.exec();
 }
 
+#endif
