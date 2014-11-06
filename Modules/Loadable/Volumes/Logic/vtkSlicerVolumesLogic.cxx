@@ -1463,7 +1463,16 @@ vtkSlicerVolumesLogic
   resliceFilter->SetOutputSpacing(1, 1, 1);
   resliceFilter->SetOutputExtent(0, dimensions[0]-1, 0, dimensions[1]-1, 0, dimensions[2]-1);
   resliceFilter->SetResliceTransform(outputVolumeResliceTransform);
-  resliceFilter->SetInterpolationModeToLinear();
+  // check for a label map and adjust interpolation mode
+  if (inputVolumeNode->IsA("vtkMRMLScalarVolumeNode") &&
+      vtkMRMLScalarVolumeNode::SafeDownCast(inputVolumeNode)->GetLabelMap())
+    {
+    resliceFilter->SetInterpolationModeToNearestNeighbor();
+    }
+  else
+    {
+    resliceFilter->SetInterpolationModeToLinear();
+    }
   resliceFilter->Update();
 
   outputVolumeNode->CopyOrientation(referenceVolumeNode);
