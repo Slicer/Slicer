@@ -153,23 +153,54 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerCLILoadableModuleFactory
+// qSlicerCLILoadableModuleFactoryPrivate
+
 //-----------------------------------------------------------------------------
-qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
+class qSlicerCLILoadableModuleFactoryPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerCLILoadableModuleFactory);
+protected:
+  qSlicerCLILoadableModuleFactory* const q_ptr;
+public:
+  typedef qSlicerCLILoadableModuleFactoryPrivate Self;
+  qSlicerCLILoadableModuleFactoryPrivate(qSlicerCLILoadableModuleFactory& object);
+
+  void init();
+
+private:
+  QString TempDirectory;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerCLILoadableModuleFactoryPrivate::qSlicerCLILoadableModuleFactoryPrivate(qSlicerCLILoadableModuleFactory& object)
+  : q_ptr(&object)
+{
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLILoadableModuleFactoryPrivate::init()
+{
+  Q_Q(qSlicerCLILoadableModuleFactory);
   // Set the list of required symbols for CmdLineLoadableModule,
   // if one of these symbols can't be resolved, the library won't be registered.
-  this->setSymbols(QStringList() << "XMLModuleDescription" << "ModuleEntryPoint");
+  q->setSymbols(QStringList() << "XMLModuleDescription" << "ModuleEntryPoint");
   this->TempDirectory = QDir::tempPath();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory(const QString& tempDir)
+// qSlicerCLILoadableModuleFactory
+
+//-----------------------------------------------------------------------------
+qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
+  : d_ptr(new qSlicerCLILoadableModuleFactoryPrivate(*this))
 {
-  // Set the list of required symbols for CmdLineLoadableModule,
-  // if one of these symbols can't be resolved, the library won't be registered.
-  this->setSymbols(QStringList() << "XMLModuleDescription" << "ModuleEntryPoint");
-  this->setTempDirectory(tempDir);
+  Q_D(qSlicerCLILoadableModuleFactory);
+  d->init();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCLILoadableModuleFactory::~qSlicerCLILoadableModuleFactory()
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -183,7 +214,8 @@ void qSlicerCLILoadableModuleFactory::registerItems()
 ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLILoadableModuleFactory::
 createFactoryFileBasedItem()
 {
-  return new qSlicerCLILoadableModuleFactoryItem(this->TempDirectory);
+  Q_D(qSlicerCLILoadableModuleFactory);
+  return new qSlicerCLILoadableModuleFactoryItem(d->TempDirectory);
 }
 
 //-----------------------------------------------------------------------------
@@ -195,7 +227,8 @@ QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName)c
 //-----------------------------------------------------------------------------
 void qSlicerCLILoadableModuleFactory::setTempDirectory(const QString& newTempDirectory)
 {
-  this->TempDirectory = newTempDirectory;
+  Q_D(qSlicerCLILoadableModuleFactory);
+  d->TempDirectory = newTempDirectory;
 }
 
 //-----------------------------------------------------------------------------

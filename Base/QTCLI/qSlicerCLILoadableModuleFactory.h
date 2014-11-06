@@ -45,6 +45,8 @@ private:
   QString TempDirectory;
 };
 
+class qSlicerCLILoadableModuleFactoryPrivate;
+
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
   public ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>
@@ -52,7 +54,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLILoadableModuleFactory :
 public:
   typedef ctkAbstractLibraryFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLILoadableModuleFactory();
-  qSlicerCLILoadableModuleFactory(const QString& tempDirectory);
+  virtual ~qSlicerCLILoadableModuleFactory();
 
   /// Reimplemented to scan the directory of the command line modules
   virtual void registerItems();
@@ -73,8 +75,13 @@ protected:
 
   virtual bool isValidFile(const QFileInfo& file)const;
 
+protected:
+
+  QScopedPointer<qSlicerCLILoadableModuleFactoryPrivate> d_ptr;
+
 private:
-  QString TempDirectory;
+  Q_DECLARE_PRIVATE(qSlicerCLILoadableModuleFactory);
+  Q_DISABLE_COPY(qSlicerCLILoadableModuleFactory);
 };
 
 #endif

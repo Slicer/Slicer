@@ -119,13 +119,19 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     {
     QString tempDirectory =
       qSlicerCoreApplication::application()->temporaryPath();
+
+    // Option to prefer executable CLIs to limit memory consumption.
     bool preferExecutableCLIs =
       app->userSettings()->value("Modules/PreferExecutableCLI", false).toBool();
-    moduleFactoryManager->registerFactory(
-      new qSlicerCLILoadableModuleFactory(tempDirectory), preferExecutableCLIs ? 0 : 1);
-    // Option to prefer executable CLIs to limit memory consumption.
-    moduleFactoryManager->registerFactory(
-      new qSlicerCLIExecutableModuleFactory(tempDirectory), preferExecutableCLIs ? 1 : 0);
+
+    qSlicerCLILoadableModuleFactory* cliLoadableFactory = new qSlicerCLILoadableModuleFactory();
+    cliLoadableFactory->setTempDirectory(tempDirectory);
+    moduleFactoryManager->registerFactory(cliLoadableFactory, preferExecutableCLIs ? 0 : 1);
+
+    qSlicerCLIExecutableModuleFactory* cliExecutableFactory = new qSlicerCLIExecutableModuleFactory();
+    cliExecutableFactory->setTempDirectory(tempDirectory);
+    moduleFactoryManager->registerFactory(cliExecutableFactory, preferExecutableCLIs ? 1 : 0);
+
     if (!options->disableBuiltInModules() &&
         !options->disableBuiltInCLIModules() &&
         !options->runPythonAndExit())
