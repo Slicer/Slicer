@@ -330,6 +330,10 @@ class ExtensionWizardWidget:
           if modified:
             settings.setValue("Modules/AdditionalPaths", rawSearchPaths)
 
+        # Enable developer mode (shows Reload&Test section, etc.), if requested
+        if dlg.enableDeveloperMode:
+          qt.QSettings().setValue('Developer/DeveloperMode', 'true')
+
         # Register requested module(s)
         failed = []
 

@@ -34,6 +34,12 @@ class _ui_LoadModulesDialog(object):
     self.addToSearchPaths = qt.QCheckBox()
     vLayout.addWidget(self.addToSearchPaths)
 
+    self.enableDeveloperMode = qt.QCheckBox()
+    self.enableDeveloperMode.text = "Enable developer mode"
+    self.enableDeveloperMode.toolTip = "Sets the 'Developer mode' application option to enabled. Enabling developer mode is recommended while developing scripted modules, as it makes the Reload and Testing section displayed in the module user interface."
+    self.enableDeveloperMode.checked = True
+    vLayout.addWidget(self.enableDeveloperMode)
+
     self.buttonBox = qt.QDialogButtonBox()
     self.buttonBox.setStandardButtons(qt.QDialogButtonBox.Yes |
                                       qt.QDialogButtonBox.No)
@@ -73,6 +79,13 @@ class LoadModulesDialog(object):
     else:
       self.ui.addToSearchPaths.text = "Add selected modules to search paths"
 
+    # If developer mode is already enabled then don't even show the option
+    settings = qt.QSettings()
+    developerModeAlreadyEnabled = settings.value('Developer/DeveloperMode').lower() == 'true'
+    if developerModeAlreadyEnabled:
+      self.ui.enableDeveloperMode.visible = False
+      self.ui.enableDeveloperMode.checked = False
+
   #---------------------------------------------------------------------------
   def exec_(self):
     return self.dialog.exec_()
@@ -108,6 +121,11 @@ class LoadModulesDialog(object):
   @property
   def addToSearchPaths(self):
     return self.ui.addToSearchPaths.checked
+
+  #---------------------------------------------------------------------------
+  @property
+  def enableDeveloperMode(self):
+    return self.ui.enableDeveloperMode.checked
 
   #---------------------------------------------------------------------------
   @property
