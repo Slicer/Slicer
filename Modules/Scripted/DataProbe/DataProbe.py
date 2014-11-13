@@ -281,8 +281,8 @@ class DataProbeInfoWidget(object):
     sliceAnnotationsSettings.setIcon(settingsIcon)
     self.sliceAnnotationsFrame.layout().addWidget(sliceAnnotationsSettings)
 
-    self.sliceAnnoations = DataProbeLib.SliceAnnotations()
-    sliceAnnotationsSettings.connect('clicked()', self.sliceAnnoations.openSettingsPopup)
+    self.sliceAnnotations = DataProbeLib.SliceAnnotations()
+    sliceAnnotationsSettings.connect('clicked()', self.sliceAnnotations.openSettingsPopup)
     self.sliceAnnotationsFrame.layout().addStretch(1)
     # goto module button
     self.goToModule = qt.QPushButton('->', self.frame)
