@@ -50,6 +50,10 @@ public:
   static const std::string SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR;
 
 public:
+  /// IMPORTANT! New method should not be used to create subject hierarchy nodes.
+  ///   The nodes are created automatically for supported data types when adding
+  ///   the data nodes. To set up the node (name, level, parent, associated data)
+  ///   call \sa CreateSubjectHierarchyNode method.
   static vtkMRMLSubjectHierarchyNode *New();
   vtkTypeMacro(vtkMRMLSubjectHierarchyNode,vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -89,7 +93,9 @@ public:
   /// \return Child node whose name without postfix is the same as the given attribute
   static vtkMRMLSubjectHierarchyNode* GetChildWithName(vtkMRMLSubjectHierarchyNode* parent, const char* name, vtkMRMLScene* scene=NULL);
 
-  /// Create subject hierarchy node in the scene under a specified parent
+  /// Create subject hierarchy node in the scene under a specified parent. If the node existed (most of the cases,
+  /// as subject hierarchy nodes are automatically added for supported data types when adding the data nodes),
+  /// then use that and set it up with the supplied parameters.
   /// \param scene MRML scene
   /// \param parent Parent node under which the created node is put. If NULL, then the child will be a top-level node
   /// \param level Level string of the created node

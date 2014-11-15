@@ -41,9 +41,6 @@ public:
   qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=0);
   virtual ~qMRMLSortFilterSubjectHierarchyProxyModel();
 
-  /// Set whether potential nodes are shown or filtered out
-  void setPotentialNodesVisible(bool visible);
-
 protected:
   /// Filters nodes to decide which to display in the view
   virtual AcceptType filterAcceptsNode(vtkMRMLNode* node)const;

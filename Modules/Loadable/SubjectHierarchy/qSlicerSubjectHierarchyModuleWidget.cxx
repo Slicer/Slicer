@@ -135,7 +135,6 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
   // Make connection for the checkboxes
   connect( d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)), this, SLOT(setMRMLIDsVisible(bool)) );
   connect( d->DisplayTransformsCheckBox, SIGNAL(toggled(bool)), this, SLOT(setTransformsVisible(bool)) );
-  connect( d->PotentialNodesCheckBox, SIGNAL(toggled(bool)), this, SLOT(setPotentialNodesVisible(bool)) );
 
   // Set up tree view
   d->SubjectHierarchyTreeView->expandToDepth(4);
@@ -146,7 +145,6 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
 
   this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
   this->setTransformsVisible(d->DisplayTransformsCheckBox->isChecked());
-  this->setPotentialNodesVisible(d->PotentialNodesCheckBox->isChecked());
 
   // Assemble help text for question mark tooltip
   QString aggregatedHelpText("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">    <html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">    p, li   { white-space: pre-wrap;   }  </style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">");
@@ -198,20 +196,6 @@ void qSlicerSubjectHierarchyModuleWidget::setTransformsVisible(bool visible)
   d->DisplayTransformsCheckBox->blockSignals(true);
   d->DisplayTransformsCheckBox->setChecked(visible);
   d->DisplayTransformsCheckBox->blockSignals(false);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModuleWidget::setPotentialNodesVisible(bool visible)
-{
-  Q_D(qSlicerSubjectHierarchyModuleWidget);
-
-  qMRMLSortFilterSubjectHierarchyProxyModel* proxyModel = qobject_cast<qMRMLSortFilterSubjectHierarchyProxyModel*>(d->SubjectHierarchyTreeView->model());
-  proxyModel->setPotentialNodesVisible(visible);
-  proxyModel->invalidate();
-
-  d->PotentialNodesCheckBox->blockSignals(true);
-  d->PotentialNodesCheckBox->setChecked(visible);
-  d->PotentialNodesCheckBox->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------

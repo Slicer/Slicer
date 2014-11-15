@@ -510,7 +510,6 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHi
 {
   if (!associatedNode)
     {
-    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::GetAssociatedSubjectHierarchyNode: associated node is null" << std::endl;
     return NULL;
     }
   if (!scene)
@@ -695,21 +694,33 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetChildWithName(vtkMR
 vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
   vtkMRMLScene* scene, vtkMRMLSubjectHierarchyNode* parent, const char* level, const char* nodeName, vtkMRMLNode* associatedNode/*=NULL*/)
 {
-  // Create subject hierarchy node
-  vtkSmartPointer<vtkMRMLSubjectHierarchyNode> childSubjectHierarchyNode =
-    vtkSmartPointer<vtkMRMLSubjectHierarchyNode>::New();
+  // Use existing subject hierarchy node if found
+  bool nodeCreated = false;
+  vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(associatedNode);
+  if (!childSubjectHierarchyNode)
+    {
+    // Create subject hierarchy node
+    childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::New();
+    nodeCreated = true;
+    }
+
   childSubjectHierarchyNode->SetLevel(level);
-  //TODO: UID?
+
   std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX;
   childSubjectHierarchyNode->SetName(shNodeName.c_str());
-  scene->AddNode(childSubjectHierarchyNode);
+
+  if (nodeCreated)
+    {
+    scene->AddNode(childSubjectHierarchyNode);
+    childSubjectHierarchyNode->Delete(); // Return ownership to the scene only
+    if (associatedNode)
+      {
+      childSubjectHierarchyNode->SetAssociatedNodeID(associatedNode->GetID());
+      }
+    }
   if (parent)
     {
     childSubjectHierarchyNode->SetParentNodeID(parent->GetID());
-    }
-  if (associatedNode)
-    {
-    childSubjectHierarchyNode->SetAssociatedNodeID(associatedNode->GetID());
     }
 
   return childSubjectHierarchyNode;

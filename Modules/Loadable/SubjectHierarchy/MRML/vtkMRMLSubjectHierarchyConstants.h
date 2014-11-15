@@ -39,7 +39,7 @@ public:
   // Subject hierarchy constants
   static const std::string SUBJECTHIERARCHY_NODE_NAME_POSTFIX;
   static const std::string SUBJECTHIERARCHY_ATTRIBUTE_PREFIX;
-  static const std::string SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME;
+  static const std::string SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME;
   static const std::string SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX;
 
   static const char* SUBJECTHIERARCHY_LEVEL_SUBJECT;

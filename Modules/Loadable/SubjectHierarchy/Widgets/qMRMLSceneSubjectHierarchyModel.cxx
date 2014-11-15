@@ -262,7 +262,7 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
   if (!subjectHierarchyNode)
     {
-    // If not subject hierarchy node (i.e. potential node or filtering is turned off),
+    // If not subject hierarchy node (i.e. filtering is turned off),
     // then show as any node, except for a tooltip explaining how to add it to subject hierarchy
     if (column == this->nameColumn())
       {
@@ -476,7 +476,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
 {
   if (!node || newParent == node)
     {
-    std::cerr << "qMRMLSceneSubjectHierarchyModel::reparent: Invalid node to reparent!" << std::endl;
+    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Invalid node to reparent!";
     return false;
     }
 
@@ -488,88 +488,52 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
 
   if (!this->mrmlScene())
     {
-    std::cerr << "qMRMLSceneSubjectHierarchyModel::reparent: Invalid MRML scene!" << std::endl;
+    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Invalid MRML scene!";
     return false;
     }
 
   vtkMRMLSubjectHierarchyNode* parentSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(newParent);
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
+  if (!subjectHierarchyNode)
+    {
+    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Reparented node (" << node->GetName() << ") is not a subject hierarchy node!";
+    }
 
   if (newParent && !this->canBeAParent(newParent))
     {
-    vtkWarningWithObjectMacro(this->mrmlScene(), "qMRMLSceneSubjectHierarchyModel::reparent: Target parent node (" << newParent->GetName() << ") is not a valid subject hierarchy parent node!");
+    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Target parent node (" << newParent->GetName() << ") is not a valid subject hierarchy parent node!";
     }
 
   // If dropped from within the subject hierarchy tree
-  if (subjectHierarchyNode)
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
+    qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForReparentingInsideSubjectHierarchyForNode(subjectHierarchyNode, parentSubjectHierarchyNode);
+  qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
+  if (foundPlugins.size() > 1)
     {
-    bool successfullyReparentedByPlugin = false;
-    QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-      qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForReparentingInsideSubjectHierarchyForNode(subjectHierarchyNode, parentSubjectHierarchyNode);
-    qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
-    if (foundPlugins.size() > 1)
-      {
-      // Let the user choose a plugin if more than one returned the same non-zero confidence value
-      vtkMRMLNode* associatedNode = (subjectHierarchyNode->GetAssociatedNode() ? subjectHierarchyNode->GetAssociatedNode() : subjectHierarchyNode);
-      QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for reparenting.\n\nSelect plugin to reparent node named\n'%1'\n(type %2)\nParent node: %3").arg(associatedNode->GetName()).arg(associatedNode->GetNodeTagName()).arg(parentSubjectHierarchyNode->GetName());
-      selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
-      }
-    else if (foundPlugins.size() == 1)
-      {
-      selectedPlugin = foundPlugins[0];
-      }
-    else
-      {
-      // Choose default plugin if all registered plugins returned confidence value 0
-      selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin();
-      }
-
-    // Have the selected plugin reparent the node
-    successfullyReparentedByPlugin = selectedPlugin->reparentNodeInsideSubjectHierarchy(subjectHierarchyNode, parentSubjectHierarchyNode);
-    if (!successfullyReparentedByPlugin)
-      {
-      subjectHierarchyNode->SetParentNodeID( subjectHierarchyNode->GetParentNodeID() );
-
-      vtkWarningWithObjectMacro(this->mrmlScene(), "qMRMLSceneSubjectHierarchyModel::reparent: Failed to reparent node "
-        << subjectHierarchyNode->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'");
-      }
+    // Let the user choose a plugin if more than one returned the same non-zero confidence value
+    vtkMRMLNode* associatedNode = (subjectHierarchyNode->GetAssociatedNode() ? subjectHierarchyNode->GetAssociatedNode() : subjectHierarchyNode);
+    QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for reparenting.\n\nSelect plugin to reparent node named\n'%1'\n(type %2)\nParent node: %3").arg(associatedNode->GetName()).arg(associatedNode->GetNodeTagName()).arg(parentSubjectHierarchyNode->GetName());
+    selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
     }
-
-  // If dropped from the potential subject hierarchy nodes list
+  else if (foundPlugins.size() == 1)
+    {
+    selectedPlugin = foundPlugins[0];
+    }
   else
     {
-    // If there is a plugin that can handle the dropped node then let it take care of it
-    bool successfullyAddedByPlugin = false;
-    QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-      qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(node, parentSubjectHierarchyNode);
-    qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
-    if (foundPlugins.size() > 1)
-      {
-      // Let the user choose a plugin if more than one returned the same non-zero confidence value
-      QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for adding potential node to subject hierarchy.\n\nSelect plugin to add node named\n'%1'\n(type %2)\nParent node: %3").arg(node->GetName()).arg(node->GetNodeTagName()).arg(parentSubjectHierarchyNode->GetName());
-      selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
-      }
-    else if (foundPlugins.size() == 1)
-      {
-      selectedPlugin = foundPlugins[0];
-      }
-    else
-      {
-      // Choose default plugin if all registered plugins returned confidence value 0
-      selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin();
-      }
+    // Choose default plugin if all registered plugins returned confidence value 0
+    selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin();
+    }
 
-    // Have the selected plugin add the potential node to subject hierarchy
-    successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, parentSubjectHierarchyNode);
-    if (!successfullyAddedByPlugin)
-      {
-      vtkWarningWithObjectMacro(this->mrmlScene(), "qMRMLSceneSubjectHierarchyModel::reparent: Failed to add node "
-        << node->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'");
-      }
+  // Have the selected plugin reparent the node
+  bool successfullyReparentedByPlugin = selectedPlugin->reparentNodeInsideSubjectHierarchy(subjectHierarchyNode, parentSubjectHierarchyNode);
+  if (!successfullyReparentedByPlugin)
+    {
+    subjectHierarchyNode->SetParentNodeID( subjectHierarchyNode->GetParentNodeID() );
 
-    // Trigger updating item of reparented data node. Without this, the potential data node does not disappear
-    // from the tree when doing the reparenting programatically (however it does when doing drag&drop from UI)
-    emit invalidateFilter();
+    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Failed to reparent node "
+      << subjectHierarchyNode->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+    return false;
     }
 
   return true;

@@ -46,7 +46,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
 public:
-  //TODO: To plugins?
   /// Place series in subject hierarchy. Create subject and study node if needed
   /// \return Series subject hierarchy node of the inserted series
   static vtkMRMLSubjectHierarchyNode* InsertDicomSeriesInHierarchy(

@@ -146,9 +146,9 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
 //----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parentNode)
 {
-  if (!nodeToAdd || !parentNode)
+  if (!nodeToAdd)
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy: Invalid node to add or parent node!";
+    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy: Invalid node to add!";
     return false;
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
@@ -159,8 +159,9 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
     }
 
   // Associate to a new hierarchy node and put it in the tree under the parent
+  const char* level = (parentNode ? this->childLevel(parentNode->GetLevel()).toLatin1().constData() : vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES);
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, parentNode, this->childLevel(parentNode->GetLevel()).toLatin1().constData(), nodeToAdd->GetName(), nodeToAdd);
+    scene, parentNode, level, nodeToAdd->GetName(), nodeToAdd);
   if (!subjectHierarchyNode)
     {
     qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy: Failed to create subject hierarchy node!";

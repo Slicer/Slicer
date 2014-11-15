@@ -29,7 +29,7 @@
 // Subject hierarchy constants
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX = "_SubjectHierarchy";
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_PREFIX = "SubjectHierarchy.";
-const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_PREFIX + "ExcludeFromPotentialNodesList"; // Identifier
+const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_PREFIX + "ExcludeFromTree"; // Identifier
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX = "New";
 
 const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT = "Subject";

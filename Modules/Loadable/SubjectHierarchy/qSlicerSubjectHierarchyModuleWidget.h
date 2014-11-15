@@ -59,9 +59,6 @@ protected slots:
   /// Show or hide transforms
   void setTransformsVisible(bool visible);
 
-  /// Show or hide potential nodes in the tree
-  void setPotentialNodesVisible(bool visible);
-
 public:
   /// Assessor function for subject hierarchy scene model (for python)
   Q_INVOKABLE qMRMLSceneSubjectHierarchyModel* subjectHierarchySceneModel()const;

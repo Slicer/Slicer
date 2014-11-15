@@ -271,7 +271,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForCurrentNode()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    // Don't show certain actions for potential nodes
+    // Don't show certain actions for non-subject hierarchy nodes (i.e. filtering is turned off)
     d->EditAction->setVisible(false);
     d->SelectPluginSubMenu->menuAction()->setVisible(false);
     }

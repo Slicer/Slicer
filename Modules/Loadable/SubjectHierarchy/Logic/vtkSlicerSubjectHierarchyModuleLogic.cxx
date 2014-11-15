@@ -89,7 +89,6 @@ void vtkSlicerSubjectHierarchyModuleLogic::UpdateFromMRMLScene()
 vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
   vtkMRMLScene *scene, const char* patientId, const char* studyInstanceUID, const char* seriesInstanceUID )
 {
-  //TODO: Move this function to the DICOM plugin?
   if ( !scene || !patientId || !studyInstanceUID || !seriesInstanceUID )
     {
     std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Invalid input arguments!" << std::endl;
@@ -114,7 +113,6 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSe
       if (!nodeDicomUID)
         {
         // Having a UID is not mandatory
-        //TODO: Isn't it?
         continue;
         }
       if (!strcmp(patientId, nodeDicomUID))
