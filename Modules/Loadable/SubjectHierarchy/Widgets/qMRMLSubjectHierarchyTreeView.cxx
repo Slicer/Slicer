@@ -96,7 +96,9 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
 
   // Change item visibility
   q->setShowScene(true);
-  q->setUniformRowHeights(false);
+  //TODO: this would be desirable to set, but results in showing the scrollbar, which makes
+  //      subject hierarchy much less usable (because there will be two scrollbars)
+  //q->setUniformRowHeights(false);
 
   // Connect edit properties context menu action
   QObject::connect(q, SIGNAL(editNodeRequested(vtkMRMLNode*)), q, SLOT(openModuleForSubjectHierarchyNode(vtkMRMLNode*)));
@@ -110,6 +112,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
 
   // Set item delegate (that creates widgets for certain types of data)
   this->TransformItemDelegate = new qMRMLTransformItemDelegate(q);
+  this->TransformItemDelegate->setFixedRowHeight(16);
   this->TransformItemDelegate->setMRMLScene(q->mrmlScene());
   q->setItemDelegateForColumn(sceneModel->transformColumn(), this->TransformItemDelegate);
   QObject::connect(this->TransformItemDelegate, SIGNAL(removeTransformsFromBranchOfCurrentNode()),

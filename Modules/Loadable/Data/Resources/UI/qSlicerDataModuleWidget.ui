@@ -14,13 +14,13 @@
    <string>Data</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../Annotations/Resources/qSlicerAnnotationModule.qrc">
+   <iconset>
     <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
-    <widget class="ctkCollapsibleButton" name="DisplayModifiyButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="DisplayModifyButton">
+     <property name="text">
       <string>Display &amp;&amp; Modify Scene</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
@@ -35,13 +35,13 @@
         <property name="indentation">
          <number>10</number>
         </property>
-        <property name="minSizeHint" stdset="0">
+        <property name="minSizeHint">
          <size>
           <width>0</width>
           <height>120</height>
          </size>
         </property>
-        <property name="editMenuActionVisible" stdset="0">
+        <property name="editMenuActionVisible">
          <bool>true</bool>
         </property>
        </widget>
@@ -103,12 +103,12 @@
           <property name="checked">
            <bool>false</bool>
           </property>
-          <property name="collapsed" stdset="0">
+          <property name="collapsed">
            <bool>true</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
-            <widget class="qMRMLNodeAttributeTableWidget" name="MRMLNodeAttributeTableWidget" native="true"/>
+            <widget class="qMRMLNodeAttributeTableWidget" name="MRMLNodeAttributeTableWidget"/>
            </item>
           </layout>
          </widget>
@@ -126,20 +126,20 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer" native="true">
-     <property name="activeSizePolicy" stdset="0">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="activeSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Ignored">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="inactiveSizePolicy" stdset="0">
+     <property name="inactiveSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="active" stdset="0">
+     <property name="active">
       <bool>true</bool>
      </property>
     </widget>
@@ -147,6 +147,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLNodeAttributeTableWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeAttributeTableWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>qMRMLTreeView</class>
    <extends>QTreeView</extends>
@@ -160,11 +165,6 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeAttributeTableWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeAttributeTableWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>
@@ -205,7 +205,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>DisplayModifiyButton</sender>
+   <sender>DisplayModifyButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>DynamicSpacer</receiver>
    <slot>setActive(bool)</slot>
