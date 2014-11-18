@@ -25,8 +25,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkDiffusionTensorMathematics.h"
 #include <math.h>
 
-
-
 vtkStandardNewMacro(vtkPolyDataTensorToColor);
 
 // Construct with lower threshold=0, upper threshold=1, and threshold
@@ -38,7 +36,6 @@ vtkPolyDataTensorToColor::vtkPolyDataTensorToColor()
   this->ExtractScalar = 0;
   this->ExtractEigenvalues = 1;
 }
-
 
 void vtkPolyDataTensorToColor::ColorGlyphsByLinearMeasure() {
   this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_LINEAR_MEASURE);
@@ -71,7 +68,6 @@ void vtkPolyDataTensorToColor::ColorGlyphsByTrace() {
 void vtkPolyDataTensorToColor::ColorGlyphsByOrientation() {
   this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION);
 }
-
 
 void vtkPolyDataTensorToColor::ColorGlyphsBy(int invariant) {
   if (this->ScalarInvariant != invariant)
@@ -129,7 +125,6 @@ int vtkPolyDataTensorToColor::RequestData(
     this->ColorMode = vtkTensorGlyph::COLOR_BY_SCALARS;
     //this->ExtractScalarOff();
   }
-
 
   outPD = output->GetPointData();
   //outPD->CopyAllocate(pd);
@@ -204,20 +199,25 @@ int vtkPolyDataTensorToColor::RequestData(
   m[0] = m0; m[1] = m1; m[2] = m2;
   v[0] = v0; v[1] = v1; v[2] = v2;
 
-  if (this->ExtractScalar && ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) ||
-    (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))  )
+  if ((this->ExtractScalar && ((this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES) ||
+    (inScalars && (this->ColorMode == vtkTensorGlyph::COLOR_BY_SCALARS)))) ||
+     (!this->ExtractScalar && inScalars) )
   {
     newScalars = vtkFloatArray::New();
     newScalars->SetNumberOfComponents(1);
     newScalars->Allocate(numPts);
   }
-  else
+  if (!this->ExtractScalar && inScalars && newScalars)
   {
     // only copy scalar data through
     // (superclass does this but why? if user has not asked for ColorGlyphs)
-    outPD->CopyAllOff();
-    outPD->CopyScalarsOn();
-    outPD->CopyAllocate(pd,numPts);
+    newScalars->DeepCopy(inScalars);
+
+    outPD->AddArray(newScalars);
+    outPD->SetActiveScalars(newScalars->GetName());
+    //outPD->CopyAllOff();
+    //outPD->CopyScalarsOn();
+    //outPD->CopyAllocate(pd,numPts);
   }
 
   // Check that the scalars of each point satisfy the threshold criterion
@@ -232,7 +232,6 @@ int vtkPolyDataTensorToColor::RequestData(
       this->UpdateProgress((double)ptId/numPts);
       abort = this->GetAbortExecute();
     }
-
 
     input->GetPoint(ptId, x);
     pts[0] = newPoints->InsertNextPoint(x);
@@ -252,8 +251,6 @@ int vtkPolyDataTensorToColor::RequestData(
 
       //outPD->CopyData(pd,ptId,pts[0]);
       //verts->InsertNextCell(1,pts);
-
-
 
       // compute orientation vectors and scale factors from tensor
       if ( this->ExtractEigenvalues ) // extract appropriate eigenfunctions
@@ -293,7 +290,6 @@ int vtkPolyDataTensorToColor::RequestData(
         w[1] = vtkMath::Normalize(yv);
         w[2] = vtkMath::Normalize(zv);
       }
-
     }
     // Calculate output scalars before computing glyph scale factors from eigenvalues.
     // First, pass through input scalars if requested.
@@ -306,7 +302,6 @@ int vtkPolyDataTensorToColor::RequestData(
     // Output scalar invariants if requested
     else if (  this->ColorMode == vtkTensorGlyph::COLOR_BY_EIGENVALUES )
     {
-
       // Correct for negative eigenvalues: use logic coded in vtkDiffusionTensorMathematics
       vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w);
 
@@ -351,7 +346,6 @@ int vtkPolyDataTensorToColor::RequestData(
         s = 0;
         break;
       }
-
     }
 
     // Actually output the scalar invariant calculated above
@@ -369,7 +363,6 @@ int vtkPolyDataTensorToColor::RequestData(
 
     // Keep track of the number of points output so far.
     ptOffset++;
-
   } // for all points
 
   vtkDebugMacro(<< "Extracted " << output->GetNumberOfPoints() << " points.");
@@ -418,5 +411,4 @@ int vtkPolyDataTensorToColor::FillInputPortInformation(int, vtkInformation *info
 void vtkPolyDataTensorToColor::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-
 }
