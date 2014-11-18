@@ -187,8 +187,7 @@ QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkMRMLSubjectHierarchyNod
   // Get basic tooltip from abstract plugin
   QString tooltipString = Superclass::tooltip(node);
 
-  vtkMRMLScalarVolumeNode* volumeNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
   vtkImageData* imageData = volumeNode->GetImageData();
   if (volumeNode && imageData)
     {

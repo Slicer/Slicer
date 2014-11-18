@@ -282,8 +282,10 @@ public:
   unsigned long GetTransformToWorldMTime();
 
   /// Get a human-readable description of the transformation
-  /// The returned string is stored in a shared buffer therefore the text
-  /// has to be copied.
+  /// The returned string is stored in a shared buffer therefore the text has to be copied. This is a
+  /// static-style function (the contents of the owner transform node is not used), but the returned
+  /// string buffer needs to be owned by an object.
+  /// \param inputTransform The transform for which information is obtained
   const char* GetTransformInfo(vtkAbstractTransform* inputTransform);
 
 protected:

@@ -423,9 +423,18 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(int visible)
         vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(childNodeIndex));
     if (displayableNode)
       {
+      // Create default display node is there is no display node associated
+      vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+      if (!displayNode)
+        {
+        displayableNode->CreateDefaultDisplayNodes();
+        }
+
+      // Set display visibility
       displayableNode->SetDisplayVisibility(visible);
 
-      vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
+      // Set slice intersection visibility through display node
+      displayNode = displayableNode->GetDisplayNode();
       if (displayNode)
         {
         displayNode->SetSliceIntersectionVisibility(visible);
@@ -455,10 +464,20 @@ void vtkMRMLSubjectHierarchyNode::SetDisplayVisibilityForBranch(int visible)
 int vtkMRMLSubjectHierarchyNode::GetDisplayVisibilityForBranch()
 {
   int visible = -1;
+
+  // Get all child displayable nodes for branch
   vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
   this->GetAssociatedChildrenNodes(childDisplayableNodes, "vtkMRMLDisplayableNode");
-  childDisplayableNodes->InitTraversal();
 
+  // Add associated displayable node for this node too
+  vtkMRMLDisplayableNode* associatedDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(this->GetAssociatedNode());
+  if (associatedDisplayableNode)
+    {
+    childDisplayableNodes->AddItem(associatedDisplayableNode);
+    }
+
+  // Determine visibility state based on all displayable nodes involved
+  childDisplayableNodes->InitTraversal();
   for (int childNodeIndex=0; childNodeIndex<childDisplayableNodes->GetNumberOfItems(); ++childNodeIndex)
     {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(
@@ -767,15 +786,18 @@ void vtkMRMLSubjectHierarchyNode::TransformBranch(vtkMRMLTransformNode* transfor
   this->GetAssociatedChildrenNodes(childTransformableNodes.GetPointer(), "vtkMRMLTransformableNode");
 
   childTransformableNodes->InitTraversal();
-  for (int childNodeIndex = 0;
-       childNodeIndex < childTransformableNodes->GetNumberOfItems();
-       ++childNodeIndex)
+  for (int childNodeIndex = 0; childNodeIndex < childTransformableNodes->GetNumberOfItems(); ++childNodeIndex)
     {
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
       childTransformableNodes->GetItemAsObject(childNodeIndex) );
     if (!transformableNode)
       {
       vtkWarningMacro("TransformBranch: Non-transformable node found in a collection of transformable nodes!");
+      continue;
+      }
+    if (transformableNode == transformNode)
+      {
+      // Transform node cannot be transformed by itself
       continue;
       }
 
