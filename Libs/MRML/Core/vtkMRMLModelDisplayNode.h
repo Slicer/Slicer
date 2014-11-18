@@ -25,7 +25,7 @@ class vtkAssignAttribute;
 class vtkPassThrough;
 class vtkPolyData;
 
-/// \brief MRML node to represent a dispaly property of 3D surface model.
+/// \brief MRML node to represent a display property of 3D surface model.
 ///
 /// vtkMRMLModelDisplayNode nodes stores display property of a 3D surface model
 /// including reference to ColorNode, texture, opacity, etc.
@@ -79,7 +79,6 @@ public:
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransformMatrix, ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const {return true;};
-
 
 protected:
   vtkMRMLModelDisplayNode();

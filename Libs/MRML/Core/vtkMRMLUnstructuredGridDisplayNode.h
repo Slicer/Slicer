@@ -51,7 +51,6 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLDisplay
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML ( ostream& of, int indent );
 
-
   ///
   /// Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
@@ -94,7 +93,7 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLDisplay
 
   double ShrinkFactor;
 
-  /// dispaly pipeline
+  /// display pipeline
   vtkGeometryFilter *GeometryFilter;
   vtkShrinkPolyData *ShrinkPolyData;
 };
