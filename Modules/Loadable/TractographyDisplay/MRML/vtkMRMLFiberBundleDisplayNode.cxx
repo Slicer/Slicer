@@ -41,6 +41,7 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 
   // Enumerated
   this->ColorMode = this->colorModeSolid;
+  this->ScalarVisibility = 1;
 
   this->DiffusionTensorDisplayPropertiesNode = NULL;
   this->DiffusionTensorDisplayPropertiesNodeID = NULL;
@@ -276,8 +277,7 @@ void vtkMRMLFiberBundleDisplayNode::UpdatePolyDataPipeline()
   if (this->GetActiveTensorName() &&
     std::string(this->GetActiveTensorName()) != std::string("") &&
     this->GetInputPolyData() &&
-    this->GetInputPolyData()->GetPointData() &&
-    this->GetInputPolyData()->GetPointData()->GetTensors() )
+    this->GetInputPolyData()->GetPointData() )
   {
     this->AssignAttribute->Assign(
       this->GetActiveTensorName(),
@@ -286,3 +286,41 @@ void vtkMRMLFiberBundleDisplayNode::UpdatePolyDataPipeline()
     this->AssignAttribute->Update();
   }
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLFiberBundleDisplayNode::SetColorMode (int colorMode)
+{
+  int oldColorMode = this->GetColorMode();
+  this->ColorMode = colorMode;
+
+  if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
+    {
+    this->ScalarVisibilityOff( );
+    }
+  else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+    {
+    this->ScalarVisibilityOn( );
+    }
+  else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation)
+    {
+    this->ScalarVisibilityOn( );
+    }
+  else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
+    {
+    this->ScalarVisibilityOn( );
+   }
+  else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalarData)
+    {
+    this->ScalarVisibilityOn( );
+    }
+  else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+    {
+    this->ScalarVisibilityOn( );
+    }
+
+  if (this->ColorMode != oldColorMode)
+    {
+    this->Modified();
+    }
+}
+

@@ -243,8 +243,10 @@ void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLFiberBun
         d->FiberBundleDisplayNode->GetInputPolyData()->GetPointData() &&
         d->FiberBundleDisplayNode->GetInputPolyData()->GetPointData()->GetTensors() )
       {
+      this->m_updating = 1;
       d->FiberBundleDisplayNode->SetActiveTensorName(
         d->FiberBundleDisplayNode->GetInputPolyData()->GetPointData()->GetTensors()->GetName());
+      this->m_updating = 0;
       }
     }
   this->updateWidgetFromMRML();
@@ -647,11 +649,14 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
   bool was_updating = this->m_updating;
   this->m_updating = true;
 
+  if (d->FiberBundleDisplayNode->GetVisibility() )
+    {
 #if (VTK_MAJOR_VERSION <= 5)
-  d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
+    d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
 #else
-  d->FiberBundleDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
+    d->FiberBundleDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
+    }
   d->FiberBundleDisplayNode->GetScalarRange(range);
   if (d->FiberBundleDisplayNode->GetAutoScalarRange())
     {

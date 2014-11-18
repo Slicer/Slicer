@@ -122,7 +122,6 @@ vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyLogic::GetModelHierarchyNode(con
     {
     return 0;
     }
-
 }
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyLogic::GetHierarchyChildrenNodes(
@@ -173,7 +172,6 @@ vtkMRMLModelHierarchyNodeList vtkMRMLModelHierarchyLogic
     }
   return childrenNodes;
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
@@ -230,10 +228,10 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode,
-                                                      int visibility)
+                                                       const char *displayableNodeClass, const char *displayNodeClass,
+                                                       int visibility)
 {
   if (displayableHierarchyNode==NULL)
   {
@@ -279,10 +277,13 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
       model = vtkMRMLModelNode::SafeDownCast(node);
       if (model)
         {
-        displayNode = model->GetDisplayNode();
-        if (displayNode)
+        if (displayableNodeClass && model->IsA(displayableNodeClass))
           {
-          displayNode->SetVisibility(visibility);
+          model->SetDisplayClassVisibility(displayNodeClass, visibility);
+          }
+        else
+          {
+          model->SetDisplayClassVisibility(0, visibility);
           }
         }
       }

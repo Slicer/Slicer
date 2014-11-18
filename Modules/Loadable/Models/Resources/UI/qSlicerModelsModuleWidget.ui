@@ -25,10 +25,7 @@
    </property>
    <item>
     <widget class="ctkExpandableWidget" name="ResizableFrame">
-     <property name="orientations">
-      <set>Qt::Vertical</set>
-     </property>
-     <property name="sizeGripInside">
+     <property name="sizeGripInside" stdset="0">
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -38,18 +35,52 @@
       <item>
        <layout class="QHBoxLayout" name="allModelsHorizontalLayout">
         <item>
-          <widget class="QLabel" name="IncludeFiberBundlesLabel">
-            <property name="text">
-              <string>Include Fibers</string>
-            </property>
-          </widget>
+         <widget class="QLabel" name="IncludeFiberBundlesLabel">
+          <property name="text">
+           <string>Include Fibers</string>
+          </property>
+         </widget>
         </item>
         <item>
-          <widget class="QCheckBox" name="IncludeFiberBundleCheckBox">
-            <property name="text">
-              <string/>
-            </property>
+         <widget class="QCheckBox" name="IncludeFiberBundleCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="DisplayClassTabWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="LineTab">
+           <attribute name="title">
+            <string>Line</string>
+           </attribute>
           </widget>
+          <widget class="QWidget" name="TubeTab">
+           <attribute name="title">
+            <string>Tube</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="GlyphTab">
+           <attribute name="title">
+            <string>Glyph</string>
+           </attribute>
+          </widget>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer">
@@ -69,7 +100,7 @@
           <property name="placeholderText">
            <string>Scroll to...</string>
           </property>
-          <property name="showSearchIcon">
+          <property name="showSearchIcon" stdset="0">
            <bool>true</bool>
           </property>
          </widget>
@@ -84,7 +115,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>:/Icons/Small/SlicerInvisible.png</normaloff>:/Icons/Medium/SlicerInvisible.png</iconset>
+            <normaloff>:/Icons/Small/SlicerInvisible.png</normaloff>:/Icons/Small/SlicerInvisible.png</iconset>
           </property>
          </widget>
         </item>
@@ -98,7 +129,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>:/Icons/Small/SlicerVisible.png</normaloff>:/Icons/Medium/SlicerVisible.png</iconset>
+            <normaloff>:/Icons/Small/SlicerVisible.png</normaloff>:/Icons/Small/SlicerVisible.png</iconset>
           </property>
          </widget>
         </item>
@@ -115,28 +146,28 @@
         <property name="dragDropMode">
          <enum>QAbstractItemView::InternalMove</enum>
         </property>
-        <property name="showHidden">
-         <bool>false</bool>
-        </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::ExtendedSelection</enum>
         </property>
         <property name="headerHidden">
          <bool>true</bool>
         </property>
-        <property name="sceneModelType">
+        <property name="showHidden" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="sceneModelType" stdset="0">
          <string>ModelHierarchy</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLModelHierarchyNode</string>
           <string>vtkMRMLModelNode</string>
          </stringlist>
         </property>
-        <property name="renameMenuActionVisible">
+        <property name="renameMenuActionVisible" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="deleteMenuActionVisible">
+        <property name="deleteMenuActionVisible" stdset="0">
          <bool>false</bool>
         </property>
        </widget>
@@ -145,37 +176,37 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="InformationButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="InformationButton" native="true">
+     <property name="text" stdset="0">
       <string>Information</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="qMRMLModelInfoWidget" name="MRMLModelInfoWidget"/>
+       <widget class="qMRMLModelInfoWidget" name="MRMLModelInfoWidget" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="DisplayButton">
+    <widget class="ctkCollapsibleButton" name="DisplayButton" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
+     <property name="text" stdset="0">
       <string>Display</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="qMRMLModelDisplayNodeWidget" name="ModelDisplayWidget">
+       <widget class="qMRMLModelDisplayNodeWidget" name="ModelDisplayWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -188,34 +219,34 @@
     </widget>
    </item>
    <item>
-    <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox">
-     <property name="nodeTypes">
+    <widget class="qMRMLNodeComboBox" name="ClipModelsNodeComboBox" native="true">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLClipModelsNode</string>
       </stringlist>
      </property>
-     <property name="showHidden">
+     <property name="showHidden" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="addEnabled">
+     <property name="addEnabled" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled">
+     <property name="removeEnabled" stdset="0">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="ClippingButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="ClippingButton" native="true">
+     <property name="text" stdset="0">
       <string>Clipping</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+       <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget" native="true"/>
       </item>
      </layout>
     </widget>

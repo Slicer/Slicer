@@ -188,8 +188,15 @@ public:
   virtual int GetDisplayVisibility();
   virtual void SetDisplayVisibility(int visible);
 
+  /// Get/Set visibility of display nodes of certain class
+  /// if nodeClass is 0, get/set visibility of all display nodes
+  virtual int GetDisplayClassVisibility(const char* nodeClass);
+  virtual void SetDisplayClassVisibility(const char* nodeClass, int visible);
+
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
+
+  virtual const char* GetDisplayNodeReferenceRole();
 
  protected:
   vtkMRMLDisplayableNode();
@@ -200,7 +207,6 @@ public:
   static const char* DisplayNodeReferenceRole;
   static const char* DisplayNodeReferenceMRMLAttributeName;
 
-  virtual const char* GetDisplayNodeReferenceRole();
   virtual const char* GetDisplayNodeReferenceMRMLAttributeName();
 
   ///
@@ -221,6 +227,5 @@ public:
   /// DON'T USE this variable anywhere else
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;
 };
-
 
 #endif

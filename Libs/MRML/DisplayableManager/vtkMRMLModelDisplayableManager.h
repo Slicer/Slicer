@@ -29,6 +29,7 @@ class vtkMRMLDisplayableNode;
 class vtkMRMLModelHierarchyLogic;
 class vtkMRMLModelHierarchyNode;
 class vtkMRMLModelNode;
+class vtkMRMLSelectionNode;
 
 // VTK includes
 #include "vtkRenderWindow.h"
@@ -198,6 +199,8 @@ protected:
 
   void RemoveDispalyedID(std::string &id);
 
+  vtkMRMLSelectionNode* GetSelectionNode();
+
 private:
 
   vtkMRMLModelDisplayableManager(const vtkMRMLModelDisplayableManager&); // Not implemented
@@ -205,7 +208,6 @@ private:
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
 
 #endif

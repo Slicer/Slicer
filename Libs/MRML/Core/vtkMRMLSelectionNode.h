@@ -218,6 +218,28 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   std::string GetPlaceNodeResourceByClassName(std::string className);
   /// Get the number of class names in the list
   int GetNumberOfPlaceNodeClassNamesInList() { return static_cast<int>(this->PlaceNodeClassNameList.size()); };
+
+  /// Get node dispaly class name for a displayable class name
+  /// to which dispaly node to apply properties in hierarchy display widgets
+  std::string GetModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass)const;
+
+  /// Get node dispaly class names
+  /// to which dispaly node to apply properties in hierarchy display widgets
+  std::map<std::string, std::string>  GetModelHierarchyDisplayNodeClassNames()const;
+
+  /// Add display node class for a displayable class
+  /// controlswhich dispaly node to apply properties in hierarchy display widgets
+  /// affected by setting visibility.
+  /// This mostly applies to displayable nodes that have mutiple display nodes
+  /// For example, parameters of "vtkMRMLFiberbundleNode" , "vtkMRMLFiberbundleTubeDisplayNode"
+  /// will change tube visibility
+  void AddModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass,
+                                             const std::string& dispayNodeClass);
+
+  /// Clear node dispaly class names
+  /// to which dispaly node to apply properties in hierarchy display widgets
+   void ClearModelHierarchyDisplayNodeClassNames();
+
 protected:
   vtkMRMLSelectionNode();
   ~vtkMRMLSelectionNode();
@@ -240,6 +262,10 @@ protected:
   char *ActiveCameraID;
   char *ActiveViewID;
   char *ActiveLayoutID;
+
+  /// Dispalyable/Display node class pairs for contolling
+  /// to which dispaly node to apply properties in hierarchy display widgets
+  std::map<std::string, std::string> ModelHierarchyDisplayNodeClassName;
 
   std::vector<std::string> PlaceNodeClassNameList;
   std::vector<std::string> PlaceNodeResourceList;

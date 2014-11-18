@@ -129,12 +129,10 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     // set line coloring
     if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
       {
-      this->ScalarVisibilityOff( );
       this->TensorToColor->SetExtractScalar(0);
       }
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
       {
-      this->ScalarVisibilityOn( );
       this->TensorToColor->SetExtractScalar(0);
       if (!this->GetInputPolyData()->GetCellData()->HasArray(this->GetActiveScalarName()) ||
           this->GetActiveScalarName() == this->ColorLinesByOrientation->GetScalarArrayName())
@@ -150,7 +148,6 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation)
       {
       vtkDebugMacro("Color by mean fiber orientation");
-      this->ScalarVisibilityOn( );
       this->ColorLinesByOrientation->SetColorMode(ColorLinesByOrientation->colorModeMeanFiberOrientation);
       vtkMRMLNode* colorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
       if (colorNode)
@@ -161,7 +158,6 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
       {
       vtkDebugMacro("Color by mean fiber orientation");
-      this->ScalarVisibilityOn( );
       this->ColorLinesByOrientation->SetColorMode(
         this->ColorLinesByOrientation->colorModePointFiberOrientation);
       vtkMRMLNode* colorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
@@ -176,7 +172,6 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
       }
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
       {
-      this->ScalarVisibilityOn( );
       this->TensorToColor->SetExtractScalar(1);
 
       switch ( DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( ))
@@ -242,7 +237,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           break;
         default:
           {
-          vtkDebugMacro("coloring with relative anisotropy");
+          vtkErrorMacro("unknown line coloring mode");
           this->ScalarVisibilityOff( );
           this->TensorToColor->SetExtractScalar(0);
           }
@@ -252,7 +247,6 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     }
   else
     {
-    this->ScalarVisibilityOff( );
     this->TensorToColor->SetExtractScalar(0);
     }
 

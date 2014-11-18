@@ -19,6 +19,7 @@
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
+#include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
 
@@ -301,7 +302,6 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
   return res;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -413,7 +413,6 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
         }
       }
     //--- end informatics
-
     }
   fsmoStorageNode->Delete();
 
@@ -487,6 +486,22 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     return;
     }
 
+  std::vector<vtkMRMLNode *> selectionNodes;
+  vtkMRMLSelectionNode *selectionNode = 0;
+  if (this->GetMRMLScene())
+    {
+    this->GetMRMLScene()->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
+    }
+
+  if (selectionNodes.size() > 0)
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
+    }
+
+  std::map<std::string, std::string> displayNodeClasses =
+    selectionNode->GetModelHierarchyDisplayNodeClassNames();
+  std::map<std::string, std::string>::iterator it;
+
   int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
 
   // go into batch processing mode
@@ -508,6 +523,27 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
         {
         // have a "real" model node, set the display visibility
         modelNode->SetDisplayVisibility(flag);
+        }
+      }
+
+    if (flag != 2 && mrmlNode != NULL
+        && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode) )
+      {
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
+      int ndnodes = modelNode->GetNumberOfDisplayNodes();
+      for (int i=0; i<ndnodes; i++)
+        {
+        vtkMRMLDisplayNode *displayNode = modelNode->GetNthDisplayNode(i);
+        if (displayNode)
+          {
+          for (it = displayNodeClasses.begin(); it != displayNodeClasses.end(); it++)
+            {
+            if (!strcmp(displayNode->GetClassName(), it->second.c_str()))
+              {
+              displayNode->SetVisibility(flag);
+              }
+            }
+          }
         }
       }
     }

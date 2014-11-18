@@ -28,11 +28,12 @@
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
-#include "vtkMRMLClipModelsNode.h"
+#include <vtkMRMLClipModelsNode.h>
 #include <vtkMRMLScene.h>
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLViewNode.h"
-#include "vtkMRMLInteractionNode.h"
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSelectionNode.h>
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
@@ -121,6 +122,8 @@ public:
   double       PickedRAS[3];
   vtkIdType    PickedCellID;
   vtkIdType    PickedPointID;
+
+  vtkMRMLSelectionNode*   SelectionNode;
 };
 
 //---------------------------------------------------------------------------
@@ -133,6 +136,7 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
   this->RedSliceNode = 0;
   this->GreenSliceNode = 0;
   this->YellowSliceNode = 0;
+  this->SelectionNode = 0;
 
   this->ModelHierarchiesPresent = false;
   this->UpdateHierachyRequested = false;
@@ -149,7 +153,6 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
 //---------------------------------------------------------------------------
 vtkMRMLModelDisplayableManager::vtkInternal::~vtkInternal()
 {
-
 }
 
 //---------------------------------------------------------------------------
@@ -183,7 +186,6 @@ void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
   this->PickedPointID = -1;
 }
 
-
 //---------------------------------------------------------------------------
 // vtkMRMLModelDisplayableManager methods
 
@@ -202,6 +204,7 @@ vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
   vtkSetMRMLNodeMacro(this->Internal->RedSliceNode, 0);
   vtkSetMRMLNodeMacro(this->Internal->GreenSliceNode, 0);
   vtkSetMRMLNodeMacro(this->Internal->YellowSliceNode, 0);
+  vtkSetMRMLNodeMacro(this->Internal->SelectionNode, 0);
 
   // release the DisplayedModelActors
   this->Internal->DisplayedActors.clear();
@@ -868,7 +871,6 @@ void vtkMRMLModelDisplayableManager::UpdateModelsFromMRML()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateModifiedModel(vtkMRMLDisplayableNode *model)
 {
-
   this->UpdateModelHierarchyDisplay(model);
   this->UpdateModel(model);
   this->SetModelDisplayProperty(model);
@@ -945,10 +947,10 @@ void vtkMRMLModelDisplayableManager
       //visibility = hdnode->GetVisibility();
 #if (VTK_MAJOR_VERSION <= 5)
       polyData = hierarchyModelDisplayNode ?
-        hierarchyModelDisplayNode->GetPolyData() : NULL;
+        hierarchyModelDisplayNode->GetPolyData() : polyData;
 #else
       polyDataConnection = hierarchyModelDisplayNode ?
-        hierarchyModelDisplayNode->GetPolyDataConnection() : NULL;
+        hierarchyModelDisplayNode->GetPolyDataConnection() : polyDataConnection;
 #endif
       }
     // hierarchy display nodes may not have poly data pointer
@@ -1522,13 +1524,12 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
 
   for (int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode *thisDisplayNode = model->GetNthDisplayNode(i);
-    vtkMRMLDisplayNode *mrmlDisplayNode = thisDisplayNode;
+    vtkMRMLDisplayNode *mrmlDisplayNode = model->GetNthDisplayNode(i);
     vtkMRMLModelDisplayNode *modelDisplayNode =
       vtkMRMLModelDisplayNode::SafeDownCast(mrmlDisplayNode);
-    if (thisDisplayNode != 0)
+    if (mrmlDisplayNode != 0)
       {
-      vtkProp3D *prop = this->GetActorByID(thisDisplayNode->GetID());
+      vtkProp3D *prop = this->GetActorByID(mrmlDisplayNode->GetID());
       if (prop == 0)
         {
         continue;
@@ -1536,7 +1537,17 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       // use hierarchy display node if it exists
       if (hierarchyDisplayNode)
         {
-        thisDisplayNode = hierarchyDisplayNode;
+        // process selection display node filter
+        if (this->GetSelectionNode())
+          {
+          std::string displayNode = this->GetSelectionNode()->GetModelHierarchyDisplayNodeClassName(
+                                    model->GetClassName());
+          if (!displayNode.empty() && !mrmlDisplayNode->IsA(displayNode.c_str()) )
+            {
+            continue;
+            }
+          }
+
         mrmlDisplayNode = hierarchyDisplayNode;
         modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(hierarchyDisplayNode);
         if (!modelDisplayNode)
@@ -1724,7 +1735,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               {
               // set the scalar range
               //actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
-              //if (!(thisDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode")))
+              //if (!(mrmlDisplayNode->IsA("vtkMRMLFiberBundleDisplayNode")))
               //  {
               // WHY need this, does not show glyph colors otherwise
               //actor->GetMapper()->SetScalarModeToUsePointFieldData();
@@ -1874,7 +1885,6 @@ const char* vtkMRMLModelDisplayableManager
        polyDataConnection->GetProducer()->Update();
        }
 #endif
-
       }
     activeScalarName =
       modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
@@ -1961,7 +1971,6 @@ const char * vtkMRMLModelDisplayableManager::GetIDByActor(vtkProp3D *actor)
     }
   return (0);
 }
-
 
 //---------------------------------------------------------------------------
 vtkWorldPointPicker* vtkMRMLModelDisplayableManager::GetWorldPointPicker()
@@ -2281,7 +2290,6 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper(
   return clipper;
 }
 
-
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
@@ -2295,7 +2303,6 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
   //if (eventid == vtkCommand::LeftButtonReleaseEvent)
   if (eventid == vtkCommand::LeftButtonPressEvent && keyPressed)
     {
-
     double x = this->GetInteractor()->GetEventPosition()[0];
     double y = this->GetInteractor()->GetEventPosition()[1];
 
@@ -2342,3 +2349,20 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
   return;
 }
 
+vtkMRMLSelectionNode* vtkMRMLModelDisplayableManager::GetSelectionNode()
+{
+  if (this->Internal->SelectionNode == 0)
+    {
+    std::vector<vtkMRMLNode *> selectionNodes;
+    if (this->GetMRMLScene())
+      {
+      this->GetMRMLScene()->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
+      }
+
+    if (selectionNodes.size() > 0)
+      {
+      this->Internal->SelectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
+      }
+    }
+  return this->Internal->SelectionNode;
+}

@@ -26,10 +26,12 @@
 #include "ui_qMRMLModelDisplayNodeWidget.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLSelectionNode.h>
 
 // VTK includes
 #include <vtkDataArray.h>
@@ -55,6 +57,8 @@ public:
   virtual void setRange(double min, double max);
 
   vtkSmartPointer<vtkMRMLModelDisplayNode> MRMLModelDisplayNode;
+  vtkSmartPointer<vtkMRMLSelectionNode> MRMLSelectionNode;
+  vtkSmartPointer<vtkMRMLNode>  ModelOrHierarchyNode;
 };
 
 //------------------------------------------------------------------------------
@@ -150,7 +154,6 @@ qMRMLModelDisplayNodeWidget::~qMRMLModelDisplayNodeWidget()
 {
 }
 
-
 //------------------------------------------------------------------------------
 vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()const
 {
@@ -159,17 +162,43 @@ vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()cons
 }
 
 //------------------------------------------------------------------------------
+vtkMRMLNode* qMRMLModelDisplayNodeWidget::mrmlDisplayableNode()const
+{
+  Q_D(const qMRMLModelDisplayNodeWidget);
+  return d->ModelOrHierarchyNode;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setMRMLModelOrHierarchyNode(vtkMRMLNode* node)
 {
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  d->ModelOrHierarchyNode = node;
+
   // can be set from a model node or a model hierarchy node
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
   vtkMRMLModelHierarchyNode *hierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(node);
   vtkMRMLModelDisplayNode *modelDisplayNode = 0;
   if (modelNode)
     {
-    if (modelNode->GetDisplayNode())
+    vtkMRMLSelectionNode* selectionNode = this->getSelectionNode(modelNode->GetScene());
+    std::string displayNodeName;
+    if (selectionNode)
       {
-      modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+      displayNodeName = selectionNode->GetModelHierarchyDisplayNodeClassName(
+                        modelNode->GetClassName());
+      }
+
+    int nDisplayNodes = modelNode->GetNumberOfDisplayNodes();
+    for (int i=0; i<nDisplayNodes; i++)
+      {
+        modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetNthDisplayNode(i));
+        //qvtkReconnect(modelDisplayNode, modelDisplayNode, vtkCommand::ModifiedEvent,
+        //        this, SLOT(updateWidgetFromMRML()));
+        if (displayNodeName.empty() || modelDisplayNode->IsA(displayNodeName.c_str()))
+          {
+          break;
+          }
       }
     }
   else if (hierarchyNode)
@@ -177,7 +206,6 @@ void qMRMLModelDisplayNodeWidget::setMRMLModelOrHierarchyNode(vtkMRMLNode* node)
     modelDisplayNode = hierarchyNode->GetModelDisplayNode();
     }
   this->setMRMLModelDisplayNode(modelDisplayNode);
-
 }
 
 //------------------------------------------------------------------------------
@@ -424,7 +452,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     return;
     }
   if (d->ScalarsVisibilityCheckBox->isChecked() !=
-      d->MRMLModelDisplayNode->GetScalarVisibility())
+      (bool)d->MRMLModelDisplayNode->GetScalarVisibility())
     {
     d->ScalarsVisibilityCheckBox->setChecked(
       d->MRMLModelDisplayNode->GetScalarVisibility());
@@ -556,3 +584,24 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
       d->MRMLModelDisplayNode->GetColorNodeID());
     }
 }
+
+vtkMRMLSelectionNode* qMRMLModelDisplayNodeWidget::getSelectionNode(vtkMRMLScene *mrmlScene)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  if (d->MRMLSelectionNode.GetPointer() == 0)
+    {
+    std::vector<vtkMRMLNode *> selectionNodes;
+    if (mrmlScene)
+      {
+      mrmlScene->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
+      }
+
+    if (selectionNodes.size() > 0)
+      {
+      d->MRMLSelectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
+      }
+    }
+  return d->MRMLSelectionNode;
+}
+

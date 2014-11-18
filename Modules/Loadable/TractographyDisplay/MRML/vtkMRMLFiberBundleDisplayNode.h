@@ -97,7 +97,7 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
  /// Description:
   /// Color mode for glyphs. The color modes are mutually exclusive.
   vtkGetMacro ( ColorMode, int );
-  vtkSetMacro ( ColorMode, int );
+  void SetColorMode (int colorMode);
 
   ///
   /// Color by solid color (for example the whole fiber bundle red. blue, etc.)

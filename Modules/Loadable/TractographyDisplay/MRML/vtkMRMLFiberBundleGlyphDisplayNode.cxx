@@ -166,18 +166,8 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
       vtkDebugMacro("setting glyph geometry" << diffusionTensorDisplayNode->GetGlyphGeometry( ) );
 
       // set glyph coloring
-      if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
+      if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
         {
-        this->ScalarVisibilityOff( );
-        }
-      else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
-        {
-        this->ScalarVisibilityOn( );
-        }
-      else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
-        {
-        this->ScalarVisibilityOn( );
-
         switch ( diffusionTensorDisplayNode->GetColorGlyphBy( ))
           {
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
@@ -241,16 +231,12 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
             break;
           default:
             {
-            vtkDebugMacro("coloring with relative anisotropy");
+            vtkErrorMacro("unknown glyph coloring mode");
             this->ScalarVisibilityOff( );
             }
             break;
           }
         }
-      }
-    else
-      {
-      this->ScalarVisibilityOff( );
       }
     }
   else

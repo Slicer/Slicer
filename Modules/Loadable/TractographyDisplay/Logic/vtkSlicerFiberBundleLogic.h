@@ -17,7 +17,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the fiber bundles
 
-
 #ifndef __vtkSlicerFiberBundleLogic_h
 #define __vtkSlicerFiberBundleLogic_h
 
@@ -63,12 +62,13 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLog
   // Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
 
+  static bool SetPolyDataTensors(vtkMRMLFiberBundleNode *fiberBundleNode);
+
 protected:
   vtkSlicerFiberBundleLogic();
   ~vtkSlicerFiberBundleLogic();
   vtkSlicerFiberBundleLogic(const vtkSlicerFiberBundleLogic&);
   void operator=(const vtkSlicerFiberBundleLogic&);
-
 
   // Description:
   // Create internal logic objects to manage fiber bundles (currently display).

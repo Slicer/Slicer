@@ -29,6 +29,7 @@
 class qSlicerModelsModuleWidgetPrivate;
 class vtkMRMLNode;
 class QModelIndex;
+class vtkMRMLSelectionNode;
 
 /// \ingroup Slicer_QtModules_Models
 class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget
@@ -42,6 +43,8 @@ public:
   qSlicerModelsModuleWidget(QWidget *parent=0);
   virtual ~qSlicerModelsModuleWidget();
 
+  vtkMRMLSelectionNode* getSelectionNode();
+
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
@@ -50,6 +53,10 @@ public slots:
   void renameMultipleModels();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
   void includeFiberBundles(bool include);
+  void onDisplayClassChanged(int index);
+
+  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
+                               void* client_data, void* call_data);
 
   /// hide/show all the models in the scene
   void hideAllModels();
@@ -59,6 +66,8 @@ protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
 
   virtual void setup();
+
+  void updateWidgetFromSelectionNode();
 
   void updateTreeViewModel();
 

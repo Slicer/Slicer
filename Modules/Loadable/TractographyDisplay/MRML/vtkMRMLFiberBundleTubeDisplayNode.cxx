@@ -175,12 +175,10 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
   // set line coloring
   if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeSolid)
     {
-    this->ScalarVisibilityOff( );
     this->TensorToColor->SetExtractScalar(0);
     }
   else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
     {
-    this->ScalarVisibilityOn( );
     this->TensorToColor->SetExtractScalar(0); // force a copy of the data
     this->SetActiveScalarName("ClusterId");
     if (this->GetInputPolyData()->GetCellData()->HasArray("ClusterId"))
@@ -191,7 +189,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
   else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation)
     {
     vtkDebugMacro("Color by mean fiber orientation");
-    this->ScalarVisibilityOn( );
     this->ColorLinesByOrientation->SetColorMode(
       this->ColorLinesByOrientation->colorModeMeanFiberOrientation);
     this->TubeFilter->SetInputConnection(this->ColorLinesByOrientation->GetOutputPort());
@@ -204,7 +201,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
   else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
     {
     vtkDebugMacro("Color by segment orientation");
-    this->ScalarVisibilityOn( );
     this->ColorLinesByOrientation->SetColorMode(
       this->ColorLinesByOrientation->colorModePointFiberOrientation);
     this->TubeFilter->SetInputConnection(this->ColorLinesByOrientation->GetOutputPort());
@@ -221,7 +217,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
   else if ((this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar) &&
            (DiffusionTensorDisplayPropertiesNode != NULL))
     {
-    this->ScalarVisibilityOn( );
     this->TensorToColor->SetExtractScalar(1);
 
     switch ( DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( ))
@@ -287,7 +282,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
         break;
       default:
         {
-        vtkDebugMacro("coloring with relative anisotropy");
+        vtkErrorMacro("unknown tube coloring mode");
         this->ScalarVisibilityOff( );
         this->TensorToColor->SetExtractScalar(0);
         }
@@ -296,7 +291,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     }
   else
     {
-    this->ScalarVisibilityOff( );
     this->TensorToColor->SetExtractScalar(0);
     }
 

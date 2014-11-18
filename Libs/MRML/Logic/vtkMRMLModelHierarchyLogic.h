@@ -73,7 +73,11 @@ public:
 
   ///
   /// Set visibility on all children of the node recursively
-  static void SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *parentNode, int visibility);
+  /// If displayNodeClass is not 0 apply only to the disaply nodes of that class,
+  /// otherwise to all display nodes
+  static void SetChildrenVisibility(vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode,
+                                   const char *displayableNodeClass, const char *displayNodeClass,
+                                   int visibility);
 
   ///
   /// Children visibility setting will be performed in batch processing mode
