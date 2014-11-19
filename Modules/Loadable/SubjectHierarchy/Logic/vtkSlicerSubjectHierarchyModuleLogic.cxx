@@ -142,7 +142,7 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSe
   if (!patientNode)
     {
     patientNode = vtkMRMLSubjectHierarchyNode::New();
-    patientNode->SetLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT);
+    patientNode->SetLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
     patientNode->AddUID(vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_DICOM_UID_NAME, patientId);
     patientNode->SetOwnerPluginName("DICOM");
     scene->AddNode(patientNode);

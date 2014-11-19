@@ -198,6 +198,15 @@ signals:
 
 protected:
   /// Get child level according to child level map of the current plugin
+  /// Currently two core modules provide levels: GenericFolder and DICOM. The tree looks like this:
+  ///
+  ///      /-> Subject -> GenericFolder -> GenericFolder
+  /// Scene
+  ///      \-> Patient -> Study -> Series -> Subseries
+  ///
+  /// This is how child nodes are automatically created. The exception is Subject and Patient, as
+  /// those two cannot be automatically created from scene, but either manually or programatically.
+  /// GenericFolder can be created from any node, but the others just the way it can be seen above.
   virtual QString childLevel(QString parentLevel);
 
   /// Hide all context menu actions offered by the plugin.

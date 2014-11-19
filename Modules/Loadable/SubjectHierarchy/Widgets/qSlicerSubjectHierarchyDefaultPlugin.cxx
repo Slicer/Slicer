@@ -30,21 +30,11 @@
 
 // Qt includes
 #include <QDebug>
-#include <QAction>
 #include <QIcon>
-#include <QStandardItem>
-
-// MRMLWidgets includes
-#include <qMRMLSceneModel.h>
-
-// MRML includes
-#include <vtkMRMLScene.h>
-#include <vtkMRMLNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
-#include <vtkCollection.h>
 
 //----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -56,17 +46,12 @@ protected:
 public:
   qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object);
   ~qSlicerSubjectHierarchyDefaultPluginPrivate();
-  void init();
 public:
-  QIcon StudyIcon;
-  QIcon SubjectIcon;
+  QIcon UnknownIcon;
 
   QIcon VisibleIcon;
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
-
-  QAction* CreateSubjectAction;
-  QAction* CreateStudyAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,23 +61,7 @@ public:
 qSlicerSubjectHierarchyDefaultPluginPrivate::qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object)
 : q_ptr(&object)
 {
-  this->StudyIcon = QIcon(":Icons/Study.png");
-  this->SubjectIcon = QIcon(":Icons/Subject.png");
-
-  this->CreateSubjectAction = NULL;
-  this->CreateStudyAction = NULL;
-}
-
-//------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDefaultPluginPrivate::init()
-{
-  Q_Q(qSlicerSubjectHierarchyDefaultPlugin);
-
-  this->CreateSubjectAction = new QAction("Create new subject",q);
-  QObject::connect(this->CreateSubjectAction, SIGNAL(triggered()), q, SLOT(createChildForCurrentNode()));
-
-  this->CreateStudyAction = new QAction("Create new study",q);
-  QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildForCurrentNode()));
+  this->UnknownIcon = QIcon(":Icons/Unknown.png");
 }
 
 //-----------------------------------------------------------------------------
@@ -106,16 +75,6 @@ qSlicerSubjectHierarchyDefaultPlugin::qSlicerSubjectHierarchyDefaultPlugin(QObje
  , d_ptr( new qSlicerSubjectHierarchyDefaultPluginPrivate(*this) )
 {
   this->m_Name = QString("Default");
-
-  // Scene -> Subject
-  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( QString(),
-    vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT );
-  // Subject -> Study
-  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT,
-    vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY );
-
-  Q_D(qSlicerSubjectHierarchyDefaultPlugin);
-  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -145,21 +104,16 @@ double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyNode(vtkMRMLS
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin()const
 {
-  return "Generic";
+  return "Unknown";
 }
 
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
 {
   return QString(
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
-    "Create new Subject from scratch"
-    "</span>"
-    "</p>"
     "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
     "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Right-click on the top-level item 'Scene' and select 'Create new subject'"
+    "Right-click on the top-level item 'Scene' and select 'Create new subject' or 'Create new patient'"
     "</span>"
     "</p>"
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
@@ -196,18 +150,11 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::icon(vtkMRMLSubjectHierarchyNode* no
 
   Q_D(qSlicerSubjectHierarchyDefaultPlugin);
 
-  // Subject and Study icons
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT))
-    {
-    return d->SubjectIcon;
-    }
-  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
-    {
-    return d->StudyIcon;
-    }
-
-  // Node unknown by plugin
-  return QIcon();
+  // Unknown icon
+  // This role is only used when there is no plugin to claim a node, which is an erroneous
+  // scenario, as only those nodes can be added to subject hierarchy for which there is at
+  // least one plugin that can claim them.
+  return d->UnknownIcon;
 }
 
 //---------------------------------------------------------------------------
@@ -226,44 +173,6 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
     return d->PartiallyVisibleIcon;
   default:
     return QIcon();
-    }
-}
-
-//---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::nodeContextMenuActions()const
-{
-  Q_D(const qSlicerSubjectHierarchyDefaultPlugin);
-
-  QList<QAction*> actions;
-  actions << d->CreateStudyAction;
-  return actions;
-}
-
-//-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::sceneContextMenuActions()const
-{
-  Q_D(const qSlicerSubjectHierarchyDefaultPlugin);
-
-  QList<QAction*> actions;
-  actions << d->CreateSubjectAction;
-  return actions;
-}
-
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDefaultPlugin::showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node)
-{
-  Q_D(qSlicerSubjectHierarchyDefaultPlugin);
-  this->hideAllContextMenuActions();
-
-  // Scene
-  if (!node)
-    {
-    d->CreateSubjectAction->setVisible(true);
-    }
-  // Subject
-  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT))
-    {
-    d->CreateStudyAction->setVisible(true);
     }
 }
 

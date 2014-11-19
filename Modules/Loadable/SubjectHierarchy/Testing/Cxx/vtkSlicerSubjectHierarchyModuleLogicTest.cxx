@@ -62,7 +62,7 @@ namespace
   const char* STUDY_ATTRIBUTE_NAME = "TestStudyAttribute";
   const char* STUDY_ATTRIBUTE_VALUE = "1";
   const char* UID_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_DICOM_UID_NAME;
-  const char* SUBJECT_UID_VALUE = "SUBJECT";
+  const char* PATIENT_UID_VALUE = "PATIENT";
   const char* STUDY1_UID_VALUE = "STUDY1";
   const char* STUDY2_UID_VALUE = "STUDY2";
   const char* VOLUME1_UID_VALUE = "VOLUME1";
@@ -91,7 +91,7 @@ namespace
   // Populate a sample subject hierarchy scene
   // Scene
   //  + SubjectHierarchyNode
-  //     |    (Subject)
+  //     |    (Patient)
   //     +- SubjectHierarchyNode
   //     |   |    (Study)
   //     |   +- SubjectHierarchyNode -- ScalarVolumeNode (volume1)
@@ -110,16 +110,16 @@ namespace
   bool PopulateScene(vtkMRMLScene* scene)
     {
     // Create subject and studies
-    vtkMRMLSubjectHierarchyNode* subjectShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, NULL, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT, "Subject");
-    subjectShNode->AddUID(UID_NAME, SUBJECT_UID_VALUE);
+    vtkMRMLSubjectHierarchyNode* patientShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
+      scene, NULL, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT, "Patient");
+    patientShNode->AddUID(UID_NAME, PATIENT_UID_VALUE);
 
     vtkMRMLSubjectHierarchyNode* study1ShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, subjectShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, "Study1");
+      scene, patientShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, "Study1");
     study1ShNode->AddUID(UID_NAME, STUDY1_UID_VALUE);
 
     vtkMRMLSubjectHierarchyNode* study2ShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, subjectShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, "Study2");
+      scene, patientShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, "Study2");
     study2ShNode->AddUID(UID_NAME, STUDY2_UID_VALUE);
     study2ShNode->SetAttribute(STUDY_ATTRIBUTE_NAME, STUDY_ATTRIBUTE_VALUE);
 
@@ -292,23 +292,23 @@ namespace
       }
 
     // Get node by UID
-    vtkMRMLSubjectHierarchyNode* subjectNode =
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene.GetPointer(), UID_NAME, SUBJECT_UID_VALUE);
-    if (!subjectNode)
+    vtkMRMLSubjectHierarchyNode* patientNode =
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene.GetPointer(), UID_NAME, PATIENT_UID_VALUE);
+    if (!patientNode)
       {
       std::cout << "Failed to get subject by UID" << std::endl;
       return false;
       }
     // Check level
-    if (strcmp(subjectNode->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT))
+    if (strcmp(patientNode->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
       {
       std::cout << "Wrong level of found node!" << std::endl;
       return false;
       }
     // Check name
-    std::string subjectNodeName = std::string(subjectNode->GetNameWithoutPostfix()) +
+    std::string patientNodeName = std::string(patientNode->GetNameWithoutPostfix()) +
       vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX;
-    if (subjectNodeName.compare(subjectNode->GetName()))
+    if (patientNodeName.compare(patientNode->GetName()))
       {
       std::cout << "Failed to get correct name without postfix!" << std::endl;
       return false;
@@ -402,8 +402,8 @@ namespace
       }
 
     // Get nodes used in this test case
-    vtkMRMLSubjectHierarchyNode* subjectShNode =
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, SUBJECT_UID_VALUE);
+    vtkMRMLSubjectHierarchyNode* patientShNode =
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, PATIENT_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* study1ShNode =
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, STUDY1_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* volume1ShNode =
@@ -412,7 +412,7 @@ namespace
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, VOLUME2_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* model21ShNode =
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, MODEL21_UID_VALUE);
-    if (!subjectShNode || !study1ShNode || !volume1ShNode || !volume2ShNode || !model21ShNode)
+    if (!patientShNode || !study1ShNode || !volume1ShNode || !volume2ShNode || !model21ShNode)
       {
       std::cout << "Failed to get nodes by UID" << std::endl;
       return false;
@@ -439,11 +439,11 @@ namespace
       }
 
     commonAncestor = vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(
-      volume1ShNode, volume2ShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT);
+      volume1ShNode, volume2ShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
     if ( !commonAncestor
-      || strcmp(commonAncestor->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT) )
+      || strcmp(commonAncestor->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT) )
       {
-      std::cout << "Common parent check failed (volume1 and volume2 are in the same subject)" << std::endl;
+      std::cout << "Common parent check failed (volume1 and volume2 are in the same patient)" << std::endl;
       return false;
       }
 
@@ -451,16 +451,16 @@ namespace
     vtkMRMLSubjectHierarchyNode* foundChild = NULL;
 
     foundChild = vtkMRMLSubjectHierarchyNode::GetChildWithName(
-      NULL, subjectShNode->GetNameWithoutPostfix().c_str(), scene );
+      NULL, patientShNode->GetNameWithoutPostfix().c_str(), scene );
     if ( !foundChild
-      || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT) )
+      || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT) )
       {
       std::cout << "Failed to find top-level subject hierarchy node by name" << std::endl;
       return false;
       }
 
     foundChild = vtkMRMLSubjectHierarchyNode::GetChildWithName(
-      subjectShNode, study1ShNode->GetNameWithoutPostfix().c_str() );
+      patientShNode, study1ShNode->GetNameWithoutPostfix().c_str() );
     if ( !foundChild
       || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY) )
       {
@@ -471,7 +471,7 @@ namespace
     // GetAssociatedChildrenNodes utility method in node class
     vtkNew<vtkCollection> childNodes;
 
-    subjectShNode->GetAssociatedChildrenNodes(childNodes.GetPointer());
+    patientShNode->GetAssociatedChildrenNodes(childNodes.GetPointer());
     int expectedChildCount = 5;
     int currentChildCount = childNodes->GetNumberOfItems();
     if (currentChildCount != expectedChildCount)
@@ -484,7 +484,7 @@ namespace
       }
 
     childNodes->RemoveAllItems();
-    subjectShNode->GetAssociatedChildrenNodes(childNodes.GetPointer(), "vtkMRMLScalarVolumeNode");
+    patientShNode->GetAssociatedChildrenNodes(childNodes.GetPointer(), "vtkMRMLScalarVolumeNode");
     expectedChildCount = 2;
     currentChildCount = childNodes->GetNumberOfItems();
     if (currentChildCount != expectedChildCount)
@@ -514,7 +514,7 @@ namespace
       }
 
     const char* attributeValueWrongLevel =
-      volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT);
+      volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
     if (attributeValueWrongLevel)
       {
       std::cout << "Found attribute from ancestor in wrong level" << std::endl;
@@ -532,11 +532,11 @@ namespace
       }
 
     vtkMRMLSubjectHierarchyNode* ancestorAtSubjectLevel =
-      volume1ShNode->GetAncestorAtLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT);
+      volume1ShNode->GetAncestorAtLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
     if ( !ancestorAtSubjectLevel
-      || strcmp(ancestorAtSubjectLevel->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT) )
+      || strcmp(ancestorAtSubjectLevel->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT) )
       {
-      std::cout << "Failed to find ancestor at subject level" << std::endl;
+      std::cout << "Failed to find ancestor at patient level" << std::endl;
       return false;
       }
 
@@ -555,21 +555,21 @@ namespace
     seriesShNode->AddUID(UID_NAME, seriesUid);
 
     vtkMRMLSubjectHierarchyNode* insertedSeriesNode = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
-      scene, SUBJECT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
+      scene, PATIENT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
     if (insertedSeriesNode != seriesShNode)
       {
       std::cout << "Failed to insert DICOM series node" << std::endl;
       return false;
       }
 
-    // Check newly created study and subject nodes
-    vtkMRMLSubjectHierarchyNode* subjectShNode =
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, SUBJECT_UID_VALUE);
+    // Check newly created study and patient nodes
+    vtkMRMLSubjectHierarchyNode* patientShNode =
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, PATIENT_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* studyShNode =
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, STUDY1_UID_VALUE);
-    if (!subjectShNode || !studyShNode)
+    if (!patientShNode || !studyShNode)
       {
-      std::cout << "Subject and study nodes not created for DICOM series" << std::endl;
+      std::cout << "Patient and study nodes not created for DICOM series" << std::endl;
       return false;
       }
 
@@ -599,7 +599,7 @@ namespace
     seriesShNode->AddUID(UID_NAME, seriesUid);
 
     vtkMRMLSubjectHierarchyNode* insertedSeriesNode = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
-      scene, SUBJECT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
+      scene, PATIENT_UID_VALUE, STUDY1_UID_VALUE, seriesUid );
 
     // Check if series was inserted under the desired study
     vtkMRMLSubjectHierarchyNode* studyShNode =
@@ -633,8 +633,8 @@ namespace
       }
 
     // Get nodes used in this test case
-    vtkMRMLSubjectHierarchyNode* subjectShNode =
-      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, SUBJECT_UID_VALUE);
+    vtkMRMLSubjectHierarchyNode* patientShNode =
+      vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, PATIENT_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* study1ShNode =
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, STUDY1_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* study2ShNode =
@@ -649,7 +649,7 @@ namespace
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, MODEL21_UID_VALUE);
     vtkMRMLSubjectHierarchyNode* model22ShNode =
       vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID(scene, UID_NAME, MODEL22_UID_VALUE);
-    if ( !subjectShNode || !study1ShNode || !study2ShNode || !volume1ShNode
+    if ( !patientShNode || !study1ShNode || !study2ShNode || !volume1ShNode
       || !model1ShNode || !volume2ShNode || !model21ShNode || !model22ShNode)
       {
       std::cout << "Failed to get nodes by UID" << std::endl;
@@ -687,9 +687,9 @@ namespace
       return false;
       }
 
-    if (subjectShNode->GetDisplayVisibilityForBranch() != 1)
+    if (patientShNode->GetDisplayVisibilityForBranch() != 1)
       {
-      std::cout << "Wrong display visibility value for subject" << std::endl;
+      std::cout << "Wrong display visibility value for patient" << std::endl;
       return false;
       }
 
@@ -703,9 +703,9 @@ namespace
       }
 
     // Check partial visibility
-    if (subjectShNode->GetDisplayVisibilityForBranch() != 2)
+    if (patientShNode->GetDisplayVisibilityForBranch() != 2)
       {
-      std::cout << "Wrong partial display visibility value for subject" << std::endl;
+      std::cout << "Wrong partial display visibility value for patient" << std::endl;
       return false;
       }
 
@@ -715,14 +715,14 @@ namespace
       std::cout << "Wrong partial display visibility value for study" << std::endl;
       return false;
       }
-    if (subjectShNode->GetDisplayVisibilityForBranch() != 2)
+    if (patientShNode->GetDisplayVisibilityForBranch() != 2)
       {
-      std::cout << "Wrong partial display visibility value for subject" << std::endl;
+      std::cout << "Wrong partial display visibility value for patient" << std::endl;
       return false;
       }
 
     // Show everything again
-    subjectShNode->SetDisplayVisibilityForBranch(1);
+    patientShNode->SetDisplayVisibilityForBranch(1);
     if ( study1ShNode->GetDisplayVisibilityForBranch() != 1
       || study2ShNode->GetDisplayVisibilityForBranch() != 1
       || model1DisplayNode->GetVisibility() != 1

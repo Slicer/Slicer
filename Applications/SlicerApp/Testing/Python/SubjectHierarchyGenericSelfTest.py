@@ -287,9 +287,9 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.patientNodeName = studyNode.GetParentNode().GetName()
     self.studyNodeName = studyNode.GetName()
     self.ctVolumeShNodeName = ctVolumeShNode.GetName()
-    
+
     # Verify DICOM levels
-    self.assertTrue( studyNode.GetParentNode().GetLevel() == 'Subject' )
+    self.assertTrue( studyNode.GetParentNode().GetLevel() == 'Patient' )
     self.assertTrue( studyNode.GetLevel() == 'Study' )
     self.assertTrue( ctVolumeShNode.GetLevel() == 'Series' )
 

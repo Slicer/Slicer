@@ -34,9 +34,11 @@ const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FRO
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX = "New";
 
 const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT = "Subject";
-const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY = "Study";
+const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_GENERIC_FOLDER = "GenericFolder";
 
 // DICOM plugin constants
+const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT = "Patient";
+const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY = "Study";
 const char* vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES = "Series";
 const char* vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SUBSERIES = "Subseries";
 

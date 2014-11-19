@@ -40,6 +40,7 @@
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchySegmentPlugin.h"
+#include "qSlicerSubjectHierarchyGenericFolderPlugin.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -142,6 +143,8 @@ void qSlicerSubjectHierarchyModule::setup()
     new qSlicerSubjectHierarchyRegisterPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchySegmentPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyGenericFolderPlugin());
 }
 
 //-----------------------------------------------------------------------------

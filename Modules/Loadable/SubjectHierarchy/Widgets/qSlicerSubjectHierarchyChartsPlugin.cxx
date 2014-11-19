@@ -27,7 +27,6 @@
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyChartsPlugin.h"
-#include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>

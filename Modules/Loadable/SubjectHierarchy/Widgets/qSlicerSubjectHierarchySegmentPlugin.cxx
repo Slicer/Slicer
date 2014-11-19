@@ -27,7 +27,6 @@
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchySegmentPlugin.h"
-#include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
 // Slicer includes
 #include "qSlicerCoreApplication.h"

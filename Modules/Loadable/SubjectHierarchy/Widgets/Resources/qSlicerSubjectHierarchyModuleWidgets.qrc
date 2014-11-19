@@ -1,12 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
     <file>Icons/Chart.png</file>
+    <file>Icons/Folder.png</file>
     <file>Icons/Labelmap.png</file>
     <file>Icons/Markup.png</file>
     <file>Icons/Model.png</file>
     <file>Icons/Patient.png</file>
     <file>Icons/Study.png</file>
-    <file>Icons/Subject.png</file>
     <file>Icons/Unknown.png</file>
     <file>Icons/Volume.png</file>
     <file>Icons/VolumeVisibilityOff.png</file>

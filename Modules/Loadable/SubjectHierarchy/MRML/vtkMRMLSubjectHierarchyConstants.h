@@ -44,9 +44,11 @@ public:
   static const std::string SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX;
 
   static const char* SUBJECTHIERARCHY_LEVEL_SUBJECT;
-  static const char* SUBJECTHIERARCHY_LEVEL_STUDY;
+  static const char* SUBJECTHIERARCHY_LEVEL_GENERIC_FOLDER;
 
   // DICOM plugin constants
+  static const char* SUBJECTHIERARCHY_LEVEL_PATIENT;
+  static const char* SUBJECTHIERARCHY_LEVEL_STUDY;
   static const char* DICOMHIERARCHY_LEVEL_SERIES;
   static const char* DICOMHIERARCHY_LEVEL_SUBSERIES;
 
