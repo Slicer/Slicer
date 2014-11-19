@@ -417,7 +417,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
     && !item->data(VisibilityRole).isNull() )
     {
     int visible = item->data(VisibilityRole).toInt();
-    if (visible > -1)
+    if (visible > -1 && visible != ownerPlugin->getDisplayVisibility(subjectHierarchyNode))
       {
       // Have owner plugin set the display visibility
       ownerPlugin->setDisplayVisibility(subjectHierarchyNode, visible);

@@ -161,7 +161,6 @@ class DICOMPlugin(object):
     """
     tags = {}
     tags['seriesInstanceUID'] = "0020,000E"
-    tags['seriesDescription'] = "0008,103E"
     tags['seriesModality'] = "0008,0060"
     tags['studyInstanceUID'] = "0020,000D"
     tags['studyDescription'] = "0008,1030"
@@ -189,17 +188,12 @@ class DICOMPlugin(object):
       sys.stderr.write('Unable to create SubjectHierarchy nodes: invalid data node provided!')
       return
 
-    # Get first file to access DICOM tags form it
+    # Get first file to access DICOM tags from it
     firstFile = loadable.files[0]
-
-    # Get series description. Use data node name if empty
-    seriesDescription = slicer.dicomDatabase.fileValue(firstFile,tags['seriesDescription'])
-    if seriesDescription == '':
-      seriesDescription = dataNode.GetName()
 
     # Set up subject hierarchy node
     seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['seriesInstanceUID'])
-    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, 'Series', seriesDescription.encode('latin1', 'ignore'), dataNode) #TODO: Use get function instead of 'Series' constant string
+    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, 'Series', loadable.name.encode('latin1', 'ignore'), dataNode) #TODO: Use get function instead of 'Series' constant string
 
     # Specify details of series node
     seriesNode.AddUID('DICOM',seriesInstanceUid)
