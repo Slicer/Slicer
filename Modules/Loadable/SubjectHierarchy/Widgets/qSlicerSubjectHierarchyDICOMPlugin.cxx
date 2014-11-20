@@ -58,7 +58,8 @@ public:
 
   QAction* CreatePatientAction;
   QAction* CreateStudyAction;
-  QAction* CreateGenericSeriesAction;
+  QAction* ConvertFolderToPatientAction;
+  QAction* ConvertFolderToStudyAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -73,7 +74,8 @@ qSlicerSubjectHierarchyDICOMPluginPrivate::qSlicerSubjectHierarchyDICOMPluginPri
 
   this->CreatePatientAction = NULL;
   this->CreateStudyAction = NULL;
-  this->CreateGenericSeriesAction = NULL;
+  this->ConvertFolderToPatientAction = NULL;
+  this->ConvertFolderToStudyAction = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -81,14 +83,17 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyDICOMPlugin);
 
-  this->CreatePatientAction = new QAction("Create new patient",q);
+  this->CreatePatientAction = new QAction("Create new subject",q);
   QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createPatientNode()));
 
   this->CreateStudyAction = new QAction("Create child study",q);
-  QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildForCurrentNode()));
+  QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildStudyUnderCurrentNode()));
 
-  this->CreateGenericSeriesAction = new QAction("Create child generic series",q);
-  QObject::connect(this->CreateGenericSeriesAction, SIGNAL(triggered()), q, SLOT(createChildForCurrentNode()));
+  this->ConvertFolderToPatientAction = new QAction("Convert folder to subject",q);
+  QObject::connect(this->ConvertFolderToPatientAction, SIGNAL(triggered()), q, SLOT(convertCurrentNodeToPatient()));
+
+  this->ConvertFolderToStudyAction = new QAction("Convert folder to study",q);
+  QObject::connect(this->ConvertFolderToStudyAction, SIGNAL(triggered()), q, SLOT(convertCurrentNodeToStudy()));
 }
 
 //-----------------------------------------------------------------------------
@@ -102,23 +107,6 @@ qSlicerSubjectHierarchyDICOMPlugin::qSlicerSubjectHierarchyDICOMPlugin(QObject* 
  , d_ptr( new qSlicerSubjectHierarchyDICOMPluginPrivate(*this) )
 {
   this->m_Name = QString("DICOM");
-
-  // Scene (empty level) -> Patient
-  //TODO: Top-level nodes cannot be created automatically, remove if confirmed that it works
-  //qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( QString(),
-  //  vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT );
-  // Patient -> Study
-  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT,
-    vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY );
-  // Study -> Series
-  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY,
-    vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES );
-  // Series -> Subseries
-  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
-    vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SUBSERIES );
-  // Subseries -> Subseries
-  qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.insert( vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SUBSERIES,
-    vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SUBSERIES );
 
   Q_D(qSlicerSubjectHierarchyDICOMPlugin);
   d->init();
@@ -148,11 +136,6 @@ double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyNode(vtkMRMLSub
     {
     return 0.3;
     }
-  // Series level
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES))
-    {
-    return 0.3;
-    }
 
   return 0.0;
 }
@@ -160,7 +143,6 @@ double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyNode(vtkMRMLSub
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
 {
-  // NOTE: This is a plugin of third type, that defines levels and containers (folders, groups, etc.)
   // Get current node to determine tole
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
@@ -172,20 +154,42 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
   // Patient level
   if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
     {
-    return "Patient";
+    return "Subject"; // Show the role Subject to the user, while internally it is used for the patient notation defined in DICOM
     }
   // Study level (so that creation of a generic series is possible)
   if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
     {
     return "Study";
     }
-  // Series level
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES))
-    {
-    return "Generic series";
-    }
 
   return QString("Error!");
+}
+
+//---------------------------------------------------------------------------
+const QString qSlicerSubjectHierarchyDICOMPlugin::helpText()const
+{
+  return QString(
+    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+    "Create new Subject from scratch"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+    "Right-click on the top-level item 'Scene' and select 'Create new subject'."
+    "</span>"
+    "</p>\n"
+    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+    "Create new hierarchy node"
+    "</span>"
+    "</p>"
+    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+    "Right-click on an existing node and select 'Create child ...'. "
+    "The type and level of the child node will be specified by the user and the possible types depend on the parent."
+    "</span>"
+    "</p>");
 }
 
 //---------------------------------------------------------------------------
@@ -227,7 +231,7 @@ QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::nodeContextMenuActions()cons
   Q_D(const qSlicerSubjectHierarchyDICOMPlugin);
 
   QList<QAction*> actions;
-  actions << d->CreateStudyAction << d->CreateGenericSeriesAction;
+  actions << d->CreateStudyAction << d->ConvertFolderToPatientAction << d->ConvertFolderToStudyAction;
   return actions;
 }
 
@@ -259,10 +263,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForNode(vtkMRMLSu
     {
     d->CreateStudyAction->setVisible(true);
     }
-  // Study
-  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
+  // Folder
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER))
     {
-    d->CreateGenericSeriesAction->setVisible(true);
+    d->ConvertFolderToPatientAction->setVisible(true);
+    d->ConvertFolderToStudyAction->setVisible(true);
     }
 }
 
@@ -277,10 +282,62 @@ void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkMRMLSubjectHierarchyN
 void qSlicerSubjectHierarchyDICOMPlugin::createPatientNode()
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  if (!scene)
+    {
+    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::createPatientNode: Invalid MRML scene!";
+    return;
+    }
 
+  // It is called Subject to the user, while internally it is used for the patient notation defined in DICOM
+  std::string nodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + "Subject";
+  nodeName = scene->GenerateUniqueName(nodeName);
   // Create patient subject hierarchy node
-  std::string nodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT;
   vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
     scene, NULL, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT, nodeName.c_str());
   emit requestExpandNode(childSubjectHierarchyNode);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentNode()
+{
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
+  if (!scene || !currentNode)
+    {
+    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::createPatientNode: Invalid MRML scene or current node!";
+    return;
+    }
+
+  std::string nodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY;
+  nodeName = scene->GenerateUniqueName(nodeName);
+  // Create patient subject hierarchy node
+  vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
+    scene, currentNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, nodeName.c_str());
+  emit requestExpandNode(childSubjectHierarchyNode);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient()
+{
+  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
+  if ( !currentNode)
+    {
+    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient: Invalid current node!";
+    return;
+    }
+
+  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToStudy()
+{
+  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
+  if ( !currentNode)
+    {
+    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient: Invalid current node!";
+    return;
+    }
+
+  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
 }

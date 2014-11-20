@@ -65,7 +65,7 @@ protected slots:
   /// name (meaning it has been loaded from local disk). Creates patient/study/series/subseries hierarchies according to the
   /// paths of the loaded files, ignoring the part that is identical (if everything has been loaded from the same directory,
   /// then only creates subject hierarchy nodes for the directories within that directory).
-  void createHierarchyFromLoadedLocalDirectories();
+  void createHierarchyFromLoadedDirectoryStructure();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyParseLocalDataPluginPrivate> d_ptr;

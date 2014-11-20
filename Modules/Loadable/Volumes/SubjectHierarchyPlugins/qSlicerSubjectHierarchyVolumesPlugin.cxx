@@ -79,7 +79,7 @@ public:
   QIcon VolumeVisibilityOnIcon;
 
   QAction* ToggleLabelmapOutlineDisplayAction;
-  QAction* ShowVolumesInStudyAction;
+  QAction* ShowVolumesInBranchAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ qSlicerSubjectHierarchyVolumesPluginPrivate::qSlicerSubjectHierarchyVolumesPlugi
   this->VolumeVisibilityOnIcon = QIcon(":Icons/VolumeVisibilityOn.png");
 
   this->ToggleLabelmapOutlineDisplayAction = NULL;
-  this->ShowVolumesInStudyAction = NULL;
+  this->ShowVolumesInBranchAction = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -124,8 +124,8 @@ void qSlicerSubjectHierarchyVolumesPluginPrivate::init()
   this->ToggleLabelmapOutlineDisplayAction->setCheckable(true);
   this->ToggleLabelmapOutlineDisplayAction->setChecked(false);
 
-  this->ShowVolumesInStudyAction = new QAction("Show volumes in study",q);
-  QObject::connect(this->ShowVolumesInStudyAction, SIGNAL(triggered()), q, SLOT(showVolumesInStudy()));
+  this->ShowVolumesInBranchAction = new QAction("Show volumes in branch",q);
+  QObject::connect(this->ShowVolumesInBranchAction, SIGNAL(triggered()), q, SLOT(showVolumesInBranch()));
 }
 
 //-----------------------------------------------------------------------------
@@ -579,7 +579,7 @@ QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::nodeContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
 
   QList<QAction*> actions;
-  actions << d->ToggleLabelmapOutlineDisplayAction << d->ShowVolumesInStudyAction;
+  actions << d->ToggleLabelmapOutlineDisplayAction << d->ShowVolumesInBranchAction;
   return actions;
 }
 
@@ -615,10 +615,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForNode(vtkMRML
       }
     }
 
-  // Study level
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
+  // Folders (Patient, Study, Folder)
+  if ( node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT)
+    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY)
+    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER) )
     {
-    d->ShowVolumesInStudyAction->setVisible(true);
+    d->ShowVolumesInBranchAction->setVisible(true);
     }
 }
 
@@ -637,12 +639,12 @@ void qSlicerSubjectHierarchyVolumesPlugin::toggleLabelmapOutlineDisplay(bool che
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInStudy()
+void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
 {
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolumesInStudy: Unable to get selection node";
+    qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch: Unable to get selection node";
     return;
     }
 
@@ -679,7 +681,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInStudy()
       vtkMRMLSubjectHierarchyNode* volumeSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(volumeNode);
       if (!volumeSubjectHierarchyNode)
         {
-        qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolumesInStudy: Unable to get subject hierarchy node!";
+        qCritical() << "qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch: Unable to get subject hierarchy node!";
         continue;
         }
 

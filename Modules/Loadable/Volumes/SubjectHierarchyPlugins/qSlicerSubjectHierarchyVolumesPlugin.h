@@ -123,7 +123,7 @@ protected slots:
 
   /// Show volumes in study. The first two regular volumes and the first labelmap is shown if there are more.
   /// Hides other volumes if there are less in the current study.
-  void showVolumesInStudy();
+  void showVolumesInBranch();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;

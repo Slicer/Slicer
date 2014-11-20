@@ -20,15 +20,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyGenericFolderPlugin_h
-#define __qSlicerSubjectHierarchyGenericFolderPlugin_h
+#ifndef __qSlicerSubjectHierarchyFolderPlugin_h
+#define __qSlicerSubjectHierarchyFolderPlugin_h
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
-class qSlicerSubjectHierarchyGenericFolderPluginPrivate;
+class qSlicerSubjectHierarchyFolderPluginPrivate;
 class vtkMRMLNode;
 class vtkMRMLSubjectHierarchyNode;
 
@@ -39,16 +39,15 @@ class vtkMRMLSubjectHierarchyNode;
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
-/// NOTE: This is a plugin of third type, that defines levels and containers (folders, groups, etc.)
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyGenericFolderPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyFolderPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyGenericFolderPlugin(QObject* parent = NULL);
-  virtual ~qSlicerSubjectHierarchyGenericFolderPlugin();
+  qSlicerSubjectHierarchyFolderPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyFolderPlugin();
 
 public:
   /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
@@ -87,19 +86,24 @@ public:
   /// \param node Subject Hierarchy node to show the context menu items for. If NULL, then shows menu items for the scene
   virtual void showContextMenuActionsForNode(vtkMRMLSubjectHierarchyNode* node);
 
-protected slots:
-  /// Create subject node
-  void createSubjectNode();
+public:
+  /// Create folder under specified node
+  /// \param parentNode Parent node for folder to create. NULL if top-level (right under the scene)
+  vtkMRMLSubjectHierarchyNode* createFolderUnderNode(vtkMRMLSubjectHierarchyNode* parentNode);
 
-  /// Create generic folder node under current node
-  void createGenericFolderUnderCurrentNode();
+protected slots:
+  /// Create folder node under the scene
+  void createFolderUnderScene();
+
+  /// Create folder node under current node
+  void createFolderUnderCurrentNode();
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyGenericFolderPluginPrivate> d_ptr;
+  QScopedPointer<qSlicerSubjectHierarchyFolderPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyGenericFolderPlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyGenericFolderPlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyFolderPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyFolderPlugin);
 };
 
 //ETX

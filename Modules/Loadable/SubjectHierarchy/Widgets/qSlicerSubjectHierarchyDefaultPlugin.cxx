@@ -111,11 +111,6 @@ const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin()const
 const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
 {
   return QString(
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Right-click on the top-level item 'Scene' and select 'Create new subject' or 'Create new patient'"
-    "</span>"
-    "</p>"
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
     "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
     "Rename Subject hierarchy node"

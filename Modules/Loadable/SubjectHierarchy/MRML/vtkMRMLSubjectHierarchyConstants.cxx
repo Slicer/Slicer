@@ -32,16 +32,18 @@ const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_P
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_ATTRIBUTE_PREFIX + "ExcludeFromTree"; // Identifier
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME; //TODO: Deprecated member, kept for backwards compatibility
 const std::string vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX = "New";
+const char* vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_DICOM_UID_NAME = "DICOM";
 
-const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_SUBJECT = "Subject";
-const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_GENERIC_FOLDER = "GenericFolder";
+// Non-DICOM levels
+const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER = "Folder";
 
-// DICOM plugin constants
+// DICOM-related levels
 const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT = "Patient";
 const char* vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY = "Study";
 const char* vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES = "Series";
 const char* vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SUBSERIES = "Subseries";
 
+// Attributes
 const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_ATTRIBUTE_PREFIX = "DICOMHierarchy.";
 const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_PATIENT_NAME_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_ATTRIBUTE_PREFIX + "PatientName";
 const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_PATIENT_ID_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_ATTRIBUTE_PREFIX + "PatientId";
@@ -50,4 +52,3 @@ const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_PATIENT_BIRTH
 const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_STUDY_DATE_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_ATTRIBUTE_PREFIX + "StudyDate";
 const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_STUDY_TIME_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_ATTRIBUTE_PREFIX + "StudyTime";
 const std::string vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_SERIES_MODALITY_ATTRIBUTE_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_ATTRIBUTE_PREFIX + "SeriesModality";
-const char* vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_DICOM_UID_NAME = "DICOM";

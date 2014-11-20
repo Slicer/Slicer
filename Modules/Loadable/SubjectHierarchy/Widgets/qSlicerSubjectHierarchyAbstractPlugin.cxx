@@ -22,7 +22,6 @@
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 
@@ -42,9 +41,6 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-
-//-----------------------------------------------------------------------------
-QMap<QString, QString> qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap = QMap<QString, QString>();
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QObject *parent)
@@ -144,7 +140,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parentNode)
+bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parentNode, const char* level/*='Series'*/)
 {
   if (!nodeToAdd)
     {
@@ -159,7 +155,6 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
     }
 
   // Associate to a new hierarchy node and put it in the tree under the parent
-  const char* level = (parentNode ? this->childLevel(parentNode->GetLevel()).toLatin1().constData() : vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES);
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
     scene, parentNode, level, nodeToAdd->GetName(), nodeToAdd);
   if (!subjectHierarchyNode)
@@ -250,68 +245,6 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkMRMLSubjectHi
   Q_UNUSED(node);
 
   return node->GetDisplayVisibilityForBranch();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyAbstractPlugin::childLevel(QString parentLevel)
-{
-  // Get child level from this plugin
-  if (qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap.contains(parentLevel))
-    {
-    return qSlicerSubjectHierarchyAbstractPlugin::m_ChildLevelMap[parentLevel];
-    }
-  // If this plugin does not have child level for this parent level, then log a warning
-  else
-    {
-    qWarning() << "qSlicerSubjectHierarchyAbstractPlugin::childLevel: Could not get child level for level '"
-      << parentLevel << "'!";
-    return QString("Invalid");
-    }
-}
-
-//--------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyAbstractPlugin::createChildNode(vtkMRMLSubjectHierarchyNode* parentNode,
-                                                                                    QString nodeName,
-                                                                                    vtkMRMLNode* associatedNode/*=NULL*/)
-{
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-
-  // If there is current node, parent level will be an empty string, which means the scene
-  QString parentLevel;
-  if (parentNode)
-    {
-    parentLevel = QString(parentNode->GetLevel());
-    }
-  QString childLevel = this->childLevel(parentLevel);
-
-  // Create child subject hierarchy node
-  vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, parentNode, childLevel.toLatin1().constData(), nodeName.toLatin1().constData(), associatedNode);
-
-  emit requestExpandNode(childSubjectHierarchyNode);
-
-  return childSubjectHierarchyNode;
-}
-
-//--------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::createChildForCurrentNode()
-{
-  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-
-  // If there is current node, parent level will be an empty string, which means the scene
-  QString parentLevel;
-  if (currentNode)
-    {
-    parentLevel = QString(currentNode->GetLevel());
-    }
-  QString childLevel = this->childLevel(parentLevel);
-
-  // Create child subject hierarchy node
-  std::string childNodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + childLevel.toLatin1().constData();
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  childNodeName = scene->GenerateUniqueName(childNodeName);
-
-  this->createChildNode(currentNode, childNodeName.c_str());
 }
 
 //--------------------------------------------------------------------------

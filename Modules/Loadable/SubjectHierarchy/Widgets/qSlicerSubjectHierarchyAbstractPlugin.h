@@ -29,6 +29,8 @@
 #include <QStringList>
 
 // SubjectHierarchy includes
+#include "vtkMRMLSubjectHierarchyConstants.h"
+
 #include "qSlicerSubjectHierarchyModuleWidgetsExport.h"
 
 class vtkObject;
@@ -144,8 +146,11 @@ public:
 
   /// Add a node to subject hierarchy under a specified parent node. If added non subject hierarchy nodes
   ///   have certain steps to perform when adding them in Subject Hierarchy, those steps take place here.
+  /// \param node Node to add to subject hierarchy
+  /// \param parent Parent node of the added node
+  /// \param level Level of the added node in subject hierarchy
   /// \return True if added successfully, false otherwise
-  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent);
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent, const char* level=vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES);
 
   /// Determines if a subject hierarchy node can be reparented in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
@@ -163,9 +168,6 @@ public:
 
 // Utility functions
 public:
-  /// Create child node for a given parent node based on the child level map
-  virtual vtkMRMLSubjectHierarchyNode* createChildNode(vtkMRMLSubjectHierarchyNode* parentNode, QString nodeName, vtkMRMLNode* associatedNode=NULL);
-
   /// Determines if the node is owned by this plugin
   bool isThisPluginOwnerOfNode(vtkMRMLSubjectHierarchyNode* node)const;
 
@@ -179,9 +181,6 @@ public:
 public:
   /// Get the name of the plugin
   virtual QString name()const;
-
-  /// Get child level map
-  QMap<QString, QString> childLevelMap()const { return m_ChildLevelMap; };
 
 signals:
   /// Signal requesting expanding of the subject hierarchy tree item belonging to a node
@@ -197,34 +196,15 @@ signals:
   void ownerPluginChanged(vtkObject* node, void* callData);
 
 protected:
-  /// Get child level according to child level map of the current plugin
-  /// Currently two core modules provide levels: GenericFolder and DICOM. The tree looks like this:
-  ///
-  ///      /-> Subject -> GenericFolder -> GenericFolder
-  /// Scene
-  ///      \-> Patient -> Study -> Series -> Subseries
-  ///
-  /// This is how child nodes are automatically created. The exception is Subject and Patient, as
-  /// those two cannot be automatically created from scene, but either manually or programatically.
-  /// GenericFolder can be created from any node, but the others just the way it can be seen above.
-  virtual QString childLevel(QString parentLevel);
-
   /// Hide all context menu actions offered by the plugin.
   /// This method must be called as a first step in \sa showContextMenuActionsForNode
   /// before showing the actions that apply to the current situation. Calling this method
   /// prevents programming errors made in case plugin actions change.
   void hideAllContextMenuActions()const;
 
-protected slots:
-  /// Create supported child for the current node (which is selected in the tree)
-  void createChildForCurrentNode();
-
 protected:
   /// Name of the plugin
   QString m_Name;
-
-  /// Map assigning a child level to a parent level for the plugin
-  static QMap<QString, QString> m_ChildLevelMap;
 
 private:
   qSlicerSubjectHierarchyAbstractPlugin(const qSlicerSubjectHierarchyAbstractPlugin&); // Not implemented

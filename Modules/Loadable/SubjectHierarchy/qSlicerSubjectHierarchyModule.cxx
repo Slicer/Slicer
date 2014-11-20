@@ -40,7 +40,7 @@
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 #include "qSlicerSubjectHierarchySegmentPlugin.h"
-#include "qSlicerSubjectHierarchyGenericFolderPlugin.h"
+#include "qSlicerSubjectHierarchyFolderPlugin.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -134,17 +134,17 @@ void qSlicerSubjectHierarchyModule::setup()
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyDICOMPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyFolderPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
+    new qSlicerSubjectHierarchyParseLocalDataPlugin());
+  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyCloneNodePlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyChartsPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyParseLocalDataPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyRegisterPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchySegmentPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyGenericFolderPlugin());
 }
 
 //-----------------------------------------------------------------------------
@@ -283,7 +283,7 @@ void qSlicerSubjectHierarchyModule::onNodeAboutToBeRemoved(vtkObject* sceneObjec
       {
       QMessageBox::StandardButton answer =
         QMessageBox::question(NULL, tr("Delete branch?"),
-        tr("The deleted node has children. Do you want to remove those too?\n\nIf you choose yes, the whole branch will be deleted recursively."),
+        tr("The deleted node has children. Do you want to remove those too?\n\nIf you choose yes, the whole branch will be deleted, including all children."),
         QMessageBox::Yes | QMessageBox::No,
         QMessageBox::No);
       // Delete branch if the user chose yes

@@ -42,16 +42,18 @@ public:
   static const std::string SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME;
   static const std::string SUBJECTHIERARCHY_EXCLUDE_FROM_POTENTIAL_NODES_LIST_ATTRIBUTE_NAME; //TODO: Deprecated member, kept for backwards compatibility
   static const std::string SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX;
+  static const char* DICOMHIERARCHY_DICOM_UID_NAME;
 
-  static const char* SUBJECTHIERARCHY_LEVEL_SUBJECT;
-  static const char* SUBJECTHIERARCHY_LEVEL_GENERIC_FOLDER;
+  // Non-DICOM levels
+  static const char* SUBJECTHIERARCHY_LEVEL_FOLDER;
 
-  // DICOM plugin constants
+  // DICOM levels
   static const char* SUBJECTHIERARCHY_LEVEL_PATIENT;
   static const char* SUBJECTHIERARCHY_LEVEL_STUDY;
   static const char* DICOMHIERARCHY_LEVEL_SERIES;
   static const char* DICOMHIERARCHY_LEVEL_SUBSERIES;
 
+  // Attributes
   static const std::string DICOMHIERARCHY_ATTRIBUTE_PREFIX;
   static const std::string DICOMHIERARCHY_PATIENT_NAME_ATTRIBUTE_NAME;
   static const std::string DICOMHIERARCHY_PATIENT_ID_ATTRIBUTE_NAME;
@@ -60,8 +62,6 @@ public:
   static const std::string DICOMHIERARCHY_STUDY_DATE_ATTRIBUTE_NAME;
   static const std::string DICOMHIERARCHY_STUDY_TIME_ATTRIBUTE_NAME;
   static const std::string DICOMHIERARCHY_SERIES_MODALITY_ATTRIBUTE_NAME;
-  static const char* DICOMHIERARCHY_DICOM_UID_NAME;
-
 };
 
 #endif

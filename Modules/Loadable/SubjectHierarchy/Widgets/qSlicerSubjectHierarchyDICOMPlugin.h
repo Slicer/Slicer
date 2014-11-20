@@ -39,7 +39,6 @@ class vtkMRMLSubjectHierarchyNode;
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
-/// NOTE: This is a plugin of third type, that defines levels and containers (folders, groups, etc.)
 class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyDICOMPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
@@ -62,6 +61,9 @@ public:
   /// Get role that the plugin assigns to the subject hierarchy node.
   ///   Each plugin should provide only one role.
   Q_INVOKABLE virtual const QString roleForPlugin()const;
+
+  /// Get help text for plugin to be added in subject hierarchy module widget help box
+  virtual const QString helpText()const;
 
   /// Get icon of an owned subject hierarchy node
   /// \return Icon to set, NULL if nothing to set
@@ -90,6 +92,15 @@ public:
 protected slots:
   /// Create patient node
   void createPatientNode();
+
+  /// Create study node under current node (must be patient)
+  void createChildStudyUnderCurrentNode();
+
+  /// Convert current node (must be folder) to patient
+  void convertCurrentNodeToPatient();
+
+  /// Convert current node (must be folder) to study
+  void convertCurrentNodeToStudy();
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchyDICOMPluginPrivate> d_ptr;
