@@ -93,6 +93,11 @@ protected slots:
   /// in case the changes in the subject hierarchy node leads to a new most suitable plugin.
   void onSubjectHierarchyNodeModified(vtkObject* nodeObject);
 
+  /// Called when scene import is finished.
+  /// Subject hierarchy nodes are created for supported data nodes if they have not
+  /// been imported with the scene (backwards compatibility for older scenes)
+  void onSceneImportEnded(vtkObject* sceneObject);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyModulePrivate> d_ptr;
 

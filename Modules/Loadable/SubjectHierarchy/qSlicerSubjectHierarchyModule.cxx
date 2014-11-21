@@ -174,6 +174,8 @@ void qSlicerSubjectHierarchyModule::onLogicModified()
     qvtkReconnect( scene, vtkMRMLScene::NodeAddedEvent, this, SLOT( onNodeAdded(vtkObject*,vtkObject*) ) );
     // Connect scene node added event so that the associated subject hierarchy node can be deleted too
     qvtkReconnect( scene, vtkMRMLScene::NodeAboutToBeRemovedEvent, this, SLOT( onNodeAboutToBeRemoved(vtkObject*,vtkObject*) ) );
+    // Connect scene import ended event so that subject hierarchy nodes can be created for supported data nodes if missing (backwards compatibility)
+    qvtkReconnect( scene, vtkMRMLScene::EndImportEvent, this, SLOT( onSceneImportEnded(vtkObject*) ) );
     }
 }
 
@@ -208,38 +210,39 @@ void qSlicerSubjectHierarchyModule::onNodeAdded(vtkObject* sceneObject, vtkObjec
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
 
     // Don't add to subject hierarchy automatically if importing scene, because the SH nodes are stored in the scene and will be loaded
-    if (!scene->IsImporting())
+    if (scene->IsImporting())
       {
-      // Abort if invalid or hidden node or if explicitly excluded from subject hierarchy before even adding to the scene
-      if ( !node || node->GetHideFromEditors()
-        || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME.c_str()) )
-        {
-        return;
-        }
+      return;
+      }
+    // Abort if invalid or hidden node or if explicitly excluded from subject hierarchy before even adding to the scene
+    if ( !node || node->GetHideFromEditors()
+      || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME.c_str()) )
+      {
+      return;
+      }
 
-      // If there is a plugin that can add the data node to subject hierarchy, then add
-      QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-        qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(node, NULL);
-      qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
-      if (foundPlugins.size() > 1)
+    // If there is a plugin that can add the data node to subject hierarchy, then add
+    QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
+      qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(node, NULL);
+    qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
+    if (foundPlugins.size() > 1)
+      {
+      // Let the user choose a plugin if more than one returned the same non-zero confidence value
+      QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for adding new node to subject hierarchy.\n\nSelect plugin to add node named\n'%1'\n(type %2)").arg(node->GetName()).arg(node->GetNodeTagName());
+      selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
+      }
+     else if (foundPlugins.size() == 1)
+      {
+      selectedPlugin = foundPlugins[0];
+      }
+    // Have the selected plugin add the new node to subject hierarchy
+    if (selectedPlugin)
+      {
+      bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, NULL);
+      if (!successfullyAddedByPlugin)
         {
-        // Let the user choose a plugin if more than one returned the same non-zero confidence value
-        QString textToDisplay = QString("Equal confidence number found for more than one subject hierarchy plugin for adding new node to subject hierarchy.\n\nSelect plugin to add node named\n'%1'\n(type %2)").arg(node->GetName()).arg(node->GetNodeTagName());
-        selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->selectPluginFromDialog(textToDisplay, foundPlugins);
-        }
-       else if (foundPlugins.size() == 1)
-        {
-        selectedPlugin = foundPlugins[0];
-        }
-      // Have the selected plugin add the new node to subject hierarchy
-      if (selectedPlugin)
-        {
-        bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, NULL);
-        if (!successfullyAddedByPlugin)
-          {
-          qWarning() << "qSlicerSubjectHierarchyModule::onNodeAdded: Failed to add node "
-            << node->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
-          }
+        qWarning() << "qSlicerSubjectHierarchyModule::onNodeAdded: Failed to add node "
+          << node->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
         }
       }
     }
@@ -335,5 +338,50 @@ void qSlicerSubjectHierarchyModule::onSubjectHierarchyNodeModified(vtkObject* no
     //    subjectHierarchyNode->GetName() << "' has been modified, plugin search performed, and owner plugin changed from '" <<
     //    pluginBefore << "' to '" << pluginAfter << "'";
     //  }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModule::onSceneImportEnded(vtkObject* sceneObject)
+{
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
+  if (!scene)
+    {
+    return;
+    }
+
+  // Traverse all storable nodes in the scene (only storable nodes can be saved to the scene and thus
+  // imported, so it does not make sense to go through non-storable ones)
+  std::vector<vtkMRMLNode*> storableNodes;
+  scene->GetNodesByClass("vtkMRMLStorableNode", storableNodes);
+  for (std::vector<vtkMRMLNode*>::iterator storableNodeIt = storableNodes.begin(); storableNodeIt != storableNodes.end(); ++storableNodeIt)
+    {
+    vtkMRMLNode* node = (*storableNodeIt);
+    // Do not add into subject hierarchy if hidden or already added
+    if ( node->GetHideFromEditors()
+      || vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(node, scene) )
+      {
+      continue;
+      }
+
+    // If there is a plugin that can add the data node to subject hierarchy, then add
+    QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
+      qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingToSubjectHierarchyForNode(node, NULL);
+    qSlicerSubjectHierarchyAbstractPlugin* selectedPlugin = NULL;
+    if (foundPlugins.size() > 0)
+      {
+      // Choose first plugin in case of confidence equality not to annoy user (it can be changed later in subject hierarchy)
+      selectedPlugin = foundPlugins[0];
+      }
+    // Have the selected plugin add the new node to subject hierarchy
+    if (selectedPlugin)
+      {
+      bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, NULL);
+      if (!successfullyAddedByPlugin)
+        {
+        qWarning() << "qSlicerSubjectHierarchyModule::onNodeAdded: Failed to add node "
+          << node->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+        }
+      }
     }
 }
