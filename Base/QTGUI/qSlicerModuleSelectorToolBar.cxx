@@ -201,6 +201,13 @@ qSlicerModulesMenu* qSlicerModuleSelectorToolBar::modulesMenu()const
 }
 
 //---------------------------------------------------------------------------
+QString qSlicerModuleSelectorToolBar::selectedModule()const
+{
+  Q_D(const qSlicerModuleSelectorToolBar);
+  return d->ModulesMenu->currentModule();
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* moduleManager)
 {
   Q_D(qSlicerModuleSelectorToolBar);
