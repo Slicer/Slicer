@@ -66,12 +66,16 @@ void qMRMLSceneSubjectHierarchyModelPrivate::init()
   q->setIDColumn(3);
 
   q->setHorizontalHeaderLabels(
-    QStringList() << "Node" << "Vis" << "Tr" << "IDs");
+    QStringList() << "Node" << "" << "" << "IDs");
 
   q->horizontalHeaderItem(q->nameColumn())->setToolTip(QObject::tr("Node name and type"));
   q->horizontalHeaderItem(q->visibilityColumn())->setToolTip(QObject::tr("Show/hide branch or node"));
   q->horizontalHeaderItem(q->transformColumn())->setToolTip(QObject::tr("Applied transform"));
   q->horizontalHeaderItem(q->idColumn())->setToolTip(QObject::tr("Node ID"));
+
+  q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
+  q->horizontalHeaderItem(q->transformColumn())->setIcon(QIcon(":/Icons/Transform.png"));
+
 
   // Set visibility icons from model to the default plugin
   qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->setDefaultVisibilityIcons(this->VisibleIcon, this->HiddenIcon, this->PartiallyVisibleIcon);
