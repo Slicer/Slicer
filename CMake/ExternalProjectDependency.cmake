@@ -335,7 +335,7 @@ endfunction()
 #!
 function(ExternalProject_Message proj msg)
   set(_display 1)
-  if("${ARGV2}" MATCHES ".+")
+  if(NOT "x${ARGV2}" STREQUAL "x")
     set(_display ${ARGN})
   endif()
   if(${_display})
