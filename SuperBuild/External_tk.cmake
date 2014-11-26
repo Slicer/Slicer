@@ -27,7 +27,7 @@ if(NOT WIN32)
     # used when making a shared object; recompile with -fPIC
     # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
     #
-    if( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
       set(_configure_cflags "-fPIC")
     endif()
 

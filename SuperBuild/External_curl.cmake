@@ -45,7 +45,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
   endif()
 
   set(${proj}_CMAKE_C_FLAGS ${ep_common_c_flags})
-  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
     set(${proj}_CMAKE_C_FLAGS "${ep_common_c_flags} -fPIC")
   endif()
 
