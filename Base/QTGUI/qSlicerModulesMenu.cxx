@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QSettings>
 
 // CTK includes
 #include "qSlicerAbstractModule.h"
@@ -397,6 +398,29 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
     // ignore hidden modules
     return;
     }
+
+  // Only show modules in Testing category if developer mode is enabled
+  // to not clutter the module list for regular users with tests
+  QSettings settings;
+  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  if (!developerModeEnabled)
+    {
+    bool testOnlyModule = true;
+    foreach(const QString& category, module->categories())
+      {
+      if (category.split('.').takeFirst()!="Testing")
+        {
+        testOnlyModule = false;
+        }
+      }
+    if (testOnlyModule)
+      {
+      // This module only appears in the Testing category but we are not in developer mode,
+      // so do not add this module to the module menu
+      return;
+      }
+    }
+
   QAction* moduleAction = module->action();
   Q_ASSERT(moduleAction);
   if (d->DuplicateActions)

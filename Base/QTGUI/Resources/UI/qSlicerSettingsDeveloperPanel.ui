@@ -26,6 +26,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="toolTip">
+      <string>Run the application in developer mode: testing modules are shown in the module list, Reload&amp;Test section is shown in scripted modules user interface, CLI module input and output files are not deleted after module execution</string>
+     </property>
     </widget>
    </item>
    <item row="1" column="0">
