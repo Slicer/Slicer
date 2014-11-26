@@ -435,7 +435,7 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
   bool foundDefault = false;
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> crosshairs = this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode");
+  vtkSmartPointer<vtkCollection> crosshairs = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode"));
   for (crosshairs->InitTraversal(it);
        (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
     {
@@ -448,7 +448,6 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
       break;
       }
     }
-  crosshairs->Delete();
 
   if (!foundDefault)
     {
@@ -1213,15 +1212,12 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       vtkDataObject::SetPointDataActiveScalarInfo(tempMathUVWOutInfo, VTK_SHORT,
         vtkImageData::GetNumberOfScalarComponents(tempMathUVWOutInfo));
 
-      vtkImageCast *tempCastUVW = vtkImageCast::New();
+      vtkNew<vtkImageCast> tempCastUVW;
       tempCastUVW->SetInputConnection( tempMathUVW->GetOutputPort() );
       tempCastUVW->SetOutputScalarTypeToUnsignedChar();
 
       this->BlendUVW->AddInputConnection( tempCastUVW->GetOutputPort() );
       this->BlendUVW->SetOpacity( layerIndexUVW++, 1.0 );
-
-      tempMathUVW->Delete();  // Blend may still be holding a reference
-      tempCastUVW->Delete();  // Blend may still be holding a reference
       }
     else
       {
