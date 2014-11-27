@@ -28,7 +28,7 @@
 #include "qSlicerTransformsModule.h"
 #include "qSlicerTransformsModuleWidget.h"
 #include <vtkMRMLScene.h>
-#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
 
 // VTK includes
 #include <vtkMatrix4x4.h>
@@ -49,7 +49,7 @@ private slots:
 void qSlicerTransformsModuleWidgetTester::testIdentity()
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLLinearTransformNode> transformNode;
+  vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
 
   qSlicerTransformsModule transformsModule;
@@ -75,7 +75,7 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
 void qSlicerTransformsModuleWidgetTester::testInvert()
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLLinearTransformNode> transformNode;
+  vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
 
   qSlicerTransformsModule transformsModule;

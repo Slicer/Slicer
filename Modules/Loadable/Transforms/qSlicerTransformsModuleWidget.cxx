@@ -32,7 +32,7 @@
 #include <qMRMLUtils.h>
 
 // MRML includes
-#include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLScene.h"
 
@@ -125,10 +125,15 @@ void qSlicerTransformsModuleWidget::setup()
                 SIGNAL(clicked()),
                 SLOT(identity()));
 
-  // Connect revert button
+  // Connect invert button
   this->connect(d->InvertPushButton,
                 SIGNAL(clicked()),
                 SLOT(invert()));
+
+  // Connect split button
+  this->connect(d->SplitPushButton,
+                SIGNAL(clicked()),
+                SLOT(split()));
 
   // Connect node selector with module itself
   this->connect(d->TransformNodeSelector,
@@ -192,21 +197,25 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   Q_D(qSlicerTransformsModuleWidget);
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
-  vtkMRMLLinearTransformNode* linearTransformNode = vtkMRMLLinearTransformNode::SafeDownCast(node);
 
-  // Enable/Disable CoordinateReference, identity buttons, MatrixViewGroupBox, and
+  bool isLinearTransform = (transformNode!=NULL && transformNode->IsLinear());
+  bool isCompositeTransform = (transformNode!=NULL && transformNode->IsComposite());
+
+  // Enable/Disable CoordinateReference, identity, split buttons, MatrixViewGroupBox, and
   // Min/Max translation inputs
 
   d->InvertPushButton->setEnabled(transformNode != 0);
 
-  d->CoordinateReferenceGroupBox->setEnabled(linearTransformNode != 0);
-  d->IdentityPushButton->setEnabled(linearTransformNode != 0);
-  d->MatrixViewGroupBox->setEnabled(linearTransformNode != 0);
+  d->CoordinateReferenceGroupBox->setEnabled(isLinearTransform);
+  d->IdentityPushButton->setEnabled(isLinearTransform);
+  d->MatrixViewGroupBox->setEnabled(isLinearTransform);
 
-  d->CoordinateReferenceGroupBox->setVisible(linearTransformNode != 0);
-  d->MatrixViewGroupBox->setVisible(linearTransformNode != 0);
-  d->TranslationSliders->setVisible(linearTransformNode != 0);
-  d->RotationSliders->setVisible(linearTransformNode != 0);
+  d->CoordinateReferenceGroupBox->setVisible(isLinearTransform);
+  d->MatrixViewGroupBox->setVisible(isLinearTransform);
+  d->TranslationSliders->setVisible(isLinearTransform);
+  d->RotationSliders->setVisible(isLinearTransform);
+
+  d->SplitPushButton->setVisible(isCompositeTransform);
 
   QStringList nodeTypes;
   // If no transform node, it would show the entire scene, lets shown none
@@ -228,6 +237,11 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
     }
   d->TransformableTreeView->sortFilterProxyModel()
     ->setHiddenNodeIDs(hiddenNodeIDs);
+
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
+                      vtkMRMLTransformableNode::TransformModifiedEvent,
+                      this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
+
   d->MRMLTransformNode = transformNode;
 
   // If there is no display node then collapse the display section.
@@ -245,12 +259,39 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* caller)
+{
+  Q_D(qSlicerTransformsModuleWidget);
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
+  if (!transformNode)
+    {
+    return;
+    }
+  Q_ASSERT(d->MRMLTransformNode == transformNode);
+
+  bool isLinearTransform = transformNode->IsLinear();
+  bool isCompositeTransform = transformNode->IsComposite();
+
+  d->CoordinateReferenceGroupBox->setEnabled(isLinearTransform);
+  d->IdentityPushButton->setEnabled(isLinearTransform);
+  d->MatrixViewGroupBox->setEnabled(isLinearTransform);
+
+  d->CoordinateReferenceGroupBox->setVisible(isLinearTransform);
+  d->MatrixViewGroupBox->setVisible(isLinearTransform);
+  d->TranslationSliders->setVisible(isLinearTransform);
+  d->RotationSliders->setVisible(isLinearTransform);
+
+  d->SplitPushButton->setVisible(isCompositeTransform);
+
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerTransformsModuleWidget::identity()
 {
   Q_D(qSlicerTransformsModuleWidget);
 
-  vtkMRMLLinearTransformNode* linearTransformNode=vtkMRMLLinearTransformNode::SafeDownCast(d->MRMLTransformNode);
-  if (!linearTransformNode)
+  if (d->MRMLTransformNode==NULL || !d->MRMLTransformNode->IsLinear())
     {
     return;
     }
@@ -259,7 +300,7 @@ void qSlicerTransformsModuleWidget::identity()
   d->RotationSliders->resetUnactiveSliders();
 
   vtkNew<vtkMatrix4x4> matrix; // initialized to identity by default
-  linearTransformNode->SetMatrixTransformToParent(matrix.GetPointer());
+  d->MRMLTransformNode->SetMatrixTransformToParent(matrix.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
@@ -272,6 +313,19 @@ void qSlicerTransformsModuleWidget::invert()
   d->RotationSliders->resetUnactiveSliders();
 
   d->MRMLTransformNode->Inverse();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::split()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+
+  if (d->MRMLTransformNode==NULL)
+    {
+    return;
+    }
+
+  d->MRMLTransformNode->Split();
 }
 
 //-----------------------------------------------------------------------------

@@ -28,7 +28,6 @@
 
 // MRML includes
 #include <vtkMRMLProceduralColorNode.h>
-#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>

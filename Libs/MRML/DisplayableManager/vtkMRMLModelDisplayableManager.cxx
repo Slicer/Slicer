@@ -23,7 +23,6 @@
 #include <vtkEventBroker.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
@@ -34,6 +33,7 @@
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLTransformNode.h>
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
@@ -907,7 +907,7 @@ void vtkMRMLModelDisplayableManager
   vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
   vtkGeneralTransform *worldTransform = vtkGeneralTransform::New();
   worldTransform->Identity();
-  if (tnode != 0 && !tnode->IsLinear())
+  if (tnode != 0 && !tnode->IsTransformToWorldLinear())
     {
     hasNonLinearTransform = true;
     tnode->GetTransformToWorld(worldTransform);
@@ -1057,7 +1057,7 @@ void vtkMRMLModelDisplayableManager
         vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
         // clipped model could be transformed
         // TODO: handle non-linear transforms
-        if (clipping == 0 || tnode == 0 || !tnode->IsLinear())
+        if (clipping == 0 || tnode == 0 || !tnode->IsTransformToWorldLinear())
           {
           continue;
           }
@@ -1513,10 +1513,9 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
 
   vtkNew<vtkMatrix4x4> matrixTransformToWorld;
-  if (tnode != 0 && tnode->IsLinear())
+  if (tnode != 0 && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
     }
 
   int ndnodes = model->GetNumberOfDisplayNodes();
@@ -2223,10 +2222,9 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper(
   vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
   vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
-  if (tnode != 0 && tnode->IsLinear())
+  if (tnode != 0 && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
 
     vtkNew<vtkImplicitBoolean> slicePlanes;
 

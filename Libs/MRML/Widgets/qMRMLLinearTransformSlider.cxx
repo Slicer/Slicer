@@ -25,7 +25,7 @@
 #include "qMRMLLinearTransformSlider.h"
 
 // MRML includes
-#include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -39,7 +39,7 @@ public:
   qMRMLLinearTransformSliderPrivate();
   qMRMLLinearTransformSlider::TransformType            TypeOfTransform;
   qMRMLLinearTransformSlider::CoordinateReferenceType  CoordinateReference;
-  vtkWeakPointer<vtkMRMLLinearTransformNode>           MRMLTransformNode;
+  vtkWeakPointer<vtkMRMLTransformNode>                 MRMLTransformNode;
   double                                               OldPosition;
 };
 
@@ -120,7 +120,7 @@ qMRMLLinearTransformSlider::CoordinateReferenceType qMRMLLinearTransformSlider::
 }
 
 // --------------------------------------------------------------------------
-void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
+void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
 {
   Q_D(qMRMLLinearTransformSlider);
 
@@ -134,11 +134,11 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLLinearTransformNode
   this->onMRMLTransformNodeModified(transformNode);
   // If the node is NULL, any action on the widget is meaningless, this is why
   // the widget is disabled
-  this->setEnabled(transformNode != 0);
+  this->setEnabled(transformNode != 0 && transformNode->IsLinear());
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLLinearTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
+vtkMRMLTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
 {
   Q_D(const qMRMLLinearTransformSlider);
   return d->MRMLTransformNode;
@@ -149,12 +149,19 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
 {
   Q_D(qMRMLLinearTransformSlider);
 
-  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
   if (!transformNode)
     {
     return;
     }
   Q_ASSERT(d->MRMLTransformNode == transformNode);
+
+  bool isLinear = transformNode->IsLinear();
+  this->setEnabled(isLinear);
+  if (!isLinear)
+    {
+    return;
+    }
 
   vtkNew<vtkTransform> transform;
   if (d->MRMLTransformNode.GetPointer() != NULL)
@@ -206,7 +213,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
 {
   Q_D(qMRMLLinearTransformSlider);
 
-  if (d->MRMLTransformNode.GetPointer() == NULL)
+  if (d->MRMLTransformNode.GetPointer() == NULL || !d->MRMLTransformNode->IsLinear())
     {
     return;
     }

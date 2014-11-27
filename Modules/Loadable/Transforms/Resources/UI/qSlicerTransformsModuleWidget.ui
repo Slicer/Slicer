@@ -196,6 +196,19 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="SplitPushButton">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Split a composite transform to its components</string>
+          </property>
+          <property name="text">
+           <string>Split</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>

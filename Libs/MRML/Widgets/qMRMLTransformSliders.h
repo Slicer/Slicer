@@ -31,7 +31,7 @@
 #include "qMRMLWidget.h"
 
 class vtkMRMLNode;
-class vtkMRMLLinearTransformNode;
+class vtkMRMLTransformNode;
 class vtkMatrix4x4;
 class qMRMLTransformSlidersPrivate;
 
@@ -119,7 +119,7 @@ public:
 
   ///
   /// Return the current MRML node of interest
-  vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode()const;
 
 signals:
   ///
@@ -136,7 +136,7 @@ signals:
 public slots:
   ///
   /// Set the MRML node of interest
-  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
+  void setMRMLTransformNode(vtkMRMLTransformNode* transformNode);
   void setMRMLTransformNode(vtkMRMLNode* node);
 
   ///

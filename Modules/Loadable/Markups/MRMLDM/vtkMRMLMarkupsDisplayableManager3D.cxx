@@ -29,7 +29,6 @@
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLInteractionNode.h>
-#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -1142,16 +1141,15 @@ void vtkMRMLMarkupsDisplayableManager3D::GetWorldToLocalCoordinates(vtkMRMLMarku
   vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
   vtkGeneralTransform *transformToWorld = vtkGeneralTransform::New();
   transformToWorld->Identity();
-  if (tnode != 0 && !tnode->IsLinear())
+  if (tnode != 0 && !tnode->IsTransformToWorldLinear())
     {
     tnode->GetTransformFromWorld(transformToWorld);
     }
-  else if (tnode != NULL && tnode->IsLinear())
+  else if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
     vtkNew<vtkMatrix4x4> matrixTransformToWorld;
     matrixTransformToWorld->Identity();
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
     matrixTransformToWorld->Invert();
     transformToWorld->Concatenate(matrixTransformToWorld.GetPointer());
   }

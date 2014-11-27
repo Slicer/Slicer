@@ -101,7 +101,7 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
     vtkMRMLTransformNode::SafeDownCast(newParent);
   if (transformableNode)
     {
-    if (transformNode && !transformNode->IsLinear() && !transformableNode->CanApplyNonLinearTransforms())
+    if (transformNode && !transformNode->IsTransformToWorldLinear() && !transformableNode->CanApplyNonLinearTransforms())
       {
       return false;
       }

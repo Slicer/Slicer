@@ -27,7 +27,7 @@
 // MRML includes
 #include "qMRMLSliderWidget.h"
 
-class vtkMRMLLinearTransformNode;
+class vtkMRMLTransformNode;
 class vtkMatrix4x4;
 class qMRMLLinearTransformSliderPrivate;
 
@@ -72,13 +72,13 @@ public:
 
   ///
   /// Return the current transform node
-  vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode()const;
 
 public slots:
   ///
   /// Set the MRML node of interest
   /// Note that setting transformNode to 0 will disable the widget
-  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
+  void setMRMLTransformNode(vtkMRMLTransformNode* transformNode);
 
   ///
   /// Apply the appropriate rotation/translation according to the typeOfTransform of the slider.

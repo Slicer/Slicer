@@ -28,7 +28,7 @@
 #include <qMRMLUtils.h>
 
 // MRML includes
-#include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -45,7 +45,7 @@ public:
     }
 
   qMRMLTransformSliders::TransformType   TypeOfTransform;
-  vtkMRMLLinearTransformNode*            MRMLTransformNode;
+  vtkMRMLTransformNode*                  MRMLTransformNode;
   QStack<qMRMLLinearTransformSlider*>    ActiveSliders;
 };
 
@@ -157,11 +157,11 @@ qMRMLTransformSliders::TransformType qMRMLTransformSliders::typeOfTransform() co
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLNode* node)
 {
-  this->setMRMLTransformNode(vtkMRMLLinearTransformNode::SafeDownCast(node));
+  this->setMRMLTransformNode(vtkMRMLTransformNode::SafeDownCast(node));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
+void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
 {
   Q_D(qMRMLTransformSliders);
 
@@ -177,19 +177,25 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 
   // If the node is NULL, any action on the widget is meaningless, this is why
   // the widget is disabled
-  this->setEnabled(transformNode != 0);
+  this->setEnabled(transformNode != 0 && transformNode->IsLinear());
   d->MRMLTransformNode = transformNode;
 }
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
 {
-  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
   if (!transformNode)
     {
     return;
     }
   Q_ASSERT(transformNode);
+  bool isLinear = transformNode->IsLinear();
+  this->setEnabled(isLinear);
+  if (!isLinear)
+    {
+    return;
+    }
 
   // If the type of transform is ROTATION, do not modify
   if(this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
@@ -221,7 +227,7 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(qMRMLTransformSliders, vtkMRMLLinearTransformNode*, mrmlTransformNode, MRMLTransformNode);
+CTK_GET_CPP(qMRMLTransformSliders, vtkMRMLTransformNode*, mrmlTransformNode, MRMLTransformNode);
 
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::setTitle(const QString& _title)

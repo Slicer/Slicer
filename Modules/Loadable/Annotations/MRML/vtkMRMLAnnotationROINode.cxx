@@ -670,12 +670,11 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
   points->Delete();
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL) // && tnode->IsLinear())
+  if (tnode != NULL) // && tnode->IsTransformToWorldLinear())
     {
     //vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     //transformToWorld->Identity();
-    //vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    //lnode->GetMatrixTransformToWorld(transformToWorld);
+    //tnode->GetMatrixTransformToWorld(transformToWorld);
 
     vtkGeneralTransform *transform = vtkGeneralTransform::New();
     tnode->GetTransformFromWorld(transform);

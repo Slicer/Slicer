@@ -26,7 +26,7 @@
 #include "qMRMLMatrixWidget.h"
 
 // MRML includes
-#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -46,7 +46,7 @@ public:
     }
 
   qMRMLMatrixWidget::CoordinateReferenceType   CoordinateReference;
-  vtkWeakPointer<vtkMRMLLinearTransformNode>   MRMLTransformNode;
+  vtkWeakPointer<vtkMRMLTransformNode>         MRMLTransformNode;
   // Warning, this is not the real "transform, the real can be retrieved
   // by qVTKAbstractMatrixWidget->transform();
   vtkSmartPointer<vtkTransform>                Transform;
@@ -92,11 +92,11 @@ qMRMLMatrixWidget::CoordinateReferenceType qMRMLMatrixWidget::coordinateReferenc
 // --------------------------------------------------------------------------
 void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLNode* node)
 {
-  this->setMRMLTransformNode(vtkMRMLLinearTransformNode::SafeDownCast(node));
+  this->setMRMLTransformNode(vtkMRMLTransformNode::SafeDownCast(node));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
+void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLTransformNode* transformNode)
 {
   Q_D(qMRMLMatrixWidget);
 
@@ -111,11 +111,13 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLLinearTransformNode* transfo
 
   d->MRMLTransformNode = transformNode;
 
+  this->setEnabled(transformNode->IsLinear());
+
   this->updateMatrix();
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLLinearTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
+vtkMRMLTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
 {
   Q_D(const qMRMLMatrixWidget);
   return d->MRMLTransformNode;
@@ -130,6 +132,13 @@ void qMRMLMatrixWidget::updateMatrix()
     {
     this->setMatrixInternal(0);
     d->Transform = 0;
+    return;
+    }
+
+  bool isLinear = d->MRMLTransformNode->IsLinear();
+  this->setEnabled(isLinear);
+  if (!isLinear)
+    {
     return;
     }
 

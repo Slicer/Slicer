@@ -29,9 +29,6 @@
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLLinearTransformNode.h>
-#include <vtkMRMLBSplineTransformNode.h>
-#include <vtkMRMLGridTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLNRRDStorageNode.h>
@@ -848,9 +845,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLDiffusionWeightedVolumeNode *dwvnd = 0;
   vtkMRMLModelNode *mnd = 0;
   vtkMRMLTransformNode *tnd = 0;
-  vtkMRMLLinearTransformNode *ltnd = 0;
-  vtkMRMLBSplineTransformNode *btnd = 0;
-  vtkMRMLGridTransformNode *gtnd = 0;
   vtkMRMLDisplayableNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
@@ -884,9 +878,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   tnd   = vtkMRMLTransformNode::SafeDownCast(nd);
-  ltnd  = vtkMRMLLinearTransformNode::SafeDownCast(nd);
-  btnd  = vtkMRMLBSplineTransformNode::SafeDownCast(nd);
-  gtnd  = vtkMRMLGridTransformNode::SafeDownCast(nd);
   fbnd  = vtkMRMLDisplayableNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
@@ -1030,7 +1021,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           fson->Delete();
           }
         }
-    else if (ltnd || btnd || gtnd || tnd)
+    else if (tnd)
       {
       // Load a transform node
 
@@ -1205,7 +1196,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       disp->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
       }
     }
-  else if (ltnd || btnd || gtnd || tnd)
+  else if (tnd)
     {
     // Linear transform node
     // (no display node)

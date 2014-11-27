@@ -54,6 +54,9 @@ public slots:
   /// Invert the transform.
   void invert();
 
+  /// Split composite transform to its components
+  void split();
+
 protected:
 
   virtual void setup();
@@ -63,6 +66,7 @@ protected slots:
   void onCoordinateReferenceButtonPressed(int id);
   void onNodeSelected(vtkMRMLNode* node);
   void onTranslationRangeChanged(double newMin, double newMax);
+  void onMRMLTransformNodeModified(vtkObject* caller);
 
   void transformSelectedNodes();
   void untransformSelectedNodes();

@@ -16,8 +16,8 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLFiducial.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLFiducialListStorageNode.h"
-#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkAbstractTransform.h>
@@ -737,10 +737,9 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZWorld(int n, float x, float y, flo
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
-  if (tnode != NULL && tnode->IsLinear())
+  if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
   // convert by the inverted parent transform
   transformToWorld->Invert();
@@ -789,10 +788,9 @@ int vtkMRMLFiducialListNode::GetNthFiducialXYZWorld(int n, double *worldxyz)
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
-  if (tnode != NULL && tnode->IsLinear())
+  if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
   // convert by the parent transform
   double  xyzw[4];

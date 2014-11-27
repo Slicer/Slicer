@@ -11,11 +11,11 @@
 #include "vtkSlicerFiducialsLogic.h"
 
 // MRML includes
-#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLFiducialListNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkMatrix4x4.h>
@@ -187,10 +187,9 @@ int vtkSlicerFiducialsLogic::AddFiducialPicked (float x, float y, float z, int s
   vtkMRMLTransformNode* tnode = flist->GetParentTransformNode();
   vtkNew<vtkMatrix4x4> transformToWorld;
   transformToWorld->Identity();
-  if (tnode != NULL && tnode->IsLinear())
+  if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
     }
   // will convert by the inverted parent transform
   transformToWorld->Invert();

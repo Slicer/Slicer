@@ -29,9 +29,10 @@
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeDisplayNode.h>
+#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>
-#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLAnnotationROINode.h>
 
@@ -218,7 +219,6 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       vtkMatrix4x4 *inputIJKToRAS = vtkMatrix4x4::New();
       vtkMatrix4x4 *outputRASToIJK = vtkMatrix4x4::New();
       vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
-      vtkMRMLLinearTransformNode *movingVolumeTransform = NULL, *roiTransform = NULL;
 
       refVolume = this->Internal->VolumesLogic->CreateAndAddLabelVolume(
           this->GetMRMLScene(), inputVolume, "CropVolume_ref_volume");
@@ -276,9 +276,8 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
           roiXYZ[2] - roiRadius[2] + outputSpacing[2] * .5);
 
       // account for the ROI parent transform, if present
-      roiTransform = vtkMRMLLinearTransformNode::SafeDownCast(
-          inputROI->GetParentTransformNode());
-      if (roiTransform)
+      vtkMRMLTransformNode *roiTransform = inputROI->GetParentTransformNode();
+      if (roiTransform && roiTransform->IsTransformToWorldLinear())
         {
           vtkMatrix4x4 *roiMatrix = vtkMatrix4x4::New();
           roiTransform->GetMatrixTransformToWorld(roiMatrix);
@@ -323,12 +322,13 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       cmdNode->SetParameterAsString("referenceVolume", refVolume->GetID());
       cmdNode->SetParameterAsString("outputVolume", outputVolume->GetID());
 
-      movingVolumeTransform = vtkMRMLLinearTransformNode::SafeDownCast(
-          inputVolume->GetParentTransformNode());
+      vtkMRMLTransformNode *movingVolumeTransform = inputVolume->GetParentTransformNode();
 
-      if (movingVolumeTransform != NULL)
+      if (movingVolumeTransform != NULL && movingVolumeTransform->IsLinear())
+        {
         cmdNode->SetParameterAsString("transformationFile",
             movingVolumeTransform->GetID());
+        }
 
       std::string interp = "linear";
       switch (pnode->GetInterpolationMode())
@@ -386,9 +386,9 @@ void vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtk
   double minXYZRAS[] = {roiXYZ[0]-roiRadius[0], roiXYZ[1]-roiRadius[1],roiXYZ[2]-roiRadius[2],1.};
   double maxXYZRAS[] = {roiXYZ[0]+roiRadius[0], roiXYZ[1]+roiRadius[1],roiXYZ[2]+roiRadius[2],1.};
 
-  vtkSmartPointer<vtkMRMLLinearTransformNode> roiTransform  = vtkMRMLLinearTransformNode::SafeDownCast(roi->GetParentTransformNode());
+  vtkMRMLTransformNode* roiTransform  = roi->GetParentTransformNode();
   // account for the ROI parent transform, if present
-  if (roiTransform.GetPointer())
+  if (roiTransform && roiTransform->IsTransformToWorldLinear())
     {
       vtkNew<vtkMatrix4x4> roiTransformMatrix;
       roiTransform->GetMatrixTransformToWorld(roiTransformMatrix.GetPointer());

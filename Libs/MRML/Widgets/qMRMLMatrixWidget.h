@@ -29,7 +29,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
-class vtkMRMLLinearTransformNode;
+class vtkMRMLTransformNode;
 class vtkMatrix4x4;
 class qMRMLMatrixWidgetPrivate;
 
@@ -54,12 +54,12 @@ public:
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
-  vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode()const;
 
 public slots:
   ///
   /// Set the MRML node of interest
-  void setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode);
+  void setMRMLTransformNode(vtkMRMLTransformNode* transformNode);
   void setMRMLTransformNode(vtkMRMLNode* node);
 
 protected slots:

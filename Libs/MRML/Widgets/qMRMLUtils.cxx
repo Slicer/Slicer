@@ -26,8 +26,8 @@
 #include "qMRMLUtils.h"
 
 // MRML includes
-#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -67,12 +67,12 @@ void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vect
 void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global,
     vtkTransform* transform)
 {
-  Self::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode::SafeDownCast( node ),
+  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast( node ),
     global, transform);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode,
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode,
   bool global, vtkTransform* transform)
 {
   Q_ASSERT(transform);
@@ -83,7 +83,7 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* tran
 
   transform->Identity();
 
-  if (!transformNode)
+  if (!transformNode || !transformNode->IsLinear())
     {
     return;
     }

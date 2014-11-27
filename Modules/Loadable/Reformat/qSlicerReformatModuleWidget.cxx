@@ -32,7 +32,6 @@
 // MRML includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLCameraNode.h"
-#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceLogic.h"

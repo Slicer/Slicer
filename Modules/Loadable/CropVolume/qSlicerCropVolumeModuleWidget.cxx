@@ -32,7 +32,7 @@
 #include <vtkMRMLCropVolumeParametersNode.h>
 #include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
-#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLTransformNode.h>
 
 
 //-----------------------------------------------------------------------------
@@ -86,19 +86,18 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkForVolumeParentTransform() const
 {
   Q_ASSERT(this->InputVolumeComboBox);
 
-
-  vtkSmartPointer<vtkMRMLVolumeNode> inputVolume = vtkMRMLVolumeNode::SafeDownCast(this->InputVolumeComboBox->currentNode());
-
+  vtkMRMLVolumeNode* inputVolume = vtkMRMLVolumeNode::SafeDownCast(this->InputVolumeComboBox->currentNode());
   if(!inputVolume)
+    {
     return false;
-
-   vtkSmartPointer<vtkMRMLLinearTransformNode> volTransform  = vtkMRMLLinearTransformNode::SafeDownCast(inputVolume->GetParentTransformNode());
-
-   if(volTransform)
-       return true;
-
-
-   return false;
+    }
+  vtkMRMLTransformNode* volTransform = inputVolume->GetParentTransformNode();
+  if(!volTransform)
+    {
+    return false;
+    }
+  // we ignore non-linear transforms
+  return volTransform->IsTransformToWorldLinear();
 }
 
 //-----------------------------------------------------------------------------
@@ -119,9 +118,9 @@ void qSlicerCropVolumeModuleWidgetPrivate::performROIVoxelGridAlignment()
   bool volumeTilted = vtkSlicerCropVolumeLogic::IsVolumeTiltedInRAS(inputVolume,volRotMat.GetPointer());
 
 
-  vtkSmartPointer<vtkMRMLLinearTransformNode> roiTransform  = vtkMRMLLinearTransformNode::SafeDownCast(inputROI->GetParentTransformNode());
+  vtkMRMLTransformNode* roiTransform = inputROI->GetParentTransformNode();
 
-  if(roiTransform)
+  if(roiTransform && roiTransform->IsTransformToWorldLinear())
     {
       vtkNew<vtkMatrix4x4> parentTransform;
       roiTransform->GetMatrixTransformToWorld(parentTransform.GetPointer());

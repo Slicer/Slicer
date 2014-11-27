@@ -20,10 +20,10 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
+#include "vtkMRMLTransformNode.h"
 
 // Slicer MRML includes
 #include "vtkMRMLScene.h"
-#include "vtkMRMLLinearTransformNode.h"
 
 // VTK includes
 #include <vtkAbstractTransform.h>
@@ -613,16 +613,15 @@ int vtkMRMLMarkupsNode::GetMarkupPointWorld(int markupIndex, int pointIndex, dou
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   vtkGeneralTransform *transformToWorld = vtkGeneralTransform::New();
   transformToWorld->Identity();
-  if (tnode != 0 && !tnode->IsLinear())
+  if (tnode != 0 && !tnode->IsTransformToWorldLinear())
     {
     tnode->GetTransformToWorld(transformToWorld);
     }
-  else if (tnode != NULL && tnode->IsLinear())
+  else if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
     vtkNew<vtkMatrix4x4> matrixTransformToWorld;
     matrixTransformToWorld->Identity();
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
     transformToWorld->Concatenate(matrixTransformToWorld.GetPointer());
   }
 
@@ -829,16 +828,14 @@ void vtkMRMLMarkupsNode::SetMarkupPointWorld(const int markupIndex, const int po
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   vtkGeneralTransform *transformFromWorld = vtkGeneralTransform::New();
   transformFromWorld->Identity();
-  if (tnode != 0 && !tnode->IsLinear())
+  if (tnode != 0 && !tnode->IsTransformToWorldLinear())
     {
     tnode->GetTransformFromWorld(transformFromWorld);
     }
-  else if (tnode != NULL && tnode->IsLinear())
+  else if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
     vtkNew<vtkMatrix4x4> matrixTransformToWorld;
-    matrixTransformToWorld->Identity();
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
+    tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
     matrixTransformToWorld->Invert();
     transformFromWorld->Concatenate(matrixTransformToWorld.GetPointer());
   }

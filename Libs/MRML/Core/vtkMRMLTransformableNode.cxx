@@ -12,10 +12,12 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLTransformableNode.h"
+
 // MRML includes
 #include "vtkEventBroker.h"
-#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -174,12 +176,11 @@ void vtkMRMLTransformableNode::TransformPointToWorld(const double in[4], double 
 {
   // get the nodes's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsLinear())
+  if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     transformToWorld->Identity();
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    tnode->GetMatrixTransformToWorld(transformToWorld);
     transformToWorld->MultiplyPoint(in, out);
     transformToWorld->Delete();
     }
@@ -201,12 +202,11 @@ void vtkMRMLTransformableNode::TransformPointFromWorld(const double in[4], doubl
 {
   // get the nodes's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL && tnode->IsLinear())
+  if (tnode != NULL && tnode->IsTransformToWorldLinear())
     {
-    vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
     transformToWorld->Identity();
-    lnode->GetMatrixTransformToWorld(transformToWorld);
+    tnode->GetMatrixTransformToWorld(transformToWorld);
     transformToWorld->Invert();
     transformToWorld->MultiplyPoint(in, out);
     transformToWorld->Delete();

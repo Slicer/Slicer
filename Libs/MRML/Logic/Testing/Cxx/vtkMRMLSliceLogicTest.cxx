@@ -15,7 +15,6 @@
 #include "vtkMRMLSliceLayerLogic.h"
 
 // MRML includes
-#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>

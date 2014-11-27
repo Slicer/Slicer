@@ -33,7 +33,6 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLLinearTransformNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -233,7 +232,8 @@ void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForNode(vtkM
   if (this->canOwnSubjectHierarchyNode(node))
     {
     d->InvertAction->setVisible(true);
-    if (node->GetAssociatedNode() && node->GetAssociatedNode()->IsA("vtkMRMLLinearTransformNode"))
+    vtkMRMLTransformNode* tnode = vtkMRMLTransformNode::SafeDownCast(node->GetAssociatedNode());
+    if (tnode && tnode->IsLinear())
       {
       d->IdentityAction->setVisible(true);
       }
@@ -273,10 +273,10 @@ void qSlicerSubjectHierarchyTransformsPlugin::invert()
 void qSlicerSubjectHierarchyTransformsPlugin::identity()
 {
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  vtkMRMLLinearTransformNode* linearTransformNode = vtkMRMLLinearTransformNode::SafeDownCast(currentNode->GetAssociatedNode());
-  if (linearTransformNode)
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(currentNode->GetAssociatedNode());
+  if (transformNode && transformNode->IsLinear())
     {
     vtkNew<vtkMatrix4x4> matrix; // initialized to identity by default
-    linearTransformNode->SetMatrixTransformToParent(matrix.GetPointer());
+    transformNode->SetMatrixTransformToParent(matrix.GetPointer());
     }
 }

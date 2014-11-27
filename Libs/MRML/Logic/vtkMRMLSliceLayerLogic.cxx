@@ -20,9 +20,9 @@
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-#include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLDiffusionTensorVolumeSliceDisplayNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLTransformNode.h"
 
 // VTK includes
 #include <vtkAlgorithm.h>
@@ -1032,10 +1032,9 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       vtkMRMLTransformNode* tnode = this->VolumeNode->GetParentTransformNode();
       vtkNew<vtkMatrix4x4> transformToWorld;
       //transformToWorld->Identity();unnecessary, transformToWorld is already identiy
-      if (tnode != 0 && tnode->IsLinear())
+      if (tnode != 0 && tnode->IsTransformToWorldLinear())
         {
-        vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-        lnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
+        tnode->GetMatrixTransformToWorld(transformToWorld.GetPointer());
         transformToWorld->Invert();
         }
 

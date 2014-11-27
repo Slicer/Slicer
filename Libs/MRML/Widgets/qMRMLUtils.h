@@ -31,7 +31,7 @@
 
 class QStyle;
 class vtkMRMLNode;
-class vtkMRMLLinearTransformNode;
+class vtkMRMLTransformNode;
 class vtkTransform;
 class vtkMatrix4x4;
 class vtkMRMLScene;
@@ -54,7 +54,7 @@ public:
   ///
   Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLNode* transformNode, bool global,
     vtkTransform* transform);
-  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode,
+  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode,
     bool global, vtkTransform* transform);
 
   /// Retrieve the number of visible view node associated with \a scene
