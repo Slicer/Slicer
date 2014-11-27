@@ -877,6 +877,11 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
       visibility = (hierDisplayNode->GetVisibility() ? 0 : 1);
       }
     std::map<std::string, std::string> nodeTypes =  selectionNode->GetModelHierarchyDisplayNodeClassNames();
+    if (nodeTypes.empty())
+      {
+      vtkMRMLModelHierarchyLogic::SetChildrenVisibility(displayableHierarchyNode,
+                                                        0, 0, visibility);
+      }
     for (std::map<std::string, std::string>::iterator it = nodeTypes.begin();
          it != nodeTypes.end(); it++)
       {
