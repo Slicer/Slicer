@@ -83,6 +83,7 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
   this->RemoveAllMarkups();
+  this->RemoveAllTexts();
 
   Superclass::ReadXMLAttributes(atts);
   const char* attName;
@@ -216,20 +217,17 @@ void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::RemoveAllMarkups()
 {
-  // remove all markups and points
-  this->Markups.clear();
+  int wasModifying = this->StartModify();
 
-  // remove all text
-  this->TextList->Initialize();
+  this->SetLocked(0); // Should this be done here ?
 
-  this->Locked = 0;
+  while(this->Markups.size() > 0)
+    {
+    this->RemoveMarkup(0);
+    }
   this->MaximumNumberOfMarkups = 0;
 
-  this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::MarkupRemovedEvent);
-    }
+  this->EndModify(wasModifying);
 }
 
 //---------------------------------------------------------------------------
@@ -326,6 +324,11 @@ int vtkMRMLMarkupsNode::GetNumberOfTexts()
   return this->TextList->GetNumberOfValues();
 }
 
+//-------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::RemoveAllTexts()
+{
+  this->TextList->Initialize();
+}
 
 //-------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLMarkupsNode::CreateDefaultStorageNode()

@@ -121,6 +121,7 @@ public:
   vtkStdString GetText(int id);
   int DeleteText(int id);
   int GetNumberOfTexts();
+  void RemoveAllTexts();
 
   /// Invoke events when markups change, passing the markup index if applicable.
   /// Invoke the lock modified event when a markup's lock status is changed.
