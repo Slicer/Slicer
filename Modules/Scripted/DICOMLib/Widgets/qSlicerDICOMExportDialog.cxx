@@ -179,6 +179,7 @@ void qSlicerDICOMExportDialog::selectNode(vtkMRMLSubjectHierarchyNode* node)
 //-----------------------------------------------------------------------------
 void qSlicerDICOMExportDialog::onCurrentNodeChanged(vtkMRMLNode* node)
 {
+  Q_UNUSED(node)
   Q_D(qSlicerDICOMExportDialog);
 
   // Clear error label

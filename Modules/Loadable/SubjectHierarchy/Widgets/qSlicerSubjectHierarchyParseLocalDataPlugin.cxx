@@ -221,7 +221,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   for (int nodeIndex=0; nodeIndex<loadedNodes.count(); ++nodeIndex)
     {
     vtkMRMLSubjectHierarchyNode* parent = NULL;
-    for (unsigned int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
+    for (int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
       {
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
       vtkMRMLSubjectHierarchyNode* foundNode = vtkMRMLSubjectHierarchyNode::GetChildWithName(parent, currentComponent.toLatin1().constData(), scene);

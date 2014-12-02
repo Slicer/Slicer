@@ -197,14 +197,14 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSam
     hierarchyNode1 = vtkMRMLSubjectHierarchyNode::SafeDownCast(hierarchyNode1->GetParentNode());
     if (!hierarchyNode1)
       {
-      vtkWarningWithObjectMacro(node1, "Node ('" << node1->GetName() << "') has no ancestor with DICOM level '" << lowestCommonLevel << "'");
+      vtkDebugWithObjectMacro(node1, "Node ('" << node1->GetName() << "') has no ancestor with DICOM level '" << lowestCommonLevel << "'");
       hierarchyNode1 = NULL;
       break;
       }
     const char* node1Level = hierarchyNode1->GetLevel();
     if (!node1Level)
       {
-      vtkWarningWithObjectMacro(node1, "Node ('" << node1->GetName() << "') has no DICOM level '" << lowestCommonLevel << "'");
+      vtkDebugWithObjectMacro(node1, "Node ('" << node1->GetName() << "') has no DICOM level '" << lowestCommonLevel << "'");
       hierarchyNode1 = NULL;
       break;
       }
@@ -219,14 +219,14 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSam
     hierarchyNode2 = vtkMRMLSubjectHierarchyNode::SafeDownCast(hierarchyNode2->GetParentNode());
     if (!hierarchyNode2)
       {
-      vtkWarningWithObjectMacro(node2, "Node ('" << node2->GetName() << "') has no ancestor with DICOM level '" << lowestCommonLevel << "'");
+      vtkDebugWithObjectMacro(node2, "Node ('" << node2->GetName() << "') has no ancestor with DICOM level '" << lowestCommonLevel << "'");
       hierarchyNode2 = NULL;
       break;
       }
     const char* node2Level = hierarchyNode2->GetLevel();
     if (!node2Level)
       {
-      vtkWarningWithObjectMacro(node2, "Node ('" << node2->GetName() << "') has no DICOM level '" << lowestCommonLevel << "'");
+      vtkDebugWithObjectMacro(node2, "Node ('" << node2->GetName() << "') has no DICOM level '" << lowestCommonLevel << "'");
       hierarchyNode2 = NULL;
       break;
       }

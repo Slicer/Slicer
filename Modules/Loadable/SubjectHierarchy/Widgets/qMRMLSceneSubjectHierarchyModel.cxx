@@ -501,11 +501,13 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
   if (!subjectHierarchyNode)
     {
     qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Reparented node (" << node->GetName() << ") is not a subject hierarchy node!";
+    return false;
     }
 
   if (newParent && !this->canBeAParent(newParent))
     {
     qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Target parent node (" << newParent->GetName() << ") is not a valid subject hierarchy parent node!";
+    return false;
     }
 
   // If dropped from within the subject hierarchy tree

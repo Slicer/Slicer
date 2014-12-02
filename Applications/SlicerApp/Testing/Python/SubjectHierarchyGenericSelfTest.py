@@ -277,9 +277,13 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     subjectHierarchySceneModel = subjectHierarchyWidget.subjectHierarchySceneModel()
     self.assertTrue( subjectHierarchySceneModel != None )
 
-    # Get study node
+    # Get subject hierarchy nodes and study node
     ctVolumeShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(ctVolumeNode)
     self.assertTrue( ctVolumeShNode != None )
+    sampleLabelmapShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(sampleLabelmapNode)
+    self.assertTrue( sampleLabelmapShNode != None )
+    sampleModelShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(sampleModelNode)
+    self.assertTrue( sampleModelShNode != None )
     studyNode = ctVolumeShNode.GetParentNode()
     self.assertTrue( studyNode != None )
 
@@ -294,16 +298,12 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.assertTrue( ctVolumeShNode.GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries() )
 
     # Add model and labelmap to the created study
-    subjectHierarchySceneModel.reparent(sampleLabelmapNode, studyNode)
-    subjectHierarchySceneModel.reparent(sampleModelNode, studyNode)
+    subjectHierarchySceneModel.reparent(sampleLabelmapShNode, studyNode)
+    subjectHierarchySceneModel.reparent(sampleModelShNode, studyNode)
 
-    sampleLabelmapShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(sampleLabelmapNode)
-    self.assertTrue( sampleLabelmapShNode != None )
     self.assertTrue( sampleLabelmapShNode.GetParentNode() == studyNode )
     self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'Volumes' )
 
-    sampleModelShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(sampleModelNode)
-    self.assertTrue( sampleModelShNode != None )
     self.assertTrue( sampleModelShNode.GetParentNode() == studyNode )
     self.assertTrue( sampleModelShNode.GetOwnerPluginName() == 'Models' )
 
@@ -419,6 +419,8 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.assertTrue( label > 0 )
 
     sampleLabelmapNode = slicer.vtkMRMLScalarVolumeNode()
+    sampleLabelmapNode.SetName(name)
+    sampleLabelmapNode.SetLabelMap(1)
     sampleLabelmapNode = slicer.mrmlScene.AddNode(sampleLabelmapNode)
     sampleLabelmapNode.Copy(volumeNode)
     imageData = vtk.vtkImageData()
@@ -442,11 +444,7 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
       self.assertTrue( colorNode != None )
     labelmapVolumeDisplayNode.SetAndObserveColorNodeID(colorNode.GetID())
     labelmapVolumeDisplayNode.VisibilityOn()
-    sampleLabelmapNodeName = slicer.mrmlScene.GenerateUniqueName(name)
-    sampleLabelmapNode.SetName(sampleLabelmapNodeName)
-    sampleLabelmapNode.SetLabelMap(1)
     sampleLabelmapNode.SetAndObserveDisplayNodeID(labelmapVolumeDisplayNode.GetID())
-    sampleLabelmapNode.SetHideFromEditors(0)
 
     return sampleLabelmapNode
 
@@ -469,9 +467,8 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     sphere.SetRadius(radius)
 
     modelNode = slicer.vtkMRMLModelNode()
+    modelNode.SetName(name)
     modelNode = slicer.mrmlScene.AddNode(modelNode)
-    modelNodeName = slicer.mrmlScene.GenerateUniqueName(name)
-    modelNode.SetName(modelNodeName)
     if vtk.VTK_MAJOR_VERSION <= 5:
       modelNode.SetAndObservePolyData(sphere.GetOutput())
     else:

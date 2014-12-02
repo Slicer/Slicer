@@ -523,7 +523,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
   vtkMRMLSubjectHierarchyNode* studyNode = NULL;
 
   // Commit changes to series
-  for (unsigned int row=d->topSeriesHeaderRow(); row<d->TagsTable->rowCount(); ++row)
+  for (int row=d->topSeriesHeaderRow(); row<d->TagsTable->rowCount(); ++row)
     {
     qSlicerDICOMExportable* exportable = d->exportableForRowIndex(row);
     if (!exportable) // Header row
@@ -553,7 +553,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
     return;
     }
   // Write tags from study section to study node
-  for (int row=d->StudyTagsHeaderRow+1; row<d->topSeriesHeaderRow(); ++row)
+  for (unsigned int row=d->StudyTagsHeaderRow+1; row<d->topSeriesHeaderRow(); ++row)
     {
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
@@ -569,7 +569,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToNodes()
     return;
     }
   // Write tags from patient table to patient node
-  for (int row=1; row<d->StudyTagsHeaderRow; ++row)
+  for (unsigned int row=1; row<d->StudyTagsHeaderRow; ++row)
     {
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
@@ -589,7 +589,7 @@ void qSlicerDICOMTagEditorWidget::tagsTableCellChanged(int row, int column)
     }
 
   // If patient or study tag (need to set value to each exportable)
-  if (row < d->topSeriesHeaderRow())
+  if (row < (int)d->topSeriesHeaderRow())
     {
     // Set new tag value in each exportable
     foreach (qSlicerDICOMExportable* exportable, d->Exportables)
