@@ -1,0 +1,167 @@
+import os
+import glob
+import tempfile
+import zipfile
+from __main__ import qt
+from __main__ import vtk
+from __main__ import ctk
+from __main__ import slicer
+
+import DICOMLib
+
+#########################################################
+#
+#
+comment = """
+
+DICOMExportScene provides the feature of exporting a slicer
+scene as an MRB file and a secondary capture series in the
+slicer DICOM database
+
+This code is slicer-specific and relies on the slicer python module
+for elements like slicer.dicomDatatabase and slicer.mrmlScene
+
+"""
+#
+#########################################################
+
+class DICOMExportScene(object):
+  """Export slicer scene to dicom database
+  TODO: delete temp directories and files
+  """
+
+  def __init__(self,referenceFile=None):
+    self.referenceFile = referenceFile
+    self.sdbFile = None
+
+  def progress(self,string):
+    # TODO: make this a callback for a gui progress dialog
+    print(string)
+
+  def export(self):
+    success = self.createDICOMFileForScene()
+    if success:
+      self.addFilesToDatabase()
+    return success
+
+  def getFirstFileInDatabase(self):
+    for patient in slicer.dicomDatabase.patients():
+      studies = slicer.dicomDatabase.studiesForPatient(patient)
+      if len(studies) == 0:
+        continue
+      for study in studies:
+        series = slicer.dicomDatabase.seriesForStudy(study)
+        if len(series) == 0:
+          continue
+        for serie in series:
+          files = slicer.dicomDatabase.filesForSeries(serie)
+          if len(files):
+            self.referenceFile = files[0]
+          return
+
+  def createDICOMFileForScene(self):
+    """
+    Export the scene data:
+    - first to a directory using the utility in the mrmlScene
+    - create a zip file using the application logic
+    - create secondary capture based on the sample dataset
+    - add the zip file as a private creator tag
+    TODO: confirm that resulting file is valid - may need to change the CLI
+    to include more parameters or do a new implementation ctk/DCMTK
+    See:
+    http://sourceforge.net/apps/mediawiki/gdcm/index.php?title=Writing_DICOM
+    """
+
+    # set up temp directories and files
+    self.dicomDirectory = tempfile.mkdtemp('', 'dicomExport', slicer.app.temporaryPath)
+    self.sceneDirectory = os.path.join(self.dicomDirectory,'scene')
+    os.mkdir(self.sceneDirectory) # known to be unique
+    self.imageFile = os.path.join(self.dicomDirectory, "scene.jpg")
+    self.zipFile = os.path.join(self.dicomDirectory, "scene.zip")
+    self.dumpFile = os.path.join(self.dicomDirectory, "dicom.dump")
+    self.sdbFile = os.path.join(self.dicomDirectory, "SlicerDataBundle.dcm")
+    # Clean up paths on Windows (some commands and operations are not performed properly with mixed slash and backslash)
+    self.dicomDirectory = self.dicomDirectory.replace('\\','/')
+    self.sceneDirectory = self.sceneDirectory.replace('\\','/') # otherwise invalid zip file is created on Windows (with the same size strangely)
+    self.imageFile = self.imageFile.replace('\\','/')
+    self.zipFile = self.zipFile.replace('\\','/')
+    self.dumpFile = self.dumpFile.replace('\\','/')
+    self.sdbFile = self.sdbFile.replace('\\','/')
+
+    # get the screen image
+    self.progress('Saving Image...')
+    pixmap = qt.QPixmap.grabWidget(slicer.util.mainWindow())
+    pixmap.save(self.imageFile)
+    imageReader = vtk.vtkJPEGReader()
+    imageReader.SetFileName(self.imageFile)
+    imageReader.Update()
+
+    # save the scene to the temp dir
+    self.progress('Saving Scene...')
+    appLogic = slicer.app.applicationLogic()
+    appLogic.SaveSceneToSlicerDataBundleDirectory(self.sceneDirectory, imageReader.GetOutput())
+
+    # make the zip file
+    self.progress('Making zip...')
+    appLogic.Zip(self.zipFile, self.sceneDirectory)
+    zipSize = os.path.getsize(self.zipFile)
+
+    # now create the dicom file
+    # - create the dump (capture stdout)
+    # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.dicomDirectory, self.referenceFile)
+    self.progress('Making dicom reference file...')
+    if not self.referenceFile:
+      # set reference file the first file found in the DICOM database
+      self.getFirstFileInDatabase()
+      # if there is still no reference file, then there are no files in the database, cannot continue
+      if not self.referenceFile:
+        print('ERROR: No reference file! DICOM database is empty.')
+        return
+    args = ['--print-all', '--write-pixel', self.dicomDirectory, self.referenceFile]
+    dump = DICOMLib.DICOMCommand('dcmdump', args).start()
+
+    # append this to the dumped output and save the result as self.dicomDirectory/dcm.dump
+    # with %s as self.zipFile and %d being its size in bytes
+    zipSizeString = "%d" % zipSize
+    candygram = """(cadb,0010) LO [3D Slicer Lollipop]           #  %d, 1 PrivateCreator
+(cadb,1008) UL [%s]                                     #   4, 1 Unknown Tag & Data
+(cadb,1010) OB =%s                                      #  %d, 1 Unknown Tag & Data
+""" % (len('3D Slicer Lollipop'), zipSizeString, self.zipFile, zipSize)
+
+    dump = dump + candygram
+
+    fp = open('%s/dump.dcm' % self.dicomDirectory, 'w')
+    fp.write(dump)
+    fp.close()
+
+    self.progress('Encapsulating Scene in DICOM Dump...')
+    args = [
+        '%s/dump.dcm' % self.dicomDirectory,
+        '%s/template.dcm' % self.dicomDirectory,
+        '--generate-new-uids', '--overwrite-uids', '--ignore-errors']
+    DICOMLib.DICOMCommand('dump2dcm', args).start()
+
+    # now create the Secondary Capture data set
+    # cmd = "img2dcm -k 'InstanceNumber=1' -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (self.dicomDirectory, self.imageFile, self.sdbFile)
+    args = [
+        '-k', 'InstanceNumber=1',
+        '-k', 'StudyDescription=Slicer Scene Export',
+        '-k', 'SeriesDescription=Slicer Data Bundle',
+        '--dataset-from', '%s/template.dcm' % self.dicomDirectory,
+        self.imageFile, self.sdbFile]
+    self.progress('Creating DICOM Binary File...')
+    DICOMLib.DICOMCommand('img2dcm', args).start()
+    self.progress('Done')
+    return True
+
+  def addFilesToDatabase(self):
+    self.progress('Adding to DICOM Database...')
+    indexer = ctk.ctkDICOMIndexer()
+    destinationDir = os.path.dirname(slicer.dicomDatabase.databaseFilename)
+    if self.sdbFile:
+      files = [self.sdbFile]
+    else:
+      files = glob.glob('%s/*' % self.dicomDirectory)
+    for file in files:
+      indexer.addFile( slicer.dicomDatabase, file, destinationDir )
+      slicer.util.showStatusMessage("Loaded: %s" % file, 1000)

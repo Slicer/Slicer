@@ -5,6 +5,7 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
 
+from slicer.ScriptedLoadableModule import *
 import DICOMLib
 
 #
@@ -15,7 +16,7 @@ import DICOMLib
 # for data exchange and running servers.
 #
 
-class DICOM:
+class DICOM(ScriptedLoadableModule):
 
   @staticmethod
   def setDatabasePrecacheTags(dicomBrowser=None):
@@ -34,18 +35,19 @@ class DICOM:
       dicomBrowser.tagsToPrecache = tagsToPrecache
 
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     import string
-    parent.title = "DICOM"
-    parent.categories = ["", "Informatics"] # top level module
-    parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = string.Template("""
+    self.parent.title = "DICOM"
+    self.parent.categories = ["", "Informatics"] # top level module
+    self.parent.contributors = ["Steve Pieper (Isomics)"]
+    self.parent.helpText = string.Template("""
 The DICOM module integrates DICOM classes from CTK (based on DCMTK).  See <a href=\"$a/Documentation/$b.$c/Modules/DICOM\">the documentaiton</a> for more information.
 """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
-    parent.acknowledgementText = """
+    self.parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a href=http://www.slicer.org>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.  Based on work from CommonTK (http://www.commontk.org).
     """
-    parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadDICOM.png')
-    self.parent = parent
+    self.parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadDICOM.png')
+    self.parent.dependencies = ["SubjectHierarchy"]
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
@@ -83,6 +85,13 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     # set the dicom pre-cache tags once all plugin classes have been initialized
     qt.QTimer.singleShot(0, DICOM.setDatabasePrecacheTags)
 
+  def setup(self):
+    # Register DICOM subject hierarchy plugin (member to prevent destruction)
+    self.dicomPlugin = slicer.qSlicerSubjectHierarchyDICOMPlugin()
+    pluginHandlerTempInstance = slicer.qSlicerSubjectHierarchyPluginHandler()
+    pluginHandlerSingleton = pluginHandlerTempInstance.instance()
+    pluginHandlerSingleton.registerPlugin(self.dicomPlugin)
+
   def addMenu(self):
     """Add an action to the File menu that will go into
     the DICOM module by selecting the module.  Note that
@@ -100,6 +109,15 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if hasattr(slicer, 'dicomListener'):
       print('trying to stop listener')
       slicer.dicomListener.stop()
+
+
+#
+# Class for avoiding python error that is caused by the method DICOM::setup
+# http://www.na-mic.org/Bug/view.php?id=3871
+#
+class DICOMFileWriter:
+  def __init__(self, parent):
+    pass
 
 
 #
@@ -294,9 +312,6 @@ class DICOMWidget:
 
     # TODO: populate context menu
     self.contextMenu = qt.QMenu(self.tables)
-    self.exportAction = qt.QAction("Export to Study", self.contextMenu)
-    self.contextMenu.addAction(self.exportAction)
-    self.exportAction.enabled = False
     self.deleteAction = qt.QAction("Delete", self.contextMenu)
     self.contextMenu.addAction(self.deleteAction)
     self.deleteAction.enabled = False
@@ -420,10 +435,6 @@ class DICOMWidget:
       #self.sendButton.enabled = True
     #else:
       #self.sendButton.enabled = False
-    #if typeRole:
-      #self.exportAction.enabled = self.dicomModelTypes[typeRole] == "Study"
-    #else:
-      #self.exportAction.enabled = False
     self.detailsPopup.open()
     #uid = self.selection.data(self.dicomModelUIDRole)
     #role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
@@ -450,17 +461,6 @@ class DICOMWidget:
           removeWorked = slicer.dicomDatabase.removeSeries(uid)
         if not removeWorked:
           self.messageBox(self,"Could not remove %s" % role,title='DICOM')
-    elif action == self.exportAction:
-      self.onExportClicked()
-
-  def onExportClicked(self):
-    """Associate a slicer volume as a series in the selected dicom study"""
-    uid = self.selection.data(self.dicomModelUIDRole)
-    exportDialog = DICOMLib.DICOMExportDialog(uid,onExportFinished=self.onExportFinished)
-    exportDialog.open()
-
-  def onExportFinished(self):
-    pass
 
   def onSendClicked(self):
     """Perform a dicom store of slicer data to a peer"""

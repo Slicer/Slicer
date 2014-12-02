@@ -616,9 +616,9 @@ void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForNode(vtkMRML
     }
 
   // Folders (Patient, Study, Folder)
-  if ( node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT)
-    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY)
-    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER) )
+  if ( node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient())
+    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
+    || node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()) )
     {
     d->ShowVolumesInBranchAction->setVisible(true);
     }

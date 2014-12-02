@@ -61,7 +61,7 @@ namespace
 
   const char* STUDY_ATTRIBUTE_NAME = "TestStudyAttribute";
   const char* STUDY_ATTRIBUTE_VALUE = "1";
-  const char* UID_NAME = vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_DICOM_UID_NAME;
+  const char* UID_NAME = vtkMRMLSubjectHierarchyConstants::GetDICOMUIDName();
   const char* PATIENT_UID_VALUE = "PATIENT";
   const char* STUDY1_UID_VALUE = "STUDY1";
   const char* STUDY2_UID_VALUE = "STUDY2";
@@ -111,15 +111,15 @@ namespace
     {
     // Create subject and studies
     vtkMRMLSubjectHierarchyNode* patientShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, NULL, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT, "Patient");
+      scene, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient(), "Patient");
     patientShNode->AddUID(UID_NAME, PATIENT_UID_VALUE);
 
     vtkMRMLSubjectHierarchyNode* study1ShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, patientShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, "Study1");
+      scene, patientShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), "Study1");
     study1ShNode->AddUID(UID_NAME, STUDY1_UID_VALUE);
 
     vtkMRMLSubjectHierarchyNode* study2ShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, patientShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, "Study2");
+      scene, patientShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), "Study2");
     study2ShNode->AddUID(UID_NAME, STUDY2_UID_VALUE);
     study2ShNode->SetAttribute(STUDY_ATTRIBUTE_NAME, STUDY_ATTRIBUTE_VALUE);
 
@@ -133,7 +133,7 @@ namespace
     volume1Node->SetAndObserveDisplayNodeID(volume1DisplayNode->GetID());
 
     vtkMRMLSubjectHierarchyNode* volume1SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, study1ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
+      scene, study1ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(),
       volume1Node->GetName(), volume1Node.GetPointer());
     volume1SeriesShNode->AddUID(UID_NAME, VOLUME1_UID_VALUE);
 
@@ -147,7 +147,7 @@ namespace
     model1Node->SetAndObserveDisplayNodeID(model1DisplayNode->GetID());
 
     vtkMRMLSubjectHierarchyNode* model1SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, study1ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
+      scene, study1ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(),
       model1Node->GetName(), model1Node.GetPointer());
     model1SeriesShNode->AddUID(UID_NAME, MODEL1_UID_VALUE);
 
@@ -161,7 +161,7 @@ namespace
     volume2Node->SetAndObserveDisplayNodeID(volume2DisplayNode->GetID());
 
     vtkMRMLSubjectHierarchyNode* volume2SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
+      scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(),
       volume2Node->GetName(), volume2Node.GetPointer());
     volume2SeriesShNode->AddUID(UID_NAME, VOLUME2_UID_VALUE);
 
@@ -181,7 +181,7 @@ namespace
     scene->AddNode(model21ModelHierarchyNode.GetPointer());
 
     vtkMRMLSubjectHierarchyNode* model21SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
+      scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(),
       model21Node->GetName(), model21ModelHierarchyNode.GetPointer());
     model21SeriesShNode->AddUID(UID_NAME, MODEL21_UID_VALUE);
 
@@ -201,7 +201,7 @@ namespace
     scene->AddNode(model22ModelHierarchyNode.GetPointer());
 
     vtkMRMLSubjectHierarchyNode* model22SeriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES,
+      scene, study2ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(),
       model22Node->GetName(), model22ModelHierarchyNode.GetPointer());
     model22SeriesShNode->AddUID(UID_NAME, MODEL22_UID_VALUE);
 
@@ -300,14 +300,14 @@ namespace
       return false;
       }
     // Check level
-    if (strcmp(patientNode->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
+    if (strcmp(patientNode->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
       {
       std::cout << "Wrong level of found node!" << std::endl;
       return false;
       }
     // Check name
     std::string patientNodeName = std::string(patientNode->GetNameWithoutPostfix()) +
-      vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX;
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
     if (patientNodeName.compare(patientNode->GetName()))
       {
       std::cout << "Failed to get correct name without postfix!" << std::endl;
@@ -422,7 +422,7 @@ namespace
     vtkMRMLSubjectHierarchyNode* commonAncestor = NULL;
 
     commonAncestor = vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(
-      volume1ShNode, volume2ShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
+      volume1ShNode, volume2ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
     if (commonAncestor)
       {
       std::cout << "Common parent check failed (volume1 and volume2 are not in the same study)" << std::endl;
@@ -430,18 +430,18 @@ namespace
       }
 
     commonAncestor = vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(
-      volume2ShNode, model21ShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
+      volume2ShNode, model21ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
     if ( !commonAncestor
-      || strcmp(commonAncestor->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY) )
+      || strcmp(commonAncestor->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
       {
       std::cout << "Common parent check failed (volume2 and model21 are in the same study)" << std::endl;
       return false;
       }
 
     commonAncestor = vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(
-      volume1ShNode, volume2ShNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
+      volume1ShNode, volume2ShNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
     if ( !commonAncestor
-      || strcmp(commonAncestor->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT) )
+      || strcmp(commonAncestor->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
       {
       std::cout << "Common parent check failed (volume1 and volume2 are in the same patient)" << std::endl;
       return false;
@@ -453,7 +453,7 @@ namespace
     foundChild = vtkMRMLSubjectHierarchyNode::GetChildWithName(
       NULL, patientShNode->GetNameWithoutPostfix().c_str(), scene );
     if ( !foundChild
-      || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT) )
+      || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
       {
       std::cout << "Failed to find top-level subject hierarchy node by name" << std::endl;
       return false;
@@ -462,7 +462,7 @@ namespace
     foundChild = vtkMRMLSubjectHierarchyNode::GetChildWithName(
       patientShNode, study1ShNode->GetNameWithoutPostfix().c_str() );
     if ( !foundChild
-      || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY) )
+      || strcmp(foundChild->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
       {
       std::cout << "Failed to find child subject hierarchy node by name" << std::endl;
       return false;
@@ -506,7 +506,7 @@ namespace
       }
 
     const char* attributeValueStudyLevel =
-      volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
+      volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
     if (!attributeValueStudyLevel || strcmp(attributeValueStudyLevel, STUDY_ATTRIBUTE_VALUE))
       {
       std::cout << "Failed to find attribute from ancestor in study level" << std::endl;
@@ -514,7 +514,7 @@ namespace
       }
 
     const char* attributeValueWrongLevel =
-      volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
+      volume2ShNode->GetAttributeFromAncestor(STUDY_ATTRIBUTE_NAME, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
     if (attributeValueWrongLevel)
       {
       std::cout << "Found attribute from ancestor in wrong level" << std::endl;
@@ -523,18 +523,18 @@ namespace
 
     // GetAncestorAtLevel utility method in node class
     vtkMRMLSubjectHierarchyNode* ancestorAtStudyLevel =
-      volume1ShNode->GetAncestorAtLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
+      volume1ShNode->GetAncestorAtLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
     if ( !ancestorAtStudyLevel
-      || strcmp(ancestorAtStudyLevel->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY) )
+      || strcmp(ancestorAtStudyLevel->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
       {
       std::cout << "Failed to find ancestor at study level" << std::endl;
       return false;
       }
 
-    vtkMRMLSubjectHierarchyNode* ancestorAtSubjectLevel =
-      volume1ShNode->GetAncestorAtLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
-    if ( !ancestorAtSubjectLevel
-      || strcmp(ancestorAtSubjectLevel->GetLevel(), vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT) )
+    vtkMRMLSubjectHierarchyNode* ancestorAtPatientLevel =
+      volume1ShNode->GetAncestorAtLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
+    if ( !ancestorAtPatientLevel
+      || strcmp(ancestorAtPatientLevel->GetLevel(), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
       {
       std::cout << "Failed to find ancestor at patient level" << std::endl;
       return false;
@@ -551,7 +551,7 @@ namespace
     // Create series node to insert
     const char* seriesUid = "NEW_SERIES";
     vtkMRMLSubjectHierarchyNode* seriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, NULL, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES, "Series");
+      scene, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(), "Series");
     seriesShNode->AddUID(UID_NAME, seriesUid);
 
     vtkMRMLSubjectHierarchyNode* insertedSeriesNode = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
@@ -595,7 +595,7 @@ namespace
     // Create series node to insert
     const char* seriesUid = "NEW_SERIES";
     vtkMRMLSubjectHierarchyNode* seriesShNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-      scene, NULL, vtkMRMLSubjectHierarchyConstants::DICOMHIERARCHY_LEVEL_SERIES, "Series");
+      scene, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries(), "Series");
     seriesShNode->AddUID(UID_NAME, seriesUid);
 
     vtkMRMLSubjectHierarchyNode* insertedSeriesNode = vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(

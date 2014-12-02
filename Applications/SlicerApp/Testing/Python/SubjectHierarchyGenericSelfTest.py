@@ -289,9 +289,9 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.ctVolumeShNodeName = ctVolumeShNode.GetName()
 
     # Verify DICOM levels
-    self.assertTrue( studyNode.GetParentNode().GetLevel() == 'Patient' )
-    self.assertTrue( studyNode.GetLevel() == 'Study' )
-    self.assertTrue( ctVolumeShNode.GetLevel() == 'Series' )
+    self.assertTrue( studyNode.GetParentNode().GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient() )
+    self.assertTrue( studyNode.GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy() )
+    self.assertTrue( ctVolumeShNode.GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries() )
 
     # Add model and labelmap to the created study
     subjectHierarchySceneModel.reparent(sampleLabelmapNode, studyNode)
@@ -313,10 +313,10 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
 
     from vtkSlicerSubjectHierarchyModuleMRML import vtkMRMLSubjectHierarchyNode
 
-    patient2Node = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, 'Subject', self.patient2Name)
-    study2Node = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, patient2Node, 'Study', self.study2Name)
-    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, study2Node, 'Series', self.testSeriesName)
-    subseriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, seriesNode, 'Subseries', self.testSubseriesName)
+    patient2Node = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient(), self.patient2Name)
+    study2Node = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, patient2Node, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy(), self.study2Name)
+    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, study2Node, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries(), self.testSeriesName)
+    subseriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, seriesNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSubseries(), self.testSubseriesName)
 
     # Check if the created nodes have the right parents
     self.assertTrue( study2Node.GetParentNode() == patient2Node )
@@ -328,9 +328,9 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.delayDisplay("Reparent node in subject hierarchy",self.delayMs)
 
     # Get second study node and labelmap node to reparent
-    study2Node = slicer.util.getNode(self.study2Name + '_SubjectHierarchy')
+    study2Node = slicer.util.getNode(self.study2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( study2Node != None )
-    sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + '_SubjectHierarchy')
+    sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( sampleLabelmapShNode != None )
 
     # Get subject hierarchy scene model
@@ -387,27 +387,27 @@ class SubjectHierarchyGenericSelfTestTest(unittest.TestCase):
     self.assertTrue( ctVolumeShNode != None )
     self.assertTrue( ctVolumeShNode.GetParentNode() == studyNode )
     
-    sampleModelShNode = slicer.util.getNode(self.sampleModelName + '_SubjectHierarchy')
+    sampleModelShNode = slicer.util.getNode(self.sampleModelName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( sampleModelShNode != None )
     self.assertTrue( sampleModelShNode.GetParentNode() == studyNode )
     
-    patient2Node = slicer.util.getNode(self.patient2Name + '_SubjectHierarchy')
+    patient2Node = slicer.util.getNode(self.patient2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( patient2Node != None )
     self.assertTrue( patient2Node.GetParentNode() == None )
 
-    study2Node = slicer.util.getNode(self.study2Name + '_SubjectHierarchy')
+    study2Node = slicer.util.getNode(self.study2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( study2Node != None )
     self.assertTrue( study2Node.GetParentNode() == patient2Node )
 
-    sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + '_SubjectHierarchy')
+    sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( sampleLabelmapShNode != None )
     self.assertTrue( sampleLabelmapShNode.GetParentNode() == study2Node )
 
-    testSeriesNode = slicer.util.getNode(self.testSeriesName + '_SubjectHierarchy')
+    testSeriesNode = slicer.util.getNode(self.testSeriesName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( testSeriesNode != None )
     self.assertTrue( testSeriesNode.GetParentNode() == study2Node )
 
-    testSubseriesNode = slicer.util.getNode(self.testSubseriesName + '_SubjectHierarchy')
+    testSubseriesNode = slicer.util.getNode(self.testSubseriesName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertTrue( testSubseriesNode != None )
     self.assertTrue( testSubseriesNode.GetParentNode() == testSeriesNode )
 

@@ -25,6 +25,7 @@ endif()
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND modules
     DICOM
+    DICOMLib
     DICOMPlugins
     )
   if(Slicer_BUILD_DIFFUSION_SUPPORT)

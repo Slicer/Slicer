@@ -132,7 +132,7 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
   d->setupUi(this);
   this->Superclass::setup();
 
-  // Make connection for the checkboxes
+  // Make connections for the checkboxes and buttons
   connect( d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)), this, SLOT(setMRMLIDsVisible(bool)) );
   connect( d->DisplayTransformsCheckBox, SIGNAL(toggled(bool)), this, SLOT(setTransformsVisible(bool)) );
 

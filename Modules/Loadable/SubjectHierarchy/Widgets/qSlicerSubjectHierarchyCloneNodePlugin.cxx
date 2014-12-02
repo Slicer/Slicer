@@ -221,7 +221,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
     {
     std::string clonedSubjectHierarchyNodeName = currentNode->GetName();
     vtksys::SystemTools::ReplaceString(clonedSubjectHierarchyNodeName,
-      vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX.c_str(), "");
+      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str(), "");
     clonedSubjectHierarchyNodeName.append(CLONE_NODE_NAME_POSTFIX);
 
     vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,

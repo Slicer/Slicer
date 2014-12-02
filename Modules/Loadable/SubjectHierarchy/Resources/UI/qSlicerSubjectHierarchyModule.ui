@@ -39,10 +39,7 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <property name="horizontalSpacing">
-      <number>4</number>
-     </property>
-     <property name="verticalSpacing">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item row="1" column="0" colspan="2">
@@ -66,13 +63,6 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
-       <property name="text">
-        <string>MRML ID's</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
@@ -85,6 +75,13 @@
          </property>
          <property name="checked">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
+         <property name="text">
+          <string>ID's</string>
          </property>
         </widget>
        </item>
@@ -156,16 +153,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
-  <include location="../qSlicerSubjectHierarchyModule.qrc"/>
   <include location="../qSlicerSubjectHierarchyModule.qrc"/>
  </resources>
  <connections>

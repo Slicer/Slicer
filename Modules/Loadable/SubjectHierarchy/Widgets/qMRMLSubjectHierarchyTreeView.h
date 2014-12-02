@@ -78,6 +78,9 @@ public slots:
   /// Edit properties of current node
   virtual void editCurrentSubjectHierarchyNode();
 
+  /// Set multi-selection
+  virtual void setMultiSelection(bool multiSelectionOn);
+
 protected slots:
   /// Expand tree to depth specified by the clicked context menu action
   virtual void expandToDepthFromContextMenu();

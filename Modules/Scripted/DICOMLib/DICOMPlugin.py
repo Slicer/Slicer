@@ -14,7 +14,6 @@ comment = """
 
   These classes are Abstract.
 
-# TODO :
 """
 #
 #########################################################
@@ -30,6 +29,8 @@ class DICOMLoadable(object):
   evaluate method and accepts a list of these
   in its load method corresponding to the things
   the user has selected for loading
+  NOTE: This class is deprecated, use qSlicerDICOMLoadable
+  instead.
   """
 
   def __init__(self):
@@ -53,33 +54,6 @@ class DICOMLoadable(object):
     # both series are selected for loading.
     self.confidence = 0.5
 
-#
-# DICOMExporter
-#
-
-class DICOMExporterWorkInProgress(object):
-  """Container class for ways of exporting
-  slicer data into DICOM.
-  Each plugin returns a list of instances of this
-  from its exportOptions method
-  so the DICOM module can build an appropriate
-  interface to offer user the options to export
-  and perform the exporting operation.
-  """
-
-  def __init__(self):
-    # callable to be invoked if user selects this exporter
-    self.exportCallback = None
-    # name exposed to the user for the export method
-    self.name = "Untitled Exporter"
-    # extra information the user sees on mouse over the export option
-    self.tooltip = "Creates a DICOM file from the selected data"
-    # if true, only the whole scene is an option for exporting
-    self.exportScene = False
-    # list of node types that can be exported
-    self.nodeTypes = []
-
-
 
 #
 # DICOMPlugin
@@ -90,7 +64,7 @@ class DICOMPlugin(object):
   """
 
   def __init__(self):
-    # displayed for the user as the pluging handling the load
+    # displayed for the user as the plugin handling the load
     self.loadType = "Generic DICOM"
     # a dictionary that maps a list of files to a list of loadables
     # (so that subsequent requests for the same info can be
@@ -99,8 +73,8 @@ class DICOMPlugin(object):
     # tags is a dictionary of symbolic name keys mapping to
     # hex tag number values (as in {'pixelData': '7fe0,0010'}).
     # Each subclass should define the tags it will be using in
-    # calls to the dicom database so that any needed values
-    # can be effiently pre-fetched if possible.
+    # calls to the DICOM database so that any needed values
+    # can be efficiently pre-fetched if possible.
     self.tags = {}
 
   def hashFiles(self,files):
@@ -128,12 +102,18 @@ class DICOMPlugin(object):
     key = self.hashFiles(files)
     self.loadableCache[key] = loadables
 
-  def examine(self,fileList):
+  def examineForImport(self,fileList):
     """Look at the list of lists of filenames and return
     a list of DICOMLoadables that are options for loading
     Virtual: should be overridden by the subclass
     """
     return []
+
+  def examine(self,fileList):
+    """Backwards compatibility function for examineForImport
+    (renamed on introducing examineForExport to avoid confusion)
+    """
+    return self.examineForImport(fileList)
 
   def load(self,loadable):
     """Accept a DICOMLoadable and perform the operation to convert
@@ -142,13 +122,20 @@ class DICOMPlugin(object):
     """
     return True
 
-  def exportOptions(self):
-    """Return a list of DICOMExporter instances that describe the
+  def examineForExport(self,node):
+    """Return a list of DICOMExportable instances that describe the
     available techniques that this plugin offers to convert MRML
     data into DICOM data
     Virtual: should be overridden by the subclass
     """
     return []
+
+  def export(self,exportable):
+    """Export an exportable (one series) to file(s)
+    Return error message, empty if success
+    Virtual: should be overridden by the subclass
+    """
+    return ""
 
   def addSeriesInSubjectHierarchy(self,loadable,dataNode):
     """Add loaded DICOM series into subject hierarchy.
@@ -162,6 +149,7 @@ class DICOMPlugin(object):
     tags = {}
     tags['seriesInstanceUID'] = "0020,000E"
     tags['seriesModality'] = "0008,0060"
+    tags['seriesNumber'] = "0020,0011"
     tags['studyInstanceUID'] = "0020,000D"
     tags['studyDescription'] = "0008,1030"
     tags['studyDate'] = "0008,0020"
@@ -170,6 +158,7 @@ class DICOMPlugin(object):
     tags['patientName'] = "0010,0010"
     tags['patientSex'] = "0010,0040"
     tags['patientBirthDate'] = "0010,0030"
+    tags['patientComments'] = "0010,4000"
 
     # Import and check dependencies
     from vtkSlicerSubjectHierarchyModuleMRML import vtkMRMLSubjectHierarchyNode
@@ -193,37 +182,46 @@ class DICOMPlugin(object):
 
     # Set up subject hierarchy node
     seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['seriesInstanceUID'])
-    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, 'Series', loadable.name.encode('latin1', 'ignore'), dataNode) #TODO: Use get function instead of 'Series' constant string
+    seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries(), loadable.name.encode('latin1', 'ignore'), dataNode)
 
     # Specify details of series node
-    seriesNode.AddUID('DICOM',seriesInstanceUid)
-    seriesNode.SetAttribute('DICOMHierarchy.SeriesModality',slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']))
-    seriesNode.SetAttribute('DICOMHierarchy.StudyDate',slicer.dicomDatabase.fileValue(firstFile, tags['studyDate']))
-    seriesNode.SetAttribute('DICOMHierarchy.StudyTime',slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']))
-    seriesNode.SetAttribute('DICOMHierarchy.PatientSex',slicer.dicomDatabase.fileValue(firstFile, tags['patientSex']))
-    seriesNode.SetAttribute('DICOMHierarchy.PatientBirthDate',slicer.dicomDatabase.fileValue(firstFile, tags['patientBirthDate']))
+    seriesNode.AddUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), seriesInstanceUid)
+    seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(), slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']))
+    seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(), slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']))
 
     # Add series node to hierarchy under the right study and patient nodes. If they are present then used, if not, then created
     patientId = slicer.dicomDatabase.fileValue(firstFile,tags['patientID'])
-    patientNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, 'DICOM', patientId)
+    patientNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
     studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['studyInstanceUID'])
-    studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, 'DICOM', studyInstanceUid)
+    studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
     vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(slicer.mrmlScene, patientId, studyInstanceUid, seriesInstanceUid)
 
     if patientNode == None:
-      patientNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, 'DICOM', patientId)
+      patientNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
       if patientNode != None:
+        # Add attributes for DICOM tags
         patientName = slicer.dicomDatabase.fileValue(firstFile,tags['patientName'])
         if patientName == '':
           patientName = 'No name'
+        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameAttributeName(),patientName)
+        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientID']))
+        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientSexAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientSex']))
+        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientBirthDateAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientBirthDate']))
+        patientNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['patientComments']))
+        # Set node name
         patientName = patientName.encode('UTF-8', 'ignore')
-        patientNode.SetName(patientName + '_SubjectHierarchy')
+        patientNode.SetName(patientName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
 
     if studyNode == None:
-      studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, 'DICOM', studyInstanceUid)
+      studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
       if studyNode != None:
+        # Add attributes for DICOM tags
         studyDescription = slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription']).encode('latin1', 'ignore')
-        studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate']).encode('latin1', 'ignore')
         if studyDescription == '':
           studyDescription = 'No study description'
-        studyNode.SetName(studyDescription + ' (' + studyDate + ')_SubjectHierarchy')
+        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),studyDescription)
+        studyDate = slicer.dicomDatabase.fileValue(firstFile,tags['studyDate']).encode('latin1', 'ignore')
+        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),studyDate)
+        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']))
+        # Set node name
+        studyNode.SetName(studyDescription + ' (' + studyDate + ')' + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())

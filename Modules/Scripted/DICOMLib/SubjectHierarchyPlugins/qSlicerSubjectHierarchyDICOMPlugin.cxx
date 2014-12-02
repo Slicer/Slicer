@@ -29,6 +29,9 @@
 #include "qSlicerSubjectHierarchyDICOMPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
+// DICOMLib includes
+#include "qSlicerDICOMExportDialog.h"
+
 // Qt includes
 #include <QDebug>
 #include <QAction>
@@ -60,6 +63,7 @@ public:
   QAction* CreateStudyAction;
   QAction* ConvertFolderToPatientAction;
   QAction* ConvertFolderToStudyAction;
+  QAction* OpenDICOMExportDialogAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,6 +80,7 @@ qSlicerSubjectHierarchyDICOMPluginPrivate::qSlicerSubjectHierarchyDICOMPluginPri
   this->CreateStudyAction = NULL;
   this->ConvertFolderToPatientAction = NULL;
   this->ConvertFolderToStudyAction = NULL;
+  this->OpenDICOMExportDialogAction = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -94,6 +99,9 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
 
   this->ConvertFolderToStudyAction = new QAction("Convert folder to study",q);
   QObject::connect(this->ConvertFolderToStudyAction, SIGNAL(triggered()), q, SLOT(convertCurrentNodeToStudy()));
+
+  this->OpenDICOMExportDialogAction = new QAction("Export to DICOM...",q);
+  QObject::connect(this->OpenDICOMExportDialogAction, SIGNAL(triggered()), q, SLOT(openDICOMExportDialog()));
 }
 
 //-----------------------------------------------------------------------------
@@ -127,12 +135,12 @@ double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyNode(vtkMRMLSub
     }
 
   // Patient level
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     return 0.7;
     }
   // Study level (so that creation of a generic series is possible)
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     return 0.3;
     }
@@ -152,12 +160,12 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
     }
 
   // Patient level
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
+  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     return "Subject"; // Show the role Subject to the user, while internally it is used for the patient notation defined in DICOM
     }
   // Study level (so that creation of a generic series is possible)
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
+  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     return "Study";
     }
@@ -204,12 +212,12 @@ QIcon qSlicerSubjectHierarchyDICOMPlugin::icon(vtkMRMLSubjectHierarchyNode* node
   Q_D(qSlicerSubjectHierarchyDICOMPlugin);
 
   // Patient icon
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     return d->PatientIcon;
     }
   // Study icon
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
     {
     return d->StudyIcon;
     }
@@ -231,7 +239,7 @@ QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::nodeContextMenuActions()cons
   Q_D(const qSlicerSubjectHierarchyDICOMPlugin);
 
   QList<QAction*> actions;
-  actions << d->CreateStudyAction << d->ConvertFolderToPatientAction << d->ConvertFolderToStudyAction;
+  actions << d->CreateStudyAction << d->ConvertFolderToPatientAction << d->ConvertFolderToStudyAction << d->OpenDICOMExportDialogAction;
   return actions;
 }
 
@@ -259,15 +267,31 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForNode(vtkMRMLSu
     }
 
   // Patient
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
     d->CreateStudyAction->setVisible(true);
     }
   // Folder
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER))
+  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     d->ConvertFolderToPatientAction->setVisible(true);
     d->ConvertFolderToStudyAction->setVisible(true);
+    }
+  // Study
+  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
+    {
+    //if (this->canBeExported(node)) //TODO:
+      {
+      d->OpenDICOMExportDialogAction->setVisible(true);
+      }
+    }
+  // Series
+  else if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries()))
+    {
+    //if (this->canBeExported(node)) //TODO:
+      {
+      d->OpenDICOMExportDialogAction->setVisible(true);
+      }
     }
 }
 
@@ -289,11 +313,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::createPatientNode()
     }
 
   // It is called Subject to the user, while internally it is used for the patient notation defined in DICOM
-  std::string nodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + "Subject";
+  std::string nodeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + "Subject";
   nodeName = scene->GenerateUniqueName(nodeName);
   // Create patient subject hierarchy node
   vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, NULL, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT, nodeName.c_str());
+    scene, NULL, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient(), nodeName.c_str());
   emit requestExpandNode(childSubjectHierarchyNode);
 }
 
@@ -308,11 +332,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::createChildStudyUnderCurrentNode()
     return;
     }
 
-  std::string nodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY;
+  std::string nodeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy();
   nodeName = scene->GenerateUniqueName(nodeName);
   // Create patient subject hierarchy node
   vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, currentNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY, nodeName.c_str());
+    scene, currentNode, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy(), nodeName.c_str());
   emit requestExpandNode(childSubjectHierarchyNode);
 }
 
@@ -326,7 +350,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToPatient()
     return;
     }
 
-  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_PATIENT);
+  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
 }
 
 //---------------------------------------------------------------------------
@@ -339,5 +363,22 @@ void qSlicerSubjectHierarchyDICOMPlugin::convertCurrentNodeToStudy()
     return;
     }
 
-  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_STUDY);
+  currentNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
+}
+
+//---------------------------------------------------------------------------
+void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
+{
+  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
+  if (!currentNode)
+    {
+    qCritical() << "qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog: Invalid current node!";
+    return;
+    }
+
+  qSlicerDICOMExportDialog* exportDialog = new qSlicerDICOMExportDialog(NULL);
+  exportDialog->setMRMLScene(qSlicerSubjectHierarchyPluginHandler::instance()->scene());
+  exportDialog->exec(currentNode);
+
+  delete exportDialog;
 }

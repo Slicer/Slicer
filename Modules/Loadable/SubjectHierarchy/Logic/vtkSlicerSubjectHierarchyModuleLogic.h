@@ -60,6 +60,12 @@ public:
   static vtkMRMLSubjectHierarchyNode* AreNodesInSameBranch(
     vtkMRMLNode* node1, vtkMRMLNode* node2, const char* lowestCommonLevel );
 
+  /// Determine if a tag name is a patient tag (not attribute, but tag - without prefix!)
+  static bool IsPatientTag(std::string tagName);
+
+  /// Determine if a tag name is a study tag (not attribute, but tag - without prefix!)
+  static bool IsStudyTag(std::string tagName);
+
 protected:
   /// Called each time a new scene is set
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);

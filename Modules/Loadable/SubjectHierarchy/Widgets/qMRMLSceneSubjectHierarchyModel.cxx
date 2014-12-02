@@ -407,7 +407,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
   // Name column
   if ( item->column() == this->nameColumn() )
     {
-    subjectHierarchyNode->SetName(item->text().append(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NODE_NAME_POSTFIX.c_str()).toLatin1().constData());
+    subjectHierarchyNode->SetName(item->text().append(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str()).toLatin1().constData());
 
     // Rename data node too
     vtkMRMLNode* associatedDataNode = subjectHierarchyNode->GetAssociatedNode();

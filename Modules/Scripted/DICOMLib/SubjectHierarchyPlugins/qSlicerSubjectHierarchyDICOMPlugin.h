@@ -102,6 +102,9 @@ protected slots:
   /// Convert current node (must be folder) to study
   void convertCurrentNodeToStudy();
 
+  /// Open DICOM export dialog to export the selected series
+  void openDICOMExportDialog();
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyDICOMPluginPrivate> d_ptr;
 

@@ -1,4 +1,5 @@
 from DICOMProcesses import *
-from DICOMDataExchange import *
+from DICOMExportScalarVolume import *
+from DICOMExportScene import *
 from DICOMWidgets import *
 from DICOMPlugin import *

@@ -30,11 +30,9 @@
 #include "qSlicerSubjectHierarchyModuleWidget.h"
 #include "vtkSlicerSubjectHierarchyModuleLogic.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyPluginHandler.h"
-#include "qSlicerSubjectHierarchyDICOMPlugin.h"
 #include "qSlicerSubjectHierarchyCloneNodePlugin.h"
 #include "qSlicerSubjectHierarchyChartsPlugin.h"
 #include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
@@ -132,8 +130,6 @@ void qSlicerSubjectHierarchyModule::setup()
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyDICOMPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyFolderPlugin());
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchyParseLocalDataPlugin());
@@ -216,7 +212,7 @@ void qSlicerSubjectHierarchyModule::onNodeAdded(vtkObject* sceneObject, vtkObjec
       }
     // Abort if invalid or hidden node or if explicitly excluded from subject hierarchy before even adding to the scene
     if ( !node || node->GetHideFromEditors()
-      || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME.c_str()) )
+      || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()) )
       {
       return;
       }

@@ -135,7 +135,9 @@ public:
 
   /// Get attribute value for a node from an upper level in the subject hierarchy
   /// \param attributeName Name of the requested attribute
-  /// \param level Level of the ancestor node we look for the attribute in (e.g. SubjectHierarchy_LEVEL_STUDY). If NULL, then look all the way up to the subject
+  /// \param level Level of the ancestor node we look for the attribute in
+  ///   (e.g. value of vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelStudy()).
+  ///   If NULL, then look all the way up to the subject
   /// \return Attribute value from the lowest level ancestor where the attribute can be found
   const char* GetAttributeFromAncestor(const char* attributeName, const char* level=NULL);
 

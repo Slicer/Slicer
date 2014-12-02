@@ -18,7 +18,7 @@
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
 
-==============================================================================*/\
+==============================================================================*/
 
 #ifndef __qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin_h
 #define __qSlicerSubjectHierarchyModuleWidgetsAbstractPlugin_h

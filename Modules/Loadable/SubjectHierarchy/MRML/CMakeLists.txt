@@ -13,7 +13,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
 # Sources
 
 set(${KIT}_SRCS
-  vtkMRML${MODULE_NAME}Constants.cxx
   vtkMRML${MODULE_NAME}Constants.h
   vtkMRML${MODULE_NAME}Node.cxx
   vtkMRML${MODULE_NAME}Node.h

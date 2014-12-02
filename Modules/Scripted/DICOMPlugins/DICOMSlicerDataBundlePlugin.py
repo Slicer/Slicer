@@ -21,7 +21,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     self.tags['zipSize'] = "cadb,1008"
     self.tags['zipData'] = "cadb,1010"
 
-  def examine(self,fileLists):
+  def examineForImport(self,fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.

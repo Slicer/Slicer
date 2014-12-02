@@ -53,7 +53,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
         tagIndex += 1
     self.tags['seriesDescription'] = "0008,103e"
 
-  def examine(self,fileLists):
+  def examineForImport(self,fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
@@ -75,7 +75,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
 
     For testing:
     dv = slicer.modules.dicomPlugins['DICOMDiffusionVolumePlugin']()
-    dv.examine([['/media/extra650/data/DWI-examples/SiemensTrioTimB17-DWI/63000-000025-000001.dcm']])
+    dv.examineForImport([['/media/extra650/data/DWI-examples/SiemensTrioTimB17-DWI/63000-000025-000001.dcm']])
     """
 
     # get the series description to use as base for volume name

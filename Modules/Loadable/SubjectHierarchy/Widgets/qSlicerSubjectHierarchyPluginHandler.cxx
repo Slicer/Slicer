@@ -92,12 +92,12 @@ void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPl
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler()
-  : m_CurrentNode(NULL)
+qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObject* parent)
+  : QObject(parent)
+  , m_CurrentNode(NULL)
   , m_Scene(NULL)
 {
   this->m_RegisteredPlugins.clear();
-
   this->m_DefaultPlugin = new qSlicerSubjectHierarchyDefaultPlugin();
 }
 

@@ -190,6 +190,9 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
 
   // Update actions in owner plugin sub-menu when opened
   QObject::connect( this->SelectPluginSubMenu, SIGNAL(aboutToShow()), q, SLOT(updateSelectPluginActions()) );
+
+  // Connect invalidate filters
+  QObject::connect( q->sceneModel(), SIGNAL(invalidateFilter()), q->model(), SLOT(invalidate()) );
 }
 
 //------------------------------------------------------------------------------
@@ -441,4 +444,23 @@ void qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu()
 
   int depth = senderAction->text().toInt();
   this->expandToDepth(depth);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setMultiSelection(bool multiSelectionOn)
+{
+  return; //TODO: - Make PluginHandler::currentNode a list
+          //      - Context menu should show only Delete from the basic actions
+          //        and those plugin actions that are offered for every selected node
+          //      - Offer export to DICOM if every selected node has an exportable.
+          //      - Handle multiple nodes in drag&drop.
+
+  if (multiSelectionOn)
+    {
+    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    }
+  else
+    {
+    this->setSelectionMode(QAbstractItemView::SingleSelection);
+    }
 }

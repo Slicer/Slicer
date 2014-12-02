@@ -85,7 +85,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterSubjectHierarchyProxyModel
     {
     // Hide if explicitly excluded from tree
     vtkMRMLNode* associatedNode = subjectHierarchyNode->GetAssociatedNode();
-    if ( associatedNode && associatedNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_EXCLUDE_FROM_TREE_ATTRIBUTE_NAME.c_str()) )
+    if ( associatedNode && associatedNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()) )
       {
       return Reject;
       }

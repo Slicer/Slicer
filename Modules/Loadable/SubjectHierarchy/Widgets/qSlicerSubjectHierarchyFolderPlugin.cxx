@@ -115,7 +115,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
     }
 
   // Folder
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     return 1.0;
     }
@@ -135,7 +135,7 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
     }
 
   // Folder level
-  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER))
+  if (currentNode->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     return "Folder";
     }
@@ -155,7 +155,7 @@ QIcon qSlicerSubjectHierarchyFolderPlugin::icon(vtkMRMLSubjectHierarchyNode* nod
   Q_D(qSlicerSubjectHierarchyFolderPlugin);
 
   // Subject and Folder icon
-  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER))
+  if (node->IsLevel(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()))
     {
     return d->FolderIcon;
     }
@@ -228,10 +228,10 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyFolderPlugin::createFolderUn
     }
 
   // Create folder subject hierarchy node
-  std::string nodeName = vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_NEW_NODE_NAME_PREFIX + vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER;
+  std::string nodeName = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewNodeNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   nodeName = scene->GenerateUniqueName(nodeName);
   vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
-    scene, parentNode, vtkMRMLSubjectHierarchyConstants::SUBJECTHIERARCHY_LEVEL_FOLDER, nodeName.c_str());
+    scene, parentNode, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder(), nodeName.c_str());
   emit requestExpandNode(childSubjectHierarchyNode);
 
   return childSubjectHierarchyNode;

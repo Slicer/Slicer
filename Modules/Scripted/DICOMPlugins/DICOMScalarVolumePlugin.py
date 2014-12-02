@@ -17,6 +17,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     super(DICOMScalarVolumePluginClass,self).__init__()
     self.loadType = "Scalar Volume"
     self.epsilon = epsilon
+    self.defaultStudyUID = 'SLICER10001' #TODO: What should be the new study ID?
 
     self.tags['seriesDescription'] = "0008,103e"
     self.tags['seriesNumber'] = "0020,0011"
@@ -32,7 +33,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.tags['instanceUID'] = "0008,0018"
 
 
-  def examine(self,fileLists):
+  def examineForImport(self,fileLists):
     """ Returns a sorted list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter (list of file lists).
@@ -332,7 +333,90 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
     return volumeNode
 
+  def examineForExport(self,node):
+    """Return a list of DICOMExportable instances that describe the
+    available techniques that this plugin offers to convert MRML
+    data into DICOM data
+    """
+    # cannot export if there is no data node or the data node is not a volume
+    if node.GetAssociatedNode() == None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
+      return []
 
+    # Define basic properties of the exportable
+    exportable = slicer.qSlicerDICOMExportable()
+    exportable.name = self.loadType
+    exportable.tooltip = "Creates a series of DICOM files from scalar volumes"
+    exportable.nodeID = node.GetID()
+    exportable.pluginClass = self.__module__
+    exportable.confidence = 0.5 # There could be more specialized volume types
+
+    # Define required tags and default values
+    exportable.setTag('SeriesDescription', 'No series description')
+    exportable.setTag('Modality', 'CT')
+    exportable.setTag('Manufacturer', 'Unknown manufacturer')
+    exportable.setTag('Model', 'Unknown model')
+    exportable.setTag('SeriesNumber', '1')
+
+    return [exportable]
+
+  def export(self,exportables):
+    for exportable in exportables:
+      # Get node to export
+      node = slicer.mrmlScene.GetNodeByID(exportable.nodeID)
+      if node.GetAssociatedNode() == None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
+        error = "Series '" + node.GetNameWithoutPostfix() + "' cannot be exported!"
+        print(error)
+        return error
+
+      # Get output directory and create a subdirectory. This is necessary
+      # to avoid overwriting the files in case of multiple exportables, as
+      # naming of the DICOM files is static
+      directoryDir = qt.QDir(exportable.directory)
+      directoryDir.mkdir(exportable.nodeID)
+      directoryDir.cd(exportable.nodeID)
+      directory = directoryDir.absolutePath()
+      print("Export scalar volume '" + node.GetAssociatedNode().GetName() + "' to directory " + directory)
+
+      # Get study and patient nodes
+      studyNode = node.GetParentNode()
+      if studyNode == None:
+        error = "Unable to get study node for series '" + node.GetAssociatedNode().GetName() + "'"
+        print(error)
+        return error
+      patientNode = studyNode.GetParentNode()
+      if patientNode == None:
+        error = "Unable to get patient node for series '" + node.GetAssociatedNode().GetName() + "'"
+        print(error)
+        return error
+
+      # Assemble tags dictionary for volume export
+      from vtkSlicerSubjectHierarchyModuleMRMLPython import vtkMRMLSubjectHierarchyConstants
+      tags = {}
+      tags['Patient Name'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
+      tags['Patient ID'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
+      tags['Patient Comments'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
+      tags['Study ID'] = self.defaultStudyUID
+      tags['Study Date'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
+      tags['Study Description'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
+      tags['Modality'] = exportable.tag('Modality')
+      tags['Manufacturer'] = exportable.tag('Manufacturer')
+      tags['Model'] = exportable.tag('Model')
+      tags['Series Description'] = exportable.tag('SeriesDescription')
+      tags['Series Number'] = exportable.tag('SeriesNumber')
+
+      # Validate tags
+      if tags['Modality'] == "":
+        error = "Empty modality for series '" + node.GetAssociatedNode().GetName() + "'"
+        print(error)
+        return error
+      #TODO: more tag checks
+
+      # Perform export
+      exporter = DICOMLib.DICOMExportScalarVolume(tags['Study ID'], node.GetAssociatedNode(), tags, directory)
+      exporter.export()
+
+    # Success
+    return ""
 #
 # DICOMScalarVolumePlugin
 #
