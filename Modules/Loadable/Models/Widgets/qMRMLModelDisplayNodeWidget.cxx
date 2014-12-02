@@ -571,17 +571,20 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     }
   d->ActiveScalarRangeLabel->setText(scalarRangeString);
 
-  if (d->ScalarsColorNodeComboBox->mrmlScene() !=
-      d->MRMLModelDisplayNode->GetScene())
+  if (d->MRMLModelDisplayNode)
     {
-    d->ScalarsColorNodeComboBox->setMRMLScene(
-      d->MRMLModelDisplayNode->GetScene());
-    }
-  if (d->ScalarsColorNodeComboBox->currentNodeID() !=
-      d->MRMLModelDisplayNode->GetColorNodeID())
-    {
-    d->ScalarsColorNodeComboBox->setCurrentNodeID(
-      d->MRMLModelDisplayNode->GetColorNodeID());
+    if (d->ScalarsColorNodeComboBox->mrmlScene() !=
+        d->MRMLModelDisplayNode->GetScene())
+      {
+      d->ScalarsColorNodeComboBox->setMRMLScene(
+        d->MRMLModelDisplayNode->GetScene());
+      }
+    if (d->ScalarsColorNodeComboBox->currentNodeID() !=
+        d->MRMLModelDisplayNode->GetColorNodeID())
+      {
+      d->ScalarsColorNodeComboBox->setCurrentNodeID(
+        d->MRMLModelDisplayNode->GetColorNodeID());
+      }
     }
 }
 

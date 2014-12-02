@@ -288,10 +288,13 @@ void vtkMRMLModelHierarchyLogic::SetChildrenVisibility(vtkMRMLDisplayableHierarc
         }
       }
     vtkMRMLDisplayableHierarchyNode *dhnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
-    displayNode = dhnode->GetDisplayNode();
-    if (displayNode)
+    if (dhnode)
       {
-      displayNode->SetVisibility(visibility);
+      displayNode = dhnode->GetDisplayNode();
+      if (displayNode)
+        {
+        displayNode->SetVisibility(visibility);
+        }
       }
     }
   if (batchProcess && scene!=NULL)
