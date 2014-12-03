@@ -718,12 +718,15 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
   vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(associatedNode);
   if (!childSubjectHierarchyNode)
     {
-  // Create subject hierarchy node
+    // Create subject hierarchy node
     childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::New();
     nodeCreated = true;
     }
 
-  childSubjectHierarchyNode->SetLevel(level);
+  if (level)
+    {
+    childSubjectHierarchyNode->SetLevel(level);
+    }
 
   std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
   childSubjectHierarchyNode->SetName(shNodeName.c_str());

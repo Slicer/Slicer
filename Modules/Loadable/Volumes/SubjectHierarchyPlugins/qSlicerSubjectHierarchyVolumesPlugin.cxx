@@ -188,7 +188,7 @@ QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkMRMLSubjectHierarchyNod
   QString tooltipString = Superclass::tooltip(node);
 
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node->GetAssociatedNode());
-  vtkImageData* imageData = volumeNode->GetImageData();
+  vtkImageData* imageData = (volumeNode ? volumeNode->GetImageData() : NULL);
   if (volumeNode && imageData)
     {
     int dimensions[3] = {0,0,0};

@@ -125,11 +125,12 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyNode(vtkMRMLS
     return 0.0;
     }
 
-  // Chart
+  // Markup
   vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLMarkupsFiducialNode"))
     {
-    return 0.5; // There may be other plugins that can handle special charts better
+    // Node is a markup fiducial
+    return 0.5;
     }
 
   return 0.0;

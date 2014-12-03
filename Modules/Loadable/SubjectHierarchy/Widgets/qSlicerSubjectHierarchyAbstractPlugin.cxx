@@ -140,7 +140,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parentNode, const char* level/*='Series'*/)
+bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parentNode, const char* level/*=NULL*/)
 {
   if (!nodeToAdd)
     {
