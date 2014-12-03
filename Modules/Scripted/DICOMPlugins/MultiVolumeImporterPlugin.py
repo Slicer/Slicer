@@ -39,6 +39,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['GE.B-value'] = "0043,1039"
     # used on some GE systems, with 2D acquisitions
     self.multiVolumeTags['TemporalPositionIdentifier'] = "0020,0100"
+    # Philips DWI
+    self.multiVolumeTags['Philips.B-value'] = "2001,1003"
 
     for tagName,tagVal in self.multiVolumeTags.iteritems():
       self.tags[tagName] = tagVal
@@ -53,6 +55,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
     self.multiVolumeTagsUnits['Siemens.B-value'] = "mm2/s"
     self.multiVolumeTagsUnits['GE.B-value'] = "mm2/s"
+    self.multiVolumeTagsUnits['Philips.B-value'] = "mm2/s"
 
     self.epsilon = epsilon
 
