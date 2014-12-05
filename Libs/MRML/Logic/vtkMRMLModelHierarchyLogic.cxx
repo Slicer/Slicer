@@ -176,8 +176,9 @@ vtkMRMLModelHierarchyNodeList vtkMRMLModelHierarchyLogic
 //----------------------------------------------------------------------------
 void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
 {
+  // Clear cache if scene is invalid
   std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> >::iterator iter;
-  if (this->GetMRMLScene() == 0)
+  if (!this->GetMRMLScene())
     {
     for (iter  = this->HierarchyChildrenNodes.begin();
          iter != this->HierarchyChildrenNodes.end();
@@ -186,46 +187,51 @@ void vtkMRMLModelHierarchyLogic::UpdateHierarchyChildrenMap()
       iter->second.clear();
       }
     this->HierarchyChildrenNodes.clear();
+    return;
     }
 
-  if (this->GetMRMLScene() &&
-      (this->GetMRMLScene()->GetNodes()->GetMTime() > this->HierarchyChildrenNodesMTime))
+  // Skip update if nodes were not modified since last update
+  if (this->GetMRMLScene()->GetNodes()->GetMTime() <= this->HierarchyChildrenNodesMTime)
     {
-    for (iter  = this->HierarchyChildrenNodes.begin();
-         iter != this->HierarchyChildrenNodes.end();
-         iter++)
-      {
-      iter->second.clear();
-      }
-    this->HierarchyChildrenNodes.clear();
+    return;
+    }
 
-    std::vector<vtkMRMLNode *> nodes;
-    int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+  // Clear hierarchy children nodes cache
+  for (iter  = this->HierarchyChildrenNodes.begin();
+       iter != this->HierarchyChildrenNodes.end();
+       iter++)
+    {
+    iter->second.clear();
+    }
+  this->HierarchyChildrenNodes.clear();
 
-    for (int i=0; i<nnodes; i++)
+  // Update hierarchy children nodes cache
+  std::vector<vtkMRMLNode *> nodes;
+  int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelHierarchyNode", nodes);
+
+  for (int i=0; i<nnodes; i++)
+    {
+    vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);
+    if (node)
       {
-      vtkMRMLModelHierarchyNode *node =  vtkMRMLModelHierarchyNode::SafeDownCast(nodes[i]);
-      if (node)
+      vtkMRMLModelHierarchyNode *pnode = vtkMRMLModelHierarchyNode::SafeDownCast(node->GetParentNode());
+      if (pnode)
         {
-        vtkMRMLModelHierarchyNode *pnode = vtkMRMLModelHierarchyNode::SafeDownCast(node->GetParentNode());
-        if (pnode)
+        iter = this->HierarchyChildrenNodes.find(std::string(pnode->GetID()));
+        if (iter == this->HierarchyChildrenNodes.end())
           {
-          iter = this->HierarchyChildrenNodes.find(std::string(pnode->GetID()));
-          if (iter == this->HierarchyChildrenNodes.end())
-            {
-            std::vector< vtkMRMLModelHierarchyNode *> children;
-            children.push_back(node);
-            this->HierarchyChildrenNodes[std::string(pnode->GetID())] = children;
-            }
-          else
-            {
-            iter->second.push_back(node);
-            }
+          std::vector< vtkMRMLModelHierarchyNode *> children;
+          children.push_back(node);
+          this->HierarchyChildrenNodes[std::string(pnode->GetID())] = children;
+          }
+        else
+          {
+          iter->second.push_back(node);
           }
         }
       }
-    this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetNodes()->GetMTime();
     }
+  this->HierarchyChildrenNodesMTime = this->GetMRMLScene()->GetNodes()->GetMTime();
 }
 
 //----------------------------------------------------------------------------

@@ -57,7 +57,7 @@ public:
   virtual QString acknowledgementText()const;
 
   /// Return the authors of the module
-  virtual QStringList  contributors()const;
+  virtual QStringList contributors()const;
 
   /// Return a custom icon for the module
   virtual QIcon icon()const;
@@ -75,44 +75,14 @@ protected:
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
-protected slots:
-  /// Handles logic modified event, which happens on major changes in the
-  /// scene (new scene, batch processing, import etc.)
-  void onLogicModified();
-
-  /// Called when a node is added to the scene so that a plugin can claim it
-  /// if it is a subject hierarchy node
-  /// Note: Implemented in Module class not in Logic because this exercises the Subject
-  ///   hierarchy plugin mechanism and those are Qt classes
-  void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
-
-  /// Called when a node is removed to the scene so that the associated
-  /// subject hierarchy node can be deleted too
-  /// Note: Implemented in Module class not in Logic because this exercises the Subject
-  ///   hierarchy plugin mechanism and those are Qt classes
-  void onNodeAboutToBeRemoved(vtkObject* scene, vtkObject* nodeObject);
-
-  /// Called when a subject hierarchy node is modified.
-  /// A search for owner plugin is performed if the plugin is not overridden by the user,
-  /// in case the changes in the subject hierarchy node leads to a new most suitable plugin.
-  /// Note: Implemented in Module class not in Logic because this exercises the Subject
-  ///   hierarchy plugin mechanism and those are Qt classes
-  void onSubjectHierarchyNodeModified(vtkObject* nodeObject);
-
-  /// Called when scene import is finished.
-  /// Subject hierarchy nodes are created for supported data nodes if they have not
-  /// been imported with the scene (backwards compatibility for older scenes)
-  /// Note: Implemented in Module class not in Logic because this exercises the Subject
-  ///   hierarchy plugin mechanism and those are Qt classes
-  void onSceneImportEnded(vtkObject* sceneObject);
-
-protected:
-  QScopedPointer<qSlicerSubjectHierarchyModulePrivate> d_ptr;
+  /// Register subject hierarchy core plugins
+  /// Note: Registering plugins provided by other modules is the responsibility
+  ///   of the module!
+  void registerCorePlugins();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyModule);
   Q_DISABLE_COPY(qSlicerSubjectHierarchyModule);
-
 };
 
 #endif

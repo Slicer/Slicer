@@ -73,6 +73,48 @@ public:
   /// Only used in python tests!
   Q_INVOKABLE void setCurrentSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node);
 
+public slots:
+  /// Handles logic modified event, which happens on major changes in the
+  /// scene (new scene, batch processing, import etc.)
+  void onLogicModified();
+
+protected:
+  /// Add supported nodes to subject hierarchy.
+  /// This method is called if auto-creation is enabled and a supported node is added to the
+  /// scene, or if the user answers yes to the question that pops up upon entering subject
+  /// hierarchy module if supported nodes are found that are not in the hierarchy.
+  void addSupportedNodesToSubjectHierarchy();
+
+  /// Determine whether there are supported nodes not in subject hierarchy
+  bool isThereSupportedNodeOutsideSubjectHierarchy();
+
+protected slots:
+  /// Called when a node is added to the scene so that a plugin can claim it
+  /// if it is a subject hierarchy node
+  /// Note: Implemented in Module class not in Logic because this exercises the Subject
+  ///   hierarchy plugin mechanism and those are Qt classes
+  void onNodeAdded(vtkObject* scene, vtkObject* nodeObject);
+
+  /// Called when a node is removed to the scene so that the associated
+  /// subject hierarchy node can be deleted too
+  /// Note: Implemented in Module class not in Logic because this exercises the Subject
+  ///   hierarchy plugin mechanism and those are Qt classes
+  void onNodeAboutToBeRemoved(vtkObject* scene, vtkObject* nodeObject);
+
+  /// Called when a subject hierarchy node is modified.
+  /// A search for owner plugin is performed if the plugin is not overridden by the user,
+  /// in case the changes in the subject hierarchy node leads to a new most suitable plugin.
+  /// Note: Implemented in Module class not in Logic because this exercises the Subject
+  ///   hierarchy plugin mechanism and those are Qt classes
+  void onSubjectHierarchyNodeModified(vtkObject* nodeObject);
+
+  /// Called when scene import is finished.
+  /// Subject hierarchy nodes are created for supported data nodes if they have not
+  /// been imported with the scene (backwards compatibility for older scenes)
+  /// Note: Implemented in Module class not in Logic because this exercises the Subject
+  ///   hierarchy plugin mechanism and those are Qt classes
+  void onSceneImportEnded(vtkObject* sceneObject);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyModuleWidgetPrivate> d_ptr;
 
