@@ -1,6 +1,7 @@
 import os, string
 import unittest
 from __main__ import qt, ctk, slicer
+import slicer.log
 
 class ScriptedLoadableModule:
   def __init__(self, parent):
@@ -115,8 +116,8 @@ class ScriptedLoadableModuleWidget:
     except Exception, e:
       import traceback
       traceback.print_exc()
-      qt.QMessageBox.warning(slicer.util.mainWindow(),
-          "Reload and Test", 'Exception!\n\n' + str(e) + "\n\nSee Python Console for Stack Trace")
+      errorMessage = "Reload and Test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
+      slicer.log.error(errorMessage, showMessageBox=True)
 
 class ScriptedLoadableModuleLogic():
 
@@ -175,17 +176,9 @@ class ScriptedLoadableModuleLogic():
     return node
 
   def delayDisplay(self,message,msec=1000):
-    #
-    # logic version of delay display
-    #
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+    """Display a message in a popup window for a short time
+    """
+    slicer.log.info(message, True, msec)
 
   def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
     """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
@@ -232,24 +225,24 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
   """
 
   def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
+    """Display messages to the user/tester during testing.
+    This method can be temporarily overridden to allow tests running
+    with longer or shorter message display time.
+    Displaying a dialog and waiting does two things:
+    1) it lets the event loop catch up to the state of the test so
+    that rendering and widget updates have all taken place before
+    the test continues and
+    2) it shows the user/developer/tester the state of the test
     so that we'll know when it breaks.
+    Note:
+    Information that might be useful (but not important enough to show
+    to the user) can be logged using slicer.log.info function.
+    Error messages should be displayed using slicer.log.error function.
     """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+    # By default simply use slicer.log.info with message popup enabled
+    slicer.log.info(message, True, msec)
 
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
-    self.delayDisplay('No test is defined in '+self.__class__.__name__)
-
+    slicer.log.error('No test is defined in '+self.__class__.__name__)
