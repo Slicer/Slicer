@@ -301,7 +301,11 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
         mrmlNode->GetID())
       {
       hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID());
-      if (!hierarchyNode)
+      // Create hierarchy node if does not exist or different type than the new parent
+      // (hierarchy node types need to match within a hierarchy to avoid "mixing" of hierarchies of different type)
+      // Note: This may need to be revised if mixing across classes is to be allowed (e.g. displayable and model,
+      //   in which case base classes might be allowed as well)
+      if (!hierarchyNode || strcmp(newParent->GetClassName(), hierarchyNode->GetClassName()))
         {
         vtkMRMLHierarchyNode* newHierarchyNode = d->CreateHierarchyNode();
         newHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString(

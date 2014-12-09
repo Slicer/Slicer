@@ -115,6 +115,12 @@ protected slots:
   ///   hierarchy plugin mechanism and those are Qt classes
   void onSceneImportEnded(vtkObject* sceneObject);
 
+  /// Called when hierarchy modified event is fired for a data node
+  /// This method ensures that the hierarchy nodes remain consistent and deterministic
+  /// so that instead of having a data node directly associated to multiple hierarchy nodes,
+  /// nested association is used (see vtkMRMLSubjectHierarchyNode header)
+  void onMRMLNodeHierarchyModified(vtkObject* nodeObject);
+
 protected:
   QScopedPointer<qSlicerSubjectHierarchyModuleWidgetPrivate> d_ptr;
 

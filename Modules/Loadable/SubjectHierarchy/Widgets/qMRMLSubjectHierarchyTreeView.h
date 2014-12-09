@@ -69,9 +69,6 @@ public slots:
   /// for the currently selected node.
   virtual void updateSelectPluginActions();
 
-  /// Open module belonging to the data node associated to a subject hierarchy node
-  virtual void openModuleForSubjectHierarchyNode(vtkMRMLNode* node);
-
   /// Remove current node from subject hierarchy on context menu choice
   virtual void removeCurrentNodeFromSubjectHierarchy();
 

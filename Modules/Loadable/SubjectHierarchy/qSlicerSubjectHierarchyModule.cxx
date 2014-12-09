@@ -93,11 +93,6 @@ void qSlicerSubjectHierarchyModule::setup()
 
   // Register Subject Hierarchy core plugins
   this->registerCorePlugins();
-
-  // Handle scene change event if occurs
-  qSlicerSubjectHierarchyModuleWidget* moduleWidget =
-    dynamic_cast<qSlicerSubjectHierarchyModuleWidget*>(this->widgetRepresentation());
-  qvtkConnect( this->logic(), vtkCommand::ModifiedEvent, moduleWidget, SLOT( onLogicModified() ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -126,5 +121,10 @@ vtkMRMLAbstractLogic* qSlicerSubjectHierarchyModule::createLogic()
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerSubjectHierarchyModule::createWidgetRepresentation()
 {
-  return new qSlicerSubjectHierarchyModuleWidget;
+  qSlicerSubjectHierarchyModuleWidget* moduleWidget = new qSlicerSubjectHierarchyModuleWidget();
+
+  // Handle scene change event if occurs
+  qvtkConnect( this->logic(), vtkCommand::ModifiedEvent, moduleWidget, SLOT( onLogicModified() ) );
+
+  return moduleWidget;
 }

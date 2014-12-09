@@ -137,6 +137,8 @@ void qSlicerSubjectHierarchyModuleWidget::onEnter()
   d->ModuleWindowInitialized = true;
   d->SubjectHierarchyTreeView->setMRMLScene(this->mrmlScene());
 
+  this->onLogicModified();
+
   this->updateWidgetFromMRML();
 }
 
@@ -219,7 +221,7 @@ void qSlicerSubjectHierarchyModuleWidget::updateWidgetFromMRML()
     // Ask the user if they want subject hierarchy to be created, otherwise it's unusable
     QMessageBox::StandardButton answer =
       QMessageBox::question(NULL, tr("Do you want to create subject hierarchy?"),
-      tr("Supported nodes have bene found outside the hierarchy. Do you want to create subject hierarchy?\n\nIf you choose No, subject hierarchy will not be usable.\nIf you choose yes, then this question will appear every time you enter this module and not all supported nodes are in the hierarchy\nIf you choose Yes to All, this question never appears again, and all supported data nodes are automatically added to the hierarchy"),
+      tr("Supported nodes have been found outside the hierarchy. Do you want to create subject hierarchy?\n\nIf you choose No, subject hierarchy will not be usable.\nIf you choose yes, then this question will appear every time you enter this module and not all supported nodes are in the hierarchy\nIf you choose Yes to All, this question never appears again, and all supported data nodes are automatically added to the hierarchy"),
       QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
       QMessageBox::Yes);
     // Create subject hierarchy if the user some form of yes
@@ -338,18 +340,22 @@ void qSlicerSubjectHierarchyModuleWidget::onNodeAdded(vtkObject* sceneObject, vt
     // See if owner plugin has to be changed when a note is modified
     qvtkConnect( subjectHierarchyNode, vtkCommand::ModifiedEvent, this, SLOT( onSubjectHierarchyNodeModified(vtkObject*) ) );
     }
-  // If data node and auto-creation is enabled, then add subject hierarchy node for the added data node
-  else if (d->AutoCreateSubjectHierarchy)
+  // If data node
+  else
     {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
 
-    // Don't add to subject hierarchy automatically if importing scene, because the SH nodes are stored in the scene and will be loaded
-    if (scene->IsImporting())
-      {
-      return;
-      }
-    // Abort if invalid or hidden node or if explicitly excluded from subject hierarchy before even adding to the scene
-    if ( !node || node->GetHideFromEditors()
+    // Observe HierarchyModifiedEvent so that we can switch to nested association (see vtkMRMLSubjectHierarchyNode header)
+    // if the data node is associated independently to another hierarchy node
+    qvtkConnect( node, vtkMRMLNode::HierarchyModifiedEvent, this, SLOT( onMRMLNodeHierarchyModified(vtkObject*) ) );
+
+    // If auto-creation is enabled, then add subject hierarchy node for the added data node
+    // Don't add to subject hierarchy automatically one-by-one if importing scene, because the SH nodes may be stored in the scene and loaded
+    // Also abort if invalid or hidden node or if explicitly excluded from subject hierarchy before even adding to the scene
+    if ( !d->AutoCreateSubjectHierarchy
+      || scene->IsImporting()
+      || !node
+      || node->GetHideFromEditors()
       || node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyExcludeFromTreeAttributeName().c_str()) )
       {
       return;
@@ -490,6 +496,74 @@ void qSlicerSubjectHierarchyModuleWidget::onSceneImportEnded(vtkObject* sceneObj
     {
     // Only auto-create subject hierarchy if it's enabled
     this->addSupportedNodesToSubjectHierarchy();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::onMRMLNodeHierarchyModified(vtkObject* nodeObject)
+{
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
+  if (!node || node->IsA("vtkMRMLHierarchyNode"))
+    // Only handle this event for non-hierarchy nodes, as the same event is fired for both
+    // hierarchy and associated nodes, and also on other occasions, not just associations.
+    {
+    return;
+    }
+  vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(node->GetScene());
+  if (!scene)
+    {
+    return;
+    }
+
+  // Resolve possible conflict by creating nested association if necessary
+
+  // Look for hierarchy nodes that are associated to the node in question
+  std::vector<vtkMRMLNode*> hierarchyNodes;
+  std::vector<vtkMRMLHierarchyNode*> associatedHierarchyNodes;
+  scene->GetNodesByClass("vtkMRMLHierarchyNode", hierarchyNodes);
+  for (std::vector<vtkMRMLNode*>::iterator hierarchyNodeIt = hierarchyNodes.begin(); hierarchyNodeIt != hierarchyNodes.end(); ++hierarchyNodeIt)
+    {
+    vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(*hierarchyNodeIt);
+    if ( hierarchyNode && hierarchyNode->GetAssociatedNodeID()
+      && !strcmp(hierarchyNode->GetAssociatedNodeID(), node->GetID()) )
+      {
+      associatedHierarchyNodes.push_back(hierarchyNode);
+      }
+    }
+
+  // If more than one hierarchy nodes are associated with the data node, then create nested association.
+  if (associatedHierarchyNodes.size() > 1)
+    {
+    // We cannot handle multi-level nesting yet, it's only used by subject hierarchy, so it must be a bug!
+    if (associatedHierarchyNodes.size() > 2)
+      {
+      qCritical() << "qSlicerSubjectHierarchyModuleWidget::onMRMLNodeHierarchyModified: Multi-level nested associations detected for node "
+        << node->GetName() << "! This is probably a bug, please report.";
+      return;
+      }
+
+    // Create nested association
+    vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = NULL;
+    vtkMRMLHierarchyNode* otherHierarchyNode = NULL;
+    if (associatedHierarchyNodes[0]->IsA("vtkMRMLSubjectHierarchyNode"))
+      {
+      subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(associatedHierarchyNodes[0]);
+      otherHierarchyNode = associatedHierarchyNodes[1];
+      }
+    else if (associatedHierarchyNodes[1]->IsA("vtkMRMLSubjectHierarchyNode"))
+      {
+      subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(associatedHierarchyNodes[1]);
+      otherHierarchyNode = associatedHierarchyNodes[0];
+      }
+    else // Neither is subject hierarchy. This should never happen
+      {
+      qCritical() << "qSlicerSubjectHierarchyModuleWidget::onMRMLNodeHierarchyModified: Invalid nested associations detected for node "
+        << node->GetName() << "! This is probably a bug, please report.";
+      return;
+      }
+
+      // Create nested association: (SH -> node <- OtherH)  ==>  (SH -> OtherH -> node)
+      subjectHierarchyNode->SetAssociatedNodeID(otherHierarchyNode->GetID());
     }
 }
 

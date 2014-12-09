@@ -64,6 +64,9 @@ public:
   /// constructor of qMRMLSubjectHierarchyTreeView
   virtual void init2();
 
+  /// Setup all actions for tree view
+  void setupActions();
+
   QList<QAction*> SelectPluginActions;
   QMenu* SelectPluginSubMenu;
   QActionGroup* SelectPluginActionGroup;
@@ -100,9 +103,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
   //      subject hierarchy much less usable (because there will be two scrollbars)
   //q->setUniformRowHeights(false);
 
-  // Connect edit properties context menu action
-  QObject::connect(q, SIGNAL(editNodeRequested(vtkMRMLNode*)), q, SLOT(openModuleForSubjectHierarchyNode(vtkMRMLNode*)));
-
   // Set up headers
   q->header()->setStretchLastSection(false);
   q->header()->setResizeMode(sceneModel->nameColumn(), QHeaderView::Stretch);
@@ -120,9 +120,21 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
   QObject::connect(this->TransformItemDelegate, SIGNAL(hardenTransformOnBranchOfCurrentNode()),
     sceneModel, SLOT(onHardenTransformOnBranchOfCurrentNode()));
 
-  // Connect Edit properties... action to another slot
+  // Connect Edit properties... action to a different slot than in the base class
   QObject::disconnect(this->EditAction, SIGNAL(triggered()), (qMRMLTreeView*)q, SLOT(editCurrentNode()));
   QObject::connect(this->EditAction, SIGNAL(triggered()), q, SLOT(editCurrentSubjectHierarchyNode()));
+
+  // Connect invalidate filters
+  QObject::connect( q->sceneModel(), SIGNAL(invalidateFilter()), q->model(), SLOT(invalidate()) );
+
+  // Set up scene and node actions for the tree view
+  this->setupActions();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setupActions()
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
 
   // Set up Remove from subject hierarchy action (hidden by default)
   this->RemoveFromSubjectHierarchyAction = new QAction(qMRMLTreeView::tr("Remove from subject hierarchy"), this->NodeMenu);
@@ -190,9 +202,6 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
 
   // Update actions in owner plugin sub-menu when opened
   QObject::connect( this->SelectPluginSubMenu, SIGNAL(aboutToShow()), q, SLOT(updateSelectPluginActions()) );
-
-  // Connect invalidate filters
-  QObject::connect( q->sceneModel(), SIGNAL(invalidateFilter()), q->model(), SLOT(invalidate()) );
 }
 
 //------------------------------------------------------------------------------
@@ -381,26 +390,6 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
 
     currentSelectPluginAction->setChecked(isOwner);
     }
-}
-
-//--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::openModuleForSubjectHierarchyNode(vtkMRMLNode* node)
-{
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
-  if (!subjectHierarchyNode)
-    {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::openModuleForSubjectHierarchyNode: Invalid node!";
-    return;
-    }
-  vtkMRMLNode* associatedNode = subjectHierarchyNode->GetAssociatedNode();
-  if (!associatedNode)
-    {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::openModuleForSubjectHierarchyNode: Invalid associated node!";
-    return;
-    }
-
-  // Open module belonging to the associated node
-  qSlicerApplication::application()->openNodeModule(associatedNode);
 }
 
 //--------------------------------------------------------------------------
