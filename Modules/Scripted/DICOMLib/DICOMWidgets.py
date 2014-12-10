@@ -477,9 +477,10 @@ class DICOMDetailsPopup(object):
       self.progress.setValue(step)
       slicer.app.processEvents()
       try:
-        if hasattr(plugin, 'examineForImport'):
-          self.loadablesByPlugin[plugin] = plugin.examineForImport(self.fileLists)
-        else: # Ensuring backwards compatibility (examineForImport used to be called examine)
+        self.loadablesByPlugin[plugin] = plugin.examineForImport(self.fileLists)
+        # If regular method is not overridden (so returns empty list), try old function
+        # Ensuring backwards compatibility: examineForImport used to be called examine
+        if self.loadablesByPlugin[plugin] == []:
           self.loadablesByPlugin[plugin] = plugin.examine(self.fileLists)
         loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
       except Exception,e:
