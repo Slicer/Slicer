@@ -29,20 +29,51 @@
 #include "vtkSlicerSubjectHierarchyModuleLogic.h"
 
 // SubjectHierarchy Plugins includes
-#include "qSlicerSubjectHierarchyPluginHandler.h"
-#include "qSlicerSubjectHierarchyCloneNodePlugin.h"
-#include "qSlicerSubjectHierarchyChartsPlugin.h"
-#include "qSlicerSubjectHierarchyParseLocalDataPlugin.h"
-#include "qSlicerSubjectHierarchyRegisterPlugin.h"
-#include "qSlicerSubjectHierarchySegmentPlugin.h"
-#include "qSlicerSubjectHierarchyFolderPlugin.h"
+#include "qSlicerSubjectHierarchyPluginLogic.h"
+
+// MRML includes
+#include <vtkMRMLScene.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerSubjectHierarchyModule, qSlicerSubjectHierarchyModule);
 
 //-----------------------------------------------------------------------------
+/// \ingroup Slicer_QtModules_SubjectHierarchy
+class qSlicerSubjectHierarchyModulePrivate
+{
+public:
+  qSlicerSubjectHierarchyModulePrivate();
+  ~qSlicerSubjectHierarchyModulePrivate();
+
+  qSlicerSubjectHierarchyPluginLogic* PluginLogic;
+};
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyModulePrivate methods
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyModulePrivate::qSlicerSubjectHierarchyModulePrivate()
+  : PluginLogic(NULL)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSubjectHierarchyModulePrivate::~qSlicerSubjectHierarchyModulePrivate()
+{
+  if (this->PluginLogic)
+    {
+    delete this->PluginLogic;
+    this->PluginLogic = NULL;
+    }
+}
+
+//-----------------------------------------------------------------------------
+// qSlicerSubjectHierarchyModule methods
+
+//-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModule::qSlicerSubjectHierarchyModule(QObject* _parent)
   : Superclass(_parent)
+  , d_ptr(new qSlicerSubjectHierarchyModulePrivate)
 {
 }
 
@@ -90,41 +121,48 @@ QIcon qSlicerSubjectHierarchyModule::icon()const
 void qSlicerSubjectHierarchyModule::setup()
 {
   this->Superclass::setup();
-
-  // Register Subject Hierarchy core plugins
-  this->registerCorePlugins();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModule::registerCorePlugins()
-{
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyFolderPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyParseLocalDataPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyCloneNodePlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyChartsPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchyRegisterPlugin());
-  qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
-    new qSlicerSubjectHierarchySegmentPlugin());
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerSubjectHierarchyModule::createLogic()
 {
-  return vtkSlicerSubjectHierarchyModuleLogic::New();
+  Q_D(qSlicerSubjectHierarchyModule);
+
+  // Create logic
+  vtkSlicerSubjectHierarchyModuleLogic* logic = vtkSlicerSubjectHierarchyModuleLogic::New();
+  // Handle scene change event if occurs
+  qvtkConnect( logic, vtkCommand::ModifiedEvent, this, SLOT( onLogicModified() ) );
+
+  // Create plugin logic
+  d->PluginLogic = new qSlicerSubjectHierarchyPluginLogic();
+
+  return logic;
 }
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerSubjectHierarchyModule::createWidgetRepresentation()
 {
-  qSlicerSubjectHierarchyModuleWidget* moduleWidget = new qSlicerSubjectHierarchyModuleWidget();
+  Q_D(qSlicerSubjectHierarchyModule);
 
-  // Handle scene change event if occurs
-  qvtkConnect( this->logic(), vtkCommand::ModifiedEvent, moduleWidget, SLOT( onLogicModified() ) );
+  qSlicerSubjectHierarchyModuleWidget* moduleWidget = new qSlicerSubjectHierarchyModuleWidget();
+  if (!d->PluginLogic)
+    {
+    this->createLogic();
+    }
+  moduleWidget->setPluginLogic(d->PluginLogic);
 
   return moduleWidget;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModule::onLogicModified()
+{
+  Q_D(qSlicerSubjectHierarchyModule);
+
+  vtkMRMLScene* scene = this->mrmlScene();
+  if (d->PluginLogic && scene != d->PluginLogic->mrmlScene())
+    {
+    // Set the new scene to the plugin logic
+    d->PluginLogic->setMRMLScene(scene);
+    }
 }

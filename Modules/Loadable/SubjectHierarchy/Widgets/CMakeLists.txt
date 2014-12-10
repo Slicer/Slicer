@@ -12,6 +12,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   qMRMLSubjectHierarchyTreeView.cxx
   qMRMLSubjectHierarchyTreeView.h
+  qSlicerSubjectHierarchyPluginLogic.cxx
+  qSlicerSubjectHierarchyPluginLogic.h
   qMRMLSceneSubjectHierarchyModel.cxx
   qMRMLSceneSubjectHierarchyModel.h
   qMRMLSceneSubjectHierarchyModel_p.h
@@ -41,6 +43,7 @@ set(${KIT}_SRCS
 
 set(${KIT}_MOC_SRCS
   qMRMLSubjectHierarchyTreeView.h
+  qSlicerSubjectHierarchyPluginLogic.h
   qMRMLSceneSubjectHierarchyModel.h
   qMRMLSortFilterSubjectHierarchyProxyModel.h
   qMRMLTransformItemDelegate.h

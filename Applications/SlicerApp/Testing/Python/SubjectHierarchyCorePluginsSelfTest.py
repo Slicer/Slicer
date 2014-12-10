@@ -1,13 +1,15 @@
 import os
 import unittest
 from __main__ import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
 
 #
 # SubjectHierarchyCorePluginsSelfTest
 #
 
-class SubjectHierarchyCorePluginsSelfTest:
+class SubjectHierarchyCorePluginsSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
+    ScriptedLoadableModule.__init__(self, parent)
     parent.title = "SubjectHierarchyCorePluginsSelfTest"
     parent.categories = ["Testing.TestCases"]
     parent.dependencies = ["SubjectHierarchy"]
@@ -35,59 +37,16 @@ class SubjectHierarchyCorePluginsSelfTest:
 # SubjectHierarchyCorePluginsSelfTestWidget
 #
 
-class SubjectHierarchyCorePluginsSelfTestWidget:
-  def __init__(self, parent = None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
-    if not parent:
-      self.setup()
-      self.parent.show()
-
+class SubjectHierarchyCorePluginsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
-    # Instantiate and connect widgets ...
-
-    # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadButton = qt.QPushButton("Reload")
-    self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "SubjectHierarchyCorePluginsSelfTest Reload"
-    self.layout.addWidget(self.reloadButton)
-    self.reloadButton.connect('clicked()', self.onReload)
-
-    # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
-    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    self.layout.addWidget(self.reloadAndTestButton)
-    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
-
-    # Add vertical spacer
-    self.layout.addStretch(1)
-
-  def onReload(self,moduleName="SubjectHierarchyCorePluginsSelfTest"):
-    """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
-    """
-    globals()[moduleName] = slicer.util.reloadScriptedModule(moduleName)
-
-  def onReloadAndTest(self,moduleName="SubjectHierarchyCorePluginsSelfTest"):
-    self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-    tester = eval(evalString)
-    tester.runTest()
+    self.developerMode = True
+    ScriptedLoadableModuleWidget.setup(self)
 
 #
 # SubjectHierarchyCorePluginsSelfTestLogic
 #
 
-class SubjectHierarchyCorePluginsSelfTestLogic:
+class SubjectHierarchyCorePluginsSelfTestLogic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual
   computation done by your module.  The interface
   should be such that other python code can import
@@ -98,27 +57,10 @@ class SubjectHierarchyCorePluginsSelfTestLogic:
     pass
 
 
-class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
+class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
   """
   This is the test case for your scripted module.
   """
-
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
@@ -155,6 +97,14 @@ class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
 
   # ------------------------------------------------------------------------------
   def section_SetupPathsAndNames(self):
+    # Make sure subject hierarchy auto-creation is on for this test
+    subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
+    subjectHierarchyPluginLogic = subjectHierarchyWidget.pluginLogic()
+    self.assertTrue( subjectHierarchyWidget != None )
+    self.assertTrue( subjectHierarchyPluginLogic != None )
+    subjectHierarchyPluginLogic.autoCreateSubjectHierarchy = True
+
+    # Set constants
     self.sampleMarkupName = 'SampleMarkup'
     self.sampleChartName = 'SampleChart'
     self.studyName = 'Study'
@@ -220,12 +170,14 @@ class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
     import qSlicerSubjectHierarchyModuleWidgetsPythonQt
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
     self.assertTrue( subjectHierarchyWidget != None )
+    subjectHierarchyPluginLogic = subjectHierarchyWidget.pluginLogic()
+    self.assertTrue( subjectHierarchyPluginLogic != None )
 
-    cloneNodePlugin = subjectHierarchyWidget.subjectHierarchyPluginByName('CloneNode')
+    cloneNodePlugin = subjectHierarchyPluginLogic.subjectHierarchyPluginByName('CloneNode')
     self.assertTrue( cloneNodePlugin != None )
 
     # Set markup node as current (i.e. selected in the tree) for clone
-    subjectHierarchyWidget.setCurrentSubjectHierarchyNode(markupsShNode)
+    subjectHierarchyPluginLogic.setCurrentSubjectHierarchyNode(markupsShNode)
 
     # Get clone node context menu action and trigger
     cloneNodePlugin.nodeContextMenuActions()[0].activate(qt.QAction.Trigger)
@@ -250,10 +202,17 @@ class SubjectHierarchyCorePluginsSelfTestTest(unittest.TestCase):
   def section_PluginAutoSearch(self):
     self.delayDisplay("Plugin auto search",self.delayMs)
 
+    # Disable subject hierarchy auto-creation to be able to test plugin auto search
+    subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
+    subjectHierarchyPluginLogic = subjectHierarchyWidget.pluginLogic()
+    self.assertTrue( subjectHierarchyWidget != None )
+    self.assertTrue( subjectHierarchyPluginLogic != None )
+    subjectHierarchyPluginLogic.autoCreateSubjectHierarchy = False
+    
     # Test whether the owner plugin is automatically searched when the associated data node changes
     chartNode2 = slicer.vtkMRMLChartNode()
-    slicer.mrmlScene.AddNode(chartNode2)
     chartNode2.SetName(self.sampleChartName + '2')
+    slicer.mrmlScene.AddNode(chartNode2)
 
     clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + ' Copy' + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     clonedMarkupShNode.SetAssociatedNodeID(chartNode2.GetID())

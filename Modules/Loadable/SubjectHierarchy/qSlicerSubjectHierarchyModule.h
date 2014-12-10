@@ -43,7 +43,6 @@ class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule :
   QVTK_OBJECT
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerSubjectHierarchyModule(QObject *parent=0);
   virtual ~qSlicerSubjectHierarchyModule();
@@ -73,12 +72,15 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
   /// Create and return the widget representation associated to this module
-  virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
+  virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
 
-  /// Register subject hierarchy core plugins
-  /// Note: Registering plugins provided by other modules is the responsibility
-  ///   of the module!
-  void registerCorePlugins();
+protected slots:
+  /// Handles logic modified event, which happens on major changes in the
+  /// scene (new scene, batch processing, import etc.)
+  void onLogicModified();
+
+protected:
+  QScopedPointer<qSlicerSubjectHierarchyModulePrivate> d_ptr; 
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyModule);
