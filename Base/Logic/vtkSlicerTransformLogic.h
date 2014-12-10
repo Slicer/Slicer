@@ -108,12 +108,14 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
     TRANSFORM_OTHER,
     TRANSFORM_LINEAR,
     TRANSFORM_BSPLINE,
-    TRANSFORM_GRID
+    TRANSFORM_GRID,
+    TRANSFORM_THINPLATESPLINE
   };
   /// Returns TRANSFORM_LINEAR if the node contains a simple linear transform.
   /// Returns TRANSFORM_BSPLINE if the node contains a bspline transform with an
   ///   optional additive or composite bulk component.
   /// Returns TRANSFORM_GRID if the node contains a simple grid transform.
+  /// Returns TRANSFORM_THINPLATESPLINE if the node contains a simple thin plate spline transform.
   /// Returns TRANSFORM_OTHER in all other cases.
   static TransformKind GetTransformKind(vtkMRMLTransformNode *transformNode);
 

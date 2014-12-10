@@ -51,6 +51,7 @@
 #include <vtkPointSet.h>
 #include <vtkPointData.h>
 #include <vtkSphereSource.h>
+#include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTubeFilter.h>
@@ -192,6 +193,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform (const char* filenam
       storageNode->ReadData(tnode.GetPointer());
       break;
     default:
+      // No specialized classes for thin plate spline, general, and other transforms
       tnode =  generalTransform.GetPointer();
     }
 
@@ -1155,6 +1157,10 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
     {
     return TRANSFORM_GRID;
     }
+  else if (vtkThinPlateSplineTransform::SafeDownCast(inputTransform))
+    {
+    return TRANSFORM_THINPLATESPLINE;
+    }
 
   // Check if it is a simple transform embedded into a general transform
   vtkGeneralTransform* generalTransform = vtkGeneralTransform::SafeDownCast(inputTransform);
@@ -1178,6 +1184,10 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
     else if (vtkOrientedGridTransform::SafeDownCast(transformList->GetItemAsObject(0)))
       {
       return TRANSFORM_GRID;
+      }
+    else if (vtkThinPlateSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+      {
+      return TRANSFORM_THINPLATESPLINE;
       }
     }
   else if (transformList->GetNumberOfItems()==2)

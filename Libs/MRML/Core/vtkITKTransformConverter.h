@@ -20,6 +20,8 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkPoints.h>
+#include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
 
 // ITK includes
@@ -37,6 +39,7 @@
 #include <itkTranslationTransform.h>
 #include <itkScaleTransform.h>
 #include <itkTransformFactory.h>
+#include <itkThinPlateSplineKernelTransform.h>
 
 // Constants and typedefs
 
@@ -57,6 +60,8 @@ typedef itk::BSplineDeformableTransform< float, VTKDimension, VTKDimension > BSp
 typedef itk::BSplineDeformableTransform< double, VTKDimension, VTKDimension > BSplineTransformDoubleITKv3Type;
 typedef itk::BSplineTransform< float, VTKDimension, VTKDimension > BSplineTransformFloatITKv4Type;
 typedef itk::BSplineTransform< double, VTKDimension, VTKDimension > BSplineTransformDoubleITKv4Type;
+
+typedef itk::ThinPlateSplineKernelTransform<double,3> ThinPlateSplineTransformType;
 
 typedef itk::CompositeTransform< double > CompositeTransformType;
 
@@ -97,6 +102,8 @@ protected:
   static bool SetITKv3BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, itk::Object::Pointer& bulkTransformItk, vtkOrientedBSplineTransform* bsplineVtk, bool alwaysAddBulkTransform);
   static bool SetITKv4BSplineFromVTK(vtkObject* loggerObject, itk::Object::Pointer& warpTransformItk, vtkOrientedBSplineTransform* bsplineVtk);
 
+  static bool SetVTKThinPlateSplineTransformFromITK(vtkObject* loggerObject, vtkThinPlateSplineTransform* transformVtk_RAS, TransformType::Pointer transformItk_LPS);
+  static bool SetITKThinPlateSplineTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkThinPlateSplineTransform* transformVtk_RAS);
 
   static bool IsIdentityMatrix(vtkMatrix4x4 *matrix);
 
@@ -118,6 +125,8 @@ void vtkITKTransformConverter::RegisterInverseTransformTypes()
   itk::TransformFactory<InverseBSplineTransformFloatITKv4Type>::RegisterTransform();
   itk::TransformFactory<InverseBSplineTransformDoubleITKv3Type>::RegisterTransform();
   itk::TransformFactory<InverseBSplineTransformDoubleITKv4Type>::RegisterTransform();
+  itk::TransformFactory<InverseThinPlateSplineTransformType>::RegisterTransform();
+  itk::TransformFactory<ThinPlateSplineTransformType>::RegisterTransform(); // by default it is not registered
 }
 
 //----------------------------------------------------------------------------
@@ -1101,6 +1110,151 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
 }
 
 //----------------------------------------------------------------------------
+bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* loggerObject, vtkThinPlateSplineTransform* transformVtk_RAS, TransformType::Pointer transformItk_LPS)
+{
+  if (transformVtk_RAS==NULL)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot set VTK thin-plate spline transform from ITK: the output vtkThinPlateSplineTransform is invalid");
+    return false;
+    }
+
+  ThinPlateSplineTransformType* tpsTransform = dynamic_cast<ThinPlateSplineTransformType*>( transformItk_LPS.GetPointer() );
+  ThinPlateSplineTransformType* inverseTpsTransform = dynamic_cast<InverseThinPlateSplineTransformType*>( transformItk_LPS.GetPointer() );
+  bool inverse = false;
+  ThinPlateSplineTransformType::PointSetType::Pointer sourceLandmarksItk_Lps;
+  ThinPlateSplineTransformType::PointSetType::Pointer targetLandmarksItk_Lps;
+  if (inverseTpsTransform!=NULL) // inverse class is derived from forward class, so it has to be checked first
+    {
+    inverse = true;
+    sourceLandmarksItk_Lps = inverseTpsTransform->GetSourceLandmarks();
+    targetLandmarksItk_Lps = inverseTpsTransform->GetTargetLandmarks();
+    }
+  else if (tpsTransform!=NULL)
+    {
+    inverse = false;
+    sourceLandmarksItk_Lps = tpsTransform->GetSourceLandmarks();
+    targetLandmarksItk_Lps = tpsTransform->GetTargetLandmarks();
+    }
+  else
+    {
+    vtkDebugWithObjectMacro(loggerObject, "Not a ThinPlateSpline transform");
+    return false;
+    }
+
+  vtkNew<vtkPoints> sourceLandmarksVtk_Ras;
+  unsigned int numberOfSourceLandmarks = sourceLandmarksItk_Lps->GetNumberOfPoints();
+  for(unsigned int i = 0; i < numberOfSourceLandmarks; i++)
+    {
+    ThinPlateSplineTransformType::InputPointType pointItk_Lps;
+    bool pointExists = sourceLandmarksItk_Lps->GetPoint(i, &pointItk_Lps);
+    if (!pointExists)
+      {
+      continue;
+      }
+    double pointVtk_Ras[3]={0};
+    pointVtk_Ras[0] = -pointItk_Lps[0];
+    pointVtk_Ras[1] = -pointItk_Lps[1];
+    pointVtk_Ras[2] =  pointItk_Lps[2];
+    sourceLandmarksVtk_Ras->InsertNextPoint(pointVtk_Ras);
+    }
+
+  vtkNew<vtkPoints> targetLandmarksVtk_Ras;
+  unsigned int numberOfTargetLandmarks = targetLandmarksItk_Lps->GetNumberOfPoints();
+  for(unsigned int i = 0; i < numberOfTargetLandmarks; i++)
+    {
+    ThinPlateSplineTransformType::InputPointType pointItk_Lps;
+    bool pointExists = targetLandmarksItk_Lps->GetPoint(i, &pointItk_Lps);
+    if (!pointExists)
+      {
+      continue;
+      }
+    double pointVtk_Ras[3]={0};
+    pointVtk_Ras[0] = -pointItk_Lps[0];
+    pointVtk_Ras[1] = -pointItk_Lps[1];
+    pointVtk_Ras[2] =  pointItk_Lps[2];
+    targetLandmarksVtk_Ras->InsertNextPoint(pointVtk_Ras);
+    }
+
+  transformVtk_RAS->SetBasisToR(); // need to set this because data is 3D
+  transformVtk_RAS->SetSourceLandmarks(sourceLandmarksVtk_Ras.GetPointer());
+  transformVtk_RAS->SetTargetLandmarks(targetLandmarksVtk_Ras.GetPointer());
+
+  if (inverse)
+    {
+    transformVtk_RAS->Inverse();
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkThinPlateSplineTransform* transformVtk_RAS)
+{
+  if (transformVtk_RAS==NULL)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: the intput vtkThinPlateSplineTransform is invalid");
+    return false;
+    }
+
+  if (transformVtk_RAS->GetBasis()!=VTK_RBF_R)
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: basis function must be R");
+    return false;
+    }
+
+  ThinPlateSplineTransformType::PointSetType::Pointer sourceLandmarksItk_Lps = ThinPlateSplineTransformType::PointSetType::New();
+  vtkPoints* sourceLandmarksVtk_Ras=transformVtk_RAS->GetSourceLandmarks();
+  if (sourceLandmarksVtk_Ras!=NULL)
+    {
+    for (int i=0; i<sourceLandmarksVtk_Ras->GetNumberOfPoints(); i++)
+      {
+      double posVtk_Ras[3]={0};
+      sourceLandmarksVtk_Ras->GetPoint(i, posVtk_Ras);
+      ThinPlateSplineTransformType::InputPointType posItk_Lps;
+      posItk_Lps[0] = -posVtk_Ras[0];
+      posItk_Lps[1] = -posVtk_Ras[1];
+      posItk_Lps[2] =  posVtk_Ras[2];
+      sourceLandmarksItk_Lps->GetPoints()->InsertElement(i,posItk_Lps);
+      }
+    }
+  ThinPlateSplineTransformType::PointSetType::Pointer targetLandmarksItk_Lps = ThinPlateSplineTransformType::PointSetType::New();
+  vtkPoints* targetLandmarksVtk_Ras=transformVtk_RAS->GetTargetLandmarks();
+  if (targetLandmarksVtk_Ras!=NULL)
+    {
+    for (int i=0; i<targetLandmarksVtk_Ras->GetNumberOfPoints(); i++)
+      {
+      double posVtk_Ras[3]={0};
+      targetLandmarksVtk_Ras->GetPoint(i, posVtk_Ras);
+      ThinPlateSplineTransformType::InputPointType posItk_Lps;
+      posItk_Lps[0] = -posVtk_Ras[0];
+      posItk_Lps[1] = -posVtk_Ras[1];
+      posItk_Lps[2] =  posVtk_Ras[2];
+      targetLandmarksItk_Lps->GetPoints()->InsertElement(i,posItk_Lps);
+      }
+    }
+
+  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+  transformVtk_RAS->Update();
+  if (transformVtk_RAS->GetInverseFlag())
+    {
+    InverseThinPlateSplineTransformType::Pointer tpsTransformItk = InverseThinPlateSplineTransformType::New();
+    tpsTransformItk->SetSourceLandmarks(sourceLandmarksItk_Lps);
+    tpsTransformItk->SetTargetLandmarks(targetLandmarksItk_Lps);
+    tpsTransformItk->ComputeWMatrix();
+    transformItk_LPS = tpsTransformItk;
+    }
+  else
+    {
+    ThinPlateSplineTransformType::Pointer tpsTransformItk = ThinPlateSplineTransformType::New();
+    tpsTransformItk->SetSourceLandmarks(sourceLandmarksItk_Lps);
+    tpsTransformItk->SetTargetLandmarks(targetLandmarksItk_Lps);
+    tpsTransformItk->ComputeWMatrix();
+    transformItk_LPS = tpsTransformItk;
+    }
+  return true;
+}
+
+
+//----------------------------------------------------------------------------
 vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObject* loggerObject, TransformType::Pointer transformItk)
 {
   bool conversionSuccess = false;
@@ -1130,6 +1284,14 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
     {
     bsplineTransformVtk->Register(NULL);
     return bsplineTransformVtk.GetPointer();
+    }
+  // ThinPlateSpline
+  vtkNew<vtkThinPlateSplineTransform> tpsTransformVtk;
+  conversionSuccess = SetVTKThinPlateSplineTransformFromITK(loggerObject, tpsTransformVtk.GetPointer(), transformItk);
+  if (conversionSuccess)
+    {
+    tpsTransformVtk->Register(NULL);
+    return tpsTransformVtk.GetPointer();
     }
 
   return 0;
@@ -1197,6 +1359,17 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
       {
       vtkOrientedGridTransform* gridTransformVtk = vtkOrientedGridTransform::SafeDownCast(singleTransformVtk);
       if (!SetITKOrientedGridTransformFromVTK(loggerObject, primaryTransformItk, gridTransformVtk))
+        {
+        // conversion failed
+        return 0;
+        }
+      return primaryTransformItk;
+      }
+    // ThinPlateSpline
+    else if (vtkThinPlateSplineTransform::SafeDownCast(singleTransformVtk))
+      {
+      vtkThinPlateSplineTransform* tpsTransformVtk = vtkThinPlateSplineTransform::SafeDownCast(singleTransformVtk);
+      if (!SetITKThinPlateSplineTransformFromVTK(loggerObject, primaryTransformItk, tpsTransformVtk))
         {
         // conversion failed
         return 0;

@@ -27,6 +27,7 @@
 
 bool TestBSplineTransform(const char *filename);
 bool TestGridTransform(const char *filename);
+bool TestThinPlateSplineTransform(const char *filename);
 bool TestCompositeTransform(const char *filename);
 
 int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
@@ -41,6 +42,7 @@ int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
     }
   res = TestBSplineTransform(filename) && res;
   res = TestGridTransform(filename) && res;
+  res = TestThinPlateSplineTransform(filename) && res;
   res = TestCompositeTransform(filename) && res;
 
   if (res)
@@ -177,6 +179,52 @@ bool TestGridTransform(const char *filename)
   scene->Delete();
   return true;
 }
+
+//---------------------------------------------------------------------------
+bool TestThinPlateSplineTransform(const char *filename)
+{
+  vtkMRMLScene *scene = vtkMRMLScene::New();
+
+  scene->SetURL(filename);
+  scene->Import();
+
+  vtkMRMLTransformNode *tpsTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID("vtkMRMLTransformNode1"));
+  if (tpsTransformNode == 0)
+    {
+    std::cout << __LINE__ << ": TestThinPlateSplineTransform failed" << std::endl;
+    return false;
+    }
+
+  vtkAbstractTransform *xfp = tpsTransformNode->GetTransformFromParentAs("vtkThinPlateSplineTransform");
+  vtkAbstractTransform *xtp = tpsTransformNode->GetTransformToParentAs("vtkThinPlateSplineTransform");
+
+  if (xfp == 0 || xtp == 0)
+    {
+    std::cout << __LINE__ << ": TestThinPlateSplineTransform failed" << std::endl;
+    return false;
+    }
+
+  double inp[] = {0,0,0};
+  double outp[3];
+  xfp->TransformPoint(inp, outp);
+  if (fabs(outp[0]) < 0.1 || fabs(outp[1]) < 0.1 || fabs(outp[2]) < 0.1)
+    {
+    std::cout << __LINE__ << ": TestThinPlateSplineTransform failed" << std::endl;
+    return false;
+    }
+
+  xtp->TransformPoint(outp, inp);
+  if (fabs(inp[0]) > 0.1 || fabs(inp[1]) > 0.1 || fabs(inp[2]) > 0.1)
+    {
+    std::cout << __LINE__ << ": TestThinPlateSplineTransform failed" << std::endl;
+    return false;
+    }
+
+  scene->Clear(1);
+  scene->Delete();
+  return true;
+}
+
 
 //---------------------------------------------------------------------------
 bool TestCompositeTransform(const char *filename)

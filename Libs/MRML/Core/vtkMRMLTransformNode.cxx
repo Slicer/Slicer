@@ -34,6 +34,8 @@ Version:   $Revision: 1.14 $
 #include <vtkHomogeneousTransform.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPoints.h>
+#include <vtkThinPlateSplineTransform.h>
 #include <vtkTransform.h>
 
 // STD includes
@@ -217,6 +219,25 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
 #else
       vtkGridTransform::SafeDownCast(dst)->SetDisplacementGridData(dstDisplacementGrid.GetPointer());
 #endif
+      }
+    }
+  else if (src->IsA("vtkThinPlateSplineTransform"))
+    {
+    // Fix up the DeepCopy for vtkThinPlateSplineTransform (it performs only a ShallowCopy on the landmark points)
+    dst->DeepCopy(src);
+    vtkPoints* srcSourceLandmarks=vtkThinPlateSplineTransform::SafeDownCast(src)->GetSourceLandmarks();
+    if (srcSourceLandmarks)
+      {
+      vtkNew<vtkPoints> dstSourceLandmarks;
+      dstSourceLandmarks->DeepCopy(srcSourceLandmarks);
+      vtkThinPlateSplineTransform::SafeDownCast(dst)->SetSourceLandmarks(dstSourceLandmarks.GetPointer());
+      }
+    vtkPoints* srcTargetLandmarks=vtkThinPlateSplineTransform::SafeDownCast(src)->GetTargetLandmarks();
+    if (srcTargetLandmarks)
+      {
+      vtkNew<vtkPoints> dstTargetLandmarks;
+      dstTargetLandmarks->DeepCopy(srcTargetLandmarks);
+      vtkThinPlateSplineTransform::SafeDownCast(dst)->SetTargetLandmarks(dstTargetLandmarks.GetPointer());
       }
     }
   else
@@ -638,7 +659,7 @@ int vtkMRMLTransformNode::Split()
       {
       // Create a new transform node with the most suitable type.
       // The generic vtkMRMLTransformNode could handle everything but at a couple of places
-      // the class type of the transform node is still used. When vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, and
+      // specific transform node classes are still used. When vtkMRMLLinearTransformNode, vtkMRMLBSplineTransformNode, and
       // vtkMRMLGridTransformNode classes will be removed then we can simply create a vtkMRMLTransformNode regardless the VTK transform type.
       if (transformComponent->IsA("vtkLinearTransform"))
         {
@@ -654,6 +675,7 @@ int vtkMRMLTransformNode::Split()
         }
       else
         {
+        // vtkThinPlateSplineTransform and general transform
         transformComponentNode = vtkSmartPointer<vtkMRMLTransformNode>::New();
         }
       std::string baseName = std::string(this->GetName())+"_Component";
@@ -1153,6 +1175,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
     vtkHomogeneousTransform* linearTransform=vtkHomogeneousTransform::SafeDownCast(transform);
     vtkBSplineTransform* bsplineTransform=vtkBSplineTransform::SafeDownCast(transform);
     vtkGridTransform* gridTransform=vtkGridTransform::SafeDownCast(transform);
+    vtkThinPlateSplineTransform* tpsTransform=vtkThinPlateSplineTransform::SafeDownCast(transform);
     if (linearTransform!=NULL)
       {
       ss << " Linear";
@@ -1165,6 +1188,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
     else if (bsplineTransform!=NULL)
       {
       ss << " B-spline:";
+      bsplineTransform->Update(); // compute if inverse
 #if (VTK_MAJOR_VERSION <= 5)
       vtkImageData* coefficients=bsplineTransform->GetCoefficients();
 #else
@@ -1211,6 +1235,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
     else if (gridTransform!=NULL)
       {
       ss << " Displacement field:";
+      gridTransform->Update(); // compute if inverse
       vtkImageData* displacementField=gridTransform->GetDisplacementGrid();
       if (displacementField!=NULL)
         {
@@ -1239,6 +1264,27 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
         ss << std::endl << "  Displacement field is invalid.";
         }
       if (gridTransform->GetInverseFlag())
+        {
+        ss << std::endl << "  Computed from its inverse.";
+        }
+      }
+    else if (tpsTransform!=NULL)
+      {
+      ss << " Thin plate spline:";
+      tpsTransform->Update(); // compute if inverse
+      int numberOfSourceLandmarks = 0;
+      if (tpsTransform->GetSourceLandmarks()!=NULL)
+        {
+        numberOfSourceLandmarks = tpsTransform->GetSourceLandmarks()->GetNumberOfPoints();
+        }
+      int numberOfTargetLandmarks = 0;
+      if (tpsTransform->GetTargetLandmarks()!=NULL)
+        {
+        numberOfTargetLandmarks = tpsTransform->GetTargetLandmarks()->GetNumberOfPoints();
+        }
+      ss << std::endl << "  Number of source landmarks: " << numberOfSourceLandmarks;
+      ss << std::endl << "  Number of target landmarks: " << numberOfTargetLandmarks;
+      if (tpsTransform->GetInverseFlag())
         {
         ss << std::endl << "  Computed from its inverse.";
         }

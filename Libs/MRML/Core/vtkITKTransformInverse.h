@@ -236,6 +236,65 @@ namespace itk
       itkExceptionMacro( "Only storage methods are implemented for InverseDisplacementFieldTransform" );
       }
   };
+
+  //----------------------------------------------------------------------------
+  template <class TScalar, unsigned int NDimensions>
+  class InverseThinPlateSplineKernelTransform :
+    public ThinPlateSplineKernelTransform<TScalar, NDimensions>
+  {
+  public:
+    /** Standard class typedefs. */
+    typedef InverseThinPlateSplineKernelTransform            Self;
+    typedef ThinPlateSplineKernelTransform<TScalar, NDimensions> Superclass;
+    typedef SmartPointer<Self>                           Pointer;
+    typedef SmartPointer<const Self>                     ConstPointer;
+
+    /** Run-time type information (and related methods). */
+    itkTypeMacro( InverseThinPlateSplineKernelTransform, ThinPlateSplineKernelTransform );
+
+    /** New macro for creation of through a Smart Pointer */
+    itkNewMacro( Self );
+
+    /** Define all computation methods as unimplemented to make sure they are not used
+    (the inherited implementations are for the forward transform, so they would not give correct results) */
+    virtual typename Superclass::OutputPointType TransformPoint(
+        const typename Superclass::InputPointType&) const
+      {
+      itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
+      }
+    virtual void ComputeDeformationContribution(const typename Superclass::InputPointType & inputPoint,
+                                              typename Superclass::OutputPointType & result) const
+      {
+      itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
+      }
+    virtual void ComputeJacobianWithRespectToParameters(
+        const typename Superclass::InputPointType &,
+        typename Superclass::JacobianType &) const
+      {
+      itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
+      }
+    virtual void ComputeJacobianWithRespectToPosition(
+        const typename Superclass::InputPointType  &,
+        typename Superclass::JacobianType &) const
+      {
+      itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
+      }
+    virtual void ComputeInverseJacobianWithRespectToPosition(
+        const typename Superclass::InputPointType  &,
+        typename Superclass::JacobianType &) const
+      {
+      itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
+      }
+    virtual void GetInverseJacobianOfForwardFieldWithRespectToPosition(
+        const typename Superclass::InputPointType &,
+        typename Superclass::JacobianType &,
+        bool useSVD = false ) const
+      {
+      (void)useSVD; // unused
+      itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
+      }
+  };
+
 } // end of ITK namespace
 
 typedef itk::InverseBSplineDeformableTransform< float, VTKDimension, VTKDimension > InverseBSplineTransformFloatITKv3Type;
@@ -244,5 +303,7 @@ typedef itk::InverseBSplineTransform< float, VTKDimension, VTKDimension > Invers
 typedef itk::InverseBSplineTransform< double, VTKDimension, VTKDimension > InverseBSplineTransformDoubleITKv4Type;
 
 typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementFieldTransformType;
+
+typedef itk::InverseThinPlateSplineKernelTransform< double, 3 > InverseThinPlateSplineTransformType;
 
 #endif // __vtkITKTransformInverse_h
