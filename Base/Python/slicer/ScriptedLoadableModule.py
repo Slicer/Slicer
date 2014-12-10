@@ -1,7 +1,7 @@
 import os, string
 import unittest
 from __main__ import qt, ctk, slicer
-import slicer.log
+import logging
 
 class ScriptedLoadableModule:
   def __init__(self, parent):
@@ -11,17 +11,15 @@ class ScriptedLoadableModule:
     parent.title = ""
     parent.categories = []
     parent.dependencies = []
-    parent.contributors = []
+    parent.contributors = ["Andras Lasso (PerkLab, Queen's University), Steve Pieper (Isomics)"]
 
     parent.helpText = string.Template("""
 This module was created from a template and the help section has not yet been updated.
-
 Please refer to <a href=\"$a/Documentation/$b.$c/Modules/ScriptedLoadableModule\">the documentation</a>.
-
     """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
 
     parent.acknowledgementText = """
-This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
+This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.
 This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a href=http://www.slicer.org>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>).
     """
 
@@ -102,8 +100,9 @@ class ScriptedLoadableModuleWidget:
     pass
 
   def onReload(self):
-    """Generic reload method for any scripted module.
-    ModuleWizard will subsitute correct default moduleName.
+    """
+    ModuleWizard will substitute correct default moduleName.
+    Generic reload method for any scripted module.
     """
     globals()[self.moduleName] = slicer.util.reloadScriptedModule(self.moduleName)
 
@@ -117,7 +116,7 @@ class ScriptedLoadableModuleWidget:
       import traceback
       traceback.print_exc()
       errorMessage = "Reload and Test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
-      slicer.log.error(errorMessage, showMessageBox=True)
+      slicer.util.errorDisplay(errorMessage)
 
 class ScriptedLoadableModuleLogic():
 
@@ -134,7 +133,8 @@ class ScriptedLoadableModuleLogic():
     self.isSingletonParameterNode = True
 
   def getParameterNode(self):
-    """return the first available parameter node for this module
+    """
+    Return the first available parameter node for this module
     If no parameter nodes are available for this module then a new one is created.
     """
     numberOfScriptedModuleNodes =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
@@ -148,7 +148,8 @@ class ScriptedLoadableModuleLogic():
     return parameterNode
 
   def getAllParameterNodes(self):
-    """return a list of all parameter nodes for this module
+    """
+    Return a list of all parameter nodes for this module
     Multiple parameter nodes are useful for storing multiple parameter sets in a single scene.
     """
     foundParameterNodes = []
@@ -160,7 +161,8 @@ class ScriptedLoadableModuleLogic():
     return foundParameterNodes
 
   def createParameterNode(self):
-    """create a new parameter node
+    """
+    Create a new parameter node
     The node is of vtkMRMLScriptedModuleNode class. Module name is added as an attribute to allow filtering
     in node selector widgets (attribute name: ModuleName, attribute value: the module's name).
     This method can be overridden in derived classes to create a default parameter node with all
@@ -176,12 +178,16 @@ class ScriptedLoadableModuleLogic():
     return node
 
   def delayDisplay(self,message,msec=1000):
-    """Display a message in a popup window for a short time
     """
-    slicer.log.info(message, True, msec)
+    Display a message in a popup window for a short time.
+    It is recommended to directly use slicer.util.delayDisplay function.
+    This method is only kept for backward compatibility and may be removed in the future.
+    """
+    slicer.util.delayDisplay(message, msec)
 
   def clickAndDrag(self,widget,button='Left',start=(10,10),end=(10,40),steps=20,modifiers=[]):
-    """Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
+    """
+    Send synthetic mouse events to the specified widget (qMRMLSliceWidget or qMRMLThreeDView)
     button : "Left", "Middle", "Right", or "None"
     start, end : window coordinates for action
     steps : number of steps to move in
@@ -225,7 +231,8 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
   """
 
   def delayDisplay(self,message,msec=1000):
-    """Display messages to the user/tester during testing.
+    """
+    Display messages to the user/tester during testing.
     This method can be temporarily overridden to allow tests running
     with longer or shorter message display time.
     Displaying a dialog and waiting does two things:
@@ -236,13 +243,16 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     so that we'll know when it breaks.
     Note:
     Information that might be useful (but not important enough to show
-    to the user) can be logged using slicer.log.info function.
-    Error messages should be displayed using slicer.log.error function.
+    to the user) can be logged using logging.info() function
+    (printed to console and application log) or logging.debug()
+    function (printed to application log only).
+    Error messages should be logged by logging.error() function
+    and displayed to user by slicer.util.errorDisplay function.
     """
-    # By default simply use slicer.log.info with message popup enabled
-    slicer.log.info(message, True, msec)
+    slicer.util.delayDisplay(message, msec)
 
   def runTest(self):
-    """Run as few or as many tests as needed here.
     """
-    slicer.log.error('No test is defined in '+self.__class__.__name__)
+    Run a default selection of tests here.
+    """
+    logging.warning('No test is defined in '+self.__class__.__name__)

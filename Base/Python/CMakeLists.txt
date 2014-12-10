@@ -1,6 +1,5 @@
 
 set(Slicer_PYTHON_SCRIPTS
-  slicer/log
   slicer/logic
   slicer/ScriptedLoadableModule
   slicer/slicerqt

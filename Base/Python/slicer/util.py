@@ -572,3 +572,42 @@ def unicodeify(s):
   http://stackoverflow.com/questions/9942594/unicodeencodeerror-ascii-codec-cant-encode-character-u-xa0-in-position-20
   """
   return u' '.join(s).encode('utf-8').strip()
+
+def delayDisplay(message,autoCloseMsec=1000):
+  """Display an information message in a popup window for a short time.
+  If autoCloseMsec>0 then the window is closed after waiting for autoCloseMsec milliseconds
+  If autoCloseMsec=0 then the window is not closed until the user clicks on it.
+  """
+  from __main__ import qt, slicer
+  import logging
+  logging.info(message)
+  messagePopup = qt.QDialog()
+  layout = qt.QVBoxLayout()
+  messagePopup.setLayout(layout)
+  label = qt.QLabel(message,messagePopup)
+  layout.addWidget(label)
+  if autoCloseMsec>0:
+    qt.QTimer.singleShot(autoCloseMsec, messagePopup.close)
+  else:
+    okButton = qt.QPushButton("OK")
+    layout.addWidget(okButton)
+    okButton.connect('clicked()', messagePopup.close)
+  messagePopup.exec_()
+
+def warningDisplay(message,autoCloseMsec=1000,windowTitle="Slicer warning"):
+  """Display popup with a warning message.
+  """
+  from __main__ import qt, slicer
+  import logging
+  logging.warning(message)
+  if mainWindow(verbose=False):
+    qt.QMessageBox.warning(slicer.util.mainWindow(), windowTitle, message)
+
+def errorDisplay(message,autoCloseMsec=1000,windowTitle="Slicer error"):
+  """Display an error popup.
+  """
+  from __main__ import qt, slicer
+  import logging
+  logging.error(message)
+  if mainWindow(verbose=False):
+    qt.QMessageBox.critical(slicer.util.mainWindow(), windowTitle, message)

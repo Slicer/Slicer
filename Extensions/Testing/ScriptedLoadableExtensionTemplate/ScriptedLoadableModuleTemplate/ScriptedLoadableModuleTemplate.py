@@ -2,7 +2,7 @@ import os
 import unittest
 from __main__ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
-import slicer.log
+import logging
 
 #
 # ScriptedLoadableModuleTemplate
@@ -153,10 +153,10 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     node has valid image data
     """
     if not volumeNode:
-      slicer.log.error('hasImageData failed: no volume node')
+      logging.debug('hasImageData failed: no volume node')
       return False
     if volumeNode.GetImageData() == None:
-      slicer.log.error('hasImageData failed: no image data in volume node')
+      logging.debug('hasImageData failed: no image data in volume node')
       return False
     return True
 
@@ -164,19 +164,19 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     """Validates if the output is not the same as input
     """
     if not inputVolumeNode:
-      slicer.log.error('isValidInputOutputData failed: no input volume node defined')
+      logging.debug('isValidInputOutputData failed: no input volume node defined')
       return False
     if not outputVolumeNode:
-      slicer.log.error('isValidInputOutputData failed: no output volume node defined')
+      logging.debug('isValidInputOutputData failed: no output volume node defined')
       return False
     if inputVolumeNode.GetID()==outputVolumeNode.GetID():
-      slicer.log.error('isValidInputOutputData failed: input and output volume is the same. Create a new volume for output to avoid this error.')
+      logging.debug('isValidInputOutputData failed: input and output volume is the same. Create a new volume for output to avoid this error.')
       return False
     return True
 
   def takeScreenshot(self,name,description,type=-1):
     # show the message even if not taking a screen shot
-    slicer.log.info('Take screenshot: '+description+'.\nResult is available in the Annotations module.', True, 3000)
+    slicer.util.delayDisplay('Take screenshot: '+description+'.\nResult is available in the Annotations module.', 3000)
 
     lm = slicer.app.layoutManager()
     # switch on the type to get the requested window
@@ -217,10 +217,10 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     """
 
     if not self.isValidInputOutputData(inputVolume, outputVolume):
-      slicer.log.error('Input volume is the same as output volume. Choose a different output volume.', True)
+      slicer.util.errorDisplay('Input volume is the same as output volume. Choose a different output volume.')
       return False
 
-    slicer.log.info('Processing started')
+    logging.info('Processing started')
 
     # Compute the thresholded output volume using the Threshold Scalar Volume CLI module
     cliParams = {'InputVolume': inputVolume.GetID(), 'OutputVolume': outputVolume.GetID(), 'ThresholdValue' : imageThreshold, 'ThresholdType' : 'Above'}
@@ -230,7 +230,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     if enableScreenshots:
       self.takeScreenshot('ScriptedLoadableModuleTemplate-Start','MyScreenshot',-1)
 
-    slicer.log.info('Processing completed')
+    logging.info('Processing completed')
 
     return True
 
@@ -277,10 +277,10 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
     for url,name,loader in downloads:
       filePath = slicer.app.temporaryPath + '/' + name
       if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-        slicer.log.info('Requesting download %s from %s...\n' % (name, url))
+        logging.info('Requesting download %s from %s...\n' % (name, url))
         urllib.urlretrieve(url, filePath)
       if loader:
-        slicer.log.info('Loading %s...' % (name,))
+        logging.info('Loading %s...' % (name,))
         loader(filePath)
     self.delayDisplay('Finished with download and loading')
 

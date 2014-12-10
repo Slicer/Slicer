@@ -198,10 +198,10 @@ def initLogging(logger, args):
   lhe.setLevel(logging.WARNING)
   lhe.setFormatter(f)
 
-  # Set root logging level and add handlers
-  logging.getLogger().addHandler(lho)
-  logging.getLogger().addHandler(lhe)
-  logging.getLogger().setLevel(_logLevel)
+  # Set logging level and add handlers
+  logger.addHandler(lho)
+  logger.addHandler(lhe)
+  logger.setLevel(logLevel)
 
   # Turn of github debugging
   ghLogger = logging.getLogger("github")
