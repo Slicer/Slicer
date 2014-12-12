@@ -363,12 +363,6 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
       subjectHierarchyNode->SetAssociatedNodeID(NULL);
       scene->RemoveNode(subjectHierarchyNode);
       }
-    // Remove associated other hierarchy node if any (if there is a nested association)
-    vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene, dataNode->GetID());
-    if (hierarchyNode)
-      {
-      scene->RemoveNode(hierarchyNode);
-      }
     }
 }
 
