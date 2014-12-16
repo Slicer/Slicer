@@ -54,13 +54,20 @@ void getPathFromParentToChild(vtkMRMLHierarchyNode *parent,
 
 bool setTensors(vtkPolyData *poly);
 
-void printTable(std::ofstream &ofs);
+void printTable(std::ofstream &ofs, bool printHeader,
+                std::map< std::string, std::map<std::string, double> > &output);
 
 std::string getNthTensorName(int n, vtkPolyData *poly);
 
+bool isInCluster(const std::string &id, const std::string &clusterName);
+
 int getNumberOfTensors(vtkPolyData *poly);
 
+void addClusters();
+
 std::map< std::string, std::map<std::string, double> > OutTable;
+std::map< std::string, std::string> ClusterNames;
+std::map< std::string, std::map<std::string, double> > Clusters;
 
 int main( int argc, char * argv[] )
 {
@@ -291,7 +298,11 @@ int main( int argc, char * argv[] )
       }
     } //if (inputType == std::string("Fibers File Folder") )
 
-  printTable(ofs);
+  printTable(ofs, true, OutTable);
+
+  addClusters();
+
+  printTable(ofs, false, Clusters);
 
   ofs.flush();
   ofs.close();
@@ -304,10 +315,15 @@ void getPathFromParentToChild(vtkMRMLHierarchyNode *parent,
                               std::string &path)
 {
   vtkMRMLHierarchyNode *immediateParent = child->GetParentNode();
-  path = std::string(immediateParent->GetID()) + std::string(".") + path;
-  if (strcmp(immediateParent->GetID(), parent->GetID()) != 0)
+  if (immediateParent)
     {
-    getPathFromParentToChild(parent, immediateParent, path);
+    std::string parentName = immediateParent->GetName() ? immediateParent->GetName() : immediateParent->GetID();
+    path = parentName + std::string(":") + path;
+    ClusterNames[parentName] = parentName;
+    if (strcmp(immediateParent->GetID(), parent->GetID()) != 0)
+      {
+      getPathFromParentToChild(parent, immediateParent, path);
+      }
     }
 }
 
@@ -517,12 +533,11 @@ std::string getNthTensorName(int n, vtkPolyData *poly)
   return std::string();
 }
 
-void printTable(std::ofstream &ofs)
+std::map<std::string, std::string> getMeasureNames()
 {
   std::map<std::string, std::string> names;
   std::map< std::string, std::map<std::string, double> >::iterator it;
   std::map<std::string, double>::iterator it1;
-  std::map<std::string, std::string>::iterator it2;
 
   for(it = OutTable.begin(); it != OutTable.end(); it++)
     {
@@ -531,19 +546,33 @@ void printTable(std::ofstream &ofs)
       names[it1->first] = it1->first;
       }
     }
+  return names;
+}
 
-  std::cout << "Name";
-  ofs << "Name";
+void printTable(std::ofstream &ofs, bool printHeader,
+                std::map< std::string, std::map<std::string, double> > &output)
+{
+  std::map<std::string, std::string> names = getMeasureNames();
 
-  for (it2 = names.begin(); it2 != names.end(); it2++)
+  std::map< std::string, std::map<std::string, double> >::iterator it;
+  std::map<std::string, double>::iterator it1;
+  std::map<std::string, std::string>::iterator it2;
+
+  if (printHeader)
     {
-    std::cout << " , " << it2->second;
-    ofs << " , " << it2->second;
-    }
-  std::cout << std::endl;
-  ofs << std::endl;
+    std::cout << "Name";
+    ofs << "Name";
 
-  for(it = OutTable.begin(); it != OutTable.end(); it++)
+    for (it2 = names.begin(); it2 != names.end(); it2++)
+      {
+      std::cout << " , " << it2->second;
+      ofs << " , " << it2->second;
+      }
+    std::cout << std::endl;
+    ofs << std::endl;
+    }
+
+  for(it = output.begin(); it != output.end(); it++)
     {
     std::cout << it->first;
     ofs << it->first;
@@ -562,4 +591,89 @@ void printTable(std::ofstream &ofs)
     std::cout << std::endl;
     ofs << std::endl;
     }
+}
+
+bool isInCluster(const std::string &id, const std::string &clusterName)
+{
+  std::string s = id;
+  std::string delimiter = ":";
+  size_t pos = 0;
+  std::string token;
+  while ((pos = s.find(delimiter)) != std::string::npos)
+    {
+    token = s.substr(0, pos);
+    if (clusterName == token)
+      {
+      return true;
+      }
+    s.erase(0, pos + delimiter.length());
+    }
+  return false;
+}
+
+void addClusters()
+{
+  std::map< std::string, std::map<std::string, double> >::iterator itOutput;
+  std::map<std::string, double>::iterator itValues;
+  std::map<std::string, double>::iterator itClusterValues;
+  std::map<std::string, std::string>::iterator itClusterNames;
+  std::map<std::string, std::string>::iterator itNames;
+
+  std::map<std::string, std::string> names = getMeasureNames();
+
+  for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
+    {
+    Clusters[itClusterNames->first] = std::map<std::string, double>();
+    std::map< std::string, std::map<std::string, double> >::iterator itCluster = Clusters.find(itClusterNames->first);
+
+    int npoints = 0;
+    int npointsCluster = 0;
+    for(itOutput = OutTable.begin(); itOutput != OutTable.end(); itOutput++)
+      {
+      if (isInCluster(itOutput->first, itClusterNames->first))
+        {
+        itValues = itOutput->second.find(std::string("Num_Points"));
+        if (itValues != itOutput->second.end())
+          {
+          npoints = itValues->second;
+          }
+        npointsCluster += npoints;
+
+        for (itNames = names.begin(); itNames != names.end(); itNames++)
+          {
+          itValues = itOutput->second.find(itNames->second);
+          itClusterValues = itCluster->second.find(itNames->second);
+          if (itClusterValues == itCluster->second.end())
+            {
+            itCluster->second[itNames->second] = 0;
+            itClusterValues = itCluster->second.find(itNames->second);
+            }
+          double clusterValue = itClusterValues->second;
+          if (itValues != itOutput->second.end() && itNames->second != std::string("Num_Points") &&
+              itNames->second != std::string("Num_Polylines") )
+            {
+            clusterValue += npoints * itValues->second;
+            }
+          else
+            {
+            clusterValue += itValues->second;
+            }
+
+          itCluster->second[itNames->second] = clusterValue;
+          } ////for (itNames = names.begin(); itNames != names.end(); itNames++)
+        } // if (isInCluster(itOutput->first, itClusterNames->first)
+      } // for(itOutput = OutTable.begin(); itOutput != OutTable.end(); itOutput++)
+
+      // second pass divide by npoints
+      for (itNames = names.begin(); itNames != names.end(); itNames++)
+        {
+        itClusterValues = itCluster->second.find(itNames->second);
+        if (itClusterValues != itCluster->second.end() && itNames->second != std::string("Num_Points") &&
+              itNames->second != std::string("Num_Polylines") )
+          {
+          double clusterValue = itClusterValues->second;
+          itCluster->second[itNames->second] = clusterValue/npointsCluster;
+          }
+        }
+    } //  for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
 }
