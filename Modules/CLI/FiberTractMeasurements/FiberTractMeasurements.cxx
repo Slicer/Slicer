@@ -93,6 +93,8 @@ int main( int argc, char * argv[] )
   operations.push_back(std::string("MinEigenvalue"));
   operations.push_back(std::string("MidEigenvalue"));
   operations.push_back(std::string("MaxEigenvalue"));
+  std::vector<std::string> emptyOperationVector;
+  emptyOperationVector.push_back(std::string(""));
 
   if (inputType == std::string("Fibers_Hierarchy") ||
       inputType == std::string("All_Fiber_Nodes") )
@@ -187,7 +189,7 @@ int main( int argc, char * argv[] )
 
             computeFiberStats(fiberNode->GetPolyData(), id);
 
-            computeScalarMeasurements(fiberNode->GetPolyData(), id, std::string(""));
+            computeScalarMeasurements(fiberNode->GetPolyData(), id, emptyOperationVector[0]);
 
             for (int o=0; o<operations.size(); o++)
               {
@@ -211,7 +213,7 @@ int main( int argc, char * argv[] )
 
         computeFiberStats(fiberNode->GetPolyData(), id);
 
-        computeScalarMeasurements(fiberNode->GetPolyData(), id, std::string(""));
+        computeScalarMeasurements(fiberNode->GetPolyData(), id, emptyOperationVector[0]);
 
         for (int o=0; o<operations.size(); o++)
           {
@@ -255,7 +257,7 @@ int main( int argc, char * argv[] )
 
       computeFiberStats(readerVTP->GetOutput(), id);
 
-      computeScalarMeasurements(readerVTP->GetOutput(), id , std::string(""));
+      computeScalarMeasurements(readerVTP->GetOutput(), id, emptyOperationVector[0]);
 
       if( !setTensors(readerVTP->GetOutput()) )
         {
@@ -280,7 +282,7 @@ int main( int argc, char * argv[] )
 
       computeFiberStats(readerVTK->GetOutput(), id);
 
-      computeScalarMeasurements(readerVTK->GetOutput(), id, std::string(""));
+      computeScalarMeasurements(readerVTK->GetOutput(), id, emptyOperationVector[0]);
 
       if( !setTensors(readerVTK->GetOutput()) )
         {
