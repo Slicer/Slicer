@@ -244,12 +244,10 @@ int main( int argc, char * argv[] )
     gfnVTP->AddFileNames("*.vtp");
     vtkStringArray *fileNamesVTP = gfnVTP->GetFileNames();
 
-    vtkNew<vtkXMLPolyDataReader> readerVTP;
-    vtkNew<vtkPolyDataReader> readerVTK;
-
     // Loop over polydatas
     for (int i=0; i<fileNamesVTP->GetNumberOfValues(); i++)
       {
+      vtkNew<vtkXMLPolyDataReader> readerVTP;
       vtkStdString fileName = fileNamesVTP->GetValue(i);
       readerVTP->SetFileName(fileName.c_str());
       readerVTP->Update();
@@ -275,6 +273,7 @@ int main( int argc, char * argv[] )
       }
     for (int i=0; i<fileNamesVTK->GetNumberOfValues(); i++)
       {
+      vtkNew<vtkPolyDataReader> readerVTK;
       vtkStdString fileName = fileNamesVTK->GetValue(i);
       readerVTK->SetFileName(fileName.c_str());
       readerVTK->Update();
@@ -335,20 +334,31 @@ void computeFiberStats(vtkPolyData *poly,
   int npoints = poly->GetNumberOfPoints();
   int npolys = poly->GetNumberOfCells();
 
-  std::map< std::string, std::map<std::string, double> >::iterator it = OutTable.find(id);
-  if (it == OutTable.end())
+  if (npoints > 0 && npolys > 0)
     {
-    OutTable[id] = std::map<std::string, double>();
-    it = OutTable.find(id);
+    std::map< std::string, std::map<std::string, double> >::iterator it = OutTable.find(id);
+    if (it == OutTable.end())
+      {
+      OutTable[id] = std::map<std::string, double>();
+      it = OutTable.find(id);
+      }
+    it->second[std::string("Num_Points")] = npoints;
+    it->second[std::string("Num_Polylines")] = npolys;
     }
-  it->second[std::string("Num_Points")] = npoints;
-  it->second[std::string("Num_Polylines")] = npolys;
 }
 
 void computeScalarMeasurements(vtkPolyData *poly,
                                std::string &id,
                                std::string &operation)
 {
+  int npoints = poly->GetNumberOfPoints();
+  int npolys = poly->GetNumberOfCells();
+
+  if (npoints == 0 || npolys == 0)
+    {
+    return;
+    }
+
   // averagre measurement for each scalar array
   for (int i=0; i<poly->GetPointData()->GetNumberOfArrays(); i++)
     {
