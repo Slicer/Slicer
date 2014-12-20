@@ -65,6 +65,15 @@ int getNumberOfTensors(vtkPolyData *poly);
 
 void addClusters();
 
+void printFlat(std::ofstream &ofs);
+
+void printCluster(const std::string &id,
+                  std::map< std::string, std::map<std::string, double> > &output,
+                  std::map<std::string, std::string> &names,
+                  std::stringstream &ids,
+                  std::stringstream &measureNames,
+                  std::stringstream &measureValues);
+
 std::map< std::string, std::map<std::string, double> > OutTable;
 std::map< std::string, std::string> ClusterNames;
 std::map< std::string, std::map<std::string, double> > Clusters;
@@ -299,11 +308,17 @@ int main( int argc, char * argv[] )
       }
     } //if (inputType == std::string("Fibers File Folder") )
 
-  printTable(ofs, true, OutTable);
-
   addClusters();
 
-  printTable(ofs, false, Clusters);
+  if (outputFormat == std::string("Row_Hierarchy"))
+    {
+    printFlat(ofs);
+    }
+  else
+    {
+    printTable(ofs, true, OutTable);
+    printTable(ofs, false, Clusters);
+    }
 
   ofs.flush();
   ofs.close();
@@ -319,6 +334,12 @@ void getPathFromParentToChild(vtkMRMLHierarchyNode *parent,
   if (immediateParent)
     {
     std::string parentName = immediateParent->GetName() ? immediateParent->GetName() : immediateParent->GetID();
+    std::string childName = child->GetName() ? child->GetName() : child->GetID();
+    std::map<std::string, std::string>::iterator it = ClusterNames.find(childName);
+    if (it != ClusterNames.end())
+      {
+      ClusterNames[childName] = parentName + std::string(":") + it->second;
+      }
     path = parentName + std::string(":") + path;
     ClusterNames[parentName] = parentName;
     if (strcmp(immediateParent->GetID(), parent->GetID()) != 0)
@@ -635,8 +656,8 @@ void addClusters()
 
   for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
     {
-    Clusters[itClusterNames->first] = std::map<std::string, double>();
-    std::map< std::string, std::map<std::string, double> >::iterator itCluster = Clusters.find(itClusterNames->first);
+    Clusters[itClusterNames->second] = std::map<std::string, double>();
+    std::map< std::string, std::map<std::string, double> >::iterator itCluster = Clusters.find(itClusterNames->second);
 
     int npoints = 0;
     int npointsCluster = 0;
@@ -688,4 +709,107 @@ void addClusters()
           }
         }
     } //  for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
+}
+
+void printFlat(std::ofstream &ofs)
+{
+  std::stringstream ids;
+  std::stringstream measureNames;
+  std::stringstream measureValues;
+  std::map<std::string, std::string>::iterator itClusterNames;
+
+  std::map<std::string, std::string> names = getMeasureNames();
+
+  for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
+    {
+    // find if this cluster in any other cluster
+    bool topCluster = true;
+    std::map<std::string, std::string>::iterator itClusterNames1;
+    for (itClusterNames1 = ClusterNames.begin(); itClusterNames1!= ClusterNames.end(); itClusterNames1++)
+      {
+      if (isInCluster(itClusterNames->second, itClusterNames1->first) )
+        {
+        topCluster = false;
+        break;
+        }
+      }
+
+    if (topCluster)
+    {
+      // print it
+      printCluster(itClusterNames->first, Clusters, names,
+                   ids, measureNames, measureValues);
+
+      // print all children clusters
+      for (itClusterNames1 = ClusterNames.begin(); itClusterNames1!= ClusterNames.end(); itClusterNames1++)
+        {
+        if (isInCluster(itClusterNames1->second, itClusterNames->first) )
+          {
+          printCluster(itClusterNames1->first, Clusters, names,
+                       ids, measureNames, measureValues);
+          // print all fibers in this clusters
+          std::map< std::string, std::map<std::string, double> >::iterator it;
+          for(it = OutTable.begin(); it != OutTable.end(); it++)
+            {
+            if (isInCluster(it->first, itClusterNames1->first) )
+              {
+              printCluster(it->first, OutTable, names,
+                           ids, measureNames, measureValues);
+              }
+            } //for(it = OutTable.begin(); it != OutTable.end(); it++)
+          }
+        }
+      } // if (topCluster)
+    } //   for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
+
+  // if no clusters print fibers
+  if (ClusterNames.empty())
+    {
+    std::map< std::string, std::map<std::string, double> >::iterator it;
+    for(it = OutTable.begin(); it != OutTable.end(); it++)
+      {
+      printCluster(it->first, OutTable, names,
+                   ids, measureNames, measureValues);
+      }
+    }
+
+  if (!ids.str().empty())
+    {
+    ofs << ids.str() << std::endl;
+    ofs << measureNames.str() << std::endl;
+    ofs << measureValues.str() << std::endl;
+    }
+}
+
+void printCluster(const std::string &id,
+                  std::map< std::string, std::map<std::string, double> > &output,
+                  std::map<std::string, std::string> &names,
+                  std::stringstream &ids,
+                  std::stringstream &measureNames,
+                  std::stringstream &measureValues)
+{
+  std::map< std::string, std::map<std::string, double> >::iterator it;
+  std::map<std::string, double>::iterator it1;
+  std::map<std::string, std::string>::iterator it2;
+
+  it = output.find(id);
+  if (it != output.end())
+    {
+    for (it2 = names.begin(); it2 != names.end(); it2++)
+      {
+      it1 = it->second.find(it2->second);
+      if (it1 != it->second.end())
+        {
+        if (!ids.str().empty())
+          {
+          ids << ",";
+          measureNames << ",";
+          measureValues << ",";
+          }
+        ids << id;
+        measureNames << it2->second;
+        measureValues << it1->second;
+        }
+      }
+    }
 }

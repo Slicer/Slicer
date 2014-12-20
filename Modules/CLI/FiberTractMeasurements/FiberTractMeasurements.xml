@@ -54,5 +54,15 @@
       <longflag>--outputfile</longflag>
       <description>Output measurement file</description>
     </file>
+    <string-enumeration>
+      <name>outputFormat</name>
+      <flag>f</flag>
+      <longflag>--format</longflag>
+      <description><![CDATA[Outout format: hierarchy along column or row.]]></description>
+      <label>Select Output Format</label>
+      <default>Row_Hierarchy</default>
+      <element>Row_Hierarchy</element>
+      <element>Column_Hierarchy</element>
+    </string-enumeration>
   </parameters>
 </executable>
