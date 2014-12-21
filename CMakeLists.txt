@@ -334,12 +334,10 @@ endif()
 #-----------------------------------------------------------------------------
 # CTestCustom
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  configure_file(
-    CMake/CTestCustom.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
-    @ONLY)
-endif()
+configure_file(
+  CMake/CTestCustom.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+  @ONLY)
 
 #-----------------------------------------------------------------------------
 # Additional CXX/C Flags
@@ -568,21 +566,19 @@ mark_as_superbuild(VARS QT_QMAKE_EXECUTABLE LABELS "FIND_PACKAGE")
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  # NOTE: For CTEST_USE_LAUNCHER to work, it's required to include CTest at the superbuild level.
-  #       See http://www.kitware.com/blog/home/post/11
+# NOTE: For CTEST_USE_LAUNCHER to work, it's required to include CTest at the superbuild level.
+#       See http://www.kitware.com/blog/home/post/11
 
-  set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
-  include(CTest)
+set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
+include(CTest)
 
-  # Add Experimental target - Adapted from CTestTargets.cmake
-  set(__conf_types "")
-  if(CMAKE_CONFIGURATION_TYPES)
-    # We need to pass the configuration type on the test command line.
-    set(__conf_types -C "${CMAKE_CFG_INTDIR}")
-  endif()
-  add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
+# Add Experimental target - Adapted from CTestTargets.cmake
+set(__conf_types "")
+if(CMAKE_CONFIGURATION_TYPES)
+  # We need to pass the configuration type on the test command line.
+  set(__conf_types -C "${CMAKE_CFG_INTDIR}")
 endif()
+add_custom_target(Experimental ${CMAKE_CTEST_COMMAND} ${__conf_types} -D Experimental)
 
 #-----------------------------------------------------------------------------
 # Superbuild script
@@ -656,13 +652,13 @@ set(Slicer_ExternalData_URL_TEMPLATES ${ExternalData_URL_TEMPLATES})
 set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX})
 set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
-if(BUILD_TESTING)
-  include(SlicerMacroConfigureModuleCxxTestDriver)
-  include(SlicerMacroSimpleTest)
-  include(SlicerMacroPythonTesting)
-  include(SlicerMacroConfigureGenericCxxModuleTests)
-  include(SlicerMacroConfigureGenericPythonModuleTests)
+include(SlicerMacroConfigureModuleCxxTestDriver)
+include(SlicerMacroSimpleTest)
+include(SlicerMacroPythonTesting)
+include(SlicerMacroConfigureGenericCxxModuleTests)
+include(SlicerMacroConfigureGenericPythonModuleTests)
 
+if(BUILD_TESTING)
   include(MIDAS)
   set(MIDAS_REST_URL "http://midas.kitware.com/api/rest" CACHE STRING "The MIDAS server where testing data resides")
   set(MIDAS_KEY_DIR "${Slicer_SOURCE_DIR}/Testing/Data")
