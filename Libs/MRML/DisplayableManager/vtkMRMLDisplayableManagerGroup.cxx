@@ -281,7 +281,8 @@ void vtkMRMLDisplayableManagerGroup::AddDisplayableManager(
   this->Internal->NameToDisplayableManagerMap[displayableManagerClassName] = displayableManager;
 
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): "
-                << "registering DisplayableManager: " << displayableManager );
+                << "registering DisplayableManager: " << displayableManager << "("
+                << displayableManager->GetClassName() << ")");
 }
 
 //----------------------------------------------------------------------------
