@@ -112,9 +112,6 @@ set(KIT_SRCS
 
 set_source_files_properties(
   vtkMRMLDisplayableManagerGroup.cxx
-  vtkMRMLDisplayableManagerFactory.cxx
-  vtkMRMLThreeDViewDisplayableManagerFactory.cxx
-  vtkMRMLSliceViewDisplayableManagerFactory.cxx
   WRAP_EXCLUDE
   )
 
