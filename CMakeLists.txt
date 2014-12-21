@@ -668,7 +668,10 @@ if(BUILD_TESTING)
   set(MIDAS_KEY_DIR "${Slicer_SOURCE_DIR}/Testing/Data")
   set(MIDAS_DATA_DIR "${Slicer_BINARY_DIR}/MIDAS_Data")
 
-  set(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  # The variable CXX_TEST_PATH should *NOT* be used when adding tests.
+  # Instead the the $<TARGET_FILE:...> generator expression should be
+  # considered. See r16586 for more details.
+  set(CXX_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}) # XXX
 
   configure_file(
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
