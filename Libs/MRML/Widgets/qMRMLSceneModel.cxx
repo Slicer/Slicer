@@ -419,13 +419,8 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
     {
     return 0;
     }
-  //return nodeItem ? d->MRMLScene->GetNodeByID(
-  //  nodeItem->data(qMRMLSceneModel::UIDRole).toString().toLatin1()) : 0;
-  vtkMRMLNode* node = static_cast<vtkMRMLNode*>(
-    reinterpret_cast<void *>(
-      nodePointer.toLongLong()));
-  Q_ASSERT(node);
-  return node;
+  return nodeItem ? d->MRMLScene->GetNodeByID(
+    nodeItem->data(qMRMLSceneModel::UIDRole).toString().toLatin1()) : 0;
 }
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
