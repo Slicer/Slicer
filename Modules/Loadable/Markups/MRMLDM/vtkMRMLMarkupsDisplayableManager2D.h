@@ -56,8 +56,6 @@ public:
   virtual void PropagateMRMLToWidget(vtkMRMLMarkupsNode* node, vtkAbstractWidget * widget);
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLMarkupsNode* node);
-  /// Get the sliceNode, if registered.
-  vtkMRMLSliceNode * GetSliceNode();
 
   /// Check if the displayCoordinates are inside the viewport and if not,
   /// correct the displayCoordinates. Coordinates are reset if the normalized
