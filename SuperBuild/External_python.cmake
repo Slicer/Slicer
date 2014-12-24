@@ -185,7 +185,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     )
 
   # paths
-  set(${proj}_PATHS_LAUNCHER_BUILD ${python_DIR}/bin/<CMAKE_CFG_INTDIR>)
+  set(${proj}_PATHS_LAUNCHER_BUILD ${python_DIR}/bin)
   mark_as_superbuild(
     VARS ${proj}_PATHS_LAUNCHER_BUILD
     LABELS "PATHS_LAUNCHER_BUILD"
