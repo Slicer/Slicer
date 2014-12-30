@@ -96,7 +96,6 @@ int qMRMLSceneHierarchyModel::maxColumnId()const
   return maxId;
 }
 
-
 /*
 
 //------------------------------------------------------------------------------
@@ -142,7 +141,6 @@ vtkMRMLNode* qMRMLSceneHierarchyModel::parentNode(vtkMRMLNode* node)const
     }
   return hierarchyNode ? hierarchyNode->GetParentNode() : 0;
 }
-
 
 //------------------------------------------------------------------------------
 int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
@@ -305,7 +303,7 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
       // (hierarchy node types need to match within a hierarchy to avoid "mixing" of hierarchies of different type)
       // Note: This may need to be revised if mixing across classes is to be allowed (e.g. displayable and model,
       //   in which case base classes might be allowed as well)
-      if (!hierarchyNode || strcmp(newParent->GetClassName(), hierarchyNode->GetClassName()))
+      if (!hierarchyNode || newParent && strcmp(newParent->GetClassName(), hierarchyNode->GetClassName()))
         {
         vtkMRMLHierarchyNode* newHierarchyNode = d->CreateHierarchyNode();
         newHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString(
@@ -410,7 +408,6 @@ void qMRMLSceneHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, QStanda
       }
     }
 }
-
 
 //------------------------------------------------------------------------------
 void qMRMLSceneHierarchyModel::observeNode(vtkMRMLNode* node)

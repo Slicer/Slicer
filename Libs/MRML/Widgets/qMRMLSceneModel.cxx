@@ -892,7 +892,7 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
       }
     // If the item has no parent, then it means it hasn't been put into the scene yet.
     // and it will do it automatically.
-    if (parentItem)
+    if (parentItem && parentItem != newParentItem)
       {
       int newIndex = this->nodeIndex(node);
       if (parentItem != newParentItem ||
