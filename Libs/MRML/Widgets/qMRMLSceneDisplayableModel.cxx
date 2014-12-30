@@ -26,6 +26,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLSelectionNode.h>
 
 //------------------------------------------------------------------------------
 qMRMLSceneDisplayableModelPrivate
@@ -58,14 +59,47 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
     return vtkMRMLDisplayNode::SafeDownCast(node);
     }
 
+  vtkMRMLSelectionNode* selectionNode = 0;
+  std::vector<vtkMRMLNode *> selectionNodes;
+  if (this->MRMLScene)
+    {
+    this->MRMLScene->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
+    if (selectionNodes.size() > 0)
+      {
+      selectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
+      }
+    }
+
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
-  if (displayableNode)
+  if (selectionNode && displayableNode)
+    {
+    char *displayableType = (char *)node->GetClassName();
+    char *displayType = 0;
+    std::string ds = selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
+    if (!ds.empty())
+      {
+      displayType = (char *)ds.c_str();
+      for (int  i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++)
+        {
+        vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
+        if (displayNode && displayNode->IsA(displayType))
+          {
+            return displayNode;
+          }
+        }
+      }
+    else
+      {
+      return displayableNode->GetDisplayNode();
+      }
+    }
+  else if (displayableNode)
     {
     return displayableNode->GetDisplayNode();
     }
 
   vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode
-    = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+      = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
   if (displayableHierarchyNode)
     {
     return displayableHierarchyNode->GetDisplayNode();
