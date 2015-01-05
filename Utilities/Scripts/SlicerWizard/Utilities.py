@@ -201,7 +201,7 @@ def initLogging(logger, args):
   # Set logging level and add handlers
   logger.addHandler(lho)
   logger.addHandler(lhe)
-  logger.setLevel(logLevel)
+  logger.setLevel(_logLevel)
 
   # Turn of github debugging
   ghLogger = logging.getLogger("github")
