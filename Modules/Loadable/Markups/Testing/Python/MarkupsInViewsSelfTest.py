@@ -175,7 +175,7 @@ class MarkupsInViewsSelfTestLogic:
       sliceView.getDisplayableManagers(ms)
       for i in range(ms.GetNumberOfItems()):
         m = ms.GetItemAsObject(i)
-        if m.GetClassName() == 'vtkMRMLMarkupsFiducialDisplayableManager2D' and m.GetSliceNode().GetID() == sliceNodeID:
+        if m.GetClassName() == 'vtkMRMLMarkupsFiducialDisplayableManager2D' and m.GetMRMLSliceNode().GetID() == sliceNodeID:
           h = m.GetHelper()
           seedWidget = h.GetWidget(fidNode)
           return seedWidget.GetEnabled()
