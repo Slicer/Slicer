@@ -501,8 +501,13 @@ void qSlicerModelsModuleWidget::updateWidgetFromSelectionNode()
 
   vtkMRMLSelectionNode* selectionNode = this->getSelectionNode();
 
-  std::string displayNodeClass = selectionNode->GetModelHierarchyDisplayNodeClassName("vtkMRMLFiberBundleNode");
-  bool include = !displayNodeClass.empty();
+  bool include = false;
+  std::string displayNodeClass;
+  if (selectionNode)
+    {
+    displayNodeClass = selectionNode->GetModelHierarchyDisplayNodeClassName("vtkMRMLFiberBundleNode");
+    include = !displayNodeClass.empty();
+    }
 
   if (include)
     {
@@ -534,13 +539,16 @@ void qSlicerModelsModuleWidget::updateWidgetFromSelectionNode()
 
   d->ModelHierarchyTreeView->sortFilterProxyModel()->invalidate();
 
-  // force update mrml widgets
-  std::vector<vtkMRMLNode *> nodes;
-  vtkMRMLScene *scene = this->mrmlScene();
-  scene->GetNodesByClass(displayNodeClass.c_str(), nodes);
-  for (int i=0; i<nodes.size(); i++)
+  if (include)
     {
-    nodes[i]->InvokeEvent(vtkCommand::ModifiedEvent);
+    // force update mrml widgets
+    std::vector<vtkMRMLNode *> nodes;
+    vtkMRMLScene *scene = this->mrmlScene();
+    scene->GetNodesByClass(displayNodeClass.c_str(), nodes);
+    for (int i=0; i<nodes.size(); i++)
+      {
+      nodes[i]->InvokeEvent(vtkCommand::ModifiedEvent);
+      }
     }
   d->ModelDisplayWidget->setMRMLModelOrHierarchyNode(d->ModelDisplayWidget->mrmlDisplayableNode());
 }
