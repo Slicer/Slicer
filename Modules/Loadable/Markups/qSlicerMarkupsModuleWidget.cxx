@@ -2370,7 +2370,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
   // sort the list
   qSort(rows);
 
-  // keep track of point ot point distance
+  // keep track of point to point distance
   double distance = 0.0;
   double lastPoint[3] = {0.0, 0.0, 0.0};
 
@@ -2429,8 +2429,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
     }
   if (distance != 0.0)
     {
-    QString fiducialDistanceString = QString("Summed linear distance: ") + QString::number(distance);
-    menu->addAction(fiducialDistanceString);
+    menu->addAction(QString("Summed linear distance: %1").arg(distance));
     }
   menu->addSeparator();
 }
