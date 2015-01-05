@@ -51,6 +51,7 @@
 #include "vtkSlicerMarkupsLogic.h"
 
 // VTK includes
+#include <vtkMath.h>
 #include <vtkNew.h>
 
 #include <math.h>
@@ -2354,14 +2355,24 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
 
   // get the list of selected rows to sort them in index order
   QList<int> rows;
-  for (int i = 0; i < selectedItems.size(); i += d->numberOfColumns())
+  // The selected items list contains an item for each column in each row that
+  // has been selected. Don't make any assumptions about the order of the
+  // selected items, iterate through all of them and collect unique rows
+  for (int i = 0; i < selectedItems.size(); ++i)
     {
     // get the row
     int row = selectedItems.at(i)->row();
-    rows << row;
+    if (!rows.contains(row))
+      {
+      rows << row;
+      }
     }
   // sort the list
   qSort(rows);
+
+  // keep track of point ot point distance
+  double distance = 0.0;
+  double lastPoint[3] = {0.0, 0.0, 0.0};
 
   // loop over the selected rows
   for (int i = 0; i < rows.size() ; i++)
@@ -2397,9 +2408,30 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
         QString::number(point[1]) + QString(",") +
         QString::number(point[2]);
       menu->addAction(coordinate);
+
+      // calculate the point to point accumulated distance for fiducials
+      if (numPoints == 1 && rows.size() > 1)
+        {
+        if (i > 0)
+          {
+          double distanceToLastPoint = vtkMath::Distance2BetweenPoints(lastPoint, point);
+          if (distanceToLastPoint != 0.0)
+            {
+            distanceToLastPoint = sqrt(distanceToLastPoint);
+            }
+          distance += distanceToLastPoint;
+          }
+        lastPoint[0] = point[0];
+        lastPoint[1] = point[1];
+        lastPoint[2] = point[2];
+        }
       }
     }
-
+  if (distance != 0.0)
+    {
+    QString fiducialDistanceString = QString("Summed linear distance: ") + QString::number(distance);
+    menu->addAction(fiducialDistanceString);
+    }
   menu->addSeparator();
 }
 
