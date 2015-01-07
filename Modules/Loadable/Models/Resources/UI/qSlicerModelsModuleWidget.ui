@@ -25,6 +25,9 @@
    </property>
    <item>
     <widget class="ctkExpandableWidget" name="ResizableFrame">
+     <property name="orientations">
+      <set>Qt::Vertical</set>
+     </property>
      <property name="sizeGripInside" stdset="0">
       <bool>false</bool>
      </property>
