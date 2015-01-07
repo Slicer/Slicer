@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Diffusion Tensor Images</category>
+  <category>Diffusion.Tractography</category>
   <title>Fiber Tract Scalar Measurements</title>
   <description><![CDATA[Compute a set of different scalar measurements from a directory of fibers]]></description>
   <version>0.1.0.$Revision: 2014</version>

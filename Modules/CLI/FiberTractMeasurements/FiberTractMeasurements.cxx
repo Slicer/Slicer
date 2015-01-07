@@ -63,7 +63,7 @@ bool isInCluster(const std::string &id, const std::string &clusterName);
 
 int getNumberOfTensors(vtkPolyData *poly);
 
-void addClusters();
+int addClusters();
 
 void printFlat(std::ofstream &ofs);
 
@@ -77,6 +77,9 @@ void printCluster(const std::string &id,
 std::map< std::string, std::map<std::string, double> > OutTable;
 std::map< std::string, std::string> ClusterNames;
 std::map< std::string, std::map<std::string, double> > Clusters;
+
+#define INVALID_NUMBER -999999
+#define INVALID_NUMBER_PRINT std::string("#NAN")
 
 int main( int argc, char * argv[] )
 {
@@ -308,7 +311,10 @@ int main( int argc, char * argv[] )
       }
     } //if (inputType == std::string("Fibers File Folder") )
 
-  addClusters();
+  if (addClusters() == 0)
+    {
+    return EXIT_FAILURE;
+    }
 
   if (outputFormat == std::string("Row_Hierarchy"))
     {
@@ -355,8 +361,8 @@ void computeFiberStats(vtkPolyData *poly,
   int npoints = poly->GetNumberOfPoints();
   int npolys = poly->GetNumberOfCells();
 
-  if (npoints > 0 && npolys > 0)
-    {
+  //if (npoints > 0 && npolys > 0)
+  //  {
     std::map< std::string, std::map<std::string, double> >::iterator it = OutTable.find(id);
     if (it == OutTable.end())
       {
@@ -364,8 +370,8 @@ void computeFiberStats(vtkPolyData *poly,
       it = OutTable.find(id);
       }
     it->second[std::string("Num_Points")] = npoints;
-    it->second[std::string("Num_Polylines")] = npolys;
-    }
+    it->second[std::string("Num_Fibers")] = npolys;
+   // }
 }
 
 void computeScalarMeasurements(vtkPolyData *poly,
@@ -377,7 +383,7 @@ void computeScalarMeasurements(vtkPolyData *poly,
 
   if (npoints == 0 || npolys == 0)
     {
-    return;
+    //return;
     }
 
   // averagre measurement for each scalar array
@@ -397,12 +403,19 @@ void computeScalarMeasurements(vtkPolyData *poly,
 
     double val;
     double sum = 0;
-    for (int n=0; n<poly->GetNumberOfPoints(); n++)
+    for (int n=0; n<npoints; n++)
       {
       arr->GetTuple(n, &val);
       sum += val;
       }
-    sum /= poly->GetNumberOfPoints();
+    if (npoints)
+      {
+      sum /= npoints;
+      }
+    else
+      {
+      sum = INVALID_NUMBER;
+      }
 
     std::cout << " : " << name << " = " << sum << std::endl;
     //ofs << id << " : " << name << " = " << sum << std::endl;
@@ -617,8 +630,16 @@ void printTable(std::ofstream &ofs, bool printHeader,
       it1 = it->second.find(it2->second);
       if (it1 != it->second.end())
         {
-        std::cout << it1->second;
-        ofs << it1->second;
+        if (it1->second == INVALID_NUMBER)
+          {
+          std::cout << INVALID_NUMBER_PRINT;
+          ofs << INVALID_NUMBER_PRINT;
+          }
+        else
+          {
+          std::cout << std::fixed << it1->second;
+          ofs << std::fixed << it1->second;
+          }
         }
       }
     std::cout << std::endl;
@@ -644,7 +665,7 @@ bool isInCluster(const std::string &id, const std::string &clusterName)
   return false;
 }
 
-void addClusters()
+int addClusters()
 {
   std::map< std::string, std::map<std::string, double> >::iterator itOutput;
   std::map<std::string, double>::iterator itValues;
@@ -675,6 +696,12 @@ void addClusters()
         for (itNames = names.begin(); itNames != names.end(); itNames++)
           {
           itValues = itOutput->second.find(itNames->second);
+          if (itValues == itOutput->second.end())
+            {
+            std::cerr << "Fibers contain different number of scalars" << std::endl;
+            return 0;
+            }
+
           itClusterValues = itCluster->second.find(itNames->second);
           if (itClusterValues == itCluster->second.end())
             {
@@ -683,9 +710,12 @@ void addClusters()
             }
           double clusterValue = itClusterValues->second;
           if (itValues != itOutput->second.end() && itNames->second != std::string("Num_Points") &&
-              itNames->second != std::string("Num_Polylines") )
+              itNames->second != std::string("Num_Fibers") )
             {
-            clusterValue += npoints * itValues->second;
+            if (itValues->second != INVALID_NUMBER)
+              {
+              clusterValue += npoints * itValues->second;
+              }
             }
           else
             {
@@ -702,13 +732,14 @@ void addClusters()
         {
         itClusterValues = itCluster->second.find(itNames->second);
         if (itClusterValues != itCluster->second.end() && itNames->second != std::string("Num_Points") &&
-              itNames->second != std::string("Num_Polylines") )
+              itNames->second != std::string("Num_Fibers") && npointsCluster )
           {
           double clusterValue = itClusterValues->second;
           itCluster->second[itNames->second] = clusterValue/npointsCluster;
           }
         }
     } //  for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
+  return 1;
 }
 
 void printFlat(std::ofstream &ofs)
@@ -763,15 +794,15 @@ void printFlat(std::ofstream &ofs)
     } //   for (itClusterNames = ClusterNames.begin(); itClusterNames!= ClusterNames.end(); itClusterNames++)
 
   // if no clusters print fibers
-  if (ClusterNames.empty())
-    {
+  //if (ClusterNames.empty())
+  //  {
     std::map< std::string, std::map<std::string, double> >::iterator it;
     for(it = OutTable.begin(); it != OutTable.end(); it++)
       {
       printCluster(it->first, OutTable, names,
                    ids, measureNames, measureValues);
       }
-    }
+  //  }
 
   if (!ids.str().empty())
     {
@@ -808,7 +839,15 @@ void printCluster(const std::string &id,
           }
         ids << id;
         measureNames << it2->second;
-        measureValues << it1->second;
+
+        if (it1->second == INVALID_NUMBER)
+          {
+          measureValues << INVALID_NUMBER_PRINT;
+          }
+        else
+          {
+          measureValues << std::fixed << it1->second;
+          }
         }
       }
     }
