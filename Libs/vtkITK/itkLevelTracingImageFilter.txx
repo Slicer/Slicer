@@ -284,7 +284,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   OutputImageRegionType regionOut =  outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion( regionOut );
   outputImage->Allocate();
-  outputImage->FillBuffer ( NumericTraits<OutputImagePixelType>::Zero );
+  outputImage->FillBuffer ( NumericTraits<OutputImagePixelType>::ZeroValue() );
 
   outputPath->Initialize();
 
@@ -397,7 +397,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 
   // Now we have the seed and the starting neighbor
   outputPath->SetStart(seed);
-  outputImage->SetPixel(pix, NumericTraits<OutputImagePixelType>::One);
+  outputImage->SetPixel(pix, NumericTraits<OutputImagePixelType>::OneValue());
   do
     {
     for(int s = 0; s<8; s++)
@@ -413,7 +413,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
           {
           //condition is satisfied, label the output image and output path
           outputImage->SetPixel(pixTemp,
-                                NumericTraits<OutputImagePixelType>::One);
+                                NumericTraits<OutputImagePixelType>::OneValue());
           offset[0]=offsetX;
           offset[1]=offsetY;
           outputPath->InsertStep(noOfPixels, offset);
@@ -459,7 +459,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   OutputImageRegionType region =  outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion( region );
   outputImage->Allocate();
-  outputImage->FillBuffer ( NumericTraits<OutputImagePixelType>::Zero );
+  outputImage->FillBuffer ( NumericTraits<OutputImagePixelType>::ZeroValue() );
 
   typedef LevelTracingImageFunction<InputImageType, double> FunctionType;
   typedef FloodFilledImageFunctionConditionalIterator<OutputImageType, FunctionType> IteratorType;
@@ -475,7 +475,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 
   while( !it.IsAtEnd())
     {
-    it.Set(NumericTraits<OutputImagePixelType>::One);
+    it.Set(NumericTraits<OutputImagePixelType>::OneValue());
     ++it;
     progress.CompletedPixel();  // potential exception thrown here
     }

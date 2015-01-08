@@ -316,7 +316,7 @@ int RegressionTestImage(const char *testImageFilename,
   diff->SetToleranceRadius(radiusTolerance);
   diff->UpdateLargestPossibleRegion();
 
-  itk::SizeValueType status = itk::NumericTraits<itk::SizeValueType>::Zero;
+  itk::SizeValueType status = itk::NumericTraits<itk::SizeValueType>::ZeroValue();
   status = diff->GetNumberOfPixelsWithDifferences();
 
   // if there are discrepencies, create an diff image

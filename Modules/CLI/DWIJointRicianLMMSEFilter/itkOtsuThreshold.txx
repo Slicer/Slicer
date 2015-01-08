@@ -69,7 +69,7 @@ template <class TInputImage, class TOutputImage>
 void OtsuThreshold<TInputImage, TOutputImage>
 ::AfterThreadedGenerateData( void )
 {
-  double totalSamples = itk::NumericTraits<double>::Zero;
+  double totalSamples = itk::NumericTraits<double>::ZeroValue();
 
   for( unsigned int k = 0; k < (unsigned int)(this->GetNumberOfThreads()); ++k )
     {
@@ -82,7 +82,7 @@ void OtsuThreshold<TInputImage, TOutputImage>
       m_ThreadHist[0][b] += m_ThreadHist[k][b];
       }
     }
-  double totalMean = itk::NumericTraits<double>::Zero;
+  double totalMean = itk::NumericTraits<double>::ZeroValue();
   for( unsigned int b = 0; b < m_Bins; ++b )
     {
     m_ThreadHist[0][b] /= totalSamples;

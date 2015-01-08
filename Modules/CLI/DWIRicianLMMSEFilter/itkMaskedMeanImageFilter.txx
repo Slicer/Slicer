@@ -104,7 +104,7 @@ void MaskedMeanImageFilter<TInputImage, TOutputImage>
     for( bit.GoToBegin(), it.GoToBegin(); !bit.IsAtEnd(); ++bit, ++it )
       {
       int iNumberOfUsedVoxels = 0;
-      sum = NumericTraits<InputRealType>::Zero;
+      sum = NumericTraits<InputRealType>::ZeroValue();
       for( i = 0; i < neighborhoodSize; ++i )
         {
         if( bit.GetPixel(i) > 0 )

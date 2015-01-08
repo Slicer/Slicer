@@ -55,13 +55,13 @@ ImageRegionMomentsCalculator<TImage>::ImageRegionMomentsCalculator(void)
   m_Valid = false;
   m_Image = NULL;
   m_SpatialObjectMask = NULL;
-  m_M0 = NumericTraits<ScalarType>::Zero;
-  m_M1.Fill(NumericTraits<typename VectorType::ValueType>::Zero);
-  m_M2.Fill(NumericTraits<typename MatrixType::ValueType>::Zero);
-  m_Cg.Fill(NumericTraits<typename VectorType::ValueType>::Zero);
-  m_Cm.Fill(NumericTraits<typename MatrixType::ValueType>::Zero);
-  m_Pm.Fill(NumericTraits<typename VectorType::ValueType>::Zero);
-  m_Pa.Fill(NumericTraits<typename MatrixType::ValueType>::Zero);
+  m_M0 = NumericTraits<ScalarType>::ZeroValue();
+  m_M1.Fill(NumericTraits<typename VectorType::ValueType>::ZeroValue());
+  m_M2.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
+  m_Cg.Fill(NumericTraits<typename VectorType::ValueType>::ZeroValue());
+  m_Cm.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
+  m_Pm.Fill(NumericTraits<typename VectorType::ValueType>::ZeroValue());
+  m_Pa.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
   m_UseRegionOfInterest = false;
   m_RegionOfInterestPoint1.Fill(0);
   m_RegionOfInterestPoint2.Fill(0);
@@ -101,11 +101,11 @@ template <class TImage>
 void
 ImageRegionMomentsCalculator<TImage>::Compute()
 {
-  m_M0 = NumericTraits<ScalarType>::Zero;
-  m_M1.Fill(NumericTraits<typename VectorType::ValueType>::Zero);
-  m_M2.Fill(NumericTraits<typename MatrixType::ValueType>::Zero);
-  m_Cg.Fill(NumericTraits<typename VectorType::ValueType>::Zero);
-  m_Cm.Fill(NumericTraits<typename MatrixType::ValueType>::Zero);
+  m_M0 = NumericTraits<ScalarType>::ZeroValue();
+  m_M1.Fill(NumericTraits<typename VectorType::ValueType>::ZeroValue());
+  m_M2.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
+  m_Cg.Fill(NumericTraits<typename VectorType::ValueType>::ZeroValue());
+  m_Cm.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
 
   typedef typename ImageType::IndexType IndexType;
 

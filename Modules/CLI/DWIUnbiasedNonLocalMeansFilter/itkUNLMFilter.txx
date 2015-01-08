@@ -70,7 +70,7 @@ void UNLMFilter<TInputImage, TOutputImage>
     for( unsigned int k = 0; k < m_NDWI; ++k )       // Compare to each other gradient direction
       {
       orderElement[0] = (double)k;
-      orderElement[1] = itk::NumericTraits<double>::Zero;
+      orderElement[1] = itk::NumericTraits<double>::ZeroValue();
       for( unsigned int d = 0; d < TInputImage::ImageDimension; ++d ) // Sum of squared differences (euclidean norm)
         {
         orderElement[1] += ( m_GradientList[g][d] * m_GradientList[k][d] );
@@ -169,13 +169,13 @@ void UNLMFilter<TInputImage, TOutputImage>
                                                                                                outputRegionForThread  );
   unsigned int neighborhoodSize = test.Size();
   float*       gw = new float[neighborhoodSize];      // The window itself
-  float        sum = itk::NumericTraits<float>::Zero; // To normalize the window to sum to 1
+  float        sum = itk::NumericTraits<float>::ZeroValue(); // To normalize the window to sum to 1
   for( unsigned int k = 0; k < neighborhoodSize; ++k )
     {
     if( k != neighborhoodSize / 2 )   // Not the center of the neighbourhhod
       {
       typename ConstNeighborhoodIterator<InputImageType>::OffsetType idx = test.GetOffset(k);
-      gw[k] = itk::NumericTraits<float>::Zero;
+      gw[k] = itk::NumericTraits<float>::ZeroValue();
       for( unsigned int d = 0; d < InputImageType::ImageDimension; ++d )
         {
         gw[k] += static_cast<float>( idx[d] * idx[d] );
@@ -277,7 +277,7 @@ void UNLMFilter<TInputImage, TOutputImage>
           {
           if( pos != midPosition )
             {
-            distB[pos] = itk::NumericTraits<float>::Zero;
+            distB[pos] = itk::NumericTraits<float>::ZeroValue();
             for( unsigned int k = 0; k < neighborhoodSize; ++k )  // For each pixel in the comparison neighbourhood
               {
               float aux   = bit.GetPixel(k)[m_Baselines[j]] - search.GetPixel(k)[m_Baselines[j]];
@@ -303,14 +303,14 @@ void UNLMFilter<TInputImage, TOutputImage>
           distB[midPosition] = 1.0f;
           norm = 1.0f / (1.0f + norm);
           }
-        float value = itk::NumericTraits<float>::Zero;
+        float value = itk::NumericTraits<float>::ZeroValue();
         for( unsigned int k = 0; k < pos; ++k )
           {
           value += distB[k] * valsB[k] * norm;
           }
         // Remove Rician bias:
         value -= 2.0f * m_Sigma * m_Sigma;
-        value = ( value > 1e-10 ? ::sqrt(value) : itk::NumericTraits<float>::Zero );
+        value = ( value > 1e-10 ? ::sqrt(value) : itk::NumericTraits<float>::ZeroValue() );
         op[m_Baselines[j]] = static_cast<ScalarType>(value);
         }
       // -------------------------------------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ void UNLMFilter<TInputImage, TOutputImage>
           { // First, we process the gradients in the same direction as the one being processed:
           if( pos != midPosition )
             {
-            distD[pos] = itk::NumericTraits<float>::Zero;
+            distD[pos] = itk::NumericTraits<float>::ZeroValue();
             for( unsigned int k = 0; k < neighborhoodSize; ++k )  // For each pixel in the comparison neighbourhood
               {
               float aux = bit.GetPixel(k)[m_DWI[j]] - search.GetPixel(k)[m_DWI[j]];
@@ -342,7 +342,7 @@ void UNLMFilter<TInputImage, TOutputImage>
           // Now, we may process the gradient directions similar to the direction under study
           for( unsigned int g = 1; g < m_Neighbours; ++g )
             {
-            distD[pos + g * numNeighbours] = itk::NumericTraits<float>::Zero;
+            distD[pos + g * numNeighbours] = itk::NumericTraits<float>::ZeroValue();
             for( unsigned int k = 0; k < neighborhoodSize; ++k )  // For each pixel in the comparison neighbourhood
               {
               float aux = bit.GetPixel(k)[m_DWI[j]] - search.GetPixel(k)[m_NeighboursInd[j][g]];
@@ -369,7 +369,7 @@ void UNLMFilter<TInputImage, TOutputImage>
           distD[midPosition] = 1;
           norm = 1.0f / (1 + norm);
           }
-        float value = itk::NumericTraits<float>::Zero;
+        float value = itk::NumericTraits<float>::ZeroValue();
         for( unsigned int k = 0; k < pos; ++k )
           {
           for( unsigned int l = 0; l < m_Neighbours; ++l )
@@ -379,7 +379,7 @@ void UNLMFilter<TInputImage, TOutputImage>
           }
         // Remove Rician bias:
         value -= 2.0f * m_Sigma * m_Sigma;
-        value = ( value > 1e-10 ? ::sqrt(value) : itk::NumericTraits<float>::Zero );
+        value = ( value > 1e-10 ? ::sqrt(value) : itk::NumericTraits<float>::ZeroValue() );
         op[m_DWI[j]] = static_cast<ScalarType>(value);;
         }
       // -------------------------------------------------------------------------------------------------------------

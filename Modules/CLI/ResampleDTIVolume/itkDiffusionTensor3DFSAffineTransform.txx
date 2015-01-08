@@ -31,7 +31,7 @@ DiffusionTensor3DFSAffineTransform<TData>
   vnl_real_eigensystem             eig( M );
   vnl_matrix<vcl_complex<double> > D( 3, 3 );
   vnl_matrix<vcl_complex<double> > vnl_sqrMatrix( 3, 3 );
-  D.fill( NumericTraits<TData>::Zero );
+  D.fill( NumericTraits<TData>::ZeroValue() );
   for( int i = 0; i < 3; i++ )
     {
     D.put( i, i, vcl_pow( eig.D.get( i, i ), 0.5 ) );

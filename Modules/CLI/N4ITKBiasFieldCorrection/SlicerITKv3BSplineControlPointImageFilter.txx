@@ -689,9 +689,9 @@ BSplineControlPointImageFilter<InputImage, TOutputImage>
   vnl_vector<RealType> p( ImageDimension );
   for( unsigned int i = 0; i < ImageDimension; i++ )
     {
-    if( params[i] == NumericTraits<RealType>::One )
+    if( params[i] == NumericTraits<RealType>::OneValue() )
       {
-      params[i] = NumericTraits<RealType>::One - this->m_BSplineEpsilon;
+      params[i] = NumericTraits<RealType>::OneValue() - this->m_BSplineEpsilon;
       }
     if( params[i] < 0.0 || params[i] >= 1.0 )
       {

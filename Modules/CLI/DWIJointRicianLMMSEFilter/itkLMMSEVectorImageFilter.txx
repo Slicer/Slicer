@@ -66,7 +66,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutputImage>
     for( unsigned int k = 0; k < m_NDWI; ++k )       // Compare to each other gradient direction
       {
       orderElement[0] = (double)k;
-      orderElement[1] = itk::NumericTraits<double>::Zero;
+      orderElement[1] = itk::NumericTraits<double>::ZeroValue();
       for( unsigned int d = 0; d < TInputImage::ImageDimension; ++d ) // Sum of squared differences (euclidean norm)
         {
         orderElement[1] += ( m_GradientList[g][d] * m_GradientList[k][d] );
@@ -185,7 +185,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutputImage>
         }
       // -----------------------------------------------------------------------------------------------------------------------
       // With this implementation, we only need to estimate the fourth order moment for the baseline images
-      dFourthAveragedMoment = itk::NumericTraits<double>::Zero;
+      dFourthAveragedMoment = itk::NumericTraits<double>::ZeroValue();
       voxelsUsedFor4Moment = 0;
       // -----------------------------------------------------------------------------------------------------------------------
       // Compute the sample statistics as the sum over the neighbourhood:
@@ -252,7 +252,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutputImage>
           dSecondAveragedMoment[iJ] = 100000 * std::numeric_limits<double>::epsilon();
           }
         }
-      double aux4 = itk::NumericTraits<double>::Zero;
+      double aux4 = itk::NumericTraits<double>::ZeroValue();
       for( unsigned int k = 0; k < m_NBaselines; ++k )
         {
         aux4 += dSecondAveragedMoment[m_Baselines[k]];
@@ -270,7 +270,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutputImage>
       const float        CFACT1          = 5.0f;
       //    -Initiallisation:
       OutputPixelType outPixel  = dMagnitude;
-      double          normal    = itk::NumericTraits<double>::Zero;
+      double          normal    = itk::NumericTraits<double>::ZeroValue();
       for( unsigned int k = 0; k < m_NBaselines; ++k )
         {
         normal += dSecondAveragedMoment[m_Baselines[k]];
@@ -330,7 +330,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutputImage>
             }
           //    - Product with C_A2M2
           //          Scalar product with the vector of second order moments:
-          double dp = itk::NumericTraits<double>::Zero;
+          double dp = itk::NumericTraits<double>::ZeroValue();
           for( unsigned int iJ = 0; iJ < m_NBaselines; ++iJ )
             {
             dp += bRes[iJ] * bSqAvg[iJ];
@@ -375,7 +375,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutputImage>
               }
             //    - Product with C_A2M2
             //          Scalar product with the vector of second order moments:
-            dp = itk::NumericTraits<double>::Zero;
+            dp = itk::NumericTraits<double>::ZeroValue();
             for( unsigned int iJ = 0; iJ < m_Neighbours; ++iJ )
               {
               dp += dRes[iJ] * dSqAvg[iJ];
@@ -487,7 +487,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutput>
     whitened[0] = measures[0] / aux;
     return;
     }
-  normal     = itk::NumericTraits<double>::One / normal; // For convenience
+  normal     = itk::NumericTraits<double>::OneValue() / normal; // For convenience
   double aux = 4.0f * m_Sigma * m_Sigma * normal;
   // The terms in the inverse matrix:
   double  Ad = aux;
@@ -495,9 +495,9 @@ void LMMSEVectorImageFilter<TInputImage, TOutput>
   for( unsigned int k = 0; k < K; ++k )
     {
     Ad   += squaredAverages[k];
-    Ai[k] = itk::NumericTraits<double>::One / ( aux * squaredAverages[k] );
+    Ai[k] = itk::NumericTraits<double>::OneValue() / ( aux * squaredAverages[k] );
     }
-  Ad     = -itk::NumericTraits<double>::One / ( aux * Ad );
+  Ad     = -itk::NumericTraits<double>::OneValue() / ( aux * Ad );
   // Now, recursively process the output; initiallise w_0 = x
   for( unsigned int k = 0; k < K; ++k )
     {
@@ -508,7 +508,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutput>
   // Iterate: w_{n+1} = x - D^{-1}w_n
   for( unsigned int o = 0; o < order; ++o )        // If order=0, this loop does nothing!
     { // Compute A_d*w
-    cum = itk::NumericTraits<double>::Zero;  // Initiallise acumulator
+    cum = itk::NumericTraits<double>::ZeroValue();  // Initiallise acumulator
     for( unsigned int k = 0; k < K; ++k )
       {
       cum += whitened[k];
@@ -523,7 +523,7 @@ void LMMSEVectorImageFilter<TInputImage, TOutput>
   // Now we have the truncated series of ( Id + D^(-1) )^(-1). It remains to
   // multiplicate by D^(-1):
   // Compute A_d*w
-  cum = itk::NumericTraits<double>::Zero; // Initiallise acumulator
+  cum = itk::NumericTraits<double>::ZeroValue(); // Initiallise acumulator
   for( unsigned int k = 0; k < K; ++k )
     {
     cum += whitened[k];
@@ -615,7 +615,7 @@ bool LMMSEVectorImageFilter<TInputImage, TOutput>
       }
     // At this point, we have a valid (col,col), element. We scale the whole
     // corresponding col-th row so that the pivoting element is simply 1:
-    double scale = itk::NumericTraits<double>::One / matrix[col][col];
+    double scale = itk::NumericTraits<double>::OneValue() / matrix[col][col];
     for( unsigned int cc = col; cc < K; ++cc )
       {
       matrix[col][cc]  *= scale;

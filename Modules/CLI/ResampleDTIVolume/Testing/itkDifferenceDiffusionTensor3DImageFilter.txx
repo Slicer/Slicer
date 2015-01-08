@@ -37,14 +37,14 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   this->SetNumberOfRequiredInputs(2);
 
   // Set the default DifferenceThreshold.
-  m_DifferenceThreshold = NumericTraits<OutputPixelType>::Zero;
+  m_DifferenceThreshold = NumericTraits<OutputPixelType>::ZeroValue();
 
   // Set the default ToleranceRadius.
   m_ToleranceRadius = 0;
 
   // Initialize statistics about difference image.
-  m_MeanDifference = NumericTraits<RealType>::Zero;
-  m_TotalDifference = NumericTraits<AccumulateType>::Zero;
+  m_MeanDifference = NumericTraits<RealType>::ZeroValue();
+  m_TotalDifference = NumericTraits<AccumulateType>::ZeroValue();
   m_NumberOfPixelsWithDifferences = 0;
   m_IgnoreBoundaryPixels = false;
   measurementFrameValid.SetIdentity();
@@ -127,8 +127,8 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   int numberOfThreads = this->GetNumberOfThreads();
 
   // Initialize statistics about difference image.
-  m_MeanDifference = NumericTraits<RealType>::Zero;
-  m_TotalDifference = NumericTraits<AccumulateType>::Zero;
+  m_MeanDifference = NumericTraits<RealType>::ZeroValue();
+  m_TotalDifference = NumericTraits<AccumulateType>::ZeroValue();
   m_NumberOfPixelsWithDifferences = 0;
 
   // Resize the thread temporaries
@@ -136,7 +136,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   m_ThreadNumberOfPixels.SetSize(numberOfThreads);
 
   // Initialize the temporaries
-  m_ThreadDifferenceSum.Fill(NumericTraits<AccumulateType>::Zero);
+  m_ThreadDifferenceSum.Fill(NumericTraits<AccumulateType>::ZeroValue());
   m_ThreadNumberOfPixels.Fill(0);
 
   measurementFrameValid = GetMetaDataDictionary( this->GetInput(0) );
@@ -232,7 +232,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
         //  Assume a good match - so test center pixel first, for speed
         typename InputPixelType::Iterator it;
         typename InputPixelType::Iterator ittest;
-        RealType       sumdifference = NumericTraits<RealType>::Zero;
+        RealType       sumdifference = NumericTraits<RealType>::ZeroValue();
         InputPixelType centerTensor = ApplyMeasurementFrameToTensor( test.GetCenterPixel(), measurementFrameTest );
         for( it = t.Begin(), ittest = centerTensor.Begin(); it != t.End(); ++it, ++ittest )
           {
@@ -254,7 +254,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
             {
             // Use the RealType for the difference to make sure we get the
             // sign.
-            sumdifference = NumericTraits<RealType>::Zero;
+            sumdifference = NumericTraits<RealType>::ZeroValue();
             InputPixelType tensor = ApplyMeasurementFrameToTensor( test.GetPixel(i), measurementFrameTest );
             for( it = t.Begin(), ittest = tensor.Begin(); it != t.End(); ++it, ++ittest )
               {
@@ -290,7 +290,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
         else
           {
           // Difference is below threshold.
-          out.Set(NumericTraits<OutputPixelType>::Zero);
+          out.Set(NumericTraits<OutputPixelType>::ZeroValue());
           }
 
         // Update progress.
@@ -301,7 +301,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
       {
       for( out.GoToBegin(); !out.IsAtEnd(); ++out )
         {
-        out.Set(NumericTraits<OutputPixelType>::Zero);
+        out.Set(NumericTraits<OutputPixelType>::ZeroValue());
         progress.CompletedPixel();
         }
       }

@@ -124,7 +124,7 @@ void OtsuStatistics<TInputImage, TOutputImage>
     for( bit.GoToBegin(), it.GoToBegin(); !bit.IsAtEnd(); ++bit, ++it )    // Iterate through pixels in the current
                                                                            // facet
       { // Depending on the mode of operation, take the center pixel or the whole vicinity:
-      double averagedValue = itk::NumericTraits<float>::Zero;
+      double averagedValue = itk::NumericTraits<float>::ZeroValue();
 
       switch( m_Mode )
         {

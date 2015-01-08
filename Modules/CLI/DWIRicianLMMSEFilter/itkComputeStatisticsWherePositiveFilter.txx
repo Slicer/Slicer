@@ -77,8 +77,8 @@ void ComputeStatisticsWherePositiveFilter<TInputImage, TOutputImage>
   m_TMin.SetSize( k );
   m_TMax.SetSize( k );
   m_TCount.SetSize( k );
-  m_TMean.Fill( itk::NumericTraits<double>::Zero );
-  m_TStd.Fill( itk::NumericTraits<double>::Zero );
+  m_TMean.Fill( itk::NumericTraits<double>::ZeroValue() );
+  m_TStd.Fill( itk::NumericTraits<double>::ZeroValue() );
   m_TMin.Fill( itk::NumericTraits<double>::max() );
   m_TMax.Fill( itk::NumericTraits<double>::min() );
   m_TCount.Fill( 0 );
@@ -90,8 +90,8 @@ void ComputeStatisticsWherePositiveFilter<TInputImage, TOutputImage>
 {
   unsigned int k = this->GetNumberOfThreads();
 
-  m_Mean = itk::NumericTraits<double>::Zero;
-  m_Std  = itk::NumericTraits<double>::Zero;
+  m_Mean = itk::NumericTraits<double>::ZeroValue();
+  m_Std  = itk::NumericTraits<double>::ZeroValue();
   m_Min  = itk::NumericTraits<double>::max();
   m_Max  = itk::NumericTraits<double>::min();
   unsigned long count = 0;
@@ -120,7 +120,7 @@ void ComputeStatisticsWherePositiveFilter<TInputImage, TOutputImage>
       }
     else
       {
-      m_Std = itk::NumericTraits<double>::Zero;
+      m_Std = itk::NumericTraits<double>::ZeroValue();
       }
     m_Ready = true;
     }

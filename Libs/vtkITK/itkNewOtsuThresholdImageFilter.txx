@@ -28,9 +28,9 @@ template<class TInputImage, class TOutputImage>
 NewOtsuThresholdImageFilter<TInputImage, TOutputImage>
 ::NewOtsuThresholdImageFilter()
 {
-  m_OutsideValue   = NumericTraits<OutputPixelType>::Zero;
+  m_OutsideValue   = NumericTraits<OutputPixelType>::ZeroValue();
   m_InsideValue    = NumericTraits<OutputPixelType>::max();
-  m_Threshold      = NumericTraits<InputPixelType>::Zero;
+  m_Threshold      = NumericTraits<InputPixelType>::ZeroValue();
   m_NumberOfHistogramBins = 128;
   m_Omega = 2;
 }
