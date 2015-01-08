@@ -15,7 +15,7 @@ include(ExternalProjectDependency)
 #-----------------------------------------------------------------------------
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
-  #       we ensure that the bitness will be properly detected.
+  #       we ensure that the bitness, and C++ standard library will be properly detected.
   include(SlicerBlockSetCMakeOSXVariables)
   mark_as_superbuild(
     VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING

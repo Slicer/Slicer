@@ -27,7 +27,8 @@
 #
 
 # Note: Change architecture *before* any enable_language() or project()
-#       calls so that it's set properly to detect 64-bit-ness...
+#       calls so that it's set properly to detect 64-bit-ness, and
+#       deployment target for the standard c++ library.
 #
 if(APPLE)
 
@@ -47,41 +48,73 @@ if(APPLE)
   #  11.x == Mac OSX 10.7 (Lion)
   #  12.x == Mac OSX 10.8 (Mountain Lion)
   #  13.x == Mac OSX 10.9 (Mavericks)
+  #  14.x == Mac OSX 10.10 (Yosemite)
   set(OSX_SDK_104_NAME "Tiger")
   set(OSX_SDK_105_NAME "Leopard")
   set(OSX_SDK_106_NAME "Snow Leopard")
   set(OSX_SDK_107_NAME "Lion")
   set(OSX_SDK_108_NAME "Mountain Lion")
   set(OSX_SDK_109_NAME "Mavericks")
+  set(OSX_SDK_1010_NAME "Yosemite")
 
   set(OSX_SDK_ROOTS
     /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
     /Developer/SDKs
     )
-  # XXX Since (1) the default runtime associated with 10.9 is libc++ [1]
-  #     and (2) qt support for 'macx-clang-libc++' is listed as 'unsupported' mkspecs
-  #     and (3) Qt binaries are (as expected) build against 'libstdc++', we
-  #     are removing 10.9 from the list of version to check.
-  #     [1] http://stackoverflow.com/questions/19637164/c-linking-error-after-upgrading-to-mac-os-x-10-9-xcode-5-0-1/19637199#19637199
-  set(SDK_VERSIONS_TO_CHECK 10.8 10.7 10.6 10.5)
-  foreach(SDK_VERSION ${SDK_VERSIONS_TO_CHECK})
-    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" STREQUAL "")
-      foreach(SDK_ROOT ${OSX_SDK_ROOTS})
-        set(TEST_OSX_SYSROOT "${SDK_ROOT}/MacOSX${SDK_VERSION}.sdk")
-        if(EXISTS "${TEST_OSX_SYSROOT}")
-          # Retrieve OSX target name
+
+  # Explicitly set the OSX_SYSROOT to the latest one, as its required
+  #       when the SX_DEPLOYMENT_TARGET is explicitly set
+  foreach(SDK_ROOT ${OSX_SDK_ROOTS})
+    if( "x${CMAKE_OSX_SYSROOT}x" STREQUAL "xx")
+      file(GLOB SDK_SYSROOTS "${SDK_ROOT}/MacOSX*.sdk")
+
+      if(NOT "x${SDK_SYSROOTS}x" STREQUAL "xx")
+        set(SDK_SYSROOT_NEWEST "")
+        set(SDK_VERSION "0")
+        # find the latest SDK
+        foreach(SDK_ROOT_I ${SDK_SYSROOTS})
+          # extract version from SDK
+          string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${SDK_ROOT_I}")
+          if("${CMAKE_MATCH_1}" VERSION_GREATER "${SDK_VERSION}")
+            set(SDK_SYSROOT_NEWEST "${SDK_ROOT_I}")
+            set(SDK_VERSION "${CMAKE_MATCH_1}")
+          endif()
+        endforeach()
+
+        if(NOT "x${SDK_SYSROOT_NEWEST}x" STREQUAL "xx")
           string(REPLACE "." "" sdk_version_no_dot ${SDK_VERSION})
           set(OSX_NAME ${OSX_SDK_${sdk_version_no_dot}_NAME})
           set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Force build for 64-bit ${OSX_NAME}." FORCE)
-          set(CMAKE_OSX_DEPLOYMENT_TARGET "${SDK_VERSION}" CACHE STRING "Force build for 64-bit ${OSX_NAME}." FORCE)
-          set(CMAKE_OSX_SYSROOT "${TEST_OSX_SYSROOT}" CACHE PATH "Force build for 64-bit ${OSX_NAME}." FORCE)
+          set(CMAKE_OSX_SYSROOT "${SDK_SYSROOT_NEWEST}" CACHE PATH "Force build for 64-bit ${OSX_NAME}." FORCE)
           message(STATUS "Setting OSX_ARCHITECTURES to '${CMAKE_OSX_ARCHITECTURES}' as none was specified.")
-          message(STATUS "Setting OSX_DEPLOYMENT_TARGET to '${SDK_VERSION}' as none was specified.")
-          message(STATUS "Setting OSX_SYSROOT to '${TEST_OSX_SYSROOT}' as none was specified.")
+          message(STATUS "Setting OSX_SYSROOT to latest '${CMAKE_OSX_SYSROOT}' as none was specified.")
         endif()
-      endforeach()
+      endif()
     endif()
   endforeach()
+
+  if("x${CMAKE_OSX_DEPLOYMENT_TARGET}x" STREQUAL "xx")
+    string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${CMAKE_OSX_SYSROOT}")
+    set(SDK_VERSION "${CMAKE_MATCH_1}")
+    if( "${SDK_VERSION}" VERSION_GREATER "10.8" )
+      # add to cache to allow interactive editing after fatal error
+      set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE PATH "Deployment target needs to be explicitly set." FORCE)
+      message(FATAL_ERROR
+        "The OSX_SYSROOT is set to version ${SDK_VERSION} (>10.8) and OSX_DEPLOYMENT_TARGET is not explicitly set!\n"
+        "Since:\n"
+        " (1) the default runtime associated with >=10.9 deployment target is 'libc++'.[1]\n"
+        " (2) the default runtime associated with <=10.8 deployment target is 'libstdc++'.\n"
+        " (3) Qt support for 'macx-clang-libc++' is listed as 'unsupported' mkspecs.\n"
+        " (4) Qt binaries may be build against 'libstdc++' or 'libc++'.\n"
+        " (5) Mixing the two different runtime in binaries is unstable.\n"
+        "  [1]http://stackoverflow.com/questions/19637164/c-linking-error-after-upgrading-to-mac-os-x-10-9-xcode-5-0-1/19637199#19637199\n"
+        "--------------------------------\n"
+        "Run '$otool -L $(which qmake) |grep lib.\\*c++' to check what library Qt is built against:\n"
+        " (1) if it is libstdc++ then add '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.8' (or older) to the cmake command line.\n"
+        " (2) if it is libc++ then add '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.9' (or newer) to the cmake command line.\n"
+        )
+    endif()
+  endif()
 
   if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")
     if(NOT EXISTS "${CMAKE_OSX_SYSROOT}")
