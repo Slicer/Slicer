@@ -12,9 +12,9 @@ endif()
 
 if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(SWIG_TARGET_VERSION 2.0.12)
-  set(SWIG_DOWNLOAD_SOURCE_HASH "c3fb0b2d710cc82ed0154b91e43085a4")
-  set(SWIG_DOWNLOAD_WIN_HASH "3cc7dd131a87972f70fca1490b9e6e6b")
+  set(SWIG_TARGET_VERSION 3.0.2)
+  set(SWIG_DOWNLOAD_SOURCE_HASH "62f9b0d010cef36a13a010dc530d0d41")
+  set(SWIG_DOWNLOAD_WIN_HASH "3f18de4fc09ab9abb0d3be37c11fbc8f")
 
   if(WIN32)
     # swig.exe available as pre-built binary on Windows:
@@ -28,7 +28,7 @@ if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       UPDATE_COMMAND ""
       )
 
-    set(SWIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/swigwin-${SWIG_TARGET_VERSION}") # ??
+    set(SWIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/swigwin-${SWIG_TARGET_VERSION}") # path specified as source in ep
     set(SWIG_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}/swigwin-${SWIG_TARGET_VERSION}/swig.exe")
     set(Swig_DEPEND Swig)
 
