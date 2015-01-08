@@ -458,7 +458,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
       mvNode.SetLabelArray(frameLabelsArray)
 
-      if frameTag == 'TriggerTime' or frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
+      if frameTag == 'TriggerTime' or frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime' or frameTag == 'FlipAngle':
         # this is DCE, so let's keep the tag values that will be needed for
         # the analysis
         firstFile = frameFileList[0]
@@ -468,7 +468,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
         mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',echoTime)
         mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',repetitionTime)
-        mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
+        if frameTag != 'FlipAngle':
+          mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
 
       # add the node
       multivolumes.append(mvNode)
