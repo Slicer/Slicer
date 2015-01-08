@@ -852,14 +852,12 @@ class SliceAnnotations(object):
         sliceLogic.GetBackgroundWindowLevelAndRange(width,level,rangeLow,rangeHigh)
       else:
         sliceLogic.GetForegroundWindowLevelAndRange(width,level,rangeLow,rangeHigh)
-      lut2.SetRange(int(level-width/2),int(level+width/2))
+      lut2.SetRange(level-width/2,level+width/2)
       scalarBar.SetLookupTable(lut2)
-      '''
-      if width < 5 and np.abs(level)<10 :
-        scalarBar.SetLabelFormat("%4.2f")
+      if width < 1:
+        scalarBar.AddRangeLabelsOff()
       else:
-        scalarBar.SetLabelFormat("%4.0f")
-      '''
+        scalarBar.AddRangeLabelsOn()
 
   def makeDicomAnnotation(self,bgUid,fgUid):
     viewHeight = self.sliceViews[self.currentSliceViewName].height
