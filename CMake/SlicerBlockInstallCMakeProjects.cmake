@@ -39,7 +39,7 @@ endif()
 # Install Teem
 # -------------------------------------------------------------------------
 if(NOT "${Teem_DIR}" STREQUAL "" AND EXISTS "${Teem_DIR}/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Teem_DIR};teem;ALL;/")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Teem_DIR};teem;RuntimeLibraries;/")
 endif()
 
 # -------------------------------------------------------------------------

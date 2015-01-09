@@ -47,29 +47,6 @@ if(NOT APPLE)
   include(InstallRequiredSystemLibraries)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallCMakeProjects.cmake)
 
-  macro(_remove_installed_dir dir_to_remove)
-    set(_code "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E remove_directory")
-    set(_code "${_code} \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${dir_to_remove}\")")
-    install(CODE "${_code}" COMPONENT Runtime)
-  endmacro()
-
-  if(Slicer_INSTALL_NO_DEVELOPMENT)
-    # Remove development files installed by teem. Ideally, teem project itself should be updated.
-    # See http://na-mic.org/Mantis/view.php?id=3455
-    set(dollar "$")
-    _remove_installed_dir("include/teem")
-    foreach(file
-      lib/Teem-1.10.0/TeemBuildSettings.cmake
-      lib/Teem-1.10.0/TeemConfig.cmake
-      lib/Teem-1.10.0/TeemLibraryDepends.cmake
-      lib/Teem-1.10.0/TeemUse.cmake
-      )
-      install(
-        CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E remove \"${dollar}{CMAKE_INSTALL_PREFIX}/${Slicer_INSTALL_ROOT}${file}\")"
-        COMPONENT Runtime
-        )
-    endforeach()
-  endif()
 else()
 
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
