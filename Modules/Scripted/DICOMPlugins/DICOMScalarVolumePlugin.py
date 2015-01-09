@@ -294,7 +294,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     name = slicer.util.toVTKString(name)
     fileList = vtk.vtkStringArray()
     for f in files:
-      fileList.InsertNextValue(f)
+      fileList.InsertNextValue(slicer.util.toVTKString(f))
     volumesLogic = slicer.modules.volumes.logic()
     return(volumesLogic.AddArchetypeScalarVolume(files[0],name,0,fileList))
 
