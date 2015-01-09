@@ -44,14 +44,10 @@ if(NOT DEFINED Teem_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
-  set(teem_URL http://slicer.kitware.com/midas3/download/item/159431/teem-1.10.0-src.tar.gz)
-  set(teem_MD5 efe219575adc89f6470994154d86c05b)
-
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    URL ${teem_URL}
-    URL_MD5 ${teem_MD5}
-    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/teem"
+    GIT_TAG 9142f9a616074827d70ec6158ad1dba689b32a23
     SOURCE_DIR teem
     BINARY_DIR teem-build
     CMAKE_CACHE_ARGS
