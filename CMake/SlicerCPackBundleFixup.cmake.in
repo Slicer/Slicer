@@ -120,7 +120,7 @@ endfunction()
 
 macro(_fixup_paths_append list var)
   if(NOT EXISTS "${var}")
-    message(FATAL_ERROR "Path append to list [${list}] does NOT exist !")
+    message(FATAL_ERROR "Path append to list [${list}] failed - Path [${var}:${${var}}] does NOT exist !")
   endif()
 
   list(APPEND ${list} ${var})
