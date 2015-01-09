@@ -189,6 +189,9 @@ public slots:
   void addSelectedCoordinatesToMenu(QMenu *menu);
   /// Jump slices action slot
   void onJumpSlicesActionTriggered();
+  /// Refocus cameras action slot
+  void onRefocusCamerasActionTriggered();
+
   /// Build a string list of the names of other nodes with the same
   /// class name as thisMarkup. Return an empty string list if no other
   /// markups in the scene

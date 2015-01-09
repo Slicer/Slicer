@@ -92,6 +92,8 @@ public:
   void JumpSlicesToLocation(double x, double y, double z, bool centered);
   /// jump the slice windows to the nth markup with the mrml id id
   void JumpSlicesToNthPointInMarkup(const char *id, int n, bool centered = false);
+  /// refocus all of the 3D cameras to the nth markup with the mrml id id
+  void FocusCamerasOnNthPointInMarkup(const char *id, int n);
 
   /// Load a markups fiducial list from fileName, return NULL on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene

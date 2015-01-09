@@ -2307,6 +2307,13 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
   QObject::connect(jumpSlicesAction, SIGNAL(triggered()),
                    this, SLOT(onJumpSlicesActionTriggered()));
 
+  // Refocus 3D cameras
+  QAction *refocusCamerasAction =
+    new QAction(QString("Refocus all cameras"), &menu);
+  menu.addAction(refocusCamerasAction);
+  QObject::connect(refocusCamerasAction, SIGNAL(triggered()),
+                   this, SLOT(onRefocusCamerasActionTriggered()));
+
   // If there's another list in the scene
   if (this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLMarkupsNode") > 1)
     {
@@ -2467,6 +2474,35 @@ void qSlicerMarkupsModuleWidget::onJumpSlicesActionTriggered()
     {
     // use the first selected
     this->markupsLogic()->JumpSlicesToNthPointInMarkup(mrmlNode->GetID(), selectedItems.at(0)->row(), jumpCentered);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onRefocusCamerasActionTriggered()
+{
+ Q_D(qSlicerMarkupsModuleWidget);
+
+  // get the selected rows
+  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+
+  // first, check if nothing is selected
+  if (selectedItems.isEmpty())
+    {
+    return;
+    }
+
+  // get the active node
+  vtkMRMLNode *mrmlNode = d->activeMarkupMRMLNodeComboBox->currentNode();
+  if (!mrmlNode)
+    {
+    return;
+    }
+
+  // refocus on this point
+  if (this->markupsLogic())
+    {
+    // use the first selected
+    this->markupsLogic()->FocusCamerasOnNthPointInMarkup(mrmlNode->GetID(), selectedItems.at(0)->row());
     }
 }
 

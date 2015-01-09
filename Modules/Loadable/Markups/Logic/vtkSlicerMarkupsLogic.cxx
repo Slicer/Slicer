@@ -31,6 +31,7 @@
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 
 // MRML includes
+#include "vtkMRMLCameraNode.h"
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
@@ -561,7 +562,7 @@ void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, 
     }
   if (!this->GetMRMLScene())
     {
-    vtkErrorMacro("JumpSlicesToLocation: No scene defined");
+    vtkErrorMacro("JumpSlicesToNthPointInMarkup: No scene defined");
     return;
     }
   // get the markups node
@@ -577,6 +578,50 @@ void vtkSlicerMarkupsLogic::JumpSlicesToNthPointInMarkup(const char *id, int n, 
     // get the first point for now
     markup->GetMarkupPointWorld(n, 0, point);
     this->JumpSlicesToLocation(point[0], point[1], point[2], centered);
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::FocusCamerasOnNthPointInMarkup(const char *id, int n)
+{
+  if (!id)
+    {
+    return;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("FocusCamerasOnNthPointInMarkup: No scene defined");
+    return;
+    }
+  // get the markups node
+  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(id);
+  if (mrmlNode == NULL)
+    {
+    return;
+    }
+  vtkMRMLMarkupsNode *markup = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
+  if (markup)
+    {
+    double point[4];
+    // get the first point for now
+    markup->GetMarkupPointWorld(n, 0, point);
+    // get all the cameras and reset focal points
+    std::vector<vtkMRMLNode *> cameraNodes;
+    this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cameraNodes);
+    vtkMRMLCameraNode *cameraNode;
+    vtkMRMLNode *node;
+    for (unsigned int i = 0; i < cameraNodes.size(); ++i)
+      {
+      node = cameraNodes[i];
+      if (node)
+        {
+        cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
+        if (cameraNode)
+          {
+          cameraNode->SetFocalPoint(point[0], point[1], point[2]);
+          }
+        }
+      }
     }
 }
 
