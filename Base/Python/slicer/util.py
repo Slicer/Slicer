@@ -563,6 +563,12 @@ class VTKObservationMixin(object):
         return o
     return None
 
+def toVTKString(str):
+  """Convert unicode string into 8-bit encoded ascii string.
+  Unicode characters without ascii equivalent will be stripped out.
+  """
+  return str.encode('latin1', 'ignore')
+
 #
 # Misc. Utility methods
 #

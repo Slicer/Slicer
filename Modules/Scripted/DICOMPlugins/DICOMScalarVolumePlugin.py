@@ -291,8 +291,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     using the volume logic helper class
     and the vtkITK archetype helper code
     """
-    #name = slicer.util.unicodeify(name)
-    name = name.encode('latin1', 'ignore')
+    name = slicer.util.toVTKString(name)
     fileList = vtk.vtkStringArray()
     for f in files:
       fileList.InsertNextValue(f)
