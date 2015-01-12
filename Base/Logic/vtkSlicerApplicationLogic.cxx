@@ -931,13 +931,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       if (svnd || vvnd)
         {
         // Load a scalar or vector volume node
-        //
-        // Need to maintain the original coordinate frame established by
-        // the images sent to the execution model
-        vtkMRMLVolumeArchetypeStorageNode *vin
-          = vtkMRMLVolumeArchetypeStorageNode::New();
-        vin->SetCenterImage(0);
-        storageNode = vin;
+        storageNode = storableNode->CreateDefaultStorageNode();
         }
       else if (dtvnd || dwvnd)
         {
@@ -1127,134 +1121,144 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   // Get the right type of display node. Only create a display node
   // if one does not exist already
   //
-  if ((svnd && !svnd->GetDisplayNode())
-      || (vvnd && !vvnd->GetDisplayNode()))
+  vtkMRMLDisplayableNode *displayableNode =
+    vtkMRMLDisplayableNode::SafeDownCast(nd);
+  if (displayableNode)
     {
-    // Scalar or vector volume node
-    if (svnd)
+      displayableNode->CreateDefaultDisplayNodes();
+      if (!displayableNode->GetDisplayNode())
       {
-      if (svnd->GetLabelMap())
+      if ((svnd && !svnd->GetDisplayNode())
+          || (vvnd && !vvnd->GetDisplayNode()))
         {
-        disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+        // Scalar or vector volume node
+        if (svnd)
+          {
+          if (svnd->GetLabelMap())
+            {
+            disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+            }
+          else
+            {
+            disp = vtkMRMLScalarVolumeDisplayNode::New();
+            }
+          }
+        else
+          {
+          disp = vtkMRMLVectorVolumeDisplayNode::New();
+          }
         }
-      else
+      else if ((dtvnd && !dtvnd->GetDisplayNode())
+               || (dwvnd && !dwvnd->GetDisplayNode()))
         {
-        disp = vtkMRMLScalarVolumeDisplayNode::New();
+        // Diffusion tensor or a diffusion weighted node
+        if (dtvnd)
+          {
+          vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
+   //       dtvdn->SetWindow(0);
+   //       dtvdn->SetLevel(0);
+   //       dtvdn->SetUpperThreshold(0);
+   //       dtvdn->SetLowerThreshold(0);
+   //       dtvdn->SetAutoWindowLevel(1);
+          disp = dtvdn; // assign to superclass pointer
+          }
+        else
+          {
+          disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+          }
         }
-      }
-    else
-      {
-      disp = vtkMRMLVectorVolumeDisplayNode::New();
-      }
-    }
-  else if ((dtvnd && !dtvnd->GetDisplayNode())
-           || (dwvnd && !dwvnd->GetDisplayNode()))
-    {
-    // Diffusion tensor or a diffusion weighted node
-    if (dtvnd)
-      {
-      vtkMRMLDiffusionTensorVolumeDisplayNode *dtvdn = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
-//       dtvdn->SetWindow(0);
-//       dtvdn->SetLevel(0);
-//       dtvdn->SetUpperThreshold(0);
-//       dtvdn->SetLowerThreshold(0);
-//       dtvdn->SetAutoWindowLevel(1);
-      disp = dtvdn; // assign to superclass pointer
-      }
-    else
-      {
-      disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
-      }
-    }
-  else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode") && !fbnd->GetDisplayNode())
-    {
-    // Fiber bundle node
-    fbnd->CreateDefaultDisplayNodes();
-    disp = NULL;
-    }
-  else if (mnd && !mnd->GetDisplayNode())
-    {
-    // Model node
-    vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
-    disp = modelDisplayNode;
-    if (mnd->GetPolyData())
-      {
+      else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode") && !fbnd->GetDisplayNode())
+        {
+        // Fiber bundle node
+        fbnd->CreateDefaultDisplayNodes();
+        disp = NULL;
+        }
+      else if (mnd && !mnd->GetDisplayNode())
+        {
+        // Model node
+        vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
+        disp = modelDisplayNode;
+        if (mnd->GetPolyData())
+          {
 #if (VTK_MAJOR_VERSION <= 5)
-      modelDisplayNode->SetInputPolyData(mnd->GetPolyData());
+          modelDisplayNode->SetInputPolyData(mnd->GetPolyData());
 #else
-      modelDisplayNode->SetInputPolyDataConnection(mnd->GetPolyDataConnection());
+          modelDisplayNode->SetInputPolyDataConnection(mnd->GetPolyDataConnection());
 #endif
-      }
-    if (mnd->GetPolyData() &&
-        mnd->GetPolyData()->GetPointData() &&
-        mnd->GetPolyData()->GetPointData()->GetScalars())
-      {
-      vtkDebugMacro("Made a new model display node, there are scalars defined on the model - setting them visible and using the first one as the selected overlay");
-      disp->SetScalarVisibility(1);
-      disp->SetActiveScalarName(mnd->GetPolyData()->GetPointData()->GetAttribute(0)->GetName());
-      // use the fs red green colour node for now
-      disp->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
-      }
-    }
-  else if (tnd)
-    {
-    // Linear transform node
-    // (no display node)
-    }
+          }
+        if (mnd->GetPolyData() &&
+            mnd->GetPolyData()->GetPointData() &&
+            mnd->GetPolyData()->GetPointData()->GetScalars())
+          {
+          vtkDebugMacro("Made a new model display node, there are scalars defined \
+              on the model - setting them visible and using the first one as the selected overlay");
+          disp->SetScalarVisibility(1);
+          disp->SetActiveScalarName(mnd->GetPolyData()->GetPointData()->GetAttribute(0)->GetName());
+          // use the fs red green colour node for now
+          disp->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+          }
+        }
+      else if (tnd)
+        {
+        // Linear transform node
+        // (no display node)
+        }
 
-  // Set up the display node.  If we already have a display node,
-  // just use that one.
-  //
-  if (disp)
-    {
-    vtkMRMLNode *dnode = this->GetMRMLScene()->AddNode( disp );
-    disp->SetAndObserveColorNodeID(this->GetColorLogic()->GetDefaultVolumeColorNodeID());
-    disp = vtkMRMLDisplayNode::SafeDownCast(dnode);
-    int isLabelMap = 0;
-    vtkMRMLVolumeDisplayNode *displayNode = NULL;
-    if (svnd)
-      {
-      isLabelMap = svnd->GetLabelMap();
-      if (isLabelMap)
+      // Set up the display node.  If we already have a display node,
+      // just use that one.
+      //
+      if (disp)
         {
-        displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
+        vtkMRMLNode *dnode = this->GetMRMLScene()->AddNode( disp );
+        disp->SetAndObserveColorNodeID(this->GetColorLogic()->GetDefaultVolumeColorNodeID());
+        disp = vtkMRMLDisplayNode::SafeDownCast(dnode);
+        int isLabelMap = 0;
+        vtkMRMLVolumeDisplayNode *displayNode = NULL;
+        if (svnd)
+          {
+          isLabelMap = svnd->GetLabelMap();
+          if (isLabelMap)
+            {
+            displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
+            }
+          else
+            {
+            displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+            }
+          }
+        else
+          {
+          displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
+          }
+        if (displayNode)
+          {
+          displayNode->SetDefaultColorMap();
+          }
+        if (svnd)
+          {
+          svnd->SetAndObserveDisplayNodeID( disp->GetID() );
+          }
+        else if (vvnd)
+          {
+          vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+          }
+        else if (dtvnd)
+          {
+          dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+          // add slice display nodes
+          vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(disp)->AddSliceGlyphDisplayNodes( dtvnd );
+          }
+        else if (dwvnd)
+          {
+          dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+          }
+        else if (mnd)
+          {
+          mnd->SetAndObserveDisplayNodeID( disp->GetID() );
+          }
+        disp->Delete();
         }
-      else
-        {
-        displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
-        }
       }
-    else
-      {
-      displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
-      }
-    if (displayNode)
-      {
-      displayNode->SetDefaultColorMap();
-      }
-    if (svnd)
-      {
-      svnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      }
-    else if (vvnd)
-      {
-      vvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      }
-    else if (dtvnd)
-      {
-      dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      // add slice display nodes
-      vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(disp)->AddSliceGlyphDisplayNodes( dtvnd );
-      }
-    else if (dwvnd)
-      {
-      dwvnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      }
-    else if (mnd)
-      {
-      mnd->SetAndObserveDisplayNodeID( disp->GetID() );
-      }
-    disp->Delete();
     }
 
   // Cause the any observers to fire (we may have avoided calling
