@@ -835,6 +835,24 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
 //----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 {
+  // This method needs to read the data into the specific type of node and set up an
+  // appropriate display node.  Ideally, this would be done with calls like
+  //
+  // vtkMRMLNode *nd = this->GetMRMLScene()->GetNodeByID( req.GetNode().c_str() );
+  // vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
+  // vtkMRMLStorageNode *sn = storableNode->CreateDefaultStorageNode();
+  // sn->SetFileName(req.GetFileName().c_str());  // or a call to SetURI as appropriate
+  // sn->ReadData( nd, /*temporary*/true );
+  // vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(nd);
+  // displayableNode->CreateDefaultDisplayNodes();
+  //
+  // (It would actually be a bit more complicated but you get the point.)
+  // Unfortunately,  CreateDefaultStorageNode() and CreateDefaultDisplayNodes() do not exists
+  // in all the node types that we need. To support the legacy node types, we currently chain
+  // through a set of cases.  However, if new node types supports both CreateDefaultStorageNode()
+  // and CreateDefaultDisplayNodes() then all the code below should (or can be easily made to) work.
+  //
+
   // What type of node is the data really? Or is it a scene
   vtkMRMLNode *nd = 0;
   vtkMRMLDisplayNode *disp = 0;
@@ -1125,6 +1143,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     vtkMRMLDisplayableNode::SafeDownCast(nd);
   if (displayableNode)
     {
+      // Create a default display node.  Not all node types have implemented this method.
+      // If no display node is create using the CreateDefault method, then chain through the cases.
+      // Much of this case specific code should be moved to the respective
+      // CreateDefaultDisplayNodes() methods.
       displayableNode->CreateDefaultDisplayNodes();
       if (!displayableNode->GetDisplayNode())
       {
