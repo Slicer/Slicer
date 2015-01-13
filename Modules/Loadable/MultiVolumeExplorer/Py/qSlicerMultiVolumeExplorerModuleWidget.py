@@ -249,7 +249,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         mean = 0.
         cnt = 0.
         for v in labeledVoxels[k]:
-          mean = mean+mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
+          val = mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
+          if math.isnan(val):
+            val = 0
+          mean = mean+val
           cnt = cnt+1
         arr.SetComponent(c, 0, self.__mvLabels[c])
         arr.SetComponent(c, 1, mean/cnt)
@@ -605,10 +608,14 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     for c in range(nComponents):
       val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+      if math.isnan(val):
+        val = 0
       self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
       self.__chartTable.SetValue(c, 1, val)
       if useFg:
         fgValue = fgImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+        if math.isnan(fgValue):
+          fgValue = 0
         fgChartTable.SetValue(c,0,self.__mvLabels[c])
         fgChartTable.SetValue(c,1,fgValue)
 
@@ -617,12 +624,17 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       # check if percent plotting was requested and recalculate
       nBaselines = min(self.baselineFrames.value,nComponents)
       for c in range(nBaselines):
-        baselineAverageSignal += mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+        val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+        if math.isnan(val):
+          val = 0
+        baselineAverageSignal += val
       baselineAverageSignal /= nBaselines
       if baselineAverageSignal != 0:
         for c in range(nComponents):
-          intensity = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-          self.__chartTable.SetValue(c,1,(intensity/baselineAverageSignal-1)*100.)
+          val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+          if math.isnan(val):
+            val = 0
+          self.__chartTable.SetValue(c,1,(val/baselineAverageSignal-1)*100.)
 
     self.__chart.RemovePlot(0)
     self.__chart.RemovePlot(0)
