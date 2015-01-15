@@ -29,7 +29,7 @@
     </parameter>
     <parameter>
       <label>Click to Jump Slices</label>
-      <description><![CDATA[If checked, click in name column to jump slices to that point. The radio buttons control if the slice is centered on the markup or not after the jump. Right click in the table allows jumping to a highlighted fiducial (uses the center/offset radio button settings). Once checked, arrow keys moving the highlighted row will also jump slice viewers to that markup position.]]></description>
+      <description><![CDATA[If checked, click in name column to jump slices to that point. The radio buttons control if the slice is centered on the markup or not after the jump. Right click in the table allows jumping 2D slices to a highlighted fiducial (uses the center/offset radio button settings). Once checked, arrow keys moving the highlighted row will also jump slice viewers to that markup position.]]></description>
     </parameter>
   </parameters>
   <parameters>
@@ -57,8 +57,20 @@
     </parameter>
   </parameters>
   <parameters>
+    <label>Checkboxes</label>
+    <description>These check boxes change how the markups in the selected list are displayed.</description>
+    <parameter>
+      <label>Transformed</label>
+      <description><![CDATA[Check to show the transformed coordinates in the table. This will apply any transform nodes to the points in the list and show that result. Keep unchecked to show the raw RAS values that are stored in MRML. If you harden the transform the transformed coordinates will be the same as the non transformed coordinates.]]></description>
+    </parameter>
+    <parameter>
+      <label>Hide RAS</label>
+      <description><![CDATA[Check to hide the coordinate columns in the table, uncheck to show them. Right click in rows to see coordinates.]]></description>
+    </parameter>
+  </parameters>
+  <parameters>
     <label>Markups Table</label>
-    <description><![CDATA[Right click on rows in the table to bring up a context menu to delete the highlighted markup, jump slice viewers to that location, or if there are other lists, to copy or move the markup to another list.]]></description>
+    <description><![CDATA[Right click on rows in the table to bring up a context menu to show the full precision coordinates, distance between multiple highlighted fiducials, delete the highlighted markup, jump slice viewers to that location, refocus 3D viewers to that location, or if there are other lists, to copy or move the markup to another list.]]></description>
     <parameter>
       <label>Selected</label>
       <description><![CDATA[A check box is shown in this column, it's check state depends on if the markup is selected or not. Click to toggle the selected state. Only selected markups will be passed to command line modules.]]></description>
