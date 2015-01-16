@@ -100,7 +100,7 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(decimationFrame)
     decimationFormLayout = qt.QFormLayout(decimationFrame)
 
-    reductionFrame, reductionSlider, reductionSpinBox = numericInputFrame(self.parent,"Reduction:","Tooltip",0.0,1.0,0.1,1)
+    reductionFrame, reductionSlider, reductionSpinBox = numericInputFrame(self.parent,"Reduction:","Tooltip",0.0,1.0,0.05,2)
     decimationFormLayout.addWidget(reductionFrame)
 
     boundaryDeletionCheckBox = qt.QCheckBox("Boundary deletion")
