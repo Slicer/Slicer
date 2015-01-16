@@ -64,5 +64,16 @@
       <element>Row_Hierarchy</element>
       <element>Column_Hierarchy</element>
     </string-enumeration>
+    <string-enumeration>
+      <name>outputSeparator</name>
+      <flag>s</flag>
+      <longflag>--separator</longflag>
+      <description><![CDATA[Outout file field separator.]]></description>
+      <label>Output Field Separator</label>
+      <default>Tab</default>
+      <element>Comma</element>
+      <element>Space</element>
+      <element>Tab</element>
+    </string-enumeration>
   </parameters>
 </executable>

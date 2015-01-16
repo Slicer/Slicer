@@ -6,6 +6,7 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkNew.h>
+#include <vtkMath.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataTensorToColor.h>
 #include <vtkPolyDataReader.h>
@@ -78,8 +79,9 @@ std::map< std::string, std::map<std::string, double> > OutTable;
 std::map< std::string, std::string> ClusterNames;
 std::map< std::string, std::map<std::string, double> > Clusters;
 
-#define INVALID_NUMBER -999999
-#define INVALID_NUMBER_PRINT std::string("#NAN")
+#define INVALID_NUMBER_PRINT std::string("NAN")
+
+std::string SEPARATOR;
 
 int main( int argc, char * argv[] )
 {
@@ -316,6 +318,19 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  if (outputSeparator == std::string("Tab"))
+    {
+    SEPARATOR = "\t";
+    }
+  else if (outputSeparator == std::string("Comma"))
+    {
+    SEPARATOR = ",";
+    }
+  else if (outputSeparator == std::string("Space"))
+    {
+    SEPARATOR = " ";
+    }
+
   if (outputFormat == std::string("Row_Hierarchy"))
     {
     printFlat(ofs);
@@ -414,7 +429,7 @@ void computeScalarMeasurements(vtkPolyData *poly,
       }
     else
       {
-      sum = INVALID_NUMBER;
+      sum = vtkMath::Nan();
       }
 
     std::cout << " : " << name << " = " << sum << std::endl;
@@ -609,10 +624,27 @@ void printTable(std::ofstream &ofs, bool printHeader,
     std::cout << "Name";
     ofs << "Name";
 
+    it2 = names.find(std::string("Num_Points"));
+    if (it2 != names.end())
+      {
+      std::cout << " " << SEPARATOR << " " << it2->second;
+      ofs << " " << SEPARATOR << " " << it2->second;
+      }
+    it2 = names.find(std::string("Num_Fibers"));
+    if (it2 != names.end())
+      {
+      std::cout << " " << SEPARATOR << " " << it2->second;
+      ofs << " " << SEPARATOR << " " << it2->second;
+      }
+
     for (it2 = names.begin(); it2 != names.end(); it2++)
       {
-      std::cout << " , " << it2->second;
-      ofs << " , " << it2->second;
+      if (it2->first != std::string("Num_Points") &&
+          it2->first != std::string("Num_Fibers"))
+        {
+        std::cout << " " << SEPARATOR << " " << it2->second;
+        ofs << " " << SEPARATOR << " " << it2->second;
+        }
       }
     std::cout << std::endl;
     ofs << std::endl;
@@ -623,14 +655,15 @@ void printTable(std::ofstream &ofs, bool printHeader,
     std::cout << it->first;
     ofs << it->first;
 
-    for (it2 = names.begin(); it2 != names.end(); it2++)
+    it2 = names.find(std::string("Num_Points"));
+    if (it2 != names.end())
       {
-      std::cout << " , ";
-      ofs << " , ";
-      it1 = it->second.find(it2->second);
+      std::cout << " " << SEPARATOR << " ";
+      ofs << " " << SEPARATOR << " ";
+      it1 = it->second.find(std::string("Num_Points"));
       if (it1 != it->second.end())
         {
-        if (it1->second == INVALID_NUMBER)
+        if (vtkMath::IsNan(it1->second))
           {
           std::cout << INVALID_NUMBER_PRINT;
           ofs << INVALID_NUMBER_PRINT;
@@ -639,6 +672,51 @@ void printTable(std::ofstream &ofs, bool printHeader,
           {
           std::cout << std::fixed << it1->second;
           ofs << std::fixed << it1->second;
+          }
+        }
+      }
+    it2 = names.find(std::string("Num_Fibers"));
+    if (it2 != names.end())
+      {
+      std::cout << " " << SEPARATOR << " ";
+      ofs << " " << SEPARATOR << " ";
+      it1 = it->second.find(std::string("Num_Fibers"));
+      if (it1 != it->second.end())
+        {
+        if (vtkMath::IsNan(it1->second))
+          {
+          std::cout << INVALID_NUMBER_PRINT;
+          ofs << INVALID_NUMBER_PRINT;
+          }
+        else
+          {
+          std::cout << std::fixed << it1->second;
+          ofs << std::fixed << it1->second;
+          }
+        }
+      }
+
+    for (it2 = names.begin(); it2 != names.end(); it2++)
+      {
+      if (it2->first != std::string("Num_Points") &&
+          it2->first != std::string("Num_Fibers"))
+        {
+        std::cout << " " << SEPARATOR << " ";
+        ofs << " " << SEPARATOR << " ";
+
+        it1 = it->second.find(it2->second);
+        if (it1 != it->second.end())
+          {
+          if (vtkMath::IsNan(it1->second))
+            {
+            std::cout << INVALID_NUMBER_PRINT;
+            ofs << INVALID_NUMBER_PRINT;
+            }
+          else
+            {
+            std::cout << std::fixed << it1->second;
+            ofs << std::fixed << it1->second;
+            }
           }
         }
       }
@@ -712,7 +790,7 @@ int addClusters()
           if (itValues != itOutput->second.end() && itNames->second != std::string("Num_Points") &&
               itNames->second != std::string("Num_Fibers") )
             {
-            if (itValues->second != INVALID_NUMBER)
+            if (!vtkMath::IsNan(itValues->second))
               {
               clusterValue += npoints * itValues->second;
               }
@@ -826,27 +904,82 @@ void printCluster(const std::string &id,
   it = output.find(id);
   if (it != output.end())
     {
-    for (it2 = names.begin(); it2 != names.end(); it2++)
+    it2 = names.find(std::string("Num_Points"));
+    if (it2 != names.end())
       {
-      it1 = it->second.find(it2->second);
+      it1 = it->second.find(std::string("Num_Points"));
       if (it1 != it->second.end())
         {
         if (!ids.str().empty())
           {
-          ids << ",";
-          measureNames << ",";
-          measureValues << ",";
+          ids <<  SEPARATOR;
+          measureNames <<  SEPARATOR;
+          measureValues <<  SEPARATOR;
           }
         ids << id;
         measureNames << it2->second;
 
-        if (it1->second == INVALID_NUMBER)
+        if (vtkMath::IsNan(it1->second))
           {
           measureValues << INVALID_NUMBER_PRINT;
           }
         else
           {
           measureValues << std::fixed << it1->second;
+          }
+        }
+      }
+    it2 = names.find(std::string("Num_Fibers"));
+    if (it2 != names.end())
+      {
+      it1 = it->second.find(std::string("Num_Fibers"));
+      if (it1 != it->second.end())
+        {
+        if (!ids.str().empty())
+          {
+          ids <<  SEPARATOR;
+          measureNames <<  SEPARATOR;
+          measureValues <<  SEPARATOR;
+          }
+        ids << id;
+        measureNames << it2->second;
+
+        if (vtkMath::IsNan(it1->second))
+          {
+          measureValues << INVALID_NUMBER_PRINT;
+          }
+        else
+          {
+          measureValues << std::fixed << it1->second;
+          }
+        }
+      }
+
+    for (it2 = names.begin(); it2 != names.end(); it2++)
+      {
+      if (it2->first != std::string("Num_Points") &&
+          it2->first != std::string("Num_Fibers"))
+        {
+        it1 = it->second.find(it2->second);
+        if (it1 != it->second.end())
+          {
+          if (!ids.str().empty())
+            {
+            ids <<  SEPARATOR;
+            measureNames <<  SEPARATOR;
+            measureValues <<  SEPARATOR;
+            }
+          ids << id;
+          measureNames << it2->second;
+
+          if (vtkMath::IsNan(it1->second))
+            {
+            measureValues << INVALID_NUMBER_PRINT;
+            }
+          else
+            {
+            measureValues << std::fixed << it1->second;
+            }
           }
         }
       }
