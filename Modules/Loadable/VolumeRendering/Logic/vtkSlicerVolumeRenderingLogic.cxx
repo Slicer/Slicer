@@ -21,7 +21,6 @@
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h"
-#include "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.h"
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 
 // Annotations includes
@@ -70,8 +69,6 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
                                 "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
   this->RegisterRenderingMethod("VTK GPU Ray Casting",
                                 "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
-  //this->RegisterRenderingMethod("VTK OpenGL 3D Texture Mapping",
-  //                              "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode");
   //this->RegisterRenderingMethod("NCI GPU Ray Casting",
   //                              "vtkMRMLNCIRayCastVolumeRenderingDisplayNode");
   //this->RegisterRenderingMethod("NCI GPU MultiVolume Ray Casting",
@@ -138,9 +135,6 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 
   vtkNew<vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode> nciMVNode;
   this->GetMRMLScene()->RegisterNodeClass( nciMVNode.GetPointer() );
-
-  vtkNew<vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode> tmNode;
-  this->GetMRMLScene()->RegisterNodeClass( tmNode.GetPointer() );
 
   vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> gpuNode;
   this->GetMRMLScene()->RegisterNodeClass( gpuNode.GetPointer() );

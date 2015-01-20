@@ -15,9 +15,6 @@ set(module_replacements_include_directories
   )
 
 set(module_replacements_SRCS
-  # Texture mappers
-  vtkSlicerVolumeTextureMapper3D.cxx
-  vtkSlicerVolumeTextureMapper3D.h
   # GPU Ray Cast stuff
   vtkSlicerGPURayCastVolumeMapper.cxx
   vtkSlicerGPURayCastVolumeMapper.h
@@ -47,8 +44,6 @@ set(module_replacements_SRCS
   vtkSlicerRayCastImageDisplayHelper.cxx
   vtkSlicerRayCastImageDisplayHelper.h
   # OpenGL
-  vtkSlicerOpenGLVolumeTextureMapper3D.h
-  vtkSlicerOpenGLVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLRayCastImageDisplayHelper.h
   vtkSlicerOpenGLRayCastImageDisplayHelper.cxx
   )
@@ -56,7 +51,6 @@ set(module_replacements_SRCS
 if (${VTK_VERSION_MAJOR} GREATER 5)
   # Now for the object factory.
   set(opengl_overrides
-    VolumeTextureMapper3D
     RayCastImageDisplayHelper
     )
 

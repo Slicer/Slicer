@@ -21,16 +21,13 @@
 
 // if using some sort of opengl, then include these files
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
-#include <vtkOpenGLVolumeTextureMapper2D.h>
 #include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 #include "vtkSlicerGPURayCastVolumeMapper.h"
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
-#include "vtkSlicerOpenGLVolumeTextureMapper3D.h"
 #endif
 
 #if defined(VTK_USE_MANGLED_MESA)
 #include "vtkMesaRayCastImageDisplayHelper.h"
-#include "vtkMesaVolumeTextureMapper2D.h"
 #endif
 
 vtkStandardNewMacro(vtkSlicerVolumeRenderingFactory);
@@ -55,31 +52,6 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
   const char *rl = vtkGraphicsFactory::GetRenderLibrary();
   if (!strcmp("OpenGL",rl) || !strcmp("Win32OpenGL",rl) || !strcmp("CarbonOpenGL",rl) || !strcmp("CocoaOpenGL",rl))
     {
-    // 2D Volume Texture Mapper
-    if(strcmp(vtkclassname, "vtkVolumeTextureMapper2D") == 0)
-      {
-#if defined(VTK_USE_MANGLED_MESA)
-      if ( vtkGraphicsFactory::GetUseMesaClasses() )
-        {
-        return vtkMesaVolumeTextureMapper2D::New();
-        }
-#endif
-      return vtkOpenGLVolumeTextureMapper2D::New();
-      }
-
-    // 3D Volume Texture Mapper
-    if(strcmp(vtkclassname, "vtkSlicerVolumeTextureMapper3D") == 0)
-      {
-#if defined(VTK_USE_MANGLED_MESA)
-      if ( vtkGraphicsFactory::GetUseMesaClasses() )
-        {
-        vtkGenericWarningMacro("No support for mesa in vtkVolumeTextureMapper3D");
-        return 0;
-        }
-#endif
-      return vtkSlicerOpenGLVolumeTextureMapper3D::New();
-      }
-
         // 3D Volume GPU RayCast Mapper
     if(strcmp(vtkclassname, "vtkSlicerGPURayCastVolumeMapper") == 0)
       {

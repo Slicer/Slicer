@@ -25,12 +25,10 @@
 #include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 #include "vtkSlicerGPURayCastVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
-#include "vtkSlicerVolumeTextureMapper3D.h"
 
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h"
-#include "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.h"
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 
 // MRML includes
@@ -90,7 +88,6 @@ int vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = 256;
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
 {
   this->MapperRaycast = NULL;
-  this->MapperTexture = NULL;
   this->MapperGPURaycast = NULL;
   this->MapperGPURaycastII = NULL;
   this->MapperGPURaycast3 = NULL;
@@ -150,7 +147,6 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
 
   //delete instances
   vtkSetMRMLNodeMacro(this->MapperRaycast, NULL);
-  vtkSetMRMLNodeMacro(this->MapperTexture, NULL);
   vtkSetMRMLNodeMacro(this->MapperGPURaycast, NULL);
   vtkSetMRMLNodeMacro(this->MapperGPURaycastII, NULL);
   vtkSetMRMLNodeMacro(this->MapperGPURaycast3, NULL);
@@ -193,8 +189,6 @@ int vtkMRMLVolumeRenderingDisplayableManager::ActiveInteractionModes()
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::SetGUICallbackCommand(vtkCommand* callback)
 {
-  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
-
   //cpu ray casting
   this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,callback);
@@ -225,11 +219,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::Reset()
   vtkSetAndObserveMRMLNodeEventsMacro(this->MapperRaycast,
                                       newMapperRaycast.GetPointer(),
                                       mapperEventsWithProgress.GetPointer());
-  // 3D Texture
-  vtkNew<vtkSlicerVolumeTextureMapper3D> newMapperTexture;
-  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperTexture,
-                                      newMapperTexture.GetPointer(),
-                                      mapperEvents.GetPointer());
+
   // GPU raycast
   vtkNew<vtkSlicerGPURayCastVolumeMapper> newMapperGPURaycast;
   vtkSetAndObserveMRMLNodeEventsMacro(this->MapperGPURaycast,
@@ -376,7 +366,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
 
   int nciRayCastMapper = 200; // 200^3
   int nciMultiVolumeMapper = 200;
-  int textureMappingMapper = 128; //has to be power-of-two in this mapper
   int gpuRayCastMapper = 128*1024*1024;
   if (memory <= 128)
     {
@@ -386,48 +375,41 @@ int vtkMRMLVolumeRenderingDisplayableManager
     nciRayCastMapper = 256;
     nciMultiVolumeMapper = 320;
     gpuRayCastMapper = 256*1024*1024;
-    textureMappingMapper = 256;
     }
   else if (memory <= 512)
     {
     nciRayCastMapper = 320;
     nciMultiVolumeMapper = 500;
-    textureMappingMapper = 256;
     gpuRayCastMapper = 512*1024*1024;
     }
   else if (memory <= 1024)
     {
     nciRayCastMapper = 400;
     nciMultiVolumeMapper = 620;
-    textureMappingMapper = 256;
     gpuRayCastMapper = 1024*1024*1024;
     }
   else if (memory <= 1536)
     {
     nciRayCastMapper = 460;
     nciMultiVolumeMapper = 700;
-    textureMappingMapper = 256;
     gpuRayCastMapper = 1536*1024*1024;
     }
   else if (memory <= 2048)
     {
     nciRayCastMapper = 512;
     nciMultiVolumeMapper = 775;
-    textureMappingMapper = 512;
     gpuRayCastMapper = 2047*1024*1024;
     }
   else if (memory <= 3072)
     {
     nciRayCastMapper = 700;
     nciMultiVolumeMapper = 900;
-    textureMappingMapper = 512;
     gpuRayCastMapper = 2047*1024*1024;
     }
   else if (memory <= 4096)
     {
     nciRayCastMapper = 800;
     nciMultiVolumeMapper = 1000;
-    textureMappingMapper = 512;
     gpuRayCastMapper = 2047*1024*1024;
     }
 
@@ -438,10 +420,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
   else if (volumeMapper->IsA("vtkSlicerGPURayCastMultiVolumeMapper"))
     {
     return nciMultiVolumeMapper;
-    }
-  else if (volumeMapper->IsA("vtkSlicerVolumeTextureMapper3D"))
-    {
-    return textureMappingMapper;
     }
   else if (volumeMapper->IsA("vtkGPUVolumeRayCastMapper"))
     {
@@ -596,18 +574,6 @@ void vtkMRMLVolumeRenderingDisplayableManager
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager
-::UpdateGPUTextureMappingMapper(
-  vtkSlicerVolumeTextureMapper3D* mapper,
-  vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode* vspNode)
-{
-  this->UpdateMapper(mapper, vspNode);
-  mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
-  mapper->SetInternalVolumeSize(this->GetMaxMemory(mapper, vspNode));
-  mapper->SetFramerate(this->GetFramerate(vspNode));
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager
 ::UpdateGPURaycastMapper(
   vtkGPUVolumeRayCastMapper* mapper,
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* vspNode)
@@ -688,11 +654,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
     supported = vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
       window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
     }
-  else if (volumeMapper->IsA("vtkSlicerVolumeTextureMapper3D"))
-    {
-    supported = vtkSlicerVolumeTextureMapper3D::SafeDownCast(volumeMapper)->IsRenderSupported(
-      window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-    }
   else if (volumeMapper->IsA("vtkGPUVolumeRayCastMapper"))
     {
     supported = vtkGPUVolumeRayCastMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
@@ -721,10 +682,6 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager
   else if (vspNode->IsA("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode"))
     {
     return this->MapperGPURaycastII;
-    }
-  else if (vspNode->IsA("vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode"))
-    {
-    return this->MapperTexture;
     }
   else if (vspNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
     {
@@ -844,11 +801,6 @@ bool vtkMRMLVolumeRenderingDisplayableManager::UpdateMapper(
     {
     this->UpdateNCIMultiVolumeRaycastMapper(vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper),
                                             vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
-    }
-  else if (vspNode->IsA("vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode"))
-    {
-    this->UpdateGPUTextureMappingMapper(vtkSlicerVolumeTextureMapper3D::SafeDownCast(volumeMapper),
-                                        vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode::SafeDownCast(vspNode));
     }
   else if (vspNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
     {
