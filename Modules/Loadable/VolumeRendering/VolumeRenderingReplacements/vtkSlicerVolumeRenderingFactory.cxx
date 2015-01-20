@@ -21,7 +21,6 @@
 
 // if using some sort of opengl, then include these files
 #if defined(VTK_USE_OGLR) || defined(_WIN32) || defined(VTK_USE_COCOA) || defined(VTK_USE_CARBON)
-#include "vtkSlicerGPURayCastMultiVolumeMapper.h"
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 #endif
 
@@ -51,19 +50,6 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
   const char *rl = vtkGraphicsFactory::GetRenderLibrary();
   if (!strcmp("OpenGL",rl) || !strcmp("Win32OpenGL",rl) || !strcmp("CarbonOpenGL",rl) || !strcmp("CocoaOpenGL",rl))
     {
-      // 3D Multi Volume GPU RayCast Mapper
-    if(strcmp(vtkclassname, "vtkSlicerGPURayCastMultiVolumeMapper") == 0)
-      {
-#if defined(VTK_USE_MANGLED_MESA)
-      if ( vtkGraphicsFactory::GetUseMesaClasses() )
-        {
-        vtkGenericWarningMacro("No support for mesa in vtkSlicerGPURayCastMultiVolumeMapper");
-        return 0;
-        }
-#endif
-        return vtkSlicerGPURayCastMultiVolumeMapper::New();
-      }
-
     // Ray Cast Image Display Helper
     if(strcmp(vtkclassname, "vtkSlicerRayCastImageDisplayHelper") == 0)
       {

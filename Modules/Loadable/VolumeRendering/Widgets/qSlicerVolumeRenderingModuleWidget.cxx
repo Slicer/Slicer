@@ -34,7 +34,6 @@
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "qSlicerCPURayCastVolumeRenderingPropertiesWidget.h"
 #include "qSlicerGPURayCastVolumeRenderingPropertiesWidget.h"
-#include "qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.h"
 
 // MRML includes
 #include "vtkMRMLAnnotationROINode.h"
@@ -146,8 +145,6 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                               new qSlicerCPURayCastVolumeRenderingPropertiesWidget);
   q->addRenderingMethodWidget("vtkMRMLGPURayCastVolumeRenderingDisplayNode",
                               new qSlicerGPURayCastVolumeRenderingPropertiesWidget);
-  //q->addRenderingMethodWidget("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode",
-  //                            new qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget);
   QSettings settings;
   int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
   this->MemorySizeComboBox->addItem(

@@ -27,12 +27,10 @@ class vtkGPUVolumeRayCastMapper;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkMRMLCPURayCastVolumeRenderingDisplayNode;
 class vtkMRMLGPURayCastVolumeRenderingDisplayNode;
-class vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 class vtkMRMLVolumeRenderingScenarioNode;
 class vtkSlicerVolumeRenderingLogic;
-class vtkSlicerGPURayCastMultiVolumeMapper;
 class vtkVolumeProperty;
 
 // MRML DisplayableManager includes
@@ -93,23 +91,16 @@ public:
   void SetupHistograms(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //vtkKWHistogramSet* GetHistogramSet(){return this->Histograms;}
 
-  void SetupHistogramsFg(vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode);
-  //vtkKWHistogramSet* GetHistogramSetFg(){return this->HistogramsFg;}
-
   virtual bool UpdateMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   void UpdateMapper(vtkVolumeMapper* mapper,
                     vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void UpdateCPURaycastMapper(vtkFixedPointVolumeRayCastMapper* mapper,
                               vtkMRMLCPURayCastVolumeRenderingDisplayNode* vspNode);
-  void UpdateNCIMultiVolumeRaycastMapper(vtkSlicerGPURayCastMultiVolumeMapper* mapper,
-                                         vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode);
   void UpdateGPURaycastMapper(vtkGPUVolumeRayCastMapper* mapper,
                               vtkMRMLGPURayCastVolumeRenderingDisplayNode* vspNode);
   void UpdateDesiredUpdateRate(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void UpdateClipping(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
-
-  void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
@@ -174,10 +165,6 @@ protected:
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
 
   // Description:
-  // The hardware accelerated multi-volume gpu ray cast mapper.
-  vtkSlicerGPURayCastMultiVolumeMapper *MapperGPURaycastII;
-
-  // Description:
   // The software accelerated software mapper
   vtkFixedPointVolumeRayCastMapper *MapperRaycast;
 
@@ -199,9 +186,6 @@ protected:
 
   /// Holders for MRML callbacks
   //vtkCallbackCommand *MRMLCallback;
-
-
-  vtkVolumeProperty *VolumePropertyGPURaycastII;
 
   //vtkVolumeProperty *VolumePropertyGPURaycast3;
 

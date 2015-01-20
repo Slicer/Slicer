@@ -18,10 +18,6 @@ set(module_replacements_SRCS
   # GPU Ray Cast stuff
   vtkSlicerGPUVolumeMapper.cxx
   vtkSlicerGPUVolumeMapper.h
-  vtkSlicerGPURayCastMultiVolumeMapper.cxx
-  vtkSlicerGPURayCastMultiVolumeMapper.h
-  vtkSlicerGPUMultiVolumeMapper.cxx
-  vtkSlicerGPUMultiVolumeMapper.h
   # Ray Cast stuff
   vtkSlicerFixedPointRayCastImage.cxx
   vtkSlicerFixedPointRayCastImage.h
