@@ -168,7 +168,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
 
     this->GetMRMLScene()->AddNode(fiberBundleNode);
 
-    if (!this->SetPolyDataTensors(fiberBundleNode));
+    if (!this->SetPolyDataTensors(fiberBundleNode))
       {
       vtkErrorMacro("No Tensors found in: " << filename);
       }
