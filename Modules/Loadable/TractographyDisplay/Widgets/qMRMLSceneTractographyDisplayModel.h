@@ -66,6 +66,7 @@ public:
 
   virtual bool         canBeAChild(vtkMRMLNode* node)const
   {
+    Q_UNUSED(node);
     return false;
   }
 
