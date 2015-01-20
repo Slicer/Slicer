@@ -26,6 +26,9 @@
 // QtCore includes
 #include "qSlicerSceneBundleReader.h"
 
+// CTK includes
+#include <ctkUtils.h>
+
 // MRML includes
 #include <vtkMRMLScene.h>
 
@@ -69,23 +72,21 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   QString file = properties["fileName"].toString();
 
   // TODO: switch to QTemporaryDir in Qt5.
-  // For now, create a named directory and use
-  // kwsys calls to remove it
   QString unpackPath( QDir::tempPath() +
                         QString("/__BundleLoadTemp") +
                           QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
 
   qDebug() << "Unpacking bundle to " << unpackPath;
 
-  if (vtksys::SystemTools::FileIsDirectory(unpackPath.toLatin1()))
+  if (QFileInfo(unpackPath).isDir())
     {
-    if ( !vtksys::SystemTools::RemoveADirectory(unpackPath.toLatin1()) )
+    if (!ctk::removeDirRecursively(unpackPath))
       {
       return false;
       }
     }
 
-  if ( !vtksys::SystemTools::MakeDirectory(unpackPath.toLatin1()) )
+  if (!QDir().mkpath(unpackPath))
     {
     return false;
     }
@@ -112,7 +113,7 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
     res = this->mrmlScene()->Import();
     }
 
-  if ( !vtksys::SystemTools::RemoveADirectory(unpackPath.toLatin1()) )
+  if (!ctk::removeDirRecursively(unpackPath))
     {
     return false;
     }
