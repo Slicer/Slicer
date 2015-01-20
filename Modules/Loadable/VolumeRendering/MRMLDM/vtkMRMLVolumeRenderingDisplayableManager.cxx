@@ -23,11 +23,9 @@
 #include "vtkMRMLVolumeRenderingDisplayableManager.h"
 #include "vtkSlicerFixedPointVolumeRayCastMapper.h"
 #include "vtkSlicerGPURayCastMultiVolumeMapper.h"
-#include "vtkSlicerGPURayCastVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
-#include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 
@@ -88,7 +86,6 @@ int vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = 256;
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
 {
   this->MapperRaycast = NULL;
-  this->MapperGPURaycast = NULL;
   this->MapperGPURaycastII = NULL;
   this->MapperGPURaycast3 = NULL;
   this->Volume = NULL;
@@ -147,7 +144,6 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
 
   //delete instances
   vtkSetMRMLNodeMacro(this->MapperRaycast, NULL);
-  vtkSetMRMLNodeMacro(this->MapperGPURaycast, NULL);
   vtkSetMRMLNodeMacro(this->MapperGPURaycastII, NULL);
   vtkSetMRMLNodeMacro(this->MapperGPURaycast3, NULL);
   vtkSetMRMLNodeMacro(this->Volume, NULL);
@@ -194,7 +190,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetGUICallbackCommand(vtkCommand*
   this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent,callback);
 
   //hook up the gpu mapper
-  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
 
   this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
   this->MapperGPURaycast3->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, callback);
@@ -220,11 +215,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::Reset()
                                       newMapperRaycast.GetPointer(),
                                       mapperEventsWithProgress.GetPointer());
 
-  // GPU raycast
-  vtkNew<vtkSlicerGPURayCastVolumeMapper> newMapperGPURaycast;
-  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperGPURaycast,
-                                      newMapperGPURaycast.GetPointer(),
-                                      mapperEvents.GetPointer());
   // GPU raycast II
   vtkNew<vtkSlicerGPURayCastMultiVolumeMapper> newMapperGPURaycastII;
   vtkNew<vtkIntArray> newMapperGPURaycastIIEvents;
@@ -364,7 +354,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
     vspNode->GetGPUMemorySize() :
     vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize;
 
-  int nciRayCastMapper = 200; // 200^3
   int nciMultiVolumeMapper = 200;
   int gpuRayCastMapper = 128*1024*1024;
   if (memory <= 128)
@@ -372,52 +361,41 @@ int vtkMRMLVolumeRenderingDisplayableManager
     }
   else if (memory <= 256)
     {
-    nciRayCastMapper = 256;
     nciMultiVolumeMapper = 320;
     gpuRayCastMapper = 256*1024*1024;
     }
   else if (memory <= 512)
     {
-    nciRayCastMapper = 320;
     nciMultiVolumeMapper = 500;
     gpuRayCastMapper = 512*1024*1024;
     }
   else if (memory <= 1024)
     {
-    nciRayCastMapper = 400;
     nciMultiVolumeMapper = 620;
     gpuRayCastMapper = 1024*1024*1024;
     }
   else if (memory <= 1536)
     {
-    nciRayCastMapper = 460;
     nciMultiVolumeMapper = 700;
     gpuRayCastMapper = 1536*1024*1024;
     }
   else if (memory <= 2048)
     {
-    nciRayCastMapper = 512;
     nciMultiVolumeMapper = 775;
     gpuRayCastMapper = 2047*1024*1024;
     }
   else if (memory <= 3072)
     {
-    nciRayCastMapper = 700;
     nciMultiVolumeMapper = 900;
     gpuRayCastMapper = 2047*1024*1024;
     }
   else if (memory <= 4096)
     {
-    nciRayCastMapper = 800;
     nciMultiVolumeMapper = 1000;
     gpuRayCastMapper = 2047*1024*1024;
     }
 
-  if (volumeMapper->IsA("vtkSlicerGPURayCastVolumeMapper"))
-    {
-    return nciRayCastMapper;
-    }
-  else if (volumeMapper->IsA("vtkSlicerGPURayCastMultiVolumeMapper"))
+  if (volumeMapper->IsA("vtkSlicerGPURayCastMultiVolumeMapper"))
     {
     return nciMultiVolumeMapper;
     }
@@ -537,23 +515,6 @@ void vtkMRMLVolumeRenderingDisplayableManager
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager
-::UpdateNCIRaycastMapper(
-  vtkSlicerGPURayCastVolumeMapper* mapper,
-  vtkMRMLNCIRayCastVolumeRenderingDisplayNode* vspNode)
-{
-  this->UpdateMapper(mapper, vspNode);
-  mapper->SetInternalVolumeSize(this->GetMaxMemory(mapper, vspNode));
-  mapper->SetFramerate(this->GetFramerate(vspNode));
-
-  mapper->SetDepthPeelingThreshold(vspNode->GetDepthPeelingThreshold());
-  mapper->SetDistanceColorBlending(vspNode->GetDistanceColorBlending());
-  mapper->SetICPEScale(vspNode->GetICPEScale());
-  mapper->SetICPESmoothness(vspNode->GetICPESmoothness());
-  mapper->SetTechnique(vspNode->GetRaycastTechnique());
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager
 ::UpdateNCIMultiVolumeRaycastMapper(
   vtkSlicerGPURayCastMultiVolumeMapper* mapper,
   vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode)
@@ -644,11 +605,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
     {
     supported = 1;
     }
-  else if (volumeMapper->IsA("vtkSlicerGPURayCastVolumeMapper"))
-    {
-    supported = vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
-      window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-    }
   else if (volumeMapper->IsA("vtkSlicerGPURayCastMultiVolumeMapper"))
     {
     supported = vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
@@ -674,10 +630,6 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager
   if (vspNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
     {
     return this->MapperRaycast;
-    }
-  else if (vspNode->IsA("vtkMRMLNCIRayCastVolumeRenderingDisplayNode"))
-    {
-    return this->MapperGPURaycast;
     }
   else if (vspNode->IsA("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode"))
     {
@@ -792,11 +744,6 @@ bool vtkMRMLVolumeRenderingDisplayableManager::UpdateMapper(
     this->UpdateCPURaycastMapper(vtkFixedPointVolumeRayCastMapper::SafeDownCast(volumeMapper),
                                  vtkMRMLCPURayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
     }
-  else if (vspNode->IsA("vtkMRMLNCIRayCastVolumeRenderingDisplayNode"))
-    {
-    this->UpdateNCIRaycastMapper(vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper),
-                                 vtkMRMLNCIRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
-    }
   else if (vspNode->IsA("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode"))
     {
     this->UpdateNCIMultiVolumeRaycastMapper(vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper),
@@ -867,11 +814,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateClipping(
       || !vspNode->GetCroppingEnabled())
     {
     volumeMapper->RemoveAllClippingPlanes();
-    if (vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper))
-      {
-      vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper)->ClippingOff();
-      }
-    else if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper))
+    if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper))
       {
       vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->ClippingOff();
       }
@@ -902,11 +845,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateClipping(
       }
     }
   volumeMapper->SetClippingPlanes(planes.GetPointer());
-  if (vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper))
-    {
-    vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper)->ClippingOn();
-    }
-  else if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper))
+  if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper))
     {
     vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->ClippingOn();
     }

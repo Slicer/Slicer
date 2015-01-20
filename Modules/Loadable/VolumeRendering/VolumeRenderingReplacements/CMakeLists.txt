@@ -16,8 +16,6 @@ set(module_replacements_include_directories
 
 set(module_replacements_SRCS
   # GPU Ray Cast stuff
-  vtkSlicerGPURayCastVolumeMapper.cxx
-  vtkSlicerGPURayCastVolumeMapper.h
   vtkSlicerGPUVolumeMapper.cxx
   vtkSlicerGPUVolumeMapper.h
   vtkSlicerGPURayCastMultiVolumeMapper.cxx

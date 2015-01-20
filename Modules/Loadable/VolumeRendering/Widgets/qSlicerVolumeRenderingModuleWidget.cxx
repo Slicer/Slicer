@@ -34,7 +34,6 @@
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "qSlicerCPURayCastVolumeRenderingPropertiesWidget.h"
 #include "qSlicerGPURayCastVolumeRenderingPropertiesWidget.h"
-#include "qSlicerNCIRayCastVolumeRenderingPropertiesWidget.h"
 #include "qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.h"
 
 // MRML includes
@@ -147,8 +146,6 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                               new qSlicerCPURayCastVolumeRenderingPropertiesWidget);
   q->addRenderingMethodWidget("vtkMRMLGPURayCastVolumeRenderingDisplayNode",
                               new qSlicerGPURayCastVolumeRenderingPropertiesWidget);
-  q->addRenderingMethodWidget("vtkMRMLNCIRayCastVolumeRenderingDisplayNode",
-                              new qSlicerNCIRayCastVolumeRenderingPropertiesWidget);
   //q->addRenderingMethodWidget("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode",
   //                            new qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget);
   QSettings settings;

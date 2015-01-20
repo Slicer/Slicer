@@ -27,13 +27,11 @@ class vtkGPUVolumeRayCastMapper;
 class vtkFixedPointVolumeRayCastMapper;
 class vtkMRMLCPURayCastVolumeRenderingDisplayNode;
 class vtkMRMLGPURayCastVolumeRenderingDisplayNode;
-class vtkMRMLNCIRayCastVolumeRenderingDisplayNode;
 class vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 class vtkMRMLVolumeRenderingScenarioNode;
 class vtkSlicerVolumeRenderingLogic;
-class vtkSlicerGPURayCastVolumeMapper;
 class vtkSlicerGPURayCastMultiVolumeMapper;
 class vtkVolumeProperty;
 
@@ -104,8 +102,6 @@ public:
                     vtkMRMLVolumeRenderingDisplayNode* vspNode);
   void UpdateCPURaycastMapper(vtkFixedPointVolumeRayCastMapper* mapper,
                               vtkMRMLCPURayCastVolumeRenderingDisplayNode* vspNode);
-  void UpdateNCIRaycastMapper(vtkSlicerGPURayCastVolumeMapper* mapper,
-                              vtkMRMLNCIRayCastVolumeRenderingDisplayNode* vspNode);
   void UpdateNCIMultiVolumeRaycastMapper(vtkSlicerGPURayCastMultiVolumeMapper* mapper,
                                          vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode);
   void UpdateGPURaycastMapper(vtkGPUVolumeRayCastMapper* mapper,
@@ -176,10 +172,6 @@ protected:
   static bool First;
 
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic;
-
-  // Description:
-  // The hardware accelerated gpu ray cast mapper.
-  vtkSlicerGPURayCastVolumeMapper *MapperGPURaycast;
 
   // Description:
   // The hardware accelerated multi-volume gpu ray cast mapper.

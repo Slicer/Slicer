@@ -13,13 +13,11 @@
 =========================================================================auto=*/
 
 // Volume Rendering includes
-#include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
-#include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h"
 #include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 
@@ -69,8 +67,6 @@ vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
                                 "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
   this->RegisterRenderingMethod("VTK GPU Ray Casting",
                                 "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
-  //this->RegisterRenderingMethod("NCI GPU Ray Casting",
-  //                              "vtkMRMLNCIRayCastVolumeRenderingDisplayNode");
   //this->RegisterRenderingMethod("NCI GPU MultiVolume Ray Casting",
   //                              "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode");
 }
@@ -129,9 +125,6 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass( cpuVRNode.GetPointer(),
                                            "VolumeRenderingParameters");
 #endif
-
-  vtkNew<vtkMRMLNCIRayCastVolumeRenderingDisplayNode> nciNode;
-  this->GetMRMLScene()->RegisterNodeClass( nciNode.GetPointer() );
 
   vtkNew<vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode> nciMVNode;
   this->GetMRMLScene()->RegisterNodeClass( nciMVNode.GetPointer() );
@@ -651,13 +644,7 @@ void vtkSlicerVolumeRenderingLogic
   this->SetThresholdToVolumeProp(
     scalarRange, threshold, prop,
     this->UseLinearRamp, ignoreVolumeDisplayNodeThreshold);
-  if (vtkMRMLNCIRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode))
-    {
-    // NCI raycast mapper applies a second threshold in addition to the opacity
-    // transfer function
-    vtkMRMLNCIRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode)
-      ->SetDepthPeelingThreshold(scalarRange[0]);
-    }
+
   this->SetWindowLevelToVolumeProp(
     scalarRange, windowLevel, lut, prop);
   this->SetGradientOpacityToVolumeProp(scalarRange, prop);
