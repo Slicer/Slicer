@@ -100,6 +100,9 @@
 #  define Slicer_INCR_TCL_VERSION "@INCR_TCL_VERSION@"
 #endif //Slicer_USE_PYTHONQT_WITH_TCL
 
+#cmakedefine Slicer_VTK_RENDERING_USE_OpenGL_BACKEND
+#cmakedefine Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
+
 // Library sub-directory - The following macros define directories only valid for a given build tree.
 #define VTK_DIR "@VTK_DIR@"
 #define CTK_DIR "@CTK_DIR@"

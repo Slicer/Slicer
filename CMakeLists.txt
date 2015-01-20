@@ -485,6 +485,11 @@ endif()
 # VTKv6 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
 if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(Slicer_VTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Choose the rendering backend.")
+  set_property(CACHE Slicer_VTK_RENDERING_BACKEND PROPERTY STRINGS "OpenGL" "OpenGL2")
+  mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
+  set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
+
   set(Slicer_VTK_COMPONENTS
     vtkFiltersExtraction
     vtkFiltersFlowPaths
@@ -498,9 +503,9 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkImagingStatistics
     vtkImagingStencil
     vtkInteractionImage
-    vtkRenderingContextOpenGL
+    vtkRenderingContext${Slicer_VTK_RENDERING_BACKEND}
     vtkRenderingQt
-    vtkRenderingVolumeOpenGL
+    vtkRenderingVolume${Slicer_VTK_RENDERING_BACKEND}
     vtkTestingRendering
     vtkzlib
     )
@@ -514,7 +519,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     if(FONTCONFIG_FOUND)
       list(APPEND Slicer_VTK_COMPONENTS
         vtkRenderingFreeTypeFontConfig
-        vtkRenderingFreeTypeOpenGL
+        vtkRenderingFreeType${Slicer_VTK_RENDERING_BACKEND}
         )
     endif()
   endif()
@@ -716,6 +721,9 @@ else()
   endif()
 endif()
 include(${VTK_USE_FILE})
+if(NOT DEFINED VTK_RENDERING_BACKEND)
+  set(VTK_RENDERING_BACKEND "OpenGL")
+endif()
 
 #-----------------------------------------------------------------------------
 # CTK

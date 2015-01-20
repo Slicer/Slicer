@@ -18,6 +18,7 @@
 
 ==============================================================================*/
 
+#include "vtkSlicerConfigure.h" // Slicer_VTK_RENDERING_USE_{OpenGL|OpenGL2}_BACKEND
 
 // QT includes
 #include <QApplication>
@@ -41,7 +42,11 @@ int qMRMLVolumePropertyNodeWidgetTest1(int argc, char * argv [] )
 #else
 
 #include <vtkAutoInit.h>
+#if defined(Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)
+VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
+#else
 VTK_MODULE_INIT(vtkRenderingContextOpenGL);
+#endif
 
 // STD includes
 
