@@ -60,7 +60,7 @@
 
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
 # include <windows.h>
-# include <vtksys/SystemTools.hxx>
+# include <vtksys/Encoding.hxx>
 #endif
 
 namespace
@@ -220,20 +220,22 @@ int __stdcall WinMain(HINSTANCE hInstance,
   Q_UNUSED(hPrevInstance);
   Q_UNUSED(nShowCmd);
 
+  // CommandLineToArgvW has no narrow-character version, so we get the arguments in wide strings
+  // and then convert to regular string.
   int argc;
-  char **argv;
-  vtksys::SystemTools::ConvertWindowsCommandLineToUnixArguments(
-    lpCmdLine, &argc, &argv);
+  LPWSTR* argvStringW = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-  int ret = SlicerAppMain(argc, argv);
-
-  for (int i = 0; i < argc; i++)
+  std::vector< const char* > argv(argc); // usual const char** array used in main() functions
+  std::vector< std::string > argvString(argc); // this stores the strings that the argv pointers point to
+  for(int i=0; i<argc; i++)
     {
-    delete [] argv[i];
+    argvString[i] = vtksys::Encoding::ToNarrow(argvStringW[i]);
+    argv[i] = argvString[i].c_str();
     }
-  delete [] argv;
 
-  return ret;
+  LocalFree(argvStringW);
+
+  return SlicerAppMain(argc, const_cast< char** >(&argv[0]));
 }
 #else
 int main(int argc, char *argv[])
