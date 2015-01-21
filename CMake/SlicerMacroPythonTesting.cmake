@@ -26,7 +26,7 @@ macro(SLICER_ADD_PYTHON_TEST)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
   if(NOT IS_ABSOLUTE ${MY_SCRIPT})
-    set(${MY_SCRIPT} "${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT}")
+    set(MY_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT}")
   endif()
   ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
