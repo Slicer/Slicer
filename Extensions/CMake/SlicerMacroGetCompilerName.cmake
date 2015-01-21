@@ -4,7 +4,7 @@
 #
 
 macro(SlicerMacroGetCompilerName COMPILER_NAME_VAR)
-  if("${COMPILER_NAME_VAR}" STREQUAL "")
+  if(${COMPILER_NAME_VAR} STREQUAL "")
     message(FATAL_ERROR "error: COMPILER_NAME_VAR CMake variable is empty !")
   endif()
 
