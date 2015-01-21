@@ -42,8 +42,8 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${git_protocol}://github.com/libarchive/libarchive.git"
-    GIT_TAG "v3.0.4"
+    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/libarchive.git"
+    GIT_TAG "453b390286a59503f1ed3e2d8382e244cddbc304" # slicer-v3.0.4
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR LibArchive-install
