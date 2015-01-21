@@ -55,7 +55,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/curl.git"
-    GIT_TAG "c2bc1187192ea9565f16db6382abc574114af193"
+    GIT_TAG "92a23fb0aa8543fbb2f53c05a653f5ac67187eff"
     SOURCE_DIR curl
     BINARY_DIR ${EP_BUILD_DIR}
     CMAKE_CACHE_ARGS
