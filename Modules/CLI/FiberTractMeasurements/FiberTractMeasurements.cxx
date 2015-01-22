@@ -205,13 +205,13 @@ int main( int argc, char * argv[] )
 
             computeScalarMeasurements(fiberNode->GetPolyData(), id, emptyOperationVector[0]);
 
-            for (int o=0; o<operations.size(); o++)
+            for (unsigned int o = 0; o < operations.size(); o++)
               {
               computeTensorMeasurement(math.GetPointer(),
                                        fiberNode->GetPolyDataConnection(),
                                        id,
                                        operations[o]);
-              } // for (int o=0; o<operations.size(); o++)
+              } // for (unsigned int o = 0; o < operations.size(); o++)
             } // if (fiberNode)
           } // if (dispHierarchyNode)
         } // for (unsigned int i = 0; i < allChildren.size(); ++i)
@@ -220,7 +220,7 @@ int main( int argc, char * argv[] )
       {
       std::vector< vtkMRMLNode *> fiberNodes;
       modelScene->GetNodesByClass("vtkMRMLFiberBundleNode", fiberNodes);
-      for (int i=0; i<fiberNodes.size(); i++)
+      for (unsigned int i = 0; i < fiberNodes.size(); i++)
         {
         vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(fiberNodes[i]);
         std::string id = std::string(fiberNode->GetName());
@@ -229,14 +229,14 @@ int main( int argc, char * argv[] )
 
         computeScalarMeasurements(fiberNode->GetPolyData(), id, emptyOperationVector[0]);
 
-        for (int o=0; o<operations.size(); o++)
+        for (unsigned int o = 0; o < operations.size(); o++)
           {
           computeTensorMeasurement(math.GetPointer(),
                                    fiberNode->GetPolyDataConnection(),
                                    id,
                                    operations[o]);
-          } // for (int o=0; o<operations.size(); o++)
-        } // for (int i=0; i<fiberNodes.size(); i++)
+          } // for (unsigned int o = 0; o < operations.size(); o++)
+        } // for (unsigned int i = 0; i < fiberNodes.size(); i++)
       } // else if inputType == std::string("All_Fiber_Nodes"))
     } //if (inputType == ... || ... )
   else if (inputType == std::string("Fibers_File_Folder") )
@@ -259,7 +259,7 @@ int main( int argc, char * argv[] )
     vtkStringArray *fileNamesVTP = gfnVTP->GetFileNames();
 
     // Loop over polydatas
-    for (int i=0; i<fileNamesVTP->GetNumberOfValues(); i++)
+    for (vtkIdType i = 0; i < fileNamesVTP->GetNumberOfValues(); i++)
       {
       vtkNew<vtkXMLPolyDataReader> readerVTP;
       vtkStdString fileName = fileNamesVTP->GetValue(i);
@@ -277,7 +277,7 @@ int main( int argc, char * argv[] )
         continue;
         }
 
-      for (int o=0; o<operations.size(); o++)
+      for (unsigned int o = 0; o < operations.size(); o++)
         {
         computeTensorMeasurement(math.GetPointer(),
                                  readerVTP.GetPointer()->GetOutputPort(),
@@ -285,7 +285,7 @@ int main( int argc, char * argv[] )
                                  operations[o]);
         }
       }
-    for (int i=0; i<fileNamesVTK->GetNumberOfValues(); i++)
+    for (vtkIdType i = 0; i < fileNamesVTK->GetNumberOfValues(); i++)
       {
       vtkNew<vtkPolyDataReader> readerVTK;
       vtkStdString fileName = fileNamesVTK->GetValue(i);
@@ -303,7 +303,7 @@ int main( int argc, char * argv[] )
         continue;
         }
 
-      for (int o=0; o<operations.size(); o++)
+      for (unsigned int o = 0; o < operations.size(); o++)
         {
         computeTensorMeasurement(math.GetPointer(),
                                  readerVTK.GetPointer()->GetOutputPort(),
@@ -393,8 +393,8 @@ void computeScalarMeasurements(vtkPolyData *poly,
                                std::string &id,
                                std::string &operation)
 {
-  int npoints = poly->GetNumberOfPoints();
-  int npolys = poly->GetNumberOfCells();
+  vtkIdType npoints = poly->GetNumberOfPoints();
+  vtkIdType npolys = poly->GetNumberOfCells();
 
   if (npoints == 0 || npolys == 0)
     {
