@@ -429,6 +429,7 @@ void qMRMLTreeView::setCurrentNode(vtkMRMLNode* node)
 void qMRMLTreeView::onSelectionChanged(const QItemSelection & selected,
                                        const QItemSelection & deselected)
 {
+  Q_UNUSED(deselected);
   Q_D(qMRMLTreeView);
   vtkMRMLNode* newCurrentNode = 0;
   if (selected.indexes().count() > 0)
