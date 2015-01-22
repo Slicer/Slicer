@@ -36,7 +36,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 {
-  this->PreferITKv3CompatibleTransforms = 1;
+  this->PreferITKv3CompatibleTransforms = 0;
   vtkITKTransformConverter::RegisterInverseTransformTypes();
 }
 
