@@ -273,6 +273,7 @@ void vtkImageBimodalAnalysis::ExecuteDataWithInformation(vtkDataObject *out, vtk
       << " must be float\n");
     return;
     }
+
   switch (inData->GetScalarType())
     {
     vtkTemplateMacro(vtkImageBimodalAnalysisExecute(this, inData,
