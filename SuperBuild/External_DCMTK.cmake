@@ -34,7 +34,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "de4f9bae3150d4a1209d235bb5b1306309343043")
+  set(${proj}_GIT_TAG "3366181db75ac0e334045c66350e438adf304cb0")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
