@@ -274,47 +274,10 @@ void vtkImageBimodalAnalysis::ExecuteDataWithInformation(vtkDataObject *out, vtk
     return;
     }
   switch (inData->GetScalarType())
-  {
-    case VTK_CHAR:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (char *)(inPtr), outData, outPtr);
-      break;
-    case VTK_UNSIGNED_CHAR:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (unsigned char *)(inPtr), outData, outPtr);
-      break;
-    case VTK_SHORT:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (short *)(inPtr), outData, outPtr);
-      break;
-    case VTK_UNSIGNED_SHORT:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (unsigned short *)(inPtr), outData, outPtr);
-      break;
-    case VTK_INT:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (int *)(inPtr), outData, outPtr);
-      break;
-    case VTK_UNSIGNED_INT:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (unsigned int *)(inPtr), outData, outPtr);
-      break;
-    case VTK_LONG:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (long *)(inPtr), outData, outPtr);
-      break;
-    case VTK_UNSIGNED_LONG:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (unsigned long *)(inPtr), outData, outPtr);
-      break;
-    case VTK_FLOAT:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (float *)(inPtr), outData, outPtr);
-      break;
-    case VTK_DOUBLE:
-      vtkImageBimodalAnalysisExecute(this,
-              inData, (double *)(inPtr), outData, outPtr);
-      break;
+    {
+    vtkTemplateMacro(vtkImageBimodalAnalysisExecute(this, inData,
+                                                    static_cast<VTK_TT *>(inPtr),
+                                                    outData, outPtr));
     default:
       vtkErrorMacro(<< "ExecuteData: Unsupported ScalarType");
       return;
