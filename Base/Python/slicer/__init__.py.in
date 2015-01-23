@@ -1,9 +1,10 @@
 """ This module sets up root logging and loads the Slicer library modules into its namespace."""
 
+import ctk
 import imp
 import logging
+import qt
 import sys
-from __main__ import ctk, qt
 
 #-----------------------------------------------------------------------------
 class _LogReverseLevelFilter(logging.Filter):
@@ -22,11 +23,12 @@ class SlicerApplicationLogHandler(logging.Handler):
   """
   def __init__(self):
     logging.Handler.__init__(self)
-    self.pythonToCtkLevelConverter = {
-      logging.DEBUG : ctk.ctkErrorLogLevel.Debug,
-      logging.INFO : ctk.ctkErrorLogLevel.Info,
-      logging.WARNING : ctk.ctkErrorLogLevel.Warning,
-      logging.ERROR : ctk.ctkErrorLogLevel.Error }
+    if hasattr(ctk, 'ctkErrorLogLevel'):
+      self.pythonToCtkLevelConverter = {
+        logging.DEBUG : ctk.ctkErrorLogLevel.Debug,
+        logging.INFO : ctk.ctkErrorLogLevel.Info,
+        logging.WARNING : ctk.ctkErrorLogLevel.Warning,
+        logging.ERROR : ctk.ctkErrorLogLevel.Error }
     self.origin = "Python"
     self.category = "Python"
   def emit(self, record):

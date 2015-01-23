@@ -58,7 +58,7 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
-    GIT_TAG "a3d8aa94cad5a7704414365505ee05365c3a1f1e"
+    GIT_TAG "e23537d146048845b092ad2320f0f42f659aa838"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
@@ -99,6 +99,7 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 
+  # library paths
   set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>)
   if(Slicer_USE_QtTesting)
     list(APPEND ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
@@ -113,6 +114,16 @@ if(NOT DEFINED CTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+    ${CTK_DIR}/CTK-build/bin/Python
+    ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
+    LABELS "PYTHONPATH_LAUNCHER_BUILD"
     )
 
   #-----------------------------------------------------------------------------
