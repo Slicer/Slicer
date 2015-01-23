@@ -164,6 +164,16 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
     )
 
+  # pythonpath
+  set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+    ${VTK_DIR}/Wrapping/Python
+    ${VTK_DIR}/lib/<CMAKE_CFG_INTDIR>
+    )
+  mark_as_superbuild(
+    VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
+    LABELS "PYTHONPATH_LAUNCHER_BUILD"
+    )
+
   #-----------------------------------------------------------------------------
   # Launcher setting specific to install tree
 
