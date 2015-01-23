@@ -262,8 +262,8 @@ namespace itk
       {
       itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
       }
-    virtual void ComputeDeformationContribution(const typename Superclass::InputPointType & inputPoint,
-                                              typename Superclass::OutputPointType & result) const
+    virtual void ComputeDeformationContribution(const typename Superclass::InputPointType &,
+                                              typename Superclass::OutputPointType &) const
       {
       itkExceptionMacro( "Only storage methods are implemented for InverseThinPlateSplineKernelTransform" );
       }
