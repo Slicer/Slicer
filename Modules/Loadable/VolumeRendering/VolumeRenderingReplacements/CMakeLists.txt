@@ -15,9 +15,6 @@ set(module_replacements_include_directories
   )
 
 set(module_replacements_SRCS
-  # GPU Ray Cast stuff
-  vtkSlicerGPUVolumeMapper.cxx
-  vtkSlicerGPUVolumeMapper.h
   # Ray Cast stuff
   vtkSlicerFixedPointRayCastImage.cxx
   vtkSlicerFixedPointRayCastImage.h
