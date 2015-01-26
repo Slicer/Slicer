@@ -14,15 +14,18 @@
 =========================================================================*/
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 
-#include "vtkObjectFactory.h"
-#include "vtkRenderer.h"
-#include "vtkTransform.h"
-#include "vtkCamera.h"
-#include "vtkSlicerFixedPointRayCastImage.h"
+// VTK includes
+#include <vtkCamera.h>
+#include <vtkObjectFactory.h>
+#include <vtkRenderer.h>
+#include <vtkTransform.h>
 #include <vtkVersion.h>
 
+// Slicer includes
+#include "vtkSlicerFixedPointRayCastImage.h"
+
 #ifndef VTK_IMPLEMENT_MESA_CXX
-# include "vtkOpenGL.h"
+# include <vtkOpenGL.h>
 #endif
 
 
