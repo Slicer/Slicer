@@ -102,6 +102,10 @@ public:
   }
 
   // Study tags
+  static const std::string  GetDICOMStudyInstanceUIDTagName()
+    { return "StudyInstanceUID"; };
+  static const std::string  GetDICOMStudyIDTagName()
+    { return "StudyID"; };
   static const std::string  GetDICOMStudyDescriptionTagName()
     { return "StudyDescription"; };
   static const std::string  GetDICOMStudyDescriptionAttributeName()

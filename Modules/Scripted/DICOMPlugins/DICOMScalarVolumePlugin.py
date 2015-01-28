@@ -17,7 +17,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     super(DICOMScalarVolumePluginClass,self).__init__()
     self.loadType = "Scalar Volume"
     self.epsilon = epsilon
-    self.defaultStudyUID = 'SLICER10001' #TODO: What should be the new study ID?
+    self.defaultStudyID = 'SLICER10001' #TODO: What should be the new study ID?
 
     self.tags['seriesDescription'] = "0008,103e"
     self.tags['seriesNumber'] = "0020,0011"
@@ -394,7 +394,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       tags['Patient Name'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMPatientNameTagName())
       tags['Patient ID'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMPatientIDTagName())
       tags['Patient Comments'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMPatientCommentsTagName())
-      tags['Study ID'] = self.defaultStudyUID
+      tags['Study ID'] = self.defaultStudyID
       tags['Study Date'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateTagName())
       tags['Study Description'] = exportable.tag(vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionTagName())
       tags['Modality'] = exportable.tag('Modality')
@@ -428,7 +428,7 @@ class DICOMScalarVolumePlugin:
   def __init__(self, parent):
     parent.title = "DICOM Scalar Volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.contributors = ["Steve Pieper (Isomics Inc.), Csaba Pinter (Queen's)"]
     parent.helpText = """
     Plugin to the DICOM Module to parse and load scalar volumes
     from DICOM files.

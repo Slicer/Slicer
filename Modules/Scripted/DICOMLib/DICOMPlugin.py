@@ -152,6 +152,7 @@ class DICOMPlugin(object):
     tags['seriesModality'] = "0008,0060"
     tags['seriesNumber'] = "0020,0011"
     tags['studyInstanceUID'] = "0020,000D"
+    tags['studyID'] = "0020,0010"
     tags['studyDescription'] = "0008,1030"
     tags['studyDate'] = "0008,0020"
     tags['studyTime'] = "0008,0030"
@@ -194,6 +195,7 @@ class DICOMPlugin(object):
     patientId = slicer.dicomDatabase.fileValue(firstFile,tags['patientID'])
     patientNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
     studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['studyInstanceUID'])
+    studyId = slicer.dicomDatabase.fileValue(firstFile,tags['studyID'])
     studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
     vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(slicer.mrmlScene, patientId, studyInstanceUid, seriesInstanceUid)
 
@@ -221,6 +223,8 @@ class DICOMPlugin(object):
           studyDescription = 'No study description'
         studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDescriptionAttributeName(),studyDescription)
         studyDate = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDate']))
+        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyInstanceUIDTagName(),studyInstanceUid)
+        studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyIDTagName(),studyId)
         studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyDateAttributeName(),studyDate)
         studyNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMStudyTimeAttributeName(),slicer.dicomDatabase.fileValue(firstFile, tags['studyTime']))
         # Set node name
