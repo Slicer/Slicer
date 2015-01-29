@@ -242,6 +242,20 @@ public:
   static vtkMRMLScalarVolumeNode* ResampleVolumeToReferenceVolume(vtkMRMLVolumeNode *inputVolumeNode,
                                                            vtkMRMLVolumeNode *referenceVolumeNode);
 
+  /// Getting the epsilon value to use when determining if the
+  /// elements of the IJK to RAS matrices of two volumes match.
+  /// Defaults to 10 to the minus 6.
+  vtkGetMacro(CompareVolumeGeometryEpsilon, double);
+  /// Setting the epsilon value and associated precision to use when determining
+  /// if the elements of the IJK to RAS matrices of two volumes match and how to
+  /// print out the mismatched elements.
+  void SetCompareVolumeGeometryEpsilon(double epsilon);
+
+  /// Get the precision with which to print out volume geometry mismatches,
+  /// value is set when setting the compare volume geometry epsilon.
+  /// \sa SetCompareVolumeGeometryEpsilon
+  vtkGetMacro(CompareVolumeGeometryPrecision, int);
+
 protected:
   vtkSlicerVolumesLogic();
   virtual ~vtkSlicerVolumesLogic();
@@ -273,6 +287,13 @@ protected:
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
 
   NodeSetFactoryRegistry VolumeRegistry;
+
+  /// Allowable difference in comparing volume geometry double values.
+  /// Defaults to 1 to the power of 10 to the minus 6
+  double CompareVolumeGeometryEpsilon;
+  /// Error print out precision, paried with CompareVolumeGeometryEpsilon.
+  /// defaults to 6
+  int CompareVolumeGeometryPrecision;
 };
 
 #endif
