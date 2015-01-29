@@ -98,8 +98,15 @@ public:
 
   /// Load in a color file, creating a storage node. Returns a pointer to the
   /// created node on success, 0 on failure (no file, invalid color file). The
-  /// name of the created color node is \a nodeName if specified or the fileName
-  /// otherwise.
+  /// name of the created color node is \a nodeName if specified or
+  /// the fileName otherwise. Try first to load it as a color table
+  /// node, then if that fails, as a procedural color node. It calls
+  /// CreateFileNode or CreateProceduralFileNode which are also used
+  /// for the built in color nodes, so it has to unset some flags: set
+  /// the category to File, turn save with scene on on the node and
+  /// it's storage node, turn off hide from editors, remove the
+  /// singleton tag.
+  /// \sa CreateFileNode, CreateProceduralFileNode
   vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = NULL);
 
   /// Get/Set the user defined paths where to look for extra colour files

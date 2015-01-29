@@ -425,6 +425,7 @@ vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const c
     node->SaveWithSceneOn();
     node->GetStorageNode()->SaveWithSceneOn();
     node->HideFromEditorsOff();
+    node->SetSingletonTag(NULL);
 
     if (nodeName != NULL)
       {
@@ -447,6 +448,7 @@ vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const c
       procNode->SaveWithSceneOn();
       procNode->GetStorageNode()->SaveWithSceneOn();
       procNode->HideFromEditorsOff();
+      procNode->SetSingletonTag(NULL);
 
       if (nodeName != NULL)
         {
