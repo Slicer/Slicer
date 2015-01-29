@@ -75,7 +75,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
     ${ARGN}
     )
 
-  message(STATUS "Configuring Slicer Qt base library: ${SLICERQTBASELIB_NAME}")
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} Qt base library: ${SLICERQTBASELIB_NAME}")
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------

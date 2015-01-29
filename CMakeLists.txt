@@ -436,8 +436,8 @@ endif()
 if(Slicer_VERSION_TWEAK GREATER 0)
   set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_VERSION_TWEAK}")
 endif()
-message(STATUS "Configuring ${SlicerApp_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")
-message(STATUS "Configuring ${SlicerApp_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories
@@ -646,7 +646,7 @@ set(Slicer_ModuleWidgets_INCLUDE_DIRS CACHE INTERNAL "Slicer Module Widgets incl
 # Get operating system, architecture and bitness
 #-----------------------------------------------------------------------------
 SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX Slicer)
-message(STATUS "Configuring ${SlicerApp_APPLICATION_NAME} for [${Slicer_OS}-${Slicer_ARCHITECTURE}]")
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} for [${Slicer_OS}-${Slicer_ARCHITECTURE}]")
 
 #-----------------------------------------------------------------------------
 # ExternalData configuration for test data
@@ -773,7 +773,7 @@ if(Slicer_USE_PYTHONQT)
     OUTPUT_VARIABLE Slicer_PYTHON_VERSION_DOT
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   string(REGEX REPLACE "[.]" "" Slicer_PYTHON_VERSION ${Slicer_PYTHON_VERSION_DOT})
-  message(STATUS "Configuring ${SlicerApp_APPLICATION_NAME} with python ${Slicer_PYTHON_VERSION_DOT}")
+  message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} with python ${Slicer_PYTHON_VERSION_DOT}")
 
   set(CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME "Slicer")
 endif()
