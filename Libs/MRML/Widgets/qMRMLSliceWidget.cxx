@@ -274,7 +274,7 @@ void qMRMLSliceWidget::fitSliceToBackground()
 }
 
 // --------------------------------------------------------------------------
-const qMRMLSliceView* qMRMLSliceWidget::sliceView()const
+qMRMLSliceView* qMRMLSliceWidget::sliceView()const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceView;

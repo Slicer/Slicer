@@ -123,7 +123,7 @@ public:
   /// A const ctkVTKSliceView pointer is returned as you shouldn't
   /// mess too much with it. If you do, be aware that you are probably
   /// unsynchronizing the view from the nodes/logics.
-  Q_INVOKABLE const qMRMLSliceView* sliceView()const;
+  Q_INVOKABLE qMRMLSliceView* sliceView()const;
 
   //virtual bool eventFilter(QObject* object, QEvent* event);
 public slots:
