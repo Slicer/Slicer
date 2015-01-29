@@ -1052,6 +1052,25 @@ vtkMRMLScene* vtkSlicerVolumeRenderingLogic::GetPresetsScene()
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic::GetPresetByName(
+    const char* presetName)
+{
+  vtkMRMLScene * presetsScene = this->GetPresetsScene();
+  if (!presetsScene || !presetName)
+    {
+    return 0;
+    }
+  vtkSmartPointer<vtkCollection> presets;
+  presets.TakeReference(presetsScene->GetNodesByClassByName(
+        "vtkMRMLVolumePropertyNode", presetName));
+  if (presets->GetNumberOfItems() == 0)
+    {
+    return 0;
+    }
+  return vtkMRMLVolumePropertyNode::SafeDownCast(presets->GetItemAsObject(0));
+}
+
+//---------------------------------------------------------------------------
 bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
 {
   this->PresetsScene->RegisterNodeClass(vtkNew<vtkMRMLVolumePropertyNode>().GetPointer());

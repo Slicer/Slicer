@@ -108,5 +108,16 @@ bool testPresets(const std::string& moduleShareDirectory)
               << " - Problem with vtkSlicerVolumeRenderingLogic::GetPresetsScene()" << std::endl;
     return false;
     }
+
+  const char* presetName = "MR-Default";
+  if (logic->GetPresetByName(presetName) == 0)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Problem with vtkSlicerVolumeRenderingLogic::GetPresetByName()\n"
+              << " - Failed to load preset '" << presetName << "'"
+              << std::endl;
+    return false;
+    }
+
   return true;
 }

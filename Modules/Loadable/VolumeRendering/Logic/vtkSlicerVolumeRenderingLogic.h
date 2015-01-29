@@ -273,6 +273,13 @@ public:
   /// \sa vtkMRMLVolumePropertyNode, GetModuleShareDirectory()
   vtkMRMLScene* GetPresetsScene();
 
+  /// Return the preset \a presetName contained in the presets scene
+  /// loaded using \a GetPresetsScene().
+  /// If no presets are found, return 0.
+  /// If multiple presets are found, the first one is returned.
+  /// \sa GetPresetsScene(), vtkMRMLVolumePropertyNode
+  vtkMRMLVolumePropertyNode* GetPresetByName(const char *presetName);
+
   /// Utility function that checks if the piecewise functions are equal
   /// Returns true if different
   bool IsDifferentFunction(vtkPiecewiseFunction* function1,
