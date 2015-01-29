@@ -141,20 +141,32 @@ set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${Slicer_CPACK_PACKAGE_NAME} ${Slice
 
 set(project ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
-set(CPACK_PACKAGE_NAME ${${project}_CPACK_PACKAGE_NAME})
-set(CPACK_PACKAGE_VENDOR ${${project}_CPACK_PACKAGE_VENDOR})
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY})
-set(CPACK_PACKAGE_DESCRIPTION_FILE ${${project}_CPACK_PACKAGE_DESCRIPTION_FILE})
-set(CPACK_RESOURCE_FILE_LICENSE ${${project}_CPACK_RESOURCE_FILE_LICENSE})
-set(CPACK_PACKAGE_VERSION_MAJOR ${${project}_CPACK_PACKAGE_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${${project}_CPACK_PACKAGE_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${${project}_CPACK_PACKAGE_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION ${${project}_CPACK_PACKAGE_VERSION})
+macro(slicer_cpack_set varname)
+  if(DEFINED ${project}_${varname})
+    set(${varname} ${${project}_${varname}})
+  elseif(DEFINED Slicer_${varname})
+    set(${varname} ${Slicer_${varname}})
+  else()
+    message(FATAL_ERROR "Failed to set variable ${varname}."
+                        "Neither Slicer_${varname} or ${project}_${varname} are defined.")
+  endif()
+  message(STATUS "Setting ${varname} to '${${varname}}'")
+endmacro()
+
+slicer_cpack_set("CPACK_PACKAGE_NAME")
+slicer_cpack_set("CPACK_PACKAGE_VENDOR")
+slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_SUMMARY")
+slicer_cpack_set("CPACK_PACKAGE_DESCRIPTION_FILE")
+slicer_cpack_set("CPACK_RESOURCE_FILE_LICENSE")
+slicer_cpack_set("CPACK_PACKAGE_VERSION_MAJOR")
+slicer_cpack_set("CPACK_PACKAGE_VERSION_MINOR")
+slicer_cpack_set("CPACK_PACKAGE_VERSION_PATCH")
+slicer_cpack_set("CPACK_PACKAGE_VERSION")
 set(CPACK_SYSTEM_NAME "${Slicer_OS}-${Slicer_ARCHITECTURE}")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY ${${project}_CPACK_PACKAGE_INSTALL_DIRECTORY})
+slicer_cpack_set("CPACK_PACKAGE_INSTALL_DIRECTORY")
 
 if(APPLE)
-  set(CPACK_PACKAGE_ICON ${${project}_CPACK_PACKAGE_ICON})
+  slicer_cpack_set("CPACK_PACKAGE_ICON")
 endif()
 
 # Installers for 32- vs. 64-bit CMake:
