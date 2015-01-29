@@ -441,6 +441,22 @@ class DICOMDetailsPopup(object):
   def examineForLoading(self):
     """For selected plugins, give user the option
     of what to load"""
+
+    loadEnabled = False
+    (self.loadablesByPlugin,loadEnabled) = self.getLoadablesFromFileLists(self.fileLists)
+
+    self.loadButton.enabled = loadEnabled
+    #self.viewMetadataButton.enabled = loadEnabled
+    self.organizeLoadables()
+    self.loadableTable.setLoadables(self.loadablesByPlugin)
+
+  '''
+  Take list of file lists, return loadables by plugin dictionary
+  '''
+  def getLoadablesFromFileLists(self, fileLists):
+
+    loadablesByPlugin = {}
+
     allFileCount = missingFileCount = 0
     for fileList in self.fileLists:
         for filePath in fileList:
@@ -464,7 +480,6 @@ class DICOMDetailsPopup(object):
     step = 0
 
     loadEnabled = False
-    self.loadablesByPlugin = {}
     plugins = self.pluginSelector.selectedPlugins()
     for pluginClass in plugins:
       if not self.pluginInstances.has_key(pluginClass):
@@ -477,12 +492,12 @@ class DICOMDetailsPopup(object):
       self.progress.setValue(step)
       slicer.app.processEvents()
       try:
-        self.loadablesByPlugin[plugin] = plugin.examineForImport(self.fileLists)
+        loadablesByPlugin[plugin] = plugin.examineForImport(fileLists)
         # If regular method is not overridden (so returns empty list), try old function
         # Ensuring backwards compatibility: examineForImport used to be called examine
-        if self.loadablesByPlugin[plugin] == []:
-          self.loadablesByPlugin[plugin] = plugin.examine(self.fileLists)
-        loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
+        if loadablesByPlugin[plugin] == []:
+          loadablesByPlugin[plugin] = plugin.examine(fileLists)
+        loadEnabled = loadEnabled or loadablesByPlugin[plugin] != []
       except Exception,e:
         import traceback
         traceback.print_exc()
@@ -491,12 +506,10 @@ class DICOMDetailsPopup(object):
         print("DICOM Plugin failed: %s", str(e))
       step +=1
 
-    self.loadButton.enabled = loadEnabled
-    #self.viewMetadataButton.enabled = loadEnabled
-    self.organizeLoadables()
-    self.loadableTable.setLoadables(self.loadablesByPlugin)
     self.progress.close()
     self.progress = None
+
+    return (loadablesByPlugin,loadEnabled)
 
   def loadCheckedLoadables(self):
     """Invoke the load method on each plugin for the loadable
@@ -505,6 +518,68 @@ class DICOMDetailsPopup(object):
       self.examineForLoading()
 
     self.loadableTable.updateSelectedFromCheckstate()
+
+    # TODO: add check that disables all referenced stuff to be considered?
+    # get all the references from the checked loadables
+    referencedFileLists = []
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        if hasattr(loadable,'referencedInstanceUIDs'):
+          instanceFileList = []
+          for instance in loadable.referencedInstanceUIDs:
+            instanceFile = slicer.dicomDatabase.fileForInstance(instance)
+            if instanceFile != '':
+              instanceFileList.append(instanceFile)
+          if len(instanceFileList):
+            referencedFileLists.append(instanceFileList)
+
+    # if applicable, find all loadables from the file lists
+    loadEnabled = False
+    if len(referencedFileLists):
+      (self.referencedLoadables,loadEnabled) = self.getLoadablesFromFileLists(referencedFileLists)
+
+    self.referencesDialog = None
+    if loadEnabled:
+      print('Loadables identified from the referenced files: '+str(self.referencedLoadables))
+      self.referencesDialog = qt.QDialog(self.window)
+      self.referencesDialog.modal = False
+      layout = qt.QFormLayout()
+      self.referencesDialog.setLayout(layout)
+      self.referencesDialog.setWindowTitle("Select referenced items to load")
+      for plugin in self.referencedLoadables:
+        for loadable in self.referencedLoadables[plugin]:
+          if loadable.selected:
+            cb = qt.QCheckBox(self.referencesDialog)
+            cb.checked = True
+            layout.addRow(cb, qt.QLabel(loadable.name))
+            print('Added loadable '+loadable.name+' to the dialog')
+      okButton = qt.QPushButton('Done')
+      okButton.connect("clicked()", self.proceedWithReferencedLoadablesSelection)
+      layout.addRow(okButton)
+      self.referencesDialog.show()
+    else:
+      self.proceedWithReferencedLoadablesSelection()
+
+    return
+
+  def proceedWithReferencedLoadablesSelection(self):
+
+    # each check box corresponds to a referenced loadable
+    # that was selected by examine; if the user confirmed
+    # that reference should be loaded, add it to the self.loadablesByPlugin
+    # dictionary
+    if self.referencesDialog:
+      children = self.referencesDialog.children()
+      loadableCnt = 0
+      for plugin in self.referencedLoadables:
+        for loadable in self.referencedLoadables[plugin]:
+          if loadable.selected:
+            if children[loadableCnt+1].checked:
+              self.loadablesByPlugin[plugin].append(loadable)
+
+      self.referencesDialog.close()
+      self.referencesDialog = None
+
     loadableCount = 0
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
@@ -527,6 +602,8 @@ class DICOMDetailsPopup(object):
         if loadable.selected:
           self.progress.labelText = '\nLoading %s' % loadable.name
           slicer.app.processEvents()
+
+
           if not plugin.load(loadable):
             loadingResult = '%s\nCould not load: %s as a %s' % (loadingResult,loadable.name,plugin.loadType)
           step += 1
@@ -547,6 +624,8 @@ class DICOMDetailsPopup(object):
       qt.QMessageBox.warning(slicer.util.mainWindow(), 'DICOM loading', loadingResult)
     if not self.browserPersistent:
       self.close()
+
+    return
 
 class DICOMPluginSelector(object):
   """Implement the Qt code for a table of
