@@ -51,7 +51,7 @@ public:
   qSlicerAbstractCoreModule* module()const;
 
 protected:
-  /// All inialization code (typically setupUi()) must be done in setup()
+  /// All initialization code (typically setupUi()) must be done in setup()
   /// The module and the logic are accessible.
   virtual void setup() = 0;
 
