@@ -136,8 +136,11 @@ public:
 signals:
 
   /// This signal is emitted each time a file is loaded using loadNodes()
+  /// The \a loadedFileParameters QVariant map contains the parameters
+  /// passed to the reader and also the \a fileType and \a nodeIDs keys respectively
+  /// associated with a QString and a QStringList.
   /// \sa loadNodes(const qSlicerIO::IOFileType&, const qSlicerIO::IOProperties&, vtkCollection*)
-  void newFileLoaded(const qSlicerIO::IOProperties& parametersWithFileType);
+  void newFileLoaded(const qSlicerIO::IOProperties& loadedFileParameters);
 
 protected:
 
