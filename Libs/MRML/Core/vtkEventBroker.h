@@ -255,7 +255,7 @@ protected:
   ///
   /// Attach adds the observers to the object.
   /// Detach removes the observers
-  /// These routines manage the internal datastructres and should
+  /// These routines manage the internal datastructures and should
   /// be the only methods used to modified the internal Observations member
   /// Please note that they don't update the SubjectMap nor the ObserverMap.
   void AttachObservation (vtkObservation *observation);

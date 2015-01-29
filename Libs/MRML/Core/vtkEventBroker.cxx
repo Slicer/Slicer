@@ -229,7 +229,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation *observation )
 
   if ( observation->GetObserver() != NULL && (observation->GetSubject() != observation->GetObserver()) )
     {
-    // there may be no Oberserver (e.g. for a Script)
+    // there may be no Observer (e.g. for a Script)
     tag = observation->GetObserver()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
     observation->SetObserverDeleteEventTag( tag );
     }
@@ -819,7 +819,7 @@ void vtkEventBroker::InvokeObservation ( vtkObservation *observation,
   observation->Register(this);
 
   // Invoke the observation
-  // - run script is available, otherwise run callback command
+  // - run script if available, otherwise run callback command
   //  -- pass back the client data to the script handler (for
   //     example it could be the interpreter to use)
   if ( observation->GetScript() != NULL )

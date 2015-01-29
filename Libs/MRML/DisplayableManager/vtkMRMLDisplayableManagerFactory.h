@@ -32,7 +32,7 @@ class vtkMRMLDisplayableManagerGroup;
 
 /// \brief Factory where displayable manager classes are registered.
 ///
-/// A displayable manager class is responsible to represente a
+/// A displayable manager class is responsible to represent a
 /// MRMLDisplayable node in a renderer.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject
 {
@@ -72,7 +72,7 @@ public:
   /// Return name of the nth registered displayable manager
   std::string GetRegisteredDisplayableManagerName(int n);
 
-  /// Instantiate registrered DisplayableManagers
+  /// Instantiate registered DisplayableManagers
   /// It returns a vtkMRMLDisplayableManagerGroup representing a list of DisplayableManager
   /// Internally, the factory keep track of all the Group and will invoke the ModifiedEvent
   /// of each group.

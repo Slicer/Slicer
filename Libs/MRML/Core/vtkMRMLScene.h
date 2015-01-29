@@ -152,7 +152,7 @@ public:
   /// Add a copy of a node to the scene.
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);
 
-  /// Invoke a NodeAddedEvent (used, for instnace, after adding a bunch of nodes with AddNodeNoNotify
+  /// Invoke a NodeAddedEvent (used, for instance, after adding a bunch of nodes with AddNodeNoNotify
   void NodeAdded(vtkMRMLNode *n);
   void NodeAdded() {this->NodeAdded(NULL);};
 

@@ -125,7 +125,7 @@ protected:
   typedef vtkMRMLDisplayableManagerGroup Self;
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
-  /// Trigger upon a DisplayableManager is either registered or unregisterer from
+  /// Trigger upon a DisplayableManager is either registered or unregistered from
   /// the associated factory
   void onDisplayableManagerFactoryRegisteredEvent(const char* displayableManagerName);
   void onDisplayableManagerFactoryUnRegisteredEvent(const char* displayableManagerName);
