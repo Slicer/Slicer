@@ -354,6 +354,11 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
       ADDITIONAL_PATH_ENVVARS_PREFIX SLICER_
       )
 
+    if(WIN32)
+      set(SlicerApp_APPLICATION_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${SlicerApp_APPLICATION_NAME}.ico)
+      message(STATUS "Setting SlicerApp_APPLICATION_ICON to '${SlicerApp_APPLICATION_ICON}'")
+    endif()
+
     if(NOT APPLE)
       if(Slicer_HAS_CONSOLE_IO_SUPPORT)
         install(
@@ -374,7 +379,7 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
           COMMAND
             ${CTKResEdit_EXECUTABLE}
               --update-resource-ico ${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
-              IDI_ICON1 ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${SlicerApp_APPLICATION_NAME}.ico
+              IDI_ICON1 ${SlicerApp_APPLICATION_ICON}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           COMMEND ""
           )
@@ -409,7 +414,7 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
         COMMAND
           ${CTKResEdit_EXECUTABLE}
             --update-resource-ico ${Slicer_BINARY_DIR}/${SlicerApp_APPLICATION_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-            IDI_ICON1 ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${SlicerApp_APPLICATION_NAME}.ico
+            IDI_ICON1 ${SlicerApp_APPLICATION_ICON}
         )
       add_dependencies(${SlicerApp_APPLICATION_NAME}UpdateLauncherIcon ${SlicerApp_APPLICATION_NAME}ConfigureLauncher)
     endif()
