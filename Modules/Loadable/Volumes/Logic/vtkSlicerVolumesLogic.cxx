@@ -87,7 +87,7 @@ int significantDecimals(double value, int defaultDecimals = -1)
     {
     return -1;
     }
-  char previous;
+  char previous = ' ';
   int previousRepeat=0;
   bool only0s = true;
   bool isUnit = value > -1. && value < 1.;
