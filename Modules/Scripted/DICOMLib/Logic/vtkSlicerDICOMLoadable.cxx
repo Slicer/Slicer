@@ -44,12 +44,17 @@ vtkSlicerDICOMLoadable::vtkSlicerDICOMLoadable()
   this->Files = NULL;
   vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
   this->SetFiles(files);
+
+  this->ReferencedInstanceUIDs = NULL;
+  vtkSmartPointer<vtkStringArray> referencedInstanceUIDs = vtkSmartPointer<vtkStringArray>::New();
+  this->SetReferencedInstanceUIDs(referencedInstanceUIDs);
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerDICOMLoadable::~vtkSlicerDICOMLoadable()
 {
   this->SetFiles(NULL);
+  this->SetReferencedInstanceUIDs(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -70,10 +75,24 @@ void vtkSlicerDICOMLoadable::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << indent << "Selected:   " << (this->Selected?"true":"false") << "\n";
   os << indent << "Confidence:   " << this->Confidence << "\n";
+  os << indent << "ReferencedInstanceUIDs:   " << (this->ReferencedInstanceUIDs?"":"NULL") << "\n";
+  if (this->ReferencedInstanceUIDs)
+    {
+    for (int fileIndex=0; fileIndex<this->ReferencedInstanceUIDs->GetNumberOfValues(); ++fileIndex)
+      {
+      os << indent << "  " << this->ReferencedInstanceUIDs->GetValue(fileIndex) << "\n";
+      }
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerDICOMLoadable::AddFile(const char* file)
 {
   this->Files->InsertNextValue(file);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerDICOMLoadable::AddReferencedInstanceUID(const char* referencedInstanceUID)
+{
+  this->ReferencedInstanceUIDs->InsertNextValue(referencedInstanceUID);
 }

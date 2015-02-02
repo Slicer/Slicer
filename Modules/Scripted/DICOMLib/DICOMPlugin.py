@@ -161,6 +161,7 @@ class DICOMPlugin(object):
     tags['patientSex'] = "0010,0040"
     tags['patientBirthDate'] = "0010,0030"
     tags['patientComments'] = "0010,4000"
+    tags['instanceUID'] = "0008,0018"
 
     # Import and check dependencies
     from vtkSlicerSubjectHierarchyModuleMRML import vtkMRMLSubjectHierarchyNode
@@ -183,13 +184,22 @@ class DICOMPlugin(object):
     firstFile = loadable.files[0]
 
     # Set up subject hierarchy node
-    seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['seriesInstanceUID'])
     seriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, None, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries(), slicer.util.toVTKString(loadable.name), dataNode)
 
     # Specify details of series node
+    seriesInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['seriesInstanceUID'])
     seriesNode.AddUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), seriesInstanceUid)
     seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesModalityAttributeName(), slicer.dicomDatabase.fileValue(firstFile, tags['seriesModality']))
     seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMSeriesNumberAttributeName(), slicer.dicomDatabase.fileValue(firstFile, tags['seriesNumber']))
+    # Set instance UIDs
+    instanceUIDs = ""
+    for file in loadable.files:
+      uid = slicer.dicomDatabase.fileValue(file,tags['instanceUID'])
+      if uid == "":
+        uid = "Unknown"
+      instanceUIDs += uid + " "
+    instanceUIDs = instanceUIDs[:-1]  # strip last space
+    seriesNode.AddUID(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMInstanceUIDName(), instanceUIDs)
 
     # Add series node to hierarchy under the right study and patient nodes. If they are present then used, if not, then created
     patientId = slicer.dicomDatabase.fileValue(firstFile,tags['patientID'])

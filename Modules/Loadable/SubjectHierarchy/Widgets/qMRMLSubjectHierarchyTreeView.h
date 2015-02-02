@@ -38,10 +38,19 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
 {
   Q_OBJECT
 
+  /// Flag determining whether to highlight nodes referenced by DICOM. Storing DICOM references:
+  ///   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  ///   -> SH node instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  Q_PROPERTY (bool highlightReferencedNodes READ highlightReferencedNodes WRITE setHighlightReferencedNodes)
+
 public:
   typedef qMRMLTreeView Superclass;
   qMRMLSubjectHierarchyTreeView(QWidget *parent=0);
   virtual ~qMRMLSubjectHierarchyTreeView();
+
+public:
+  bool highlightReferencedNodes()const;
+  void setHighlightReferencedNodes(bool highlightOn);
 
 protected:
   /// Toggle visibility
@@ -52,6 +61,10 @@ protected:
 
   /// Handle mouse press event (facilitates timely update of context menu)
   virtual void mousePressEvent(QMouseEvent* event);
+
+  /// Apply highlight for nodes referenced by argument node by DICOM
+  /// \sa highlightReferencedNodes
+  void applyReferenceHighlightForNode(vtkMRMLSubjectHierarchyNode* node);
 
 public slots:
   /// Set MRML scene

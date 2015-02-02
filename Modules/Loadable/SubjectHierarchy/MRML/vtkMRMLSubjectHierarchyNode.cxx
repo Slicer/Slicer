@@ -303,6 +303,33 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNod
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUIDList(vtkMRMLScene* scene, const char* uidName, const char* uidValue)
+{
+  if (!scene || !uidName || !uidValue)
+    {
+    std::cerr << "vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUID: Invalid scene or searched UID!" << std::endl;
+    return NULL;
+    }
+
+  std::vector<vtkMRMLNode*> subjectHierarchyNodes;
+  unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSubjectHierarchyNode", subjectHierarchyNodes);
+  for (unsigned int shNodeIndex=0; shNodeIndex<numberOfNodes; shNodeIndex++)
+    {
+    vtkMRMLSubjectHierarchyNode* node = vtkMRMLSubjectHierarchyNode::SafeDownCast(subjectHierarchyNodes[shNodeIndex]);
+    if (node)
+      {
+      std::string nodeUidValueStr = node->GetUID(uidName);
+      if (nodeUidValueStr.find(uidValue) != std::string::npos)
+        {
+        return node;
+        }
+      }
+    }
+
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetAssociatedNode()
 {
   vtkMRMLNode* firstAssociatedNode = vtkMRMLHierarchyNode::GetAssociatedNode();
@@ -860,4 +887,88 @@ void vtkMRMLSubjectHierarchyNode::HardenTransformOnBranch()
       }
     subjectHierarchyNode->Modified();
     }
+}
+
+//---------------------------------------------------------------------------
+std::vector<vtkMRMLSubjectHierarchyNode*> vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodesReferencedByDICOM()
+{
+  std::vector<vtkMRMLSubjectHierarchyNode*> referencedNodes;
+
+  vtkMRMLScene* scene = this->GetScene();
+  if (!scene)
+    {
+    vtkErrorMacro("GetSubjectHierarchyNodesReferencedByDICOM: Invalid MRML scene!");
+    return referencedNodes;
+    }
+
+  // Get referenced SOP instance UIDs
+  const char* referencedInstanceUIDsAttributeChars = this->GetAttribute(
+    vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName().c_str() );
+  if (!referencedInstanceUIDsAttributeChars)
+    {
+    return referencedNodes;
+    }
+
+  // De-serialize SOP instance UID list
+  std::string referencedSopInstanceUidsAttribute(referencedInstanceUIDsAttributeChars);
+  std::vector<std::string> referencedSopInstanceUids;
+  char separatorCharacter = ' ';
+  size_t separatorPosition = referencedSopInstanceUidsAttribute.find( separatorCharacter );
+  while (separatorPosition != std::string::npos)
+    {
+    std::string uid = referencedSopInstanceUidsAttribute.substr(0, separatorPosition);
+    referencedSopInstanceUids.push_back(uid);
+    referencedSopInstanceUidsAttribute = referencedSopInstanceUidsAttribute.substr( separatorPosition+1 );
+    separatorPosition = referencedSopInstanceUidsAttribute.find( separatorCharacter );
+    }
+  // Add last UID in case there was no space at the end (which is default behavior)
+  if (!referencedSopInstanceUidsAttribute.empty() && referencedSopInstanceUidsAttribute.find(separatorCharacter) == std::string::npos)
+    {
+    referencedSopInstanceUids.push_back(referencedSopInstanceUidsAttribute);
+    }
+
+  // Find subject hierarchy nodes by SOP instance UIDs
+  std::vector<std::string>::iterator uidIt;
+  for (uidIt = referencedSopInstanceUids.begin(); uidIt != referencedSopInstanceUids.end(); ++uidIt)
+    {
+    // Find first referenced node in whole scene
+    if (referencedNodes.empty())
+      {
+      vtkMRMLSubjectHierarchyNode* node = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUIDList(
+        scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), (*uidIt).c_str() );
+      if (node)
+        {
+        referencedNodes.push_back(node);
+        }
+      }
+    else
+      {
+      // If we found a referenced node, check the other instances in those nodes first to save time
+      bool foundUidInFoundReferencedNodes = false;
+      std::vector<vtkMRMLSubjectHierarchyNode*>::iterator nodeIt;
+      for (nodeIt = referencedNodes.begin(); nodeIt != referencedNodes.end(); ++nodeIt)
+        {
+        // Get instance UIDs of the referenced node
+        std::string uids = (*nodeIt)->GetUID( vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName() );
+        if (uids.find(*uidIt) != std::string::npos)
+          {
+          // If we found the UID in the already found referenced nodes, then we don't need to do anything
+          foundUidInFoundReferencedNodes = true;
+          break;
+          }
+        }
+      // If the referenced SOP instance UID is not contained in the already found referenced nodes, then we look in the scene
+      if (!foundUidInFoundReferencedNodes)
+        {
+        vtkMRMLSubjectHierarchyNode* node = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodeByUIDList(
+          scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), (*uidIt).c_str() );
+        if (node)
+          {
+          referencedNodes.push_back(node);
+          }
+        }
+      }
+    }
+
+  return referencedNodes;
 }

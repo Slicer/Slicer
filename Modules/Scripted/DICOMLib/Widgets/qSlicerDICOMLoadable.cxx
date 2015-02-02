@@ -53,6 +53,8 @@ public:
   /// actually selected by default.  In the case of a tie,
   /// both series are selected for loading.
   double Confidence;
+  /// List of UIDs for the DICOM instances that are referenced by this loadable
+  QStringList ReferencedInstanceUIDs;
 };
 
 //-----------------------------------------------------------------------------
@@ -114,6 +116,10 @@ CTK_SET_CPP(qSlicerDICOMLoadable, const double, setConfidence, Confidence)
 CTK_GET_CPP(qSlicerDICOMLoadable, double, confidence, Confidence)
 
 //-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerDICOMLoadable, const QStringList&, setReferencedInstanceUIDs, ReferencedInstanceUIDs)
+CTK_GET_CPP(qSlicerDICOMLoadable, QStringList, referencedInstanceUIDs, ReferencedInstanceUIDs)
+
+//-----------------------------------------------------------------------------
 void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable)
 {
   Q_D(qSlicerDICOMLoadable);
@@ -132,6 +138,11 @@ void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable
   foreach(QString file, d->Files)
     {
     vtkLoadable->AddFile(file.toLatin1().constData());
+    }
+
+  foreach(QString referencedInstanceUID, d->ReferencedInstanceUIDs)
+    {
+    vtkLoadable->AddReferencedInstanceUID(referencedInstanceUID.toLatin1().constData());
     }
 }
 
@@ -157,6 +168,15 @@ void qSlicerDICOMLoadable::copyFromVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadab
     for (int fileIndex = 0; fileIndex < filesArray->GetNumberOfValues(); ++fileIndex)
       {
       d->Files.append(QString(filesArray->GetValue(fileIndex)));
+      }
+    }
+
+  vtkStringArray* referencedInstanceUIDsArray = vtkLoadable->GetReferencedInstanceUIDs();
+  if (referencedInstanceUIDsArray)
+    {
+    for (int fileIndex = 0; fileIndex < referencedInstanceUIDsArray->GetNumberOfValues(); ++fileIndex)
+      {
+      d->ReferencedInstanceUIDs.append(QString(referencedInstanceUIDsArray->GetValue(fileIndex)));
       }
     }
 }

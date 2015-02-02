@@ -44,6 +44,8 @@ public:
     { return "SubjectHierarchy."; };
   static const std::string GetSubjectHierarchyExcludeFromTreeAttributeName()
     { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList"; };
+  static const std::string GetHighlightedSubjectHierarchyNodeAttributeName()
+    { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "Highlighted"; };
   static const std::string GetSubjectHierarchyNewNodeNamePrefix()
     { return "New"; };
 
@@ -64,8 +66,12 @@ public:
   // DICOM attributes
   static const char* GetDICOMUIDName()
     { return "DICOM"; };
+  static const char* GetDICOMInstanceUIDName()
+    { return "DICOMInstanceUID"; };
   static const std::string GetDICOMAttributePrefix()
     { return "DICOM."; };
+  static std::string GetDICOMReferencedInstanceUIDsAttributeName()
+    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "ReferencedInstanceUIDs"; };
 
   // Patient tags
   static const std::string GetDICOMPatientNameTagName()

@@ -73,6 +73,14 @@ public:
   QAction* RemoveFromSubjectHierarchyAction;
   QAction* ExpandToDepthAction;
   qMRMLTransformItemDelegate* TransformItemDelegate;
+
+  /// Flag determining whether to highlight nodes referenced by DICOM. Storing DICOM references:
+  ///   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  ///   -> SH node instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  bool HighlightReferencedNodes;
+
+  /// Cached list of highlighted nodes to speed up clearing highlight after new selection
+  QList<vtkMRMLSubjectHierarchyNode*> HighlightedNodes;
 };
 
 //------------------------------------------------------------------------------
@@ -82,6 +90,7 @@ qMRMLSubjectHierarchyTreeViewPrivate::qMRMLSubjectHierarchyTreeViewPrivate(qMRML
   this->RemoveFromSubjectHierarchyAction = NULL;
   this->ExpandToDepthAction = NULL;
   this->SelectPluginSubMenu = NULL;
+  this->HighlightReferencedNodes = true;
 }
 
 //------------------------------------------------------------------------------
@@ -229,6 +238,20 @@ void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
   this->expandToDepth(4);
 }
 
+//--------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyTreeView::highlightReferencedNodes()const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  return d->HighlightReferencedNodes;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::setHighlightReferencedNodes(bool highlightOn)
+{
+  Q_D(qMRMLSubjectHierarchyTreeView);
+  d->HighlightReferencedNodes = highlightOn;
+}
+
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::toggleVisibility(const QModelIndex& index)
 {
@@ -262,6 +285,15 @@ void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
   // Set new current node to plugin handler (even if it's NULL which means the scene is selected)
   qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentNode(
     vtkMRMLSubjectHierarchyNode::SafeDownCast(node) );
+
+  // Highlight nodes referenced by DICOM
+  //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  //   -> SH node instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  if (this->highlightReferencedNodes())
+    {
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
+    this->applyReferenceHighlightForNode(shNode);
+    }
 
   if (e->button() != Qt::RightButton)
     {
@@ -433,6 +465,48 @@ void qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu()
 
   int depth = senderAction->text().toInt();
   this->expandToDepth(depth);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForNode(vtkMRMLSubjectHierarchyNode* node)
+{
+  if (!node)
+    {
+    return;
+    }
+
+  Q_D(qMRMLSubjectHierarchyTreeView);
+
+  // Get scene model and column to highlight
+  qMRMLSceneSubjectHierarchyModel* sceneModel = qobject_cast<qMRMLSceneSubjectHierarchyModel*>(this->sceneModel());
+  int nameColumn = sceneModel->nameColumn();
+
+  // Clear highlight for previously highlighted nodes
+  foreach(vtkMRMLSubjectHierarchyNode* highlightedNode, d->HighlightedNodes)
+    {
+    QStandardItem* item = sceneModel->itemFromNode(highlightedNode, nameColumn);
+    if (item)
+      {
+      item->setBackground(Qt::transparent);
+      }
+    }
+  d->HighlightedNodes.clear();
+
+  // Get nodes referenced by argument node by DICOM
+  std::vector<vtkMRMLSubjectHierarchyNode*> referencedNodes = node->GetSubjectHierarchyNodesReferencedByDICOM();
+
+  // Highlight referenced nodes
+  std::vector<vtkMRMLSubjectHierarchyNode*>::iterator nodeIt;
+  for (nodeIt = referencedNodes.begin(); nodeIt != referencedNodes.end(); ++nodeIt)
+    {
+    vtkMRMLSubjectHierarchyNode* referencedNode = (*nodeIt);
+    QStandardItem* item = sceneModel->itemFromNode(referencedNode, nameColumn);
+    if (item)
+      {
+      item->setBackground(Qt::yellow);
+      d->HighlightedNodes.append(referencedNode);
+      }
+    }
 }
 
 //--------------------------------------------------------------------------

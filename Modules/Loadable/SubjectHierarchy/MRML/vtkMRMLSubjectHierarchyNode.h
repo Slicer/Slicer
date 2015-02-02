@@ -73,8 +73,14 @@ public:
   virtual const char* GetNodeTagName();
 
 public:
-  /// Find subject hierarchy node according to a UID
+  /// Find subject hierarchy node according to a UID (by exact match)
+  /// \param uidValue UID string that needs to _exactly match_ the UID string of the subject hierarchy node
   static vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNodeByUID(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
+
+  /// Find subject hierarchy node according to a UID (by containing). For example find UID in instance UID list
+  /// \param uidValue UID string that needs to be _contained_ in the UID string of the subject hierarchy node
+  /// \return First match
+  static vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNodeByUIDList(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
 
   /// Get associated subject hierarchy node for a MRML node
   /// Note: This must be used instead of vtkMRMLHierarchyNode::GetAssociatedHierarchyNode, because nested associations have been introduced to avoid conflicts.
@@ -161,6 +167,12 @@ public:
 
   /// Harden transform on itself and on all children, recursively
   void HardenTransformOnBranch();
+
+  /// Get subject hierarchy nodes that are referenced from this node by DICOM.
+  /// Finds the series nodes that contain the SOP instance UIDs that are listed in
+  /// the MRML attribute of this node containing the referenced SOP instance UIDs
+  /// \sa vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName()
+  std::vector<vtkMRMLSubjectHierarchyNode*> GetSubjectHierarchyNodesReferencedByDICOM();
 
 public:
   /// Set level

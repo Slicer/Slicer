@@ -60,6 +60,8 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMLoadable : public QObj
   /// actually selected by default.  In the case of a tie,
   /// both series are selected for loading.
   Q_PROPERTY(double confidence READ confidence WRITE setConfidence)
+  /// List of UIDs for the DICOM instances that are referenced by this loadable
+  Q_PROPERTY(QStringList referencedInstanceUIDs READ referencedInstanceUIDs WRITE setReferencedInstanceUIDs)
 
 public:
   typedef QObject Superclass;
@@ -83,6 +85,9 @@ public:
 
   virtual double confidence()const;
   void setConfidence(const double newConfidence);
+
+  virtual QStringList referencedInstanceUIDs()const;
+  void setReferencedInstanceUIDs(const QStringList& newReferencedInstanceUIDs);
 
   /// Copy values to VTK loadable
   Q_INVOKABLE void copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable);

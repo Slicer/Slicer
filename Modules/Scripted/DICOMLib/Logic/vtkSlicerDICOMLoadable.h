@@ -56,11 +56,17 @@ public:
   vtkGetMacro(Confidence, double);
   vtkSetMacro(Confidence, double);
 
+  vtkGetObjectMacro(ReferencedInstanceUIDs, vtkStringArray);
+
   /// Add file to file list \sa Files
   void AddFile(const char* file);
 
+  /// Add referenced instance UID to the UIDs list \sa ReferencedInstanceUIDs
+  void AddReferencedInstanceUID(const char* referencedInstanceUID);
+
 protected:
   vtkSetObjectMacro(Files, vtkStringArray);
+  vtkSetObjectMacro(ReferencedInstanceUIDs, vtkStringArray);
 
 protected:
   vtkSlicerDICOMLoadable();
@@ -93,6 +99,9 @@ protected:
   /// actually selected by default.  In the case of a tie,
   /// both series are selected for loading.
   double Confidence;
+
+  /// List of UIDs for the DICOM instances that are referenced by this loadable
+  vtkStringArray* ReferencedInstanceUIDs;
 };
 
 #endif
