@@ -103,6 +103,7 @@ public:
    * to within a specified tolerance, else an exception is thrown.
    *
    * \sa MatrixOffsetTransformBase::SetMatrix() */
+  using itk::Rigid3DTransform<TScalarType>::SetMatrix;
   virtual void SetMatrix(const MatrixType & matrix);
 
   /** Set the transformation from a container of parameters This is typically
