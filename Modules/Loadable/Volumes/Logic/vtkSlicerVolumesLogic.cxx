@@ -39,6 +39,7 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
 #include <vtkMathUtilities.h>
@@ -61,6 +62,7 @@
 //----------------------------------------------------------------------------
 namespace
 {
+
 /// Return a "smart" number of decimals needed to display (in a gui) a floating
 /// number. 16 is the max that can be returned, -1 for NaN numbers. When the
 /// number of decimals is not obvious, it defaults to defaultDecimals if it is
@@ -468,7 +470,6 @@ vtkSlicerVolumesLogic::vtkSlicerVolumesLogic()
   this->RegisterArchetypeVolumeNodeSetFactory( ScalarVolumeNodeSetFactory );
 
   this->SetCompareVolumeGeometryEpsilon(0.000001);
-
 }
 
 //----------------------------------------------------------------------------
@@ -1055,7 +1056,6 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
                                              vtkMRMLScalarVolumeNode *volumeNode2)
 {
   std::stringstream warnings;
-
   if (!volumeNode1 || !volumeNode2)
     {
     if (!volumeNode1)
@@ -1603,34 +1603,34 @@ vtkSlicerVolumesLogic
                                                                                 inputVolumeNode,
                                                                                 inputVolumeNode->GetName());
 
-  vtkSmartPointer<vtkMatrix4x4> inputVolumeIJK2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  inputVolumeNode->GetIJKToRASMatrix(inputVolumeIJK2RASMatrix);
-  vtkSmartPointer<vtkMatrix4x4> referenceVolumeRAS2IJKMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  referenceVolumeNode->GetRASToIJKMatrix(referenceVolumeRAS2IJKMatrix);
-  referenceVolumeNode->GetImageData()->GetDimensions(dimensions);
-
-  vtkSmartPointer<vtkTransform> outputVolumeResliceTransform = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkGeneralTransform> outputVolumeResliceTransform = vtkSmartPointer<vtkGeneralTransform>::New();
   outputVolumeResliceTransform->Identity();
   outputVolumeResliceTransform->PostMultiply();
-  outputVolumeResliceTransform->SetMatrix(inputVolumeIJK2RASMatrix);
+
+  vtkSmartPointer<vtkMatrix4x4> inputVolumeIJK2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  inputVolumeNode->GetIJKToRASMatrix(inputVolumeIJK2RASMatrix);
+  outputVolumeResliceTransform->Concatenate(inputVolumeIJK2RASMatrix);
 
   vtkSmartPointer<vtkMRMLTransformNode> inputVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID(inputVolumeNode->GetTransformNodeID()));
-  vtkSmartPointer<vtkMatrix4x4> inputVolumeRAS2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   if (inputVolumeNodeTransformNode!=NULL)
     {
-    inputVolumeNodeTransformNode->GetMatrixTransformToWorld(inputVolumeRAS2RASMatrix);
-    outputVolumeResliceTransform->Concatenate(inputVolumeRAS2RASMatrix);
+    vtkSmartPointer<vtkGeneralTransform> inputVolumeRAS2RAS = vtkSmartPointer<vtkGeneralTransform>::New();
+    inputVolumeNodeTransformNode->GetTransformToWorld(inputVolumeRAS2RAS);
+    outputVolumeResliceTransform->Concatenate(inputVolumeRAS2RAS);
     }
+
   vtkSmartPointer<vtkMRMLTransformNode> referenceVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID(referenceVolumeNode->GetTransformNodeID()));
-  vtkSmartPointer<vtkMatrix4x4> referenceVolumeRAS2RASMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   if (referenceVolumeNodeTransformNode!=NULL)
     {
-    inputVolumeNodeTransformNode->GetMatrixTransformToWorld(referenceVolumeRAS2RASMatrix);
-    referenceVolumeRAS2RASMatrix->Invert();
-    outputVolumeResliceTransform->Concatenate(referenceVolumeRAS2RASMatrix);
+    vtkSmartPointer<vtkGeneralTransform> ras2referenceVolumeRAS = vtkSmartPointer<vtkGeneralTransform>::New();
+    inputVolumeNodeTransformNode->GetTransformFromWorld(ras2referenceVolumeRAS);
+    outputVolumeResliceTransform->Concatenate(ras2referenceVolumeRAS);
     }
+
+  vtkSmartPointer<vtkMatrix4x4> referenceVolumeRAS2IJKMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  referenceVolumeNode->GetRASToIJKMatrix(referenceVolumeRAS2IJKMatrix);
   outputVolumeResliceTransform->Concatenate(referenceVolumeRAS2IJKMatrix);
   outputVolumeResliceTransform->Inverse();
 
@@ -1642,8 +1642,20 @@ vtkSlicerVolumesLogic
 #endif
   resliceFilter->SetOutputOrigin(0, 0, 0);
   resliceFilter->SetOutputSpacing(1, 1, 1);
+  referenceVolumeNode->GetImageData()->GetDimensions(dimensions);
   resliceFilter->SetOutputExtent(0, dimensions[0]-1, 0, dimensions[1]-1, 0, dimensions[2]-1);
-  resliceFilter->SetResliceTransform(outputVolumeResliceTransform);
+
+  // vtkImageReslice works faster if the input is a linear transform, so try to convert it
+  // to a linear transform
+  vtkSmartPointer<vtkTransform> linearResliceTransform = vtkSmartPointer<vtkTransform>::New();
+  if (vtkMRMLTransformNode::IsGeneralTransformLinear(outputVolumeResliceTransform, linearResliceTransform))
+    {
+    resliceFilter->SetResliceTransform(linearResliceTransform);
+    }
+  else
+    {
+    resliceFilter->SetResliceTransform(outputVolumeResliceTransform);
+    }
   // check for a label map and adjust interpolation mode
   if (inputVolumeNode->IsA("vtkMRMLScalarVolumeNode") &&
       vtkMRMLScalarVolumeNode::SafeDownCast(inputVolumeNode)->GetLabelMap())

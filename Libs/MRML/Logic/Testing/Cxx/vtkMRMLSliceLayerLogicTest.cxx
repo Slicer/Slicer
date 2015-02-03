@@ -23,7 +23,6 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-#include <vtkImageResliceMask.h>
 
 // VTK includes
 #include <vtkAssignAttribute.h>
@@ -96,7 +95,8 @@ bool testDTIPipeline()
     std::cout << "Input scalar type: " << imageData->GetScalarType() << std::endl;
     }
 
-  vtkNew<vtkImageResliceMask> reslicer;
+  vtkNew<vtkImageReslice> reslicer;
+  reslicer->GenerateStencilOutputOn();
   reslicer->SetNumberOfThreads(1);
   reslicer->SetInputConnection(tensorsToScalars->GetOutputPort());
   reslicer->SetOutputExtentToDefault();

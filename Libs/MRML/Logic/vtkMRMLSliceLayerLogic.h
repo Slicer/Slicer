@@ -48,7 +48,7 @@
 #include <vtkVersion.h>
 
 class vtkAssignAttribute;
-class vtkImageResliceMask;
+class vtkImageReslice;
 class vtkGeneralTransform;
 
 // STL includes
@@ -86,7 +86,8 @@ public:
 
   ///
   /// The image reslice or slice being used
-  vtkGetObjectMacro (Reslice, vtkImageResliceMask);
+  vtkGetObjectMacro (Reslice, vtkImageReslice);
+  vtkGetObjectMacro (ResliceUVW, vtkImageReslice);
 
   ///
   /// Select if this is a label layer or not (it currently determines if we use
@@ -174,8 +175,8 @@ protected:
 
   ///
   /// the VTK class instances that implement this Logic's operations
-  vtkImageResliceMask *Reslice;
-  vtkImageResliceMask *ResliceUVW;
+  vtkImageReslice *Reslice;
+  vtkImageReslice *ResliceUVW;
   vtkImageLabelOutline *LabelOutline;
   vtkImageLabelOutline *LabelOutlineUVW;
 

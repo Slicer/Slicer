@@ -1458,3 +1458,67 @@ int vtkMRMLTransformNode::SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *m
   vtkWarningMacro("vtkMRMLTransformNode::SetAndObserveMatrixTransformFromParent method is deprecated. Use vtkMRMLTransformNode::SetMatrixTransformFromParent instead");
   return SetMatrixTransformFromParent(matrix);
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform/*=NULL*/)
+{
+  if (inputTransform==NULL)
+    {
+    return true;
+    }
+
+  if (concatenatedLinearTransform)
+    {
+    concatenatedLinearTransform->Identity();
+    concatenatedLinearTransform->PostMultiply();
+    }
+
+  vtkHomogeneousTransform* inputHomogeneousTransform=vtkHomogeneousTransform::SafeDownCast(inputTransform);
+  if (inputHomogeneousTransform)
+    {
+    if (concatenatedLinearTransform)
+      {
+      concatenatedLinearTransform->Concatenate(inputHomogeneousTransform->GetMatrix());
+      }
+    return true;
+    }
+
+  // Push the transforms onto the stack in reverse order (use a stack to avoid recursive method call)
+  std::stack< vtkAbstractTransform* > tstack;
+  tstack.push(inputTransform);
+
+  // Put all the transforms on the stack
+  while (!tstack.empty())
+    {
+    vtkAbstractTransform *transform = tstack.top();
+    tstack.pop();
+    if (transform->IsA("vtkGeneralTransform"))
+      {
+      // Decompose general transforms
+      vtkGeneralTransform *gtrans = (vtkGeneralTransform *)transform;
+      gtrans->Update();
+      int n = gtrans->GetNumberOfConcatenatedTransforms();
+      while (n > 0)
+        {
+        tstack.push(gtrans->GetConcatenatedTransform(--n));
+        }
+      }
+    else
+      {
+      // Simple transform, just concatenate (if non-linear then return with false)
+      vtkHomogeneousTransform* homogeneousTransform=vtkHomogeneousTransform::SafeDownCast(transform);
+      if (homogeneousTransform)
+        {
+        if (concatenatedLinearTransform)
+          {
+          concatenatedLinearTransform->Concatenate(homogeneousTransform->GetMatrix());
+          }
+        }
+      else
+        {
+        return false;
+        }
+      }
+    }
+  return true;
+}

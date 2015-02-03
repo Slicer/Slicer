@@ -21,6 +21,7 @@ class vtkCollection;
 class vtkAbstractTransform;
 class vtkGeneralTransform;
 class vtkMatrix4x4;
+class vtkTransform;
 
 /// \brief MRML node for representing a transformation
 /// between this node space and a parent node space.
@@ -323,6 +324,13 @@ public:
   /// Creates a shallow copy of an input composite transform (that can contain a complex hierarchy of transforms)
   /// into a flat list of transforms. This is useful for simplifying serialization for copying and writing to file.
   static void FlattenGeneralTransform(vtkCollection* outputTransformList, vtkAbstractTransform* inputTransform);
+
+  ///
+  /// Utility function that determines if a transform is linear. It looks into composite transforms and only returns
+  /// with true if all the transform components are linear.
+  /// If concatenatedLinearTransform is specified and the transform is linear then it returns the concatenated linear
+  /// transformation matrix.
+  static bool IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform=NULL);
 
   ///
   /// Some transforms have DeepCopy method that actually only creates a shallow copy

@@ -28,6 +28,7 @@ class vtkImageData;
 class vtkImageLogic;
 class vtkImageMapToColors;
 class vtkImageMapToWindowLevelColors;
+class vtkImageStencil;
 class vtkImageThreshold;
 class vtkImageExtractComponents;
 class vtkImageMathematics;
@@ -254,7 +255,7 @@ protected:
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
   vtkImageExtractComponents *ExtractRGB;
   vtkImageExtractComponents *ExtractAlpha;
-  vtkImageMathematics *MultiplyAlpha;
+  vtkImageStencil *MultiplyAlpha;
 
   ///
   /// window level presets

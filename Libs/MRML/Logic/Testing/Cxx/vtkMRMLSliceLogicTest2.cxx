@@ -35,7 +35,7 @@
 #include <vtkImageCast.h>
 #include <vtkImageMapToColors.h>
 #include <vtkImageMapToWindowLevelColors.h>
-#include <vtkImageResliceMask.h>
+#include <vtkImageReslice.h>
 #include <vtkImageThreshold.h>
 #include <vtkImageViewer2.h>
 #include <vtkLookupTable.h>
@@ -141,13 +141,14 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   // Duplicate the pipeline of vtkMRMLScalarVolumeDisplayNode
   vtkNew<vtkImageData> imageData;
   imageData->DeepCopy(displayNode2->GetInputImageData());
-  vtkNew<vtkImageResliceMask> reslice;
+  vtkNew<vtkImageReslice> reslice;
   reslice->SetBackgroundColor(0, 0, 0, 0); // only first two are used
   reslice->AutoCropOutputOff();
   reslice->SetOptimization(1);
   reslice->SetOutputOrigin( 0, 0, 0 );
   reslice->SetOutputSpacing( 1, 1, 1 );
   reslice->SetOutputDimensionality( 3 );
+  reslice->GenerateStencilOutputOn();
   int dimensions[3];
   sliceNode->GetDimensions(dimensions);
 
@@ -196,9 +197,9 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
 
   vtkNew<vtkImageCast> resliceAlphaCast;
 #if (VTK_MAJOR_VERSION <= 5)
-  resliceAlphaCast->SetInput(reslice->GetBackgroundMask());
+  resliceAlphaCast->SetInput(reslice->GetOutput(1));
 #else
-  resliceAlphaCast->SetInputConnection(reslice->GetBackgroundMaskPort());
+  resliceAlphaCast->SetInputConnection(reslice->GetOutputPort(1));
 #endif
   resliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
 

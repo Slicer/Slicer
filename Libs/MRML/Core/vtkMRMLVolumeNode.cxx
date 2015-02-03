@@ -27,11 +27,12 @@ Version:   $Revision: 1.14 $
 #include <vtkHomogeneousTransform.h>
 #include <vtkImageData.h>
 #include <vtkImageDataGeometryFilter.h>
-#include <vtkImageResliceMask.h>
+#include <vtkImageReslice.h>
 #include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 #include <vtkTrivialProducer.h>
 
 #include <algorithm> // For std::min
@@ -1135,7 +1136,8 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 
   ****/
 
-  vtkNew<vtkImageResliceMask> reslice;
+  vtkNew<vtkImageReslice> reslice;
+  reslice->GenerateStencilOutputOn();
 
   vtkNew<vtkGeneralTransform> resampleXform;
   resampleXform->Identity();
@@ -1152,9 +1154,17 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   resampleXform->Concatenate(transform);
   resampleXform->Concatenate(rasToIJK.GetPointer());
 
-  //resampleXform->Inverse();
-
-  reslice->SetResliceTransform(resampleXform.GetPointer());
+  // vtkImageReslice works faster if the input is a linear transform, so try to convert it
+  // to a linear transform
+  vtkNew<vtkTransform> linearResampleXform;
+  if (vtkMRMLTransformNode::IsGeneralTransformLinear(resampleXform.GetPointer(), linearResampleXform.GetPointer()))
+    {
+    reslice->SetResliceTransform(linearResampleXform.GetPointer());
+    }
+  else
+    {
+    reslice->SetResliceTransform(resampleXform.GetPointer());
+    }
 
 #if (VTK_MAJOR_VERSION <= 5)
   reslice->SetInput(this->ImageData);
@@ -1192,10 +1202,13 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
 
   reslice->SetOutputExtent( extent);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  reslice->GetBackgroundMask()->SetUpdateExtentToWholeExtent();
-#endif
   reslice->Update();
+#if (VTK_MAJOR_VERSION <= 5)
+  if (reslice->GetOutput(1))
+    {
+    reslice->GetOutput(1)->SetUpdateExtentToWholeExtent();
+    }
+#endif
 
   vtkNew<vtkImageData> resampleImage;
   resampleImage->DeepCopy(reslice->GetOutput());
