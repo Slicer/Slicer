@@ -392,6 +392,7 @@ void qSlicerModelsModuleWidget::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned lo
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(call_data);
   Q_UNUSED(node);
   Q_ASSERT(scene);
+  Q_UNUSED(scene);
   Q_ASSERT(widget);
   if (event == vtkMRMLScene::EndImportEvent)
     {
