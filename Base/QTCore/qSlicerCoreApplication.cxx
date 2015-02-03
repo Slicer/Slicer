@@ -98,6 +98,8 @@
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_{MINOR, MAJOR}, Slicer_VERSION_FULL
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
+// XXX Avoid  warning: "HAVE_STAT" redefined
+#undef HAVE_STAT
 #include <ctkDICOMDatabase.h>
 #endif
 
