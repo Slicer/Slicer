@@ -205,7 +205,7 @@ class DICOMPlugin(object):
     referencedInstanceUIDs = ""
     if hasattr(loadable,'referencedInstanceUIDs'):
       for instanceUID in loadable.referencedInstanceUIDs:
-      referencedInstanceUIDs += instanceUID + " "
+        referencedInstanceUIDs += instanceUID + " "
     referencedInstanceUIDs = referencedInstanceUIDs[:-1]  # strip last space
     seriesNode.SetAttribute(vtkMRMLSubjectHierarchyConstants.GetDICOMReferencedInstanceUIDsAttributeName(), referencedInstanceUIDs)
 
