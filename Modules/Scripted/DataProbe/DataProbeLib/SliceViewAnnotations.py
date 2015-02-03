@@ -574,14 +574,20 @@ class SliceAnnotations(object):
     textProperty = textActor.GetTextProperty()
 
   def createColorScalarBar(self, sliceViewName):
-    scalarBar = slicer.vtkPVScalarBarActor()
+    if vtk.VTK_MAJOR_VERSION > 5:
+      scalarBar = slicer.vtkPVScalarBarActor()
+    else:
+      scalarBar = vtk.vtkScalarBarActor()
     scalarBar.SetTitle(" ")
     # adjust text property
-    scalarBar.SetRangeLabelFormat('%.0f')
+    if vtk.VTK_MAJOR_VERSION > 5:
+      scalarBar.SetRangeLabelFormat('%.0f')
     lookupTable = vtk.vtkLookupTable()
     scalarBar.SetLookupTable(lookupTable)
     scalarBarWidget = vtk.vtkScalarBarWidget()
     scalarBarWidget.SetScalarBarActor(scalarBar)
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      scalarBarWidget.RepositionableOff()
     self.colorScalarBarWidgets[sliceViewName] = scalarBarWidget
     return scalarBar
 
@@ -717,7 +723,10 @@ class SliceAnnotations(object):
 
       scalarBar = self.colorScalarBars[sliceViewName]
       scalarBar.SetTextPositionToPrecedeScalarBar()
-      scalarBar.SetAddRangeAnnotations(0)
+      if vtk.VTK_MAJOR_VERSION > 5:
+        scalarBar.SetAddRangeAnnotations(0)
+      else:
+        scalarBar.SetMaximumWidthInPixels(int(self.colorScalarBarMaxWidthSlider.value))
 
       renderWindow = renderer.GetRenderWindow()
       interactor = renderWindow.GetInteractor()
