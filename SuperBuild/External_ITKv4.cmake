@@ -39,6 +39,16 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
+  if(Slicer_USE_PYTHONQT)
+    # XXX Ensure python executable used for ITKModuleHeaderTest
+    #     is the same as Slicer.
+    #     This will keep the sanity check implemented in SlicerConfig.cmake
+    #     quiet.
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
+      )
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
