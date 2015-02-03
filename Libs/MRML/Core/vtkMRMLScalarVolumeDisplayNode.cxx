@@ -38,6 +38,10 @@ Version:   $Revision: 1.2 $
 #include <vtkPointData.h>
 #include <vtkVersion.h>
 
+#if (VTK_MAJOR_VERSION <= 5)
+#include <vtkImageStencilData.h>
+#endif
+
 // STD includes
 #include <cassert>
 

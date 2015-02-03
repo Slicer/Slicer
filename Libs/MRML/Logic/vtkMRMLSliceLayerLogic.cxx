@@ -42,6 +42,10 @@
 #include <vtkTransform.h>
 #include <vtkVersion.h>
 
+#if (VTK_MAJOR_VERSION <= 5)
+#include <vtkImageStencilData.h>
+#endif
+
 //
 #include "vtkImageLabelOutline.h"
 
@@ -865,7 +869,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       //int wasModifying = volumeDisplayNode->StartModify();
 #if (VTK_MAJOR_VERSION <= 5)
       volumeDisplayNode->SetInputImageData(this->GetSliceImageData());
-      volumeDisplayNode->SetBackgroundImageStencilData(this->Reslice->GetOutputPort(1));
+      volumeDisplayNode->SetBackgroundImageStencilData(this->Reslice->GetStencil());
 #else
       volumeDisplayNode->SetInputImageDataConnection(this->GetSliceImageDataConnection());
       volumeDisplayNode->SetBackgroundImageStencilDataConnection(this->Reslice->GetOutputPort(1));
@@ -898,7 +902,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       //int wasModifying = volumeDisplayNode->StartModify();
 #if (VTK_MAJOR_VERSION <= 5)
       volumeDisplayNodeUVW->SetInputImageData(this->GetSliceImageDataUVW());
-      volumeDisplayNodeUVW->SetBackgroundImageStencilData(this->ResliceUVW->GetOutput(1));
+      volumeDisplayNodeUVW->SetBackgroundImageStencilData(this->ResliceUVW->GetStencil());
 #else
       volumeDisplayNodeUVW->SetInputImageDataConnection(this->GetSliceImageDataConnectionUVW());
       volumeDisplayNodeUVW->SetBackgroundImageStencilDataConnection(this->ResliceUVW->GetOutputPort(1));
