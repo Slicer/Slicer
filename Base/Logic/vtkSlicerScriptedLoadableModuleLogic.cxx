@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+// Python includes
+#include <vtkPython.h>
+
 // Slicer includes
 #include "vtkSlicerScriptedLoadableModuleLogic.h"
 
@@ -27,8 +30,6 @@
 // VTK includes
 #include <vtkPythonUtil.h>
 #include <vtkStdString.h>
-
-// Python includes
 
 // STD includes
 #include <cstdlib>
