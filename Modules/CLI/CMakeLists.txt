@@ -37,7 +37,6 @@ set(cli_modules
   SubtractScalarVolumes
   ThresholdScalarVolume
   VotingBinaryHoleFillingImageFilter
-  FiberTractMeasurements
   )
 if(BUILD_TESTING)
   list(APPEND cli_modules ROITest)
@@ -59,6 +58,7 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DTIImportExport
     TractographyLabelMapSeeding
     FiberBundleLabelSelect
+    FiberTractMeasurements
     )
 endif()
 
