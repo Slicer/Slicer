@@ -93,7 +93,7 @@ int significantDecimals(double value, int defaultDecimals = -1)
   int previousRepeat=0;
   bool only0s = true;
   bool isUnit = value > -1. && value < 1.;
-  for (int i = 0; i < fractional.length(); ++i)
+  for (size_t i = 0; i < fractional.length(); ++i)
     {
     char digit = fractional.at(i);
     if (digit != '0')
