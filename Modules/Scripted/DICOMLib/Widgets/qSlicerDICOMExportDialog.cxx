@@ -52,6 +52,8 @@
 #include "qSlicerApplication.h"
 
 // CTK includes
+// XXX Avoid  warning: "HAVE_STAT" redefined
+#undef HAVE_STAT
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMIndexer.h"
 
