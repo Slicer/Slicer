@@ -207,7 +207,7 @@ class DICOMPlugin(object):
       for instanceUID in loadable.referencedInstanceUIDs:
         referencedInstanceUIDs += instanceUID + " "
     referencedInstanceUIDs = referencedInstanceUIDs[:-1]  # strip last space
-    seriesNode.SetAttribute(vtkMRMLSubjectHierarchyConstants.GetDICOMReferencedInstanceUIDsAttributeName(), referencedInstanceUIDs)
+    seriesNode.SetAttribute(slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMReferencedInstanceUIDsAttributeName(), referencedInstanceUIDs)
 
     # Add series node to hierarchy under the right study and patient nodes. If they are present then used, if not, then created
     patientId = slicer.dicomDatabase.fileValue(firstFile,tags['patientID'])

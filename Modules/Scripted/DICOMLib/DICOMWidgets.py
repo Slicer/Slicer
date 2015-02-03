@@ -563,7 +563,6 @@ class DICOMDetailsPopup(object):
     return
 
   def proceedWithReferencedLoadablesSelection(self):
-
     # each check box corresponds to a referenced loadable
     # that was selected by examine; if the user confirmed
     # that reference should be loaded, add it to the self.loadablesByPlugin
@@ -602,8 +601,6 @@ class DICOMDetailsPopup(object):
         if loadable.selected:
           self.progress.labelText = '\nLoading %s' % loadable.name
           slicer.app.processEvents()
-
-
           if not plugin.load(loadable):
             loadingResult = '%s\nCould not load: %s as a %s' % (loadingResult,loadable.name,plugin.loadType)
           step += 1
