@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+// Python includes
+#include <vtkPython.h>
+
 // MRMLDisplayableManager includes
 #include "vtkMRMLScriptedDisplayableManager.h"
 
@@ -31,8 +34,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkPythonUtil.h>
 #include <vtkSmartPointer.h>
-
-// Python includes
 
 // STD includes
 
