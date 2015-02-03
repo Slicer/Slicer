@@ -21,6 +21,7 @@ Version:   $Revision: 1.2 $
 #include <vtkAlgorithmOutput.h>
 #include <vtkCommand.h>
 #include <vtkImageData.h>
+#include <vtkImageStencilData.h>
 #include <vtkTrivialProducer.h>
 
 // Initialize static member that controls resampling --
@@ -183,31 +184,31 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLVolumeDisplayNode::SetBackgroundImageData(vtkImageData* vtkNotUsed(imageData))
+void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilData(vtkImageStencilData* vtkNotUsed(imageData))
 {
 }
 #else
-void vtkMRMLVolumeDisplayNode::SetBackgroundImageDataConnection(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection))
+void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection))
 {
 }
 
 //----------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetBackgroundImageDataConnection()
+vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilDataConnection()
 {
   return 0;
 }
 #endif
 
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLVolumeDisplayNode::GetBackgroundImageData()
+vtkImageStencilData* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilData()
 {
 #if (VTK_MAJOR_VERSION <= 5)
   return NULL;
 }
 #else
-  vtkAlgorithmOutput* imageConnection = this->GetBackgroundImageDataConnection();
+  vtkAlgorithmOutput* imageConnection = this->GetBackgroundImageStencilDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
-  return vtkImageData::SafeDownCast(
+  return vtkImageStencilData::SafeDownCast(
     producer ? producer->GetOutputDataObject(0) : 0);
 }
 #endif

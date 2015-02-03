@@ -23,6 +23,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageExtractComponents.h>
 #include <vtkImageRGBToHSI.h>
 #include <vtkImageShiftScale.h>
+#include <vtkImageStencil.h>
 #include <vtkImageThreshold.h>
 #include <vtkVersion.h>
 
@@ -51,11 +52,11 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
  this->Threshold->SetInputConnection( this->ExtractIntensity->GetOutputPort() );
 
  this->AppendComponents->RemoveAllInputs();
- //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
- //this->AppendComponents->SetInput(0, this->RGBToHSI->GetInput());
  this->AppendComponents->AddInputConnection(0, this->ShiftScale->GetOutputPort());
- this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutputPort());
+ this->AppendComponents->AddInputConnection(0, this->MultiplyAlpha->GetOutputPort());
 
+ this->MultiplyAlpha->RemoveAllInputs();
+ this->MultiplyAlpha->SetInputConnection(0, this->Threshold->GetOutputPort() );
 }
 
 //----------------------------------------------------------------------------
@@ -82,32 +83,6 @@ void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOut
 #endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageData)
-{
-  /// TODO: what is this for?  The comment above is unhelpful!
-  this->ResliceAlphaCast->SetInput(imageData);
-}
-//----------------------------------------------------------------------------
-vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetBackgroundImageData()
-{
-  return vtkImageData::SafeDownCast(this->ResliceAlphaCast->GetInput());
-}
-#else
-void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
-{
-  this->ResliceAlphaCast->SetInputConnection(imageDataConnection);
-}
-
-//----------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetBackgroundImageDataConnection()
-{
-  return this->ResliceAlphaCast->GetNumberOfInputConnections(0) ?
-    this->ResliceAlphaCast->GetInputConnection(0,0) : 0;
-}
-#endif
-
-//----------------------------------------------------------------------------
 #if VTK_MAJOR_VERSION <= 5
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 {
@@ -121,24 +96,11 @@ vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetInputImageDataConnection(
 }
 #endif
 
-//----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
-{
-  return this->AppendComponents->GetOutput();
-}
-#else
-vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetOutputImageDataConnection()
-{
-  return this->AppendComponents->GetOutputPort();
-}
-#endif
-
 //---------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetScalarImageData()
 {
-  return vtkImageData::SafeDownCast(this->ShiftScale->GetInput());
+  return this->GetInputImageData();
 }
 #else
 vtkAlgorithmOutput* vtkMRMLVectorVolumeDisplayNode::GetScalarImageDataConnection()

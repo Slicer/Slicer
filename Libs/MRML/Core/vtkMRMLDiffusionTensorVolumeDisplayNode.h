@@ -151,15 +151,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   virtual vtkAlgorithmOutput* GetInputImageDataConnection();
 #endif
 
-  /// Get the output of the pipeline
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual vtkImageData* GetOutputImageData();
-#else
-  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
-#endif
-
+  ///
+  /// Get background mask stencil
   /// Reimplemented to return 0 when the background mask is not used.
-  virtual vtkImageData* GetBackgroundImageData();
+#if (VTK_MAJOR_VERSION <= 5)
+  virtual vtkImageStencilData* GetBackgroundImageStencilData();
+#else
+  virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection();
+#endif
 
   virtual void UpdateImageDataPipeline();
 
@@ -214,8 +213,6 @@ protected:
   vtkDiffusionTensorMathematics *DTIMathematicsAlpha;
 
   vtkImageShiftScale *ShiftScale;
-
-  vtkImageExtractComponents *ExtractComponents;
 
   vtkImageMathematics *ImageMath;
 

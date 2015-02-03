@@ -104,23 +104,6 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   virtual vtkAlgorithmOutput* GetInputImageDataConnection();
 #endif
 
-  /// Get the output of the pipeline
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual vtkImageData* GetOutputImageData();
-#else
-  virtual vtkAlgorithmOutput* GetOutputImageDataConnection();
-#endif
-
-  /// 
-  /// Sets ImageData for background mask
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetBackgroundImageData(vtkImageData *imageData);
-  virtual vtkImageData* GetBackgroundImageData();
-#else
-  virtual void SetBackgroundImageDataConnection(vtkAlgorithmOutput *imageDataConnection);
-  virtual vtkAlgorithmOutput* GetBackgroundImageDataConnection();
-#endif
-
   virtual void UpdateImageDataPipeline();
 
   ///

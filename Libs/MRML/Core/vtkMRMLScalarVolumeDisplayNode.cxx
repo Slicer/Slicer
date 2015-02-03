@@ -209,26 +209,29 @@ void vtkMRMLScalarVolumeDisplayNode
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageStencilData *imageData)
+void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageStencilData(vtkImageStencilData *imageData)
 {
   this->MultiplyAlpha->SetStencil(imageData);
 }
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageData()
+vtkImageStencilData* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageStencilData()
 {
   return vtkImageStencilData::SafeDownCast(this->MultiplyAlpha->GetStencil());
 }
 #else
 void vtkMRMLScalarVolumeDisplayNode
-::SetBackgroundImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
   this->MultiplyAlpha->SetStencilConnection(imageDataConnection);
 }
 //----------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageDataConnection()
+vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageStencilDataConnection()
 {
-  return this->MultiplyAlpha->GetNumberOfInputConnections(0) ?
-    this->MultiplyAlpha->GetInputConnection(0,2) : 0;
+  // Input ports:
+  // 0 = foreground image, 1 = background image, 2 = stencil
+  const int stencilInputPort = 2;
+  return this->MultiplyAlpha->GetNumberOfInputConnections(0)>stencilInputPort ?
+    this->MultiplyAlpha->GetInputConnection(0,stencilInputPort) : 0;
 }
 #endif
 

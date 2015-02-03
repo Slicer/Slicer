@@ -23,6 +23,7 @@ class vtkMRMLVolumeNode;
 // VTK includes
 class vtkAlgorithmOutput;
 class vtkImageData;
+class vtkImageStencilData;
 
 /// \brief MRML node for representing a volume display attributes.
 ///
@@ -61,15 +62,15 @@ public:
   ///
   /// Sets ImageData for background mask
   /// Must be reimplemented in deriving class if they need it.
-  /// GetBackgroundImageDataConnection() returns 0 if the background image data
+  /// GetBackgroundImageStencilDataConnection() returns 0 if the background image data
   /// is not used.
 #if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetBackgroundImageData(vtkImageData* imageData);
+  virtual void SetBackgroundImageStencilData(vtkImageStencilData* imageData);
 #else
-  virtual void SetBackgroundImageDataConnection(vtkAlgorithmOutput * imageDataConnection);
-  virtual vtkAlgorithmOutput* GetBackgroundImageDataConnection();
+  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput * imageDataConnection);
+  virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection();
 #endif
-  virtual vtkImageData* GetBackgroundImageData();
+  virtual vtkImageStencilData* GetBackgroundImageStencilData();
 
   /// Returns the output of the pipeline if there is a not a null input.
   /// Gets ImageData converted from the real data in the node

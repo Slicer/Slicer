@@ -55,9 +55,6 @@ vtkMRMLDiffusionTensorVolumeDisplayNode
  this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
  this->ShiftScale->SetClampOverflow(1);
 
- this->ExtractComponents = vtkImageExtractComponents::New();
- this->ExtractComponents->SetComponents(0,1,2);
-
  this->ImageCast = vtkImageCast::New();
  this->ImageCast->SetOutputScalarTypeToUnsignedChar();
 
@@ -82,7 +79,6 @@ vtkMRMLDiffusionTensorVolumeDisplayNode
 
   this->DiffusionTensorGlyphFilter->Delete();
   this->ShiftScale->Delete();
-  this->ExtractComponents->Delete();
   this->ImageMath->Delete();
   this->ImageCast->Delete();
 }
@@ -215,21 +211,21 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 
 #if (VTK_MAJOR_VERSION <= 5)
-      this->ExtractComponents->SetInput(this->ShiftScale->GetOutput());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
+      this->ExtractRGB->SetInput(this->ShiftScale->GetOutput());
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutput()->GetProducerPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutput()->GetProducerPort())
         {
         this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutput()->GetProducerPort());
+        this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutput()->GetProducerPort());
         this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort() );
         }
 #else
-      this->ExtractComponents->SetInputConnection(this->ShiftScale->GetOutputPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutputPort() ||
+      this->ExtractRGB->SetInputConnection(this->ShiftScale->GetOutputPort());
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutputPort())
         {
         this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutputPort());
+        this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutputPort());
         this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutputPort() );
         }
 #endif
@@ -240,22 +236,22 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 #if (VTK_MAJOR_VERSION <= 5)
       this->Threshold->SetInput( this->DTIMathematics->GetOutput());
       this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
-      this->ExtractComponents->SetInputConnection(this->MapToColors->GetOutput()->GetProducerPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutput()->GetProducerPort() ||
+      this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutput()->GetProducerPort());
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutput()->GetProducerPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutput()->GetProducerPort())
         {
         this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutput()->GetProducerPort() );
+        this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutput()->GetProducerPort() );
         this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
 #else
       this->Threshold->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->MapToWindowLevelColors->SetInputConnection( this->DTIMathematics->GetOutputPort());
-      this->ExtractComponents->SetInputConnection(this->MapToColors->GetOutputPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractComponents->GetOutputPort() ||
+      this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutputPort());
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutputPort())
         {
         this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutputPort() );
+        this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutputPort() );
         this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
 #endif
         }
@@ -347,7 +343,6 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
 {
   this->DTIMathematics->SetInput(imageData);
   this->DTIMathematicsAlpha->SetInput(0, imageData);
-  //this->ShiftScale->SetInput(0, imageData );
 }
 #else
 void vtkMRMLDiffusionTensorVolumeDisplayNode
@@ -375,20 +370,8 @@ vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode
 
 //----------------------------------------------------------------------------
 #if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
-{
-  return this->AppendComponents->GetOutput();
-}
-#else
-vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode
-::GetOutputImageDataConnection()
-{
-  return this->AppendComponents->GetOutputPort();
-}
-#endif
-
 //----------------------------------------------------------------------------
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageData()
+vtkImageStencilData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageStencilData()
 {
   switch (this->GetScalarInvariant())
     {
@@ -400,9 +383,27 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageData()
       return 0;
       }
     default:
-      return this->Superclass::GetBackgroundImageData();
+      return this->Superclass::GetBackgroundImageStencilData();
     }
 }
+#else
+//----------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageStencilDataConnection()
+{
+  switch (this->GetScalarInvariant())
+    {
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
+      {
+      return 0;
+      }
+    default:
+      return this->Superclass::GetBackgroundImageStencilDataConnection();
+    }
+}
+#endif
 
 //---------------------------------------------------------------------------
 #if VTK_MAJOR_VERSION <= 5
