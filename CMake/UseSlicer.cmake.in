@@ -139,7 +139,7 @@ else()
 endif()
 
 # Set '<PROJECTNAME>_DIR' variable(s) so that find_package(<PROJECTNAME>) works as expected.
-set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
+# NA
 
 # Find PythonQt package so that PYTHONQT_USE_RELEASE_PYTHON_FALLBACK is defined
 # See https://github.com/commontk/PythonQt/issues/7

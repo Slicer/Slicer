@@ -739,15 +739,6 @@ find_package(CTK REQUIRED)
 include(${CTK_USE_FILE})
 
 #-----------------------------------------------------------------------------
-# QtTesting
-#-----------------------------------------------------------------------------
-if(Slicer_USE_QtTesting)
-  set(QtTesting_INSTALL_DIR ${CTK_QtTesting_INSTALL_DIR})
-  set(QtTesting_DIR ${CTK_QtTesting_DIR})
-  find_package(QtTesting REQUIRED)
-endif()
-
-#-----------------------------------------------------------------------------
 # Update CMake module path
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH
@@ -782,7 +773,6 @@ endif()
 # PythonQt
 #-----------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)
-  set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
   # Find PythonQt package so that PYTHONQT_USE_RELEASE_PYTHON_FALLBACK is defined
   # See https://github.com/commontk/PythonQt/issues/7
   # and https://github.com/commontk/PythonQt/issues/8
