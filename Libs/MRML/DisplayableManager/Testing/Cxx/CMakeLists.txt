@@ -40,6 +40,8 @@ add_executable(${KIT}CxxTests
   ${DisplayableManagerInstantiatorTest_SRCS})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+
 #
 # Add all the tests
 #

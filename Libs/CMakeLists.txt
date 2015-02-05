@@ -76,6 +76,7 @@ foreach(dir ${dirs})
   set(${dir_noslash}_INSTALL_SHARE_DIR ${Slicer_INSTALL_ROOT}share/${dir_noslash})
   set(${dir_noslash}_INSTALL_NO_DEVELOPMENT ${Slicer_INSTALL_NO_DEVELOPMENT})
   set(${dir_noslash}_EXPORT_FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
+  set(${dir_noslash}_FOLDER Core-Libs/${dir_noslash})
   add_subdirectory(${dir})
 endforeach()
 

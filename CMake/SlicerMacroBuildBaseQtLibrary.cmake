@@ -213,6 +213,9 @@ macro(SlicerMacroBuildBaseQtLibrary)
     ${SLICERQTBASELIB_TARGET_LIBRARIES}
     )
 
+  # Folder
+  set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
+
   #-----------------------------------------------------------------------------
   # Install library
   #-----------------------------------------------------------------------------
@@ -246,6 +249,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
       INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
       INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
       )
+    set_target_properties(${lib_name}PythonQt PROPERTIES FOLDER "Core-Base")
   endif()
 
   # --------------------------------------------------------------------------

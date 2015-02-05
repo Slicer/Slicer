@@ -128,6 +128,8 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+
 macro(SCENE_TEST TESTNAME SCENEFILENAME)
   add_test(
     NAME ${TESTNAME}_${SCENEFILENAME}

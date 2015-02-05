@@ -8,6 +8,9 @@ set(VTKITKTESTVECTORREADER_SOURCE VTKITKVectorReader.cxx)
 add_executable(VTKITKVectorReader ${VTKITKTESTVECTORREADER_SOURCE})
 target_link_libraries(VTKITKVectorReader
   vtkITK)
+
+set_target_properties(VTKITKVectorReader PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+
 add_test(
   NAME VTKITKVectorReader
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:VTKITKVectorReader>

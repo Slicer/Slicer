@@ -189,6 +189,7 @@ endif()
 
 target_link_libraries(${lib_name} ${libs})
 set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
+set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
 
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
@@ -224,6 +225,9 @@ if(VTK_WRAP_PYTHON)
     )
   # Export target
   set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}Python ${lib_name}PythonD)
+
+  set_target_properties(${lib_name}Python PROPERTIES FOLDER "Core-Base")
+  set_target_properties(${lib_name}PythonD PROPERTIES FOLDER "Core-Base")
 endif()
 
 # --------------------------------------------------------------------------

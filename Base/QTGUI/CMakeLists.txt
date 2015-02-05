@@ -321,6 +321,7 @@ set(CTK_LIBRARIES CTKWidgets)
 ctkMacroBuildQtIconEnginesPlugin(
   NAME qSlicerIconEnginePlugin
   EXPORT_DIRECTIVE "Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT"
+  FOLDER "Core-Base"
   SRCS qSlicerIconEnginePlugin.cxx qSlicerIconEnginePlugin.h
   MOC_SRCS qSlicerIconEnginePlugin.h
   TARGET_LIBRARIES ${QT_LIBRARIES} ${CTK_LIBRARIES}

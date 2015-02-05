@@ -30,6 +30,7 @@ macro(SlicerMacroBuildModuleVTKLibrary)
   set(oneValueArgs
     NAME
     EXPORT_DIRECTIVE
+    FOLDER
     )
   set(multiValueArgs
     SRCS
@@ -118,6 +119,10 @@ macro(SlicerMacroBuildModuleVTKLibrary)
   # Apply user-defined properties to the library target.
   if(Slicer_LIBRARY_PROPERTIES)
     set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  endif()
+
+  if(NOT "${MODULEVTKLIBRARY_FOLDER}" STREQUAL "")
+    set_target_properties(${lib_name} PROPERTIES FOLDER ${MODULEVTKLIBRARY_FOLDER})
   endif()
 
   # --------------------------------------------------------------------------

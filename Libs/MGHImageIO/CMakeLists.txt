@@ -88,6 +88,16 @@ set(libs ${ITK_LIBRARIES})
 target_link_libraries(${lib_name} ${libs})
 
 # --------------------------------------------------------------------------
+# Folder
+# --------------------------------------------------------------------------
+if(NOT DEFINED ${PROJECT_NAME}_FOLDER)
+  set(${PROJECT_NAME}_FOLDER ${PROJECT_NAME})
+endif()
+if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
+  set_target_properties(${lib_name} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+endif()
+
+# --------------------------------------------------------------------------
 # Export target
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
@@ -141,6 +151,11 @@ target_link_libraries(MGHIOPlugin
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+endif()
+
+# Folder
+if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
+  set_target_properties(MGHIOPlugin PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
 endif()
 
 # --------------------------------------------------------------------------

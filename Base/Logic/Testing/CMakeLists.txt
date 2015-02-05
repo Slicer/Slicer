@@ -15,6 +15,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT})
 set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 
 simple_test( vtkArchiveTest1 ${CMAKE_CURRENT_SOURCE_DIR}/vol.zip)
 simple_test( vtkDataIOManagerLogicTest1 )

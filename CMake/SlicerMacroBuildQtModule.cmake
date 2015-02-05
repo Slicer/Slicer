@@ -194,6 +194,14 @@ macro(slicerMacroBuildLoadableModule)
     set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
   endif()
 
+  # Folder
+  if(NOT DEFINED LOADABLEMODULE_FOLDER AND DEFINED MODULE_NAME)
+    set(LOADABLEMODULE_FOLDER "Module-${MODULE_NAME}")
+  endif()
+  if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
+    set_target_properties(${lib_name} PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+  endif()
+
   set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_TARGETS ${lib_name})
 
   # --------------------------------------------------------------------------
@@ -252,6 +260,9 @@ macro(slicerMacroBuildLoadableModule)
     add_executable(${KIT}GenericCxxTests ${Tests})
     set_target_properties(${KIT}GenericCxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
     target_link_libraries(${KIT}GenericCxxTests ${KIT})
+    if(NOT "${LOADABLEMODULE_FOLDER}" STREQUAL "")
+      set_target_properties(${KIT}GenericCxxTests PROPERTIES FOLDER ${LOADABLEMODULE_FOLDER})
+    endif()
 
     foreach(testname ${KIT_GENERIC_TEST_NAMES})
       add_test(NAME ${testname}

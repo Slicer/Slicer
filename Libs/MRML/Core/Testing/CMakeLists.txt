@@ -104,6 +104,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
 target_link_libraries(${KIT}CxxTests ${KIT})
 
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+
 #-----------------------------------------------------------------------------
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
 

@@ -134,6 +134,9 @@ if(VTK_WRAP_PYTHON)
     KIT_PYTHON_LIBRARIES SlicerBaseLogicPythonD
     )
   set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python ${PROJECT_NAME}PythonD)
+  # Folder
+  set_target_properties(${PROJECT_NAME}Python PROPERTIES FOLDER "Core-Base")
+  set_target_properties(${PROJECT_NAME}PythonD PROPERTIES FOLDER "Core-Base")
 endif()
 
 # --------------------------------------------------------------------------

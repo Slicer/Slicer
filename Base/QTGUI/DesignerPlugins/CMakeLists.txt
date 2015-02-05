@@ -48,6 +48,7 @@ endif()
 ctkMacroBuildQtDesignerPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${${KIT}_EXPORT}
+  FOLDER "Core-Base"
   SRCS ${${KIT}_SRCS}
   MOC_SRCS ${${KIT}_MOC_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}

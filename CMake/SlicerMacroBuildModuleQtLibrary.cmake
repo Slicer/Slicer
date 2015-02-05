@@ -30,6 +30,7 @@ macro(SlicerMacroBuildModuleQtLibrary)
   set(oneValueArgs
     NAME
     EXPORT_DIRECTIVE
+    FOLDER
     )
   set(multiValueArgs
     SRCS
@@ -151,6 +152,10 @@ macro(SlicerMacroBuildModuleQtLibrary)
     )
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
+  if(NOT "${MODULEQTLIBRARY_FOLDER}" STREQUAL "")
+    set_target_properties(${lib_name} PROPERTIES FOLDER ${MODULEQTLIBRARY_FOLDER})
+  endif()
+
   target_link_libraries(${lib_name}
     ${MODULEQTLIBRARY_TARGET_LIBRARIES}
     )
@@ -217,6 +222,9 @@ macro(SlicerMacroBuildModuleQtLibrary)
       INSTALL_LIB_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}
       ${MODULEQTLIBRARY_NO_INSTALL_OPTION}
       )
+    if(NOT "${MODULEQTLIBRARY_FOLDER}" STREQUAL "")
+      set_target_properties(${lib_name}PythonQt PROPERTIES FOLDER ${MODULEQTLIBRARY_FOLDER})
+    endif()
   endif()
 
 endmacro()

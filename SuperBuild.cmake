@@ -267,7 +267,7 @@ list_conditional_append(Slicer_BUILD_EMSegment Slicer_REMOTE_DEPENDENCIES EMSegm
 
 Slicer_Remote_Add(OtsuThresholdImageFilter
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/Slicer-OtsuThresholdImageFilter"
-  GIT_TAG "87a9e620a685bf6a63132e65a175da667e710813"
+  GIT_TAG "5efe4123584016d73147e0b68a9487e64c10a074"
   OPTION_NAME Slicer_BUILD_OtsuThresholdImageFilter
   OPTION_DEPENDS "Slicer_BUILD_EMSegment"
   LABELS REMOTE_MODULE

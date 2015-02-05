@@ -236,6 +236,10 @@ mark_as_superbuild(Slicer_UPDATE_TRANSLATION)
 set(Slicer_FORCED_WC_REVISION "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_REVISION")
 mark_as_advanced(Slicer_FORCED_WC_REVISION)
 
+option(Slicer_USE_FOLDERS "Organize build targets into folders" ON)
+mark_as_superbuild(Slicer_USE_FOLDERS)
+mark_as_advanced(Slicer_USE_FOLDERS)
+
 #-----------------------------------------------------------------------------
 # External projects related options
 #-----------------------------------------------------------------------------
@@ -605,6 +609,11 @@ foreach(dep QT ${Slicer_DEPENDENCIES})
     message(STATUS "Using system ${dep}")
   endif()
 endforeach()
+
+#-----------------------------------------------------------------------------
+# Folders
+#-----------------------------------------------------------------------------
+set_property(GLOBAL PROPERTY USE_FOLDERS ${Slicer_USE_FOLDERS})
 
 #-----------------------------------------------------------------------------
 # Clear SlicerTargets.cmake

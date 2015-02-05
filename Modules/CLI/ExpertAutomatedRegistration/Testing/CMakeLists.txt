@@ -14,6 +14,7 @@ target_link_libraries(Generate${CLP}TestData
   ITKFactoryRegistration
   )
 set_target_properties(Generate${CLP}TestData PROPERTIES LABELS ${CLP})
+set_target_properties(Generate${CLP}TestData PROPERTIES FOLDER ${${CLP}_TARGETS_FOLDER})
 
 set(frequency 10)
 

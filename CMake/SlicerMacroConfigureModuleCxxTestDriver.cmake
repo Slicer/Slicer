@@ -25,6 +25,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
   set(oneValueArgs
     NAME
     TESTS_TO_RUN_VAR
+    FOLDER
     )
   set(multiValueArgs
     SOURCES
@@ -93,6 +94,13 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
       ${SLICER_TEST_DRIVER_NAME}
       ${SLICER_TEST_DRIVER_TARGET_LIBRARIES}
       )
+    if(NOT DEFINED SLICER_TEST_DRIVER_FOLDER AND DEFINED MODULE_NAME)
+      set(SLICER_TEST_DRIVER_FOLDER "Module-${MODULE_NAME}")
+    endif()
+    if(NOT "${SLICER_TEST_DRIVER_FOLDER}" STREQUAL "")
+      set_target_properties(${SLICER_TEST_DRIVER_NAME}CxxTests
+        PROPERTIES FOLDER ${SLICER_TEST_DRIVER_FOLDER})
+    endif()
   endif()
 
 endmacro()

@@ -31,6 +31,11 @@ if(WIN32)
 endif()
 
 # --------------------------------------------------------------------------
+# Folder
+# --------------------------------------------------------------------------
+set(${PROJECT_NAME}_FOLDER "App-${PROJECT_NAME}")
+
+# --------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------
 set(SlicerApp_SRCS
@@ -236,6 +241,14 @@ target_link_libraries(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
   ${KIT_LIBRARY_NAME}
   )
 
+# --------------------------------------------------------------------------
+# Folder
+# --------------------------------------------------------------------------
+if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
+  set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+  set_target_properties(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+endif()
+
 #-----------------------------------------------------------------------------
 # Configure
 # --------------------------------------------------------------------------
@@ -354,6 +367,11 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
       ADDITIONAL_PATH_ENVVARS_PREFIX SLICER_
       )
 
+    # Folder
+    if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
+      set_target_properties(${SlicerApp_APPLICATION_NAME}ConfigureLauncher PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+    endif()
+
     if(WIN32)
       set(SlicerApp_APPLICATION_ICON ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${SlicerApp_APPLICATION_NAME}.ico)
       message(STATUS "Setting SlicerApp_APPLICATION_ICON to '${SlicerApp_APPLICATION_ICON}'")
@@ -387,6 +405,11 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
           DEPENDS
             ${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}
           )
+
+        # Folder
+        if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
+          set_target_properties(${SlicerApp_APPLICATION_NAME}UpdateLauncherWIcon PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+        endif()
         install(
           PROGRAMS "${Slicer_BINARY_DIR}/CMakeFiles/${SlicerApp_APPLICATION_NAME}W${CMAKE_EXECUTABLE_SUFFIX}"
           DESTINATION "."
@@ -417,6 +440,11 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
             IDI_ICON1 ${SlicerApp_APPLICATION_ICON}
         )
       add_dependencies(${SlicerApp_APPLICATION_NAME}UpdateLauncherIcon ${SlicerApp_APPLICATION_NAME}ConfigureLauncher)
+
+      # Folder
+      if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
+        set_target_properties(${SlicerApp_APPLICATION_NAME}UpdateLauncherIcon PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+      endif()
     endif()
 
   endif()

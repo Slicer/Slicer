@@ -43,6 +43,7 @@ simple_test(vtkSlicerVolumesLogicTest1 ${INPUT}/fixed.nrrd)
 #-----------------------------------------------------------------------------
 add_executable(vtkSlicer${MODULE_NAME}LogicTest2 vtkSlicer${MODULE_NAME}LogicTest2.cxx)
 target_link_libraries(vtkSlicer${MODULE_NAME}LogicTest2 ${KIT})
+set_target_properties(vtkSlicer${MODULE_NAME}LogicTest2 PROPERTIES FOLDER "Module-${MODULE_NAME}")
 
 add_test(NAME vtkSlicer${MODULE_NAME}LogicTest2
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:vtkSlicer${MODULE_NAME}LogicTest2>

@@ -50,6 +50,7 @@ if(BUILD_TESTING)
   add_executable(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
+  set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 
   #
   # Add Tests
