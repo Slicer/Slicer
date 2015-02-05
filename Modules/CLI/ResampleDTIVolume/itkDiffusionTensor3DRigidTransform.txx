@@ -46,11 +46,11 @@ DiffusionTensor3DRigidTransform<TData>
 }
 
 template <class TData>
-itk::Rigid3DTransform<double>::Pointer
+itk::VersorRigid3DTransform<double>::Pointer
 DiffusionTensor3DRigidTransform<TData>
 ::GetRigidTransform()
 {
-  typename Rigid3DTransformType::Pointer rigidTransform = Rigid3DTransformType::New();
+  typename VersorRigid3DTransformType::Pointer rigidTransform = VersorRigid3DTransformType::New();
   rigidTransform->SetMatrix( this->m_TransformMatrix );
   rigidTransform->SetTranslation( this->m_Translation );
   return rigidTransform;

@@ -15,7 +15,7 @@
 #define __itkDiffusionTensor3DRigidTransform_h
 
 #include "itkDiffusionTensor3DMatrix3x3Transform.h"
-#include <itkRigid3DTransform.h>
+#include <itkVersorRigid3DTransform.h>
 
 #define PRECISION .001
 
@@ -39,12 +39,13 @@ public:
   typedef typename Superclass::InternalMatrixTransformType InternalMatrixTransformType;
   typedef Matrix<double, 4, 4>                             MatrixTransform4x4Type;
   typedef Rigid3DTransform<double>                         Rigid3DTransformType;
+  typedef VersorRigid3DTransform<double>                   VersorRigid3DTransformType;
   // /Set the 4x4 Matrix (the last row is ignored and considered to be 0,0,0,1
   void SetMatrix4x4( MatrixTransform4x4Type matrix );
 
   // /Set the transformation matrix from an itk::RigidTransform< double > object
   void SetTransform( typename Rigid3DTransformType::Pointer transform );
-  typename Rigid3DTransformType::Pointer GetRigidTransform();
+  typename VersorRigid3DTransformType::Pointer GetRigidTransform();
 
   itkNewMacro( Self );
   // /Set the 3x3 rotation matrix
