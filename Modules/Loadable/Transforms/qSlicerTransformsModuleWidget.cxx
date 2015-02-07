@@ -277,10 +277,26 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   d->IdentityPushButton->setEnabled(isLinearTransform);
   d->MatrixViewGroupBox->setEnabled(isLinearTransform);
 
-  d->CoordinateReferenceGroupBox->setVisible(isLinearTransform);
-  d->MatrixViewGroupBox->setVisible(isLinearTransform);
-  d->TranslationSliders->setVisible(isLinearTransform);
-  d->RotationSliders->setVisible(isLinearTransform);
+  // This method may be called very frequently (when transform is changing
+  // in real time). Due to some reason setVisible calls take time,
+  // even if the visibility state does not change.
+  // To save time, only call the set function if the visibility has to be changed.
+  if (isLinearTransform!=d->CoordinateReferenceGroupBox->isVisible())
+    {
+    d->CoordinateReferenceGroupBox->setVisible(isLinearTransform);
+    }
+  if (isLinearTransform!=d->MatrixViewGroupBox->isVisible())
+    {
+    d->MatrixViewGroupBox->setVisible(isLinearTransform);
+    }
+  if (isLinearTransform!=d->TranslationSliders->isVisible())
+    {
+    d->TranslationSliders->setVisible(isLinearTransform);
+    }
+  if (isLinearTransform!=d->RotationSliders->isVisible())
+    {
+    d->RotationSliders->setVisible(isLinearTransform);
+    }
 
   d->SplitPushButton->setVisible(isCompositeTransform);
 

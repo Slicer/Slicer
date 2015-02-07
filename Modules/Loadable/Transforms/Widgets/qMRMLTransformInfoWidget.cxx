@@ -169,9 +169,25 @@ void qMRMLTransformInfoWidget::setMRMLTransformNode(vtkMRMLTransformNode* transf
 }
 
 //------------------------------------------------------------------------------
+void qMRMLTransformInfoWidget::showEvent(QShowEvent *)
+{
+  // Update the widget, now that it becomes becomes visible
+  // (we might have missed some updates, because widget contents is not updated
+  // if the widget is not visible).
+  updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLTransformInfoWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLTransformInfoWidget);
+  if (!this->isVisible())
+    {
+    // Getting the transform information is too expensive,
+    // so if the widget is not visible then do not update
+    return;
+    }
+
   if (d->TransformNode.GetPointer())
     {
     d->TransformToParentInfoTextBrowser->setText(d->TransformNode->GetTransformToParentInfo());
@@ -192,6 +208,13 @@ void qMRMLTransformInfoWidget::updateWidgetFromMRML()
 void qMRMLTransformInfoWidget::updateTransformVectorDisplayFromMRML()
 {
   Q_D(qMRMLTransformInfoWidget);
+  if (!this->isVisible())
+    {
+    // Getting the transform information is too expensive,
+    // so if the widget is not visible then do not update
+    return;
+    }
+
   if (d->TransformNode.GetPointer() && d->CrosshairNode.GetPointer())
     {
     double ras[3]={0};

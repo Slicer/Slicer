@@ -74,6 +74,9 @@ protected slots:
   void updateTransformVectorDisplayFromMRML();
 
 protected:
+
+  virtual void showEvent(QShowEvent *);
+
   QScopedPointer<qMRMLTransformInfoWidgetPrivate> d_ptr;
 
 private:

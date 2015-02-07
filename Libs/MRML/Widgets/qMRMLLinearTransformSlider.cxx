@@ -226,20 +226,36 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   Q_ASSERT(matrix);
   if (!matrix) { return; }
 
+  bool transformChanged = false;
+  const double rotationChangeTolerance = 0.00001;
+  const double translationChangeTolerance = 0.00001;
+
   if (this->typeOfTransform() == ROTATION_LR)
     {
     double angle = _sliderPosition - d->OldPosition;
     transform->RotateX(angle);
+    if (fabs(angle)>rotationChangeTolerance)
+      {
+      transformChanged = true;
+      }
     }
   else if (this->typeOfTransform() == ROTATION_PA)
     {
     double angle = _sliderPosition - d->OldPosition;
     transform->RotateY(angle);
+    if (fabs(angle)>rotationChangeTolerance)
+      {
+      transformChanged = true;
+      }
     }
   else if (this->typeOfTransform() == ROTATION_IS)
     {
     double angle = _sliderPosition - d->OldPosition;
     transform->RotateZ(angle);
+    if (fabs(angle)>rotationChangeTolerance)
+      {
+      transformChanged = true;
+      }
     }
   else if (this->typeOfTransform() == TRANSLATION_LR)
     {
@@ -254,6 +270,10 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
       vector[0] = _sliderPosition - d->OldPosition;
       }
     transform->Translate(vector);
+    if (fabs(vector[0])>translationChangeTolerance)
+      {
+      transformChanged = true;
+      }
     }
   else if (this->typeOfTransform() == TRANSLATION_PA)
     {
@@ -268,6 +288,10 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
       vector[1] = _sliderPosition - d->OldPosition;
       }
     transform->Translate(vector);
+    if (fabs(vector[1])>translationChangeTolerance)
+      {
+      transformChanged = true;
+      }
     }
   else if (this->typeOfTransform() == TRANSLATION_IS)
     {
@@ -282,8 +306,15 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
       vector[2] = _sliderPosition - d->OldPosition;
       }
     transform->Translate(vector);
+    if (fabs(vector[2])>translationChangeTolerance)
+      {
+      transformChanged = true;
+      }
     }
   d->OldPosition = _sliderPosition;
 
+  if (transformChanged)
+    {
   d->MRMLTransformNode->SetMatrixTransformToParent(transform->GetMatrix());
+    }
 }
