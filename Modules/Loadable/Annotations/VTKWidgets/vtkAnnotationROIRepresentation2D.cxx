@@ -23,7 +23,6 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
-#include <vtkCutter.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 #include <vtkInteractorObserver.h>
@@ -32,12 +31,14 @@
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
 #include <vtkPlanes.h>
+#include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
 #include <vtkPropPicker.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -56,22 +57,13 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
   this->LastEventPosition2D[3]=1;
   this->LastPicker2D = NULL;
 
+  this->SliceIntersectionVisibility = 1;
+
   this->HandleSizeInPixels = 4;
   this->HandlesVisibility = 1;
 
   // Set up the initial properties
   this->CreateDefaultProperties();
-
-  // The face of the hexahedra
-  this->HexFaceMapper2D = vtkPolyDataMapper2D::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  this->HexFaceMapper2D->SetInput(HexFacePolyData);
-#else
-  this->HexFaceMapper2D->SetInputData(HexFacePolyData);
-#endif
-  this->HexFace2D = vtkActor2D::New();
-  this->HexFace2D->SetMapper(this->HexFaceMapper2D);
-  //this->HexFace2D->SetProperty(this->FaceProperty);
 
   // Create the handles
   this->Handle2D = new vtkActor2D* [7];
@@ -131,10 +123,7 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
 vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
 {
   this->HandlePicker2D->Delete();
-  this->HexFace2D->Delete();
-  this->HexFaceMapper2D->Delete();
-  int i;
-  for (i=0; i<7; i++)
+  for (int i=0; i<7; i++)
     {
     this->HandleToPlaneTransformFilters[i]->Delete();
     this->HandleMapper2D[i]->Delete();
@@ -146,10 +135,10 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
 
   this->IntersectionPlane->Delete();
   this->IntersectionPlaneTransform->Delete();
-  for (i=0; i<6; i++)
+  for (int i=0; i<6; i++)
     {
     this->IntersectionFaces[i]->Delete();
-    this->IntersectionCutters[i]->Delete();
+    this->IntersectionLines[i]->Delete();
     this->IntersectionPlaneTransformFilters[i]->Delete();
     this->IntersectionMappers[i]->Delete();
     this->IntersectionActors[i]->Delete();
@@ -170,8 +159,6 @@ vtkAnnotationROIRepresentation2D::~vtkAnnotationROIRepresentation2D()
 //----------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 {
-  int i;
-
   // Create Plane/Face intersection pipelines
   int faceIndex[6][4] = {
     {3, 0, 4, 7},
@@ -181,7 +168,7 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
     {0, 3, 2, 1},
     {4, 5, 6, 7}};
 
-  for (i=0; i<6; i++)
+  for (int i=0; i<6; i++)
     {
     this->IntersectionFaces[i] = vtkPolyData::New();
     this->IntersectionFaces[i]->SetPoints(this->Points);
@@ -197,20 +184,16 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
     this->IntersectionFaces[i]->BuildCells();
     cells->Delete();
 
-    this->IntersectionCutters[i] = vtkCutter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    this->IntersectionCutters[i]->SetInput(this->IntersectionFaces[i]);
-#else
-    this->IntersectionCutters[i]->SetInputData(this->IntersectionFaces[i]);
-#endif
-    this->IntersectionCutters[i]->SetCutFunction(this->IntersectionPlane);
+    this->IntersectionLines[i] = vtkPolyData::New();
+
 
     this->IntersectionPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
 #if (VTK_MAJOR_VERSION <= 5)
-    this->IntersectionPlaneTransformFilters[i]->SetInput(this->IntersectionCutters[i]->GetOutput());
+    this->IntersectionPlaneTransformFilters[i]->SetInput(this->IntersectionLines[i]);
 #else
-    this->IntersectionPlaneTransformFilters[i]->SetInputConnection(this->IntersectionCutters[i]->GetOutputPort());
+    this->IntersectionPlaneTransformFilters[i]->SetInputData(this->IntersectionLines[i]);
 #endif
+
     this->IntersectionPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->IntersectionMappers[i] = vtkPolyDataMapper2D::New();
@@ -222,8 +205,6 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 
     this->IntersectionActors[i] = vtkActor2D::New();
     this->IntersectionActors[i]->SetMapper(this->IntersectionMappers[i]);
-
-    //this->GetRenderer()->AddActor2D(this->IntersectionActors[i]);
     }
 }
 
@@ -232,13 +213,11 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 void vtkAnnotationROIRepresentation2D::GetActors2D(vtkPropCollection *actors)
 {
   actors->RemoveAllItems();
-  //actors->AddItem(this->HexFace2D);
-  int i;
-  for (i=0; i<6; i++)
+  for (int i=0; i<6; i++)
     {
     actors->AddItem(this->IntersectionActors[i]);
     }
-  for (i=0; i<7; i++)
+  for (int i=0; i<7; i++)
     {
     actors->AddItem(this->Handle2D[i]);
     }
@@ -259,16 +238,13 @@ void vtkAnnotationROIRepresentation2D::GetIntersectionActors(vtkPropCollection *
 void vtkAnnotationROIRepresentation2D::ReleaseGraphicsResources(vtkWindow *w)
 {
   Superclass::ReleaseGraphicsResources(w);
-  this->HexFace2D->ReleaseGraphicsResources(w);
-  // render the handles
-  int j;
-  for (j=0; j<7; j++)
+  for (int i=0; i<7; i++)
     {
-    this->Handle2D[j]->ReleaseGraphicsResources(w);
+    this->Handle2D[i]->ReleaseGraphicsResources(w);
     }
-  for (j=0; j<6; j++)
+  for (int i=0; i<6; i++)
     {
-    this->IntersectionActors[j]->ReleaseGraphicsResources(w);
+    this->IntersectionActors[i]->ReleaseGraphicsResources(w);
     }
 
 }
@@ -313,19 +289,14 @@ void vtkAnnotationROIRepresentation2D::CreateDefaultProperties()
   // dark violet
   this->HandleProperties2D[1]->SetColor(.5585, .343, .91);
   // dark red
-  //this->HandleProperties2D[2]->SetColor(.51562, .38281, .15234);
   this->HandleProperties2D[2]->SetColor(.75, .121, .26953);
   // orange
-  //this->HandleProperties2D[3]->SetColor(.9101, .39453, 0.0);
   this->HandleProperties2D[3]->SetColor(.9765, .488, .1133);
   // dark blue
-  //this->HandleProperties2D[4]->SetColor(.140625, .30468, .5);
   this->HandleProperties2D[4]->SetColor(.1328, .4531, .5351);
   // light blue
-  //this->HandleProperties2D[5]->SetColor(.33984, .69140, .71875);
   this->HandleProperties2D[5]->SetColor(.582, .898, .871);
   // yellow
-  //this->HandleProperties2D[6]->SetColor(0.953125, .738281, 0.0);
   this->HandleProperties2D[6]->SetColor(0.973125, .798281, 0.0);
 
   this->SelectedHandleProperty2D = vtkProperty2D::New();
@@ -429,6 +400,81 @@ void vtkAnnotationROIRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 }
 
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation2D::ComputeIntersectionLine(vtkPolyData* inputIntersectionFace, vtkPlane* inputPlane, vtkPolyData* outputIntersectionFacesIntersection)
+{
+  if (inputIntersectionFace==NULL || inputPlane==NULL || outputIntersectionFacesIntersection==NULL)
+    {
+    vtkWarningMacro("ComputeIntersectionLine received invalid input");
+    return;
+    }
+
+  if (inputIntersectionFace->GetNumberOfCells()<1)
+  {
+    vtkWarningMacro("ComputeIntersectionLine received invalid input");
+    return;
+  }
+  vtkCell* cell=inputIntersectionFace->GetCell(0);
+  vtkPoints* cornerPoints = cell->GetPoints();
+  if (cornerPoints->GetNumberOfPoints()!=4)
+  {
+    vtkWarningMacro("ComputeIntersectionLine received invalid input");
+    return;
+  }
+  int numberOfFoundIntersectionPoints=0;
+  const int maxNumberOfFoundIntersectionPoints=2;
+  double foundIntersectionPoints[maxNumberOfFoundIntersectionPoints][3]={0};
+
+  double point1[3]={0};
+  double point2[3]={0};
+  double intersectionPoint[3]={0};
+  double t=0;
+
+  for (int i=0; i<4; i++)
+  {
+    cornerPoints->GetPoint(i, point1);
+    cornerPoints->GetPoint((i+1)%4, point2);
+    if (inputPlane->IntersectWithLine(point1, point2, t, intersectionPoint))
+    {
+      // Check if the point is already added (e.g., when one of the corners is on the plane)
+      bool sameAsExistingPoint = false;
+      for (int foundIntersectionPointIndex=0; foundIntersectionPointIndex<numberOfFoundIntersectionPoints; foundIntersectionPointIndex++)
+      {
+        if (fabs(foundIntersectionPoints[foundIntersectionPointIndex][0]-intersectionPoint[0])<0.001
+          && fabs(foundIntersectionPoints[foundIntersectionPointIndex][1]-intersectionPoint[1])<0.001
+          && fabs(foundIntersectionPoints[foundIntersectionPointIndex][2]-intersectionPoint[2])<0.001)
+        {
+          sameAsExistingPoint=true;
+          break;
+        }
+      }
+      if (!sameAsExistingPoint && numberOfFoundIntersectionPoints<maxNumberOfFoundIntersectionPoints)
+      {
+        // found a new intersection point, add it
+        foundIntersectionPoints[numberOfFoundIntersectionPoints][0]=intersectionPoint[0];
+        foundIntersectionPoints[numberOfFoundIntersectionPoints][1]=intersectionPoint[1];
+        foundIntersectionPoints[numberOfFoundIntersectionPoints][2]=intersectionPoint[2];
+        numberOfFoundIntersectionPoints++;
+      }
+    }
+  }
+  if (numberOfFoundIntersectionPoints==2)
+  {
+    vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
+    newPoints->InsertNextPoint(foundIntersectionPoints[0]);
+    newPoints->InsertNextPoint(foundIntersectionPoints[1]);
+    vtkSmartPointer<vtkCellArray> newLines = vtkSmartPointer<vtkCellArray>::New();
+    vtkIdType pointIds[2]={0,1};
+    newLines->InsertNextCell(2, pointIds);
+    outputIntersectionFacesIntersection->SetPoints(newPoints);
+    outputIntersectionFacesIntersection->SetLines(newLines);
+  }
+  else
+  {
+    outputIntersectionFacesIntersection->Reset();
+  }
+}
+
 #define VTK_AVERAGE(a,b,c) \
   c[0] = (a[0] + b[0])/2.0; \
   c[1] = (a[1] + b[1])/2.0; \
@@ -437,9 +483,7 @@ void vtkAnnotationROIRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkAnnotationROIRepresentation2D::PositionHandles()
 {
-  int i;
-  double *pts =
-     static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
+  double *pts = static_cast<vtkDoubleArray *>(this->Points->GetData())->GetPointer(0);
   double *p0 = pts;
   //double *p1 = pts + 3*1;
   //double *p2 = pts + 3*2;
@@ -453,29 +497,35 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   double radius = this->ComputeHandleRadiusInWorldCoordinates(this->HandleSizeInPixels);
 
   int count=0;
-  this->Points->GetData()->Modified();
-  for (i=0; i<6; i++)
+  for (int i=0; i<6; i++)
     {
     this->IntersectionFaces[i]->Modified();
-    this->IntersectionCutters[i]->Update();
-    this->IntersectionPlaneTransformFilters[i]->Update();
-
-    if (this->IntersectionCutters[i]->GetOutput()->GetNumberOfLines() > 0)
+    this->ComputeIntersectionLine(this->IntersectionFaces[i], this->IntersectionPlane, this->IntersectionLines[i]);
+    if (this->IntersectionLines[i]->GetNumberOfLines() > 0)
       {
       double pi0[3];
       double pi1[3];
-      this->IntersectionCutters[i]->GetOutput()->GetPoint(0, pi0);
-      this->IntersectionCutters[i]->GetOutput()->GetPoint(1, pi1);
+      this->IntersectionLines[i]->GetPoint(0, pi0);
+      this->IntersectionLines[i]->GetPoint(1, pi1);
       VTK_AVERAGE(pi0,pi1,x);
       this->Points->SetPoint(8+i, x);
       this->HandleGeometry[i]->SetRadius(this->HandlesVisibility*radius);
       this->Handle2D[i]->SetVisibility(this->HandlesVisibility);
+      this->IntersectionActors[i]->SetVisibility(this->SliceIntersectionVisibility);
+#if (VTK_MAJOR_VERSION <= 5)
+      if (this->Handle2D[i]->GetVisibility())
+        {
+        // This is SLOW, so only do it if the result is displayed
+        this->IntersectionPlaneTransformFilters[i]->Update();
+        }
+#endif
       count++;
       }
     else
       {
       this->HandleGeometry[i]->SetRadius(0);
       this->Handle2D[i]->SetVisibility(0);
+      this->IntersectionActors[i]->SetVisibility(0);
       }
     }
 
@@ -492,13 +542,18 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
     this->Handle2D[6]->SetVisibility(0);
     }
 
-  for (i = 0; i < 7; ++i)
+  for (int i = 0; i < 7; ++i)
     {
     this->HandleGeometry[i]->SetCenter(this->Points->GetPoint(8+i));
-    this->HandleToPlaneTransformFilters[i]->Update();
+#if (VTK_MAJOR_VERSION <= 5)
+    if (this->Handle2D[i]->GetVisibility())
+      {
+      // This is very SLOW, so only do it if the result is displayed
+      this->HandleToPlaneTransformFilters[i]->Update();
+      }
+#endif
     }
 
-  this->Points->GetData()->Modified();
 
 }
 
@@ -714,10 +769,10 @@ void vtkAnnotationROIRepresentation2D::PrintIntersections(ostream& os)
                              "), (" << pts[3*cpts[2]] << ", " << pts[3*cpts[2]+1] << ", " << pts[3*cpts[2]+2] <<
                              "), (" << pts[3*cpts[3]] << ", " << pts[3*cpts[3]+1] << ", " << pts[3*cpts[3]+2] << ")\n";
 
-    if (this->IntersectionCutters[i]->GetOutput()->GetNumberOfLines())
+    if (this->IntersectionLines[i]->GetNumberOfLines())
       {
-      float *fpts = static_cast<vtkFloatArray *>(this->IntersectionCutters[i]->GetOutput()->GetPoints()->GetData())->GetPointer(0);
-      this->IntersectionCutters[i]->GetOutput()->GetLines()->GetCell(0, ncpts, cpts);
+      float *fpts = static_cast<vtkFloatArray *>(this->IntersectionLines[i]->GetPoints()->GetData())->GetPointer(0);
+      this->IntersectionLines[i]->GetLines()->GetCell(0, ncpts, cpts);
       os << "   Cutter[" << i <<"]=(" << fpts[3*cpts[0]] << ", " << fpts[3*cpts[0]+1] << ", " << fpts[3*cpts[0]+2] <<
                                "), (" << fpts[3*cpts[1]] << ", " << fpts[3*cpts[1]+1] << ", " << fpts[3*cpts[1]+2] << ")\n";
       }

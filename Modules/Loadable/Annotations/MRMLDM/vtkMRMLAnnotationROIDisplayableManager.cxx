@@ -552,18 +552,10 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
+  rep->SetSliceIntersectionVisibility(roiNode->GetDisplayVisibility() ? 1:0);
   rep->SetHandlesVisibility(roiNode->GetLocked()==0 && roiNode->GetDisplayVisibility() ? 1:0);
 
   rep->PlaceWidget(b);
-
-  // update actor's visbility from mrml
-
-  vtkNew<vtkPropCollection> actors;
-  rep->GetActors2D(actors.GetPointer());
-  for (int i=0; i<actors->GetNumberOfItems(); i++)
-    {
-    vtkProp::SafeDownCast(actors->GetItemAsObject(i))->SetVisibility(roiNode->GetDisplayVisibility());
-    }
 
   // re-render the widget
   rep->NeedToRenderOn();

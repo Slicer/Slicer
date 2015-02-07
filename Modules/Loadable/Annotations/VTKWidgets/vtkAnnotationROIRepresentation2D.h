@@ -54,7 +54,6 @@ class vtkMatrix4x4;
 class vtkActor2D;
 class vtkPolyDataMapper2D;
 class vtkPlane;
-class vtkCutter;
 class vtkTransform;
 class vtkTransformPolyDataFilter;
 
@@ -100,6 +99,9 @@ public:
 
   virtual void SizeHandles();
 
+  vtkGetMacro(SliceIntersectionVisibility, int);
+  vtkSetMacro(SliceIntersectionVisibility, int);
+
   vtkGetMacro(HandlesVisibility, int);
   vtkSetMacro(HandlesVisibility, int);
 
@@ -116,9 +118,9 @@ protected:
   vtkAnnotationROIRepresentation2D();
   ~vtkAnnotationROIRepresentation2D();
 
-  /// A face of the hexahedron
-  vtkActor2D          *HexFace2D;
-  vtkPolyDataMapper2D *HexFaceMapper2D;
+  // Compute intersection line of the inputIntersectionFace and the slice plane
+  // It is 50x faster than computing the intersection using vtkCutter
+  virtual void ComputeIntersectionLine(vtkPolyData* inputIntersectionFace, vtkPlane* inputPlane, vtkPolyData* outputIntersectionFacesIntersection);
 
   /// glyphs representing hot spots (e.g., handles)
   vtkActor2D          **Handle2D;
@@ -128,7 +130,7 @@ protected:
   /// Plane/Face intersection pipelines
   vtkPlane *IntersectionPlane;
   vtkTransform *IntersectionPlaneTransform;
-  vtkCutter *IntersectionCutters[6];
+  vtkPolyData *IntersectionLines[6]; // intersection lines of IntersectionFaces
   vtkPolyData *IntersectionFaces[6];
   vtkTransformPolyDataFilter *IntersectionPlaneTransformFilters[6];
   vtkActor2D *IntersectionActors[6];
@@ -151,6 +153,8 @@ protected:
 
   virtual void CreateDefaultProperties();
   virtual void PositionHandles();
+
+  int SliceIntersectionVisibility;
 
   double  HandleSizeInPixels;
   int HandlesVisibility;
