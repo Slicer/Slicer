@@ -497,6 +497,7 @@ def array(pattern = "", index = 0):
   """
   vectorTypes = ('vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode')
   tensorTypes = ('vtkMRMLDiffusionTensorVolumeNode',)
+  pointTypes = ('vtkMRMLModelNode',)
   import vtk.util.numpy_support
   n = getNode(pattern=pattern, index=index)
   if n.GetClassName() == 'vtkMRMLScalarVolumeNode':
@@ -519,6 +520,10 @@ def array(pattern = "", index = 0):
     shape = list(n.GetImageData().GetDimensions())
     shape.reverse()
     a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetTensors()).reshape(shape+[3,3])
+    return a
+  elif n.GetClassName() in pointTypes:
+    p = n.GetPolyData().GetPoints().GetData()
+    a = vtk.util.numpy_support.vtk_to_numpy(p)
     return a
   # TODO: accessors for other node types: polydata (verts, polys...), colors
 
