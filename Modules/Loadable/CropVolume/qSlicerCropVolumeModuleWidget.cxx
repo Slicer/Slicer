@@ -710,8 +710,14 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
   vtkMRMLNode *roiNode = this->mrmlScene()->GetNodeByID(roiNodeID);
   d->InputROIComboBox->setCurrentNode(roiNode);
 
-  d->VoxelBasedModeRadioButton->setChecked(parametersNode->GetVoxelBased());
-
+  if (parametersNode->GetVoxelBased())
+    {
+    d->VoxelBasedModeRadioButton->setChecked(true);
+    }
+  else
+    {
+    d->InterpolationModeRadioButton->setChecked(true);
+    }
   d->VisibilityButton->setChecked(parametersNode->GetROIVisibility());
 
   switch (parametersNode->GetInterpolationMode())
