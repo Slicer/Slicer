@@ -169,7 +169,17 @@ class CropVolumeSelfTestTest(unittest.TestCase):
     cropVolumeLogic = slicer.modules.cropvolume.logic()
     cropVolumeLogic.Apply(cropVolumeNode)
 
-    slicer.mrmlScene.RemoveNode(roi)
+    self.delayDisplay('First test passed, closing the scene and running again')
+    # test clearing the scene and running a second time
+    slicer.mrmlScene.Clear(0)
+    # the module will re-add the removed parameters node
+    cropVolumeNode = slicer.mrmlScene.GetNodeByID('vtkMRMLCropVolumeParametersNode1')
+    vol = self.downloadMRHead()
+    roi = slicer.vtkMRMLAnnotationROINode()
+    roi.Initialize(slicer.mrmlScene)
+    cropVolumeNode.SetInputVolumeNodeID(vol.GetID())
+    cropVolumeNode.SetROINodeID(roi.GetID())
+    cropVolumeLogic.Apply(cropVolumeNode)
 
     self.delayDisplay('Test passed')
 

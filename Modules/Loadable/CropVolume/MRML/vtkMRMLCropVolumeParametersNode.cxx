@@ -39,11 +39,10 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   this->OutputVolumeNodeID = NULL;
   this->ROINodeID = NULL;
 
-  this->ROIVisibility = false;
-  this->InterpolationMode = 2;
-
+  this->ROIVisibility = true;
   this->VoxelBased = false;
-
+  this->InterpolationMode = 2;
+  this->IsotropicResampling = false;
   this->SpacingScalingConst = 1.;
 }
 
@@ -52,24 +51,26 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
 {
   if (this->InputVolumeNodeID)
     {
-    this->SetInputVolumeNodeID(NULL);
+    delete [] this->InputVolumeNodeID;
+    this->InputVolumeNodeID = NULL;
     }
 
   if (this->OutputVolumeNodeID)
     {
-    this->SetOutputVolumeNodeID(NULL);
+    delete [] this->OutputVolumeNodeID;
+    this->OutputVolumeNodeID = NULL;
     }
 
   if (this->ROINodeID)
     {
-    this->SetROINodeID(NULL);
+    delete [] this->ROINodeID;
+    this->ROINodeID = NULL;
     }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
 {
-  std::cerr << "Reading CropVolume param node!" << std::endl;
   Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
@@ -79,37 +80,63 @@ void vtkMRMLCropVolumeParametersNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
     if (!strcmp(attName, "inputVolumeNodeID"))
-    {
+      {
       this->SetInputVolumeNodeID(attValue);
-      continue;
-    }
-    if (!strcmp(attName, "outputVolumeNodeID"))
-    {
+      }
+    else if (!strcmp(attName, "outputVolumeNodeID"))
+      {
       this->SetOutputVolumeNodeID(attValue);
-      continue;
-    }
-    if (!strcmp(attName, "ROINodeID"))
-    {
+      }
+    else if (!strcmp(attName, "ROINodeID"))
+      {
       this->SetROINodeID(attValue);
-      continue;
-    }
-    if (!strcmp(attName,"ROIVisibility"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->ROIVisibility;
-      continue;
-    }
-    if (!strcmp(attName,"interpolationMode"))
-    {
+      }
+    else if (!strcmp(attName, "ROIVisibility"))
+      {
+      if (!strcmp(attValue, "true") || !strcmp(attValue, "1"))
+        {
+        this->ROIVisibility = true;
+        }
+      else
+        {
+        this->ROIVisibility = false;
+        }
+      }
+    else if (!strcmp(attName,"VoxelBased"))
+      {
+      if (!strcmp(attValue, "true"))
+        {
+        this->VoxelBased = true;
+        }
+      else
+        {
+        this->VoxelBased = false;
+        }
+      }
+    else if (!strcmp(attName,"interpolationMode"))
+      {
       std::stringstream ss;
       ss << attValue;
       ss >> this->InterpolationMode;
-      continue;
-    }
+      }
+    else if (!strcmp(attName, "isotropicResampling"))
+      {
+      if (!strcmp(attValue, "true"))
+        {
+        this->IsotropicResampling = true;
+        }
+      else
+        {
+        this->IsotropicResampling = false;
+        }
+      }
+    else if (!strcmp(attName, "spaceScalingConst"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SpacingScalingConst;
+      }
   }
-
-  this->WriteXML(std::cout,1);
 }
 
 //----------------------------------------------------------------------------
@@ -119,11 +146,24 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  of << indent << " inputVolumeNodeID=\"" << (this->InputVolumeNodeID ? this->InputVolumeNodeID : "NULL") << "\"";
-  of << indent << " outputVolumeNodeID=\"" << (this->OutputVolumeNodeID ? this->OutputVolumeNodeID : "NULL") << "\"";
-  of << indent << " ROIVisibility=\""<< this->ROIVisibility << "\"";
-  of << indent << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
+  if (this->InputVolumeNodeID != NULL)
+    {
+    of << indent << " inputVolumeNodeID=\"" << this->InputVolumeNodeID << "\"";
+    }
+  if (this->OutputVolumeNodeID != NULL)
+    {
+    of << indent << " outputVolumeNodeID=\"" << this->OutputVolumeNodeID << "\"";
+    }
+  if (this->ROINodeID != NULL)
+    {
+    of << indent << " ROINodeID=\"" << this->ROINodeID << "\"";
+    }
+
+  of << indent << " ROIVisibility=\"" << (this->ROIVisibility ? "true" : "false") << "\"";
+  of << indent << " voxelBased=\"" << (this->VoxelBased ? "true" : "false") << "\"";
   of << indent << " interpolationMode=\"" << this->InterpolationMode << "\"";
+  of << indent << " isotropicResampling=\"" << (this->IsotropicResampling ? "true" : "false") << "\"";
+  of << indent << " spaceScalingConst=\"" << this->SpacingScalingConst << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -138,8 +178,13 @@ void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
   this->SetInputVolumeNodeID(node->GetInputVolumeNodeID());
   this->SetOutputVolumeNodeID(node->GetOutputVolumeNodeID());
   this->SetROINodeID(node->GetROINodeID());
-  this->SetInterpolationMode(node->GetInterpolationMode());
+
+
   this->SetROIVisibility(node->GetROIVisibility());
+  this->SetVoxelBased(node->GetVoxelBased());
+  this->SetInterpolationMode(node->GetInterpolationMode());
+  this->SetIsotropicResampling(node->GetIsotropicResampling());
+  this->SetSpacingScalingConst(node->GetSpacingScalingConst());
 
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
@@ -153,9 +198,12 @@ void vtkMRMLCropVolumeParametersNode::PrintSelf(ostream& os, vtkIndent indent)
   os << "InputVolumeNodeID: " << ( (this->InputVolumeNodeID) ? this->InputVolumeNodeID : "None" ) << "\n";
   os << "OutputVolumeNodeID: " << ( (this->OutputVolumeNodeID) ? this->OutputVolumeNodeID : "None" ) << "\n";
   os << "ROINodeID: " << ( (this->ROINodeID) ? this->ROINodeID : "None" ) << "\n";
-  os << "ROIVisibility: " << this->ROIVisibility << "\n";
+
+  os << "ROIVisibility: " << (this->ROIVisibility ? "true" : "false") << "\n";
+  os << "VoxelBased: " << (this->VoxelBased ? "true" : "false") << "\n";
   os << "InterpolationMode: " << this->InterpolationMode << "\n";
-  os << "IsotropicResampling: " << this->IsotropicResampling << "\n";
+  os << "IsotropicResampling: " << (this->IsotropicResampling ? "true" : "false") << "\n";
+  os << "SpacingScalingConst: " << this->SpacingScalingConst << "\n";
 }
 
 // End

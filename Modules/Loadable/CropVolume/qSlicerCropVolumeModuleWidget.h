@@ -38,7 +38,13 @@ protected:
 protected slots:
   void initializeNode(vtkMRMLNode*);
   void onInputVolumeChanged();
+  /// when input volumes get added to the node selector, if the selector doesn't
+  /// have a current node, select it
+  void onInputVolumeAdded(vtkMRMLNode*);
   void onInputROIChanged();
+  /// when ROIs get added to the node selector, if the selector doesn't
+  /// have a current node, select it
+  void onInputROIAdded(vtkMRMLNode*);
   void onROIVisibilityChanged();
   void onInterpolationModeChanged();
   void onApply();
@@ -53,9 +59,6 @@ protected slots:
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
   Q_DISABLE_COPY(qSlicerCropVolumeModuleWidget);
-
-  vtkMRMLCropVolumeParametersNode *parametersNode;
-
 };
 
 #endif

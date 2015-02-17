@@ -20,5 +20,15 @@ int vtkMRMLCropVolumeParametersNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
 
+  TEST_SET_GET_STRING(node1.GetPointer(), InputVolumeNodeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), OutputVolumeNodeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ROINodeID);
+
+  TEST_SET_GET_BOOLEAN(node1.GetPointer(), ROIVisibility);
+  TEST_SET_GET_BOOLEAN(node1.GetPointer(), VoxelBased);
+  TEST_SET_GET_INT_RANGE(node1.GetPointer(), InterpolationMode, 1, 4);
+  TEST_SET_GET_BOOLEAN(node1.GetPointer(), IsotropicResampling);
+  TEST_SET_GET_DOUBLE_RANGE(node1.GetPointer(), SpacingScalingConst, -10.0, 10.0);
+
   return EXIT_SUCCESS;
 }

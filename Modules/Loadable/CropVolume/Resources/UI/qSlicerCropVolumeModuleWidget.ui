@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>383</height>
+    <width>670</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,12 +19,18 @@
    </property>
    <item>
     <widget class="ctkCollapsibleButton" name="ParametersCollapsibleButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Parameters</string>
      </property>
      <layout class="QFormLayout" name="parametersFormLayout">
       <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
       <property name="verticalSpacing">
        <number>12</number>
@@ -36,18 +42,58 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
+       <widget class="QLabel" name="ParameterNodeLabel">
+        <property name="text">
+         <string>Parameters Node:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="ParametersNodeComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLCropVolumeParametersNode</string>
+         </stringlist>
+        </property>
+        <property name="showHidden">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
        <widget class="QLabel" name="InputVolumeLabel">
         <property name="text">
          <string>Input volume:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="qMRMLNodeComboBox" name="InputVolumeComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
         </property>
         <property name="addEnabled">
          <bool>false</bool>
@@ -57,19 +103,28 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="InputROILabel">
         <property name="text">
          <string>Input ROI:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="qMRMLNodeComboBox" name="InputROIComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
         </property>
         <property name="editEnabled">
          <bool>true</bool>
@@ -79,7 +134,44 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="3" column="0">
+       <widget class="QLabel" name="TechniqueLabel">
+        <property name="text">
+         <string>Technique:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="InterpolationModeRadioButton">
+          <property name="text">
+           <string>Interpolated cropping</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">TechniqueButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="VoxelBasedModeRadioButton">
+          <property name="text">
+           <string>Voxel based cropping</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">TechniqueButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="6" column="0">
        <widget class="QLabel" name="ROIVisibilityLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -93,7 +185,19 @@
        </widget>
       </item>
       <item row="6" column="1">
-       <widget class="QWidget" name="EmptyWidget" native="true"/>
+       <widget class="QToolButton" name="VisibilityButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+          <normaloff>:/Icons/VisibleOff.png</normaloff>
+          <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="7" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="InterpolationOptionsGroupBox">
@@ -102,7 +206,7 @@
         </property>
         <layout class="QFormLayout" name="formLayout_2">
          <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
          <property name="margin">
           <number>0</number>
@@ -127,7 +231,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="InputSpacingScalingConstantLabel">
            <property name="toolTip">
-            <string>In not equal to 1, this will result in upsampling (&lt;1) or downlsampling (&gt;1) relative to the voxel spacing of the input volume.</string>
+            <string>If not equal to 1, this will result in upsampling (&lt;1) or downsampling (&gt;1) relative to the voxel spacing of the input volume.</string>
            </property>
            <property name="text">
             <string>Input spacing scaling constant:</string>
@@ -197,63 +301,17 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="TechniqueLabel">
-        <property name="text">
-         <string>Technique:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QToolButton" name="VisibilityButton">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>:/Icons/VisibleOff.png</normaloff>
-          <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <layout class="QHBoxLayout" name="TechniqueRadioButtonsHorizontalLayout">
-        <property name="spacing">
-         <number>12</number>
-        </property>
-        <item>
-         <widget class="QRadioButton" name="InterpolationModeRadioButton">
-          <property name="text">
-           <string>Interpolated cropping</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <attribute name="buttonGroup">
-           <string>TechniqueButtonGroup</string>
-          </attribute>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="VoxelBasedModeRadioButton">
-          <property name="text">
-           <string>Voxel based cropping</string>
-          </property>
-          <attribute name="buttonGroup">
-           <string>TechniqueButtonGroup</string>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </item>
      </layout>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="CropButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Crop!</string>
      </property>
@@ -306,10 +364,26 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../qSlicerCropVolumeModule.qrc"/>
  </resources>
  <connections>
+  <connection>
+   <sender>qSlicerCropVolumeModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ParametersNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>4</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>376</x>
+     <y>111</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>qSlicerCropVolumeModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
