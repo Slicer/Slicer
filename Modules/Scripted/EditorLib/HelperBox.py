@@ -832,12 +832,6 @@ class HelperBox(object):
       self.colorSelector.setToolTip( "Pick the table of structures you wish to edit" )
       self.colorSelect.layout().addWidget( self.colorSelector )
 
-      # pick the default editor LUT for the user
-      defaultID = self.colorLogic.GetDefaultEditorColorNodeID()
-      defaultNode = slicer.mrmlScene.GetNodeByID(defaultID)
-      if defaultNode:
-        self.colorSelector.setCurrentNode( defaultNode )
-
       self.colorButtonFrame = qt.QFrame()
       self.colorButtonFrame.objectName = 'ColorButtonFrame'
       self.colorButtonFrame.setLayout( qt.QHBoxLayout() )
@@ -855,6 +849,13 @@ class HelperBox(object):
 
       self.colorDialogApply.connect("clicked()", self.onColorDialogApply)
       self.colorDialogCancel.connect("clicked()", self.colorSelect.hide)
+
+    # pick the default editor LUT for the user
+    defaultID = self.colorLogic.GetDefaultEditorColorNodeID()
+    defaultNode = slicer.mrmlScene.GetNodeByID(defaultID)
+    if defaultNode:
+      self.colorSelector.setCurrentNode( defaultNode )
+
 
     self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node that will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+"-label"))
     self.colorSelect.show()
