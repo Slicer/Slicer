@@ -23,6 +23,8 @@ class ModuleParameter;
 
 // MRML include
 #include "vtkMRMLScene.h"
+class vtkMRMLModelHierarchyNode;
+class MRMLIDMap;
 
 // STL includes
 #include <string>
@@ -141,6 +143,11 @@ protected:
   enum Events{
     RequestHierarchyEditEvent = vtkCommand::UserEvent + 1
   };
+
+  // Add a model hierarchy node and all its descendents to a scene (miniscene to sent to a CLI).
+  // The mapping of ids from the original scene to the mini scene is put in (added to) sceneToMiniSceneMap.
+  // Any files that will be created by writing out the miniscene are added to filesToDelete (i.e. models)
+  void AddCompleteModelHierarchyToMiniScene(vtkMRMLScene*, vtkMRMLModelHierarchyNode*, MRMLIDMap* sceneToMiniSceneMap, std::set<std::string> &filesToDelete);
 
 private:
   vtkSlicerCLIModuleLogic();
