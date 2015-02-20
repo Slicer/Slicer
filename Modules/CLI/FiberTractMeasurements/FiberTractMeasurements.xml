@@ -20,7 +20,6 @@
       <label>Select Input Type</label>
       <default>Fibers_Hierarchy</default>
       <element>Fibers_Hierarchy</element>
-      <element>All_Fiber_Nodes</element>
       <element>Fibers_File_Folder</element>
     </string-enumeration>
 
@@ -31,14 +30,6 @@
       <longflag>--fiberHierarchy</longflag>
       <description><![CDATA[Fibers top hierarchy node]]></description>
     </geometry>
-
-    <file>
-      <name>FibersMRMLFile</name>
-      <channel>input</channel>
-      <label>Fibers MRML Scene File</label>
-      <longflag>--mrmlSceneFile</longflag>
-      <description><![CDATA[MRML scene file containing fiber nodes]]></description>
-    </file>
 
     <directory>
       <name>InputDirectory</name>

@@ -110,31 +110,27 @@ int main( int argc, char * argv[] )
   std::vector<std::string> emptyOperationVector;
   emptyOperationVector.push_back(std::string(""));
 
-  if (inputType == std::string("Fibers_Hierarchy") ||
-      inputType == std::string("All_Fiber_Nodes") )
+  if (inputType == std::string("Fibers_Hierarchy") )
     {
     // get the model hierarchy id from the scene file
     std::string::size_type loc;
     std::string            inputFilename;
     std::string            inputNodeID;
 
-    if (inputType == std::string("Fibers_Hierarchy"))
+    std::string sceneFilename;
+    std::string filename = FiberHierarchyNode[0];
+    loc = filename.find_last_of("#");
+    if (loc != std::string::npos)
       {
-      std::string sceneFilename;
-      std::string filename = FiberHierarchyNode[0];
-      loc = filename.find_last_of("#");
-      if (loc != std::string::npos)
-        {
-        sceneFilename = std::string(filename.begin(),
-                                    filename.begin() + loc);
-        loc++;
+      sceneFilename = std::string(filename.begin(),
+                                  filename.begin() + loc);
+      loc++;
 
-        inputNodeID = std::string(filename.begin() + loc, filename.end());
-        }
+      inputNodeID = std::string(filename.begin() + loc, filename.end());
       }
 
     // check for the model mrml file
-    if (FibersMRMLFile.empty())
+    if (sceneFilename.empty())
       {
       std::cout << "No MRML scene file specified." << std::endl;
       return EXIT_FAILURE;
@@ -142,12 +138,12 @@ int main( int argc, char * argv[] )
 
     // get the directory of the scene file
     std::string rootDir
-      = vtksys::SystemTools::GetParentDirectory(FibersMRMLFile.c_str());
+      = vtksys::SystemTools::GetParentDirectory(sceneFilename.c_str());
 
     vtkNew<vtkMRMLScene> modelScene;
 
     // load the scene that Slicer will re-read
-    modelScene->SetURL(FibersMRMLFile.c_str());
+    modelScene->SetURL(sceneFilename.c_str());
 
     modelScene->RegisterNodeClass(vtkNew<vtkMRMLSceneViewNode>().GetPointer());
     modelScene->RegisterNodeClass(vtkNew<vtkMRMLSceneViewStorageNode>().GetPointer());
@@ -159,13 +155,13 @@ int main( int argc, char * argv[] )
     modelScene->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleStorageNode>().GetPointer());
 
     // only try importing if the scene file exists
-    if (vtksys::SystemTools::FileExists(FibersMRMLFile.c_str()))
+    if (vtksys::SystemTools::FileExists(sceneFilename.c_str()))
       {
       modelScene->Import();
       }
     else
       {
-      std::cerr << "Model scene file doesn't exist: " <<  FibersMRMLFile.c_str() << std::endl;
+      std::cerr << "Model scene file doesn't exist: " <<  sceneFilename.c_str() << std::endl;
       }
 
     if (inputType == std::string("Fibers_Hierarchy"))
@@ -216,28 +212,6 @@ int main( int argc, char * argv[] )
           } // if (dispHierarchyNode)
         } // for (unsigned int i = 0; i < allChildren.size(); ++i)
       } // if (inputType == std::string("Fibers_Hierarchy"))
-    else if (inputType == std::string("All_Fiber_Nodes"))
-      {
-      std::vector< vtkMRMLNode *> fiberNodes;
-      modelScene->GetNodesByClass("vtkMRMLFiberBundleNode", fiberNodes);
-      for (unsigned int i = 0; i < fiberNodes.size(); i++)
-        {
-        vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(fiberNodes[i]);
-        std::string id = std::string(fiberNode->GetName());
-
-        computeFiberStats(fiberNode->GetPolyData(), id);
-
-        computeScalarMeasurements(fiberNode->GetPolyData(), id, emptyOperationVector[0]);
-
-        for (unsigned int o = 0; o < operations.size(); o++)
-          {
-          computeTensorMeasurement(math.GetPointer(),
-                                   fiberNode->GetPolyDataConnection(),
-                                   id,
-                                   operations[o]);
-          } // for (unsigned int o = 0; o < operations.size(); o++)
-        } // for (unsigned int i = 0; i < fiberNodes.size(); i++)
-      } // else if inputType == std::string("All_Fiber_Nodes"))
     } //if (inputType == ... || ... )
   else if (inputType == std::string("Fibers_File_Folder") )
     {
