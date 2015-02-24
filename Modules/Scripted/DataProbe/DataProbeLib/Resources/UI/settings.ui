@@ -34,13 +34,13 @@
      <item>
       <widget class="QCheckBox" name="sliceViewAnnotationsCheckBox">
        <property name="text">
-        <string>Slice View Annotations</string>
+        <string>Enable Slice View Annotations</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="cornerTextParametersCollapsibleButton">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="cornerTextParametersCollapsibleButton" native="true">
+       <property name="text" stdset="0">
         <string>Corner Text Annotation</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -238,11 +238,11 @@
             <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
               <widget class="QCheckBox" name="backgroundLayerPersistenceCheckbox">
-               <property name="text">
-                <string>Background DICOM annotations persistence</string>
-               </property>
                <property name="toolTip">
                 <string>Show background volume DICOM annotations if foreground volume is non-DICOM.</string>
+               </property>
+               <property name="text">
+                <string>Background DICOM annotations persistence</string>
                </property>
               </widget>
              </item>
@@ -255,8 +255,8 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="scalingRulerCollapsibleButton">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="scalingRulerCollapsibleButton" native="true">
+       <property name="text" stdset="0">
         <string>Scaling Ruler</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -271,8 +271,8 @@
       </widget>
      </item>
      <item>
-      <widget class="ctkCollapsibleButton" name="colorScalarBarCollapsibleButton">
-       <property name="text">
+      <widget class="ctkCollapsibleButton" name="colorScalarBarCollapsibleButton" native="true">
+       <property name="text" stdset="0">
         <string>Color Scalar Bar</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -330,31 +330,22 @@
          </widget>
         </item>
         <item>
-         <widget class="ctkCollapsibleGroupBox" name="widthSettingsCollapsibleGroupBox">
+         <widget class="ctkCollapsibleGroupBox" name="LabelsPropertiesCollapsibleGroupBox">
           <property name="title">
-           <string>Width Settings</string>
+           <string>Labels Properties</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="QLabel" name="label_5">
              <property name="text">
-              <string>Maximum width (pixels):</string>
+              <string>Range Label Format:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="ctkSliderWidget" name="colorScalarBarMaxWidthSlider">
-             <property name="pageStep">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="minimum">
-              <double>20.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>200.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>50.000000000000000</double>
+            <widget class="QLineEdit" name="rangeLabelFormatLineEdit">
+             <property name="text">
+              <string>%G</string>
              </property>
             </widget>
            </item>
@@ -416,11 +407,6 @@
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
