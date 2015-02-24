@@ -112,6 +112,8 @@ void qSlicerModelsModuleWidget::setup()
 
   d->DisplayClassTabWidget->setVisible(false);
 
+  d->ModelHierarchyTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
+
   // turn of setting of size to visible indexes to allow drag scrolling
   d->ModelHierarchyTreeView->setFitSizeToVisibleIndexes(false);
 
