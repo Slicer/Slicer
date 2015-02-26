@@ -52,8 +52,15 @@ if(BUILD_TESTING)
 
   QT4_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
 
+  set(KIT_TEST_TARGET_LIBRARIES ${KIT})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    list(APPEND KIT_TEST_TARGET_LIBRARIES Qt5::Test)
+  else()
+    list(APPEND KIT_TEST_TARGET_LIBRARIES Qt4::QtTest)
+  endif()
+
   add_executable(${KIT}CxxTests ${Tests})
-  target_link_libraries(${KIT}CxxTests ${KIT})
+  target_link_libraries(${KIT}CxxTests ${KIT_TEST_TARGET_LIBRARIES})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 
