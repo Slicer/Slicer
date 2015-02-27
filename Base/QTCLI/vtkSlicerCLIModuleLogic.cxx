@@ -2814,15 +2814,21 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
               vtkMRMLNode *mcp = miniscene->CopyNode(mnd);
               vtkMRMLModelNode *tmcp = vtkMRMLModelNode::SafeDownCast(mcp);
 
-              // add the display node for the model to the miniscene
-              vtkMRMLDisplayNode *mdnd = mnd->GetDisplayNode();
-              if (mdnd && tmcp)
+              mhcp->SetAssociatedNodeID(tmcp->GetID());
+
+              // add the display nodes for the model to the miniscene
+              int ndn = mnd->GetNumberOfDisplayNodes();
+              for (int i=0; i<ndn; i++)
                 {
-                vtkMRMLNode *mdcp = miniscene->CopyNode(mdnd);
+                vtkMRMLDisplayNode *mdnd = mnd->GetNthDisplayNode(i);
+                if (mdnd && tmcp)
+                  {
+                  vtkMRMLNode *mdcp = miniscene->CopyNode(mdnd);
 
-                vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(mdcp);
+                  vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(mdcp);
 
-                tmcp->SetAndObserveDisplayNodeID( d->GetID());
+                  tmcp->AddAndObserveDisplayNodeID( d->GetID());
+                  }
                 }
 
               // add the storage node for the model to the miniscene
