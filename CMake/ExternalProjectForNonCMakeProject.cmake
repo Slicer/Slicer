@@ -97,6 +97,24 @@ function(ExternalProject_Remove_Execute_Logs proj stepnames)
 endfunction()
 
 #!
+#! _ep_var_append(<var_name> <value>)
+#!
+#! Append <value> to the variable <var_name> if <value>
+#! is not an empty string.
+#!
+function(_ep_var_append var_name value)
+  string(STRIP "${value}" value)
+  if(NOT "${value}" STREQUAL "")
+    if("${${var_name}}" STREQUAL "")
+      set(${var_name} ${value})
+    else()
+      set(${var_name} "${${var_name}} ${value}")
+    endif()
+    set(${var_name} ${${var_name}} PARENT_SCOPE)
+  endif()
+endfunction()
+
+#!
 #! ExternalProject_Write_SetBuildEnv_Commands(<file> [APPEND])
 #!
 #! Write (or append) to <file> the CMake command setting the environment
@@ -107,6 +125,7 @@ function(ExternalProject_Write_SetBuildEnv_Commands file)
   if("${ARGV1}" MATCHES "APPEND")
     set(append_or_write ${ARGV1})
   endif()
+
   file(${append_or_write} ${file}
 "#------------------------------------------------------------------------------
 # Added by 'ExternalProject_Write_SetBuildEnv_Commands'
@@ -115,13 +134,35 @@ include(\"${_this_list_file}\")
 
 set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")
 
-set(ENV{VS_UNICODE_OUTPUT} \"\")
+set(CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\")
+set(CMAKE_C_COMPILER_ARG1 \"${CMAKE_C_COMPILER_ARG1}\")
 
-set(ENV{CC} \"${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1}\")
-set(ENV{CFLAGS} \"${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}\")
-set(ENV{CXX} \"${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1}\")
-set(ENV{CXXFLAGS} \"${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}\")
-set(ENV{LDFLAGS} \"${CMAKE_LINKER_FLAGS} ${CMAKE_LINKER_FLAGS_RELEASE}\")
+set(CMAKE_C_FLAGS \"${CMAKE_C_FLAGS}\")
+set(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE}\")
+
+set(CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\")
+set(CMAKE_CXX_COMPILER_ARG1 \"${CMAKE_CXX_COMPILER_ARG1}\")
+
+set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS}\")
+set(CMAKE_CXX_FLAGS_RELEASE \"${CMAKE_CXX_FLAGS_RELEASE}\")
+
+set(CMAKE_LINKER_FLAGS \"${CMAKE_LINKER_FLAGS}\")
+set(CMAKE_LINKER_FLAGS_RELEASE \"${CMAKE_LINKER_FLAGS_RELEASE}\")
+
+_ep_var_append(_ep_CC \"\${CMAKE_C_COMPILER}\")
+_ep_var_append(_ep_CC \"\${CMAKE_C_COMPILER_ARG1}\")
+
+_ep_var_append(_ep_CFLAGS \"\${CMAKE_C_FLAGS}\")
+_ep_var_append(_ep_CFLAGS \"\${CMAKE_C_FLAGS_RELEASE}\")
+
+_ep_var_append(_ep_CXX \"\${CMAKE_CXX_COMPILER}\")
+_ep_var_append(_ep_CXX \"\${CMAKE_CXX_COMPILER_ARG1}\")
+
+_ep_var_append(_ep_CXXFLAGS \"\${CMAKE_CXX_FLAGS}\")
+_ep_var_append(_ep_CXXFLAGS \"\${CMAKE_CXX_FLAGS_RELEASE}\")
+
+_ep_var_append(_ep_LDFLAGS \"\${CMAKE_LINKER_FLAGS}\")
+_ep_var_append(_ep_LDFLAGS \"\${CMAKE_LINKER_FLAGS_RELEASE}\")
 
 if(APPLE)
   set(CMAKE_CXX_HAS_ISYSROOT \"${CMAKE_CXX_HAS_ISYSROOT}\")
@@ -140,10 +181,26 @@ if(APPLE)
   endif()
   set(CMAKE_OSX_FLAGS \"\${osx_arch_flags} \${osx_version_flag} \${osx_sysroot}\")
 
-  set(ENV{CFLAGS} \"\$ENV{CFLAGS} \${CMAKE_OSX_FLAGS}\")
-  set(ENV{CXXFLAGS} \"\$ENV{CXXFLAGS} \${CMAKE_OSX_FLAGS}\")
-  set(ENV{LDFLAGS} \"\$ENV{LDFLAGS} \${CMAKE_OSX_FLAGS}\")
+  _ep_var_append(_ep_CFLAGS \"\${CMAKE_OSX_FLAGS}\")
+  _ep_var_append(_ep_CXXFLAGS \"\${CMAKE_OSX_FLAGS}\")
+  _ep_var_append(_ep_LDFLAGS \"\${CMAKE_OSX_FLAGS}\")
 endif()
+
+set(ENV{VS_UNICODE_OUTPUT} \"\")
+
+set(ENV{CC} \"\${_ep_CC}\")
+set(ENV{CXX} \"\${_ep_CXX}\")
+
+if(NOT \"\${_ep_CFLAGS}\" STREQUAL \"\")
+  set(ENV{CFLAGS} \"\${_ep_CFLAGS}\")
+endif()
+if(NOT \"\${_ep_CXXFLAGS}\" STREQUAL \"\")
+  set(ENV{CXXFLAGS} \"\${_ep_CXXFLAGS}\")
+endif()
+if(NOT \"\${_ep_LDFLAGS}\" STREQUAL \"\")
+  set(ENV{LDFLAGS} \"\${_ep_LDFLAGS}\")
+endif()
+
 ")
 endfunction()
 
