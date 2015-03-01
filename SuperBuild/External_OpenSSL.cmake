@@ -163,46 +163,31 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     #--------------------
     if(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
 
-      if(_qt_version VERSION_EQUAL "4.8.5" OR _qt_version VERSION_LESS "4.8.5")
-        # OpenSSL 1.0.1e - Used to compile Qt 4.8.5
-        set(OpenSSL_URL http://packages.kitware.com/download/item/3877/OpenSSL_1_0_1e-install-32.tar.gz)
-        set(OpenSSL_MD5 aedd620319a0d3c87b03a92e2fad8f96)
+      # OpenSSL 1.0.1h
+      if(MSVC_VERSION VERSION_EQUAL "1500")
+        set(OpenSSL_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
+        set(OpenSSL_MD5 8b110bb48063223c3b9f3a99f1fa9067)
+      elseif(MSVC_VERSION VERSION_EQUAL "1600")
+        set(OpenSSL_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
+        set(OpenSSL_MD5 e80269ae7969276977a342cccc1df5c5)
       else()
-        # OpenSSL 1.0.1h - Used to compile Qt 4.8.6
-        if(MSVC_VERSION VERSION_EQUAL "1500")
-          set(OpenSSL_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
-          set(OpenSSL_MD5 8b110bb48063223c3b9f3a99f1fa9067)
-        elseif(MSVC_VERSION VERSION_EQUAL "1600")
-          set(OpenSSL_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
-          set(OpenSSL_MD5 e80269ae7969276977a342cccc1df5c5)
-        else()
-          message(FATAL_ERROR ${_error_msg})
-        endif()
+        message(FATAL_ERROR ${_error_msg})
       endif()
 
     #--------------------
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
 
-      if(_qt_version VERSION_EQUAL "4.8.5" OR _qt_version VERSION_LESS "4.8.5")
-        # OpenSSL 1.0.1e - Used to compile Qt 4.8.5
-        set(OpenSSL_URL http://packages.kitware.com/download/item/3876/OpenSSL_1_0_1e-install-64.tar.gz)
-        set(OpenSSL_MD5 d57a52c20253723c17bf39594a0ebb96)
+      # OpenSSL 1.0.1h
+      if(MSVC_VERSION VERSION_EQUAL "1500")
+        set(OpenSSL_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
+        set(OpenSSL_MD5 dab0c026ab56fd0fbfe2843d14218fad)
+      else(MSVC_VERSION VERSION_EQUAL "1600")
+        set(OpenSSL_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
+        set(OpenSSL_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
       else()
-        # OpenSSL 1.0.1h - Used to compile Qt 4.8.6
-        if(MSVC_VERSION VERSION_EQUAL "1500")
-          set(OpenSSL_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
-          set(OpenSSL_MD5 dab0c026ab56fd0fbfe2843d14218fad)
-        else(MSVC_VERSION VERSION_EQUAL "1600")
-          set(OpenSSL_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
-          set(OpenSSL_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
-        else()
-          message(FATAL_ERROR ${_error_msg})
-        endif()
+        message(FATAL_ERROR ${_error_msg})
       endif()
 
-    endif()
-    if(MSVC_VERSION VERSION_GREATER "1600")
-      message(WARNING "Using OpenSSL 1.0.1h compiled with Visual Studio 2010")
     endif()
 
     #------------------------------------------------------------------------------
