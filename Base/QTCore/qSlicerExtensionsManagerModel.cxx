@@ -941,7 +941,9 @@ bool qSlicerExtensionsManagerModel::isExtensionInstalled(const QString& extensio
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QModelIndexList foundIndexes = d->Model.match(
-        d->Model.index(0, qSlicerExtensionsManagerModelPrivate::NameColumn), qSlicerExtensionsManagerModelPrivate::NameRole, QVariant(extensionName));
+        d->Model.index(0, qSlicerExtensionsManagerModelPrivate::NameColumn),
+        qSlicerExtensionsManagerModelPrivate::NameRole, QVariant(extensionName),
+        /* hits = */ 1, /* flags= */ Qt::MatchExactly | Qt::MatchWrap);
   Q_ASSERT(foundIndexes.size() < 2);
   return (foundIndexes.size() != 0);
 }
