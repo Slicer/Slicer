@@ -137,8 +137,6 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
     set(OPENSSL_CRYPTO_LIBRARY ${OPENSSL_LIBRARY_DIR}/libcrypto${CMAKE_SHARED_LIBRARY_SUFFIX})
     set(OPENSSL_SSL_LIBRARY ${OPENSSL_LIBRARY_DIR}/libssl${CMAKE_SHARED_LIBRARY_SUFFIX})
 
-    set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
-
     ExternalProject_Message(${proj} "OPENSSL_CRYPTO_LIBRARY:${OPENSSL_CRYPTO_LIBRARY}")
     ExternalProject_Message(${proj} "OPENSSL_SSL_LIBRARY:${OPENSSL_SSL_LIBRARY}")
 
@@ -253,7 +251,6 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     set(OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
     set(OPENSSL_LIBRARY_DIR "${OpenSSL_DIR}/lib")
     set(OPENSSL_EXPORT_LIBRARY_DIR "${OpenSSL_DIR}/bin")
-    set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARY_DIR}/libeay32.lib" "${OPENSSL_LIBRARY_DIR}/ssleay32.lib")
 
     set(LIB_EAY_DEBUG "${EP_SOURCE_DIR}/Debug/lib/libeay32.lib")
     set(LIB_EAY_RELEASE "${EP_SOURCE_DIR}/Release/lib/libeay32.lib")
@@ -287,9 +284,9 @@ mark_as_superbuild(
   LABELS "FIND_PACKAGE"
   )
 
+# XXX What should we do when OpenSSL is on the system or in a custom location ?
 mark_as_superbuild(
   VARS
-    OPENSSL_LIBRARIES:STRING
     OPENSSL_EXPORT_LIBRARY_DIR:PATH
   )
 
@@ -300,6 +297,12 @@ if(UNIX)
       OPENSSL_CRYPTO_LIBRARY:FILEPATH
     LABELS "FIND_PACKAGE"
     )
+  # OPENSSL_LIBRARIES
+  set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
+  mark_as_superbuild(
+    VARS
+      OPENSSL_LIBRARIES:STRING
+    )
 elseif(WIN32)
   mark_as_superbuild(
     VARS
@@ -308,6 +311,19 @@ elseif(WIN32)
       SSL_EAY_DEBUG:FILEPATH
       SSL_EAY_RELEASE:FILEPATH
     LABELS "FIND_PACKAGE"
+    )
+  # OPENSSL_LIBRARIES
+  include(SelectLibraryConfigurations)
+  set(LIB_EAY_LIBRARY_DEBUG "${LIB_EAY_DEBUG}")
+  set(LIB_EAY_LIBRARY_RELEASE "${LIB_EAY_RELEASE}")
+  set(SSL_EAY_LIBRARY_DEBUG "${SSL_EAY_DEBUG}")
+  set(SSL_EAY_LIBRARY_RELEASE "${SSL_EAY_RELEASE}")
+  select_library_configurations(LIB_EAY)
+  select_library_configurations(SSL_EAY)
+  set(OPENSSL_LIBRARIES ${SSL_EAY_LIBRARY} ${LIB_EAY_LIBRARY})
+  mark_as_superbuild(
+    VARS
+      OPENSSL_LIBRARIES:STRING
     )
 endif()
 
