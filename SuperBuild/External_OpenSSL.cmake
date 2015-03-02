@@ -26,21 +26,22 @@ endif()
 
 
 if(UNIX)
-  set(_no_openssl_libraries
-    NOT DEFINED OPENSSL_CRYPTO_LIBRARY
-    OR NOT DEFINED OPENSSL_SSL_LIBRARY
+  set(_has_openssl_libraries
+    DEFINED OPENSSL_CRYPTO_LIBRARY
+    AND DEFINED OPENSSL_SSL_LIBRARY
     )
 elseif(WIN32)
-  set(_no_openssl_libraries
-    NOT DEFINED LIB_EAY_DEBUG
-    OR NOT DEFINED LIB_EAY_RELEASE
-    OR NOT DEFINED SSL_EAY_DEBUG
-    OR NOT DEFINED SSL_EAY_RELEASE
+  set(_has_openssl_libraries
+    (DEFINED LIB_EAY_DEBUG
+    AND DEFINED SSL_EAY_DEBUG)
+    OR
+    (DEFINED LIB_EAY_RELEASE
+    AND DEFINED SSL_EAY_RELEASE)
     )
 endif()
 
-if((NOT DEFINED OPENSSL_LIBRARIES
-   OR ${_no_openssl_libraries}) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED OPENSSL_LIBRARIES
+   AND NOT (${_has_openssl_libraries}) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   #------------------------------------------------------------------------------
   if(UNIX)
