@@ -80,7 +80,9 @@ set(ENV{VS_UNICODE_OUTPUT} \"\")
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${EP_SOURCE_DIR}\")
-ExternalProject_Execute(${proj} \"configure\" sh config zlib -lzlib -L${_zlib_library_dir} shared
+ExternalProject_Execute(${proj} \"configure-zlib\" cp ${ZLIB_LIBRARY} ${_zlib_library_dir}/libz.a
+  )
+ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_library_dir} --with-zlib-include=${ZLIB_INCLUDE_DIR} threads zlib shared
   )
 ")
 
