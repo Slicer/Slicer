@@ -3,6 +3,7 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
+import EditUtil
 from EditOptions import EditOptions
 from EditorLib import EditorLib
 import LabelEffect
@@ -34,19 +35,11 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
   """
 
   def __init__(self, parent=0):
-    super(PaintEffectOptions,self).__init__(parent)
-    # option to use 'min' or 'diag'
-    # - min means pixel radius is min spacing
-    # - diag means corner to corner length
-    self.radiusPixelMode = 'min'
 
-  def __del__(self):
-    super(PaintEffectOptions,self).__del__()
-
-  def create(self):
-    super(PaintEffectOptions,self).create()
-
-    labelVolume = self.editUtil.getLabelVolume()
+    # get pixel-size-dependent parameters
+    # calculate this before calling superclass init
+    # so it can be used to set mrml defaults if needed
+    labelVolume = EditUtil.EditUtil().getLabelVolume()
     if labelVolume and labelVolume.GetImageData():
       spacing = labelVolume.GetSpacing()
       dimensions = labelVolume.GetImageData().GetDimensions()
@@ -56,6 +49,20 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     else:
       self.minimumRadius = 0.01
       self.maximumRadius = 100
+
+    super(PaintEffectOptions,self).__init__(parent)
+
+    # option to use 'min' or 'diag'
+    # - min means pixel radius is min spacing
+    # - diag means corner to corner length
+    self.radiusPixelMode = 'min'
+
+
+  def __del__(self):
+    super(PaintEffectOptions,self).__del__()
+
+  def create(self):
+    super(PaintEffectOptions,self).create()
 
     self.radiusFrame = qt.QFrame(self.frame)
     self.radiusFrame.setLayout(qt.QHBoxLayout())
@@ -138,7 +145,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.frame.layout().addStretch(1)
 
     # set the node parameters that are dependent on the input data
-    self.parameterNode.SetParameter( "PaintEffect,radius", str(self.minimumRadius * 10) )
+    # self.parameterNode.SetParameter( "PaintEffect,radius", str(self.minimumRadius * 10) )
 
   def destroy(self):
     super(PaintEffectOptions,self).destroy()
@@ -159,7 +166,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
-      ("radius", "5"),
+      ("radius", str(self.minimumRadius * 50)),
       ("sphere", "0"),
       ("smudge", "0"),
       ("pixelMode", "0"),
