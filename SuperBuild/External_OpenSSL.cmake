@@ -44,8 +44,22 @@ if((NOT DEFINED OPENSSL_LIBRARIES
 
   #------------------------------------------------------------------------------
   if(UNIX)
-    set(OpenSSL_URL http://packages.kitware.com/download/item/6172/openssl-1.0.1e.tar.gz)
-    set(OpenSSL_MD5 66bf6f10f060d561929de96f9dfe5b8c)
+
+    set(OPENSSL_DOWNLOAD_VERSION "1.0.1e" CACHE STRING "Version of OpenSSL source package to download")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1e")
+
+    set(OpenSSL_1.0.1e_URL http://packages.kitware.com/download/item/6172/openssl-1.0.1e.tar.gz)
+    set(OpenSSL_1.0.1e_MD5 66bf6f10f060d561929de96f9dfe5b8c)
+
+    if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL)
+      message(FATAL_ERROR "There is no source version of OpenSSL ${OPENSSL_DOWNLOAD_VERSION} available.
+You could either:
+ (1) disable SSL support configuring with option Slicer_USE_PYTHONQT_WITH_OPENSSL:BOOL=OFF
+ or
+ (2) configure Slicer providing your own version of OpenSSL that matches the version
+     of OpenSSL also used to compile Qt library.
+     The options to specify are OPENSSL_INCLUDE_DIR, OPENSSL_SSL_LIBRARY, OPENSSL_CRYPTO_LIBRARY.")
+    endif()
 
     #------------------------------------------------------------------------------
     set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
@@ -89,8 +103,8 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
     #------------------------------------------------------------------------------
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL ${OpenSSL_URL}
-      URL_MD5 ${OpenSSL_MD5}
+      URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL}
+      URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_MD5}
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       BUILD_IN_SOURCE 1
@@ -127,6 +141,10 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
 
   #------------------------------------------------------------------------------
   elseif(WIN32)
+
+    set(OPENSSL_DOWNLOAD_VERSION "1.0.1h" CACHE STRING "Version of OpenSSL pre-compiled package ot download.")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1h")
+
     set(_qt_version "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
 
     # Starting with Qt 4.8.6, we compiled [1] OpenSSL binaries specifically for each
@@ -153,43 +171,39 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
     # [3] http://bytes.com/topic/net/answers/505515-compile-different-versions-visual-studio
     # [4] http://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx
 
-    set(_error_msg "There is no pre-compiled version of OpenSSL available for
+    set(_error_msg "There is no pre-compiled version of OpenSSL ${OPENSSL_DOWNLOAD_VERSION} available for
 this version of visual studio [${MSVC_VERSION}]. You could either:
  (1) disable SSL support configuring with option Slicer_USE_PYTHONQT_WITH_OPENSSL:BOOL=OFF
  or
  (2) configure Slicer providing your own version of OpenSSL that matches the version
      of OpenSSL also used to compile Qt library.
-     The option to specify are OPENSSL_INCLUDE_DIR, LIB_EAY_DEBUG, LIB_EAY_RELEASE,
+     The options to specify are OPENSSL_INCLUDE_DIR, LIB_EAY_DEBUG, LIB_EAY_RELEASE,
      SSL_EAY_DEBUG and SSL_EAY_RELEASE.")
 
     #--------------------
     if(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
 
-      # OpenSSL 1.0.1h
-      if(MSVC_VERSION VERSION_EQUAL "1500")
-        set(OpenSSL_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
-        set(OpenSSL_MD5 8b110bb48063223c3b9f3a99f1fa9067)
-      elseif(MSVC_VERSION VERSION_EQUAL "1600")
-        set(OpenSSL_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
-        set(OpenSSL_MD5 e80269ae7969276977a342cccc1df5c5)
-      else()
-        message(FATAL_ERROR ${_error_msg})
-      endif()
+      # VS2008
+      set(OpenSSL_1.0.1h_1500_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
+      set(OpenSSL_1.0.1h_1500_MD5 8b110bb48063223c3b9f3a99f1fa9067)
+      # VS2010
+      set(OpenSSL_1.0.1h_1600_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
+      set(OpenSSL_1.0.1h_1600_MD5 e80269ae7969276977a342cccc1df5c5)
 
     #--------------------
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
 
-      # OpenSSL 1.0.1h
-      if(MSVC_VERSION VERSION_EQUAL "1500")
-        set(OpenSSL_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
-        set(OpenSSL_MD5 dab0c026ab56fd0fbfe2843d14218fad)
-      else(MSVC_VERSION VERSION_EQUAL "1600")
-        set(OpenSSL_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
-        set(OpenSSL_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
-      else()
-        message(FATAL_ERROR ${_error_msg})
-      endif()
+      # VS2008
+      set(OpenSSL_1.0.1h_1500_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
+      set(OpenSSL_1.0.1h_1500_MD5 dab0c026ab56fd0fbfe2843d14218fad)
+      # VS2010
+      set(OpenSSL_1.0.1h_1600_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
+      set(OpenSSL_1.0.1h_1600_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
 
+    endif()
+
+    if(NOT DEFINED OpenSSL_${DOWNLOAD_VERSION}_${MSVC_VERSION}_URL)
+      message(FATAL_ERROR ${_error_msg})
     endif()
 
     #------------------------------------------------------------------------------
@@ -197,8 +211,8 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL ${OpenSSL_URL}
-      URL_MD5 ${OpenSSL_MD5}
+      URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL}
+      URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_MD5}
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       CONFIGURE_COMMAND ""
@@ -240,6 +254,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
     )
 
+  ExternalProject_Message(${proj} "OpenSSL ${OPENSSL_DOWNLOAD_VERSION}")
   ExternalProject_Message(${proj} "OPENSSL_LIBRARY_DIR:${OPENSSL_LIBRARY_DIR}")
   ExternalProject_Message(${proj} "OPENSSL_EXPORT_LIBRARY_DIR:${OPENSSL_EXPORT_LIBRARY_DIR}")
 else()
