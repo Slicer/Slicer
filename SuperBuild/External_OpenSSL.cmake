@@ -232,8 +232,8 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
     ExternalProject_Add(${proj}
       ${${proj}_EP_ARGS}
-      URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL}
-      URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_MD5}
+      URL ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_${MSVC_VERSION}_URL}
+      URL_MD5 ${OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_${MSVC_VERSION}_MD5}
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
       SOURCE_DIR ${EP_SOURCE_DIR}
       CONFIGURE_COMMAND ""
