@@ -45,6 +45,24 @@ if(NOT APPLE)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallLibArchive.cmake)
   endif()
   include(InstallRequiredSystemLibraries)
+
+  # XXX: Remove this once CMake minimum version has been updated.
+  #      See Slicer issue #3972 and CMake issue #15428
+  if(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+    if(NOT CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP)
+      if(NOT CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION)
+        if(WIN32)
+          set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION bin)
+        else()
+          set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION lib)
+        endif()
+      endif()
+      install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+        DESTINATION ${CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION}
+        COMPONENT RuntimeLibraries)
+    endif()
+  endif()
+
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallCMakeProjects.cmake)
 
 else()
