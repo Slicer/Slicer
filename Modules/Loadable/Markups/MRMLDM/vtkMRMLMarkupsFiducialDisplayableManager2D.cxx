@@ -793,10 +793,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
 
               if (handleRep)
                 {
-#if (VTK_MAJOR_VERSION >= 6)
-                handleRep->DisablePicking();
-#endif
-
                 vtkNew<vtkMarkupsGlyphSource2D> glyphSource;
                 glyphSource->SetGlyphType(glyphType);
                 glyphSource->SetScale(glyphScale);
@@ -884,9 +880,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
     }
   else if (pointHandleRep)
     {
-#if (VTK_MAJOR_VERSION >= 6)
-    pointHandleRep->DisablePicking();
-#endif
     // set the glyph type - TBD, swapping isn't working
     // set the color
     if (fiducialNode->GetNthFiducialSelected(n))
