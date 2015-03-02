@@ -223,7 +223,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
     endif()
 
-    if(NOT DEFINED OpenSSL_${DOWNLOAD_VERSION}_${MSVC_VERSION}_URL)
+    if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_${MSVC_VERSION}_URL)
       message(FATAL_ERROR ${_error_msg})
     endif()
 
