@@ -196,10 +196,10 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
       # OpenSSL 1.0.1l
       # VS2008
-      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7806/OpenSSL_1_0_1l-install-msvc1500-32.tar.gz)
+      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7689/OpenSSL_1_0_1l-install-msvc1500-32.tar.gz)
       set(OpenSSL_1.0.1l_1500_MD5 85218e0ea7bd15457f66cc04170560d5)
       # VS2010
-      set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7809/OpenSSL_1_0_1l-install-msvc1600-32.tar.gz)
+      set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7692/OpenSSL_1_0_1l-install-msvc1600-32.tar.gz)
       set(OpenSSL_1.0.1l_1600_MD5 3f756fc731fb95f919ea24f2ec979732)
 
     #--------------------
@@ -215,7 +215,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
 
       # OpenSSL 1.0.1l
       # VS2008
-      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7803/OpenSSL_1_0_1l-install-msvc1500-64.tar.gz)
+      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7686/OpenSSL_1_0_1l-install-msvc1500-64.tar.gz)
       set(OpenSSL_1.0.1l_1500_MD5 ce819931504f8e7c5d9024215b2cc9cf)
       # VS2010
       set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7700/OpenSSL_1_0_1l-install-msvc1600-64.tar.gz)
