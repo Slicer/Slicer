@@ -46,10 +46,13 @@ if((NOT DEFINED OPENSSL_LIBRARIES
   if(UNIX)
 
     set(OPENSSL_DOWNLOAD_VERSION "1.0.1e" CACHE STRING "Version of OpenSSL source package to download")
-    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1e")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1e" "1.0.1l")
 
     set(OpenSSL_1.0.1e_URL http://packages.kitware.com/download/item/6172/openssl-1.0.1e.tar.gz)
     set(OpenSSL_1.0.1e_MD5 66bf6f10f060d561929de96f9dfe5b8c)
+
+    set(OpenSSL_1.0.1l_URL http://packages.kitware.com/download/item/7669/openssl-1.0.1l.tar.gz)
+    set(OpenSSL_1.0.1l_MD5 cdb22925fc9bc97ccbf1e007661f2aa6)
 
     if(NOT DEFINED OpenSSL_${OPENSSL_DOWNLOAD_VERSION}_URL)
       message(FATAL_ERROR "There is no source version of OpenSSL ${OPENSSL_DOWNLOAD_VERSION} available.
@@ -143,7 +146,7 @@ ExternalProject_Execute(${proj} \"configure\" sh config --with-zlib-lib=${_zlib_
   elseif(WIN32)
 
     set(OPENSSL_DOWNLOAD_VERSION "1.0.1h" CACHE STRING "Version of OpenSSL pre-compiled package ot download.")
-    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1h")
+    set_property(CACHE OPENSSL_DOWNLOAD_VERSION PROPERTY STRINGS "1.0.1h" "1.0.1l")
 
     set(_qt_version "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
 
@@ -183,6 +186,7 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
     #--------------------
     if(CMAKE_SIZEOF_VOID_P EQUAL 4) # 32-bit
 
+      # OpenSSL 1.0.1h
       # VS2008
       set(OpenSSL_1.0.1h_1500_URL http://packages.kitware.com/download/item/6093/OpenSSL_1_0_1h-install-msvc1500-32.tar.gz)
       set(OpenSSL_1.0.1h_1500_MD5 8b110bb48063223c3b9f3a99f1fa9067)
@@ -190,15 +194,32 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       set(OpenSSL_1.0.1h_1600_URL http://packages.kitware.com/download/item/6096/OpenSSL_1_0_1h-install-msvc1600-32.tar.gz)
       set(OpenSSL_1.0.1h_1600_MD5 e80269ae7969276977a342cccc1df5c5)
 
+      # OpenSSL 1.0.1l
+      # VS2008
+      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7806/OpenSSL_1_0_1l-install-msvc1500-32.tar.gz)
+      set(OpenSSL_1.0.1l_1500_MD5 85218e0ea7bd15457f66cc04170560d5)
+      # VS2010
+      set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7809/OpenSSL_1_0_1l-install-msvc1600-32.tar.gz)
+      set(OpenSSL_1.0.1l_1600_MD5 3f756fc731fb95f919ea24f2ec979732)
+
     #--------------------
     elseif(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
 
+      # OpenSSL 1.0.1h
       # VS2008
       set(OpenSSL_1.0.1h_1500_URL http://packages.kitware.com/download/item/6090/OpenSSL_1_0_1h-install-msvc1500-64.tar.gz)
       set(OpenSSL_1.0.1h_1500_MD5 dab0c026ab56fd0fbfe2843d14218fad)
       # VS2010
       set(OpenSSL_1.0.1h_1600_URL http://packages.kitware.com/download/item/6099/OpenSSL_1_0_1h-install-msvc1600-64.tar.gz)
       set(OpenSSL_1.0.1h_1600_MD5 b54a0a4b396397fdf96e55f0f7345dd1)
+
+      # OpenSSL 1.0.1l
+      # VS2008
+      set(OpenSSL_1.0.1l_1500_URL http://packages.kitware.com/download/item/7803/OpenSSL_1_0_1l-install-msvc1500-64.tar.gz)
+      set(OpenSSL_1.0.1l_1500_MD5 ce819931504f8e7c5d9024215b2cc9cf)
+      # VS2010
+      set(OpenSSL_1.0.1l_1600_URL http://packages.kitware.com/download/item/7700/OpenSSL_1_0_1l-install-msvc1600-64.tar.gz)
+      set(OpenSSL_1.0.1l_1600_MD5 07d259e1a467d9c7a7d9cddfd77e8915)
 
     endif()
 
