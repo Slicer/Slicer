@@ -105,7 +105,19 @@ int SlicerAppMain(int argc, char* argv[])
 #endif
 #endif
 
-  QCoreApplication::setApplicationName("Slicer");
+
+  // Allow a custom appliction name so that the settings
+  // can be distinct for differently named applications
+  QString applicationName("Slicer");
+  if (argv[0])
+    {
+    char *p = strrchr(argv[0], '/');
+    applicationName = QString::fromLocal8Bit(p ? p + 1 : argv[0]);
+    applicationName.remove(QString("App-real"));
+    qDebug() << "applicationName: " << applicationName;
+    }
+  QCoreApplication::setApplicationName(applicationName);
+
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
