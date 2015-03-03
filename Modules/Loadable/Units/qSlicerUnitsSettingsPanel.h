@@ -67,7 +67,6 @@ signals:
 
 protected slots:
   void onUnitsLogicModified();
-  void onNodeIDChanged(const QString& id);
   void setQuantities(const QStringList& quantities);
   void updateFromSelectionNode();
   void showAll(bool showAll);

@@ -103,8 +103,6 @@ void qSlicerUnitsSettingsPanelPrivate
 ::registerProperties(QString quantity, qMRMLSettingsUnitWidget* unitWidget)
 {
   Q_Q(qSlicerUnitsSettingsPanel);
-  q->connect(unitWidget->unitComboBox(), SIGNAL(currentNodeIDChanged(QString)),
-    q, SLOT(onNodeIDChanged(QString)));
 
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 
@@ -266,21 +264,6 @@ QStringList qSlicerUnitsSettingsPanel::quantities()
 {
   Q_D(qSlicerUnitsSettingsPanel);
   return d->Quantities.keys();
-}
-
-// --------------------------------------------------------------------------
-void qSlicerUnitsSettingsPanel::onNodeIDChanged(const QString& id)
-{
-  Q_D(qSlicerUnitsSettingsPanel);
-  if (d->Logic)
-    {
-    qMRMLNodeComboBox* sender =
-      qobject_cast<qMRMLNodeComboBox*>(QObject::sender());
-    Q_ASSERT(sender);
-
-    QString quantity = sender->property("Quantity").toString();
-    d->Logic->SetDefaultUnit(quantity.toLatin1(), id.toLatin1());
-    }
 }
 
 // --------------------------------------------------------------------------
