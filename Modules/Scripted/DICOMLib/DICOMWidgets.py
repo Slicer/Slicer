@@ -1,4 +1,4 @@
-import os, glob, sys
+import os, glob, sys, copy
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
@@ -511,6 +511,22 @@ class DICOMDetailsPopup(object):
 
     return (loadablesByPlugin,loadEnabled)
 
+  def isFileListInCheckedLoadables(self,fileList):
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        if len(loadable.files) != len(fileList):
+          continue
+        inputFileListCopy = copy.deepcopy(fileList)
+        loadableFileListCopy = copy.deepcopy(loadable.files)
+        inputFileListCopy.sort()
+        loadableFileListCopy.sort()
+        for pair in zip(inputFileListCopy,loadableFileListCopy):
+          if pair[0] != pair[1]:
+            print(pair[0]+' != '+pair[1])
+            continue
+        return True
+    return False
+
   def loadCheckedLoadables(self):
     """Invoke the load method on each plugin for the loadable
     (DICOMLoadable or qSlicerDICOMLoadable) instances that are selected"""
@@ -530,7 +546,7 @@ class DICOMDetailsPopup(object):
             instanceFile = slicer.dicomDatabase.fileForInstance(instance)
             if instanceFile != '':
               instanceFileList.append(instanceFile)
-          if len(instanceFileList):
+          if len(instanceFileList) and not self.isFileListInCheckedLoadables(instanceFileList):
             referencedFileLists.append(instanceFileList)
 
     # if applicable, find all loadables from the file lists
@@ -540,23 +556,30 @@ class DICOMDetailsPopup(object):
 
     self.referencesDialog = None
     if loadEnabled:
-      print('Loadables identified from the referenced files: '+str(self.referencedLoadables))
       self.referencesDialog = qt.QDialog(self.window)
-      self.referencesDialog.modal = False
+      self.referencesDialog.modal = True
       layout = qt.QFormLayout()
       self.referencesDialog.setLayout(layout)
-      self.referencesDialog.setWindowTitle("Select referenced items to load")
+      windowTitle = "Referenced datasets found"
+      self.referencesDialog.setWindowTitle(windowTitle)
+      fm = qt.QFontMetrics(qt.QApplication.font(self.referencesDialog))
+      self.referencesDialog.setMinimumWidth(fm.width(windowTitle)+50)
+      label = qt.QLabel("The loaded DICOM objects contain references to other "
+      "datasets you did not select for loading. Please confirm if you would "
+      "like to load the following referenced datasets.")
+      label.wordWrap = True
+      layout.addRow(label)
       for plugin in self.referencedLoadables:
         for loadable in self.referencedLoadables[plugin]:
           if loadable.selected:
             cb = qt.QCheckBox(self.referencesDialog)
             cb.checked = True
             layout.addRow(cb, qt.QLabel(loadable.name))
-            print('Added loadable '+loadable.name+' to the dialog')
-      okButton = qt.QPushButton('Done')
-      okButton.connect("clicked()", self.proceedWithReferencedLoadablesSelection)
+      okButton = qt.QPushButton('Proceed')
+      okButton.connect("clicked()",self.proceedWithReferencedLoadablesSelection)
       layout.addRow(okButton)
       self.referencesDialog.show()
+      self.referencesDialog.adjustSize()
     else:
       self.proceedWithReferencedLoadablesSelection()
 
@@ -573,7 +596,7 @@ class DICOMDetailsPopup(object):
       for plugin in self.referencedLoadables:
         for loadable in self.referencedLoadables[plugin]:
           if loadable.selected:
-            if children[loadableCnt+1].checked:
+            if children[loadableCnt+2].checked:
               self.loadablesByPlugin[plugin].append(loadable)
 
       self.referencesDialog.close()
