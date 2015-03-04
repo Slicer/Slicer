@@ -896,6 +896,9 @@ class SliceAnnotations(object):
       scalarBar.SetLookupTable(lut2)
 
   def makeDicomAnnotation(self,bgUid,fgUid):
+    # Do not attempt to retrieve dicom values if no local database exists
+    if not slicer.dicomDatabase:
+      return
     viewHeight = self.sliceViews[self.currentSliceViewName].height
     if fgUid != None and bgUid != None:
       backgroundDicomDic = self.extractDICOMValues(bgUid)
