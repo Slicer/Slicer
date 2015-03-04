@@ -559,6 +559,7 @@ class DICOMDetailsPopup(object):
       self.referencesDialog = qt.QDialog(self.window)
       self.referencesDialog.modal = True
       layout = qt.QFormLayout()
+      layout.setSpacing(9)
       self.referencesDialog.setLayout(layout)
       windowTitle = "Referenced datasets found"
       self.referencesDialog.setWindowTitle(windowTitle)
