@@ -208,7 +208,6 @@ signals:
   void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode * newActiveMRMLChartViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
   void activeChartRendererChanged(vtkRenderer* newRenderer);
-  void sliceWidgetCreated(qMRMLSliceWidget* sliceWidget);
   void layoutChanged(int);
 
 protected:
@@ -216,10 +215,6 @@ protected:
   qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* viewport, QObject* parent);
 
   virtual void onViewportChanged();
-  //virtual void setupView(QDomElement viewElement, QWidget* view);
-  //virtual QWidget* viewFromXML(QDomElement layoutElement);
-  /// Reimplemented to support
-  ///virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
   using ctkLayoutManager::setLayout;
 private:

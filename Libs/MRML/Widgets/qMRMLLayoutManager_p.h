@@ -87,15 +87,8 @@ public:
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
   void setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node);
 
-  /// Instantiate a slice viewer corresponding to \a sliceViewName
-  //virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
-
   /// Delete slice viewer associated with \a sliceNode
   void removeSliceView(vtkMRMLSliceNode* sliceNode);
-
-  /// Instantiate a 3D Viewer corresponding to \a viewNode
-  //virtual qMRMLThreeDWidget* createThreeDWidget(vtkMRMLViewNode* viewNode);
-  //virtual qMRMLChartWidget* createChartWidget(vtkMRMLChartViewNode* viewNode);
 
   /// Delete 3D Viewer associated with \a viewNode
   void removeThreeDWidget(vtkMRMLViewNode* viewNode);
@@ -111,11 +104,7 @@ public:
 
   void setLayoutNumberOfCompareViewRowsInternal(int num);
   void setLayoutNumberOfCompareViewColumnsInternal(int num);
-/*
-  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement)const;
-  vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement)const;
-  vtkMRMLLayoutLogic::ViewProperty propertyFromXML(QDomElement propertyElement)const;
-*/
+
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.
   qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
@@ -156,9 +145,6 @@ public:
   int                     SavedCurrentViewArrangement;
   QGridLayout*            GridLayout;
   QWidget*                TargetWidget;
-  //QButtonGroup*           SliceControllerButtonGroup;
-  //vtkCollection*          MRMLSliceLogics;
-  //vtkMRMLColorLogic*      MRMLColorLogic;
 
   QList<qMRMLThreeDWidget*>         ThreeDWidgetList;
   QList<qMRMLChartWidget*>          ChartWidgetList;
