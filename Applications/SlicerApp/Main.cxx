@@ -57,6 +57,7 @@
 
 // VTK includes
 //#include <vtkObject.h>
+#include <vtksys/SystemTools.hxx>
 
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
 # include <windows.h>
@@ -111,8 +112,8 @@ int SlicerAppMain(int argc, char* argv[])
   QString applicationName("Slicer");
   if (argv[0])
     {
-    char *p = strrchr(argv[0], '/');
-    applicationName = QString::fromLocal8Bit(p ? p + 1 : argv[0]);
+    std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv[0]);
+    applicationName = QString::fromLocal8Bit(name.c_str());
     applicationName.remove(QString("App-real"));
     qDebug() << "applicationName: " << applicationName;
     }
