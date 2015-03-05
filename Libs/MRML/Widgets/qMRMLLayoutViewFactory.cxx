@@ -387,6 +387,7 @@ void qMRMLLayoutViewFactory::onSceneModified()
 // --------------------------------------------------------------------------
 QWidget* qMRMLLayoutViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
+  Q_UNUSED(viewNode);
   return 0;
 }
 
