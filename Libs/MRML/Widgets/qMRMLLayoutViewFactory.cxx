@@ -254,7 +254,7 @@ void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
 QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
 {
   Q_D(const qMRMLLayoutViewFactory);
-  return this->registeredViews().value(id, 0);
+  return d->Views.values().at(id);
 }
 
 //------------------------------------------------------------------------------
