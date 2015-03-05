@@ -1397,8 +1397,12 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
       const std::string& singletonTag = it->second;
       viewNode->SetLayoutName(singletonTag.c_str());
       }
-    std::string name = std::string("View");
-    name += std::string(viewNode->GetLayoutName());
+    std::string name = std::string(viewNode->GetLayoutName());
+    // Maintain backward compatibility
+    if (!viewNode->IsA("vtkMRMLSliceNode") && !viewNode->IsA("vtkMRMLChartViewNode"))
+      {
+      name = std::string("View") + name;
+      }
     viewNode->SetName(name.c_str());
     }
   return node;
