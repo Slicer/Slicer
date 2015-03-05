@@ -45,6 +45,9 @@ public:
 signals:
   void selectModule(const QString& moduleName);
 
+protected Q_SLOTS:
+  void onSliceViewCreated(QWidget* view);
+
 private:
   Q_DECLARE_PRIVATE(qSlicerLayoutManager);
   Q_DISABLE_COPY(qSlicerLayoutManager);

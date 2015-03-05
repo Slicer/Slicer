@@ -106,6 +106,8 @@ set(MRMLWidgets_SRCS
   qMRMLLayoutManager.cxx
   qMRMLLayoutManager.h
   qMRMLLayoutManager_p.h
+  qMRMLLayoutViewFactory.cxx
+  qMRMLLayoutViewFactory.h
   qMRMLLayoutWidget.cxx
   qMRMLLayoutWidget.h
   qMRMLLinearTransformSlider.cxx
@@ -238,6 +240,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLLabelComboBox.h
   qMRMLLayoutManager.h
   qMRMLLayoutManager_p.h
+  qMRMLLayoutViewFactory.h
   qMRMLLayoutWidget.h
   qMRMLLinearTransformSlider.h
   qMRMLListWidget.h

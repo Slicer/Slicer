@@ -56,7 +56,7 @@ class qSlicerLayoutManagerPrivate: public qMRMLLayoutManagerPrivate
 public:
   qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
   /// Instantiate a slice viewer corresponding to \a sliceViewName
-  virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
+  //virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
 
 public:
   QString            ScriptedDisplayableManagerDirectory;
@@ -67,12 +67,13 @@ qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qSlicerLayoutManager& o
   : qMRMLLayoutManagerPrivate(object)
 {
 }
-
+/*
 // --------------------------------------------------------------------------
 QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNode)
 {
   return this->qMRMLLayoutManagerPrivate::createSliceWidget(sliceNode);
 }
+*/
 
 //------------------------------------------------------------------------------
 // qSlicerLayoutManager methods
@@ -81,6 +82,9 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
 qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget)
   : qMRMLLayoutManager(new qSlicerLayoutManagerPrivate(*this), widget, widget)
 {
+  Q_D(qSlicerLayoutManager);
+  QObject::connect(this->mrmlViewFactory("vtkMRMLSliceNode"), SIGNAL(viewCreated(QWidget*)),
+                   this, SLOT(onSliceViewCreated(QWidget*)));
 }
 
 //------------------------------------------------------------------------------
@@ -120,4 +124,47 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
 void qSlicerLayoutManager::setCurrentModule(const QString& moduleName)
 {
   emit this->selectModule(moduleName);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerLayoutManager::onSliceViewCreated(QWidget* view)
+{
+  Q_D(qSlicerLayoutManager);
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(view);
+  Q_ASSERT(sliceWidget);
+
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(
+    this->mrmlViewFactory("vtkMRMLSliceNode")->viewNode(sliceWidget));
+
+  /// \tbd move the following code into the python manager ?
+#ifdef Slicer_USE_PYTHONQT_WITH_TCL
+  bool disablePython = qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython);
+  if (!disablePython)
+    {
+    QString sliceLayoutName(sliceNode->GetLayoutName());
+    // Note: Python code shouldn't be added to the layout manager itself !
+    // TODO: move this functionality to the scripted displayable manager...
+
+    // Register this slice view with the python layer
+    qSlicerPythonManager *py = qSlicerApplication::application()->pythonManager();
+    py->executeString(QString("slicer.sliceWidget%1 = _sliceWidget()").arg(sliceLayoutName));
+
+    QString pythonInstanceName = QString("slicer.sliceWidget%1_%2");
+
+    py->addVTKObjectToPythonMain(
+      pythonInstanceName.arg(sliceLayoutName, "sliceLogic"),
+      sliceWidget->sliceController()->sliceLogic());
+
+    py->addVTKObjectToPythonMain(
+      pythonInstanceName.arg(sliceLayoutName, "interactorStyle"),
+      sliceWidget->interactorStyle());
+
+    py->addVTKObjectToPythonMain(
+      pythonInstanceName.arg(sliceLayoutName, "cornerAnnotation"),
+      sliceWidget->overlayCornerAnnotation());
+
+    //qDebug() << QString("qSlicerLayoutManagerPrivate::createSliceWidget - "
+    //                    "%1 registered with python").arg(sliceLayoutName);
+    }
+#endif
 }
