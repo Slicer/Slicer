@@ -409,6 +409,13 @@ endif()
 
 set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
+if(WIN32)
+  option(Slicer_BUILD_WIN32_CONSOLE "Build ${PROJECT_NAME} executable as a console app on windows (allows debug output)" ON)
+else()
+  set(Slicer_BUILD_WIN32_CONSOLE OFF)
+endif()
+mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE:BOOL)
+
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------

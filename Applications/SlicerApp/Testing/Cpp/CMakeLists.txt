@@ -1,4 +1,4 @@
-set(KIT ${KIT_LIBRARY_NAME})
+set(KIT ${APPLIB_NAME})
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer_BUILD_CLI_SUPPORT)
@@ -69,7 +69,7 @@ simple_test( qSlicerModuleFactoryManagerTest1 )
 if(Slicer_HAS_CONSOLE_IO_SUPPORT)
   add_test(
     NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}>
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
     ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
     )
   set_tests_properties(
