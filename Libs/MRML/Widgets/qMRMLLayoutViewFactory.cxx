@@ -345,7 +345,6 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
     return;
     }
   QWidget* viewWidget = this->createViewFromNode(node);
-  Q_ASSERT(viewWidget);
   if (!viewWidget)
     { // the factory can not create such view, then do nothing about it
     return;

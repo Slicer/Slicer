@@ -64,7 +64,7 @@ QString qMRMLLayoutThreeDViewFactory::viewClassName()const
 QWidget* qMRMLLayoutThreeDViewFactory
 ::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  if (!viewNode || !this->layoutManager())
+  if (!viewNode || !this->layoutManager() || !this->layoutManager()->viewport())
     {
     Q_ASSERT(viewNode);
     return 0;
@@ -116,7 +116,7 @@ void qMRMLLayoutChartViewFactory::setColorLogic(vtkMRMLColorLogic* colorLogic)
 //------------------------------------------------------------------------------
 QWidget* qMRMLLayoutChartViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  if (!this->layoutManager() || !viewNode)
+  if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
     {
     Q_ASSERT(viewNode);
     return 0;
@@ -199,7 +199,7 @@ void qMRMLLayoutSliceViewFactory::setSliceLogics(vtkCollection* sliceLogics)
 // --------------------------------------------------------------------------
 QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* viewNode)
 {
-  if (!this->layoutManager() || !viewNode)
+  if (!this->layoutManager() || !viewNode || !this->layoutManager()->viewport())
     {// can't create a slice widget if there is no parent widget
     Q_ASSERT(viewNode);
     return 0;
@@ -619,6 +619,11 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* vtkNotUsed(
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::updateLayoutFromMRMLScene()
 {
+  Q_Q(qMRMLLayoutManager);
+  foreach(qMRMLLayoutViewFactory* viewFactory, q->mrmlViewFactories())
+    {
+    viewFactory->onSceneModified();
+    }
   this->setMRMLLayoutNode(this->MRMLLayoutLogic->GetLayoutNode());
 }
 
