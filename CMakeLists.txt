@@ -525,6 +525,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkRenderingQt
     vtkRenderingVolume${Slicer_VTK_RENDERING_BACKEND}
     vtkTestingRendering
+    vtkViewsQt
     vtkzlib
     )
   if(Slicer_USE_PYTHONQT)
