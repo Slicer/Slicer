@@ -112,7 +112,7 @@ protected:
     Superclass::OnNodeReferenceAdded(reference);
     if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
       {
-      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
+      this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
       }
   }
 
@@ -123,7 +123,7 @@ protected:
     Superclass::OnNodeReferenceModified(reference);
     if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
     {
-      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
+      this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
     }
   }
 
@@ -134,7 +134,7 @@ protected:
     Superclass::OnNodeReferenceRemoved(reference);
     if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
     {
-      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
+      this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencedNode);
     }
   }
 

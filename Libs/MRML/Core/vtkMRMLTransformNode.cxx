@@ -51,8 +51,6 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
   this->TransformToParent=NULL;
   this->TransformFromParent=NULL;
   this->ReadAsTransformToParent=0;
-  this->DisableTransformModifiedEvent=0;
-  this->TransformModifiedEventPending=0;
 
   this->CachedMatrixTransformToParent=vtkMatrix4x4::New();
   this->CachedMatrixTransformFromParent=vtkMatrix4x4::New();
@@ -80,7 +78,6 @@ void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 {
-  int disabledTransformModify = this->StartTransformModify();
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
@@ -108,7 +105,6 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
     }
 
   this->EndModify(disabledModify);
-  this->EndTransformModify(disabledTransformModify);
 }
 
 //---------------------------------------------------------------------------
@@ -254,7 +250,6 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 {
-  int disabledTransformModify = this->StartTransformModify();
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
@@ -289,7 +284,6 @@ void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
   this->TransformModified();
 
   this->EndModify(disabledModify);
-  this->EndTransformModify(disabledTransformModify);
 }
 
 //----------------------------------------------------------------------------
@@ -1011,7 +1005,6 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
 
   // Temporarily disable all Modified and TransformModified events to make sure that
   // the operations are performed without interruption.
-  int disabledTransformModify = this->StartTransformModify();
   int disabledModify = this->StartModify();
 
   vtkSetAndObserveMRMLObjectMacro((*originalTransformPtr), transform);
@@ -1023,7 +1016,6 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
   this->TransformModified();
 
   this->EndModify(disabledModify);
-  this->EndTransformModify(disabledTransformModify);
 }
 
 //----------------------------------------------------------------------------
@@ -1366,7 +1358,6 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 
   // Temporarily disable all Modified and TransformModified events to make sure that
   // the operations are performed without interruption.
-  int oldTransformModify=this->StartTransformModify();
   int oldModify=this->StartModify();
 
   vtkTransform* currentTransform = NULL;
@@ -1405,7 +1396,6 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 
   this->TransformToParent->Modified();
   this->EndModify(oldModify);
-  this->EndTransformModify(oldTransformModify);
   return 1;
 }
 

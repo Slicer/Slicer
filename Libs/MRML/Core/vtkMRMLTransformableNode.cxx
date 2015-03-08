@@ -135,7 +135,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode == caller)
     {
-    this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+    this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
     }
 }
 

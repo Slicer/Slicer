@@ -346,11 +346,7 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
   this->Locked = locked;
 
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    // invoke a lock modified event
-    this->InvokeEvent(vtkMRMLMarkupsNode::LockModifiedEvent);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LockModifiedEvent);
 //  this->ModifiedSinceReadOn();
 }
 
@@ -480,10 +476,7 @@ int vtkMRMLMarkupsNode::AddMarkup(Markup markup)
   int markupIndex = this->GetNumberOfMarkups() - 1;
 
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
   return markupIndex;
 }
 
@@ -521,10 +514,7 @@ int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label)
   markupIndex = this->GetNumberOfMarkups() - 1;
 
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
 
   return markupIndex;
 }
@@ -552,10 +542,7 @@ int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point, std::string label
   markupIndex = this->Markups.size() - 1;
 
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
 
   return markupIndex;
 }
@@ -655,10 +642,7 @@ void vtkMRMLMarkupsNode::RemoveMarkup(int m)
     this->Markups.erase(this->Markups.begin() + m);
 
     this->Modified();
-    if (!this->GetDisableModifiedEvent())
-      {
-      this->InvokeEvent(vtkMRMLMarkupsNode::MarkupRemovedEvent, (void*)&m);
-      }
+    this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupRemovedEvent, (void*)&m);
     }
 }
 
@@ -697,10 +681,7 @@ bool vtkMRMLMarkupsNode::InsertMarkup(Markup m, int targetIndex)
 
   // let observers know that a markup was added
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&targetIndex);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&targetIndex);
 
   return true;
 }
@@ -755,11 +736,8 @@ void vtkMRMLMarkupsNode::SwapMarkups(int m1, int m2)
 
   // and let listeners know that two markups have changed
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&m1);
-    this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&m2);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&m1);
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&m2);
 }
 
 //-----------------------------------------------------------
@@ -802,10 +780,7 @@ void vtkMRMLMarkupsNode::SetMarkupPoint(const int markupIndex, const int pointIn
     }
   // throw an event to let listeners know the position has changed
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    this->InvokeEvent(vtkMRMLMarkupsNode::PointModifiedEvent, (void*)&markupIndex);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointModifiedEvent, (void*)&markupIndex);
 }
 
 //-----------------------------------------------------------
@@ -1051,10 +1026,7 @@ void vtkMRMLMarkupsNode::SetNthMarkupSelected(int n, bool flag)
         markup->Selected = flag;
         int markupIndex = n;
         this->Modified();
-        if (!this->GetDisableModifiedEvent())
-          {
-          this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
-          }
+        this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
         }
       }
     }
@@ -1087,11 +1059,7 @@ void vtkMRMLMarkupsNode::SetNthMarkupLocked(int n, bool flag)
         markup->Locked = flag;
         int markupIndex = n;
         this->Modified();
-        if (!this->GetDisableModifiedEvent())
-          {
-          this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent,
-                            (void*)&markupIndex);
-          }
+        this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
         }
       }
     }
@@ -1124,10 +1092,7 @@ void vtkMRMLMarkupsNode::SetNthMarkupVisibility(int n, bool flag)
         markup->Visibility = flag;
         int markupIndex = n;
         this->Modified();
-        if (!this->GetDisableModifiedEvent())
-          {
-          this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
-          }
+        this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
         }
       }
     }
@@ -1160,10 +1125,7 @@ void vtkMRMLMarkupsNode::SetNthMarkupLabel(int n, std::string label)
         markup->Label = label;
         int markupIndex = n;
         this->Modified();
-        if (!this->GetDisableModifiedEvent())
-          {
-          this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
-          }
+        this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
         }
       }
     }
@@ -1196,10 +1158,7 @@ void vtkMRMLMarkupsNode::SetNthMarkupDescription(int n, std::string description)
         markup->Description = description;
         int markupIndex = n;
         this->Modified();
-        if (!this->GetDisableModifiedEvent())
-          {
-          this->InvokeEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
-          }
+        this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
         }
       }
     }
@@ -1471,11 +1430,7 @@ void vtkMRMLMarkupsNode::SetMarkupLabelFormat(std::string format)
   this->MarkupLabelFormat = format;
 
   this->Modified();
-  if (!this->GetDisableModifiedEvent())
-    {
-    // invoke a label format modified event
-    this->InvokeEvent(vtkMRMLMarkupsNode::LabelFormatModifiedEvent);
-    }
+  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LabelFormatModifiedEvent);
 }
 
 //---------------------------------------------------------------------------

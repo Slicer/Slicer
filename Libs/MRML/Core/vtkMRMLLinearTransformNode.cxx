@@ -76,7 +76,6 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 {
   // Temporarily disable all Modified and TransformModified events to make sure that
   // the operations are performed without interruption.
-  int oldTransformModify=this->StartTransformModify();
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
@@ -143,7 +142,6 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 
     }
   this->EndModify(disabledModify);
-  this->EndTransformModify(oldTransformModify);
 }
 
 //----------------------------------------------------------------------------

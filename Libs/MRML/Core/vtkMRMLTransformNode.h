@@ -209,82 +209,12 @@ public:
   vtkBooleanMacro(ReadAsTransformToParent, int);
 
   ///
-  /// Start modifying the transform in the node.
-  /// Disable vtkMRMLTransformableNode::TransformModifiedEvent events.
-  /// Returns the previous state of DisableTransformModifiedEvent flag
-  /// that should be passed to EndTransformModify() method
-  virtual int StartTransformModify()
-    {
-    int disabledTransformModify = this->GetDisableTransformModifiedEvent();
-    this->DisableTransformModifiedEventOn();
-    return disabledTransformModify;
-    };
-
-  ///
-  /// End modifying the transform in the node.
-  /// Enable vtkMRMLTransformableNode::TransformModifiedEvent events if the
-  /// previous state of DisableTransformModifiedEvent flag is 0.
-  /// Return the number of pending events (even if
-  /// InvokePendingTransformModifiedEvent is not called).
-  virtual int EndTransformModify(int previousDisableTransformModifiedEventState)
-    {
-    this->SetDisableTransformModifiedEvent(previousDisableTransformModifiedEventState);
-    if (!previousDisableTransformModifiedEventState)
-      {
-      return this->InvokePendingTransformModifiedEvent();
-      }
-    return this->TransformModifiedEventPending;
-    };
-
-  ///
-  /// Turn on/off generating InvokeEvent for transformation changes
-  vtkGetMacro(DisableTransformModifiedEvent, int);
-  void SetDisableTransformModifiedEvent(int onOff)
-    {
-    this->DisableTransformModifiedEvent = onOff;
-    }
-  void DisableTransformModifiedEventOn()
-    {
-    this->SetDisableTransformModifiedEvent(1);
-    }
-  void DisableTransformModifiedEventOff()
-    {
-    this->SetDisableTransformModifiedEvent(0);
-    }
-
-  /// Count of pending modified events
-  vtkGetMacro(TransformModifiedEventPending, int);
-
-  ///
   /// Indicates that the transform inside the object is modified.
   /// Typical usage would be to disable transform modified events, call a series of operations that change transforms
   /// and then re-enable transform modified events to invoke any pending notifications.
   virtual void TransformModified()
     {
-    if (!this->GetDisableTransformModifiedEvent())
-      {
-      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
-      }
-    else
-      {
-      ++this->TransformModifiedEventPending;
-      }
-    }
-
-  ///
-  /// Invokes any transform modified events that are 'pending', meaning they were generated
-  /// while the DisableTransformModifiedEvent flag was nonzero.
-  /// Returns the old flag state.
-  virtual int InvokePendingTransformModifiedEvent ()
-    {
-    if ( this->TransformModifiedEventPending )
-      {
-      int oldModifiedEventPending = this->TransformModifiedEventPending;
-      this->TransformModifiedEventPending = 0;
-      this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
-      return oldModifiedEventPending;
-      }
-    return this->TransformModifiedEventPending;
+    this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     }
 
   virtual bool GetModifiedSinceRead();
@@ -380,9 +310,6 @@ protected:
   vtkAbstractTransform* TransformFromParent;
 
   int ReadAsTransformToParent;
-
-  int DisableTransformModifiedEvent;
-  int TransformModifiedEventPending;
 
   // Temporary buffers used for returning transform info as char*
   std::string TransformInfo;

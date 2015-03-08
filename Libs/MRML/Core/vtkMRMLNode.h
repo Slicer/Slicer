@@ -31,8 +31,8 @@ class vtkMRMLScene;
 class vtkCallbackCommand;
 
 // STD includes
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
 
 #ifndef vtkSetMRMLObjectMacro
@@ -372,17 +372,51 @@ public:
   ///
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
-  /// Returns the old flag state.
+  /// Returns the total number of pending modified events that have been replaced by the just invoked modified event(s).
   virtual int InvokePendingModifiedEvent ()
     {
+    int oldModifiedEventPending = 0;
+    // Invoke pending standard Modified event
     if ( this->ModifiedEventPending )
       {
-      int oldModifiedEventPending = this->ModifiedEventPending;
+      oldModifiedEventPending += this->ModifiedEventPending;
       this->ModifiedEventPending = 0;
       Superclass::Modified();
+      }
+    // Invoke pending custom modified events
+    if (!this->CustomModifiedEventPending.empty())
+      {
+      for (std::map< int, int >::iterator it=this->CustomModifiedEventPending.begin(); it!=this->CustomModifiedEventPending.end(); ++it)
+        {
+        oldModifiedEventPending += it->second;
+        this->InvokeEvent(it->first);
+        }
+      this->CustomModifiedEventPending.clear();
+      }
       return oldModifiedEventPending;
       }
-    return this->ModifiedEventPending;
+
+  ///
+  /// This method allows the node to compress events: instead of invoking
+  /// a certain event several times, the event is called only once, for all the invocations
+  /// that are made between StartModified() and EndModified().
+  /// Typical usage is to group several ...Added, ...Removed, ...Modified events into one,
+  /// to improve performance.
+  /// callData is passed to InvokeEvent if the event is invoked immediately.
+  /// If the event is not invoked immediately then it will be sent with callData=NULL.
+  virtual void InvokeCustomModifiedEvent(int eventId, void *callData=NULL)
+    {
+    if (!this->GetDisableModifiedEvent())
+      {
+      // DisableModify is inactive, we immediately invoke the event
+      this->InvokeEvent(eventId, callData);
+      }
+    else
+      {
+      // just remember the custom modified event and invoke it once,
+      // when DisableModify is deactivated
+      ++this->CustomModifiedEventPending[eventId];
+      }
     }
 
   void CopyWithSingleModifiedEvent (vtkMRMLNode *node)
@@ -748,7 +782,7 @@ private:
 
   int DisableModifiedEvent;
   int ModifiedEventPending;
-
+  std::map<int, int> CustomModifiedEventPending; // event id, pending value (number of events grouped together)
 };
 
 #endif
