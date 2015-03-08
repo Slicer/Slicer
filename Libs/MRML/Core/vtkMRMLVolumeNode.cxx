@@ -746,6 +746,13 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 #else
   if (imageData == 0)
     {
+    vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
+      this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : 0);
+    if (oldProducer && oldProducer->GetOutputDataObject(0))
+      {
+      oldProducer->GetOutputDataObject(0)->RemoveObservers(
+        vtkCommand::ModifiedEvent, this->DataEventForwarder);
+      }
     this->SetImageDataConnection(0);
     }
   else
