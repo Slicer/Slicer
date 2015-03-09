@@ -382,10 +382,7 @@ void qMRMLVolumeInfoWidget::center()
     {
     return;
     }
-  //volumeNode->SetDisableModifiedEvent(1);
   d->VolumeNode->SetOrigin(origin);
-  //volumeNode->SetDisableModifiedEvent(0);
-  //volumeNode->InvokePendingModifiedEvent();
 }
 
 //------------------------------------------------------------------------------

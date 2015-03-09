@@ -402,9 +402,10 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateReferences()
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLMultiVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify(); 
+
   Superclass::Copy(anode);
   vtkMRMLMultiVolumeRenderingDisplayNode *node = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(anode);
-  this->DisableModifiedEventOn();
 
   this->SetBgVolumeNodeID(node->GetBgVolumeNodeID());
   this->SetFgVolumeNodeID(node->GetFgVolumeNodeID());
@@ -436,9 +437,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetFgFollowVolumeDisplayNode(node->GetFgFollowVolumeDisplayNode());
   this->SetFgIgnoreVolumeDisplayNodeThreshold(node->GetFgIgnoreVolumeDisplayNodeThreshold());
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

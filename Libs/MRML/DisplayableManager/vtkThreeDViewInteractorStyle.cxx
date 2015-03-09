@@ -164,12 +164,11 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
 {
   int x = this->Interactor->GetEventPosition()[0];
   int y = this->Interactor->GetEventPosition()[1];
-  int cameraDisableState = 0;
+  int disabledModify = 0;
 
   if (this->CameraNode)
     {
-    cameraDisableState = this->CameraNode->GetDisableModifiedEvent();
-    this->CameraNode->DisableModifiedEventOn();
+    disabledModify = this->CameraNode->StartModify();
     }
 
   switch (this->State)
@@ -204,8 +203,7 @@ void vtkThreeDViewInteractorStyle::OnMouseMove()
 
   if (this->CameraNode)
     {
-    this->CameraNode->SetDisableModifiedEvent(cameraDisableState);
-    this->CameraNode->InvokePendingModifiedEvent();
+    this->CameraNode->EndModify(disabledModify);
     }
 }
 

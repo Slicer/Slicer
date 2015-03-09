@@ -86,15 +86,14 @@ void vtkMRMLVolumeRenderingScenarioNode::UpdateReferences()
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLVolumeRenderingScenarioNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify(); 
+
   Superclass::Copy(anode);
   vtkMRMLVolumeRenderingScenarioNode *node = vtkMRMLVolumeRenderingScenarioNode::SafeDownCast(anode);
-  this->DisableModifiedEventOn();
 
   this->SetParametersNodeID(node->GetParametersNodeID());
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
-
+  this->EndModify(disabledModify);
 }
 
 //-----------------------------------------------------------

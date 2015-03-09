@@ -379,8 +379,9 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTractographyInteractiveSeedingNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
-  this->DisableModifiedEventOn();
 
   vtkMRMLTractographyInteractiveSeedingNode *node = (vtkMRMLTractographyInteractiveSeedingNode *) anode;
 
@@ -408,9 +409,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
-
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------

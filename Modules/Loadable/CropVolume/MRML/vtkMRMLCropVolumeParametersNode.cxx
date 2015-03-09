@@ -171,9 +171,10 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
 {
+  int disabledModify = this->StartModify();
+  
   Superclass::Copy(anode);
   vtkMRMLCropVolumeParametersNode *node = vtkMRMLCropVolumeParametersNode::SafeDownCast(anode);
-  this->DisableModifiedEventOn();
 
   this->SetInputVolumeNodeID(node->GetInputVolumeNodeID());
   this->SetOutputVolumeNodeID(node->GetOutputVolumeNodeID());
@@ -186,8 +187,7 @@ void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
   this->SetIsotropicResampling(node->GetIsotropicResampling());
   this->SetSpacingScalingConst(node->GetSpacingScalingConst());
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
