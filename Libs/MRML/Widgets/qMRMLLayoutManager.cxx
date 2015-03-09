@@ -309,6 +309,7 @@ qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(int id)const
 //------------------------------------------------------------------------------
 qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node)const
 {
+  Q_Q(const qMRMLLayoutManager);
   if (!node)
     {
     return 0;
@@ -320,12 +321,14 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node
       return view;
       }
     }
-  return 0;
+  return qobject_cast<qMRMLThreeDWidget*>(
+        q->mrmlViewFactory("vtkMRMLViewNode")->viewWidget(node));
 }
 
 //------------------------------------------------------------------------------
 qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(vtkMRMLChartViewNode* node)const
 {
+  Q_Q(const qMRMLLayoutManager);
   if (!node)
     {
     return 0;
@@ -337,12 +340,18 @@ qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(vtkMRMLChartViewNode* n
       return view;
       }
     }
-  return 0;
+  return qobject_cast<qMRMLChartWidget*>(
+        q->mrmlViewFactory("vtkMRMLChartViewNode")->viewWidget(node));
 }
 
 //------------------------------------------------------------------------------
 qMRMLSliceWidget* qMRMLLayoutManagerPrivate::sliceWidget(vtkMRMLSliceNode* node)const
 {
+  Q_Q(const qMRMLLayoutManager);
+  if (!node)
+    {
+    return 0;
+    }
   foreach(qMRMLSliceWidget* slice, this->SliceWidgetList)
     {
     if (slice->mrmlSliceNode() == node)
@@ -350,7 +359,8 @@ qMRMLSliceWidget* qMRMLLayoutManagerPrivate::sliceWidget(vtkMRMLSliceNode* node)
       return slice;
       }
     }
-  return 0;
+  return qobject_cast<qMRMLSliceWidget*>(
+        q->mrmlViewFactory("vtkMRMLSliceNode")->viewWidget(node));
 }
 
 //------------------------------------------------------------------------------
@@ -1033,6 +1043,7 @@ void qMRMLLayoutManager::resetSliceViews()
     }
 }
 
+//------------------------------------------------------------------------------
 QWidget* qMRMLLayoutManager::viewWidget(vtkMRMLNode* viewNode) const
 {
   Q_D(const qMRMLLayoutManager);
