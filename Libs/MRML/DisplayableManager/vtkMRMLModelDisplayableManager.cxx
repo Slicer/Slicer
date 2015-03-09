@@ -59,6 +59,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkVersion.h>
+#include <vtkWeakPointer.h>
 
 // for picking
 #include <vtkCellPicker.h>
@@ -123,7 +124,9 @@ public:
   vtkIdType    PickedCellID;
   vtkIdType    PickedPointID;
 
-  vtkMRMLSelectionNode*   SelectionNode;
+  // Used for caching the node pointer so that we do not have to search in the scene each time.
+  // We do not add an observer therefore we can let the selection node deleted without our knowledge.
+  vtkWeakPointer<vtkMRMLSelectionNode>   SelectionNode;
 };
 
 //---------------------------------------------------------------------------
@@ -136,7 +139,6 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
   this->RedSliceNode = 0;
   this->GreenSliceNode = 0;
   this->YellowSliceNode = 0;
-  this->SelectionNode = 0;
 
   this->ModelHierarchiesPresent = false;
   this->UpdateHierachyRequested = false;
@@ -204,8 +206,7 @@ vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
   vtkSetMRMLNodeMacro(this->Internal->RedSliceNode, 0);
   vtkSetMRMLNodeMacro(this->Internal->GreenSliceNode, 0);
   vtkSetMRMLNodeMacro(this->Internal->YellowSliceNode, 0);
-  vtkSetMRMLNodeMacro(this->Internal->SelectionNode, 0);
-
+  this->Internal->SelectionNode = 0; // WeakPointer, therefore must not use vtkSetMRMLNodeMacro
   // release the DisplayedModelActors
   this->Internal->DisplayedActors.clear();
 
@@ -309,7 +310,6 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
     }
 
   // update Slice nodes
-  vtkMRMLSliceNode *node= 0;
   vtkMRMLSliceNode *nodeRed= 0;
   vtkMRMLSliceNode *nodeGreen= 0;
   vtkMRMLSliceNode *nodeYellow= 0;
@@ -318,7 +318,7 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
   int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceNode", snodes);
   for (int n=0; n<nnodes; n++)
     {
-    node = vtkMRMLSliceNode::SafeDownCast (snodes[n]);
+      vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast (snodes[n]);
     // TODO use perhaps SliceLogic to get the name instead of "Red" etc.
     if (!strcmp(node->GetLayoutName(), "Red"))
       {
@@ -332,7 +332,6 @@ int vtkMRMLModelDisplayableManager::UpdateClipSlicesFromMRML()
       {
       nodeYellow = node;
       }
-    node = 0;
     }
 
   if (nodeRed != this->Internal->RedSliceNode)
@@ -2349,6 +2348,7 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
 
 vtkMRMLSelectionNode* vtkMRMLModelDisplayableManager::GetSelectionNode()
 {
+  // If selection node is set then use that, otherwise find selection node in the scene
   if (this->Internal->SelectionNode == 0)
     {
     std::vector<vtkMRMLNode *> selectionNodes;
