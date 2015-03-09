@@ -1470,7 +1470,11 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
 
   // Only nodes can be changed, scene and extra items should be not editable
   vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
-  Q_ASSERT(mrmlNode);
+  if (mrmlNode==NULL)
+  {
+    qCritical() << "qMRMLSceneModel::onItemChanged: Failed to get MRML node from scene model item";
+    return;
+  }
   this->updateNodeFromItem(mrmlNode, item);
 }
 
