@@ -132,9 +132,6 @@ public:
   vtkMRMLLayoutLogic*     MRMLLayoutLogic;
   vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
   vtkMRMLChartViewNode*   ActiveMRMLChartViewNode;
-  int                     SavedCurrentViewArrangement;
-  QGridLayout*            GridLayout;
-  QWidget*                TargetWidget;
 protected:
   void showWidget(QWidget* widget);
 };
