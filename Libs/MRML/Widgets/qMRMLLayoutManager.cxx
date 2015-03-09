@@ -285,42 +285,9 @@ void qMRMLLayoutManagerPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(int id)const
-{
-  Q_ASSERT(id >= 0);
-  if (id >= this->ThreeDWidgetList.size())
-    {
-    return 0;
-    }
-  return this->ThreeDWidgetList.at(id);
-}
-
-//------------------------------------------------------------------------------
-qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(int id)const
-{
-  Q_ASSERT(id >= 0);
-  if (id >= this->ChartWidgetList.size())
-    {
-    return 0;
-    }
-  return this->ChartWidgetList.at(id);
-}
-
-//------------------------------------------------------------------------------
 qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node)const
 {
   Q_Q(const qMRMLLayoutManager);
-  if (!node)
-    {
-    return 0;
-    }
-  foreach(qMRMLThreeDWidget* view, this->ThreeDWidgetList)
-    {
-    if (view->mrmlViewNode() == node)
-      {
-      return view;
-      }
-    }
   return qobject_cast<qMRMLThreeDWidget*>(
         q->mrmlViewFactory("vtkMRMLViewNode")->viewWidget(node));
 }
@@ -329,17 +296,6 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node
 qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(vtkMRMLChartViewNode* node)const
 {
   Q_Q(const qMRMLLayoutManager);
-  if (!node)
-    {
-    return 0;
-    }
-  foreach(qMRMLChartWidget* view, this->ChartWidgetList)
-    {
-    if (view->mrmlChartViewNode() == node)
-      {
-      return view;
-      }
-    }
   return qobject_cast<qMRMLChartWidget*>(
         q->mrmlViewFactory("vtkMRMLChartViewNode")->viewWidget(node));
 }
@@ -348,32 +304,8 @@ qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(vtkMRMLChartViewNode* n
 qMRMLSliceWidget* qMRMLLayoutManagerPrivate::sliceWidget(vtkMRMLSliceNode* node)const
 {
   Q_Q(const qMRMLLayoutManager);
-  if (!node)
-    {
-    return 0;
-    }
-  foreach(qMRMLSliceWidget* slice, this->SliceWidgetList)
-    {
-    if (slice->mrmlSliceNode() == node)
-      {
-      return slice;
-      }
-    }
   return qobject_cast<qMRMLSliceWidget*>(
         q->mrmlViewFactory("vtkMRMLSliceNode")->viewWidget(node));
-}
-
-//------------------------------------------------------------------------------
-qMRMLSliceWidget* qMRMLLayoutManagerPrivate::sliceWidget(const QString& name)const
-{
-  foreach(qMRMLSliceWidget* slice, this->SliceWidgetList)
-    {
-    if (slice->sliceViewName() == name)
-      {
-      return slice;
-      }
-    }
-  return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -464,49 +396,6 @@ void qMRMLLayoutManagerPrivate
     q->mrmlViewFactory("vtkMRMLChartViewNode")->activeRenderer());
   emit q->activeMRMLChartViewNodeChanged(
     vtkMRMLChartViewNode::SafeDownCast(node));
-}
-
-// --------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
-{
-  Q_ASSERT(sliceNode);
-
-  qMRMLSliceWidget * sliceWidgetToDelete = this->sliceWidget(sliceNode);
-
-  // Remove slice widget
-  if (sliceWidgetToDelete)
-    {
-    this->SliceWidgetList.removeAll(sliceWidgetToDelete);
-    delete sliceWidgetToDelete;
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::removeThreeDWidget(vtkMRMLViewNode* viewNode)
-{
-  Q_ASSERT(viewNode);
-  qMRMLThreeDWidget * threeDWidgetToDelete = this->threeDWidget(viewNode);
-
-  // Remove threeDView
-  if (threeDWidgetToDelete)
-    {
-    this->ThreeDWidgetList.removeAll(threeDWidgetToDelete);
-    delete threeDWidgetToDelete;
-    }
-}
-
-// --------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::removeChartWidget(vtkMRMLChartViewNode* viewNode)
-{
-  Q_ASSERT(viewNode);
-  qMRMLChartWidget * chartWidgetToDelete = this->chartWidget(viewNode);
-
-  // Remove threeDView
-  if (chartWidgetToDelete)
-    {
-    this->ChartWidgetList.removeAll(chartWidgetToDelete);
-    delete chartWidgetToDelete;
-    }
 }
 
 // --------------------------------------------------------------------------

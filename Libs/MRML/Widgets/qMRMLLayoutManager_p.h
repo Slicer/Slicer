@@ -87,13 +87,6 @@ public:
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
   void setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node);
 
-  /// Delete slice viewer associated with \a sliceNode
-  void removeSliceView(vtkMRMLSliceNode* sliceNode);
-
-  /// Delete 3D Viewer associated with \a viewNode
-  void removeThreeDWidget(vtkMRMLViewNode* viewNode);
-  void removeChartWidget(vtkMRMLChartViewNode* viewNode);
-
   /// Enable/disable paint event associated with the TargetWidget
   //bool startUpdateLayout();
   //void endUpdateLayout(bool updateEnabled);
@@ -108,13 +101,10 @@ public:
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.
   qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
-  qMRMLThreeDWidget* threeDWidget(int id)const;
   qMRMLChartWidget* chartWidget(vtkMRMLChartViewNode* node)const;
-  qMRMLChartWidget* chartWidget(int id)const;
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
-  qMRMLSliceWidget* sliceWidget(const QString& sliceLayoutName)const;
   qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node)const;
 
   vtkMRMLNode* viewNode(QWidget* )const;
@@ -145,10 +135,6 @@ public:
   int                     SavedCurrentViewArrangement;
   QGridLayout*            GridLayout;
   QWidget*                TargetWidget;
-
-  QList<qMRMLThreeDWidget*>         ThreeDWidgetList;
-  QList<qMRMLChartWidget*>          ChartWidgetList;
-  QList<qMRMLSliceWidget*>          SliceWidgetList;
 protected:
   void showWidget(QWidget* widget);
 };
