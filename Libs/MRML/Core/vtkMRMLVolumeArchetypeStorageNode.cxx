@@ -450,6 +450,12 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   iciOutputCopy->ShallowCopy(ici->GetOutput());
   volNode->SetAndObserveImageData(iciOutputCopy.GetPointer());
 
+  // Log volume size to the application log. It helps to identify potential out-of-memory issues.
+  vtkInfoMacro(<<"Loaded volume from file: "<<fullName \
+    <<". Dimensions: "<<iciOutputCopy->GetDimensions()[0]<<"x"<<iciOutputCopy->GetDimensions()[1]<<"x"<<iciOutputCopy->GetDimensions()[2] \
+    <<". Number of components: "<<iciOutputCopy->GetNumberOfScalarComponents() \
+    <<". Pixel type: "<<vtkImageScalarTypeNameMacro(iciOutputCopy->GetScalarType())<<".");
+
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
   if ( mat == NULL )
     {

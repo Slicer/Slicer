@@ -82,6 +82,7 @@
 
 // Logic includes
 #include <vtkSlicerApplicationLogic.h>
+#include <vtkSystemInformation.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -687,17 +688,74 @@ void qSlicerApplication::setupFileLogging()
   // Set current log file path
   d->ErrorLogModel->setFilePath(currentLogFilePath);
 
-  // Log essential information (platform, revision, date, etc.)
+  // Log essential information about the application version and the host computer.
+  // This helps in reproducing reported problems.
+
   QFile f(currentLogFilePath);
   if (f.open(QFile::Append))
     {
     QTextStream s(&f);
-    s << QString("Platform: %1").arg(this->platform()) << "\n";
-    s << QString("OS: %1").arg(this->os()) << "\n";
-    s << QString("Version: %1.%2").arg(this->majorVersion()).arg(this->minorVersion()) << "\n";
-    s << QString("Revision: %1").arg(this->repositoryRevision()) << "\n";
-    s << QString("DateTime: %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")) << "\n";
-    s << "Installed: " << (this->isInstalled() ? "Yes" : "No") << "\n";
+    s << QString("Session start time: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    s << QString("Slicer version: %1 (revision %2) %3 - %4\n").arg(Slicer_VERSION_FULL).arg(this->repositoryRevision()).arg(this->platform()).arg((this->isInstalled() ? "installed" : "not installed"));
+
+    vtkNew<vtkSystemInformation> systemInfo;
+    systemInfo->RunCPUCheck();
+    systemInfo->RunOSCheck();
+    systemInfo->RunMemoryCheck();
+
+    s << QString("Operating system: %1 / %2 / %3 - %4\n").arg(systemInfo->GetOSName()).arg(systemInfo->GetOSRelease()).arg(systemInfo->GetOSVersion()).arg(systemInfo->Is64Bits() ? "64-bit" : "32-bit");
+
+    size_t totalPhysicalMemoryMb = systemInfo->GetTotalPhysicalMemory();
+    size_t totalVirtualMemoryMb = systemInfo->GetTotalVirtualMemory();
+#if defined(_WIN32)
+    // On Windows vtkSystemInformation::GetTotalVirtualMemory() returns the virtual address space,
+    // while memory allocation fails if total page file size is reached. Therefore,
+    // total page file size is a better indication of actually available memory for the process.
+    // The issue has been fixed in kwSys release at the end of 2014, therefore when VTK is upgraded then
+    // this workaround may not be needed anymore.
+  #if defined(_MSC_VER) && _MSC_VER < 1300
+    MEMORYSTATUS ms;
+    ms.dwLength = sizeof(ms);
+    GlobalMemoryStatus(&ms);
+    unsigned long totalPhysicalBytes = ms.dwTotalPhys;
+    totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
+    unsigned long totalVirtualBytes = ms.dwTotalPageFile;
+    totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
+  #else
+    MEMORYSTATUSEX ms;
+    ms.dwLength = sizeof(ms);
+    if (GlobalMemoryStatusEx(&ms))
+      {
+      DWORDLONG totalPhysicalBytes = ms.ullTotalPhys;
+      totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
+      DWORDLONG totalVirtualBytes = ms.ullTotalPageFile;
+      totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
+      }
+  #endif
+#endif
+    s << QString("Memory: %1 MB physical, %2 MB virtual\n").arg(totalPhysicalMemoryMb).arg(totalVirtualMemoryMb);
+
+    unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
+#if defined(_WIN32)
+    // On Windows number of physical CPUs are computed incorrectly by vtkSystemInformation::GetNumberOfPhysicalCPU(),
+    // if hyperthreading is enabled (typically 0 is reported), therefore get it directly from the OS instead.
+    SYSTEM_INFO info;
+    info.dwNumberOfProcessors = 0;
+    GetSystemInfo (&info);
+    numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
+#endif
+    s << QString("CPU: %1 %2 MHz, %3 cores\n").arg(systemInfo->GetVendorString()).arg(QString::number(systemInfo->GetProcessorClockFrequency()/1000, 'g', 3)).arg(numberOfPhysicalCPU);
+
+    QSettings settings;
+    bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+    s << QString("Developer mode enabled: %1\n").arg(developerModeEnabled ? "yes" : "no");
+
+    bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", false).toBool();
+    s << QString("Prefer executable CLI: %1\n").arg(preferExecutableCli ? "yes" : "no");
+
+    QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
+    s << QString("Additional module paths: %1\n").arg(additionalModulePaths.isEmpty() ? QString("(none)") : additionalModulePaths.join(", "));
+
     f.close();
     }
 }

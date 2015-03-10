@@ -30,6 +30,9 @@ class vtkMRMLScene;
 #include <vtkWeakPointer.h>
 class vtkCallbackCommand;
 
+// Slicer VTK add-on includes
+#include <vtkLoggingMacros.h>
+
 // STD includes
 #include <map>
 #include <string>

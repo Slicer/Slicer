@@ -20,6 +20,7 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES
   )
 
 list(APPEND dirs
+  vtkAddon
   vtkTeem
   vtkITK
   FreeSurfer
@@ -111,6 +112,7 @@ set(MRML_LIBRARIES ${_mrml_libraries} CACHE INTERNAL "MRML libraries" FORCE)
 # Set variable Slicer_Libs_VTK_WRAPPED_LIBRARIES
 #-----------------------------------------------------------------------------
 set(_vtk_wrapped_libraries
+  vtkAddon
   vtkTeem
   vtkITK
   FreeSurfer

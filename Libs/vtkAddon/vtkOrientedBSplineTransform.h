@@ -27,11 +27,11 @@
 #ifndef __vtkOrientedBSplineTransform_h
 #define __vtkOrientedBSplineTransform_h
 
-#include "vtkMRML.h"
+#include "vtkAddon.h"
 
 #include "vtkBSplineTransform.h"
 
-class VTK_MRML_EXPORT vtkOrientedBSplineTransform : public vtkBSplineTransform
+class VTK_ADDON_EXPORT vtkOrientedBSplineTransform : public vtkBSplineTransform
 {
 public:
   static vtkOrientedBSplineTransform *New();

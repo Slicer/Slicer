@@ -72,6 +72,7 @@ endif()
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkAddon_INCLUDE_DIRS}
   ${vtkITK_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS}
   )
@@ -196,9 +197,6 @@ set(MRMLCore_SRCS
   # Classes for 2D Plotting
   vtkMRMLDoubleArrayNode.cxx
   vtkMRMLDoubleArrayStorageNode.cxx
-  # Classes for transforms computation
-  vtkOrientedBSplineTransform.cxx
-  vtkOrientedGridTransform.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
   )
@@ -258,6 +256,7 @@ else()
 endif()
 
 set(libs
+  vtkAddon
   vtkITK
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
@@ -378,5 +377,5 @@ endif()
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${vtkAddon_INCLUDE_DIRS}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

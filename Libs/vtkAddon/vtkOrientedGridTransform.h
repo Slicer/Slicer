@@ -16,11 +16,11 @@
 #ifndef __vtkOrientedGridTransform_h
 #define __vtkOrientedGridTransform_h
 
-#include "vtkMRML.h"
+#include "vtkAddon.h"
 
 #include "vtkGridTransform.h"
 
-class VTK_MRML_EXPORT vtkOrientedGridTransform : public vtkGridTransform
+class VTK_ADDON_EXPORT vtkOrientedGridTransform : public vtkGridTransform
 {
 public:
   static vtkOrientedGridTransform *New();

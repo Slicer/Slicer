@@ -1,0 +1,3 @@
+set(vtkAddon_INCLUDE_DIRS "@vtkAddon_INCLUDE_DIRS@")
+set(vtkAddon_LIB_DIR "@CMAKE_BINARY_DIR@/bin" "@CMAKE_BINARY_DIR@")
+set(VTK_DIR "@VTK_DIR@")

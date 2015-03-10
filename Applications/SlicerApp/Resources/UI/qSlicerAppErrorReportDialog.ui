@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>291</height>
+    <width>702</width>
+    <height>441</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -441,7 +441,7 @@
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="InstructionsLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Questions and feature requests:&lt;/span&gt; post a message to &lt;a href=&quot;http://massmail.bwh.harvard.edu/mailman/listinfo/slicer-users&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;slicer-users&lt;/span&gt;&lt;/a&gt; mailing list.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bug reports: &lt;/span&gt;submit a bug report to the &lt;a href=&quot;http://www.na-mic.org/Bug/my_view_page.php&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;3D Slicer bugtracker&lt;/span&gt;&lt;/a&gt;. Describe the steps that lead to the error and also attach log messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Questions and feature requests:&lt;/span&gt; post a message to &lt;a href=&quot;http://massmail.bwh.harvard.edu/mailman/listinfo/slicer-users&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;slicer-users&lt;/span&gt;&lt;/a&gt; mailing list.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Bug reports: &lt;/span&gt;submit a bug report to the &lt;a href=&quot;http://www.na-mic.org/Bug/my_view_page.php&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;3D Slicer bugtracker&lt;/span&gt;&lt;/a&gt;. Describe the steps that lead to the error and also attach log messages.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning - if you work with patient data:&lt;/span&gt; Check that the log messages do not contain any information that may identify a patient. Send the log messages to specific people instead of sharing them publicly on a mailing list or website.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
@@ -464,7 +464,7 @@
    <item row="1" column="1">
     <widget class="ctkComboBox" name="RecentLogFilesComboBox"/>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="0" colspan="2">
     <widget class="QPlainTextEdit" name="LogText">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -480,7 +480,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="ctkPushButton" name="LogCopyToClipboardPushButton">
