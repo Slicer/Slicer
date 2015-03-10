@@ -7,6 +7,11 @@
 
 =========================================================================auto=*/
 
+#ifndef __vtkAddon_h
+#define __vtkAddon_h
+
 #include <vtkVersion.h>
 
 #include "vtkAddonWin32Header.h"
+
+#endif
