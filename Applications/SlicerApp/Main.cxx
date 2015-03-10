@@ -115,7 +115,6 @@ int SlicerAppMain(int argc, char* argv[])
     std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(argv[0]);
     applicationName = QString::fromLocal8Bit(name.c_str());
     applicationName.remove(QString("App-real"));
-    qDebug() << "applicationName: " << applicationName;
     }
   QCoreApplication::setApplicationName(applicationName);
 
