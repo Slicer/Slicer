@@ -643,6 +643,24 @@ QStringList qSlicerApplication::recentLogFiles()
 }
 
 // --------------------------------------------------------------------------
+QString qSlicerApplication::currentLogFile()const
+{
+  Q_D(const qSlicerApplication);
+  return d->ErrorLogModel->filePath();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerApplication::appendToLogFile(const QString& txt)
+{
+  QFile f(this->currentLogFile());
+  if (f.open(QFile::Append))
+    {
+    f.write(qPrintable(txt));
+    }
+  f.close();
+}
+
+// --------------------------------------------------------------------------
 void qSlicerApplication::setupFileLogging()
 {
   Q_D(qSlicerApplication);
@@ -690,11 +708,10 @@ void qSlicerApplication::setupFileLogging()
 
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
-
-  QFile f(currentLogFilePath);
-  if (f.open(QFile::Append))
+  if (QFile(currentLogFilePath).exists())
     {
-    QTextStream s(&f);
+    QString logTxt;
+    QTextStream s(&logTxt);
     s << QString("Session start time: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
     s << QString("Slicer version: %1 (revision %2) %3 - %4\n").arg(Slicer_VERSION_FULL).arg(this->repositoryRevision()).arg(this->platform()).arg((this->isInstalled() ? "installed" : "not installed"));
 
@@ -756,6 +773,6 @@ void qSlicerApplication::setupFileLogging()
     QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
     s << QString("Additional module paths: %1\n").arg(additionalModulePaths.isEmpty() ? QString("(none)") : additionalModulePaths.join(", "));
 
-    f.close();
+    this->appendToLogFile(logTxt);
     }
 }

@@ -142,6 +142,14 @@ public slots:
   /// Paths of recent log files
   QStringList recentLogFiles();
 
+  /// Path of the current log file
+  /// \sa recentLogFiles(), setupFileLogging()
+  QString currentLogFile()const;
+
+  /// Append text to current log file.
+  /// \sa currentLogFile()
+  void appendToLogFile(const QString& txt);
+
 protected:
   /// Reimplemented from qSlicerCoreApplication
   virtual void handleCommandLineArguments();
