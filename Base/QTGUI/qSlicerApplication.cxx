@@ -50,6 +50,7 @@
 #include "qSlicerCoreApplication_p.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
+#include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
@@ -434,6 +435,19 @@ QMainWindow* qSlicerApplication::mainWindow()const
 //-----------------------------------------------------------------------------
 void qSlicerApplication::handleCommandLineArguments()
 {
+  // XXX Could probably be moved into a more general function
+  QString logTxt;
+  {
+    QTextStream s(&logTxt);
+    s << QString("Number of registered modules: %1\n").arg(
+           this->moduleManager()->factoryManager()->registeredModuleNames().count());
+    s << QString("Number of instantiated modules: %1\n").arg(
+           this->moduleManager()->factoryManager()->instantiatedModuleNames().count());
+    s << QString("Number of loaded modules: %1\n").arg(
+           this->moduleManager()->modulesNames().count());
+  }
+  this->appendToLogFile(logTxt);
+
   qSlicerCommandOptions* options = this->commandOptions();
   Q_ASSERT(options);
 
