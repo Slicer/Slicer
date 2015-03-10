@@ -107,7 +107,7 @@ macro(slicerMacroBuildScriptedModule)
     foreach(script_name ${_generic_unitest_scripts})
       slicer_add_python_unittest(
         SCRIPT ${script_name}
-        SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules
+        SLICER_ARGS --no-main-window --disable-cli-modules
                     --additional-module-path ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
         TESTNAME_PREFIX nomainwindow_
         )
