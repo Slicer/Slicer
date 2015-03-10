@@ -249,34 +249,3 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
 
 endif()
 
-#
-# Tutorial tests
-#
-
-if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
-
-  configure_file(
-    slicerappdatapaths.py.in
-    ${Slicer_BINARY_DIR}/bin/Python/slicer/slicerappdatapaths.py
-    @ONLY
-    )
-
-  set(tests_using_qttesting)
-
-  if(Slicer_BUILD_CLI)
-    slicer_add_python_test(
-      SCRIPT NeurosurgicalPlanningTutorial.py
-      SLICER_ARGS --launcher-no-splash --qt-testing
-      )
-
-    list(APPEND tests_using_qttesting
-      py_NeurosurgicalPlanningTutorial
-      )
-  endif()
-
-
-  set_tests_properties(
-    ${tests_using_qttesting}
-    PROPERTIES RUN_SERIAL ON
-    )
-endif()
