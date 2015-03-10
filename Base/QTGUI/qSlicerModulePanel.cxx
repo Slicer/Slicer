@@ -91,7 +91,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
     return;
     }
 
-  // Log when the user switches netween modules so that if the application crashed
+  // Log when the user switches between modules so that if the application crashed
   // we knew which module was active.
   qDebug() << "Switch to module: " << moduleName;
 
