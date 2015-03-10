@@ -722,7 +722,6 @@ void qSlicerApplication::setupFileLogging()
 
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
-  if (QFile(currentLogFilePath).exists())
     {
     QString logTxt;
     QTextStream s(&logTxt);
