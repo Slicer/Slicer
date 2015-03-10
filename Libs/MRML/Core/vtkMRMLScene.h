@@ -562,6 +562,11 @@ public:
   /// Note that the nodes see their reference count being incremented while
   /// being in the list. Don't forget to clear it as soon as you don't need it.
   bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = 0);
+
+  /// Search the scene for storable nodes that are not "ModifiedSinceRead"
+  /// and call StorableModified() on them. Useful after loading a scene
+  /// from a temporary directory and deleting the files
+  void SetStorableNodesModifiedSinceRead();
 protected:
 
   typedef std::map< std::string, std::set<std::string> > NodeReferencesType;

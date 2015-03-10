@@ -71,12 +71,20 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   Q_ASSERT(properties.contains("fileName"));
   QString file = properties["fileName"].toString();
 
+  // check for a relative path as the unzip will need an absolute one
+  QFileInfo fileInfo(file);
+  if (fileInfo.isRelative())
+    {
+    fileInfo = QFileInfo(QDir::currentPath(), file);
+    file = fileInfo.absoluteFilePath();
+    }
+
   // TODO: switch to QTemporaryDir in Qt5.
   QString unpackPath( QDir::tempPath() +
                         QString("/__BundleLoadTemp") +
                           QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
 
-  qDebug() << "Unpacking bundle to " << unpackPath;
+  qDebug() << "Unpacking bundle " << file << " to " << unpackPath;
 
   if (QFileInfo(unpackPath).isDir())
     {
@@ -119,5 +127,14 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
     }
 
   qDebug() << "Loaded bundle from " << unpackPath;
+  // since the unpack path has been deleted, reset the scene to where the data bundle is
+  QString mrbDirectoryPath = QFileInfo(file).dir().absolutePath();
+  QString mrbBaseName = QFileInfo(file).baseName();
+  QString resetURL = mrbDirectoryPath + QString("/") + mrbBaseName + QString(".mrml");
+  this->mrmlScene()->SetURL(resetURL.toLatin1());
+  qDebug() << "Reset scene to point to the MRB directory " << this->mrmlScene()->GetURL();
+  // and mark storable nodes as modified since read
+  this->mrmlScene()->SetStorableNodesModifiedSinceRead();
+
   return res;
 }
