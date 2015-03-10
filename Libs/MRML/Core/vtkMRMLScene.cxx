@@ -3198,10 +3198,17 @@ void vtkMRMLScene::SetStorableNodesModifiedSinceRead()
 {
   vtkSmartPointer<vtkCollection> storableNodes;
   storableNodes.TakeReference(this->GetNodesByClass("vtkMRMLStorableNode"));
+  vtkMRMLScene::SetStorableNodesModifiedSinceRead(storableNodes);
+}
+
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::
+SetStorableNodesModifiedSinceRead(vtkCollection* storableNodes)
+{
   vtkCollectionSimpleIterator it;
   vtkMRMLStorableNode* storableNode;
   for (storableNodes->InitTraversal(it);
-       (storableNode= vtkMRMLStorableNode::SafeDownCast(
+       (storableNode = vtkMRMLStorableNode::SafeDownCast(
           storableNodes->GetNextItemAsObject(it))) ;)
     {
     if (!storableNode->GetHideFromEditors() &&

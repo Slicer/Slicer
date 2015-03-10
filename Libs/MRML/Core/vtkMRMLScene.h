@@ -564,9 +564,13 @@ public:
   bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = 0);
 
   /// Search the scene for storable nodes that are not "ModifiedSinceRead"
-  /// and call StorableModified() on them. Useful after loading a scene
-  /// from a temporary directory and deleting the files
+  /// and pass the list to SetStorableNodesModifiedSinceRead
+  /// Useful after loading a scene from a temporary directory and deleting
+  /// the files.
   void SetStorableNodesModifiedSinceRead();
+  /// Given a collection of storable nodes, iterate through
+  /// and call StorableModified() on them.
+  static void SetStorableNodesModifiedSinceRead(vtkCollection* storableNodes);
 protected:
 
   typedef std::map< std::string, std::set<std::string> > NodeReferencesType;
