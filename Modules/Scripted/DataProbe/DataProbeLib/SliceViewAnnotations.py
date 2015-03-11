@@ -757,7 +757,7 @@ class SliceAnnotations(object):
       if vtk.VTK_MAJOR_VERSION > 5:
         scalarBar.SetAddRangeAnnotations(0)
       else:
-        scalarBar.SetMaximumWidthInPixels(int(self.colorScalarBarMaxWidthSlider.value))
+        scalarBar.SetMaximumWidthInPixels(50)
 
       renderWindow = renderer.GetRenderWindow()
       interactor = renderWindow.GetInteractor()
