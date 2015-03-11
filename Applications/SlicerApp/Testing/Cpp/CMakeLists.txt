@@ -70,7 +70,7 @@ if(Slicer_HAS_CONSOLE_IO_SUPPORT)
   add_test(
     NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-    ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+    ${ARGN} --testing --verbose-module-discovery --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
     )
   set_tests_properties(
     slicer_nomainwindow_DisableModulesCommandLineOptionsTest
