@@ -12,6 +12,9 @@ class SliceAnnotations(object):
   """Implement the Qt window showing settings for Slice View Annotations
   """
   def __init__(self):
+    self.hasVTKPVScalarBarActor = hasattr(slicer, 'vtkPVScalarBarActor')
+    if not self.hasVTKPVScalarBarActor:
+      slicer.logging.warning("SliceAnnotations: Disable features relying on vtkPVScalarBarActor")
 
     self.dataProbeUtil = DataProbeUtil.DataProbeUtil()
 
@@ -594,13 +597,13 @@ class SliceAnnotations(object):
     textProperty = textActor.GetTextProperty()
 
   def createColorScalarBar(self, sliceViewName):
-    if vtk.VTK_MAJOR_VERSION > 5:
+    if self.hasVTKPVScalarBarActor:
       scalarBar = slicer.vtkPVScalarBarActor()
     else:
       scalarBar = vtk.vtkScalarBarActor()
     scalarBar.SetTitle(" ")
     # adjust text property
-    if vtk.VTK_MAJOR_VERSION > 5:
+    if self.hasVTKPVScalarBarActor:
       scalarBar.SetRangeLabelFormat(self.rangeLabelFormat)
     lookupTable = vtk.vtkLookupTable()
     scalarBar.SetLookupTable(lookupTable)
@@ -753,8 +756,8 @@ class SliceAnnotations(object):
 
       scalarBar = self.colorScalarBars[sliceViewName]
       scalarBar.SetTextPositionToPrecedeScalarBar()
-      scalarBar.SetRangeLabelFormat(self.rangeLabelFormat)
-      if vtk.VTK_MAJOR_VERSION > 5:
+      if self.hasVTKPVScalarBarActor:
+        scalarBar.SetRangeLabelFormat(self.rangeLabelFormat)
         scalarBar.SetAddRangeAnnotations(0)
       else:
         scalarBar.SetMaximumWidthInPixels(50)
