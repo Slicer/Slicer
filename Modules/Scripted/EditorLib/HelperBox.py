@@ -1,5 +1,5 @@
 import os
-import re
+import fnmatch
 from __main__ import qt
 from __main__ import ctk
 from __main__ import vtk
@@ -237,11 +237,12 @@ class HelperBox(object):
     labelName = colorNode.GetColorName( label )
     structureName = self.master.GetName()+"-%s-label"%labelName
 
-    struct = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, structureName )
-    struct.SetName(structureName)
-    struct.GetDisplayNode().SetAndObserveColorNodeID( colorNode.GetID() )
+    if labelName not in self.structureLabelNames:
+      struct = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, structureName )
+      struct.SetName(structureName)
+      struct.GetDisplayNode().SetAndObserveColorNodeID( colorNode.GetID() )
+      self.updateStructures()
 
-    self.updateStructures()
     if options.find("noEdit") < 0:
       self.edit( label )
 
@@ -504,8 +505,8 @@ class HelperBox(object):
     while vNode:
       vName = vNode.GetName()
       # match something like "CT-lung-label1"
-      regexp = "%s-.*-label" % masterName
-      if re.match(regexp, vName):
+      fnmatchExp = "%s-*-label*" % masterName
+      if fnmatch.fnmatch(vName,fnmatchExp):
         volumeNodes.append(vNode)
       vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
     return volumeNodes
@@ -572,7 +573,7 @@ class HelperBox(object):
       # label index
       item = qt.QStandardItem()
       item.setEditable(False)
-      item.setText( str(structureIndex) )
+      item.setText( "%03d"%int(structureIndex) )
       self.structures.setItem(self.row,0,item)
       self.items.append(item)
       # label color
@@ -601,12 +602,9 @@ class HelperBox(object):
       self.items.append(item)
       self.row += 1
 
+    for i in range(5):
+      self.structuresView.resizeColumnToContents(i)
 
-    self.structuresView.setColumnWidth(0,70)
-    self.structuresView.setColumnWidth(1,50)
-    self.structuresView.setColumnWidth(2,60)
-    self.structuresView.setColumnWidth(3,100)
-    self.structuresView.setColumnWidth(4,10)
     self.structures.setHeaderData(0,1,"Number")
     self.structures.setHeaderData(1,1,"Color")
     self.structures.setHeaderData(2,1,"Name")
@@ -615,6 +613,12 @@ class HelperBox(object):
     self.structuresView.setModel(self.structures)
     self.structuresView.connect("activated(QModelIndex)", self.onStructuresClicked)
     self.structuresView.setProperty('SH_ItemView_ActivateItemOnSingleClick', 1)
+
+    self.structureLabelNames = []
+    rows = self.structures.rowCount()
+    for row in xrange(rows):
+      self.structureLabelNames.append(self.structures.item(row,2).text())
+
 
   #
   # callback helpers (slots)
