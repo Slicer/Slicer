@@ -436,17 +436,9 @@ QMainWindow* qSlicerApplication::mainWindow()const
 void qSlicerApplication::handleCommandLineArguments()
 {
   // XXX Could probably be moved into a more general function
-  QString logTxt;
-  {
-    QTextStream s(&logTxt);
-    s << QString("Number of registered modules: %1\n").arg(
-           this->moduleManager()->factoryManager()->registeredModuleNames().count());
-    s << QString("Number of instantiated modules: %1\n").arg(
-           this->moduleManager()->factoryManager()->instantiatedModuleNames().count());
-    s << QString("Number of loaded modules: %1\n").arg(
-           this->moduleManager()->modulesNames().count());
-  }
-  this->appendToLogFile(logTxt);
+  qDebug("Number of registered modules: %d", this->moduleManager()->factoryManager()->registeredModuleNames().count());
+  qDebug("Number of instantiated modules: %d", this->moduleManager()->factoryManager()->instantiatedModuleNames().count());
+  qDebug("Number of loaded modules: %d", this->moduleManager()->modulesNames().count());
 
   qSlicerCommandOptions* options = this->commandOptions();
   Q_ASSERT(options);
@@ -664,17 +656,6 @@ QString qSlicerApplication::currentLogFile()const
 }
 
 // --------------------------------------------------------------------------
-void qSlicerApplication::appendToLogFile(const QString& txt)
-{
-  QFile f(this->currentLogFile());
-  if (f.open(QFile::Append))
-    {
-    f.write(qPrintable(txt));
-    }
-  f.close();
-}
-
-// --------------------------------------------------------------------------
 void qSlicerApplication::setupFileLogging()
 {
   Q_D(qSlicerApplication);
@@ -722,70 +703,66 @@ void qSlicerApplication::setupFileLogging()
 
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
+
+  qDebug("Session start time: %s", qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+  qDebug("Slicer version: %s (revision %s) %s - %s", Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()), qPrintable(this->platform()), this->isInstalled() ? "installed" : "not installed");
+
+  vtkNew<vtkSystemInformation> systemInfo;
+  systemInfo->RunCPUCheck();
+  systemInfo->RunOSCheck();
+  systemInfo->RunMemoryCheck();
+
+  qDebug("Operating system: %s / %s / %s - %s", systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown", systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown", systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown" , systemInfo->Is64Bits() ? "64-bit" : "32-bit");
+
+  size_t totalPhysicalMemoryMb = systemInfo->GetTotalPhysicalMemory();
+  size_t totalVirtualMemoryMb = systemInfo->GetTotalVirtualMemory();
+#if defined(_WIN32)
+  // On Windows vtkSystemInformation::GetTotalVirtualMemory() returns the virtual address space,
+  // while memory allocation fails if total page file size is reached. Therefore,
+  // total page file size is a better indication of actually available memory for the process.
+  // The issue has been fixed in kwSys release at the end of 2014, therefore when VTK is upgraded then
+  // this workaround may not be needed anymore.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+  MEMORYSTATUS ms;
+  ms.dwLength = sizeof(ms);
+  GlobalMemoryStatus(&ms);
+  unsigned long totalPhysicalBytes = ms.dwTotalPhys;
+  totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
+  unsigned long totalVirtualBytes = ms.dwTotalPageFile;
+  totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
+#else
+  MEMORYSTATUSEX ms;
+  ms.dwLength = sizeof(ms);
+  if (GlobalMemoryStatusEx(&ms))
     {
-    QString logTxt;
-    QTextStream s(&logTxt);
-    s << QString("Session start time: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-    s << QString("Slicer version: %1 (revision %2) %3 - %4\n").arg(Slicer_VERSION_FULL).arg(this->repositoryRevision()).arg(this->platform()).arg((this->isInstalled() ? "installed" : "not installed"));
-
-    vtkNew<vtkSystemInformation> systemInfo;
-    systemInfo->RunCPUCheck();
-    systemInfo->RunOSCheck();
-    systemInfo->RunMemoryCheck();
-
-    s << QString("Operating system: %1 / %2 / %3 - %4\n").arg(systemInfo->GetOSName()).arg(systemInfo->GetOSRelease()).arg(systemInfo->GetOSVersion()).arg(systemInfo->Is64Bits() ? "64-bit" : "32-bit");
-
-    size_t totalPhysicalMemoryMb = systemInfo->GetTotalPhysicalMemory();
-    size_t totalVirtualMemoryMb = systemInfo->GetTotalVirtualMemory();
-#if defined(_WIN32)
-    // On Windows vtkSystemInformation::GetTotalVirtualMemory() returns the virtual address space,
-    // while memory allocation fails if total page file size is reached. Therefore,
-    // total page file size is a better indication of actually available memory for the process.
-    // The issue has been fixed in kwSys release at the end of 2014, therefore when VTK is upgraded then
-    // this workaround may not be needed anymore.
-  #if defined(_MSC_VER) && _MSC_VER < 1300
-    MEMORYSTATUS ms;
-    ms.dwLength = sizeof(ms);
-    GlobalMemoryStatus(&ms);
-    unsigned long totalPhysicalBytes = ms.dwTotalPhys;
+    DWORDLONG totalPhysicalBytes = ms.ullTotalPhys;
     totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
-    unsigned long totalVirtualBytes = ms.dwTotalPageFile;
+    DWORDLONG totalVirtualBytes = ms.ullTotalPageFile;
     totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
-  #else
-    MEMORYSTATUSEX ms;
-    ms.dwLength = sizeof(ms);
-    if (GlobalMemoryStatusEx(&ms))
-      {
-      DWORDLONG totalPhysicalBytes = ms.ullTotalPhys;
-      totalPhysicalMemoryMb = totalPhysicalBytes>>10>>10;
-      DWORDLONG totalVirtualBytes = ms.ullTotalPageFile;
-      totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
-      }
-  #endif
-#endif
-    s << QString("Memory: %1 MB physical, %2 MB virtual\n").arg(totalPhysicalMemoryMb).arg(totalVirtualMemoryMb);
-
-    unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
-#if defined(_WIN32)
-    // On Windows number of physical CPUs are computed incorrectly by vtkSystemInformation::GetNumberOfPhysicalCPU(),
-    // if hyperthreading is enabled (typically 0 is reported), therefore get it directly from the OS instead.
-    SYSTEM_INFO info;
-    info.dwNumberOfProcessors = 0;
-    GetSystemInfo (&info);
-    numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
-#endif
-    s << QString("CPU: %1 %2 MHz, %3 cores\n").arg(systemInfo->GetVendorString()).arg(QString::number(systemInfo->GetProcessorClockFrequency()/1000, 'g', 3)).arg(numberOfPhysicalCPU);
-
-    QSettings settings;
-    bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
-    s << QString("Developer mode enabled: %1\n").arg(developerModeEnabled ? "yes" : "no");
-
-    bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", false).toBool();
-    s << QString("Prefer executable CLI: %1\n").arg(preferExecutableCli ? "yes" : "no");
-
-    QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
-    s << QString("Additional module paths: %1\n").arg(additionalModulePaths.isEmpty() ? QString("(none)") : additionalModulePaths.join(", "));
-
-    this->appendToLogFile(logTxt);
     }
+#endif
+#endif
+  qDebug("Memory: %d MB physical, %d MB virtual", totalPhysicalMemoryMb, totalVirtualMemoryMb);
+
+  unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
+#if defined(_WIN32)
+  // On Windows number of physical CPUs are computed incorrectly by vtkSystemInformation::GetNumberOfPhysicalCPU(),
+  // if hyperthreading is enabled (typically 0 is reported), therefore get it directly from the OS instead.
+  SYSTEM_INFO info;
+  info.dwNumberOfProcessors = 0;
+  GetSystemInfo (&info);
+  numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
+#endif
+  qDebug("CPU: %s %.3f MHz, %d cores", systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown", systemInfo->GetProcessorClockFrequency()/1000, numberOfPhysicalCPU);
+
+  QSettings settings;
+  bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
+  qDebug("Developer mode enabled: %s", developerModeEnabled ? "yes" : "no");
+
+  bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", false).toBool();
+  qDebug("Prefer executable CLI: %s", preferExecutableCli ? "yes" : "no");
+
+  QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
+  qDebug("Additional module paths: %s", additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
+
 }
