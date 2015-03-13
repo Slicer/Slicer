@@ -360,7 +360,7 @@ void qSlicerCoreCommandOptions::addArguments()
                     "List of additional module path to consider when searching for modules to load.");
 
   this->addArgument("disable-modules", "", QVariant::Bool,
-                    "Disables the loading of any odules.");
+                    "Disables the loading of any Modules.");
 
   this->addArgument("disable-builtin-modules", "", QVariant::Bool,
                     "Disables the loading of builtin Modules.");
