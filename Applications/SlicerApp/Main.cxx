@@ -164,14 +164,14 @@ int SlicerAppMain(int argc, char* argv[])
   // Register and instantiate modules
   splashMessage(splashScreen, "Registering modules...");
   moduleFactoryManager->registerModules();
-  if (app.commandOptions()->verboseModuleDiscovery())
+  if (app.commandOptions()->verbose())
     {
     qDebug() << "Number of registered modules:"
              << moduleFactoryManager->registeredModuleNames().count();
     }
   splashMessage(splashScreen, "Instantiating modules...");
   moduleFactoryManager->instantiateModules();
-  if (app.commandOptions()->verboseModuleDiscovery())
+  if (app.commandOptions()->verbose())
     {
     qDebug() << "Number of instantiated modules:"
              << moduleFactoryManager->instantiatedModuleNames().count();
@@ -192,7 +192,7 @@ int SlicerAppMain(int argc, char* argv[])
     splashMessage(splashScreen, "Loading module \"" + name + "\"...");
     moduleFactoryManager->loadModule(name);
     }
-  if (app.commandOptions()->verboseModuleDiscovery())
+  if (app.commandOptions()->verbose())
     {
     qDebug() << "Number of loaded modules:" << moduleManager->modulesNames().count();
     }

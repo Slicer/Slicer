@@ -435,11 +435,6 @@ QMainWindow* qSlicerApplication::mainWindow()const
 //-----------------------------------------------------------------------------
 void qSlicerApplication::handleCommandLineArguments()
 {
-  // XXX Could probably be moved into a more general function
-  qDebug("Number of registered modules: %d", this->moduleManager()->factoryManager()->registeredModuleNames().count());
-  qDebug("Number of instantiated modules: %d", this->moduleManager()->factoryManager()->instantiatedModuleNames().count());
-  qDebug("Number of loaded modules: %d", this->moduleManager()->modulesNames().count());
-
   qSlicerCommandOptions* options = this->commandOptions();
   Q_ASSERT(options);
 
