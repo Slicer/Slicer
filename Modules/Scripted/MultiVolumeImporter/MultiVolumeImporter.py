@@ -1,5 +1,5 @@
 from __future__ import print_function
-import sys
+import sys, re
 
 from __main__ import vtk, qt, ctk, slicer
 try:
