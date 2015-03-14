@@ -661,6 +661,11 @@ void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode * newSliceNode)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *sliceCompositeNode)
 {
+  if (this->SliceCompositeNode == sliceCompositeNode)
+    {
+    return;
+    }
+
   // Observe the composite node, since this holds the parameters for this pipeline
   vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, sliceCompositeNode );
   this->UpdatePipeline();

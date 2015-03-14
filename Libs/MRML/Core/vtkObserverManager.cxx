@@ -111,6 +111,11 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
   vtkDebugMacro (<< "SetAndObserveObject of " << node);
   if (*nodePtr == node)
     {
+    if (node == 0)
+      {
+      return;
+      }
+    vtkWarningMacro( << "Setting the same object should be a no-op.");
     return;
     }
   this->SetObject(nodePtr, node);

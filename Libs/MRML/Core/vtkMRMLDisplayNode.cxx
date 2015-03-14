@@ -774,7 +774,10 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
     cnode = vtkMRMLColorNode::SafeDownCast(
       this->GetScene()->GetNodeByID(colorNodeID));
     }
-  vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+  if (this->ColorNode != cnode)
+    {
+    vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
+    }
   this->SetColorNodeInternal(cnode);
   this->SetColorNodeID(colorNodeID);
   if (this->Scene)

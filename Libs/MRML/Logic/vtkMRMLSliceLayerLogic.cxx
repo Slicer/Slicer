@@ -392,10 +392,13 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
       }
     // vtkSetAndObserveMRMLNodeMacro could fire an event but we want to wait
     // after UpdateVolumeDisplayNode is called to fire it.
-    bool wasModifying = this->StartModify();
-    vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
-    this->UpdateVolumeDisplayNode();
-    this->EndModify(wasModifying);
+    if (this->VolumeDisplayNodeObserved != displayNode)
+      {
+      bool wasModifying = this->StartModify();
+      vtkSetAndObserveMRMLNodeMacro(this->VolumeDisplayNodeObserved, displayNode);
+      this->UpdateVolumeDisplayNode();
+      this->EndModify(wasModifying);
+      }
 }
 
 //----------------------------------------------------------------------------
