@@ -129,6 +129,7 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
       return;
       }
     vtkWarningMacro( << "Setting the same object should be a no-op.");
+    return;
     }
   this->SetObject(nodePtr, node);  // should we set a priority on the object?
   this->AddObjectEvents(node, events, priorities);
