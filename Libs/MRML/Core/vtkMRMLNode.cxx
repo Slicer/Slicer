@@ -1430,13 +1430,16 @@ void vtkMRMLNode::SetAndObserveNthNodeReference(const char* referenceRole, int n
 
   vtkMRMLNode *oldReferencedNode = references[n]->ReferencedNode;
 
-  if (events)
+  if (references[n]->ReferencedNode != referencedNode)
     {
-    vtkSetAndObserveMRMLObjectEventsMacro(references[n]->ReferencedNode, referencedNode, events);
-    }
-  else
-    {
-    vtkSetAndObserveMRMLObjectMacro(references[n]->ReferencedNode, referencedNode);
+    if (events)
+      {
+      vtkSetAndObserveMRMLObjectEventsMacro(references[n]->ReferencedNode, referencedNode, events);
+      }
+    else
+      {
+      vtkSetAndObserveMRMLObjectMacro(references[n]->ReferencedNode, referencedNode);
+      }
     }
 
   if (oldReferencedNode != 0 && referencedNode == 0)
