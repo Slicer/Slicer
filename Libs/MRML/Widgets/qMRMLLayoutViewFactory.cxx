@@ -463,9 +463,19 @@ QWidget* qMRMLLayoutViewFactory::createViewFromXML(QDomElement viewElement)
   Q_D(qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = this->viewNodeFromXML(viewElement);
   Q_ASSERT(viewNode);
-  // the view should have been created automatically by the logic when the new
-  // view arrangement is set
+  // Usually, the view is automatically created if:
+  //  (1) a view node associated with the factory is added (See onViewNodeAdded)
+  //  (2) a new Scene is set on the factory (See setMRMLScene / onSceneModified)
+  //  (3) a batch process ends (See EndBatchProcessEvent / onSceneModified)
   QWidget* view = this->viewWidget(viewNode);
+  if (!view)
+    {
+    // The following call will take care of creating the view when a sceneView is
+    // restored. In that case, vtkMRMLLayoutLogic::OnMRMLSceneEndRestore was called first
+    // without giving a chance to the factory to create the missing views.
+    this->onViewNodeAdded(viewNode);
+    view = this->viewWidget(viewNode);
+    }
   Q_ASSERT(view);
 
   vtkMRMLLayoutLogic::ViewProperties properties = d->propertiesFromXML(viewElement);
