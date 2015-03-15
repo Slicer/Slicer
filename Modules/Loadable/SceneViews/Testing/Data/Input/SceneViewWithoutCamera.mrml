@@ -1,0 +1,16 @@
+<MRML userTags="">
+<Selection
+  id="vtkMRMLSelectionNodeSingleton"  name="Selection"  hideFromEditors="true"  selectable="true"  selected="false"  attributes="Category:"  activeVolumeID="vtkMRMLScalarVolumeNode13"  secondaryVolumeID="vtkMRMLScalarVolumeNode13"  activeLabelVolumeID="vtkMRMLScalarVolumeNode5"  activeFiducialListID="NULL"  activeAnnotationID="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="NULL" ></Selection>
+ <Interaction
+  id="vtkMRMLInteractionNodeSingleton"  name="Interaction"  hideFromEditors="true"  selectable="true"  selected="false"  currentInteractionMode="ViewTransform"  lastInteractionMode="ViewTransform" ></Interaction>
+
+ <SceneView
+  id="vtkMRMLSceneViewNode1"  name="Preop multiparametric MRI review"  hideFromEditors="false"  selectable="true"  selected="false"  attributes="Category:" userTags=""  screenshotType="4"  sceneViewDescription="" >
+  <Selection
+    id="vtkMRMLSelectionNodeSingleton"    name="Selection"    hideFromEditors="true"    selectable="true"    selected="false"    attributes="Category:"    activeVolumeID="vtkMRMLScalarVolumeNode13"    secondaryVolumeID="vtkMRMLScalarVolumeNode13"    activeLabelVolumeID="vtkMRMLScalarVolumeNode5"    activeFiducialListID="NULL"    activeAnnotationID="NULL"    activeROIListID="NULL"    activeCameraID="NULL"    activeViewID="NULL"    activeLayoutID="NULL"  ></Selection>
+  <Interaction
+    id="vtkMRMLInteractionNodeSingleton"    name="Interaction"    hideFromEditors="true"    selectable="true"    selected="false"    currentInteractionMode="ViewTransform"    lastInteractionMode="ViewTransform"  ></Interaction>
+    <View
+    id="vtkMRMLViewNode1"    name="View"    hideFromEditors="false"    selectable="true"    selected="false"    attributes="Category:;MappedInLayout:1"    layoutLabel="1"    layoutName="1"    active="false"    visibility="true"    backgroundColor="0.756863 0.764706 0.909804"    backgroundColor2="0.454902 0.470588 0.745098"    fieldOfView="200"    letterSize="0.05"    boxVisible="false"    fiducialsVisible="true"    fiducialLabelsVisible="true"    axisLabelsVisible="true"    axisLabelsCameraDependent="true"    animationMode="Off"    viewAxisMode="LookFrom"    spinDegrees="2"    spinMs="5"    spinDirection="YawLeft"    rotateDegrees="5"    rockLength="200"    rockCount="0"    stereoType="NoStereo"    renderMode="Perspective"  ></View>
+</SceneView>
+</MRML>
