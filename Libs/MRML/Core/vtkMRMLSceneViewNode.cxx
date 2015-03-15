@@ -441,7 +441,6 @@ void vtkMRMLSceneViewNode::RestoreScene()
        (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
-    vtkSmartPointer<vtkMRMLHierarchyNode> hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
     // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
     // sceneview nodes nor top level scene view hierarchy nodes
     if (iter == snapshotMap.end() &&
