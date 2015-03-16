@@ -87,7 +87,11 @@ Version:   $Revision: 1.18 $
 #include <cassert>
 #include <numeric>
 
-//#define MRMLSCENE_VERBOSE 1
+//#define MRMLSCENE_VERBOSE
+
+#ifdef MRMLSCENE_VERBOSE
+# include <vtkTimerLog.h>
+#endif
 
 vtkCxxSetObjectMacro(vtkMRMLScene, CacheManager, vtkCacheManager)
 vtkCxxSetObjectMacro(vtkMRMLScene, DataIOManager, vtkDataIOManager)
