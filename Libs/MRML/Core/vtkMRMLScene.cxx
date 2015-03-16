@@ -1028,11 +1028,23 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       assert(sn != n);
       std::string oldId(sn->GetID());
       std::string newId(n->GetID() ? n->GetID() : sn->GetID());
-      sn->CopyWithSceneWithSingleModifiedEvent(n);
+
+      // Instead of using 'CopyWithSceneWithSingleModifiedEvent', 'StartModify' is
+      // explicitly invoked before calling 'CopyWithScene', then 'EndModify' is
+      // invoked only after swapping the singleton node ID. Doing so will avoid
+      // to get error message like:
+      //   "GetNodeByID: Node is in the scene, but its ID is missing from the NodeIDs cache"
+      //sn->CopyWithSceneWithSingleModifiedEvent(n);
+      int wasModifyingSingeltonNode = sn->StartModify();
+      sn->CopyWithScene(n);
 
       this->RemoveNodeReferences(n);
       // cache the node so the whole scene cache stays up-to-date
       // Remove the old node ID only if the ID was associated with sn.
+#ifdef MRMLSCENE_VERBOSE
+      std::cerr << "Update node id cache swaping '" << oldId
+                << "' with '" << newId << "'" << std::endl;
+#endif
       std::map< std::string, vtkSmartPointer<vtkMRMLNode> >::iterator nodeID =
         this->NodeIDs.find(oldId);
       if (nodeID != this->NodeIDs.end() &&
@@ -1045,6 +1057,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       this->NodeIDs[newId] = sn;
       this->NodeIDsMTime = this->Nodes->GetMTime();
 
+      sn->EndModify(wasModifyingSingeltonNode);
       n->EndModify(wasModifying);
       return sn;
       }
