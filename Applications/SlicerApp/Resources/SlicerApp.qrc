@@ -7,5 +7,6 @@
     <file alias="Icons/XXLarge/DesktopIcon.png">Icons/XXLarge/Slicer-DesktopIcon.png</file>
     <file alias="SplashScreen.png">Images/Slicer-SplashScreen.png</file>
     <file alias="Logo.png">Images/Slicer-Logo.png</file>
+    <file alias="ModulePanelLogo.png">Images/Slicer-ModulePanelLogo.png</file>
   </qresource>
 </RCC>

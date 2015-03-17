@@ -164,7 +164,7 @@
      <item>
       <widget class="QLabel" name="LogoLabel">
        <property name="pixmap">
-        <pixmap resource="../../../../Resources/qSlicer.qrc">:/Logos/Slicer3.png</pixmap>
+        <pixmap resource="../SlicerApp.qrc">:/ModulePanelLogo.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1273,7 +1273,6 @@
   <include location="../SlicerApp.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
-  <include location="../../../../Resources/qSlicer.qrc"/>
  </resources>
  <connections/>
 </ui>
