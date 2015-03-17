@@ -28,6 +28,7 @@ macro(slicerMacroBuildAppLibrary)
     FOLDER
     APPLICATION_NAME
     DESCRIPTION_SUMMARY
+    DESCRIPTION_FILE
     )
   set(multiValueArgs
     SRCS
@@ -58,6 +59,13 @@ macro(slicerMacroBuildAppLibrary)
     endif()
   endforeach()
 
+  set(expected_existing_vars DESCRIPTION_FILE)
+  foreach(var ${expected_existing_vars})
+    if(NOT EXISTS "${SLICERAPPLIB_${var}}")
+      message(FATAL_ERROR "error: Variable ${var} set to ${SLICERAPPLIB_${var}} corresponds to an nonexistent file. ")
+    endif()
+  endforeach()
+
   if(NOT DEFINED Slicer_INSTALL_NO_DEVELOPMENT)
     message(SEND_ERROR "Slicer_INSTALL_NO_DEVELOPMENT is mandatory")
   endif()
@@ -74,6 +82,7 @@ macro(slicerMacroBuildAppLibrary)
   endmacro()
 
   _set_applib_property(DESCRIPTION_SUMMARY)
+  _set_applib_property(DESCRIPTION_FILE)
 
   # --------------------------------------------------------------------------
   # Define library name
