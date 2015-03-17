@@ -293,6 +293,11 @@ macro(slicerMacroBuildApplication)
 
   message(STATUS "Configuring ${SLICERAPP_APPLICATION_NAME} application: ${SLICERAPP_NAME}")
 
+  macro(_set_app_property varname)
+    set_property(GLOBAL PROPERTY ${SLICERAPP_APPLICATION_NAME}_${varname} ${SLICERAPP_${varname}})
+    message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} ${varname} to '${SLICERAPP_${varname}}'")
+  endmacro()
+
   macro(_set_path_var varname defaultvalue)
     if(NOT DEFINED SLICERAPP_${varname})
       set(SLICERAPP_${varname} ${defaultvalue})
@@ -303,7 +308,7 @@ macro(slicerMacroBuildApplication)
     if(NOT EXISTS "${SLICERAPP_${varname}}")
       message(FATAL_ERROR "error: Variable ${varname} set to ${SLICERAPP_${varname}} corresponds to an nonexistent file. ")
     endif()
-    message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} ${varname} to '${SLICERAPP_${varname}}'")
+    _set_app_property(${varname})
   endmacro()
 
   _set_path_var(LAUNCHER_SPLASHSCREEN_FILE "Resources/Images/${SLICERAPP_APPLICATION_NAME}-SplashScreen.png")

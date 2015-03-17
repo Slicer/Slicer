@@ -154,10 +154,12 @@ set(Slicer_CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 set(Slicer_CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
 set(Slicer_CPACK_PACKAGE_VERSION_PATCH "${Slicer_VERSION_PATCH}")
 set(Slicer_CPACK_PACKAGE_VERSION "${Slicer_VERSION_FULL}")
-set(Slicer_CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Resources/Slicer.icns")
 set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${Slicer_CPACK_PACKAGE_NAME} ${Slicer_CPACK_PACKAGE_VERSION}")
 
 set(project ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
+
+# Get main application properties
+get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
 
 macro(slicer_cpack_set varname)
   if(DEFINED ${project}_${varname})
