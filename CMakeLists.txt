@@ -414,13 +414,17 @@ mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE:BOOL)
 # Organization name
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_ORGANIZATION_DOMAIN)
-  set(Slicer_ORGANIZATION_DOMAIN "www.na-mic.org" CACHE INTERNAL "Organization domain")
+  set(Slicer_ORGANIZATION_DOMAIN "www.na-mic.org" CACHE STRING "Organization domain")
 endif()
+mark_as_advanced(Slicer_ORGANIZATION_DOMAIN)
+mark_as_superbuild(Slicer_ORGANIZATION_DOMAIN)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} organization [${Slicer_ORGANIZATION_DOMAIN}]")
 
 if(NOT DEFINED Slicer_ORGANIZATION_NAME)
-  set(Slicer_ORGANIZATION_NAME "NA-MIC" CACHE INTERNAL "Organization name")
+  set(Slicer_ORGANIZATION_NAME "NA-MIC" CACHE STRING "Organization name")
 endif()
+mark_as_advanced(Slicer_ORGANIZATION_NAME)
+mark_as_superbuild(Slicer_ORGANIZATION_NAME)
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} domain [${Slicer_ORGANIZATION_NAME}]")
 
 set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
