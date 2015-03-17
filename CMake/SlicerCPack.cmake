@@ -147,8 +147,6 @@ set(CPACK_MONOLITHIC_INSTALL ON)
 set(Slicer_CPACK_PACKAGE_NAME ${SlicerApp_APPLICATION_NAME})
 set(Slicer_CPACK_PACKAGE_VENDOR ${Slicer_ORGANIZATION_NAME})
 set(Slicer_CPACK_PACKAGE_DESCRIPTION_FILE "${Slicer_SOURCE_DIR}/README.txt")
-set(Slicer_CPACK_PACKAGE_DESCRIPTION_SUMMARY
-  "Medical Visualization and Processing Environment for Research")
 set(Slicer_CPACK_RESOURCE_FILE_LICENSE "${Slicer_SOURCE_DIR}/License.txt")
 set(Slicer_CPACK_PACKAGE_VERSION_MAJOR "${Slicer_VERSION_MAJOR}")
 set(Slicer_CPACK_PACKAGE_VERSION_MINOR "${Slicer_VERSION_MINOR}")
@@ -159,6 +157,7 @@ set(Slicer_CPACK_PACKAGE_INSTALL_DIRECTORY "${Slicer_CPACK_PACKAGE_NAME} ${Slice
 set(project ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
 # Get main application properties
+get_property(${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${project}_DESCRIPTION_SUMMARY)
 get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
 
 macro(slicer_cpack_set varname)

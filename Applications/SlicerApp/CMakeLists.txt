@@ -34,6 +34,10 @@ set(${PROJECT_NAME}_FOLDER "App-${SlicerApp_APPLICATION_NAME}")
 
 set(APPLIB_NAME "q${PROJECT_NAME}")
 
+set(APPLIB_DESCRIPTION_SUMMARY
+  "Medical Visualization and Processing Environment for Research"
+  )
+
 set(APPLIB_SRCS
   qSlicerAppAboutDialog.cxx
   qSlicerAppAboutDialog.h
@@ -64,6 +68,7 @@ set(APPLIB_RESOURCES
 slicerMacroBuildAppLibrary(
   NAME ${APPLIB_NAME}
   APPLICATION_NAME ${SlicerApp_APPLICATION_NAME}
+  DESCRIPTION_SUMMARY ${APPLIB_DESCRIPTION_SUMMARY}
   EXPORT_DIRECTIVE "Q_SLICER_APP_EXPORT"
   FOLDER ${${PROJECT_NAME}_FOLDER}
   SRCS ${APPLIB_SRCS}

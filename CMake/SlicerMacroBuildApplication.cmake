@@ -27,6 +27,7 @@ macro(slicerMacroBuildAppLibrary)
     EXPORT_DIRECTIVE
     FOLDER
     APPLICATION_NAME
+    DESCRIPTION_SUMMARY
     )
   set(multiValueArgs
     SRCS
@@ -50,7 +51,7 @@ macro(slicerMacroBuildAppLibrary)
     message(FATAL_ERROR "Unknown keywords given to SlicerMacroBuildAppLibrary(): \"${SLICERAPPLIB_UNPARSED_ARGUMENTS}\"")
   endif()
 
-  set(expected_defined_vars NAME EXPORT_DIRECTIVE)
+  set(expected_defined_vars NAME EXPORT_DIRECTIVE DESCRIPTION_SUMMARY)
   foreach(var ${expected_defined_vars})
     if(NOT DEFINED SLICERAPPLIB_${var})
       message(FATAL_ERROR "${var} is mandatory")
@@ -66,6 +67,13 @@ macro(slicerMacroBuildAppLibrary)
   endif()
 
   message(STATUS "Configuring ${SLICERAPPLIB_APPLICATION_NAME} application library: ${SLICERAPPLIB_NAME}")
+
+  macro(_set_applib_property varname)
+    set_property(GLOBAL PROPERTY ${SLICERAPPLIB_APPLICATION_NAME}_${varname} ${SLICERAPPLIB_${varname}})
+    message(STATUS "Setting ${SLICERAPPLIB_APPLICATION_NAME} ${varname} to '${SLICERAPPLIB_${varname}}'")
+  endmacro()
+
+  _set_applib_property(DESCRIPTION_SUMMARY)
 
   # --------------------------------------------------------------------------
   # Define library name
