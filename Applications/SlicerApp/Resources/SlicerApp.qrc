@@ -1,11 +1,11 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file alias="Icons/Small/DesktopIcon.png">Icons/Small/3DSlicer-DesktopIcon.png</file>
-    <file alias="Icons/Medium/DesktopIcon.png">Icons/Medium/3DSlicer-DesktopIcon.png</file>
-    <file alias="Icons/Large/DesktopIcon.png">Icons/Large/3DSlicer-DesktopIcon.png</file>
-    <file alias="Icons/XLarge/DesktopIcon.png">Icons/XLarge/3DSlicer-DesktopIcon.png</file>
-    <file alias="Icons/XXLarge/DesktopIcon.png">Icons/XXLarge/3DSlicer-DesktopIcon.png</file>
-    <file alias="SplashScreen.png">Images/SlicerSplashScreen.png</file>
-    <file alias="Logo.png">Images/SlicerLogo.png</file>
+    <file alias="Icons/Small/DesktopIcon.png">Icons/Small/Slicer-DesktopIcon.png</file>
+    <file alias="Icons/Medium/DesktopIcon.png">Icons/Medium/Slicer-DesktopIcon.png</file>
+    <file alias="Icons/Large/DesktopIcon.png">Icons/Large/Slicer-DesktopIcon.png</file>
+    <file alias="Icons/XLarge/DesktopIcon.png">Icons/XLarge/Slicer-DesktopIcon.png</file>
+    <file alias="Icons/XXLarge/DesktopIcon.png">Icons/XXLarge/Slicer-DesktopIcon.png</file>
+    <file alias="SplashScreen.png">Images/Slicer-SplashScreen.png</file>
+    <file alias="Logo.png">Images/Slicer-Logo.png</file>
   </qresource>
 </RCC>

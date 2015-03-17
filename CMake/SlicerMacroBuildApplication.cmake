@@ -306,7 +306,7 @@ macro(slicerMacroBuildApplication)
     message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} ${varname} to '${SLICERAPP_${varname}}'")
   endmacro()
 
-  _set_path_var(LAUNCHER_SPLASHSCREEN_FILE "Resources/Images/${SLICERAPP_APPLICATION_NAME}SplashScreen.png")
+  _set_path_var(LAUNCHER_SPLASHSCREEN_FILE "Resources/Images/${SLICERAPP_APPLICATION_NAME}-SplashScreen.png")
   _set_path_var(APPLE_ICON_FILE "Resources/${SLICERAPP_APPLICATION_NAME}.icns")
   _set_path_var(WIN_ICON_FILE "Resources/${SLICERAPP_APPLICATION_NAME}.ico")
 
