@@ -387,14 +387,6 @@ endif()
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
-# Organization name
-#-----------------------------------------------------------------------------
-set(Slicer_ORGANIZATION_DOMAIN "www.na-mic.org" CACHE INTERNAL "Organization domain")
-set(Slicer_ORGANIZATION_NAME "NA-MIC" CACHE INTERNAL "Organization name")
-
-set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
-
-#-----------------------------------------------------------------------------
 # Main application
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_MAIN_PROJECT)
@@ -415,6 +407,21 @@ else()
   set(Slicer_BUILD_WIN32_CONSOLE OFF)
 endif()
 mark_as_superbuild(Slicer_BUILD_WIN32_CONSOLE:BOOL)
+
+#-----------------------------------------------------------------------------
+# Organization name
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_ORGANIZATION_DOMAIN)
+  set(Slicer_ORGANIZATION_DOMAIN "www.na-mic.org" CACHE INTERNAL "Organization domain")
+endif()
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} organization [${Slicer_ORGANIZATION_DOMAIN}]")
+
+if(NOT DEFINED Slicer_ORGANIZATION_NAME)
+  set(Slicer_ORGANIZATION_NAME "NA-MIC" CACHE INTERNAL "Organization name")
+endif()
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} domain [${Slicer_ORGANIZATION_NAME}]")
+
+set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
 
 #-----------------------------------------------------------------------------
 # Slicer version number.
