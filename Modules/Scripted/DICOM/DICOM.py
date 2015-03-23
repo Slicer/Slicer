@@ -290,18 +290,12 @@ class DICOMWidget:
 
     # connect to the main window's dicom button
     mw = slicer.util.mainWindow()
-    try:
-      action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
-      action.connect('triggered()',self.detailsPopup.open)
-    except IndexError:
-      print('Could not connect to the main window DICOM button')
-
-    # connect to our menu file entry so it raises the browser
-    fileMenu = slicer.util.lookupTopLevelWidget('FileMenu')
-    if fileMenu:
-      for action in fileMenu.actions():
-        if action.text == 'DICOM':
-          action.connect('triggered()',self.detailsPopup.open)
+    if mw:
+      try:
+        action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
+        action.connect('triggered()',self.detailsPopup.open)
+      except IndexError:
+        print('Could not connect to the main window DICOM button')
 
     # make the tables view a bit bigger
     self.tables.setMinimumHeight(250)
