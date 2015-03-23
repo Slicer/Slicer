@@ -1155,10 +1155,6 @@ void qSlicerAppMainWindow::setupMenuActions()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_LoadDICOMAction_triggered()
 {
-//  Q_D(qSlicerAppMainWindow);
-// raise the dicom module....
-//  d->ModuleSelectorToolBar->selectModule("DICOM");
-
   qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
 
   if (!layoutManager)
