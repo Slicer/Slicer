@@ -1,9 +1,14 @@
 import os, glob, sys
-import numpy as np
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
+
+try:
+  import numpy as np
+  NUMPY_AVAILABLE = True
+except ImportError:
+  NUMPY_AVAILABLE = False
 
 import DataProbeLib
 import DataProbeUtil
@@ -677,7 +682,7 @@ class SliceAnnotations(object):
 
       if self.showScalingRuler and \
           viewWidth > self.minimumWidthForScalingRuler and\
-         rulerArea>0.5 and rulerArea<500 :
+         rulerArea>0.5 and rulerArea<500 and NUMPY_AVAILABLE:
         rulerSizesArray = np.array([1,5,10,50,100])
         index = np.argmin(np.abs(rulerSizesArray- rulerArea))
 
