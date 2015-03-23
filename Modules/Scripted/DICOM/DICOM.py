@@ -284,9 +284,10 @@ class DICOMWidget:
 
     self.tables = self.detailsPopup.tables
 
-    self.showBrowser = qt.QPushButton('Show DICOM Browser')
-    self.dicomFrame.layout().addWidget(self.showBrowser)
-    self.showBrowser.connect('clicked()', self.detailsPopup.open)
+    # connect to the 'Show DICOM Browser' button
+    self.showBrowserButton = qt.QPushButton('Show DICOM Browser')
+    self.dicomFrame.layout().addWidget(self.showBrowserButton)
+    self.showBrowserButton.connect('clicked()', self.detailsPopup.open)
 
     # connect to the main window's dicom button
     mw = slicer.util.mainWindow()
