@@ -427,17 +427,7 @@ class DICOMWidget:
         self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onSeriesSelected(self,seriesUIDList):
-    #self.model = index.model()
-    #self.tables.setExpanded(index, not self.tables.expanded(index))
-    #self.selection = index.sibling(index.row(), 0)
-    #typeRole = self.selection.data(self.dicomModelTypeRole)
-    #if typeRole > 0:
-      #self.sendButton.enabled = True
-    #else:
-      #self.sendButton.enabled = False
     self.detailsPopup.open()
-    #uid = self.selection.data(self.dicomModelUIDRole)
-    #role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
     self.detailsPopup.offerLoadables(seriesUIDList, "SeriesUIDList")
 
   def onTreeContextMenuRequested(self,pos):
