@@ -1,5 +1,6 @@
-import os
 import glob
+import logging
+import os
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
@@ -74,8 +75,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
                   slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
                   slicer.dicomListener.start()
                 except (UserWarning,OSError) as message:
-                  # TODO: how to put this into the error log?
-                  print ('Problem trying to start DICOMListener:\n %s' % message)
+                  logging.error('Problem trying to start DICOMListener:\n %s' % message)
         if slicer.dicomDatabase:
           slicer.app.setDICOMDatabase(slicer.dicomDatabase)
 
@@ -107,7 +107,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
-      print('trying to stop listener')
+      logging.debug('trying to stop listener')
       slicer.dicomListener.stop()
 
 
@@ -139,7 +139,7 @@ class DICOMFileDialog:
 
   def execDialog(self):
     """Not used"""
-    print('execDialog called on %s' % self)
+    logging.debug('execDialog called on %s' % self)
 
   def isMimeDataAccepted(self):
     """Checks the dropped data and returns true if it is one or
@@ -295,7 +295,7 @@ class DICOMWidget:
         action = slicer.util.findChildren(mw,name='LoadDICOMAction')[0]
         action.connect('triggered()',self.detailsPopup.open)
       except IndexError:
-        print('Could not connect to the main window DICOM button')
+        logging.error('Could not connect to the main window DICOM button')
 
     # make the tables view a bit bigger
     self.tables.setMinimumHeight(250)
