@@ -46,6 +46,12 @@ void vtkPolyDataTensorToColor::ColorGlyphsBySphericalMeasure() {
 void vtkPolyDataTensorToColor::ColorGlyphsByPlanarMeasure() {
   this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_PLANAR_MEASURE);
 }
+void vtkPolyDataTensorToColor::ColorGlyphsByParallelDiffusivity() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_PARALLEL_DIFFUSIVITY);
+}
+void vtkPolyDataTensorToColor::ColorGlyphsByPerpendicularDiffusivity() {
+  this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_PERPENDICULAR_DIFFUSIVITY);
+}
 void vtkPolyDataTensorToColor::ColorGlyphsByMaxEigenvalue() {
   this->ColorGlyphsBy(vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVALUE);
 }

@@ -211,6 +211,24 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           this->TensorToColor->ColorGlyphsByPlanarMeasure( );
           }
           break;
+        case vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure:
+          {
+          vtkDebugMacro("coloring with spherical measure");
+          this->TensorToColor->ColorGlyphsBySphericalMeasure( );
+          }
+          break;
+        case vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity:
+          {
+          vtkDebugMacro("coloring with parallel diff");
+          this->TensorToColor->ColorGlyphsByParallelDiffusivity( );
+          }
+          break;
+        case vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity:
+          {
+          vtkDebugMacro("coloring with perpendicular diff");
+          this->TensorToColor->ColorGlyphsByPerpendicularDiffusivity( );
+          }
+          break;
         case vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue:
           {
           vtkDebugMacro("coloring with max eigenval");
@@ -277,11 +295,18 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           this->GetOutputPolyDataConnection()->GetProducer()->Update();
 #endif
           vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
-          if (pointData &&
-              pointData->GetArray(this->GetActiveScalarName()))
+          if (pointData)
             {
-            double *activeScalarRange = pointData->GetArray(
-              this->GetActiveScalarName())->GetRange();
+            double *activeScalarRange = 0;
+            if (pointData->GetArray(this->GetActiveScalarName()))
+              {
+              activeScalarRange = pointData->GetArray(
+                                  this->GetActiveScalarName())->GetRange();
+              }
+            else if (pointData->GetArray(0))
+              {
+              activeScalarRange = pointData->GetArray(0)->GetRange();
+              }
             if (activeScalarRange)
               {
               range[0] = activeScalarRange[0];

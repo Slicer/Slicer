@@ -91,7 +91,6 @@ public:
   /// of polydata at that point
   virtual void SetMask(vtkImageData*);
 
-
   /// TO DO: make more of these
 
   ///
@@ -99,6 +98,8 @@ public:
   void ColorGlyphsByLinearMeasure();
   void ColorGlyphsBySphericalMeasure();
   void ColorGlyphsByPlanarMeasure();
+  void ColorGlyphsByParallelDiffusivity();
+  void ColorGlyphsByPerpendicularDiffusivity();
   void ColorGlyphsByMaxEigenvalue();
   void ColorGlyphsByMidEigenvalue();
   void ColorGlyphsByMinEigenvalue();
@@ -109,7 +110,6 @@ public:
   ///
   /// Output R,G,B scalars according to orientation of max eigenvalue
   void ColorGlyphsByOrientation();
-
 
   /// Description
   /// Transform output glyph locations (not orientations!)
@@ -126,7 +126,6 @@ public:
   ///
   virtual void SetVolumePositionMatrix(vtkMatrix4x4*);
   vtkGetObjectMacro(VolumePositionMatrix, vtkMatrix4x4);
-
 
   /// Description
   /// Transform output glyph orientations

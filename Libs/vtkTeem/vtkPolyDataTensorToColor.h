@@ -55,7 +55,6 @@ public:
   vtkBooleanMacro(ExtractScalar,int);
   vtkGetMacro(ExtractScalar,int);
 
-
   /// TO DO: make more of these
 
   ///
@@ -63,6 +62,8 @@ public:
   void ColorGlyphsByLinearMeasure();
   void ColorGlyphsBySphericalMeasure();
   void ColorGlyphsByPlanarMeasure();
+  void ColorGlyphsByParallelDiffusivity();
+  void ColorGlyphsByPerpendicularDiffusivity();
   void ColorGlyphsByMaxEigenvalue();
   void ColorGlyphsByMidEigenvalue();
   void ColorGlyphsByMinEigenvalue();
@@ -70,7 +71,6 @@ public:
   void ColorGlyphsByFractionalAnisotropy();
   void ColorGlyphsByTrace();
   void ColorGlyphsByOrientation();
-
 
 protected:
   vtkPolyDataTensorToColor();
