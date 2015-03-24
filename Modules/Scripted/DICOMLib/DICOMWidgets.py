@@ -233,10 +233,6 @@ class DICOMDetailsPopup(object):
     self.uncheckAllButton.connect('clicked()', self.uncheckAllLoadables)
     self.actionButtonLayout.addStretch(1)
 
-    self.closeButton = qt.QPushButton('Close')
-    #self.actionButtonLayout.addWidget(self.closeButton)
-    self.closeButton.connect('clicked()', self.close)
-
     self.advancedViewButton = qt.QCheckBox('Advanced')
     self.actionButtonLayout.addWidget(self.advancedViewButton)
     self.advancedViewButton.enabled = True
