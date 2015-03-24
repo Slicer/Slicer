@@ -301,11 +301,6 @@ class DICOMWidget:
     slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
     self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
 
-    # enable to the Send button of the app widget and take it over
-    # for our purposes - TODO: fix this to enable it at the ctkDICOM level
-    self.sendButton = slicer.util.findChildren(self.dicomBrowser, text='Send')[0]
-    self.sendButton.enabled = False
-
     # the recent activity frame
     self.activityFrame = ctk.ctkCollapsibleButton(self.parent)
     self.activityFrame.setLayout(qt.QVBoxLayout())
