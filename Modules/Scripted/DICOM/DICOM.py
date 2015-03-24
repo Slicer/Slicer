@@ -533,29 +533,3 @@ class DICOMWidget:
 
   def okayCancel(self,text,title='DICOM'):
     return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x400400) == 0x400
-
-def DICOMTest():
-  w = slicer.modules.dicom.widgetRepresentation()
-  w.onToggleServer()
-  queryButton = slicer.util.findChildren(w.dicomBrowser, text='Query')[0]
-  queryButton.click()
-
-
-  print("DICOMTest Passed!")
-  return True
-
-def DICOMDemo():
-  pass
-
-if __name__ == "__main__":
-  import sys
-  if '--test' in sys.argv:
-    if DICOMTest():
-      exit(0)
-    exit(1)
-  if '--demo' in sys.argv:
-    DICOMDemo()
-    exit()
-  # TODO - 'exit()' returns so this code gets run
-  # even if the argument matches one of the cases above
-  #print ("usage: DICOM.py [--test | --demo]")
