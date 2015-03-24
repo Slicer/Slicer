@@ -282,6 +282,7 @@ class DICOMWidget:
 
     self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomBrowser)
 
+    # XXX Slicer 4.5 - Remove this. Was here only for backward compatibility.
     self.tables = self.detailsPopup.tables
 
     # connect to the 'Show DICOM Browser' button
@@ -304,8 +305,6 @@ class DICOMWidget:
 
     slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
     self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
-
-    self.tables.connect('seriesSelectionChanged(QStringList)', self.onSeriesSelected)
 
     # enable to the Send button of the app widget and take it over
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
@@ -409,9 +408,6 @@ class DICOMWidget:
         if not os.path.exists(databaseDirectory):
           os.mkdir(databaseDirectory)
         self.onDatabaseDirectoryChanged(databaseDirectory)
-
-  def onSeriesSelected(self,seriesUIDList):
-    self.detailsPopup.offerLoadables(seriesUIDList, "SeriesUIDList")
 
   def onSendClicked(self):
     """Perform a dicom store of slicer data to a peer"""

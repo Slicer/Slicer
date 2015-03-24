@@ -280,6 +280,11 @@ class DICOMDetailsPopup(object):
       self.headerLayout.addWidget(self.header.widget)
 
     #
+    # Series selection
+    #
+    self.tables.connect('seriesSelectionChanged(QStringList)', self.onSeriesSelected)
+
+    #
     # Plugin selection widget
     #
     self.pluginSelector = DICOMPluginSelector(self.window)
@@ -407,6 +412,9 @@ class DICOMDetailsPopup(object):
       for loadable in loadablesBySeries[series]:
         if loadable.confidence < highestConfidenceValue:
           loadable.selected = False
+
+  def onSeriesSelected(self,seriesUIDList):
+    self.offerLoadables(seriesUIDList, "SeriesUIDList")
 
   def offerLoadables(self,uidArgument,role):
     """Get all the loadable options at the currently selected level
