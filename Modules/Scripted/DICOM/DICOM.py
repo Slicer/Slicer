@@ -362,11 +362,17 @@ class DICOMWidget:
       if not os.access(databaseDirectory, os.R_OK):
         messages += "Directory not readable. "
     if messages != "":
-      self.messageBox('The database file path "%s" cannot be used.  %s\nPlease pick a different database directory using the LocalDatabase button in the DICOM Browser.' % (databaseFilepath,messages))
+      slicer.util.warningDisplay('The database file path "%s" cannot be used.  %s\n'
+                                 'Please pick a different database directory using the '
+                                 'LocalDatabase button in the DICOM Browser' % (databaseFilepath,messages),
+                                 windowTitle="DICOM")
     else:
       slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
       if not slicer.dicomDatabase.isOpen:
-        self.messageBox('The database file path "%s" cannot be opened.\nPlease pick a different database directory using the LocalDatabase button in the DICOM Browser.' % databaseFilepath)
+        slicer.util.warningDisplay('The database file path "%s" cannot be opened.\n'
+                                   'Please pick a different database directory using the '
+                                   'LocalDatabase button in the DICOM Browser.' % databaseFilepath,
+                                   windowTitle="DICOM")
         self.dicomDatabase = None
       else:
         if self.dicomBrowser:
@@ -448,7 +454,7 @@ class DICOMWidget:
           dicomListener.fileAddedCallback = self.onListenerAddedFile
           slicer.dicomListener = dicomListener
       except UserWarning as message:
-        self.messageBox(self,"Could not start listener:\n %s" % message,title='DICOM')
+        slicer.util.warningDisplay("Could not start listener:\n %s" % message, windowTitle="DICOM")
 
   def onListenerStateChanged(self,newState):
     """ Called when the indexer process state changes
@@ -521,9 +527,6 @@ class DICOMWidget:
     settings.setValue('DICOM/RunListenerAtStart', self.runListenerAtStart.checked)
 
   def messageBox(self,text,title='DICOM'):
-    self.mb = qt.QMessageBox(slicer.util.mainWindow())
-    self.mb.setWindowTitle(title)
-    self.mb.setText(text)
-    self.mb.setWindowModality(1)
-    self.mb.exec_()
-    return
+    # XXX Slicer 4.5 - Remove this function. Was here only for backward compatibility.
+    #                  Instead, slicer.util.warningDisplay() should be used.
+    slicer.util.warningDisplay(text, windowTitle=title)
