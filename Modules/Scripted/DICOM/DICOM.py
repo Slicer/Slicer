@@ -19,22 +19,6 @@ import DICOMLib
 
 class DICOM(ScriptedLoadableModule):
 
-  @staticmethod
-  def setDatabasePrecacheTags(dicomBrowser=None):
-    """query each plugin for tags that should be cached on import
-       and set them for the dicom app widget and slicer"""
-    if not slicer.dicomDatabase:
-      return
-    tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
-    for pluginClass in slicer.modules.dicomPlugins:
-      plugin = slicer.modules.dicomPlugins[pluginClass]()
-      tagsToPrecache += plugin.tags.values()
-    tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
-    tagsToPrecache.sort()
-    slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
-    if dicomBrowser:
-      dicomBrowser.tagsToPrecache = tagsToPrecache
-
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
     import string
@@ -83,7 +67,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if not slicer.app.commandOptions().noMainWindow :
       qt.QTimer.singleShot(0, self.addMenu)
     # set the dicom pre-cache tags once all plugin classes have been initialized
-    qt.QTimer.singleShot(0, DICOM.setDatabasePrecacheTags)
+    qt.QTimer.singleShot(0, DICOMLib.setDatabasePrecacheTags)
 
   def setup(self):
     # Register DICOM subject hierarchy plugin (member to prevent destruction)
@@ -110,6 +94,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       logging.debug('trying to stop listener')
       slicer.dicomListener.stop()
 
+# XXX Slicer 4.5 - Remove this. Here only for backward compatibility.
+DICOM.setDatabasePrecacheTags = DICOMLib.setDatabasePrecacheTags
 
 #
 # Class for avoiding python error that is caused by the method DICOM::setup
@@ -164,7 +150,6 @@ class DICOMFileDialog:
       dicomWidget.detailsPopup.dicomBrowser.onImportDirectory(directory)
     self.directoriesToAdd = []
 
-
 #
 # DICOM widget
 #
@@ -176,7 +161,6 @@ class DICOMWidget:
 
   def __init__(self, parent=None):
     self.testingServer = None
-    self.dicomBrowser = None
 
     # state management for compressing events
     # - each time an update is requested, start the singleShot timer
@@ -261,23 +245,10 @@ class DICOMWidget:
     self.dicomFrame.setText("DICOM Database and Networking")
     self.layout.addWidget(self.dicomFrame)
 
-    # initialize the dicomDatabase
-    #   - pick a default and let the user know
-    if not slicer.dicomDatabase:
-      self.promptForDatabaseDirectory()
+    self.detailsPopup = DICOMLib.DICOMDetailsPopup()
 
-    #
-    # create and configure the app widget - this involves
-    # reaching inside and manipulating the widget hierarchy
-    # - TODO: this configurability should be exposed more natively
-    #   in the CTK code to avoid the findChildren calls
-    #
-    self.dicomBrowser = ctk.ctkDICOMBrowser()
-    DICOM.setDatabasePrecacheTags(self.dicomBrowser)
-
-    self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomBrowser)
-
-    # XXX Slicer 4.5 - Remove this. Was here only for backward compatibility.
+    # XXX Slicer 4.5 - Remove these. Here only for backward compatibility.
+    self.dicomBrowser = self.detailsPopup.dicomBrowser
     self.tables = self.detailsPopup.tables
 
     # connect to the 'Show DICOM Browser' button
@@ -299,7 +270,6 @@ class DICOMWidget:
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
     slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
-    self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
 
     # the recent activity frame
     self.activityFrame = ctk.ctkCollapsibleButton(self.parent)
@@ -333,76 +303,6 @@ class DICOMWidget:
 
   def onUpateRecentActivityRequestTimeout(self):
     self.recentActivity.update()
-
-  def onDatabaseDirectoryChanged(self,databaseDirectory):
-    if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
-      slicer.dicomDatabase = ctk.ctkDICOMDatabase()
-    DICOM.setDatabasePrecacheTags(self.dicomBrowser)
-    databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
-    messages = ""
-    if not os.path.exists(databaseDirectory):
-      try:
-        os.mkdir(databaseDirectory)
-      except OSError:
-        messages += "Directory does not exist and cannot be created. "
-    else:
-      if not os.access(databaseDirectory, os.W_OK):
-        messages += "Directory not writable. "
-      if not os.access(databaseDirectory, os.R_OK):
-        messages += "Directory not readable. "
-    if messages != "":
-      slicer.util.warningDisplay('The database file path "%s" cannot be used.  %s\n'
-                                 'Please pick a different database directory using the '
-                                 'LocalDatabase button in the DICOM Browser' % (databaseFilepath,messages),
-                                 windowTitle="DICOM")
-    else:
-      slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
-      if not slicer.dicomDatabase.isOpen:
-        slicer.util.warningDisplay('The database file path "%s" cannot be opened.\n'
-                                   'Please pick a different database directory using the '
-                                   'LocalDatabase button in the DICOM Browser.' % databaseFilepath,
-                                   windowTitle="DICOM")
-        self.dicomDatabase = None
-      else:
-        if self.dicomBrowser:
-          if self.dicomBrowser.databaseDirectory != databaseDirectory:
-            self.dicomBrowser.databaseDirectory = databaseDirectory
-        else:
-          settings = qt.QSettings()
-          settings.setValue('DatabaseDirectory', databaseDirectory)
-          settings.sync()
-    if slicer.dicomDatabase:
-      slicer.app.setDICOMDatabase(slicer.dicomDatabase)
-
-  def promptForDatabaseDirectory(self):
-    """Ask the user to pick a database directory.
-    But, if the application is in testing mode, just pick
-    a temp directory
-    """
-    commandOptions = slicer.app.commandOptions()
-    if commandOptions.testingEnabled:
-      databaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
-      qt.QDir().mkpath(databaseDirectory)
-      self.onDatabaseDirectoryChanged(databaseDirectory)
-    else:
-      settings = qt.QSettings()
-      databaseDirectory = settings.value('DatabaseDirectory')
-      if databaseDirectory:
-        self.onDatabaseDirectoryChanged(databaseDirectory)
-      else:
-        # pick the user's Documents by default
-        documentsLocation = qt.QDesktopServices.DocumentsLocation
-        documents = qt.QDesktopServices.storageLocation(documentsLocation)
-        databaseDirectory = documents + "/SlicerDICOMDatabase"
-        message = "DICOM Database will be stored in\n\n"
-        message += databaseDirectory
-        message += "\n\nUse the Local Database button in the DICOM Browser "
-        message += "to pick a different location."
-        qt.QMessageBox.information(slicer.util.mainWindow(),
-                        'DICOM', message, qt.QMessageBox.Ok)
-        if not os.path.exists(databaseDirectory):
-          os.mkdir(databaseDirectory)
-        self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onToggleListener(self):
     self.toggleListener.checked = False

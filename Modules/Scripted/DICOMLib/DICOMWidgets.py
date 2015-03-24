@@ -21,14 +21,31 @@ for elements like slicer.dicomDatabase and slicer.mrmlScene
 #
 #########################################################
 
+def setDatabasePrecacheTags(dicomBrowser=None):
+  """query each plugin for tags that should be cached on import
+     and set them for the dicom app widget and slicer"""
+  if not slicer.dicomDatabase:
+    return
+  tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
+  for pluginClass in slicer.modules.dicomPlugins:
+    plugin = slicer.modules.dicomPlugins[pluginClass]()
+    tagsToPrecache += plugin.tags.values()
+  tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
+  tagsToPrecache.sort()
+  slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
+  if dicomBrowser:
+    dicomBrowser.tagsToPrecache = tagsToPrecache
+
 class DICOMDetailsPopup(object):
   """Implement the Qt window showing details and possible
   operations to perform on the selected dicom list item.
   This is a helper used in the DICOMWidget class.
   """
 
-  def __init__(self,dicomBrowser):
+  def __init__(self,dicomBrowser=None):
     self.dicomBrowser = dicomBrowser
+    if self.dicomBrowser == None:
+      self.dicomBrowser = ctk.ctkDICOMBrowser()
     self.popupGeometry = qt.QRect()
     settings = qt.QSettings()
 
@@ -59,6 +76,14 @@ class DICOMDetailsPopup(object):
     self.pluginInstances = {}
     self.fileLists = []
 
+    setDatabasePrecacheTags(self.dicomBrowser)
+
+    self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
+    # initialize the dicomDatabase
+    #   - pick a default and let the user know
+    if not slicer.dicomDatabase:
+      self.promptForDatabaseDirectory()
+
   def create(self,widgetType='window',showHeader=False,showPreview=False):
     """
     main window is a frame with widgets from the app
@@ -77,7 +102,12 @@ class DICOMDetailsPopup(object):
     if  (index != -1) :
       self.tableDensityComboBox.setCurrentIndex(index)
 
-    #self.tables = self.dicomBrowser.tableManager
+    #
+    # create and configure the Slicer browser widget - this involves
+    # reaching inside and manipulating the widget hierarchy
+    # - TODO: this configurability should be exposed more natively
+    #   in the CTK code to avoid the findChildren calls
+    #
     self.tables = slicer.util.findChildren(self.dicomBrowser, 'dicomTableManager')[0]
     patientTable = slicer.util.findChildren(self.tables, 'patientsTable')[0]
     patientTableView = slicer.util.findChildren(patientTable, 'tblDicomDatabaseView')[0]
@@ -282,6 +312,76 @@ class DICOMDetailsPopup(object):
       self.checkBox = self.pluginSelector.checkBoxByPlugin[pluginClass]
       self.checkBox.connect('stateChanged(int)', self.onPluginStateChanged)
       self.checkBoxByPlugins.append(self.checkBox)
+
+  def onDatabaseDirectoryChanged(self,databaseDirectory):
+    if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
+      slicer.dicomDatabase = ctk.ctkDICOMDatabase()
+    setDatabasePrecacheTags(self.dicomBrowser)
+    databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
+    messages = ""
+    if not os.path.exists(databaseDirectory):
+      try:
+        os.mkdir(databaseDirectory)
+      except OSError:
+        messages += "Directory does not exist and cannot be created. "
+    else:
+      if not os.access(databaseDirectory, os.W_OK):
+        messages += "Directory not writable. "
+      if not os.access(databaseDirectory, os.R_OK):
+        messages += "Directory not readable. "
+    if messages != "":
+      slicer.util.warningDisplay('The database file path "%s" cannot be used.  %s\n'
+                                 'Please pick a different database directory using the '
+                                 'LocalDatabase button in the DICOM Browser' % (databaseFilepath,messages),
+                                 windowTitle="DICOM")
+    else:
+      slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+      if not slicer.dicomDatabase.isOpen:
+        slicer.util.warningDisplay('The database file path "%s" cannot be opened.\n'
+                                   'Please pick a different database directory using the '
+                                   'LocalDatabase button in the DICOM Browser.' % databaseFilepath,
+                                   windowTitle="DICOM")
+        self.dicomDatabase = None
+      else:
+        if self.dicomBrowser:
+          if self.dicomBrowser.databaseDirectory != databaseDirectory:
+            self.dicomBrowser.databaseDirectory = databaseDirectory
+        else:
+          settings = qt.QSettings()
+          settings.setValue('DatabaseDirectory', databaseDirectory)
+          settings.sync()
+    if slicer.dicomDatabase:
+      slicer.app.setDICOMDatabase(slicer.dicomDatabase)
+
+  def promptForDatabaseDirectory(self):
+    """Ask the user to pick a database directory.
+    But, if the application is in testing mode, just pick
+    a temp directory
+    """
+    commandOptions = slicer.app.commandOptions()
+    if commandOptions.testingEnabled:
+      databaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
+      qt.QDir().mkpath(databaseDirectory)
+      self.onDatabaseDirectoryChanged(databaseDirectory)
+    else:
+      settings = qt.QSettings()
+      databaseDirectory = settings.value('DatabaseDirectory')
+      if databaseDirectory:
+        self.onDatabaseDirectoryChanged(databaseDirectory)
+      else:
+        # pick the user's Documents by default
+        documentsLocation = qt.QDesktopServices.DocumentsLocation
+        documents = qt.QDesktopServices.storageLocation(documentsLocation)
+        databaseDirectory = documents + "/SlicerDICOMDatabase"
+        message = "DICOM Database will be stored in\n\n"
+        message += databaseDirectory
+        message += "\n\nUse the Local Database button in the DICOM Browser "
+        message += "to pick a different location."
+        qt.QMessageBox.information(slicer.util.mainWindow(),
+                        'DICOM', message, qt.QMessageBox.Ok)
+        if not os.path.exists(databaseDirectory):
+          os.mkdir(databaseDirectory)
+        self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onTableDensityComboBox(self, state):
     settings = qt.QSettings()
