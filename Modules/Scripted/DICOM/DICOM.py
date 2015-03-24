@@ -178,11 +178,6 @@ class DICOMWidget:
     self.testingServer = None
     self.dicomBrowser = None
 
-    # TODO: are these wrapped so we can avoid magic numbers?
-    self.dicomModelUIDRole = 32
-    self.dicomModelTypeRole = self.dicomModelUIDRole + 1
-    self.dicomModelTypes = ('Root', 'Patient', 'Study', 'Series', 'Image')
-
     # state management for compressing events
     # - each time an update is requested, start the singleShot timer
     # - if the update is requested before the timeout, the call to timer.start() resets it
@@ -310,7 +305,6 @@ class DICOMWidget:
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
     self.sendButton = slicer.util.findChildren(self.dicomBrowser, text='Send')[0]
     self.sendButton.enabled = False
-    self.sendButton.connect('triggered()', self.onSendClicked)
 
     # the recent activity frame
     self.activityFrame = ctk.ctkCollapsibleButton(self.parent)
@@ -414,29 +408,6 @@ class DICOMWidget:
         if not os.path.exists(databaseDirectory):
           os.mkdir(databaseDirectory)
         self.onDatabaseDirectoryChanged(databaseDirectory)
-
-  def onSendClicked(self):
-    """Perform a dicom store of slicer data to a peer"""
-    # TODO: this should migrate to ctk for a more complete implementation
-    # - just the basics for now
-    uid = self.selection.data(self.dicomModelUIDRole)
-    role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
-    studies = []
-    if role == "Patient":
-      studies = slicer.dicomDatabase.studiesForPatient(uid)
-    if role == "Study":
-      studies = [uid]
-    series = []
-    if role == "Series":
-      series = [uid]
-    else:
-      for study in studies:
-        series += slicer.dicomDatabase.seriesForStudy(study)
-    files = []
-    for serie in series:
-      files += slicer.dicomDatabase.filesForSeries(serie)
-    sendDialog = DICOMLib.DICOMSendDialog(files)
-    sendDialog.open()
 
   def onToggleListener(self):
     self.toggleListener.checked = False
