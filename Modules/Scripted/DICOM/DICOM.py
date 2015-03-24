@@ -527,9 +527,3 @@ class DICOMWidget:
     self.mb.setWindowModality(1)
     self.mb.exec_()
     return
-
-  def question(self,text,title='DICOM'):
-    return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x14000) == 0x4000
-
-  def okayCancel(self,text,title='DICOM'):
-    return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x400400) == 0x400
