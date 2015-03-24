@@ -98,10 +98,7 @@ class DICOMDetailsPopup(object):
     studyTableView.resizeColumnsToContents()
     seriesTableView.resizeColumnsToContents()
 
-    #self.userFrame = slicer.util.findChildren(self.dicomBrowser, 'UserFrame')[0]
     self.userFrame = qt.QWidget()
-    #self.thumbs = slicer.util.findChildren(self.dicomBrowser, 'ThumbnailsWidget')[0]
-    #self.widthSlider = slicer.util.findChildren(self.dicomBrowser, 'ThumbnailWidthSlider')[0]
     self.preview = qt.QWidget()
 
     self.widgetType = widgetType
@@ -181,10 +178,6 @@ class DICOMDetailsPopup(object):
     # preview related column
     #
     self.previewLayout = qt.QVBoxLayout()
-    #self.layout.addLayout(self.previewLayout,selectionRow,0)
-
-    #self.previewLayout.addWidget(self.thumbs)
-    #self.previewLayout.addWidget(self.widthSlider)
     if showPreview:
       self.previewLayout.addWidget(self.preview)
     else:
@@ -203,8 +196,6 @@ class DICOMDetailsPopup(object):
 
     tableWidth = 350 if showHeader else 600
     self.loadableTable = DICOMLoadableTable(self.userFrame,width=tableWidth)
-    #self.loadableTableLayout.addWidget(self.loadableTable.widget)
-    #self.loadableTable.widget.hide()
 
     #
     # button row for action column
@@ -212,7 +203,7 @@ class DICOMDetailsPopup(object):
     self.actionButtonsFrame = qt.QWidget()
     self.actionButtonsFrame.setMaximumHeight(40)
     self.layout.addWidget(self.actionButtonsFrame)
-    #self.layout.addStretch(1)
+
     self.actionButtonLayout = qt.QHBoxLayout()
     self.actionButtonsFrame.setLayout(self.actionButtonLayout)
 
