@@ -298,25 +298,14 @@ class DICOMWidget:
       except IndexError:
         logging.error('Could not connect to the main window DICOM button')
 
-    # make the tables view a bit bigger
-    self.tables.setMinimumHeight(250)
-
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
-    # TODO: populate context menu
-    self.contextMenu = qt.QMenu(self.tables)
-    self.deleteAction = qt.QAction("Delete", self.contextMenu)
-    self.contextMenu.addAction(self.deleteAction)
-    self.deleteAction.enabled = False
-    self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
-
     slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
     self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
+
     self.tables.connect('seriesSelectionChanged(QStringList)', self.onSeriesSelected)
-    self.tables.setContextMenuPolicy(3)
-    self.tables.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
 
     # enable to the Send button of the app widget and take it over
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
@@ -422,30 +411,7 @@ class DICOMWidget:
         self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onSeriesSelected(self,seriesUIDList):
-    self.detailsPopup.open()
     self.detailsPopup.offerLoadables(seriesUIDList, "SeriesUIDList")
-
-  def onTreeContextMenuRequested(self,pos):
-    # TODO: populate the context menu
-    #index = self.tables.indexAt(pos)
-    #self.selection = index.sibling(index.row(), 0)
-    self.contextMenu.popup(self.tables.mapToGlobal(pos))
-
-  def onContextMenuTriggered(self,action):
-    if action == self.deleteAction:
-      typeRole = self.selection.data(self.dicomModelTypeRole)
-      role = self.dicomModelTypes[typeRole]
-      uid = self.selection.data(self.dicomModelUIDRole)
-      if self.okayCancel('This will remove references from the database\n(Files will not be deleted)\n\nDelete %s?' % role):
-        # TODO: add delete option to ctkDICOMDatabase
-        if role == "Patient":
-          removeWorked = slicer.dicomDatabase.removePatient(uid)
-        elif role == "Study":
-          removeWorked = slicer.dicomDatabase.removeStudy(uid)
-        elif role == "Series":
-          removeWorked = slicer.dicomDatabase.removeSeries(uid)
-        if not removeWorked:
-          self.messageBox(self,"Could not remove %s" % role,title='DICOM')
 
   def onSendClicked(self):
     """Perform a dicom store of slicer data to a peer"""
