@@ -392,6 +392,10 @@ class DICOMWidget:
     settings = qt.QSettings()
     settings.setValue('DICOM/RunListenerAtStart', self.runListenerAtStart.checked)
 
+  def onDatabaseDirectoryChanged(self,databaseDirectory):
+    # XXX Slicer 4.5 - Remove this function. Was here only for backward compatibility.
+    self.detailsPopup.onDatabaseDirectoryChanged(databaseDirectory)
+
   def messageBox(self,text,title='DICOM'):
     # XXX Slicer 4.5 - Remove this function. Was here only for backward compatibility.
     #                  Instead, slicer.util.warningDisplay() should be used.
