@@ -121,6 +121,8 @@ class EditUtil(object):
         return slicer.mrmlScene.GetNodeByID(labelID)
 
   def getColorNode(self):
+    if not self.isEraseEffectEnabled():
+      self.backupLabel()
     labelNode = self.getLabelVolume()
     if labelNode:
       dispNode = labelNode.GetDisplayNode()
