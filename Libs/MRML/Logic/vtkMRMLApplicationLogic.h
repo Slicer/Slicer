@@ -73,13 +73,33 @@ public:
   void SetColorLogic(vtkMRMLColorLogic* newColorLogic);
   vtkMRMLColorLogic* GetColorLogic()const;
 
-  ///
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
   /// Perform the default behavior related to selecting a volume
   /// (in this case, making it the background for all SliceCompositeNodes)
-  void PropagateVolumeSelection(int fit);
-  void PropagateVolumeSelection() {this->PropagateVolumeSelection(1);}
+  /// \sa vtkInternal::PropagateVolumeSelection()
+  /// \sa FitSliceToAll()
+  /// \sa vtkMRMLSelectionNode::SetActiveVolumeID()
+  /// \sa vtkMRMLSelectionNode::SetSecondaryVolumeID()
+  /// \sa vtkMRMLSelectionNode::SetActiveLabelVolumeID()
+  void PropagateVolumeSelection(int fit = 1);
 
+  /// Propagate only active background volume in the SelectionNode to slice composite
+  /// nodes
+  /// \sa FitSliceToAll()
+  /// \sa vtkMRMLSelectionNode::SetActiveVolumeID()
+  void PropagateBackgroundVolumeSelection(int fit = 1);
+
+  /// Propagate only active foreground volume in the SelectionNode to slice composite
+  /// nodes
+  /// \sa FitSliceToAll()
+  /// \sa vtkMRMLSelectionNode::SetSecondaryVolumeID()
+  void PropagateForegroundVolumeSelection(int fit = 1);
+
+  /// Propagate only active label volume in the SelectionNode to slice composite
+  /// nodes
+  /// \sa FitSliceToAll()
+  /// \sa vtkMRMLSelectionNode::SetActiveLabelVolumeID()
+  void PropagateLabelVolumeSelection(int fit = 1);
 
   /// Fit all the volumes into their views
   void FitSliceToAll();

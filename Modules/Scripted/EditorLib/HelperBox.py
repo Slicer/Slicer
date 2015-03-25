@@ -120,7 +120,8 @@ class HelperBox(object):
         selectionNode = self.applicationLogic.GetSelectionNode()
         selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
         selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-        self.applicationLogic.PropagateVolumeSelection(0)
+
+        self.propagateVolumeSelection()
         mergeText = merge.GetName()
         self.merge = merge
     else:
@@ -144,6 +145,15 @@ class HelperBox(object):
 
     if self.selectCommand:
       self.selectCommand()
+
+  def propagateVolumeSelection(self):
+    parameterNode = self.editUtil.getParameterNode()
+    mode = parameterNode.GetParameter("propagationMode")
+    if mode == 'BackgroundAndLabel':
+      self.applicationLogic.PropagateBackgroundVolumeSelection(0)
+      self.applicationLogic.PropagateLabelVolumeSelection(0)
+    else:
+      self.applicationLogic.PropagateVolumeSelection(0)
 
   def setVolumes(self,masterVolume,mergeVolume):
     """set both volumes at the same time - trick the callback into
@@ -340,7 +350,7 @@ class HelperBox(object):
     selectionNode = self.applicationLogic.GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-    self.applicationLogic.PropagateVolumeSelection(0)
+    self.propagateVolumeSelection()
 
     self.statusText( "Finished merging." )
 
@@ -490,7 +500,7 @@ class HelperBox(object):
     selectionNode.SetReferenceActiveVolumeID(self.master.GetID())
     if structureVolume:
       selectionNode.SetReferenceActiveLabelVolumeID( structureVolume.GetID() )
-    self.applicationLogic.PropagateVolumeSelection(0)
+    self.propagateVolumeSelection()
 
     self.editUtil.setLabel(label)
 

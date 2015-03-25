@@ -46,6 +46,7 @@ class EditUtil(object):
     node.SetModuleName( "Editor" )
     node.SetParameter( "label", "1" )
     node.SetParameter( "effect", "DefaultTool" )
+    node.SetParameter( "propagationMode", "Default" )
     slicer.mrmlScene.AddNode(node)
     # Since we are a singleton, the scene won't add our node into the scene,
     # but will instead insert a copy, so we find that and return it
@@ -131,6 +132,12 @@ class EditUtil(object):
 
   def setLabel(self,label):
     self.getParameterNode().SetParameter('label',str(label))
+
+  def getPropagationMode(self):
+    return int(self.getParameterNode().GetParameter('propagationMode'))
+
+  def setPropagateMode(self,propagationMode):
+    self.getParameterNode().SetParameter('propagationMode',str(propagationMode))
 
   def backupLabel(self):
     """Save current label into 'storedLabel' parameter node attribute"""
