@@ -1,5 +1,14 @@
 <MRML>
 
+<Selection
+  id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1" hideFromEditors="true" 
+  activeVolumeID="vtkMRMLScalarVolumeNode1" activeLayoutID="vtkMRMLLayoutNode1">
+</Selection>
+<Interaction
+  id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1" hideFromEditors="true"
+  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform">
+</Interaction>
+
 <Slice
   id="filevtkMRMLSliceNode1" name="yellowAxial"  hideFromEditors="true" 
   fieldOfView="283.203 261.719 250" dimensions="290 268 1" 
@@ -44,7 +53,7 @@ labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
 <VolumeDisplay
   id="vtkMRMLVolumeDisplayNode1" name=""  hideFromEditors="true" window="252" level="109" 
   upperThreshold="235" lowerThreshold="-17" interpolate="1" autoWindowLevel="1" 
-  applyThreshold="0" autoThreshold="0" colorNodeRef="vtkMRMLColorTableNodeGrey">
+  applyThreshold="0" autoThreshold="0" colorNodeID="vtkMRMLColorTableNodeGrey">
 </VolumeDisplay>
 
 <Volume

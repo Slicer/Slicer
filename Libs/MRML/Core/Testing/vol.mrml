@@ -5,7 +5,7 @@
   fileName="TestData/fixed.nrrd" >
 </VolumeArchetypeStorage>
 
-<VolumeDisplay>
+<VolumeDisplay
   id="vtkMRMLScalarVolumeDisplayNode1" 
   name="vtkMRMLScalarVolumeDisplayNode1" 
   hideFromEditors="true" selectable="true"  selected="false"  
@@ -15,7 +15,7 @@
   sliceIntersectionVisibility="false" backfaceCulling="true" 
   scalarVisibility="false" vectorVisibility="false" tensorVisibility="false" 
   autoScalarRange="true" scalarRange="0 100" 
-  colorNodeRef="vtkMRMLColorTableNodeGrey"  window="90" level="44" 
+  colorNodeID="vtkMRMLColorTableNodeGrey"  window="90" level="44" 
   upperThreshold="32767" lowerThreshold="-32768" interpolate="1" 
   autoWindowLevel="1" applyThreshold="0" autoThreshold="0">
 </VolumeDisplay>

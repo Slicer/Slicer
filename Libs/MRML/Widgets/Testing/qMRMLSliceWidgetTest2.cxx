@@ -45,7 +45,6 @@
 
 // ITK includes
 #include <itkConfigure.h>
-#include <itkFactoryRegistration.h>
 
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {
@@ -64,9 +63,6 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
-  //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-  //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-  //colorLogic->Delete();
   scene->AddNode(storageNode.GetPointer());
   scene->AddNode(displayNode.GetPointer());
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -74,10 +70,11 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   scene->AddNode(scalarNode.GetPointer());
   storageNode->ReadData(scalarNode.GetPointer());
 
-  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
+  // Default color tables are not present in the scene if there is no vtkMRMLColorLogic,
+  // therefore we need to create and set the color node manually.
+  vtkNew<vtkMRMLColorTableNode> colorNode;
   colorNode->SetTypeToGrey();
-  scene->AddNode(colorNode);
-  colorNode->Delete();
+  scene->AddNode(colorNode.GetPointer());
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   return scalarNode.GetPointer();
@@ -86,8 +83,6 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 int qMRMLSliceWidgetTest2(int argc, char * argv [] )
 {
   TESTING_OUTPUT_INIT;
-
-  itk::itkFactoryRegistration();
 
   QApplication app(argc, argv);
   if( argc < 2 )
@@ -180,7 +175,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     QTimer::singleShot(1000, &app, SLOT(quit()));
     }
 
+  int status = app.exec();
   TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
-
-  return app.exec();
+  return status;
 }
