@@ -1,5 +1,18 @@
-
 set(KIT ${PROJECT_NAME})
+
+#-----------------------------------------------------------------------------
+set(${KIT}Testing_ITK_COMPONENTS
+  ITKCommon
+  )
+find_package(ITK 4.6 COMPONENTS ${${KIT}Testing_ITK_COMPONENTS} REQUIRED)
+set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+list(APPEND ITK_INCLUDE_DIRS
+  ${ITKFactoryRegistration_INCLUDE_DIRS}
+  )
+include(${ITK_USE_FILE})
+
+#-----------------------------------------------------------------------------
 set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
 set(TEST_SOURCES
   qMRMLCheckableNodeComboBoxTest.cxx

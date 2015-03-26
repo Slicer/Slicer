@@ -349,6 +349,26 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkDebugMacro("ReadData: right before reader update, reader num files = " << reader->GetNumberOfFileNames());
     reader->Update();
     }
+  catch (itk::ImageFileReaderException& e)
+    {
+    std::string reader0thFileName;
+    if (reader->GetFileName(0) != NULL)
+      {
+      reader0thFileName = std::string("reader 0th file name = ") + std::string(reader->GetFileName(0));
+      }
+    vtkErrorMacro("ReadData: Cannot read file as a volume of type "
+                  << (refNode ? refNode->GetNodeTagName() : "null")
+                  << "[" << "fullName = " << fullName << "]\n"
+                  << "\tNumber of files listed in the node = "
+                  << this->GetNumberOfFileNames() << ".\n"
+                  << "\tFile reader says it was able to read "
+                  << reader->GetNumberOfFileNames() << " files.\n"
+                  << "\tFile reader used the archetype file name of " << reader->GetArchetype()
+                  << " [" << reader0thFileName.c_str() << "]\n"
+                  << "ITK exception info: error in " << e.GetLocation() << "\n"
+                  << e.GetDescription() << "\n");
+    return 0;
+    }
   catch (...)
     {
     std::string reader0thFileName;
