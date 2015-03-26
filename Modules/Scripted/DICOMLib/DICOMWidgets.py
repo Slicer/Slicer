@@ -67,6 +67,38 @@ class DICOMDetailsPopup(object):
     if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
 
+    # Update visibility
+    for name in [
+        'ActionImport', 'ActionExport', 'ActionQuery', 'ActionSend', 'ActionRemove', 'ActionRepair',
+        'ActionViewMetadata',
+        'AdvancedViewCheckBox', 'HorizontalViewCheckBox', 'BrowserPersistentCheckBox'
+        ]:
+      visible = settingsValue('DICOM/%s.visible' % name, True, converter=toBool)
+      control = self._findChildren(name)
+      control.visible = visible
+
+    # Define set of widgets that should be hidden/shown together
+    self.settingsWidgetNames = {
+      'DatabaseButton' : ('DatabaseNameLabel', 'DirectoryButton'),
+      'TableDensityComboBox' : ('tablesDensityLabel', 'tableDensityComboBox')
+      }
+
+    # Hide the settings button if all associated widgets should be hidden
+    settingsButtonHidden = True
+    for groupName in self.settingsWidgetNames.keys():
+      settingsButtonHidden = settingsButtonHidden and not settingsValue('DICOM/%s.visible' % groupName, True, converter=toBool)
+    self.settingsButton.visible = not settingsButtonHidden
+
+  def _findChildren(self, name):
+    """Since the ctkDICOMBrowser widgets stollen by the Slicer DICOM browser
+    loses their objectName when they are re-parented, this convenience function
+    will search in both the ``self.window`` and ``self.dicomBrowser``.
+    """
+    try:
+      return slicer.util.findChildren(self.window, name=name)[0]
+    except IndexError:
+      return slicer.util.findChildren(self.dicomBrowser, name=name)[0]
+
   def create(self,widgetType='window',showHeader=False,showPreview=False):
     """
     main window is a frame with widgets from the app
@@ -79,6 +111,7 @@ class DICOMDetailsPopup(object):
     self.databaseNameLabel = slicer.util.findChildren(self.dicomBrowser, 'DatabaseNameLabel')[0]
     self.databaseDirectoryButton = slicer.util.findChildren(self.dicomBrowser, 'DirectoryButton')[0]
     self.tableDensityLabel = qt.QLabel('Density: ')
+    self.tableDensityLabel.objectName = 'tablesDensityLabel'
     self.tableDensityComboBox = slicer.util.findChildren(self.dicomBrowser, 'tableDensityComboBox')[0]
     self.tableDensityComboBox.connect('currentIndexChanged(QString)', self.onTableDensityComboBox)
     index = self.tableDensityComboBox.findText(self.tableDensity)
@@ -134,6 +167,8 @@ class DICOMDetailsPopup(object):
       self.dock.setWidget(self.window)
     else:
       raise "Unknown widget type - should be dialog, window, dock or popup"
+
+    self.window.objectName = 'SlicerDICOMBrowser'
 
     self.setModality(not self.browserPersistent)
 
@@ -215,6 +250,7 @@ class DICOMDetailsPopup(object):
     #
     self.actionButtonsFrame = qt.QWidget()
     self.actionButtonsFrame.setMaximumHeight(40)
+    self.actionButtonsFrame.objectName = 'ActionButtonsFrame'
     self.layout.addWidget(self.actionButtonsFrame)
 
     self.actionButtonLayout = qt.QHBoxLayout()
@@ -229,6 +265,7 @@ class DICOMDetailsPopup(object):
     self.headerPopup = DICOMLib.DICOMHeaderPopup()
 
     self.viewMetadataButton = qt.QPushButton('Metadata')
+    self.viewMetadataButton.objectName = 'ActionViewMetadata'
     self.viewMetadataButton.toolTip = 'Display Metadata of the Selected Series'
     self.viewMetadataButton.enabled = False
     self.actionButtonLayout.addWidget(self.viewMetadataButton)
@@ -247,18 +284,21 @@ class DICOMDetailsPopup(object):
     self.actionButtonLayout.addStretch(1)
 
     self.advancedViewButton = qt.QCheckBox('Advanced')
+    self.advancedViewButton.objectName = 'AdvancedViewCheckBox'
     self.actionButtonLayout.addWidget(self.advancedViewButton)
     self.advancedViewButton.enabled = True
     self.advancedViewButton.checked = self.advancedView
     self.advancedViewButton.connect('clicked()', self.onAdvanedViewButton)
 
     self.horizontalViewCheckBox = qt.QCheckBox('Horizontal')
+    self.horizontalViewCheckBox.objectName = 'HorizontalViewCheckBox'
     self.horizontalViewCheckBox.checked = self.horizontalTables
     self.horizontalViewCheckBox.connect('clicked()', self.onHorizontalViewCheckBox)
     self.actionButtonLayout.addWidget(self.horizontalViewCheckBox)
     self.toolLayout.addStretch(1)
 
     self.browserPersistentButton = qt.QCheckBox('Browser Persistent')
+    self.browserPersistentButton.objectName = 'BrowserPersistentCheckBox'
     self.browserPersistentButton.toolTip = 'When enabled, DICOM Browser remains open after loading data or switching to another module'
     self.browserPersistentButton.checked = self.browserPersistent
     self.actionButtonLayout.addWidget(self.browserPersistentButton)
@@ -394,10 +434,13 @@ class DICOMDetailsPopup(object):
     settings.setValue('DICOM/BrowserPersistent', bool(self.browserPersistent))
 
   def onSettingsButton(self, status):
-    settingWidgets = [self.databaseNameLabel, self.databaseDirectoryButton,
-        self.tableDensityLabel,self.tableDensityComboBox]
-    for widget in settingWidgets:
-      widget.visible = self.settingsButton.checked
+    for groupName in self.settingsWidgetNames.keys():
+      visible = settingsValue('DICOM/%s.visible' % groupName, True, converter=toBool)
+      for name in self.settingsWidgetNames[groupName]:
+        control = self._findChildren(name)
+        control.visible = False
+        if visible:
+          control.visible = self.settingsButton.checked
 
   def onAdvanedViewButton(self):
     self.advancedView = self.advancedViewButton.checked
