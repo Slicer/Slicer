@@ -33,27 +33,6 @@
 // STD includes
 #include <vector>
 
-// Commented out redefinition of ExceptionMacro
-#ifdef REDEFINE_EXCEPTION_MACROS
-// turn itk exceptions into vtk errors
-#undef itkExceptionMacro
-#define itkExceptionMacro(x) \
-  { \
-  ::std::ostringstream message; \
-  message << "itk::ERROR: " << this->GetNameOfClass() \
-          << "(" << this << "): " x; \
-  std::cout << message.str().c_str() << std::endl; \
-  }
-
-#undef itkGenericExceptionMacro
-#define itkGenericExceptionMacro(x) \
-  { \
-  ::std::ostringstream message; \
-  message << "itk::ERROR: " x; \
-  std::cout << message.str().c_str() << std::endl; \
-  }
-#endif
-
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkOrientImageFilter.h"
 #include "itkImageSeriesReader.h"
@@ -238,7 +217,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     {
     if (!itksys::SystemTools::FileExists (fileNameCollapsed.c_str()))
       {
-      itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
+      vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
       return 0;
       }
     }
@@ -508,7 +487,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       imageIO = imageReader->GetImageIO();
       if (imageIO.GetPointer() == NULL)
         {
-          itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+          vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
           return 0;
         }
       }
@@ -567,10 +546,11 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
       }
     }
-    catch (...)
+  catch (itk::ExceptionObject& e)
     {
     IjkToLpsMatrix->Delete();
-    itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ".");
+    vtkErrorMacro( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Cannot open " << fileNameCollapsed.c_str() << ". "
+      << "ITK exception info: error in " << e.GetLocation() << ": "<< e.GetDescription());
     return 0;
     }
   // Transform from LPS to RAS
