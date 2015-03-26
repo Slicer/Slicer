@@ -66,6 +66,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
+  Q_PROPERTY(QString slicerDefaultSettingsFilePath READ slicerDefaultSettingsFilePath CONSTANT)
   Q_PROPERTY(QString slicerUserSettingsFilePath READ slicerUserSettingsFilePath CONSTANT)
   Q_PROPERTY(QString slicerRevisionUserSettingsFilePath READ slicerRevisionUserSettingsFilePath CONSTANT)
   Q_PROPERTY(QString extensionsInstallPath READ extensionsInstallPath WRITE setExtensionsInstallPath)
@@ -174,6 +175,10 @@ public:
   /// If any, return slicer user settings file path specific to a given revision of Slicer.
   QString launcherRevisionSpecificUserSettingsFilePath()const;
 
+  /// If any, return slicer default settings file path.
+  /// \sa defaultSettings()
+  QString slicerDefaultSettingsFilePath()const;
+
   /// Return slicer user settings file path.
   /// \sa userSettings()
   QString slicerUserSettingsFilePath()const;
@@ -232,6 +237,10 @@ public:
   /// Set coreCommandOptions
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCoreCommandOptions(qSlicerCoreCommandOptions* options);
+
+  /// Get slicer application default settings.
+  /// \sa slicerDefaultSettingsFilePath()
+  Q_INVOKABLE QSettings* defaultSettings()const;
 
   /// Get slicer application user settings
   /// \note It will also instantiate a QSettings object if required.

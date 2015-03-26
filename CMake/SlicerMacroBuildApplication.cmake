@@ -272,6 +272,7 @@ macro(slicerMacroBuildApplication)
     FOLDER
     APPLICATION_NAME
 
+    DEFAULT_SETTINGS_FILE
     LAUNCHER_SPLASHSCREEN_FILE
     APPLE_ICON_FILE
     WIN_ICON_FILE
@@ -331,6 +332,9 @@ macro(slicerMacroBuildApplication)
   _set_path_var(LAUNCHER_SPLASHSCREEN_FILE "Resources/Images/${SLICERAPP_APPLICATION_NAME}-SplashScreen.png")
   _set_path_var(APPLE_ICON_FILE "Resources/${SLICERAPP_APPLICATION_NAME}.icns")
   _set_path_var(WIN_ICON_FILE "Resources/${SLICERAPP_APPLICATION_NAME}.ico")
+  if(DEFINED SLICERAPP_DEFAULT_SETTINGS_FILE)
+    _set_path_var(DEFAULT_SETTINGS_FILE "")
+  endif()
 
   # --------------------------------------------------------------------------
   # Folder
@@ -464,6 +468,21 @@ macro(slicerMacroBuildApplication)
   install(TARGETS ${slicerapp_target}
     ${SLICERAPP_INSTALL_DESTINATION_ARGS}
     COMPONENT Runtime)
+
+  if(DEFINED SLICERAPP_DEFAULT_SETTINGS_FILE)
+    get_filename_component(default_settings_filename ${SLICERAPP_DEFAULT_SETTINGS_FILE} NAME)
+    set(default_settings_build_dir ${CMAKE_BINARY_DIR}/${Slicer_SHARE_DIR})
+    message(STATUS "Copying '${default_settings_filename}' to '${default_settings_build_dir}'")
+    configure_file(
+      ${SLICERAPP_DEFAULT_SETTINGS_FILE}
+      ${default_settings_build_dir}/${default_settings_filename}
+      COPYONLY
+      )
+    install(FILES
+      ${SLICERAPP_DEFAULT_SETTINGS_FILE}
+      DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Runtime
+      )
+  endif()
 
   # --------------------------------------------------------------------------
   # Configure Launcher

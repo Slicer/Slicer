@@ -130,6 +130,7 @@ public:
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                     IntDir;
 
+  QSettings*                                  DefaultSettings;
   QSettings*                                  UserSettings;
   QSettings*                                  RevisionUserSettings;
 

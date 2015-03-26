@@ -113,6 +113,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
 {
   qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
+  this->DefaultSettings = 0;
   this->UserSettings = 0;
   this->RevisionUserSettings = 0;
   this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
@@ -211,6 +212,18 @@ void qSlicerCoreApplicationPrivate::init()
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
   this->setPythonEnvironmentVariables();
   this->setTclEnvironmentVariables();
+
+  // Load default settings if any.
+  if (q->defaultSettings())
+    {
+    foreach(const QString& key, q->defaultSettings()->allKeys())
+      {
+      if (!q->userSettings()->contains(key))
+        {
+        q->userSettings()->setValue(key, q->defaultSettings()->value(key));
+        }
+      }
+    }
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
@@ -926,6 +939,27 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
+QSettings* qSlicerCoreApplication::defaultSettings()const
+{
+  Q_D(const qSlicerCoreApplication);
+  if (!QFile(this->slicerDefaultSettingsFilePath()).exists())
+    {
+    return 0;
+    }
+  qSlicerCoreApplication* mutable_self =
+    const_cast<qSlicerCoreApplication*>(this);
+  qSlicerCoreApplicationPrivate* mutable_d =
+    const_cast<qSlicerCoreApplicationPrivate*>(d);
+  // If required, instantiate Settings
+  if(!mutable_d->DefaultSettings)
+    {
+    mutable_d->DefaultSettings =
+        new QSettings(this->slicerDefaultSettingsFilePath(), QSettings::IniFormat, mutable_self);
+    }
+  return mutable_d->DefaultSettings;
+}
+
+//-----------------------------------------------------------------------------
 QSettings* qSlicerCoreApplication::userSettings()const
 {
   Q_D(const qSlicerCoreApplication);
@@ -1119,6 +1153,12 @@ QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath()co
     {
     return this->slicerRevisionUserSettingsFilePath();
     }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::slicerDefaultSettingsFilePath()const
+{
+  return this->slicerHome() + "/" Slicer_SHARE_DIR "/" Slicer_MAIN_PROJECT_APPLICATION_NAME "DefaultSettings.ini";
 }
 
 //-----------------------------------------------------------------------------
