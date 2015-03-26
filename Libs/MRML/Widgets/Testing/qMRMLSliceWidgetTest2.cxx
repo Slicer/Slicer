@@ -45,6 +45,7 @@
 
 // ITK includes
 #include <itkConfigure.h>
+#include <itkFactoryRegistration.h> // Required for volume loading
 
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {
@@ -83,6 +84,9 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 int qMRMLSliceWidgetTest2(int argc, char * argv [] )
 {
   TESTING_OUTPUT_INIT;
+
+  // Required for volume loading
+  itk::itkFactoryRegistration();
 
   QApplication app(argc, argv);
   if( argc < 2 )
