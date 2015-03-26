@@ -22,15 +22,24 @@
 #include <vtkNew.h>
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
+#include <vtkTestingOutputWindow.h>
 
 class vtkLoggingMacroTester : public vtkObject
 {
 public:
   static vtkLoggingMacroTester *New();
   vtkTypeMacro(vtkLoggingMacroTester,vtkObject);
-  void TestLogs()
+  void TestInfo()
     {
     vtkInfoMacro("This is an info message printed from inside a VTK object");
+    }
+  void TestWarning()
+    {
+    vtkWarningMacro("This is a warning message printed from inside a VTK object");
+    }
+  void TestError()
+    {
+    vtkErrorMacro("This is a error message printed from inside a VTK object");
     }
 protected:
   vtkLoggingMacroTester() {};
@@ -44,9 +53,37 @@ vtkStandardNewMacro(vtkLoggingMacroTester);
 //----------------------------------------------------------------------------
 int vtkLoggingMacrosTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
+  TESTING_OUTPUT_INIT;
+
   vtkNew<vtkLoggingMacroTester> testerClass;
+
+  // Non-error messages
+
+  TESTING_OUTPUT_RESET;
   vtkInfoWithObjectMacro(testerClass, "This is an info message printed on behalf of a VTK object");
   vtkInfoWithoutObjectMacro("This is an info message printed without having a pointer to a related VTK object");
+  testerClass->TestInfo();
+  TESTING_OUTPUT_ASSERT_MESSAGES(3);
+  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
+
+  // Warning messages
+  
+  TESTING_OUTPUT_RESET;
+  testerClass->TestWarning();
+  testerClass->TestWarning();
+  TESTING_OUTPUT_ASSERT_WARNINGS(2);
+  TESTING_OUTPUT_ASSERT_ERRORS(0);
+  TESTING_OUTPUT_ASSERT_WARNINGS_MINIMUM(1);
+
+  // Error messages
+
+  TESTING_OUTPUT_RESET;
+  testerClass->TestError();
+  testerClass->TestError();
+  testerClass->TestError();
+  TESTING_OUTPUT_ASSERT_WARNINGS(0);
+  TESTING_OUTPUT_ASSERT_ERRORS(3);
+  TESTING_OUTPUT_ASSERT_ERRORS_MINIMUM(1);
   
   return EXIT_SUCCESS;
 }

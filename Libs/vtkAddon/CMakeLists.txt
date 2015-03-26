@@ -57,6 +57,8 @@ endif()
 # --------------------------------------------------------------------------
 set(vtkAddon_SRCS
   vtkLoggingMacros.h
+  vtkTestingOutputWindow.cxx
+  vtkTestingOutputWindow.h
   vtkOrientedBSplineTransform.cxx
   vtkOrientedBSplineTransform.h
   vtkOrientedGridTransform.cxx
