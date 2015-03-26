@@ -4,6 +4,8 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
 
+from slicer.util import settingsValue
+
 try:
   import numpy as np
   NUMPY_AVAILABLE = True
@@ -69,66 +71,39 @@ class SliceAnnotations(object):
 
     # If there is no user settings load defaults
     settings = qt.QSettings()
-    if settings.contains('DataProbe/sliceViewAnnotations.topLeft'):
-      self.topLeftAnnotationDisplay = int(settings.value(
-          'DataProbe/sliceViewAnnotations.topLeft'))
-    else:
-      self.topLeftAnnotationDisplay = 1
 
-    if settings.contains('DataProbe/sliceViewAnnotations.topRight'):
-      self.topRightAnnotationDisplay = int(settings.value(
-          'DataProbe/sliceViewAnnotations.topRight'))
-    else:
-      self.topRightAnnotationDisplay = 1
+    self.topLeftAnnotationDisplay = settingsValue(
+        'DataProbe/sliceViewAnnotations.topLeft', 1, converter=int)
 
-    if settings.contains('DataProbe/sliceViewAnnotations.bottomLeft'):
-      self.bottomLeftAnnotationDisplay = int(settings.value(
-          'DataProbe/sliceViewAnnotations.bottomLeft'))
-    else:
-      self.bottomLeftAnnotationDisplay = 1
+    self.topRightAnnotationDisplay = settingsValue(
+        'DataProbe/sliceViewAnnotations.topRight', 1, converter=int)
 
-    if settings.contains('DataProbe/sliceViewAnnotations.show'):
-      self.showSliceViewAnnotations= int(settings.value(
-          'DataProbe/sliceViewAnnotations.show'))
-    else:
-      self.showSliceViewAnnotations = 1
+    self.bottomLeftAnnotationDisplay = settingsValue(
+        'DataProbe/sliceViewAnnotations.bottomLeft', 1, converter=int)
 
-    if settings.contains('DataProbe/sliceViewAnnotations.showScalingRuler'):
-      self.showScalingRuler= int(settings.value(
-          'DataProbe/sliceViewAnnotations.showScalingRuler'))
-    else:
-      self.showScalingRuler = 1
+    self.showSliceViewAnnotations = settingsValue(
+        'DataProbe/sliceViewAnnotations.show', 1, converter=int)
+
+    self.showScalingRuler = settingsValue(
+        'DataProbe/sliceViewAnnotations.showScalingRuler', 1, converter=int)
     self.showScalingRulerLastStatus = self.showScalingRuler
 
-    if settings.contains('DataProbe/sliceViewAnnotations.showColorScalarBar'):
-      self.showColorScalarBar= int(settings.value(
-          'DataProbe/sliceViewAnnotations.showColorScalarBar'))
-    else:
-      self.showColorScalarBar = 0
+    self.showColorScalarBar = settingsValue(
+        'DataProbe/sliceViewAnnotations.showColorScalarBar', 0, converter=int)
     self.showColorScalarBarLastStatus = self.showColorScalarBar
 
-    if settings.contains('DataProbe/sliceViewAnnotations.fontFamily'):
-      self.fontFamily = settings.value('DataProbe/sliceViewAnnotations.fontFamily')
-    else:
-      self.fontFamily = 'Times'
+    self.fontFamily = settingsValue(
+        'DataProbe/sliceViewAnnotations.fontFamily', 'Times')
 
-    if settings.contains('DataProbe/sliceViewAnnotations.fontSize'):
-      self.fontSize = int(settings.value('DataProbe/sliceViewAnnotations.fontSize'))
-    else:
-      self.fontSize = 14
+    self.fontSize = settingsValue(
+        'DataProbe/sliceViewAnnotations.fontSize', 14, converter=int)
     self.maximumTextLength= 35
 
-    if settings.contains('DataProbe/sliceViewAnnotations.bgDicomAnnotationsPersistence'):
-      self.backgroundDicomAnnotationsPersistence = int(settings.value(
-          'DataProbe/sliceViewAnnotations.bgDicomAnnotationsPersistence'))
-    else:
-      self.backgroundDicomAnnotationsPersistence = 0
+    self.backgroundDicomAnnotationsPersistence = settingsValue(
+        'DataProbe/sliceViewAnnotations.bgDicomAnnotationsPersistence', 0, converter=int)
 
-    if settings.contains('DataProbe/sliceViewAnnotations.rangeLabelFormat'):
-      self.rangeLabelFormat= str(settings.value(
-          'DataProbe/sliceViewAnnotations.rangeLabelFormat'))
-    else:
-      self.rangeLabelFormat = '%G'
+    self.rangeLabelFormat = settingsValue(
+        'DataProbe/sliceViewAnnotations.rangeLabelFormat', '%G')
 
     self.parameter = 'showSliceViewAnnotations'
     self.parameterNode = self.dataProbeUtil.getParameterNode()

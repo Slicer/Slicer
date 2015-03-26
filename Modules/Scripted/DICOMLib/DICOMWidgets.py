@@ -4,6 +4,7 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
 
+from slicer.util import settingsValue, toBool
 import DICOMLib
 
 #########################################################
@@ -46,30 +47,12 @@ class DICOMDetailsPopup(object):
     self.dicomBrowser = dicomBrowser
     if self.dicomBrowser == None:
       self.dicomBrowser = ctk.ctkDICOMBrowser()
-    self.popupGeometry = qt.QRect()
-    settings = qt.QSettings()
 
-    self.browserPersistent = False
-    if settings.contains('DICOM/BrowserPersistent'):
-      self.browserPersistent = settings.value('DICOM/BrowserPersistent').lower() == 'true'
-
-    if settings.contains('DICOM/tableDensity'):
-      self.tableDensity = settings.value('DICOM/tableDensity')
-    else:
-      self.tableDensity = 'Compact'
-
-    if settings.contains('DICOM/detailsPopup.geometry'):
-      self.popupGeometry = settings.value('DICOM/detailsPopup.geometry')
-
-    if settings.contains('DICOM/advancedView'):
-      self.advancedView = int(settings.value('DICOM/advancedView'))
-    else:
-      self.advancedView= 0
-
-    if settings.contains('DICOM/horizontalTables'):
-      self.horizontalTables = int(settings.value('DICOM/horizontalTables'))
-    else:
-      self.horizontalTables = 0
+    self.browserPersistent = settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
+    self.tableDensity = settingsValue('DICOM/tableDensity', 'Compact')
+    self.popupGeometry = settingsValue('detailsPopup.geometry', qt.QRect())
+    self.advancedView = settingsValue('DICOM/advancedView', 0, converter=int)
+    self.horizontalTables = settingsValue('DICOM/horizontalTables', 0, converter=int)
 
     self.create()
     self.popupPositioned = False
@@ -408,8 +391,7 @@ class DICOMDetailsPopup(object):
     self.browserPersistent = state
     self.setModality(not self.browserPersistent)
     settings = qt.QSettings()
-    browserPersistentSettingString = 'true' if self.browserPersistent else 'false'
-    settings.setValue('DICOM/BrowserPersistent', browserPersistentSettingString)
+    settings.setValue('DICOM/BrowserPersistent', bool(self.browserPersistent))
 
   def onSettingsButton(self, status):
     settingWidgets = [self.databaseNameLabel, self.databaseDirectoryButton,

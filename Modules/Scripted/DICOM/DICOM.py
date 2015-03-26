@@ -6,6 +6,7 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
 
+from slicer.util import settingsValue, toBool
 from slicer.ScriptedLoadableModule import *
 import DICOMLib
 
@@ -235,8 +236,7 @@ class DICOMWidget:
 
     self.runListenerAtStart = qt.QCheckBox("Start Listener when Slicer Starts")
     self.localFrame.layout().addWidget(self.runListenerAtStart)
-    if settings.contains('DICOM/RunListenerAtStart'):
-      self.runListenerAtStart.checked = bool(settings.value('DICOM/RunListenerAtStart') == 'true')
+    self.runListenerAtStart.checked =  settingsValue('DICOM/RunListenerAtStart', False, converter=toBool)
     self.runListenerAtStart.connect('clicked()', self.onRunListenerAtStart)
 
     # the Database frame (home of the ctkDICOM widget)
