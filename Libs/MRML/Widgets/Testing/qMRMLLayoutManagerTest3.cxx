@@ -36,6 +36,9 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 
+// Common test driver includes
+#include "qMRMLWidgetCxxTests.h"
+
 namespace
 {
 
@@ -91,7 +94,9 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
     // The view arrangement can be set before the view descriptions are registered
     // into the layout node. Setting the scene to the layout manager will set the
     // the scene to the layout logic which will register the layout descriptions.
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
     newLayoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
     layoutNode = vtkMRMLLayoutNode::SafeDownCast(scene->AddNode(newLayoutNode.GetPointer()));
   }

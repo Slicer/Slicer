@@ -27,8 +27,10 @@
 #include "qMRMLThreeDView.h"
 
 // MRML includes
-#include <vtkMRMLViewNode.h>
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -50,13 +52,18 @@ int qMRMLNavigationViewTest1(int argc, char * argv [] )
   navigationView.setMRMLScene(scene.GetPointer());
   threeDView.setMRMLScene(scene.GetPointer());
 
-  vtkMRMLViewNode* viewNode = vtkMRMLViewNode::New();
-  viewNode->SetBoxVisible(true);
-  scene->AddNode(viewNode);
-  viewNode->Delete();
+  // vtkMRMLAbstractDisplayableManager requires selection and interaction nodes
+  vtkNew<vtkMRMLSelectionNode> selectionNode;
+  scene->AddNode(selectionNode.GetPointer());
+  vtkNew<vtkMRMLInteractionNode> interactionNode;
+  scene->AddNode(interactionNode.GetPointer());
 
-  threeDView.setMRMLViewNode(viewNode);
-  navigationView.setMRMLViewNode(viewNode);
+  vtkNew<vtkMRMLViewNode> viewNode;
+  viewNode->SetBoxVisible(true);
+  scene->AddNode(viewNode.GetPointer());
+
+  threeDView.setMRMLViewNode(viewNode.GetPointer());
+  navigationView.setMRMLViewNode(viewNode.GetPointer());
 
   navigationView.show();
   threeDView.show();

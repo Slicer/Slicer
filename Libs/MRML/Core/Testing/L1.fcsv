@@ -1,0 +1,5 @@
+# Markups fiducial file version = 4.4
+# CoordinateSystem = 0
+# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+vtkMRMLMarkupsFiducialNode_0,43.3769,23.1343,0,0,0,0,1,1,1,0,L1-P1,,vtkMRMLDiffusionTensorVolumeNode1
+vtkMRMLMarkupsFiducialNode_1,49.8834,-4.33769,0,0,0,0,1,1,1,0,L1-P2,,vtkMRMLDiffusionTensorVolumeNode1

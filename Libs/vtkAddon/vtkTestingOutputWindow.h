@@ -20,6 +20,7 @@
 
 #include "vtkObject.h"
 #include "vtkOutputWindow.h"
+#include "vtkLoggingMacros.h" // for vtkInfoWithoutObjectMacro
 
 /// \brief VTK message output window class for automated testing.
 ///
@@ -32,13 +33,14 @@
 /// A set of convenience macros are defined. Example:
 ///
 ///    // Initialize output window. All messages are logged to the console.
-///    TESTING_OUTPUT_INIT;
-///    ...
-///    // Set up a checkpoint, we restart counting messages from this point
-///    TESTING_OUTPUT_RESET;
-///    ...do something that should not log error messages
-///    // Exit with EXIT_FAILURE if any warnings or errors are logged
+///    TESTING_OUTPUT_INIT();
+///
+///    ...perform operations that _must_not_ log error messages
 ///    TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
+///
+///    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+///    ...perform operations that _must_ log error messages
+///    TESTING_OUTPUT_ASSERT_WARNINGS_END();
 ///
 class VTK_ADDON_EXPORT vtkTestingOutputWindow : public vtkOutputWindow
 {
@@ -94,10 +96,10 @@ private:
 // Convenience macros:
 
 /// Initializes logging to the tesing window
-#define TESTING_OUTPUT_INIT vtkTestingOutputWindow::GetInstance();
+#define TESTING_OUTPUT_INIT() vtkTestingOutputWindow::GetInstance();
 
 /// Resets all message counters to 0
-#define TESTING_OUTPUT_RESET vtkTestingOutputWindow::GetInstance()->ResetNumberOfLoggedMessages();
+#define TESTING_OUTPUT_RESET() vtkTestingOutputWindow::GetInstance()->ResetNumberOfLoggedMessages();
 
 /// Exits with failure if the number of logged messages is not equal to the specified number
 #define TESTING_OUTPUT_ASSERT_MESSAGES(expectedNumberOfMessages) \
@@ -107,7 +109,7 @@ private:
     { \
     std::cerr << "Assertion failed in " << __FILE__ << ":" << __LINE__ << " - expected " << expectedNumberOfMessages \
       << " messages, got " << actualNumberOfMessages << std::endl; \
-    return EXIT_FAILURE; \
+    exit(EXIT_FAILURE); \
     } \
   };
 
@@ -119,7 +121,7 @@ private:
     { \
     std::cerr << "Assertion failed in " << __FILE__ << ":" << __LINE__ << " - expected " << expectedNumberOfMessages \
       << " warnings messages, got " << actualNumberOfMessages << std::endl; \
-    return EXIT_FAILURE; \
+    exit(EXIT_FAILURE); \
     } \
   };
 
@@ -131,7 +133,7 @@ private:
     { \
     std::cerr << "Assertion failed in " << __FILE__ << ":" << __LINE__ << " - expected " << expectedNumberOfMessages \
       << " error messages, got " << actualNumberOfMessages << std::endl; \
-    return EXIT_FAILURE; \
+    exit(EXIT_FAILURE); \
     } \
   };
 
@@ -143,7 +145,7 @@ private:
     { \
     std::cerr << "Assertion failed in " << __FILE__ << ":" << __LINE__ << " - expected " << expectedNumberOfMessages \
       << " error or warning messages, got " << actualNumberOfMessages << std::endl; \
-    return EXIT_FAILURE; \
+    exit(EXIT_FAILURE); \
     } \
   };
 
@@ -155,7 +157,7 @@ private:
     { \
     std::cerr << "Assertion failed in " << __FILE__ << ":" << __LINE__ << " - expected minimum " << expectedNumberOfMessages \
       << " warning messages, got " << actualNumberOfMessages << std::endl; \
-    return EXIT_FAILURE; \
+    exit(EXIT_FAILURE); \
     } \
   };
 
@@ -167,8 +169,57 @@ private:
     { \
     std::cerr << "Assertion failed in " << __FILE__ << ":" << __LINE__ << " - expected minimum " << expectedNumberOfMessages \
       << " error messages, got " << actualNumberOfMessages << std::endl; \
-    return EXIT_FAILURE; \
+    exit(EXIT_FAILURE); \
     } \
   };
+
+/// Asserts that no warnings or errors has been logged so far and prepares for receiving warning(s)
+#define TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN() \
+  { \
+  /* Make sure there were no errors or warnings so far */ \
+  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0); \
+  vtkInfoWithoutObjectMacro("Expecting warning message(s)..."); \
+  }
+
+/// Asserts that warning(s) are logged but not errors, and clears the counters
+#define TESTING_OUTPUT_ASSERT_WARNINGS_END() \
+  { \
+  TESTING_OUTPUT_ASSERT_WARNINGS_MINIMUM(1); \
+  vtkInfoWithoutObjectMacro("Expected warning message(s) successfully received"); \
+  TESTING_OUTPUT_ASSERT_ERRORS(0); \
+  TESTING_OUTPUT_RESET(); \
+  }
+
+/// Asserts that no warnings or errors has been logged so far and prepares for receiving error(s)
+#define TESTING_OUTPUT_ASSERT_ERRORS_BEGIN() \
+  { \
+  /* Make sure there were no errors or warnings so far */ \
+  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0); \
+  vtkInfoWithoutObjectMacro("Expecting warning or error message(s)..."); \
+  }
+
+/// Asserts that error(s) are logged (warnings ignored), and clears the counters
+#define TESTING_OUTPUT_ASSERT_ERRORS_END() \
+  { \
+  TESTING_OUTPUT_ASSERT_ERRORS_MINIMUM(1); \
+  vtkInfoWithoutObjectMacro("Expected error message(s) successfully received"); \
+  TESTING_OUTPUT_RESET(); \
+  }
+
+/// Asserts that no warnings or errors has been logged so far and prepares for receiving error(s)
+#define TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN() \
+  { \
+  /* Make sure there were no errors or warnings so far */ \
+  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0); \
+  vtkInfoWithoutObjectMacro("Ignoring expected warning or error message(s)..."); \
+  }
+
+/// Asserts that error(s) are logged (warnings ignored), and clears the counters
+#define TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END() \
+  { \
+  vtkInfoWithoutObjectMacro("Finished ignoring warning or error message"); \
+  TESTING_OUTPUT_RESET(); \
+  }
+
 
 #endif

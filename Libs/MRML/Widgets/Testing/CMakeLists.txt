@@ -13,7 +13,16 @@ list(APPEND ITK_INCLUDE_DIRS
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
-set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN  "
+  TESTING_OUTPUT_INIT();
+  itk::itkFactoryRegistration();
+  ")
+
+set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "
+  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
+  DEBUG_LEAKS_ENABLE_EXIT_ERROR();
+  ")
+
 set(TEST_SOURCES
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLCheckableNodeComboBoxTest1.cxx
@@ -80,7 +89,7 @@ set(TEST_SOURCES
   qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
   qMRMLWindowLevelWidgetTest1.cxx
-  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
+  EXTRA_INCLUDE qMRMLWidgetCxxTests.h 
   )
 
 if(Slicer_USE_QtTesting)
@@ -137,6 +146,7 @@ QT4_GENERATE_MOCS(
   )
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
 target_link_libraries(${KIT}CxxTests ${KIT})
@@ -194,7 +204,7 @@ simple_test( qMRMLSceneFactoryWidgetTest1 )
 simple_test( qMRMLSceneModelTest )
 simple_test( qMRMLSceneModelTest1 )
 simple_test( qMRMLSceneModelHierarchyModelTest1 )
-simple_test( qMRMLSceneModelHierarchyModelTest2 vol_and_cube.mrml)
+SCENE_TEST( qMRMLSceneModelHierarchyModelTest2 vol_and_cube.mrml)
 simple_test( qMRMLSceneTransformModelTest1 )
 SCENE_TEST(  qMRMLSceneTransformModelTest2 vol_and_cube.mrml )
 simple_test( qMRMLSceneDisplayableModelTest1 )

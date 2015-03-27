@@ -33,6 +33,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// Common test driver includes
+#include "qMRMLWidgetCxxTests.h"
+
 // ----------------------------------------------------------------------------
 class qMRMLNodeAttributeTableViewTester: public QObject
 {
@@ -102,6 +105,9 @@ void qMRMLNodeAttributeTableViewTester::testDefaults()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testPopulate()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   vtkNew<vtkMRMLModelNode> node;
 
   QFETCH(QList<AttributeType>, attributes);
@@ -125,6 +131,8 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
              expectedAttributes[i].second);
     ++i;
     }
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
@@ -182,6 +190,9 @@ void qMRMLNodeAttributeTableViewTester::testPopulate_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSetAttribute()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   vtkNew<vtkMRMLModelNode> node;
   node->SetAttribute("Attribute1", "Value1");
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
@@ -213,11 +224,16 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute()
     QCOMPARE(node->GetAttributeNames().size(), static_cast<size_t>(expectedAttributeCount));
     QCOMPARE(QString(node->GetAttribute("Attribute1")), expectedAttribute1Value);
     }
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSetAttribute_data()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   QTest::addColumn<bool>("setOnNode");
   QTest::addColumn<QString>("attribute");
   QTest::addColumn<QString>("value");
@@ -254,11 +270,16 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute_data()
     QTest::newRow("replace valid") << (setOnNode != 0)
       << QString("Attribute1") << QString("Value2") << 1 << QString("Value2");
   }
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSelect()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   QFETCH(bool, null);
   QFETCH(QList<int>, rangeToSelect);
   QFETCH(int, expectedSelectedCellCount);
@@ -294,6 +315,8 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
     QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).bottom(), rangeToSelect[2]);
     QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).right(), rangeToSelect[3]);
     }
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
@@ -325,6 +348,9 @@ void qMRMLNodeAttributeTableViewTester::testSelect_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testAdd()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   vtkNew<vtkMRMLModelNode> node;
 
   QFETCH(QList<AttributeType>, attributes);
@@ -348,6 +374,8 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
              expectedAttributes[i].second);
     ++i;
     }
+  
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
@@ -372,6 +400,9 @@ void qMRMLNodeAttributeTableViewTester::testAdd_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testRename()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   vtkNew<vtkMRMLModelNode> node;
   node->SetAttribute("Attribute1", "Value1");
   node->SetAttribute("Attribute2", "Value2");
@@ -393,6 +424,8 @@ void qMRMLNodeAttributeTableViewTester::testRename()
   QFETCH(QStringList, expectedAttributes);
   QCOMPARE(this->NodeAttributeTableView->attributes(),
            expectedAttributes);
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
@@ -423,6 +456,9 @@ void qMRMLNodeAttributeTableViewTester::testRename_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testRemove()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   QFETCH(QList<AttributeType>, attributesToAdd);
   QFETCH(QList<int>, rangeToSelect);
   QFETCH(int, expectedAttributeCountAfterRemove);
@@ -461,6 +497,8 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
       QVERIFY(inspectedNodeAttributeValue != NULL);
       }
     }
+  
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------
@@ -488,6 +526,9 @@ void qMRMLNodeAttributeTableViewTester::testRemove_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
 {
+  // We may get empty name, in that case error is logged
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
+
   QFETCH(QList<AttributeType>, attributes);
   vtkNew<vtkMRMLModelNode> node;
 
@@ -518,6 +559,8 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
              expectedAttributes[i].second);
     ++i;
     }
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 }
 
 // ----------------------------------------------------------------------------

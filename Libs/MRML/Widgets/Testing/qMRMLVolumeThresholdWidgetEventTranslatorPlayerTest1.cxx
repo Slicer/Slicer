@@ -35,6 +35,7 @@
 #include "qMRMLVolumeThresholdWidget.h"
 
 // MRML includes
+#include <vtkMRMLColorLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLVolumeNode.h>
 
@@ -72,6 +73,13 @@ int qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1(int argc, char * argv [
   vtkNew<vtkMRMLScene> scene;
   scene->SetURL(argv[2]);
   scene->Connect();
+
+  // Add default color nodes
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+  // need to set it back to NULL, otherwise the logic removes the nodes that it added when it is destructed
+  colorLogic->SetMRMLScene(NULL);
+
   scene->InitTraversal();
   vtkMRMLNode* node = scene->GetNextNodeByClass("vtkMRMLScalarVolumeNode");
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);

@@ -41,11 +41,6 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
-#include <vtkTestingOutputWindow.h>
-
-// ITK includes
-#include <itkConfigure.h>
-#include <itkFactoryRegistration.h> // Required for volume loading
 
 vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 {
@@ -83,11 +78,6 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
 
 int qMRMLSliceWidgetTest2(int argc, char * argv [] )
 {
-  TESTING_OUTPUT_INIT;
-
-  // Required for volume loading
-  itk::itkFactoryRegistration();
-
   QApplication app(argc, argv);
   if( argc < 2 )
     {
@@ -179,7 +169,5 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     QTimer::singleShot(1000, &app, SLOT(quit()));
     }
 
-  int status = app.exec();
-  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
-  return status;
+  return app.exec();
 }

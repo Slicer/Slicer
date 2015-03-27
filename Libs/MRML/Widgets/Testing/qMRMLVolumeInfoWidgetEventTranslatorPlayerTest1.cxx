@@ -35,7 +35,7 @@
 #include "qMRMLVolumeInfoWidget.h"
 
 // MRML includes
-#include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLColorLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -92,13 +92,13 @@ int qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
   vtkNew<vtkMRMLScene> scene;
+
+  // Add default color nodes
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+
   scene->AddNode(volumeNode.GetPointer());
   scene->AddNode(displayNode.GetPointer());
-
-  vtkNew<vtkMRMLColorTableNode> colorNode;
-  colorNode->SetTypeToGrey();
-  scene->AddNode(colorNode.GetPointer());
-  displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 

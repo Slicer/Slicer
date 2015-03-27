@@ -28,6 +28,7 @@
 // MRML includes
 #include "qMRMLNodeComboBox.h"
 #include "qMRMLSliceControllerWidget.h"
+#include <vtkMRMLColorLogic.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -71,6 +72,12 @@ private slots:
 void qMRMLSliceControllerWidgetTester::init()
 {
   this->MRMLScene = vtkMRMLScene::New();
+
+  // Add default color nodes
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(this->MRMLScene);
+  // need to set it back to NULL, otherwise the logic removes the nodes that it added when it is destructed
+  colorLogic->SetMRMLScene(NULL);
 
   vtkNew<vtkMRMLSliceNode> sliceNode;
   sliceNode->SetLayoutName("Red");

@@ -37,13 +37,11 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkTestingOutputWindow.h>
 
 // STD includes
 
 int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
 {
-  TESTING_OUTPUT_INIT;
   QApplication app(argc, argv);
 
   if( argc < 2 )
@@ -111,8 +109,6 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
 
-  int status = app.exec();
-  TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);
-  return status;
+  return app.exec();
 }
 

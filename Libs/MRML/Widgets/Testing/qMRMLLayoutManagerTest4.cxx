@@ -48,18 +48,25 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLLayoutNode> layoutNode;
 
-  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
   scene->AddNode(layoutNode.GetPointer());
 
   applicationLogic->SetMRMLScene(scene.GetPointer());
+
   layoutManager.setMRMLScene(scene.GetPointer());
 
+  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
+
   for (int i = vtkMRMLLayoutNode::SlicerLayoutInitialView;
-       i < vtkMRMLLayoutNode::SlicerLayoutFourOverFourView; ++i)
+    i < vtkMRMLLayoutNode::SlicerLayoutFinalView-1; ++i)
     {
-    layoutManager.setLayout(vtkMRMLLayoutNode::SlicerLayoutInitialView);
+    layoutManager.setLayout(i);
     scene->Clear(false);
     }
+
+  // Note:
+  // Qt reports leaks in debug mode (LEAK: 88 WebCoreNode) on exit.
+  // This seems to be harmless and will be fixed in future Qt releases.
+  // More info: https://bugreports.qt.io/browse/QTBUG-29390
 
   return EXIT_SUCCESS;
 }

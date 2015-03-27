@@ -53,13 +53,13 @@ vtkStandardNewMacro(vtkLoggingMacroTester);
 //----------------------------------------------------------------------------
 int vtkLoggingMacrosTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  TESTING_OUTPUT_INIT;
+  TESTING_OUTPUT_INIT();
 
   vtkNew<vtkLoggingMacroTester> testerClass;
 
   // Non-error messages
 
-  TESTING_OUTPUT_RESET;
+  TESTING_OUTPUT_RESET();
   vtkInfoWithObjectMacro(testerClass, "This is an info message printed on behalf of a VTK object");
   vtkInfoWithoutObjectMacro("This is an info message printed without having a pointer to a related VTK object");
   testerClass->TestInfo();
@@ -68,22 +68,33 @@ int vtkLoggingMacrosTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // Warning messages
   
-  TESTING_OUTPUT_RESET;
+  TESTING_OUTPUT_RESET();
   testerClass->TestWarning();
   testerClass->TestWarning();
   TESTING_OUTPUT_ASSERT_WARNINGS(2);
   TESTING_OUTPUT_ASSERT_ERRORS(0);
   TESTING_OUTPUT_ASSERT_WARNINGS_MINIMUM(1);
 
+  TESTING_OUTPUT_RESET();
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  testerClass->TestWarning();
+  testerClass->TestWarning();
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+
   // Error messages
 
-  TESTING_OUTPUT_RESET;
+  TESTING_OUTPUT_RESET();
   testerClass->TestError();
   testerClass->TestError();
   testerClass->TestError();
   TESTING_OUTPUT_ASSERT_WARNINGS(0);
   TESTING_OUTPUT_ASSERT_ERRORS(3);
   TESTING_OUTPUT_ASSERT_ERRORS_MINIMUM(1);
+
+  TESTING_OUTPUT_RESET();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  testerClass->TestError();
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   
   return EXIT_SUCCESS;
 }

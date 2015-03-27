@@ -26,8 +26,10 @@
 #include "qMRMLThreeDWidget.h"
 
 // MRML includes
-#include <vtkMRMLViewNode.h>
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLViewNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -42,9 +44,15 @@ int qMRMLThreeDWidgetTest1(int argc, char * argv [] )
   qMRMLThreeDWidget widget;
   widget.show();
 
-  vtkNew<vtkMRMLViewNode> viewNode;
-
   vtkNew<vtkMRMLScene> scene;
+
+  // vtkMRMLAbstractDisplayableManager requires selection and interaction nodes
+  vtkNew<vtkMRMLSelectionNode> selectionNode;
+  scene->AddNode(selectionNode.GetPointer());
+  vtkNew<vtkMRMLInteractionNode> interactionNode;
+  scene->AddNode(interactionNode.GetPointer());
+
+  vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
 
   widget.setMRMLScene(scene.GetPointer());
