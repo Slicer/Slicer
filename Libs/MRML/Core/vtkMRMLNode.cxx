@@ -1196,7 +1196,6 @@ vtkMRMLNode* vtkMRMLNode::SetAndObserveNthNodeReferenceID(const char* referenceR
       referencedNode = this->Scene->GetNodeByID(referencedNodeID);
       }
 
-    bool newReferenceWasAdded = false;
     if (referenceIt==references.end())
       {
       vtkNew<vtkMRMLNodeReference> reference;
@@ -1204,7 +1203,6 @@ vtkMRMLNode* vtkMRMLNode::SetAndObserveNthNodeReferenceID(const char* referenceR
       reference->SetReferenceRole(referenceRole);
       references.push_back(reference.GetPointer());
       referenceIt = references.begin() + (references.size()-1);
-      newReferenceWasAdded = true;
       }
 
     // Update node observations
