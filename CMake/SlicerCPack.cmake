@@ -44,6 +44,15 @@ if(NOT APPLE)
   if(NOT Slicer_USE_SYSTEM_LibArchive)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallLibArchive.cmake)
   endif()
+  # XXX Note that installation of OpenMP libraries is available only
+  #     when using msvc compiler.
+  if(NOT DEFINED CMAKE_INSTALL_OPENMP_LIBRARIES)
+    set(CMAKE_INSTALL_OPENMP_LIBRARIES ON)
+  endif()
+  if(MSVC AND CMAKE_VERSION VERSION_LESS "3.1" AND CMAKE_INSTALL_OPENMP_LIBRARIES)
+    message(WARNING "Skipping installation of OpenMP libraries. "
+                    "Upgrade from CMake ${CMAKE_VERSION} to CMake >= 3.1 to install them.")
+  endif()
   include(InstallRequiredSystemLibraries)
 
   # XXX: Remove this once CMake minimum version has been updated.
