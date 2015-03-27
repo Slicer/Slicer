@@ -51,13 +51,16 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   void SetObject(vtkObject **nodePtr, vtkObject *node);
 
   /// set vtkObject to a specified pointer, remove all observers for all events, add observer for Modify event
-  void SetAndObserveObject(vtkObject **nodePtr, vtkObject *node, float priority=0.0);
+  void SetAndObserveObject(vtkObject **nodePtr, vtkObject *node, float priority=0.0, bool logWarningIfSameObservationExists=true);
 
   /// set vtkObject to a specified pointer, remove all observers for all events, add observers for specified events
-  void SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities=0);
+  void SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities=0, bool logWarningIfSameObservationExists=true);
 
   /// remove all observers for all events
   void RemoveObjectEvents(vtkObject *nodePtr);
+
+  /// get a list of all observed events and priorities for the selected node
+  void GetObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities);
 
   /// Observe ModifiedEvent on the object
   void ObserveObject(vtkObject *node, float priority=0.0);

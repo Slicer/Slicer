@@ -575,7 +575,7 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
       if (reference)
         {
         units.push_back(
-          vtkMRMLUnitNode::SafeDownCast(reference->ReferencedNode));
+          vtkMRMLUnitNode::SafeDownCast(reference->GetReferencedNode()));
         }
       }
     }

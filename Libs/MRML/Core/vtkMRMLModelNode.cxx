@@ -729,7 +729,7 @@ void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 {
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
     {
-    this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+    this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
     }
   Superclass::OnNodeReferenceAdded(reference);
 }
@@ -737,7 +737,7 @@ void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::OnNodeReferenceModified(vtkMRMLNodeReference *reference)
 {
-   this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+   this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
    Superclass::OnNodeReferenceModified(reference);
 }
 

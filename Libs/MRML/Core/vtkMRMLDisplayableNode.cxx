@@ -68,7 +68,7 @@ void vtkMRMLDisplayableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *referenc
   this->Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
     {
-    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->GetReferencedNode());
     }
 }
 
@@ -78,7 +78,7 @@ void vtkMRMLDisplayableNode::OnNodeReferenceModified(vtkMRMLNodeReference *refer
   this->Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
     {
-    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->GetReferencedNode());
     }
 }
 
@@ -88,7 +88,7 @@ void vtkMRMLDisplayableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *refere
   this->Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
     {
-    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->GetReferencedNode());
     }
 }
 
@@ -159,7 +159,7 @@ void vtkMRMLDisplayableNode::RemoveNthDisplayNodeID(int n)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::RemoveAllDisplayNodeIDs()
 {
-  this->RemoveAllNodeReferenceIDs(this->GetDisplayNodeReferenceRole());
+  this->RemoveNodeReferenceIDs(this->GetDisplayNodeReferenceRole());
 }
 
 //----------------------------------------------------------------------------

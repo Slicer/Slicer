@@ -861,14 +861,14 @@ void vtkMRMLVolumeNode
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 {
-  this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+  this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
   Superclass::OnNodeReferenceAdded(reference);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode:: OnNodeReferenceModified(vtkMRMLNodeReference *reference)
 {
-  this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+  this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
   Superclass::OnNodeReferenceModified(reference);
 }
 

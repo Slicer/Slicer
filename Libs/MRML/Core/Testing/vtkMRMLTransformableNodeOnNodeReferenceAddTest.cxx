@@ -34,31 +34,65 @@ namespace
 {
 
 void populateScene(vtkMRMLScene* scene);
+int testScene(vtkMRMLScene* scene);
 
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
 int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
 {
-  // Save a scene containing a viewnode and a sceneview node.
   vtkNew<vtkMRMLScene> scene;
   populateScene(scene.GetPointer());
+
+  // Test with a freshly created scene
+  if (testScene(scene.GetPointer())!=EXIT_SUCCESS)
+  {
+    std::cerr << "vtkMRMLTransformableNode::OnNodeReferenceAdded failed on original scene." << std::endl;
+    return EXIT_FAILURE;
+  }
+
 
   scene->SetSaveToXMLString(1);
   scene->Commit();
   std::string xmlScene = scene->GetSceneXMLString();
   std::cout << xmlScene << std::endl;
 
-  // Load the saved scene
+  // Test with a loaded scene
   vtkNew<vtkMRMLScene> scene2;
 
   scene2->SetLoadFromXMLString(1);
   scene2->SetSceneXMLString(xmlScene);
   scene2->Import();
 
+  if (testScene(scene2.GetPointer())!=EXIT_SUCCESS)
+  {
+    std::cerr << "vtkMRMLTransformableNode::OnNodeReferenceAdded failed on saved scene." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+namespace
+{
+
+//---------------------------------------------------------------------------
+void populateScene(vtkMRMLScene* scene)
+{
+  vtkNew<vtkMRMLScalarVolumeNode> transformableableNode;
+  scene->AddNode(transformableableNode.GetPointer());
+
+  vtkNew<vtkMRMLLinearTransformNode> transformNode;
+  scene->AddNode(transformNode.GetPointer());
+
+  transformableableNode->SetAndObserveTransformNodeID(transformNode->GetID());
+}
+
+int testScene(vtkMRMLScene* scene)
+{
   // Check transform node IDs
   vtkMRMLNode* transformNode =
-    scene2->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode");
+    scene->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode");
   if (!transformNode || strcmp(transformNode->GetID(), "vtkMRMLLinearTransformNode1") != 0)
     {
     std::cerr << __LINE__ << ": import failed." << std::endl
@@ -70,7 +104,7 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
 
   // Check references
   vtkMRMLTransformableNode* trnsformableNode =
-    vtkMRMLTransformableNode::SafeDownCast(scene2->GetNthNodeByClass(0, "vtkMRMLTransformableNode"));
+    vtkMRMLTransformableNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLTransformableNode"));
 
   if (strcmp(trnsformableNode->GetTransformNodeID(),
              transformNode->GetID()) != 0)
@@ -84,8 +118,8 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
     }
 
   // Test vtkMRMLTransformableNode::OnNodeReferenceAdded()
-  vtkMRMLLinearTransformNode* linearTransformNode = vtkMRMLLinearTransformNode::SafeDownCast(scene2->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode"));
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene2->GetNthNodeByClass(0, "vtkMRMLScalarVolumeNode"));
+  vtkMRMLLinearTransformNode* linearTransformNode = vtkMRMLLinearTransformNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode"));
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLScalarVolumeNode"));
   vtkNew<vtkMRMLNodeCallback> callback;
   volumeNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 
@@ -103,25 +137,8 @@ int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
     return EXIT_FAILURE;
     }
   callback->ResetNumberOfEvents();
+
   return EXIT_SUCCESS;
 }
-
-namespace
-{
-
-//---------------------------------------------------------------------------
-void populateScene(vtkMRMLScene* scene)
-{
-
-  vtkNew<vtkMRMLScalarVolumeNode> transformableableNode;
-  scene->AddNode(transformableableNode.GetPointer());
-
-  vtkNew<vtkMRMLLinearTransformNode> transformNode;
-  scene->AddNode(transformNode.GetPointer());
-
-  transformableableNode->SetAndObserveTransformNodeID(transformNode->GetID());
-
-}
-
 
 }

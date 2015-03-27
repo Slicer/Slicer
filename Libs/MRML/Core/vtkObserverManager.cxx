@@ -16,6 +16,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkIntArray.h>
 #include <vtkFloatArray.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkUnsignedLongArray.h>
 
@@ -82,17 +83,19 @@ vtkObject* vtkObserverManager::GetObserver()
 void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 {
   vtkDebugMacro (<< "SetObject of " << node);
+
+  // SetObject only, therefore we need to remove all event observers
+  this->RemoveObjectEvents(*nodePtr);
+
   if (*nodePtr == node)
     {
     return;
     }
   vtkObject *nodePtrOld = *nodePtr;
 
-  this->RemoveObjectEvents(*nodePtr);
-
   *nodePtr  = node ;
 
-  if ( node  )
+  if ( node )
     {
     vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
     node->Register(this);
@@ -106,7 +109,7 @@ void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 }
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *node, float priority)
+void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *node, float priority, bool logWarningIfSameObservationExists)
 {
   vtkDebugMacro (<< "SetAndObserveObject of " << node);
   if (*nodePtr == node)
@@ -115,8 +118,20 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
       {
       return;
       }
-    vtkWarningMacro( << "Setting the same object should be a no-op.");
-    return;
+    // The node is the same - check if the events are the same, too,
+    // because then there is no need to update the observations.
+    vtkNew<vtkIntArray> existingEvents;
+    vtkNew<vtkFloatArray> existingPriorities;
+    this->GetObjectEvents(*nodePtr, existingEvents.GetPointer(), existingPriorities.GetPointer());
+    if (existingEvents->GetNumberOfTuples()==1 && existingEvents->GetValue(0) == vtkCommand::ModifiedEvent
+      && existingPriorities->GetNumberOfTuples()==1 && existingPriorities->GetValue(0) == priority)
+      {
+      if (logWarningIfSameObservationExists)
+        {
+        vtkWarningMacro( << "The same object is already observed with the same priority. The observation is kept as is.");
+        }
+      return;
+      }
     }
   this->SetObject(nodePtr, node);
   this->ObserveObject(node, priority);
@@ -124,7 +139,7 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
 
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities)
+void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities, bool logWarningIfSameObservationExists)
 {
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node)
@@ -133,10 +148,46 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
       {
       return;
       }
-    vtkWarningMacro( << "Setting the same object should be a no-op.");
-    return;
+    // The node is the same - check if the events are the same, too,
+    // because then there is no need to update the observations.
+    int numberOfEvents = events ? events->GetNumberOfTuples() : 0;
+    int numberOfPriorities = priorities ? priorities->GetNumberOfTuples() : 0;
+    vtkNew<vtkIntArray> existingEvents;
+    vtkNew<vtkFloatArray> existingPriorities;
+    this->GetObjectEvents(*nodePtr, existingEvents.GetPointer(), existingPriorities.GetPointer());
+    // There must be same number of existing events and priorities in the same order,
+    // if there is a mismatch then we update the event observations. This event comparison method
+    // is simple and fast, but it may update the event observations when it is not necessary
+    // (when only the order is different) - which is an acceptable tradeoff.
+    if (existingEvents->GetNumberOfTuples() == numberOfEvents && existingEvents->GetNumberOfTuples() == existingPriorities->GetNumberOfTuples())
+      {
+      bool eventsEqual = true;
+      for (int i=0; i<numberOfEvents; i++)
+        {
+        if (existingEvents->GetValue(i) != events->GetValue(i))
+          {
+          eventsEqual = false;
+          break;
+          }
+        float priority = ( i<numberOfPriorities ? priorities->GetValue(i) : 0.0 /* default priority */ );
+        if (existingPriorities->GetValue(i) != priority)
+          {
+          eventsEqual = false;
+          break;
+          }
+        }
+      if (eventsEqual)
+        {
+        if (logWarningIfSameObservationExists)
+          {
+          vtkWarningMacro( << "The same object is already observed with the same events and priorities. The observation is kept as is.");
+          }
+        return;
+        }
+      }
     }
-  this->SetObject(nodePtr, node);  // should we set a priority on the object?
+
+  this->SetObject(nodePtr, node);
   this->AddObjectEvents(node, events, priorities);
 }
 
@@ -243,4 +294,33 @@ int vtkObserverManager::GetObservationsCount(vtkObject *nodePtr, unsigned long e
   vtkEventBroker::ObservationVector observations =
     broker->GetObservations(nodePtr, event, observer, this->CallbackCommand);
   return static_cast<int>(observations.size());
+}
+
+//----------------------------------------------------------------------------
+void vtkObserverManager::GetObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities)
+{
+  events->Resize(0);
+  priorities->Resize(0);
+  if (nodePtr == NULL)
+    {
+    // node is invalid
+    return;
+    }
+  std::map< vtkObject*, vtkUnsignedLongArray*>::iterator it =  this->ObserverTags.find(nodePtr);
+  if (it == this->ObserverTags.end())
+    {
+    // no observations are found
+    return;
+    }
+  vtkEventBroker *broker = vtkEventBroker::GetInstance();
+  vtkUnsignedLongArray* objTags = it->second;
+  for (int i=0; i < objTags->GetNumberOfTuples(); i++)
+    {
+    vtkEventBroker::ObservationVector observations = broker->GetObservationsForSubjectByTag ( nodePtr, objTags->GetValue(i) );
+    for (vtkEventBroker::ObservationVector::iterator observationIt = observations.begin(); observationIt != observations.end(); ++observationIt)
+      {
+      events->InsertNextValue((*observationIt)->GetEvent());
+      priorities->InsertNextValue((*observationIt)->GetPriority());
+      }
+    }
 }
