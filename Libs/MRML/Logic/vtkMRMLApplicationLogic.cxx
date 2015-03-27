@@ -72,12 +72,6 @@ public:
   void PropagateVolumeSelection(int layer, int fit);
   ~vtkInternal();
 
-  enum{
-    Background = 0x1,
-    Foreground = 0x2,
-    Label = 0x4,
-    };
-
   vtkMRMLApplicationLogic*        External;
   vtkSmartPointer<vtkMRMLSelectionNode>    SelectionNode;
   vtkSmartPointer<vtkMRMLInteractionNode>  InteractionNode;
@@ -129,15 +123,15 @@ void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, i
       {
       continue;
       }
-    if (layer & Background)
+    if (layer & vtkMRMLApplicationLogic::BackgroundLayer)
       {
       cnode->SetBackgroundVolumeID( ID );
       }
-    if (layer & Foreground)
+    if (layer & vtkMRMLApplicationLogic::ForegroundLayer)
       {
       cnode->SetForegroundVolumeID( secondID );
       }
-    if (layer & Label)
+    if (layer & vtkMRMLApplicationLogic::LabelLayer)
       {
       cnode->SetLabelVolumeID( labelID );
       }
@@ -331,26 +325,32 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode *interac
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateVolumeSelection(int fit)
 {
-  this->Internal->PropagateVolumeSelection(
-        vtkInternal::Background | vtkInternal::Foreground | vtkInternal::Label, fit);
+  this->PropagateVolumeSelection(
+        BackgroundLayer | ForegroundLayer | LabelLayer, fit);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateBackgroundVolumeSelection(int fit)
 {
-  this->Internal->PropagateVolumeSelection(vtkInternal::Background, fit);
+  this->PropagateVolumeSelection(BackgroundLayer, fit);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateForegroundVolumeSelection(int fit)
 {
-  this->Internal->PropagateVolumeSelection(vtkInternal::Foreground, fit);
+  this->PropagateVolumeSelection(ForegroundLayer, fit);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateLabelVolumeSelection(int fit)
 {
-  this->Internal->PropagateVolumeSelection(vtkInternal::Label, fit);
+  this->PropagateVolumeSelection(LabelLayer, fit);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::PropagateVolumeSelection(int layer, int fit)
+{
+  this->Internal->PropagateVolumeSelection(layer, fit);
 }
 
 //----------------------------------------------------------------------------

@@ -87,19 +87,35 @@ public:
   /// nodes
   /// \sa FitSliceToAll()
   /// \sa vtkMRMLSelectionNode::SetActiveVolumeID()
+  /// \sa Layers::BackgroundLayer
   void PropagateBackgroundVolumeSelection(int fit = 1);
 
   /// Propagate only active foreground volume in the SelectionNode to slice composite
   /// nodes
   /// \sa FitSliceToAll()
   /// \sa vtkMRMLSelectionNode::SetSecondaryVolumeID()
+  /// \sa Layers::ForegroundLayer
   void PropagateForegroundVolumeSelection(int fit = 1);
 
   /// Propagate only active label volume in the SelectionNode to slice composite
   /// nodes
   /// \sa FitSliceToAll()
   /// \sa vtkMRMLSelectionNode::SetActiveLabelVolumeID()
+  /// \sa Layers::LabelLayer
   void PropagateLabelVolumeSelection(int fit = 1);
+
+  enum Layers
+  {
+    LabelLayer = 0x1,
+    ForegroundLayer = 0x2,
+    BackgroundLayer = 0x4,
+    AllLayers = LabelLayer | ForegroundLayer | BackgroundLayer
+  };
+
+  /// Propagate selected volume layer in the SelectionNode to the slice composite
+  /// nodes.
+  /// \sa Layers
+  void PropagateVolumeSelection(int layer, int fit);
 
   /// Fit all the volumes into their views
   void FitSliceToAll();

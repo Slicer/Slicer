@@ -46,7 +46,7 @@ class EditUtil(object):
     node.SetModuleName( "Editor" )
     node.SetParameter( "label", "1" )
     node.SetParameter( "effect", "DefaultTool" )
-    node.SetParameter( "propagationMode", "Default" )
+    node.SetParameter( "propagationMode", str(slicer.vtkMRMLApplicationLogic.AllLayers) )
     slicer.mrmlScene.AddNode(node)
     # Since we are a singleton, the scene won't add our node into the scene,
     # but will instead insert a copy, so we find that and return it

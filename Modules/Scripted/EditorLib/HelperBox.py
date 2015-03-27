@@ -148,12 +148,8 @@ class HelperBox(object):
 
   def propagateVolumeSelection(self):
     parameterNode = self.editUtil.getParameterNode()
-    mode = parameterNode.GetParameter("propagationMode")
-    if mode == 'BackgroundAndLabel':
-      self.applicationLogic.PropagateBackgroundVolumeSelection(0)
-      self.applicationLogic.PropagateLabelVolumeSelection(0)
-    else:
-      self.applicationLogic.PropagateVolumeSelection(0)
+    mode = int(parameterNode.GetParameter("propagationMode"))
+    self.applicationLogic.PropagateVolumeSelection(mode, 0)
 
   def setVolumes(self,masterVolume,mergeVolume):
     """set both volumes at the same time - trick the callback into
