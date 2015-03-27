@@ -306,7 +306,7 @@ macro(slicerMacroBuildApplication)
   endforeach()
 
   if(NOT DEFINED SLICERAPP_APPLICATION_NAME)
-    set(SLICERAPP_APPLICATION_NAME ${SLICERAPP_NAME})
+    string(REGEX REPLACE "(.+)App" "\\1" SLICERAPP_APPLICATION_NAME ${SLICERAPP_NAME})
   endif()
 
   message(STATUS "Configuring ${SLICERAPP_APPLICATION_NAME} application: ${SLICERAPP_NAME}")
@@ -381,10 +381,6 @@ macro(slicerMacroBuildApplication)
   # --------------------------------------------------------------------------
   # Build the executable
   # --------------------------------------------------------------------------
-  if(NOT APPLE)
-    set(SLICERAPP_EXE_SUFFIX -real)
-  endif()
-
   set(Slicer_HAS_CONSOLE_IO_SUPPORT TRUE)
   if(WIN32)
     set(Slicer_HAS_CONSOLE_IO_SUPPORT ${Slicer_BUILD_WIN32_CONSOLE})
@@ -401,10 +397,19 @@ macro(slicerMacroBuildApplication)
     set(SLICERAPP_EXE_OPTIONS MACOSX_BUNDLE)
   endif()
 
-  set(slicerapp_target ${SLICERAPP_NAME}${SLICERAPP_EXE_SUFFIX})
+  set(slicerapp_target ${SLICERAPP_NAME})
   if(DEFINED SLICERAPP_TARGET_NAME_VAR)
     set(${SLICERAPP_TARGET_NAME_VAR} ${slicerapp_target})
   endif()
+
+  set(executable_name ${SLICERAPP_APPLICATION_NAME})
+  if(NOT APPLE)
+    set(executable_name ${executable_name}App-real)
+    if(WIN32)
+      set(executable_name ${executable_name}.exe)
+    endif()
+  endif()
+  message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} executable name to '${executable_name}'")
 
   add_executable(${slicerapp_target}
     ${SLICERAPP_EXE_OPTIONS}
@@ -412,13 +417,15 @@ macro(slicerMacroBuildApplication)
     ${apple_bundle_sources}
     ${qt_menu_nib_sources}
     )
-  set_target_properties(${slicerapp_target} PROPERTIES LABELS ${SLICERAPP_NAME})
+  set_target_properties(${slicerapp_target} PROPERTIES
+    LABELS ${SLICERAPP_NAME}
+    OUTPUT_NAME ${executable_name}
+    )
 
   if(APPLE)
     set(link_flags "-Wl,-rpath,@loader_path/../")
     set_target_properties(${slicerapp_target}
       PROPERTIES
-        OUTPUT_NAME ${SLICERAPP_APPLICATION_NAME}
         MACOSX_BUNDLE_BUNDLE_VERSION "${Slicer_VERSION_FULL}"
         MACOSX_BUNDLE_INFO_PLIST "${Slicer_CMAKE_DIR}/MacOSXBundleInfo.plist.in"
         LINK_FLAGS ${link_flags}

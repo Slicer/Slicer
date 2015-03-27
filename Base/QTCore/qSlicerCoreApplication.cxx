@@ -767,7 +767,7 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     if (this->launcherSettingsFilePath().isEmpty())
       {
       std::cout << "Usage\n"
-                << "  " Slicer_MAIN_PROJECT_APPLICATION_NAME " [options]\n\n"
+                << "  " << qPrintable(this->applicationName()) << " [options]\n\n"
                 << "Options\n";
       }
     std::cout << qPrintable(options->helpText()) << std::endl;
@@ -1129,12 +1129,12 @@ QString qSlicerCoreApplication::launcherSettingsFilePath()const
 #ifdef Q_OS_MAC
     return QString();
 #else
-    return this->slicerHome() + "/" Slicer_BIN_DIR "/" Slicer_MAIN_PROJECT_APPLICATION_NAME "LauncherSettings.ini";
+    return this->slicerHome() + "/" Slicer_BIN_DIR "/" + this->applicationName() + "LauncherSettings.ini";
 #endif
     }
   else
     {
-    return this->slicerHome() + "/" Slicer_MAIN_PROJECT_APPLICATION_NAME "LauncherSettings.ini";
+    return this->slicerHome() + "/" + this->applicationName() + "LauncherSettings.ini";
     }
 }
 
@@ -1158,7 +1158,7 @@ QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath()co
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::slicerDefaultSettingsFilePath()const
 {
-  return this->slicerHome() + "/" Slicer_SHARE_DIR "/" Slicer_MAIN_PROJECT_APPLICATION_NAME "DefaultSettings.ini";
+  return this->slicerHome() + "/" Slicer_SHARE_DIR "/" + this->applicationName() + "DefaultSettings.ini";
 }
 
 //-----------------------------------------------------------------------------
