@@ -624,6 +624,8 @@ class SliceAnnotations(object):
 
     # Get slice view name
     sliceNode = backgroundLayer.GetSliceNode()
+    if not sliceNode:
+      return
     sliceViewName = sliceNode.GetLayoutName()
     self.currentSliceViewName = sliceViewName
 
@@ -727,6 +729,8 @@ class SliceAnnotations(object):
 
     # Get slice view name
     sliceNode = backgroundLayer.GetSliceNode()
+    if not sliceNode:
+      return
     sliceViewName = sliceNode.GetLayoutName()
     self.currentSliceViewName = sliceViewName
 
@@ -775,6 +779,8 @@ class SliceAnnotations(object):
   def makeAnnotationText(self, sliceLogic):
     self.resetTexts()
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
+    if not sliceCompositeNode:
+      return
 
     # Get the layers
     backgroundLayer = sliceLogic.GetBackgroundLayer()
@@ -788,6 +794,8 @@ class SliceAnnotations(object):
 
     # Get slice view name
     sliceNode = backgroundLayer.GetSliceNode()
+    if not sliceNode:
+      return
     sliceViewName = sliceNode.GetLayoutName()
     self.currentSliceViewName = sliceViewName
 
