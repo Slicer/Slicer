@@ -34,7 +34,7 @@ function(slicerFunctionAddPythonQtResources RESOURCE_NAMES)
       configure_file(
         ${in_path}
         ${CMAKE_CURRENT_BINARY_DIR}/.${out_name}Resources.py.deps
-        COPY_ONLY
+        COPYONLY
         )
     endif()
 
