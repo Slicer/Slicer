@@ -1,5 +1,5 @@
-#ifndef __itkMGHIOPlugin_h
-#define __itkMGHIOPlugin_h
+#ifndef itkMGHIOPlugin_h
+#define itkMGHIOPlugin_h
 
 #include "itkObjectFactoryBase.h"
 

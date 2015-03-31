@@ -16,8 +16,8 @@
 /// The itkMGHImageIOWin32Header captures some system differences between Unix
 /// and Windows operating systems.
 
-#ifndef __itkMGHImageIOWin32Header_h
-#define __itkMGHImageIOWin32Header_h
+#ifndef itkMGHImageIOWin32Header_h
+#define itkMGHImageIOWin32Header_h
 
 #include <itkMGHImageIOConfigure.h>
 
