@@ -98,7 +98,7 @@ public:
 
   /// Set/Get layout manager
   Q_INVOKABLE qSlicerLayoutManager* layoutManager()const;
-  void setLayoutManager(qSlicerLayoutManager* layoutManager);
+  Q_INVOKABLE void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
   /// Return a pointer on the main window of the application if any.
   QMainWindow* mainWindow()const;
