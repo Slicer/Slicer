@@ -47,6 +47,9 @@ public:
 
   /// Layout manager
   Q_INVOKABLE qMRMLLayoutManager* layoutManager()const;
+  /// Set layout manager (useful for specifying a specialized layout manager class)
+  Q_INVOKABLE void setLayoutManager(qMRMLLayoutManager* layoutManager);
+
   /// Utility function that returns the mrml scene of the layout manager
   vtkMRMLScene* mrmlScene()const;
   /// Utility function that returns the current layout of the layout manager

@@ -37,8 +37,7 @@ qMRMLLayoutWidget::qMRMLLayoutWidget(QWidget* widget)
   , d_ptr(new qMRMLLayoutWidgetPrivate)
 {
   Q_D(qMRMLLayoutWidget);
-  d->LayoutManager = new qMRMLLayoutManager(this);
-  d->LayoutManager->setViewport(this);
+  this->setLayoutManager(new qMRMLLayoutManager);
 }
 
 // --------------------------------------------------------------------------
@@ -51,6 +50,15 @@ qMRMLLayoutManager* qMRMLLayoutWidget::layoutManager()const
 {
   Q_D(const qMRMLLayoutWidget);
   return d->LayoutManager;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutWidget::setLayoutManager(qMRMLLayoutManager* layoutManager)
+{
+  Q_D(qMRMLLayoutWidget);
+  d->LayoutManager = layoutManager;
+  d->LayoutManager->setParent(this);
+  d->LayoutManager->setViewport(this);
 }
 
 //------------------------------------------------------------------------------
