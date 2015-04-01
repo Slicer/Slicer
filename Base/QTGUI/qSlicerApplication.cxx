@@ -438,10 +438,8 @@ void qSlicerApplication::handleCommandLineArguments()
   qSlicerCommandOptions* options = this->commandOptions();
   Q_ASSERT(options);
 
-  if (options->noMainWindow() || options->disableMessageHandlers())
+  if (options->disableMessageHandlers())
     {
-    // If no UI is expected, it doesn't make sens to use registered handlers.
-    // Let's disable them.
     this->errorLogModel()->disableAllMsgHandler();
     }
 
