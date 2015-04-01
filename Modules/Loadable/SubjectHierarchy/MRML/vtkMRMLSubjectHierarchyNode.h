@@ -74,12 +74,18 @@ public:
 
 public:
   /// Find subject hierarchy node according to a UID (by exact match)
+  /// \param scene MRML scene
+  /// \param uidName UID string to lookup
   /// \param uidValue UID string that needs to _exactly match_ the UID string of the subject hierarchy node
+  /// \sa GetUID()
   static vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNodeByUID(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
 
   /// Find subject hierarchy node according to a UID (by containing). For example find UID in instance UID list
+  /// \param scene MRML scene
+  /// \param uidName UID string to lookup
   /// \param uidValue UID string that needs to be _contained_ in the UID string of the subject hierarchy node
   /// \return First match
+  /// \sa GetUID()
   static vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNodeByUIDList(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
 
   /// Get associated subject hierarchy node for a MRML node
