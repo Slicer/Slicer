@@ -209,6 +209,8 @@ class LabelStatisticsWidget:
     self.view.verticalHeader().visible = False
     row = 0
     for i in self.logic.labelStats["Labels"]:
+      col = 0
+      
       color = qt.QColor()
       rgb = lut.GetTableValue(i)
       color.setRgb(rgb[0]*255,rgb[1]*255,rgb[2]*255)
@@ -216,9 +218,17 @@ class LabelStatisticsWidget:
       item.setData(color,qt.Qt.DecorationRole)
       item.setToolTip(colorNode.GetColorName(i))
       item.setEditable(False)
-      self.model.setItem(row,0,item)
+      self.model.setItem(row,col,item)
       self.items.append(item)
-      col = 1
+      col += 1
+      
+      item = qt.QStandardItem()
+      item.setData(colorNode.GetColorName(i),qt.Qt.DisplayRole)
+      item.setEditable(False)
+      self.model.setItem(row,col,item)
+      self.items.append(item)
+      col += 1
+      
       for k in self.logic.keys:
         item = qt.QStandardItem()
         # set data as float with Qt::DisplayRole
@@ -232,7 +242,8 @@ class LabelStatisticsWidget:
 
     self.view.setColumnWidth(0,30)
     self.model.setHeaderData(0,1," ")
-    col = 1
+    self.model.setHeaderData(1,1,"Type")
+    col = 2
     for k in self.logic.keys:
       self.view.setColumnWidth(col,15*len(k))
       self.model.setHeaderData(col,1,k)
@@ -253,6 +264,8 @@ class LabelStatisticsLogic:
 
     # TODO: progress and status updates
     # this->InvokeEvent(vtkLabelStatisticsLogic::StartLabelStats, (void*)"start label stats")
+    
+    self.labelNode = labelNode
 
     self.labelStats = {}
     self.labelStats['Labels'] = []
@@ -384,14 +397,20 @@ class LabelStatisticsLogic:
     """
     print comma separated value file with header keys in quotes
     """
+    
+    displayNode = self.labelNode.GetDisplayNode()
+    colorNode = displayNode.GetColorNode()
+    
     csv = ""
     header = ""
+    header += "\"%s\"" % "Type" + ","
     for k in self.keys[:-1]:
       header += "\"%s\"" % k + ","
     header += "\"%s\"" % self.keys[-1] + "\n"
     csv = header
     for i in self.labelStats["Labels"]:
       line = ""
+      line += colorNode.GetColorName(i) + ","
       for k in self.keys[:-1]:
         line += str(self.labelStats[i,k]) + ","
       line += str(self.labelStats[i,self.keys[-1]]) + "\n"
