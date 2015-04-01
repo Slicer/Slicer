@@ -77,8 +77,6 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterSubjectHierarchyProxyModel
     return res;
     }
 
-  Q_D(const qMRMLSortFilterSubjectHierarchyProxyModel);
-
   // Show subject hierarchy nodes
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
   if (subjectHierarchyNode)

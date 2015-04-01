@@ -423,7 +423,7 @@ void vtkAnnotationROIRepresentation2D::ComputeIntersectionLine(vtkPolyData* inpu
   }
   int numberOfFoundIntersectionPoints=0;
   const int maxNumberOfFoundIntersectionPoints=2;
-  double foundIntersectionPoints[maxNumberOfFoundIntersectionPoints][3]={0};
+  double foundIntersectionPoints[maxNumberOfFoundIntersectionPoints][3]={{0}};
 
   double point1[3]={0};
   double point2[3]={0};
