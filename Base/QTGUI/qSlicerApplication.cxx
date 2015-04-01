@@ -737,7 +737,7 @@ void qSlicerApplication::setupFileLogging()
     }
 #endif
 #endif
-  qDebug(qPrintable(QString("Memory: %0 MB physical, %1 MB virtual").arg(totalPhysicalMemoryMb).arg(totalVirtualMemoryMb)));
+  qDebug() << qPrintable(QString("Memory: %0 MB physical, %1 MB virtual").arg(totalPhysicalMemoryMb).arg(totalVirtualMemoryMb));
 
   unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
 #if defined(_WIN32)
