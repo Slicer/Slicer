@@ -559,11 +559,10 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
                          removeFromPathList(paths, this->extensionPaths(extensionName)),
                          "Paths", "path");
 #ifdef Slicer_USE_PYTHONQT
-  QString sep("<PATHSEP>");
-  QString pythonPath = settings.value("EnvironmentVariables/PYTHONPATH").toString();
-  QStringList pythonPaths = pythonPath.split(sep);
-  settings.setValue("EnvironmentVariables/PYTHONPATH",
-                    removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
+  QStringList pythonPaths = qSlicerExtensionsManagerModel::readArrayValues(settings, "PYTHONPATH", "path");
+  qSlicerExtensionsManagerModel::writeArrayValues(settings,
+                         removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)),
+                         "PYTHONPATH", "path");
 #endif
 }
 
