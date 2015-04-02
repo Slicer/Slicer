@@ -8,6 +8,12 @@ class qSlicer@MODULENAME@ModuleGenericTest(unittest.TestCase):
     self.assertTrue(hasattr(slicer.modules, '@MODULENAME_LC@'))
     self.module = slicer.modules.@MODULENAME_LC@
 
+  def test_file_attribute(self):
+    self.assertRegexpMatches(__file__, r'qSlicer@MODULENAME@ModuleGenericTest.py[c]?$')
+
+  def test_name_attribute(self):
+    self.assertEqual(__name__, 'qSlicer@MODULENAME@ModuleGenericTest')
+
   def test_module_valid(self):
     self.assertNotEqual(self.module, None)
     self.assertEqual(self.module.name, '@MODULENAME@')

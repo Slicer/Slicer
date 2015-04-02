@@ -20,6 +20,9 @@
 
 #include "qSlicerScriptedUtils_p.h"
 
+// Qt includes
+#include <QFileInfo>
+
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -30,6 +33,11 @@ bool qSlicerScriptedUtils::executeFile(const QString& fileName, PyObject * globa
     {
     PyDict_SetItemString(global_dict, "__name__", PyString_FromString(className.toLatin1()));
     }
+
+  // Backup current __file__ value
+  QString savedFile = PyString_AsString(PyDict_GetItemString(global_dict, "__file__"));
+  // Set new __file__ value
+  PyDict_SetItemString(global_dict, "__file__", PyString_FromString(QFileInfo(fileName).fileName().toLatin1()));
 
   PyObject* pyRes = 0;
   if (fileName.endsWith(".py"))
@@ -47,6 +55,8 @@ bool qSlicerScriptedUtils::executeFile(const QString& fileName, PyObject * globa
     {
     PythonQt::self()->handleError();
     qCritical() << "setPythonSource - Failed to execute file" << fileName << "!";
+    // Restore __file__ value
+    PyDict_SetItemString(global_dict, "__file__", PyString_FromString(savedFile.toLatin1()));
     return false;
     }
   Py_DECREF(pyRes);
@@ -54,6 +64,8 @@ bool qSlicerScriptedUtils::executeFile(const QString& fileName, PyObject * globa
     {
     PyDict_SetItemString(global_dict, "__name__", PyString_FromString("__main__"));
     }
+  // Restore __file__ value
+  PyDict_SetItemString(global_dict, "__file__", PyString_FromString(savedFile.toLatin1()));
   return true;
 }
 
