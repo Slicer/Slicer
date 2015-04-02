@@ -56,3 +56,97 @@ bool qSlicerScriptedUtils::executeFile(const QString& fileName, PyObject * globa
     }
   return true;
 }
+
+//-----------------------------------------------------------------------------
+qSlicerPythonCppAPI::qSlicerPythonCppAPI()
+{
+  this->PythonSelf = 0;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerPythonCppAPI::~qSlicerPythonCppAPI()
+{
+  if (this->PythonSelf)
+    {
+    foreach(PyObject* method, this->PythonAPIMethods)
+      {
+      Py_XDECREF(method);
+      }
+    Py_DECREF(this->PythonSelf);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerPythonCppAPI::declareMethod(int id, const char* name)
+{
+  if (!name)
+    {
+    return;
+    }
+  this->APIMethods[id] = QString(name);
+}
+
+//-----------------------------------------------------------------------------
+PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate)
+{
+  PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
+  if (!wrappedThis)
+    {
+    PythonQt::self()->handleError();
+    qCritical() << "qSlicerPythonCppAPI::instantiateClass"
+                << "- Failed to wrap" << cpp->metaObject()->className() << "associated with " << className;
+    return 0;
+    }
+
+  PyObject * arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, wrappedThis);
+
+  // Attempt to instantiate the associated python class
+  PyObject * self = PyInstance_New(classToInstantiate, arguments, 0);
+  Py_DECREF(arguments);
+  if (!self)
+    {
+    PythonQt::self()->handleError();
+    qCritical() << "qSlicerPythonCppAPI::instantiateClass"
+                << "- Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
+    return 0;
+    }
+
+  foreach(int methodId, this->APIMethods.keys())
+    {
+    QString methodName = this->APIMethods.value(methodId);
+    if (!PyObject_HasAttrString(self, methodName.toLatin1()))
+      {
+      continue;
+      }
+    PyObject * method = PyObject_GetAttrString(self, methodName.toLatin1());
+    this->PythonAPIMethods[methodId] = method;
+    }
+
+  this->PythonSelf = self;
+
+  return self;
+}
+
+//-----------------------------------------------------------------------------
+PyObject * qSlicerPythonCppAPI::callMethod(int id, PyObject * arguments)
+{
+  if (!this->PythonAPIMethods.contains(id))
+    {
+    return 0;
+    }
+  PyObject * method = this->PythonAPIMethods.value(id);
+  PythonQt::self()->clearError();
+  PyObject * result = PyObject_CallObject(method, arguments);
+  if (PythonQt::self()->handleError())
+    {
+    return 0;
+    }
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+PyObject* qSlicerPythonCppAPI::pythonSelf()const
+{
+  return this->PythonSelf;
+}

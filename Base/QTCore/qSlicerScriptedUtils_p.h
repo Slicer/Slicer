@@ -35,6 +35,7 @@
 #include "qSlicerBaseQTCoreExport.h"
 
 // Qt includes
+#include <QHash>
 #include <QString>
 
 // Forward Declare PyObject*
@@ -56,6 +57,29 @@ private:
   qSlicerScriptedUtils(){}
   virtual ~qSlicerScriptedUtils(){}
 
+};
+
+
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerPythonCppAPI
+{
+public:
+  qSlicerPythonCppAPI();
+  virtual ~qSlicerPythonCppAPI();
+
+  void declareMethod(int id, const char* name);
+
+  PyObject* instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate);
+
+  PyObject * callMethod(int id, PyObject * arguments = 0);
+
+  PyObject* pythonSelf()const;
+
+private:
+
+  QHash<int, QString>   APIMethods;
+  QHash<int, PyObject*> PythonAPIMethods;
+
+  PyObject * PythonSelf;
 };
 
 

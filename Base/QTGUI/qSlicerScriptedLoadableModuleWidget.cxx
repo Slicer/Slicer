@@ -28,8 +28,6 @@
 #include "qSlicerScriptedLoadableModuleWidget.h"
 #include "qSlicerScriptedUtils_p.h"
 
-// Python includes
-
 //-----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleWidgetPrivate
 {
@@ -44,49 +42,25 @@ public:
     ExitMethod
     };
 
-  static int          APIMethodCount;
-  static const char * APIMethodNames[3];
+  mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  PyObject*  PythonAPIMethods[3];
-  PyObject*  PythonSelf;
   QString    PythonSource;
 };
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedLoadableModuleWidgetPrivate methods
 
-//---------------------------------------------------------------------------
-int qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodCount = 3;
-
-//---------------------------------------------------------------------------
-const char* qSlicerScriptedLoadableModuleWidgetPrivate::APIMethodNames[3] =
-{
-  "setup",
-  "enter",
-  "exit"
-};
-
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidgetPrivate::qSlicerScriptedLoadableModuleWidgetPrivate()
 {
-  this->PythonSelf = 0;
-  for (int i = 0; i < Self::APIMethodCount; ++i)
-    {
-    this->PythonAPIMethods[i] = 0;
-    }
+  this->PythonCppAPI.declareMethod(Self::SetupMethod, "setup");
+  this->PythonCppAPI.declareMethod(Self::EnterMethod, "enter");
+  this->PythonCppAPI.declareMethod(Self::ExitMethod, "exit");
 }
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidgetPrivate()
 {
-  if (this->PythonSelf)
-    {
-    for (int i = 0; i < Self::APIMethodCount; ++i)
-      {
-      Py_XDECREF(this->PythonAPIMethods[i]);
-      }
-    Py_DECREF(this->PythonSelf);
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -164,44 +138,13 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     return false;
     }
 
-  PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
-  if (!wrappedThis)
-    {
-    PythonQt::self()->handleError();
-    qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
-        << "- Failed to wrap" << this->metaObject()->className();
-    return false;
-    }
-
-  PyObject * arguments = PyTuple_New(1);
-  PyTuple_SET_ITEM(arguments, 0, wrappedThis);
-
-  // Attempt to instantiate the associated python class
-  PyObject * self = PyInstance_New(classToInstantiate, arguments, 0);
-  Py_DECREF(arguments);
+  PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
     {
-    PythonQt::self()->handleError();
-    qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
-        << " - Failed to instantiate scripted pythonqt class"
-        << classNameToLoad << classToInstantiate;
     return false;
-    }
-
-  // Retrieve API methods
-  for (int i = 0; i < Pimpl::APIMethodCount; ++i)
-    {
-    Q_ASSERT(Pimpl::APIMethodNames[i]);
-    if (!PyObject_HasAttrString(self, Pimpl::APIMethodNames[i]))
-      {
-      continue;
-      }
-    PyObject * method = PyObject_GetAttrString(self, Pimpl::APIMethodNames[i]);
-    d->PythonAPIMethods[i] = method;
     }
 
   d->PythonSource = newPythonSource;
-  d->PythonSelf = self;
 
   PyObject * slicer = PyDict_GetItemString(global_dict, "slicer");
   if (slicer)
@@ -228,7 +171,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
 PyObject* qSlicerScriptedLoadableModuleWidget::self() const
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
-  return d->PythonSelf;
+  return d->PythonCppAPI.pythonSelf();
 }
 
 //-----------------------------------------------------------------------------
@@ -236,14 +179,7 @@ void qSlicerScriptedLoadableModuleWidget::setup()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::setup();
-  PyObject * method = d->PythonAPIMethods[Pimpl::SetupMethod];
-  if (!method)
-    {
-    return;
-    }
-  PythonQt::self()->clearError();
-  PyObject_CallObject(method, 0);
-  PythonQt::self()->handleError();
+  d->PythonCppAPI.callMethod(Pimpl::SetupMethod);
 }
 
 //-----------------------------------------------------------------------------
@@ -251,14 +187,7 @@ void qSlicerScriptedLoadableModuleWidget::enter()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::enter();
-  PyObject * method = d->PythonAPIMethods[Pimpl::EnterMethod];
-  if (!method)
-    {
-    return;
-    }
-  PythonQt::self()->clearError();
-  PyObject_CallObject(method, 0);
-  PythonQt::self()->handleError();
+  d->PythonCppAPI.callMethod(Pimpl::EnterMethod);
 }
 
 //-----------------------------------------------------------------------------
@@ -266,12 +195,5 @@ void qSlicerScriptedLoadableModuleWidget::exit()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::exit();
-  PyObject * method = d->PythonAPIMethods[Pimpl::ExitMethod];
-  if (!method)
-    {
-    return;
-    }
-  PythonQt::self()->clearError();
-  PyObject_CallObject(method, 0);
-  PythonQt::self()->handleError();
+  d->PythonCppAPI.callMethod(Pimpl::ExitMethod);
 }
