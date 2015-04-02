@@ -46,8 +46,8 @@ endif()
 set(KIT_PYTHON_SCRIPTS
   MultiVolumeImporter.py
   MultiVolumeImporterPlugin.py
-  MultiVolumeImporter/__init__.py
-  MultiVolumeImporter/Helper.py
+  MultiVolumeImporterLib/__init__.py
+  MultiVolumeImporterLib/Helper.py
   )
 
 set(KIT_PYTHON_RESOURCES

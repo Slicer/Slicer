@@ -7,7 +7,7 @@ try:
   import vtk.util.numpy_support
 except:
   NUMPY_AVAILABLE = False
-from MultiVolumeImporter.Helper import Helper
+from MultiVolumeImporterLib.Helper import Helper
 
 #
 # MultiVolumeImporter
