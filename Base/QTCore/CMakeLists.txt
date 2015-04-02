@@ -116,6 +116,8 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_SRCS
     qSlicerScriptedFileWriter.cxx
     qSlicerScriptedFileWriter.h
+    qSlicerScriptedUtils.cxx
+    qSlicerScriptedUtils_p.h
     )
 endif()
 

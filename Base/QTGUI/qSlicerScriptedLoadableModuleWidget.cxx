@@ -26,6 +26,7 @@
 
 // SlicerQt includes
 #include "qSlicerScriptedLoadableModuleWidget.h"
+#include "qSlicerScriptedUtils_p.h"
 
 // Python includes
 
@@ -145,25 +146,10 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
   if (!classToInstantiate)
     {
-    PyObject* pyRes = 0;
-    if (newPythonSource.endsWith(".py"))
+    if (!qSlicerScriptedUtils::executeFile(newPythonSource, global_dict, QString()))
       {
-      pyRes = PyRun_String(QString("execfile('%1')").arg(newPythonSource).toLatin1(),
-                           Py_file_input, global_dict, global_dict);
-      }
-    else if (newPythonSource.endsWith(".pyc"))
-      {
-      pyRes = PyRun_String(
-            QString("with open('%1', 'rb') as f:import imp;imp.load_module('__main__', f, '%1', ('.pyc', 'rb', 2))").arg(newPythonSource).toLatin1(),
-            Py_file_input, global_dict, global_dict);
-      }
-    if (!pyRes)
-      {
-      PythonQt::self()->handleError();
-      qCritical() << "setPythonSource - Failed to execute file" << newPythonSource << "!";
       return false;
       }
-    Py_DECREF(pyRes);
     classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
     }
 
