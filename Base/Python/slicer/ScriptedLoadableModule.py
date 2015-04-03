@@ -3,6 +3,8 @@ import unittest
 from __main__ import qt, ctk, slicer
 import logging
 
+__all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
+
 class ScriptedLoadableModule:
   def __init__(self, parent):
     self.parent = parent
