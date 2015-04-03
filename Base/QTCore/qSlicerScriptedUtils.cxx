@@ -35,7 +35,11 @@ bool qSlicerScriptedUtils::executeFile(const QString& fileName, PyObject * globa
     }
 
   // Backup current __file__ value
-  QString savedFile = PyString_AsString(PyDict_GetItemString(global_dict, "__file__"));
+  QString savedFile;
+  if (PyObject_HasAttrString(global_dict, "__file__"))
+    {
+    PyString_AsString(PyDict_GetItemString(global_dict, "__file__"));
+    }
   // Set new __file__ value
   PyDict_SetItemString(global_dict, "__file__", PyString_FromString(QFileInfo(fileName).fileName().toLatin1()));
 
