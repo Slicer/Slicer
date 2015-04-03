@@ -19,16 +19,45 @@
 ==============================================================================*/
 
 #include "qSlicerAbstractCoreModule.h"
+#include "qSlicerAbstractModuleRepresentation.h"
 
+// Qt includes
+#include <QScopedPointer>
+
+// STD includes
 #include <cstdlib>
+#include <iostream>
 
+//-----------------------------------------------------------------------------
+class AModuleWidgetRepresentation : public qSlicerAbstractModuleRepresentation
+{
+public:
+  AModuleWidgetRepresentation()
+  {
+    ++Count;
+  }
+  virtual ~AModuleWidgetRepresentation()
+  {
+    --Count;
+  }
+
+  static int Count;
+
+protected:
+  virtual void setup () {}
+
+};
+
+int AModuleWidgetRepresentation::Count = 0;
+
+//-----------------------------------------------------------------------------
 class AModule: public qSlicerAbstractCoreModule
 {
 public:
   virtual QString title()const { return "A Title";}
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation()
   {
-    return 0;
+    return new AModuleWidgetRepresentation();
   }
 
   virtual vtkMRMLAbstractLogic* createLogic()
@@ -39,9 +68,89 @@ protected:
   virtual void setup () {}
 };
 
+//-----------------------------------------------------------------------------
 int qSlicerAbstractCoreModuleTest1(int, char * [] )
 {
   AModule module;
+
+  //
+  // Test WidgetRepresentationCreationEnabled
+  //
+
+  {
+    bool current = module.isWidgetRepresentationCreationEnabled();
+    bool expected = true;
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  {
+    QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
+    if (!repr)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
+                << " widgetRepresentation is expected to be non-null." << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  {
+    module.setWidgetRepresentationCreationEnabled(false);
+    bool current = module.isWidgetRepresentationCreationEnabled();
+    bool expected = false;
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  {
+    QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
+    if (repr)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
+                << " widgetRepresentation is expected to be null." << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  module.setWidgetRepresentationCreationEnabled(true);
+
+  {
+    QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
+    if (!repr)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
+                << " widgetRepresentation is expected to be non-null." << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  {
+    int current = AModuleWidgetRepresentation::Count;
+    int expected = 0;
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with representation destructor !\n"
+                << " current count:" << current << "\n"
+                << " expected count:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
 
   return EXIT_SUCCESS;
 }

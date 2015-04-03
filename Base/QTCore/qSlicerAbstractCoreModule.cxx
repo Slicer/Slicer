@@ -46,6 +46,7 @@ public:
   QString                                    Name;
   QString                                    Path;
   bool                                       Installed;
+  bool                                       WidgetRepresentationCreationEnabled;
   qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
   QList<qSlicerAbstractModuleRepresentation*> WidgetRepresentations;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
@@ -61,6 +62,7 @@ qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
   this->Name = "NA";
   this->WidgetRepresentation = 0;
   this->Installed = false;
+  this->WidgetRepresentationCreationEnabled = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -192,7 +194,7 @@ CTK_GET_CPP(qSlicerAbstractCoreModule, vtkSlicerApplicationLogic*, appLogic, App
 //-----------------------------------------------------------------------------
 bool qSlicerAbstractCoreModule::isHidden()const
 {
-  return false;
+  return this->isWidgetRepresentationCreationEnabled() ? false : true;
 }
 
 //-----------------------------------------------------------------------------
@@ -208,6 +210,10 @@ CTK_SET_CPP(qSlicerAbstractCoreModule, const QString&, setPath, Path);
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isInstalled, Installed);
 CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setInstalled, Installed);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isWidgetRepresentationCreationEnabled, WidgetRepresentationCreationEnabled);
+CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setWidgetRepresentationCreationEnabled, WidgetRepresentationCreationEnabled);
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresentation()
@@ -226,6 +232,11 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
 qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetRepresentation()
 {
   Q_D(qSlicerAbstractCoreModule);
+
+  if (!this->isWidgetRepresentationCreationEnabled())
+    {
+    return 0;
+    }
 
   // Since 'logic()' should have been called in 'initialize(), let's make
   // sure the 'logic()' method call is consistent and won't create a

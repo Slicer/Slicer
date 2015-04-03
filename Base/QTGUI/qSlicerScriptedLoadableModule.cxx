@@ -177,6 +177,14 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     qCritical() << "Could not access slicer module";
     }
 
+  // Check if there is module widget class
+  QString widgetClassName = className + "Widget";
+  PyObject * widgetClass = PyDict_GetItemString(global_dict, widgetClassName.toLatin1());
+  if (!widgetClass)
+    {
+    this->setWidgetRepresentationCreationEnabled(false);
+    }
+
   return true;
 }
 
@@ -223,6 +231,11 @@ void qSlicerScriptedLoadableModule::registerIO()
 qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidgetRepresentation()
 {
   Q_D(qSlicerScriptedLoadableModule);
+
+  if (!this->isWidgetRepresentationCreationEnabled())
+    {
+    return 0;
+    }
 
   QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
   bool ret = widget->setPythonSource(d->PythonSource);
