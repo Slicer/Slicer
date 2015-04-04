@@ -116,6 +116,15 @@ nowarning_test(nomainwindow_noloadable_noscripted --no-main-window --disable-loa
 nowarning_test(nomainwindow_nocli_noloadable_noscripted --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules)
 nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
 
+#
+# Check if scripted module import works as expected
+#
+
+slicer_add_python_test(
+  SCRIPT ScriptedModuleDiscoveryTest.py
+  SLICER_ARGS --no-main-window --disable-builtin-modules --additional-module-path ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleDiscoveryTest
+  TESTNAME_PREFIX nomainwindow_
+  )
 
 #
 # Application tests
