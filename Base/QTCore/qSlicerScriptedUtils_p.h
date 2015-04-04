@@ -50,7 +50,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedUtils
 public:
   typedef qSlicerScriptedUtils Self;
 
-  static bool executeFile(const QString& fileName, PyObject * global_dict, const QString& className);
+  static bool loadSourceAsModule(const QString& moduleName, const QString& fileName, PyObject * global_dict, PyObject *local_dict);
 
 private:
   /// Not implemented

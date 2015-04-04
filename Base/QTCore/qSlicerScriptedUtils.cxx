@@ -27,49 +27,34 @@
 #include <PythonQt.h>
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedUtils::executeFile(const QString& fileName, PyObject * global_dict, const QString& className)
+bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
+                                       const QString& fileName,
+                                       PyObject * global_dict,
+                                       PyObject * local_dict)
 {
-  if (!className.isEmpty())
-    {
-    PyDict_SetItemString(global_dict, "__name__", PyString_FromString(className.toLatin1()));
-    }
-
-  // Backup current __file__ value
-  QString savedFile;
-  if (PyObject_HasAttrString(global_dict, "__file__"))
-    {
-    PyString_AsString(PyDict_GetItemString(global_dict, "__file__"));
-    }
-  // Set new __file__ value
-  PyDict_SetItemString(global_dict, "__file__", PyString_FromString(QFileInfo(fileName).fileName().toLatin1()));
-
   PyObject* pyRes = 0;
   if (fileName.endsWith(".py"))
     {
-    pyRes = PyRun_String(QString("execfile('%1')").arg(fileName).toLatin1(),
-                         Py_file_input, global_dict, global_dict);
+    pyRes = PyRun_String(
+          QString("import imp;imp.load_source('%2', '%1');del imp;")
+          .arg(fileName).arg(moduleName).toLatin1(),
+          Py_file_input, global_dict, local_dict);
     }
   else if (fileName.endsWith(".pyc"))
     {
     pyRes = PyRun_String(
-          QString("with open('%1', 'rb') as f:import imp;imp.load_module('__main__', f, '%1', ('.pyc', 'rb', 2))").arg(fileName).toLatin1(),
-          Py_file_input, global_dict, global_dict);
+          QString("with open('%1', 'rb') as f:import imp;imp.load_module('%2', f, '%1', ('.pyc', 'rb', 2));del imp")
+          .arg(fileName).arg(moduleName).toLatin1(),
+          Py_file_input, global_dict, local_dict);
     }
   if (!pyRes)
     {
     PythonQt::self()->handleError();
-    qCritical() << "setPythonSource - Failed to execute file" << fileName << "!";
-    // Restore __file__ value
-    PyDict_SetItemString(global_dict, "__file__", PyString_FromString(savedFile.toLatin1()));
+    qCritical() << "loadSourceAsModule - Failed to load file" << fileName
+                << " as module" << moduleName << "!";
     return false;
     }
   Py_DECREF(pyRes);
-  if (!className.isEmpty())
-    {
-    PyDict_SetItemString(global_dict, "__name__", PyString_FromString("__main__"));
-    }
-  // Restore __file__ value
-  PyDict_SetItemString(global_dict, "__file__", PyString_FromString(savedFile.toLatin1()));
   return true;
 }
 

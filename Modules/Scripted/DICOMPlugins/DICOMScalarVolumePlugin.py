@@ -2,6 +2,7 @@ import os
 from __main__ import vtk, qt, ctk, slicer
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+from DICOMLib import DICOMExportScalarVolume
 
 #
 # This is the plugin to handle translation of scalar volumes
@@ -68,7 +69,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       name = num + ": " + name
 
     # default loadable includes all files for series
-    loadable = DICOMLib.DICOMLoadable()
+    loadable = DICOMLoadable()
     loadable.files = files
     loadable.name = name
     loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
@@ -135,7 +136,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       if len(subseriesValues[tag]) > 1:
         for value in subseriesValues[tag]:
           # default loadable includes all files for series
-          loadable = DICOMLib.DICOMLoadable()
+          loadable = DICOMLoadable()
           loadable.files = subseriesFiles[tag,value]
           loadable.name = name + " for %s of %s" % (tag,value)
           loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
@@ -411,7 +412,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       #TODO: more tag checks
 
       # Perform export
-      exporter = DICOMLib.DICOMExportScalarVolume(tags['Study ID'], node.GetAssociatedNode(), tags, directory)
+      exporter = DICOMExportScalarVolume(tags['Study ID'], node.GetAssociatedNode(), tags, directory)
       exporter.export()
 
     # Success

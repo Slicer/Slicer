@@ -86,7 +86,7 @@ QString qSlicerScriptedLoadableModuleWidget::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPythonSource, const QString& className)
+bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPythonSource, const QString& _className)
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
 
@@ -101,14 +101,15 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     }
 
   // Extract moduleName from the provided filename
-  QString classNameToLoad = className;
-  if (classNameToLoad.isEmpty())
+  QString moduleName = QFileInfo(newPythonSource).baseName();
+
+  QString className = _className;
+  if (className.isEmpty())
     {
-    QString moduleName = QFileInfo(newPythonSource).baseName();
-    classNameToLoad = moduleName;
+    className = moduleName;
     if (!moduleName.endsWith("Widget"))
       {
-      classNameToLoad.append("Widget");
+      className.append("Widget");
       }
     }
 
@@ -116,15 +117,26 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   PyObject * main_module = PyImport_AddModule("__main__");
   PyObject * global_dict = PyModule_GetDict(main_module);
 
-  // Load class definition if needed
-  PyObject * classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
+  // Get a reference (or create if needed) the <moduleName> python module
+  PyObject * module = PyImport_AddModule(moduleName.toLatin1());
+
+  // Get a reference to the python module class to instantiate
+  PyObject * classToInstantiate = 0;
+  if (PyObject_HasAttrString(module, className.toLatin1()))
+    {
+    classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+    }
   if (!classToInstantiate)
     {
-    if (!qSlicerScriptedUtils::executeFile(newPythonSource, global_dict, QString()))
+    PythonQtObjectPtr local_dict(PyDict_New());
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
       {
       return false;
       }
-    classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
+    if (PyObject_HasAttrString(module, className.toLatin1()))
+      {
+      classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+      }
     }
 
   if (!classToInstantiate)
@@ -133,7 +145,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModuleWidget::setPythonSource - "
                             "Failed to load scripted loadable module widget: "
-                            "class %1 was not found in %2").arg(classNameToLoad).arg(newPythonSource).toLatin1());
+                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toLatin1());
     PythonQt::self()->handleError();
     return false;
     }
@@ -152,11 +164,11 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     PyObject * slicerModules = PyObject_GetAttrString(slicer, "modules");
     if (slicerModules)
       {
-      PyObject_SetAttrString(slicerModules, classNameToLoad.toLatin1(), self);
+      PyObject_SetAttrString(slicerModules, className.toLatin1(), self);
       }
     else
       {
-      qCritical() << "Could not access slicer.modules module";
+      PythonQt::self()->handleError();
       }
     }
   else

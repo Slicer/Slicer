@@ -96,7 +96,7 @@ QString qSlicerScriptedFileWriter::pythonSource()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, const QString& className)
+bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, const QString& _className)
 {
   Q_D(qSlicerScriptedFileWriter);
 
@@ -111,24 +111,28 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, 
     }
 
   // Extract moduleName from the provided filename
-  QString classNameToLoad = className;
-  if (classNameToLoad.isEmpty())
+  QString moduleName = QFileInfo(newPythonSource).baseName();
+
+  QString className = _className;
+  if (className.isEmpty())
     {
-    QString moduleName = QFileInfo(newPythonSource).baseName();
-    classNameToLoad = moduleName;
+    className = moduleName;
     if (!moduleName.endsWith("FileWriter"))
       {
-      classNameToLoad.append("FileWriter");
+      className.append("FileWriter");
       }
     }
-  d->PythonClassName = classNameToLoad;
+  d->PythonClassName = className;
 
-  // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  // Get a reference (or create if needed) the <moduleName> python module
+  PyObject * module = PyImport_AddModule(moduleName.toLatin1());
 
-  // Load class definition if needed
-  PyObject * classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
+  // Get a reference to the python module class to instantiate
+  PyObject * classToInstantiate = 0;
+  if (PyObject_HasAttrString(module, className.toLatin1()))
+    {
+    classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+    }
   if (!classToInstantiate)
     {
     PythonQt::self()->handleError();

@@ -127,15 +127,26 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   PyObject * main_module = PyImport_AddModule("__main__");
   PyObject * global_dict = PyModule_GetDict(main_module);
 
-  // Load class definition if needed
-  PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
+  // Get a reference (or create if needed) the <moduleName> python module
+  PyObject * module = PyImport_AddModule(moduleName.toLatin1());
+
+  // Get a reference to the python module class to instantiate
+  PyObject * classToInstantiate = 0;
+  if (module && PyObject_HasAttrString(module, className.toLatin1()))
+    {
+    classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+    }
   if (!classToInstantiate)
     {
-    if (!qSlicerScriptedUtils::executeFile(newPythonSource, global_dict, className))
+    PythonQtObjectPtr local_dict(PyDict_New());
+    if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
       {
       return false;
       }
-    classToInstantiate = PyDict_GetItemString(global_dict, className.toLatin1());
+    if (PyObject_HasAttrString(module, className.toLatin1()))
+      {
+      classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+      }
     }
 
   if (!classToInstantiate)
@@ -169,7 +180,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
       }
     else
       {
-      qCritical() << "Could not access slicer.modules module";
+      PythonQt::self()->handleError();
       }
     }
   else
@@ -179,8 +190,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 
   // Check if there is module widget class
   QString widgetClassName = className + "Widget";
-  PyObject * widgetClass = PyDict_GetItemString(global_dict, widgetClassName.toLatin1());
-  if (!widgetClass)
+  if (!PyObject_HasAttrString(module, widgetClassName.toLatin1()))
     {
     this->setWidgetRepresentationCreationEnabled(false);
     }
