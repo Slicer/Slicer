@@ -37,6 +37,12 @@ if( DOXYGEN_FOUND )
     set_target_properties(cpp-doc cpp-doc-tarball
       PROPERTIES LABELS Documentation)
 
+    # Need to add EXCLUDE_FROM_DEFAULT_BUILD otherwise these targets would be built each time when build is started
+    # in the Visual Studio IDE (regardless of DOCUMENTATION_TARGET_IN_ALL setting).
+    set_target_properties(cpp-doc PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+    set_target_properties(cpp-doc-tarball-clean PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+    set_target_properties(cpp-doc-tarball PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+      
     #
     # Dev documentation
     #
@@ -55,6 +61,10 @@ if( DOXYGEN_FOUND )
     #  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/DevDoxyfile.txt
     #  )
     #set_target_properties(doc-dev PROPERTIES LABELS Documentation)
+
+    # Need to add EXCLUDE_FROM_DEFAULT_BUILD otherwise these targets would be built each time when build is started
+    # in the Visual Studio IDE (regardless of DOCUMENTATION_TARGET_IN_ALL setting).
+    #set_target_properties(doc-dev PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
   else( DOXYGEN_DOT_FOUND )
     message( WARNING
