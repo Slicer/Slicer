@@ -128,6 +128,10 @@ protected slots:
   virtual void onLayoutChanged(int);
   virtual void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
 
+#ifdef Slicer_USE_PYTHONQT
+  virtual void onPythonConsoleUserInput(const QString&);
+#endif
+
 protected:
   /// Connect MainWindow action with slots defined in MainWindowCore
   virtual void setupMenuActions();

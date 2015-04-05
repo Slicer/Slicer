@@ -450,6 +450,22 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ErrorLogWidget = new ctkErrorLogWidget;
   this->ErrorLogWidget->setErrorLogModel(
     qSlicerApplication::application()->errorLogModel());
+
+  //----------------------------------------------------------------------------
+  // Python console
+  //----------------------------------------------------------------------------
+#ifdef Slicer_USE_PYTHONQT
+  if (q->pythonConsole())
+    {
+    QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
+      q, SLOT(onPythonConsoleUserInput(const QString&)));
+    }
+  else
+    {
+    qWarning("qSlicerAppMainWindowPrivate::setupUi: Failed to create Python console");
+    }
+#endif
+
 }
 
 //-----------------------------------------------------------------------------
@@ -714,6 +730,16 @@ ctkPythonConsole* qSlicerAppMainWindow::pythonConsole()const
       }
     }
   return d->PythonConsole;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::onPythonConsoleUserInput(const QString& cmd)
+{
+  Q_D(qSlicerAppMainWindow);
+  if (!cmd.isEmpty())
+    {
+    qDebug("Python console user input: %s", qPrintable(cmd));
+    }
 }
 #endif
 
