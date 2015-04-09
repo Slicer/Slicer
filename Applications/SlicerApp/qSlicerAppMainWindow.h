@@ -35,10 +35,7 @@ class ctkPythonConsole;
 #include "qSlicerIO.h"
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT, Slicer_USE_PYTHONQT, Slicer_USE_QtTesting
 
-class qSlicerAbstractCoreModule;
-class qSlicerModulePanel;
 class qSlicerModuleSelectorToolBar;
-class qSlicerAppMainWindowCore;
 class qSlicerAppMainWindowPrivate;
 
 // VTK includes
