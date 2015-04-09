@@ -7,16 +7,20 @@ import textwrap
 
 from urlparse import urlparse
 
-try:
-  import git
-
-  from . import GithubHelper
-
-  from .GithubHelper import NotSet
-
-  _haveGit = True
-
-except ImportError:
+# If Python is not built with SSL support then do not even try to import
+# GithubHelper (it would throw missing attribute error for HTTPSConnection)
+import httplib
+if hasattr(httplib, "HTTPSConnection"):
+  # SSL is available
+  try:
+    import git
+    from . import GithubHelper
+    from .GithubHelper import NotSet
+    _haveGit = True
+  except ImportError:
+    _haveGit = False
+else:
+  logging.debug("ExtensionWizard: git support is disabled because httplib.HTTPSConnection is not available")
   _haveGit = False
 
 from . import __version__, __version_info__
