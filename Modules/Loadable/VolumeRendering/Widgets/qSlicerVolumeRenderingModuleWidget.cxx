@@ -395,7 +395,7 @@ void qSlicerVolumeRenderingModuleWidget
   // update view node references
   vtkMRMLScalarVolumeNode* volumeNode = this->mrmlVolumeNode();
 
-  // if display node is not referenced by current volume, add the refrence
+  // if display node is not referenced by current volume, add the reference
   if (volumeNode && displayNode)
     {
     vtkSlicerVolumeRenderingLogic *logic =
