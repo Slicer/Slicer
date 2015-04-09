@@ -61,13 +61,13 @@ public:
                                            const QString& intDir,
                                            const QString& modulePath);
 
-  /// Set \a module identified by \a moduleName has an attibute of "slicer.modules" module dictionnary.
+  /// Set \a module identified by \a moduleName has an attribute of "slicer.modules" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()
   static bool addModuleToSlicerModules(qSlicerCorePythonManager * pythonManager,
                                        qSlicerAbstractModule *module,
                                        const QString& moduleName);
 
-  /// Set \a \a moduleName has an attibute of "slicer.moduleNames" module dictionnary.
+  /// Set \a moduleName has an attribute of "slicer.moduleNames" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()
   static bool addModuleNameToSlicerModuleNames(qSlicerCorePythonManager * pythonManager,
                                                const QString& moduleName);
