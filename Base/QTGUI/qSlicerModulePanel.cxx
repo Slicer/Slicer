@@ -37,6 +37,8 @@ class qSlicerModulePanelPrivate: public Ui_qSlicerModulePanel
 {
 public:
   void setupUi(qSlicerWidget* widget);
+
+  bool HelpAndAcknowledgmentVisible;
   /*
   QTextBrowser*          HelpLabel;
   //QWebView*              HelpLabel;
@@ -52,6 +54,7 @@ qSlicerModulePanel::qSlicerModulePanel(QWidget* _parent, Qt::WindowFlags f)
   , d_ptr(new qSlicerModulePanelPrivate)
 {
   Q_D(qSlicerModulePanel);
+  d->HelpAndAcknowledgmentVisible = true;
   d->setupUi(this);
 }
 
@@ -170,7 +173,7 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
   moduleWidget->setVisible(true);
 
   QString help = module->helpText();
-  d->HelpCollapsibleButton->setVisible(!help.isEmpty());
+  d->HelpCollapsibleButton->setVisible(this->isHelpAndAcknowledgmentVisible() && !help.isEmpty());
   d->HelpLabel->setHtml(help);
   //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
   d->AcknowledgementLabel->clear();
@@ -246,6 +249,31 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
 void qSlicerModulePanel::removeAllModules()
 {
   this->setModule("");
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModulePanel::setHelpAndAcknowledgmentVisible(bool value)
+{
+  Q_D(qSlicerModulePanel);
+  d->HelpAndAcknowledgmentVisible = value;
+  if (value)
+    {
+    if (!d->HelpLabel->toHtml().isEmpty())
+      {
+      d->HelpCollapsibleButton->setVisible(true);
+      }
+    }
+  else
+    {
+    d->HelpCollapsibleButton->setVisible(false);
+    }
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModulePanel::isHelpAndAcknowledgmentVisible()const
+{
+  Q_D(const qSlicerModulePanel);
+  return d->HelpAndAcknowledgmentVisible;
 }
 
 //---------------------------------------------------------------------------

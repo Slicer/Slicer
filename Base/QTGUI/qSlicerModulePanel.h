@@ -35,10 +35,30 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
   : public qSlicerAbstractModulePanel
 {
   Q_OBJECT
+
+  /// This property controls whether the help and acknowledgment
+  /// section is visible or not.
+  /// If the property is set to \a true and the current module doesn't have
+  /// any help text, the section will remain hidden.
+  /// If the property has already been set to \a true and a module
+  /// with a help text is set, the section will be visible.
+  /// \sa isHelpAndAcknowledgmentVisible()
+  /// \sa setHelpAndAcknowledgmentVisible()
+  /// \sa qSlicerAbstractCoreModule::helpText(), setModule()
+  Q_PROPERTY(bool helpAndAcknowledgmentVisible READ isHelpAndAcknowledgmentVisible WRITE setHelpAndAcknowledgmentVisible)
+
 public:
   typedef qSlicerAbstractModulePanel Superclass;
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   virtual ~qSlicerModulePanel();
+
+  /// Get the helpAndAcknowledgmentVisible property value.
+  /// \sa helpAndAcknowledgmentVisible, isHelpAndAcknowledgmentVisible()
+  void setHelpAndAcknowledgmentVisible(bool value);
+
+  /// Set the canShowHelpAndAcknowledgment property value.
+  /// \sa helpAndAcknowledgmentVisible, setHelpAndAcknowledgmentVisible()
+  bool isHelpAndAcknowledgmentVisible()const;
 
   virtual void removeAllModules();
   qSlicerAbstractCoreModule* currentModule()const;

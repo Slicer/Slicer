@@ -64,6 +64,57 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
 
   dockWidget.show();
 
+  // helpAndAcknowledgmentVisible property
+  {
+    QWidget* helpCollapsibleButton =
+        modulePanel->findChild<QWidget*>("HelpCollapsibleButton");
+    if (!helpCollapsibleButton)
+      {
+      std::cerr << "Line " << __LINE__ << " - Couldn't find 'HelpCollapsibleButton' widget !\n" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    bool expected = false;
+    modulePanel->setHelpAndAcknowledgmentVisible(expected);
+    bool current = modulePanel->isHelpAndAcknowledgmentVisible();
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    current = helpCollapsibleButton->isVisible();
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with HelpCollapsibleButton visibility!\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    expected = true;
+    modulePanel->setHelpAndAcknowledgmentVisible(expected);
+    current = modulePanel->isHelpAndAcknowledgmentVisible();
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    current = helpCollapsibleButton->isVisible();
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with HelpCollapsibleButton visibility!\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(100, qApp, SLOT(quit()));

@@ -32,8 +32,35 @@ int qSlicerModulePanelTest1(int argc, char * argv[] )
   qSlicerApplication app(argc, argv);
 
   qSlicerModulePanel modulePanel;
-  modulePanel.setModuleManager(app.moduleManager());
 
+  // helpAndAcknowledgmentVisible property
+  {
+    bool expected = true;
+    bool current = modulePanel.isHelpAndAcknowledgmentVisible();
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  modulePanel.setHelpAndAcknowledgmentVisible(false);
+
+  {
+    bool expected = false;
+    bool current = modulePanel.isHelpAndAcknowledgmentVisible();
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with helpAndAcknowledgmentVisible property !\n"
+                << " current:" << current << "\n"
+                << " expected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  modulePanel.setModuleManager(app.moduleManager());
   if (modulePanel.moduleManager() != app.moduleManager())
     {
     std::cerr << "qSlicerModulePanel::setModuleManager() failed" << std::endl;
