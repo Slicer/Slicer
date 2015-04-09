@@ -1,4 +1,3 @@
-import os
 import unittest
 import qt, vtk, ctk
 from __main__ import slicer
@@ -179,7 +178,8 @@ class DataProbeInfoWidget(object):
         component = int(component)
       # format string according to suggestion here:
       # http://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
-      componentString = ("%f" % component).rstrip('0').rstrip('.')
+      # also set the default field width for each coordinate
+      componentString = ("%4f" % component).rstrip('0').rstrip('.')
       pixel += ("%s, " % componentString)
     return pixel[:-2]
 
@@ -203,11 +203,8 @@ class DataProbeInfoWidget(object):
     if not insideView or not sliceNode or not sliceLogic:
       self.currentLayoutName = None
       # reset all the readouts
-      self.viewerColor.setText( "" )
-      self.viewerName.setText( "" )
-      self.viewerRAS.setText( "" )
-      self.viewerOrient.setText( "" )
-      self.viewerSpacing.setText( "" )
+      self.viewerColor.text = ""
+      self.viewInfo.text =  ""
       layers = ('L', 'F', 'B')
       for layer in layers:
         self.layerNames[layer].setText( "" )
@@ -223,41 +220,51 @@ class DataProbeInfoWidget(object):
     color = qt.QColor.fromRgbF(rgbColor[0], rgbColor[1], rgbColor[2])
     if hasattr(color, 'name'):
       self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % color.name())
-    self.viewerName.setText( "  " + sliceNode.GetLayoutName() + "  " )
-    self.viewerRAS.setText( "RAS: ({0:.1f}, {1:.1f}, {2:.1f})".format(ras[0],ras[1],ras[2]) )
-    self.viewerOrient.setText( "  " + sliceNode.GetOrientationString() )
-    self.viewerSpacing.setText( "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2] )
-    if sliceNode.GetSliceSpacingMode() == 1:
-      self.viewerSpacing.setText( "(" + self.viewerSpacing.text + ")" )
-    self.viewerSpacing.setText( " Sp: " + self.viewerSpacing.text )
+
+    # Described below are the details for the ras coordinate width set to 6:
+    #  1: sign
+    #  3: suggested number of digits before decimal point
+    #  1: decimal point:
+    #  1: number of digits after decimal point
+
+    spacing = "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2]
+    if sliceNode.GetSliceSpacingMode() == slicer.vtkMRMLSliceNode.PrescribedSliceSpacingMode:
+      spacing = "(%s)" % spacing
+
+    self.viewInfo.text = \
+      "  {layoutName: <8s}  RAS: ({ras_x:6.1f}, {ras_y:6.1f}, {ras_z:6.1f})  {orient: >8s} Sp: {spacing:s}" \
+      .format(layoutName=sliceNode.GetLayoutName(),
+              ras_x=ras[0],
+              ras_y=ras[1],
+              ras_z=ras[2],
+              orient=sliceNode.GetOrientationString(),
+              spacing=spacing
+              )
+
+    def _roundInt(value):
+      try:
+        return int(round(value))
+      except ValueError:
+        return 0
+
     layerLogicCalls = (('L', sliceLogic.GetLabelLayer),
                        ('F', sliceLogic.GetForegroundLayer),
                        ('B', sliceLogic.GetBackgroundLayer))
     for layer,logicCall in layerLogicCalls:
       layerLogic = logicCall()
       volumeNode = layerLogic.GetVolumeNode()
-      nameLabel = "None"
-      ijkLabel = ""
-      valueLabel = ""
-      rasToIJK = vtk.vtkMatrix4x4()
+      ijk = [0, 0, 0]
       if volumeNode:
-        nameLabel = self.fitName(volumeNode.GetName())
         xyToIJK = layerLogic.GetXYToIJKTransform()
         ijkFloat = xyToIJK.TransformDoublePoint(xyz)
-        ijk = []
-        ijkLabel = "("
-        for element in ijkFloat:
-          try:
-            index = int(round(element))
-          except ValueError:
-            index = 0
-          ijk.append(index)
-          ijkLabel += "%d, " % index
-        ijkLabel = ijkLabel[:-2] + ')'
-        valueLabel = self.getPixelString(volumeNode,ijk)
-      self.layerNames[layer].setText( '<b>' + nameLabel )
-      self.layerIJKs[layer].setText( ijkLabel )
-      self.layerValues[layer].setText( '<b>' + valueLabel )
+        ijk = [_roundInt(value) for value in ijkFloat]
+      self.layerNames[layer].setText(
+        "<b>%s</b>" % (self.fitName(volumeNode.GetName()) if volumeNode else "None"))
+      self.layerIJKs[layer].setText(
+        "({i:4d}, {j:4d}, {k:4d})".format(i=ijk[0], j=ijk[1], k=ijk[2]) if volumeNode else "")
+      self.layerValues[layer].setText(
+        "<b>%s</b>" % self.getPixelString(volumeNode,ijk) if volumeNode else "")
+
     sceneName = slicer.mrmlScene.GetURL()
     if sceneName != "":
       self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
@@ -285,41 +292,45 @@ class DataProbeInfoWidget(object):
     self.frame.layout().addWidget(self.viewerFrame)
     self.viewerColor = qt.QLabel(self.viewerFrame)
     self.viewerFrame.layout().addWidget(self.viewerColor)
-    self.viewerName = qt.QLabel(self.viewerFrame)
-    self.viewerFrame.layout().addWidget(self.viewerName)
-    self.viewerRAS = qt.QLabel()
-    self.viewerFrame.layout().addWidget(self.viewerRAS)
-    self.viewerOrient = qt.QLabel()
-    self.viewerFrame.layout().addWidget(self.viewerOrient)
-    self.viewerSpacing = qt.QLabel()
-    self.viewerFrame.layout().addWidget(self.viewerSpacing)
+    self.viewInfo = qt.QLabel()
+    self.viewerFrame.layout().addWidget(self.viewInfo)
+
     self.viewerFrame.layout().addStretch(1)
+
+    def _setFixedFontFamily(widget, family='Monospace'):
+      font = widget.font
+      font.setFamily(family)
+      widget.font = font
+
+    _setFixedFontFamily(self.viewInfo)
 
     # the grid - things about the layers
     # this method makes labels
     self.layerGrid = qt.QFrame(self.frame)
-    self.layerGrid.setLayout(qt.QGridLayout())
+    layout = qt.QGridLayout()
+    self.layerGrid.setLayout(layout)
     self.frame.layout().addWidget(self.layerGrid)
     layers = ('L', 'F', 'B')
     self.layerNames = {}
     self.layerIJKs = {}
     self.layerValues = {}
-    row = 0
-    for layer in layers:
+    for (row, layer) in enumerate(layers):
       col = 0
-      self.layerGrid.layout().addWidget(qt.QLabel(layer), row, col)
+      layout.addWidget(qt.QLabel(layer), row, col)
       col += 1
       self.layerNames[layer] = qt.QLabel()
-      self.layerGrid.layout().addWidget(self.layerNames[layer], row, col)
+      layout.addWidget(self.layerNames[layer], row, col)
       col += 1
       self.layerIJKs[layer] = qt.QLabel()
-      self.layerGrid.layout().addWidget(self.layerIJKs[layer], row, col)
+      layout.addWidget(self.layerIJKs[layer], row, col)
       col += 1
       self.layerValues[layer] = qt.QLabel()
-      self.layerGrid.layout().addWidget(self.layerValues[layer], row, col)
-      self.layerGrid.layout().setColumnStretch(col,100)
-      col += 1
-      row += 1
+      layout.addWidget(self.layerValues[layer], row, col)
+      layout.setColumnStretch(col, 100)
+
+      _setFixedFontFamily(self.layerNames[layer])
+      _setFixedFontFamily(self.layerIJKs[layer])
+      _setFixedFontFamily(self.layerValues[layer])
 
     # goto module button
     self.goToModule = qt.QPushButton('->', self.frame)
