@@ -855,7 +855,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 
   // What type of node is the data really? Or is it a scene
   vtkMRMLNode *nd = 0;
-  vtkMRMLDisplayNode *disp = 0;
+  vtkSmartPointer<vtkMRMLDisplayNode> disp;
   vtkMRMLStorageNode *storageNode = 0;
   vtkMRMLScalarVolumeNode *svnd = 0;
   vtkMRMLVectorVolumeNode *vvnd = 0;
@@ -892,7 +892,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     {
     svnd  = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
     }
-
+  else
+    {
+    vtkWarningMacro("Unkown volume type");
+    }
 
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
   tnd   = vtkMRMLTransformNode::SafeDownCast(nd);
@@ -1158,16 +1161,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           {
           if (svnd->GetLabelMap())
             {
-            disp = vtkMRMLLabelMapVolumeDisplayNode::New();
+            disp.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
             }
           else
             {
-            disp = vtkMRMLScalarVolumeDisplayNode::New();
+            disp.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
             }
           }
         else
           {
-          disp = vtkMRMLVectorVolumeDisplayNode::New();
+          disp.TakeReference(vtkMRMLVectorVolumeDisplayNode::New());
           }
         }
       else if ((dtvnd && !dtvnd->GetDisplayNode())
@@ -1182,11 +1185,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
    //       dtvdn->SetUpperThreshold(0);
    //       dtvdn->SetLowerThreshold(0);
    //       dtvdn->SetAutoWindowLevel(1);
-          disp = dtvdn; // assign to superclass pointer
+          disp.TakeReference(dtvdn); // assign to superclass pointer
           }
         else
           {
-          disp = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
+          disp.TakeReference(vtkMRMLDiffusionWeightedVolumeDisplayNode::New());
           }
         }
       else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode") && !fbnd->GetDisplayNode())
@@ -1199,7 +1202,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         {
         // Model node
         vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::New();
-        disp = modelDisplayNode;
+        disp.TakeReference(modelDisplayNode);
         if (mnd->GetPolyData())
           {
 #if (VTK_MAJOR_VERSION <= 5)
@@ -1229,7 +1232,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       // Set up the display node.  If we already have a display node,
       // just use that one.
       //
-      if (disp)
+      if (disp.GetPointer())
         {
         vtkMRMLNode *dnode = this->GetMRMLScene()->AddNode( disp );
         disp->SetAndObserveColorNodeID(this->GetColorLogic()->GetDefaultVolumeColorNodeID());
@@ -1278,7 +1281,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           {
           mnd->SetAndObserveDisplayNodeID( disp->GetID() );
           }
-        disp->Delete();
         }
       }
     }
