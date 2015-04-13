@@ -492,14 +492,14 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("WriteData: File name not specified");
     return 0;
     }
 
   bool moveSucceeded = true;
-  if (moveFromDir != std::string(""))
+  if (!moveFromDir.empty())
     {
     // the temp writing went okay, just move the files from there to where
     // they're supposed to go. It will fail if the temp dir is on a different
@@ -632,7 +632,7 @@ const char* vtkMRMLVolumeArchetypeStorageNode::GetDefaultWriteFileExtension()
 std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode, int move)
 {
   bool result = true;
-  std::string returnString = "";
+  std::string returnString;
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") )
     {
@@ -640,8 +640,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     return returnString;
     }
 
-  vtkMRMLVolumeNode *volNode = NULL;
-  volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+  vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
   if (volNode == NULL || volNode->GetImageData() == NULL)
     {
@@ -650,7 +649,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     }
 
   std::string oldName = this->GetFileName();
-  if (oldName == std::string(""))
+  if (oldName.empty())
     {
     vtkErrorMacro("UpdateFileList: File name not specified");
     return returnString;
@@ -771,7 +770,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   else
     {
     if (volNode->GetScene() != NULL &&
-        strcmp(volNode->GetScene()->GetRootDirectory(), "") != 0)
+        strlen(volNode->GetScene()->GetRootDirectory()) )
       {
       // use the scene's root dir, all the files in the list will be
       // relative to it (the relative path is how you go from the root dir to
