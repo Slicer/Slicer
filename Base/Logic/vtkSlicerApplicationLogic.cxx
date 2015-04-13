@@ -1143,12 +1143,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     vtkMRMLDisplayableNode::SafeDownCast(nd);
   if (displayableNode)
     {
-      // Create a default display node.  Not all node types have implemented this method.
-      // If no display node is create using the CreateDefault method, then chain through the cases.
-      // Much of this case specific code should be moved to the respective
-      // CreateDefaultDisplayNodes() methods.
-      displayableNode->CreateDefaultDisplayNodes();
-      if (!displayableNode->GetDisplayNode())
+    // Create a default display node.  Not all node types have implemented this method.
+    // If no display node is create using the CreateDefault method, then chain through the cases.
+    // Much of this case specific code should be moved to the respective
+    // CreateDefaultDisplayNodes() methods.
+    displayableNode->CreateDefaultDisplayNodes();
+    if (!displayableNode->GetDisplayNode())
       {
       if ((svnd && !svnd->GetDisplayNode())
           || (vvnd && !vvnd->GetDisplayNode()))
