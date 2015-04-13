@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
                                    unsigned long /*event*/,
                                    void * /*callData*/ );
   ///
-  /// set gray colormap
+  /// set default labels colormap
   virtual void SetDefaultColorMap();
 
   /// Set the pipeline input
