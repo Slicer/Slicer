@@ -1271,7 +1271,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           {
           dtvnd->SetAndObserveDisplayNodeID( disp->GetID() );
           // add slice display nodes
-          vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(disp)->AddSliceGlyphDisplayNodes( dtvnd );
+          vtkMRMLDiffusionTensorVolumeDisplayNode* n = vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(disp);
+          if (n)
+            {
+            n->AddSliceGlyphDisplayNodes( dtvnd );
+            }
           }
         else if (dwvnd)
           {
