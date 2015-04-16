@@ -23,22 +23,22 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings)
   file(WRITE ${_additonal_settings_configure_script}
   "
   file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
-  \"[LibraryPaths]
-  1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-  2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-  size=2
+\"[LibraryPaths]
+1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+size=2
 
-  [Paths]
-  1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/\${CMAKE_CFG_INTDIR}
-  size=1
+[Paths]
+1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/\${CMAKE_CFG_INTDIR}
+size=1
 
-  [PYTHONPATH]
-  1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
-  2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
-  3\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}
-  size=3
-  \")
-  ")
+[PYTHONPATH]
+1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+3\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}
+size=3
+\")
+")
 
   add_custom_command(
     DEPENDS
