@@ -349,6 +349,12 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
     { // the factory can not create such view, then do nothing about it
     return;
     }
+
+  // Do not show until mapped into a view (the widget is shown/hidden only
+  // if it is part of the layout, but if the widget was not yet part of any layout
+  // then it would show up in the top-left corner of the viewport)
+  viewWidget->setVisible(false);
+
   d->Views[node] = viewWidget;
   // For now, the active view is the first one
   if (this->viewCount() == 1)
