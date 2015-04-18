@@ -31,11 +31,11 @@ class qSlicerCommandOptionsPrivate;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerCommandOptions : public qSlicerCoreCommandOptions
 {
   Q_OBJECT
-  Q_PROPERTY(bool noSplash READ noSplash)
-  Q_PROPERTY(bool disableToolTips READ disableToolTips)
-  Q_PROPERTY(bool noMainWindow READ noMainWindow)
-  Q_PROPERTY(bool showPythonInteractor READ showPythonInteractor)
-  Q_PROPERTY(bool enableQtTesting READ enableQtTesting)
+  Q_PROPERTY(bool noSplash READ noSplash CONSTANT)
+  Q_PROPERTY(bool disableToolTips READ disableToolTips CONSTANT)
+  Q_PROPERTY(bool noMainWindow READ noMainWindow CONSTANT)
+  Q_PROPERTY(bool showPythonInteractor READ showPythonInteractor CONSTANT)
+  Q_PROPERTY(bool enableQtTesting READ enableQtTesting CONSTANT)
 public:
   typedef qSlicerCoreCommandOptions Superclass;
   qSlicerCommandOptions();
