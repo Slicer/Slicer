@@ -50,6 +50,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit CONSTANT)
   Q_PROPERTY(bool displaySettingsPathAndExit READ displaySettingsPathAndExit CONSTANT)
   Q_PROPERTY(bool displayTemporaryPathAndExit READ displayTemporaryPathAndExit CONSTANT)
+  Q_PROPERTY(bool displayMessageAndExit READ displayMessageAndExit STORED false CONSTANT)
   Q_PROPERTY(bool verboseModuleDiscovery READ verboseModuleDiscovery CONSTANT)
   Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers CONSTANT)
   Q_PROPERTY(bool testingEnabled READ isTestingEnabled CONSTANT)
@@ -133,6 +134,17 @@ public:
 
   /// Return True if slicer should display temporary path and exit
   bool displayTemporaryPathAndExit()const;
+
+  /// Return True if slicer should display a message and exit.
+  /// A message is displayed if any of the
+  /// function named like \a display[Something]AndExit returns True.
+  /// \sa displayHelpAndExit()
+  /// \sa displayVersionAndExit()
+  /// \sa displayProgramPathAndExit()
+  /// \sa displayHomePathAndExit()
+  /// \sa displaySettingsPathAndExit()
+  /// \sa displayTemporaryPathAndExit()
+  virtual bool displayMessageAndExit() const;
 
   /// Return True if slicer should display details regarding the module discovery process
   bool verboseModuleDiscovery()const;

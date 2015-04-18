@@ -895,11 +895,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     delete[] pythonArgv;
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
-    if (!(options->displayHelpAndExit() ||
-        options->displayHomePathAndExit() ||
-        options->displayProgramPathAndExit() ||
-        options->displaySettingsPathAndExit() ||
-        options->displayVersionAndExit() ||
+    if (!(options->displayMessageAndExit() ||
         options->ignoreSlicerRC()))
       {
       this->corePythonManager()->executeString("loadSlicerRCFile()");

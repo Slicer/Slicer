@@ -269,6 +269,18 @@ bool qSlicerCoreCommandOptions::displayTemporaryPathAndExit() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::displayMessageAndExit() const
+{
+  return
+      this->displayHelpAndExit()
+      || this->displayVersionAndExit()
+      || this->displayProgramPathAndExit()
+      || this->displayHomePathAndExit()
+      || this->displaySettingsPathAndExit()
+      || this->displayTemporaryPathAndExit();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
 {
   Q_D(const qSlicerCoreCommandOptions);
