@@ -101,7 +101,9 @@ protected:
 public:
   typedef qSlicerCoreApplicationPrivate Superclass;
 
-  qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions * commandOptions, qSlicerIOManager * ioManager);
+  qSlicerApplicationPrivate(qSlicerApplication& object,
+                            qSlicerCommandOptions * commandOptions,
+                            qSlicerIOManager * ioManager);
   virtual ~qSlicerApplicationPrivate();
 
   /// Convenient method regrouping all initialization code
@@ -132,7 +134,9 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::qSlicerApplicationPrivate(
-  qSlicerApplication& object, qSlicerCommandOptions * commandOptions, qSlicerIOManager * ioManager)
+    qSlicerApplication& object,
+    qSlicerCommandOptions * commandOptions,
+    qSlicerIOManager * ioManager)
   : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
 {
   this->LayoutManager = 0;
@@ -700,15 +704,24 @@ void qSlicerApplication::setupFileLogging()
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
 
-  qDebug("Session start time: %s", qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
-  qDebug("Slicer version: %s (revision %s) %s - %s", Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()), qPrintable(this->platform()), this->isInstalled() ? "installed" : "not installed");
+  qDebug("Session start time: %s",
+         qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
+
+  qDebug("Slicer version: %s (revision %s) %s - %s",
+         Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()),
+         qPrintable(this->platform()),
+         this->isInstalled() ? "installed" : "not installed");
 
   vtkNew<vtkSystemInformation> systemInfo;
   systemInfo->RunCPUCheck();
   systemInfo->RunOSCheck();
   systemInfo->RunMemoryCheck();
 
-  qDebug("Operating system: %s / %s / %s - %s", systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown", systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown", systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown" , systemInfo->Is64Bits() ? "64-bit" : "32-bit");
+  qDebug("Operating system: %s / %s / %s - %s",
+         systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
+         systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
+         systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown" ,
+         systemInfo->Is64Bits() ? "64-bit" : "32-bit");
 
   size_t totalPhysicalMemoryMb = systemInfo->GetTotalPhysicalMemory();
   size_t totalVirtualMemoryMb = systemInfo->GetTotalVirtualMemory();
@@ -738,7 +751,9 @@ void qSlicerApplication::setupFileLogging()
     }
 #endif
 #endif
-  qDebug() << qPrintable(QString("Memory: %0 MB physical, %1 MB virtual").arg(totalPhysicalMemoryMb).arg(totalVirtualMemoryMb));
+  qDebug() << qPrintable(QString("Memory: %0 MB physical, %1 MB virtual")
+                         .arg(totalPhysicalMemoryMb)
+                         .arg(totalVirtualMemoryMb));
 
   unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
 #if defined(_WIN32)
@@ -749,7 +764,11 @@ void qSlicerApplication::setupFileLogging()
   GetSystemInfo (&info);
   numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
 #endif
-  qDebug("CPU: %s %.3f MHz, %d cores", systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown", systemInfo->GetProcessorClockFrequency()/1000, numberOfPhysicalCPU);
+
+  qDebug("CPU: %s %.3f MHz, %d cores",
+         systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown",
+         systemInfo->GetProcessorClockFrequency()/1000,
+         numberOfPhysicalCPU);
 
   QSettings settings;
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
@@ -758,7 +777,10 @@ void qSlicerApplication::setupFileLogging()
   bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", false).toBool();
   qDebug("Prefer executable CLI: %s", preferExecutableCli ? "yes" : "no");
 
-  QStringList additionalModulePaths = this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
-  qDebug("Additional module paths: %s", additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
+  QStringList additionalModulePaths =
+      this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
+
+  qDebug("Additional module paths: %s",
+         additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
 
 }
