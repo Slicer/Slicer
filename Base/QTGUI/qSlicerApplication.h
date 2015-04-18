@@ -119,6 +119,19 @@ public:
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
 
+  /// Display application informations.
+  /// This function will print to standard output the following
+  /// details:
+  ///   - Session start time
+  ///   - Slicer version
+  ///   - Operating system
+  ///   - Memory
+  ///   - CPU
+  ///   - Developer mode enabled
+  ///   - Prefer executable CLI
+  ///   - Additional module paths
+  Q_INVOKABLE virtual void displayApplicationInformations() const;
+
 public slots:
 
   /// Utility function that retrieve the best module for a node and trigger
@@ -148,6 +161,7 @@ public slots:
 
 protected:
   /// Reimplemented from qSlicerCoreApplication
+  virtual void handlePreApplicationCommandLineArguments();
   virtual void handleCommandLineArguments();
   virtual void onSlicerApplicationLogicModified();
 

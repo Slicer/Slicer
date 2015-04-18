@@ -440,6 +440,19 @@ QMainWindow* qSlicerApplication::mainWindow()const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerApplication::handlePreApplicationCommandLineArguments()
+{
+  this->Superclass::handlePreApplicationCommandLineArguments();
+
+  qSlicerCoreCommandOptions* options = this->coreCommandOptions();
+  Q_ASSERT(options);
+  if (!options->displayMessageAndExit())
+    {
+    this->displayApplicationInformations();
+    }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerApplication::handleCommandLineArguments()
 {
   qSlicerCommandOptions* options = this->commandOptions();
@@ -700,7 +713,11 @@ void qSlicerApplication::setupFileLogging()
 
   // Set current log file path
   d->ErrorLogModel->setFilePath(currentLogFilePath);
+}
 
+// --------------------------------------------------------------------------
+void qSlicerApplication::displayApplicationInformations() const
+{
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
 
