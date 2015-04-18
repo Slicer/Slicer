@@ -704,25 +704,52 @@ void qSlicerApplication::setupFileLogging()
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
 
-  qDebug("Session start time: %s",
+  QStringList titles = QStringList()
+      << "Session start time "
+      << "Slicer version "
+      << "Operating system "
+      << "Memory "
+      << "CPU "
+      << "Developer mode enabled "
+      << "Prefer executable CLI "
+      << "Additional module paths ";
+
+  int titleWidth = 0;
+  foreach(const QString& title, titles)
+    {
+    if (title.length() > titleWidth)
+      {
+      titleWidth = title.length();
+      }
+    }
+  titleWidth += 2;
+
+  // Session start time
+  qDebug("%s: %s",
+         qPrintable(titles.at(0).leftJustified(titleWidth, '.')),
          qPrintable(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")));
 
-  qDebug("Slicer version: %s (revision %s) %s - %s",
+  // Slicer version
+  qDebug("%s: %s (revision %s) %s - %s",
+         qPrintable(titles.at(1).leftJustified(titleWidth, '.')),
          Slicer_VERSION_FULL, qPrintable(this->repositoryRevision()),
          qPrintable(this->platform()),
          this->isInstalled() ? "installed" : "not installed");
 
+  // Operating system
   vtkNew<vtkSystemInformation> systemInfo;
   systemInfo->RunCPUCheck();
   systemInfo->RunOSCheck();
   systemInfo->RunMemoryCheck();
 
-  qDebug("Operating system: %s / %s / %s - %s",
+  qDebug("%s: %s / %s / %s - %s",
+         qPrintable(titles.at(2).leftJustified(titleWidth, '.')),
          systemInfo->GetOSName() ? systemInfo->GetOSName() : "unknown",
          systemInfo->GetOSRelease() ? systemInfo->GetOSRelease() : "unknown",
          systemInfo->GetOSVersion() ? systemInfo->GetOSVersion() : "unknown" ,
          systemInfo->Is64Bits() ? "64-bit" : "32-bit");
 
+  // Memory
   size_t totalPhysicalMemoryMb = systemInfo->GetTotalPhysicalMemory();
   size_t totalVirtualMemoryMb = systemInfo->GetTotalVirtualMemory();
 #if defined(_WIN32)
@@ -751,10 +778,12 @@ void qSlicerApplication::setupFileLogging()
     }
 #endif
 #endif
-  qDebug() << qPrintable(QString("Memory: %0 MB physical, %1 MB virtual")
+  qDebug() << qPrintable(QString("%0: %1 MB physical, %2 MB virtual")
+                         .arg(titles.at(3).leftJustified(titleWidth, '.'))
                          .arg(totalPhysicalMemoryMb)
                          .arg(totalVirtualMemoryMb));
 
+  // CPU
   unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
 #if defined(_WIN32)
   // On Windows number of physical CPUs are computed incorrectly by vtkSystemInformation::GetNumberOfPhysicalCPU(),
@@ -765,22 +794,32 @@ void qSlicerApplication::setupFileLogging()
   numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
 #endif
 
-  qDebug("CPU: %s %.3f MHz, %d cores",
+  qDebug("%s: %s %.3f MHz, %d cores",
+         qPrintable(titles.at(4).leftJustified(titleWidth, '.')),
          systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown",
          systemInfo->GetProcessorClockFrequency()/1000,
          numberOfPhysicalCPU);
 
   QSettings settings;
+
+  // Developer mode enabled
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
-  qDebug("Developer mode enabled: %s", developerModeEnabled ? "yes" : "no");
+  qDebug("%s: %s",
+         qPrintable(titles.at(5).leftJustified(titleWidth, '.')),
+         developerModeEnabled ? "yes" : "no");
 
+  // Prefer executable CLI
   bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", false).toBool();
-  qDebug("Prefer executable CLI: %s", preferExecutableCli ? "yes" : "no");
+  qDebug("%s: %s",
+         qPrintable(titles.at(6).leftJustified(titleWidth, '.')),
+         preferExecutableCli ? "yes" : "no");
 
+  // Additional module paths
   QStringList additionalModulePaths =
       this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
 
-  qDebug("Additional module paths: %s",
+  qDebug("%s: %s",
+         qPrintable(titles.at(7).leftJustified(titleWidth, '.')),
          additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
 
 }
