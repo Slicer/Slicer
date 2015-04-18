@@ -131,7 +131,7 @@ public:
   /// Return True if slicer should display settings path and exit
   bool displaySettingsPathAndExit()const;
 
-  /// Return True if slicer should display settings path and exit
+  /// Return True if slicer should display temporary path and exit
   bool displayTemporaryPathAndExit()const;
 
   /// Return True if slicer should display details regarding the module discovery process
