@@ -72,6 +72,47 @@ bool AreMatricesEqual(const vtkMatrix4x4* first, const vtkMatrix4x4* second)
          first->GetElement(3,3) == second->GetElement(3,3);
 }
 
+// Convert a linear transform that is almost exactly a permute transform
+// to an exact permute transform.
+// vtkImageReslice works about 10-20% faster if it reslices along an axis
+// (transformation is just a permutation). However, vtkImageReslice
+// checks for strict (floatValue!=0) to consider a matrix element zero.
+// Here we set a small floatValue to 0 if it is several magnitudes
+// (controlled by SUPPRESSION_FACTOR parameter) smaller than the
+// maximum norm of the axis.
+//----------------------------------------------------------------------------
+void SnapToPermuteMatrix(vtkTransform* transform)
+{
+  const double SUPPRESSION_FACTOR = 1e-3;
+  vtkHomogeneousTransform* linearTransform = vtkHomogeneousTransform::SafeDownCast(transform);
+  if (!linearTransform)
+    {
+    // it is not a simple linear transform, so it cannot be snapped to a permute matrix
+    return;
+    }
+  bool modified = false;
+  vtkNew<vtkMatrix4x4> transformMatrix;
+  linearTransform->GetMatrix(transformMatrix.GetPointer());
+  for (int c=0; c<3; c++)
+    {
+    double absValues[3] = {fabs(transformMatrix->Element[0][c]), fabs(transformMatrix->Element[1][c]), fabs(transformMatrix->Element[2][c])};
+    double maxValue = std::max(absValues[0], std::max(absValues[1], absValues[2]));
+    double zeroThreshold = SUPPRESSION_FACTOR * maxValue;
+    for (int r=0; r<3; r++)
+      {
+      if (absValues[r]!=0 && absValues[r]<zeroThreshold)
+        {
+        transformMatrix->Element[r][c]=0;
+        modified = true;
+        }
+      }
+    }
+  if (modified)
+  {
+    transform->SetMatrix(transformMatrix.GetPointer());
+  }
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
 {
@@ -519,10 +560,12 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     this->UVWToIJKTransform->Concatenate(rasToIJK.GetPointer());
 
     // vtkImageReslice works faster if the input is a linear transform, so try to convert it
-    // to a linear transform
+    // to a linear transform.
+    // Also attempt to make it a permute transform, as it makes reslicing even faster.
     vtkSmartPointer<vtkTransform> linearXYToIJKTransform = vtkSmartPointer<vtkTransform>::New();
     if (vtkMRMLTransformNode::IsGeneralTransformLinear(this->XYToIJKTransform, linearXYToIJKTransform))
       {
+      SnapToPermuteMatrix(linearXYToIJKTransform);
       this->Reslice->SetResliceTransform(linearXYToIJKTransform);
       }
     else
@@ -532,6 +575,7 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
     vtkSmartPointer<vtkTransform> linearUVWToIJKTransform = vtkSmartPointer<vtkTransform>::New();
     if (vtkMRMLTransformNode::IsGeneralTransformLinear(this->UVWToIJKTransform, linearUVWToIJKTransform))
       {
+      SnapToPermuteMatrix(linearUVWToIJKTransform);
       this->ResliceUVW->SetResliceTransform( linearUVWToIJKTransform );
       }
     else
