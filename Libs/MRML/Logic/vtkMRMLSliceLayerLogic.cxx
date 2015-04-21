@@ -913,33 +913,22 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     {
     if (volumeNode != 0 && volumeNode->GetImageData() != 0)
       {
-      //int wasModifying = volumeDisplayNode->StartModify();
 #if (VTK_MAJOR_VERSION <= 5)
       volumeDisplayNode->SetInputImageData(this->GetSliceImageData());
       volumeDisplayNode->SetBackgroundImageStencilData(this->Reslice->GetStencil());
-#else
-      volumeDisplayNode->SetInputImageDataConnection(this->GetSliceImageDataConnection());
-      volumeDisplayNode->SetBackgroundImageStencilDataConnection(this->Reslice->GetOutputPort(1));
-#endif
       // If the background mask is not used, make sure the update extent of the
       // background mask is set to the whole extent so the reslice filter can write
       // into the entire extent instead of trying to access an update extent that won't
       // be up-to-date because not connected to a pipeline.
-#if (VTK_MAJOR_VERSION <= 5)
       if (volumeDisplayNode->GetBackgroundImageStencilData() == 0 &&
           this->Reslice->GetOutput(1) != 0)
         {
         this->Reslice->GetOutput(1)->SetUpdateExtentToWholeExtent();
         }
 #else
-      if (volumeDisplayNode->GetBackgroundImageStencilData() == 0 &&
-         this->Reslice->GetOutputPort(1) != 0)
-        {
-        this->Reslice->UpdateInformation();
-        this->Reslice->SetUpdateExtentToWholeExtent(1);
-        }
+      volumeDisplayNode->SetInputImageDataConnection(this->GetSliceImageDataConnection());
+      volumeDisplayNode->SetBackgroundImageStencilDataConnection(this->Reslice->GetOutputPort(1));
 #endif
-      //volumeDisplayNode->EndModify(wasModifying);
       }
     }
   if (volumeDisplayNodeUVW)
