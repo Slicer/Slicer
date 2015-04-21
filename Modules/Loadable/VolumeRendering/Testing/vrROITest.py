@@ -12,7 +12,7 @@ def load_default_volume():
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeScalarVolume (fileName, "moving", 0)
     # automatically select the volume to display
-    mrmlLogic = slicer.app.mrmlApplicationLogic()
+    mrmlLogic = slicer.app.applicationLogic()
     selNode = mrmlLogic.GetSelectionNode()
     selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
     mrmlLogic.PropagateVolumeSelection()
