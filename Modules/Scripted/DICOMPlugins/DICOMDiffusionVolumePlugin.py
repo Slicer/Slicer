@@ -98,11 +98,12 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     loadables = []
     if validDWI:
       # default loadable includes all files for series
-      loadable = DICOMLib.DICOMLoadable()
+      loadable = DICOMLoadable()
       loadable.files = files
       loadable.name = name + ' - as DWI Volume'
       loadable.selected = False
       loadable.tooltip = "Appears to be DWI from vendor %s" % vendorName
+      loadable.confidence = 0.75
       loadables = [loadable]
     return loadables
 
@@ -120,7 +121,12 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     diffusionNode.SetName(loadable.name)
     # set up the parameters
     parameters = {}
-    parameters['inputDicomDirectory'] = os.path.dirname(loadable.files[0])
+    tempDir = slicer.util.tempDirectory()
+    import shutil
+    for filePath in loadable.files:
+      base = os.path.basename(filePath)
+      shutil.copy(filePath, os.path.join(tempDir, base))
+    parameters['inputDicomDirectory'] = tempDir
     parameters['outputDirectory'] = slicer.app.temporaryPath
     parameters['outputVolume'] = diffusionNode.GetID()
     # run the module
@@ -133,6 +139,9 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
 
     # create Subject Hierarchy nodes for the loaded series
     self.addSeriesInSubjectHierarchy(loadable,diffusionNode)
+
+    # remove temp directory of dwi series
+    shutil.rmtree(tempDir)
 
     return success
 

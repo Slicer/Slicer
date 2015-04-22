@@ -574,6 +574,27 @@ def toVTKString(str):
   """
   return str.encode('latin1', 'ignore')
 
+
+#
+# File Utlities
+#
+
+def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
+  """Come up with a unique directory name in the temp dir and make it and return it
+  # TODO: switch to QTemporaryDir in Qt5.
+  Note: this directory is not automatically cleaned up
+  """
+  from __main__ import qt, slicer
+  if not tempDir:
+    tempDir = qt.QDir(slicer.app.temporaryPath)
+  tempDirName = key
+  if includeDateTime:
+    key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
+  fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
+  dirPath = fileInfo.absoluteFilePath()
+  qt.QDir().mkpath(dirPath)
+  return dirPath
+
 #
 # Misc. Utility methods
 #
