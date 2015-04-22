@@ -61,7 +61,7 @@ public:
   /// Get the application color logic. 0 by default.
   vtkMRMLColorLogic* colorLogic()const;
 
-  // Redefine the sizeHint so layouts work properly.
+  /// Redefine the sizeHint so layouts work properly.
   virtual QSize sizeHint() const;
 
 public slots:
