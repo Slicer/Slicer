@@ -33,6 +33,8 @@ class ExtensionProject(object):
 
   _moduleInsertPlaceholder = "# NEXT_MODULE"
 
+  _referencedVariables = re.compile(r"\$\{([\w_\/\.\+\-]+)\}")
+
   #---------------------------------------------------------------------------
   def __init__(self, path, encoding=None):
     """
@@ -145,12 +147,55 @@ class ExtensionProject(object):
     raise EOFError("could not find project")
 
   #---------------------------------------------------------------------------
-  def getValue(self, name, default=None):
+  def substituteVariableReferences(self, text):
+    """Return a copy of ``text`` where all valid '``${var}``' occurrences
+    have been replaced.
+
+    Note that variable references can nest and are evaluated from the inside
+    out, e.g. '``${outer_${inner_variable}_variable}``'.
+
+    :param text: A text with zero or more variable references.
+    :type text: :class:`basestring`
+    """
+
+    def _substitue(text):
+      variableNames = self._referencedVariables.findall(text)
+      if len(variableNames) == 0:
+        return text
+
+      prefinedVariables = {}
+      try:
+         prefinedVariables[u"PROJECT_NAME"] = self.project
+      except EOFError:
+        pass
+
+      for name in prefinedVariables.keys():
+        try:
+          text = text.replace("${%s}" % name, prefinedVariables[name])
+        except KeyError:
+          continue
+
+      for name in variableNames:
+        try:
+          text = text.replace("${%s}" % name, self.getValue(name))
+        except KeyError:
+          text = text.replace("${%s}" % name, "%s-NOTFOUND" % name)
+
+      return text
+
+    while len(self._referencedVariables.findall(text)) > 0:
+      text = _substitue(text)
+    return text
+
+  #---------------------------------------------------------------------------
+  def getValue(self, name, default=None, substitute=False):
     """Get value of CMake variable set in project.
 
     :param name: Name of the variable.
     :type name: :class:`basestring`
     :param default: Value to return if no such variable exists.
+    :param substitute: If ``True``, expand variable references in value.
+    :type substitute: :class:`bool`
 
     :returns: Value of the variable, or ``default`` if not set.
     :rtype: :class:`str` or ``type(default)``
@@ -160,14 +205,28 @@ class ExtensionProject(object):
       ``None``.
 
     This returns the raw value of the variable ``name`` which is set in the
-    build script. No substitution is performed (the result may contain
-    substitution placeholders like '``${var}``'). If more than one ``set()``
-    command sets the same ``name``, the result is the raw argument to the last
-    such command. If the value consists of more than one argument, only the
-    first is returned.
+    build script. By default, no substitution is performed (the result is taken
+    from the raw argument). If more than one ``set()`` command sets the same
+    ``name``, the result is the raw argument to the last such command. If the
+    value consists of more than one argument, only the first is returned.
+
+    If ``substitute`` is ``True``, each occurence of '``${var}``' will be
+    replaced with the corresponding variable if it has been set. Variable
+    references can nest and are evaluated from the inside out,
+    e.g. '``${outer_${inner_variable}_variable}``'. If a variable
+    reference is not found, it will be replaced with '``<var>-NOTFOUND``'.
 
     If no ``set()`` command sets ``name``, and ``default`` is not ``None``,
     ``default`` is returned. Otherwise a :exc:`~exceptions.KeyError` is raised.
+
+    .. note::
+
+      Variables set using a nested reference are not supported.
+      For example, if the underlying CMake code is ``set(foo \"world\")``
+      and ``set(hello_${foo} \"earth\")``. Occurences of
+      '``${hello_${foo}}``' will be replaced by '``hello_world-NOTFOUND``'
+
+    .. seealso:: :func:`.substituteVariableReferences`
     """
 
     for t in reversed(self._scriptContents.tokens):
@@ -175,8 +234,10 @@ class ExtensionProject(object):
          t.arguments[0].text == name:
         if len(t.arguments) < 2:
           return None
-
-        return t.arguments[1].text
+        value = t.arguments[1].text
+        if substitute:
+          value = self.substituteVariableReferences(value)
+        return value
 
     if default is not None:
       return default

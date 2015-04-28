@@ -165,12 +165,12 @@ class ExtensionDescription(object):
 
   #---------------------------------------------------------------------------
   def _setProjectAttribute(self, name, project, default=None, required=False,
-                           elideempty=False):
+                           elideempty=False, substitute=True):
 
     if default is None and not required:
       default=""
 
-    v = project.getValue("EXTENSION_" + name.upper(), default)
+    v = project.getValue("EXTENSION_" + name.upper(), default, substitute)
 
     if len(v) or not elideempty:
       setattr(self, name, v)
