@@ -590,7 +590,7 @@ int ReadTransform( parameters & list,
 
 // Set Output parameters
 template <class PixelType>
-void SetOutputParameters( const parameters & list,
+itk::Matrix< double , 3 , 3 > SetOutputParameters( const parameters & list,
                           typename itk::DiffusionTensor3DResample<PixelType, PixelType>
                           ::Pointer & resampler,
                           const typename itk::Image<itk::DiffusionTensor3D<PixelType>, 3>
@@ -712,6 +712,7 @@ void SetOutputParameters( const parameters & list,
   resampler->SetOutputSize( m_Size );
   resampler->SetOutputOrigin( m_Origin );
   resampler->SetOutputDirection( m_Direction );
+  return m_Direction ;
 }
 
 template <class PixelType>
@@ -1011,21 +1012,28 @@ int Do( parameters list )
     }
   double defaultPixelValue = list.defaultPixelValue;
   // start transform
-  transform->SetMeasurementFrame( measurementFrame ); // This was probably wrong in the old versions
+
     {                                                 // local for memory management: the input image should not stay in
                                                       // memory after we exit this portion of code
     ResamplerTypePointer resampler = ResamplerType::New();
     resampler->SetInput( image );
-    resampler->SetTransform( transform );
     if( list.numberOfThread )
       {
       resampler->SetNumberOfThreads( list.numberOfThread );
       }
     resampler->SetInterpolator( interpol );
-    SetOutputParameters<PixelType>( list, resampler, image );
+    itk::Matrix<double, 3, 3> outputImageDirection ;
+    outputImageDirection = SetOutputParameters<PixelType>( list, resampler, image );
+    if( !hasMeasurementFrame || list.noMeasurementFrame )
+    {
+      itk::Matrix<double, 3, 3> transposeOutputDirection ( outputImageDirection.GetTranspose() ) ;
+      measurementFrame = transposeOutputDirection * measurementFrame ;
+    }
     resampler->SetDefaultPixelValue( static_cast<PixelType>( defaultPixelValue ) );    // Could be set directly in the
                                                                                        // interpolator, but we keep
                                                                                        // ITKResampleImageFilter design
+    transform->SetMeasurementFrame( measurementFrame ); // This was probably wrong in the old versions
+    resampler->SetTransform( transform );
     // Compute the resampled image
     resampler->Update();
     writer->SetMeasurementFrame( resampler->GetOutputMeasurementFrame() );   // measurement frame set to Identity after
