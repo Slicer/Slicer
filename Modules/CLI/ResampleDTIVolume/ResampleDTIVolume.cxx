@@ -1032,7 +1032,7 @@ int Do( parameters list )
     resampler->SetDefaultPixelValue( static_cast<PixelType>( defaultPixelValue ) );    // Could be set directly in the
                                                                                        // interpolator, but we keep
                                                                                        // ITKResampleImageFilter design
-    transform->SetMeasurementFrame( measurementFrame ); // This was probably wrong in the old versions
+    transform->SetMeasurementFrame( measurementFrame );
     resampler->SetTransform( transform );
     // Compute the resampled image
     resampler->Update();
