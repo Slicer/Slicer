@@ -329,19 +329,27 @@ vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
 //------------------------------------------------------------------------------
 QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
 {
+  Q_Q(const qMRMLLayoutManager);
+  if (!viewNode)
+    {
+    return 0;
+    }
+  QWidget* widget = 0;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
     {
-    return this->sliceWidget(vtkMRMLSliceNode::SafeDownCast(viewNode));
+    widget = this->sliceWidget(vtkMRMLSliceNode::SafeDownCast(viewNode));
     }
   if (vtkMRMLViewNode::SafeDownCast(viewNode))
     {
-    return this->threeDWidget(vtkMRMLViewNode::SafeDownCast(viewNode));
+    widget = this->threeDWidget(vtkMRMLViewNode::SafeDownCast(viewNode));
     }
   if (vtkMRMLChartViewNode::SafeDownCast(viewNode))
     {
-    return this->chartWidget(vtkMRMLChartViewNode::SafeDownCast(viewNode));
+    widget = this->chartWidget(vtkMRMLChartViewNode::SafeDownCast(viewNode));
     }
-  return 0;
+  return widget ? widget : q->mrmlViewFactory(
+        QLatin1String(viewNode->GetClassName()))->viewWidget(
+        vtkMRMLAbstractViewNode::SafeDownCast(viewNode));
 }
 
 // --------------------------------------------------------------------------

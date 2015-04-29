@@ -41,6 +41,7 @@ set(TEST_SOURCES
   qMRMLLayoutManagerTest2.cxx
   qMRMLLayoutManagerTest3.cxx
   qMRMLLayoutManagerTest4.cxx
+  qMRMLLayoutManagerWithCustomFactoryTest.cxx
   qMRMLLinearTransformSliderTest1.cxx
   qMRMLListWidgetTest1.cxx
   qMRMLMatrixWidgetTest1.cxx
@@ -139,6 +140,7 @@ QT4_GENERATE_MOCS(
   qMRMLColorModelTest.cxx
   qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLLabelComboBoxTest.cxx
+  qMRMLLayoutManagerWithCustomFactoryTest.cxx
   qMRMLNodeAttributeTableViewTest.cxx
   qMRMLNodeAttributeTableWidgetTest.cxx
   qMRMLSceneModelTest.cxx
@@ -177,6 +179,7 @@ simple_test( qMRMLLayoutManagerTest1 )
 simple_test( qMRMLLayoutManagerTest2 )
 simple_test( qMRMLLayoutManagerTest3 )
 simple_test( qMRMLLayoutManagerTest4 )
+simple_test( qMRMLLayoutManagerWithCustomFactoryTest )
 simple_test( qMRMLLinearTransformSliderTest1 )
 simple_test( qMRMLListWidgetTest1 )
 simple_test( qMRMLMatrixWidgetTest1 )
