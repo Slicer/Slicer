@@ -945,21 +945,8 @@ class HelperBox(object):
 
   def getNodeByName(self, name):
     """get the first MRML node that has the given name
-    - use a regular expression to match names post-pended with numbers"""
-
-    slicer.mrmlScene.InitTraversal()
-    node = slicer.mrmlScene.GetNextNode()
-    while node:
-      try:
-        nodeName = node.GetName()
-        if nodeName.find(name) == 0:
-          # prefix matches, is the rest all numbers?
-          if nodeName == name or nodeName[len(name):].isdigit():
-            return node
-      except:
-        pass
-      node = slicer.mrmlScene.GetNextNode()
-    return None
+    - use a regular expression to match names post-pended with addition characters"""
+    return slicer.mrmlScene.GetFirstNode(name, 'vtkMRMLVolumeNode', (0,), False)
 
   def errorDialog(self, message):
     self.dialog = qt.QErrorMessage()
