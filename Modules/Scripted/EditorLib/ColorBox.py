@@ -116,7 +116,7 @@ class ColorBox(object):
       self.row+=1
     for c in xrange(self.colorNode.GetNumberOfColors()):
       name = self.colorNode.GetColorName(c)
-      if name != "(none)" and name.find(pattern) >= 0:
+      if name != "(none)" and name.lower().find(pattern.lower()) >= 0:
         self.addRow(c)
     self.view.setColumnWidth(0,75)
     self.view.setColumnWidth(1,50)
