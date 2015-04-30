@@ -50,6 +50,9 @@ public:
 
   vtkMRMLScalarVolumeNode* volumeNode()const;
   vtkMRMLLabelMapVolumeDisplayNode* volumeDisplayNode()const;
+
+  int sliceIntersectionThickness()const;
+
 public slots:
 
   /// Set the MRML node of interest
@@ -57,6 +60,8 @@ public slots:
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
   void setColorNode(vtkMRMLNode* colorNode);
+
+  void setSliceIntersectionThickness(int);
 
 protected slots:
   void updateWidgetFromMRML();

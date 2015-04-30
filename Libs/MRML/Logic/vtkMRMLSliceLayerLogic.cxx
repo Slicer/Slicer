@@ -874,11 +874,12 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       {
       vtkDebugMacro("UpdateImageDisplay: volume node (not diff tensor), using label outline");
 #if (VTK_MAJOR_VERSION <= 5)
-     this->LabelOutline->SetInput( this->Reslice->GetOutput() );
+      this->LabelOutline->SetInput( this->Reslice->GetOutput() );
 #else
       this->LabelOutline->SetInputConnection( this->Reslice->GetOutputPort() );
 #endif
-
+      int outlineThickness = labelMapVolumeDisplayNode->GetSliceIntersectionThickness();
+      this->LabelOutline->SetOutline(outlineThickness);
       // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
       if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
         {

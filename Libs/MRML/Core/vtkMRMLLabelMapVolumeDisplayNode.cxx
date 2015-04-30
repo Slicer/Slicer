@@ -35,6 +35,10 @@ vtkMRMLLabelMapVolumeDisplayNode::vtkMRMLLabelMapVolumeDisplayNode()
 {
   this->MapToColors = vtkImageMapToColors::New();
   this->MapToColors->SetOutputFormatToRGBA();
+
+  // set a thicker default slice intersection thickness for use when showing
+  // the outline of the label map
+  this->SliceIntersectionThickness = 3;
 }
 
 //----------------------------------------------------------------------------

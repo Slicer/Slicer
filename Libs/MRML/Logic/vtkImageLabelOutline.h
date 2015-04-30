@@ -38,8 +38,8 @@ public:
   vtkGetMacro(Background, float);
 
   ///
-  /// not used (don't know what it was intended for)
-  vtkSetMacro(Outline, int);
+  /// Thickness of the outline, used to set the kernel size
+  void SetOutline(int outline);
   vtkGetMacro(Outline, int);
 
 protected:
@@ -50,7 +50,7 @@ protected:
   int Outline;
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-  int extent[6], int id);
+                       int extent[6], int id);
 };
 
 #endif

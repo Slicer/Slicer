@@ -51,6 +51,7 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
                      vtkImageData *outData,
                      int outExt[6], int id)
 {
+  int *kernelMiddle, *kernelSize;
   // For looping though output (and input) pixels.
   int outMin0, outMax0, outMin1, outMax1, outMin2, outMax2;
   int outIdx0, outIdx1, outIdx2;
@@ -95,8 +96,14 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   outMin2 = outExt[4];   outMax2 = outExt[5];
 
   // Neighborhood around current voxel
-  self->GetRelativeHoodExtent(hoodMin0, hoodMax0, hoodMin1,
-    hoodMax1, hoodMin2, hoodMax2);
+  kernelSize = self->GetKernelSize();
+  kernelMiddle = self->GetKernelMiddle();
+  hoodMin0 = - kernelMiddle[0];
+  hoodMin1 = - kernelMiddle[1];
+  hoodMin2 = - kernelMiddle[2];
+  hoodMax0 = hoodMin0 + kernelSize[0] - 1;
+  hoodMax1 = hoodMin1 + kernelSize[1] - 1;
+  hoodMax2 = hoodMin2 + kernelSize[2] - 1;
 
   // Set up mask info
   maskPtr = (unsigned char *)(self->GetMaskPointer());
@@ -136,11 +143,11 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
 
         if (pix != backgnd)
           {
-          // Loop through neighborhood pixels (kernel radius=1)
+          // Loop through neighborhood pixels
           // Note: input pointer marches out of bounds.
-          //hoodPtr2 = inPtr0 - inInc0 - inInc1 - inInc2;
-          hoodPtr2 = inPtr0 + inInc0*hoodMin0 + inInc1*hoodMin1
-            + inInc2*hoodMin2;
+          hoodPtr2 = inPtr0 - kernelMiddle[0] * inInc0
+              - kernelMiddle[1] * inInc1 - kernelMiddle[2] * inInc2;
+
           maskPtr2 = maskPtr;
           for (hoodIdx2 = hoodMin2; hoodIdx2 <= hoodMax2; ++hoodIdx2)
             {
@@ -279,3 +286,19 @@ void vtkImageLabelOutline::PrintSelf(ostream& os, vtkIndent indent)
       }
 }
 
+//----------------------------------------------------------------------------
+void vtkImageLabelOutline::SetOutline(int outline)
+{
+  if (this->Outline == outline)
+    {
+    return;
+    }
+
+  this->Outline = outline;
+
+  // also set the kernel size for 2D
+  int kernelSize = (outline * 2) + 1;
+  this->SetKernelSize(kernelSize, kernelSize, 1);
+
+  this->Modified();
+}
