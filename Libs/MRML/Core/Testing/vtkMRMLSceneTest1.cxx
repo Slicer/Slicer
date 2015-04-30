@@ -226,6 +226,24 @@ int vtkMRMLSceneTest1(int , char * [] )
       }
   }
 
+  // Check that byName + [exactNameMatch=false] works as expected
+  {
+    vtkMRMLNode* expectedFirstNodeByClass = node2;
+    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+          /* byName= */ "Node.+",
+          /* byClass= */ 0,
+          /* byHideFromEditors= */ 0,
+          /* exactNameMatch= */ false);
+    if (currentFirstNodeByClass != expectedFirstNodeByClass)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
+                << "  currentFirstNodeByClass: " << currentFirstNodeByClass << "\n"
+                << "  expectedFirstNodeByClass: " << expectedFirstNodeByClass
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
   // Check that byHideFromEditors works as expected
   {
     int hideFromEditors = 1;
@@ -260,6 +278,24 @@ int vtkMRMLSceneTest1(int , char * [] )
     vtkMRMLNode* expectedFirstNodeByClass = node1;
     vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
           /* byName= */ "Node", /* byClass= */ "vtkMRMLCustomNode");
+    if (currentFirstNodeByClass != expectedFirstNodeByClass)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"
+                << "  currentFirstNodeByClass: " << currentFirstNodeByClass << "\n"
+                << "  expectedFirstNodeByClass: " << expectedFirstNodeByClass
+                << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+
+  // Check that byClass + byName + [exactNameMatch=false] works as expected
+  {
+    vtkMRMLNode* expectedFirstNodeByClass = node4;
+    vtkMRMLNode* currentFirstNodeByClass = scene1->GetFirstNode(
+          /* byName= */ "Node.+",
+          /* byClass= */ "vtkMRMLCustomNode",
+          /* byHideFromEditors= */ 0,
+          /* exactNameMatch= */ false);
     if (currentFirstNodeByClass != expectedFirstNodeByClass)
       {
       std::cerr << "Line " << __LINE__ << " - Problem with GetNodesByClass()\n"

@@ -80,6 +80,7 @@ Version:   $Revision: 1.18 $
 #include <vtkSmartPointer.h>
 
 // VTKSYS includes
+#include <vtksys/RegularExpression.hxx>
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
@@ -1632,7 +1633,8 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
 //-----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetFirstNode(const char* byName,
                                         const char* byClass,
-                                        const int* byHideFromEditors)
+                                        const int* byHideFromEditors,
+                                        bool exactNameMatch)
 {
   vtkCollectionSimpleIterator it;
   vtkMRMLNode* node;
@@ -1640,7 +1642,13 @@ vtkMRMLNode* vtkMRMLScene::GetFirstNode(const char* byName,
        (node= vtkMRMLNode::SafeDownCast(
           this->Nodes->GetNextItemAsObject(it))) ;)
     {
-    if (byName && node->GetName() != 0 && strcmp(node->GetName(), byName) != 0)
+    if (exactNameMatch && byName &&
+        node->GetName() != 0 && strcmp(node->GetName(), byName) != 0)
+      {
+      continue;
+      }
+    if (!exactNameMatch && byName &&
+        node->GetName() != 0 && !vtksys::RegularExpression(byName).find(node->GetName()))
       {
       continue;
       }

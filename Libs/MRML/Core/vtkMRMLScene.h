@@ -178,8 +178,12 @@ public:
 
   /// Return the first node in the scene that matches the filtering
   /// criterias if specified.
+  /// By default, \a byName will be compared using an exact match. If
+  /// \a exactNameMatch is set to \a false, the node will be returned if
+  /// its name starts with \a byName.
   vtkMRMLNode *GetFirstNode(const char* byName = 0, const char* byClass = 0,
-                            const int* byHideFromEditors = 0);
+                            const int* byHideFromEditors = 0,
+                            bool exactNameMatch = true);
 
   /// Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
