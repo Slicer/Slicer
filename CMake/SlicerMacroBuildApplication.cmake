@@ -405,11 +405,8 @@ macro(slicerMacroBuildApplication)
   set(executable_name ${SLICERAPP_APPLICATION_NAME})
   if(NOT APPLE)
     set(executable_name ${executable_name}App-real)
-    if(WIN32)
-      set(executable_name ${executable_name}.exe)
-    endif()
   endif()
-  message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} executable name to '${executable_name}'")
+  message(STATUS "Setting ${SLICERAPP_APPLICATION_NAME} executable name to '${executable_name}${CMAKE_EXECUTABLE_SUFFIX}'")
 
   add_executable(${slicerapp_target}
     ${SLICERAPP_EXE_OPTIONS}
