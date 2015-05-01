@@ -148,19 +148,30 @@ public:
   ///
   /// Set a new matrix transform of this node to parent node.
   /// Invokes a TransformModified event (does not invoke Modified).
-  /// Returns 0 if the current transform is not linear.
+  /// The method only allows setting or updating an empty or simple
+  /// linear transform.
+  /// Returns nonzero if the transform is successfully updated,
+  /// returns 0 if the transform is non-linear or composite and therefore
+  /// cannot be updated.
+  /// To overwrite a non-linear or composite transform first remove
+  /// the old transform by calling SetAndObserveTransformToParent(NULL)
+  /// and then set the matrix.
   virtual int SetMatrixTransformToParent(vtkMatrix4x4 *matrix);
 
   ///
   /// Set a new matrix transform of this node from parent node.
-  /// Invokes a TransformModified event (does not invoke Modified).
-  /// Returns 0 if the current transform is not linear.
+  /// \sa SetMatrixTransformToParent
   virtual int SetMatrixTransformFromParent(vtkMatrix4x4 *matrix);
 
   ///
-  /// Applies a transformation matrix by multiplying it with the current
-  /// matrix. The resulting transform will be a simple (non-composite)
+  /// Applies a transformation matrix to the current matrix.
+  /// Difference compared to ApplyTransform(): if the current
+  /// transform is a linear then instead of creating a composite
+  /// transform, the current and applicable transform matrices
+  /// are multiplied and stored in a simple (non-composite)
   /// linear transform.
+  /// If the current transformation was non-linear then the method
+  /// is equivalent to ApplyTransform (creates a composite transform).
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
   ///

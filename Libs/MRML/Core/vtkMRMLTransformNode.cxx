@@ -589,24 +589,37 @@ void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
     return;
     }
 
-  // We need the current transform to be a vtkGeneralTransform, which can store all the transform components.
-  // (if the current transform is already a general transform tben we can just use that, otherwise we convert)
-  // We arbitrarily pick the ToParent transform to store the new composited transform.
-  vtkAbstractTransform* oldTransformToParent = GetTransformToParent();
-  vtkSmartPointer<vtkGeneralTransform> transformToParentGeneral = vtkGeneralTransform::SafeDownCast(oldTransformToParent);
-  if (transformToParentGeneral==NULL)
-    {
-    transformToParentGeneral = vtkSmartPointer<vtkGeneralTransform>::New();
-    transformToParentGeneral->Concatenate(oldTransformToParent);
-    }
-
-  // Add new transform components
+  // Get the applied transform components
   vtkSmartPointer<vtkAbstractTransform> transformCopy=vtkSmartPointer<vtkAbstractTransform>::Take(transform->MakeTransform());
   DeepCopyTransform(transformCopy, transform);
   // Flatten the transform list that will be applied to make the resulting general transform simpler
   // (have a simple list instead of a complex hierarchy)
   vtkNew<vtkCollection> transformCopyList;
   FlattenGeneralTransform(transformCopyList.GetPointer(), transformCopy);
+
+  vtkAbstractTransform* oldTransformToParent = GetTransformToParent();
+  if (oldTransformToParent==NULL && transformCopyList->GetNumberOfItems()==1)
+    {
+    // The transform was empty before and a non-composite transform is applied,
+    // therefore there is no need to create a composite transform, just set the applied transform.
+    vtkAbstractTransform* appliedTransform = vtkAbstractTransform::SafeDownCast(transformCopyList->GetItemAsObject(0));
+    SetAndObserveTransformToParent(appliedTransform);
+    return;
+    }
+
+  // We need the current transform to be a vtkGeneralTransform, which can store all the transform components.
+  // (if the current transform is already a general transform tben we can just use that, otherwise we convert)
+  // We arbitrarily pick the ToParent transform to store the new composited transform.
+  vtkSmartPointer<vtkGeneralTransform> transformToParentGeneral = vtkGeneralTransform::SafeDownCast(oldTransformToParent);
+  if (transformToParentGeneral.GetPointer()==NULL)
+    {
+    transformToParentGeneral = vtkSmartPointer<vtkGeneralTransform>::New();
+    if (oldTransformToParent!=NULL)
+      {
+      transformToParentGeneral->Concatenate(oldTransformToParent);
+      }
+    }
+
   // Add components
   transformToParentGeneral->PostMultiply();
   for (int transformComponentIndex = transformCopyList->GetNumberOfItems()-1; transformComponentIndex>=0; transformComponentIndex--)
@@ -1352,7 +1365,7 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 {
   if (!this->IsLinear())
     {
-    vtkWarningMacro("Cannot set matrix, as vtkMRMLTransformNode contains a non-linear transform");
+    vtkWarningMacro("Cannot set matrix because vtkMRMLTransformNode contains a composite or non-linear transform. To overwrite the transform, first reset it by calling SetAndObserveTransformToParent(NULL).");
     return 0;
     }
 
@@ -1424,11 +1437,11 @@ void vtkMRMLTransformNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
     ApplyTransform(transform.GetPointer());
     return;
     }
+  vtkNew<vtkMatrix4x4> matrixToParent;
+  this->GetMatrixTransformToParent(matrixToParent.GetPointer());
   // vtkMatrix4x4::Multiply4x4 computes the output in an internal buffer and then
   // copies the result to the output matrix, therefore it is safe to use
   // one of the input matrices as output
-  vtkNew<vtkMatrix4x4> matrixToParent;
-  this->GetMatrixTransformToParent(matrixToParent.GetPointer());
   vtkMatrix4x4::Multiply4x4(transformMatrix, matrixToParent.GetPointer(), matrixToParent.GetPointer());
   SetMatrixTransformToParent(matrixToParent.GetPointer());
 }
