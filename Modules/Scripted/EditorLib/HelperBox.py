@@ -110,6 +110,7 @@ class HelperBox(object):
     """select master volume - load merge volume if one with the correct name exists"""
 
     self.master = self.masterSelector.currentNode()
+    self.merge = None
     merge = self.mergeVolume()
     mergeText = "None"
     if merge:
