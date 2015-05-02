@@ -108,8 +108,10 @@ public Q_SLOTS:
 
   virtual void onNodeAdded(vtkObject* scene, vtkObject* node);
   virtual void onNodeRemoved(vtkObject* scene, vtkObject* node);
+  virtual void onNodeModified(vtkObject* node);
   virtual void onViewNodeAdded(vtkMRMLAbstractViewNode* node);
   virtual void onViewNodeRemoved(vtkMRMLAbstractViewNode* node);
+  virtual void onViewNodeModified(vtkMRMLAbstractViewNode* node);
 
   /// Populate widgets from the scene. The widgets will then be used by viewFromXML()
   /// \sa viewFromXML()

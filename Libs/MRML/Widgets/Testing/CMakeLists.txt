@@ -41,6 +41,7 @@ set(TEST_SOURCES
   qMRMLLayoutManagerTest2.cxx
   qMRMLLayoutManagerTest3.cxx
   qMRMLLayoutManagerTest4.cxx
+  qMRMLLayoutManagerVisibilityTest.cxx
   qMRMLLayoutManagerWithCustomFactoryTest.cxx
   qMRMLLinearTransformSliderTest1.cxx
   qMRMLListWidgetTest1.cxx
@@ -179,6 +180,7 @@ simple_test( qMRMLLayoutManagerTest1 )
 simple_test( qMRMLLayoutManagerTest2 )
 simple_test( qMRMLLayoutManagerTest3 )
 simple_test( qMRMLLayoutManagerTest4 )
+simple_test( qMRMLLayoutManagerVisibilityTest )
 simple_test( qMRMLLayoutManagerWithCustomFactoryTest )
 simple_test( qMRMLLinearTransformSliderTest1 )
 simple_test( qMRMLListWidgetTest1 )

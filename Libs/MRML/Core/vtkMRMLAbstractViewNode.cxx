@@ -140,17 +140,27 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
         this->Active = 0;
         }
       }
-    else if (!strcmp(attName, "visibility"))
-      {
-      if (!strcmp(attValue,"true"))
-        {
-        this->Visibility = 1;
-        }
-      else
-        {
-        this->Visibility = 0;
-        }
-      }
+    // XXX Do not read 'visibility' attribute and default to 1 because:
+    // (1) commit r21034 (STYLE: Add abstract class for all view nodes)
+    // changed the default value for 'visibility' attribute from 1 to 0. This
+    // means there are a lot of already saved scene where visibility attribute
+    // value is saved as 0.
+    // (2) support for visibility attribute by the layout manager has been
+    // added.
+    // XXX Support for 'visibility' attribute could be restored by updating
+    // the mrml version. Scene with a newer version number would consider the
+    // serialized attribute whereas older scene would not.
+//    else if (!strcmp(attName, "visibility"))
+//      {
+//      if (!strcmp(attValue,"true"))
+//        {
+//        this->Visibility = 1;
+//        }
+//      else
+//        {
+//        this->Visibility = 0;
+//        }
+//      }
     }
 #if MRML_SUPPORT_VERSION < 0x040000
   if (!isBackgroundColor2Set)

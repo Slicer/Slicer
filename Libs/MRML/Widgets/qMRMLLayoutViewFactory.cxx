@@ -333,6 +333,16 @@ void qMRMLLayoutViewFactory::onNodeRemoved(vtkObject* scene, vtkObject* node)
 }
 
 // --------------------------------------------------------------------------
+void qMRMLLayoutViewFactory::onNodeModified(vtkObject* node)
+{
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(node);
+  if (viewNode)
+    {
+    this->onViewNodeModified(viewNode);
+    }
+}
+
+// --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
 {
   Q_D(qMRMLLayoutViewFactory);
@@ -361,6 +371,8 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
     {
     this->setActiveViewNode(node);
     }
+  this->qvtkConnect(node, vtkCommand::ModifiedEvent,
+                    this, SLOT(onNodeModified(vtkObject*)));
   emit viewCreated(viewWidget);
 }
 
@@ -368,6 +380,12 @@ void qMRMLLayoutViewFactory::onViewNodeAdded(vtkMRMLAbstractViewNode* node)
 void qMRMLLayoutViewFactory::onViewNodeRemoved(vtkMRMLAbstractViewNode* node)
 {
   this->deleteView(node);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLLayoutViewFactory::onViewNodeModified(vtkMRMLAbstractViewNode* node)
+{
+  this->viewWidget(node)->setVisible(node->GetVisibility());
 }
 
 // --------------------------------------------------------------------------
@@ -400,6 +418,10 @@ QWidget* qMRMLLayoutViewFactory::createViewFromNode(vtkMRMLAbstractViewNode* vie
 void qMRMLLayoutViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
 {
   Q_D(qMRMLLayoutViewFactory);
+
+  this->qvtkDisconnect(viewNode, vtkCommand::ModifiedEvent,
+                       this, SLOT(onNodeModified(vtkObject*)));
+
   QWidget* widgetToDelete = this->viewWidget(viewNode);
 
   // Remove slice widget
@@ -530,8 +552,9 @@ void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget*view)
 {
   Q_D(qMRMLLayoutViewFactory);
   this->Superclass::setupView(viewElement, view);
-  vtkMRMLNode* viewNode = this->viewNode(view);
+  vtkMRMLAbstractViewNode* viewNode = this->viewNode(view);
   Q_ASSERT(viewNode);
   viewNode->SetAttribute("MappedInLayout", "1");
+  view->setVisible(viewNode->GetVisibility());
   view->setWindowTitle(viewNode->GetName());
 }
