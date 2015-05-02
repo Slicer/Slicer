@@ -30,7 +30,7 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
 {
   this->LayoutLabel = NULL;
   this->Active = 0;
-  this->Visibility = 0;
+  this->Visibility = 1;
 
   double black[3] = {0.,0.,0.};
   memcpy(this->BackgroundColor, black, 3 * sizeof(double));
