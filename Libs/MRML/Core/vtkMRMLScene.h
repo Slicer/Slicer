@@ -76,13 +76,16 @@ public:
   /// Get Root directory, where URL is pointing
   const char *GetRootDirectory();
 
-  /// Create new scene from URL
-  /// Returns nonzero on success
+  /// \brief Create new scene from URL
+  ///
+  /// Returns nonzero on success.
   int Connect();
 
-  /// Add the scene into the existing scene (no clear) from \a URL file or
-  /// from \sa SceneXMLString XML string.
-  /// Returns nonzero on success
+  /// \brief Add the scene into the existing scene (no clear) from \a URL file
+  /// or from \sa SceneXMLString XML string.
+  ///
+  /// Returns nonzero on success.
+  ///
   /// \sa SetURL(), GetLoadFromXMLString(), SetSceneXMLString()
   int Import();
 
@@ -121,7 +124,7 @@ public:
   /// \sa CreateNodeByClass(), GetClassNameByTag()
   void RegisterNodeClass(vtkMRMLNode* node, const char* tagName);
 
-  /// Utility function to RegisterNodeClass(), the node tag name is used when
+  /// \brief Utility function to RegisterNodeClass(), the node tag name is used when
   /// registering the node.
   ///
   /// \sa RegisterNodeClass()
@@ -136,8 +139,9 @@ public:
   /// Return collection of nodes
   vtkCollection* GetNodes();
 
-  /// Add a node to the scene and send NodeAboutToBeAddedEvent, NodeAddedEvent
-  /// and SceneModified events.
+  /// \brief Add a node to the scene and send vtkMRMLScene::NodeAboutToBeAddedEvent,
+  /// vtkMRMLScene::NodeAddedEvent and vtkMRMLScene::SceneModified events.
+  ///
   /// A unique ID (e.g. "vtkMRMLModeNode1", "vtkMRMLScalarVolumeNode4") is
   /// generated and set to the node. If the node has no name
   /// (i.e. vtkMRMLNode::GetName() == 0), a unique name is given to the node
@@ -152,15 +156,18 @@ public:
   /// Add a copy of a node to the scene.
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);
 
-  /// Invoke a NodeAddedEvent (used, for instance, after adding a bunch of nodes with AddNodeNoNotify
+  /// \brief Invoke a vtkMRMLScene::NodeAddedEvent.
+  ///
+  /// This function is used after adding a bunch of nodes with AddNodeNoNotify()
   void NodeAdded(vtkMRMLNode *n);
   void NodeAdded() {this->NodeAdded(NULL);};
 
   /// Remove a path from the list.
   void RemoveNode(vtkMRMLNode *n);
 
-  /// Determine whether a particular node is present. Returns its position
-  /// in the list.
+  /// \brief Determine whether a particular node is present.
+  ///
+  /// Returns its position in the list.
   int IsNodePresent(vtkMRMLNode *n);
 
   /// Initialize a traversal (not reentrant!)
@@ -176,8 +183,9 @@ public:
   vtkCollection *GetNodesByName(const char* name);
   vtkMRMLNode *GetFirstNodeByName(const char* name);
 
-  /// Return the first node in the scene that matches the filtering
+  /// \brief Return the first node in the scene that matches the filtering
   /// criterias if specified.
+  ///
   /// By default, \a byName will be compared using an exact match. If
   /// \a exactNameMatch is set to \a false, the node will be returned if
   /// its name starts with \a byName.
@@ -189,8 +197,8 @@ public:
   vtkMRMLNode *GetNodeByID(const char* name);
   vtkMRMLNode *GetNodeByID(std::string name);
 
-  /// Get nodes of a specified class having the specified name
-  /// You are responsible for deleting the collection.
+  /// Get nodes of a specified class having the specified name.
+  /// \warning You are responsible for deleting the collection.
   vtkCollection *GetNodesByClassByName(const char* className, const char* name);
 
   /// Get number of nodes in the scene
@@ -208,15 +216,18 @@ public:
   /// Get vector of nodes of a specified class in the scene
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
 
-  /// You are responsible for deleting the returned collection
+  /// \warning You are responsible for deleting the returned collection.
   vtkCollection* GetNodesByClass(const char *className);
 
-  /// Search and return the singleton of type className with a singletonTag
-  /// tag. Return 0 if such node can't be found in the scene.
+  /// \brief Search and return the singleton of type className with a
+  /// \a singletonTag tag.
+  ///
+  /// Return 0 if such node can't be found in the scene.
   vtkMRMLNode* GetSingletonNode(const char* singletonTag, const char* className);
 
-  /// Search and return a matching singleton in the scene that the input singleton
+  /// \brief Search and return a matching singleton in the scene that the input singleton
   /// node will overwrite if it is added to the scene.
+  ///
   /// There is matching if the singleton tag and className are the same,
   /// or there is an existing node with the generated unique singleton node ID.
   /// Return 0 if such node can't be found in the scene.
@@ -231,7 +242,7 @@ public:
   /// Useful for iterating through nodes to find all the possible storage nodes.
   vtkMRMLNode * GetNthRegisteredNodeClass(int n);
 
-  /// Generate a node name that is unique in the scene.
+  /// \brief Generate a node name that is unique in the scene.
   /// Calling this function successively with the same baseName returns a
   /// different name: e.g. baseName1, baseName2, baseName3
   std::string GenerateUniqueName(const std::string& baseName);
@@ -247,7 +258,7 @@ public:
   /// insert a node in the scene before a specified node
   vtkMRMLNode* InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
 
-  /// Ger transformation between two nodes
+  /// Get transformation between two nodes
   int GetTransformBetweenNodes( vtkMRMLNode *node1, vtkMRMLNode *node2,
                                 vtkGeneralTransform *xform );
 
@@ -277,23 +288,26 @@ public:
 
   /// Save current state in the undo buffer
   void SaveStateForUndo();
+
   /// Save current state of the node in the undo buffer
   void SaveStateForUndo(vtkMRMLNode *node);
+
   /// Save current state of the nodes in the undo buffer
   void SaveStateForUndo(vtkCollection *nodes);
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
 
   /// The Scene maintains a map (NodeReferences) to keep track of the relationship
   /// between node IDs and the nodes referencing those IDs.  Each
-  /// node can use the call AddReferencedNodeID to tell the scene
+  /// node can use the call AddReferencedNodeID() to tell the scene
   /// that is 'has an interest' in the given ID so that the scene
   /// can notify that node when the ID has been remapped.   It does
-  /// this notification through the UpdateNodeReferences call.
+  /// this notification through the UpdateNodeReferences() call.
   void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
   bool IsNodeReferencingNodeID(vtkMRMLNode* referencingNode, const char* id);
 
-  /// Get the total number of node references (number of ReferencedID-ReferencingNode pairs).
-  /// Only for testing and debugging.
+  /// \brief Get the total number of node references (number of ReferencedID-ReferencingNode pairs).
+  ///
+  /// \warning Only for testing and debugging.
   int GetNumberOfNodeReferences();
   /// Get the ReferencingNode component of the n-th ReferencedID-ReferencingNode pair.
   /// Only for testing and debugging.
@@ -308,16 +322,20 @@ public:
 
   void RemoveReferencesToNode(vtkMRMLNode *node);
 
-  /// Notify nodes about node ID changes.
-  /// UpdateReferenceID is called for all the nodes that refer to a node with a changed ID.
-  /// If checkNodes is not NULL, then only those nodes are notified that are part of the checkNodes collection.
+  /// \brief Notify nodes about node ID changes.
+  ///
+  /// vtkMRMLNode::UpdateReferenceID() is called for all the nodes that refer
+  /// to a node with a changed ID.
+  ///
+  /// If \a checkNodes is not NULL, then only those nodes are notified that are
+  /// part of the checkNodes collection.
   void UpdateNodeReferences(vtkCollection* checkNodes=NULL);
 
   void CopyNodeReferences(vtkMRMLScene *scene);
 
   void CopyNodeChangedIDs(vtkMRMLScene *scene);
 
-  /// Change node IDs based on the ReferencedIDChanges list
+  /// Change node IDs based on the ReferencedIDChanges list.
   void UpdateNodeChangedIDs();
 
   void RemoveUnusedNodeReferences();
@@ -330,22 +348,27 @@ public:
   /// or NULL if id has not changed
   const char* GetChangedID(const char* id);
 
-  /// Return collection of all nodes referenced directly or indirectly by
+  /// \brief Return collection of all nodes referenced directly or indirectly by
   /// \a node.
+  ///
   /// The node itself is in first place in the collection. No doublon in the
   /// list.
   /// For a node to be referenced by another node, the latter must call
   /// AddReferencedNodeID().
-  /// Note that you are responsible for deleting the returned collection.
+  ///
+  /// \warning You are responsible for deleting the returned collection.
+  ///
   /// \sa GetReferencedSubScene()
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
   /// Get vector of nodes containing references to an input node
   void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode *> &referencingNodes);
 
-  /// Get a sub-scene containing all nodes directly or indirectly referenced by
-  /// the input node.
-  /// GetReferencedNodes() is internally called.
+  /// \brief Get a sub-scene containing all nodes directly or indirectly
+  /// referenced by the input node.
+  ///
+  /// \note GetReferencedNodes() is internally called.
+  ///
   /// \sa AddReferencedNodeID(), GetReferencedNodes()
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
 
@@ -354,16 +377,18 @@ public:
   vtkSetMacro(ErrorCode,unsigned long);
   vtkGetMacro(ErrorCode,unsigned long);
 
-  /// This property controls whether Import() loads a scene from an XML string
-  /// or from an XML file
+  /// \brief This property controls whether Import() loads a scene from an XML
+  /// string or from an XML file.
+  ///
   /// If true, contents is loaded from SceneXMLString.
   /// If false, contents is loaded from the \a URL file.
   /// \sa Import(), SetSceneXMLString(), SetURL(), SetSaveToXMLString()
   vtkSetMacro(LoadFromXMLString,int);
   vtkGetMacro(LoadFromXMLString,int);
 
-  /// This property controls whether Commit() should save the scene as an XML
-  /// string or an XML file.
+  /// \brief This property controls whether Commit() should save the scene as
+  /// an XML string or an XML file.
+  ///
   /// If true, the contents generated by Commit() will be in SceneXMLString.
   /// If false, the contents will be saved into the \a URL file.
   /// \sa Commit(), GetSceneXMLString(), SetURL(), SetLoadFromXMLString()
@@ -376,13 +401,15 @@ public:
   void SetErrorMessage(const std::string &error);
   std::string GetErrorMessage();
 
-  /// Set the XML string to read from by Import() if GetLoadFromXMLString() is
-  /// true.
+  /// \brief Set the XML string to read from by Import() if
+  /// GetLoadFromXMLString() is true.
+  ///
   /// \sa Import(), GetLoadFromXMLString(), GetSceneXMLString()
   void SetSceneXMLString(const std::string &xmlString);
 
-  /// Returns the saved scene with an XML format if  SaveToXMLString is true
-  /// and Commit() was called prior.
+  /// \brief Returns the saved scene with an XML format if \a SaveToXMLString
+  /// is true and Commit() was called prior.
+  ///
   /// \sa Commit(), SetSaveToXMLString()
   const std::string& GetSceneXMLString();
 
@@ -398,8 +425,10 @@ public:
   vtkGetObjectMacro ( UserTagTable, vtkTagTable);
   virtual void SetUserTagTable(vtkTagTable* );
 
-  /// find a URI handler in the collection that can work on the passed URI
-  /// returns NULL on failure
+  /// \brief Find a URI handler in the collection that can work on the
+  /// passed URI.
+  ///
+  /// Returns NULL on failure
   vtkURIHandler *FindURIHandler(const char *URI);
   /// Returns a URIhandler of a specific type if its name is known.
   vtkURIHandler *FindURIHandlerByName ( const char *name );
@@ -407,36 +436,40 @@ public:
   void AddURIHandler(vtkURIHandler *handler);
 
   /// The state of the scene reflects what the scene is doing.
-  /// The scene is in \a BatchProcessState when nodes are either inserted or
+  /// The scene is in \link vtkMRMLScene::BatchProcessState BatchProcessState \endlink
+  /// when nodes are either inserted or
   /// removed contiguously. The methods Connect, Import and Clear
   /// automatically set the scene in specific states. It is possible to
-  /// manually set the scene in a specific state using \a StartState and
-  /// \a EndState.
-  /// When the scene is in \a BatchProcessState mode, observers can ignore
-  /// the events NodeAddedEvent and NodeRemovedEvent to
-  /// only synchronize with the scene when the scene is no longer in
-  ///  \a BatchProcessState (EndBatchProcessEvent being fired).
+  /// manually set the scene in a specific state using StartState()
+  /// and EndState().
+  /// When the scene is in \link vtkMRMLScene::BatchProcessState BatchProcessState \endlink mode, observers can
+  /// ignore the events \link vtkMRMLScene::NodeAddedEvent NodeAddedEvent \endlink
+  /// and \link vtkMRMLScene::NodeRemovedEvent NodeRemovedEvent \endlink
+  /// to only synchronize with the scene when the scene is no longer in
+  /// \link vtkMRMLScene::BatchProcessState BatchProcessState \endlink
+  /// (\link vtkMRMLScene::EndBatchProcessEvent EndBatchProcessEvent \endlink being fired).
   ///
   /// The call <code>scene->Connect("myScene.mrml");</code> that closes and
   /// import a scene will fire the events:
-  /// vtkMRMLScene::StartBatchProcessEvent,
-  /// vtkMRMLScene::StartCloseEvent,
   ///
-  /// vtkMRMLScene::NodeAboutToBeRemovedEvent,
-  /// vtkMRMLScene::NodeRemovedEvent,
-  /// vtkMRMLScene::ProgressCloseEvent,
-  /// vtkMRMLScene::ProgressBatchProcessEvent,
-  /// ...
-  /// vtkMRMLScene::EndCloseEvent,
-  /// vtkMRMLScene::StartImportEvent,
+  /// * \link vtkMRMLScene::StartBatchProcessEvent StartBatchProcessEvent \endlink,
+  /// * \link vtkMRMLScene::StartCloseEvent StartCloseEvent \endlink,
   ///
-  /// vtkMRMLScene::NodeAboutToBeAddedEvent,
-  /// vtkMRMLScene::NodeAddedEvent,
-  /// vtkMRMLScene::ProgressImportEvent,
-  /// vtkMRMLScene::ProgressBatchProcessEvent,
-  /// ...
-  /// vtkMRMLScene::EndImportEvent,
-  /// vtkMRMLScene::EndBatchProcessEvent
+  /// * \link vtkMRMLScene::NodeAboutToBeRemovedEvent NodeAboutToBeRemovedEvent \endlink,
+  /// * \link vtkMRMLScene::NodeRemovedEvent NodeRemovedEvent \endlink,
+  /// * \link vtkMRMLScene::ProgressCloseEvent ProgressCloseEvent \endlink,
+  /// * \link vtkMRMLScene::ProgressBatchProcessEvent ProgressBatchProcessEvent \endlink,
+  /// * ...
+  /// * \link vtkMRMLScene::EndCloseEvent EndCloseEvent \endlink,
+  /// * \link vtkMRMLScene::StartImportEvent StartImportEvent \endlink,
+  ///
+  /// * \link vtkMRMLScene::NodeAboutToBeAddedEvent NodeAboutToBeAddedEvent \endlink,
+  /// * \link vtkMRMLScene::NodeAddedEvent NodeAddedEvent \endlink,
+  /// * \link vtkMRMLScene::ProgressImportEvent ProgressImportEvent \endlink,
+  /// * \link vtkMRMLScene::ProgressBatchProcessEvent ProgressBatchProcessEvent \endlink,
+  /// * ...
+  /// * \link vtkMRMLScene::EndImportEvent EndImportEvent \endlink,
+  /// * \link vtkMRMLScene::EndBatchProcessEvent EndBatchProcessEvent \endlink
   enum StateType
     {
     BatchProcessState = 0x0001,
@@ -446,9 +479,11 @@ public:
     SaveState = 0x0010
     };
 
-  /// Returns the current state of the scene.
+  /// \brief Returns the current state of the scene.
+  ///
   /// It is a combination of all current states.
   /// Returns 0 if the scene has no current state flag.
+  ///
   /// \sa IsBatchProcessing, IsClosing, IsImporting, IsRestoring
   /// \sa StartState, EndState
   int GetStates()const;
@@ -462,15 +497,21 @@ public:
   /// Return true if the scene is in Restore state, false otherwise
   inline bool IsRestoring()const;
 
-  /// Flag the scene as being in a \a state mode.
+  /// \brief Flag the scene as being in a \a state mode.
+  ///
   /// A matching EndState(\a state) must be called later.
-  /// Nested states are supported as long as they all have their own EndState
+  /// Nested states are supported as long as they all have their own EndState()
   /// calls.
   /// StartState() fires the \a state start event if it isn't already in that
-  /// state, e.g. StartImportEvent if \a state is ImportState.
-  /// If the state is BatchProcessState, CloseState, ImportState or
-  /// RestoreState and if the scene is not already in a BatchProcessState
-  /// state, it also fires the event StartBatchProcessEvent.
+  /// state, e.g. \link vtkMRMLScene::StartImportEvent StartImportEvent \endlink
+  /// if \a state is \link vtkMRMLScene::ImportState ImportState \endlink.
+  /// If the state is \link vtkMRMLScene::BatchProcessState BatchProcessState \endlink,
+  /// \link vtkMRMLScene::CloseState CloseState \endlink,
+  /// \link vtkMRMLScene::ImportState ImportState \endlink
+  /// or \link vtkMRMLScene::RestoreState RestoreState \endlink
+  /// and if the scene is not already in a \link vtkMRMLScene::BatchProcessState BatchProcessState \endlink
+  /// state, it also fires the event \link vtkMRMLScene::StartBatchProcessEvent StartBatchProcessEvent \endlink.
+  ///
   /// Example:
   /// \code
   /// scene->StartState(vtkMRMLScene::ImportState);
@@ -486,16 +527,20 @@ public:
   /// scene->EndState(vtkMRMLScene::ImportState);
   /// // fires: EndImportEvent, StartBatchProcessEvent
   /// \endcode
-  /// StartState internally pushes the state into a stack.
+  ///
+  /// StartState() internally pushes the state into a stack.
+  ///
   /// \sa EndState, GetStates
   void StartState(unsigned long state, int anticipatedMaxProgress = 0);
 
-  /// Unflag the scene as being in a \a state mode.
+  /// \brief Unflag the scene as being in a \a state mode.
+  ///
   /// EndState() fires the state end event if the scene is no longer
   /// in the \a state mode.
   /// A matching StartState(\a state) must be called prior.
-  /// e.g. EndImportEvent if state is ImportState.
-  /// EndState internally pops the state out of the stack
+  /// e.g. vtkMRMLScene::EndImportEvent if state is \link vtkMRMLScene::ImportState ImportState \endlink.
+  ///
+  /// EndState() internally pops the state out of the stack.
   void EndState(unsigned long state);
 
   /// TODO: Report progress of the current state.
@@ -542,39 +587,43 @@ public:
     ProgressSaveEvent = StateEvent | ProgressEvent | SaveState,
     };
 
-  /// the version of the last loaded scene file
+  /// The version of the last loaded scene file.
   vtkGetStringMacro(LastLoadedVersion);
   vtkSetStringMacro(LastLoadedVersion);
 
-  /// the current software version
+  /// The current software version.
   vtkGetStringMacro(Version);
   vtkSetStringMacro(Version);
 
-  /// Copies all registered nodes into the parameter scene
+  /// Copies all registered nodes into the parameter scene.
   void CopyRegisteredNodesToScene(vtkMRMLScene *scene);
 
-  /// Copies all singleton nodes into the parameter scene
+  /// Copies all singleton nodes into the parameter scene.
   void CopySingletonNodesToScene(vtkMRMLScene *scene);
 
-  /// Returns true if the scene has been "significantly" modified since the
-  /// last time it was read or written
+  /// \brief Returns true if the scene has been "significantly" modified
+  /// since the last time it was read or written.
   bool GetModifiedSinceRead();
 
-  /// Search the scene for storable nodes that are "ModifiedSinceRead".
+  /// \brief Search the scene for storable nodes that are "ModifiedSinceRead".
+  ///
   /// Returns true if at least 1 matching node is found.
   /// If \a modifiedStorableNodes is passed the modified nodes are appended.
   /// Note that the nodes see their reference count being incremented while
   /// being in the list. Don't forget to clear it as soon as you don't need it.
   bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = 0);
 
-  /// Search the scene for storable nodes that are not "ModifiedSinceRead"
-  /// and pass the list to SetStorableNodesModifiedSinceRead
+  /// \brief Search the scene for storable nodes that are not "ModifiedSinceRead".
+  ///
   /// Useful after loading a scene from a temporary directory and deleting
   /// the files.
+  /// \sa SetStorableNodesModifiedSinceRead(vtkCollection*)
   void SetStorableNodesModifiedSinceRead();
-  /// Given a collection of storable nodes, iterate through
+
+  /// \brief Given a collection of storable nodes, iterate through
   /// and call StorableModified() on them.
   static void SetStorableNodesModifiedSinceRead(vtkCollection* storableNodes);
+
 protected:
 
   typedef std::map< std::string, std::set<std::string> > NodeReferencesType;
@@ -588,13 +637,14 @@ protected:
   void CopyNodeInUndoStack(vtkMRMLNode *node);
   void CopyNodeInRedoStack(vtkMRMLNode *node);
 
-  /// Add a node to the scene without invoking a NodeAddedEvent event
-  /// Use with extreme caution as it might unsynchronize observer.
+  /// Add a node to the scene without invoking a vtkMRMLScene::NodeAddedEvent event.
+  ///
+  /// \warning Use with extreme caution as it might unsynchronize observer.
   vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
 
   void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes);
 
-  /// Handle vtkMRMLScene::DeleteEvent: clear the scene
+  /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
   static void SceneCallback( vtkObject *caller, unsigned long eid,
                              void *clientData, void *callData );
 
@@ -606,27 +656,30 @@ protected:
   /// Return a unique name for a MRML node. It uses the node tag as the base.
   std::string GenerateUniqueName(vtkMRMLNode* node);
 
-  /// Returns a unique index for a given baseName.
-  /// Calling this function succesively with the same baseName returns an
+  /// \brief Returns a unique index for a given \a baseName.
+  ///
+  /// Calling this function successively with the same \a baseName returns an
   /// incremented index: 1, 2, 3...
   /// \sa GenerateUniqueName
   int GetUniqueNameIndex(const std::string& baseName);
+
   /// Combine a basename and an index to produce a full name.
   std::string BuildName(const std::string& baseName, int nameIndex)const;
 
-  /// Syncronize NodeIDs map used to speedup GetByID() method with the Nodes collection
+  /// \brief Synchronize NodeIDs map used to speedup GetByID() method with the
+  /// \a Nodes collection.
   void UpdateNodeIDs();
 
-  /// Add node to NodeIDs map used to speedup GetByID() method
+  /// Add node to \a NodeIDs map used to speedup GetByID() method.
   void AddNodeID(vtkMRMLNode *node);
 
-  /// Remove node from NodeIDs map used to speedup GetByID() method
+  /// Remove node from \a NodeIDs map used to speedup GetByID() method.
   void RemoveNodeID(char *nodeID);
 
-  /// Clear NodeIDs map used to speedup GetByID() method
+  /// Clear NodeIDs map used to speedup GetByID() method.
   void ClearNodeIDs();
 
-  /// Get a NodeReferences iterator for a node reference
+  /// Get a NodeReferences iterator for a node reference.
   NodeReferencesType::iterator FindNodeReference(const char* referencedId, vtkMRMLNode* referencingNode);
 
   vtkCollection*  Nodes;
