@@ -64,6 +64,10 @@
       <description><![CDATA[Select the color mapping for scalar volumes to colors.]]></description>
     </parameter>
     <parameter>
+      <label>Label Outline Thickness</label>
+      <description><![CDATA[When displaying the label map in outline mode, this controls the width of the outline (in pixels).]]></description>
+    </parameter>
+    <parameter>
       <label>Interpolate</label>
       <description><![CDATA[When checked, slice views will display linearly interpolated slices through input volumes.  Unchecked indicates nearest neighbor resampling]]></description>
     </parameter>
