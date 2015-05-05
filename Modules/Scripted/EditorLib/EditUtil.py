@@ -208,6 +208,11 @@ class EditUtil(object):
     """Switch the label outline mode for all composite nodes in the scene"""
     for sliceNode in slicer.util.getNodes('vtkMRMLSliceNode*').values():
       sliceNode.SetUseLabelOutline(not sliceNode.GetUseLabelOutline())
+  
+  def setLabelOutline(self, state):
+    """Set the label outline mode for all composite nodes in the scene to state"""
+    for sliceNode in slicer.util.getNodes('vtkMRMLSliceNode*').values():
+      sliceNode.SetUseLabelOutline(state)
 
   def toggleForegroundBackground(self):
     """Swap the foreground and background volumes for all composite nodes in the scene"""
