@@ -90,6 +90,8 @@ public:
   QWidget* viewWidget(const QString& name)const;
   int viewCount()const;
 
+  virtual void beginSetupLayout();
+
   vtkMRMLAbstractViewNode* viewNode(QWidget* widget)const;
 
   /// Return all the names of the created view nodes.

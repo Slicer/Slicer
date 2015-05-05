@@ -246,3 +246,29 @@ void vtkMRMLAbstractViewNode::RemoveActiveFlagInScene()
       }
     }
 }
+
+//------------------------------------------------------------------------------
+int vtkMRMLAbstractViewNode::IsMappedInLayout()
+{
+  if (!this->GetAttribute("MappedInLayout"))
+    {
+    return 0;
+    }
+  return strcmp(this->GetAttribute("MappedInLayout"), "1") == 0;
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLAbstractViewNode::SetMappedInLayout(int value)
+{
+  if (this->IsMappedInLayout() == value)
+    {
+    return;
+    }
+  this->SetAttribute("MappedInLayout", value ? "1" : "0");
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLAbstractViewNode::IsViewVisibleInLayout()
+{
+  return (this->IsMappedInLayout() && this->GetVisibility());
+}

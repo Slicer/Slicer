@@ -301,6 +301,17 @@ int qMRMLLayoutViewFactory::viewCount()const
 }
 
 // --------------------------------------------------------------------------
+void qMRMLLayoutViewFactory::beginSetupLayout()
+{
+  Q_D(qMRMLLayoutViewFactory);
+  this->Superclass::beginSetupLayout();
+  foreach(vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
+    {
+    viewNode->SetMappedInLayout(0);
+    }
+}
+
+// --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onNodeAdded(vtkObject* scene, vtkObject* node)
 {
   Q_D(qMRMLLayoutViewFactory);
@@ -385,7 +396,8 @@ void qMRMLLayoutViewFactory::onViewNodeRemoved(vtkMRMLAbstractViewNode* node)
 // --------------------------------------------------------------------------
 void qMRMLLayoutViewFactory::onViewNodeModified(vtkMRMLAbstractViewNode* node)
 {
-  this->viewWidget(node)->setVisible(node->GetVisibility());
+  Q_D(qMRMLLayoutViewFactory);
+  this->viewWidget(node)->setVisible(node->IsViewVisibleInLayout());
 }
 
 // --------------------------------------------------------------------------
@@ -554,7 +566,7 @@ void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget*view)
   this->Superclass::setupView(viewElement, view);
   vtkMRMLAbstractViewNode* viewNode = this->viewNode(view);
   Q_ASSERT(viewNode);
-  viewNode->SetAttribute("MappedInLayout", "1");
+  viewNode->SetMappedInLayout(1);
   view->setVisible(viewNode->GetVisibility());
   view->setWindowTitle(viewNode->GetName());
 }

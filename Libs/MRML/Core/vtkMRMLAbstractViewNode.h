@@ -71,12 +71,33 @@ public:
   vtkGetMacro (Active, int );
   vtkSetMacro (Active, int );
 
+  /// \brief Indicates whether or not the view is visible.
   ///
-  /// Indicates whether or not the view is visible (if it is not visible,
-  /// then the view is not shown in any of the view layouts, but can be privately
-  /// used by modules)
+  /// If it is not visible, then the view is not shown in any of the view
+  /// layouts, but can be privately used by modules.
+  ///
+  /// \sa IsViewVisibleInLayout()
+  /// \sa IsMappedInLayout()
   vtkGetMacro(Visibility, int);
   vtkSetMacro(Visibility, int);
+
+
+  /// Indicates whether or not the view is mapped in the current layout.
+  /// \sa GetVisibility()
+  /// \sa IsViewVisibleInLayout()
+  /// \sa vtkMRMLLayoutNode::SetViewArrangement()
+  virtual int IsMappedInLayout();
+  virtual void SetMappedInLayout(int value);
+
+  /// \brief Indicates whether or not the view is visible in the current layout.
+  ///
+  /// A view is visible in the current layout it is both mapped in layout
+  /// and visible.
+  ///
+  /// \sa GetVisibility()
+  /// \sa IsMappedInLayout()
+  /// \sa vtkMRMLLayoutNode::SetViewArrangement()
+  bool IsViewVisibleInLayout();
 
   ///
   /// 1st background color of the view.
