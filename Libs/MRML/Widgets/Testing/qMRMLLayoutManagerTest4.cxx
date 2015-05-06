@@ -34,6 +34,9 @@
 // VTK includes
 #include <vtkNew.h>
 
+// Common test driver includes
+#include "qMRMLLayoutManagerTestHelper.cxx"
+
 int qMRMLLayoutManagerTest4(int argc, char * argv[] )
 {
   QApplication app(argc, argv);
@@ -60,6 +63,10 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
     i < vtkMRMLLayoutNode::SlicerLayoutFinalView-1; ++i)
     {
     layoutManager.setLayout(i);
+    if (!checkViewArrangement(__LINE__, &layoutManager, layoutNode.GetPointer(), i))
+      {
+      return EXIT_FAILURE;
+      }
     scene->Clear(false);
     }
 
