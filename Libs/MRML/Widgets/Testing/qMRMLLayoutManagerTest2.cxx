@@ -28,8 +28,9 @@
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
-#include <vtkMRMLScene.h>
+#include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLLayoutNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -78,6 +79,43 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       return EXIT_FAILURE;
       }
 
+    vtkMRMLLayoutNode* layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
+
+    if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutInitialView))
+      {
+      return EXIT_FAILURE;
+      }
+
+    int expectedThreeDViewCout = 1;
+    int currentThreeDViewCount = layoutManager->threeDViewCount();
+    if (expectedThreeDViewCout != currentThreeDViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedThreeDViewCout:" << expectedThreeDViewCout << "\n"
+                << "  currentThreeDViewCount:" << currentThreeDViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    int expectedSliceViewCout = 3;
+    int currentSliceViewCount = layoutManager->sliceViewNames().count();
+    if (expectedSliceViewCout != currentSliceViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedSliceViewCout:" << expectedSliceViewCout << "\n"
+                << "  currentSliceViewCount:" << currentSliceViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    int expectedChartViewCout = 0;
+    int currentChartViewCount = layoutManager->chartViewCount();
+    if (expectedChartViewCout != currentChartViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedChartViewCout:" << expectedChartViewCout << "\n"
+                << "  currentChartViewCount:" << currentChartViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
     layoutManager->setMRMLScene(0);
     applicationLogic->SetMRMLScene(0);
 
@@ -92,6 +130,48 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       }
   }
 
+  {
+    // Setting a new scene is expected to reset the factories
+    vtkNew<vtkMRMLScene> scene;
+    applicationLogic->SetMRMLScene(scene.GetPointer());
+    layoutManager->setMRMLScene(scene.GetPointer());
+    vtkMRMLLayoutNode* layoutNode = layoutManager->layoutLogic()->GetLayoutNode();
+
+    if (!checkViewArrangement(__LINE__, layoutManager, layoutNode, vtkMRMLLayoutNode::SlicerLayoutInitialView))
+      {
+      return EXIT_FAILURE;
+      }
+
+    int expectedThreeDViewCout = 1;
+    int currentThreeDViewCount = layoutManager->threeDViewCount();
+    if (expectedThreeDViewCout != currentThreeDViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedThreeDViewCout:" << expectedThreeDViewCout << "\n"
+                << "  currentThreeDViewCount:" << currentThreeDViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    int expectedSliceViewCout = 3;
+    int currentSliceViewCount = layoutManager->sliceViewNames().count();
+    if (expectedSliceViewCout != currentSliceViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedSliceViewCout:" << expectedSliceViewCout << "\n"
+                << "  currentSliceViewCount:" << currentSliceViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    int expectedChartViewCout = 0;
+    int currentChartViewCount = layoutManager->chartViewCount();
+    if (expectedChartViewCout != currentChartViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedChartViewCout:" << expectedChartViewCout << "\n"
+                << "  currentChartViewCount:" << currentChartViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
   vtkMRMLLayoutNode* layoutNode = 0;
   {
     vtkNew<vtkMRMLScene> scene;

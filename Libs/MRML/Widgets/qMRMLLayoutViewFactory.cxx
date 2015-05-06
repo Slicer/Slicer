@@ -232,9 +232,14 @@ vtkMRMLScene* qMRMLLayoutViewFactory::mrmlScene()const
 void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLLayoutViewFactory);
-  foreach(qMRMLWidget* widget, d->mrmlWidgets())
+
+  if (d->MRMLScene == scene)
     {
-    widget->setMRMLScene(scene);
+    return;
+    }
+  while(this->viewCount())
+    {
+    this->deleteView(d->Views.keys()[0]);
     }
   this->qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent,
                       this, SLOT(onNodeAdded(vtkObject*,vtkObject*)));
@@ -440,6 +445,11 @@ void qMRMLLayoutViewFactory::deleteView(vtkMRMLAbstractViewNode* viewNode)
   if (!widgetToDelete)
     {
     return;
+    }
+  qMRMLWidget* mrmlWidgetToDelete = qobject_cast<qMRMLWidget*>(widgetToDelete);
+  if (mrmlWidgetToDelete)
+    {
+    mrmlWidgetToDelete->setMRMLScene(0);
     }
   this->unregisterView(widgetToDelete);
   d->Views.remove(viewNode);
