@@ -247,6 +247,29 @@
   }
 
 // ----------------------------------------------------------------------------
+/// test an object variable via Get
+#define TEST_GET_OBJECT(object,variable) \
+  if ( !object->Get##variable() )        \
+    {                                    \
+    std::cerr << "Error in  Get"#variable << ", non null value is expected " << std::endl; \
+    return EXIT_FAILURE;                 \
+    }                                    \
+  object->Get##variable()->Print(std::cout);
+
+// ----------------------------------------------------------------------------
+/// test an object variable on the object by setting it to input value using Set, and
+/// testing it via the Get
+#define TEST_SET_GET_VALUE(object,variable,value) \
+  object->Set##variable(value); \
+  if (object->Get##variable() != value) \
+    {   \
+    std::cerr << "Error getting " << #variable << std::endl; \
+    std::cerr << "Expected " << value << std::endl; \
+    std::cerr << "but got  " << object->Get##variable()<< std::endl; \
+    return EXIT_FAILURE; \
+    }
+
+// ----------------------------------------------------------------------------
 /// test a vector variable on the object by setting it to a the values x, y, z
 /// passed in using Set, and  testing it via the Get
 #define TEST_SET_GET_VECTOR3_DOUBLE( object, variable, x, y, z )    \

@@ -32,32 +32,25 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
   vtkNew<vtkMRMLSliceLogic> node1;
   EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
 
-#define TEST_SET_GET_OBJECT(object,prefix,variable) \
-  vtkSmartPointer<prefix> __##variable = vtkSmartPointer<prefix>::New();\
-  object->Set##variable(__##variable); \
-  object->Get##variable()->Print(std::cout)
-
-#define TEST_GET_OBJECT(object,variable) \
-  object->Get##variable()->Print(std::cout)
-
-#define TEST_SET_GET_VALUE(object,variable,value) \
-  object->Set##variable(value); \
-  if (object->Get##variable() != value) \
-    {   \
-    std::cerr << "Error getting " << #variable << std::endl; \
-    std::cerr << "Expected " << value << std::endl; \
-    std::cerr << "but got  " << object->Get##variable()<< std::endl; \
-    return EXIT_FAILURE; \
-    }
-
   vtkNew<vtkMRMLScene> scene;
   node1->SetName("Green");
   node1->SetMRMLScene(scene.GetPointer());
-  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceNode, SliceNode);
-  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, LabelLayer);
-  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceCompositeNode, SliceCompositeNode);
-  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, ForegroundLayer);
-  TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, BackgroundLayer);
+
+  vtkNew<vtkMRMLSliceNode> SliceNode;
+  TEST_SET_GET_VALUE(node1, SliceNode, SliceNode.GetPointer());
+
+  vtkNew<vtkMRMLSliceLayerLogic> LabelLayer;
+  TEST_SET_GET_VALUE(node1, LabelLayer, LabelLayer.GetPointer());
+
+  vtkNew<vtkMRMLSliceCompositeNode> SliceCompositeNode;
+  TEST_SET_GET_VALUE(node1, SliceCompositeNode, SliceCompositeNode.GetPointer());
+
+  vtkNew<vtkMRMLSliceLayerLogic> ForegroundLayer;
+  TEST_SET_GET_VALUE(node1, ForegroundLayer, ForegroundLayer.GetPointer());
+
+  vtkNew<vtkMRMLSliceLayerLogic> BackgroundLayer;
+  TEST_SET_GET_VALUE(node1, BackgroundLayer, BackgroundLayer.GetPointer());
+
   // TODO: need to fix the test.
   // The problem here is that the current node of the logic is wrong
   // it hasn't been added to the mrml scene. So when modified,
