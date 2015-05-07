@@ -349,18 +349,13 @@ void vtkMRMLSliceLayerLogic::SetVolumeNode(vtkMRMLVolumeNode *volumeNode)
 void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
 {
   // if there's a display node, observe it
-  vtkMRMLVolumeDisplayNode *displayNode = 0;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *propNode = 0;
-
-  vtkMRMLDiffusionTensorVolumeDisplayNode *dtdisplayNode = 0;
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *dwdisplayNode = 0;
-  vtkMRMLVectorVolumeDisplayNode *vdisplayNode = 0;
-  vtkMRMLScalarVolumeDisplayNode *sdisplayNode = 0;
+  vtkSmartPointer<vtkMRMLVolumeDisplayNode> displayNode;
+  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> dtPropNode;
 
   if ( this->VolumeNode )
     {
     const char *id = this->VolumeNode->GetDisplayNodeID();
-    if (id)
+    if (id && this->GetMRMLScene())
       {
       displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID(id));
       }
@@ -371,48 +366,49 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
       int isLabelMap =0;
       if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
         {
-        dtdisplayNode = vtkMRMLDiffusionTensorVolumeDisplayNode::New();
-        displayNode= dtdisplayNode;
-        propNode = vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
+        displayNode.TakeReference(vtkMRMLDiffusionTensorVolumeDisplayNode::New());
+        dtPropNode.TakeReference(vtkMRMLDiffusionTensorDisplayPropertiesNode::New());
         }
       else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(this->VolumeNode))
         {
-        dwdisplayNode = vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
-        displayNode= dwdisplayNode;
+        displayNode.TakeReference(vtkMRMLDiffusionWeightedVolumeDisplayNode::New());
         }
       else if (vtkMRMLVectorVolumeNode::SafeDownCast(this->VolumeNode))
         {
-        vdisplayNode = vtkMRMLVectorVolumeDisplayNode::New();
-        displayNode= vdisplayNode;
+        displayNode.TakeReference(vtkMRMLVectorVolumeDisplayNode::New());
         }
       else if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
         {
         isLabelMap = vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode)->GetLabelMap();
         if (isLabelMap)
           {
-          displayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
+          displayNode.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
           }
         else
          {
-         sdisplayNode = vtkMRMLScalarVolumeDisplayNode::New();
-         displayNode = sdisplayNode;
+         displayNode.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
          }
 
         }
       displayNode->SetScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(displayNode);
-
-      if (propNode)
+      if (this->GetMRMLScene())
         {
-        propNode->SetScene(this->GetMRMLScene());
-        this->GetMRMLScene()->AddNode(propNode);
-        displayNode->SetAndObserveColorNodeID(propNode->GetID());
+        this->GetMRMLScene()->AddNode(displayNode);
+        }
+
+      if (dtPropNode)
+        {
+        dtPropNode->SetScene(this->GetMRMLScene());
+        if (this->GetMRMLScene())
+          {
+          this->GetMRMLScene()->AddNode(dtPropNode);
+          }
+        displayNode->SetAndObserveColorNodeID(dtPropNode->GetID());
         }
 
       displayNode->SetDefaultColorMap();
 
       this->VolumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-      displayNode->Delete();
       }
     }
 
