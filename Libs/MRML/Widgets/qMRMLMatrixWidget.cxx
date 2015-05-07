@@ -111,7 +111,7 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLTransformNode* transformNode
 
   d->MRMLTransformNode = transformNode;
 
-  this->setEnabled(transformNode->IsLinear());
+  this->setEnabled(transformNode ? transformNode->IsLinear() : false);
 
   this->updateMatrix();
 }
