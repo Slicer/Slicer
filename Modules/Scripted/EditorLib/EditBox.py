@@ -208,9 +208,9 @@ class EditBox(VTKObservationMixin):
         self.effectButtons[effect] = b = self.buttons[effect] = qt.QToolButton()
         b.objectName = effect + 'ToolButton'
         b.setDefaultAction(a)
-        b.setToolTip(effect)
+        a.setToolTip(effect)
         if EditBox.displayNames.has_key(effect):
-          b.setToolTip(EditBox.displayNames[effect])
+          a.setToolTip(EditBox.displayNames[effect])
         hbox.addWidget(b)
 
         if effect not in ('EraseLabel', 'PreviousCheckPoint', 'NextCheckPoint'):
