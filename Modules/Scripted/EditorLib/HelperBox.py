@@ -252,6 +252,31 @@ class HelperBox(object):
 
     if options.find("noEdit") < 0:
       self.edit( label )
+      
+  def deleteSelectedStructure(self, confirm=True):
+    """delete the currently selected structure"""
+    
+    merge = self.mergeVolume()
+    if not merge:
+      return
+    
+    selectionModel = self.structuresView.selectionModel()
+    selected = selectionModel.currentIndex().row()
+
+    if selected >= 0:
+
+      structureName = self.structures.item(selected,2).text()
+      labelNode = slicer.util.getNode(self.structures.item(selected,3).text())
+    
+      if confirm:
+        if not self.confirmDialog( "Delete \'%s\' volume?" % structureName ):
+          return
+        
+      slicer.mrmlScene.SaveStateForUndo()
+      
+      slicer.mrmlScene.RemoveNode( labelNode )
+      self.updateStructures()
+    
 
   def deleteStructures(self, confirm=True):
     """delete all the structures"""
@@ -546,6 +571,7 @@ class HelperBox(object):
     merge = self.mergeVolume()
     self.addStructureButton.setDisabled(not merge)
     self.deleteStructuresButton.setDisabled(not merge)
+    self.deleteSelectedStructureButton.setDisabled(not merge)
     self.mergeButton.setDisabled(not merge)
     self.splitButton.setDisabled(not merge)
     self.mergeAndBuildButton.setDisabled(not merge)
@@ -750,12 +776,19 @@ class HelperBox(object):
     self.allButtonsFrame.setLayout(qt.QHBoxLayout())
     self.structuresFrame.layout().addWidget(self.allButtonsFrame)
 
-    # delete structures button
+    # delete all structures button
 
-    self.deleteStructuresButton = qt.QPushButton("Delete Structures", self.allButtonsFrame)
+    self.deleteStructuresButton = qt.QPushButton("Delete All", self.allButtonsFrame)
     self.deleteStructuresButton.objectName = 'DeleteStructureButton'
     self.deleteStructuresButton.setToolTip( "Delete all the structure volumes from the scene.\n\nNote: to delete individual structure volumes, use the Data Module." )
     self.allButtonsFrame.layout().addWidget(self.deleteStructuresButton)
+    
+    # delete selected structures button
+
+    self.deleteSelectedStructureButton = qt.QPushButton("Delete Selected", self.allButtonsFrame)
+    self.deleteSelectedStructureButton.objectName = 'DeleteSelectedStructureButton'
+    self.deleteSelectedStructureButton.setToolTip( "Delete the selected structure volume from the scene." )
+    self.allButtonsFrame.layout().addWidget(self.deleteSelectedStructureButton)
 
     # merge button
 
@@ -798,6 +831,7 @@ class HelperBox(object):
     # buttons pressed
     self.addStructureButton.connect("clicked()", self.addStructure)
     self.deleteStructuresButton.connect("clicked()", self.deleteStructures)
+    self.deleteSelectedStructureButton.connect("clicked()", self.deleteSelectedStructure)
     # selection changed event
     # invoked event
     self.splitButton.connect("clicked()", self.split)
