@@ -355,9 +355,12 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
   if ( this->VolumeNode )
     {
     const char *id = this->VolumeNode->GetDisplayNodeID();
-    if (id && this->GetMRMLScene())
+    if (id)
       {
-      displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID(id));
+      if (this->GetMRMLScene())
+        {
+        displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast (this->GetMRMLScene()->GetNodeByID(id));
+        }
       }
     else
       {
