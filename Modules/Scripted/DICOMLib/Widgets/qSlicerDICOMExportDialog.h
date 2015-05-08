@@ -57,13 +57,13 @@ public:
   /// Python compatibility function for showing dialog (calls \a exec)
   Q_INVOKABLE bool execDialog(vtkMRMLSubjectHierarchyNode* nodeToSelect=NULL) { return this->exec(nodeToSelect); };
 
-  /// Set specific node selected in subject hierarchy tree
-  Q_INVOKABLE void selectNode(vtkMRMLSubjectHierarchyNode* node);
-
   /// Show DICOM browser and update database to show new items
   Q_INVOKABLE void showUpdatedDICOMBrowser();
 
 protected slots:
+  /// Select node that was passed with \sa exec() in subject hierarchy tree
+  void selectNode();
+
   /// Handles change of export series or entire scene radio button selection
   void onExportSeriesRadioButtonToggled(bool);
 
@@ -81,10 +81,10 @@ protected slots:
 
 protected:
   /// Export selected node based on the selected exportable
-  void ExportSeries();
+  void exportSeries();
 
   /// Export entire scene as a secondary capture containing an MRB
-  void ExportEntireScene();
+  void exportEntireScene();
 
 protected:
   QScopedPointer<qSlicerDICOMExportDialogPrivate> d_ptr;

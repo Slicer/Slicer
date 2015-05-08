@@ -41,6 +41,7 @@
 #include <QItemSelection>
 #include <QListWidgetItem>
 #include <QDateTime>
+#include <QTimer>
 
 // PythonQt includes
 #include "PythonQt.h"
@@ -71,6 +72,7 @@ public:
   void init();
 private:
   vtkMRMLScene* Scene;
+  vtkMRMLSubjectHierarchyNode* NodeToSelect;
   qSlicerDICOMExportable* SelectedExportable;
 };
 
@@ -78,6 +80,7 @@ private:
 qSlicerDICOMExportDialogPrivate::qSlicerDICOMExportDialogPrivate(qSlicerDICOMExportDialog& object)
   : q_ptr(&object)
   , Scene(NULL)
+  , NodeToSelect(NULL)
   , SelectedExportable(NULL)
 {
 }
@@ -102,7 +105,6 @@ void qSlicerDICOMExportDialogPrivate::init()
   this->SubjectHierarchyTreeView->hideColumn(sceneModel->idColumn());
   this->SubjectHierarchyTreeView->hideColumn(sceneModel->visibilityColumn());
   this->SubjectHierarchyTreeView->hideColumn(sceneModel->transformColumn());
-  //this->SubjectHierarchyTreeView->header()->resizeSection(sceneModel->transformColumn(), 60);
 
   // Empty error label (was not empty to indicate its purpose in designer)
   this->ErrorLabel->setText(QString());
@@ -143,11 +145,8 @@ bool qSlicerDICOMExportDialog::exec(vtkMRMLSubjectHierarchyNode* nodeToSelect/*=
   d->init();
 
   // Make selection if requested
-  if (nodeToSelect)
-    {
-    QApplication::processEvents();
-    this->selectNode(nodeToSelect);
-    }
+  d->NodeToSelect = nodeToSelect;
+  QTimer::singleShot(0, this, SLOT( selectNode() ) );
 
   // Show dialog
   bool result = false;
@@ -170,12 +169,14 @@ void qSlicerDICOMExportDialog::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::selectNode(vtkMRMLSubjectHierarchyNode* node)
+void qSlicerDICOMExportDialog::selectNode()
 {
   Q_D(qSlicerDICOMExportDialog);
-  QModelIndex selectionIndex = d->SubjectHierarchyTreeView->sceneModel()->indexFromNode(node);
-  d->SubjectHierarchyTreeView->selectionModel()->select(selectionIndex, QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
-  d->SubjectHierarchyTreeView->setCurrentNode(node);
+  if (!d->NodeToSelect)
+    {
+    return;
+    }
+  d->SubjectHierarchyTreeView->setCurrentNode(d->NodeToSelect);
 }
 
 //-----------------------------------------------------------------------------
@@ -371,24 +372,24 @@ void qSlicerDICOMExportDialog::onExportSeriesRadioButtonToggled(bool seriesOn)
 
   // Export series
   if (seriesOn)
-  {
+    {
     d->groupBox_1SelectNode->setEnabled(true);
     d->groupBox_2SelectExportType->setEnabled(true);
     d->groupBox_3EditDICOMTags->setEnabled(true);
     d->SaveTagsCheckBox->setEnabled(true);
     d->DirectoryButton_OutputFolder->setEnabled(true);
     d->ErrorLabel->setText(QString());
-  }
+    }
   // Export entire scene
   else
-  {
+    {
     d->groupBox_1SelectNode->setEnabled(false);
     d->groupBox_2SelectExportType->setEnabled(false);
     d->groupBox_3EditDICOMTags->setEnabled(false);
     d->SaveTagsCheckBox->setEnabled(false);
     d->DirectoryButton_OutputFolder->setEnabled(false);
     d->ErrorLabel->setText(QString());
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -401,13 +402,13 @@ void qSlicerDICOMExportDialog::onExport()
 
   // Call export function based on radio button choice
   if (d->ExportSeriesRadioButton->isChecked())
-  {
-    this->ExportSeries();
-  }
+    {
+    this->exportSeries();
+    }
   else
-  {
-    this->ExportEntireScene();
-  }
+    {
+    this->exportEntireScene();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -425,7 +426,7 @@ void qSlicerDICOMExportDialog::showUpdatedDICOMBrowser()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::ExportSeries()
+void qSlicerDICOMExportDialog::exportSeries()
 {
   Q_D(qSlicerDICOMExportDialog);
 
@@ -450,6 +451,11 @@ void qSlicerDICOMExportDialog::ExportSeries()
   if (d->SaveTagsCheckBox->isChecked())
     {
     d->DICOMTagEditorWidget->commitChangesToNodes();
+    }
+
+  if (d->DICOMTagEditorWidget->exportables().isEmpty())
+    {
+    return;
     }
 
   // Assemble list of exportables to pass to the DICOM plugin.
@@ -522,7 +528,7 @@ void qSlicerDICOMExportDialog::ExportSeries()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDICOMExportDialog::ExportEntireScene()
+void qSlicerDICOMExportDialog::exportEntireScene()
 {
   Q_D(qSlicerDICOMExportDialog);
 

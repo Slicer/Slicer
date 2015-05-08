@@ -754,6 +754,11 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
     {
     childSubjectHierarchyNode->SetLevel(level);
     }
+  else
+    {
+    // Default level is series
+    childSubjectHierarchyNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries());
+    }
 
   std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
   childSubjectHierarchyNode->SetName(shNodeName.c_str());

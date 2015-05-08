@@ -337,7 +337,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 
   // Get patient node
   vtkMRMLSubjectHierarchyNode* patientNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
-    studyNode->GetParentNode() );
+    studyNode ? studyNode->GetParentNode() : NULL );
   if (!patientNode)
     {
     QString error("No patient node found!");
