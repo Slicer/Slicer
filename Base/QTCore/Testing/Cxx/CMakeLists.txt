@@ -21,6 +21,7 @@ if(BUILD_TESTING)
   if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_TEST_SRCS
       qSlicerCorePythonManagerWithoutApplicationTest.cxx
+      qSlicerScriptedUtilsTest1.cxx
       )
   endif()
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
@@ -85,6 +86,7 @@ if(BUILD_TESTING)
 
   if(Slicer_USE_PYTHONQT)
     simple_test( qSlicerCorePythonManagerWithoutApplicationTest )
+    simple_test( qSlicerScriptedUtilsTest1 )
   endif()
 
   if(Slicer_USE_PYTHONQT_WITH_OPENSSL)

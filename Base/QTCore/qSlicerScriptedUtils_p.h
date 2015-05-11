@@ -52,6 +52,16 @@ public:
 
   static bool loadSourceAsModule(const QString& moduleName, const QString& fileName, PyObject * global_dict, PyObject *local_dict);
 
+  /// \brief Set the value of the attribute named \a attributeName, for module
+  /// named \a moduleName, to the value \a attributeValue.
+  ///
+  /// If \a moduleName is empty, attribute will be set for module `__main__`.
+  ///
+  /// If \a moduleName is a dotted name, attribute will be set the last module.
+  static bool setModuleAttribute(const QString& moduleName,
+                                 const QString& attributeName,
+                                 PyObject* attributeValue);
+
 private:
   /// Not implemented
   qSlicerScriptedUtils(){}
