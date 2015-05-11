@@ -100,5 +100,7 @@ class _Internal():
       delattr(slicer.modules, moduleName + "Widget")
     delattr(slicer.moduleNames, moduleName)
     delattr(slicer.modules, moduleName.lower())
+    if moduleName in slicer.selfTests:
+      del slicer.selfTests[moduleName]
 
 _internalInstance = _Internal()
