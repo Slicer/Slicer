@@ -117,7 +117,7 @@ public:
   /// ErrorLogModel - It should exist only one instance of the ErrorLogModel
   QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
 
-  qSlicerLayoutManager*   LayoutManager;
+  QWeakPointer<qSlicerLayoutManager> LayoutManager;
   ctkToolTipTrapper*      ToolTipTrapper;
   ctkSettingsDialog*      SettingsDialog;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -139,7 +139,6 @@ qSlicerApplicationPrivate::qSlicerApplicationPrivate(
     qSlicerIOManager * ioManager)
   : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
 {
-  this->LayoutManager = 0;
   this->ToolTipTrapper = 0;
   this->SettingsDialog = 0;
 #ifdef Slicer_USE_QtTesting
@@ -410,10 +409,10 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
   if (this->applicationLogic())
     {
     this->applicationLogic()->SetSliceLogics(
-      d->LayoutManager? d->LayoutManager->mrmlSliceLogics() : 0);
+      d->LayoutManager? d->LayoutManager.data()->mrmlSliceLogics() : 0);
     if (d->LayoutManager)
       {
-      d->LayoutManager->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
+      d->LayoutManager.data()->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
       }
     }
 }
@@ -422,7 +421,7 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
 qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 {
   Q_D(const qSlicerApplication);
-  return d->LayoutManager;
+  return d->LayoutManager.data();
 }
 
 //-----------------------------------------------------------------------------

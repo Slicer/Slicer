@@ -66,7 +66,6 @@ class SliceAnnotations(VTKObservationMixin):
       '7-TE':{'text':'','category':'A'}
       })
 
-    self.layoutManager = slicer.app.layoutManager()
     self.sliceCornerAnnotations = {}
 
     self.annotationsDisplayAmount = 0
@@ -431,6 +430,8 @@ class SliceAnnotations(VTKObservationMixin):
     elif self.level3RadioButton.checked:
       self.annotationsDisplayAmount = 2
 
+    layoutManager = slicer.app.layoutManager()
+
     if self.showSliceViewAnnotations:
       self.cornerTextParametersCollapsibleButton.enabled = True
       self.activateCornersGroupBox.enabled = True
@@ -441,7 +442,7 @@ class SliceAnnotations(VTKObservationMixin):
       self.colorScalarBarCollapsibleButton.enabled = True
 
       for sliceViewName in self.sliceViewNames:
-        sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
+        sliceWidget = layoutManager.sliceWidget(sliceViewName)
         sl = sliceWidget.sliceLogic()
         self.makeAnnotationText(sl)
         self.makeScalingRuler(sl)
@@ -456,7 +457,7 @@ class SliceAnnotations(VTKObservationMixin):
       self.colorScalarBarCollapsibleButton.enabled = False
       # Remove Observers
       for sliceViewName in self.sliceViewNames:
-        sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
+        sliceWidget = layoutManager.sliceWidget(sliceViewName)
         sl = sliceWidget.sliceLogic()
         self.makeScalingRuler(sl)
         self.makeColorScalarBar(sl)
@@ -487,7 +488,7 @@ class SliceAnnotations(VTKObservationMixin):
 
   def createCornerAnnotations(self):
     self.createGlobalVariables()
-    sliceViewNames = self.layoutManager.sliceViewNames()
+    sliceViewNames = slicer.app.layoutManager().sliceViewNames()
 
     for sliceViewName in sliceViewNames:
       self.sliceViewNames.append(sliceViewName)
@@ -496,7 +497,7 @@ class SliceAnnotations(VTKObservationMixin):
       self.createActors(sliceViewName)
 
   def addSliceViewObserver(self, sliceViewName):
-    sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
+    sliceWidget = slicer.app.layoutManager().sliceWidget(sliceViewName)
     self.sliceWidgets[sliceViewName] = sliceWidget
     sliceView = sliceWidget.sliceView()
 
@@ -512,7 +513,7 @@ class SliceAnnotations(VTKObservationMixin):
 
 
   def createActors(self, sliceViewName):
-    sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
+    sliceWidget = slicer.app.layoutManager().sliceWidget(sliceViewName)
     self.sliceWidgets[sliceViewName] = sliceWidget
     sliceView = sliceWidget.sliceView()
 
@@ -594,7 +595,10 @@ class SliceAnnotations(VTKObservationMixin):
     return scalarBar
 
   def updateCornerAnnotations(self,caller,event):
-    sliceViewNames = self.layoutManager.sliceViewNames()
+    layoutManager = slicer.app.layoutManager()
+    if layoutManager is None:
+      return
+    sliceViewNames = layoutManager.sliceViewNames()
     for sliceViewName in sliceViewNames:
       if sliceViewName not in self.sliceViewNames:
         self.sliceViewNames.append(sliceViewName)
