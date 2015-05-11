@@ -160,6 +160,8 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
+  d->PythonCppAPI.setObjectName(className);
+
   PyObject* self = d->PythonCppAPI.instantiateClass(this, className, classToInstantiate);
   if (!self)
     {

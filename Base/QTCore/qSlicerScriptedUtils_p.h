@@ -76,6 +76,9 @@ public:
   qSlicerPythonCppAPI();
   virtual ~qSlicerPythonCppAPI();
 
+  QString objectName()const;
+  void setObjectName(const QString& name);
+
   void declareMethod(int id, const char* name);
 
   PyObject* instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate);
@@ -85,6 +88,8 @@ public:
   PyObject* pythonSelf()const;
 
 private:
+
+  QString ObjectName;
 
   QHash<int, QString>   APIMethods;
   QHash<int, PyObject*> PythonAPIMethods;

@@ -124,6 +124,8 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& newPythonSource, 
     }
   d->PythonClassName = className;
 
+  d->PythonCppAPI.setObjectName(className);
+
   // Get a reference (or create if needed) the <moduleName> python module
   PyObject * module = PyImport_AddModule(moduleName.toLatin1());
 

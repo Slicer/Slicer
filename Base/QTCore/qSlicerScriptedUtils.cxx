@@ -110,6 +110,18 @@ qSlicerPythonCppAPI::~qSlicerPythonCppAPI()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerPythonCppAPI::objectName()const
+{
+  return this->ObjectName;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerPythonCppAPI::setObjectName(const QString& name)
+{
+  this->ObjectName = name;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerPythonCppAPI::declareMethod(int id, const char* name)
 {
   if (!name)
@@ -127,7 +139,8 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     {
     PythonQt::self()->handleError();
     qCritical() << "qSlicerPythonCppAPI::instantiateClass"
-                << "- Failed to wrap" << cpp->metaObject()->className() << "associated with " << className;
+                << " - [" << this->ObjectName << "]"
+                << " - Failed to wrap" << cpp->metaObject()->className() << "associated with " << className;
     return 0;
     }
 
@@ -141,6 +154,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     {
     PythonQt::self()->handleError();
     qCritical() << "qSlicerPythonCppAPI::instantiateClass"
+                << " - [" << this->ObjectName << "]"
                 << "- Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
     return 0;
     }
