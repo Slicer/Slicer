@@ -71,10 +71,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     qt.QTimer.singleShot(0, DICOMLib.setDatabasePrecacheTags)
 
   def setup(self):
-    # Register DICOM subject hierarchy plugin (member to prevent destruction)
-    self.dicomPlugin = slicer.qSlicerSubjectHierarchyDICOMPlugin()
     pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
-    pluginHandlerSingleton.registerPlugin(self.dicomPlugin)
+    pluginHandlerSingleton.registerPlugin(slicer.qSlicerSubjectHierarchyDICOMPlugin())
 
   def addMenu(self):
     """Add an action to the File menu that will go into

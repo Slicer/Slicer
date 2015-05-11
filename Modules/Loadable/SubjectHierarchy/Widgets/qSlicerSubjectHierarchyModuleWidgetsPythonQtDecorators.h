@@ -52,6 +52,16 @@ public slots:
     {
     return qSlicerSubjectHierarchyPluginHandler::instance();
     }
+
+  //----------------------------------------------------------------------------
+  // instance methods
+
+  //----------------------------------------------------------------------------
+  bool registerPlugin(qSlicerSubjectHierarchyPluginHandler* handler,
+                      PythonQtPassOwnershipToCPP<qSlicerSubjectHierarchyAbstractPlugin*> plugin)
+    {
+    return handler->registerPlugin(plugin);
+    }
 };
 
 //-----------------------------------------------------------------------------
