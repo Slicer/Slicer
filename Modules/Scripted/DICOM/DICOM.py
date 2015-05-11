@@ -73,8 +73,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
   def setup(self):
     # Register DICOM subject hierarchy plugin (member to prevent destruction)
     self.dicomPlugin = slicer.qSlicerSubjectHierarchyDICOMPlugin()
-    pluginHandlerTempInstance = slicer.qSlicerSubjectHierarchyPluginHandler()
-    pluginHandlerSingleton = pluginHandlerTempInstance.instance()
+    pluginHandlerSingleton = slicer.qSlicerSubjectHierarchyPluginHandler.instance()
     pluginHandlerSingleton.registerPlugin(self.dicomPlugin)
 
   def addMenu(self):
