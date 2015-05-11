@@ -133,10 +133,10 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
   PyObject * module = PyImport_AddModule(moduleName.toLatin1());
 
   // Get a reference to the python module class to instantiate
-  PyObject * classToInstantiate = 0;
+  PythonQtObjectPtr classToInstantiate;
   if (PyObject_HasAttrString(module, className.toLatin1()))
     {
-    classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
     }
   if (!classToInstantiate)
     {

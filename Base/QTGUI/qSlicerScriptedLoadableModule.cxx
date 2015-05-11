@@ -131,21 +131,22 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   PyObject * module = PyImport_AddModule(moduleName.toLatin1());
 
   // Get a reference to the python module class to instantiate
-  PyObject * classToInstantiate = 0;
+  PythonQtObjectPtr classToInstantiate;
   if (module && PyObject_HasAttrString(module, className.toLatin1()))
     {
-    classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+    classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
     }
   if (!classToInstantiate)
     {
-    PythonQtObjectPtr local_dict(PyDict_New());
+    PythonQtObjectPtr local_dict;
+    local_dict.setNewRef(PyDict_New());
     if (!qSlicerScriptedUtils::loadSourceAsModule(moduleName, newPythonSource, global_dict, local_dict))
       {
       return false;
       }
     if (PyObject_HasAttrString(module, className.toLatin1()))
       {
-      classToInstantiate = PyObject_GetAttrString(module, className.toLatin1());
+      classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toLatin1()));
       }
     }
 
