@@ -168,24 +168,10 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 
   d->PythonSource = newPythonSource;
 
-  QString instanceName = moduleName + QString("Instance");
-
-  PyObject * slicer = PyDict_GetItemString(global_dict, "slicer");
-  if (slicer)
+  if (!qSlicerScriptedUtils::setModuleAttribute(
+        "slicer.modules", moduleName + "Instance", self))
     {
-    PyObject * slicerModules = PyObject_GetAttrString(slicer, "modules");
-    if (slicerModules)
-      {
-      PyObject_SetAttrString(slicerModules, instanceName.toLatin1(), self);
-      }
-    else
-      {
-      PythonQt::self()->handleError();
-      }
-    }
-  else
-    {
-    qCritical() << "Could not access slicer module";
+    qCritical() << "Failed to set" << ("slicer.modules." + moduleName + "Instance");
     }
 
   // Check if there is module widget class
