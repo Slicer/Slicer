@@ -1,7 +1,6 @@
 """ This module sets up root logging and loads the Slicer library modules into its namespace."""
 
 import ctk
-import imp
 import logging
 import qt
 import sys
@@ -88,15 +87,31 @@ initLogging(logging.getLogger())
 
 
 #-----------------------------------------------------------------------------
+def _createModule(name, globals, docstring):
+  import imp
+  moduleName = name.split('.')[-1]
+  module = imp.new_module( moduleName )
+  module.__file__ = __file__
+  module.__doc__ = docstring
+  sys.modules[name] = module
+  globals[moduleName] = module
+
+#-----------------------------------------------------------------------------
 # Load modules
 
-# Add module 'slicer.modules'
-__modules = imp.new_module( 'modules' )
-globals()[__modules.__name__] = __modules
+_createModule('slicer.modules', globals(),
+"""This module provides an access to all instantiated Slicer modules.
 
-# Add module 'slicer.moduleNames'
-__moduleNames = imp.new_module( 'moduleNames' )
-globals()[__moduleNames.__name__] = __moduleNames
+The module attributes are the lower-cased Slicer module names, the
+associated value is an instance of ``qSlicerAbstractCoreModule``.
+""")
+
+_createModule('slicer.moduleNames', globals(),
+"""This module provides an access to all instantiated Slicer module names.
+
+The module attributes are the Slicer modules names, the associated
+value is the module name.
+""")
 
 __kits_to_load = [ @Slicer_PYTHON_MODULES_CONFIG@ ]
 
@@ -107,6 +122,5 @@ for kit in __kits_to_load:
      print detail
 
 # Removing things the user shouldn't have to see.
+del _createModule
 del __kits_to_load
-del __modules, __moduleNames
-del imp
