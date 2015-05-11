@@ -38,6 +38,9 @@
 #include <QHash>
 #include <QString>
 
+// PythonQt includes
+#include <PythonQtObjectPtr.h>
+
 // Forward Declare PyObject*
 #ifndef PyObject_HEAD
 struct _object;
@@ -92,9 +95,9 @@ private:
   QString ObjectName;
 
   QHash<int, QString>   APIMethods;
-  QHash<int, PyObject*> PythonAPIMethods;
+  QHash<int, PythonQtObjectPtr> PythonAPIMethods;
 
-  PyObject * PythonSelf;
+  PythonQtObjectPtr PythonSelf;
 };
 
 

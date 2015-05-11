@@ -93,7 +93,6 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
 //-----------------------------------------------------------------------------
 qSlicerPythonCppAPI::qSlicerPythonCppAPI()
 {
-  this->PythonSelf = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -101,11 +100,7 @@ qSlicerPythonCppAPI::~qSlicerPythonCppAPI()
 {
   if (this->PythonSelf)
     {
-    foreach(PyObject* method, this->PythonAPIMethods)
-      {
-      Py_XDECREF(method);
-      }
-    Py_DECREF(this->PythonSelf);
+    this->APIMethods.clear();
     }
 }
 
@@ -148,8 +143,10 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
   PyTuple_SET_ITEM(arguments, 0, wrappedThis);
 
   // Attempt to instantiate the associated python class
-  PyObject * self = PyInstance_New(classToInstantiate, arguments, 0);
+  PythonQtObjectPtr self;
+  self.setNewRef(PyInstance_New(classToInstantiate, arguments, 0));
   Py_DECREF(arguments);
+
   if (!self)
     {
     PythonQt::self()->handleError();
@@ -162,17 +159,18 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
   foreach(int methodId, this->APIMethods.keys())
     {
     QString methodName = this->APIMethods.value(methodId);
-    if (!PyObject_HasAttrString(self, methodName.toLatin1()))
+    if (!PyObject_HasAttrString(self.object(), methodName.toLatin1()))
       {
       continue;
       }
-    PyObject * method = PyObject_GetAttrString(self, methodName.toLatin1());
+    PythonQtObjectPtr method;
+    method.setNewRef(PyObject_GetAttrString(self.object(), methodName.toLatin1()));
     this->PythonAPIMethods[methodId] = method;
     }
 
   this->PythonSelf = self;
 
-  return self;
+  return self.object();
 }
 
 //-----------------------------------------------------------------------------
@@ -182,7 +180,7 @@ PyObject * qSlicerPythonCppAPI::callMethod(int id, PyObject * arguments)
     {
     return 0;
     }
-  PyObject * method = this->PythonAPIMethods.value(id);
+  PyObject * method = this->PythonAPIMethods.value(id).object();
   PythonQt::self()->clearError();
   PyObject * result = PyObject_CallObject(method, arguments);
   if (PythonQt::self()->handleError())
