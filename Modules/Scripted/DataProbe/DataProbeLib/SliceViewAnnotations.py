@@ -5,6 +5,7 @@ from __main__ import ctk
 from __main__ import slicer
 
 from slicer.util import settingsValue
+from slicer.util import VTKObservationMixin
 
 try:
   import numpy as np
@@ -15,10 +16,11 @@ except ImportError:
 import DataProbeLib
 import DataProbeUtil
 
-class SliceAnnotations(object):
+class SliceAnnotations(VTKObservationMixin):
   """Implement the Qt window showing settings for Slice View Annotations
   """
   def __init__(self):
+    VTKObservationMixin.__init__(self)
     self.hasVTKPVScalarBarActor = hasattr(slicer, 'vtkPVScalarBarActor')
     if not self.hasVTKPVScalarBarActor:
       slicer.logging.warning("SliceAnnotations: Disable features relying on vtkPVScalarBarActor")
@@ -107,8 +109,7 @@ class SliceAnnotations(object):
 
     self.parameter = 'showSliceViewAnnotations'
     self.parameterNode = self.dataProbeUtil.getParameterNode()
-    self.parameterNodeTag = self.parameterNode.AddObserver(
-        vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
+    self.addObserver(self.parameterNode, vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
     self.colorbarSelectedLayer = 'background'
     self.create()
@@ -476,8 +477,6 @@ class SliceAnnotations(object):
     self.sliceWidgets = {}
     self.sliceViews = {}
     self.cameras = {}
-    self.blNodeObserverTag = {}
-    self.sliceLogicObserverTag = {}
     self.sliceCornerAnnotations = {}
     self.renderers = {}
     self.scalingRulerActors = {}
@@ -493,10 +492,10 @@ class SliceAnnotations(object):
     for sliceViewName in sliceViewNames:
       self.sliceViewNames.append(sliceViewName)
     for sliceViewName in self.sliceViewNames:
-      self.addObserver(sliceViewName)
+      self.addSliceViewObserver(sliceViewName)
       self.createActors(sliceViewName)
 
-  def addObserver(self, sliceViewName):
+  def addSliceViewObserver(self, sliceViewName):
     sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
     self.sliceWidgets[sliceViewName] = sliceWidget
     sliceView = sliceWidget.sliceView()
@@ -509,8 +508,8 @@ class SliceAnnotations(object):
     self.sliceViews[sliceViewName] = sliceView
     self.sliceCornerAnnotations[sliceViewName] = sliceView.cornerAnnotation()
     sliceLogic = sliceWidget.sliceLogic()
-    self.sliceLogicObserverTag[sliceViewName] = sliceLogic.AddObserver(vtk.vtkCommand.ModifiedEvent,
-                                             self.updateCornerAnnotations)
+    self.addObserver(sliceLogic, vtk.vtkCommand.ModifiedEvent, self.updateCornerAnnotations)
+
 
   def createActors(self, sliceViewName):
     sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
@@ -599,7 +598,7 @@ class SliceAnnotations(object):
     for sliceViewName in sliceViewNames:
       if sliceViewName not in self.sliceViewNames:
         self.sliceViewNames.append(sliceViewName)
-        self.addObserver(sliceViewName)
+        self.addSliceViewObserver(sliceViewName)
         self.createActors(sliceViewName)
         self.updateSliceViewFromGUI()
     self.makeAnnotationText(caller)
