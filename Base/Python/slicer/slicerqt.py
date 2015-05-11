@@ -51,6 +51,7 @@ class _Internal():
       factoryManager = moduleManager.factoryManager()
       factoryManager.connect( 'modulesRegistered(QStringList)', self.setSlicerModuleNames )
       moduleManager.connect( 'moduleLoaded(QString)', self.setSlicerModules )
+      moduleManager.connect( 'moduleAboutToBeUnloaded(QString)', self.unsetSlicerModule )
 
     # Retrieve current instance of the scene and set 'slicer.mrmlScene'
     setattr( slicer, 'mrmlScene', slicer.app.mrmlScene() )
@@ -90,5 +91,14 @@ class _Internal():
     if moduleName == 'DWIConvert':
       setattr( slicer.modules, 'dicomtonrrdconverter', moduleManager.module(moduleName) )
 
+  def unsetSlicerModule( self, moduleName ):
+    """Remove attribute from ``slicer.modules``
+    """
+    if hasattr(slicer.modules, moduleName + "Instance"):
+      delattr(slicer.modules, moduleName + "Instance")
+    if hasattr(slicer.modules, moduleName + "Widget"):
+      delattr(slicer.modules, moduleName + "Widget")
+    delattr(slicer.moduleNames, moduleName)
+    delattr(slicer.modules, moduleName.lower())
 
 _internalInstance = _Internal()

@@ -135,6 +135,7 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
   // => Di facto, it's important to make sure PythonManager is destructed
   // after the ModuleManager.
   // To do so, the associated SharedPointer are cleared in the appropriate order
+  this->ModuleManager->factoryManager()->unloadModules();
   this->ModuleManager.clear();
   this->CoreIOManager.clear();
 #ifdef Slicer_USE_PYTHONQT
