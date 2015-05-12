@@ -1176,13 +1176,17 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::Reset()
 {
-  // The LayoutName is preserved by vtkMRMLNode::Reset, however the orientation
-  // (typically associated with the layoutName)is not preserved automatically.
+  // The LayoutName is preserved by vtkMRMLNode::Reset, however the orientation,
+  // and the layout color (typically associated with the ayoutName) are not
+  // preserved automatically.
   // This require a custom behavior implemented here.
   std::string orientation = this->GetOrientationString();
+  double layoutColor[3] = {0.0, 0.0, 0.0};
+  this->GetLayoutColor(layoutColor);
   this->Superclass::Reset();
   this->DisableModifiedEventOn();
   this->SetOrientation(orientation.c_str());
+  this->SetLayoutColor(layoutColor);
   this->DisableModifiedEventOff();
 }
 

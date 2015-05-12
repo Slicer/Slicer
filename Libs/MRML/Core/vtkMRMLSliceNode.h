@@ -49,7 +49,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// Reimplemented to preserve orientation when reset
+  /// \brief Reimplemented to preserve orientation and layout color when reset.
+  /// \sa GetOrientationString()
+  /// \sa GetLayoutColor()
   virtual void Reset();
 
   ///

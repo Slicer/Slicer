@@ -50,6 +50,10 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
+  /// \brief Reimplemented to preserve layout label when reset.
+  /// \sa GetLayoutLabel()
+  virtual void Reset();
+
   ///
   /// Name of the layout. Must be unique between all the view nodes of the
   /// same type because it is used as a singleton tag.

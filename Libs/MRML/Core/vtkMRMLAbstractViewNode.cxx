@@ -211,6 +211,20 @@ void vtkMRMLAbstractViewNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLAbstractViewNode::Reset()
+{
+  // The LayoutName is preserved by vtkMRMLNode::Reset, however the layout
+  // label (typically associated with the layoutName) is not preserved
+  // automatically.
+  // This require a custom behavior implemented here.
+  std::string layoutLabel = this->GetLayoutLabel() ? this->GetLayoutLabel() : "";
+  this->Superclass::Reset();
+  this->DisableModifiedEventOn();
+  this->SetLayoutLabel(layoutLabel.c_str());
+  this->DisableModifiedEventOff();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
