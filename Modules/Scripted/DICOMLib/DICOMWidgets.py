@@ -634,7 +634,7 @@ class DICOMDetailsPopup(object):
   def isFileListInCheckedLoadables(self,fileList):
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
-        if len(loadable.files) != len(fileList):
+        if len(loadable.files) != len(fileList) or len(loadable.files) == 0:
           continue
         inputFileListCopy = copy.deepcopy(fileList)
         loadableFileListCopy = copy.deepcopy(loadable.files)
