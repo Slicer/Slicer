@@ -79,6 +79,9 @@ vtkTeemEstimateDiffusionTensor::vtkTeemEstimateDiffusionTensor()
   this->SetDiffusionGradient(5,1,-1,0);
   this->SetDiffusionGradient(6,-1,0,1);
 
+  this->RescaledDiffusionGradients = vtkDoubleArray::New();
+  this->RescaledDiffusionGradients->DeepCopy(this->DiffusionGradients);
+
 }
 
 //----------------------------------------------------------------------------
@@ -86,6 +89,7 @@ vtkTeemEstimateDiffusionTensor::~vtkTeemEstimateDiffusionTensor()
 {
   this->BValues->Delete();
   this->DiffusionGradients->Delete();
+  this->RescaledDiffusionGradients->Delete();
 #if (VTK_MAJOR_VERSION <= 5)
   this->Baseline->Delete();
   this->AverageDWI->Delete();
@@ -337,6 +341,10 @@ int vtkTeemEstimateDiffusionTensor::RequestData(
   // if the user has transformed the coordinate system
   this->TransformDiffusionGradients();
 
+  // Rescale gradients to account for multiple b-Values.
+  //This is done in a different array to preserve the original gradients set by the user
+  this->RescaleGradients();
+
   // jump back into normal pipeline: call standard superclass method here
   //Do not jump to do the proper allocation of output data
   return this->Superclass::RequestData(request, inputVector, outputVector);
@@ -499,29 +507,39 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
 }
 
 //----------------------------------------------------------------------------
+// To accomodate different b-values we might have to rescale the gradients
+void vtkTeemEstimateDiffusionTensor::RescaleGradients()
+{
+  unsigned int Ngrads = this->DiffusionGradients->GetNumberOfTuples();
+  // Reset rescaled diffusion grandients array before rescaling
+  this->RescaledDiffusionGradients->DeepCopy(this->DiffusionGradients);
+  double *data = (double *) this->DiffusionGradients->GetVoidPointer(0);
+  double *data_r = (double *) this->RescaledDiffusionGradients->GetVoidPointer(0);
+  double factor;
+  for (unsigned int i=0; i < Ngrads; i++)
+    {
+    factor =  sqrt(this->BValues->GetValue(i)/this->MaxB);
+    data_r[0] = data[0] * factor;
+    data_r[1] = data[1] * factor;
+    data_r[2] = data[2] * factor;
+    data += 3;
+    data_r += 3;
+    }
+}
+
+//----------------------------------------------------------------------------
 int vtkTeemEstimateDiffusionTensor::SetGradientsToContext(tenEstimateContext *tec,Nrrd *ngrad, Nrrd *nbmat)
 {
   char *err = NULL;
   const int type = nrrdTypeDouble;
   size_t size[2];
-  size[0]=3;
-  size[1]=this->DiffusionGradients->GetNumberOfTuples();
-  double *data = (double *) this->DiffusionGradients->GetVoidPointer(0);
+  size[0] = 3;
+  size[1] = this->RescaledDiffusionGradients->GetNumberOfTuples();
+  double *data = (double *) this->RescaledDiffusionGradients->GetVoidPointer(0);
   if(nrrdWrap_nva(ngrad ,data,type,2,size)) {
     biffAdd(NRRD, err);
     sprintf(err,"%s:",this->GetClassName());
     return 1;
-  }
-
-  // To accomodate different b-values we might have to rescale the gradients
-  data = (double *) (ngrad ->data);
-  double factor;
-  for (unsigned int i=0; i< size[1]; i++) {
-   factor =  sqrt(this->BValues->GetValue(i)/this->MaxB);
-   data[0] = data[0] * factor;
-   data[1] = data[1] * factor;
-   data[2] = data[2] * factor;
-   data += 3;
   }
 
   //tenEstimateGradientsSet(tec,ngrad,maxB,!this->knownB0);
@@ -626,5 +644,3 @@ void vtkTeemEstimateDiffusionTensor::ThreadedExecute(vtkImageData *inData,
       return;
     }
 }
-
-
