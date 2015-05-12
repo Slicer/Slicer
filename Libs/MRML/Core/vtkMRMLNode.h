@@ -423,15 +423,23 @@ public:
     // Invoke pending custom modified events
     if (!this->CustomModifiedEventPending.empty())
       {
+      // Need to make a copy of the event IDs stored in this->CustomModifiedEventPending,
+      // because event invocation may add more events to this->CustomModifiedEventPending,
+      // which would then make the iterator invalid.
+      std::vector<int> customEventsToInvoke;
       for (std::map< int, int >::iterator it=this->CustomModifiedEventPending.begin(); it!=this->CustomModifiedEventPending.end(); ++it)
         {
         oldModifiedEventPending += it->second;
-        this->InvokeEvent(it->first);
+        customEventsToInvoke.push_back(it->first);
         }
       this->CustomModifiedEventPending.clear();
+      for (std::vector<int>::iterator it=customEventsToInvoke.begin(); it!=customEventsToInvoke.end(); ++it)
+        {
+        this->InvokeEvent(*it);
+        }
       }
-      return oldModifiedEventPending;
-      }
+    return oldModifiedEventPending;
+    }
 
   /// \brief This method allows the node to compress events.
   ///
