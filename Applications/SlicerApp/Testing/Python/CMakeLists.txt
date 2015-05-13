@@ -200,6 +200,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   # add as unit test for use at build/test time
   slicer_add_python_unittest(SCRIPT AtlasTests.py)
   slicer_add_python_unittest(SCRIPT AbdominalAtlasTest.py)
+  slicer_add_python_unittest(SCRIPT DTINotReproducibleIssue3977.py)
   slicer_add_python_unittest(SCRIPT KneeAtlasTest.py)
   slicer_add_python_unittest(SCRIPT fiber_visibility_crash2438.py)
   slicer_add_python_unittest(SCRIPT test_tractography_display.py)
@@ -223,6 +224,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
     AtlasTests.py
+    DTINotReproducibleIssue3977.py
     fiber_visibility_crash2438.py
     test_tractography_display.py
     labelToggleBug2049.py
