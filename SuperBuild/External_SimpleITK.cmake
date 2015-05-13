@@ -34,7 +34,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" PythonPacka
 ")
 
   set(SimpleITK_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
-  set(SimpleITK_GIT_TAG 0bbbd33d2cdee9c3971d91544e3c551c19a8ef8a ) # v0.9b01 plus a couple patches
+  set(SimpleITK_GIT_TAG 4531702ba9bfeb802b27b3795df1344b2626891b ) # v0.9.0
 
   ExternalProject_add(SimpleITK
     ${${proj}_EP_ARGS}
