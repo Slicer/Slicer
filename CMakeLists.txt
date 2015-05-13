@@ -430,6 +430,24 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} organization
 set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
 
 #-----------------------------------------------------------------------------
+# Home and favorite modules
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_DEFAULT_HOME_MODULE)
+  set(Slicer_DEFAULT_HOME_MODULE "Welcome" CACHE STRING "Name of the module that Slicer activates on start-up by default")
+endif()
+mark_as_advanced(Slicer_DEFAULT_HOME_MODULE)
+mark_as_superbuild(Slicer_DEFAULT_HOME_MODULE)
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} default home module [${Slicer_DEFAULT_HOME_MODULE}]")
+
+if(NOT DEFINED Slicer_DEFAULT_FAVORITE_MODULES)
+  set(Slicer_DEFAULT_FAVORITE_MODULES "SubjectHierarchy, Volumes, Models, Transforms, Markups, Editor" CACHE STRING "Name of the modules shown on the toolbar by default (comma-separated list)")
+endif()
+mark_as_advanced(Slicer_DEFAULT_FAVORITE_MODULES)
+mark_as_superbuild(Slicer_DEFAULT_FAVORITE_MODULES)
+message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} default favorite modules [${Slicer_DEFAULT_FAVORITE_MODULES}]")
+
+
+#-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_VERSION_MAJOR)

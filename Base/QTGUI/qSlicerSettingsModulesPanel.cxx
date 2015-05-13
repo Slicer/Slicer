@@ -121,9 +121,18 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
   this->DisableModulesListView->setFactoryManager( factoryManager );
   this->FavoritesModulesListView->setFactoryManager( factoryManager );
-  this->ModulesMenu->setCurrentModule("Welcome");
+  
+  this->ModulesMenu->setCurrentModule(Slicer_DEFAULT_HOME_MODULE);
+  
+  // Slicer_DEFAULT_FAVORITE_MODULES contains module names in a comma-separated list 
+  // (chosen this format because the same format is used for storing the favorites list in the .ini file).
+  QStringList favoritesRaw = QString(Slicer_DEFAULT_FAVORITE_MODULES).split(",", QString::SkipEmptyParts);
+  // The separator commas have been removed, but we also need need to remove leading and trailing spaces from the retrieved names.
   QStringList favorites;
-  favorites  << "SubjectHierarchy" << "Volumes" << "Models" << "Transforms" << "Markups" << "Editor";
+  foreach(QString s, favoritesRaw)
+    {
+    favorites << s.trimmed();
+    }
   this->FavoritesModulesListView->filterModel()->setShowModules(favorites);
 
   // Register settings
