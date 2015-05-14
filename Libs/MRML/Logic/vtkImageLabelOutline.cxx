@@ -98,9 +98,9 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   // Neighborhood around current voxel
   kernelSize = self->GetKernelSize();
   kernelMiddle = self->GetKernelMiddle();
-  hoodMin0 = - kernelMiddle[0];
-  hoodMin1 = - kernelMiddle[1];
-  hoodMin2 = - kernelMiddle[2];
+  hoodMin0 = kernelMiddle[0] - kernelSize[0]/2; // truncate on purpose
+  hoodMin1 = kernelMiddle[1] - kernelSize[1]/2; // to round down odd sizes
+  hoodMin2 = kernelMiddle[2] - kernelSize[2]/2;
   hoodMax0 = hoodMin0 + kernelSize[0] - 1;
   hoodMax1 = hoodMin1 + kernelSize[1] - 1;
   hoodMax2 = hoodMin2 + kernelSize[2] - 1;
