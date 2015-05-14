@@ -104,13 +104,13 @@ class HelperBox(object):
       merge = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, mergeName )
       merge.GetDisplayNode().SetAndObserveColorNodeID( self.colorSelector.currentNodeID )
       self.setMergeVolume( merge )
-    self.select()
+    self.select(merge)
 
-  def select(self):
+  def select(self, mergeVolume=None):
     """select master volume - load merge volume if one with the correct name exists"""
 
     self.master = self.masterSelector.currentNode()
-    self.merge = None
+    self.merge = mergeVolume
     merge = self.mergeVolume()
     mergeText = "None"
     if merge:
@@ -175,7 +175,7 @@ class HelperBox(object):
         if self.labelSelector:
           self.merge = self.labelSelector.currentNode()
       self.masterWhenMergeWasSet = self.master
-      self.select()
+      self.select(mergeVolume)
 
   def mergeVolume(self):
     """select merge volume"""
@@ -972,7 +972,7 @@ class HelperBox(object):
 
   # labelSelect callbacks (slots)
   def onLabelDialogApply(self):
-    self.setMergeVolume()
+    self.setMergeVolume(self.labelSelector.currentNode())
     self.labelSelect.hide()
   def onLabelDialogCreate(self):
     self.newMerge()
