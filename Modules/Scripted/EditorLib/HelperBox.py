@@ -189,7 +189,7 @@ class HelperBox(object):
         return self.merge
 
     self.merge = None
-    self.masterWhenMergeWasSemasterWhenMergeWasSet = None
+    self.masterWhenMergeWasSet = None
 
     # otherwise pick the merge based on the master name
     # - either return the merge volume or empty string
