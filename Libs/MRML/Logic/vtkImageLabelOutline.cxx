@@ -63,9 +63,6 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   int hoodMin0, hoodMax0, hoodMin1, hoodMax1, hoodMin2, hoodMax2;
   int hoodIdx0, hoodIdx1, hoodIdx2;
   T *hoodPtr0, *hoodPtr1, *hoodPtr2;
-  // For looping through the mask.
-  unsigned char *maskPtr, *maskPtr0, *maskPtr1, *maskPtr2;
-  vtkIdType maskInc0, maskInc1, maskInc2;
   // The extent of the whole input image
   int inImageMin0, inImageMin1, inImageMin2;
   int inImageMax0, inImageMax1, inImageMax2;
@@ -104,10 +101,6 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   hoodMax0 = hoodMin0 + kernelSize[0] - 1;
   hoodMax1 = hoodMin1 + kernelSize[1] - 1;
   hoodMax2 = hoodMin2 + kernelSize[2] - 1;
-
-  // Set up mask info
-  maskPtr = (unsigned char *)(self->GetMaskPointer());
-  self->GetMaskIncrements(maskInc0, maskInc1, maskInc2);
 
   // in and out should be marching through corresponding pixels.
   inPtr = (T *)(inData->GetScalarPointer(outMin0, outMin1, outMin2));
@@ -148,26 +141,22 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
           hoodPtr2 = inPtr0 - kernelMiddle[0] * inInc0
               - kernelMiddle[1] * inInc1 - kernelMiddle[2] * inInc2;
 
-          maskPtr2 = maskPtr;
           for (hoodIdx2 = hoodMin2; hoodIdx2 <= hoodMax2; ++hoodIdx2)
             {
             hoodPtr1 = hoodPtr2;
-            maskPtr1 = maskPtr2;
             for (hoodIdx1 = hoodMin1; hoodIdx1 <= hoodMax1;    ++hoodIdx1)
               {
               hoodPtr0 = hoodPtr1;
-              maskPtr0 = maskPtr1;
               for (hoodIdx0 = hoodMin0; hoodIdx0 <= hoodMax0; ++hoodIdx0)
                 {
-                if (*maskPtr0)
-                  {
-                  // handle boundaries
-                  if (outIdx0 + hoodIdx0 >= inImageMin0 &&
+                // handle boundaries
+                if (outIdx0 + hoodIdx0 >= inImageMin0 &&
                     outIdx0 + hoodIdx0 <= inImageMax0 &&
                     outIdx1 + hoodIdx1 >= inImageMin1 &&
                     outIdx1 + hoodIdx1 <= inImageMax1 &&
                     outIdx2 + hoodIdx2 >= inImageMin2 &&
                     outIdx2 + hoodIdx2 <= inImageMax2)
+                  {
                     {
                     // If the neighbor not identical, use this pixel
                     // (set the output to foreground)
@@ -176,13 +165,10 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
                     }
                   }
                 hoodPtr0 += inInc0;
-                maskPtr0 += maskInc0;
                 }//for0
               hoodPtr1 += inInc1;
-              maskPtr1 += maskInc1;
               }//for1
             hoodPtr2 += inInc2;
-            maskPtr2 += maskInc2;
             }//for2
           }//if
         inPtr0 += inInc0;
