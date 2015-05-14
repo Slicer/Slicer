@@ -104,12 +104,14 @@ class HelperBox(object):
       merge = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, mergeName )
       merge.GetDisplayNode().SetAndObserveColorNodeID( self.colorSelector.currentNodeID )
       self.setMergeVolume( merge )
-    self.select(merge)
+    self.select(mergeVolume=merge)
 
-  def select(self, mergeVolume=None):
+  def select(self, masterVolume=None, mergeVolume=None):
     """select master volume - load merge volume if one with the correct name exists"""
 
-    self.master = self.masterSelector.currentNode()
+    if masterVolume == None:
+        masterVolume = self.masterSelector.currentNode()
+    self.master = masterVolume
     self.merge = mergeVolume
     merge = self.mergeVolume()
     mergeText = "None"
@@ -144,6 +146,9 @@ class HelperBox(object):
     # (such as the EditColor) will know to update and enable themselves
     self.editUtil.getParameterNode().Modified()
 
+    # make sure the selector is up to date
+    self.masterSelector.setCurrentNode(self.master)
+
     if self.selectCommand:
       self.selectCommand()
 
@@ -155,9 +160,8 @@ class HelperBox(object):
   def setVolumes(self,masterVolume,mergeVolume):
     """set both volumes at the same time - trick the callback into
     thinking that the merge volume is already set so it won't prompt for a new one"""
-    self.merge = mergeVolume
     self.masterWhenMergeWasSet = masterVolume
-    self.setMasterVolume(masterVolume)
+    self.select(masterVolume=masterVolume, mergeVolume=mergeVolume)
 
   def setMasterVolume(self,masterVolume):
     """select merge volume"""
@@ -175,7 +179,7 @@ class HelperBox(object):
         if self.labelSelector:
           self.merge = self.labelSelector.currentNode()
       self.masterWhenMergeWasSet = self.master
-      self.select(mergeVolume)
+      self.select(masterVolume=self.master,mergeVolume=mergeVolume)
 
   def mergeVolume(self):
     """select merge volume"""
@@ -981,7 +985,7 @@ class HelperBox(object):
   def getNodeByName(self, name):
     """get the first MRML node that has the given name
     - use a regular expression to match names post-pended with addition characters"""
-    return slicer.mrmlScene.GetFirstNode(name, 'vtkMRMLVolumeNode', (0,), False)
+    return slicer.util.getNode(name+'*')
 
   def errorDialog(self, message):
     self.dialog = qt.QErrorMessage()
