@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource prefix="/">
+    <file>Icons/Ellipsis.png</file>
     <file>Icons/Markups.png</file>
     <file>Icons/MarkupsAddFiducial.png</file>
     <file>Icons/MarkupsDelete.png</file>

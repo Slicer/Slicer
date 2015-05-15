@@ -638,8 +638,11 @@ class DICOMDetailsPopup(object):
           continue
         inputFileListCopy = copy.deepcopy(fileList)
         loadableFileListCopy = copy.deepcopy(loadable.files)
-        inputFileListCopy.sort()
-        loadableFileListCopy.sort()
+        try:
+          inputFileListCopy.sort()
+          loadableFileListCopy.sort()
+        except Exception,e:
+          pass
         for pair in zip(inputFileListCopy,loadableFileListCopy):
           if pair[0] != pair[1]:
             print(pair[0]+' != '+pair[1])
