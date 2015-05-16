@@ -105,7 +105,6 @@ void vtkSlicerTractographyInteractiveSeedingLogic::AddMRMLNodesObservers()
 {
   if (this->TractographyInteractiveSeedingNode)
     {
-
     vtkMRMLDiffusionTensorVolumeNode *dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
           this->GetMRMLScene()->GetNodeByID(this->TractographyInteractiveSeedingNode->GetInputVolumeRef()));
     vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, dtiNode);
@@ -301,16 +300,18 @@ void vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForOneSeed(vtkSee
   streamer->SetRadiusOfCurvature(stoppingCurvature);
   streamer->SetIntegrationStepLength(integrationStepLength);
 
-#if (VTK_MAJOR_VERSION <= 5)
   // Temp fix to provide a scalar
-  seed->GetInputTensorField()->GetPointData()->SetScalars(
-        volumeNode->GetImageData()->GetPointData()->GetScalars());
+#if (VTK_MAJOR_VERSION <= 5)
+  vtkImageData* inputTensorField = seed->GetInputTensorField();
+#else
+  vtkImageData* inputTensorField = vtkImageData::SafeDownCast(
+        seed->GetInputTensorFieldConnection()->GetProducer()->GetOutputDataObject(0));
 #endif
+  inputTensorField->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
 
   vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(transformableNode);
   vtkMRMLMarkupsFiducialNode *markupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(transformableNode);
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(transformableNode);
-
 
   // if annotation
   if (annotationNode && annotationNode->GetNumberOfControlPoints() &&
@@ -421,7 +422,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
 
   vtkNew<vtkSeedTracts> seed;
 
-
   //1. Set Input
 
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
@@ -440,7 +440,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
       seed->SetFilePrefix(parametersNode->GetFilePrefix() );
       }
     }
-
 
   //Do scale IJK
   double sp[3];
@@ -500,12 +499,10 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
         continue;
         }
 
-
       this->CreateTractsForOneSeed(seed.GetPointer(), volumeNode, annotationNode,
                                    stoppingMode, stoppingValue, stoppingCurvature,
                                    integrationStepLength, minPathLength, regionSize,
                                    sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
-
       }
     }
   else if (annotationNode) // loop over points in the models
@@ -514,7 +511,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
                                  stoppingMode, stoppingValue, stoppingCurvature,
                                  integrationStepLength, minPathLength, regionSize,
                                  sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
-
     }
   else if (markupsFiducialNode) // loop over points in the markup
     {
@@ -529,7 +525,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
                                  stoppingMode, stoppingValue, stoppingCurvature,
                                  integrationStepLength, minPathLength, regionSize,
                                  sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
-
     }
 
   //6. Extra5ct PolyData in RAS
@@ -635,7 +630,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
 
     // count on fiberNode->SetAndObservePolyData() sending PolyDataModifiedEvent
     //fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
-
   }
 
   return 1;
@@ -646,7 +640,6 @@ void vtkSlicerTractographyInteractiveSeedingLogic::ProcessMRMLNodesEvents(vtkObj
                                                                       unsigned long event,
                                                                       void *callData)
 {
-
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
@@ -840,18 +833,18 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     //Do scale IJK
     double sp[3];
     seedingNode->GetSpacing(sp);
-    vtkNew<vtkImageChangeInformation> ici;
+    vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
     ici->SetOutputSpacing(sp);
 #if (VTK_MAJOR_VERSION <= 5)
     ici->SetInput(imageCast->GetOutput());
     ici->GetOutput()->Update();
     ROI = ici->GetOutput();
 #else
+    imageCast->Update();
     ici->SetInputConnection(imageCast->GetOutputPort());
+    ici->Update();
     ROIConnection = ici->GetOutputPort();
 #endif
-
-
 
     // Set up the matrix that will take points in ROI
     // to RAS space.  Code assumes this is world space
@@ -889,8 +882,8 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
     th->ReplaceInOn();
     th->ReplaceOutOn();
     th->SetOutputScalarTypeToShort();
-#if (VTK_MAJOR_VERSION <= 5)
     th->Update();
+#if (VTK_MAJOR_VERSION <= 5)
     ROI = th->GetOutput();
 #else
     ROIConnection = th->GetOutputPort();
@@ -963,13 +956,11 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
 
   // 3. Set up ROI (not based on Cl mask), from input now
 
-
   // Create Cl mask
   /**
   iwriter->SetInput(imageCast->GetOutput());
   iwriter->SetFileName("C:/Temp/cast.nhdr");
   iwriter->Write();
-
 
   vtkNew<vtkDiffusionTensorMathematicsSimple> math;
 #if (VTK_MAJOR_VERSION <= 5)
@@ -1014,7 +1005,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
   trans2->Inverse();
   seed->SetROIToWorld(trans2.GetPointer());
 
-
   // PENDING: Do merging with input ROI
 
 #if (VTK_MAJOR_VERSION <= 5)
@@ -1025,7 +1015,6 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
   seed->SetInputROIValue(ROIlabel);
   seed->UseStartingThresholdOn();
   seed->SetStartingThreshold(linearMeasureStart);
-
 
   // 4. Set Tractography specific parameters
 
@@ -1063,6 +1052,9 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
   streamer->SetMaximumPropagationDistance(maxPathLength);
   streamer->SetRadiusOfCurvature(stoppingCurvature);
   streamer->SetIntegrationStepLength(integrationStepLength);
+
+  // Temp fix to provide a scalar
+  // seed->GetInputTensorField()->GetPointData()->SetScalars(math->GetOutput()->GetPointData()->GetScalars());
 
   // 5. Run the thing
   seed->SeedStreamlinesInROI();
