@@ -28,6 +28,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.layoutManager = layoutManager
     if self.layoutManager == None:
       self.layoutManager = slicer.app.layoutManager()
+    self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
 
     self.dataProbeUtil = DataProbeUtil.DataProbeUtil()
 
@@ -225,6 +226,10 @@ class SliceAnnotations(VTKObservationMixin):
     self.rangeLabelFormatLineEdit.connect('returnPressed()',self.onRangeLabelFormatLineEdit)
 
     restorDefaultsButton.connect('clicked()', self.restoreDefaultValues)
+
+  def onLayoutManagerDestroyed(self):
+    self.layoutManager = slicer.app.layoutManager()
+    self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
 
   def onSliceViewAnnotationsCheckbox(self):
     if self.sliceViewAnnotationsCheckBox.checked:
