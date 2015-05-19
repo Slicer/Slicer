@@ -229,7 +229,8 @@ class SliceAnnotations(VTKObservationMixin):
 
   def onLayoutManagerDestroyed(self):
     self.layoutManager = slicer.app.layoutManager()
-    self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
+    if self.layoutManager:
+      self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
 
   def onSliceViewAnnotationsCheckbox(self):
     if self.sliceViewAnnotationsCheckBox.checked:
