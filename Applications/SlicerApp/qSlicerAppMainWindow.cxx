@@ -1075,9 +1075,16 @@ void qSlicerAppMainWindow::disclaimer()
     {
     return;
     }
-  QString message = QString("Thank you for using %1!\n\n"
-                            "This software is not intended for clinical use.")
-    .arg(app->applicationName() + " " + app->applicationVersion());
+
+  QString message = QString(Slicer_DISCLAIMER_AT_STARTUP);
+  if (message.isEmpty())
+    {
+    // No disclaimer message to show, skip the popup
+    return;
+    }
+
+  // Replace "%1" in the text by the name and version of the application
+  message = message.arg(app->applicationName() + " " + app->applicationVersion());
 
   ctkMessageBox* disclaimerMessage = new ctkMessageBox(this);
   disclaimerMessage->setAttribute( Qt::WA_DeleteOnClose, true );

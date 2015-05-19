@@ -14,6 +14,8 @@
 #define Slicer_DEFAULT_HOME_MODULE "@Slicer_DEFAULT_HOME_MODULE@"
 #define Slicer_DEFAULT_FAVORITE_MODULES "@Slicer_DEFAULT_FAVORITE_MODULES@"
 
+#define Slicer_DISCLAIMER_AT_STARTUP "@Slicer_DISCLAIMER_AT_STARTUP@"
+
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
 #pragma warning ( disable : 4275 )
 #endif
