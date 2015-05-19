@@ -56,9 +56,10 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
       if name == "":
         name = "Unknown"
       candygramValue = slicer.dicomDatabase.fileValue(f, self.tags['candygram'])
+
       if candygramValue:
         # default loadable includes all files for series
-        loadable = DICOMLib.DICOMLoadable()
+        loadable = DICOMLoadable()
         loadable.files = [f]
         loadable.name = name + ' - as Slicer Scene'
         loadable.selected = True
@@ -72,8 +73,14 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     """
 
     f = loadable.files[0]
+
     try:
-      zipSize = int(slicer.dicomDatabase.fileValue(f, self.tags['zipSize']))
+      # TODO: this method should work, but not correcly encoded in real tag
+      zipSizeString = slicer.dicomDatabase.fileValue(f, self.tags['zipSize'])
+      zipSize = int(zipSizeString)
+      # instead use this hack where the number is in the creator string
+      candygramValue = slicer.dicomDatabase.fileValue(f, self.tags['candygram'])
+      zipSize = int(candygramValue.split(' ')[2])
     except ValueError:
       print("Could not get zipSize for %s" % f)
       return False
@@ -85,7 +92,12 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     # so we can seek from the end by the size of the zip data
     sceneDir = tempfile.mkdtemp('', 'sceneImport', slicer.app.temporaryPath)
     fp = open(f, 'rb')
-    fp.seek(-1 * (1+zipSize), os.SEEK_END)
+
+    #The previous code only works for files with odd number of bits.
+    if zipSize % 2 == 0:
+      fp.seek(-1 * (zipSize), os.SEEK_END)
+    else:
+      fp.seek(-1 * (1+zipSize), os.SEEK_END)
     zipData = fp.read(zipSize)
     fp.close()
 
@@ -128,6 +140,9 @@ class DICOMSlicerDataBundlePlugin:
     and was partially funded by NIH grant 3P41RR013218.
     """
 
+    # don't show this module - it only appears in the DICOM module
+    parent.hidden = True
+
     # Add this extension to the DICOM module's list for discovery when the module
     # is created.  Since this module may be discovered before DICOM itself,
     # create the list if it doesn't already exist.
@@ -136,3 +151,21 @@ class DICOMSlicerDataBundlePlugin:
     except AttributeError:
       slicer.modules.dicomPlugins = {}
     slicer.modules.dicomPlugins['DICOMSlicerDataBundlePlugin'] = DICOMSlicerDataBundlePluginClass
+
+#
+# DICOMSlicerDataBundleWidget
+#
+
+class DICOMSlicerDataBundleWidget:
+  def __init__(self, parent = None):
+    self.parent = parent
+
+  def setup(self):
+    # don't display anything for this widget - it will be hidden anyway
+    pass
+
+  def enter(self):
+    pass
+
+  def exit(self):
+    pass

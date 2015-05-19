@@ -2,6 +2,7 @@ import os
 import glob
 import tempfile
 import zipfile
+import sys
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
@@ -96,6 +97,22 @@ class DICOMExportScene(object):
     imageReader.SetFileName(self.imageFile)
     imageReader.Update()
 
+    #add storage node for each storable node in the scene, add file name if file name doesn't exist
+    # TODO: this could be moved to appLogic.SaveSceneToSlicerDataBundleDirectory
+    lnodes = slicer.mrmlScene.GetNodesByClass("vtkMRMLLinearTransformNode")
+    lnum = lnodes.GetNumberOfItems()
+    for itemNum in xrange(lnum):
+      print(itemNum)
+      node = lnodes.GetItemAsObject(itemNum)
+      snode = node.GetStorageNode()
+      if snode == None:
+        print "something is none"
+        snode = node.CreateDefaultStorageNode()
+        slicer.mrmlScene.AddNode(snode)
+        node.SetAndObserveStorageNodeID(snode.GetID())
+      if snode.GetFileName() == None:
+        snode.SetFileName(node.GetID()+".h5")
+
     # save the scene to the temp dir
     self.progress('Saving Scene...')
     appLogic = slicer.app.applicationLogic()
@@ -123,13 +140,19 @@ class DICOMExportScene(object):
     # append this to the dumped output and save the result as self.dicomDirectory/dcm.dump
     # with %s as self.zipFile and %d being its size in bytes
     zipSizeString = "%d" % zipSize
-    candygram = """(cadb,0010) LO [3D Slicer Lollipop]           #  %d, 1 PrivateCreator
-(cadb,1008) UL [%s]                                     #   4, 1 Unknown Tag & Data
+
+    # hack: encode the file zip file size as part of the creator string
+    # because none of the normal types (UL, DS, LO) seem to survive
+    # the dump2dcm step (possibly due to the Unknown nature of the private tag)
+    creatorString = "3D Slicer %s" % zipSizeString
+    candygram = """(cadb,0010) LO [%s]           #  %d, 1 PrivateCreator
+(cadb,1008) LO [%s]                                   #   4, 1 Unknown Tag & Data
 (cadb,1010) OB =%s                                      #  %d, 1 Unknown Tag & Data
-""" % (len('3D Slicer Lollipop'), zipSizeString, self.zipFile, zipSize)
+""" % (creatorString, len(creatorString), zipSizeString, self.zipFile, zipSize)
 
-    dump = dump + candygram
+    dump = str(dump) + candygram
 
+    print('dumping to: %s/dump.dcm' % self.dicomDirectory, 'w')
     fp = open('%s/dump.dcm' % self.dicomDirectory, 'w')
     fp.write(dump)
     fp.close()

@@ -537,6 +537,7 @@ void qSlicerDICOMExportDialog::exportEntireScene()
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.evalScript( QString(
+    "import DICOMLib\n"
     "exporter = DICOMLib.DICOMExportScene()\n"
     "exporter.export()\n") );
 
