@@ -59,7 +59,6 @@
        <property name="renameEnabled">
         <bool>true</bool>
        </property>
-       <zorder>MarkupsFiducialTableWidget</zorder>
       </widget>
      </item>
      <item>
