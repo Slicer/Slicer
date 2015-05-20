@@ -208,6 +208,11 @@ void qSlicerApplicationPrivate::init()
 
   q->setupFileLogging();
 
+  if (!this->CoreCommandOptions->displayMessageAndExit())
+    {
+    q->displayApplicationInformations();
+    }
+
   //----------------------------------------------------------------------------
   // Settings Dialog
   //----------------------------------------------------------------------------
@@ -445,10 +450,6 @@ void qSlicerApplication::handlePreApplicationCommandLineArguments()
 
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
-  if (!options->displayMessageAndExit())
-    {
-    this->displayApplicationInformations();
-    }
 }
 
 //-----------------------------------------------------------------------------
