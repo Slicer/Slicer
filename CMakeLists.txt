@@ -562,6 +562,8 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkFiltersFlowPaths
     vtkFiltersGeometry
     vtkGUISupportQtOpenGL
+    vtkGUISupportQtWebkit
+    vtkGUISupportQtSQL
     vtkIOImage
     vtkIOLegacy
     vtkIOPLY
