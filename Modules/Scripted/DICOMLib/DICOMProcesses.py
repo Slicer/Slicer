@@ -176,6 +176,7 @@ class DICOMListener(DICOMProcess):
       # start the server!
       onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
       args = [str(self.port),
+          '--accept-all',
           '--output-directory' , self.incomingDir,
           '--exec-sync', '--exec-on-reception', onReceptionCallback]
       print("starting DICOM listener")
