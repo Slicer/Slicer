@@ -331,6 +331,12 @@ int vtkPolyDataTensorToColor::RequestData(
       case vtkDiffusionTensorMathematics::VTK_TENS_MIN_EIGENVALUE:
         s = w[2];
         break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_PARALLEL_DIFFUSIVITY:
+        s = w[0];
+        break;
+      case vtkDiffusionTensorMathematics::VTK_TENS_PERPENDICULAR_DIFFUSIVITY:
+        s = 0.5*(w[1]+w[2]);
+        break;
       case vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION:
         double v_maj[3];
         v_maj[0]=v[0][0];
