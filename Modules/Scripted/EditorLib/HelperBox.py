@@ -199,7 +199,7 @@ class HelperBox(object):
     # - either return the merge volume or empty string
     masterName = self.master.GetName()
     mergeName = masterName+"-label"
-    self.merge = self.getNodeByName( mergeName )
+    self.merge = self.getNodeByName( mergeName, className=self.master.GetClassName() )
     return self.merge
 
   def structureVolume(self,structureName):
@@ -208,7 +208,7 @@ class HelperBox(object):
       return None
     masterName = self.master.GetName()
     structureVolumeName = masterName+"-%s-label"%structureName
-    return self.getNodeByName(structureVolumeName)
+    return self.getNodeByName(structureVolumeName, className=self.master.GetClassName())
 
   def promptStructure(self):
     """ask user which label to create"""
@@ -256,14 +256,14 @@ class HelperBox(object):
 
     if options.find("noEdit") < 0:
       self.edit( label )
-      
+
   def deleteSelectedStructure(self, confirm=True):
     """delete the currently selected structure"""
-    
+
     merge = self.mergeVolume()
     if not merge:
       return
-    
+
     selectionModel = self.structuresView.selectionModel()
     selected = selectionModel.currentIndex().row()
 
@@ -271,16 +271,16 @@ class HelperBox(object):
 
       structureName = self.structures.item(selected,2).text()
       labelNode = slicer.util.getNode(self.structures.item(selected,3).text())
-    
+
       if confirm:
         if not self.confirmDialog( "Delete \'%s\' volume?" % structureName ):
           return
-        
+
       slicer.mrmlScene.SaveStateForUndo()
-      
+
       slicer.mrmlScene.RemoveNode( labelNode )
       self.updateStructures()
-    
+
 
   def deleteStructures(self, confirm=True):
     """delete all the structures"""
@@ -786,7 +786,7 @@ class HelperBox(object):
     self.deleteStructuresButton.objectName = 'DeleteStructureButton'
     self.deleteStructuresButton.setToolTip( "Delete all the structure volumes from the scene.\n\nNote: to delete individual structure volumes, use the Data Module." )
     self.allButtonsFrame.layout().addWidget(self.deleteStructuresButton)
-    
+
     # delete selected structures button
 
     self.deleteSelectedStructureButton = qt.QPushButton("Delete Selected", self.allButtonsFrame)
@@ -982,10 +982,19 @@ class HelperBox(object):
     self.newMerge()
     self.labelSelect.hide()
 
-  def getNodeByName(self, name):
+  def getNodeByName(self, name, className=None):
     """get the first MRML node that has the given name
-    - use a regular expression to match names post-pended with addition characters"""
-    return slicer.util.getNode(name+'*')
+    - use a regular expression to match names post-pended with addition characters
+    - optionally specify a classname that must match
+    """
+    nodes = slicer.util.getNodes(name+'*')
+    for nodeName in nodes.keys():
+      if not className:
+        return (nodes[nodeName]) # return the first one
+      else:
+        if nodes[nodeName].IsA(className):
+          return (nodes[nodeName])
+    return None
 
   def errorDialog(self, message):
     self.dialog = qt.QErrorMessage()
