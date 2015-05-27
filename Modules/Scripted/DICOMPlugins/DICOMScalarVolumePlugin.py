@@ -343,7 +343,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       return []
 
     # Define basic properties of the exportable
-    exportable = slicer.qSlicerDICOMExportable(slicer.app)
+    exportable = slicer.qSlicerDICOMExportable()
     exportable.name = self.loadType
     exportable.tooltip = "Creates a series of DICOM files from scalar volumes"
     exportable.nodeID = node.GetID()

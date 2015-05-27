@@ -236,13 +236,13 @@ void qSlicerDICOMExportDialog::examineSelectedNode()
     }
 
   // Get exportables from DICOM plugins for selection
-  // One plugin should return one exportable for one series, but nevertheless
-  // a list is returned for convenient concatenation (without type check etc.)
-  QList<QVariant> exportablesVariantList;
+  QMap<QString,QList<qSlicerDICOMExportable*> > exportablesByPlugin;
   foreach (vtkMRMLSubjectHierarchyNode* selectedSeriesNode, selectedSeriesNodes)
     {
     PythonQt::init();
     PythonQtObjectPtr context = PythonQt::self()->getMainModule();
+    // A plugin should return one exportable for one series, but nevertheless
+    // a list is returned for convenient concatenation (without type check etc.)
     context.evalScript( QString(
       "exportables = []\n"
       "selectedNode = slicer.mrmlScene.GetNodeByID('%1')\n"
@@ -252,34 +252,32 @@ void qSlicerDICOMExportDialog::examineSelectedNode()
       .arg(selectedSeriesNode->GetID()) );
 
     // Extract resulting exportables from python
-    exportablesVariantList.append(context.getVariable("exportables").toList());
-    }
+    QVariantList exportablesVariantList = context.getVariable("exportables").toList();
 
-  // Group exportables by provider plugin
-  QMap<QString,QList<qSlicerDICOMExportable*> > exportablesByPlugin;
-  foreach(QVariant exportableVariant, exportablesVariantList)
-    {
-    // Get exportable object (to compose item text)
-    qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(
-      exportableVariant.value<QObject*>() );
-    if (!exportable)
+    // Group exportables by provider plugin
+    foreach(QVariant exportableVariant, exportablesVariantList)
       {
-      qCritical() << "qSlicerDICOMExportDialog::examineSelectedNode: Invalid exportable returned by DICOM plugin for " << currentNode->GetNameWithoutPostfix().c_str();
-      continue;
-      }
-
-    QString plugin = exportable->pluginClass();
-    if (!exportablesByPlugin.contains(plugin))
-      {
-      QList<qSlicerDICOMExportable*> firstExportableForPlugin;
-      firstExportableForPlugin.append(exportable);
-      exportablesByPlugin[plugin] = firstExportableForPlugin;
-      }
-    else
-      {
-      exportablesByPlugin[plugin].append(exportable);
-      }
+      qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(
+        exportableVariant.value<QObject*>() );
+      if (!exportable)
+        {
+        qCritical() << "qSlicerDICOMExportDialog::examineSelectedNode: Invalid exportable returned by DICOM plugin for " << currentNode->GetNameWithoutPostfix().c_str();
+        continue;
+        }
+      exportable->setParent(this); // Take ownership to prevent destruction
+      QString plugin = exportable->pluginClass();
+      if (!exportablesByPlugin.contains(plugin))
+        {
+        QList<qSlicerDICOMExportable*> firstExportableForPlugin;
+        firstExportableForPlugin.append(exportable);
+        exportablesByPlugin[plugin] = firstExportableForPlugin;
+        }
+      else
+        {
+        exportablesByPlugin[plugin].append(exportable);
+        }
     }
+  }
   // Map the grouped exportables by confidence values so that the highest confidence is on top
   QMap<double,QList<qSlicerDICOMExportable*> > exportablesByConfidence;
   foreach(QList<qSlicerDICOMExportable*> exportablesForPlugin, exportablesByPlugin)
@@ -537,7 +535,6 @@ void qSlicerDICOMExportDialog::exportEntireScene()
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.evalScript( QString(
-    "import DICOMLib\n"
     "exporter = DICOMLib.DICOMExportScene()\n"
     "exporter.export()\n") );
 
