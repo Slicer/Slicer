@@ -255,8 +255,19 @@ class HelperBox(object):
       self.updateStructures()
 
     if options.find("noEdit") < 0:
-      self.edit( label )
-
+      self.selectStructure(self.structures.rowCount()-1)
+      
+  
+  def selectStructure(self, idx):
+    """programmatically select the specified structure"""
+    selectionModel = self.structuresView.selectionModel()
+    selectionModel.select(qt.QItemSelection(self.structures.index(idx,0), 
+                                            self.structures.index(idx,4)), 
+                                            selectionModel.ClearAndSelect)
+    selectionModel.setCurrentIndex(self.structures.index(idx,0), selectionModel.NoUpdate)
+    self.structuresView.activated(self.structures.index(idx,0))
+    
+    
   def deleteSelectedStructure(self, confirm=True):
     """delete the currently selected structure"""
 
@@ -280,7 +291,12 @@ class HelperBox(object):
 
       slicer.mrmlScene.RemoveNode( labelNode )
       self.updateStructures()
-
+      if self.structures.rowCount() > 0:
+        self.selectStructure((selected-1) if (selected-1 >= 0) else 0)
+      else:
+        self.select()
+        self.edit(0)
+    
 
   def deleteStructures(self, confirm=True):
     """delete all the structures"""
@@ -304,6 +320,8 @@ class HelperBox(object):
     for volumeNode in volumeNodes:
       slicer.mrmlScene.RemoveNode( volumeNode )
     self.updateStructures()
+    self.select()
+    self.edit(0)
 
   def mergeStructures(self,label="all"):
     """merge the named or all structure labels into the master label"""
