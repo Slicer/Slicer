@@ -461,6 +461,13 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         handle1->GetProperty()->SetColor(pointDisplayNode->GetColor());
         handle2->GetProperty()->SetColor(pointDisplayNode->GetColor());
         }
+      // opacity
+      handle1->GetProperty()->SetOpacity(pointDisplayNode->GetOpacity());
+      handle2->GetProperty()->SetOpacity(pointDisplayNode->GetOpacity());
+      // scale
+      handle1->SetHandleSize(pointDisplayNode->GetGlyphScale());
+      handle2->SetHandleSize(pointDisplayNode->GetGlyphScale());
+
       }
     if (textDisplayNode)
       {
@@ -556,6 +563,12 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       }
     if (pointDisplayNode)
       {
+      // opacity
+      handle1->GetProperty()->SetOpacity(pointDisplayNode->GetOpacity());
+      handle2->GetProperty()->SetOpacity(pointDisplayNode->GetOpacity());
+      // scale
+      handle1->SetHandleSize(pointDisplayNode->GetGlyphScale());
+      handle2->SetHandleSize(pointDisplayNode->GetGlyphScale());
       // use this scale for the ticks
       rep->SetGlyphScale(pointDisplayNode->GetGlyphScale());
       }
