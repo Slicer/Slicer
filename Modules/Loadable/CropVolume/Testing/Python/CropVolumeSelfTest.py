@@ -184,10 +184,10 @@ class CropVolumeSelfTestTest(unittest.TestCase):
     self.delayDisplay('Test passed')
 
   def downloadMRHead(self):
-    uri = 'http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd'
-    name = 'MRHead'
-    vl = slicer.modules.volumes.logic()
-    volumeNode = vl.AddArchetypeVolume(uri, name, 0)
-    return volumeNode
+    import SampleData
+    sampleDataLogic = SampleData.SampleDataLogic()
+    self.delayDisplay('Getting MR Head Volume')
+    mrHeadVolume = sampleDataLogic.downloadMRHead()
+    return mrHeadVolume
 
 
