@@ -35,6 +35,9 @@
 // qMRML includes
 #include "qMRMLVolumeWidget.h"
 
+// VTK includes
+#include <vtkWeakPointer.h>
+
 class ctkPopupWidget;
 class ctkRangeWidget;
 
@@ -72,8 +75,8 @@ public slots:
   virtual void setSingleStep(double singleStep);
 
 protected:
-  vtkMRMLScalarVolumeNode* VolumeNode;
-  vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
+  vtkWeakPointer<vtkMRMLScalarVolumeNode> VolumeNode;
+  vtkWeakPointer<vtkMRMLScalarVolumeDisplayNode> VolumeDisplayNode;
   ctkPopupWidget* PopupWidget;
   ctkRangeWidget* RangeWidget;
   double DisplayScalarRange[2];
