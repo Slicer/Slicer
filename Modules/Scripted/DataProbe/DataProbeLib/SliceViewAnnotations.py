@@ -465,7 +465,7 @@ class SliceAnnotations(VTKObservationMixin):
       self.colorScalarBarCollapsibleButton.enabled = False
       # Remove Observers
       for sliceViewName in self.sliceViewNames:
-        sliceWidget = layoutManager.sliceWidget(sliceViewName)
+        sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
         sl = sliceWidget.sliceLogic()
         self.makeScalingRuler(sl)
         self.makeColorScalarBar(sl)
