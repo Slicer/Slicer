@@ -62,7 +62,13 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
       print("No Data Probe frame - cannot create DataProbe")
       return
     self.infoWidget = DataProbeInfoWidget(parent,type='small')
+    self.infoWidget.onShowImage(False)
     parent.layout().insertWidget(0,self.infoWidget.frame)
+
+  def showZoomedSlice(self, value=False):
+    self.showZoomedSlice = value
+    if self.infoWidget:
+      self.infoWidget.onShowImage(value)
 
 class DataProbeInfoWidget(object):
 
@@ -85,8 +91,16 @@ class DataProbeInfoWidget(object):
     modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
     self.iconsDIR = modulePath + '/Resources/Icons'
 
+    self.imageCrop = vtk.vtkExtractVOI()
+    self.imageZoom = 10
+    self.showImage = False
+
+    self.painter = qt.QPainter()
+    self.pen = qt.QPen()
+
     if type == 'small':
       self.createSmall()
+
 
     #Helper class to calculate and display tensor scalars
     self.calculateTensorScalars = CalculateTensorScalars()
@@ -210,7 +224,17 @@ class DataProbeInfoWidget(object):
         self.layerNames[layer].setText( "" )
         self.layerIJKs[layer].setText( "" )
         self.layerValues[layer].setText( "" )
+      self.imageLabel.hide()
+      self.viewerColor.hide()
+      self.viewInfo.hide()
+      self.viewerFrame.hide()
+      self.showImageBox.show()
       return
+
+    self.viewerColor.show()
+    self.viewInfo.show()
+    self.viewerFrame.show()
+    self.showImageBox.hide()
 
     self.currentLayoutName = sliceNode.GetLayoutName()
 
@@ -247,6 +271,7 @@ class DataProbeInfoWidget(object):
       except ValueError:
         return 0
 
+    hasVolume = False
     layerLogicCalls = (('L', sliceLogic.GetLabelLayer),
                        ('F', sliceLogic.GetForegroundLayer),
                        ('B', sliceLogic.GetBackgroundLayer))
@@ -255,6 +280,7 @@ class DataProbeInfoWidget(object):
       volumeNode = layerLogic.GetVolumeNode()
       ijk = [0, 0, 0]
       if volumeNode:
+        hasVolume = True
         xyToIJK = layerLogic.GetXYToIJKTransform()
         ijkFloat = xyToIJK.TransformDoublePoint(xyz)
         ijk = [_roundInt(value) for value in ijkFloat]
@@ -264,6 +290,39 @@ class DataProbeInfoWidget(object):
         "({i:4d}, {j:4d}, {k:4d})".format(i=ijk[0], j=ijk[1], k=ijk[2]) if volumeNode else "")
       self.layerValues[layer].setText(
         "<b>%s</b>" % self.getPixelString(volumeNode,ijk) if volumeNode else "")
+
+    # set image
+    if (not slicer.mrmlScene.IsBatchProcessing()) and sliceLogic and hasVolume and self.showImage:
+      self.imageCrop.SetInputConnection(sliceLogic.GetBlend().GetOutputPort())
+      xyzInt = [0, 0, 0]
+      xyzInt = [_roundInt(value) for value in xyz]
+      dims = sliceLogic.GetBlend().GetOutput().GetDimensions()
+      minDim = min(dims[0],dims[1])
+      imageSize = _roundInt(minDim/self.imageZoom/2.0)
+      imin = max(0,xyzInt[0]-imageSize)
+      imax = min(dims[0]-1,  xyzInt[0]+imageSize)
+      jmin = max(0,xyzInt[1]-imageSize)
+      jmax = min(dims[1]-1,  xyzInt[1]+imageSize)
+      if (imin <= imax) and (jmin <= jmax):
+        self.imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
+        self.imageCrop.Update()
+        vtkImage = self.imageCrop.GetOutput()
+        if vtkImage:
+          qImage = qt.QImage()
+          slicer.qMRMLUtils().vtkImageDataToQImage(vtkImage, qImage)
+          self.imagePixmap = self.imagePixmap.fromImage(qImage)
+          self.imagePixmap = self.imagePixmap.scaled(self.imageLabel.size, qt.Qt.KeepAspectRatio, qt.Qt.FastTransformation)
+
+          # draw crosshair
+          self.painter.begin(self.imagePixmap)
+          self.pen.setColor(color)
+          self.painter.setPen(self.pen)
+          self.painter.drawLine(0,self.imagePixmap.height()/2, self.imagePixmap.width(), self.imagePixmap.height()/2)
+          self.painter.drawLine(self.imagePixmap.width()/2,0, self.imagePixmap.width()/2, self.imagePixmap.height())
+          self.painter.end()
+
+          self.imageLabel.setPixmap(self.imagePixmap)
+          self.onShowImage(self.showImage)
 
     sceneName = slicer.mrmlScene.GetURL()
     if sceneName != "":
@@ -285,6 +344,20 @@ class DataProbeInfoWidget(object):
     self.goToModule.connect("clicked()", self.onGoToModule)
     # hide this for now - there's not much to see in the module itself
     self.goToModule.hide()
+
+    # image view
+    self.showImageBox = qt.QCheckBox('Show Zoomed Slice', self.frame)
+    self.frame.layout().addWidget(self.showImageBox)
+    self.showImageBox.connect("toggled(bool)", self.onShowImage)
+    self.showImageBox.setChecked(False)
+
+    self.imageLabel = qt.QLabel()
+    self.imagePixmap = qt.QPixmap()
+    qSize = qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
+    self.imageLabel.setSizePolicy(qSize)
+    #self.imageLabel.setScaledContents(True)
+    self.frame.layout().addWidget(self.imageLabel)
+    self.onShowImage(False)
 
     # top row - things about the viewer itself
     self.viewerFrame = qt.QFrame(self.frame)
@@ -343,6 +416,15 @@ class DataProbeInfoWidget(object):
   def onGoToModule(self):
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('DataProbe')
+
+  def onShowImage(self, value=False):
+    self.showImage = value
+    if value:
+      self.imageLabel.show()
+    else:
+      self.imageLabel.hide()
+      pixmap = qt.QPixmap()
+      self.imageLabel.setPixmap(pixmap)
 
 #
 # DataProbe widget
