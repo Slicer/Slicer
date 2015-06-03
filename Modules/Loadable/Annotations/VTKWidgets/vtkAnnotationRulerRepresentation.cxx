@@ -53,6 +53,7 @@ void vtkAnnotationRulerRepresentation::BuildRepresentation()
   if ( this->GetMTime() > this->BuildTime ||
        this->AxisActor->GetMTime() > this->BuildTime ||
        this->AxisActor->GetTitleTextProperty()->GetMTime()  > this->BuildTime ||
+       this->AxisActor->GetLabelTextProperty()->GetMTime()  > this->BuildTime ||
        this->Point1Representation->GetMTime() > this->BuildTime ||
        this->Point2Representation->GetMTime() > this->BuildTime ||
        (this->Renderer && this->Renderer->GetVTKWindow() &&

@@ -253,3 +253,17 @@ void vtkAnnotationRulerRepresentation3D::UpdateGlyphPolyData(vtkPolyData *polyDa
   this->Glyph3D->SetSourceConnection(this->GlyphXForm->GetOutputPort());
   */
 }
+
+//----------------------------------------------------------------------
+int vtkAnnotationRulerRepresentation3D::HasTranslucentPolygonalGeometry()
+{
+  int result = 0;
+  this->BuildRepresentation();
+
+  result |= this->LabelActor->HasTranslucentPolygonalGeometry();
+  result |= this->GlyphActor->HasTranslucentPolygonalGeometry();
+  result |= this->LineActor->HasTranslucentPolygonalGeometry();
+
+  return result;
+
+}

@@ -28,6 +28,7 @@
 #include <vtkAbstractWidget.h>
 #include <vtkAxisActor2D.h>
 #include <vtkCubeSource.h>
+#include <vtkFollower.h>
 #include <vtkGlyph3D.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkInteractorEventRecorder.h>
@@ -426,15 +427,15 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
 
     if (textDisplayNode)
       {
-      // TODO: get this working
-      /*
-      float textScale = textDisplayNode->GetTextScale();
-      std::cout << "Setting title text property 2d, scale to " << textScale << std::endl;
+      // TODO: get the font size/scale working
       vtkTextProperty *textProp = rep->GetAxis()->GetTitleTextProperty();
-      textProp->SetFontSize(textScale);
-      std::cout << "\ttitle font size now = " <<
-      rep->GetAxis()->GetTitleTextProperty()->GetFontSize() << std::endl;
-      */
+      textProp->SetFontSize(textDisplayNode->GetTextScale());
+      // opacity
+      textProp->SetOpacity(textDisplayNode->GetOpacity());
+      // to match with the 3d ruler that doesn't have labels and turns off the measurement
+      // with the label visibility is off, toggle the title visibility on the label visibility
+      // for the 2d case (also: no text visibility is exposed in the current GUI)
+      rep->GetAxis()->SetTitleVisibility(textDisplayNode->GetVisibility());
       }
     // update the distance measurement
     rep->SetDistance(distance);
@@ -471,23 +472,15 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       }
     if (textDisplayNode)
       {
-
-      // TODO: get this working
-      /*
-      rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
-
-      if (rep->GetTitleTextMapper())
-        {
-        rep->GetTitleTextMapper()->GetTextProperty()->ShallowCopy(rep->GetAxis()->GetTitleTextProperty());
-        }
-      */
       if (rulerNode->GetSelected())
         {
         rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetSelectedColor());
+        rep->GetAxis()->GetLabelTextProperty()->SetColor(textDisplayNode->GetSelectedColor());
         }
       else
         {
         rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetColor());
+        rep->GetAxis()->GetLabelTextProperty()->SetColor(textDisplayNode->GetColor());
         }
       // TODO: get this working
       rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
@@ -506,13 +499,14 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
           }
         rep->GetLineProperty()->SetLineWidth(lineDisplayNode->GetLineThickness());
         rep->GetLineProperty()->SetOpacity(lineDisplayNode->GetOpacity());
-//        rep->GetLineProperty()->SetAmbient(lineDisplayNode->GetAmbient());
-//        rep->GetLineProperty()->SetDiffuse(lineDisplayNode->GetDiffuse());
-//        rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
+       }
+      rep->GetAxis()->SetTitlePosition(lineDisplayNode->GetLabelPosition());
+      if (textDisplayNode && rep->GetAxis()->GetLabelTextProperty())
+        {
+        rep->GetAxis()->GetLabelTextProperty()->SetOpacity(textDisplayNode->GetOpacity());
         }
-      vtkAxisActor2D *axis = rep->GetAxis();
-      axis->SetTitlePosition(lineDisplayNode->GetLabelPosition());
-      axis->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
+      rep->GetAxis()->SetLabelVisibility(lineDisplayNode->GetLabelVisibility());
+      rep->GetAxis()->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
       rep->SetRulerMode(lineDisplayNode->GetMaxTicks() ? 1 : 0);
       rep->SetNumberOfRulerTicks(lineDisplayNode->GetMaxTicks());
       rep->SetRulerDistance(this->ApplyUnit(lineDisplayNode->GetTickSpacing()));
@@ -523,7 +517,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     {
     /// 3d case
 
-    // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
+    // now get the widget properties (coordinates, measurement etc.) and if the mrml node
+    // has changed, propagate the changes
     vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
 
     // update the distance measurement
@@ -569,63 +564,62 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       // scale
       handle1->SetHandleSize(pointDisplayNode->GetGlyphScale());
       handle2->SetHandleSize(pointDisplayNode->GetGlyphScale());
-      // use this scale for the ticks
+      // use the point scale and opacity and color for the ticks
       rep->SetGlyphScale(pointDisplayNode->GetGlyphScale());
-      }
-    if (lineDisplayNode)
-      {
+      rep->GetGlyphActor()->GetProperty()->SetOpacity(pointDisplayNode->GetOpacity());
       if (rulerNode->GetSelected())
         {
-        rep->GetGlyphActor()->GetProperty()->SetColor(lineDisplayNode->GetSelectedColor());
+        rep->GetGlyphActor()->GetProperty()->SetColor(pointDisplayNode->GetSelectedColor());
         }
       else
         {
-        rep->GetGlyphActor()->GetProperty()->SetColor(lineDisplayNode->GetColor());
+        rep->GetGlyphActor()->GetProperty()->SetColor(pointDisplayNode->GetColor());
         }
-      if (textDisplayNode)
+      }
+    if (textDisplayNode)
+      {
+      if (rulerNode->GetSelected())
         {
-        if (rulerNode->GetSelected())
-          {
-          rep->GetLabelProperty()->SetColor(textDisplayNode->GetSelectedColor());
-          }
-        else
-          {
-          rep->GetLabelProperty()->SetColor(textDisplayNode->GetColor());
-          }
-        // if the line node says not to show the label, use the label
-        // property to set it invisible, otherwise, use the text display
-        // node's opacity setting.
-        if (!lineDisplayNode->GetLabelVisibility())
-          {
-          rep->GetLabelProperty()->SetOpacity(0);
-          }
-        else
-          {
-          rep->GetLabelProperty()->SetOpacity(textDisplayNode->GetOpacity());
-          }
+        rep->GetLabelProperty()->SetColor(textDisplayNode->GetSelectedColor());
         }
-      if (rep->GetLineProperty())
+      else
         {
-        if (rulerNode->GetSelected())
-          {
-          rep->GetLineProperty()->SetColor(lineDisplayNode->GetSelectedColor());
-          }
-        else
-          {
-          rep->GetLineProperty()->SetColor(lineDisplayNode->GetColor());
-          }
-        rep->GetLineProperty()->SetLineWidth(lineDisplayNode->GetLineThickness());
-        rep->GetLineProperty()->SetOpacity(lineDisplayNode->GetOpacity());
-        // vtkProperty2D only defines opacity, color and line width
-        //rep->GetLineProperty()->SetAmbient(lineDisplayNode->GetAmbient());
-        //rep->GetLineProperty()->SetDiffuse(lineDisplayNode->GetDiffuse());
-        //rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
+        rep->GetLabelProperty()->SetColor(textDisplayNode->GetColor());
         }
+      // if the line node says not to show the label, use the label
+      // property to set it invisible, otherwise, use the text display
+      // node's opacity setting.
+      if (lineDisplayNode && !lineDisplayNode->GetLabelVisibility())
+        {
+        rep->GetLabelProperty()->SetOpacity(0);
+        }
+      else
+        {
+        vtkProperty *labelProp = rep->GetLabelProperty();
+        labelProp->SetOpacity(textDisplayNode->GetOpacity());
+        }
+      }
+    if (lineDisplayNode && rep->GetLineProperty())
+      {
+      if (rulerNode->GetSelected())
+        {
+        rep->GetLineProperty()->SetColor(lineDisplayNode->GetSelectedColor());
+        }
+      else
+        {
+        rep->GetLineProperty()->SetColor(lineDisplayNode->GetColor());
+        }
+      rep->GetLineProperty()->SetLineWidth(lineDisplayNode->GetLineThickness());
+      rep->GetLineProperty()->SetOpacity(lineDisplayNode->GetOpacity());
+      // vtkProperty2D only defines opacity, color and line width
+      //rep->GetLineProperty()->SetAmbient(lineDisplayNode->GetAmbient());
+      //rep->GetLineProperty()->SetDiffuse(lineDisplayNode->GetDiffuse());
+      //rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
+
       //double thickness = lineDisplayNode->GetLineThickness();
       rep->SetRulerDistance(this->ApplyUnit(lineDisplayNode->GetTickSpacing()));
       rep->SetMaxTicks(lineDisplayNode->GetMaxTicks());
       }
-    //vtkProperty *labelProperty = rep->GetLabelProperty();
 
     rep->NeedToRenderOn();
     }
