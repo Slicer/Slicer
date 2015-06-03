@@ -42,6 +42,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['TemporalPositionIdentifier'] = "0020,0100"
     # Philips DWI
     self.multiVolumeTags['Philips.B-value'] = "2001,1003"
+    self.multiVolumeTags['Standard.B-value'] = "0018,9807"
 
     for tagName,tagVal in self.multiVolumeTags.iteritems():
       self.tags[tagName] = tagVal
@@ -54,10 +55,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
     self.multiVolumeTagsUnits['SeriesTime'] = "ms"
     self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
-    self.multiVolumeTagsUnits['Siemens.B-value'] = "mm2/s"
-    self.multiVolumeTagsUnits['GE.B-value'] = "mm2/s"
-    self.multiVolumeTagsUnits['Philips.B-value'] = "mm2/s"
-
+    self.multiVolumeTagsUnits['Siemens.B-value'] = "sec/mm2"
+    self.multiVolumeTagsUnits['GE.B-value'] = "sec/mm2"
+    self.multiVolumeTagsUnits['Philips.B-value'] = "sec/mm2"
+    self.multiVolumeTags['Standard.B-value'] = "sec/mm2"
     self.epsilon = epsilon
 
   def examine(self,fileLists):
