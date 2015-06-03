@@ -186,7 +186,7 @@ int qMRMLSceneSubjectHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 //------------------------------------------------------------------------------
 bool qMRMLSceneSubjectHierarchyModel::canBeAChild(vtkMRMLNode* node)const
 {
-  return node && node->IsA("vtkMRMLSubjectHierarchyNode");
+  return node;
 }
 
 //------------------------------------------------------------------------------
@@ -243,26 +243,9 @@ QFlags<Qt::ItemFlag> qMRMLSceneSubjectHierarchyModel::nodeFlags(vtkMRMLNode* nod
 {
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
 
-  // Transform column is editable
   if (column == this->transformColumn() && node)
     {
-    flags |= Qt::ItemIsEditable;
-    }
-  // Besides the superclass conditions for drop enabled (no associated node, only 1 child if no
-  // multiple children allowed), drop is also enabled for virtual branches.
-  // (a virtual branch is a branch where the children nodes do not correspond to actual MRML data nodes,
-  // but to implicit items contained by the parent MRML node, e.g. in case of Markups or Segmentations)
-  if (node->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()))
-    {
-    flags |= Qt::ItemIsDropEnabled;
-    }
-  // Along the same logic, drop is not enabled to children nodes in virtual branches
-  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
-  vtkMRMLHierarchyNode* parentNode = (hierarchyNode ? hierarchyNode->GetParentNode() : NULL); // Speed up by preventing GetParentNode from being called multiple times
-  if ( parentNode
-    && parentNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()) )
-    {
-    flags &= ~Qt::ItemIsDropEnabled;
+    flags = flags | Qt::ItemIsEditable;
     }
 
   return flags;
@@ -547,20 +530,6 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
     // Choose default plugin if all registered plugins returned confidence value 0
     selectedPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin();
     }
-
-  // If default plugin was chosen to reparent virtual node (a node in a virtual branch), or into a virtual branch,
-  // then abort reparenting (it means that the actual owner plugin cannot reparent its own virtual node, so it then
-  // cannot be reparented).
-  if ( ( ( newParent && newParent->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()) )
-      || ( subjectHierarchyNode->GetParentNode()
-        && subjectHierarchyNode->GetParentNode()->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()) ) )
-    && selectedPlugin == qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin() )
-  {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Failed to reparent virtual node "
-      << subjectHierarchyNode->GetName() << " under parent " << newParent->GetName();
-    return false;
-  }
-
 
   // Have the selected plugin reparent the node
   bool successfullyReparentedByPlugin = selectedPlugin->reparentNodeInsideSubjectHierarchy(subjectHierarchyNode, parentSubjectHierarchyNode);
