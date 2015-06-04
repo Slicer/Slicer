@@ -46,6 +46,8 @@ public:
     { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList"; };
   static const std::string GetHighlightedSubjectHierarchyNodeAttributeName()
     { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "Highlighted"; };
+  static const std::string GetVirtualBranchSubjectHierarchyNodeAttributeName()
+    { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "VirtualBranch"; };
   static const std::string GetSubjectHierarchyNewNodeNamePrefix()
     { return "New"; };
 

@@ -49,6 +49,13 @@ public:
   static const std::string SUBJECTHIERARCHY_UID_ITEM_SEPARATOR;
   static const std::string SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR;
 
+  enum
+  {
+    /// Event fired when UID is added to subject hierarchy node. Useful when using UIDs
+    /// to find related nodes, and the nodes are loaded sequentially in unspecified order.
+    SubjectHierarchyUIDAddedEvent = 62000,
+  };
+
 public:
   /// IMPORTANT! New method should not be used to create subject hierarchy nodes.
   ///   The nodes are created automatically for supported data types when adding
@@ -173,6 +180,9 @@ public:
 
   /// Harden transform on itself and on all children, recursively
   void HardenTransformOnBranch();
+
+  /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
+  static void DeserializeUIDList(std::string uidListString, std::vector<std::string>& deserializedUIDList);
 
   /// Get subject hierarchy nodes that are referenced from this node by DICOM.
   /// Finds the series nodes that contain the SOP instance UIDs that are listed in

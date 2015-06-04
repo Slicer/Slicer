@@ -251,7 +251,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     qt.QApplication.processEvents()
 
     self.assertTrue( sampleLabelmapShNode.GetParentNode() == studyNode )
-    self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'Volumes' )
+    self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'LabelMaps' )
 
     self.assertTrue( sampleModelShNode.GetParentNode() == studyNode )
     self.assertTrue( sampleModelShNode.GetOwnerPluginName() == 'Models' )
@@ -292,7 +292,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Reparent
     subjectHierarchySceneModel.reparent(sampleLabelmapShNode, study2Node)
     self.assertTrue( sampleLabelmapShNode.GetParentNode() == study2Node )
-    self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'Volumes' )
+    self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'LabelMaps' )
 
   # ------------------------------------------------------------------------------
   def section_SaveScene(self):

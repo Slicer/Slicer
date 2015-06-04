@@ -14,12 +14,15 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  qSlicerSubjectHierarchy${MODULE_NAME}Plugin.cxx
-  qSlicerSubjectHierarchy${MODULE_NAME}Plugin.h
+  qSlicerSubjectHierarchyVolumesPlugin.cxx
+  qSlicerSubjectHierarchyVolumesPlugin.h
+  qSlicerSubjectHierarchyLabelMapsPlugin.cxx
+  qSlicerSubjectHierarchyLabelMapsPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
-  qSlicerSubjectHierarchy${MODULE_NAME}Plugin.h
+  qSlicerSubjectHierarchyVolumesPlugin.h
+  qSlicerSubjectHierarchyLabelMapsPlugin.h
   )
 
 set(${KIT}_UI_SRCS

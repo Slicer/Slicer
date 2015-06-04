@@ -20,15 +20,15 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSubjectHierarchyVolumesPlugin_h
-#define __qSlicerSubjectHierarchyVolumesPlugin_h
+#ifndef __qSlicerSubjectHierarchyLabelMapsPlugin_h
+#define __qSlicerSubjectHierarchyLabelMapsPlugin_h
 
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 
 #include "qSlicerVolumesSubjectHierarchyPluginsExport.h"
 
-class qSlicerSubjectHierarchyVolumesPluginPrivate;
+class qSlicerSubjectHierarchyLabelMapsPluginPrivate;
 class vtkMRMLNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLSubjectHierarchyNode;
@@ -40,15 +40,15 @@ class vtkMRMLSubjectHierarchyNode;
 //BTX
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Plugins
-class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyVolumesPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyLabelMapsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
 
 public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
-  qSlicerSubjectHierarchyVolumesPlugin(QObject* parent = NULL);
-  virtual ~qSlicerSubjectHierarchyVolumesPlugin();
+  qSlicerSubjectHierarchyLabelMapsPlugin(QObject* parent = NULL);
+  virtual ~qSlicerSubjectHierarchyLabelMapsPlugin();
 
 public:
   /// Determines if a non subject hierarchy node can be placed in the hierarchy, and gets a confidence
@@ -102,29 +102,25 @@ public:
 protected:
   /// Show volume in slice viewers. The argument node becomes the background, and the previous
   /// background becomes the foreground with 50% transparency.
-  void showVolume(vtkMRMLScalarVolumeNode* node, int visible=1);
+  void showLabelMap(vtkMRMLScalarVolumeNode* node, int visible=1);
 
   /// Update selection node based on current volumes visibility (if the selection is different in the slice viewers, then the first one is set)
   /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  void updateSelectionNodeBasedOnCurrentVolumesVisibility()const;
-  /// Determine background volume selection (if the selection is different in the slice viewers, then the first one is set)
+  void updateSelectionNodeBasedOnCurrentLabelMapVisibility()const;
+  /// Determine labelmap selection (if the selection is different in the slice viewers, then the first one is set)
   /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedBackgroundVolumeNodeID()const;
-  /// Determine foreground volume selection (if the selection is different in the slice viewers, then the first one is set)
-  /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
-  std::string getSelectedForegroundVolumeNodeID()const;
+  std::string getSelectedLabelmapVolumeNodeID()const;
 
 protected slots:
-  /// Show volumes in study. The first two scalar volumes are shown if there are more.
-  /// Hides other volumes if there are less in the current study.
-  void showVolumesInBranch();
+  /// Toggle between labelmap outline display in the slice views
+  void toggleLabelmapOutlineDisplay(bool checked);
 
 protected:
-  QScopedPointer<qSlicerSubjectHierarchyVolumesPluginPrivate> d_ptr;
+  QScopedPointer<qSlicerSubjectHierarchyLabelMapsPluginPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVolumesPlugin);
-  Q_DISABLE_COPY(qSlicerSubjectHierarchyVolumesPlugin);
+  Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyLabelMapsPlugin);
+  Q_DISABLE_COPY(qSlicerSubjectHierarchyLabelMapsPlugin);
 };
 
 //ETX

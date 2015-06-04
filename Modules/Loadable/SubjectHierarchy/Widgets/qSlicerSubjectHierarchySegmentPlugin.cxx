@@ -144,8 +144,9 @@ void qSlicerSubjectHierarchySegmentPlugin::showContextMenuActionsForNode(vtkMRML
     return;
     }
 
-  // Volume
-  if (qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyNode(node))
+  // Volume but not LabelMap
+  if ( qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->canOwnSubjectHierarchyNode(node)
+    && !qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("LabelMaps")->canOwnSubjectHierarchyNode(node) )
     {
     // Get current node
     vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
@@ -177,7 +178,7 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
     qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Invalid current node or scene!";
     return;
     }
-  vtkMRMLLabelMapVolumeNode* volumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
   if (!volumeNode)
     {
     qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Invalid volume node to segment!";

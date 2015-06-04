@@ -497,8 +497,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::UseDisplayableNode(vtkMRMLDisplayableNode* node)
 {
-  //TODO: remove contour node reference when contours (segmentations) are handled by their own displayable manager
-  bool show = node && ( node->IsA("vtkMRMLModelNode") || node->IsA("vtkMRMLContourNode") );
+  bool show = node && node->IsA("vtkMRMLModelNode");
 
   if (!this->SliceNode->GetLayoutName())
     {
@@ -595,7 +594,7 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLModelNode") && !node->IsA("vtkMRMLContourNode") )
+  if (!node->IsA("vtkMRMLModelNode"))
     {
     return;
     }
@@ -615,8 +614,8 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node && (!node->IsA("vtkMRMLModelNode")) && (!node->IsA("vtkMRMLContourNode"))
-       && (!node->IsA("vtkMRMLModelDisplayNode")) )
+  if ( node && !node->IsA("vtkMRMLModelNode")
+       && !node->IsA("vtkMRMLModelDisplayNode") )
     {
     return;
     }

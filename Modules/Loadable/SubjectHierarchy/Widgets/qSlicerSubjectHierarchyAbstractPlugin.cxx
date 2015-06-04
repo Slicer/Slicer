@@ -134,8 +134,7 @@ double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMR
   Q_UNUSED(node);
   Q_UNUSED(parent);
 
-  // Many plugins do not perform steps additional to the default when
-  // adding nodes to the hierarchy from outside, so return 0 by default
+  // Only role plugins can add node to the hierarchy, so default is 0
   return 0.0;
 }
 

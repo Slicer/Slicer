@@ -139,21 +139,42 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
 {
   // Get currently selected node and scene
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-  if (!currentNode || !scene)
+  if (!currentNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode: Invalid current node or MRML scene!";
+    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode: Invalid current subject hierarchy node!";
     return;
     }
 
-  vtkMRMLNode* associatedDataNode = currentNode->GetAssociatedNode();
+  vtkMRMLSubjectHierarchyNode* clonedSubjectHierarchyNode = qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjectHierarchyNode(currentNode);
+  if (!clonedSubjectHierarchyNode)
+    {
+    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode: Failed to clone subject hierarchy node" << currentNode->GetNameWithoutPostfix().c_str();
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node, QString name/*=QString()*/)
+{
+  if (!node)
+    {
+    return NULL;
+    }
+  vtkMRMLScene* scene = node->GetScene();
+  if (!scene)
+    {
+    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjectHierarchyNode: Invalid MRML scene!";
+    return NULL;
+    }
+
+  vtkMRMLSubjectHierarchyNode* clonedSubjectHierarchyNode = NULL;
+  vtkMRMLNode* associatedDataNode = node->GetAssociatedNode();
   if (associatedDataNode)
     {
     // Clone data node
     vtkSmartPointer<vtkMRMLNode> clonedDataNode;
     clonedDataNode.TakeReference(scene->CreateNodeByClass(associatedDataNode->GetClassName()));
     clonedDataNode->Copy(associatedDataNode);
-    std::string clonedDataNodeName = std::string(associatedDataNode->GetName()) + CLONE_NODE_NAME_POSTFIX;
+    std::string clonedDataNodeName = ( name.isEmpty() ? std::string(associatedDataNode->GetName()) + CLONE_NODE_NAME_POSTFIX : std::string(name.toLatin1().constData()) );
     clonedDataNode->SetName(clonedDataNodeName.c_str());
     scene->AddNode(clonedDataNode);
 
@@ -165,7 +186,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
       clonedDisplayNode.TakeReference( vtkMRMLDisplayNode::SafeDownCast(
         scene->CreateNodeByClass(displayableDataNode->GetDisplayNode()->GetClassName()) ) );
       clonedDisplayNode->Copy(displayableDataNode->GetDisplayNode());
-      std::string clonedDisplayNodeName = std::string(displayableDataNode->GetDisplayNode()->GetName()) + CLONE_NODE_NAME_POSTFIX;
+      std::string clonedDisplayNodeName = clonedDataNodeName + "_Display";
       clonedDisplayNode->SetName(clonedDisplayNodeName.c_str());
       scene->AddNode(clonedDisplayNode);
       vtkMRMLDisplayableNode* clonedDisplayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(clonedDataNode);
@@ -195,7 +216,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
       vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene, associatedDataNode->GetID());
 
     // Put data node in the same non-subject hierarchy if any
-    if (genericHierarchyNode != currentNode)
+    if (genericHierarchyNode != node)
       {
       vtkSmartPointer<vtkMRMLHierarchyNode> clonedHierarchyNode;
       clonedHierarchyNode.TakeReference( vtkMRMLHierarchyNode::SafeDownCast(
@@ -208,10 +229,9 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
       }
 
     // Put data node in the same subject hierarchy branch as current node
-    vtkMRMLSubjectHierarchyNode* clonedSubjectHierarchyNode =
-      vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,
-      vtkMRMLSubjectHierarchyNode::SafeDownCast(currentNode->GetParentNode()),
-      currentNode->GetLevel(), clonedDataNodeName.c_str(), clonedDataNode);
+    clonedSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,
+      vtkMRMLSubjectHierarchyNode::SafeDownCast(node->GetParentNode()),
+      node->GetLevel(), clonedDataNodeName.c_str(), clonedDataNode);
 
     // Trigger update
     clonedSubjectHierarchyNode->Modified();
@@ -219,13 +239,19 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
     }
   else // No associated node
     {
-    std::string clonedSubjectHierarchyNodeName = currentNode->GetName();
+    std::string clonedSubjectHierarchyNodeName = node->GetName();
     vtksys::SystemTools::ReplaceString(clonedSubjectHierarchyNodeName,
       vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str(), "");
     clonedSubjectHierarchyNodeName.append(CLONE_NODE_NAME_POSTFIX);
-
-    vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,
-      vtkMRMLSubjectHierarchyNode::SafeDownCast(currentNode->GetParentNode()),
-      currentNode->GetLevel(), clonedSubjectHierarchyNodeName.c_str());
+    if (!name.isEmpty())
+    {
+      clonedSubjectHierarchyNodeName = std::string(name.toLatin1().constData());
     }
+
+    clonedSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,
+      vtkMRMLSubjectHierarchyNode::SafeDownCast(node->GetParentNode()),
+      node->GetLevel(), clonedSubjectHierarchyNodeName.c_str());
+    }
+
+  return clonedSubjectHierarchyNode;
 }

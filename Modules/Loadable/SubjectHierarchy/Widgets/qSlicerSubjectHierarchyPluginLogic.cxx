@@ -330,26 +330,32 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
       scene->RemoveNode(associatedDataNode);
       }
 
-    // Check if node has children and ask if branch is to be removed
-    std::vector<vtkMRMLHierarchyNode*> childrenNodes;
-    subjectHierarchyNode->GetAllChildrenNodes(childrenNodes);
-    if (!childrenNodes.empty() && !d->DeleteBranchInProgress)
+    // Check if node has children and ask if branch is to be removed.
+    // If node contains a virtual branch, then it is assumed to be taken care of by the owner plugin
+    // (a virtual branch is a branch where the children nodes do not correspond to actual MRML data nodes,
+    // but to implicit items contained by the parent MRML node, e.g. in case of Markups or Segmentations)
+    if (!subjectHierarchyNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()))
       {
-      QMessageBox::StandardButton answer =
-        QMessageBox::question(NULL, tr("Delete branch?"),
-        tr("The deleted node has children. Do you want to remove those too?\n\nIf you choose yes, the whole branch will be deleted, including all children."),
-        QMessageBox::Yes | QMessageBox::No,
-        QMessageBox::No);
-      // Delete branch if the user chose yes
-      if (answer == QMessageBox::Yes)
+      std::vector<vtkMRMLHierarchyNode*> childrenNodes;
+      subjectHierarchyNode->GetAllChildrenNodes(childrenNodes);
+      if (!childrenNodes.empty() && !d->DeleteBranchInProgress)
         {
-        d->DeleteBranchInProgress = true;
-        for (std::vector<vtkMRMLHierarchyNode*>::iterator childrenIt = childrenNodes.begin();
-          childrenIt != childrenNodes.end(); ++childrenIt)
+        QMessageBox::StandardButton answer =
+          QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
+          tr("The deleted subject hierarchy node has children. Do you want to remove those too?\n\nIf you choose yes, the whole branch will be deleted, including all children."),
+          QMessageBox::Yes | QMessageBox::No,
+          QMessageBox::No);
+        // Delete branch if the user chose yes
+        if (answer == QMessageBox::Yes)
           {
-          scene->RemoveNode(*childrenIt);
+          d->DeleteBranchInProgress = true;
+          for (std::vector<vtkMRMLHierarchyNode*>::iterator childrenIt = childrenNodes.begin();
+            childrenIt != childrenNodes.end(); ++childrenIt)
+            {
+            scene->RemoveNode(*childrenIt);
+            }
+          d->DeleteBranchInProgress = false;
           }
-        d->DeleteBranchInProgress = false;
         }
       }
     }

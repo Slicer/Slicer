@@ -120,7 +120,7 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
     if imageType == 'label':
         newNode = CreateNewVolumeNode(NodeName,'vtkMRMLLabelMapVolumeNode', overwrite)
     else:
-    newNode = CreateNewVolumeNode(NodeName,'vtkMRMLScalarVolumeNode', overwrite)
+        newNode = CreateNewVolumeNode(NodeName,'vtkMRMLScalarVolumeNode', overwrite)
 
     if not overwrite:
         newDisplayNode = CreateNewDisplayNode(NodeName)

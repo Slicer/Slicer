@@ -254,6 +254,7 @@ void vtkMRMLSubjectHierarchyNode::AddUID(std::string uidName, std::string uidVal
       }
     }
   this->UIDs[uidName] = uidValue;
+  this->InvokeEvent(SubjectHierarchyUIDAddedEvent, this);
   this->Modified();
 }
 
@@ -510,7 +511,10 @@ int vtkMRMLSubjectHierarchyNode::GetDisplayVisibilityForBranch()
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(
       childDisplayableNodes->GetItemAsObject(childNodeIndex) );
     // Omit volume nodes from the process (they are displayed differently than every other type)
-    if (displayableNode && !displayableNode->IsA("vtkMRMLScalarVolumeNode"))
+    // TODO: This is not very elegant or safe, it would be better to distinguish between visibility modes, or overhaul the visibility features completely
+    if ( displayableNode
+      && ( !displayableNode->IsA("vtkMRMLVolumeNode")
+        || !strcmp(displayableNode->GetClassName(), "vtkMRMLSegmentationNode") ) )
       {
       // If we set visibility
       if (visible == -1)
@@ -895,6 +899,26 @@ void vtkMRMLSubjectHierarchyNode::HardenTransformOnBranch()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::DeserializeUIDList(std::string uidListString, std::vector<std::string>& deserializedUIDList)
+{
+  deserializedUIDList.clear();
+  char separatorCharacter = ' ';
+  size_t separatorPosition = uidListString.find( separatorCharacter );
+  while (separatorPosition != std::string::npos)
+    {
+    std::string uid = uidListString.substr(0, separatorPosition);
+    deserializedUIDList.push_back(uid);
+    uidListString = uidListString.substr( separatorPosition+1 );
+    separatorPosition = uidListString.find( separatorCharacter );
+    }
+  // Add last UID in case there was no space at the end (which is default behavior)
+  if (!uidListString.empty() && uidListString.find(separatorCharacter) == std::string::npos)
+    {
+    deserializedUIDList.push_back(uidListString);
+    }
+}
+
+//---------------------------------------------------------------------------
 std::vector<vtkMRMLSubjectHierarchyNode*> vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNodesReferencedByDICOM()
 {
   std::vector<vtkMRMLSubjectHierarchyNode*> referencedNodes;
@@ -907,30 +931,16 @@ std::vector<vtkMRMLSubjectHierarchyNode*> vtkMRMLSubjectHierarchyNode::GetSubjec
     }
 
   // Get referenced SOP instance UIDs
-  const char* referencedInstanceUIDsAttributeChars = this->GetAttribute(
+  const char* referencedInstanceUIDsAttribute = this->GetAttribute(
     vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName().c_str() );
-  if (!referencedInstanceUIDsAttributeChars)
+  if (!referencedInstanceUIDsAttribute)
     {
     return referencedNodes;
     }
 
   // De-serialize SOP instance UID list
-  std::string referencedSopInstanceUidsAttribute(referencedInstanceUIDsAttributeChars);
   std::vector<std::string> referencedSopInstanceUids;
-  char separatorCharacter = ' ';
-  size_t separatorPosition = referencedSopInstanceUidsAttribute.find( separatorCharacter );
-  while (separatorPosition != std::string::npos)
-    {
-    std::string uid = referencedSopInstanceUidsAttribute.substr(0, separatorPosition);
-    referencedSopInstanceUids.push_back(uid);
-    referencedSopInstanceUidsAttribute = referencedSopInstanceUidsAttribute.substr( separatorPosition+1 );
-    separatorPosition = referencedSopInstanceUidsAttribute.find( separatorCharacter );
-    }
-  // Add last UID in case there was no space at the end (which is default behavior)
-  if (!referencedSopInstanceUidsAttribute.empty() && referencedSopInstanceUidsAttribute.find(separatorCharacter) == std::string::npos)
-    {
-    referencedSopInstanceUids.push_back(referencedSopInstanceUidsAttribute);
-    }
+  this->DeserializeUIDList(referencedInstanceUIDsAttribute, referencedSopInstanceUids);
 
   // Find subject hierarchy nodes by SOP instance UIDs
   std::vector<std::string>::iterator uidIt;
