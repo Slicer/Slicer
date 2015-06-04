@@ -154,37 +154,37 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-    std::cout << "Testing volume geometry" << std::endl;
-    std::string warnings;
-    warnings = logic->CheckForLabelVolumeValidity(NULL, NULL);
-    if (warnings.empty())
-      {
-      std::cerr << "ERROR: did not detect two null volumes in check for label volume validity" << std::endl;
-      return EXIT_FAILURE;
-      }
-    warnings = logic->CompareVolumeGeometry(NULL, NULL);
-    if (warnings.empty())
-      {
-      std::cerr << "ERROR: did not detect two null volumes in Compare Volume Geometry" << std::endl;
-      return EXIT_FAILURE;
-      }
-    warnings = logic->CheckForLabelVolumeValidity(scalarVolume, NULL);
-    if (warnings.empty())
-      {
-      std::cerr << "ERROR: did not detect null labe volumes in CheckForLabelVolumeValidity" << std::endl;
-      return EXIT_FAILURE;
-      }
+  std::cout << "Testing volume geometry" << std::endl;
+  std::string warnings;
+  warnings = logic->CheckForLabelVolumeValidity(NULL, NULL);
+  if (warnings.empty())
+    {
+    std::cerr << "ERROR: did not detect two null volumes in check for label volume validity" << std::endl;
+    return EXIT_FAILURE;
+    }
+  warnings = logic->CompareVolumeGeometry(NULL, NULL);
+  if (warnings.empty())
+    {
+    std::cerr << "ERROR: did not detect two null volumes in Compare Volume Geometry" << std::endl;
+    return EXIT_FAILURE;
+    }
+  warnings = logic->CheckForLabelVolumeValidity(scalarVolume, NULL);
+  if (warnings.empty())
+    {
+    std::cerr << "ERROR: did not detect null labe volumes in CheckForLabelVolumeValidity" << std::endl;
+    return EXIT_FAILURE;
+    }
   warnings = logic->CheckForLabelVolumeValidity(NULL, labelMapVolume);
-    if (warnings.empty())
-      {
-      std::cerr << "ERROR: did not detect null volumes and incorrect label map in CheckForLabelVolumeValidity" << std::endl;
-      return EXIT_FAILURE;
-      }
+  if (warnings.empty())
+    {
+    std::cerr << "ERROR: did not detect null volumes and incorrect label map in CheckForLabelVolumeValidity" << std::endl;
+    return EXIT_FAILURE;
+    }
   warnings = logic->CompareVolumeGeometry(scalarVolume, labelMapVolume);
-    if (!warnings.empty())
-      {
-      std::cerr << "ERROR: got a warning when comparing identical volumes in CompareVolumeGeometry: " << warnings.c_str() << std::endl;
-      return EXIT_FAILURE;
+  if (!warnings.empty())
+    {
+    std::cerr << "ERROR: got a warning when comparing identical volumes in CompareVolumeGeometry: " << warnings.c_str() << std::endl;
+    return EXIT_FAILURE;
     }
 
   return EXIT_SUCCESS;

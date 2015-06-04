@@ -1147,15 +1147,15 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
 
   // clone the display node if possible
   vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
-  if ( volumeNode->GetDisplayNode() )
+  if (volumeNode->GetDisplayNode())
     {
     clonedDisplayNode.TakeReference((vtkMRMLDisplayNode*)scene->CreateNodeByClass(volumeNode->GetDisplayNode()->GetClassName()));
-      }
+    }
   if (clonedDisplayNode.GetPointer())
-      {
-      clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
-      scene->AddNode(clonedDisplayNode);
-      }
+    {
+    clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
+    scene->AddNode(clonedDisplayNode);
+    }
 
   // clone the volume node
   vtkSmartPointer<vtkMRMLScalarVolumeNode> clonedVolumeNode;
@@ -1177,18 +1177,18 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
 
   if (cloneImageData)
     {
-  // copy over the volume's data
-  if (volumeNode->GetImageData())
-    {
-    vtkNew<vtkImageData> clonedVolumeData;
-    clonedVolumeData->DeepCopy(volumeNode->GetImageData());
-    clonedVolumeNode->SetAndObserveImageData( clonedVolumeData.GetPointer() );
-    }
-  else
-    {
-    vtkErrorWithObjectMacro(scene, "CloneVolume: The ImageData of VolumeNode with ID "
-                            << volumeNode->GetID() << " is null !");
-    }
+    // copy over the volume's data
+    if (volumeNode->GetImageData())
+      {
+      vtkNew<vtkImageData> clonedVolumeData;
+      clonedVolumeData->DeepCopy(volumeNode->GetImageData());
+      clonedVolumeNode->SetAndObserveImageData( clonedVolumeData.GetPointer() );
+      }
+    else
+      {
+      vtkErrorWithObjectMacro(scene, "CloneVolume: The ImageData of VolumeNode with ID "
+                              << volumeNode->GetID() << " is null !");
+      }
     }
   else
     {

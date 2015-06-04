@@ -382,13 +382,13 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
         displayNode.TakeReference(vtkMRMLVectorVolumeDisplayNode::New());
         }
       else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(this->VolumeNode))
-          {
-          displayNode.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
-          }
+        {
+        displayNode.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
+        }
       else if (vtkMRMLScalarVolumeNode::SafeDownCast(this->VolumeNode))
-         {
-         displayNode.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
-         }
+        {
+        displayNode.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
+        }
 
       displayNode->SetScene(this->GetMRMLScene());
       if (this->GetMRMLScene())
