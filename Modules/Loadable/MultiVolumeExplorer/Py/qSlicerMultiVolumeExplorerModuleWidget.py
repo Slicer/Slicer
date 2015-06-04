@@ -133,8 +133,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     # label map for probing
     label = qt.QLabel('Probed label volume')
     self.__fSelector = slicer.qMRMLNodeComboBox()
-    self.__fSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
-    self.__fSelector.addAttribute('vtkMRMLScalarVolumeNode','LabelMap','1')
+    self.__fSelector.nodeTypes = ['vtkMRMLLabelMapVolumeNode']
     self.__fSelector.toolTip = 'Label map to be probed'
     self.__fSelector.setMRMLScene(slicer.mrmlScene)
     self.__fSelector.addEnabled = 0
