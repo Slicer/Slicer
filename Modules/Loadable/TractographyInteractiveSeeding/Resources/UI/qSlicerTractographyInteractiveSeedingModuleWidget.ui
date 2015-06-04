@@ -155,7 +155,7 @@
           <string>vtkMRMLMarkupsFiducialNode</string>
           <string>vtkMRMLAnnotationHierarchyNode</string>
           <string>vtkMRMLModelNode</string>
-          <string>vtkMRMLScalarVolumeNode</string>
+          <string>vtkMRMLLabelMapVolumeNode</string>
          </stringlist>
         </property>
         <property name="showChildNodeTypes" stdset="0">

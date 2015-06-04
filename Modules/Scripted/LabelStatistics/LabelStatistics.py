@@ -57,7 +57,6 @@ class LabelStatisticsWidget:
 
     self.grayscaleSelector = slicer.qMRMLNodeComboBox(self.grayscaleSelectorFrame)
     self.grayscaleSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
-    self.grayscaleSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
     self.grayscaleSelector.selectNodeUponCreation = False
     self.grayscaleSelector.addEnabled = False
     self.grayscaleSelector.removeEnabled = False
@@ -81,15 +80,14 @@ class LabelStatisticsWidget:
     self.labelSelectorFrame.layout().addWidget( self.labelSelectorLabel )
 
     self.labelSelector = slicer.qMRMLNodeComboBox()
-    self.labelSelector.nodeTypes = ( "vtkMRMLScalarVolumeNode", "" )
-    self.labelSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", "1" )
+    self.labelSelector.nodeTypes = ( "vtkMRMLLabelMapVolumeNode", "" )
     # todo addAttribute
     self.labelSelector.selectNodeUponCreation = False
     self.labelSelector.addEnabled = False
     self.labelSelector.noneEnabled = True
     self.labelSelector.removeEnabled = False
     self.labelSelector.showHidden = False
-    self.labelSelector.showChildNodeTypes = False
+    self.labelSelector.showChildNodeTypes = True
     self.labelSelector.setMRMLScene( slicer.mrmlScene )
     self.labelSelector.setToolTip( "Pick the label map to edit" )
     self.labelSelectorFrame.layout().addWidget( self.labelSelector )

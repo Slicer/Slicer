@@ -452,6 +452,13 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
   QString volumeNodeID;
   vtkSmartPointer<vtkMRMLVolumeDisplayNode> volumeDisplayNode;
 
+  // set labelMap 0
+  //   if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
+  //       set labelMap 1
+  //   }
+  bool labelMap = node.contains("labelMap") &&
+    (node["labelMap"] == "yes" ||
+     node["labelMap"] == "true");
 
   //switch [string tolower $n(fileType)] {
   //  "nrrd" -
@@ -484,14 +491,6 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
       {
       fileName = node["fileName"];
       }
-
-    // set labelMap 0
-    //   if { [info exists n(labelMap)] && ($n(labelMap) == "yes"  || $n(labelMap) == "true") } {
-    //       set labelMap 1
-    //   }
-    bool labelMap = node.contains("labelMap") &&
-      (node["labelMap"] == "yes" ||
-       node["labelMap"] == "true");
 
     //set logic [$::slicer3::VolumesGUI GetLogic]
     //set loadingOptions $labelMap
@@ -682,11 +681,8 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     //   } else {
     //       set volumeDisplayNode [vtkMRMLScalarVolumeDisplayNode New]
     //   }
-    if (node.contains("labelMap") &&
-        (node["labelMap"] == "yes" ||
-         node["labelMap"] == "true"))
+    if (labelMap)
       {
-      vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode)->SetLabelMap(1);
       volumeDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
       }
     else

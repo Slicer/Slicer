@@ -120,6 +120,24 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     }
 #endif
 
+  // Replace old-style label map nodes (vtkMRMLScalarVolumeNode with LabelMap custom attribute)
+  // with new-style vtkMRMLLabelMapVolumeNode
+  if (node->IsA("vtkMRMLScalarVolumeNode"))
+    {
+    const char* labelMapAttr = node->GetAttribute("LabelMap");
+    bool isLabelMap = labelMapAttr ? (atoi(labelMapAttr)!=0) : false;
+    if (isLabelMap)
+      {
+      // create a copy of the node of the correct class
+      vtkMRMLNode* newTypeLabelMapNode = this->MRMLScene->CreateNodeByClass( "vtkMRMLLabelMapVolumeNode" );
+      newTypeLabelMapNode->CopyWithScene(node); // copy all contents, including MRML node ID
+      newTypeLabelMapNode->RemoveAttribute("LabelMap"); // this attribute is obsolete
+      // replace the current node with the new one
+      node->Delete();
+      node=newTypeLabelMapNode;
+      }
+    }
+
   // ID will be set by AddNode
   /*
   if (node->GetID() == NULL)

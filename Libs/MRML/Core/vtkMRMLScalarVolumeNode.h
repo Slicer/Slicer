@@ -30,9 +30,6 @@ class vtkMRMLScalarVolumeDisplayNode;
 /// generated.
 /// Consequently, MRML files isolate MRML browsers from understanding how
 /// to read the myriad of file formats for medical data.
-/// A scalar volume node can be a labelmap, which is typically the output of
-/// a segmentation that labels each voxel according to its tissue type.
-/// The alternative is a gray-level or color image.
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
   public:
@@ -57,28 +54,6 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Volume";};
-
-  ///
-  /// Returns true (1) if the volume is a labelmap (1 label value per voxel
-  /// to indicates the tissue type.
-  /// \sa SetLabelMap
-  int GetLabelMap();
-
-  ///
-  /// Set the volume as a labelmap.
-  /// If true (1), it sets the volume as a labelmap.
-  /// \sa GetLabelMap(), LabelMapOn(), LabelMapOff()
-  void SetLabelMap(int);
-
-  ///
-  /// Convenient method that sets the volume as labelmap
-  /// \sa SetLabelMap, LabelMapOff()
-  void LabelMapOn();
-
-  ///
-  /// Convenient method that unsets the volume a labelmap
-  /// \sa SetLabelMap, LabelMapOff()
-  void LabelMapOff();
 
   ///
   /// Make a 'None' volume node with blank image data

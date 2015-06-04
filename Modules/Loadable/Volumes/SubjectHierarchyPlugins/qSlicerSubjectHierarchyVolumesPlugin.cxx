@@ -34,6 +34,7 @@
 #include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
+#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -222,8 +223,7 @@ QIcon qSlicerSubjectHierarchyVolumesPlugin::icon(vtkMRMLSubjectHierarchyNode* no
   vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLScalarVolumeNode"))
     {
-    const char* labelmapAttribute = associatedNode->GetAttribute("LabelMap");
-    if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
+    if (associatedNode->IsA("vtkMRMLLabelMapVolumeNode"))
       {
       return d->LabelmapIcon;
       }
@@ -300,8 +300,8 @@ int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkMRMLSubjectHie
   /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
   this->updateSelectionNodeBasedOnCurrentVolumesVisibility();
 
-  const char* labelmapAttribute = volumeNode->GetAttribute("LabelMap");
-  if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
+  bool isLabelMap = volumeNode->IsA("vtkMRMLLabelMapVolumeNode");
+  if (isLabelMap)
     {
     if ( selectionNode->GetActiveLabelVolumeID() && !strcmp(selectionNode->GetActiveLabelVolumeID(), volumeNode->GetID()) )
       {
@@ -359,9 +359,9 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
   /// TODO: This is a workaround (http://www.na-mic.org/Bug/view.php?id=3551)
   this->updateSelectionNodeBasedOnCurrentVolumesVisibility();
 
-  const char* labelmapAttribute = volumeNode->GetAttribute("LabelMap");
   // Labelmap
-  if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
+  bool isLabelMap = volumeNode->IsA("vtkMRMLLabelMapVolumeNode");
+  if (isLabelMap)
     {
     // Show
     if (visible)
@@ -369,7 +369,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolume(vtkMRMLScalarVolumeNode* n
       if (selectionNode->GetActiveLabelVolumeID() && strlen(selectionNode->GetActiveLabelVolumeID()))
         {
         // Needed so that visibility icon is updated (could be done in a faster way, but there is no noticeable overhead)
-        vtkMRMLScalarVolumeNode* originalLabelmapNode = vtkMRMLScalarVolumeNode::SafeDownCast(
+        vtkMRMLLabelMapVolumeNode* originalLabelmapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(
           scene->GetNodeByID(selectionNode->GetActiveLabelVolumeID()) );
         this->showVolume(originalLabelmapNode, 0);
         }
@@ -601,8 +601,8 @@ void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForNode(vtkMRML
   if (this->canOwnSubjectHierarchyNode(node))
     {
     vtkMRMLNode* associatedNode = node->GetAssociatedNode();
-    const char* labelmapAttribute = associatedNode->GetAttribute("LabelMap");
-    if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
+    bool isLabelMap = associatedNode->IsA("vtkMRMLLabelMapVolumeNode");
+    if (isLabelMap)
       {
       // Determine current state of the toggle labelmap outline checkbox (from the first slice view)
       vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast ( scene->GetNthNodeByClass( 0, "vtkMRMLSliceNode" ) );
@@ -685,8 +685,8 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
         continue;
         }
 
-      const char* labelmapAttribute = volumeNode->GetAttribute("LabelMap");
-      if (labelmapAttribute && strcmp(labelmapAttribute, "0"))
+      bool isLabelMap = volumeNode->IsA("vtkMRMLLabelMapVolumeNode");
+      if (isLabelMap)
         {
         // Show first labelmap in study only
         if (!selectionNode->GetActiveLabelVolumeID())

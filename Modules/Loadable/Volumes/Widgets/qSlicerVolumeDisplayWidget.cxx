@@ -10,6 +10,7 @@
 // MRML includes
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLLabelMapVolumeNode.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
@@ -131,6 +132,8 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
     }
 
   vtkMRMLScene* scene = volumeNode->GetScene();
+  vtkMRMLLabelMapVolumeNode* labelMapVolumeNode =
+    vtkMRMLLabelMapVolumeNode::SafeDownCast(volumeNode);
   vtkMRMLScalarVolumeNode* scalarVolumeNode =
     vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
   vtkMRMLDiffusionWeightedVolumeNode* dwiVolumeNode =
@@ -149,21 +152,21 @@ void qSlicerVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNode)
     d->DWVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     d->setCurrentDisplayWidget(d->DWVolumeDisplayWidget);
     }
-   else if (scalarVolumeNode && !scalarVolumeNode->GetLabelMap())
-    {
-    qvtkConnect(volumeNode, vtkCommand::ModifiedEvent,
-              this, SLOT(updateFromMRML(vtkObject*)));
-    d->ScalarVolumeDisplayWidget->setMRMLScene(scene);
-    d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
-    d->setCurrentDisplayWidget(d->ScalarVolumeDisplayWidget);
-    }
-  else if (scalarVolumeNode && scalarVolumeNode->GetLabelMap())
+   else if (labelMapVolumeNode)
     {
     qvtkConnect(volumeNode, vtkCommand::ModifiedEvent,
               this, SLOT(updateFromMRML(vtkObject*)));
     d->LabelMapVolumeDisplayWidget->setMRMLScene(scene);
     d->LabelMapVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
     d->setCurrentDisplayWidget(d->LabelMapVolumeDisplayWidget);
+    }
+  else if (scalarVolumeNode)
+    {
+    qvtkConnect(volumeNode, vtkCommand::ModifiedEvent,
+              this, SLOT(updateFromMRML(vtkObject*)));
+    d->ScalarVolumeDisplayWidget->setMRMLScene(scene);
+    d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
+    d->setCurrentDisplayWidget(d->ScalarVolumeDisplayWidget);
     }
 }
 

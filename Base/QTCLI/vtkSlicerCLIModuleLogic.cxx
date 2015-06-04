@@ -990,6 +990,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
   std::set<std::string> MemoryTransferPossible;
   MemoryTransferPossible.insert("vtkMRMLScalarVolumeNode");
+  MemoryTransferPossible.insert("vtkMRMLLabelMapVolumeNode");
   MemoryTransferPossible.insert("vtkMRMLVectorVolumeNode");
   MemoryTransferPossible.insert("vtkMRMLDiffusionWeightedVolumeNode");
   MemoryTransferPossible.insert("vtkMRMLDiffusionTensorVolumeNode");

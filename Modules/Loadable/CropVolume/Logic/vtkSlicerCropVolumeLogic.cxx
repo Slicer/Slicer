@@ -29,6 +29,7 @@
 #include <vtkMRMLDiffusionTensorVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeNode.h>
 #include <vtkMRMLDiffusionWeightedVolumeDisplayNode.h>
+#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVectorVolumeDisplayNode.h>

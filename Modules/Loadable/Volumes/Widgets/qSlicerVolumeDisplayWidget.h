@@ -31,7 +31,7 @@ public slots:
 
 protected slots:
   /// Internally use in case the current display widget should change when the
-  /// volume node changes (typically if the LabelMap attribute is changed)
+  /// volume node changes
   void updateFromMRML(vtkObject* volume);
 protected:
   QScopedPointer<qSlicerVolumeDisplayWidgetPrivate> d_ptr;

@@ -138,6 +138,7 @@ set(MRMLCore_SRCS
   vtkMRMLDisplayableHierarchyNode.cxx
   vtkMRMLInteractionNode.cxx
   vtkMRMLLabelMapVolumeDisplayNode.cxx
+  vtkMRMLLabelMapVolumeNode.cxx
   vtkMRMLLinearTransformNode.cxx
   vtkMRMLModelDisplayNode.cxx
   vtkMRMLModelHierarchyNode.cxx

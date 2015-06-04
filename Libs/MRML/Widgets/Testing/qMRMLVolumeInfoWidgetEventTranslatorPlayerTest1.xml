@@ -49,7 +49,6 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkDoubleSpinBox2/1ctkQDoubleSpinBox0" command="set_double" arguments="17"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/CenterVolumePushButton" command="activate" arguments=""/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkDoubleSpinBox2/1ctkQDoubleSpinBox0" command="set_double" arguments="16"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/LabelMapCheckBox" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/WindowLevelPresetsListWidget" command="mousePress" arguments="1,1,0,31,15,"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/WindowLevelPresetsListWidget" command="mouseRelease" arguments="1,0,0,31,15,"/>
     </events>

@@ -302,6 +302,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item row="11" column="0">

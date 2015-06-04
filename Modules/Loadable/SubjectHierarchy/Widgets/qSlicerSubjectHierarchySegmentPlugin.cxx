@@ -34,12 +34,13 @@
 
 // MRML includes
 #include <vtkMRMLNode.h>
+#include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
-#include "vtkMRMLLabelMapVolumeDisplayNode.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -176,8 +177,8 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
     qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Invalid current node or scene!";
     return;
     }
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
-  if (!volumeNode || volumeNode->GetLabelMap())
+  vtkMRMLLabelMapVolumeNode* volumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
+  if (!volumeNode)
     {
     qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Invalid volume node to segment!";
     return;
@@ -191,11 +192,10 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
   vtkNew<vtkMRMLLabelMapVolumeDisplayNode> labelDisplayNode;
   scene->AddNode(labelDisplayNode.GetPointer());
   // create a volume node as copy of source volume
-  vtkNew<vtkMRMLScalarVolumeNode> labelNode;
+  vtkNew<vtkMRMLLabelMapVolumeNode> labelNode;
   labelNode->CopyWithScene(volumeNode);
   labelNode->RemoveAllDisplayNodeIDs();
   labelNode->SetAndObserveStorageNodeID(NULL);
-  labelNode->SetLabelMap(1);
   // associate it with the source volume
   labelNode->SetAttribute("AssociatedNodeID", volumeNode->GetID());
   labelDisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt");

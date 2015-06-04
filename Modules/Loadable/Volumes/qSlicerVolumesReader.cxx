@@ -30,6 +30,7 @@
 #include "vtkSlicerVolumesLogic.h"
 
 // MRML includes
+#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
 
@@ -163,8 +164,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
       appLogic ? appLogic->GetSelectionNode() : 0;
     if (selectionNode)
       {
-      if (vtkMRMLScalarVolumeNode::SafeDownCast(node) &&
-          vtkMRMLScalarVolumeNode::SafeDownCast(node)->GetLabelMap())
+      if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))
         {
         selectionNode->SetReferenceActiveLabelVolumeID(node->GetID());
         }

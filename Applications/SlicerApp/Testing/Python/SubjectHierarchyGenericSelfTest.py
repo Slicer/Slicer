@@ -367,9 +367,8 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( volumeNode.IsA('vtkMRMLScalarVolumeNode') )
     self.assertTrue( label > 0 )
 
-    sampleLabelmapNode = slicer.vtkMRMLScalarVolumeNode()
+    sampleLabelmapNode = slicer.vtkMRMLLabelMapVolumeNode()
     sampleLabelmapNode.SetName(name)
-    sampleLabelmapNode.SetLabelMap(1)
     sampleLabelmapNode = slicer.mrmlScene.AddNode(sampleLabelmapNode)
     sampleLabelmapNode.Copy(volumeNode)
     imageData = vtk.vtkImageData()
@@ -393,6 +392,8 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       self.assertTrue( colorNode != None )
     labelmapVolumeDisplayNode.SetAndObserveColorNodeID(colorNode.GetID())
     labelmapVolumeDisplayNode.VisibilityOn()
+    sampleLabelmapNodeName = slicer.mrmlScene.GenerateUniqueName(name)
+    sampleLabelmapNode.SetName(sampleLabelmapNodeName)
     sampleLabelmapNode.SetAndObserveDisplayNodeID(labelmapVolumeDisplayNode.GetID())
 
     return sampleLabelmapNode

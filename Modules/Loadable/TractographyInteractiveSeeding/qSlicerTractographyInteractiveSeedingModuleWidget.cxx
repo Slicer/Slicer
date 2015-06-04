@@ -220,8 +220,6 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setup()
   Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
   d->setupUi(this);
 
-  d->FiducialNodeSelector->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
-
   QObject::connect(d->DTINodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this,
                                        SLOT(setDiffusionTensorVolumeNode(vtkMRMLNode*)));
 

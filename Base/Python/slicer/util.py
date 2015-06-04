@@ -495,12 +495,13 @@ def array(pattern = "", index = 0):
   console for quick debugging/testing.  More specific API should be
   used in scripts to be sure you get exactly what you want.
   """
+  scalarTypes = ('vtkMRMLScalarVolumeNode', 'vtkMRMLLabelMapVolumeNode')
   vectorTypes = ('vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode')
   tensorTypes = ('vtkMRMLDiffusionTensorVolumeNode',)
   pointTypes = ('vtkMRMLModelNode',)
   import vtk.util.numpy_support
   n = getNode(pattern=pattern, index=index)
-  if n.GetClassName() == 'vtkMRMLScalarVolumeNode':
+  if n.GetClassName() in scalarTypes:
     i = n.GetImageData()
     shape = list(n.GetImageData().GetDimensions())
     shape.reverse()

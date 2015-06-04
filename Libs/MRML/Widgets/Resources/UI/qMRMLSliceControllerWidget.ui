@@ -337,7 +337,7 @@
      </property>
      <property name="nodeTypes">
       <stringlist>
-       <string>vtkMRMLVolumeNode</string>
+       <string>vtkMRMLLabelMapVolumeNode</string>
       </stringlist>
      </property>
      <property name="noneEnabled">

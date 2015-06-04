@@ -28,6 +28,7 @@
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
@@ -857,6 +858,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLNode *nd = 0;
   vtkSmartPointer<vtkMRMLDisplayNode> disp;
   vtkMRMLStorageNode *storageNode = 0;
+  vtkMRMLLabelMapVolumeNode *lmvnd = 0;
   vtkMRMLScalarVolumeNode *svnd = 0;
   vtkMRMLVectorVolumeNode *vvnd = 0;
   vtkMRMLDiffusionTensorVolumeNode *dtvnd = 0;
@@ -887,6 +889,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   else if (vtkMRMLVectorVolumeNode::SafeDownCast(nd))
     {
     vvnd  = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
+    }
+  else if (vtkMRMLLabelMapVolumeNode::SafeDownCast(nd))
+    {
+    lmvnd  = vtkMRMLLabelMapVolumeNode::SafeDownCast(nd);
     }
   else if (vtkMRMLScalarVolumeNode::SafeDownCast(nd))
     {
@@ -949,9 +955,9 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     // Read the data into the referenced node
     if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
       {
-      if (svnd || vvnd)
+      if (svnd || lmvnd || vvnd)
         {
-        // Load a scalar or vector volume node
+        // Load a scalar, label map, or vector volume node
         storageNode = storableNode->CreateDefaultStorageNode();
         }
       else if (dtvnd || dwvnd)
@@ -1154,20 +1160,18 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     if (!displayableNode->GetDisplayNode())
       {
       if ((svnd && !svnd->GetDisplayNode())
+          || (lmvnd && !lmvnd->GetDisplayNode())
           || (vvnd && !vvnd->GetDisplayNode()))
         {
-        // Scalar or vector volume node
-        if (svnd)
+        // Scalar, label map or vector volume node
+        if (lmvnd)
           {
-          if (svnd->GetLabelMap())
-            {
             disp.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
             }
-          else
+        else if (svnd)
             {
             disp.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
             }
-          }
         else
           {
           disp.TakeReference(vtkMRMLVectorVolumeDisplayNode::New());
@@ -1185,7 +1189,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
    //       dtvdn->SetUpperThreshold(0);
    //       dtvdn->SetLowerThreshold(0);
    //       dtvdn->SetAutoWindowLevel(1);
-          disp.TakeReference(dtvdn); // assign to superclass pointer
+          disp = dtvdn; // assign to superclass pointer
           }
         else
           {
@@ -1237,20 +1241,16 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         vtkMRMLNode *dnode = this->GetMRMLScene()->AddNode( disp );
         disp->SetAndObserveColorNodeID(this->GetColorLogic()->GetDefaultVolumeColorNodeID());
         disp = vtkMRMLDisplayNode::SafeDownCast(dnode);
-        int isLabelMap = 0;
+
         vtkMRMLVolumeDisplayNode *displayNode = NULL;
-        if (svnd)
+        if (lmvnd)
           {
-          isLabelMap = svnd->GetLabelMap();
-          if (isLabelMap)
-            {
             displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
             }
-          else
+        else if (svnd)
             {
             displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
             }
-          }
         else
           {
           displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
@@ -1259,7 +1259,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           {
           displayNode->SetDefaultColorMap();
           }
-        if (svnd)
+
+        if (lmvnd)
+          {
+          lmvnd->SetAndObserveDisplayNodeID( disp->GetID() );
+          }
+        else if (svnd)
           {
           svnd->SetAndObserveDisplayNodeID( disp->GetID() );
           }
@@ -1302,36 +1307,17 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   // Tensors? Vectors?
   if (req.GetDisplayData())
     {
-    if (vtkMRMLScalarVolumeNode::SafeDownCast(nd) != NULL)
+    if (lmvnd)
       {
-      svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
+      this->GetSelectionNode()->SetActiveLabelVolumeID( req.GetNode().c_str() );
       }
-    else
+    else if (svnd)
       {
-      svnd = NULL;
-      }
-    if (svnd)
-      {
-      if (svnd->GetLabelMap())
-        {
-        this->GetSelectionNode()
-          ->SetActiveLabelVolumeID( req.GetNode().c_str() );
-        }
-      else
-        {
-        this->GetSelectionNode()
-          ->SetActiveVolumeID( req.GetNode().c_str() );
-        }
-      if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(svnd->GetDisplayNode()) != NULL)
-        {
+      this->GetSelectionNode()->SetActiveVolumeID( req.GetNode().c_str() );
         // make sure win/level gets calculated
         svnd->GetDisplayNode()->Modified();
         }
-//      if (!strcmp(svnd->GetClassName(), "vtkMRMLScalarVolumeNode"))
-        {
         this->PropagateVolumeSelection();
-        }
-      }
     }
 }
 

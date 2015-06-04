@@ -116,7 +116,7 @@ class HelperBox(object):
     merge = self.mergeVolume()
     mergeText = "None"
     if merge:
-      if merge.GetClassName() != "vtkMRMLScalarVolumeNode" or not merge.GetLabelMap():
+      if not merge.IsA("vtkMRMLLabelMapVolumeNode"):
         self.errorDialog( "Error: selected merge label volume is not a label volume" )
       else:
         # make the source node the active background, and the label node the active label
@@ -715,7 +715,6 @@ class HelperBox(object):
     self.masterSelector.objectName = 'MasterVolumeNodeSelector'
     # TODO
     self.masterSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
-    self.masterSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
     self.masterSelector.selectNodeUponCreation = False
     self.masterSelector.addEnabled = False
     self.masterSelector.removeEnabled = False
@@ -952,8 +951,7 @@ class HelperBox(object):
       self.labelSelectorFrame.layout().addWidget( self.labelSelectorLabel )
 
       self.labelSelector = slicer.qMRMLNodeComboBox()
-      self.labelSelector.nodeTypes = ( "vtkMRMLScalarVolumeNode", "" )
-      self.labelSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", "1" )
+      self.labelSelector.nodeTypes = ( "vtkMRMLLabelMapVolumeNode", "" )
       # todo addAttribute
       self.labelSelector.selectNodeUponCreation = False
       self.labelSelector.addEnabled = False

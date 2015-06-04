@@ -22,6 +22,7 @@
 #include "vtkSlicerVolumesLogic.h"
 
 // MRML includes
+#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScene.h>
 
@@ -94,6 +95,8 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
 
   logic->SetMRMLScene(scene.GetPointer());
 
+  // Load file as scalar volume
+
   vtkMRMLVolumeNode* volume =
     logic->AddArchetypeVolume(argv[1], "volume", 0);
 
@@ -113,11 +116,44 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
     volume->GetImageData()->Print(std::cerr);
     }
 
+  // Load file as label map volume
+
+  vtkMRMLVolumeNode* volume2 =
+    logic->AddArchetypeVolume(argv[1], "volume", 1 /* bit 0: label map */);
+
+  if (!volume2 ||
+#if VTK_MAJOR_VERSION <=5
+      !isImageDataValid(volume2->GetImageData()))
+#else
+      !isImageDataValid(volume2->GetImageDataConnection()))
+#endif
+    {
+    std::cerr << "Failed to load label map image." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (volume2 && volume2->GetImageData())
+    {
+    volume2->GetImageData()->Print(std::cerr);
+    }
+
   // basic checks on volume geometry
   vtkMRMLScalarVolumeNode *scalarVolume =
     vtkMRMLScalarVolumeNode::SafeDownCast(volume);
-  if (scalarVolume != NULL)
+  vtkMRMLLabelMapVolumeNode *labelMapVolume =
+    vtkMRMLLabelMapVolumeNode::SafeDownCast(volume2);
+
+  if (scalarVolume == NULL)
     {
+    std::cerr << "ERROR: failed to read as scalar volume" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (labelMapVolume == NULL)
+    {
+    std::cerr << "ERROR: failed to read as label map volume" << std::endl;
+    return EXIT_FAILURE;
+    }
+
     std::cout << "Testing volume geometry" << std::endl;
     std::string warnings;
     warnings = logic->CheckForLabelVolumeValidity(NULL, NULL);
@@ -138,18 +174,17 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
       std::cerr << "ERROR: did not detect null labe volumes in CheckForLabelVolumeValidity" << std::endl;
       return EXIT_FAILURE;
       }
-    warnings = logic->CheckForLabelVolumeValidity(NULL, scalarVolume);
+  warnings = logic->CheckForLabelVolumeValidity(NULL, labelMapVolume);
     if (warnings.empty())
       {
       std::cerr << "ERROR: did not detect null volumes and incorrect label map in CheckForLabelVolumeValidity" << std::endl;
       return EXIT_FAILURE;
       }
-    warnings = logic->CompareVolumeGeometry(scalarVolume, scalarVolume);
+  warnings = logic->CompareVolumeGeometry(scalarVolume, labelMapVolume);
     if (!warnings.empty())
       {
       std::cerr << "ERROR: got a warning when comparing identical volumes in CompareVolumeGeometry: " << warnings.c_str() << std::endl;
       return EXIT_FAILURE;
-      }
     }
 
   return EXIT_SUCCESS;

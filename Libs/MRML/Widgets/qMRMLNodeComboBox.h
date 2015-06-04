@@ -124,10 +124,10 @@ public:
   inline QStringList hideChildNodeTypes()const;
 
   /// Add node type attribute that filter the nodes to
-  /// display. For example, labelmaps are defined with the "LabelMap"
-  /// attribute. In the following, the combobox only display the volume nodes
-  /// that are labelmaps.
-  /// \code addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1"); \endcode
+  /// display. For example, colormap categories are defined with the "Category"
+  /// attribute. In the following, the combobox only display Discrete colormap
+  /// nodes.
+  /// \code addAttribute("vtkMRMLColorNode", "Category", "Discrete"); \endcode
   /// \note The attributes are used for filtering but also when "AddNode" is
   /// called: the attributes will be set to the new node
   /// \note An undefined attributeValue will match any value as long as the node

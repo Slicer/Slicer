@@ -37,8 +37,7 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   QApplication app(argc, argv);
 
   qMRMLNodeComboBox nodeSelector;
-  nodeSelector.setNodeTypes(QStringList("vtkMRMLScalarVolumeNode"));
-  nodeSelector.addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
+  nodeSelector.setNodeTypes(QStringList("vtkMRMLLabelMapVolumeNode"));
 
   vtkNew<vtkMRMLScene> scene;
   nodeSelector.setMRMLScene(scene.GetPointer());

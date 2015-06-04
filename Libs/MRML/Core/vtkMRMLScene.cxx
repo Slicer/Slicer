@@ -35,6 +35,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLHierarchyStorageNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include "vtkMRMLLabelMapVolumeNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
@@ -169,6 +170,7 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScalarVolumeDisplayNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLLabelMapVolumeDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLLabelMapVolumeNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLColorNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLDiffusionWeightedVolumeNode >::New() );
 #ifdef MRML_USE_vtkTeem

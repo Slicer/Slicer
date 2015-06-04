@@ -73,8 +73,6 @@ void qSlicerMultiVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerMultiVolumeR
 {
   this->Ui_qSlicerMultiVolumeRenderingModule::setupUi(q);
 
-  this->MRMLNodeComboBoxLabelmapVolume->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
-
   QObject::connect(this->MRMLNodeComboBoxBackgroundVolume,
                     SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                     q, SLOT(onCurrentBgVolumeMRMLImageNodeChanged(vtkMRMLNode*)));
@@ -200,12 +198,12 @@ void qSlicerMultiVolumeRenderingModuleWidget::onCurrentBgVolumeMRMLImageNodeChan
   }
 
   vtkMRMLScalarVolumeNode* fgVolumeNode = NULL;
-  vtkMRMLScalarVolumeNode* labelmapVolumeNode = NULL;
+  vtkMRMLLabelMapVolumeNode* labelmapVolumeNode = NULL;
 
   if (d->DisplayNode)
   {
     fgVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->DisplayNode->GetFgVolumeNode());
-    labelmapVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->DisplayNode->GetLabelmapVolumeNode());
+    labelmapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(d->DisplayNode->GetLabelmapVolumeNode());
   }
 
   vtkSlicerMultiVolumeRenderingLogic *logic =
@@ -237,12 +235,12 @@ void qSlicerMultiVolumeRenderingModuleWidget::onCurrentFgVolumeMRMLImageNodeChan
   }
 
   vtkMRMLScalarVolumeNode* bgVolumeNode = NULL;
-  vtkMRMLScalarVolumeNode* labelmapVolumeNode = NULL;
+  vtkMRMLLabelMapVolumeNode* labelmapVolumeNode = NULL;
 
   if (d->DisplayNode)
   {
     bgVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->DisplayNode->GetBgVolumeNode());
-    labelmapVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->DisplayNode->GetLabelmapVolumeNode());
+    labelmapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(d->DisplayNode->GetLabelmapVolumeNode());
   }
 
   vtkSlicerMultiVolumeRenderingLogic *logic =
@@ -266,7 +264,7 @@ void qSlicerMultiVolumeRenderingModuleWidget::onCurrentLabelmapVolumeMRMLImageNo
 {
   Q_D(qSlicerMultiVolumeRenderingModuleWidget);
 
-  vtkMRMLScalarVolumeNode* labelmapVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);
+  vtkMRMLLabelMapVolumeNode* labelmapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(node);
 
   if (!labelmapVolumeNode)
   {
@@ -316,7 +314,7 @@ void qSlicerMultiVolumeRenderingModuleWidget::onCurrentMRMLDisplayNodeChanged(vt
   // update view node references
   vtkMRMLScalarVolumeNode* bgVolumeNode = this->getCurrentBgVolumeNode();
   vtkMRMLScalarVolumeNode* fgVolumeNode = this->getCurrentFgVolumeNode();
-  vtkMRMLScalarVolumeNode* labelmapVolumeNode = this->getCurrentLabelmapVolumeNode();
+  vtkMRMLLabelMapVolumeNode* labelmapVolumeNode = this->getCurrentLabelmapVolumeNode();
 
   // if display node is not referenced by current volume, add the refrence
   if (bgVolumeNode && displayNode)
@@ -384,10 +382,10 @@ vtkMRMLScalarVolumeNode* qSlicerMultiVolumeRenderingModuleWidget::getCurrentFgVo
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* qSlicerMultiVolumeRenderingModuleWidget::getCurrentLabelmapVolumeNode()const
+vtkMRMLLabelMapVolumeNode* qSlicerMultiVolumeRenderingModuleWidget::getCurrentLabelmapVolumeNode()const
 {
   Q_D(const qSlicerMultiVolumeRenderingModuleWidget);
-  return vtkMRMLScalarVolumeNode::SafeDownCast(d->MRMLNodeComboBoxLabelmapVolume->currentNode());
+  return vtkMRMLLabelMapVolumeNode::SafeDownCast(d->MRMLNodeComboBoxLabelmapVolume->currentNode());
 }
 
 // --------------------------------------------------------------------------

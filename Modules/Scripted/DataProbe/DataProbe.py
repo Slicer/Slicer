@@ -145,7 +145,7 @@ class DataProbeInfoWidget(object):
       if ijk[ele] < 0 or ijk[ele] >= dims[ele]:
         return "Out of Frame"
     pixel = ""
-    if volumeNode.GetLabelMap():
+    if volumeNode.IsA("vtkMRMLLabelMapVolumeNode"):
       labelIndex = int(imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0))
       labelValue = "Unknown"
       displayNode = volumeNode.GetDisplayNode()

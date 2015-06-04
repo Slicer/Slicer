@@ -101,7 +101,7 @@ class WatershedFromMarkerEffectOptions(Effect.EffectOptions):
     helpDoc = \
         """Use this effect to apply the watershed from markers segmentation from multiple initial labels.
 
-The input to this filter is current labelmap image which is expected to contain multiple labels as initial markss. The marks or labels are grown to fill the image and with edges defining the bondaries between. To segment a single object, mark the object, and then it is suggested to surround the object with a negative label on each axis.
+The input to this filter is current labelmap image which is expected to contain multiple labels as initial marks. The marks or labels are grown to fill the image and with edges defining the bondaries between. To segment a single object, mark the object, and then it is suggested to surround the object with a negative label on each axis.
 
 The "Object Scale" parameter is use to adjust the smoothness of the output image and prevent leakage. It is used internally for the sigma of the gradient magnitude.
     """
@@ -259,8 +259,8 @@ class WatershedFromMarkerEffectLogic(LabelEffect.LabelEffectLogic):
     del featureImage
 
     # The output of the watershed is the same as the input.
-    # But Slicer exepects labelMaps to be Int16, so convert to that
-    # type to impove compatibility, just in cast if needed.
+    # But Slicer expects labelMaps to be Int16, so convert to that
+    # type to improve compatibility, just in case if needed.
     if labelImage.GetPixelID() != sitk.sitkInt16:
       labelImage = sitk.Cast( labelImage, sitk.sitkInt16 )
 

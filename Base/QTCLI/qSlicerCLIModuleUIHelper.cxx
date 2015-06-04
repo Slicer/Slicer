@@ -254,7 +254,7 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
 
   // Image type attribute mapping
   Self::ImageTypeAttributeToNodeType["scalar"] = "vtkMRMLScalarVolumeNode";
-  Self::ImageTypeAttributeToNodeType["label"] = "vtkMRMLScalarVolumeNode";
+  Self::ImageTypeAttributeToNodeType["label"] = "vtkMRMLLabelMapVolumeNode";
   Self::ImageTypeAttributeToNodeType["vector"] = "vtkMRMLVectorVolumeNode";
   Self::ImageTypeAttributeToNodeType["tensor"] = "vtkMRMLDiffusionTensorVolumeNode";
   Self::ImageTypeAttributeToNodeType["diffusion-weighted"] = "vtkMRMLDiffusionWeightedVolumeNode";
@@ -616,11 +616,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
-  // Specify factory attributes
-  if (type == "label")
-    {
-    widget->addAttribute(nodeType, "LabelMap",QString("1"));
-    }
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, imageName, imageLabel, widget);
 

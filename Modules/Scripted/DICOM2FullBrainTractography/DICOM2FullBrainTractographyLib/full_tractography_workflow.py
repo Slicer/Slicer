@@ -134,8 +134,7 @@ class WorkflowConfiguration:
         if not hasattr(self, 'baseline_node'):
             self.baseline_node = create_scalar_volume_node(dimensions=dimensions, prefix=WORKFLOW_PREFIX)
         if not hasattr(self, 'mask_node'):
-            self.mask_node = create_scalar_volume_node(dimensions=dimensions, prefix=WORKFLOW_PREFIX)
-            self.mask_node.LabelMapOn()
+            self.mask_node = create_label_map_volume_node(dimensions=dimensions, prefix=WORKFLOW_PREFIX)
 
         step_parameters = data[step_object.id()]
 
