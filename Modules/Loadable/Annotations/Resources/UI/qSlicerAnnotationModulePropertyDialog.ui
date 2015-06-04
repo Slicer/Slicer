@@ -443,6 +443,19 @@
               </property>
              </widget>
             </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="textVisibilityLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Visibility:</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget">
               <property name="sizePolicy">
@@ -469,7 +482,25 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="3" column="1">
+             <widget class="ctkCheckBox" name="textVisibilityCheckBox">
+               <property name="toolTip">
+                 <string>Turn on/off visualization of text (when off, overrides ruler label visibility)</string>
+               </property>
+               <property name="indicatorIcon">
+                 <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+                   <normaloff>:/Icons/XLarge/SlicerVisible.png</normaloff>
+                 <normalon>:/Icons/XLarge/SlicerInvisible.png</normalon>:/Icons/XLarge/SlicerVisible.png</iconset>
+               </property>
+               <property name="indicatorIconSize">
+                 <size>
+                   <width>23</width>
+                   <height>23</height>
+                 </size>
+               </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -862,6 +893,9 @@
             </item>
             <item row="1" column="0" colspan="3">
              <widget class="QCheckBox" name="lineLabelVisibilityCheckBox">
+              <property name="toolTip">
+               <string>Show or hide the tick mark labels in 2D</string>
+              </property>
               <property name="layoutDirection">
                <enum>Qt::RightToLeft</enum>
               </property>

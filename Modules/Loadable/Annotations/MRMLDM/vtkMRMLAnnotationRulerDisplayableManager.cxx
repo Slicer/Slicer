@@ -482,6 +482,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         rep->GetAxis()->GetTitleTextProperty()->SetColor(textDisplayNode->GetColor());
         rep->GetAxis()->GetLabelTextProperty()->SetColor(textDisplayNode->GetColor());
         }
+      rep->GetAxis()->SetTitleVisibility(textDisplayNode->GetVisibility());
       // TODO: get this working
       rep->GetAxis()->GetTitleTextProperty()->SetFontSize(textDisplayNode->GetTextScale());
       }
@@ -505,8 +506,22 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         {
         rep->GetAxis()->GetLabelTextProperty()->SetOpacity(textDisplayNode->GetOpacity());
         }
-      rep->GetAxis()->SetLabelVisibility(lineDisplayNode->GetLabelVisibility());
-      rep->GetAxis()->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
+      if (textDisplayNode)
+        {
+        if (textDisplayNode->GetVisibility() == 0)
+          {
+          // override label visibility if all text is off
+          rep->GetAxis()->SetLabelVisibility(0);
+          }
+        else
+          {
+          rep->GetAxis()->SetLabelVisibility(lineDisplayNode->GetLabelVisibility());
+          }
+        }
+      else
+        {
+        rep->GetAxis()->SetLabelVisibility(lineDisplayNode->GetLabelVisibility());
+        }
       rep->SetRulerMode(lineDisplayNode->GetMaxTicks() ? 1 : 0);
       rep->SetNumberOfRulerTicks(lineDisplayNode->GetMaxTicks());
       rep->SetRulerDistance(this->ApplyUnit(lineDisplayNode->GetTickSpacing()));
@@ -586,10 +601,10 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         {
         rep->GetLabelProperty()->SetColor(textDisplayNode->GetColor());
         }
-      // if the line node says not to show the label, use the label
-      // property to set it invisible, otherwise, use the text display
-      // node's opacity setting.
-      if (lineDisplayNode && !lineDisplayNode->GetLabelVisibility())
+      // if the text node says not to show text, use the label property to set it invisible,
+      // otherwise, use the text displaynode's opacity setting (since there are no tick
+      // labels in the 3D case, don't sue the line display node label visibility).
+      if (!textDisplayNode->GetVisibility())
         {
         rep->GetLabelProperty()->SetOpacity(0);
         }

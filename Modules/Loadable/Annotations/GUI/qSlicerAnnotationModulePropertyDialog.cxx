@@ -276,6 +276,9 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
     double opacity = textDisplayNode->GetOpacity();
     ui.textOpacitySliderSpinBoxWidget->setValue(opacity);
+
+    int visibility = textDisplayNode->GetVisibility();
+    ui.textVisibilityCheckBox->setChecked(visibility);
     }
 
   // load the current measurement
@@ -573,6 +576,9 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
 
   this->connect(ui.textOpacitySliderSpinBoxWidget, SIGNAL(valueChanged(double)),
       this, SLOT(onTextOpacityChanged(double)));
+
+  this->connect(ui.textVisibilityCheckBox, SIGNAL(toggled(bool)),
+                this, SLOT(onTextVisibilityChanged(bool)));
 
   // point
   this->connect(ui.pointsTableWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
@@ -934,6 +940,22 @@ void qSlicerAnnotationModulePropertyDialog::onTextOpacityChanged(double value)
     textDisplayNode->GetScene()->SaveStateForUndo(textDisplayNode);
     }
   textDisplayNode->SetOpacity(value);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onTextVisibilityChanged(bool value)
+{
+  // get the text display node
+  vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
+  if (!textDisplayNode)
+    {
+    return;
+    }
+  if (textDisplayNode->GetScene())
+    {
+    textDisplayNode->GetScene()->SaveStateForUndo(textDisplayNode);
+    }
+  textDisplayNode->SetVisibility(value);
 }
 
 //------------------------------------------------------------------------------
@@ -1515,6 +1537,7 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.textUnselectedColorPickerButton->setEnabled(lock);
   ui.textScaleSliderSpinBoxWidget->setEnabled(lock);
   ui.textOpacitySliderSpinBoxWidget->setEnabled(lock);
+  ui.textVisibilityCheckBox->setEnabled(lock);
 
 
   // Point
