@@ -61,8 +61,6 @@ set(CMAKE_MODULE_PATH
   )
 
 include(CMakeParseArguments)
-include(CTestPackage)
-include(MIDASAPIUploadExtension)
 include(MIDASCTestUploadURL)
 include(UseSlicerMacros) # for slicer_setting_variable_message
 
@@ -174,9 +172,13 @@ if(RUN_CTEST_CONFIGURE)
   ctest_configure(
     BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}
     SOURCE ${EXTENSION_SOURCE_DIR}
+    RETURN_VALUE res
     )
   if(RUN_CTEST_SUBMIT)
     ctest_submit(PARTS Configure)
+  endif()
+  if(NOT res EQUAL 0)
+    message(FATAL_ERROR "Failed to configure extension ${EXTENSION_NAME}")
   endif()
 endif()
 
@@ -217,62 +219,25 @@ endif()
 if(build_errors GREATER "0")
   message(WARNING "Skip extension packaging: ${build_errors} build error(s) occured !")
 else()
-  #message("----------- [ Packaging extension ${EXTENSION_NAME} ] -----------")
-  message("Packaging extension ${EXTENSION_NAME} ...")
-  set(extension_packages)
+  message("Packaging and uploading extension ${EXTENSION_NAME} to midas ...")
+  set(package_list)
   if(RUN_CTEST_PACKAGES)
-    ctest_package(
-      BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
-      CONFIG ${CTEST_BUILD_CONFIGURATION}
-      RETURN_VAR extension_packages)
-  else()
-    set(extension_packages "${CPACK_PACKAGE_FILE_NAME}.tar.gz")
+    ctest_build(TARGET packageupload APPEND)
+    ctest_submit(PARTS Build)
   endif()
 
   if(RUN_CTEST_UPLOAD AND COMMAND ctest_upload)
-    message("Uploading extension ${EXTENSION_NAME} ...")
+    message("Uploading package URL for extension ${EXTENSION_NAME} ...")
 
-    foreach(p ${extension_packages})
+    file(STRINGS ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}/PACKAGES.txt package_list)
+
+    foreach(p ${package_list})
       get_filename_component(package_name "${p}" NAME)
-      message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
-      midas_api_upload_extension(
-        SERVER_URL ${MIDAS_PACKAGE_URL}
-        SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
-        SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
-        TMP_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
-        SUBMISSION_TYPE ${CTEST_MODEL}
-        SLICER_REVISION ${Slicer_WC_REVISION}
-        EXTENSION_NAME ${EXTENSION_NAME}
-        EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
-        EXTENSION_ICONURL ${EXTENSION_ICONURL}
-        EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
-        EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
-        EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
-        EXTENSION_SCREENSHOTURLS ${EXTENSION_SCREENSHOTURLS}
-        EXTENSION_REPOSITORY_TYPE ${EXTENSION_WC_TYPE}
-        EXTENSION_REPOSITORY_URL ${EXTENSION_WC_URL}
-        EXTENSION_SOURCE_REVISION ${EXTENSION_WC_REVISION}
-        EXTENSION_ENABLED ${EXTENSION_ENABLED}
-        OPERATING_SYSTEM ${EXTENSION_OPERATING_SYSTEM}
-        ARCHITECTURE ${EXTENSION_ARCHITECTURE}
-        PACKAGE_FILEPATH ${p}
-        PACKAGE_TYPE "archive"
-        RELEASE ${release}
-        RESULT_VARNAME slicer_midas_upload_status
+      message("Uploading URL to [${package_name}] on CDash")
+      midas_ctest_upload_url(
+        API_URL ${MIDAS_PACKAGE_URL}
+        FILEPATH ${p}
         )
-      if(NOT slicer_midas_upload_status STREQUAL "ok")
-        message(FATAL_ERROR
-"Upload of [${package_name}] failed !
-Check that:
-  (1) you have been granted permission to upload
-  (2) your email and api key are correct")
-      else()
-        message("Uploading URL on CDash")  # On success, upload a link to CDash
-        midas_ctest_upload_url(
-          API_URL ${MIDAS_PACKAGE_URL}
-          FILEPATH ${p}
-          )
-      endif()
       if(RUN_CTEST_SUBMIT)
         ctest_submit(PARTS Upload)
       endif()

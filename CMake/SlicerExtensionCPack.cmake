@@ -167,28 +167,7 @@ if(APPLE)
 endif()
 
 #-----------------------------------------------------------------------------
-# Set EXTENSION_UPLOAD_ONLY_COMMAND
-set(EXTENSION_UPLOAD_ONLY_COMMAND_ARG_LIST "${EXTENSION_COMMAND_ARG_LIST}
-set(RUN_CTEST_CONFIGURE \"FALSE\")
-set(RUN_CTEST_BUILD \"FALSE\")
-set(RUN_CTEST_TEST \"FALSE\")
-set(RUN_CTEST_PACKAGES \"FALSE\")
-set(RUN_CTEST_UPLOAD \"TRUE\")
-set(EXTENSION_ARCHITECTURE \"${EXTENSION_ARCHITECTURE}\")
-set(EXTENSION_BITNESS \"${EXTENSION_BITNESS}\")
-set(EXTENSION_OPERATING_SYSTEM \"${EXTENSION_OPERATING_SYSTEM}\")
-set(CPACK_PACKAGE_FILE_NAME \"${CPACK_PACKAGE_FILE_NAME}\")")
-
-set(script_args_file ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-upload-only-command-args.cmake)
-file(WRITE ${script_args_file} ${EXTENSION_UPLOAD_ONLY_COMMAND_ARG_LIST})
-
-set(CTEST_MODEL "Experimental")
-set(EXTENSION_UPLOAD_ONLY_COMMAND ${CMAKE_CTEST_COMMAND} ${EXTENSION_COMMAND_BUILD_CONF_ARG_LIST} -DCTEST_MODEL:STRING=${CTEST_MODEL} -DSCRIPT_ARGS_FILE:FILEPATH=${script_args_file} -S ${EXTENSION_SCRIPT} -V${CTEST_EXTRA_VERBOSE_ARG})
-
-add_custom_target(Experimental${target_qualifier}UploadOnly
-  COMMAND ${EXTENSION_UPLOAD_ONLY_COMMAND}
-  COMMENT "Upload extension"
-  )
+include(SlicerExtensionPackageAndUploadTarget)
 
 #-----------------------------------------------------------------------------
 include(CPack)
