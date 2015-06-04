@@ -1076,6 +1076,11 @@
    <header>qMRMLAnnotationRulerProjectionPropertyWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>ctkCheckBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
