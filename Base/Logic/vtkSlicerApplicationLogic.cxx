@@ -1166,12 +1166,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         // Scalar, label map or vector volume node
         if (lmvnd)
           {
-            disp.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
-            }
+          disp.TakeReference(vtkMRMLLabelMapVolumeDisplayNode::New());
+          }
         else if (svnd)
-            {
-            disp.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
-            }
+          {
+          disp.TakeReference(vtkMRMLScalarVolumeDisplayNode::New());
+          }
         else
           {
           disp.TakeReference(vtkMRMLVectorVolumeDisplayNode::New());
@@ -1245,12 +1245,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         vtkMRMLVolumeDisplayNode *displayNode = NULL;
         if (lmvnd)
           {
-            displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
-            }
+          displayNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(disp);
+          }
         else if (svnd)
-            {
-            displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
-            }
+          {
+          displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(disp);
+          }
         else
           {
           displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(disp);
@@ -1314,10 +1314,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     else if (svnd)
       {
       this->GetSelectionNode()->SetActiveVolumeID( req.GetNode().c_str() );
-        // make sure win/level gets calculated
-        svnd->GetDisplayNode()->Modified();
-        }
-        this->PropagateVolumeSelection();
+      // make sure win/level gets calculated
+      svnd->GetDisplayNode()->Modified();
+      }
+    this->PropagateVolumeSelection();
     }
 }
 
