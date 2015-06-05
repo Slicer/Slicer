@@ -100,6 +100,10 @@ class _Internal():
       delattr(slicer.modules, moduleName + "Widget")
     delattr(slicer.moduleNames, moduleName)
     delattr(slicer.modules, moduleName.lower())
+    try:
+      slicer.selfTests
+    except AttributeError:
+      slicer.selfTests = {}
     if moduleName in slicer.selfTests:
       del slicer.selfTests[moduleName]
 
