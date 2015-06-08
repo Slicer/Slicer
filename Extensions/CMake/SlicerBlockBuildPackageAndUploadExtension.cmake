@@ -222,7 +222,11 @@ else()
   message("Packaging and uploading extension ${EXTENSION_NAME} to midas ...")
   set(package_list)
   if(RUN_CTEST_PACKAGES)
-    ctest_build(TARGET packageupload APPEND)
+    ctest_build(
+      TARGET packageupload
+      BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
+      APPEND
+      )
     ctest_submit(PARTS Build)
   endif()
 
