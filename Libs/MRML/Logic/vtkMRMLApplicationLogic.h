@@ -118,7 +118,9 @@ public:
   void PropagateVolumeSelection(int layer, int fit);
 
   /// Fit all the volumes into their views
-  void FitSliceToAll();
+  /// If onlyIfPropagateVolumeSelectionAllowed is true then field of view will be reset on
+  /// only those slices where propagate volume selection is allowed
+  void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed=false);
 
   /// zip the directory into a zip file
   /// Returns success or failure.

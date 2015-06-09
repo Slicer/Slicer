@@ -174,9 +174,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
         }
       if (appLogic)
         {
-        appLogic->PropagateVolumeSelection();
-        // TODO: slices should probably be fitting automatically..
-        appLogic->FitSliceToAll();
+        appLogic->PropagateVolumeSelection(); // includes FitSliceToAll by default
         }
       }
     this->setLoadedNodes(QStringList(QString(node->GetID())));

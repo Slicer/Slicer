@@ -147,7 +147,6 @@ def PushToSlicer(sitkimage, NodeName, compositeView=0, overwrite=False):
 
     applicationLogic = slicer.app.applicationLogic()
     applicationLogic.PropagateVolumeSelection(0)
-    applicationLogic.FitSliceToAll()
 
 # Helper functions
 def PushBackground(sitkImage, nodeName, overwrite=False):

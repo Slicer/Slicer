@@ -138,7 +138,7 @@ void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, i
     }
   if (fit)
     {
-    this->External->FitSliceToAll();
+    this->External->FitSliceToAll(true);
     }
 }
 //----------------------------------------------------------------------------
@@ -354,7 +354,7 @@ void vtkMRMLApplicationLogic::PropagateVolumeSelection(int layer, int fit)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLApplicationLogic::FitSliceToAll()
+void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed /* =false */)
 {
   if (this->Internal->SliceLogics.GetPointer() == 0)
     {
@@ -366,6 +366,15 @@ void vtkMRMLApplicationLogic::FitSliceToAll()
       (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(
         this->Internal->SliceLogics->GetNextItemAsObject(it)));)
     {
+    if (onlyIfPropagateVolumeSelectionAllowed)
+      {
+      vtkMRMLSliceCompositeNode *sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+      if (sliceCompositeNode!=NULL && !sliceCompositeNode->GetDoPropagateVolumeSelection())
+        {
+        // propagate volume selection is disabled, skip this slice
+        continue;
+        }
+      }
     vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
     int *dims = sliceNode->GetDimensions();
     sliceLogic->FitSliceToAll(dims[0], dims[1]);
