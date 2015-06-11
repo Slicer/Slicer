@@ -218,6 +218,10 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLDisplayNode::SetSceneReferences()
 {
   this->Superclass::SetSceneReferences();
+  if (this->Scene == NULL)
+    {
+    return;
+    }
   this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
   for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
     {
@@ -727,6 +731,11 @@ void vtkMRMLDisplayNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
+  if (this->Scene == NULL)
+    {
+    return;
+    }
+
   if (this->ColorNodeID != NULL && this->Scene->GetNodeByID(this->ColorNodeID) == NULL)
     {
     this->SetAndObserveColorNodeID(NULL);
@@ -743,6 +752,8 @@ void vtkMRMLDisplayNode::UpdateReferences()
     }
   if (this->ViewNodeIDs.size() != viewNodeIDs.size())
     {
+    // The following line is probably incorrect
+    // (should be this->ViewNodeIDs = viewNodeIDs;)
     viewNodeIDs = this->ViewNodeIDs;
     this->Modified();
     }
@@ -863,7 +874,7 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
       viewNodeIDs.push_back(this->ViewNodeIDs[i]);
       }
     }
-  if (viewNodeIDs.size() != this->ViewNodeIDs.size())
+  if (viewNodeIDs.size() != this->ViewNodeIDs.size() && this->Scene!=NULL)
     {
     this->Scene->RemoveReferencedNodeID(viewNodeID, this);
     this->ViewNodeIDs = viewNodeIDs;
@@ -874,9 +885,12 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
 //-------------------------------------------------------
 void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
 {
-  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  if (this->Scene!=NULL)
     {
-    this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this);
+    for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+      {
+      this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this);
+      }
     }
   this->ViewNodeIDs.clear();
   this->Modified();
