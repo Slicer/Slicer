@@ -274,17 +274,21 @@ void vtkMRMLFiberBundleDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdatePolyDataPipeline()
 {
-  if (this->GetActiveTensorName() &&
-    std::string(this->GetActiveTensorName()) != std::string("") &&
-    this->GetInputPolyData() &&
-    this->GetInputPolyData()->GetPointData() )
-  {
-    this->AssignAttribute->Assign(
-      this->GetActiveTensorName(),
-      this->GetActiveTensorName() ? vtkDataSetAttributes::TENSORS : -1,
-      vtkAssignAttribute::POINT_DATA);
-    this->AssignAttribute->Update();
-  }
+  if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalarData)
+    {
+    this->Superclass::UpdatePolyDataPipeline();
+    }
+  else if (this->GetActiveTensorName() &&
+      std::string(this->GetActiveTensorName()) != std::string("") &&
+      this->GetInputPolyData() &&
+      this->GetInputPolyData()->GetPointData() )
+    {
+      this->AssignAttribute->Assign(
+        this->GetActiveTensorName(),
+        this->GetActiveTensorName() ? vtkDataSetAttributes::TENSORS : -1,
+        vtkAssignAttribute::POINT_DATA);
+      this->AssignAttribute->Update();
+    }
 }
 
 //---------------------------------------------------------------------------
