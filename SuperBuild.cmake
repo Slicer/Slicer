@@ -251,7 +251,7 @@ set(BRAINSTools_options
   )
 Slicer_Remote_Add(BRAINSTools
   GIT_REPOSITORY "${git_protocol}://github.com/Slicer/BRAINSTools.git"
-  GIT_TAG "0dd3268d7a0c117732bf24b4a099ba3d1bf02f8b"
+  GIT_TAG "30f43a71dfe59155112ee4b4a6a29c7b3cb689ef"
   OPTION_NAME Slicer_BUILD_BRAINSTOOLS
   OPTION_DEPENDS "Slicer_BUILD_CLI_SUPPORT;Slicer_BUILD_CLI"
   LABELS REMOTE_MODULE
@@ -365,9 +365,19 @@ ExternalProject_Add(${proj}
 
 # This custom external project step forces the build and later
 # steps to run whenever a top level build is done...
+#
+# BUILD_ALWAYS flag is available in CMake 3.1 that allows force build
+# of external projects without this workaround. Remove this workaround
+# and use the CMake flag instead, when Slicer's required minimum CMake
+# version will be at least 3.1.
+#
+if(CMAKE_CONFIGURATION_TYPES)
+  set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${CMAKE_CFG_INTDIR}/${proj}-build")
+else()
+  set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build")
+endif()
 ExternalProject_Add_Step(${proj} forcebuild
-  COMMAND ${CMAKE_COMMAND} -E remove
-    ${CMAKE_CURRENT_BINARY_DIR}/Slicer-prefix/src/Slicer-stamp/Slicer-build
+  COMMAND ${CMAKE_COMMAND} -E remove ${BUILD_STAMP_FILE}
   COMMENT "Forcing build step for '${proj}'"
   DEPENDEES build
   ALWAYS 1
