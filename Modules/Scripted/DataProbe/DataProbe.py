@@ -353,7 +353,11 @@ class DataProbeInfoWidget(object):
 
     self.imageLabel = qt.QLabel()
     self.imagePixmap = qt.QPixmap()
-    qSize = qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
+    # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
+    # fails on some systems, therefore set the policies using separate method calls
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
+    qSize.setVerticalPolicy(qt.QSizePolicy.Expanding)
     self.imageLabel.setSizePolicy(qSize)
     #self.imageLabel.setScaledContents(True)
     self.frame.layout().addWidget(self.imageLabel)
