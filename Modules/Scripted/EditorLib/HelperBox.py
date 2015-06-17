@@ -89,7 +89,7 @@ class HelperBox(object):
     """create a merge volume for the current master"""
     if not self.master:
       # should never happen
-      self.errorDialog( "Cannot create merge volume without master" )
+      slicer.util.errorDisplay( "Cannot create merge volume without master" )
 
     masterName = self.master.GetName()
     mergeName = masterName + self.mergeVolumePostfix
@@ -116,7 +116,7 @@ class HelperBox(object):
     mergeText = "None"
     if merge:
       if not merge.IsA("vtkMRMLLabelMapVolumeNode"):
-        self.errorDialog( "Error: selected merge label volume is not a label volume" )
+        slicer.util.errorDisplay( "Error: selected merge label volume is not a label volume" )
       else:
         # make the source node the active background, and the label node the active label
         selectionNode = self.applicationLogic.GetSelectionNode()
@@ -139,7 +139,7 @@ class HelperBox(object):
       warnings = self.volumesLogic.CheckForLabelVolumeValidity(self.master,self.merge)
       if warnings != "":
         warnings = "Geometry of master and merge volumes do not match.\n\n" + warnings
-        self.errorDialog( "Warning: %s" % warnings )
+        slicer.util.errorDisplay( "Warning: %s" % warnings )
 
     # trigger a modified event on the parameter node so that other parts of the GUI
     # (such as the EditColor) will know to update and enable themselves
@@ -218,7 +218,7 @@ class HelperBox(object):
     colorNode = merge.GetDisplayNode().GetColorNode()
 
     if colorNode == "":
-      self.errorDialog( "No color node selected" )
+      slicer.util.errorDisplay( "No color node selected" )
       return
 
     if not self.colorBox == "":
@@ -338,11 +338,11 @@ class HelperBox(object):
       structureVolume = self.structureVolume( structureName )
       if not structureVolume:
         mergeName = merge.GetName()
-        self.errorDialog( "Merge Aborted: No image data for volume node %s."%(structureName) )
+        slicer.util.errorDisplay( "Merge Aborted: No image data for volume node %s."%(structureName) )
         return
       if structureVolume.GetImageData().GetDimensions() != dims:
         mergeName = merge.GetName()
-        self.errorDialog( "Merge Aborted: Volume %s does not have the same dimensions as the target merge volume.  Use the Resample Scalar/Vector/DWI module to resample.  Use %s as the Reference Volume and select Nearest Neighbor (nn) Interpolation Type."%(structureName,mergeName) )
+        slicer.util.errorDisplay( "Merge Aborted: Volume %s does not have the same dimensions as the target merge volume.  Use the Resample Scalar/Vector/DWI module to resample.  Use %s as the Reference Volume and select Nearest Neighbor (nn) Interpolation Type."%(structureName,mergeName) )
         return
 
     # check that user really wants to merge
@@ -352,7 +352,7 @@ class HelperBox(object):
       structureVolume = self.structureVolume( structureName)
       if structureVolume.GetImageData().GetMTime() < merge.GetImageData().GetMTime():
         mergeName = merge.GetName()
-        self.errorDialog( "Note: Merge volume has been modified more recently than structure volumes.\nCreating backup copy as %s-backup"%mergeName )
+        slicer.util.errorDisplay( "Note: Merge volume has been modified more recently than structure volumes.\nCreating backup copy as %s-backup"%mergeName )
         self.volumesLogic.CloneVolume( slicer.mrmlScene, merge, mergeName+"-backup" )
 
     #
@@ -1004,11 +1004,6 @@ class HelperBox(object):
         if nodes[nodeName].IsA(className):
           return (nodes[nodeName])
     return None
-
-  def errorDialog(self, message):
-    self.dialog = qt.QErrorMessage()
-    self.dialog.setWindowTitle("Editor")
-    self.dialog.showMessage(message)
 
   def confirmDialog(self, message):
     result = qt.QMessageBox.question(slicer.util.mainWindow(),
