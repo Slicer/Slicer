@@ -33,6 +33,9 @@ class HelperBox(VTKObservationMixin):
 
   mergeValidCommand = _map_property(lambda self: self.structureListWidget, "mergeValidCommand")
 
+  # Backward compatibility
+  structures = _map_property(lambda self: self.structureListWidget, "structures")
+
   def __init__(self, parent=None):
     VTKObservationMixin.__init__(self)
 
@@ -302,6 +305,10 @@ class HelperBox(VTKObservationMixin):
     # so buttons will initially be disabled
     self.master = None
     self.structureListWidget.updateStructures()
+
+  def selectStructure(self, idx):
+    """backward compatibility"""
+    self.structureListWidget.selectStructure(idx)
 
   def labelCreateDialog(self):
     """label create dialog"""
