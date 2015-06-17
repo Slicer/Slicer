@@ -4,6 +4,7 @@ from __main__ import qt
 from __main__ import slicer
 from EditOptions import EditOptions
 import EditUtil
+from slicer.util import NodeModify
 
 
 #########################################################
@@ -128,14 +129,10 @@ class EffectOptions(EditOptions):
     self.updateMRMLFromGUI()
 
   def updateMRMLFromGUI(self):
-    disableState = self.parameterNode.GetDisableModifiedEvent()
-    self.parameterNode.SetDisableModifiedEvent(1)
-    super(EffectOptions,self).updateMRMLFromGUI()
-    self.scope = self.availableScopeOptions[self.scopeComboBox.currentIndex]
-    self.parameterNode.SetParameter( "Effect,scope", str(self.scope) )
-    self.parameterNode.SetDisableModifiedEvent(disableState)
-    if not disableState:
-      self.parameterNode.InvokePendingModifiedEvent()
+    with NodeModify(self.parameterNode):
+      super(EffectOptions,self).updateMRMLFromGUI()
+      self.scope = self.availableScopeOptions[self.scopeComboBox.currentIndex]
+      self.parameterNode.SetParameter( "Effect,scope", str(self.scope) )
 
 #
 # EffectTool
