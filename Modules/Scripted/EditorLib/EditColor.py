@@ -2,7 +2,7 @@ import slicer
 from __main__ import qt
 from __main__ import vtk
 import ColorBox
-import EditUtil
+from EditUtil import EditUtil
 
 #########################################################
 #
@@ -24,7 +24,6 @@ class EditColor(object):
     self.parameterNode = None
     self.parameterNodeTag = None
     self.parameter = parameter
-    self.editUtil = EditUtil.EditUtil()
     self.colorBox = None
     self.colorNode = colorNode
     if parent == 0:
@@ -63,7 +62,7 @@ class EditColor(object):
     self.colorSpin = qt.QSpinBox(self.frame)
     self.colorSpin.objectName = 'ColorSpinBox'
     self.colorSpin.setMaximum( 64000)
-    self.colorSpin.setValue( self.editUtil.getLabel() )
+    self.colorSpin.setValue( EditUtil.getLabel() )
     self.colorSpin.setToolTip( "Click colored patch at right to bring up color selection pop up window.  Use the 'c' key to bring up color popup menu." )
     self.frame.layout().addWidget(self.colorSpin)
 
@@ -90,7 +89,7 @@ class EditColor(object):
     #
     # observe the scene to know when to get the parameter node
     #
-    parameterNode = self.editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     if parameterNode != self.parameterNode:
       if self.parameterNode:
         self.parameterNode.RemoveObserver(self.parameterNodeTag)
@@ -112,7 +111,7 @@ class EditColor(object):
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
 
-    self.colorNode = self.editUtil.getColorNode()
+    self.colorNode = EditUtil.getColorNode()
     if self.colorNode:
       self.frame.setDisabled(0)
       self.labelName.setText( self.colorNode.GetColorName( label ) )
@@ -137,7 +136,7 @@ class EditColor(object):
 
 
   def showColorBox(self):
-    self.colorNode = self.editUtil.getColorNode()
+    self.colorNode = EditUtil.getColorNode()
 
     if not self.colorBox:
       self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.colorNode)

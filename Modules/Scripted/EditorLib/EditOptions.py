@@ -3,7 +3,7 @@ from __main__ import qt
 from __main__ import ctk
 from __main__ import vtk
 from __main__ import getNodes
-import EditUtil
+from EditUtil import EditUtil
 
 #########################################################
 #
@@ -66,7 +66,7 @@ class EditOptions(object):
     self.widgets = []
     self.parameterNode = None
     self.parameterNodeTag = None
-    self.editUtil = EditUtil.EditUtil()
+    self.editUtil = EditUtil() # Kept for backward compatibility
     self.tools = []
 
     # connections is a list of widget/signal/slot tripples
@@ -165,7 +165,7 @@ class EditOptions(object):
     success = False
     lo = -1
     hi = -1
-    backgroundVolume = self.editUtil.getBackgroundVolume()
+    backgroundVolume = EditUtil.getBackgroundVolume()
     if backgroundVolume:
       backgroundImage = backgroundVolume.GetImageData()
       if backgroundImage:

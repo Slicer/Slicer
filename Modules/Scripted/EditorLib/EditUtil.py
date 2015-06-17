@@ -20,14 +20,16 @@ comment = """
 
 class EditUtil(object):
 
-  def getParameterNode(self):
+  @staticmethod
+  def getParameterNode():
     """Get the Editor parameter node - a singleton in the scene"""
-    node = self._findParameterNodeInScene()
+    node = EditUtil._findParameterNodeInScene()
     if not node:
-      node = self._createParameterNode()
+      node = EditUtil._createParameterNode()
     return node
 
-  def _findParameterNodeInScene(self):
+  @staticmethod
+  def _findParameterNodeInScene():
     node = None
     size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
     for i in xrange(size):
@@ -36,7 +38,8 @@ class EditUtil(object):
         node = n
     return node
 
-  def _createParameterNode(self):
+  @staticmethod
+  def _createParameterNode():
     """create the Editor parameter node - a singleton in the scene
     This is used internally by getParameterNode - shouldn't really
     be called for any other reason.
@@ -50,23 +53,26 @@ class EditUtil(object):
     slicer.mrmlScene.AddNode(node)
     # Since we are a singleton, the scene won't add our node into the scene,
     # but will instead insert a copy, so we find that and return it
-    node = self._findParameterNodeInScene()
+    node = EditUtil._findParameterNodeInScene()
     return node
 
-  def getCurrentEffect(self):
+  @staticmethod
+  def getCurrentEffect():
     """return effect associated with the editor parameter node.
     """
-    return self.getParameterNode().GetParameter('effect')
+    return EditUtil.getParameterNode().GetParameter('effect')
 
-  def setCurrentEffect(self, name):
+  @staticmethod
+  def setCurrentEffect(name):
     """set current effect on the editor parameter node.
     """
     if name != 'EraseLabel':
-      self.getParameterNode().SetParameter('effect', name)
+      EditUtil.getParameterNode().SetParameter('effect', name)
     else:
-      self.toggleLabel()
+      EditUtil.toggleLabel()
 
-  def getCompositeNode(self,layoutName='Red'):
+  @staticmethod
+  def getCompositeNode(layoutName='Red'):
     """ use the Red slice composite node to define the active volumes """
     count = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceCompositeNode')
     for n in xrange(count):
@@ -74,132 +80,154 @@ class EditUtil(object):
       if compNode.GetLayoutName() == layoutName:
         return compNode
 
-  def getSliceWidget(self,layoutName='Red'):
+  @staticmethod
+  def getSliceWidget(layoutName='Red'):
     """ use the Red slice widget as the default"""
     layoutManager = slicer.app.layoutManager()
     sliceWidget = layoutManager.sliceWidget(layoutName)
     return sliceWidget
 
-  def getSliceLogic(self,layoutName='Red'):
+  @staticmethod
+  def getSliceLogic(layoutName='Red'):
     """ use the Red slice logic as the default for operations that are
     not specific to a slice widget"""
-    sliceWidget = self.getSliceWidget(layoutName)
+    sliceWidget = EditUtil.getSliceWidget(layoutName)
     return sliceWidget.sliceLogic()
 
-  def getBackgroundImage(self):
-    backgroundVolume = self.getBackgroundVolume()
+  @staticmethod
+  def getBackgroundImage():
+    backgroundVolume = EditUtil.getBackgroundVolume()
     if backgroundVolume:
       return backgroundVolume.GetImageData()
 
-  def getBackgroundVolume(self):
-    compNode = self.getCompositeNode()
+  @staticmethod
+  def getBackgroundVolume():
+    compNode = EditUtil.getCompositeNode()
     if compNode:
       backgroundID = compNode.GetBackgroundVolumeID()
       if backgroundID:
         return slicer.mrmlScene.GetNodeByID(backgroundID)
 
-  def getBackgroundID(self):
-    compNode = self.getCompositeNode()
+  @staticmethod
+  def getBackgroundID():
+    compNode = EditUtil.getCompositeNode()
     if compNode:
       return compNode.GetBackgroundVolumeID()
 
-  def getLabelImage(self):
-    labelVolume = self.getLabelVolume()
+  @staticmethod
+  def getLabelImage():
+    labelVolume = EditUtil.getLabelVolume()
     if labelVolume:
       return labelVolume.GetImageData()
 
-  def getLabelID(self):
-    compNode = self.getCompositeNode()
+  @staticmethod
+  def getLabelID():
+    compNode = EditUtil.getCompositeNode()
     if compNode:
       return compNode.GetLabelVolumeID()
 
-  def getLabelVolume(self):
-    compNode = self.getCompositeNode()
+  @staticmethod
+  def getLabelVolume():
+    compNode = EditUtil.getCompositeNode()
     if compNode:
       labelID = compNode.GetLabelVolumeID()
       if labelID:
         return slicer.mrmlScene.GetNodeByID(labelID)
 
-  def getColorNode(self):
-    if not self.isEraseEffectEnabled():
-      self.backupLabel()
-    labelNode = self.getLabelVolume()
+  @staticmethod
+  def getColorNode():
+    if not EditUtil.isEraseEffectEnabled():
+      EditUtil.backupLabel()
+    labelNode = EditUtil.getLabelVolume()
     if labelNode:
       dispNode = labelNode.GetDisplayNode()
       if dispNode:
         return ( dispNode.GetColorNode() )
 
-  def getLabel(self):
-    return int(self.getParameterNode().GetParameter('label'))
+  @staticmethod
+  def getLabel():
+    return int(EditUtil.getParameterNode().GetParameter('label'))
 
-  def setLabel(self,label):
-    self.getParameterNode().SetParameter('label',str(label))
+  @staticmethod
+  def setLabel(label):
+    EditUtil.getParameterNode().SetParameter('label',str(label))
 
-  def getPropagationMode(self):
-    return int(self.getParameterNode().GetParameter('propagationMode'))
+  @staticmethod
+  def getPropagationMode():
+    return int(EditUtil.getParameterNode().GetParameter('propagationMode'))
 
-  def setPropagateMode(self,propagationMode):
-    self.getParameterNode().SetParameter('propagationMode',str(propagationMode))
+  @staticmethod
+  def setPropagateMode(propagationMode):
+    EditUtil.getParameterNode().SetParameter('propagationMode',str(propagationMode))
 
-  def propagateVolumeSelection(self):
-    parameterNode = self.getParameterNode()
+  @staticmethod
+  def propagateVolumeSelection():
+    parameterNode = EditUtil.getParameterNode()
     mode = int(parameterNode.GetParameter("propagationMode"))
     applicationLogic = slicer.app.applicationLogic()
     applicationLogic.PropagateVolumeSelection(mode, 0)
 
-  def backupLabel(self):
+  @staticmethod
+  def backupLabel():
     """Save current label into 'storedLabel' parameter node attribute"""
-    self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
+    EditUtil.getParameterNode().SetParameter('storedLabel',str(EditUtil.getLabel()))
 
-  def restoreLabel(self):
+  @staticmethod
+  def restoreLabel():
     """Restore the label saved as 'storedLabel' parameter node attribute"""
-    storedLabel = self.getParameterNode().GetParameter('storedLabel')
+    storedLabel = EditUtil.getParameterNode().GetParameter('storedLabel')
     if storedLabel:
-      self.setLabel(storedLabel)
+      EditUtil.setLabel(storedLabel)
 
-  def toggleLabel(self):
+  @staticmethod
+  def toggleLabel():
     """toggle the current label map in the editor parameter node"""
-    if self.isEraseEffectEnabled():
-      self.restoreLabel()
+    if EditUtil.isEraseEffectEnabled():
+      EditUtil.restoreLabel()
     else:
-      self.backupLabel()
-      self.setLabel(0)
+      EditUtil.backupLabel()
+      EditUtil.setLabel(0)
 
-  def isEraseEffectEnabled(self):
-      return self.getLabel() == 0;
+  @staticmethod
+  def isEraseEffectEnabled():
+      return EditUtil.getLabel() == 0;
 
-  def setEraseEffectEnabled(self, enabled):
-    with NodeModify(self.getParameterNode()):
-      if enabled and not self.isEraseEffectEnabled():
-        self.backupLabel()
-        self.setLabel(0)
-      elif not enabled and self.isEraseEffectEnabled():
-        self.restoreLabel()
+  @staticmethod
+  def setEraseEffectEnabled(enabled):
+    with NodeModify(EditUtil.getParameterNode()):
+      if enabled and not EditUtil.isEraseEffectEnabled():
+        EditUtil.backupLabel()
+        EditUtil.setLabel(0)
+      elif not enabled and EditUtil.isEraseEffectEnabled():
+        EditUtil.restoreLabel()
 
-  def getLabelColor(self):
+  @staticmethod
+  def getLabelColor():
     """returns rgba tuple for the current paint color """
-    labelVolume = self.getLabelVolume()
+    labelVolume = EditUtil.getLabelVolume()
     if labelVolume:
       volumeDisplayNode = labelVolume.GetDisplayNode()
       if volumeDisplayNode != '':
         colorNode = volumeDisplayNode.GetColorNode()
         lut = colorNode.GetLookupTable()
-        index = self.getLabel()
+        index = EditUtil.getLabel()
         return lut.GetTableValue(index)
     return (0,0,0,0)
 
-  def getLabelName(self):
+  @staticmethod
+  def getLabelName():
     """returns the string name of the currently selected index """
-    labelVolume = self.getLabelVolume()
+    labelVolume = EditUtil.getLabelVolume()
     if labelVolume:
       volumeDisplayNode = labelVolume.GetDisplayNode()
       if volumeDisplayNode != '':
         colorNode = volumeDisplayNode.GetColorNode()
-        index = self.getLabel()
+        index = EditUtil.getLabel()
         return colorNode.GetColorName(index)
     return ""
 
-  def toggleCrosshair(self):
+  @staticmethod
+  def toggleCrosshair():
     """Turn on or off the crosshair and enable navigation mode
     by manipulating the scene's singleton crosshair node.
     """
@@ -210,24 +238,28 @@ class EditUtil(object):
       else:
         crosshairNode.SetCrosshairMode(0)
 
-  def toggleLabelOutline(self):
+  @staticmethod
+  def toggleLabelOutline():
     """Switch the label outline mode for all composite nodes in the scene"""
     for sliceNode in slicer.util.getNodes('vtkMRMLSliceNode*').values():
       sliceNode.SetUseLabelOutline(not sliceNode.GetUseLabelOutline())
   
-  def setLabelOutline(self, state):
+  @staticmethod
+  def setLabelOutline(state):
     """Set the label outline mode for all composite nodes in the scene to state"""
     for sliceNode in slicer.util.getNodes('vtkMRMLSliceNode*').values():
       sliceNode.SetUseLabelOutline(state)
 
-  def toggleForegroundBackground(self):
+  @staticmethod
+  def toggleForegroundBackground():
     """Swap the foreground and background volumes for all composite nodes in the scene"""
     for sliceCompositeNode in slicer.util.getNodes('vtkMRMLSliceCompositeNode*').values():
       oldForeground = sliceCompositeNode.GetForegroundVolumeID()
       sliceCompositeNode.SetForegroundVolumeID(sliceCompositeNode.GetBackgroundVolumeID())
       sliceCompositeNode.SetBackgroundVolumeID(oldForeground)
 
-  def markVolumeNodeAsModified(self,volumeNode):
+  @staticmethod
+  def markVolumeNodeAsModified(volumeNode):
     """Mark all parts of a volume node as modified so that a correct
     render is triggered.  This includes setting the modified flag on the
     point data scalars so that the GetScalarRange method will return the
@@ -289,7 +321,6 @@ class UndoRedo(object):
     self.undoSize = undoSize
     self.undoList = []
     self.redoList = []
-    self.editUtil = EditUtil()
     self.stateChangedCallback = self.defaultStateChangedCallback
 
   def defaultStateChangedCallback(self):
@@ -324,7 +355,7 @@ class UndoRedo(object):
     """Called by effects as they modify the label volume node
     """
     # store current state onto undoList
-    self.undoList = self.storeVolume( self.undoList, self.editUtil.getLabelVolume() )
+    self.undoList = self.storeVolume( self.undoList, EditUtil.getLabelVolume() )
     self.redoList = []
     self.stateChangedCallback()
 
@@ -337,7 +368,7 @@ class UndoRedo(object):
     if self.undoList == []:
       return
     # store current state onto redoList
-    self.redoList = self.storeVolume( self.redoList, self.editUtil.getLabelVolume() )
+    self.redoList = self.storeVolume( self.redoList, EditUtil.getLabelVolume() )
     # get the checkPoint to restore and remove it from the list
     self.undoList[-1].restore()
     self.undoList = self.undoList[:-1]
@@ -352,7 +383,7 @@ class UndoRedo(object):
     if self.redoList == []:
       return
     # store current state onto undoList
-    self.undoList = self.storeVolume( self.undoList, self.editUtil.getLabelVolume() )
+    self.undoList = self.storeVolume( self.undoList, EditUtil.getLabelVolume() )
     # get the checkPoint to restore and remove it from the list
     self.redoList[-1].restore()
     self.redoList = self.redoList[:-1]
