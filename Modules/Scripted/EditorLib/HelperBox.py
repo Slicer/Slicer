@@ -44,7 +44,7 @@ class HelperBox(object):
     # qt model/view classes to track per-structure volumes
     self.structures = qt.QStandardItemModel()
     # widgets that are dynamically created on demand
-    self.colorSelect = None
+    self.labelCreate = None
     self.labelSelect = None
     self.labelSelector = None
     # pseudo signals
@@ -83,7 +83,7 @@ class HelperBox(object):
   def newMerge(self):
     """create a merge volume for the current master even if one exists"""
     self.createMergeOptions = "new"
-    self.colorSelectDialog()
+    self.labelCreateDialog()
 
   def createMerge(self):
     """create a merge volume for the current master"""
@@ -130,7 +130,7 @@ class HelperBox(object):
       # the master exists, but there is no merge volume yet
       # bring up dialog to create a merge with a user-selected color node
       if self.master:
-        self.colorSelectDialog()
+        self.labelCreateDialog()
 
     self.mergeName.setText( mergeText )
     self.updateStructures()
@@ -853,21 +853,21 @@ class HelperBox(object):
     self.master = None
     self.updateStructures()
 
-  def colorSelectDialog(self):
-    """color table dialog"""
+  def labelCreateDialog(self):
+    """label create dialog"""
 
-    if not self.colorSelect:
-      self.colorSelect = qt.QDialog(slicer.util.mainWindow())
-      self.colorSelect.objectName = 'EditorColorSelectDialog'
-      self.colorSelect.setLayout( qt.QVBoxLayout() )
+    if not self.labelCreate:
+      self.labelCreate = qt.QDialog(slicer.util.mainWindow())
+      self.labelCreate.objectName = 'EditorLabelCreateDialog'
+      self.labelCreate.setLayout( qt.QVBoxLayout() )
 
       self.colorPromptLabel = qt.QLabel()
-      self.colorSelect.layout().addWidget( self.colorPromptLabel )
+      self.labelCreate.layout().addWidget( self.colorPromptLabel )
 
       self.colorSelectorFrame = qt.QFrame()
       self.colorSelectorFrame.objectName = 'ColorSelectorFrame'
       self.colorSelectorFrame.setLayout( qt.QHBoxLayout() )
-      self.colorSelect.layout().addWidget( self.colorSelectorFrame )
+      self.labelCreate.layout().addWidget( self.colorSelectorFrame )
 
       self.colorSelectorLabel = qt.QLabel()
       self.colorSelectorFrame.layout().addWidget( self.colorSelectorLabel )
@@ -884,25 +884,25 @@ class HelperBox(object):
       self.colorSelector.showChildNodeTypes = True
       self.colorSelector.setMRMLScene( slicer.mrmlScene )
       self.colorSelector.setToolTip( "Pick the table of structures you wish to edit" )
-      self.colorSelect.layout().addWidget( self.colorSelector )
+      self.labelCreate.layout().addWidget( self.colorSelector )
 
       self.colorButtonFrame = qt.QFrame()
       self.colorButtonFrame.objectName = 'ColorButtonFrame'
       self.colorButtonFrame.setLayout( qt.QHBoxLayout() )
-      self.colorSelect.layout().addWidget( self.colorButtonFrame )
+      self.labelCreate.layout().addWidget( self.colorButtonFrame )
 
-      self.colorDialogApply = qt.QPushButton("Apply", self.colorButtonFrame)
-      self.colorDialogApply.objectName = 'ColorDialogApply'
-      self.colorDialogApply.setToolTip( "Use currently selected color node." )
-      self.colorButtonFrame.layout().addWidget(self.colorDialogApply)
+      self.labelCreateDialogApply = qt.QPushButton("Apply", self.colorButtonFrame)
+      self.labelCreateDialogApply.objectName = 'LabelCreateDialogApply'
+      self.labelCreateDialogApply.setToolTip( "Use currently selected color node." )
+      self.colorButtonFrame.layout().addWidget(self.labelCreateDialogApply)
 
-      self.colorDialogCancel = qt.QPushButton("Cancel", self.colorButtonFrame)
-      self.colorDialogCancel.objectName = 'ColorDialogCancel'
-      self.colorDialogCancel.setToolTip( "Cancel current operation." )
-      self.colorButtonFrame.layout().addWidget(self.colorDialogCancel)
+      self.labelCreateDialogCancel = qt.QPushButton("Cancel", self.colorButtonFrame)
+      self.labelCreateDialogCancel.objectName = 'LabelCreateDialogCancel'
+      self.labelCreateDialogCancel.setToolTip( "Cancel current operation." )
+      self.colorButtonFrame.layout().addWidget(self.labelCreateDialogCancel)
 
-      self.colorDialogApply.connect("clicked()", self.onColorDialogApply)
-      self.colorDialogCancel.connect("clicked()", self.colorSelect.hide)
+      self.labelCreateDialogApply.connect("clicked()", self.onLabelCreateDialogApply)
+      self.labelCreateDialogCancel.connect("clicked()", self.labelCreate.hide)
 
     # pick the default editor LUT for the user
     defaultID = self.colorLogic.GetDefaultEditorColorNodeID()
@@ -912,12 +912,12 @@ class HelperBox(object):
 
 
     self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node that will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+self.mergeVolumePostfix))
-    self.colorSelect.show()
+    self.labelCreate.show()
 
   # colorSelect callback (slot)
-  def onColorDialogApply(self):
+  def onLabelCreateDialogApply(self):
     self.createMerge()
-    self.colorSelect.hide()
+    self.labelCreate.hide()
 
   def labelSelectDialog(self):
     """label table dialog"""
