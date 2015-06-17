@@ -83,7 +83,6 @@ class EditOptions(object):
     # 2) set the defaults (will only set them if they are not
     # already set)
     self.updateParameterNode(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
-    self.setMRMLDefaults()
 
     # TODO: change this to look for specfic events (added, removed...)
     # but this requires being able to access events by number from wrapped code

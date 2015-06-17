@@ -353,6 +353,7 @@ class EditBox(VTKObservationMixin):
       # for effects, create an options gui and an
       # instance for every slice view
       self.currentOption = effectClass.options(self.optionsFrame)
+      self.currentOption.setMRMLDefaults()
       self.currentOption.undoRedo = self.undoRedo
       self.currentOption.defaultEffect = self.defaultEffect
       self.currentOption.create()
