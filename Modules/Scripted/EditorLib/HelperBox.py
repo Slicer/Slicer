@@ -6,6 +6,7 @@ from __main__ import vtk
 from __main__ import slicer
 import ColorBox
 import EditUtil
+from LabelCreateDialog import LabelCreateDialog
 
 #########################################################
 #
@@ -30,6 +31,8 @@ class HelperBox(object):
     self.master = None
     self.merge = None
     self.masterWhenMergeWasSet = None
+    # Editor color LUT
+    self.colorNodeID = None
     # string
     self.createMergeOptions = ""
     self.mergeVolumePostfix = "-label"
@@ -40,11 +43,9 @@ class HelperBox(object):
     # slicer helper class
     self.applicationLogic = slicer.app.applicationLogic()
     self.volumesLogic = slicer.modules.volumes.logic()
-    self.colorLogic = slicer.modules.colors.logic()
     # qt model/view classes to track per-structure volumes
     self.structures = qt.QStandardItemModel()
     # widgets that are dynamically created on demand
-    self.labelCreate = None
     self.labelSelect = None
     self.labelSelector = None
     # pseudo signals
@@ -101,7 +102,7 @@ class HelperBox(object):
 
     if not merge:
       merge = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, mergeName )
-      merge.GetDisplayNode().SetAndObserveColorNodeID( self.colorSelector.currentNodeID )
+      merge.GetDisplayNode().SetAndObserveColorNodeID( self.colorNodeID )
       self.setMergeVolume( merge )
     self.select(mergeVolume=merge)
 
@@ -112,6 +113,12 @@ class HelperBox(object):
         masterVolume = self.masterSelector.currentNode()
     self.master = masterVolume
     self.merge = mergeVolume
+
+    if self.master and not self.mergeVolume():
+      # the master exists, but there is no merge volume yet
+      # bring up dialog to create a merge with a user-selected color node
+      self.labelCreateDialog()
+
     merge = self.mergeVolume()
     mergeText = "None"
     if merge:
@@ -126,11 +133,6 @@ class HelperBox(object):
         self.editUtil.propagateVolumeSelection()
         mergeText = merge.GetName()
         self.merge = merge
-    else:
-      # the master exists, but there is no merge volume yet
-      # bring up dialog to create a merge with a user-selected color node
-      if self.master:
-        self.labelCreateDialog()
 
     self.mergeName.setText( mergeText )
     self.updateStructures()
@@ -855,69 +857,13 @@ class HelperBox(object):
 
   def labelCreateDialog(self):
     """label create dialog"""
+    dlg = LabelCreateDialog(slicer.util.mainWindow(), self.master, self.mergeVolumePostfix)
+    colorLogic = slicer.modules.colors.logic()
+    dlg.colorNodeID = colorLogic.GetDefaultEditorColorNodeID()
 
-    if not self.labelCreate:
-      self.labelCreate = qt.QDialog(slicer.util.mainWindow())
-      self.labelCreate.objectName = 'EditorLabelCreateDialog'
-      self.labelCreate.setLayout( qt.QVBoxLayout() )
-
-      self.colorPromptLabel = qt.QLabel()
-      self.labelCreate.layout().addWidget( self.colorPromptLabel )
-
-      self.colorSelectorFrame = qt.QFrame()
-      self.colorSelectorFrame.objectName = 'ColorSelectorFrame'
-      self.colorSelectorFrame.setLayout( qt.QHBoxLayout() )
-      self.labelCreate.layout().addWidget( self.colorSelectorFrame )
-
-      self.colorSelectorLabel = qt.QLabel()
-      self.colorSelectorFrame.layout().addWidget( self.colorSelectorLabel )
-
-      self.colorSelector = slicer.qMRMLColorTableComboBox()
-      # TODO
-      self.colorSelector.nodeTypes = ("vtkMRMLColorNode", "")
-      self.colorSelector.hideChildNodeTypes = ("vtkMRMLDiffusionTensorDisplayPropertiesNode", "vtkMRMLProceduralColorNode", "")
-      self.colorSelector.addEnabled = False
-      self.colorSelector.removeEnabled = False
-      self.colorSelector.noneEnabled = False
-      self.colorSelector.selectNodeUponCreation = True
-      self.colorSelector.showHidden = True
-      self.colorSelector.showChildNodeTypes = True
-      self.colorSelector.setMRMLScene( slicer.mrmlScene )
-      self.colorSelector.setToolTip( "Pick the table of structures you wish to edit" )
-      self.labelCreate.layout().addWidget( self.colorSelector )
-
-      self.colorButtonFrame = qt.QFrame()
-      self.colorButtonFrame.objectName = 'ColorButtonFrame'
-      self.colorButtonFrame.setLayout( qt.QHBoxLayout() )
-      self.labelCreate.layout().addWidget( self.colorButtonFrame )
-
-      self.labelCreateDialogApply = qt.QPushButton("Apply", self.colorButtonFrame)
-      self.labelCreateDialogApply.objectName = 'LabelCreateDialogApply'
-      self.labelCreateDialogApply.setToolTip( "Use currently selected color node." )
-      self.colorButtonFrame.layout().addWidget(self.labelCreateDialogApply)
-
-      self.labelCreateDialogCancel = qt.QPushButton("Cancel", self.colorButtonFrame)
-      self.labelCreateDialogCancel.objectName = 'LabelCreateDialogCancel'
-      self.labelCreateDialogCancel.setToolTip( "Cancel current operation." )
-      self.colorButtonFrame.layout().addWidget(self.labelCreateDialogCancel)
-
-      self.labelCreateDialogApply.connect("clicked()", self.onLabelCreateDialogApply)
-      self.labelCreateDialogCancel.connect("clicked()", self.labelCreate.hide)
-
-    # pick the default editor LUT for the user
-    defaultID = self.colorLogic.GetDefaultEditorColorNodeID()
-    defaultNode = slicer.mrmlScene.GetNodeByID(defaultID)
-    if defaultNode:
-      self.colorSelector.setCurrentNode( defaultNode )
-
-
-    self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node that will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+self.mergeVolumePostfix))
-    self.labelCreate.show()
-
-  # colorSelect callback (slot)
-  def onLabelCreateDialogApply(self):
-    self.createMerge()
-    self.labelCreate.hide()
+    if dlg.exec_() == qt.QDialog.Accepted:
+      self.colorNodeID = dlg.colorNodeID
+      self.createMerge()
 
   def labelSelectDialog(self):
     """label table dialog"""
