@@ -41,6 +41,7 @@ set(MODULE_PYTHON_SCRIPTS
   Effect
   HelperBox
   LabelCreateDialog
+  LabelStructureListWidget
   ${EDITOR_BUILTIN_EFFECTS}
   )
 
