@@ -719,24 +719,24 @@ class HelperBox(object):
     #
     # merge label name and set button
     #
-    self.mergeFrame = qt.QFrame(self.masterFrame)
-    self.mergeFrame.objectName = 'MergeVolumeFrame'
-    self.mergeFrame.setLayout(qt.QHBoxLayout())
-    self.masterFrame.layout().addWidget(self.mergeFrame)
+    self.mergeSelectorFrame = qt.QFrame(self.masterFrame)
+    self.mergeSelectorFrame.objectName = 'MergeVolumeFrame'
+    self.mergeSelectorFrame.setLayout(qt.QHBoxLayout())
+    self.masterFrame.layout().addWidget(self.mergeSelectorFrame)
 
     mergeNameToolTip = "Composite label map containing the merged structures (be aware that merge operations will overwrite any edits applied to this volume)"
-    self.mergeNameLabel = qt.QLabel("Merge Volume: ", self.mergeFrame)
+    self.mergeNameLabel = qt.QLabel("Merge Volume: ", self.mergeSelectorFrame)
     self.mergeNameLabel.setToolTip( mergeNameToolTip )
-    self.mergeFrame.layout().addWidget(self.mergeNameLabel)
+    self.mergeSelectorFrame.layout().addWidget(self.mergeNameLabel)
 
-    self.mergeName = qt.QLabel("", self.mergeFrame)
+    self.mergeName = qt.QLabel("", self.mergeSelectorFrame)
     self.mergeName.setToolTip( mergeNameToolTip )
-    self.mergeFrame.layout().addWidget(self.mergeName)
+    self.mergeSelectorFrame.layout().addWidget(self.mergeName)
 
-    self.setMergeButton = qt.QPushButton("Set...", self.mergeFrame)
+    self.setMergeButton = qt.QPushButton("Set...", self.mergeSelectorFrame)
     self.setMergeButton.objectName = 'MergeVolumeButton'
     self.setMergeButton.setToolTip( "Set the merge volume to use with this master." )
-    self.mergeFrame.layout().addWidget(self.setMergeButton)
+    self.mergeSelectorFrame.layout().addWidget(self.setMergeButton)
 
 
     #
