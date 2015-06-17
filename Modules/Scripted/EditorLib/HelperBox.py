@@ -7,6 +7,7 @@ from __main__ import slicer
 import ColorBox
 from EditUtil import EditUtil
 from LabelCreateDialog import LabelCreateDialog
+from slicer.util import VTKObservationMixin
 
 #########################################################
 #
@@ -21,9 +22,10 @@ comment = """
 #
 #########################################################
 
-class HelperBox(object):
+class HelperBox(VTKObservationMixin):
 
   def __init__(self, parent=None):
+    VTKObservationMixin.__init__(self)
 
     self.editUtil = EditUtil() # Kept for backward compatibility
 
@@ -35,8 +37,6 @@ class HelperBox(object):
     # string
     self.createMergeOptions = ""
     self.mergeVolumePostfix = "-label"
-    # pairs of (node instance, observer tag number)
-    self.observerTags = []
     # instance of a ColorBox
     self.colorBox = None
     # slicer helper class
@@ -62,15 +62,17 @@ class HelperBox(object):
       self.create()
 
   def onEnter(self):
-    # new scene, node added or removed events
-    tag = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, self.updateStructures)
-    self.observerTags.append( (slicer.mrmlScene, tag) )
-    tag = slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeRemovedEvent, self.updateStructures)
-    self.observerTags.append( (slicer.mrmlScene, tag) )
+
+    self.addObserver(slicer.mrmlScene,
+        slicer.vtkMRMLScene.NodeAddedEvent,
+        self.updateStructures)
+
+    self.addObserver(slicer.mrmlScene,
+        slicer.vtkMRMLScene.NodeRemovedEvent,
+        self.updateStructures)
 
   def onExit(self):
-    for tagpair in self.observerTags:
-      tagpair[0].RemoveObserver(tagpair[1])
+    self.removeObservers(method=self.updateStructures)
 
   def cleanup(self):
     self.onExit()
