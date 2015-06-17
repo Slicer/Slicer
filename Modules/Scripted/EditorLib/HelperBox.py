@@ -7,6 +7,7 @@ from __main__ import slicer
 import ColorBox
 import EditUtil
 from LabelCreateDialog import LabelCreateDialog
+from LabelSelectDialog import LabelSelectDialog
 
 #########################################################
 #
@@ -46,8 +47,6 @@ class HelperBox(object):
     # qt model/view classes to track per-structure volumes
     self.structures = qt.QStandardItemModel()
     # widgets that are dynamically created on demand
-    self.labelSelect = None
-    self.labelSelector = None
     # pseudo signals
     # - python callable that gets True or False
     self.mergeValidCommand = None
@@ -161,19 +160,17 @@ class HelperBox(object):
 
   def setMasterVolume(self,masterVolume):
     """select merge volume"""
+    if isinstance(masterVolume, basestring):
+      masterVolume = slicer.mrmlScene.GetNodeByID(masterVolume)
     self.masterSelector.setCurrentNode( masterVolume )
-    self.select()
 
   def setMergeVolume(self,mergeVolume=None):
     """select merge volume"""
+    if isinstance(mergeVolume, basestring):
+      mergeVolume = slicer.mrmlScene.GetNodeByID(mergeVolume)
     if self.master:
       if mergeVolume:
         self.merge = mergeVolume
-        if self.labelSelector:
-          self.labelSelector.setCurrentNode( self.merge )
-      else:
-        if self.labelSelector:
-          self.merge = self.labelSelector.currentNode()
       self.masterWhenMergeWasSet = self.master
       self.select(masterVolume=self.master,mergeVolume=mergeVolume)
 
@@ -868,69 +865,12 @@ class HelperBox(object):
   def labelSelectDialog(self):
     """label table dialog"""
 
-    if not self.labelSelect:
-      self.labelSelect = qt.QFrame()
-      self.labelSelect.setLayout( qt.QVBoxLayout() )
+    dlg = LabelSelectDialog(slicer.util.mainWindow())
 
-      self.labelPromptLabel = qt.QLabel()
-      self.labelSelect.layout().addWidget( self.labelPromptLabel )
-
-
-      self.labelSelectorFrame = qt.QFrame()
-      self.labelSelectorFrame.setLayout( qt.QHBoxLayout() )
-      self.labelSelect.layout().addWidget( self.labelSelectorFrame )
-
-      self.labelSelectorLabel = qt.QLabel()
-      self.labelPromptLabel.setText( "Label Map: " )
-      self.labelSelectorFrame.layout().addWidget( self.labelSelectorLabel )
-
-      self.labelSelector = slicer.qMRMLNodeComboBox()
-      self.labelSelector.nodeTypes = ( "vtkMRMLLabelMapVolumeNode", "" )
-      # todo addAttribute
-      self.labelSelector.selectNodeUponCreation = False
-      self.labelSelector.addEnabled = False
-      self.labelSelector.noneEnabled = False
-      self.labelSelector.removeEnabled = False
-      self.labelSelector.showHidden = False
-      self.labelSelector.showChildNodeTypes = False
-      self.labelSelector.setMRMLScene( slicer.mrmlScene )
-      self.labelSelector.setToolTip( "Pick the label map to edit" )
-      self.labelSelectorFrame.layout().addWidget( self.labelSelector )
-
-      self.labelButtonFrame = qt.QFrame()
-      self.labelButtonFrame.setLayout( qt.QHBoxLayout() )
-      self.labelSelect.layout().addWidget( self.labelButtonFrame )
-
-      self.labelDialogApply = qt.QPushButton("Apply", self.labelButtonFrame)
-      self.labelDialogApply.setToolTip( "Use currently selected label node." )
-      self.labelButtonFrame.layout().addWidget(self.labelDialogApply)
-
-      self.labelDialogCancel = qt.QPushButton("Cancel", self.labelButtonFrame)
-      self.labelDialogCancel.setToolTip( "Cancel current operation." )
-      self.labelButtonFrame.layout().addWidget(self.labelDialogCancel)
-
-      self.labelButtonFrame.layout().addStretch(1)
-
-      self.labelDialogCreate = qt.QPushButton("Create New...", self.labelButtonFrame)
-      self.labelDialogCreate.setToolTip( "Cancel current operation." )
-      self.labelButtonFrame.layout().addWidget(self.labelDialogCreate)
-
-      self.labelDialogApply.connect("clicked()", self.onLabelDialogApply)
-      self.labelDialogCancel.connect("clicked()", self.labelSelect.hide)
-      self.labelDialogCreate.connect("clicked()", self.onLabelDialogCreate)
-
-    self.labelPromptLabel.setText( "Select existing label map volume to edit." )
-    p = qt.QCursor().pos()
-    self.labelSelect.setGeometry(p.x(), p.y(), 400, 200)
-    self.labelSelect.show()
-
-  # labelSelect callbacks (slots)
-  def onLabelDialogApply(self):
-    self.setMergeVolume(self.labelSelector.currentNode())
-    self.labelSelect.hide()
-  def onLabelDialogCreate(self):
-    self.newMerge()
-    self.labelSelect.hide()
+    if dlg.exec_() == qt.QDialog.Accepted:
+      self.setMergeVolume(dlg.labelNodeID)
+    elif dlg.createNew:
+      self.newMerge()
 
   def confirmDialog(self, message):
     result = qt.QMessageBox.question(slicer.util.mainWindow(),

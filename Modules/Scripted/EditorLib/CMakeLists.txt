@@ -41,6 +41,7 @@ set(MODULE_PYTHON_SCRIPTS
   Effect
   HelperBox
   LabelCreateDialog
+  LabelSelectDialog
   ${EDITOR_BUILTIN_EFFECTS}
   )
 
