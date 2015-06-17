@@ -622,7 +622,11 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
   // * mesh origin X, Y, Z (position of the boundary node before the grid)
   // * mesh spacing X, Y, Z
   // * mesh direction 3x3 matrix (first row, second row, third row)
+#if defined(ITK_FIXED_PARAMETERS_ARE_DOUBLE) // After 4.8.1
+  typename BSplineTransformType::FixedParametersValueType transformFixedParamsItk;
+#else                                         //Pre 4.8.1
   typename BSplineTransformType::ParametersType transformFixedParamsItk;
+#endif
   const unsigned int numberOfFixedParameters=VTKDimension*(VTKDimension+3);
   transformFixedParamsItk.SetSize(numberOfFixedParameters);
 
