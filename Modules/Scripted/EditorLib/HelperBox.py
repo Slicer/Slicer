@@ -7,7 +7,6 @@ from __main__ import slicer
 import ColorBox
 import EditUtil
 from LabelCreateDialog import LabelCreateDialog
-from LabelSelectDialog import LabelSelectDialog
 
 #########################################################
 #
@@ -30,7 +29,6 @@ class HelperBox(object):
 
     # mrml volume node instances
     self.master = None
-    self.merge = None
     self.masterWhenMergeWasSet = None
     # Editor color LUT
     self.colorNodeID = None
@@ -80,6 +78,14 @@ class HelperBox(object):
     if self.colorBox:
       self.colorBox.cleanup()
 
+  @property
+  def merge(self):
+    return self.mergeSelector.currentNode()
+
+  @merge.setter
+  def merge(self, node):
+    self.mergeSelector.setCurrentNode(node)
+
   def newMerge(self):
     """create a merge volume for the current master even if one exists"""
     self.createMergeOptions = "new"
@@ -111,7 +117,12 @@ class HelperBox(object):
     if masterVolume == None:
         masterVolume = self.masterSelector.currentNode()
     self.master = masterVolume
-    self.merge = mergeVolume
+
+    self.masterSelector.blockSignals(True)
+    self.masterSelector.setCurrentNode(self.master)
+    self.masterSelector.blockSignals(False)
+
+    self.mergeSelector.setCurrentNode(mergeVolume)
 
     if self.master and not self.mergeVolume():
       # the master exists, but there is no merge volume yet
@@ -119,7 +130,6 @@ class HelperBox(object):
       self.labelCreateDialog()
 
     merge = self.mergeVolume()
-    mergeText = "None"
     if merge:
       if not merge.IsA("vtkMRMLLabelMapVolumeNode"):
         slicer.util.errorDisplay( "Error: selected merge label volume is not a label volume" )
@@ -130,14 +140,12 @@ class HelperBox(object):
         selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
 
         self.editUtil.propagateVolumeSelection()
-        mergeText = merge.GetName()
-        self.merge = merge
+        self.mergeSelector.setCurrentNode(merge)
 
-    self.mergeName.setText( mergeText )
     self.updateStructures()
 
     if self.master and merge:
-      warnings = self.volumesLogic.CheckForLabelVolumeValidity(self.master,self.merge)
+      warnings = self.volumesLogic.CheckForLabelVolumeValidity(self.master,merge)
       if warnings != "":
         warnings = "Geometry of master and merge volumes do not match.\n\n" + warnings
         slicer.util.errorDisplay( "Warning: %s" % warnings )
@@ -145,9 +153,6 @@ class HelperBox(object):
     # trigger a modified event on the parameter node so that other parts of the GUI
     # (such as the EditColor) will know to update and enable themselves
     self.editUtil.getParameterNode().Modified()
-
-    # make sure the selector is up to date
-    self.masterSelector.setCurrentNode(self.master)
 
     if self.selectCommand:
       self.selectCommand()
@@ -169,8 +174,6 @@ class HelperBox(object):
     if isinstance(mergeVolume, basestring):
       mergeVolume = slicer.mrmlScene.GetNodeByID(mergeVolume)
     if self.master:
-      if mergeVolume:
-        self.merge = mergeVolume
       self.masterWhenMergeWasSet = self.master
       self.select(masterVolume=self.master,mergeVolume=mergeVolume)
 
@@ -180,20 +183,18 @@ class HelperBox(object):
       return None
 
     # if we already have a merge and the master hasn't changed, use it
-    if self.merge and self.master == self.masterWhenMergeWasSet:
-      mergeNode = slicer.mrmlScene.GetNodeByID( self.merge.GetID() )
-      if mergeNode and mergeNode != "":
-        return self.merge
+    if self.mergeSelector.currentNode() and self.master == self.masterWhenMergeWasSet:
+      return self.mergeSelector.currentNode()
 
-    self.merge = None
     self.masterWhenMergeWasSet = None
 
     # otherwise pick the merge based on the master name
     # - either return the merge volume or empty string
     masterName = self.master.GetName()
     mergeName = masterName + self.mergeVolumePostfix
-    self.merge = slicer.util.getFirstNodeByName( mergeName, className=self.master.GetClassName() )
-    return self.merge
+    merge = slicer.util.getFirstNodeByName(mergeName, className=self.master.GetClassName())
+    self.mergeSelector.setCurrentNode(merge)
+    return self.mergeSelector.currentNode()
 
   def structureVolume(self,structureName):
     """select structure volume"""
@@ -566,7 +567,7 @@ class HelperBox(object):
     if slicer.mrmlScene.IsBatchProcessing():
       return
 
-    if self.setMergeButton.destroyed():
+    if self.mergeSelector.destroyed():
       """ TODO: here the python class still exists but the
       Qt widgets are gone - need to figure out when to remove observers
       and free python code - probably the destroyed() signal.
@@ -574,7 +575,7 @@ class HelperBox(object):
       self.cleanup()
       return
 
-    self.setMergeButton.setDisabled(not self.master)
+    self.mergeSelector.setDisabled(not self.master)
 
     # reset to a fresh model
     self.structures = qt.QStandardItemModel()
@@ -582,6 +583,7 @@ class HelperBox(object):
 
     # if no merge volume exists, disable everything - else enable
     merge = self.mergeVolume()
+
     self.addStructureButton.setDisabled(not merge)
     self.deleteStructuresButton.setDisabled(not merge)
     self.deleteSelectedStructureButton.setDisabled(not merge)
@@ -669,6 +671,9 @@ class HelperBox(object):
   def onSelect(self, node):
     self.select()
 
+  def onMergeSelect(self, node):
+    self.select(mergeVolume=node)
+
   def onStructuresClicked(self, modelIndex):
     self.edit(int(self.structures.item(modelIndex.row(),0).text()))
 
@@ -729,15 +734,21 @@ class HelperBox(object):
     self.mergeNameLabel.setToolTip( mergeNameToolTip )
     self.mergeSelectorFrame.layout().addWidget(self.mergeNameLabel)
 
-    self.mergeName = qt.QLabel("", self.mergeSelectorFrame)
-    self.mergeName.setToolTip( mergeNameToolTip )
-    self.mergeSelectorFrame.layout().addWidget(self.mergeName)
+    self.mergeSelector = slicer.qMRMLNodeComboBox(self.mergeSelectorFrame)
+    self.mergeSelector.objectName = 'MergeVolumeNodeSelector'
+    self.mergeSelector.setToolTip( mergeNameToolTip )
+    self.mergeSelector.nodeTypes = ( ("vtkMRMLLabelMapVolumeNode"), "" )
+    self.mergeSelector.addEnabled = False
+    self.mergeSelector.removeEnabled = False
+    self.mergeSelector.noneEnabled = False
+    self.mergeSelector.showHidden = False
+    self.mergeSelector.showChildNodeTypes = False
+    self.mergeSelector.setMRMLScene( slicer.mrmlScene )
+    self.mergeSelectorFrame.layout().addWidget(self.mergeSelector)
 
-    self.setMergeButton = qt.QPushButton("Set...", self.mergeSelectorFrame)
-    self.setMergeButton.objectName = 'MergeVolumeButton'
-    self.setMergeButton.setToolTip( "Set the merge volume to use with this master." )
-    self.mergeSelectorFrame.layout().addWidget(self.setMergeButton)
-
+    self.newMergeVolumeAction = qt.QAction("Create new LabelMapVolume", self.mergeSelector)
+    self.newMergeVolumeAction.connect("triggered()", self.newMerge)
+    self.mergeSelector.addMenuAction(self.newMergeVolumeAction)
 
     #
     # Structures Frame
@@ -837,6 +848,7 @@ class HelperBox(object):
 
     # node selected
     self.masterSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
+    self.mergeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onMergeSelect)
     # buttons pressed
     self.addStructureButton.connect("clicked()", self.addStructure)
     self.deleteStructuresButton.connect("clicked()", self.deleteStructures)
@@ -846,7 +858,6 @@ class HelperBox(object):
     self.splitButton.connect("clicked()", self.split)
     self.mergeButton.connect("clicked()", self.mergeStructures)
     self.mergeAndBuildButton.connect("clicked()", self.onMergeAndBuild)
-    self.setMergeButton.connect("clicked()", self.labelSelectDialog)
 
     # so buttons will initially be disabled
     self.master = None
@@ -861,16 +872,6 @@ class HelperBox(object):
     if dlg.exec_() == qt.QDialog.Accepted:
       self.colorNodeID = dlg.colorNodeID
       self.createMerge()
-
-  def labelSelectDialog(self):
-    """label table dialog"""
-
-    dlg = LabelSelectDialog(slicer.util.mainWindow())
-
-    if dlg.exec_() == qt.QDialog.Accepted:
-      self.setMergeVolume(dlg.labelNodeID)
-    elif dlg.createNew:
-      self.newMerge()
 
   def confirmDialog(self, message):
     result = qt.QMessageBox.question(slicer.util.mainWindow(),
