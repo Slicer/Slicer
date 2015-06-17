@@ -4,6 +4,7 @@ from __main__ import ctk
 from __main__ import vtk
 from __main__ import getNodes
 from EditUtil import EditUtil
+from slicer.util import VTKObservationMixin
 
 #########################################################
 #
@@ -52,7 +53,7 @@ class HelpButton(object):
 #########################################################
 # Options
 #########################################################
-class EditOptions(object):
+class EditOptions(VTKObservationMixin):
   """ This EditOptions is a parent class for all the GUI options
   for editor effects.  These are small custom interfaces
   that it in the toolOptionsFrame of the Editor interface.
@@ -60,9 +61,9 @@ class EditOptions(object):
   """
 
   def __init__(self, parent=None):
+    VTKObservationMixin.__init__(self)
     self.parent = parent
     self.updatingGUI = False
-    self.observerTags = []
     self.widgets = []
     self.parameterNode = None
     self.parameterNodeTag = None
@@ -86,15 +87,13 @@ class EditOptions(object):
 
     # TODO: change this to look for specfic events (added, removed...)
     # but this requires being able to access events by number from wrapped code
-    tag = slicer.mrmlScene.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
-    self.observerTags.append( (slicer.mrmlScene, tag) )
+    self.addObserver(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
 
   def __del__(self):
     self.destroy()
     if self.parameterNode:
       self.parameterNode.RemoveObserver(self.parameterNodeTag)
-    for tagpair in self.observerTags:
-      tagpair[0].RemoveObserver(tagpair[1])
+    self.removeObservers()
 
   def connectWidgets(self):
     if self.connectionsConnected: return
