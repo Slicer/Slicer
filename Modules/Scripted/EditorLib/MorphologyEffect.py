@@ -4,7 +4,6 @@ from __main__ import qt
 from __main__ import ctk
 from __main__ import slicer
 from EditOptions import EditOptions
-import EditUtil
 import Effect
 
 

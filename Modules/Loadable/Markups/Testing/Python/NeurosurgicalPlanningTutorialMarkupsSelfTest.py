@@ -3,6 +3,7 @@ import time
 import unittest
 from __main__ import vtk, qt, ctk, slicer
 import EditorLib
+from EditorLib.EditUtil import EditUtil
 
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTest
@@ -342,8 +343,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     #
     # paint
     #
-    editUtil = EditorLib.EditUtil.EditUtil()
-    parameterNode = editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     paintEffect = EditorLib.PaintEffectOptions()
     paintEffect.setMRMLDefaults()
     paintEffect.__del__()
@@ -355,7 +355,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     # paint in cystic part of tumor, using converstion from RAS coords to
     # avoid slice widget size differences
     #
-    editUtil.setLabel(293)
+    EditUtil.setLabel(293)
     displayCoords = self.rasToDisplay(-7.4, 71, sliceOffset)
     paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
     displayCoords = self.rasToDisplay(-11, 73, sliceOffset)
@@ -372,7 +372,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     #
     # paint in solid part of tumor
     #
-    editUtil.setLabel(7)
+    EditUtil.setLabel(7)
     displayCoords = self.rasToDisplay(-0.5 , 118.5, sliceOffset)
     paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
     displayCoords = self.rasToDisplay(-7.4 , 116, sliceOffset)
@@ -383,7 +383,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     #
     # paint around the tumor
     #
-    editUtil.setLabel(295)
+    EditUtil.setLabel(295)
     rMax = 25
     rMin = -50
     aMax = 145
@@ -459,7 +459,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     # Threshold tool
     #
     slicer.modules.EditorWidget.toolsBox.selectEffect('ThresholdEffect')
-    parameterNode = slicer.modules.EditorWidget.toolsBox.currentOption.editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     parameterNode.SetParameter('ThresholdEffect,min', str(1700))
     slicer.modules.EditorWidget.toolsBox.currentTools[0].apply()
     self.takeScreenshot('NeurosurgicalPlanning-Ventricles','Ventricles segmentation',-1)
@@ -508,7 +508,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     # Dilate
     #
     slicer.modules.EditorWidget.toolsBox.selectEffect('DilateEffect')
-    editUtil.setLabel(293)
+    EditUtil.setLabel(293)
     self.takeScreenshot('NeurosurgicalPlanning-Dilate','Dilate tool',-1)
     # tutorial says to click apply three times
     for d in range (1,3):

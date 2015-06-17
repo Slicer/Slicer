@@ -3,9 +3,9 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-import EditUtil
 from EditOptions import EditOptions
 from EditorLib import EditorLib
+from EditUtil import EditUtil
 import LabelEffect
 import numpy
 from math import sqrt
@@ -39,7 +39,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     # get pixel-size-dependent parameters
     # calculate this before calling superclass init
     # so it can be used to set mrml defaults if needed
-    labelVolume = EditUtil.EditUtil().getLabelVolume()
+    labelVolume = EditUtil.getLabelVolume()
     if labelVolume and labelVolume.GetImageData():
       spacing = labelVolume.GetSpacing()
       dimensions = labelVolume.GetImageData().GetDimensions()
@@ -154,7 +154,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -227,7 +227,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.setQuickieRadius(20)
 
   def setQuickieRadius(self,radius):
-    labelVolume = self.editUtil.getLabelVolume()
+    labelVolume = EditUtil.getLabelVolume()
     if labelVolume:
       if self.radiusUnitsToggle.text == 'px:':
         spacing = labelVolume.GetSpacing()
@@ -298,7 +298,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
     # configuration variables
     self.delayedPaint = True
-    self.parameterNode = self.editUtil.getParameterNode()
+    self.parameterNode = EditUtil.getParameterNode()
     self.sphere = not (0 == int(self.parameterNode.GetParameter("PaintEffect,sphere")))
     self.smudge = not (0 == int(self.parameterNode.GetParameter("PaintEffect,smudge")))
     self.pixelMode = not (0 == int(self.parameterNode.GetParameter("PaintEffect,pixelMode")))
@@ -371,7 +371,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
         self.cursorOff()
       xy = self.interactor.GetEventPosition()
       if self.smudge:
-        self.editUtil.setLabel(self.getLabelPixel(xy))
+        EditUtil.setLabel(self.getLabelPixel(xy))
       self.paintAddPoint(xy[0], xy[1])
       self.abortEvent(event)
     elif event == "LeftButtonReleaseEvent":
@@ -522,7 +522,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     sliceLogic = self.sliceWidget.sliceLogic()
     labelLogic = sliceLogic.GetLabelLayer()
     labelNode = labelLogic.GetVolumeNode()
-    self.editUtil.markVolumeNodeAsModified(labelNode)
+    EditUtil.markVolumeNodeAsModified(labelNode)
 
   def paintPixel(self, x, y):
     """
@@ -551,10 +551,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
       if e < 0 or e >= d:
         return
 
-    parameterNode = self.editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     paintLabel = int(parameterNode.GetParameter("label"))
     labelImage.SetScalarComponentFromFloat(ijk[0],ijk[1],ijk[2],0, paintLabel)
-    self.editUtil.markVolumeNodeAsModified(labelNode)
+    EditUtil.markVolumeNodeAsModified(labelNode)
 
   def paintBrush(self, x, y):
     """
@@ -665,7 +665,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     brushRadius = self.radius
     bSphere = self.sphere
 
-    parameterNode = self.editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     paintLabel = int(parameterNode.GetParameter("label"))
     paintOver = int(parameterNode.GetParameter("LabelEffect,paintOver"))
     paintThreshold = int(parameterNode.GetParameter("LabelEffect,paintThreshold"))

@@ -4,8 +4,8 @@ from __main__ import qt
 from __main__ import ctk
 from __main__ import slicer
 from EditOptions import EditOptions
-import EditUtil
 import EditorLib
+from EditorLib.EditUtil import EditUtil
 import Effect
 
 
@@ -68,7 +68,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
     self.widgets.append(self.modelNameLabel)
 
     self.modelName = qt.QLineEdit(self.nameFrame)
-    self.modelName.setText( self.getUniqueModelName( self.editUtil.getLabelName() ) )
+    self.modelName.setText( self.getUniqueModelName( EditUtil.getLabelName() ) )
     self.nameFrame.layout().addWidget(self.modelName)
     self.widgets.append(self.modelName)
 
@@ -95,7 +95,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
     defined in the leaf classes in EditOptions.py
     in each leaf subclass so that "self" in the observer
     is of the correct type """
-    node = self.editUtil.getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -193,7 +193,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
     # based on the current editor parameters
     #
 
-    volumeNode = self.editUtil.getLabelVolume()
+    volumeNode = EditUtil.getLabelVolume()
     if not volumeNode:
       return
 
@@ -207,7 +207,7 @@ class MakeModelEffectLogic(Effect.EffectLogic):
     parameters['FilterType'] = "Sinc"
 
     # build only the currently selected model.
-    parameters['Labels'] = self.editUtil.getLabel()
+    parameters['Labels'] = EditUtil.getLabel()
     parameters["StartLabel"] = -1
     parameters["EndLabel"] = -1
 

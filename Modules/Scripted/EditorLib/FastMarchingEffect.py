@@ -3,7 +3,7 @@ from __main__ import vtk, qt, ctk, slicer
 import EditorLib
 from EditorLib.EditOptions import HelpButton
 from EditorLib.EditOptions import EditOptions
-from EditorLib import EditUtil
+from EditorLib.EditUtil import EditUtil
 from EditorLib import Effect
 
 #
@@ -30,7 +30,7 @@ class FastMarchingEffectOptions(Effect.EffectOptions):
     # self.attributes = ('MouseTool')
     self.displayName = 'FastMarchingEffect Effect'
 
-    self.logic = FastMarchingEffectLogic(self.editUtil.getSliceLogic())
+    self.logic = FastMarchingEffectLogic(EditUtil.getSliceLogic())
 
   def __del__(self):
     super(FastMarchingEffectOptions,self).__del__()
@@ -90,7 +90,7 @@ class FastMarchingEffectOptions(Effect.EffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = EditUtil.EditUtil().getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -128,7 +128,7 @@ class FastMarchingEffectOptions(Effect.EffectOptions):
 
   def percentMaxChanged(self, val):
     labelNode = self.logic.getLabelNode()
-    labelImage = self.editUtil.getLabelImage()
+    labelImage = EditUtil.getLabelImage()
     spacing = labelNode.GetSpacing()
     if vtk.VTK_MAJOR_VERSION <= 5:
       dim = labelImage.GetDimensions()
@@ -203,8 +203,8 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
 
     self.fm = None
     # allocate a new filter each time March is hit
-    bgImage = self.editUtil.getBackgroundImage()
-    labelImage = self.editUtil.getLabelImage()
+    bgImage = EditUtil.getBackgroundImage()
+    labelImage = EditUtil.getLabelImage()
 
     # collect seeds
     if vtk.VTK_MAJOR_VERSION <= 5:
@@ -264,8 +264,8 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
       npoints = int(dim[0]*dim[1]*dim[2]*percentMax/100.)
 
     self.fm.setNPointsEvolution(npoints)
-    print('Setting active label to '+str(self.editUtil.getLabel()))
-    self.fm.setActiveLabel(self.editUtil.getLabel())
+    print('Setting active label to '+str(EditUtil.getLabel()))
+    self.fm.setActiveLabel(EditUtil.getLabel())
 
     nSeeds = self.fm.addSeedsFromImage(labelImage)
     if nSeeds == 0:
@@ -285,8 +285,8 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
 
     self.undoRedo.saveState()
 
-    self.editUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
-    self.editUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
+    EditUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
+    EditUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
     # print('FastMarching output image: '+str(output))
     print('FastMarching march update completed')
 
@@ -299,10 +299,10 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
     self.fm.Modified()
     self.fm.Update()
 
-    self.editUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
-    self.editUtil.getLabelImage().Modified()
+    EditUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
+    EditUtil.getLabelImage().Modified()
 
-    self.editUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
+    EditUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
 
   def getLabelNode(self):
     return self.sliceLogic.GetLabelLayer().GetVolumeNode()

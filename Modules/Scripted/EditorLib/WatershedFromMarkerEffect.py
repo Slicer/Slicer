@@ -3,7 +3,7 @@ from __main__ import vtk, qt, ctk, slicer
 import EditorLib
 from EditorLib.EditOptions import HelpButton
 from EditorLib.EditOptions import EditOptions
-from EditorLib import EditUtil
+from EditorLib.EditUtil import EditUtil
 import Effect
 import LabelEffect
 
@@ -48,7 +48,7 @@ class WatershedFromMarkerEffectOptions(Effect.EffectOptions):
       self.frame.layout().addWidget(self.warningLabel)
       return
 
-    labelVolume = self.editUtil.getLabelVolume()
+    labelVolume = EditUtil.getLabelVolume()
     if labelVolume and labelVolume.GetImageData():
       spacing = labelVolume.GetSpacing()
       self.minimumSigma = 0.1 * min(spacing)
@@ -127,7 +127,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
   # in each leaf subclass so that "self" in the observer
   # is of the correct type
   def updateParameterNode(self, caller, event):
-    node = EditUtil.EditUtil().getParameterNode()
+    node = EditUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -157,7 +157,7 @@ The "Object Scale" parameter is use to adjust the smoothness of the output image
     self.updatingGUI = False
 
   def onApply(self):
-    logic = WatershedFromMarkerEffectLogic( self.editUtil.getSliceLogic() )
+    logic = WatershedFromMarkerEffectLogic( EditUtil.getSliceLogic() )
     logic.undoRedo = self.undoRedo
 
     logic.sigma = float( self.sigmaSpinBox.value )

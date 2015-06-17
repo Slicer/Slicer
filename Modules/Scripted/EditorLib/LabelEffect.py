@@ -4,7 +4,8 @@ from __main__ import qt
 from __main__ import ctk
 from __main__ import slicer
 from EditOptions import EditOptions
-import EditUtil
+import EditorLib
+from EditorLib.EditUtil import EditUtil
 import Effect
 
 
@@ -413,7 +414,7 @@ class LabelEffectLogic(Effect.EffectLogic):
     if not self.extractImage:
       self.extractImage = vtk.vtkImageData()
 
-    parameterNode = self.editUtil.getParameterNode()
+    parameterNode = EditUtil.getParameterNode()
     paintLabel = int(parameterNode.GetParameter("label"))
     paintOver = int(parameterNode.GetParameter("LabelEffect,paintOver"))
     paintThreshold = int(parameterNode.GetParameter("LabelEffect,paintThreshold"))
@@ -445,7 +446,7 @@ class LabelEffectLogic(Effect.EffectLogic):
 
     self.painter.Paint()
 
-    self.editUtil.markVolumeNodeAsModified(labelNode)
+    EditUtil.markVolumeNodeAsModified(labelNode)
 
   def sliceIJKPlane(self):
     """ Return a code indicating which plane of IJK
