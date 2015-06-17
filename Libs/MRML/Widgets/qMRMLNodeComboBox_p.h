@@ -63,6 +63,8 @@ public:
   void updateDelegate(bool force = false);
   QString nodeTypeLabel()const;
 
+  bool hasPostItem(const QString& name)const;
+
   QComboBox*        ComboBox;
   qMRMLNodeFactory* MRMLNodeFactory;
   qMRMLSceneModel*  MRMLSceneModel;

@@ -32,6 +32,26 @@
 // VTK includes
 #include <vtkNew.h>
 
+namespace
+{
+
+// --------------------------------------------------------------------------
+bool checkActionCount(int line, qMRMLSceneModel* sceneModel, int expected)
+{
+  int current = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  if (current != expected)
+    {
+    std::cerr << "Line " << line
+              << " - After adding a new user action with valid text,"
+                 " new number of actions " << current << " != " << expected << std::endl;
+    return false;
+    }
+  return true;
+}
+
+} // end of anonymous namespace
+
+// --------------------------------------------------------------------------
 // test the adding of user menu actions
 int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
 {
@@ -141,14 +161,217 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
     }
   else
     {
-    std::cout << "After adding a third new user action with valid text, new number of actions = " << actionsPlusTwo << std::endl;
+    std::cout << "After adding a fourth new user action with valid text, new number of actions = " << actionsPlusTwo << std::endl;
     }
 
+  // disable rename action
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setRenameEnabled(false);
+
+  int expected = startingActions - 2;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "After disabling rename action, new number of actions = " << expected << std::endl;
+    }
+
+  // disable add action
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setAddEnabled(false);
+
+  expected = startingActions - 1;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "After disabling add action, new number of actions = " << expected << std::endl;
+    }
+
+  // disable delete action
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setRemoveEnabled(false);
+
+  expected = startingActions - 1;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+  else
+    {
+    std::cout << "After disabling remove action, new number of actions = " << expected << std::endl;
+    }
+
+  // add a custom action starting respectively with:
+  //  * "Create new "
+  //  * "Delete current "
+  //  * "Edit current "
+  //  * "Rename current "
+  //  * "Create and rename "
+  foreach(const QString& actionPrefix,
+          QStringList()\
+            << "Create new "
+            << "Delete current "
+            << "Edit current "
+            << "Rename current "
+            << "Create and rename ")
+    {
+    startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+
+    QString actionName = QString("%1node using custom action").arg(actionPrefix);
+    QAction *action = new QAction(actionName, &nodeSelector);
+    nodeSelector.addMenuAction(action);
+
+    expected = startingActions + 1;
+    if (!checkActionCount(__LINE__, sceneModel, expected))
+      {
+      return EXIT_FAILURE;
+      }
+    else
+      {
+      std::cout << "After adding a new user action with text ["
+                << qPrintable(actionName) << "], "
+                << "new number of actions = " << expected << std::endl;
+      }
+    }
+
+  // enabling add action is expected to fail since a custom action
+  // with same name already exists
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setAddEnabled(1);
+
+  if (nodeSelector.addEnabled() != false)
+    {
+    std::cerr << "Enabling add action after adding a custom action"
+                 " with the same name is expected to fail." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  expected = startingActions;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // enabling remove action is expected to fail since a custom action
+  // with same name already exists
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setRemoveEnabled(1);
+
+  if (nodeSelector.removeEnabled() != false)
+    {
+    std::cerr << "Enabling remove action after adding a custom action"
+                 " with the same name is expected to fail." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  expected = startingActions;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // enabling edit action is expected to fail since a custom action
+  // with same name already exists
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setEditEnabled(1);
+
+  if (nodeSelector.editEnabled() != false)
+    {
+    std::cerr << "Enabling edit action after adding a custom action"
+                 " with the same name is expected to fail." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  expected = startingActions;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // enabling rename action is expected to fail since a custom action
+  // with same name already exists
+  startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  nodeSelector.setRenameEnabled(1);
+
+  if (nodeSelector.renameEnabled() != false)
+    {
+    std::cerr << "Enabling rename action after adding a custom action"
+                 " with the same name is expected to fail." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  expected = startingActions;
+  if (!checkActionCount(__LINE__, sceneModel, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // Enabling the default "Add" or "Rename" action is expected to fail
+  // when a custom action starting with "Create and rename " exists.
+
+  qMRMLNodeComboBox nodeSelector2;
+  nodeSelector2.setAddEnabled(false);
+  nodeSelector2.setRenameEnabled(false);
+  nodeSelector2.setBaseName("testing");
+  nodeSelector2.setNodeTypes(QStringList(QString("vtkMRMLScalarVolumeNode")));
+  nodeSelector2.setShowHidden(true);
+  nodeSelector2.setMRMLScene(scene.GetPointer());
+
+  qMRMLSceneModel *sceneModel2 = nodeSelector2.sceneModel();
+
+  QAction* action = new QAction("Create and rename node using custom action", &nodeSelector2);
+
+  startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
+  nodeSelector2.addMenuAction(action);
+  expected = startingActions + 1;
+  if (!checkActionCount(__LINE__, sceneModel2, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // enabling rename action is expected to fail since a "Create and rename "
+  // custom action already exists
+  startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
+  nodeSelector2.setRenameEnabled(1);
+
+  if (nodeSelector2.renameEnabled() != false)
+    {
+    std::cerr << "Enabling rename action after adding a custom action"
+                 " starting with 'Create and rename ' is expected to fail."
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  expected = startingActions;
+  if (!checkActionCount(__LINE__, sceneModel2, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+  // enabling add action is expected to fail since a "Create and rename "
+  // custom action already exists
+  startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
+  nodeSelector2.setAddEnabled(1);
+
+  if (nodeSelector2.addEnabled() != false)
+    {
+    std::cerr << "Enabling add action after adding a custom action"
+                 " starting with 'Create and rename ' is expected to fail."
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  expected = startingActions;
+  if (!checkActionCount(__LINE__, sceneModel2, expected))
+    {
+    return EXIT_FAILURE;
+    }
+
+
   nodeSelector.show();
-
-
-
-
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
