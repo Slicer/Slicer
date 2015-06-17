@@ -123,7 +123,7 @@ class HelperBox(object):
         selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
         selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
 
-        self.propagateVolumeSelection()
+        self.editUtil.propagateVolumeSelection()
         mergeText = merge.GetName()
         self.merge = merge
     else:
@@ -388,7 +388,7 @@ class HelperBox(object):
     selectionNode = self.applicationLogic.GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-    self.propagateVolumeSelection()
+    self.editUtil.propagateVolumeSelection()
 
     self.statusText( "Finished merging." )
 
@@ -538,7 +538,7 @@ class HelperBox(object):
     selectionNode.SetReferenceActiveVolumeID(self.master.GetID())
     if structureVolume:
       selectionNode.SetReferenceActiveLabelVolumeID( structureVolume.GetID() )
-    self.propagateVolumeSelection()
+    self.editUtil.propagateVolumeSelection()
 
     self.editUtil.setLabel(label)
 

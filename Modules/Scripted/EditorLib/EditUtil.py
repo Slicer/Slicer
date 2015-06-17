@@ -141,6 +141,12 @@ class EditUtil(object):
   def setPropagateMode(self,propagationMode):
     self.getParameterNode().SetParameter('propagationMode',str(propagationMode))
 
+  def propagateVolumeSelection(self):
+    parameterNode = self.getParameterNode()
+    mode = int(parameterNode.GetParameter("propagationMode"))
+    applicationLogic = slicer.app.applicationLogic()
+    applicationLogic.PropagateVolumeSelection(mode, 0)
+
   def backupLabel(self):
     """Save current label into 'storedLabel' parameter node attribute"""
     self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
