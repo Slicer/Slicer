@@ -4,11 +4,16 @@ import vtkITK
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 import IslandEffect
 
+__all__ = [
+  'SaveIslandEffectOptions',
+  'SaveIslandEffectTool',
+  'SaveIslandEffectLogic',
+  'SaveIslandEffect'
+  ]
 
 #########################################################
 #
@@ -50,7 +55,7 @@ class SaveIslandEffectOptions(IslandEffect.IslandEffectOptions):
     self.helpLabel = qt.QLabel("Click on segmented region to remove all\nsegmentation not directly connected to it.", self.frame)
     self.frame.layout().addWidget(self.helpLabel)
 
-    EditorLib.HelpButton(self.frame, "Save the connected region (island) where you click.")
+    HelpButton(self.frame, "Save the connected region (island) where you click.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)

@@ -1,9 +1,7 @@
 import os
 from __main__ import vtk, qt, ctk, slicer
-import EditorLib
-from EditorLib.EditOptions import HelpButton
-from EditorLib.EditOptions import EditOptions
-from EditorLib.EditUtil import EditUtil
+from EditOptions import HelpButton
+from EditUtil import EditUtil
 import Effect
 import LabelEffect
 
@@ -16,6 +14,13 @@ try:
 except ImportError:
   HAVE_SIMPLEITK=False
 
+__all__ = [
+  'WatershedFromMarkerEffectOptions',
+  'WatershedFromMarkerEffectTool',
+  'WatershedFromMarkerEffectLogic',
+  'WatershedFromMarkerEffectExtension',
+  'WatershedFromMarkerEffect'
+  ]
 
 #
 # The Editor Extension itself.

@@ -3,11 +3,16 @@ from __main__ import vtk
 from __main__ import qt
 from __main__ import ctk
 from __main__ import slicer
-from EditOptions import EditOptions
-import EditorLib
-from EditorLib.EditUtil import EditUtil
+from EditOptions import HelpButton
+from EditUtil import EditUtil
 import Effect
 
+__all__ = [
+  'ChangeLabelEffectOptions',
+  'ChangeLabelEffectTool',
+  'ChangeLabelEffectLogic',
+  'ChangeLabelEffect'
+  ]
 
 #########################################################
 #
@@ -57,7 +62,7 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
-    EditorLib.HelpButton(self.frame, "Replace all instances of input color with output color in current label map")
+    HelpButton(self.frame, "Replace all instances of input color with output color in current label map")
 
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 

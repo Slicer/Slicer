@@ -3,11 +3,15 @@ from __main__ import vtk
 from __main__ import qt
 from __main__ import ctk
 from __main__ import slicer
-from EditOptions import EditOptions
-import EditorLib
-from EditorLib.EditUtil import EditUtil
+from EditUtil import EditUtil
 import Effect
 
+__all__ = [
+  'LabelEffectOptions',
+  'LabelEffectTool',
+  'LabelEffectLogic',
+  'LabelEffect'
+  ]
 
 #########################################################
 #

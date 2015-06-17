@@ -4,11 +4,16 @@ import vtkITK
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 import IslandEffect
 
+__all__ = [
+  'ChangeIslandEffectOptions',
+  'ChangeIslandEffectTool',
+  'ChangeIslandEffectLogic',
+  'ChangeIslandEffect'
+  ]
 
 #########################################################
 #
@@ -50,7 +55,7 @@ class ChangeIslandEffectOptions(IslandEffect.IslandEffectOptions):
     self.helpLabel = qt.QLabel("Click on segmented region to change all\nsegmentation directly connected to it to current label.", self.frame)
     self.frame.layout().addWidget(self.helpLabel)
 
-    EditorLib.HelpButton(self.frame, "Change the connected region (island) where you click to the current label color.")
+    HelpButton(self.frame, "Change the connected region (island) where you click to the current label color.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)

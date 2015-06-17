@@ -4,10 +4,15 @@ import vtkITK
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 
+__all__ = [
+  'GrowCutEffectOptions',
+  'GrowCutEffectTool',
+  'GrowCutEffectLogic',
+  'GrowCutEffect'
+  ]
 
 #########################################################
 #
@@ -50,7 +55,7 @@ class GrowCutEffectOptions(Effect.EffectOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
-    EditorLib.HelpButton(self.frame, "Use this tool to apply grow cut segmentation.\n\n Select different label colors and paint on foreground and background or as many different classes as you want using the standard drawing tools.\nTo run segmentation correctly, you need to supply a minimum or two class labels.")
+    HelpButton(self.frame, "Use this tool to apply grow cut segmentation.\n\n Select different label colors and paint on foreground and background or as many different classes as you want using the standard drawing tools.\nTo run segmentation correctly, you need to supply a minimum or two class labels.")
 
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 

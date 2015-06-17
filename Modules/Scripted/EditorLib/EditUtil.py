@@ -3,6 +3,8 @@ import slicer
 
 from slicer.util import NodeModify
 
+__all__ = ['EditUtil']
+
 #########################################################
 #
 #

@@ -3,10 +3,15 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import LabelEffect
 
+__all__ = [
+  'RectangleEffectOptions',
+  'RectangleEffectTool',
+  'RectangleEffectLogic',
+  'RectangleEffect'
+  ]
 
 #########################################################
 #
@@ -39,7 +44,7 @@ class RectangleEffectOptions(LabelEffect.LabelEffectOptions):
   def create(self):
     super(RectangleEffectOptions,self).create()
 
-    EditorLib.HelpButton(self.frame, "Use this tool to draw a rectangle.\n\nLeft Click and Drag: sweep out an outline that will draw when the button is released.")
+    HelpButton(self.frame, "Use this tool to draw a rectangle.\n\nLeft Click and Drag: sweep out an outline that will draw when the button is released.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)

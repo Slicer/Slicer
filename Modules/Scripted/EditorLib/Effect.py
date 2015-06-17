@@ -6,6 +6,7 @@ from EditOptions import EditOptions
 import EditUtil
 from slicer.util import NodeModify
 
+__all__ = ['EffectOptions', 'EffectTool', 'EffectLogic', 'Effect']
 
 #########################################################
 #

@@ -4,11 +4,16 @@ import vtkITK
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 import IslandEffect
 
+__all__ = [
+  'RemoveIslandsEffectOptions',
+  'RemoveIslandsEffectTool',
+  'RemoveIslandsEffectLogic',
+  'RemoveIslandsEffect'
+  ]
 
 #########################################################
 #
@@ -57,7 +62,7 @@ class RemoveIslandsEffectOptions(IslandEffect.IslandEffectOptions):
     self.connections.append( (self.applyConnectivity, 'clicked()', self.onApplyConnectivity) )
     self.connections.append( (self.applyMorphology, 'clicked()', self.onApplyMorphology) )
 
-    EditorLib.HelpButton(self.frame, "Remove connected regions (islands) that are fully enclosed by the current label color and are smaller than the given minimum size.")
+    HelpButton(self.frame, "Remove connected regions (islands) that are fully enclosed by the current label color and are smaller than the given minimum size.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)

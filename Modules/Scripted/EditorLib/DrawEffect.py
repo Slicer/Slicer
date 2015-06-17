@@ -3,10 +3,15 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import LabelEffect
 
+__all__ = [
+  'DrawEffectOptions',
+  'DrawEffectTool',
+  'DrawEffectLogic',
+  'DrawEffect'
+  ]
 
 #########################################################
 #
@@ -45,7 +50,7 @@ class DrawEffectOptions(LabelEffect.LabelEffectOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
-    EditorLib.HelpButton(self.frame, "Use this tool to draw an outline.\n\nLeft Click: add point.\nLeft Drag: add multiple points.\nx: delete last point.\na: apply outline.")
+    HelpButton(self.frame, "Use this tool to draw an outline.\n\nLeft Click: add point.\nLeft Drag: add multiple points.\nx: delete last point.\na: apply outline.")
 
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 

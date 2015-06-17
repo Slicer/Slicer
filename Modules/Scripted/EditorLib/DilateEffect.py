@@ -3,11 +3,16 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 import MorphologyEffect
 
+__all__ = [
+  'DilateEffectOptions',
+  'DilateEffectTool',
+  'DilateEffectLogic',
+  'DilateEffect'
+  ]
 
 #########################################################
 #
@@ -44,7 +49,7 @@ class DilateEffectOptions(MorphologyEffect.MorphologyEffectOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
-    EditorLib.HelpButton(self.frame, "Use this tool to remove pixels from the boundary of the current label.")
+    HelpButton(self.frame, "Use this tool to remove pixels from the boundary of the current label.")
 
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 

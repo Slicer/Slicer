@@ -3,10 +3,15 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 
+__all__ = [
+  'ThresholdEffectOptions',
+  'ThresholdEffectTool',
+  'ThresholdEffectLogic',
+  'ThresholdEffect'
+  ]
 
 #########################################################
 #
@@ -76,7 +81,7 @@ class ThresholdEffectOptions(Effect.EffectOptions):
     self.connections.append( (self.threshold, 'valuesChanged(double,double)', self.onThresholdValuesChanged) )
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 
-    EditorLib.HelpButton(self.frame, "Set labels based on threshold range.  Note: this replaces the current label map values.")
+    HelpButton(self.frame, "Set labels based on threshold range.  Note: this replaces the current label map values.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)

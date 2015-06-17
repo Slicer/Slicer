@@ -1,10 +1,15 @@
 import os
 from __main__ import vtk, qt, ctk, slicer
-import EditorLib
-from EditorLib.EditOptions import HelpButton
-from EditorLib.EditOptions import EditOptions
-from EditorLib.EditUtil import EditUtil
-from EditorLib import Effect
+from EditOptions import HelpButton
+from EditUtil import EditUtil
+import Effect
+
+__all__ = [
+  'FastMarchingEffectOptions',
+  'FastMarchingEffectTool',
+  'FastMarchingEffectLogic',
+  'FastMarchingEffect'
+  ]
 
 #
 # The Editor Extension itself.

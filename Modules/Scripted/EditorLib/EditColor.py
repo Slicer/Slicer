@@ -5,6 +5,8 @@ import ColorBox
 from EditUtil import EditUtil
 from slicer.util import VTKObservationMixin
 
+__all__ = ['EditColor']
+
 #########################################################
 #
 #

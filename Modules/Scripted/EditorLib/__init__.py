@@ -7,10 +7,10 @@ from ColorBox import *
 from EditBox import *
 from EditColor import *
 from EditOptions import *
-from EditUtil import *
 from HelperBox import *
-from Effect import *
-from LabelEffect import *
+from LabelEffect import LabelEffectOptions
+
+# Built-in effects
 from PaintEffect import *
 from DrawEffect import *
 from ThresholdEffect import *
@@ -30,3 +30,7 @@ from GrowCutEffect import *
 from WatershedFromMarkerEffect import *
 from FastMarchingEffect import *
 from WandEffect import *
+
+# XXX Importing this module last will ensure effect
+#     calling "EditUtil.EditUtil()" will work.
+import EditUtil

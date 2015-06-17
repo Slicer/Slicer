@@ -4,11 +4,16 @@ import vtkITK
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import Effect
 import IslandEffect
 
+__all__ = [
+  'IdentifyIslandsEffectOptions',
+  'IdentifyIslandsEffectTool',
+  'IdentifyIslandsEffectLogic',
+  'IdentifyIslandsEffect'
+  ]
 
 #########################################################
 #
@@ -52,7 +57,7 @@ class IdentifyIslandsEffectOptions(IslandEffect.IslandEffectOptions):
 
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 
-    EditorLib.HelpButton(self.frame, "IdentifyIslands: create a unique label for islands larger than minimum size (label number is ordered by size of island)")
+    HelpButton(self.frame, "IdentifyIslands: create a unique label for islands larger than minimum size (label number is ordered by size of island)")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)

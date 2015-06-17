@@ -3,14 +3,18 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 from EditUtil import EditUtil
 import LabelEffect
 import numpy
 from math import sqrt
 
-
+__all__ = [
+  'PaintEffectOptions',
+  'PaintEffectTool',
+  'PaintEffectLogic',
+  'PaintEffect'
+  ]
 
 #########################################################
 #
@@ -133,7 +137,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.frame.layout().addWidget(self.pixelMode)
     self.widgets.append(self.pixelMode)
 
-    EditorLib.HelpButton(self.frame, "Use this tool to paint with a round brush of the selected radius")
+    HelpButton(self.frame, "Use this tool to paint with a round brush of the selected radius")
 
     self.connections.append( (self.sphere, 'clicked()', self.updateMRMLFromGUI) )
     self.connections.append( (self.smudge, 'clicked()', self.updateMRMLFromGUI) )

@@ -8,6 +8,8 @@ from LabelCreateDialog import LabelCreateDialog
 from LabelStructureListWidget import LabelStructureListWidget
 from slicer.util import VTKObservationMixin
 
+__all__ = ['HelperBox']
+
 def _map_property(objfunc, name):
   """Creates a Python :class:`property` associated with an object
   ``attributename``. ``objfunc`` is a function that takes a ``self`` as

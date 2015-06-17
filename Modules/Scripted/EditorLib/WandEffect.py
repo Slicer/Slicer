@@ -3,9 +3,15 @@ from __main__ import vtk
 from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
-from EditOptions import EditOptions
-from EditorLib import EditorLib
+from EditOptions import HelpButton
 import LabelEffect
+
+__all__ = [
+  'WandEffectOptions',
+  'WandEffectTool',
+  'WandEffectLogic',
+  'WandEffect'
+  ]
 
 #
 # This defines the hooks to be come an editor effect.
@@ -77,7 +83,7 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
     self.fillModeFrame.layout().addWidget(self.fillModeCheckBox)
     self.widgets.append(self.fillModeCheckBox)
 
-    EditorLib.HelpButton(self.frame, "Use this tool to label all voxels that are within a tolerance of where you click")
+    HelpButton(self.frame, "Use this tool to label all voxels that are within a tolerance of where you click")
 
     # don't connect the signals and slots directly - instead, add these
     # to the list of connections so that gui callbacks can be cleanly

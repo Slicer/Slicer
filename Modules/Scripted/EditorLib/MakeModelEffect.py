@@ -3,11 +3,16 @@ from __main__ import vtk
 from __main__ import qt
 from __main__ import ctk
 from __main__ import slicer
-from EditOptions import EditOptions
-import EditorLib
-from EditorLib.EditUtil import EditUtil
+from EditOptions import HelpButton
+from EditUtil import EditUtil
 import Effect
 
+__all__ = [
+  'MakeModelEffectOptions',
+  'MakeModelEffectTool',
+  'MakeModelEffectLogic',
+  'MakeModelEffect'
+  ]
 
 #########################################################
 #
@@ -78,7 +83,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
 
-    EditorLib.HelpButton(self.frame, "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters.  Use Merge and Build button in the Advanced... tab to quickly make a model of all defined structures in the merge label map.")
+    HelpButton(self.frame, "Use this tool build a model.  A subset of model building options is provided here.  Go to the Model Maker module to expose a range of parameters.  Use Merge and Build button in the Advanced... tab to quickly make a model of all defined structures in the merge label map.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
