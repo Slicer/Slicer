@@ -882,7 +882,6 @@ class HelperBox(object):
       self.colorSelect.layout().addWidget( self.colorSelectorFrame )
 
       self.colorSelectorLabel = qt.QLabel()
-      self.colorPromptLabel.setText( "Color Table: " )
       self.colorSelectorFrame.layout().addWidget( self.colorSelectorLabel )
 
       self.colorSelector = slicer.qMRMLColorTableComboBox()
