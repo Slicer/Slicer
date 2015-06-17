@@ -244,7 +244,7 @@ public:
   /// Checks for action text duplicates and doesn't add them.
   /// Also checks for action text that will be hidden by the default action
   /// texts and doesn't add it.
-  virtual void addMenuAction(QAction *newAction);
+  Q_INVOKABLE virtual void addMenuAction(QAction *newAction);
 
 public slots:
   /// Set the scene the combobox listens to. The scene is observed and when new
