@@ -3,6 +3,7 @@ from __main__ import qt
 from __main__ import vtk
 import ColorBox
 from EditUtil import EditUtil
+from slicer.util import VTKObservationMixin
 
 #########################################################
 #
@@ -17,10 +18,10 @@ comment = """
 #
 #########################################################
 
-class EditColor(object):
+class EditColor(VTKObservationMixin):
 
   def __init__(self, parent=0, parameter='label',colorNode=None):
-    self.observerTags = []
+    VTKObservationMixin.__init__(self)
     self.parameterNode = None
     self.parameterNodeTag = None
     self.parameter = parameter
@@ -42,8 +43,7 @@ class EditColor(object):
   def cleanup(self, QObject=None):
     if self.parameterNode:
       self.parameterNode.RemoveObserver(self.parameterNodeTag)
-    for tagpair in self.observerTags:
-      tagpair[0].RemoveObserver(tagpair[1])
+    self.removeObservers()
 
   def create(self):
     self.frame = qt.QFrame(self.parent)
@@ -79,8 +79,7 @@ class EditColor(object):
 
     # TODO: change this to look for specfic events (added, removed...)
     # but this requires being able to access events by number from wrapped code
-    tag = slicer.mrmlScene.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
-    self.observerTags.append( (slicer.mrmlScene, tag) )
+    self.addObserver(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
 
   #
   # update the parameter node when the scene changes
