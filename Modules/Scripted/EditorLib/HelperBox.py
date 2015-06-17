@@ -32,6 +32,7 @@ class HelperBox(object):
     self.masterWhenMergeWasSet = None
     # string
     self.createMergeOptions = ""
+    self.mergeVolumePostfix = "-label"
     # pairs of (node instance, observer tag number)
     self.observerTags = []
     # instance of a ColorBox
@@ -93,7 +94,7 @@ class HelperBox(object):
       self.errorDialog( "Cannot create merge volume without master" )
 
     masterName = self.master.GetName()
-    mergeName = masterName + "-label"
+    mergeName = masterName + self.mergeVolumePostfix
     if self.createMergeOptions.find("new") >= 0:
       merge = None
     else:
@@ -198,7 +199,7 @@ class HelperBox(object):
     # otherwise pick the merge based on the master name
     # - either return the merge volume or empty string
     masterName = self.master.GetName()
-    mergeName = masterName+"-label"
+    mergeName = masterName + self.mergeVolumePostfix
     self.merge = self.getNodeByName( mergeName, className=self.master.GetClassName() )
     return self.merge
 
@@ -207,7 +208,7 @@ class HelperBox(object):
     if not self.master:
       return None
     masterName = self.master.GetName()
-    structureVolumeName = masterName+"-%s-label"%structureName
+    structureVolumeName = masterName+"-%s"%structureName + self.mergeVolumePostfix
     return self.getNodeByName(structureVolumeName, className=self.master.GetClassName())
 
   def promptStructure(self):
@@ -246,7 +247,7 @@ class HelperBox(object):
 
     colorNode = merge.GetDisplayNode().GetColorNode()
     labelName = colorNode.GetColorName( label )
-    structureName = self.master.GetName()+"-%s-label"%labelName
+    structureName = self.master.GetName()+"-%s"%labelName+self.mergeVolumePostfix
 
     if labelName not in self.structureLabelNames:
       struct = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, structureName )
@@ -559,7 +560,7 @@ class HelperBox(object):
     while vNode:
       vName = vNode.GetName()
       # match something like "CT-lung-label1"
-      fnmatchExp = "%s-*-label*" % masterName
+      fnmatchExp = "%s-*%s*" % (masterName, self.mergeVolumePostfix)
       if fnmatch.fnmatch(vName,fnmatchExp):
         volumeNodes.append(vNode)
       vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
@@ -615,7 +616,7 @@ class HelperBox(object):
       # figure out what name it is
       # - account for the fact that sometimes a number will be added to the end of the name
       start = 1+len(masterName)
-      end = vName.rfind("-label")
+      end = vName.rfind(self.mergeVolumePostfix)
       structureName = vName[start:end]
       structureIndex = colorNode.GetColorIndexByName( structureName )
       structureColor = lut.GetTableValue(structureIndex)[0:3]
@@ -724,7 +725,7 @@ class HelperBox(object):
     self.masterSelector.setMRMLScene( slicer.mrmlScene )
     # TODO: need to add a QLabel
     # self.masterSelector.SetLabelText( "Master Volume:" )
-    self.masterSelector.setToolTip( "Pick the master structural volume to define the segmentation.  A label volume with the with \"-label\" appended to the name will be created if it doesn't already exist." )
+    self.masterSelector.setToolTip( "Pick the master structural volume to define the segmentation.  A label volume with the with \"%s\" appended to the name will be created if it doesn't already exist." % self.mergeVolumePostfix)
     self.masterSelectorFrame.layout().addWidget(self.masterSelector)
 
 
@@ -923,7 +924,7 @@ class HelperBox(object):
       self.colorSelector.setCurrentNode( defaultNode )
 
 
-    self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node that will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+"-label"))
+    self.colorPromptLabel.setText( "Create a merge label map for selected master volume %s.\nNew volume will be %s.\nSelect the color table node that will be used for segmentation labels." %(self.master.GetName(), self.master.GetName()+self.mergeVolumePostfix))
     self.colorSelect.show()
 
   # colorSelect callback (slot)
