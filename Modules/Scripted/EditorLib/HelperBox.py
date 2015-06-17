@@ -43,7 +43,6 @@ class HelperBox(object):
     self.colorLogic = slicer.modules.colors.logic()
     # qt model/view classes to track per-structure volumes
     self.structures = qt.QStandardItemModel()
-    self.items = []
     # widgets that are dynamically created on demand
     self.colorSelect = None
     self.labelSelect = None
@@ -584,7 +583,6 @@ class HelperBox(object):
     self.setMergeButton.setDisabled(not self.master)
 
     # reset to a fresh model
-    self.items = []
     self.structures = qt.QStandardItemModel()
     self.structuresView.setModel(self.structures)
 
@@ -626,31 +624,31 @@ class HelperBox(object):
       item.setEditable(False)
       item.setText( "%03d"%int(structureIndex) )
       self.structures.setItem(self.row,0,item)
-      self.items.append(item)
+
       # label color
       item = qt.QStandardItem()
       item.setEditable(False)
       item.setData(color,1)
       self.structures.setItem(self.row,1,item)
-      self.items.append(item)
+
       # structure name
       item = qt.QStandardItem()
       item.setEditable(False)
       item.setText(structureName)
       self.structures.setItem(self.row,2,item)
-      self.items.append(item)
+
       # volumeName name
       item = qt.QStandardItem()
       item.setEditable(False)
       item.setText(vName)
       self.structures.setItem(self.row,3,item)
-      self.items.append(item)
+
       # sort order
       item = qt.QStandardItem()
       item.setEditable(True)
       item.setText("")
       self.structures.setItem(self.row,4,item)
-      self.items.append(item)
+
       self.row += 1
 
     for i in range(5):
