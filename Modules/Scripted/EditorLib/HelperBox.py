@@ -133,12 +133,7 @@ class HelperBox(object):
       if not merge.IsA("vtkMRMLLabelMapVolumeNode"):
         slicer.util.errorDisplay( "Error: selected merge label volume is not a label volume" )
       else:
-        # make the source node the active background, and the label node the active label
-        selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-        selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
-        selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-
-        EditUtil.propagateVolumeSelection()
+        EditUtil.setActiveVolumes(self.master, merge)
         self.mergeSelector.setCurrentNode(merge)
 
     self.updateStructures()
@@ -384,10 +379,7 @@ class HelperBox(object):
       structureVolume = self.structureVolume( structureName )
       structureVolume.GetImageData().Modified()
 
-    selectionNode = self.applicationLogic.GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID( self.master.GetID() )
-    selectionNode.SetReferenceActiveLabelVolumeID( merge.GetID() )
-    EditUtil.propagateVolumeSelection()
+    EditUtil.setActiveVolumes(self.master, merge)
 
     self.statusText( "Finished merging." )
 
@@ -532,13 +524,7 @@ class HelperBox(object):
     structureName = colorNode.GetColorName( label )
     structureVolume = self.structureVolume( structureName )
 
-    # make the master node the active background, and the structure label node the active label
-    selectionNode = self.applicationLogic.GetSelectionNode()
-    selectionNode.SetReferenceActiveVolumeID(self.master.GetID())
-    if structureVolume:
-      selectionNode.SetReferenceActiveLabelVolumeID( structureVolume.GetID() )
-    EditUtil.propagateVolumeSelection()
-
+    EditUtil.setActiveVolumes(self.master, structureVolume)
     EditUtil.setLabel(label)
 
   def structureVolumes(self):

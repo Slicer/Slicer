@@ -161,6 +161,20 @@ class EditUtil(object):
     EditUtil.getParameterNode().SetParameter('propagationMode',str(propagationMode))
 
   @staticmethod
+  def setActiveVolumes(masterVolume, mergeVolume=None):
+    """make the master node the active background, and the merge node the active label
+    """
+    if isinstance(masterVolume, basestring):
+      masterVolume = slicer.mrmlScene.GetNodeByID(masterVolume)
+    if isinstance(mergeVolume, basestring):
+      mergeVolume = slicer.mrmlScene.GetNodeByID(mergeVolume)
+    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+    selectionNode.SetReferenceActiveVolumeID(masterVolume.GetID())
+    if mergeVolume:
+      selectionNode.SetReferenceActiveLabelVolumeID(mergeVolume.GetID())
+    EditUtil.propagateVolumeSelection()
+
+  @staticmethod
   def propagateVolumeSelection():
     parameterNode = EditUtil.getParameterNode()
     mode = int(parameterNode.GetParameter("propagationMode"))
