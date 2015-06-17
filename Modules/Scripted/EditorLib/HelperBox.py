@@ -151,11 +151,6 @@ class HelperBox(object):
     if self.selectCommand:
       self.selectCommand()
 
-  def propagateVolumeSelection(self):
-    parameterNode = self.editUtil.getParameterNode()
-    mode = int(parameterNode.GetParameter("propagationMode"))
-    self.applicationLogic.PropagateVolumeSelection(mode, 0)
-
   def setVolumes(self,masterVolume,mergeVolume):
     """set both volumes at the same time - trick the callback into
     thinking that the merge volume is already set so it won't prompt for a new one"""
@@ -198,7 +193,7 @@ class HelperBox(object):
     # - either return the merge volume or empty string
     masterName = self.master.GetName()
     mergeName = masterName + self.mergeVolumePostfix
-    self.merge = self.getNodeByName( mergeName, className=self.master.GetClassName() )
+    self.merge = slicer.util.getFirstNodeByName( mergeName, className=self.master.GetClassName() )
     return self.merge
 
   def structureVolume(self,structureName):
@@ -207,7 +202,7 @@ class HelperBox(object):
       return None
     masterName = self.master.GetName()
     structureVolumeName = masterName+"-%s"%structureName + self.mergeVolumePostfix
-    return self.getNodeByName(structureVolumeName, className=self.master.GetClassName())
+    return slicer.util.getFirstNodeByName(structureVolumeName, className=self.master.GetClassName())
 
   def promptStructure(self):
     """ask user which label to create"""
@@ -990,20 +985,6 @@ class HelperBox(object):
   def onLabelDialogCreate(self):
     self.newMerge()
     self.labelSelect.hide()
-
-  def getNodeByName(self, name, className=None):
-    """get the first MRML node that has the given name
-    - use a regular expression to match names post-pended with addition characters
-    - optionally specify a classname that must match
-    """
-    nodes = slicer.util.getNodes(name+'*')
-    for nodeName in nodes.keys():
-      if not className:
-        return (nodes[nodeName]) # return the first one
-      else:
-        if nodes[nodeName].IsA(className):
-          return (nodes[nodeName])
-    return None
 
   def confirmDialog(self, message):
     result = qt.QMessageBox.question(slicer.util.mainWindow(),

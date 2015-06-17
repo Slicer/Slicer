@@ -465,6 +465,7 @@ def getNode(pattern = "", index = 0, scene=None):
       return None
 
 def getFirstNodeByClassByName(className, name, scene=None):
+  import fnmatch
   import slicer
   if scene is None:
       scene = slicer.mrmlScene
@@ -472,6 +473,20 @@ def getFirstNodeByClassByName(className, name, scene=None):
   nodes.UnRegister(nodes)
   if nodes.GetNumberOfItems() > 0:
     return nodes.GetItemAsObject(0)
+  return None
+
+def getFirstNodeByName(name, className=None):
+  """get the first MRML node that has the given name
+  - use a regular expression to match names post-pended with addition characters
+  - optionally specify a classname that must match
+  """
+  nodes = getNodes(name+'*')
+  for nodeName in nodes.keys():
+    if not className:
+      return (nodes[nodeName]) # return the first one
+    else:
+      if nodes[nodeName].IsA(className):
+        return (nodes[nodeName])
   return None
 
 class NodeModify:
