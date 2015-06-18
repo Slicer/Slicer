@@ -1460,7 +1460,8 @@ vtkSlicerVolumesLogic
   vtkMRMLScene* scene = inputVolumeNode->GetScene();
 
   // Make sure inputs are initialized
-  if (!inputVolumeNode || !referenceVolumeNode || !scene)
+  if (!inputVolumeNode || !referenceVolumeNode || !scene ||
+      !inputVolumeNode->GetImageData() || !referenceVolumeNode->GetImageData())
     {
     return NULL;
     }
