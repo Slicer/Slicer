@@ -439,6 +439,21 @@ void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
                                      const QVariant& attributeValue)
 {
   Q_D(qMRMLNodeComboBox);
+
+  // Add a warning to make it easier to detect issue in obsolete modules that have not been updated
+  // since the "LabelMap" attribute was replaced by vtkMRMLLabelMapVolumeNode.
+  // The "LabelMap" attribute filter is not applied to make obsolete modules still usable (if we
+  // applied the filter then no volume would show up in the selector; as we ignore it both scalar
+  // and labelmap volumes show up, which is just a slight inconvenience).
+  // Probably this check can be removed by Summer 2016 (one year after the vtkMRMLLabelMapVolumeNode
+  // was introduced).
+  if (nodeType=="vtkMRMLScalarVolumeNode" && attributeName=="LabelMap")
+  {
+    qWarning("vtkMRMLScalarVolumeNode does not have a LabelMap attribute anymore. Update your code according to "
+      "http://www.slicer.org/slicerWiki/index.php/Documentation/Labs/Segmentations#Module_update_instructions");
+    return;
+  }
+
   d->MRMLNodeFactory->addAttribute(attributeName, attributeValue.toString());
   this->sortFilterProxyModel()->addAttribute(nodeType, attributeName, attributeValue);
 }
