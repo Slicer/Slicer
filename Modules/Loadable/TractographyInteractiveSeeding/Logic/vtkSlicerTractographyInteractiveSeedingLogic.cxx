@@ -569,7 +569,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
         dnode->DisableModifiedEventOn();
         dnode->SetVisibility(0);
         dnode->SetOpacity(1);
-        dnode->SetScalarVisibility(0);
+        dnode->SetScalarVisibility(1);
         dnode->DisableModifiedEventOff();
         }
       }
