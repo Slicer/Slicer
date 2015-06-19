@@ -1289,7 +1289,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
     }
 
   // Gather information on dependency extensions
-  const QStringList dependencies = extensionIndexMetadata.value("depends").toStringList();
+  const QStringList dependencies = extensionIndexMetadata.value("depends").toString().split(" ");
   QHash<QString, ExtensionMetadataType> dependenciesMetadata;
   QStringList unresolvedDependencies;
   foreach (const QString& dependencyName, dependencies)
