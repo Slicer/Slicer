@@ -165,37 +165,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>ActiveVolumeNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>VolumeDisplayWidget</receiver>
-   <slot>setMRMLVolumeNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>302</x>
-     <y>19</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>414</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ActiveVolumeNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MRMLVolumeInfoWidget</receiver>
-   <slot>setVolumeNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>152</x>
-     <y>11</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>155</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
