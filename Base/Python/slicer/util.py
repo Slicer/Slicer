@@ -465,7 +465,6 @@ def getNode(pattern = "", index = 0, scene=None):
       return None
 
 def getFirstNodeByClassByName(className, name, scene=None):
-  import fnmatch
   import slicer
   if scene is None:
       scene = slicer.mrmlScene
