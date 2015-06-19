@@ -58,14 +58,13 @@ public:
   void init();
   bool centeredOrigin(double* origin)const;
 
-  vtkMRMLVolumeNode* VolumeNode;
+  vtkWeakPointer<vtkMRMLVolumeNode> VolumeNode;
 };
 
 //------------------------------------------------------------------------------
 qMRMLVolumeInfoWidgetPrivate::qMRMLVolumeInfoWidgetPrivate(qMRMLVolumeInfoWidget& object)
   : q_ptr(&object)
 {
-  this->VolumeNode = 0;
 }
 
 //------------------------------------------------------------------------------
