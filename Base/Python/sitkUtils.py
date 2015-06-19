@@ -24,7 +24,7 @@ def CloneSlicerNode( NodeName, NewNodeNamePrefix ):
     newvol = vl.CloneVolume(slicer.mrmlScene,n,NewNodeNamePrefix)
     return newvol.GetName()
 
-__sitk__VOLUME_TYPES__ = [ 'Scalar' ]
+__sitk__VOLUME_TYPES__ = [ 'Scalar', 'LabelMap' ]
 
 def checkVolumeNodeType(nodeType):
     """ Raise an error if the node type is not a recognized volume node
