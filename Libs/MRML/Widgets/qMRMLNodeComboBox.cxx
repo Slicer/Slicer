@@ -191,6 +191,7 @@ QModelIndexList qMRMLNodeComboBoxPrivate::indexesFromMRMLNodeID(const QString& n
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::updateDefaultText()
 {
+  Q_Q(const qMRMLNodeComboBox);
   if (!this->AutoDefaultText)
     {
     return;
@@ -198,7 +199,15 @@ void qMRMLNodeComboBoxPrivate::updateDefaultText()
   ctkComboBox* cb = qobject_cast<ctkComboBox*>(this->ComboBox);
   if (cb)
     {
-    cb->setDefaultText(QObject::tr("Select a ") + this->nodeTypeLabel());
+    // Use the first node type label to give a hint to the user
+    // what kind of node is expected
+    QString nodeType;
+    QStringList nodeTypes = q->nodeTypes();
+    if (!nodeTypes.empty())
+      {
+      nodeType = nodeTypes[0];
+      }
+    cb->setDefaultText(QObject::tr("Select a ") + this->nodeTypeLabel(nodeType));
     }
 }
 
@@ -235,12 +244,20 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
   Q_Q(qMRMLNodeComboBox);
   Q_UNUSED(resetRootIndex);
 
-  QVariant currentNode =
-    this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole);
 
   QStringList extraItems;
   if (q->mrmlScene())
     {
+    // Action items are not updated when selection is changed, therefore use the actual
+    // node type label if there is only one type and use a generic name if there are multiple node types (or none)
+    QString nodeType;
+    QStringList nodeTypes = q->nodeTypes();
+    if (nodeTypes.size()==1)
+      {
+      nodeType = nodeTypes[0];
+      }
+    QString label = this->nodeTypeLabel(nodeType);
+
     if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled
         || this->RenameEnabled || !this->UserMenuActions.empty())
       {
@@ -248,23 +265,27 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       }
     if (this->RenameEnabled)
       {
-      extraItems.append(QObject::tr("Rename current ")  + this->nodeTypeLabel());
+      extraItems.append(QObject::tr("Rename current ")  + label);
       }
     if (this->EditEnabled)
       {
-      extraItems.append(QObject::tr("Edit current ")  + this->nodeTypeLabel());
+      extraItems.append(QObject::tr("Edit current ")  + label);
       }
     if (this->AddEnabled)
       {
-      extraItems.append(QObject::tr("Create new ") + this->nodeTypeLabel());
-      }
-    if (this->RenameEnabled && this->AddEnabled)
-      {
-      extraItems.append(QObject::tr("Create and rename new ") + this->nodeTypeLabel());
+      foreach (QString nodeType, q->nodeTypes())
+        {
+        QString label = this->nodeTypeLabel(nodeType);
+        extraItems.append(QObject::tr("Create new ") + label);
+        if (this->RenameEnabled)
+          {
+          extraItems.append(QObject::tr("Create new ") + label + " as...");
+          }
+        }
       }
     if (this->RemoveEnabled)
       {
-      extraItems.append(QObject::tr("Delete current ")  + this->nodeTypeLabel());
+      extraItems.append(QObject::tr("Delete current ")  + label);
       }
     foreach (QAction *action, this->UserMenuActions)
       {
@@ -315,22 +336,21 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLNodeComboBoxPrivate::nodeTypeLabel()const
+QString qMRMLNodeComboBoxPrivate::nodeTypeLabel(const QString& nodeType)const
 {
   Q_Q(const qMRMLNodeComboBox);
-  QStringList nodeTypes = q->nodeTypes();
   QString label;
-  if (q->mrmlScene() && !nodeTypes.isEmpty())
+  if (q->mrmlScene())
     {
-    label = q->mrmlScene()->GetTagByClassName(nodeTypes[0].toLatin1());
-    if (label.isEmpty() && nodeTypes[0] == "vtkMRMLVolumeNode")
+    label = q->mrmlScene()->GetTagByClassName(nodeType.toLatin1());
+    if (label.isEmpty() && nodeType == "vtkMRMLVolumeNode")
       {
       label = QObject::tr("Volume");
       }
     }
   if (label.isEmpty())
     {
-    label = QObject::tr("Node");
+    label = QObject::tr("node");
     }
   return label;
 }
@@ -390,10 +410,20 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
   Q_D(qMRMLNodeComboBox);
   // FIXME: check the type of the item on a different role instead of the display role
   QString data = this->model()->data(index, Qt::DisplayRole).toString();
-  if (d->AddEnabled && data.startsWith(QObject::tr("Create new ")))
+  if (d->AddEnabled && data.startsWith(QObject::tr("Create new ")) && !data.endsWith(QObject::tr(" as...")))
     {
+    QString label = data.right(data.length()-QObject::tr("Create new ").length());
+    QString nodeTypeName;
+    foreach (QString nodeType, this->nodeTypes())
+      {
+      QString foundLabel = d->nodeTypeLabel(nodeType);
+      if (foundLabel==label)
+        {
+        nodeTypeName = nodeType;
+        }
+      }
     d->ComboBox->hidePopup();
-    this->addNode();
+    this->addNode(nodeTypeName);
     }
   else if (d->RemoveEnabled && data.startsWith(QObject::tr("Delete current ")))
     {
@@ -411,10 +441,21 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
     this->renameCurrentNode();
     }
   else if (d->RenameEnabled && d->AddEnabled
-           && data.startsWith(QObject::tr("Create and rename")))
+           && data.startsWith(QObject::tr("Create new ")) && data.endsWith(QObject::tr(" as...")))
     {
+    // Get the node type label by stripping "Create new" and "as..." from left and right
+    QString label = data.mid(QObject::tr("Create new ").length(), data.length()-QObject::tr("Create new ").length()-QObject::tr(" as...").length());
+    QString nodeTypeName;
+    foreach (QString nodeType, this->nodeTypes())
+      {
+      QString foundLabel = d->nodeTypeLabel(nodeType);
+      if (foundLabel==label)
+        {
+        nodeTypeName = nodeType;
+        }
+      }
     d->ComboBox->hidePopup();
-    this->addNode();
+    this->addNode(nodeTypeName);
     this->renameCurrentNode();
     }
   else
@@ -483,22 +524,39 @@ QString qMRMLNodeComboBox::baseName()const
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeComboBox::addNode()
+vtkMRMLNode* qMRMLNodeComboBox::addNode(QString nodeType)
 {
   Q_D(qMRMLNodeComboBox);
+  if (!this->nodeTypes().contains(nodeType))
+    {
+    qWarning("qMRMLNodeComboBox::addNode() attempted with node type %s, which is not among the allowed node types", qPrintable(nodeType));
+    return NULL;
+    }
   // Create the MRML node via the MRML Scene
-  // FIXME, for the moment we create only nodes of the first type, but we should
-  // be able to add a node of any type in NodeTypes
-  vtkMRMLNode * newNode =
-    d->MRMLNodeFactory->createNode(this->nodeTypes()[0]);
+  vtkMRMLNode * newNode = d->MRMLNodeFactory->createNode(nodeType);
   // The created node is appended at the bottom of the current list
-  Q_ASSERT(newNode);
+  if (newNode==NULL)
+    {
+    qWarning("qMRMLNodeComboBox::addNode() failed with node type %s", qPrintable(nodeType));
+    return NULL;
+    }
   if (newNode && this->selectNodeUponCreation())
     {// select the created node.
     this->setCurrentNode(newNode);
     }
   emit this->nodeAddedByUser(newNode);
   return newNode;
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLNode* qMRMLNodeComboBox::addNode()
+{
+  Q_D(qMRMLNodeComboBox);
+  if (this->nodeTypes().isEmpty())
+    {
+    return NULL;
+    }
+  return this->addNode(this->nodeTypes()[0]);
 }
 
 // --------------------------------------------------------------------------
@@ -538,9 +596,10 @@ void qMRMLNodeComboBox::renameCurrentNode()
     {
     return;
     }
+
   bool ok = false;
   QString newName = QInputDialog::getText(
-    this, "Rename " + d->nodeTypeLabel(), "New name:",
+    this, "Rename " + d->nodeTypeLabel(node->GetClassName()), "New name:",
     QLineEdit::Normal, node->GetName(), &ok);
   if (!ok)
     {
@@ -791,13 +850,6 @@ void qMRMLNodeComboBox::setAddEnabled(bool enable)
                 "Not enabling this property.";
     return;
     }
-  if (enable && d->hasPostItem(QObject::tr("Create and rename ")))
-    {
-    qDebug() << "setAddEnabled: An action starting with name "
-             << QObject::tr("Create and rename ") << " already exists. "
-                "Not enabling this property.";
-    return;
-    }
   d->AddEnabled = enable;
   d->updateActionItems();
 }
@@ -873,13 +925,6 @@ void qMRMLNodeComboBox::setRenameEnabled(bool enable)
     {
     qDebug() << "setRenameEnabled: An action starting with name "
              << QObject::tr("Rename current ") << " already exists. "
-                "Not enabling this property.";
-    return;
-    }
-  if (enable && d->hasPostItem(QObject::tr("Create and rename ")))
-    {
-    qDebug() << "setRenameEnabled: An action starting with name "
-             << QObject::tr("Create and rename ") << " already exists. "
                 "Not enabling this property.";
     return;
     }
@@ -1098,9 +1143,7 @@ void qMRMLNodeComboBox::addMenuAction(QAction *newAction)
       (d->EditEnabled
        && newAction->text().startsWith(QObject::tr("Edit current "))) ||
       (d->RenameEnabled
-       && newAction->text().startsWith(QObject::tr("Rename current "))) ||
-      (d->RenameEnabled && d->AddEnabled
-       && newAction->text().startsWith(QObject::tr("Create and rename "))))
+       && newAction->text().startsWith(QObject::tr("Rename current "))))
     {
     qDebug() << "addMenuAction: warning: the text on this action, "
              << newAction->text()

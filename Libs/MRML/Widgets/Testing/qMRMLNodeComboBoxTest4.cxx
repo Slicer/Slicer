@@ -37,7 +37,7 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   QApplication app(argc, argv);
 
   qMRMLNodeComboBox nodeSelector;
-  nodeSelector.setNodeTypes(QStringList("vtkMRMLLabelMapVolumeNode"));
+  nodeSelector.setNodeTypes(QStringList() << "vtkMRMLScalarVolumeNode" << "vtkMRMLLabelMapVolumeNode");
 
   vtkNew<vtkMRMLScene> scene;
   nodeSelector.setMRMLScene(scene.GetPointer());
@@ -45,11 +45,33 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   vtkMRMLNode* node = nodeSelector.addNode();
   if (nodeSelector.nodeCount() != 1)
     {
-    std::cerr << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
     }
 
   node->SetName("foo");
+
+  node = nodeSelector.addNode("vtkMRMLScalarVolumeNode");
+  if (nodeSelector.nodeCount() != 2)
+    {
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  node = nodeSelector.addNode("vtkMRMLLabelMapVolumeNode");
+  if (nodeSelector.nodeCount() != 3)
+    {
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Test that we cannot add a node type that is not among the list of allowed node types
+  node = nodeSelector.addNode("vtkMRMLModelNode");
+  if (nodeSelector.nodeCount() != 3)
+    {
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   nodeSelector.show();
 

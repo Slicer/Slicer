@@ -79,7 +79,7 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // no type has been given yet -> no item shoud be listed
+  // no type has been given yet -> no item should be listed
   if (nodeSelector.nodeCount() != 0)
     {
     std::cerr << __LINE__ << " - qMRMLNodeSelector::count() failed: "

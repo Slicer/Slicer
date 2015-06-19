@@ -164,6 +164,24 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
     std::cout << "After adding a fourth new user action with valid text, new number of actions = " << actionsPlusTwo << std::endl;
     }
 
+  // Check if "Create new" and "Create new node as..." actions are added if multiple node types are enabled
+
+  int actionsWithOneNodeType = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+
+  // don't use the view node as that has an attribute filter on it
+  nodeSelector.setNodeTypes(QStringList()<<"vtkMRMLScalarVolumeNode"<<"vtkMRMLCameraNode");
+
+  // Two new actions should have been added (Create new node; Create new node as...)
+  int actionsWithTwoNodeTypes = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
+  if (actionsWithTwoNodeTypes-actionsWithOneNodeType!=2)
+    {
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: 2 new actions are expected for each new node type, but actually " << actionsWithTwoNodeTypes-actionsWithOneNodeType
+      <<" new actions have been added." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  nodeSelector.setNodeTypes(QStringList(QString("vtkMRMLScalarVolumeNode")));
+
   // disable rename action
   startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
   nodeSelector.setRenameEnabled(false);
@@ -217,8 +235,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
             << "Create new "
             << "Delete current "
             << "Edit current "
-            << "Rename current "
-            << "Create and rename ")
+            << "Rename current ")
     {
     startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
@@ -324,7 +341,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
 
   qMRMLSceneModel *sceneModel2 = nodeSelector2.sceneModel();
 
-  QAction* action = new QAction("Create and rename node using custom action", &nodeSelector2);
+  QAction* action = new QAction("Rename current node using custom action", &nodeSelector2);
 
   startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
   nodeSelector2.addMenuAction(action);
@@ -334,7 +351,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // enabling rename action is expected to fail since a "Create and rename "
+  // enabling rename action is expected to fail since a "Rename current "
   // custom action already exists
   startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
   nodeSelector2.setRenameEnabled(1);
@@ -352,26 +369,9 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // enabling add action is expected to fail since a "Create and rename "
-  // custom action already exists
-  startingActions = sceneModel2->postItems(sceneModel2->mrmlSceneItem()).size();
-  nodeSelector2.setAddEnabled(1);
-
-  if (nodeSelector2.addEnabled() != false)
-    {
-    std::cerr << "Enabling add action after adding a custom action"
-                 " starting with 'Create and rename ' is expected to fail."
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  expected = startingActions;
-  if (!checkActionCount(__LINE__, sceneModel2, expected))
-    {
-    return EXIT_FAILURE;
-    }
-
-
   nodeSelector.show();
+
+  std::cout << "Test completed successfully" << std::endl;
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

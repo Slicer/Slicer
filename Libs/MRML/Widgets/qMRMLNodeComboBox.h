@@ -268,8 +268,23 @@ public slots:
   /// \sa nodeCount, setCurrentNode(vtkMRMLNode* ), setCurrentNodeID(const QString&)
   void setCurrentNodeIndex(int index);
 
-  /// Creates a node of the same type than on the "node types" properties.
-  /// It's name is generated using \a basename.
+  /// \brief Creates a node of the same type as in the "node types" property.
+  ///
+  /// Its name is generated using \a basename.
+  ///
+  /// \return The new node or NULL if \a nodeType is not among the allowed
+  /// node types specified using setNodeTypes().
+  ///
+  /// \sa nodeTypes()
+  /// \sa baseName()
+  virtual vtkMRMLNode* addNode(QString nodeType);
+
+  /// \brief Creates a node of the same type as the first in the "node types" property.
+  ///
+  /// Its name is generated using \a basename.
+  ///
+  /// \sa nodeTypes()
+  /// \sa baseName()
   virtual vtkMRMLNode* addNode();
 
   /// Removes the current node from the scene. The node reference count gets
