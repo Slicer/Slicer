@@ -555,46 +555,49 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParameter& moduleParameter)
 {
-  QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap(Self::ImageTypeAttributeToNodeType,
-                                           type,
-                                           "vtkMRMLScalarVolumeNode");
-
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
-  if (channel == "input")
-    {
-    }
-  else if (channel == "output")
-    {
-    if (type == "any")
-      {
-//     // Add all of the other concrete volume node types
-//     tparameter->AddNodeClass("vtkMRMLVectorVolumeNode",
-//                               attrName, attrValue,
-//                               (title + " VectorVolume").c_str());
-//     tparameter->AddNodeClass("vtkMRMLDiffusionTensorVolumeNode",
-//                               attrName, attrValue,
-//                               (title + " DiffusionTensorVolume").c_str());
-//     tparameter->AddNodeClass("vtkMRMLDiffusionWeightedVolumeNode",
-//                               attrName, attrValue,
-//                               (title + " DiffusionWeightedVolume").c_str());
-      }
-    }
-  else
+  if (channel != "input" && channel != "output")
     {
     qWarning() << "ImageTag - Unknown channel:" << channel;
     return 0;
     }
 
-  // TODO - tparameter->SetNoneEnabled(noneEnabled);
+  QString type = QString::fromStdString(moduleParameter.GetType());
+
+  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  if (type == "any")
+    {
+    // Add all of the other concrete volume node types
+    // TODO: it would be nicer to iterate through all the registered node classes in the scene
+    // and add all nodes that are derived from vtkMRMLVolumeNode.
+    widget->setNodeTypes(QStringList()
+      << "vtkMRMLScalarVolumeNode"
+      << "vtkMRMLLabelMapVolumeNode"
+      << "vtkMRMLVectorVolumeNode"
+      << "vtkMRMLDiffusionTensorVolumeNode"
+      << "vtkMRMLDiffusionWeightedVolumeNode"
+      );
+    }
+  else if (type == "scalar")
+    {
+    // TODO: it would be nicer to be able to set multiple node types in Self::nodeTypeFromMap
+    widget->setNodeTypes(QStringList()
+      << "vtkMRMLScalarVolumeNode"
+      << "vtkMRMLLabelMapVolumeNode"
+      );
+    }
+  else
+    {
+    QString nodeType = Self::nodeTypeFromMap(Self::ImageTypeAttributeToNodeType, type, "vtkMRMLScalarVolumeNode");
+    widget->setNodeTypes(QStringList(nodeType));
+    }
+
   // TODO - title + " Volume"
 
   QString imageIndex = QString::fromStdString(moduleParameter.GetIndex());
   QString imageLabel = QString::fromStdString(moduleParameter.GetLabel());
   QString imageName = QString::fromStdString(moduleParameter.GetName());
 
-  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
-  widget->setNodeTypes(QStringList(nodeType));
   // If "type" is specified, only display nodes of type nodeType
   // (e.g. vtkMRMLScalarVolumeNode), don't display subclasses
   // (e.g. vtkMRMLDiffusionTensorVolumeNode)
