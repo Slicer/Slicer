@@ -115,7 +115,7 @@ public:
 
   /// Get plugin owning a certain subject hierarchy node.
   /// This function doesn't try to find a suitable plugin, it just returns the one already assigned.
-  qSlicerSubjectHierarchyAbstractPlugin* getOwnerPluginForSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node);
+  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* getOwnerPluginForSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node);
 
   /// Used when multiple plugins are found with the same confidence number for a node.
   /// Pops up a simple dialog asking to choose one plugin from a list.

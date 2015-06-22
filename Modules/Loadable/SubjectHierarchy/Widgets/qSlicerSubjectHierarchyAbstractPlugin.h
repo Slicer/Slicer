@@ -111,7 +111,7 @@ public:
   virtual QString tooltip(vtkMRMLSubjectHierarchyNode* node)const;
 
   /// Set display visibility of a owned subject hierarchy node
-  virtual void setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible);
+  Q_INVOKABLE virtual void setDisplayVisibility(vtkMRMLSubjectHierarchyNode* node, int visible);
 
   /// Get display visibility of a owned subject hierarchy node
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
