@@ -1481,7 +1481,7 @@ vtkSlicerVolumesLogic
 
   vtkSmartPointer<vtkMRMLTransformNode> inputVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID(inputVolumeNode->GetTransformNodeID()));
-  if (inputVolumeNodeTransformNode!=NULL)
+  if (inputVolumeNodeTransformNode.GetPointer() != NULL)
     {
     vtkSmartPointer<vtkGeneralTransform> inputVolumeRAS2RAS = vtkSmartPointer<vtkGeneralTransform>::New();
     inputVolumeNodeTransformNode->GetTransformToWorld(inputVolumeRAS2RAS);
@@ -1490,7 +1490,8 @@ vtkSlicerVolumesLogic
 
   vtkSmartPointer<vtkMRMLTransformNode> referenceVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID(referenceVolumeNode->GetTransformNodeID()));
-  if (referenceVolumeNodeTransformNode!=NULL)
+  if (referenceVolumeNodeTransformNode.GetPointer() != NULL &&
+      inputVolumeNodeTransformNode.GetPointer() != NULL)
     {
     vtkSmartPointer<vtkGeneralTransform> ras2referenceVolumeRAS = vtkSmartPointer<vtkGeneralTransform>::New();
     inputVolumeNodeTransformNode->GetTransformFromWorld(ras2referenceVolumeRAS);
