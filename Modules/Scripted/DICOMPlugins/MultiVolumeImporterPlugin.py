@@ -77,7 +77,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # individual frames should be parsed from series
     loadables += self.examineFilesMultiseries(allfiles)
 
+    loadables += self.examineFilesIPP(allfiles)
+
     return loadables
+
 
   def examineFilesMultiseries(self,files):
 
@@ -107,6 +110,93 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadable.files = orderedFiles
       loadable.tooltip =  name+' - '+str(nFrames) + ' frames MultiVolume by ' + tagName
       loadable.name = name
+      loadable.selected = True
+      loadable.multivolume = mvNode
+      loadable.confidence = 0.9
+      loadables.append(loadable)
+
+    return loadables
+
+  def examineFilesIPP(self,files):
+    print('Examin IPP')
+
+    loadables = []
+    subseriesLists = {}
+    orderedFiles = []
+
+    desc = slicer.dicomDatabase.fileValue(files[0],self.tags['seriesDescription']) # SeriesDescription
+
+    for file in files:
+      ipp = slicer.dicomDatabase.fileValue(file,self.tags['position'])
+      time = float(slicer.dicomDatabase.fileValue(file,self.tags['AcquisitionTime']))
+      if not subseriesLists.has_key(ipp):
+        subseriesLists[ipp] = {}
+      subseriesLists[ipp][time] = file
+    print('Parsed files')
+
+    nSlicesEqual = True
+    allIPPs = subseriesLists.keys()
+    for ipp in subseriesLists.keys():
+      if len(subseriesLists[allIPPs[0]].keys()) != len(subseriesLists[ipp].keys()):
+        nSlicesEqual = False
+        break
+
+    if nSlicesEqual:
+      nFrames = len(subseriesLists[allIPPs[0]].keys())
+      nSlices = len(allIPPs)
+
+      print('IPPs: '+str(allIPPs)+' Times:'+str(subseriesLists[allIPPs[0]].keys()))
+
+      orderedFiles = [0] * nFrames * nSlices
+      print('nFrames = '+str(nFrames)+' nSlices = '+str(nSlices))
+
+      frameLabelsStr=""
+      frameFileList = ""
+      frameLabelsArray = vtk.vtkDoubleArray()
+
+      ippPositionCnt = 0
+      print('file list size: '+str(len(orderedFiles)))
+      for ipp in subseriesLists.keys():
+        timesSorted = subseriesLists[ipp].keys()
+        timesSorted.sort()
+        timeCnt = 0
+        for time in timesSorted:
+          #print("TimeCnt = "+str(timeCnt)+" ippCnt="+str(timeCnt)+" acqTime="+str(time)+" ipp="+ipp+" "+subseriesLists[ipp][time])
+          orderedFiles[timeCnt*nSlices+ippPositionCnt] = subseriesLists[ipp][time]
+          frameFileList = frameFileList+subseriesLists[ipp][time]+','
+          timeCnt = timeCnt+1
+          if ippPositionCnt == 0:
+            frameLabelsStr = frameLabelsStr+str(time)+','
+            frameLabelsArray.InsertNextValue(time)
+        ippPositionCnt = ippPositionCnt+1
+  
+      frameLabelsStr = frameLabelsStr[:-1]
+      frameFileList = frameFileList[:-1]
+
+      print('nFrames = '+str(nFrames)+' nSlices = '+str(nSlices))
+      mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
+      mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
+      mvNode.SetScene(slicer.mrmlScene)
+      mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
+      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName","AcquisitionTime_via_ImagePositionPatient")
+      print('nFrames = '+str(nFrames)+' nSlices = '+str(nSlices))
+      mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
+      mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',"ms")
+      # keep the files in the order by the detected tag
+      # files are not ordered within the individual frames -- this will be
+      # done by ScalarVolumePlugin later
+      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileList)
+
+      mvNode.SetNumberOfFrames(nFrames)
+      mvNode.SetLabelName("temp")
+      mvNode.SetLabelArray(frameLabelsArray)
+
+      loadable = DICOMLib.DICOMLoadable()
+      loadable.files = orderedFiles
+      print('nFrames = '+str(nFrames)+' nSlices = '+str(nSlices))
+      loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by IPP+AcquisitionTime'
+      mvNode.SetName(desc)
+      loadable.tooltip = loadable.name
       loadable.selected = True
       loadable.multivolume = mvNode
       loadable.confidence = 0.9
