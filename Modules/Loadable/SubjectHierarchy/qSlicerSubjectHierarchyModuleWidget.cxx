@@ -56,9 +56,6 @@ public:
   ~qSlicerSubjectHierarchyModuleWidgetPrivate();
   vtkSlicerSubjectHierarchyModuleLogic* logic() const;
 public:
-  /// Using this flag prevents overriding the parameter set node contents when the
-  ///   QMRMLCombobox selects the first instance of the specified node type when initializing
-  bool ModuleWindowInitialized;
 
   /// Subject hierarchy plugin logic
   qSlicerSubjectHierarchyPluginLogic* PluginLogic;
@@ -70,7 +67,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModuleWidgetPrivate::qSlicerSubjectHierarchyModuleWidgetPrivate(qSlicerSubjectHierarchyModuleWidget& object)
   : q_ptr(&object)
-  , ModuleWindowInitialized(false)
   , PluginLogic(NULL)
 {
 }
@@ -144,7 +140,6 @@ void qSlicerSubjectHierarchyModuleWidget::onEnter()
 
   Q_D(qSlicerSubjectHierarchyModuleWidget);
 
-  d->ModuleWindowInitialized = true;
   d->SubjectHierarchyTreeView->setMRMLScene(this->mrmlScene());
 
   this->updateWidgetFromMRML();
