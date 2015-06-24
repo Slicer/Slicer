@@ -744,6 +744,57 @@
       std::cerr << "ERROR getting range" << std::endl;                  \
       return EXIT_FAILURE;                                              \
       }                                                                 \
+                                                                        \
+    const char *red = "vtkMRMLSliceNodeRed";                            \
+    const char *green = "vtkMRMLSliceNodeGreen";                        \
+    const char *yellow = "vtkMRMLSliceNodeYellow";                      \
+    const char *threeD = "vtkMRMLViewNode1";                            \
+    if (node1->GetNumberOfViewNodeIDs() != 0)                           \
+      {                                                                 \
+      std::cerr << "Incorrect number of default view node ids, expecting 0, have " << node1->GetNumberOfViewNodeIDs() << std::endl; \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    if (!node1->IsDisplayableInView(red) ||                             \
+        !node1->IsDisplayableInView(green) ||                           \
+        !node1->IsDisplayableInView(yellow) ||                          \
+        !node1->IsDisplayableInView(threeD))                            \
+      {                                                                 \
+      std::cerr << "Not displayable in all views: " <<                  \
+        "red = " << node1->IsDisplayableInView(red) <<                  \
+        ", green = " << node1->IsDisplayableInView(green) <<            \
+        ", yellow = " << node1->IsDisplayableInView(yellow) <<          \
+        ", 3D = " << node1->IsDisplayableInView(threeD) <<              \
+        std::cout;                                                      \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node1->AddViewNodeID(green);                                        \
+    if (!node1->IsDisplayableInView(green) ||                           \
+        node1->IsDisplayableInView(red) ||                              \
+        node1->IsDisplayableInView(yellow) ||                           \
+        node1->IsDisplayableInView(threeD))                             \
+      {                                                                 \
+      std::cerr << "Not displayable in just green view: " <<            \
+        "red = " << node1->IsDisplayableInView(red) <<                  \
+        ", green = " << node1->IsDisplayableInView(green) <<            \
+        ", yellow = " << node1->IsDisplayableInView(yellow) <<          \
+        ", 3D = " << node1->IsDisplayableInView(threeD) <<              \
+        std::cout;                                                      \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node1->SetDisplayableOnlyInView(red);                               \
+    if (!node1->IsDisplayableInView(red) ||                             \
+        node1->IsDisplayableInView(green) ||                            \
+        node1->IsDisplayableInView(yellow) ||                           \
+        node1->IsDisplayableInView(threeD))                             \
+      {                                                                 \
+      std::cerr << "Not displayable in just red view: " <<              \
+        "red = " << node1->IsDisplayableInView(red) <<                  \
+        ", green = " << node1->IsDisplayableInView(green) <<            \
+        ", yellow = " << node1->IsDisplayableInView(yellow) <<          \
+        ", 3D = " << node1->IsDisplayableInView(threeD) <<              \
+        std::cout;                                                      \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
   }
 #endif
 

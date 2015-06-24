@@ -463,6 +463,11 @@ public:
   /// node)
   /// \sa ViewNodeIDs, IsViewNodeIDPresent(), AddViewNodeID()
   bool IsDisplayableInView(const char* viewNodeID)const;
+  /// Set the View Node ID as the only view to display this node in.
+  /// If the view node id does not exist, the node will show in all views.
+  /// Uses a disable/enable modified event block to avoid flicker.
+  /// \sa RemoveAllViewNodeIDs(), AddViewNodeID()
+  void SetDisplayableOnlyInView(const char *viewNodeID);
   /// Set all the view node IDs at once. Only trigger Modified() if the
   /// new vector is different from the existing vector.
   /// \sa GetViewNodeIDs(), AddViewNodeID()

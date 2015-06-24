@@ -928,6 +928,20 @@ bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
 }
 
 //-------------------------------------------------------
+void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char *viewNodeID)
+{
+  if (viewNodeID == 0)
+    {
+    return;
+    }
+
+  int disabledModify = this->StartModify();
+  this->RemoveAllViewNodeIDs();
+  this->AddViewNodeID(viewNodeID);
+  this->EndModify(disabledModify);
+}
+
+//-------------------------------------------------------
 void vtkMRMLDisplayNode
 ::SetViewNodeIDs(const std::vector<std::string>& viewNodeIDs)
 {
