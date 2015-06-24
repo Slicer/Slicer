@@ -68,6 +68,9 @@ protected slots:
   void onTranslationRangeChanged(double newMin, double newMax);
   void onMRMLTransformNodeModified(vtkObject* caller);
 
+  void onCopyShortcutActivated();
+  void onPasteShortcutActivated();
+
   void transformSelectedNodes();
   void untransformSelectedNodes();
   void hardenSelectedNodes();
