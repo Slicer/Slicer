@@ -148,17 +148,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
  vtkDebugMacro("Have a possible option in line " << line);
  std::string lineString = std::string(line);
 
- if (lineString.find(preposition + "Resolution = ") != std::string::npos)
-   {
-     std::string str = lineString.substr(13 + pointOffset,std::string::npos);
-     vtkDebugMacro("Getting Resolution, substr = " << str);
-     float size = atof(str.c_str());
-     refNode->SetResolution(size);
-     //this->DebugOff();
-
-     return 1;
-   }
- else if (lineString.find(preposition + "DistanceAnnotationFormat = ") != std::string::npos)
+ if (lineString.find(preposition + "DistanceAnnotationFormat = ") != std::string::npos)
    {
      std::string str = lineString.substr(27 + pointOffset,std::string::npos);
      vtkDebugMacro("Getting DistanceAnnotationFormat, substr = " << str);
@@ -339,7 +329,6 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& o
     return 0;
     }
 
-  of << "# " << this->GetAnnotationStorageType() << "Resolution = " << refNode->GetResolution() << endl;
   of << "# " << this->GetAnnotationStorageType() << "DistanceAnnotationFormat = " << refNode->GetDistanceAnnotationFormat() << endl;
   of << "# " << this->GetAnnotationStorageType() << "Columns = type|line1ID|sel|vis" << endl;
 

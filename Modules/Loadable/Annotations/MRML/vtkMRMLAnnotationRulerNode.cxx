@@ -21,7 +21,6 @@ vtkMRMLAnnotationRulerNode::vtkMRMLAnnotationRulerNode()
   this->HideFromEditors = false;
   this->DistanceAnnotationFormat = NULL;
   this->SetDistanceAnnotationFormat("%.0f mm");
-  this->Resolution = 5;
   this->ModelID1 = NULL;
   this->ModelID2 = NULL;
 }
@@ -63,7 +62,6 @@ void vtkMRMLAnnotationRulerNode::WriteXML(ostream& of, int nIndent)
     {
       of << "\"";
     }
-  of << indent << " rulerResolution=\""<< this->Resolution << "\"";
 
   if (this->ModelID1)
     {
@@ -95,14 +93,7 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
     std::string attValue(*(atts++));
 
 
-    if (!strcmp(attName, "rulerResolution"))
-      {
-
-    std::stringstream ss;
-        ss << attValue;
-        ss >> this->Resolution;
-      }
-    else if (!strcmp(attName, "rulerDistanceAnnotationFormat"))
+    if (!strcmp(attName, "rulerDistanceAnnotationFormat"))
       {
       this->SetDistanceAnnotationFormat(attValue.c_str());
       }
@@ -128,7 +119,6 @@ void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
 
   //this->SetPosition1(node->GetPosition1());
   //this->SetPosition2(node->GetPosition2());
-  //this->SetResolution(node->GetResolution());
   //this->SetDistanceAnnotationFormat(node->GetDistanceAnnotationFormat());
   //this->SetModelID1(node->GetModelID1());
   //this->SetModelID2(node->GetModelID2());
@@ -181,7 +171,6 @@ void vtkMRMLAnnotationRulerNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
     {
       os  << "(None)" << "\n";
     }
-  os << indent << "rulerResolution: " << this->Resolution << "\n";
 
   os << indent << "Model 1: " << (this->ModelID1 ? this->ModelID1 : "none") << "\n";
   os << indent << "Model 2: " << (this->ModelID2 ? this->ModelID2 : "none") << "\n";
