@@ -74,7 +74,7 @@ public:
 
   vtkMarkupsFiducialWidgetCallback3D(){}
 
-  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+  virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void *callData)
   {
     if (event ==  vtkCommand::PlacePointEvent)
       {
@@ -106,6 +106,7 @@ public:
         {
         this->Node->GetScene()->SaveStateForUndo(this->Node);
         }
+      this->Node->InvokeEvent(vtkMRMLMarkupsNode::PointEndInteractionEvent, callData);
       }
     // the interaction with the widget ended, now propagate the changes to MRML
     this->DisplayableManager->PropagateWidgetToMRML(this->Widget, this->Node);
