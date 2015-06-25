@@ -444,8 +444,8 @@ void qSlicerTransformsModuleWidget::onPasteShortcutActivated()
                   "Unable to cast string to double: " << entry;
       return;
       }
-    tempMatrix->SetElement(index / static_cast<int>(sqrt(entries.count())),
-                           index % static_cast<int>(sqrt(entries.count())),
+    tempMatrix->SetElement(index / static_cast<int>(sqrt(static_cast<double>(entries.count()))),
+                           index % static_cast<int>(sqrt(static_cast<double>(entries.count()))),
                            numericEntry);
     ++index;
   }
