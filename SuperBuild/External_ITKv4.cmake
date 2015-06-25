@@ -31,14 +31,6 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
-  if(NOT Slicer_ITKV3_COMPATIBILITY AND CMAKE_CL_64)
-    # enables using long long type for indexes and size on platforms
-    # where long is only 32-bits (msvc)
-    set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DITK_USE_64BITS_IDS:BOOL=ON
-      )
-  endif()
-
   if(Slicer_USE_PYTHONQT)
     # XXX Ensure python executable used for ITKModuleHeaderTest
     #     is the same as Slicer.
@@ -65,7 +57,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
       -DITK_LEGACY_REMOVE:BOOL=OFF
-      -DITKV3_COMPATIBILITY:BOOL=${Slicer_ITKV3_COMPATIBILITY}
+      -DITKV3_COMPATIBILITY:BOOL=OFF
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DModule_ITKReview:BOOL=ON
       -DBUILD_SHARED_LIBS:BOOL=ON

@@ -269,10 +269,6 @@ option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
 mark_as_advanced(Slicer_USE_QtTesting)
 mark_as_superbuild(Slicer_USE_QtTesting)
 
-option(Slicer_ITKV3_COMPATIBILITY "Enable ITKV3 compatibility later" OFF)
-mark_as_advanced(Slicer_ITKV3_COMPATIBILITY)
-mark_as_superbuild(Slicer_ITKV3_COMPATIBILITY)
-
 option(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support" ON)
 mark_as_superbuild(Slicer_USE_SimpleITK)
 
