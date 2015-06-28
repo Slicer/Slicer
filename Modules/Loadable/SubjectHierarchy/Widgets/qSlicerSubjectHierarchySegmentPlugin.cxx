@@ -56,7 +56,9 @@
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 #include "qSlicerApplication.h"
-#include "PythonQt.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "PythonQt.h"
+#endif
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
@@ -245,6 +247,7 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
       }
     }
 
+#ifdef Slicer_USE_PYTHONQT
   // Switch to Editor module
   qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("Editor");
 
@@ -261,4 +264,8 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
       "editorWidget.setMergeNode(mergeNode)" )
       .arg(currentNode->GetAssociatedNode()->GetID()).arg(labelNode->GetID()) );
     }
+#else
+  qDebug() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor -- "
+              "Editor module is not available to edit label map" << labelNode->GetName();
+#endif
 }
