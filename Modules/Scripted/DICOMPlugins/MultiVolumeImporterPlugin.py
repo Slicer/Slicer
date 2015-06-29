@@ -150,7 +150,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       orderedFiles = [0] * nFrames * nSlices
 
       frameLabelsStr=""
-      frameFileList = ""
+      frameFileListStr = ""
       frameLabelsArray = vtk.vtkDoubleArray()
 
       ippPositionCnt = 0
@@ -166,11 +166,28 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
             frameLabelsArray.InsertNextValue(time-minTime)
         ippPositionCnt = ippPositionCnt+1
 
+      scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+      firstFrameTime = 0
+      for f in range(nFrames):
+        frameFileList = orderedFiles[f*nSlices:(f+1)*nSlices]
+        svs = scalarVolumePlugin.examine([frameFileList])
+        if len(svs)==0:
+          print('Failed to parse one of the multivolume frames as scalar volume!')
+          break
+        time = self.tm2ms(slicer.dicomDatabase.fileValue(svs[0].files[0],self.tags['AcquisitionTime']))
+        if f==0:
+            frameLabelsStr = '0,'
+            frameLabelsArray.InsertNextValue(0)
+            firstFrameTime = time 
+        else:
+            frameLabelsStr = frameLabelsStr+str(time-firstFrameTime)+','
+            frameLabelsArray.InsertNextValue(time)
+
       for file in orderedFiles:
-        frameFileList = frameFileList+file+','
+        frameFileListStr = frameFileListStr+str(file)+','
 
       frameLabelsStr = frameLabelsStr[:-1]
-      frameFileList = frameFileList[:-1]
+      frameFileListStr = frameFileListStr[:-1]
 
       mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
       mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
@@ -182,7 +199,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       # keep the files in the order by the detected tag
       # files are not ordered within the individual frames -- this will be
       # done by ScalarVolumePlugin later
-      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileList)
+      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileListStr)
 
       mvNode.SetNumberOfFrames(nFrames)
       mvNode.SetLabelName("AcquisitionTime")
