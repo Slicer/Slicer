@@ -185,7 +185,7 @@ mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
 
 Slicer_Remote_Add(MultiVolumeExplorer
   GIT_REPOSITORY ${git_protocol}://github.com/fedorov/MultiVolumeExplorer.git
-  GIT_TAG e50c7383dc3b0fb01ecb04f73747fd05885de768
+  GIT_TAG 82d10b495d6cec19b6dd2fb015da958a974e4eae
   OPTION_NAME Slicer_BUILD_MultiVolumeExplorer
   OPTION_DEPENDS "Slicer_BUILD_QTLOADABLEMODULES;Slicer_BUILD_MULTIVOLUME_SUPPORT;Slicer_USE_PYTHONQT"
   LABELS REMOTE_MODULE
