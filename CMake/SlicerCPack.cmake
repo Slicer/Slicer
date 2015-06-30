@@ -15,6 +15,7 @@ endif()
 
 if(Slicer_BUILD_DICOM_SUPPORT AND NOT Slicer_USE_SYSTEM_DCMTK)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
+  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKResources.cmake)
 endif()
 
 set(CPACK_INSTALL_CMAKE_PROJECTS)
