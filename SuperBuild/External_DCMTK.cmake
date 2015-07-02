@@ -63,7 +63,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
   )
   set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(DCMTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
@@ -77,13 +76,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
-    )
-
-  # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "DCMDICTHOME=<APPLAUNCHER_DIR>/lib/Slicer-4.4/private.dic")
-  mark_as_superbuild(
-    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
-    LABELS "ENVVARS_LAUNCHER_INSTALLED"
     )
 
 else()
