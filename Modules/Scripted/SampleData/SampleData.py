@@ -322,7 +322,11 @@ class SampleDataLogic:
     success, volumeNode = slicer.util.loadVolume(uri, properties = {'name' : name}, returnNode=True)
     if success:
       self.logMessage('<b>Load finished</b>\n')
-      volumeNode.SetAndObserveStorageNodeID(None) # since it was read from a temp directory
+      # since it was read from a temp directory remove the storage node
+      volumeStorageNode = volumeNode.GetStorageNode()
+      if volumeStorageNode != None:
+        slicer.mrmlScene.RemoveNode(volumeStorageNode)
+      volumeNode.SetAndObserveStorageNodeID(None)
     else:
       self.logMessage('<b><font color="red">\tLoad failed!</font></b>\n')
     return volumeNode
