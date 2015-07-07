@@ -212,6 +212,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT test_tractography_display.py)
   slicer_add_python_unittest(SCRIPT sceneImport2428.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
+  slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreTest.py)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT Charting.py)
   slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
@@ -234,6 +235,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     test_tractography_display.py
     sceneImport2428.py
     SlicerMRBTest.py
+    SlicerMRBMultipleSaveRestoreTest.py
     Slicer4Minute.py
     Charting.py
     SliceLinkLogic.py
