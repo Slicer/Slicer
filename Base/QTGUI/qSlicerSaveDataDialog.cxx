@@ -519,8 +519,8 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
       QFileInfo existingInfo(snode->GetFileName());
       qSlicerCoreIOManager* coreIOManager =
            qSlicerCoreApplication::application()->coreIOManager();
-      QString suffix = coreIOManager->completeSlicerSuffix(existingInfo.fileName());
-      QFileInfo newInfo(existingInfo.absoluteDir(), QString(safeNodeName + QString(".") + suffix));
+      QString suffix = coreIOManager->completeSlicerWritableFileNameSuffix(existingInfo.fileName());
+      QFileInfo newInfo(existingInfo.absoluteDir(), QString(node->GetName() + QString(".") + suffix));
       // Only reset the file name if the user has set the name explicitly (that is,
       // if the name isn't the default created by qSlicerVolumesIOOptionsWidget::setFileNames
       // TODO: this logic relies on the GUI so we should consider moving it into MRML proper
@@ -634,7 +634,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   int currentFormat = -1;
-  QString currentExtension = QString(".") + coreIOManager->completeSlicerSuffix(fileInfo.fileName());
+  QString currentExtension = QString(".") + coreIOManager->completeSlicerWritableFileNameSuffix(fileInfo.fileName());
   foreach(QString nameFilter, coreIOManager->fileWriterExtensions(node))
     {
     QString extension = QString::fromStdString(

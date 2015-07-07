@@ -63,20 +63,35 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
   std::cout << "File Type from extension " << qPrintable(extension);
   //std::cout << " is " << qPrintable(fileType) << std::endl;
 
-  // get all the file extensions
-  QStringList allExtensions = manager.allFileExtensions();
-  if (allExtensions.isEmpty())
+  // get all the writable file extensions
+  QStringList allWritableExtensions = manager.allWritableFileExtensions();
+  if (allWritableExtensions.isEmpty())
     {
-    std::cerr << "Failed to get the list of all file extensions." << std::endl;
+    std::cerr << "Failed to get the list of all writable file extensions."
+              << std::endl;
     return EXIT_FAILURE;
     }
-  qDebug() << "All extensions = ";
-  foreach (QString ext, allExtensions)
+  qDebug() << "All writable extensions = ";
+  foreach (QString ext, allWritableExtensions)
     {
     qDebug() << ext;
     }
 
-  // test getting specific file extensions
+  // get all the readable file extensions
+  QStringList allReadableExtensions = manager.allReadableFileExtensions();
+  if (allReadableExtensions.isEmpty())
+    {
+    std::cerr << "Failed to get the list of all readable file extensions."
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  qDebug() << "All readable extensions = ";
+  foreach (QString ext, allReadableExtensions)
+    {
+    qDebug() << ext;
+    }
+
+  // test getting specific writable file extensions
   QStringList testFileNames;
   testFileNames << "MRHead.nrrd" << "brain.nii.gz" << "brain.1.nii.gz"
                 << "brain.thisisafailurecase" << "brain" << "model.vtp.gz"
@@ -90,7 +105,7 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
 
   for (int i = 0; i < testFileNames.size(); ++i)
     {
-    QString ext = manager.completeSlicerSuffix(testFileNames[i]);
+    QString ext = manager.completeSlicerWritableFileNameSuffix(testFileNames[i]);
     if (expectedExtensions[i] != ext)
       {
       qWarning() << "Failed on file " << testFileNames[i]

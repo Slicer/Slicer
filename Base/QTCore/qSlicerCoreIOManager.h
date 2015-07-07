@@ -66,9 +66,12 @@ public:
 
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
   Q_INVOKABLE QStringList fileWriterExtensions(vtkObject* object)const;
-  /// Return a string list of all the file extensions for all types of storage
-  /// nodes. Includes the leading dot.
-  Q_INVOKABLE QStringList allFileExtensions()const;
+  /// Return a string list of all the writable file extensions for all
+  /// registered types of storage nodes. Includes the leading dot.
+  Q_INVOKABLE QStringList allWritableFileExtensions()const;
+  /// Return a string list of all the readable file extensions for all
+  /// registered types of storage nodes. Includes the leading dot.
+  Q_INVOKABLE QStringList allReadableFileExtensions()const;
 
   /// Return the file option associated with a \a file type
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
@@ -79,7 +82,7 @@ public:
   /// is found and the .* extension exists, return the Qt completeSuffix string.
   /// If .* is not in the complete list of known suffixes, returns an empty suffix.
   /// Always includes the leading dot.
-  Q_INVOKABLE QString completeSlicerSuffix(const QString &fileName)const;
+  Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(const QString &fileName)const;
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.

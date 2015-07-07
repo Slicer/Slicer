@@ -306,7 +306,7 @@ QStringList qSlicerCoreIOManager::fileWriterExtensions(
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCoreIOManager::allFileExtensions()const
+QStringList qSlicerCoreIOManager::allWritableFileExtensions()const
 {
   Q_D(const qSlicerCoreIOManager);
 
@@ -314,7 +314,7 @@ QStringList qSlicerCoreIOManager::allFileExtensions()const
 
   if (!d->currentScene())
     {
-    qWarning() << "allFileExtensions: manager has no scene defined";
+    qWarning() << "allWritableFileExtensions: manager has no scene defined";
     return extensions;
     }
   // check for all extensions that can be used to write storable nodes
@@ -331,6 +331,43 @@ QStringList qSlicerCoreIOManager::allFileExtensions()const
         for (int formatIt = 0; formatIt < formatCount; ++formatIt)
           {
           vtkStdString format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+          QString extension = QString::fromStdString(
+                 vtkDataFileFormatHelper::GetFileExtensionFromFormatString(format));
+          extensions << extension;
+          }
+        }
+      }
+    }
+  extensions.removeDuplicates();
+  return extensions;
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerCoreIOManager::allReadableFileExtensions()const
+{
+  Q_D(const qSlicerCoreIOManager);
+
+  QStringList extensions;
+
+  if (!d->currentScene())
+    {
+    qWarning() << "allReadableFileExtensions: manager has no scene defined";
+    return extensions;
+    }
+  // check for all extensions that can be used to read storable nodes
+  int numRegisteredNodeClasses = d->currentScene()->GetNumberOfRegisteredNodeClasses();
+  for (int i = 0; i < numRegisteredNodeClasses; ++i)
+    {
+    vtkMRMLNode *mrmlNode = d->currentScene()->GetNthRegisteredNodeClass(i);
+    if (mrmlNode && mrmlNode->IsA("vtkMRMLStorageNode"))
+      {
+      vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(mrmlNode);
+      if (snode)
+        {
+        const int formatCount = snode->GetSupportedReadFileTypes()->GetNumberOfValues();
+        for (int formatIt = 0; formatIt < formatCount; ++formatIt)
+          {
+          vtkStdString format = snode->GetSupportedReadFileTypes()->GetValue(formatIt);
           QString extension = QString::fromStdString(
                  vtkDataFileFormatHelper::GetFileExtensionFromFormatString(format));
           extensions << extension;
@@ -376,10 +413,10 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::completeSlicerSuffix(const QString &fileName)const
+QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(const QString &fileName)const
 {
   // first get all possible Slicer file extensions
-  QStringList allExtensions = qSlicerCoreIOManager::allFileExtensions();
+  QStringList allExtensions = qSlicerCoreIOManager::allWritableFileExtensions();
   // then iterate through them to find one that matches
   foreach (QString extension, allExtensions)
     {
