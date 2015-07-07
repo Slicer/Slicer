@@ -263,6 +263,13 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     return false;
     }
 
+  // Mark the storable nodes as modified since read, since that flag was reset
+  // when the files were written out. If there was newly generated data in the
+  // scene that only got saved to the MRB bundle directory, it would be marked
+  // as unmodified since read when saving as a MRML file + data. This will not
+  // disrupt multiple MRB saves.
+  this->mrmlScene()->SetStorableNodesModifiedSinceRead();
+
   qDebug() << "saved " << fileInfo.absoluteFilePath();
   return true;
 }
