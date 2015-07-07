@@ -135,6 +135,6 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   qDebug() << "Reset scene to point to the MRB directory " << this->mrmlScene()->GetURL();
   // and mark storable nodes as modified since read
   this->mrmlScene()->SetStorableNodesModifiedSinceRead();
-
+  // MRBs come with default scene views, but the paths of storage nodes in there can be still pointing to the bundle extraction directory that was removed. Clear out the file lists at least so that they get reset
   return res;
 }

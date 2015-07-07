@@ -615,6 +615,15 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
           if (snode1)
             {
             snode->SetFileName(snode1->GetFileName());
+            int numberOfFileNames = snode1->GetNumberOfFileNames();
+            if (numberOfFileNames > 0)
+              {
+              snode->ResetFileNameList();
+              for (int i = 0; i < numberOfFileNames; ++i)
+                {
+                snode->AddFileName(snode1->GetNthFileName(i));
+                }
+              }
             }
           }
         }

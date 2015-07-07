@@ -29,16 +29,11 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     unittest.TestCase.__init__(self,methodName)
     self.uniqueDirectory = uniqueDirectory
     self.strict = strict
-
-  def delayDisplay(self,message,msec=1000):
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+    # this flag will need to be updated if the code in
+    #  qSlicerSceneBundleReader::load
+    # is changed from the current behaviour (delete expanded
+    # files after loading the MRB into Slicer)
+    self.mrbDeleteFilesAfterLoad = 1
 
   def setUp(self):
     slicer.mrmlScene.Clear(0)
@@ -86,7 +81,11 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
             print '\t\tmodified since read = ',storableNode.GetModifiedSinceRead()
           else:
             print '\t\tNo storable node found for this storage node'
-          self.numberOfFilesNotFound += 1
+          # double check that it's not due to the unzipped files being deleted
+          if (not self.mrbDeleteFilesAfterLoad) or ('BundleSaveTemp' in absFileName):
+            self.numberOfFilesNotFound += 1
+          else:
+            print '\t\tMRB files were deleted after load, not counting this file as not found for the purposes of this test'
         else:
           print '\tfile exists:',absFileName
         # check for the file list
@@ -96,21 +95,24 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
           absFileName = storageNode.GetAbsoluteFilePath(fileName)
           if not os.path.exists(absFileName):
             print '\t',n,'th file list member does not exist: ',absFileName
-            self.numberOfFilesNotFound += 1
+            if (not self.mrbDeleteFilesAfterLoad) or ('BundleSaveTemp' in absFileName):
+              self.numberOfFilesNotFound += 1
+            else:
+              print '\t\tMRB files were deleted after load, not counting this file as not foudn for the purposes of this test'
 
   def checkSceneViewFileNames(self, scene):
     # check for any scene views
     numberOfSceneViews = scene.GetNumberOfNodesByClass('vtkMRMLSceneViewNode')
-    self.delayDisplay("Number of scene views = " + str(numberOfSceneViews))
+    slicer.util.delayDisplay("Number of scene views = " + str(numberOfSceneViews))
     if numberOfSceneViews == 0:
       return;
     for n in range(numberOfSceneViews):
       sceneViewNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSceneViewNode')
-      self.delayDisplay('\nChecking scene view ' + sceneViewNode.GetName() + ', id = ' + sceneViewNode.GetID())
+      slicer.util.delayDisplay('\nChecking scene view ' + sceneViewNode.GetName() + ', id = ' + sceneViewNode.GetID())
       self.checkSceneFileNames(sceneViewNode.GetStoredScene())
 
   def checkAllFileNames(self, scene):
-    self.delayDisplay("\n\nChecking all file names in scene")
+    slicer.util.delayDisplay("\n\nChecking all file names in scene")
     self.numberOfFilesNotFound = 0
     self.checkSceneFileNames(scene)
     self.checkSceneViewFileNames(scene)
@@ -127,6 +129,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     print("Running SlicerMRBSaveRestoreCheckPaths Test case with:")
     print("uniqueDirectory : %s" % self.uniqueDirectory)
     print("strict : %s" % self.strict)
+    print("files deleted after load: %d" % self.mrbDeleteFilesAfterLoad)
 
     #
     # first, get the volume data
@@ -136,7 +139,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     print("Getting MR Head Volume")
     mrHeadVolume = sampleDataLogic.downloadMRHead()
 
-    self.delayDisplay('Finished with download of volume')
+    slicer.util.delayDisplay('Finished with download of volume')
 
     #
     # test all current file paths
@@ -156,14 +159,14 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # point with the volume saved in a regular directory
     #
     tempDir = self.tempDirectory('__mrml__')
-    self.delayDisplay('Temp dir = %s ' % tempDir)
+    slicer.util.delayDisplay('Temp dir = %s ' % tempDir)
     mrmlFilePath = tempDir + '/SlicerMRBSaveRestoreCheckPath.mrml'
     slicer.mrmlScene.SetURL(mrmlFilePath)
-    self.delayDisplay('Saving mrml file to %s, current url of scene is %s' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
+    slicer.util.delayDisplay('Saving mrml file to %s, current url of scene is %s' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
     # saveScene just writes out the .mrml file
     self.assertTrue(ioManager.saveScene(mrmlFilePath, screenShot))
-    self.delayDisplay('Finished saving mrml file %s, mrml url is now %s\n\n\n' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
-    self.delayDisplay('mrml root dir = %s' % slicer.mrmlScene.GetRootDirectory())
+    slicer.util.delayDisplay('Finished saving mrml file %s, mrml url is now %s\n\n\n' % (mrmlFilePath, slicer.mrmlScene.GetURL()))
+    slicer.util.delayDisplay('mrml root dir = %s' % slicer.mrmlScene.GetRootDirectory())
     # explicitly save MRHead
     mrHeadVolume.GetStorageNode().WriteData(mrHeadVolume)
 
@@ -176,11 +179,11 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # save the mrb
     #
     mrbFilePath= self.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-1.mrb'
-    self.delayDisplay("\n\n\nSaving mrb to: %s" % mrbFilePath)
+    slicer.util.delayDisplay("\n\n\nSaving mrb to: %s" % mrbFilePath)
     self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)
     )
-    self.delayDisplay("Finished saving mrb\n\n\n")
+    slicer.util.delayDisplay("Finished saving mrb\n\n\n")
 
     #
     # test all current file paths
@@ -191,12 +194,12 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # reload the mrb and restore a scene view
     #
     slicer.mrmlScene.Clear(0)
-    self.delayDisplay('Now, reload the saved MRB\n\n\n')
+    slicer.util.delayDisplay('Now, reload the first saved MRB\n\n\n')
     mrbLoaded = ioManager.loadScene(mrbFilePath)
     # load can return false even though it succeeded - only fail if in strict mode
     self.assertTrue( not self.strict or mrbLoaded )
     slicer.app.processEvents()
-    self.delayDisplay("\n\n\nFinished reloading the saved MRB\n\n\n")
+    slicer.util.delayDisplay("\n\n\nFinished reloading the first saved MRB\n\n\n")
     #
     # test all current file paths
     #
@@ -206,19 +209,18 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # Save it again
     #
     mrbFilePath= self.tempDirectory('__mrb__') + '/SlicerMRBSaveRestoreCheckPaths-2.mrb'
-    self.delayDisplay("Saving mrb to: %s\n\n\n\n" % mrbFilePath)
+    slicer.util.delayDisplay("Saving second mrb to: %s\n\n\n\n" % mrbFilePath)
     self.assertTrue(
         ioManager.saveScene(mrbFilePath, screenShot)
     )
-    self.delayDisplay("\n\n\nFinished saving mrb %s" % mrbFilePath)
+    slicer.util.delayDisplay("\n\n\nFinished second saving mrb %s" % mrbFilePath)
 
     #
     # test all current file paths
     #
-    self.delayDisplay("Skipping a file name check so test passes")
-    # self.checkAllFileNames(slicer.mrmlScene)
+    self.checkAllFileNames(slicer.mrmlScene)
 
-    self.delayDisplay("Test Finished")
+    slicer.util.delayDisplay("Test Finished")
 
   def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None):
     """Come up with a unique directory name in the temp dir and make it and return it

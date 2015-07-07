@@ -607,7 +607,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
     }
     if (mrmlNode->IsA("vtkMRMLSceneViewNode"))
       {
-      // get all additional storable nodes for all scene views except "Master Scene View"
+      // get all additional storable nodes for all scene views
       vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
       sceneViewNode->SetSceneViewRootDir(this->GetMRMLScene()->GetRootDirectory());
 
@@ -681,6 +681,9 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   // Now, restore the state of the scene
   //
 
+  this->GetMRMLScene()->SetURL(origURL.c_str());
+  this->GetMRMLScene()->SetRootDirectory(origRootDirectory.c_str());
+
   // clean up scene views
   this->GetMRMLScene()->RemoveNode(newSceneViewNode);
   newSceneViewNode->Delete();
@@ -702,6 +705,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
     if (mrmlNode->IsA("vtkMRMLSceneViewNode"))
       {
       vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
+      sceneViewNode->GetScene()->SetURL(origURL.c_str());
       sceneViewNode->SetSceneViewRootDir(origRootDirectory.c_str());
 
       // get all additional storable nodes for all scene views
