@@ -79,6 +79,10 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewNode::WriteNodeBodyXML(ostream& of, int nIndent)
 {
+  // first make sure that the scene view scene is to be saved relative to the same place as the main scene
+  const char *sceneURL = this->SnapshotScene->GetURL();
+  const char *rootDir = this->SnapshotScene->GetRootDirectory();
+  this->SnapshotScene->SetRootDirectory(this->GetScene()->GetRootDirectory());
   this->SetAbsentStorageFileNames();
 
   vtkMRMLNode * node = NULL;

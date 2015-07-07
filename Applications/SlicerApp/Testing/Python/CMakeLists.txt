@@ -214,6 +214,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreLoopTest.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBMultipleSaveRestoreTest.py)
+  slicer_add_python_unittest(SCRIPT SlicerMRBSaveRestoreCheckPathsTest.py)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT Charting.py)
   slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
@@ -238,6 +239,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SlicerMRBTest.py
     SlicerMRBMultipleSaveRestoreLoopTest.py
     SlicerMRBMultipleSaveRestoreTest.py
+    SlicerMRBSaveRestoreCheckPathsTest.py
     Slicer4Minute.py
     Charting.py
     SliceLinkLogic.py
