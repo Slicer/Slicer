@@ -121,7 +121,7 @@ bool store()
 
   if (sceneViewNode->GetStoredScene()->GetNodeByID("vtkMRMLScalarVolumeNode1") == 0)
     {
-    std::cout << "vtkMRMLSceneViewNode::StoreScene() failed" << std::endl;
+    std::cout << "vtkMRMLSceneViewNode::StoreScene() failed, expected no volume node" << std::endl;
     return false;
     }
 
@@ -221,15 +221,19 @@ bool storeTwice()
   if (defaultNodes != 0)
     {
     std::cout << __LINE__ << ": vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()"
-              << " failed" << std::endl;
+              << " failed, default nodes != 0: "
+              << defaultNodes
+              << std::endl;
     return false;
     }
   sceneViewNode->StoreScene();
 
   int nodeCount = sceneViewNode->GetStoredScene()->GetNumberOfNodes();
-  if (nodeCount != 2)
+  // a storage node gets added
+  if (nodeCount != 3)
     {
     std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed"
+              << ", node count " << nodeCount << " != 3"
               << std::endl;
     return false;
     }
@@ -239,6 +243,8 @@ bool storeTwice()
   if (newNodeCount != nodeCount)
     {
     std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed"
+              << ", new node count " << newNodeCount
+              << " != node count " << nodeCount
               << std::endl;
     return false;
     }
@@ -300,7 +306,7 @@ bool references()
   if (sceneReferencedNodes->GetNumberOfItems() != 2)
     {
     std::cout << __LINE__ << ": vtkMRMLScene::GetReferencedNodes() failed. \n"
-              << sceneReferencedNodes->GetNumberOfItems() << " items"
+              << sceneReferencedNodes->GetNumberOfItems() << " items != 2"
               << std::endl;
     return false;
     }
@@ -318,20 +324,20 @@ bool references()
     sceneViewNode->GetStoredScene()->GetReferencedNodes(sceneViewVolumeNode));
 
   // Number of references in scene view node scene should be the same as the
-  // main scene reference count.
-  if (sceneViewReferencedNodes->GetNumberOfItems() != 2 ||
+  // main scene reference count (+1 for new storage node).
+  if (sceneViewReferencedNodes->GetNumberOfItems() != 3 ||
       sceneViewReferencedNodes->GetItemAsObject(0) != sceneViewVolumeNode ||
       sceneViewReferencedNodes->GetItemAsObject(1) != sceneViewVolumeDisplayNode ||
-      sceneViewNode->GetStoredScene()->GetNumberOfNodeReferences() != 1 ||
+      sceneViewNode->GetStoredScene()->GetNumberOfNodeReferences() != 2 ||
       sceneViewNode->GetStoredScene()->GetNthReferencingNode(0) != sceneViewVolumeNode)
     {
     std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed." << std::endl
-              << sceneViewReferencedNodes->GetNumberOfItems() << " items for "
+              << sceneViewReferencedNodes->GetNumberOfItems() << " items (3 expected) "
               << sceneViewVolumeNode << ": "
               << sceneViewReferencedNodes->GetItemAsObject(0) << ", "
               << sceneViewReferencedNodes->GetItemAsObject(1) << std::endl;
     unsigned int referencingNodesSize = sceneViewNode->GetStoredScene()->GetNumberOfNodeReferences();
-    std::cout << "Referencing nodes: " << referencingNodesSize << "(1 expected) ";
+    std::cout << "Referencing nodes: " << referencingNodesSize << "(2 expected) ";
     for (unsigned int i = 0; i < referencingNodesSize; ++i)
       {
       std::cout << sceneViewNode->GetStoredScene()->GetNthReferencingNode(i) << "("
