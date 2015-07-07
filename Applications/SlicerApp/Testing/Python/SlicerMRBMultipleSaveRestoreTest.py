@@ -52,7 +52,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
   def test_SlicerMRBMultipleSaveRestore(self):
     """
-    Replicate the issue reported in bug 2385 where saving
+    Replicate the issue reported in bug 3956 where saving
     and restoring an MRB file does not work.
     """
 

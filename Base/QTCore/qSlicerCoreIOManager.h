@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QList>
+#include <QImage>
 #include <QMap>
 #include <QObject>
 #include <QVariantMap>
@@ -42,7 +43,6 @@ class vtkObject;
 class qSlicerCoreIOManagerPrivate;
 class qSlicerFileReader;
 class qSlicerFileWriter;
-
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager:public QObject
 {
   Q_OBJECT;
@@ -118,7 +118,7 @@ public:
   /// Load/import a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
   /// loadNodes function with QString("SceneFile")
-  bool loadScene(const QString& fileName, bool clear = true);
+  Q_INVOKABLE bool loadScene(const QString& fileName, bool clear = true);
 
   /// Convenient function to load a file. All the options (e.g. filetype) are
   /// chosen by default.
@@ -138,6 +138,12 @@ public:
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
                              const qSlicerIO::IOProperties& parameters);
 #endif
+
+  /// Save a scene corresponding to \a fileName
+  /// This function is provided for convenience and is equivalent to call
+  /// saveNodes function with QString("SceneFile") with the fileName
+  /// and screenShot set as properties.
+  Q_INVOKABLE bool saveScene(const QString& fileName, QImage screenShot);
 
   /// Register the reader/writer \a io
   /// Note also that the IOManager takes ownership of \a io

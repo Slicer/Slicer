@@ -634,6 +634,16 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::saveScene(const QString& fileName, QImage screenShot)
+{
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = fileName;
+  properties["screenShot"] = screenShot;
+
+  return this->saveNodes(QString("SceneFile"), properties);
+}
+
+//-----------------------------------------------------------------------------
 const QList<qSlicerFileReader*>& qSlicerCoreIOManager::readers()const
 {
   Q_D(const qSlicerCoreIOManager);

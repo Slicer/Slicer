@@ -142,6 +142,8 @@ public:
   std::string PercentEncode(std::string s);
 
   /// Save the scene into a self contained directory, sdbDir
+  /// Called by the qSlicerSceneWriter, which can be accessed via
+  /// \sa qSlicerCoreIOManager::saveScene
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns false if the save failed
   bool SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot = NULL);
