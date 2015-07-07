@@ -132,7 +132,8 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
   // list from being cleared of points and then not repopulated.
   // TBD: if scene view node reading xml triggers reading the data from
   // storage nodes, this should no longer be necessary.
-  if (this->Scene->IsRestoring())
+  if (this->Scene &&
+      this->Scene->IsRestoring())
     {
     if (this->GetNumberOfMarkups() != 0 &&
         node->GetNumberOfMarkups() == 0)
