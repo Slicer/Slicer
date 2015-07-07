@@ -20,6 +20,8 @@
 
 // MRML logic includes
 #include "vtkMRMLColorLogic.h"
+#include "vtkDataIOManagerLogic.h"
+#include "vtkMRMLRemoteIOLogic.h"
 
 // MRML nodes includes
 #include "vtkCacheManager.h"
@@ -655,12 +657,22 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
 
   // set up a mini scene to avoid adding and removing nodes from the main scene
   vtkNew<vtkMRMLScene> testScene;
-  // borrow the cache manager in case some nodes are stored remotely
+  // set it up for remote io, the constructor creates a cache and data io manager
+  vtkSmartPointer<vtkMRMLRemoteIOLogic> remoteIOLogic;
+  remoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
+  remoteIOLogic->SetMRMLScene(testScene.GetPointer());
+  remoteIOLogic->AddDataIOToScene();
   if (this->GetMRMLScene()->GetCacheManager())
     {
-    testScene->SetCacheManager(this->GetMRMLScene()->GetCacheManager());
+    // update the temp remote cache dir from the main one
+    remoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory());
     }
-
+  // set up the data io manager logic to handle remote downloads
+  vtkSmartPointer<vtkDataIOManagerLogic> dataIOManagerLogic;
+  dataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
+  dataIOManagerLogic->SetMRMLApplicationLogic(this->GetApplicationLogic());
+  dataIOManagerLogic->SetAndObserveDataIOManager(
+    remoteIOLogic->GetDataIOManager());
   // Run through the factory list and test each factory until success
   for (NodeSetFactoryRegistry::const_iterator fit = volumeRegistry.begin();
        fit != volumeRegistry.end(); ++fit)
@@ -735,10 +747,15 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     modified = true;
     }
 
-    // clean up the test scene
+  // clean up the test scene
+  remoteIOLogic->RemoveDataIOFromScene();
   if (testScene->GetCacheManager())
     {
     testScene->SetCacheManager(0);
+    }
+  if (testScene->GetDataIOManager())
+    {
+    testScene->SetDataIOManager(0);
     }
 
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
