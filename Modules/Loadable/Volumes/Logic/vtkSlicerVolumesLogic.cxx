@@ -735,7 +735,13 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   bool modified = false;
   if (volumeNode != NULL)
     {
-    // move the nodes from the test scene to the main one, observations should still be good
+    // move the nodes from the test scene to the main one, removing from the
+    // test scene first to avoid missing ID/reference errors and to fix a
+    // problem found in testing an extension where the RAS to IJK matrix
+    /// was reset to identity.
+    testScene->RemoveNode(displayNode);
+    testScene->RemoveNode(storageNode);
+    testScene->RemoveNode(volumeNode);
     this->GetMRMLScene()->AddNode(displayNode);
     this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(volumeNode);
