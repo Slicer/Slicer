@@ -57,6 +57,8 @@ public:
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
+  /// Watch for storable nodes being added after a scene view is present
+  void OnMRMLSceneNodeAddedEvent(vtkObject* scene, vtkObject* node);
 
 signals:
   void screenshotButtonClicked();
