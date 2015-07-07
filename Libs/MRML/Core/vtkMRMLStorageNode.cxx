@@ -1123,5 +1123,12 @@ int vtkMRMLStorageNode::WriteDataInternal(vtkMRMLNode* vtkNotUsed(refNode))
 std::string vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(const std::string& filename)
 {
   std::string extension = vtksys::SystemTools::GetFilenameLastExtension(filename);
+  if (extension.compare(".gz") == 0)
+    {
+    // some file formats have a compressed version ending with gz, return
+    // the full extension
+    extension = vtksys::SystemTools::GetFilenameLastExtension(vtksys::SystemTools::GetFilenameWithoutLastExtension(filename)) +
+                vtksys::SystemTools::GetFilenameLastExtension(filename);
+    }
   return vtksys::SystemTools::LowerCase(extension);
 }
