@@ -374,14 +374,14 @@ void vtkMRMLSceneViewNode::StoreScene()
       if (this->IncludeNodeInSceneView(storableNode) &&
           storableNode->GetSaveWithScene() )
         {
-        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
+        vtkSmartPointer<vtkMRMLStorageNode> storageNode = storableNode->GetStorageNode();
         if (!storageNode)
           {
           // No storage node in the main scene, add one there, and ensure it
           // gets added to the scene view
           vtkWarningMacro("SceneView StoreScene: creating a new storage node for "
                            << storableNode->GetID());
-          storageNode = storableNode->CreateDefaultStorageNode();
+          storageNode.TakeReference(storableNode->CreateDefaultStorageNode());
           if (storageNode)
             {
             std::string fileBaseName = std::string(storableNode->GetName());
@@ -391,7 +391,6 @@ void vtkMRMLSceneViewNode::StoreScene()
             // add to the main scene
             this->Scene->AddNode(storageNode);
             storableNode->SetAndObserveStorageNodeID(storageNode->GetID());
-            storageNode->Delete();
             }
           }
         }
