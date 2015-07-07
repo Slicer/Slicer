@@ -49,6 +49,7 @@ class qMRMLCaptureToolBarPrivate
   Q_DECLARE_PUBLIC(qMRMLCaptureToolBar);
 protected:
   qMRMLCaptureToolBar* const q_ptr;
+  bool timeOutFlag;
 public:
   qMRMLCaptureToolBarPrivate(qMRMLCaptureToolBar& object);
   void init();
@@ -78,6 +79,7 @@ qMRMLCaptureToolBarPrivate::qMRMLCaptureToolBarPrivate(qMRMLCaptureToolBar& obje
   this->ScreenshotAction = 0;
   this->SceneViewAction = 0;
   this->SceneViewMenu = 0;
+  this->timeOutFlag = false;
 }
 
 // --------------------------------------------------------------------------
@@ -276,8 +278,27 @@ void qMRMLCaptureToolBar::OnMRMLSceneNodeAddedEvent(vtkObject *vtkNotUsed(caller
     msgBox.setDefaultButton(ackButton);
     msgBox.setDontShowAgainVisible(true);
     msgBox.setDontShowAgainSettingsKey("SceneViews/NeverShowLostDataWarning");
-    // have it time out after giving the user some time to read it
-    QTimer::singleShot(15000, &msgBox, SLOT(close()));
+    // time out during testing
+    if (this->popupsTimeOut())
+      {
+      QTimer::singleShot(1000, &msgBox, SLOT(close()));
+      }
     msgBox.exec();
     }
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLCaptureToolBar::popupsTimeOut() const
+{
+  Q_D(const qMRMLCaptureToolBar);
+
+  return d->timeOutFlag;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLCaptureToolBar::setPopupsTimeOut(bool flag)
+{
+  Q_D(qMRMLCaptureToolBar);
+
+  d->timeOutFlag = flag;
 }

@@ -239,6 +239,12 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    qSlicerApplication::application()->ioManager(),
                    SLOT(openSceneViewsDialog()));
 
+  // if testing is enabled on the application level, add a time out to the pop ups
+  if (qSlicerApplication::application()->testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+    {
+    this->CaptureToolBar->setPopupsTimeOut(true);
+    }
+
   QList<QAction*> toolBarActions;
   toolBarActions << this->MainToolBar->toggleViewAction();
   //toolBarActions << this->UndoRedoToolBar->toggleViewAction();
