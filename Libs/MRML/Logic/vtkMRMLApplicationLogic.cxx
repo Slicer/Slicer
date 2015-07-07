@@ -607,13 +607,14 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
     }
     if (mrmlNode->IsA("vtkMRMLSceneViewNode"))
       {
-      // get all additioanl storable nodes for all scene views except "Master Scene View"
+      // get all additional storable nodes for all scene views except "Master Scene View"
       vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
       sceneViewNode->SetSceneViewRootDir(this->GetMRMLScene()->GetRootDirectory());
 
-      // skip "Master Scene View" since it contains the same ndoes as the scene
+      // skip "Master Scene View" since it contains the same nodes as the scene
       if (sceneViewNode->GetName() && std::string("Master Scene View") == std::string(sceneViewNode->GetName()))
         {
+        // TBD: need to update the file paths
         continue;
         }
       std::vector<vtkMRMLNode *> snodes;
@@ -712,7 +713,20 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
 
         if (storageNode && this->OriginalStorageNodeFileNames.find( storageNode ) != this->OriginalStorageNodeFileNames.end() )
           {
-          storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode].c_str());
+          storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode][0].c_str());
+          if (this->OriginalStorageNodeFileNames[storageNode].size() > 1)
+            {
+            // set the file list
+            storageNode->ResetFileNameList();
+            for (unsigned int fileNumber = 0;
+                 fileNumber < this->OriginalStorageNodeFileNames[storageNode].size();
+                 ++fileNumber)
+              {
+              // the fileName is also in the file list, but AddFileName does
+              // check for duplicates
+              storageNode->AddFileName(this->OriginalStorageNodeFileNames[storageNode][fileNumber].c_str());
+              }
+            }
           }
         if (storageNode && this->OriginalStorageNodeDirs.find( storageNode ) != this->OriginalStorageNodeDirs.end() )
           {
@@ -726,7 +740,18 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
       vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
       if (storageNode && this->OriginalStorageNodeFileNames.find( storageNode ) != this->OriginalStorageNodeFileNames.end() )
         {
-        storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode].c_str());
+        storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode][0].c_str());
+        if (this->OriginalStorageNodeFileNames[storageNode].size() > 1)
+          {
+          // set the file list
+          for (unsigned int fileNumber = 0;
+               fileNumber < this->OriginalStorageNodeFileNames[storageNode].size();
+               ++fileNumber)
+            {
+            // the fileName is also in the file list
+            storageNode->AddFileName(this->OriginalStorageNodeFileNames[storageNode][fileNumber].c_str());
+            }
+          }
         }
       if (storageNode && this->OriginalStorageNodeDirs.find( storageNode ) != this->OriginalStorageNodeDirs.end() )
         {
@@ -778,10 +803,14 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
   if (storageNode)
     {
     // save the old values for the storage nodes
-    // - this->OriginalStorageNodeFileNames has the old filename (absolute path)
+    // - this->OriginalStorageNodeFileNames has the old filenames (absolute paths)
     // - this->OriginalStorageNodeDirs has old paths
     std::string fileName(storageNode->GetFileName());
-    this->OriginalStorageNodeFileNames[storageNode] = fileName;
+    this->OriginalStorageNodeFileNames[storageNode].push_back(fileName);
+    for (int i = 0; i < storageNode->GetNumberOfFileNames(); ++i)
+      {
+      this->OriginalStorageNodeFileNames[storageNode].push_back(storageNode->GetNthFileName(i));
+      }
 
     std::vector<std::string> pathComponents;
     vtksys::SystemTools::SplitPath(fileName.c_str(), pathComponents);
@@ -796,9 +825,21 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
     std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileBaseName);
     if (defaultWriteExtension != extension)
       {
-      uniqueFileName = uniqueFileName + defaultWriteExtension;
+      // for saving to MRB all nodes will be written in their default format
+      if (extension.find(".gz") != std::string::npos)
+        {
+        // there's a double extension
+        uniqueFileName = vtksys::SystemTools::GetFilenameWithoutLastExtension(vtksys::SystemTools::GetFilenameWithoutLastExtension(fileBaseName)) +
+                         defaultWriteExtension;
+        }
+      else
+        {
+        uniqueFileName = vtksys::SystemTools::GetFilenameWithoutLastExtension(fileBaseName) + defaultWriteExtension;
+        }
       }
     storageNode->SetFileName(uniqueFileName.c_str());
+    // also clear out the file list since it's assumed that the default write format is a single file one
+    storageNode->ResetFileNameList();
     storageNode->SetDataDirectory(dataDir.c_str());
     vtkDebugMacro("set data directory to "
       << dataDir.c_str() << ", storable node " << storableNode->GetID()
