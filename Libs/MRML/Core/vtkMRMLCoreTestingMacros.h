@@ -428,7 +428,6 @@
     TEST_SET_GET_BOOLEAN( node, HideFromEditors );                      \
     TEST_SET_GET_BOOLEAN( node, Selectable );                           \
     TEST_SET_GET_STRING( node, Description );                           \
-    TEST_SET_GET_STRING( node, SceneRootDir );                          \
     TEST_SET_GET_STRING( node, Name );                                  \
     TEST_SET_GET_STRING( node, SingletonTag );                          \
     TEST_SET_GET_BOOLEAN( node, SaveWithScene );                        \

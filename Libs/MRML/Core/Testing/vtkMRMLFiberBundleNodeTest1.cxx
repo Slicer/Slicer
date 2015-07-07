@@ -19,7 +19,7 @@ int vtkMRMLFiberBundleNodeTest1(int , char * [] )
 {
   vtkNew< vtkMRMLFiberBundleNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHOD(vtkMRMLFiberBundleNode, node1.GetPointer());
 
   node1->UpdateReferences();
 
@@ -47,19 +47,6 @@ int vtkMRMLFiberBundleNodeTest1(int , char * [] )
     std::cerr << "Error in Set/GetAttribute() " << std::endl;
     return EXIT_FAILURE;
     }
-
-  TEST_SET_GET_BOOLEAN( node1, HideFromEditors );
-  TEST_SET_GET_BOOLEAN( node1, Selectable );
-
-  TEST_SET_GET_STRING( node1, Description );
-  TEST_SET_GET_STRING( node1, SceneRootDir );
-  TEST_SET_GET_STRING( node1, Name );
-  TEST_SET_GET_STRING( node1, SingletonTag );
-
-  TEST_SET_GET_BOOLEAN( node1, ModifiedSinceRead );
-  TEST_SET_GET_BOOLEAN( node1, SaveWithScene );
-  TEST_SET_GET_BOOLEAN( node1, AddToScene );
-  TEST_SET_GET_BOOLEAN( node1, Selected );
 
   node1->Modified();
 

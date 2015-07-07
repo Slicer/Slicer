@@ -877,6 +877,9 @@ int vtkMRMLScene::Commit(const char* url)
   else
     {
     os = &ofs;
+    // set the root directory from the URL
+    this->RootDirectory = vtksys::SystemTools::GetParentDirectory(url);
+
     // Open file
 #ifdef _WIN32
     ofs.open(url, std::ios::out | std::ios::binary);
@@ -1017,7 +1020,6 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   int wasModifying = n->StartModify();
 
   //TODO convert URL to Root directory
-  //n->SetSceneRootDir("");
 
   // check if node is a singletone
   if (n->GetSingletonTag() != NULL)
@@ -1820,7 +1822,6 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
   int modifyStatus = n->GetDisableModifiedEvent();
   n->SetDisableModifiedEvent(1);
 
-  n->SetSceneRootDir(this->RootDirectory.c_str());
   if (n->GetName() == NULL|| n->GetName()[0] == '\0')
     {
     n->SetName(n->GetID());
@@ -1904,7 +1905,6 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
   int modifyStatus = n->GetDisableModifiedEvent();
   n->SetDisableModifiedEvent(1);
 
-  n->SetSceneRootDir(this->RootDirectory.c_str());
   if (n->GetName() == NULL|| n->GetName()[0] == '\0')
     {
     n->SetName(n->GetID());

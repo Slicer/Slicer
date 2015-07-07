@@ -45,6 +45,7 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtksys/SystemTools.hxx>
 
 //----------------------------------------------------------------------------
 qSlicerSceneWriter::qSlicerSceneWriter(QObject* parentObject)
@@ -111,6 +112,14 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 //----------------------------------------------------------------------------
 bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
 {
+  // set the mrml scene url first
+  Q_ASSERT(!properties["fileName"].toString().isEmpty());
+  QString fileName = properties["fileName"].toString();
+
+  this->mrmlScene()->SetURL(fileName.toLatin1());
+  std::string parentDir = vtksys::SystemTools::GetParentDirectory(this->mrmlScene()->GetURL());
+  this->mrmlScene()->SetRootDirectory(parentDir.c_str());
+
   // save an explicit default scene view recording the state of the scene when
   // saved to file
   const char *defaultSceneName = "Master Scene View";
@@ -161,11 +170,9 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   // force a write
   sceneViewNode->GetStorageNode()->WriteData(sceneViewNode);
 
-  Q_ASSERT(!properties["fileName"].toString().isEmpty());
-  QString fileName = properties["fileName"].toString();
-
-  this->mrmlScene()->SetURL(fileName.toLatin1());
+  // write out the mrml file
   bool res = this->mrmlScene()->Commit();
+
   return res;
 }
 

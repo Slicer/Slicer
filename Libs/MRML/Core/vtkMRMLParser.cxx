@@ -103,12 +103,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     return;
     }
 
-  // It is needed to have the scene root dir set before ReadXMLAttributes is
+  // It is needed to have the scene set before ReadXMLAttributes is
   // called on storage nodes.
-  if (this->GetMRMLScene())
-    {
-    node->SetSceneRootDir(this->GetMRMLScene()->GetRootDirectory());
-    }
+  node->SetScene(this->GetMRMLScene());
+
   node->ReadXMLAttributes(atts);
 
   // Slicer3 snap shot nodes were hidden by default, show them so that

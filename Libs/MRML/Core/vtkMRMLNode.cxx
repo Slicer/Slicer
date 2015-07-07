@@ -47,7 +47,6 @@ vtkMRMLNode::vtkMRMLNode()
 
   this->SingletonTag = NULL;
 
-  this->SceneRootDir = NULL;
   this->Scene = NULL;
 
   this->HideFromEditors = 0;
@@ -103,11 +102,6 @@ vtkMRMLNode::~vtkMRMLNode()
     {
     delete [] this->ID;
     this->ID = NULL;
-    }
-  if (this->SceneRootDir)
-    {
-    delete [] this->SceneRootDir;
-    this->SceneRootDir = NULL;
     }
   if (this->MRMLObserverManager)
     {
@@ -573,7 +567,6 @@ void vtkMRMLNode::SetScene(vtkMRMLScene* scene)
   if (this->Scene)
     {
     this->SetSceneReferences();
-    this->SetSceneRootDir(scene->GetRootDirectory());
     // We must not call UpdateNodeReferences() here yet, because referenced node IDs may change
     // due to conflict with node IDs existing in the scene.
     }

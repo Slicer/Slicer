@@ -316,11 +316,7 @@ public:
   vtkSetStringMacro(Description);
   vtkGetStringMacro(Description);
 
-  /// Root directory of MRML scene.
-  vtkSetStringMacro(SceneRootDir);
-  vtkGetStringMacro(SceneRootDir);
-
-  /// Name of this node, to be set by the user.
+  /// Name of this node, to be set by the user
   vtkSetStringMacro(Name);
   vtkGetStringMacro(Name);
 
@@ -820,7 +816,6 @@ protected:
   int InMRMLCallbackFlag;
 
   char *Description;
-  char *SceneRootDir;
   char *Name;
   char *ID;
   int Indent;
