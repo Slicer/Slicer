@@ -20,4 +20,4 @@ slicerMacroBuildScriptedModule(
 )
 slicer_add_python_unittest(SCRIPT AddStorableDataAfterSceneViewTest.py
                            SLICER_ARGS --disable-cli-modules)
-set_property(TEST AddStorableDataAfterSceneViewTest PROPERTY LABELS ${MODULE_NAME})
+set_property(TEST py_AddStorableDataAfterSceneViewTest PROPERTY LABELS ${MODULE_NAME})
