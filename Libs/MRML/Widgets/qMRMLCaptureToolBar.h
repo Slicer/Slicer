@@ -62,8 +62,6 @@ public:
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
-  /// Watch for storable nodes being added after a scene view is present
-  void OnMRMLSceneNodeAddedEvent(vtkObject* scene, vtkObject* node);
 
   /// Set flag to time out pop ups, set from the qSlicerAppMainWindow according to the
   /// AA_EnableTesting attribute

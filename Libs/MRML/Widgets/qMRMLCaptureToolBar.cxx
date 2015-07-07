@@ -147,10 +147,6 @@ void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
                       this, SLOT(OnMRMLSceneEndBatchProcessing()));
 
 */
-  // observe for storable nodes added after scene views are present in the scene
-  this->qvtkReconnect(this->MRMLScene, newScene,
-                      vtkMRMLScene::NodeAddedEvent,
-                      q, SLOT(OnMRMLSceneNodeAddedEvent(vtkObject*,vtkObject*)));
 
   this->MRMLScene = newScene;
 
@@ -237,54 +233,6 @@ void qMRMLCaptureToolBar::setActiveMRMLThreeDViewNode(
   Q_D(qMRMLCaptureToolBar);
   d->ActiveMRMLThreeDViewNode = newActiveMRMLThreeDViewNode;
   d->updateWidgetFromMRML();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLCaptureToolBar::OnMRMLSceneNodeAddedEvent(vtkObject *vtkNotUsed(caller), vtkObject* callData)
-{
-  Q_D(qMRMLCaptureToolBar);
-
-  if (!d->MRMLScene ||
-      d->MRMLScene->IsClosing() ||
-      d->MRMLScene->IsBatchProcessing() ||
-      !callData)
-    {
-    return;
-    }
-
-  vtkMRMLNode *mrmlNode = vtkMRMLNode::SafeDownCast(callData);
-  if (!mrmlNode)
-    {
-    return;
-    }
-
-  if (!mrmlNode->IsA("vtkMRMLSceneViewNode") &&
-      mrmlNode->IsA("vtkMRMLStorableNode") &&
-      mrmlNode->GetSaveWithScene() == 1 &&
-      d->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode") > 0)
-    {
-    qDebug() << "Warning! Adding the node" << mrmlNode->GetName() << " with id " << mrmlNode->GetID() << " to the scene does not add it\nto the scene views already present!\n\tRestoring a previously saved scene view will remove this node!";
-    ctkMessageBox msgBox;
-    msgBox.setWindowTitle("New data added after scene view created.");
-    QString msgText = QString("Data that can be saved to disk was added to the scene, but doesn't appear in the currently defined scene views!\n\n")
-      + QString("If you restore one of those scene views you will lose\n")
-      + QString(mrmlNode->GetName())
-      + QString("\n\nYou can save ")
-      + QString(mrmlNode->GetName())
-      + QString(" to disk, restore the scene view, reload the data, then resave the scene view.");
-    msgBox.setText(msgText);
-    QPushButton *ackButton = msgBox.addButton("Acknowledged",
-                                              QMessageBox::AcceptRole);
-    msgBox.setDefaultButton(ackButton);
-    msgBox.setDontShowAgainVisible(true);
-    msgBox.setDontShowAgainSettingsKey("SceneViews/NeverShowLostDataWarning");
-    // time out during testing
-    if (this->popupsTimeOut())
-      {
-      QTimer::singleShot(1000, &msgBox, SLOT(close()));
-      }
-    msgBox.exec();
-    }
 }
 
 // --------------------------------------------------------------------------
