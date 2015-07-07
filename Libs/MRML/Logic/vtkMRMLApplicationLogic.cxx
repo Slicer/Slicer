@@ -779,7 +779,7 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
   if (!storageNode)
     {
     // no storage node, so we have to create one with a valid name in the new directory
-    vtkWarningMacro("creating a new storage node for " << storableNode->GetID());
+    vtkDebugMacro("creating a new storage node for " << storableNode->GetID());
     storageNode = storableNode->CreateDefaultStorageNode();
     if (storageNode)
       {
