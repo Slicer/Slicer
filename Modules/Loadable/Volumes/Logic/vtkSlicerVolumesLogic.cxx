@@ -545,19 +545,25 @@ void vtkSlicerVolumesLogic
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::InitializeStorageNode(
-    vtkMRMLStorageNode * storageNode, const char * filename, vtkStringArray *fileList)
+  vtkMRMLStorageNode * storageNode, const char * filename, vtkStringArray *fileList, vtkMRMLScene * mrmlScene)
 {
   bool useURI = false;
-  if (this->GetMRMLScene() && this->GetMRMLScene()->GetCacheManager())
+
+  if (mrmlScene == NULL)
     {
-    useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
+    mrmlScene = this->GetMRMLScene();
+    }
+
+  if (mrmlScene && mrmlScene->GetCacheManager())
+    {
+    useURI = mrmlScene->GetCacheManager()->IsRemoteReference(filename);
     }
   if (useURI)
     {
     vtkDebugMacro("AddArchetypeVolume: input filename '" << filename << "' is a URI");
     // need to set the scene on the storage node so that it can look for file handlers
     storageNode->SetURI(filename);
-    storageNode->SetScene(this->GetMRMLScene());
+    storageNode->SetScene(mrmlScene);
     if (fileList != NULL)
       {
       // it's a list of uris
@@ -647,11 +653,19 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
 
   vtkNew<vtkSlicerErrorSink> errorSink;
 
+  // set up a mini scene to avoid adding and removing nodes from the main scene
+  vtkNew<vtkMRMLScene> testScene;
+  // borrow the cache manager in case some nodes are stored remotely
+  if (this->GetMRMLScene()->GetCacheManager())
+    {
+    testScene->SetCacheManager(this->GetMRMLScene()->GetCacheManager());
+    }
+
   // Run through the factory list and test each factory until success
   for (NodeSetFactoryRegistry::const_iterator fit = volumeRegistry.begin();
        fit != volumeRegistry.end(); ++fit)
     {
-    ArchetypeVolumeNodeSet nodeSet( (*fit)(volumeName, this->GetMRMLScene(), loadingOptions) );
+    ArchetypeVolumeNodeSet nodeSet( (*fit)(volumeName, testScene.GetPointer(), loadingOptions) );
 
     // if the labelMap flags for reader and factory are consistent
     // (both true or both false)
@@ -662,7 +676,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
       nodeSet.StorageNode->AddObserver(vtkCommand::ErrorEvent, errorSink.GetPointer());
       nodeSet.StorageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 
-      this->InitializeStorageNode(nodeSet.StorageNode, filename, fileList);
+      this->InitializeStorageNode(nodeSet.StorageNode, filename, fileList, testScene.GetPointer());
 
       vtkDebugMacro("Attempt to read file as a volume of type "
                     << nodeSet.Node->GetNodeTagName() << " using "
@@ -691,9 +705,9 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     // clean up the scene
     nodeSet.Node->SetAndObserveDisplayNodeID(NULL);
     nodeSet.Node->SetAndObserveStorageNodeID(NULL);
-    this->GetMRMLScene()->RemoveNode(nodeSet.DisplayNode);
-    this->GetMRMLScene()->RemoveNode(nodeSet.StorageNode);
-    this->GetMRMLScene()->RemoveNode(nodeSet.Node);
+    testScene->RemoveNode(nodeSet.DisplayNode);
+    testScene->RemoveNode(nodeSet.StorageNode);
+    testScene->RemoveNode(nodeSet.Node);
     }
 
   // display any errors
@@ -706,6 +720,11 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   bool modified = false;
   if (volumeNode != NULL)
     {
+    // move the nodes from the test scene to the main one, observations should still be good
+    this->GetMRMLScene()->AddNode(displayNode);
+    this->GetMRMLScene()->AddNode(storageNode);
+    this->GetMRMLScene()->AddNode(volumeNode);
+
     this->SetAndObserveColorToDisplayNode(displayNode, labelMap, filename);
 
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
@@ -714,14 +733,21 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     this->SetActiveVolumeNode(volumeNode);
 
     modified = true;
-    // since added the node w/o notification, let the scene know now that it
-    // has a new node
-    //this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, volumeNode);
+    }
+
+    // clean up the test scene
+  if (testScene->GetCacheManager())
+    {
+    testScene->SetCacheManager(0);
     }
 
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
   if (modified)
     {
+    // since added the node to the test scene, let the scene know now that it
+    // has a new node
+    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, volumeNode);
+
     this->Modified();
     }
   return volumeNode;

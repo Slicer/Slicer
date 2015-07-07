@@ -268,7 +268,8 @@ protected:
 
   void InitializeStorageNode(vtkMRMLStorageNode * storageNode,
                              const char * filename,
-                             vtkStringArray *fileList);
+                             vtkStringArray *fileList,
+                             vtkMRMLScene * mrmlScene = NULL);
 
   void SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode* displayNode,
                                        int labelmap, const char* filename);
