@@ -125,6 +125,24 @@ void vtkMRMLMarkupsNode::Copy(vtkMRMLNode *anode)
   this->SetMarkupLabelFormat(node->GetMarkupLabelFormat());
   this->TextList->DeepCopy(node->TextList);
 
+  // BUG: When fiducial nodes appear in scene views as of Slicer 4.1 the per
+  // fiducial information (visibility, position etc) is saved to the file on
+  // disk and not read, so the scene view copy of a fiducial node doesn't have
+  // any fiducials in it. This work around prevents the main scene fiducial
+  // list from being cleared of points and then not repopulated.
+  // TBD: if scene view node reading xml triggers reading the data from
+  // storage nodes, this should no longer be necessary.
+  if (this->Scene->IsRestoring())
+    {
+    if (this->GetNumberOfMarkups() != 0 &&
+        node->GetNumberOfMarkups() == 0)
+      {
+      // just return for now
+      vtkWarningMacro("MarkupsNode Copy: Scene view is restoring and list to restore is empty, skipping copy of points");
+      return;
+      }
+    }
+
   this->Markups.clear();
   int numMarkups = node->GetNumberOfMarkups();
   for (int n = 0; n < numMarkups; n++)
