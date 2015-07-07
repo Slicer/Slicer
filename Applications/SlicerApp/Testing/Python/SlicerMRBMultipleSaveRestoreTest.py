@@ -87,14 +87,13 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.delayDisplay('The MRHead volume is in the background of the Red viewer')
 
     
-    # turn off one at a time and save scene view
-    fidNode.SetNthFiducialVisibility(1, 0)
-    self.delayDisplay('Showing eye fid')
-    self.storeSceneView('Eye-view', "Only showing eye fiducial")
-    fidNode.SetNthFiducialVisibility(1, 1)
-    fidNode.SetNthFiducialVisibility(0, 0)
-    self.delayDisplay('Showing nose fid')
-    self.storeSceneView('Nose-view', "Only showing nose fiducial")
+    # turn off visibility save scene view
+    fidNode.SetDisplayVisibility(0)
+    self.delayDisplay('Not showing fiducials')
+    self.storeSceneView('Invisible-view', "Not showing fiducials")
+    fidNode.SetDisplayVisibility(1)
+    self.delayDisplay('Showing fiducials')
+    self.storeSceneView('Visible-view', "Showing fiducials")
  
     #
     # save the mrml scene to a temp directory, then zip it
@@ -132,14 +131,21 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.delayDisplay('The MRHead volume is AGAIN in the background of the Red viewer')
 
     # confirm that the fiducial list exists with two points
+    self.delayDisplay('Does the fiducial list have 2 points in it?')
     fidNode = slicer.util.getNode('F')
     self.assertTrue(fidNode.GetNumberOfFiducials() == 2)
     self.delayDisplay('The fiducial list has 2 points in it')
      
-    # Restore the eye visible scene view 
-    sceneView = slicer.util.getNode('Eye-view')
+    # Restore the invisible scene view
+    self.delayDisplay('About to restore Invisible-view scene')
+    sceneView = slicer.util.getNode('Invisible-view')
     sceneView.RestoreScene()
-    self.delayDisplay("Should now see just the eye fiducial, not the nose")
+    fidNode = slicer.util.getNode('F')
+    self.assertTrue(fidNode.GetDisplayVisibility() == 0)
+    self.delayDisplay("NOT seeing the fiducials")
+    self.delayDisplay('Does the fiducial list still have 2 points in it after restoring a scenen view?')
+    self.assertTrue(fidNode.GetNumberOfFiducials() == 2)
+    self.delayDisplay('The fiducial list has 2 points in it after scene view restore')
 
     #
     # Save it again
@@ -181,8 +187,10 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # confirm that the fiducial list exists with two points
     fidNode = slicer.util.getNode('F')
     self.assertTrue(fidNode.GetNumberOfFiducials() == 2)
-    self.delayDisplay('The fiducial list has 2 points in it after scene view save and MRB reload')
-      
+    self.delayDisplay('The fiducial list has 2 points in it after scene view restore, save and MRB reload')
+    self.assertTrue(fidNode.GetDisplayVisibility() == 0)
+    self.delayDisplay("NOT seeing the fiducials")
+
     self.delayDisplay("Test Finished")
 
   
