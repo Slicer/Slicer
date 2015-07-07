@@ -647,22 +647,22 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   newSceneViewNode->StoreScene();
   this->GetMRMLScene()->AddNode(newSceneViewNode);
 
-  vtkMRMLStorageNode *sceneViewStorageNode = 0;
+  vtkMRMLStorageNode *newSceneViewStorageNode = 0;
   if (screenShot)
     {
     // assumes has been passed a screen shot of the full layout
     newSceneViewNode->SetScreenShotType(4);
     newSceneViewNode->SetScreenShot(screenShot);
     // create a storage node
-    vtkMRMLStorageNode *sceneViewStorageNode = newSceneViewNode->CreateDefaultStorageNode();
+    newSceneViewStorageNode = newSceneViewNode->CreateDefaultStorageNode();
     // set the file name from the node name, using a relative path, it will go
     // at the same level as the  .mrml file
     std::string sceneViewFileName = std::string(newSceneViewNode->GetName()) + std::string(".png");
-    sceneViewStorageNode->SetFileName(sceneViewFileName.c_str());
-    this->GetMRMLScene()->AddNode(sceneViewStorageNode);
-    newSceneViewNode->SetAndObserveStorageNodeID(sceneViewStorageNode->GetID());
+    newSceneViewStorageNode->SetFileName(sceneViewFileName.c_str());
+    this->GetMRMLScene()->AddNode(newSceneViewStorageNode);
+    newSceneViewNode->SetAndObserveStorageNodeID(newSceneViewStorageNode->GetID());
     // force a write
-    sceneViewStorageNode->WriteData(newSceneViewNode);
+    newSceneViewStorageNode->WriteData(newSceneViewNode);
     }
 
   // write the scene to disk, changes paths to relative
@@ -676,10 +676,10 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   // clean up scene views
   this->GetMRMLScene()->RemoveNode(newSceneViewNode);
   newSceneViewNode->Delete();
-  if (sceneViewStorageNode)
+  if (newSceneViewStorageNode)
     {
-    this->GetMRMLScene()->RemoveNode(sceneViewStorageNode);
-    sceneViewStorageNode->Delete();
+    this->GetMRMLScene()->RemoveNode(newSceneViewStorageNode);
+    newSceneViewStorageNode->Delete();
     }
 
   // reset the storage paths
