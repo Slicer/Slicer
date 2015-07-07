@@ -266,10 +266,10 @@ void qMRMLCaptureToolBar::OnMRMLSceneNodeAddedEvent(vtkObject *vtkNotUsed(caller
     qDebug() << "Warning! Adding the node" << mrmlNode->GetName() << " with id " << mrmlNode->GetID() << " to the scene does not add it\nto the scene views already present!\n\tRestoring a previously saved scene view will remove this node!";
     ctkMessageBox msgBox;
     msgBox.setWindowTitle("New data added after scene view created.");
-    QString msgText = QString("Data that can be saved to disk was added to the scene, but doesn't appear in the currently defined scene views!\n")
+    QString msgText = QString("Data that can be saved to disk was added to the scene, but doesn't appear in the currently defined scene views!\n\n")
       + QString("If you restore one of those scene views you will lose\n")
       + QString(mrmlNode->GetName())
-      + QString("\nYou can save ")
+      + QString("\n\nYou can save ")
       + QString(mrmlNode->GetName())
       + QString(" to disk, restore the scene view, reload the data, then resave the scene view.");
     msgBox.setText(msgText);
