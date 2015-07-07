@@ -39,7 +39,9 @@
 
 // VTK includes
 #include <vtkCollection.h>
+#include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
 #include <vtkNew.h>
+#include <vtkStringArray.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreIOManagerPrivate
@@ -304,6 +306,43 @@ QStringList qSlicerCoreIOManager::fileWriterExtensions(
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerCoreIOManager::allFileExtensions()const
+{
+  Q_D(const qSlicerCoreIOManager);
+
+  QStringList extensions;
+
+  if (!d->currentScene())
+    {
+    qWarning() << "allFileExtensions: manager has no scene defined";
+    return extensions;
+    }
+  // check for all extensions that can be used to write storable nodes
+  int numRegisteredNodeClasses = d->currentScene()->GetNumberOfRegisteredNodeClasses();
+  for (int i = 0; i < numRegisteredNodeClasses; ++i)
+    {
+    vtkMRMLNode *mrmlNode = d->currentScene()->GetNthRegisteredNodeClass(i);
+    if (mrmlNode && mrmlNode->IsA("vtkMRMLStorageNode"))
+      {
+      vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(mrmlNode);
+      if (snode)
+        {
+        const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
+        for (int formatIt = 0; formatIt < formatCount; ++formatIt)
+          {
+          vtkStdString format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+          QString extension = QString::fromStdString(
+                 vtkDataFileFormatHelper::GetFileExtensionFromFormatString(format));
+          extensions << extension;
+          }
+        }
+      }
+    }
+  extensions.removeDuplicates();
+  return extensions;
+}
+
+//-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescription)const
 {
   Q_D(const qSlicerCoreIOManager);
@@ -334,6 +373,35 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
       }
     }
   return bestWriter ? bestWriter->options() : 0;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreIOManager::completeSlicerSuffix(const QString &fileName)const
+{
+  // first get all possible Slicer file extensions
+  QStringList allExtensions = qSlicerCoreIOManager::allFileExtensions();
+  // then iterate through them to find one that matches
+  foreach (QString extension, allExtensions)
+    {
+    // check if this extension is at the end of the file name
+    if (fileName.endsWith(extension))
+      {
+      return extension;
+      }
+    }
+  if (allExtensions.contains(QString(".*")))
+    {
+    // if the .* option is in the valid extensions list,
+    // use the QFileInfo complete suffix. That will return
+    // a string of everything following the first '.', then
+    // prepend the dot to match the extensions returned from above
+    QString suffix = QString (".") + QFileInfo(fileName).completeSuffix();
+    qDebug() << "Slicer extension not found in file name " << fileName
+             << ", returning Qt complete suffix as .* case " << suffix;
+    return suffix;
+    }
+  // otherwise return an empty suffix
+  return QString (".");
 }
 
 //-----------------------------------------------------------------------------

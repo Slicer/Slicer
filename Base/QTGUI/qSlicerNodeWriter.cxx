@@ -27,6 +27,7 @@
 #include "qSlicerNodeWriterOptionsWidget.h"
 
 // QTCore includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 
 // MRML includes
@@ -145,8 +146,11 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   QString fileName = properties["fileName"].toString();
   snode->SetFileName(fileName.toLatin1());
 
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+
   QString fileFormat =
-    properties.value("fileFormat", QFileInfo(fileName).completeSuffix()).toString();
+    properties.value("fileFormat", coreIOManager->completeSlicerSuffix(fileName)).toString();
   snode->SetWriteFileFormat(fileFormat.toLatin1());
   snode->SetURI(0);
   if (properties.contains("useCompression"))

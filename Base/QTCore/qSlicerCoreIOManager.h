@@ -58,18 +58,28 @@ public:
   /// Return the file description associated with a \a file
   /// Usually the description is a short text of one or two words
   /// e.g. Volume, Model, ...
-  QStringList fileDescriptions(const QString& file)const;
+  Q_INVOKABLE QStringList fileDescriptions(const QString& file)const;
   QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
   /// Return the file type associated with an VTK \a object.
   Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object)const;
 
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
-  QStringList fileWriterExtensions(vtkObject* object)const;
+  Q_INVOKABLE QStringList fileWriterExtensions(vtkObject* object)const;
+  /// Return a string list of all the file extensions for all types of storage
+  /// nodes. Includes the leading dot.
+  Q_INVOKABLE QStringList allFileExtensions()const;
 
   /// Return the file option associated with a \a file type
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
   qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension)const;
+
+  /// Returns a full extension for this file that is recognised by Slicer IO.
+  /// Consults the qSlicerIOCoreManager for a list of known suffixes, if no match
+  /// is found and the .* extension exists, return the Qt completeSuffix string.
+  /// If .* is not in the complete list of known suffixes, returns an empty suffix.
+  /// Always includes the leading dot.
+  Q_INVOKABLE QString completeSlicerSuffix(const QString &fileName)const;
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.

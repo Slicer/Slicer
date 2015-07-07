@@ -17,8 +17,15 @@
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
+// Qt includes
+#include <QDebug>
+#include <QStringList>
 
+// Qt Core includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
+
+// MRML includes
 #include "vtkMRMLScene.h"
 
 
@@ -31,6 +38,9 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
     std::cerr << "Missing arguments" << std::endl;
     return EXIT_FAILURE;
     }
+
+  // make the core application so that the manager can be instantiated
+  qSlicerCoreApplication app(argc, argv);
 
   qSlicerCoreIOManager manager;
 
@@ -53,5 +63,42 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
   std::cout << "File Type from extension " << qPrintable(extension);
   //std::cout << " is " << qPrintable(fileType) << std::endl;
 
+  // get all the file extensions
+  QStringList allExtensions = manager.allFileExtensions();
+  if (allExtensions.isEmpty())
+    {
+    std::cerr << "Failed to get the list of all file extensions." << std::endl;
+    return EXIT_FAILURE;
+    }
+  qDebug() << "All extensions = ";
+  foreach (QString ext, allExtensions)
+    {
+    qDebug() << ext;
+    }
+
+  // test getting specific file extensions
+  QStringList testFileNames;
+  testFileNames << "MRHead.nrrd" << "brain.nii.gz" << "brain.1.nii.gz"
+                << "brain.thisisafailurecase" << "brain" << "model.vtp.gz"
+                << "model.1.vtk" << "color.table.txt.ctbl";
+  QStringList expectedExtensions;
+  // thisisafailurecase is the default Qt completeSuffix since it doesn't match any
+  // known Slicer ext, same with no suffix, and the vtp.gz one
+  expectedExtensions << ".nrrd" << ".nii.gz" << ".nii.gz"
+                     << ".thisisafailurecase" << "." << ".vtp.gz"
+                     << ".vtk" << ".ctbl";
+
+  for (int i = 0; i < testFileNames.size(); ++i)
+    {
+    QString ext = manager.completeSlicerSuffix(testFileNames[i]);
+    if (expectedExtensions[i] != ext)
+      {
+      qWarning() << "Failed on file " << testFileNames[i]
+                 << ", expected extension " << expectedExtensions[i]
+                 << ", but got " << ext;
+      return EXIT_FAILURE;
+      }
+    qDebug() << "Found extension " << ext << " from file " << testFileNames[i];
+    }
   return EXIT_SUCCESS;
 }
