@@ -257,17 +257,8 @@ void qSlicerCoreApplicationPrivate::init()
   // Set up Slicer to use the system proxy
   QNetworkProxyFactory::setUseSystemConfiguration(true);
 
-  // Create MRMLRemoteIOLogic
-  this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
-  // Default cache location, can be changed in settings.
-  this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(
-    QFileInfo(q->temporaryPath(), "RemoteIO").
-    absoluteFilePath().toLatin1());
-
-  this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
-  this->DataIOManagerLogic->SetMRMLApplicationLogic(this->AppLogic);
-  this->DataIOManagerLogic->SetAndObserveDataIOManager(
-    this->MRMLRemoteIOLogic->GetDataIOManager());
+  // Set up Data IO
+  this->initDataIO();
 
   // Create MRML scene
   vtkNew<vtkMRMLScene> scene;
@@ -338,6 +329,24 @@ void qSlicerCoreApplicationPrivate::init()
     // We load the language selected for the application
     qSlicerCoreApplication::loadLanguage();
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplicationPrivate::initDataIO()
+{
+  Q_Q(qSlicerCoreApplication);
+
+  // Create MRMLRemoteIOLogic
+  this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
+  // Default cache location, can be changed in settings.
+  this->MRMLRemoteIOLogic->GetCacheManager()->SetRemoteCacheDirectory(
+    QFileInfo(q->temporaryPath(), "RemoteIO").
+    absoluteFilePath().toLatin1());
+
+  this->DataIOManagerLogic = vtkSmartPointer<vtkDataIOManagerLogic>::New();
+  this->DataIOManagerLogic->SetMRMLApplicationLogic(this->AppLogic);
+  this->DataIOManagerLogic->SetAndObserveDataIOManager(
+    this->MRMLRemoteIOLogic->GetDataIOManager());
 }
 
 //-----------------------------------------------------------------------------
@@ -1031,29 +1040,10 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
   if (d->AppLogic.GetPointer())
     {
     d->AppLogic->SetMRMLScene(newMRMLScene);
-    }
-  if (d->MRMLRemoteIOLogic.GetPointer())
-    {
-    if (d->MRMLScene)
-      {
-      d->MRMLRemoteIOLogic->RemoveDataIOFromScene();
-      }
-    d->MRMLRemoteIOLogic->SetMRMLScene(newMRMLScene);
-    }
-  if (d->DataIOManagerLogic.GetPointer())
-    {
-    d->DataIOManagerLogic->SetMRMLScene(newMRMLScene);
+    d->AppLogic->SetMRMLSceneDataIO(newMRMLScene, d->MRMLRemoteIOLogic.GetPointer(), d->DataIOManagerLogic.GetPointer());
     }
 
   d->MRMLScene = newMRMLScene;
-
-  if (d->MRMLScene)
-    {
-    if (d->MRMLRemoteIOLogic.GetPointer())
-      {
-      d->MRMLRemoteIOLogic->AddDataIOToScene();
-      }
-    }
 
   emit this->mrmlSceneChanged(newMRMLScene);
 }

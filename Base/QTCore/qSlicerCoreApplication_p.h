@@ -64,6 +64,11 @@ public:
 
   virtual void init();
 
+  /// Set up the local and remote data input/output for this application.
+  /// Use this as a template for creating stand alone scenes, then call
+  /// vtkSlicerApplicationLogic::SetMRMLSceneDataIO to hook it into a scene.
+  virtual void initDataIO();
+
   /// Instanciate settings object
   virtual QSettings* newSettings();
   QSettings* instantiateSettings(bool useTmp);

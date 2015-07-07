@@ -14,6 +14,7 @@
 
 // MRML includes
 #include <vtkCacheManager.h>
+#include <vtkDataIOManagerLogic.h>
 #include <vtkMRMLColorTableStorageNode.h>
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include <vtkMRMLCommandLineModuleNode.h>
@@ -41,6 +42,7 @@
 #include <vtkMRMLVectorVolumeDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLRemoteIOLogic.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -275,6 +277,40 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 unsigned int vtkSlicerApplicationLogic::GetReadDataQueueSize()
 {
   return static_cast<unsigned int>( (*this->InternalReadDataQueue).size() );
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerApplicationLogic::SetMRMLSceneDataIO(vtkMRMLScene* newMRMLScene,
+                                                   vtkMRMLRemoteIOLogic *remoteIOLogic,
+                                                   vtkDataIOManagerLogic *dataIOManagerLogic)
+{
+  if (remoteIOLogic)
+    {
+    if (remoteIOLogic->GetMRMLScene() != newMRMLScene)
+      {
+      if (remoteIOLogic->GetMRMLScene())
+        {
+        remoteIOLogic->RemoveDataIOFromScene();
+        }
+      remoteIOLogic->SetMRMLScene(newMRMLScene);
+      }
+    }
+
+  if (dataIOManagerLogic)
+    {
+    if (dataIOManagerLogic->GetMRMLScene() != newMRMLScene)
+      {
+      dataIOManagerLogic->SetMRMLScene(newMRMLScene);
+      }
+    }
+
+  if (newMRMLScene)
+    {
+    if (remoteIOLogic)
+      {
+      remoteIOLogic->AddDataIOToScene();
+      }
+    }
 }
 
 //----------------------------------------------------------------------------

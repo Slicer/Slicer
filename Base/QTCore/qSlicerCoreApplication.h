@@ -47,8 +47,10 @@ class qSlicerCorePythonManager;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 class qSlicerExtensionsManagerModel;
 #endif
+class vtkDataIOManagerLogic;
 class vtkSlicerApplicationLogic;
 class vtkMRMLApplicationLogic;
+class vtkMRMLRemoteIOLogic;
 class vtkMRMLScene;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
@@ -330,6 +332,7 @@ protected:
   virtual void handlePreApplicationCommandLineArguments();
 
   /// Set MRML Scene
+  /// \sa vtkSlicerApplicationLogic::SetMRMLSceneDataIO
   virtual void setMRMLScene(vtkMRMLScene * scene);
 
 protected slots:

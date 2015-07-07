@@ -68,7 +68,10 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
   // from qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
   // should be moved to here so they can be used outside of the
   // context of a qSlicer based application
-
+  // Update 2015/03/20: split qSlicerCoreApplication::setMRMLScene so that
+  // a user can call vtkSlicerApplicationLogic::SetMRMLSceneDataIO to trigger
+  /// this method on a independent scene with separate remote io logic and data
+  /// io manager logic
   if (!this->GetMRMLScene())
     {
     vtkErrorMacro("Cannot add DataIOHandlers -- scene not set");

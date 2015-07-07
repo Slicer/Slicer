@@ -660,8 +660,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   // set it up for remote io, the constructor creates a cache and data io manager
   vtkSmartPointer<vtkMRMLRemoteIOLogic> remoteIOLogic;
   remoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
-  remoteIOLogic->SetMRMLScene(testScene.GetPointer());
-  remoteIOLogic->AddDataIOToScene();
   if (this->GetMRMLScene()->GetCacheManager())
     {
     // update the temp remote cache dir from the main one
@@ -673,6 +671,11 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   dataIOManagerLogic->SetMRMLApplicationLogic(this->GetApplicationLogic());
   dataIOManagerLogic->SetAndObserveDataIOManager(
     remoteIOLogic->GetDataIOManager());
+
+  // and link up everything for the test scene
+  this->GetApplicationLogic()->SetMRMLSceneDataIO(testScene.GetPointer(),
+                                                  remoteIOLogic, dataIOManagerLogic);
+
   // Run through the factory list and test each factory until success
   for (NodeSetFactoryRegistry::const_iterator fit = volumeRegistry.begin();
        fit != volumeRegistry.end(); ++fit)
