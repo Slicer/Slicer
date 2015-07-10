@@ -61,12 +61,12 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
     string(REGEX REPLACE "\n" "" py_spp_no_newline "${py_spp}")
     string(REGEX REPLACE "\\\\" "/" py_spp_nobackslashes "${py_spp_no_newline}")
-    set(_install_command ${CMAKE_COMMAND} -E copy
+    set(ITKv4_INSTALL_COMMAND ${CMAKE_COMMAND} -E copy
           "${CMAKE_BINARY_DIR}/${proj}-build/Wrapping/Generators/Python/WrapITK.pth"
           "${py_spp_nobackslashes}"
           )
   else()
-    set(_install_command "")
+    set(ITKv4_INSTALL_COMMAND ${CMAKE_COMMAND} -E echo "Skip install step.")
   endif()
 
   ExternalProject_Add(${proj}
@@ -102,7 +102,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
-    INSTALL_COMMAND ${_install_command}
+    INSTALL_COMMAND ${ITKv4_INSTALL_COMMAND}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
