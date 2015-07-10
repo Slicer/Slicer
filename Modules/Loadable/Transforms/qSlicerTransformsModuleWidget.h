@@ -63,13 +63,13 @@ protected:
 
 protected slots:
 
-  void onCoordinateReferenceButtonPressed(int id);
+  void onTranslateFirstButtonPressed(bool checked);
   void onNodeSelected(vtkMRMLNode* node);
   void onTranslationRangeChanged(double newMin, double newMax);
   void onMRMLTransformNodeModified(vtkObject* caller);
 
-  void onCopyShortcutActivated();
-  void onPasteShortcutActivated();
+  void copyTransform();
+  void pasteTransform();
 
   void transformSelectedNodes();
   void untransformSelectedNodes();

@@ -2,5 +2,7 @@
   <qresource>
     <file>Icons/LoadTransform.png</file>
     <file>Icons/Transforms.png</file>
+    <file>Icons/RotateFirst.png</file>
+    <file>Icons/TranslateFirst.png</file>
   </qresource>
 </RCC>

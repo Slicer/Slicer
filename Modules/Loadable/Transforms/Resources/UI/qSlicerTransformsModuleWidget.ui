@@ -209,6 +209,24 @@
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="TranslateFirstToolButton">
+          <property name="toolTip">
+           <string>Translation in global or local (rotated) reference frame</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qSlicerTransformsModule.qrc">
+            <normaloff>:/Icons/TranslateFirst.png</normaloff>
+            <normalon>:/Icons/RotateFirst.png</normalon>:/Icons/TranslateFirst.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -222,32 +240,31 @@
          </spacer>
         </item>
         <item>
-         <widget class="QGroupBox" name="CoordinateReferenceGroupBox">
+         <widget class="QToolButton" name="CopyTransformToolButton">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
-          <property name="title">
-           <string>Coordinate Reference</string>
+          <property name="text">
+           <string>Copy transform</string>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QRadioButton" name="GlobalRadioButton">
-             <property name="text">
-              <string>Global</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="LocalRadioButton">
-             <property name="text">
-              <string>Local</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <property name="icon">
+           <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+            <normaloff>:/Icons/Medium/SlicerEditCopy.png</normaloff>:/Icons/Medium/SlicerEditCopy.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="PasteTransformToolButton">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Paste transform</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+            <normaloff>:/Icons/Medium/SlicerEditPaste.png</normaloff>:/Icons/Medium/SlicerEditPaste.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>
@@ -498,6 +515,7 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerTransformsModule.qrc"/>
+  <include location="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
  <connections>
   <connection>

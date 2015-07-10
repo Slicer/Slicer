@@ -58,7 +58,6 @@ public:
   qSlicerTransformsModuleWidgetPrivate(qSlicerTransformsModuleWidget& object);
   static QList<vtkSmartPointer<vtkMRMLTransformableNode> > getSelectedNodes(qMRMLTreeView* tree);
   vtkSlicerTransformLogic*      logic()const;
-  QButtonGroup*                 CoordinateReferenceButtonGroup;
   vtkMRMLTransformNode*         MRMLTransformNode;
   QShortcut*                    CopyShortcut;
   QShortcut*                    PasteShortcut;
@@ -68,7 +67,6 @@ public:
 qSlicerTransformsModuleWidgetPrivate::qSlicerTransformsModuleWidgetPrivate(qSlicerTransformsModuleWidget& object)
   : q_ptr(&object)
 {
-  this->CoordinateReferenceButtonGroup = 0;
   this->MRMLTransformNode = 0;
   this->CopyShortcut = 0;
   this->PasteShortcut = 0;
@@ -119,12 +117,6 @@ void qSlicerTransformsModuleWidget::setup()
   d->setupUi(this);
 
   // Add coordinate reference button to a button group
-  d->CoordinateReferenceButtonGroup =
-    new QButtonGroup(d->CoordinateReferenceGroupBox);
-  d->CoordinateReferenceButtonGroup->addButton(
-    d->GlobalRadioButton, qMRMLTransformSliders::GLOBAL);
-  d->CoordinateReferenceButtonGroup->addButton(
-    d->LocalRadioButton, qMRMLTransformSliders::LOCAL);
   d->CopyShortcut =
     new QShortcut(this);
   d->CopyShortcut->setContext(Qt::WidgetWithChildrenShortcut);
@@ -135,9 +127,9 @@ void qSlicerTransformsModuleWidget::setup()
   d->PasteShortcut->setKey(QKeySequence::Paste);
 
   // Connect button group
-  this->connect(d->CoordinateReferenceButtonGroup,
-                SIGNAL(buttonPressed(int)),
-                SLOT(onCoordinateReferenceButtonPressed(int)));
+  this->connect(d->TranslateFirstToolButton,
+                SIGNAL(toggled(bool)),
+                SLOT(onTranslateFirstButtonPressed(bool)));
 
   // Connect identity button
   this->connect(d->IdentityPushButton,
@@ -153,6 +145,14 @@ void qSlicerTransformsModuleWidget::setup()
   this->connect(d->SplitPushButton,
                 SIGNAL(clicked()),
                 SLOT(split()));
+
+  // Copy/paste buttons
+  this->connect(d->CopyTransformToolButton,
+                SIGNAL(clicked()),
+                SLOT(copyTransform()));
+  this->connect(d->PasteTransformToolButton,
+                SIGNAL(clicked()),
+                SLOT(pasteTransform()));
 
   // Connect node selector with module itself
   this->connect(d->TransformNodeSelector,
@@ -190,11 +190,11 @@ void qSlicerTransformsModuleWidget::setup()
   // Connect copy and paste actions
   this->connect(d->CopyShortcut,
                 SIGNAL(activated()),
-                SLOT(onCopyShortcutActivated()));
+                SLOT(copyTransform()));
 
   this->connect(d->PasteShortcut,
                 SIGNAL(activated()),
-                SLOT(onPasteShortcutActivated()));
+                SLOT(pasteTransform()));
 
   // Icons
   QIcon rightIcon =
@@ -209,12 +209,12 @@ void qSlicerTransformsModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onCoordinateReferenceButtonPressed(int id)
+void qSlicerTransformsModuleWidget::onTranslateFirstButtonPressed(bool checked)
 {
   Q_D(qSlicerTransformsModuleWidget);
 
   qMRMLTransformSliders::CoordinateReferenceType ref =
-    (id == qMRMLTransformSliders::GLOBAL) ? qMRMLTransformSliders::GLOBAL : qMRMLTransformSliders::LOCAL;
+    checked ? qMRMLTransformSliders::LOCAL : qMRMLTransformSliders::GLOBAL;
   d->TranslationSliders->setCoordinateReference(ref);
   d->RotationSliders->setCoordinateReference(ref);
 }
@@ -234,14 +234,17 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 
   d->InvertPushButton->setEnabled(transformNode != 0);
 
-  d->CoordinateReferenceGroupBox->setEnabled(isLinearTransform);
+  d->TranslateFirstToolButton->setEnabled(isLinearTransform);
   d->IdentityPushButton->setEnabled(isLinearTransform);
   d->MatrixViewGroupBox->setEnabled(isLinearTransform);
 
-  d->CoordinateReferenceGroupBox->setVisible(isLinearTransform);
+  d->TranslateFirstToolButton->setVisible(isLinearTransform);
   d->MatrixViewGroupBox->setVisible(isLinearTransform);
   d->TranslationSliders->setVisible(isLinearTransform);
   d->RotationSliders->setVisible(isLinearTransform);
+
+  d->CopyTransformToolButton->setVisible(isLinearTransform);
+  d->PasteTransformToolButton->setVisible(isLinearTransform);
 
   d->SplitPushButton->setVisible(isCompositeTransform);
 
@@ -301,7 +304,7 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   bool isLinearTransform = transformNode->IsLinear();
   bool isCompositeTransform = transformNode->IsComposite();
 
-  d->CoordinateReferenceGroupBox->setEnabled(isLinearTransform);
+  d->TranslateFirstToolButton->setEnabled(isLinearTransform);
   d->IdentityPushButton->setEnabled(isLinearTransform);
   d->MatrixViewGroupBox->setEnabled(isLinearTransform);
 
@@ -309,9 +312,9 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   // in real time). Due to some reason setVisible calls take time,
   // even if the visibility state does not change.
   // To save time, only call the set function if the visibility has to be changed.
-  if (isLinearTransform!=d->CoordinateReferenceGroupBox->isVisible())
+  if (isLinearTransform!=d->TranslateFirstToolButton->isVisible())
     {
-    d->CoordinateReferenceGroupBox->setVisible(isLinearTransform);
+    d->TranslateFirstToolButton->setVisible(isLinearTransform);
     }
   if (isLinearTransform!=d->MatrixViewGroupBox->isVisible())
     {
@@ -324,6 +327,14 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   if (isLinearTransform!=d->RotationSliders->isVisible())
     {
     d->RotationSliders->setVisible(isLinearTransform);
+    }
+  if (isLinearTransform!=d->CopyTransformToolButton->isVisible())
+    {
+    d->CopyTransformToolButton->setVisible(isLinearTransform);
+    }
+  if (isLinearTransform!=d->PasteTransformToolButton->isVisible())
+    {
+    d->PasteTransformToolButton->setVisible(isLinearTransform);
     }
 
   d->SplitPushButton->setVisible(isCompositeTransform);
@@ -381,7 +392,7 @@ void qSlicerTransformsModuleWidget::onTranslationRangeChanged(double newMin,
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onCopyShortcutActivated()
+void qSlicerTransformsModuleWidget::copyTransform()
 {
   Q_D(qSlicerTransformsModuleWidget);
 
@@ -412,7 +423,7 @@ void qSlicerTransformsModuleWidget::onCopyShortcutActivated()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onPasteShortcutActivated()
+void qSlicerTransformsModuleWidget::pasteTransform()
 {
   Q_D(qSlicerTransformsModuleWidget);
 
@@ -427,7 +438,7 @@ void qSlicerTransformsModuleWidget::onPasteShortcutActivated()
       && entries.count() != 16)
     {
     // Silent fail, incompatible matrix size
-    qDebug() << "qSlicerTransformsModuleWidget::onPasteShortcutActivated -- "
+    qDebug() << "qSlicerTransformsModuleWidget::pasteTransform -- "
                 "Pasted matrix is not a 2x2 or 3x3 or 4x4 matrix.";
     return;
     }
@@ -440,7 +451,7 @@ void qSlicerTransformsModuleWidget::onPasteShortcutActivated()
     if (!ok)
       {
       // Silent fail, no problem!
-      qDebug() << "qSlicerTransformsModuleWidget::onPasteShortcutActivated -- "
+      qDebug() << "qSlicerTransformsModuleWidget::pasteTransform -- "
                   "Unable to cast string to double: " << entry;
       return;
       }
@@ -457,7 +468,7 @@ void qSlicerTransformsModuleWidget::onPasteShortcutActivated()
 int qSlicerTransformsModuleWidget::coordinateReference()const
 {
   Q_D(const qSlicerTransformsModuleWidget);
-  return d->CoordinateReferenceButtonGroup->checkedId();
+  return (d->TranslateFirstToolButton->isChecked() ? qMRMLTransformSliders::LOCAL : qMRMLTransformSliders::GLOBAL);
 }
 
 //-----------------------------------------------------------------------------
