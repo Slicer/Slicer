@@ -28,13 +28,20 @@
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyRegisterPlugin.h"
 
+// SlicerQt includes
+#include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerApplication.h"
+
 // MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLBSplineTransformNode.h>
+
+#ifdef Slicer_BUILD_CLI_SUPPORT
+# include <vtkMRMLCommandLineModuleNode.h>
+#endif
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -49,10 +56,6 @@
 #include <QDialog>
 #include <QMainWindow>
 #include <QPushButton>
-
-// SlicerQt includes
-#include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerApplication.h"
 
 // MRML widgets includes
 #include "qMRMLNodeComboBox.h"
@@ -204,6 +207,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentNodeTo()
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
 {
+#ifdef Slicer_BUILD_CLI_SUPPORT
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!currentNode || !scene)
@@ -266,11 +270,16 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
 
   // Reset saved 'from' node
   this->m_RegisterFromNode = NULL;
+
+#else
+  qWarning() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid: This operation cannot be performed with CLI disabled";
+#endif
 }
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
 {
+#ifdef Slicer_BUILD_CLI_SUPPORT
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!currentNode || !scene)
@@ -333,6 +342,10 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
 
   // Reset saved 'from' node
   this->m_RegisterFromNode = NULL;
+
+#else
+  qWarning() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline: This operation cannot be performed with CLI disabled";
+#endif
 }
 
 //---------------------------------------------------------------------------

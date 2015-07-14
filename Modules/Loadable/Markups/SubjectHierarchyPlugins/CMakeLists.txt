@@ -10,7 +10,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${qMRMLWidgets_INCLUDE_DIRS}
-  ${MRMLCLI_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -38,7 +37,6 @@ set(${KIT}_TARGET_LIBRARIES
   qSlicerSubjectHierarchyModuleWidgets
   MRMLCore
   MRMLLogic
-  MRMLCLI
   qMRMLWidgets
   ${QT_LIBRARIES}
   )
