@@ -3,6 +3,7 @@ from __main__ import vtk, qt, ctk, slicer
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
 from DICOMLib import DICOMExportScalarVolume
+import logging
 
 #
 # This is the plugin to handle translation of scalar volumes
@@ -32,6 +33,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.tags['imageOrientationPatient'] = "0020,0037"
     self.tags['numberOfFrames'] = "0028,0008"
     self.tags['instanceUID'] = "0008,0018"
+    self.tags['windowCenter'] = "0028,1050"
+    self.tags['windowWidth'] = "0028,1051"
 
 
   def examineForImport(self,fileLists):
@@ -252,7 +255,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             n += 1
 
         if spaceWarnings != 0:
-          print("Geometric issues were found with %d of the series.  Please use caution." % spaceWarnings)
+          logging.warning("Geometric issues were found with %d of the series.  Please use caution." % spaceWarnings)
 
     return loadables
 
@@ -330,6 +333,25 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       selNode = appLogic.GetSelectionNode()
       selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
       appLogic.PropagateVolumeSelection()
+      
+      #
+      # apply window/level from DICOM if available (the first pair that is found)
+      #   Note: There can be multiple presets (multiplicity 1-n) in the standard [1]. We have
+      #   a way to put these into the display node [2], but currently the slicer4 Volumes GUI
+      #   does not expose this (the slicer3 one did).
+      #   [1] http://medical.nema.org/medical/dicom/current/output/html/part06.html
+      #   [2] https://github.com/Slicer/Slicer/blob/3bfa2fc2b310d41c09b7a9e8f8f6c4f43d3bd1e2/Libs/MRML/Core/vtkMRMLScalarVolumeDisplayNode.h#L172
+      #
+      try:
+        windowCenter = float( slicer.dicomDatabase.fileValue(file,self.tags['windowCenter']) )
+        windowWidth = float( slicer.dicomDatabase.fileValue(file,self.tags['windowWidth']) )
+        displayNode = volumeNode.GetDisplayNode()
+        if displayNode:
+          logging.info('Window/level found in DICOM tags (center=' + str(windowCenter) + ', width=' + str(windowWidth) + ') has been applied to volume ' + volumeNode.GetName())
+          displayNode.SetAutoWindowLevel(False)
+          displayNode.SetWindowLevel(windowWidth, windowCenter)
+      except ValueError:
+        pass # DICOM tags cannot be parsed to floating point numbers
 
     return volumeNode
 
@@ -365,7 +387,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       node = slicer.mrmlScene.GetNodeByID(exportable.nodeID)
       if node.GetAssociatedNode() == None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
         error = "Series '" + node.GetNameWithoutPostfix() + "' cannot be exported!"
-        print(error)
+        logging.error(error)
         return error
 
       # Get output directory and create a subdirectory. This is necessary
@@ -375,18 +397,18 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       directoryDir.mkdir(exportable.nodeID)
       directoryDir.cd(exportable.nodeID)
       directory = directoryDir.absolutePath()
-      print("Export scalar volume '" + node.GetAssociatedNode().GetName() + "' to directory " + directory)
+      logging.info("Export scalar volume '" + node.GetAssociatedNode().GetName() + "' to directory " + directory)
 
       # Get study and patient nodes
       studyNode = node.GetParentNode()
       if studyNode == None:
         error = "Unable to get study node for series '" + node.GetAssociatedNode().GetName() + "'"
-        print(error)
+        logging.error(error)
         return error
       patientNode = studyNode.GetParentNode()
       if patientNode == None:
         error = "Unable to get patient node for series '" + node.GetAssociatedNode().GetName() + "'"
-        print(error)
+        logging.error(error)
         return error
 
       # Assemble tags dictionary for volume export
@@ -407,7 +429,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # Validate tags
       if tags['Modality'] == "":
         error = "Empty modality for series '" + node.GetAssociatedNode().GetName() + "'"
-        print(error)
+        logging.error(error)
         return error
       #TODO: more tag checks
 
