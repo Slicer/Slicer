@@ -247,10 +247,6 @@
           <property name="text">
            <string>Copy transform</string>
           </property>
-          <property name="icon">
-           <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-            <normaloff>:/Icons/Medium/SlicerEditCopy.png</normaloff>:/Icons/Medium/SlicerEditCopy.png</iconset>
-          </property>
          </widget>
         </item>
         <item>
@@ -260,10 +256,6 @@
           </property>
           <property name="text">
            <string>Paste transform</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-            <normaloff>:/Icons/Medium/SlicerEditPaste.png</normaloff>:/Icons/Medium/SlicerEditPaste.png</iconset>
           </property>
          </widget>
         </item>

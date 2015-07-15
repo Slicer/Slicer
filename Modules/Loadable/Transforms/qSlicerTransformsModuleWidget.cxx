@@ -19,8 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAction>
 #include <QFileDialog>
-#include <QShortcut>
 #include <QApplication>
 #include <QClipboard>
 #include <QStringBuilder>
@@ -59,8 +59,8 @@ public:
   static QList<vtkSmartPointer<vtkMRMLTransformableNode> > getSelectedNodes(qMRMLTreeView* tree);
   vtkSlicerTransformLogic*      logic()const;
   vtkMRMLTransformNode*         MRMLTransformNode;
-  QShortcut*                    CopyShortcut;
-  QShortcut*                    PasteShortcut;
+  QAction*                      CopyAction;
+  QAction*                      PasteAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -68,8 +68,8 @@ qSlicerTransformsModuleWidgetPrivate::qSlicerTransformsModuleWidgetPrivate(qSlic
   : q_ptr(&object)
 {
   this->MRMLTransformNode = 0;
-  this->CopyShortcut = 0;
-  this->PasteShortcut = 0;
+  this->CopyAction = 0;
+  this->PasteAction = 0;
 }
 //-----------------------------------------------------------------------------
 vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
@@ -117,14 +117,16 @@ void qSlicerTransformsModuleWidget::setup()
   d->setupUi(this);
 
   // Add coordinate reference button to a button group
-  d->CopyShortcut =
-    new QShortcut(this);
-  d->CopyShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-  d->CopyShortcut->setKey(QKeySequence::Copy);
-  d->PasteShortcut =
-    new QShortcut(this);
-  d->PasteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-  d->PasteShortcut->setKey(QKeySequence::Paste);
+  d->CopyAction = new QAction(this);
+  d->CopyAction->setIcon(QIcon(":Icons/Medium/SlicerEditCopy.png"));
+  d->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  d->CopyAction->setShortcuts(QKeySequence::Copy);
+  this->addAction(d->CopyAction);
+  d->PasteAction = new QAction(this);
+  d->PasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
+  d->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  d->PasteAction->setShortcuts(QKeySequence::Paste);
+  this->addAction(d->PasteAction);
 
   // Connect button group
   this->connect(d->TranslateFirstToolButton,
@@ -145,14 +147,6 @@ void qSlicerTransformsModuleWidget::setup()
   this->connect(d->SplitPushButton,
                 SIGNAL(clicked()),
                 SLOT(split()));
-
-  // Copy/paste buttons
-  this->connect(d->CopyTransformToolButton,
-                SIGNAL(clicked()),
-                SLOT(copyTransform()));
-  this->connect(d->PasteTransformToolButton,
-                SIGNAL(clicked()),
-                SLOT(pasteTransform()));
 
   // Connect node selector with module itself
   this->connect(d->TransformNodeSelector,
@@ -188,12 +182,14 @@ void qSlicerTransformsModuleWidget::setup()
                 SLOT(onTransformableSectionClicked(bool)));
 
   // Connect copy and paste actions
-  this->connect(d->CopyShortcut,
-                SIGNAL(activated()),
+  d->CopyTransformToolButton->setDefaultAction(d->CopyAction);
+  this->connect(d->CopyAction,
+                SIGNAL(triggered()),
                 SLOT(copyTransform()));
 
-  this->connect(d->PasteShortcut,
-                SIGNAL(activated()),
+  d->PasteTransformToolButton->setDefaultAction(d->PasteAction);
+  this->connect(d->PasteAction,
+                SIGNAL(triggered()),
                 SLOT(pasteTransform()));
 
   // Icons
