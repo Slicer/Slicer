@@ -132,6 +132,18 @@ void vtkSlicerUnitsLogic::AddDefaultsUnits()
   node = this->AddUnitNode("ApplicationTime", "time", "", "s", 3);
   node->SetSaveWithScene(false);
   this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+
+  node = this->AddUnitNode("ApplicationFrequency", "frequency", "", "Hz", 3);
+  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+
+  node = this->AddUnitNode("ApplicationVelocity", "velocity", "", "m/s", 3);
+  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+
+  node = this->AddUnitNode("ApplicationIntensity", "intensity", "", "W/m\xB2", 3);
+  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
 }
 
 //---------------------------------------------------------------------------
@@ -174,6 +186,28 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Microsecond", "time", "", "\xB5s", 3, -10000., 10000., 1000., 0.);
 
+  this->AddUnitNodeToScene(scene,
+    "Herz", "frequency", "", "Hz", 3, -10000., 10000., 1., 0.);
+  this->AddUnitNodeToScene(scene,
+    "decahertz", "frequency", "", "daHz", 3, -10000., 10000., 0.1, 0.);
+  this->AddUnitNodeToScene(scene,
+    "HectoHerz", "frequency", "", "hHz", 3, -10000., 10000., 0.01, 0.);
+  this->AddUnitNodeToScene(scene,
+    "KiloHerz", "frequency", "", "kHz", 3, -10000., 10000., 0.001, 0.);
+  this->AddUnitNodeToScene(scene,
+    "MegaHerz", "frequency", "", "MHz", 3, -10000., 10000., 0.000001, 0.);
+  this->AddUnitNodeToScene(scene,
+    "GigaHerz", "frequency", "", "GHz", 3, -10000., 10000., 0.000000001, 0.);
+  this->AddUnitNodeToScene(scene,
+    "TeraHerz", "frequency", "", "THz", 3, -10000., 10000., 0.000000000001, 0.);
+
+  this->AddUnitNodeToScene(scene,
+    "Metre per second", "velocity", "", "m/s", 3, -10000., 10000., 1., 0.);
+  this->AddUnitNodeToScene(scene,
+    "Kilometre per second", "velocity", "", "km/s", 3, -10000., 10000., 0.01, 0.);
+
+  this->AddUnitNodeToScene(scene,
+    "Intensity", "intensity", "", "W/m\xB2", 3, -10000., 10000., 1., 0.);
 }
 
 //-----------------------------------------------------------------------------

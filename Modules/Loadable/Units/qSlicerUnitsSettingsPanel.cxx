@@ -145,6 +145,8 @@ void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
   groupboxTitle[0] = groupboxTitle[0].toUpper();
   groupbox->setTitle(groupboxTitle);
   QVBoxLayout* layout = new QVBoxLayout;
+  layout->setSizeConstraint(QLayout::SetMaximumSize);
+
   groupbox->setLayout(layout);
 
   // Add unit widget
@@ -191,7 +193,7 @@ void qSlicerUnitsSettingsPanelPrivate::setMRMLScene(vtkMRMLScene* scene)
   //q->registerProperty("Units", q, "quantities",
   //  SIGNAL(quantitiesChanged(QStringList)));
   QStringList quantities; // delete this when "un-hardcoding" quantities
-  quantities << "length" << "time";
+  quantities << "length" << "time" << "frequency" << "velocity" << "intensity";
   q->setQuantities(quantities);
 
   foreach (qMRMLSettingsUnitWidget* widget, this->Quantities.values())
