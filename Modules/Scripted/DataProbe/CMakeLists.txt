@@ -18,6 +18,10 @@ set(MODULE_PYTHON_SCRIPTS
 set(MODULE_PYTHON_RESOURCES
   Resources/Icons/SlicerAdvancedGear-Small.png
   ${MODULE_NAME}Lib/Resources/UI/settings.ui
+  ${MODULE_NAME}Lib/Resources/Models/humanOrientationMarker.stl
+  ${MODULE_NAME}Lib/Resources/Models/rightShoeOrientationMarker.stl
+  ${MODULE_NAME}Lib/Resources/Models/leftShoeOrientationMarker.stl
+  ${MODULE_NAME}Lib/Resources/Models/shortsOrientationMarker.stl
   )
 
 #-----------------------------------------------------------------------------
