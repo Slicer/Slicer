@@ -152,6 +152,11 @@ public:
   /// Create and add default storage node
   Q_INVOKABLE static vtkMRMLStorageNode* createAndAddDefaultStorageNode(vtkMRMLStorableNode* node);
 
+  /// This function should be used from python scripted module willing to interface with
+  /// the qSlicerCoreIOManager. It will emit the signal newFileLoaded().
+  /// \sa newFileLoaded()
+  Q_INVOKABLE void emitNewFileLoaded(const QVariantMap& loadedFileParameters);
+
 signals:
 
   /// This signal is emitted each time a file is loaded using loadNodes()

@@ -585,6 +585,12 @@ vtkMRMLStorageNode* qSlicerCoreIOManager::createAndAddDefaultStorageNode(
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCoreIOManager::emitNewFileLoaded(const QVariantMap& loadedFileParameters)
+{
+  emit this->newFileLoaded(loadedFileParameters);
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
                                      const qSlicerIO::IOProperties& parameters)
 {
