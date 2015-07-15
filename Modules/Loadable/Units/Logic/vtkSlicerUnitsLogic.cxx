@@ -152,7 +152,7 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Millimeter", "length", "", "mm", 3, -10000., 10000., 1., 0.);
   this->AddUnitNodeToScene(scene,
-    "Micrometer", "length", "", "µm", 3, -10000., 10000., 1000., 0.);
+    "Micrometer", "length", "", "\xB5m", 3, -10000., 10000., 1000., 0.);
   this->AddUnitNodeToScene(scene,
     "Nanometer", "length", "", "nm", 3, -10000., 10000., 1000000., 0.);
 
@@ -172,7 +172,8 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Millisecond", "time", "", "ms", 3, -10000., 10000., 1000., 0.);
   this->AddUnitNodeToScene(scene,
-    "Microsecond", "time", "", "µs", 3, -10000., 10000., 1000., 0.);
+    "Microsecond", "time", "", "\xB5s", 3, -10000., 10000., 1000., 0.);
+
 }
 
 //-----------------------------------------------------------------------------
