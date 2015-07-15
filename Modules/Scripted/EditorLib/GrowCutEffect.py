@@ -84,6 +84,25 @@ class GrowCutEffectOptions(Effect.EffectOptions):
     super(GrowCutEffectOptions,self).updateGUIFromMRML(caller,event)
 
   def onApply(self):
+
+    slicer.util.showStatusMessage("Checking GrowCut inputs...")
+    if not self.logic.areInputsValid():
+      logging.warning(self.logic.getInvalidInputsMessage())
+      background = self.logic.getScopedBackground()
+      labelInput = self.logic.getScopedLabelInput()
+      result = qt.QMessageBox.question(slicer.util.mainWindow(), 'Editor',
+        "Current image type is '{0}' and labelmap type is '{1}' " \
+        "GrowCut only works reliably with 'short' type.\n\n" \
+        "If the segmentation result is not satisfacory, then cast " \
+        "the image and labelmap to 'short' type (using Cast Scalar " \
+        "Volume module) or install Fast GrowCut extension and use " \
+        "FastGrowCutEffect editor tool.".format(
+          background.GetScalarTypeAsString(),
+          labelInput.GetScalarTypeAsString()), qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
+      if result != qt.QMessageBox.Ok:
+        logging.warning('GrowCut is cancelled by the user')
+        return
+
     slicer.util.showStatusMessage("Running GrowCut...", 2000)
     self.logic.undoRedo = self.undoRedo
     self.logic.growCut()
@@ -130,18 +149,30 @@ class GrowCutEffectLogic(Effect.EffectLogic):
   def __init__(self,sliceLogic):
     super(GrowCutEffectLogic,self).__init__(sliceLogic)
 
+  def getInvalidInputsMessage(self):
+    background = self.getScopedBackground()
+    labelInput = self.getScopedLabelInput()
+    return "GrowCut is attempted with image type '{0}' and labelmap " \
+           "type '{1}'. GrowCut only works robustly with 'short' " \
+           "image and labelmap types.".format(
+             background.GetScalarTypeAsString(),
+             labelInput.GetScalarTypeAsString())
+
+  def areInputsValid(self):
+    background = self.getScopedBackground()
+    labelInput = self.getScopedLabelInput()
+    if not (background.GetScalarType()==vtk.VTK_SHORT and labelInput.GetScalarType()==vtk.VTK_SHORT):
+      return False
+    return True
+
   def growCut(self):
     growCutFilter = vtkITK.vtkITKGrowCutSegmentationImageFilter()
     background = self.getScopedBackground()
     gestureInput = self.getScopedLabelInput()
     growCutOutput = self.getScopedLabelOutput()
 
-    if not (background.GetScalarType()==vtk.VTK_SHORT and gestureInput.GetScalarType()==vtk.VTK_SHORT):
-      logging.warning("GrowCut is attempted with image type '{0}' and labelmap type '{1}'. GrowCut only works robustly with 'short' image and labelmap types.".format(background.GetScalarTypeAsString(), gestureInput.GetScalarTypeAsString()))
-      result = qt.QMessageBox.question(slicer.util.mainWindow(), 'Editor', "Current image type is '{0}' and labelmap type is '{1}'. GrowCut only works reliably with 'short' type.<p>If the segmentation result is not satisfacory, then cast the image and labelmap to 'short' type (using Cast Scalar Volume module) or install Fast GrowCut extension and use FastGrowCutEffect editor tool.".format(background.GetScalarTypeAsString(), gestureInput.GetScalarTypeAsString()), qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
-      if result != qt.QMessageBox.Ok:
-        logging.warning('GrowCut is cancelled by the user')
-        return
+    if not self.areInputsValid():
+      logging.warning(self.getInvalidInputsMessage())
 
     # set the make a zero-valued volume for the output
     # TODO: maybe this should be done in numpy as a one-liner
