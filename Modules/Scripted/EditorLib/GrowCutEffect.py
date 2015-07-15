@@ -6,6 +6,7 @@ from __main__ import qt
 from __main__ import slicer
 from EditOptions import HelpButton
 import Effect
+import logging
 
 __all__ = [
   'GrowCutEffectOptions',
@@ -134,6 +135,13 @@ class GrowCutEffectLogic(Effect.EffectLogic):
     background = self.getScopedBackground()
     gestureInput = self.getScopedLabelInput()
     growCutOutput = self.getScopedLabelOutput()
+
+    if not (background.GetScalarType()==vtk.VTK_SHORT and gestureInput.GetScalarType()==vtk.VTK_SHORT):
+      logging.warning("GrowCut is attempted with image type '{0}' and labelmap type '{1}'. GrowCut only works robustly with 'short' image and labelmap types.".format(background.GetScalarTypeAsString(), gestureInput.GetScalarTypeAsString()))
+      result = qt.QMessageBox.question(slicer.util.mainWindow(), 'Editor', "Current image type is '{0}' and labelmap type is '{1}'. GrowCut only works reliably with 'short' type.<p>If the segmentation result is not satisfacory, then cast the image and labelmap to 'short' type (using Cast Scalar Volume module) or install Fast GrowCut extension and use FastGrowCutEffect editor tool.".format(background.GetScalarTypeAsString(), gestureInput.GetScalarTypeAsString()), qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
+      if result != qt.QMessageBox.Ok:
+        logging.warning('GrowCut is cancelled by the user')
+        return
 
     # set the make a zero-valued volume for the output
     # TODO: maybe this should be done in numpy as a one-liner
