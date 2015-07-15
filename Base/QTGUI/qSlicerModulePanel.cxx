@@ -26,11 +26,13 @@
 #include <ctkWidgetsUtils.h>
 
 // SlicerQt includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerModulePanel.h"
 #include "ui_qSlicerModulePanel.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleWidget.h"
+#include "qSlicerUtils.h"
 
 //---------------------------------------------------------------------------
 class qSlicerModulePanelPrivate: public Ui_qSlicerModulePanel
@@ -173,6 +175,18 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
   moduleWidget->setVisible(true);
 
   QString help = module->helpText();
+
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  if (app)
+    {
+    QString wikiVersion = "Nightly";
+    if (app->isRelease())
+      {
+      wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
+      }
+    help = qSlicerUtils::replaceWikiUrlVersion(module->helpText(), wikiVersion);
+    }
+
   d->HelpCollapsibleButton->setVisible(this->isHelpAndAcknowledgmentVisible() && !help.isEmpty());
   d->HelpLabel->setHtml(help);
   //d->HelpLabel->load(QString("http://www.slicer.org/slicerWiki/index.php?title=Modules:Transforms-Documentation-3.4&useskin=chick"));
