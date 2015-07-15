@@ -172,6 +172,13 @@ public:
                                         QFile::Permissions directoryPermissions,
                                         QFile::Permissions filePermissions);
 
+  /// \brief Return \a true if \a version corresponds to a \a Release build.
+  ///
+  /// A given build could either be a \a Release or a \a Nightly one:
+  /// * \a Release build matches `<MAJOR_VERSION>.<MINOR_VERSION>.<PATCH_VERSION>[-rc{1|2|3...}][-<TWEAK_VERSION>]`
+  /// * \a Nightly build matches the same string as a \a Release build appended with `-<DATE>`
+  static bool isRelease(const QString& version);
+
 private:
   /// Not implemented
   qSlicerUtils(){}

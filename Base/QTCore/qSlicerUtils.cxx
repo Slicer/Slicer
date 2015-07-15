@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
+#include <QRegExp>
 #include <QStringList>
 
 // SlicerQt includes
@@ -263,4 +264,10 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
       }
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::isRelease(const QString& version)
+{
+  return QRegExp("\\d+\\.\\d+\\.\\d+(-rc\\d+)?(-\\d+)?").exactMatch(version);
 }

@@ -1014,6 +1014,12 @@ bool qSlicerCoreApplication::isInstalled()const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreApplication::isRelease()const
+{
+  return qSlicerUtils::isRelease(Slicer_VERSION_FULL);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
 {
   Q_D(qSlicerCoreApplication);
