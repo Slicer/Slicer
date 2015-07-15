@@ -3,7 +3,6 @@
   <category>Core</category>
   <title>View Controllers</title>
   <description><![CDATA[The View Controllers module provides access to nodes controlling multiple views within a single panel. A view is a display of data packed within layout. Slice Views and 3D Views are two types of views that can appear in a layout and whose controls can also be accessed from the View Controllers module. Each type of view has a separate section of the View Controllers panel. For example, the Slice Controllers are grouped together, followed by the 3D Controllers. An extra panel allows an alternative control over a Slice View.]]></description>
-  <version>4.4</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ViewControllers</documentation-url>
   <license>slicer4</license>
   <contributor>Wendy Plesniak (SPL, BWH), Jim Miller (GE), Steve Pieper (Isomics), Ron Kikinis (SPL, BWH), Jean-Christophe Fillion-Robin (Kitware)</contributor>

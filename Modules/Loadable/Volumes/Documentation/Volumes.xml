@@ -3,7 +3,6 @@
   <category>Core</category>
   <title>Volumes</title>
   <description><![CDATA[This module is used for changing the appearance of various volume types.]]></description>
-  <version>4.4</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Volumes</documentation-url>
   <license>slicer4</license>
   <contributor>Steve Pieper (Isomics), Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Nicole Aucoin (SPL, BWH)</contributor>

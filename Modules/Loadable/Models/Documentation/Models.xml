@@ -3,7 +3,6 @@
   <category>Core</category>
   <title>Models</title>
   <description><![CDATA[This module is used for changing the appearance of and organizing 3d surface models.]]></description>
-  <version>4.4</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Models</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Nicole Aucoin (SPL, BWH)</contributor>

@@ -3,7 +3,6 @@
   <category>Registration.Specialized</category>
   <title>Reformat</title>
   <description><![CDATA[This module is used for changing the slice properties.]]></description>
-  <version>4.4</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/</documentation-url>
   <license>slicer4</license>
   <contributor>Michael Jeulin-Lagarrigue (Kitware)</contributor>
