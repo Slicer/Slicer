@@ -3,6 +3,7 @@ from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
+from slicer.util import VTKObservationMixin
 
 from slicer.util import settingsValue, toBool
 import DICOMLib
@@ -37,13 +38,14 @@ def setDatabasePrecacheTags(dicomBrowser=None):
   if dicomBrowser:
     dicomBrowser.tagsToPrecache = tagsToPrecache
 
-class DICOMDetailsPopup(object):
+class DICOMDetailsPopup(VTKObservationMixin):
   """Implement the Qt window showing details and possible
   operations to perform on the selected dicom list item.
   This is a helper used in the DICOMWidget class.
   """
 
   def __init__(self,dicomBrowser=None):
+    VTKObservationMixin.__init__(self)
     self.dicomBrowser = dicomBrowser
     if self.dicomBrowser == None:
       self.dicomBrowser = ctk.ctkDICOMBrowser()
@@ -738,6 +740,17 @@ class DICOMDetailsPopup(object):
     self.progress.setMaximum(loadableCount)
     step = 0
     loadingResult = ''
+
+    loadedNodeIDs = []
+
+    @vtk.calldata_type(vtk.VTK_OBJECT)
+    def onNodeAdded(caller, event, calldata):
+      node = calldata
+      if isinstance(node, slicer.vtkMRMLVolumeNode):
+        loadedNodeIDs.append(node.GetID())
+
+    self.addObserver(slicer.mrmlScene, slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded);
+
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
         if self.progress.wasCanceled:
@@ -762,6 +775,13 @@ class DICOMDetailsPopup(object):
         except AttributeError:
           # no derived items or some other attribute error
           pass
+
+    self.removeObserver(slicer.mrmlScene, slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded);
+
+    loadedFileParameters = {}
+    loadedFileParameters['nodeIDs'] = loadedNodeIDs
+    slicer.app.ioManager().emitNewFileLoaded(loadedFileParameters)
+
     self.progress.close()
     self.progress = None
     if loadingResult:
