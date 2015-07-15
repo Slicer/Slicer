@@ -66,6 +66,7 @@ public:
   void clearQuantities();
   void setMRMLScene(vtkMRMLScene* scene);
   void setSelectionNode(vtkMRMLSelectionNode* selectionNode);
+  void resize(bool showall);
 
   vtkSmartPointer<vtkSlicerUnitsLogic> Logic;
   vtkMRMLScene* MRMLScene;
@@ -225,6 +226,20 @@ void qSlicerUnitsSettingsPanelPrivate
   q->updateFromSelectionNode();
 }
 
+// ---------------------------------------------------------------------------
+void qSlicerUnitsSettingsPanelPrivate::resize(bool showall)
+{
+  Q_Q(qSlicerUnitsSettingsPanel);
+  if(showall)
+    {
+    this->scrollArea->setMinimumSize(QSize(0, 700));
+    }
+  else
+    {
+    this->scrollArea->setMinimumSize(QSize(0, 350));
+    }
+}
+
 // --------------------------------------------------------------------------
 // qSlicerUnitsSettingsPanel methods
 
@@ -326,6 +341,9 @@ void qSlicerUnitsSettingsPanel::updateFromSelectionNode()
 void qSlicerUnitsSettingsPanel::showAll(bool showAll)
 {
   Q_D(qSlicerUnitsSettingsPanel);
+
+  d->resize(showAll);
+
   foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
     {
     qMRMLUnitWidget::UnitProperties allButNameAndQuantity =
@@ -338,4 +356,5 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
     widget->unitWidget()->setDisplayedProperties(showAll ?
       allButNameAndQuantity : qMRMLUnitWidget::Precision);
     }
+
 }
