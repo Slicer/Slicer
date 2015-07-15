@@ -501,8 +501,6 @@ void qSlicerSubjectHierarchyVolumesPlugin::showContextMenuActionsForNode(vtkMRML
     return;
     }
 
-  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
-
   // Volume
   if (this->canOwnSubjectHierarchyNode(node))
     {
