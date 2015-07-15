@@ -28,6 +28,9 @@
 // MRML includes
 #include <vtkMRMLNode.h>
 
+// STD includes
+#include <sstream>
+
 // --------------------------------------------------------------------------
 class qMRMLNodeAttributeTableWidgetPrivate: public Ui_qMRMLNodeAttributeTableWidget
 {
@@ -37,6 +40,8 @@ protected:
 public:
   qMRMLNodeAttributeTableWidgetPrivate(qMRMLNodeAttributeTableWidget& object);
   void init();
+
+  vtkWeakPointer<vtkMRMLNode> MRMLNode;
 };
 
 // --------------------------------------------------------------------------
@@ -75,10 +80,23 @@ qMRMLNodeAttributeTableWidget::~qMRMLNodeAttributeTableWidget()
 }
 
 // --------------------------------------------------------------------------
+vtkMRMLNode* qMRMLNodeAttributeTableWidget::mrmlNode()const
+{
+  Q_D(const qMRMLNodeAttributeTableWidget);
+  return d->MRMLNode.GetPointer();
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeAttributeTableWidget::setMRMLNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLNodeAttributeTableWidget);
   d->MRMLNodeAttributeTableView->setInspectedNode(node);
+
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkCommand::ModifiedEvent,
+                this, SLOT(updateWidgetFromMRML()));
+  d->MRMLNode = node;
+
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -86,4 +104,36 @@ qMRMLNodeAttributeTableView* qMRMLNodeAttributeTableWidget::tableView()
 {
   Q_D(qMRMLNodeAttributeTableWidget);
   return d->MRMLNodeAttributeTableView;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLNodeAttributeTableWidget::showEvent(QShowEvent *)
+{
+  // Update the widget, now that it becomes becomes visible
+  // (we might have missed some updates, because widget contents is not updated
+  // if the widget is not visible).
+  this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLNodeAttributeTableWidget::updateWidgetFromMRML()
+{
+  Q_D(qMRMLNodeAttributeTableWidget);
+  if (!this->isVisible())
+    {
+    // Getting the node information may be expensive,
+    // so if the widget is not visible then do not update
+    return;
+    }
+
+  if (d->MRMLNode.GetPointer())
+    {
+    std::stringstream infoStream;
+    d->MRMLNode->PrintSelf(infoStream, vtkIndent(0));
+    d->MRMLNodeInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
+    }
+  else
+    {
+    d->MRMLNodeInfoLabel->clear();
+    }
 }

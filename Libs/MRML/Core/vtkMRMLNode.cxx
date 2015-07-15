@@ -226,12 +226,14 @@ void vtkMRMLNode::Reset()
 //----------------------------------------------------------------------------
 void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->vtkObject::PrintSelf(os,indent);
-
   os << indent << "ID: " <<
     (this->ID ? this->ID : "(none)") << "\n";
 
-  os << indent << "Indent:      " << this->Indent << "\n";
+  // vtkObject's PrintSelf prints a long list of registered events, which
+  // is too long and not useful, therefore we don't call vtkObject::PrintSelf
+  // but print essential information on the vtkObject base.
+  os << indent << "Debug: " << (this->Debug ? "On\n" : "Off\n");
+  os << indent << "Modified Time: " << this->GetMTime() << "\n";
 
   os << indent << "Name: " <<
     (this->Name ? this->Name : "(none)") << "\n";
@@ -246,6 +248,7 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Selectable: " << this->Selectable << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
+  os << indent << "Indent:      " << this->Indent << "\n";
   if (this->Attributes.size())
     {
     os << indent << "Attributes:\n";
@@ -289,7 +292,6 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
          << ss.str().c_str() << "\"" << "\n";
       }
     }
-
 }
 
 //----------------------------------------------------------------------------

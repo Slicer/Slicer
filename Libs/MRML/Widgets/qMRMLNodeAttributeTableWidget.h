@@ -39,6 +39,7 @@ class qMRMLNodeAttributeTableView;
 class QMRML_WIDGETS_EXPORT qMRMLNodeAttributeTableWidget : public QWidget
 {
   Q_OBJECT
+  QVTK_OBJECT
 
 public:
   /// Constructors
@@ -48,11 +49,19 @@ public:
   /// Get node attribute table view
   qMRMLNodeAttributeTableView* tableView();
 
+  /// Get the inspected MRML node
+  vtkMRMLNode* mrmlNode()const;
+
 public slots:
   /// Set the inspected MRML node
   void setMRMLNode(vtkMRMLNode* node);
 
+protected slots:
+  void updateWidgetFromMRML();
+
 protected:
+  virtual void showEvent(QShowEvent *);
+
   QScopedPointer<qMRMLNodeAttributeTableWidgetPrivate> d_ptr;
 
 private:
