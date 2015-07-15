@@ -4,7 +4,7 @@
   <title>CLIModuleTemplate</title>
   <description><![CDATA[This is a CLI module that can be bundled in an extension]]></description>
   <version>0.0.1</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/CLIModuleTemplate</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/CLIModuleTemplate</documentation-url>
   <license>Slicer</license>
   <contributor>FirstName LastName (Institution), FirstName LastName (Institution)</contributor>
   <acknowledgements>This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN</acknowledgements>

@@ -4,7 +4,7 @@
   <title>Markups</title>
   <description><![CDATA[Create and edit markups, supplementary information associated with a scene. Currently supported markups are lists of fiducial points. Fiducials can be placed using the mouse mode tool bar. Once fiducial place mode has been entered, a new fiducial can be placed under the current mouse position by pressing the p key. Right mouse button click will exit persistent place mode.]]></description>
   <version>4.4</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/Markups</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Markups</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

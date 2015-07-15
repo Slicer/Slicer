@@ -4,7 +4,7 @@
   <title>Fiber Tract Scalar Measurements</title>
   <description><![CDATA[Compute a set of different scalar measurements from a directory of fibers]]></description>
   <version>0.1.0.$Revision: 2014</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/DiffusionTensorMathematics</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/DiffusionTensorMathematics</documentation-url>
   <license/>
   <contributor>Alex Yarmarkovich (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[LMI]]></acknowledgements>

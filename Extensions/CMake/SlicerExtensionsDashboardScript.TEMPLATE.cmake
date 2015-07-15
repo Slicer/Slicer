@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #
-# For additional information, see http://http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/DashboardSetup
+# For additional information, see http://http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/DashboardSetup
 #
 
 #-----------------------------------------------------------------------------
