@@ -89,15 +89,6 @@ qSlicerSimpleMarkupsWidget::qSlicerSimpleMarkupsWidget(QWidget* parentWidget) : 
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  qSlicerAbstractCoreModule* MarkupsModule = qSlicerApplication::application()->moduleManager()->module( "Markups" );
-  if ( MarkupsModule != NULL )
-    {
-    d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast( MarkupsModule->logic() );
-    }
-  else
-    {
-    d->MarkupsLogic = NULL;
-    }
   this->setup();
 }
 
@@ -112,7 +103,6 @@ void qSlicerSimpleMarkupsWidget::setup()
   Q_D(qSlicerSimpleMarkupsWidget);
 
   d->setupUi(this);
-  this->setMRMLScene( d->MarkupsLogic->GetMRMLScene() );
 
   d->DefaultNodeColor.setRgb(0.0,0.0,0.0);
 
@@ -141,16 +131,30 @@ void qSlicerSimpleMarkupsWidget::setup()
   connect( d->MarkupsFiducialTableWidget, SIGNAL( customContextMenuRequested(const QPoint&) ), this, SLOT( onMarkupsFiducialTableContextMenu(const QPoint&) ) );
   connect( d->MarkupsFiducialTableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( onMarkupsFiducialEdited( int, int ) ) );
 
-  // Connect to the selection singleton node - that way we can update the GUI if the Active node changes
-  // Note that only the GUI cares about the active node (the logic and mrml don't)
-  this->connectInteractionAndSelectionNodes();
-
-  this->updateWidget();  
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::enter()
 {
+  Q_D(qSlicerSimpleMarkupsWidget);
+
+  // This cannot be called by the constructor, because Slicer may not exist when the constructor is called
+  qSlicerAbstractCoreModule* MarkupsModule = qSlicerApplication::application()->moduleManager()->module( "Markups" );
+  if ( MarkupsModule != NULL )
+    {
+    d->MarkupsLogic = vtkSlicerMarkupsLogic::SafeDownCast( MarkupsModule->logic() );
+    }
+  else
+    {
+    d->MarkupsLogic = NULL;
+    }
+
+  this->setMRMLScene( d->MarkupsLogic->GetMRMLScene() );
+
+  // Connect to the selection singleton node - that way we can update the GUI if the Active node changes
+  // Note that only the GUI cares about the active node (the logic and mrml don't)
+  this->connectInteractionAndSelectionNodes();
+  this->updateWidget();
 }
 
 //-----------------------------------------------------------------------------
@@ -605,7 +609,6 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsFiducialTableWidget->setColumnCount( 0 );
     d->ActiveButton->setChecked( Qt::Unchecked );
     d->PlaceButton->setChecked( Qt::Unchecked );
-    // This will ensure that we refresh the widget next time we move to a non-null widget (since there is guaranteed to be a modified status of larger than zero)
     return;
     }
 
