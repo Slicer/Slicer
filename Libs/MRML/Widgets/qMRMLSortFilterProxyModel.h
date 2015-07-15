@@ -158,6 +158,9 @@ public:
   Q_INVOKABLE void addAttribute(const QString& nodeType,
                     const QString& attributeName,
                     const QVariant& attributeValue = QVariant());
+  /// Remove node type attribute filtering the displayed nodes
+  /// \sa addAttribute
+  Q_INVOKABLE void removeAttribute(const QString& nodeType, const QString& attributeName);
 
   /// Display or not the nodes that are excluded by
   /// the ExcludedChildNodeTypes list.

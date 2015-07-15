@@ -141,6 +141,20 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSortFilterProxyModel::removeAttribute(const QString& nodeType,
+                                              const QString& attributeName)
+{
+  Q_D(qMRMLSortFilterProxyModel);
+  if (!d->NodeTypes.contains(nodeType) ||
+      d->Attributes[nodeType].first != attributeName)
+    {
+    return;
+    }
+  d->Attributes.remove(nodeType);
+  this->invalidateFilter();
+}
+
+//------------------------------------------------------------------------------
 //bool qMRMLSortFilterProxyModel::filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
 
 //------------------------------------------------------------------------------

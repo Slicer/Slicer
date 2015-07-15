@@ -136,6 +136,10 @@ public:
   Q_INVOKABLE void addAttribute(const QString& nodeType,
                                 const QString& attributeName,
                                 const QVariant& attributeValue = QVariant());
+  /// Remove node type attribute filtering the displayed nodes
+  /// \sa addAttribute
+  Q_INVOKABLE void removeAttribute(const QString& nodeType,
+                                const QString& attributeName);
 
   /// BaseName is the name used to generate a node name for all the new created
   /// nodes.

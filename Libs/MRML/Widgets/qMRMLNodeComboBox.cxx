@@ -500,6 +500,16 @@ void qMRMLNodeComboBox::addAttribute(const QString& nodeType,
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLNodeComboBox::removeAttribute(const QString& nodeType,
+                                     const QString& attributeName)
+{
+  Q_D(qMRMLNodeComboBox);
+
+  d->MRMLNodeFactory->removeAttribute(attributeName);
+  this->sortFilterProxyModel()->removeAttribute(nodeType, attributeName);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLNodeComboBox::setBaseName(const QString& baseName)
 {
   Q_D(qMRMLNodeComboBox);
