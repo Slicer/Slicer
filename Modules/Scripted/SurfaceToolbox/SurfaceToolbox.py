@@ -61,7 +61,7 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     inputModelSelectorFrame.layout().addWidget(inputModelSelectorLabel)
 
     inputModelSelector = slicer.qMRMLNodeComboBox(inputModelSelectorFrame)
-    inputModelSelector.nodeTypes = ( ("vtkMRMLModelNode"), "" )
+    inputModelSelector.nodeTypes = ["vtkMRMLModelNode"]
     inputModelSelector.selectNodeUponCreation = False
     inputModelSelector.addEnabled = False
     inputModelSelector.removeEnabled = False
@@ -80,7 +80,7 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     outputModelSelectorFrame.layout().addWidget(outputModelSelectorLabel)
 
     outputModelSelector = slicer.qMRMLNodeComboBox(outputModelSelectorFrame)
-    outputModelSelector.nodeTypes = ( ("vtkMRMLModelNode"), "" )
+    outputModelSelector.nodeTypes = ["vtkMRMLModelNode"]
     outputModelSelector.selectNodeUponCreation = False
     outputModelSelector.addEnabled = True
     outputModelSelector.renameEnabled = True

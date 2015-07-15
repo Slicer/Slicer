@@ -56,7 +56,7 @@ class LabelStatisticsWidget:
     self.grayscaleSelectorFrame.layout().addWidget(self.grayscaleSelectorLabel)
 
     self.grayscaleSelector = slicer.qMRMLNodeComboBox(self.grayscaleSelectorFrame)
-    self.grayscaleSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
+    self.grayscaleSelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
     self.grayscaleSelector.selectNodeUponCreation = False
     self.grayscaleSelector.addEnabled = False
     self.grayscaleSelector.removeEnabled = False
@@ -80,7 +80,7 @@ class LabelStatisticsWidget:
     self.labelSelectorFrame.layout().addWidget( self.labelSelectorLabel )
 
     self.labelSelector = slicer.qMRMLNodeComboBox()
-    self.labelSelector.nodeTypes = ( "vtkMRMLLabelMapVolumeNode", "" )
+    self.labelSelector.nodeTypes = ["vtkMRMLLabelMapVolumeNode"]
     # todo addAttribute
     self.labelSelector.selectNodeUponCreation = False
     self.labelSelector.addEnabled = False

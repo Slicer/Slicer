@@ -48,7 +48,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
     self.inputSelector = qt.QLabel("Input Vector Volume: ", self.inputFrame)
     self.inputFrame.layout().addWidget(self.inputSelector)
     self.inputSelector = slicer.qMRMLNodeComboBox(self.inputFrame)
-    self.inputSelector.nodeTypes = ( ("vtkMRMLVectorVolumeNode"), "" )
+    self.inputSelector.nodeTypes = ["vtkMRMLVectorVolumeNode"]
     self.inputSelector.addEnabled = False
     self.inputSelector.removeEnabled = False
     self.inputSelector.setMRMLScene( slicer.mrmlScene )
@@ -60,7 +60,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
     self.outputSelector = qt.QLabel("Output Scalar Volume: ", self.outputFrame)
     self.outputFrame.layout().addWidget(self.outputSelector)
     self.outputSelector = slicer.qMRMLNodeComboBox(self.outputFrame)
-    self.outputSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
+    self.outputSelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
     self.outputSelector.setMRMLScene( slicer.mrmlScene )
     self.outputSelector.addEnabled = True
     self.outputSelector.renameEnabled = True

@@ -33,7 +33,7 @@ class _ui_LabelCreateDialog(object):
     self.colorSelectorFrame.layout().addWidget( self.colorSelectorLabel )
 
     self.colorSelector = slicer.qMRMLColorTableComboBox()
-    self.colorSelector.nodeTypes = ("vtkMRMLColorNode", "")
+    self.colorSelector.nodeTypes = ["vtkMRMLColorNode"]
     self.colorSelector.hideChildNodeTypes = ("vtkMRMLDiffusionTensorDisplayPropertiesNode", "vtkMRMLProceduralColorNode", "")
     self.colorSelector.addEnabled = False
     self.colorSelector.removeEnabled = False

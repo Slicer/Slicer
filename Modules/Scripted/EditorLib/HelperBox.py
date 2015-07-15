@@ -235,7 +235,7 @@ class HelperBox(VTKObservationMixin):
     self.masterSelector = slicer.qMRMLNodeComboBox(self.masterSelectorFrame)
     self.masterSelector.objectName = 'MasterVolumeNodeSelector'
     # TODO
-    self.masterSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
+    self.masterSelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
     self.masterSelector.selectNodeUponCreation = False
     self.masterSelector.addEnabled = False
     self.masterSelector.removeEnabled = False
@@ -265,7 +265,7 @@ class HelperBox(VTKObservationMixin):
     self.mergeSelector = slicer.qMRMLNodeComboBox(self.mergeSelectorFrame)
     self.mergeSelector.objectName = 'MergeVolumeNodeSelector'
     self.mergeSelector.setToolTip( mergeNameToolTip )
-    self.mergeSelector.nodeTypes = ( ("vtkMRMLLabelMapVolumeNode"), "" )
+    self.mergeSelector.nodeTypes = ["vtkMRMLLabelMapVolumeNode"]
     self.mergeSelector.addEnabled = False
     self.mergeSelector.removeEnabled = False
     self.mergeSelector.noneEnabled = False

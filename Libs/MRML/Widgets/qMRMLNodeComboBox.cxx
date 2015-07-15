@@ -540,7 +540,7 @@ vtkMRMLNode* qMRMLNodeComboBox::addNode(QString nodeType)
     qWarning("qMRMLNodeComboBox::addNode() failed with node type %s", qPrintable(nodeType));
     return NULL;
     }
-  if (newNode && this->selectNodeUponCreation())
+  if (this->selectNodeUponCreation())
     {// select the created node.
     this->setCurrentNode(newNode);
     }
@@ -811,7 +811,13 @@ QStringList qMRMLNodeComboBox::nodeTypes()const
 void qMRMLNodeComboBox::setNodeTypes(const QStringList& _nodeTypes)
 {
   Q_D(qMRMLNodeComboBox);
-  this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
+
+  // Remove empty elements (empty elements may be created accidentally when
+  // string lists are constructed in Python)
+  QStringList nodeTypesFiltered = _nodeTypes;
+  nodeTypesFiltered.removeAll("");
+
+  this->sortFilterProxyModel()->setNodeTypes(nodeTypesFiltered);
   d->updateDefaultText();
   d->updateActionItems();
 }

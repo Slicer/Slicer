@@ -69,7 +69,7 @@ class FiberBundleToLabelMapWidget:
 
     # fiber
     self.fiberSelector = slicer.qMRMLNodeComboBox(parametersCollapsibleButton)
-    self.fiberSelector.nodeTypes = ( ("vtkMRMLFiberBundleNode"), "" )
+    self.fiberSelector.nodeTypes = ["vtkMRMLFiberBundleNode"]
     self.fiberSelector.selectNodeUponCreation = False
     self.fiberSelector.addEnabled = False
     self.fiberSelector.removeEnabled = False
@@ -82,7 +82,7 @@ class FiberBundleToLabelMapWidget:
 
     # label map
     self.labelSelector = slicer.qMRMLNodeComboBox(parametersCollapsibleButton)
-    self.labelSelector.nodeTypes = ( ("vtkMRMLLabelMapVolumeNode"), "" )
+    self.labelSelector.nodeTypes = ["vtkMRMLLabelMapVolumeNode"]
     self.labelSelector.selectNodeUponCreation = False
     self.labelSelector.addEnabled = False
     self.labelSelector.removeEnabled = False
