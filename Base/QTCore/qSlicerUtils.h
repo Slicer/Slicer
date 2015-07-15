@@ -179,6 +179,27 @@ public:
   /// * \a Nightly build matches the same string as a \a Release build appended with `-<DATE>`
   static bool isRelease(const QString& version);
 
+  /// \brief Return an updated \a text where Slicer wiki URL version is replaced
+  /// with the provided one.
+  ///
+  /// Any URL containing `Documentation/<VERSION>/` will be updated.
+  ///
+  /// More specifically, in an URL with http or https protocol that contains
+  /// "Documentation" path element, the following path element is replaced by
+  /// the provided \a version. If there are multiple
+  /// "Documentation" path elements then only the first one is considered.
+  ///
+  /// \note The "path element" term is defined in this rfc: http://tools.ietf.org/html/rfc3986
+  /// "A path consists of a sequence of path segments separated by a slash
+  /// ("/") character."
+  ///
+  /// Examples:
+  /// \snippet qSlicerUtilsTest1.cxx replaceWikiUrlVersion example1
+  /// \snippet qSlicerUtilsTest1.cxx replaceWikiUrlVersion example2
+  /// \snippet qSlicerUtilsTest1.cxx replaceWikiUrlVersion example3
+  /// \snippet qSlicerUtilsTest1.cxx replaceWikiUrlVersion example4
+  static QString replaceWikiUrlVersion(const QString& text, const QString& version);
+
 private:
   /// Not implemented
   qSlicerUtils(){}
