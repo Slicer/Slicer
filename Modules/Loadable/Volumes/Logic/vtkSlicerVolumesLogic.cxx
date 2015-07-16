@@ -470,7 +470,7 @@ vtkSlicerVolumesLogic::vtkSlicerVolumesLogic()
   this->RegisterArchetypeVolumeNodeSetFactory( LabelMapVolumeNodeSetFactory );
   this->RegisterArchetypeVolumeNodeSetFactory( ScalarVolumeNodeSetFactory );
 
-  this->SetCompareVolumeGeometryEpsilon(0.000001);
+  this->CompareVolumeGeometryEpsilon = 0.000001;
 }
 
 //----------------------------------------------------------------------------
