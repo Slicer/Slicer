@@ -143,9 +143,10 @@ public:
 
   /// BaseName is the name used to generate a node name for all the new created
   /// nodes.
-  /// TODO: Support different basename depending on the node type
-  void setBaseName(const QString& baseName);
-  QString baseName()const;
+  /// If nodeType is not specified for setBaseName() then base name is set for all already defined node types.
+  /// If nodeType is not specified for baseName() then base name of the first node type is returned.
+  void setBaseName(const QString& baseName, const QString& nodeType = "");
+  QString baseName(const QString& nodeType = "")const;
 
   /// return the number of nodes. it can be different from count()
   /// as count includes the "AddNode", "Remove Node"... items

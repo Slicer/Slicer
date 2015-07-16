@@ -510,24 +510,40 @@ void qMRMLNodeComboBox::removeAttribute(const QString& nodeType,
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLNodeComboBox::setBaseName(const QString& baseName)
+void qMRMLNodeComboBox::setBaseName(const QString& baseName, const QString& nodeType /* ="" */ )
 {
   Q_D(qMRMLNodeComboBox);
-  QStringList nodeClasses = this->nodeTypes();
-  if (nodeClasses.isEmpty())
+  if (!nodeType.isEmpty())
     {
+    d->MRMLNodeFactory->setBaseName(nodeType, baseName);
     return;
     }
-  d->MRMLNodeFactory->setBaseName(nodeClasses[0], baseName);
+  // If no node type is defined then we set the base name for all already specified node types
+  QStringList nodeTypes = this->nodeTypes();
+  if (nodeTypes.isEmpty())
+    {
+    qWarning("qMRMLNodeComboBox::setBaseName failed: no node types have been set yet");
+    return;
+    }
+  foreach (QString aNodeType, nodeTypes)
+    {
+    d->MRMLNodeFactory->setBaseName(aNodeType, baseName);
+    }
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLNodeComboBox::baseName()const
+QString qMRMLNodeComboBox::baseName(const QString& nodeType /* ="" */ )const
 {
   Q_D(const qMRMLNodeComboBox);
+  if (!nodeType.isEmpty())
+    {
+    return d->MRMLNodeFactory->baseName(nodeType);
+    }
+  // If nodeType is not specified then base name of the first node type is returned.
   QStringList nodeClasses = this->nodeTypes();
   if (nodeClasses.isEmpty())
     {
+    qWarning("qMRMLNodeComboBox::baseName failed: no node types have been set yet");
     return QString();
     }
   return d->MRMLNodeFactory->baseName(nodeClasses[0]);

@@ -38,6 +38,7 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
 
   qMRMLNodeComboBox nodeSelector;
   nodeSelector.setNodeTypes(QStringList() << "vtkMRMLScalarVolumeNode" << "vtkMRMLLabelMapVolumeNode");
+  nodeSelector.setBaseName("SomeBaseName");
 
   vtkNew<vtkMRMLScene> scene;
   nodeSelector.setMRMLScene(scene.GetPointer());
@@ -57,9 +58,19 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
     }
+  if (strcmp(node->GetName(), "SomeBaseName_1")!=0)
+    {
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   node = nodeSelector.addNode("vtkMRMLLabelMapVolumeNode");
   if (nodeSelector.nodeCount() != 3)
+    {
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (strcmp(node->GetName(), "SomeBaseName_2")!=0)
     {
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
@@ -68,6 +79,15 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   // Test that we cannot add a node type that is not among the list of allowed node types
   node = nodeSelector.addNode("vtkMRMLModelNode");
   if (nodeSelector.nodeCount() != 3)
+    {
+    std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Check if base name of a particular class can be changed
+  nodeSelector.setBaseName("DifferentBaseName", "vtkMRMLLabelMapVolumeNode");
+  node = nodeSelector.addNode("vtkMRMLLabelMapVolumeNode");
+  if (strcmp(node->GetName(), "DifferentBaseName")!=0)
     {
     std::cerr << __LINE__ << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;

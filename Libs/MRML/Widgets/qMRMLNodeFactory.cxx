@@ -173,5 +173,10 @@ void qMRMLNodeFactory::setBaseName(const QString& className, const QString& base
 QString qMRMLNodeFactory::baseName(const QString& className)const
 {
   Q_D(const qMRMLNodeFactory);
-  return d->BaseNames.contains(className) ? d->BaseNames[className] : QString();
+  if (!d->BaseNames.contains(className))
+    {
+    qWarning("qMRMLNodeFactory::baseName failed: class name %s not found", qPrintable(className));
+    return QString();
+    }
+  return d->BaseNames[className];
 }
