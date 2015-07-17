@@ -254,6 +254,7 @@ vtkMRMLScene::~vtkMRMLScene()
     this->UserTagTable->Delete();
     this->UserTagTable = NULL;
     }
+  this->SetLastLoadedVersion(0);
   this->SetVersion(0);
   if ( this->DeleteEventCallback != NULL )
     {
