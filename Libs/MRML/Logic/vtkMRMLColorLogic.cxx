@@ -1041,6 +1041,7 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CopyNode(vtkMRMLColorNode* nodeToCopy,
   colorNode->SetTypeToUser();
   colorNode->SetAttribute("Category", "User Generated");
   colorNode->SetHideFromEditors(false);
+  colorNode->SetNamesInitialised(nodeToCopy->GetNamesInitialised());
   if (nodeToCopy->GetLookupTable())
     {
     double* range = nodeToCopy->GetLookupTable()->GetRange();

@@ -1296,10 +1296,6 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char *name, double r, doubl
     }
 
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
-  if (!this->GetNamesInitialised())
-    {
-    this->SetNamesFromColors();
-    }
   if (this->SetColorName(entry, name) == 0)
     {
     vtkWarningMacro("SetColor: error setting color name " << name << " for entry " << entry);
