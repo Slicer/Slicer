@@ -63,6 +63,9 @@ vtkNRRDReader::vtkNRRDReader()
   nrrd = nrrdNew();
   UseNativeOrigin = true;
   ReadStatus = 0;
+  PointDataType = -1;
+  DataType = -1;
+  NumberOfComponents = -1;
 }
 
 vtkNRRDReader::~vtkNRRDReader()
