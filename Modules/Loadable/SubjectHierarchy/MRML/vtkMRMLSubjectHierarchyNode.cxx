@@ -66,6 +66,8 @@ vtkMRMLSubjectHierarchyNode::vtkMRMLSubjectHierarchyNode()
 vtkMRMLSubjectHierarchyNode::~vtkMRMLSubjectHierarchyNode()
 {
   this->UIDs.clear();
+
+  this->SetLevel(0);
 }
 
 //----------------------------------------------------------------------------
