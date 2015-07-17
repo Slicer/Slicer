@@ -41,10 +41,11 @@ class qMRMLTransformSlidersPrivate: public Ui_qMRMLTransformSliders
 public:
   qMRMLTransformSlidersPrivate()
     {
+    this->TypeOfTransform = -1;
     this->MRMLTransformNode = 0;
     }
 
-  qMRMLTransformSliders::TransformType   TypeOfTransform;
+  int                                    TypeOfTransform;
   vtkMRMLTransformNode*                  MRMLTransformNode;
   QStack<qMRMLLinearTransformSlider*>    ActiveSliders;
 };
@@ -151,7 +152,7 @@ void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
 qMRMLTransformSliders::TransformType qMRMLTransformSliders::typeOfTransform() const
 {
   Q_D(const qMRMLTransformSliders);
-  return d->TypeOfTransform;
+  return static_cast<qMRMLTransformSliders::TransformType>(d->TypeOfTransform);
 }
 
 // --------------------------------------------------------------------------
