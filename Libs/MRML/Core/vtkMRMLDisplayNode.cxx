@@ -111,6 +111,7 @@ vtkMRMLDisplayNode::~vtkMRMLDisplayNode()
 #else
   this->SetTextureImageDataConnection(NULL);
 #endif
+  this->SetActiveScalarName(NULL);
   this->SetAndObserveColorNodeID( NULL);
 }
 
