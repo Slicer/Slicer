@@ -51,6 +51,7 @@ vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
     this->LayoutRootElement->Delete();
     this->LayoutRootElement = NULL;
     }
+  this->SetCurrentLayoutDescription(0);
 }
 
 
