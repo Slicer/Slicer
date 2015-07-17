@@ -32,13 +32,9 @@
 // We mean it.
 //
 
-// Qt includes
-class QToolButton;
-
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
-class ctkPopupWidget;
 
 // qMRML includes
 #include "qMRMLThreeDView.h"
@@ -81,9 +77,6 @@ protected:
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLViewNode*                   MRMLViewNode;
-
-  QToolButton*                       PinButton;
-  ctkPopupWidget*                    PopupWidget;
 };
 
 #endif
