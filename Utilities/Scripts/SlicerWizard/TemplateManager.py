@@ -115,7 +115,7 @@ class TemplateManager(object):
       fp.write(contents)
 
   #---------------------------------------------------------------------------
-  def copyTemplate(self, destination, category, kind, name, createInSubdirectory = True, requireEmptyDirectory = True):
+  def copyTemplate(self, destination, category, kind, name, createInSubdirectory=True, requireEmptyDirectory=True):
     """Copy (instantiate) a template.
 
     :param destination: Directory in which to create the template copy.
@@ -126,7 +126,7 @@ class TemplateManager(object):
     :type kind: :class:`basestring`
     :param name: Name for the instantiated template.
     :type name: :class:`basestring`
-    :param createInSubdirectory: If True then files are copied to destination/name/, else destination/.
+    :param createInSubdirectory: If True then files are copied to ``destination/name/``, else ``destination/``.
     :type name: :class:`bool`
     :param requireEmptyDirectory: If True then files are only copied if the target directory is empty.
     :type name: :class:`bool`
