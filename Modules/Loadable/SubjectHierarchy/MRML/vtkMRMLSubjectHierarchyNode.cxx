@@ -68,6 +68,7 @@ vtkMRMLSubjectHierarchyNode::~vtkMRMLSubjectHierarchyNode()
   this->UIDs.clear();
 
   this->SetLevel(0);
+  this->SetOwnerPluginName(0);
 }
 
 //----------------------------------------------------------------------------
