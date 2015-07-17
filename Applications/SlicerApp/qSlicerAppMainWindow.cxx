@@ -331,7 +331,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
 
   // Add menus for configuring compare view
-  QMenu *compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  QMenu *compareMenu = new QMenu(q->tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuView");
   compareMenu->addAction(this->ViewLayoutCompare_2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompare_3_viewersAction);
@@ -345,7 +345,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    q, SLOT(onLayoutCompareActionTriggered(QAction*)));
 
   // ... and for widescreen version of compare view as well
-  compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu = new QMenu(q->tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuWideScreen");
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_3_viewersAction);
@@ -359,7 +359,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
 
   // ... and for the grid version of the compare views
-  compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu = new QMenu(q->tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuGrid");
   compareMenu->addAction(this->ViewLayoutCompareGrid_2x2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareGrid_3x3_viewersAction);
