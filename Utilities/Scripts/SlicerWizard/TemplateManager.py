@@ -158,7 +158,7 @@ class TemplateManager(object):
     kind = kind.lower()
 
     if createInSubdirectory:
-    destination = os.path.join(destination, name)
+      destination = os.path.join(destination, name)
 
     if requireEmptyDirectory and os.path.exists(destination):
       raise IOError("create %s: refusing to overwrite"
