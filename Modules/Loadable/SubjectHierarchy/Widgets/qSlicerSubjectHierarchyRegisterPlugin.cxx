@@ -74,6 +74,7 @@ public:
 public:
   QAction* RegisterThisAction;
   QAction* RegisterToAction;
+  QSharedPointer<QMenu> RegistrationMethodsSubMenu;
 };
 
 //-----------------------------------------------------------------------------
@@ -117,20 +118,20 @@ void qSlicerSubjectHierarchyRegisterPluginPrivate::init()
   this->RegisterToAction = new QAction("Register * to this using...",q);
 
   // Actions for the registration methods
-  QMenu* registrationMethodsSubMenu = new QMenu();
-  this->RegisterToAction->setMenu(registrationMethodsSubMenu);
+  this->RegistrationMethodsSubMenu = QSharedPointer<QMenu>(new QMenu());
+  this->RegisterToAction->setMenu(this->RegistrationMethodsSubMenu.data());
 
   QAction* imageBasedRigidAction = new QAction("Rigid image-based registration",q);
   QObject::connect(imageBasedRigidAction, SIGNAL(triggered()), q, SLOT(registerImageBasedRigid()));
-  registrationMethodsSubMenu->addAction(imageBasedRigidAction);
+  this->RegistrationMethodsSubMenu->addAction(imageBasedRigidAction);
 
   QAction* imageBasedBSplineAction = new QAction("BSpline image-based registration",q);
   QObject::connect(imageBasedBSplineAction, SIGNAL(triggered()), q, SLOT(registerImageBasedBSpline()));
-  registrationMethodsSubMenu->addAction(imageBasedBSplineAction);
+  this->RegistrationMethodsSubMenu->addAction(imageBasedBSplineAction);
 
   QAction* interactiveLandmarkAction = new QAction("Interactive landmark registration",q);
   QObject::connect(interactiveLandmarkAction, SIGNAL(triggered()), q, SLOT(registerInteractiveLandmark()));
-  registrationMethodsSubMenu->addAction(interactiveLandmarkAction);
+  this->RegistrationMethodsSubMenu->addAction(interactiveLandmarkAction);
 }
 
 //-----------------------------------------------------------------------------

@@ -73,7 +73,7 @@ public:
   void init();
 public:
   QAction* SegmentWithMenuAction;
-  QMenu* SegmentWithMenu;
+  QSharedPointer<QMenu> SegmentWithMenu;
 };
 
 //-----------------------------------------------------------------------------
@@ -84,7 +84,6 @@ qSlicerSubjectHierarchySegmentPluginPrivate::qSlicerSubjectHierarchySegmentPlugi
 : q_ptr(&object)
 {
   this->SegmentWithMenuAction = NULL;
-  this->SegmentWithMenu = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -111,8 +110,8 @@ void qSlicerSubjectHierarchySegmentPluginPrivate::init()
   // Create top-level segment action and add it to menu
   this->SegmentWithMenuAction = new QAction("Segment this using...",q);
 
-  this->SegmentWithMenu = new QMenu();
-  this->SegmentWithMenuAction->setMenu(this->SegmentWithMenu);
+  this->SegmentWithMenu = QSharedPointer<QMenu>(new QMenu());
+  this->SegmentWithMenuAction->setMenu(this->SegmentWithMenu.data());
 
   QAction* editorAction = new QAction("Editor",q);
   QObject::connect(editorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentNodeWithEditor()));
@@ -167,7 +166,7 @@ QMenu* qSlicerSubjectHierarchySegmentPlugin::segmentWithMenu()
 {
   Q_D(qSlicerSubjectHierarchySegmentPlugin);
 
-  return d->SegmentWithMenu;
+  return d->SegmentWithMenu.data();
 }
 
 //---------------------------------------------------------------------------
