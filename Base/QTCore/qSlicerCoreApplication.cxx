@@ -141,6 +141,8 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 #ifdef Slicer_USE_PYTHONQT
   this->CorePythonManager.clear();
 #endif
+
+  this->AppLogic->TerminateProcessingThread();
 }
 
 //-----------------------------------------------------------------------------

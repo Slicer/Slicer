@@ -391,7 +391,6 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 {
   if (this->ProcessingThreadId != -1)
     {
-    std::cout << "vtkSlicerApplicationLogic::TerminateProcessingThread()" << std::endl;
     this->ModifiedQueueActiveLock->Lock();
     this->ModifiedQueueActive = false;
     this->ModifiedQueueActiveLock->Unlock();
