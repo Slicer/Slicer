@@ -203,10 +203,34 @@ class ExtensionWizardWidget:
     dlg.setTemplates(self.templateManager.templates("extensions"))
 
     while dlg.exec_() == qt.QDialog.Accepted:
+        
+        # If the selected destination is in a repository then use the root of that repository
+        # as destination
       try:
+        repo = SlicerWizard.Utilities.getRepo(dlg.destination)
+
+        createInSubdirectory = True
+        requireEmptyDirectory = True
+        
+        if repo is None:
+          destination = os.path.join(dlg.destination, dlg.componentName)
+          if os.path.exists(dlg.destination):
+            raise IOError("create extension: refusing to overwrite"
+                          " existing directory '%s'" % dlg.destination)
+
+        else:
+          destination = SlicerWizard.Utilities.localRoot(repo)
+          cmakeFile = os.path.join(destination, "CMakeLists.txt")
+          createInSubdirectory = False # create the files in the destination directory
+          requireEmptyDirectory = False # we only check if no CMakeLists.txt file exists
+          if os.path.exists(cmakeFile):
+            raise IOError("create extension: refusing to overwrite"
+                          " directory containing CMakeLists.txt file at '%s'" % dlg.destination)
+
         path = self.templateManager.copyTemplate(
-                 dlg.destination, "extensions",
-                 dlg.componentType, dlg.componentName)
+                 destination, "extensions",
+                 dlg.componentType, dlg.componentName,
+                 createInSubdirectory, requireEmptyDirectory)
 
       except:
         md = qt.QMessageBox(self.parent.window())

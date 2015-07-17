@@ -115,7 +115,7 @@ class TemplateManager(object):
       fp.write(contents)
 
   #---------------------------------------------------------------------------
-  def copyTemplate(self, destination, category, kind, name):
+  def copyTemplate(self, destination, category, kind, name, createInSubdirectory = True, requireEmptyDirectory = True):
     """Copy (instantiate) a template.
 
     :param destination: Directory in which to create the template copy.
@@ -126,6 +126,10 @@ class TemplateManager(object):
     :type kind: :class:`basestring`
     :param name: Name for the instantiated template.
     :type name: :class:`basestring`
+    :param createInSubdirectory: If True then files are copied to destination/name/, else destination/.
+    :type name: :class:`bool`
+    :param requireEmptyDirectory: If True then files are only copied if the target directory is empty.
+    :type name: :class:`bool`
 
     :return:
       Path to the new instance (``os.path.join(destination, name)``).
@@ -153,8 +157,10 @@ class TemplateManager(object):
 
     kind = kind.lower()
 
+    if createInSubdirectory:
     destination = os.path.join(destination, name)
-    if os.path.exists(destination):
+
+    if requireEmptyDirectory and os.path.exists(destination):
       raise IOError("create %s: refusing to overwrite"
                     " existing directory '%s'" % (category, destination))
 
