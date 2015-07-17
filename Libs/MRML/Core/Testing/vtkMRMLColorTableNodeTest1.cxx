@@ -60,7 +60,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 
   if (argc != 2)
     {
-    std::cerr << "Missing parameters !\n"
+    std::cerr << "Line " << __LINE__
+              << " - Missing parameters !\n"
               << "Usage: " << argv[0] << " /path/to/temp"
               << std::endl;
     return EXIT_FAILURE;
@@ -92,7 +93,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     scene->SetRootDirectory(tempDir);
     if (!scene->AddNode(colorNode.GetPointer()))
       {
-      std::cerr << "Problem adding colorNode to the scene !" << std::endl;
+      std::cerr << "Line " << __LINE__
+                << " - Problem adding colorNode to the scene !" << std::endl;
       return EXIT_FAILURE;
       }
 
@@ -112,7 +114,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     scene->SetURL(sceneFileName.c_str());
     if (!scene->Commit())
       {
-      std::cerr << "Failed to save color node [id:" << colorNode->GetID() << "]"
+      std::cerr << "Line " << __LINE__
+                << " - Failed to save color node [id:" << colorNode->GetID() << "]"
                 << " into scene " << sceneFileName
                 << std::endl;
       return EXIT_FAILURE;
@@ -128,7 +131,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     int result = parser->Parse();
     if (result != 1)
       {
-      std::cerr << "Failed to parse scene file " << sceneFileName << std::endl;
+      std::cerr << "Line " << __LINE__
+                << " - Failed to parse scene file " << sceneFileName << std::endl;
       return EXIT_FAILURE;
       }
 
@@ -137,7 +141,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
         vtkMRMLColorTableNode::SafeDownCast(scene->GetNodeByID(expectedColorNodeId.c_str()));
     if (!colorNode)
       {
-      std::cerr << "Failed to get colorNode [id: " << expectedColorNodeId << "]"
+      std::cerr << "Line " << __LINE__
+                << " - Failed to get colorNode [id: " << expectedColorNodeId << "]"
                 << " from scene file " << sceneFileName
                 << std::endl;
       return EXIT_FAILURE;
@@ -145,7 +150,8 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 
     if (!colorNode->GetStorageNode()->ReadData(colorNode))
       {
-      std::cerr << "Failed to read " << colorTableFileName << std::endl;
+      std::cerr << "Line " << __LINE__
+                << " - Failed to read " << colorTableFileName << std::endl;
       return EXIT_FAILURE;
       }
 
