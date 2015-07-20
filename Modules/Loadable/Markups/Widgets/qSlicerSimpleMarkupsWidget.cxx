@@ -237,7 +237,7 @@ void qSlicerSimpleMarkupsWidget::setNodeColor(QColor color)
     return;
     }
 
-  double rgbDoubleVector[3] = {color.red(),color.green(),color.blue()};
+  double rgbDoubleVector[3] = {color.redF(),color.greenF(),color.blueF()};
   currentMarkupsDisplayNode->SetColor( rgbDoubleVector );
   currentMarkupsDisplayNode->SetSelectedColor( rgbDoubleVector );
 }
