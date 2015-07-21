@@ -17,8 +17,11 @@ SEMMacroBuildCLI(
   TARGET_LIBRARIES
     # ${VTK_LIBRARIES} # Not needed: All dependencies are transitively satisfied by other targets
     MRMLCore
+    vtkSlicerMarkupsModuleMRML
   INCLUDE_DIRECTORIES
     ${MRMLCore_INCLUDE_DIRS}
+    ${vtkSlicerMarkupsModuleMRML_SOURCE_DIR}
+    ${vtkSlicerMarkupsModuleMRML_BINARY_DIR}
   )
 
 #-----------------------------------------------------------------------------

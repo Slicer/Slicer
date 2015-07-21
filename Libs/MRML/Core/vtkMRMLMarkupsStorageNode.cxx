@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMarkupsNode.h"
+//#include "vtkMRMLMarkupsDisplayNode.h"
+//#include "vtkMRMLMarkupsNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
 #include "vtkMRMLScene.h"

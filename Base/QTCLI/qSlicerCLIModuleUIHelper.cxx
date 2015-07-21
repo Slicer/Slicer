@@ -95,6 +95,7 @@ WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, ctkDoubleSpinBox, value, setValue
 WIDGET_VALUE_WRAPPER(DoubleWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(String, QLineEdit, text, setText, String, textChanged(const QString&));
 WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(PointFile, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Region, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
@@ -171,6 +172,7 @@ public:
   QWidget* createDoubleTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createStringTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createPointTagWidget(const ModuleParameter& moduleParameter);
+  QWidget* createPointFileTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createRegionTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createImageTagWidget(const ModuleParameter& moduleParameter);
   QWidget* createGeometryTagWidget(const ModuleParameter& moduleParameter);
@@ -522,6 +524,31 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
                    widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Point, _name, _label, widget);
+
+  return widget;
+}
+
+//-----------------------------------------------------------------------------
+QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleParameter& moduleParameter)
+{
+  QString _label = QString::fromStdString(moduleParameter.GetLabel());
+  QString _name = QString::fromStdString(moduleParameter.GetName());
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
+  QStringList nodeTypes;
+  nodeTypes += "vtkMRMLMarkupsFiducialNode";
+
+  widget->setNodeTypes(nodeTypes);
+  //TODO - title + " FiducialList"
+  //TODO - tparameter->SetNewNodeEnabled(1);
+  //TODO - tparameter->SetNoneEnabled(noneEnabled);
+  widget->setBaseName(_label);
+  widget->setRenameEnabled(true);
+
+  widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(PointFile, _name, _label, widget);
 
   return widget;
 }
@@ -913,6 +940,10 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   else if (moduleParameter.GetTag() == "point")
     {
     widget = d->createPointTagWidget(moduleParameter);
+    }
+  else if (moduleParameter.GetTag() == "pointfile")
+    {
+    widget = d->createPointFileTagWidget(moduleParameter);
     }
   else if (moduleParameter.GetTag() == "region")
     {

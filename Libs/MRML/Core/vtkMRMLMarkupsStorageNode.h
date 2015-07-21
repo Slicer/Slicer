@@ -21,6 +21,7 @@
 ///
 /// vtkMRMLMarkupsStorageNode nodes describe the markups storage
 /// node that allows to read/write point data from/to file.
+/// In MRML/Core to facilitate passing markups to CLIs via file.
 
 #ifndef __vtkMRMLMarkupsStorageNode_h
 #define __vtkMRMLMarkupsStorageNode_h
@@ -28,14 +29,10 @@
 // MRML includes
 #include "vtkMRMLStorageNode.h"
 
-// Markups includes
-#include "vtkSlicerMarkupsModuleMRMLExport.h"
-
 /// Define a default buffer size for parsing files during read, number of characters
 #define MARKUPS_BUFFER_SIZE 1024
 
-/// \ingroup Slicer_QtModules_Markups
-class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsStorageNode : public vtkMRMLStorageNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLMarkupsStorageNode *New();

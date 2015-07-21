@@ -7,6 +7,10 @@
 // VTK includes
 #include <vtkNew.h>
 
+// Markups includes
+#include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsFiducialStorageNode.h>
+
 int main(int argc, char *argv[])
 {
   PARSE_ARGS;
@@ -81,6 +85,52 @@ int main(int argc, char *argv[])
     std::cerr << "No input transform found! Specified transform ID = " << transform1ID << std::endl;
     return EXIT_FAILURE;
     }
+  // fiducials
+  std::cout << "Have an input seed list of size " << seed.size() << std::endl;
+  for (unsigned int i = 0; i < seed.size(); ++i)
+    {
+    std::cout << i << "\t" << seed[i][0] << "\t" << seed[i][1] << "\t" << seed[i][2] << std::endl;
+    }
+  if (seedsFile.size() > 0)
+    {
+    // read the input seeds file
+    std::cout << "Have an input seeds file with name " << seedsFile[0].c_str() << std::endl;
+    vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
+    vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorageNode;
+    fiducialStorageNode->SetFileName(seedsFile[0].c_str());
+    fiducialStorageNode->ReadData(fiducialNode.GetPointer());
+    std::cout << "Number of fids read = " << fiducialNode->GetNumberOfFiducials() << ", coordinate system flag = " << fiducialStorageNode->GetCoordinateSystem() << std::endl;
+    for (int i = 0; i < fiducialNode->GetNumberOfFiducials(); ++i)
+      {
+      double pos[3];
+      fiducialNode->GetNthFiducialPosition(i, pos);
+      std::cout << i << "\t" << pos[0] << "\t" << pos[1] << "\t" << pos[2] << std::endl;
+      }
+    }
+  // copy the seeds list
+  vtkNew<vtkMRMLMarkupsFiducialNode> copiedFiducialNode;
+  // set the node name so that fiducials have names that don't just
+  // start with -1, -2 etc
+  copiedFiducialNode->SetName("seedsCopy");
+  for (unsigned int i = 0; i < seed.size(); ++i)
+    {
+    std::cout << "Copying seed list to output file list: " << seed[i][0] << ", " << seed[i][1] << ", " << seed[i][2] << std::endl;
+    copiedFiducialNode->AddFiducial(seed[i][0], seed[i][1], seed[i][2]);
+    // toggle some settings
+    if (i == 0)
+      {
+      copiedFiducialNode->SetNthMarkupLocked(i, 1);
+      copiedFiducialNode->SetNthFiducialSelected(i, 0);
+      copiedFiducialNode->SetNthFiducialVisibility(i, 0);
+      }
+    }
+  // write out the copy
+  vtkNew<vtkMRMLMarkupsFiducialStorageNode> outputFiducialStorageNode;
+  outputFiducialStorageNode->SetFileName(seedsOutFile.c_str());
+  // the .xml file specifies that it expects the output file in LPS
+  // coordinate system
+  outputFiducialStorageNode->UseLPSOn();
+  outputFiducialStorageNode->WriteData(copiedFiducialNode.GetPointer());
 
   // Write out the return parameters in "name = value" form
   std::ofstream rts;

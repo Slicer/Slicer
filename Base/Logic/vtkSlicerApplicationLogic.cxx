@@ -903,6 +903,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   vtkMRMLDisplayableNode *fbnd = 0;
   vtkMRMLColorTableNode *cnd = 0;
   vtkMRMLDoubleArrayNode *dand = 0;
+  vtkMRMLDisplayableNode *markupsFiducialNode = 0;
 #ifdef Slicer_BUILD_CLI_SUPPORT
   vtkMRMLCommandLineModuleNode *clp = 0;
 #endif
@@ -935,7 +936,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     }
   else
     {
-    vtkWarningMacro("Unkown volume type");
+    vtkDebugMacro("Not a known volume type: " << nd->GetClassName());
     }
 
   mnd   = vtkMRMLModelNode::SafeDownCast(nd);
@@ -943,6 +944,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   fbnd  = vtkMRMLDisplayableNode::SafeDownCast(nd);
   cnd = vtkMRMLColorTableNode::SafeDownCast(nd);
   dand = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
+  markupsFiducialNode = vtkMRMLDisplayableNode::SafeDownCast(nd);
 #ifdef Slicer_BUILD_CLI_SUPPORT
   clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
 #endif
@@ -1010,6 +1012,10 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         vtkDebugMacro("ProcessReadNodeData: node is a vtkMRMLFiberBundleNode");
         // Load a fiber bundle node
         storageNode = fbnd->CreateDefaultStorageNode();
+        }
+      else if (markupsFiducialNode && markupsFiducialNode->IsA("vtkMRMLMarkupsFiducialNode"))
+        {
+        storageNode = markupsFiducialNode->CreateDefaultStorageNode();
         }
       else if (cnd)
         {

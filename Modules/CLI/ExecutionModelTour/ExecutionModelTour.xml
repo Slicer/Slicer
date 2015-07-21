@@ -145,6 +145,13 @@
       <description><![CDATA[Lists of points in the CLI correspond to slicer fiducial lists]]></description>
       <default>0,0,0</default>
     </point>
+    <pointfile multiple="true" fileExtensions=".fcsv" coordinateSystem="lps">
+      <name>seedsFile</name>
+      <description><![CDATA[Test file of input fiducials, compared to seeds]]></description>
+      <label>Seeds file</label>
+      <longflag>seedsFile</longflag>
+      <channel>input</channel>
+    </pointfile>
   </parameters>
   <parameters>
     <label>Index Parameters</label>
@@ -247,5 +254,15 @@
       <element>Steve</element>
       <element>Will</element>
     </string-enumeration>
+  </parameters>
+  <parameters>
+    <label>File return types</label>
+    <pointfile fileExtensions=".fcsv" coordinateSystem="lps">
+      <name>seedsOutFile</name>
+      <label>Output Fiducials File</label>
+      <description><![CDATA[Output file to read back in, compare to seeds with flipped settings on first fiducial]]></description>
+      <longflag>seedsOutFile</longflag>
+      <channel>output</channel>
+    </pointfile>
   </parameters>
 </executable>

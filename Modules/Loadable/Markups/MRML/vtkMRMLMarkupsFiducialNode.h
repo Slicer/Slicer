@@ -72,6 +72,9 @@ public:
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  /// Create and observe default display node(s)
+  virtual void CreateDefaultDisplayNodes();
+
   /// Return a cast display node, returns null if none
   vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
 

@@ -22,6 +22,7 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
 // STD includes
@@ -135,6 +136,25 @@ void vtkMRMLMarkupsFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLStorageNode* vtkMRMLMarkupsFiducialNode::CreateDefaultStorageNode()
 {
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLMarkupsFiducialStorageNode::New());
+}
+
+//-------------------------------------------------------------------------
+void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
+{
+  if (this->GetDisplayNode() != NULL &&
+      vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != NULL)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene()==NULL)
+    {
+    vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkNew<vtkMRMLMarkupsDisplayNode> dispNode;
+  this->GetScene()->AddNode(dispNode.GetPointer());
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }
 
 //-------------------------------------------------------------------------
