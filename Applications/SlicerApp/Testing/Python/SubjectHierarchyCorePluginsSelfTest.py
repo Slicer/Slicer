@@ -39,7 +39,6 @@ class SubjectHierarchyCorePluginsSelfTest(ScriptedLoadableModule):
 
 class SubjectHierarchyCorePluginsSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
-    self.developerMode = True
     ScriptedLoadableModuleWidget.setup(self)
 
 #

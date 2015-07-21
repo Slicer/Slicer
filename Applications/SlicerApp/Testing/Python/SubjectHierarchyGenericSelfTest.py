@@ -39,7 +39,6 @@ class SubjectHierarchyGenericSelfTest(ScriptedLoadableModule):
 
 class SubjectHierarchyGenericSelfTestWidget(ScriptedLoadableModuleWidget):
   def setup(self):
-    self.developerMode = True
     ScriptedLoadableModuleWidget.setup(self)
 
 #
