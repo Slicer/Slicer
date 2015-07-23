@@ -45,6 +45,9 @@ public:
   virtual ~qSlicerSimpleMarkupsWidget();
 
   /// Get the currently selected markups node.
+  Q_INVOKABLE vtkMRMLNode* currentNode() const;
+
+  /// Deprecated. Use currentNode() instead.
   Q_INVOKABLE vtkMRMLNode* getCurrentNode();
   
 public slots:

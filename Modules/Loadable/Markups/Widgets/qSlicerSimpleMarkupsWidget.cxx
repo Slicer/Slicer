@@ -176,11 +176,18 @@ void qSlicerSimpleMarkupsWidget::connectInteractionAndSelectionNodes()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerSimpleMarkupsWidget::getCurrentNode()
+vtkMRMLNode* qSlicerSimpleMarkupsWidget::currentNode() const
 {
-  Q_D(qSlicerSimpleMarkupsWidget);
+  Q_D(const qSlicerSimpleMarkupsWidget);
 
   return d->MarkupsFiducialNodeComboBox->currentNode();
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLNode* qSlicerSimpleMarkupsWidget::getCurrentNode()
+{
+  qWarning("qSlicerSimpleMarkupsWidget::getCurrentNode() method is deprecated. Use qSlicerSimpleMarkupsWidget::currentNode() method instead");
+  return this->currentNode();
 }
 
 //-----------------------------------------------------------------------------
