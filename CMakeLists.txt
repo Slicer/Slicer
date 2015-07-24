@@ -589,8 +589,16 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     if(FONTCONFIG_FOUND)
       list(APPEND Slicer_VTK_COMPONENTS
         vtkRenderingFreeTypeFontConfig
-        vtkRenderingFreeType${Slicer_VTK_RENDERING_BACKEND}
+        # vtkRenderingFreeTypeOpenGL # Since commit 4f7460a5 (> 6.2.0), vtkRenderingFreeTypeOpenGL
+                                     # has been removed. This mean Slicer will not compile
+                                     # against version of VTK folder than 6.3.0 having FontConfig
+                                     # capabilities.
+                                     # If this is needed, a configure test would have to
+                                     # be added to check if the module is available or not.
         )
+      if(TARGET vtkRenderingFreeTypeOpenGL)
+        list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
+      endif()
     endif()
   endif()
 endif()
