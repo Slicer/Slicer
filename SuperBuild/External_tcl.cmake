@@ -31,6 +31,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(tcl_build ${CMAKE_CURRENT_BINARY_DIR}/tcl-build)
 
   set(tcl_DOWNLOAD_COMMAND)
+  set(tcl_PATCH_COMMAND)
 
   if(WIN32)
     set(TCL_TK_VERSION_DOT "8.5")
@@ -115,6 +116,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
     include(ExternalProjectForNonCMakeProject)
 
+    # patch: Since (1) a more recent version of itcl is provided by External_incrTcl
+    #        and (2) packages bundled with tcl are not used, the patch command
+    #        simply remove the 'pkgs' folder.
+    set(tcl_PATCH_COMMAND
+      PATCH_COMMAND ${CMAKE_COMMAND} -E remove_directory ${tcl_base}/tcl/pkgs
+      )
+
     # environment
     set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
     ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
@@ -165,6 +173,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
     UPDATE_COMMAND "" # Disable update
     SOURCE_DIR ${tcl_SOURCE_DIR}
     BUILD_IN_SOURCE ${tcl_BUILD_IN_SOURCE}
+    ${tcl_PATCH_COMMAND}
     CONFIGURE_COMMAND ${tcl_CONFIGURE_COMMAND}
     BUILD_COMMAND ${tcl_BUILD_COMMAND}
     INSTALL_COMMAND ${tcl_INSTALL_COMMAND}
