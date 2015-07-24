@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="/qt/etc">
+    <file alias="qt.conf">@QT_CONF_FILEPATH@</file>
+  </qresource>
+</RCC>

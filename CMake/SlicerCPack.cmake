@@ -93,17 +93,6 @@ else()
     set(VTK_LIBRARY_DIRS "${VTK_DIR}/lib")
   endif()
 
-  # Generate qt.conf
-  file(WRITE ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
-"[Paths]
-Plugins = ${Slicer_QtPlugins_DIR}
-")
-  # .. and install
-  install(FILES ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
-          DESTINATION ${Slicer_INSTALL_ROOT}Resources
-          COMPONENT Runtime
-          RENAME qt.conf)
-
   set(fixup_path @rpath)
   set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)
   configure_file(
