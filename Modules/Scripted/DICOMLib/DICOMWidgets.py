@@ -698,9 +698,9 @@ class DICOMDetailsPopup(VTKObservationMixin):
       for plugin in self.referencedLoadables:
         for loadable in self.referencedLoadables[plugin]:
           if loadable.selected:
-            cb = qt.QCheckBox(self.referencesDialog)
+            cb = qt.QCheckBox(loadable.name, self.referencesDialog)
             cb.checked = True
-            layout.addRow(cb, qt.QLabel(loadable.name))
+            layout.addRow(cb)
       okButton = qt.QPushButton('Proceed')
       okButton.connect("clicked()",self.proceedWithReferencedLoadablesSelection)
       layout.addRow(okButton)
