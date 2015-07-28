@@ -49,3 +49,8 @@ SlicerMacroBuildModuleWidgets(
 
 #-----------------------------------------------------------------------------
 add_subdirectory(DesignerPlugins)
+
+# Testing
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()

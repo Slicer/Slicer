@@ -53,6 +53,9 @@ public:
 public slots:
   /// Set the currently selected markups node.
   void setCurrentNode(vtkMRMLNode* currentNode);
+
+  void setMRMLScene(vtkMRMLScene* scene);
+
   /// Set the default name of the markups node created in the combo box.
   void setNodeBaseName(QString newNodeBaseName);
 
@@ -109,7 +112,6 @@ protected:
   QScopedPointer<qSlicerSimpleMarkupsWidgetPrivate> d_ptr;
 
   virtual void setup();
-  virtual void enter();
 
   /// Monitor for changes in the interaction and selection nodes.
   void connectInteractionAndSelectionNodes();
