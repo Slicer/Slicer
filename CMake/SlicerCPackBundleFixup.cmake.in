@@ -71,9 +71,12 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     # Tcl libraries
-    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$"
-       OR item MATCHES "libitcl[^/]+\\.dylib$")
+    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
       set(path "@fixup_path@/lib/TclTk/lib")
+    endif()
+    # Itcl library
+    if(item MATCHES "libitcl[^/]+\\.dylib$")
+      set(path "@fixup_path@/lib/TclTk/lib/itcl4.0.1")
     endif()
   endif()
 
