@@ -109,7 +109,11 @@ class EditOptions(VTKObservationMixin):
   def disconnectWidgets(self):
     if not self.connectionsConnected: return
     for widget,signal,slot in self.connections:
-      success = widget.disconnect(signal,slot)
+      try:
+        success = widget.disconnect(signal,slot)
+      except ValueError:
+        # handle "Trying to call 'disconnect' on a destroyed QComboBox object" case
+        success = False
       if not success:
         print("Could not disconnect {signal} to {slot} for {widget}".format(
           signal = signal, slot = slot, widget = widget))
