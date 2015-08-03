@@ -320,7 +320,7 @@ void vtkSlicerVolumeRenderingLogic
 void vtkSlicerVolumeRenderingLogic
 ::UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  std::cout << "vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage()" << std::endl;
+  vtkDebugMacro("vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage()");
   if (vspNode == 0 || vspNode->GetVolumeNode() == 0 || vspNode->GetVolumePropertyNode() == 0)
   {
     return;
@@ -344,16 +344,12 @@ void vtkSlicerVolumeRenderingLogic
   double rangeNew[2];
   scalars->GetRange(rangeNew);
   functionColor->AdjustRange(rangeNew);
-  std::cout << "Color range: "
-            << functionColor->GetRange()[0] << " " << functionColor->GetRange()[1]
-            << std::endl;
+  vtkDebugMacro("Color range: "<< functionColor->GetRange()[0] << " " << functionColor->GetRange()[1]);
 
   vtkPiecewiseFunction *functionOpacity = prop->GetScalarOpacity();
   functionOpacity->AdjustRange(rangeNew);
 
-  std::cout << "Opacity range: "
-            << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]
-            << std::endl;
+  vtkDebugMacro("Opacity range: " << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]);
 
   rangeNew[1] = (rangeNew[1] - rangeNew[0])*0.25;
   rangeNew[0] = 0;
@@ -361,9 +357,7 @@ void vtkSlicerVolumeRenderingLogic
   functionOpacity = prop->GetGradientOpacity();
   functionOpacity->RemovePoint(255);//Remove the standard value
   functionOpacity->AdjustRange(rangeNew);
-  std::cout << "Gradient Opacity range: "
-            << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]
-            << std::endl;
+  vtkDebugMacro("Gradient Opacity range: " << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]);
 }
 
 //----------------------------------------------------------------------------
@@ -378,7 +372,7 @@ void vtkSlicerVolumeRenderingLogic
   // Sanity check
   threshold[0] = std::max(std::min(threshold[0], scalarRange[1]), scalarRange[0]);
   threshold[1] = std::min(std::max(threshold[1], scalarRange[0]), scalarRange[1]);
-  std::cout << "Threshold: " << threshold[0] << " " << threshold[1] << std::endl;
+  vtkDebugMacro("Threshold: " << threshold[0] << " " << threshold[1]);
 
   double previous = VTK_DOUBLE_MIN;
 
