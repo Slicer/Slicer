@@ -763,7 +763,7 @@
         ", green = " << node1->IsDisplayableInView(green) <<            \
         ", yellow = " << node1->IsDisplayableInView(yellow) <<          \
         ", 3D = " << node1->IsDisplayableInView(threeD) <<              \
-        std::cout;                                                      \
+        std::endl;                                                      \
       return EXIT_FAILURE;                                              \
       }                                                                 \
     node1->AddViewNodeID(green);                                        \
@@ -777,7 +777,7 @@
         ", green = " << node1->IsDisplayableInView(green) <<            \
         ", yellow = " << node1->IsDisplayableInView(yellow) <<          \
         ", 3D = " << node1->IsDisplayableInView(threeD) <<              \
-        std::cout;                                                      \
+        std::endl;                                                      \
       return EXIT_FAILURE;                                              \
       }                                                                 \
     node1->SetDisplayableOnlyInView(red);                               \
@@ -791,7 +791,7 @@
         ", green = " << node1->IsDisplayableInView(green) <<            \
         ", yellow = " << node1->IsDisplayableInView(yellow) <<          \
         ", 3D = " << node1->IsDisplayableInView(threeD) <<              \
-        std::cout;                                                      \
+        std::endl;                                                      \
       return EXIT_FAILURE;                                              \
       }                                                                 \
   }

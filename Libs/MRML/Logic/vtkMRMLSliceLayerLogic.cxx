@@ -50,6 +50,9 @@
 //
 #include "vtkImageLabelOutline.h"
 
+// STD includes
+#include <algorithm>
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
