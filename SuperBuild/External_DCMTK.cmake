@@ -63,10 +63,11 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
   )
   set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(DCM_DICT_PATH ${CMAKE_BINARY_DIR}/${proj}/dcmdata/data/private.dic)
+  set(DCM_PRIVATE_DICT_PATH ${CMAKE_BINARY_DIR}/${proj}/dcmdata/data/private.dic)
+  set(DCM_STANDARD_DICT_PATH ${CMAKE_BINARY_DIR}/${proj}/dcmdata/data/dicom.dic)
 
   mark_as_superbuild(
-    VARS DCM_DICT_PATH:PATH
+    VARS DCM_STANDARD_DICT_PATH:PATH DCM_PRIVATE_DICT_PATH:PATH
     )
 
   #-----------------------------------------------------------------------------
@@ -84,7 +85,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
 
   # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_BUILD "DCMDICTHOME=${DCM_DICT_PATH}")
+  set(${proj}_ENVVARS_LAUNCHER_BUILD
+    "DCMDICTHOME=${DCM_STANDARD_DICT_PATH}<PATHSEP>${DCM_PRIVATE_DICT_PATH}")
   mark_as_superbuild(
     VARS ${proj}_ENVVARS_LAUNCHER_BUILD
     LABELS "ENVVARS_LAUNCHER_BUILD"
@@ -94,7 +96,9 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # Launcher setting specific to install tree
 
   # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "DCMDICTHOME=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/private.dic")
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED
+    "DCMDICTHOME=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/dicom.dic<PATHSEP>\
+<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/private.dic")
   mark_as_superbuild(
     VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
     LABELS "ENVVARS_LAUNCHER_INSTALLED"

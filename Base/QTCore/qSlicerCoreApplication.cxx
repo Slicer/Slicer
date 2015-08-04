@@ -218,7 +218,8 @@ void qSlicerCoreApplicationPrivate::init()
 #if defined(Slicer_BUILD_DICOM_SUPPORT) && defined(Q_OS_MAC)
   if (q->isInstalled())
     {
-    this->setEnvironmentVariable("DCMDICTPATH", this->SlicerHome + "/" Slicer_SHARE_DIR "/private.dic");
+    this->setEnvironmentVariable("DCMDICTPATH", this->SlicerHome + "/" Slicer_SHARE_DIR "/dicom.dic:" +
+       this->SlicerHome + "/" Slicer_SHARE_DIR "/private.dic");
     }
 #endif
 
