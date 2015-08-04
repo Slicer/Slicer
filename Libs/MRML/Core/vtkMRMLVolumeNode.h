@@ -173,7 +173,6 @@ public:
                                    unsigned long /*event*/,
                                    void * /*callData*/ );
 
-  /// DisplayModifiedEvent is generated when display node parameters is changed
   /// ImageDataModifiedEvent is generated when image data is changed
   enum
     {
