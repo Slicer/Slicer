@@ -537,7 +537,8 @@ void vtkMRMLVolumeRenderingDisplayableManager
     {
     vtkNew<vtkIntArray> events;
     events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    events->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent);
+    events->InsertNextValue(vtkCommand::ModifiedEvent);
     vtkObserveMRMLNodeEventsMacro(volumeNode, events.GetPointer());
     }
   this->SetupMapperFromVolumeNode(volumeNode, this->GetVolumeMapper(vspNode), 0);
@@ -910,6 +911,16 @@ void vtkMRMLVolumeRenderingDisplayableManager
 
       this->UpdateClipping(this->GetVolumeMapper(vspNode), vspNode);
       this->RequestRender();
+      }
+    else if(vtkMRMLVolumeNode::SafeDownCast(caller))
+      {
+        node = reinterpret_cast<vtkMRMLNode *>(caller);
+        vtkMRMLVolumeRenderingDisplayNode* vspNode =
+          this->VolumeRenderingLogic->GetVolumeRenderingDisplayNodeForViewNode(
+          vtkMRMLVolumeNode::SafeDownCast(node),
+          this->GetMRMLViewNode());
+        this->SetupMapperFromParametersNode(vspNode);
+        this->RequestRender();
       }
     }
   else if (event == vtkCommand::StartEvent ||
