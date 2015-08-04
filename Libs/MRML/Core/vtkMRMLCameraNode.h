@@ -123,6 +123,7 @@ public:
   /// Set camera Up vector
   /// \sa GetViewUp(), SetPosition(), SetFocalPoint()
   void SetViewUp(double viewUp[3]);
+  inline void SetViewUp(double vx, double vy, double vz);
 
   ///
   /// Get camera Up vector
@@ -243,6 +244,13 @@ void vtkMRMLCameraNode::SetFocalPoint(double x, double y, double z)
 {
   double pos[3] = {x, y, z};
   this->SetFocalPoint(pos);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetViewUp(double vx, double vy, double vz)
+{
+  double viewUp[3] = {vx, vy, vz};
+  this->SetViewUp(viewUp);
 }
 
 #endif
