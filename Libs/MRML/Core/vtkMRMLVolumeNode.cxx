@@ -771,7 +771,7 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
     vtkNew<vtkTrivialProducer> tp;
     tp->SetOutput(imageData);
     // Propagate ModifiedEvent onto the trivial producer to make sure
-    // PolyDataModifiedEvent is triggered.
+    // ImageDataModifiedEvent is triggered.
     if (!this->DataEventForwarder)
       {
       this->DataEventForwarder = vtkEventForwarderCommand::New();
