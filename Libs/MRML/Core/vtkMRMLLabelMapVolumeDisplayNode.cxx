@@ -96,9 +96,14 @@ vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
 vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataConnection()
 #endif
 {
-  assert(!this->MapToColors->GetLookupTable() ||
-         !this->MapToColors->GetLookupTable()->IsA("vtkLookupTable") ||
-         vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues());
+  if (this->MapToColors->GetLookupTable() && this->MapToColors->GetLookupTable()->IsA("vtkLookupTable"))
+    {
+    if (vtkLookupTable::SafeDownCast(this->MapToColors->GetLookupTable())->GetNumberOfTableValues() == 0)
+      {
+      vtkErrorMacro("GetOutputImageData: Lookup table exists but empty!");
+      return NULL;
+      }
+    }
 #if (VTK_MAJOR_VERSION <= 5)
   return this->MapToColors->GetOutput();
 #else
@@ -153,6 +158,11 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
     this->MapToColors->SetLookupTable(lookupTable);
     }
   // if there is no point, the mapping will fail (not sure)
-  assert(!lookupTable || !vtkLookupTable::SafeDownCast(lookupTable) ||
-         vtkLookupTable::SafeDownCast(lookupTable)->GetNumberOfTableValues());
+  if (lookupTable && lookupTable->IsA("vtkLookupTable"))
+    {
+    if (vtkLookupTable::SafeDownCast(lookupTable)->GetNumberOfTableValues() == 0)
+      {
+      vtkErrorMacro("GetOutputImageData: Lookup table exists but empty!");
+      }
+    }
 }
