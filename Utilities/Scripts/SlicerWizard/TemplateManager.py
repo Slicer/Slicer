@@ -82,7 +82,7 @@ class TemplateManager(object):
 
     # Read file contents
     p = os.path.join(template, inFile)
-    with open(p) as fp:
+    with open(p, "rb") as fp:
       contents = fp.read()
 
     # Replace template key with copy name
@@ -111,7 +111,7 @@ class TemplateManager(object):
         pass
 
     # Write adjusted contents
-    with open(outFile, "w") as fp:
+    with open(outFile, "wb") as fp:
       fp.write(contents)
 
   #---------------------------------------------------------------------------
