@@ -919,8 +919,13 @@ void vtkMRMLVolumeRenderingDisplayableManager
           this->VolumeRenderingLogic->GetVolumeRenderingDisplayNodeForViewNode(
           vtkMRMLVolumeNode::SafeDownCast(node),
           this->GetMRMLViewNode());
-        this->SetupMapperFromParametersNode(vspNode);
-        this->RequestRender();
+        // We are notified about the change of all volume nodes that have a VR display node, but
+        // we should only request render if the currently displayed volume node is changed
+        if (vspNode && vspNode->GetVisibility())
+          {
+          this->SetupMapperFromParametersNode(vspNode);
+          this->RequestRender();
+          }
       }
     }
   else if (event == vtkCommand::StartEvent ||
