@@ -34,6 +34,10 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkVersion.h>
 
+// added for taking VTK and VTP as input and output
+#include <vtkPolyDataReader.h>
+#include <vtksys/SystemTools.hxx>
+
 // STD includes
 #include <iostream>
 #include <algorithm>
@@ -96,10 +100,26 @@ int main( int argc, char * argv[] )
 #endif
   imageCastLabel_A->Update();
 
-  // Read in fiber bundle input to be selected.
-  vtkNew<vtkXMLPolyDataReader> readerPD;
-  readerPD->SetFileName(InputFibers.c_str());
-  readerPD->Update();
+  // Read in fiber bundle input to be selected from VTK or VTP
+  std::string extension1 = vtksys::SystemTools::GetFilenameLastExtension(InputFibers.c_str());
+  std::string extension = vtksys::SystemTools::LowerCase(extension1);
+
+  vtkSmartPointer<vtkPolyData> input;
+  if (extension == std::string(".vtk"))
+    {
+    vtkPolyData* output = 0;
+    vtkNew<vtkPolyDataReader> readerPD;
+    readerPD->SetFileName(InputFibers.c_str());
+    readerPD->Update();
+    input = vtkPolyData::SafeDownCast(readerPD->GetOutput());
+    }
+  else if (extension == std::string(".vtp"))
+    {
+      vtkNew<vtkXMLPolyDataReader> readerPD;
+      readerPD->SetFileName(InputFibers.c_str());
+      readerPD->Update();
+      input = vtkPolyData::SafeDownCast(readerPD->GetOutput());
+    }
 
 
   //1. Set up matrices to put fibers into ijk space of volume
@@ -133,8 +153,6 @@ int main( int argc, char * argv[] )
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
 #endif
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(readerPD->GetOutput());
-
   vtkPoints *inPts =input->GetPoints();
   vtkIdType numPts = inPts->GetNumberOfPoints();
   vtkCellArray *inLines = input->GetLines();
@@ -153,11 +171,6 @@ int main( int argc, char * argv[] )
   double p[3];
 
   unsigned int label;
-  std::vector<bool> passAll;
-  for (label=0; label<PassLabel.size(); label++)
-    {
-    passAll.push_back(false);
-    }
 
   int *labelDims = imageCastLabel_A->GetOutput()->GetDimensions();
   // Check lines
@@ -171,6 +184,13 @@ int main( int argc, char * argv[] )
       std::cerr << "Less than two points in line " << inCellId << std::endl;
       continue; //skip this polyline
       }
+
+    std::vector<bool> passAll;
+    for (label=0; label<PassLabel.size(); label++)
+      {
+      passAll.push_back(false);
+      }
+
     double pIJK[3];
     int pt[3];
     short *inPtr;
@@ -187,7 +207,6 @@ int main( int argc, char * argv[] )
       if (pt[0] < 0 || pt[1] < 0 || pt[2] < 0 ||
           pt[0] >= labelDims[0] || pt[1] >= labelDims[1] || pt[2] >= labelDims[2])
         {
-        std::cerr << "point #" << j <<" on the line #" << inCellId << " is outside the label\n";
         continue;
         }
 
@@ -315,15 +334,35 @@ int main( int argc, char * argv[] )
       }
     }
 
-  //3. Save the output
-  vtkNew<vtkXMLPolyDataWriter> writer;
-  writer->SetFileName(OutputFibers.c_str());
-#if (VTK_MAJOR_VERSION <= 5)
-  writer->SetInput(outFibers.GetPointer());
-#else
-  writer->SetInputData(outFibers.GetPointer());
-#endif
-  writer->Write();
+  //3. Save the output in VTK or VTP
+  std::string extension2 = vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str());
+  std::string extension_output = vtksys::SystemTools::LowerCase(extension2);
+  // The above two lines duplicate the below function, but we can't include vtkMRMLStorageNode.h here.
+  //std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(InputFibers.c_str());
+  if (extension_output == std::string(".vtk"))
+    {
+      vtkNew<vtkPolyDataWriter> writer;
+      writer->SetFileName(OutputFibers.c_str());
+      #if (VTK_MAJOR_VERSION <= 5)
+           writer->SetInput(outFibers.GetPointer());
+      #else
+           writer->SetInputData(outFibers.GetPointer());
+      #endif
+           writer->SetFileTypeToBinary();
+           writer->Write();
+    }
+  else if (extension_output == std::string(".vtp"))
+    {
+           vtkNew<vtkXMLPolyDataWriter> writer;
+           writer->SetFileName(OutputFibers.c_str());
+      #if (VTK_MAJOR_VERSION <= 5)
+           writer->SetInput(outFibers.GetPointer());
+      #else
+           writer->SetInputData(outFibers.GetPointer());
+      #endif
+           writer->SetDataModeToBinary();
+           writer->Write();
+    }
   }
   catch ( ... )
       {
