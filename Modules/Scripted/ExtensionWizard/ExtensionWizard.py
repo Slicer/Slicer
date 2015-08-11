@@ -214,9 +214,10 @@ class ExtensionWizardWidget:
         
         if repo is None:
           destination = os.path.join(dlg.destination, dlg.componentName)
-          if os.path.exists(dlg.destination):
+          if os.path.exists(destination):
             raise IOError("create extension: refusing to overwrite"
-                          " existing directory '%s'" % dlg.destination)
+                          " existing directory '%s'" % destination)
+          createInSubdirectory = False
 
         else:
           destination = SlicerWizard.Utilities.localRoot(repo)
