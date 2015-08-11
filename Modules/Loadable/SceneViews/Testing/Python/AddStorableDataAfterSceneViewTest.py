@@ -213,4 +213,28 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( restoredData == None )
     self.delayDisplay('Success: extra storable node removed with scene view restore')
 
+
+    #
+    # add new storable again
+    mrHeadVolume = sampleDataLogic.downloadMRHead()
+    mrHeadID = mrHeadVolume.GetID()
+
+    #
+    # restore the scene view, but error on removing nodes
+    #
+    self.delayDisplay("Restoring the scene view with check for removed nodes")
+    sv.RestoreScene(0)
+
+    #
+    # Is the new storable data still present?
+    #
+    restoredData = slicer.mrmlScene.GetNodeByID(mrHeadID)
+
+    # in this case the non scene view storable data is kept' scene is not changed
+    self.assertTrue( restoredData != None )
+    self.delayDisplay('Success: extra storable node NOT removed with scene view restore')
+
+    print 'Scene error code = ' + str(slicer.mrmlScene.GetErrorCode())
+    print '\t' + slicer.mrmlScene.GetErrorMessage()
+
     self.delayDisplay('Test passed!')

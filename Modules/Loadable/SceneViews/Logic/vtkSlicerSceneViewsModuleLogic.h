@@ -74,8 +74,10 @@ public:
   /// Return the screenshot of an existing sceneView.
   vtkImageData* GetSceneViewScreenshot(const char* id);
 
-  /// Restore an sceneView.
-  void RestoreSceneView(const char* id);
+  /// Restore a sceneView.
+  /// If removeNodes flag is false, don't restore the scene if it will remove data.
+  /// removeNodes defaults to true for backward compatibility.
+  void RestoreSceneView(const char* id, bool removeNodes = true);
 
   /// Move sceneView up
   const char* MoveSceneViewUp(const char* id);
