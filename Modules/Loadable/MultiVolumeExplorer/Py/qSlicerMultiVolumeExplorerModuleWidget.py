@@ -10,7 +10,7 @@ from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerMod
 class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
 
   def __init__(self, parent=None):
-    ScriptedLoadableModuleWidget.__init__(parent)
+    ScriptedLoadableModuleWidget.__init__(self, parent)
 
     self.__bgMultiVolumeNode = None
     self.extractFrame = False
