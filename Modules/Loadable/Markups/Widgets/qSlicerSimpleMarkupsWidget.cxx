@@ -62,6 +62,8 @@ public:
 public:
   QColor DefaultNodeColor;
 
+  bool EnterPlaceModeOnNodeChange;
+
   vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
   vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
@@ -69,7 +71,9 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qSlicerSimpleMarkupsWidgetPrivate::qSlicerSimpleMarkupsWidgetPrivate( qSlicerSimpleMarkupsWidget& object) : q_ptr(&object)
+qSlicerSimpleMarkupsWidgetPrivate::qSlicerSimpleMarkupsWidgetPrivate( qSlicerSimpleMarkupsWidget& object)
+  : q_ptr(&object)
+  , EnterPlaceModeOnNodeChange(true)
 {
 }
 
@@ -216,6 +220,22 @@ void qSlicerSimpleMarkupsWidget::setDefaultNodeColor(QColor color)
   Q_D(qSlicerSimpleMarkupsWidget);
 
   d->DefaultNodeColor = color;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSimpleMarkupsWidget::enterPlaceModeOnNodeChange() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+
+  return d->EnterPlaceModeOnNodeChange;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setEnterPlaceModeOnNodeChange(bool enterPlaceMode)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+
+  d->EnterPlaceModeOnNodeChange = enterPlaceMode;
 }
 
 //-----------------------------------------------------------------------------
@@ -448,10 +468,12 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeChanged()
     if ( currentMarkupsNode != NULL )
       {
       d->MarkupsLogic->SetActiveListID( currentMarkupsNode ); // If there are other widgets, they are responsible for updating themselves
-      interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::Place );
-      // interactionNode->SetPlaceModePersistence( true ); // Use whatever persistence the user has already set
+      if( d->EnterPlaceModeOnNodeChange )
+        {
+        interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::Place );
+        }
       }
-    else
+    else if( d->EnterPlaceModeOnNodeChange )
       {
       interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
       }

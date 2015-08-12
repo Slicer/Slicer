@@ -38,6 +38,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
 qSlicerSimpleMarkupsWidget : public qSlicerWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool enterPlaceModeOnNodeChange READ enterPlaceModeOnNodeChange WRITE setEnterPlaceModeOnNodeChange)
 
 public:
   typedef qSlicerWidget Superclass;
@@ -49,6 +50,10 @@ public:
 
   /// Deprecated. Use currentNode() instead.
   Q_INVOKABLE vtkMRMLNode* getCurrentNode();
+
+  /// Accessors to control place mode behavior
+  void setEnterPlaceModeOnNodeChange(bool);
+  bool enterPlaceModeOnNodeChange() const;
   
 public slots:
   /// Set the currently selected markups node.
