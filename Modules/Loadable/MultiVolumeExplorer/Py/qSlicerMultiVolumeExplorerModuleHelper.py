@@ -1,5 +1,5 @@
-
 from __main__ import slicer
+
 
 class qSlicerMultiVolumeExplorerModuleHelper( object ):
 
