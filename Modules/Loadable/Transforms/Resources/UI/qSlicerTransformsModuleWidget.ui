@@ -221,6 +221,12 @@
             <normaloff>:/Icons/TranslateFirst.png</normaloff>
             <normalon>:/Icons/RotateFirst.png</normalon>:/Icons/TranslateFirst.png</iconset>
           </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>16</height>
+           </size>
+          </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
