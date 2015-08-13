@@ -2,6 +2,7 @@ import os, string
 import unittest
 from __main__ import qt, ctk, slicer
 import logging
+import importlib
 
 __all__ = ['ScriptedLoadableModule', 'ScriptedLoadableModuleWidget', 'ScriptedLoadableModuleLogic', 'ScriptedLoadableModuleTest']
 
@@ -41,9 +42,17 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     slicer.selfTests[self.moduleName] = self.runTest
 
   def runTest(self):
-    # Name of the tester class is expected to be MyModuleNameTest()
-    tester = eval(self.moduleName + 'Test()')
-    tester.runTest()
+    # Name of the test case class is expected to be <ModuleName>Test
+    module = importlib.import_module(self.__module__)
+    className = self.moduleName + 'Test'
+    try:
+      TestCaseClass = getattr(module, className)
+    except AttributeError:
+      # Treat missing test case class as a failure; provide useful error message
+      raise AssertionError('Test case class not found: %s.%s ' % (self.__module__, className))
+
+    testCase = TestCaseClass()
+    testCase.runTest()
 
 class ScriptedLoadableModuleWidget:
   def __init__(self, parent = None):
@@ -106,14 +115,13 @@ class ScriptedLoadableModuleWidget:
     ModuleWizard will substitute correct default moduleName.
     Generic reload method for any scripted module.
     """
-    globals()[self.moduleName] = slicer.util.reloadScriptedModule(self.moduleName)
+    slicer.util.reloadScriptedModule(self.moduleName)
 
   def onReloadAndTest(self):
     try:
       self.onReload()
-      evalString = 'globals()["%s"].%sTest()' % (self.moduleName, self.moduleName)
-      tester = eval(evalString)
-      tester.runTest()
+      test = slicer.selfTests[self.moduleName]
+      test()
     except Exception, e:
       import traceback
       traceback.print_exc()
