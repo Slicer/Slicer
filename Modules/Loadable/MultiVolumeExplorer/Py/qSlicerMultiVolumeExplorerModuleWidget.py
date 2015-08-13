@@ -1,4 +1,3 @@
-from __future__ import print_function
 import string, math
 from __main__ import vtk, ctk, slicer
 from qt import QVBoxLayout, QGridLayout, QFormLayout, QButtonGroup
@@ -74,13 +73,13 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     ctrlFrameLayout.addWidget(self.__metaDataSlider, 0, 1)
     ctrlFrameLayout.addWidget(self.playButton, 0, 2)
 
-    self.__vfSelector = slicer.qMRMLNodeComboBox()
-    self.__vfSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
-    self.__vfSelector.setMRMLScene(slicer.mrmlScene)
-    self.__vfSelector.addEnabled = 1
-    self.__vfSelector.enabled = 0
+    self.__frameCopySelector = slicer.qMRMLNodeComboBox()
+    self.__frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self.__frameCopySelector.setMRMLScene(slicer.mrmlScene)
+    self.__frameCopySelector.addEnabled = 1
+    self.__frameCopySelector.enabled = 0
     # do not show "children" of vtkMRMLScalarVolumeNode
-    self.__vfSelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode",
+    self.__frameCopySelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode",
                                             "vtkMRMLDiffusionTensorVolumeNode",
                                             "vtkMRMLVectorVolumeNode"]
     self.extractFrame = False
@@ -88,7 +87,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.extractButton.checkable = True
     self.extractButton.connect('toggled(bool)', self.onExtractFrameToggled)
     ctrlFrameLayout.addWidget(QLabel('Current frame copy'), 1, 0)
-    ctrlFrameLayout.addWidget(self.__vfSelector, 1, 1, 1, 2)
+    ctrlFrameLayout.addWidget(self.__frameCopySelector, 1, 1, 1, 2)
     ctrlFrameLayout.addWidget(self.extractButton, 2, 0, 1, 3)
 
   def setupPlotSettingsFrame(self):
@@ -127,6 +126,9 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.iChartingIntensityFixedAxes = QRadioButton('Fixed range intensity')
     self.iChartingPercent = QRadioButton('Percent change')
     self.iChartingIntensity.setChecked(1)
+    self.iChartingMode.addButton(self.iChartingIntensity)
+    self.iChartingMode.addButton(self.iChartingIntensityFixedAxes)
+    self.iChartingMode.addButton(self.iChartingPercent)
     self.groupWidget = QWidget()
     self.groupLayout = QFormLayout(self.groupWidget)
     self.groupLayout.addRow(QLabel('Interactive plotting mode:'))
@@ -134,9 +136,9 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.groupLayout.addRow(self.iChartingIntensityFixedAxes)
     self.groupLayout.addRow(self.iChartingPercent)
 
-    self.baselineFrames = QSpinBox()
-    self.baselineFrames.minimum = 1
-    self.groupLayout.addRow(QLabel('Number of frames for baseline calculation'), self.baselineFrames)
+    self.nFramesBaselineCalculation = QSpinBox()
+    self.nFramesBaselineCalculation.minimum = 1
+    self.groupLayout.addRow(QLabel('Number of frames for baseline calculation'), self.nFramesBaselineCalculation)
     self.xLogScaleCheckBox = QCheckBox()
     self.xLogScaleCheckBox.setChecked(0)
     self.groupLayout.addRow(self.xLogScaleCheckBox, QLabel('Use log scale for X axis'))
@@ -153,33 +155,39 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.layout.addWidget(self.plotFrame)
 
     # add chart container widget
-    self.__chartView = ctk.ctkVTKChartView(w)
-    plotFrameLayout.addWidget(self.__chartView, 3, 0, 1, 3)
-    self.__chartTable = vtk.vtkTable()
-    self.__xArray = vtk.vtkFloatArray()
-    self.__yArray = vtk.vtkFloatArray()
-    # will crash if there is no name
-    self.__xArray.SetName('')
-    self.__yArray.SetName('signal intensity')
-    self.__chartTable.AddColumn(self.__xArray)
-    self.__chartTable.AddColumn(self.__yArray)
+    self.__multiVolumeIntensityChart = MultiVolumeIntensityChartView(parent=w)
+    plotFrameLayout.addWidget(self.__multiVolumeIntensityChart.chartView, 3, 0, 1, 3)
 
   def setupConnections(self):
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
     self.__metaDataSlider.connect('valueChanged(double)', self.onSliderChanged)
-    self.__vfSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
-    self.__bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
+    self.__frameCopySelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
+    self.__bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onBackgroundInputChanged)
+    self.__fgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onForegroundInputChanged)
     self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
     self.chartButton.connect('clicked()', self.onChartRequested)
     self.xLogScaleCheckBox.connect('stateChanged(int)', self.onXLogScaleRequested)
     self.yLogScaleCheckBox.connect('stateChanged(int)', self.onYLogScaleRequested)
+    self.nFramesBaselineCalculation.valueChanged.connect(self.onFrameCountBaselineCalculationChanged)
+    self.iChartingMode.buttonClicked.connect(self.onChartingModeChanged)
     self.timer.connect('timeout()', self.goToNext)
 
+  def onFrameCountBaselineCalculationChanged(self, value):
+    self.__multiVolumeIntensityChart.nFramesForBaselineCalculation = value
+
+  def onChartingModeChanged(self, button):
+    if button is self.iChartingIntensity:
+      self.__multiVolumeIntensityChart.activateSignalIntensityMode()
+    elif button is self.iChartingIntensityFixedAxes:
+      self.__multiVolumeIntensityChart.activateFixedRangeIntensityMode()
+    elif button is self.iChartingPercent:
+      self.__multiVolumeIntensityChart.activatePercentageChangeMode()
+
   def onXLogScaleRequested(self, checked):
-    self.__chartView.chart().GetAxis(1).SetLogScale(checked)
+    self.__multiVolumeIntensityChart.showXLogScale = checked
 
   def onYLogScaleRequested(self, checked):
-    self.__chartView.chart().GetAxis(0).SetLogScale(checked)
+    self.__multiVolumeIntensityChart.showYLogScale = checked
 
   def onSliderChanged(self, newValue):
 
@@ -190,21 +198,21 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.setCurrentFrameNumber(newValue)
 
     if self.extractFrame:
-      frameVolume = self.__vfSelector.currentNode()
+      frameVolume = self.__frameCopySelector.currentNode()
 
       if frameVolume is None:
         mvNodeFrameCopy = slicer.vtkMRMLScalarVolumeNode()
         mvNodeFrameCopy.SetName(self.__bgMultiVolumeNode.GetName()+' frame')
         mvNodeFrameCopy.SetScene(slicer.mrmlScene)
         slicer.mrmlScene.AddNode(mvNodeFrameCopy)
-        self.__vfSelector.setCurrentNode(mvNodeFrameCopy)
-        frameVolume = self.__vfSelector.currentNode()
+        self.__frameCopySelector.setCurrentNode(mvNodeFrameCopy)
+        frameVolume = self.__frameCopySelector.currentNode()
 
       mvImage = self.__bgMultiVolumeNode.GetImageData()
       frameId = newValue
 
       extract = vtk.vtkImageExtractComponents()
-      self.setExtractInput(extract, mvImage)
+      MultiVolumeIntensityChartView.setExtractInput(extract, mvImage)
       extract.SetComponents(frameId)
       extract.Update()
 
@@ -238,74 +246,47 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
 
   def onVCMRMLSceneChanged(self, mrmlScene):
     self.__bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
-    self.onInputChanged()
+    self.onBackgroundInputChanged()
 
   def onLVMRMLSceneChanged(self, mrmlScene):
     self.__fSelector.setMRMLScene(slicer.mrmlScene)
 
   def onVFMRMLSceneChanged(self, mrmlScene):
-    self.__vfSelector.setMRMLScene(slicer.mrmlScene)
+    self.__frameCopySelector.setMRMLScene(slicer.mrmlScene)
 
-  def onInputChanged(self):
+  def onBackgroundInputChanged(self):
     self.__bgMultiVolumeNode = self.__bgMultiVolumeSelector.currentNode()
 
+    self.__multiVolumeIntensityChart.reset()
+
     if self.__bgMultiVolumeNode is not None:
+      self.setFramesEnabled(True)
 
       Helper.SetBgFgVolumes(self.__bgMultiVolumeNode.GetID(), None)
 
       self.refreshFrameSlider()
-      nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
+      self.__frameCopySelector.setCurrentNode(None)
 
-      self.setFramesEnabled(True)
-
-      self.__vfSelector.setCurrentNode(None)
-
-      self.__xArray.SetNumberOfTuples(nFrames)
-      self.__xArray.SetNumberOfComponents(1)
-      self.__xArray.Allocate(nFrames)
-      self.__xArray.SetName('frame')
-
-      self.__yArray.SetNumberOfTuples(nFrames)
-      self.__yArray.SetNumberOfComponents(1)
-      self.__yArray.Allocate(nFrames)
-      self.__yArray.SetName('signal intensity')
-
-      self.__chartTable = vtk.vtkTable()
-      self.__chartTable.AddColumn(self.__xArray)
-      self.__chartTable.AddColumn(self.__yArray)
-      self.__chartTable.SetNumberOfRows(nFrames)
-
-      # get the range of intensities for the
-      mvi = self.__bgMultiVolumeNode.GetImageData()
-      self.__mvRange = [0,0]
-      for f in range(nFrames):
-        extract = vtk.vtkImageExtractComponents()
-        self.setExtractInput(extract, mvi)
-        extract.SetComponents(f)
-        extract.Update()
-
-        frame = extract.GetOutput()
-        frameRange = frame.GetScalarRange()
-        self.__mvRange[0] = min(self.__mvRange[0], frameRange[0])
-        self.__mvRange[1] = max(self.__mvRange[1], frameRange[1])
+      self.__multiVolumeIntensityChart.bgMultiVolumeNode = self.__bgMultiVolumeNode
+      self.nFramesBaselineCalculation.maximum = self.__bgMultiVolumeNode.GetNumberOfFrames()
 
       self.__mvLabels = string.split(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameLabels'),',')
+      nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
       if len(self.__mvLabels) != nFrames:
         return
       for l in range(nFrames):
         self.__mvLabels[l] = float(self.__mvLabels[l])
-
-      self.baselineFrames.maximum = nFrames
-
     else:
       self.setFramesEnabled(False)
-      self.__mvLabels = []
+
+  def onForegroundInputChanged(self):
+    self.__multiVolumeIntensityChart.fgMultiVolumeNode = self.__fgMultiVolumeSelector.currentNode()
 
   def refreshFrameSlider(self):
     nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
     self.__metaDataSlider.minimum = 0
     self.__metaDataSlider.maximum = nFrames - 1
-    self.__chartTable.SetNumberOfRows(nFrames)
+    self.__multiVolumeIntensityChart.chartTable.SetNumberOfRows(nFrames)
 
   def setFramesEnabled(self, enabled):
     self.ctrlFrame.enabled = enabled
@@ -384,151 +365,9 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
       return
 
     sliceWidget = self.sliceWidgetsPerStyle[observee]
-    sliceLogic = sliceWidget.sliceLogic()
-
-    bgLayer = sliceLogic.GetBackgroundLayer()
-    bgVolumeNode = bgLayer.GetVolumeNode()
-
-    if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID():
-      return
-    if bgVolumeNode != self.__bgMultiVolumeNode:
-      return
-
     interactor = observee.GetInteractor()
-    xy = interactor.GetEventPosition()
-    xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy)
-    xyToIJK = bgLayer.GetXYToIJKTransform()
-    ijkFloat = xyToIJK.TransformDoublePoint(xyz)
-    ijk = []
-    for element in ijkFloat:
-      try:
-        index = int(round(element))
-      except ValueError:
-        index = 0
-      ijk.append(index)
-
-    bgImage = self.__bgMultiVolumeNode.GetImageData()
-    extent = bgImage.GetExtent()
-    if not (extent[0] <= ijk[0] <= extent[1] and
-                  extent[2] <= ijk[1] <= extent[3] and
-                  extent[4] <= ijk[2] <= extent[5]):
-      # pixel outside the valid extent
-      return
-
-    nComponents = self.__bgMultiVolumeNode.GetNumberOfFrames()
-
-    useFg = False
-    fgVolumeNode = self.__fgMultiVolumeSelector.currentNode()
-    if fgVolumeNode:
-      fgijkFloat = xyToIJK.TransformDoublePoint(xyz)
-      fgijk = []
-      for element in fgijkFloat:
-        try:
-          index = int(round(element))
-        except ValueError:
-          index = 0
-        fgijk.append(index)
-        fgImage = fgVolumeNode.GetImageData()
-
-      fgChartTable = vtk.vtkTable()
-      if fgijk[0] == ijk[0] and fgijk[1] == ijk[1] and fgijk[2] == ijk[2] and \
-          fgImage.GetNumberOfScalarComponents() == bgImage.GetNumberOfScalarComponents():
-        useFg = True
-
-        fgxArray = vtk.vtkFloatArray()
-        fgxArray.SetNumberOfTuples(nComponents)
-        fgxArray.SetNumberOfComponents(1)
-        fgxArray.Allocate(nComponents)
-        fgxArray.SetName('frame')
-
-        fgyArray = vtk.vtkFloatArray()
-        fgyArray.SetNumberOfTuples(nComponents)
-        fgyArray.SetNumberOfComponents(1)
-        fgyArray.Allocate(nComponents)
-        fgyArray.SetName('signal intensity')
-
-        # will crash if there is no name
-        fgChartTable.AddColumn(fgxArray)
-        fgChartTable.AddColumn(fgyArray)
-        fgChartTable.SetNumberOfRows(nComponents)
-
-    # get the vector of values at IJK
-
-    for c in range(nComponents):
-      val = bgImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-      if math.isnan(val):
-        val = 0
-      self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
-      self.__chartTable.SetValue(c, 1, val)
-      if useFg:
-        fgValue = fgImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-        if math.isnan(fgValue):
-          fgValue = 0
-        fgChartTable.SetValue(c,0,self.__mvLabels[c])
-        fgChartTable.SetValue(c,1,fgValue)
-
-    baselineAverageSignal = 0
-    if self.iChartingPercent.checked:
-      # check if percent plotting was requested and recalculate
-      nBaselines = min(self.baselineFrames.value,nComponents)
-      for c in range(nBaselines):
-        val = bgImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-        if math.isnan(val):
-          val = 0
-        baselineAverageSignal += val
-      baselineAverageSignal /= nBaselines
-      if baselineAverageSignal != 0:
-        for c in range(nComponents):
-          val = bgImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-          if math.isnan(val):
-            val = 0
-          self.__chartTable.SetValue(c,1,(val/baselineAverageSignal-1)*100.)
-
-    chart = self.__chartView.chart()
-    chart.RemovePlot(0)
-    chart.RemovePlot(0)
-
-    yTitle = 'change relative to baseline, %' if self.iChartingPercent.checked and baselineAverageSignal != 0 else \
-            'signal intensity'
-    chart.GetAxis(0).SetTitle(yTitle)
-
-    tag = str(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
-    units = str(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
-    xTitle = tag + ', ' + units
-    chart.GetAxis(1).SetTitle(xTitle)
-    if self.iChartingIntensityFixedAxes.checked:
-      chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
-      chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
-    else:
-      chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
-    if useFg:
-      plot = chart.AddPlot(vtk.vtkChart.POINTS)
-      self.setPlotInputTable(plot, self.__chartTable)
-      fgPlot = chart.AddPlot(vtk.vtkChart.LINE)
-      self.setPlotInputTable(fgPlot, fgChartTable)
-    else:
-      plot = chart.AddPlot(vtk.vtkChart.LINE)
-      self.setPlotInputTable(plot, self.__chartTable)
-
-    if self.xLogScaleCheckBox.checkState() == 2:
-      xTitle = chart.GetAxis(1).GetTitle()
-      chart.GetAxis(1).SetTitle('log of ' + xTitle)
-
-    if self.yLogScaleCheckBox.checkState() == 2:
-      chart.GetAxis(0).SetTitle('log of ' + chart.GetAxis(0).GetTitle())
-    # seems to update only after another plot?..
-
-  def setExtractInput(self, extract, mvImage):
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      extract.SetInput(mvImage)
-    else:
-      extract.SetInputData(mvImage)
-
-  def setPlotInputTable(self, plot, table):
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      plot.SetInput(table, 0, 1)
-    else:
-      plot.SetInputData(table, 0, 1)
+    position = interactor.GetEventPosition()
+    self.__multiVolumeIntensityChart.createChart(sliceWidget, position)
 
   def onChartRequested(self):
     labelNode = self.__fSelector.currentNode()
@@ -537,7 +376,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     chartViewNode = LabelledImageChart(labelNode=labelNode,
                                         multiVolumeNode=mvNode,
                                         multiVolumeLabels=self.__mvLabels,
-                                        baselineFrames=self.baselineFrames,
+                                        baselineFrames=self.nFramesBaselineCalculation,
                                         displayPercentualChange=self.iChartingPercent.checked)
     chartViewNode.requestChartCreation()
 
@@ -643,3 +482,312 @@ class LabelledImageChart(object):
       chartNode.SetProperty('default','yAxisLabel','mean signal intensity')
 
     chartViewNode.SetChartNodeID(chartNode.GetID())
+
+
+class MultiVolumeIntensityChartView(object):
+
+  SIGNAL_INTENSITY_MODE = 0
+  FIXED_RANGE_INTENSITY_MODE = 1
+  PERCENTAGE_CHANGE_MODE = 2
+  MODES = [SIGNAL_INTENSITY_MODE, FIXED_RANGE_INTENSITY_MODE, PERCENTAGE_CHANGE_MODE]
+
+  @staticmethod
+  def getIJKIntFromIJKFloat(ijkFloat):
+    ijk = []
+    for element in ijkFloat:
+      try:
+        index = int(round(element))
+      except ValueError:
+        index = 0
+      ijk.append(index)
+    return ijk
+
+  @staticmethod
+  def setExtractInput(extract, mvImage):
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      extract.SetInput(mvImage)
+    else:
+      extract.SetInputData(mvImage)
+
+  @property
+  def chartView(self):
+    return self.__chartView
+
+  @property
+  def chartTable(self):
+    return self.__chartTable
+
+  @property
+  def xArray(self):
+    return self.__xArray
+
+  @property
+  def yArray(self):
+    return self.__yArray
+
+  @property
+  def showXLogScale(self):
+    return self.__xLogScaleEnabled
+
+  @showXLogScale.setter
+  def showXLogScale(self, value):
+    assert type(value) is bool, "Only boolean values are allowed for this class member"
+    self.__xLogScaleEnabled = value
+    self.__chartView.chart().GetAxis(1).SetLogScale(value)
+
+  @property
+  def showYLogScale(self):
+    return self.__yLogScaleEnabled
+
+  @showYLogScale.setter
+  def showYLogScale(self, value):
+    assert type(value) is bool, "Only boolean values are allowed for this class member"
+    self.__yLogScaleEnabled = value
+    self.__chartView.chart().GetAxis(0).SetLogScale(value)
+
+  @property
+  def fgMultiVolumeNode(self):
+    return self.__fgMultiVolumeNode
+
+  @fgMultiVolumeNode.setter
+  def fgMultiVolumeNode(self, fgMultiVolumeNode):
+    self.__fgMultiVolumeNode = fgMultiVolumeNode
+
+  @property
+  def bgMultiVolumeNode(self):
+    return self.__bgMultiVolumeNode
+
+  @bgMultiVolumeNode.setter
+  def bgMultiVolumeNode(self, bgMultiVolumeNode):
+    self.__bgMultiVolumeNode = bgMultiVolumeNode
+
+    nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
+
+    self.refreshArray(self.__xArray, nFrames, 'frame')
+    self.refreshArray(self.__yArray, nFrames, 'signal intensity')
+
+    self.__chartTable = vtk.vtkTable()
+    self.__chartTable.AddColumn(self.__xArray)
+    self.__chartTable.AddColumn(self.__yArray)
+    self.__chartTable.SetNumberOfRows(nFrames)
+
+    # get the range of intensities for the
+    mvi = self.__bgMultiVolumeNode.GetImageData()
+    self.__mvRange = [0,0]
+    for f in range(nFrames):
+      extract = vtk.vtkImageExtractComponents()
+      self.setExtractInput(extract, mvi)
+      extract.SetComponents(f)
+      extract.Update()
+
+      frame = extract.GetOutput()
+      frameRange = frame.GetScalarRange()
+      self.__mvRange[0] = min(self.__mvRange[0], frameRange[0])
+      self.__mvRange[1] = max(self.__mvRange[1], frameRange[1])
+
+    self.__mvLabels = string.split(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameLabels'),',')
+    if len(self.__mvLabels) != nFrames:
+      return
+    for l in range(nFrames):
+      self.__mvLabels[l] = float(self.__mvLabels[l])
+
+  @property
+  def nFramesForBaselineCalculation(self):
+    return self.__nFramesForBaselineCalculation
+
+  @nFramesForBaselineCalculation.setter
+  def nFramesForBaselineCalculation(self, value):
+    self._nFramesForBaselineCalculation = value
+    if self.__chartMode == self.PERCENTAGE_CHANGE_MODE:
+      self.createChart()
+
+  @staticmethod
+  def refreshArray(array, nFrames, name):
+    array.SetNumberOfTuples(nFrames)
+    array.SetNumberOfComponents(1)
+    array.Allocate(nFrames)
+    array.SetName(name)
+
+  def __init__(self, parent, bgMultiVolumeNode=None, fgMultiVolumeNode=None, nFramesForBaselineCalculation=1):
+    self.__chartView = ctk.ctkVTKChartView(parent)
+    self.__chartTable = vtk.vtkTable()
+    self.__xArray = vtk.vtkFloatArray()
+    self.__yArray = vtk.vtkFloatArray()
+    # will crash if there is no name
+    self.__xArray.SetName('')
+    self.__yArray.SetName('signal intensity')
+    self.__chartTable.AddColumn(self.__xArray)
+    self.__chartTable.AddColumn(self.__yArray)
+
+    self.__bgMultiVolumeNode = bgMultiVolumeNode
+    self.__fgMultiVolumeNode = fgMultiVolumeNode
+
+    self.__mvLabels = []
+
+    self.__xLogScaleEnabled = False
+    self.__yLogScaleEnabled = False
+
+    self.__mvRange = [0,0]
+    self.__nFramesForBaselineCalculation = nFramesForBaselineCalculation
+
+    self.__currentSliceWidget = None
+    self.__lastPosition = None
+
+    self.__chartMode = None
+    self.activateSignalIntensityMode()
+
+  def reset(self):
+    self.__mvLabels = []
+
+  def setMultiVolumeRange(self, minVal, maxVal):
+    assert maxVal > minVal and type(minVal) is int and type(maxVal) is int
+    self.__mvRange = [minVal, maxVal]
+
+  def activateSignalIntensityMode(self):
+    if self.__chartMode != self.SIGNAL_INTENSITY_MODE:
+      self.__chartView.chart().GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
+      self.__chartMode = self.SIGNAL_INTENSITY_MODE
+      self.createChart()
+
+  def activateFixedRangeIntensityMode(self):
+    if self.__chartMode != self.FIXED_RANGE_INTENSITY_MODE:
+      self.__chartMode = self.FIXED_RANGE_INTENSITY_MODE
+      self.__chartView.chart().GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
+      self.__chartView.chart().GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+      self.createChart()
+
+  def activatePercentageChangeMode(self):
+    if self.__chartMode != self.PERCENTAGE_CHANGE_MODE:
+      self.__chartView.chart().GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
+      self.__chartMode = self.PERCENTAGE_CHANGE_MODE
+      self.createChart()
+
+  def adaptValuesRelativeToBaseline(self, ijk):
+    # TODO: add also for fg if available
+    baselineAverageSignal = 0
+    bgImage = self.__bgMultiVolumeNode.GetImageData()
+    nComponents = self.__bgMultiVolumeNode.GetNumberOfFrames()
+    nBaselines = min(self.__nFramesForBaselineCalculation, nComponents)
+    for c in range(nBaselines):
+      val = bgImage.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
+      baselineAverageSignal += 0 if math.isnan(val) else val
+    baselineAverageSignal /= nBaselines
+    if baselineAverageSignal != 0:
+      for c in range(nComponents):
+        val = bgImage.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
+        if math.isnan(val):
+          val = 0
+        self.__chartTable.SetValue(c, 1, (val / baselineAverageSignal - 1) * 100.)
+    return baselineAverageSignal
+
+  def createChart(self, sliceWidget=None, xy=None):
+    if sliceWidget and xy:
+      self.__currentSliceWidget = sliceWidget
+      self.__lastPosition = xy
+    else:
+      if not self.__currentSliceWidget and not self.__lastPosition:
+        return
+      sliceWidget = self.__currentSliceWidget
+      xy = self.__lastPosition
+
+    sliceLogic = sliceWidget.sliceLogic()
+
+    bgLayer = sliceLogic.GetBackgroundLayer()
+    bgVolumeNode = bgLayer.GetVolumeNode()
+
+    if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID():
+      return
+    if bgVolumeNode != self.__bgMultiVolumeNode:
+      return
+
+    xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy)
+    xyToIJK = bgLayer.GetXYToIJKTransform()
+    ijkFloat = xyToIJK.TransformDoublePoint(xyz)
+    bgijk = self.getIJKIntFromIJKFloat(ijkFloat)
+
+    bgImage = self.__bgMultiVolumeNode.GetImageData()
+    extent = bgImage.GetExtent()
+    if not (extent[0] <= bgijk[0] <= extent[1] and extent[2] <= bgijk[1] <= extent[3] and extent[4] <= bgijk[2] <= extent[5]):
+      # pixel outside the valid extent
+      return
+
+    nComponents = self.__bgMultiVolumeNode.GetNumberOfFrames()
+
+    useFg = False
+    fgImage = None
+    if self.__fgMultiVolumeNode:
+      fgijkFloat = xyToIJK.TransformDoublePoint(xyz)
+      fgijk = self.getIJKIntFromIJKFloat(fgijkFloat)
+
+      fgImage = self.__fgMultiVolumeNode.GetImageData()
+      fgChartTable = vtk.vtkTable()
+      if fgijk[0] == bgijk[0] and fgijk[1] == bgijk[1] and fgijk[2] == bgijk[2] and \
+          fgImage.GetNumberOfScalarComponents() == bgImage.GetNumberOfScalarComponents():
+        useFg = True
+
+        fgxArray = vtk.vtkFloatArray()
+        self.refreshArray(fgxArray, nComponents, 'frame')
+
+        fgyArray = vtk.vtkFloatArray()
+        self.refreshArray(fgyArray, nComponents, 'signal intensity')
+
+        # will crash if there is no name
+        fgChartTable.AddColumn(fgxArray)
+        fgChartTable.AddColumn(fgyArray)
+        fgChartTable.SetNumberOfRows(nComponents)
+
+    # get the vector of values at IJK
+    for c in range(nComponents):
+      val = bgImage.GetScalarComponentAsDouble(bgijk[0],bgijk[1],bgijk[2],c)
+      if math.isnan(val):
+        val = 0
+      self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
+      self.__chartTable.SetValue(c, 1, val)
+      if useFg:
+        fgValue = fgImage.GetScalarComponentAsDouble(bgijk[0],bgijk[1],bgijk[2],c)
+        if math.isnan(fgValue):
+          fgValue = 0
+        fgChartTable.SetValue(c,0,self.__mvLabels[c])
+        fgChartTable.SetValue(c,1,fgValue)
+
+    baselineAverageSignal = 0
+    if self.__chartMode == self.PERCENTAGE_CHANGE_MODE:
+      baselineAverageSignal = self.adaptValuesRelativeToBaseline(bgijk)
+
+    chart = self.__chartView.chart()
+    chart.RemovePlot(0)
+    chart.RemovePlot(0)
+
+    if self.__chartMode == self.PERCENTAGE_CHANGE_MODE and baselineAverageSignal != 0:
+      yTitle = 'change relative to baseline, %'
+    else:
+      yTitle = 'signal intensity'
+    chart.GetAxis(0).SetTitle(yTitle)
+
+    tag = str(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
+    units = str(self.__bgMultiVolumeNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
+    xTitle = tag + ', ' + units
+    chart.GetAxis(1).SetTitle(xTitle)
+
+    if useFg:
+      plot = chart.AddPlot(vtk.vtkChart.POINTS)
+      self.setPlotInputTable(plot, self.__chartTable)
+      fgPlot = chart.AddPlot(vtk.vtkChart.LINE)
+      self.setPlotInputTable(fgPlot, fgChartTable)
+    else:
+      plot = chart.AddPlot(vtk.vtkChart.LINE)
+      self.setPlotInputTable(plot, self.__chartTable)
+
+    if self.showXLogScale:
+      xTitle = chart.GetAxis(1).GetTitle()
+      chart.GetAxis(1).SetTitle('log of ' + xTitle)
+
+    if self.showYLogScale:
+      chart.GetAxis(0).SetTitle('log of ' + chart.GetAxis(0).GetTitle())
+    # seems to update only after another plot?..
+
+  def setPlotInputTable(self, plot, table):
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      plot.SetInput(table, 0, 1)
+    else:
+      plot.SetInputData(table, 0, 1)
