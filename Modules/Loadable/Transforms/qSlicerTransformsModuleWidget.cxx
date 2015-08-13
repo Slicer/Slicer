@@ -121,11 +121,13 @@ void qSlicerTransformsModuleWidget::setup()
   d->CopyAction->setIcon(QIcon(":Icons/Medium/SlicerEditCopy.png"));
   d->CopyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   d->CopyAction->setShortcuts(QKeySequence::Copy);
+  d->CopyAction->setToolTip(tr("Copy"));
   this->addAction(d->CopyAction);
   d->PasteAction = new QAction(this);
   d->PasteAction->setIcon(QIcon(":Icons/Medium/SlicerEditPaste.png"));
   d->PasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   d->PasteAction->setShortcuts(QKeySequence::Paste);
+  d->PasteAction->setToolTip(tr("Paste"));
   this->addAction(d->PasteAction);
 
   // Connect button group
@@ -426,7 +428,7 @@ void qSlicerTransformsModuleWidget::pasteTransform()
   vtkNew<vtkMatrix4x4> tempMatrix;
 
   QString text = QApplication::clipboard()->text();
-  QRegExp rx("(\\ |\\,|\\:|\\t|\\n)");
+  QRegExp rx("(\\ |\\,|\\:|\\t|\\n|\\[|\\])");
   QStringList entries = text.split(rx, QString::SkipEmptyParts);
 
   if (entries.count() != 4
