@@ -221,6 +221,7 @@ class MultiVolumeIntensityChartView(object):
 
     useFg = False
     fgImage = None
+    fgijk = None
     if self.__fgMultiVolumeNode:
       fgijkFloat = xyToIJK.TransformDoublePoint(xyz)
       fgijk = self.getIJKIntFromIJKFloat(fgijkFloat)
@@ -258,7 +259,9 @@ class MultiVolumeIntensityChartView(object):
 
     self.baselineAverageSignal = 0
     if self.__chartMode == self.PERCENTAGE_CHANGE_MODE:
-      self.computePercentageChangeWithRespectToBaseline(bgijk)
+      self.computePercentageChangeWithRespectToBaseline(self.__bgMultiVolumeNode, self.__chartTable, bgijk)
+      if useFg:
+        self.computePercentageChangeWithRespectToBaseline(self.__fgMultiVolumeNode, fgChartTable, fgijk)
 
     self.clearPlots()
     self.setAxesTitle()
@@ -273,21 +276,21 @@ class MultiVolumeIntensityChartView(object):
       plot = chart.AddPlot(vtk.vtkChart.LINE)
       self.setPlotInputTable(plot, self.__chartTable)
 
-  def computePercentageChangeWithRespectToBaseline(self, ijk):
-    # TODO: add also for fg if available
-    bgImage = self.__bgMultiVolumeNode.GetImageData()
-    nComponents = self.__bgMultiVolumeNode.GetNumberOfFrames()
+  def computePercentageChangeWithRespectToBaseline(self, multiVolumeNode, chartTable, ijk):
+    self.baselineAverageSignal = 0
+    image = multiVolumeNode.GetImageData()
+    nComponents = multiVolumeNode.GetNumberOfFrames()
     nBaselines = min(self.__nFramesForBaselineCalculation, nComponents)
     for c in range(nBaselines):
-      val = bgImage.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
+      val = image.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
       self.baselineAverageSignal += 0 if math.isnan(val) else val
     self.baselineAverageSignal /= nBaselines
     if self.baselineAverageSignal != 0:
       for c in range(nComponents):
-        val = bgImage.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
+        val = image.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], c)
         if math.isnan(val):
           val = 0
-        self.__chartTable.SetValue(c, 1, (val / self.baselineAverageSignal - 1) * 100.)
+        chartTable.SetValue(c, 1, (val / self.baselineAverageSignal - 1) * 100.)
 
   def setPlotInputTable(self, plot, table):
     if vtk.VTK_MAJOR_VERSION <= 5:
