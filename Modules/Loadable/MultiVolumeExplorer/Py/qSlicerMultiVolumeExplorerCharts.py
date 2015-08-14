@@ -1,4 +1,4 @@
-import math, string
+import math, string, logging
 from __main__ import vtk, ctk, slicer
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 
@@ -47,6 +47,18 @@ class MultiVolumeIntensityChartView(object):
     return self.__chartTable
 
   @property
+  def chart(self):
+    return self.__chartView.chart()
+
+  @property
+  def xAxis(self):
+      return self.chart.GetAxis(1)
+
+  @property
+  def yAxis(self):
+      return self.chart.GetAxis(0)
+
+  @property
   def showXLogScale(self):
     return self.__xLogScaleEnabled
 
@@ -54,7 +66,7 @@ class MultiVolumeIntensityChartView(object):
   def showXLogScale(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__xLogScaleEnabled = value
-    self.__chartView.chart().GetAxis(1).SetLogScale(value)
+    self.xAxis.SetLogScale(value)
 
   @property
   def showYLogScale(self):
@@ -64,7 +76,17 @@ class MultiVolumeIntensityChartView(object):
   def showYLogScale(self, value):
     assert type(value) is bool, "Only boolean values are allowed for this class member"
     self.__yLogScaleEnabled = value
-    self.__chartView.chart().GetAxis(0).SetLogScale(value)
+    self.yAxis.SetLogScale(value)
+
+  @property
+  def showLegend(self):
+    return self.__showLegend
+
+  @showLegend.setter
+  def showLegend(self, value):
+    assert type(value) is bool, "Only boolean values are allowed for this class member"
+    self.__showLegend = value
+    self.chart.SetShowLegend(value)
 
   @property
   def fgMultiVolumeNode(self):
@@ -80,14 +102,15 @@ class MultiVolumeIntensityChartView(object):
 
   @bgMultiVolumeNode.setter
   def bgMultiVolumeNode(self, bgMultiVolumeNode):
+    logging.info('MultiVolumeIntensityChartView: bgMultiVolumeNode changed')
     self.__bgMultiVolumeNode = bgMultiVolumeNode
 
     nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
 
-    self.refreshArray(self.__xArray, nFrames, 'frame')
-    self.refreshArray(self.__yArray, nFrames, 'signal intensity')
+    self.refreshArray(self.__bgxArray, nFrames, '')
+    self.refreshArray(self.__bgyArray, nFrames, '1st multivolume')
 
-    self.__chartTable = self.createNewVTKTable(self.__xArray, self.__yArray)
+    self.__chartTable = self.createNewVTKTable(self.__bgxArray, self.__bgyArray)
     self.__chartTable.SetNumberOfRows(nFrames)
 
     # get the range of intensities for the
@@ -113,8 +136,6 @@ class MultiVolumeIntensityChartView(object):
   @nFramesForBaselineCalculation.setter
   def nFramesForBaselineCalculation(self, value):
     self.__nFramesForBaselineCalculation = value
-    if self.__chartMode == self.PERCENTAGE_CHANGE_MODE:
-      self.createChart()
 
   @staticmethod
   def refreshArray(array, nFrames, name):
@@ -123,13 +144,14 @@ class MultiVolumeIntensityChartView(object):
     array.Allocate(nFrames)
     array.SetName(name)
 
-  def __init__(self, parent):
-    self.__chartView = ctk.ctkVTKChartView(parent)
+  def __init__(self):
+    self.__chartView = ctk.ctkVTKChartView()
 
-    self.__xArray = vtk.vtkFloatArray()
-    self.__yArray = vtk.vtkFloatArray()
-
-    self.__chartTable = self.createNewVTKTable(self.__xArray, self.__yArray)
+    self.__bgxArray = vtk.vtkFloatArray()
+    self.__bgyArray = vtk.vtkFloatArray()
+    self.__bgxArray.SetName('')
+    self.__bgyArray.SetName('1st multivolume')
+    self.__chartTable = self.createNewVTKTable(self.__bgxArray, self.__bgyArray)
 
     self.__bgMultiVolumeNode = None
     self.__fgMultiVolumeNode = None
@@ -142,22 +164,20 @@ class MultiVolumeIntensityChartView(object):
     self.__mvRange = [0,0]
     self.__nFramesForBaselineCalculation = 1
 
-    self.__currentSliceWidget = None
-    self.__lastPosition = None
-
     self.__chartMode = None
     self.activateSignalIntensityMode()
 
     self.baselineAverageSignal = 0
+
+    self.__showLegend = False
 
   def reset(self):
     self.__mvLabels = []
     self.clearPlots()
 
   def clearPlots(self):
-    chart = self.__chartView.chart()
-    chart.RemovePlot(0)
-    chart.RemovePlot(0)
+    self.chart.RemovePlot(0)
+    self.chart.RemovePlot(0)
 
   def createNewVTKTable(self, xArray, yArray):
     chartTable = vtk.vtkTable()
@@ -171,32 +191,25 @@ class MultiVolumeIntensityChartView(object):
 
   def activateSignalIntensityMode(self):
     if self.__chartMode != self.SIGNAL_INTENSITY_MODE:
-      self.__chartView.chart().GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
+      self.yAxis.SetBehavior(vtk.vtkAxis.AUTO)
       self.__chartMode = self.SIGNAL_INTENSITY_MODE
-      self.createChart()
 
   def activateFixedRangeIntensityMode(self):
+    logging.debug("Fixed range for yAxis: min(%d), max(%d)" % (self.__mvRange[0], self.__mvRange[1]))
     if self.__chartMode != self.FIXED_RANGE_INTENSITY_MODE:
       self.__chartMode = self.FIXED_RANGE_INTENSITY_MODE
-      self.__chartView.chart().GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
-      self.__chartView.chart().GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
-      self.createChart()
+      self.clearPlots()
+      self.yAxis.SetBehavior(vtk.vtkAxis.FIXED)
+      self.yAxis.SetRange(self.__mvRange[0],self.__mvRange[1])
 
   def activatePercentageChangeMode(self):
     if self.__chartMode != self.PERCENTAGE_CHANGE_MODE:
-      self.__chartView.chart().GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
+      self.yAxis.SetBehavior(vtk.vtkAxis.AUTO)
       self.__chartMode = self.PERCENTAGE_CHANGE_MODE
-      self.createChart()
 
-  def createChart(self, sliceWidget=None, xy=None):
-    if sliceWidget and xy:
-      self.__currentSliceWidget = sliceWidget
-      self.__lastPosition = xy
-    else:
-      if not self.__currentSliceWidget and not self.__lastPosition:
-        return
-      sliceWidget = self.__currentSliceWidget
-      xy = self.__lastPosition
+  def createChart(self, sliceWidget, xy):
+    if not sliceWidget and not xy:
+      return
 
     sliceLogic = sliceWidget.sliceLogic()
 
@@ -233,10 +246,10 @@ class MultiVolumeIntensityChartView(object):
         useFg = True
 
         fgxArray = vtk.vtkFloatArray()
-        self.refreshArray(fgxArray, nComponents, 'frame')
+        self.refreshArray(fgxArray, nComponents, '')
 
         fgyArray = vtk.vtkFloatArray()
-        self.refreshArray(fgyArray, nComponents, 'signal intensity')
+        self.refreshArray(fgyArray, nComponents, '2nd multivolume')
 
         # will crash if there is no name
         fgChartTable.AddColumn(fgxArray)
@@ -266,15 +279,14 @@ class MultiVolumeIntensityChartView(object):
     self.clearPlots()
     self.setAxesTitle()
 
-    chart = self.__chartView.chart()
+    bgPlot = self.chart.AddPlot(vtk.vtkChart.POINTS if useFg else vtk.vtkChart.LINE)
+    # bgPlot.SetLabel("Primary multivolume ")
+    self.setPlotInputTable(bgPlot, self.__chartTable)
+
     if useFg:
-      plot = chart.AddPlot(vtk.vtkChart.POINTS)
-      self.setPlotInputTable(plot, self.__chartTable)
-      fgPlot = chart.AddPlot(vtk.vtkChart.LINE)
+      fgPlot = self.chart.AddPlot(vtk.vtkChart.LINE)
+      # bgPlot.SetLabel("Primary multivolume ")
       self.setPlotInputTable(fgPlot, fgChartTable)
-    else:
-      plot = chart.AddPlot(vtk.vtkChart.LINE)
-      self.setPlotInputTable(plot, self.__chartTable)
 
   def computePercentageChangeWithRespectToBaseline(self, multiVolumeNode, chartTable, ijk):
     self.baselineAverageSignal = 0
@@ -326,12 +338,10 @@ class MultiVolumeIntensityChartView(object):
     self.setXAxisTitle(xTitle)
 
   def setYAxisTitle(self, title):
-    chart = self.__chartView.chart()
-    chart.GetAxis(0).SetTitle(title)
+    self.yAxis.SetTitle(title)
 
   def setXAxisTitle(self, title):
-    chart = self.__chartView.chart()
-    chart.GetAxis(1).SetTitle(title)
+    self.xAxis.SetTitle(title)
 
 
 class LabeledImageChartView(object):

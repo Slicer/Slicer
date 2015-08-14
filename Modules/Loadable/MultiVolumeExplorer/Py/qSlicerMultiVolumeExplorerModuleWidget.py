@@ -1,6 +1,6 @@
 from __main__ import vtk, ctk, slicer
-from qt import QVBoxLayout, QGridLayout, QFormLayout, QButtonGroup
-from qt import QWidget, QLabel, QPushButton, QCheckBox, QRadioButton, QSpinBox, QTimer
+from qt import QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout
+from qt import QWidget, QLabel, QPushButton, QCheckBox, QRadioButton, QSpinBox, QTimer, QButtonGroup, QGroupBox
 from slicer.ScriptedLoadableModule import *
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 from qSlicerMultiVolumeExplorerCharts import LabeledImageChartView, MultiVolumeIntensityChartView
@@ -12,7 +12,6 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     ScriptedLoadableModuleWidget.__init__(self, parent)
 
     self.__bgMultiVolumeNode = None
-    self.extractFrame = False
 
     self.styleObserverTags = []
     self.sliceWidgetsPerStyle = {}
@@ -30,6 +29,8 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.setupFrameControlFrame()
     self.setupPlotSettingsFrame()
     self.setupPlottingFrame(w)
+
+    self.setFramesEnabled(False)
 
     self.timer = QTimer()
     self.timer.setInterval(50)
@@ -86,18 +87,16 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
                                             "vtkMRMLDiffusionTensorVolumeNode",
                                             "vtkMRMLVectorVolumeNode"]
     self.extractFrame = False
-    self.extractButton = QPushButton('Enable current frame copying')
-    self.extractButton.checkable = True
-    self.extractButton.connect('toggled(bool)', self.onExtractFrameToggled)
+    self.extractFrameCheckBox = QCheckBox('Enable copying')
     ctrlFrameLayout.addWidget(QLabel('Current frame copy'), 1, 0)
-    ctrlFrameLayout.addWidget(self.__frameCopySelector, 1, 1, 1, 2)
-    ctrlFrameLayout.addWidget(self.extractButton, 2, 0, 1, 3)
+    ctrlFrameLayout.addWidget(self.__frameCopySelector, 1, 1)
+    ctrlFrameLayout.addWidget(self.extractFrameCheckBox, 1, 2)
 
   def setupPlotSettingsFrame(self):
     self.plotSettingsFrame = ctk.ctkCollapsibleButton()
     self.plotSettingsFrame.text = "Plotting Settings"
     self.plotSettingsFrame.collapsed = 1
-    plotSettingsFrameLayout = QGridLayout(self.plotSettingsFrame)
+    plotSettingsFrameLayout = QFormLayout(self.plotSettingsFrame)
     self.layout.addWidget(self.plotSettingsFrame)
 
     # initialize slice observers (from DataProbe.py)
@@ -114,65 +113,84 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.__fSelector.setMRMLScene(slicer.mrmlScene)
     self.__fSelector.addEnabled = 0
     self.chartButton = QPushButton('Chart')
-    self.chartButton.checkable = False
-    plotSettingsFrameLayout.addWidget(QLabel('Probed label volume'), 0, 0)
-    plotSettingsFrameLayout.addWidget(self.__fSelector, 0, 1)
-    plotSettingsFrameLayout.addWidget(self.chartButton, 0, 2)
+    self.chartButton.setEnabled(False)
 
-    self.iCharting = QCheckBox()
-    self.iCharting.text = 'Interactive charting'
+    hbox = QHBoxLayout()
+    hbox.addWidget(QLabel('Probed label volume'))
+    hbox.addWidget(self.__fSelector)
+    hbox.addWidget(self.chartButton)
+    plotSettingsFrameLayout.addRow(hbox)
+
+    self.iCharting = QCheckBox('Interactive charting')
     self.iCharting.setChecked(True)
-    plotSettingsFrameLayout.addWidget(self.iCharting, 1, 0, 1, 3)
+    plotSettingsFrameLayout.addRow(self.iCharting)
 
     self.iChartingMode = QButtonGroup()
     self.iChartingIntensity = QRadioButton('Signal intensity')
     self.iChartingIntensityFixedAxes = QRadioButton('Fixed range intensity')
-    self.iChartingPercent = QRadioButton('Percent change')
+    self.iChartingPercent = QRadioButton('Percentage change')
     self.iChartingIntensity.setChecked(1)
     self.iChartingMode.addButton(self.iChartingIntensity)
     self.iChartingMode.addButton(self.iChartingIntensityFixedAxes)
     self.iChartingMode.addButton(self.iChartingPercent)
-    self.groupWidget = QWidget()
-    self.groupLayout = QFormLayout(self.groupWidget)
-    self.groupLayout.addRow(QLabel('Interactive plotting mode:'))
-    self.groupLayout.addRow(self.iChartingIntensity)
-    self.groupLayout.addRow(self.iChartingIntensityFixedAxes)
-    self.groupLayout.addRow(self.iChartingPercent)
+
+    hbox = QHBoxLayout()
+    self.plottingModeGroupBox = QGroupBox('Plotting mode:')
+    plottingModeLayout = QVBoxLayout()
+    self.plottingModeGroupBox.setLayout(plottingModeLayout)
+    plottingModeLayout.addWidget(self.iChartingIntensity)
+    plottingModeLayout.addWidget(self.iChartingIntensityFixedAxes)
+    plottingModeLayout.addWidget(self.iChartingPercent)
+    hbox.addWidget(self.plottingModeGroupBox)
+
+    self.showLegendCheckBox = QCheckBox('Display legend')
+    self.showLegendCheckBox.setChecked(0)
+    self.xLogScaleCheckBox = QCheckBox('Use log scale for X axis')
+    self.xLogScaleCheckBox.setChecked(0)
+    self.yLogScaleCheckBox = QCheckBox('Use log scale for Y axis')
+    self.yLogScaleCheckBox.setChecked(0)
+
+    self.plotGeneralSettingsGroupBox = QGroupBox('General Plot options:')
+    plotGeneralSettingsLayout = QVBoxLayout()
+    self.plotGeneralSettingsGroupBox.setLayout(plotGeneralSettingsLayout)
+    plotGeneralSettingsLayout.addWidget(self.showLegendCheckBox)
+    plotGeneralSettingsLayout.addWidget(self.xLogScaleCheckBox)
+    plotGeneralSettingsLayout.addWidget(self.yLogScaleCheckBox)
+    hbox.addWidget(self.plotGeneralSettingsGroupBox)
+    plotSettingsFrameLayout.addRow(hbox)
 
     self.nFramesBaselineCalculation = QSpinBox()
     self.nFramesBaselineCalculation.minimum = 1
-    self.groupLayout.addRow(QLabel('Number of frames for baseline calculation'), self.nFramesBaselineCalculation)
-    self.xLogScaleCheckBox = QCheckBox()
-    self.xLogScaleCheckBox.setChecked(0)
-    self.groupLayout.addRow(self.xLogScaleCheckBox, QLabel('Use log scale for X axis'))
-    self.yLogScaleCheckBox = QCheckBox()
-    self.yLogScaleCheckBox.setChecked(0)
-    self.groupLayout.addRow(self.yLogScaleCheckBox, QLabel('Use log scale for Y axis'))
-    plotSettingsFrameLayout.addWidget(self.groupWidget, 2, 0)
+    hbox = QHBoxLayout()
+    hbox.addWidget(QLabel('Frame count(baseline calculation):'))
+    hbox.addWidget(self.nFramesBaselineCalculation)
+    plotSettingsFrameLayout.addRow(hbox)
 
   def setupPlottingFrame(self, w):
-    self.plotFrame = ctk.ctkCollapsibleButton()
+    self.plotFrame = ctk.ctkCollapsibleButton(w)
     self.plotFrame.text = "Plotting"
     self.plotFrame.collapsed = 0
     plotFrameLayout = QGridLayout(self.plotFrame)
     self.layout.addWidget(self.plotFrame)
 
-    # add chart container widget
-    self.__multiVolumeIntensityChart = MultiVolumeIntensityChartView(parent=w)
-    plotFrameLayout.addWidget(self.__multiVolumeIntensityChart.chartView, 3, 0, 1, 3)
+    self.__multiVolumeIntensityChart = MultiVolumeIntensityChartView()
+    plotFrameLayout.addWidget(self.__multiVolumeIntensityChart.chartView, 0, 0)
 
   def setupConnections(self):
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
+    self.extractFrameCheckBox.connect('stateChanged(int)', self.onExtractFrameChanged)
     self.__metaDataSlider.connect('valueChanged(double)', self.onSliderChanged)
     self.__frameCopySelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
     self.__bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onBackgroundInputChanged)
     self.__fgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onForegroundInputChanged)
+    self.__fSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelNodeChanged)
     self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
     self.chartButton.connect('clicked()', self.onLabeledChartRequested)
     self.xLogScaleCheckBox.connect('stateChanged(int)', self.onXLogScaleRequested)
     self.yLogScaleCheckBox.connect('stateChanged(int)', self.onYLogScaleRequested)
     self.nFramesBaselineCalculation.valueChanged.connect(self.onFrameCountBaselineCalculationChanged)
     self.iChartingMode.buttonClicked.connect(self.onChartingModeChanged)
+    self.showLegendCheckBox.connect('stateChanged(int)', self.onShowLegendChanged)
     self.timer.connect('timeout()', self.goToNext)
 
   def onFrameCountBaselineCalculationChanged(self, value):
@@ -185,6 +203,9 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
       self.__multiVolumeIntensityChart.activateFixedRangeIntensityMode()
     elif button is self.iChartingPercent:
       self.__multiVolumeIntensityChart.activatePercentageChangeMode()
+
+  def onShowLegendChanged(self, checked):
+    self.__multiVolumeIntensityChart.showLegend = True if checked == 2 else False
 
   def onXLogScaleRequested(self, checked):
     self.__multiVolumeIntensityChart.showXLogScale = True if checked == 2 else False
@@ -253,6 +274,10 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
   def onVFMRMLSceneChanged(self, mrmlScene):
     self.__frameCopySelector.setMRMLScene(slicer.mrmlScene)
 
+  def onLabelNodeChanged(self):
+    labelNode = self.__fSelector.currentNode()
+    self.chartButton.setEnabled(labelNode is not None and self.__bgMultiVolumeNode is not None)
+
   def onBackgroundInputChanged(self):
     self.__bgMultiVolumeNode = self.__bgMultiVolumeSelector.currentNode()
 
@@ -270,6 +295,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
       self.nFramesBaselineCalculation.maximum = self.__bgMultiVolumeNode.GetNumberOfFrames()
     else:
       self.setFramesEnabled(False)
+    self.onLabelNodeChanged()
 
   def onForegroundInputChanged(self):
     self.__multiVolumeIntensityChart.fgMultiVolumeNode = self.__fgMultiVolumeSelector.currentNode()
@@ -288,13 +314,11 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
   If extract button is checked, will copy the current frame to the
   selected volume node on each event from frame slider
   '''
-  def onExtractFrameToggled(self, checked):
+  def onExtractFrameChanged(self, checked):
     if checked:
-      self.extractButton.text = 'Disable current frame copying'
       self.extractFrame = True
       self.onSliderChanged(self.__metaDataSlider.value)
     else:
-      self.extractButton.text = 'Enable current frame copying'
       self.extractFrame = False
 
   def onLabeledChartRequested(self):
@@ -339,10 +363,11 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.__multiVolumeIntensityChart.chartTable.SetNumberOfRows(nFrames)
 
   def setFramesEnabled(self, enabled):
-    self.ctrlFrame.enabled = enabled
-    self.plotFrame.enabled = enabled
-    self.ctrlFrame.collapsed = 1 if enabled else 0
-    self.plotFrame.collapsed = 1 if enabled else 0
+    self.ctrlFrame.setEnabled(enabled)
+    self.plotFrame.setEnabled(enabled)
+    self.plotSettingsFrame.setEnabled(enabled)
+    self.ctrlFrame.collapsed = 0 if enabled else 1
+    self.plotFrame.collapsed = 0 if enabled else 1
 
   def goToNext(self):
     currentElement = self.__metaDataSlider.value
