@@ -1199,6 +1199,9 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
     return false;
     }
 
+  // Update is needed because the Basis value and Inverse flag may be out-of-date if the transform depends on its inverse
+  transformVtk_RAS->Update();
+
   if (transformVtk_RAS->GetBasis()!=VTK_RBF_R)
     {
     vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK thin-plate spline transform from VTK: basis function must be R");
@@ -1236,8 +1239,6 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
       }
     }
 
-  // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-  transformVtk_RAS->Update();
   if (transformVtk_RAS->GetInverseFlag())
     {
     InverseThinPlateSplineTransformType::Pointer tpsTransformItk = InverseThinPlateSplineTransformType::New();
