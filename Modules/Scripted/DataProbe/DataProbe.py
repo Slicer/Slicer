@@ -1,3 +1,4 @@
+import os
 import unittest
 import qt, vtk, ctk
 from __main__ import slicer
