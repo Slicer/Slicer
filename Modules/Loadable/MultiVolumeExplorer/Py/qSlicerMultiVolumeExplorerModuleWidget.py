@@ -1,17 +1,20 @@
 from __main__ import vtk, ctk, slicer
-from qt import QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout
+import logging
+from qt import QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, QSizePolicy, QDialog
 from qt import QWidget, QLabel, QPushButton, QCheckBox, QRadioButton, QSpinBox, QTimer, QButtonGroup, QGroupBox
 from slicer.ScriptedLoadableModule import *
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 from qSlicerMultiVolumeExplorerCharts import LabeledImageChartView, MultiVolumeIntensityChartView
 
 
-class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
+class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWidget):
 
   def __init__(self, parent=None):
+    logging.info("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:init() called")
     ScriptedLoadableModuleWidget.__init__(self, parent)
 
-    self.__bgMultiVolumeNode = None
+    self._bgMultiVolumeNode = None
+    self._fgMultiVolumeNode = None
 
     self.styleObserverTags = []
     self.sliceWidgetsPerStyle = {}
@@ -27,8 +30,8 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
 
     self.setupInputFrame()
     self.setupFrameControlFrame()
-    self.setupPlotSettingsFrame()
-    self.setupPlottingFrame(w)
+    self.setupPlottingFrame()
+    self.setupAdditionalFrames()
 
     self.setFramesEnabled(False)
 
@@ -37,6 +40,161 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
 
     self.setupConnections()
 
+    # initialize slice observers (from DataProbe.py)
+    # keep list of pairs: [observee,tag] so they can be removed easily
+    self.styleObserverTags = []
+    # keep a map of interactor styles to sliceWidgets so we can easily get sliceLogic
+    self.sliceWidgetsPerStyle = {}
+    self.refreshObservers()
+
+  def setupInputFrame(self):
+    self._bgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
+    self._bgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self._bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
+    self._bgMultiVolumeSelector.addEnabled = 0
+    self.layout.addWidget(QLabel('Input multivolume'), 0, 0)
+    self.layout.addWidget(self._bgMultiVolumeSelector, 0, 1, 1, 2)
+
+  def setupFrameControlFrame(self):
+    # TODO: initialize the slider based on the contents of the labels array
+    # slider to scroll over metadata stored in the vector container being explored
+    self._metaDataSlider = ctk.ctkSliderWidget()
+    self.playButton = QPushButton('Play')
+    self.playButton.toolTip = 'Iterate over multivolume frames'
+    self.playButton.checkable = True
+    self.layout.addWidget(QLabel('Current frame number'), 1, 0)
+    self.layout.addWidget(self._metaDataSlider, 1, 1)
+    self.layout.addWidget(self.playButton, 1, 2)
+
+  def setupAdditionalFrames(self):
+    pass
+
+  def setupPlottingFrame(self):
+    self._multiVolumeIntensityChart = MultiVolumeIntensityChartView()
+    self.layout.addWidget(self._multiVolumeIntensityChart.chartView, 2, 0, 1, 3)
+
+  def setupConnections(self):
+    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
+    self._bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onBackgroundInputChanged)
+    self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+    self._metaDataSlider.connect('valueChanged(double)', self.onSliderChanged)
+    self.timer.connect('timeout()', self.goToNext)
+
+  def onSliderChanged(self, newValue):
+    if self._bgMultiVolumeNode is None:
+      return
+    newValue = int(newValue)
+    self.setCurrentFrameNumber(newValue)
+
+  def onVCMRMLSceneChanged(self, mrmlScene):
+    logging.info("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:onVCMRMLSceneChanged")
+    self._bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
+    self.onBackgroundInputChanged()
+
+  def refreshGUIForNewBackgroundImage(self):
+    self._multiVolumeIntensityChart.reset()
+    self.setFramesEnabled(True)
+    if self._fgMultiVolumeNode and self._bgMultiVolumeNode:
+      Helper.SetBgFgVolumes(self._bgMultiVolumeNode.GetID(), None)
+    else:
+      Helper.SetBgVolume(self._bgMultiVolumeNode.GetID())
+    self.refreshFrameSlider()
+    self._multiVolumeIntensityChart.bgMultiVolumeNode = self._bgMultiVolumeNode
+    self.refreshObservers()
+
+  def onBackgroundInputChanged(self):
+    self._bgMultiVolumeNode = self._bgMultiVolumeSelector.currentNode()
+
+    if self._bgMultiVolumeNode is not None:
+      self.refreshGUIForNewBackgroundImage()
+    else:
+      self.setFramesEnabled(False)
+
+  def onPlayButtonToggled(self, checked):
+    if self._bgMultiVolumeNode is None:
+      return
+    if checked:
+      self.timer.start()
+      self.playButton.text = 'Stop'
+    else:
+      self.timer.stop()
+      self.playButton.text = 'Play'
+
+  def processEvent(self, observee, event):
+    logging.debug("processing event %s" % event)
+    if self._bgMultiVolumeNode is None:
+      return
+
+    # TODO: use a timer to delay calculation and compress events
+    if event == 'LeaveEvent':
+      # reset all the readouts
+      # TODO: reset the label text
+      return
+
+    if not self.sliceWidgetsPerStyle.has_key(observee):
+      return
+
+    sliceWidget = self.sliceWidgetsPerStyle[observee]
+    interactor = observee.GetInteractor()
+    position = interactor.GetEventPosition()
+    self._multiVolumeIntensityChart.createChart(sliceWidget, position)
+
+  def setCurrentFrameNumber(self, frameNumber):
+    mvDisplayNode = self._bgMultiVolumeNode.GetDisplayNode()
+    mvDisplayNode.SetFrameComponent(frameNumber)
+
+  def setFramesEnabled(self, enabled):
+    pass
+
+  def refreshObservers(self):
+    """ When the layout changes, drop the observers from
+    all the old widgets and create new observers for the
+    newly created widgets"""
+    self.removeObservers()
+    # get new slice nodes
+    layoutManager = slicer.app.layoutManager()
+    sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
+    for nodeIndex in xrange(sliceNodeCount):
+      # find the widget for each node in scene
+      sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
+      sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
+      if sliceWidget:
+        # add observers and keep track of tags
+        style = sliceWidget.sliceView().interactorStyle()
+        self.sliceWidgetsPerStyle[style] = sliceWidget
+        events = ("MouseMoveEvent", "EnterEvent", "LeaveEvent")
+        for event in events:
+          tag = style.AddObserver(event, self.processEvent)
+          self.styleObserverTags.append([style,tag])
+
+  def removeObservers(self):
+    for observee,tag in self.styleObserverTags:
+      observee.RemoveObserver(tag)
+    self.styleObserverTags = []
+    self.sliceWidgetsPerStyle = {}
+
+  def refreshFrameSlider(self):
+    nFrames = self._bgMultiVolumeNode.GetNumberOfFrames()
+    self._metaDataSlider.minimum = 0
+    self._metaDataSlider.maximum = nFrames - 1
+    self._multiVolumeIntensityChart.chartTable.SetNumberOfRows(nFrames)
+
+  def goToNext(self):
+    currentElement = self._metaDataSlider.value
+    currentElement += 1
+    if currentElement > self._metaDataSlider.maximum:
+      currentElement = 0
+    self._metaDataSlider.value = currentElement
+
+
+class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifiedModuleWidget):
+
+  def __init__(self, parent=None):
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.__init__(self, parent)
+
+  def setupAdditionalFrames(self):
+    self.setupPlotSettingsFrame()
+
   def setupInputFrame(self):
     self.inputFrame = ctk.ctkCollapsibleButton()
     self.inputFrame.text = "Input"
@@ -44,21 +202,21 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     self.inputFrameLayout = QFormLayout(self.inputFrame)
     self.layout.addWidget(self.inputFrame)
 
-    self.__bgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
-    self.__bgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
-    self.__bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
-    self.__bgMultiVolumeSelector.addEnabled = 0
-    self.inputFrameLayout.addRow(QLabel('Input multivolume'), self.__bgMultiVolumeSelector)
+    self._bgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
+    self._bgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self._bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
+    self._bgMultiVolumeSelector.addEnabled = 0
+    self.inputFrameLayout.addRow(QLabel('Input multivolume'), self._bgMultiVolumeSelector)
 
-    self.__fgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
-    self.__fgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
-    self.__fgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
-    self.__fgMultiVolumeSelector.addEnabled = 0
-    self.__fgMultiVolumeSelector.noneEnabled = 1
-    self.__fgMultiVolumeSelector.toolTip = "Secondary multivolume will be used for the secondary \
+    self._fgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
+    self._fgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self._fgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
+    self._fgMultiVolumeSelector.addEnabled = 0
+    self._fgMultiVolumeSelector.noneEnabled = 1
+    self._fgMultiVolumeSelector.toolTip = "Secondary multivolume will be used for the secondary \
       plot in interactive charting. As an example, this can be used to overlay the \
       curve obtained by fitting a model to the data"
-    self.inputFrameLayout.addRow(QLabel('Input secondary multivolume'), self.__fgMultiVolumeSelector)
+    self.inputFrameLayout.addRow(QLabel('Input secondary multivolume'), self._fgMultiVolumeSelector)
 
   def setupFrameControlFrame(self):
     self.ctrlFrame = ctk.ctkCollapsibleButton()
@@ -69,27 +227,27 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
 
     # TODO: initialize the slider based on the contents of the labels array
     # slider to scroll over metadata stored in the vector container being explored
-    self.__metaDataSlider = ctk.ctkSliderWidget()
+    self._metaDataSlider = ctk.ctkSliderWidget()
     self.playButton = QPushButton('Play')
     self.playButton.toolTip = 'Iterate over multivolume frames'
     self.playButton.checkable = True
     ctrlFrameLayout.addWidget(QLabel('Current frame number'), 0, 0)
-    ctrlFrameLayout.addWidget(self.__metaDataSlider, 0, 1)
+    ctrlFrameLayout.addWidget(self._metaDataSlider, 0, 1)
     ctrlFrameLayout.addWidget(self.playButton, 0, 2)
 
-    self.__frameCopySelector = slicer.qMRMLNodeComboBox()
-    self.__frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
-    self.__frameCopySelector.setMRMLScene(slicer.mrmlScene)
-    self.__frameCopySelector.addEnabled = 1
-    self.__frameCopySelector.enabled = 0
+    self._frameCopySelector = slicer.qMRMLNodeComboBox()
+    self._frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self._frameCopySelector.setMRMLScene(slicer.mrmlScene)
+    self._frameCopySelector.addEnabled = 1
+    self._frameCopySelector.enabled = 0
     # do not show "children" of vtkMRMLScalarVolumeNode
-    self.__frameCopySelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode",
+    self._frameCopySelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode",
                                             "vtkMRMLDiffusionTensorVolumeNode",
                                             "vtkMRMLVectorVolumeNode"]
     self.extractFrame = False
     self.extractFrameCheckBox = QCheckBox('Enable copying')
     ctrlFrameLayout.addWidget(QLabel('Current frame copy'), 1, 0)
-    ctrlFrameLayout.addWidget(self.__frameCopySelector, 1, 1)
+    ctrlFrameLayout.addWidget(self._frameCopySelector, 1, 1)
     ctrlFrameLayout.addWidget(self.extractFrameCheckBox, 1, 2)
 
   def setupPlotSettingsFrame(self):
@@ -99,25 +257,18 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     plotSettingsFrameLayout = QFormLayout(self.plotSettingsFrame)
     self.layout.addWidget(self.plotSettingsFrame)
 
-    # initialize slice observers (from DataProbe.py)
-    # keep list of pairs: [observee,tag] so they can be removed easily
-    self.styleObserverTags = []
-    # keep a map of interactor styles to sliceWidgets so we can easily get sliceLogic
-    self.sliceWidgetsPerStyle = {}
-    self.refreshObservers()
-
     # label map for probing
-    self.__fSelector = slicer.qMRMLNodeComboBox()
-    self.__fSelector.nodeTypes = ['vtkMRMLLabelMapVolumeNode']
-    self.__fSelector.toolTip = 'Label map to be probed'
-    self.__fSelector.setMRMLScene(slicer.mrmlScene)
-    self.__fSelector.addEnabled = 0
+    self._fSelector = slicer.qMRMLNodeComboBox()
+    self._fSelector.nodeTypes = ['vtkMRMLLabelMapVolumeNode']
+    self._fSelector.toolTip = 'Label map to be probed'
+    self._fSelector.setMRMLScene(slicer.mrmlScene)
+    self._fSelector.addEnabled = 0
     self.chartButton = QPushButton('Chart')
     self.chartButton.setEnabled(False)
 
     hbox = QHBoxLayout()
     hbox.addWidget(QLabel('Probed label volume'))
-    hbox.addWidget(self.__fSelector)
+    hbox.addWidget(self._fSelector)
     hbox.addWidget(self.chartButton)
     plotSettingsFrameLayout.addRow(hbox)
 
@@ -166,73 +317,104 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     hbox.addWidget(self.nFramesBaselineCalculation)
     plotSettingsFrameLayout.addRow(hbox)
 
-  def setupPlottingFrame(self, w):
-    self.plotFrame = ctk.ctkCollapsibleButton(w)
+  def setupPlottingFrame(self):
+    self.plotFrame = ctk.ctkCollapsibleButton()
     self.plotFrame.text = "Plotting"
     self.plotFrame.collapsed = 0
     plotFrameLayout = QGridLayout(self.plotFrame)
     self.layout.addWidget(self.plotFrame)
 
-    self.__multiVolumeIntensityChart = MultiVolumeIntensityChartView()
-    plotFrameLayout.addWidget(self.__multiVolumeIntensityChart.chartView, 0, 0)
+    self._multiVolumeIntensityChart = MultiVolumeIntensityChartView()
+    plotFrameLayout.addWidget(self._multiVolumeIntensityChart.chartView, 0, 0)
+
+  def setFramesEnabled(self, enabled):
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setFramesEnabled(self, enabled)
+    self.ctrlFrame.setEnabled(enabled)
+    self.ctrlFrame.collapsed = 0 if enabled else 1
+    self.plotSettingsFrame.setEnabled(enabled)
+    self.plotFrame.setEnabled(enabled)
+    self.plotFrame.collapsed = 0 if enabled else 1
 
   def setupConnections(self):
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
-    self.extractFrameCheckBox.connect('stateChanged(int)', self.onExtractFrameChanged)
-    self.__metaDataSlider.connect('valueChanged(double)', self.onSliderChanged)
-    self.__frameCopySelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
-    self.__bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onBackgroundInputChanged)
-    self.__fgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onForegroundInputChanged)
-    self.__fSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelNodeChanged)
-    self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setupConnections(self)
+    self._fSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelNodeChanged)
     self.chartButton.connect('clicked()', self.onLabeledChartRequested)
     self.xLogScaleCheckBox.connect('stateChanged(int)', self.onXLogScaleRequested)
     self.yLogScaleCheckBox.connect('stateChanged(int)', self.onYLogScaleRequested)
     self.nFramesBaselineCalculation.valueChanged.connect(self.onFrameCountBaselineCalculationChanged)
     self.iChartingMode.buttonClicked.connect(self.onChartingModeChanged)
     self.showLegendCheckBox.connect('stateChanged(int)', self.onShowLegendChanged)
-    self.timer.connect('timeout()', self.goToNext)
+    self._fgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onForegroundInputChanged)
+    self.extractFrameCheckBox.connect('stateChanged(int)', self.onExtractFrameChanged)
+    self._frameCopySelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
 
   def onFrameCountBaselineCalculationChanged(self, value):
-    self.__multiVolumeIntensityChart.nFramesForBaselineCalculation = value
+    self._multiVolumeIntensityChart.nFramesForBaselineCalculation = value
 
   def onChartingModeChanged(self, button):
     if button is self.iChartingIntensity:
-      self.__multiVolumeIntensityChart.activateSignalIntensityMode()
+      self._multiVolumeIntensityChart.activateSignalIntensityMode()
     elif button is self.iChartingIntensityFixedAxes:
-      self.__multiVolumeIntensityChart.activateFixedRangeIntensityMode()
+      self._multiVolumeIntensityChart.activateFixedRangeIntensityMode()
     elif button is self.iChartingPercent:
-      self.__multiVolumeIntensityChart.activatePercentageChangeMode()
+      self._multiVolumeIntensityChart.activatePercentageChangeMode()
 
   def onShowLegendChanged(self, checked):
-    self.__multiVolumeIntensityChart.showLegend = True if checked == 2 else False
+    self._multiVolumeIntensityChart.showLegend = True if checked == 2 else False
 
   def onXLogScaleRequested(self, checked):
-    self.__multiVolumeIntensityChart.showXLogScale = True if checked == 2 else False
+    self._multiVolumeIntensityChart.showXLogScale = True if checked == 2 else False
 
   def onYLogScaleRequested(self, checked):
-    self.__multiVolumeIntensityChart.showYLogScale = True if checked == 2 else False
+    self._multiVolumeIntensityChart.showYLogScale = True if checked == 2 else False
+
+  def onLVMRMLSceneChanged(self, mrmlScene):
+    self._fSelector.setMRMLScene(slicer.mrmlScene)
+
+  def onVFMRMLSceneChanged(self, mrmlScene):
+    self._frameCopySelector.setMRMLScene(slicer.mrmlScene)
+
+  def onLabelNodeChanged(self):
+    labelNode = self._fSelector.currentNode()
+    self.chartButton.setEnabled(labelNode is not None and self._bgMultiVolumeNode is not None)
+
+  def onForegroundInputChanged(self):
+    self._multiVolumeIntensityChart.fgMultiVolumeNode = self._fgMultiVolumeSelector.currentNode()
+
+  def onBackgroundInputChanged(self):
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.onBackgroundInputChanged(self)
+
+    if self._bgMultiVolumeNode is not None:
+      self._frameCopySelector.setCurrentNode(None)
+      self.nFramesBaselineCalculation.maximum = self._bgMultiVolumeNode.GetNumberOfFrames()
+    self.onLabelNodeChanged()
+
+  '''
+  If extract button is checked, will copy the current frame to the
+  selected volume node on each event from frame slider
+  '''
+  def onExtractFrameChanged(self, checked):
+    if checked:
+      self.extractFrame = True
+      self.onSliderChanged(self._metaDataSlider.value)
+    else:
+      self.extractFrame = False
 
   def onSliderChanged(self, newValue):
-
-    if self.__bgMultiVolumeNode is None:
-      return
-
-    newValue = int(newValue)
-    self.setCurrentFrameNumber(newValue)
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.onSliderChanged(self, newValue)
 
     if self.extractFrame:
-      frameVolume = self.__frameCopySelector.currentNode()
+      frameVolume = self._frameCopySelector.currentNode()
 
       if frameVolume is None:
         mvNodeFrameCopy = slicer.vtkMRMLScalarVolumeNode()
-        mvNodeFrameCopy.SetName(self.__bgMultiVolumeNode.GetName()+' frame')
+        mvNodeFrameCopy.SetName(self._bgMultiVolumeNode.GetName()+' frame')
         mvNodeFrameCopy.SetScene(slicer.mrmlScene)
         slicer.mrmlScene.AddNode(mvNodeFrameCopy)
-        self.__frameCopySelector.setCurrentNode(mvNodeFrameCopy)
-        frameVolume = self.__frameCopySelector.currentNode()
+        self._frameCopySelector.setCurrentNode(mvNodeFrameCopy)
+        frameVolume = self._frameCopySelector.currentNode()
 
-      mvImage = self.__bgMultiVolumeNode.GetImageData()
+      mvImage = self._bgMultiVolumeNode.GetImageData()
       frameId = newValue
 
       extract = vtk.vtkImageExtractComponents()
@@ -242,8 +424,8 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
 
       ras2ijk = vtk.vtkMatrix4x4()
       ijk2ras = vtk.vtkMatrix4x4()
-      self.__bgMultiVolumeNode.GetRASToIJKMatrix(ras2ijk)
-      self.__bgMultiVolumeNode.GetIJKToRASMatrix(ijk2ras)
+      self._bgMultiVolumeNode.GetRASToIJKMatrix(ras2ijk)
+      self._bgMultiVolumeNode.GetIJKToRASMatrix(ijk2ras)
       frameImage = frameVolume.GetImageData()
       if frameImage is None:
         frameVolume.SetRASToIJKMatrix(ras2ijk)
@@ -261,71 +443,14 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
         displayNode.SetDefaultColorMap()
         frameVolume.SetAndObserveDisplayNodeID(displayNode.GetID())
 
-      frameName = '%s frame %d' % (self.__bgMultiVolumeNode.GetName(), frameId)
+      frameName = '%s frame %d' % (self._bgMultiVolumeNode.GetName(), frameId)
       frameVolume.SetName(frameName)
 
-  def onVCMRMLSceneChanged(self, mrmlScene):
-    self.__bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
-    self.onBackgroundInputChanged()
-
-  def onLVMRMLSceneChanged(self, mrmlScene):
-    self.__fSelector.setMRMLScene(slicer.mrmlScene)
-
-  def onVFMRMLSceneChanged(self, mrmlScene):
-    self.__frameCopySelector.setMRMLScene(slicer.mrmlScene)
-
-  def onLabelNodeChanged(self):
-    labelNode = self.__fSelector.currentNode()
-    self.chartButton.setEnabled(labelNode is not None and self.__bgMultiVolumeNode is not None)
-
-  def onBackgroundInputChanged(self):
-    self.__bgMultiVolumeNode = self.__bgMultiVolumeSelector.currentNode()
-
-    self.__multiVolumeIntensityChart.reset()
-
-    if self.__bgMultiVolumeNode is not None:
-      self.setFramesEnabled(True)
-
-      Helper.SetBgFgVolumes(self.__bgMultiVolumeNode.GetID(), None)
-
-      self.refreshFrameSlider()
-      self.__frameCopySelector.setCurrentNode(None)
-
-      self.__multiVolumeIntensityChart.bgMultiVolumeNode = self.__bgMultiVolumeNode
-      self.nFramesBaselineCalculation.maximum = self.__bgMultiVolumeNode.GetNumberOfFrames()
-    else:
-      self.setFramesEnabled(False)
-    self.onLabelNodeChanged()
-
-  def onForegroundInputChanged(self):
-    self.__multiVolumeIntensityChart.fgMultiVolumeNode = self.__fgMultiVolumeSelector.currentNode()
-
-  def onPlayButtonToggled(self, checked):
-    if self.__bgMultiVolumeNode is None:
-      return
-    if checked:
-      self.timer.start()
-      self.playButton.text = 'Stop'
-    else:
-      self.timer.stop()
-      self.playButton.text = 'Play'
-
-  '''
-  If extract button is checked, will copy the current frame to the
-  selected volume node on each event from frame slider
-  '''
-  def onExtractFrameChanged(self, checked):
-    if checked:
-      self.extractFrame = True
-      self.onSliderChanged(self.__metaDataSlider.value)
-    else:
-      self.extractFrame = False
-
   def onLabeledChartRequested(self):
-    labelNode = self.__fSelector.currentNode()
-    mvNode = self.__bgMultiVolumeNode
+    labelNode = self._fSelector.currentNode()
+    mvNode = self._bgMultiVolumeNode
 
-    mvLabels = MultiVolumeIntensityChartView.getMultiVolumeLabels(self.__bgMultiVolumeNode)
+    mvLabels = MultiVolumeIntensityChartView.getMultiVolumeLabels(self._bgMultiVolumeNode)
 
     chartViewNode = LabeledImageChartView(labelNode=labelNode,
                                            multiVolumeNode=mvNode,
@@ -335,70 +460,6 @@ class qSlicerMultiVolumeExplorerModuleWidget(ScriptedLoadableModuleWidget):
     chartViewNode.requestChartCreation()
 
   def processEvent(self, observee, event):
-    if not self.iCharting.checked or self.__bgMultiVolumeNode is None:
+    if not self.iCharting.checked:
       return
-
-    # TODO: use a timer to delay calculation and compress events
-    if event == 'LeaveEvent':
-      # reset all the readouts
-      # TODO: reset the label text
-      return
-
-    if not self.sliceWidgetsPerStyle.has_key(observee):
-      return
-
-    sliceWidget = self.sliceWidgetsPerStyle[observee]
-    interactor = observee.GetInteractor()
-    position = interactor.GetEventPosition()
-    self.__multiVolumeIntensityChart.createChart(sliceWidget, position)
-
-  def setCurrentFrameNumber(self, frameNumber):
-    mvDisplayNode = self.__bgMultiVolumeNode.GetDisplayNode()
-    mvDisplayNode.SetFrameComponent(frameNumber)
-
-  def refreshFrameSlider(self):
-    nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
-    self.__metaDataSlider.minimum = 0
-    self.__metaDataSlider.maximum = nFrames - 1
-    self.__multiVolumeIntensityChart.chartTable.SetNumberOfRows(nFrames)
-
-  def setFramesEnabled(self, enabled):
-    self.ctrlFrame.setEnabled(enabled)
-    self.plotFrame.setEnabled(enabled)
-    self.plotSettingsFrame.setEnabled(enabled)
-    self.ctrlFrame.collapsed = 0 if enabled else 1
-    self.plotFrame.collapsed = 0 if enabled else 1
-
-  def goToNext(self):
-    currentElement = self.__metaDataSlider.value
-    currentElement += 1
-    if currentElement > self.__metaDataSlider.maximum:
-      currentElement = 0
-    self.__metaDataSlider.value = currentElement
-
-  def refreshObservers(self):
-    """ When the layout changes, drop the observers from
-    all the old widgets and create new observers for the
-    newly created widgets"""
-    self.removeObservers()
-    # get new slice nodes
-    layoutManager = slicer.app.layoutManager()
-    sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
-    for nodeIndex in xrange(sliceNodeCount):
-      # find the widget for each node in scene
-      sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
-      sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
-      if sliceWidget:
-        # add observers and keep track of tags
-        style = sliceWidget.sliceView().interactorStyle()
-        self.sliceWidgetsPerStyle[style] = sliceWidget
-        events = ("MouseMoveEvent", "EnterEvent", "LeaveEvent")
-        for event in events:
-          tag = style.AddObserver(event, self.processEvent)
-          self.styleObserverTags.append([style,tag])
-
-  def removeObservers(self):
-    for observee,tag in self.styleObserverTags:
-      observee.RemoveObserver(tag)
-    self.styleObserverTags = []
-    self.sliceWidgetsPerStyle = {}
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.processEvent(self, observee, event)

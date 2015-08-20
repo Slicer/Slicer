@@ -16,6 +16,13 @@ class qSlicerMultiVolumeExplorerModuleHelper( object ):
     appLogic.PropagateVolumeSelection()
 
   @staticmethod
+  def SetBgVolume(bg):
+    appLogic = slicer.app.applicationLogic()
+    selectionNode = appLogic.GetSelectionNode()
+    selectionNode.SetReferenceActiveVolumeID(bg)
+    appLogic.PropagateVolumeSelection()
+
+  @staticmethod
   def setupChartNodeViewLayout():
     layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
     layoutNodes.SetReferenceCount(layoutNodes.GetReferenceCount()-1)

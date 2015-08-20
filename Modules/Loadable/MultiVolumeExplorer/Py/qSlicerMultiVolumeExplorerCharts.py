@@ -1,5 +1,6 @@
 import math, string, logging
 from __main__ import vtk, ctk, slicer
+from qt import QSize
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 
 
@@ -146,6 +147,7 @@ class MultiVolumeIntensityChartView(object):
 
   def __init__(self):
     self.__chartView = ctk.ctkVTKChartView()
+    self.__chartView.minimumSize = QSize(200,200)
 
     self.__bgxArray = vtk.vtkFloatArray()
     self.__bgyArray = vtk.vtkFloatArray()
@@ -198,7 +200,6 @@ class MultiVolumeIntensityChartView(object):
     logging.debug("Fixed range for yAxis: min(%d), max(%d)" % (self.__mvRange[0], self.__mvRange[1]))
     if self.__chartMode != self.FIXED_RANGE_INTENSITY_MODE:
       self.__chartMode = self.FIXED_RANGE_INTENSITY_MODE
-      self.clearPlots()
       self.yAxis.SetBehavior(vtk.vtkAxis.FIXED)
       self.yAxis.SetRange(self.__mvRange[0],self.__mvRange[1])
 
@@ -216,9 +217,8 @@ class MultiVolumeIntensityChartView(object):
     bgLayer = sliceLogic.GetBackgroundLayer()
     bgVolumeNode = bgLayer.GetVolumeNode()
 
-    if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID():
-      return
-    if bgVolumeNode != self.__bgMultiVolumeNode:
+    if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID() or \
+      bgVolumeNode != self.__bgMultiVolumeNode:
       return
 
     xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy)
