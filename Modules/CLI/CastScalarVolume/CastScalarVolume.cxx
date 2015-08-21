@@ -88,7 +88,6 @@ int main( int argc, char * argv[] )
     // This filter handles all types on input
     switch( componentType )
       {
-      case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::CHAR:
         if( Type == std::string("Char") )
           {
@@ -136,7 +135,6 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
           }
         break;
-      case itk::ImageIOBase::USHORT:
       case itk::ImageIOBase::SHORT:
         if( Type == std::string("Char") )
           {
@@ -184,7 +182,6 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
           }
         break;
-      case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
         if( Type == std::string("Char") )
           {
@@ -232,7 +229,6 @@ int main( int argc, char * argv[] )
           return EXIT_FAILURE;
           }
         break;
-      case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
         if( Type == std::string("Char") )
           {
@@ -273,6 +269,194 @@ int main( int argc, char * argv[] )
         else if( Type == std::string("Double") )
           {
           return DoIt( argc, argv, static_cast<long>(0), static_cast<double>(0) );
+          }
+        else
+          {
+          std::cout << "Unknown type to which to cast input volume: " << Type.c_str() << std::endl;
+          return EXIT_FAILURE;
+          }
+        break;
+      case itk::ImageIOBase::UCHAR:
+        if( Type == std::string("Char") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<char>(0) );
+          }
+        else if( Type == std::string("UnsignedChar") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned char>(0) );
+          }
+        else if( Type == std::string("Short") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<short>(0) );
+          }
+        else if( Type == std::string("UnsignedShort") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned short>(0) );
+          }
+        else if( Type == std::string("Int") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<int>(0) );
+          }
+        else if( Type == std::string("UnsignedInt") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned int>(0) );
+          }
+        else if( Type == std::string("Long") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<long>(0) );
+          }
+        else if( Type == std::string("UnsignedLong") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned long>(0) );
+          }
+        else if( Type == std::string("Float") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<float>(0) );
+          }
+        else if( Type == std::string("Double") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<double>(0) );
+          }
+        else
+          {
+          std::cout << "Unknown type to which to cast input volume: " << Type.c_str() << std::endl;
+          return EXIT_FAILURE;
+          }
+        break;
+      case itk::ImageIOBase::USHORT:
+        if( Type == std::string("Char") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<char>(0) );
+          }
+        else if( Type == std::string("UnsignedChar") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned char>(0) );
+          }
+        else if( Type == std::string("Short") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<short>(0) );
+          }
+        else if( Type == std::string("UnsignedShort") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned short>(0) );
+          }
+        else if( Type == std::string("Int") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<int>(0) );
+          }
+        else if( Type == std::string("UnsignedInt") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned int>(0) );
+          }
+        else if( Type == std::string("Long") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<long>(0) );
+          }
+        else if( Type == std::string("UnsignedLong") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned long>(0) );
+          }
+        else if( Type == std::string("Float") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<float>(0) );
+          }
+        else if( Type == std::string("Double") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<double>(0) );
+          }
+        else
+          {
+          std::cout << "Unknown type to which to cast input volume: " << Type.c_str() << std::endl;
+          return EXIT_FAILURE;
+          }
+        break;
+      case itk::ImageIOBase::UINT:
+        if( Type == std::string("Char") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<char>(0) );
+          }
+        else if( Type == std::string("UnsignedChar") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned char>(0) );
+          }
+        else if( Type == std::string("Short") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<short>(0) );
+          }
+        else if( Type == std::string("UnsignedShort") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned short>(0) );
+          }
+        else if( Type == std::string("Int") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<int>(0) );
+          }
+        else if( Type == std::string("UnsignedInt") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned int>(0) );
+          }
+        else if( Type == std::string("Long") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<long>(0) );
+          }
+        else if( Type == std::string("UnsignedLong") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned long>(0) );
+          }
+        else if( Type == std::string("Float") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<float>(0) );
+          }
+        else if( Type == std::string("Double") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<double>(0) );
+          }
+        else
+          {
+          std::cout << "Unknown type to which to cast input volume: " << Type.c_str() << std::endl;
+          return EXIT_FAILURE;
+          }
+        break;
+      case itk::ImageIOBase::ULONG:
+        if( Type == std::string("Char") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<char>(0) );
+          }
+        else if( Type == std::string("UnsignedChar") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned char>(0) );
+          }
+        else if( Type == std::string("Short") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<short>(0) );
+          }
+        else if( Type == std::string("UnsignedShort") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned short>(0) );
+          }
+        else if( Type == std::string("Int") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<int>(0) );
+          }
+        else if( Type == std::string("UnsignedInt") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned int>(0) );
+          }
+        else if( Type == std::string("Long") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<long>(0) );
+          }
+        else if( Type == std::string("UnsignedLong") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned long>(0) );
+          }
+        else if( Type == std::string("Float") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<float>(0) );
+          }
+        else if( Type == std::string("Double") )
+          {
+          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<double>(0) );
           }
         else
           {
