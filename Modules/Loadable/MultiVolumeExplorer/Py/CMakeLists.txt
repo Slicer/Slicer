@@ -2,6 +2,7 @@
 SET(KIT_PYTHON_SCRIPTS
   qSlicerMultiVolumeExplorerModuleHelper.py
   qSlicerMultiVolumeExplorerModuleWidget.py
+  qSlicerMultiVolumeExplorerCharts.py
   )
 
 SET(KIT_PYTHON_RESOURCES

@@ -106,6 +106,11 @@ class MultiVolumeIntensityChartView(object):
     logging.info('MultiVolumeIntensityChartView: bgMultiVolumeNode changed')
     self.__bgMultiVolumeNode = bgMultiVolumeNode
 
+    if not self.__bgMultiVolumeNode:
+      self.__chartView.minimumSize = QSize(0,0)
+      return
+    else:
+      self.__chartView.minimumSize = QSize(200,200)
     nFrames = self.__bgMultiVolumeNode.GetNumberOfFrames()
 
     self.refreshArray(self.__bgxArray, nFrames, '')
@@ -147,7 +152,6 @@ class MultiVolumeIntensityChartView(object):
 
   def __init__(self):
     self.__chartView = ctk.ctkVTKChartView()
-    self.__chartView.minimumSize = QSize(200,200)
 
     self.__bgxArray = vtk.vtkFloatArray()
     self.__bgyArray = vtk.vtkFloatArray()
