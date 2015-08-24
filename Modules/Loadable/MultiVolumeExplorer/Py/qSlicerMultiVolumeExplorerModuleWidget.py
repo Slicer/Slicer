@@ -22,14 +22,13 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
   def setup(self):
 
     w = QWidget()
-    layout = QGridLayout()
+    layout = QFormLayout()
     w.setLayout(layout)
     self.layout.addWidget(w)
     w.show()
     self.layout = layout
 
     self.setupInputFrame()
-    self.setupFrameControlFrame()
     self.setupPlottingFrame()
     self.setupAdditionalFrames()
 
@@ -52,32 +51,35 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     self._bgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
     self._bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
     self._bgMultiVolumeSelector.addEnabled = 0
-    self.layout.addWidget(QLabel('Input multivolume'), 0, 0)
-    self.layout.addWidget(self._bgMultiVolumeSelector, 0, 1, 1, 2)
+    self._bgMultiVolumeSelectorLabel = QLabel('Input multivolume')
+    self.layout.addRow(self._bgMultiVolumeSelectorLabel, self._bgMultiVolumeSelector)
+    self.setupFrameControlFrame()
 
   def setupFrameControlFrame(self):
     # TODO: initialize the slider based on the contents of the labels array
     # slider to scroll over metadata stored in the vector container being explored
-    self._metaDataSlider = ctk.ctkSliderWidget()
+    self.metaDataSlider = ctk.ctkSliderWidget()
     self.playButton = QPushButton('Play')
     self.playButton.toolTip = 'Iterate over multivolume frames'
     self.playButton.checkable = True
-    self.layout.addWidget(QLabel('Current frame number'), 1, 0)
-    self.layout.addWidget(self._metaDataSlider, 1, 1)
-    self.layout.addWidget(self.playButton, 1, 2)
+    hbox = QHBoxLayout()
+    hbox.addWidget(QLabel('Current frame number'))
+    hbox.addWidget(self.metaDataSlider)
+    hbox.addWidget(self.playButton)
+    self.layout.addRow(hbox)
 
   def setupAdditionalFrames(self):
     pass
 
   def setupPlottingFrame(self):
     self._multiVolumeIntensityChart = MultiVolumeIntensityChartView()
-    self.layout.addWidget(self._multiVolumeIntensityChart.chartView, 2, 0, 1, 3)
+    self.layout.addRow(self._multiVolumeIntensityChart.chartView)
 
   def setupConnections(self):
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
     self._bgMultiVolumeSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onBackgroundInputChanged)
     self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
-    self._metaDataSlider.connect('valueChanged(double)', self.onSliderChanged)
+    self.metaDataSlider.connect('valueChanged(double)', self.onSliderChanged)
     self.timer.connect('timeout()', self.goToNext)
 
   def onSliderChanged(self, newValue):
@@ -102,8 +104,11 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     self._multiVolumeIntensityChart.bgMultiVolumeNode = self._bgMultiVolumeNode
     self.refreshObservers()
 
+  def getBackgroundMultiVolumeNode(self):
+    return self._bgMultiVolumeSelector.currentNode()
+
   def onBackgroundInputChanged(self):
-    self._bgMultiVolumeNode = self._bgMultiVolumeSelector.currentNode()
+    self._bgMultiVolumeNode = self.getBackgroundMultiVolumeNode()
 
     if self._bgMultiVolumeNode is not None:
       self.refreshGUIForNewBackgroundImage()
@@ -121,7 +126,7 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
       self.playButton.text = 'Play'
 
   def processEvent(self, observee, event):
-    logging.debug("processing event %s" % event)
+    # logging.debug("processing event %s" % event)
     if self._bgMultiVolumeNode is None:
       return
 
@@ -174,17 +179,19 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     self.sliceWidgetsPerStyle = {}
 
   def refreshFrameSlider(self):
+    self.metaDataSlider.minimum = 0
+    if not self._bgMultiVolumeNode:
+      self.metaDataSlider.maximum = 0
+      return
     nFrames = self._bgMultiVolumeNode.GetNumberOfFrames()
-    self._metaDataSlider.minimum = 0
-    self._metaDataSlider.maximum = nFrames - 1
-    self._multiVolumeIntensityChart.chartTable.SetNumberOfRows(nFrames)
+    self.metaDataSlider.maximum = nFrames - 1
 
   def goToNext(self):
-    currentElement = self._metaDataSlider.value
+    currentElement = self.metaDataSlider.value
     currentElement += 1
-    if currentElement > self._metaDataSlider.maximum:
+    if currentElement > self.metaDataSlider.maximum:
       currentElement = 0
-    self._metaDataSlider.value = currentElement
+    self.metaDataSlider.value = currentElement
 
 
 class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifiedModuleWidget):
@@ -200,7 +207,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self.inputFrame.text = "Input"
     self.inputFrame.collapsed = 0
     self.inputFrameLayout = QFormLayout(self.inputFrame)
-    self.layout.addWidget(self.inputFrame)
+    self.layout.addRow(self.inputFrame)
 
     self._bgMultiVolumeSelector = slicer.qMRMLNodeComboBox()
     self._bgMultiVolumeSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
@@ -217,23 +224,20 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
       plot in interactive charting. As an example, this can be used to overlay the \
       curve obtained by fitting a model to the data"
     self.inputFrameLayout.addRow(QLabel('Input secondary multivolume'), self._fgMultiVolumeSelector)
+    self.setupFrameControlFrame()
 
   def setupFrameControlFrame(self):
-    self.ctrlFrame = ctk.ctkCollapsibleButton()
-    self.ctrlFrame.text = "Frame control"
-    self.ctrlFrame.collapsed = 0
-    ctrlFrameLayout = QGridLayout(self.ctrlFrame)
-    self.layout.addWidget(self.ctrlFrame)
-
     # TODO: initialize the slider based on the contents of the labels array
     # slider to scroll over metadata stored in the vector container being explored
-    self._metaDataSlider = ctk.ctkSliderWidget()
+    self.metaDataSlider = ctk.ctkSliderWidget()
     self.playButton = QPushButton('Play')
     self.playButton.toolTip = 'Iterate over multivolume frames'
     self.playButton.checkable = True
-    ctrlFrameLayout.addWidget(QLabel('Current frame number'), 0, 0)
-    ctrlFrameLayout.addWidget(self._metaDataSlider, 0, 1)
-    ctrlFrameLayout.addWidget(self.playButton, 0, 2)
+    hbox = QHBoxLayout()
+    hbox.addWidget(QLabel('Current frame number'))
+    hbox.addWidget(self.metaDataSlider)
+    hbox.addWidget(self.playButton)
+    self.inputFrameLayout.addRow(hbox)
 
     self._frameCopySelector = slicer.qMRMLNodeComboBox()
     self._frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
@@ -246,16 +250,18 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
                                             "vtkMRMLVectorVolumeNode"]
     self.extractFrame = False
     self.extractFrameCheckBox = QCheckBox('Enable copying')
-    ctrlFrameLayout.addWidget(QLabel('Current frame copy'), 1, 0)
-    ctrlFrameLayout.addWidget(self._frameCopySelector, 1, 1)
-    ctrlFrameLayout.addWidget(self.extractFrameCheckBox, 1, 2)
+    hbox = QHBoxLayout()
+    hbox.addWidget(QLabel('Current frame copy'))
+    hbox.addWidget(self._frameCopySelector)
+    hbox.addWidget(self.extractFrameCheckBox)
+    self.inputFrameLayout.addRow(hbox)
 
   def setupPlotSettingsFrame(self):
     self.plotSettingsFrame = ctk.ctkCollapsibleButton()
     self.plotSettingsFrame.text = "Plotting Settings"
     self.plotSettingsFrame.collapsed = 1
     plotSettingsFrameLayout = QFormLayout(self.plotSettingsFrame)
-    self.layout.addWidget(self.plotSettingsFrame)
+    self.layout.addRow(self.plotSettingsFrame)
 
     # label map for probing
     self._fSelector = slicer.qMRMLNodeComboBox()
@@ -322,15 +328,13 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self.plotFrame.text = "Plotting"
     self.plotFrame.collapsed = 0
     plotFrameLayout = QGridLayout(self.plotFrame)
-    self.layout.addWidget(self.plotFrame)
+    self.layout.addRow(self.plotFrame)
 
     self._multiVolumeIntensityChart = MultiVolumeIntensityChartView()
     plotFrameLayout.addWidget(self._multiVolumeIntensityChart.chartView, 0, 0)
 
   def setFramesEnabled(self, enabled):
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setFramesEnabled(self, enabled)
-    self.ctrlFrame.setEnabled(enabled)
-    self.ctrlFrame.collapsed = 0 if enabled else 1
     self.plotSettingsFrame.setEnabled(enabled)
     self.plotFrame.setEnabled(enabled)
     self.plotFrame.collapsed = 0 if enabled else 1
@@ -396,7 +400,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
   def onExtractFrameChanged(self, checked):
     if checked:
       self.extractFrame = True
-      self.onSliderChanged(self._metaDataSlider.value)
+      self.onSliderChanged(self.metaDataSlider.value)
     else:
       self.extractFrame = False
 
@@ -415,7 +419,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
         frameVolume = self._frameCopySelector.currentNode()
 
       mvImage = self._bgMultiVolumeNode.GetImageData()
-      frameId = newValue
+      frameId = int(newValue)
 
       extract = vtk.vtkImageExtractComponents()
       MultiVolumeIntensityChartView.setExtractInput(extract, mvImage)
