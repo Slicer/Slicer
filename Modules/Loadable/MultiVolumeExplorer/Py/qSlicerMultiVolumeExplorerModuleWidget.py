@@ -2,16 +2,21 @@ from __main__ import vtk, ctk, slicer
 import logging
 from qt import QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, QSizePolicy, QDialog
 from qt import QWidget, QLabel, QPushButton, QCheckBox, QRadioButton, QSpinBox, QTimer, QButtonGroup, QGroupBox
-from slicer.ScriptedLoadableModule import *
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 from qSlicerMultiVolumeExplorerCharts import LabeledImageChartView, MultiVolumeIntensityChartView
 
 
-class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWidget):
+class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
 
   def __init__(self, parent=None):
-    logging.info("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:init() called")
-    ScriptedLoadableModuleWidget.__init__(self, parent)
+    logging.debug("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:init() called")
+    if not parent or not hasattr(parent, "layout"):
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(QVBoxLayout())
+    else:
+      self.parent = parent
+
+    self.layout = self.parent.layout()
 
     self._bgMultiVolumeNode = None
     self._fgMultiVolumeNode = None
@@ -19,13 +24,18 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     self.styleObserverTags = []
     self.sliceWidgetsPerStyle = {}
 
-  def setup(self):
+  def hide(self):
+    self.widget.hide()
 
-    w = QWidget()
+  def show(self):
+    self.widget.show()
+
+  def setup(self):
+    self.widget = QWidget()
     layout = QGridLayout()
-    w.setLayout(layout)
-    self.layout.addWidget(w)
-    w.show()
+    self.widget.setLayout(layout)
+    self.layout.addWidget(self.widget)
+    self.widget.show()
     self.layout = layout
 
     self.setupInputFrame()
@@ -62,7 +72,6 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
 
   def setupFrameControlFrame(self):
     # TODO: initialize the slider based on the contents of the labels array
-    # slider to scroll over metadata stored in the vector container being explored
     self.frameSlider = ctk.ctkSliderWidget()
     self.frameLabel = QLabel('Current frame number')
     self.playButton = QPushButton('Play')
@@ -97,7 +106,7 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     self.setCurrentFrameNumber(newValue)
 
   def onVCMRMLSceneChanged(self, mrmlScene):
-    logging.info("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:onVCMRMLSceneChanged")
+    logging.debug("qSlicerMultiVolumeExplorerSimplifiedModuleWidget:onVCMRMLSceneChanged")
     self.bgMultiVolumeSelector.setMRMLScene(slicer.mrmlScene)
     self.onBackgroundInputChanged()
 
@@ -236,17 +245,8 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     self.setupFrameControlFrame()
 
   def setupFrameControlFrame(self):
-    # TODO: initialize the slider based on the contents of the labels array
-    # slider to scroll over metadata stored in the vector container being explored
-    self.frameSlider = ctk.ctkSliderWidget()
-    self.playButton = QPushButton('Play')
-    self.playButton.toolTip = 'Iterate over multivolume frames'
-    self.playButton.checkable = True
-    hbox = QHBoxLayout()
-    hbox.addWidget(QLabel('Current frame number'))
-    hbox.addWidget(self.frameSlider)
-    hbox.addWidget(self.playButton)
-    self.inputFrameLayout.addRow(hbox)
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setupFrameControlFrame(self)
+    self.inputFrameLayout.addRow(self.frameControlWidget)
 
     self._frameCopySelector = slicer.qMRMLNodeComboBox()
     self._frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']

@@ -103,7 +103,7 @@ class MultiVolumeIntensityChartView(object):
 
   @bgMultiVolumeNode.setter
   def bgMultiVolumeNode(self, bgMultiVolumeNode):
-    logging.info('MultiVolumeIntensityChartView: bgMultiVolumeNode changed')
+    logging.debug('MultiVolumeIntensityChartView: bgMultiVolumeNode changed')
     self.__bgMultiVolumeNode = bgMultiVolumeNode
 
     if not self.__bgMultiVolumeNode:
