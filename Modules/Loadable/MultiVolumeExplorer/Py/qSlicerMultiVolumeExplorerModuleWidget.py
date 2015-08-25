@@ -59,14 +59,15 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     # TODO: initialize the slider based on the contents of the labels array
     # slider to scroll over metadata stored in the vector container being explored
     self.metaDataSlider = ctk.ctkSliderWidget()
+    self.frameLabel = QLabel('Current frame number')
     self.playButton = QPushButton('Play')
     self.playButton.toolTip = 'Iterate over multivolume frames'
     self.playButton.checkable = True
-    hbox = QHBoxLayout()
-    hbox.addWidget(QLabel('Current frame number'))
-    hbox.addWidget(self.metaDataSlider)
-    hbox.addWidget(self.playButton)
-    self.layout.addRow(hbox)
+    self.frameControlHBox = QHBoxLayout()
+    self.frameControlHBox.addWidget(self.frameLabel)
+    self.frameControlHBox.addWidget(self.metaDataSlider)
+    self.frameControlHBox.addWidget(self.playButton)
+    self.layout.addRow(self.frameControlHBox)
 
   def setupAdditionalFrames(self):
     pass
@@ -139,9 +140,10 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget(ScriptedLoadableModuleWid
     if not self.sliceWidgetsPerStyle.has_key(observee):
       return
 
-    sliceWidget = self.sliceWidgetsPerStyle[observee]
     interactor = observee.GetInteractor()
-    position = interactor.GetEventPosition()
+    self.createChart(self.sliceWidgetsPerStyle[observee], interactor.GetEventPosition())
+
+  def createChart(self, sliceWidget, position):
     self._multiVolumeIntensityChart.createChart(sliceWidget, position)
 
   def setCurrentFrameNumber(self, frameNumber):
