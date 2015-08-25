@@ -212,18 +212,19 @@ class MultiVolumeIntensityChartView(object):
       self.yAxis.SetBehavior(vtk.vtkAxis.AUTO)
       self.__chartMode = self.PERCENTAGE_CHANGE_MODE
 
-  def createChart(self, sliceWidget, xy):
+  def createChart(self, sliceWidget, xy, ignoreCurrentBackground=False):
     if not sliceWidget and not xy:
       return
 
     sliceLogic = sliceWidget.sliceLogic()
 
     bgLayer = sliceLogic.GetBackgroundLayer()
-    bgVolumeNode = bgLayer.GetVolumeNode()
 
-    if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID() or \
-      bgVolumeNode != self.__bgMultiVolumeNode:
-      return
+    if not ignoreCurrentBackground:
+      bgVolumeNode = bgLayer.GetVolumeNode()
+      if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID() or \
+        bgVolumeNode != self.__bgMultiVolumeNode:
+        return
 
     xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy)
     xyToIJK = bgLayer.GetXYToIJKTransform()
@@ -232,6 +233,7 @@ class MultiVolumeIntensityChartView(object):
     bgImage = self.__bgMultiVolumeNode.GetImageData()
 
     if not self.arePixelsWithinImageExtent(bgImage, bgijk):
+      self.clearPlots()
       return
 
     nComponents = self.__bgMultiVolumeNode.GetNumberOfFrames()
@@ -320,6 +322,8 @@ class MultiVolumeIntensityChartView(object):
             extent[2] <= ijk[1] <= extent[3] and
             extent[4] <= ijk[2] <= extent[5]):
       # pixel outside the valid extent
+      logging.debug("Point %d,%d,%d is not in valid Extent P1(%d,%d,%d) and P2(%d,%d,%d) "
+                   % (ijk[0], ijk[1], ijk[2], extent[0], extent[2], extent[4], extent[1], extent[3], extent[5]))
       return False
     return True
 
