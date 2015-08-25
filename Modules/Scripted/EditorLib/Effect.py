@@ -202,8 +202,6 @@ class EffectTool(object):
     """Event filter that lisens for certain key events that
     should be responded to by all events.
     Currently:
-      escape - cancel operation
-      'e' - toggle paint color to black and back
       '\\' - pick up paint color from current location (eyedropper)
     """
     if event == "KeyPressEvent":
