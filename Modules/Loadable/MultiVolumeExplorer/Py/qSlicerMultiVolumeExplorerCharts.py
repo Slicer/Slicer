@@ -220,15 +220,24 @@ class MultiVolumeIntensityChartView(object):
 
     bgLayer = sliceLogic.GetBackgroundLayer()
 
-    if not ignoreCurrentBackground:
-      bgVolumeNode = bgLayer.GetVolumeNode()
-      if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID() or \
-        bgVolumeNode != self.__bgMultiVolumeNode:
+    doIJKToRASTransformation = False
+    bgVolumeNode = bgLayer.GetVolumeNode()
+    if not bgVolumeNode or bgVolumeNode.GetID() != self.__bgMultiVolumeNode.GetID() or \
+      bgVolumeNode != self.__bgMultiVolumeNode:
+      if not ignoreCurrentBackground:
         return
+      else:
+        doIJKToRASTransformation = True
 
     xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy)
     xyToIJK = bgLayer.GetXYToIJKTransform()
     ijkFloat = xyToIJK.TransformDoublePoint(xyz)
+    if doIJKToRASTransformation:
+      RAStoIJK = vtk.vtkMatrix4x4()
+      self.__bgMultiVolumeNode.GetRASToIJKMatrix(RAStoIJK)
+      ras = self.xyToRAS(sliceLogic, xy)
+      ijkFloat = RAStoIJK.MultiplyPoint([ras[0], ras[1], ras[2], 1])[:3]
+
     bgijk = self.getIJKIntFromIJKFloat(ijkFloat)
     bgImage = self.__bgMultiVolumeNode.GetImageData()
 
@@ -293,6 +302,11 @@ class MultiVolumeIntensityChartView(object):
       fgPlot = self.chart.AddPlot(vtk.vtkChart.LINE)
       # bgPlot.SetLabel("Primary multivolume ")
       self.setPlotInputTable(fgPlot, fgChartTable)
+
+  def xyToRAS(self, sliceLogic, xyPoint):
+    sliceNode = sliceLogic.GetSliceNode()
+    rast = sliceNode.GetXYToRAS().MultiplyPoint(xyPoint + (0,1,))
+    return rast[:3]
 
   def computePercentageChangeWithRespectToBaseline(self, multiVolumeNode, chartTable, ijk):
     self.baselineAverageSignal = 0
