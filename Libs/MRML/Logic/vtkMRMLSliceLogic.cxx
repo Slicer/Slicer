@@ -1594,9 +1594,9 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->AddingSliceModelNodes = true;
     this->GetMRMLScene()->AddNode(this->SliceModelDisplayNode);
     this->GetMRMLScene()->AddNode(this->SliceModelTransformNode);
+    this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
     this->GetMRMLScene()->AddNode(this->SliceModelNode);
     this->AddingSliceModelNodes = false;
-    this->SliceModelNode->SetAndObserveDisplayNodeID(this->SliceModelDisplayNode->GetID());
 #if (VTK_MAJOR_VERSION <= 5)
     this->SliceModelDisplayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
 #else
