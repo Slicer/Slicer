@@ -772,10 +772,6 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
   if (modified)
     {
-    // since added the node to the test scene, let the scene know now that it
-    // has a new node
-    this->GetMRMLScene()->InvokeEvent(vtkMRMLScene::NodeAddedEvent, volumeNode);
-
     this->Modified();
     }
   return volumeNode;
