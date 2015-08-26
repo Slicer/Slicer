@@ -379,9 +379,11 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     if checked:
       self.layout.removeWidget(self.plotFrame)
       self.plotFrame.hide()
-    else:
-      self.layout.addWidget(self.plotFrame)
-      self.plotFrame.show()
+
+  def dockChartView(self):
+    qSlicerMultiVolumeExplorerSimplifiedModuleWidget.dockChartView(self)
+    self.layout.addWidget(self.plotFrame)
+    self.plotFrame.show()
 
   def setFramesEnabled(self, enabled):
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setFramesEnabled(self, enabled)
