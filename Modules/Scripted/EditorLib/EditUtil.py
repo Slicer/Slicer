@@ -156,7 +156,15 @@ class EditUtil(object):
 
   @staticmethod
   def getPropagationMode():
-    return int(EditUtil.getParameterNode().GetParameter('propagationMode'))
+    defaultPropagationMode = slicer.vtkMRMLApplicationLogic.BackgroundLayer | slicer.vtkMRMLApplicationLogic.LabelLayer
+    propagationMode = defaultPropagationMode
+    propagationModeString = EditUtil.getParameterNode().GetParameter('propagationMode')
+    try:
+      propagationMode = int(propagationModeString)
+    except ValueError:
+      propagationMode = defaultPropagationMode
+      EditUtil.setPropagateMode(defaultPropagationMode)
+    return propagationMode
 
   @staticmethod
   def setPropagateMode(propagationMode):
@@ -178,8 +186,7 @@ class EditUtil(object):
 
   @staticmethod
   def propagateVolumeSelection():
-    parameterNode = EditUtil.getParameterNode()
-    mode = int(parameterNode.GetParameter("propagationMode"))
+    mode = EditUtil.getPropagationMode()
     applicationLogic = slicer.app.applicationLogic()
     applicationLogic.PropagateVolumeSelection(mode, 0)
 

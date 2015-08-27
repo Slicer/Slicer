@@ -106,7 +106,11 @@ class EditBox(VTKObservationMixin):
     self._onEffectChanged(caller.GetParameter("effect"))
     EditUtil.setEraseEffectEnabled(EditUtil.isEraseEffectEnabled())
     self.actions["EraseLabel"].checked = EditUtil.isEraseEffectEnabled()
-    self.actions[EditUtil.getCurrentEffect()].checked = True
+    effectName = EditUtil.getCurrentEffect()
+    if effectName not in self.actions:
+      print('Warning: effect %s not a valid action' % effectName)
+      return
+    self.actions[effectName].checked = True
 
   #
   # Public lists of the available effects provided by the editor
@@ -323,7 +327,9 @@ class EditBox(VTKObservationMixin):
 
     EditUtil.restoreLabel()
 
-    # Update action
+    # Update action if possible - if not, we aren't ready to select the effect
+    if effectName not in self.actions:
+      return
     self.actions[effectName].checked = True
 
     #
