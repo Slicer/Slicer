@@ -5,7 +5,6 @@ from qt import QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout, QSizePolicy, 
 from qt import QWidget, QLabel, QPushButton, QCheckBox, QRadioButton, QSpinBox, QTimer, QButtonGroup, QGroupBox
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 from qSlicerMultiVolumeExplorerCharts import LabeledImageChartView, MultiVolumeIntensityChartView
-from slicer.ScriptedLoadableModule import *
 
 
 class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
@@ -29,7 +28,6 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
     self.chartPopupWindow = None
     self.chartPopupSize = QSize(600, 300)
     self.chartPopupPosition = QPoint(0,0)
-    self.logic = MultiVolumeExplorerLogic()
 
   def hide(self):
     self.widget.hide()
@@ -466,7 +464,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     frameId = int(frameId)
     if self.extractFrameCopy:
       frameVolume = self.frameCopySelector.currentNode()
-      frameVolumeCopy = self.logic.extractFrame(frameVolume, self._bgMultiVolumeNode, frameId)
+      frameVolumeCopy = Helper.extractFrame(frameVolume, self._bgMultiVolumeNode, frameId)
       if not frameVolume:
         self.frameCopySelector.setCurrentNode(frameVolumeCopy)
       frameName = '%s frame %d' % (self._bgMultiVolumeNode.GetName(), frameId)
@@ -489,45 +487,3 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     if not self.iCharting.checked:
       return
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.processEvent(self, observee, event)
-
-
-class MultiVolumeExplorerLogic(ScriptedLoadableModuleLogic):
-
-  def __init__(self, parent=None):
-    ScriptedLoadableModuleLogic.__init__(self, parent)
-
-  @staticmethod
-  def extractFrame(scalarVolumeNode, multiVolumeNode, frameId):
-    # Extract frame from multiVolumeNode and put it into scalarVolumeNode
-    # if no scalar volume given, create one
-    if scalarVolumeNode is None:
-      scalarVolumeNode = slicer.vtkMRMLScalarVolumeNode()
-      scalarVolumeNode.SetScene(slicer.mrmlScene)
-      slicer.mrmlScene.AddNode(scalarVolumeNode)
-
-    # Extract the image data
-    mvImage = multiVolumeNode.GetImageData()
-    extract = vtk.vtkImageExtractComponents()
-    MultiVolumeIntensityChartView.setExtractInput(extract, mvImage)
-    extract.SetComponents(frameId)
-    extract.Update()
-
-    ras2ijk = vtk.vtkMatrix4x4()
-    ijk2ras = vtk.vtkMatrix4x4()
-    multiVolumeNode.GetRASToIJKMatrix(ras2ijk)
-    multiVolumeNode.GetIJKToRASMatrix(ijk2ras)
-    scalarVolumeNode.SetRASToIJKMatrix(ras2ijk)
-    scalarVolumeNode.SetIJKToRASMatrix(ijk2ras)
-
-    scalarVolumeNode.SetAndObserveImageData(extract.GetOutput())
-
-    displayNode = scalarVolumeNode.GetDisplayNode()
-    if displayNode is None:
-      displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
-      displayNode.SetReferenceCount(1)
-      displayNode.SetScene(slicer.mrmlScene)
-      slicer.mrmlScene.AddNode(displayNode)
-      displayNode.SetDefaultColorMap()
-      scalarVolumeNode.SetAndObserveDisplayNodeID(displayNode.GetID())
-
-    return scalarVolumeNode

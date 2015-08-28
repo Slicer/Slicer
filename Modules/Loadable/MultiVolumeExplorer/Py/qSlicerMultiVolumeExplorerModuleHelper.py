@@ -1,4 +1,5 @@
 from __main__ import slicer
+import vtk
 
 
 class qSlicerMultiVolumeExplorerModuleHelper( object ):
@@ -6,6 +7,44 @@ class qSlicerMultiVolumeExplorerModuleHelper( object ):
   @staticmethod
   def RGBtoHex(r, g, b):
     return '#%02X%02X%02X' % (r,g,b)
+
+  @staticmethod
+  def extractFrame(scalarVolumeNode, multiVolumeNode, frameId):
+    # Extract frame from multiVolumeNode and put it into scalarVolumeNode
+    # if no scalar volume given, create one
+    if scalarVolumeNode is None:
+      scalarVolumeNode = slicer.vtkMRMLScalarVolumeNode()
+      scalarVolumeNode.SetScene(slicer.mrmlScene)
+      slicer.mrmlScene.AddNode(scalarVolumeNode)
+
+    # Extract the image data
+    mvImage = multiVolumeNode.GetImageData()
+    extract = vtk.vtkImageExtractComponents()
+    if vtk.VTK_MAJOR_VERSION <= 5:
+      extract.SetInput(mvImage)
+    else:
+      extract.SetInputData(mvImage)
+    extract.SetComponents(frameId)
+    extract.Update()
+
+    ras2ijk = vtk.vtkMatrix4x4()
+    ijk2ras = vtk.vtkMatrix4x4()
+    multiVolumeNode.GetRASToIJKMatrix(ras2ijk)
+    multiVolumeNode.GetIJKToRASMatrix(ijk2ras)
+    scalarVolumeNode.SetRASToIJKMatrix(ras2ijk)
+    scalarVolumeNode.SetIJKToRASMatrix(ijk2ras)
+
+    scalarVolumeNode.SetAndObserveImageData(extract.GetOutput())
+
+    displayNode = scalarVolumeNode.GetDisplayNode()
+    if displayNode is None:
+      displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
+      displayNode.SetReferenceCount(1)
+      displayNode.SetScene(slicer.mrmlScene)
+      slicer.mrmlScene.AddNode(displayNode)
+      displayNode.SetDefaultColorMap()
+      scalarVolumeNode.SetAndObserveDisplayNodeID(displayNode.GetID())
+    return scalarVolumeNode
 
   @staticmethod
   def SetBgFgVolumes(bg, fg):
