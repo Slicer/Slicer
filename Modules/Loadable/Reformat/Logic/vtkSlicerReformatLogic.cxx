@@ -109,8 +109,6 @@ SetSliceNormal(vtkMRMLSliceNode* node, double x, double y, double z)
   vtkMath::Normalize(normal);
 
   // Set the new normal
-  double cross[3], dot, rotation;
-  vtkNew<vtkTransform> transform;
   vtkMatrix4x4* sliceToRAS = node->GetSliceToRAS();
   double nodeNormal[3] = {sliceToRAS->GetElement(0,2),
                            sliceToRAS->GetElement(1,2),
@@ -128,13 +126,15 @@ SetSliceNormal(vtkMRMLSliceNode* node, double x, double y, double z)
   sliceToRAS->SetElement(2,3,0);
 
   // Rotate the sliceNode to match the planeWidget normal
+  double cross[3];
   vtkMath::Cross(nodeNormal, normal, cross);
-  dot = vtkMath::Dot(nodeNormal, normal);
+  double dot = vtkMath::Dot(nodeNormal, normal);
   // Clamp the dot product
   dot = (dot < -1.0) ? -1.0 : (dot > 1.0 ? 1.0 : dot);
-  rotation = vtkMath::DegreesFromRadians(acos(dot));
+  double rotation = vtkMath::DegreesFromRadians(acos(dot));
 
   // Apply the rotation
+  vtkNew<vtkTransform> transform;
   transform->PostMultiply();
   transform->SetMatrix(sliceToRAS);
   transform->RotateWXYZ(rotation,cross);
