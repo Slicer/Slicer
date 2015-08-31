@@ -238,9 +238,14 @@ class ScriptedLoadableModuleLogic():
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """
   Base class for module tester class.
+  Setting messageDelay to something small, like 50 allows
+  faster development time.
   """
 
-  def delayDisplay(self,message,msec=1000):
+  def __init__(self, messageDelay=1000):
+    self.messageDelay = messageDelay
+
+  def delayDisplay(self,message,requestedDelay=None):
     """
     Display messages to the user/tester during testing.
     This method can be temporarily overridden to allow tests running
@@ -259,6 +264,9 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     Error messages should be logged by logging.error() function
     and displayed to user by slicer.util.errorDisplay function.
     """
+    msec = self.messageDelay
+    if requestedDelay:
+      msec = requestedDelay
     slicer.util.delayDisplay(message, msec)
 
   def runTest(self):
