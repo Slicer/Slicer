@@ -149,7 +149,7 @@ void qSlicerVolumeRenderingModule::setup()
     new qSlicerVolumeRenderingReader(volumeRenderingLogic, this));
   coreIOManager->registerIO(new qSlicerNodeWriter(
     "Transfer Function", QString("TransferFunctionFile"),
-    QStringList() << "vtkMRMLVolumePropertyNode", this));
+    QStringList() << "vtkMRMLVolumePropertyNode", true, this));
 }
 
 //-----------------------------------------------------------------------------

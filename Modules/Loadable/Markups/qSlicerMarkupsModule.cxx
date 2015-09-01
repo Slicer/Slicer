@@ -135,7 +135,7 @@ void qSlicerMarkupsModule::setup()
   ioManager->registerIO(markupsIO);
   ioManager->registerIO(new qSlicerNodeWriter(
                             "MarkupsFiducials", markupsIO->fileType(),
-                            QStringList() << "vtkMRMLMarkupsNode", this));
+                            QStringList() << "vtkMRMLMarkupsNode", true, this));
 
   // settings
   /*

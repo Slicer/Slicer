@@ -150,7 +150,7 @@ void qSlicerVolumesModule::setup()
   ioManager->registerIO(new qSlicerVolumesReader(volumesLogic,this));
   ioManager->registerIO(new qSlicerNodeWriter(
     "Volumes", QString("VolumeFile"),
-    QStringList() << "vtkMRMLVolumeNode", this));
+    QStringList() << "vtkMRMLVolumeNode", true, this));
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyVolumesPlugin());

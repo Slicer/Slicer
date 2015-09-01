@@ -39,8 +39,8 @@ public:
   qSlicerNodeWriter(const QString& description,
                     const qSlicerIO::IOFileType& fileType,
                     const QStringList& nodeTags,
-                    bool useCompression = true,
-                    QObject* parent = 0);
+                    bool useCompression,
+                    QObject* parent);
 
   virtual ~qSlicerNodeWriter();
 

@@ -65,7 +65,7 @@ void qSlicerTractographyDisplayModule::setup()
     new qSlicerFiberBundleReader(fiberBundleLogic, this));
   coreIOManager->registerIO(new qSlicerNodeWriter(
     "FiberBundles", QString("FiberBundleFile"),
-    QStringList() << "vtkMRMLFiberBundleNode", this));
+    QStringList() << "vtkMRMLFiberBundleNode", true, this));
 }
 
 //-----------------------------------------------------------------------------

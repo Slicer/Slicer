@@ -162,7 +162,7 @@ void qSlicerModelsModule::setup()
     ioManager->registerDialog(new qSlicerModelsDialog(this));
     ioManager->registerIO(new qSlicerNodeWriter(
       "Models", QString("ModelFile"),
-      QStringList() << "vtkMRMLModelNode", this));
+      QStringList() << "vtkMRMLModelNode", true, this));
     }
 
   // Register Subject Hierarchy core plugins

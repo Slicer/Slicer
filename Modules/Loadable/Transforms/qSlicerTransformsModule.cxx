@@ -146,7 +146,7 @@ void qSlicerTransformsModule::setup()
     new qSlicerTransformsReader(transformLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(
     "Transforms", QString("TransformFile"),
-    QStringList() << "vtkMRMLTransformNode", this));
+    QStringList() << "vtkMRMLTransformNode", true, this));
 
   // Use the displayable manager class to make sure the the containing library is loaded
   vtkSmartPointer<vtkMRMLTransformsDisplayableManager2D> dm2d=vtkSmartPointer<vtkMRMLTransformsDisplayableManager2D>::New();
