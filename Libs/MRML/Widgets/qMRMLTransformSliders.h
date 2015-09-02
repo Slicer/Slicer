@@ -167,6 +167,11 @@ protected slots:
 protected:
   QScopedPointer<qMRMLTransformSlidersPrivate> d_ptr;
 
+  /// Extract the min/max values from the matrix and
+  /// change the slider min/max values accordingly.
+  /// Needed if the matrix changed externally (python, cli, etc.)
+  void updateRangeFromTransform();
+
   ///
   /// Extract min/max translation values from the transform matrix.
   /// Parameter 'pad' allows to specify (using a value between 0 and 1)

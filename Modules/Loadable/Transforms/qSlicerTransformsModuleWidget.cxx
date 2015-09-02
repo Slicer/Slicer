@@ -155,14 +155,8 @@ void qSlicerTransformsModuleWidget::setup()
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onNodeSelected(vtkMRMLNode*)));
 
-  // Connect minimum and maximum from the translation sliders to the matrix
-  this->connect(d->TranslationSliders,
-               SIGNAL(rangeChanged(double,double)),
-               SLOT(onTranslationRangeChanged(double,double)));
-
-  // Notify the matrix of the current translation min/max values
-  this->onTranslationRangeChanged(d->TranslationSliders->minimum(),
-                                  d->TranslationSliders->maximum());
+  // Set a static min/max range to let users freely enter values
+  d->MatrixWidget->setRange(-1e10, 1e10);
 
   // Transform nodes connection
   this->connect(d->TransformToolButton, SIGNAL(clicked()),
@@ -363,6 +357,7 @@ void qSlicerTransformsModuleWidget::invert()
 
   if (!d->MRMLTransformNode) { return; }
 
+  d->TranslationSliders->resetUnactiveSliders();
   d->RotationSliders->resetUnactiveSliders();
 
   d->MRMLTransformNode->Inverse();
@@ -379,14 +374,6 @@ void qSlicerTransformsModuleWidget::split()
     }
 
   d->MRMLTransformNode->Split();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onTranslationRangeChanged(double newMin,
-                                                              double newMax)
-{
-  Q_D(qSlicerTransformsModuleWidget);
-  d->MatrixWidget->setRange(newMin, newMax);
 }
 
 //-----------------------------------------------------------------------------

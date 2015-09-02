@@ -65,7 +65,6 @@ protected slots:
 
   void onTranslateFirstButtonPressed(bool checked);
   void onNodeSelected(vtkMRMLNode* node);
-  void onTranslationRangeChanged(double newMin, double newMax);
   void onMRMLTransformNodeModified(vtkObject* caller);
 
   void copyTransform();
