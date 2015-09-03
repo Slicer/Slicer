@@ -74,7 +74,6 @@ class ScriptedLoadableModuleWidget:
       self.parent.show()
 
   def setupDeveloperSection(self):
-
     if not self.developerMode:
       return
 
@@ -129,7 +128,6 @@ class ScriptedLoadableModuleWidget:
       slicer.util.errorDisplay(errorMessage)
 
 class ScriptedLoadableModuleLogic():
-
   def __init__(self, parent = None):
     # Get module name by stripping 'Logic' from the class name
     self.moduleName = self.__class__.__name__
@@ -243,6 +241,7 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
   """
 
   def __init__(self, messageDelay=1000):
+    unittest.TestCase.__init__(self)
     self.messageDelay = messageDelay
 
   def delayDisplay(self,message,requestedDelay=None):
