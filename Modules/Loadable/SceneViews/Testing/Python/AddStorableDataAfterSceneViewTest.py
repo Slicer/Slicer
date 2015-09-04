@@ -176,7 +176,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
 
   def test_AddStorableDataAfterSceneViewTest1(self):
 
-    self.delayDisplay("Starting the test")
+    slicer.util.delayDisplay("Starting the test")
 
     #
     # add a fiducial
@@ -192,7 +192,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     #
     # add another storable node, a volume
     #
-    self.delayDisplay("Adding a new storable node, after creating a scene view")
+    slicer.util.delayDisplay("Adding a new storable node, after creating a scene view")
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
     mrHeadVolume = sampleDataLogic.downloadMRHead()
@@ -201,7 +201,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     #
     # restore the scene view
     #
-    self.delayDisplay("Restoring the scene view")
+    slicer.util.delayDisplay("Restoring the scene view")
     sv.RestoreScene()
 
     #
@@ -211,7 +211,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
 
     # for now, the non scene view storable data is removed
     self.assertTrue( restoredData == None )
-    self.delayDisplay('Success: extra storable node removed with scene view restore')
+    slicer.util.delayDisplay('Success: extra storable node removed with scene view restore')
 
 
     #
@@ -222,7 +222,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     #
     # restore the scene view, but error on removing nodes
     #
-    self.delayDisplay("Restoring the scene view with check for removed nodes")
+    slicer.util.delayDisplay("Restoring the scene view with check for removed nodes")
     sv.RestoreScene(0)
 
     #
@@ -232,9 +232,9 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
 
     # in this case the non scene view storable data is kept' scene is not changed
     self.assertTrue( restoredData != None )
-    self.delayDisplay('Success: extra storable node NOT removed with scene view restore')
+    slicer.util.delayDisplay('Success: extra storable node NOT removed with scene view restore')
 
     print 'Scene error code = ' + str(slicer.mrmlScene.GetErrorCode())
     print '\t' + slicer.mrmlScene.GetErrorMessage()
 
-    self.delayDisplay('Test passed!')
+    slicer.util.delayDisplay('Test passed!')
