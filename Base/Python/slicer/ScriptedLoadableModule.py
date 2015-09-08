@@ -240,9 +240,11 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
   faster development time.
   """
 
-  def __init__(self, messageDelay=1000):
-    unittest.TestCase.__init__(self)
-    self.messageDelay = messageDelay
+  def __init__(self, *args, **kwargs):
+    super(ScriptedLoadableModuleTest, self).__init__(*args, **kwargs)
+    self.messageDelay = 1000
+    if 'messageDelay' in kwargs:
+      self.messageDelay = kwargs['messageDelay']
 
   def delayDisplay(self,message,requestedDelay=None):
     """
