@@ -64,7 +64,6 @@ slicer_add_python_test(SCRIPT SlicerTestingExitSuccessTest.py)
 slicer_add_python_test(SCRIPT SlicerTestingExitFailureTest.py)
 set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
-
 #
 # Check if 'slicer.testing.runUnitTest()' works as expected
 #
@@ -193,6 +192,14 @@ slicer_add_python_unittest(
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_VTKObservationMixin.py
   SLICER_ARGS --no-main-window --disable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
+# DCMTKPrivateDictionary test
+slicer_add_python_test(
+  SCRIPT DCMTKPrivateDictTest.py
+  SLICER_ARGS --no-main-window --disable-modules
+  SCRIPT_ARGS ${Slicer_SOURCE_DIR}/Testing/Data/Input/philips_ingenia_4_1_3_dwi.dcm
   TESTNAME_PREFIX nomainwindow_
   )
 

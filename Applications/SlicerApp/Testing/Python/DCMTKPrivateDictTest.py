@@ -1,0 +1,24 @@
+import DICOMLib, sys, slicer, os
+
+dcmfile = sys.argv[1]
+
+print('DCMDICTPATH is'),
+try:
+  print(os.environ['DCMDICTPATH'])
+except KeyError:
+  raise Exception("DCMDICTPATH environment variable is not defined !")
+
+dcmdump=DICOMLib.DICOMCommand('dcmdump',[dcmfile])
+dump=str(dcmdump.start()).split('\n')
+
+found_private_tag = False
+for line in dump:
+  line = line.split(' ')
+  if line[0] == '(2001,1003)':
+    if line[-1] == "DiffusionBFactor":
+      found_private_tag = True
+      break
+
+if not found_private_tag:
+  raise Exception("Could not find 'DiffusionBFactor' "
+                  "private tag reading file '%s' using 'dcmdump' !" % dcmfile)
