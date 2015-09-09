@@ -36,7 +36,7 @@ class EditUtil(object):
     size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
     for i in xrange(size):
       n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
-      if n.GetModuleName() == "Editor":
+      if n.GetModuleName() == "Editor" and n.GetSingletonTag() == "Editor":
         node = n
     return node
 
