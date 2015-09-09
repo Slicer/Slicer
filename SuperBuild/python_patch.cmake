@@ -4,7 +4,7 @@ set(out_msvc9compiler ${PYTHON_SRC_DIR}/Lib/distutils/msvc9compiler.py)
 
 #
 # This custom version of 'msvc9compiler.py' has been made by applying
-# the following patches to the version of 'msvc9compiler.py' shipped with Python-2.7.3.tgz:
+# the following patches to the version of 'msvc9compiler.py' shipped with Python-2.7.10.tgz:
 #
 #   06-msvc9compiler-vs10-support-issue16296.patch
 #   07-msvc9compiler-vcexpress-and-sdk-support-issue7511.patch
