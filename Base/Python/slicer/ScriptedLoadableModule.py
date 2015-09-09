@@ -200,9 +200,21 @@ class ScriptedLoadableModuleLogic():
     start, end : window coordinates for action
     steps : number of steps to move in
     modifiers : list containing zero or more of "Shift" or "Control"
+
+    Hint: for generating test data you can use this snippet of code:
+
+layoutManager = slicer.app.layoutManager()
+threeDView = layoutManager.threeDWidget(0).threeDView()
+style = threeDView.interactorStyle()
+interactor = style.GetInteractor()
+def onClick(caller,event):
+    print(interactor.GetEventPosition())
+
+interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
+
     """
     style = widget.interactorStyle()
-    interator = style.GetInteractor()
+    interactor = style.GetInteractor()
     if button == 'Left':
       down = style.OnLeftButtonDown
       up = style.OnLeftButtonUp
@@ -218,20 +230,20 @@ class ScriptedLoadableModuleLogic():
     else:
       raise Exception("Bad button - should be Left or Right, not %s" % button)
     if 'Shift' in modifiers:
-      interator.SetShiftKey(1)
+      interactor.SetShiftKey(1)
     if 'Control' in modifiers:
-      interator.SetControlKey(1)
-    interator.SetEventPosition(*start)
+      interactor.SetControlKey(1)
+    interactor.SetEventPosition(*start)
     down()
     for step in xrange(steps):
       frac = float(step)/steps
       x = int(start[0] + frac*(end[0]-start[0]))
       y = int(start[1] + frac*(end[1]-start[1]))
-      interator.SetEventPosition(x,y)
+      interactor.SetEventPosition(x,y)
       style.OnMouseMove()
     up()
-    interator.SetShiftKey(0)
-    interator.SetControlKey(0)
+    interactor.SetShiftKey(0)
+    interactor.SetControlKey(0)
 
 class ScriptedLoadableModuleTest(unittest.TestCase):
   """
