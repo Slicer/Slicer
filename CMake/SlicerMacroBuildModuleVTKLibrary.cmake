@@ -64,6 +64,19 @@ macro(SlicerMacroBuildModuleVTKLibrary)
   set(lib_name ${MODULEVTKLIBRARY_NAME})
 
   # --------------------------------------------------------------------------
+  # Set <MODULEVTKLIBRARY_NAME>_INCLUDE_DIRS
+  # --------------------------------------------------------------------------
+  # XXX Since corresponding variables are explicitly set in
+  #     SubjectHierarchy, do not overwrite.
+  if(NOT lib_name STREQUAL "vtkSlicerSubjectHierarchyModuleLogic"
+     AND NOT lib_name STREQUAL "vtkSlicerSubjectHierarchyModuleMRML")
+    set(${MODULEVTKLIBRARY_NAME}_INCLUDE_DIRS
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      CACHE INTERNAL "${MODULEVTKLIBRARY_NAME} include directories" FORCE)
+  endif()
+
+  # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
   include_directories(

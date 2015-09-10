@@ -51,8 +51,7 @@ if(_module_targets)
     set(Slicer_INCLUDE_MODULE_DIRS_CONFIG
 "${Slicer_INCLUDE_MODULE_DIRS_CONFIG}
 set(${target}_INCLUDE_DIRS
-  \"${${target}_SOURCE_DIR}\"
-  \"${${target}_BINARY_DIR}\")"
+  \"${${target}_INCLUDE_DIRS}\")"
 )
   endforeach()
 endif()
@@ -63,8 +62,7 @@ if(_module_logic_targets)
     set(Slicer_INCLUDE_MODULE_LOGIC_DIRS_CONFIG
 "${Slicer_INCLUDE_MODULE_LOGIC_DIRS_CONFIG}
 set(${target}_INCLUDE_DIRS
-  \"${${target}_SOURCE_DIR}\"
-  \"${${target}_BINARY_DIR}\")"
+  \"${${target}_INCLUDE_DIRS}\")"
 )
     list(APPEND Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG "\${${target}_INCLUDE_DIRS}")
   endforeach()
@@ -76,8 +74,7 @@ if(_module_mrml_targets)
     set(Slicer_INCLUDE_MODULE_MRML_DIRS_CONFIG
 "${Slicer_INCLUDE_MODULE_MRML_DIRS_CONFIG}
 set(${target}_INCLUDE_DIRS
-  \"${${target}_SOURCE_DIR}\"
-  \"${${target}_BINARY_DIR}\")"
+  \"${${target}_INCLUDE_DIRS}\")"
 )
     list(APPEND Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG "\${${target}_INCLUDE_DIRS}")
   endforeach()
@@ -89,8 +86,7 @@ if(_module_widget_targets)
     set(Slicer_INCLUDE_MODULE_WIDGET_DIRS_CONFIG
 "${Slicer_INCLUDE_MODULE_WIDGET_DIRS_CONFIG}
 set(${target}_INCLUDE_DIRS
-  \"${${target}_SOURCE_DIR}\"
-  \"${${target}_BINARY_DIR}\")"
+  \"${${target}_INCLUDE_DIRS}\")"
 )
     list(APPEND Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG "\${${target}_INCLUDE_DIRS}")
   endforeach()

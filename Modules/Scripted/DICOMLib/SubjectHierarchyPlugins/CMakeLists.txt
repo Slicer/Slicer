@@ -28,8 +28,6 @@ set(${KIT}_UI_SRCS
 set(${KIT}_RESOURCES
   )
 
-SET (${KIT}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "" FORCE)
-
 #-----------------------------------------------------------------------------
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicerSubjectHierarchyModuleMRML

@@ -67,11 +67,18 @@ macro(SlicerMacroBuildModuleQtLibrary)
   set(lib_name ${MODULEQTLIBRARY_NAME})
 
   # --------------------------------------------------------------------------
+  # Set <MODULEQTLIBRARY_NAME>_INCLUDE_DIRS
+  # --------------------------------------------------------------------------
+  set(${MODULEQTLIBRARY_NAME}_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    CACHE INTERNAL "${MODULEQTLIBRARY_NAME} include directories" FORCE)
+
+  # --------------------------------------------------------------------------
   # Include dirs
   # --------------------------------------------------------------------------
   include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
+    ${${MODULEQTLIBRARY_NAME}_INCLUDE_DIRS}
     ${MODULEQTLIBRARY_INCLUDE_DIRECTORIES}
     )
 
