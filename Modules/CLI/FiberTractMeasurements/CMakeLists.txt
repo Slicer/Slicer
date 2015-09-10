@@ -15,7 +15,7 @@ include(${SlicerExecutionModel_USE_FILE})
 
 #-----------------------------------------------------------------------------
 set(${MODULE_NAME}_TARGET_LIBRARIES
-  vtkITK ModuleDescriptionParser MRMLCore SlicerBaseLogic SlicerBaseCLI
+  vtkITK ModuleDescriptionParser MRMLCore SlicerBaseLogic
   vtkTeem ${VTK_LIBRARIES} vtkSlicerTractographyDisplayModuleMRML MRMLCLI
   )
 
@@ -29,8 +29,7 @@ SEMMacroBuildCLI(
     ${MRMLCore_INCLUDE_DIRS}
     ${MRMLCLI_INCLUDE_DIRS}
     ${VTK_INCLUDE_DIRS}
-    ${SlicerBaseLogic_SOURCE_DIR} ${SlicerBaseLogic_BINARY_DIR}
-    ${vtkSlicerTractographyDisplayModuleMRML_SOURCE_DIR} ${vtkSlicerTractographyDisplayModuleMRML_BINARY_DIR}
+    ${vtkSlicerTractographyDisplayModuleMRML_INCLUDE_DIRS}
   EXECUTABLE_ONLY
   )
 
