@@ -204,7 +204,7 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Metre per second", "velocity", "", "m/s", 3, -10000., 10000., 1., 0.);
   this->AddUnitNodeToScene(scene,
-    "Kilometre per second", "velocity", "", "km/s", 3, -10000., 10000., 0.01, 0.);
+    "Kilometre per second", "velocity", "", "km/s", 3, -10000., 10000., 0.001, 0.);
 
   this->AddUnitNodeToScene(scene,
     "Intensity", "intensity", "", "W/m\xB2", 3, -10000., 10000., 1., 0.);
