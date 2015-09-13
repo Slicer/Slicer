@@ -20,8 +20,7 @@ SEMMacroBuildCLI(
     vtkSlicerMarkupsModuleMRML
   INCLUDE_DIRECTORIES
     ${MRMLCore_INCLUDE_DIRS}
-    ${vtkSlicerMarkupsModuleMRML_SOURCE_DIR}
-    ${vtkSlicerMarkupsModuleMRML_BINARY_DIR}
+    ${vtkSlicerMarkupsModuleMRML_INCLUDE_DIRS}
   )
 
 #-----------------------------------------------------------------------------

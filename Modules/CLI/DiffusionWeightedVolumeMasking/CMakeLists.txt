@@ -32,8 +32,7 @@ SEMMacroBuildCLI(
     ${vtkITK_INCLUDE_DIRS}
     ${MRMLCore_INCLUDE_DIRS}
     ${vtkTeem_INCLUDE_DIRS}
-    ${vtkSlicerEditorLibModuleLogic_SOURCE_DIR}
-    ${vtkSlicerEditorLibModuleLogic_BINARY_DIR}
+    ${vtkSlicerEditorLibModuleLogic_INCLUDE_DIRS}
   TARGET_LIBRARIES ${${MODULE_NAME}_TARGET_LIBRARIES}
   EXECUTABLE_ONLY
   )
