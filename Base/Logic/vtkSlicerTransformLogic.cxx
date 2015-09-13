@@ -454,6 +454,49 @@ vtkMRMLScalarVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTr
   return outputVolumeNode.GetPointer();
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode)
+{
+  if (inputTransformNode==NULL || referenceVolumeNode==NULL || referenceVolumeNode->GetImageData()==NULL)
+    {
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: inputs are invalid");
+    return NULL;
+    }
+  vtkMRMLScene* scene=this->GetMRMLScene();
+  if (scene==NULL)
+    {
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: scene invalid");
+    return NULL;
+    }
+
+  // Fill the volume
+  vtkNew<vtkImageData> outputVolume;
+  outputVolume->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+  vtkNew<vtkMatrix4x4> ijkToRas;
+  referenceVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
+  vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume.GetPointer(), inputTransformNode, ijkToRas.GetPointer());
+
+  // Create a volume node
+  vtkNew<vtkMRMLTransformNode> outputGridTransformNode;
+  std::string nodeName=std::string(inputTransformNode->GetName())+" grid transform";
+  outputGridTransformNode->SetName(scene->GenerateUniqueName(nodeName).c_str());
+
+  vtkNew<vtkOrientedGridTransform> outputGridTransform;
+  // The output volume has unit spacing and zero origin (because ijkToRas contains origin, spacing, and directions)
+  // so we have to set it here
+  outputVolume->SetOrigin(referenceVolumeNode->GetOrigin());
+  outputVolume->SetSpacing(referenceVolumeNode->GetSpacing());
+  // Volume cannot store directions, therefore that has to be set in the grid transform
+  vtkNew<vtkMatrix4x4> ijkToRasDirection; // normalized direction matrix
+  referenceVolumeNode->GetIJKToRASDirectionMatrix(ijkToRasDirection.GetPointer());
+  outputGridTransform->SetGridDirectionMatrix(ijkToRasDirection.GetPointer());
+  outputGridTransform->SetDisplacementGridData(outputVolume.GetPointer());
+
+  outputGridTransformNode->SetAndObserveTransformToParent(outputGridTransform.GetPointer());
+  scene->AddNode(outputGridTransformNode.GetPointer());
+
+  return outputGridTransformNode.GetPointer();
+}
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageData* vectorImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS)

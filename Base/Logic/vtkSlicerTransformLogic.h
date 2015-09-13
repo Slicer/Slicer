@@ -91,6 +91,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   /// referenceVolumeNode specifies the volume origin, spacing, extent, and orientation
   vtkMRMLScalarVolumeNode* CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude=true);
 
+  /// Convert the input transform to a grid transform.
+  /// referenceVolumeNode specifies the volume origin, spacing, extent, and orientation
+  vtkMRMLTransformNode* ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode);
+
   /// Take samples from the displacement field and store the magnitude in an image volume
   /// The extents of the output image must be set before calling this method.
   /// The origin and spacing attributes of the output image are ignored (origin, spacing, and axis directions
