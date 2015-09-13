@@ -94,7 +94,7 @@ public:
   ///
   /// Set/Get the unit prefix.
   /// Default is "".
-  // \sa SetSuffix(), GetSuffix()
+  /// \sa SetPrefix(), GetPrefix()
   vtkGetStringMacro(Prefix);
   vtkSetStringMacro(Prefix);
 
@@ -102,7 +102,7 @@ public:
   /// Set/Get the unit suffix. For example, the suffix for the unity
   /// meter would be "m".
   /// Default is "".
-  /// \sa SetPrefix(), GetPrefix()
+  /// \sa SetSuffix(), GetSuffix()
   vtkGetStringMacro(Suffix);
   vtkSetStringMacro(Suffix);
 
