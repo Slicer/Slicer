@@ -156,8 +156,30 @@ protected:
 
   /// \brief Add a unit node to the given scene.
   ///
-  /// The display coefficient corresponds to the inverse of the
-  /// SI prefix coefficient associated with the unit.
+  /// A unit node is defined by the following properties:
+  ///
+  /// * Name: The property describes the unit itself. For example,
+  /// the name of a `length` unit can be `Millimeter`, `Meter` or
+  /// `Centimeter`. Setting the node's name also sets the node's singleton tag.
+  ///
+  /// * Quantity: This property describes what types of unit. For example the
+  /// quantity of `second` and `day` is `time`. This property is a Units node
+  /// attribute so it can be easily observed by the GUI.
+  ///
+  /// * Prefix and Suffix: Abbreviation/text displayed respectively before and
+  /// after the unit.
+  ///
+  /// * Precision: This property describes the number of digit used after the
+  /// comma. For example a precision of 2 gives 12.00 and -13.61.
+  ///
+  /// * Min and Max: Range of value allowed for the unit. For example, the
+  /// minimum for the Kelvin value would be 0.
+  ///
+  /// * DisplayCoeff: Coefficient multiplied to the value to display it with
+  /// the appropriate unit. The display coefficient corresponds to the inverse
+  /// of the SI prefix coefficient associated with the unit.
+  ///
+  /// * DisplayOffset: Offset added to the value being displayed.
   ///
   /// \sa GetDisplayCoefficient()
   vtkMRMLUnitNode* AddUnitNodeToScene(vtkMRMLScene* scene,
