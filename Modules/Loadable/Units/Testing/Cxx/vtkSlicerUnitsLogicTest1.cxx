@@ -46,6 +46,7 @@ bool testSelectionNode();
 bool testCloseScene();
 bool testSaveAndReloadScene();
 bool testImportScene(const char* sceneFilePath);
+bool testGetSIPrefixCoefficient();
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +57,7 @@ int vtkSlicerUnitsLogicTest1( int argc , char * argv[] )
   res = res && testSelectionNode();
   res = res && testCloseScene();
   res = res && testSaveAndReloadScene();
+  res = res && testGetSIPrefixCoefficient();
   if (argc > 1)
     {
     res = res && testImportScene(argv[1]);
@@ -288,6 +290,51 @@ bool testImportScene(const char* sceneFilePath)
 
   selectionNode->GetUnitNodes(unitNodes);
   return areValidNodes(unitNodes, /*sorted =*/ true, "testImportScene->selectionNodeAfterClear");
+}
+
+//-----------------------------------------------------------------------------
+bool testGetSIPrefixCoefficient()
+{
+  std::map<std::string, double> coefficients;
+  coefficients["yotta"] = 1000000000000000000000000.;
+  coefficients["zetta"] = 1000000000000000000000.;
+  coefficients["exa"] = 1000000000000000000.;
+  coefficients["peta"] = 1000000000000000.;
+  coefficients["tera"] = 1000000000000.;
+  coefficients["giga"] = 1000000000.;
+  coefficients["mega"] = 1000000.;
+  coefficients["kilo"] = 1000.;
+  coefficients["hecto"] = 100.;
+  coefficients["deca"] = 10.;
+  coefficients[""] = 1.;
+  coefficients["deci"] = 0.1;
+  coefficients["centi"] = 0.01;
+  coefficients["milli"] = 0.001;
+  coefficients["micro"] = 0.000001;
+  coefficients["nano"] = 0.000000001;
+  coefficients["pico"] = 0.000000000001;
+  coefficients["femto"] = 0.000000000000001;
+  coefficients["atto"] = 0.000000000000000001;
+  coefficients["zepto"] = 0.000000000000000000001;
+  coefficients["yocto"] = 0.000000000000000000000001;
+
+  for (std::map<std::string, double>::iterator it = coefficients.begin();
+       it != coefficients.end(); ++it)
+    {
+    std::string prefix = it->first;
+    double expectedCoefficient = it->second;
+    double coefficient = vtkSlicerUnitsLogic::GetSIPrefixCoefficient(prefix.c_str());
+    if (coefficient != expectedCoefficient)
+      {
+      std::cerr << "Line " << __LINE__
+                << " - Problem with GetSIPrefixCoefficient(\"" << prefix << "\")\n"
+                << "  coefficient: " << coefficient << "\n"
+                << "  expectedCoefficient: " << expectedCoefficient
+                << std::endl;
+      return false;
+      }
+    }
+  return true;
 }
 
 } // end namespace

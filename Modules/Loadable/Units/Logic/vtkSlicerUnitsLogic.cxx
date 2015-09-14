@@ -77,6 +77,38 @@ vtkMRMLScene* vtkSlicerUnitsLogic::GetUnitsScene() const
 }
 
 //----------------------------------------------------------------------------
+double vtkSlicerUnitsLogic::
+GetSIPrefixCoefficient(const char* prefix)
+{
+  if (!prefix)
+    {
+    return 1.;
+    }
+  if (strcmp("yotta", prefix) == 0) { return 1000000000000000000000000.; }
+  else if (strcmp("zetta", prefix) == 0) { return 1000000000000000000000.; }
+  else if (strcmp("exa", prefix) == 0) { return 1000000000000000000.; }
+  else if (strcmp("peta", prefix) == 0) { return 1000000000000000.; }
+  else if (strcmp("tera", prefix) == 0) { return 1000000000000.; }
+  else if (strcmp("giga", prefix) == 0) { return 1000000000.; }
+  else if (strcmp("mega", prefix) == 0) { return 1000000.; }
+  else if (strcmp("kilo", prefix) == 0) { return 1000.; }
+  else if (strcmp("hecto", prefix) == 0) { return 100.; }
+  else if (strcmp("deca", prefix) == 0) { return 10.; }
+  else if (strcmp("", prefix) == 0) { return 1.; }
+  else if (strcmp("deci", prefix) == 0) { return 0.1; }
+  else if (strcmp("centi", prefix) == 0) { return 0.01; }
+  else if (strcmp("milli", prefix) == 0) { return 0.001; }
+  else if (strcmp("micro", prefix) == 0) { return 0.000001; }
+  else if (strcmp("nano", prefix) == 0) { return 0.000000001; }
+  else if (strcmp("pico", prefix) == 0) { return 0.000000000001; }
+  else if (strcmp("femto", prefix) == 0) { return 0.000000000000001; }
+  else if (strcmp("atto", prefix) == 0) { return 0.000000000000000001; }
+  else if (strcmp("zepto", prefix) == 0) { return 0.000000000000000000001; }
+  else if (strcmp("yocto", prefix) == 0) { return 0.000000000000000000000001; }
+  else { return 1.; }
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLUnitNode* vtkSlicerUnitsLogic
 ::AddUnitNodeToScene(vtkMRMLScene* scene, const char* name,
                      const char* quantity, const char* prefix,

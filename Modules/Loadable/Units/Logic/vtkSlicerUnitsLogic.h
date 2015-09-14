@@ -63,6 +63,42 @@ public:
   /// Get the scene with preset unit nodes in it.
   vtkMRMLScene* GetUnitsScene() const;
 
+  /// \brief Get the coefficient associated with the given SI prefix \a name.
+  ///
+  /// Returns the coefficient for all prefix names defined in the [International
+  /// System of Units (SI)](https://en.wikipedia.org/wiki/Metric_prefix#List_of_SI_prefixes) reported in the table below.
+  ///
+  /// Otherwise, returns 1 if an empty name or an unknown prefix name is given.
+  ///
+  /// | Prefix | Coefficient                         |
+  /// |--------|-------------------------------------|
+  /// | yotta  | 10^24  (1000000000000000000000000)  |
+  /// | zetta  | 10^21  (1000000000000000000000)     |
+  /// | exa    | 10^18  (1000000000000000000)        |
+  /// | peta   | 10^15  (1000000000000000)           |
+  /// | tera   | 10^12  (1000000000000)              |
+  /// | giga   | 10^9   (1000000000)                 |
+  /// | mega   | 10^6   (1000000)                    |
+  /// | kilo   | 10^3   (1000)                       |
+  /// | hecto  | 10^2   (100)                        |
+  /// | deca   | 10^1   (10)                         |
+  /// |        | 10^0   (1)                          |
+  /// | deci   | 10^-1  (0.1)                        |
+  /// | centi  | 10^-2  (0.01)                       |
+  /// | milli  | 10^-3  (0.001)                      |
+  /// | micro  | 10^-6  (0.000001)                   |
+  /// | nano   | 10^-9  (0.000000001)                |
+  /// | pico   | 10^-12 (0.000000000001)             |
+  /// | femto  | 10^-15 (0.000000000000001)          |
+  /// | atto   | 10^-18 (0.000000000000000001)       |
+  /// | zepto  | 10^-21 (0.000000000000000000001)    |
+  /// | yocto  | 10^-24 (0.000000000000000000000001) |
+  ///
+  /// Source https://en.wikipedia.org/wiki/Metric_prefix#List_of_SI_prefixes
+  ///
+  /// \sa AddUnitNodeToScene()
+  static double GetSIPrefixCoefficient(const char* prefix);
+
 protected:
   vtkSlicerUnitsLogic();
   virtual ~vtkSlicerUnitsLogic();
