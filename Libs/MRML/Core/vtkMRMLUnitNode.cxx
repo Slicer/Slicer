@@ -202,6 +202,7 @@ const char* vtkMRMLUnitNode
 ::GetDisplayValueStringFromDisplayValue(double displayValue)
 {
   std::stringstream strstream;
+  strstream.setf(ios::fixed,ios::floatfield);
   strstream.precision(this->Precision);
   strstream << displayValue;
   strstream >> this->LastValueString;
