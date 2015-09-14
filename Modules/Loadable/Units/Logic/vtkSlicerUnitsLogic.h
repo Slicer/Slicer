@@ -44,6 +44,7 @@ class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
 {
 public:
   static vtkSlicerUnitsLogic *New();
+  typedef vtkSlicerUnitsLogic Self;
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -99,6 +100,32 @@ public:
   /// \sa AddUnitNodeToScene()
   static double GetSIPrefixCoefficient(const char* prefix);
 
+  /// \brief Get the coefficient to transform a value and display it.
+  ///
+  /// This function is used to conveniently compute the display coefficient
+  /// expected by AddUnitNodeToScene().
+  ///
+  /// The display coefficient is used to transform quantity values to a given
+  /// unit.
+  ///
+  /// By default, value for a given quantity are assumed to have no prefix. For
+  /// example, this means that `length` values are in `meter`, `time` values are
+  /// in `second`. In that case, the coefficient to transform quantity values to
+  /// a given unit can be computed using GetDisplayCoefficient() specifying only
+  /// the \a displayPrefix parameter.
+  ///
+  /// If the quantity values are associated with a specific unit, the \a valuePrefix
+  /// parameter should be provided. For example, in Slicer, since `length` values
+  /// are assumed to be in millimeter the display coefficient should be computed
+  /// specifying `milli` as \a valuePrefix.
+  ///
+  /// \a prefix and \a basePrefix can be any value documented in GetSIPrefixCoefficient().
+  ///
+  /// \sa GetSIPrefixCoefficient()
+  /// \sa AddUnitNodeToScene()
+  /// \sa AddDefaultsUnits(), AddBuiltInUnits()
+  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "");
+
 protected:
   vtkSlicerUnitsLogic();
   virtual ~vtkSlicerUnitsLogic();
@@ -128,6 +155,11 @@ protected:
   virtual void RegisterNodesInternal(vtkMRMLScene* scene);
 
   /// \brief Add a unit node to the given scene.
+  ///
+  /// The display coefficient corresponds to the inverse of the
+  /// SI prefix coefficient associated with the unit.
+  ///
+  /// \sa GetDisplayCoefficient()
   vtkMRMLUnitNode* AddUnitNodeToScene(vtkMRMLScene* scene,
     const char* name,
     const char* quantity = "length",

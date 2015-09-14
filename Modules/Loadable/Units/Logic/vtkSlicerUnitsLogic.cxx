@@ -109,6 +109,12 @@ GetSIPrefixCoefficient(const char* prefix)
 }
 
 //----------------------------------------------------------------------------
+double vtkSlicerUnitsLogic::GetDisplayCoefficient(const char* prefix, const char* basePrefix)
+{
+  return GetSIPrefixCoefficient(basePrefix) / GetSIPrefixCoefficient(prefix);
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLUnitNode* vtkSlicerUnitsLogic
 ::AddUnitNodeToScene(vtkMRMLScene* scene, const char* name,
                      const char* quantity, const char* prefix,
@@ -189,16 +195,18 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->RegisterNodesInternal(scene);
 
   // Add defaults nodes here
+
+  // in Slicer, "length" quantity values are always expressed in millimeters.
   this->AddUnitNodeToScene(scene,
-    "Meter", "length", "", "m", 3, -10000., 10000., 0.001, 0.);
+    "Meter", "length", "", "m", 3, -10000., 10000., Self::GetDisplayCoefficient("", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Centimeter", "length", "", "cm", 3, -10000., 10000., 0.1, 0.);
+    "Centimeter", "length", "", "cm", 3, -10000., 10000., Self::GetDisplayCoefficient("centi", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Millimeter", "length", "", "mm", 3, -10000., 10000., 1., 0.);
+    "Millimeter", "length", "", "mm", 3, -10000., 10000., Self::GetDisplayCoefficient("milli", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Micrometer", "length", "", "\xB5m", 3, -10000., 10000., 1000., 0.);
+    "Micrometer", "length", "", "\xB5m", 3, -10000., 10000., Self::GetDisplayCoefficient("micro", "milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Nanometer", "length", "", "nm", 3, -10000., 10000., 1000000., 0.);
+    "Nanometer", "length", "", "nm", 3, -10000., 10000., Self::GetDisplayCoefficient("nano", "milli"), 0.);
 
   // 30.436875 is average number of days in a month
   this->AddUnitNodeToScene(scene,
@@ -212,31 +220,31 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
   this->AddUnitNodeToScene(scene,
     "Minute", "time", "", "min", 2, -10000., 10000., 1.0/60.0, 0.);
   this->AddUnitNodeToScene(scene,
-    "Second", "time", "", "s", 3, -10000., 10000., 1., 0.);
+    "Second", "time", "", "s", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
   this->AddUnitNodeToScene(scene,
-    "Millisecond", "time", "", "ms", 3, -10000., 10000., 1000., 0.);
+    "Millisecond", "time", "", "ms", 3, -10000., 10000., Self::GetDisplayCoefficient("milli"), 0.);
   this->AddUnitNodeToScene(scene,
-    "Microsecond", "time", "", "\xB5s", 3, -10000., 10000., 1000., 0.);
+    "Microsecond", "time", "", "\xB5s", 3, -10000., 10000., Self::GetDisplayCoefficient("micro"), 0.);
 
   this->AddUnitNodeToScene(scene,
-    "Herz", "frequency", "", "Hz", 3, -10000., 10000., 1., 0.);
+    "Herz", "frequency", "", "Hz", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
   this->AddUnitNodeToScene(scene,
-    "decahertz", "frequency", "", "daHz", 3, -10000., 10000., 0.1, 0.);
+    "decahertz", "frequency", "", "daHz", 3, -10000., 10000., Self::GetDisplayCoefficient("deca"), 0.);
   this->AddUnitNodeToScene(scene,
-    "HectoHerz", "frequency", "", "hHz", 3, -10000., 10000., 0.01, 0.);
+    "HectoHerz", "frequency", "", "hHz", 3, -10000., 10000., Self::GetDisplayCoefficient("hecto"), 0.);
   this->AddUnitNodeToScene(scene,
-    "KiloHerz", "frequency", "", "kHz", 3, -10000., 10000., 0.001, 0.);
+    "KiloHerz", "frequency", "", "kHz", 3, -10000., 10000., Self::GetDisplayCoefficient("kilo"), 0.);
   this->AddUnitNodeToScene(scene,
-    "MegaHerz", "frequency", "", "MHz", 3, -10000., 10000., 0.000001, 0.);
+    "MegaHerz", "frequency", "", "MHz", 3, -10000., 10000., Self::GetDisplayCoefficient("mega"), 0.);
   this->AddUnitNodeToScene(scene,
-    "GigaHerz", "frequency", "", "GHz", 3, -10000., 10000., 0.000000001, 0.);
+    "GigaHerz", "frequency", "", "GHz", 3, -10000., 10000., Self::GetDisplayCoefficient("giga"), 0.);
   this->AddUnitNodeToScene(scene,
-    "TeraHerz", "frequency", "", "THz", 3, -10000., 10000., 0.000000000001, 0.);
+    "TeraHerz", "frequency", "", "THz", 3, -10000., 10000., Self::GetDisplayCoefficient("tera"), 0.);
 
   this->AddUnitNodeToScene(scene,
-    "Metre per second", "velocity", "", "m/s", 3, -10000., 10000., 1., 0.);
+    "Metre per second", "velocity", "", "m/s", 3, -10000., 10000., Self::GetDisplayCoefficient(""), 0.);
   this->AddUnitNodeToScene(scene,
-    "Kilometre per second", "velocity", "", "km/s", 3, -10000., 10000., 0.001, 0.);
+    "Kilometre per second", "velocity", "", "km/s", 3, -10000., 10000., Self::GetDisplayCoefficient("kilo"), 0.);
 
   this->AddUnitNodeToScene(scene,
     "Intensity", "intensity", "", "W/m\xB2", 3, -10000., 10000., 1., 0.);
