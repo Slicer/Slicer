@@ -18,12 +18,6 @@
 
 ==============================================================================*/
 
-// .NAME vtkSlicerUnitsLogic - Slicer logic for unit manipulation
-// .SECTION Description
-// This class manages the logic associated with the units. It allows to create
-// a new unit easily. The logic is in charge of calling a modify on the
-// the selection node every time a current unit is modified so the listeners
-// can update themselves.
 
 #ifndef __vtkSlicerUnitsLogic_h
 #define __vtkSlicerUnitsLogic_h
@@ -39,6 +33,12 @@ class vtkMRMLUnitNode;
 // STD includes
 #include <map>
 
+/// \brief Slicer logic for unit manipulation.
+///
+/// This class manages the logic associated with the units. It allows to create
+/// a new unit easily. The logic is in charge of calling a modify on the
+/// the selection node every time a current unit is modified so the listeners
+/// can update themselves.
 class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
   : public vtkMRMLAbstractLogic
 {
@@ -47,9 +47,8 @@ public:
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  //
-  // Add unit node to the scene.
-  // Returns NULL if the logic has no scene.
+  /// Add unit node to the scene.
+  /// Returns NULL if the logic has no scene.
   vtkMRMLUnitNode* AddUnitNode(const char* name,
     const char* quantity = "length",
     const char* prefix = "",
@@ -58,12 +57,10 @@ public:
     double min = -10000.,
     double max = 10000.);
 
-  //
-  // Change the default unit for the corresponding quantity
+  /// Change the default unit for the corresponding quantity
   void SetDefaultUnit(const char* quantity, const char* id);
 
-  //
-  // Get the scene with preset unit nodes in it.
+  /// Get the scene with preset unit nodes in it.
   vtkMRMLScene* GetUnitsScene() const;
 
 protected:
@@ -79,13 +76,13 @@ protected:
   /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
   virtual void OnMRMLNodeModified(vtkMRMLNode* modifiedNode);
 
-  // Add the built in units in the units logic scene.
+  /// Add the built in units in the units logic scene.
   virtual void AddDefaultsUnits();
 
-  // Add the default units in the application scene
+  /// Add the default units in the application scene
   virtual void AddBuiltInUnits(vtkMRMLScene* scene);
 
-  // Overloaded to add the defaults units in the application scene.
+  /// Overloaded to add the defaults units in the application scene.
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Register MRML Node classes to Scene.
@@ -94,7 +91,7 @@ protected:
   virtual void RegisterNodes();
   virtual void RegisterNodesInternal(vtkMRMLScene* scene);
 
-  // Add a unit node to the given secne
+  /// \brief Add a unit node to the given scene.
   vtkMRMLUnitNode* AddUnitNodeToScene(vtkMRMLScene* scene,
     const char* name,
     const char* quantity = "length",
@@ -114,6 +111,7 @@ protected:
   /// singleton.
   /// \sa SaveDefaultUnits()
   void RestoreDefaultUnits();
+
   // Variables
   vtkMRMLScene* UnitsScene;
 private:
