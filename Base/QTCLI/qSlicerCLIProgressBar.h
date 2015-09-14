@@ -40,10 +40,15 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
   Q_ENUMS(Visibility)
   QVTK_OBJECT
 
+  /// This property controls how the module name is visible.
+  /// AlwaysHidden by default.
+  /// \sa nameVisibility(), setNameVisibility(),
+  /// nameVisibility
+  Q_PROPERTY(Visibility nameVisibility READ nameVisibility WRITE setNameVisibility)
   /// This property controls how the status label is visible.
   /// AlwaysVisible by default.
   /// \sa statusVisibility(), setStatusVisibility(),
-  /// progressVisibility
+  /// statusVisibility
   Q_PROPERTY(Visibility statusVisibility READ statusVisibility WRITE setStatusVisibility)
   /// This property controls how the progress bar is visible.
   /// VisibleAfterCompletion by default.
@@ -68,6 +73,9 @@ public:
     VisibleAfterCompletion
   };
 
+  /// Visiblity of the module name.
+  /// \sa nameVisibility
+  Visibility nameVisibility()const;
   /// Visiblity of the status label.
   /// \sa statusVisibility
   Visibility statusVisibility()const;
@@ -79,6 +87,10 @@ public slots:
 
   /// Set the \a commandLineModuleNode
   void setCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
+
+  /// Set the module name visibility
+  /// \sa nameVisibility
+  void setNameVisibility(qSlicerCLIProgressBar::Visibility visibility);
 
   /// Set the status label visibility
   /// \sa statusVisibility

@@ -56,12 +56,14 @@ public:
 private:
 
   QGridLayout *  GridLayout;
+  QLabel *       NameLabel;
   QLabel *       StatusLabelLabel;
   QLabel *       StatusLabel;
   QProgressBar * ProgressBar;
   QProgressBar * StageProgressBar;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+  qSlicerCLIProgressBar::Visibility NameVisibility;
   qSlicerCLIProgressBar::Visibility StatusVisibility;
   qSlicerCLIProgressBar::Visibility ProgressVisibility;
   qSlicerCLIProgressBar::Visibility StageProgressVisibility;
@@ -75,6 +77,7 @@ qSlicerCLIProgressBarPrivate::qSlicerCLIProgressBarPrivate(qSlicerCLIProgressBar
   :q_ptr(&object)
 {
   this->CommandLineModuleNode = 0;
+  this->NameVisibility = qSlicerCLIProgressBar::AlwaysHidden;
   this->StatusVisibility = qSlicerCLIProgressBar::AlwaysVisible;
   this->ProgressVisibility = qSlicerCLIProgressBar::VisibleAfterCompletion;
   this->StageProgressVisibility = qSlicerCLIProgressBar::HiddenWhenIdle;
@@ -88,6 +91,11 @@ void qSlicerCLIProgressBarPrivate::init()
   this->GridLayout = new QGridLayout(this->q_ptr);
   this->GridLayout->setObjectName(QString::fromUtf8("gridLayout"));
   this->GridLayout->setContentsMargins(0,0,0,0);
+
+  this->NameLabel = new QLabel();
+  this->NameLabel->setObjectName(QString::fromUtf8("NameLabel"));
+
+  this->GridLayout->addWidget(NameLabel, 1, 0, 1, 1);
 
   this->StatusLabelLabel = new QLabel();
   this->StatusLabelLabel->setObjectName(QString::fromUtf8("StatusLabelLabel"));
@@ -117,6 +125,7 @@ void qSlicerCLIProgressBarPrivate::init()
   this->StageProgressBar->setValue(0);
   this->GridLayout->addWidget(StageProgressBar, 3, 0, 1, 2);
 
+  this->NameLabel->setText(QObject::tr(""));
   this->StatusLabelLabel->setText(QObject::tr("Status:"));
   this->StatusLabel->setText(QObject::tr("Idle"));
 
@@ -171,6 +180,26 @@ vtkMRMLCommandLineModuleNode * qSlicerCLIProgressBar::commandLineModuleNode()con
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->CommandLineModuleNode;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::nameVisibility()const
+{
+  Q_D(const qSlicerCLIProgressBar);
+  return d->NameVisibility;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIProgressBar::setNameVisibility(qSlicerCLIProgressBar::Visibility visibility)
+{
+  Q_D(qSlicerCLIProgressBar);
+  if (visibility == d->NameVisibility)
+    {
+    return;
+    }
+
+  d->NameVisibility = visibility;
+  this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -242,6 +271,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
 
+  d->NameLabel->setVisible(d->isVisible(d->NameVisibility));
   d->StatusLabelLabel->setVisible(d->isVisible(d->StatusVisibility));
   d->StatusLabel->setVisible(d->isVisible(d->StatusVisibility));
   d->ProgressBar->setVisible(d->isVisible(d->ProgressVisibility));
@@ -257,6 +287,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
 
   // Update progress
   d->StatusLabel->setText(node->GetStatusString());
+  d->NameLabel->setText(node->GetName());
 
   // Update Progress
   ModuleProcessInformation* info = node->GetModuleDescription().GetProcessInformation();
