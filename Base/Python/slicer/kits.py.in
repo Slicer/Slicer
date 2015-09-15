@@ -1,0 +1,1 @@
+available_kits = [ @Slicer_PYTHON_MODULES_CONFIG@ ]

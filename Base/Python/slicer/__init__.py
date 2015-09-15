@@ -113,9 +113,12 @@ The module attributes are the Slicer modules names, the associated
 value is the module name.
 """)
 
-__kits_to_load = [ @Slicer_PYTHON_MODULES_CONFIG@ ]
+try:
+  from kits import available_kits
+except ImportError:
+  available_kits = []
 
-for kit in __kits_to_load:
+for kit in available_kits:
    try:
      exec "from %s import *" % (kit)
    except ImportError as detail:
@@ -123,4 +126,5 @@ for kit in __kits_to_load:
 
 # Removing things the user shouldn't have to see.
 del _createModule
-del __kits_to_load
+del available_kits
+del kit
