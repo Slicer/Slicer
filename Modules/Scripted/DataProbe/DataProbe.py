@@ -76,12 +76,6 @@ class DataProbeInfoWidget(object):
   def __init__(self, parent=None,type='small'):
     self.type = type
     self.nameSize = 24
-    # the currentLayoutName is tag on the slice node that corresponds
-    # view which should currently be shown in the DataProbe window.
-    # Keeping track of this allows us to respond to non-interactor updates
-    # to the slice (like from an external tracker) but only in the view where
-    # the mouse has most recently entered.
-    self.currentLayoutName = None
 
     self.CrosshairNode = None
     self.CrosshairNodeObserverTag = None
@@ -216,7 +210,6 @@ class DataProbeInfoWidget(object):
         sliceLogic = appLogic.GetSliceLogic(sliceNode)
 
     if not insideView or not sliceNode or not sliceLogic:
-      self.currentLayoutName = None
       # reset all the readouts
       self.viewerColor.text = ""
       self.viewInfo.text =  ""
@@ -236,8 +229,6 @@ class DataProbeInfoWidget(object):
     self.viewInfo.show()
     self.viewerFrame.show()
     self.showImageBox.hide()
-
-    self.currentLayoutName = sliceNode.GetLayoutName()
 
     # populate the widgets
     self.viewerColor.setText( " " )
