@@ -27,6 +27,7 @@ set(ITK_IO_MODULES_USED
   ITKIOTransformHDF5
   ITKIOTransformInsightLegacy
   ITKIOTransformMatlab
+  MGHIO
   )
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ITK_IO_MODULES_USED ITKIODCMTK)
