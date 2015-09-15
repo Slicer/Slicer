@@ -91,7 +91,7 @@ class DataProbeInfoWidget(object):
     self.painter = qt.QPainter()
     self.pen = qt.QPen()
 
-    self.createSmall()
+    self._createSmall()
 
     #Helper class to calculate and display tensor scalars
     self.calculateTensorScalars = CalculateTensorScalars()
@@ -338,7 +338,7 @@ class DataProbeInfoWidget(object):
         return imagePixmap
     return None
 
-  def createSmall(self):
+  def _createSmall(self):
     """Make the internals of the widget to display in the
     Data Probe frame (lower left of slicer main window by default)"""
 
