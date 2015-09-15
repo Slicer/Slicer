@@ -233,25 +233,7 @@ class DataProbeInfoWidget(object):
     if hasattr(color, 'name'):
       self.viewerColor.setStyleSheet('QLabel {background-color : %s}' % color.name())
 
-    # Described below are the details for the ras coordinate width set to 6:
-    #  1: sign
-    #  3: suggested number of digits before decimal point
-    #  1: decimal point:
-    #  1: number of digits after decimal point
-
-    spacing = "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2]
-    if sliceNode.GetSliceSpacingMode() == slicer.vtkMRMLSliceNode.PrescribedSliceSpacingMode:
-      spacing = "(%s)" % spacing
-
-    self.viewInfo.text = \
-      "  {layoutName: <8s}  RAS: ({ras_x:6.1f}, {ras_y:6.1f}, {ras_z:6.1f})  {orient: >8s} Sp: {spacing:s}" \
-      .format(layoutName=sliceNode.GetLayoutName(),
-              ras_x=ras[0],
-              ras_y=ras[1],
-              ras_z=ras[2],
-              orient=sliceNode.GetOrientationString(),
-              spacing=spacing
-              )
+    self.viewInfo.text = self.generateViewDescription(xyz, ras, sliceNode, sliceLogic)
 
     def _roundInt(value):
       try:
@@ -272,12 +254,9 @@ class DataProbeInfoWidget(object):
         xyToIJK = layerLogic.GetXYToIJKTransform()
         ijkFloat = xyToIJK.TransformDoublePoint(xyz)
         ijk = [_roundInt(value) for value in ijkFloat]
-      self.layerNames[layer].setText(
-        "<b>%s</b>" % (self.fitName(volumeNode.GetName()) if volumeNode else "None"))
-      self.layerIJKs[layer].setText(
-        "({i:4d}, {j:4d}, {k:4d})".format(i=ijk[0], j=ijk[1], k=ijk[2]) if volumeNode else "")
-      self.layerValues[layer].setText(
-        "<b>%s</b>" % self.getPixelString(volumeNode,ijk) if volumeNode else "")
+      self.layerNames[layer].setText(self.generateLayerName(layerLogic))
+      self.layerIJKs[layer].setText(self.generateIJKPixelDescription(ijk, layerLogic))
+      self.layerValues[layer].setText(self.generateIJKPixelValueDescription(ijk, layerLogic))
 
     # set image
     if (not slicer.mrmlScene.IsBatchProcessing()) and sliceLogic and hasVolume and self.showImage:
@@ -292,6 +271,43 @@ class DataProbeInfoWidget(object):
       self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
     else:
       self.frame.parent().text = "Data Probe"
+
+  def generateViewDescription(self, xyz, ras, sliceNode, sliceLogic):
+
+    # Note that 'xyz' is unused in the Slicer implementation but could
+    # be used when customizing the behavior of this function in extension.
+
+    # Described below are the details for the ras coordinate width set to 6:
+    #  1: sign
+    #  3: suggested number of digits before decimal point
+    #  1: decimal point:
+    #  1: number of digits after decimal point
+
+    spacing = "%.1f" % sliceLogic.GetLowestVolumeSliceSpacing()[2]
+    if sliceNode.GetSliceSpacingMode() == slicer.vtkMRMLSliceNode.PrescribedSliceSpacingMode:
+      spacing = "(%s)" % spacing
+
+    return \
+      "  {layoutName: <8s}  RAS: ({ras_x:6.1f}, {ras_y:6.1f}, {ras_z:6.1f})  {orient: >8s} Sp: {spacing:s}" \
+      .format(layoutName=sliceNode.GetLayoutName(),
+              ras_x=ras[0],
+              ras_y=ras[1],
+              ras_z=ras[2],
+              orient=sliceNode.GetOrientationString(),
+              spacing=spacing
+              )
+
+  def generateLayerName(self, slicerLayerLogic):
+    volumeNode = slicerLayerLogic.GetVolumeNode()
+    return "<b>%s</b>" % (self.fitName(volumeNode.GetName()) if volumeNode else "None")
+
+  def generateIJKPixelDescription(self, ijk, slicerLayerLogic):
+    volumeNode = slicerLayerLogic.GetVolumeNode()
+    return "({i:4d}, {j:4d}, {k:4d})".format(i=ijk[0], j=ijk[1], k=ijk[2]) if volumeNode else ""
+
+  def generateIJKPixelValueDescription(self, ijk, slicerLayerLogic):
+    volumeNode = slicerLayerLogic.GetVolumeNode()
+    return "<b>%s</b>" % self.getPixelString(volumeNode,ijk) if volumeNode else ""
 
   def _createMagnifiedPixmap(self, xyz, inputImageDataConnection, outputSize, crosshairColor, imageZoom=10):
 
