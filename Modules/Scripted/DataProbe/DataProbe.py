@@ -62,7 +62,7 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
     except IndexError:
       print("No Data Probe frame - cannot create DataProbe")
       return
-    self.infoWidget = DataProbeInfoWidget(parent,type='small')
+    self.infoWidget = DataProbeInfoWidget(parent)
     parent.layout().insertWidget(0,self.infoWidget.frame)
 
   def showZoomedSlice(self, value=False):
@@ -72,8 +72,7 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
 
 class DataProbeInfoWidget(object):
 
-  def __init__(self, parent=None,type='small'):
-    self.type = type
+  def __init__(self, parent=None):
     self.nameSize = 24
 
     self.CrosshairNode = None
@@ -92,9 +91,7 @@ class DataProbeInfoWidget(object):
     self.painter = qt.QPainter()
     self.pen = qt.QPen()
 
-    if type == 'small':
-      self.createSmall()
-
+    self.createSmall()
 
     #Helper class to calculate and display tensor scalars
     self.calculateTensorScalars = CalculateTensorScalars()
@@ -447,9 +444,6 @@ class DataProbeInfoWidget(object):
 
 class DataProbeWidget:
   """This builds the module contents - nothing here"""
-  # TODO: this could have a more in-depth set of information
-  # about the volumes and layers in the slice views
-  # and possibly other view types as well
   # TODO: Since this is empty for now, it should be hidden
   # from the Modules menu.
 
