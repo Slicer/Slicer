@@ -63,7 +63,6 @@ See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Piepe
       print("No Data Probe frame - cannot create DataProbe")
       return
     self.infoWidget = DataProbeInfoWidget(parent,type='small')
-    self.infoWidget.onShowImage(False)
     parent.layout().insertWidget(0,self.infoWidget.frame)
 
   def showZoomedSlice(self, value=False):
