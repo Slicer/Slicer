@@ -86,10 +86,10 @@ class DataProbeInfoWidget(object):
     modulePath = slicer.modules.dataprobe.path.replace("DataProbe.py","")
     self.iconsDIR = modulePath + '/Resources/Icons'
 
-    self.imageCrop = vtk.vtkExtractVOI()
-    self.imageZoom = 10
     self.showImage = False
 
+    # Used in _createMagnifiedPixmap()
+    self.imageCrop = vtk.vtkExtractVOI()
     self.painter = qt.QPainter()
     self.pen = qt.QPen()
 
@@ -285,42 +285,62 @@ class DataProbeInfoWidget(object):
 
     # set image
     if (not slicer.mrmlScene.IsBatchProcessing()) and sliceLogic and hasVolume and self.showImage:
-      self.imageCrop.SetInputConnection(sliceLogic.GetBlend().GetOutputPort())
-      xyzInt = [0, 0, 0]
-      xyzInt = [_roundInt(value) for value in xyz]
-      dims = sliceLogic.GetBlend().GetOutput().GetDimensions()
-      minDim = min(dims[0],dims[1])
-      imageSize = _roundInt(minDim/self.imageZoom/2.0)
-      imin = max(0,xyzInt[0]-imageSize)
-      imax = min(dims[0]-1,  xyzInt[0]+imageSize)
-      jmin = max(0,xyzInt[1]-imageSize)
-      jmax = min(dims[1]-1,  xyzInt[1]+imageSize)
-      if (imin <= imax) and (jmin <= jmax):
-        self.imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
-        self.imageCrop.Update()
-        vtkImage = self.imageCrop.GetOutput()
-        if vtkImage:
-          qImage = qt.QImage()
-          slicer.qMRMLUtils().vtkImageDataToQImage(vtkImage, qImage)
-          self.imagePixmap = self.imagePixmap.fromImage(qImage)
-          self.imagePixmap = self.imagePixmap.scaled(self.imageLabel.size, qt.Qt.KeepAspectRatio, qt.Qt.FastTransformation)
-
-          # draw crosshair
-          self.painter.begin(self.imagePixmap)
-          self.pen.setColor(color)
-          self.painter.setPen(self.pen)
-          self.painter.drawLine(0,self.imagePixmap.height()/2, self.imagePixmap.width(), self.imagePixmap.height()/2)
-          self.painter.drawLine(self.imagePixmap.width()/2,0, self.imagePixmap.width()/2, self.imagePixmap.height())
-          self.painter.end()
-
-          self.imageLabel.setPixmap(self.imagePixmap)
-          self.onShowImage(self.showImage)
+      pixmap = self._createMagnifiedPixmap(
+        xyz, sliceLogic.GetBlend().GetOutputPort(), self.imageLabel.size, color)
+      if pixmap:
+        self.imageLabel.setPixmap(pixmap)
+        self.onShowImage(self.showImage)
 
     sceneName = slicer.mrmlScene.GetURL()
     if sceneName != "":
       self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
     else:
       self.frame.parent().text = "Data Probe"
+
+  def _createMagnifiedPixmap(self, xyz, inputImageDataConnection, outputSize, crosshairColor, imageZoom=10):
+
+    # Use existing instance of objects to avoid instanciating one at each event.
+    imageCrop = self.imageCrop
+    painter = self.painter
+    pen = self.pen
+
+    def _roundInt(value):
+      try:
+        return int(round(value))
+      except ValueError:
+        return 0
+
+    imageCrop.SetInputConnection(inputImageDataConnection)
+    xyzInt = [0, 0, 0]
+    xyzInt = [_roundInt(value) for value in xyz]
+    producer = inputImageDataConnection.GetProducer()
+    dims = producer.GetOutput().GetDimensions()
+    minDim = min(dims[0],dims[1])
+    imageSize = _roundInt(minDim/imageZoom/2.0)
+    imin = max(0,xyzInt[0]-imageSize)
+    imax = min(dims[0]-1,  xyzInt[0]+imageSize)
+    jmin = max(0,xyzInt[1]-imageSize)
+    jmax = min(dims[1]-1,  xyzInt[1]+imageSize)
+    if (imin <= imax) and (jmin <= jmax):
+      imageCrop.SetVOI(imin, imax, jmin, jmax, 0,0)
+      imageCrop.Update()
+      vtkImage = imageCrop.GetOutput()
+      if vtkImage:
+        qImage = qt.QImage()
+        slicer.qMRMLUtils().vtkImageDataToQImage(vtkImage, qImage)
+        imagePixmap = qt.QPixmap.fromImage(qImage)
+        imagePixmap = imagePixmap.scaled(outputSize, qt.Qt.KeepAspectRatio, qt.Qt.FastTransformation)
+
+        # draw crosshair
+        painter.begin(imagePixmap)
+        pen = qt.QPen()
+        pen.setColor(crosshairColor)
+        painter.setPen(pen)
+        painter.drawLine(0, imagePixmap.height()/2, imagePixmap.width(), imagePixmap.height()/2)
+        painter.drawLine(imagePixmap.width()/2,0, imagePixmap.width()/2, imagePixmap.height())
+        painter.end()
+        return imagePixmap
+    return None
 
   def createSmall(self):
     """Make the internals of the widget to display in the
@@ -344,7 +364,7 @@ class DataProbeInfoWidget(object):
     self.showImageBox.setChecked(False)
 
     self.imageLabel = qt.QLabel()
-    self.imagePixmap = qt.QPixmap()
+
     # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
     # fails on some systems, therefore set the policies using separate method calls
     qSize = qt.QSizePolicy()
