@@ -1038,6 +1038,9 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
     return false;
     }
 
+  // Update is needed because DisplacementGrid may be out-of-date if the transform depends on its inverse
+  grid_Ras->Update();
+
   vtkImageData* gridImage_Ras = grid_Ras->GetDisplacementGrid();
   if (gridImage_Ras==NULL)
     {
@@ -1095,12 +1098,27 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   region.SetIndex( start );
   gridImage_Lps->SetRegions( region );
   gridImage_Lps->Allocate();
-  double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
   itk::ImageRegionIterator<GridImageType> gridImageIt_Lps(gridImage_Lps, region);
   gridImageIt_Lps.GoToBegin();
   GridImageType::PixelType displacementVectorLps;
   double displacementScale = grid_Ras->GetDisplacementScale();
   double displacementShift = grid_Ras->GetDisplacementShift();
+
+  if (gridImage_Ras->GetScalarType()==VTK_DOUBLE)
+    {
+    double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
+    while( !gridImageIt_Lps.IsAtEnd() )
+      {
+      displacementVectorLps[0] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
+      displacementVectorLps[1] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
+      displacementVectorLps[2] =  ( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
+      gridImageIt_Lps.Set(displacementVectorLps);
+      ++gridImageIt_Lps;
+      }
+    }
+  else if (gridImage_Ras->GetScalarType()==VTK_FLOAT)
+    {
+    float* displacementVectors_Ras = reinterpret_cast<float*>(gridImage_Ras->GetScalarPointer());
   while( !gridImageIt_Lps.IsAtEnd() )
     {
     displacementVectorLps[0] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
@@ -1109,7 +1127,12 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
     gridImageIt_Lps.Set(displacementVectorLps);
     ++gridImageIt_Lps;
     }
-
+    }
+  else
+    {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot save grid transform: only float and double scalar types are supported");
+    return false;
+    }
   return true;
 }
 
