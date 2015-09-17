@@ -195,22 +195,4 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>qSlicerCLIModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLCommandLineModuleNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>337</x>
-     <y>109</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>411</x>
-     <y>91</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

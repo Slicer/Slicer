@@ -155,6 +155,16 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->connect(this->MRMLCommandLineModuleNodeSelector,
                 SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
                 SLOT(setDefaultNodeValue(vtkMRMLNode*)));
+
+  // Scene must be set in node selector widgets before the MRMLCommandLineModuleNodeSelector widget
+  // because when the scene is set in MRMLCommandLineModuleNodeSelector the first available module node
+  // is automatically selected and all widgets are updated.
+  // Node selector widgets can only be updated if the scene is already set, therefore
+  // we set the scene here for all widgets, before MRMLCommandLineModuleNodeSelector has a chance to trigger
+  // an update. Scene in MRMLCommandLineModuleNodeSelector will be set later by qSlicerAbstractCoreModule.
+  emit q->mrmlSceneChanged(this->module()->mrmlScene());
+  this->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+              this->MRMLCommandLineModuleNodeSelector, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 //-----------------------------------------------------------------------------
