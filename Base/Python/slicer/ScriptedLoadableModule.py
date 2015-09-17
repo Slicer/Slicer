@@ -254,9 +254,6 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
 
   def __init__(self, *args, **kwargs):
     super(ScriptedLoadableModuleTest, self).__init__(*args, **kwargs)
-    self.messageDelay = 1000
-    if 'messageDelay' in kwargs:
-      self.messageDelay = kwargs['messageDelay']
 
   def delayDisplay(self,message,requestedDelay=None):
     """
@@ -277,7 +274,10 @@ class ScriptedLoadableModuleTest(unittest.TestCase):
     Error messages should be logged by logging.error() function
     and displayed to user by slicer.util.errorDisplay function.
     """
-    msec = self.messageDelay
+    if hasattr(self, "messageDelay"):
+        msec = self.messageDelay
+    else:
+        msec = 1000
     if requestedDelay:
       msec = requestedDelay
     slicer.util.delayDisplay(message, msec)
