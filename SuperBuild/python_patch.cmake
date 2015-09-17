@@ -13,6 +13,20 @@ set(out_msvc9compiler ${PYTHON_SRC_DIR}/Lib/distutils/msvc9compiler.py)
 #
 #  https://github.com/davidsansome/python-cmake-buildsystem/tree/master/cmake/patches-win32
 #
+#
+# Additionally, an entry for Visual Studio 2013 was added to WINSDK_VERSION_MAP
+# to fix the following error when building Numpy 1.9.x:
+#
+#  Traceback (most recent call last):
+#    ...
+#    File "C:\dev\S4D\NUMPY\numpy\distutils\command\config.py", line 55, in _check_compiler
+#      self.compiler.initialize()
+#    File "C:\dev\S4D\python-install\Lib\distutils\msvc9compiler.py", line 500, in initialize
+#      vc_env = query_vcvarsall(VERSION, plat_spec)
+#    File "C:\dev\S4D\python-install\Lib\distutils\msvc9compiler.py", line 371, in query_vcvarsall
+#      for sdkver in WINSDK_VERSION_MAP[versionstr]:
+#  KeyError: '12.0'
+#
 
 message("Copying patched 'Lib/distutils/msvc9compiler.py' into source directory [${PYTHON_SRC_DIR}]
   in_msvc9compiler:${in_msvc9compiler}
