@@ -27,13 +27,13 @@ class DICOMProcess(object):
     self.process = None
     self.connections = {}
     pathOptions = (
+        '/../DCMTK-build/bin/Debug',
+        '/../DCMTK-build/bin/Release',
         '/../DCMTK-build/bin',
         '/../CTK-build/CMakeExternals/Install/bin',
         '/bin'
         )
 
-    # note: even in a windows build tree DCMTK's install does not include
-    # a "Debug" or "Release" intDir
     self.exeDir = None
     for path in pathOptions:
       testPath = slicer.app.slicerHome + path
