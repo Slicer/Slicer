@@ -86,6 +86,17 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       )
   endif()
 
+  # Force modules that statically link to zlib to not be built-in.  Otherwise,
+  # when building in Debug configuration, the Python library--which we force to
+  # build in Release configuration--would mix Debug and Release C runtime
+  # libraries.
+  if(WIN32)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+        -DBUILTIN_BINASCII:BOOL=OFF
+        -DBUILTIN_ZLIB:BOOL=OFF
+      )
+  endif()
+
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
   # Force Python build to "Release".
