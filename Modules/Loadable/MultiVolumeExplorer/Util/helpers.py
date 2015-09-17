@@ -54,7 +54,7 @@ def explodeMultivolume(mvName, refName):
 
   for i in range(mv.GetNumberOfFrames()):
     e0 = vtk.vtkImageExtractComponents()
-    e0.SetInput(mvi)
+    e0.SetInputData(mvi)
     e0.SetComponents(i)
     e0.Update()
 
