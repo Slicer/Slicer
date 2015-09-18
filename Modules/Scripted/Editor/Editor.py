@@ -65,8 +65,6 @@ class EditorWidget:
       self.parent = parent
       self.layout = parent.layout()
 
-    slicer.mrmlScene.AddObserver(slicer.mrmlScene.StartCloseEvent, self.resetInterface)
-
   def turnOffLightboxes(self):
     """Since the editor effects can't be used in lightbox mode,
     be sure to turn these off and warn the user about it"""
@@ -154,6 +152,8 @@ class EditorWidget:
     self.parameterNode = EditUtil.getParameterNode()
     self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
+    self.mrmlSceneTag = slicer.mrmlScene.AddObserver(slicer.mrmlScene.StartCloseEvent, self.resetInterface)
+
     if self.helper:
       self.helper.onEnter()
 
@@ -161,6 +161,7 @@ class EditorWidget:
       self.toolsColor.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
 
   def exit(self):
+    slicer.mrmlScene.RemoveObserver(self.mrmlSceneTag)
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
     self.resetInterface()
     self.removeShortcutKeys()
