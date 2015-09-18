@@ -9,7 +9,7 @@ except KeyError:
   raise Exception("DCMDICTPATH environment variable is not defined !")
 
 dcmdump=DICOMLib.DICOMCommand('dcmdump',[dcmfile])
-dump=str(dcmdump.start()).split('\n')
+dump=str(dcmdump.start()).splitlines()
 
 found_private_tag = False
 for line in dump:
