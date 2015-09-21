@@ -210,6 +210,7 @@ protected:
 private:
   qSlicerSubjectHierarchyAbstractPlugin(const qSlicerSubjectHierarchyAbstractPlugin&); // Not implemented
   void operator=(const qSlicerSubjectHierarchyAbstractPlugin&); // Not implemented
+  friend class qMRMLSubjectHierarchyTreeView;
 };
 
 #endif

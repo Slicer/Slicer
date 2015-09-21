@@ -110,6 +110,8 @@ protected:
 
 protected slots:
   virtual void onMRMLSceneImported(vtkMRMLScene* scene);
+  virtual void onItemChanged(QStandardItem * item);
+  virtual void delayedItemChanged();
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneSubjectHierarchyModel);

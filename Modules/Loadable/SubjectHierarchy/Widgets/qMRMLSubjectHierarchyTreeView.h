@@ -62,9 +62,9 @@ protected:
   /// Handle mouse press event (facilitates timely update of context menu)
   virtual void mousePressEvent(QMouseEvent* event);
 
-  /// Apply highlight for nodes referenced by argument node by DICOM
+  /// Apply highlight for nodes referenced by argument nodes by DICOM
   /// \sa highlightReferencedNodes
-  void applyReferenceHighlightForNode(vtkMRMLSubjectHierarchyNode* node);
+  void applyReferenceHighlightForNode(QList<vtkMRMLSubjectHierarchyNode*> nodes);
 
 public slots:
   /// Set MRML scene
@@ -87,6 +87,9 @@ public slots:
 
   /// Edit properties of current node
   virtual void editCurrentSubjectHierarchyNode();
+
+  /// Delete selected subject hierarchy node(s)
+  virtual void deleteSelectedNodes();
 
   /// Set multi-selection
   virtual void setMultiSelection(bool multiSelectionOn);

@@ -133,6 +133,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init2()
   QObject::disconnect(this->EditAction, SIGNAL(triggered()), (qMRMLTreeView*)q, SLOT(editCurrentNode()));
   QObject::connect(this->EditAction, SIGNAL(triggered()), q, SLOT(editCurrentSubjectHierarchyNode()));
 
+  // Connect Delete action to a different slot than in the base class
+  QObject::disconnect(this->DeleteAction, SIGNAL(triggered()), q, SLOT(deleteCurrentNode()));
+  QObject::connect(this->DeleteAction, SIGNAL(triggered()), q, SLOT(deleteSelectedNodes()));
+
   // Connect invalidate filters
   QObject::connect( q->sceneModel(), SIGNAL(invalidateFilter()), q->model(), SLOT(invalidate()) );
 
@@ -278,28 +282,39 @@ void qMRMLSubjectHierarchyTreeView::toggleVisibility(const QModelIndex& index)
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::mousePressEvent(QMouseEvent* e)
 {
-  // Get the index of the current column
-  QModelIndex index = this->indexAt(e->pos());
-  vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+  // Perform default mouse press event (make selections etc.)
+  this->QTreeView::mousePressEvent(e);
 
-  // Set new current node to plugin handler (even if it's NULL which means the scene is selected)
-  qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentNode(
-    vtkMRMLSubjectHierarchyNode::SafeDownCast(node) );
+  // Collect selected subject hierarchy nodes
+  QList<vtkMRMLSubjectHierarchyNode*> selectedShNodes;
+  QList<QModelIndex> selectedIndices = this->selectedIndexes();
+  foreach(QModelIndex index, selectedIndices)
+    {
+    // Only consider the first column to avoid duplicates
+    if (index.column() != 0)
+      {
+      continue;
+      }
+    vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
+    if (shNode)
+      {
+      selectedShNodes.append(shNode);
+      }
+    }
+  // Set current node(s) to plugin handler
+  qSlicerSubjectHierarchyPluginHandler::instance()->setCurrentNodes(selectedShNodes);
 
-  // Highlight nodes referenced by DICOM
+  // Highlight nodes referenced by DICOM in case of single-selection
   //   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
   //   -> SH node instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
   if (this->highlightReferencedNodes())
     {
-    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
-    this->applyReferenceHighlightForNode(shNode);
+    this->applyReferenceHighlightForNode(selectedShNodes);
     }
 
-  if (e->button() != Qt::RightButton)
-    {
-    this->QTreeView::mousePressEvent(e);
-    }
-  else // Right button clicked
+  // Not the right button clicked, handle events the default way
+  if (e->button() == Qt::RightButton)
     {
     // Make sure the shown context menu is up-to-date
     this->populateContextMenuForCurrentNode();
@@ -314,7 +329,25 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForCurrentNode()
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
 
-  // Get current node
+  // Get current node(s)
+  QList<vtkMRMLSubjectHierarchyNode*> currentNodes = qSlicerSubjectHierarchyPluginHandler::instance()->currentNodes();
+  if (currentNodes.size() > 1)
+    {
+    // Multi-selection: only show delete action
+    d->EditAction->setVisible(false);
+    d->RenameAction->setVisible(false);
+    d->SelectPluginSubMenu->menuAction()->setVisible(false);
+
+    // Hide all plugin context menu items
+    foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, qSlicerSubjectHierarchyPluginHandler::instance()->allPlugins())
+      {
+      plugin->hideAllContextMenuActions();
+      }
+
+    return;
+    }
+
+  // Single selection
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
@@ -454,6 +487,16 @@ void qMRMLSubjectHierarchyTreeView::editCurrentSubjectHierarchyNode()
 }
 
 //--------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeView::deleteSelectedNodes()
+{
+  QList<vtkMRMLSubjectHierarchyNode*> currentNodes = qSlicerSubjectHierarchyPluginHandler::instance()->currentNodes();
+  foreach(vtkMRMLSubjectHierarchyNode* node, currentNodes)
+  {
+    this->mrmlScene()->RemoveNode(node);
+  }
+}
+
+//--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu()
 {
   QAction* senderAction = qobject_cast<QAction*>(this->sender());
@@ -468,13 +511,8 @@ void qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu()
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForNode(vtkMRMLSubjectHierarchyNode* node)
+void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForNode(QList<vtkMRMLSubjectHierarchyNode*> nodes)
 {
-  if (!node)
-    {
-    return;
-    }
-
   Q_D(qMRMLSubjectHierarchyTreeView);
 
   // Get scene model and column to highlight
@@ -492,19 +530,23 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForNode(vtkMRMLSubjec
     }
   d->HighlightedNodes.clear();
 
-  // Get nodes referenced by argument node by DICOM
-  std::vector<vtkMRMLSubjectHierarchyNode*> referencedNodes = node->GetSubjectHierarchyNodesReferencedByDICOM();
-
-  // Highlight referenced nodes
-  std::vector<vtkMRMLSubjectHierarchyNode*>::iterator nodeIt;
-  for (nodeIt = referencedNodes.begin(); nodeIt != referencedNodes.end(); ++nodeIt)
+  // Go through all selected nodes
+  foreach(vtkMRMLSubjectHierarchyNode* node, nodes)
     {
-    vtkMRMLSubjectHierarchyNode* referencedNode = (*nodeIt);
-    QStandardItem* item = sceneModel->itemFromNode(referencedNode, nameColumn);
-    if (item)
+    // Get nodes referenced by argument node by DICOM
+    std::vector<vtkMRMLSubjectHierarchyNode*> referencedNodes = node->GetSubjectHierarchyNodesReferencedByDICOM();
+
+    // Highlight referenced nodes
+    std::vector<vtkMRMLSubjectHierarchyNode*>::iterator nodeIt;
+    for (nodeIt = referencedNodes.begin(); nodeIt != referencedNodes.end(); ++nodeIt)
       {
-      item->setBackground(Qt::yellow);
-      d->HighlightedNodes.append(referencedNode);
+      vtkMRMLSubjectHierarchyNode* referencedNode = (*nodeIt);
+      QStandardItem* item = sceneModel->itemFromNode(referencedNode, nameColumn);
+      if (item && !d->HighlightedNodes.contains(referencedNode))
+        {
+        item->setBackground(Qt::yellow);
+        d->HighlightedNodes.append(referencedNode);
+        }
       }
     }
 }
@@ -512,12 +554,6 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForNode(vtkMRMLSubjec
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setMultiSelection(bool multiSelectionOn)
 {
-  return; //TODO: - Make PluginHandler::currentNode a list
-          //      - Context menu should show only Delete from the basic actions
-          //        and those plugin actions that are offered for every selected node
-          //      - Offer export to DICOM if every selected node has an exportable.
-          //      - Handle multiple nodes in drag&drop.
-
   if (multiSelectionOn)
     {
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);

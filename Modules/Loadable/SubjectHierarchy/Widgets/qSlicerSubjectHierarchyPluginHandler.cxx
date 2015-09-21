@@ -94,9 +94,9 @@ void qSlicerSubjectHierarchyPluginHandler::setInstance(qSlicerSubjectHierarchyPl
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler::qSlicerSubjectHierarchyPluginHandler(QObject* parent)
   : QObject(parent)
-  , m_CurrentNode(NULL)
   , m_Scene(NULL)
 {
+  this->m_CurrentNodes.clear();
   this->m_RegisteredPlugins.clear();
   this->m_DefaultPlugin = new qSlicerSubjectHierarchyDefaultPlugin();
 }
@@ -364,13 +364,30 @@ vtkMRMLScene* qSlicerSubjectHierarchyPluginHandler::scene()
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyPluginHandler::setCurrentNode(vtkMRMLSubjectHierarchyNode* node)
 {
-  m_CurrentNode = node;
+  this->m_CurrentNodes.clear();
+  this->m_CurrentNodes.append(node);
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyPluginHandler::currentNode()
 {
-  return m_CurrentNode;
+  if (this->m_CurrentNodes.size() != 1)
+    {
+    return NULL;
+    }
+  return this->m_CurrentNodes.at(0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyPluginHandler::setCurrentNodes(QList<vtkMRMLSubjectHierarchyNode*> nodes)
+{
+  this->m_CurrentNodes = nodes;
+}
+
+//-----------------------------------------------------------------------------
+QList<vtkMRMLSubjectHierarchyNode*> qSlicerSubjectHierarchyPluginHandler::currentNodes()
+{
+  return this->m_CurrentNodes;
 }
 
 //------------------------------------------------------------------------------

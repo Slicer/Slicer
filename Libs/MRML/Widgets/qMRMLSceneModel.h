@@ -239,8 +239,8 @@ protected slots:
   /// The node has its ID changed. The scene model needs to update the UIDRole
   /// associated with the node in order to keep being in sync.
   void onMRMLNodeIDChanged(vtkObject* node, void* callData);
-  void onItemChanged(QStandardItem * item);
-  void delayedItemChanged();
+  virtual void onItemChanged(QStandardItem * item);
+  virtual void delayedItemChanged();
 
   /// Recompute the number of columns in the model.
   /// To be called when a XXXColumn is set.

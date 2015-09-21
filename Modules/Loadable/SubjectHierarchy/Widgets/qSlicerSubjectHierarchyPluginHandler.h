@@ -62,11 +62,20 @@ public:
   /// Get MRML scene
   vtkMRMLScene* scene();
 
-  /// Set current subject hierarchy node
+  /// Set current subject hierarchy node (single selection only)
   void setCurrentNode(vtkMRMLSubjectHierarchyNode* node);
 
-  /// Get current subject hierarchy node
+  /// Get current subject hierarchy node (single selection only).
+  /// This function is called from the plugins when exposing and performing the supported actions. As the plugin actions are not
+  /// aggregated on multi-selection, this function is never called from plugins in that case (and thus NULL is returned).
+  /// \return Current node if only one is selected, otherwise NULL
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* currentNode();
+
+  /// Set current subject hierarchy nodes in case of multi-selection
+  void setCurrentNodes(QList<vtkMRMLSubjectHierarchyNode*> nodes);
+
+  /// Get current subject hierarchy nodes in case of multi-selection
+  Q_INVOKABLE QList<vtkMRMLSubjectHierarchyNode*> currentNodes();
 
 public:
   /// Register a plugin
@@ -140,12 +149,10 @@ protected:
   /// (the default plugin instance cannot be in the registered list, as then it would never be returned)
   qSlicerSubjectHierarchyDefaultPlugin* m_DefaultPlugin;
 
-  //TODO: Is there a way to avoid having this member? (Having a member for the tree view is equally bad)
-  /// Current subject hierarchy node
-  /// (selected node in the tree view e.g. for context menu request)
-  vtkMRMLSubjectHierarchyNode* m_CurrentNode;
+  /// Current subject hierarchy node(s)
+  /// (selected nodes in the tree view e.g. for context menu request)
+  QList<vtkMRMLSubjectHierarchyNode*> m_CurrentNodes;
 
-  //TODO: is there a better way to access the scene without a node?
   /// MRML scene
   vtkMRMLScene* m_Scene;
 

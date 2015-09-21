@@ -30,6 +30,9 @@
 // Subject Hierarchy Plugins includes
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
+// Qt includes
+#include <QSet>
+
 //------------------------------------------------------------------------------
 // qMRMLSceneSubjectHierarchyModelPrivate
 //------------------------------------------------------------------------------
@@ -52,6 +55,9 @@ public:
 
   QIcon UnknownIcon;
   QIcon WarningIcon;
+
+  mutable QSet<QStandardItem*>  DraggedItems;
+  bool DelayedItemChangedFired;
 };
 
 #endif
