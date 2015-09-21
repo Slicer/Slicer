@@ -63,6 +63,9 @@ public:
   QColor DefaultNodeColor;
 
   bool EnterPlaceModeOnNodeChange;
+  bool JumpToSliceEnabled;
+
+  QList < QWidget* > OptionsWidgets;
 
   vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
@@ -74,6 +77,7 @@ public:
 qSlicerSimpleMarkupsWidgetPrivate::qSlicerSimpleMarkupsWidgetPrivate( qSlicerSimpleMarkupsWidget& object)
   : q_ptr(&object)
   , EnterPlaceModeOnNodeChange(true)
+  , JumpToSliceEnabled(false)
 {
 }
 
@@ -127,6 +131,8 @@ void qSlicerSimpleMarkupsWidget::setup()
     }
   d->setupUi(this);
 
+  d->OptionsWidgets << d->ActiveButton << d->ColorButton << d->PlaceButton << d->ExtraButton;
+
   d->DefaultNodeColor.setRgb(0.0,1.0,0.0);
 
   connect( d->MarkupsFiducialNodeComboBox, SIGNAL( currentNodeChanged( vtkMRMLNode* ) ), this, SLOT( onMarkupsFiducialNodeChanged() ) );
@@ -150,9 +156,19 @@ void qSlicerSimpleMarkupsWidget::setup()
   
   d->ExtraButton->setIcon( QIcon( ":/Icons/Ellipsis.png" ) );
 
+  d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
+  d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
+  d->MarkupsFiducialTableWidget->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
   d->MarkupsFiducialTableWidget->setContextMenuPolicy( Qt::CustomContextMenu );
-  connect( d->MarkupsFiducialTableWidget, SIGNAL( customContextMenuRequested(const QPoint&) ), this, SLOT( onMarkupsFiducialTableContextMenu(const QPoint&) ) );
+  // only select rows rather than cells
+  d->MarkupsFiducialTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  connect(d->MarkupsFiducialTableWidget, SIGNAL( customContextMenuRequested(const QPoint&) ), this, SLOT( onMarkupsFiducialTableContextMenu(const QPoint&) ) );
   connect( d->MarkupsFiducialTableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( onMarkupsFiducialEdited( int, int ) ) );
+  // listen for click on a markup
+  connect(d->MarkupsFiducialTableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(onMarkupsFiducialSelected(int,int)));
+  // listen for the current cell selection change (happens when arrows are used to navigate)
+  connect(d->MarkupsFiducialTableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(onMarkupsFiducialSelected(int, int)));
 
 }
 
@@ -239,6 +255,67 @@ void qSlicerSimpleMarkupsWidget::setEnterPlaceModeOnNodeChange(bool enterPlaceMo
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerSimpleMarkupsWidget::jumpToSliceEnabled() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+
+  return d->JumpToSliceEnabled;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setJumpToSliceEnabled(bool enable)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+
+  d->JumpToSliceEnabled = enable;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSimpleMarkupsWidget::nodeSelectorVisible() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsFiducialNodeComboBox->isVisible();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setNodeSelectorVisible(bool visible)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  d->MarkupsFiducialNodeComboBox->setVisible(visible);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSimpleMarkupsWidget::optionsVisible() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  foreach( QWidget *w, d->OptionsWidgets )
+  {
+    if (!w->isVisible())
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::setOptionsVisible(bool visible)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+  foreach( QWidget *w, d->OptionsWidgets )
+  {
+    w->setVisible(visible);
+  }
+}
+
+//-----------------------------------------------------------------------------
+QTableWidget* qSlicerSimpleMarkupsWidget::tableWidget() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsFiducialTableWidget;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::setNodeColor(QColor color)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
@@ -289,7 +366,9 @@ void qSlicerSimpleMarkupsWidget::highlightNthFiducial(int n)
 
   if ( n >= 0 && n < d->MarkupsFiducialTableWidget->rowCount() )
     {
-    d->MarkupsFiducialTableWidget->selectRow( n );
+    d->MarkupsFiducialTableWidget->selectRow(n);
+    d->MarkupsFiducialTableWidget->setCurrentCell(n,0);
+    d->MarkupsFiducialTableWidget->scrollTo(d->MarkupsFiducialTableWidget->currentIndex());
     }
   else
     {
@@ -448,6 +527,27 @@ void qSlicerSimpleMarkupsWidget::activate()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::placeActive(bool place)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+
+  if (place)
+    {
+    // activate and set place mode
+    onPlaceButtonClicked();
+    }
+  else
+    {
+    // exit place mode
+    vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
+    if (interactionNode)
+      {
+      interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::onActiveButtonClicked()
 {
   this->activate();
@@ -581,10 +681,33 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
 
   if ( selectedAction == jumpAction )
     {
-    d->MarkupsLogic->JumpSlicesToNthPointInMarkup( this->getCurrentNode()->GetID(), currentFiducial );
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup( this->currentNode()->GetID(), currentFiducial, true /* centered */ );
     }
 
   this->updateWidget();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected(int row, int column)
+{
+  Q_D(qSlicerSimpleMarkupsWidget);
+
+  if (d->JumpToSliceEnabled)
+    {
+    vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->currentNode() );
+    if ( currentMarkupsFiducialNode == NULL )
+      {
+      return;
+      }
+    if (d->MarkupsLogic == NULL)
+      {
+      qCritical("qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected failed: Cannot jump, markups module logic is invalid");
+      return;
+      }
+    d->MarkupsLogic->JumpSlicesToNthPointInMarkup(currentMarkupsFiducialNode->GetID(), row, true /* centered */);
+    }
+
+  emit currentMarkupsFiducialSelectionChanged(row);
 }
 
 //-----------------------------------------------------------------------------
@@ -592,7 +715,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialEdited(int row, int column)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
 
-  vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->getCurrentNode() );
+  vtkMRMLMarkupsFiducialNode* currentMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( this->currentNode() );
 
   if ( currentMarkupsFiducialNode == NULL )
     {
@@ -653,15 +776,16 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsFiducialTableWidget->setColumnCount( 0 );
     d->ActiveButton->setChecked( Qt::Unchecked );
     d->PlaceButton->setChecked( Qt::Unchecked );
+    emit updateFinished();
     return;
     }
 
   // Set the button indicating if this list is active
-  d->ActiveButton->blockSignals( true );
-  d->PlaceButton->blockSignals( true );
-  d->ColorButton->blockSignals( true );
-  d->VisibilityButton->blockSignals( true );
-  d->LockButton->blockSignals( true );
+  bool wasBlockedActiveButton = d->ActiveButton->blockSignals( true );
+  bool wasBlockedPlaceButton = d->PlaceButton->blockSignals( true );
+  bool wasBlockedColorButton = d->ColorButton->blockSignals( true );
+  bool wasBlockedVisibilityButton = d->VisibilityButton->blockSignals( true );
+  bool wasBlockedLockButton = d->LockButton->blockSignals( true );
 
   // Depending to the current state, change the activeness and placeness for the current markups node
   vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
@@ -683,6 +807,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->ActiveButton->setChecked( Qt::Unchecked );
     }
 
+  bool placeButtonWasChecked = d->PlaceButton->isChecked();
   if ( interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place && d->MarkupsLogic->GetActiveListID().compare( currentMarkupsFiducialNode->GetID() ) == 0 )
     {
     d->PlaceButton->setChecked( true );
@@ -690,6 +815,10 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
   else
     {
     d->PlaceButton->setChecked( false );
+    }
+  if (placeButtonWasChecked != d->PlaceButton->isChecked())
+    {
+    emit activeMarkupsFiducialPlaceModeChanged(d->PlaceButton->isChecked());
     }
 
   if ( currentMarkupsFiducialNode->GetDisplayNode() != NULL && currentMarkupsFiducialNode->GetDisplayNode()->GetVisibility() )
@@ -710,42 +839,57 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->LockButton->setIcon( QIcon( ":/Icons/Small/SlicerUnlock.png" ) );
     }
 
-  d->ActiveButton->blockSignals( false );
-  d->PlaceButton->blockSignals( false );
-  d->ColorButton->blockSignals( false );
-  d->VisibilityButton->blockSignals( false);
-  d->LockButton->blockSignals( false );
+  d->ActiveButton->blockSignals( wasBlockedActiveButton );
+  d->PlaceButton->blockSignals( wasBlockedPlaceButton );
+  d->ColorButton->blockSignals( wasBlockedColorButton );
+  d->VisibilityButton->blockSignals( wasBlockedVisibilityButton);
+  d->LockButton->blockSignals( wasBlockedLockButton );
 
   // Update the fiducials table
-  d->MarkupsFiducialTableWidget->blockSignals( true );
- 
-  d->MarkupsFiducialTableWidget->clear();
-  QStringList MarkupsTableHeaders;
-  MarkupsTableHeaders << "Label" << "X" << "Y" << "Z";
-  d->MarkupsFiducialTableWidget->setRowCount( currentMarkupsFiducialNode->GetNumberOfFiducials() );
-  d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
-  d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( MarkupsTableHeaders );
-  d->MarkupsFiducialTableWidget->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
+  bool wasBlockedTableWidget = d->MarkupsFiducialTableWidget->blockSignals( true );
   
-  double fiducialPosition[ 3 ] = { 0, 0, 0 };
-  std::string fiducialLabel;
-  for ( int i = 0; i < currentMarkupsFiducialNode->GetNumberOfFiducials(); i++ )
+  if (d->MarkupsFiducialTableWidget->rowCount()==currentMarkupsFiducialNode->GetNumberOfFiducials())
     {
-    fiducialLabel = currentMarkupsFiducialNode->GetNthFiducialLabel( i );
-    currentMarkupsFiducialNode->GetNthFiducialPosition( i, fiducialPosition );
+    // don't recreate the table if the number of items is not changed to preserve selection state
+    double fiducialPosition[ 3 ] = { 0, 0, 0 };
+    std::string fiducialLabel;
+    for ( int i = 0; i < currentMarkupsFiducialNode->GetNumberOfFiducials(); i++ )
+      {
+      fiducialLabel = currentMarkupsFiducialNode->GetNthFiducialLabel( i );
+      currentMarkupsFiducialNode->GetNthFiducialPosition( i, fiducialPosition );
+      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_LABEL_COLUMN)->setText(QString::fromStdString( fiducialLabel ));
+      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_X_COLUMN)->setText(QString::number( fiducialPosition[0], 'f', 3 ));
+      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_Y_COLUMN)->setText(QString::number( fiducialPosition[1], 'f', 3 ));
+      d->MarkupsFiducialTableWidget->item(i, FIDUCIAL_Z_COLUMN)->setText(QString::number( fiducialPosition[2], 'f', 3 ));
+      }
+    }
+  else
+    {
+    d->MarkupsFiducialTableWidget->clear();
+    d->MarkupsFiducialTableWidget->setRowCount( currentMarkupsFiducialNode->GetNumberOfFiducials() );
+    d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
+    d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
+  
+    double fiducialPosition[ 3 ] = { 0, 0, 0 };
+    std::string fiducialLabel;
+    for ( int i = 0; i < currentMarkupsFiducialNode->GetNumberOfFiducials(); i++ )
+      {
+      fiducialLabel = currentMarkupsFiducialNode->GetNthFiducialLabel( i );
+      currentMarkupsFiducialNode->GetNthFiducialPosition( i, fiducialPosition );
 
-    QTableWidgetItem* labelItem = new QTableWidgetItem( QString::fromStdString( fiducialLabel ) );
-    QTableWidgetItem* xItem = new QTableWidgetItem( QString::number( fiducialPosition[0], 'f', 3 ) );
-    QTableWidgetItem* yItem = new QTableWidgetItem( QString::number( fiducialPosition[1], 'f', 3 ) );
-    QTableWidgetItem* zItem = new QTableWidgetItem( QString::number( fiducialPosition[2], 'f', 3 ) );
+      QTableWidgetItem* labelItem = new QTableWidgetItem( QString::fromStdString( fiducialLabel ) );
+      QTableWidgetItem* xItem = new QTableWidgetItem( QString::number( fiducialPosition[0], 'f', 3 ) );
+      QTableWidgetItem* yItem = new QTableWidgetItem( QString::number( fiducialPosition[1], 'f', 3 ) );
+      QTableWidgetItem* zItem = new QTableWidgetItem( QString::number( fiducialPosition[2], 'f', 3 ) );
 
-    d->MarkupsFiducialTableWidget->setItem( i, 0, labelItem );
-    d->MarkupsFiducialTableWidget->setItem( i, 1, xItem );
-    d->MarkupsFiducialTableWidget->setItem( i, 2, yItem );
-    d->MarkupsFiducialTableWidget->setItem( i, 3, zItem );
+      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_LABEL_COLUMN, labelItem );
+      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_X_COLUMN, xItem );
+      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_Y_COLUMN, yItem );
+      d->MarkupsFiducialTableWidget->setItem( i, FIDUCIAL_Z_COLUMN, zItem );
+      }
     }
 
-  d->MarkupsFiducialTableWidget->blockSignals( false );
+  d->MarkupsFiducialTableWidget->blockSignals( wasBlockedTableWidget );
 
   emit updateFinished();
 }

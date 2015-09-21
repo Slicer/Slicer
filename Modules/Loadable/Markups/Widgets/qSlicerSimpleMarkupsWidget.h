@@ -39,6 +39,9 @@ qSlicerSimpleMarkupsWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool enterPlaceModeOnNodeChange READ enterPlaceModeOnNodeChange WRITE setEnterPlaceModeOnNodeChange)
+  Q_PROPERTY(bool jumpToSliceEnabled READ jumpToSliceEnabled WRITE setJumpToSliceEnabled)
+  Q_PROPERTY(bool nodeSelectorVisible READ nodeSelectorVisible WRITE setNodeSelectorVisible)
+  Q_PROPERTY(bool optionsVisible READ optionsVisible WRITE setOptionsVisible)
 
 public:
   typedef qSlicerWidget Superclass;
@@ -51,11 +54,27 @@ public:
   /// Deprecated. Use currentNode() instead.
   Q_INVOKABLE vtkMRMLNode* getCurrentNode();
 
+  /// Get the markups table widget
+  Q_INVOKABLE QTableWidget* tableWidget() const;
+
   /// Accessors to control place mode behavior
   void setEnterPlaceModeOnNodeChange(bool);
   bool enterPlaceModeOnNodeChange() const;
   
+  /// If enabled then the fiducial will be shown in all slice views when a fiducial is selected
+  void setJumpToSliceEnabled(bool);
+  bool jumpToSliceEnabled() const;
+
+  /// Show/hide the markup node selector widget.
+  void setNodeSelectorVisible(bool);
+  bool nodeSelectorVisible() const;
+
+  /// Show/hide options (place, activate, color, etc).
+  void setOptionsVisible(bool);
+  bool optionsVisible() const;
+
 public slots:
+
   /// Set the currently selected markups node.
   void setCurrentNode(vtkMRMLNode* currentNode);
 
@@ -71,10 +90,14 @@ public slots:
   /// Set the default color that is assigned to newly created markups nodes in the combo box.
   void setDefaultNodeColor(QColor color);
 
-  /// Highlight the Nth fiducial in the table of fiducials.
+  /// Scrolls to and selects the Nth fiducial in the table of fiducials.
   void highlightNthFiducial(int n);
+
   /// Set the currently selected markups node to be the active markups node in the Slicer scene.
   void activate();
+
+  /// Set the currently selected markups node to be the active markups node in the Slicer scene. The argument \a place is true then also interaction mode is set to place mode.
+  void placeActive(bool place);
 
 protected slots:
   /// Update the currently selected markups node to have its selected color changed.
@@ -100,19 +123,35 @@ protected slots:
   /// Edit the name or position of the currently selected markups node.
   void onMarkupsFiducialEdited(int row, int column);
 
+  /// Clicked on a fiducial or used keyboard to move between fiducials in the table.
+  void onMarkupsFiducialSelected(int row, int column);
+
   /// Update the GUI to reflect the currently selected markups node.
   void updateWidget();
 
 signals:
-  /// The currently selected markups node has changed.
-  void markupsFiducialNodeChanged();
-  /// The currently selected markups node has been activated.
-  void markupsFiducialActivated();
-  /// The place mode has changed. This is independent of whether the currently selected markups node is active.
-  void markupsFiducialPlaceModeChanged();
-  /// The updates to the GUI have are finished.
-  void updateFinished();
 
+  /// The signal is emitted when a different markup node is selected.
+  void markupsFiducialNodeChanged();
+
+  /// This signal is emitted when a different markup point is selected in the table.
+  /// The argument \a markupIndex is the index of the selected markup.
+  void currentMarkupsFiducialSelectionChanged(int markupIndex);
+
+  /// The signal is emitted when currently selected markups node has been activated. If place mode is activated then clicking on a view adds a fiducial to the active markup node.
+  void markupsFiducialActivated();
+
+  /// This signal is emitted when place mode has changed. This is independent of whether the currently selected markups node is active.
+  void markupsFiducialPlaceModeChanged();
+
+  /// This signal is emitted when place mode for the active markup is activated or deactivated.
+  /// The argument \a placeActive is true if the currently selected markups node is active and in place mode.
+  /// The argument \a placeActive is false if the currently selected markups node is not active or not in place mode. 
+  void activeMarkupsFiducialPlaceModeChanged(bool placeActive);
+
+  /// This signal is emitted if updates to the widget have finished.
+  /// It is called after fiducials are changed (added, position modified, etc).
+  void updateFinished();
 protected:
   QScopedPointer<qSlicerSimpleMarkupsWidgetPrivate> d_ptr;
 
