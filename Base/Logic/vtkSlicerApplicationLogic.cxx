@@ -1230,7 +1230,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
    //       dtvdn->SetUpperThreshold(0);
    //       dtvdn->SetLowerThreshold(0);
    //       dtvdn->SetAutoWindowLevel(1);
-          disp = dtvdn; // assign to superclass pointer
+          disp.TakeReference(dtvdn); // assign to superclass pointer
           }
         else
           {
