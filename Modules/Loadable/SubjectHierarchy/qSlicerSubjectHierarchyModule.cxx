@@ -23,9 +23,13 @@
 // Qt includes
 #include <QtPlugin>
 
+// QtGUI includes
+#include <qSlicerApplication.h> 
+
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyModule.h"
 #include "qSlicerSubjectHierarchyModuleWidget.h"
+#include "qSlicerSubjectHierarchySettingsPanel.h" 
 #include "vtkSlicerSubjectHierarchyModuleLogic.h"
 
 // SubjectHierarchy Plugins includes
@@ -121,6 +125,12 @@ QIcon qSlicerSubjectHierarchyModule::icon()const
 void qSlicerSubjectHierarchyModule::setup()
 {
   this->Superclass::setup();
+
+  if (qSlicerApplication::application())
+    {
+    qSlicerSubjectHierarchySettingsPanel* panel = new qSlicerSubjectHierarchySettingsPanel();
+    qSlicerApplication::application()->settingsDialog()->addPanel("Subject hierarchy", panel);
+    } 
 }
 
 //-----------------------------------------------------------------------------

@@ -22,15 +22,19 @@ set(MODULE_INCLUDE_DIRECTORIES
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}Module.cxx
   qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}SettingsPanel.cxx
+  qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
 set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
 set(MODULE_UI_SRCS
   Resources/UI/qSlicer${MODULE_NAME}Module.ui
+  Resources/UI/qSlicer${MODULE_NAME}SettingsPanel.ui
   )
 
 set(MODULE_TARGET_LIBRARIES

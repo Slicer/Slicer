@@ -97,7 +97,7 @@ void qSlicerSubjectHierarchyPluginLogicPrivate::loadApplicationSettings()
     {
     if (settings->contains("SubjectHierarchy/AutoCreateSubjectHierarchy"))
       {
-      this->AutoCreateSubjectHierarchy = (bool)settings->value("SubjectHierarchy/AutoCreateSubjectHierarchy").toInt();
+      this->AutoCreateSubjectHierarchy = (settings->value("SubjectHierarchy/AutoCreateSubjectHierarchy").toString().compare("true") == 0);
       }
     }
 }
@@ -189,7 +189,7 @@ void qSlicerSubjectHierarchyPluginLogic::checkSupportedNodesInScene()
     // Ask the user if they want subject hierarchy to be created, otherwise it's unusable
     QMessageBox::StandardButton answer =
       QMessageBox::question(NULL, tr("Do you want to create subject hierarchy?"),
-      tr("Supported nodes have been found outside the hierarchy. Do you want to create subject hierarchy?\n\nIf you choose No, subject hierarchy will not be usable.\nIf you choose yes, then this question will appear every time you enter this module and not all supported nodes are in the hierarchy\nIf you choose Yes to All, this question never appears again, and all supported data nodes are automatically added to the hierarchy"),
+      tr("Supported nodes have been found outside the hierarchy. Do you want to create subject hierarchy?\n\nIf you choose No, subject hierarchy will not be usable.\nIf you choose yes, then this question will appear every time you enter this module and not all supported nodes are in the hierarchy\nIf you choose Yes to All, this question never appears again, and all supported data nodes are automatically added to the hierarchy. This can be later changed in Application Settings."),
       QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
       QMessageBox::Yes);
     // Create subject hierarchy if the user some form of yes
@@ -202,7 +202,7 @@ void qSlicerSubjectHierarchyPluginLogic::checkSupportedNodesInScene()
       {
       d->AutoCreateSubjectHierarchy = true;
       QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
-      settings->setValue("SubjectHierarchy/AutoCreateSubjectHierarchy", "1");
+      settings->setValue("SubjectHierarchy/AutoCreateSubjectHierarchy", "true");
       }
     }
 }
