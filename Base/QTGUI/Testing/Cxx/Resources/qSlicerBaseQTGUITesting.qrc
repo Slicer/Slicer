@@ -1,8 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
     <file alias="qSlicerScriptedLoadableModuleTestWidget.py">../../Data/Input/qSlicerScriptedLoadableModuleTestWidget.py</file>
+    <file alias="qSlicerScriptedLoadableModuleNewStyleTestWidget.py">../../Data/Input/qSlicerScriptedLoadableModuleNewStyleTestWidget.py</file>
     <file alias="qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py">../../Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py</file>
     <file alias="qSlicerScriptedLoadableModuleTest.py">../../Data/Input/qSlicerScriptedLoadableModuleTest.py</file>
+    <file alias="qSlicerScriptedLoadableModuleNewStyleTest.py">../../Data/Input/qSlicerScriptedLoadableModuleNewStyleTest.py</file>
     <file alias="qSlicerScriptedLoadableModuleSyntaxErrorTest.py">../../Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py</file>
     <file>Icons/AnnotationPointWithArrow.png</file>
     <file>Icons/AnnotationDistanceWithArrow.png</file>

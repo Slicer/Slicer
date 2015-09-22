@@ -129,6 +129,7 @@ void qSlicerScriptedLoadableModuleWidgetTester::testSetPythonSource_data()
   QTest::newRow("0") << "qSlicerScriptedLoadableModuleTestWidget.py" << false;
   QTest::newRow("1") << "qSlicerScriptedLoadableModuleTest.py" << false;
   QTest::newRow("2") << "qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py" << true;
+  QTest::newRow("3") << "qSlicerScriptedLoadableModuleNewStyleTestWidget.py" << false;
 }
 
 // ----------------------------------------------------------------------------
@@ -158,6 +159,7 @@ void qSlicerScriptedLoadableModuleWidgetTester::testEnterExit_data()
   QTest::addColumn<QString>("scriptName");
 
   QTest::newRow("0") << "qSlicerScriptedLoadableModuleTestWidget.py";
+  QTest::newRow("1") << "qSlicerScriptedLoadableModuleNewStyleTestWidget.py";
 }
 
 
@@ -194,6 +196,7 @@ void qSlicerScriptedLoadableModuleWidgetTester::testSetup_data()
   QTest::addColumn<QString>("scriptName");
 
   QTest::newRow("0") << "qSlicerScriptedLoadableModuleTestWidget.py";
+  QTest::newRow("1") << "qSlicerScriptedLoadableModuleNewStyleTestWidget.py";
 }
 
 // ----------------------------------------------------------------------------

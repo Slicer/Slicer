@@ -144,7 +144,17 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
 
   // Attempt to instantiate the associated python class
   PythonQtObjectPtr self;
-  self.setNewRef(PyInstance_New(classToInstantiate, arguments, 0));
+
+  if (PyType_Check(classToInstantiate))
+    {
+    // New style class
+    self.setNewRef(PyObject_Call(classToInstantiate, arguments, 0));
+    }
+  else
+    {
+    self.setNewRef(PyInstance_New(classToInstantiate, arguments, 0));
+    }
+
   Py_DECREF(arguments);
 
   if (!self)

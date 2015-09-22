@@ -125,6 +125,7 @@ void qSlicerScriptedLoadableModuleTester::testSetPythonSource_data()
 
   QTest::newRow("0") << "qSlicerScriptedLoadableModuleTest.py" << false;
   QTest::newRow("1") << "qSlicerScriptedLoadableModuleSyntaxErrorTest.py" << true;
+  QTest::newRow("2") << "qSlicerScriptedLoadableModuleNewStyleTest.py" << false;
 }
 
 namespace
@@ -160,6 +161,7 @@ void qSlicerScriptedLoadableModuleTester::testSetup_data()
   QTest::addColumn<QString>("scriptName");
 
   QTest::newRow("0") << "qSlicerScriptedLoadableModuleTest.py";
+  QTest::newRow("1") << "qSlicerScriptedLoadableModuleNewStyleTest.py";
 }
 
 // ----------------------------------------------------------------------------
