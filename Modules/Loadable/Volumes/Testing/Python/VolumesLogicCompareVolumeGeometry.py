@@ -25,6 +25,8 @@ class VolumesLogicCompareVolumeGeometryTesting(unittest.TestCase):
     volumesLogic = slicer.modules.volumes.logic()
     print 'Compare volume geometry epsilon: ', volumesLogic.GetCompareVolumeGeometryEpsilon()
     print 'Compare volume geometry precision: ', volumesLogic.GetCompareVolumeGeometryPrecision()
+    self.assertAlmostEqual(volumesLogic.GetCompareVolumeGeometryEpsilon(), 1e-6)
+    self.assertEqual(volumesLogic.GetCompareVolumeGeometryPrecision(), 6)
 
     #
     # compare the head against itself, this shouldn't produce any warning
