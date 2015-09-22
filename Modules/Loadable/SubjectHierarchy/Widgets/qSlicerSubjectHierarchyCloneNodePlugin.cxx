@@ -170,20 +170,19 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
   vtkMRMLNode* associatedDataNode = node->GetAssociatedNode();
   if (associatedDataNode)
     {
-    // Clone data node
+    // Create data node clone
     vtkSmartPointer<vtkMRMLNode> clonedDataNode;
     clonedDataNode.TakeReference(scene->CreateNodeByClass(associatedDataNode->GetClassName()));
-    clonedDataNode->Copy(associatedDataNode);
     std::string clonedDataNodeName = ( name.isEmpty() ? std::string(associatedDataNode->GetName()) + CLONE_NODE_NAME_POSTFIX : std::string(name.toLatin1().constData()) );
     clonedDataNode->SetName(clonedDataNodeName.c_str());
     scene->AddNode(clonedDataNode);
 
     // Clone display node
+    vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
     vtkMRMLDisplayableNode* displayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(associatedDataNode);
     if (displayableDataNode && displayableDataNode->GetDisplayNode())
       {
-      vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
-      clonedDisplayNode.TakeReference( vtkMRMLDisplayNode::SafeDownCast(
+      clonedDisplayNode = vtkSmartPointer<vtkMRMLDisplayNode>::Take( vtkMRMLDisplayNode::SafeDownCast(
         scene->CreateNodeByClass(displayableDataNode->GetDisplayNode()->GetClassName()) ) );
       clonedDisplayNode->Copy(displayableDataNode->GetDisplayNode());
       std::string clonedDisplayNodeName = clonedDataNodeName + "_Display";
@@ -194,11 +193,11 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
       }
 
     // Clone storage node
+    vtkSmartPointer<vtkMRMLStorageNode> clonedStorageNode;
     vtkMRMLStorableNode* storableDataNode = vtkMRMLStorableNode::SafeDownCast(associatedDataNode);
     if (storableDataNode && storableDataNode->GetStorageNode())
       {
-      vtkSmartPointer<vtkMRMLStorageNode> clonedStorageNode;
-      clonedStorageNode.TakeReference( vtkMRMLStorageNode::SafeDownCast(
+      clonedStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take( vtkMRMLStorageNode::SafeDownCast(
         scene->CreateNodeByClass(storableDataNode->GetStorageNode()->GetClassName()) ) );
       clonedStorageNode->Copy(storableDataNode->GetStorageNode());
       if (storableDataNode->GetStorageNode()->GetFileName())
@@ -209,6 +208,19 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
       scene->AddNode(clonedStorageNode);
       vtkMRMLStorableNode* clonedStorableDataNode = vtkMRMLStorableNode::SafeDownCast(clonedDataNode);
       clonedStorableDataNode->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
+      }
+
+    // Copy data node
+    // Display and storage nodes might be involved in the copy process, so they are needed to be set up before the copy operation
+    clonedDataNode->Copy(associatedDataNode);
+    // Copy overwrites display and storage node references too, need to restore
+    if (clonedDisplayNode.GetPointer())
+      {
+      vtkMRMLDisplayableNode::SafeDownCast(clonedDataNode)->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+      }
+    if (clonedStorageNode.GetPointer())
+      {
+      vtkMRMLDisplayableNode::SafeDownCast(clonedDataNode)->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
       }
 
     // Get hierarchy nodes
