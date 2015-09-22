@@ -498,10 +498,12 @@ void qSlicerTransformsModuleWidget::hardenSelectedNodes()
   Q_D(qSlicerTransformsModuleWidget);
   QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform =
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformedTreeView);
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
     {
     d->logic()->hardenTransform(vtkMRMLTransformableNode::SafeDownCast(node));
     }
+  QApplication::restoreOverrideCursor();
 }
 
 //-----------------------------------------------------------------------------

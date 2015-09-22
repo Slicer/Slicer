@@ -634,11 +634,13 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
 //------------------------------------------------------------------------------
 void qMRMLSceneSubjectHierarchyModel::onHardenTransformOnBranchOfCurrentNode()
 {
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (currentNode)
     {
     currentNode->HardenTransformOnBranch();
     }
+  QApplication::restoreOverrideCursor();
 }
 
 //------------------------------------------------------------------------------
