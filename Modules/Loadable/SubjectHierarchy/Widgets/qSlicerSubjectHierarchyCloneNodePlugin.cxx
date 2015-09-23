@@ -182,14 +182,22 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
     vtkMRMLDisplayableNode* displayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(associatedDataNode);
     if (displayableDataNode && displayableDataNode->GetDisplayNode())
       {
-      clonedDisplayNode = vtkSmartPointer<vtkMRMLDisplayNode>::Take( vtkMRMLDisplayNode::SafeDownCast(
-        scene->CreateNodeByClass(displayableDataNode->GetDisplayNode()->GetClassName()) ) );
-      clonedDisplayNode->Copy(displayableDataNode->GetDisplayNode());
-      std::string clonedDisplayNodeName = clonedDataNodeName + "_Display";
-      clonedDisplayNode->SetName(clonedDisplayNodeName.c_str());
-      scene->AddNode(clonedDisplayNode);
+      // If display node was automatically created by the specific module logic when the data node was added to the scene, then do not create it
       vtkMRMLDisplayableNode* clonedDisplayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(clonedDataNode);
-      clonedDisplayableDataNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+      if (clonedDisplayableDataNode->GetDisplayNode())
+        {
+        clonedDisplayNode = clonedDisplayableDataNode->GetDisplayNode();
+        }
+      else
+        {
+        clonedDisplayNode = vtkSmartPointer<vtkMRMLDisplayNode>::Take( vtkMRMLDisplayNode::SafeDownCast(
+          scene->CreateNodeByClass(displayableDataNode->GetDisplayNode()->GetClassName()) ) );
+        clonedDisplayNode->Copy(displayableDataNode->GetDisplayNode());
+        std::string clonedDisplayNodeName = clonedDataNodeName + "_Display";
+        clonedDisplayNode->SetName(clonedDisplayNodeName.c_str());
+        scene->AddNode(clonedDisplayNode);
+        clonedDisplayableDataNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+        }
       }
 
     // Clone storage node
@@ -197,17 +205,25 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
     vtkMRMLStorableNode* storableDataNode = vtkMRMLStorableNode::SafeDownCast(associatedDataNode);
     if (storableDataNode && storableDataNode->GetStorageNode())
       {
-      clonedStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take( vtkMRMLStorageNode::SafeDownCast(
-        scene->CreateNodeByClass(storableDataNode->GetStorageNode()->GetClassName()) ) );
-      clonedStorageNode->Copy(storableDataNode->GetStorageNode());
-      if (storableDataNode->GetStorageNode()->GetFileName())
-        {
-        std::string clonedStorageNodeFileName = std::string(storableDataNode->GetStorageNode()->GetFileName()) + CLONE_NODE_NAME_POSTFIX;
-        clonedStorageNode->SetFileName(clonedStorageNodeFileName.c_str());
-        }
-      scene->AddNode(clonedStorageNode);
+      // If storage node was automatically created by the specific module logic when the data node was added to the scene, then do not create it
       vtkMRMLStorableNode* clonedStorableDataNode = vtkMRMLStorableNode::SafeDownCast(clonedDataNode);
-      clonedStorableDataNode->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
+      if (clonedStorableDataNode->GetStorageNode())
+        {
+        clonedStorageNode = clonedStorableDataNode->GetStorageNode();
+        }
+      else
+        {
+        clonedStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take( vtkMRMLStorageNode::SafeDownCast(
+          scene->CreateNodeByClass(storableDataNode->GetStorageNode()->GetClassName()) ) );
+        clonedStorageNode->Copy(storableDataNode->GetStorageNode());
+        if (storableDataNode->GetStorageNode()->GetFileName())
+          {
+          std::string clonedStorageNodeFileName = std::string(storableDataNode->GetStorageNode()->GetFileName()) + CLONE_NODE_NAME_POSTFIX;
+          clonedStorageNode->SetFileName(clonedStorageNodeFileName.c_str());
+          }
+        scene->AddNode(clonedStorageNode);
+        clonedStorableDataNode->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
+        }
       }
 
     // Copy data node

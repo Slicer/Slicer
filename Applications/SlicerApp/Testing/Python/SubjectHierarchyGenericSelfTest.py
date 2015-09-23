@@ -164,9 +164,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       qt.QDir().mkpath(self.dicomDatabaseDir)
 
       if slicer.dicomDatabase:
-        self.originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
+        originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
       else:
-        self.originalDatabaseDirectory = None
+        originalDatabaseDirectory = None
         settings = qt.QSettings()
         settings.setValue('DatabaseDirectory', self.dicomDatabaseDir)
 
@@ -197,6 +197,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       self.assertTrue( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ) == numOfScalarVolumeNodesBeforeLoad + 1 )
       self.assertTrue( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ) == numOfSubjectHierarchyNodesBeforeLoad + 3 )
 
+      if originalDatabaseDirectory:
+        dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
+      
     except Exception, e:
       import traceback
       traceback.print_exc()
