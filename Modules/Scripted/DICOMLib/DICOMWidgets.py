@@ -52,7 +52,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
 
     self.browserPersistent = settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
     self.tableDensity = settingsValue('DICOM/tableDensity', 'Compact')
-    self.popupGeometry = settingsValue('detailsPopup.geometry', qt.QRect())
+    self.popupGeometry = settingsValue('DICOM/detailsPopup.geometry', qt.QRect())
     self.advancedView = settingsValue('DICOM/advancedView', 0, converter=int)
     self.horizontalTables = settingsValue('DICOM/horizontalTables', 0, converter=int)
 
