@@ -130,8 +130,8 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   typename ImageImportType::Pointer itkImporter = ImageImportType::New();
 
   // vtk export for  vtk image
-  vtkImageExport* vtkExporter = vtkImageExport::New();
-  vtkImageFlip* vtkFlip = vtkImageFlip::New();
+  vtkNew<vtkImageExport> vtkExporter;
+  vtkNew<vtkImageFlip> vtkFlip;
 
   // writer
   typedef typename itk::ImageFileWriter<ImageType> ImageWriterType;
@@ -158,7 +158,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   vtkFlip->SetFilteredAxis(1);
   vtkFlip->FlipAboutOriginOn();
 
-  ConnectPipelines(vtkExporter, itkImporter);
+  ConnectPipelines(vtkExporter.GetPointer(), itkImporter);
 
   // write image
   if(self->GetImageIOClassName())
@@ -224,9 +224,6 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
     exception.Print(std::cerr);
     throw exception;
     }
-  // clean up
-  vtkExporter->Delete();
-  vtkFlip->Delete();
 }
 
 //----------------------------------------------------------------------------
