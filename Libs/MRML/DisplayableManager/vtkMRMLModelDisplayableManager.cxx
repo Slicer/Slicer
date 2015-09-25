@@ -1571,7 +1571,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         actor->GetMapper()->SetScalarVisibility(mrmlDisplayNode->GetScalarVisibility());
         // if the scalars are visible, set active scalars, try to get the lookup
         // table
-        if (mrmlDisplayNode->GetScalarVisibility())
+        if (visible && mrmlDisplayNode->GetScalarVisibility())
           {
           if (mrmlDisplayNode->GetColorNode() != 0)
             {

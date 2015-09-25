@@ -147,6 +147,14 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
 {
+  if (scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
+    {
+    return;
+    }
+  if (scalarName == 0 && this->ActiveScalarName == 0)
+    {
+    return;
+    }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveScalarName(scalarName);
   this->UpdatePolyDataPipeline();
@@ -156,6 +164,10 @@ void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
 {
+  if (location == this->ActiveAttributeLocation)
+    {
+    return;
+    }
   int wasModifying = this->StartModify();
   this->Superclass::SetActiveAttributeLocation(location);
   this->UpdatePolyDataPipeline();
