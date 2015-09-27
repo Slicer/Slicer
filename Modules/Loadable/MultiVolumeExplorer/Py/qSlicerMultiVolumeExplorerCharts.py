@@ -13,12 +13,17 @@ class MultiVolumeIntensityChartView(object):
 
   @staticmethod
   def getMultiVolumeLabels(volumeNode):
-    mvLabels = string.split(volumeNode.GetAttribute('MultiVolume.FrameLabels'),',')
+    frameLabels = volumeNode.GetAttribute('MultiVolume.FrameLabels')
     nFrames = volumeNode.GetNumberOfFrames()
-    if len(mvLabels) != nFrames:
-      return
-    for l in range(nFrames):
-      mvLabels[l] = float(mvLabels[l])
+    mvLabels = [0,]*nFrames
+    if frameLabels:
+      mvLabels = string.split(frameLabels,',')
+      if len(mvLabels) == nFrames:
+        for l in range(nFrames):
+          mvLabels[l] = float(mvLabels[l])
+    else:
+      for l in range(nFrames):
+        mvLabels[l] = float(l)
     return mvLabels
 
   @staticmethod
