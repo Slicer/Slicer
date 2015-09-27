@@ -59,6 +59,7 @@
       <stringlist>
        <string>vtkMRMLDiffusionWeightedVolumeNode</string>
        <string>vtkMRMLDiffusionTensorVolumeNode</string>
+       <string>vtkMRMLMultiVolumeNode</string>
       </stringlist>
      </property>
      <property name="addEnabled">
