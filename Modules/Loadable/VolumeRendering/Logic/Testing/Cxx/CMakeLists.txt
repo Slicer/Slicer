@@ -3,6 +3,7 @@ set(KIT ${PROJECT_NAME})
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
   vtkSlicerVolumeRenderingLogicTest.cxx
+  vtkSlicerVolumeRenderingLogicAddFromFileTest.cxx
   )
 
 #-----------------------------------------------------------------------------
@@ -14,3 +15,4 @@ slicerMacroConfigureModuleCxxTestDriver(
 
 #-----------------------------------------------------------------------------
 simple_test(vtkSlicerVolumeRenderingLogicTest ${Slicer_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME})
+simple_test(vtkSlicerVolumeRenderingLogicAddFromFileTest ${Slicer_BINARY_DIR}/Testing/Temporary/)

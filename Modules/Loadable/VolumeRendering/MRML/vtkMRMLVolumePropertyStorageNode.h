@@ -53,7 +53,9 @@ protected:
   vtkMRMLVolumePropertyStorageNode(const vtkMRMLVolumePropertyStorageNode&);
   void operator=(const vtkMRMLVolumePropertyStorageNode&);
 
-  ///
+  /// Initialize all the supported read file types
+  virtual void InitializeSupportedReadFileTypes();
+
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
