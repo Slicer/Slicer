@@ -333,13 +333,42 @@ public:
   ///
   /// If set to NULL, multiple instances of this node class are allowed.
   ///
-  /// If set to a non-NULL string, the node will be a singletong and
+  /// If set to a non-NULL string, the node will be a singleton and
   /// the scene will replace this node instead of adding new instances.
   ///
   /// The SingletonTag is used by the scene to build a unique ID.
+  ///
+  /// If the there can only be one instance of a given node class in the scene,
+  /// then the singleton tag should be Singleton. For example, the interaction and
+  /// selection nodes are named Selection and Interaction, with Singleton tags set to
+  /// Singleton, and with IDs set to vtkMRMLSelectionNodeSingleton and
+  /// vtkMRMLInteractionNodeSingleton.
+  /// If the singleton node is associated with a specific module it should use
+  /// the module name, which already needs to be unique, as the tag. The Editor module
+  /// uses this naming convention, with a parameter node that has a singleton tag
+  /// of Editor and a node ID of vtkMRMLScriptedModuleNodeEditor.
+  /// If the there is more than one instance of the node class then the
+  /// singleton tag should be Singleton post-pended with a unique identifier
+  /// for that specific node (e.g. the name). Any new color nodes should use this
+  /// convention, with a name of NewName, a Singleton tag of SingletonNewName, leading
+  /// to an ID of vtkMRMLColorTableNodeSingletonNewName.
+  /// The existing MRML nodes don't always use these conventions but are kept unchanged
+  /// for backward compatibility.
   /// \sa vtkMRMLScene::BuildID
   vtkSetStringMacro(SingletonTag);
   vtkGetStringMacro(SingletonTag);
+  void SetSingletonOn()
+    {
+    this->SetSingletonTag("Singleton");
+    }
+  void SetSingletonOff()
+    {
+    this->SetSingletonTag(NULL);
+    }
+  bool IsSingleton()
+    {
+    return (this->GetSingletonTag() != NULL);
+    }
 
   /// Save node with MRML scene.
   vtkGetMacro(SaveWithScene, int);

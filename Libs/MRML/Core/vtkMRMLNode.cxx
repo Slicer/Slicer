@@ -353,6 +353,10 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
         this->Selected = 0;
         }
       }
+     else if (!strcmp(attName, "singletonTag"))
+       {
+       this->SetSingletonTag(attValue);
+       }
      else if (!strcmp(attName, "attributes"))
        {
        std::stringstream attributes(attValue);
@@ -452,6 +456,12 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " selectable=\"" << (this->Selectable ? "true" : "false") << "\"";
   of << indent << " selected=\"" << (this->Selected ? "true" : "false") << "\"";
+
+  if (this->SingletonTag)
+    {
+    of << indent << " singletonTag=\"" << this->SingletonTag << "\"";
+    }
+
   if (this->Attributes.size())
     {
     of << indent << " attributes=\"";

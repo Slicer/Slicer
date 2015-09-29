@@ -1552,6 +1552,8 @@ vtkMRMLNode* vtkMRMLScene::GetSingletonNode(vtkMRMLNode* n)
 
   // No singleton node found, but it may be possible that a non-singleton node exists with
   // the same ID, which is probably a singleton node where the tag was not set by mistake.
+  // The vtkMRMLNode was updated to serialize the singleton tag but legacy scene files from
+  // before October 2015 may have saved nodes without the singleton tag having been set.
   std::string singletonId = this->GenerateUniqueID(n);
   sn = this->GetNodeByID(singletonId.c_str());
   if (sn != NULL)

@@ -435,6 +435,20 @@
     TEST_SET_GET_BOOLEAN( node, DisableModifiedEvent);                  \
     TEST_SET_GET_BOOLEAN( node, Selected );                             \
                                                                         \
+    /* Test singleton utility methods */                                \
+    node->SetSingletonOff();                                            \
+    if (node->IsSingleton())                                            \
+      {                                                                 \
+      std::cerr << "Error in SetSingletonOff() " << std::endl;          \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+    node->SetSingletonOn();                                             \
+    if (!node->IsSingleton())                                           \
+      {                                                                 \
+      std::cerr << "Error in SetSingletonOn() " << std::endl;           \
+      return EXIT_FAILURE;                                              \
+      }                                                                 \
+                                                                        \
     node->Modified();                                                   \
     node->InvokePendingModifiedEvent();                                 \
     node1->SetName("copywithsinglemodified");                           \
