@@ -215,13 +215,6 @@ void qSlicerCoreApplicationPrivate::init()
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
   this->setPythonEnvironmentVariables();
   this->setTclEnvironmentVariables();
-#if defined(Slicer_BUILD_DICOM_SUPPORT) && defined(Q_OS_MAC)
-  if (q->isInstalled())
-    {
-    this->setEnvironmentVariable("DCMDICTPATH", this->SlicerHome + "/" Slicer_SHARE_DIR "/dicom.dic:" +
-       this->SlicerHome + "/" Slicer_SHARE_DIR "/private.dic");
-    }
-#endif
 
   // Load default settings if any.
   if (q->defaultSettings())

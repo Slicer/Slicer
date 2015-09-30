@@ -33,8 +33,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "3366181db75ac0e334045c66350e438adf304cb0")
+  set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
+  set(${proj}_GIT_TAG "DCMTK-3.6.1_20150924")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -57,18 +57,14 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
+      -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
+      -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
   set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(DCM_PRIVATE_DICT_PATH ${CMAKE_BINARY_DIR}/${proj}/dcmdata/data/private.dic)
-  set(DCM_STANDARD_DICT_PATH ${CMAKE_BINARY_DIR}/${proj}/dcmdata/data/dicom.dic)
-
-  mark_as_superbuild(
-    VARS DCM_STANDARD_DICT_PATH:PATH DCM_PRIVATE_DICT_PATH:PATH
-    )
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
@@ -83,26 +79,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
     )
-
-  # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_BUILD
-    "DCMDICTPATH=${DCM_STANDARD_DICT_PATH}<PATHSEP>${DCM_PRIVATE_DICT_PATH}")
-  mark_as_superbuild(
-    VARS ${proj}_ENVVARS_LAUNCHER_BUILD
-    LABELS "ENVVARS_LAUNCHER_BUILD"
-    )
-
-  #-----------------------------------------------------------------------------
-  # Launcher setting specific to install tree
-
-  # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_INSTALLED
-    "DCMDICTPATH=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/dicom.dic<PATHSEP><APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/private.dic")
-  mark_as_superbuild(
-    VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
-    LABELS "ENVVARS_LAUNCHER_INSTALLED"
-    )
-
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
