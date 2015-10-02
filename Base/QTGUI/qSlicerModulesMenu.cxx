@@ -39,8 +39,8 @@ public:
   void init();
   void addDefaultCategories();
 
-  void addModuleAction(QMenu* menu, QAction* moduleAction, bool useIndex = true);
-  QMenu* menu(QMenu* parentMenu, QStringList subCategories);
+  void addModuleAction(QMenu* menu, QAction* moduleAction, bool useIndex = true, bool builtIn = true);
+  QMenu* menu(QMenu* parentMenu, QStringList subCategories, bool builtIn = true);
 
   QAction* action(const QVariant& actionData, const QMenu* parentMenu)const;
   QAction* action(const QString& text, const QMenu* parentMenu)const;
@@ -90,8 +90,10 @@ void qSlicerModulesMenuPrivate::addDefaultCategories()
   q->addSeparator();
   // between the 2 separators are the top level modules (with no category)
   q->addSeparator();
-  // after the separator are the predefined categories followed by the custom
-  // ones.
+  // after the top level modules are the non-built-in categories (from
+  // extensions or any user defined external folder)
+  q->addSeparator();
+  // after the separator are the predefined categories
 }
 
 //---------------------------------------------------------------------------
@@ -137,7 +139,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* par
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleAction, bool useIndex)
+void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleAction, bool useIndex, bool builtIn)
 {
   Q_Q(qSlicerModulesMenu);
   QList<QAction*> actions = menu->actions();
@@ -153,6 +155,8 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
       orderedList = this->TopLevelCategoryOrder;
       }
     }
+  // Set built-in property to action
+  moduleAction->setProperty("builtIn", QVariant(builtIn));
   // The actions are before submenus and inserted based on their index or alphabetically
   bool ok = false;
   int index = moduleAction->property("index").toInt(&ok);
@@ -169,6 +173,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
       {
       actionIndex = 65535;
       }
+    bool actionBuiltIn = action->property("builtIn").toBool();
     // Sort alphabetically if the indexes are the same
     if (actionIndex == index)
       {
@@ -205,10 +210,29 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
       }
     // If the action to add is a menu
     else if (moduleAction->menu() && action->menu() &&
-             (actionIndex > index))
+             (actionIndex > index) && actionBuiltIn)
       {
       menu->insertAction(action, moduleAction);
       return;
+      }
+    }
+  // if top level and not built-in, then add it to the external section
+  if (menu == q && !builtIn && !orderedList.isEmpty())
+    {
+    // look for third separator (second, as the first one was removed above)
+    int separatorCount = 0;
+    foreach(QAction* action, actions)
+      {
+      Q_ASSERT(action);
+      if (action->isSeparator())
+        {
+        ++separatorCount;
+        if (separatorCount == 2)
+          {
+          menu->insertAction(action, moduleAction);
+          return;
+          }
+        }
       }
     }
   // otherwise, simply add it to the end of the menu list
@@ -216,7 +240,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
 }
 
 //---------------------------------------------------------------------------
-QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories)
+QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories, bool builtIn)
 {
   Q_Q(qSlicerModulesMenu);
   if (subCategories.isEmpty())
@@ -228,7 +252,7 @@ QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories)
     {
     return menu;
     }
-  // The action are inserted alphabetically
+  // The actions are inserted alphabetically
   foreach(QAction* action, menu->actions())
     {
     if (action->text() == category)
@@ -238,8 +262,8 @@ QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories)
     }
   // if we are here that means the category has not been found, create it.
   QMenu* subMenu = new QMenu(category, q);
-  this->addModuleAction(menu, subMenu->menuAction());
-  return this->menu(subMenu, subCategories);
+  this->addModuleAction(menu, subMenu->menuAction(), true, builtIn);
+  return this->menu(subMenu, subCategories, builtIn);
 }
 
 //---------------------------------------------------------------------------
@@ -436,11 +460,11 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
 
   foreach(const QString& category, module->categories())
     {
-    QMenu* menu = d->menu(this, category.split('.'));
-    d->addModuleAction(menu, moduleAction);
+    QMenu* menu = d->menu(this, category.split('.'), module->isBuiltIn());
+    d->addModuleAction(menu, moduleAction, true, module->isBuiltIn());
     }
   // Add in "All Modules" as well
-  d->addModuleAction(d->AllModulesMenu, moduleAction, false);
+  d->addModuleAction(d->AllModulesMenu, moduleAction, false, true);
 
   // Maybe the module was set current before it was added into the menu
   if (d->CurrentModule == moduleAction->data().toString())

@@ -182,6 +182,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// an other project.
   static bool IsPluginInstalled(const std::string& filePath, const std::string& applicationHomeDir);
 
+  /// Return \a true if the plugin identified with its \a filePath is a built-in Slicer module.
+  static bool IsPluginBuiltIn(const std::string& filePath, const std::string& applicationHomeDir);
+
   /// Get share directory associated with \a moduleName located in \a filePath
   static std::string GetModuleShareDirectory(const std::string& moduleName, const std::string& filePath);
 

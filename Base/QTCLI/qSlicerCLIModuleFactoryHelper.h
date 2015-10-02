@@ -37,6 +37,9 @@ public:
   /// Convenient method returning True if the given CLI path corresponds to an installed module
   static bool isInstalled(const QString& path);
 
+  /// Convenient method returning True if the given CLI path corresponds to a built-in module
+  static bool isBuiltIn(const QString& path);
+
 private:
   /// Not implemented
   qSlicerCLIModuleFactoryHelper(){}

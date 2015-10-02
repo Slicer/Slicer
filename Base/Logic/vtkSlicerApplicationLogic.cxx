@@ -1728,6 +1728,37 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
   return true;
 }
 
+//----------------------------------------------------------------------------
+bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
+                                                  const std::string& applicationHomeDir)
+{
+  if (filePath.empty())
+    {
+    vtkGenericWarningMacro( << "filePath is an empty string !");
+    return false;
+    }
+  if (applicationHomeDir.empty())
+    {
+    vtkGenericWarningMacro( << "applicationHomeDir is an empty string !");
+    return false;
+    }
+
+  std::string path = itksys::SystemTools::GetFilenamePath(filePath);
+  std::string canonicalPath = itksys::SystemTools::GetRealPath(path.c_str());
+
+  bool isBuiltIn = itksys::SystemTools::StringStartsWith(
+        canonicalPath.c_str(), applicationHomeDir.c_str());
+
+  // On MacOSX extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
+  // folder being a sub directory of the application dir, an extra test is required to make sure the
+  // tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
+  // Since package name can be rename from "Slicer.app" to "Something.app", let's compare
+  // using ".app/Contents/" instead of "Slicer_BUNDLE_LOCATION" which is "Slicer.app/Contents/"
+  bool macExtension = (canonicalPath.find(".app/Contents/" Slicer_EXTENSIONS_DIRBASENAME "-") != std::string::npos);
+
+  return  isBuiltIn && !macExtension;
+}
+
 namespace
 {
 //----------------------------------------------------------------------------

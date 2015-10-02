@@ -66,3 +66,10 @@ bool qSlicerCLIModuleFactoryHelper::isInstalled(const QString& path)
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   return app ? qSlicerUtils::isPluginInstalled(path, app->slicerHome()) : false;
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerCLIModuleFactoryHelper::isBuiltIn(const QString& path)
+{
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  return app ? qSlicerUtils::isPluginBuiltIn(path, app->slicerHome()) : true;
+}

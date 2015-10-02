@@ -46,6 +46,7 @@ public:
   QString                                    Name;
   QString                                    Path;
   bool                                       Installed;
+  bool                                       BuiltIn;
   bool                                       WidgetRepresentationCreationEnabled;
   qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
   QList<qSlicerAbstractModuleRepresentation*> WidgetRepresentations;
@@ -62,6 +63,7 @@ qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
   this->Name = "NA";
   this->WidgetRepresentation = 0;
   this->Installed = false;
+  this->BuiltIn = false;
   this->WidgetRepresentationCreationEnabled = true;
 }
 
@@ -210,6 +212,10 @@ CTK_SET_CPP(qSlicerAbstractCoreModule, const QString&, setPath, Path);
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isInstalled, Installed);
 CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setInstalled, Installed);
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isBuiltIn, BuiltIn);
+CTK_SET_CPP(qSlicerAbstractCoreModule, bool, setBuiltIn, BuiltIn);
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerAbstractCoreModule, bool, isWidgetRepresentationCreationEnabled, WidgetRepresentationCreationEnabled);

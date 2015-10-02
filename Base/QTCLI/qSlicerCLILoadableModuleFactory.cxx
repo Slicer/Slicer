@@ -80,6 +80,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setTempDirectory(this->TempDirectory);
   module->setPath(this->path());
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
+  module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
 
   ModuleLogo logo;
   if (updateLogo(this, logo))

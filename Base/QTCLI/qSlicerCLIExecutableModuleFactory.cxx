@@ -127,6 +127,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   module->setTempDirectory(this->TempDirectory);
   module->setPath(this->path());
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
+  module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
 
   this->CLIModule = module.data();
 

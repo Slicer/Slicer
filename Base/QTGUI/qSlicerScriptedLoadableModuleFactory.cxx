@@ -57,6 +57,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
+  module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome()));
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))

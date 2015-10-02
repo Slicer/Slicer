@@ -169,6 +169,12 @@ bool qSlicerUtils::isPluginInstalled(const QString& filePath, const QString& app
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerUtils::isPluginBuiltIn(const QString& filePath, const QString& applicationHomeDir)
+{
+  return vtkSlicerApplicationLogic::IsPluginBuiltIn(filePath.toStdString(), applicationHomeDir.toStdString());
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerUtils::pathWithoutIntDir(const QString& path, const QString& subDirWithoutIntDir)
 {
   QString tmp;

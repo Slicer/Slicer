@@ -49,6 +49,7 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
+  module->setBuiltIn(qSlicerUtils::isPluginBuiltIn(this->path(), app->slicerHome()));
 
   return module;
 }

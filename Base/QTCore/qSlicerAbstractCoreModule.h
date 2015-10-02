@@ -167,6 +167,12 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// reimplemented in each module.
   Q_PROPERTY(bool isInstalled READ isInstalled)
 
+  /// This property holds whether module is a built-in Slicer module or
+  /// one from an extension or any user-specified folder.
+  /// \a isBuiltIn is set by the module factory and shouldn't be
+  /// reimplemented in each module.
+  Q_PROPERTY(bool isBuiltIn READ isBuiltIn)
+
 public:
 
   typedef QObject Superclass;
@@ -269,6 +275,11 @@ public:
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.
   bool isInstalled()const;
   void setInstalled(bool value);
+
+  /// Determine if this module is a built-in Slicer module or one from an extension
+  /// or any user-specified folder.
+  bool isBuiltIn()const;
+  void setBuiltIn(bool value);
 
 public slots:
 
