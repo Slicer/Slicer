@@ -1,4 +1,24 @@
 
+# -------------------------------------------------------------------------
+# Disable source generator enabled by default
+# -------------------------------------------------------------------------
+set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages" FORCE)
+set(CPACK_SOURCE_TGZ  OFF CACHE BOOL "Enable to build TGZ source packages" FORCE)
+set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages" FORCE)
+
+# -------------------------------------------------------------------------
+# Select generator
+# -------------------------------------------------------------------------
+if(UNIX)
+  set(CPACK_GENERATOR "TGZ")
+  if(APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+  endif()
+elseif(WIN32)
+  set(CPACK_GENERATOR "NSIS")
+endif()
+
+# -------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
   # Python install rules are common to both 'bundled' and 'regular' package
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPython.cmake)
@@ -240,25 +260,6 @@ if(FILE_EXTENSIONS)
           ")
     endforeach()
   endif()
-endif()
-
-# -------------------------------------------------------------------------
-# Disable source generator enabled by default
-# -------------------------------------------------------------------------
-set(CPACK_SOURCE_TBZ2 OFF CACHE BOOL "Enable to build TBZ2 source packages" FORCE)
-set(CPACK_SOURCE_TGZ  OFF CACHE BOOL "Enable to build TGZ source packages" FORCE)
-set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages" FORCE)
-
-# -------------------------------------------------------------------------
-# Enable generator
-# -------------------------------------------------------------------------
-if(UNIX)
-  set(CPACK_GENERATOR "TGZ")
-  if(APPLE)
-    set(CPACK_GENERATOR "DragNDrop")
-  endif()
-elseif(WIN32)
-  set(CPACK_GENERATOR "NSIS")
 endif()
 
 include(CPack)
