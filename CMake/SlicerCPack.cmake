@@ -219,19 +219,27 @@ endif()
 # -------------------------------------------------------------------------
 if(CPACK_GENERATOR STREQUAL "NSIS")
 
+  set(Slicer_CPACK_NSIS_INSTALL_SUBDIRECTORY "")
+  slicer_cpack_set("CPACK_NSIS_INSTALL_SUBDIRECTORY")
+
   # Installers for 32- vs. 64-bit CMake:
   #  - Root install directory (displayed to end user at installer-run time)
   #  - "NSIS package/display name" (text used in the installer GUI)
   #  - Registry key used to store info about the installation
   if(CMAKE_CL_64)
-    slicer_verbose_set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+    set(_nsis_install_root "$PROGRAMFILES64")
     slicer_verbose_set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     slicer_verbose_set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
   else()
-    slicer_verbose_set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+    set(_nsis_install_root "$PROGRAMFILES")
     slicer_verbose_set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win32)")
     slicer_verbose_set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
   endif()
+
+  if(NOT CPACK_NSIS_INSTALL_SUBDIRECTORY STREQUAL "")
+    set(_nsis_install_root "${_nsis_install_root}\\\\${CPACK_NSIS_INSTALL_SUBDIRECTORY}")
+  endif()
+  slicer_verbose_set(CPACK_NSIS_INSTALL_ROOT ${_nsis_install_root})
 
   # Slicer does *NOT* require setting the windows path
   set(CPACK_NSIS_MODIFY_PATH OFF)
