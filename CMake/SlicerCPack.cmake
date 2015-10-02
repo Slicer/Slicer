@@ -158,7 +158,7 @@ endif()
 set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Runtime;/")
 
 # -------------------------------------------------------------------------
-# Package properties
+# Common package properties
 # -------------------------------------------------------------------------
 set(CPACK_MONOLITHIC_INSTALL ON)
 
@@ -214,37 +214,39 @@ if(APPLE)
   slicer_cpack_set("CPACK_PACKAGE_ICON")
 endif()
 
-# Installers for 32- vs. 64-bit CMake:
-#  - Root install directory (displayed to end user at installer-run time)
-#  - "NSIS package/display name" (text used in the installer GUI)
-#  - Registry key used to store info about the installation
-if(CMAKE_CL_64)
-  set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
-  set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
-else()
-  set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
-  set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win32)")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-endif()
-
-# Slicer does *NOT* require setting the windows path
-set(CPACK_NSIS_MODIFY_PATH OFF)
-
-set(APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
-set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
-slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
-
 # -------------------------------------------------------------------------
-# File extensions
+# NSIS package properties
 # -------------------------------------------------------------------------
-set(FILE_EXTENSIONS .mrml .xcat .mrb)
+if(CPACK_GENERATOR STREQUAL "NSIS")
 
-if(FILE_EXTENSIONS)
+  # Installers for 32- vs. 64-bit CMake:
+  #  - Root install directory (displayed to end user at installer-run time)
+  #  - "NSIS package/display name" (text used in the installer GUI)
+  #  - Registry key used to store info about the installation
+  if(CMAKE_CL_64)
+    slicer_verbose_set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+    slicer_verbose_set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+    slicer_verbose_set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
+  else()
+    slicer_verbose_set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+    slicer_verbose_set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win32)")
+    slicer_verbose_set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+  endif()
 
-  # For NSIS (Win32) now, we will add MacOSX support later (get back to Wes)
+  # Slicer does *NOT* require setting the windows path
+  set(CPACK_NSIS_MODIFY_PATH OFF)
 
-  if(WIN32 AND NOT UNIX)
+  set(APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
+  set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
+  slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
+
+  # -------------------------------------------------------------------------
+  # File extensions
+  # -------------------------------------------------------------------------
+  set(FILE_EXTENSIONS .mrml .xcat .mrb)
+
+  if(FILE_EXTENSIONS)
+
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS)
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS)
     foreach(ext ${FILE_EXTENSIONS})
@@ -264,6 +266,7 @@ if(FILE_EXTENSIONS)
           ")
     endforeach()
   endif()
+
 endif()
 
 include(CPack)
