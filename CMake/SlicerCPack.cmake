@@ -178,11 +178,16 @@ get_property(${project}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${project
 get_property(${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${project}_DESCRIPTION_SUMMARY)
 get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
 
+macro(slicer_verbose_set varname)
+  message(STATUS "Setting ${varname} to '${ARGN}'")
+  set(${varname} ${ARGN})
+endmacro()
+
 macro(slicer_cpack_set varname)
   if(DEFINED ${project}_${varname})
-    set(${varname} ${${project}_${varname}})
+    slicer_verbose_set(${varname} ${${project}_${varname}})
   elseif(DEFINED Slicer_${varname})
-    set(${varname} ${Slicer_${varname}})
+    slicer_verbose_set(${varname} ${Slicer_${varname}})
   else()
     if(NOT "Slicer" STREQUAL "${project}")
       set(_error_msg "Neither Slicer_${varname} or ${project}_${varname} are defined.")
@@ -191,7 +196,6 @@ macro(slicer_cpack_set varname)
     endif()
     message(FATAL_ERROR "Failed to set variable ${varname}. ${_error_msg}")
   endif()
-  message(STATUS "Setting ${varname} to '${${varname}}'")
 endmacro()
 
 slicer_cpack_set("CPACK_PACKAGE_NAME")
@@ -229,7 +233,7 @@ set(CPACK_NSIS_MODIFY_PATH OFF)
 
 set(APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
 set(EXECUTABLE_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}")
-set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
+slicer_verbose_set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
 
 # -------------------------------------------------------------------------
 # File extensions
