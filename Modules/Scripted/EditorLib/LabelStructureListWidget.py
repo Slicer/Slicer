@@ -202,7 +202,7 @@ class LabelStructureListWidget(qt.QWidget):
       vName = vNode.GetName()
       # match something like "CT-lung-label1"
       fnmatchExp = "%s-*%s*" % (masterName, self.mergeVolumePostfix)
-      if fnmatch.fnmatch(vName,fnmatchExp):
+      if fnmatch.fnmatchcase(vName,fnmatchExp):
         volumeNodes.append(vNode)
       vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
     return volumeNodes

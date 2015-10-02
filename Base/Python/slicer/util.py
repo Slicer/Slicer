@@ -140,26 +140,26 @@ def findChildren(widget=None,name="",text="",title="",className=""):
     if not hasattr(p,'children'):
       continue
     parents += p.children()
-    if name and fnmatch.fnmatch(p.name, name):
+    if name and fnmatch.fnmatchcase(p.name, name):
       children.append(p)
     elif text:
       try:
         p.text
-        if fnmatch.fnmatch(p.text, text):
+        if fnmatch.fnmatchcase(p.text, text):
           children.append(p)
       except (AttributeError, TypeError):
         pass
     elif title:
       try:
         p.title
-        if fnmatch.fnmatch(p.title, title):
+        if fnmatch.fnmatchcase(p.title, title):
           children.append(p)
       except AttributeError:
         pass
     elif className:
       try:
         p.className()
-        if fnmatch.fnmatch(p.className(), className):
+        if fnmatch.fnmatchcase(p.className(), className):
           children.append(p)
       except AttributeError:
         pass
@@ -449,7 +449,7 @@ def getNodes(pattern = "", scene=None):
       node = scene.GetNthNode(idx)
       name = node.GetName()
       id = node.GetID()
-      if fnmatch.fnmatch(name, pattern) or fnmatch.fnmatch(id, pattern):
+      if fnmatch.fnmatchcase(name, pattern) or fnmatch.fnmatchcase(id, pattern):
         nodes[node.GetName()] = node
     return nodes
 
