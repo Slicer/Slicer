@@ -1743,11 +1743,14 @@ bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
     return false;
     }
 
+  std::string canonicalApplicationHomeDir =
+      itksys::SystemTools::GetRealPath(applicationHomeDir.c_str());
+
   std::string path = itksys::SystemTools::GetFilenamePath(filePath);
   std::string canonicalPath = itksys::SystemTools::GetRealPath(path.c_str());
 
   bool isBuiltIn = itksys::SystemTools::StringStartsWith(
-        canonicalPath.c_str(), applicationHomeDir.c_str());
+        canonicalPath.c_str(), canonicalApplicationHomeDir.c_str());
 
   // On MacOSX extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
   // folder being a sub directory of the application dir, an extra test is required to make sure the
