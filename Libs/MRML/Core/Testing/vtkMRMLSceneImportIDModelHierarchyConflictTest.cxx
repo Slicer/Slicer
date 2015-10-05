@@ -69,7 +69,7 @@ bool ImportIDModelHierarchyConflictTest()
               << " - Failed to add node into the scene: "
               << "model id: " << modelNode->GetID()<< " "
               << "model display id: " << modelDisplayNode->GetID()<< " "
-              << "display node: " << modelNode.GetPointer()->GetDisplayNode()
+              << "display node: " << modelNode->GetDisplayNode()
               << std::endl;
     return false;
     }
@@ -81,8 +81,8 @@ bool ImportIDModelHierarchyConflictTest()
     {
     std::cerr << "Line " << __LINE__
               << " - Model display node and model node point to different poly data:"
-              <<" model poly data = " <<  modelNode.GetPointer()->GetPolyData()
-              << ", display node polydata = " << modelDisplayNode.GetPointer()->GetInputPolyData()
+              <<" model poly data = " <<  modelNode->GetPolyData()
+              << ", display node polydata = " << modelDisplayNode->GetInputPolyData()
               << std::endl;
     return false;
     }
@@ -92,8 +92,8 @@ bool ImportIDModelHierarchyConflictTest()
   scene->AddNode(hierachyDisplayNode.GetPointer());
   vtkNew<vtkMRMLModelHierarchyNode> hierarchyNode;
   scene->AddNode(hierarchyNode.GetPointer());
-  hierarchyNode->SetAndObserveDisplayNodeID(hierachyDisplayNode.GetPointer()->GetID());
-  hierarchyNode->SetAssociatedNodeID(modelNode.GetPointer()->GetID());
+  hierarchyNode->SetAndObserveDisplayNodeID(hierachyDisplayNode->GetID());
+  hierarchyNode->SetAssociatedNodeID(modelNode->GetID());
 
   std::cout << "Starting scene has " << scene->GetNumberOfNodes() << " nodes" << std::endl;
   /// at this point the following node id should be in the scene
@@ -265,8 +265,8 @@ bool ImportModelHierarchyTwiceTest()
   // Add a model hierarchy node
   vtkNew<vtkMRMLModelHierarchyNode> modelHierarchyNode;
   scene->AddNode(modelHierarchyNode.GetPointer());
-  modelHierarchyNode->SetAndObserveDisplayNodeID(hierachyDisplayNode.GetPointer()->GetID());
-  modelHierarchyNode->SetAssociatedNodeID(modelNode.GetPointer()->GetID());
+  modelHierarchyNode->SetAndObserveDisplayNodeID(hierachyDisplayNode->GetID());
+  modelHierarchyNode->SetAssociatedNodeID(modelNode->GetID());
 
   vtkNew<vtkMRMLHierarchyNode> hierarchyNode;
   scene->AddNode(hierarchyNode.GetPointer());
