@@ -1297,9 +1297,6 @@ class DICOMHeaderPopup(object):
     self.window = ctk.ctkDICOMObjectListWidget()
     self.window.setWindowTitle('DICOM File Metadata')
 
-    self.layout = qt.QGridLayout()
-    self.window.setLayout(self.layout)
-
   def open(self):
     if not self.window.isVisible():
       self.window.show()
