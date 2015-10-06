@@ -104,5 +104,7 @@ function(midas_api_escape_for_url var str)
   string(REPLACE "[" "%5B" _tmp "${_tmp}") # Left Square Bracket
   string(REPLACE "]" "%5D" _tmp "${_tmp}") # Right Square Bracket
   string(REPLACE "`" "%60" _tmp "${_tmp}") # Grave Accent
+  string(REPLACE "\n" "%0A" _tmp "${_tmp}") # Line feed
+  string(REPLACE "\r" "%0D" _tmp "${_tmp}") # Carriage return
   set(${var} ${_tmp} PARENT_SCOPE)
 endfunction()
