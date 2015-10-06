@@ -690,6 +690,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::onMarkupsFiducialSelected(int row, int column)
 {
+  Q_UNUSED(column)
   Q_D(qSlicerSimpleMarkupsWidget);
 
   if (d->JumpToSliceEnabled)
