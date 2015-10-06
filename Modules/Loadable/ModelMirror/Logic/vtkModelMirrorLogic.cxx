@@ -156,10 +156,7 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference (inputStorageNode->GetFileName() );
     }
-  itksys_stl::string name;
-  itksys_stl::string localFile;
-  itksys_stl::string newURI;
-  itksys_stl::string extension;
+  std::string localFile;
   if ( useURI )
     {
     localFile = ((this->GetMRMLScene())->GetCacheManager())->GetFilenameFromURI(inputStorageNode->GetFileName());
@@ -171,8 +168,8 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
 
   //--- use original file but tack a _Mirror onto the end.
     size_t index = localFile.find_last_of (".");
-    extension = localFile.substr ( index );
-    newURI = localFile.substr( 0, index );
+    std::string extension = localFile.substr ( index );
+    std::string newURI = localFile.substr( 0, index );
     newURI += "_Mirror";
     newURI += extension;
 
@@ -182,11 +179,11 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     mStorageNode->SetFileName(localFile.c_str());
     fsmStorageNode->SetFileName(localFile.c_str());
 
-    const itksys_stl::string fname(localFile.c_str());
+    const std::string fname(localFile.c_str());
 
     // the model name is based on the file name (itksys call should work even if
     // file is not on disk yet)
-    name = itksys::SystemTools::GetFilenameName(fname);
+    const std::string name = itksys::SystemTools::GetFilenameName(fname);
 
     // check to see which node can read this type of file
     if (mStorageNode->SupportedFileType(name.c_str()))

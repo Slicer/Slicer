@@ -128,9 +128,9 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
   storageNode->SetFileName(filename);
   if (storageNode->ReadData(fiberBundleNode) != 0)
     {
-    const itksys_stl::string fname(filename);
-    itksys_stl::string name = itksys::SystemTools::GetFilenameWithoutExtension(fname);
-    std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
+    const std::string fname(filename);
+    const std::string name = itksys::SystemTools::GetFilenameWithoutExtension(fname);
+    const std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     fiberBundleNode->SetName(uname.c_str());
 
     displayLineNode->SetVisibility(1);

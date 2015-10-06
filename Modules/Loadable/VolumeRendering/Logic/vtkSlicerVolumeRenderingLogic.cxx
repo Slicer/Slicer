@@ -972,7 +972,6 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     }
 
-  itksys_stl::string name;
   const char *localFile;
   if (useURI)
     {
@@ -985,11 +984,11 @@ vtkMRMLVolumePropertyNode* vtkSlicerVolumeRenderingLogic
     vpStorageNode->SetFileName(filename);
     localFile = filename;
     }
-  const itksys_stl::string fname(localFile);
+  const std::string fname(localFile);
   // the node name is based on the file name (itksys call should work even if
   // file is not on disk yet)
   std::string filenameName = itksys::SystemTools::GetFilenameName(fname);
-  name = itksys::SystemTools::GetFilenameWithoutExtension(filenameName);
+  const std::string name = itksys::SystemTools::GetFilenameWithoutExtension(filenameName);
 
   // check to see which node can read this type of file
   if (!vpStorageNode->SupportedFileType(fname.c_str()))

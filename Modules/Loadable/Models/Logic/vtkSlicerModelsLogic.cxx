@@ -195,10 +195,10 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     fsmStorageNode->SetFileName(filename);
     localFile = filename;
     }
-  const itksys_stl::string fname(localFile?localFile:"");
+  const std::string fname(localFile?localFile:"");
   // the model name is based on the file name (itksys call should work even if
   // file is not on disk yet)
-  itksys_stl::string name = itksys::SystemTools::GetFilenameName(fname);
+  std::string name = itksys::SystemTools::GetFilenameName(fname);
   vtkDebugMacro("AddModel: got model name = " << name.c_str());
 
   // check to see which node can read this type of file
@@ -224,7 +224,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   */
   if (storageNode != NULL)
     {
-    itksys_stl::string baseName = itksys::SystemTools::GetFilenameWithoutExtension(fname);
+    std::string baseName = itksys::SystemTools::GetFilenameWithoutExtension(fname);
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str()));
     modelNode->SetName(uname.c_str());
 
