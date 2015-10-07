@@ -572,10 +572,9 @@ class DICOMDetailsPopup(VTKObservationMixin):
     self.organizeLoadables()
     self.loadableTable.setLoadables(self.loadablesByPlugin)
 
-  '''
-  Take list of file lists, return loadables by plugin dictionary
-  '''
   def getLoadablesFromFileLists(self, fileLists):
+    """Take list of file lists, return loadables by plugin dictionary
+    """
 
     loadablesByPlugin = {}
 
