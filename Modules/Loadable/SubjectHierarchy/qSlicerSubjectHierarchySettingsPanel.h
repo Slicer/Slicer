@@ -52,6 +52,7 @@ public slots:
 
 protected slots:
   void enableAutoCreateSubjectHierarchy(bool value);
+  void enableAutoDeleteSubjectHierarchyChildren(bool value);
 
 protected:
   QScopedPointer<qSlicerSubjectHierarchySettingsPanelPrivate> d_ptr;

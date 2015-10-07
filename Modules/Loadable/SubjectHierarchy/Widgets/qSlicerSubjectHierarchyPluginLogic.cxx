@@ -104,6 +104,10 @@ void qSlicerSubjectHierarchyPluginLogicPrivate::loadApplicationSettings()
       {
       this->AutoCreateSubjectHierarchy = (settings->value("SubjectHierarchy/AutoCreateSubjectHierarchy").toString().compare("true") == 0);
       }
+    if (settings->contains("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren"))
+      {
+      this->AutoDeleteSubjectHierarchyChildren = (settings->value("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren").toString().compare("true") == 0);
+      }
     }
 }
 
@@ -364,12 +368,15 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
           {
           answer =
             QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
-            tr("The deleted subject hierarchy node has children. Do you want to remove those too?\n\nIf you choose yes, the whole branch will be deleted, including all children."),
-            QMessageBox::Yes | QMessageBox::No,
+            tr("The deleted subject hierarchy node has children. "
+               "Do you want to remove those too?\n\n"
+               "If you choose yes, the whole branch will be deleted, including all children.\n"
+               "If you choose Yes to All, this question never appears again, and all subject hierarchy children are automatically deleted. This can be later changed in Application Settings."),
+            QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
             QMessageBox::No);
           }
         // Delete branch if the user chose yes
-        if (answer == QMessageBox::Yes)
+        if (answer == QMessageBox::Yes || answer == QMessageBox::YesToAll)
           {
           d->DeleteBranchInProgress = true;
           for (std::vector<vtkMRMLHierarchyNode*>::iterator childrenIt = childrenNodes.begin();
@@ -378,6 +385,13 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
             scene->RemoveNode(*childrenIt);
             }
           d->DeleteBranchInProgress = false;
+          }
+        // Save auto-creation flag in settings
+        if (answer == QMessageBox::YesToAll)
+          {
+          d->AutoDeleteSubjectHierarchyChildren = true;
+          QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
+          settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
           }
         }
       }

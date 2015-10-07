@@ -34,6 +34,26 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="AutoDeleteSubjectHierarchyChildrenEnabledLabel">
+     <property name="text">
+      <string>Automatically delete subject hierarchy children:</string>
+     </property>
+     <property name="toolTip">
+      <string>Automatically delete subject hierarchy children for nodes removed from the scene.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="AutoDeleteSubjectHierarchyChildrenEnabledCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="toolTip">
+      <string>Automatically delete subject hierarchy children for nodes removed from the scene.</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
