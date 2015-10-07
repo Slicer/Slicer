@@ -79,6 +79,7 @@ class qSlicerMultiVolumeExplorerSimplifiedModuleWidget:
   def setupFrameControlFrame(self):
     # TODO: initialize the slider based on the contents of the labels array
     self.frameSlider = ctk.ctkSliderWidget()
+    self.frameSlider.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
     self.frameLabel = QLabel('Current frame number')
     self.playButton = QPushButton('Play')
     self.playButton.toolTip = 'Iterate over multivolume frames'
@@ -283,6 +284,7 @@ class qSlicerMultiVolumeExplorerModuleWidget(qSlicerMultiVolumeExplorerSimplifie
     qSlicerMultiVolumeExplorerSimplifiedModuleWidget.setupFrameControlFrame(self)
 
     self.frameCopySelector = slicer.qMRMLNodeComboBox()
+    self.frameCopySelector.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
     self.frameCopySelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
     self.frameCopySelector.setMRMLScene(slicer.mrmlScene)
     self.frameCopySelector.addEnabled = 1
