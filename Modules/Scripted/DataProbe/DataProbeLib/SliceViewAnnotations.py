@@ -1,8 +1,7 @@
 from __future__ import division
-import os, glob, sys
+import os
 from __main__ import qt
 from __main__ import vtk
-from __main__ import ctk
 from __main__ import slicer
 
 from slicer.util import settingsValue
@@ -14,7 +13,6 @@ try:
 except ImportError:
   NUMPY_AVAILABLE = False
 
-import DataProbeLib
 import DataProbeUtil
 
 class SliceAnnotations(VTKObservationMixin):
