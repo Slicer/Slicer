@@ -100,7 +100,15 @@ public:
   /// int GetXYAxisValue(int index, double* x, double* y, double*  yerr);
 
   ///
-  /// Set X and Y values at he data point specified by 'index'
+  /// Set values at the data point specified by 'index'
+  int SetValues(int index, double* values);
+
+  ///
+  /// Set value at the data point specified by 'index' at the given 'component'
+  int SetValue(int index, int component, double value);
+
+  ///
+  /// Set X and Y values at the data point specified by 'index'
   int SetXYValue(int index, double x, double y);
 
   ///
@@ -109,7 +117,15 @@ public:
   int SetXYValue(int index, double x, double y, double yerr);
 
   ///
-  /// Get X and Y values at he data point specified by 'index'
+  /// Get values at the data point specified by 'index'
+  int GetValues(int index, double* values);
+
+  ///
+  /// Get value at the data point specified by 'index' at the given 'component'
+  double GetValue(int index, int component, int& success);
+  
+  ///
+  /// Get X and Y values at the data point specified by 'index'
   int GetXYValue(int index, double* x, double* y);
 
   ///
@@ -117,6 +133,13 @@ public:
   /// at the data point specified by 'index'
   int GetXYValue(int index, double* x, double* y, double* yerr);
 
+  ///
+  /// Add values at the end of the array
+  int AddValues(double* values);
+
+  ///
+  /// Add value at the end of the array at the given 'component'
+  int AddValue(int component, double value);
 
   ///
   /// Add a set of X and Y values at the end of the array
