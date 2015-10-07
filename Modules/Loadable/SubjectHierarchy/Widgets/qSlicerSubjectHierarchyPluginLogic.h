@@ -58,6 +58,12 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
   /// if there are supported data nodes in the scene outside subject hierarchy.
   Q_PROPERTY (bool autoCreateSubjectHierarchy READ autoCreateSubjectHierarchy WRITE setAutoCreateSubjectHierarchy)
 
+  /// Flag determining whether children of subject hierarchy nodes are automatically
+  /// deleted upon deleting a parent subject hierarchy node.
+  /// By default, a pop-up question asking the user to confirm the deletion of
+  /// children nodes will be shown.
+  Q_PROPERTY (bool autoDeleteSubjectHierarchyChildren READ autoDeleteSubjectHierarchyChildren WRITE setAutoDeleteSubjectHierarchyChildren)
+
 public:
   typedef QObject Superclass;
   qSlicerSubjectHierarchyPluginLogic(QWidget *parent=0);
@@ -89,6 +95,9 @@ public:
 
   bool autoCreateSubjectHierarchy()const;
   void setAutoCreateSubjectHierarchy(bool flag);
+
+  bool autoDeleteSubjectHierarchyChildren()const;
+  void setAutoDeleteSubjectHierarchyChildren(bool flag);
 
 protected:
   /// Add supported nodes to subject hierarchy.
