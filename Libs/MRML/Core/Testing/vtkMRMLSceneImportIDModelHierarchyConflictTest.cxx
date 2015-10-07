@@ -213,6 +213,7 @@ bool ImportIDModelHierarchyConflictTest()
               << " - Import failed: new model node should have null polydata: "
               << modelNode2->GetPolyData()
               << std::endl;
+    return false;
     }
   if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
       ->GetInputPolyData() != NULL)

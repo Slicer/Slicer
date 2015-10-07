@@ -23,6 +23,9 @@
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
+// VTK includes
+#include <vtkPolyData.h>
+
 // STD includes
 #include <vtkNew.h>
 
@@ -34,6 +37,11 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   // Add displayable node
   vtkNew<vtkMRMLModelNode> modelNode;
   scene->AddNode(modelNode.GetPointer());
+
+  // add poly data
+  vtkNew<vtkPolyData> polyData;
+  modelNode->SetAndObservePolyData(polyData.GetPointer());
+  std::cout << "Polydata pointer = " << polyData.GetPointer() << std::endl;
 
   // Add display node
   vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;
@@ -97,6 +105,49 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
     {
     std::cerr << "Failed to import scene - part2: "
               << "model #3: " << modelNode3 << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // check that the model nodes and model display nodes point to the right poly data
+  if (modelNode2->GetPolyData() != NULL)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Import failed: new model node should have null polydata: "
+              << modelNode2->GetPolyData()
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
+      ->GetInputPolyData() != NULL)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Import failed: new model node's display node should have null polydata: "
+              << vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
+                   ->GetInputPolyData()
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (modelNode->GetPolyData() == NULL)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Import failed: original model node should not have null polydata"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode())->GetInputPolyData() == NULL)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Import failed: original model display node should not have null polydata"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (modelNode->GetPolyData() != vtkMRMLModelDisplayNode::SafeDownCast(
+        modelNode->GetDisplayNode())->GetInputPolyData())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Import failed: original model node and display node don't have the same poly data"
+              << std::endl;
     return EXIT_FAILURE;
     }
 

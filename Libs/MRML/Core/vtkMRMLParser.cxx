@@ -15,6 +15,7 @@ Version:   $Revision: 1.8 $
 // MRML includes
 #include "vtkMRMLParser.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLStorageNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkTagTable.h"
 
@@ -105,7 +106,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   // It is needed to have the scene set before ReadXMLAttributes is
   // called on storage nodes.
-  node->SetScene(this->GetMRMLScene());
+  if (vtkMRMLStorageNode::SafeDownCast(node) != 0)
+    {
+    node->SetScene(this->GetMRMLScene());
+    }
 
   node->ReadXMLAttributes(atts);
 
