@@ -124,21 +124,15 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->Color)
-    {
-    of << indent << " color=\"" << this->Color[0] << " "
-      << this->Color[1] << " "
-      << this->Color[2] << "\"";
-    }
+  of << indent << " color=\"" << this->Color[0] << " "
+    << this->Color[1] << " "
+    << this->Color[2] << "\"";
 
   of << indent << " edgeColor=\"" << this->EdgeColor[0] << " "
-     << this->EdgeColor[1] << " " << this->EdgeColor[2] << "\"";
-  if (this->SelectedColor)
-    {
-    of << indent << " selectedColor=\"" << this->SelectedColor[0] << " "
-      << this->SelectedColor[1] << " "
-      << this->SelectedColor[2] << "\"";
-    }
+    << this->EdgeColor[1] << " " << this->EdgeColor[2] << "\"";
+  of << indent << " selectedColor=\"" << this->SelectedColor[0] << " "
+    << this->SelectedColor[1] << " "
+    << this->SelectedColor[2] << "\"";
 
   of << indent << " selectedAmbient=\"" << this->SelectedAmbient << "\"";
 
