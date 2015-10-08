@@ -1696,11 +1696,6 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(std::string id)
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 {
-  if (this == NULL)
-    {
-    vtkErrorMacro("GetNodeByID: That's scary, you accessed a null scene !");
-    return NULL;
-    }
   if (id == NULL)
     {
     // don't use a macro here, can cause a crash on exit
