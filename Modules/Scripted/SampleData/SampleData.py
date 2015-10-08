@@ -1,5 +1,5 @@
 import os
-from __main__ import slicer
+import slicer
 import qt, ctk
 
 #

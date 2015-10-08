@@ -10,7 +10,7 @@
 import sys
 import os
 import Tkinter
-from __main__ import slicer
+import slicer
 import qt
 
 class tpycl(object):

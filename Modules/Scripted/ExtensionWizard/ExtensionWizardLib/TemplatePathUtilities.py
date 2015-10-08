@@ -1,6 +1,6 @@
 import os
 
-from __main__ import slicer
+import slicer
 
 _userTemplatePathKey = "ExtensionWizard/TemplatePaths"
 

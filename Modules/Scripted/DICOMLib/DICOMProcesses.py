@@ -1,7 +1,7 @@
 import os, subprocess
 import slicer
-from __main__ import qt
-from __main__ import ctk
+import qt
+import ctk
 
 #########################################################
 #

@@ -1,6 +1,6 @@
 import os, string
 import unittest
-from __main__ import qt, ctk, slicer
+import qt, ctk, slicer
 import logging
 import importlib
 

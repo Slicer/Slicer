@@ -1,8 +1,8 @@
 import os, glob, sys, copy
-from __main__ import qt
-from __main__ import vtk
-from __main__ import ctk
-from __main__ import slicer
+import qt
+import vtk
+import ctk
+import slicer
 from slicer.util import VTKObservationMixin
 
 from slicer.util import settingsValue, toBool

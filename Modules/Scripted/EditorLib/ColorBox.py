@@ -1,6 +1,6 @@
 import os
-from __main__ import qt
-from __main__ import slicer
+import qt
+import slicer
 
 __all__ = ['ColorBox']
 

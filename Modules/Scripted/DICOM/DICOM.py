@@ -1,10 +1,10 @@
 import glob
 import logging
 import os
-from __main__ import qt
-from __main__ import vtk
-from __main__ import ctk
-from __main__ import slicer
+import qt
+import vtk
+import ctk
+import slicer
 
 from slicer.util import settingsValue, toBool
 from slicer.ScriptedLoadableModule import *

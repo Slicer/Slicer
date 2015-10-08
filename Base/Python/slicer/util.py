@@ -599,7 +599,7 @@ def tempDirectory(key='__SlicerTemp__',tempDir=None,includeDateTime=True):
   # TODO: switch to QTemporaryDir in Qt5.
   Note: this directory is not automatically cleaned up
   """
-  from __main__ import qt, slicer
+  import qt, slicer
   if not tempDir:
     tempDir = qt.QDir(slicer.app.temporaryPath)
   tempDirName = key
@@ -625,7 +625,7 @@ def delayDisplay(message,autoCloseMsec=1000):
   If autoCloseMsec>0 then the window is closed after waiting for autoCloseMsec milliseconds
   If autoCloseMsec=0 then the window is not closed until the user clicks on it.
   """
-  from __main__ import qt, slicer
+  import qt, slicer
   import logging
   logging.info(message)
   messagePopup = qt.QDialog()
@@ -644,7 +644,7 @@ def delayDisplay(message,autoCloseMsec=1000):
 def warningDisplay(message,autoCloseMsec=1000,windowTitle="Slicer warning"):
   """Display popup with a warning message.
   """
-  from __main__ import qt, slicer
+  import qt, slicer
   import logging
   logging.warning(message)
   if mainWindow(verbose=False):
@@ -653,7 +653,7 @@ def warningDisplay(message,autoCloseMsec=1000,windowTitle="Slicer warning"):
 def errorDisplay(message,autoCloseMsec=1000,windowTitle="Slicer error"):
   """Display an error popup.
   """
-  from __main__ import qt, slicer
+  import qt, slicer
   import logging
   logging.error(message)
   if mainWindow(verbose=False):

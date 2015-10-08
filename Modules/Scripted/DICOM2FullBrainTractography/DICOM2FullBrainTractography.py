@@ -1,4 +1,4 @@
-from __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
 import DICOM2FullBrainTractographyLib
 #
 # DICOM2FullBrainTractography

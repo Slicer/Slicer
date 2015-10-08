@@ -2,7 +2,7 @@ import os
 import sys
 import traceback
 
-from __main__ import qt, ctk, slicer
+import qt, ctk, slicer
 
 import SlicerWizard.ExtensionDescription
 import SlicerWizard.ExtensionProject

@@ -1,4 +1,4 @@
-from __main__ import slicer, qt
+import slicer, qt
 
 #-----------------------------------------------------------------------------
 def _dialogIcon(icon):

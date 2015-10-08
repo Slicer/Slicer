@@ -1,4 +1,4 @@
-from __main__ import qt, ctk
+import qt, ctk
 
 import SlicerWizard.TemplateManager
 

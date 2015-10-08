@@ -1,5 +1,5 @@
 import unittest
-from __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
 
 #
 # LabelStatistics

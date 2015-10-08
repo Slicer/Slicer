@@ -1,6 +1,6 @@
 import slicer
-from __main__ import qt
-from __main__ import vtk
+import qt
+import vtk
 import ColorBox
 from EditUtil import EditUtil
 from slicer.util import VTKObservationMixin

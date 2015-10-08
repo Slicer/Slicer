@@ -1,9 +1,9 @@
 import os
-from __main__ import vtk
+import vtk
 import vtkITK
-from __main__ import ctk
-from __main__ import qt
-from __main__ import slicer
+import ctk
+import qt
+import slicer
 from EditOptions import HelpButton
 import Effect
 import logging

@@ -1,4 +1,4 @@
-from __main__ import qt
+import qt
 
 #-----------------------------------------------------------------------------
 def _makeAction(parent, text, icon=None, shortcut=None, slot=None):

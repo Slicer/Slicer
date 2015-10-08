@@ -1,8 +1,8 @@
 from __future__ import division
 import os
-from __main__ import qt
-from __main__ import vtk
-from __main__ import slicer
+import qt
+import vtk
+import slicer
 
 from slicer.util import settingsValue
 from slicer.util import VTKObservationMixin

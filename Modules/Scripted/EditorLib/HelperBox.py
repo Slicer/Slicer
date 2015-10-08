@@ -1,8 +1,8 @@
 import os
-from __main__ import qt
-from __main__ import ctk
-from __main__ import vtk
-from __main__ import slicer
+import qt
+import ctk
+import vtk
+import slicer
 from EditUtil import EditUtil
 from LabelCreateDialog import LabelCreateDialog
 from LabelStructureListWidget import LabelStructureListWidget

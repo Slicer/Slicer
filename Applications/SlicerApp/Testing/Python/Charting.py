@@ -4,7 +4,7 @@ import math
 import datetime
 import time
 import random
-from __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
 
 #
 # Charting

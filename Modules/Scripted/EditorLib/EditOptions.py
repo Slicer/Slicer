@@ -1,8 +1,8 @@
 import slicer
-from __main__ import qt
-from __main__ import ctk
-from __main__ import vtk
-from __main__ import getNodes
+import qt
+import ctk
+import vtk
+from slicer.util import getNodes
 from EditUtil import EditUtil
 from slicer.util import VTKObservationMixin
 

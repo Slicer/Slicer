@@ -1,7 +1,7 @@
 import os
-from __main__ import vtk
-from __main__ import qt
-from __main__ import slicer
+import vtk
+import qt
+import slicer
 from EditOptions import EditOptions
 import EditUtil
 from slicer.util import NodeModify

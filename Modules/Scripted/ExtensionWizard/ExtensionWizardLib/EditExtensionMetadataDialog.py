@@ -1,7 +1,7 @@
 import os
 import re
 
-from __main__ import qt, ctk
+import qt, ctk
 
 from .EditableTreeWidget import EditableTreeWidget
 

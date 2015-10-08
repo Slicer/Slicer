@@ -1,7 +1,7 @@
 import os
 import slicer
 import vtk
-from __main__ import qt
+import qt
 import EditorLib
 from EditUtil import EditUtil
 from EditUtil import UndoRedo

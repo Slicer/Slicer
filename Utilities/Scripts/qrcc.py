@@ -9,7 +9,7 @@ import sys
 _header = """
 import base64
 
-from __main__ import slicer
+import slicer
 
 qt_resource_handle = None
 qt_resource_data = base64.decodestring(\"\"\"

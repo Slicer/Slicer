@@ -1,5 +1,5 @@
 import os
-from __main__ import vtk, qt, ctk, slicer
+import vtk, qt, ctk, slicer
 from EditOptions import HelpButton
 from EditUtil import EditUtil
 import Effect

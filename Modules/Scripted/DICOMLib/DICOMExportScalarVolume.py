@@ -1,6 +1,6 @@
 import os
 import glob
-from __main__ import slicer
+import slicer
 
 #########################################################
 #

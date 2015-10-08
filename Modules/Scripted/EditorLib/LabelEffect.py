@@ -1,8 +1,8 @@
 import os
-from __main__ import vtk
-from __main__ import qt
-from __main__ import ctk
-from __main__ import slicer
+import vtk
+import qt
+import ctk
+import slicer
 from EditUtil import EditUtil
 import Effect
 

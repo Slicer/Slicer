@@ -3,10 +3,10 @@ import glob
 import tempfile
 import zipfile
 import sys
-from __main__ import qt
-from __main__ import vtk
-from __main__ import ctk
-from __main__ import slicer
+import qt
+import vtk
+import ctk
+import slicer
 
 import DICOMLib
 
