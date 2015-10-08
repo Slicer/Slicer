@@ -149,18 +149,16 @@ void vtkMRMLVolumeHeaderlessStorageNode::WriteXML(ostream& of, int nIndent)
   ss << this->CenterImage;
   of << indent << " centerImage=\"" << ss.str() << "\"";
   }
-  if (this->FileDimensions)
-    {
-    of << indent << " fileDimensions=\"" << this->FileDimensions[0] << " "
-      << this->FileDimensions[1] << " "
-      << this->FileDimensions[2] << "\"";
-    }
-  if (this->FileSpacing)
-    {
-    of << indent << " fileSpacing=\"" << this->FileSpacing[0] << " "
-      << this->FileSpacing[1] << " "
-      << this->FileSpacing[2] << "\"";
-    }
+  {
+  of << indent << " fileDimensions=\"" << this->FileDimensions[0] << " "
+    << this->FileDimensions[1] << " "
+    << this->FileDimensions[2] << "\"";
+  }
+  {
+  of << indent << " fileSpacing=\"" << this->FileSpacing[0] << " "
+    << this->FileSpacing[1] << " "
+    << this->FileSpacing[2] << "\"";
+  }
   {
   std::stringstream ss;
   ss << this->FileLittleEndian;
