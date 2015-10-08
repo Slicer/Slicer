@@ -530,10 +530,6 @@ const char* vtkMRMLScene::GetClassNameByTag(const char *tagName)
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetTagByClassName(const char *className)
 {
-  if ( !this )
-    {
-    return NULL;
-    }
   if ( !className )
     {
     vtkErrorMacro("GetTagByClassName: className is null");
@@ -1489,10 +1485,6 @@ std::list< std::string > vtkMRMLScene::GetNodeClassesList()
 //------------------------------------------------------------------------------
 vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 {
-  if ( !this || !this->Nodes)
-    {
-    return NULL;
-    }
   if (!className)
     {
     vtkErrorMacro("GetNextNodeByClass: class name is null.");
