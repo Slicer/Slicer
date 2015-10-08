@@ -715,7 +715,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output, vtkMR
   else
     {
     // the arrow tips are note always oriented correctly, but the direction of the shaft looks correct
-    rotateArrow->RotateX(vtkMath::DegreesFromRadians(acos(abs(sliceNormal_RAS[2])))); // TODO: check this, it might not be correct for an arbitrarily oriented slice normal
+    rotateArrow->RotateX(vtkMath::DegreesFromRadians(std::acos(std::abs(sliceNormal_RAS[2])))); // TODO: check this, it might not be correct for an arbitrarily oriented slice normal
     }
 
   glyph2DSource->SetScale(1);
