@@ -15,6 +15,7 @@ set(Slicer_PYTHON_SCRIPTS
   mrmlLogic
   saferef
   teem
+  vtkAddon
   vtkITK
   )
 

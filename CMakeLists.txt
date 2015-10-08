@@ -880,6 +880,7 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "" CACHE INTERNAL "Sl
 # Set Slicer buildin libraries *_DIR variables
 #-----------------------------------------------------------------------------
 set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
+set(vtkAddon_DIR ${Slicer_BINARY_DIR}/Libs/vtkAddon)
 set(vtkITK_DIR ${Slicer_BINARY_DIR}/Libs/vtkITK)
 
 #-----------------------------------------------------------------------------
