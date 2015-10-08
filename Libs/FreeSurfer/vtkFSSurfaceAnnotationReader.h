@@ -55,7 +55,7 @@ public:
   int WriteFSAnnotation();
 
   vtkGetMacro(NumColorTableEntries, int);
-  void SetColorTableFileName (char*);
+  vtkSetStringMacro(ColorTableFileName);
 
   vtkGetMacro(UseExternalColorTableFile,int);
   vtkSetMacro(UseExternalColorTableFile,int);
@@ -87,9 +87,8 @@ protected:
   char           *NamesList;
   int            NumColorTableEntries;
 
-    /// bool UseExternalColorTableFile;
-    int UseExternalColorTableFile;
-  char ColorTableFileName[1024];
+  int UseExternalColorTableFile;
+  char *ColorTableFileName;
 
   /// Read color table information from a source, allocate the arrays
   /// to hold rgb and name values, and return pointers to the

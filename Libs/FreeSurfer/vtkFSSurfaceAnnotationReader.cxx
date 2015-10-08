@@ -32,7 +32,7 @@ vtkFSSurfaceAnnotationReader::vtkFSSurfaceAnnotationReader()
   this->NamesList = NULL;
   this->NumColorTableEntries = -1;
   this->UseExternalColorTableFile = 0;
-  strcpy (this->ColorTableFileName, "");
+  this->ColorTableFileName = NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -42,15 +42,11 @@ vtkFSSurfaceAnnotationReader::~vtkFSSurfaceAnnotationReader()
   {
       free (this->NamesList);
   }
-}
-
-//-------------------------------------------------------------------------
-void vtkFSSurfaceAnnotationReader::SetColorTableFileName (char* name)
-{
-  if (NULL != name)
-  {
-      strcpy (this->ColorTableFileName, name);
-  }
+  if (this->ColorTableFileName)
+    {
+    delete [] this->ColorTableFileName;
+    this->ColorTableFileName = NULL;
+    }
 }
 
 //-------------------------------------------------------------------------
