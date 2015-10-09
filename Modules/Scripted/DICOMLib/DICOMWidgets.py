@@ -47,7 +47,15 @@ class DICOMDetailsPopup(VTKObservationMixin):
   def __init__(self,dicomBrowser=None):
     VTKObservationMixin.__init__(self)
     self.dicomBrowser = dicomBrowser
+    
+    # initialize the dicomDatabase
+    #   - pick a default and let the user know
+    if not slicer.dicomDatabase:
+      self.promptForDatabaseDirectory()
+    
     if self.dicomBrowser == None:
+      # This creates a DICOM database in the current working directory if nothing else
+      # is specified in the settings, therefore promptForDatabaseDirectory must be called before this.
       self.dicomBrowser = ctk.ctkDICOMBrowser()
 
     self.browserPersistent = settingsValue('DICOM/BrowserPersistent', False, converter=toBool)
@@ -64,10 +72,6 @@ class DICOMDetailsPopup(VTKObservationMixin):
     setDatabasePrecacheTags(self.dicomBrowser)
 
     self.dicomBrowser.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
-    # initialize the dicomDatabase
-    #   - pick a default and let the user know
-    if not slicer.dicomDatabase:
-      self.promptForDatabaseDirectory()
 
     # Update visibility
     for name in [
@@ -354,6 +358,10 @@ class DICOMDetailsPopup(VTKObservationMixin):
         messages += "Directory not writable. "
       if not os.access(databaseDirectory, os.R_OK):
         messages += "Directory not readable. "
+      if os.listdir(databaseDirectory) and not os.path.isfile(databaseFilepath):
+        # Prevent users from the error of trying to import a DICOM directory by selecting it as DICOM database path
+        messages += "Directory is not empty and not an existing DICOM database."
+        
     if messages != "":
       slicer.util.warningDisplay('The database file path "%s" cannot be used.  %s\n'
                                  'Please pick a different database directory using the '
