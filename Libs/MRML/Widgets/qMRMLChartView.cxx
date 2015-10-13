@@ -1078,7 +1078,11 @@ QString qMRMLChartViewPrivate::barXAxisTicks(vtkMRMLChartNode *cn)
   vtkStringArray *arrayNames = cn->GetArrayNames();
   const char *xAxisType = cn->GetProperty("default", "xAxisType");
 
-  if (!xAxisType || (xAxisType && !strcmp(xAxisType, "categorical")))
+  if (!arrayIDs || arrayIDs->GetNumberOfValues() <= 0)
+    {
+    // no axis ticks by default
+    }
+  else if (!xAxisType || (xAxisType && !strcmp(xAxisType, "categorical")))
     {
     // define the ticks from the first curve (could do better)
     vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
@@ -1125,7 +1129,11 @@ QString qMRMLChartViewPrivate::barOptions(vtkMRMLChartNode *cn)
 
   // Do we need to rotate the x-axis tick labels?
   bool rotateXTickLabels = false;
-  if (xAxisType && !strcmp(xAxisType, "categorical"))
+  if (!arrayIDs || arrayIDs->GetNumberOfValues() <= 0)
+    {
+    // no bar options by default
+    }
+  else if (xAxisType && !strcmp(xAxisType, "categorical"))
     {
     // if we have a color table for the first series
     vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
@@ -1336,7 +1344,11 @@ QString qMRMLChartViewPrivate::boxXAxisTicks(vtkMRMLChartNode *cn)
   vtkStringArray *arrayNames = cn->GetArrayNames();
   const char *xAxisType = cn->GetProperty("default", "xAxisType");
 
-  if (xAxisType && !strcmp(xAxisType, "categorical"))
+  if (!arrayIDs || arrayIDs->GetNumberOfValues() <= 0)
+    {
+    // no axis ticks by default
+    }
+  else if (xAxisType && !strcmp(xAxisType, "categorical"))
     {
     // define the ticks from the first curve (could do better)
     vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
