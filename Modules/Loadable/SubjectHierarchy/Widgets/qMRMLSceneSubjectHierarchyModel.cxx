@@ -386,7 +386,7 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
   if (column == this->nameColumn())
     {
     // Have owner plugin set the name and the tooltip
-    item->setText(ownerPlugin->displayedName(subjectHierarchyNode));
+    item->setText(ownerPlugin->displayedNodeName(subjectHierarchyNode));
     item->setToolTip(ownerPlugin->tooltip(subjectHierarchyNode));
     }
   // ID column

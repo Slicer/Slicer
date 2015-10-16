@@ -448,7 +448,7 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
       // Set text to display for the role
       QString role = currentPlugin->roleForPlugin();
       QString currentSelectPluginActionText = QString("%1: '%2', (%3%)").arg(
-        role).arg(currentPlugin->displayedName(currentNode)).arg(confidenceNumber*100.0, 0, 'f', 0);
+        role).arg(currentPlugin->displayedNodeName(currentNode)).arg(confidenceNumber*100.0, 0, 'f', 0);
       currentSelectPluginAction->setText(currentSelectPluginActionText);
       currentSelectPluginAction->setVisible(true);
       }

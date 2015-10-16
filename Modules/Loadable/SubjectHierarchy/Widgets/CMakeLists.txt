@@ -32,6 +32,8 @@ set(${KIT}_SRCS
   qSlicerSubjectHierarchyPluginHandler.h
   qSlicerSubjectHierarchyDefaultPlugin.cxx
   qSlicerSubjectHierarchyDefaultPlugin.h
+  qSlicerSubjectHierarchyScriptedPlugin.cxx
+  qSlicerSubjectHierarchyScriptedPlugin.h
   qSlicerSubjectHierarchyCloneNodePlugin.cxx
   qSlicerSubjectHierarchyCloneNodePlugin.h
   qSlicerSubjectHierarchyChartsPlugin.cxx
@@ -55,6 +57,7 @@ set(${KIT}_MOC_SRCS
   qSlicerSubjectHierarchyAbstractPlugin.h
   qSlicerSubjectHierarchyPluginHandler.h
   qSlicerSubjectHierarchyDefaultPlugin.h
+  qSlicerSubjectHierarchyScriptedPlugin.h
   qSlicerSubjectHierarchyCloneNodePlugin.h
   qSlicerSubjectHierarchyChartsPlugin.h
   qSlicerSubjectHierarchyParseLocalDataPlugin.h
@@ -101,8 +104,8 @@ SlicerMacroBuildModuleWidgets(
   )
 
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  #add_subdirectory(Testing)
+if(Slicer_USE_PYTHONQT)
+  add_subdirectory(Python)
 endif()
 
 #-----------------------------------------------------------------------------
