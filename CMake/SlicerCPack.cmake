@@ -178,10 +178,10 @@ get_property(${project}_CPACK_PACKAGE_DESCRIPTION_FILE GLOBAL PROPERTY ${project
 get_property(${project}_CPACK_PACKAGE_DESCRIPTION_SUMMARY GLOBAL PROPERTY ${project}_DESCRIPTION_SUMMARY)
 get_property(${project}_CPACK_PACKAGE_ICON GLOBAL PROPERTY ${project}_APPLE_ICON_FILE)
 
-macro(slicer_verbose_set varname)
+function(slicer_verbose_set varname)
   message(STATUS "Setting ${varname} to '${ARGN}'")
-  set(${varname} ${ARGN})
-endmacro()
+  set(${varname} "${ARGN}" PARENT_SCOPE)
+endfunction()
 
 macro(slicer_cpack_set varname)
   if(DEFINED ${project}_${varname})
