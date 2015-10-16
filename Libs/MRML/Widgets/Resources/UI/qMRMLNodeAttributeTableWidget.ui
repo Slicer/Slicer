@@ -77,6 +77,9 @@
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>     
     </widget>
    </item>
   </layout>
