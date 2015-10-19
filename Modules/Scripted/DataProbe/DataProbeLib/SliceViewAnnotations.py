@@ -423,14 +423,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.sliceViewAnnotationsEnabled = int(self.parameterNode.GetParameter(self.parameter))
     self.updateSliceViewFromGUI()
 
-  def openSettingsPopup(self):
-    if not self.window.isVisible():
-      self.window.show()
-    self.window.raise_()
-
-  def close(self):
-    self.window.hide()
-
   def updateSliceViewFromGUI(self):
     # Create corner annotations if have not created already
     if len(self.sliceCornerAnnotations.items()) == 0:
