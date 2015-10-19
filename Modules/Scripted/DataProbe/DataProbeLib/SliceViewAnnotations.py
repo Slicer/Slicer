@@ -845,6 +845,9 @@ class SliceAnnotations(VTKObservationMixin):
 
   def updateRuler(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
+    if not sliceCompositeNode:
+      return
+
     # Get the layers
     sliceNode = sliceLogic.GetBackgroundLayer().GetSliceNode()
     if not sliceNode:
@@ -859,6 +862,8 @@ class SliceAnnotations(VTKObservationMixin):
 
   def updateScalarBar(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
+    if not sliceCompositeNode:
+      return
 
     # Get the layers
     backgroundLayer = sliceLogic.GetBackgroundLayer()
@@ -958,6 +963,8 @@ class SliceAnnotations(VTKObservationMixin):
 
   def modifyScalarBar(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
+    if not sliceCompositeNode:
+      return
 
     # Get the layers
     backgroundLayer = sliceLogic.GetBackgroundLayer()
