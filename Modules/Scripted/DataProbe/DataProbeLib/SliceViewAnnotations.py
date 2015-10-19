@@ -59,7 +59,7 @@ class SliceAnnotations(VTKObservationMixin):
       '8-Bg-SeriesDescription':{'text':'','category':'C'},
       '9-Fg-SeriesDescription':{'text':'','category':'C'}
       })
-    # Top Rihgt Corner Text
+    # Top Right Corner Text
     self.cornerTexts.append({
       '1-Institution-Name':{'text':'','category':'B'},
       '2-Referring-Phisycian':{'text':'','category':'B'},
@@ -196,7 +196,7 @@ class SliceAnnotations(VTKObservationMixin):
     else:
       self.axesRadioButton.checked = True
 
-    self.restorDefaultsButton = find(window, 'restoreDefaultsButton')[0]
+    self.restoreDefaultsButton = find(window, 'restoreDefaultsButton')[0]
 
     # connections
     self.sliceViewAnnotationsCheckBox.connect('clicked()', self.onSliceViewAnnotationsCheckBox)
@@ -230,7 +230,7 @@ class SliceAnnotations(VTKObservationMixin):
     for radioButton in [self.cubeRadioButton, self.axesRadioButton, self.humanRadioButton]:
       radioButton.connect('clicked()', self.onOrientationMarkerTypeRadioButton)
 
-    self.restorDefaultsButton.connect('clicked()', self.restoreDefaultValues)
+    self.restoreDefaultsButton.connect('clicked()', self.restoreDefaultValues)
 
   def onLayoutManagerDestroyed(self):
     self.layoutManager = slicer.app.layoutManager()
@@ -448,7 +448,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.annotationsAmountGroupBox.enabled = enabled
     self.rulerCollapsibleButton.enabled = enabled
     self.scalarBarCollapsibleButton.enabled = enabled
-    self.restorDefaultsButton.enabled = enabled
+    self.restoreDefaultsButton.enabled = enabled
 
     for sliceViewName in self.sliceViewNames:
       sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
