@@ -416,9 +416,6 @@ class SliceAnnotations(VTKObservationMixin):
     settings.setValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', self.rangeLabelFormat)
     self.updateSliceViewFromGUI()
 
-  def updateMRMLFromGUI(self):
-    self.parameterNode.SetParameter(self.parameter, str(sliceViewAnnotationsEnabled))
-
   def updateGUIFromMRML(self,caller,event):
     if self.parameterNode.GetParameter(self.parameter) == '':
       # parameter does not exist - probably intializing
@@ -846,9 +843,6 @@ class SliceAnnotations(VTKObservationMixin):
     transform.Translate(0,0,0)
     self.axes.SetUserTransform(transform)
 
-
-  def sliceLogicModifiedEvent(self, caller,event):
-    self.updateLayersAnnotation(caller)
 
   def updateRuler(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
