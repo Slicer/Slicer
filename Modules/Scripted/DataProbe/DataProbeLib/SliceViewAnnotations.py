@@ -1006,21 +1006,21 @@ class SliceAnnotations(VTKObservationMixin):
         scalarBar.SetPosition(0.8,0.1)
         scalarBar.SetPosition2(0.17,0.8)
 
-    # Get the volumes
-    backgroundVolume = backgroundLayer.GetVolumeNode()
-    foregroundVolume = foregroundLayer.GetVolumeNode()
+      # Get the volumes
+      backgroundVolume = backgroundLayer.GetVolumeNode()
+      foregroundVolume = foregroundLayer.GetVolumeNode()
 
-    if (backgroundVolume != None and self.scalarBarSelectedLayer == 'background'):
-      self.updateScalarBarRange(sliceLogic, backgroundVolume, scalarBar, self.scalarBarSelectedLayer)
-      renderer.AddActor(scalarBar)
-      #scalarBarWidget.On()
-    elif (foregroundVolume != None and self.scalarBarSelectedLayer == 'foreground'):
-      self.updateScalarBarRange(sliceLogic, foregroundVolume, scalarBar, self.scalarBarSelectedLayer)
-      renderer.AddActor(scalarBar)
-      #scalarBarWidget.On()
-    else:
-      renderer.RemoveActor(scalarBar)
-      #scalarBarWidget.Off()
+      if (backgroundVolume != None and self.scalarBarSelectedLayer == 'background'):
+        self.updateScalarBarRange(sliceLogic, backgroundVolume, scalarBar, self.scalarBarSelectedLayer)
+        renderer.AddActor(scalarBar)
+        #scalarBarWidget.On()
+      elif (foregroundVolume != None and self.scalarBarSelectedLayer == 'foreground'):
+        self.updateScalarBarRange(sliceLogic, foregroundVolume, scalarBar, self.scalarBarSelectedLayer)
+        renderer.AddActor(scalarBar)
+        #scalarBarWidget.On()
+      else:
+        renderer.RemoveActor(scalarBar)
+        #scalarBarWidget.Off()
 
   def makeAnnotationText(self, sliceLogic):
     self.resetTexts()
