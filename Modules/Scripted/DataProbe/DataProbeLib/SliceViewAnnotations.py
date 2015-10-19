@@ -70,8 +70,6 @@ class SliceAnnotations(VTKObservationMixin):
       '7-TE':{'text':'','category':'A'}
       })
 
-    self.sliceCornerAnnotations = {}
-
     self.annotationsDisplayAmount = 0
 
     #
@@ -425,7 +423,7 @@ class SliceAnnotations(VTKObservationMixin):
 
   def updateSliceViewFromGUI(self):
     # Create corner annotations if have not created already
-    if len(self.sliceCornerAnnotations.items()) == 0:
+    if len(self.sliceViewNames) == 0:
       self.createCornerAnnotations()
 
     for slider in [self.zoomSlider,self.widthSlider, self.heightSlider]:
@@ -458,16 +456,11 @@ class SliceAnnotations(VTKObservationMixin):
       self.updateOrientationMarker(sl)
       self.updateCornerAnnotation(sl)
 
-    if not enabled:
-      # reset global variables
-      self.sliceCornerAnnotations = {}
-
   def createGlobalVariables(self):
     self.sliceViewNames = []
     self.sliceWidgets = {}
     self.sliceViews = {}
     self.cameras = {}
-    self.sliceCornerAnnotations = {}
     self.renderers = {}
     self.rulerActors = {}
     self.points = {}
@@ -493,7 +486,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.renderers[sliceViewName] = renderer
 
     self.sliceViews[sliceViewName] = sliceView
-    self.sliceCornerAnnotations[sliceViewName] = sliceView.cornerAnnotation()
     sliceLogic = sliceWidget.sliceLogic()
     self.addObserver(sliceLogic, vtk.vtkCommand.ModifiedEvent, self.updateViewAnnotations)
     self.orientationMarkerRenderers[sliceViewName] = vtk.vtkRenderer()
@@ -603,7 +595,7 @@ class SliceAnnotations(VTKObservationMixin):
 
     enabled = self.sliceViewAnnotationsEnabled
 
-    cornerAnnotation = self.sliceCornerAnnotations[sliceViewName]
+    cornerAnnotation = self.sliceViews[sliceViewName].cornerAnnotation()
 
     if enabled:
       # Font
@@ -1264,7 +1256,7 @@ class SliceAnnotations(VTKObservationMixin):
           elif self.annotationsDisplayAmount == 2:
             if (cornerText[key]['category'] == 'A'):
               cornerAnnotation = cornerAnnotation+ text + '\n'
-      sliceCornerAnnotation = self.sliceCornerAnnotations[sliceViewName]
+      sliceCornerAnnotation = self.sliceViews[sliceViewName].cornerAnnotation()
       # encode to avoid 'unicode conversion error' for patient names containing international characters
       cornerAnnotation = slicer.util.toVTKString(cornerAnnotation)
       sliceCornerAnnotation.SetText(i, cornerAnnotation)
