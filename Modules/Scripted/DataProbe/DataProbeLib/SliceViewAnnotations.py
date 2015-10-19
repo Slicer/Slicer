@@ -1281,8 +1281,6 @@ class SliceAnnotations(VTKObservationMixin):
       sliceCornerAnnotation.SetText(i, cornerAnnotation)
       textProperty = sliceCornerAnnotation.GetTextProperty()
       textProperty.SetShadow(1)
-      self.renderers[sliceViewName].RemoveActor(sliceCornerAnnotation)
-      self.renderers[sliceViewName].AddActor(sliceCornerAnnotation)
 
     self.sliceViews[sliceViewName].scheduleRender()
 
