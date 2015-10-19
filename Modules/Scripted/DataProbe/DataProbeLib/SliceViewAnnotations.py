@@ -323,22 +323,15 @@ class SliceAnnotations(VTKObservationMixin):
     self.updateSliceViewFromGUI()
 
   def onCornerTextsActivationCheckBox(self):
-    if self.topLeftCheckBox.checked:
-      self.topLeft = 1
-    else:
-      self.topLeft = 0
+    self.topLeft = int(self.topLeftCheckBox.checked)
+    self.topRight = int(self.topRightCheckBox.checked)
+    self.bottomLeft = int(self.bottomLeftCheckBox.checked)
 
-    if self.topRightCheckBox.checked:
-      self.topRight = 1
+    if self.topRight:
       self.scalarBarEnalbeCheckBox.checked = False
-    else:
-      self.topRight = 0
 
-    if self.bottomLeftCheckBox.checked:
-      self.bottomLeft = 1
-    else:
-      self.bottomLeft = 0
     self.updateSliceViewFromGUI()
+
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.topLeft',
         self.topLeft)
@@ -476,16 +469,18 @@ class SliceAnnotations(VTKObservationMixin):
     elif self.level3RadioButton.checked:
       self.annotationsDisplayAmount = 2
 
-    if self.sliceViewAnnotationsEnabled:
-      self.cornerTextParametersCollapsibleButton.enabled = True
-      self.activateCornersGroupBox.enabled = True
-      self.fontPropertiesGroupBox.enabled = True
-      self.scalarBarLayerSelectionGroupBox.enabled = True
-      self.annotationsAmountGroupBox.enabled = True
-      self.rulerCollapsibleButton.enabled = True
-      self.scalarBarCollapsibleButton.enabled = True
-      self.restorDefaultsButton.enabled = True
+    enabled = self.sliceViewAnnotationsEnabled
 
+    self.cornerTextParametersCollapsibleButton.enabled = enabled
+    self.activateCornersGroupBox.enabled = enabled
+    self.fontPropertiesGroupBox.enabled = enabled
+    self.scalarBarLayerSelectionGroupBox.enabled = enabled
+    self.annotationsAmountGroupBox.enabled = enabled
+    self.rulerCollapsibleButton.enabled = enabled
+    self.scalarBarCollapsibleButton.enabled = enabled
+    self.restorDefaultsButton.enabled = enabled
+
+    if enabled:
       for sliceViewName in self.sliceViewNames:
         sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
         sl = sliceWidget.sliceLogic()
@@ -494,14 +489,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.updateScalarBar(sl)
         self.updateOrientationMarker(sl)
     else:
-      self.cornerTextParametersCollapsibleButton.enabled = False
-      self.activateCornersGroupBox.enabled = False
-      self.scalarBarLayerSelectionGroupBox.enabled = False
-      self.fontPropertiesGroupBox.enabled = False
-      self.annotationsAmountGroupBox.enabled = False
-      self.rulerCollapsibleButton.enabled = False
-      self.scalarBarCollapsibleButton.enabled = False
-      self.restorDefaultsButton.enabled = False
       # Remove Observers
 
       for sliceViewName in self.sliceViewNames:
@@ -780,7 +767,7 @@ class SliceAnnotations(VTKObservationMixin):
       modelPaths = [modulePath + "DataProbeLib/Resources/Models/"+ modelFile for modelFile in modelFiles]
       for modelPath in modelPaths:
         successfulLoad = slicer.util.loadModel(modelPath)
-        if successfulLoad != True:
+        if not successfulLoad:
           print 'Warning: Could not load model %s' %modelPath
     nodes.UnRegister(slicer.mrmlScene)
 
@@ -931,8 +918,7 @@ class SliceAnnotations(VTKObservationMixin):
         rulerArea = viewWidth/4
 
       #if self.rulerEnabled and \
-      if  viewWidth > self.minimumWidthForRuler and\
-         rulerArea>0.5 and rulerArea<500 and NUMPY_AVAILABLE:
+      if viewWidth > self.minimumWidthForRuler and 0.5 < rulerArea < 500 and NUMPY_AVAILABLE:
         rulerSizesArray = np.array([1,5,10,50,100])
         index = np.argmin(np.abs(rulerSizesArray- rulerArea))
 
