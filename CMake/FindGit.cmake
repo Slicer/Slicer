@@ -22,6 +22,7 @@
 # The module defines the following variables:
 #   GIT_EXECUTABLE - path to git command line client
 #   GIT_FOUND - true if the command line client was found
+#   GIT_VERSION_STRING - the version of git found (since CMake 2.8.8)
 #
 # If the command line client executable is found the macro
 #  GIT_WC_INFO(<dir> <var-prefix>)
@@ -83,6 +84,15 @@ find_program(GIT_EXECUTABLE ${git_names}
 mark_as_advanced(GIT_EXECUTABLE)
 
 if(GIT_EXECUTABLE)
+  execute_process(COMMAND ${GIT_EXECUTABLE} --version
+                  OUTPUT_VARIABLE git_version
+                  ERROR_QUIET
+                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if (git_version MATCHES "^git version [0-9]")
+    string(REPLACE "git version " "" GIT_VERSION_STRING "${git_version}")
+  endif()
+  unset(git_version)
+
   macro(GIT_WC_INFO dir prefix)
     execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --verify -q --short=7 HEAD
        WORKING_DIRECTORY ${dir}
