@@ -475,32 +475,24 @@ class SliceAnnotations(VTKObservationMixin):
     self.scalarBarCollapsibleButton.enabled = enabled
     self.restorDefaultsButton.enabled = enabled
 
-    if enabled:
-      for sliceViewName in self.sliceViewNames:
-        sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
-        sl = sliceWidget.sliceLogic()
+    for sliceViewName in self.sliceViewNames:
+      sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
+      sl = sliceWidget.sliceLogic()
+      self.updateRuler(sl)
+      self.updateScalarBar(sl)
+      self.updateOrientationMarker(sl)
+
+      if enabled:
         self.makeAnnotationText(sl)
-        self.updateRuler(sl)
-        self.updateScalarBar(sl)
-        self.updateOrientationMarker(sl)
-    else:
-      # Remove Observers
-
-      for sliceViewName in self.sliceViewNames:
-        sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
-        sl = sliceWidget.sliceLogic()
-        self.updateRuler(sl)
-        self.updateScalarBar(sl)
-        self.updateOrientationMarker(sl)
-
-      # Clear Annotations
-      for sliceViewName in self.sliceViewNames:
+      else:
+        # Clear Annotations
         self.sliceCornerAnnotations[sliceViewName].SetText(0, "")
         self.sliceCornerAnnotations[sliceViewName].SetText(1, "")
         self.sliceCornerAnnotations[sliceViewName].SetText(2, "")
         self.sliceCornerAnnotations[sliceViewName].SetText(3, "")
         self.sliceViews[sliceViewName].scheduleRender()
 
+    if not enabled:
       # reset global variables
       self.sliceCornerAnnotations = {}
 
