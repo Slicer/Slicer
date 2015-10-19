@@ -882,7 +882,6 @@ class SliceAnnotations(VTKObservationMixin):
 
   def makeRuler(self, sliceNode):
     sliceViewName = sliceNode.GetLayoutName()
-    self.currentSliceViewName = sliceViewName
     renderer = self.renderers[sliceViewName]
     if self.sliceViews[sliceViewName]:
       #
@@ -973,8 +972,6 @@ class SliceAnnotations(VTKObservationMixin):
     # Get slice view name
     sliceViewName = backgroundLayer.GetSliceNode().GetLayoutName()
 
-    self.currentSliceViewName = sliceViewName
-
     renderer = self.renderers[sliceViewName]
     orientationRenderer = self.orientationMarkerRenderers[sliceViewName]
     if self.sliceViews[sliceViewName]:
@@ -1043,7 +1040,6 @@ class SliceAnnotations(VTKObservationMixin):
     if not sliceNode:
       return
     sliceViewName = sliceNode.GetLayoutName()
-    self.currentSliceViewName = sliceViewName
 
     if self.sliceViews[sliceViewName]:
       #
@@ -1064,11 +1060,11 @@ class SliceAnnotations(VTKObservationMixin):
           bgUid = bgUids.partition(' ')[0]
           fgUid = fgUids.partition(' ')[0]
           self.dicomVolumeNode = 1
-          self.makeDicomAnnotation(bgUid,fgUid)
+          self.makeDicomAnnotation(bgUid,fgUid,sliceViewName)
         elif (bgUids and self.backgroundDICOMAnnotationsPersistence):
           uid = bgUids.partition(' ')[0]
           self.dicomVolumeNode = 1
-          self.makeDicomAnnotation(uid,None)
+          self.makeDicomAnnotation(uid,None,sliceViewName)
         else:
           for key in self.cornerTexts[2]:
             self.cornerTexts[2][key]['text'] = ''
@@ -1083,7 +1079,7 @@ class SliceAnnotations(VTKObservationMixin):
         uids = backgroundVolume.GetAttribute('DICOM.instanceUIDs')
         if uids:
           uid = uids.partition(' ')[0]
-          self.makeDicomAnnotation(uid,None)
+          self.makeDicomAnnotation(uid,None,sliceViewName)
           self.dicomVolumeNode = 1
         else:
           self.dicomVolumeNode = 0
@@ -1098,7 +1094,7 @@ class SliceAnnotations(VTKObservationMixin):
         if uids:
           uid = uids.partition(' ')[0]
           # passed UID as bg
-          self.makeDicomAnnotation(uid,None)
+          self.makeDicomAnnotation(uid,None,sliceViewName)
           self.dicomVolumeNode = 1
         else:
           self.dicomVolumeNode = 0
@@ -1109,7 +1105,7 @@ class SliceAnnotations(VTKObservationMixin):
         self.cornerTexts[0]['1-Label']['text'] = 'L: ' + labelVolumeName + ' (' + str(
                  "%d"%(labelOpacity*100)) + '%)'
 
-      self.drawCornerAnnotations()
+      self.drawCornerAnnotations(sliceViewName)
 
   @staticmethod
   def updateScalarBarRange(sliceLogic, volumeNode, scalarBar, selectedLayer):
@@ -1130,11 +1126,11 @@ class SliceAnnotations(VTKObservationMixin):
       lut2.SetRange(level-width/2,level+width/2)
       scalarBar.SetLookupTable(lut2)
 
-  def makeDicomAnnotation(self,bgUid,fgUid):
+  def makeDicomAnnotation(self,bgUid,fgUid,sliceViewName):
     # Do not attempt to retrieve dicom values if no local database exists
     if not slicer.dicomDatabase:
       return
-    viewHeight = self.sliceViews[self.currentSliceViewName].height
+    viewHeight = self.sliceViews[sliceViewName].height
     if fgUid != None and bgUid != None:
       backgroundDicomDic = self.extractDICOMValues(bgUid)
       foregroundDicomDic = self.extractDICOMValues(fgUid)
@@ -1252,12 +1248,12 @@ class SliceAnnotations(VTKObservationMixin):
       text = text[:preSize] + "..." + text[-postSize:]
     return text
 
-  def drawCornerAnnotations(self):
+  def drawCornerAnnotations(self, sliceViewName):
     if not self.sliceViewAnnotationsEnabled:
       return
     # Auto-Adjust
     # adjust maximum text length based on fontsize and view width
-    viewWidth = self.sliceViews[self.currentSliceViewName].width
+    viewWidth = self.sliceViews[sliceViewName].width
     self.maximumTextLength = int((viewWidth - 40) / self.fontSize)
 
     for i, cornerText in enumerate(self.cornerTexts):
@@ -1278,16 +1274,16 @@ class SliceAnnotations(VTKObservationMixin):
           elif self.annotationsDisplayAmount == 2:
             if (cornerText[key]['category'] == 'A'):
               cornerAnnotation = cornerAnnotation+ text + '\n'
-      sliceCornerAnnotation = self.sliceCornerAnnotations[self.currentSliceViewName]
+      sliceCornerAnnotation = self.sliceCornerAnnotations[sliceViewName]
       # encode to avoid 'unicode conversion error' for patient names containing international characters
       cornerAnnotation = slicer.util.toVTKString(cornerAnnotation)
       sliceCornerAnnotation.SetText(i, cornerAnnotation)
       textProperty = sliceCornerAnnotation.GetTextProperty()
       textProperty.SetShadow(1)
-      self.renderers[self.currentSliceViewName].RemoveActor(sliceCornerAnnotation)
-      self.renderers[self.currentSliceViewName].AddActor(sliceCornerAnnotation)
+      self.renderers[sliceViewName].RemoveActor(sliceCornerAnnotation)
+      self.renderers[sliceViewName].AddActor(sliceCornerAnnotation)
 
-    self.sliceViews[self.currentSliceViewName].scheduleRender()
+    self.sliceViews[sliceViewName].scheduleRender()
 
   def resetTexts(self):
     for i, cornerText in enumerate(self.cornerTexts):
