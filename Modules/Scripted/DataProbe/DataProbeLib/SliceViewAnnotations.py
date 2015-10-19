@@ -697,9 +697,8 @@ class SliceAnnotations(VTKObservationMixin):
             [m.GetElement(2,0),m.GetElement(2,1),m.GetElement(2,2)]])
         det = np.linalg.det(v)
         cameraPositionMultiplier = 100/self.zoomValue
-        if det > 0: # right hand
-          y = np.array([0,0,-cameraPositionMultiplier])
-        elif det < 0: # left hand
+        y = np.array([0,0,-cameraPositionMultiplier]) # right hand
+        if det < 0: # left hand
           y = np.array([0,0,cameraPositionMultiplier])
 
         x = np.matrix([[m.GetElement(0,0),m.GetElement(0,1),m.GetElement(0,2)],
