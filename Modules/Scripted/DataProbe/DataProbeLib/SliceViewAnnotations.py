@@ -445,16 +445,10 @@ class SliceAnnotations(VTKObservationMixin):
       cornerAnnotation.SetMinimumFontSize(self.fontSize)
       cornerAnnotation.SetNonlinearFontScaleFactor(1)
       textProperty = cornerAnnotation.GetTextProperty()
-      scalarBar = self.scalarBars[sliceViewName]
-      scalarBarTextProperty = scalarBar.GetLabelTextProperty()
-      scalarBarTextProperty.ItalicOff()
-      scalarBarTextProperty.BoldOff()
       if self.fontFamily == 'Times':
         textProperty.SetFontFamilyToTimes()
-        scalarBarTextProperty.SetFontFamilyToTimes()
       else:
         textProperty.SetFontFamilyToArial()
-        scalarBarTextProperty.SetFontFamilyToArial()
 
     # Updating Annotations Amount
     if self.level1RadioButton.checked:
@@ -968,6 +962,15 @@ class SliceAnnotations(VTKObservationMixin):
     orientationRenderer = self.orientationMarkerRenderers[sliceViewName]
     if self.sliceViews[sliceViewName]:
       scalarBar = self.scalarBars[sliceViewName]
+      # Font
+      scalarBarTextProperty = scalarBar.GetLabelTextProperty()
+      scalarBarTextProperty.ItalicOff()
+      scalarBarTextProperty.BoldOff()
+      if self.fontFamily == 'Times':
+        scalarBarTextProperty.SetFontFamilyToTimes()
+      else:
+        scalarBarTextProperty.SetFontFamilyToArial()
+
       scalarBar.SetTextPositionToPrecedeScalarBar()
       if self.hasVTKPVScalarBarActor:
         scalarBar.SetRangeLabelFormat(self.rangeLabelFormat)
