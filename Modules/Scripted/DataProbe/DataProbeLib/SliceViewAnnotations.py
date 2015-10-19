@@ -526,7 +526,7 @@ class SliceAnnotations(VTKObservationMixin):
     self.sliceViews[sliceViewName] = sliceView
     self.sliceCornerAnnotations[sliceViewName] = sliceView.cornerAnnotation()
     sliceLogic = sliceWidget.sliceLogic()
-    self.addObserver(sliceLogic, vtk.vtkCommand.ModifiedEvent, self.updateCornerAnnotations)
+    self.addObserver(sliceLogic, vtk.vtkCommand.ModifiedEvent, self.updateViewAnnotations)
     self.orientationMarkerRenderers[sliceViewName] = vtk.vtkRenderer()
 
 
@@ -611,7 +611,7 @@ class SliceAnnotations(VTKObservationMixin):
     '''
     return scalarBar
 
-  def updateCornerAnnotations(self,caller,event):
+  def updateViewAnnotations(self,caller,event):
     layoutManager = self.layoutManager
     if layoutManager is None:
       return
