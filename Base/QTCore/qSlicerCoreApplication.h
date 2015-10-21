@@ -319,9 +319,9 @@ public:
 
   static void loadLanguage();
 
-  /// If system certificates couldn't be found, load certicates bundled into 'Slicer.crt'.
+  /// Load certicates bundled into 'Slicer.crt'.
   /// For more details, see Slicer/Base/QTCore/Resources/Certs/README
-  /// Returns \a False if 'Slicer.crt' also failed to be loaded.
+  /// Returns \a False if 'Slicer.crt' failed to be loaded.
   /// \sa QSslSocket::defaultCaCertificates()
   static bool loadCaCertificates();
 
