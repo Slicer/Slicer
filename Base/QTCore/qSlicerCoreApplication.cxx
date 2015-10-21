@@ -191,17 +191,6 @@ void qSlicerCoreApplicationPrivate::init()
     QMessageBox::information(0, "Attach process", msg.arg(QCoreApplication::applicationPid()));
     }
 
-#ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
-  if (!QSslSocket::supportsSsl())
-    {
-    qWarning() << "[SSL] SSL support disabled - Failed to load SSL library !";
-    }
-  if (!qSlicerCoreApplication::loadCaCertificates())
-    {
-    qWarning() << "[SSL] Failed to load Slicer.crt";
-    }
-#endif
-
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
   QCoreApplication::setOrganizationName(Slicer_ORGANIZATION_NAME);
 
@@ -216,6 +205,17 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
   this->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
+
+#ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
+  if (!QSslSocket::supportsSsl())
+    {
+    qWarning() << "[SSL] SSL support disabled - Failed to load SSL library !";
+    }
+  if (!qSlicerCoreApplication::loadCaCertificates(this->SlicerHome))
+    {
+    qWarning() << "[SSL] Failed to load Slicer.crt";
+    }
+#endif
 
   // Add 'SLICER_SHARE_DIR' to the environment so that Tcl scripts can reference
   // their dependencies.
@@ -1608,12 +1608,14 @@ void qSlicerCoreApplication::loadLanguage()
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerCoreApplication::loadCaCertificates()
+bool qSlicerCoreApplication::loadCaCertificates(const QString& slicerHome)
 {
 #ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   if (QSslSocket::supportsSsl())
     {
-    QSslSocket::setDefaultCaCertificates(QSslCertificate::fromPath(":/Certs/Slicer.crt"));
+    QSslSocket::setDefaultCaCertificates(
+          QSslCertificate::fromPath(
+            slicerHome + "/" Slicer_SHARE_DIR "/Slicer.crt"));
     }
   return !QSslSocket::defaultCaCertificates().empty();
 #else

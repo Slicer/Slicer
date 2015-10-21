@@ -34,7 +34,8 @@ void qSlicerSslTester::testSupportsSsl()
 // ----------------------------------------------------------------------------
 void qSlicerSslTester::testLoadCaCertificates()
 {
-  QVERIFY(qSlicerCoreApplication::loadCaCertificates());
+  QVERIFY(qSlicerCoreApplication::loadCaCertificates(
+            QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
 }
 
 // ----------------------------------------------------------------------------
@@ -44,7 +45,8 @@ void qSlicerSslTester::testHttpsConnection()
   QFETCH(QNetworkReply::NetworkError, expectedNetworkError);
   QFETCH(int, expectedStatusCode);
 
-  qSlicerCoreApplication::loadCaCertificates();
+  qSlicerCoreApplication::loadCaCertificates(
+        QProcessEnvironment::systemEnvironment().value("SLICER_HOME"));
 
   QNetworkAccessManager * manager = new QNetworkAccessManager(this);
 

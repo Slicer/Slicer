@@ -319,11 +319,11 @@ public:
 
   static void loadLanguage();
 
-  /// Load certicates bundled into 'Slicer.crt'.
+  /// Load certicates bundled into '<slicerHome>/<SLICER_SHARE_DIR>/Slicer.crt'.
   /// For more details, see Slicer/Base/QTCore/Resources/Certs/README
   /// Returns \a False if 'Slicer.crt' failed to be loaded.
   /// \sa QSslSocket::defaultCaCertificates()
-  static bool loadCaCertificates();
+  static bool loadCaCertificates(const QString& slicerHome);
 
   Q_INVOKABLE int registerResource(const QByteArray& data);
 

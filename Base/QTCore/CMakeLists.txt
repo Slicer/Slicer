@@ -258,6 +258,18 @@ SlicerMacroBuildBaseQtLibrary(
   WRAP_PYTHONQT
   )
 
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  configure_file(
+    Resources/Certs/Slicer.crt
+    ${Slicer_BINARY_DIR}/${Slicer_SHARE_DIR}/Slicer.crt
+    COPYONLY
+    )
+  install(
+    FILES Resources/Certs/Slicer.crt
+    DESTINATION ${Slicer_SHARE_DIR} COMPONENT Runtime
+    )
+endif()
+
 # Plugins
 #add_subdirectory(Plugins)
 
