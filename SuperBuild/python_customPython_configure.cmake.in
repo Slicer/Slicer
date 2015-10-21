@@ -24,6 +24,7 @@ set(CTKAPPLAUNCHER_DIR "@CTKAPPLAUNCHER_DIR@")
 set(python_DIR "@python_DIR@")
 set(Slicer_BIN_DIR "@Slicer_BIN_DIR@")
 set(Slicer_LIB_DIR "@Slicer_LIB_DIR@")
+set(Slicer_SHARE_DIR "@Slicer_SHARE_DIR@")
 
 set(python_version_dot "2.7")
 set(pythonpath_subdir lib/python${python_version_dot})
@@ -88,6 +89,12 @@ _listToQtSettingsArray("${_pythonpath_paths_build}" "path" SETTINGS_PYTHONLAUNCH
 
 set(PYTHON_EXE_SUFFIX_CONFIG "")
 
+set(SSL_CERT_FILE_CONFIG "")
+if(PYTHON_ENABLE_SSL)
+  set(SSL_CERT_FILE_CONFIG
+    "SSL_CERT_FILE=<APPLAUNCHER_DIR>/../../Slicer-build/${Slicer_SHARE_DIR}/Slicer.crt")
+endif()
+
 # Configure SlicerPython launcher settings.
 get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
 configure_file(
@@ -125,6 +132,12 @@ set(_pythonpath_paths_installed
 _listToQtSettingsArray("${_pythonpath_paths_installed}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
 set(PYTHON_EXE_SUFFIX_CONFIG "-real")
+
+set(SSL_CERT_FILE_CONFIG "")
+if(PYTHON_ENABLE_SSL)
+  set(SSL_CERT_FILE_CONFIG
+    "SSL_CERT_FILE=<APPLAUNCHER_DIR>/../${Slicer_SHARE_DIR}/Slicer.crt")
+endif()
 
 # Configure SlicerPython launcher settings.
 get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)

@@ -121,6 +121,11 @@ endforeach()
 set(SLICER_ENVVARS_BUILD
   "SLICER_HOME=${Slicer_BINARY_DIR}" # See note below
   )
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  list(APPEND SLICER_ENVVARS_BUILD
+    "SSL_CERT_FILE=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/Slicer.crt"
+    )
+endif()
 set(SLICER_QT_PLUGIN_PATH_BUILD
   "<APPLAUNCHER_DIR>/bin"
   "${CTK_DIR}/CTK-build/bin"
@@ -216,6 +221,11 @@ set(SLICER_ENVVARS_INSTALLED
   # could have unwanted side effects
   "SLICER_HOME=<APPLAUNCHER_DIR>"
   )
+if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+  list(APPEND SLICER_ENVVARS_INSTALLED
+    "SSL_CERT_FILE=<APPLAUNCHER_DIR>/${Slicer_SHARE_DIR}/Slicer.crt"
+    )
+endif()
 set(SLICER_QT_PLUGIN_PATH_INSTALLED
   "<APPLAUNCHER_DIR>/${Slicer_INSTALL_QtPlugins_DIR}"
   )
