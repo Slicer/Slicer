@@ -266,7 +266,7 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
     )
   install(
     FILES Resources/Certs/Slicer.crt
-    DESTINATION ${Slicer_SHARE_DIR} COMPONENT Runtime
+    DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT Runtime
     )
 endif()
 
