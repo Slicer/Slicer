@@ -1178,10 +1178,21 @@ void qSlicerSaveDataDialogPrivate::saveSceneAsDataBundle()
   QComboBox* box = qobject_cast<QComboBox*>(
     this->FileWidget->cellWidget(sceneRow, FileFormatColumn));
   int mrbIndex = box->findText("mrb", Qt::MatchContains);
-  // Select scene data bundle entry
+  int mrmlIndex = box->findText("mrml", Qt::MatchContains);
+  // Toggle between scene data bundle entry and mrml entry
   if (mrbIndex != -1)
     {
-    box->setCurrentIndex(mrbIndex);
+    if (box->currentIndex() != mrbIndex)
+      {
+      box->setCurrentIndex(mrbIndex);
+      }
+    else
+      {
+      if (mrmlIndex != -1)
+        {
+        box->setCurrentIndex(mrmlIndex);
+        }
+      }
     }
 }
 
