@@ -103,17 +103,16 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
 {
   Q_D(qMRMLTransformSliders);
 
-  qMRMLLinearTransformSlider::CoordinateReferenceType ref = qMRMLLinearTransformSlider::GLOBAL;
-  if (_coordinateReference == LOCAL)
-    {
-    ref = qMRMLLinearTransformSlider::LOCAL;
-    }
+  qMRMLLinearTransformSlider::CoordinateReferenceType ref =
+      static_cast<qMRMLLinearTransformSlider::CoordinateReferenceType>(
+        _coordinateReference);
 
-  if (coordinateReference() != ref)
+  if (this->coordinateReference() != _coordinateReference)
     {
     // reference changed
     if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
-      || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && ref == LOCAL) )
+      || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION
+          && ref == qMRMLLinearTransformSlider::LOCAL) )
       {
       // No one-to-one correspondence between slider and transform matrix values
       bool blocked = false;
