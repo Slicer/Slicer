@@ -45,7 +45,16 @@ def setNodeParameters(node, parameters):
     else:
       print "parameter ", key, " has unsupported type ", value.__class__.__name__
 
-def run(module, node=None, parameters=None, wait_for_completion=False, delete_temporary_files=True):
+def runSync(module, node=None, parameters=None, delete_temporary_files=True):
+  """Run a CLI synchronously, optionally given a node with optional parameters,
+  returning the node (or the new one if created)
+  node: existing parameter node (None by default)
+  parameters: dictionary of parameters for cli (None by default)
+  delete_temporary_files: remove temp files created during exectuion (True by default)
+  """
+  return run(module, node=node, parameters=parameters, wait_for_completion=True, delete_temporary_files=delete_temporary_files)
+
+def run(module, node = None, parameters = None, wait_for_completion = False, delete_temporary_files = True):
   """Runs a CLI, optionally given a node with optional parameters, returning
   back the node (or the new one if created)
   node: existing parameter node (None by default)
@@ -59,7 +68,7 @@ def run(module, node=None, parameters=None, wait_for_completion=False, delete_te
   else:
     node = createNode(module, parameters)
     if not node:
-      return
+      return None
 
   logic = module.logic()
 
