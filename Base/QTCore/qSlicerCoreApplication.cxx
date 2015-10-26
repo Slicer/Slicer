@@ -215,6 +215,14 @@ void qSlicerCoreApplicationPrivate::init()
     {
     qWarning() << "[SSL] Failed to load Slicer.crt";
     }
+# ifdef Q_OS_MAC
+  if (this->isInstalled(this->SlicerHome))
+    {
+    this->setEnvironmentVariable(
+          "SSL_CERT_FILE",
+          this->SlicerHome + "/" Slicer_SHARE_DIR "/Slicer.crt");
+    }
+# endif
 #endif
 
   // Add 'SLICER_SHARE_DIR' to the environment so that Tcl scripts can reference
