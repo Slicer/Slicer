@@ -4,6 +4,7 @@ from __main__ import vtk, qt, ctk, slicer
 import DICOMLib
 from DICOMLib import DICOMPlugin
 from DICOMLib import DICOMLoadable
+import logging
 
 #
 # This is the plugin to handle translation of DICOM objects
@@ -80,12 +81,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
   def examineFilesMultiseries(self,files):
 
-    print('MultiVolumeImportPlugin:examineMultiseries')
+    logging.debug('MultiVolumeImportPlugin:examineMultiseries')
     loadables = []
 
     mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime','FlipAngle'])
 
-    print('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
+    logging.debug('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
 
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
@@ -115,7 +116,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
   def examineFiles(self,files):
 
-    print("MultiVolumeImportPlugin::examine")
+    logging.debug("MultiVolumeImportPlugin::examine")
 
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
@@ -155,7 +156,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       mvNodes = self.initMultiVolumes(subseriesLists[key])
 
-      print('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
+      logging.debug('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
 
       for mvNode in mvNodes:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
@@ -263,7 +264,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       sNode.ReadData(frame)
 
       if frame.GetImageData() == None:
-        print('Failed to read a multivolume frame!')
+        logging.error('Failed to read a multivolume frame!')
         return None
 
       if frameNumber == 0:
