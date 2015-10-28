@@ -471,8 +471,8 @@ class ExtensionWizard(object):
         try:
           odPath = os.path.join(xiRepo.working_tree_dir, xdf)
           od = ExtensionDescription(filepath=odPath)
-          if od.scmurl != "NA":
-            oldRef = od.scmurl
+          if od.scmrevision != "NA":
+            oldRef = od.scmrevision
 
         except:
           oldRef = None
