@@ -39,6 +39,9 @@
 // VTK includes
 #include <vtkImageData.h>
 #include <vtkNew.h>
+#include <vtkRendererCollection.h>
+#include <vtkRenderLargeImage.h>
+#include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
@@ -304,7 +307,7 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
   switch (screenshotWindow)
     {
     case qMRMLScreenShotDialog::ThreeD:
-      // Create a scrennshot of the first 3DView
+      // Create a screenshot of the first 3DView
       widget = d->LayoutManager.data()->threeDWidget(0)->threeDView();
       break;
     case qMRMLScreenShotDialog::Red:
@@ -321,17 +324,45 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
       break;
     }
 
-  QImage screenShot = ctk::grabVTKWidget(widget);
+  double scaleFactor = d->scaleFactorSpinBox->value();
 
-  // Rescale the image which gets saved
-  QImage rescaledScreenShot = screenShot.scaled(screenShot.size().width()
-      * d->scaleFactorSpinBox->value(), screenShot.size().height()
-      * d->scaleFactorSpinBox->value());
-
-  // convert the screenshot from QPixmap to vtkImageData and store it with this class
   vtkNew<vtkImageData> newImageData;
-  qMRMLUtils::qImageToVtkImageData(rescaledScreenShot,
-                                   newImageData.GetPointer());
+  if (scaleFactor != 1 &&
+      screenshotWindow  == qMRMLScreenShotDialog::ThreeD)
+    {
+    // use off screen rendering to magnifiy the VTK widget's image without interpolation
+    // TODO: fix VTK so that the slice windows are scaled rather than tiled
+    vtkRenderer *renderer = NULL;
+    renderer = vtkRenderer::SafeDownCast(d->LayoutManager.data()->threeDWidget(0)->threeDView()->renderWindow()->GetRenderers()->GetItemAsObject(0));
+    vtkNew<vtkRenderLargeImage> renderLargeImage;
+    renderLargeImage->SetInput(renderer);
+    renderLargeImage->SetMagnification(scaleFactor);
+    renderLargeImage->Update();
+    newImageData.GetPointer()->DeepCopy(renderLargeImage->GetOutput());
+    }
+  else
+    {
+    // no scaling, or for not just the 3D window
+    QImage screenShot = ctk::grabVTKWidget(widget);
+
+    if (scaleFactor != 1.0)
+      {
+      // Rescale the image which gets saved
+      QImage rescaledScreenShot = screenShot.scaled(screenShot.size().width() * scaleFactor,
+                                                    screenShot.size().height() * scaleFactor);
+
+      // convert the scaled screenshot from QPixmap to vtkImageData
+      qMRMLUtils::qImageToVtkImageData(rescaledScreenShot,
+                                       newImageData.GetPointer());
+      }
+    else
+      {
+      // convert the screenshot from QPixmap to vtkImageData
+      qMRMLUtils::qImageToVtkImageData(screenShot,
+                                       newImageData.GetPointer());
+      }
+    }
+  // save the screen shot image to this class
   this->setImageData(newImageData.GetPointer());
 }
 
