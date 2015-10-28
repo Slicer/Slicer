@@ -72,7 +72,7 @@ public:
 protected:
   NewOtsuThresholdImageCalculator();
   virtual ~NewOtsuThresholdImageCalculator() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
   NewOtsuThresholdImageCalculator(const Self&); //purposely not implemented

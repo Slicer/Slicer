@@ -50,7 +50,7 @@ public:
   itkSetObjectMacro( Transform, TransformType );
 
 // /Get the time of the last modification of the object
-  unsigned long GetMTime() const;
+  unsigned long GetMTime() const ITK_OVERRIDE;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
@@ -63,13 +63,13 @@ public:
 protected:
   TransformDeformationFieldFilter();
 
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
   typename TransformType::Pointer m_Transform;

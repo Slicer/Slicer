@@ -53,7 +53,7 @@ public:
 
   itkNewMacro(Self);
 protected:
-  void PreCompute();
+  void PreCompute() ITK_OVERRIDE;
 
 private:
   MatrixTransformType ComputeMatrixSquareRoot( MatrixTransformType matrix );

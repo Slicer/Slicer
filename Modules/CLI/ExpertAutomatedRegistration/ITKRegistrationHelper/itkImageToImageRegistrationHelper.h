@@ -428,7 +428,7 @@ protected:
   void PrintSelfHelper( std::ostream & os, Indent indent, const std::string basename, MetricMethodEnumType metric,
                         InterpolationMethodEnumType interpolation ) const;
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
 

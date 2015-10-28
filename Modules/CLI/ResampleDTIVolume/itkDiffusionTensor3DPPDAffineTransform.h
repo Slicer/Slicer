@@ -52,12 +52,12 @@ public:
   typedef DiffusionTensor3DExtended<double>::EigenVectorsMatrixType EVectorsType;
   itkNewMacro( Self );
   using Superclass::EvaluateTransformedTensor;
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor );
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor ) ITK_OVERRIDE;
 
   void SetMatrix( MatrixTransformType & matrix );
 
 protected:
-  void PreCompute();
+  void PreCompute() ITK_OVERRIDE;
 
   InternalMatrixTransformType ComputeMatrixFromAxisAndAngle( VectorType axis, double cosangle );
 

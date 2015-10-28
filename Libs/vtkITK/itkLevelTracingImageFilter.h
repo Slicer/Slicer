@@ -74,7 +74,7 @@ public:
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
 
-  void PrintSelf ( std::ostream& os, Indent indent ) const;
+  void PrintSelf ( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   /// Set/Get the seed
   itkSetMacro(Seed, IndexType);
@@ -95,12 +95,12 @@ protected:
   ~LevelTracingImageFilter(){}
 
   /// Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
   /// Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   using Superclass::MakeOutput;
   DataObjectPointer MakeOutput(unsigned int output);

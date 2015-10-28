@@ -85,14 +85,14 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
   virtual void GenerateInputRequestedRegion()
-  throw (InvalidRequestedRegionError);
+  throw (InvalidRequestedRegionError) ITK_OVERRIDE;
 
 protected:
   MaskedMeanImageFilter();
   virtual ~MaskedMeanImageFilter()
   {
   }
-  void PrintSelf( std::ostream& os, Indent indent) const;
+  void PrintSelf( std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /** MaskedMeanImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
@@ -104,7 +104,7 @@ protected:
    *
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
   MaskedMeanImageFilter(const Self &); // purposely not implemented

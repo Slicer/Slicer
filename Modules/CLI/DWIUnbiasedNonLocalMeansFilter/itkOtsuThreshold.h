@@ -66,14 +66,14 @@ protected:
   virtual ~OtsuThreshold()
   {
   }
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   // Threaded filter!
-  void BeforeThreadedGenerateData( void );
+  void BeforeThreadedGenerateData( void ) ITK_OVERRIDE;
 
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData( void );
+  void AfterThreadedGenerateData( void ) ITK_OVERRIDE;
 
 private:
   OtsuThreshold(const Self &);   // purposely not implemented

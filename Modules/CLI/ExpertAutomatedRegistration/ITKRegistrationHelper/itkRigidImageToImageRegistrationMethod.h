@@ -76,7 +76,7 @@ public:
   //
   //  Superclass Methods
   //
-  void GenerateData( void );
+  void GenerateData( void ) ITK_OVERRIDE;
 
   //
   // Custom Methods
@@ -120,7 +120,7 @@ protected:
   RigidImageToImageRegistrationMethod( void );
   virtual ~RigidImageToImageRegistrationMethod( void );
 
-  void PrintSelf( std::ostream & os, Indent indent ) const;
+  void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
 

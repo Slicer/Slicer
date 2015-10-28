@@ -85,8 +85,8 @@ public:
   itkGetMacro ( OutputDirection, typename OutputImageType::DirectionType );
 
   /** Standard method for a ImageSource object */
-  virtual void GenerateOutputInformation(void);
-  virtual void GenerateData(void);
+  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
+  virtual void GenerateData(void) ITK_OVERRIDE;
 
   /** A convience method for reading a voxel's time course
    * Subsequent calls to voxels in the immediate region of this will be
@@ -105,7 +105,7 @@ public:
 protected:
   TimeSeriesDatabase();
   ~TimeSeriesDatabase();
-  virtual void PrintSelf(std::ostream& os, Indent indent) const;
+  virtual void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
   Array<unsigned int> m_Dimensions;
   Array<unsigned int> m_BlocksPerImage;
 

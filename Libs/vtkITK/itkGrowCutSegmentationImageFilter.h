@@ -267,21 +267,21 @@ template<class TInputImage,
   ~GrowCutSegmentationImageFilter() {};
 
    // Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
    // Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion(DataObject *output) ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread ,
-                             ThreadIdType threadId ) ;
+                             ThreadIdType threadId ) ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
   void Initialize(OutputImageType* output);
 
-  void PrintSelf ( std::ostream& os, Indent indent ) const;
+  void PrintSelf ( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
   void GrowCutSlowROI( TOutputImage *);
 

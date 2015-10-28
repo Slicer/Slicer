@@ -140,16 +140,16 @@ public:
 
   /** This filter requires the whole input to produce its output */
   virtual void GenerateInputRequestedRegion()
-  throw (InvalidRequestedRegionError);
+  throw (InvalidRequestedRegionError) ITK_OVERRIDE;
 
 protected:
   LMMSEVectorImageFilter();
   virtual ~LMMSEVectorImageFilter()
   {
   }
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf( std::ostream& os, Indent indent) const;
+  void PrintSelf( std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 private:
   LMMSEVectorImageFilter(const Self &); // purposely not implemented

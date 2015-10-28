@@ -106,10 +106,10 @@ public:
 protected:
   NewOtsuThresholdImageFilter();
   ~NewOtsuThresholdImageFilter(){};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
-  void GenerateData ();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
+  void GenerateData () ITK_OVERRIDE;
 
 private:
   NewOtsuThresholdImageFilter(const Self&); //purposely not implemented

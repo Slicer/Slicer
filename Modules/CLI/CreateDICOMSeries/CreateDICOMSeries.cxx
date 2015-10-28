@@ -114,13 +114,13 @@ int DoIt( int argc, char * argv[])
               << std::endl
               << std::flush;
 
-    itksys_ios::ostringstream value;
     typename Image3DType::PointType    origin;
     typename Image3DType::IndexType    index;
     index.Fill(0);
     index[2] = i;
     image->TransformIndexToPhysicalPoint(index, origin);
 
+    std::ostringstream value;
     // Set all required DICOM fields
     value.str("");
     value << origin[0] << "\\" << origin[1] << "\\" << origin[2];

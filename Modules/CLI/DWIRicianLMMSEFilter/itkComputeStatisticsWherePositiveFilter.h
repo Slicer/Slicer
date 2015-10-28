@@ -70,7 +70,7 @@ protected:
   {
   }
 
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
   // Override Modified() method to fix the ready variable:
   void Modified()
@@ -80,9 +80,9 @@ protected:
   }
 
   using itk::Object::Modified;
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
 private:
   ComputeStatisticsWherePositiveFilter(const Self &); // purposely not implemented

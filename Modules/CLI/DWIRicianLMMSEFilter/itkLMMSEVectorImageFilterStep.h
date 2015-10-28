@@ -78,17 +78,17 @@ public:
   /** It is necessary to override GenerateInputRequestedRegion(), since we need a larger
    region of the input than is the output */
   virtual void GenerateInputRequestedRegion()
-  throw (InvalidRequestedRegionError);
+  throw (InvalidRequestedRegionError) ITK_OVERRIDE;
 
 protected:
   LMMSEVectorImageFilterStep();
   virtual ~LMMSEVectorImageFilterStep()
   {
   }
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   // Threaded filter!
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
   LMMSEVectorImageFilterStep(const Self &); // purposely not implemented

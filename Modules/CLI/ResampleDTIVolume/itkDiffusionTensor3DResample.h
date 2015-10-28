@@ -71,7 +71,7 @@ public:
   void SetOutputParametersFromImage( InputImagePointerType Image );
 
 // /Get the time of the last modification of the object
-  unsigned long GetMTime() const;
+  unsigned long GetMTime() const ITK_OVERRIDE;
 
   itkSetMacro( DefaultPixelValue, OutputDataType );
   itkGetMacro( DefaultPixelValue, OutputDataType );
@@ -89,15 +89,15 @@ public:
 protected:
   DiffusionTensor3DResample();
 
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
-  void BeforeThreadedGenerateData();
+  void BeforeThreadedGenerateData() ITK_OVERRIDE;
 
-  void GenerateOutputInformation();
+  void GenerateOutputInformation() ITK_OVERRIDE;
 
-  void AfterThreadedGenerateData();
+  void AfterThreadedGenerateData() ITK_OVERRIDE;
 
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion() ITK_OVERRIDE;
 
 private:
   typename InterpolatorType::Pointer m_Interpolator;

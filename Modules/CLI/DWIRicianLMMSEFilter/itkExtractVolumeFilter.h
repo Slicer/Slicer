@@ -71,7 +71,7 @@ protected:
   {
   }
   // Threaded filter!
-  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) ITK_OVERRIDE;
 
 private:
   ExtractVolumeFilter(const Self &);  // purposely not implemented

@@ -77,7 +77,7 @@ public:
   //
   // Methods from Superclass
   //
-  virtual void GenerateData( void );
+  virtual void GenerateData( void ) ITK_OVERRIDE;
 
   //
   // Custom Methods
@@ -144,7 +144,7 @@ protected:
 
   virtual void Optimize( MetricType * metric, InterpolatorType * interpolator );
 
-  virtual void PrintSelf( std::ostream & os, Indent indent ) const;
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
 private:
 
