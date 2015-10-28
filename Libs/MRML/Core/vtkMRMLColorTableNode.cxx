@@ -15,6 +15,7 @@ Version:   $Revision: 1.0 $
 // MRML includes
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkLookupTable.h>
@@ -156,6 +157,23 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, ID
 void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
 {
+  /// BUG 3992: when custom color tables appear in scene views,
+  /// the color information is saved in a file on disk and not
+  /// read into the scene view copy of the node. Continuing
+  /// with the copy will remove the color information from the
+  /// node in the main scene, so return to preserve it.
+  /// See also vtkMRMLMarkupsNode::Copy.
+  /// TBD: if scene view node reading xml triggers reading the data from
+  // storage nodes, this should no longer be necessary.
+  if (this->Scene &&
+      this->Scene->IsRestoring())
+    {
+#ifndef _NDEBUG
+    vtkWarningMacro("ColorTable Copy inside scene view restore: "
+                    << "colors to restore are missing, skipping.");
+#endif
+    return;
+    }
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
