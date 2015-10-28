@@ -232,7 +232,7 @@ public slots:
   /// \brief Download and install \a extensionId
   /// The \a extensionId correponds to the identifier used on the extension server itself.
   /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
-  void downloadAndInstallExtension(const QString& extensionId);
+  bool downloadAndInstallExtension(const QString& extensionId);
 
   /// \brief Schedule \a extensionName of uninstall
   /// Tell the application to uninstall \a extensionName when it will restart
