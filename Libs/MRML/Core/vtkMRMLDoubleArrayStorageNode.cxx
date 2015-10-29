@@ -87,19 +87,28 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   int numColumns = 3;
   std::vector<std::string> labels;
-  // save the valid lines in a vector, parse them once know the max id
-  std::vector<std::string>lines;
-  bool firstLine = true;
+  bool haslabels = true;
 
   while (fstr.good())
     {
     fstr.getline(line, 1024);
 
-
     // does it start with a #?
     if (line[0] == '#')
       {
       vtkDebugMacro("Comment line, checking:\n\"" << line << "\"");
+
+      char *ptr;
+      if (strncmp(line, " ", 1) != 0)
+        {
+        ptr = strtok(line, " ");
+        ptr = strtok(NULL, " ");
+        if (strcmp(ptr, "nolabels") == 0)
+          {
+          haslabels = false;
+          vtkDebugMacro("No labels in this file");
+          }
+        }
       }
 
     else
@@ -132,7 +141,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             {
             if (columnNumber == xColumn)
               {
-              if (firstLine)
+              if (haslabels)
                 {
                 labels.push_back(ptr);
                 }
@@ -143,7 +152,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               }
             else if (columnNumber == yColumn)
               {
-              if (firstLine)
+              if (haslabels)
                 {
                 labels.push_back(ptr);
                 }
@@ -154,7 +163,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
               }
             else if (columnNumber == zColumn)
               {
-              if (firstLine)
+              if (haslabels)
                 {
                 labels.push_back(ptr);
                 }
@@ -177,9 +186,10 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
           columnNumber++;
           } // end while over columns
         int   fidIndex;
-        if (firstLine)
+        if (haslabels)
           {
           doubleArrayNode->vtkMRMLDoubleArrayNode::SetLabels(labels);
+          haslabels = false;
           }
         else
           {
@@ -189,15 +199,12 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             vtkErrorMacro("Error adding a measurement to the list");
             }
           }
-        firstLine = false;
-
         } // point line
       }
     }
   fstr.close();
 
-  // If it's the first line, that means there was no point in the file.
-  return firstLine ? 0 : 1;
+  return (doubleArrayNode->GetSize() > 0) ? 0 : 1;
 }
 
 //----------------------------------------------------------------------------
@@ -221,16 +228,19 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       vtkMRMLDoubleArrayNode::SafeDownCast(refNode);
 
     if (doubleArrayNode == NULL)
-      {
+    {
       vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known double array node");
       return 0;
-      }
+    }
+    if (doubleArrayNode->GetSize() == 0)
+    {
+      vtkErrorMacro("WriteData: " << refNode->GetID() << " is empty, no data to write in " << fullName.c_str());
+      return 0;
+    }
 
     // open the file for writing
     fstream of;
-
     of.open(fullName.c_str(), fstream::out);
-
     if (!of.is_open())
     {
         vtkErrorMacro("WriteData: unable to open file " << fullName.c_str() << " for writing");
@@ -240,8 +250,7 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     // put down a header
     of << "# measurement file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
 
-    // if change the ones being included, make sure to update the parsing in ReadData
-    of << "# columns = x,y,yerr" << endl;
+    // put labels
     std::vector< std::string > labels = doubleArrayNode->GetLabels();
     if (labels.size())
     {
@@ -251,9 +260,12 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
         }
         of << labels.at(labels.size()-1) << endl;
     }
+    else
+    {
+        of << "# nolabels"<< endl;
+    }
 
-
-
+    // put values
     for (unsigned int i = 0; i < doubleArrayNode->GetSize(); i++)
     {
         double x,y,yerr;
@@ -270,10 +282,9 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
             of << endl;
         }
     }
-  of.close();
+    of.close();
 
-
-  return 1;
+    return 1;
 }
 
 //----------------------------------------------------------------------------
