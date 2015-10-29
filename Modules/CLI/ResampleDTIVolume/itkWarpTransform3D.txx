@@ -52,7 +52,6 @@ WarpTransform3D<FieldData>
     m_DerivativeWeights[i] = 1.0;
     }
   m_SizeForJacobian.Fill( 1 );
-  this->m_NonThreadsafeSharedJacobian.SetSize( 3, 3 );
 }
 
 // Returns the position of the transformed point. If input point is outside of the deformation
@@ -75,17 +74,6 @@ WarpTransform3D<FieldData>
   transformedPoint = inputPoint + displacement;
   return transformedPoint;
 }
-
-// Copied and modified from dtiprocess
-// available there: http://www.nitrc.org/projects/dtiprocess/
-template <class FieldData>
-const typename WarpTransform3D<FieldData>::JacobianType
-& WarpTransform3D<FieldData>
-::GetJacobian( const InputPointType &inputPoint ) const
-  {
-  this->ComputeJacobianWithRespectToParameters( inputPoint, this->m_NonThreadsafeSharedJacobian );
-  return this->m_NonThreadsafeSharedJacobian;
-  }
 
 template <class FieldData>
 void

@@ -47,8 +47,6 @@ public:
   itkTypeMacro( WarpTransform3D, Transform );
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const ITK_OVERRIDE;
 
-  const JacobianType & GetJacobian( const InputPointType & inputPoint ) const;
-
   virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian ) const ITK_OVERRIDE;
 
   virtual void ComputeJacobianWithRespectToPosition(
@@ -112,7 +110,6 @@ protected:
   DeformationImagePointerType m_DeformationField;
 //  Vector< double , 3 > m_OutputSpacing ;
   Size<3>              m_SizeForJacobian;
-  mutable JacobianType m_NonThreadsafeSharedJacobian;
 };
 
 } // end namespace itk

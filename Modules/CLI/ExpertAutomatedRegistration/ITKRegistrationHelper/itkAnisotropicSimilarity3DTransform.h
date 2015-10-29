@@ -125,8 +125,6 @@ public:
    * given point or vector, returning the transformed point or
    * vector. The rank of the Jacobian will also indicate if the
    * transform is invertible at this point. */
-  virtual const JacobianType & GetJacobian(const InputPointType  & point ) const;
-
   virtual void ComputeJacobianWithRespectToParameters(const InputPointType & p, JacobianType & jacobian) const ITK_OVERRIDE;
 
 protected:
@@ -151,7 +149,6 @@ private:
   void operator=(const Self &);                   // purposely not implemented
 
   VectorType           m_Scale;
-  mutable JacobianType m_NonThreadsafeSharedJacobian;
 
 }; // class AnisotropicSimilarity3DTransform
 

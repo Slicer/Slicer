@@ -18,7 +18,6 @@
 #include "itkDiffusionTensor3DFSAffineTransform.h"
 #include "itkDiffusionTensor3DPPDAffineTransform.h"
 #include <itkTransform.h>
-#include <itkMutexLock.h>
 
 namespace itk
 {
@@ -55,7 +54,6 @@ public:
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 protected:
   DiffusionTensor3DNonRigidTransform();
-  MutexLock::Pointer m_LockGetJacobian;
   unsigned long      latestTime;
   typename TransformType::Pointer m_Transform;
   typename AffineTransform::Pointer m_Affine;

@@ -212,14 +212,6 @@ const typename AnisotropicSimilarity3DTransform<TScalarType>::ParametersType
 
 // Set parameters
 template <class TScalarType>
-const typename AnisotropicSimilarity3DTransform<TScalarType>::JacobianType
-& AnisotropicSimilarity3DTransform<TScalarType>::
-GetJacobian( const InputPointType &p ) const
-  {
-  ComputeJacobianWithRespectToParameters( p, this->m_NonThreadsafeSharedJacobian );
-  return this->m_NonThreadsafeSharedJacobian;
-  }
-template <class TScalarType>
 void
 AnisotropicSimilarity3DTransform<TScalarType>::ComputeJacobianWithRespectToParameters(const InputPointType & p,
                                                                                       JacobianType & jacobian) const

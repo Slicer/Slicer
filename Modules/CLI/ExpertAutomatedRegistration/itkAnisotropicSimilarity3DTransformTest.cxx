@@ -347,6 +347,7 @@ int itkAnisotropicSimilarity3DTransformTest(int, char * [] )
     aPoint[0] = 10.0;
     aPoint[1] = 20.0;
     aPoint[2] = -10.0;
+    // XXX This should be fixed to use ComputeJacobianWithRespectToParameters
     JacobianType jacobian = transform->GetJacobian( aPoint );
     std::cout << "Jacobian: "  << std::endl;
     std::cout << jacobian << std::endl;

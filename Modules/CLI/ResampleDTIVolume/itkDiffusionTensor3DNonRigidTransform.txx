@@ -23,7 +23,6 @@ template <class TData>
 DiffusionTensor3DNonRigidTransform<TData>
 ::DiffusionTensor3DNonRigidTransform()
 {
-  m_LockGetJacobian = MutexLock::New();
 }
 
 template <class TData>
@@ -32,7 +31,6 @@ DiffusionTensor3DNonRigidTransform<TData>
 ::SetAffineTransformType(typename AffineTransform::Pointer transform)
 {
   m_Affine = transform;
-//  m_LockGetJacobian = MutexLock::New() ;
 }
 
 template <class TData>
