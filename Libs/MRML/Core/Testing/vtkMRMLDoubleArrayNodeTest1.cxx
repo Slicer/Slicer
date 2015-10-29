@@ -31,15 +31,34 @@ bool TestAddValues();
 bool TestAddValue();
 bool TestAddXYValue();
 bool TestAddXYerrValue();
+bool TestReadFileWithLabels(std::string filepath);
+bool TestReadFileWithoutLabels(std::string filepath);
+bool TestReadOldFile(std::string filepath);
 
 //---------------------------------------------------------------------------
-int vtkMRMLDoubleArrayNodeTest1(int, char * [])
+int vtkMRMLDoubleArrayNodeTest1(int argc, char * argv[])
 {
   vtkNew<vtkMRMLDoubleArrayNode> node1;
 
   EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLDoubleArrayNode, node1.GetPointer());
+
+  if (argc != 3)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - Missing parameters !\n"
+              << "Usage: " << argv[0] << " /path/to/temp /path/to/testdata"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  const char* tempDir = argv[1];
+  const char* dataDir = argv[2];
+
+  std::string fileNameOldFile = std::string(dataDir) + "/vtkMRMLDoubleArrayNodeTest1_OldFile.mcsv";
+  std::string fileNameWithLabels = std::string(tempDir) + "/vtkMRMLDoubleArrayNodeTest1_WithLabels.mcsv";
+  std::string fileNameWithoutLabels = std::string(tempDir) + "/vtkMRMLDoubleArrayNodeTest1_WithoutLabels.mcsv";
 
   bool res = true;
   res = res && TestSetValues();
@@ -50,6 +69,9 @@ int vtkMRMLDoubleArrayNodeTest1(int, char * [])
   res = res && TestAddValue();
   res = res && TestAddXYValue();
   res = res && TestAddXYerrValue();
+  res = res && TestReadFileWithLabels(fileNameWithLabels);
+  res = res && TestReadFileWithoutLabels(fileNameWithoutLabels);
+  res = res && TestReadOldFile(fileNameOldFile);
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -69,6 +91,24 @@ bool doubleArrayMatch(int line, double array1[], double array2[],
       std::cerr << "Line " << line
                 << " - Array do not match !\n"
                 << array1[i] << " not equal to " << array2[i]
+                << std::endl;
+      return false;
+      }
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool labelsMatch(int line, std::vector< std::string > labels1,
+                 std::vector< std::string > labels2, unsigned int sizeOfArray)
+{
+  for(unsigned int i = 0; i < sizeOfArray; i++)
+    {
+    if( labels1[i] != labels2[i] )
+      {
+      std::cerr << "Line " << line
+                << " - Labels do not match !\n"
+                << labels1[i] << " not equal to " << labels2[i]
                 << std::endl;
       return false;
       }
@@ -241,6 +281,111 @@ bool TestAddXYerrValue()
   res = res && doubleArray->GetXYValue(1, &testArray3[0], &testArray3[1], &testArray3[2]);
   res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
   res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
+
+  return res;
+}
+
+//---------------------------------------------------------------------------
+bool TestReadFileWithLabels(std::string filepath)
+{
+  vtkNew<vtkMRMLDoubleArrayNode> doubleArrayIn;
+  double testArray0[3] = { 12.1, 425.576817, -454};
+  double testArray1[3] = { 8796325425.01, 0.0, -1};
+  std::vector< std::string > labelsIn;
+  labelsIn.push_back("x");
+  labelsIn.push_back("y");
+  labelsIn.push_back("yerr");
+
+  doubleArrayIn->AddValues(testArray0);
+  doubleArrayIn->AddValues(testArray1);
+  doubleArrayIn->SetLabels(labelsIn);
+
+  vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayWrite;
+  doubleArrayWrite->SetFileName(filepath.c_str());
+  doubleArrayWrite->WriteData(doubleArrayIn.GetPointer());
+
+  vtkNew<vtkMRMLDoubleArrayNode> doubleArrayOut;
+  double testArray2[3];
+  double testArray3[3];
+  std::vector< std::string > labelsOut(3);
+
+  vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayRead;
+  doubleArrayRead->SetFileName(filepath.c_str());
+  doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
+
+  doubleArrayOut->GetValues(0, testArray2);
+  doubleArrayOut->GetValues(1, testArray3);
+  labelsOut = doubleArrayOut->GetLabels();
+
+  bool res = true;
+  res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
+  res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
+  res = res && labelsMatch(__LINE__, labelsIn, labelsOut, 3);
+
+  return res;
+}
+
+//---------------------------------------------------------------------------
+bool TestReadFileWithoutLabels(std::string filepath)
+{
+  vtkNew<vtkMRMLDoubleArrayNode> doubleArrayIn;
+  double testArray0[3] = { 12.1, 425.576817, -454};
+  double testArray1[3] = { 8796325425.01, 0.0, -1};
+
+  doubleArrayIn->AddValues(testArray0);
+  doubleArrayIn->AddValues(testArray1);
+
+  vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayWrite;
+  doubleArrayWrite->SetFileName(filepath.c_str());
+  doubleArrayWrite->WriteData(doubleArrayIn.GetPointer());
+
+  vtkNew<vtkMRMLDoubleArrayNode> doubleArrayOut;
+  double testArray2[3];
+  double testArray3[3];
+
+  vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayRead;
+  doubleArrayRead->SetFileName(filepath.c_str());
+  doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
+
+  doubleArrayOut->GetValues(0, testArray2);
+  doubleArrayOut->GetValues(1, testArray3);
+
+  bool res = true;
+  res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
+  res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
+
+  return res;
+}
+
+//---------------------------------------------------------------------------
+bool TestReadOldFile(std::string filepath)
+{
+  // Set values from 'TestData/vtkMRMLDoubleArrayNodeTest1_OldFile.mcsv'
+  vtkNew<vtkMRMLDoubleArrayNode> doubleArrayIn;
+  double testArray0[3] = { 12.1, 425.576817, -454};
+  double testArray1[3] = { 8796325425.01, 0.0, -1};
+  std::vector< std::string > labelsIn;
+  labelsIn.push_back("x");
+  labelsIn.push_back("y");
+  labelsIn.push_back("yerr");
+
+  vtkNew<vtkMRMLDoubleArrayNode> doubleArrayOut;
+  double testArray2[3];
+  double testArray3[3];
+  std::vector< std::string > labelsOut(3);
+
+  vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayRead;
+  doubleArrayRead->SetFileName(filepath.c_str());
+  doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
+
+  doubleArrayOut->GetValues(0, testArray2);
+  doubleArrayOut->GetValues(1, testArray3);
+  labelsOut = doubleArrayOut->GetLabels();
+
+  bool res = true;
+  res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
+  res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
+  res = res && labelsMatch(__LINE__, labelsIn, labelsOut, 3);
 
   return res;
 }

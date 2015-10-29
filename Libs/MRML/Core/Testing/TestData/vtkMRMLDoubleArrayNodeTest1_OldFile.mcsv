@@ -1,0 +1,5 @@
+# measurement file /path/to/Slicer/Libs/MRML/Core/Testing/TestData/vtkMRMLDoubleArrayNodeTest1_OldFile.mcsv
+# columns = x,y,yerr
+x,y,yerr
+12.1,425.577,-454
+8.79633e+09,0,-1
