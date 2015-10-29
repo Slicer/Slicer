@@ -66,7 +66,7 @@ int main( int argc, char * argv[] )
     for( int gradient_n = 0; gradient_n < grads->GetNumberOfTuples(); gradient_n++ )
       {
       double* gradient = grads->GetTuple3(gradient_n);
-      if( abs(gradient[0]) + abs(gradient[1]) + abs(gradient[2]) < GRAD_0_TOL )
+      if( fabs(gradient[0]) + fabs(gradient[1]) + fabs(gradient[2]) < GRAD_0_TOL )
         {
         vtkNew<vtkImageExtractComponents> extractComponents;
 #if (VTK_MAJOR_VERSION <= 5)
