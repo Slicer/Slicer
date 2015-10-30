@@ -311,13 +311,12 @@ bool TestReadFileWithLabels(std::string filepath)
 
   vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayRead;
   doubleArrayRead->SetFileName(filepath.c_str());
-  doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
+  bool res = doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
 
   doubleArrayOut->GetValues(0, testArray2);
   doubleArrayOut->GetValues(1, testArray3);
   labelsOut = doubleArrayOut->GetLabels();
 
-  bool res = true;
   res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
   res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
   res = res && labelsMatch(__LINE__, labelsIn, labelsOut, 3);
@@ -345,12 +344,11 @@ bool TestReadFileWithoutLabels(std::string filepath)
 
   vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayRead;
   doubleArrayRead->SetFileName(filepath.c_str());
-  doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
+  bool res = doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
 
   doubleArrayOut->GetValues(0, testArray2);
   doubleArrayOut->GetValues(1, testArray3);
 
-  bool res = true;
   res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
   res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
 
@@ -376,13 +374,12 @@ bool TestReadOldFile(std::string filepath)
 
   vtkNew<vtkMRMLDoubleArrayStorageNode> doubleArrayRead;
   doubleArrayRead->SetFileName(filepath.c_str());
-  doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
+  bool res = doubleArrayRead->ReadData(doubleArrayOut.GetPointer());
 
   doubleArrayOut->GetValues(0, testArray2);
   doubleArrayOut->GetValues(1, testArray3);
   labelsOut = doubleArrayOut->GetLabels();
 
-  bool res = true;
   res = res && doubleArrayMatch(__LINE__, testArray0, testArray2, 3);
   res = res && doubleArrayMatch(__LINE__, testArray1, testArray3, 3);
   res = res && labelsMatch(__LINE__, labelsIn, labelsOut, 3);
