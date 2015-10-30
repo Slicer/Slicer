@@ -62,7 +62,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     string(REGEX REPLACE "\n" "" py_spp_no_newline "${py_spp}")
     string(REGEX REPLACE "\\\\" "/" py_spp_nobackslashes "${py_spp_no_newline}")
     set(ITKv4_INSTALL_COMMAND ${CMAKE_COMMAND} -E copy
-          "${CMAKE_BINARY_DIR}/${proj}-build/Wrapping/Generators/Python/WrapITK.pth"
+          "${CMAKE_BINARY_DIR}/${proj}-build/Wrapping/Generators/Python/${CMAKE_CFG_INTDIR}/WrapITK.pth"
           "${py_spp_nobackslashes}"
           )
   else()
