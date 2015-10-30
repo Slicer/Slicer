@@ -109,7 +109,10 @@ bool testAddFile(const char * filePath)
   if (doubleArray == 0 ||
       scene->GetNumberOfNodes() != nodeCount + 2)
     {
-    std::cerr << "Adding an doubleArray should create 2 nodes" << std::endl;
+    std::cerr << "Line " << __LINE__
+              << ": Adding an doubleArray should create 2 nodes. "
+              << scene->GetNumberOfNodes() << " vs " << nodeCount + 2
+              << std::endl;
     return false;
     }
 
