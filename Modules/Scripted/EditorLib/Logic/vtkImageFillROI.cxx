@@ -17,9 +17,6 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkVersion.h>
 
-// STD includes
-#include <cmath>
-
 vtkCxxSetObjectMacro(vtkImageFillROI,Points,vtkPoints);
 
 //------------------------------------------------------------------------------
@@ -105,8 +102,8 @@ void InsertEdge(Edge *list, Edge *edge)
 void MakeEdgeRec(int x1, int y1, int x2, int y2, Edge *edge, Edge *edges[])
 {
   // p1 is lower than p2
-  edge->dx = std::abs(x2 - x1);
-  edge->dy = std::abs(y2 - y1);
+  edge->dx = abs(x2 - x1);
+  edge->dy = abs(y2 - y1);
   edge->dx2 = edge->dx << 1;
   edge->dy2 = edge->dy << 1;
   if (x1 < x2)
@@ -348,8 +345,8 @@ static void DrawLinesFast(int nx, int ny, int nPts, int *xPts, int *yPts,
       y2 = yy1;
       }
 
-    dx = std::abs(x2 - x1);
-    dy = std::abs(y2 - y1);
+    dx = abs(x2 - x1);
+    dy = abs(y2 - y1);
     dx2 = dx << 1;
     dy2 = dy << 1;
     if (x1 < x2)
@@ -486,8 +483,8 @@ static void DrawLines(int nx, int ny, int z, int radius,
       y1-rad >= min1 && y2+rad <= max1 &&
       x2-rad >= min0 && x2+rad <= max0)
       {
-      dx = std::abs(x2 - x1);
-      dy = std::abs(y2 - y1);
+      dx = abs(x2 - x1);
+      dy = abs(y2 - y1);
       dx2 = dx << 1;
       dy2 = dy << 1;
       if (x1 < x2)

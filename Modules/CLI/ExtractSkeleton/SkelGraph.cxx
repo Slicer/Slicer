@@ -274,10 +274,10 @@ void SkelGraph::Extract_skel_graph(unsigned char *orig_image, int orig_dim[3])
             //    following of branch has 1 neighbor -> label, cont
             point * pt = &(*(neighbors->begin() ) );
             // update length
-            // since act_point->x - pt->x is either [-1,0,1] -> std::abs == ^2
-            act_branch->length += sqrt( (float) std::abs(act_point->x - pt->x)
-                                        + std::abs(act_point->y - pt->y)
-                                        + std::abs(act_point->z - pt->z) );
+            // since act_point->x - pt->x is either [-1,0,1] -> abs == ^2
+            act_branch->length += sqrt( (float) abs(act_point->x - pt->x)
+                                        + abs(act_point->y - pt->y)
+                                        + abs(act_point->z - pt->z) );
             act_point->x = pt->x; act_point->y = pt->y; act_point->z = pt->z;
             label_image[act_point->x
                         + dim[0] * (act_point->y + dim[1] * act_point->z)] = branchID;
@@ -511,7 +511,7 @@ void SkelGraph::Extract_max_axis_in_graph()
               // neighbour not yet treated
               wait_list->push_back(act_neighbor);
               // update entries of neighbour
-              // since act_point->x - pt->x is either [-1,0,1] -> std::abs == ^2
+              // since act_point->x - pt->x is either [-1,0,1] -> abs == ^2
               // add distance between branches to length at preceding branch
               point * cont_neigh_point = NULL;
               act_neighbor->acc_length = act_node->acc_length;
@@ -530,8 +530,8 @@ void SkelGraph::Extract_max_axis_in_graph()
                   cont_neigh_point = act_neighbor->end_2_point;
                   }
                 double new_costs = sqrt( (float)abs(cont_neigh_point->x - cont_end_point->x)
-                                         + std::abs(cont_neigh_point->y - cont_end_point->y)
-                                         + std::abs(cont_neigh_point->z - cont_end_point->z) );
+                                         + abs(cont_neigh_point->y - cont_end_point->y)
+                                         + abs(cont_neigh_point->z - cont_end_point->z) );
                 if( conn_costs > new_costs )
                   {
                   conn_costs = new_costs;
@@ -592,12 +592,12 @@ void SkelGraph::Extract_max_axis_in_graph()
     //   // advance(act_pos, *act_path - 1);
     //   //len += act_pos->length;
     //   //if (old_pos != graph->end()) {
-    //   //double len1 = sqrt(std::abs(act_pos->end_1_point->x - old_pos->end_2_point->x) +
-    //   //         std::abs(act_pos->end_1_point->y - old_pos->end_2_point->y) +
-    //   //         std::abs(act_pos->end_1_point->z - old_pos->end_2_point->z));
-    //   //  double len2 = sqrt(std::abs(act_pos->end_2_point->x - old_pos->end_1_point->x) +
-    //   //         std::abs(act_pos->end_2_point->y - old_pos->end_1_point->y) +
-    //   //         std::abs(act_pos->end_2_point->z - old_pos->end_1_point->z));
+    //   //double len1 = sqrt(abs(act_pos->end_1_point->x - old_pos->end_2_point->x) +
+    //   //         abs(act_pos->end_1_point->y - old_pos->end_2_point->y) +
+    //   //         abs(act_pos->end_1_point->z - old_pos->end_2_point->z));
+    //   //  double len2 = sqrt(abs(act_pos->end_2_point->x - old_pos->end_1_point->x) +
+    //   //         abs(act_pos->end_2_point->y - old_pos->end_1_point->y) +
+    //   //         abs(act_pos->end_2_point->z - old_pos->end_1_point->z));
     //   //  if (len1 < len2) len += len1; else len += len2;
     //   //}
     //   //old_pos = act_pos;
@@ -674,11 +674,11 @@ void SkelGraph::Sample_along_axis(int n_dim, list<point> * axis_points)
     if( old_pos != graph->end() )
       {
       double len1 = sqrt( (float)abs(act_pos->end_1_point->x - old_pos->end_2_point->x)
-                          + std::abs(act_pos->end_1_point->y - old_pos->end_2_point->y)
-                          + std::abs(act_pos->end_1_point->z - old_pos->end_2_point->z) );
+                          + abs(act_pos->end_1_point->y - old_pos->end_2_point->y)
+                          + abs(act_pos->end_1_point->z - old_pos->end_2_point->z) );
       double len2 = sqrt( (float)abs(act_pos->end_2_point->x - old_pos->end_1_point->x)
-                          + std::abs(act_pos->end_2_point->y - old_pos->end_1_point->y)
-                          + std::abs(act_pos->end_2_point->z - old_pos->end_1_point->z) );
+                          + abs(act_pos->end_2_point->y - old_pos->end_1_point->y)
+                          + abs(act_pos->end_2_point->z - old_pos->end_1_point->z) );
       if( len1 < len2 )
         {
         len += len1;

@@ -19,9 +19,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkVersion.h>
 
-// STD includes
-#include <cmath>
-
 
 vtkStandardNewMacro(vtkImageSlicePaint);
 
@@ -116,24 +113,24 @@ void vtkImageSlicePaintPaint(vtkImageSlicePaint *self, T *vtkNotUsed(ptr))
   for (int i = 0; i < 3; i++)
     {
     deltaTopRow[i] = self->GetTopRight()[i] - self->GetTopLeft()[i];
-    if ( std::abs(deltaTopRow[i]) > maxColumnDelta )
+    if ( abs(deltaTopRow[i]) > maxColumnDelta )
       {
-      maxColumnDelta = std::abs(deltaTopRow[i]);
+      maxColumnDelta = abs(deltaTopRow[i]);
       }
     deltaBottomRow[i] = self->GetBottomRight()[i] - self->GetBottomLeft()[i];
-    if ( std::abs(deltaBottomRow[i]) > maxColumnDelta )
+    if ( abs(deltaBottomRow[i]) > maxColumnDelta )
       {
-      maxColumnDelta = std::abs(deltaBottomRow[i]);
+      maxColumnDelta = abs(deltaBottomRow[i]);
       }
     deltaLeftColumn[i] = self->GetBottomLeft()[i] - self->GetTopLeft()[i];
-    if ( std::abs(deltaLeftColumn[i]) > maxRowDelta )
+    if ( abs(deltaLeftColumn[i]) > maxRowDelta )
       {
-      maxRowDelta = std::abs(deltaLeftColumn[i]);
+      maxRowDelta = abs(deltaLeftColumn[i]);
       }
     deltaRightColumn[i] = self->GetBottomRight()[i] - self->GetTopRight()[i];
-    if ( std::abs(deltaRightColumn[i]) > maxRowDelta )
+    if ( abs(deltaRightColumn[i]) > maxRowDelta )
       {
-      maxRowDelta = std::abs(deltaRightColumn[i]);
+      maxRowDelta = abs(deltaRightColumn[i]);
       }
     }
 
