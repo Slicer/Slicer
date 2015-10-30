@@ -55,7 +55,15 @@ void vtkSlicerDoubleArraysLogic::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLDoubleArrayNode* vtkSlicerDoubleArraysLogic
 ::AddDoubleArray(const char* fileName, const char* name)
 {
-  if (this->GetMRMLScene() == 0 || fileName == 0)
+  if (!fileName)
+    {
+    return 0;
+    }
+  if (fileName[0] == '\0')
+    {
+    return 0;
+    }
+  if (this->GetMRMLScene() == 0)
     {
     return 0;
     }
