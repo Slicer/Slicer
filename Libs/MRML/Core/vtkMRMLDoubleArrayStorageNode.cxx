@@ -204,7 +204,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   fstr.close();
 
-  return (doubleArrayNode->GetSize() > 0) ? 0 : 1;
+  return doubleArrayNode->GetSize() > 0;
 }
 
 //----------------------------------------------------------------------------
