@@ -67,6 +67,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::name()const
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyAbstractPlugin::setName(QString name)
 {
+  Q_UNUSED(name);
   qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::setName: Cannot set plugin name by method, only in constructor!";
 }
 
