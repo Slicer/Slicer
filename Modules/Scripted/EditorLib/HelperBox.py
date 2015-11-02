@@ -314,6 +314,8 @@ class HelperBox(VTKObservationMixin):
 
   def labelCreateDialog(self):
     """label create dialog"""
+    if self.master is None:
+        return
     dlg = LabelCreateDialog(slicer.util.mainWindow(), self.master, self.mergeVolumePostfix)
     colorLogic = slicer.modules.colors.logic()
     dlg.colorNodeID = colorLogic.GetDefaultEditorColorNodeID()

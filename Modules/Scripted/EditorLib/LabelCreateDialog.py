@@ -71,6 +71,9 @@ class LabelCreateDialog(object):
     self.dialog.objectName = 'EditorLabelCreateDialog'
     self.ui = _ui_LabelCreateDialog(self.dialog)
 
+    if master is None:
+        return
+
     self.ui.colorPromptLabel.text = """
     Create a merge label map or a segmentation for selected master volume %s.
     New volume will be %s.
