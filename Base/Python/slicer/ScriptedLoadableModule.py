@@ -216,14 +216,14 @@ interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
     style = widget.interactorStyle()
     interactor = style.GetInteractor()
     if button == 'Left':
-      down = style.OnLeftButtonDown
-      up = style.OnLeftButtonUp
+      down = interactor.LeftButtonPressEvent
+      up = interactor.LeftButtonReleaseEvent
     elif button == 'Right':
-      down = style.OnRightButtonDown
-      up = style.OnRightButtonUp
+      down = interactor.RightButtonPressEvent
+      up = interactor.RightButtonReleaseEvent
     elif button == 'Middle':
-      down = style.OnMiddleButtonDown
-      up = style.OnMiddleButtonUp
+      down = interactor.MiddleButtonPressEvent
+      up = interactor.MiddleButtonReleaseEvent
     elif button == 'None' or not button:
       down = lambda : None
       up = lambda : None
@@ -240,7 +240,7 @@ interactor.AddObserver(vtk.vtkCommand.LeftButtonPressEvent, onClick)
       x = int(start[0] + frac*(end[0]-start[0]))
       y = int(start[1] + frac*(end[1]-start[1]))
       interactor.SetEventPosition(x,y)
-      style.OnMouseMove()
+      interactor.MouseMoveEvent()
     up()
     interactor.SetShiftKey(0)
     interactor.SetControlKey(0)
