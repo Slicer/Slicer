@@ -694,15 +694,15 @@ int vtkMRMLTransformNode::Split()
       {
       transformComponentNode = this;
       }
-    vtkWarpTransform* warpTransformComponent = vtkWarpTransform::SafeDownCast(transformComponent);
-    // In case of non-linear transform set as to/from parent so that the transform will not be inverted
-    bool setAsTransformFromParent = false;
-    if (warpTransformComponent)
-      {
-      warpTransformComponent->Update(); // Update is needed bacause it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
-      setAsTransformFromParent = warpTransformComponent->GetInverseFlag();
-      }
-    if (setAsTransformFromParent)
+
+    // Set as to/from parent so that the transform will not be inverted
+    // It is important to set the non-inverted transform because when the
+    // transform is edited then we have to update the forward transform
+    // (inverse transform is computed, therefore changing an inverse transform would not affect the forward transform
+    // which would lead to inconsistency between the forward and inverse transform;
+    // also, any update of the forward transform overwrites the computed inverse transform)
+    bool transformComputedFromInverse = vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(transformComponent);
+    if (transformComputedFromInverse)
       {
       transformComponentNode->SetAndObserveTransformFromParent(transformComponent->GetInverse());
       }
@@ -714,6 +714,39 @@ int vtkMRMLTransformNode::Split()
     parentTransformNode=transformComponentNode.GetPointer();
     }
   return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(vtkAbstractTransform* abstractTransform)
+{
+  if (abstractTransform==NULL)
+    {
+    return false;
+    }
+
+  vtkTransform* linearTransformComponent = vtkTransform::SafeDownCast(abstractTransform);
+  if (linearTransformComponent)
+    {
+    linearTransformComponent->Update(); // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+    return linearTransformComponent->GetInverseFlag();
+    }
+
+  vtkWarpTransform* warpTransformComponent = vtkWarpTransform::SafeDownCast(abstractTransform);
+  if (warpTransformComponent)
+    {
+    warpTransformComponent->Update(); // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+    return warpTransformComponent->GetInverseFlag();
+    }
+
+  vtkGeneralTransform* generalTransformComponent = vtkGeneralTransform::SafeDownCast(abstractTransform);
+  if (generalTransformComponent)
+    {
+    generalTransformComponent->Update(); // Update is needed because it refreshes the inverse flag (the flag may be out-of-date if the transform depends on its inverse)
+    return generalTransformComponent->GetInverseFlag();
+    }
+
+  vtkGenericWarningMacro("vtkMRMLTransformNode::IsTransformComputedFromInverse cannot determine if input transform " << abstractTransform->GetClassName() << " is inverted or not. Assuming not inverted.");
+  return false;
 }
 
 //----------------------------------------------------------------------------
@@ -1379,13 +1412,21 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
     currentTransform = vtkTransform::SafeDownCast(GetTransformToParentAs("vtkTransform"));
     }
 
+  // If current transform is an inverse transform then don't reuse it
+  // (inverse transform is computed, therefore changing an inverse transform would not affect the forward transform
+  // which would lead to inconsistency between the forward and inverse transform;
+  // also, any update of the forward transform overwrites the computed inverse transform)
   if (currentTransform)
     {
-    // Reset InverseFlag (in case an external module has changed it)
+    currentTransform->Update();
     if (currentTransform->GetInverseFlag())
       {
-      currentTransform->Inverse();
+      currentTransform = NULL;
       }
+    }
+
+  if (currentTransform)
+    {
     // Set matrix
     if (matrix)
       {

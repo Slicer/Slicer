@@ -274,6 +274,12 @@ public:
   static bool IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform=NULL);
 
   ///
+  /// Utility function that determines if a transform is computed from its inverse.
+  /// It may be important to know if a transform is computed from its inverse because then
+  /// it cannot not be modified (if modification is needed then he source transform has to be updated).
+  static bool IsAbstractTransformComputedFromInverse(vtkAbstractTransform* abstractTransform);
+
+  ///
   /// Some transforms have DeepCopy method that actually only creates a shallow copy
   /// (such as vtkGeneralTransform and vtkGridTransform). This method creates a true deep copy of a transform.
   /// Returns nonzero on success.

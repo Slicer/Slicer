@@ -11,4 +11,8 @@
   id="vtkMRMLTransformStorageNode3"  name="TransformStorage_1"  hideFromEditors="true"  selectable="true"  selected="false"  fileName="TestData/TpsTransform.h5"  useCompression="1"  readState="0"  writeState="0"  preferITKv3CompatibleTransforms="true" ></TransformStorage>
  <Transform
   id="vtkMRMLTransformNode1"  name="TpsTransform"  hideFromEditors="false"  selectable="true"  selected="false"  storageNodeRef="vtkMRMLTransformStorageNode3"  references="storage:vtkMRMLTransformStorageNode3;"  userTags="" ></Transform>
+ <TransformStorage
+  id="vtkMRMLTransformStorageNode4"  name="TransformStorage_2"  hideFromEditors="true"  selectable="true"  selected="false"  fileName="TestData/BSplineLinearCompositeTransform.h5"  useCompression="1"  readState="0"  writeState="0" ></TransformStorage>
+ <Transform
+  id="vtkMRMLTransformNode2"  name="BSplineLinearCompositeTransform"  hideFromEditors="false"  selectable="true"  selected="false"  storageNodeRef="vtkMRMLTransformStorageNode4"  references="storage:vtkMRMLTransformStorageNode4;"  userTags="" ></Transform>
 </MRML>
