@@ -1250,6 +1250,7 @@ bool qSlicerExtensionsManagerModel::installExtension(
 
   if (!this->extractExtensionArchive(extensionName, archiveFile, this->extensionsInstallPath()))
     {
+    // extractExtensionArchive has logged the error
     return false;
     }
 
@@ -2199,6 +2200,7 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   if (extensionName.isEmpty())
     {
+    d->critical("Corrupted extension package");
     return false;
     }
 
@@ -2222,6 +2224,7 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
   QString archiveBaseName = d->extractArchive(extensionsDir, archiveFile);
   if (archiveBaseName.isEmpty())
     {
+    // extractArchive has logged the error
     return false;
     }
   extensionsDir.cdUp();
@@ -2240,26 +2243,36 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     srcPathToCopy = srcPathToCopy + "/" Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRBASENAME "-"
         + this->slicerRevision() + "/" + extensionName;
     }
+
+
+  // Remove intermediate directory (might be created and left there if running out of disk space)
+  // as it would make copyDirRecursively fail.
+  ctk::removeDirRecursively(intermediatePath);
+
   if (!ctk::copyDirRecursively(srcPathToCopy, intermediatePath))
     {
+    d->critical(QString("Failed to copy directory %1 into directory %2").arg(srcPathToCopy).arg(intermediatePath));
     return false;
     }
 
   //  Step2: <extensionName>-XXXXXX -> <extensionName>
   if (!ctk::copyDirRecursively(intermediatePath, dstPath))
     {
+    d->critical(QString("Failed to copy directory %1 into directory %2").arg(intermediatePath).arg(dstPath));
     return false;
     }
 
   //  Step3: Remove <extensionName>-XXXXXX
   if (!ctk::removeDirRecursively(intermediatePath))
     {
+    d->critical(QString("Failed to remove directory %1").arg(intermediatePath));
     return false;
     }
 
   //  Step4: Remove  <extensionName>/<archiveBaseName>
   if (!ctk::removeDirRecursively(srcPath))
     {
+    d->critical(QString("Failed to remove directory %1").arg(srcPath));
     return false;
     }
 
