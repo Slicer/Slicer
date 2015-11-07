@@ -74,15 +74,14 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
   if (selectionNode && displayableNode)
     {
     char *displayableType = (char *)node->GetClassName();
-    char *displayType = 0;
-    std::string ds = selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
-    if (!ds.empty())
+    std::string displayType =
+        selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
+    if (!displayType.empty())
       {
-      displayType = (char *)ds.c_str();
       for (int  i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++)
         {
         vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
-        if (displayNode && displayNode->IsA(displayType))
+        if (displayNode && displayNode->IsA(displayType.c_str()))
           {
             return displayNode;
           }
