@@ -199,7 +199,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     }
 
   // add a selection node
-  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene);
 
   if (!logic1->StartPlaceMode(1))
@@ -222,7 +222,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     }
 
   // adding with app logic
-  logic1->SetMRMLApplicationLogic(applicationLogic);
+  logic1->SetMRMLApplicationLogic(applicationLogic.GetPointer());
   fidIndex = logic1->AddFiducial(-11, 10.0, 50.0);
   if (fidIndex == -1)
     {
@@ -245,7 +245,6 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   if (!activeMarkupsNode)
     {
     std::cerr << "Failed to get active markups list from id " << activeListID.c_str() << std::endl;
-    applicationLogic->Delete();
     return EXIT_FAILURE;
     }
 
@@ -264,7 +263,6 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
     {
     std::cerr << "After rename, expected " << expectedLabel.c_str()
               << ", but got " << newLabel.c_str() << std::endl;
-    applicationLogic->Delete();
     return EXIT_FAILURE;
     }
   std::cout << "After renaming:" << std::endl;
@@ -323,9 +321,6 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
               << sliceIntersectionVisibility << std::endl;
     return EXIT_FAILURE;
     }
-
-  // cleanup
-  applicationLogic->Delete();
 
   return EXIT_SUCCESS;
 }
