@@ -196,10 +196,24 @@ void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLFiberBundleNode
 
   if (fiberBundleNode == 0)
     {
-    setFiberBundleDisplayNode((vtkMRMLFiberBundleDisplayNode*)NULL);
+    this->setFiberBundleDisplayNode((vtkMRMLFiberBundleDisplayNode*)NULL);
+    this->updateWidgetFromMRML();
     }
-
-  this->updateWidgetFromMRML();
+  else if (d->FiberBundleDisplayNode)
+    {
+      if (d->FiberBundleDisplayNode->IsA("vtkMRMLFiberBundleLineDisplayNode"))
+        {
+        this->setFiberBundleDisplayNode(fiberBundleNode->GetLineDisplayNode());
+        }
+      else if (d->FiberBundleDisplayNode->IsA("vtkMRMLFiberBundleTubeDisplayNode"))
+        {
+        this->setFiberBundleDisplayNode(fiberBundleNode->GetTubeDisplayNode());
+        }
+      else if (d->FiberBundleDisplayNode->IsA("vtkMRMLFiberBundleGlyphDisplayNode"))
+        {
+        this->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -694,7 +708,10 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
 
   d->ColorByScalarsColorTableComboBox->setCurrentNodeID
     (d->FiberBundleDisplayNode->GetColorNodeID());
+
+  bool wasBlockingColorByScalarComboBox = d->ColorByScalarComboBox->blockSignals(true);
   d->ColorByScalarComboBox->setDataSet(vtkDataSet::SafeDownCast(d->FiberBundleNode->GetPolyData()));
+  d->ColorByScalarComboBox->blockSignals(wasBlockingColorByScalarComboBox);
 
   bool hasTensors = false;
   if (d->FiberBundleNode && d->FiberBundleNode->GetPolyData() &&
@@ -768,9 +785,8 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         {
         if (d->ColorByScalarComboBox->currentText() != d->FiberBundleDisplayNode->GetActiveScalarName())
         {
-          d->ColorByScalarComboBox->setCurrentIndex(
-            d->ColorByScalarComboBox->findData( d->FiberBundleDisplayNode->GetActiveScalarName() )
-          );
+          d->ColorByScalarComboBox->setCurrentArray(
+              d->FiberBundleDisplayNode->GetActiveScalarName());
         }
 
         d->ColorByScalarRadioButton->setChecked(1);
