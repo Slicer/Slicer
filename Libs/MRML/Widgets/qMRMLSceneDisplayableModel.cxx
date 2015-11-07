@@ -73,7 +73,7 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
   if (selectionNode && displayableNode)
     {
-    char *displayableType = (char *)node->GetClassName();
+    char *displayableType = (char *)displayableNode->GetClassName();
     std::string displayType =
         selectionNode->GetModelHierarchyDisplayNodeClassName(displayableType);
     if (!displayType.empty())
