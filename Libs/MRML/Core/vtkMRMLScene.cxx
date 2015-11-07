@@ -1010,6 +1010,12 @@ inline bool IsNodeWithoutID(vtkMRMLNode* node)
   return node->GetID() == NULL || node->GetID()[0] == '\0';
 }
 
+//------------------------------------------------------------------------------
+inline bool IsNodeWithoutName(vtkMRMLNode* node)
+{
+  return node->GetName() == NULL|| node->GetName()[0] == '\0';
+}
+
 }
 
 //------------------------------------------------------------------------------
@@ -1104,7 +1110,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     }
 
   // Set a default name if none is given automatically
-  if (n->GetName() == NULL|| n->GetName()[0] == '\0')
+  if (IsNodeWithoutName(n))
     {
     n->SetName(this->GenerateUniqueName(n).c_str());
     }
@@ -1824,7 +1830,7 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
   int modifyStatus = n->GetDisableModifiedEvent();
   n->SetDisableModifiedEvent(1);
 
-  if (n->GetName() == NULL|| n->GetName()[0] == '\0')
+  if (IsNodeWithoutName(n))
     {
     n->SetName(n->GetID());
     }
@@ -1907,7 +1913,7 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
   int modifyStatus = n->GetDisableModifiedEvent();
   n->SetDisableModifiedEvent(1);
 
-  if (n->GetName() == NULL|| n->GetName()[0] == '\0')
+  if (IsNodeWithoutName(n))
     {
     n->SetName(n->GetID());
     }
