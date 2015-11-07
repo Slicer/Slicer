@@ -1775,15 +1775,6 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
 }
 
 //------------------------------------------------------------------------------
-int  vtkMRMLScene::GetTransformBetweenNodes(vtkMRMLNode * vtkNotUsed(node1),
-                                            vtkMRMLNode * vtkNotUsed(node2),
-                                            vtkGeneralTransform * vtkNotUsed(xform))
-{
-  vtkErrorMacro("NOT IMPLEMENTEED YET");
-  return 1;
-}
-
-//------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
 {
   if (!n)

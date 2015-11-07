@@ -258,10 +258,6 @@ public:
   /// insert a node in the scene before a specified node
   vtkMRMLNode* InsertBeforeNode( vtkMRMLNode *item, vtkMRMLNode *newItem);
 
-  /// Get transformation between two nodes
-  int GetTransformBetweenNodes( vtkMRMLNode *node1, vtkMRMLNode *node2,
-                                vtkGeneralTransform *xform );
-
   /// Set undo on/off
   void SetUndoOn() {UndoFlag=true;};
   void SetUndoOff() {UndoFlag=false;};
