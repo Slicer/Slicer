@@ -234,7 +234,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// For example, parameters of "vtkMRMLFiberbundleNode" , "vtkMRMLFiberbundleTubeDisplayNode"
   /// will change tube visibility
   void AddModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass,
-                                             const std::string& dispayNodeClass);
+                                             const std::string& displayNodeClass);
 
   /// Clear node display class names
   /// to which display node to apply properties in hierarchy display widgets

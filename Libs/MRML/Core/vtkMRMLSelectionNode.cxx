@@ -717,9 +717,9 @@ vtkMRMLSelectionNode::GetModelHierarchyDisplayNodeClassNames()const
 
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::AddModelHierarchyDisplayNodeClassName(const std::string& dispayableNodeClass,
-                                                                 const std::string& dispayNodeClass)
+                                                                 const std::string& displayNodeClass)
 {
-  this->ModelHierarchyDisplayNodeClassName[dispayableNodeClass] = dispayNodeClass;
+  this->ModelHierarchyDisplayNodeClassName[dispayableNodeClass] = displayNodeClass;
 }
 
 //----------------------------------------------------------------------------
