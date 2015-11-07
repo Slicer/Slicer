@@ -1001,6 +1001,17 @@ int vtkMRMLScene::Commit(const char* url)
   return 1;
 }
 
+namespace
+{
+
+//------------------------------------------------------------------------------
+inline bool IsNodeWithoutID(vtkMRMLNode* node)
+{
+  return node->GetID() == NULL || node->GetID()[0] == '\0';
+}
+
+}
+
 //------------------------------------------------------------------------------
 vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 {
@@ -1070,7 +1081,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   // ID. This can create a node ID conflict with the nodes already in the
   // scene. A new unique ID  must be set to the node to add and references to
   // the node must be updated with the new ID.
-  if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL)
+  if (IsNodeWithoutID(n) || this->GetNodeByID(n->GetID()) != NULL)
     {
     std::string oldID;
     if (n->GetID())
@@ -1787,7 +1798,7 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
   this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
 
   // code from add node no notify
-  if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL)
+  if (IsNodeWithoutID(n) || this->GetNodeByID(n->GetID()) != NULL)
     {
     std::string oldID;
     if (n->GetID())
@@ -1870,7 +1881,7 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
   this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
 
   // code from add node no notify
-  if (n->GetID() == NULL || n->GetID()[0] == '\0' || this->GetNodeByID(n->GetID()) != NULL)
+  if (IsNodeWithoutID(n) || this->GetNodeByID(n->GetID()) != NULL)
     {
     std::string oldID;
     if (n->GetID())
