@@ -336,6 +336,8 @@ public:
 
   void RemoveUnusedNodeReferences();
 
+  bool IsReservedID(const std::string& id);
+
   void AddReservedID(const char *id);
 
   void RemoveReservedIDs();

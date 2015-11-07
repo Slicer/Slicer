@@ -2068,7 +2068,7 @@ int vtkMRMLScene::GetUniqueIDIndex(const std::string& baseID)
     std::string candidateID = this->BuildID(baseID, index);
     isUnique =
       (this->GetNodeByID(candidateID) == 0) &&
-      (this->ReservedIDs.find(candidateID) == this->ReservedIDs.end());
+      (!this->IsReservedID(candidateID));
     }
   return index;
 }
@@ -2146,6 +2146,12 @@ std::string vtkMRMLScene::BuildName(const std::string& baseName, int nameIndex)c
     name << "_" << nameIndex;
     }
   return name.str();
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::IsReservedID(const std::string& id)
+{
+  return !(this->ReservedIDs.find(id) == this->ReservedIDs.end());
 }
 
 //------------------------------------------------------------------------------
