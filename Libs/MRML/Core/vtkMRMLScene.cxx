@@ -1074,8 +1074,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
         }
       // If NodeIDs[newId] already contains a value, that node can't be found
       // anymore in the NodeIDs cache.
-      this->NodeIDs[newId] = sn;
-      this->NodeIDsMTime = this->Nodes->GetMTime();
+      this->AddNodeID(sn);
 
       sn->EndModify(wasModifyingSingeltonNode);
       n->EndModify(wasModifying);
