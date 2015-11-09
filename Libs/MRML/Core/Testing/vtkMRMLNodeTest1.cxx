@@ -2158,27 +2158,84 @@ bool TestNodeReferenceSerialization()
   scene2->SetSceneXMLString(sceneXMLString);
   scene2->Import();
 
-  vtkMRMLNode* referencingNodeImported = NULL;
-  if (scene2->GetNumberOfNodes() != 4 ||
-      (referencingNodeImported = scene2->GetNodeByID(referencingNode->GetID())) == 0 ||
-      referencingNodeImported->GetNumberOfNodeReferences(role1.c_str()) != 1 ||
-      referencingNodeImported->GetNumberOfNodeReferences(role2.c_str()) != 2 ||
-      referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
-      strcmp(referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0),
-             referencedNode11->GetID()) != 0 ||
-      referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0) == 0 ||
-      strcmp(referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0),
-             referencedNode21->GetID()) != 0 ||
-      referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1) == 0 ||
-      strcmp(referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1),
-             referencedNode22->GetID()) != 0)
+  if (!CheckInt(__LINE__,
+                "Scene2-GetNumberOfNodes",
+                scene2->GetNumberOfNodes(), 4))
     {
-    std::cerr << "Line " << __LINE__ << ": TestNodeReferenceSerialization failed" << std::endl
-      << "Number of nodes: " << scene2->GetNumberOfNodes()
-      << "Number of role1 references: "
-        << referencingNodeImported->GetNumberOfNodeReferences(role1.c_str())
-      << "Number of role2 references: "
-        << referencingNodeImported->GetNumberOfNodeReferences(role2.c_str());
+    return false;
+    }
+
+  vtkMRMLNode* referencingNodeImported =
+      scene2->GetNodeByID(referencingNode->GetID());
+
+  if (!CheckNotNull(__LINE__,
+                    std::string("Scene2-GetNodeByID-") + referencingNode->GetID(),
+                    referencingNodeImported))
+    {
+    return false;
+    }
+
+  if (!CheckInt(__LINE__,
+                std::string("Scene2-referencingNodeImported-GetNumberOfNodeReferences-role:") + role1,
+                referencingNodeImported->GetNumberOfNodeReferences(role1.c_str()),
+                1))
+    {
+    return false;
+    }
+
+  if (!CheckInt(__LINE__,
+                std::string("Scene2-referencingNodeImported-GetNumberOfNodeReferences-role:") + role2,
+                referencingNodeImported->GetNumberOfNodeReferences(role2.c_str()),
+                2))
+    {
+    return false;
+    }
+
+  if (!CheckNotNull(__LINE__,
+                    std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:0-role:") + role1,
+                    referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0)))
+    {
+    return false;
+    }
+
+  if(!CheckString(
+       __LINE__,
+       std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:0-role:") + role1,
+       referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0),
+       referencedNode11->GetID()))
+    {
+    return false;
+    }
+
+  if (!CheckNotNull(__LINE__,
+                    std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:0-role:") + role2,
+                    referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0)))
+    {
+    return false;
+    }
+
+  if(!CheckString(
+       __LINE__,
+       std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:0-role:") + role2,
+       referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0),
+       referencedNode21->GetID()))
+    {
+    return false;
+    }
+
+  if (!CheckNotNull(__LINE__,
+                    std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:1-role:") + role2,
+                    referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1)))
+    {
+    return false;
+    }
+
+  if(!CheckString(
+       __LINE__,
+       std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:1-role:") + role2,
+       referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1),
+       referencedNode22->GetID()))
+    {
     return false;
     }
   return true;
