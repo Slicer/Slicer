@@ -2771,7 +2771,9 @@ void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes/*=NULL*/)
   for (std::map< std::string, std::string>::const_iterator iterChanged = this->ReferencedIDChanges.begin();
     iterChanged != this->ReferencedIDChanges.end(); iterChanged++)
     {
-    NodeReferencesType::iterator referencedIdIt=this->NodeReferences.find(iterChanged->first);
+    const std::string& oldID = iterChanged->first;
+    const std::string& newID = iterChanged->second;
+    NodeReferencesType::iterator referencedIdIt=this->NodeReferences.find(oldID);
     if (referencedIdIt==this->NodeReferences.end())
       {
       // this updated ID is not observed by any node
@@ -2792,7 +2794,7 @@ void vtkMRMLScene::UpdateNodeReferences(vtkCollection* checkNodes/*=NULL*/)
         {
         continue;
         }
-      node->UpdateReferenceID(iterChanged->first.c_str(), iterChanged->second.c_str());
+      node->UpdateReferenceID(oldID.c_str(), newID.c_str());
       }
     }
 }
