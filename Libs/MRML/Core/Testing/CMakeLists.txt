@@ -7,6 +7,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLColorNodeTest1.cxx
   vtkMRMLColorTableNodeTest1.cxx
   vtkMRMLColorTableStorageNodeTest1.cxx
+  vtkMRMLCoreTestingUtilitiesTest.cxx
   vtkMRMLCrosshairNodeTest1.cxx
   vtkMRMLDiffusionImageVolumeNodeTest1.cxx
   vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1.cxx
@@ -117,6 +118,7 @@ simple_test( vtkMRMLClipModelsNodeTest1 )
 simple_test( vtkMRMLColorNodeTest1 )
 simple_test( vtkMRMLColorTableNodeTest1 ${TEMP})
 simple_test( vtkMRMLColorTableStorageNodeTest1 )
+simple_test( vtkMRMLCoreTestingUtilitiesTest )
 simple_test( vtkMRMLCrosshairNodeTest1 )
 simple_test( vtkMRMLdGEMRICProceduralColorNodeTest1 )
 simple_test( vtkMRMLDiffusionImageVolumeNodeTest1 )

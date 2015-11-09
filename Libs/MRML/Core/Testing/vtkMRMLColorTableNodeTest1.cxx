@@ -16,38 +16,13 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLParser.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLCoreTestingUtilities.h"
 
 // VTK includes
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
-namespace
-{
-
-//----------------------------------------------------------------------------
-bool CheckString(int line, const std::string& function, const char* current, const char* expected)
-{
-  bool different = true;
-  if (current == 0 || expected == 0)
-    {
-    different = !(current == 0 && expected == 0);
-    }
-  else if(strcmp(current, expected) == 0)
-    {
-    different = false;
-    }
-  if(different)
-    {
-    std::cerr << "Line " << line << " - " << function << " : CheckString failed"
-              << "\n\tcurrent:" << (current ? current : "<null>")
-              << "\n\texpected:" << (expected ? expected : "<null>")
-              << std::endl;
-    return false;
-    }
-  return true;
-}
-
-}
+using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNodeTest1(int argc, char * argv[])

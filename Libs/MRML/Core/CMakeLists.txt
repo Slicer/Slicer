@@ -121,6 +121,7 @@ set(MRMLCore_SRCS
   vtkMRMLColorTableNode.cxx
   vtkMRMLColorTableStorageNode.cxx
   vtkMRMLCoreTestingMacros.cxx
+  vtkMRMLCoreTestingUtilities.cxx
   vtkMRMLCrosshairNode.cxx
   vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
   vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
@@ -215,6 +216,11 @@ if(MRML_USE_vtkTeem)
     vtkMRMLVectorVolumeNode.cxx
     )
 endif()
+
+set_source_files_properties(
+  vtkMRMLCoreTestingUtilities.cxx
+  WRAP_EXCLUDE
+  )
 
 # Abstract/pure virtual classes
 

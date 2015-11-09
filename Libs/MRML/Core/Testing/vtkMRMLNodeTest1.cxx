@@ -13,6 +13,7 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLCoreTestingUtilities.h"
 
 // VTK includes
 #include <vtkCollection.h>
@@ -21,6 +22,8 @@
 
 // STD includes
 #include <sstream>
+
+using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
 class vtkMRMLNodeTestHelper1 : public vtkMRMLNode
@@ -124,48 +127,6 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = TestClearScene() && res;
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-namespace
-{
-
-//----------------------------------------------------------------------------
-bool CheckInt(int line, const std::string& function, int current, int expected)
-{
-  if(current != expected)
-    {
-    std::cerr << "Line " << line << " - " << function << " : CheckInt failed"
-              << "\n\tcurrent:" << current
-              << "\n\texpected:" << expected
-              << std::endl;
-    return false;
-    }
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool CheckString(int line, const std::string& function, const char* current, const char* expected)
-{
-  bool different = true;
-  if (current == 0 || expected == 0)
-    {
-    different = !(current == 0 && expected == 0);
-    }
-  else if(strcmp(current, expected) == 0)
-    {
-    different = false;
-    }
-  if(different)
-    {
-    std::cerr << "Line " << line << " - " << function << " : CheckString failed"
-              << "\n\tcurrent:" << (current ? current : "<null>")
-              << "\n\texpected:" << (expected ? expected : "<null>")
-              << std::endl;
-    return false;
-    }
-  return true;
-}
-
 }
 
 //---------------------------------------------------------------------------
