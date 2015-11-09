@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLCoreTestingUtilities.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
@@ -28,6 +29,8 @@
 
 // STD includes
 #include <vtkNew.h>
+
+using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
@@ -48,18 +51,51 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   scene->AddNode(modelDisplayNode.GetPointer());
   modelNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
 
-  if (scene->GetNumberOfNodes() != 2 ||
-      (strcmp("vtkMRMLModelNode1", modelNode->GetID()) != 0) ||
-      (strcmp("vtkMRMLModelDisplayNode1", modelDisplayNode->GetID()) != 0) ||
-      modelNode->GetDisplayNode() != modelDisplayNode.GetPointer())
+  // At this point the scene should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelNode1  (valid polydata)
+  //    |          |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode1
+  //    |
+  //    |---- vtkMRMLModelDisplayNode1 (valid polydata)
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene->GetNumberOfNodes(), 2)
+
+      ||!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        "vtkMRMLModelNode1", modelNode.GetPointer())
+
+      ||!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        "vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer())
+
+      ||!CheckPointer(
+              __LINE__, "modelNode->GetDisplayNode() / modelDisplayNode",
+              modelNode->GetDisplayNode(),
+              modelDisplayNode.GetPointer())
+      )
     {
-    std::cerr << "Failed to add node into the scene: "
-              << "model id: " << modelNode->GetID()<< " "
-              << "model display id: " << modelDisplayNode->GetID()<< " "
-              << "display node: " << modelNode->GetDisplayNode()
-              << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
+
+  //
+  // Import
+  //
+
+  // Here is the scene that will be imported:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelNode1  (null polydata / New Model1)
+  //    |          |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode1
+  //    |
+  //    |---- vtkMRMLModelDisplayNode1 (null polydata / New Display 1)
+  //    |
+  //    |---- vtkMRMLModelDisplayNode2 (null polydata / New Display 2)
+  //    |
+  //    |---- vtkMRMLModelNode2  (null polydata / New Model2)
+  //               |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode2
 
   const char scene1XML[] =
     "<MRML  version=\"18916\" userTags=\"\">"
@@ -72,82 +108,140 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
 
   scene->SetSceneXMLString(scene1XML);
   scene->SetLoadFromXMLString(1);
+  scene->Import();
+
   // When importing the scene, there is conflict between the existing nodes
   // and added nodes. New IDs are set by Import to the added nodes.
-  scene->Import();
-  vtkMRMLModelNode* modelNode2 = vtkMRMLModelNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLModelNode3"));
 
-  if (scene->GetNumberOfNodes() != 6 ||
-      scene->GetNodeByID("vtkMRMLModelNode1") != modelNode.GetPointer() ||
-      scene->GetNodeByID("vtkMRMLModelDisplayNode1") != modelDisplayNode.GetPointer() ||
-      modelNode->GetDisplayNode() != modelDisplayNode.GetPointer() ||
-      modelNode2 == 0 ||
-      strcmp(modelNode2->GetID(), "vtkMRMLModelNode3") != 0 ||
-      strcmp(modelNode2->GetName(), "New Model1") != 0 ||
-      modelNode2->GetDisplayNode() == 0 ||
-      strcmp(modelNode2->GetDisplayNode()->GetID(), "vtkMRMLModelDisplayNode3") != 0 ||
-      strcmp(modelNode2->GetDisplayNode()->GetName(), "New Display 1") != 0)
+  // At this point the scene should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelNode1  (valid polydata)
+  //    |          |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode1
+  //    |
+  //    |---- vtkMRMLModelDisplayNode1 (valid polydata)
+  //    |
+  //    |---- vtkMRMLModelNode2  (null polydata / New Model1)            [was vtkMRMLModelNode1]
+  //    |          |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode2
+  //    |
+  //    |---- vtkMRMLModelDisplayNode2 (null polydata / New Display 1)   [was vtkMRMLModelDisplayNode1]
+  //    |
+  //    |---- vtkMRMLModelDisplayNode3 (null polydata / New Display 2)   [was vtkMRMLModelDisplayNode2]
+  //    |
+  //    |---- vtkMRMLModelNode3  (null polydata / New Model2)            [was vtkMRMLModelNode2]
+  //               |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode3
+
+  //
+  // Check scene contains original nodes
+  //
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene->GetNumberOfNodes(), 6)
+
+      ||!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        "vtkMRMLModelNode1", modelNode.GetPointer())
+
+      ||!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        "vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer())
+
+      ||!CheckPointer(
+              __LINE__, "modelNode->GetDisplayNode() / modelDisplayNode",
+              modelNode->GetDisplayNode(),
+              modelDisplayNode.GetPointer())
+      )
     {
-    std::cerr << "Failed to import scene: "
-              << "number of nodes: " << scene->GetNumberOfNodes() << std::endl
-              << "model #2: " << modelNode2  << std::endl;
+    return false;
+    }
+
+  //
+  // Part 1
+  //
+
+  vtkMRMLModelNode* modelNode2 =
+      vtkMRMLModelNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelNode3"));
+
+  if (!CheckNotNull(
+        __LINE__,
+        "GetNodeByID(\"vtkMRMLModelNode3\")", modelNode2)
+
+      ||!CheckNodeIdAndName(
+        __LINE__, modelNode2, "vtkMRMLModelNode3", "New Model1")
+
+      ||!CheckNodeIdAndName(
+        __LINE__, modelNode2->GetDisplayNode(),
+        "vtkMRMLModelDisplayNode3", "New Display 1")
+      )
+    {
     return EXIT_FAILURE;
     }
-  vtkMRMLModelNode* modelNode3 = vtkMRMLModelNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLModelNode2"));
-  if (modelNode3 == 0 ||
-      strcmp(modelNode3->GetID(), "vtkMRMLModelNode2") != 0 ||
-      strcmp(modelNode3->GetName(), "New Model2") != 0 ||
-      modelNode3->GetDisplayNode() == 0 ||
-      strcmp(modelNode3->GetDisplayNode()->GetID(), "vtkMRMLModelDisplayNode2") != 0 ||
-      strcmp(modelNode3->GetDisplayNode()->GetName(), "New Display 2") != 0)
+
+  //
+  // Part2
+  //
+
+  vtkMRMLModelNode* modelNode3 =
+      vtkMRMLModelNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelNode2"));
+
+  if (!CheckNotNull(
+        __LINE__,
+        "GetNodeByID(\"vtkMRMLModelNode2\")", modelNode3)
+
+      ||!CheckNodeIdAndName(
+        __LINE__, modelNode3, "vtkMRMLModelNode2", "New Model2")
+
+      ||!CheckNodeIdAndName(
+        __LINE__, modelNode3->GetDisplayNode(),
+        "vtkMRMLModelDisplayNode2", "New Display 2")
+      )
     {
-    std::cerr << "Failed to import scene - part2: "
-              << "model #3: " << modelNode3 << std::endl;
     return EXIT_FAILURE;
     }
+
+  //
+  // Check PolyData / InputPolyData
+  //
+
+  vtkMRMLModelDisplayNode* modelDisplayNode2 =
+      vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode());
 
   // check that the model nodes and model display nodes point to the right poly data
-  if (modelNode2->GetPolyData() != NULL)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Import failed: new model node should have null polydata: "
-              << modelNode2->GetPolyData()
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
-      ->GetInputPolyData() != NULL)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Import failed: new model node's display node should have null polydata: "
-              << vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
-                   ->GetInputPolyData()
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+  if (!CheckNull(
+        __LINE__,
+        "Import failed: new model node should have null polydata\n"
+        "modelNode2->GetPolyData()",
+        modelNode2->GetPolyData())
 
-  if (modelNode->GetPolyData() == NULL)
+      ||!CheckNull(
+        __LINE__,
+        "Import failed: new model node's display node should have null polydata\n"
+        "modelDisplayNode2->GetInputPolyData()",
+        modelDisplayNode2->GetInputPolyData())
+
+      ||!CheckNotNull(
+        __LINE__,
+        "Import failed: original model node should not have null polydata\n"
+        "modelNode->GetPolyData()",
+        modelNode->GetPolyData())
+
+      ||!CheckNotNull(
+        __LINE__,
+        "Import failed: original model display node should not have null polydata\n"
+        "modelDisplayNode->GetInputPolyData()",
+        modelDisplayNode->GetInputPolyData()
+        )
+
+      ||!CheckPointer(
+        __LINE__,
+        "Import failed: original model node and display node don't have the same poly data\n"
+        "modelNode->GetPolyData() / modelDisplayNode->GetInputPolyData()",
+        modelNode->GetPolyData(),
+        modelDisplayNode->GetInputPolyData()
+        )
+      )
     {
-    std::cerr << "Line " << __LINE__
-              << " - Import failed: original model node should not have null polydata"
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode())->GetInputPolyData() == NULL)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Import failed: original model display node should not have null polydata"
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (modelNode->GetPolyData() != vtkMRMLModelDisplayNode::SafeDownCast(
-        modelNode->GetDisplayNode())->GetInputPolyData())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Import failed: original model node and display node don't have the same poly data"
-              << std::endl;
     return EXIT_FAILURE;
     }
 
