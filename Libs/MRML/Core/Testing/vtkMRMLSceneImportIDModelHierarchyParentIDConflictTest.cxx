@@ -16,11 +16,13 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLCoreTestingUtilities.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLScene.h"
 
 // STD includes
 #include <sstream>
+#include <vector>
 
 // VTK includes
 #include <vtkNew.h>
@@ -28,6 +30,9 @@
 // ITKSYS includes
 #include <itksys/SystemTools.hxx>
 
+using namespace vtkMRMLCoreTestingUtilities;
+
+//---------------------------------------------------------------------------
 bool ImportIDModelHierarchyParentIDConflictTestXMLString();
 bool ImportIDModelHierarchyParentIDConflictTestFile();
 
@@ -35,50 +40,100 @@ bool ImportIDModelHierarchyParentIDConflictTestFile();
 int vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
 {
   bool res = true;
-  res = ImportIDModelHierarchyParentIDConflictTestXMLString() && res;
-  res = ImportIDModelHierarchyParentIDConflictTestFile() && res;
+  res = res && ImportIDModelHierarchyParentIDConflictTestXMLString();
+  res = res && ImportIDModelHierarchyParentIDConflictTestFile();
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //---------------------------------------------------------------------------
 // add a 5 deep model hierarchy to a scene
-void PopulateScene(vtkMRMLScene *scene)
+bool PopulateScene(int line, vtkMRMLScene *scene)
 {
+  if (!CheckInt(
+        line, "GetNumberOfNodes",
+        scene->GetNumberOfNodes(), 0)
+      )
+    {
+    return false;
+    }
+
+  std::vector<vtkMRMLNode*> nodes;
+  std::vector<vtkMRMLNode*> parentNodes;
+
+  vtkMRMLNode* parentNode = 0;
   // add model hierarchy nodes
   for (int i = 0; i < 5; i++)
     {
     vtkNew<vtkMRMLModelHierarchyNode> mhn;
+    nodes.push_back(mhn.GetPointer());
     scene->AddNode(mhn.GetPointer());
-    std::string idNumberString;
-    std::stringstream ss;
-    ss << i;
-    ss >> idNumberString;
+    std::string idNumberString = ToString(i);
     mhn->SetName(idNumberString.c_str());
     if (i > 0)
       {
       std::string parentNodeID = std::string("vtkMRMLModelHierarchyNode") + idNumberString;
-      std::cout << "Setting parent node id on node " << mhn->GetID() << " to " << parentNodeID.c_str() << std::endl;
+//      std::cout << "Setting parent node id"
+//                << " on node " << mhn->GetID()
+//                << " to " << parentNodeID.c_str() << std::endl;
       mhn->SetParentNodeID(parentNodeID.c_str());
       }
+    parentNodes.push_back(parentNode);
+    parentNode = mhn.GetPointer();
     }
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene->GetNumberOfNodes(), 5)
+      )
+    {
+    return false;
+    }
+
+  for (int index = 0; index < 5; ++index)
+    {
+    std::string nodeID = std::string("vtkMRMLModelHierarchyNode") + ToString(index + 1);
+
+    if (!CheckNodeInSceneByID(
+          line, scene,
+          nodeID.c_str(), nodes[index])
+
+        ||!CheckPointer(
+          line, std::string("GetNodeByID(\"") + nodeID + "\")->GetParentNode() / parentNode",
+          vtkMRMLModelHierarchyNode::SafeDownCast(
+            scene->GetNodeByID(nodeID.c_str()))->GetParentNode(), parentNodes[index])
+        )
+      {
+      return false;
+      }
+    }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
 // Print out the model hierarchy nodes in a scene
-void PrintModelHierarchyNodes(vtkMRMLScene *scene)
+void PrintModelHierarchyNodes(int line, vtkMRMLScene *scene)
 {
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
+
+  std::cerr << "\nLine " << line << " - ModelHierarchyNodes:" << std::endl;
 
   for (int i = 0; i < numNodes; i++)
     {
     vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode");
     if (mrmlNode && mrmlNode->IsA("vtkMRMLModelHierarchyNode"))
       {
-      vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
-      std::cout << i << ": Model Hierarchy node named " << hnode->GetName() << " with id " << hnode->GetID() << " has parent node id of " << (hnode->GetParentNodeID() ? hnode->GetParentNodeID() : "null") << std::endl;
+      vtkMRMLModelHierarchyNode *hnode =
+          vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
+      std::cerr << "  " << i << ": Model Hierarchy node"
+                << " named [" << (hnode->GetName() ? hnode->GetName() : "null")
+                << "] with id [" << (hnode->GetID() ? hnode->GetID() : "null")
+                << "] has parent node id of ["
+                << (hnode->GetParentNodeID() ? hnode->GetParentNodeID() : "null")
+                << "]"
+                << std::endl;
       }
     }
-
 }
 
 //---------------------------------------------------------------------------
@@ -90,16 +145,34 @@ bool ImportIDModelHierarchyParentIDConflictTestXMLString()
 {
   vtkNew<vtkMRMLScene> scene;
 
-  PopulateScene(scene.GetPointer());
+  if (!PopulateScene(__LINE__, scene.GetPointer()))
+    {
+    return false;
+    }
 
-  std::cout << "XML: Starting scene has " << scene->GetNumberOfNodes() << " nodes" << std::endl;
-  /// at this point the following node id should be in the scene
-  /// vtkMRMLModelHierarchyNode1 with parent id null
-  /// vtkMRMLModelHierarchyNode2 with parent id vtkMRMLModelHierarchyNode1
-  /// vtkMRMLModelHierarchyNode3 with parent id vtkMRMLModelHierarchyNode2
-  /// vtkMRMLModelHierarchyNode4 with parent id vtkMRMLModelHierarchyNode3
-  /// vtkMRMLModelHierarchyNode5 with parent id vtkMRMLModelHierarchyNode4
+  // At this point the scene should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelHierarchyNode1 (name: 0)
+  //    |          |-- ref [parentNodeRef] to <null>
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode2 (name: 1)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode1
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode3 (name: 2)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode2
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode4 (name: 3)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode3
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode5 (name: 4)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode4
 
+  //
+  // Import
+  //
+
+  // Here is the scene that will be imported:
 
   const char scene1XML[] =
     "<MRML >"
@@ -113,70 +186,81 @@ bool ImportIDModelHierarchyParentIDConflictTestXMLString()
 
   scene->SetSceneXMLString(scene1XML);
   scene->SetLoadFromXMLString(1);
+
   // When importing the scene, there is conflict between the existing nodes
   // and added nodes. New IDs are set by Import to the added nodes and the
   // parent node refs should be updated
-  // The node ids in the scene after a proper import should be
-  /// vtkMRMLModelHierarchyNode1 with parent node id NULL
-  /// vtkMRMLModelHierarchyNode2 with parent id vtkMRMLModelHierarchyNode1
-  /// vtkMRMLModelHierarchyNode3 with parent id vtkMRMLModelHierarchyNode2
-  /// vtkMRMLModelHierarchyNode4 with parent id vtkMRMLModelHierarchyNode3
-  /// vtkMRMLModelHierarchyNode5 with parent id vtkMRMLModelHierarchyNode4
-  /// vtkMRMLModelHierarchyNode6 with parent node NULL
-  /// vtkMRMLModelHierarchyNode7 with parent id vtkMRMLModelHierarchyNode6
-  /// vtkMRMLModelHierarchyNode8 with parent id vtkMRMLModelHierarchyNode7
-  /// vtkMRMLModelHierarchyNode9 with parent id vtkMRMLModelHierarchyNode8
-  /// vtkMRMLModelHierarchyNode10 with parent id vtkMRMLModelHierarchyNode9
 
   scene->Import();
-  int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
-  if (numNodes != 10)
+
+
+  // At this point the scene should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelHierarchyNode1 (name: 0)
+  //    |          |-- ref [parentNodeRef] to <null>
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode2 (name: 1)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode1
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode3 (name: 2)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode2
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode4 (name: 3)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode3
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode5 (name: 4)
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode4
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode6 (name: vtkMRMLModelHierarchyNode1)  [was vtkMRMLModelHierarchyNode1]
+  //    |          |-- ref [parentNodeRef] to <null>
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode7 (name: vtkMRMLModelHierarchyNode2)  [was vtkMRMLModelHierarchyNode1]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode6
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode8 (name: vtkMRMLModelHierarchyNode2)  [was vtkMRMLModelHierarchyNode3]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode7
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode9 (name: vtkMRMLModelHierarchyNode2)  [was vtkMRMLModelHierarchyNode4]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode8
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode10 (name: vtkMRMLModelHierarchyNode2) [was vtkMRMLModelHierarchyNode5]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode9
+
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene->GetNumberOfNodes(), 10)
+
+      ||!CheckInt(
+        __LINE__, "GetNumberOfNodesByClass(\"vtkMRMLModelHierarchyNode\")",
+        scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode"), 10)
+      )
     {
-    std::cerr << "Failed to import scene at line" << __LINE__
-              << ", number of nodes: " << numNodes
-              << ", expected 8"
-              << std::endl;
+    PrintModelHierarchyNodes(__LINE__, scene.GetPointer());
     return false;
     }
 
-  // print out
-  PrintModelHierarchyNodes(scene.GetPointer());
+  for (int index = 0; index < 10; ++index)
+    {
+    std::string nodeID = std::string("vtkMRMLModelHierarchyNode") + ToString(index + 1);
+    vtkMRMLModelHierarchyNode* hierarchyNode =
+        vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID(nodeID.c_str()));
 
-  // check that the hierarchies point to the right parent nodes
-  vtkMRMLModelHierarchyNode *hierarchyNode7 = vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelHierarchyNode7"));
-  if (!hierarchyNode7)
-    {
-    std::cerr << "Import failure: imported hierarchy is not using id vtkMRMLModelHierarchyNode7" << std::endl;
-    return false;
-    }
-  if (!hierarchyNode7->GetParentNodeID())
-    {
-    std::cerr << "Import failure: imported hierarchy node 7 does not have a parent node" << std::endl;
-    return false;
-    }
-  if (strcmp(hierarchyNode7->GetParentNodeID(), "vtkMRMLModelHierarchyNode6") != 0)
-    {
-    std::cerr << "Import failure: new model hierarchy node 7 should point to new parent hierarchynode with id vtkMRMLModelHierarchyNode6, instead points to"
-              << hierarchyNode7->GetParentNodeID() << std::endl;
-    return false;
-    }
+    std::string expectedParentID = std::string("vtkMRMLModelHierarchyNode") + ToString(index);
 
-  vtkMRMLModelHierarchyNode *hierarchyNode8 = vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelHierarchyNode8"));
-  if (!hierarchyNode8)
-    {
-    std::cerr << "Import failure: imported hierarchy is not using id vtkMRMLModelHierarchyNode8" << std::endl;
-    return false;
-    }
-  if (!hierarchyNode8->GetParentNodeID())
-    {
-    std::cerr << "Import failure: imported hierarchy node 8 does not have a parent node" << std::endl;
-    return false;
-    }
-  if (strcmp(hierarchyNode8->GetParentNodeID(), "vtkMRMLModelHierarchyNode7") != 0)
-    {
-    std::cerr << "Import failure: new model hierarchy node 8 should point to new parent hierarchynode with id vtkMRMLModelHierarchyNode7, instead points to"
-              << hierarchyNode8->GetParentNodeID() << std::endl;
-    return false;
+    if (!CheckNotNull(
+          __LINE__,
+          std::string("GetNodeByID(\"") + nodeID + "\")", hierarchyNode)
+
+        ||!CheckString(
+            __LINE__, std::string("hierarchyNode") + ToString(index + 1) + "->GetParentNodeID()",
+            hierarchyNode->GetParentNodeID(), (index == 0 || index == 5) ? 0 : expectedParentID.c_str())
+        )
+      {
+      PrintModelHierarchyNodes(__LINE__, scene.GetPointer());
+      return false;
+      }
     }
 
   return true;
@@ -198,7 +282,22 @@ bool ImportIDModelHierarchyParentIDConflictTestFile()
   vtkNew<vtkMRMLModelHierarchyNode> mhn;
   scene1->AddNode(mhn.GetPointer());
 
-  std::cout << "\nFile: Starting scene 1 has " << scene1->GetNumberOfNodes() << " nodes" << std::endl;
+  // At this point the scene1 should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelHierarchyNode1 (name: 0)
+  //    |          |-- ref [parentNodeRef] to <null>
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene1->GetNumberOfNodes(), 1))
+    {
+    return false;
+    }
+
+  //
+  // Save scene1
+  //
 
   std::string filename1 = "ImportIDModelHierarchyParentIDConflictTestFile1.mrml";
   scene1->SetURL(filename1.c_str());
@@ -207,50 +306,99 @@ bool ImportIDModelHierarchyParentIDConflictTestFile()
   // make a second scene file on disk with 5 nodes, the first one conflicting with the one node in the first scene
   vtkNew<vtkMRMLScene> scene2;
 
-  PopulateScene(scene2.GetPointer());
+  if (!PopulateScene(__LINE__, scene2.GetPointer()))
+    {
+    return false;
+    }
 
-  std::cout << "\nFile: Starting scene2 has " << scene2->GetNumberOfNodes() << " nodes" << std::endl;
+  //
+  // Save scene2
+  //
 
   std::string filename2 = "ImportIDModelHierarchyParentIDConflictTestFile2.mrml";
   scene2->SetURL(filename2.c_str());
   scene2->Commit();
+
+  //
+  // Load scene1 and scene2 into the same scene
+  //
 
   // now read into a new scene
   vtkNew<vtkMRMLScene> scene3;
 
   scene3->SetURL(filename1.c_str());
   scene3->Import();
-  std::cout << "After first import, new scene has " << scene3->GetNumberOfNodes() << " nodes" << std::endl;
-  PrintModelHierarchyNodes(scene3.GetPointer());
+
+  // At this point the scene3 should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelHierarchyNode1 (name: 0)
+  //    |          |-- ref [parentNodeRef] to <null>
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene3->GetNumberOfNodes(), 1))
+    {
+    return false;
+    }
+
+  std::cerr << "After first import, new scene has " << scene3->GetNumberOfNodes() << " nodes" << std::endl;
+  PrintModelHierarchyNodes(__LINE__, scene3.GetPointer());
 
   // now import file 2
   scene3->SetURL(filename2.c_str());
   scene3->Import();
-  std::cout << "After second import, scene has " << scene3->GetNumberOfNodes() << " nodes" << std::endl;
-  PrintModelHierarchyNodes(scene3.GetPointer());
 
-  // now expect the scene to have
+  // At this point the scene3 should be:
+  //
+  //  Scene
+  //    |---- vtkMRMLModelHierarchyNode1 (name: 0)
+  //    |          |-- ref [parentNodeRef] to <null>
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode2 (name: 0)                        [was vtkMRMLModelHierarchyNode1]
+  //    |          |-- ref [parentNodeRef] to <null>
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode3 (name: 1)                        [was vtkMRMLModelHierarchyNode2]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode2
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode4 (name: 2)                        [was vtkMRMLModelHierarchyNode3]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode3
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode5 (name: 3)                        [was vtkMRMLModelHierarchyNode4]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode4
+  //    |
+  //    |---- vtkMRMLModelHierarchyNode6 (name: 4)                        [was vtkMRMLModelHierarchyNode5]
+  //    |          |-- ref [parentNodeRef] to vtkMRMLModelHierarchyNode5
+
+  // but now expect the scene to have
   // vtkMRMLModelHierarchyNode1 has parent node id of null
   // vtkMRMLModelHierarchyNode6 has parent node id of null
   // vtkMRMLModelHierarchyNode2 has parent node id of vtkMRMLModelHierarchyNode6
   // vtkMRMLModelHierarchyNode3 has parent node id of vtkMRMLModelHierarchyNode2
   // vtkMRMLModelHierarchyNode4 has parent node id of vtkMRMLModelHierarchyNode3
   // vtkMRMLModelHierarchyNode5 has parent node id of vtkMRMLModelHierarchyNode4
-  vtkMRMLModelHierarchyNode *hierarchyNode2 = vtkMRMLModelHierarchyNode::SafeDownCast(scene3->GetNodeByID("vtkMRMLModelHierarchyNode2"));
-  if (!hierarchyNode2)
+
+  if (!CheckInt(
+        __LINE__, "GetNumberOfNodes",
+        scene3->GetNumberOfNodes(), 6))
     {
-    std::cerr << "Import failure: imported hierarchy is not using id vtkMRMLModelHierarchyNode2" << std::endl;
     return false;
     }
-  if (!hierarchyNode2->GetParentNodeID())
+
+  vtkMRMLModelHierarchyNode *hierarchyNode2 =
+      vtkMRMLModelHierarchyNode::SafeDownCast(scene3->GetNodeByID("vtkMRMLModelHierarchyNode2"));
+
+  if (!CheckNotNull(
+        __LINE__,
+        "GetNodeByID(\"vtkMRMLModelHierarchyNode2\")", hierarchyNode2)
+
+      // New model hierarchy node 2 should point to new parent hierarchynode with id vtkMRMLModelHierarchyNode6
+      ||!CheckString(
+          __LINE__, "hierarchyNode2->GetParentNodeID()",
+          hierarchyNode2->GetParentNodeID(), "vtkMRMLModelHierarchyNode6")
+      )
     {
-    std::cerr << "Import failure: imported hierarchy node 2 does not have a parent node" << std::endl;
-    return false;
-    }
-  if (strcmp(hierarchyNode2->GetParentNodeID(), "vtkMRMLModelHierarchyNode6") != 0)
-    {
-    std::cerr << "Import failure: new model hierarchy node 2 should point to new parent hierarchynode with id vtkMRMLModelHierarchyNode6, instead points to"
-              << hierarchyNode2->GetParentNodeID() << std::endl;
+    PrintModelHierarchyNodes(__LINE__, scene3.GetPointer());
     return false;
     }
 
