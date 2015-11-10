@@ -35,7 +35,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #   * backported ITK ExternalModule support
   #   * backported segfault fix for IsolatedWatershed Threshold (Slicer #4065)
   #   * backported segfault fix for DiffusionTensor3DReconstruction
-  set(ITKv4_GIT_TAG 8989fda9f52874bd1e519b0d947ebda0d50dcb55)
+  #   * backported tweaks for optional ITK Python wrapping
+  set(ITKv4_GIT_TAG 03055046e2693349937339975df4e16b598609c1)
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
