@@ -30,8 +30,12 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
-  # ITK release branch + Slicer patches for CMP0042 + backported ITK ExternalModule support
-  set(ITKv4_GIT_TAG 0f346bf7c5c17f07705a8ba2d0c71fd59367a848)
+  # ITK release branch of 2015-10-23 (38095f7) with
+  #   * Slicer patches for CMP0042 (See Slicer r24522)
+  #   * backported ITK ExternalModule support
+  #   * backported segfault fix for IsolatedWatershed Threshold (Slicer #4065)
+  #   * backported segfault fix for DiffusionTensor3DReconstruction
+  set(ITKv4_GIT_TAG 8989fda9f52874bd1e519b0d947ebda0d50dcb55)
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
