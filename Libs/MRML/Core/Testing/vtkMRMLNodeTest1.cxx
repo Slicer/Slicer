@@ -177,7 +177,7 @@ vtkStandardNewMacro(vtkMRMLStorageNodeTestHelper);
 //---------------------------------------------------------------------------
 int TestBasicMethods();
 bool TestAttribute();
-
+bool TestCopyWithScene();
 bool TestSetAndObserveNodeReferenceID();
 bool TestAddRefrencedNodeIDWithNoScene();
 bool TestAddDelayedReferenceNode();
@@ -203,6 +203,7 @@ int vtkMRMLNodeTest1(int , char * [] )
   bool res = true;
   res = res && (TestBasicMethods() == EXIT_SUCCESS);
   res = res && TestAttribute();
+  res = res && TestCopyWithScene();
   res = res && TestSetAndObserveNodeReferenceID();
   res = res && TestAddRefrencedNodeIDWithNoScene();
   res = res && TestAddDelayedReferenceNode();
@@ -405,6 +406,168 @@ bool TestAttribute()
   res = TestSetAttribute(__LINE__, "Attribute0", ""      , ""      , 1, 1) && res;
   res = TestSetAttribute(__LINE__, "Attribute0", "Value1", "Value1", 1, 1) && res;
   res = TestSetAttribute(__LINE__, "Attribute0", "Value0", "Value0", 1, 0) && res;
+  return res;
+}
+
+namespace
+{
+
+//----------------------------------------------------------------------------
+bool TestCopyWithScene(
+    int line,
+    bool useSameClassNameForSourceAndCopy,
+    bool useCopyWithSceneAfterAddingNode,
+    bool useCopyWithSceneWithSingleModifiedEvent,
+    const std::string& expectedSourceID,
+    const std::string& expectedCopyID)
+{
+  struct ErrorWhenReturn
+  {
+    bool Opt1; bool Opt2; bool Opt3;
+    int Line; bool Activated;
+    ErrorWhenReturn(int line, bool opt1, bool opt2, bool opt3) :
+      Opt1(opt1), Opt2(opt2), Opt3(opt3), Line(line), Activated(true){}
+    ~ErrorWhenReturn()
+    {
+      if (!this->Activated) { return; }
+      std::cerr << "\nLine " << this->Line << " - TestCopyWithScene failed"
+                << "\n\tuseSameClassNameForSourceAndCopy:" << this->Opt1
+                << "\n\tuseCopyWithSceneAfterAddingNode:" << this->Opt2
+                << "\n\tuseCopyWithSceneWithSingleModifiedEvent:" << this->Opt3
+                << std::endl;
+    }
+  };
+  ErrorWhenReturn errorWhenReturn(
+        line,
+        useSameClassNameForSourceAndCopy,
+        useCopyWithSceneAfterAddingNode,
+        useCopyWithSceneWithSingleModifiedEvent);
+
+
+  vtkNew<vtkMRMLScene> scene;
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLNodeTestHelper1>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLStorageNodeTestHelper>::New());
+
+  vtkSmartPointer<vtkMRMLNode> source;
+
+  // case: 1, x, x
+  if (useSameClassNameForSourceAndCopy)
+    {
+    source = vtkSmartPointer<vtkMRMLNodeTestHelper1>::New();
+    }
+  // case: 0, x, x
+  else
+    {
+    source = vtkSmartPointer<vtkMRMLStorageNodeTestHelper>::New();
+    }
+
+  source->SetAttribute("What", "TheSource");
+  scene->AddNode(source.GetPointer());
+
+  if (!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        expectedSourceID.c_str(), source))
+    {
+    return false;
+    }
+
+  // Create a copy
+  const char* name = "BetterThanTheOriginal";
+  vtkNew<vtkMRMLNodeTestHelper1> copy;
+
+  // case: x, 1, x
+  if (useCopyWithSceneAfterAddingNode)
+    {
+    scene->AddNode(copy.GetPointer());
+    }
+
+  vtkNew<vtkMRMLNodeCallback> spy;
+  copy->AddObserver(vtkCommand::ModifiedEvent, spy.GetPointer());
+
+  // case: x, x, 1
+  if (useCopyWithSceneWithSingleModifiedEvent)
+    {
+    copy->CopyWithSceneWithSingleModifiedEvent(source);
+
+    if (!CheckInt(
+          __LINE__, "spy->GetNumberOfModified()",
+          spy->GetNumberOfModified(), 1))
+      {
+      return false;
+      }
+
+    }
+  // case: x, x, 0
+  else
+    {
+    copy->CopyWithScene(source);
+
+    if (!CheckInt(
+          __LINE__, "spy->GetNumberOfModified() > 1",
+          spy->GetNumberOfModified() > 1, true))
+      {
+      return false;
+      }
+
+    }
+
+  std::string uname = scene->GetUniqueNameByString(name);
+  copy->SetName(uname.c_str());
+
+  // case: x, 0, x
+  if (!useCopyWithSceneAfterAddingNode)
+    {
+    scene->AddNode(copy.GetPointer());
+    }
+
+  if (!CheckInt(
+        __LINE__, "scene->GetNumberOfNodes()",
+        scene->GetNumberOfNodes(), 2)
+
+      ||!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        expectedSourceID.c_str(), source)
+
+      ||!CheckNodeInSceneByID(
+        __LINE__, scene.GetPointer(),
+        expectedCopyID.c_str(), copy.GetPointer())
+
+      ||!CheckNodeIdAndName(
+        __LINE__, copy.GetPointer(),
+        expectedCopyID.c_str(), "BetterThanTheOriginal")
+
+      ||!CheckString(
+        __LINE__, "copy->GetAttribute(\"What\")",
+        copy->GetAttribute("What"), "TheSource"))
+    {
+    return false;
+    }
+
+  errorWhenReturn.Activated = false;
+  return true;
+}
+}
+
+//----------------------------------------------------------------------------
+bool TestCopyWithScene()
+{
+  // vtkMRMLNodeTestHelper1, vtkMRMLStorageNodeTestHelper
+
+  bool res = true;
+  //                                  A: SameClass
+  //                                  B: CopyAfterAdd
+  //                                  C: CopySingleModified
+  //
+  //                            (line    , A, B, C, expectedSrcID                  , expectedCopyID           )
+  res = res && TestCopyWithScene(__LINE__, 0, 0, 0, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
+  res = res && TestCopyWithScene(__LINE__, 0, 0, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11");
+//  res = res && TestCopyWithScene(__LINE__, 0, 1, 0, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
+//  res = res && TestCopyWithScene(__LINE__, 0, 1, 1, "vtkMRMLStorageNodeTestHelper1", "vtkMRMLNodeTestHelper11"); // NOT SUPPORTED
+  res = res && TestCopyWithScene(__LINE__, 1, 0, 0, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
+  res = res && TestCopyWithScene(__LINE__, 1, 0, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12");
+//  res = res && TestCopyWithScene(__LINE__, 1, 1, 0, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
+//  res = res && TestCopyWithScene(__LINE__, 1, 1, 1, "vtkMRMLNodeTestHelper11"      , "vtkMRMLNodeTestHelper12"); // NOT SUPPORTED
+
   return res;
 }
 

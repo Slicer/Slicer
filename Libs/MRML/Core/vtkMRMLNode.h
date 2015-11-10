@@ -207,8 +207,16 @@ public:
   /// \brief Copy everything (including Scene and ID) from another node of
   /// the same type.
   ///
-  /// \note The node is not added into the scene of \a node. You must do it
-  /// manually before or after calling CopyWithScene().
+  /// \note The node is **not** added into the scene of \a node. You must do it
+  /// manually **after** calling CopyWithScene(vtkMRMLNode*) using
+  /// vtkMRMLScene::AddNode(vtkMRMLNode*).
+  ///
+  /// \bug Calling vtkMRMLScene::AddNode(vtkMRMLNode*) **before**
+  /// CopyWithScene(vtkMRMLNode*) is **NOT** supported, it will unsynchronize
+  /// the node internal caches.
+  /// See [#4078](http://www.na-mic.org/Bug/view.php?id=4078)
+  ///
+  /// \sa vtkMRMLScene::AddNode(vtkMRMLNode*)
   void CopyWithScene(vtkMRMLNode *node);
 
   /// \brief Reset node attributes to the initial state as defined in the
@@ -510,6 +518,14 @@ public:
     this->SetDisableModifiedEvent(oldMode);
     }
 
+  /// \brief \copybrief CopyWithScene(vtkMRMLNode *)
+  ///
+  /// This function is a wrapper around CopyWithScene(vtkMRMLNode *) ensuring
+  /// that only one vtkCommand::ModifiedEvent is invoked. It internally uses
+  /// the function StartModify() and EndModify(int).
+  ///
+  /// \sa CopyWithScene(vtkMRMLNode *)
+  /// \sa StartModify() EndModify(int)
   void CopyWithSceneWithSingleModifiedEvent (vtkMRMLNode *node)
     {
     int oldMode = this->StartModify();
