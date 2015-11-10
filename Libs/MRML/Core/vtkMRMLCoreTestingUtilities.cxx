@@ -148,10 +148,16 @@ bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene,
   vtkMRMLNode* current = scene->GetNodeByID(nodeID);
   if (current != expected)
     {
+    const char* currentID = (current ? current->GetID() : 0);
+    const char* expectedID = (expected ? expected->GetID() : 0);
     std::cerr << "\nLine " << line << " - GetNodeByID(\"" << nodeID << "\")"
               << " : " << testName << " failed"
+
               << "\n\tcurrent :" << current
+              << ", ID: " << (currentID ? currentID : "(null)")
+
               << "\n\texpected:" << expected
+              << ", ID: " << (expectedID ? expectedID : "(null)")
               << std::endl;
     return false;
     }
