@@ -25,6 +25,8 @@ set(python_DIR "@python_DIR@")
 set(Slicer_BIN_DIR "@Slicer_BIN_DIR@")
 set(Slicer_LIB_DIR "@Slicer_LIB_DIR@")
 set(Slicer_SHARE_DIR "@Slicer_SHARE_DIR@")
+set(Slicer_SOURCE_DIR "@Slicer_SOURCE_DIR@")
+set(Slicer_BINARY_DIR "@Slicer_BINARY_DIR@")
 
 set(python_version_dot "2.7")
 set(pythonpath_subdir lib/python${python_version_dot})
@@ -88,6 +90,13 @@ set(_pythonpath_paths_build
 _listToQtSettingsArray("${_pythonpath_paths_build}" "path" SETTINGS_PYTHONLAUNCHER_PYTHONPATH_PATHS)
 
 set(PYTHON_EXE_SUFFIX_CONFIG "")
+
+if(PYTHON_ENABLE_SSL)
+  set(_src ${Slicer_SOURCE_DIR}/Base/QTCore/Resources/Certs/Slicer.crt)
+  set(_dest ${Slicer_BINARY_DIR}/Slicer-build/${Slicer_SHARE_DIR}/Slicer.crt)
+  configure_file(${_src} ${_dest} COPYONLY)
+  message(STATUS "Copying '${_src}' to '${_dest}'")
+endif()
 
 set(SSL_CERT_FILE_CONFIG "")
 if(PYTHON_ENABLE_SSL)
