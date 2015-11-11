@@ -758,7 +758,15 @@ void vtkMRMLMarkupsDisplayableManager2D::UpdateWidgetVisibility(vtkMRMLMarkupsNo
          widget->GetRepresentation()->GetRenderer() &&
          widget->GetRepresentation()->GetRenderer()->IsActiveCameraCreated())
        {
-       widget->SetEnabled(1);
+       if (this->IsInLightboxMode())
+         {
+         // TBD: issue #1690
+         vtkDebugMacro("NOT setting widget enabled because in light box mode!");
+         }
+       else
+         {
+         widget->SetEnabled(1);
+         }
        }
      else
        {
@@ -799,6 +807,13 @@ void vtkMRMLMarkupsDisplayableManager2D::OnMRMLSliceNodeModifiedEvent()
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsDisplayableManager2D::IsWidgetDisplayableOnSlice(vtkMRMLMarkupsNode* node, int markupIndex)
 {
+
+  if (this->IsInLightboxMode())
+    {
+    // TBD: issue 1690: disable fiducials in light box mode as they appear
+    // in the wrong location
+    return false;
+    }
 
   vtkMRMLSliceNode* sliceNode = this->GetMRMLSliceNode();
   // if no slice node, it doesn't constrain the visibility, so return that

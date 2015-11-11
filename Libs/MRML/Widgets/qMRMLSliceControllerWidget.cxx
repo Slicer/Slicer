@@ -24,12 +24,14 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMenu>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QWidgetAction>
 
 // CTK includes
 #include <ctkDoubleSlider.h>
+#include <ctkMessageBox.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
 #include <ctkDoubleSpinBox.h>
@@ -2157,6 +2159,27 @@ void qMRMLSliceControllerWidget::setSliceModelMode(int mode)
 void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
 {
   Q_D(qMRMLSliceControllerWidget);
+  // TBD: issue #1690: disable fiducials in light box mode
+  if (rows * columns != 1)
+    {
+    ctkMessageBox disableFidsMsgBox;
+    disableFidsMsgBox.setWindowTitle("Disable fiducials?");
+    QString labelText = QString("Fiducials are disabled in light box mode. Press Continue to enter light box mode without fiducials.");
+    disableFidsMsgBox.setText(labelText);
+    QPushButton *continueButton =
+       disableFidsMsgBox.addButton(tr("Continue"), QMessageBox::AcceptRole);
+    disableFidsMsgBox.addButton(QMessageBox::Cancel);
+    disableFidsMsgBox.setIcon(QMessageBox::Question);
+    disableFidsMsgBox.setDontShowAgainVisible(true);
+    disableFidsMsgBox.setDontShowAgainSettingsKey("SliceController/AlwaysEnterLightBoxWithDisabledFiducials");
+    disableFidsMsgBox.exec();
+    if (disableFidsMsgBox.clickedButton() != continueButton)
+      {
+      d->actionLightbox1x1_view->setChecked(1);
+      return;
+      }
+    }
+
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
   if (!nodes.GetPointer())
     {

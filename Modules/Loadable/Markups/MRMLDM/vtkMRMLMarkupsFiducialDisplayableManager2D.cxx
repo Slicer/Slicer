@@ -526,6 +526,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
   // can have a 3d or 2d handle depending on if in light box mode or not
   vtkOrientedPolygonalHandleRepresentation3D *handleRep =
     vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(n));
+  // might be in lightbox mode where using a 2d point handle
   vtkPointHandleRepresentation2D *pointHandleRep =
     vtkPointHandleRepresentation2D::SafeDownCast(seedRepresentation->GetHandleRepresentation(n));
 
@@ -551,7 +552,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
   bool fidVisible = true;
   if (displayNode->GetVisibility() == 0 ||
       fiducialNode->GetNthFiducialVisibility(n) == 0 ||
-      this->IsWidgetDisplayableOnSlice(fiducialNode, n) == 0)
+      !this->IsWidgetDisplayableOnSlice(fiducialNode, n))
     {
     fidVisible = false;
     }
@@ -698,7 +699,13 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       vtkSeedRepresentation *seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
       if (seedRepresentation)
         {
-        seedRepresentation->GetHandleRepresentation()->DisablePicking();
+        vtkOrientedPolygonalHandleRepresentation3D *orientedHandleRep =
+          vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(
+            seedRepresentation->GetHandleRepresentation());
+        if (orientedHandleRep)
+          {
+          orientedHandleRep->DisablePicking();
+          }
         }
 #else
       seedWidget->GetSeed(n)->EnabledOff();
@@ -892,6 +899,10 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       // use the unselected color
       pointHandleRep->GetProperty()->SetColor(displayNode->GetColor());
       }
+    // update visibility and enabled (if the point handle is still enabled
+    // while invisible, mousing near it will show it)
+    pointHandleRep->SetVisibility(fidVisible);
+    seedWidget->GetSeed(n)->SetEnabled(fidVisible);
     }
 }
 
@@ -1003,6 +1014,14 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
     {
     vtkDebugMacro("WARNING: updated the handle type");
     seedWidget->CreateDefaultRepresentation();
+    // need to reset any old handles
+    int numSeeds = seedRepresentation->GetNumberOfSeeds();
+    // remove seeds from the end of the list
+    for (int n = numSeeds - 1; n >= 0; --n)
+      {
+      seedWidget->DeleteSeed(n);
+      }
+    // set nth seed will recreate the handles
     }
 
   // iterate over the fiducials in this markup
@@ -1024,7 +1043,12 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
       vtkHandleRepresentation *handleRepresentation = handleWidget->GetHandleRepresentation();
       if (handleRepresentation)
         {
-        handleRepresentation->DisablePicking();
+        vtkOrientedPolygonalHandleRepresentation3D *orientedHandleRep =
+          vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(handleRepresentation);
+        if (orientedHandleRep)
+          {
+          orientedHandleRep->DisablePicking();
+          }
         }
       seed++;
       }
