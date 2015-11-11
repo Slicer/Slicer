@@ -40,3 +40,4 @@ add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} ${CMAKE_COMMAND}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/run_MergeModelsTest.cmake
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+set_property(TEST ${testname} PROPERTY DEPENDS ${CLP}TestVtp)
