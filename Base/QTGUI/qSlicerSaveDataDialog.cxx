@@ -490,7 +490,8 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
   // Make sure series number is not one digit (names like "1: something" confuse save dialog, see http://www.na-mic.org/Bug/view.php?id=3991)
   // TODO: This is a workaround, remove if good fix found
   QString safeNodeName(node->GetName());
-  if (safeNodeName.at(0).isNumber() && safeNodeName.at(1) == QChar(':'))
+  if (safeNodeName.length() > 1 &&
+      safeNodeName.at(0).isNumber() && safeNodeName.at(1) == QChar(':'))
     {
     safeNodeName.insert(0, tr("0"));
     }
