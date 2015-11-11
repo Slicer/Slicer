@@ -86,6 +86,7 @@ void qMRMLSceneModelPrivate::init()
 
   q->setNameColumn(0);
   q->setListenNodeModifiedEvent(qMRMLSceneModel::OnlyVisibleNodes);
+  q->setLazyUpdate(true); // XXX See issues #4081, #3462, #4080 and #2849
 }
 
 //------------------------------------------------------------------------------
