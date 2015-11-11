@@ -49,7 +49,6 @@ int main( int argc, char * argv[] )
 
   try
   {
-
   // Label operations
   int includeOperation = 0; // 0-OR; 1-AND
   if (PassOperation == std::string("OR"))
@@ -107,7 +106,6 @@ int main( int argc, char * argv[] )
   vtkSmartPointer<vtkPolyData> input;
   if (extension == std::string(".vtk"))
     {
-    vtkPolyData* output = 0;
     vtkNew<vtkPolyDataReader> readerPD;
     readerPD->SetFileName(InputFibers.c_str());
     readerPD->Update();
@@ -134,15 +132,6 @@ int main( int argc, char * argv[] )
   trans->Identity();
   trans->PreMultiply();
   trans->SetMatrix(Label_A_RASToIJK.GetPointer());
-
-  /**
-  // Trans from IJK to RAS
-  trans->Inverse();
-  // Take into account spacing to compute Scaled IJK
-  trans->Scale(1/sp[0],1/sp[1],1/sp[2]);
-  // now it's RAS to scaled IJK
-  trans->Inverse();
- ***/
 
   // 2. Find polylines
   int inExt[6];
@@ -279,8 +268,6 @@ int main( int argc, char * argv[] )
       }
     } //for (inCellId=0, inLines->InitTraversal();
 
-  // Add lines
-
   //Preallocate PolyData elements
   vtkNew<vtkPolyData> outFibers;
 
@@ -292,26 +279,22 @@ int main( int argc, char * argv[] )
   outFibersCellArray->Allocate(numNewPts+numNewCells);
   outFibers->SetLines(outFibersCellArray.GetPointer());
 
-  //outFibersCellArray->SetNumberOfCells(numNewCells);
-  //outFibersCellArray = outFibers->GetLines();
+  // If the input has point data, including tensors or scalar arrays, copy them to the output.
+  // Currently this ignores cell data, which may be added in the future if needed.
+  // Check for point data arrays to keep and allocate them.
+  int numberArrays = input->GetPointData()->GetNumberOfArrays();
 
-  //vtkIdTypeArray *cellArray=outFibersCellArray->GetData();
-  //cellArray->SetNumberOfTuples(numNewPts+numNewCells);
-
-  // if the input has tensors, copy them to the output
-  vtkDataArray *oldTensors = input->GetPointData()->GetTensors();
-  vtkSmartPointer<vtkFloatArray> newTensors = vtkSmartPointer<vtkFloatArray>::New();
-  if (oldTensors)
+  for (int arrayIdx = 0; arrayIdx < numberArrays; arrayIdx++)
     {
-    newTensors->SetNumberOfComponents(9);
-    newTensors->Allocate(9*numNewPts);
-    outFibers->GetPointData()->SetTensors(newTensors);
-    newTensors = static_cast<vtkFloatArray *> (outFibers->GetPointData()->GetTensors());
+      vtkDataArray *oldArray = input->GetPointData()->GetArray(arrayIdx);
+      vtkSmartPointer<vtkFloatArray> newArray = vtkSmartPointer<vtkFloatArray>::New();
+      newArray->SetNumberOfComponents(oldArray->GetNumberOfComponents());
+      newArray->SetName(oldArray->GetName());
+      newArray->Allocate(newArray->GetNumberOfComponents()*numNewPts);
+      outFibers->GetPointData()->AddArray(newArray);
     }
 
-
   vtkIdType ptId = 0;
-  double tensor[9];
 
   for (inCellId=0, inLines->InitTraversal();
        inLines->GetNextCell(npts,pts); inCellId++)
@@ -324,21 +307,33 @@ int main( int argc, char * argv[] )
         inPts->GetPoint(pts[j],p);
         points->InsertPoint(ptId,p);
         outFibersCellArray->InsertCellPoint(ptId);
-        if (oldTensors)
+
+        // Copy point data from input fiber
+        for (int arrayIdx = 0; arrayIdx < numberArrays; arrayIdx++)
           {
-          oldTensors->GetTuple(pts[j],tensor);
-          newTensors->InsertNextTuple(tensor);
+            vtkDataArray *newArray = outFibers->GetPointData()->GetArray(arrayIdx);
+            vtkDataArray *oldArray = input->GetPointData()->GetArray(newArray->GetName());
+            newArray->InsertNextTuple(oldArray->GetTuple(pts[j]));
           }
+
         ptId++;
         }
+      }
+    }
+
+  // Copy array attributes from input (TENSORS, scalars, etc)
+  for (int arrayIdx = 0; arrayIdx < numberArrays; arrayIdx++)
+    {
+    int attr = input->GetPointData()->IsArrayAnAttribute(arrayIdx);
+    if (attr >= 0)
+      {
+      outFibers->GetPointData()->SetActiveAttribute(input->GetPointData()->GetArray(arrayIdx)->GetName(), attr);
       }
     }
 
   //3. Save the output in VTK or VTP
   std::string extension2 = vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str());
   std::string extension_output = vtksys::SystemTools::LowerCase(extension2);
-  // The above two lines duplicate the below function, but we can't include vtkMRMLStorageNode.h here.
-  //std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(InputFibers.c_str());
   if (extension_output == std::string(".vtk"))
     {
       vtkNew<vtkPolyDataWriter> writer;
