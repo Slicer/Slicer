@@ -684,9 +684,9 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       // if the fiducial is visible, turn off projection
       vtkSeedWidget* fiducialSeed = vtkSeedWidget::SafeDownCast(this->Helper->GetPointProjectionWidget(fiducialNode->GetNthMarkupID(n)));
       if (fiducialSeed && fiducialSeed->GetSeed(0))
-    {
+        {
         fiducialSeed->GetSeed(0)->Off();
-    }
+        }
       }
     else
       {
@@ -970,7 +970,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
     {
     if (handleRep)
       {
-      vtkDebugMacro("SetNthSeed: have a 3d handle representation in 2d light box, resetting it.");
+      vtkDebugMacro("PropagateMRMLToWidget: have a 3d handle representation in 2d light box, resetting it.");
       vtkNew<vtkPointHandleRepresentation2D> handle;
       seedRepresentation->SetHandleRepresentation(handle.GetPointer());
       updateHandleType = true;
@@ -983,7 +983,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
     {
     if (pointHandleRep)
       {
-      vtkDebugMacro("SetNthSeed: Not in light box, but have a point handle.");
+      vtkDebugMacro("PropagateMRMLToWidget: Not in light box, but have a point handle.");
       vtkNew<vtkOrientedPolygonalHandleRepresentation3D> handle;
       // default to a sphere glyph, update in propagate mrml to widget
       vtkNew<vtkMarkupsGlyphSource2D> glyphSource;
