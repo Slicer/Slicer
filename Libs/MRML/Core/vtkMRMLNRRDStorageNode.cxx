@@ -487,7 +487,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
       rep = atoi(value.c_str());
       for (int i=0;i<rep-1;i++) {
         grad->InsertNextTuple3(g[0],g[1],g[2]);
-        factor->InsertNextValue(sqrt(g[0]*g[0]+g[1]*g[1]+g[2]*g[2]));
+        factor->InsertNextValue(sqrt( g[0]*g[0]+g[1]*g[1]+g[2]*g[2] ));
       }
     }
    pos = (unsigned int)keys.find(tag,pos+1);
@@ -508,7 +508,9 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
   bvalues->SetNumberOfTuples(grad->GetNumberOfTuples());
   for (int i=0; i<grad->GetNumberOfTuples();i++)
     {
-    bvalues->SetValue(i,bval*factor->GetValue(i)/range[1]);
+    // note: this is norm^2, per the NA-MIC NRRD DWI convention
+    // http://wiki.na-mic.org/Wiki/index.php/NAMIC_Wiki:DTI:Nrrd_format
+    bvalues->SetValue(i, bval * (pow(factor->GetValue(i)/range[1], 2)));
     }
   return 1;
 }

@@ -819,7 +819,6 @@ MRMLIDImageIO
 
     for (unsigned int j=0; j < 3; ++j)
       {
-//      gradient[j] = g[j] * dw->GetBValue(i) / maxBValue;
         gradient[j] = g[j];
       }
 
@@ -920,7 +919,7 @@ MRMLIDImageIO
       gradientSS >> gradient[0];
       gradientSS >> gradient[1];
       gradientSS >> gradient[2];
-/*
+
       // gradient length is the b-value / max_b-value
       double sum = 0.0;
       for (unsigned int i=0; i < 3; ++i)
@@ -928,14 +927,10 @@ MRMLIDImageIO
         sum += (gradient[i] * gradient[i]);
         }
       sum = sqrt(sum);
-      bvalues.push_back( sum * maxBValue );
-
-      if (sum > 0)
-        for (unsigned int i=0; i < 3; ++i)
-          {
-            gradient[i] /= sum;
-          }
-*/
+      // for multiple b-values, scale factor is `sqrt(b/b_max)`
+      // per NA-MIC DWI convention. so we take `norm^2 * b_max`
+      // to get back the original b-values.
+      bvalues.push_back( pow(sum,2) * maxBValue );
       gradients.push_back(gradient);
       }
     }

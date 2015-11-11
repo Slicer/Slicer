@@ -319,7 +319,10 @@ void vtkNRRDWriter::WriteData()
         {
         grad=this->DiffusionGradients->GetTuple3(ig);
         bVal = this->BValues->GetValue(ig);
-        factor = bVal/maxbVal;
+        // for multiple b-values, scale factor is `sqrt(b/b_max)`
+        // per NA-MIC DWI convention. so we take `norm^2 * b_max`
+        // to get back the original b-values.
+        factor = sqrt(bVal/maxbVal);
         sprintf(key,"%s%04d","DWMRI_gradient_",ig);
         sprintf(value,"%f %f %f",grad[0]*factor, grad[1]*factor, grad[2]*factor);
         nrrdKeyValueAdd(nrrd,key, value);
