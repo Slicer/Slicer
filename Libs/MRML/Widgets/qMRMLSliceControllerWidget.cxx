@@ -2160,7 +2160,10 @@ void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
 {
   Q_D(qMRMLSliceControllerWidget);
   // TBD: issue #1690: disable fiducials in light box mode
-  if (rows * columns != 1)
+  int AA_EnableTesting = 1001; // XXX Copied from qSlicerCoreApplication
+  bool isTestingEnabled = QCoreApplication::testAttribute(
+        static_cast<Qt::ApplicationAttribute>(AA_EnableTesting));
+  if (rows * columns != 1 && !isTestingEnabled)
     {
     ctkMessageBox disableFidsMsgBox;
     disableFidsMsgBox.setWindowTitle("Disable fiducials?");
