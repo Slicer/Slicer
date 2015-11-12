@@ -164,20 +164,35 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
     QColor color = index.data(this->colorRole(index)).value<QColor>();
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     Q_ASSERT(colorPicker);
-    colorPicker->blockSignals(true);
-    colorPicker->setColor(color);
-    colorPicker->blockSignals(false);
-    if (colorPicker->property("changeColorOnSet").toBool())
+    if (colorPicker) // colorPicker may be NULL, don't make the application crash when that happens
       {
-      colorPicker->setProperty("changeColorOnSet", false);
-      colorPicker->changeColor();
+      colorPicker->blockSignals(true);
+      colorPicker->setColor(color);
+      colorPicker->blockSignals(false);
+      if (colorPicker->property("changeColorOnSet").toBool())
+        {
+        colorPicker->setProperty("changeColorOnSet", false);
+        colorPicker->changeColor();
+        }
+      }
+    else
+      {
+      qWarning("qMRMLItemDelegate::setEditorData failed: colorPicker is invalid");
       }
     }
   else if (this->is0To1Value(index))
     {
     ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     double value = index.data(Qt::EditRole).toDouble();
-    sliderWidget->setValue(value);
+    Q_ASSERT(sliderWidget);
+    if (sliderWidget) // sliderWidget may be NULL, don't make the application crash when that happens
+      {
+      sliderWidget->setValue(value);
+      }
+    else
+      {
+      qWarning("qMRMLItemDelegate::setEditorData failed: sliderWidget is invalid");
+      }
     }
   else
     {
