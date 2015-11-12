@@ -9,7 +9,10 @@ endif()
 # version number is changed, and the updated __version__.py should be committed
 # at the same time. This is mainly to ensure that __version__.py is kept in
 # sync.
-configure_file("__version__.py.in" "__version__.py" @ONLY)
+configure_file(
+  "__version__.py.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/__version__.py"
+  @ONLY)
 
 set(SlicerWizard_PYTHON_SCRIPTS
   __init__.py
