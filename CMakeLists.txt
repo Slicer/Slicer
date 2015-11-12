@@ -465,13 +465,13 @@ if(NOT DEFINED Slicer_VERSION_MAJOR)
   set(Slicer_VERSION_MAJOR "4")
 endif()
 if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "4")
+  set(Slicer_VERSION_MINOR "5")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
 endif()
 # Releases define a tweak level
-#set(Slicer_VERSION_TWEAK 0)
+set(Slicer_VERSION_TWEAK 0)
 #set(Slicer_VERSION_RC 0)
 
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
