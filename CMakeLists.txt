@@ -471,7 +471,7 @@ if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
 endif()
 # Releases define a tweak level
-set(Slicer_VERSION_TWEAK 1)
+#set(Slicer_VERSION_TWEAK 1)
 #set(Slicer_VERSION_RC 0)
 
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
