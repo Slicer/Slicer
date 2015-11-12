@@ -1,4 +1,4 @@
-if(DEFINED Slicer_VERSION_TWEAK) # This is defined only for release
+if(NOT "${Slicer_VERSION_TWEAK}" STREQUAL "") # This is set only for release
   set(Slicer_VERSION_TWEAK_OR_DEV "${Slicer_VERSION_TWEAK}")
 else()
   set(Slicer_VERSION_TWEAK_OR_DEV "\"dev0\"")

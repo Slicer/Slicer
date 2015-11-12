@@ -427,7 +427,7 @@ macro(slicerMacroBuildApplication)
         MACOSX_BUNDLE_INFO_PLIST "${Slicer_CMAKE_DIR}/MacOSXBundleInfo.plist.in"
         LINK_FLAGS ${link_flags}
       )
-    if(DEFINED Slicer_VERSION_TWEAK)
+    if(NOT "${Slicer_VERSION_TWEAK}" STREQUAL "") # This is set only for release
       set_target_properties(${slicerapp_target} PROPERTIES
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}"
         )

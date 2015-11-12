@@ -9,7 +9,7 @@ if(SPHINX_BUILD_EXECUTABLE)
   # Determine wiki documentation version string
   set(doc_version "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
   set(wiki_version "Nightly")
-  if(DEFINED Slicer_VERSION_TWEAK) # This is defined only for release
+  if(NOT "${Slicer_VERSION_TWEAK}" STREQUAL "") # This is set only for release
     set(wiki_version "${doc_version}")
   endif()
 

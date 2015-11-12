@@ -482,9 +482,10 @@ if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
   set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
 endif()
 
-if(NOT DEFINED Slicer_VERSION_TWEAK)
-  # if it's not a release, use the date as a tweak
-  set(Slicer_VERSION_TWEAK "${Slicer_BUILDDATE}")
+if("${Slicer_VERSION_TWEAK}" STREQUAL "")
+  set(_version_qualifier "-${Slicer_BUILDDATE}")
+elseif("${Slicer_VERSION_TWEAK}" GREATER 0)
+  set(_version_qualifier "-${Slicer_VERSION_TWEAK}")
 endif()
 
 set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
@@ -492,9 +493,8 @@ set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 if(Slicer_VERSION_RC)
   set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-rc${Slicer_VERSION_RC}")
 endif()
-if(Slicer_VERSION_TWEAK GREATER 0)
-  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_VERSION_TWEAK}")
-endif()
+set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}${_version_qualifier}")
+
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")
 message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
 
