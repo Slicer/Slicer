@@ -250,15 +250,16 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 {
-  int disabledModify = this->StartModify();
-
-  Superclass::Copy(anode);
   vtkMRMLTransformNode *node = (vtkMRMLTransformNode *) anode;
   if (node==NULL)
     {
     vtkErrorMacro("vtkMRMLTransformNode::Copy: input node type is incompatible");
     return;
     }
+
+  int disabledModify = this->StartModify();
+
+  Superclass::Copy(anode);
 
   this->SetReadAsTransformToParent(node->GetReadAsTransformToParent());
 
