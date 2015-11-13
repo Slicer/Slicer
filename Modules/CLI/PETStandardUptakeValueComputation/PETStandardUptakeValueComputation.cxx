@@ -737,11 +737,11 @@ double DecayCorrection(parameters & list, double inVal )
 // ...
 // ...............................................................................................
 // ...
-const char * MapLabelIDtoColorName( int id, std::string colorFile )
+std::string MapLabelIDtoColorName( int id, std::string colorFile )
 {
   // use the colour table that was passed in with the VOI volume
 
-  const char *colorName = "";
+  std::string colorName;
 
   vtkNew<vtkMRMLColorTableNode> colorNode;
   vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
