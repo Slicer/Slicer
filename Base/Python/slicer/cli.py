@@ -45,22 +45,24 @@ def setNodeParameters(node, parameters):
     else:
       print "parameter ", key, " has unsupported type ", value.__class__.__name__
 
-def runSync(module, node=None, parameters=None, delete_temporary_files=True):
+def runSync(module, node=None, parameters=None, delete_temporary_files=True, update_display=True):
   """Run a CLI synchronously, optionally given a node with optional parameters,
   returning the node (or the new one if created)
   node: existing parameter node (None by default)
   parameters: dictionary of parameters for cli (None by default)
   delete_temporary_files: remove temp files created during exectuion (True by default)
+  update_display: show output nodes after completion
   """
   return run(module, node=node, parameters=parameters, wait_for_completion=True, delete_temporary_files=delete_temporary_files)
 
-def run(module, node = None, parameters = None, wait_for_completion = False, delete_temporary_files = True):
+def run(module, node = None, parameters = None, wait_for_completion = False, delete_temporary_files = True, update_display=True):
   """Runs a CLI, optionally given a node with optional parameters, returning
   back the node (or the new one if created)
   node: existing parameter node (None by default)
   parameters: dictionary of parameters for cli (None by default)
   wait_for_completion: block if True (False by default)
   delete_temporary_files: remove temp files created during exectuion (True by default)
+  update_display: show output nodes after completion
   """
   import slicer.util
   if node:
@@ -75,9 +77,9 @@ def run(module, node = None, parameters = None, wait_for_completion = False, del
   logic.SetDeleteTemporaryFiles(1 if delete_temporary_files else 0)
 
   if wait_for_completion:
-      logic.ApplyAndWait(node)
+      logic.ApplyAndWait(node, update_display)
   else:
-      logic.Apply(node)
+      logic.Apply(node, update_display)
   #widget = slicer.util.getModuleGui(module)
   #if not widget:
   #  print "Could not find widget representation for module"
