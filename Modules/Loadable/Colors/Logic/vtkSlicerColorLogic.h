@@ -44,12 +44,20 @@ class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic
   virtual std::vector<std::string> FindDefaultColorFiles();
   virtual std::vector<std::string> FindUserColorFiles();
 
+  /// look for terminology-color files in the
+  /// Base/Logic/Resources/ColorFiles/Terminology
+  /// directory and put their names in the TerminologyColorFiles list.
+  /// These files define a linking between a Slicer color node and
+  /// a pre defined standard terminology.
+  virtual std::vector<std::string> FindDefaultTerminologyColorFiles();
+
 protected:
   vtkSlicerColorLogic();
   ~vtkSlicerColorLogic();
   vtkSlicerColorLogic(const vtkSlicerColorLogic&);
   void operator=(const vtkSlicerColorLogic&);
   std::vector<std::string> FindColorFiles(const std::vector<std::string>& directories);
+  std::vector<std::string> FindTerminologyColorFiles(const std::vector<std::string>& directories);
 };
 
 #endif

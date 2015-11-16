@@ -32,6 +32,7 @@
 #include "ui_qSlicerColorsModuleWidget.h"
 
 // qMRMLWidget includes
+#include "qMRMLColorModel.h"
 #include "qMRMLThreeDView.h"
 #include "qMRMLThreeDWidget.h"
 
@@ -198,6 +199,13 @@ void qSlicerColorsModuleWidget::setMRMLScene(vtkMRMLScene *scene)
   Q_D(qSlicerColorsModuleWidget);
   this->qSlicerAbstractModuleWidget::setMRMLScene(scene);
   d->setDefaultColorNode();
+
+  // make sure the table view has the logic set so that it can access terminologies
+  if (d->ColorView &&
+      d->ColorView->colorModel())
+    {
+    d->ColorView->colorModel()->setMRMLColorLogic(d->colorLogic());
+    }
 }
 
 //-----------------------------------------------------------------------------

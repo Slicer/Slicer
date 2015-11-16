@@ -62,6 +62,7 @@ public:
   vtkSmartPointer<vtkMRMLColorNode>   MRMLColorNode;
   bool                                NoneEnabled;
   bool                                LabelInColor;
+  vtkSmartPointer<vtkMRMLColorLogic>  ColorLogic;
 };
 
 #endif

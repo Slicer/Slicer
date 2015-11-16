@@ -17,6 +17,7 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLAbstractLogicSceneEventsTest.cxx
   vtkMRMLColorLogicTest1.cxx
+  vtkMRMLColorLogicTest2.cxx
   vtkMRMLDisplayableHierarchyLogicTest1.cxx
   vtkMRMLLayoutLogicCompareTest.cxx
   vtkMRMLLayoutLogicTest1.cxx
@@ -46,6 +47,7 @@ endmacro()
 
 simple_test( vtkMRMLAbstractLogicSceneEventsTest )
 simple_test( vtkMRMLColorLogicTest1 )
+simple_test( vtkMRMLColorLogicTest2 )
 simple_test( vtkMRMLDisplayableHierarchyLogicTest1 )
 simple_test( vtkMRMLModelHierarchyLogicTest1 )
 simple_test( vtkMRMLLayoutLogicCompareTest )
