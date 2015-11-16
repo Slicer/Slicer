@@ -42,7 +42,7 @@ foreach(filename ${terminology_filenames})
     )
   install(
     FILES ${terminology_filepath}
-    DESTINATION ${Slicer_INSTALL_SHARE_DIR}/ColorFiles/${Slicer_TERMINOLOGY_DIR}
+    DESTINATION ${Slicer_INSTALL_SHARE_DIR}/${Slicer_TERMINOLOGY_DIR}
     COMPONENT Runtime
     )
 endforeach()
