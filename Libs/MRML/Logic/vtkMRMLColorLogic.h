@@ -57,24 +57,9 @@ public:
       {
       }
 
-      void Print(std::ostream& os)
-      {
-        vtkIndent indent;
-        this->PrintSelf(os, indent.GetNextIndent());
-      }
-      std::ostream& operator<<(std::ostream& os)
-      {
-        this->Print(os);
-        return os;
-      }
-
-      void PrintSelf(std::ostream &os, vtkIndent indent)
-      {
-        os << indent << "Code value: " << CodeValue << std::endl
-           << indent << "Code scheme designator: " << CodingSchemeDesignator << std::endl
-           << indent << "Code meaning: " << CodeMeaning
-           << std::endl;
-      }
+      void Print(std::ostream& os);
+      std::ostream& operator<<(std::ostream& os);
+      void PrintSelf(std::ostream &os, vtkIndent indent);
   };
 
   struct ColorLabelCategorization
@@ -86,30 +71,9 @@ public:
     StandardTerm AnatomicRegion;
     StandardTerm AnatomicRegionModifier;
 
-      void Print(std::ostream& os)
-      {
-        vtkIndent indent;
-        this->PrintSelf(os, indent.GetNextIndent());
-      }
-      std::ostream& operator<<(std::ostream& os)
-      {
-        this->Print(os);
-        return os;
-      }
-      void PrintSelf(ostream &os, vtkIndent indent){
-      os << "Label: " << LabelValue << std::endl;
-      os << "Segmented property category:\n";
-      SegmentedPropertyCategory.PrintSelf(os, indent);
-      os << "Segmented property type:\n";
-      SegmentedPropertyType.PrintSelf(os, indent);
-      os << "Segmented property type modifier:\n";
-      SegmentedPropertyTypeModifier.PrintSelf(os, indent);
-      os << "Anatomic region:\n";
-      AnatomicRegion.PrintSelf(os, indent);
-      os << "Antatomic region modifier:\n";
-      AnatomicRegionModifier.PrintSelf(os, indent);
-      os << std::endl;
-    };
+    void Print(std::ostream& os);
+    std::ostream& operator<<(std::ostream& os);
+    void PrintSelf(ostream &os, vtkIndent indent);
     };
 
 

@@ -44,6 +44,53 @@ vtkStandardNewMacro(vtkMRMLColorLogic);
 
 const char * vtkMRMLColorLogic::DEFAULT_TERMINOLOGY_NAME = "GenericAnatomyColors";
 
+void vtkMRMLColorLogic::StandardTerm::Print(std::ostream& os)
+{
+  vtkIndent indent;
+  this->PrintSelf(os, indent.GetNextIndent());
+}
+std::ostream& vtkMRMLColorLogic::StandardTerm::operator<<(std::ostream& os)
+{
+  this->Print(os);
+  return os;
+}
+
+void vtkMRMLColorLogic::StandardTerm::PrintSelf(std::ostream &os, vtkIndent indent)
+{
+  os << indent << "Code value: " << CodeValue.c_str() << std::endl
+     << indent << "Code scheme designator: " << CodingSchemeDesignator.c_str() << std::endl
+     << indent << "Code meaning: " << CodeMeaning.c_str()
+     << std::endl;
+}
+
+
+void vtkMRMLColorLogic::ColorLabelCategorization::Print(std::ostream& os)
+{
+  vtkIndent indent;
+  this->PrintSelf(os, indent.GetNextIndent());
+}
+std::ostream& vtkMRMLColorLogic::ColorLabelCategorization::operator<<(std::ostream& os)
+{
+  this->Print(os);
+  return os;
+}
+
+void vtkMRMLColorLogic::ColorLabelCategorization::PrintSelf(ostream &os, vtkIndent indent)
+{
+  os << "Label: " << LabelValue << std::endl;
+  os << "Segmented property category:\n";
+  SegmentedPropertyCategory.PrintSelf(os, indent);
+  os << "Segmented property type:\n";
+  SegmentedPropertyType.PrintSelf(os, indent);
+  os << "Segmented property type modifier:\n";
+  SegmentedPropertyTypeModifier.PrintSelf(os, indent);
+  os << "Anatomic region:\n";
+  AnatomicRegion.PrintSelf(os, indent);
+  os << "Antatomic region modifier:\n";
+  AnatomicRegionModifier.PrintSelf(os, indent);
+  os << std::endl;
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLColorLogic::vtkMRMLColorLogic()
 {
