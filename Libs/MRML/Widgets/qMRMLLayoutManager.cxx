@@ -716,7 +716,6 @@ void qMRMLLayoutManager::onViewportChanged()
 //------------------------------------------------------------------------------
 qMRMLSliceWidget* qMRMLLayoutManager::sliceWidget(const QString& name)const
 {
-  Q_D(const qMRMLLayoutManager);
   return qobject_cast<qMRMLSliceWidget*>(
     this->mrmlViewFactory("vtkMRMLSliceNode")->viewWidget(name));
 }
@@ -724,28 +723,24 @@ qMRMLSliceWidget* qMRMLLayoutManager::sliceWidget(const QString& name)const
 //------------------------------------------------------------------------------
 QStringList qMRMLLayoutManager::sliceViewNames() const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLSliceNode")->viewNodeNames();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::threeDViewCount()const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLViewNode")->viewCount();
 }
 
 //------------------------------------------------------------------------------
 int qMRMLLayoutManager::chartViewCount()const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLChartViewNode")->viewCount();
 }
 
 //------------------------------------------------------------------------------
 qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
 {
-  Q_D(const qMRMLLayoutManager);
   return qobject_cast<qMRMLThreeDWidget*>(
     this->mrmlViewFactory("vtkMRMLViewNode")->viewWidget(id));
 }
@@ -753,7 +748,6 @@ qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
 //------------------------------------------------------------------------------
 qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
 {
-  Q_D(const qMRMLLayoutManager);
   return qobject_cast<qMRMLChartWidget*>(
     this->mrmlViewFactory("vtkMRMLChartViewNode")->viewWidget(id));
 }
@@ -761,7 +755,6 @@ qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
 //------------------------------------------------------------------------------
 vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 {
-  Q_D(const qMRMLLayoutManager);
   qMRMLLayoutSliceViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutSliceViewFactory*>(
       this->mrmlViewFactory("vtkMRMLSliceNode"));
@@ -771,7 +764,6 @@ vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 //------------------------------------------------------------------------------
 void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 {
-  Q_D(qMRMLLayoutManager);
   qMRMLLayoutChartViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutChartViewFactory*>(
       this->mrmlViewFactory("vtkMRMLChartViewNode"));
@@ -782,7 +774,6 @@ void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 //------------------------------------------------------------------------------
 vtkMRMLColorLogic* qMRMLLayoutManager::mrmlColorLogic()const
 {
-  Q_D(const qMRMLLayoutManager);
   qMRMLLayoutChartViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutChartViewFactory*>(
       this->mrmlViewFactory("vtkMRMLChartViewNode"));
@@ -850,7 +841,6 @@ vtkMRMLScene* qMRMLLayoutManager::mrmlScene()const
 //------------------------------------------------------------------------------
 vtkMRMLViewNode* qMRMLLayoutManager::activeMRMLThreeDViewNode()const
 {
-  Q_D(const qMRMLLayoutManager);
   return vtkMRMLViewNode::SafeDownCast(
     this->mrmlViewFactory("vtkMRMLViewNode")->activeViewNode());
 }
@@ -858,7 +848,6 @@ vtkMRMLViewNode* qMRMLLayoutManager::activeMRMLThreeDViewNode()const
 //------------------------------------------------------------------------------
 vtkMRMLChartViewNode* qMRMLLayoutManager::activeMRMLChartViewNode()const
 {
-  Q_D(const qMRMLLayoutManager);
   return vtkMRMLChartViewNode::SafeDownCast(
     this->mrmlViewFactory("vtkMRMLChartViewNode")->activeViewNode());
 }
@@ -866,14 +855,12 @@ vtkMRMLChartViewNode* qMRMLLayoutManager::activeMRMLChartViewNode()const
 //------------------------------------------------------------------------------
 vtkRenderer* qMRMLLayoutManager::activeThreeDRenderer()const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLViewNode")->activeRenderer();
 }
 
 //------------------------------------------------------------------------------
 vtkRenderer* qMRMLLayoutManager::activeChartRenderer()const
 {
-  Q_D(const qMRMLLayoutManager);
   return this->mrmlViewFactory("vtkMRMLChartViewNode")->activeRenderer();
 }
 
