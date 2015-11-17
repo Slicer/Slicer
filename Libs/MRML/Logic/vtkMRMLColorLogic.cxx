@@ -98,18 +98,18 @@ void vtkMRMLColorLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "UserColorFilePaths: " << this->GetUserColorFilePaths() << "\n";
   os << indent << "Color Files:\n";
-  for (int i = 0; i < this->ColorFiles.size(); i++)
+  for (size_t i = 0; i < this->ColorFiles.size(); i++)
     {
     os << indent.GetNextIndent() << i << " " << this->ColorFiles[i].c_str() << "\n";
     }
   os << indent << "User Color Files:\n";
-  for (int i = 0; i < this->UserColorFiles.size(); i++)
+  for (size_t i = 0; i < this->UserColorFiles.size(); i++)
     {
     os << indent.GetNextIndent() << i << " " << this->UserColorFiles[i].c_str() << "\n";
     }
 
   os << indent << "Terminology Color Files:\n";
-  for (int i = 0; i < this->TerminologyColorFiles.size(); i++)
+  for (size_t i = 0; i < this->TerminologyColorFiles.size(); i++)
     {
     os << indent.GetNextIndent() << i << " " << this->TerminologyColorFiles[i].c_str() << "\n";
     }
