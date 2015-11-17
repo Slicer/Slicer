@@ -34,6 +34,7 @@
 #include <vtkObjectFactory.h>
 
 // STD includes
+#include <algorithm>
 #include <cassert>
 #include <sstream>
 
