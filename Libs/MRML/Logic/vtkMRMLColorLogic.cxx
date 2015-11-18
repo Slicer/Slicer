@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <cassert>
 #include <ctype.h> // For isspace
+#include <functional>
 #include <sstream>
 
 //----------------------------------------------------------------------------
