@@ -36,6 +36,7 @@
 // STD includes
 #include <algorithm>
 #include <cassert>
+#include <ctype.h> // For isspace
 #include <sstream>
 
 //----------------------------------------------------------------------------
@@ -1458,9 +1459,9 @@ std::string vtkMRMLColorLogic::RemoveLeadAndTrailSpaces(std::string in)
 {
   std::string ret = in;
   ret.erase(ret.begin(), std::find_if(ret.begin(),ret.end(),
-    std::not1(std::ptr_fun<int,int>(std::isspace))));
+    std::not1(std::ptr_fun<int,int>(isspace))));
   ret.erase(std::find_if(ret.rbegin(),ret.rend(),
-    std::not1(std::ptr_fun<int,int>(std::isspace))).base(), ret.end());
+    std::not1(std::ptr_fun<int,int>(isspace))).base(), ret.end());
   return ret;
 }
 
