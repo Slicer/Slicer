@@ -38,23 +38,30 @@
 #include <cassert>
 #include <sstream>
 
+//----------------------------------------------------------------------------
 std::string vtkMRMLColorLogic::TempColorNodeID;
 
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLColorLogic);
 
+//----------------------------------------------------------------------------
 const char * vtkMRMLColorLogic::DEFAULT_TERMINOLOGY_NAME = "GenericAnatomyColors";
 
+//----------------------------------------------------------------------------
 void vtkMRMLColorLogic::StandardTerm::Print(std::ostream& os)
 {
   vtkIndent indent;
   this->PrintSelf(os, indent.GetNextIndent());
 }
+
+//----------------------------------------------------------------------------
 std::ostream& vtkMRMLColorLogic::StandardTerm::operator<<(std::ostream& os)
 {
   this->Print(os);
   return os;
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLColorLogic::StandardTerm::PrintSelf(std::ostream &os, vtkIndent indent)
 {
   os << indent << "Code value: " << CodeValue.c_str() << std::endl
@@ -63,18 +70,21 @@ void vtkMRMLColorLogic::StandardTerm::PrintSelf(std::ostream &os, vtkIndent inde
      << std::endl;
 }
 
-
+//----------------------------------------------------------------------------
 void vtkMRMLColorLogic::ColorLabelCategorization::Print(std::ostream& os)
 {
   vtkIndent indent;
   this->PrintSelf(os, indent.GetNextIndent());
 }
+
+//----------------------------------------------------------------------------
 std::ostream& vtkMRMLColorLogic::ColorLabelCategorization::operator<<(std::ostream& os)
 {
   this->Print(os);
   return os;
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLColorLogic::ColorLabelCategorization::PrintSelf(ostream &os, vtkIndent indent)
 {
   os << "Label: " << LabelValue << std::endl;
