@@ -5,11 +5,6 @@
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLColorLogic.h,v $
-  Date:      $Date$
-  Version:   $Revision$
-
 =========================================================================auto=*/
 
 #ifndef __vtkMRMLColorLogic_h
@@ -42,7 +37,7 @@ public:
 
   /// Terminology used with DICOM Segmentation objects
   /// ftp://medical.nema.org/medical/dicom/final/sup111_ft.pdf
-  struct StandardTerm
+  struct VTK_MRML_LOGIC_EXPORT StandardTerm
     {
       StandardTerm() {}
 
@@ -62,7 +57,7 @@ public:
       void PrintSelf(std::ostream &os, vtkIndent indent);
   };
 
-  struct ColorLabelCategorization
+  struct VTK_MRML_LOGIC_EXPORT ColorLabelCategorization
     {
     unsigned LabelValue;
     StandardTerm SegmentedPropertyCategory;
