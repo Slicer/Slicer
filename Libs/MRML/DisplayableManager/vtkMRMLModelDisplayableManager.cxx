@@ -734,7 +734,12 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
   for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *dnode = modelNode->GetNthDisplayNode(i);
-    assert(dnode);
+    if (dnode == 0)
+      {
+      // display node has been removed
+      updateMRML = true;
+      break;
+      }
     bool visible = (dnode->GetVisibility() == 1) && this->IsModelDisplayable(dnode);
     bool hasActor =
       this->Internal->DisplayedActors.find(dnode->GetID()) != this->Internal->DisplayedActors.end();
