@@ -1481,7 +1481,7 @@ bool vtkMRMLColorLogic::ParseTerm(const std::string inputStr, StandardTerm& term
       str.at(str.length()-1) != ')')
     {
     vtkWarningMacro(<< __LINE__
-                    << "ParseTerm: input string doesn't start/end with parentheses "
+                    << ": ParseTerm: input string doesn't start/end with parentheses "
                     << str);
     return false;
     }
@@ -1489,7 +1489,7 @@ bool vtkMRMLColorLogic::ParseTerm(const std::string inputStr, StandardTerm& term
   if (n != 2)
     {
     vtkWarningMacro(<< __LINE__
-                    << "ParseTerm: input string doesn't have 2 semi colons "
+                    << ": ParseTerm: input string doesn't have 2 semi colons "
                     << str);
     return false;
     }
