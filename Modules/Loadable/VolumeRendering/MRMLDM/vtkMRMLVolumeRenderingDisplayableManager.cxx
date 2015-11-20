@@ -709,8 +709,10 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateClipping(
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::TransformModified(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  if (vspNode == NULL)
+  if (vspNode == NULL || vspNode != this->DisplayedNode)
     {
+    // Only the current DisplayedNode is visible, therefore we can safely ignore all other transform updates.
+    // Ideally, event management in the Volume Rendering displayable manager should be refactored to not observe irrelevant events.
     return;
     }
   vtkNew<vtkMatrix4x4> matrix;
