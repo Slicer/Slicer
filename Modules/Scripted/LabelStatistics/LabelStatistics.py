@@ -482,7 +482,7 @@ class LabelStatisticsTest(unittest.TestCase):
 
     self.delayDisplay("Warnings for match:\n%s" % warnings)
 
-    self.assertNotEqual( warnings, "" )
+    self.assertEqual( warnings, "" )
 
     self.delayDisplay('test_LabelStatisticsBasic passed!')
 
