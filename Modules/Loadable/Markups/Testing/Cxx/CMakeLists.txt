@@ -27,6 +27,7 @@ slicerMacroConfigureModuleCxxTestDriver(
   TARGET_LIBRARIES
     vtkSlicerAnnotationsModuleLogic
   WITH_VTK_DEBUG_LEAKS_CHECK
+  WITH_VTK_ERROR_OUTPUT_CHECK
   )
 
 SIMPLE_TEST( vtkMRMLMarkupsDisplayNodeTest1 )

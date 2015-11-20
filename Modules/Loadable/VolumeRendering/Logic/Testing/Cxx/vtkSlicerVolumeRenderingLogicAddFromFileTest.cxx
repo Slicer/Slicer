@@ -30,6 +30,7 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtksys/SystemTools.hxx>
+#include <vtkTestingOutputWindow.h>
 
 //----------------------------------------------------------------------------
 bool testAddVolumePropertyFromFile(const std::string &temporaryDirectory);
@@ -99,7 +100,9 @@ bool testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   logic->SetMRMLScene(scene.GetPointer());
 
   // null file name
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vpNode = logic->AddVolumePropertyFromFile(NULL);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (vpNode != NULL)
     {
     std::cerr << "Line " << __LINE__
@@ -110,7 +113,9 @@ bool testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
     }
 
   // empty file name
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vpNode = logic->AddVolumePropertyFromFile("");
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (vpNode != NULL)
     {
     std::cerr << "Line " << __LINE__

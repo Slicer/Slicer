@@ -26,6 +26,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkTestingOutputWindow.h>
 
 // STD includes
 #include <algorithm>
@@ -34,7 +35,7 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
 {
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> node1;
 
-  EXERCISE_BASIC_STORAGE_MRML_METHODS( vtkMRMLMarkupsFiducialStorageNode, node1 );
+  EXERCISE_BASIC_STORAGE_MRML_METHODS( vtkMRMLMarkupsFiducialStorageNode, node1.GetPointer() );
 
   vtkNew<vtkMRMLMarkupsFiducialNode> markupsNode;
   vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;
@@ -121,7 +122,10 @@ int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
 
   std::cout << "Reading from " << snode2->GetFileName() << std::endl;
 
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   retval = snode2->ReadData(markupsNode2.GetPointer());
+  TESTING_OUTPUT_ASSERT_WARNINGS(2); // 2 warnings are logged: display node is not available, display node is added
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
   if (!retval)
     {
     std::cerr << "Failed to read from file " << snode2->GetFileName()

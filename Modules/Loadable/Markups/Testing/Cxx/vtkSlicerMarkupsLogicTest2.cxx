@@ -22,6 +22,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkTestingOutputWindow.h>
 
 static void PrintLabels(vtkMRMLMarkupsNode *m)
 {
@@ -44,6 +45,7 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
   vtkSmartPointer<vtkMRMLMarkupsNode> dest = vtkSmartPointer<vtkMRMLMarkupsNode>::New();
 
   // null cases
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   if (logic1->MoveNthMarkupToNewListAtIndex(0, NULL, NULL, 0))
     {
     std::cerr << "MoveNthMarkupToNewListAtIndex: Failed to return false when passed null lists" << std::endl;
@@ -59,13 +61,16 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
     std::cerr << "MoveNthMarkupToNewListAtIndex: Failed to return false when passed null source list" << std::endl;
     return EXIT_FAILURE;
     }
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // empty lists
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   if (logic1->MoveNthMarkupToNewListAtIndex(0, source, dest, 0))
     {
     std::cerr << "MoveNthMarkupToNewListAtIndex: Failed to return false when passed emtpy source and dest list" << std::endl;
     return EXIT_FAILURE;
     }
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // dest list smaller than source list
   source->AddMarkupWithNPoints(1);
@@ -249,6 +254,7 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
 
   // Test copying markup between lists
   // null cases
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   if (logic1->CopyNthMarkupToNewList(0, NULL, NULL))
     {
     std::cerr << "CopyNthMarkupToNewList: Failed to return false when passed null lists" << std::endl;
@@ -264,6 +270,8 @@ int vtkSlicerMarkupsLogicTest2(int , char * [] )
     std::cerr << "CopyNthMarkupToNewList: Failed to return false when passed null source list" << std::endl;
     return EXIT_FAILURE;
     }
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   source->AddMarkupWithNPoints(1);
   int sourceSize = source->GetNumberOfMarkups();
   int destSize = dest->GetNumberOfMarkups();

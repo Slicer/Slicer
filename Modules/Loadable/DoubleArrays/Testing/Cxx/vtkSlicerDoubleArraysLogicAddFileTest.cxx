@@ -28,6 +28,7 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkPolyData.h>
+#include <vtkTestingOutputWindow.h>
 
 //-----------------------------------------------------------------------------
 bool testAddEmptyFile(const char* filePath);
@@ -37,16 +38,13 @@ bool testAddFile(const char* filePath);
 int vtkSlicerDoubleArraysLogicAddFileTest( int argc, char * argv[] )
 {
   bool res = true;
-  std::cout << ">>>>>>>>>>>>>>>>>> "
-            << "The following can print errors and warnings"
-            << " <<<<<<<<<<<<<<<<<<" << std::endl;
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   res = testAddEmptyFile(0) && res;
   res = testAddEmptyFile("") && res;
   res = testAddEmptyFile("non existing file.badextension") && res;
   res = testAddEmptyFile("non existing file.vtk") && res;
-  std::cout << ">>>>>>>>>>>>>>>>>> "
-            << "end of normal errors and warnings"
-            << " <<<<<<<<<<<<<<<<<<" << std::endl;
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   if (argc > 1)
     {
     res = testAddFile(argv[1]) && res;

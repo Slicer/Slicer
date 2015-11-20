@@ -20,6 +20,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkTestingOutputWindow.h>
 
 // test copy and swap
 int vtkMRMLMarkupsNodeTest2(int , char * [] )
@@ -72,7 +73,9 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
     }
 
   // test swap
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   node1->SwapMarkups(-1,100);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   std::cout << "Adding a markup with 1 point" << std::endl;
   node1->AddMarkupWithNPoints(1);
   double pos0[3];
@@ -81,11 +84,13 @@ int vtkMRMLMarkupsNodeTest2(int , char * [] )
   pos0[2] = -2.6;
   node1->SetMarkupPointFromArray(0, 0, pos0);
 
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   node1->SwapMarkups(-1,100);
   node1->SwapMarkups(-1,1);
   node1->SwapMarkups(1,-1);
   node1->SwapMarkups(1,100);
   node1->SwapMarkups(100,1);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   std::cout << "Adding another markup with 1 point" << std::endl;
   node1->AddMarkupWithNPoints(1);

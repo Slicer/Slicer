@@ -26,7 +26,7 @@
 
 // VTK includes
 #include <vtkNew.h>
-
+#include <vtkTestingOutputWindow.h>
 
 int vtkMRMLMarkupsFiducialStorageNodeTest2(int argc, char * argv[] )
 {
@@ -57,7 +57,10 @@ int vtkMRMLMarkupsFiducialStorageNodeTest2(int argc, char * argv[] )
   //
   std::cout << "Reading from " << node1->GetFileName() << std::endl;
 
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   int retval = node1->ReadData(markupsFiducialNode.GetPointer());
+  TESTING_OUTPUT_ASSERT_WARNINGS(1); // Expected warning: Have an unversioned file, assuming Slicer 3 format .fcsv
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
   if (!retval)
     {
     std::cerr << "Failed to read into Markups fiducial node from Slicer3 Fiducials file " << node1->GetFileName() << std::endl;

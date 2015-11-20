@@ -15,6 +15,7 @@ slicerMacroConfigureModuleCxxTestDriver(
   SOURCES ${KIT_TEST_SRCS}
   TARGET_LIBRARIES vtkSlicerVolumesModuleLogic
   WITH_VTK_DEBUG_LEAKS_CHECK
+  WITH_VTK_ERROR_OUTPUT_CHECK
   )
 
 #-----------------------------------------------------------------------------

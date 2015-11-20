@@ -35,6 +35,7 @@
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
+#include <vtkCamera.h>
 #include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -52,6 +53,9 @@ int vtkMRMLAnnotationDisplayableManagerTest2(int vtkNotUsed(argc), char* vtkNotU
   vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindow->SetSize(600, 600);
   renderWindow->SetMultiSamples(0); // Ensure to have the same test image everywhere
+
+  vtkNew<vtkCamera> camera;
+  renderer->SetActiveCamera(camera.GetPointer());
 
   renderWindow->AddRenderer(renderer.GetPointer());
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
@@ -83,6 +87,8 @@ int vtkMRMLAnnotationDisplayableManagerTest2(int vtkNotUsed(argc), char* vtkNotU
 
   // Start test
   vtkNew<vtkMRMLAnnotationFiducialNode> fiducialNode;
+  double controlPoint[3]={0,0,0};
+  fiducialNode->AddControlPoint(controlPoint,0,1);
   /// Initializing a node should automatically create a display node
   fiducialNode->Initialize(scene);
   if (fiducialNode->GetNumberOfDisplayNodes() == 0)

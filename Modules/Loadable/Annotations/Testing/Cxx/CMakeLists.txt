@@ -53,6 +53,7 @@ slicerMacroConfigureModuleCxxTestDriver(
   TARGET_LIBRARIES qSlicer${MODULE_NAME}ModuleWidgets
   TESTS_TO_RUN_VAR KIT_TESTS_TO_RUN
   WITH_VTK_DEBUG_LEAKS_CHECK
+  WITH_VTK_ERROR_OUTPUT_CHECK
   )
 
 #-----------------------------------------------------------------------------

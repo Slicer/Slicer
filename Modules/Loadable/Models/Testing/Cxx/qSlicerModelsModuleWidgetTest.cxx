@@ -38,6 +38,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkTestingOutputWindow.h>
 
 // --------------------------------------------------------------------------
 class qSlicerModelsModuleWidgetTester: public QObject
@@ -74,7 +75,9 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
 
   // Instantiate Models module panel
   qSlicerModelsModule module;
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   module.initialize(0);
+  TESTING_OUTPUT_ASSERT_WARNINGS_END(); // warning due to using 0 as application logic
   module.setMRMLScene(scene.GetPointer());
 
   QWidget* moduleWidget = dynamic_cast<QWidget*>(module.widgetRepresentation());

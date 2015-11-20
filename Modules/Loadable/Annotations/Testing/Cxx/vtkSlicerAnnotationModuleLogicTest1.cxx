@@ -8,7 +8,11 @@
 
 // MRML includes
 #include <vtkMRMLCoreTestingMacros.h>
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSelectionNode.h>
+
+#include "vtkTestingOutputWindow.h"
 
 void CheckTextColor(vtkMRMLAnnotationRulerNode *rnode)
 {
@@ -42,13 +46,16 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   // ======================
   // Basic Setup
   // ======================
-  vtkSmartPointer<vtkSlicerAnnotationModuleLogic > node2 = vtkSmartPointer< vtkSlicerAnnotationModuleLogic >::New();
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLSelectionNode> selectionNode;
+  mrmlScene->AddNode(selectionNode.GetPointer());
+  vtkNew<vtkMRMLInteractionNode> interactionNode;
+  mrmlScene->AddNode(interactionNode.GetPointer());
+
+  vtkSmartPointer<vtkSlicerAnnotationModuleLogic > node2 = vtkSmartPointer< vtkSlicerAnnotationModuleLogic >::New();
   node2->SetMRMLScene(mrmlScene);
 
   EXERCISE_BASIC_OBJECT_METHODS( node2 );
-
-  node2->RegisterNodes();
 
   node2->StartPlaceMode(true);
   node2->StartPlaceMode(false);
@@ -67,7 +74,10 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
 
   node2->CancelCurrentOrRemoveLastAddedAnnotationNode();
 
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   node2->RemoveAnnotationNode(NULL);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+
   node2->RemoveAnnotationNode(rnode1);
 
   // TODO: test mrml event processing?
@@ -208,6 +218,10 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   vtkSmartPointer<vtkMRMLAnnotationFiducialNode> fnode = vtkSmartPointer<vtkMRMLAnnotationFiducialNode>::New();
+  double pos[3]={1,2,5};
+  fnode->SetControlPoint(0, pos, 0, 1);
+  mrmlScene->AddNode(fnode);
+
   char *toplevelfidid = node2->GetTopLevelHierarchyNodeIDForNodeClass(fnode);
   std::cout << "Top level fid id = " << (toplevelfidid ? toplevelfidid : "null") << std::endl;
 
@@ -218,7 +232,9 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     }
 
   vtkMRMLAnnotationNode *nullNode = NULL;
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   const char *htmlRep = node2->GetHTMLRepresentation(nullNode, -1);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (htmlRep)
     {
     std::cout << htmlRep << std::endl;
@@ -237,7 +253,9 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
 
   // test adding a display node for a hierarchy node
 
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   const char *dID = node2->AddDisplayNodeForHierarchyNode(NULL);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (dID != NULL)
     {
     std::cerr << "Error testing null hierarchy node to add display node for, got a display node id of " << dID << std::endl;

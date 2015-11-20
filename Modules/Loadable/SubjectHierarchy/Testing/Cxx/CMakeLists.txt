@@ -14,6 +14,7 @@ slicerMacroConfigureModuleCxxTestDriver(
   SOURCES ${KIT_TEST_SRCS}
   TARGET_LIBRARIES vtkSlicer${MODULE_NAME}ModuleLogic qSlicer${MODULE_NAME}Module
   WITH_VTK_DEBUG_LEAKS_CHECK
+  WITH_VTK_ERROR_OUTPUT_CHECK
   )
 
 #-----------------------------------------------------------------------------

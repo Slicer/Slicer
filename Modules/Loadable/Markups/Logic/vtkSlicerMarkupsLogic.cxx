@@ -1372,6 +1372,7 @@ int vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility()
 {
   if (!this->GetMRMLScene())
     {
+    vtkErrorMacro("GetSliceIntersectionsVisibility: no scene");
     return -1;
     }
   int numVisible = 0;

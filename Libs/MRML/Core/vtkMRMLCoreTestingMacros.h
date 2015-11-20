@@ -21,6 +21,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkTestErrorObserver.h>
 
 // STD includes
 #include <vector>
@@ -819,8 +820,23 @@
 #define EXERCISE_BASIC_STORAGE_MRML_METHODS( className, node )   \
   {                                                 \
     EXERCISE_BASIC_MRML_METHODS(className, node);    \
+    vtkNew<vtkTest::ErrorObserver> errorWarningObserver; \
+    int errorObserverTag = node->AddObserver(vtkCommand::WarningEvent, errorWarningObserver.GetPointer()); \
+    int warningObserverTag = node->AddObserver(vtkCommand::ErrorEvent, errorWarningObserver.GetPointer()); \
     node->ReadData(NULL);                           \
+    if (!errorWarningObserver->GetError()) \
+    { \
+      std::cerr << "ERROR ReadData(NULL) did not report error" << std::endl;   \
+      return EXIT_FAILURE;                                          \
+    } \
+    errorWarningObserver->Clear(); \
     node->WriteData(NULL);                          \
+    if (!errorWarningObserver->GetError()) \
+    { \
+      std::cerr << "ERROR WriteData(NULL) did not report error" << std::endl;   \
+      return EXIT_FAILURE;                                          \
+    } \
+    errorWarningObserver->Clear(); \
     TEST_SET_GET_STRING(node, FileName);            \
     const char *f0 = node->GetNthFileName(0);       \
     std::cout << "Filename 0 = " << (f0 == NULL ? "NULL" : f0) << std::endl; \
@@ -897,6 +913,12 @@
       std::cout << "\t" << types->GetValue(i).c_str() << std::endl;      \
       }                                                                 \
     int sup = node->SupportedFileType(NULL);                            \
+    if (!errorWarningObserver->GetWarning()) \
+    { \
+      std::cerr << "ERROR SupportedFileType(NULL) did not report warning" << std::endl;   \
+      return EXIT_FAILURE;                                          \
+    } \
+    errorWarningObserver->Clear(); \
     std::cout << "Filename or uri supported? " << sup << std::endl;     \
     sup = node->SupportedFileType("testing.vtk");                       \
     std::cout << ".vtk supported?  " << sup << std::endl;     \
@@ -969,6 +991,8 @@
     std::cout << "Is null file path relative? " << node->IsFilePathRelative(NULL) << std::endl; \
     std::cout << "Is absolute file path relative? " << node->IsFilePathRelative("/spl/tmp/file.txt") << std::endl; \
     std::cout << "Is relative file path relative? " << node->IsFilePathRelative("tmp/file.txt") << std::endl; \
+    node->RemoveObserver(errorObserverTag); \
+    node->RemoveObserver(warningObserverTag); \
   }
 
 // ----------------------------------------------------------------------------

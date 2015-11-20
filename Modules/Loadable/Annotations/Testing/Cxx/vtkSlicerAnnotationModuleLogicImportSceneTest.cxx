@@ -46,14 +46,15 @@ int vtkSlicerAnnotationModuleLogicImportSceneTest(int vtkNotUsed(argc), char * v
 bool ImportTwiceTest(bool verbose)
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkSlicerAnnotationModuleLogic > logic;
-  logic->SetMRMLScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSelectionNode> selectionNode;
   scene->AddNode(selectionNode.GetPointer());
 
   vtkNew<vtkMRMLInteractionNode> interactionNode;
   scene->AddNode(interactionNode.GetPointer());
+
+  vtkNew<vtkSlicerAnnotationModuleLogic > logic;
+  logic->SetMRMLScene(scene.GetPointer());
 
   logic->AddHierarchy();
   vtkNew<vtkMRMLAnnotationRulerNode> rnode;
@@ -68,6 +69,10 @@ bool ImportTwiceTest(bool verbose)
   ///   - vtkMRMLModelHierarchyNode2 (parent of vtkMRMLModelHierarchyNode1)
   vtkMRMLAnnotationRulerNode* ruler1 = vtkMRMLAnnotationRulerNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLAnnotationRulerNode1"));
+  double controlPoint1[3]={34,56,78};
+  double controlPoint2[3]={134,156,178};
+  ruler1->SetControlPointWorldCoordinates(0,controlPoint1, 0, 1);
+  ruler1->SetControlPointWorldCoordinates(1,controlPoint2, 0, 1);
   vtkMRMLAnnotationHierarchyNode* rulerHierarchy1 = vtkMRMLAnnotationHierarchyNode::SafeDownCast(
     vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(
       scene.GetPointer(),
