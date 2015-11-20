@@ -115,12 +115,12 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
       # confirm that MRHead is in the background of the Red slice
       redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
       mrHead = slicer.util.getNode('MRHead')
-      self.assertTrue( redComposite.GetBackgroundVolumeID() == mrHead.GetID() )
+      self.assertEqual(redComposite.GetBackgroundVolumeID(), mrHead.GetID())
       self.delayDisplay('The MRHead volume is AGAIN in the background of the Red viewer')
 
       # confirm that the fiducial list exists with 1 points
       fidNode = slicer.util.getNode('F')
-      self.assertTrue(fidNode.GetNumberOfFiducials() == 1)
+      self.assertEqual(fidNode.GetNumberOfFiducials(), 1)
       self.delayDisplay('The fiducial list has 1 point in it')
 
       # adjust the fid list location
@@ -134,7 +134,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     finalFiducialPosition = [ 0,0,0 ]
     fidNode.GetNthFiducialPosition(0, finalFiducialPosition)
     print 'Final fiducial scene pos = ',finalFiducialPosition
-    self.assertTrue(self.fiducialPosition == finalFiducialPosition)
+    self.assertEqual(self.fiducialPosition, finalFiducialPosition)
 
     self.delayDisplay("Test Finished")
 

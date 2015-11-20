@@ -195,7 +195,7 @@ class ChartingTest(unittest.TestCase):
 
     #volumeNode = slicer.util.getNode(pattern="FA")
     #logic = ChartingLogic()
-    #self.assertTrue( logic.hasImageData(volumeNode) )
+    #self.assertIsNotNone( logic.hasImageData(volumeNode) )
 
     # Change the layout to one that has a chart.  This created the ChartView
     ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')

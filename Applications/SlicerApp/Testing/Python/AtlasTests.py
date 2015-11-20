@@ -254,7 +254,7 @@ class AtlasTestsTest(unittest.TestCase):
 
     volumeNode = slicer.util.getNode(pattern=testVolumePattern)
     logic = AtlasTestsLogic()
-    self.assertTrue( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone( logic.hasImageData(volumeNode) )
 
     m = slicer.util.mainWindow()
 

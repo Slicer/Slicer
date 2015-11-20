@@ -284,5 +284,5 @@ class ScriptedLoadableModuleTemplateTest(ScriptedLoadableModuleTest):
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = ScriptedLoadableModuleTemplateLogic()
-    self.assertTrue( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone( logic.hasImageData(volumeNode) )
     self.delayDisplay('Test passed!')

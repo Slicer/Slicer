@@ -102,7 +102,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     # confirm that FA is in the background of the Red slice
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     fa = slicer.util.getNode('FA')
-    self.assertTrue( redComposite.GetBackgroundVolumeID() == fa.GetID() )
+    self.assertEqual( redComposite.GetBackgroundVolumeID(), fa.GetID() )
     self.delayDisplay('The FA volume is in the background of the Red viewer')
 
     #
@@ -140,7 +140,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.delayDisplay('Check that FA volume is STILL in the background of the Red viewer')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     fa = slicer.util.getNode('FA')
-    self.assertTrue( redComposite.GetBackgroundVolumeID() == fa.GetID() )
+    self.assertEqual( redComposite.GetBackgroundVolumeID(), fa.GetID() )
     self.delayDisplay('The FA volume is STILL in the background of the Red viewer')
 
     #
@@ -162,7 +162,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.delayDisplay('IS the FA volume is AGAIN in the background of the Red viewer?')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     fa = slicer.util.getNode('FA')
-    self.assertTrue( redComposite.GetBackgroundVolumeID() == fa.GetID() )
+    self.assertEqual( redComposite.GetBackgroundVolumeID(), fa.GetID() )
     self.delayDisplay('The FA volume is AGAIN in the background of the Red viewer')
 
     self.sceneLoadedImage = qt.QPixmap.grabWidget(slicer.util.mainWindow()).toImage()
@@ -178,7 +178,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.delayDisplay('FA volume is the background of the Red viewer after mrb reload?')
     redComposite = slicer.util.getNode('vtkMRMLSliceCompositeNodeRed')
     fa = slicer.util.getNode('FA')
-    self.assertTrue( redComposite.GetBackgroundVolumeID() == fa.GetID() )
+    self.assertEqual( redComposite.GetBackgroundVolumeID(), fa.GetID() )
     self.delayDisplay('Yes, the FA volume is back in the background of the Red viewer')
 
     sceneMismatch = self.beforeImage != self.sceneLoadedImage
@@ -228,7 +228,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     for original,encoded in stringPairs:
       self.delayDisplay("Testing that %s becomes %s" % (original,encoded), 150)
       print ('%s becomes %s, should be %s' % (original, appLogic.PercentEncode(original), encoded))
-      self.assertTrue( appLogic.PercentEncode(original) == encoded )
+      self.assertEqual( appLogic.PercentEncode(original), encoded )
     self.delayDisplay("Test Finished")
 
   def imageCompare(self,images,text='',prefWidth=1500):

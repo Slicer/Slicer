@@ -199,7 +199,7 @@ class Slicer4MinuteTest(unittest.TestCase):
     # check volume is loaded out of scene
     volumeNode = slicer.util.getNode(pattern="grayscale")
     logic = Slicer4MinuteLogic()
-    self.assertTrue( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone( logic.hasImageData(volumeNode) )
 
     # check the slice planes
     red = slicer.util.getNode(pattern="vtkMRMLSliceNode1")

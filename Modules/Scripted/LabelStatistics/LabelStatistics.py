@@ -476,13 +476,13 @@ class LabelStatisticsTest(unittest.TestCase):
 
     self.delayDisplay("Warnings for mismatch:\n%s" % warnings)
 
-    self.assertTrue( warnings != "" )
+    self.assertNotEqual( warnings, "" )
 
     warnings = volumesLogic.CheckForLabelVolumeValidity(mrHead, mrHeadLabel)
 
     self.delayDisplay("Warnings for match:\n%s" % warnings)
 
-    self.assertTrue( warnings == "" )
+    self.assertNotEqual( warnings, "" )
 
     self.delayDisplay('test_LabelStatisticsBasic passed!')
 

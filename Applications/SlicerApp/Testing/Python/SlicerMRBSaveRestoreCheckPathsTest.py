@@ -118,7 +118,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.checkSceneViewFileNames(scene)
     if self.numberOfFilesNotFound != 0:
       print 'checkAllFilesNames: there are ',self.numberOfFilesNotFound,'files that are missing from disk\n'
-    self.assertTrue(self.numberOfFilesNotFound == 0)
+    self.assertEqual(self.numberOfFilesNotFound, 0)
 
   def test_SlicerMRBSaveRestoreCheckPaths(self):
     """

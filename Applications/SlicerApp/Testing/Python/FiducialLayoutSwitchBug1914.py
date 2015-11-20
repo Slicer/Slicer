@@ -369,6 +369,6 @@ class FiducialLayoutSwitchBug1914Test(unittest.TestCase):
       slicer.util.delayDisplay('Test passed!')
     else:
       slicer.util.delayDisplay('Test failed!')
-    self.assertTrue(returnFlag == True)
+    self.assertTrue(returnFlag)
 
 

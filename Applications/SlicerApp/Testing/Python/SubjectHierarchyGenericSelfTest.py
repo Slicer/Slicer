@@ -83,7 +83,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   # ------------------------------------------------------------------------------
   def test_SubjectHierarchyGenericSelfTest_FullTest1(self):
     # Check for SubjectHierarchy module
-    self.assertTrue( slicer.modules.subjecthierarchy )
+    self.assertIsNotNone( slicer.modules.subjecthierarchy )
 
     self.section_SetupPathsAndNames()
     self.section_LoadDicomData()
@@ -99,8 +99,8 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     # Make sure subject hierarchy auto-creation is on for this test
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
     subjectHierarchyPluginLogic = subjectHierarchyWidget.pluginLogic()
-    self.assertTrue( subjectHierarchyWidget is not None )
-    self.assertTrue( subjectHierarchyPluginLogic is not None )
+    self.assertIsNotNone( subjectHierarchyWidget )
+    self.assertIsNotNone( subjectHierarchyPluginLogic )
     subjectHierarchyPluginLogic.autoCreateSubjectHierarchy = True
 
     # Set constants
@@ -158,7 +158,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Unzipping done",self.delayMs)
 
       numOfFilesInDicomDataDirTest = len([name for name in os.listdir(self.dicomDataDir) if os.path.isfile(self.dicomDataDir + '/' + name)])
-      self.assertTrue( numOfFilesInDicomDataDirTest == self.expectedNumOfFilesInDicomDataDir )
+      self.assertEqual( numOfFilesInDicomDataDirTest, self.expectedNumOfFilesInDicomDataDir )
 
       # Open test database and empty it
       qt.QDir().mkpath(self.dicomDatabaseDir)
@@ -176,12 +176,12 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
       # Import test data in database
       indexer = ctk.ctkDICOMIndexer()
-      self.assertTrue( indexer )
+      self.assertIsNotNone( indexer )
 
       indexer.addDirectory( slicer.dicomDatabase, self.dicomDataDir )
 
-      self.assertTrue( len(slicer.dicomDatabase.patients()) == 1 )
-      self.assertTrue( slicer.dicomDatabase.patients()[0] )
+      self.assertEqual( len(slicer.dicomDatabase.patients()), 1 )
+      self.assertIsNotNone( slicer.dicomDatabase.patients()[0] )
 
       # Load test data
       numOfScalarVolumeNodesBeforeLoad = len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') )
@@ -194,8 +194,8 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
       dicomWidget.detailsPopup.loadCheckedLoadables()
 
-      self.assertTrue( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ) == numOfScalarVolumeNodesBeforeLoad + 1 )
-      self.assertTrue( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ) == numOfSubjectHierarchyNodesBeforeLoad + 3 )
+      self.assertEqual( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ),  numOfScalarVolumeNodesBeforeLoad + 1 )
+      self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), numOfSubjectHierarchyNodesBeforeLoad + 3 )
 
       if originalDatabaseDirectory:
         dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
@@ -214,7 +214,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     # Get volume previously loaded from DICOM
     ctVolumeNode = slicer.util.getNode('vtkMRMLScalarVolumeNode*')
-    self.assertTrue( ctVolumeNode is not None )
+    self.assertIsNotNone( ctVolumeNode )
 
     # Create sample labelmap and model and add them in subject hierarchy
     sampleLabelmapNode = self.createSampleLabelmapVolumeNode(ctVolumeNode, self.sampleLabelmapName, 2)
@@ -223,19 +223,19 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     # Get subject hierarchy scene model
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
-    self.assertTrue( subjectHierarchyWidget is not None )
+    self.assertIsNotNone( subjectHierarchyWidget )
     subjectHierarchySceneModel = subjectHierarchyWidget.subjectHierarchySceneModel()
-    self.assertTrue( subjectHierarchySceneModel is not None )
+    self.assertIsNotNone( subjectHierarchySceneModel )
 
     # Get subject hierarchy nodes and study node
     ctVolumeShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(ctVolumeNode)
-    self.assertTrue( ctVolumeShNode is not None )
+    self.assertIsNotNone( ctVolumeShNode )
     sampleLabelmapShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(sampleLabelmapNode)
-    self.assertTrue( sampleLabelmapShNode is not None )
+    self.assertIsNotNone( sampleLabelmapShNode )
     sampleModelShNode = vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(sampleModelNode)
-    self.assertTrue( sampleModelShNode is not None )
+    self.assertIsNotNone( sampleModelShNode )
     studyNode = ctVolumeShNode.GetParentNode()
-    self.assertTrue( studyNode is not None )
+    self.assertIsNotNone( studyNode )
 
     # Save node names for scene load testing
     self.patientNodeName = studyNode.GetParentNode().GetName()
@@ -243,20 +243,20 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.ctVolumeShNodeName = ctVolumeShNode.GetName()
 
     # Verify DICOM levels
-    self.assertTrue( studyNode.GetParentNode().GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient() )
-    self.assertTrue( studyNode.GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy() )
-    self.assertTrue( ctVolumeShNode.GetLevel() == slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries() )
+    self.assertEqual( studyNode.GetParentNode().GetLevel(), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelPatient() )
+    self.assertEqual( studyNode.GetLevel(), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy() )
+    self.assertEqual( ctVolumeShNode.GetLevel(), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries() )
 
     # Add model and labelmap to the created study
     subjectHierarchySceneModel.reparent(sampleLabelmapShNode, studyNode)
     subjectHierarchySceneModel.reparent(sampleModelShNode, studyNode)
     qt.QApplication.processEvents()
 
-    self.assertTrue( sampleLabelmapShNode.GetParentNode() == studyNode )
-    self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'LabelMaps' )
+    self.assertEqual( sampleLabelmapShNode.GetParentNode(), studyNode )
+    self.assertEqual( sampleLabelmapShNode.GetOwnerPluginName(), 'LabelMaps' )
 
-    self.assertTrue( sampleModelShNode.GetParentNode() == studyNode )
-    self.assertTrue( sampleModelShNode.GetOwnerPluginName() == 'Models' )
+    self.assertEqual( sampleModelShNode.GetParentNode(), studyNode )
+    self.assertEqual( sampleModelShNode.GetOwnerPluginName(), 'Models' )
 
   # ------------------------------------------------------------------------------
   def section_CreateSecondBranch(self):
@@ -270,9 +270,9 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     subseriesNode = vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, seriesNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSubseries(), self.testSubseriesName)
 
     # Check if the created nodes have the right parents
-    self.assertTrue( study2Node.GetParentNode() == patient2Node )
-    self.assertTrue( seriesNode.GetParentNode() == study2Node )
-    self.assertTrue( subseriesNode.GetParentNode() == seriesNode )
+    self.assertEqual( study2Node.GetParentNode(), patient2Node )
+    self.assertEqual( seriesNode.GetParentNode(), study2Node )
+    self.assertEqual( subseriesNode.GetParentNode(), seriesNode )
 
   # ------------------------------------------------------------------------------
   def section_ReparentNodeInSubjectHierarchy(self):
@@ -280,21 +280,21 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
 
     # Get second study node and labelmap node to reparent
     study2Node = slicer.util.getNode(self.study2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( study2Node is not None )
+    self.assertIsNotNone( study2Node )
     sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( sampleLabelmapShNode is not None )
+    self.assertIsNotNone( sampleLabelmapShNode )
 
     # Get subject hierarchy scene model
     import qSlicerSubjectHierarchyModuleWidgetsPythonQt
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
-    self.assertTrue( subjectHierarchyWidget is not None )
+    self.assertIsNotNone( subjectHierarchyWidget )
     subjectHierarchySceneModel = subjectHierarchyWidget.subjectHierarchySceneModel()
-    self.assertTrue( subjectHierarchySceneModel is not None )
+    self.assertIsNotNone( subjectHierarchySceneModel )
 
     # Reparent
     subjectHierarchySceneModel.reparent(sampleLabelmapShNode, study2Node)
-    self.assertTrue( sampleLabelmapShNode.GetParentNode() == study2Node )
-    self.assertTrue( sampleLabelmapShNode.GetOwnerPluginName() == 'LabelMaps' )
+    self.assertEqual( sampleLabelmapShNode.GetParentNode(), study2Node )
+    self.assertEqual( sampleLabelmapShNode.GetOwnerPluginName(), 'LabelMaps' )
 
   # ------------------------------------------------------------------------------
   def section_SaveScene(self):
@@ -321,51 +321,51 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     slicer.util.loadScene(self.sceneFileName)
 
     # Check number of nodes in the scene
-    self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode') == 2 )
-    self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode') == 4 ) # 1 + slice models
-    self.assertTrue( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode') == 9 )
+    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLScalarVolumeNode'), 2 )
+    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLModelNode'), 4 ) # 1 + slice models
+    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSubjectHierarchyNode'), 9 )
     
     # Check if the nodes have the right parents
     patientNode = slicer.util.getNode(self.patientNodeName)
-    self.assertTrue( patientNode is not None )
-    self.assertTrue( patientNode.GetParentNode() is None )
+    self.assertIsNotNone( patientNode )
+    self.assertIsNone( patientNode.GetParentNode() )
     
     studyNode = slicer.util.getNode(self.studyNodeName)
-    self.assertTrue( studyNode is not None )
-    self.assertTrue( studyNode.GetParentNode() == patientNode )
+    self.assertIsNotNone( studyNode )
+    self.assertEqual( studyNode.GetParentNode(), patientNode )
     
     ctVolumeShNode = slicer.util.getNode(self.ctVolumeShNodeName)
-    self.assertTrue( ctVolumeShNode is not None )
-    self.assertTrue( ctVolumeShNode.GetParentNode() == studyNode )
+    self.assertIsNotNone( ctVolumeShNode )
+    self.assertEqual( ctVolumeShNode.GetParentNode(), studyNode )
     
     sampleModelShNode = slicer.util.getNode(self.sampleModelName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( sampleModelShNode is not None )
-    self.assertTrue( sampleModelShNode.GetParentNode() == studyNode )
+    self.assertIsNotNone( sampleModelShNode )
+    self.assertEqual( sampleModelShNode.GetParentNode(), studyNode )
     
     patient2Node = slicer.util.getNode(self.patient2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( patient2Node is not None )
-    self.assertTrue( patient2Node.GetParentNode() is None )
+    self.assertIsNotNone( patient2Node )
+    self.assertIsNone( patient2Node.GetParentNode() )
 
     study2Node = slicer.util.getNode(self.study2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( study2Node is not None )
-    self.assertTrue( study2Node.GetParentNode() == patient2Node )
+    self.assertIsNotNone( study2Node )
+    self.assertEqual( study2Node.GetParentNode(), patient2Node )
 
     sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( sampleLabelmapShNode is not None )
-    self.assertTrue( sampleLabelmapShNode.GetParentNode() == study2Node )
+    self.assertIsNotNone( sampleLabelmapShNode )
+    self.assertEqual( sampleLabelmapShNode.GetParentNode(), study2Node )
 
     testSeriesNode = slicer.util.getNode(self.testSeriesName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( testSeriesNode is not None )
-    self.assertTrue( testSeriesNode.GetParentNode() == study2Node )
+    self.assertIsNotNone( testSeriesNode )
+    self.assertEqual( testSeriesNode.GetParentNode(), study2Node )
 
     testSubseriesNode = slicer.util.getNode(self.testSubseriesName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
-    self.assertTrue( testSubseriesNode is not None )
-    self.assertTrue( testSubseriesNode.GetParentNode() == testSeriesNode )
+    self.assertIsNotNone( testSubseriesNode )
+    self.assertEqual( testSubseriesNode.GetParentNode(), testSeriesNode )
 
   # ------------------------------------------------------------------------------
   # Create sample labelmap with same geometry as input volume
   def createSampleLabelmapVolumeNode(self, volumeNode, name, label, colorNode=None):
-    self.assertTrue( volumeNode is not None )
+    self.assertIsNotNone( volumeNode )
     self.assertTrue( volumeNode.IsA('vtkMRMLScalarVolumeNode') )
     self.assertTrue( label > 0 )
 
@@ -391,7 +391,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     slicer.mrmlScene.AddNode(labelmapVolumeDisplayNode)
     if colorNode is None:
       colorNode = slicer.util.getNode('GenericAnatomyColors')
-      self.assertTrue( colorNode is not None )
+      self.assertIsNotNone( colorNode )
     labelmapVolumeDisplayNode.SetAndObserveColorNodeID(colorNode.GetID())
     labelmapVolumeDisplayNode.VisibilityOn()
     sampleLabelmapNodeName = slicer.mrmlScene.GenerateUniqueName(name)

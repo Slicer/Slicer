@@ -250,13 +250,13 @@ class test_tractography_displayTest(unittest.TestCase):
 
     autoWL = slicer.util.findChildren(tubeTab, text='Auto W/L')[0]
 
-    assert(not autoWL.checked or displayNode.GetAutoScalarRange())
-    assert(autoWL.checked or not displayNode.GetAutoScalarRange())
+    self.assertTrue(not autoWL.checked or displayNode.GetAutoScalarRange())
+    self.assertTrue(autoWL.checked or not displayNode.GetAutoScalarRange())
     self.delayDisplay('Default Window Level Agrees with Display Node\n')
 
     autoWL.click()
-    assert(not autoWL.checked or displayNode.GetAutoScalarRange())
-    assert(autoWL.checked or not displayNode.GetAutoScalarRange())
+    self.assertTrue(not autoWL.checked or displayNode.GetAutoScalarRange())
+    self.assertTrue(autoWL.checked or not displayNode.GetAutoScalarRange())
     self.delayDisplay('Changes in Window Level Agrees with Display Node\n')
 
     if autoWL.checked:
@@ -266,7 +266,8 @@ class test_tractography_displayTest(unittest.TestCase):
     slider.setMinimumValue(.1)
     slider.setMaximumValue(.8)
     scalar_range = displayNode.GetScalarRange()
-    assert((scalar_range[0] == .1) and (scalar_range[1] == .8))
+    self.assertEqual(scalar_range[0], .1)
+    self.assertEqual(scalar_range[1], .8)
     self.delayDisplay('Changes in Window Level Values Agree with Display Node\n')
 
     autoWL.click()

@@ -253,5 +253,5 @@ class FiberBundleToLabelMapTest(unittest.TestCase):
 
     logic.rasterizeFibers(fiberNode, labelNode, labelValue=10)
 
-    self.assertTrue( logic.hasImageData(labelNode) )
+    self.assertIsNotNone( logic.hasImageData(labelNode) )
     self.delayDisplay('Test passed!')

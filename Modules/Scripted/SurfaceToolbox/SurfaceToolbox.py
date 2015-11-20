@@ -490,5 +490,5 @@ class SurfaceToolboxTest(ScriptedLoadableModuleTest):
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = SurfaceToolboxLogic()
-    self.assertTrue( logic is not None )
+    self.assertIsNotNone( logic )
     self.delayDisplay('Test passed!')

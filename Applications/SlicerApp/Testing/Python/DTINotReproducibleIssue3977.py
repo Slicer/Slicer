@@ -155,7 +155,7 @@ class DTINotReproducibleIssue3977Test(ScriptedLoadableModuleTest):
 
     volumeNode = slicer.util.getNode(pattern="dwi")
     logic = DTINotReproducibleIssue3977Logic()
-    self.assertTrue( logic.hasImageData(volumeNode) )
+    self.assertIsNotNone( logic.hasImageData(volumeNode) )
 
     # Run 1
     (outputBaseline, outputFA) = logic.computeFA(volumeNode)

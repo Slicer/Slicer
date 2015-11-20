@@ -25,7 +25,7 @@ class qSlicer@MODULENAME@ModuleGenericTest(unittest.TestCase):
   def test_settings(self):
     import slicer
     import ctk
-    self.assertTrue(isinstance(slicer.app.settings(), ctk.ctkSettings))
+    self.assertIsInstance(slicer.app.settings(), ctk.ctkSettings)
 
   def test_categories(self):
     self.assertNotEqual(self.module.categories, "")

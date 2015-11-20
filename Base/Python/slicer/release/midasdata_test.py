@@ -79,7 +79,7 @@ class TestVersioning(unittest.TestCase):
     sys.stdout = sys.__stdout__
     f = open("logfile")
     lines = f.readlines()
-    self.assertTrue(len(lines) == 16)
+    self.assertEqual(len(lines), 16)
     expr = "Application"
     regexp = re.compile(expr)
     self.assertRegexpMatches(lines[0], regexp)
@@ -130,7 +130,7 @@ class TestVersioning(unittest.TestCase):
     self.assertTrue(index > -1)
     destID = midasdata._getIDfromIndex(applicationChildren, "folder", index)
     dest_items = self.communicator.folder_children(self.token, destID)
-    self.assertTrue(len(dest_items["items"]) == 1)
+    self.assertEqual(len(dest_items["items"]), 1)
     self.cleanUpFolder()
     print msg + "[DONE]"
 
