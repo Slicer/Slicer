@@ -386,7 +386,7 @@ class LabelStatisticsLogic:
     chartNode.SetProperty('default', 'showLegend', 'off')
 
     # series level properties
-    if labelNode.GetDisplayNode() != None and labelNode.GetDisplayNode().GetColorNode() != None:
+    if labelNode.GetDisplayNode() is not None and labelNode.GetDisplayNode().GetColorNode() is not None:
       chartNode.SetProperty(valueToPlot, 'lookupTable', labelNode.GetDisplayNode().GetColorNodeID());
 
     chartNode.EndModify(state)

@@ -105,12 +105,12 @@ class DICOMExportScene(object):
       print(itemNum)
       node = lnodes.GetItemAsObject(itemNum)
       snode = node.GetStorageNode()
-      if snode == None:
+      if snode is None:
         print "something is none"
         snode = node.CreateDefaultStorageNode()
         slicer.mrmlScene.AddNode(snode)
         node.SetAndObserveStorageNodeID(snode.GetID())
-      if snode.GetFileName() == None:
+      if snode.GetFileName() is None:
         snode.SetFileName(node.GetID()+".h5")
 
     # save the scene to the temp dir

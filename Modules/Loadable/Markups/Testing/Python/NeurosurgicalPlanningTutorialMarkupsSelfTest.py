@@ -279,7 +279,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
       # for the tutorial, pop up the linking control
       sliceController = slicer.app.layoutManager().sliceWidget("Red").sliceController()
       popupWidget = sliceController.findChild("ctkPopupWidget")
-      if popupWidget != None:
+      if popupWidget is not None:
         popupWidget.pinPopup(1)
         self.takeScreenshot('NeurosurgicalPlanning-Link','Link slice viewers',-1)
         popupWidget.pinPopup(0)
@@ -580,7 +580,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
 
     # make it active
     selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
-    if (selectionNode != None):
+    if (selectionNode is not None):
       selectionNode.SetReferenceActivePlaceNodeID(fidNode.GetID())
 
     self.takeScreenshot('NeurosurgicalPlanning-TIS-Fid1','Fiducial in Tractography Interactive Seeding Module',-1)

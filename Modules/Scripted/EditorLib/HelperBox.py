@@ -121,7 +121,7 @@ class HelperBox(VTKObservationMixin):
   def select(self, masterVolume=None, mergeVolume=None):
     """select master volume - load merge volume if one with the correct name exists"""
 
-    if masterVolume == None:
+    if masterVolume is None:
         masterVolume = self.masterSelector.currentNode()
     self.master = masterVolume
 

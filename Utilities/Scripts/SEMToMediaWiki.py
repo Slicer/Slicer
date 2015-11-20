@@ -321,7 +321,7 @@ def SEMToMediaWikiProg():
                 "The only valid options are [h|b|f]: Given {0}".format(
                     stage))
 
-    if options.xmlfilename != None:
+    if options.xmlfilename is not None:
         outfile = open(options.outfilename, 'w')
         outfile.write(docString)
         outfile.close()

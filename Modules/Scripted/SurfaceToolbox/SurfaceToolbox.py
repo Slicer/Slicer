@@ -258,8 +258,8 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
 
       connectivityButton.checked = state.connectivity
 
-      toggleModelsButton.enabled = state.inputModelNode != None and state.outputModelNode != None
-      applyButton.enabled = state.inputModelNode != None and state.outputModelNode != None
+      toggleModelsButton.enabled = state.inputModelNode is not None and state.outputModelNode is not None
+      applyButton.enabled = state.inputModelNode is not None and state.outputModelNode is not None
 
 
     connect(inputModelSelector,'currentNodeChanged(vtkMRMLNode*)','state.inputModelNode = args[0]')
@@ -490,5 +490,5 @@ class SurfaceToolboxTest(ScriptedLoadableModuleTest):
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = SurfaceToolboxLogic()
-    self.assertTrue( logic != None )
+    self.assertTrue( logic is not None )
     self.delayDisplay('Test passed!')

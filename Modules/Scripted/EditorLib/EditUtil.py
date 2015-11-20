@@ -296,7 +296,7 @@ class EditUtil(object):
     """
     if vtk.VTK_MAJOR_VERSION > 5 and volumeNode.GetImageDataConnection():
       volumeNode.GetImageDataConnection().GetProducer().Update()
-    if volumeNode.GetImageData().GetPointData().GetScalars() != None:
+    if volumeNode.GetImageData().GetPointData().GetScalars() is not None:
       volumeNode.GetImageData().GetPointData().GetScalars().Modified()
     volumeNode.GetImageData().Modified()
     volumeNode.Modified()

@@ -152,7 +152,7 @@ class AtlasTestsLogic:
     if not volumeNode:
       print('no volume node')
       return False
-    if volumeNode.GetImageData() == None:
+    if volumeNode.GetImageData() is None:
       print('no image data')
       return False
     return True
@@ -268,7 +268,7 @@ class AtlasTestsTest(unittest.TestCase):
     numModelHierarchiesToManipulate = 0
     for h in range(numModelHierarchies):
       mh = slicer.mrmlScene.GetNthNodeByClass(h, "vtkMRMLModelHierarchyNode")
-      if mh.GetNumberOfChildrenNodes() > 0 and mh.GetDisplayNode() != None:
+      if mh.GetNumberOfChildrenNodes() > 0 and mh.GetDisplayNode() is not None:
         numModelHierarchiesToManipulate += 1
     # iterate over all the hierarchies
     hierarchyManipulating = 0
@@ -278,7 +278,7 @@ class AtlasTestsTest(unittest.TestCase):
       if numChildren > 0:
         mhd = mh.GetDisplayNode()
         # manually added hierarchies may not have display nodes, skip
-        if mhd == None:
+        if mhd is None:
           self.delayDisplay("Skipping model hierarchy with no display node " + mh.GetName())
         else:
           hierarchyManipulating += 1

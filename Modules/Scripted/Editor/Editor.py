@@ -72,7 +72,7 @@ class EditorWidget(VTKObservationMixin):
     be sure to turn these off and warn the user about it"""
     warned = False
     layoutManager = slicer.app.layoutManager()
-    if layoutManager != None:
+    if layoutManager is not None:
       sliceLogics = layoutManager.mrmlSliceLogics()
       for i in xrange(sliceLogics.GetNumberOfItems()):
         sliceLogic = sliceLogics.GetItemAsObject(i)

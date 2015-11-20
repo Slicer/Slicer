@@ -175,7 +175,7 @@ class DICOMPlugin(object):
       return
 
     # Validate dataNode argument
-    if dataNode == None or not dataNode.IsA('vtkMRMLNode'):
+    if dataNode is None or not dataNode.IsA('vtkMRMLNode'):
       import sys
       sys.stderr.write('Unable to create SubjectHierarchy nodes: invalid data node provided!')
       return
@@ -217,9 +217,9 @@ class DICOMPlugin(object):
     studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
     vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(slicer.mrmlScene, patientId, studyInstanceUid, seriesInstanceUid)
 
-    if patientNode == None:
+    if patientNode is None:
       patientNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
-      if patientNode != None:
+      if patientNode is not None:
         # Add attributes for DICOM tags
         patientName = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['patientName']))
         if patientName == '':
@@ -232,9 +232,9 @@ class DICOMPlugin(object):
         # Set node name
         patientNode.SetName(patientName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
 
-    if studyNode == None:
+    if studyNode is None:
       studyNode = vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
-      if studyNode != None:
+      if studyNode is not None:
         # Add attributes for DICOM tags
         studyDescription = slicer.util.toVTKString(slicer.dicomDatabase.fileValue(firstFile,tags['studyDescription']))
         if studyDescription == '':

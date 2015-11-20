@@ -243,7 +243,7 @@ class tpycl(object):
       cmd = sys.stdin.readline()[:-1]
       if cmd != "":
         result = self.tcl_eval( cmd )
-        if result != None:
+        if result is not None:
           print result
 
 if __name__ == "__main__":

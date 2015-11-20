@@ -153,7 +153,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
     if not volumeNode:
       logging.debug('hasImageData failed: no volume node')
       return False
-    if volumeNode.GetImageData() == None:
+    if volumeNode.GetImageData() is None:
       logging.debug('hasImageData failed: no image data in volume node')
       return False
     return True

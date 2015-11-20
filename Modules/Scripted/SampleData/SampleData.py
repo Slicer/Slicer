@@ -324,7 +324,7 @@ class SampleDataLogic:
       self.logMessage('<b>Load finished</b>\n')
       # since it was read from a temp directory remove the storage node
       volumeStorageNode = volumeNode.GetStorageNode()
-      if volumeStorageNode != None:
+      if volumeStorageNode is not None:
         slicer.mrmlScene.RemoveNode(volumeStorageNode)
       volumeNode.SetAndObserveStorageNodeID(None)
     else:

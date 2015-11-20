@@ -136,13 +136,13 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
 
     for x,y in ((0,0),)*4:
       p = points.InsertNextPoint( x, y, 0 )
-      if prevPoint != None:
+      if prevPoint is not None:
         idList = vtk.vtkIdList()
         idList.InsertNextId( prevPoint )
         idList.InsertNextId( p )
         self.polyData.InsertNextCell( vtk.VTK_LINE, idList )
       prevPoint = p
-      if firstPoint == None:
+      if firstPoint is None:
         firstPoint = p
 
     # make the last line in the polydata

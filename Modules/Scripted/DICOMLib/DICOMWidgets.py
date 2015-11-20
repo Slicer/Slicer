@@ -53,7 +53,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
     if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
     
-    if self.dicomBrowser == None:
+    if self.dicomBrowser is None:
       # This creates a DICOM database in the current working directory if nothing else
       # is specified in the settings, therefore promptForDatabaseDirectory must be called before this.
       self.dicomBrowser = ctk.ctkDICOMBrowser()

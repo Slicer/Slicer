@@ -25,7 +25,7 @@ class SliceAnnotations(VTKObservationMixin):
       slicer.logging.warning("SliceAnnotations: Disable features relying on vtkPVScalarBarActor")
 
     self.layoutManager = layoutManager
-    if self.layoutManager == None:
+    if self.layoutManager is None:
       self.layoutManager = slicer.app.layoutManager()
     self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
 
@@ -627,39 +627,39 @@ class SliceAnnotations(VTKObservationMixin):
       if self.orientationMarkerEnabled:
         # Add actors to renderer
         if self.orientationMarkerType == 'Cube':
-          if self.cube == None:
+          if self.cube is None:
             self.createCubeOrientationModel()
           ren.AddActor(self.cube)
-          if self.humanActor != None:
+          if self.humanActor is not None:
             ren.RemoveActor(self.humanActor)
             ren.RemoveActor(self.shortsActor)
             ren.RemoveActor(self.leftShoeActor)
             ren.RemoveActor(self.rightShoeActor)
-          if self.axes != None:
+          if self.axes is not None:
             ren.RemoveActor(self.axes)
 
         elif self.orientationMarkerType == 'Human':
-          if self.humanActor == None:
+          if self.humanActor is None:
             self.createHumanOrientationModel()
           ren.AddActor(self.humanActor)
           ren.AddActor(self.shortsActor)
           ren.AddActor(self.leftShoeActor)
           ren.AddActor(self.rightShoeActor)
-          if self.cube!= None:
+          if self.cube is not None:
             ren.RemoveActor(self.cube)
-          if self.axes != None:
+          if self.axes is not None:
             ren.RemoveActor(self.axes)
 
         elif self.orientationMarkerType == 'Axes':
-          if self.axes == None:
+          if self.axes is None:
             self.createAxesOrientationModel()
           ren.AddActor(self.axes)
-          if self.humanActor != None:
+          if self.humanActor is not None:
             ren.RemoveActor(self.humanActor)
             ren.RemoveActor(self.shortsActor)
             ren.RemoveActor(self.leftShoeActor)
             ren.RemoveActor(self.rightShoeActor)
-          if self.cube!= None:
+          if self.cube is not None:
             ren.RemoveActor(self.cube)
 
         # Calculate the camera position and viewup based on XYToRAS matrix
@@ -691,14 +691,14 @@ class SliceAnnotations(VTKObservationMixin):
         rw.AddRenderer(ren)
 
       else:
-        if self.humanActor != None:
+        if self.humanActor is not None:
           ren.RemoveActor(self.humanActor)
           ren.RemoveActor(self.shortsActor)
           ren.RemoveActor(self.leftShoeActor)
           ren.RemoveActor(self.rightShoeActor)
-        if self.axes != None:
+        if self.axes is not None:
           ren.RemoveActor(self.axes)
-        if self.cube != None:
+        if self.cube is not None:
           ren.RemoveActor(self.cube)
         rw.RemoveRenderer(ren)
 
@@ -967,7 +967,7 @@ class SliceAnnotations(VTKObservationMixin):
 
       renderer.SetViewport(0,0,1,1)
       renderer.SetLayer(0)
-      if orientationRenderer != None:
+      if orientationRenderer is not None:
         orientationRenderer.SetLayer(1)
       #renderWindow = renderer.GetRenderWindow()
       #interactor = renderWindow.GetInteractor()
@@ -989,11 +989,11 @@ class SliceAnnotations(VTKObservationMixin):
       backgroundVolume = backgroundLayer.GetVolumeNode()
       foregroundVolume = foregroundLayer.GetVolumeNode()
 
-      if (backgroundVolume != None and self.scalarBarSelectedLayer == 'background'):
+      if (backgroundVolume is not None and self.scalarBarSelectedLayer == 'background'):
         self.updateScalarBarRange(sliceLogic, backgroundVolume, scalarBar, self.scalarBarSelectedLayer)
         renderer.AddActor(scalarBar)
         #scalarBarWidget.On()
-      elif (foregroundVolume != None and self.scalarBarSelectedLayer == 'foreground'):
+      elif (foregroundVolume is not None and self.scalarBarSelectedLayer == 'foreground'):
         self.updateScalarBarRange(sliceLogic, foregroundVolume, scalarBar, self.scalarBarSelectedLayer)
         renderer.AddActor(scalarBar)
         #scalarBarWidget.On()
@@ -1028,7 +1028,7 @@ class SliceAnnotations(VTKObservationMixin):
       # Update slice corner annotations
       #
       # Case I: Both background and foregraound
-      if ( backgroundVolume != None and foregroundVolume != None):
+      if ( backgroundVolume is not None and foregroundVolume is not None):
         foregroundOpacity = sliceCompositeNode.GetForegroundOpacity()
         backgroundVolumeName = backgroundVolume.GetName()
         foregroundVolumeName = foregroundVolume.GetName()
@@ -1053,7 +1053,7 @@ class SliceAnnotations(VTKObservationMixin):
           self.dicomVolumeNode = 0
 
       # Case II: Only background
-      elif (backgroundVolume != None):
+      elif (backgroundVolume is not None):
         backgroundVolumeName = backgroundVolume.GetName()
         if self.bottomLeft:
           self.cornerTexts[0]['3-Background']['text'] = 'B: ' + backgroundVolumeName
@@ -1067,7 +1067,7 @@ class SliceAnnotations(VTKObservationMixin):
           self.dicomVolumeNode = 0
 
       # Case III: Only foreground
-      elif (foregroundVolume != None):
+      elif (foregroundVolume is not None):
         if self.bottomLeft:
           foregroundVolumeName = foregroundVolume.GetName()
           self.cornerTexts[0]['2-Foreground']['text'] = 'F: ' + foregroundVolumeName
@@ -1081,7 +1081,7 @@ class SliceAnnotations(VTKObservationMixin):
         else:
           self.dicomVolumeNode = 0
 
-      if (labelVolume != None):
+      if (labelVolume is not None):
         labelOpacity = sliceCompositeNode.GetLabelOpacity()
         labelVolumeName = labelVolume.GetName()
         self.cornerTexts[0]['1-Label']['text'] = 'L: ' + labelVolumeName + ' (' + str(
@@ -1113,7 +1113,7 @@ class SliceAnnotations(VTKObservationMixin):
     if not slicer.dicomDatabase:
       return
     viewHeight = self.sliceViews[sliceViewName].height
-    if fgUid != None and bgUid != None:
+    if fgUid is not None and bgUid is not None:
       backgroundDicomDic = self.extractDICOMValues(bgUid)
       foregroundDicomDic = self.extractDICOMValues(fgUid)
       # check if background and foreground are from different patients

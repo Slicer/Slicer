@@ -191,7 +191,7 @@ class EndoscopyWidget:
   def enableOrDisableCreateButton(self):
     """Connected to both the fiducial and camera node selector. It allows to
     enable or disable the 'create path' button."""
-    self.createPathButton.enabled = self.cameraNodeSelector.currentNode() != None and self.inputFiducialsNodeSelector.currentNode() != None
+    self.createPathButton.enabled = self.cameraNodeSelector.currentNode() is not None and self.inputFiducialsNodeSelector.currentNode() is not None
 
   def onCreatePathButtonClicked(self):
     """Connected to 'create path' button. It allows to:

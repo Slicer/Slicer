@@ -361,7 +361,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     data into DICOM data
     """
     # cannot export if there is no data node or the data node is not a volume
-    if node.GetAssociatedNode() == None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
+    if node.GetAssociatedNode() is None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
       return []
 
     # Define basic properties of the exportable
@@ -385,7 +385,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     for exportable in exportables:
       # Get node to export
       node = slicer.mrmlScene.GetNodeByID(exportable.nodeID)
-      if node.GetAssociatedNode() == None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
+      if node.GetAssociatedNode() is None or not node.GetAssociatedNode().IsA('vtkMRMLScalarVolumeNode'):
         error = "Series '" + node.GetNameWithoutPostfix() + "' cannot be exported!"
         logging.error(error)
         return error
@@ -401,12 +401,12 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
       # Get study and patient nodes
       studyNode = node.GetParentNode()
-      if studyNode == None:
+      if studyNode is None:
         error = "Unable to get study node for series '" + node.GetAssociatedNode().GetName() + "'"
         logging.error(error)
         return error
       patientNode = studyNode.GetParentNode()
-      if patientNode == None:
+      if patientNode is None:
         error = "Unable to get patient node for series '" + node.GetAssociatedNode().GetName() + "'"
         logging.error(error)
         return error

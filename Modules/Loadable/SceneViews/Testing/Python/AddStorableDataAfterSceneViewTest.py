@@ -210,7 +210,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     restoredData = slicer.mrmlScene.GetNodeByID(mrHeadID)
 
     # for now, the non scene view storable data is removed
-    self.assertTrue( restoredData == None )
+    self.assertTrue( restoredData is None )
     slicer.util.delayDisplay('Success: extra storable node removed with scene view restore')
 
 
@@ -231,7 +231,7 @@ class AddStorableDataAfterSceneViewTestTest(ScriptedLoadableModuleTest):
     restoredData = slicer.mrmlScene.GetNodeByID(mrHeadID)
 
     # in this case the non scene view storable data is kept' scene is not changed
-    self.assertTrue( restoredData != None )
+    self.assertTrue( restoredData is not None )
     slicer.util.delayDisplay('Success: extra storable node NOT removed with scene view restore')
 
     print 'Scene error code = ' + str(slicer.mrmlScene.GetErrorCode())

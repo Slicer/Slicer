@@ -24,9 +24,9 @@ assert slicer.modules.ModuleE_WithFileWriter_WithoutWidgetInstance.somevar() == 
 # Widget representation
 assert isinstance(slicer.modules.modulea.widgetRepresentation(), slicer.qSlicerScriptedLoadableModuleWidget)
 assert isinstance(slicer.modules.moduleb.widgetRepresentation(), slicer.qSlicerScriptedLoadableModuleWidget)
-assert slicer.modules.modulec_withoutwidget.widgetRepresentation() == None
-assert slicer.modules.moduled_withfiledialog_withoutwidget.widgetRepresentation() == None
-assert slicer.modules.modulee_withfilewriter_withoutwidget.widgetRepresentation() == None
+assert slicer.modules.modulec_withoutwidget.widgetRepresentation() is None
+assert slicer.modules.moduled_withfiledialog_withoutwidget.widgetRepresentation() is None
+assert slicer.modules.modulee_withfilewriter_withoutwidget.widgetRepresentation() is None
 
 import ModuleA
 import ModuleB

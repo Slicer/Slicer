@@ -318,7 +318,7 @@ def _checkRequiredArguments(options, parser):
     parser -- OptionParser."""
   missing_options = []
   for option in parser.option_list:
-    if re.match(r'^\[REQUIRED\]', option.help) and eval('options.' + option.dest) == None:
+    if re.match(r'^\[REQUIRED\]', option.help) and eval('options.' + option.dest) is None:
       missing_options.extend(option._long_opts)
   if len(missing_options) > 0:
     _error('Missing REQUIRED parameters: ' + str(missing_options))

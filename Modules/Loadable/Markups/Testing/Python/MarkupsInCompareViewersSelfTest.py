@@ -192,7 +192,7 @@ class MarkupsInCompareViewersSelfTestLogic:
 
     # make it active
     selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
-    if (selectionNode != None):
+    if (selectionNode is not None):
       selectionNode.SetReferenceActivePlaceNodeID(fidNode.GetID())
 
     # add some known points to it

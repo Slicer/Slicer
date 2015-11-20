@@ -126,4 +126,4 @@ class DICOMExportScalarVolume(object):
       return False
     dicomWrite = slicer.modules.createdicomseries
     cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
-    return cliNode != None
+    return cliNode is not None

@@ -53,7 +53,7 @@ class DICOMProcess(object):
     self.stop()
 
   def start(self, cmd, args):
-    if self.process != None:
+    if self.process is not None:
       self.stop()
     self.cmd = cmd
     self.args = args
@@ -287,7 +287,7 @@ class DICOMTestingQRServer(object):
     self.stop()
 
   def qrRunning(self):
-    return self.qrProcess != None
+    return self.qrProcess is not None
 
   def start(self,verbose=False,initialFiles=None):
     if self.qrRunning():

@@ -263,7 +263,7 @@ class FiducialLayoutSwitchBug1914Logic:
     # Get the seed widget seed location
     startingSeedDisplayCoords = [0.0, 0.0, 0.0]
     helper = self.getFiducialSliceDisplayableManagerHelper('Red')
-    if helper != None:
+    if helper is not None:
      seedWidget = helper.GetWidget(fidNode)
      seedRepresentation = seedWidget.GetSeedRepresentation()
      handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)
@@ -284,7 +284,7 @@ class FiducialLayoutSwitchBug1914Logic:
     # Get the current seed widget seed location
     endingSeedDisplayCoords = [0.0, 0.0, 0.0]
     helper = self.getFiducialSliceDisplayableManagerHelper('Red')
-    if helper != None:
+    if helper is not None:
      seedWidget = helper.GetWidget(fidNode)
      seedRepresentation = seedWidget.GetSeedRepresentation()
      handleRep = seedRepresentation.GetHandleRepresentation(fidIndex)

@@ -76,7 +76,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
           print '\tfile does not exist: ',absFileName
           print '\t\tnon absolute file name = ',fileName
           print '\t\tscene of the node root dir = ',storageNode.GetScene().GetRootDirectory()
-          if storableNode != None:
+          if storableNode is not None:
             print '\t\tstorable node name = ',storableNode.GetName()
             print '\t\tmodified since read = ',storableNode.GetModifiedSinceRead()
           else:

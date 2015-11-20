@@ -9,7 +9,7 @@ colorNode.SetHideFromEditors(0)
 colorNode.SetTypeToFile()
 colorNode.NamesInitialisedOff()
 colorNode.SetNumberOfColors(3)
-if colorNode.GetLookupTable() != None:
+if colorNode.GetLookupTable() is not None:
   colorNode.GetLookupTable().SetTableRange(0,2)
 
 colorNode.SetColor(0, 'zero', 0.0, 0.0, 0.0, 0.0)
@@ -73,7 +73,7 @@ readSceneView.RestoreScene()
 colorNodeAfterRestore =  slicer.util.getFirstNodeByName('CustomTest')
 # mrmlScene.GetNodeByID("vtkMRMLColorTableNode1")
 
-if colorNodeAfterRestore == None:
+if colorNodeAfterRestore is None:
   exceptionMessage = "Unable to find vtkMRMLColorTableNode1 in scene after restore"
   raise Exception(exceptionMessage)
 
