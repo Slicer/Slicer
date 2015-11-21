@@ -62,6 +62,13 @@ void vtkThreeDViewInteractorStyle::OnChar()
 void vtkThreeDViewInteractorStyle::OnKeyPress()
 {
   this->Superclass::OnKeyPress();
+
+  if(!this->CameraNode)
+    {
+    vtkErrorMacro("OnKeyPress: camera node is null");
+    return;
+    }
+
   if (this->Interactor->GetKeySym())
     {
     bool shift = (this->Interactor->GetShiftKey() != 0);
