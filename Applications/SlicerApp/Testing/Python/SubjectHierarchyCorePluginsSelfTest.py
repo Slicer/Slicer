@@ -182,7 +182,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     cloneNodePlugin.nodeContextMenuActions()[0].activate(qt.QAction.Trigger)
 
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialNode'), 2 )
-    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsDisplayNode', 2 )
+    self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsDisplayNode'), 2 )
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialStorageNode'), 2 )
 
     clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + ' Copy' + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
