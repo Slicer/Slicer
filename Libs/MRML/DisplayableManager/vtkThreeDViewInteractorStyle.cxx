@@ -49,6 +49,12 @@ vtkThreeDViewInteractorStyle::~vtkThreeDViewInteractorStyle()
 //----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnChar()
 {
+  if (!this->Interactor->GetKeySym())
+    {
+    vtkErrorMacro("OnChar: could not retrieve KeySym");
+    return;
+    }
+
   // Ignore KeyPad strokes, they are handled by OnKeyPress instead.
   if (strncmp(this->Interactor->GetKeySym(), "KP_", 3) == 0 ||
       this->Interactor->GetKeyCode() == '3')
@@ -66,6 +72,12 @@ void vtkThreeDViewInteractorStyle::OnKeyPress()
   if(!this->CameraNode)
     {
     vtkErrorMacro("OnKeyPress: camera node is null");
+    return;
+    }
+
+  if (!this->Interactor->GetKeySym())
+    {
+    vtkErrorMacro("OnKeyPress: could not retrieve KeySym");
     return;
     }
 
