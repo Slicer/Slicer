@@ -269,6 +269,15 @@ signals:
 #endif
   void renderRequested();
 
+protected:
+  /// Constructor allowing derived class to specify a specialized pimpl.
+  ///
+  /// \note You are responsible to call init() in the constructor of
+  /// derived class. Doing so ensures the derived class is fully
+  /// instantiated in case virtual method are called within init() itself.
+  qMRMLSliceControllerWidget(qMRMLSliceControllerWidgetPrivate* obj,
+                             QWidget* parent);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceControllerWidget);
   Q_DISABLE_COPY(qMRMLSliceControllerWidget);

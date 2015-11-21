@@ -1240,6 +1240,15 @@ qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(QWidget* _parent)
 }
 
 // --------------------------------------------------------------------------
+qMRMLSliceControllerWidget::qMRMLSliceControllerWidget(
+    qMRMLSliceControllerWidgetPrivate* pimpl, QWidget* _parent)
+  : Superclass(pimpl, _parent)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  // Note: You are responsible to call init() in the constructor of derived class.
+}
+
+// --------------------------------------------------------------------------
 qMRMLSliceControllerWidget::~qMRMLSliceControllerWidget()
 {
 }

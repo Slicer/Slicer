@@ -60,14 +60,14 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-struct qMRMLOrientation
+struct QMRML_WIDGETS_EXPORT qMRMLOrientation
 {
   QString Prefix;
   QString ToolTip;
 };
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceControllerWidgetPrivate
+class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidgetPrivate
   : public qMRMLViewControllerBarPrivate
   , public Ui_qMRMLSliceControllerWidget
 {
