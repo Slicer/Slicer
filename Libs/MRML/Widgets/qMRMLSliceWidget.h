@@ -152,6 +152,13 @@ public slots:
 protected:
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
 
+  /// Constructor allowing derived class to specify a specialized pimpl.
+  ///
+  /// \note You are responsible to call init() in the constructor of
+  /// derived class. Doing so ensures the derived class is fully
+  /// instantiated in case virtual method are called within init() itself.
+  qMRMLSliceWidget(qMRMLSliceWidgetPrivate* obj, QWidget* parent);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLSliceWidget);
   Q_DISABLE_COPY(qMRMLSliceWidget);

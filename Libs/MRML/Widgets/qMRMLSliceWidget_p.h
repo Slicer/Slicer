@@ -47,7 +47,7 @@ class vtkMRMLDisplayableManagerGroup;
 class QResizeEvent;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceWidgetPrivate
+class QMRML_WIDGETS_EXPORT qMRMLSliceWidgetPrivate
   : public QObject
   , public Ui_qMRMLSliceWidget
 {
