@@ -1,4 +1,4 @@
-
+import logging
 import fnmatch
 import qt
 import slicer
@@ -50,6 +50,7 @@ class LabelStructureListWidget(qt.QWidget):
     self.splitButton.connect("clicked()", self.split)
     self.mergeButton.connect("clicked()", self.mergeStructures)
     self.mergeAndBuildButton.connect("clicked()", self.onMergeAndBuild)
+    self.exportButton.connect("clicked()", self.export)
 
   #---------------------------------------------------------------------------
   @property
@@ -101,6 +102,14 @@ class LabelStructureListWidget(qt.QWidget):
     self.splitButton.objectName = 'SplitStructureButton'
     self.splitButton.setToolTip( "Split distinct labels from merge volume into new volumes" )
     self.structureButtonsFrame.layout().addWidget(self.splitButton)
+
+    # dicom export button
+
+    self.exportButton = qt.QPushButton("Export DICOM SEG")
+    self.exportButton.objectName = 'ExportDICOMButton'
+    self.exportButton.setToolTip( "Export current merge (only if Reporting extension is installed and Master Volume has DICOM context)" )
+    self.structureButtonsFrame.layout().addWidget(self.exportButton)
+    self.exportButton.enabled = hasattr(slicer.modules, 'encodeseg')
 
     # structures view
 
@@ -163,9 +172,7 @@ class LabelStructureListWidget(qt.QWidget):
     """select structure volume"""
     if not self.master:
       return None
-    masterName = self.master.GetName()
-    structureVolumeName = masterName+"-%s"%structureName + self.mergeVolumePostfix
-    return slicer.util.getFirstNodeByName(structureVolumeName, className=self.master.GetClassName())
+    return EditUtil.structureVolume(self.master, structureName, self.mergeVolumePostfix)
 
   #---------------------------------------------------------------------------
   def promptStructure(self):
@@ -221,15 +228,8 @@ class LabelStructureListWidget(qt.QWidget):
       label = self.promptStructure()
       return
 
-    colorNode = merge.GetDisplayNode().GetColorNode()
-    labelName = colorNode.GetColorName( label )
-    structureName = self.master.GetName()+"-%s"%labelName+self.mergeVolumePostfix
-
-    if labelName not in self.structureLabelNames:
-      struct = self.volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, self.master, structureName )
-      struct.SetName(structureName)
-      struct.GetDisplayNode().SetAndObserveColorNodeID( colorNode.GetID() )
-      self.updateStructures()
+    EditUtil.addStructure(self.master, self.merge, label)
+    self.updateStructures()
 
     if options.find("noEdit") < 0:
       self.selectStructure(self.structures.rowCount()-1)
@@ -379,49 +379,37 @@ class LabelStructureListWidget(qt.QWidget):
     """split the merge volume into individual structures"""
 
     self.statusText( "Splitting..." )
-    merge = self.merge
-    if not merge:
-      return
-    colorNode = merge.GetDisplayNode().GetColorNode()
-
-    accum = vtk.vtkImageAccumulate()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      accum.SetInput(merge.GetImageData())
+    if self.merge:
+      EditUtil.splitPerStructureVolumes(self.master, self.merge)
+      self.updateStructures()
     else:
-      accum.SetInputConnection(merge.GetImageDataConnection())
-    accum.Update()
-    lo = int(accum.GetMin()[0])
-    hi = int(accum.GetMax()[0])
-
-    # TODO: pending resolution of bug 1822, run the thresholding
-    # in single threaded mode to avoid data corruption observed on mac release
-    # builds
-    thresholder = vtk.vtkImageThreshold()
-    thresholder.SetNumberOfThreads(1)
-    for i in xrange(lo,hi+1):
-      self.statusText( "Splitting label %d..."%i )
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        thresholder.SetInput( merge.GetImageData() )
-      else:
-        thresholder.SetInputConnection( merge.GetImageDataConnection() )
-      thresholder.SetInValue( i )
-      thresholder.SetOutValue( 0 )
-      thresholder.ReplaceInOn()
-      thresholder.ReplaceOutOn()
-      thresholder.ThresholdBetween( i, i )
-      thresholder.SetOutputScalarType( merge.GetImageData().GetScalarType() )
-      thresholder.Update()
-      if thresholder.GetOutput().GetScalarRange() != (0.0, 0.0):
-        labelName = colorNode.GetColorName(i)
-        self.statusText( "Creating structure volume %s..."%labelName )
-        structureVolume = self.structureVolume( labelName )
-        if not structureVolume:
-          self.addStructure( i, "noEdit" )
-        structureVolume = self.structureVolume( labelName )
-        structureVolume.GetImageData().DeepCopy( thresholder.GetOutput() )
-        EditUtil.markVolumeNodeAsModified(structureVolume)
-
+      logging.info("No merged label map, cannot split")
     self.statusText( "Finished splitting." )
+
+  #---------------------------------------------------------------------------
+  def export(self):
+    """create a DICOM Segmentation Object from the current labels
+    and put it in the slicer dicom database"""
+
+    if not hasattr(slicer.modules, 'encodeseg'):
+      # TODO: change this message when EncodeSEG is in the trunk
+      qt.QMessageBox.critical(slicer.util.mainWindow(), "DICOM", "The Reporting extension must be installed in order to export segmentation objects")
+      return
+
+    if not self.master.GetAttribute("DICOM.instanceUIDs"):
+      qt.QMessageBox.critical(slicer.util.mainWindow(), "DICOM", "Master volume must have DICOM context")
+      return
+
+    rows = self.structures.rowCount()
+    if rows == 0:
+      self.split()
+      rows = self.structures.rowCount()
+      if rows == 0:
+        logging.info("Cannot export empty segmentation") # TODO: should you be able to?
+        return
+
+    EditUtil.exportAsDICOMSEG(self.master)
+    logging.info("Segmentations exported to DICOM Database")
 
   #---------------------------------------------------------------------------
   def build(self):
@@ -551,6 +539,7 @@ class LabelStructureListWidget(qt.QWidget):
     self.deleteSelectedStructureButton.setDisabled(not merge)
     self.mergeButton.setDisabled(not merge)
     self.splitButton.setDisabled(not merge)
+    self.exportButton.setDisabled(not merge)
     self.mergeAndBuildButton.setDisabled(not merge)
     self.replaceModels.setDisabled(not merge)
     if self.mergeValidCommand:

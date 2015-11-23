@@ -1,5 +1,6 @@
 import vtk
 import slicer
+import logging
 
 from slicer.util import NodeModify
 
@@ -266,7 +267,7 @@ class EditUtil(object):
     """Switch the label outline mode for all composite nodes in the scene"""
     for sliceNode in slicer.util.getNodes('vtkMRMLSliceNode*').values():
       sliceNode.SetUseLabelOutline(not sliceNode.GetUseLabelOutline())
-  
+
   @staticmethod
   def setLabelOutline(state):
     """Set the label outline mode for all composite nodes in the scene to state"""
@@ -301,6 +302,210 @@ class EditUtil(object):
     volumeNode.GetImageData().Modified()
     volumeNode.Modified()
 
+  @staticmethod
+  def structureVolume(masterNode, structureName, mergeVolumePostfix="-label"):
+    """Return the per-structure volume associated with the master node for the given
+    structure name"""
+    masterName = masterNode.GetName()
+    structureVolumeName = masterName+"-%s"%structureName + mergeVolumePostfix
+    return slicer.util.getFirstNodeByName(structureVolumeName, className=masterNode.GetClassName())
+
+  @staticmethod
+  def addStructure(masterNode, mergeNode, structureLabel, mergeVolumePostfix="-label"):
+    """Make a new per-structure volume for the given label associated with the given master
+    and merge nodes"""
+    colorNode = mergeNode.GetDisplayNode().GetColorNode()
+    structureName = colorNode.GetColorName( structureLabel )
+    structureName = masterNode.GetName()+"-%s"%structureName+mergeVolumePostfix
+    if EditUtil.structureVolume(masterNode, structureName, mergeVolumePostfix) is None:
+      volumesLogic = slicer.modules.volumes.logic()
+      struct = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, masterNode, structureName )
+      struct.SetName(structureName)
+      struct.GetDisplayNode().SetAndObserveColorNodeID( colorNode.GetID() )
+
+  @staticmethod
+  def splitPerStructureVolumes(masterNode, mergeNode):
+    """Make a separate label map node for each non-empty label value in the
+    merged label map"""
+
+    colorNode = mergeNode.GetDisplayNode().GetColorNode()
+
+    accum = vtk.vtkImageAccumulate()
+    accum.SetInputConnection(mergeNode.GetImageDataConnection())
+    accum.Update()
+    lo = int(accum.GetMin()[0])
+    hi = int(accum.GetMax()[0])
+
+    # TODO: pending resolution of bug 1822, run the thresholding
+    # in single threaded mode to avoid data corruption observed on mac release
+    # builds
+    thresholder = vtk.vtkImageThreshold()
+    thresholder.SetNumberOfThreads(1)
+    for index in xrange(lo,hi+1):
+      logging.info( "Splitting label %d..."%index )
+      if vtk.VTK_MAJOR_VERSION <= 5:
+        thresholder.SetInput( mergeNode.GetImageData() )
+      else:
+        thresholder.SetInputConnection( mergeNode.GetImageDataConnection() )
+      thresholder.SetInValue( index )
+      thresholder.SetOutValue( 0 )
+      thresholder.ReplaceInOn()
+      thresholder.ReplaceOutOn()
+      thresholder.ThresholdBetween( index, index )
+      thresholder.SetOutputScalarType( mergeNode.GetImageData().GetScalarType() )
+      thresholder.Update()
+      if thresholder.GetOutput().GetScalarRange() != (0.0, 0.0):
+        structureName = colorNode.GetColorName(index)
+        logging.info( "Creating structure volume %s..."%structureName )
+        structureVolume = EditUtil.structureVolume( masterNode, structureName )
+        if not structureVolume:
+          EditUtil.addStructure( masterNode, mergeNode, index )
+        structureVolume = EditUtil.structureVolume( masterNode, structureName )
+        structureVolume.GetImageData().DeepCopy( thresholder.GetOutput() )
+        EditUtil.markVolumeNodeAsModified(structureVolume)
+
+  @staticmethod
+  def exportAsDICOMSEG(masterNode):
+    """Export the given node to a segmentation object and load it in the
+    DICOM database"""
+    import os
+
+    instanceUIDs = masterNode.GetAttribute("DICOM.instanceUIDs").split()
+    if instanceUIDs == "":
+      raise Exception("Editor master node does not have DICOM information")
+
+    # get the list of source DICOM files
+    inputDICOMImageFileNames = ""
+    for instanceUID in instanceUIDs:
+      inputDICOMImageFileNames += slicer.dicomDatabase.fileForInstance(instanceUID) + ","
+    inputDICOMImageFileNames = inputDICOMImageFileNames[:-1] # strip last comma
+
+    # save the per-structure volumes in the temp directory
+    inputSegmentationsFileNames = ""
+    import random # TODO: better way to generate temp file names?
+    import vtkITK
+    writer = vtkITK.vtkITKImageWriter()
+    rasToIJKMatrix = vtk.vtkMatrix4x4()
+    masterName = masterNode.GetName()
+    perStructureNodes = slicer.util.getNodes(masterName+"-*-label")
+    for nodeName in perStructureNodes.keys():
+      node = perStructureNodes[nodeName]
+      structureName = nodeName[len(masterName)+1:-1*len('-label')]
+      structureFileName = structureName + str(random.randint(0,vtk.VTK_INT_MAX)) + ".nrrd"
+      filePath = os.path.join(slicer.app.temporaryPath, structureFileName)
+      writer.SetFileName(filePath)
+      writer.SetInputDataObject(node.GetImageData())
+      node.GetRASToIJKMatrix(rasToIJKMatrix)
+      writer.SetRasToIJKMatrix(rasToIJKMatrix)
+      logging.debug("Saving to %s..." % filePath)
+      writer.Write()
+      inputSegmentationsFileNames += filePath + ","
+    inputSegmentationsFileNames = inputSegmentationsFileNames[:-1] # strip last comma
+
+    # save the per-structure volumes label attributes
+    mergeNode = slicer.util.getNode(masterName+"-label")
+    colorNode = mergeNode.GetDisplayNode().GetColorNode()
+    terminologyName = colorNode.GetAttribute("TerminologyName")
+    colorLogic = slicer.modules.colors.logic()
+    if not terminologyName or not colorLogic:
+      raise Exception("No terminology or color logic - cannot export")
+    inputLabelAttributesFileNames = ""
+    perStructureNodes = slicer.util.getNodes(masterName+"-*-label")
+    for nodeName in perStructureNodes.keys():
+      node = perStructureNodes[nodeName]
+      structureName = nodeName[len(masterName)+1:-1*len('-label')]
+      labelIndex = colorNode.GetColorIndexByName( structureName )
+
+      rgbColor = [0,]*4
+      colorNode.GetColor(labelIndex, rgbColor)
+      rgbColor = map(lambda e: e*255., rgbColor)
+
+      # get the attributes and conver to format CodeValue,CodeMeaning,CodingSchemeDesignator
+      # or empty strings if not defined
+      propertyCategoryWithColons = colorLogic.GetSegmentedPropertyCategory(labelIndex, terminologyName)
+      if propertyCategoryWithColons == '':
+        logging.debug ('ERROR: no segmented property category found for label ',str(labelIndex))
+        # Try setting a default as this section is required
+        propertyCategory = "C94970,NCIt,Reference Region"
+      else:
+        propertyCategory = propertyCategoryWithColons.replace(':',',')
+
+      propertyTypeWithColons = colorLogic.GetSegmentedPropertyType(labelIndex, terminologyName)
+      propertyType = propertyTypeWithColons.replace(':',',')
+
+      propertyTypeModifierWithColons = colorLogic.GetSegmentedPropertyTypeModifier(labelIndex, terminologyName)
+      propertyTypeModifier = propertyTypeModifierWithColons.replace(':',',')
+
+      anatomicRegionWithColons = colorLogic.GetAnatomicRegion(labelIndex, terminologyName)
+      anatomicRegion = anatomicRegionWithColons.replace(':',',')
+
+      anatomicRegionModifierWithColons = colorLogic.GetAnatomicRegionModifier(labelIndex, terminologyName)
+      anatomicRegionModifier = anatomicRegionModifierWithColons.replace(':',',')
+
+      structureFileName = structureName + str(random.randint(0,vtk.VTK_INT_MAX)) + ".info"
+      filePath = os.path.join(slicer.app.temporaryPath, structureFileName)
+
+      # EncodeSEG is expecting a file of format:
+      # labelNum;SegmentedPropertyCategory:codeValue,codeScheme,codeMeaning;SegmentedPropertyType:v,m,s etc
+      attributes = "%d" % labelIndex
+      attributes += ";SegmentedPropertyCategory:"+propertyCategory
+      if propertyType != "":
+        attributes += ";SegmentedPropertyType:" + propertyType
+      if propertyTypeModifier != "":
+        attributes += ";SegmentedPropertyTypeModifier:" + propertyTypeModifier
+      if anatomicRegion != "":
+        attributes += ";AnatomicRegion:" + anatomicRegion
+      if anatomicRegionModifier != "":
+        attributes += ";AnatomicRegionModifer:" + anatomicRegionModifier
+      attributes += ";SegmentAlgorithmType:AUTOMATIC"
+      attributes += ";SegmentAlgorithmName:SlicerSelfTest"
+      attributes += ";RecommendedDisplayRGBValue:%g,%g,%g" % tuple(rgbColor[:-1])
+      fp = open(filePath, "w")
+      fp.write(attributes)
+      fp.close()
+      logging.debug ("filePath: %s", filePath)
+      logging.debug ("attributes: %s", attributes)
+      inputLabelAttributesFileNames += filePath + ","
+    inputLabelAttributesFileNames = inputLabelAttributesFileNames[:-1] # strip last comma
+
+    try:
+      user = os.environ['USER']
+    except KeyError:
+      user = "Unspecified"
+    segFileName = "editor_export.SEG" + str(random.randint(0,vtk.VTK_INT_MAX)) + ".dcm"
+    segFilePath = os.path.join(slicer.app.temporaryPath, segFileName)
+    # TODO: define a way to set parameters like description
+    # TODO: determine a good series number automatically by looking in the database
+    parameters = {
+        "inputDICOMImageFileNames": inputDICOMImageFileNames,
+        "inputSegmentationsFileNames": inputSegmentationsFileNames,
+        "inputLabelAttributesFileNames": inputLabelAttributesFileNames,
+        "readerId": user,
+        "sessionId": "1",
+        "timePointId": "1",
+        "seriesDescription": "SlicerEditorSEGExport",
+        "seriesNumber": "100",
+        "instanceNumber": "1",
+        "bodyPart": "HEAD",
+        "algorithmDescriptionFileName": "Editor",
+        "outputSEGFileName": segFilePath,
+        "skipEmptySlices": False,
+        "compress": False,
+        }
+
+    encodeSEG = slicer.modules.encodeseg
+    cliNode = None
+    cliNode = slicer.cli.run(encodeSEG, cliNode, parameters, delete_temporary_files=False)
+    waitCount = 0
+    while cliNode.IsBusy() and waitCount < 20:
+      slicer.util.delayDisplay( "Running SEG Encoding... %d" % waitCount, 1000 )
+      waitCount += 1
+
+    if cliNode.GetStatusString() != 'Completed':
+      raise Exception("encodeSEG CLI did not complete cleanly")
+
+    logging.info("Added segmentation to DICOM database (%s)", segFilePath)
+    slicer.dicomDatabase.insert(segFilePath)
 
 class UndoRedo(object):
   """ Code to manage a list of undo/redo volumes
