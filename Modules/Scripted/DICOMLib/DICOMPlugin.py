@@ -76,6 +76,8 @@ class DICOMPlugin(object):
     # calls to the DICOM database so that any needed values
     # can be efficiently pre-fetched if possible.
     self.tags = {}
+    self.tags['seriesDescription'] = "0008,103E"
+    self.tags['seriesNumber'] = "0020,0011"
 
   def hashFiles(self,files):
     """Create a hash key for a list of files"""
@@ -137,6 +139,21 @@ class DICOMPlugin(object):
     Virtual: should be overridden by the subclass
     """
     return ""
+
+  def defaultSeriesNodeName(self,seriesUID):
+    """Generate a name suitable for use as a mrml node name based
+    on the series level data in the database"""
+    instanceFilePaths = slicer.dicomDatabase.filesForSeries(seriesUID)
+    if len(instanceFilePaths) == 0:
+      return "Unnamed Series"
+    seriesDescription = slicer.dicomDatabase.fileValue(instanceFilePaths[0],self.tags['seriesDescription'])
+    seriesNumber = slicer.dicomDatabase.fileValue(instanceFilePaths[0],self.tags['seriesNumber'])
+    name = seriesDescription
+    if seriesDescription == "":
+      name = "Unnamed Series"
+    if seriesNumber != "":
+      name = seriesNumber + ": " + name
+    return name
 
   def addSeriesInSubjectHierarchy(self,loadable,dataNode):
     """Add loaded DICOM series into subject hierarchy.

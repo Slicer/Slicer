@@ -22,6 +22,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     self.defaultStudyID = 'SLICER10001' #TODO: What should be the new study ID?
 
     self.tags['seriesDescription'] = "0008,103e"
+    self.tags['seriesUID'] = "0020,000E"
     self.tags['seriesNumber'] = "0020,0011"
     self.tags['position'] = "0020,0032"
     self.tags['orientation'] = "0020,0037"
@@ -63,18 +64,13 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     files parameter.
     """
 
-    # get the series description to use as base for volume name
-    name = slicer.dicomDatabase.fileValue(files[0],self.tags['seriesDescription'])
-    if name == "":
-      name = "Unknown"
-    num = slicer.dicomDatabase.fileValue(files[0],self.tags['seriesNumber'])
-    if num != "":
-      name = num + ": " + name
+    seriesUID = slicer.dicomDatabase.fileValue(files[0],self.tags['seriesUID'])
+    seriesName = self.defaultSeriesNodeName(seriesUID)
 
     # default loadable includes all files for series
     loadable = DICOMLoadable()
     loadable.files = files
-    loadable.name = name
+    loadable.name = seriesName
     loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
     loadable.selected = True
     # add it to the list of loadables later, if pixel data is available in at least one file
@@ -83,7 +79,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     # position and orientation for later use
     positions = {}
     orientations = {}
-
 
     # make subseries volumes based on tag differences
     subseriesTags = [
@@ -141,7 +136,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           # default loadable includes all files for series
           loadable = DICOMLoadable()
           loadable.files = subseriesFiles[tag,value]
-          loadable.name = name + " for %s of %s" % (tag,value)
+          loadable.name = seriesName + " for %s of %s" % (tag,value)
           loadable.tooltip = "%d files, first file: %s" % (len(loadable.files), loadable.files[0])
           loadable.selected = False
           loadables.append(loadable)
