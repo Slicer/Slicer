@@ -174,7 +174,6 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
     vtkSmartPointer<vtkMRMLNode> clonedDataNode;
     clonedDataNode.TakeReference(scene->CreateNodeByClass(associatedDataNode->GetClassName()));
     std::string clonedDataNodeName = ( name.isEmpty() ? std::string(associatedDataNode->GetName()) + CLONE_NODE_NAME_POSTFIX : std::string(name.toLatin1().constData()) );
-    clonedDataNode->SetName(clonedDataNodeName.c_str());
     scene->AddNode(clonedDataNode);
 
     // Clone display node
@@ -229,6 +228,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
     // Copy data node
     // Display and storage nodes might be involved in the copy process, so they are needed to be set up before the copy operation
     clonedDataNode->Copy(associatedDataNode);
+    clonedDataNode->SetName(clonedDataNodeName.c_str());
     // Copy overwrites display and storage node references too, need to restore
     if (clonedDisplayNode.GetPointer())
       {
