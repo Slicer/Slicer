@@ -87,6 +87,15 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 #endif
 
   // Default values
+
+  this->DefaultScenePathButton->setDirectory(qSlicerCoreApplication::application()->defaultScenePath());
+  q->registerProperty("DefaultScenePath", this->DefaultScenePathButton,"directory",
+                      SIGNAL(directoryChanged(QString)),
+                      "Default scene path",
+                     ctkSettingsPanel::OptionRequireRestart);
+  QObject::connect(this->DefaultScenePathButton, SIGNAL(directoryChanged(QString)),
+                   q, SLOT(setDefaultScenePath(QString)));
+
   this->SlicerWikiURLLineEdit->setText("http://www.slicer.org/slicerWiki/index.php");
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
@@ -128,4 +137,10 @@ qSlicerSettingsGeneralPanel::qSlicerSettingsGeneralPanel(QWidget* _parent)
 // --------------------------------------------------------------------------
 qSlicerSettingsGeneralPanel::~qSlicerSettingsGeneralPanel()
 {
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsGeneralPanel::setDefaultScenePath(const QString& path)
+{
+  qSlicerCoreApplication::application()->setDefaultScenePath(path);
 }

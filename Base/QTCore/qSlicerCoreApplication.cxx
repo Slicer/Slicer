@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDesktopServices>
 #include <QDir>
 #include <QLocale>
 #include <QMessageBox>
@@ -1048,8 +1049,8 @@ void qSlicerCoreApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
     return;
     }
 
-  QString workingDirectory = QDir::currentPath();
-  newMRMLScene->SetRootDirectory(workingDirectory.toLatin1());
+  // Set the default scene save directory
+  newMRMLScene->SetRootDirectory(this->defaultScenePath().toLatin1());
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
   // Register the node type for the command line modules
@@ -1085,6 +1086,28 @@ QString qSlicerCoreApplication::slicerHome() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->SlicerHome;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::defaultScenePath() const
+{
+  Q_D(const qSlicerCoreApplication);
+  QSettings* appSettings = this->userSettings();
+  Q_ASSERT(appSettings);
+  QString defaultScenePath = appSettings->value("DefaultScenePath", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)).toString();
+  return defaultScenePath;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setDefaultScenePath(const QString& path)
+{
+  if (this->defaultScenePath() == path)
+    {
+    return;
+    }
+  QSettings* appSettings = this->userSettings();
+  Q_ASSERT(appSettings);
+  appSettings->setValue("DefaultScenePath", path);
 }
 
 //-----------------------------------------------------------------------------

@@ -64,6 +64,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   /// "C:\Program Files (x86)\Slicer 4.4.0\".
   /// \sa slicerHome(), temporaryPath, isInstalled
   Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
+  Q_PROPERTY(QString defaultScenePath READ defaultScenePath WRITE setDefaultScenePath)
   Q_PROPERTY(QString slicerSharePath READ slicerSharePath CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
@@ -147,6 +148,15 @@ public:
   /// Get slicer home directory
   /// \sa slicerHome
   QString slicerHome() const;
+
+  /// Get default scene directory
+  ///
+  /// This returns the full path where scenes are saved to by default
+  ///
+  QString defaultScenePath() const;
+
+  /// Set default slicer scene directory
+  void setDefaultScenePath(const QString& path);
 
   /// Get slicer share directory
   ///

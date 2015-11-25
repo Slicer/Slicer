@@ -47,6 +47,9 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsGeneralPanel();
 
+public slots:
+  void setDefaultScenePath(const QString& path);
+
 protected:
   QScopedPointer<qSlicerSettingsGeneralPanelPrivate> d_ptr;
 
