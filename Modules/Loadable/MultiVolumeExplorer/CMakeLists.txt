@@ -1,7 +1,5 @@
 
-#-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.4)
-#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
@@ -16,13 +14,11 @@ set(MODULE_TITLE ${MODULE_NAME})
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
-# Add subdirectories
+#-----------------------------------------------------------------------------
 add_subdirectory(MRML)
 add_subdirectory(Logic)
 add_subdirectory(Py)
 
-#-----------------------------------------------------------------------------
-# Sources
 #-----------------------------------------------------------------------------
 set(qt_module_export_directive "Q_SLICER_QTMODULES_MULTIVOLUMEEXPLORER_EXPORT")
 
@@ -34,34 +30,27 @@ set(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/MRML
   )
 
-# Source files
 set(qt_module_SRCS
   qSlicerMultiVolumeExplorerModule.cxx
   qSlicerMultiVolumeExplorerModule.h
   )
 
-# Headers that should run through moc
 set(qt_module_MOC_SRCS
   qSlicerMultiVolumeExplorerModule.h
   )
 
-# UI files
 set(qt_module_UI_SRCS
 )
 
-# Additional Target libraries
 set(qt_module_target_libraries
   vtkSlicerMultiVolumeExplorerModuleMRML
   vtkSlicerMultiVolumeExplorerModuleLogic
   )
 
-# Resources
 set(qt_module_resources
   Resources/qSlicerMultiVolumeExplorerModule.qrc
 )
 
-#-----------------------------------------------------------------------------
-# Build
 #-----------------------------------------------------------------------------
 slicerMacroBuildQtModule(
   NAME ${MODULE_NAME}
@@ -74,8 +63,6 @@ slicerMacroBuildQtModule(
   RESOURCES ${qt_module_resources}
   )
 
-#-----------------------------------------------------------------------------
-# Testing
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)

@@ -15,12 +15,10 @@ set(module_mrml_SRCS
   vtkMRMLMultiVolumeStorageNode.h
   )
 
-# Additional Target libraries
 set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   )
 
-# The header '${module_mrml_name}Export.h' will be automatically configured.
 set(module_mrml_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT")
 
 set(module_mrml_target_libraries
@@ -28,6 +26,7 @@ set(module_mrml_target_libraries
   ${vtkTeem_LIBRARIES}
   )
 
+#-----------------------------------------------------------------------------
 SlicerMacroBuildModuleMRML(
   NAME ${module_mrml_name}
   EXPORT_DIRECTIVE ${module_mrml_export_directive}

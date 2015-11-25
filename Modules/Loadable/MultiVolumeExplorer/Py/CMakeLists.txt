@@ -8,6 +8,7 @@ SET(KIT_PYTHON_SCRIPTS
 SET(KIT_PYTHON_RESOURCES
   )
 
+#-----------------------------------------------------------------------------
 ctkMacroCompilePythonScript(
   TARGET_NAME qSlicerMultiVolumeExplorerModuleWidget
   SCRIPTS "${KIT_PYTHON_SCRIPTS}"
