@@ -30,15 +30,7 @@ if(${Teem_VERSION_MAJOR}.${Teem_VERSION_MINOR}.${Teem_VERSION_PATCH} VERSION_LES
   message(FATAL_ERROR
     "Could not find a configuration file for package \"Teem\" that is compatible with requested version \"1.10\".")
 endif()
-
-# XXX Waiting Teem gets ride of 'export_library_dependencies'
-#     and switch to an export of targets, set policy CMP0033.
-cmake_policy(PUSH)
-if(POLICY CMP0033)
-  cmake_policy(SET CMP0033 OLD)
-endif()
 include(${Teem_USE_FILE})
-cmake_policy(POP)
 
 # XXX Teem 1.11.0 or Teem >= 4168 - This variable won't be needed anymore.
 #     See http://sourceforge.net/p/teem/code/4168/
