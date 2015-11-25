@@ -1,12 +1,14 @@
 project(vtkSlicer${MODULE_NAME}ModuleMRML)
 
-set(module_mrml_name "${PROJECT_NAME}")
+set(KIT "${PROJECT_NAME}")
 
-set(module_mrml_include_directory
+set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT")
+
+set(${KIT}_INCLUDE_DIRECTORIES
   )
 include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
 
-set(module_mrml_SRCS
+set(${KIT}_SRCS
   vtkMRMLMultiVolumeNode.cxx
   vtkMRMLMultiVolumeNode.h
   vtkMRMLMultiVolumeDisplayNode.cxx
@@ -15,22 +17,16 @@ set(module_mrml_SRCS
   vtkMRMLMultiVolumeStorageNode.h
   )
 
-set(module_logic_target_libraries
-  ${ITK_LIBRARIES}
-  )
-
-set(module_mrml_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT")
-
-set(module_mrml_target_libraries
+set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
   ${vtkTeem_LIBRARIES}
   )
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleMRML(
-  NAME ${module_mrml_name}
-  EXPORT_DIRECTIVE ${module_mrml_export_directive}
-  INCLUDE_DIRECTORIES ${module_mrml_include_directories}
-  SRCS ${module_mrml_SRCS}
-  TARGET_LIBRARIES ${module_mrml_target_libraries}
+  NAME ${KIT}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
+  SRCS ${${KIT}_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

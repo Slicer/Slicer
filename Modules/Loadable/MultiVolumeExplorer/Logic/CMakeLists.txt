@@ -1,30 +1,29 @@
 project(vtkSlicer${MODULE_NAME}ModuleLogic)
 
-set(module_logic_name "${PROJECT_NAME}")
+set(KIT ${PROJECT_NAME})
 
-set(module_logic_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT")
+set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
 
-set(module_logic_include_directories
+set(${KIT}_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/../MRML
   ${CMAKE_CURRENT_BINARY_DIR}/../MRML
   )
 
-set(module_logic_SRCS
+set(${KIT}_SRCS
   vtkSlicerMultiVolumeExplorerLogic.cxx
   vtkSlicerMultiVolumeExplorerLogic.h
   )
 
-set(module_logic_target_libraries
-  # ${ITK_LIBRARIES}
+set(${KIT}_TARGET_LIBRARIES
   vtkSlicerMultiVolumeExplorerModuleMRML
   vtkSlicerVolumesModuleLogic
   )
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(
-  NAME ${module_logic_name}
-  EXPORT_DIRECTIVE ${module_logic_export_directive}
-  INCLUDE_DIRECTORIES ${module_logic_include_directories}
-  SRCS ${module_logic_SRCS}
-  TARGET_LIBRARIES ${module_logic_target_libraries}
+  NAME ${KIT}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
+  SRCS ${${KIT}_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )
