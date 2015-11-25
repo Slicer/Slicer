@@ -1,4 +1,4 @@
-project(vtkSlicer${EXTENSION_NAME}ModuleMRML)
+project(vtkSlicer${MODULE_NAME}ModuleMRML)
 
 set(module_mrml_name "${PROJECT_NAME}")
 
