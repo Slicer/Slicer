@@ -51,7 +51,7 @@ public:
   virtual ~qSlicerSubjectHierarchyCloneNodePlugin();
 
 public:
-  static const std::string CLONE_NODE_NAME_POSTFIX;
+  Q_INVOKABLE static const QString getCloneNodeNamePostfix() { return QString(" Copy"); };
 
 public:
   /// Get node context menu item actions to add to tree view

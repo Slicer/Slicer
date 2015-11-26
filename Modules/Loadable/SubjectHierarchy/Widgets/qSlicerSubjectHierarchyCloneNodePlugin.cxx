@@ -50,9 +50,6 @@
 #include <QStandardItem>
 #include <QAction>
 
-//----------------------------------------------------------------------------
-const std::string qSlicerSubjectHierarchyCloneNodePlugin::CLONE_NODE_NAME_POSTFIX = std::string(" Copy");
-
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy_Widgets
 class qSlicerSubjectHierarchyCloneNodePluginPrivate: public QObject
@@ -173,7 +170,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
     // Create data node clone
     vtkSmartPointer<vtkMRMLNode> clonedDataNode;
     clonedDataNode.TakeReference(scene->CreateNodeByClass(associatedDataNode->GetClassName()));
-    std::string clonedDataNodeName = ( name.isEmpty() ? std::string(associatedDataNode->GetName()) + CLONE_NODE_NAME_POSTFIX : std::string(name.toLatin1().constData()) );
+    std::string clonedDataNodeName = ( name.isEmpty() ? std::string(associatedDataNode->GetName()) + std::string(getCloneNodeNamePostfix().toLatin1().constData()) : std::string(name.toLatin1().constData()) );
     scene->AddNode(clonedDataNode);
 
     // Clone display node
@@ -217,7 +214,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
         clonedStorageNode->Copy(storableDataNode->GetStorageNode());
         if (storableDataNode->GetStorageNode()->GetFileName())
           {
-          std::string clonedStorageNodeFileName = std::string(storableDataNode->GetStorageNode()->GetFileName()) + CLONE_NODE_NAME_POSTFIX;
+          std::string clonedStorageNodeFileName = std::string(storableDataNode->GetStorageNode()->GetFileName()) + std::string(getCloneNodeNamePostfix().toLatin1().constData());
           clonedStorageNode->SetFileName(clonedStorageNodeFileName.c_str());
           }
         scene->AddNode(clonedStorageNode);
@@ -250,7 +247,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
       clonedHierarchyNode.TakeReference( vtkMRMLHierarchyNode::SafeDownCast(
         scene->CreateNodeByClass(genericHierarchyNode->GetClassName()) ) );
       clonedHierarchyNode->Copy(genericHierarchyNode);
-      std::string clonedHierarchyNodeName = std::string(genericHierarchyNode->GetName()) + CLONE_NODE_NAME_POSTFIX;
+      std::string clonedHierarchyNodeName = std::string(genericHierarchyNode->GetName()) + std::string(getCloneNodeNamePostfix().toLatin1().constData());
       clonedHierarchyNode->SetName(clonedHierarchyNodeName.c_str());
       scene->AddNode(clonedHierarchyNode);
       clonedHierarchyNode->SetAssociatedNodeID(clonedDataNode->GetID());
@@ -270,7 +267,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
     std::string clonedSubjectHierarchyNodeName = node->GetName();
     vtksys::SystemTools::ReplaceString(clonedSubjectHierarchyNodeName,
       vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str(), "");
-    clonedSubjectHierarchyNodeName.append(CLONE_NODE_NAME_POSTFIX);
+    clonedSubjectHierarchyNodeName.append(std::string(getCloneNodeNamePostfix().toLatin1().constData()));
     if (!name.isEmpty())
     {
       clonedSubjectHierarchyNodeName = std::string(name.toLatin1().constData());

@@ -107,6 +107,8 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.sampleMarkupName = 'SampleMarkup'
     self.sampleChartName = 'SampleChart'
     self.studyName = 'Study'
+    from qSlicerSubjectHierarchyModuleWidgetsPythonQt import qSlicerSubjectHierarchyCloneNodePlugin
+    self.cloneNodeNamePostfix = qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
 
   # ------------------------------------------------------------------------------
   def section_MarkupRole(self):
@@ -185,11 +187,11 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsDisplayNode'), 2 )
     self.assertEqual( slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsFiducialStorageNode'), 2 )
 
-    clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + ' Copy' + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + self.cloneNodeNamePostfix + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertIsNotNone( clonedMarkupShNode )
     clonedMarkupNode = clonedMarkupShNode.GetAssociatedNode()
     self.assertIsNotNone( clonedMarkupNode )
-    self.assertNotEqual( clonedMarkupNode.GetName(), self.sampleMarkupName + ' Copy' )
+    self.assertEqual( clonedMarkupNode.GetName(), self.sampleMarkupName + self.cloneNodeNamePostfix )
     self.assertIsNotNone( clonedMarkupNode.GetDisplayNode() )
     self.assertIsNotNone( clonedMarkupNode.GetStorageNode() )
 
@@ -213,7 +215,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     chartNode2.SetName(self.sampleChartName + '2')
     slicer.mrmlScene.AddNode(chartNode2)
 
-    clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + ' Copy' + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    clonedMarkupShNode = slicer.util.getNode(self.sampleMarkupName + self.cloneNodeNamePostfix + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     clonedMarkupShNode.SetAssociatedNodeID(chartNode2.GetID())
 
     self.assertEqual( clonedMarkupShNode.GetOwnerPluginName(), 'Charts' )
