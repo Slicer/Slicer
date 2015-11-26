@@ -1,12 +1,10 @@
 
 cmake_minimum_required(VERSION 2.8.9)
-if(POLICY CMP0048)
-  cmake_policy(SET CMP0048 OLD)
-endif()
 if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 foreach(p
+  CMP0048 # CMake 3.0
   CMP0054 # CMake 3.1
   )
   if(POLICY ${p})
@@ -30,7 +28,20 @@ if(APPLE)
     )
 endif()
 
-project(Slicer)
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_VERSION_MAJOR)
+  set(Slicer_VERSION_MAJOR "4")
+endif()
+if(NOT DEFINED Slicer_VERSION_MINOR)
+  set(Slicer_VERSION_MINOR "5")
+endif()
+if(NOT DEFINED Slicer_VERSION_PATCH)
+  set(Slicer_VERSION_PATCH "0")
+endif()
+if(POLICY CMP0048)
+  set(_project_version VERSION "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}")
+endif()
+project(Slicer ${_project_version})
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
@@ -461,15 +472,6 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disc
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_VERSION_MAJOR)
-  set(Slicer_VERSION_MAJOR "4")
-endif()
-if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "5")
-endif()
-if(NOT DEFINED Slicer_VERSION_PATCH)
-  set(Slicer_VERSION_PATCH "0")
-endif()
 # Releases define a tweak level
 #set(Slicer_VERSION_TWEAK 1)
 #set(Slicer_VERSION_RC 0)
@@ -488,6 +490,7 @@ elseif("${Slicer_VERSION_TWEAK}" GREATER 0)
   set(_version_qualifier "-${Slicer_VERSION_TWEAK}")
 endif()
 
+# XXX This variable should not be set explicitly
 set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
 if(Slicer_VERSION_RC)

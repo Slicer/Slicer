@@ -11,6 +11,9 @@ if(NOT Slicer_SOURCE_DIR)
   endif()
 endif()
 
+if(POLICY CMP0048)
+  cmake_policy(SET CMP0048 NEW) # CMake 3.0.0
+endif()
 project(SlicerExtensions)
 
 #-----------------------------------------------------------------------------
