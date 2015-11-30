@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Informatics</category>
+  <title>Tables</title>
+  <description><![CDATA["The Tables module allows displaying and editing of spreadsheets.]]></description>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Tables</documentation-url>
+  <license>slicer4</license>
+  <contributor>Andras Lasso (PerkLab), Kevin Wang (PMH)</contributor>
+  <acknowledgements><![CDATA[This work was was partially funded by OCAIRO, the Applied Cancer Research Unit program of Cancer Care Ontario, and Department of Anesthesia and Critical Care Medicine, Children’s Hospital of Philadelphia.]]></acknowledgements>
+  <parameters>
+    <label>Input</label>
+    <parameter>
+      <label>Active table</label>
+      <description><![CDATA[Select the table node to edit/view.]]></description>
+    </parameter>
+    <parameter>
+      <label>Lock button</label>
+      <description><![CDATA[Allows locking the table node to read-only. Only applies to the user interface. The node can eb still modified programmatically.]]></description>
+    </parameter>
+  <parameters>
+    <label>Edit</label>
+    <parameter>
+      <label>Copy button</label>
+      <description><![CDATA[Copy contents of selected cells to clipboard.]]></description>
+    </parameter>
+    <parameter>
+      <label>Paste button</label>
+      <description><![CDATA[Paste contents of clipboard at the current position. Data that does not fit into the table is ignored.]]></description>
+    </parameter>
+    <parameter>
+      <label>Add column button</label>
+      <description><![CDATA[Add an empty column at the end of the table.]]></description>
+    </parameter>
+    <parameter>
+      <label>Delete column button</label>
+      <description><![CDATA[Delete all selected columns. If any cell is selected in a column the entire column will be removed.]]></description>
+    </parameter>
+    <parameter>
+      <label>Lock first column button</label>
+      <description><![CDATA[Use the first column as row header. Header cannot be edited and is not copied to clipboard but still saved to file.]]></description>
+    </parameter>
+    <parameter>
+      <label>Add row button</label>
+      <description><![CDATA[Add an empty row at the end of the table.]]></description>
+    </parameter>
+    <parameter>
+      <label>Delete row button</label>
+      <description><![CDATA[Delete all selected rows. If any cell is selected in a row the entire row will be removed.]]></description>
+    </parameter>
+    <parameter>
+      <label>Lock first row button</label>
+      <description><![CDATA[Use the first row as column header. Header cannot be edited and is not copied to clipboard but still saved to file.]]></description>
+    </parameter>
+  </parameters>
+</executable>
