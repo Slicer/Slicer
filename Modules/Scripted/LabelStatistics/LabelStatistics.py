@@ -122,10 +122,10 @@ class LabelStatisticsWidget:
 
 
     # Save button
-    self.saveButton = qt.QPushButton("Save")
-    self.saveButton.toolTip = "Calculate Statistics."
-    self.saveButton.enabled = False
-    self.parent.layout().addWidget(self.saveButton)
+    self.exportToTableButton = qt.QPushButton("Export to table")
+    self.exportToTableButton.toolTip = "Export statistics to table node"
+    self.exportToTableButton.enabled = False
+    self.parent.layout().addWidget(self.exportToTableButton)
 
     # Add vertical spacer
     self.parent.layout().addStretch(1)
@@ -133,7 +133,7 @@ class LabelStatisticsWidget:
     # connections
     self.applyButton.connect('clicked()', self.onApply)
     self.chartButton.connect('clicked()', self.onChart)
-    self.saveButton.connect('clicked()', self.onSave)
+    self.exportToTableButton.connect('clicked()', self.onExportToTable)
     self.grayscaleSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onGrayscaleSelect)
     self.labelSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelSelect)
 
@@ -159,7 +159,8 @@ class LabelStatisticsWidget:
     if warnings != "":
       if 'mismatch' in warnings:
         resampledLabelNode = volumesLogic.ResampleVolumeToReferenceVolume(self.labelNode, self.grayscaleNode)
-        self.logic = LabelStatisticsLogic(self.grayscaleNode, resampledLabelNode)
+        # resampledLabelNode does not have a display node, therefore the colorNode has to be passed to it
+        self.logic = LabelStatisticsLogic(self.grayscaleNode, resampledLabelNode, colorNode=self.labelNode.GetDisplayNode().GetColorNode(), nodeBaseName=self.labelNode.GetName())
       else:
         qt.QMessageBox.warning(slicer.util.mainWindow(),
             "Label Statistics", "Volumes do not have the same geometry.\n%s" % warnings)
@@ -170,7 +171,7 @@ class LabelStatisticsWidget:
     if resampledLabelNode:
       slicer.mrmlScene.RemoveNode(resampledLabelNode)
     self.chartFrame.enabled = True
-    self.saveButton.enabled = True
+    self.exportToTableButton.enabled = True
     self.applyButton.text = "Apply"
 
   def onChart(self):
@@ -179,6 +180,11 @@ class LabelStatisticsWidget:
     valueToPlot = self.chartOptions[self.chartOption.currentIndex]
     ignoreZero = self.chartIgnoreZero.checked
     self.logic.createStatsChart(self.labelNode,valueToPlot,ignoreZero)
+
+  def onExportToTable(self):
+    """write the label statistics to a table node
+    """
+    self.logic.exportToTable()
 
   def onSave(self):
     """save the label statistics
@@ -253,7 +259,7 @@ class LabelStatisticsLogic:
   Results are stored as 'statistics' instance variable.
   """
 
-  def __init__(self, grayscaleNode, labelNode, fileName=None):
+  def __init__(self, grayscaleNode, labelNode, colorNode=None, nodeBaseName=None, fileName=None):
     #import numpy
 
     self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
@@ -264,6 +270,11 @@ class LabelStatisticsLogic:
     # this->InvokeEvent(vtkLabelStatisticsLogic::StartLabelStats, (void*)"start label stats")
     
     self.labelNode = labelNode
+    self.colorNode = colorNode
+
+    self.nodeBaseName = nodeBaseName
+    if self.nodeBaseName is None:
+      nodeBaseName = labelNode.GetName() if labelNode.GetName() is not None else 'Labels'
 
     self.labelStats = {}
     self.labelStats['Labels'] = []
@@ -340,6 +351,18 @@ class LabelStatisticsLogic:
 
     # this.InvokeEvent(vtkLabelStatisticsLogic::EndLabelStats, (void*)"end label stats")
 
+  def getColorNode(self):
+    """Returns the color node corresponding to the labelmap. If a color node is explicitly
+    specified then that will be used. Otherwise the color node is retrieved from the display node
+    of the labelmap node
+    """
+    if self.colorNode:
+      return self.colorNode
+    displayNode = self.labelNode.GetDisplayNode
+    if not displayNode:
+      return None
+    return displayNode.GetColorNode()
+
   def createStatsChart(self, labelNode, valueToPlot, ignoreZero=False):
     """Make a MRML chart of the current stats
     """
@@ -386,29 +409,68 @@ class LabelStatisticsLogic:
     chartNode.SetProperty('default', 'showLegend', 'off')
 
     # series level properties
-    if labelNode.GetDisplayNode() is not None and labelNode.GetDisplayNode().GetColorNode() is not None:
-      chartNode.SetProperty(valueToPlot, 'lookupTable', labelNode.GetDisplayNode().GetColorNodeID());
+    if labelNode.GetDisplayNode() is not None and self.getColorNode() is not None:
+      chartNode.SetProperty(valueToPlot, 'lookupTable', self.getColorNode().GetID());
 
     chartNode.EndModify(state)
+
+  def exportToTable(self):
+    """
+    Export statistics to table node
+    """
+
+    colorNode = self.getColorNode()
+
+    table = slicer.vtkMRMLTableNode()
+    tableWasModified = table.StartModify()
+
+    table.SetName(slicer.mrmlScene.GenerateUniqueName(self.nodeBaseName+' statistics'))
+    
+    # Define table columns
+    if colorNode:
+      col=table.AddColumn()
+      col.SetName("Type")
+    for k in self.keys:
+      col=table.AddColumn()
+      col.SetName(k)
+    for i in self.labelStats["Labels"]:
+      rowIndex = table.AddEmptyRow()
+      if colorNode:
+        columnIndex = 0
+        table.SetCellText(rowIndex, columnIndex, colorNode.GetColorName(i))
+        columnIndex += 1
+      # Add other values
+      for k in self.keys:
+        table.SetCellText(rowIndex, columnIndex, str(self.labelStats[i,k]))
+        columnIndex += 1
+
+    table.EndModify(tableWasModified)
+
+    # Add table to the scene and show it
+    slicer.mrmlScene.AddNode(table)
+    slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
+    slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(table.GetID())
+    slicer.app.applicationLogic().PropagateTableSelection()
 
   def statsAsCSV(self):
     """
     print comma separated value file with header keys in quotes
     """
     
-    displayNode = self.labelNode.GetDisplayNode()
-    colorNode = displayNode.GetColorNode()
+    colorNode = self.getColorNode()
     
     csv = ""
     header = ""
-    header += "\"%s\"" % "Type" + ","
+    if colorNode:
+      header += "\"%s\"" % "Type" + ","
     for k in self.keys[:-1]:
       header += "\"%s\"" % k + ","
     header += "\"%s\"" % self.keys[-1] + "\n"
     csv = header
     for i in self.labelStats["Labels"]:
       line = ""
-      line += colorNode.GetColorName(i) + ","
+      if colorNode:
+        line += colorNode.GetColorName(i) + ","
       for k in self.keys[:-1]:
         line += str(self.labelStats[i,k]) + ","
       line += str(self.labelStats[i,self.keys[-1]]) + "\n"
