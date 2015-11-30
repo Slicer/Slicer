@@ -158,6 +158,9 @@ set(MRMLCore_SRCS
   vtkMRMLSnapshotClipNode.cxx
   vtkMRMLStorableNode.cxx
   vtkMRMLStorageNode.cxx
+  vtkMRMLTableNode.cxx
+  vtkMRMLTableStorageNode.cxx
+  vtkMRMLTableViewNode.cxx
   vtkMRMLTransformNode.cxx
   vtkMRMLTransformStorageNode.cxx
   vtkMRMLTransformDisplayNode.cxx
@@ -261,6 +264,7 @@ set(libs
   vtkITK
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
+  vtkIOInfovis
   FreeSurfer
   )
 if(MRML_USE_vtkTeem)

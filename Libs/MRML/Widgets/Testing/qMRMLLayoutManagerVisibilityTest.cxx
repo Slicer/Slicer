@@ -251,6 +251,26 @@ bool runTests(vtkMRMLScene* scene,
       }
   }
 
+  layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView);
+  qApp->processEvents();
+
+  vtkMRMLAbstractViewNode* tableNode =
+      vtkMRMLAbstractViewNode::SafeDownCast(scene->GetNodeByID("vtkMRMLTableViewNodeTableView1"));
+
+  // Only yellow widgets is expected to be hidden
+  {
+    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
+    viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
+    viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
+    viewNodesToExpectedVisibility[tableNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
+
+    if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
+      {
+      return false;
+      }
+  }
+
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   qApp->processEvents();
 
@@ -262,6 +282,7 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[threeDNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
     viewNodesToExpectedVisibility[chartNode] =  QList<bool>()  << Visibility   << NotMappedInLayout << NotVisibleInLayout;
+    viewNodesToExpectedVisibility[tableNode] =  QList<bool>()  << Visibility   << NotMappedInLayout << NotVisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
       {
@@ -280,6 +301,7 @@ bool runTests(vtkMRMLScene* scene,
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[threeDNode] = QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[chartNode] =  QList<bool>()  << Visibility   << NotMappedInLayout << NotVisibleInLayout;
+    viewNodesToExpectedVisibility[tableNode] =  QList<bool>()  << Visibility   << NotMappedInLayout << NotVisibleInLayout;
 
     if (!checkViews(__LINE__, layoutManager, viewNodesToExpectedVisibility))
       {

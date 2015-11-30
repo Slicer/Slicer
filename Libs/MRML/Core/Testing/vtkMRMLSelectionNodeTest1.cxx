@@ -34,6 +34,7 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   TEST_SET_GET_STRING(node1.GetPointer(), ActivePlaceNodeClassName);
   TEST_SET_GET_STRING(node1.GetPointer(), ActiveROIListID);
   TEST_SET_GET_STRING(node1.GetPointer(), ActiveCameraID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveTableID);
   TEST_SET_GET_STRING(node1.GetPointer(), ActiveViewID);
   TEST_SET_GET_STRING(node1.GetPointer(), ActiveLayoutID);
 

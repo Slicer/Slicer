@@ -6,6 +6,9 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkDelimitedTextReader.h>
+#include <vtkDelimitedTextWriter.h>
+#include <vtkTable.h>
 
 // Markups includes
 #include <vtkMRMLMarkupsFiducialNode.h>
@@ -27,6 +30,18 @@ int main(int argc, char *argv[])
   std::string::size_type loc;
   std::string            transform1Filename, transform2Filename;
   std::string            transform1ID, transform2ID;
+
+  if( transform1.empty() )
+    {
+    std::cerr << "transform1 parameter is required" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if( transform2.empty() )
+    {
+    std::cerr << "transform2 parameter is required" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   loc = transform1.find_last_of("#");
   if( loc != std::string::npos )
@@ -131,6 +146,42 @@ int main(int argc, char *argv[])
   // coordinate system
   outputFiducialStorageNode->UseLPSOn();
   outputFiducialStorageNode->WriteData(copiedFiducialNode.GetPointer());
+
+  // generic tables
+
+  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
+
+  if (!inputDT.empty())
+    {
+    vtkNew<vtkDelimitedTextReader> tsvReader;
+    tsvReader->SetFileName(inputDT.c_str());
+    tsvReader->SetFieldDelimiterCharacters("\t");
+    tsvReader->SetHaveHeaders(true);
+    tsvReader->SetDetectNumericColumns(true);
+    tsvReader->Update();
+    table = tsvReader->GetOutput();
+    std::cout << "number of rows:" << table->GetNumberOfRows() << std::endl;
+    std::cout << "number of cols:" << table->GetNumberOfColumns() << std::endl;
+    if (table->GetNumberOfRows()<1)
+      {
+      table->InsertNextBlankRow();
+      }
+    table->SetValue(0,0,vtkVariant("Computed first"));
+    if (table->GetNumberOfRows()<2)
+      {
+      table->InsertNextBlankRow();
+      }
+    table->SetValue(1,0,vtkVariant("Computed second"));
+    }
+
+  if (!outputDT.empty())
+    {
+    vtkNew<vtkDelimitedTextWriter> tsvWriter;
+    tsvWriter->SetFileName(outputDT.c_str());
+    tsvWriter->SetFieldDelimiter("\t");
+    tsvWriter->SetInputData(table);
+    tsvWriter->Update();
+    }
 
   // Write out the return parameters in "name = value" form
   std::ofstream rts;

@@ -656,7 +656,14 @@ vtkSlicerCLIModuleLogic
     // tables are currently always passed via files
 
     // Use default fname construction, tack on extension
-    std::string ext = ".ctbl";
+    // In general, use tsv (tab-separated values) file format for tables
+    std::string ext = ".tsv";
+    if ( type == "color")
+      {
+      // Special case: color tables use .ctbl files
+      ext = ".ctbl";
+      }
+
     if (extensions.size() != 0)
       {
       ext = extensions[0];

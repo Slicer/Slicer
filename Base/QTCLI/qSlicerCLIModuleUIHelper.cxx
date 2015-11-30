@@ -698,7 +698,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
 QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap(Self::TableTypeAttributeToNodeType, type);
+  QString nodeType = Self::nodeTypeFromMap(Self::TableTypeAttributeToNodeType, type, "vtkMRMLTableNode");
   if (nodeType.isEmpty())
     {
     qWarning() << "TableTag - Unknown type:" << type;

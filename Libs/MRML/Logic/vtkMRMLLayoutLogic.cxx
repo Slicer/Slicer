@@ -28,6 +28,7 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLChartViewNode.h"
+#include "vtkMRMLTableViewNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -569,6 +570,53 @@ const char* threeOverThreeQuantitativeView =
   "    </view>"
   "   </item>"
   "  </layout>"
+  " </item>"
+  "</layout>";
+
+const char* fourUpTableView =
+  "<layout type=\"vertical\" split=\"true\" >"
+  " <item>"
+  "  <layout type=\"vertical\">"
+  "   <item>"
+  "    <layout type=\"horizontal\">"
+  "     <item>"
+  "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+  "       <property name=\"orientation\" action=\"default\">Axial</property>"
+  "       <property name=\"viewlabel\" action=\"default\">R</property>"
+  "       <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
+  "      </view>"
+  "     </item>"
+  "     <item>"
+  "      <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
+  "       <property name=\"viewlabel\" action=\"default\">1</property>"
+  "      </view>"
+  "     </item>"
+  "    </layout>"
+  "   </item>"
+  "   <item>"
+  "    <layout type=\"horizontal\">"
+  "     <item>"
+  "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+  "       <property name=\"orientation\" action=\"default\">Sagittal</property>"
+  "       <property name=\"viewlabel\" action=\"default\">Y</property>"
+  "       <property name=\"viewcolor\" action=\"default\">#EDD54C</property>"
+  "      </view>"
+  "     </item>"
+  "     <item>"
+  "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
+  "       <property name=\"orientation\" action=\"default\">Coronal</property>"
+  "       <property name=\"viewlabel\" action=\"default\">G</property>"
+  "       <property name=\"viewcolor\" action=\"default\">#6EB04B</property>"
+  "      </view>"
+  "     </item>"
+  "    </layout>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableView1\">"
+  "    <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
   " </item>"
   "</layout>";
 
@@ -1349,6 +1397,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          twoOverTwoView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeQuantitativeView,
                                          threeOverThreeQuantitativeView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView,
+                                         fourUpTableView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutSideBySideView,
                                          sideBySideView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourByThreeSliceView,
@@ -1399,7 +1449,7 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
       }
     std::string name = std::string(viewNode->GetLayoutName());
     // Maintain backward compatibility
-    if (!viewNode->IsA("vtkMRMLSliceNode") && !viewNode->IsA("vtkMRMLChartViewNode"))
+    if (!viewNode->IsA("vtkMRMLSliceNode") && !viewNode->IsA("vtkMRMLChartViewNode") && !viewNode->IsA("vtkMRMLTableViewNode"))
       {
       name = std::string("View") + name;
       }

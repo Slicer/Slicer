@@ -173,6 +173,16 @@ set(MRMLWidgets_SRCS
   qMRMLSortFilterProxyModel.h
   qMRMLSpinBox.cxx
   qMRMLSpinBox.h
+  qMRMLTableModel.cxx
+  qMRMLTableModel.h
+  qMRMLTableView.cxx
+  qMRMLTableView.h
+  qMRMLTableView_p.h
+  qMRMLTableViewControllerWidget.cxx
+  qMRMLTableViewControllerWidget.h
+  qMRMLTableViewControllerWidget_p.h
+  qMRMLTableWidget.cxx
+  qMRMLTableWidget.h
   qMRMLThreeDView.cxx
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
@@ -272,6 +282,12 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.h
   qMRMLSpinBox.h
+  qMRMLTableModel.h
+  qMRMLTableView.h
+  qMRMLTableView_p.h
+  qMRMLTableViewControllerWidget.h
+  qMRMLTableViewControllerWidget_p.h
+  qMRMLTableWidget.h
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
   qMRMLThreeDViewControllerWidget.h
@@ -307,6 +323,7 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLSliceControllerWidget.ui
   Resources/UI/qMRMLSliceInformationWidget.ui
   Resources/UI/qMRMLSliceWidget.ui
+  Resources/UI/qMRMLTableViewControllerWidget.ui
   Resources/UI/qMRMLThreeDViewControllerWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
   Resources/UI/qMRMLVolumeInfoWidget.ui

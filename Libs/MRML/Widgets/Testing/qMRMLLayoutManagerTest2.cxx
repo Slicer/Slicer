@@ -96,6 +96,16 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       return EXIT_FAILURE;
       }
 
+    int expectedTableViewCout = 0;
+    int currentTableViewCount = layoutManager->tableViewCount();
+    if (expectedTableViewCout != currentTableViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedTableViewCout:" << expectedTableViewCout << "\n"
+                << "  currentTableViewCount:" << currentTableViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
     layoutManager->setMRMLScene(0);
     applicationLogic->SetMRMLScene(0);
 
@@ -151,6 +161,17 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
                 << "  currentChartViewCount:" << currentChartViewCount << std::endl;
       return EXIT_FAILURE;
       }
+
+    int expectedTableViewCout = 0;
+    int currentTableViewCount = layoutManager->tableViewCount();
+    if (expectedTableViewCout != currentTableViewCount)
+      {
+      std::cerr << "Line " << __LINE__ << " - Problem with qMRMLLayoutManager\n"
+                << "  expectedTableViewCout:" << expectedTableViewCout << "\n"
+                << "  currentTableViewCount:" << currentTableViewCount << std::endl;
+      return EXIT_FAILURE;
+      }
+
   }
   vtkMRMLLayoutNode* layoutNode = 0;
   {

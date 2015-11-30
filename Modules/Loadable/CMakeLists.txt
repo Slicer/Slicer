@@ -19,6 +19,7 @@ set(qtmodules
   #FiberBundles
   SceneViews
   SlicerWelcome
+  Tables
   Reformat
   ViewControllers
   Volumes

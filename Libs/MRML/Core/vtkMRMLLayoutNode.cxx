@@ -277,12 +277,19 @@ void vtkMRMLLayoutNode::UpdateCurrentLayoutDescription()
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::SetAndParseCurrentLayoutDescription(const char* description)
 {
-  // Be carefull that it matches the ViewArrangement value
+  // Be careful that it matches the ViewArrangement value
   if (this->LayoutRootElement)
     {
     this->LayoutRootElement->Delete();
     }
   this->LayoutRootElement = this->ParseLayout(description);
+  if (this->LayoutRootElement == NULL)
+    {
+    // ParseLayout has already logged an error, if there was any
+    this->SetCurrentLayoutDescription("");
+    return;
+    }
+
   this->SetCurrentLayoutDescription(description);
 }
 
@@ -300,6 +307,12 @@ vtkXMLDataElement* vtkMRMLLayoutNode::ParseLayout(const char* description)
   parser->Parse();
 
   vtkXMLDataElement* root = parser->GetRootElement();
+  if (root==NULL)
+    {
+    vtkErrorWithObjectMacro(parser, "vtkMRMLLayoutNode::ParseLayout: failed to parse layout description");
+    return NULL;
+    }
+
   // if we don't register, then the root element will be destroyed when the
   // parser gets out of scope
   root->Register(0);

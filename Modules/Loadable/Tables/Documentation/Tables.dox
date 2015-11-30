@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Tables Tables
+\ingroup Slicer_QtModules
+This module allows to handle vtkMRMLTableNodes
+
+*/

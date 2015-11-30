@@ -80,6 +80,7 @@ set(TEST_SOURCES
   qMRMLSliceControllerWidgetTest.cxx
   qMRMLSliceWidgetTest1.cxx
   qMRMLSliceWidgetTest2.cxx
+  qMRMLTableViewTest1.cxx
   qMRMLTransformSlidersTest1.cxx
   qMRMLThreeDViewTest1.cxx
   qMRMLThreeDWidgetTest1.cxx
@@ -217,6 +218,7 @@ SCENE_TEST(  qMRMLSceneDisplayableModelTest2 vol_and_cube.mrml )
 simple_test( qMRMLSliceControllerWidgetTest )
 SCENE_TEST( qMRMLSliceWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLSliceWidgetTest2 TestData/fixed.nrrd)
+simple_test( qMRMLTableViewTest1 )
 simple_test( qMRMLTransformSlidersTest1 )
 simple_test( qMRMLThreeDViewTest1 )
 simple_test( qMRMLThreeDWidgetTest1 )

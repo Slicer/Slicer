@@ -56,6 +56,8 @@ class QButtonGroup;
 class qMRMLSliceWidget;
 class qMRMLChartView;
 class qMRMLChartWidget;
+class qMRMLTableView;
+class qMRMLTableWidget;
 class qMRMLThreeDView;
 class qMRMLThreeDWidget;
 class vtkCollection;
@@ -63,6 +65,7 @@ class vtkObject;
 class vtkMRMLLayoutLogic;
 class vtkMRMLLayoutNode;
 class vtkMRMLChartViewNode;
+class vtkMRMLTableViewNode;
 class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 class vtkXMLDataElement;
@@ -86,6 +89,7 @@ public:
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
   void setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node);
+  void setActiveMRMLTableViewNode(vtkMRMLTableViewNode * node);
 
   /// Enable/disable paint event associated with the TargetWidget
   //bool startUpdateLayout();
@@ -102,6 +106,7 @@ public:
   /// identified by \a renderViewName.
   qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
   qMRMLChartWidget* chartWidget(vtkMRMLChartViewNode* node)const;
+  qMRMLTableWidget* tableWidget(vtkMRMLTableViewNode* node)const;
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
@@ -124,6 +129,7 @@ public slots:
 
   void onActiveThreeDViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActiveChartViewNodeChanged(vtkMRMLAbstractViewNode*);
+  void onActiveTableViewNodeChanged(vtkMRMLAbstractViewNode*);
 
 public:
   bool                    Enabled;
@@ -132,6 +138,7 @@ public:
   vtkMRMLLayoutLogic*     MRMLLayoutLogic;
   vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
   vtkMRMLChartViewNode*   ActiveMRMLChartViewNode;
+  vtkMRMLTableViewNode*   ActiveMRMLTableViewNode;
 protected:
   void showWidget(QWidget* widget);
 };
@@ -168,6 +175,21 @@ public:
 protected:
   virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
   vtkMRMLColorLogic* ColorLogic;
+};
+
+//------------------------------------------------------------------------------
+class QMRML_WIDGETS_EXPORT qMRMLLayoutTableViewFactory
+  : public qMRMLLayoutViewFactory
+{
+  Q_OBJECT
+public:
+  typedef qMRMLLayoutViewFactory Superclass;
+  qMRMLLayoutTableViewFactory(QObject* parent = 0);
+
+  virtual QString viewClassName()const;
+
+protected:
+  virtual QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode);
 };
 
 //------------------------------------------------------------------------------

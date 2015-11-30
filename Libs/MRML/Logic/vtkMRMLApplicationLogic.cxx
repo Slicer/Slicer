@@ -37,6 +37,7 @@
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSceneViewNode.h>
+#include <vtkMRMLTableViewNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -352,6 +353,30 @@ void vtkMRMLApplicationLogic::PropagateVolumeSelection(int layer, int fit)
 {
   this->Internal->PropagateVolumeSelection(layer, fit);
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::PropagateTableSelection()
+{
+  if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
+    {
+    return;
+    }
+
+  char *tableId = this->Internal->SelectionNode->GetActiveTableID();
+
+  const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLTableViewNode");
+  for (int i = 0; i < nnodes; i++)
+    {
+    vtkMRMLTableViewNode* tnode = vtkMRMLTableViewNode::SafeDownCast (
+      this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLTableViewNode" ) );
+    if(!tnode->GetDoPropagateTableSelection())
+      {
+      continue;
+      }
+    tnode->SetTableNodeID( tableId );
+    }
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed /* =false */)

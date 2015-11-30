@@ -45,14 +45,14 @@
   <parameters>
     <label>Output</label>
     <description><![CDATA[The Ouptut file collects the information on disk from the output label, suv max/mean/min output stringsin the gui, plus some extra information from the DICOM header.]]></description>
-    <file fileExtensions=".csv">
+    <table fileExtensions=".csv">
       <name>OutputCSV</name>
-      <description><![CDATA[A file holding the output SUV values in comma separated lines, one per label. Optional.]]></description>
-      <label>Output (csv) file</label>
+      <description><![CDATA[A table holding the output SUV values in comma separated lines, one per label. Optional.]]></description>
+      <label>Output table</label>
       <flag>-o</flag>
       <longflag>--csvFile</longflag>
       <channel>output</channel>
-    </file>
+    </table>
     <string>
       <name>OutputLabel</name>
       <label>Output Label</label>

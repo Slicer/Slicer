@@ -17,6 +17,7 @@
     <file>Icons/LayoutDual3DView.png</file>
     <file>Icons/LayoutFourUpView.png</file>
     <file>Icons/LayoutFourUpQuantitativeView.png</file>
+    <file>Icons/LayoutFourUpTableView.png</file>
     <file>Icons/LayoutLightboxView.png</file>
     <file>Icons/LayoutOneUp3DView.png</file>
     <file>Icons/LayoutOneUpGreenSliceView.png</file>
@@ -88,6 +89,12 @@
     <file>Icons/YellowSpaceNegative.png</file>
     <file>Icons/GreenSpacePositive.png</file>
     <file>Icons/GreenSpaceNegative.png</file>
+    <file>Icons/column_add.png</file>
+    <file>Icons/column_delete.png</file>
+    <file>Icons/column_header_lock.png</file>
+    <file>Icons/row_add.png</file>
+    <file>Icons/row_delete.png</file>
+    <file>Icons/row_header_lock.png</file>
     <file alias="AbdomenColors">Icons/LUTs/AbdomenColors.png</file>
     <file alias="blankLUT">Icons/LUTs/blankLUT.png</file>
     <file alias="dGEMRIC-3T">Icons/LUTs/cartilegeMIdGEMRIC-3T.png</file>

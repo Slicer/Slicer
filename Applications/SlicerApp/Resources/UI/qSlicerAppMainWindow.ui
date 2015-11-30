@@ -72,6 +72,7 @@
      <addaction name="ViewLayoutConventionalQuantitativeAction"/>
      <addaction name="ViewLayoutFourUpAction"/>
      <addaction name="ViewLayoutFourUpQuantitativeAction"/>
+     <addaction name="ViewLayoutFourUpTableAction"/>
      <addaction name="ViewLayoutDual3DAction"/>
      <addaction name="ViewLayoutTriple3DAction"/>
      <addaction name="ViewLayoutOneUp3DAction"/>
@@ -253,6 +254,7 @@
    <addaction name="ViewLayoutConventionalQuantitativeAction"/>
    <addaction name="ViewLayoutFourUpAction"/>
    <addaction name="ViewLayoutFourUpQuantitativeAction"/>
+   <addaction name="ViewLayoutFourUpTableAction"/>
    <addaction name="ViewLayoutDual3DAction"/>
    <addaction name="ViewLayoutTriple3DAction"/>
    <addaction name="ViewLayoutOneUp3DAction"/>
@@ -789,6 +791,18 @@
    </property>
    <property name="text">
     <string>Four-Up Quantitative</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="ViewLayoutFourUpTableAction">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutFourUpTableView.png</normaloff>:/Icons/LayoutFourUpTableView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Four-Up Table</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>

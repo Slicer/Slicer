@@ -48,6 +48,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSnapshotClipNode.h"
+#include "vtkMRMLTableNode.h"
+#include "vtkMRMLTableStorageNode.h"
+#include "vtkMRMLTableViewNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
@@ -209,6 +212,9 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLInteractionNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLChartViewNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableStorageNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLTableViewNode >::New() );
 }
 
 //------------------------------------------------------------------------------

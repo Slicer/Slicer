@@ -122,6 +122,9 @@ public:
   /// only those slices where propagate volume selection is allowed
   void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed=false);
 
+  /// Propagate selected table in the SelectionNode to table view nodes.
+  void PropagateTableSelection();
+
   /// zip the directory into a zip file
   /// Returns success or failure.
   bool Zip(const char *zipFileName, const char *directoryToZip);

@@ -27,6 +27,7 @@
 #include "qMRMLChartWidget.h"
 #include "qMRMLLayoutManager.h"
 #include "qMRMLSliceWidget.h"
+#include "qMRMLTableWidget.h"
 #include "qMRMLThreeDWidget.h"
 
 // MRML includes
@@ -35,6 +36,7 @@
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLTableViewNode.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes
@@ -50,6 +52,23 @@ bool testLayoutManagerViewWidgetForChart(int line, qMRMLLayoutManager* layoutMan
   if (!widget || !node)
     {
     std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::chartWidget()" << std::endl;
+    return false;
+    }
+  if (layoutManager->viewWidget(node) != widget)
+    {
+    std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::viewWidget()" << std::endl;
+    return false;
+    }
+  return true;
+}
+//------------------------------------------------------------------------------
+bool testLayoutManagerViewWidgetForTable(int line, qMRMLLayoutManager* layoutManager, int viewId)
+{
+  qMRMLTableWidget* widget = layoutManager->tableWidget(viewId);
+  vtkMRMLTableViewNode* node = widget ? widget->mrmlTableViewNode() : 0;
+  if (!widget || !node)
+    {
+    std::cerr << "Line " << line << " - Problem with qMRMLLayoutManager::tableWidget()" << std::endl;
     return false;
     }
   if (layoutManager->viewWidget(node) != widget)
@@ -170,6 +189,24 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   if (!testLayoutManagerViewWidgetForChart(__LINE__, layoutManager, 0))
+    {
+    return EXIT_FAILURE;
+    }
+
+  layoutManager->setLayout(vtkMRMLLayoutNode::SlicerLayoutFourUpTableView);
+  if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Green"))
+    {
+    return EXIT_FAILURE;
+    }
+  if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Red"))
+    {
+    return EXIT_FAILURE;
+    }
+  if (!testLayoutManagerViewWidgetForSlice(__LINE__, layoutManager, "Yellow"))
+    {
+    return EXIT_FAILURE;
+    }
+  if (!testLayoutManagerViewWidgetForTable(__LINE__, layoutManager, 0))
     {
     return EXIT_FAILURE;
     }

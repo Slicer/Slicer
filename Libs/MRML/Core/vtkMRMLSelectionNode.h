@@ -27,7 +27,7 @@ class vtkMRMLUnitNode;
 ///
 /// This node stores the information about the currently selected volume,
 /// label volume, fiducial list, place node class name, place node id, ROI
-/// list, camera, view, layout, units
+/// list, camera, table, view, layout, units
 /// Note: the SetReferenceActive* routines are added because
 /// the vtkSetReferenceStringMacro is not wrapped (vtkSetStringMacro
 /// on which it is based is a special case in vtk's parser).
@@ -128,6 +128,11 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   vtkGetStringMacro (ActiveCameraID );
   void SetActiveCameraID(const char* id);
   void SetReferenceActiveCameraID (const char *id) { this->SetActiveCameraID(id); };
+
+  /// the ID of a MRMLTableNode
+  vtkGetStringMacro (ActiveTableID);
+  void SetActiveTableID(const char* id);
+  void SetReferenceActiveTableID (char *id) { this->SetActiveTableID(id); };
 
   /// the ID of a MRMLViewNode
   vtkGetStringMacro (ActiveViewID );
@@ -260,6 +265,7 @@ protected:
   char *ActivePlaceNodeClassName;
   char *ActiveROIListID;
   char *ActiveCameraID;
+  char *ActiveTableID;
   char *ActiveViewID;
   char *ActiveLayoutID;
 

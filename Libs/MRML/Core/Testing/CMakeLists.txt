@@ -75,6 +75,9 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSnapshotClipNodeTest1.cxx
   vtkMRMLStorableNodeTest1.cxx
   vtkMRMLStorageNodeTest1.cxx
+  vtkMRMLTableNodeTest1.cxx
+  vtkMRMLTableStorageNodeTest1.cxx
+  vtkMRMLTableViewNodeTest1.cxx
   vtkMRMLTensorVolumeNodeTest1.cxx
   vtkMRMLTransformableNodeReferenceSaveImportTest.cxx
   vtkMRMLTransformableNodeOnNodeReferenceAddTest.cxx
@@ -185,6 +188,9 @@ simple_test( vtkMRMLSliceNodeTest1 )
 simple_test( vtkMRMLSnapshotClipNodeTest1 )
 simple_test( vtkMRMLStorableNodeTest1 )
 simple_test( vtkMRMLStorageNodeTest1 )
+simple_test( vtkMRMLTableNodeTest1 )
+simple_test( vtkMRMLTableStorageNodeTest1 )
+simple_test( vtkMRMLTableViewNodeTest1 )
 simple_test( vtkMRMLTensorVolumeNodeTest1 )
 simple_test( vtkMRMLTransformableNodeReferenceSaveImportTest )
 simple_test( vtkMRMLTransformableNodeOnNodeReferenceAddTest )
