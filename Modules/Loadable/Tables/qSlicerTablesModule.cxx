@@ -83,19 +83,23 @@ QIcon qSlicerTablesModule::icon()const
 QString qSlicerTablesModule::helpText()const
 {
   return "This module provides support for data table nodes";
+  QString help =
+    "The Tables module allows displaying and editing of spreadsheets.<br>"
+    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Tables\">%1/Documentation/%2.%3/Modules/Tables</a><br>";
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR); 
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerTablesModule::acknowledgementText()const
 {
-  return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
+  return "This work was was partially funded by OCAIRO, the Applied Cancer Research Unit program of Cancer Care Ontario, and Department of Anesthesia and Critical Care Medicine, Children’s Hospital of Philadelphia.";
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerTablesModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Kevin Wang (PMH)");
+  moduleContributors << QString("Andras Lasso (PerkLab), Kevin Wang (PMH)");
   return moduleContributors;
 }
 
