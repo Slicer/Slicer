@@ -2,7 +2,7 @@
 <executable>
   <category>Informatics</category>
   <title>Tables</title>
-  <description><![CDATA["The Tables module allows displaying and editing of spreadsheets.]]></description>
+  <description><![CDATA[The Tables module allows displaying and editing of spreadsheets.]]></description>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Tables</documentation-url>
   <license>slicer4</license>
   <contributor>Andras Lasso (PerkLab), Kevin Wang (PMH)</contributor>
