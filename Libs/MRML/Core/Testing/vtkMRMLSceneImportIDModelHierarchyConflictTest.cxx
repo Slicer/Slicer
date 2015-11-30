@@ -29,15 +29,15 @@
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
-bool ImportIDModelHierarchyConflictTest();
-bool ImportModelHierarchyTwiceTest();
+int ImportIDModelHierarchyConflictTest();
+int ImportModelHierarchyTwiceTest();
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
 {
   bool res = true;
-  res = res && ImportIDModelHierarchyConflictTest();
-  res = res && ImportModelHierarchyTwiceTest();
+  res = res && (ImportIDModelHierarchyConflictTest() == EXIT_SUCCESS);
+  res = res && (ImportModelHierarchyTwiceTest() == EXIT_SUCCESS);
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -46,7 +46,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
 // conflict. There are 2 steps in this test
 // a) populates a scene with a model with flat hierarchy node
 // b) and imports a similar scene into the existing scene.
-bool ImportIDModelHierarchyConflictTest()
+int ImportIDModelHierarchyConflictTest()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -63,38 +63,13 @@ bool ImportIDModelHierarchyConflictTest()
   scene->AddNode(modelDisplayNode.GetPointer());
   modelNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 2)
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelNode1", modelNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelNode->GetDisplayNode() / modelDisplayNode",
-              modelNode->GetDisplayNode(),
-              modelDisplayNode.GetPointer())
-      )
-    {
-    return false;
-    }
+  CHECK_INT(scene->GetNumberOfNodes(), 2);
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer());
+  CHECK_POINTER(modelNode->GetDisplayNode(), modelDisplayNode.GetPointer());
 
   // does the display node point to the correct polydata?
-  if (modelDisplayNode->GetInputPolyData() !=
-      modelNode->GetPolyData())
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Model display node and model node point to different poly data:"
-              <<" \n\tmodelNode->GetPolyData(): " <<  modelNode->GetPolyData()
-              << "\n\tmodelDisplayNode->GetInputPolyData(): " << modelDisplayNode->GetInputPolyData()
-              << std::endl;
-    return false;
-    }
+  CHECK_POINTER(modelDisplayNode->GetInputPolyData(), modelNode->GetPolyData());
 
   // add a model hierarchy node
   vtkNew<vtkMRMLModelDisplayNode> hierachyDisplayNode;
@@ -106,12 +81,7 @@ bool ImportIDModelHierarchyConflictTest()
   hierarchyNode->SetAndObserveDisplayNodeID(hierachyDisplayNode->GetID());
   hierarchyNode->SetAssociatedNodeID(modelNode->GetID());
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 4))
-    {
-    return false;
-    }
+  CHECK_INT(scene->GetNumberOfNodes(), 4);
 
   // Note about vtkMRMLModelHierarchyNode reference role attribute names:
   //
@@ -196,41 +166,16 @@ bool ImportIDModelHierarchyConflictTest()
   //               |-- ref [displayNodeID] to vtkMRMLModelDisplayNode4
   //               |-- ref [associatedNodeRef] to vtkMRMLModelNode2
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 8)
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelNode1", modelNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelNode->GetDisplayNode() / modelDisplayNode",
-              modelNode->GetDisplayNode(),
-              modelDisplayNode.GetPointer())
-      )
-    {
-    return false;
-    }
-
+  CHECK_INT(scene->GetNumberOfNodes(), 8);
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer());
+  CHECK_POINTER(modelNode->GetDisplayNode(), modelDisplayNode.GetPointer());
 
   vtkMRMLModelNode* modelNode2 = vtkMRMLModelNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLModelNode2"));
 
-  if (!CheckNodeIdAndName(
-        __LINE__, modelNode2, "vtkMRMLModelNode2", "New Model1")
-
-      ||!CheckNodeIdAndName(
-        __LINE__, modelNode2->GetDisplayNode(),
-        "vtkMRMLModelDisplayNode3", "New Display 1")
-      )
-    {
-    return EXIT_FAILURE;
-    }
+  CHECK_NODE_ID_AND_NAME(modelNode2, "vtkMRMLModelNode2", "New Model1");
+  CHECK_NODE_ID_AND_NAME(modelNode2->GetDisplayNode(), "vtkMRMLModelDisplayNode3", "New Display 1");
 
   // check that the hierarchies point to the right display nodes
   vtkMRMLModelHierarchyNode *hierarchyNode2 =
@@ -239,65 +184,22 @@ bool ImportIDModelHierarchyConflictTest()
   vtkMRMLModelDisplayNode* modelDisplayNode2 =
       vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode());
 
-  if (!CheckNotNull(
-        __LINE__,
-        "GetNodeByID(\"vtkMRMLModelHierarchyNode2\")", hierarchyNode2)
-
-      ||!CheckString(
-        __LINE__, "hierarchyNode2->GetDisplayNodeID()",
-        hierarchyNode2->GetDisplayNodeID(), "vtkMRMLModelDisplayNode4")
-
-      ||!CheckString(
-        __LINE__, "hierarchyNode2->GetAssociatedNodeID()",
-        hierarchyNode2->GetAssociatedNodeID(), "vtkMRMLModelNode2")
-      )
-    {
-    return false;
-    }
+  CHECK_NOT_NULL(hierarchyNode2);
+  CHECK_STRING(hierarchyNode2->GetDisplayNodeID(), "vtkMRMLModelDisplayNode4");
+  CHECK_STRING(hierarchyNode2->GetAssociatedNodeID(), "vtkMRMLModelNode2");
 
   // check that the model nodes and model display nodes point to the right poly data
-  if (!CheckNull(
-        __LINE__,
-        "Import failed: new model node should have null polydata\n"
-        "modelNode2->GetPolyData()",
-        modelNode2->GetPolyData())
+  CHECK_NULL(modelNode2->GetPolyData()); // new model node should have null polydata
+  CHECK_NULL(modelDisplayNode2->GetInputPolyData()); // new model node's display node should have null polydata
+  CHECK_NOT_NULL(modelNode->GetPolyData()); // original model node should not have null polydata
+  CHECK_NOT_NULL(modelDisplayNode->GetInputPolyData()); // original model display node should not have null polydata
+  CHECK_POINTER(modelNode->GetPolyData(), modelDisplayNode->GetInputPolyData()); // original model node and display node don't have the same poly data
 
-      ||!CheckNull(
-        __LINE__,
-        "Import failed: new model node's display node should have null polydata\n"
-        "modelDisplayNode2->GetInputPolyData()",
-        modelDisplayNode2->GetInputPolyData())
-
-      ||!CheckNotNull(
-        __LINE__,
-        "Import failed: original model node should not have null polydata\n"
-        "modelNode->GetPolyData()",
-        modelNode->GetPolyData())
-
-      ||!CheckNotNull(
-        __LINE__,
-        "Import failed: original model display node should not have null polydata\n"
-        "modelDisplayNode->GetInputPolyData()",
-        modelDisplayNode->GetInputPolyData()
-        )
-
-      ||!CheckPointer(
-        __LINE__,
-        "Import failed: original model node and display node don't have the same poly data\n"
-        "modelNode->GetPolyData() / modelDisplayNode->GetInputPolyData()",
-        modelNode->GetPolyData(),
-        modelDisplayNode->GetInputPolyData()
-        )
-      )
-    {
-    return false;
-    }
-
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool ImportModelHierarchyTwiceTest()
+int ImportModelHierarchyTwiceTest()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -331,44 +233,14 @@ bool ImportModelHierarchyTwiceTest()
   //    |
   //    |---- vtkMRMLHierarchyNode1
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 4)
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelNode1", modelNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelDisplayNode1", hierachyDisplayNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelHierarchyNode1", modelHierarchyNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLHierarchyNode1", hierarchyNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelHierarchyNode->GetDisplayNode() / hierachyDisplayNode",
-              modelHierarchyNode->GetDisplayNode(),
-              hierachyDisplayNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelHierarchyNode->GetAssociatedNode() / modelNode",
-              modelHierarchyNode->GetAssociatedNode(),
-              modelNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelHierarchyNode->GetParentNode() / hierarchyNode",
-              modelHierarchyNode->GetParentNode(),
-              hierarchyNode.GetPointer())
-      )
-    {
-    return false;
-    }
+  CHECK_INT(scene->GetNumberOfNodes(), 4);
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", hierachyDisplayNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelHierarchyNode1", modelHierarchyNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLHierarchyNode1", hierarchyNode.GetPointer());
+  CHECK_POINTER(modelHierarchyNode->GetDisplayNode(), hierachyDisplayNode.GetPointer());
+  CHECK_POINTER(modelHierarchyNode->GetAssociatedNode(), modelNode.GetPointer());
+  CHECK_POINTER(modelHierarchyNode->GetParentNode(), hierarchyNode.GetPointer());
 
   //
   // Save
@@ -409,45 +281,14 @@ bool ImportModelHierarchyTwiceTest()
   //    |
   //    |---- vtkMRMLHierarchyNode2                                     [was vtkMRMLHierarchyNode1]
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 8)
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelNode1", modelNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelDisplayNode1", hierachyDisplayNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelHierarchyNode1", modelHierarchyNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLHierarchyNode1", hierarchyNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelHierarchyNode->GetDisplayNode() / hierachyDisplayNode",
-              modelHierarchyNode->GetDisplayNode(),
-              hierachyDisplayNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelHierarchyNode->GetAssociatedNode() / modelNode",
-              modelHierarchyNode->GetAssociatedNode(),
-              modelNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelHierarchyNode->GetParentNode() / hierarchyNode",
-              modelHierarchyNode->GetParentNode(),
-              hierarchyNode.GetPointer())
-      )
-    {
-    return false;
-    }
-
+  CHECK_INT(scene->GetNumberOfNodes(), 8);
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", hierachyDisplayNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelHierarchyNode1", modelHierarchyNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLHierarchyNode1", hierarchyNode.GetPointer());
+  CHECK_POINTER(modelHierarchyNode->GetDisplayNode(), hierachyDisplayNode.GetPointer());
+  CHECK_POINTER(modelHierarchyNode->GetAssociatedNode(), modelNode.GetPointer());
+  CHECK_POINTER(modelHierarchyNode->GetParentNode(), hierarchyNode.GetPointer());
 
   vtkMRMLModelHierarchyNode* modelHierarchyNode2 =
       vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelHierarchyNode2"));
@@ -455,21 +296,9 @@ bool ImportModelHierarchyTwiceTest()
   vtkMRMLHierarchyNode* hierarchyNode2 =
       vtkMRMLHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLHierarchyNode2"));
 
-  if (!CheckNotNull(
-        __LINE__,
-        "GetNodeByID(\"vtkMRMLModelHierarchyNode2\")", modelHierarchyNode2)
+  CHECK_NOT_NULL(modelHierarchyNode2);
+  CHECK_NOT_NULL(hierarchyNode2);
+  CHECK_POINTER(modelHierarchyNode2->GetParentNode(), hierarchyNode2);
 
-      ||!CheckNotNull(
-        __LINE__,
-        "GetNodeByID(\"vtkMRMLHierarchyNode2\")", hierarchyNode2)
-
-      ||!CheckPointer(
-        __LINE__, "modelHierarchyNode2->GetParentNode() / hierarchyNode2",
-        modelHierarchyNode2->GetParentNode(), hierarchyNode2)
-      )
-    {
-    return false;
-    }
-
-  return true;
+  return EXIT_SUCCESS;
 }

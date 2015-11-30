@@ -67,12 +67,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     // add node to the scene
     vtkNew<vtkMRMLScene> scene;
     scene->SetRootDirectory(tempDir);
-    if (!scene->AddNode(colorNode.GetPointer()))
-      {
-      std::cerr << "Line " << __LINE__
-                << " - Problem adding colorNode to the scene !" << std::endl;
-      return EXIT_FAILURE;
-      }
+    CHECK_NOT_NULL(scene->AddNode(colorNode.GetPointer()));
 
     // add storage node to the scene
     scene->AddNode(colorStorageNode);
@@ -88,14 +83,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 
     // write MRML file
     scene->SetURL(sceneFileName.c_str());
-    if (!scene->Commit())
-      {
-      std::cerr << "Line " << __LINE__
-                << " - Failed to save color node [id:" << colorNode->GetID() << "]"
-                << " into scene " << sceneFileName
-                << std::endl;
-      return EXIT_FAILURE;
-      }
+    CHECK_INT(scene->Commit(), 1);
   }
 
   {
@@ -104,45 +92,18 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     vtkNew<vtkMRMLParser> parser;
     parser->SetMRMLScene(scene.GetPointer());
     parser->SetFileName(sceneFileName.c_str());
-    int result = parser->Parse();
-    if (result != 1)
-      {
-      std::cerr << "Line " << __LINE__
-                << " - Failed to parse scene file " << sceneFileName << std::endl;
-      return EXIT_FAILURE;
-      }
+    CHECK_INT(parser->Parse(), 1);
 
     // test the color node
     vtkMRMLColorTableNode *colorNode =
         vtkMRMLColorTableNode::SafeDownCast(scene->GetNodeByID(expectedColorNodeId.c_str()));
-    if (!colorNode)
-      {
-      std::cerr << "Line " << __LINE__
-                << " - Failed to get colorNode [id: " << expectedColorNodeId << "]"
-                << " from scene file " << sceneFileName
-                << std::endl;
-      return EXIT_FAILURE;
-      }
+    CHECK_NOT_NULL(colorNode);
 
-    if (!colorNode->GetStorageNode()->ReadData(colorNode))
-      {
-      std::cerr << "Line " << __LINE__
-                << " - Failed to read " << colorTableFileName << std::endl;
-      return EXIT_FAILURE;
-      }
+    CHECK_INT(colorNode->GetStorageNode()->ReadData(colorNode),1);
 
-    if (!CheckString(__LINE__, "GetColorName", colorNode->GetColorName(0), "zero"))
-      {
-      return EXIT_FAILURE;
-      }
-    if (!CheckString(__LINE__, "GetColorName", colorNode->GetColorName(1), "one"))
-      {
-      return EXIT_FAILURE;
-      }
-    if (!CheckString(__LINE__, "GetColorName", colorNode->GetColorName(2), "two"))
-      {
-      return EXIT_FAILURE;
-      }
+    CHECK_STRING(colorNode->GetColorName(0), "zero")
+    CHECK_STRING(colorNode->GetColorName(1), "one")
+    CHECK_STRING(colorNode->GetColorName(2), "two")
   }
 
   return EXIT_SUCCESS;

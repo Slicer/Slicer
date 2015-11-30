@@ -90,7 +90,7 @@ bool CheckPointer(int line, const std::string& description,
 
 //----------------------------------------------------------------------------
 bool CheckString(int line, const std::string& description,
-                 const char* current, const char* expected)
+                 const char* current, const char* expected, bool errorIfDifferent /* = true */)
 {
   std::string testName = "CheckString";
 
@@ -103,7 +103,7 @@ bool CheckString(int line, const std::string& description,
     {
     different = false;
     }
-  if(different)
+  if(different == errorIfDifferent)
     {
     std::cerr << "\nLine " << line << " - " << description
               << " : " << testName << "  failed"

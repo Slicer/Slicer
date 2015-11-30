@@ -59,26 +59,10 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   //    |
   //    |---- vtkMRMLModelDisplayNode1 (valid polydata)
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 2)
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelNode1", modelNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelNode->GetDisplayNode() / modelDisplayNode",
-              modelNode->GetDisplayNode(),
-              modelDisplayNode.GetPointer())
-      )
-    {
-    return false;
-    }
+  CHECK_INT(scene->GetNumberOfNodes(), 2);
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(), "vtkMRMLModelNode1",  modelNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(), "vtkMRMLModelDisplayNode1",  modelDisplayNode.GetPointer());
+  CHECK_POINTER(modelNode->GetDisplayNode(), modelDisplayNode.GetPointer());
 
   //
   // Import
@@ -135,26 +119,10 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   // Check scene contains original nodes
   //
 
-  if (!CheckInt(
-        __LINE__, "GetNumberOfNodes",
-        scene->GetNumberOfNodes(), 6)
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelNode1", modelNode.GetPointer())
-
-      ||!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer())
-
-      ||!CheckPointer(
-              __LINE__, "modelNode->GetDisplayNode() / modelDisplayNode",
-              modelNode->GetDisplayNode(),
-              modelDisplayNode.GetPointer())
-      )
-    {
-    return false;
-    }
+  CHECK_INT(scene->GetNumberOfNodes(), 6);
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelNode1", modelNode.GetPointer());
+  CHECK_NODE_IN_SCENE_BY_ID(scene.GetPointer(),"vtkMRMLModelDisplayNode1", modelDisplayNode.GetPointer());
+  CHECK_POINTER(modelNode->GetDisplayNode(), modelDisplayNode.GetPointer());
 
   //
   // Part 1
@@ -163,20 +131,9 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   vtkMRMLModelNode* modelNode2 =
       vtkMRMLModelNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelNode3"));
 
-  if (!CheckNotNull(
-        __LINE__,
-        "GetNodeByID(\"vtkMRMLModelNode3\")", modelNode2)
-
-      ||!CheckNodeIdAndName(
-        __LINE__, modelNode2, "vtkMRMLModelNode3", "New Model1")
-
-      ||!CheckNodeIdAndName(
-        __LINE__, modelNode2->GetDisplayNode(),
-        "vtkMRMLModelDisplayNode3", "New Display 1")
-      )
-    {
-    return EXIT_FAILURE;
-    }
+  CHECK_NOT_NULL(modelNode2);
+  CHECK_NODE_ID_AND_NAME(modelNode2, "vtkMRMLModelNode3", "New Model1");
+  CHECK_NODE_ID_AND_NAME(modelNode2->GetDisplayNode(), "vtkMRMLModelDisplayNode3", "New Display 1");
 
   //
   // Part2
@@ -185,20 +142,9 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
   vtkMRMLModelNode* modelNode3 =
       vtkMRMLModelNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelNode2"));
 
-  if (!CheckNotNull(
-        __LINE__,
-        "GetNodeByID(\"vtkMRMLModelNode2\")", modelNode3)
-
-      ||!CheckNodeIdAndName(
-        __LINE__, modelNode3, "vtkMRMLModelNode2", "New Model2")
-
-      ||!CheckNodeIdAndName(
-        __LINE__, modelNode3->GetDisplayNode(),
-        "vtkMRMLModelDisplayNode2", "New Display 2")
-      )
-    {
-    return EXIT_FAILURE;
-    }
+  CHECK_NOT_NULL(modelNode3);
+  CHECK_NODE_ID_AND_NAME(modelNode3, "vtkMRMLModelNode2", "New Model2");
+  CHECK_NODE_ID_AND_NAME(modelNode3->GetDisplayNode(), "vtkMRMLModelDisplayNode2", "New Display 2");
 
   //
   // Check PolyData / InputPolyData
@@ -208,42 +154,12 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(arg
       vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode());
 
   // check that the model nodes and model display nodes point to the right poly data
-  if (!CheckNull(
-        __LINE__,
-        "Import failed: new model node should have null polydata\n"
-        "modelNode2->GetPolyData()",
-        modelNode2->GetPolyData())
 
-      ||!CheckNull(
-        __LINE__,
-        "Import failed: new model node's display node should have null polydata\n"
-        "modelDisplayNode2->GetInputPolyData()",
-        modelDisplayNode2->GetInputPolyData())
-
-      ||!CheckNotNull(
-        __LINE__,
-        "Import failed: original model node should not have null polydata\n"
-        "modelNode->GetPolyData()",
-        modelNode->GetPolyData())
-
-      ||!CheckNotNull(
-        __LINE__,
-        "Import failed: original model display node should not have null polydata\n"
-        "modelDisplayNode->GetInputPolyData()",
-        modelDisplayNode->GetInputPolyData()
-        )
-
-      ||!CheckPointer(
-        __LINE__,
-        "Import failed: original model node and display node don't have the same poly data\n"
-        "modelNode->GetPolyData() / modelDisplayNode->GetInputPolyData()",
-        modelNode->GetPolyData(),
-        modelDisplayNode->GetInputPolyData()
-        )
-      )
-    {
-    return EXIT_FAILURE;
-    }
+  CHECK_NULL(modelNode2->GetPolyData()); // new model node should have null polydata
+  CHECK_NULL(modelDisplayNode2->GetInputPolyData()); // new model node's display node should have null polydata
+  CHECK_NOT_NULL(modelNode->GetPolyData()); // original model node should not have null polydata
+  CHECK_NOT_NULL(modelDisplayNode->GetInputPolyData()); // original model display node should not have null polydata
+  CHECK_POINTER(modelNode->GetPolyData(), modelDisplayNode->GetInputPolyData()); // original model node and display node don't have the same poly data
 
   return EXIT_SUCCESS;
 }
