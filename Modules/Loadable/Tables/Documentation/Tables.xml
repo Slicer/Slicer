@@ -17,6 +17,7 @@
       <label>Lock button</label>
       <description><![CDATA[Allows locking the table node to read-only. Only applies to the user interface. The node can eb still modified programmatically.]]></description>
     </parameter>
+  </parameters>
   <parameters>
     <label>Edit</label>
     <parameter>
