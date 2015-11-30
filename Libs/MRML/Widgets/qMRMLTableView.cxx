@@ -369,6 +369,7 @@ void qMRMLTableView::deleteColumn()
   Q_D(qMRMLTableView);
   VERIFY_TABLE_MODEL_AND_NODE(deleteColumn);
   tableModel()->removeSelectionFromMRML(selectionModel()->selectedIndexes(), false);
+  clearSelection();
 }
 
 //-----------------------------------------------------------------------------
@@ -392,6 +393,7 @@ void qMRMLTableView::deleteRow()
   Q_D(qMRMLTableView);
   VERIFY_TABLE_MODEL_AND_NODE(deleteRow);
   tableModel()->removeSelectionFromMRML(selectionModel()->selectedIndexes(), true);
+  clearSelection();
 }
 
 //-----------------------------------------------------------------------------
