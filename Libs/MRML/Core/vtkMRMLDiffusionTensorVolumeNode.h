@@ -49,6 +49,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  /// Create and observe default display node
+  virtual void CreateDefaultDisplayNodes();
+
 protected:
   vtkMRMLDiffusionTensorVolumeNode();
   ~vtkMRMLDiffusionTensorVolumeNode();

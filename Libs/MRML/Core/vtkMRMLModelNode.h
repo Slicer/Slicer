@@ -185,6 +185,9 @@ public:
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  /// Create and observe default display node
+  virtual void CreateDefaultDisplayNodes();
+
   /// Reimplemented to take into account the modified time of the polydata.
   /// Returns true if the node (default behavior) or the polydata are modified
   /// since read/written.

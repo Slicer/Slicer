@@ -724,6 +724,47 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 {
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelNode::CreateDefaultDisplayNodes()
+{
+  if (vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode())!=NULL)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene()==NULL)
+    {
+    vtkErrorMacro("vtkMRMLModelNode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkNew<vtkMRMLModelDisplayNode> dispNode;
+
+  if (this->GetPolyData())
+    {
+#if (VTK_MAJOR_VERSION <= 5)
+    dispNode->SetInputPolyData(this->GetPolyData());
+#else
+    dispNode->SetInputPolyDataConnection(this->GetPolyDataConnection());
+#endif
+    }
+
+  if (this->GetPolyData() &&
+      this->GetPolyData()->GetPointData() &&
+      this->GetPolyData()->GetPointData()->GetScalars())
+    {
+    vtkDebugMacro("Made a new model display node, there are scalars defined \
+        on the model - setting them visible and using the first one as the selected overlay");
+    dispNode->SetScalarVisibility(1);
+    dispNode->SetActiveScalarName(this->GetPolyData()->GetPointData()->GetAttribute(0)->GetName());
+    // use the fs red green colour node for now
+    dispNode->SetAndObserveColorNodeID("vtkMRMLFreeSurferProceduralColorNodeRedGreen");
+    }
+
+  this->GetScene()->AddNode( dispNode.GetPointer() );
+  this->SetAndObserveDisplayNodeID( dispNode->GetID() );
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 {

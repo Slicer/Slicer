@@ -55,6 +55,10 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  ///
+  /// Create and observe default display node
+  virtual void CreateDefaultDisplayNodes();
+
 protected:
   vtkMRMLVectorVolumeNode();
   ~vtkMRMLVectorVolumeNode();

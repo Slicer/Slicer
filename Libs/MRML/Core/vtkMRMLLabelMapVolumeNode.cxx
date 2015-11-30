@@ -78,7 +78,7 @@ void vtkMRMLLabelMapVolumeNode::CreateDefaultDisplayNodes()
     return;
     }
   vtkNew<vtkMRMLLabelMapVolumeDisplayNode> dispNode;
-  dispNode->SetAndObserveColorNodeID ("vtkMRMLColorTableNodeLabels");
   this->GetScene()->AddNode(dispNode.GetPointer());
+  dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

@@ -12,10 +12,12 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLScene.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
+#include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkImageExtractComponents.h"
 
@@ -72,4 +74,23 @@ vtkMRMLVectorVolumeDisplayNode* vtkMRMLVectorVolumeNode::GetVectorVolumeDisplayN
 vtkMRMLStorageNode* vtkMRMLVectorVolumeNode::CreateDefaultStorageNode()
 {
   return vtkMRMLVolumeArchetypeStorageNode::New();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVectorVolumeNode::CreateDefaultDisplayNodes()
+{
+  if (vtkMRMLVectorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=NULL)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene()==NULL)
+    {
+    vtkErrorMacro("vtkMRMLVectorVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkNew<vtkMRMLVectorVolumeDisplayNode> dispNode;
+  this->GetScene()->AddNode(dispNode.GetPointer());
+  dispNode->SetDefaultColorMap();
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

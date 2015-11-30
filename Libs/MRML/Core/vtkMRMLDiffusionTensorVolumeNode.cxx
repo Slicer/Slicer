@@ -17,8 +17,10 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
@@ -65,4 +67,25 @@ vtkMRMLDiffusionTensorVolumeDisplayNode* vtkMRMLDiffusionTensorVolumeNode
 vtkMRMLStorageNode* vtkMRMLDiffusionTensorVolumeNode::CreateDefaultStorageNode()
 {
   return vtkMRMLNRRDStorageNode::New();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDiffusionTensorVolumeNode::CreateDefaultDisplayNodes()
+{
+  if (vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=NULL)
+    {
+    // display node already exists
+    return;
+    }
+  if (this->GetScene()==NULL)
+    {
+    vtkErrorMacro("vtkMRMLDiffusionTensorVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
+    return;
+    }
+  vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> dispNode;
+  this->GetScene()->AddNode(dispNode.GetPointer());
+  dispNode->SetDefaultColorMap();
+  this->SetAndObserveDisplayNodeID(dispNode->GetID());
+  // add slice display nodes
+  dispNode->AddSliceGlyphDisplayNodes( this );
 }
