@@ -130,7 +130,7 @@ double qSlicerSubjectHierarchyModelsPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
   vtkMRMLNode* associatedNode = node->GetAssociatedNode();
   if (associatedNode && associatedNode->IsA("vtkMRMLModelNode"))
     {
-    return 0.5; // There may be other plugins that can handle special charts better
+    return 0.5; // There may be other plugins that can handle special models better
     }
 
   return 0.0;
