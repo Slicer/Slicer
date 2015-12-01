@@ -50,22 +50,24 @@ public:
   virtual ~qMRMLTableView();
 
   /// Return a pointer on the current MRML scene
-  vtkMRMLScene* mrmlScene() const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get the TableView node observed by view.
-  vtkMRMLTableViewNode* mrmlTableViewNode()const;
+  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode()const;
 
-  vtkMRMLTableNode* mrmlTableNode()const;
+  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode()const;
 
-  qMRMLTableModel* tableModel()const;
-  QSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLTableModel* tableModel()const;
+  Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel()const;
 
   bool transposed()const;
   bool firstRowLocked()const;
   bool firstColumnLocked()const;
 
 public slots:
-  /// Set the MRML \a scene that should be listened for events
+  /// Set the MRML \a scene that should be listened for events.
+  /// If scene is set then MRMLTableViewNode has to be set, too.
+  /// If scene is set then scene has to be set before MRMLTableNode is set.
   void setMRMLScene(vtkMRMLScene* newScene);
 
   /// Set the current \a viewNode to observe. If NULL then view properties are not stored in the scene.
