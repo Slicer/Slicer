@@ -1197,15 +1197,9 @@ void vtkSlicerFixedPointVolumeRayCastMapper::PerVolumeInitialization( vtkRendere
     }
     else
     {
-#if (VTK_MAJOR_VERSION <= 5)
-        input->UpdateInformation();
-        input->SetUpdateExtentToWholeExtent();
-        input->Update();
-#else
         this->UpdateInformation();
         this->SetUpdateExtentToWholeExtent();
         this->Update();
-#endif
     }
 
     // Compute some matrices from voxels to view and vice versa based
@@ -2236,15 +2230,9 @@ void vtkSlicerFixedPointVolumeRayCastMapper::ComputeMatrices( double inputOrigin
     // Don't replace this with the GetCompositePerspectiveTransformMatrix
     // because that turns off stereo rendering!!!
     this->PerspectiveTransform->Identity();
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
     this->PerspectiveTransform->
         Concatenate(cam->GetProjectionTransformMatrix(aspect[0]/aspect[1],
         0.0, 1.0 ));
-#else
-    this->PerspectiveTransform->
-        Concatenate(cam->GetPerspectiveTransformMatrix(aspect[0]/aspect[1],
-        0.0, 1.0 ));
-#endif
     this->PerspectiveTransform->Concatenate(cam->GetViewTransformMatrix());
     this->PerspectiveMatrix->DeepCopy(this->PerspectiveTransform->GetMatrix());
 

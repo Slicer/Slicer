@@ -76,17 +76,12 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
   // Get information to march through data
 
   inData->GetIncrements(inInc0, inInc1, inInc2);
-#if (VTK_MAJOR_VERSION <= 5)
-  self->GetInput()->GetWholeExtent(inImageMin0, inImageMax0, inImageMin1,
-    inImageMax1, inImageMin2, inImageMax2);
-#else
   int inExt[6];
   self->GetInputInformation()->Get(
         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
   inImageMin0 = inExt[0]; inImageMax0 = inExt[1];
   inImageMin1 = inExt[2]; inImageMax1 = inExt[3];
   inImageMin2 = inExt[4]; inImageMax2 = inExt[5];
-#endif
   outData->GetIncrements(outInc0, outInc1, outInc2);
   outMin0 = outExt[0];   outMax0 = outExt[1];
   outMin1 = outExt[2];   outMax1 = outExt[3];

@@ -146,9 +146,6 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   sceneViewNode->SetScreenShot(imageData.GetPointer());
   sceneViewNode->GetScreenShot()->SetSpacing(1.0, 1.0, 1.0);
   sceneViewNode->GetScreenShot()->SetOrigin(0.0, 0.0, 0.0);
-#if (VTK_MAJOR_VERSION <= 5)
-  sceneViewNode->GetScreenShot()->SetScalarType(VTK_UNSIGNED_CHAR);
-#endif
 
   return result;
 }
@@ -199,11 +196,7 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   int result = 1; // success by default
 
   writer->SetFileName(fullName.c_str());
-#if (VTK_MAJOR_VERSION <= 5)
-  writer->SetInput( sceneViewNode->GetScreenShot() );
-#else
   writer->SetInputData( sceneViewNode->GetScreenShot() );
-#endif
   try
     {
     writer->Write();

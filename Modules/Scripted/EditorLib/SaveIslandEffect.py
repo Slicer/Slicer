@@ -148,10 +148,7 @@ class SaveIslandEffectLogic(IslandEffect.IslandEffectLogic):
 
     connectivity = slicer.vtkImageConnectivity()
     connectivity.SetFunctionToSaveIsland()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      connectivity.SetInput( self.getScopedLabelInput() )
-    else:
-      connectivity.SetInputData( self.getScopedLabelInput() )
+    connectivity.SetInputData( self.getScopedLabelInput() )
     connectivity.SetOutput( self.getScopedLabelOutput() )
     connectivity.SetSeed( ijk )
     # TODO: $this setProgressFilter $connectivity "Save Island"

@@ -71,9 +71,6 @@ public:
 
   /// Return the input poly data
   /// \sa SetAndObservePolyData()
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkGetObjectMacro(PolyData, vtkPolyData);
-#else
   virtual vtkPolyData* GetPolyData();
   /// Set and observe poly data pipeline.
   /// It is propagated to the display nodes.
@@ -81,7 +78,6 @@ public:
   virtual void SetPolyDataConnection(vtkAlgorithmOutput *inputPort);
   /// Return the input polydata pipeline.
   vtkGetObjectMacro(PolyDataConnection, vtkAlgorithmOutput);
-#endif
 
   /// PolyDataModifiedEvent is fired when PolyData is changed.
   /// While it is possible for the subclasses to fire PolyDataModifiedEvent
@@ -225,12 +221,8 @@ protected:
   virtual void SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode);
 
   /// Data
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkPolyData *PolyData;
-#else
   vtkAlgorithmOutput* PolyDataConnection;
   vtkEventForwarderCommand* DataEventForwarder;
-#endif
 };
 
 #endif

@@ -23,17 +23,11 @@
 #include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkPrincipalAxesAlign::Execute()
-{
-  vtkPolyData *         input = (vtkPolyData *)this->GetExecutive()->GetInputData(0,0);
-#else
 int vtkPrincipalAxesAlign::RequestData(vtkInformation* vtkNotUsed(request),
       vtkInformationVector** inInfoVec,
       vtkInformationVector* vtkNotUsed(outInfoVec))
 {
   vtkPolyData *         input = vtkPolyData::GetData(inInfoVec[0]);
-#endif
 
   vtkIdType             nr_points = input->GetNumberOfPoints();
   double* x;
@@ -120,9 +114,7 @@ int vtkPrincipalAxesAlign::RequestData(vtkInformation* vtkNotUsed(request),
   ZAxis[0] = eigenvectors[0][2];
   ZAxis[1] = eigenvectors[1][2];
   ZAxis[2] = eigenvectors[2][2];
-#if (VTK_MAJOR_VERSION > 5)
   return 1;
-#endif
 }
 
 //----------------------------------------------------------------------------

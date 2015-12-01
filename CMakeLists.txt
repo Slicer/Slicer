@@ -286,24 +286,6 @@ mark_as_superbuild(Slicer_USE_SimpleITK)
 option(Slicer_USE_ITKPython "Build Python wrapping for ITK" OFF)
 mark_as_superbuild(Slicer_USE_ITKPython)
 
-set(default_vtk_version_major 6)
-
-set(VTK_VERSION_MAJOR ${default_vtk_version_major} CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6).")
-# Set the possible values of VTK major version for cmake-gui
-set_property(CACHE VTK_VERSION_MAJOR PROPERTY STRINGS "5" "6")
-if(NOT "${VTK_VERSION_MAJOR}" STREQUAL "5" AND NOT "${VTK_VERSION_MAJOR}" STREQUAL "6")
-  set(VTK_VERSION_MAJOR 5 CACHE STRING "Choose the expected VTK major version to build Slicer (5 or 6)." FORCE)
-  message(WARNING "Setting VTK_VERSION_MAJOR to '5' as an valid value was specified.")
-endif()
-mark_as_superbuild(VTK_VERSION_MAJOR)
-
-set(USE_VTKv5 ON)
-set(USE_VTKv6 OFF)
-if(${VTK_VERSION_MAJOR} STREQUAL "6")
-  set(USE_VTKv5 OFF)
-  set(USE_VTKv6 ON)
-endif()
-
 #
 # SimpleITK has large internal libraries, which take an extremely long
 # time to link on windows when they are static. Creating shared
@@ -553,55 +535,53 @@ endif()
 #-----------------------------------------------------------------------------
 # VTKv6 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(Slicer_VTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Choose the rendering backend.")
-  set_property(CACHE Slicer_VTK_RENDERING_BACKEND PROPERTY STRINGS "OpenGL" "OpenGL2")
-  mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
-  set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
+set(Slicer_VTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Choose the rendering backend.")
+set_property(CACHE Slicer_VTK_RENDERING_BACKEND PROPERTY STRINGS "OpenGL" "OpenGL2")
+mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
+set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
 
-  set(Slicer_VTK_COMPONENTS
-    vtkFiltersExtraction
-    vtkFiltersFlowPaths
-    vtkFiltersGeometry
-    vtkGUISupportQtOpenGL
-    vtkGUISupportQtWebkit
-    vtkGUISupportQtSQL
-    vtkIOImage
-    vtkIOLegacy
-    vtkIOPLY
-    vtkIOXML
-    vtkImagingMath
-    vtkImagingMorphological
-    vtkImagingStatistics
-    vtkImagingStencil
-    vtkInteractionImage
-    vtkRenderingContext${Slicer_VTK_RENDERING_BACKEND}
-    vtkRenderingQt
-    vtkRenderingVolume${Slicer_VTK_RENDERING_BACKEND}
-    vtkTestingRendering
-    vtkViewsQt
-    vtkzlib
+set(Slicer_VTK_COMPONENTS
+  vtkFiltersExtraction
+  vtkFiltersFlowPaths
+  vtkFiltersGeometry
+  vtkGUISupportQtOpenGL
+  vtkGUISupportQtWebkit
+  vtkGUISupportQtSQL
+  vtkIOImage
+  vtkIOLegacy
+  vtkIOPLY
+  vtkIOXML
+  vtkImagingMath
+  vtkImagingMorphological
+  vtkImagingStatistics
+  vtkImagingStencil
+  vtkInteractionImage
+  vtkRenderingContext${Slicer_VTK_RENDERING_BACKEND}
+  vtkRenderingQt
+  vtkRenderingVolume${Slicer_VTK_RENDERING_BACKEND}
+  vtkTestingRendering
+  vtkViewsQt
+  vtkzlib
+  )
+if(Slicer_USE_PYTHONQT)
+  list(APPEND Slicer_VTK_COMPONENTS
+    vtkWrappingPythonCore
     )
-  if(Slicer_USE_PYTHONQT)
+endif()
+if(UNIX AND NOT APPLE)
+  find_package(FontConfig QUIET)
+  if(FONTCONFIG_FOUND)
     list(APPEND Slicer_VTK_COMPONENTS
-      vtkWrappingPythonCore
+      vtkRenderingFreeTypeFontConfig
+      # vtkRenderingFreeTypeOpenGL # Since commit 4f7460a5 (> 6.2.0), vtkRenderingFreeTypeOpenGL
+                                   # has been removed. This mean Slicer will not compile
+                                   # against version of VTK folder than 6.3.0 having FontConfig
+                                   # capabilities.
+                                   # If this is needed, a configure test would have to
+                                   # be added to check if the module is available or not.
       )
-  endif()
-  if(UNIX AND NOT APPLE)
-    find_package(FontConfig QUIET)
-    if(FONTCONFIG_FOUND)
-      list(APPEND Slicer_VTK_COMPONENTS
-        vtkRenderingFreeTypeFontConfig
-        # vtkRenderingFreeTypeOpenGL # Since commit 4f7460a5 (> 6.2.0), vtkRenderingFreeTypeOpenGL
-                                     # has been removed. This mean Slicer will not compile
-                                     # against version of VTK folder than 6.3.0 having FontConfig
-                                     # capabilities.
-                                     # If this is needed, a configure test would have to
-                                     # be added to check if the module is available or not.
-        )
-      if(TARGET vtkRenderingFreeTypeOpenGL)
-        list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
-      endif()
+    if(TARGET vtkRenderingFreeTypeOpenGL)
+      list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
     endif()
   endif()
 endif()
@@ -789,22 +769,12 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
-if(${VTK_VERSION_MAJOR} STREQUAL "6")
-  find_package(VTK 6.1 COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
-  if(NOT TARGET vtkGUISupportQt)
-    message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
-                      "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
-                      "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. "
-                      "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
-  endif()
-else()
-  find_package(VTK REQUIRED)
-  if(NOT VTK_USE_QVTK)
-    message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
-                      "to recompile it with VTK_USE_GUISUPPORT ON, VTK_USE_QVTK ON, "
-                      "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. "
-                      "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
-  endif()
+find_package(VTK 6.1 COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED NO_MODULE)
+if(NOT TARGET vtkGUISupportQt)
+  message(FATAL_ERROR "error: VTK was not configured to use QT, you probably need "
+                    "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
+                    "DESIRED_QT_VERSION 4 and QT_QMAKE_EXECUTABLE set appropriatly. "
+                    "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
 endif()
 include(${VTK_USE_FILE})
 if(NOT DEFINED VTK_RENDERING_BACKEND)

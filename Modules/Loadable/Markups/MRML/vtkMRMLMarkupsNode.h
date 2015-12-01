@@ -177,19 +177,9 @@ public:
   int AddMarkup(Markup markup);
   /// Create a new markup with n points, init points to (0,0,0). Return index
   /// of new markup, -1 on failure.
-#if (VTK_MAJOR_VERSION >= 6)
   int AddMarkupWithNPoints(int n, std::string label = std::string());
-#else
-  int AddMarkupWithNPoints(int n);
-  int AddMarkupWithNPoints(int n, std::string label);
-#endif
   /// Create a new markup and add a point to it, returning the markup index
-#if (VTK_MAJOR_VERSION >= 6)
   int AddPointToNewMarkup(vtkVector3d point, std::string label = std::string());
-#else
-  int AddPointToNewMarkup(vtkVector3d point);
-  int AddPointToNewMarkup(vtkVector3d point, std::string label);
-#endif
   /// Add a point to the nth markup, returning the point index
   int AddPointToNthMarkup(vtkVector3d point, int n);
 

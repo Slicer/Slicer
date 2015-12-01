@@ -11,16 +11,10 @@ set(${KIT}_SRCS
   vtk${MODULE_NAME}GlyphSource2D.cxx
   vtk${MODULE_NAME}GlyphSource2D.h
   )
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(${KIT}_TARGET_LIBRARIES
-    vtkSlicer${MODULE_NAME}ModuleMRML
-    )
-else()
-  set(${KIT}_TARGET_LIBRARIES
-    vtkRendering
-    vtkSlicer${MODULE_NAME}ModuleMRML
+
+set(${KIT}_TARGET_LIBRARIES
+  vtkSlicer${MODULE_NAME}ModuleMRML
   )
-endif()
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(

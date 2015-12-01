@@ -295,7 +295,7 @@ class EditUtil(object):
     Note that this call will typically schedule a render operation to be
     performed the next time the event loop is idle.
     """
-    if vtk.VTK_MAJOR_VERSION > 5 and volumeNode.GetImageDataConnection():
+    if volumeNode.GetImageDataConnection():
       volumeNode.GetImageDataConnection().GetProducer().Update()
     if volumeNode.GetImageData().GetPointData().GetScalars() is not None:
       volumeNode.GetImageData().GetPointData().GetScalars().Modified()
@@ -343,10 +343,7 @@ class EditUtil(object):
     thresholder.SetNumberOfThreads(1)
     for index in xrange(lo,hi+1):
       logging.info( "Splitting label %d..."%index )
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        thresholder.SetInput( mergeNode.GetImageData() )
-      else:
-        thresholder.SetInputConnection( mergeNode.GetImageDataConnection() )
+      thresholder.SetInputConnection( mergeNode.GetImageDataConnection() )
       thresholder.SetInValue( index )
       thresholder.SetOutValue( 0 )
       thresholder.ReplaceInOn()

@@ -111,7 +111,6 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
 }
 
 //----------------------------------------------------------------------------
-#if VTK_MAJOR_VERSION >5
 vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
 {
   if (this->GetMRMLScene() == 0)
@@ -129,7 +128,6 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkAlgorithmOutput* polyData)
 
   return model.GetPointer();
 }
-#endif
 
 //----------------------------------------------------------------------------
 int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
@@ -448,11 +446,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     //--- Triangle strips are broken up into triangle polygons.
     //--- Polygons are not automatically re-stripped.
     vtkNew<vtkPolyDataNormals> normals;
-#if (VTK_MAJOR_VERSION <= 5)
-    normals->SetInput(poly.GetPointer());
-#else
     normals->SetInputData(poly.GetPointer());
-#endif
     //--- NOTE: This assumes a completely closed surface
     //---(i.e. no boundary edges) and no non-manifold edges.
     //--- If these constraints do not hold, the AutoOrientNormals
@@ -466,11 +460,7 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
     normals->ConsistencyOn();
 
     normals->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-    modelOut->SetAndObservePolyData(normals->GetOutput());
-#else
     modelOut->SetPolyDataConnection(normals->GetOutputPort());
-#endif
    }
 
   modelOut->SetAndObserveTransformNodeID(mtnode == NULL ? NULL : mtnode->GetID());

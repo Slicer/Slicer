@@ -58,12 +58,7 @@ vtkTeemEstimateDiffusionTensor::vtkTeemEstimateDiffusionTensor()
   this->ShiftNegativeEigenvalues = 0;
 
   // Output images beside the estimated tensor
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Baseline = vtkImageData::New();
-  this->AverageDWI = vtkImageData::New();
-#else
   this->SetNumberOfOutputPorts(3);
-#endif
 
   // defaults are from DT-MRI
   // (from Processing and Visualization for
@@ -90,10 +85,6 @@ vtkTeemEstimateDiffusionTensor::~vtkTeemEstimateDiffusionTensor()
   this->BValues->Delete();
   this->DiffusionGradients->Delete();
   this->RescaledDiffusionGradients->Delete();
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Baseline->Delete();
-  this->AverageDWI->Delete();
-#endif
   if (this->Transform)
     {
     this->Transform->Delete();
@@ -142,7 +133,6 @@ void vtkTeemEstimateDiffusionTensor::CalculateMaxB()
   this->SetMaxB( this->BValues->GetRange()[1] );
 }
 
-#if (VTK_MAJOR_VERSION >= 6)
 //----------------------------------------------------------------------------
 vtkImageData* vtkTeemEstimateDiffusionTensor::GetBaseline()
 {
@@ -153,7 +143,6 @@ vtkImageData* vtkTeemEstimateDiffusionTensor::GetAverageDWI()
 {
   return this->GetOutput(2);
 }
-#endif
 
 //----------------------------------------------------------------------------
 void vtkTeemEstimateDiffusionTensor::TransformDiffusionGradients()
@@ -242,19 +231,10 @@ int vtkTeemEstimateDiffusionTensor::RequestInformation(
   // We output one scalar components: baseline (for legacy issues)
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, scalarType, 1);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Baseline->CopyTypeSpecificInformation( this->GetInput() );
-  this->AverageDWI->CopyTypeSpecificInformation( this->GetInput() );
-  this->Baseline->SetScalarType(scalarType);
-  this->AverageDWI->SetScalarType(scalarType);
-  this->Baseline->SetNumberOfScalarComponents(1);
-  this->AverageDWI->SetNumberOfScalarComponents(1);
-#else
   vtkInformation* baselineOutInfo = outputVector->GetInformationObject(1);
   vtkInformation* averageDWIOutInfo = outputVector->GetInformationObject(2);
   vtkDataObject::SetPointDataActiveScalarInfo(baselineOutInfo, scalarType, 1);
   vtkDataObject::SetPointDataActiveScalarInfo(averageDWIOutInfo, scalarType, 1);
-#endif
 
   return 1;
 
@@ -294,11 +274,7 @@ int vtkTeemEstimateDiffusionTensor::RequestData(
     }
 
   // set extent so we know how many tensors to allocate
-#if (VTK_MAJOR_VERSION <= 5)
-  output->SetExtent(output->GetUpdateExtent());
-#else
   output->SetExtent(this->GetUpdateExtent());
-#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
@@ -312,14 +288,6 @@ int vtkTeemEstimateDiffusionTensor::RequestData(
   // Allocate baseline and averageDWI images
   vtkImageData* baseline = 0;
   vtkImageData* averageDWI = 0;
-#if (VTK_MAJOR_VERSION <= 5)
-  baseline = this->Baseline;
-  averageDWI = this->AverageDWI;
-  baseline->SetExtent(output->GetUpdateExtent());
-  averageDWI->SetExtent(output->GetUpdateExtent());
-  baseline->AllocateScalars();
-  averageDWI->AllocateScalars();
-#else
   vtkInformation* baselineOutInfo = outputVector->GetInformationObject(1);
   vtkInformation* averageDWIOutInfo = outputVector->GetInformationObject(2);
 
@@ -331,7 +299,6 @@ int vtkTeemEstimateDiffusionTensor::RequestData(
   averageDWI->SetExtent(this->GetUpdateExtent());
   baseline->AllocateScalars(baselineOutInfo);
   averageDWI->AllocateScalars(averageDWIOutInfo);
-#endif
   baseline->GetPointData()->GetScalars()->SetName("Baseline");
   averageDWI->GetPointData()->GetScalars()->SetName("AverageDWI");
 
@@ -399,11 +366,7 @@ static void vtkTeemEstimateDiffusionTensorExecute(vtkTeemEstimateDiffusionTensor
   vtkIdType *outInc;
   int *outFullUpdateExt;
   outInc = self->GetOutput()->GetIncrements();
-#if (VTK_MAJOR_VERSION <= 5)
-  outFullUpdateExt = self->GetOutput()->GetUpdateExtent(); //We are only working over the update extent
-#else
   outFullUpdateExt = self->GetUpdateExtent(); //We are only working over the update extent
-#endif
   ptId = ((outExt[0] - outFullUpdateExt[0]) * outInc[0]
          + (outExt[2] - outFullUpdateExt[2]) * outInc[1]
          + (outExt[4] - outFullUpdateExt[4]) * outInc[2]);

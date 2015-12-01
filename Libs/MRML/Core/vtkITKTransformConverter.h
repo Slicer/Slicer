@@ -428,13 +428,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetVTKBS
     bsplineCoefficientsScalarType=VTK_DOUBLE;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  bsplineCoefficients->SetScalarType(bsplineCoefficientsScalarType);
-  bsplineCoefficients->SetNumberOfScalarComponents(3);
-  bsplineCoefficients->AllocateScalars();
-#else
   bsplineCoefficients->AllocateScalars(bsplineCoefficientsScalarType, 3);
-#endif
 
   const unsigned int expectedNumberOfVectors = meshSize[0]*meshSize[1]*meshSize[2];
   const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
@@ -454,11 +448,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetVTKBS
     *(vtkBSplineParams_RAS++) =    (*(itkBSplineParams_LPS+expectedNumberOfVectors*2));
     itkBSplineParams_LPS++;
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  bsplineVtk->SetCoefficients(bsplineCoefficients.GetPointer());
-#else
   bsplineVtk->SetCoefficientData(bsplineCoefficients.GetPointer());
-#endif
 
   // Success
   return true;
@@ -603,11 +593,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
     vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: bsplineVtk is invalid");
     return false;
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* bsplineCoefficients_RAS=bsplineVtk->GetCoefficients();
-#else
   vtkImageData* bsplineCoefficients_RAS=bsplineVtk->GetCoefficientData();
-#endif
   if (bsplineCoefficients_RAS==NULL)
     {
     vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: coefficients are not specified");
@@ -802,11 +788,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     return false;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficients();
-#else
   vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficientData();
-#endif
 
   if (bsplineCoefficients==NULL)
     {
@@ -858,11 +840,7 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject, i
     return false;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficients();
-#else
   vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficientData();
-#endif
 
   if (bsplineCoefficients==NULL)
     {
@@ -997,13 +975,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
       << VTKDimension << " components but it actually contains " << numberOfScalarComponents );
     return false;
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  gridImage_Ras->SetNumberOfScalarComponents( numberOfScalarComponents );
-  gridImage_Ras->SetScalarTypeToDouble();
-  gridImage_Ras->AllocateScalars();
-#else
   gridImage_Ras->AllocateScalars(VTK_DOUBLE, 3);
-#endif
 
   double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
   itk::ImageRegionConstIterator<GridImageType> inputIt(gridImage_Lps, gridImage_Lps->GetRequestedRegion());
@@ -1017,11 +989,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
     ++inputIt;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  grid_Ras->SetDisplacementGrid( gridImage_Ras.GetPointer() );
-#else
   grid_Ras->SetDisplacementGridData( gridImage_Ras.GetPointer() );
-#endif
 
   // Set the interpolation to cubic to have smooth derivatives
   grid_Ras->SetInterpolationModeToCubic();

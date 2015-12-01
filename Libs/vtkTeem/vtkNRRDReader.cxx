@@ -431,9 +431,7 @@ void vtkNRRDReader::ExecuteInformation()
 
    // Set type information
    this->SetDataType(this->NrrdToVTKScalarType(this->nrrd->type) );
-#if (VTK_MAJOR_VERSION > 5)
    this->SetDataScalarType( this->NrrdToVTKScalarType(this->nrrd->type) );
-#endif
 
    // Set axis information
    int dataExtent[6];
@@ -645,11 +643,7 @@ void vtkNRRDReader::ExecuteInformation()
    nio = nrrdIoStateNix(nio);
 }
 
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out) {
-#else
 vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo){
-#endif
  vtkImageData *res = vtkImageData::SafeDownCast(out);
   if (!res)
     {
@@ -663,23 +657,14 @@ vtkImageData *vtkNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformati
   // before the execute.
   this->ExecuteInformation();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  res->SetExtent(res->GetUpdateExtent());
-  this->AllocatePointData(res);
-#else
   res->SetExtent(this->GetUpdateExtent());
   this->AllocatePointData(res, outInfo);
-#endif
 
   return res;
 
 }
 
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkNRRDReader::AllocatePointData(vtkImageData *out) {
-#else
 void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo) {
-#endif
 
  vtkDataArray *pd = NULL;
  int Extent[6];
@@ -764,12 +749,8 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo
       vtkErrorMacro("Could not allocate data type.");
       return;
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  out->SetScalarType(this->DataType);
-#else
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
     this->DataType, this->GetNumberOfComponents());
-#endif
   pd->SetNumberOfComponents(this->GetNumberOfComponents());
 
   // allocate enough memors
@@ -780,12 +761,8 @@ void vtkNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo
     switch (this->PointDataType) {
     case vtkDataSetAttributes::SCALARS:
        out->GetPointData()->SetScalars(pd);
-#if (VTK_MAJOR_VERSION <= 5)
-       out->SetNumberOfScalarComponents(this->GetNumberOfComponents());
-#else
        vtkDataObject::SetPointDataActiveScalarInfo(outInfo,
          this->DataType, this->GetNumberOfComponents());
-#endif
        break;
     case vtkDataSetAttributes::VECTORS:
        out->GetPointData()->SetVectors(pd);
@@ -878,17 +855,10 @@ vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkNRRDReader::ExecuteData(vtkDataObject *output)
-{
-  output->SetUpdateExtentToWholeExtent();
-  vtkImageData *data = this->AllocateOutputData(output);
-#else
 void vtkNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
   this->SetUpdateExtentToWholeExtent();
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
-#endif
 
   if (this->GetFileName() == NULL)
     {

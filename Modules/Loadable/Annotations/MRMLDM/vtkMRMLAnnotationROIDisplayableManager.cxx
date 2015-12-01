@@ -31,18 +31,14 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkObject.h>
-#if (VTK_MAJOR_VERSION >= 6)
 #include <vtkPickingManager.h>
-#endif
 #include <vtkPlane.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
-#if (VTK_MAJOR_VERSION >= 6)
 // for picking
 #include <vtkRenderWindowInteractor.h>
-#endif
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
@@ -154,7 +150,6 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
     roiWidget = vtkAnnotationROIWidget::New();
     }
 
-#if (VTK_MAJOR_VERSION >= 6)
   if (this->GetInteractor()->GetPickingManager())
     {
     if (!(this->GetInteractor()->GetPickingManager()->GetEnabled()))
@@ -164,7 +159,6 @@ vtkAbstractWidget * vtkMRMLAnnotationROIDisplayableManager::CreateWidget(vtkMRML
       this->GetInteractor()->GetPickingManager()->EnabledOn();
       }
     }
-#endif
 
   roiWidget->SetInteractor(this->GetInteractor());
   roiWidget->SetRotationEnabled(0);

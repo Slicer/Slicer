@@ -103,22 +103,13 @@ int main(int argc, char * argv[])
   std::cout << "Done reading the file " << InputVolume << endl;
 
   vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  ici->SetInput(reader->GetOutput() );
-#else
   ici->SetInputConnection(reader->GetOutputPort() );
-#endif
   ici->SetOutputSpacing( 1, 1, 1 );
   ici->SetOutputOrigin( 0, 0, 0 );
   ici->Update();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  image = ici->GetOutput();
-  image->Update();
-#else
   ici->Update();
   image = ici->GetOutput();
-#endif
 
   // Get the dimensions, marching cubes only works on 3d
   int extents[6];
@@ -154,20 +145,12 @@ int main(int argc, char * argv[])
                                      CLPProcessInformation,
                                      1.0 / 7.0, 0.0);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  mcubes->SetInput(ici->GetOutput() );
-#else
   mcubes->SetInputConnection(ici->GetOutputPort() );
-#endif
   mcubes->SetValue(0, Threshold);
   mcubes->ComputeScalarsOff();
   mcubes->ComputeGradientsOff();
   mcubes->ComputeNormalsOff();
-#if (VTK_MAJOR_VERSION <= 5)
-  (mcubes->GetOutput() )->ReleaseDataFlagOn();
-#else
   mcubes->ReleaseDataFlagOn();
-#endif
   mcubes->Update();
 
   if( debug )
@@ -181,22 +164,14 @@ int main(int argc, char * argv[])
                                         "Decimator",
                                         CLPProcessInformation,
                                         1.0 / 7.0, 1.0 / 7.0);
-#if (VTK_MAJOR_VERSION <= 5)
-  decimator->SetInput(mcubes->GetOutput() );
-#else
   decimator->SetInputConnection(mcubes->GetOutputPort() );
-#endif
   decimator->SetFeatureAngle(60);
   decimator->SplittingOff();
   decimator->PreserveTopologyOn();
 
   decimator->SetMaximumError(1);
   decimator->SetTargetReduction(Decimate);
-#if (VTK_MAJOR_VERSION <= 5)
-  (decimator->GetOutput() )->ReleaseDataFlagOff();
-#else
   decimator->ReleaseDataFlagOff();
-#endif
 
 
   std::cout << "Decimating ... \n";
@@ -219,17 +194,9 @@ int main(int argc, char * argv[])
                                          "Reversor",
                                          CLPProcessInformation,
                                          1.0 / 7.0, 2.0 / 7.0);
-#if (VTK_MAJOR_VERSION <= 5)
-    reverser->SetInput(decimator->GetOutput() );
-#else
     reverser->SetInputConnection(decimator->GetOutputPort() );
-#endif
     reverser->ReverseNormalsOn();
-#if (VTK_MAJOR_VERSION <= 5)
-    (reverser->GetOutput() )->ReleaseDataFlagOn();
-#else
     reverser->ReleaseDataFlagOn();
-#endif
     // TODO: add progress
     }
 
@@ -246,28 +213,16 @@ int main(int argc, char * argv[])
     }
   if( (transformIJKtoRAS->GetMatrix() )->Determinant() < 0 )
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    smootherSinc->SetInput(reverser->GetOutput() );
-#else
     smootherSinc->SetInputConnection(reverser->GetOutputPort() );
-#endif
     }
   else
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    smootherSinc->SetInput(decimator->GetOutput() );
-#else
     smootherSinc->SetInputConnection(decimator->GetOutputPort() );
-#endif
     }
   smootherSinc->SetNumberOfIterations(Smooth);
   smootherSinc->FeatureEdgeSmoothingOff();
   smootherSinc->BoundarySmoothingOff();
-#if (VTK_MAJOR_VERSION <= 5)
-  (smootherSinc->GetOutput() )->ReleaseDataFlagOn();
-#else
   smootherSinc->ReleaseDataFlagOn();
-#endif
 
   // TODO: insert progress
   std::cout << "Smoothing...\n";
@@ -277,26 +232,14 @@ int main(int argc, char * argv[])
                                          "Transformer",
                                          CLPProcessInformation,
                                          1.0 / 7.0, 4.0 / 7.0);
-#if (VTK_MAJOR_VERSION <= 5)
-  transformer->SetInput(smootherSinc->GetOutput() );
-#else
   transformer->SetInputConnection(smootherSinc->GetOutputPort() );
-#endif
   if( (transformIJKtoRAS->GetMatrix() )->Determinant() < 0 )
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    transformer->SetInput(reverser->GetOutput() );
-#else
     transformer->SetInputConnection(reverser->GetOutputPort() );
-#endif
     }
   else
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    transformer->SetInput(decimator->GetOutput() );
-#else
     transformer->SetInputConnection(decimator->GetOutputPort() );
-#endif
     }
 
   transformer->SetTransform(transformIJKtoRAS);
@@ -307,11 +250,7 @@ int main(int argc, char * argv[])
     }
 
   // TODO: add progress
-#if (VTK_MAJOR_VERSION <= 5)
-  (transformer->GetOutput() )->ReleaseDataFlagOn();
-#else
   transformer->ReleaseDataFlagOn();
-#endif
 
   normals = vtkPolyDataNormals::New();
   vtkPluginFilterWatcher watchNormals(normals,
@@ -326,54 +265,30 @@ int main(int argc, char * argv[])
     {
     normals->ComputePointNormalsOff();
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  normals->SetInput(transformer->GetOutput() );
-#else
   normals->SetInputConnection(transformer->GetOutputPort() );
-#endif
   normals->SetFeatureAngle(60);
   normals->SetSplitting(SplitNormals);
   std::cout << "Splitting normals...\n";
   // TODO: add progress
-#if (VTK_MAJOR_VERSION <= 5)
-  (normals->GetOutput() )->ReleaseDataFlagOn();
-#else
   normals->ReleaseDataFlagOn();
-#endif
 
   stripper = vtkStripper::New();
   vtkPluginFilterWatcher watchStripper(stripper,
                                        "Stripper",
                                        CLPProcessInformation,
                                        1.0 / 7.0, 6.0 / 7.0);
-#if (VTK_MAJOR_VERSION <= 5)
-  stripper->SetInput(normals->GetOutput() );
-#else
   stripper->SetInputConnection(normals->GetOutputPort() );
-#endif
   std::cout << "Stripping...\n";
   // TODO: add progress
-#if (VTK_MAJOR_VERSION <= 5)
-  (stripper->GetOutput() )->ReleaseDataFlagOff();
-#else
   stripper->ReleaseDataFlagOff();
-#endif
 
 
   // the poly data output from the stripper can be set as an input to a model's polydata
-#if (VTK_MAJOR_VERSION <= 5)
-  (stripper->GetOutput() )->Update();
-#else
   stripper->Update();
-#endif
   // but for now we're just going to write it out
 
   writer = vtkXMLPolyDataWriter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  writer->SetInput(stripper->GetOutput() );
-#else
   writer->SetInputConnection(stripper->GetOutputPort() );
-#endif
   writer->SetFileName(OutputGeometry.c_str() );
   // TODO: add progress
   writer->Write();

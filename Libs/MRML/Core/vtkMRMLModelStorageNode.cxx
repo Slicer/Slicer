@@ -135,11 +135,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkNew<vtkBYUReader> reader;
       reader->SetGeometryFileName(fullName.c_str());
       reader->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-      modelNode->SetAndObservePolyData(reader->GetOutput());
-#else
       modelNode->SetPolyDataConnection(reader->GetOutputPort());
-#endif
       }
     else if (extension == std::string(".vtk"))
       {
@@ -174,11 +170,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        modelNode->SetAndObservePolyData(output);
-#else
         modelNode->SetPolyDataConnection(reader->GetOutputPort());
-#endif
         }
       }
     else if (extension == std::string(".vtp"))
@@ -186,44 +178,28 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       vtkNew<vtkXMLPolyDataReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-      modelNode->SetAndObservePolyData(reader->GetOutput());
-#else
       modelNode->SetPolyDataConnection(reader->GetOutputPort());
-#endif
       }
     else if (extension == std::string(".stl"))
       {
       vtkNew<vtkSTLReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-      modelNode->SetAndObservePolyData(reader->GetOutput());
-#else
       modelNode->SetPolyDataConnection(reader->GetOutputPort());
-#endif
       }
     else if (extension == std::string(".ply"))
       {
       vtkNew<vtkPLYReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-      modelNode->SetAndObservePolyData(reader->GetOutput());
-#else
       modelNode->SetPolyDataConnection(reader->GetOutputPort());
-#endif
       }
     else if (extension == std::string(".obj"))
       {
       vtkNew<vtkOBJReader> reader;
       reader->SetFileName(fullName.c_str());
       reader->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-      modelNode->SetAndObservePolyData(reader->GetOutput());
-#else
       modelNode->SetPolyDataConnection(reader->GetOutputPort());
-#endif
       }
     else if (extension == std::string(".meta"))  // model in meta format
       {
@@ -334,11 +310,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkPolyDataWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
-#if (VTK_MAJOR_VERSION <= 5)
-    writer->SetInput( modelNode->GetPolyData() );
-#else
     writer->SetInputConnection( modelNode->GetPolyDataConnection() );
-#endif
     try
       {
       writer->Write();
@@ -356,11 +328,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       this->GetUseCompression() ? vtkXMLWriter::ZLIB : vtkXMLWriter::NONE);
     writer->SetDataMode(
       this->GetUseCompression() ? vtkXMLWriter::Appended : vtkXMLWriter::Ascii);
-#if (VTK_MAJOR_VERSION <= 5)
-    writer->SetInput( modelNode->GetPolyData() );
-#else
     writer->SetInputConnection( modelNode->GetPolyDataConnection() );
-#endif
     try
       {
       writer->Write();
@@ -376,13 +344,8 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkSTLWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
-#if (VTK_MAJOR_VERSION <= 5)
-    triangulator->SetInput( modelNode->GetPolyData() );
-    writer->SetInput( triangulator->GetOutput() );
-#else
     triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
     writer->SetInputConnection( triangulator->GetOutputPort() );
-#endif
     try
       {
       writer->Write();
@@ -398,13 +361,8 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkNew<vtkPLYWriter> writer;
     writer->SetFileName(fullName.c_str());
     writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
-#if (VTK_MAJOR_VERSION <= 5)
-    triangulator->SetInput( modelNode->GetPolyData() );
-    writer->SetInput( triangulator->GetOutput() );
-#else
     triangulator->SetInputConnection( modelNode->GetPolyDataConnection() );
     writer->SetInputConnection( triangulator->GetOutputPort() );
-#endif
     try
       {
       writer->Write();

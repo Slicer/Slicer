@@ -189,37 +189,17 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->DTIMathematics->SetScaleFactor(1000.0);
       this->DTIMathematicsAlpha->SetOperation(
         vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
-#if (VTK_MAJOR_VERSION <= 5)
-      this->ImageMath->SetInput( this->DTIMathematicsAlpha->GetOutput());
-      this->ImageCast->SetInput( this->ImageMath->GetOutput());
-      this->Threshold->SetInput( this->ImageCast->GetOutput());
-#else
       this->ImageMath->SetInputConnection( this->DTIMathematicsAlpha->GetOutputPort());
       this->ImageCast->SetInputConnection( this->ImageMath->GetOutputPort());
       this->Threshold->SetInputConnection( this->ImageCast->GetOutputPort());
-#endif
 
       // window/level
-#if (VTK_MAJOR_VERSION <= 5)
-      this->ShiftScale->SetInput(this->DTIMathematics->GetOutput());
-#else
       this->ShiftScale->SetInputConnection(this->DTIMathematics->GetOutputPort());
-#endif
       double halfWindow = (this->GetWindow() / 2.);
       double min = this->GetLevel() - halfWindow;
       this->ShiftScale->SetShift ( -min );
       this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 
-#if (VTK_MAJOR_VERSION <= 5)
-      this->ExtractRGB->SetInput(this->ShiftScale->GetOutput());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutput()->GetProducerPort() ||
-          this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutput()->GetProducerPort())
-        {
-        this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutput()->GetProducerPort());
-        this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort() );
-        }
-#else
       this->ExtractRGB->SetInputConnection(this->ShiftScale->GetOutputPort());
       if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() ||
           this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutputPort())
@@ -228,22 +208,10 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
         this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutputPort());
         this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutputPort() );
         }
-#endif
       break;
       }
     default:
       this->DTIMathematics->SetScaleFactor(1.0);
-#if (VTK_MAJOR_VERSION <= 5)
-      this->Threshold->SetInput( this->DTIMathematics->GetOutput());
-      this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
-      this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutput()->GetProducerPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutput()->GetProducerPort() ||
-          this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutput()->GetProducerPort())
-        {
-        this->AppendComponents->RemoveAllInputs();
-        this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutput()->GetProducerPort() );
-        this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
-#else
       this->Threshold->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->MapToWindowLevelColors->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutputPort());
@@ -253,7 +221,6 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
         this->AppendComponents->RemoveAllInputs();
         this->AppendComponents->SetInputConnection(0, this->ExtractRGB->GetOutputPort() );
         this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
-#endif
         }
       break;
     }
@@ -337,56 +304,22 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
 }
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLDiffusionTensorVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkImageData *imageData)
-{
-  this->DTIMathematics->SetInput(imageData);
-  this->DTIMathematicsAlpha->SetInput(0, imageData);
-}
-#else
 void vtkMRMLDiffusionTensorVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
 {
   this->DTIMathematics->SetInputConnection(imageDataConnection);
   this->DTIMathematicsAlpha->SetInputConnection(imageDataConnection);
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
-{
-  return vtkImageData::SafeDownCast(this->DTIMathematics->GetInput());
-}
-#else
 vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode
 ::GetInputImageDataConnection()
 {
   return this->DTIMathematics->GetNumberOfInputConnections(0) ?
     this->DTIMathematics->GetInputConnection(0, 0) : 0;
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-//----------------------------------------------------------------------------
-vtkImageStencilData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageStencilData()
-{
-  switch (this->GetScalarInvariant())
-    {
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
-    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
-      {
-      return 0;
-      }
-    default:
-      return this->Superclass::GetBackgroundImageStencilData();
-    }
-}
-#else
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageStencilDataConnection()
 {
@@ -403,21 +336,13 @@ vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageS
       return this->Superclass::GetBackgroundImageStencilDataConnection();
     }
 }
-#endif
 
 //---------------------------------------------------------------------------
-#if VTK_MAJOR_VERSION <= 5
-vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetScalarImageData()
-{
-  return vtkImageData::SafeDownCast(this->DTIMathematics->GetOutput());
-}
-#else
 vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeDisplayNode
 ::GetScalarImageDataConnection()
 {
   return this->DTIMathematics->GetOutputPort();
 }
-#endif
 
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode

@@ -120,9 +120,7 @@ endif()
 
 # Create the instantiator for DisplayableManager classes.
 set(VTK_USE_INSTANTIATOR_NEW 1)
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  include(${VTK_CMAKE_DIR}/vtkMakeInstantiator.cmake)
-endif()
+include(${VTK_CMAKE_DIR}/vtkMakeInstantiator.cmake)
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
   DisplayableManagerInstantiator_SRCS
   "${DisplayableManager_SRCS}"
@@ -141,14 +139,6 @@ set(srcs
 set(lib_name ${PROJECT_NAME})
 add_library(${lib_name} ${srcs})
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    vtkWidgets
-    )
-endif()
-
 set(libs
   ${VTK_LIBRARIES}
   MRMLCore
@@ -156,15 +146,9 @@ set(libs
   )
 
 if(MRMLDisplayableManager_USE_PYTHON)
-  if(${VTK_VERSION_MAJOR} GREATER 5)
-    set(VTK_COMMON_PYTHON_LIBRARY
-      vtkWrappingPythonCore # For vtkPythonUtil
-      )
-  else()
-    set(VTK_COMMON_PYTHON_LIBRARY
-      vtkCommonPythonD # For vtkPythonUtils
-      )
-  endif()
+  set(VTK_COMMON_PYTHON_LIBRARY
+    vtkWrappingPythonCore # For vtkPythonUtil
+    )
   list(APPEND libs
     ${VTK_COMMON_PYTHON_LIBRARY} # For vtkPythonUtils
     ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY

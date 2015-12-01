@@ -16,23 +16,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkVersion.h>
 
-#if VTK_MAJOR_VERSION <= 5
-#include "vtkSlicerVolumeRenderingFactory.h"
-
-//----------------------------------------------------------------------------
-// Needed when we don't use the vtkStandardNewMacro.
-vtkInstantiatorNewMacro(vtkSlicerRayCastImageDisplayHelper);
-
-//----------------------------------------------------------------------------
-vtkSlicerRayCastImageDisplayHelper* vtkSlicerRayCastImageDisplayHelper::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret=vtkSlicerVolumeRenderingFactory::CreateInstance("vtkSlicerRayCastImageDisplayHelper");
-  return (vtkSlicerRayCastImageDisplayHelper*)ret;
-}
-#else
 vtkAbstractObjectFactoryNewMacro(vtkSlicerRayCastImageDisplayHelper);
-#endif
 
 // Construct a new vtkSlicerRayCastImageDisplayHelper with default values
 vtkSlicerRayCastImageDisplayHelper::vtkSlicerRayCastImageDisplayHelper()

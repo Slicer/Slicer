@@ -71,17 +71,10 @@ void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
-{
-  this->MapToColors->SetInput(imageData);
-}
-#else
 void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
   this->MapToColors->SetInputConnection(imageDataConnection);
 }
-#endif
 
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
@@ -90,11 +83,7 @@ vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetInputImageData()
 }
 
 //---------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageData()
-#else
 vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataConnection()
-#endif
 {
   if (this->MapToColors->GetLookupTable() && this->MapToColors->GetLookupTable()->IsA("vtkLookupTable"))
     {
@@ -104,11 +93,7 @@ vtkAlgorithmOutput* vtkMRMLLabelMapVolumeDisplayNode::GetOutputImageDataConnecti
       return NULL;
       }
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  return this->MapToColors->GetOutput();
-#else
   return this->MapToColors->GetOutputPort();
-#endif
 }
 
 //---------------------------------------------------------------------------

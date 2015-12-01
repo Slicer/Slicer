@@ -184,21 +184,13 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     {
     // Fix up the DeepCopy for vtkBSplineTransform (it performs only a ShallowCopy on the coefficient grid)
     dst->DeepCopy(src);
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkImageData* srcCoefficients=vtkBSplineTransform::SafeDownCast(src)->GetCoefficients();
-#else
     vtkImageData* srcCoefficients=vtkBSplineTransform::SafeDownCast(src)->GetCoefficientData();
-#endif
 
     if (srcCoefficients)
       {
       vtkNew<vtkImageData> dstCoefficients;
       dstCoefficients->DeepCopy(srcCoefficients);
-#if (VTK_MAJOR_VERSION <= 5)
-      vtkBSplineTransform::SafeDownCast(dst)->SetCoefficients(dstCoefficients.GetPointer());
-#else
       vtkBSplineTransform::SafeDownCast(dst)->SetCoefficientData(dstCoefficients.GetPointer());
-#endif
       }
     }
   else if (src->IsA("vtkGridTransform")) // this handles vtkOrientedGridTransform as well
@@ -210,11 +202,7 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
       {
       vtkNew<vtkImageData> dstDisplacementGrid;
       dstDisplacementGrid->DeepCopy(srcDisplacementGrid);
-#if (VTK_MAJOR_VERSION <= 5)
-      vtkGridTransform::SafeDownCast(dst)->SetDisplacementGrid(dstDisplacementGrid.GetPointer());
-#else
       vtkGridTransform::SafeDownCast(dst)->SetDisplacementGridData(dstDisplacementGrid.GetPointer());
-#endif
       }
     }
   else if (src->IsA("vtkThinPlateSplineTransform"))
@@ -1228,11 +1216,7 @@ const char* vtkMRMLTransformNode::GetTransformInfo(vtkAbstractTransform* inputTr
       {
       ss << " B-spline:";
       bsplineTransform->Update(); // compute if inverse
-#if (VTK_MAJOR_VERSION <= 5)
-      vtkImageData* coefficients=bsplineTransform->GetCoefficients();
-#else
       vtkImageData* coefficients=bsplineTransform->GetCoefficientData();
-#endif
       if (coefficients!=NULL)
         {
         int* extent = coefficients->GetExtent();

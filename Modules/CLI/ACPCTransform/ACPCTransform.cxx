@@ -148,11 +148,7 @@ int main(int argc, char * argv[])
       {
       std::cout << "Set Input to PrincipalAxesAlign\n";
       }
-#if (VTK_MAJOR_VERSION <= 5)
-    pa->SetInput(polydata.GetPointer());
-#else
     pa->SetInputData(polydata.GetPointer());
-#endif
     if( debugSwitch )
       {
       std::cout << "Executing PrincipalAxesAlign\n";

@@ -46,48 +46,17 @@ public:
   vtkTypeMacro(vtkSlicerScalarBarActor,vtkScalarBarActor);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  /// Get for the flag on using color names as label
-  vtkGetMacro(UseColorNameAsLabel, int);
-  /// Set for the flag on using color names as label
-  vtkSetMacro(UseColorNameAsLabel, int);
-  /// Get/Set for the flag on using color names as label
-  vtkBooleanMacro(UseColorNameAsLabel, int);
-
-  /// Get color names array
-  vtkGetObjectMacro(ColorNames, vtkStringArray);
-
-  /// Set the ith color name.
-  int SetColorName(int ind, const char *name);
-
-protected:
-  /// Set color names array
-  vtkSetObjectMacro(ColorNames, vtkStringArray);
-
-#else
   /// Get for the flag on using VTK6 annotation as label
   vtkGetMacro(UseAnnotationAsLabel, int);
   /// Set for the flag on using VTK6 annotation as label
   vtkSetMacro(UseAnnotationAsLabel, int);
   /// Get/Set for the flag on using VTK6 annotation as label
   vtkBooleanMacro(UseAnnotationAsLabel, int);
-#endif
 
 protected:
   vtkSlicerScalarBarActor();
   ~vtkSlicerScalarBarActor();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  /// overloaded virtual function that adds the color name as label
-  virtual void AllocateAndSizeLabels(int *labelSize, int *size,
-                                     vtkViewport *viewport, double *range);
-
-  /// A vector of names for the color table elements
-  vtkStringArray* ColorNames;
-
-  /// flag for setting color name as label
-  int UseColorNameAsLabel;
-#else
   // Description:
   // Determine the size and placement of any tick marks to be rendered.
   //
@@ -100,7 +69,6 @@ protected:
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;
-#endif
 
 private:
   vtkSlicerScalarBarActor(const vtkSlicerScalarBarActor&);  // Not implemented.

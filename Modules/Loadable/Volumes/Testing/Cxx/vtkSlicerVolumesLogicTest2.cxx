@@ -50,17 +50,6 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-#if VTK_MAJOR_VERSION <= 5
-bool isImageDataValid(vtkImageData* imageData)
-{
-  if (!imageData)
-    {
-    return false;
-    }
-  imageData->GetProducerPort();
-  vtkInformation* info = imageData->GetPipelineInformation();
-  info = imageData->GetPipelineInformation();
-#else
 bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 {
   if (!imageDataConnection ||
@@ -72,7 +61,6 @@ bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
   imageDataConnection->GetProducer()->Update();
   vtkInformation* info =
     imageDataConnection->GetProducer()->GetOutputInformation(0);
-#endif
   if (!info)
     {
     std::cout << "No output information" << std::endl;
@@ -138,11 +126,7 @@ int main( int argc, char * argv[] )
       logic->AddArchetypeVolume(fileNameList->GetValue(0), "rgbVolume", 0, fileNameList));
 
   if (!vectorVolume ||
-#if VTK_MAJOR_VERSION <= 5
-      !isImageDataValid(vectorVolume->GetImageData()))
-#else
       !isImageDataValid(vectorVolume->GetImageDataConnection()))
-#endif
     {
     std::cerr << "Failed to load RGB image." << std::endl;
     return EXIT_FAILURE;

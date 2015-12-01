@@ -74,11 +74,7 @@ public:
 
   /// \sa qMRMLSliceControllerWidget::imageData()
   /// \sa setImageData();
-#if (VTK_MAJOR_VERSION <= 5)
-  Q_INVOKABLE vtkImageData* imageData()const;
-#else
   Q_INVOKABLE vtkAlgorithmOutput* imageDataConnection()const;
-#endif
 
   /// \sa qMRMLSliceControllerWidget::mrmlSliceCompositeNode()
   Q_INVOKABLE vtkMRMLSliceCompositeNode* mrmlSliceCompositeNode()const;
@@ -136,11 +132,7 @@ public slots:
 
   /// \sa qMRMLSliceControllerWidget::setImageData()
   /// \sa imageData()
-#if (VTK_MAJOR_VERSION <= 5)
-  void setImageData(vtkImageData* newImageData);
-#else
   void setImageDataConnection(vtkAlgorithmOutput* newImageDataConnection);
-#endif
 
   /// \sa qMRMLSliceControllerWidget::setSliceOrientation()
   /// \sa sliceOrientation()

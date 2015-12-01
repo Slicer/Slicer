@@ -32,11 +32,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
   vtkITKArchetypeDiffusionTensorImageReaderFile();
   ~vtkITKArchetypeDiffusionTensorImageReaderFile();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *data);
-#else
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-#endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:
 };

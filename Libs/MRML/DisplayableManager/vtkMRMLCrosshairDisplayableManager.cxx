@@ -387,11 +387,7 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
 
   vtkNew<vtkPolyDataMapper2D> mapper;
   vtkNew<vtkActor2D> actor;
-#if (VTK_MAJOR_VERSION <= 5)
-  mapper->SetInput(polyData.GetPointer());
-#else
   mapper->SetInputData(polyData.GetPointer());
-#endif
   actor->SetMapper(mapper.GetPointer());
 
   if (this->LightBoxRenderer)
@@ -489,11 +485,7 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::BuildCrosshair()
 
   vtkNew<vtkPolyDataMapper2D> hmapper;
   vtkNew<vtkActor2D> hactor;
-#if (VTK_MAJOR_VERSION <= 5)
-  hmapper->SetInput(hpolyData.GetPointer());
-#else
   hmapper->SetInputData(hpolyData.GetPointer());
-#endif
   hactor->SetMapper(hmapper.GetPointer());
 
   if (this->LightBoxRenderer)

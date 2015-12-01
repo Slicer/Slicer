@@ -102,28 +102,16 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
 
   vtkNew<vtkImageReslice> resliceMask;
   resliceMask->SetOutputExtent(0, 400, 0, 500, 0, 0);
-#if (VTK_MAJOR_VERSION <= 5)
-  resliceMask->SetInput(img);
-#else
   resliceMask->SetInputData(img);
-#endif
 
   vtkNew<vtkImageMapToColors> colors;
-#if (VTK_MAJOR_VERSION <= 5)
-  colors->SetInput(resliceMask->GetOutput());
-#else
   colors->SetInputConnection(resliceMask->GetOutputPort());
-#endif
   vtkNew<vtkColorTransferFunction> ctf;
   ctf->AddRGBPoint(0, 1., 0., 0.);
   colors->SetLookupTable(ctf.GetPointer());
 
   vtkNew<vtkImageAppendComponents> append;
-#if (VTK_MAJOR_VERSION <= 5)
-  append->SetInputConnection(0, colors->GetOutput()->GetProducerPort());
-#else
   append->SetInputConnection(0, colors->GetOutputPort());
-#endif
 
   //vtkImageBlend* blend = vtkImageBlend::New();
   //blend->AddInput(append->GetOutput());

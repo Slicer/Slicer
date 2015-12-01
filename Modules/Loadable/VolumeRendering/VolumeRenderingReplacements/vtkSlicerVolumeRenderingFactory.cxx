@@ -25,16 +25,6 @@
 #include "vtkSlicerOpenGLRayCastImageDisplayHelper.h"
 #endif
 
-#if VTK_MAJOR_VERSION <= 5
-// Mangled Mesa has been removed from VTK6. See the
-// following commits:
-//   kitware/VTK@3977699
-//   kitware/VTK@0659c80
-#if defined(VTK_USE_MANGLED_MESA)
-#include "vtkMesaRayCastImageDisplayHelper.h"
-#endif
-#endif
-
 vtkStandardNewMacro(vtkSlicerVolumeRenderingFactory);
 
 
@@ -60,14 +50,6 @@ vtkObject* vtkSlicerVolumeRenderingFactory::CreateInstance(const char* vtkclassn
     // Ray Cast Image Display Helper
     if(strcmp(vtkclassname, "vtkSlicerRayCastImageDisplayHelper") == 0)
       {
-#if VTK_MAJOR_VERSION <= 5
-#if defined(VTK_USE_MANGLED_MESA)
-      if ( vtkGraphicsFactory::GetUseMesaClasses() )
-        {
-        return vtkMesaRayCastImageDisplayHelper::New();
-        }
-#endif
-#endif
       return vtkSlicerOpenGLRayCastImageDisplayHelper::New();
       }
     }

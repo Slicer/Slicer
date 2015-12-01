@@ -97,21 +97,13 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
     extract = vtk.vtkImageExtractComponents()
     extract.SetComponents(0,1,2)
     luminance = vtk.vtkImageLuminance()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      extract.SetInput(inputVolume.GetImageData())
-      luminance.SetInput(extract.GetOutput())
-      luminance.GetOutput().Update()
-    else:
-      extract.SetInputConnection(inputVolume.GetImageDataConnection())
-      luminance.SetInputConnection(extract.GetOutputPort())
-      luminance.Update()
+    extract.SetInputConnection(inputVolume.GetImageDataConnection())
+    luminance.SetInputConnection(extract.GetOutputPort())
+    luminance.Update()
     ijkToRAS = vtk.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRAS)
     outputVolume.SetIJKToRASMatrix(ijkToRAS)
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      outputVolume.SetAndObserveImageData(luminance.GetOutput())
-    else:
-      outputVolume.SetImageDataConnection(luminance.GetOutputPort())
+    outputVolume.SetImageDataConnection(luminance.GetOutputPort())
     # make the output volume appear in all the slice views
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID(outputVolume.GetID())

@@ -373,15 +373,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       {
       return;
       }
-#if (VTK_MAJOR_VERSION <= 5)
-    pipeline->ModelWarper->SetInput(polyData);
-    // need this to update bounds of the locator, to avoid crash in the cutter
-    polyData->Modified();
-#else
     pipeline->ModelWarper->SetInputData(polyData);
     // need this to update bounds of the locator, to avoid crash in the cutter
     modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
-#endif
 
     pipeline->ModelWarper->SetTransform(pipeline->NodeToWorld);
 

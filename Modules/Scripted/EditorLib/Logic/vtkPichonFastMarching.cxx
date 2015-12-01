@@ -499,18 +499,6 @@ void vtkPichonFastMarching::setActiveLabel(int _label)
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the datas data types.
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkPichonFastMarching::ExecuteData(vtkDataObject *)
-{
-  vtkImageData *inData = this->GetImageDataInput(0);
-  vtkImageData *outData = this->GetOutput();
-
-  outData->SetExtent(this->GetOutput()->GetWholeExtent());
-  outData->AllocateScalars();
-
-  int outExt[6], s;
-  outData->GetWholeExtent(outExt);
-#else
 void vtkPichonFastMarching::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
   vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
@@ -518,7 +506,6 @@ void vtkPichonFastMarching::ExecuteDataWithInformation(vtkDataObject *output, vt
 
   int outExt[6], s;
   outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), outExt);
-#endif
   void *inPtr = inData->GetScalarPointerForExtent(outExt);
   void *outPtr = outData->GetScalarPointerForExtent(outExt);
 

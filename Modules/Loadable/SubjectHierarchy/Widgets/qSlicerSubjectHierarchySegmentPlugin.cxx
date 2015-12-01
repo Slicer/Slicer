@@ -212,17 +212,9 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
   thresh->SetInValue(0);
   thresh->SetOutValue(0);
   thresh->SetOutputScalarType (VTK_SHORT);
-#if (VTK_MAJOR_VERSION <= 5)
-  thresh->SetInput( volumeNode->GetImageData() );
-  thresh->GetOutput()->Update();
-  vtkNew<vtkImageData> imageData;
-  imageData->DeepCopy( thresh->GetOutput() );
-  labelNode->SetAndObserveImageData( imageData.GetPointer() );
-#else
   thresh->SetInputData(volumeNode->GetImageData());
   thresh->Update();
   labelNode->SetImageDataConnection( thresh->GetOutputPort() );
-#endif
   // add the label volume to the scene
   scene->AddNode(labelNode.GetPointer());
 

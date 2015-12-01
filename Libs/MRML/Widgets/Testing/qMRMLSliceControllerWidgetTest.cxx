@@ -123,11 +123,7 @@ void qMRMLSliceControllerWidgetTester::testDefaults()
   QCOMPARE(sliceControllerWidget.sliceViewColor(), QColor());
 
   QVERIFY(sliceControllerWidget.sliceLogic() != 0);
-#if (VTK_MAJOR_VERSION <= 5)
-  QCOMPARE(sliceControllerWidget.imageData(), nullPtr);
-#else
   QCOMPARE(sliceControllerWidget.imageDataConnection(), nullPtr);
-#endif
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode(), nullPtr);
 
   QCOMPARE(sliceControllerWidget.isLinked(), false);
@@ -152,11 +148,7 @@ void qMRMLSliceControllerWidgetTester::testSetMRMLSliceNode()
   QCOMPARE(sliceControllerWidget.mrmlScene(), this->MRMLScene);
   QCOMPARE(sliceControllerWidget.mrmlSliceNode(), this->MRMLSliceNode);
   QVERIFY(sliceControllerWidget.sliceLogic() != 0);
-#if (VTK_MAJOR_VERSION <= 5)
-  QCOMPARE(sliceControllerWidget.imageData(), nullPtr);
-#else
   QCOMPARE(sliceControllerWidget.imageDataConnection(), nullPtr);
-#endif
 
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode()->GetBackgroundVolumeID(), nullPtr);
   QCOMPARE(sliceControllerWidget.mrmlSliceCompositeNode()->GetForegroundVolumeID(), nullPtr);

@@ -556,13 +556,8 @@ void vtkThreeDViewInteractorStyle::Spin()
     atan2((double)rwi->GetLastEventPosition()[1] - (double)center[1],
           (double)rwi->GetLastEventPosition()[0] - (double)center[0]);
 
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
   newAngle = vtkMath::DegreesFromRadians(newAngle);
   oldAngle = vtkMath::DegreesFromRadians(oldAngle);
-#else
-  newAngle *= vtkMath::RadiansToDegrees();
-  oldAngle *= vtkMath::RadiansToDegrees();
-#endif
   vtkCamera *camera = 0;
   if (this->CameraNode)
     {

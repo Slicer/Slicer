@@ -119,21 +119,13 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* textureImage = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData();
-#else
   vtkAlgorithmOutput* textureImagePort = sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection();
   vtkImageData* textureImage = vtkImageData::SafeDownCast(textureImagePort->GetProducer()->GetOutputDataObject(textureImagePort->GetIndex()));
-#endif
   int* tdims = textureImage->GetDimensions();
   std::cout << "Texture dimension"  << tdims[0] << " " << tdims[1] << " " << tdims[2] << std::endl;
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* img = sliceLogic->GetImageData();
-#else
   vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
-#endif
   int* dims = img->GetDimensions();
   std::cout << "Logic dimension"  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
@@ -150,11 +142,7 @@ int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
     }
   vtkNew<vtkImageViewer2> viewer;
   //viewer->SetInput(appendComponents->GetOutput());
-#if (VTK_MAJOR_VERSION <= 5)
-  viewer->SetInput(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageData());
-#else
   viewer->SetInputConnection(sliceLogic->GetSliceModelDisplayNode()->GetTextureImageDataConnection());
-#endif
   //viewer->SetInputConnection(appendComponents->GetOutputPort());
 
   // Renderer, RenderWindow and Interactor

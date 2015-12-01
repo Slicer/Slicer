@@ -271,11 +271,7 @@ class LabelEffectLogic(Effect.EffectLogic):
     if not labelNode: return
     labelImage = labelNode.GetImageData()
     if not labelImage: return
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      imageData.SetScalarType(labelImage.GetScalarType())
-      imageData.AllocateScalars()
-    else:
-      imageData.AllocateScalars(labelImage.GetScalarType(), 1)
+    imageData.AllocateScalars(labelImage.GetScalarType(), 1)
 
     #
     # move the points so the lower left corner of the
@@ -289,10 +285,7 @@ class LabelEffectLogic(Effect.EffectLogic):
     drawPoints.Modified()
 
     fill = slicer.vtkImageFillROI()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      fill.SetInput(imageData)
-    else:
-      fill.SetInputData(imageData)
+    fill.SetInputData(imageData)
     fill.SetValue(1)
     fill.SetPoints(drawPoints)
     fill.Update()

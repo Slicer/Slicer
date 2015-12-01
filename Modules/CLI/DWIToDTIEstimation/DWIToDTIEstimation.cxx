@@ -101,9 +101,6 @@ int main( int argc, char * argv[] )
       }
     estim->Update();
     vtkImageData *tensorImage = estim->GetOutput();
-#if (VTK_MAJOR_VERSION <= 5)
-    tensorImage->GetPointData()->SetScalars(NULL);
-#endif
     // Read the tensor mask
     vtkNew<vtkImageData> mask;
     if( strlen(inputMaskVolume.c_str() ) > 0 )
@@ -143,13 +140,8 @@ int main( int argc, char * argv[] )
     if( applyMask )
       {
       tensorMask->SetMaskAlpha(0.0);
-#if (VTK_MAJOR_VERSION <= 5)
-      tensorMask->SetInput(tensorImage);
-      tensorMask->SetMaskInput(mask.GetPointer());
-#else
       tensorMask->SetInputConnection(estim->GetOutputPort());
       tensorMask->SetMaskInputData(mask.GetPointer());
-#endif
       tensorMask->Update();
       tensorImage = tensorMask->GetOutput();
       }
@@ -162,11 +154,7 @@ int main( int argc, char * argv[] )
     // Save tensor
     vtkNew<vtkNRRDWriter> writer;
     tensorImage->GetPointData()->SetScalars(NULL);
-#if (VTK_MAJOR_VERSION <= 5)
-    writer->SetInput(tensorImage);
-#else
     writer->SetInputData(tensorImage);
-#endif
     writer->SetFileName( outputTensor.c_str() );
     writer->UseCompressionOn();
     writer->SetIJKToRASMatrix( ijkToRasMatrix );
@@ -178,11 +166,7 @@ int main( int argc, char * argv[] )
 
     // Save baseline
     vtkNew<vtkNRRDWriter> writer2;
-#if (VTK_MAJOR_VERSION <= 5)
-    writer2->SetInput(estim->GetBaseline() );
-#else
     writer2->SetInputData(estim->GetBaseline() );
-#endif
     writer2->SetFileName( outputBaseline.c_str() );
     writer2->UseCompressionOn();
     writer2->SetIJKToRASMatrix( ijkToRasMatrix );

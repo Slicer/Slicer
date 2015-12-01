@@ -106,11 +106,7 @@ protected:
   vtkPichonFastMarching();
   ~vtkPichonFastMarching();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *);
-#else
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *);
-#endif
 
 
   friend void vtkPichonFastMarchingExecute(vtkPichonFastMarching *self,

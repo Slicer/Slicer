@@ -24,26 +24,8 @@
 // Slicer includes
 #include "vtkSlicerFixedPointRayCastImage.h"
 
-#if VTK_MAJOR_VERSION <= 5
-
-// Mangled Mesa has been removed from VTK6. See the
-// following commits:
-//   kitware/VTK@3977699
-//   kitware/VTK@0659c80
-#ifndef VTK_IMPLEMENT_MESA_CXX
-# include <vtkOpenGL.h>
-#endif
-
-#ifndef VTK_IMPLEMENT_MESA_CXX
-vtkStandardNewMacro(vtkSlicerOpenGLRayCastImageDisplayHelper);
-#endif
-
-#else
-
 #include <vtkOpenGL.h>
 vtkStandardNewMacro(vtkSlicerOpenGLRayCastImageDisplayHelper);
-
-#endif
 
 // Construct a new vtkSlicerOpenGLRayCastImageDisplayHelper with default values
 vtkSlicerOpenGLRayCastImageDisplayHelper::vtkSlicerOpenGLRayCastImageDisplayHelper()
@@ -151,15 +133,9 @@ void vtkSlicerOpenGLRayCastImageDisplayHelper::RenderTextureInternal( vtkVolume 
 
   vtkTransform *perspectiveTransform = vtkTransform::New();
   perspectiveTransform->Identity();
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
   perspectiveTransform->Concatenate(
     cam->GetProjectionTransformMatrix(aspect[0]/aspect[1],
                                        0.0, 1.0 ));
-#else
-  perspectiveTransform->Concatenate(
-    cam->GetPerspectiveTransformMatrix(aspect[0]/aspect[1],
-                                       0.0, 1.0 ));
-#endif
   perspectiveTransform->Concatenate(cam->GetViewTransformMatrix());
 
   // get the perspective transformation from the active camera

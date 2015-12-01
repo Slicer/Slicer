@@ -103,16 +103,12 @@ public:
   ///
   /// Get the output of the pipeline for this layer
   vtkImageData *GetImageData();
-#if (VTK_MAJOR_VERSION > 5)
   vtkAlgorithmOutput *GetImageDataConnection();
-#endif
 
   ///
   /// Get the output of the texture UVW pipeline for this layer
   vtkImageData *GetImageDataUVW();
-#if (VTK_MAJOR_VERSION > 5)
   vtkAlgorithmOutput *GetImageDataConnectionUVW();
-#endif
 
   void UpdateImageDisplay();
 
@@ -154,13 +150,8 @@ protected:
                                       void* callData);
   void UpdateLogic();
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* GetSliceImageData();
-  vtkImageData* GetSliceImageDataUVW();
-#else
   vtkAlgorithmOutput* GetSliceImageDataConnection();
   vtkAlgorithmOutput* GetSliceImageDataConnectionUVW();
-#endif
 
   // Copy VolumeDisplayNodeObserved into VolumeDisplayNode
   void UpdateVolumeDisplayNode();

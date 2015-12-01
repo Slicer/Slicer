@@ -149,11 +149,7 @@ public:
   /// Resolution of the output glyphs. This parameter is a integer value
   /// that sets the number of tensors (points) that are skipped before a glyph is rendered.
   /// 1 is the finest level meaning that every input point a glyph is rendered.
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkSetClampMacro(Resolution,int,1,VTK_LARGE_INTEGER);
-#else
   vtkSetClampMacro(Resolution,int,1,VTK_INT_MAX);
-#endif
   vtkGetMacro(Resolution,int);
 
   ///

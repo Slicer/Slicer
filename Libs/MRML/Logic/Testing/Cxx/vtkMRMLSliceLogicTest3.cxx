@@ -114,12 +114,8 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
   vtkMRMLDisplayNode* displayNode = scalarNode->GetDisplayNode();
   //sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* img = sliceLogic->GetImageData();
-#else
   vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
-#endif
   int* dims = img->GetDimensions();
   std::cout << "Logic dimension"  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
@@ -135,11 +131,7 @@ int vtkMRMLSliceLogicTest3(int argc, char * argv [] )
               << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
     }
   vtkSmartPointer<vtkImageViewer2> viewer = vtkSmartPointer<vtkImageViewer2>::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  viewer->SetInput(sliceLogic->GetImageData());
-#else
   viewer->SetInputConnection(sliceLogic->GetImageDataConnection());
-#endif
   //viewer->SetInput(appendComponents->GetOutput());
 
   // Renderer, RenderWindow and Interactor

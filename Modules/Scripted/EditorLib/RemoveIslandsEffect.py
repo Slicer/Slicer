@@ -180,19 +180,13 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     preThresh.ReplaceInOn()
     preThresh.ReplaceOutOn()
     preThresh.ThresholdBetween( label,label )
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      preThresh.SetInput( self.getScopedLabelInput() )
-    else:
-      preThresh.SetInputData( self.getScopedLabelInput() )
+    preThresh.SetInputData( self.getScopedLabelInput() )
     preThresh.SetOutputScalarTypeToUnsignedLong()
 
     # now identify the islands in the inverted volume
     # and find the pixel that corresponds to the background
     islandMath = vtkITK.vtkITKIslandMath()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      islandMath.SetInput( preThresh.GetOutput() )
-    else:
-      islandMath.SetInputConnection( preThresh.GetOutputPort() )
+    islandMath.SetInputConnection( preThresh.GetOutputPort() )
     islandMath.SetFullyConnected( fullyConnected )
     islandMath.SetMinimumSize( minimumSize )
     # TODO: $this setProgressFilter $islandMath "Calculating Islands..."
@@ -214,10 +208,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     postThresh.ReplaceOutOn()
     postThresh.ThresholdBetween( bgPixel, bgPixel )
     postThresh.SetOutputScalarTypeToShort()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      postThresh.SetInput( islandMath.GetOutput() )
-    else:
-      postThresh.SetInputConnection( islandMath.GetOutputPort() )
+    postThresh.SetInputConnection( islandMath.GetOutputPort() )
     postThresh.SetOutput( self.getScopedLabelOutput() )
     # TODO $this setProgressFilter $postThresh "Applying to Label Map..."
     postThresh.Update()
@@ -236,24 +227,13 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
       thresh2 = volumesLogic.CloneVolume(slicer.mrmlScene, labelNode, 'thres2')
       cast = vtk.vtkImageCast()
       cast.SetOutputScalarTypeToShort()
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        cast.SetInput(preThresh.GetOutput())
-        cast.Update()
-        thresh1.SetAndObserveImageData(cast.GetOutput())
-      else:
-        cast.SetInputConnection(preThresh.GetOutputPort())
-        thresh1.SetImageDataConnection(cast.GetOutputPort())
+      cast.SetInputConnection(preThresh.GetOutputPort())
+      thresh1.SetImageDataConnection(cast.GetOutputPort())
       cast2 = vtk.vtkImageCast()
       cast2.SetOutputScalarTypeToShort()
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        cast2.SetInput(islandMath.GetOutput())
-        cast2.Update()
-        islands.SetAndObserveImageData(cast2.GetOutput())
-        thresh2.SetAndObserveImageData(postThresh.GetOutput())
-      else:
-        cast2.SetInputConnection(islandMath.GetOutputPort())
-        islands.SetImageDataConnection(cast2.GetOutputPort())
-        thresh2.SetImageDataConnection(postThresh.GetOutputPort())
+      cast2.SetInputConnection(islandMath.GetOutputPort())
+      islands.SetImageDataConnection(cast2.GetOutputPort())
+      thresh2.SetImageDataConnection(postThresh.GetOutputPort())
 
   def removeIslandsMorphology(self):
     """
@@ -292,10 +272,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     # make binary mask foregroundLabel->1, backgroundLabel->0
     #
     binThresh = vtk.vtkImageThreshold()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      binThresh.SetInput( image )
-    else:
-      binThresh.SetInputData( image )
+    binThresh.SetInputData( image )
     binThresh.ThresholdBetween(foregroundLabel,foregroundLabel)
     binThresh.SetInValue( 1 )
     binThresh.SetOutValue( 0 )
@@ -307,10 +284,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     eroder = slicer.vtkImageErode()
     eroderImage = vtk.vtkImageData()
     eroderImage.DeepCopy(binThresh.GetOutput())
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      eroder.SetInput(eroderImage)
-    else:
-      eroder.SetInputData(eroderImage)
+    eroder.SetInputData(eroderImage)
     for iteration in range(iterations):
       eroder.SetForeground( 1 )
       eroder.SetBackground( 0 )
@@ -326,29 +300,20 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     # note that island operation happens in unsigned long space
     # but the slicer editor works in Short
     castIn = vtk.vtkImageCast()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      castIn.SetInput( eroderImage )
-    else:
-      castIn.SetInputConnection( eroder.GetInputConnection(0,0) )
+    castIn.SetInputConnection( eroder.GetInputConnection(0,0) )
     castIn.SetOutputScalarTypeToUnsignedLong()
 
     # now identify the islands in the inverted volume
     # and find the pixel that corresponds to the background
     islandMath = vtkITK.vtkITKIslandMath()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      islandMath.SetInput( castIn.GetOutput() )
-    else:
-      islandMath.SetInputConnection( castIn.GetOutputPort() )
+    islandMath.SetInputConnection( castIn.GetOutputPort() )
     islandMath.SetFullyConnected( self.fullyConnected )
     islandMath.SetMinimumSize( self.minimumSize )
 
     # note that island operation happens in unsigned long space
     # but the slicer editor works in Short
     castOut = vtk.vtkImageCast()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      castOut.SetInput( islandMath.GetOutput() )
-    else:
-      castOut.SetInputConnection( islandMath.GetOutputPort() )
+    castOut.SetInputConnection( islandMath.GetOutputPort() )
     castOut.SetOutputScalarTypeToShort()
 
     castOut.Update()
@@ -362,10 +327,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     #
 
     thresh = vtk.vtkImageThreshold()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      thresh.SetInput( castOut.GetOutput() )
-    else:
-      thresh.SetInputConnection( castOut.GetOutputPort() )
+    thresh.SetInputConnection( castOut.GetOutputPort() )
     thresh.ThresholdByUpper(1)
     thresh.SetInValue( 1 )
     thresh.SetOutValue( 0 )
@@ -377,10 +339,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     dilater = slicer.vtkImageErode()
     dilaterImage = vtk.vtkImageData()
     dilaterImage.DeepCopy(thresh.GetOutput())
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      dilater.SetInput(dilaterImage)
-    else:
-      dilater.SetInputData(dilaterImage)
+    dilater.SetInputData(dilaterImage)
     for iteration in range(1+iterations):
       dilater.SetForeground( 0 )
       dilater.SetBackground( 1 )
@@ -393,12 +352,8 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     #
 
     logic = vtk.vtkImageLogic()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      logic.SetInput1(dilaterImage)
-      logic.SetInput2(binThresh.GetOutput())
-    else:
-      logic.SetInputConnection(0, dilater.GetInputConnection(0,0))
-      logic.SetInputConnection(1, binThresh.GetOutputPort())
+    logic.SetInputConnection(0, dilater.GetInputConnection(0,0))
+    logic.SetInputConnection(1, binThresh.GetOutputPort())
     #if foregroundLabel == 0:
     #  logic.SetOperationToNand()
     #else:
@@ -410,10 +365,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     # convert from binary mask to 1->foregroundLabel, 0->backgroundLabel
     #
     unbinThresh = vtk.vtkImageThreshold()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      unbinThresh.SetInput( logic.GetOutput() )
-    else:
-      unbinThresh.SetInputConnection( logic.GetOutputPort() )
+    unbinThresh.SetInputConnection( logic.GetOutputPort() )
     unbinThresh.ThresholdBetween( 1,1 )
     unbinThresh.SetInValue( foregroundLabel )
     unbinThresh.SetOutValue( backgroundLabel )

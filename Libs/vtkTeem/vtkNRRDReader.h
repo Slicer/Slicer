@@ -219,17 +219,10 @@ public:
       break;
     }
   }
-#if (VTK_MAJOR_VERSION <= 5)
-virtual vtkImageData * AllocateOutputData(vtkDataObject *out);
-virtual void AllocateOutputData(vtkImageData *out, int *uExtent)
-    { Superclass::AllocateOutputData(out, uExtent); }
-void AllocatePointData(vtkImageData *out);
-#else
 virtual vtkImageData * AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo);
 virtual void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent)
     { Superclass::AllocateOutputData(out, outInfo, uExtent); }
 void AllocatePointData(vtkImageData *out, vtkInformation* outInfo);
-#endif
 
 protected:
   vtkNRRDReader();
@@ -254,11 +247,7 @@ protected:
   std::map <std::string, std::string> HeaderKeyValue;
 
   virtual void ExecuteInformation();
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void ExecuteData(vtkDataObject *out);
-#else
   virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo);
-#endif
 
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 

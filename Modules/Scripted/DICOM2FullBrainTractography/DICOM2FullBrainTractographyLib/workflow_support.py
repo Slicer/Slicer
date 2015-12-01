@@ -214,10 +214,7 @@ def create_volume_node(volume_type, attach_display_node = False, dimensions=None
     if dimensions:
         image_data = vtk.vtkImageData()
         image_data.SetDimensions(dimensions)
-        if vtk.VTK_MAJOR_VERSION <= 5:
-            image_data.AllocateScalars()
-        else:
-            image_data.AllocateScalars(vtk.VTK_UNSIGNED_INT, 1)
+        image_data.AllocateScalars(vtk.VTK_UNSIGNED_INT, 1)
 
         volume_node.SetAndObserveImageData(image_data)
 

@@ -149,18 +149,12 @@ public:
 
   ///
   /// Reimplemented from internal reasons
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetAndObservePolyData(vtkPolyData* polyData);
-#else
   virtual void SetPolyDataConnection(vtkAlgorithmOutput* inputPort);
-#endif
 
   ///
   /// Gets the subsampled PolyData converted from the real data in the node
   virtual vtkPolyData* GetFilteredPolyData();
-#if (VTK_MAJOR_VERSION > 5)
   virtual vtkAlgorithmOutput* GetFilteredPolyDataConnection();
-#endif
 
   ///
   /// get associated line display node or NULL if not set

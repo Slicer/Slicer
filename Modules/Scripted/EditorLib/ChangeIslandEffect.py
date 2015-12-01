@@ -152,10 +152,7 @@ class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
 
     connectivity = slicer.vtkImageConnectivity()
     connectivity.SetFunctionToChangeIsland()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      connectivity.SetInput( self.getScopedLabelInput() )
-    else:
-      connectivity.SetInputData( self.getScopedLabelInput() )
+    connectivity.SetInputData( self.getScopedLabelInput() )
     connectivity.SetOutput( self.getScopedLabelOutput() )
     connectivity.SetOutputLabel( self.editUtil.getLabel() )
     connectivity.SetSeed( ijk )

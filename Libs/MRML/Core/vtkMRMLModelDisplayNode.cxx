@@ -61,17 +61,6 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLModelDisplayNode::SetInputPolyData(vtkPolyData* polyData)
-{
-  if (this->GetInputPolyData() == polyData)
-    {
-    return;
-    }
-  this->SetInputToPolyDataPipeline(polyData);
-  this->Modified();
-}
-#else
 void vtkMRMLModelDisplayNode
 ::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
 {
@@ -82,23 +71,14 @@ void vtkMRMLModelDisplayNode
   this->SetInputToPolyDataPipeline(polyDataConnection);
   this->Modified();
 }
-#endif
 
 //---------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkPolyData* polyData)
-{
-  this->PassThrough->SetInput(polyData);
-  this->AssignAttribute->SetInput(polyData);
-}
-#else
 void vtkMRMLModelDisplayNode
 ::SetInputToPolyDataPipeline(vtkAlgorithmOutput* polyDataConnection)
 {
   this->PassThrough->SetInputConnection(polyDataConnection);
   this->AssignAttribute->SetInputConnection(polyDataConnection);
 }
-#endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelDisplayNode::GetInputPolyData()
@@ -106,14 +86,12 @@ vtkPolyData* vtkMRMLModelDisplayNode::GetInputPolyData()
   return vtkPolyData::SafeDownCast(this->AssignAttribute->GetInput());
 }
 
-#if (VTK_MAJOR_VERSION > 5)
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputPolyDataConnection()
 {
   return this->AssignAttribute->GetNumberOfInputConnections(0) ?
     this->AssignAttribute->GetInputConnection(0,0) : 0;
 }
-#endif
 
 //---------------------------------------------------------------------------
 vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
@@ -183,11 +161,7 @@ void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
     this->GetActiveAttributeLocation());
   if (this->GetOutputPolyData())
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    this->GetOutputPolyData()->Update();
-#else
     this->GetOutputPolyDataConnection()->GetProducer()->Update();
-#endif
     if (this->GetAutoScalarRange())
       {
       vtkDebugMacro("UpdatePolyDataPipeline: Auto flag is on, resetting scalar range!");

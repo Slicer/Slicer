@@ -236,24 +236,12 @@ static void vtkImageBimodalAnalysisExecute(vtkImageBimodalAnalysis *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the Datas data types.
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkImageBimodalAnalysis::ExecuteData(vtkDataObject *out)
-{
-  vtkImageData *outData = vtkImageData::SafeDownCast(out);
-  vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
-  void *inPtr;
-  float *outPtr;
-
-  outData->SetExtent(outData->GetWholeExtent());
-  outData->AllocateScalars();
-#else
 void vtkImageBimodalAnalysis::ExecuteDataWithInformation(vtkDataObject *out, vtkInformation* outInfo)
 {
     vtkImageData *inData = vtkImageData::SafeDownCast(this->GetInput());
     void *inPtr;
     float *outPtr;
     vtkImageData *outData = this->AllocateOutputData(out, outInfo);
-#endif
 
   inPtr  = inData->GetScalarPointer();
   outPtr = (float *)outData->GetScalarPointer();

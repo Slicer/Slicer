@@ -44,9 +44,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkOrientedPolygonalHandleRepresentation3D.h>
-#if (VTK_MAJOR_VERSION >= 6)
 #include <vtkPickingManager.h>
-#endif
 #include <vtkProperty2D.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
@@ -183,7 +181,6 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager3D::CreateWidget(vtk
 
   seedWidget->SetRepresentation(rep.GetPointer());
 
-#if (VTK_MAJOR_VERSION >= 6)
   if (this->GetInteractor()->GetPickingManager())
     {
     if (!(this->GetInteractor()->GetPickingManager()->GetEnabled()))
@@ -196,7 +193,6 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager3D::CreateWidget(vtk
       this->GetInteractor()->GetPickingManager()->EnabledOn();
       }
     }
-#endif
   seedWidget->SetInteractor(this->GetInteractor());
   seedWidget->SetCurrentRenderer(this->GetRenderer());
 

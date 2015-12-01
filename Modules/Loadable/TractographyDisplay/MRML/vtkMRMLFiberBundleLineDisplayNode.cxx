@@ -289,11 +289,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           }
         else if (this->GetInputPolyData())
           {
-#if (VTK_MAJOR_VERSION <= 5)
-          this->GetOutputPolyData()->Update();
-#else
           this->GetOutputPolyDataConnection()->GetProducer()->Update();
-#endif
           vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
           if (pointData)
             {
@@ -324,11 +320,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
       else if (this->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData &&
                this->GetInputPolyData())
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        this->GetInputPolyData()->Update();
-#else
         this->GetInputPolyDataConnection()->GetProducer()->Update();
-#endif
         vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
         if (pointData &&
             pointData->GetArray(this->GetActiveScalarName()))

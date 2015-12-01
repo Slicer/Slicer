@@ -118,11 +118,7 @@ int vtkMRMLUnstructuredGridStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkUnstructuredGridWriter *writer = vtkUnstructuredGridWriter::New();
     writer->SetFileName(fullName.c_str());
-#if (VTK_MAJOR_VERSION <= 5)
-    writer->SetInput( modelNode->GetUnstructuredGrid() );
-#else
     writer->SetInputData( modelNode->GetUnstructuredGrid() );
-#endif
     try
       {
       writer->Write();

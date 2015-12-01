@@ -88,11 +88,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Set ImageData for a volume slice
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetSliceImage(vtkImageData *image);
-#else
   virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort);
-#endif
 
   ///
   /// Set slice to RAS transformation

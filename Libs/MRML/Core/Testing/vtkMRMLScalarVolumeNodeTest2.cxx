@@ -33,13 +33,7 @@ int vtkMRMLScalarVolumeNodeTest2(int , char * [] )
 {
   vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(256, 256, 1);
-#if (VTK_MAJOR_VERSION <= 5)
-  imageData->SetScalarTypeToUnsignedShort();
-  imageData->SetNumberOfScalarComponents(1); // image holds one value intensities
-  imageData->AllocateScalars(); // allocate storage for image data
-#else
   imageData->AllocateScalars(VTK_UNSIGNED_SHORT, 1); // allocate storage for image data
-#endif
 
   // Fill every entry of the image data with "0"
   int* dims = imageData->GetDimensions();

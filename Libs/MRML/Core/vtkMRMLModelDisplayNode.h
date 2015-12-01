@@ -42,12 +42,8 @@ public:
 
   /// Set and observe poly data for this model. It should be the output
   /// polydata of the model node.
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetInputPolyData(vtkPolyData* polydata);
-# else
   virtual void SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection);
   virtual vtkAlgorithmOutput* GetInputPolyDataConnection();
-#endif
 
   /// Return the polydata that was set by SetInputPolyData()
   /// \sa GetOutputPolyData()
@@ -95,11 +91,7 @@ protected:
                                  void *callData);
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetInputToPolyDataPipeline(vtkPolyData* polyData);
-#else
   virtual void SetInputToPolyDataPipeline(vtkAlgorithmOutput* polyDataConnection);
-#endif
 
   /// Filter that changes the active scalar of the input polydata
   /// using the ActiveScalarName and ActiveAttributeLocation properties.

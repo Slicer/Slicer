@@ -280,10 +280,7 @@ class LabelStatisticsLogic:
     self.labelStats['Labels'] = []
 
     stataccum = vtk.vtkImageAccumulate()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      stataccum.SetInput(labelNode.GetImageData())
-    else:
-      stataccum.SetInputConnection(labelNode.GetImageDataConnection())
+    stataccum.SetInputConnection(labelNode.GetImageDataConnection())
     stataccum.Update()
     lo = int(stataccum.GetMin()[0])
     hi = int(stataccum.GetMax()[0])
@@ -299,10 +296,7 @@ class LabelStatisticsLogic:
       # //logic copied from slicer2 LabelStatistics MaskStat
       # // create the binary volume of the label
       thresholder = vtk.vtkImageThreshold()
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        thresholder.SetInput(labelNode.GetImageData())
-      else:
-        thresholder.SetInputConnection(labelNode.GetImageDataConnection())
+      thresholder.SetInputConnection(labelNode.GetImageDataConnection())
       thresholder.SetInValue(1)
       thresholder.SetOutValue(0)
       thresholder.ReplaceOutOn()
@@ -314,22 +308,15 @@ class LabelStatisticsLogic:
 
       #  use vtk's statistics class with the binary labelmap as a stencil
       stencil = vtk.vtkImageToImageStencil()
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        stencil.SetInput(thresholder.GetOutput())
-      else:
-        stencil.SetInputConnection(thresholder.GetOutputPort())
+      stencil.SetInputConnection(thresholder.GetOutputPort())
       stencil.ThresholdBetween(1, 1)
 
       # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.5")
 
       stat1 = vtk.vtkImageAccumulate()
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        stat1.SetInput(grayscaleNode.GetImageData())
-        stat1.SetStencil(stencil.GetOutput())
-      else:
-        stat1.SetInputConnection(grayscaleNode.GetImageDataConnection())
-        stencil.Update()
-        stat1.SetStencilData(stencil.GetOutput())
+      stat1.SetInputConnection(grayscaleNode.GetImageDataConnection())
+      stencil.Update()
+      stat1.SetStencilData(stencil.GetOutput())
 
       stat1.Update()
 

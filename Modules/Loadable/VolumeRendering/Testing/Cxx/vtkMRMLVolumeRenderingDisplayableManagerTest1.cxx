@@ -98,13 +98,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(3, 3, 3);
-#if (VTK_MAJOR_VERSION <= 5)
-  imageData->SetScalarTypeToUnsignedChar();
-  imageData->SetNumberOfScalarComponents(1);
-  imageData->AllocateScalars();
-#else
   imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
-#endif
   unsigned char* ptr = reinterpret_cast<unsigned char*>(
     imageData->GetScalarPointer(0,0,0));
   for (int z = 0; z < 3; ++z)
@@ -208,11 +202,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(screenshootFilename.c_str());
-#if (VTK_MAJOR_VERSION <= 5)
-    writer->SetInput(windowToImageFilter->GetOutput());
-#else
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
-#endif
     writer->Write();
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }

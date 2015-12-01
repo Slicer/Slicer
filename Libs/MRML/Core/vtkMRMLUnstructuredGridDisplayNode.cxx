@@ -32,11 +32,7 @@ vtkMRMLUnstructuredGridDisplayNode::vtkMRMLUnstructuredGridDisplayNode()
   this->GeometryFilter = vtkGeometryFilter::New();
   this->ShrinkPolyData = vtkShrinkPolyData::New();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  this->ShrinkPolyData->SetInput( this->GeometryFilter->GetOutput());
-#else
   this->ShrinkPolyData->SetInputConnection( this->GeometryFilter->GetOutputPort());
-#endif
   this->ShrinkFactor = 0.5;
   this->ShrinkPolyData->SetShrinkFactor(this->ShrinkFactor);
 }
@@ -129,11 +125,7 @@ void vtkMRMLUnstructuredGridDisplayNode::SetUnstructuredGrid(vtkUnstructuredGrid
 {
   if (this->GeometryFilter)
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    this->GeometryFilter->SetInput(grid);
-#else
     this->GeometryFilter->SetInputData(grid);
-#endif
     }
 }
 

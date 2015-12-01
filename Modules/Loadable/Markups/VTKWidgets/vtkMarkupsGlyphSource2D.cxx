@@ -192,11 +192,7 @@ void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints *pts)
     }
   else
     {
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
     double angle = vtkMath::RadiansFromDegrees(this->RotationAngle);
-#else
-    double angle = this->RotationAngle * vtkMath::DegreesToRadians();
-#endif
     double xt;
     for (i=0; i<numPts; i++)
       {

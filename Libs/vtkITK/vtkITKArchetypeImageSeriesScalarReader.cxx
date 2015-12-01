@@ -37,11 +37,7 @@ namespace {
 template <class T>
 vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 {
-#if VTK_MAJOR_VERSION <= 5
-  return static_cast<vtkDataArrayTemplate<T>*>(a);
-#else
   return vtkDataArrayTemplate<T>::FastDownCast(a);
-#endif
 }
 
 };
@@ -85,14 +81,9 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
   //   from VTK and doesn't appear to be needed...
   //data->UpdateInformation();
   data->SetExtent(0,0,0,0,0,0);
-#if (VTK_MAJOR_VERSION <= 5)
-  data->AllocateScalars();
-  data->SetExtent(data->GetWholeExtent());
-#else
   data->AllocateScalars(outInfo);
   data->SetExtent(outInfo->Get(
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
-#endif
 
 /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \

@@ -190,11 +190,7 @@ void vtkMRMLMarkupsNode::PrintMarkup(ostream& os, vtkIndent indent, Markup *mark
   for (int p = 0; p < numPoints; p++)
     {
     vtkVector3d point = markup->points[p];
-#if (VTK_MAJOR_VERSION <= 5)
-    os << indent.GetNextIndent() << "p" << p << ": " << point.X() << ", " << point.Y() << ", " << point.Z() << "\n";
-#else
     os << indent.GetNextIndent() << "p" << p << ": " << point.GetX() << ", " << point.GetY() << ", " << point.GetZ() << "\n";
-#endif
     }
   os << indent.GetNextIndent() << "Orientation = "
      << markup->OrientationWXYZ[0] << ","
@@ -500,12 +496,6 @@ int vtkMRMLMarkupsNode::AddMarkup(Markup markup)
 }
 
 //-----------------------------------------------------------
-#if (VTK_MAJOR_VERSION < 6)
-int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n)
-{
-  return this->AddMarkupWithNPoints(n, std::string());
-}
-#endif
 
 //-----------------------------------------------------------
 int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label)
@@ -539,12 +529,6 @@ int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label)
 }
 
 //-----------------------------------------------------------
-#if (VTK_MAJOR_VERSION < 6)
-int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point)
-{
-  return this->AddPointToNewMarkup(point, std::string());
-}
-#endif
 
 //-----------------------------------------------------------
 int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point, std::string label)

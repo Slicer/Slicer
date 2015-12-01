@@ -31,11 +31,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKA
   vtkITKArchetypeImageSeriesVectorReaderFile();
   ~vtkITKArchetypeImageSeriesVectorReaderFile();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *data);
-#else
   void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo);
-#endif
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:
 };

@@ -38,9 +38,6 @@ Version:   $Revision: 1.2 $
 #include <vtkPointData.h>
 #include <vtkVersion.h>
 
-#if (VTK_MAJOR_VERSION <= 5)
-#include <vtkImageStencilData.h>
-#endif
 
 // STD includes
 #include <cassert>
@@ -150,24 +147,6 @@ void vtkMRMLScalarVolumeDisplayNode::SetDefaultColorMap()
 }
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLScalarVolumeDisplayNode::SetInputImageData(vtkImageData *imageData)
-{
-  if (this->GetInputImageData() != NULL)
-    {
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->GetInputImageData(), vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    }
-
-  this->Superclass::SetInputImageData(imageData);
-
-  if (this->GetInputImageData() != NULL)
-    {
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->GetInputImageData(), vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    }
-}
-#else
 void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
   if (this->GetInputImageDataConnection() == imageDataConnection)
@@ -193,36 +172,16 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
       inputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLScalarVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *imageData)
-{
-  this->Threshold->SetInput(imageData);
-  this->MapToWindowLevelColors->SetInput(imageData);
-}
-#else
 void vtkMRMLScalarVolumeDisplayNode
 ::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
 {
   this->Threshold->SetInputConnection(imageDataConnection);
   this->MapToWindowLevelColors->SetInputConnection(imageDataConnection);
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageStencilData(vtkImageStencilData *imageData)
-{
-  this->MultiplyAlpha->SetStencil(imageData);
-}
-//----------------------------------------------------------------------------
-vtkImageStencilData* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageStencilData()
-{
-  return vtkImageStencilData::SafeDownCast(this->MultiplyAlpha->GetStencil());
-}
-#else
 void vtkMRMLScalarVolumeDisplayNode
 ::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
@@ -237,34 +196,19 @@ vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageStencilDat
   return this->MultiplyAlpha->GetNumberOfInputConnections(0)>stencilInputPort ?
     this->MultiplyAlpha->GetInputConnection(0,stencilInputPort) : 0;
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInputImageData()
-{
-  return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
-}
-#else
 vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetInputImageDataConnection()
 {
   return this->MapToWindowLevelColors->GetNumberOfInputConnections(0) ?
     this->MapToWindowLevelColors->GetInputConnection(0,0) : 0;
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetOutputImageData()
-{
-  return this->AppendComponents->GetOutput();
-}
-#else
 vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetOutputImageDataConnection()
 {
   return this->AppendComponents->GetOutputPort();
 }
-#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
@@ -460,12 +404,8 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->UpdateLookupTable(cnode);
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  if (vtkImageData::SafeDownCast(caller) == this->GetScalarImageData() &&
-#else
   if (vtkAlgorithmOutput::SafeDownCast(caller) == this->GetScalarImageDataConnection() &&
       this->GetScalarImageDataConnection() &&
-#endif
       event == vtkCommand::ModifiedEvent)
     {
     this->CalculateAutoLevels();
@@ -722,10 +662,6 @@ void vtkMRMLScalarVolumeDisplayNode::ResetWindowLevelPresets()
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetScalarImageData()
 {
-#if VTK_MAJOR_VERSION <= 5
-  return this->GetInputImageData();
-}
-#else
   vtkAlgorithm* producer = this->GetScalarImageDataConnection() ?
     this->GetScalarImageDataConnection()->GetProducer() : 0;
   return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : 0);
@@ -736,7 +672,6 @@ vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetScalarImageDataConnection
 {
   return this->GetInputImageDataConnection();
 }
-#endif
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
@@ -756,11 +691,7 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
     vtkDebugMacro( << "No valid image data, returning default values [0, 255]");
     return;
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  imageData->Update();
-#else
   this->GetScalarImageDataConnection()->GetProducer()->Update();
-#endif
   imageData->GetScalarRange(range);
   if (imageData->GetNumberOfScalarComponents() >=3 &&
       fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001)
@@ -792,11 +723,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
   // filters.
   if (this->GetInputImageData())
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    imageDataScalar->Update();
-#else
     this->GetScalarImageDataConnection()->GetProducer()->Update();
-#endif
     }
 
   if (!(imageDataScalar->GetPointData()) ||
@@ -847,13 +774,8 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     this->Accumulate->SetComponentExtent(extent);
     double origin[3] = {-32768, 0, 0};
     this->Accumulate->SetComponentOrigin(origin);
-#if (VTK_MAJOR_VERSION <= 5)
-    this->Accumulate->SetInput(imageDataScalar);
-    this->Bimodal->SetInput(this->Accumulate->GetOutput());
-#else
     this->Accumulate->SetInputData(imageDataScalar);
     this->Bimodal->SetInputConnection(this->Accumulate->GetOutputPort());
-#endif
     this->Bimodal->Update();
     // Workaround for image data where all accumulate samples fall
     // within the same histogram bin

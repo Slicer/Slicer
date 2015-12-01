@@ -37,13 +37,7 @@ void CreateGridTransformVtk(vtkOrientedGridTransform* gridTransform,
   gridCoefficients->SetOrigin(origin);
   gridCoefficients->SetSpacing(spacing);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  gridCoefficients->SetScalarType(VTK_DOUBLE);
-  gridCoefficients->SetNumberOfScalarComponents(3);
-  gridCoefficients->AllocateScalars();
-#else
   gridCoefficients->AllocateScalars(VTK_DOUBLE, 3);
-#endif
 
   // Fill with 0
   for (int z = 0; z < dims[2]; z++)
@@ -69,11 +63,7 @@ void CreateGridTransformVtk(vtkOrientedGridTransform* gridTransform,
     }
 
   gridTransform->SetGridDirectionMatrix(gridOrientation.GetPointer());
-#if (VTK_MAJOR_VERSION <= 5)
-  gridTransform->SetDisplacementGrid(gridCoefficients.GetPointer());
-#else
   gridTransform->SetDisplacementGridData(gridCoefficients.GetPointer());
-#endif
 
   gridTransform->SetInterpolationModeToCubic();
 }

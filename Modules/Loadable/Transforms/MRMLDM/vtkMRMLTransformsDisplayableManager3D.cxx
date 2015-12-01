@@ -249,11 +249,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMRMLT
   pipeline->Actor->SetMapper(mapper.GetPointer());
   pipeline->Actor->SetVisibility(false);
   pipeline->InputPolyData = vtkSmartPointer<vtkPolyData>::New();
-#if VTK_MAJOR_VERSION <= 5
-  mapper->SetInput(pipeline->InputPolyData);
-#else
   mapper->SetInputData(pipeline->InputPolyData);
-#endif
 
   // Add actor to Renderer and local cache
   this->External->GetRenderer()->AddActor( pipeline->Actor );

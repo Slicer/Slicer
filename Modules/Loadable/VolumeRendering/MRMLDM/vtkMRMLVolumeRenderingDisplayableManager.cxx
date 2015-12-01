@@ -267,11 +267,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetupHistograms(vtkMRMLVolumeRend
   //gradient histogram
   vtkImageGradientMagnitude *grad = vtkImageGradientMagnitude::New();
   grad->SetDimensionality(3);
-#if (VTK_MAJOR_VERSION <= 5)
-  grad->SetInput(input);
-#else
   grad->SetInputData(input);
-#endif
   grad->Update();
 
   vtkKWHistogram *gradHisto = vtkKWHistogram::New();
@@ -486,13 +482,8 @@ int vtkMRMLVolumeRenderingDisplayableManager
     }
   vtkRenderWindow* window = this->GetRenderer()->GetRenderWindow();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  volumeMapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(
-                           vspNode->GetVolumeNode())->GetImageData() );
-#else
   volumeMapper->SetInputData(vtkMRMLScalarVolumeNode::SafeDownCast(
                            vspNode->GetVolumeNode())->GetImageData() );
-#endif
   int supported = 0;
   if (volumeMapper->IsA("vtkFixedPointVolumeRayCastMapper"))
     {
@@ -553,13 +544,8 @@ void vtkMRMLVolumeRenderingDisplayableManager
   if (volumeMapper &&
       volumeMapper->GetNumberOfInputPorts() > index)
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
-    volumeMapper->SetInputConnection(index, imageData ? imageData->GetProducerPort() : 0);
-#else
     volumeMapper->SetInputConnection(
       index, volumeNode ? volumeNode->GetImageDataConnection() : 0);
-#endif
     }
 }
 

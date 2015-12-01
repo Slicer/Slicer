@@ -236,19 +236,11 @@ void vtkAnnotationRulerRepresentation3D::UpdateGlyphPolyData(vtkPolyData *polyDa
   this->GlyphPolyData->DeepCopy(polyData);
   this->GlyphPolyData->SetPoints(this->GlyphPoints);
   this->GlyphPolyData->GetPointData()->SetVectors(this->GlyphVectors);
-#if (VTK_MAJOR_VERSION <= 5)
-  this->GlyphXForm->SetInput(this->GlyphPolyData);
-#else
   this->GlyphXForm->SetInputData(this->GlyphPolyData);
-#endif
   vtkNew<vtkTransform> xform;
   this->GlyphXForm->SetTransform(xform.GetPointer());
 
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Glyph3D->SetInput(this->GlyphPolyData);
-#else
   this->Glyph3D->SetInputData(this->GlyphPolyData);
-#endif
   // set the transform to identity
   this->Glyph3D->SetSourceConnection(this->GlyphXForm->GetOutputPort());
   */

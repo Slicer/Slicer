@@ -427,13 +427,8 @@ int computeTensorMeasurement(vtkPolyDataTensorToColor *math,
   //TODO loop over all tensors, use ExtractTensor
   vtkNew<vtkAssignAttribute> assignAttribute;
 
-#if (VTK_MAJOR_VERSION <= 5)
-  assignAttribute->SetInput(0, input );
-  math->SetInput(0, assignAttribute->GetOutput() );
-#else
   assignAttribute->SetInputConnection(0, input );
   math->SetInputConnection(0, assignAttribute->GetOutputPort() );
-#endif
 
   vtkPolyData *poly = vtkPolyData::SafeDownCast(assignAttribute->GetInput());
 

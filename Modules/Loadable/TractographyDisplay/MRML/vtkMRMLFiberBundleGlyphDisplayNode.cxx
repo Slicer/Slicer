@@ -130,15 +130,10 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 
   if (diffusionTensorDisplayNode)
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    this->DiffusionTensorGlyphFilter->SetSource(
-      diffusionTensorDisplayNode->GetGlyphSource() );
-#else
     // Need to set the input connection to prevent unnecessary error messages
     // complaining about missing input port 1.
     this->DiffusionTensorGlyphFilter->SetSourceConnection(
       diffusionTensorDisplayNode->GetGlyphConnection() );
-#endif
     }
 
   if (!this->Visibility)
@@ -282,11 +277,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         }
       else if (this->GetInputPolyData())
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        this->GetOutputPolyData()->Update();
-#else
         this->GetOutputPolyDataConnection()->GetProducer()->Update();
-#endif
         vtkPointData *pointData = this->GetOutputPolyData()->GetPointData();
         if (pointData)
           {

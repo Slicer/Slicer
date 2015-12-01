@@ -60,7 +60,6 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 {
   bool wasModifying = this->StartModify();
   this->Superclass::Copy(anode);
-#if VTK_MAJOR_VERSION > 5
   vtkMRMLVolumeDisplayNode *node =
     vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
   if (node)
@@ -68,7 +67,6 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
     this->SetInputImageDataConnection(node->GetInputImageDataConnection());
     }
   this->UpdateImageDataPipeline();
-#endif
   this->EndModify(wasModifying);
 }
 
@@ -103,17 +101,6 @@ void vtkMRMLVolumeDisplayNode::UpdateReferences()
 }
 
 //---------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLVolumeDisplayNode::GetImageData()
-{
-  if (!this->GetInputImageData())
-    {
-    return 0;
-    }
-  this->UpdateImageDataPipeline();
-  return this->GetOutputImageData();
-}
-#else
 vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetImageDataConnection()
 {
 /*
@@ -125,21 +112,8 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetImageDataConnection()
 */
   return this->GetOutputImageDataConnection();
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLVolumeDisplayNode
-::SetInputImageData(vtkImageData *imageData)
-{
-  if (this->GetInputImageData() == imageData)
-    {
-    return;
-    }
-  this->SetInputToImageDataPipeline(imageData);
-  this->Modified();
-}
-#else
 void vtkMRMLVolumeDisplayNode
 ::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
 {
@@ -156,38 +130,22 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode
 {
   return 0;
 }
-#endif
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *vtkNotUsed(imageData))
-{
-}
-#else
 void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *vtkNotUsed(imageDataConnection))
 {
 }
-#endif
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  return NULL;
-#else
   vtkAlgorithmOutput* imageConnection = this->GetInputImageDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
   return vtkImageData::SafeDownCast(
     producer ? producer->GetOutputDataObject(0) : 0);
-#endif
 }
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilData(vtkImageStencilData* vtkNotUsed(imageData))
-{
-}
-#else
 void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection))
 {
 }
@@ -197,29 +155,19 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilDataConne
 {
   return 0;
 }
-#endif
 
 //----------------------------------------------------------------------------
 vtkImageStencilData* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilData()
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  return NULL;
-}
-#else
   vtkAlgorithmOutput* imageConnection = this->GetBackgroundImageStencilDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
   return vtkImageStencilData::SafeDownCast(
     producer ? producer->GetOutputDataObject(0) : 0);
 }
-#endif
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  return NULL;
-}
-#else
   vtkAlgorithmOutput* imageConnection = this->GetOutputImageDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : 0;
   return vtkImageData::SafeDownCast(
@@ -231,7 +179,6 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetOutputImageDataConnection()
 {
   return NULL;
 }
-#endif
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::UpdateImageDataPipeline()
@@ -251,15 +198,3 @@ vtkMRMLVolumeNode* vtkMRMLVolumeDisplayNode::GetVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-vtkImageData* vtkMRMLVolumeDisplayNode::GetUpToDateImageData()
-{
-  vtkImageData* imageData = this->GetImageData();
-  if (!imageData)
-    {
-    return NULL;
-    }
-  imageData->Update();
-  return imageData;
-}
-#endif

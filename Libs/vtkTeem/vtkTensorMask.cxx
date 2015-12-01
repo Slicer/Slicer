@@ -16,7 +16,6 @@
 #include "vtkFloatArray.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
-#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkTensorMask);
@@ -42,11 +41,7 @@ void vtkTensorMask::ExecuteData(vtkDataObject *out)
   vtkImageData *output = vtkImageData::SafeDownCast(out);
 
   // set extent so we know how many tensors to allocate
-#if (VTK_MAJOR_VERSION <= 5)
-  output->SetExtent(output->GetUpdateExtent());
-#else
   output->SetExtent(this->GetUpdateExtent());
-#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
@@ -186,11 +181,7 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
   maskState = self->GetNotMask();
 
   // input tensors
-#if (VTK_MAJOR_VERSION >= 5)
   inTensors = self->GetImageDataInput(0)->GetPointData()->GetTensors();
-#else
-  inTensors = self->GetInput()->GetPointData()->GetTensors();
-#endif
   // output tensors
   outTensors = self->GetOutput()->GetPointData()->GetTensors();
 
@@ -203,11 +194,7 @@ static void vtkTensorMaskExecuteTensor(vtkTensorMask *self, int ext[6],
   vtkIdType outInc[3];
   int outFullUpdateExt[6];
   self->GetOutput()->GetIncrements(outInc);
-#if (VTK_MAJOR_VERSION <= 5)
-  self->GetOutput()->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
-#else
   self->GetUpdateExtent(outFullUpdateExt); //We are only working over the update extent
-#endif
   ptId = ((ext[0] - outFullUpdateExt[0]) * outInc[0]
          + (ext[2] - outFullUpdateExt[2]) * outInc[1]
          + (ext[4] - outFullUpdateExt[4]) * outInc[2]);
@@ -327,11 +314,7 @@ void vtkTensorMask::ThreadedRequestData(
   // output
   outPtr = outData[0]->GetScalarPointerForExtent(outExt);
   // input tensors
-#if (VTK_MAJOR_VERSION >= 5)
   inTensors = this->GetImageDataInput(0)->GetPointData()->GetTensors();
-#else
-  inTensors = this->GetInput()->GetPointData()->GetTensors();
-#endif
 
   tExt = inData[1][0]->GetExtent();
   if (tExt[0] > outExt[0] || tExt[1] < outExt[1] ||

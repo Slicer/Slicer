@@ -90,11 +90,7 @@ protected:
   int Function;
   int SliceBySlice;
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *);
-#else
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation *);
-#endif
 
 private:
   vtkImageConnectivity(const vtkImageConnectivity&);

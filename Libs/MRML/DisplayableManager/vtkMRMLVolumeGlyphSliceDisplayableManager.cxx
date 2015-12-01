@@ -489,12 +489,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
     vtkActor2D* actor2D = vtkActor2D::SafeDownCast(actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
       actor2D->GetMapper());
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkPolyData* polyData = dtiDisplayNode->GetSliceOutputPolyData();
-    mapper->SetInput( polyData );
-#else
     mapper->SetInputConnection( dtiDisplayNode->GetSliceOutputPort() );
-#endif
     mapper->SetLookupTable( dtiDisplayNode->GetColorNode() ?
                             dtiDisplayNode->GetColorNode()->GetScalarsToColors() : 0);
     mapper->SetScalarRange(dtiDisplayNode->GetScalarRange());

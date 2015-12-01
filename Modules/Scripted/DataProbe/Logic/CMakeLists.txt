@@ -12,16 +12,6 @@ set(${KIT}_SRCS
 
   )
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    vtkCommon
-    vtkFiltering
-    vtkIO
-    )
-endif()
-
 set(${KIT}_TARGET_LIBRARIES
   ${VTK_LIBRARIES}
   )

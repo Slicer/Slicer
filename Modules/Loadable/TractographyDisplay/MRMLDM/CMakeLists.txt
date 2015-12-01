@@ -29,24 +29,13 @@ set(${KIT}_SRCS
   ${displayable_manager_SRCS}
   )
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(${KIT}_TARGET_LIBRARIES
-    ${ITK_LIBRARIES}
-    ${MRML_LIBRARIES}
-    vtkSlicerAnnotationsModuleMRML
-    vtkSlicer${MODULE_NAME}ModuleLogic
-    vtkSlicer${MODULE_NAME}ModuleMRML
-    )
-else()
-  set(${KIT}_TARGET_LIBRARIES
-    ${ITK_LIBRARIES}
-    ${MRML_LIBRARIES}
-    vtkRendering
-    vtkSlicerAnnotationsModuleMRML
-    vtkSlicer${MODULE_NAME}ModuleLogic
-    vtkSlicer${MODULE_NAME}ModuleMRML
-    )
-endif()
+set(${KIT}_TARGET_LIBRARIES
+  ${ITK_LIBRARIES}
+  ${MRML_LIBRARIES}
+  vtkSlicerAnnotationsModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleMRML
+  )
 
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(

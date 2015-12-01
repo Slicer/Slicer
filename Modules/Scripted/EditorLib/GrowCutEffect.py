@@ -182,22 +182,14 @@ class GrowCutEffectLogic(Effect.EffectLogic):
     thresh.SetInValue(0)
     thresh.SetOutValue(0)
     thresh.SetOutputScalarType( vtk.VTK_SHORT )
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      thresh.SetInput( gestureInput )
-    else:
-      thresh.SetInputData( gestureInput )
+    thresh.SetInputData( gestureInput )
     thresh.SetOutput( growCutOutput )
     thresh.Update()
     growCutOutput.DeepCopy( gestureInput )
 
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      growCutFilter.SetInput( 0, background )
-      growCutFilter.SetInput( 1, gestureInput )
-      growCutFilter.SetInput( 2, growCutOutput )
-    else:
-      growCutFilter.SetInputData( 0, background )
-      growCutFilter.SetInputData( 1, gestureInput )
-      growCutFilter.SetInputConnection( 2, thresh.GetOutputPort() )
+    growCutFilter.SetInputData( 0, background )
+    growCutFilter.SetInputData( 1, gestureInput )
+    growCutFilter.SetInputConnection( 2, thresh.GetOutputPort() )
 
     objectSize = 5. # TODO: this is a magic number
     contrastNoiseRatio = 0.8 # TODO: this is a magic number

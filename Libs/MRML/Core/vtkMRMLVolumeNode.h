@@ -155,9 +155,6 @@ public:
   /// vtkMRMLVolumeNode::Spacing, and vtkMRMLVolumeNode::IJKToRASDirections).
   /// \sa GetImageData(), SetImageDataConnection()
   void SetAndObserveImageData(vtkImageData *ImageData);
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkGetObjectMacro(ImageData, vtkImageData);
-#else
   virtual vtkImageData* GetImageData();
   /// Set and observe image data pipeline.
   /// It is propagated to the display nodes.
@@ -165,7 +162,6 @@ public:
   virtual void SetImageDataConnection(vtkAlgorithmOutput *inputPort);
   /// Return the input image data pipeline.
   vtkGetObjectMacro(ImageDataConnection, vtkAlgorithmOutput);
-#endif
 
   ///
   /// alternative method to propagate events generated in Display nodes
@@ -222,13 +218,8 @@ protected:
   double Spacing[3];
   double Origin[3];
 
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetImageData(vtkImageData* img);
-  vtkImageData* ImageData;
-#else
   vtkAlgorithmOutput* ImageDataConnection;
   vtkEventForwarderCommand* DataEventForwarder;
-#endif
 
   itk::MetaDataDictionary Dictionary;
 };

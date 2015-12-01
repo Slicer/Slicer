@@ -29,9 +29,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkProperty.h>
-#if (VTK_MAJOR_VERSION >= 6)
 #include <vtkPickingManager.h>
-#endif
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSeedRepresentation.h>
 #include <vtkSeedWidget.h>
@@ -492,7 +490,6 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PlaceSeed(double x, double y, vtkRe
     vtkSeedWidget * seedWidget = vtkSeedWidget::New();
     seedWidget->SetRepresentation(rep.GetPointer());
 
-#if (VTK_MAJOR_VERSION >= 6)
     if (interactor->GetPickingManager())
       {
       if (!(interactor->GetPickingManager()->GetEnabled()))
@@ -502,7 +499,6 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PlaceSeed(double x, double y, vtkRe
         interactor->GetPickingManager()->EnabledOn();
         }
       }
-#endif
 
     seedWidget->SetInteractor(interactor);
     seedWidget->SetCurrentRenderer(renderer);

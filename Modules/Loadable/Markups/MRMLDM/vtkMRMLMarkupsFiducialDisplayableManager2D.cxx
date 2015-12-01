@@ -43,9 +43,7 @@
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkOrientedPolygonalHandleRepresentation3D.h>
-#if (VTK_MAJOR_VERSION >= 6)
 #include <vtkPickingManager.h>
-#endif
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkProperty2D.h>
 #include <vtkProperty.h>
@@ -285,7 +283,6 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager2D::CreateWidget(vtk
 
   seedWidget->SetRepresentation(rep.GetPointer());
 
-#if (VTK_MAJOR_VERSION >= 6)
   if (this->GetInteractor()->GetPickingManager())
     {
     if (!(this->GetInteractor()->GetPickingManager()->GetEnabled()))
@@ -295,7 +292,6 @@ vtkAbstractWidget * vtkMRMLMarkupsFiducialDisplayableManager2D::CreateWidget(vtk
       this->GetInteractor()->GetPickingManager()->EnabledOn();
       }
     }
-#endif
 
   seedWidget->SetInteractor(this->GetInteractor());
   // set the renderer on the widget and representation
@@ -674,9 +670,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       {
       handleRep->VisibilityOn();
       handleRep->HandleVisibilityOn();
-#if (VTK_MAJOR_VERSION >= 6)
       handleRep->EnablePicking();
-#endif
       if (textString.compare("") != 0)
         {
         handleRep->LabelVisibilityOn();
@@ -694,7 +688,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
       handleRep->VisibilityOff();
       handleRep->HandleVisibilityOff();
       handleRep->LabelVisibilityOff();
-#if (VTK_MAJOR_VERSION >= 6)
       handleRep->DisablePicking();
       vtkSeedRepresentation *seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
       if (seedRepresentation)
@@ -707,9 +700,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::SetNthSeed(int n, vtkMRMLMarkup
           orientedHandleRep->DisablePicking();
           }
         }
-#else
-      seedWidget->GetSeed(n)->EnabledOff();
-#endif
 
       // if the widget is not shown on the slice, show the intersection
       if (fiducialNode &&
@@ -1029,7 +1019,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
 
   vtkDebugMacro("Fids PropagateMRMLToWidget, node num markups = " << numberOfFiducials);
 
-#if (VTK_MAJOR_VERSION >= 6)
   if (numberOfFiducials == 0)
     {
     if (handleRep)
@@ -1060,7 +1049,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
       handleRep->EnablePicking();
       }
     }
-#endif
 
   for (int n = 0; n < numberOfFiducials; n++)
     {

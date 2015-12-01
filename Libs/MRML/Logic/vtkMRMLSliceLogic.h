@@ -148,13 +148,7 @@ public:
   ///
   /// the tail of the pipeline
   /// -- returns NULL if none of the inputs exist
-#if (VTK_MAJOR_VERSION <= 5)
-  //BTX
-  vtkImageData *GetImageData();
-  //ETX
-#else
   vtkAlgorithmOutput *GetImageDataConnection();
-#endif
 
   ///
   /// update the pipeline to reflect the current state of the nodes
@@ -391,11 +385,7 @@ protected:
   vtkImageBlend *   Blend;
   vtkImageBlend *   BlendUVW;
   vtkImageReslice * ExtractModelTexture;
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData *    ImageData;
-#else
   vtkAlgorithmOutput *    ImageDataConnection;
-#endif
   vtkTransform *    ActiveSliceTransform;
 
   vtkPolyDataCollection * PolyDataCollection;

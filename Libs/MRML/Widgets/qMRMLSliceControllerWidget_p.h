@@ -145,11 +145,7 @@ public:
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
   vtkCollection*                      SliceLogics;
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkWeakPointer<vtkImageData>        ImageData;
-#else
   vtkWeakPointer<vtkAlgorithmOutput>  ImageDataConnection;
-#endif
   QHash<QString, qMRMLOrientation>    SliceOrientationToDescription;
   QString                             SliceViewName;
   QButtonGroup*                       ControllerButtonGroup;

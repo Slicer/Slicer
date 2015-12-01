@@ -92,11 +92,7 @@ int main( int argc, char * argv[] )
   readerLabel_A->Update();
 
   imageCastLabel_A->SetOutputScalarTypeToShort();
-#if (VTK_MAJOR_VERSION <= 5)
-  imageCastLabel_A->SetInput(readerLabel_A->GetOutput() );
-#else
   imageCastLabel_A->SetInputConnection(readerLabel_A->GetOutputPort() );
-#endif
   imageCastLabel_A->Update();
 
   // Read in fiber bundle input to be selected from VTK or VTP
@@ -135,12 +131,8 @@ int main( int argc, char * argv[] )
 
   // 2. Find polylines
   int inExt[6];
-#if (VTK_MAJOR_VERSION <= 5)
-  imageCastLabel_A->GetOutput()->GetWholeExtent(inExt);
-#else
   imageCastLabel_A->GetOutputInformation(0)->Get(
     vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
-#endif
 
   vtkPoints *inPts =input->GetPoints();
   vtkIdType numPts = inPts->GetNumberOfPoints();
@@ -338,11 +330,7 @@ int main( int argc, char * argv[] )
     {
       vtkNew<vtkPolyDataWriter> writer;
       writer->SetFileName(OutputFibers.c_str());
-      #if (VTK_MAJOR_VERSION <= 5)
-           writer->SetInput(outFibers.GetPointer());
-      #else
            writer->SetInputData(outFibers.GetPointer());
-      #endif
            writer->SetFileTypeToBinary();
            writer->Write();
     }
@@ -350,11 +338,7 @@ int main( int argc, char * argv[] )
     {
            vtkNew<vtkXMLPolyDataWriter> writer;
            writer->SetFileName(OutputFibers.c_str());
-      #if (VTK_MAJOR_VERSION <= 5)
-           writer->SetInput(outFibers.GetPointer());
-      #else
            writer->SetInputData(outFibers.GetPointer());
-      #endif
            writer->SetDataModeToBinary();
            writer->Write();
     }

@@ -48,13 +48,7 @@ void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
 {
   vtkNew<vtkImageData> id;
   id->SetDimensions(1, 1, 1);
-#if (VTK_MAJOR_VERSION <= 5)
-  id->SetNumberOfScalarComponents(1);
-  id->SetScalarType(VTK_SHORT);
-  id->AllocateScalars();
-#else
   id->AllocateScalars(VTK_SHORT, 1);
-#endif
   id->GetPointData()->GetScalars()->FillComponent(0, 0);
 
   vtkNew<vtkMRMLLabelMapVolumeNode> n;

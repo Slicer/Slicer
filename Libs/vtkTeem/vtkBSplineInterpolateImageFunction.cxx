@@ -355,13 +355,8 @@ double vtkBSplineInterpolateImageFunction::EvaluateFunction(
       }
       // Convert our step p to the appropriate point in ND space in the
       // this->Coefficients cube.
-#if (VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 3) || (VTK_MAJOR_VERSION >= 5 )
       interpolated += w * this->Coefficients->GetScalarComponentAsDouble(
         coefficientIndex[0],coefficientIndex[1],coefficientIndex[2],0);
-#else
-      interpolated += w * this->Coefficients->GetScalarComponentAsFloat(
-        coefficientIndex[0],coefficientIndex[1],coefficientIndex[2],0);
-#endif
     }
   for ( i = 0 ; i < ImageDimension ; i++ )
     {
@@ -430,13 +425,8 @@ void vtkBSplineInterpolateImageFunction::EvaluateGradient(
           tempValue *= weights[n1][ this->PointsToIndex[n1][p] ];
           }
         }
-#if (VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 3) || (VTK_MAJOR_VERSION >= 5 )
       derivativeValue[n] += this->Coefficients->GetScalarComponentAsDouble(
           coefficientIndex[0],coefficientIndex[1],coefficientIndex[2],0) * tempValue ;
-#else
-      derivativeValue[n] += this->Coefficients->GetScalarComponentAsFloat(
-        coefficientIndex[0],coefficientIndex[1],coefficientIndex[2],0) * tempValue ;
-#endif
       }
     }
   for ( i = 0 ; i < ImageDimension ; i++ ) {

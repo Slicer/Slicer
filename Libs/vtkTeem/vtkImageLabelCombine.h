@@ -43,19 +43,11 @@ public:
   /// Set the two inputs to this filter
   virtual void SetInput1(vtkDataObject *in)
   {
-#if (VTK_MAJOR_VERSION <= 5)
-      this->SetInput(0,in);
-#else
       this->SetInputData(0,in);
-#endif
   }
   virtual void SetInput2(vtkDataObject *in)
   {
-#if (VTK_MAJOR_VERSION <= 5)
-      this->SetInput(1,in);
-#else
       this->SetInputData(1,in);
-#endif
   }
 
 protected:

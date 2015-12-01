@@ -410,15 +410,6 @@ void vtkImageRectangularSource_GeneralExecute(vtkImageRectangularSource *self, v
 
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkImageRectangularSource::ExecuteData(vtkDataObject *output)
-{
-  int *extent;
-  void *ptr;
-
-  vtkImageData *data = this->AllocateOutputData(output);
-  extent = this->GetOutput()->GetUpdateExtent();
-#else
 void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
   int *extent;
@@ -426,7 +417,6 @@ void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject *output
 
   vtkImageData *data = this->AllocateOutputData(output, outInfo);
   extent = this->GetUpdateExtent();
-#endif
   ptr = data->GetScalarPointerForExtent(extent);
   
   if (this->Corners ) {

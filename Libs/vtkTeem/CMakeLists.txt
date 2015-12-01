@@ -113,21 +113,9 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${vtkTeem_SRCS})
 add_library(${lib_name} ${srcs})
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-
-  # Teem vtkNRRDReader overwrites VTK vtkNrrdReader
-  set(VTK_WRAP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${VTK_INCLUDE_DIRS}
-      CACHE INTERNAL "VTK wrap include dirs" FORCE)
-else()
-  set(VTK_LIBRARIES
-    vtkCommon
-    vtkFiltering
-    vtkGraphics
-    vtkIO
-    vtkImaging
-  )
-endif()
+# Teem vtkNRRDReader overwrites VTK vtkNrrdReader
+set(VTK_WRAP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${VTK_INCLUDE_DIRS}
+    CACHE INTERNAL "VTK wrap include dirs" FORCE)
 
 set(libs
   ${Teem_LIBRARIES}

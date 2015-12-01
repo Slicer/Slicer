@@ -216,11 +216,7 @@ vtkMRMLModelDisplayableManager::~vtkMRMLModelDisplayableManager()
        tit != this->Internal->DisplayNodeTransformPolyDataFilters.end(); tit++ )
     {
     vtkTransformPolyDataFilter  *transformFilter = (*tit).second;
-#if (VTK_MAJOR_VERSION <= 5)
-    transformFilter->SetInput(0);
-#else
     transformFilter->SetInputConnection(0);
-#endif
     transformFilter->SetTransform(0);
     transformFilter->Delete();
     }
@@ -932,50 +928,25 @@ void vtkMRMLModelDisplayableManager
 
     int clipping = displayNode->GetClipping();
     int visibility = displayNode->GetVisibility();
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkPolyData *polyData = NULL;
-#else
     vtkAlgorithmOutput *polyDataConnection = NULL;
-#endif
     if (this->IsModelDisplayable(modelDisplayNode))
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      polyData = modelDisplayNode->GetOutputPolyData();
-#else
       polyDataConnection = modelDisplayNode->GetOutputPolyDataConnection();
-#endif
       }
     if (hdnode)
       {
       clipping = hdnode->GetClipping();
       //visibility = hdnode->GetVisibility();
-#if (VTK_MAJOR_VERSION <= 5)
-      polyData = hierarchyModelDisplayNode ?
-        hierarchyModelDisplayNode->GetPolyData() : polyData;
-#else
       polyDataConnection = hierarchyModelDisplayNode ?
         hierarchyModelDisplayNode->GetPolyDataConnection() : polyDataConnection;
-#endif
       }
     // hierarchy display nodes may not have poly data pointer
-#if (VTK_MAJOR_VERSION <= 5)
-    if (polyData == 0 &&
-#else
     if (polyDataConnection == 0 &&
-#endif
         this->IsModelDisplayable(modelNode))
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      polyData = modelNode ? modelNode->GetPolyData() : NULL;
-#else
       polyDataConnection = modelNode ? modelNode->GetPolyDataConnection() : NULL;
-#endif
       }
-#if (VTK_MAJOR_VERSION <= 5)
-    bool hasPolyData = (polyData != 0);
-#else
     bool hasPolyData = (polyDataConnection != 0);
-#endif
 
     if (!hasPolyData)
       {
@@ -999,15 +970,9 @@ void vtkMRMLModelDisplayableManager
         }
       }
 
-#if (VTK_MAJOR_VERSION <= 5)
-    if (transformFilter && polyData)
-      {
-      transformFilter->SetInput(polyData);
-#else
     if (transformFilter)
       {
       transformFilter->SetInputConnection(polyDataConnection);
-#endif
       transformFilter->SetTransform(worldTransform);
       }
 
@@ -1036,26 +1001,13 @@ void vtkMRMLModelDisplayableManager
           {
           vtkPolyDataMapper *mapper = vtkPolyDataMapper::SafeDownCast(actor->GetMapper());
 
-#if (VTK_MAJOR_VERSION <= 5)
-          if (transformFilter && polyData)
-            {
-            mapper->SetInput(transformFilter->GetOutput());
-#else
           if (transformFilter)
             {
             mapper->SetInputConnection(transformFilter->GetOutputPort());
-#endif
             }
-#if (VTK_MAJOR_VERSION <= 5)
-          else if (mapper && mapper->GetInput() != polyData
-                   && !(this->Internal->ClippingOn && clipping))
-            {
-            mapper->SetInput(polyData);
-#else
           else if (mapper && !(this->Internal->ClippingOn && clipping))
             {
             mapper->SetInputConnection(polyDataConnection);
-#endif
             }
           }
         vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
@@ -1081,31 +1033,16 @@ void vtkMRMLModelDisplayableManager
 
       if (clipper)
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        clipper->SetInput(polyData);
-        clipper->Update();
-        mapper->SetInput(clipper->GetOutput());
-#else
         clipper->SetInputConnection(polyDataConnection);
         mapper->SetInputConnection(clipper->GetOutputPort());
-#endif
         }
       else if (transformFilter)
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        transformFilter->Update();
-        mapper->SetInput(transformFilter->GetOutput());
-#else
         mapper->SetInputConnection(transformFilter->GetOutputPort());
-#endif
         }
       else
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        mapper->SetInput(polyData);
-#else
         mapper->SetInputConnection(polyDataConnection);
-#endif
         }
 
       actor->SetMapper(mapper);
@@ -1807,11 +1744,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         actor->GetProperty()->SetSpecularPower(modelDisplayNode->GetPower());
         actor->GetProperty()->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
         actor->GetProperty()->SetEdgeColor(modelDisplayNode->GetEdgeColor());
-#if (VTK_MAJOR_VERSION <= 5)
-        if (modelDisplayNode->GetTextureImageData() != 0)
-#else
         if (modelDisplayNode->GetTextureImageDataConnection() != 0)
-#endif
           {
           if (actor->GetTexture() == 0)
             {
@@ -1819,11 +1752,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             actor->SetTexture(texture);
             texture->Delete();
             }
-#if (VTK_MAJOR_VERSION <= 5)
-          actor->GetTexture()->SetInput(modelDisplayNode->GetTextureImageData());
-#else
           actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
-#endif
           actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
           actor->GetProperty()->SetColor(1., 1., 1.);
           }
@@ -1834,18 +1763,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
         }
       else if (imageActor)
         {
-#if (VTK_MAJOR_VERSION <= 5)
-        if (modelDisplayNode->GetTextureImageData() != 0)
-          {
-          imageActor->SetInput(modelDisplayNode->GetTextureImageData());
-          }
-        else
-          {
-          imageActor->SetInput(0);
-          }
-#else
         imageActor->GetMapper()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
-#endif
         imageActor->SetDisplayExtent(-1, 0, 0, 0, 0, 0);
         }
       }
@@ -1863,11 +1781,7 @@ const char* vtkMRMLModelDisplayableManager
     vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
     if (modelDisplayNode && modelDisplayNode->GetOutputPolyData())
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      modelDisplayNode->GetOutputPolyData()->Update();
-#else
       modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
-#endif
       }
     activeScalarName = displayNode->GetActiveScalarName();
     }
@@ -1879,15 +1793,11 @@ const char* vtkMRMLModelDisplayableManager
     {
     if (modelNode->GetPolyData())
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      modelNode->GetPolyData()->Update();
-#else
      vtkAlgorithmOutput *polyDataConnection = modelNode->GetPolyDataConnection();
      if (polyDataConnection != NULL)
        {
        polyDataConnection->GetProducer()->Update();
        }
-#endif
       }
     activeScalarName =
       modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);

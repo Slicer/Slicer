@@ -61,11 +61,7 @@ qMRMLModelInfoWidgetPrivate::qMRMLModelInfoWidgetPrivate(qMRMLModelInfoWidget& o
   this->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   this->TriangleFilter->SetPassLines(0);
   this->MassProperties = vtkSmartPointer<vtkMassProperties>::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  this->MassProperties->SetInput( this->TriangleFilter->GetOutput() );
-#else
   this->MassProperties->SetInputConnection( this->TriangleFilter->GetOutputPort() );
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -125,11 +121,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
   vtkPolyData *poly = d->MRMLModelNode ? d->MRMLModelNode->GetPolyData() : 0;
   if (poly)
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    d->TriangleFilter->SetInput(poly);
-#else
     d->TriangleFilter->SetInputData(poly);
-#endif
     d->TriangleFilter->Update();
     if (d->TriangleFilter->GetOutput()->GetNumberOfCells() > 0)
       {

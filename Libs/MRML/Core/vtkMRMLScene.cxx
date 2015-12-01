@@ -893,11 +893,7 @@ int vtkMRMLScene::Commit(const char* url)
     if (ofs.fail())
       {
       vtkErrorMacro("Write: Could not open file " << url);
-#if (VTK_MAJOR_VERSION <= 5)
-      this->SetErrorCode(2);
-#else
      this->SetErrorCode(vtkErrorCode::GetErrorCodeFromString("CannotOpenFileError"));
-#endif
       return 0;
       }
     }
@@ -998,11 +994,7 @@ int vtkMRMLScene::Commit(const char* url)
     {
     ofs.close();
     }
-#if (VTK_MAJOR_VERSION <= 5)
-  this->SetErrorCode(0);
-#else
   this->SetErrorCode(vtkErrorCode::GetErrorCodeFromString("NoError"));
-#endif
   this->StoredTime.Modified();
   return 1;
 }

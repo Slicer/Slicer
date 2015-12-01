@@ -69,11 +69,7 @@ int main( int argc, char * argv[] )
       if( fabs(gradient[0]) + fabs(gradient[1]) + fabs(gradient[2]) < GRAD_0_TOL )
         {
         vtkNew<vtkImageExtractComponents> extractComponents;
-#if (VTK_MAJOR_VERSION <= 5)
-        extractComponents->SetInput(reader->GetOutput() );
-#else
         extractComponents->SetInputConnection(reader->GetOutputPort() );
-#endif
         extractComponents->SetComponents(gradient_n);
         extractComponents->Update();
 
@@ -91,11 +87,7 @@ int main( int argc, char * argv[] )
 
     // compute DWI mask
     vtkNew<vtkITKNewOtsuThresholdImageFilter> otsu;
-#if (VTK_MAJOR_VERSION <= 5)
-    otsu->SetInput(imageWeightedSum->GetOutput() );
-#else
     otsu->SetInputConnection(imageWeightedSum->GetOutputPort() );
-#endif
     otsu->SetOmega(1 + otsuOmegaThreshold);
     otsu->SetOutsideValue(1);
     otsu->SetInsideValue(0);
@@ -110,20 +102,12 @@ int main( int argc, char * argv[] )
     int  pz = dims[2] / 2;
 
     vtkNew<vtkImageCast> cast;
-#if (VTK_MAJOR_VERSION <= 5)
-    cast->SetInput(mask.GetPointer());
-#else
     cast->SetInputData(mask.GetPointer());
-#endif
     cast->SetOutputScalarTypeToUnsignedChar();
     cast->Update();
 
     vtkNew<vtkImageSeedConnectivity> con;
-#if (VTK_MAJOR_VERSION <= 5)
-    con->SetInput(cast->GetOutput() );
-#else
     con->SetInputConnection(cast->GetOutputPort() );
-#endif
     con->SetInputConnectValue(1);
     con->SetOutputConnectedValue(1);
     con->SetOutputUnconnectedValue(0);
@@ -131,11 +115,7 @@ int main( int argc, char * argv[] )
     con->Update();
 
     vtkNew<vtkImageCast> cast1;
-#if (VTK_MAJOR_VERSION <= 5)
-    cast1->SetInput(con->GetOutput() );
-#else
     cast1->SetInputConnection(con->GetOutputPort() );
-#endif
     cast1->SetOutputScalarTypeToShort();
     cast1->Update();
 
@@ -149,11 +129,7 @@ int main( int argc, char * argv[] )
       conn->SetFunctionToRemoveIslands();
       conn->SetMinSize(10000);
       conn->SliceBySliceOn();
-#if (VTK_MAJOR_VERSION <= 5)
-      conn->SetInput(cast1->GetOutput() );
-#else
       conn->SetInputConnection(cast1->GetOutputPort() );
-#endif
       conn->Update();
       }
 
@@ -162,19 +138,11 @@ int main( int argc, char * argv[] )
 
     if( removeIslands )
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      cast2->SetInput(conn->GetOutput() );
-#else
       cast2->SetInputConnection(conn->GetOutputPort() );
-#endif
       }
     else
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      cast2->SetInput(cast1->GetOutput() );
-#else
       cast2->SetInputConnection(cast1->GetOutputPort() );
-#endif
       }
 
     vtkMatrix4x4* ijkToRasMatrix = reader->GetRasToIjkMatrix();
@@ -192,19 +160,11 @@ int main( int argc, char * argv[] )
     vtkNew<vtkNRRDWriter> writer2;
     if( removeIslands )
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      writer2->SetInput(conn->GetOutput() );
-#else
       writer2->SetInputConnection(conn->GetOutputPort() );
-#endif
       }
     else
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      writer2->SetInput(cast1->GetOutput() );
-#else
       writer2->SetInputConnection(cast1->GetOutputPort() );
-#endif
       }
     writer2->SetFileName( thresholdMask.c_str() );
     writer2->UseCompressionOn();

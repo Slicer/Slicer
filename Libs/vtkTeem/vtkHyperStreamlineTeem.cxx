@@ -19,13 +19,9 @@ vtkHyperStreamlineTeem::~vtkHyperStreamlineTeem()
 }
 
 
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkHyperStreamlineTeem::Execute()
-#else
 int vtkHyperStreamlineTeem::RequestData(vtkInformation* vtkNotUsed(request),
                                         vtkInformationVector** vtkNotUsed(inInfoVec),
                                         vtkInformationVector* vtkNotUsed(outInfoVec))
-#endif
 {
   this->DebugOn();
 
@@ -49,9 +45,7 @@ int vtkHyperStreamlineTeem::RequestData(vtkInformation* vtkNotUsed(request),
 
   vtkDebugMacro( << "Done!");
   this->DebugOff();
-#if (VTK_MAJOR_VERSION > 5)
   return 1;
-#endif
 }
 
 
@@ -120,11 +114,7 @@ void vtkHyperStreamlineTeem::VisualizeFibers( const Nrrd *fibers )
       {
           point->D = 0.0;
       }
-#if (VTK_MAJOR_VERSION >= 5)
       point->CellId = this->GetPolyDataInput(0)->FindPoint(point->X);
-#else
-      point->CellId = this->GetInput()->FindPoint( point->X );
-#endif
     }
 
   vtkDebugMacro( << "Building lines");

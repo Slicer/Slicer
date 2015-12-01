@@ -348,12 +348,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeli
   vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
   vtkSlicerTransformLogic::GetVisualization2d(polyData, transformDisplayNode, this->SliceNode);
 
-#if VTK_MAJOR_VERSION <= 5
-  pipeline->Transformer->SetInput(polyData);
-  pipeline->Transformer->Update();
-#else
   pipeline->Transformer->SetInputData(polyData);
-#endif
 
   if (polyData->GetNumberOfPoints()==0)
     {

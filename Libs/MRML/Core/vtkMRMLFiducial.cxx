@@ -354,11 +354,7 @@ void vtkMRMLFiducial::SetOrientationWXYZFromMatrix4x4(vtkMatrix4x4 *mat)
 
     if (mag)
       {
-#if ( (VTK_MAJOR_VERSION >= 6) || ( VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION >= 4 ) )
       wxyz[0] = 2.0*acos(wxyz[0]) / vtkMath::RadiansFromDegrees(1.0);
-#else
-      wxyz[0] = 2.0*acos(wxyz[0])/vtkMath::DoubleDegreesToRadians();
-#endif
       wxyz[1] /= mag;
       wxyz[2] /= mag;
       wxyz[3] /= mag;

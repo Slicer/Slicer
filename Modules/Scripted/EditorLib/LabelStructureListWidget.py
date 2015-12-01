@@ -353,12 +353,8 @@ class LabelStructureListWidget(qt.QWidget):
         merge.GetImageData().DeepCopy( structureVolume.GetImageData() )
         continue
 
-      if vtk.VTK_MAJOR_VERSION <= 5:
-        combiner.SetInput1( merge.GetImageData() )
-        combiner.SetInput2( structureVolume.GetImageData() )
-      else:
-        combiner.SetInputConnection(0, merge.GetImageDataConnection() )
-        combiner.SetInputConnection(1, structureVolume.GetImageDataConnection() )
+      combiner.SetInputConnection(0, merge.GetImageDataConnection() )
+      combiner.SetInputConnection(1, structureVolume.GetImageDataConnection() )
       self.statusText( "Merging %s" % structureName )
       combiner.Update()
       merge.GetImageData().DeepCopy( combiner.GetOutput() )

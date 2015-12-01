@@ -333,15 +333,6 @@ vtkITKGrowCutSegmentationImageFilter::vtkITKGrowCutSegmentationImageFilter()
 }
 
 //-----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-template< class IT1>
-void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
-          vtkImageData *input1,
-          vtkImageData *input2,
-          vtkImageData *input3,
-          vtkImageData *outData,
-          IT1 *)
-#else
 template< class IT1>
 void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
           vtkImageData *input1,
@@ -350,7 +341,6 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
           vtkImageData *outData,
           vtkInformation* outInfo,
           IT1 *)
-#endif
 {
   int outExt[6];
   int dims[3];
@@ -365,20 +355,12 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
   void *inPtr2 =  input2->GetScalarPointerForExtent(outExt);
   void *inPtr3 = input3->GetScalarPointerForExtent(outExt);
 
-#if (VTK_MAJOR_VERSION <= 5)
-  input1->GetWholeExtent(outExt);
-#else
   outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), outExt);
-#endif
   outData->SetExtent(outExt);
   outData->SetOrigin(origin);
   outData->SetSpacing(spacing);
   outData->SetDimensions(dims);
-#if (VTK_MAJOR_VERSION <= 5)
-  outData->AllocateScalars();
-#else
   outData->AllocateScalars(outInfo);
-#endif
 
   input1->GetExtent(outExt);
 
@@ -401,11 +383,7 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       {
 
       vtkImageCast *imageCaster = vtkImageCast::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      imageCaster->SetInput( input3 );
-#else
       imageCaster->SetInputData( input3 );
-#endif
 
       if((input2->GetScalarType() != VTK_UNSIGNED_SHORT) ||
       (input2->GetScalarType() != VTK_UNSIGNED_CHAR) ||
@@ -417,21 +395,13 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
 
         std::cout<<" Setting to type "<<VTK_SHORT<<std::endl;
 
-#if (VTK_MAJOR_VERSION <= 5)
-        outData->SetScalarType(VTK_SHORT);
-#else
         vtkDataObject::SetPointDataActiveScalarInfo(
           outInfo, VTK_SHORT, vtkImageData::GetNumberOfScalarComponents(outInfo));
-#endif
 
         imageCaster->SetOutputScalarTypeToShort();
 
         vtkImageCast *imageCaster1 = vtkImageCast::New();
-#if (VTK_MAJOR_VERSION <= 5)
-        imageCaster1->SetInput(input2);
-#else
         imageCaster1->SetInputData(input2);
-#endif
         imageCaster1->SetOutputScalarTypeToShort();
 
         vtkITKImageGrowCutExecute3D(input1,
@@ -445,13 +415,9 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       else
         {
         std::cout<<" setting to type "<<input2->GetScalarType()<<std::endl;
-#if (VTK_MAJOR_VERSION <= 5)
-        outData->SetScalarType(input2->GetScalarType());
-#else
         vtkDataObject::SetPointDataActiveScalarInfo(
           outInfo, input2->GetScalarType(),
           vtkImageData::GetNumberOfScalarComponents(outInfo));
-#endif
         imageCaster->SetOutputScalarType(input2->GetScalarType() );
 
         if(input2->GetScalarType() == VTK_UNSIGNED_SHORT)
@@ -522,27 +488,15 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
         (input2->GetScalarType() != VTK_LONG) )
       {
 
-#if (VTK_MAJOR_VERSION <= 5)
-        outData->SetScalarType(VTK_SHORT);
-#else
         vtkDataObject::SetPointDataActiveScalarInfo(
           outInfo, VTK_SHORT, vtkImageData::GetNumberOfScalarComponents(outInfo));
-#endif
 
       vtkImageCast *imageCaster = vtkImageCast::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      imageCaster->SetInput( input2 );
-#else
       imageCaster->SetInputData( input2 );
-#endif
       imageCaster->SetOutputScalarTypeToShort();
 
       vtkImageCast *imageCaster1 = vtkImageCast::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      imageCaster1->SetInput(input3);
-#else
       imageCaster1->SetInputData(input3);
-#endif
       imageCaster1->SetOutputScalarTypeToShort();
 
       vtkITKImageGrowCutExecute3D(input1,
@@ -557,13 +511,9 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
       }
     else
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      outData->SetScalarType(input2->GetScalarType());
-#else
       vtkDataObject::SetPointDataActiveScalarInfo(
         outInfo, input2->GetScalarType(),
         vtkImageData::GetNumberOfScalarComponents(outInfo));
-#endif
 
       if(input2->GetScalarType() == VTK_UNSIGNED_SHORT)
         {
@@ -624,13 +574,8 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
 }
 
 //-----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkITKGrowCutSegmentationImageFilter::ExecuteData(
-        vtkDataObject *outData)
-#else
 void vtkITKGrowCutSegmentationImageFilter::ExecuteDataWithInformation(
         vtkDataObject *outData, vtkInformation* outInfo)
-#endif
 {
   vtkImageData *input1 = vtkImageData::SafeDownCast(GetInput(0));
   vtkImageData *input2 = vtkImageData::SafeDownCast(GetInput(1));
@@ -639,15 +584,9 @@ void vtkITKGrowCutSegmentationImageFilter::ExecuteDataWithInformation(
   vtkImageData * out = vtkImageData::SafeDownCast(outData);
 
   switch(input1->GetScalarType() ) {
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkTemplateMacro( ExecuteGrowCut(this, input1, input2,
-             input3, out,
-             static_cast< VTK_TT*>(0)));
-#else
     vtkTemplateMacro( ExecuteGrowCut(this, input1, input2,
              input3, out, outInfo,
              static_cast< VTK_TT*>(0)));
-#endif
     break;
   }
 }

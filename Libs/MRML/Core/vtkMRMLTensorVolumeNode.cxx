@@ -18,10 +18,6 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLNRRDStorageNode.h"
 
 // VTK includes
-#if VTK_MAJOR_VERSION <= 5
-#include "vtkAssignAttribute.h"
-#include "vtkDiffusionTensorMathematics.h"
-#endif
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 #include <vtkMatrix4x4.h>
@@ -41,27 +37,11 @@ vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()
       }
     }
   this->Order = -1; //Tensor order
-#if VTK_MAJOR_VERSION <= 5
-  this->DTIMathematics = NULL;
-  this->AssignAttributeTensorsFromScalars = NULL;
-#endif
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode::~vtkMRMLTensorVolumeNode()
 {
-#if VTK_MAJOR_VERSION <= 5
-  if (DTIMathematics)
-    {
-    DTIMathematics->Delete();
-    DTIMathematics = NULL;
-    }
-  if (AssignAttributeTensorsFromScalars)
-    {
-    AssignAttributeTensorsFromScalars->Delete();
-    AssignAttributeTensorsFromScalars = NULL;
-    }
-#endif
 }
 
 //----------------------------------------------------------------------------

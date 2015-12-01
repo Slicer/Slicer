@@ -542,10 +542,7 @@ class SliceAnnotations(VTKObservationMixin):
 
     # mapper
     mapper = vtk.vtkPolyDataMapper2D()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      mapper.SetInput(linesPolyData)
-    else:
-      mapper.SetInputData(linesPolyData)
+    mapper.SetInputData(linesPolyData)
     # actor
     actor = self.rulerActors[sliceViewName]
     actor.SetMapper(mapper)
@@ -566,8 +563,6 @@ class SliceAnnotations(VTKObservationMixin):
     '''
     scalarBarWidget = vtk.vtkScalarBarWidget()
     scalarBarWidget.SetScalarBarActor(scalarBar)
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      scalarBarWidget.RepositionableOff()
     self.scalarBarWidgets[sliceViewName] = scalarBarWidget
     '''
     return scalarBar
@@ -754,29 +749,16 @@ class SliceAnnotations(VTKObservationMixin):
 
     # Mappers
     humanMapper = vtk.vtkPolyDataMapper()
-
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      humanMapper.SetInput(self.humanNode.GetPolyData())
-    else:
-      humanMapper.SetInputData(self.humanNode.GetPolyData())
+    humanMapper.SetInputData(self.humanNode.GetPolyData())
 
     shortsMapper = vtk.vtkPolyDataMapper()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      shortsMapper.SetInput(self.shortsNode.GetPolyData())
-    else:
-      shortsMapper.SetInputData(self.shortsNode.GetPolyData())
+    shortsMapper.SetInputData(self.shortsNode.GetPolyData())
 
     leftShoeMapper = vtk.vtkPolyDataMapper()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      leftShoeMapper.SetInput(self.leftShoeNode.GetPolyData())
-    else:
-      leftShoeMapper.SetInputData(self.leftShoeNode.GetPolyData())
+    leftShoeMapper.SetInputData(self.leftShoeNode.GetPolyData())
 
     rightShoeMapper = vtk.vtkPolyDataMapper()
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      rightShoeMapper.SetInput(self.rightShoeNode.GetPolyData())
-    else:
-      rightShoeMapper.SetInputData(self.rightShoeNode.GetPolyData())
+    rightShoeMapper.SetInputData(self.rightShoeNode.GetPolyData())
 
     # Actors
     scale = 0.01

@@ -438,11 +438,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   ///
   /// Get a polydata object according to current glyph display settings
   /// (so a line, sphere, or tube) to use as a source for a glyphing filter.
-#if VTK_MAJOR_VERSION <= 5
-  vtkGetObjectMacro( GlyphSource, vtkPolyData );
-#else
   vtkGetObjectMacro( GlyphConnection, vtkAlgorithmOutput );
-#endif
 
  //Helper function to get the string of Scalar enums
   static const char *GetScalarEnumAsString(int val);
@@ -491,14 +487,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// This is used internally to set a pointer to this polydata
   /// and reference count it.
   /// TO DO: is this causing an extra modified event?
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetGlyphSource(vtkPolyData* glyphSource);
-  /// ---- VTK objects for display --- //
-  vtkPolyData * GlyphSource;
-#else
   virtual void SetGlyphConnection(vtkAlgorithmOutput* glyphPort);
   vtkAlgorithmOutput * GlyphConnection;
-#endif
 
   /// TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   /// for scalar invariants with those ranges

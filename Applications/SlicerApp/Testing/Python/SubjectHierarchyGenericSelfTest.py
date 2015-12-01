@@ -405,10 +405,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     modelNode = slicer.vtkMRMLModelNode()
     modelNode.SetName(name)
     modelNode = slicer.mrmlScene.AddNode(modelNode)
-    if vtk.VTK_MAJOR_VERSION <= 5:
-      modelNode.SetAndObservePolyData(sphere.GetOutput())
-    else:
-      modelNode.SetPolyDataConnection(sphere.GetOutputPort())
+    modelNode.SetPolyDataConnection(sphere.GetOutputPort())
     modelNode.SetHideFromEditors(0)
 
     displayNode = slicer.vtkMRMLModelDisplayNode()

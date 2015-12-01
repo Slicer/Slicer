@@ -10,18 +10,6 @@ set(MODULE_NAME MergeModels)
 find_package(SlicerExecutionModel REQUIRED)
 include(${SlicerExecutionModel_USE_FILE})
 
-#
-# VTK
-#
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    vtkIO
-    vtkGraphics
-    )
-endif()
-
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}

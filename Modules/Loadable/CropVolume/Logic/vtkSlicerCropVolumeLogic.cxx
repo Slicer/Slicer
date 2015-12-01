@@ -292,11 +292,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       vtkImageData* outputImageData = vtkImageData::New();
       outputImageData->SetDimensions(outputExtent[0], outputExtent[1],
           outputExtent[2]);
-#if (VTK_MAJOR_VERSION <= 5)
-      outputImageData->AllocateScalars();
-#else
       outputImageData->AllocateScalars(VTK_DOUBLE, 1);
-#endif
 
       refVolume->SetAndObserveImageData(outputImageData);
       outputImageData->Delete();
@@ -443,11 +439,7 @@ void vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtk
 
 
   vtkNew<vtkImageClip> imageClip;
-#if (VTK_MAJOR_VERSION <= 5)
-  imageClip->SetInput(imageDataWorkingCopy.GetPointer());
-#else
   imageClip->SetInputData(imageDataWorkingCopy.GetPointer());
-#endif
   imageClip->SetOutputWholeExtent(outputWholeExtent);
   imageClip->SetClipData(true);
 

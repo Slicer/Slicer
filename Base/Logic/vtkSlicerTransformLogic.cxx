@@ -275,11 +275,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
 
   // Compute vector magnitude and add to the data set
   vtkNew<vtkVectorNorm> norm;
-#if VTK_MAJOR_VERSION <= 5
-  norm->SetInput(outputPointSet);
-#else
   norm->SetInputData(outputPointSet);
-#endif
   norm->Update();
   vtkDataArray* vectorMagnitude = norm->GetOutput()->GetPointData()->GetScalars();
   vectorMagnitude->SetName(GetVisualizationDisplacementMagnitudeScalarName());
@@ -357,13 +353,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
   // The orientation of the volume cannot be set in the image
   // therefore the volume will not appear in the correct position
   // if the direction matrix is not identity.
-#if VTK_MAJOR_VERSION <= 5
-  magnitudeImage->SetScalarTypeToFloat();
-  magnitudeImage->SetNumberOfScalarComponents(1);
-  magnitudeImage->AllocateScalars();
-#else
   magnitudeImage->AllocateScalars(VTK_FLOAT, 1);
-#endif
 
   double point_RAS[4] = {0,0,0,1};
   double transformedPoint_RAS[4] = {0,0,0,1};
@@ -513,13 +503,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageDa
   // The orientation of the volume cannot be set in the image
   // therefore the volume will not appear in the correct position
   // if the direction matrix is not identity.
-#if VTK_MAJOR_VERSION <= 5
-  vectorImage->SetScalarTypeToFloat();
-  vectorImage->SetNumberOfScalarComponents(3);
-  vectorImage->AllocateScalars();
-#else
   vectorImage->AllocateScalars(VTK_FLOAT, 3);
-#endif
 
   double point_RAS[4] = {0,0,0,1};
   double transformedPoint_RAS[4] = {0,0,0,1};
@@ -603,11 +587,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output, vtkMR
   glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent()*0.01);
   glyphFilter->SetColorModeToColorByScalar();
   glyphFilter->OrientOn();
-#if VTK_MAJOR_VERSION <= 5
-  glyphFilter->SetInput(pointSet.GetPointer());
-#else
   glyphFilter->SetInputData(pointSet.GetPointer());
-#endif
 
   glyphFilter->SetColorArray(GetVisualizationDisplacementMagnitudeScalarName());
 
@@ -726,11 +706,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output, vtkMR
   glyphFilter->SetColorModeToColorByScalar();
   glyphFilter->SetSourceTransform(rotateArrow.GetPointer());
   glyphFilter->SetSourceConnection(glyph2DSource->GetOutputPort());
-#if VTK_MAJOR_VERSION <= 5
-  glyphFilter->SetInput(pointSet.GetPointer());
-#else
   glyphFilter->SetInputData(pointSet.GetPointer());
-#endif
 
   glyphFilter->SetColorArray(GetVisualizationDisplacementMagnitudeScalarName());
 
@@ -810,11 +786,7 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData, vtkMRMLTrans
   if (warpedGrid)
     {
     vtkNew<vtkWarpVector> warp;
-#if VTK_MAJOR_VERSION <= 5
-    warp->SetInput(gridPolyData);
-#else
     warp->SetInputData(gridPolyData);
-#endif
     warp->SetScaleFactor(displayNode->GetGridScalePercent()*0.01);
     warp->Update();
     vtkPolyData* polyoutput = warp->GetPolyDataOutput();
@@ -860,13 +832,8 @@ void vtkSlicerTransformLogic::GetGridVisualization2d(vtkPolyData* output, vtkMRM
 
     // Create the output by combining the warped and non-warped grid
     vtkNew<vtkAppendPolyData> appender;
-#if VTK_MAJOR_VERSION <= 5
-    appender->AddInput(gridPolyData.GetPointer());
-    appender->AddInput(warpedGridPolyData.GetPointer());
-#else
     appender->AddInputData(gridPolyData.GetPointer());
     appender->AddInputData(warpedGridPolyData.GetPointer());
-#endif
     appender->Update();
     output->ShallowCopy(appender->GetOutput());
     output->GetPointData()->SetActiveAttribute(GetVisualizationDisplacementMagnitudeScalarName(), vtkDataSetAttributes::SCALARS);
@@ -892,11 +859,7 @@ void vtkSlicerTransformLogic::GetGridVisualization3d(vtkPolyData* output, vtkMRM
   CreateGrid(gridPolyData.GetPointer(), displayNode, numGridPoints, warpedGridPolyData.GetPointer());
 
   vtkNew<vtkTubeFilter> tubeFilter;
-#if VTK_MAJOR_VERSION <= 5
-  tubeFilter->SetInput(warpedGridPolyData.GetPointer());
-#else
   tubeFilter->SetInputData(warpedGridPolyData.GetPointer());
-#endif
   tubeFilter->SetRadius(displayNode->GetGridLineDiameterMm()*0.5);
   tubeFilter->SetNumberOfSides(8);
   tubeFilter->Update();
@@ -939,11 +902,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output, vtk
    {
     contourFilter->SetValue(i, levels[i]);
    }
-#if VTK_MAJOR_VERSION <= 5
-  contourFilter->SetInput(magnitudeImage.GetPointer());
-#else
   contourFilter->SetInputData(magnitudeImage.GetPointer());
-#endif
   contourFilter->Update();
 
   vtkNew<vtkTransformPolyDataFilter> transformSliceToRas;
@@ -1007,11 +966,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
     {
     contourFilter->SetValue(i, levels[i]);
     }
-#if VTK_MAJOR_VERSION <= 5
-  contourFilter->SetInput(magnitudeImage.GetPointer());
-#else
   contourFilter->SetInputData(magnitudeImage.GetPointer());
-#endif
   contourFilter->Update();
 
   //  Transform contours to RAS

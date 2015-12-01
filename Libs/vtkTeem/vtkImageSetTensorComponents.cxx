@@ -50,11 +50,7 @@ void vtkImageSetTensorComponents::ExecuteData(vtkDataObject *out)
   vtkImageData *output = vtkImageData::SafeDownCast(out);
 
   // set extent so we know how many tensors to allocate
-#if (VTK_MAJOR_VERSION <= 5)
-  output->SetExtent(output->GetUpdateExtent());
-#else
   output->SetExtent(this->GetUpdateExtent());
-#endif
 
   // allocate output tensors
   vtkFloatArray* data = vtkFloatArray::New();
@@ -122,11 +118,7 @@ static void vtkImageSetTensorComponentsExecute(vtkImageSetTensorComponents *self
   // changed from arrays to pointers
   int *outInc,*outFullUpdateExt;
   outInc = self->GetOutput()->GetIncrements();
-#if (VTK_MAJOR_VERSION <= 5)
-  outFullUpdateExt = self->GetOutput()->GetUpdateExtent(); //We are only working over the update extent
-#else
   outFullUpdateExt = self->GetUpdateExtent(); //We are only working over the update extent
-#endif
   ptId = ((outExt[0] - outFullUpdateExt[0]) * outInc[0]
          + (outExt[2] - outFullUpdateExt[2]) * outInc[1]
          + (outExt[4] - outFullUpdateExt[4]) * outInc[2]);

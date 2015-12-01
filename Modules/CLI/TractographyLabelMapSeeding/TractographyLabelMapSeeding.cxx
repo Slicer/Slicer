@@ -45,11 +45,7 @@ int main( int argc, char * argv[] )
       }
 
 
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkSmartPointer<vtkImageData> ROI;
-#else
     vtkSmartPointer<vtkAlgorithmOutput> ROIConnection;
-#endif
     vtkNew<vtkITKArchetypeImageSeriesScalarReader> reader2;
     vtkNew<vtkImageCast> imageCast;
     vtkNew<vtkDiffusionTensorMathematics> math;
@@ -74,14 +70,8 @@ int main( int argc, char * argv[] )
 
       // cast roi to short data type
       imageCast->SetOutputScalarTypeToShort();
-#if (VTK_MAJOR_VERSION <=5)
-      imageCast->SetInput(reader2->GetOutput() );
-      imageCast->Update();
-      ROI = imageCast->GetOutput();
-#else
       imageCast->SetInputConnection(reader2->GetOutputPort() );
       ROIConnection = imageCast->GetOutputPort();
-#endif
 
       // Set up the matrix that will take points in ROI
       // to RAS space.  Code assumes this is world space
@@ -91,11 +81,7 @@ int main( int argc, char * argv[] )
       //
       ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix() );
     } else { // If the mask does not exist, create one
-#if (VTK_MAJOR_VERSION <=5)
-      math->SetInput(0, reader->GetOutput());
-#else
       math->SetInputConnection(reader->GetOutputPort());
-#endif
 
       if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
         {
@@ -115,24 +101,14 @@ int main( int argc, char * argv[] )
         return EXIT_FAILURE;
         }
 
-#if (VTK_MAJOR_VERSION <=5)
-      math->Update();
-      th->SetInput(math->GetOutput());
-#else
       th->SetInputConnection(math->GetOutputPort());
-#endif
       th->ThresholdBetween(ClTh,1);
       th->SetInValue(ROIlabel);
       th->SetOutValue(0);
       th->ReplaceInOn();
       th->ReplaceOutOn();
       th->SetOutputScalarTypeToShort();
-#if (VTK_MAJOR_VERSION <=5)
-      th->Update();
-      ROI = th->GetOutput();
-#else
       ROIConnection = th->GetOutputPort();
-#endif
 
       // Set up the matrix that will take points in ROI
       // to RAS space.  Code assumes this is world space
@@ -145,11 +121,7 @@ int main( int argc, char * argv[] )
     vtkNew<vtkSeedTracts> seed;
 
     // 1. Set Input
-#if (VTK_MAJOR_VERSION <=5)
-    seed->SetInputTensorField(reader->GetOutput() );
-#else
     seed->SetInputTensorFieldConnection(reader->GetOutputPort());
-#endif
 
     // 2. Set Up matrices
     vtkNew<vtkMatrix4x4> TensorRASToIJK;
@@ -219,11 +191,7 @@ int main( int argc, char * argv[] )
 
     // PENDING: Do merging with input ROI
 
-#if (VTK_MAJOR_VERSION <=5)
-    seed->SetInputROI(ROI);
-#else
     seed->SetInputROIConnection(ROIConnection);
-#endif
     seed->SetInputROIValue(ROIlabel);
     seed->UseStartingThresholdOn();
     seed->SetStartingThreshold(ClTh);
@@ -294,11 +262,7 @@ int main( int argc, char * argv[] )
           vtkNew<vtkPolyDataWriter> writer;
           writer->SetFileName(OutputFibers.c_str());
           writer->SetFileTypeToBinary();
-#if (VTK_MAJOR_VERSION <= 5)
-          writer->SetInput(outFibers.GetPointer());
-#else
           writer->SetInputData(outFibers.GetPointer());
-#endif
           writer->Write();
         }
       else
@@ -309,11 +273,7 @@ int main( int argc, char * argv[] )
           }
         vtkNew<vtkXMLPolyDataWriter> writer;
         writer->SetFileName(OutputFibers.c_str() );
-#if (VTK_MAJOR_VERSION <= 5)
-        writer->SetInput(outFibers.GetPointer());
-#else
         writer->SetInputData(outFibers.GetPointer());
-#endif
         writer->Write();
         }
       }

@@ -3,9 +3,7 @@
 set(MODULE_NAME DataProbe)
 
 #-----------------------------------------------------------------------------
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  add_subdirectory(Logic)
-endif()
+add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
 set(MODULE_PYTHON_SCRIPTS

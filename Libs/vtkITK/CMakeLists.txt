@@ -21,15 +21,6 @@ endif()
 #find_package(VTK REQUIRED)
 #include(${VTK_USE_FILE})
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    vtkCommon
-    vtkFiltering
-    vtkImaging
-    )
-endif()
 #
 # ITK
 #

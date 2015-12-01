@@ -146,11 +146,7 @@ void vtkOrientedBSplineTransform::ForwardTransformPoint(const double inPointTemp
     }
 
   
-#if (VTK_MAJOR_VERSION <= 5)
-  if (!this->Coefficients || !this->CalculateSpline)
-#else
   if (!this->GridPointer || !this->CalculateSpline)
-#endif
     {
     return;
     }
@@ -197,11 +193,7 @@ void vtkOrientedBSplineTransform::ForwardTransformDerivative(const double inPoin
     vtkMath::Identity3x3(derivative);
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  if (!this->Coefficients || !this->CalculateSpline)
-#else
   if (!this->GridPointer || !this->CalculateSpline)
-#endif
     {
     return;
     }
@@ -266,11 +258,7 @@ void vtkOrientedBSplineTransform::InverseTransformDerivative(const double inPoin
     vtkMath::Identity3x3(derivative);
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  if (!this->Coefficients || !this->CalculateSpline)
-#else
   if (!this->GridPointer || !this->CalculateSpline)
-#endif
     {
     return;
     }

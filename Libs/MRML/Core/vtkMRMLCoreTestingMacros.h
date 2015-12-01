@@ -638,68 +638,6 @@
 // ----------------------------------------------------------------------------
 /// For testing nodes in Libs/MRML that are subclasses of the display node. Calls the basic
 /// mrml methods macro first.
-#if (VTK_MAJOR_VERSION <= 5)
-#define EXERCISE_BASIC_DISPLAY_MRML_METHODS( className, node )   \
-  {                                                     \
-    EXERCISE_BASIC_MRML_METHODS( className, node);   \
-    vtkMRMLDisplayableNode *dnode = node->GetDisplayableNode(); \
-    if (dnode != NULL)                                          \
-      {                                                 \
-      std::cerr << "Error getting null displayable node" << std::endl;  \
-      return EXIT_FAILURE;                                      \
-      }                                                         \
-    node->SetAndObserveTextureImageData(NULL);                  \
-    if (node->GetTextureImageData() != NULL)                    \
-      {                                                                 \
-      std::cerr << "Error getting null texture image data " << std::endl; \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    node->SetAndObserveColorNodeID(NULL);                               \
-    if (node->GetColorNodeID() != NULL)                                 \
-      {                                                                 \
-      std::cerr << "Error getting null color node id " << std::endl;    \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    if (node->GetColorNode() != NULL)                                   \
-      {                                                                 \
-      std::cerr << "Error getting null color node " << std::endl;       \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    node->SetActiveScalarName("testingScalar");                         \
-    if (strcmp(node->GetActiveScalarName(), "testingScalar") != 0)      \
-      {                                                                 \
-      std::cerr << "Error getting active scalar name" << std::endl;     \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node, Color, 0.0, 1.0);           \
-    TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node, SelectedColor, 0.0, 1.0);   \
-    TEST_SET_GET_DOUBLE_RANGE(node, SelectedAmbient, 0.0, 1.0);             \
-    TEST_SET_GET_DOUBLE_RANGE(node, SelectedSpecular, 0.0, 1.0);            \
-    TEST_SET_GET_DOUBLE_RANGE(node, Opacity, 0.0, 1.0);                     \
-    TEST_SET_GET_DOUBLE_RANGE(node, Ambient, 0.0, 1.0);                     \
-    TEST_SET_GET_DOUBLE_RANGE(node, Diffuse, 0.0, 1.0);                     \
-    TEST_SET_GET_DOUBLE_RANGE(node, Specular, 0.0, 1.0);                    \
-    TEST_SET_GET_DOUBLE_RANGE(node, Power, 0.0, 1.0);                       \
-    TEST_SET_GET_BOOLEAN(node, Visibility);                             \
-    TEST_SET_GET_BOOLEAN(node, Clipping);                               \
-    TEST_SET_GET_BOOLEAN(node, SliceIntersectionVisibility);            \
-    TEST_SET_GET_INT_RANGE(node, SliceIntersectionThickness, 0, 10);   \
-    TEST_SET_GET_BOOLEAN(node, BackfaceCulling);                        \
-    TEST_SET_GET_BOOLEAN(node, ScalarVisibility);                       \
-    TEST_SET_GET_BOOLEAN(node, VectorVisibility);                       \
-    TEST_SET_GET_BOOLEAN(node, TensorVisibility);                       \
-    TEST_SET_GET_BOOLEAN(node, AutoScalarRange);                        \
-    double range[2] = {-10, 10};                                        \
-    node->SetScalarRange(range);                                        \
-    double *getrange = node->GetScalarRange();                          \
-    if (getrange == NULL || getrange[0] != range[0] || getrange[1] != range[1]) \
-      {                                                                 \
-      std::cerr << "ERROR getting range" << std::endl;                  \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    TEST_SET_GET_INT_RANGE(node1.GetPointer(), ScalarRangeFlag, 0, 3);  \
-  }
-#else
 #define EXERCISE_BASIC_DISPLAY_MRML_METHODS( className, node )   \
   {                                                     \
     EXERCISE_BASIC_MRML_METHODS( className, node);   \
@@ -810,7 +748,6 @@
       return EXIT_FAILURE;                                              \
       }                                                                 \
   }
-#endif
 
 // ----------------------------------------------------------------------------
 #include <vtkStringArray.h>

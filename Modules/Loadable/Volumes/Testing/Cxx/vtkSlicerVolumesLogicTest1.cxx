@@ -41,17 +41,6 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-#if VTK_MAJOR_VERSION <= 5
-bool isImageDataValid(vtkImageData* imageData)
-{
-  if (!imageData)
-    {
-    return false;
-    }
-  imageData->GetProducerPort();
-  vtkInformation* info = imageData->GetPipelineInformation();
-  info = imageData->GetPipelineInformation();
-#else
 bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 {
   if (!imageDataConnection ||
@@ -63,7 +52,6 @@ bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
   imageDataConnection->GetProducer()->Update();
   vtkInformation* info =
     imageDataConnection->GetProducer()->GetOutputInformation(0);
-#endif
   if (!info)
     {
     std::cout << "No output information" << std::endl;
@@ -101,11 +89,7 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
     logic->AddArchetypeVolume(argv[1], "volume", 0);
 
   if (!volume ||
-#if VTK_MAJOR_VERSION <=5
-      !isImageDataValid(volume->GetImageData()))
-#else
       !isImageDataValid(volume->GetImageDataConnection()))
-#endif
     {
     std::cerr << "Failed to load scalar image." << std::endl;
     return EXIT_FAILURE;
@@ -122,11 +106,7 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
     logic->AddArchetypeVolume(argv[1], "volume", 1 /* bit 0: label map */);
 
   if (!volume2 ||
-#if VTK_MAJOR_VERSION <=5
-      !isImageDataValid(volume2->GetImageData()))
-#else
       !isImageDataValid(volume2->GetImageDataConnection()))
-#endif
     {
     std::cerr << "Failed to load label map image." << std::endl;
     return EXIT_FAILURE;

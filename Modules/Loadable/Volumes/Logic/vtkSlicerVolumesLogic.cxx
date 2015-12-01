@@ -994,13 +994,8 @@ vtkSlicerVolumesLogic::ClearVolumeImageData(vtkMRMLVolumeNode *volumeNode)
   thresh->SetOutputScalarType(VTK_SHORT);
 
   vtkNew<vtkImageData> imageData;
-#if (VTK_MAJOR_VERSION <= 5)
-  thresh->SetInput(volumeNode->GetImageData());
-  thresh->GetOutput()->Update();
-#else
   thresh->SetInputData(volumeNode->GetImageData());
   thresh->Update();
-#endif
   imageData->DeepCopy(thresh->GetOutput());
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
 }
@@ -1556,11 +1551,7 @@ vtkSlicerVolumesLogic
   outputVolumeResliceTransform->Inverse();
 
   vtkSmartPointer<vtkImageReslice> resliceFilter = vtkSmartPointer<vtkImageReslice>::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  resliceFilter->SetInput(inputVolumeNode->GetImageData());
-#else
   resliceFilter->SetInputData(inputVolumeNode->GetImageData());
-#endif
   resliceFilter->SetOutputOrigin(0, 0, 0);
   resliceFilter->SetOutputSpacing(1, 1, 1);
   referenceVolumeNode->GetImageData()->GetDimensions(dimensions);

@@ -665,11 +665,7 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
 
   if (d->FiberBundleDisplayNode->GetVisibility() )
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
-#else
     d->FiberBundleDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
-#endif
     }
   d->FiberBundleDisplayNode->GetScalarRange(range);
   if (d->FiberBundleDisplayNode->GetAutoScalarRange())

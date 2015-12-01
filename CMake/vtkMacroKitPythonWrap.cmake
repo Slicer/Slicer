@@ -77,11 +77,7 @@ macro(vtkMacroKitPythonWrap)
         list(APPEND VTK_KIT_PYTHON_LIBRARIES ${c}PythonD)
       endif()
     endforeach()
-    if(${VTK_VERSION_MAJOR} GREATER 5)
-      set(VTK_PYTHON_CORE vtkWrappingPythonCore)
-    else()
-      set(VTK_PYTHON_CORE vtkPythonCore)
-    endif()
+    set(VTK_PYTHON_CORE vtkWrappingPythonCore)
     target_link_libraries(
       ${MY_KIT_NAME}PythonD
       ${MY_KIT_NAME}

@@ -85,11 +85,7 @@ protected:
   int Offset;
 
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-#if (VTK_MAJOR_VERSION <= 5)
-  void ExecuteData(vtkDataObject *);
-#else
   void ExecuteDataWithInformation(vtkDataObject *, vtkInformation*);
-#endif
 
 private:
   vtkImageBimodalAnalysis(const vtkImageBimodalAnalysis&);

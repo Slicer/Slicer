@@ -26,11 +26,7 @@ int TestAnnotationWidgetsStandalone( int argc, char *argv[] )
   vtkSphereSource *ss = vtkSphereSource::New();
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  mapper->SetInput(ss->GetOutput());
-#else
   mapper->SetInputConnection(ss->GetOutputPort());
-#endif
   vtkActor *actor = vtkActor::New();
   actor->SetMapper(mapper);
 

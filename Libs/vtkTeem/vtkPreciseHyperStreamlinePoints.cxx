@@ -94,13 +94,9 @@ vtkPreciseHyperStreamlinePoints::~vtkPreciseHyperStreamlinePoints()
 }
 
 //------------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkPreciseHyperStreamlinePoints::Execute()
-#else
 int vtkPreciseHyperStreamlinePoints::RequestData(vtkInformation* request,
                                                  vtkInformationVector** inInfoVec,
                                                  vtkInformationVector* outInfoVec)
-#endif
 {
   vtkPreciseHyperPoint *sPtr;
   vtkIdType i, npts;
@@ -110,11 +106,7 @@ int vtkPreciseHyperStreamlinePoints::RequestData(vtkInformation* request,
   vtkDebugMacro(<<"Calling superclass execute");
 
   // default superclass behavior
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkPreciseHyperStreamline::Execute();
-#else
   vtkPreciseHyperStreamline::RequestData(request, inInfoVec, outInfoVec);
-#endif
   vtkDebugMacro(<<"Grabbing superclass output points.");
 
   // just grab points of output to make them available to user
@@ -150,9 +142,7 @@ int vtkPreciseHyperStreamlinePoints::RequestData(vtkInformation* request,
     } //for this hyperstreamline
 
   vtkDebugMacro(<<"Done Grabbing superclass output points.");
-#if (VTK_MAJOR_VERSION > 5)
   return 1;
-#endif
 }
 
 //------------------------------------------------------------------------------

@@ -128,36 +128,22 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *output)
-#else
 int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **vtkNotUsed(inputVector),
   vtkInformationVector *outputVector)
-#endif
 {
   if (!this->Superclass::Archetype)
     {
     vtkErrorMacro("An Archetype must be specified.");
-#if (VTK_MAJOR_VERSION <= 5)
-    return;
-#else
     return 0;
-#endif
     }
 
   int extent[6] = {0,-1,0,-1,0,-1};
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData *data = vtkImageData::SafeDownCast(output);
-  //data->UpdateInformation();
-  data->GetWholeExtent(extent);
-#else
   vtkImageData* data = vtkImageData::GetData(outputVector);
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   outInfo->Get
     (vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), extent);
-#endif
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1, 1, 1);
   data->SetExtent(extent);
@@ -182,9 +168,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
     // ERROR - should have used the series reader
     vtkErrorMacro("There is more than one file, use the vtkITKArchetypeImageSeriesReader instead");
     }
-#if (VTK_MAJOR_VERSION > 5)
   return 1;
-#endif
 }
 
 //----------------------------------------------------------------------------

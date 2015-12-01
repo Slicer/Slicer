@@ -47,25 +47,13 @@ vtkSeedTracts::vtkSeedTracts()
   this->TensorRotationMatrix = vtkMatrix4x4::New();
 
   // The user must set these for the class to function.
-#if (VTK_MAJOR_VERSION <= 5)
-  this->InputTensorField = NULL;
-#else
   this->InputTensorFieldConnection = NULL;
-#endif
 
   // The user may need to set these, depending on class usage
-#if (VTK_MAJOR_VERSION <= 5)
-  this->InputROI = NULL;
-#else
   this->InputROIConnection = NULL;
-#endif
   this->InputROIValue = -1;
   this->InputMultipleROIValues = NULL;
-#if (VTK_MAJOR_VERSION <= 5)
-  this->InputROI2 = NULL;
-#else
   this->InputROIConnection2 = NULL;
-#endif
   this->IsotropicSeeding = 0;
   this->IsotropicSeedingResolution = 2;
   this->RandomGrid = 0;
@@ -103,15 +91,9 @@ vtkSeedTracts::~vtkSeedTracts()
   this->TensorRotationMatrix->Delete();
 
   // volumes
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->InputTensorField) this->InputTensorField->Delete();
-  if (this->InputROI) this->InputROI->Delete();
-  if (this->InputROI2) this->InputROI2->Delete();
-#else
   if (this->InputTensorFieldConnection) this->InputTensorFieldConnection->Delete();
   if (this->InputROIConnection) this->InputROIConnection->Delete();
   if (this->InputROIConnection2) this->InputROIConnection2->Delete();
-#endif
 
   // settings
   if (this->VtkHyperStreamlineSettings)
@@ -395,14 +377,10 @@ int vtkSeedTracts::PointWithinTensorData(double *point, double *pointw)
   double *bounds;
   int inbounds;
 
-#if (VTK_MAJOR_VERSION <= 5)
-  bounds = this->InputTensorField->GetBounds();
-#else
   vtkAlgorithm* producer = this->InputTensorFieldConnection->GetProducer();
   vtkImageData* inputTensorField = vtkImageData::SafeDownCast(producer->GetOutputDataObject(0));
   producer->Update();
   bounds = inputTensorField->GetBounds();
-#endif
   vtkDebugMacro("Bounds " << bounds[0] << " " << bounds[1] << " " << bounds[2] << " " << bounds[3] << " " << bounds[4] << " " << bounds[5]);
 
   inbounds=1;
@@ -431,19 +409,11 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
   vtkHyperStreamlineDTMRI *newStreamline;
 
   // test we have input
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->InputTensorField == NULL)
-    {
-      vtkErrorMacro("No tensor data input.");
-      return;
-    }
-#else
   if (this->InputTensorFieldConnection == NULL)
     {
       vtkErrorMacro("No tensor data input.");
       return;
     }
-#endif
 
   pointw[0]=x;
   pointw[1]=y;
@@ -467,11 +437,7 @@ void vtkSeedTracts::SeedStreamlineFromPoint(double x,
   newStreamline=(vtkHyperStreamlineDTMRI *)this->CreateHyperStreamline();
 
   // Set its input information.
-#if (VTK_MAJOR_VERSION <= 5)
-  newStreamline->SetInput(this->InputTensorField);
-#else
   newStreamline->SetInputConnection(this->InputTensorFieldConnection);
-#endif
   newStreamline->SetStartPosition(point[0],point[1],point[2]);
   //newStreamline->DebugOn();
 
@@ -514,18 +480,6 @@ void vtkSeedTracts::SeedStreamlinesInROI()
 
 
   // test we have input
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->InputROI == NULL)
-    {
-      vtkErrorMacro("No ROI input.");
-      return;
-    }
-  if (this->InputTensorField == NULL)
-    {
-      vtkErrorMacro("No tensor data input.");
-      return;
-    }
-#else
   if (this->InputROIConnection == NULL)
     {
       vtkErrorMacro("No ROI input.");
@@ -536,7 +490,6 @@ void vtkSeedTracts::SeedStreamlinesInROI()
       vtkErrorMacro("No tensor data input.");
       return;
     }
-#endif
   // check ROI's value of interest
   if (this->InputROIValue <= 0)
     {
@@ -544,15 +497,7 @@ void vtkSeedTracts::SeedStreamlinesInROI()
       return;
     }
   // make sure it is short type
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->InputROI->GetScalarType() != VTK_SHORT)
-    {
-      vtkErrorMacro("Input ROI is not of type VTK_SHORT");
-      return;
-    }
-#else
   // TODO
-#endif
 
   vtkNew<vtkTransform> transform;
   transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
@@ -568,24 +513,16 @@ void vtkSeedTracts::SeedStreamlinesInROI()
  
   double spacing[3];
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* inputTensorField = this->InputTensorField;
-#else
   vtkImageData* inputTensorField = vtkImageData::SafeDownCast(this->InputTensorFieldConnection->GetProducer()->GetOutputDataObject(0));
-#endif
   inputTensorField->GetSpacing(spacing);
 
   // currently this filter is not multithreaded, though in the future
   // it could be (especially if it inherits from an image filter class)
-#if (VTK_MAJOR_VERSION <= 5)
-  this->InputROI->GetWholeExtent(inExt);
-#else
   {
     this->InputROIConnection->GetProducer()->Update();
     vtkInformation *inInfo = this->InputROIConnection->GetProducer()->GetOutputInformation(0);
     inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
   }
-#endif
 
   // find the region to loop over
   maxX = inExt[1] - inExt[0];
@@ -635,11 +572,7 @@ void vtkSeedTracts::SeedStreamlinesInROI()
   int progressCountMax = 100;
   double progress;
 
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkImageData* inputROI = this->InputROI;
-#else
   vtkImageData* inputROI = vtkImageData::SafeDownCast(this->InputROIConnection->GetProducer()->GetOutputDataObject(0));
-#endif
 
   for (idxZ = 0; idxZ <= maxZ; idxZ+=gridIncZ)
     {
@@ -748,11 +681,7 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                         this->CreateHyperStreamline();
 
                       // Set its input information.
-#if (VTK_MAJOR_VERSION <= 5)
-                      newStreamline->SetInput(this->InputTensorField);
-#else
                       newStreamline->SetInputConnection(this->InputTensorFieldConnection);
-#endif
                       newStreamline->SetStartPosition(point[0],point[1],point[2]);
                       //newStreamline->DebugOn();
 
@@ -780,18 +709,10 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                             this->SetFilePrefix("line");
                             }
                           // transform model
-#if (VTK_MAJOR_VERSION <= 5)
-                          transformer->SetInput(newStreamline->GetOutput());
-#else
                           transformer->SetInputConnection(newStreamline->GetOutputPort());
-#endif
 
                           // Save the model to disk
-#if (VTK_MAJOR_VERSION <= 5)
-                          writer->SetInput(transformer->GetOutput());
-#else
                           writer->SetInputConnection(transformer->GetOutputPort());
-#endif
                           writer->SetFileType(2);
 
                           std::stringstream fileNameStr;
@@ -840,18 +761,6 @@ void vtkSeedTracts::SeedStreamlinesInROIWithMultipleValues()
   numROIs=this->InputMultipleROIValues->GetNumberOfTuples();
 
   // test we have input
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->InputROI == NULL)
-    {
-      vtkErrorMacro("No ROI input.");
-      return;
-    }
-  if (this->InputTensorField == NULL)
-    {
-      vtkErrorMacro("No tensor data input.");
-      return;
-    }
-#else
   if (this->InputROIConnection == NULL)
     {
       vtkErrorMacro("No ROI input.");
@@ -862,7 +771,6 @@ void vtkSeedTracts::SeedStreamlinesInROIWithMultipleValues()
       vtkErrorMacro("No tensor data input.");
       return;
     }
-#endif
 
   for (int i=0 ; i<numROIs ; i++)
     {
@@ -937,11 +845,7 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
   for (int i=0; i<this->Streamlines->GetNumberOfItems(); i++)
     {
     streamline = static_cast<vtkHyperStreamline*> (this->Streamlines->GetItemAsObject(i));
-#if (VTK_MAJOR_VERSION <= 5)
-   transformer->SetInput(streamline->GetOutput());
-#else
     transformer->SetInputConnection(streamline->GetOutputPort());
-#endif
     transformer->Update();
 
     // Fill points and cells
@@ -1046,37 +950,6 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
   vtkNew<vtkTimerLog> timer;
   timer->StartTimer();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  // test we have input
-  if (this->InputROI == NULL)
-    {
-      vtkErrorMacro("No ROI input.");
-      return;
-    }
-  if (this->InputTensorField == NULL)
-    {
-      vtkErrorMacro("No tensor data input.");
-      return;
-    }
-  if (this->InputROI2 == NULL)
-    {
-      vtkErrorMacro("No ROI input.");
-      return;
-    }
-
-  // make sure it is short type
-  if (this->InputROI->GetScalarType() != VTK_SHORT)
-    {
-      vtkErrorMacro("Input ROI is not of type VTK_SHORT");
-      return;
-    }
-  // make sure it is short type
-  if (this->InputROI2->GetScalarType() != VTK_SHORT)
-    {
-      vtkErrorMacro("Input ROI is not of type VTK_SHORT");
-      return;
-    }
-#else
   // test we have input
   if (this->InputROIConnection == NULL)
     {
@@ -1099,7 +972,6 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
     }
   // make sure it is short type
   // TODO
-#endif
 
   vtkNew<vtkTransform> transform;
   transform->SetMatrix(this->WorldToTensorScaledIJK->GetMatrix());
@@ -1121,18 +993,11 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
 
   // currently this filter is not multithreaded, though in the future
   // it could be (especially if it inherits from an image filter class)
-#if (VTK_MAJOR_VERSION <= 5)
-  this->InputROI->GetWholeExtent(inExt);
-  this->InputROI->GetContinuousIncrements(inExt, inIncX, inIncY, inIncZ);
-  vtkImageData* inputROI = this->InputROI;
-  vtkImageData* inputROI2 = this->InputROI2;
-#else
   vtkInformation *inInfo = this->InputROIConnection->GetProducer()->GetOutputInformation(0);
   inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExt);
   vtkImageData* inputROI = vtkImageData::SafeDownCast(this->InputROIConnection->GetProducer()->GetOutputDataObject(0));
   inputROI->GetContinuousIncrements(inExt, inIncX, inIncY, inIncZ);
   vtkImageData* inputROI2 = vtkImageData::SafeDownCast(this->InputROIConnection2->GetProducer()->GetOutputDataObject(0));
-#endif
 
   // find the region to loop over
   maxX = inExt[1] - inExt[0];
@@ -1183,11 +1048,7 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                       newStreamline=(vtkHyperStreamlineDTMRI *) this->CreateHyperStreamline();
 
                       // Set its input information.
-#if (VTK_MAJOR_VERSION <= 5)
-                      newStreamline->SetInput(this->InputTensorField);
-#else
                       newStreamline->SetInputConnection(this->InputTensorFieldConnection);
-#endif
                       newStreamline->SetStartPosition(point[0],point[1],point[2]);
 
                       // Force it to update to access the path points
@@ -1261,18 +1122,10 @@ void vtkSeedTracts::SeedStreamlinesFromROIIntersectWithROI2()
                             this->SetFilePrefix("line");
                             }
                           // transform model
-#if (VTK_MAJOR_VERSION <= 5)
-                          transformer->SetInput(newStreamline->GetOutput());
-#else
                           transformer->SetInputConnection(newStreamline->GetOutputPort());
-#endif
                           
                           // Save the model to disk
-#if (VTK_MAJOR_VERSION <= 5)
-                          writer->SetInput(transformer->GetOutput());
-#else
                           writer->SetInputConnection(transformer->GetOutputPort());
-#endif
                           writer->SetFileType(2);
 
                           std::stringstream fileNameStr;

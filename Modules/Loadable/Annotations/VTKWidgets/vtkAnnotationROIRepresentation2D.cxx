@@ -90,19 +90,11 @@ vtkAnnotationROIRepresentation2D::vtkAnnotationROIRepresentation2D()
     this->HandleGeometry[i]->SetRadius(0);
 
     this->HandleToPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    this->HandleToPlaneTransformFilters[i]->SetInput(this->HandleGeometry[i]->GetOutput());
-#else
     this->HandleToPlaneTransformFilters[i]->SetInputConnection(this->HandleGeometry[i]->GetOutputPort());
-#endif
     this->HandleToPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->HandleMapper2D[i] = vtkPolyDataMapper2D::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    this->HandleMapper2D[i]->SetInput(this->HandleToPlaneTransformFilters[i]->GetOutput());
-#else
     this->HandleMapper2D[i]->SetInputConnection(this->HandleToPlaneTransformFilters[i]->GetOutputPort());
-#endif
     this->Handle2D[i] = vtkActor2D::New();
     //this->Handle2D[i]->SetProperty(this->HandleProperties[i]);
     this->Handle2D[i]->SetMapper(this->HandleMapper2D[i]);
@@ -188,20 +180,12 @@ void vtkAnnotationROIRepresentation2D::CreateFaceIntersections()
 
 
     this->IntersectionPlaneTransformFilters[i] = vtkTransformPolyDataFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    this->IntersectionPlaneTransformFilters[i]->SetInput(this->IntersectionLines[i]);
-#else
     this->IntersectionPlaneTransformFilters[i]->SetInputData(this->IntersectionLines[i]);
-#endif
 
     this->IntersectionPlaneTransformFilters[i]->SetTransform(this->IntersectionPlaneTransform);
 
     this->IntersectionMappers[i] = vtkPolyDataMapper2D::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    this->IntersectionMappers[i]->SetInput(this->IntersectionPlaneTransformFilters[i]->GetOutput());
-#else
     this->IntersectionMappers[i]->SetInputConnection(this->IntersectionPlaneTransformFilters[i]->GetOutputPort());
-#endif
 
     this->IntersectionActors[i] = vtkActor2D::New();
     this->IntersectionActors[i]->SetMapper(this->IntersectionMappers[i]);
@@ -512,13 +496,6 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
       this->HandleGeometry[i]->SetRadius(this->HandlesVisibility*radius);
       this->Handle2D[i]->SetVisibility(this->HandlesVisibility);
       this->IntersectionActors[i]->SetVisibility(this->SliceIntersectionVisibility);
-#if (VTK_MAJOR_VERSION <= 5)
-      if (this->Handle2D[i]->GetVisibility())
-        {
-        // This is SLOW, so only do it if the result is displayed
-        this->IntersectionPlaneTransformFilters[i]->Update();
-        }
-#endif
       count++;
       }
     else
@@ -545,13 +522,6 @@ void vtkAnnotationROIRepresentation2D::PositionHandles()
   for (int i = 0; i < 7; ++i)
     {
     this->HandleGeometry[i]->SetCenter(this->Points->GetPoint(8+i));
-#if (VTK_MAJOR_VERSION <= 5)
-    if (this->Handle2D[i]->GetVisibility())
-      {
-      // This is very SLOW, so only do it if the result is displayed
-      this->HandleToPlaneTransformFilters[i]->Update();
-      }
-#endif
     }
 
 

@@ -18,10 +18,6 @@
 #include "vtkMRMLScalarVolumeNode.h"
 class vtkMRMLStorageNode;
 
-#if VTK_MAJOR_VERSION <= 5
-class vtkAssignAttribute;
-class vtkDiffusionTensorMathematics;
-#endif
 class vtkDoubleArray;
 class vtkImageData;
 class vtkMatrix4x4;
@@ -103,10 +99,6 @@ protected:
 
   double MeasurementFrameMatrix[3][3];
   int Order;
-#if VTK_MAJOR_VERSION <= 5
-  vtkDiffusionTensorMathematics *DTIMathematics;
-  vtkAssignAttribute *AssignAttributeTensorsFromScalars ;
-#endif
 };
 
 #endif

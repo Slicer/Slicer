@@ -31,16 +31,10 @@ set(${KIT}_SRCS
   ${displayable_manager_SRCS}
   )
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  set(${KIT}_VTK_LIBRARIES
-    vtkRenderingVolume
-    vtkRenderingVolume${VTK_RENDERING_BACKEND}
-    )
-else()
-  set(${KIT}_TARGET_LIBRARIES
-    vtkRendering
-    )
-endif()
+set(${KIT}_VTK_LIBRARIES
+  vtkRenderingVolume
+  vtkRenderingVolume${VTK_RENDERING_BACKEND}
+  )
 
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicerAnnotationsModuleMRML

@@ -30,13 +30,7 @@ vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
   double gridSize[3]={4,4,4};
   vtkNew<vtkImageData> bsplineCoefficients;
   bsplineCoefficients->SetExtent(0, gridSize[0]-1, 0, gridSize[1]-1, 0, gridSize[2]-1);
-#if (VTK_MAJOR_VERSION <= 5)
-  bsplineCoefficients->SetScalarTypeToDouble();
-  bsplineCoefficients->SetNumberOfScalarComponents(3);
-  bsplineCoefficients->AllocateScalars();
-#else
   bsplineCoefficients->AllocateScalars(VTK_DOUBLE, 3);
-#endif
   double* bsplineParams=static_cast<double*>(bsplineCoefficients->GetScalarPointer());
   const unsigned int numberOfParams = 3*gridSize[0]*gridSize[1]*gridSize[2];
   for (unsigned int i=0; i<numberOfParams; i++)
@@ -45,11 +39,7 @@ vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
     }
 
   vtkNew<vtkOrientedBSplineTransform> warp;
-#if (VTK_MAJOR_VERSION <= 5)
-  warp->SetCoefficients(bsplineCoefficients.GetPointer());
-#else
   warp->SetCoefficientData(bsplineCoefficients.GetPointer());
-#endif
 
   this->SetAndObserveTransformFromParent(warp.GetPointer());
 }

@@ -213,15 +213,9 @@ endif()
 
 # Python wrap
 if(Slicer_USE_PYTHONQT)
-  if(${VTK_VERSION_MAJOR} GREATER 5)
-    set(VTK_COMMON_PYTHON_LIBRARY
-      vtkWrappingPythonCore # For vtkPythonUtil
-      )
-  else()
-    set(VTK_COMMON_PYTHON_LIBRARY
-      vtkCommonPythonD # For vtkPythonUtils
-      )
-  endif()
+  set(VTK_COMMON_PYTHON_LIBRARY
+    vtkWrappingPythonCore # For vtkPythonUtil
+    )
   list(APPEND KIT_target_libraries
     CTKScriptingPythonCore
     ${VTK_COMMON_PYTHON_LIBRARY} # For vtkPythonUtils

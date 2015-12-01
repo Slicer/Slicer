@@ -59,17 +59,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
 
   ///
   /// Get the pipeline input
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual vtkImageData* GetInputImageData();
-#else
   virtual vtkAlgorithmOutput* GetInputImageDataConnection();
-#endif
 
-#if (VTK_MAJOR_VERSION <= 5)
-  ///
-  /// Get the pipeline output
-  virtual vtkImageData* GetOutputImageData();
-#endif
 
   virtual void UpdateImageDataPipeline();
 
@@ -90,17 +81,9 @@ protected:
 
   ///
   /// Set the input of the pipeline
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
-#else
   virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
-#endif
 
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual vtkImageData* GetScalarImageData();
-#else
   virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
-#endif
 
   /// This property holds the current diffusion component used for display.
   int DiffusionComponent;

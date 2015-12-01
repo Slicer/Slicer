@@ -54,11 +54,7 @@ protected:
   vtkITKGrowCutSegmentationImageFilter();
   ~vtkITKGrowCutSegmentationImageFilter(){}
 
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void ExecuteData(vtkDataObject *outData);
-#else
   virtual void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo);
-#endif
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
 private:

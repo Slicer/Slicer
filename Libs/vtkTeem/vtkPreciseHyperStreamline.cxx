@@ -319,19 +319,11 @@ static void FixVectors(double **prev, double **current, int iv, int ix, int iy)
     }
 }
 
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkPreciseHyperStreamline::Execute()
-#else
 int vtkPreciseHyperStreamline::RequestData(vtkInformation* vtkNotUsed(request),
       vtkInformationVector** inInfoVec,
       vtkInformationVector* vtkNotUsed(outInfoVec))
-#endif
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkPolyData *input = vtkPolyData::SafeDownCast(this->GetInput());
-#else
   vtkPolyData* input = vtkPolyData::SafeDownCast(vtkImageData::GetData(inInfoVec[0]));
-#endif
   vtkPointData *pd=input->GetPointData();
   vtkDataArray *inScalars;
   vtkDataArray *inTensors;
@@ -357,11 +349,7 @@ int vtkPreciseHyperStreamline::RequestData(vtkInformation* vtkNotUsed(request),
     //   if ( ! (pd->GetTensors()) )
     {
       vtkErrorMacro(<<"No tensor data defined!");
-#if (VTK_MAJOR_VERSION <= 5)
-      return;
-#else
       return 1;
-#endif
     }
   w = new double[input->GetMaxCellSize()];
 
@@ -583,9 +571,7 @@ int vtkPreciseHyperStreamline::RequestData(vtkInformation* vtkNotUsed(request),
   cellTensors->Delete();
   cellScalars->Delete();
 
-#if (VTK_MAJOR_VERSION > 5)
   return 1;
-#endif
 }
 
 void vtkPreciseHyperStreamline::BuildTube()

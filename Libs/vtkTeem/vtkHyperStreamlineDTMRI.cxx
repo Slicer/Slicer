@@ -20,13 +20,6 @@
 #include "vtkPointData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include <vtkVersion.h>
-
-// the superclass had these classes in the vtkHyperStreamline.cxx
-// file: being compiled via CMakeListsLocal.txt
-#if (VTK_MAJOR_VERSION == 4 && VTK_MINOR_VERSION >= 3)
-//#include "vtkHyperPointandArray.cxx"
-#endif
 
 vtkStandardNewMacro(vtkHyperStreamlineDTMRI);
 

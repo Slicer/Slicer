@@ -36,11 +36,7 @@ protected:
   vtkPreciseHyperStreamlinePoints();
   ~vtkPreciseHyperStreamlinePoints();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  void Execute();
-#else
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-#endif
 
   /// convenient pointers to PreciseHyperStreamline1 and PreciseHyperStreamline2
   vtkPoints *PreciseHyperStreamlines[2];

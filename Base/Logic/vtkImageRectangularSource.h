@@ -94,11 +94,7 @@ protected:
   int InsideGraySlopeFlag;
 
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-#if (VTK_MAJOR_VERSION <= 5)
-  virtual void ExecuteData(vtkDataObject *outData);
-#else
   virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo);
-#endif
 private:
   vtkImageRectangularSource(const vtkImageRectangularSource&);  /// Not implemented.
   void operator=(const vtkImageRectangularSource&);  /// Not implemented.

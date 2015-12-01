@@ -166,22 +166,14 @@ QString qSlicerSceneViewsModuleWidgetPrivate::htmlFromSceneView(vtkMRMLSceneView
       writer->SetFileName(thumbnailPath.toLatin1());
       vtkNew<vtkImageResize> resizeFilter;
       resizeFilter->SetResizeMethodToOutputDimensions();
-#if (VTK_MAJOR_VERSION <= 5)
-      resizeFilter->SetInput(sceneView->GetScreenShot());
-#else
       resizeFilter->SetInputData(sceneView->GetScreenShot());
-#endif
       // try to keep the aspect ratio while setting a height
       int dims[3];
       sceneView->GetScreenShot()->GetDimensions(dims);
       float newHeight = 200;
       float newWidth = (newHeight/(float)(dims[0])) * (float)(dims[1]);
       resizeFilter->SetOutputDimensions(newHeight, newWidth, 1);
-#if (VTK_MAJOR_VERSION <= 5)
-      writer->SetInput(resizeFilter->GetOutput());
-#else
       writer->SetInputConnection(resizeFilter->GetOutputPort());
-#endif
       try
         {
         writer->Write();

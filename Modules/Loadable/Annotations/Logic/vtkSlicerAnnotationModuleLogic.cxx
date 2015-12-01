@@ -3510,11 +3510,7 @@ const char* vtkSlicerAnnotationModuleLogic::GetHTMLRepresentation(vtkMRMLAnnotat
       tempPath.append(".png");
 
       vtkNew<vtkPNGWriter> w;
-#if (VTK_MAJOR_VERSION <= 5)
-      w->SetInput(image);
-#else
       w->SetInputData(image);
-#endif
       w->SetFileName(tempPath.c_str());
       w->Write();
 

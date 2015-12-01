@@ -105,11 +105,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
   // Create the default bounding box
   vtkNew<vtkOutlineSource> boxSource;
   vtkNew<vtkPolyDataMapper> boxMapper;
-#if (VTK_MAJOR_VERSION <= 5)
-  boxMapper->SetInput(boxSource->GetOutput());
-#else
   boxMapper->SetInputConnection(boxSource->GetOutputPort());
-#endif
 
   this->BoxAxisActor = vtkSmartPointer<vtkActor>::New();
   this->BoxAxisActor->SetMapper(boxMapper.GetPointer());
@@ -127,11 +123,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
     axisText->SetText(labels[i]);
 
     vtkNew<vtkPolyDataMapper> axisMapper;
-#if (VTK_MAJOR_VERSION <= 5)
-    axisMapper->SetInput(axisText->GetOutput());
-#else
     axisMapper->SetInputConnection(axisText->GetOutputPort());
-#endif
 
     vtkNew<vtkFollower> axisActor;
     axisActor->SetMapper(axisMapper.GetPointer());
@@ -304,11 +296,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     boxSource->SetBounds(bounds);
 
     vtkNew<vtkPolyDataMapper> boxMapper;
-#if (VTK_MAJOR_VERSION <= 5)
-    boxMapper->SetInput(boxSource->GetOutput());
-#else
     boxMapper->SetInputConnection(boxSource->GetOutputPort());
-#endif
 
     this->BoxAxisActor->SetMapper(boxMapper.GetPointer());
     this->BoxAxisActor->SetScale(1.0, 1.0, 1.0);

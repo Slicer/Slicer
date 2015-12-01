@@ -46,11 +46,7 @@ public:
   virtual void SetInput2(vtkImageData *Input)
   {
     this->vtkImageAlgorithm::SetInput(1, Input);
-#if (VTK_MAJOR_VERSION <= 5)
-    this->vtkExporter1->SetInput(Input);
-#else
     this->vtkExporter1->SetInputData(Input);
-#endif
   };
 
   virtual vtkImageData *GetOutput() { return this->append->GetOutput(); };

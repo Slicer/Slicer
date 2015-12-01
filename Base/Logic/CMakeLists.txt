@@ -141,20 +141,6 @@ set(srcs ${SlicerBaseLogic_SRCS})
 
 add_library(${lib_name} ${srcs})
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    #vtkCommon # Provided by MRMLLogic
-    #vtkFiltering # Provided by MRMLLogic
-    #vtkGraphics # Provided by MRMLLogic
-    #vtkHybrid # Provided by MRMLLogic
-    #vtkIO # Provided by MRMLLogic
-    "" # Since no direct dependency to VTK libraries are required, let's explicitly set
-       # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
-    )
-endif()
-
 set(libs
   MRMLLogic
   ${VTK_LIBRARIES}
@@ -172,15 +158,9 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  if(${VTK_VERSION_MAJOR} GREATER 5)
-    set(VTK_COMMON_PYTHON_LIBRARY
-      vtkWrappingPythonCore # For vtkPythonUtil
-      )
-  else()
-    set(VTK_COMMON_PYTHON_LIBRARY
-      vtkCommonPythonD # For vtkPythonUtils
-      )
-  endif()
+  set(VTK_COMMON_PYTHON_LIBRARY
+    vtkWrappingPythonCore # For vtkPythonUtil
+    )
   list(APPEND libs
     ${VTK_COMMON_PYTHON_LIBRARY}
     ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY

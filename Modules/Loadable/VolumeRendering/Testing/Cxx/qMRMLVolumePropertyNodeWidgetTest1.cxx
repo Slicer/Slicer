@@ -34,19 +34,12 @@
 #include <vtkSmartPointer.h>
 
 // this test only works on VTKv6 and later
-#if VTK_MAJOR_VERSION <= 5
-int qMRMLVolumePropertyNodeWidgetTest1(int argc, char * argv [] )
-{
-  return -1;
-}
-#else
 
 #include <vtkAutoInit.h>
 #if defined(Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)
 VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
 #else
 VTK_MODULE_INIT(vtkRenderingContextOpenGL);
-#endif
 
 // STD includes
 

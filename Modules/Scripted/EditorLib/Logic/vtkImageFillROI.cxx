@@ -766,11 +766,7 @@ int vtkImageFillROI::RequestData(
     return 0;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  this->AllocateOutputData(this->GetOutput());
-#else
   this->AllocateOutputData(output, outInfo);
-#endif
 
   if ( !input ||
        input->GetDataObjectType() != VTK_IMAGE_DATA )

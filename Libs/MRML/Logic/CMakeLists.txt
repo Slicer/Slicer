@@ -100,15 +100,6 @@ set(lib_name ${PROJECT_NAME})
 set(srcs ${MRMLLogic_SRCS})
 add_library(${lib_name} ${srcs})
 
-if(${VTK_VERSION_MAJOR} GREATER 5)
-  # Minimum set of libraries already specified using components
-else()
-  set(VTK_LIBRARIES
-    "" # Since no direct dependency to VTK libraries are required, let's explicitly set
-    # the variable to an empty string to avoid complaints from vtkMacroKitPythonWraps.cmake.
-  )
-endif()
-
 set(libs
   MRMLCore
   vtkTeem
