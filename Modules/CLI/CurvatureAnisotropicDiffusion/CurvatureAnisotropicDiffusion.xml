@@ -61,7 +61,7 @@
       <index>0</index>
       <description><![CDATA[Input volume to be filtered]]></description>
     </image>
-    <image reference="inputVolume"
+    <image reference="inputVolume">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
