@@ -1,4 +1,3 @@
-
 #-----------------------------------------------------------------------------
 set(MODULE_NAME DICOMLib)
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -16,6 +15,7 @@ set(MODULE_PYTHON_SCRIPTS
   DICOMExportScalarVolume
   DICOMExportScene
   DICOMWidgets
+  DICOMUtils
   )
 
 set(MODULE_PYTHON_RESOURCES

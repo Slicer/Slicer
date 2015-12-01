@@ -1,6 +1,7 @@
 import os
 import unittest
 import vtk, qt, ctk, slicer
+from DICOMLib import DICOMUtils
 
 #
 # RSNAVisTutorial
@@ -342,16 +343,7 @@ class RSNAVisTutorialTest(unittest.TestCase):
 
     try:
       self.delayDisplay("Switching to temp database directory")
-      tempDatabaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatabase'
-      qt.QDir().mkpath(tempDatabaseDirectory)
-      if slicer.dicomDatabase:
-        originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
-      else:
-        originalDatabaseDirectory = None
-        settings = qt.QSettings()
-        settings.setValue('DatabaseDirectory', tempDatabaseDirectory)
-      dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-      dicomWidget.onDatabaseDirectoryChanged(tempDatabaseDirectory)
+      originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatabase')
 
       self.delayDisplay('Importing DICOM')
       mainWindow = slicer.util.mainWindow()
@@ -453,8 +445,7 @@ class RSNAVisTutorialTest(unittest.TestCase):
       self.delayDisplay('Test caused exception!\n' + str(e))
 
     self.delayDisplay("Restoring original database directory")
-    if originalDatabaseDirectory:
-      dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
+    DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
 
   def test_Part2Head(self,enableScreenshotsFlag=0,screenshotScaleFactor=1):
     """ Test using the head atlas - may not be needed - Slicer4Minute is already tested

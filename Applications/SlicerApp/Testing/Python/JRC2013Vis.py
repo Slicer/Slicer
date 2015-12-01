@@ -1,6 +1,7 @@
 import os
 import unittest
 import vtk, qt, ctk, slicer
+from DICOMLib import DICOMUtils
 
 #
 # JRC2013Vis
@@ -329,16 +330,7 @@ class JRC2013VisTest(unittest.TestCase):
 
     try:
       self.delayDisplay("Switching to temp database directory")
-      tempDatabaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
-      qt.QDir().mkpath(tempDatabaseDirectory)
-      if slicer.dicomDatabase:
-        originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
-      else:
-        originalDatabaseDirectory = None
-        settings = qt.QSettings()
-        settings.setValue('DatabaseDirectory', tempDatabaseDirectory)
-      dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-      dicomWidget.onDatabaseDirectoryChanged(tempDatabaseDirectory)
+      originalDatabaseDirectory = DICOMUtils.openTemporaryDatabase('tempDICOMDatbase')
 
       self.delayDisplay('Start Local DICOM Q/R SCP')
       import subprocess
@@ -444,8 +436,7 @@ class JRC2013VisTest(unittest.TestCase):
       self.delayDisplay('Test caused exception!\n' + str(e))
 
     self.delayDisplay("Restoring original database directory")
-    if originalDatabaseDirectory:
-      dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
+    DICOMUtils.closeTemporaryDatabase(originalDatabaseDirectory)
 
   def test_Part2Head(self):
     """ Test using the head atlas - may not be needed - Slicer4Minute is already tested

@@ -2,6 +2,7 @@ import os
 import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
+from DICOMLib import DICOMUtils
 
 #
 # SubjectHierarchyGenericSelfTest
@@ -161,44 +162,28 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
       self.assertEqual( numOfFilesInDicomDataDirTest, self.expectedNumOfFilesInDicomDataDir )
 
       # Open test database and empty it
-      qt.QDir().mkpath(self.dicomDatabaseDir)
+      with DICOMUtils.TemporaryDICOMDatabase(self.dicomDatabaseDir, True) as db:
+        self.assertTrue( db.isOpen )
+        self.assertEqual( slicer.dicomDatabase, db)
 
-      if slicer.dicomDatabase:
-        originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
-      else:
-        originalDatabaseDirectory = None
-        settings = qt.QSettings()
-        settings.setValue('DatabaseDirectory', self.dicomDatabaseDir)
+        # Import test data in database
+        indexer = ctk.ctkDICOMIndexer()
+        self.assertIsNotNone( indexer )
 
-      dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-      dicomWidget.onDatabaseDirectoryChanged(self.dicomDatabaseDir)
-      self.assertTrue( slicer.dicomDatabase.isOpen )
+        indexer.addDirectory( slicer.dicomDatabase, self.dicomDataDir )
 
-      # Import test data in database
-      indexer = ctk.ctkDICOMIndexer()
-      self.assertIsNotNone( indexer )
+        self.assertEqual( len(slicer.dicomDatabase.patients()), 1 )
+        self.assertIsNotNone( slicer.dicomDatabase.patients()[0] )
 
-      indexer.addDirectory( slicer.dicomDatabase, self.dicomDataDir )
+        # Load test data
+        numOfScalarVolumeNodesBeforeLoad = len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') )
+        numOfSubjectHierarchyNodesBeforeLoad = len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') )
 
-      self.assertEqual( len(slicer.dicomDatabase.patients()), 1 )
-      self.assertIsNotNone( slicer.dicomDatabase.patients()[0] )
+        patient = slicer.dicomDatabase.patients()[0]
+        DICOMUtils.loadPatientByUID(patient)
 
-      # Load test data
-      numOfScalarVolumeNodesBeforeLoad = len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') )
-      numOfSubjectHierarchyNodesBeforeLoad = len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') )
-
-      patient = slicer.dicomDatabase.patients()[0]
-      studies = slicer.dicomDatabase.studiesForPatient(patient)
-      series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
-      seriesUIDs = [uid for uidList in series for uid in uidList]
-      dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
-      dicomWidget.detailsPopup.loadCheckedLoadables()
-
-      self.assertEqual( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ),  numOfScalarVolumeNodesBeforeLoad + 1 )
-      self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), numOfSubjectHierarchyNodesBeforeLoad + 3 )
-
-      if originalDatabaseDirectory:
-        dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
+        self.assertEqual( len( slicer.util.getNodes('vtkMRMLScalarVolumeNode*') ),  numOfScalarVolumeNodesBeforeLoad + 1 )
+        self.assertEqual( len( slicer.util.getNodes('vtkMRMLSubjectHierarchyNode*') ), numOfSubjectHierarchyNodesBeforeLoad + 3 )
       
     except Exception, e:
       import traceback
