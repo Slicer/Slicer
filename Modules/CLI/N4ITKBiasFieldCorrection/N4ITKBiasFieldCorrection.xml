@@ -26,14 +26,14 @@
       <channel>input</channel>
       <description><![CDATA[Binary mask that defines the structure of your interest. NOTE: This parameter is OPTIONAL. If the mask is not specified, the module will use internally Otsu thresholding to define this mask. Better processing results can often be obtained when a meaningful mask is defined.]]></description>
     </image>
-    <image>
+    <image reference="inputImageName">
       <name>outputImageName</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
       <description><![CDATA[Result of processing]]></description>
     </image>
-    <image>
+    <image reference="inputImageName">
       <longflag>outputbiasfield</longflag>
       <name>outputBiasFieldName</name>
       <label>Output bias field image</label>

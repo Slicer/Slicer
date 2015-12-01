@@ -90,7 +90,7 @@
       <index>0</index>
       <description><![CDATA[Input DWI volume.]]></description>
     </image>
-    <image type="diffusion-weighted">
+    <image type="diffusion-weighted" reference="inputVolume">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

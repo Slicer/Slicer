@@ -49,7 +49,7 @@
       <index>1</index>
       <description><![CDATA[Input model]]></description>
     </geometry>
-    <image type="label">
+    <image type="label" reference="surface">
       <name>OutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

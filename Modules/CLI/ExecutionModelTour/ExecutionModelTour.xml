@@ -120,7 +120,7 @@
       <label>Input image</label>
       <channel>input</channel>
     </image>
-    <image>
+    <image reference="image1">
       <longflag>image2</longflag>
       <description><![CDATA[An output image]]></description>
       <label>Output image</label>

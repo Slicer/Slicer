@@ -58,7 +58,7 @@
       <index>0</index>
       <description><![CDATA[Input label map to smooth]]></description>
     </image>
-    <image type="label">
+    <image type="label" reference="inputVolume">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

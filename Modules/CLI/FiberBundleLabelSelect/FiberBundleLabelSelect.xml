@@ -32,7 +32,7 @@ Fiber bundle label select allows a user to select tracts passing or not passing 
       <index>1</index>
       <description>Input tractography</description>
     </geometry>
-    <geometry type = "fiberbundle">
+    <geometry type = "fiberbundle" reference="InputFibers">
       <name>OutputFibers</name>
       <label>Output Fiber Bundle</label>
       <channel>output</channel>

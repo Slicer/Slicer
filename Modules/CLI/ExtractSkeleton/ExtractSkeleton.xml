@@ -18,7 +18,7 @@
       <index>1</index>
       <description><![CDATA[Input image]]></description>
     </image>
-    <image type="label">
+    <image type="label" reference="InputImageFileName">
       <name>OutputImageFileName</name>
       <label>Output Image</label>
       <channel>output</channel>

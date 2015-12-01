@@ -23,7 +23,7 @@
       <longflag>--refImage</longflag>
       <channel>input</channel>
     </image>
-    <image>
+    <image reference="inputTransformName">
       <name>deformationFieldName</name>
       <label>Output deformation field</label>
       <longflag>--defImage</longflag>

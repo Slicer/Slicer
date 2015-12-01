@@ -26,7 +26,7 @@
       <description><![CDATA[Label map with seeding ROIs]]></description>
       <channel>input</channel>
     </image>
-    <geometry type="fiberbundle">
+    <geometry type="fiberbundle" reference="InputVolume">
       <name>OutputFibers</name>
       <label>Output Fiber Bundle</label>
       <channel>output</channel>

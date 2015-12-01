@@ -25,7 +25,7 @@
       <index>2</index>
       <description><![CDATA[Input model 2]]></description>
     </geometry>
-    <geometry type="model">
+    <geometry type="model" reference="Model1">
       <name>ModelOutput</name>
       <label>Output Model</label>
       <channel>output</channel>

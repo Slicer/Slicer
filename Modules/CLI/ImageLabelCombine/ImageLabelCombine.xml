@@ -25,7 +25,7 @@
       <index>1</index>
       <description><![CDATA[Label map image]]></description>
     </image>
-    <image type="label">
+    <image type="label" reference="InputLabelMap_A">
       <name>OutputLabelMap</name>
       <label>Output Label Map</label>
       <channel>output</channel>

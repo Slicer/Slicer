@@ -46,7 +46,7 @@
       <label>Input Volume</label>
       <channel>input</channel>
     </image>
-    <image>
+    <image reference="InputVolume">
       <name>OutputVolume</name>
       <index>1</index>
       <description><![CDATA[Resampled Volume]]></description>

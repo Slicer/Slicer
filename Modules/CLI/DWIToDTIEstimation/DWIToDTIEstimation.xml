@@ -26,14 +26,14 @@
       <channel>input</channel>
       <description><![CDATA[Mask where the tensors will be computed]]></description>
     </image>
-    <image type="tensor">
+    <image type="tensor" reference="inputVolume">
       <name>outputTensor</name>
       <label>Output DTI Volume</label>
       <channel>output</channel>
       <index>1</index>
       <description><![CDATA[Estimated DTI volume]]></description>
     </image>
-    <image type="scalar">
+    <image type="scalar" reference="inputVolume">
       <name>outputBaseline</name>
       <label>Output Baseline Volume</label>
       <channel>output</channel>

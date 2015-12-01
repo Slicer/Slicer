@@ -26,7 +26,7 @@
       <index>1</index>
       <description><![CDATA[The transform goes from the fixed image's space into the moving image's space]]></description>
     </image>
-    <image>
+    <image reference="fixedImage">
       <name>resampledImage</name>
       <label>Resample image</label>
       <channel>output</channel>

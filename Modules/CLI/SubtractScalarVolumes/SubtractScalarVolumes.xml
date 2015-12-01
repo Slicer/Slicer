@@ -25,7 +25,7 @@
       <index>1</index>
       <description><![CDATA[Input volume 2]]></description>
     </image>
-    <image>
+    <image reference="inputVolume1">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

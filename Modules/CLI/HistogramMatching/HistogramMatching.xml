@@ -50,7 +50,7 @@
       <index>1</index>
       <description><![CDATA[Input volume whose histogram will be matched]]></description>
     </image>
-    <image>
+    <image reference="inputVolume">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>

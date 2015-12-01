@@ -95,7 +95,7 @@
       <index>1</index>
       <description><![CDATA[Label image for initialization]]></description>
     </image>
-    <image type="label">
+    <image type="label" reference="originalImageFileName">
       <name>segmentedImageFileName</name>
       <label>Output Volume</label>
       <channel>output</channel>

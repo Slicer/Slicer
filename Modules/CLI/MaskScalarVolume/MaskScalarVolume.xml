@@ -25,7 +25,7 @@
       <index>1</index>
       <description><![CDATA[Label volume containing the mask]]></description>
     </image>
-    <image>
+    <image reference="InputVolume">
       <name>OutputVolume</name>
       <label>Masked Volume</label>
       <channel>output</channel>

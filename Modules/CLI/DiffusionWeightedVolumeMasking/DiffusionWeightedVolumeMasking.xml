@@ -18,14 +18,14 @@
       <index>0</index>
       <description><![CDATA[Input DWI volume]]></description>
     </image>
-    <image type="scalar">
+    <image type="scalar" reference="inputVolume">
       <name>outputBaseline</name>
       <label>Output Baseline Volume</label>
       <channel>output</channel>
       <index>2</index>
       <description><![CDATA[Estimated baseline volume]]></description>
     </image>
-    <image type="label">
+    <image type="label" reference="inputVolume">
       <name>thresholdMask</name>
       <label>Otsu Threshold Mask</label>
       <channel>output</channel>

@@ -20,7 +20,7 @@
       <description><![CDATA[Freesurfer white matter model of the left hemishere]]></description>
     </geometry>
     <geometry>
-      <name>lr_orig</name>
+      <name>rh_orig</name>
       <label>white matter model right side</label>
       <channel>input</channel>
       <index>0</index>
@@ -43,7 +43,7 @@
   <parameters>
     <label>Output</label>
     <description><![CDATA[output parameters]]></description>
-    <geometry>
+    <geometry reference="lh_orig">
       <name>grayMatterROI_lh</name>
       <label>Graymatter selection left hemisphere</label>
       <channel>output</channel>
@@ -51,7 +51,7 @@
       <default>None</default>
       <description><![CDATA[Graymatter surface selection on left hemisphere]]></description>
     </geometry>
-    <geometry>
+    <geometry reference="rh_orig">
       <name>grayMatterROI_rh</name>
       <label>Graymatter selection right hemisphere</label>
       <channel>output</channel>

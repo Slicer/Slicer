@@ -18,7 +18,7 @@
       <index>0</index>
       <description><![CDATA[Volume containing the input grayscale data.]]></description>
     </image>
-    <geometry>
+    <geometry reference="InputVolume">
       <name>OutputGeometry</name>
       <label>Output Geometry</label>
       <channel>output</channel>
