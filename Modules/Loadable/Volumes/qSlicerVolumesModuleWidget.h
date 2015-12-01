@@ -44,6 +44,11 @@ public:
 protected:
   virtual void setup();
 
+protected slots:
+  void nodeSelectionChanged(vtkMRMLNode*);
+  void updateWidgetFromMRML();
+  void convertToLabelmap();
+
 protected:
   QScopedPointer<qSlicerVolumesModuleWidgetPrivate> d_ptr;
 

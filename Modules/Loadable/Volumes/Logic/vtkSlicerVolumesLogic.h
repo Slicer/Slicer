@@ -162,12 +162,14 @@ public:
                                              vtkMRMLVolumeNode *volumeNode,
                                              const char *name);
 
+  /// \deprecated
   /// Fill in a label map volume to match the given template volume node.
   /// \sa FillLabelVolumeFromTemplate(vtkMRMLScene*, vtkMRMLScalarVolumeNode*, vtkMRMLVolumeNode*)
   /// \sa GetMRMLScene()
   vtkMRMLLabelMapVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLLabelMapVolumeNode *labelNode,
                                                        vtkMRMLVolumeNode *templateNode);
 
+  /// \deprecated
   /// Fill in a label map volume to match the given template volume node, under
   /// the assumption that the given label map node is already added to the scene.
   /// A display node will be added to it if the label node doesn't already have
@@ -176,6 +178,18 @@ public:
   vtkMRMLLabelMapVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
                                                        vtkMRMLLabelMapVolumeNode *labelNode,
                                                        vtkMRMLVolumeNode *templateNode);
+
+  /// Fill in a label map volume to match the given input volume node, under
+  /// the assumption that the given label map node is already added to the scene.
+  /// A display node will be added to it if the label node doesn't already have
+  /// one, and the image data associated with the label node will be allocated
+  /// according to the template volumeNode.
+  vtkMRMLLabelMapVolumeNode *CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
+                                                       vtkMRMLLabelMapVolumeNode *labelNode,
+                                                       vtkMRMLVolumeNode *inputVolume);
+
+  /// Clear the image data of a volume node to contain all zeros
+  static void ClearVolumeImageData(vtkMRMLVolumeNode *volumeNode);
 
   /// Return a string listing any warnings about the spatial validity of
   /// the labelmap with respect to the volume.  An empty string indicates
@@ -283,7 +297,9 @@ protected:
       const char* filename, const char* volname, int loadingOptions,
       vtkStringArray *fileList);
 
+protected:
   vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
+
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
 
   NodeSetFactoryRegistry VolumeRegistry;
@@ -291,6 +307,7 @@ protected:
   /// Allowable difference in comparing volume geometry double values.
   /// Defaults to 1 to the power of 10 to the minus 6
   double CompareVolumeGeometryEpsilon;
+
   /// Error print out precision, paried with CompareVolumeGeometryEpsilon.
   /// defaults to 6
   int CompareVolumeGeometryPrecision;

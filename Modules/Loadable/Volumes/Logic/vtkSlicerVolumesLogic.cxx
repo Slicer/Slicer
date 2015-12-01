@@ -868,63 +868,21 @@ vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
                                                vtkMRMLVolumeNode *volumeNode,
                                                const char *name)
 {
-  if ( scene == NULL || volumeNode == NULL || name == NULL)
+  if (scene == NULL || volumeNode == NULL || name == NULL)
     {
     return NULL;
     }
 
-  // create a display node
-  vtkNew<vtkMRMLLabelMapVolumeDisplayNode> labelDisplayNode;
-  scene->AddNode(labelDisplayNode.GetPointer());
-
-  // create a volume node as copy of source volume
+  // Create a volume node as copy of source volume
   vtkNew<vtkMRMLLabelMapVolumeNode> labelNode;
-  labelNode->CopyWithScene(volumeNode);
-  labelNode->RemoveAllDisplayNodeIDs();
-  labelNode->SetAndObserveStorageNodeID(NULL);
-
-  // associate it with the source volume
-  if (volumeNode->GetID())
-    {
-    labelNode->SetAttribute("AssociatedNodeID", volumeNode->GetID());
-    }
-
-  // set the display node to have a label map lookup table
-  this->SetAndObserveColorToDisplayNode(labelDisplayNode.GetPointer(),
-                                        /* labelMap= */ 1,
-                                        /* filename= */ 0);
-
   std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
-
   labelNode->SetName(uname.c_str());
-  labelNode->SetAndObserveDisplayNodeID( labelDisplayNode->GetID() );
-
-  // make an image data of the same size and shape as the input volume,
-  // but filled with zeros
-  vtkNew<vtkImageThreshold> thresh;
-  thresh->ReplaceInOn();
-  thresh->ReplaceOutOn();
-  thresh->SetInValue(0);
-  thresh->SetOutValue(0);
-  thresh->SetOutputScalarType (VTK_SHORT);
-#if (VTK_MAJOR_VERSION <= 5)
-  thresh->SetInput( volumeNode->GetImageData() );
-  thresh->GetOutput()->Update();
-
-  vtkNew<vtkImageData> imageData;
-  imageData->DeepCopy( thresh->GetOutput() );
-  labelNode->SetAndObserveImageData( imageData.GetPointer() );
-#else
-  thresh->SetInputData(volumeNode->GetImageData());
-  thresh->Update();
-  vtkNew<vtkImageData> imageData;
-  imageData->DeepCopy( thresh->GetOutput() );
-  labelNode->SetAndObserveImageData( imageData.GetPointer() );
-#endif
-
-
-  // add the label volume to the scene
   scene->AddNode(labelNode.GetPointer());
+
+  this->CreateLabelVolumeFromVolume(scene, labelNode.GetPointer(), volumeNode);
+
+  // Make an image data of the same size and shape as the input volume, but filled with zeros
+  vtkSlicerVolumesLogic::ClearVolumeImageData(labelNode.GetPointer());
 
   return labelNode.GetPointer();
 }
@@ -962,7 +920,21 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
                                                    vtkMRMLLabelMapVolumeNode *labelNode,
                                                    vtkMRMLVolumeNode *templateNode)
 {
-  if (scene == NULL || labelNode == NULL || templateNode == NULL)
+  this->CreateLabelVolumeFromVolume(scene, labelNode, templateNode);
+
+  // Make an image data of the same size and shape as the input volume, but filled with zeros
+  vtkSlicerVolumesLogic::ClearVolumeImageData(labelNode);
+
+  return labelNode;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLLabelMapVolumeNode*
+vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
+                                                   vtkMRMLLabelMapVolumeNode *labelNode,
+                                                   vtkMRMLVolumeNode *inputVolume)
+{
+  if (scene == NULL || labelNode == NULL || inputVolume == NULL)
     {
     return NULL;
     }
@@ -970,22 +942,48 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
   // Create a display node if the label node does not have one
   vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> labelDisplayNode =
       vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(labelNode->GetDisplayNode());
-  if ( labelDisplayNode.GetPointer() == NULL )
+  if (labelDisplayNode.GetPointer() == NULL)
     {
     labelDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
     scene->AddNode(labelDisplayNode);
     }
 
   // We need to copy from the volume node to get required attributes, but
-  // the copy copies templateNode's name as well.  So save the original name
+  // the copy copies inputVolume's name as well.  So save the original name
   // and re-set the name after the copy.
   std::string origName(labelNode->GetName());
-  labelNode->Copy(templateNode);
+  labelNode->Copy(inputVolume);
+  labelNode->SetAndObserveStorageNodeID(NULL);
   labelNode->SetName(origName.c_str());
+  labelNode->SetAndObserveDisplayNodeID(labelDisplayNode->GetID());
+
+  // Associate labelmap with the source volume
+  //TODO: Obsolete, replace mechanism with node references
+  if (inputVolume->GetID())
+    {
+    labelNode->SetAttribute("AssociatedNodeID", inputVolume->GetID());
+    }
 
   // Set the display node to have a label map lookup table
   this->SetAndObserveColorToDisplayNode(labelDisplayNode,
                                         /* labelMap = */ 1, /* filename= */ 0);
+
+  // Copy and set image data of the input volume to the label volume
+  vtkNew<vtkImageData> imageData;
+  imageData->DeepCopy(inputVolume->GetImageData());
+  labelNode->SetAndObserveImageData(imageData.GetPointer());
+
+  return labelNode;
+}
+
+//----------------------------------------------------------------------------
+void
+vtkSlicerVolumesLogic::ClearVolumeImageData(vtkMRMLVolumeNode *volumeNode)
+{
+  if (volumeNode == NULL)
+    {
+    return;
+    }
 
   // Make an image data of the same size and shape as the input volume, but filled with zeros
   vtkNew<vtkImageThreshold> thresh;
@@ -993,15 +991,18 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
   thresh->ReplaceOutOn();
   thresh->SetInValue(0);
   thresh->SetOutValue(0);
-  thresh->SetOutputScalarType (VTK_SHORT);
+  thresh->SetOutputScalarType(VTK_SHORT);
+
+  vtkNew<vtkImageData> imageData;
 #if (VTK_MAJOR_VERSION <= 5)
-  thresh->SetInput( templateNode->GetImageData() );
+  thresh->SetInput(volumeNode->GetImageData());
   thresh->GetOutput()->Update();
 #else
-  labelNode->SetImageDataConnection( thresh->GetOutputPort() );
+  thresh->SetInputData(volumeNode->GetImageData());
+  thresh->Update();
 #endif
-
-  return labelNode;
+  imageData->DeepCopy(thresh->GetOutput());
+  volumeNode->SetAndObserveImageData(imageData.GetPointer());
 }
 
 //----------------------------------------------------------------------------

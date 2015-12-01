@@ -29,8 +29,6 @@
 #include "ui_qMRMLVolumeInfoWidget.h"
 
 // MRML includes
-#include <vtkMRMLLabelMapVolumeDisplayNode.h>
-#include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
@@ -93,6 +91,7 @@ void qMRMLVolumeInfoWidgetPrivate::init()
                    q, SLOT(setImageOrigin(double*)));
   QObject::connect(this->CenterVolumePushButton, SIGNAL(clicked()),
                    q, SLOT(center()));
+
   // setScanOrder is dangerous, it can loose orientation information because
   // ComputeScanOrderFromIJKToRAS is not the exact opposite of
   // ComputeIJKToRASFromScanOrder
@@ -106,6 +105,7 @@ void qMRMLVolumeInfoWidgetPrivate::init()
                    q, SLOT(setNumberOfScalars(int)));
   QObject::connect(this->ScalarTypeComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(setScalarType(int)));
+
   // Window level presets are read-only
   q->setDataTypeEditable(false);
   q->setEnabled(this->VolumeNode != 0);
@@ -229,7 +229,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
 
     d->FileNameLineEdit->setText("");
 
-    d->LabelMapCheckBox->setChecked(false);
+    d->VolumeTagLabel->setText("");
 
     d->WindowLevelPresetsListWidget->clear();
 
@@ -299,8 +299,22 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
 
   vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
 
-  vtkMRMLLabelMapVolumeNode *labelMapNode = vtkMRMLLabelMapVolumeNode::SafeDownCast( d->VolumeNode );
-  d->LabelMapCheckBox->setChecked(labelMapNode!=0);
+  // Remove "Volume" postfix from node tag name to get only the volume type
+  QString volumeType(d->VolumeNode->GetNodeTagName());
+  if (volumeType.endsWith("Volume"))
+    {
+    volumeType.chop(6);
+    // Workaround for not having the "Scalar" tag in scalar volumes
+    if (volumeType.isEmpty())
+      {
+      volumeType = QString("Scalar");
+      }
+    }
+  else
+    {
+    qWarning() << __FUNCTION__ << "Invalid volume node tag '" << volumeType << "'!";
+    }
+  d->VolumeTagLabel->setText(volumeType);
 
   vtkMRMLScalarVolumeDisplayNode *displayNode =
     scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : 0;
