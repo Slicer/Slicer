@@ -25,6 +25,7 @@
 // Subject Hierarchy includes
 #include "vtkMRMLSubjectHierarchyConstants.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
+#include "vtkSlicerSubjectHierarchyModuleLogic.h"
 #include "qMRMLSceneSubjectHierarchyModel_p.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
@@ -339,12 +340,12 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
   if (!subjectHierarchyNode)
     {
     // If not subject hierarchy node (i.e. filtering is turned off),
-    // then show as any node, except for a tooltip explaining how to add it to subject hierarchy
+    // then show as any node, except for a tooltip explaining that it should not appear by default
     if (column == this->nameColumn())
       {
       QString text = QString(node->GetName());
       item->setText(text);
-      item->setToolTip(tr("To add into subject hierarchy, drag&drop under a subject hierarchy node"));
+      item->setToolTip(tr("ERROR: This node should not appear in subject hierarchy"));
       }
     // ID column
     if (column == this->idColumn())
@@ -510,7 +511,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
     // No checks and questions when the transform is being removed
     if (!newParentTransformNode)
       {
-      subjectHierarchyNode->TransformBranch(NULL, false);
+      vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(subjectHierarchyNode, NULL, false);
       return;
       }
 
@@ -543,7 +544,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
         }
       }
 
-    subjectHierarchyNode->TransformBranch(newParentTransformNode, hardenExistingTransforms);
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(subjectHierarchyNode, newParentTransformNode, hardenExistingTransforms);
     }
 }
 
@@ -638,7 +639,7 @@ void qMRMLSceneSubjectHierarchyModel::onHardenTransformOnBranchOfCurrentNode()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (currentNode)
     {
-    currentNode->HardenTransformOnBranch();
+    vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(currentNode);
     }
   QApplication::restoreOverrideCursor();
 }
@@ -649,6 +650,6 @@ void qMRMLSceneSubjectHierarchyModel::onRemoveTransformsFromBranchOfCurrentNode(
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (currentNode)
     {
-    currentNode->TransformBranch(NULL, false);
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(currentNode, NULL, false);
     }
 }

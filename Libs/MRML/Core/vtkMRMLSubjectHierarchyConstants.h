@@ -23,14 +23,15 @@
 #ifndef __vtkMRMLSubjectHierarchyConstants_h
 #define __vtkMRMLSubjectHierarchyConstants_h
 
-#include "vtkSlicerSubjectHierarchyModuleMRMLExport.h"
+// MRML includes
+#include "vtkMRML.h"
 
 // STD includes
 #include <cstdlib>
 #include <string>
 #include <vector>
 
-class VTK_SLICER_SUBJECTHIERARCHY_MODULE_MRML_EXPORT vtkMRMLSubjectHierarchyConstants
+class VTK_MRML_EXPORT vtkMRMLSubjectHierarchyConstants
 {
 public:
   //----------------------------------------------------------------------------

@@ -800,7 +800,7 @@ namespace
       }
 
     // Transform model21 using transform1
-    model21ShNode->TransformBranch(transformNode1.GetPointer());
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(model21ShNode, transformNode1.GetPointer());
     vtkMRMLTransformNode * currentTransformNode = model21Node->GetParentTransformNode();
     vtkMRMLTransformNode * expectedTransformNode = transformNode1.GetPointer();
     if (currentTransformNode != expectedTransformNode)
@@ -825,7 +825,7 @@ namespace
       }
 
     // Transform study2 using transform2, harden transform on model21
-    study2ShNode->TransformBranch(transformNode2.GetPointer());
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(study2ShNode, transformNode2.GetPointer());
     if ( model21Node->GetParentTransformNode() != transformNode2.GetPointer()
       || model22Node->GetParentTransformNode() != transformNode2.GetPointer() )
       {
@@ -845,7 +845,7 @@ namespace
       }
 
     // Set transform1 on study2 without hardening
-    study2ShNode->TransformBranch(transformNode1.GetPointer(), false);
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(study2ShNode, transformNode1.GetPointer(), false);
     if ( model21Node->GetParentTransformNode() != transformNode1.GetPointer()
       || model22Node->GetParentTransformNode() != transformNode1.GetPointer() )
       {
@@ -860,8 +860,8 @@ namespace
       }
 
     // Harden transform2 on model22
-    study2ShNode->TransformBranch(transformNode2.GetPointer(), false);
-    study2ShNode->HardenTransformOnBranch();
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(study2ShNode, transformNode2.GetPointer(), false);
+    vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(study2ShNode);
 
     model21PolyData->GetPoint(0, model21PointsArray);
     if (model21PointsArray[0] != 100.0 || model21PointsArray[1] != 50.0 || model21PointsArray[2] != 0.0)
@@ -879,8 +879,8 @@ namespace
       }
 
     // Remove transforms from study
-    study2ShNode->TransformBranch(transformNode1.GetPointer());
-    study2ShNode->TransformBranch(NULL);
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(study2ShNode, transformNode1.GetPointer());
+    vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(study2ShNode, NULL);
     if (study2ShNode->IsAnyNodeInBranchTransformed())
       {
       std::cout << "Wrong inquiry about transformed nodes in study2" << std::endl;

@@ -26,7 +26,11 @@
 #include "vtkMRMLSubjectHierarchyNode.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
+#include "vtkMRMLScene.h"
+#include "vtkMRMLTransformNode.h"
+
+// Slicer Libs includes
+#include <vtkSlicerTransformLogic.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -269,4 +273,97 @@ bool vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(std::string tagName)
       }
     }
   return false;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(vtkMRMLSubjectHierarchyNode* node, vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms/*=true*/)
+{
+  if (!node)
+    {
+    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid input node!" << std::endl;
+    return;
+    }
+
+  // Get all associated data nodes from children nodes (and itself)
+  vtkNew<vtkCollection> childTransformableNodes;
+  node->GetAssociatedChildrenNodes(childTransformableNodes.GetPointer(), "vtkMRMLTransformableNode");
+
+  childTransformableNodes->InitTraversal();
+  for (int childNodeIndex = 0; childNodeIndex < childTransformableNodes->GetNumberOfItems(); ++childNodeIndex)
+    {
+    vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
+      childTransformableNodes->GetItemAsObject(childNodeIndex) );
+    if (!transformableNode)
+      {
+      vtkWarningWithObjectMacro(node, "TransformBranch: Non-transformable node found in a collection of transformable nodes!");
+      continue;
+      }
+    if (transformableNode == transformNode)
+      {
+      // Transform node cannot be transformed by itself
+      continue;
+      }
+
+    vtkMRMLTransformNode* parentTransformNode = transformableNode->GetParentTransformNode();
+    if (parentTransformNode)
+      {
+      // Do nothing if the parent transform matches the specified transform to apply
+      if (parentTransformNode == transformNode)
+        {
+        //vtkDebugMacro("TransformBranch: Specified transform " << transformNode->GetName() << " already applied on data node belonging to subject hierarchy node " << this->Name);
+        continue;
+        }
+      // Harden existing parent transform if this option was chosen
+      if (hardenExistingTransforms)
+        {
+        //vtkDebugMacro("TransformBranch: Hardening transform " << transformNode->GetName() << " on node " << transformableNode->GetName());
+        vtkSlicerTransformLogic::hardenTransform(transformableNode);
+        }
+      }
+
+    // Apply the transform
+    transformableNode->SetAndObserveTransformNodeID(transformNode ? transformNode->GetID() : NULL);
+
+    // Trigger update by setting the modified flag on the subject hierarchy node
+    vtkMRMLSubjectHierarchyNode* subjectHierarchyNode =
+      vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(transformableNode);
+    if (!subjectHierarchyNode)
+      {
+      vtkErrorWithObjectMacro(node, "TransformBranch: Unable to find subject hierarchy node for transformable node " << transformableNode->GetName());
+      continue;
+      }
+    subjectHierarchyNode->Modified();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjectHierarchyNode* node)
+{
+  if (!node)
+    {
+    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid input node!" << std::endl;
+    return;
+    }
+
+  // Get all associated data nodes from children nodes (and itself)
+  vtkSmartPointer<vtkCollection> childTransformableNodes = vtkSmartPointer<vtkCollection>::New();
+  node->GetAssociatedChildrenNodes(childTransformableNodes, "vtkMRMLTransformableNode");
+  childTransformableNodes->InitTraversal();
+
+  for (int childNodeIndex=0; childNodeIndex<childTransformableNodes->GetNumberOfItems(); ++childNodeIndex)
+    {
+    vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
+      childTransformableNodes->GetItemAsObject(childNodeIndex) );
+    vtkSlicerTransformLogic::hardenTransform(transformableNode);
+
+    // Trigger update by setting the modified flag on the subject hierarchy node
+    vtkMRMLSubjectHierarchyNode* subjectHierarchyNode =
+      vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(transformableNode);
+    if (!subjectHierarchyNode)
+      {
+      vtkErrorWithObjectMacro(node, "TransformBranch: Unable to find subject hierarchy node for transformable node " << transformableNode->GetName());
+      continue;
+      }
+    subjectHierarchyNode->Modified();
+    }
 }

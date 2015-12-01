@@ -30,6 +30,7 @@
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLTransformNode.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -192,7 +193,7 @@ public:
 };
 
 //---------------------------------------------------------------------------
-// A callback command to edit the tranform hierarchy. This command is configured in the
+// A callback command to edit the transform hierarchy. This command is configured in the
 // processing thread and then passed to the main gui thread to be executed..
 //
 // Other hierarchies can be edited in this manner by creating callbacks specific to the desired edits
@@ -207,7 +208,7 @@ public:
                        unsigned long vtkNotUsed(eid),
                        void * vtkNotUsed(callData))
   {
-    vtkMRMLNode *nd =  this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->NodeID.c_str());
+    vtkMRMLNode *nd = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->NodeID.c_str());
     vtkMRMLTransformableNode *tnd = vtkMRMLTransformableNode::SafeDownCast(nd);
 
     if (tnd)
@@ -248,6 +249,72 @@ protected:
   vtkSlicerCLIModuleLogic* CLIModuleLogic;
   std::string TransformNodeID;
   std::string NodeID;
+};
+
+//---------------------------------------------------------------------------
+// A callback command to edit the subject hierarchy.
+class vtkSlicerCLIEditSubjectHierarchyCallback : public vtkCallbackCommand
+{
+public:
+  static vtkSlicerCLIEditSubjectHierarchyCallback *New()
+  {
+    return new vtkSlicerCLIEditSubjectHierarchyCallback;
+  }
+  virtual void Execute(vtkObject* vtkNotUsed(caller),
+                       unsigned long vtkNotUsed(eid),
+                       void * vtkNotUsed(callData))
+  {
+    vtkMRMLNode *nd = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->ReferenceNodeID.c_str());
+    vtkMRMLSubjectHierarchyNode *shnd = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(nd);
+
+    if (shnd)
+    {
+      vtkMRMLNode *ond = this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->OutputNodeID.c_str());
+      vtkMRMLSubjectHierarchyNode* pnd = vtkMRMLSubjectHierarchyNode::SafeDownCast(shnd->GetParentNode());
+
+      // This function call only creates a new subject hierarchy node if it does not yet exist (i.e.
+      // AutoCreateSubjectHierarchy in qSlicerSubjectHierarchyPluginLogic is off, then nodes need to
+      // be explicitly created). Otherwise change properties, in this case the parent.
+      vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
+        this->CLIModuleLogic->GetMRMLScene(), pnd, shnd->GetLevel(), ond->GetName(), ond);
+    }
+  }
+
+  void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)
+  {
+    this->CLIModuleLogic = logic;
+  }
+  vtkSlicerCLIModuleLogic* GetCLIModuleLogic()
+  {
+    return this->CLIModuleLogic;
+  }
+
+  void SetOutputNodeID(const std::string& id)
+  {
+    this->OutputNodeID = id;
+  }
+
+  void SetReferenceNodeID(const std::string& id)
+  {
+    this->ReferenceNodeID = id;
+  }
+
+protected:
+  vtkSlicerCLIEditSubjectHierarchyCallback()
+  {
+    this->CLIModuleLogic = 0;
+  }
+  ~vtkSlicerCLIEditSubjectHierarchyCallback()
+  {
+    this->SetCLIModuleLogic(0);
+  }
+
+  /// CLI logic
+  vtkSlicerCLIModuleLogic* CLIModuleLogic;
+  /// Node ID of output node to move in the hierarchy
+  std::string OutputNodeID;
+  /// Node ID of reference node specifying where to move output node
+  std::string ReferenceNodeID;
 };
 
 //----------------------------------------------------------------------------
@@ -2412,9 +2479,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     // 1. if an output transform has a reference, then that reference is placed under the transform.
     //        (subject, predicate, object) = (reference, setTransform, transform)
     //
-    // 2. TODO: if an output volume/model has a reference, then that output volume/model is placed in the
-    // same spot of the hierarchy as the reference.
-    //        (subject, predicate, object) = (reference, addChild, volume/model)
+    // 2. if an output volume/model has a reference, then that output volume/model is placed in the
+    // same spot of the subject hierarchy as the reference.
+    //        (subject, predicate, object) = (reference, setParent, volume/model)
     //
     for (pgit = pgbeginit; pgit != pgendit; ++pgit)
       {
@@ -2427,63 +2494,83 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
       for (pit = pbeginit; pit != pendit; ++pit)
         {
-          // does parameter have a reference attribute?
-          if ((*pit).GetChannel() == "output"  && (*pit).GetReference().size() > 0)
+        // does parameter have a reference attribute?
+        if ((*pit).GetChannel() == "output"  && (*pit).GetReference().size() > 0)
           {
           // does the reference parameter exist?
-            if (node0->GetModuleDescription().HasParameter((*pit).GetReference()))
+          if (node0->GetModuleDescription().HasParameter((*pit).GetReference()))
             {
             // get the id stored in the parameter referenced
-              std::string reference = node0->GetModuleDescription().GetParameterDefaultValue((*pit).GetReference());
-              if (reference.size() > 0)
+            std::string reference = node0->GetModuleDescription().GetParameterDefaultValue((*pit).GetReference());
+            if (reference.size() > 0)
               {
               // "reference" can mean different things based on the parameter type.
               // If  the parameter is a transform and the reference is transformable, then the transform hierarchy
               // of the reference is manipulated such that the reference is under the transform.
-              // If the parameter is an image or a model, then the parameter is placed in various hierarchies at the same
-              // level as the reference. TO BE IMPLEMENTED IN SLICER 4.4
+              // If the parameter is an image or a model, then the parameter is placed in subject hierarchy at the same
+              // level as the reference.
 
-                vtkMRMLNode *refNode = this->GetMRMLScene()->GetNodeByID(reference.c_str());
-                if (refNode)
+              vtkMRMLNode *refNode = this->GetMRMLScene()->GetNodeByID(reference.c_str());
+              if (refNode)
                 {
-                  if ((*pit).GetTag() == "transform")
+                if ((*pit).GetTag() == "transform")
                   {
                   // is the reference a transformable node?
-                    vtkMRMLTransformableNode *trefNode = vtkMRMLTransformableNode::SafeDownCast(refNode);
-                    if (trefNode)
+                  vtkMRMLTransformableNode *trefNode = vtkMRMLTransformableNode::SafeDownCast(refNode);
+                  if (trefNode)
                     {
-                      if ( (*pit).GetDefault() != "" )
+                    if ( (*pit).GetDefault() != "" )
                       {
                       // Invoke an event that will cause the scene to be rewired in the main thread.
                       // Pass a callback that performs the specific edit request. Callback is allocated here and
                       // deleted once it is used.
-                        vtkSlicerCLIEditTransformHierarchyCallback *callback = vtkSlicerCLIEditTransformHierarchyCallback::New();
-                        callback->SetCLIModuleLogic(this);
-                        callback->SetNodeID(reference);
-                        callback->SetTransformNodeID((*pit).GetDefault());
+                      vtkSlicerCLIEditTransformHierarchyCallback *callback = vtkSlicerCLIEditTransformHierarchyCallback::New();
+                      callback->SetCLIModuleLogic(this);
+                      callback->SetNodeID(reference);
+                      callback->SetTransformNodeID((*pit).GetDefault());
 
-                        this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
-                                                                          vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
-                                                                          callback);
+                      this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
+                                                                        vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
+                                                                        callback);
 
-                        // callback will be get deleted by the vtkSlicerCLIOneShotCallbackCallback observing this event
+                      // callback will be get deleted by the vtkSlicerCLIOneShotCallbackCallback observing this event
                       }
                     }
                   }
-                  else
+                else if (((*pit).GetTag() == "image") || ((*pit).GetTag() == "geometry"))
                   {
-                    // TODO: other reference types. I.e. placing a image in the same position in a hierarchy as the reference
+                  // Placing an image or model in the same position in a hierarchy as the reference
+                  if ( (*pit).GetDefault() != "" )
+                    {
+                    // Invoke an event that will cause the scene to be rewired in the main thread.
+                    // Pass a callback that performs the specific edit request. Callback is allocated here and
+                    // deleted once it is used.
+                    vtkSlicerCLIEditSubjectHierarchyCallback *callback = vtkSlicerCLIEditSubjectHierarchyCallback::New();
+                    callback->SetCLIModuleLogic(this);
+                    callback->SetReferenceNodeID(reference);
+                    callback->SetOutputNodeID((*pit).GetDefault());
+
+                    this->GetApplicationLogic()->InvokeEventWithDelay(0, this,
+                                                                      vtkSlicerCLIModuleLogic::RequestHierarchyEditEvent,
+                                                                      callback);
+
+                    // callback will be get deleted by the vtkSlicerCLIOneShotCallbackCallback observing this event
+                    }
+                  }
+                else
+                  {
+                  // TODO: other reference types
                   }
                 }
-                else
+              else
                 {
-                  vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
+                vtkWarningMacro( << "Cannot find referenced node " << (*pit).GetDefault());
                 }
               }
             }
-            else
+          else
             {
-              vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
+            vtkWarningMacro( << "Referenced parameter unknown: " << (*pit).GetReference() );
             }
           }
         } // for pit

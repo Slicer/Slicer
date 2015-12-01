@@ -35,6 +35,7 @@
 #include "vtkSlicerSubjectHierarchyModuleLogicExport.h"
 
 class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLTransformNode;
 
 /// \ingroup Slicer_QtModules_SubjectHierarchy
 class VTK_SLICER_SUBJECTHIERARCHY_LOGIC_EXPORT vtkSlicerSubjectHierarchyModuleLogic :
@@ -65,6 +66,17 @@ public:
 
   /// Determine if a tag name is a study tag (not attribute, but tag - without prefix!)
   static bool IsStudyTag(std::string tagName);
+
+  /// Apply transform node as parent transform on subject hierarchy node and on all children, recursively
+  /// \param node Subject hierarchy node defining branch to apply transform on
+  /// \param transformNode Transform node to apply. If NULL, then any existing transform is removed
+  /// \param hardenExistingTransforms Mode of handling already transformed nodes. If true (default), then the occurrent parent transforms
+  ///   of target nodes are hardened before applying the specified transform. If false, then the already applied parent transforms are
+  ///   transformed with the specified transform (Note: this latter approach may result in unwanted transformations of other nodes)
+  static void TransformBranch(vtkMRMLSubjectHierarchyNode* node, vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms=true);
+
+  /// Harden transform on subject hierarchy node and on all children, recursively
+  static void HardenTransformOnBranch(vtkMRMLSubjectHierarchyNode* node);
 
 protected:
   /// Called each time a new scene is set

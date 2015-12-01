@@ -6,7 +6,6 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT
 
 set(${KIT}_INCLUDE_DIRECTORIES
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
-  ${vtkSlicerSubjectHierarchyModuleMRML_INCLUDE_DIRS}
   ${vtkSlicerDICOMLibModuleLogic_INCLUDE_DIRS}
   )
 
@@ -39,7 +38,6 @@ set(${KIT}_RESOURCES
 #-----------------------------------------------------------------------------
 set(${KIT}_TARGET_LIBRARIES
   qSlicerSubjectHierarchyModuleWidgets
-  vtkSlicerSubjectHierarchyModuleMRML
   vtkSlicerDICOMLibModuleLogic
   MRMLCore
   MRMLLogic

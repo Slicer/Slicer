@@ -28,8 +28,6 @@
 #ifndef __vtkMRMLSubjectHierarchyNode_h
 #define __vtkMRMLSubjectHierarchyNode_h
 
-#include "vtkSlicerSubjectHierarchyModuleMRMLExport.h"
-
 // MRML includes
 #include <vtkMRMLHierarchyNode.h>
 
@@ -38,11 +36,11 @@
 
 class vtkMRMLTransformNode;
 
-/// \ingroup Slicer_QtModules_SubjectHierarchy
+/// \ingroup Slicer_MRML_Core
 /// \brief MRML node to represent a subject hierarchy object
 ///   Separate node type has the advantage of identifying itself faster (type vs string comparison)
 ///   and providing utility functions within the class
-class VTK_SLICER_SUBJECTHIERARCHY_MODULE_MRML_EXPORT vtkMRMLSubjectHierarchyNode : public vtkMRMLHierarchyNode
+class VTK_MRML_EXPORT vtkMRMLSubjectHierarchyNode : public vtkMRMLHierarchyNode
 {
 public:
   // Separator characters for (de)serializing the UID map
@@ -170,16 +168,6 @@ public:
   /// Determine if any of the children of this node is transformed (has a parent transform applied), except for an optionally given node
   /// \param exceptionNode The function still returns true if the only applied transform found is this specified node
   bool IsAnyNodeInBranchTransformed(vtkMRMLTransformNode* exceptionNode=NULL);
-
-  /// Apply transform node as parent transform on itself and on all children, recursively
-  /// \param transformNode Transform node to apply
-  /// \param hardenExistingTransforms Mode of handling already transformed nodes. If true (default), then the occurrent parent transforms
-  ///   of target nodes are hardened before applying the specified transform. If false, then the already applied parent transforms are
-  ///   transformed with the specified transform (Note: this latter approach may result in unwanted transformations of other nodes)
-  void TransformBranch(vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms=true);
-
-  /// Harden transform on itself and on all children, recursively
-  void HardenTransformOnBranch();
 
   /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
   static void DeserializeUIDList(std::string uidListString, std::vector<std::string>& deserializedUIDList);
