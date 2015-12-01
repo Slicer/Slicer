@@ -163,15 +163,13 @@ function(_sb_list_to_string separator input_list output_string_var)
     foreach(index RANGE ${last_element_index})
       # Get current item_value
       list(GET input_list ${index} item_value)
-      # but ignore empty value
-      if(item_value STREQUAL "")
-        continue()
-      endif()
-      # .. and append to output string
-      set(_string  "${_string}${item_value}")
-      # Append separator if current element is NOT the last one.
-      if(NOT index EQUAL last_element_index)
-        set(_string  "${_string}${separator}")
+      if(NOT item_value STREQUAL "")
+        # .. and append non-empty value to output string
+        set(_string  "${_string}${item_value}")
+        # Append separator if current element is NOT the last one.
+        if(NOT index EQUAL last_element_index)
+          set(_string  "${_string}${separator}")
+        endif()
       endif()
     endforeach()
   endif()
