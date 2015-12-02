@@ -75,6 +75,8 @@ protected slots:
   void onMRMLNodeModified();
   /// Internal function to update the ROI node based on the sliders
   void updateROI();
+  /// Internal function to update the ROIDisplay node
+  void onMRMLDisplayNodeModified();
 
 protected:
   QScopedPointer<qMRMLAnnotationROIWidgetPrivate> d_ptr;

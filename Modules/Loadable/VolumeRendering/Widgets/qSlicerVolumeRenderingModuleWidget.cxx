@@ -487,6 +487,21 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     }
 }
 
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayROINode()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  if (!d->ROIWidget->mrmlROINode())
+    {
+    return;
+    }
+  //ROI visibility
+  d->ROICropDisplayCheckBox->setChecked(
+        d->ROIWidget->mrmlROINode()->GetDisplayVisibility());
+}
+
+
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::addVolumeIntoView(vtkMRMLNode* viewNode)
 {
@@ -596,7 +611,12 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode
     return;
     }
   vtkMRMLAnnotationROINode *roiNode = vtkMRMLAnnotationROINode::SafeDownCast(node);
+  this->qvtkReconnect(d->DisplayNode->GetROINode(), roiNode,
+                        vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                        this, SLOT(updateFromMRMLDisplayROINode()));
+
   d->DisplayNode->SetAndObserveROINodeID(roiNode ? roiNode->GetID() : 0);
+  this->updateFromMRMLDisplayROINode();
 }
 
 // --------------------------------------------------------------------------
@@ -805,6 +825,24 @@ void qSlicerVolumeRenderingModuleWidget
   // cropping (to follow the "what you see is what you get" pattern).
   if (toggle)
     {
-    d->ROICropCheckBox->setChecked(true);
+    d->DisplayNode->SetCroppingEnabled(toggle);
+    }
+
+  int numberOfDisplayNodes =
+      d->ROIWidget->mrmlROINode()->GetNumberOfDisplayNodes();
+  int wasModifying[numberOfDisplayNodes];
+
+  for(int index = 0; index < numberOfDisplayNodes; index++)
+    {
+    wasModifying[index] =
+        d->ROIWidget->mrmlROINode()->GetNthDisplayNode(index)->StartModify();
+    }
+
+  d->ROIWidget->mrmlROINode()->SetDisplayVisibility(toggle);
+
+  for(int index = 0; index < numberOfDisplayNodes; index++)
+    {
+    d->ROIWidget->mrmlROINode()->GetNthDisplayNode(index)->EndModify(
+          wasModifying[index]);
     }
 }

@@ -555,7 +555,7 @@
   </customwidget>
   <customwidget>
    <class>ctkCheckablePushButton</class>
-   <extends>QPushButton</extends>
+   <extends>ctkPushButton</extends>
    <header>ctkCheckablePushButton.h</header>
   </customwidget>
   <customwidget>
@@ -584,6 +584,11 @@
    <class>ctkExpandButton</class>
    <extends>QToolButton</extends>
    <header>ctkExpandButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkSliderWidget</class>
@@ -817,38 +822,6 @@
     <hint type="destinationlabel">
      <x>230</x>
      <y>732</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ROICropDisplayCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ROIWidget</receiver>
-   <slot>setDisplayClippingBox(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>238</x>
-     <y>193</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>114</x>
-     <y>541</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ROIWidget</sender>
-   <signal>displayClippingBoxChanged(bool)</signal>
-   <receiver>ROICropDisplayCheckBox</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>114</x>
-     <y>541</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>238</x>
-     <y>193</y>
     </hint>
    </hints>
   </connection>

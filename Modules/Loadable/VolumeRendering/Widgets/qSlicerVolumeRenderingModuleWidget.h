@@ -96,6 +96,7 @@ protected slots:
   void resetOffset();
   void updatePresetSliderRange();
   void updateFromMRMLDisplayNode();
+  void updateFromMRMLDisplayROINode();
 
   void synchronizeScalarDisplayNode();
   void setFollowVolumeDisplayNode(bool);
