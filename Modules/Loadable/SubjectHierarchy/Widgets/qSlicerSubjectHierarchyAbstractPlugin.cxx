@@ -195,12 +195,20 @@ bool qSlicerSubjectHierarchyAbstractPlugin::reparentNodeInsideSubjectHierarchy(v
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyAbstractPlugin::displayedNodeName(vtkMRMLSubjectHierarchyNode* node)const
 {
-  QString nodeText(node->GetName());
-  if (nodeText.endsWith(QString(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str())))
-    {
-    nodeText = nodeText.left( nodeText.size() - vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().size() );
-    }
-
+  QString nodeText;
+  vtkMRMLNode* dataNode = node->GetAssociatedNode();
+  if (dataNode)
+  {
+    nodeText = QString(dataNode->GetName());
+  }
+  else
+  {
+    nodeText = QString(node->GetName());
+    if (nodeText.endsWith(QString(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str())))
+      {
+      nodeText = nodeText.left( nodeText.size() - vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().size() );
+      }
+  }
   return nodeText;
 }
 
