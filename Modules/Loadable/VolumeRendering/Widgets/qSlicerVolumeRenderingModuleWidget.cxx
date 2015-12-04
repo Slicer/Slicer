@@ -832,8 +832,7 @@ void qSlicerVolumeRenderingModuleWidget
   int numberOfDisplayNodes =
       d->ROIWidget->mrmlROINode()->GetNumberOfDisplayNodes();
 
-  std::vector<int> wasModifying;
-  wasModifying.resize(numberOfDisplayNodes);
+  std::vector<int> wasModifying(numberOfDisplayNodes);
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {

@@ -201,8 +201,7 @@ void qMRMLAnnotationROIWidget::setDisplayClippingBox(bool visible)
 
   int numberOfDisplayNodes = d->ROINode->GetNumberOfDisplayNodes();
 
-  std::vector<int> wasModifying;
-  wasModifying.resize(numberOfDisplayNodes);
+  std::vector<int> wasModifying(numberOfDisplayNodes);
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
     wasModifying[index] = d->ROINode->GetNthDisplayNode(index)->StartModify();
