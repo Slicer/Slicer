@@ -52,6 +52,7 @@
 
 // STD includes
 #include <cassert>
+#include <vector>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
@@ -830,7 +831,9 @@ void qSlicerVolumeRenderingModuleWidget
 
   int numberOfDisplayNodes =
       d->ROIWidget->mrmlROINode()->GetNumberOfDisplayNodes();
-  int wasModifying[numberOfDisplayNodes];
+
+  std::vector<int> wasModifying;
+  wasModifying.resize(numberOfDisplayNodes);
 
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
