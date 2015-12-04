@@ -28,6 +28,9 @@
 #include <vtkMRMLAnnotationROINode.h>
 #include <vtkMRMLDisplayNode.h>
 
+// STD includes
+#include <vector>
+
 // 0.001 because the sliders only handle 2 decimals
 #define SLIDERS_EPSILON 0.001
 
@@ -197,8 +200,9 @@ void qMRMLAnnotationROIWidget::setDisplayClippingBox(bool visible)
   Q_D(qMRMLAnnotationROIWidget);
 
   int numberOfDisplayNodes = d->ROINode->GetNumberOfDisplayNodes();
-  int wasModifying[numberOfDisplayNodes];
 
+  std::vector<int> wasModifying;
+  wasModifying.resize(numberOfDisplayNodes);
   for(int index = 0; index < numberOfDisplayNodes; index++)
     {
     wasModifying[index] = d->ROINode->GetNthDisplayNode(index)->StartModify();
