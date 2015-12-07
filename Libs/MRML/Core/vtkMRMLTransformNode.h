@@ -112,7 +112,7 @@ public:
 
   ///
   /// 1 if all the transforms to the top are linear, 0 otherwise
-  int  IsTransformToWorldLinear() ;
+  int  IsTransformToWorldLinear();
 
   ///
   /// 1 if all the transforms between nodes are linear, 0 otherwise
@@ -143,7 +143,18 @@ public:
                                        vtkMatrix4x4* transformToNode);
   ///
   /// Returns 1 if this node is one of the node's descendents
+  /// NULL designates the world transform node and so always returns with 1.
   int IsTransformNodeMyParent(vtkMRMLTransformNode* node);
+
+  ///
+  /// Returns 1 if the node is one of the this node's descendents
+  int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
+
+  ///
+  /// Get the first common parent of he current and the target transform node
+  /// If there are no common parents then NULL is returned
+  /// \param targetNode The transform for which the current transform will be determined
+  vtkMRMLTransformNode* GetFirstCommonParent(vtkMRMLTransformNode* targetNode);
 
   ///
   /// Set a new matrix transform of this node to parent node.
@@ -185,10 +196,6 @@ public:
   /// Returns 0 if the current transform is not linear.
   /// Deprecated! Use SetMatrixTransformToParent instead.
   virtual int SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *matrix);
-
-  ///
-  /// Returns 1 if the node is one of the this node's descendents
-  int IsTransformNodeMyChild(vtkMRMLTransformNode* node);
 
   /// Reimplemented from vtkMRMLTransformableNode
   virtual bool CanApplyNonLinearTransforms()const;

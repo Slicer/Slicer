@@ -155,7 +155,7 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
 {
   if (src==NULL || dst==NULL)
     {
-    // we should log an error, but unfortunately we cannot log a VTK macro in a static method
+    vtkGenericWarningMacro("vtkMRMLTransformNode::DeepCopyTransform failed: source or destination transform is invalid");
     return 0;
     }
 
@@ -166,12 +166,18 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
 
     // Flatten the transform list to make the copying simpler
     vtkGeneralTransform* dstGeneral=vtkGeneralTransform::SafeDownCast(dst);
+    if (dstGeneral==NULL)
+      {
+      vtkGenericWarningMacro("vtkMRMLTransformNode::DeepCopyTransform failed: destination transform has to be vtkGeneralTransform");
+      return 0;
+      }
     vtkNew<vtkCollection> sourceTransformList;
     FlattenGeneralTransform(sourceTransformList.GetPointer(), src);
 
     // Copy the concatentated transforms
     vtkCollectionSimpleIterator it;
     vtkAbstractTransform* concatenatedTransform = NULL;
+    dstGeneral->PreMultiply();
     for (sourceTransformList->InitTraversal(it); (concatenatedTransform = vtkAbstractTransform::SafeDownCast(sourceTransformList->GetNextItemAsObject(it))) ;)
       {
       vtkAbstractTransform* concatenatedTransformCopy=concatenatedTransform->MakeTransform();
@@ -184,8 +190,12 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     {
     // Fix up the DeepCopy for vtkBSplineTransform (it performs only a ShallowCopy on the coefficient grid)
     dst->DeepCopy(src);
+    if (vtkBSplineTransform::SafeDownCast(dst)==NULL)
+      {
+      vtkGenericWarningMacro("vtkMRMLTransformNode::DeepCopyTransform failed: destination transform has to be vtkBSplineTransform");
+      return 0;
+      }
     vtkImageData* srcCoefficients=vtkBSplineTransform::SafeDownCast(src)->GetCoefficientData();
-
     if (srcCoefficients)
       {
       vtkNew<vtkImageData> dstCoefficients;
@@ -197,6 +207,11 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     {
     // Fix up the DeepCopy for vtkGridTransform (it performs only a ShallowCopy on the displacement grid)
     dst->DeepCopy(src);
+    if (vtkGridTransform::SafeDownCast(dst)==NULL)
+      {
+      vtkGenericWarningMacro("vtkMRMLTransformNode::DeepCopyTransform failed: destination transform has to be vtkGridTransform");
+      return 0;
+      }
     vtkImageData* srcDisplacementGrid=vtkGridTransform::SafeDownCast(src)->GetDisplacementGrid();
     if (srcDisplacementGrid)
       {
@@ -209,6 +224,11 @@ int vtkMRMLTransformNode::DeepCopyTransform(vtkAbstractTransform* dst, vtkAbstra
     {
     // Fix up the DeepCopy for vtkThinPlateSplineTransform (it performs only a ShallowCopy on the landmark points)
     dst->DeepCopy(src);
+    if (vtkThinPlateSplineTransform::SafeDownCast(dst)==NULL)
+      {
+      vtkGenericWarningMacro("vtkMRMLTransformNode::DeepCopyTransform failed: destination transform has to be vtkThinPlateSplineTransform");
+      return 0;
+      }
     vtkPoints* srcSourceLandmarks=vtkThinPlateSplineTransform::SafeDownCast(src)->GetSourceLandmarks();
     if (srcSourceLandmarks)
       {
@@ -350,22 +370,15 @@ vtkAbstractTransform* vtkMRMLTransformNode::GetTransformFromParent()
 //----------------------------------------------------------------------------
 int  vtkMRMLTransformNode::IsTransformToWorldLinear()
 {
-  if (!this->IsLinear())
+  for (vtkMRMLTransformNode* current = this; current != NULL; current = current->GetParentTransformNode())
     {
-    return 0;
-    }
-  else
-    {
-    vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    if (parent != NULL)
+    if (!current->IsLinear())
       {
-      return parent->IsTransformToWorldLinear();
-      }
-    else
-      {
-      return 1;
+      return 0;
       }
     }
+  // not found non-linear transform component, therefore it's a linear transform
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -376,25 +389,7 @@ void vtkMRMLTransformNode::GetTransformToWorld(vtkGeneralTransform* transformToW
     vtkErrorMacro("vtkMRMLTransformNode::GetTransformToWorld failed: transformToWorld is invalid");
     return;
     }
-
-  if (transformToWorld->GetNumberOfConcatenatedTransforms() == 0)
-    {
-    transformToWorld->Identity();
-    }
-
-  transformToWorld->PostMultiply();
-
-  vtkAbstractTransform* transformToParent=this->GetTransformToParent();
-  if (transformToParent!=NULL)
-    {
-    transformToWorld->Concatenate(transformToParent);
-    }
-
-  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-  if (parent != NULL)
-    {
-    parent->GetTransformToWorld(transformToWorld);
-    }
+  GetTransformToNode(NULL, transformToWorld);
 }
 
 //----------------------------------------------------------------------------
@@ -405,162 +400,164 @@ void vtkMRMLTransformNode::GetTransformFromWorld(vtkGeneralTransform* transformF
     vtkErrorMacro("vtkMRMLTransformNode::GetTransformFromWorld failed: transformToWorld is invalid");
     return;
     }
-
-  if (transformFromWorld->GetNumberOfConcatenatedTransforms() == 0)
-    {
-    transformFromWorld->Identity();
-    }
-
-  transformFromWorld->PreMultiply();
-
-  vtkAbstractTransform* transformFromParent=this->GetTransformFromParent();
-  if (transformFromParent!=NULL)
-    {
-    transformFromWorld->Concatenate(transformFromParent);
-    }
-
-  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-  if (parent != NULL)
-    {
-    parent->GetTransformFromWorld(transformFromWorld);
-    }
+  GetTransformToNode(NULL, transformFromWorld);
+  transformFromWorld->Inverse();
 }
 
 //----------------------------------------------------------------------------
-int  vtkMRMLTransformNode::IsTransformToNodeLinear(vtkMRMLTransformNode* node)
+int  vtkMRMLTransformNode::IsTransformToNodeLinear(vtkMRMLTransformNode* targetNode)
 {
-  if (this->IsTransformNodeMyParent(node))
+  if (this == targetNode)
     {
-    vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    if (parent != NULL)
+    return 1;
+    }
+  if (this->IsTransformNodeMyParent(targetNode))
+    {
+    // traverse the transform tree from bottom to top, from this to target
+    for (vtkMRMLTransformNode* current = this; current != targetNode; current = current->GetParentTransformNode())
       {
-      if (!strcmp(parent->GetID(), node->GetID()) )
+      if (!current->IsLinear())
         {
-        return this->IsLinear();
-        }
-      else
-        {
-        return this->IsLinear() * parent->IsTransformToNodeLinear(node);
+        return 0;
         }
       }
-    else return this->IsLinear();
+    return 1;
     }
-  else if (this->IsTransformNodeMyChild(node))
+  else if (this->IsTransformNodeMyChild(targetNode))
     {
-    vtkMRMLTransformNode *parent = node->GetParentTransformNode();
-    if (parent != NULL)
+    // traverse the transform tree from bottom to top, from target to this
+    for (vtkMRMLTransformNode* current = targetNode; current != this; current = current->GetParentTransformNode())
       {
-      if (!strcmp(parent->GetID(), this->GetID()) )
+      if (!current->IsLinear())
         {
-        return node->IsLinear();
-        }
-      else
-        {
-        return node->IsLinear() * parent->IsTransformToNodeLinear(this);
+        return 0;
         }
       }
-    else return node->IsLinear();
-    }
-  else if (this->IsTransformToWorldLinear() == 1 &&
-           node->IsTransformToWorldLinear() == 1)
-    {
     return 1;
     }
   else
     {
-    return 0;
+    vtkMRMLTransformNode* firstCommonParentNode = this->GetFirstCommonParent(targetNode);
+    if (this->IsTransformToNodeLinear(firstCommonParentNode) &&
+        targetNode->IsTransformToNodeLinear(firstCommonParentNode) )
+      {
+      return 1;
+      }
+    else
+      {
+      return 0;
+      }
     }
 }
 
 //----------------------------------------------------------------------------
-void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* node,
-                                               vtkGeneralTransform* transformToNode)
+void  vtkMRMLTransformNode::GetTransformToNode(vtkMRMLTransformNode* targetNode,
+                                               vtkGeneralTransform* transformToTargetNode)
 {
-  if (this->IsTransformNodeMyParent(node))
+  if (transformToTargetNode == NULL)
     {
-    vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    if (parent != NULL)
+    vtkErrorMacro("vtkMRMLTransformNode::GetTransformToNode failed: transformToTargetNode is invalid");
+    return;
+    }
+
+  transformToTargetNode->Identity();
+  transformToTargetNode->PostMultiply();
+
+  if (targetNode == this)
+    {
+    return;
+    }
+
+  if (this->IsTransformNodeMyParent(targetNode))
+    {
+    // traverse the transform tree from bottom to top, from this to target
+    for (vtkMRMLTransformNode* current = this; current != targetNode; current = current->GetParentTransformNode())
       {
-      vtkAbstractTransform* transformToParent=this->GetTransformToParent();
+      vtkAbstractTransform* transformToParent=current->GetTransformToParent();
       if (transformToParent)
         {
-        transformToNode->Concatenate(transformToParent);
-        }
-      if (strcmp(parent->GetID(), node->GetID()) )
-        {
-        this->GetTransformToNode(node, transformToNode);
-        }
-      }
-    else if (this->GetTransformToParent())
-      {
-      vtkAbstractTransform* transformToParent=this->GetTransformToParent();
-      if (transformToParent)
-        {
-        transformToNode->Concatenate(transformToParent);
+        transformToTargetNode->Concatenate(transformToParent);
         }
       }
     }
-  else if (this->IsTransformNodeMyChild(node))
+  else if (this->IsTransformNodeMyChild(targetNode))
     {
-    vtkMRMLTransformNode *parent = node->GetParentTransformNode();
-    if (parent != NULL)
+    // traverse the transform tree from bottom to top, from target to this
+    for (vtkMRMLTransformNode* current = targetNode; current != this; current = current->GetParentTransformNode())
       {
-      vtkAbstractTransform* transformToParent=node->GetTransformToParent();
+      vtkAbstractTransform* transformToParent=current->GetTransformToParent();
       if (transformToParent)
         {
-        transformToNode->Concatenate(transformToParent);
-        }
-      if (strcmp(parent->GetID(), this->GetID()) )
-        {
-        node->GetTransformToNode(this, transformToNode);
+        transformToTargetNode->Concatenate(transformToParent);
         }
       }
-    else
-      {
-      vtkAbstractTransform* transformToParent=node->GetTransformToParent();
-      if (transformToParent)
-        {
-        transformToNode->Concatenate(transformToParent);
-        }
-      }
+    // in transformToTargetNode we have transform target->this,
+    // need to invert to get this->target
+    transformToTargetNode->Inverse();
     }
   else
     {
-    this->GetTransformToWorld(transformToNode);
+    vtkMRMLTransformNode* firstCommonParentNode = this->GetFirstCommonParent(targetNode);
 
-    vtkNew<vtkGeneralTransform> transformToWorld2;
-    node->GetTransformToWorld(transformToWorld2.GetPointer());
-    transformToWorld2->Inverse();
+    this->GetTransformToNode(firstCommonParentNode, transformToTargetNode);
 
-    transformToNode->Concatenate(transformToWorld2.GetPointer());
+    vtkNew<vtkGeneralTransform> transformFromCommonParentNode;
+    targetNode->GetTransformToNode(firstCommonParentNode, transformFromCommonParentNode.GetPointer());
+    transformFromCommonParentNode->Inverse();
+
+    transformToTargetNode->Concatenate(transformFromCommonParentNode.GetPointer());
     }
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLTransformNode::IsTransformNodeMyParent(vtkMRMLTransformNode* node)
 {
-  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-  if (parent != NULL)
+  if (node == NULL)
     {
-    if (!strcmp(parent->GetID(), node->GetID()) )
+    // the NULL (world) node is parent of all nodes, we don't have to iterate through the parents to know that it's
+    // the parent of this transform node
+    return 1;
+    }
+  for (vtkMRMLTransformNode* current=this->GetParentTransformNode(); current != NULL; current = current->GetParentTransformNode())
+    {
+    if (node == current)
       {
+      // node is a parent of this
       return 1;
       }
-    else
-      {
-      return parent->IsTransformNodeMyParent(node);
-      }
     }
-  else
-    {
-    return 0;
-    }
+  return 0;
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLTransformNode::IsTransformNodeMyChild(vtkMRMLTransformNode* node)
 {
+  if (node == NULL)
+    {
+    vtkErrorMacro("vtkMRMLTransformNode::IsTransformNodeMyChild failed: input node is invalid");
+    return 0;
+    }
   return node->IsTransformNodeMyParent(this);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLTransformNode* vtkMRMLTransformNode::GetFirstCommonParent(vtkMRMLTransformNode* targetNode)
+{
+  if (targetNode==NULL)
+    {
+    // target is the world node, so the common parent is the world
+    return NULL;
+    }
+  // traverse the transform tree from bottom to top, from this to target
+  for (vtkMRMLTransformNode* current = this; current != NULL; current = current->GetParentTransformNode())
+    {
+    if (targetNode->IsTransformNodeMyParent(current))
+      {
+      // parent of this and targetNode as well
+      return current;
+      }
+    }
+  return NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -600,6 +597,7 @@ void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
   // (if the current transform is already a general transform tben we can just use that, otherwise we convert)
   // We arbitrarily pick the ToParent transform to store the new composited transform.
   vtkSmartPointer<vtkGeneralTransform> transformToParentGeneral = vtkGeneralTransform::SafeDownCast(oldTransformToParent);
+
   if (transformToParentGeneral.GetPointer()==NULL)
     {
     transformToParentGeneral = vtkSmartPointer<vtkGeneralTransform>::New();
@@ -817,99 +815,80 @@ int vtkMRMLTransformNode::GetMatrixTransformFromParent(vtkMatrix4x4* matrix)
 //----------------------------------------------------------------------------
 int  vtkMRMLTransformNode::GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld)
 {
-  if (!this->IsTransformToWorldLinear())
-    {
-    vtkWarningMacro("Failed to retrieve matrix to world from transform, the requested transform is not linear");
-    transformToWorld->Identity();
-    return 0;
-    }
-
-  // vtkMatrix4x4::Multiply4x4 computes the result in a separate buffer, so it is safe to use the input as output as well
-  vtkNew<vtkMatrix4x4> matrixTransformToParent;
-  if (!this->GetMatrixTransformToParent(matrixTransformToParent.GetPointer()))
-    {
-    vtkErrorMacro("Failed to retrieve matrix from linear transform");
-    transformToWorld->Identity();
-    return 0;
-    }
-  vtkMatrix4x4::Multiply4x4(matrixTransformToParent.GetPointer(), transformToWorld, transformToWorld);
-
-  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-  if (parent != NULL)
-    {
-    if (parent->IsLinear())
-      {
-      return (parent->GetMatrixTransformToWorld(transformToWorld));
-      }
-    else
-      {
-      vtkErrorMacro("vtkMRMLTransformNode::GetMatrixTransformToWorld failed: expected parent linear transform");
-      transformToWorld->Identity();
-      return 0;
-      }
-    }
-  return 1;
+  return this->GetMatrixTransformToNode(NULL, transformToWorld);
 }
 
 //----------------------------------------------------------------------------
-int  vtkMRMLTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* node, vtkMatrix4x4* transformToNode)
+int  vtkMRMLTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* targetNode, vtkMatrix4x4* transformToTargetNode)
 {
-  if (node == NULL)
+  if (transformToTargetNode == NULL)
     {
-    return this->GetMatrixTransformToWorld(transformToNode);
-    }
-  if (!this->IsTransformToNodeLinear(node))
-    {
-    vtkErrorMacro("vtkMRMLTransformNode::GetMatrixTransformToNode failed: expected linear transforms between nodes");
-    transformToNode->Identity();
+    vtkErrorMacro("vtkMRMLTransformNode::GetMatrixtransformToTargetNode failed: transformToTargetNode is invalid");
     return 0;
     }
 
-  if (this->IsTransformNodeMyParent(node))
+  if (targetNode == this)
     {
-    vtkMRMLTransformNode *parent = this->GetParentTransformNode();
-    vtkNew<vtkMatrix4x4> toParentMatrix;
-    this->GetMatrixTransformToParent(toParentMatrix.GetPointer());
-    if (parent != NULL)
+    transformToTargetNode->Identity();
+    return 1;
+    }
+
+  if (this->IsTransformNodeMyParent(targetNode))
+    {
+    transformToTargetNode->Identity();
+    // traverse the transform tree from bottom to top, from this to target
+    for (vtkMRMLTransformNode* current = this; current != targetNode; current = current->GetParentTransformNode())
       {
-      vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
-      if (strcmp(parent->GetID(), node->GetID()) )
+      vtkNew<vtkMatrix4x4> toParentMatrix;
+      if (!current->GetMatrixTransformToParent(toParentMatrix.GetPointer()))
         {
-        this->GetMatrixTransformToNode(node, transformToNode);
+        vtkErrorMacro("vtkMRMLTransformNode::GetMatrixtransformToTargetNode failed: expected linear transforms between nodes");
+        transformToTargetNode->Identity();
+        return 0;
         }
-      }
-    else
-      {
-      vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
+      vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToTargetNode, transformToTargetNode);
       }
     }
-  else if (this->IsTransformNodeMyChild(node))
+  else if (this->IsTransformNodeMyChild(targetNode))
     {
-    vtkNew<vtkMatrix4x4> toParentMatrix;
-    node->GetMatrixTransformToParent(toParentMatrix.GetPointer());
-    vtkMRMLTransformNode *parent = vtkMRMLTransformNode::SafeDownCast(node->GetParentTransformNode());
-    if (parent != NULL)
+    transformToTargetNode->Identity();
+    vtkNew<vtkMatrix4x4> transformFromTargetNode;
+    // traverse the transform tree from bottom to top, from target to this
+    for (vtkMRMLTransformNode* current = targetNode; current != this; current = current->GetParentTransformNode())
       {
-      vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
-      if (strcmp(parent->GetID(), this->GetID()) )
+      vtkNew<vtkMatrix4x4> toParentMatrix;
+      current->GetMatrixTransformToParent(toParentMatrix.GetPointer());
+      if (!current->GetMatrixTransformToParent(toParentMatrix.GetPointer()))
         {
-        this->GetMatrixTransformToNode(this, transformToNode);
+        vtkErrorMacro("vtkMRMLTransformNode::GetMatrixtransformToTargetNode failed: expected linear transforms between nodes");
+        transformToTargetNode->Identity();
+        return 0;
         }
+      vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformFromTargetNode.GetPointer(), transformFromTargetNode.GetPointer());
       }
-    else
-      {
-      vtkMatrix4x4::Multiply4x4(toParentMatrix.GetPointer(), transformToNode, transformToNode);
-      }
+    vtkMatrix4x4::Invert(transformFromTargetNode.GetPointer(), transformToTargetNode);
     }
   else
     {
-    this->GetMatrixTransformToWorld(transformToNode);
-    vtkNew<vtkMatrix4x4> transformToWorld2;
+    vtkMRMLTransformNode* firstCommonParentNode = this->GetFirstCommonParent(targetNode);
 
-    node->GetMatrixTransformToWorld(transformToWorld2.GetPointer());
-    transformToWorld2->Invert();
+    if (!this->GetMatrixTransformToNode(firstCommonParentNode, transformToTargetNode))
+      {
+      vtkErrorMacro("vtkMRMLTransformNode::GetMatrixtransformToTargetNode failed: expected linear transforms between nodes");
+      transformToTargetNode->Identity();
+      return 0;
+      }
 
-    vtkMatrix4x4::Multiply4x4(transformToWorld2.GetPointer(), transformToNode, transformToNode);
+    vtkNew<vtkMatrix4x4> transformFromCommonParentNode;
+    if (!targetNode->GetMatrixTransformToNode(firstCommonParentNode, transformFromCommonParentNode.GetPointer()))
+      {
+      vtkErrorMacro("vtkMRMLTransformNode::GetMatrixtransformToTargetNode failed: expected linear transforms between nodes");
+      transformToTargetNode->Identity();
+      return 0;
+      }
+    transformFromCommonParentNode->Invert();
+
+    vtkMatrix4x4::Multiply4x4(transformFromCommonParentNode.GetPointer(), transformToTargetNode, transformToTargetNode);
     }
   return 1;
 }
