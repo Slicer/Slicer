@@ -31,24 +31,28 @@
 #include <vtkNew.h>
 #include <vtkPolyData.h>
 
+#include "vtkTestingOutputWindow.h"
+
 //-----------------------------------------------------------------------------
-bool testAddEmptyFile(const char* filePath);
+bool testAddInvalidFile(const char* filePath);
 bool testAddFile(const char* filePath);
 
 //-----------------------------------------------------------------------------
 int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
 {
   bool res = true;
-  std::cout << ">>>>>>>>>>>>>>>>>> "
-            << "The following can print errors and warnings"
-            << " <<<<<<<<<<<<<<<<<<" << std::endl;
-  res = testAddEmptyFile(0) && res;
-  res = testAddEmptyFile("") && res;
-  res = testAddEmptyFile("non existing file.badextension") && res;
-  res = testAddEmptyFile("non existing file.vtk") && res;
-  std::cout << ">>>>>>>>>>>>>>>>>> "
-            << "end of normal errors and warnings"
-            << " <<<<<<<<<<<<<<<<<<" << std::endl;
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  res = testAddInvalidFile(0) && res;
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  res = testAddInvalidFile("") && res;
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  res = testAddInvalidFile("non existing file.badextension") && res;
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  res = testAddInvalidFile("non existing file.vtk") && res;
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (argc > 1)
     {
     res = testAddFile(argv[1]) && res;
@@ -57,24 +61,14 @@ int vtkSlicerTablesLogicAddFileTest( int argc, char * argv[] )
 }
 
 //-----------------------------------------------------------------------------
-bool testAddEmptyFile(const char * filePath)
+bool testAddInvalidFile(const char * filePath)
 {
-  vtkNew<vtkSlicerTablesLogic> tablesLogic;
-  vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
-  if (table != 0)
-    {
-    std::cerr << "Line " << __LINE__
-              << ": Adding an invalid file (" << (filePath ? filePath : 0)
-              << ") shall not return a valid doubleArray"
-              << std::endl;
-    return false;
-    }
-
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkSlicerTablesLogic> tablesLogic;
   tablesLogic->SetMRMLScene(scene.GetPointer());
-  int nodeCount = scene->GetNumberOfNodes();
 
-  table = tablesLogic->AddTable(filePath);
+  int nodeCount = scene->GetNumberOfNodes();
+  vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
 
   if (table != 0 ||
       scene->GetNumberOfNodes() != nodeCount)
@@ -94,7 +88,9 @@ bool testAddEmptyFile(const char * filePath)
 bool testAddFile(const char * filePath)
 {
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (table != 0)
     {
     std::cerr << "Line " << __LINE__
