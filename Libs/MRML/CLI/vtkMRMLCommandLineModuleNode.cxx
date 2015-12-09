@@ -269,13 +269,30 @@ void vtkMRMLCommandLineModuleNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-
-  os << indent << "Module description:   "
-     << "\n"
-     << "   " << this->GetModuleDescription();
   os << indent << "Status: " << this->GetStatusString() << "\n";
   os << indent << "AutoRun:" << this->GetAutoRun() << "\n";
   os << indent << "AutoRunMode:" << this->GetAutoRunMode() << "\n";
+
+  os << indent << "Parameter values:\n";
+  std::vector<ModuleParameterGroup>::const_iterator pgbeginit = this->GetModuleDescription().GetParameterGroups().begin();
+  std::vector<ModuleParameterGroup>::const_iterator pgendit = this->GetModuleDescription().GetParameterGroups().end();
+  for (std::vector<ModuleParameterGroup>::const_iterator pgit = pgbeginit; pgit != pgendit; ++pgit)
+    {
+    std::vector<ModuleParameter>::const_iterator pbeginit = (*pgit).GetParameters().begin();
+    std::vector<ModuleParameter>::const_iterator pendit = (*pgit).GetParameters().end();
+    for (std::vector<ModuleParameter>::const_iterator pit = pbeginit; pit != pendit; ++pit)
+      {
+      os << indent << " " << (*pit).GetName() << " = " << (*pit).GetDefault() << "\n";
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLCommandLineModuleNode::GetModuleDescriptionAsString() const
+{
+  std::ostringstream s;
+  s << this->GetModuleDescription();
+  return s.str();
 }
 
 //----------------------------------------------------------------------------

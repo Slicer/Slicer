@@ -74,6 +74,7 @@ public:
   /// object is used to cache the current settings for the module.
   const ModuleDescription& GetModuleDescription() const;
   ModuleDescription& GetModuleDescription();
+  std::string GetModuleDescriptionAsString() const;
   void SetModuleDescription(const ModuleDescription& description);
 
   typedef enum {

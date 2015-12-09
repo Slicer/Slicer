@@ -65,6 +65,9 @@ protected:
   ///
   virtual void setup();
 
+  /// Set up the GUI from mrml when entering
+  virtual void enter();
+
   /// Run a command line module given \a parameterNode
   /// If \a waitForCompletion is True, the call will return only upon completion of
   /// the module execution.
