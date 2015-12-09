@@ -106,13 +106,13 @@ int main(int argc, char *argv[])
     {
     std::cout << i << "\t" << seed[i][0] << "\t" << seed[i][1] << "\t" << seed[i][2] << std::endl;
     }
-  if (seedsFile.size() > 0)
+  if (!seedsFile.empty())
     {
     // read the input seeds file
-    std::cout << "Have an input seeds file with name " << seedsFile[0].c_str() << std::endl;
+    std::cout << "Have an input seeds file with name " << seedsFile.c_str() << std::endl;
     vtkNew<vtkMRMLMarkupsFiducialNode> fiducialNode;
     vtkNew<vtkMRMLMarkupsFiducialStorageNode> fiducialStorageNode;
-    fiducialStorageNode->SetFileName(seedsFile[0].c_str());
+    fiducialStorageNode->SetFileName(seedsFile.c_str());
     fiducialStorageNode->ReadData(fiducialNode.GetPointer());
     std::cout << "Number of fids read = " << fiducialNode->GetNumberOfFiducials() << ", coordinate system flag = " << fiducialStorageNode->GetCoordinateSystem() << std::endl;
     for (int i = 0; i < fiducialNode->GetNumberOfFiducials(); ++i)
