@@ -67,18 +67,18 @@ public:
       TransformModifiedEvent = 15000
     };
 
-  /// Returns true if the transformable node can apply non linear transforms
+  /// Returns true if the transformable node can apply non-linear transforms.
+  /// A transformable node is always expected to apply linear transforms.
   /// \sa ApplyTransformMatrix, ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const;
 
-  /// Concatenate a matrix to the current transform matrix.
-  /// \sa SetAndObserveTransformNodeID, ApplyTransform,
-  /// CanApplyNonLinearTransforms
+  /// Convenience function to allow transforming a node by specifying a
+  /// transformation matrix.
+  /// \sa ApplyTransformMatrix, ApplyTransform
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
-  /// Concatenate a transform to the current transform matrix.
-  /// \sa SetAndObserveTransformNodeID, ApplyMatrix,
-  /// CanApplyNonLinearTransforms
+  /// Transforms the node with the provided non-linear transform.
+  /// \sa SetAndObserveTransformNodeID, ApplyTransformMatrix, CanApplyNonLinearTransforms
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   /// Apply the observed transform to the input point.
@@ -91,7 +91,6 @@ public:
 
   /// Get referenced transform node id
   const char *GetTransformNodeID();
-
 
 protected:
   vtkMRMLTransformableNode();

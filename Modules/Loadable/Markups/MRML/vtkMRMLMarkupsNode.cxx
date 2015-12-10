@@ -1260,30 +1260,6 @@ bool vtkMRMLMarkupsNode::CanApplyNonLinearTransforms()const
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
-{
-  int numMarkups = this->GetNumberOfMarkups();
-  double (*matrix)[4] = transformMatrix->Element;
-  double xyzIn[3];
-  double xyzOut[3];
-  for (int m = 0; m < numMarkups; m++)
-    {
-    int numPoints = this->GetNumberOfPointsInNthMarkup(m);
-    for (int n=0; n<numPoints; n++)
-      {
-      this->GetMarkupPoint(m, n, xyzIn);
-      xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
-      xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
-      xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
-      this->SetMarkupPointFromArray(m, n, xyzOut);
-      }
-    }
-
-  this->StorableModifiedTime.Modified();
-  this->Modified();
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   int numMarkups = this->GetNumberOfMarkups();

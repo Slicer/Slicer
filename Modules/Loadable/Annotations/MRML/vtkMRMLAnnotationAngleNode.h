@@ -124,7 +124,6 @@ public:
 
  // Description:
   // transform utility functions
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   // Description:

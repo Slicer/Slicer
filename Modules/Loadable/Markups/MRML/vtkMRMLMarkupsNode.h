@@ -303,13 +303,10 @@ public:
   // Transform utility functions
 
   /// Returns true since can apply non linear transforms
-  /// \sa ApplyTransformMatrix, ApplyTransform
+  /// \sa ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const;
-  /// Apply the passed transformation matrix to all of the markup points
-  /// \sa CanApplyNonLinearTransforms, ApplyTransform
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
   /// Apply the passed transformation to all of the markup points
-  /// \sa CanApplyNonLinearTransforms, ApplyTransformMatrix
+  /// \sa CanApplyNonLinearTransforms
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   /// Get the markup label format string that defines the markup names.

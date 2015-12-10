@@ -98,22 +98,6 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAnnotationSnapshotNode::CanApplyNonLinearTransforms()const
-{
-  return false;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationSnapshotNode::ApplyTransformMatrix(vtkMatrix4x4* vtkNotUsed(transformMatrix))
-{
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationSnapshotNode::ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform))
-{
-}
-
-//----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLAnnotationSnapshotNode::CreateDefaultStorageNode()
 {
   return vtkMRMLAnnotationSnapshotStorageNode::New();

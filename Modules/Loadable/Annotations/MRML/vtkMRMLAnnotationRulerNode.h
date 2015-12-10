@@ -156,9 +156,8 @@ public:
   double *GetDistanceAnnotationTextColour();
   void SetDistanceAnnotationTextColour(double initColor[3]);
 
- // Description:
+  // Description:
   // transform utility functions
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   // Description:

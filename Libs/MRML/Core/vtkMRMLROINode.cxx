@@ -381,21 +381,6 @@ bool vtkMRMLROINode::CanApplyNonLinearTransforms()const
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
-{
-  double (*matrix)[4] = transformMatrix->Element;
-  double *xyzIn  = this->GetXYZ();
-  double xyzOut[3];
-
-  xyzOut[0] = matrix[0][0]*xyzIn[0] + matrix[0][1]*xyzIn[1] + matrix[0][2]*xyzIn[2] + matrix[0][3];
-  xyzOut[1] = matrix[1][0]*xyzIn[0] + matrix[1][1]*xyzIn[1] + matrix[1][2]*xyzIn[2] + matrix[1][3];
-  xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
-
-  this->SetXYZ(xyzOut);
-
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
   double *xyzIn  = this->GetXYZ();

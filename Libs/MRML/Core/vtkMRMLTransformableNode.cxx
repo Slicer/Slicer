@@ -22,6 +22,7 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkIntArray.h>
+#include <vtkNew.h>
 #include <vtkTransform.h>
 #include <vtkMatrix4x4.h>
 
@@ -149,26 +150,15 @@ bool vtkMRMLTransformableNode::CanApplyNonLinearTransforms()const
 //-----------------------------------------------------------
 void vtkMRMLTransformableNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 {
-  vtkTransform* transform = vtkTransform::New();
+  vtkNew<vtkTransform> transform;
   transform->SetMatrix(transformMatrix);
-  this->ApplyTransform(transform);
-  transform->Delete();
+  this->ApplyTransform(transform.GetPointer());
 }
 
 //-----------------------------------------------------------
-void vtkMRMLTransformableNode::ApplyTransform(vtkAbstractTransform* transform)
+void vtkMRMLTransformableNode::ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform))
 {
-  vtkHomogeneousTransform* linearTransform = vtkHomogeneousTransform::SafeDownCast(transform);
-  if (linearTransform)
-    {
-    this->ApplyTransformMatrix(linearTransform->GetMatrix());
-    return;
-    }
-  if (!this->CanApplyNonLinearTransforms())
-    {
-    vtkErrorMacro("Can't apply a non-linear transform");
-    return;
-    }
+  vtkErrorMacro("ApplyTransform is not implemented for node type "<<this->GetClassName());
 }
 
 //-----------------------------------------------------------

@@ -60,11 +60,6 @@ public:
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
-  /// Utility transformable methods
-  virtual bool CanApplyNonLinearTransforms()const;
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* vtkNotUsed(transformMatrix));
-  virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform));
-
   enum
   {
     SnapshotNodeAddedEvent = 0,

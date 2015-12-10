@@ -11,10 +11,13 @@
 // VTK includes
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
+#include <vtkHomogeneousTransform.h>
 #include <vtkMath.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPlanes.h>
 #include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <sstream>
@@ -514,56 +517,14 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
-
-  // compute scale
-  double p[] = {0,0,0,0};
-  double p1[] = {1,1,1,0};
-  double p2[4];
-  double v[4];
-  double v1[4];
-  double v2[4];
-  double scale[3];
-
-  transform->TransformPoint(p, v);
-  transform->TransformPoint(p1, v1);
-
-  int i;
-  for (i=0; i<3; i++)
+  vtkHomogeneousTransform* linearTransform = vtkHomogeneousTransform::SafeDownCast(transform);
+  if (linearTransform)
     {
-    p2[i] = p1[i] - p[i];
-    v2[i] = v1[i] - v[i];
-    scale[i] = v2[i]/p2[i];
+    this->ApplyTransformMatrix(linearTransform->GetMatrix());
+    return;
     }
 
-  // report warning if transform has rotation
-  vtkMath::Normalize(p2);
-  vtkMath::Normalize(v2);
-  vtkMath::Cross(p2, v2, v);
-  if (vtkMath::Normalize(v) > 1.0e-9)
-    {
-      vtkErrorMacro("AnnotationROINode::ApplyTransformMatrix "<< this->GetName() << ". Matrix has rotation component. ROI does not support rotation.");
-    }
-
-  int modify = this->StartModify();
-
-  // first point, origin
-  if (this->GetXYZ(p))
-    {
-    transform->TransformPoint(p,p1);
-    this->SetXYZ(p1);
-    }
-
-  // second point radius, only use scale
-  if (this->GetRadiusXYZ(p))
-    {
-    p[0] *= scale[0];
-    p[1] *= scale[1];
-    p[2] *= scale[2];
-
-    this->SetRadiusXYZ(p);
-    }
-
-  this->EndModify(modify);
+  vtkErrorMacro("vtkMRMLAnnotationROINode::ApplyTransform is only supported for linear transforms");
 }
 
 #define AVERAGE_ABC(a,b,c) \
@@ -587,7 +548,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
     bounds[2*i  ] = XYZ[i] - RadiusXYZ[i];
     bounds[2*i+1] = XYZ[i] + RadiusXYZ[i];
     }
-  vtkPoints *boxPoints = vtkPoints::New(VTK_DOUBLE);
+  vtkSmartPointer<vtkPoints> boxPoints = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   boxPoints->SetNumberOfPoints(8);
 
   boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]);
@@ -599,7 +560,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
   boxPoints->SetPoint(6, bounds[1], bounds[3], bounds[5]);
   boxPoints->SetPoint(7, bounds[0], bounds[3], bounds[5]);
 
-  vtkPoints *points = vtkPoints::New(VTK_DOUBLE);
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   points->SetNumberOfPoints(6);
 
   double *pts =
@@ -630,7 +591,7 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
   planes->SetPoints(points);
 
 
-  vtkDoubleArray *normals = vtkDoubleArray::New();
+  vtkNew<vtkDoubleArray> normals;
   normals->SetNumberOfComponents(3);
   normals->SetNumberOfTuples(6);
 
@@ -662,26 +623,14 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
     {
     normals->SetTuple3(i, factor*N[i][0], factor*N[i][1], factor*N[i][2]);
     }
-  planes->SetNormals(normals);
-
-
-  normals->Delete();
-  boxPoints->Delete();
-  points->Delete();
+  planes->SetNormals(normals.GetPointer());
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode != NULL) // && tnode->IsTransformToWorldLinear())
+  if (tnode != NULL)
     {
-    //vtkMatrix4x4* transformToWorld = vtkMatrix4x4::New();
-    //transformToWorld->Identity();
-    //tnode->GetMatrixTransformToWorld(transformToWorld);
-
-    vtkGeneralTransform *transform = vtkGeneralTransform::New();
-    tnode->GetTransformFromWorld(transform);
-
-    //transform->Inverse();
-    planes->SetTransform(transform);
-    transform->Delete();
+    vtkNew<vtkGeneralTransform> transform;
+    tnode->GetTransformFromWorld(transform.GetPointer());
+    planes->SetTransform(transform.GetPointer());
   }
   planes->Modified();
 
