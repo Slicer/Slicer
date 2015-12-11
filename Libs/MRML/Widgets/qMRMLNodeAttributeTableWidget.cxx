@@ -94,6 +94,12 @@ void qMRMLNodeAttributeTableWidget::setMRMLNode(vtkMRMLNode* node)
 
   qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceAddedEvent,
+                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceModifiedEvent,
+                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceRemovedEvent,
+                this, SLOT(updateWidgetFromMRML()));
   d->MRMLNode = node;
 
   this->updateWidgetFromMRML();

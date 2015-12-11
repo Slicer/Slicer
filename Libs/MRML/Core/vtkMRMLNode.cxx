@@ -249,7 +249,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Selectable: " << this->Selectable << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
   os << indent << "Indent:      " << this->Indent << "\n";
-  if (this->Attributes.size())
+
+  if (!this->Attributes.empty())
     {
     os << indent << "Attributes:\n";
     AttributesType::const_iterator it;
@@ -261,35 +262,35 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
       }
     }
 
-  //print node references
-  NodeReferencesType::iterator it;
-  for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
+  if (!this->NodeReferences.empty())
     {
-    const std::string& referenceRole = it->first;
-    const char* refAttribute =
-      this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
-    if (refAttribute == 0)
+    os << indent << "Node references:\n";
+    NodeReferencesType::iterator it;
+    for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
       {
-      continue;
-      }
-    const std::string referenceMRMLAttributeName(refAttribute);
-    std::stringstream ss;
-    int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
-
-    for (int n=0; n < numReferencedNodes; n++)
-      {
-      const char * id = this->GetNthNodeReferenceID(referenceRole.c_str(), n);
-
-      ss << id;
-      if (n < numReferencedNodes-1)
+      const std::string& referenceRole = it->first;
+      os << indent.GetNextIndent() << referenceRole;
+      const char* refAttribute = this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
+      if (refAttribute != 0)
         {
-        ss << " ";
+        os << " [" << refAttribute << "]";
         }
-      }
-    if (numReferencedNodes > 0)
-      {
-      os << indent << referenceMRMLAttributeName << "=\""
-         << ss.str().c_str() << "\"" << "\n";
+      os << ":";
+      std::vector< const char* > referencedNodeIds;
+      GetNodeReferenceIDs(referenceRole.c_str(), referencedNodeIds);
+      if (referencedNodeIds.empty())
+        {
+        os << " (none)\n";
+        }
+      else
+        {
+        for (std::vector< const char* >::iterator referencedNodeIdsIt=referencedNodeIds.begin(); referencedNodeIdsIt!=referencedNodeIds.end(); ++referencedNodeIdsIt)
+          {
+          const char * id = *referencedNodeIdsIt;
+          os << " " << (id ? id : "(NULL)");
+          }
+        os << "\n";
+        }
       }
     }
 }
@@ -1246,9 +1247,9 @@ vtkMRMLNode* vtkMRMLNode::SetAndObserveNthNodeReferenceID(const char* referenceR
       references.erase(referenceIt);
 
       if (oldReferencedNode != NULL)
-      {
+        {
         this->OnNodeReferenceRemoved(nodeRefToDelete);
-      }
+        }
 
       // Already removed the ReferencedNode reference by calling UpdateNodeReferenceEventObserver,
       // so we have to set ReferencedNode to NULL to avoid removing the reference again in the
