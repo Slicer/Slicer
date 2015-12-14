@@ -246,6 +246,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
       {
       vtkErrorMacro("AddModel: error reading " << filename);
       this->GetMRMLScene()->RemoveNode(modelNode.GetPointer());
+      return 0;
       }
     }
   else
