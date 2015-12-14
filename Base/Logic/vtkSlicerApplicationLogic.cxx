@@ -864,7 +864,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
 
   vtkSmartPointer<vtkMRMLStorageNode> storageNode;
 #ifdef Slicer_BUILD_CLI_SUPPORT
-  vtkMRMLCommandLineModuleNode *clp = clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
+  vtkMRMLCommandLineModuleNode *clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
 #endif
 
   bool useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(req.GetFilename().c_str());
