@@ -1099,11 +1099,14 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   properties["fileName"] = file.absoluteFilePath();
 
   // create a screenShot of the full layout
-  QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
-  this->hide();  // don't block the screenshot
-  QImage screenShot = ctk::grabVTKWidget(widget);
-  this->show();
-  properties["screenShot"] = screenShot;
+  if (qSlicerApplication::application()->layoutManager())
+    {
+    QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
+    this->hide();  // don't block the screenshot
+    QImage screenShot = ctk::grabVTKWidget(widget);
+    this->show();
+    properties["screenShot"] = screenShot;
+    }
 
   qSlicerIOOptions* options = this->options(this->findSceneRow());
   if (options)
