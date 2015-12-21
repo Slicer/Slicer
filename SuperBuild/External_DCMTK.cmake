@@ -34,7 +34,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "f55f3c8d4445a4c8e2d28682b5d9aa24803a4531") # DCMTK-3.6.1_20150924 + patch for MacOSX/Windows build error + patch for DcmSegmentation
+  set(${proj}_GIT_TAG "e406845ee9244d92cfc0dfa34cb8f622bda45bd9") # DCMTK-3.6.1_20150924 + patch for MacOSX/Windows build error + patch for DcmSegmentation
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
