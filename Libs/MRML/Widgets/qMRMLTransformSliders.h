@@ -170,7 +170,7 @@ protected:
   /// Extract the min/max values from the matrix and
   /// change the slider min/max values accordingly.
   /// Needed if the matrix changed externally (python, cli, etc.)
-  void updateRangeFromTransform();
+  void updateRangeFromTransform(vtkMRMLTransformNode* transformNode);
 
   ///
   /// Extract min/max translation values from the transform matrix.

@@ -129,7 +129,7 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
     else
       {
       // make sure the current translation values can be set on the slider
-      updateRangeFromTransform();
+      updateRangeFromTransform(d->MRMLTransformNode);
       }
     d->LRSlider->setCoordinateReference(ref);
     d->PASlider->setCoordinateReference(ref);
@@ -232,16 +232,16 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
     return;
     }
 
-  this->updateRangeFromTransform();
+  this->updateRangeFromTransform(transformNode);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::updateRangeFromTransform()
+void qMRMLTransformSliders::updateRangeFromTransform(vtkMRMLTransformNode* transformNode)
 {
   Q_D(qMRMLTransformSliders);
 
   vtkNew<vtkTransform> transform;
-  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
+  qMRMLUtils::getTransformInCoordinateSystem(transformNode,
       this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
 
   vtkMatrix4x4 * matrix = transform->GetMatrix();
