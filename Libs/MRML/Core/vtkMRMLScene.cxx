@@ -693,10 +693,14 @@ int vtkMRMLScene::Import()
 #ifdef MRMLSCENE_VERBOSE
     addNodesTimer->StartTimer();
 #endif
+    // Loaded node is not always the same the one that is actually added:
+    // in case of singleton nodes the existing singleton node is kept
+    // and only the contents is overwritten.
+    vtkSmartPointer<vtkCollection> addedNodes = vtkSmartPointer<vtkCollection>::New();
     for (loadedNodes->InitTraversal(it);
          (node = (vtkMRMLNode*)loadedNodes->GetNextItemAsObject(it)) ;)
       {
-      this->AddNode(node);
+      addedNodes->AddItem(this->AddNode(node));
       }
 #ifdef MRMLSCENE_VERBOSE
     addNodesTimer->StopTimer();
@@ -704,7 +708,7 @@ int vtkMRMLScene::Import()
 #endif
     // Update the node references to the changed node IDs
     // (that conflicted in the current scene and the imported scene)
-    this->UpdateNodeReferences(loadedNodes);
+    this->UpdateNodeReferences(addedNodes);
     this->RemoveReservedIDs();
 
     this->InvokeEvent(vtkMRMLScene::NewSceneEvent, NULL);
@@ -712,8 +716,8 @@ int vtkMRMLScene::Import()
     // Notify the imported nodes about that all nodes are created
     // (so the observers can be attached to referenced nodes, etc.)
     // by calling UpdateScene on each node
-    for (loadedNodes->InitTraversal(it);
-         (node = (vtkMRMLNode*)loadedNodes->GetNextItemAsObject(it)) ;)
+    for (addedNodes->InitTraversal(it);
+         (node = (vtkMRMLNode*)addedNodes->GetNextItemAsObject(it)) ;)
       {
       //double progress = n / (1. * nnodes);
       //this->InvokeEvent(vtkCommand::ProgressEvent,(void *)&progress);
@@ -1034,7 +1038,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
 
   //TODO convert URL to Root directory
 
-  // check if node is a singletone
+  // check if node is a singleton
   if (n->GetSingletonTag() != NULL)
     {
     // check if there is a singleton of this class in the scene
@@ -1043,39 +1047,30 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
     if (sn != NULL)
       {
       // A node can't be added twice into the scene
-      assert(sn != n);
-      std::string oldId(sn->GetID());
-      std::string newId(n->GetID() ? n->GetID() : sn->GetID());
-
-      // Instead of using 'CopyWithSceneWithSingleModifiedEvent', 'StartModify' is
-      // explicitly invoked before calling 'CopyWithScene', then 'EndModify' is
-      // invoked only after swapping the singleton node ID. Doing so will avoid
-      // to get error message like:
-      //   "GetNodeByID: Node is in the scene, but its ID is missing from the NodeIDs cache"
-      //sn->CopyWithSceneWithSingleModifiedEvent(n);
-      int wasModifyingSingeltonNode = sn->StartModify();
-      sn->CopyWithScene(n);
-
-      this->RemoveNodeReferences(n);
-      // cache the node so the whole scene cache stays up-to-date
-      // Remove the old node ID only if the ID was associated with sn.
-#ifdef MRMLSCENE_VERBOSE
-      std::cerr << "Update node id cache swaping '" << oldId
-                << "' with '" << newId << "'" << std::endl;
-#endif
-      std::map< std::string, vtkSmartPointer<vtkMRMLNode> >::iterator nodeID =
-        this->NodeIDs.find(oldId);
-      if (nodeID != this->NodeIDs.end() &&
-          nodeID->second == sn)
+      if (sn == n)
         {
-        this->RemoveNodeID((char*)nodeID->first.c_str());
+        vtkWarningMacro("Same node is already added to the scene");
         }
-      // If NodeIDs[newId] already contains a value, that node can't be found
-      // anymore in the NodeIDs cache.
-      this->AddNodeID(sn);
 
-      sn->EndModify(wasModifyingSingeltonNode);
-      n->EndModify(wasModifying);
+      // Keep the existing singleton node and its node ID,
+      // just copy the contents of the new node into the existing singleton node
+
+      // If the node ID is changed (not very common) then save that
+      // info so that the nodes that are being imported can update
+      // their references.
+      std::string newId(sn->GetID());
+      std::string oldId(n->GetID() ? n->GetID() : sn->GetID());
+      if (oldId != newId)
+        {
+        this->ReferencedIDChanges[oldId] = newId;
+        }
+
+      // Update contents of existing singleton node
+      sn->Copy(n);
+
+      // Stores the node references in this->NodeReferences.
+      // This is required for UpdateNodeReferences() to work.
+      sn->SetSceneReferences();
       return sn;
       }
     }
@@ -1166,11 +1161,13 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
     this->InvokeEvent(this->NodeAboutToBeAddedEvent, n);
     }
   vtkMRMLNode* node = this->AddNodeNoNotify(n);
-  // If the node is a singleton, the returned node is the existing singleton
-  assert( add || node != n);
   if (add)
     {
     this->InvokeEvent(this->NodeAddedEvent, n);
+    }
+  else if (node==n)
+    {
+    vtkWarningMacro("vtkMRMLScene::AddNode: Adding of a new node is not notified");
     }
   this->Modified();
 #ifdef MRMLSCENE_VERBOSE
@@ -1178,6 +1175,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNode(vtkMRMLNode *n)
   std::cerr << "AddNode: " << n->GetID() << " :" << timer->GetElapsedTime() << "\n";
   timer->Delete();
 #endif
+  // If the node is a singleton, the returned node is the existing singleton
   return node;
 }
 
