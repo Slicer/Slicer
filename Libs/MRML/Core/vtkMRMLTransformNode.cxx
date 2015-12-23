@@ -795,7 +795,7 @@ int vtkMRMLTransformNode::GetMatrixTransformToParent(vtkMatrix4x4* matrix)
   vtkLinearTransform* transform=vtkLinearTransform::SafeDownCast(GetTransformToParentAs("vtkLinearTransform", false));
   if (transform==NULL)
     {
-    vtkWarningMacro("Failed to get transformation matrix because transform is not linear");
+    vtkErrorMacro("Failed to get transformation matrix because transform is not linear");
     matrix->Identity();
     return 0;
     }
@@ -1362,7 +1362,7 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 {
   if (!this->IsLinear())
     {
-    vtkWarningMacro("Cannot set matrix because vtkMRMLTransformNode contains a composite or non-linear transform. To overwrite the transform, first reset it by calling SetAndObserveTransformToParent(NULL).");
+    vtkErrorMacro("Cannot set matrix because vtkMRMLTransformNode contains a composite or non-linear transform. To overwrite the transform, first reset it by calling SetAndObserveTransformToParent(NULL).");
     return 0;
     }
 
