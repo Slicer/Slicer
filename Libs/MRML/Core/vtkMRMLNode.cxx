@@ -47,8 +47,6 @@ vtkMRMLNode::vtkMRMLNode()
 
   this->SingletonTag = NULL;
 
-  this->Scene = NULL;
-
   this->HideFromEditors = 0;
   this->Selectable = 1;
   this->Selected = 0;
@@ -565,6 +563,12 @@ void vtkMRMLNode::ProcessMRMLEvents (vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLScene* vtkMRMLNode::GetScene()
+{
+  return this->Scene.GetPointer();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLNode::SetScene(vtkMRMLScene* scene)
 {
   if (this->Scene == scene)
@@ -977,6 +981,10 @@ const char * vtkMRMLNode::URLDecodeString(const char *inString)
 //-----------------------------------------------------------
 void vtkMRMLNode::UpdateReferences()
 {
+  if (!this->Scene)
+    {
+    return;
+    }
   NodeReferencesType::iterator it;
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {

@@ -537,7 +537,7 @@ public:
   ///
   /// Internally calls SetSceneReferences()
   /// \sa SetSceneReferences()
-  vtkGetObjectMacro(Scene, vtkMRMLScene);
+  virtual vtkMRMLScene* GetScene();
   virtual void SetScene(vtkMRMLScene* scene);
 
   /// \brief Update the references of the node to the scene.
@@ -871,7 +871,10 @@ protected:
 
   int  SaveWithScene;
 
-  vtkMRMLScene *Scene;
+  // We don't increase the reference count of Scene when store its pointer
+  // therefore we must use a weak pointer to prevent pointer dangling when
+  // the scene is deleted.
+  vtkWeakPointer<vtkMRMLScene> Scene;
 
   typedef std::map< std::string, std::string > AttributesType;
   AttributesType Attributes;
