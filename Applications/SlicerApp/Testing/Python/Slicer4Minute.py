@@ -230,7 +230,7 @@ class Slicer4MinuteTest(unittest.TestCase):
     hemispheric_white_matter = slicer.util.getNode(pattern='hemispheric_white_matter.vtk')
     hemispheric_white_matter.GetDisplayNode().SetClipping(1)
 
-    clip = slicer.util.getNode(pattern='vtkMRMLClipModelsNode1')
+    clip = slicer.util.getNode('ClipModelsParameters1')
     clip.SetRedSliceClipState(0)
     clip.SetYellowSliceClipState(0)
     clip.SetGreenSliceClipState(2)
