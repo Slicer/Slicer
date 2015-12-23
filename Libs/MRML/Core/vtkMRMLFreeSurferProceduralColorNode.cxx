@@ -109,56 +109,52 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
   const char* attValue;
   int numColors;
   while (*atts != NULL)
-  {
-      attName = *(atts++);
-      attValue = *(atts++);
-      if (!strcmp(attName, "numcolors"))
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "numcolors"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> numColors;
+      vtkDebugMacro("Setting the look up table size to " << numColors << "\n");
+      this->LookupTable->SetNumberOfColors(numColors);
+      this->Names.clear();
+      this->Names.resize(numColors);
+      }
+    else if (!strcmp(attName, "colors"))
+      {
+      std::stringstream ss;
+      bool errorCondition = false;
+      for (int i = 0; i < this->LookupTable->GetNumberOfColors(); i++)
         {
-        std::stringstream ss;
+        vtkDebugMacro("Reading colour " << i << " of " << this->LookupTable->GetNumberOfColors() << endl);
         ss << attValue;
-        ss >> numColors;
-        vtkDebugMacro("Setting the look up table size to " << numColors << "\n");
-        this->LookupTable->SetNumberOfColors(numColors);
-        this->Names.clear();
-        this->Names.resize(numColors);
-        }
-      else if (!strcmp(attName, "colors"))
-        {
-        std::stringstream ss;
-        bool errorCondition = false;
-        for (int i = 0; i < this->LookupTable->GetNumberOfColors(); i++)
-          {
-          vtkDebugMacro("Reading colour " << i << " of " << this->LookupTable->GetNumberOfColors() << endl);
-          ss << attValue;
-          // index name r g b a
-          int index;
-          std::string name;
-          double r, g, b, a;
-          ss >> index;
-          ss >> name;
-          ss >> r;
-          ss >> g;
-          ss >> b;
-          ss >> a;
+        // index name r g b a
+        int index;
+        std::string name;
+        double r, g, b, a;
+        ss >> index;
+        ss >> name;
+        ss >> r;
+        ss >> g;
+        ss >> b;
+        ss >> a;
 //        vtkDebugMacro("Adding colour at index " << index << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a << " and then setting name to " << name.c_str() << endl);
 //        this->LookupTable->SetTableValue(index, r, g, b, a);
-          if (this->SetColorNameWithSpaces(index, name.c_str(), "_") == 0)
-            {
-                vtkErrorMacro("ReadXMLAttributes: error setting color " << index << " to name " << name.c_str());
-            errorCondition = true;
-            break;
-            }
-          }
-        if (!errorCondition)
+        if (this->SetColorNameWithSpaces(index, name.c_str(), "_") == 0)
           {
-          this->NamesInitialisedOn();
+              vtkErrorMacro("ReadXMLAttributes: error setting color " << index << " to name " << name.c_str());
+          errorCondition = true;
+          break;
           }
         }
-      else
+      if (!errorCondition)
         {
-        vtkErrorMacro ("Unknown attribute name " << attName << endl);
+        this->NamesInitialisedOn();
         }
-  }
+      }
+    }
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
 }
 
