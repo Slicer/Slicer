@@ -1999,7 +1999,7 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::SetURL(const char *url)
 {
-  this->URL = std::string(url);
+  this->URL = std::string(url?url:"");
 }
 
 //------------------------------------------------------------------------------
