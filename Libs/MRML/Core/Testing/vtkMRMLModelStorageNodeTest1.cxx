@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLModelStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLModelStorageNode.h"
 
 int vtkMRMLModelStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLModelStorageNode > node1 = vtkSmartPointer< vtkMRMLModelStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLModelStorageNode, node1);
-
+  vtkNew<vtkMRMLModelStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

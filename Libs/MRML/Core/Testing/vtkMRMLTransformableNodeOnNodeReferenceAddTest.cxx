@@ -120,7 +120,7 @@ int testScene(vtkMRMLScene* scene)
   // Test vtkMRMLTransformableNode::OnNodeReferenceAdded()
   vtkMRMLLinearTransformNode* linearTransformNode = vtkMRMLLinearTransformNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLLinearTransformNode"));
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLScalarVolumeNode"));
-  vtkNew<vtkMRMLNodeCallback> callback;
+  vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
   volumeNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 
   linearTransformNode->GetTransformToParent()->Modified();

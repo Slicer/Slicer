@@ -52,43 +52,43 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   vtkNew<vtkMRMLInteractionNode> interactionNode;
   mrmlScene->AddNode(interactionNode.GetPointer());
 
-  vtkSmartPointer<vtkSlicerAnnotationModuleLogic > node2 = vtkSmartPointer< vtkSlicerAnnotationModuleLogic >::New();
-  node2->SetMRMLScene(mrmlScene);
+  vtkNew<vtkSlicerAnnotationModuleLogic > logic;
+  EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
-  EXERCISE_BASIC_OBJECT_METHODS( node2 );
+  logic->SetMRMLScene(mrmlScene);
 
-  node2->StartPlaceMode(true);
-  node2->StartPlaceMode(false);
+  logic->StartPlaceMode(true);
+  logic->StartPlaceMode(false);
 
-  node2->StopPlaceMode(true);
-  node2->StopPlaceMode(false);
+  logic->StopPlaceMode(true);
+  logic->StopPlaceMode(false);
 
-  node2->AddAnnotationNode("AnnotationFiducialNode", false);
-  node2->AddAnnotationNode("AnnotationTextNode", true);
+  logic->AddAnnotationNode("AnnotationFiducialNode", false);
+  logic->AddAnnotationNode("AnnotationTextNode", true);
 
-  node2->AddNodeCompleted(NULL);
+  logic->AddNodeCompleted(NULL);
 
   vtkSmartPointer<vtkMRMLAnnotationRulerNode> rnode1 = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
-  mrmlScene->AddNode(rnode1);
-  node2->AddNodeCompleted(rnode1);
+  mrmlScene->AddNode(rnode1 );
+  logic->AddNodeCompleted(rnode1 );
 
-  node2->CancelCurrentOrRemoveLastAddedAnnotationNode();
+  logic->CancelCurrentOrRemoveLastAddedAnnotationNode();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node2->RemoveAnnotationNode(NULL);
+  logic->RemoveAnnotationNode(NULL);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  node2->RemoveAnnotationNode(rnode1);
+  logic->RemoveAnnotationNode(rnode1 );
 
   // TODO: test mrml event processing?
 
-  bool retval = node2->IsAnnotationNode(NULL);
+  bool retval = logic->IsAnnotationNode(NULL);
   if (retval)
     {
     std::cerr << "Error on checking a null annotation node id" << std::endl;
     return EXIT_FAILURE;
     }
-  retval = node2->IsAnnotationHierarchyNode(NULL);
+  retval = logic->IsAnnotationHierarchyNode(NULL);
   if (retval)
     {
     std::cerr << "Error on checking a null annotation hierarchy node id" << std::endl;
@@ -98,7 +98,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   vtkMRMLNode *node = mrmlScene->GetNodeByID("vtkMRMLAnnotationFiducialNode");
   if (node)
     {
-    retval = node2->IsAnnotationNode(node->GetID());
+    retval = logic->IsAnnotationNode(node->GetID());
     if (!retval)
       {
       std::cerr << "Error on checking a fid annotation hierarchy node id" << std::endl;
@@ -114,7 +114,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   vtkSmartPointer<vtkMRMLAnnotationRulerNode> rnode = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
   mrmlScene->AddNode(rnode);
 
-  node2->SetAnnotationTextUnselectedColor(rnode->GetID(), incolor1);
+  logic->SetAnnotationTextUnselectedColor(rnode->GetID(), incolor1);
   double *outcolor1 = NULL;
   if (rnode->GetAnnotationTextDisplayNode())
     {
@@ -129,7 +129,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     {
     std::cout << "Setting Text Color Ok!" << std::endl;
     }
-  node2->SetAnnotationPointColor(rnode->GetID(), incolor2);
+  logic->SetAnnotationPointColor(rnode->GetID(), incolor2);
   double *outcolor2 = NULL;
   if (rnode->GetAnnotationPointDisplayNode())
     {
@@ -144,7 +144,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     {
     std::cout << "Setting Point Color Ok!" << std::endl;
     }
-  node2->SetAnnotationLineColor(rnode->GetID(), incolor3);
+  logic->SetAnnotationLineColor(rnode->GetID(), incolor3);
   double *outcolor3 = NULL;
   if (rnode->GetAnnotationLineDisplayNode())
     {
@@ -160,7 +160,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     std::cout << "Setting Line Color Ok!" << std::endl;
     }
 
-  double* getcolor1 = node2->GetAnnotationLineColor(rnode->GetID());
+  double* getcolor1 = logic->GetAnnotationLineColor(rnode->GetID());
 
   if (colorTest(incolor1, getcolor1))
     {
@@ -172,7 +172,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     {
     std::cout << "Getting Text Color Ok!" << std::endl;
     }
-  double* getcolor2 = node2->GetAnnotationLineUnselectedColor(rnode->GetID());
+  double* getcolor2 = logic->GetAnnotationLineUnselectedColor(rnode->GetID());
   if (colorTest(incolor2, getcolor2))
     {
     std::cout << "Getting Point Color Failed!" << std::endl;
@@ -182,7 +182,7 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     {
     std::cout << "Getting Point Color Ok!" << std::endl;
     }
-  double* getcolor3 = node2->GetAnnotationLineUnselectedColor(rnode->GetID());
+  double* getcolor3 = logic->GetAnnotationLineUnselectedColor(rnode->GetID());
   if (colorTest(incolor3, getcolor3))
     {
     std::cout << "Getting Line Color Failed!" << std::endl;
@@ -207,11 +207,11 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
     }
 
   // test out hierarchy methods
-  node2->AddHierarchy();
+  logic->AddHierarchy();
 
-  char *toplevelid = node2->GetTopLevelHierarchyNodeID();
+  char *toplevelid = logic->GetTopLevelHierarchyNodeID();
   std::cout << "Top level id = " << (toplevelid ? toplevelid : "null") << std::endl;
-  retval = node2->IsAnnotationHierarchyNode(toplevelid);
+  retval = logic->IsAnnotationHierarchyNode(toplevelid);
   if (!retval)
     {
     std::cerr << "Error checking if is annot hierarchy node on id = " << (toplevelid ? toplevelid : "null") << std::endl;
@@ -222,10 +222,10 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
   fnode->SetControlPoint(0, pos, 0, 1);
   mrmlScene->AddNode(fnode);
 
-  char *toplevelfidid = node2->GetTopLevelHierarchyNodeIDForNodeClass(fnode);
+  char *toplevelfidid = logic->GetTopLevelHierarchyNodeIDForNodeClass(fnode);
   std::cout << "Top level fid id = " << (toplevelfidid ? toplevelfidid : "null") << std::endl;
 
-  vtkMRMLAnnotationHierarchyNode *activeHierarchy = node2->GetActiveHierarchyNode();
+  vtkMRMLAnnotationHierarchyNode *activeHierarchy = logic->GetActiveHierarchyNode();
   if (activeHierarchy)
     {
     std::cout << "Active hierarchy = " << (activeHierarchy->GetName() ? activeHierarchy->GetName() : "null") << std::endl;
@@ -233,35 +233,35 @@ int vtkSlicerAnnotationModuleLogicTest1(int , char * [] )
 
   vtkMRMLAnnotationNode *nullNode = NULL;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  const char *htmlRep = node2->GetHTMLRepresentation(nullNode, -1);
+  const char *htmlRep = logic->GetHTMLRepresentation(nullNode, -1);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (htmlRep)
     {
     std::cout << htmlRep << std::endl;
     }
-  htmlRep = node2->GetHTMLRepresentation(fnode, 1);
+  htmlRep = logic->GetHTMLRepresentation(fnode, 1);
   if (htmlRep)
     {
     std::cout << htmlRep << std::endl;
     }
-  htmlRep = node2->GetHTMLRepresentation(activeHierarchy, 0);
+  htmlRep = logic->GetHTMLRepresentation(activeHierarchy, 0);
   if (htmlRep)
     {
     std::cout << htmlRep << std::endl;
     }
-  TEST_SET_GET_STRING(node2, ActiveHierarchyNodeID);
+  TEST_SET_GET_STRING(logic, ActiveHierarchyNodeID);
 
   // test adding a display node for a hierarchy node
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  const char *dID = node2->AddDisplayNodeForHierarchyNode(NULL);
+  const char *dID = logic->AddDisplayNodeForHierarchyNode(NULL);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (dID != NULL)
     {
     std::cerr << "Error testing null hierarchy node to add display node for, got a display node id of " << dID << std::endl;
     return EXIT_FAILURE;
     }
-  dID = node2->AddDisplayNodeForHierarchyNode(activeHierarchy);
+  dID = logic->AddDisplayNodeForHierarchyNode(activeHierarchy);
   if (dID == NULL)
     {
     std::cerr << "Error testing adding display node for a hierarchy node, got a display node id of NULL" << std::endl;

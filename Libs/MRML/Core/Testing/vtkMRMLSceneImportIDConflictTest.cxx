@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLCoreTestingUtilities.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"

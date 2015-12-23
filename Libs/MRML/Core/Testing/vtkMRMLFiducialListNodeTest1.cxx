@@ -10,22 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFiducialListNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFiducialListNode.h"
 
 int vtkMRMLFiducialListNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFiducialListNode > node1 = vtkSmartPointer< vtkMRMLFiducialListNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  //EXERCISE_BASIC_MRML_METHODS(vtkMRMLFiducialListNode, node1);
-
-  // EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLFiducialListNode, node1);
-
-  EXERCISE_BASIC_STORABLE_MRML_METHODS(vtkMRMLFiducialListNode, node1);
-
+  vtkNew< vtkMRMLFiducialListNode > node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -28,8 +28,7 @@
 int vtkMRMLMarkupsFiducialNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
-
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( vtkMRMLMarkupsFiducialNode, node1 );
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkMRMLMarkupsDisplayNode *dispNode = node1->GetMarkupsDisplayNode();
   std::cout << "Get MarkupsDisplayNode returned " << (dispNode ? "valid" : "null") << " pointer" << std::endl;

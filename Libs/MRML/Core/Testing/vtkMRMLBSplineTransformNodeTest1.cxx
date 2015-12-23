@@ -11,19 +11,11 @@
 =========================================================================auto=*/
 
 #include "vtkMRMLBSplineTransformNode.h"
-
-#include <vtkGeneralTransform.h>
-
-
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLBSplineTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLBSplineTransformNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLBSplineTransformNode, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

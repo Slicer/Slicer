@@ -46,10 +46,7 @@ bool TestUnitNodeAttribute(vtkMRMLScene* scene);
 int vtkMRMLUnitNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLUnitNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLUnitNode, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   bool res = true;
   vtkMRMLScene* scene = CreatePopulatedScene();

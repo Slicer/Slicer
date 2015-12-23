@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 
 int vtkMRMLFreeSurferModelOverlayStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFreeSurferModelOverlayStorageNode > node1 = vtkSmartPointer< vtkMRMLFreeSurferModelOverlayStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLFreeSurferModelOverlayStorageNode, node1);
-
+  vtkNew<vtkMRMLFreeSurferModelOverlayStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

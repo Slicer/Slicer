@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
 int vtkMRMLFiberBundleGlyphDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFiberBundleGlyphDisplayNode > node1 = vtkSmartPointer< vtkMRMLFiberBundleGlyphDisplayNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLFiberBundleGlyphDisplayNode, node1);
-
+  vtkNew<vtkMRMLFiberBundleGlyphDisplayNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

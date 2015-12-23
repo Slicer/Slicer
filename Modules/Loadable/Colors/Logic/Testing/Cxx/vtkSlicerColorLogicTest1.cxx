@@ -22,8 +22,8 @@
 #include "vtkSlicerColorLogic.h"
 
 // MRML includes
-#include "vtkMRMLCoreTestingUtilities.h"
-#include <vtkMRMLScene.h>
+#include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkTimerLog.h>

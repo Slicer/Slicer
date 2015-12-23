@@ -10,17 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
 int vtkMRMLDiffusionWeightedVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLDiffusionWeightedVolumeDisplayNode > node1 = vtkSmartPointer< vtkMRMLDiffusionWeightedVolumeDisplayNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDiffusionWeightedVolumeDisplayNode, node1);
-
+  vtkNew<vtkMRMLDiffusionWeightedVolumeDisplayNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -32,8 +32,7 @@
 int vtkMRMLMarkupsNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLMarkupsNode> node1;
-
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( vtkMRMLMarkupsNode, node1 );
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_BOOLEAN(node1, Locked);
 

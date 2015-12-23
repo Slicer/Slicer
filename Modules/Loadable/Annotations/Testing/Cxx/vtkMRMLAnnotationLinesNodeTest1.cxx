@@ -7,7 +7,8 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-void SetControlPointsAndText(vtkMRMLAnnotationLinesNode* node2)  {
+void SetControlPointsAndText(vtkMRMLAnnotationLinesNode* node2)
+{
   node2->AddText("TESTING 1",1,1);
   node2->AddText("TESTING 2",1,1);
 
@@ -23,167 +24,84 @@ void SetControlPointsAndText(vtkMRMLAnnotationLinesNode* node2)  {
     double ctp[3] = { 1, 2, 3};
     node2->AddControlPoint(ctp,0,0);
   }
-
-
 }
+
 int vtkMRMLAnnotationLinesNodeTest1(int , char * [] )
 {
+  vtkNew< vtkMRMLAnnotationLinesNode > node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   // ======================
   // Basic Setup
   // ======================
-  vtkSmartPointer< vtkMRMLAnnotationLinesNode > node2 = vtkSmartPointer< vtkMRMLAnnotationLinesNode >::New();
-  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
-  node2->SetScene(mrmlScene);
-  {
-
-    vtkSmartPointer< vtkMRMLAnnotationLinesNode > node1 = vtkSmartPointer< vtkMRMLAnnotationLinesNode >::New();
-    node1->SetScene(mrmlScene);
-    EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-    node1->UpdateReferences();
-    node2->Copy( node1 );
-
-    mrmlScene->RegisterNodeClass(node1);
-    mrmlScene->AddNode(node2);
-  }
-
-  vtkMRMLAnnotationLinesStorageNode *storNode = dynamic_cast <vtkMRMLAnnotationLinesStorageNode *> (node2->CreateDefaultStorageNode());
-
-  if( !storNode )
-    {
-      std::cerr << "Error in CreateDefaultStorageNode()" << std::endl;
-      return EXIT_FAILURE;
-    }
-  storNode->Delete();
-
-  std::cout << "Passed StorageNode" << std::endl;
+  vtkNew<vtkMRMLScene> mrmlScene;
+  mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationLinesNode>::New());
+  mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationLineDisplayNode>::New());
 
   // ======================
   // Modify Properties
   // ======================
-  node2->Reset();
-  node2->StartModify();
+  vtkNew<vtkMRMLAnnotationLinesNode> node2;
 
-  node2->SetScene(mrmlScene);
-
+  mrmlScene->AddNode(node2.GetPointer());
   node2->CreateAnnotationLineDisplayNode();
-  vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = node2->GetAnnotationLineDisplayNode();
-  if (!lineDisplayNode)
-    {
-    std::cerr << "Error in AnnotationLineDisplayNode() " << std::endl;
-    return EXIT_FAILURE;
-    }
-  else
-    {
-    // register the node type with the scene
-    mrmlScene->RegisterNodeClass(lineDisplayNode);
-    }
+  CHECK_NOT_NULL(node2->GetAnnotationLineDisplayNode());
 
-  std::cout << "Passed DisplayNode" << std::endl;
-
-  node2->SetName("AnnotationNodeTest") ;
-
-  std::string nodeTagName = node2->GetNodeTagName();
-  std::cout << "Node Tag Name = " << nodeTagName << std::endl;
-
-  SetControlPointsAndText(node2);
-
-  if (node2->AddLine(0,1,1,0) < 0)
-    {
-      std::cerr << "Error in AddLine" << std::endl;
-       return EXIT_FAILURE;
-    }
+  SetControlPointsAndText(node2.GetPointer());
+  CHECK_INT(node2->AddLine(0,1,1/*sel*/,0/*vis*/), 0);
 
   node2->ResetAnnotations();
-  if (node2->GetNumberOfLines())
-    {
-      std::cerr << "Error in ResetAnnotations" << std::endl;
-       return EXIT_FAILURE;
-    }
+  CHECK_INT(node2->GetNumberOfLines(), 0);
 
-  SetControlPointsAndText(node2);
-  node2->AddLine(0,1,1,0);
-
+  SetControlPointsAndText(node2.GetPointer());
+  CHECK_INT(node2->AddLine(0,1,1,0), 0);
 
   int sel = 0;
   int vis = 1;
+  CHECK_INT(node2->AddLine(0,2,sel,vis), 1);
 
-  node2->AddLine(0,2,sel,vis);
+  vtkIdType ctrlPointID[2]={0};
 
-  vtkIdType ctrlPointID[2];
-
-  int flag = node2->GetEndPointsId(1,ctrlPointID);
-  if (!flag || ctrlPointID[0] || (ctrlPointID[1] != 2) || (node2->GetAnnotationAttribute(1, vtkMRMLAnnotationLinesNode::LINE_SELECTED)!= sel ) ||  (node2->GetAnnotationAttribute(1, vtkMRMLAnnotationLinesNode::LINE_VISIBLE) != vis))
-    {
-      std::cerr << "Error in Line Attributes: " << flag << "!=1, " << ctrlPointID[0] << "!=0, " << ctrlPointID[1]<< "!=2" << node2->GetAnnotationAttribute(1, vtkMRMLAnnotationLinesNode::LINE_SELECTED) << "!=" << sel<< ", " << node2->GetAnnotationAttribute(1, vtkMRMLAnnotationLinesNode::LINE_VISIBLE) <<"!="<< vis << std::endl;
-      return EXIT_FAILURE;
-    }
+  CHECK_BOOL(node2->GetEndPointsId(1,ctrlPointID), true);
+  CHECK_INT(ctrlPointID[0], 0);
+  CHECK_INT(ctrlPointID[1], 2);
+  CHECK_INT(node2->GetAnnotationAttribute(1, vtkMRMLAnnotationLinesNode::LINE_SELECTED), sel);
+  CHECK_INT(node2->GetAnnotationAttribute(1, vtkMRMLAnnotationLinesNode::LINE_VISIBLE), vis);
 
   node2->AddLine(1,2,0,0);
-
-  if (node2->GetNumberOfLines() != 3)
-    {
-      std::cerr << "Error in Number of Lines" << std::endl;
-      return EXIT_FAILURE;
-    }
+  CHECK_INT(node2->GetNumberOfLines(), 3);
 
   node2->DeleteLine(1);
-  if (node2->GetNumberOfLines() != 2)
-    {
-      std::cerr << "Error in Deleting lines" << std::endl;
-      return EXIT_FAILURE;
-    }
-
-  vtkIndent ind;
-  node2->PrintAnnotationInfo(cout,ind);
-
-
-  cout << "Passed Adding and Deleting Data" << endl;
-
-  node2->Modified();
+  CHECK_INT(node2->GetNumberOfLines(), 2);
 
   // ======================
   // Test WriteXML and ReadXML
   // ======================
 
-  // mrmlScene->SetURL("/home/pohl/Slicer3/Slicer3/QTModules/Reporting/Testing/AnnotationLineNodeTest.mrml");
   mrmlScene->SetURL("AnnotationLineNodeTest.mrml");
-  mrmlScene->Commit();
-  // Now Read in File to see if ReadXML works - it first disconnects from node2 !
-  mrmlScene->Connect();
+  mrmlScene->Commit(); // write
 
-  if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationLinesNode") != 1)
-    {
-        std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
-    return EXIT_FAILURE;
-    }
+  vtkNew<vtkMRMLScene> mrmlScene2;
+  mrmlScene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationLinesNode>::New());
+  mrmlScene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationLineDisplayNode>::New());
+  mrmlScene2->SetURL("AnnotationLineNodeTest.mrml");
+  mrmlScene2->Connect(); // read
 
-  vtkMRMLAnnotationLinesNode *node3 = dynamic_cast < vtkMRMLAnnotationLinesNode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationLinesNode"));
-  if (!node3)
-      {
-    std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
-    return EXIT_FAILURE;
-      }
+  CHECK_INT(mrmlScene2->GetNumberOfNodesByClass("vtkMRMLAnnotationLinesNode"),1);
 
+  vtkMRMLAnnotationLinesNode *node3 = dynamic_cast < vtkMRMLAnnotationLinesNode *> (mrmlScene2->GetNthNodeByClass(0,"vtkMRMLAnnotationLinesNode"));
+  CHECK_NOT_NULL(node3);
+
+  vtkIndent ind;
   std::stringstream initialAnnotation, afterAnnotation;
-
-
-  // node2->PrintSelf(cout,ind);
 
   node2->PrintAnnotationInfo(initialAnnotation,ind);
   node3->PrintAnnotationInfo(afterAnnotation,ind);
-  if (initialAnnotation.str().compare(afterAnnotation.str()))
-  {
-    std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
-    std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
-    std::cerr << "After:" << std::endl << afterAnnotation.str() <<std::endl;
-    return EXIT_FAILURE;
-  }
-  cout << "Passed XML" << endl;
+  CHECK_STRING(initialAnnotation.str().c_str(), afterAnnotation.str().c_str());
+
+  std::cout << "Test passed" << std::endl;
 
   return EXIT_SUCCESS;
-
 }
 
 

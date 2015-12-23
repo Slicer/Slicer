@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFiberBundleTubeDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFiberBundleStorageNode.h"
 
-int vtkMRMLFiberBundleTubeDisplayNodeTest1(int , char * [] )
+int vtkMRMLFiberBundleStorageNodeTest1(int , char * [] )
 {
-  vtkNew<vtkMRMLFiberBundleTubeDisplayNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-  // exercising the display mrml methods fails on the ScalarVisibility boolean test
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLFiberBundleTubeDisplayNode, node1.GetPointer());
-
-
+  vtkNew<vtkMRMLFiberBundleStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

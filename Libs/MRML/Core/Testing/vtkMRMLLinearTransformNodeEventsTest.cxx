@@ -23,7 +23,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
 {
   vtkNew< vtkMRMLLinearTransformNode > linearTransformNode;
 
-  vtkNew<vtkMRMLNodeCallback> callback;
+  vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
 
   linearTransformNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 

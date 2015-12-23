@@ -22,8 +22,7 @@
 int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLMarkupsDisplayNode> node1;
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS( vtkMRMLMarkupsDisplayNode, node1 );
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_DOUBLE_RANGE(node1, TextScale, 0.0, 100.0);
 

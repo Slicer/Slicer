@@ -29,42 +29,42 @@
 
 int vtkMRMLSliceLogicTest1(int , char * [] )
 {
-  vtkNew<vtkMRMLSliceLogic> node1;
-  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
+  vtkNew<vtkMRMLSliceLogic> logic;
+  EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
   vtkNew<vtkMRMLScene> scene;
-  node1->SetName("Green");
-  node1->SetMRMLScene(scene.GetPointer());
+  logic->SetName("Green");
+  logic->SetMRMLScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSliceNode> SliceNode;
-  TEST_SET_GET_VALUE(node1, SliceNode, SliceNode.GetPointer());
+  TEST_SET_GET_VALUE(logic, SliceNode, SliceNode.GetPointer());
 
   vtkNew<vtkMRMLSliceLayerLogic> LabelLayer;
-  TEST_SET_GET_VALUE(node1, LabelLayer, LabelLayer.GetPointer());
+  TEST_SET_GET_VALUE(logic, LabelLayer, LabelLayer.GetPointer());
 
   vtkNew<vtkMRMLSliceCompositeNode> SliceCompositeNode;
-  TEST_SET_GET_VALUE(node1, SliceCompositeNode, SliceCompositeNode.GetPointer());
+  TEST_SET_GET_VALUE(logic, SliceCompositeNode, SliceCompositeNode.GetPointer());
 
   vtkNew<vtkMRMLSliceLayerLogic> ForegroundLayer;
-  TEST_SET_GET_VALUE(node1, ForegroundLayer, ForegroundLayer.GetPointer());
+  TEST_SET_GET_VALUE(logic, ForegroundLayer, ForegroundLayer.GetPointer());
 
   vtkNew<vtkMRMLSliceLayerLogic> BackgroundLayer;
-  TEST_SET_GET_VALUE(node1, BackgroundLayer, BackgroundLayer.GetPointer());
+  TEST_SET_GET_VALUE(logic, BackgroundLayer, BackgroundLayer.GetPointer());
 
   // TODO: need to fix the test.
   // The problem here is that the current node of the logic is wrong
   // it hasn't been added to the mrml scene. So when modified,
   // the logic realizes it and create a new node (loosing the props).
-  //TEST_SET_GET_VALUE(node1, SliceOffset, 1);
+  //TEST_SET_GET_VALUE(logic, SliceOffset, 1);
 
-  node1->DeleteSliceModel();
-  node1->CreateSliceModel();
-  TEST_GET_OBJECT(node1, SliceModelNode);
-  TEST_GET_OBJECT(node1, SliceModelDisplayNode);
-  TEST_GET_OBJECT(node1, SliceModelTransformNode);
-  TEST_GET_OBJECT(node1, Blend);
+  logic->DeleteSliceModel();
+  logic->CreateSliceModel();
+  TEST_GET_OBJECT(logic, SliceModelNode);
+  TEST_GET_OBJECT(logic, SliceModelDisplayNode);
+  TEST_GET_OBJECT(logic, SliceModelTransformNode);
+  TEST_GET_OBJECT(logic, Blend);
 
-  node1->Print(std::cout);
+  logic->Print(std::cout);
   return EXIT_SUCCESS;
 }
 

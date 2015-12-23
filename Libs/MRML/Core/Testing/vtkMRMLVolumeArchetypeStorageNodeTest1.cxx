@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLVolumeArchetypeStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 int vtkMRMLVolumeArchetypeStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode > node1 = vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLVolumeArchetypeStorageNode, node1);
-
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

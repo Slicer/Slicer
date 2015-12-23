@@ -39,10 +39,7 @@ bool TestReadOldFile(std::string filepath);
 int vtkMRMLDoubleArrayNodeTest1(int argc, char * argv[])
 {
   vtkNew<vtkMRMLDoubleArrayNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLDoubleArrayNode, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   if (argc != 3)
     {

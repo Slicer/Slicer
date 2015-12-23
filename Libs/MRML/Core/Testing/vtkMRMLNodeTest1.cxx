@@ -13,7 +13,6 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLCoreTestingUtilities.h"
 
 // VTK includes
 #include <vtkCollection.h>
@@ -23,6 +22,7 @@
 #include <vtkMRMLModelStorageNode.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkStringArray.h>
 
 // STD includes
 #include <sstream>
@@ -176,9 +176,9 @@ vtkStandardNewMacro(vtkMRMLStorageNodeTestHelper);
 
 //---------------------------------------------------------------------------
 int TestBasicMethods();
-bool TestAttribute();
+int TestAttribute();
 bool TestCopyWithScene();
-bool TestSetAndObserveNodeReferenceID();
+int TestSetAndObserveNodeReferenceID();
 bool TestAddRefrencedNodeIDWithNoScene();
 bool TestAddDelayedReferenceNode();
 bool TestRemoveReferencedNodeID();
@@ -190,7 +190,7 @@ bool TestReferencesWithEvent();
 bool TestMultipleReferencesToSameNodeWithEvent();
 bool TestSingletonNodeReferencesUpdate();
 bool TestAddReferencedNodeIDEventsWithNoScene();
-bool TestSetNodeReferenceID();
+int TestSetNodeReferenceID();
 bool TestSetNodeReferenceIDToZeroOrEmptyString();
 bool TestNodeReferenceSerialization();
 bool TestClearScene();
@@ -202,9 +202,9 @@ int vtkMRMLNodeTest1(int , char * [] )
 {
   bool res = true;
   res = res && (TestBasicMethods() == EXIT_SUCCESS);
-  res = res && TestAttribute();
+  res = res && (TestAttribute() == EXIT_SUCCESS);
   res = res && TestCopyWithScene();
-  res = res && TestSetAndObserveNodeReferenceID();
+  res = res && (TestSetAndObserveNodeReferenceID() == EXIT_SUCCESS);
   res = res && TestAddRefrencedNodeIDWithNoScene();
   res = res && TestAddDelayedReferenceNode();
   res = res && TestRemoveReferencedNodeID();
@@ -216,7 +216,7 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = res && TestMultipleReferencesToSameNodeWithEvent();
   res = res && TestSingletonNodeReferencesUpdate();
   res = res && TestAddReferencedNodeIDEventsWithNoScene();
-  res = res && TestSetNodeReferenceID();
+  res = res && (TestSetNodeReferenceID() == EXIT_SUCCESS);
   res = res && TestSetNodeReferenceIDToZeroOrEmptyString();
   res = res && TestNodeReferenceSerialization();
   res = res && TestClearScene();
@@ -365,27 +365,23 @@ bool TestSetAttribute(int line, const char* attribute, const char* value,
 int TestBasicMethods()
 {
   vtkNew<vtkMRMLNodeTestHelper1> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLNodeTestHelper1, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool TestAttribute()
+int TestAttribute()
 {
   vtkNew<vtkMRMLNodeTestHelper1> node;
   // Test defaults and make sure it doesn't crash
-  if (node->GetAttribute(0) != 0 ||
-      node->GetAttributeNames().size() != 0 ||
-      node->GetAttribute("") != 0 ||
-      node->GetAttribute("Attribute1") != 0)
-    {
-    std::cerr << "vtkMRMLNode bad default attributes" << std::endl;
-    return false;
-    }
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_NULL(node->GetAttribute(0));
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  CHECK_INT(node->GetAttributeNames().size(), 0);
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_NULL(node->GetAttribute(""));
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  CHECK_NULL(node->GetAttribute("Attribute1"));
 
   // Test sets
   bool res = true;
@@ -406,7 +402,7 @@ bool TestAttribute()
   res = TestSetAttribute(__LINE__, "Attribute0", ""      , ""      , 1, 1) && res;
   res = TestSetAttribute(__LINE__, "Attribute0", "Value1", "Value1", 1, 1) && res;
   res = TestSetAttribute(__LINE__, "Attribute0", "Value0", "Value0", 1, 0) && res;
-  return res;
+  return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 namespace
@@ -723,7 +719,7 @@ bool CheckNodeReferences(int line, const char* function, vtkMRMLScene* scene,
 }
 
 //----------------------------------------------------------------------------
-bool TestSetAndObserveNodeReferenceID()
+int TestSetAndObserveNodeReferenceID()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -738,10 +734,12 @@ bool TestSetAndObserveNodeReferenceID()
   scene->AddNode(referencingNode.GetPointer());
 
   vtkNew<vtkMRMLNodeTestHelper1> referencedNode1;
-  scene->AddNode(referencedNode1.GetPointer());
+  scene->AddNode(referencedNode1.GetPointer() );
 
   /// Add empty referenced node with empty role
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   returnNode = referencingNode->AddAndObserveNodeReferenceID(0, 0);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (!CheckNodeReferences(__LINE__, "AddAndObserveNodeReferenceID", scene.GetPointer(),
                            referencingNode.GetPointer(), 0,
                            /* n = */ 0,
@@ -750,7 +748,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add empty referenced node with a role
@@ -763,7 +761,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add referenced node ID
@@ -777,7 +775,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add empty referenced node ID
@@ -791,7 +789,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Change referenced node
@@ -809,7 +807,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add referenced node
@@ -827,7 +825,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   // make sure it didn't change the first referenced node ID
@@ -838,7 +836,7 @@ bool TestSetAndObserveNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add different role
@@ -856,7 +854,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add referenced node
@@ -874,7 +872,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   // make sure it didn't change the first referenced node ID
@@ -885,7 +883,7 @@ bool TestSetAndObserveNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode22.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   // make sure it didnt change the first role references
@@ -896,13 +894,13 @@ bool TestSetAndObserveNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode3.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
   if (!CheckNumberOfNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", role1.c_str(),
                                    referencingNode.GetPointer(),
                                    /* expectedNumberOfNodeReferences = */ 2))
     {
-    return false;
+    return EXIT_FAILURE;
     }
   // make sure it didn't change the first referenced node ID associated with the first role
   if (!CheckNthNodeReferenceID(__LINE__, "SetAndObserveNthNodeReferenceID", referencingNode.GetPointer(),
@@ -912,7 +910,7 @@ bool TestSetAndObserveNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// change reference and check that it did
@@ -927,7 +925,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount - 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
   // make sure it didn't change the first referenced node ID
   if (!CheckNthNodeReferenceID(__LINE__, "SetAndObserveNthNodeReferenceID", referencingNode.GetPointer(),
@@ -937,7 +935,7 @@ bool TestSetAndObserveNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// (1) set first reference, (2) set first reference to null and (3) set second reference
@@ -955,7 +953,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
@@ -969,7 +967,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount -1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
@@ -983,7 +981,7 @@ bool TestSetAndObserveNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Set Nth reference to 0
@@ -1002,7 +1000,9 @@ bool TestSetAndObserveNodeReferenceID()
     {
     int nth = *it;
     referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+    TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN(); // error is only returned if a negative index is provided and it's fine
     returnNode = referencingNode->SetAndObserveNthNodeReferenceID(role3.c_str(), nth, 0);
+    TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 
     if (!CheckNodeReferences(__LINE__, "SetAndObserveNthNodeReferenceID", scene.GetPointer(),
                              referencingNode.GetPointer(), role3.c_str(),
@@ -1012,11 +1012,11 @@ bool TestSetAndObserveNodeReferenceID()
                              /* expectedReferencedNodesCount = */ referencedNodesCount,
                              /* currentReturnNode = */ returnNode))
       {
-      return false;
+      return EXIT_FAILURE;
       }
     }
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //----------------------------------------------------------------------------
@@ -1968,7 +1968,10 @@ bool TestMultipleReferencesToSameNodeWithEvent()
   events->SetNumberOfTuples(0);
   events->InsertNextValue(888);
   events->InsertNextValue(999);
+
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN(); // we may get a warning in debug mode
   referencingNode->SetAndObserveNodeReferenceID(role2, referencedNode1->GetID(), events.GetPointer());
+  TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 
   // Test that the referencing node receives events all the requested referencedNode1 events from role 1 and 2
 
@@ -2100,7 +2103,7 @@ bool TestAddReferencedNodeIDEventsWithNoScene()
 }
 
 //----------------------------------------------------------------------------
-bool TestSetNodeReferenceID()
+int TestSetNodeReferenceID()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -2118,7 +2121,9 @@ bool TestSetNodeReferenceID()
   scene->AddNode(referencedNode1.GetPointer());
 
   /// Add empty referenced node with empty role
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   returnNode = referencingNode->AddNodeReferenceID(0, 0);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
   if (!CheckNodeReferences(__LINE__, "AddNodeReferenceID", scene.GetPointer(),
                            referencingNode.GetPointer(), 0,
                            /* n = */ 0,
@@ -2127,7 +2132,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add empty referenced node with a role
@@ -2140,7 +2145,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add referenced node ID
@@ -2154,7 +2159,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add empty referenced node ID
@@ -2168,7 +2173,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Change referenced node
@@ -2186,7 +2191,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add referenced node
@@ -2204,7 +2209,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   // make sure it didn't change the first referenced node ID
@@ -2215,7 +2220,7 @@ bool TestSetNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add different role
@@ -2233,7 +2238,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Add referenced node
@@ -2251,7 +2256,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   // make sure it didn't change the first referenced node ID
@@ -2262,7 +2267,7 @@ bool TestSetNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode22.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   // make sure it didnt change the first role references
@@ -2273,13 +2278,13 @@ bool TestSetNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode3.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
   if (!CheckNumberOfNodeReferences(__LINE__, "SetNthNodeReferenceID", role1.c_str(),
                                    referencingNode.GetPointer(),
                                    /* expectedNumberOfNodeReferences = */ 2))
     {
-    return false;
+    return EXIT_FAILURE;
     }
   // make sure it didn't change the first referenced node ID associated with the first role
   if (!CheckNthNodeReferenceID(__LINE__, "SetNthNodeReferenceID", referencingNode.GetPointer(),
@@ -2289,7 +2294,7 @@ bool TestSetNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// change reference and check that it did
@@ -2304,7 +2309,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount - 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
   // make sure it didn't change the first referenced node ID
   if (!CheckNthNodeReferenceID(__LINE__, "SetNthNodeReferenceID", referencingNode.GetPointer(),
@@ -2314,7 +2319,7 @@ bool TestSetNodeReferenceID()
                                /* referencingNodeAddedToScene = */ true,
                                /* expectedNodeReference = */ referencedNode2.GetPointer()))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// (1) set first reference, (2) set first reference to null and (3) set second reference
@@ -2332,7 +2337,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
@@ -2346,7 +2351,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount -1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
@@ -2360,7 +2365,7 @@ bool TestSetNodeReferenceID()
                            /* expectedReferencedNodesCount = */ referencedNodesCount + 1,
                            /* currentReturnNode = */ returnNode))
     {
-    return false;
+    return EXIT_FAILURE;
     }
 
   /// Set Nth reference to 0
@@ -2379,7 +2384,9 @@ bool TestSetNodeReferenceID()
     {
     int nth = *it;
     referencedNodesCount = GetReferencedNodeCount(scene.GetPointer(), referencingNode.GetPointer());
+    TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN(); // error is only returned if a negative index is provided and it's fine
     returnNode = referencingNode->SetNthNodeReferenceID(role3.c_str(), nth, 0);
+    TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 
     if (!CheckNodeReferences(__LINE__, "SetNthNodeReferenceID", scene.GetPointer(),
                              referencingNode.GetPointer(), role3.c_str(),
@@ -2389,11 +2396,11 @@ bool TestSetNodeReferenceID()
                              /* expectedReferencedNodesCount = */ referencedNodesCount,
                              /* currentReturnNode = */ returnNode))
       {
-      return false;
+      return EXIT_FAILURE;
       }
     }
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //----------------------------------------------------------------------------

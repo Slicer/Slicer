@@ -79,7 +79,7 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
 
   vtkMRMLLayoutNode* layoutNode = layoutLogic->GetLayoutNode();
 
-  vtkNew<vtkMRMLNodeCallback> spy;
+  vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> spy;
   layoutNode->AddObserver(vtkCommand::AnyEvent, spy.GetPointer());
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);

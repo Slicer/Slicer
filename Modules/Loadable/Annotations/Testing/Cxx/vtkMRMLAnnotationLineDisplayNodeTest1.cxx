@@ -1,13 +1,10 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationLineDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLAnnotationLineDisplayNode > node1 = vtkSmartPointer< vtkMRMLAnnotationLineDisplayNode >::New();
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLAnnotationLineDisplayNode, node1);
+  vtkNew<vtkMRMLAnnotationLineDisplayNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_DOUBLE_RANGE(node1, LineThickness, -1.0, 10.0);
 

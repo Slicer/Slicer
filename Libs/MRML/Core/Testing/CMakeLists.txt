@@ -1,5 +1,9 @@
 set(KIT ${PROJECT_NAME})
-set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+
+set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include \"vtkTestingOutputWindow.h")
+set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();\nTESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);" )
+set(CMAKE_TESTDRIVER_AFTER_TESTMAIN "TESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);" )
+
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLBSplineTransformNodeTest1.cxx
   vtkMRMLCameraNodeTest1.cxx
@@ -62,7 +66,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest.cxx
   vtkMRMLSceneImportTest.cxx
   vtkMRMLSceneTest1.cxx
-  #vtkMRMLSceneTest2.cxx
+  vtkMRMLSceneTest2.cxx
   vtkMRMLSceneViewNodeImportSceneTest.cxx
   vtkMRMLSceneViewNodeEventsTest.cxx
   vtkMRMLSceneViewNodeRestoreSceneTest.cxx
@@ -102,7 +106,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkOrientedBSplineTransformTest1.cxx
   vtkOrientedGridTransformTest1.cxx
   vtkThinPlateSplineTransformTest1.cxx
-  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
+  EXTRA_INCLUDE ${EXTRA_INCLUDE}
   )
 
 add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
@@ -226,9 +230,7 @@ set( ScenesToTest
   clipCube.mrml
   cube.mrml
   diffusionEditor.mrml
-  fiducial_tract.mrml
   helixGlyphs.mrml
-  helix_roi_tract.mrml
   hier_test.mrml
   multi_display.mrml
   name.mrml
@@ -237,12 +239,10 @@ set( ScenesToTest
   vol_and_cube_camera.mrml
   vol_and_cube.mrml
   vol.mrml
-  volRender.mrml
   volScene.mrml
   )
 
 foreach(SceneToTest ${ScenesToTest})
-  #SIMPLE_TEST_WITH_SCENE( vtkMRMLSCeneTest2 ${SceneToTest} )
+  SIMPLE_TEST_WITH_SCENE( vtkMRMLSCeneTest2 ${SceneToTest} )
   SIMPLE_TEST_WITH_SCENE( vtkMRMLSceneImportTest ${SceneToTest} )
 endforeach()
-

@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLSliceCompositeNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLSliceCompositeNode.h"
 
 int vtkMRMLSliceCompositeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLSliceCompositeNode > node1 = vtkSmartPointer< vtkMRMLSliceCompositeNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_MRML_METHODS(  vtkMRMLSliceCompositeNode, node1 );
-
+  vtkNew<vtkMRMLSliceCompositeNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

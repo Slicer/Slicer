@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLPETProceduralColorNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLPETProceduralColorNode.h"
 
 int vtkMRMLPETProceduralColorNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLPETProceduralColorNode > node1 = vtkSmartPointer< vtkMRMLPETProceduralColorNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLPETProceduralColorNode, node1);
-
+  vtkNew<vtkMRMLPETProceduralColorNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

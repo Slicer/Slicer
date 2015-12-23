@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLCrosshairNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLCrosshairNode.h"
 
 int vtkMRMLCrosshairNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLCrosshairNode > node1 = vtkSmartPointer< vtkMRMLCrosshairNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLCrosshairNode, node1);
-
+  vtkNew<vtkMRMLCrosshairNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -12,6 +12,7 @@
 
 // MRML includes
 #include "vtkMRMLColorNode.h"
+#include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
 
 // VTK includes
@@ -50,12 +51,18 @@ public:
     color[2] = 200;
     return true;
     }
+
+  vtkMRMLStorageNode* CreateDefaultStorageNode()
+    {
+    // just some random storage node to pass the storage node test of basic MRML node tests
+    return vtkMRMLColorTableStorageNode::New();
+    }
 };
 vtkStandardNewMacro(vtkMRMLColorNodeTestHelper1);
 
 //---------------------------------------------------------------------------
-bool TestGetColorNameAsFileName();
-bool TestGetColorNameAsFileName(const char* colorName,
+int TestGetColorNameAsFileName();
+int TestGetColorNameAsFileName(const char* colorName,
                                 const char* expectedColorFileName,
                                 const char* substr = "_");
 
@@ -63,27 +70,23 @@ bool TestGetColorNameAsFileName(const char* colorName,
 int vtkMRMLColorNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLColorNodeTestHelper1> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName());
 
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( vtkMRMLColorNodeTestHelper1, node1.GetPointer());
-
-  bool res = true;
-  res = TestGetColorNameAsFileName() && res;
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool TestGetColorNameAsFileName()
+int TestGetColorNameAsFileName()
 {
-  bool res = true;
-  res = TestGetColorNameAsFileName("validName", "validName") && res;
-  res = TestGetColorNameAsFileName("name with space", "name_with_space") && res;
-  res = TestGetColorNameAsFileName("n^a$m(e!w)i-t_h~v{a}l.iD#c%h'ars", "n^a$m(e!w)i-t_h~v{a}l.iD#c%h'ars") && res;
-  res = TestGetColorNameAsFileName("n`a@m&e*w+i=t[h]i;n:v\\a|l\"i<D>c,h/a?rs", "n_a_m_e_w_i_t_h_i_n_v_a_l_i_D_c_h_a_rs") && res;
-  res = TestGetColorNameAsFileName("name with \nreturn", "name_with__return") && res;
-  res = TestGetColorNameAsFileName("ÑÂme wïth àçÇénts", "____me_w__th_________nts") && res;
-  res = TestGetColorNameAsFileName(
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("validName", "validName"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("name with space", "name_with_space"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("n^a$m(e!w)i-t_h~v{a}l.iD#c%h'ars", "n^a$m(e!w)i-t_h~v{a}l.iD#c%h'ars"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("n`a@m&e*w+i=t[h]i;n:v\\a|l\"i<D>c,h/a?rs", "n_a_m_e_w_i_t_h_i_n_v_a_l_i_D_c_h_a_rs"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("name with \nreturn", "name_with__return"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("ÑÂme wïth àçÇénts", "____me_w__th_________nts"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName(
     "very very very very very very very very very very "
     "very very very very very very very very very very "
     "very very very very very very very very very very "
@@ -95,25 +98,25 @@ bool TestGetColorNameAsFileName()
     "very_very_very_very_very_very_very_very_very_very_"
     "very_very_very_very_very_very_very_very_very_very_"
     "very_very_very_very_very_very_very_very_very_very_"
-    "very_v") && res;
-  res = TestGetColorNameAsFileName("name with space", "name with space", " ") && res;
-  res = TestGetColorNameAsFileName("name with space", "name__with__space", "__") && res;
-  return res;
+    "very_v"));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("name with space", "name with space", " "));
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("name with space", "name__with__space", "__"));
+  return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool TestGetColorNameAsFileName(const char* colorName, const char * expectedColorFileName, const char* substr)
+int TestGetColorNameAsFileName(const char* colorName, const char * expectedColorFileName, const char* substr)
 {
   vtkNew<vtkMRMLColorNodeTestHelper1> colorNode;
   colorNode->SetNamesFromColors();
   colorNode->SetColorName(0, colorName);
   std::string fileName = colorNode->GetColorNameAsFileName(0, substr);
-  bool res = (fileName == std::string(expectedColorFileName));
-  if (!res)
+  if (fileName != std::string(expectedColorFileName))
     {
-    std::cout << "Input: " << colorName
+    std::cerr << "Input: " << colorName
               << "\nOutput: " << fileName.c_str()
               << "\n Expected: " << expectedColorFileName <<std::endl;
+    return EXIT_FAILURE;
     }
-  return res;
+  return EXIT_SUCCESS;
 }

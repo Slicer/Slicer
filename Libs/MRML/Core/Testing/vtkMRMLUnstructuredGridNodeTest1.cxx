@@ -10,22 +10,12 @@
 
 =========================================================================auto=*/
 
-// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLUnstructuredGridNode.h"
 
-// VTK includes
-#include <vtkPolyData.h>
-
-// STD includes
-
 int vtkMRMLUnstructuredGridNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLUnstructuredGridNode > node1 = vtkSmartPointer< vtkMRMLUnstructuredGridNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLUnstructuredGridNode, node1);
-
+  vtkNew<vtkMRMLUnstructuredGridNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

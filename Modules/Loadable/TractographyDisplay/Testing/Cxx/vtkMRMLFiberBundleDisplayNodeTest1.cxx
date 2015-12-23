@@ -52,12 +52,7 @@ vtkStandardNewMacro(vtkMRMLFiberBundleDisplayNodeTestHelper1);
 //---------------------------------------------------------------------------
 int vtkMRMLFiberBundleDisplayNodeTest1(int , char * [] )
 {
-
-  vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLFiberBundleDisplayNodeTestHelper1 >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLFiberBundleDisplayNodeTestHelper1, node1);
-
+  vtkNew<vtkMRMLFiberBundleDisplayNodeTestHelper1> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

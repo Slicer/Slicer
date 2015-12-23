@@ -22,15 +22,15 @@ int vtkMRMLAnnotationROINodeTest1(int , char * [] )
 
   {
 
-    vtkSmartPointer< vtkMRMLAnnotationROINode > node1 = vtkSmartPointer< vtkMRMLAnnotationROINode >::New();
+    vtkNew<vtkMRMLAnnotationROINode> node1;
     // node1->Initialize(mrmlScene);
 
-    EXERCISE_BASIC_OBJECT_METHODS( node1 );
+    EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
     node1->UpdateReferences();
-    node2->Copy( node1 );
+    node2->Copy(node1.GetPointer());
 
-    mrmlScene->RegisterNodeClass(node1);
+    mrmlScene->RegisterNodeClass(node1.GetPointer());
     mrmlScene->AddNode(node2);
   }
 /*

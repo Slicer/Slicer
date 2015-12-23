@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLProceduralColorStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLProceduralColorStorageNode.h"
 
 int vtkMRMLProceduralColorStorageNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLProceduralColorStorageNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLProceduralColorStorageNode, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

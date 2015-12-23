@@ -10,20 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLGridTransformNode.h"
-
-#include <vtkGeneralTransform.h>
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLGridTransformNode.h"
 
 int vtkMRMLGridTransformNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLGridTransformNode > node1 = vtkSmartPointer< vtkMRMLGridTransformNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLGridTransformNode, node1);
-
+  vtkNew<vtkMRMLGridTransformNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

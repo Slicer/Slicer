@@ -20,6 +20,7 @@
 
 // VTK includes
 #include "vtkImageData.h"
+#include "vtkMatrix4x4.h"
 #include "vtkNew.h"
 
 typedef itk::BSplineDeformableTransform<double,3,3> itkBSplineType;

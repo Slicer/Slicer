@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 
 int vtkMRMLDiffusionTensorVolumeDisplayNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDiffusionTensorVolumeDisplayNode, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

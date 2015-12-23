@@ -30,29 +30,17 @@ class vtkMRMLDisplayableHierarchyNodeTestHelper1;
 namespace
 {
 int TestBasics();
-bool TestHierarchyNodeCount();
-bool TestHierarchyEvents();
+int TestHierarchyNodeCount();
+int TestHierarchyEvents();
 }
 
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableHierarchyNodeTest1(int vtkNotUsed(argc),
                                          char * vtkNotUsed(argv)[])
 {
-  if (TestBasics() != EXIT_SUCCESS)
-    {
-    std::cout << "TestBasics failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (!TestHierarchyNodeCount())
-    {
-    std::cout << "TestHierarchyNodeCount failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (!TestHierarchyEvents())
-    {
-    std::cout << "TestHierarchyEvents failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_EXIT_SUCCESS(TestBasics());
+  CHECK_EXIT_SUCCESS(TestHierarchyNodeCount());
+  CHECK_EXIT_SUCCESS(TestHierarchyEvents());
   return EXIT_SUCCESS;
 }
 
@@ -83,11 +71,9 @@ namespace
 int TestBasics()
 {
   vtkNew<vtkMRMLDisplayableHierarchyNode> node1;
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLDisplayableHierarchyNode, node1.GetPointer());
-
-  TEST_SET_GET_STRING(node1.GetPointer(), DisplayableNodeID);
+  TEST_SET_GET_STRING( node1.GetPointer  (), DisplayableNodeID);
 
   node1->SetDisplayableNodeID("testingDisplayableNodeID");
 
@@ -118,12 +104,12 @@ int TestBasics()
 }
 
 //----------------------------------------------------------------------------
-bool TestHierarchyNodeCount()
+int TestHierarchyNodeCount()
 {
   vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLDisplayableHierarchyNode> node1;
-  scene->AddNode(node1.GetPointer());
+  scene->AddNode( node1.GetPointer() );
 
   // need a concrete display node
   vtkNew<vtkMRMLScalarVolumeDisplayNode> dnode2;
@@ -141,14 +127,8 @@ bool TestHierarchyNodeCount()
   vtkNew<vtkCollection> col;
   // needs the scene to be set before getting children
   node1->GetChildrenDisplayableNodes(col.GetPointer());
-  int numChildren =  col->GetNumberOfItems();
-  std::cout << "Number of children displayble nodes = " << numChildren
-            << std::endl;
-  if (numChildren != 0)
-    {
-    std::cerr << "Expected 0 children, got " << numChildren << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(col->GetNumberOfItems(), 0);
+
   // now add a real child
   vtkNew<vtkMRMLDisplayableHierarchyNodeTestHelper1> displayableNode;
   scene->AddNode(displayableNode.GetPointer());
@@ -156,37 +136,19 @@ bool TestHierarchyNodeCount()
   node1->SetDisplayableNodeID(displayableNode->GetID());
   node1->GetChildrenDisplayableNodes(col.GetPointer());
 
-  int expectedChildren = 1;
-  numChildren =  col->GetNumberOfItems();
-  std::cout << "Number of children displayble nodes  = " << numChildren
-            << std::endl;
-  if (numChildren != expectedChildren)
-    {
-    std::cerr << "Expected " << expectedChildren << " children, got "
-              << numChildren << std::endl;
-    return false;
-    }
+  CHECK_INT(col->GetNumberOfItems(), 1);
 
   // add another hierarchy node below this one
   vtkNew<vtkMRMLDisplayableHierarchyNode> node2;
   scene->AddNode(node2.GetPointer());
   node2->SetParentNodeID(node1->GetID());
-  expectedChildren++;
 
   vtkNew<vtkMRMLModelNode> modelNode;
   scene->AddNode(modelNode.GetPointer());
   node2->SetDisplayableNodeID(modelNode->GetID());
-  expectedChildren++;
+
   node1->GetChildrenDisplayableNodes(col.GetPointer());
-  numChildren =  col->GetNumberOfItems();
-  std::cout << "Number of children displayble nodes after adding a model one = "
-            << numChildren << std::endl;
-  if (numChildren != expectedChildren)
-    {
-    std::cerr << "Expected " << expectedChildren << " children, got "
-              << numChildren << std::endl;
-    return false;
-    }
+  CHECK_INT(col->GetNumberOfItems(), 3);
 
   vtkMRMLDisplayableHierarchyNode* hnode3 =
     node1->GetDisplayableHierarchyNode(scene.GetPointer(), "myid");
@@ -199,11 +161,11 @@ bool TestHierarchyNodeCount()
             << (hnode3 == NULL ? "NULL" : hnode3->GetID())
             << std::endl;
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //----------------------------------------------------------------------------
-bool TestHierarchyEvents()
+int TestHierarchyEvents()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -223,67 +185,31 @@ bool TestHierarchyEvents()
   hierarchyNode->SetDisplayableNodeID(modelNode->GetID());
   hierarchyNode->SetAndObserveDisplayNodeID(hierarchyDisplayNode->GetID());
 
-  vtkNew<vtkMRMLNodeCallback> callback;
+  vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
   hierarchyNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 
   // Model
   modelNode->Modified();
-  if (!callback->GetErrorString().empty() ||
-      callback->GetNumberOfModified() != 0 ||
-      callback->GetNumberOfEvents(
-        vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 0)
-    {
-    std::cerr << __LINE__ << ": model modified: "
-              << "vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent failed "
-              << callback->GetErrorString().c_str()
-              << " Number of ModifiedEvent: " << callback->GetNumberOfModified()
-              << " Number of DisplayModifiedEvent: "
-              << callback->GetNumberOfEvents(
-                vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent)
-              << std::endl;
-    return false;
-    }
+  CHECK_BOOL(callback->GetErrorString().empty(), true);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent), 0);
   callback->ResetNumberOfEvents();
 
   // Model display
   modelDisplayNode->Modified();
-  if (!callback->GetErrorString().empty() ||
-      callback->GetNumberOfModified() != 0 ||
-      callback->GetNumberOfEvents(
-        vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 0)
-    {
-    std::cerr << __LINE__ << ": model display modified: "
-              <<"vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent failed "
-              << callback->GetErrorString().c_str()
-              << " Number of ModifiedEvent: " << callback->GetNumberOfModified()
-              << " Number of DisplayModifiedEvent: "
-              << callback->GetNumberOfEvents(
-                vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent)
-              << std::endl;
-    return false;
-    }
+  CHECK_BOOL(callback->GetErrorString().empty(), true);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent), 0);
   callback->ResetNumberOfEvents();
 
   // Hierarchy display
   hierarchyDisplayNode->Modified();
-  if (!callback->GetErrorString().empty() ||
-      callback->GetNumberOfModified() != 0 ||
-      callback->GetNumberOfEvents(
-        vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 1)
-    {
-    std::cerr << __LINE__ << ": hierarchy display modified: "
-              <<"vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent failed "
-              << callback->GetErrorString().c_str()
-              << " Number of ModifiedEvent: " << callback->GetNumberOfModified()
-              << " Number of DisplayModifiedEvent: "
-              << callback->GetNumberOfEvents(
-                vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent)
-              << std::endl;
-    return false;
-    }
+  CHECK_BOOL(callback->GetErrorString().empty(), true);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent), 1);
   callback->ResetNumberOfEvents();
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 } // end namespace

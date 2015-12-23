@@ -8,8 +8,8 @@
 
 int vtkMRMLAnnotationStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLAnnotationStorageNode > node2 = vtkSmartPointer< vtkMRMLAnnotationStorageNode >::New();
-  EXERCISE_BASIC_OBJECT_METHODS( node2 );
+  vtkNew<vtkMRMLAnnotationStorageNode> node2;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node2.GetPointer());
 
   vtkMRMLAnnotationStorageNode* node1 = dynamic_cast <  vtkMRMLAnnotationStorageNode *> (node2->CreateNodeInstance());
   if( node1 == NULL )

@@ -43,9 +43,9 @@ vtkStandardNewMacro(vtkMRMLTestVolumeNode);
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeNodeEventsTest(int , char * [] )
 {
-  vtkNew< vtkMRMLTestVolumeNode > volumeNode;
+  vtkNew<vtkMRMLTestVolumeNode> volumeNode;
 
-  vtkNew<vtkMRMLNodeCallback> callback;
+  vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
 
   volumeNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 

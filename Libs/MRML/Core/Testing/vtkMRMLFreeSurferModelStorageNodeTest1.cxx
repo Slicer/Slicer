@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFreeSurferModelStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
 
 int vtkMRMLFreeSurferModelStorageNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLFreeSurferModelStorageNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLFreeSurferModelStorageNode, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -15,7 +15,7 @@
 int vtkMRMLLayoutLogicTest2(int , char * [] )
 {
   vtkNew<vtkMRMLLayoutLogic> logic;
-  EXERCISE_BASIC_OBJECT_METHODS( logic.GetPointer() );
+  EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
   vtkNew<vtkMRMLScene> scene;
 

@@ -34,8 +34,7 @@
 int vtkMRMLMarkupsFiducialStorageNodeTest1(int argc, char * argv[] )
 {
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> node1;
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS( vtkMRMLMarkupsFiducialStorageNode, node1.GetPointer() );
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLMarkupsFiducialNode> markupsNode;
   vtkNew<vtkMRMLMarkupsDisplayNode> displayNode;

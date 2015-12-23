@@ -8,86 +8,46 @@
 
 int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
 {
+  vtkNew<vtkMRMLAnnotationFiducialNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   // ======================
   // Basic Setup
   // ======================
-  vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node2 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
-  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
-  node2->SetScene(mrmlScene);
-
-
-  vtkSmartPointer< vtkMRMLAnnotationFiducialNode > node1 = vtkSmartPointer< vtkMRMLAnnotationFiducialNode >::New();
-  node1->SetScene(mrmlScene);
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  node1->UpdateReferences();
-  node2->Copy( node1 );
-
-  mrmlScene->RegisterNodeClass(node1);
-  mrmlScene->AddNode(node2);
-
-
-  std::cout << "Passed Basic" << std::endl;
+  vtkNew<vtkMRMLScene> mrmlScene;
+  mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationFiducialNode>::New());
+  mrmlScene->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New());
 
   // ======================
   // Modify Properties
   // ======================
-  node2->Reset();
-  node2->StartModify();
+  vtkNew<vtkMRMLAnnotationFiducialNode> node2;
 
-  node2->SetScene(mrmlScene);
+  mrmlScene->AddNode(node2.GetPointer());
   node2->CreateAnnotationPointDisplayNode();
-  vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = node2->GetAnnotationPointDisplayNode();
-  if (!pointDisplayNode)
-    {
-    std::cerr << "Error in AnnotationPointDisplayNode() " << std::endl;
-    return EXIT_FAILURE;
-    }
-  else
-    {
-    // register with the scene
-    mrmlScene->RegisterNodeClass(pointDisplayNode);
-    }
-  std::cout << "Passed DisplayNode" << std::endl;
-
-  node2->SetName("AnnotationFidcucialNodeTest") ;
-
-  std::string nodeTagName = node2->GetNodeTagName();
-  std::cout << "Node Tag Name = " << nodeTagName << std::endl;
+  CHECK_NOT_NULL(node2->GetAnnotationPointDisplayNode());
 
   double ctp[3] = { 1, 2, 3};
   const char* text = "Test 1 2";
   node2->SetFiducialLabel(text);
-  if (!node2->SetFiducial(ctp,1,0))
-    {
-    vtkIndent f;
-    node2->PrintSelf(cout,f);
-    std::cerr << "Error: Could not define Fiducial " << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(node2->SetFiducial(ctp,1,0), true);
   node2->SetSelected(1);
   node2->SetDisplayVisibility(0);
 
-  double *_ctp =  node2->GetFiducialCoordinates();
+  CHECK_INT(node2->GetNumberOfTexts(), 1);
+  CHECK_STRING(node2->GetFiducialLabel(), text);
 
-  if ( !node2->GetNumberOfTexts() || node2->GetFiducialLabel().compare(text))
-    {
-    std::cerr << "Error in SetFiducial: Label is not set correct " << std::endl;
-    return EXIT_FAILURE;
-      }
+  double *ctrlPointPos = node2->GetFiducialCoordinates();
+  CHECK_NOT_NULL(ctrlPointPos);
+  CHECK_INT(ctrlPointPos[0], 1);
+  CHECK_INT(ctrlPointPos[1], 2);
+  CHECK_INT(ctrlPointPos[2], 3);
 
-  if (_ctp[0] != ctp[0] ||_ctp[1] != ctp[1] ||_ctp[2] != ctp[2])
-    {
-    std::cerr << "Error in SetFiducial: coordinates are not set correct " << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(node2->GetSelected(), true);
+  CHECK_BOOL(node2->GetDisplayVisibility(), false);
 
-  if (!node2->GetSelected() || node2->GetDisplayVisibility())
-    {
-    std::cerr << "Error in SetFiducial: attributes are not set correct " << std::endl;
-    return EXIT_FAILURE;
-    }
+  vtkIndent ind;
+  node2->PrintAnnotationInfo(cout,ind);
 
   node2->Modified();
 
@@ -95,82 +55,27 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
   // Test WriteXML and ReadXML
   // ======================
 
-  // mrmlScene->SetURL("/home/pohl/Slicer3/Slicer3/QTModules/Reporting/Testing/AnnotationControlPointNodeTest.mrml");
   mrmlScene->SetURL("AnnotationFiducialNodeTest.mrml");
-  mrmlScene->Commit();
-  // Now Read in File to see if ReadXML works - it first disconnects from node2 !
-  mrmlScene->Connect();
+  mrmlScene->Commit(); // write
 
-  if (mrmlScene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode") != 1)
-    {
-    std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
-    return EXIT_FAILURE;
-    }
+  vtkNew<vtkMRMLScene> mrmlScene2;
+  mrmlScene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationFiducialNode>::New());
+  mrmlScene2->RegisterNodeClass(vtkSmartPointer<vtkMRMLAnnotationPointDisplayNode>::New());
+  mrmlScene2->SetURL("AnnotationFiducialNodeTest.mrml");
+  mrmlScene2->Connect(); // read
 
-  vtkMRMLAnnotationFiducialNode *node3 = dynamic_cast < vtkMRMLAnnotationFiducialNode *> (mrmlScene->GetNthNodeByClass(0,"vtkMRMLAnnotationFiducialNode"));
-  if (!node3)
-    {
-    std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(mrmlScene2->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode"),1);
 
-  vtkIndent ind;
+  vtkMRMLAnnotationFiducialNode *node3 = dynamic_cast < vtkMRMLAnnotationFiducialNode *> (mrmlScene2->GetNthNodeByClass(0,"vtkMRMLAnnotationFiducialNode"));
+  CHECK_NOT_NULL(node3);
+
   std::stringstream initialAnnotation, afterAnnotation;
-
-  // node2->PrintSelf(cout,ind);
 
   node2->PrintAnnotationInfo(initialAnnotation,ind);
   node3->PrintAnnotationInfo(afterAnnotation,ind);
-  if (initialAnnotation.str().compare(afterAnnotation.str()))
-    {
-    std::cerr << "Error in ReadXML() or WriteXML()" << std::endl;
-    std::cerr << "Before:" << std::endl << initialAnnotation.str() <<std::endl;
-    std::cerr << "After:" << std::endl << afterAnnotation.str() <<std::endl;
-    return EXIT_FAILURE;
-    }
-  cout << "Passed XML" << endl;
+  CHECK_STRING(initialAnnotation.str().c_str(), afterAnnotation.str().c_str());
+
+  std::cout << "Test passed" << std::endl;
 
   return EXIT_SUCCESS;
-
 }
-
-
-  // std::stringstream ss;
-  // node2->WriteXML(ss,5);
-  // std::string writeXML = ss.str();
-  // std::vector<std::string> tmpVec;
-  //
-  // size_t pos = writeXML.find("     ");
-  // while (pos != std::string::npos)
-  //   {
-  //     pos += 6;
-  //     size_t fix = writeXML.find('=',pos);
-  //     tmpVec.push_back(writeXML.substr(pos,fix - pos));
-  //     fix +=2;
-  //     pos = writeXML.find("\"     ",fix);
-  //
-  //     if (pos == std::string::npos)
-  //     {
-  //       std::string tmp = writeXML.substr(fix);
-  //       std::replace(tmp.begin(), tmp.end(), '\"', ' ');
-  //       // tmp.erase(remove_if(tmp.begin(), tmp.end(), isspace), tmp.end());
-  //       tmpVec.push_back(tmp);
-  //     }
-  //     else
-  //     {
-  //       tmpVec.push_back(writeXML.substr(fix,pos-fix));
-  //       pos ++;
-  //     }
-  //   }
-  //
-  //
-  // const char **readXML = new const char*[tmpVec.size()+1];
-  // for (int i= 0 ; i < int(tmpVec.size()); i++)
-  //   {
-  //     readXML[i] =  tmpVec[i].c_str();
-  //   }
-  // readXML[tmpVec.size()]= NULL;
-  // node2->ReadXMLAttributes(readXML);
-  // delete[] readXML;
-
-

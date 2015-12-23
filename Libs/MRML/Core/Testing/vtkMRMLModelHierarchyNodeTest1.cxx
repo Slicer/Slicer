@@ -24,10 +24,7 @@
 int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLModelHierarchyNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLModelHierarchyNode, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_STRING(node1.GetPointer(), ModelNodeID);
   //TEST_SET_GET_STRING(node1, DisplayNodeID);

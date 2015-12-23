@@ -20,18 +20,12 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLTableStorageNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLTableStorageNode.h"
 
 int vtkMRMLTableStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLTableStorageNode > node1 = vtkSmartPointer< vtkMRMLTableStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLTableStorageNode, node1);
-
+  vtkNew<vtkMRMLTableStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

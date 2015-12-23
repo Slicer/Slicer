@@ -21,29 +21,25 @@
 #include <vtkPolyData.h>
 
 //---------------------------------------------------------------------------
-bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
+int TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
                      bool observeDisplayBeforeAddToScene);
 
 //---------------------------------------------------------------------------
 int vtkMRMLModelDisplayNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLModelDisplayNode > node1 = vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  CHECK_EXIT_SUCCESS(TestSetPolyData(true, true));
+  CHECK_EXIT_SUCCESS(TestSetPolyData(true, false));
+  CHECK_EXIT_SUCCESS(TestSetPolyData(false, true));
+  CHECK_EXIT_SUCCESS(TestSetPolyData(false, false));
 
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLModelDisplayNode, node1);
-
-  bool res = true;
-  res = TestSetPolyData(true, true) && res;
-  res = TestSetPolyData(true, false) && res;
-  res = TestSetPolyData(false, true) && res;
-  res = TestSetPolyData(false, false) && res;
-
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
+int TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
                      bool observeDisplayBeforeAddToScene)
 {
   std::cout << __LINE__ << "TestSetPolyData" << std::endl;
@@ -86,7 +82,7 @@ bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
               << "PolyData: " << polyData.GetPointer() << ", "
               << "Model: " << model->GetPolyData() << ", "
               << "Display: " << display->GetInputPolyData() << std::endl;
-    return false;
+    return EXIT_FAILURE;
     }
-  return true;
+  return EXIT_SUCCESS;
 }

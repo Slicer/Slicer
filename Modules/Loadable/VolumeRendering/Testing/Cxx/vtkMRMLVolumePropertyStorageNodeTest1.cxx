@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLVolumePropertyStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLVolumePropertyStorageNode.h"
 
 int vtkMRMLVolumePropertyStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLVolumePropertyStorageNode > node1 = vtkSmartPointer< vtkMRMLVolumePropertyStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS( vtkMRMLVolumePropertyStorageNode, node1);
-
+  vtkNew<vtkMRMLVolumePropertyStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

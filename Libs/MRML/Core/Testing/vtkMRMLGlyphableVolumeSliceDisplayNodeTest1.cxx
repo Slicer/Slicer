@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
 
 int vtkMRMLGlyphableVolumeSliceDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLGlyphableVolumeSliceDisplayNode > node1 = vtkSmartPointer< vtkMRMLGlyphableVolumeSliceDisplayNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLGlyphableVolumeSliceDisplayNode, node1);
-
+  vtkNew<vtkMRMLGlyphableVolumeSliceDisplayNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

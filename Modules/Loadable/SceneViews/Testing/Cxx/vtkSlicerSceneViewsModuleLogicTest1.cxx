@@ -15,33 +15,33 @@
 int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
 {
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer< vtkSlicerSceneViewsModuleLogic > node1 = vtkSmartPointer< vtkSlicerSceneViewsModuleLogic >::New();
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  vtkNew<vtkSlicerSceneViewsModuleLogic> logic;
+  EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
   // should fail, no scene
   std::cout << "CreateSceneView with no mrml scene or screen shot" << std::endl;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->CreateSceneView("SceneViewTest0", "this is a scene view", 0, NULL);
+  logic->CreateSceneView("SceneViewTest0", "this is a scene view", 0, NULL);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  node1->SetMRMLScene(scene);
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  logic->SetMRMLScene(scene.GetPointer());
+  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicObjectMethods( logic.GetPointer() ));
 
   std::cout << "CreateSceneView with no screenshot" << std::endl;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->CreateSceneView("SceneViewTest1", "this is a scene view", 0, NULL);
+  logic->CreateSceneView("SceneViewTest1", "this is a scene view", 0, NULL);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // should pass w/screen shot
   vtkSmartPointer< vtkImageData > screenShot = vtkSmartPointer< vtkImageData >::New();
   std::cout << "CreateSceneView with no name or description, with screen shot" << std::endl;
-  node1->CreateSceneView("", "", 1, screenShot);
+  logic->CreateSceneView("", "", 1, screenShot);
 
   // give a name
   std::cout << "CreateSceneView with name, no description, with screen shot" << std::endl;
-  node1->CreateSceneView("SceneViewTest2", "", 2, screenShot);
+  logic->CreateSceneView("SceneViewTest2", "", 2, screenShot);
 
   std::cout << "MRML Scene has " << scene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode") << " scene view nodes" << std::endl;
 
@@ -57,14 +57,14 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
   std::cout << "After reading in MRML Scene " << url.c_str() << std::endl;
   std::cout << "\tscene has " << scene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode") << " scene view nodes" << std::endl;
 
-  node1->SetMRMLScene(scene);
+  logic->SetMRMLScene(scene.GetPointer());
   // test trying to remove a null node
   std::cout << "Trying to remove a null node." << std::endl;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  node1->RemoveSceneViewNode(NULL);
+  logic->RemoveSceneViewNode(NULL);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   // add a node to remove
-  node1->CreateSceneView("SceneViewTestToRemove", "this is a scene view to remove", 0, screenShot);
+  logic->CreateSceneView("SceneViewTestToRemove", "this is a scene view to remove", 0, screenShot);
   vtkCollection *col = scene->GetNodesByClassByName("vtkMRMLSceneViewNode", "SceneViewTestToRemove");
   if (col && col->GetNumberOfItems() > 0)
     {
@@ -72,7 +72,7 @@ int vtkSlicerSceneViewsModuleLogicTest1(int , char * [] )
     if (nodeToRemove)
       {
       // now remove one of the nodes
-      node1->RemoveSceneViewNode(nodeToRemove);
+      logic->RemoveSceneViewNode(nodeToRemove);
       std::cout << "After adding and removing a scene view node, scene has " << scene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode") << " scene view nodes" << std::endl;
 
       }

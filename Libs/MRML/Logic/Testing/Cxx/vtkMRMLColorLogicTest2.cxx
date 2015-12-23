@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 // MRML includes
-#include "vtkMRMLCoreTestingUtilities.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // VTK includes
 #include <vtkNew.h>

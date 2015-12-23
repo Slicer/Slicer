@@ -19,14 +19,13 @@ int vtkMRMLAnnotationNodeTest1(int , char * [] )
 
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
   {
-
-    vtkSmartPointer< vtkMRMLAnnotationNode > node1 = vtkSmartPointer< vtkMRMLAnnotationNode >::New();
-    EXERCISE_BASIC_OBJECT_METHODS( node1 );
+    vtkNew<vtkMRMLAnnotationNode> node1;
+    EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
     node1->UpdateReferences();
-    node2->Copy( node1 );
+    node2->Copy( node1.GetPointer() );
 
-    mrmlScene->RegisterNodeClass(node1);
+    mrmlScene->RegisterNodeClass( node1.GetPointer() );
     mrmlScene->AddNode(node2);
   }
 

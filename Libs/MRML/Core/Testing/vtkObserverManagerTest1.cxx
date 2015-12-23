@@ -51,7 +51,6 @@ void TestCallback( vtkObject *caller,
 int vtkObserverManagerTest1(int , char * [] )
 {
   vtkNew<vtkObserverManager> observerManager;
-
   EXERCISE_BASIC_OBJECT_METHODS(observerManager.GetPointer());
 
   observerManager->Modified();

@@ -48,7 +48,7 @@ int vtkMRMLSliceLayerLogicTest(int , char * [] )
   {
     vtkNew<vtkMRMLSliceLayerLogic> logic;
 
-    EXERCISE_BASIC_OBJECT_METHODS( logic.GetPointer() );
+    EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
     TEST_GET_OBJECT(logic, Reslice);
     TEST_GET_OBJECT(logic, ResliceUVW);

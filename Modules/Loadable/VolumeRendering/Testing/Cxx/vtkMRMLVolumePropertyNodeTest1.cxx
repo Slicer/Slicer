@@ -14,8 +14,13 @@
 #include "vtkMRMLVolumePropertyNode.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLCoreTestingMacros.h>
+#include <vtkMRMLLayoutLogic.h>
 #include <vtkMRMLScene.h>
+
+#include "vtkSlicerAnnotationModuleLogic.h"
+#include "vtkSlicerVolumeRenderingLogic.h"
 
 // VTK includes
 #include <vtkPiecewiseFunction.h>
@@ -23,39 +28,55 @@
 // STD includes
 #include <limits>
 
-namespace
-{
-int basics();
-bool readWrite();
-bool piecewiseFunctionFromString();
-}
-
-//---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNodeTest1(int , char * [] )
-{
-  bool res = true;
-  res = (basics() == EXIT_SUCCESS) && res;
-  res = readWrite() && res;
-  res = piecewiseFunctionFromString() && res;
-
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
-}
 
 namespace
 {
+int readWrite();
+int piecewiseFunctionFromString();
+}
 
 //---------------------------------------------------------------------------
-int basics()
+int vtkMRMLVolumePropertyNodeTest1(int argc, char * argv[] )
 {
-  vtkSmartPointer< vtkMRMLVolumePropertyNode > node1 = vtkSmartPointer< vtkMRMLVolumePropertyNode >::New();
+  if (argc < 2)
+    {
+    std::cout << "Usage: vtkMRMLVolumePropertyNodeTest1 scene_file_path.mrml"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_STORABLE_MRML_METHODS(vtkMRMLVolumePropertyNode, node1);
+  vtkNew<vtkMRMLVolumePropertyNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
+
+  CHECK_EXIT_SUCCESS(readWrite());
+  CHECK_EXIT_SUCCESS(piecewiseFunctionFromString());
+
+  const char* sceneFilePath = argv[1];
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
+  vtkNew<vtkSlicerVolumeRenderingLogic> vrLogic;
+  vrLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
+  vtkNew<vtkSlicerAnnotationModuleLogic> annLogic;
+  annLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
+  vtkNew<vtkMRMLLayoutLogic> layLogic;
+  layLogic->SetMRMLScene(scene.GetPointer()); // register custom nodes
+  // TODO: Remove these expected warnings by fixing node references in vtkMRMLVolumeRenderingDisplayNode.
+  // Currently, in vtkMRMLVolumeRenderingDisplayNode node references implemented manually (obsolete method),
+  // with lots of unnecessary code and warnings. Instead, standard node references should be used for the
+  // three referenced nodes.
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseSceneLoadingMethods(sceneFilePath, scene.GetPointer()));
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+
   return EXIT_SUCCESS;
 }
 
+namespace
+{
+
 //---------------------------------------------------------------------------
-bool readWrite()
+int readWrite()
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLVolumePropertyNode> propertyNode;
@@ -89,22 +110,11 @@ bool readWrite()
   vtkMRMLVolumePropertyNode* propertyNode2 =
     vtkMRMLVolumePropertyNode::SafeDownCast(
       scene2->GetNthNodeByClass(0, "vtkMRMLVolumePropertyNode"));
-  if (!propertyNode2)
-    {
-    std::cout << __FUNCTION__ << ":" << __LINE__ << " failed:" << std::endl
-              << "  No volume property node found in the loaded scene."
-              << std::endl;
-    return false;
-    }
-  vtkPiecewiseFunction* scalarOpacity2 =
-    propertyNode2->GetScalarOpacity();
-  if (!propertyNode2)
-    {
-    std::cout << __FUNCTION__ << ":" << __LINE__ << " failed:" << std::endl
-              << "  No scalar opacity found in the loaded volume property node."
-              << std::endl;
-    return false;
-    }
+  CHECK_NOT_NULL(propertyNode2);
+
+  vtkPiecewiseFunction* scalarOpacity2 = propertyNode2->GetScalarOpacity();
+  CHECK_NOT_NULL(scalarOpacity2);
+
   for (int i = 0; i < scalarOpacity->GetSize(); ++i)
     {
     double value[4];
@@ -125,14 +135,14 @@ bool readWrite()
                   << "  instead of" << std::endl
                   << "     " << res << " " << value[0] << " " << value[1]
                   << " " << value[2] << " " << value[3] << std::endl;
-        return false;
+        return EXIT_FAILURE;
         }
     }
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool piecewiseFunctionFromString()
+int piecewiseFunctionFromString()
 {
   std::string s("10 0 0 4.94065645841247e-324 0 69.5504608154297"
                 " 0 154.266067504883 0.699999988079071 228 1");
@@ -141,13 +151,8 @@ bool piecewiseFunctionFromString()
   vtkSmartPointer<vtkPiecewiseFunction> function =
     vtkSmartPointer<vtkPiecewiseFunction>::New();
   vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(s, function);
+  CHECK_INT(function->GetSize(), 5);
 
-  if (function->GetSize() != 5)
-    {
-    std::cout << "Failed to parse string " << s << ", "
-              << "found " << function->GetSize() << " values instead of 10";
-    return false;
-    }
   for (int i=0; i < 5; ++i)
     {
     double node[4];
@@ -159,10 +164,10 @@ bool piecewiseFunctionFromString()
                 << "found [" << node[0] << "," << node[1] << "] "
                 << "instead of [" << expectedData[i*2] << ","
                 << expectedData[i*2+1] << "]" << std::endl;
-      return false;
+      return EXIT_FAILURE;
       }
     }
-  return true;
+  return EXIT_SUCCESS;
 }
 
 }

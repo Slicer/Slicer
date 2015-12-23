@@ -13,7 +13,7 @@
 int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLAnnotationLinesStorageNode> node2;
-  EXERCISE_BASIC_OBJECT_METHODS(node2.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node2.GetPointer());
 
   vtkMRMLAnnotationLinesStorageNode* node1 = dynamic_cast <  vtkMRMLAnnotationLinesStorageNode *> (node2->CreateNodeInstance());
   if( node1 == NULL )

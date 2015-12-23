@@ -31,8 +31,7 @@
 int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
 {
   vtkNew<vtkMRMLMarkupsStorageNode> node1;
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS( vtkMRMLMarkupsStorageNode, node1 );
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   /// Test coordinate system, use valid range as this macro will fail if the CoordinateSystem var isn't set to the passed invalid values
   TEST_SET_GET_INT_RANGE(node1, CoordinateSystem, 1, 1);

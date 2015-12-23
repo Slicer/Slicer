@@ -42,10 +42,7 @@ vtkStandardNewMacro(vtkMRMLHierarchyNodeTestHelper1);
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLHierarchyNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNode, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_DOUBLE_RANGE(node1.GetPointer(), SortingValue, 0.0, 10.0);
 

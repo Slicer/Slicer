@@ -45,11 +45,7 @@ vtkStandardNewMacro(vtkMRMLStorableNodeTestHelper1);
 //---------------------------------------------------------------------------
 int vtkMRMLStorableNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLStorableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorableNodeTestHelper1 >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORABLE_MRML_METHODS(vtkMRMLStorableNodeTestHelper1, node1);
-
+  vtkNew<vtkMRMLStorableNodeTestHelper1> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

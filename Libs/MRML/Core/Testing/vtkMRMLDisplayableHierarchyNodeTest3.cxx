@@ -260,8 +260,12 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
     }
 
   // try setting indices out of range
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   mh6->SetIndexInParent(100);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   mh6->SetIndexInParent(-1);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // clean up
   hnode2->RemoveHierarchyChildrenNodes();

@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLScalarVolumeDisplayNode.h"
 
 int vtkMRMLScalarVolumeDisplayNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLScalarVolumeDisplayNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLScalarVolumeDisplayNode, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

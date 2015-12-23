@@ -16,8 +16,7 @@
 
 int vtkMRMLCameraNodeTest1(int , char * [] )
 {
-  vtkNew< vtkMRMLCameraNode > node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
+  vtkNew<vtkMRMLCameraNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

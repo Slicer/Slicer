@@ -11,20 +11,19 @@
 =========================================================================auto=*/
 
 // SlicerLogic includes
-#include "vtkDataIOManagerLogic.h"
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkDataIOManagerLogic.h"
 
 int vtkDataIOManagerLogicTest1(int , char * [] )
 {
   vtkNew<vtkDataIOManagerLogic> logic;
-  EXERCISE_BASIC_OBJECT_METHODS( logic.GetPointer() );
+  EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());
 
   vtkNew<vtkDataIOManager> dataIOManager;
   logic->SetAndObserveDataIOManager(dataIOManager.GetPointer());
 
-  vtkNew<vtkSlicerApplicationLogic> slicerApplictionLogic;
-  logic->SetMRMLApplicationLogic(slicerApplictionLogic.GetPointer());
+  vtkNew<vtkSlicerApplicationLogic> slicerApplicationLogic;
+  logic->SetMRMLApplicationLogic(slicerApplicationLogic.GetPointer());
   logic->GetApplicationLogic()->Print(std::cout);
 
   return EXIT_SUCCESS;

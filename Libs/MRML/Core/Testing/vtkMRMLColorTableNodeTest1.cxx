@@ -16,7 +16,6 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLParser.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLCoreTestingUtilities.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -28,10 +27,7 @@ using namespace vtkMRMLCoreTestingUtilities;
 int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 {
   vtkNew<vtkMRMLColorTableNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLColorTableNode, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   if (argc != 2)
     {

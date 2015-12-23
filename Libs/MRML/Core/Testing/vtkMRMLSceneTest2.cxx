@@ -12,6 +12,7 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -23,37 +24,8 @@
 #include <set>
 #include <sstream>
 
-// Convenient macro
-#define SCENE_CHECK_NUMBER_OF_EVENT(MSG, VARNAME, CURRENTCOUNT, OP, EXPECTEDCOUNT) \
-  if (EXPECTEDCOUNT OP CURRENTCOUNT)                                               \
-    {                                                                              \
-    std::cerr << "line " << __LINE__                                               \
-    << " - " << #MSG << std::endl;                                                 \
-    std::cerr << "Expected " << #VARNAME << ":" << EXPECTEDCOUNT << std::endl;     \
-    std::cerr << "Current " << #VARNAME << ":" << CURRENTCOUNT << std::endl;       \
-    return EXIT_FAILURE;                                                           \
-    }
-
 namespace
 {
-// List of node that should be added to the scene
-std::vector<std::string> expectedNodeAddedClassNames;
-
-// List of node that should be updated when NodeAddedEvent is catched
-std::vector<std::string> nodeAddedClassNames;
-
-vtkMRMLScene*  scene = 0;
-std::string    errorString;
-int            numberOfAboutToBeAddedNodes = 0;
-int            numberOfAddedNodes = 0;
-int            numberOfAboutToBeRemovedNodes = 0;
-int            numberOfRemovedNodes = 0;
-int            numberOfSingletonNodes = 0;
-int            numberOfSceneAboutToBeClosedEvents = 0;
-int            numberOfSceneClosedEvents = 0;
-int            numberOfSceneAboutToBeImportedEvents = 0;
-int            numberOfSceneImportedEvents = 0;
-bool           calledConnectMethod = false;
 
 //---------------------------------------------------------------------------
 std::vector<std::string> vector_diff(const std::vector<std::string>& v1,
@@ -70,166 +42,141 @@ std::vector<std::string> vector_diff(const std::vector<std::string>& v1,
 }
 
 //---------------------------------------------------------------------------
-void resetNumberOfEventsVariables()
+class vtkMRMLSceneCallback : public vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback
 {
-  nodeAddedClassNames.clear();
-  numberOfAboutToBeAddedNodes = 0;
-  numberOfAddedNodes = 0;
-  numberOfAboutToBeRemovedNodes = 0;
-  numberOfRemovedNodes = 0;
-  numberOfSingletonNodes = 0;
-  numberOfSceneAboutToBeClosedEvents = 0;
-  numberOfSceneClosedEvents = 0;
-  numberOfSceneAboutToBeImportedEvents = 0;
-  numberOfSceneImportedEvents = 0;
-  calledConnectMethod = false;
-}
+public:
+  static vtkMRMLSceneCallback *New() {return new vtkMRMLSceneCallback;}
 
-//---------------------------------------------------------------------------
-void setErrorString(int line, const std::string& msg)
-{
-  std::stringstream ss;
-  ss << "line " << line << " - " << msg;
-  errorString = ss.str();
-}
+  int NumberOfSingletonNodes;
 
-//---------------------------------------------------------------------------
-void mrmlEventCallback(vtkObject *vtkcaller, unsigned long eid,
-                         void *vtkNotUsed(clientdata), void *calldata)
-{
+  // List of node that should be updated when NodeAddedEvent is catched
+  std::vector<std::string> NodeAddedClassNames;
 
-  // Let's return if an error already occured
-  if (errorString.size() > 0)
+  virtual void ResetNumberOfEvents()
     {
-    return;
-    }
-  if (scene != vtkMRMLScene::SafeDownCast(vtkcaller))
-    {
-    setErrorString(__LINE__, "mrmlEventCallback - scene != vtkMRMLScene::SafeDownCast(vtkcaller)");
-    return;
+    vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::ResetNumberOfEvents();
+    this->NumberOfSingletonNodes = 0;
+    this->NodeAddedClassNames.clear();
     }
 
-  if (eid == vtkMRMLScene::NodeAboutToBeAddedEvent)
+  virtual void Execute(vtkObject* caller, unsigned long eid, void *calldata)
     {
-    vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-    if (!node)
+    vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::Execute(caller, eid, calldata);
+
+    // Let's return if an error already occured
+    if (this->CheckStatus() == EXIT_FAILURE)
       {
-      setErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeAddedEvent - node is NULL");
       return;
-      }
-    ++numberOfAboutToBeAddedNodes;
-    }
-  else if (eid == vtkMRMLScene::NodeAddedEvent)
-    {
-    vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-    if (!node)
-      {
-      setErrorString(__LINE__, "mrmlEventCallback - NodeAddedEvent - node is NULL");
-      return;
-      }
-    ++numberOfAddedNodes;
-    if (node->GetSingletonTag())
-      {
-      ++numberOfSingletonNodes;
       }
 
-    nodeAddedClassNames.push_back(node->GetClassName());
-    }
-  else if (eid == vtkMRMLScene::NodeAboutToBeRemovedEvent)
-    {
-    vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-    if (!node)
-      {
-      setErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeRemovedEvent - node is NULL");
-      return;
-      }
-    ++numberOfAboutToBeRemovedNodes;
-    }
-  else if (eid == vtkMRMLScene::NodeRemovedEvent)
-    {
-    vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
-    if (!node)
-      {
-      setErrorString(__LINE__, "mrmlEventCallback - NodeRemovedEvent - node is NULL");
-      return;
-      }
-    ++numberOfRemovedNodes;
-    }
-  else if (eid == vtkMRMLScene::StartCloseEvent)
-    {
-    if (scene->IsImporting())
-      {
-      setErrorString(__LINE__, "StartCloseEvent - IsImporting is expected to be 0");
-      return;
-      }
-    if (scene->IsClosing())
-      {
-      setErrorString(__LINE__, "StartCloseEvent - IsClosing is expected to be 1");
-      return;
-      }
-    if (scene->IsBatchProcessing())
-      {
-      setErrorString(__LINE__, "StartCloseEvent - IsUpdating is expected to be 1");
-      return;
-      }
-    ++numberOfSceneAboutToBeClosedEvents;
-    }
-  else if (eid == vtkMRMLScene::EndCloseEvent)
-    {
-    if (scene->IsImporting())
-      {
-      setErrorString(__LINE__, "EndCloseEvent - IsImporting is expected to be 0");
-      return;
-      }
-    if (scene->IsClosing())
-      {
-      setErrorString(__LINE__, errorString = "EndCloseEvent - IsClosing is expected to be 0");
-      return;
-      }
-    ++numberOfSceneClosedEvents;
-    }
-  else if (eid == vtkMRMLScene::StartImportEvent)
-    {
-    if (!scene->IsImporting())
-      {
-      setErrorString(__LINE__, "StartImport - ImportState is expected");
-      return;
-      }
-    if (!scene->IsBatchProcessing())
-      {
-      setErrorString(__LINE__, "StartImport - IsBatchProcessing is expected");
-      return;
-      }
-    ++numberOfSceneAboutToBeImportedEvents;
-    }
-  else if (eid == vtkMRMLScene::EndImportEvent)
-    {
-    if (scene->IsImporting())
-      {
-      setErrorString(__LINE__, "EndImportEvent - ImportState is not expected");
-      return;
-      }
-    if (scene->IsBatchProcessing())
-      {
-      setErrorString(__LINE__, "EndImportEvent - IsBatchProcessing is not expected");
-      return;
-      }
-    ++numberOfSceneImportedEvents;
-    }
-}
+    vtkMRMLScene* callerScene = vtkMRMLScene::SafeDownCast(caller);
 
-//---------------------------------------------------------------------------
-bool checkErrorString()
-{
-  if (errorString.size() > 0)
-    {
-    std::cerr << errorString << std::endl;
-    return false;
-    }
-  return true;
-}
+    if (eid == vtkMRMLScene::NodeAboutToBeAddedEvent)
+      {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+        {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeAddedEvent - node is NULL");
+        return;
+        }
+      }
+    else if (eid == vtkMRMLScene::NodeAddedEvent)
+      {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+        {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeAddedEvent - node is NULL");
+        return;
+        }
+      if (node->GetSingletonTag())
+        {
+        ++this->NumberOfSingletonNodes;
+        }
 
-}
+      this->NodeAddedClassNames.push_back(node->GetClassName());
+      }
+    else if (eid == vtkMRMLScene::NodeAboutToBeRemovedEvent)
+      {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+        {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeAboutToBeRemovedEvent - node is NULL");
+        return;
+        }
+      }
+    else if (eid == vtkMRMLScene::NodeRemovedEvent)
+      {
+      vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(calldata);
+      if (!node)
+        {
+        SetErrorString(__LINE__, "mrmlEventCallback - NodeRemovedEvent - node is NULL");
+        return;
+        }
+      }
+    else if (eid == vtkMRMLScene::StartCloseEvent)
+      {
+      if (callerScene->IsImporting())
+        {
+        SetErrorString(__LINE__, "StartCloseEvent - IsImporting is expected to be 0");
+        return;
+        }
+      if (!callerScene->IsClosing())
+        {
+        SetErrorString(__LINE__, "StartCloseEvent - IsClosing is expected to be 1");
+        return;
+        }
+      if (!callerScene->IsBatchProcessing())
+        {
+        SetErrorString(__LINE__, "StartCloseEvent - IsUpdating is expected to be 1");
+        return;
+        }
+      }
+    else if (eid == vtkMRMLScene::EndCloseEvent)
+      {
+      if (callerScene->IsImporting())
+        {
+        SetErrorString(__LINE__, "EndCloseEvent - IsImporting is expected to be 0");
+        return;
+        }
+      if (callerScene->IsClosing())
+        {
+        SetErrorString(__LINE__, "EndCloseEvent - IsClosing is expected to be 0");
+        return;
+        }
+      }
+    else if (eid == vtkMRMLScene::StartImportEvent)
+      {
+      if (!callerScene->IsImporting())
+        {
+        SetErrorString(__LINE__, "StartImport - ImportState is expected");
+        return;
+        }
+      if (!callerScene->IsBatchProcessing())
+        {
+        SetErrorString(__LINE__, "StartImport - IsBatchProcessing is expected");
+        return;
+        }
+      }
+    else if (eid == vtkMRMLScene::EndImportEvent)
+      {
+      if (callerScene->IsImporting())
+        {
+        SetErrorString(__LINE__, "EndImportEvent - ImportState is not expected");
+        return;
+        }
+      }
+    }
+
+protected:
+  vtkMRMLSceneCallback()
+    {
+    this->NumberOfSingletonNodes = 0;
+    }
+  ~vtkMRMLSceneCallback() {};
+
+}; // class vtkMRMLSceneCallback
+
+}; //namespace
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneTest2(int argc, char * argv [] )
@@ -242,101 +189,63 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // Instanciate scene
-  scene = vtkMRMLScene::New();
-  EXERCISE_BASIC_OBJECT_METHODS( scene );
+  // Instantiate scene
+  vtkSmartPointer<vtkMRMLScene>  scene = vtkSmartPointer<vtkMRMLScene>::New(); // vtkSmartPointer instead of vtkNew to allow SetPointer
+  EXERCISE_BASIC_OBJECT_METHODS(scene.GetPointer());
+  CHECK_INT(scene->GetNumberOfNodes(), 0);
 
-  if (scene->GetNumberOfNodes() != 0)
-    {
-    std::cerr << "line " << __LINE__ << " - Problem with vtkMRMLScene::GetNumberOfNodes() - "
-        "Scene should contains 0 nodes" << std::endl;
-    return EXIT_FAILURE;
-    }
+  // Configure mrml event observer
+  vtkNew<vtkMRMLSceneCallback> callback;
+  scene->AddObserver(vtkMRMLScene::NodeAboutToBeAddedEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::NodeAddedEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::NodeAboutToBeRemovedEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::StartCloseEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::EndCloseEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::StartImportEvent, callback.GetPointer());
+  scene->AddObserver(vtkMRMLScene::EndImportEvent, callback.GetPointer());
 
-  // Configure mrml event callback
-  vtkNew<vtkCallbackCommand> callback;
-  callback->SetCallback(mrmlEventCallback.GetPointer());
-  scene->AddObserver(vtkMRMLScene::NodeAboutToBeAddedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::NodeAddedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::NodeAboutToBeRemovedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::NodeRemovedEvent, callback);
-  scene->AddObserver(vtkMRMLScene::StartCloseEvent, callback);
-  scene->AddObserver(vtkMRMLScene::EndCloseEvent, callback);
-  scene->AddObserver(vtkMRMLScene::StartImportEvent, callback);
-  scene->AddObserver(vtkMRMLScene::EndImportEvent, callback);
 
   //---------------------------------------------------------------------------
   // Make sure IsClosing, IsImporting, IsBatchProcessing default values are correct
   //---------------------------------------------------------------------------
-  if (scene->IsClosing())
-    {
-    std::cerr << "line " << __LINE__ <<
-        " - Problem with IsClosing - 0 expected" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (scene->IsImporting())
-    {
-    std::cerr << "line " << __LINE__ <<
-        " - Problem with GetStates - 0 expected" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (scene->IsBatchProcessing())
-    {
-    std::cerr << "line " << __LINE__ <<
-        " - Problem with IsBatchProcessing - 0 expected" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(scene->IsClosing(), false);
+  CHECK_BOOL(scene->IsImporting(), false);
+  CHECK_BOOL(scene->IsBatchProcessing(), false);
 
   //---------------------------------------------------------------------------
   // Make sure SetIsImporting invoke events properly
   //---------------------------------------------------------------------------
-  resetNumberOfEventsVariables();
-  scene->SetIsImporting(false);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::SetIsImporting()",
-                              "SceneAboutToBeImportedEvents",
-                              numberOfSceneAboutToBeImportedEvents, !=, 0);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::SetIsImporting()",
-                              "SceneImportedEvents",
-                              numberOfSceneImportedEvents, !=, 0);
+  callback->ResetNumberOfEvents();
+  // it is invalid operation to end a state before starting it, should report error
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  scene->EndState(vtkMRMLScene::ImportState);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::StartImportEvent), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::EndImportEvent), 0);
 
-  resetNumberOfEventsVariables();
-  scene->SetIsImporting(true);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::SetIsImporting()",
-                              "SceneAboutToBeImportedEvents",
-                              numberOfSceneAboutToBeImportedEvents, !=, 1);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::SetIsImporting()",
-                              "SceneImportedEvents",
-                              numberOfSceneImportedEvents, !=, 0);
+  callback->ResetNumberOfEvents();
+  scene->StartState(vtkMRMLScene::ImportState);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::StartImportEvent), 1);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::EndImportEvent), 0);
 
-  resetNumberOfEventsVariables();
-  scene->SetIsImporting(false);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::SetIsImporting()",
-                              "SceneAboutToBeImportedEvents",
-                              numberOfSceneAboutToBeImportedEvents, !=, 0);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::SetIsImporting()",
-                              "SceneImportedEvents",
-                              numberOfSceneImportedEvents, !=, 1);
+  callback->ResetNumberOfEvents();
+  scene->EndState(vtkMRMLScene::ImportState);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::StartImportEvent), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::EndImportEvent), 1);
 
   //---------------------------------------------------------------------------
   // Extract number of nodes
   //---------------------------------------------------------------------------
   vtkNew<vtkXMLDataParser> xmlParser;
   xmlParser->SetFileName(argv[1]);
-  if (!xmlParser->Parse())
-    {
-    std::cerr << "line " << __LINE__
-        << " - Failed to extract number of node using vtkXMLDataParser" <<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(xmlParser->Parse()!=0, true);
   int expectedNumberOfNode = xmlParser->GetRootElement()->GetNumberOfNestedElements();
-  if (expectedNumberOfNode <= 0)
-    {
-    std::cerr << "line " << __LINE__
-        << " - " << argv[1] << " file do NOT contains any node !" <<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(expectedNumberOfNode>0, true);
+
   // Loop though all exepcted node and populate expectedNodeAddedNames vector
   // Note that node that can't be instantiated using CreateNodeByClass are not expected
+  std::vector<std::string> expectedNodeAddedClassNames; // List of node that should be added to the scene
   for(int i=0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
     {
     std::string className = "vtkMRML";
@@ -362,22 +271,17 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   //---------------------------------------------------------------------------
   // Check if the correct number of Events are sent - Also Keep track # of Singleton node
   //---------------------------------------------------------------------------
-  resetNumberOfEventsVariables();
+  callback->ResetNumberOfEvents();
 
   // Load the scene
   scene->SetURL( argv[1] );
 
-  calledConnectMethod = true;
   scene->Connect();
-  calledConnectMethod = false;
 
-  if (!checkErrorString())
-    {
-    return EXIT_FAILURE;
-    }
+  CHECK_EXIT_SUCCESS(callback->CheckStatus());
 
   std::vector<std::string> unexpectedAddedNodeNames =
-      vector_diff(expectedNodeAddedClassNames, nodeAddedClassNames);
+      vector_diff(expectedNodeAddedClassNames, callback->NodeAddedClassNames);
   if (!unexpectedAddedNodeNames.empty())
     {
     std::cerr << "line " << __LINE__ << " - unexpectedAddedNodeNames: ";
@@ -390,89 +294,52 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     }
 
   // If additional nodes have been instantiated, let's update expectedNumberOfNode
-  if (static_cast<int>(nodeAddedClassNames.size()) > expectedNumberOfNode)
+  if (static_cast<int>(callback->NodeAddedClassNames.size()) > expectedNumberOfNode)
     {
-    expectedNumberOfNode = static_cast<int>(nodeAddedClassNames.size());
+    expectedNumberOfNode = static_cast<int>(callback->NodeAddedClassNames.size());
     }
+  CHECK_INT(scene->GetNumberOfNodes(), expectedNumberOfNode);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAddedEvent), expectedNumberOfNode);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAboutToBeAddedEvent), expectedNumberOfNode);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeRemovedEvent), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAboutToBeRemovedEvent), 0);
 
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::Connect()", "NumberOfNode",
-                              scene->GetNumberOfNodes(), !=, expectedNumberOfNode);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with NodeAddedEvent",
-                              "numberOfAddedNodes", numberOfAddedNodes, !=, expectedNumberOfNode);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with NodeAboutToAddedEvent",
-                              "numberOfAboutToBeAddedNodes", numberOfAboutToBeAddedNodes, !=,
-                              numberOfAddedNodes);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with NodeRemovedEvent",
-                              "numberOfRemovedNodes", numberOfRemovedNodes, >, 0);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with NodeAboutToBeRemovedEvent",
-                              "numberOfAboutToBeRemovedNodes", numberOfAboutToBeRemovedNodes, >, 0);
+  // Since Connect() means Clean (or close) first then import,
+  // let's check if one event of each has been triggered.
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::StartCloseEvent), 1);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::EndCloseEvent), 1);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::StartImportEvent), 1);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::EndImportEvent), 1);
 
-  // Since Connect() means Clean (or close) first then import, let's check if one event of each
-  //  as been triggered.
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with SceneAboutToBeClosedEvent",
-                              "numberOfSceneAboutToBeClosedEvents",
-                              numberOfSceneAboutToBeClosedEvents, !=, 1);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with SceneClosedEvent",
-                              "numberOfSceneClosedEvents",
-                              numberOfSceneClosedEvents, !=, 1);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with SceneAboutToBeImportedEvent",
-                              "numberOfSceneAboutToBeImportedEvents",
-                              numberOfSceneAboutToBeImportedEvents, !=, 1);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with SceneImportedEvent",
-                              "numberOfSceneImportedEvents",
-                              numberOfSceneImportedEvents, !=, 1);
+  CHECK_BOOL(scene->IsBatchProcessing(), false);
 
-  if (scene->GetIsUpdating())
-    {
-    std::cout << "Problem with vtkMRMLScene::Connect() - IsUpdating should return 0" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  int currentNumberOfSingletonTag = numberOfSingletonNodes;
+  int currentNumberOfSingletonTag = callback->NumberOfSingletonNodes;
 
   //---------------------------------------------------------------------------
   // Clear all node except Singleton ones
   //---------------------------------------------------------------------------
-  resetNumberOfEventsVariables();
+  callback->ResetNumberOfEvents();
 
   // Clear scene expect singletons
   scene->Clear(0);
-  if (!checkErrorString())
-    {
-    return EXIT_FAILURE;
-    }
+  CHECK_EXIT_SUCCESS(callback->CheckStatus());
 
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::Clear(0)",
-                              "NumberOfNode",
-                              numberOfRemovedNodes + currentNumberOfSingletonTag, !=,
-                              expectedNumberOfNode);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::Clear(0)", "NumberOfNode",
-                              scene->GetNumberOfNodes(), !=, currentNumberOfSingletonTag);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::Clear(0)",
-                              "numberOfRemovedNodes",
-                              numberOfAboutToBeRemovedNodes, !=, numberOfRemovedNodes);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with NodeAddedEvent",
-                              "numberOfAddedNodes", numberOfAddedNodes, >, 0);
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with NodeAboutToAddedEvent",
-                              "numberOfAboutToBeAddedNodes", numberOfAboutToBeAddedNodes, >, 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeRemovedEvent) + currentNumberOfSingletonTag, expectedNumberOfNode);
+  CHECK_INT(scene->GetNumberOfNodes(), currentNumberOfSingletonTag);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAboutToBeRemovedEvent), callback->GetNumberOfEvents(vtkMRMLScene::NodeRemovedEvent));
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAboutToBeAddedEvent), 0);
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAddedEvent), 0);
 
   //---------------------------------------------------------------------------
   // Clear all node including Singleton ones
   //---------------------------------------------------------------------------
-  resetNumberOfEventsVariables();
+  callback->ResetNumberOfEvents();
 
-  // Clear scene including singletons - Note that the scene should contain only singletons
+  // Clear scene including singletons - Note that by now the scene should contain only singletons
   scene->Clear(1);
-  if (!checkErrorString())
-    {
-    return EXIT_FAILURE;
-    }
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Connect() - Problem with vtkMRMLScene::Clear(1)",
-                              "numberOfRemovedNodes",
-                              numberOfRemovedNodes, !=, currentNumberOfSingletonTag);
-  SCENE_CHECK_NUMBER_OF_EVENT("Problem with vtkMRMLScene::Clear(1) - Scene should contains 0 nodes",
-                              "NumberOfNodes",
-                              scene->GetNumberOfNodes(), !=, 0);
+  CHECK_EXIT_SUCCESS(callback->CheckStatus());
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeAboutToBeRemovedEvent), currentNumberOfSingletonTag);
+  CHECK_INT(scene->GetNumberOfNodes(), 0);
 
 #if 0
   //---------------------------------------------------------------------------
@@ -497,18 +364,11 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   //---------------------------------------------------------------------------
   // Expected number of nodes that should removed
   int numberOfNodes = scene->GetNumberOfNodes();
+  callback->ResetNumberOfEvents();
+  scene = NULL;
+  CHECK_EXIT_SUCCESS(callback->CheckStatus());
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLScene::NodeRemovedEvent), numberOfNodes);
 
-  resetNumberOfEventsVariables();
-
-  // Make sure scene destructor work properly
-  scene->Delete();
-  if (!checkErrorString())
-    {
-    return EXIT_FAILURE;
-    }
-  SCENE_CHECK_NUMBER_OF_EVENT("vtkMRMLScene::Delete() has not fired enough NodeRemovedEvent",
-                              "NumberOfNodes",
-                              numberOfRemovedNodes, !=, numberOfNodes);
-
+  std::cout << "Test completed successfully" << std::endl;
   return EXIT_SUCCESS;
 }

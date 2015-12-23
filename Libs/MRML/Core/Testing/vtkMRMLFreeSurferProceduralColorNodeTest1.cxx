@@ -10,18 +10,13 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
 
 int vtkMRMLFreeSurferProceduralColorNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFreeSurferProceduralColorNode > node1 = vtkSmartPointer< vtkMRMLFreeSurferProceduralColorNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLFreeSurferProceduralColorNode, node1);
-
+  vtkNew<vtkMRMLFreeSurferProceduralColorNode> node1;
+  node1->SetTypeToBlueRed();
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

@@ -5,11 +5,9 @@
 
 int vtkMRMLAnnotationPointDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLAnnotationPointDisplayNode > node1 = vtkSmartPointer< vtkMRMLAnnotationPointDisplayNode >::New();
+  vtkNew<vtkMRMLAnnotationPointDisplayNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLAnnotationPointDisplayNode, node1);
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_INT_RANGE(node1, GlyphType, -1, 10);
 

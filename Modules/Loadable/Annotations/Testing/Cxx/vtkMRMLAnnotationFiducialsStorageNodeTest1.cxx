@@ -23,8 +23,8 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     {
     tempDir = argv[4];
     }
-  vtkSmartPointer< vtkMRMLAnnotationFiducialsStorageNode > node2 = vtkSmartPointer< vtkMRMLAnnotationFiducialsStorageNode >::New();
-  EXERCISE_BASIC_OBJECT_METHODS( node2 );
+  vtkNew<vtkMRMLAnnotationFiducialsStorageNode> node2;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node2.GetPointer());
 
   vtkMRMLAnnotationFiducialsStorageNode* node1 = dynamic_cast <  vtkMRMLAnnotationFiducialsStorageNode *> (node2->CreateNodeInstance());
   if( node1 == NULL )
@@ -78,7 +78,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
 
   annNode->Modified();
 
-  mrmlScene->AddNode(node2);
+  mrmlScene->AddNode(node2.GetPointer());
   // node2->SetDataDirectory("./log");
   std::string fileName = "AnnotationFiducialList.acsv";
   std::vector<std::string> pathComponents;

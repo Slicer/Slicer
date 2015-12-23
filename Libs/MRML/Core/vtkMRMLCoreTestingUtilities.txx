@@ -36,6 +36,6 @@ std::string ToString(Type value)
   return stream.str();
 }
 
-}
+} // namespace vtkMRMLCoreTestingUtilities
 
 #endif

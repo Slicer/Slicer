@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -31,28 +32,7 @@
 namespace
 {
 
-void populateScene(vtkMRMLScene* scene, bool saveInSceneView);
-bool import();
-
-} // end of anonymous namespace
-
-//---------------------------------------------------------------------------
-int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc),
-                                       char * vtkNotUsed(argv)[] )
-{
-  if (!import())
-    {
-    std::cerr << "import call not successful." << std::endl;
-    return EXIT_FAILURE;
-    }
-  return EXIT_SUCCESS;
-}
-
-namespace
-{
-
-//---------------------------------------------------------------------------
-void populateScene(vtkMRMLScene* scene, bool saveInSceneView)
+int populateScene(vtkMRMLScene* scene, bool saveInSceneView)
 {
   vtkNew<vtkMRMLSceneViewNode> sceneViewtoRegister;
   scene->RegisterNodeClass(sceneViewtoRegister.GetPointer());
@@ -70,18 +50,25 @@ void populateScene(vtkMRMLScene* scene, bool saveInSceneView)
     vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
     scene->AddNode(sceneViewNode.GetPointer());
 
+    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
     sceneViewNode->StoreScene();
+    TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
+    TESTING_OUTPUT_ASSERT_WARNINGS_END();
     }
 
   scene->RemoveNode(displayableNode.GetPointer());
+  return EXIT_SUCCESS;
 }
 
+} // end of anonymous namespace
+
 //---------------------------------------------------------------------------
-bool import()
+int vtkMRMLSceneViewNodeImportSceneTest(int vtkNotUsed(argc),
+                                       char * vtkNotUsed(argv)[] )
 {
   // Save a scene containing a viewnode and a sceneview node.
   vtkNew<vtkMRMLScene> scene;
-  populateScene(scene.GetPointer(), true);
+  CHECK_EXIT_SUCCESS(populateScene(scene.GetPointer(), true));
 
   // scene
   //   + vtkMRMLScalarVolumeDisplayNode1
@@ -97,7 +84,7 @@ bool import()
 
   // Simulate another scene
   vtkNew<vtkMRMLScene> scene2;
-  populateScene(scene2.GetPointer(), false);
+  CHECK_EXIT_SUCCESS(populateScene(scene2.GetPointer(), false));
 
   // scene2
   //   + vtkMRMLScalarVolumeDisplayNode1
@@ -120,20 +107,13 @@ bool import()
   vtkMRMLNode* displayNode2 = scene2->GetNthNodeByClass(1, "vtkMRMLScalarVolumeDisplayNode");
   vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(
     scene2->GetNthNodeByClass(0, "vtkMRMLSceneViewNode"));
-  if (!displayNode || !displayNode2 || !sceneViewNode
-      || strcmp(displayNode->GetID(), "vtkMRMLScalarVolumeDisplayNode1") != 0
-      || strcmp(displayNode2->GetID(), "vtkMRMLScalarVolumeDisplayNode2") != 0
-      || strcmp(sceneViewNode->GetID(), "vtkMRMLSceneViewNode1") != 0)
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    Original display node ID is " << displayNode->GetID()
-              << " instead of vtkMRMLScalarVolumeDisplayNode1." << std::endl
-              << "    Imported display node ID is " << displayNode2->GetID()
-              << " instead of vtkMRMLScalarVolumeDisplayNode2." << std::endl
-              << "    Scene view node ID is " << sceneViewNode->GetID()
-              << " instead of vtkMRMLSceneViewNode." << std::endl;
-    return false;
-    }
+
+  CHECK_NOT_NULL(displayNode);
+  CHECK_NOT_NULL(displayNode2);
+  CHECK_NOT_NULL(sceneViewNode);
+  CHECK_STRING(displayNode->GetID(), "vtkMRMLScalarVolumeDisplayNode1");
+  CHECK_STRING(displayNode2->GetID(), "vtkMRMLScalarVolumeDisplayNode2");
+  CHECK_STRING(sceneViewNode->GetID(), "vtkMRMLSceneViewNode1");
 
   // Check sceneViewNode node IDs.
   vtkMRMLNode* sceneViewDisplayNode =
@@ -141,33 +121,15 @@ bool import()
   vtkMRMLDisplayableNode* sceneViewDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(
     sceneViewNode->GetStoredScene()->GetNthNodeByClass(
       0, "vtkMRMLScalarVolumeNode"));
-  if (sceneViewNode->GetStoredScene()->GetNumberOfNodes() != 3
-      || !sceneViewDisplayNode || !sceneViewDisplayableNode
-      || strcmp(sceneViewDisplayNode->GetID(), "vtkMRMLScalarVolumeDisplayNode2") != 0
-      || strcmp(sceneViewDisplayableNode->GetID(),
-                "vtkMRMLScalarVolumeNode1") != 0)
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    Scene view Display node ID is " << sceneViewDisplayNode->GetID()
-              << " instead of vtkMRMLScalarVolumeDisplayNode2." << std::endl
-              << "    Scene view Displayable node ID is " << sceneViewDisplayableNode->GetID()
-              << " instead of vtkMRMLScalarVolumeNode1." << std::endl;
-    return false;
-    }
+
+  CHECK_INT(sceneViewNode->GetStoredScene()->GetNumberOfNodes(), 3);
+  CHECK_NOT_NULL(sceneViewDisplayNode);
+  CHECK_NOT_NULL(sceneViewDisplayableNode);
+  CHECK_STRING(sceneViewDisplayNode->GetID(), "vtkMRMLScalarVolumeDisplayNode2");
+  CHECK_STRING(sceneViewDisplayableNode->GetID(), "vtkMRMLScalarVolumeNode1");
 
   // Check references
-  if (strcmp(sceneViewDisplayableNode->GetNthDisplayNodeID(0),
-             sceneViewDisplayNode->GetID()) != 0)
-    {
-    std::cerr << __LINE__ << ": import failed." << std::endl
-              << "    Displayable node references are not updated. "
-              << "Displayable node display node ID is "
-              << sceneViewDisplayableNode->GetNthDisplayNodeID(0)
-              << " instead of " << sceneViewDisplayNode->GetID() << std::endl;
-    return false;
-    }
+  CHECK_STRING(sceneViewDisplayableNode->GetNthDisplayNodeID(0), sceneViewDisplayNode->GetID());
 
-  return true;
-}
-
+  return EXIT_SUCCESS;
 }

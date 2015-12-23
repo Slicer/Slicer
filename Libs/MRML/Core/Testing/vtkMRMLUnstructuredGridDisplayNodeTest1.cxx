@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLUnstructuredGridDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLUnstructuredGridDisplayNode.h"
 
 int vtkMRMLUnstructuredGridDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLUnstructuredGridDisplayNode > node1 = vtkSmartPointer< vtkMRMLUnstructuredGridDisplayNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLUnstructuredGridDisplayNode, node1);
-
+  vtkNew<vtkMRMLUnstructuredGridDisplayNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

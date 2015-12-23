@@ -10,21 +10,13 @@
 
 =========================================================================auto=*/
 
-// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLLinearTransformNode.h"
-
-// VTK includes
-#include <vtkGeneralTransform.h>
 
 //---------------------------------------------------------------------------
 int vtkMRMLLinearTransformNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLLinearTransformNode > node1 = vtkSmartPointer< vtkMRMLLinearTransformNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLLinearTransformNode, node1);
-
+  vtkNew<vtkMRMLLinearTransformNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

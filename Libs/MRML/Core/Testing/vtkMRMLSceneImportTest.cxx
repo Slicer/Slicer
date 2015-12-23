@@ -19,19 +19,11 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLScalarVolumeDisplayNode.h"
-#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
-
-bool connect(const char* sceneFilePath);
-bool connectTwice(const char* sceneFilePath);
-bool import(const char* sceneFilePath);
-bool importTwice(const char* sceneFilePath);
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneImportTest(int argc, char * argv[] )
@@ -43,53 +35,30 @@ int vtkMRMLSceneImportTest(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
   const char* sceneFilePath = argv[1];
-  bool res = true;
-  res = connect("") && res;
-  res = connect(sceneFilePath) && res;
-  res = connectTwice(sceneFilePath) && res;
-  res = import("") && res;
-  res = import(sceneFilePath) && res;
-  res = importTwice(sceneFilePath) && res;
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
-}
 
-//---------------------------------------------------------------------------
-bool connect(const char * sceneFilePath)
-{
   vtkNew<vtkMRMLScene> scene;
-  scene->SetURL(sceneFilePath);
+
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  scene->SetURL(0);
   scene->Connect();
-  return true;
-}
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-//---------------------------------------------------------------------------
-bool connectTwice(const char * sceneFilePath)
-{
-  vtkNew<vtkMRMLScene> scene;
-  scene->SetURL(sceneFilePath);
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  scene->SetURL("");
   scene->Connect();
-  int numberOfNodes = scene->GetNumberOfNodes();
-  scene->Connect();
-  int newNumberOfNodes = scene->GetNumberOfNodes();
-  return numberOfNodes == newNumberOfNodes;
-}
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-//---------------------------------------------------------------------------
-bool import(const char * sceneFilePath)
-{
-  vtkNew<vtkMRMLScene> scene;
-  scene->SetURL(sceneFilePath);
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  scene->SetURL(0);
   scene->Import();
-  return true;
-}
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-//---------------------------------------------------------------------------
-bool importTwice(const char * sceneFilePath)
-{
-  vtkNew<vtkMRMLScene> scene;
-  scene->SetURL(sceneFilePath);
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  scene->SetURL("");
   scene->Import();
-  scene->Import();
-  return true;
-}
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
+  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseSceneLoadingMethods(sceneFilePath));
+
+  return EXIT_SUCCESS;
+}

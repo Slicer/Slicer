@@ -17,26 +17,17 @@
 // VTK includes
 #include <vtkDataSetAttributes.h>
 #include <vtkPolyData.h>
+#include <vtkSphereSource.h>
 
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods();
-bool TestActiveScalars();
+int TestActiveScalars();
 
 //---------------------------------------------------------------------------
 int vtkMRMLModelNodeTest1(int , char * [] )
 {
-  /*
-  if (ExerciseBasicMethods() != EXIT_SUCCESS)
-    {
-    std::cerr << __LINE__ << ": ExerciseBasicMethods() failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  */
-  if (!TestActiveScalars())
-    {
-    std::cerr << __LINE__ << ": TestActiveScalars() failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_EXIT_SUCCESS(ExerciseBasicMethods());
+  CHECK_EXIT_SUCCESS(TestActiveScalars());
   return EXIT_SUCCESS;
 }
 
@@ -44,15 +35,17 @@ int vtkMRMLModelNodeTest1(int , char * [] )
 int ExerciseBasicMethods()
 {
   vtkNew<vtkMRMLModelNode> node1;
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLModelNode, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-bool TestActiveScalars()
+int TestActiveScalars()
 {
   vtkNew<vtkMRMLModelNode> node1;
+
+  vtkNew<vtkSphereSource> source;
+  node1->SetPolyDataConnection(source->GetOutputPort());
 
   vtkNew<vtkIntArray> testingArray;
   testingArray->SetName("testingArray");
@@ -72,5 +65,5 @@ bool TestActiveScalars()
   std::cout << "Active cell scalars name = " << (name == NULL ? "null" : name) << std::endl;
   node1->RemoveScalars("testingArray");
 
-  return true;
+  return EXIT_SUCCESS;
 }

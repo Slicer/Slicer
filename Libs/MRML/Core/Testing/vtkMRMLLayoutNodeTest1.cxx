@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLLayoutNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLLayoutNode.h"
 
 int vtkMRMLLayoutNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLLayoutNode > node1 = vtkSmartPointer< vtkMRMLLayoutNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLLayoutNode, node1);
-
+  vtkNew<vtkMRMLLayoutNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

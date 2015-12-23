@@ -10,20 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLDiffusionImageVolumeNode.h"
-
-#include <vtkPolyData.h>
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLDiffusionImageVolumeNode.h"
 
 int vtkMRMLDiffusionImageVolumeNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLDiffusionImageVolumeNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( vtkMRMLDiffusionImageVolumeNode, node1.GetPointer());
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

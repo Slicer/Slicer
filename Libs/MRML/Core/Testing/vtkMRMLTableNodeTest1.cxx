@@ -23,22 +23,18 @@
 #include "vtkMRMLTableNode.h"
 #include "vtkMRMLTableStorageNode.h"
 
+#include "vtkStringArray.h"
 #include "vtkTable.h"
 #include "vtkTestErrorObserver.h"
 
 #include "vtkMRMLCoreTestingMacros.h"
-#include "vtkMRMLCoreTestingUtilities.h"
 
 int vtkMRMLTableNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLTableNode > node1 = vtkSmartPointer< vtkMRMLTableNode >::New();
+  vtkNew<vtkMRMLTableNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLTableNode, node1);
-
-
-  vtkSmartPointer< vtkMRMLTableNode > node2 = vtkSmartPointer< vtkMRMLTableNode >::New();
+  vtkNew<vtkMRMLTableNode> node2;
 
   vtkSmartPointer<vtkTest::ErrorObserver> errorWarningObserver = vtkSmartPointer<vtkTest::ErrorObserver>::New();
   node2->AddObserver(vtkCommand::WarningEvent, errorWarningObserver);
@@ -127,7 +123,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   // Verify that Copy method creates a true independent copy
   vtkSmartPointer< vtkMRMLTableNode > node2copy = vtkSmartPointer< vtkMRMLTableNode >::New();
-  node2copy->Copy(node2);
+  node2copy->Copy(node2.GetPointer());
   // After copying the contents of the tables should be the same
   CHECK_STD_STRING(node2->GetCellText(0,0), node2copy->GetCellText(0,0));
 

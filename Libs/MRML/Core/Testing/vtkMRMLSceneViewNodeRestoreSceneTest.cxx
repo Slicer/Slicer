@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -32,8 +33,8 @@ namespace
 {
 
 vtkMRMLScene* createScene();
-bool restoreEditAndRestore();
-bool removeRestoreEditAndRestore();
+int restoreEditAndRestore();
+int removeRestoreEditAndRestore();
 
 } // end of anonymous namespace
 
@@ -41,10 +42,9 @@ bool removeRestoreEditAndRestore();
 int vtkMRMLSceneViewNodeRestoreSceneTest(int vtkNotUsed(argc),
                                          char * vtkNotUsed(argv)[] )
 {
-  bool res = true;
-  res = restoreEditAndRestore() && res;
-  res = removeRestoreEditAndRestore() && res;
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  CHECK_EXIT_SUCCESS(restoreEditAndRestore());
+  CHECK_EXIT_SUCCESS(removeRestoreEditAndRestore());
+  return EXIT_SUCCESS;
 }
 
 namespace
@@ -67,7 +67,7 @@ vtkMRMLScene* createScene()
 }
 
 //---------------------------------------------------------------------------
-bool restoreEditAndRestore()
+int restoreEditAndRestore()
 {
   vtkSmartPointer<vtkMRMLScene> scene;
   scene.TakeReference(createScene());
@@ -75,7 +75,10 @@ bool restoreEditAndRestore()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
+  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   sceneViewNode->RestoreScene();
 
@@ -85,18 +88,14 @@ bool restoreEditAndRestore()
 
   sceneViewNode->RestoreScene();
 
-  if (strcmp(volumeNode->GetDisplayNodeID(), "vtkMRMLScalarVolumeDisplayNode1") != 0)
-    {
-    std::cout << __LINE__ << "vtkMRMLSceneViewNode::RestoreScene failed"
-              << std::endl;
-    return false;
-    }
-  return true;
+  CHECK_STRING(volumeNode->GetDisplayNodeID(), "vtkMRMLScalarVolumeDisplayNode1");
+
+  return EXIT_SUCCESS;
 }
 
 
 //---------------------------------------------------------------------------
-bool removeRestoreEditAndRestore()
+int removeRestoreEditAndRestore()
 {
   vtkSmartPointer<vtkMRMLScene> scene;
   scene.TakeReference(createScene());
@@ -104,13 +103,21 @@ bool removeRestoreEditAndRestore()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
+  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   scene->RemoveNode(volumeNode);
 
+  // TODO: We expect errors here because of http://www.na-mic.org/Bug/view.php?id=2816 is not resolved.
+  // Once that bug is fixed, RestoreScene() should not throw any errors, and so the
+  // TESTING_OUTPUT_ASSERT_ERRORS_BEGIN/END macros should be removed.
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   sceneViewNode->RestoreScene();
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   vtkMRMLScalarVolumeNode* restoredVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
@@ -118,14 +125,10 @@ bool removeRestoreEditAndRestore()
 
   sceneViewNode->RestoreScene();
 
-  if (restoredVolumeNode->GetDisplayNodeID() == 0 ||
-      strcmp(restoredVolumeNode->GetDisplayNodeID(), "vtkMRMLScalarVolumeDisplayNode1") != 0)
-    {
-    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::RestoreScene failed"
-              << std::endl;
-    return false;
-    }
-  return true;
+  CHECK_NOT_NULL(restoredVolumeNode->GetDisplayNodeID());
+  CHECK_STRING(restoredVolumeNode->GetDisplayNodeID(), "vtkMRMLScalarVolumeDisplayNode1");
+
+  return EXIT_SUCCESS;
 }
 
 } // end of anonymous namespace

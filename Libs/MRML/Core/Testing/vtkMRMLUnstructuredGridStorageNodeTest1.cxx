@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLUnstructuredGridStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLUnstructuredGridStorageNode.h"
 
 int vtkMRMLUnstructuredGridStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLUnstructuredGridStorageNode > node1 = vtkSmartPointer< vtkMRMLUnstructuredGridStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLUnstructuredGridStorageNode, node1);
-
+  vtkNew<vtkMRMLUnstructuredGridStorageNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

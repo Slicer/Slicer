@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLScalarVolumeNode.h"
-#include <vtkPolyData.h>
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLScalarVolumeNode.h"
 
 int vtkMRMLScalarVolumeNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLScalarVolumeNode > node1 = vtkSmartPointer< vtkMRMLScalarVolumeNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLScalarVolumeNode, node1);
-
+  vtkNew<vtkMRMLScalarVolumeNode> node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

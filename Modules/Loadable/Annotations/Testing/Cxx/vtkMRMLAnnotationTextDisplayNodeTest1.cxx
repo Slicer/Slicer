@@ -1,13 +1,11 @@
 #include "vtkMRMLAnnotationTextDisplayNode.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationTextDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLAnnotationTextDisplayNode > node1 = vtkSmartPointer< vtkMRMLAnnotationTextDisplayNode >::New();
+  vtkNew<vtkMRMLAnnotationTextDisplayNode> node1;
 
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLAnnotationTextDisplayNode, node1);
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_BOOLEAN(node1, UseLineWrap);
   TEST_SET_GET_BOOLEAN(node1, ShowBorder);

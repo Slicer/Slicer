@@ -10,19 +10,12 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLFiducialListStorageNode.h"
-#include "vtkURIHandler.h"
-
-
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLFiducialListStorageNode.h"
 
 int vtkMRMLFiducialListStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFiducialListStorageNode > node1 = vtkSmartPointer< vtkMRMLFiducialListStorageNode >::New();
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLFiducialListStorageNode, node1);
-
+  vtkNew< vtkMRMLFiducialListStorageNode > node1;
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

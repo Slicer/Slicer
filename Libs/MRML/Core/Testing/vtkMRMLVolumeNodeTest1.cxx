@@ -17,6 +17,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 
@@ -46,10 +47,7 @@ vtkStandardNewMacro(vtkMRMLVolumeNodeTestHelper1);
 int vtkMRMLVolumeNodeTest1(int , char * [])
 {
   vtkNew<vtkMRMLVolumeNodeTestHelper1> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLVolumeNodeTestHelper1, node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkMRMLVolumeNodeTestHelper1> node2;
 

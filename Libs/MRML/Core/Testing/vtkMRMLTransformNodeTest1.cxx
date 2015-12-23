@@ -52,8 +52,9 @@ vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double
 int vtkMRMLTransformNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLTransformNode> node1;
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
-  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLTransformNode, node1.GetPointer());
+  vtkNew<vtkMatrix4x4> linearTransform;
+  node1->SetMatrixTransformToParent(linearTransform.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   /// Test matrix get/set functions
 

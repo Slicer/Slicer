@@ -10,15 +10,12 @@
 
 =========================================================================auto=*/
 
-// MRML includes
-#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLAnnotationDisplayNode.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationDisplayNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLAnnotationDisplayNode> node1;
-
-  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
-
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

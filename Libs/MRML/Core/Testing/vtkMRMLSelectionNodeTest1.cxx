@@ -15,28 +15,26 @@
 #include "vtkMRMLSelectionNode.h"
 
 // ---------------------------------------------------------------------------
-bool TestUnit(vtkMRMLSelectionNode* node1);
+int TestUnit(vtkMRMLSelectionNode* node1);
 
 // ---------------------------------------------------------------------------
 int vtkMRMLSelectionNodeTest1(int , char * [] )
 {
   vtkNew<vtkMRMLSelectionNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLSelectionNode, node1.GetPointer());
-
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveVolumeID);
-  TEST_SET_GET_STRING(node1.GetPointer(), SecondaryVolumeID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveLabelVolumeID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveFiducialListID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActivePlaceNodeID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActivePlaceNodeClassName);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveROIListID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveCameraID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveTableID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveViewID);
-  TEST_SET_GET_STRING(node1.GetPointer(), ActiveLayoutID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveVolumeID);
+  TEST_SET_GET_STRING( node1.GetPointer(), SecondaryVolumeID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveLabelVolumeID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveFiducialListID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActivePlaceNodeID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActivePlaceNodeClassName);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveROIListID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveCameraID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveTableID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveViewID);
+  TEST_SET_GET_STRING( node1.GetPointer(), ActiveLayoutID);
 
   // annotations
   node1->AddNewPlaceNodeClassNameToList(NULL, NULL);
@@ -79,69 +77,36 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  if (TestUnit(node1.GetPointer()) != EXIT_SUCCESS)
-    {
-    node1->Print(std::cout);
-    return EXIT_FAILURE;
-    }
+  CHECK_EXIT_SUCCESS(TestUnit(node1.GetPointer()));
 
   return EXIT_SUCCESS;
 }
 
 // ---------------------------------------------------------------------------
-bool TestUnit(vtkMRMLSelectionNode* node1)
+int TestUnit(vtkMRMLSelectionNode* node1 )
 {
-  vtkNew<vtkMRMLNodeCallback> callback;
+  vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
   node1->AddObserver(vtkMRMLSelectionNode::UnitModifiedEvent, callback.GetPointer());
 
   const char* quantity = "mass";
   const char* unit = "vtkMRMLUnitNodeKilogram";
   node1->SetUnitNodeID(quantity, unit);
-  if (strcmp(node1->GetUnitNodeID(quantity), unit) != 0)
-    {
-    std::cerr<<"Expecting: "<<unit<<" got "
-      <<node1->GetUnitNodeID(quantity)<<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_STRING(node1->GetUnitNodeID(quantity), unit);
 
   node1->SetUnitNodeID(quantity, "");
-  if (node1->GetUnitNodeID(quantity) != 0)
-    {
-    std::cerr<<"Expecting: "<<0<<" got "
-      <<node1->GetUnitNodeID(quantity)<<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_NULL(node1->GetUnitNodeID(quantity));
+
 
   node1->SetUnitNodeID(quantity, 0);
-  if (node1->GetUnitNodeID(quantity) != 0)
-    {
-    std::cerr<<"Expecting: "<<0<<" got "
-      <<node1->GetUnitNodeID(quantity)<<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_NULL(node1->GetUnitNodeID(quantity));
 
   node1->SetUnitNodeID("", unit);
-  if (strcmp(node1->GetUnitNodeID(""), unit) != 0)
-    {
-    std::cerr<<"Expecting: "<<unit<<" got "
-      <<node1->GetUnitNodeID("")<<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_STRING(node1->GetUnitNodeID(""), unit);
 
   node1->SetUnitNodeID(0, unit);
-  if (strcmp(node1->GetUnitNodeID(0), unit) != 0)
-    {
-    std::cerr<<"Expecting: "<<unit<<" got "
-      <<node1->GetUnitNodeID(0)<<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_STRING(node1->GetUnitNodeID(0), unit);
 
-  if (callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent) != 3)
-    {
-    std::cerr<<"Expecting: "<<3<<" callbacks got "
-      <<callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent)
-      <<std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent), 3);
+
   return EXIT_SUCCESS;
 }
