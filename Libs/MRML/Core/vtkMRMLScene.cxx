@@ -89,7 +89,6 @@ Version:   $Revision: 1.18 $
 
 // STD includes
 #include <algorithm>
-#include <cassert>
 #include <numeric>
 
 //#define MRMLSCENE_VERBOSE
@@ -594,7 +593,15 @@ void vtkMRMLScene::StartState(unsigned long state, int anticipatedMaxProgress)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::EndState(unsigned long state)
 {
-  assert(this->States.back() == state);
+  if (this->States.empty())
+  {
+    vtkErrorMacro("vtkMRMLScene::EndState failed: there was no previous state");
+    return;
+  }
+  if (this->States.back() != state)
+  {
+    vtkWarningMacro("vtkMRMLScene::EndState found inconsistent state");
+  }
   this->States.pop_back();
 
   bool isInState = ((this->GetStates() & state) == state);
@@ -631,8 +638,14 @@ void vtkMRMLScene::ProgressState(unsigned long state, int progress)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::Connect()
 {
-  assert(!this->IsClosing());
-  assert(!this->IsImporting());
+  if (this->IsClosing())
+    {
+    vtkWarningMacro("vtkMRMLScene::Connect(): scene is in closing state");
+    }
+  if (this->IsImporting())
+    {
+    vtkWarningMacro("vtkMRMLScene::Connect(): scene is in importing state");
+    }
 
 #ifdef MRMLSCENE_VERBOSE
   vtkTimerLog* timer = vtkTimerLog::New();
@@ -1396,7 +1409,6 @@ int vtkMRMLScene::IsNodePresent(vtkMRMLNode *n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::InitTraversal()
 {
-  assert(this);
   this->Nodes->InitTraversal();
 }
 
@@ -1521,8 +1533,16 @@ vtkMRMLNode *vtkMRMLScene::GetNextNodeByClass(const char *className)
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetSingletonNode(const char* singletonTag, const char* className)
 {
-  assert(singletonTag);
-  assert(className);
+  if (singletonTag==0 || strlen(singletonTag)==0)
+    {
+    vtkErrorMacro("vtkMRMLScene::GetSingletonNode: received invalid singletonTag");
+    return NULL;
+    }
+  if (className==0 || strlen(className)==0)
+    {
+    vtkErrorMacro("vtkMRMLScene::GetSingletonNode: received invalid className");
+    return NULL;
+    }
 
   vtkCollectionSimpleIterator it;
   vtkMRMLNode* node = NULL;
@@ -2023,7 +2043,11 @@ vtkMRMLNode *vtkMRMLScene::GetNthRegisteredNodeClass(int n)
 //------------------------------------------------------------------------------
 std::string vtkMRMLScene::GenerateUniqueID(vtkMRMLNode* node)
 {
-  assert(node != 0);
+  if (!node)
+    {
+    vtkWarningMacro("vtkMRMLScene::GenerateUniqueID: invalid node");
+    return this->GenerateUniqueID("Node");
+    }
   std::string baseID = node->GetClassName();
   if (node->GetSingletonTag())
     {
@@ -2045,7 +2069,10 @@ std::string vtkMRMLScene::GenerateUniqueID(const std::string& baseID)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetUniqueIDIndex(const std::string& baseID)
 {
-  assert(baseID.size() != 0);
+  if (baseID.empty())
+    {
+    vtkWarningMacro("vtkMRMLScene::GetUniqueIDIndex: baseID is empty");
+    }
   int lastIDIndex = 0;
   std::map< std::string, int>::const_iterator uidIt =
     this->UniqueIDs.find(baseID);
@@ -2084,7 +2111,10 @@ std::string vtkMRMLScene::BuildID(const std::string& baseID, int idIndex)const
 //------------------------------------------------------------------------------
 std::string vtkMRMLScene::GenerateUniqueName(vtkMRMLNode* node)
 {
-  assert(node);
+  if (!node)
+    {
+    vtkWarningMacro("vtkMRMLScene::GenerateUniqueName: input node is invalid");
+    }
   return this->GenerateUniqueName(node->GetNodeTagName());
 }
 
@@ -2109,7 +2139,10 @@ const char* vtkMRMLScene::GetUniqueNameByString(const char* baseName)
 //------------------------------------------------------------------------------
 int vtkMRMLScene::GetUniqueNameIndex(const std::string& baseName)
 {
-  assert(baseName.size() > 0);
+  if (baseName.empty())
+    {
+    vtkWarningMacro("vtkMRMLScene::GetUniqueNameIndex: baseName is invalid");
+    }
   int lastNameIndex = -1;
   std::map< std::string, int>::const_iterator uNameIt =
     this->UniqueNames.find(baseName);
