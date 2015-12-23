@@ -450,11 +450,12 @@ class SliceAnnotations(VTKObservationMixin):
 
     for sliceViewName in self.sliceViewNames:
       sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
-      sl = sliceWidget.sliceLogic()
-      self.updateRuler(sl)
-      self.updateScalarBar(sl)
-      self.updateOrientationMarker(sl)
-      self.updateCornerAnnotation(sl)
+      if sliceWidget:
+        sl = sliceWidget.sliceLogic()
+        self.updateRuler(sl)
+        self.updateScalarBar(sl)
+        self.updateOrientationMarker(sl)
+        self.updateCornerAnnotation(sl)
 
   def createGlobalVariables(self):
     self.sliceViewNames = []
