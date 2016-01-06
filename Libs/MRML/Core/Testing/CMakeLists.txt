@@ -32,7 +32,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLFreeSurferModelOverlayStorageNodeTest1.cxx
   vtkMRMLFreeSurferModelStorageNodeTest1.cxx
   vtkMRMLFreeSurferProceduralColorNodeTest1.cxx
-  vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1.cxx
   vtkMRMLGlyphableVolumeDisplayNodeTest1.cxx
   vtkMRMLGlyphableVolumeSliceDisplayNodeTest1.cxx
   vtkMRMLGridTransformNodeTest1.cxx
@@ -145,7 +144,6 @@ simple_test( vtkMRMLFreeSurferModelStorageNodeTest1 )
 simple_test( vtkMRMLFreeSurferProceduralColorNodeTest1 )
 simple_test( vtkMRMLGlyphableVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLGlyphableVolumeSliceDisplayNodeTest1 )
-simple_test( vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1 )
 simple_test( vtkMRMLGridTransformNodeTest1 )
 simple_test( vtkMRMLHierarchyNodeTest1 )
 simple_test( vtkMRMLHierarchyNodeTest3 )
