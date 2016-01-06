@@ -107,8 +107,6 @@ int TestReadData(int referenceNodeType,
 //---------------------------------------------------------------------------
 int TestReadData()
 {
-  bool res = true;
-
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   CHECK_EXIT_SUCCESS(TestReadData(0, "invalid", 0, 0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
