@@ -203,5 +203,12 @@ PyObject * qSlicerPythonCppAPI::callMethod(int id, PyObject * arguments)
 //-----------------------------------------------------------------------------
 PyObject* qSlicerPythonCppAPI::pythonSelf()const
 {
+  // returned object needs to get an extra ref count!
+  // Without increasing the ref count, the reference count would be decreased
+  // by one each time the object is passed to Python.
+  // For example, each call of calling of
+  // slicer.modules.endoscopy.widgetRepresentation().self()
+  // would decrease the ref count of the Python widget class by one.
+  Py_XINCREF(this->PythonSelf);
   return this->PythonSelf;
 }
