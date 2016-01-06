@@ -104,6 +104,9 @@ public:
 //   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node)
 //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
+  /// Set the application logic
+  virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic);
+
 protected:
   /// Reimplemented to observe NodeAddedEvent.
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);

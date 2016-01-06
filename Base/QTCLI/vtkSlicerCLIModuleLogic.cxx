@@ -772,12 +772,6 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node,
   node->Register(this);
   node->SetAttribute("UpdateDisplay", updateDisplay ? "true" : "false");
 
-  // Observe application logic to know when the CLI is completed and the
-  // associated data loaded. The observation will be removed in the callback.
-  vtkEventBroker::GetInstance()->AddObservation(
-    this->GetApplicationLogic(), vtkSlicerApplicationLogic::RequestProcessedEvent,
-    this, this->GetMRMLLogicsCallbackCommand());
-
   vtkSlicerCLIModuleLogic::ApplyTask ( node );
 
   while (this->GetApplicationLogic()->GetReadDataQueueSize())
@@ -828,12 +822,6 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
   node->Register(this);
   node->SetAttribute("UpdateDisplay", updateDisplay ? "true" : "false");
 
-  // Observe application logic to know when the CLI is completed and the
-  // associated data loaded. The observation will be removed in the callback.
-  vtkEventBroker::GetInstance()->AddObservation(
-    this->GetApplicationLogic(), vtkSlicerApplicationLogic::RequestProcessedEvent,
-    this, this->GetMRMLLogicsCallbackCommand());
-
   // Schedule the task
   ret = this->GetApplicationLogic()->ScheduleTask( task.GetPointer() );
 
@@ -845,6 +833,38 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
     {
     node->SetStatus(vtkMRMLCommandLineModuleNode::Scheduled);
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic
+::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic)
+{
+  vtkMRMLApplicationLogic* oldLogic = this->GetMRMLApplicationLogic();
+  if (logic == oldLogic)
+    {
+    return;
+    }
+
+  bool wasModifying = this->StartModify();
+  if (oldLogic)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations(
+      oldLogic, vtkSlicerApplicationLogic::RequestProcessedEvent,
+      this, this->GetMRMLLogicsCallbackCommand());
+    }
+
+  Superclass::SetMRMLApplicationLogic(logic);
+  assert(logic == this->GetMRMLApplicationLogic());
+
+  // Observe application logic to know when the CLI is completed and the
+  // associated data loaded.
+  if (logic)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      logic, vtkSlicerApplicationLogic::RequestProcessedEvent,
+      this, this->GetMRMLLogicsCallbackCommand());
+    }
+  this->EndModify(wasModifying);
 }
 
 //-----------------------------------------------------------------------------
@@ -2810,13 +2830,11 @@ void vtkSlicerCLIModuleLogic::ProcessMRMLLogicsEvents(vtkObject* caller,
       // If the status is not Completing, then there should be no request made
       // on the application logic.
       assert(node->GetStatus() == vtkMRMLCommandLineModuleNode::Completing);
-      node->SetStatus(vtkMRMLCommandLineModuleNode::Completed);
       this->Internal->LastRequests.erase(it);
       // we are not interested in any request anymore because the cli node is
       // Completed.
-      vtkEventBroker::GetInstance()->RemoveObservations(
-        this->GetApplicationLogic(), vtkSlicerApplicationLogic::RequestProcessedEvent,
-        this, this->GetMRMLLogicsCallbackCommand());
+
+      node->SetStatus(vtkMRMLCommandLineModuleNode::Completed);
       }
     }
 }
