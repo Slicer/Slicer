@@ -67,6 +67,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the
     fileLists parameter.
+
+    Top-level examine() calls various individual strategies implemented in examineFiles*().
     """
     loadables = []
     allfiles = []
@@ -78,12 +80,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # individual frames should be parsed from series
     loadables += self.examineFilesMultiseries(allfiles)
 
-    loadables += self.examineFilesIPP(allfiles)
+    # this strategy sorts the files into groups
+    loadables += self.examineFilesIPPAcqTime(allfiles)
 
     return loadables
 
 
   def examineFilesMultiseries(self,files):
+    """
+    This strategy is similar to examineFiles(), but
+    does not separate the files by individual series before
+    parsing multivolumes out.
+    """
 
     logging.debug('MultiVolumeImportPlugin:examineMultiseries')
     loadables = []
@@ -118,7 +126,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return loadables
 
-  def examineFilesIPP(self,files):
+  def examineFilesIPPAcqTime(self,files):
+    """
+    This strategy first orders files into lists, where each list is
+    indexed by ImagePositionPatient (IPP). Next, files within each
+    list are ordered by AcquisitionTime attribute. Finally, loadable
+    frames are indexed by AcquisitionTime, and files within each
+    frame are ordered by IPP.
+    This strategy was required to handle DSC MRI data collected on
+    Siemens, tested with a DSC sequence obtained using software
+    version "syngo MR B15"
+    """
 
     loadables = []
     subseriesLists = {}
@@ -178,7 +196,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if f==0:
             frameLabelsStr = '0,'
             frameLabelsArray.InsertNextValue(0)
-            firstFrameTime = time 
+            firstFrameTime = time
         else:
             frameLabelsStr = frameLabelsStr+str(time-firstFrameTime)+','
             frameLabelsArray.InsertNextValue(time)
@@ -218,6 +236,11 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     return loadables
 
   def examineFiles(self,files):
+
+    """
+    This is the main strategy that assumes all files (instances) belong
+    to the same series, and all instances within the same frame have the same value for one of the attributes defined in self.multiVolumeTags
+    """
 
     logging.debug("MultiVolumeImportPlugin::examine")
 
