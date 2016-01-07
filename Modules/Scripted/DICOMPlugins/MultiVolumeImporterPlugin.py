@@ -211,13 +211,16 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
       mvNode.SetScene(slicer.mrmlScene)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
-      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName","AcquisitionTime_via_ImagePositionPatient")
+      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName","AcquisitionTime")
+      mvNode.SetAttribute("MultiVolume.ParseStrategy","AcquisitionTime+ImagePositionPatient")
       mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
       mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',"ms")
       # keep the files in the order by the detected tag
       # files are not ordered within the individual frames -- this will be
       # done by ScalarVolumePlugin later
       mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileListStr)
+
+      self.addAcquisitionAttributes(mvNode, frameFileList)
 
       mvNode.SetNumberOfFrames(nFrames)
       mvNode.SetLabelName("AcquisitionTime")
@@ -234,6 +237,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadables.append(loadable)
 
     return loadables
+
+  def addAcquisitionAttributes(self,mvNode,frameFileList):
+    frameTag = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
+
+    for tag in ['EchoTime','RepetitionTime','FlipAngle']:
+      if tag != frameTag:
+        tagValue = slicer.dicomDatabase.fileValue(frameFileList[0],self.tags[tag])
+        mvNode.SetAttribute('MultiVolume.DICOM.'+tag,tagValue)
 
   def examineFiles(self,files):
 
@@ -584,18 +595,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
       mvNode.SetLabelArray(frameLabelsArray)
 
-      if frameTag == 'TriggerTime' or frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime' or frameTag == 'FlipAngle':
-        # this is DCE, so let's keep the tag values that will be needed for
-        # the analysis
-        firstFile = frameFileList[0]
-        echoTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['EchoTime'])
-        repetitionTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['RepetitionTime'])
-        flipAngle = slicer.dicomDatabase.fileValue(firstFile, self.tags['FlipAngle'])
-
-        mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',echoTime)
-        mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',repetitionTime)
-        if frameTag != 'FlipAngle':
-          mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
+      self.addAcquisitionAttributes(mvNode, frameFileList)
 
       # add the node
       multivolumes.append(mvNode)
