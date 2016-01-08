@@ -33,7 +33,6 @@ endif()
 if(Slicer_BUILD_DIFFUSION_SUPPORT)
   list(APPEND qtmodules
     TractographyDisplay
-    TractographyInteractiveSeeding # tractography depends of Volumes
     )
 endif()
 
