@@ -1192,18 +1192,6 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
     return NULL;
     }
 
-  // clone the display node if possible
-  vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
-  if (volumeNode->GetDisplayNode())
-    {
-    clonedDisplayNode.TakeReference((vtkMRMLDisplayNode*)scene->CreateNodeByClass(volumeNode->GetDisplayNode()->GetClassName()));
-    }
-  if (clonedDisplayNode.GetPointer())
-    {
-    clonedDisplayNode->CopyWithScene(volumeNode->GetDisplayNode());
-    scene->AddNode(clonedDisplayNode);
-    }
-
   // clone the volume node
   vtkSmartPointer<vtkMRMLScalarVolumeNode> clonedVolumeNode;
   clonedVolumeNode.TakeReference((vtkMRMLScalarVolumeNode*)scene->CreateNodeByClass(volumeNode->GetClassName()));
@@ -1212,15 +1200,38 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
     vtkErrorWithObjectMacro(volumeNode, "Could not clone volume!");
     return NULL;
     }
-
   clonedVolumeNode->CopyWithScene(volumeNode);
+
+  // remove storage nodes
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
-  std::string uname = scene->GetUniqueNameByString(name);
-  clonedVolumeNode->SetName(uname.c_str());
-  if ( clonedDisplayNode )
+
+  // remove display nodes (but not the first one)
+  while (clonedVolumeNode->GetNumberOfDisplayNodes() > 1)
     {
+    clonedVolumeNode->RemoveNthDisplayNodeID(1); // always remove at index 1 since they will shift
+    }
+
+  // clone the 1st display node if possible
+  vtkMRMLDisplayNode* originalDisplayNode = volumeNode->GetDisplayNode();
+  vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
+  if (originalDisplayNode)
+    {
+    clonedDisplayNode.TakeReference((vtkMRMLDisplayNode*)scene->CreateNodeByClass(originalDisplayNode->GetClassName()));
+    }
+  if (clonedDisplayNode.GetPointer())
+    {
+    clonedDisplayNode->CopyWithScene(originalDisplayNode);
+    scene->AddNode(clonedDisplayNode);
     clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
     }
+  else
+    {
+    clonedVolumeNode->SetAndObserveDisplayNodeID(NULL);
+    }
+
+  // update name
+  std::string uname = scene->GetUniqueNameByString(name);
+  clonedVolumeNode->SetName(uname.c_str());
 
   if (cloneImageData)
     {
