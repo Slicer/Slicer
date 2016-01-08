@@ -49,7 +49,6 @@ endif()
 
 if(Slicer_BUILD_DIFFUSION_SUPPORT)
   list(APPEND cli_modules
-    DiffusionTensorScalarMeasurements
     )
 endif()
 
