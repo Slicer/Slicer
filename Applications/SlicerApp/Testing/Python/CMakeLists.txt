@@ -248,8 +248,6 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT FiducialLayoutSwitchBug1914.py)
   slicer_add_python_unittest(SCRIPT SubjectHierarchyGenericSelfTest.py)
   slicer_add_python_unittest(SCRIPT SubjectHierarchyCorePluginsSelfTest.py)
-  slicer_add_python_unittest(SCRIPT TwoCLIsInARowTest.py)
-  slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
 
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
@@ -278,6 +276,16 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     TwoCLIsInARowTest.py
     TwoCLIsInParallelTest.py
     )
+
+  if(Slicer_BUILD_CLI_SUPPORT)
+    slicer_add_python_unittest(SCRIPT TwoCLIsInARowTest.py)
+    slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
+
+    list(APPEND KIT_PYTHON_SCRIPTS
+      TwoCLIsInARowTest.py
+      TwoCLIsInParallelTest.py
+      )
+  endif()
 
   set(KIT_PYTHON_RESOURCES
     Resources/UI/ScenePerformance.ui
