@@ -54,7 +54,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DWIJointRicianLMMSEFilter
     DWIRicianLMMSEFilter
     DWIToDTIEstimation
-    DWIUnbiasedNonLocalMeansFilter
     )
 endif()
 
