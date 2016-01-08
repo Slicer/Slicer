@@ -32,7 +32,6 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 if(Slicer_BUILD_DIFFUSION_SUPPORT)
   list(APPEND qtmodules
-    TractographyDisplay
     )
 endif()
 
