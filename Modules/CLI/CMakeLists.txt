@@ -56,7 +56,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DWIToDTIEstimation
     DWIUnbiasedNonLocalMeansFilter
     DTIImportExport
-    TractographyLabelMapSeeding
     )
 endif()
 
