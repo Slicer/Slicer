@@ -28,11 +28,6 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     DICOMLib
     DICOMPlugins
     )
-  if(Slicer_BUILD_DIFFUSION_SUPPORT)
-    list(APPEND modules
-      DICOM2FullBrainTractography
-      )
-  endif()
 endif()
 if(Slicer_BUILD_DIFFUSION_SUPPORT)
   list(APPEND modules
