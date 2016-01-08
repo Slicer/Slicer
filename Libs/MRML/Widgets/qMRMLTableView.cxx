@@ -43,30 +43,6 @@
 #include <vtkMRMLTableNode.h>
 #include <vtkMRMLTableViewNode.h>
 
-#define VERIFY_TABLE_MODEL_AND_NODE(methodName) \
-  if (!this->tableModel()) \
-    { \
-    qWarning() << "qMRMLTableView:: " << #methodName << " failed: invalid model"; \
-    return; \
-    } \
-  if (!this->mrmlTableNode()) \
-    { \
-    qWarning() << "qMRMLTableView::" << #methodName << " failed: invalid node"; \
-    return; \
-    }
-
-#define VERIFY_TABLE_MODEL_AND_NODE_RETURN_VALUE(methodName, returnValue) \
-  if (!this->tableModel()) \
-    { \
-    qWarning() << "qMRMLTableView:: " << #methodName << " failed: invalid model"; \
-    return returnValue; \
-    } \
-  if (!this->mrmlTableNode()) \
-    { \
-    qWarning() << "qMRMLTableView::" << #methodName << " failed: invalid node"; \
-    return returnValue; \
-    }
-
 //------------------------------------------------------------------------------
 qMRMLTableViewPrivate::qMRMLTableViewPrivate(qMRMLTableView& object)
   : q_ptr(&object)
@@ -134,6 +110,23 @@ void qMRMLTableViewPrivate::endProcessing()
 vtkMRMLScene* qMRMLTableViewPrivate::mrmlScene()
 {
   return this->MRMLScene;
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLTableViewPrivate::verifyTableModelAndNode(const char* methodName) const
+{
+  Q_Q(const qMRMLTableView);
+  if (!q->tableModel())
+    {
+    qWarning() << "qMRMLTableView:: " << methodName << " failed: invalid model";
+    return false;
+    }
+  if (!q->mrmlTableNode())
+    {
+    qWarning() << "qMRMLTableView::" << methodName << " failed: invalid node";
+    return false;
+    }
+  return true;
 }
 
 // --------------------------------------------------------------------------
@@ -219,14 +212,22 @@ vtkMRMLTableNode* qMRMLTableView::mrmlTableNode()const
 //------------------------------------------------------------------------------
 bool qMRMLTableView::transposed()const
 {
-  VERIFY_TABLE_MODEL_AND_NODE_RETURN_VALUE(transposed, false);
+  Q_D(const qMRMLTableView);
+  if (!d->verifyTableModelAndNode("transposed"))
+    {
+    return false;
+    }
   return tableModel()->transposed();
 }
 
 //------------------------------------------------------------------------------
 void qMRMLTableView::setTransposed(bool transposed)
 {
-  VERIFY_TABLE_MODEL_AND_NODE(setTransposed);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("setTransposed"))
+    {
+    return;
+    }
   tableModel()->setTransposed(transposed);
 }
 
@@ -262,7 +263,11 @@ void qMRMLTableView::keyPressEvent(QKeyEvent *event)
 //-----------------------------------------------------------------------------
 void qMRMLTableView::copySelection()
 {
-  VERIFY_TABLE_MODEL_AND_NODE(copySelection);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("copySelection"))
+    {
+    return;
+    }
 
   if (!selectionModel()->hasSelection())
     {
@@ -314,7 +319,11 @@ void qMRMLTableView::copySelection()
 //-----------------------------------------------------------------------------
 void qMRMLTableView::pasteSelection()
 {
-  VERIFY_TABLE_MODEL_AND_NODE(pasteSelection);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("pasteSelection"))
+    {
+    return;
+    }
 
   QString text = QApplication::clipboard()->text();
   if (text.isEmpty())
@@ -361,7 +370,11 @@ void qMRMLTableView::pasteSelection()
 //-----------------------------------------------------------------------------
 void qMRMLTableView::insertColumn()
 {
-  VERIFY_TABLE_MODEL_AND_NODE(insertColumn);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("insertColumn"))
+    {
+    return;
+    }
   if (tableModel()->transposed())
     {
     mrmlTableNode()->AddEmptyRow();
@@ -375,7 +388,11 @@ void qMRMLTableView::insertColumn()
 //-----------------------------------------------------------------------------
 void qMRMLTableView::deleteColumn()
 {
-  VERIFY_TABLE_MODEL_AND_NODE(deleteColumn);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("deleteColumn"))
+    {
+    return;
+    }
   tableModel()->removeSelectionFromMRML(selectionModel()->selectedIndexes(), false);
   clearSelection();
 }
@@ -383,7 +400,11 @@ void qMRMLTableView::deleteColumn()
 //-----------------------------------------------------------------------------
 void qMRMLTableView::insertRow()
 {
-  VERIFY_TABLE_MODEL_AND_NODE(insertRow);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("insertRow"))
+    {
+    return;
+    }
   if (tableModel()->transposed())
     {
     mrmlTableNode()->AddColumn();
@@ -397,7 +418,11 @@ void qMRMLTableView::insertRow()
 //-----------------------------------------------------------------------------
 void qMRMLTableView::deleteRow()
 {
-  VERIFY_TABLE_MODEL_AND_NODE(deleteRow);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("deleteRow"))
+    {
+    return;
+    }
   tableModel()->removeSelectionFromMRML(selectionModel()->selectedIndexes(), true);
   clearSelection();
 }
@@ -405,7 +430,11 @@ void qMRMLTableView::deleteRow()
 //-----------------------------------------------------------------------------
 bool qMRMLTableView::firstRowLocked()const
 {
-  VERIFY_TABLE_MODEL_AND_NODE_RETURN_VALUE(firstRowLocked, false);
+  Q_D(const qMRMLTableView);
+  if (!d->verifyTableModelAndNode("firstRowLocked"))
+    {
+    return false;
+    }
   if (tableModel()->transposed())
     {
     return mrmlTableNode()->GetUseFirstColumnAsRowHeader();
@@ -420,7 +449,11 @@ bool qMRMLTableView::firstRowLocked()const
 //-----------------------------------------------------------------------------
 void qMRMLTableView::setFirstRowLocked(bool locked)
 {
-  VERIFY_TABLE_MODEL_AND_NODE(firstRowLocked);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("setFirstRowLocked"))
+    {
+    return;
+    }
   if (tableModel()->transposed())
     {
     if (mrmlTableNode()->GetUseFirstColumnAsRowHeader()==locked)
@@ -445,7 +478,11 @@ void qMRMLTableView::setFirstRowLocked(bool locked)
 //-----------------------------------------------------------------------------
 bool qMRMLTableView::firstColumnLocked()const
 {
-  VERIFY_TABLE_MODEL_AND_NODE_RETURN_VALUE(firstColumnLocked, false);
+  Q_D(const qMRMLTableView);
+  if (!d->verifyTableModelAndNode("firstColumnLocked"))
+    {
+    return false;
+    }
   if (tableModel()->transposed())
     {
     return mrmlTableNode()->GetUseColumnNameAsColumnHeader();
@@ -459,7 +496,11 @@ bool qMRMLTableView::firstColumnLocked()const
 //-----------------------------------------------------------------------------
 void qMRMLTableView::setFirstColumnLocked(bool locked)
 {
-  VERIFY_TABLE_MODEL_AND_NODE(setFirstColumnLocked);
+  Q_D(qMRMLTableView);
+  if (!d->verifyTableModelAndNode("setFirstColumnLocked"))
+    {
+    return;
+    }
   if (tableModel()->transposed())
     {
     if (mrmlTableNode()->GetUseColumnNameAsColumnHeader()==locked)

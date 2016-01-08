@@ -73,6 +73,8 @@ public:
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene *mrmlScene();
 
+  bool verifyTableModelAndNode(const char* methodName) const;
+
 public slots:
   /// Handle MRML scene event
   void startProcessing();
