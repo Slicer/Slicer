@@ -30,10 +30,6 @@ if(Slicer_BUILD_CLI_SUPPORT)
     CropVolume
     )
 endif()
-if(Slicer_BUILD_DIFFUSION_SUPPORT)
-  list(APPEND qtmodules
-    )
-endif()
 
 foreach(module ${qtmodules})
   list(FIND Slicer_QTLOADABLEMODULES_DISABLED ${module} _module_disabled)
