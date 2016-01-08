@@ -161,6 +161,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         nSlicesEqual = False
         break
 
+    if len(subseriesLists[allIPPs[0]].keys())<2 or not nSlicesEqual:
+      return []
+
     if nSlicesEqual:
       nFrames = len(subseriesLists[allIPPs[0]].keys())
       nSlices = len(allIPPs)
@@ -228,7 +231,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
-      loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by IPP+AcquisitionTime'
+      loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by ImagePositionPatient+AcquisitionTime'
       mvNode.SetName(desc)
       loadable.tooltip = loadable.name
       loadable.selected = True
@@ -458,6 +461,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     return mvNode
 
   def tm2ms(self,tm):
+
+    if len(tm)<6:
+      return 0
 
     try:
       hhmmss = string.split(tm,'.')[0]
