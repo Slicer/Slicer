@@ -52,7 +52,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DiffusionTensorScalarMeasurements
     DiffusionWeightedVolumeMasking
     DWIJointRicianLMMSEFilter
-    DWIRicianLMMSEFilter
     )
 endif()
 
