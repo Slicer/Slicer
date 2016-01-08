@@ -213,7 +213,7 @@ vtkMRMLTableNode* qMRMLTableView::mrmlTableNode()const
 bool qMRMLTableView::transposed()const
 {
   Q_D(const qMRMLTableView);
-  if (!d->verifyTableModelAndNode("transposed"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return false;
     }
@@ -224,7 +224,7 @@ bool qMRMLTableView::transposed()const
 void qMRMLTableView::setTransposed(bool transposed)
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("setTransposed"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -264,7 +264,7 @@ void qMRMLTableView::keyPressEvent(QKeyEvent *event)
 void qMRMLTableView::copySelection()
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("copySelection"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -320,7 +320,7 @@ void qMRMLTableView::copySelection()
 void qMRMLTableView::pasteSelection()
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("pasteSelection"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -371,7 +371,7 @@ void qMRMLTableView::pasteSelection()
 void qMRMLTableView::insertColumn()
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("insertColumn"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -389,7 +389,7 @@ void qMRMLTableView::insertColumn()
 void qMRMLTableView::deleteColumn()
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("deleteColumn"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -401,7 +401,7 @@ void qMRMLTableView::deleteColumn()
 void qMRMLTableView::insertRow()
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("insertRow"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -419,7 +419,7 @@ void qMRMLTableView::insertRow()
 void qMRMLTableView::deleteRow()
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("deleteRow"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -431,7 +431,7 @@ void qMRMLTableView::deleteRow()
 bool qMRMLTableView::firstRowLocked()const
 {
   Q_D(const qMRMLTableView);
-  if (!d->verifyTableModelAndNode("firstRowLocked"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return false;
     }
@@ -450,7 +450,7 @@ bool qMRMLTableView::firstRowLocked()const
 void qMRMLTableView::setFirstRowLocked(bool locked)
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("setFirstRowLocked"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
@@ -479,7 +479,7 @@ void qMRMLTableView::setFirstRowLocked(bool locked)
 bool qMRMLTableView::firstColumnLocked()const
 {
   Q_D(const qMRMLTableView);
-  if (!d->verifyTableModelAndNode("firstColumnLocked"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return false;
     }
@@ -497,7 +497,7 @@ bool qMRMLTableView::firstColumnLocked()const
 void qMRMLTableView::setFirstColumnLocked(bool locked)
 {
   Q_D(qMRMLTableView);
-  if (!d->verifyTableModelAndNode("setFirstColumnLocked"))
+  if (!d->verifyTableModelAndNode(Q_FUNC_INFO))
     {
     return;
     }
