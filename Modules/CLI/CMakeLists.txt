@@ -55,7 +55,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DWIRicianLMMSEFilter
     DWIToDTIEstimation
     DWIUnbiasedNonLocalMeansFilter
-    DTIImportExport
     )
 endif()
 
