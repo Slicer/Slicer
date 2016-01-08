@@ -58,7 +58,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DTIImportExport
     TractographyLabelMapSeeding
     FiberBundleLabelSelect
-    FiberTractMeasurements
     )
 endif()
 
