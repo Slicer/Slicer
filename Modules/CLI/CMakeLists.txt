@@ -53,7 +53,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DiffusionWeightedVolumeMasking
     DWIJointRicianLMMSEFilter
     DWIRicianLMMSEFilter
-    DWIToDTIEstimation
     )
 endif()
 
