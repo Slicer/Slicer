@@ -29,11 +29,6 @@ if(Slicer_BUILD_DICOM_SUPPORT)
     DICOMPlugins
     )
 endif()
-if(Slicer_BUILD_DIFFUSION_SUPPORT)
-  list(APPEND modules
-    FiberBundleToLabelMap
-    )
-endif()
 foreach(module ${modules})
   list(FIND Slicer_QTSCRIPTEDMODULES_DISABLED ${module} _module_disabled)
   if(${_module_disabled} STREQUAL "-1")
