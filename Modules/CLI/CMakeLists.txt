@@ -57,7 +57,6 @@ if(Slicer_BUILD_DIFFUSION_SUPPORT)
     DWIUnbiasedNonLocalMeansFilter
     DTIImportExport
     TractographyLabelMapSeeding
-    FiberBundleLabelSelect
     )
 endif()
 
