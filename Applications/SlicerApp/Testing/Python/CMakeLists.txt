@@ -278,10 +278,12 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     )
 
   if(Slicer_BUILD_CLI_SUPPORT)
+    slicer_add_python_unittest(SCRIPT CLIEventTest.py SLICER_ARGS --no-main-window)
     slicer_add_python_unittest(SCRIPT TwoCLIsInARowTest.py)
     slicer_add_python_unittest(SCRIPT TwoCLIsInParallelTest.py)
 
     list(APPEND KIT_PYTHON_SCRIPTS
+      CLIEventTest.py
       TwoCLIsInARowTest.py
       TwoCLIsInParallelTest.py
       )

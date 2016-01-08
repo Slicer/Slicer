@@ -32,6 +32,7 @@
       <default>Addition</default>
       <element>Addition</element>
       <element>Multiplication</element>
+      <element>Fail</element>
     </string-enumeration>
     <file fileExtensions="">
       <name>OutputFile</name>
