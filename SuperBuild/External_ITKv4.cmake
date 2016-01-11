@@ -32,7 +32,12 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
   # ITK release branch of 2016-01-07 (ba3f9a0) with
   #   * Slicer patches for CMP0042 (See Slicer r24522)
-  set(ITKv4_GIT_TAG 51760b2cb1f692ea3c18ca80e53f111f8e2452b1)
+  #   * Cherry-picked from master:
+  #    - ENH: Allow ITKVideoBridgeOpenCV to be built externally.
+  #    - COMP: Add export specification for itk::ResourceProbe.
+  #    - DOC: Update some woefully out-of-date GDCM comments, and typos
+  #    - BUG: Improved itkAnalyzeImageIO to handle case insensitive extensions
+  set(ITKv4_GIT_TAG 619f991853d425441cd2274e046026724b9413d9)
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
