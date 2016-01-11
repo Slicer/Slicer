@@ -79,10 +79,16 @@ if(BUILD_TESTING)
     DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
   mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
-  set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
-  set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input")
-  set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData")
-  set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
+  # Set CLI testing directories as cache variable so that it can be used by
+  # remote module SlicerDMRI included from top-level CMakeLists.txt
+  set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI"
+    CACHE PATH "MRML CLI baseline directory")
+  set(TEST_DATA "${Slicer_SOURCE_DIR}/Testing/Data/Input"
+    CACHE PATH "MRML CLI testing input data directory")
+  set(MRML_TEST_DATA "${Slicer_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData"
+    CACHE PATH "MRML CLI testing common data directory")
+  set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary"
+    CACHE PATH "MRML CLI testing temp directory")
 
   set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
 endif()
