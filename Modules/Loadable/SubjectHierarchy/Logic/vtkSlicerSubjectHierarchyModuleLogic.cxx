@@ -101,7 +101,7 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSe
 
   vtkMRMLSubjectHierarchyNode* patientNode = NULL;
   vtkMRMLSubjectHierarchyNode* studyNode = NULL;
-  vtkMRMLSubjectHierarchyNode* seriesNode = NULL;
+  std::vector<vtkMRMLSubjectHierarchyNode*> seriesNodes;
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLHierarchyNode", subjectHierarchyNodes);
@@ -129,12 +129,12 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSe
         }
       else if (!strcmp(seriesInstanceUID, nodeDicomUID))
         {
-        seriesNode = node;
+        seriesNodes.push_back(node);
         }
       }
     }
 
-  if (!seriesNode)
+  if (seriesNodes.empty())
     {
     vtkErrorWithObjectMacro(scene,
       "vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Subject hierarchy node with DICOM UID '"
@@ -164,9 +164,24 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSe
     studyNode->Delete(); // Return ownership to the scene only
     }
 
-  seriesNode->SetParentNodeID(studyNode->GetID());
+  // In some cases there might be multiple subject hierarchy nodes for the same DICOM series,
+  // for example if a series contains instances that load to different node types that cannot
+  // be simply added under one series folder node. This can happen if for one type the node
+  // corresponds to the series, but in the other to the instances.
+  for (std::vector<vtkMRMLSubjectHierarchyNode*>::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
+  {
+    vtkMRMLSubjectHierarchyNode* seriesNode = (*seriesIt);
+    seriesNode->SetParentNodeID(studyNode->GetID());
+  }
 
-  return seriesNode;
+  if (seriesNodes.size() > 1)
+  {
+    vtkDebugWithObjectMacro(scene,
+      "vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: DICOM UID '"
+      << seriesInstanceUID << "' corresponds to multiple series subject hierarchy nodes, but only the first one is returned");
+  }
+
+  return *(seriesNodes.begin());
 }
 
 //---------------------------------------------------------------------------

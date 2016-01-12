@@ -210,6 +210,8 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( subjectHierarchyWidget )
     subjectHierarchySceneModel = subjectHierarchyWidget.subjectHierarchySceneModel()
     self.assertIsNotNone( subjectHierarchySceneModel )
+    # Ensure that the scene model has the MRML scene even if the widget was not instantiated
+    subjectHierarchySceneModel.setMRMLScene(slicer.mrmlScene)
 
     # Get subject hierarchy nodes and study node
     ctVolumeShNode = slicer.vtkMRMLSubjectHierarchyNode.GetAssociatedSubjectHierarchyNode(ctVolumeNode)
@@ -232,8 +234,10 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertEqual( ctVolumeShNode.GetLevel(), slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries() )
 
     # Add model and labelmap to the created study
-    subjectHierarchySceneModel.reparent(sampleLabelmapShNode, studyNode)
-    subjectHierarchySceneModel.reparent(sampleModelShNode, studyNode)
+    retVal1 = subjectHierarchySceneModel.reparent(sampleLabelmapShNode, studyNode)
+    self.assertTrue(retVal1)
+    retVal2 = subjectHierarchySceneModel.reparent(sampleModelShNode, studyNode)
+    self.assertTrue(retVal2)
     qt.QApplication.processEvents()
 
     self.assertEqual( sampleLabelmapShNode.GetParentNode(), studyNode )
