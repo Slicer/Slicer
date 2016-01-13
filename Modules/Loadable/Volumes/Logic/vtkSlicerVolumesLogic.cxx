@@ -1090,6 +1090,21 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
       }
     else
       {
+
+      // warning if one ID is set and not the other,
+      // or if both are set but have different strings
+      const char *transformID1, *transformID2;
+      transformID1 = volumeNode1->GetTransformNodeID();
+      transformID2 = volumeNode2->GetTransformNodeID();
+      if ( transformID1 && transformID2 && !strcmp(transformID1,transformID2) )
+        {
+        warnings << "Transform mismatch\n";
+        }
+      else if ( transformID1 != transformID2 )
+        {
+        warnings << "Transform mismatch\n";
+        }
+
       int row, column;
       double volumeValue1, volumeValue2;
       // set the floating point precision to match the precision of the espilon

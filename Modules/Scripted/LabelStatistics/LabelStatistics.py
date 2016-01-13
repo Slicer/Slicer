@@ -153,6 +153,7 @@ class LabelStatisticsWidget:
     # TODO: why doesn't processEvents alone make the label text change?
     self.applyButton.repaint()
     slicer.app.processEvents()
+    # resample the label to the space of the grayscale if needed
     volumesLogic = slicer.modules.volumes.logic()
     warnings = volumesLogic.CheckForLabelVolumeValidity(self.grayscaleNode, self.labelNode)
     resampledLabelNode = None
