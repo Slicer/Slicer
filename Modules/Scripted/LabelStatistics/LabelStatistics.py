@@ -1,50 +1,56 @@
+import os
 import unittest
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
+import logging
 
 #
 # LabelStatistics
 #
 
-class LabelStatistics:
+class LabelStatistics(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def __init__(self, parent):
     import string
-    parent.title = "Label Statistics"
-    parent.categories = ["Quantification"]
-    parent.contributors = ["Steve Pieper (Isomics)"]
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "Label Statistics"
+    self.parent.categories = ["Quantification"]
+    self.parent.dependencies = []
+    self.parent.contributors = ["Steve Pieper (Isomics), Andras Lasso (PerkLab)"]
     parent.helpText = string.Template("""
 Use this module to calculate counts and volumes for different labels of a label map plus statistics on the grayscale background volume.  Note: volumes must have same dimensions.  See <a href=\"$a/Documentation/$b.$c/Modules/LabelStatistics\">$a/Documentation/$b.$c/Modules/LabelStatistics</a> for more information.
     """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
     parent.acknowledgementText = """
     Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.  Module implemented by Steve Pieper.
     """
-    self.parent = parent
 
 #
-# qSlicerPythonModuleExampleWidget
+# LabelStatisticsWidget
 #
 
-class LabelStatisticsWidget:
-  def __init__(self, parent=None):
+class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
+  def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     self.chartOptions = ("Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
+
     self.logic = None
     self.grayscaleNode = None
     self.labelNode = None
     self.fileName = None
     self.fileDialog = None
-    if not parent:
-      self.setup()
-      self.grayscaleSelector.setMRMLScene(slicer.mrmlScene)
-      self.labelSelector.setMRMLScene(slicer.mrmlScene)
-      self.parent.show()
 
-  def setup(self):
+
+    # Instantiate and connect widgets ...
     #
+
     # the grayscale volume selector
     #
     self.grayscaleSelectorFrame = qt.QFrame(self.parent)
@@ -92,7 +98,9 @@ class LabelStatisticsWidget:
     self.labelSelector.setToolTip( "Pick the label map to edit" )
     self.labelSelectorFrame.layout().addWidget( self.labelSelector )
 
-    # Apply button
+    #
+    # Apply Button
+    #
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.toolTip = "Calculate Statistics."
     self.applyButton.enabled = False
@@ -254,15 +262,21 @@ class LabelStatisticsWidget:
       self.model.setHeaderData(col,1,k)
       col += 1
 
-class LabelStatisticsLogic:
+#
+# LabelStatisticsLogic
+#
+
+class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
   """Implement the logic to calculate label statistics.
   Nodes are passed in as arguments.
   Results are stored as 'statistics' instance variable.
+  Uses ScriptedLoadableModuleLogic base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
 
   def __init__(self, grayscaleNode, labelNode, colorNode=None, nodeBaseName=None, fileName=None):
     #import numpy
-
+    
     self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
     cubicMMPerVoxel = reduce(lambda x,y: x*y, labelNode.GetSpacing())
     ccPerCubicMM = 0.001
@@ -274,8 +288,8 @@ class LabelStatisticsLogic:
     self.colorNode = colorNode
 
     self.nodeBaseName = nodeBaseName
-    if self.nodeBaseName is None:
-      nodeBaseName = labelNode.GetName() if labelNode.GetName() is not None else 'Labels'
+    if not self.nodeBaseName:
+      self.nodeBaseName = labelNode.GetName() if labelNode.GetName() else 'Labels'
 
     self.labelStats = {}
     self.labelStats['Labels'] = []
@@ -346,7 +360,7 @@ class LabelStatisticsLogic:
     """
     if self.colorNode:
       return self.colorNode
-    displayNode = self.labelNode.GetDisplayNode
+    displayNode = self.labelNode.GetDisplayNode()
     if not displayNode:
       return None
     return displayNode.GetColorNode()
@@ -470,27 +484,14 @@ class LabelStatisticsLogic:
     fp.write(self.statsAsCSV())
     fp.close()
 
-class LabelStatisticsTest(unittest.TestCase):
-  """
-  This is the test case.
-  """
 
-  def delayDisplay(self,message,msec=1000):
-    """This utility method displays a small dialog and waits.
-    This does two things: 1) it lets the event loop catch up
-    to the state of the test so that rendering and widget updates
-    have all taken place before the test continues and 2) it
-    shows the user/developer/tester the state of the test
-    so that we'll know when it breaks.
-    """
-    print(message)
-    self.info = qt.QDialog()
-    self.infoLayout = qt.QVBoxLayout()
-    self.info.setLayout(self.infoLayout)
-    self.label = qt.QLabel(message,self.info)
-    self.infoLayout.addWidget(self.label)
-    qt.QTimer.singleShot(msec, self.info.close)
-    self.info.exec_()
+
+class LabelStatisticsTest(ScriptedLoadableModuleTest):
+  """
+  This is the test case for your scripted module.
+  Uses ScriptedLoadableModuleTest base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
 
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
