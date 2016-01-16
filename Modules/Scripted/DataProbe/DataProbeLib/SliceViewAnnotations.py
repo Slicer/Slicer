@@ -74,7 +74,6 @@ class SliceAnnotations(VTKObservationMixin):
 
     #
     self.scene = slicer.mrmlScene
-    self.layoutManager = slicer.app.layoutManager()
     self.sliceViews = {}
 
     self.viewPortFinishHeight = 0.3
@@ -612,6 +611,8 @@ class SliceAnnotations(VTKObservationMixin):
 
   def updateOrientationMarker(self, sliceLogic):
     sliceNode = sliceLogic.GetBackgroundLayer().GetSliceNode()
+    if sliceNode is None:
+      return
     sliceViewName = sliceNode.GetLayoutName()
 
     if self.sliceViews[sliceViewName]:
@@ -1077,6 +1078,8 @@ class SliceAnnotations(VTKObservationMixin):
     vdn = volumeNode.GetDisplayNode()
     if vdn:
       vcn = vdn.GetColorNode()
+      if vcn is None:
+        return
       lut = vcn.GetLookupTable()
       lut2 = vtk.vtkLookupTable()
       lut2.DeepCopy(lut)
