@@ -188,6 +188,8 @@ protected:
   vtkSliceViewInteractorStyle();
   ~vtkSliceViewInteractorStyle();
 
+  int GetMouseInteractionMode();
+
   int ActionState;
 
   double ActionStartRAS[3];

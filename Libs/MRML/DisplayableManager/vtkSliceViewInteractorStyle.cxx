@@ -16,6 +16,7 @@
 #include "vtkSliceViewInteractorStyle.h"
 
 // MRML includes
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
@@ -252,6 +253,27 @@ void vtkSliceViewInteractorStyle::OnMiddleButtonUp()
 }
 
 //----------------------------------------------------------------------------
+int vtkSliceViewInteractorStyle::GetMouseInteractionMode()
+{
+  if ( this->SliceLogic == 0 ||
+       this->SliceLogic->GetMRMLScene() == 0 )
+    {
+    vtkErrorMacro("vtkSliceViewInteractorStyle::GetMouseInteractionMode: failed to get scene");
+    return vtkMRMLInteractionNode::ViewTransform;
+    }
+  vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+
+  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast(scene->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+  if (interactionNode == 0)
+    {
+    vtkErrorMacro("vtkSliceViewInteractorStyle::GetMouseInteractionMode: failed to get interaction node");
+    return vtkMRMLInteractionNode::ViewTransform;
+    }
+
+  return interactionNode->GetCurrentInteractionMode();
+}
+
+//----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnLeftButtonDown()
 {
   if (this->Interactor->GetShiftKey())
@@ -264,7 +286,14 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     }
   else
     {
-    this->StartAdjustWindowLevel();
+    // Oonly adjust window/level in the default mouse mode.
+    // Without this window/level could be changed accidentally while in place mode
+    // and accidentally dragging the mouse while placing a new markup.
+    // (in the future it may make sense to add a special mouse mode for window/level)
+    if (this->GetMouseInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
+      {
+      this->StartAdjustWindowLevel();  
+      }
     }
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
   this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
