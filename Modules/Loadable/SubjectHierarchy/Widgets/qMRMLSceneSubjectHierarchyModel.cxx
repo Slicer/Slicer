@@ -613,7 +613,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
     && selectedPlugin == qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin() )
   {
     qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Failed to reparent virtual node "
-      << subjectHierarchyNode->GetName() << " under parent " << newParent->GetName();
+      << subjectHierarchyNode->GetName() << " under parent " << (newParent ? newParent->GetName() : "scene");
     return false;
   }
 

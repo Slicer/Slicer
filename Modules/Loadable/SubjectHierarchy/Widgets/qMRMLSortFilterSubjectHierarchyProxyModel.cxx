@@ -55,6 +55,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyM
  : qMRMLSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterSubjectHierarchyProxyModelPrivate)
 {
+  this->setShowHidden(true);
 }
 
 //------------------------------------------------------------------------------

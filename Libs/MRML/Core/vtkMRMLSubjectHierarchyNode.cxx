@@ -54,6 +54,8 @@ vtkMRMLSubjectHierarchyNode::vtkMRMLSubjectHierarchyNode()
   , OwnerPluginName(NULL)
   , OwnerPluginAutoSearch(true)
 {
+  this->HideFromEditorsOn(); 
+
   this->SetLevel("Other");
 
   this->UIDs.clear();
