@@ -44,7 +44,9 @@ public:
    * including its internal member variables. */
   virtual::itk::LightObject::Pointer CreateAnother(void) const ITK_OVERRIDE;
 
-  itkTypeMacro( WarpTransform3D, Transform );
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(WarpTransform3D, Transform);
+
   OutputPointType TransformPoint( const InputPointType & inputPoint ) const ITK_OVERRIDE;
 
   virtual void ComputeJacobianWithRespectToParameters(const InputPointType  & p, JacobianType & jacobian ) const ITK_OVERRIDE;

@@ -48,6 +48,9 @@ public:
   typedef SmartPointer<Self>                               Pointer;
   typedef SmartPointer<const Self>                         ConstPointer;
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DMatrix3x3Transform, DiffusionTensor3DTransform);
+
   // /Set the translation vector
   void SetTranslation( VectorType translation );
 

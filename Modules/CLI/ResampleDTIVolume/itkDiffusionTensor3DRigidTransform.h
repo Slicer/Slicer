@@ -47,6 +47,9 @@ public:
   void SetTransform( typename Rigid3DTransformType::Pointer transform );
   typename VersorRigid3DTransformType::Pointer GetRigidTransform();
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DRigidTransform, DiffusionTensor3DMatrix3x3Transform);
+
   itkNewMacro( Self );
   // /Set the 3x3 rotation matrix
   void SetMatrix3x3( MatrixTransformType & matrix ) ITK_OVERRIDE;

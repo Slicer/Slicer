@@ -45,6 +45,10 @@ public:
   typedef std::vector<std::vector<double> >   DoubleVectorType;
   typedef MetaDataObject<DoubleVectorType>    MetaDataDoubleVectorType;
   typedef MetaDataObject<std::string>         MetaDataIntType;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DWrite, Object);
+
   itkNewMacro( Self );
   // /Set input tensor image
   itkSetObjectMacro( Input, DiffusionImageType );

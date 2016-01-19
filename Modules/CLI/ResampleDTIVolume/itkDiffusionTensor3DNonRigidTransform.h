@@ -39,6 +39,10 @@ public:
   typedef itk::DiffusionTensor3DPPDAffineTransform<DataType> PPDAffineTransformType;
   typedef itk::DiffusionTensor3DFSAffineTransform<DataType>  FSAffineTransformType;
   typedef itk::DiffusionTensor3DAffineTransform<DataType>    AffineTransform;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DNonRigidTransform, DiffusionTensor3DTransform);
+
   // SmartPointer
   itkNewMacro( Self );
   // /Set the transform

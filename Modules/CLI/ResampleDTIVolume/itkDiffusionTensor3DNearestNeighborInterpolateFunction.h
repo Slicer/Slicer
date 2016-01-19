@@ -39,6 +39,10 @@ public:
   typedef SmartPointer<const Self>                            ConstPointer;
   typedef ImageFunction<DiffusionImageType, DataType, double> ImageFunctionType;
   typedef typename Superclass::ContinuousIndexType            ContinuousIndexType;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DNearestNeighborInterpolateFunction, DiffusionTensor3DInterpolateImageFunction);
+
   itkNewMacro( Self );
   // /Evaluate the value of a tensor at a given position
 //  TensorDataType Evaluate( const PointType &point ) ;

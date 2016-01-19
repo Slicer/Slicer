@@ -46,6 +46,9 @@ public:
                                                VRadius, TWindowFunction,
                                                TBoundaryCondition, TCoordRep> WindowedSincInterpolateImageFunctionType;
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DWindowedSincInterpolateImageFunction, DiffusionTensor3DInterpolateImageFunctionReimplementation);
+
   itkNewMacro(Self);
 protected:
   void AllocateInterpolator() ITK_OVERRIDE;

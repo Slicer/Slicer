@@ -52,6 +52,10 @@ public:
   typedef SmartPointer<const Self>                         ConstPointer;
 
   itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DFSAffineTransform, DiffusionTensor3DAffineTransform);
+
 protected:
   void PreCompute() ITK_OVERRIDE;
 

@@ -61,6 +61,9 @@ public:
   typedef typename OutputImageType::RegionType                     OutputImageRegionType;
 // typedef typename OutputTensorDataType::RealValueType TensorRealType ;
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DResample, ImageToImageFilter);
+
   itkNewMacro( Self );
 // /Set the transform
   itkSetObjectMacro( Transform, TransformType );

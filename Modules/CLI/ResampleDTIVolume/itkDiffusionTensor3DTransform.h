@@ -43,6 +43,10 @@ public:
   typedef MatrixExtended<DataType, 3, 3>      InternalMatrixDataType;
   typedef SmartPointer<Self>                  Pointer;
   typedef SmartPointer<const Self>            ConstPointer;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DTransform, Object);
+
   // /Evaluate the position of the transformed tensor
   virtual PointType EvaluateTensorPosition( const PointType & point ) = 0;
 

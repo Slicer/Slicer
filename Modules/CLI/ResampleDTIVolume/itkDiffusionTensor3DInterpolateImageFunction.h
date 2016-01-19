@@ -52,6 +52,9 @@ public:
   typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
   typedef typename Superclass::IndexType           IndexType;
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DInterpolateImageFunction, ImageFunction);
+
 // ///Copied from itkInterpolateImageFunction.h
 
   /** Interpolate the image at a point position

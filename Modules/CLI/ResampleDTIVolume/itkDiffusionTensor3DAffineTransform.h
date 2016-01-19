@@ -45,6 +45,10 @@ public:
   typedef MatrixExtended<double, 4, 4>                     MatrixTransform4x4Type;
   typedef AffineTransform<double, 3>                       AffineTransformType;
   typedef typename Superclass::VectorType                  VectorType;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DAffineTransform, DiffusionTensor3DMatrix3x3Transform);
+
   /** Set the transformation matrix from an itk::AffineTransform< double , 3 > object
   */
   void SetTransform( typename AffineTransformType::Pointer transform );

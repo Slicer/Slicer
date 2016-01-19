@@ -45,6 +45,9 @@ public:
   typedef Transform<OutputDataType, NDimensions, NDimensions>          TransformType;
   typedef typename OutputDeformationFieldType::RegionType              OutputImageRegionType;
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(TransformDeformationFieldFilter, ImageToImageFilter);
+
   itkNewMacro( Self );
 // /Set the transform
   itkSetObjectMacro( Transform, TransformType );

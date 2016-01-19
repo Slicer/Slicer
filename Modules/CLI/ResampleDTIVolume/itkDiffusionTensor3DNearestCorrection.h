@@ -125,6 +125,9 @@ public:
   typedef SmartPointer<Self>       Pointer;
   typedef SmartPointer<const Self> ConstPointer;
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(DiffusionTensor3DNearestCorrectionFilter, UnaryFunctorImageFilter);
+
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 
