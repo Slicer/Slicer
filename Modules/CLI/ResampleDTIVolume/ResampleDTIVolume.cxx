@@ -425,8 +425,6 @@ SetTransformAndOrder( parameters & list,
     list.rotationPoint.resize( 0 );
     typename itk::MatrixOffsetTransformBase<double, 3, 3>
     ::Pointer doubleMatrixOffsetTransform;
-    typename itk::MatrixOffsetTransformBase<float, 3, 3>
-    ::Pointer floatMatrixOffsetTransform;
     typename FSAffineTransformType::Superclass::AffineTransformType::Pointer
     doubleAffineTransform = dynamic_cast<
         typename FSAffineTransformType::Superclass::AffineTransformType *>
@@ -439,17 +437,6 @@ SetTransformAndOrder( parameters & list,
       }
     else
       {
-      itk::AffineTransform<float, 3>::Pointer
-        floatAffineTransform = dynamic_cast<itk::AffineTransform<float, 3> *>
-        ( transform.GetPointer() );
-      if( floatAffineTransform ) // if affine transform in float
-        {
-        list.transformType.assign( "a" );
-        floatMatrixOffsetTransform = floatAffineTransform;
-        SetListFromTransform<float>( floatMatrixOffsetTransform, list );
-        }
-      else
-        {
         typename RigidTransformType::Rigid3DTransformType::Pointer
         doubleRigid3DTransform = dynamic_cast<
             typename RigidTransformType::Rigid3DTransformType *>
@@ -461,21 +448,8 @@ SetTransformAndOrder( parameters & list,
           doubleMatrixOffsetTransform = doubleRigid3DTransform;
           SetListFromTransform<double>( doubleMatrixOffsetTransform, list );
           }
-        else
+        else // if non-rigid
           {
-          itk::Rigid3DTransform<float>::Pointer
-            floatRigid3DTransform = dynamic_cast<
-              itk::Rigid3DTransform<float> *>
-            ( transform.GetPointer() );
-          if( floatRigid3DTransform ) // if rigid3D transform in float
-            {
-            list.transformType.assign( "rt" );
-            precisionChecking = 0;
-            floatMatrixOffsetTransform = floatRigid3DTransform;
-            SetListFromTransform<float>( floatMatrixOffsetTransform, list );
-            }
-          else // if non-rigid
-            {
             nonRigidFile = dynamic_cast<
                 typename NonRigidTransformType::TransformType *>
               ( transform.GetPointer() );
@@ -489,9 +463,7 @@ SetTransformAndOrder( parameters & list,
                         << std::endl;
               return NULL;
               }
-            }
           }
-        }
       }
     if( list.transformType.compare( "nr" ) ) // if rigid or affine transform
       {
