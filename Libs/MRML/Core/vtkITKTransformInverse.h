@@ -270,8 +270,10 @@ typedef itk::InverseBSplineDeformableTransform< double, VTKDimension, VTKDimensi
 typedef itk::InverseBSplineTransform< float, VTKDimension, VTKDimension > InverseBSplineTransformFloatITKv4Type;
 typedef itk::InverseBSplineTransform< double, VTKDimension, VTKDimension > InverseBSplineTransformDoubleITKv4Type;
 
-typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementFieldTransformType;
+typedef itk::InverseDisplacementFieldTransform< float, 3 > InverseDisplacementFieldTransformFloatType;
+typedef itk::InverseDisplacementFieldTransform< double, 3 > InverseDisplacementFieldTransformDoubleType;
 
-typedef itk::InverseThinPlateSplineKernelTransform< double, 3 > InverseThinPlateSplineTransformType;
+typedef itk::InverseThinPlateSplineKernelTransform< float, 3 > InverseThinPlateSplineTransformFloatType;
+typedef itk::InverseThinPlateSplineKernelTransform< double, 3 > InverseThinPlateSplineTransformDoubleType;
 
 #endif // __vtkITKTransformInverse_h
