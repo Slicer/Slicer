@@ -270,44 +270,49 @@ SetTransformAndOrder( parameters & list,
                       )
 {
   typedef itk::AffineTransform<double, 3>        AffineTransformType;
-  typedef itk::MatrixOffsetTransformBase<double> RotationType;
   if( list.transformationFile.compare( "" ) ) // Get transformation matrix from command line if no file given
     {
+    std::string transformClassName = transform->GetNameOfClass();
     list.transformMatrix.resize( 0 );
     list.rotationPoint.resize( 0 );
     typename itk::MatrixOffsetTransformBase<double, 3, 3>
-    ::Pointer doubleMatrixOffsetTransform;
-    AffineTransformType::Pointer doubleAffineTransform
-      = dynamic_cast<AffineTransformType *>( transform.GetPointer() );
-    if( doubleAffineTransform )     // affine transform in double
+    ::Pointer matrixOffsetTransform;
+    if( transformClassName.find("AffineTransform") != std::string::npos ) // if affine transform
       {
+      matrixOffsetTransform = static_cast<AffineTransformType *>( transform.GetPointer() );
       list.transformType.assign( "a" );
-      doubleMatrixOffsetTransform = doubleAffineTransform;
-      SetListFromTransform<double>( doubleMatrixOffsetTransform, list );
+      SetListFromTransform<double>( matrixOffsetTransform, list );
       }
     else
       {
-        RotationType::Pointer doubleRigid3DTransform
-          = dynamic_cast<itk::Rigid3DTransform<double> *>( transform.GetPointer() );
-        if( doubleRigid3DTransform )             // if rigid3D transform in double
+        // Check if transform is not of type "Rigid3DTransform"
+        if( transformClassName == "Rigid3DTransform" ||
+            transformClassName == "Euler3DTransform" ||
+            transformClassName == "CenteredEuler3DTransform" ||
+            transformClassName == "QuaternionRigidTransform" ||
+            transformClassName == "VersorTransform" ||
+            transformClassName == "ScaleSkewVersor3DTransform" ||
+            transformClassName == "ScaleVersor3DTransform" ||
+            transformClassName == "Similarity3DTransform"
+            ) // if rigid3D transform
           {
           list.transformType.assign( "rt" );
-          doubleMatrixOffsetTransform = doubleRigid3DTransform;
-          SetListFromTransform<double>( doubleMatrixOffsetTransform, list );
+          matrixOffsetTransform = static_cast<itk::Rigid3DTransform<double> *>
+            ( transform.GetPointer() );
+          SetListFromTransform<double>( matrixOffsetTransform, list );
           }
         else // if non-rigid
           {
-            if( transform )               // if non rigid Transform loaded
-              {
-              list.transformType.assign( "nr" );
-              //             transform = nonRigidFile ;
-              }
-            else               // something else
-              {
-              std::cerr << "Transformation type not yet implemented"
-                        << std::endl;
-              return NULL;
-              }
+          if ( transformClassName.find("Transform") != std::string::npos )
+            { // if non rigid Transform loaded
+            list.transformType.assign( "nr" );
+            }
+          else               // something else
+            {
+            std::cerr << "Transformation type not yet implemented"
+                      << std::endl;
+            return NULL;
+            }
           }
       }
     if( list.transformType.compare( "nr" ) )      // if rigid or affine transform
@@ -339,12 +344,12 @@ SetTransform( parameters & list,
     {
     if( !list.transformsOrder.compare( "input-to-output" ) )
       {
-      transform = dynamic_cast<TransformType *>
+      transform = static_cast<TransformType *>
         ( transformFile->GetTransformList()->back().GetPointer() );
       }
     else
       {
-      transform = dynamic_cast<TransformType *>
+      transform = static_cast<TransformType *>
         ( transformFile->GetTransformList()->front().GetPointer() );
       }
     }
@@ -547,13 +552,10 @@ SetAllTransform( parameters & list,
         // order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools
         typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
         BSplineDeformableTransformType::Pointer BSplineTransform;
-        BSplineTransform = dynamic_cast<BSplineDeformableTransformType *>(transform.GetPointer() );
-        if( BSplineTransform )
-          {
-          typename TransformType::Pointer bulkTransform;
-          bulkTransform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter );
-          BSplineTransform->SetBulkTransform( bulkTransform );
-          }
+        BSplineTransform = static_cast<BSplineDeformableTransformType *>(transform.GetPointer() );
+        typename TransformType::Pointer bulkTransform;
+        bulkTransform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter );
+        BSplineTransform->SetBulkTransform( bulkTransform );
         }
       if( list.numberOfThread )
         {
@@ -584,15 +586,37 @@ SetAllTransform( parameters & list,
     do
       {
       transform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter );
-      typename MatrixTransformType::Pointer localTransform;
-      localTransform = dynamic_cast<MatrixTransformType *>(transform.GetPointer() );
-      if( !localTransform )   // should never happen, just for security
+      std::string transformClassName;
+      if ( transform.IsNotNull() )
+        {
+        transformClassName = transform->GetNameOfClass();
+        }
+      // Check if transform is NOT of type "MatrixOffsetTransformBase<double, 3, 3>"
+      // (itself typedef as "MatrixTransformType")
+      if( !(
+            transformClassName.find( "AffineTransform" ) != std::string::npos ||
+            transformClassName == "MatrixOffsetTransformBase" ||
+            transformClassName == "Rigid3DTransform" ||
+            transformClassName == "Euler3DTransform" ||
+            transformClassName == "CenteredEuler3DTransform" ||
+            transformClassName == "QuaternionRigidTransform" ||
+            transformClassName == "VersorTransform" ||
+            transformClassName == "VersorRigid3DTransform" ||
+            transformClassName == "ScaleSkewVersor3DTransform" ||
+            transformClassName == "ScaleVersor3DTransform" ||
+            transformClassName == "Similarity3DTransform" ||
+            transformClassName == "ScaleTransform" ||
+            transformClassName == "ScaleLogarithmicTransform"
+            )
+          )   // should never happen, just for security
         {
         std::cerr
         << "An affine or rigid transform was not convertible to itk::MatrixOffsetTransformBase< double , 3 , 3 >"
         << std::endl;
         return NULL;
         }
+      typename MatrixTransformType::Pointer localTransform;
+      localTransform = static_cast<MatrixTransformType *>(transform.GetPointer() );
       matrix = localTransform->GetMatrix();
       vector = localTransform->GetTranslation();
       tempMatrix.SetIdentity();
@@ -864,18 +888,35 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
   typedef itk::MatrixOffsetTransformBase<double> RotationType;
   try
     {
-    AffineTransformType::Pointer affine = dynamic_cast<AffineTransformType *>( transform.GetPointer() );
-    if( affine )  // Rotation around a selected point
+    std::string transformClassName;
+    if ( transform.IsNotNull() )
       {
+      transformClassName = transform->GetNameOfClass();
+      }
+    if( transformClassName.find( "AffineTransform" ) != std::string::npos )  // Rotation around a selected point
+      {
+      AffineTransformType::Pointer affine = static_cast<AffineTransformType *>( transform.GetPointer() );
       AffineTransformType::Pointer affinetemp = AffineTransformType::New();
       affine->GetInverse( affinetemp );
       inverseTransform = affinetemp;
       }
     else
       {
-      RotationType::Pointer rigid = dynamic_cast<RotationType *>( transform.GetPointer() );
-      if( rigid )
+      if( transformClassName == "MatrixOffsetTransformBase" ||
+          transformClassName == "Rigid3DTransform" ||
+          transformClassName == "Euler3DTransform" ||
+          transformClassName == "CenteredEuler3DTransform" ||
+          transformClassName == "QuaternionRigidTransform" ||
+          transformClassName == "VersorTransform" ||
+          transformClassName == "VersorRigid3DTransform" ||
+          transformClassName == "ScaleSkewVersor3DTransform" ||
+          transformClassName == "ScaleVersor3DTransform" ||
+          transformClassName == "Similarity3DTransform" ||
+          transformClassName == "ScaleTransform" ||
+          transformClassName == "ScaleLogarithmicTransform"
+          ) // if rotation transform
         {
+        RotationType::Pointer rigid = static_cast<RotationType *>( transform.GetPointer() );
         RotationType::Pointer rigidtemp = RotationType::New();
         rigid->GetInverse( rigidtemp );
         inverseTransform = rigidtemp;
