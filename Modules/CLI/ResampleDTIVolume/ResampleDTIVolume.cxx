@@ -421,48 +421,53 @@ SetTransformAndOrder( parameters & list,
   // Get transformation matrix from the given file
   if( list.transformationFile.compare( "" ) )
     {
+    std::string transformClassName = transform->GetNameOfClass();
     list.transformMatrix.resize( 0 );
     list.rotationPoint.resize( 0 );
     typename itk::MatrixOffsetTransformBase<double, 3, 3>
-    ::Pointer doubleMatrixOffsetTransform;
-    typename FSAffineTransformType::Superclass::AffineTransformType::Pointer
-    doubleAffineTransform = dynamic_cast<
-        typename FSAffineTransformType::Superclass::AffineTransformType *>
-      ( transform.GetPointer() );
-    if( doubleAffineTransform ) // if affine transform in double
+    ::Pointer matrixOffsetTransform;
+    if( transformClassName.find("AffineTransform") != std::string::npos ) // if affine transform
       {
+      matrixOffsetTransform = static_cast<
+          typename FSAffineTransformType::Superclass::AffineTransformType *>
+        ( transform.GetPointer() );
       list.transformType.assign( "a" );
-      doubleMatrixOffsetTransform = doubleAffineTransform;
-      SetListFromTransform<double>( doubleMatrixOffsetTransform, list );
+      SetListFromTransform<double>( matrixOffsetTransform, list );
       }
     else
       {
-        typename RigidTransformType::Rigid3DTransformType::Pointer
-        doubleRigid3DTransform = dynamic_cast<
-            typename RigidTransformType::Rigid3DTransformType *>
-          ( transform.GetPointer() );
-        if( doubleRigid3DTransform ) // if rigid3D transform in double
+        if( transformClassName == "Rigid3DTransform" ||
+            transformClassName == "Euler3DTransform" ||
+            transformClassName == "CenteredEuler3DTransform" ||
+            transformClassName == "QuaternionRigidTransform" ||
+            transformClassName == "VersorTransform" ||
+            transformClassName == "ScaleSkewVersor3DTransform" ||
+            transformClassName == "ScaleVersor3DTransform" ||
+            transformClassName == "Similarity3DTransform"
+            ) // if rigid3D transform
           {
           list.transformType.assign( "rt" );
           precisionChecking = 0;
-          doubleMatrixOffsetTransform = doubleRigid3DTransform;
-          SetListFromTransform<double>( doubleMatrixOffsetTransform, list );
+          matrixOffsetTransform = static_cast<
+              typename RigidTransformType::Rigid3DTransformType *>
+            ( transform.GetPointer() );;
+          SetListFromTransform<double>( matrixOffsetTransform, list );
           }
         else // if non-rigid
           {
-            nonRigidFile = dynamic_cast<
+          if ( transformClassName.find("Transform") != std::string::npos )
+            { // if non rigid Transform loaded
+            list.transformType.assign( "nr" );
+            nonRigidFile = static_cast<
                 typename NonRigidTransformType::TransformType *>
               ( transform.GetPointer() );
-            if( nonRigidFile ) // if non rigid Transform loaded
-              {
-              list.transformType.assign( "nr" );
-              }
-            else // something else
-              {
-              std::cerr << "Transformation type not yet implemented for tensors"
-                        << std::endl;
-              return NULL;
-              }
+            }
+          else // something else
+            {
+            std::cerr << "Transformation type not yet implemented for tensors"
+                      << std::endl;
+            return NULL;
+            }
           }
       }
     if( list.transformType.compare( "nr" ) ) // if rigid or affine transform
@@ -497,12 +502,12 @@ SetTransform( parameters & list,
     {
     if( !list.transformsOrder.compare( "input-to-output" ) )
       {
-      transform = dynamic_cast<TransformType *>
+      transform = static_cast<TransformType *>
         ( transformFile->GetTransformList()->back().GetPointer() );
       }
     else
       {
-      transform = dynamic_cast<TransformType *>
+      transform = static_cast<TransformType *>
         ( transformFile->GetTransformList()->front().GetPointer() );
       }
     }
@@ -903,11 +908,11 @@ int Do( parameters list )
         {
         // transform = SetTransform< PixelType > ( list , image , transformFile , outputImageCenter ) ;
         // order=3 for the BSpline seems to be standard among tools in Slicer and BRAINTools
-        typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
-        BSplineDeformableTransformType::Pointer BSplineTransform;
-        BSplineTransform = dynamic_cast<BSplineDeformableTransformType *>(transform->GetTransform().GetPointer() );
-        if( BSplineTransform )
+        if( std::string(transform->GetTransform()->GetNameOfClass()) == "BSplineDeformableTransform" )
           {
+          typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
+          BSplineDeformableTransformType::Pointer BSplineTransform;
+          BSplineTransform = static_cast<BSplineDeformableTransformType *>(transform->GetTransform().GetPointer() );
           typename TransformType::Pointer bulkTransform;
           bulkTransform = SetTransform<PixelType>( list, image, transformFile, outputImageCenter  );
           BSplineTransform->SetBulkTransform( bulkTransform->GetTransform() );
@@ -926,11 +931,8 @@ int Do( parameters list )
 
     // Create the DTI transform
     warpTransform->SetDeformationField( field );
-    typename NonRigidTransformType::TransformType::Pointer nonRigidFile;
     typename NonRigidTransformType::Pointer nonRigid = NonRigidTransformType::New();
-    nonRigid->SetTransform( dynamic_cast<typename
-                                         NonRigidTransformType::TransformType *>
-                            (warpTransform.GetPointer() ) );
+    nonRigid->SetTransform( warpTransform.GetPointer() );
     typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer affine;
     affine = FSOrPPD<PixelType>( list.ppd );
     nonRigid->SetAffineTransformType( affine );
@@ -951,13 +953,18 @@ int Do( parameters list )
       {
       transform = SetTransform<PixelType>( list, image, transformFile, outputImageCenter );
       typename MatrixTransformType::Pointer localTransform;
-      localTransform = dynamic_cast<MatrixTransformType *>(transform.GetPointer() );
-      if( !localTransform )  // should never happen, just for security
+      std::string transformClassName;
+      if ( transform.IsNotNull() )
+        {
+        transformClassName = transform->GetNameOfClass();
+        }
+      if( transformClassName.find("DiffusionTensor3D") == std::string::npos )  // should never happen, just for security
         {
         std::cerr << "An affine or rigid transform was not convertible to DiffusionTensor3DMatrix3x3Transform"
                   << std::endl;
         return EXIT_FAILURE;
         }
+      localTransform = static_cast<MatrixTransformType *>(transform.GetPointer() );
       matrix = localTransform->GetMatrix3x3();
       vector = localTransform->GetTranslation();
       tempMatrix.SetIdentity();
