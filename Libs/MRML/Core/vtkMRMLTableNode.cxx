@@ -298,6 +298,18 @@ bool vtkMRMLTableNode::RemoveColumn(int columnIndex)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLTableNode::RemoveAllColumns()
+{
+  if (!this->Table)
+    {
+    vtkErrorMacro("vtkMRMLTableNode::RemoveAllColumns failed: invalid table");
+    return false;
+    }
+  this->Table->Initialize();
+  return true;
+}
+
+//----------------------------------------------------------------------------
 int vtkMRMLTableNode::AddEmptyRow()
 {
   if (!this->Table)

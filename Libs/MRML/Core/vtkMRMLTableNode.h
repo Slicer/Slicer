@@ -116,6 +116,11 @@ public:
   bool RemoveColumn(int columnIndex);
 
   ///
+  /// Remove all columns from the table.
+  /// Returns with true on success.
+  bool RemoveAllColumns();
+  
+  ///
   /// Add an empty row at the end of the table
   /// Returns the index of the inserted row or -1 on failure.
   int AddEmptyRow();

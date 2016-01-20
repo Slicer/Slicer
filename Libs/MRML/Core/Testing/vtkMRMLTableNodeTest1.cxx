@@ -58,7 +58,14 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   CHECK_BOOL(node2->RemoveColumn(1), true);
   CHECK_INT(table->GetNumberOfColumns(), 1);
+  
+  CHECK_NOT_NULL(node2->AddColumn());
+  CHECK_NOT_NULL(node2->AddColumn());
+  CHECK_NOT_NULL(node2->AddColumn());
+  CHECK_BOOL(node2->RemoveAllColumns(), true);
+  CHECK_INT(table->GetNumberOfColumns(), 0);
 
+  CHECK_NOT_NULL(node2->AddColumn());
   CHECK_INT(node2->AddEmptyRow(), 0);
   CHECK_INT(table->GetNumberOfRows(), 1);
 
