@@ -167,7 +167,6 @@ public:
 private:
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginHandler);
   friend class qSlicerSubjectHierarchyPluginHandlerCleanup;
-  friend class qSlicerSubjectHierarchyModule;
 
 private:
   /// Instance of the singleton
