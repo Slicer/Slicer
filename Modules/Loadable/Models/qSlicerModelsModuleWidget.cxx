@@ -259,7 +259,8 @@ void qSlicerModelsModuleWidget::deleteMultipleModels()
     if (mrmlNode && mrmlNode->IsA("vtkMRMLModelNode"))
       {
       // get the model hierarchy node and delete it
-      vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID());
+      vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(
+        vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID()) );
       if (hnode)
         {
         //qDebug() << i << ": removing hierarchy " << (hnode ? hnode->GetID() : "null");

@@ -53,9 +53,10 @@ void vtkMRMLDisplayableHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     {
     return;
     }
-  // A displayable hierarchy node without children as well as a displayble
+  // A displayable hierarchy node without children as well as a displayable
   // node is useless node. Delete it.
-  vtkMRMLHierarchyNode* displayableHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID());
+  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
+    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()) );
   if (displayableHierarchyNode &&
       displayableHierarchyNode->GetNumberOfChildrenNodes() == 0)
     {
@@ -131,7 +132,8 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
 
   // does the parent already have a hierarchy node associated with it?
   char *parentHierarchyNodeID = NULL;
-  vtkMRMLHierarchyNode *hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID());
+  vtkMRMLDisplayableHierarchyNode *hierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
+    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID()) );
   if (!hierarchyNode)
     {
     // create one and add to the scene
@@ -148,7 +150,8 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
     }
 
   // does the child already have a hierarchy node associated with it?
-  vtkMRMLHierarchyNode *childHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID());
+  vtkMRMLDisplayableHierarchyNode *childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
+    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()) );
   if (!childHierarchyNode)
     {
     char *childHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(child);
@@ -157,7 +160,7 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
       vtkMRMLNode *mrmlNode = child->GetScene()->GetNodeByID(childHierarchyNodeID);
       if (mrmlNode)
         {
-        childHierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(mrmlNode);
+        childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(mrmlNode);
         }
       }
     }
