@@ -214,7 +214,9 @@ class EditUtil(object):
 
   @staticmethod
   def isEraseEffectEnabled():
-      return EditUtil.getLabel() == 0;
+    if slicer.mrmlScene.IsBatchProcessing():
+      return False
+    return EditUtil.getLabel() == 0;
 
   @staticmethod
   def setEraseEffectEnabled(enabled):
