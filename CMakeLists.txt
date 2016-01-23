@@ -999,8 +999,11 @@ set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake
 # --------------------------------------------------------------------------
 # Bundle extension(s)
 # --------------------------------------------------------------------------
+
+set(extensions_build_dir "${Slicer_BINARY_DIR}/E")
+
 # Configure SlicerConfig for bundled extension(s) or module(s)
-set(Slicer_DIR "${Slicer_BINARY_DIR}/Extensions")
+set(Slicer_DIR ${extensions_build_dir})
 configure_file(
   ${Slicer_SOURCE_DIR}/CMake/SlicerConfig.cmake.in
   ${Slicer_DIR}/SlicerConfig.cmake @ONLY)
@@ -1010,9 +1013,19 @@ message(STATUS "Configuring remote modules")
 message(STATUS "--------------------------------------------------")
 add_subdirectory(Modules/Remote)
 
-# List of extension source directories can be passed at configuration time
-# using the following syntax:
+# Add remote extension source directories.
+#
+# Directories can be set in two ways:
+#
+# (1) Automatically by specifying the label 'REMOTE_EXTENSION' when
+#     calling 'Slicer_Remote_Add' from SuperBuild.cmake.
+#
+# (2) Expicitly by configuring the project using the following syntax:
 #  cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB /path/to/source/Slicer
+#
+foreach(varname ${Slicer_EP_LABEL_REMOTE_EXTENSION})
+  list(APPEND Slicer_EXTENSION_SOURCE_DIRS ${${varname}})
+endforeach()
 foreach(extension_source_dir ${Slicer_EXTENSION_SOURCE_DIRS})
   get_filename_component(extension_source_dir ${extension_source_dir} REALPATH)
   get_filename_component(extension_source_dirname ${extension_source_dir} NAME_WE)
@@ -1020,7 +1033,7 @@ foreach(extension_source_dir ${Slicer_EXTENSION_SOURCE_DIRS})
   message(STATUS "Configuring extension: ${extension_source_dirname}")
   set(ExternalData_SOURCE_ROOT ${extension_source_dir})
   set(${extension_source_dirname}_SOURCE_DIR ${extension_source_dir})
-  set(${extension_source_dirname}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Extensions/${extension_source_dirname})
+  set(${extension_source_dirname}_BINARY_DIR ${extensions_build_dir}/${extension_source_dirname})
   add_subdirectory(
     ${${extension_source_dirname}_SOURCE_DIR}
     ${${extension_source_dirname}_BINARY_DIR}
