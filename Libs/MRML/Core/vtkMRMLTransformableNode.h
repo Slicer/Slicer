@@ -16,7 +16,7 @@
 #define __vtkMRMLTransformableNode_h
 
 // MRML includes
-#include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
 class vtkMRMLTransformNode;
 
 // VTK includes
@@ -27,10 +27,10 @@ class vtkMatrix4x4;
 ///
 /// A superclass for other nodes that can have a transform to parent node
 /// like volume, model and transformation nodes.
-class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLStorableNode
 {
 public:
-  vtkTypeMacro(vtkMRMLTransformableNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLTransformableNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;

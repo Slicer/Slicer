@@ -541,14 +541,14 @@
 // (className is no longer needed; usually EXERCISE_ALL_BASIC_MRML_METHODS can
 // be used instead of all the macros below)
 
-#define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( className, node )                 \
-  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicTransformableMRMLMethods(node));
-
 #define EXERCISE_BASIC_MRML_METHODS( className, node )                               \
   CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicMRMLMethods(node));
 
 #define EXERCISE_BASIC_STORABLE_MRML_METHODS( className, node )                      \
   CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicStorableMRMLMethods(node));
+
+#define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( className, node )                 \
+  CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicTransformableMRMLMethods(node));
 
 #define EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( className, node )                   \
   CHECK_EXIT_SUCCESS(vtkMRMLCoreTestingUtilities::ExerciseBasicDisplayableMRMLMethods(node));

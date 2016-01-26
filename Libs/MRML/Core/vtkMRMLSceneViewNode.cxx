@@ -379,10 +379,9 @@ void vtkMRMLSceneViewNode::StoreScene()
         vtkSmartPointer<vtkMRMLStorageNode> storageNode = storableNode->GetStorageNode();
         if (!storageNode)
           {
-          // No storage node in the main scene, add one there, and ensure it
-          // gets added to the scene view
-          vtkWarningMacro("SceneView StoreScene: creating a new storage node for "
-                           << storableNode->GetID());
+          // No storage node in the main scene, try add one.
+          // If CreateDefaultStorageNode returns NULL it means the node can be stored
+          // in the scene (without using a storage node).
           storageNode.TakeReference(storableNode->CreateDefaultStorageNode());
           if (storageNode)
             {

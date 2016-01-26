@@ -50,10 +50,7 @@ int populateScene(vtkMRMLScene* scene, bool saveInSceneView)
     vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
     scene->AddNode(sceneViewNode.GetPointer());
 
-    TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
     sceneViewNode->StoreScene();
-    TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-    TESTING_OUTPUT_ASSERT_WARNINGS_END();
     }
 
   scene->RemoveNode(displayableNode.GetPointer());

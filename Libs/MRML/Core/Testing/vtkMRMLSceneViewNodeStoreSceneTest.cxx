@@ -85,10 +85,7 @@ int store()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   CHECK_NOT_NULL(sceneViewNode->GetStoredScene()->GetNodeByID("vtkMRMLScalarVolumeNode1"));
 
@@ -106,10 +103,7 @@ int storeAndRestore()
 
   vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   sceneViewNode->RestoreScene();
 
@@ -129,10 +123,7 @@ int storeAndRemoveVolume()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   // Remove node from the scene to see if it gets restored.
   vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
@@ -184,10 +175,7 @@ int storeTwice()
     sceneViewNode->GetStoredScene()->GetNumberOfNodes() : 0;
   CHECK_INT(defaultNodes, 0);
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   // a storage node gets added
   int nodeCount = sceneViewNode->GetStoredScene()->GetNumberOfNodes();
@@ -210,10 +198,7 @@ int storeAndRestoreTwice()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   sceneViewNode->StoreScene();
 
@@ -232,10 +217,7 @@ int storeTwiceAndRemoveVolume()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   sceneViewNode->StoreScene();
 
@@ -269,10 +251,7 @@ int references()
     scene->GetReferencedNodes(volumeNode));
   CHECK_INT(sceneReferencedNodes->GetNumberOfItems(), 2);
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   vtkMRMLNode* sceneViewVolumeNode =
     sceneViewNode->GetStoredScene()->GetNodeByID("vtkMRMLScalarVolumeNode1");
@@ -313,10 +292,7 @@ int storePerformance()
 
   vtkNew<vtkTimerLog> timer;
   timer->StartTimer();
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(100); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
   timer->StopTimer();
 
   std::cout<< "<DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-"

@@ -502,7 +502,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     vtkMRMLStorageNode* storageNode = node->CreateDefaultStorageNode();
     if (storageNode == 0)
       {
-      qDebug() << "nodeFileInfo: unable to create a new default storage node for node " << node->GetID();
+      // node can be stored in the scene
       return QFileInfo();
       }
 

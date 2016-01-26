@@ -321,24 +321,9 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
 }
 
 // ----------------------------------------------------------------------------
-int ExerciseBasicTransformableMRMLMethods(vtkMRMLTransformableNode* node)
-{
-  CHECK_EXIT_SUCCESS(ExerciseBasicMRMLMethods(node));
-
-  CHECK_NULL(node->GetParentTransformNode());
-
-  node->SetAndObserveTransformNodeID(NULL);
-  CHECK_NULL(node->GetTransformNodeID());
-
-  bool canApplyNonLinear = node->CanApplyNonLinearTransforms();
-  std::cout << "Node can apply non linear transforms? " << (canApplyNonLinear == true ? "yes" : "no") << std::endl;
-  return EXIT_SUCCESS;
-}
-
-// ----------------------------------------------------------------------------
 int ExerciseBasicStorableMRMLMethods(vtkMRMLStorableNode* node)
   {
-  CHECK_EXIT_SUCCESS(ExerciseBasicTransformableMRMLMethods(node));
+  CHECK_EXIT_SUCCESS(ExerciseBasicMRMLMethods(node));
 
   CHECK_INT(node->GetNumberOfStorageNodes(), 0);
 
@@ -353,13 +338,31 @@ int ExerciseBasicStorableMRMLMethods(vtkMRMLStorableNode* node)
   CHECK_NULL(node->GetNthStorageNode(0));
 
   vtkMRMLStorageNode* defaultStorageNode = node->CreateDefaultStorageNode();
-  CHECK_NOT_NULL(defaultStorageNode);
-  defaultStorageNode->Delete();
+  if (defaultStorageNode)
+    {
+    std::cout << "Default storage node created" << std::endl;
+    defaultStorageNode->Delete();
+    }
 
   CHECK_NOT_NULL(node->GetUserTagTable());
 
   return EXIT_SUCCESS;
   }
+
+// ----------------------------------------------------------------------------
+int ExerciseBasicTransformableMRMLMethods(vtkMRMLTransformableNode* node)
+{
+  CHECK_EXIT_SUCCESS(ExerciseBasicStorableMRMLMethods(node));
+
+  CHECK_NULL(node->GetParentTransformNode());
+
+  node->SetAndObserveTransformNodeID(NULL);
+  CHECK_NULL(node->GetTransformNodeID());
+
+  bool canApplyNonLinear = node->CanApplyNonLinearTransforms();
+  std::cout << "Node can apply non linear transforms? " << (canApplyNonLinear == true ? "yes" : "no") << std::endl;
+  return EXIT_SUCCESS;
+}
 
 // ----------------------------------------------------------------------------
 int ExerciseBasicDisplayableMRMLMethods(vtkMRMLDisplayableNode* node)
@@ -655,13 +658,13 @@ int ExerciseAllBasicMRMLMethods(vtkMRMLNode* node)
     {
     return ExerciseBasicDisplayableMRMLMethods(vtkMRMLDisplayableNode::SafeDownCast(node));
     }
-  if (vtkMRMLStorableNode::SafeDownCast(node))
-    {
-    return ExerciseBasicStorableMRMLMethods(vtkMRMLStorableNode::SafeDownCast(node));
-    }
   if (vtkMRMLTransformableNode::SafeDownCast(node))
     {
     return ExerciseBasicTransformableMRMLMethods(vtkMRMLTransformableNode::SafeDownCast(node));
+    }
+  if (vtkMRMLStorableNode::SafeDownCast(node))
+    {
+    return ExerciseBasicStorableMRMLMethods(vtkMRMLStorableNode::SafeDownCast(node));
     }
   return ExerciseBasicMRMLMethods(node);
 }

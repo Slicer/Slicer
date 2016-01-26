@@ -105,15 +105,15 @@ int ExerciseAllBasicMRMLMethods(vtkMRMLNode* object);
 VTK_MRML_EXPORT
 int ExerciseBasicMRMLMethods(vtkMRMLNode* node);
 
-/// For testing nodes in Libs/MRML that are transformable. Calls the basic
+/// For testing nodes in Libs/MRML that are storable. Calls the basic
 /// mrml methods macro first.
 VTK_MRML_EXPORT
-int ExerciseBasicTransformableMRMLMethods(vtkMRMLTransformableNode* node);
-
-/// For testing nodes in Libs/MRML that are storable. Calls the basic
-/// transformable mrml methods macro first.
-VTK_MRML_EXPORT
 int ExerciseBasicStorableMRMLMethods(vtkMRMLStorableNode* node);
+
+/// For testing nodes in Libs/MRML that are transformable. Calls the basic
+/// storable mrml methods macro first.
+VTK_MRML_EXPORT
+int ExerciseBasicTransformableMRMLMethods(vtkMRMLTransformableNode* node);
 
 /// For testing nodes in Libs/MRML that are displayable. Calls the basic
 /// transformable mrml methods macro first.

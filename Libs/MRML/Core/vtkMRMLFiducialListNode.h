@@ -16,7 +16,7 @@
 #define __vtkMRMLFiducialListNode_h
 
 // MRML includes
-#include "vtkMRMLStorableNode.h"
+#include "vtkMRMLTransformableNode.h"
 class vtkMRMLFiducial;
 class vtkMRMLFiducialListStorageNode;
 
@@ -43,14 +43,14 @@ typedef struct
 ///
 /// Fiducial list nodes describe a list of points in 3d space.  They indicate
 /// how to render it (color, opacity, etc).
-class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLStorableNode
+class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLTransformableNode
 {
 public:
   /// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
   /// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
   ///
   static vtkMRMLFiducialListNode *New();
-  vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLFiducialListNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   ///--------------------------------------------------------------------------

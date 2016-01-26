@@ -75,10 +75,7 @@ int restoreEditAndRestore()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   sceneViewNode->RestoreScene();
 
@@ -103,10 +100,7 @@ int removeRestoreEditAndRestore()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
-  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   sceneViewNode->StoreScene();
-  TESTING_OUTPUT_ASSERT_WARNINGS(1); // SceneView StoreScene: creating a new storage node
-  TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
