@@ -285,6 +285,10 @@ mark_as_superbuild(Slicer_USE_SimpleITK)
 
 option(Slicer_BUILD_ITKPython "Build Python wrapping for ITK" OFF)
 mark_as_superbuild(Slicer_BUILD_ITKPython)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_INSTALL_ITKPython "Install Slicer with Python wrapping for ITK" OFF
+  "Slicer_BUILD_ITKPython" OFF)
+mark_as_superbuild(Slicer_INSTALL_ITKPython)
 
 #
 # SimpleITK has large internal libraries, which take an extremely long

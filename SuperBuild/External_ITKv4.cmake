@@ -47,7 +47,18 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       )
   endif()
+
   if(Slicer_BUILD_ITKPython)
+
+    # Custom name for the components associated with ITK
+    # wrapping install rules enabling Slicer to optionally
+    # package ITK Wrapping in Slicer installer by simply
+    # toggling the Slicer_INSTALL_ITKPython option.
+    set(Slicer_WRAP_ITK_INSTALL_COMPONENT_IDENTIFIER "Wrapping")
+    mark_as_superbuild(Slicer_WRAP_ITK_INSTALL_COMPONENT_IDENTIFIER:STRING)
+
+    set(PY_SITE_PACKAGES_PATH ${pythonpath_subdir}/site-packages)
+
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
@@ -55,6 +66,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
       -DITK_USE_SYSTEM_SWIG:BOOL=ON
       -DITK_LEGACY_SILENT:BOOL=ON
+      -DWRAP_ITK_INSTALL_COMPONENT_IDENTIFIER:STRING=${Slicer_WRAP_ITK_INSTALL_COMPONENT_IDENTIFIER}
+      -DPY_SITE_PACKAGES_PATH:STRING=${PY_SITE_PACKAGES_PATH}
       )
   endif()
 
@@ -125,6 +138,13 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       LABELS "PYTHONPATH_LAUNCHER_BUILD"
       )
   endif()
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # Since ITK Wrapping is installed in the Slicer standard site-packages
+  # location, there is no need to specify custom setting for the install
+  # case.
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
