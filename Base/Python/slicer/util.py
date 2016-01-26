@@ -716,7 +716,7 @@ def createProgressDialog(parent=None, value=0, maximum=100, labelText="", window
   Updating label text with progressbar.labelText = "processing XYZ"
   """
   import qt
-  progressIndicator = qt.QProgressDialog(parent)
+  progressIndicator = qt.QProgressDialog(parent if parent else mainWindow())
   progressIndicator.minimumDuration = 0
   progressIndicator.maximum = maximum
   progressIndicator.value = value

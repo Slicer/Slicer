@@ -599,12 +599,8 @@ class DICOMDetailsPopup(VTKObservationMixin):
     if missingFileCount == allFileCount:
       return
 
-    self.progress = qt.QProgressDialog(self.window)
-    self.progress.modal = True
-    self.progress.minimumDuration = 0
-    self.progress.show()
-    self.progress.setValue(0)
-    self.progress.setMaximum(len(slicer.modules.dicomPlugins))
+    nDicomPlugins = len(slicer.modules.dicomPlugins)
+    self.progress = slicer.util.createProgressDialog(parent=self.window, value=0, maximum=nDicomPlugins)
     step = 0
 
     loadEnabled = False
@@ -739,11 +735,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
       for loadable in self.loadablesByPlugin[plugin]:
         if loadable.selected:
           loadableCount += 1
-    self.progress = qt.QProgressDialog(self.window)
-    self.progress.minimumDuration = 0
-    self.progress.show()
-    self.progress.setValue(0)
-    self.progress.setMaximum(loadableCount)
+    self.progress = slicer.util.createProgressDialog(parent=self.window, value=0, maximum=loadableCount)
     step = 0
     loadingResult = ''
 
@@ -1162,9 +1154,7 @@ class DICOMSendDialog(object):
     settings = qt.QSettings()
     settings.setValue('DICOM.sendAddress', address)
     settings.setValue('DICOM.sendPort', port)
-    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
-    self.progress.minimumDuration = 0
-    self.progress.setMaximum(len(self.files))
+    self.progress = slicer.util.createProgressDialog(value=0, maximum=len(self.files))
     self.progressValue = 0
     try:
       DICOMLib.DICOMSender(self.files, address, port, progressCallback = self.onProgress)
