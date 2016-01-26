@@ -119,24 +119,15 @@ class SelfTestsWidget:
 
   def onRunAll(self):
     self.logic.run(continueCheck=self.continueCheck)
-    self.information(self.logic)
+    slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
 
   def onRun(self,test):
     self.logic.run([test,], continueCheck=self.continueCheck)
-    self.information(self.logic)
+    slicer.util.infoDisplay(self.logic, windowTitle='SelfTests')
 
   def continueCheck(self,logic):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
-
-  def information(self,text,title='SelfTests'):
-    qt.QMessageBox.information(slicer.util.mainWindow(), title, text)
-
-  def question(self,text,title='SelfTests'):
-    return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x14000) == 0x4000
-
-  def okayCancel(self,text,title='SelfTests'):
-    return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x400400) == 0x400
 
 class SelfTestsLogic:
   """Logic to handle invoking the tests and reporting the results"""

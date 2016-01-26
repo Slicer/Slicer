@@ -262,7 +262,7 @@ class LabelStructureListWidget(qt.QWidget):
       labelNode = slicer.util.getNode(self.structures.item(selected,3).text())
 
       if confirm:
-        if not self.confirmDialog( "Delete \'%s\' volume?" % structureName ):
+        if not slicer.util.confirmOkCancelDisplay("Delete \'%s\' volume?" % structureName, windowTitle='Editor'):
           return
 
       slicer.mrmlScene.SaveStateForUndo()
@@ -289,7 +289,7 @@ class LabelStructureListWidget(qt.QWidget):
     rows = self.structures.rowCount()
 
     if confirm:
-      if not self.confirmDialog( "Delete %d structure volume(s)?" % rows ):
+      if not slicer.util.confirmOkCancelDisplay("Delete %d structure volume(s)?" % rows, windowTitle='Editor'):
         return
 
     slicer.mrmlScene.SaveStateForUndo()
@@ -487,7 +487,8 @@ class LabelStructureListWidget(qt.QWidget):
       self.CLINode = slicer.cli.run(modelMaker, self.CLINode, parameters)
       self.statusText( "Model Making Started..." )
     except AttributeError:
-      qt.QMessageBox.critical(slicer.util.mainWindow(), 'Editor', 'The ModelMaker module is not available<p>Perhaps it was disabled in the application settings or did not load correctly.')
+      slicer.util.errorDisplay('The ModelMaker module is not available<p>Perhaps it was disabled in the application '
+                               'settings or did not load correctly.', windowTitle='Editor')
 
   #---------------------------------------------------------------------------
   def edit(self,label):
@@ -619,13 +620,6 @@ class LabelStructureListWidget(qt.QWidget):
   def onMergeAndBuild(self):
     self.mergeStructures()
     self.build()
-
-  #---------------------------------------------------------------------------
-  def confirmDialog(self, message):
-    result = qt.QMessageBox.question(slicer.util.mainWindow(),
-                    'Editor', message,
-                    qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
-    return result == qt.QMessageBox.Ok
 
   #---------------------------------------------------------------------------
   def statusText(self, text):

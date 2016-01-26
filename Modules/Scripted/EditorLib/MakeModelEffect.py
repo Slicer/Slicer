@@ -112,7 +112,8 @@ class MakeModelEffectOptions(Effect.EffectOptions):
       modelMaker = slicer.modules.modelmaker
       return True
     except AttributeError:
-      qt.QMessageBox.critical(slicer.util.mainWindow(), 'Editor', 'The ModelMaker module is not available<p>Perhaps it was disabled in the application settings or did not load correctly.')
+      slicer.util.errorDisplay('The ModelMaker module is not available<p>Perhaps it was disabled in the application '
+                               'settings or did not load correctly.', windowTitle='Editor')
       return False
 
   def onGoToModelMaker(self):

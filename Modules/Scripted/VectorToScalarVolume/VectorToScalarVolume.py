@@ -81,16 +81,13 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget):
     outputVolume = self.outputSelector.currentNode()
     # check for input data
     if not (inputVolume and outputVolume):
-      qt.QMessageBox.critical(
-          slicer.util.mainWindow(),
-          'Luminance', 'Input and output volumes are required for conversion')
+      slicer.util.errorDisplay('Input and output volumes are required for conversion', windowTitle='Luminance')
       return
     # check that data has enough components
     inputImage = inputVolume.GetImageData()
     if not inputImage or inputImage.GetNumberOfScalarComponents() < 3:
-      qt.QMessageBox.critical(
-          slicer.util.mainWindow(),
-          'Vector to Scalar Volume', 'Input does not have enough components for conversion')
+      slicer.util.errorDisplay('Input does not have enough components for conversion',
+                               windowTitle='Vector to Scalar Volume')
       return
     # run the filter
     # - extract the RGB portions

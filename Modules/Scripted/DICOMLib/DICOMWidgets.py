@@ -410,8 +410,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
         message += databaseDirectory
         message += "\n\nUse the Local Database button in the DICOM Browser "
         message += "to pick a different location."
-        qt.QMessageBox.information(slicer.util.mainWindow(),
-                        'DICOM', message, qt.QMessageBox.Ok)
+        slicer.util.infoDisplay(message, windowTitle='DICOM')
         if not os.path.exists(databaseDirectory):
           os.mkdir(databaseDirectory)
         self.onDatabaseDirectoryChanged(databaseDirectory)
@@ -594,8 +593,8 @@ class DICOMDetailsPopup(VTKObservationMixin):
             missingFileCount += 1
 
     if missingFileCount > 0:
-      qt.QMessageBox.warning(self.window,
-          "DICOM", "Warning: %d of %d selected files listed in the database cannot be found on disk." % (missingFileCount, allFileCount))
+      slicer.util.warningDisplay("Warning: %d of %d selected files listed in the database cannot be found on disk."
+                                 % (missingFileCount, allFileCount), windowTitle="DICOM")
 
     if missingFileCount == allFileCount:
       return
@@ -630,8 +629,8 @@ class DICOMDetailsPopup(VTKObservationMixin):
       except Exception,e:
         import traceback
         traceback.print_exc()
-        qt.QMessageBox.warning(self.window,
-            "DICOM", "Warning: Plugin failed: %s\n\nSee python console for error message." % pluginClass)
+        slicer.util.warningDisplay("Warning: Plugin failed: %s\n\nSee python console for error message." % pluginClass,
+                                   windowTitle="DICOM", parent=self.window)
         print("DICOM Plugin failed: %s", str(e))
       step +=1
 
@@ -792,7 +791,7 @@ class DICOMDetailsPopup(VTKObservationMixin):
     self.progress.close()
     self.progress = None
     if loadingResult:
-      qt.QMessageBox.warning(slicer.util.mainWindow(), 'DICOM loading', loadingResult)
+      slicer.util.warningDisplay(loadingResult, windowTitle='DICOM loading')
     if not self.browserPersistent:
       self.close()
 
@@ -1170,7 +1169,7 @@ class DICOMSendDialog(object):
     try:
       DICOMLib.DICOMSender(self.files, address, port, progressCallback = self.onProgress)
     except Exception as result:
-      qt.QMessageBox.warning(self.dialog, 'DICOM Send', 'Could not send data: %s' % result)
+      slicer.util.warningDisplay('Could not send data: %s' % result, windowTitle='DICOM Send', parent=self.dialog)
     self.progress.close()
     self.dialog.close()
 

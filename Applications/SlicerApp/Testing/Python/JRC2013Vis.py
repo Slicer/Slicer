@@ -136,11 +136,7 @@ class JRC2013VisWidget:
       configFilePath = dicomFilesDirectory + '/Dcmtk-db/dcmqrscp.cfg'
       processCurrentPath = dicomFilesDirectory + '/Dcmtk-db/'
 
-      msgBox = qt.QMessageBox()
-      msgBox.setText('Do you want to choose local DCMTK database folder?')
-      msgBox.setStandardButtons(qt.QMessageBox.Yes | qt.QMessageBox.No)
-      val = msgBox.exec_()
-      if(val == qt.QMessageBox.Yes):
+      if slicer.util.confirmYesNoDisplay('Do you want to choose local DCMTK database folder?'):
         print 'Yes'
         dicomFilesDirectory = qt.QFileDialog.getExistingDirectory(None, 'Select DCMTK database folder')
         configFilePath = dicomFilesDirectory + '/dcmqrscp.cfg'

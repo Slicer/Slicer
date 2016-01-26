@@ -171,8 +171,7 @@ class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
         # resampledLabelNode does not have a display node, therefore the colorNode has to be passed to it
         self.logic = LabelStatisticsLogic(self.grayscaleNode, resampledLabelNode, colorNode=self.labelNode.GetDisplayNode().GetColorNode(), nodeBaseName=self.labelNode.GetName())
       else:
-        qt.QMessageBox.warning(slicer.util.mainWindow(),
-            "Label Statistics", "Volumes do not have the same geometry.\n%s" % warnings)
+        slicer.util.warnDisplay("Volumes do not have the same geometry.\n%s" % warnings, windowTitle="Label Statistics")
         return
     else:
       self.logic = LabelStatisticsLogic(self.grayscaleNode, self.labelNode)

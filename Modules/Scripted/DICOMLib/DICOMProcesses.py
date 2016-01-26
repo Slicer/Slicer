@@ -213,11 +213,7 @@ class DICOMListener(DICOMProcess):
     print ("processed stderr")
 
   def killOtherListeners(self, osName, pid= None):
-    msgBox = qt.QMessageBox()
-    msgBox.setText('There are other DICOM listeners running.\n Do you want to end them?')
-    msgBox.setStandardButtons(qt.QMessageBox.Yes | qt.QMessageBox.No)
-    val = msgBox.exec_()
-    if(val == qt.QMessageBox.Yes):
+    if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
       if osName == 'nt':
         os.popen('taskkill /f /im storescp.exe')
       elif osName == 'posix':

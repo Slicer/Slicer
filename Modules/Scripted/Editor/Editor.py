@@ -80,7 +80,8 @@ class EditorWidget(VTKObservationMixin):
           sliceNode = sliceLogic.GetSliceNode()
           if sliceNode.GetLayoutGridRows() != 1 or sliceNode.GetLayoutGridColumns() != 1:
             if not warned:
-              qt.QMessageBox.warning(slicer.util.mainWindow(), 'Editor', 'The Editor Module is not compatible with slice viewers in light box mode.\nViews are being reset.')
+              slicer.util.warningDisplay('The Editor Module is not compatible with slice viewers in light box mode.\n'
+                                         'Views are being reset.', windowTitle='Editor')
               warned = True
             sliceNode.SetLayoutGrid(1,1)
 

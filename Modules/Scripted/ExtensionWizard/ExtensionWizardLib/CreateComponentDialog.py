@@ -1,5 +1,5 @@
 import os
-
+import slicer
 import qt, ctk
 
 #=============================================================================
@@ -51,15 +51,15 @@ class CreateComponentDialog(object):
   #---------------------------------------------------------------------------
   def accept(self):
     if not len(self.componentName):
-      qt.QMessageBox.critical(self.dialog, u"Cannot create %s" % self._typelc,
-                              u"%s name may not be empty." % self._typetc)
+      slicer.util.errorDisplay(u"%s name may not be empty." % self._typetc,
+                               windowTitle=u"Cannot create %s" % self._typelc, parent=self.dialog)
       return
 
     if self.showDestination:
       dest = self.destination
       if not len(dest) or not os.path.exists(dest):
-        qt.QMessageBox.critical(self.dialog, u"Cannot create %s" % self._typelc,
-                                u"Destination must be an existing directory.")
+        slicer.util.errorDisplay(u"Destination must be an existing directory." % self._typetc,
+                                 windowTitle=u"Cannot create %s" % self._typelc, parent=self.dialog)
         return
 
     self.dialog.accept()

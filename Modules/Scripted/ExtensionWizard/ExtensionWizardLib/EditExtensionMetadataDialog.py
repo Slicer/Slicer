@@ -1,6 +1,6 @@
 import os
 import re
-
+import slicer
 import qt, ctk
 
 from .EditableTreeWidget import EditableTreeWidget
@@ -67,13 +67,12 @@ class EditExtensionMetadataDialog(object):
   #---------------------------------------------------------------------------
   def accept(self):
     if not len(self.project):
-      qt.QMessageBox.critical(self.dialog, "Invalid metadata",
-                              "Extension name may not be empty.")
+      slicer.util.errorDisplay("Extension name may not be empty.", windowTitle="Invalid metadata", parent=self.dialog)
       return
 
     if not len(self.description):
-      qt.QMessageBox.critical(self.dialog, "Invalid metadata",
-                              "Extension description may not be empty.")
+      slicer.util.errorDisplay("Extension description may not be empty.",
+                               windowTitle="Invalid metadata", parent=self.dialog)
       return
 
     self.dialog.accept()

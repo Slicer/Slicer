@@ -140,14 +140,11 @@ class PerformanceTestsWidget:
   def chartCallback(self, mrmlID, pointIndex, x, y):
     node = slicer.util.getNode(mrmlID)
     name = node.GetName()
-    qt.QMessageBox.information(
-        slicer.util.mainWindow(), "Chart Callback",
-        """Clicked at point {x}, {y}
-on node {name} (id {mrmlID})
-with point index of {pointIndex}
-        """.format(x=x,y=y,name=name,mrmlID=mrmlID,pointIndex=pointIndex))
-
-
+    slicer.util.infoDisplay("""Clicked at point {x}, {y}
+                               on node {name} (id {mrmlID})
+                               with point index of {pointIndex}
+                            """.format(x=x,y=y,name=name,mrmlID=mrmlID,pointIndex=pointIndex),
+                            windowTitle="Chart Callback")
 
   def chartTest(self):
     import math,random

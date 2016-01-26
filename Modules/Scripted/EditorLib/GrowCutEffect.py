@@ -90,16 +90,12 @@ class GrowCutEffectOptions(Effect.EffectOptions):
       logging.warning(self.logic.getInvalidInputsMessage())
       background = self.logic.getScopedBackground()
       labelInput = self.logic.getScopedLabelInput()
-      result = qt.QMessageBox.question(slicer.util.mainWindow(), 'Editor',
-        "Current image type is '{0}' and labelmap type is '{1}' " \
-        "GrowCut only works reliably with 'short' type.\n\n" \
-        "If the segmentation result is not satisfacory, then cast " \
-        "the image and labelmap to 'short' type (using Cast Scalar " \
-        "Volume module) or install Fast GrowCut extension and use " \
-        "FastGrowCutEffect editor tool.".format(
-          background.GetScalarTypeAsString(),
-          labelInput.GetScalarTypeAsString()), qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
-      if result != qt.QMessageBox.Ok:
+      if not slicer.util.confirmOkCancel("Current image type is '{0}' and labelmap type is '{1}' GrowCut only works "
+                                         "reliably with 'short' type.\n\nIf the segmentation result is not satisfacory"
+                                         ", then cast the image and labelmap to 'short' type (using Cast Scalar Volume "
+                                         "module) or install Fast GrowCut extension and use FastGrowCutEffect editor "
+                                         "tool.".format(background.GetScalarTypeAsString(),
+                                                        labelInput.GetScalarTypeAsString()), windowTitle='Editor'):
         logging.warning('GrowCut is cancelled by the user')
         return
 

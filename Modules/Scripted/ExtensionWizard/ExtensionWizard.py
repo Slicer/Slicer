@@ -234,12 +234,8 @@ class ExtensionWizardWidget:
                  createInSubdirectory, requireEmptyDirectory)
 
       except:
-        md = qt.QMessageBox(self.parent.window())
-        md.icon = qt.QMessageBox.Critical
-        md.text = "An error occurred while trying to create the extension."
-        md.detailedText = traceback.format_exc()
-        md.standardButtons = qt.QMessageBox.Retry | qt.QMessageBox.Close
-        if md.exec_() != qt.QMessageBox.Retry:
+        if not slicer.util.confirmRetryCloseDisplay("An error occurred while trying to create the extension.",
+                                                    parent=self.parent.window(), detailedText=traceback.format_exc()):
           return
 
         continue
@@ -273,12 +269,8 @@ class ExtensionWizardWidget:
       xp = SlicerWizard.ExtensionProject(path)
 
     except:
-      md = qt.QMessageBox(self.parent.window())
-      md.icon = qt.QMessageBox.Critical
-      md.text = "Failed to open extension '%s'." % path
-      md.detailedText = traceback.format_exc()
-      md.standardButtons = qt.QMessageBox.Close
-      md.exec_()
+      slicer.util.errorDisplay("Failed to open extension '%s'." % path, parent=self.parent.window(),
+                               detailedText=traceback.format_exc(), standardButtons=qt.QMessageBox.Close)
       return False
 
     # Enable and show edit section
@@ -368,34 +360,28 @@ class ExtensionWizardWidget:
             failed.append(module)
 
         if len(failed):
-          md = qt.QMessageBox(self.parent.window())
-          md.icon = qt.QMessageBox.Critical
-          md.standardButtons = qt.QMessageBox.Close
-          md.windowTitle = "Module loading failed"
 
           if len(failed) > 1:
-            md.text = "The following modules could not be registered:"
-
+            text = "The following modules could not be registered:"
           else:
-            md.text = "The '%s' module could not be registered:" % failed[0].key
+            text = "The '%s' module could not be registered:" % failed[0].key
 
           failedFormat = "<ul><li>%(key)s<br/>(%(path)s)</li></ul>"
-          md.informativeText = "".join(
+          detailedInformation = "".join(
             [failedFormat % m.__dict__ for m in failed])
 
-          md.exec_()
+          slicer.util.errorDisplay(text, parent=self.parent.window(), windowTitle="Module loading failed",
+                                   standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
+
           return
 
         # Instantiate and load requested module(s)
         if not factory.loadModules([module.key for module in modulesToLoad]):
-          md = qt.QMessageBox(self.parent.window())
-          md.icon = qt.QMessageBox.Critical
-          md.standardButtons = qt.QMessageBox.Close
-          md.windowTitle = "Error loading module(s)"
-          md.text = ("The module factory manager reported an error. "
-                     "One or more of the requested module(s) and/or "
-                     "dependencies thereof may not have been loaded.")
-          md.exec_()
+          text = ("The module factory manager reported an error. "
+                  "One or more of the requested module(s) and/or "
+                  "dependencies thereof may not have been loaded.")
+          slicer.util.errorDisplay(text, parent=self.parent.window(), windowTitle="Error loading module(s)",
+                                   standardButtons=qt.QMessageBox.Close)
 
   #---------------------------------------------------------------------------
   def createExtensionModule(self):
@@ -417,12 +403,9 @@ class ExtensionWizardWidget:
                                           dlg.componentType, name)
 
       except:
-        md = qt.QMessageBox(self.parent.window())
-        md.icon = qt.QMessageBox.Critical
-        md.text = "An error occurred while trying to create the module."
-        md.detailedText = traceback.format_exc()
-        md.standardButtons = qt.QMessageBox.Retry | qt.QMessageBox.Close
-        if md.exec_() != qt.QMessageBox.Retry:
+        if not slicer.util.confirmRetryCloseDisplay("An error occurred while trying to create the module.",
+                                                    parent=self.parent.window(),
+                                                    detailtedText=traceback.format_exc()):
           return
 
         continue
@@ -432,17 +415,14 @@ class ExtensionWizardWidget:
         self.extensionProject.save()
 
       except:
-        md = qt.QMessageBox(self.parent.window())
-        md.icon = qt.QMessageBox.Critical
-        md.text = "An error occurred while adding the module to the extension."
-        md.informativeText = "The module has been created, but the extension" \
-                             " CMakeLists.txt could not be updated. In order" \
-                             " to include the module in the extension build," \
-                             " you will need to update the extension" \
-                             " CMakeLists.txt by hand."
-        md.detailedText = traceback.format_exc()
-        md.standardButtons = qt.QMessageBox.Close
-        md.exec_()
+        text = "An error occurred while adding the module to the extension."
+        detailedInformation = "The module has been created, but the extension" \
+                              " CMakeLists.txt could not be updated. In order" \
+                              " to include the module in the extension build," \
+                              " you will need to update the extension" \
+                              " CMakeLists.txt by hand."
+        slicer.util.errorDisplay(text, parent=self.parent.window(), detailedText = traceback.format_exc(),
+                                   standardButtons=qt.QMessageBox.Close, informativeText=detailedInformation)
 
       self.loadModules(os.path.join(self.extensionLocation, name), depth=0)
       return

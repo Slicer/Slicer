@@ -148,8 +148,8 @@ class FiducialLayoutSwitchBug1914Widget:
     except Exception, e:
       import traceback
       traceback.print_exc()
-      qt.QMessageBox.warning(slicer.util.mainWindow(),
-          "Reload and Test", 'Exception!\n\n' + str(e) + "\n\nSee Python Console for Stack Trace")
+      slicer.util.warningDisplay("Reload and Test", 'Exception!\n\n' + str(e) +
+                                 "\n\nSee Python Console for Stack Trace")
 
 
 #
