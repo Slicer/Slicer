@@ -450,6 +450,7 @@ void qSlicerApplication::handlePreApplicationCommandLineArguments()
 
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
+  Q_UNUSED(options);
 }
 
 //-----------------------------------------------------------------------------
