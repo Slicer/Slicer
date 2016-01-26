@@ -6,7 +6,7 @@ set(${proj}_DEPENDENCIES "zlib")
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
-if(Slicer_USE_ITKPython)
+if(Slicer_BUILD_ITKPython)
   list(APPEND ${proj}_DEPENDENCIES Swig python)
 endif()
 
@@ -38,7 +38,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
-  if(Slicer_USE_PYTHONQT OR Slicer_USE_ITKPython)
+  if(Slicer_USE_PYTHONQT OR Slicer_BUILD_ITKPython)
     # XXX Ensure python executable used for ITKModuleHeaderTest
     #     is the same as Slicer.
     #     This will keep the sanity check implemented in SlicerConfig.cmake
@@ -47,7 +47,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       )
   endif()
-  if(Slicer_USE_ITKPython)
+  if(Slicer_BUILD_ITKPython)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
