@@ -641,23 +641,71 @@ def delayDisplay(message,autoCloseMsec=1000):
     okButton.connect('clicked()', messagePopup.close)
   messagePopup.exec_()
 
-def warningDisplay(message,windowTitle="Slicer warning"):
+def infoDisplay(text, windowTitle="Slicer information", parent=None, standardButtons=None, **kwargs):
+  """Display popup with a info message.
+  """
+  import qt
+  import logging
+  logging.info(text)
+  if mainWindow(verbose=False):
+    standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
+    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Information, standardButtons=standardButtons,
+               **kwargs)
+
+def warningDisplay(text, windowTitle="Slicer warning", parent=None, standardButtons=None, **kwargs):
   """Display popup with a warning message.
   """
-  import qt, slicer
+  import qt
   import logging
-  logging.warning(message)
+  logging.warning(text)
   if mainWindow(verbose=False):
-    qt.QMessageBox.warning(slicer.util.mainWindow(), windowTitle, message)
+    standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
+    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Warning, standardButtons=standardButtons,
+               **kwargs)
 
-def errorDisplay(message,windowTitle="Slicer error"):
+def errorDisplay(text, windowTitle="Slicer error", parent=None, standardButtons=None, **kwargs):
   """Display an error popup.
   """
-  import qt, slicer
+  import qt
   import logging
-  logging.error(message)
+  logging.error(text)
   if mainWindow(verbose=False):
-    qt.QMessageBox.critical(slicer.util.mainWindow(), windowTitle, message)
+    standardButtons = standardButtons if standardButtons else qt.QMessageBox.Ok
+    messageBox(text, parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical, standardButtons=standardButtons,
+               **kwargs)
+
+def confirmOkCancelDisplay(text, windowTitle="Slicer confirmation", parent=None, **kwargs):
+  """Display an confirmation popup. Return if confirmed with OK.
+  """
+  import qt
+  result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
+                       standardButtons=qt.QMessageBox.Ok | qt.QMessageBox.Cancel, **kwargs)
+  return result == qt.QMessageBox.Ok
+
+def confirmYesNoDisplay(text, windowTitle="Slicer confirmation", parent=None, **kwargs):
+  """Display an confirmation popup. Return if confirmed with Yes.
+  """
+  import qt
+  result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Question,
+                       standardButtons=qt.QMessageBox.Yes | qt.QMessageBox.No, **kwargs)
+  return result == qt.QMessageBox.Yes
+
+def confirmRetryCloseDisplay(text, windowTitle="Slicer error", parent=None, **kwargs):
+  """Display an confirmation popup. Return if confirmed with Retry.
+  """
+  import qt
+  result = messageBox(text, parent=parent, windowTitle=windowTitle, icon=qt.QMessageBox.Critical,
+                       standardButtons=qt.QMessageBox.Retry | qt.QMessageBox.Close, **kwargs)
+  return result == qt.QMessageBox.Retry
+
+def messageBox(text, parent=None, **kwargs):
+  import qt
+  mbox = qt.QMessageBox(parent if parent else mainWindow())
+  mbox.text = text
+  for key, value in kwargs.iteritems():
+    if hasattr(mbox, key):
+      setattr(mbox, key, value)
+  return mbox.exec_()
 
 def toBool(value):
   """Convert any type of value to a boolean.
