@@ -35,7 +35,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
    OR NOT DEFINED PYTHON_LIBRARY
    OR NOT DEFINED PYTHON_EXECUTABLE) AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.10")
+  set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.11")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
   if(MSVC)
@@ -47,8 +47,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   endif()
 
   ExternalProject_Add(python-source
-    URL "https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz"
-    URL_MD5 "d7547558fd673bd9d38e2108c6b42521"
+    URL "https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz"
+    URL_MD5 "6b6076ec9e93f05dd63e47eb9c15728b"
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SOURCE_DIR ${python_SOURCE_DIR}
     ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
@@ -111,7 +111,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/python-cmake-buildsystem/python-cmake-buildsystem.git"
-    GIT_TAG "ed5f9bcee540e47f82fa17f8360b820591aa6d66"
+    GIT_TAG "b012e1e718250b8d94256beca97dcbca24d463db"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
