@@ -287,6 +287,14 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
       TwoCLIsInARowTest.py
       TwoCLIsInParallelTest.py
       )
+
+    if(Slicer_BUILD_BRAINSTOOLS)
+      slicer_add_python_unittest(SCRIPT BRAINSFitRigidRegistrationCrashIssue4139.py)
+
+      list(APPEND KIT_PYTHON_SCRIPTS
+        BRAINSFitRigidRegistrationCrashIssue4139.py
+        )
+    endif()
   endif()
 
   set(KIT_PYTHON_RESOURCES

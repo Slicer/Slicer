@@ -148,9 +148,19 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
   std::string itkTransformClassName = transformItk_LPS->GetNameOfClass();
 
   // Linear transform of doubles or floats, dimension 3
-  if (itkTransformClassName == "AffineTransform" ||
+  if (itkTransformClassName.find( "AffineTransform" ) != std::string::npos ||
+      itkTransformClassName == "MatrixOffsetTransformBase" ||
       itkTransformClassName == "Rigid3DTransform" ||
-      itkTransformClassName == "ScaleTransform")
+      itkTransformClassName == "Euler3DTransform" ||
+      itkTransformClassName == "CenteredEuler3DTransform" ||
+      itkTransformClassName == "QuaternionRigidTransform" ||
+      itkTransformClassName == "VersorTransform" ||
+      itkTransformClassName == "VersorRigid3DTransform" ||
+      itkTransformClassName == "ScaleSkewVersor3DTransform" ||
+      itkTransformClassName == "ScaleVersor3DTransform" ||
+      itkTransformClassName == "Similarity3DTransform" ||
+      itkTransformClassName == "ScaleTransform" ||
+      itkTransformClassName == "ScaleLogarithmicTransform")
     {
     typename LinearTransformType::Pointer dlt
       = static_cast<LinearTransformType*>( transformItk_LPS.GetPointer() );
