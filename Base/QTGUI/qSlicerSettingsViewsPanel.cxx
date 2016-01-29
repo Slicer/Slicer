@@ -81,6 +81,19 @@ void qSlicerSettingsViewsPanelPrivate::init()
                       "currentMSAA", SIGNAL(currentMSAAChanged(QString)),
                       "Multisampling (MSAA)",
                       ctkSettingsPanel::OptionRequireRestart);
+
+  q->registerProperty("Default3DView/BoxVisibility", this->ThreeDBoxVisibilityCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "3D view cube visibility");
+  q->registerProperty("Default3DView/AxisLabelsVisibility", this->ThreeDAxisLabelsVisibilityCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "3D view axis label visibility");
+  q->registerProperty("Default3DView/UseDepthPeeling", this->ThreeDUseDepthPeelingCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "3D depth peeling");
+  q->registerProperty("Default3DView/UseOrthographicProjection", this->ThreeDUseOrthographicProjectionCheckBox,
+                      "checked", SIGNAL(toggled(bool)),
+                      "Orthographic projection");
 }
 
 // --------------------------------------------------------------------------

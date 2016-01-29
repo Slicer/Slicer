@@ -136,6 +136,15 @@ public:
   /// Add a path to the list.
   const char* GetTagByClassName(const char *className);
 
+  /// Set a default node for node creation and reset.
+  /// One default node can be specified for each node class.
+  /// It is useful for overriding default values that are set in a node's constructor.
+  void AddDefaultNode(vtkMRMLNode* node);
+  vtkMRMLNode* GetDefaultNodeByClass(const char* className);
+
+  /// Deletes all default node values from the scene.
+  void RemoveAllDefaultNodes();
+
   /// Return collection of nodes
   vtkCollection* GetNodes();
 
@@ -599,6 +608,9 @@ public:
   /// Copies all singleton nodes into the parameter scene.
   void CopySingletonNodesToScene(vtkMRMLScene *scene);
 
+  /// Copies all default nodes into the parameter scene. Does not remove existing default nodes.
+  void CopyDefaultNodesToScene(vtkMRMLScene *scene);
+
   /// \brief Returns true if the scene has been "significantly" modified
   /// since the last time it was read or written.
   bool GetModifiedSinceRead();
@@ -711,6 +723,11 @@ protected:
   NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
   std::map< std::string, std::string > ReferencedIDChanges;
   std::map< std::string, vtkSmartPointer<vtkMRMLNode> > NodeIDs;
+
+  // Stores default nodes. If a class is created or reset (using CreateNodeByClass or Clear) and
+  // a default node is defined for it then the content of the default node will be used to initialize
+  // the class. It is useful for overriding default values that are set in a node's constructor.
+  std::map< std::string, vtkSmartPointer<vtkMRMLNode> > DefaultNodes;
 
   std::string ErrorMessage;
 

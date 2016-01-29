@@ -48,17 +48,15 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsViewsPanel();
 
-  /// \sa currentMSAA
+  /// Get current value as string
   QString currentMSAA() const;
 
 public slots:
-  /// Change the current MSAA based on its name
-  /// \sa currentMSAA
+  /// Change the current value based on its name
   void setCurrentMSAA(const QString&);
 
 signals:
-  /// Signal emitted when the current MSAA is changed
-  /// \sa currentMSAA
+  /// Signal emitted when the current value is changed
   void currentMSAAChanged(const QString&);
 
 protected slots:

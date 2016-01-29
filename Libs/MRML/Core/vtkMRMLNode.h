@@ -220,7 +220,7 @@ public:
   void CopyWithScene(vtkMRMLNode *node);
 
   /// \brief Reset node attributes to the initial state as defined in the
-  /// constructor.
+  /// constructor or the passed default node.
   ///
   /// It preserves values of the following dynamic attributes that may be
   /// set by an application:
@@ -229,13 +229,17 @@ public:
   /// * Selectable
   /// * SingletonTag.
   ///
+  /// If a defaultNode pointer is passed then the values stored in that node
+  /// will be used to set the node contents. If defaultNode is NULL then the values
+  /// set in the constructor of the class will be used to set the node contents.
+  ///
   /// \note Other attributes that needs to be preserved should be handled in the subclass.
   ///
   /// \sa SetSaveWithScene()
   /// \sa SetHideFromEditors()
   /// \sa SetSelectable()
   /// \sa SetSingletonTag()
-  virtual void Reset();
+  virtual void Reset(vtkMRMLNode* defaultNode);
 
   /// \brief Start modifying the node. Disable Modify events.
   ///

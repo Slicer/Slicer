@@ -19,13 +19,20 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QtPlugin>
+#include <QSettings>
 
 // SlicerQt includes
 
 // Slices QTModule includes
 #include "qSlicerViewControllersModule.h"
 #include "qSlicerViewControllersModuleWidget.h"
+
+#include "vtkSlicerViewControllersLogic.h"
+
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLViewNode.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerViewControllersModule, qSlicerViewControllersModule);
@@ -75,6 +82,25 @@ void qSlicerViewControllersModule::setup()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::setMRMLScene(vtkMRMLScene* scene)
+{
+  this->Superclass::setMRMLScene(scene);
+  vtkSlicerViewControllersLogic* logic = vtkSlicerViewControllersLogic::SafeDownCast(this->logic());
+  if (!logic)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: logic is invalid";
+    return;
+    }
+  // Update default view nodes from settings
+  this->readDefaultSliceViewSettings(logic->GetDefaultSliceViewNode());
+  this->readDefaultThreeDViewSettings(logic->GetDefaultThreeDViewNode());
+  this->writeDefaultSliceViewSettings(logic->GetDefaultSliceViewNode());
+  this->writeDefaultThreeDViewSettings(logic->GetDefaultThreeDViewNode());
+  // Update all existing view nodes to default
+  logic->ResetAllViewNodesToDefault();
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerViewControllersModule::createWidgetRepresentation()
 {
   return new qSlicerViewControllersModuleWidget;
@@ -83,7 +109,75 @@ qSlicerAbstractModuleRepresentation * qSlicerViewControllersModule::createWidget
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerViewControllersModule::createLogic()
 {
-  return 0;
+  return vtkSlicerViewControllersLogic::New();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode* defaultViewNode)
+{
+  if (!defaultViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
+    return;
+    }
+  QSettings settings;
+  settings.beginGroup("Default3DView");
+  if (settings.contains("BoxVisibility"))
+    {
+    defaultViewNode->SetBoxVisible(settings.value("BoxVisibility").toBool());
+    }
+  if (settings.contains("AxisLabelsVisibility"))
+    {
+    defaultViewNode->SetAxisLabelsVisible(settings.value("AxisLabelsVisibility").toBool());
+    }
+  if (settings.contains("UseOrthographicProjection"))
+    {
+    defaultViewNode->SetRenderMode(settings.value("UseOrthographicProjection").toBool() ? vtkMRMLViewNode::Orthographic : vtkMRMLViewNode::Perspective);
+    }
+  if (settings.contains("UseDepthPeeling"))
+    {
+    defaultViewNode->SetUseDepthPeeling(settings.value("UseDepthPeeling").toBool());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNode* defaultViewNode)
+{
+  if (!defaultViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
+    return;
+    }
+  QSettings settings;
+  settings.beginGroup("Default3DView");
+  settings.setValue("BoxVisibility", bool(defaultViewNode->GetBoxVisible()));
+  settings.setValue("AxisLabelsVisibility", bool(defaultViewNode->GetAxisLabelsVisible()));
+  settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
+  settings.setValue("UseDepthPeeling", bool(defaultViewNode->GetUseDepthPeeling()));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode* defaultViewNode)
+{
+  if (!defaultViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
+    return;
+    }
+  QSettings settings;
+  settings.beginGroup("DefaultSliceView");
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNode* defaultViewNode)
+{
+  if (!defaultViewNode)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: defaultViewNode is invalid";
+    return;
+    }
+  QSettings settings;
+  settings.beginGroup("DefaultSliceView");
 }
 
 //-----------------------------------------------------------------------------

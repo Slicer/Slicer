@@ -23,7 +23,7 @@ int vtkMRMLAnnotationControlPointsNodeTest1(int , char * [] )
   // Modify Properties
   // ======================
   vtkNew<vtkMRMLAnnotationControlPointsNode> node2;
-  node2->Reset();
+  node2->Reset(NULL);
 
   mrmlScene->AddNode(node2.GetPointer());
   node2->CreateAnnotationPointDisplayNode();

@@ -214,7 +214,7 @@ public:
 
   ///
   /// reset when close the scene
-  virtual void Reset();
+  virtual void Reset(vtkMRMLNode* defaultNode);
 
   ///
   /// return the index associated with this color name, which can then be used

@@ -200,9 +200,17 @@ void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::Reset()
+void vtkMRMLNode::Reset(vtkMRMLNode* defaultNode)
 {
-  vtkMRMLNode *newNode = this->CreateNodeInstance();
+  vtkSmartPointer<vtkMRMLNode> newNode;
+  if (defaultNode)
+    {
+    newNode = defaultNode;
+    }
+  else
+    {
+    newNode = vtkSmartPointer<vtkMRMLNode>::Take(this->CreateNodeInstance());
+    }
 
   int save = this->GetSaveWithScene();
   int hide = this->GetHideFromEditors();
@@ -217,8 +225,6 @@ void vtkMRMLNode::Reset()
   this->SetSelectable(select);
   this->SetSingletonTag(tag);
   this->EndModify(wasModifying);
-
-  newNode->Delete();
 }
 
 //----------------------------------------------------------------------------

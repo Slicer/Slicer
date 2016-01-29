@@ -253,7 +253,7 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
 
   //  Test Copy()
   node1->Copy(node);
-  node->Reset();
+  node->Reset(NULL);
 
   //  Test SetAttribute() / GetAttribute()
   int mod = node->StartModify();

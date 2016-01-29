@@ -52,7 +52,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// \brief Reimplemented to preserve orientation and layout color when reset.
   /// \sa GetOrientationString()
   /// \sa GetLayoutColor()
-  virtual void Reset();
+  virtual void Reset(vtkMRMLNode* defaultNode);
 
   ///
   /// Get node XML tag name (like Volume, Model)

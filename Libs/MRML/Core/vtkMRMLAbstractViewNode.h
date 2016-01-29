@@ -52,7 +52,7 @@ public:
 
   /// \brief Reimplemented to preserve layout label when reset.
   /// \sa GetLayoutLabel()
-  virtual void Reset();
+  virtual void Reset(vtkMRMLNode* defaultNode);
 
   ///
   /// Name of the layout. Must be unique between all the view nodes of the

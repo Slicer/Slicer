@@ -475,11 +475,11 @@ bool vtkMRMLColorNode::GetColor(int vtkNotUsed(index), double vtkNotUsed(color)[
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorNode::Reset()
+void vtkMRMLColorNode::Reset(vtkMRMLNode* defaultNode)
 {
   // don't need to call reset on color nodes, as all but the User color table
   // node are static, and that's taken care of in the vtkMRMLColorTableNode
-  //Superclass::Reset();
+  //Superclass::Reset(defaultNode);
 }
 
 //---------------------------------------------------------------------------

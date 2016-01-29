@@ -295,13 +295,13 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLUnitNode::Reset()
+void vtkMRMLUnitNode::Reset(vtkMRMLNode* defaultNode)
 {
   if (this->GetSingletonTag() != 0)
     {
     return;
     }
-  this->Superclass::Reset();
+  this->Superclass::Reset(defaultNode);
 }
 
 //----------------------------------------------------------------------------

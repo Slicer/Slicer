@@ -370,7 +370,59 @@ void vtkMRMLScene::ResetNodes()
     }
   for(unsigned int i=0; i<nodes.size(); i++)
     {
-    nodes[i]->Reset();
+    nodes[i]->Reset(GetDefaultNodeByClass(nodes[i]->GetClassName()));
+    }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetDefaultNodeByClass(const char* className)
+{
+  if (className==NULL)
+    {
+    return NULL;
+    }
+  std::map< std::string, vtkSmartPointer<vtkMRMLNode> >::iterator it = this->DefaultNodes.find(std::string(className));
+  if (it == this->DefaultNodes.end())
+    {
+    return NULL;
+    }
+  return it->second;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLScene::AddDefaultNode(vtkMRMLNode* node)
+{
+  if (node==NULL)
+    {
+    vtkErrorMacro("vtkMRMLScene::SetDefaultNodeByClass failed: invalid node");
+    return;
+    }
+  const char* className = node->GetClassName();
+  if (className==NULL)
+    {
+    vtkErrorMacro("vtkMRMLScene::SetDefaultNodeByClass failed: invalid className");
+    return;
+    }
+  this->DefaultNodes[std::string(className)] = node;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLScene::RemoveAllDefaultNodes()
+{
+  this->DefaultNodes.clear();
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::CopyDefaultNodesToScene(vtkMRMLScene *scene)
+{
+  if (!scene)
+    {
+    return;
+    }
+  for (std::map< std::string, vtkSmartPointer<vtkMRMLNode> >::iterator it = this->DefaultNodes.begin();
+    it != this->DefaultNodes.end(); ++it)
+    {
+    scene->AddDefaultNode(it->second);
     }
 }
 
@@ -413,6 +465,13 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
       vtkDebugLeaks::DestructClass(className);
 #endif
       }
+    }
+  // If a default node is specified for this class then initialize the
+  // node contents with that
+  vtkMRMLNode* defaultNode = this->GetDefaultNodeByClass(className);
+  if (defaultNode)
+    {
+    node->Reset(defaultNode);
     }
   return node;
 }

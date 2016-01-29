@@ -1402,7 +1402,7 @@ void vtkMRMLColorTableNode::ClearNames()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorTableNode::Reset()
+void vtkMRMLColorTableNode::Reset(vtkMRMLNode* defaultNode)
 {
   int disabledModify = this->StartModify();
 
@@ -1410,7 +1410,7 @@ void vtkMRMLColorTableNode::Reset()
   if (this->GetType() == vtkMRMLColorTableNode::User)
     {
     int type = this->GetType();
-    Superclass::Reset();
+    Superclass::Reset(defaultNode);
     this->SetType(type);
     }
 

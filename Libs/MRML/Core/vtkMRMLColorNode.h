@@ -76,7 +76,7 @@ public:
   ///
   /// Reset node attributes to the initilal state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
-  virtual void Reset();
+  virtual void Reset(vtkMRMLNode* defaultNode);
 
   ///
   ///
