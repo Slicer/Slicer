@@ -306,14 +306,81 @@ list_conditional_append(Slicer_BUILD_LandmarkRegistration Slicer_REMOTE_DEPENDEN
 
 Slicer_Remote_Add(SlicerDMRI
   GIT_REPOSITORY "${git_protocol}://github.com/SlicerDMRI/SlicerDMRI"
+  # SlicerDMRI Maintainer: If new revision of the extension add or remove modules, consider updating
+  #                        the module lists below. Thanks.
   GIT_TAG "86dc8ec85d9318ad05420962652443da6bf95b2a"
   OPTION_NAME Slicer_BUILD_SlicerDMRI
   OPTION_DEPENDS "Slicer_BUILD_DIFFUSION_SUPPORT"
   LABELS REMOTE_EXTENSION
+  SOURCE_DIR_VAR SlicerDMRI_SOURCE_DIR
   VARS
     SlicerDMRI_SUPERBUILD:BOOL=OFF
     MRML_USE_vtkTeem:BOOL=ON # XXX No way to detect this in Superbuild
   )
+if(Slicer_BUILD_SlicerDMRI)
+  # XXX Workaround Windows "path or filename too long" error by copying CLI, Loadable and Scripted modules
+  #     in the same directory.
+  #     Then, instead of having Visual Studio 2013 using path like:
+  #       C:\D\N\Slicer-1-build\Slicer-build\E\SlicerDMRI\Modules\Loadable\TractographyDisplay\MRMLDM\vtkSlicerTractographyDisplayModuleMRMLDisplayableManagerPythonD.dir\Release\vtkSlice.BF02D1B4.tlog\vtkSlicerTractographyDisplayModuleMRMLDisplayableManagerPythonD.lastbuildstate
+  #     It will be 24 characters shorter:
+  #       C:\D\N\Slicer-1-build\Slicer-build\E\DMRI\TractographyDisplay\MRMLDM\vtkSlicerTractographyDisplayModuleMRMLDisplayableManagerPythonD.dir\Release\vtkSlice.BF02D1B4.tlog\vtkSlicerTractographyDisplayModuleMRMLDisplayableManagerPythonD.lastbuildstate
+  #
+  # XXX For sake of consistency, the workaround is applied on both Windows and Unix. The difference
+  #     is that symlinks are used on Unix.
+  set(_src_dir ${CMAKE_CURRENT_BINARY_DIR}/SlicerDMRI)
+  set(_dest_dir ${CMAKE_CURRENT_BINARY_DIR}/DMRI)
+  set(_step_comands)
+  set(_module_names)
+  foreach(_module_dir
+      Modules/Loadable/TractographyDisplay
+      Modules/Loadable/TractographyInteractiveSeeding
+      # SlicerDMRI Maintainer: Add loadable module before this comment
+
+      Modules/CLI/DWIToDTIEstimation
+      Modules/CLI/DiffusionWeightedVolumeMasking
+      Modules/CLI/DiffusionTensorScalarMeasurements
+      Modules/CLI/FiberTractMeasurements
+      Modules/CLI/TractographyLabelMapSeeding
+      Modules/CLI/FiberBundleLabelSelect
+      # SlicerDMRI Maintainer: Add CLI module before this comment
+
+      Modules/Scripted/DICOM2FullBrainTractography
+      Modules/Scripted/FiberBundleToLabelMap
+      # SlicerDMRI Maintainer: Add Scripted module before this comment
+      )
+    get_filename_component(_module_name ${_module_dir} NAME)
+    list(APPEND _module_names ${_module_name})
+    if(WIN32)
+      list(APPEND _step_comands
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${_dest_dir}/${_module_name}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_dir} ${_dest_dir}/${_module_name}
+        )
+    else()
+      list(APPEND _step_comands
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ${_src_dir}/${_module_dir} ${_dest_dir}/${_module_name}
+        )
+    endif()
+  endforeach()
+
+  # Generate CMakeLists for "re-organized" extension source code
+  file(MAKE_DIRECTORY ${_dest_dir})
+  file(WRITE ${_dest_dir}/CMakeLists.txt
+"# Generate by ${CMAKE_CURRENT_LIST_FILE}
+foreach(module_name ${_module_names})
+  add_subdirectory(\${module_name})
+endforeach()
+")
+
+  # Add step
+  ExternalProject_Add_Step(SlicerDMRI reorganize_module_source_directories
+    DEPENDEES update
+    COMMENT "Reorganizing 'SlicerDMRI' module source directories: workaround windows 'filename or path too long' issue"
+    ${_step_comands}
+    )
+
+  set(SlicerDMRI_SOURCE_DIR ${_dest_dir})
+  message(STATUS "Remote - SlicerDMRI_SOURCE_DIR:${SlicerDMRI_SOURCE_DIR}")
+endif()
 list_conditional_append(Slicer_BUILD_SlicerDMRI Slicer_REMOTE_DEPENDENCIES SlicerDMRI)
 
 #-----------------------------------------------------------------------------
