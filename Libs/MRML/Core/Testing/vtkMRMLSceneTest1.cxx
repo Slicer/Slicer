@@ -29,8 +29,16 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
   virtual const char* GetNodeTagName() { return "Custom"; }
 
+  virtual void Reset(vtkMRMLNode* defaultNode)
+    {
+    ++this->ResetCount;
+    this->vtkMRMLNode::Reset(defaultNode);
+    }
+
+  int ResetCount;
+
 protected:
-  vtkMRMLCustomNode(){}
+  vtkMRMLCustomNode():ResetCount(0){}
   ~vtkMRMLCustomNode(){}
   vtkMRMLCustomNode(const vtkMRMLCustomNode&);
   void operator=(const vtkMRMLCustomNode&);
@@ -73,7 +81,24 @@ int vtkMRMLSceneTest1(int , char * [] )
   TEST_SET_GET_STRING(scene1.GetPointer(), URL);
   TEST_SET_GET_STRING(scene1.GetPointer(), RootDirectory);
 
-  scene1->ResetNodes();
+
+  //---------------------------------------------------------------------------
+  // Test ResetNodes
+  //---------------------------------------------------------------------------
+
+  {
+    vtkNew<vtkMRMLCustomNode> node1;
+    CHECK_INT(node1->ResetCount, 0);
+
+    scene1->AddNode(node1.GetPointer());
+    CHECK_INT(node1->ResetCount, 0);
+
+    scene1->ResetNodes();
+
+    CHECK_INT(node1->ResetCount, 1);
+
+    scene1->Clear(/* removeSingletons= */ 1);
+  }
 
   //---------------------------------------------------------------------------
   // Test GetFirstNode
