@@ -374,7 +374,10 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       }
     }
 
-  transformVtk->Register(NULL);
+  if (transformVtk)
+    {
+    transformVtk->Register(NULL);
+    }
   return transformVtk;
 }
 
