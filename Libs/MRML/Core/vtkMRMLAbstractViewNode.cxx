@@ -20,10 +20,13 @@
 
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
 // STD includes
 #include <sstream>
+
+const char* vtkMRMLAbstractViewNode::OrientationMarkerHumanModelReferenceRole = "OrientationMarkerHumanModel";
 
 //----------------------------------------------------------------------------
 vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
@@ -38,6 +41,13 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
 
   this->SetLayoutLabel("1");
   this->SetHideFromEditors(0);
+
+  this->OrientationMarkerEnabled = false;
+  this->OrientationMarkerType = OrientationMarkerTypeNone;
+  this->OrientationMarkerSize = OrientationMarkerSizeMedium;
+
+  this->RulerEnabled = false;
+  this->RulerType = RulerTypeNone;
  }
 
 //----------------------------------------------------------------------------
@@ -76,6 +86,17 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " backgroundColor2=\"" << this->BackgroundColor2[0] << " "
      << this->BackgroundColor2[1] << " " << this->BackgroundColor2[2] << "\"";
+
+  if (this->OrientationMarkerEnabled)
+    {
+    of << indent << " orientationMarkerType=\"" << this->GetOrientationMarkerTypeAsString(this->OrientationMarkerType) << "\"";
+    of << indent << " orientationMarkerSize=\"" << this->GetOrientationMarkerSizeAsString(this->OrientationMarkerSize) << "\"";
+    }
+
+  if (this->RulerEnabled)
+    {
+    of << indent << " rulerType=\"" << this->GetRulerTypeAsString(this->RulerType) << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -138,6 +159,42 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->Active = 0;
+        }
+      }
+    else if (!strcmp(attName, "orientationMarkerType") && this->OrientationMarkerEnabled)
+      {
+      int id = this->GetOrientationMarkerTypeFromString(attValue);
+      if (id<0)
+        {
+        vtkWarningMacro("Invalid orientationMarkerType: "<<(attValue?attValue:"(none)"));
+        }
+      else
+        {
+        this->OrientationMarkerType = id;
+        }
+      }
+    else if (!strcmp(attName, "orientationMarkerSize") && this->OrientationMarkerEnabled)
+      {
+      int id = this->GetOrientationMarkerSizeFromString(attValue);
+      if (id<0)
+        {
+        vtkWarningMacro("Invalid orientationMarkerSize: "<<(attValue?attValue:"(none)"));
+        }
+      else
+        {
+        this->OrientationMarkerSize = id;
+        }
+      }
+    else if (!strcmp(attName, "rulerType") && this->RulerEnabled)
+      {
+      int id = this->GetRulerTypeFromString(attValue);
+      if (id<0)
+        {
+        vtkWarningMacro("Invalid rulerType: "<<(attValue?attValue:"(none)"));
+        }
+      else
+        {
+        this->RulerType = id;
         }
       }
     // XXX Do not read 'visibility' attribute and default to 1 because:
@@ -207,6 +264,17 @@ void vtkMRMLAbstractViewNode::Copy(vtkMRMLNode *anode)
   this->Active = node->GetActive();
   this->Visibility = node->GetVisibility();
 
+  if (this->OrientationMarkerEnabled)
+    {
+    this->OrientationMarkerType = node->OrientationMarkerType;
+    this->OrientationMarkerSize = node->OrientationMarkerSize;
+    }
+
+  if (this->RulerEnabled)
+    {
+    this->RulerType = node->RulerType;
+    }
+
   this->EndModify(disabledModify);
 }
 
@@ -238,6 +306,17 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackgroundColor2:       " << this->BackgroundColor2[0] << " "
      << this->BackgroundColor2[1] << " "
      << this->BackgroundColor2[2] <<"\n";
+
+  if (this->OrientationMarkerEnabled)
+    {
+    os << indent << "Orientation marker type: " << this->GetOrientationMarkerTypeAsString(this->OrientationMarkerType) << "\n";
+    os << indent << "Orientation marker size: " << this->GetOrientationMarkerSizeAsString(this->OrientationMarkerSize) << "\n";
+    }
+
+  if (this->RulerEnabled)
+    {
+    os << indent << "Ruler type: " << this->GetRulerTypeAsString(this->RulerType) << "\n";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -285,4 +364,140 @@ void vtkMRMLAbstractViewNode::SetMappedInLayout(int value)
 bool vtkMRMLAbstractViewNode::IsViewVisibleInLayout()
 {
   return (this->IsMappedInLayout() && this->GetVisibility());
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(int id)
+{
+  switch (id)
+    {
+    case OrientationMarkerTypeNone: return "none";
+    case OrientationMarkerTypeCube: return "cube";
+    case OrientationMarkerTypeHuman: return "human";
+    case OrientationMarkerTypeAxes: return "axes";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(const char* name)
+{
+  if (name == NULL)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int i=0; i<OrientationMarkerType_Last; i++)
+    {
+    if (strcmp(name, GetOrientationMarkerTypeAsString(i))==0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(int id)
+{
+  switch (id)
+    {
+    case OrientationMarkerSizeSmall: return "small";
+    case OrientationMarkerSizeMedium: return "medium";
+    case OrientationMarkerSizeLarge: return "large";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(const char* name)
+{
+  if (name == NULL)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int i=0; i<OrientationMarkerSize_Last; i++)
+    {
+    if (strcmp(name, GetOrientationMarkerSizeAsString(i))==0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLAbstractViewNode::GetRulerTypeAsString(int id)
+{
+  switch (id)
+    {
+    case RulerTypeNone: return "none";
+    case RulerTypeThin: return "thin";
+    case RulerTypeThick: return "thick";
+    default:
+      // invalid id
+      return "";
+    }
+}
+
+//-----------------------------------------------------------
+int vtkMRMLAbstractViewNode::GetRulerTypeFromString(const char* name)
+{
+  if (name == NULL)
+  {
+    // invalid name
+    return -1;
+  }
+  for (int i=0; i<RulerType_Last; i++)
+    {
+    if (strcmp(name, GetRulerTypeAsString(i))==0)
+      {
+      // found a matching name
+      return i;
+      }
+    }
+  // unknown name
+  return -1;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLAbstractViewNode::SetOrientationMarkerHumanModelNodeID(const char* modelNodeId)
+{
+  if (!this->OrientationMarkerEnabled)
+    {
+    vtkErrorMacro("vtkMRMLAbstractViewNode::SetOrientationMarkerHumanModelID failed: orientation marker is disabled");
+    return;
+    }
+  this->SetNodeReferenceID(OrientationMarkerHumanModelReferenceRole, modelNodeId);
+}
+
+//-----------------------------------------------------------
+const char* vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelNodeID()
+{
+  if (!this->OrientationMarkerEnabled)
+    {
+    vtkErrorMacro("vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelID failed: orientation marker is disabled");
+    return NULL;
+    }
+  return this->GetNodeReferenceID(OrientationMarkerHumanModelReferenceRole);
+}
+
+//-----------------------------------------------------------
+vtkMRMLModelNode* vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModelNode()
+{
+  if (!this->OrientationMarkerEnabled)
+    {
+    vtkErrorMacro("vtkMRMLAbstractViewNode::GetOrientationMarkerHumanModel failed: orientation marker is disabled");
+    return NULL;
+    }
+  return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(OrientationMarkerHumanModelReferenceRole));
 }

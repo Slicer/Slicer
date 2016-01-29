@@ -279,6 +279,11 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
   this->SetCameraToRenderer();
   this->SetCameraToInteractor();
   this->InvokeEvent(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent, newCameraNode);
+  vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
+  if (viewNode)
+    {
+    viewNode->Modified(); // update vtkCamera from view node (perspective/parallel, etc)
+    }
 };
 
 //---------------------------------------------------------------------------

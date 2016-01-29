@@ -36,6 +36,101 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
+        <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+         <property name="title">
+          <string>Slice viewer defaults</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_2">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="SliceOrientationMarkerLabel">
+            <property name="text">
+             <string>Orientation marker:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="ctkComboBox" name="SliceOrientationMarkerTypeComboBox">
+              <item>
+               <property name="text">
+                <string>none</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>cube</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>human</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>axes</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="ctkComboBox" name="SliceOrientationMarkerSizeComboBox">
+              <property name="currentIndex">
+               <number>1</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>small</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>medium</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>large</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="SliceRulerLabel">
+            <property name="text">
+             <string>Ruler:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="ctkComboBox" name="SliceRulerTypeComboBox">
+            <item>
+             <property name="text">
+              <string>none</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>thin</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>thick</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox_2">
          <property name="title">
           <string>3D viewer defaults</string>
@@ -70,6 +165,95 @@
             <property name="checked">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="ThreeDOrientationMarkerLabel">
+            <property name="text">
+             <string>Orientation marker:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="ctkComboBox" name="ThreeDOrientationMarkerTypeComboBox">
+              <item>
+               <property name="text">
+                <string>none</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>cube</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>human</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>axes</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="ctkComboBox" name="ThreeDOrientationMarkerSizeComboBox">
+              <property name="currentIndex">
+               <number>1</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>small</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>medium</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>large</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="ThreeDRulerTypeLabel">
+            <property name="text">
+             <string>Ruler:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="ctkComboBox" name="ThreeDRulerTypeComboBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Ruler is only displayed if orthographic projection mode is used.</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>none</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>thin</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>thick</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="5" column="0">
@@ -175,5 +359,21 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources/>
  <connections>
+  <connection>
+   <sender>ThreeDUseOrthographicProjectionCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ThreeDRulerTypeComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>355</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

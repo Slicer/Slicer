@@ -38,6 +38,12 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsViewsPanel
   /// The current MSAA setting can be accessed using qSlicerApplication
   /// \sa currentMSAA(), setCurrentMSAA()
   Q_PROPERTY(QString currentMSAA READ currentMSAA WRITE setCurrentMSAA NOTIFY currentMSAAChanged)
+  Q_PROPERTY(QString sliceOrientationMarkerType READ sliceOrientationMarkerType WRITE setSliceOrientationMarkerType NOTIFY currentSliceOrientationMarkerTypeChanged)
+  Q_PROPERTY(QString sliceOrientationMarkerSize READ sliceOrientationMarkerSize WRITE setSliceOrientationMarkerSize NOTIFY currentSliceOrientationMarkerSizeChanged)
+  Q_PROPERTY(QString sliceRulerType READ sliceRulerType WRITE setSliceRulerType NOTIFY currentSliceRulerTypeChanged)
+  Q_PROPERTY(QString threeDOrientationMarkerType READ threeDOrientationMarkerType WRITE setThreeDOrientationMarkerType NOTIFY currentThreeDOrientationMarkerTypeChanged)
+  Q_PROPERTY(QString threeDOrientationMarkerSize READ threeDOrientationMarkerSize WRITE setThreeDOrientationMarkerSize NOTIFY currentThreeDOrientationMarkerSizeChanged)
+  Q_PROPERTY(QString threeDRulerType READ threeDRulerType WRITE setThreeDRulerType NOTIFY currentThreeDRulerTypeChanged)
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -50,14 +56,32 @@ public:
 
   /// Get current value as string
   QString currentMSAA() const;
+  QString sliceOrientationMarkerType() const;
+  QString sliceOrientationMarkerSize() const;
+  QString sliceRulerType() const;
+  QString threeDOrientationMarkerType() const;
+  QString threeDOrientationMarkerSize() const;
+  QString threeDRulerType() const;
 
 public slots:
   /// Change the current value based on its name
   void setCurrentMSAA(const QString&);
+  void setSliceOrientationMarkerType(const QString&);
+  void setSliceOrientationMarkerSize(const QString&);
+  void setSliceRulerType(const QString&);
+  void setThreeDOrientationMarkerType(const QString&);
+  void setThreeDOrientationMarkerSize(const QString&);
+  void setThreeDRulerType(const QString&);
 
 signals:
   /// Signal emitted when the current value is changed
   void currentMSAAChanged(const QString&);
+  void currentSliceOrientationMarkerTypeChanged(const QString&);
+  void currentSliceOrientationMarkerSizeChanged(const QString&);
+  void currentSliceRulerTypeChanged(const QString&);
+  void currentThreeDOrientationMarkerTypeChanged(const QString&);
+  void currentThreeDOrientationMarkerSizeChanged(const QString&);
+  void currentThreeDRulerTypeChanged(const QString&);
 
 protected slots:
   void onMSAAChanged(const QString&);

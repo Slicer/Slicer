@@ -255,7 +255,9 @@ void qSlicerModelsModuleWidget::deleteMultipleModels()
   for (int i = 0; i < modelIDsToDelete.size(); i++)
     {
     QString modelID = modelIDsToDelete.at(i);
-    vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNodeByID(modelID.toLatin1());
+    // the node may be deleted as a side effect of deleting the hierarchy node
+    // use a weak pointer to prevent pointer dangling
+    vtkWeakPointer<vtkMRMLNode> mrmlNode = this->mrmlScene()->GetNodeByID(modelID.toLatin1());
     if (mrmlNode && mrmlNode->IsA("vtkMRMLModelNode"))
       {
       // get the model hierarchy node and delete it
@@ -268,7 +270,10 @@ void qSlicerModelsModuleWidget::deleteMultipleModels()
         }
       // remove the model node
       //qDebug() << i << ": removing model node " << mrmlNode->GetName() << ", id = " << mrmlNode->GetID();
-      this->mrmlScene()->RemoveNode(mrmlNode);
+      if (mrmlNode)
+        {
+        this->mrmlScene()->RemoveNode(mrmlNode);
+        }
       }
     else if (mrmlNode && mrmlNode->IsA("vtkMRMLModelHierarchyNode"))
       {

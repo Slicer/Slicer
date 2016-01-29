@@ -42,7 +42,7 @@ class SliceAnnotations(VTKObservationMixin):
       '3-Background':{'text':'','category':'A'}
       })
     # Bottom Right Corner Text
-    # Not used - orientation figure will be draw there
+    # Not used - orientation figure may be drawn there
     self.cornerTexts.append({
       '1-TR':{'text':'','category':'A'},
       '2-TE':{'text':'','category':'A'}
@@ -76,13 +76,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.scene = slicer.mrmlScene
     self.sliceViews = {}
 
-    self.viewPortFinishHeight = 0.3
-    self.viewPortStartWidth = 0.8
-
-    self.cube = None
-    self.axes = None
-    self.humanActor = None
-
     # If there are no user settings load defaults
     self.sliceViewAnnotationsEnabled = settingsValue('DataProbe/sliceViewAnnotations.enabled', 1, converter=int)
 
@@ -94,18 +87,10 @@ class SliceAnnotations(VTKObservationMixin):
     self.backgroundDICOMAnnotationsPersistence = settingsValue(
         'DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence', 0, converter=int)
 
-    self.rulerEnabled = settingsValue('DataProbe/sliceViewAnnotations.rulerEnabled', 1, converter=int)
-    self.rulerEnabledLastStatus = self.rulerEnabled
-
     self.scalarBarEnabled = settingsValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', 0, converter=int)
     self.scalarBarEnabledLastStatus = self.scalarBarEnabled
     self.scalarBarSelectedLayer = 'background'
     self.rangeLabelFormat = settingsValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', '%G')
-
-    self.orientationMarkerEnabled = settingsValue('DataProbe/sliceViewAnnotations.orientationMarkerEnabled', 0, converter=int)
-    self.orientationMarkerType = settingsValue('DataProbe/sliceViewAnnotations.orientationMarkerType', 'Cube')
-    self.orientationMarkerEnabledLastStatus = self.orientationMarkerEnabled
-    self.zoomValue = settingsValue('DataProbe/sliceViewAnnotations.zoomValue', 20 , converter=int)
 
     self.parameter = 'sliceViewAnnotationsEnabled'
     self.parameterNode = self.dataProbeUtil.getParameterNode()
@@ -162,9 +147,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.backgroundPersistenceCheckBox.checked = self.backgroundDICOMAnnotationsPersistence
 
     self.annotationsAmountGroupBox = find(window,'annotationsAmountGroupBox')[0]
-    self.rulerCollapsibleButton = find(window,'rulerCollapsibleButton')[0]
-    self.rulerEnableCheckBox = find(window, 'rulerEnableCheckBox')[0]
-    self.rulerEnableCheckBox.checked = self.rulerEnabled
 
     self.scalarBarCollapsibleButton = find(window,'scalarBarCollapsibleButton')[0]
     self.scalarBarEnalbeCheckBox = find(window,'scalarBarEnableCheckBox')[0]
@@ -176,22 +158,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.foregroundRadioButton = find(window, 'foregroundRadioButton')[0]
     self.rangeLabelFormatLineEdit = find(window,'rangeLabelFormatLineEdit')[0]
     self.rangeLabelFormatLineEdit.text = self.rangeLabelFormat
-
-    # Orientation Marker Controllers
-    self.orientationMarkerEnableCheckBox =  find(window,'orientationMarkerEnableCheckBox')[0]
-    self.orientationMarkerEnableCheckBox.checked = self.orientationMarkerEnabled
-    self.zoomSlider =  find(window,'zoomSlider')[0]
-    self.widthSlider =  find(window,'widthSlider')[0]
-    self.heightSlider =  find(window,'heightSlider')[0]
-    self.cubeRadioButton = find(window,'cubeRadioButton')[0]
-    self.humanRadioButton = find(window,'humanRadioButton')[0]
-    self.axesRadioButton = find(window,'axesRadioButton')[0]
-    if self.orientationMarkerType == 'Cube':
-      self.cubeRadioButton.checked = True
-    elif self.orientationMarkerType == 'Human':
-      self.humanRadioButton.checked = True
-    else:
-      self.axesRadioButton.checked = True
 
     self.restoreDefaultsButton = find(window, 'restoreDefaultsButton')[0]
 
@@ -211,21 +177,11 @@ class SliceAnnotations(VTKObservationMixin):
 
     self.backgroundPersistenceCheckBox.connect('clicked()', self.onBackgroundLayerPersistenceCheckBox)
 
-    self.rulerEnableCheckBox.connect('clicked()', self.onShowRulerCheckBox)
-
     self.scalarBarEnalbeCheckBox.connect('clicked()', self.onScalarBarCheckBox)
     self.backgroundRadioButton.connect('clicked()',self.onLayerSelectionRadioButton)
     self.foregroundRadioButton.connect('clicked()',self.onLayerSelectionRadioButton)
     self.rangeLabelFormatLineEdit.connect('editingFinished()',self.onRangeLabelFormatLineEdit)
     self.rangeLabelFormatLineEdit.connect('returnPressed()',self.onRangeLabelFormatLineEdit)
-
-    self.orientationMarkerEnableCheckBox.connect('clicked()', self.onOrientationMarkerCheckBox)
-    self.zoomSlider.connect('valueChanged(double)', self.onZoomSlider)
-    self.zoomSlider.value = self.zoomValue
-    self.widthSlider.connect('valueChanged(double)', self.widthValueChanged)
-    self.heightSlider.connect('valueChanged(double)', self.heightValueChanged)
-    for radioButton in [self.cubeRadioButton, self.axesRadioButton, self.humanRadioButton]:
-      radioButton.connect('clicked()', self.onOrientationMarkerTypeRadioButton)
 
     self.restoreDefaultsButton.connect('clicked()', self.restoreDefaultValues)
 
@@ -234,43 +190,19 @@ class SliceAnnotations(VTKObservationMixin):
     if self.layoutManager:
       self.layoutManager.connect("destroyed()", self.onLayoutManagerDestroyed)
 
-  def onZoomSlider(self):
-    self.zoomValue = self.zoomSlider.value
-    settings = qt.QSettings()
-    settings.setValue('DataProbe/sliceViewAnnotations.zoomValue',self.zoomValue)
-    self.updateSliceViewFromGUI()
-
-  def widthValueChanged(self, value):
-    self.viewPortStartWidth = 1- value/100
-    self.updateSliceViewFromGUI()
-
-  def heightValueChanged(self, value):
-    self.viewPortFinishHeight= value/100
-    self.updateSliceViewFromGUI()
-
   def onSliceViewAnnotationsCheckBox(self):
     if self.sliceViewAnnotationsCheckBox.checked:
       self.sliceViewAnnotationsEnabled = 1
-      self.rulerEnableCheckBox.checked = self.rulerEnabledLastStatus
-      self.rulerEnabled = self.rulerEnabledLastStatus
       self.scalarBarEnalbeCheckBox.checked = self.scalarBarEnabledLastStatus
       self.scalarBarEnabled = self.scalarBarEnabledLastStatus
-      self.orientationMarkerEnabled = self.orientationMarkerEnabledLastStatus
     else:
-      self.rulerEnabledLastStatus = self.rulerEnabled
       self.scalarBarEnabledLastStatus = self.scalarBarEnabled
-      self.orientationMarkerEnabledLastStatus = self.orientationMarkerEnabled
       self.scalarBarEnalbeCheckBox.checked = False
-      self.rulerEnableCheckBox.checked = False
       self.sliceViewAnnotationsEnabled = 0
-      self.rulerEnabled = 0
       self.scalarBarEnabled = 0
-      self.orientationMarkerEnabled = 0
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.enabled', self.sliceViewAnnotationsEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.rulerEnabled',self.rulerEnabled)
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.orientationMarkerEnabled', self.orientationMarkerEnabled)
     self.updateSliceViewFromGUI()
 
   def onBackgroundLayerPersistenceCheckBox(self):
@@ -281,15 +213,6 @@ class SliceAnnotations(VTKObservationMixin):
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence',
         self.backgroundDICOMAnnotationsPersistence)
-    self.updateSliceViewFromGUI()
-
-  def onShowRulerCheckBox(self):
-    if self.rulerEnableCheckBox.checked:
-      self.rulerEnabled = 1
-    else:
-      self.rulerEnabled = 0
-    settings = qt.QSettings()
-    settings.setValue('DataProbe/sliceViewAnnotations.rulerEnabled', self.rulerEnabled)
     self.updateSliceViewFromGUI()
 
   def onLayerSelectionRadioButton(self):
@@ -308,13 +231,6 @@ class SliceAnnotations(VTKObservationMixin):
     settings = qt.QSettings()
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled',
         self.scalarBarEnabled)
-    self.updateSliceViewFromGUI()
-
-  def onOrientationMarkerCheckBox(self):
-    self.orientationMarkerEnabled = int(self.orientationMarkerEnableCheckBox.checked)
-    settings = qt.QSettings()
-    settings.setValue('DataProbe/sliceViewAnnotations.orientationMarkerEnabled',
-        self.orientationMarkerEnabled)
     self.updateSliceViewFromGUI()
 
   def onCornerTextsActivationCheckBox(self):
@@ -353,18 +269,6 @@ class SliceAnnotations(VTKObservationMixin):
         self.fontSize)
     self.updateSliceViewFromGUI()
 
-  def onOrientationMarkerTypeRadioButton(self):
-    if self.cubeRadioButton.checked:
-      self.orientationMarkerType = 'Cube'
-    elif self.humanRadioButton.checked:
-      self.orientationMarkerType = 'Human'
-    else:
-      self.orientationMarkerType = 'Axes'
-    settings = qt.QSettings()
-    settings.setValue('DataProbe/sliceViewAnnotations.orientationMarkerType',
-        self.orientationMarkerType)
-    self.updateSliceViewFromGUI()
-
   def onRangeLabelFormatLineEdit(self):
     # Updating font size and family
     self.rangeLabelFormat =  self.rangeLabelFormatLineEdit.text
@@ -385,14 +289,8 @@ class SliceAnnotations(VTKObservationMixin):
     self.fontFamily = 'Times'
     self.backgroundDICOMAnnotationsPersistence = 0
     self.backgroundPersistenceCheckBox.checked = False
-    self.rulerEnableCheckBox.checked = True
-    self.rulerEnabled = 1
     self.scalarBarEnalbeCheckBox.checked = False
     self.scalarBarEnabled = 0
-    self.orientationMarkerEnabled = 0
-    self.orientationMarkerEnableCheckBox.checked = False
-    self.orientationMarkerType = 'Cube'
-    self.zoomSlider.value = 20
     self.rangeLabelFormat = '%G'
     self.rangeLabelFormatLineEdit.text = '%G'
 
@@ -405,11 +303,7 @@ class SliceAnnotations(VTKObservationMixin):
     settings.setValue('DataProbe/sliceViewAnnotations.fontSize',self.fontSize)
     settings.setValue('DataProbe/sliceViewAnnotations.bgDICOMAnnotationsPersistence',
         self.backgroundDICOMAnnotationsPersistence)
-    settings.setValue('DataProbe/sliceViewAnnotations.rulerEnabled', self.rulerEnabled)
     settings.setValue('DataProbe/sliceViewAnnotations.scalarBarEnabled', self.scalarBarEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.orientationMarkerType', self.orientationMarkerType)
-    settings.setValue('DataProbe/sliceViewAnnotations.orientationMarkerEnabled', self.orientationMarkerEnabled)
-    settings.setValue('DataProbe/sliceViewAnnotations.zoomValue', self.zoomValue)
     settings.setValue('DataProbe/sliceViewAnnotations.rangeLabelFormat', self.rangeLabelFormat)
     self.updateSliceViewFromGUI()
 
@@ -424,9 +318,6 @@ class SliceAnnotations(VTKObservationMixin):
     # Create corner annotations if have not created already
     if len(self.sliceViewNames) == 0:
       self.createCornerAnnotations()
-
-    for slider in [self.zoomSlider,self.widthSlider, self.heightSlider]:
-      slider.enabled = self.orientationMarkerEnableCheckBox.checked
 
     # Updating Annotations Amount
     if self.level1RadioButton.checked:
@@ -443,7 +334,6 @@ class SliceAnnotations(VTKObservationMixin):
     self.fontPropertiesGroupBox.enabled = enabled
     self.scalarBarLayerSelectionGroupBox.enabled = enabled
     self.annotationsAmountGroupBox.enabled = enabled
-    self.rulerCollapsibleButton.enabled = enabled
     self.scalarBarCollapsibleButton.enabled = enabled
     self.restoreDefaultsButton.enabled = enabled
 
@@ -451,23 +341,16 @@ class SliceAnnotations(VTKObservationMixin):
       sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
       if sliceWidget:
         sl = sliceWidget.sliceLogic()
-        self.updateRuler(sl)
         self.updateScalarBar(sl)
-        self.updateOrientationMarker(sl)
         self.updateCornerAnnotation(sl)
 
   def createGlobalVariables(self):
     self.sliceViewNames = []
     self.sliceWidgets = {}
     self.sliceViews = {}
-    self.cameras = {}
     self.renderers = {}
-    self.rulerActors = {}
-    self.points = {}
-    self.rulerTextActors = {}
     self.scalarBars = {}
     self.scalarBarWidgets = {}
-    self.orientationMarkerRenderers = {}
 
   def createCornerAnnotations(self):
     self.createGlobalVariables()
@@ -488,66 +371,13 @@ class SliceAnnotations(VTKObservationMixin):
     self.sliceViews[sliceViewName] = sliceView
     sliceLogic = sliceWidget.sliceLogic()
     self.addObserver(sliceLogic, vtk.vtkCommand.ModifiedEvent, self.updateViewAnnotations)
-    self.orientationMarkerRenderers[sliceViewName] = vtk.vtkRenderer()
-
 
   def createActors(self, sliceViewName):
     sliceWidget = self.layoutManager.sliceWidget(sliceViewName)
     self.sliceWidgets[sliceViewName] = sliceWidget
 
-    self.rulerTextActors[sliceViewName] = vtk.vtkTextActor()
-    textActor = self.rulerTextActors[sliceViewName]
-    textProperty = textActor.GetTextProperty()
-    textProperty.SetShadow(1)
-    self.rulerActors[sliceViewName] = vtk.vtkActor2D()
-    # Create Ruler
-    self.createRuler(sliceViewName)
     # Create scalarBar
     self.scalarBars[sliceViewName] = self.createScalarBar(sliceViewName)
-
-  def createRuler(self, sliceViewName):
-    #
-    # Create the Scaling Ruler
-    #
-    self.points[sliceViewName] = vtk.vtkPoints()
-    self.points[sliceViewName].SetNumberOfPoints(22)
-
-    lines = []
-    for i in xrange(0,21):
-      line = vtk.vtkLine()
-      lines.append(line)
-
-    # setting the points to lines
-    for i in xrange(0,21):
-      if (i%2 == 0):
-        lines[i].GetPointIds().SetId(0,i)
-        lines[i].GetPointIds().SetId(1,i+1)
-      else:
-        lines[i].GetPointIds().SetId(0,i-1)
-        lines[i].GetPointIds().SetId(1,i+1)
-
-    # Create a cell array to store the lines in and add the lines to it
-    linesArray = vtk.vtkCellArray()
-    for i in xrange(0,21):
-      linesArray.InsertNextCell(lines[i])
-
-    # Create a polydata to store everything in
-    linesPolyData = vtk.vtkPolyData()
-
-    # Add the points to the dataset
-    linesPolyData.SetPoints(self.points[sliceViewName])
-
-    # Add the lines to the dataset
-    linesPolyData.SetLines(linesArray)
-
-    # mapper
-    mapper = vtk.vtkPolyDataMapper2D()
-    mapper.SetInputData(linesPolyData)
-    # actor
-    actor = self.rulerActors[sliceViewName]
-    actor.SetMapper(mapper)
-    # color actor
-    actor.GetProperty().SetLineWidth(1)
 
   def createScalarBar(self, sliceViewName):
     if self.hasVTKPVScalarBarActor:
@@ -579,9 +409,7 @@ class SliceAnnotations(VTKObservationMixin):
         self.createActors(sliceViewName)
         self.updateSliceViewFromGUI()
     self.makeAnnotationText(caller)
-    self.updateRuler(caller)
     self.updateScalarBar(caller)
-    self.updateOrientationMarker(caller)
 
   def updateCornerAnnotation(self, sliceLogic):
 
@@ -609,214 +437,6 @@ class SliceAnnotations(VTKObservationMixin):
       for position in range(3):
         cornerAnnotation.SetText(position, "")
 
-  def updateOrientationMarker(self, sliceLogic):
-    sliceNode = sliceLogic.GetBackgroundLayer().GetSliceNode()
-    if sliceNode is None:
-      return
-    sliceViewName = sliceNode.GetLayoutName()
-
-    if self.sliceViews[sliceViewName]:
-      ren = self.orientationMarkerRenderers[sliceViewName]
-      rw = self.sliceViews[sliceViewName].renderWindow()
-      ren.SetViewport(self.viewPortStartWidth,0,1,self.viewPortFinishHeight)
-      ren.SetLayer(1)
-
-      if self.orientationMarkerEnabled:
-        # Add actors to renderer
-        if self.orientationMarkerType == 'Cube':
-          if self.cube is None:
-            self.createCubeOrientationModel()
-          ren.AddActor(self.cube)
-          if self.humanActor is not None:
-            ren.RemoveActor(self.humanActor)
-            ren.RemoveActor(self.shortsActor)
-            ren.RemoveActor(self.leftShoeActor)
-            ren.RemoveActor(self.rightShoeActor)
-          if self.axes is not None:
-            ren.RemoveActor(self.axes)
-
-        elif self.orientationMarkerType == 'Human':
-          if self.humanActor is None:
-            self.createHumanOrientationModel()
-          ren.AddActor(self.humanActor)
-          ren.AddActor(self.shortsActor)
-          ren.AddActor(self.leftShoeActor)
-          ren.AddActor(self.rightShoeActor)
-          if self.cube is not None:
-            ren.RemoveActor(self.cube)
-          if self.axes is not None:
-            ren.RemoveActor(self.axes)
-
-        elif self.orientationMarkerType == 'Axes':
-          if self.axes is None:
-            self.createAxesOrientationModel()
-          ren.AddActor(self.axes)
-          if self.humanActor is not None:
-            ren.RemoveActor(self.humanActor)
-            ren.RemoveActor(self.shortsActor)
-            ren.RemoveActor(self.leftShoeActor)
-            ren.RemoveActor(self.rightShoeActor)
-          if self.cube is not None:
-            ren.RemoveActor(self.cube)
-
-        # Calculate the camera position and viewup based on XYToRAS matrix
-        camera = vtk.vtkCamera()
-        m = sliceNode.GetSliceToRAS()
-        v = np.array([[m.GetElement(0,0),m.GetElement(0,1),m.GetElement(0,2)],
-            [m.GetElement(1,0),m.GetElement(1,1),m.GetElement(1,2)],
-            [m.GetElement(2,0),m.GetElement(2,1),m.GetElement(2,2)]])
-        det = np.linalg.det(v)
-        cameraPositionMultiplier = 100/self.zoomValue
-        y = np.array([0,0,-cameraPositionMultiplier]) # right hand
-        if det < 0: # left hand
-          y = np.array([0,0,cameraPositionMultiplier])
-
-        x = np.matrix([[m.GetElement(0,0),m.GetElement(0,1),m.GetElement(0,2)],
-            [m.GetElement(1,0),m.GetElement(1,1),m.GetElement(1,2)],
-            [m.GetElement(2,0),m.GetElement(2,1),m.GetElement(2,2)]])
-
-        # Calculating position
-        position = np.inner(x,y)
-        camera.SetPosition(-position[0,0],-position[0,1],-position[0,2])
-        # Calculating viewUp
-        n = np.array([0,1,0])
-        viewUp = np.inner(x,n)
-        camera.SetViewUp(viewUp[0,0],viewUp[0,1],viewUp[0,2])
-
-        #ren.PreserveDepthBufferOff()
-        ren.SetActiveCamera(camera)
-        rw.AddRenderer(ren)
-
-      else:
-        if self.humanActor is not None:
-          ren.RemoveActor(self.humanActor)
-          ren.RemoveActor(self.shortsActor)
-          ren.RemoveActor(self.leftShoeActor)
-          ren.RemoveActor(self.rightShoeActor)
-        if self.axes is not None:
-          ren.RemoveActor(self.axes)
-        if self.cube is not None:
-          ren.RemoveActor(self.cube)
-        rw.RemoveRenderer(ren)
-
-      # Refresh view
-      self.sliceViews[sliceViewName].scheduleRender()
-
-  def createCubeOrientationModel(self):
-    self.cube = vtk.vtkAnnotatedCubeActor()
-    self.cube.SetXPlusFaceText('R')
-    self.cube.SetXMinusFaceText('L')
-    self.cube.SetYMinusFaceText('P')
-    self.cube.SetYPlusFaceText('A')
-    self.cube.SetZMinusFaceText('I')
-    self.cube.SetZPlusFaceText('S')
-    self.cube.SetZFaceTextRotation(90)
-    self.cube.GetTextEdgesProperty().SetColor(0.95,0.95,0.95)
-    self.cube.GetTextEdgesProperty().SetLineWidth(2)
-    self.cube.GetCubeProperty().SetColor(0.15,0.15,0.15)
-
-  def createHumanOrientationModel(self):
-    # Module's Path
-    modulePath= slicer.modules.dataprobe.path.replace("DataProbe.py","")
-
-    # Test whether the model is already loaded into the scene or not.
-    nodes = self.scene.GetNodesByName('leftShoeOrientationMarker')
-    if nodes.GetNumberOfItems() == 0 :
-      modelFiles = [ "humanOrientationMarker.stl","shortsOrientationMarker.stl",
-      "leftShoeOrientationMarker.stl", "rightShoeOrientationMarker.stl"]
-      modelPaths = [modulePath + "DataProbeLib/Resources/Models/"+ modelFile for modelFile in modelFiles]
-      for modelPath in modelPaths:
-        successfulLoad = slicer.util.loadModel(modelPath)
-        if not successfulLoad:
-          print 'Warning: Could not load model %s' %modelPath
-    nodes.UnRegister(slicer.mrmlScene)
-
-    modelNodes = []
-    # Human node
-    self.humanNode = slicer.util.getNode('humanOrientationMarker')
-    modelNodes.append(self.humanNode)
-    # Shorts node
-    self.shortsNode = slicer.util.getNode('shortsOrientationMarker')
-    modelNodes.append(self.shortsNode)
-    # Left shoe node
-    self.leftShoeNode = slicer.util.getNode('leftShoeOrientationMarker')
-    modelNodes.append(self.leftShoeNode)
-    # Right shoe node
-    self.rightShoeNode = slicer.util.getNode('rightShoeOrientationMarker')
-    modelNodes.append(self.rightShoeNode)
-
-    for node in modelNodes:
-      node.HideFromEditorsOn()
-      node.SetDisplayVisibility(False)
-
-    # Mappers
-    humanMapper = vtk.vtkPolyDataMapper()
-    humanMapper.SetInputData(self.humanNode.GetPolyData())
-
-    shortsMapper = vtk.vtkPolyDataMapper()
-    shortsMapper.SetInputData(self.shortsNode.GetPolyData())
-
-    leftShoeMapper = vtk.vtkPolyDataMapper()
-    leftShoeMapper.SetInputData(self.leftShoeNode.GetPolyData())
-
-    rightShoeMapper = vtk.vtkPolyDataMapper()
-    rightShoeMapper.SetInputData(self.rightShoeNode.GetPolyData())
-
-    # Actors
-    scale = 0.01
-    self.humanActor = vtk.vtkActor()
-    self.humanActor.SetMapper(humanMapper)
-
-    '''
-    The human skin tone (color) was chosen based on the unicode.org recommendations:
-    It was chosen as non-realistic skin tone with RGG: #FFCC22
-    Source: http://unicode.org/reports/tr51/
-    '''
-    self.humanActor.GetProperty().SetColor(255/256,204/256,34/256)
-    self.humanActor.SetScale(scale,scale,scale)
-
-    self.shortsActor = vtk.vtkActor()
-    self.shortsActor.SetMapper(shortsMapper)
-    self.shortsActor.GetProperty().SetColor(0,0,1)
-    self.shortsActor.SetScale(scale,scale,scale)
-
-    self.leftShoeActor = vtk.vtkActor()
-    self.leftShoeActor.SetMapper(leftShoeMapper)
-    self.leftShoeActor.GetProperty().SetColor(1,0,0)
-    self.leftShoeActor.SetScale(scale,scale,scale)
-
-    self.rightShoeActor = vtk.vtkActor()
-    self.rightShoeActor.SetMapper(rightShoeMapper)
-    self.rightShoeActor.GetProperty().SetColor(0,1,0)
-    self.rightShoeActor.SetScale(scale,scale,scale)
-
-  def createAxesOrientationModel(self):
-    self.axes = vtk.vtkAxesActor()
-    self.axes.SetXAxisLabelText('R')
-    self.axes.SetYAxisLabelText('A')
-    self.axes.SetZAxisLabelText('S')
-    transform = vtk.vtkTransform()
-    transform.Translate(0,0,0)
-    self.axes.SetUserTransform(transform)
-
-
-  def updateRuler(self, sliceLogic):
-    sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
-    if not sliceCompositeNode:
-      return
-
-    # Get the layers
-    sliceNode = sliceLogic.GetBackgroundLayer().GetSliceNode()
-    if not sliceNode:
-      return
-    sliceViewName = sliceNode.GetLayoutName()
-    renderer = self.renderers[sliceViewName]
-    if self.rulerEnabled:
-      self.makeRuler(sliceNode)
-    else:
-      renderer.RemoveActor2D(self.rulerActors[sliceViewName])
-      renderer.RemoveActor2D(self.rulerTextActors[sliceViewName])
-
   def updateScalarBar(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
     if not sliceCompositeNode:
@@ -837,86 +457,6 @@ class SliceAnnotations(VTKObservationMixin):
     else:
       renderer.RemoveActor(scalarBar)
 
-  def makeRuler(self, sliceNode):
-    sliceViewName = sliceNode.GetLayoutName()
-    renderer = self.renderers[sliceViewName]
-    if self.sliceViews[sliceViewName]:
-      #
-      # update scaling ruler
-      #
-      self.minimumWidthForRuler = 200
-      viewWidth = self.sliceViews[sliceViewName].width
-
-      rasToXY = vtk.vtkMatrix4x4()
-      m = sliceNode.GetXYToRAS()
-      rasToXY.DeepCopy(m)
-      rasToXY.Invert()
-
-      # TODO: The current logic only supports rulers from 1mm to 10cm
-      # add support for other ranges.
-      import math
-      scalingFactor = math.sqrt( rasToXY.GetElement(0,0)**2 +
-          rasToXY.GetElement(0,1)**2 +rasToXY.GetElement(0,2) **2 )
-
-      if scalingFactor != 0:
-        rulerArea = viewWidth/scalingFactor/4
-      else:
-        rulerArea = viewWidth/4
-
-      #if self.rulerEnabled and \
-      if viewWidth > self.minimumWidthForRuler and 0.5 < rulerArea < 500 and NUMPY_AVAILABLE:
-        rulerSizesArray = np.array([1,5,10,50,100])
-        index = np.argmin(np.abs(rulerSizesArray- rulerArea))
-
-        if rulerSizesArray[index]/10 > 1:
-          scalingFactorString = str(int(rulerSizesArray[index]/10))+" cm"
-        else:
-          scalingFactorString = str(rulerSizesArray[index])+" mm"
-
-        RASRulerSize = rulerSizesArray[index]
-
-        pts = self.points[sliceViewName]
-
-        pts.SetPoint(0,[(viewWidth/2-RASRulerSize*scalingFactor/10*5),5, 0])
-        pts.SetPoint(1,[(viewWidth/2-RASRulerSize*scalingFactor/10*5),15, 0])
-        pts.SetPoint(2,[(viewWidth/2-RASRulerSize*scalingFactor/10*4),5, 0])
-        pts.SetPoint(3,[(viewWidth/2-RASRulerSize*scalingFactor/10*4),10, 0])
-        pts.SetPoint(4,[(viewWidth/2-RASRulerSize*scalingFactor/10*3),5, 0])
-        pts.SetPoint(5,[(viewWidth/2-RASRulerSize*scalingFactor/10*3),15, 0])
-        pts.SetPoint(6,[(viewWidth/2-RASRulerSize*scalingFactor/10*2),5, 0])
-        pts.SetPoint(7,[(viewWidth/2-RASRulerSize*scalingFactor/10*2),10, 0])
-        pts.SetPoint(8,[(viewWidth/2-RASRulerSize*scalingFactor/10),5, 0])
-        pts.SetPoint(9,[(viewWidth/2-RASRulerSize*scalingFactor/10),15, 0])
-        pts.SetPoint(10,[viewWidth/2,5, 0])
-        pts.SetPoint(11,[viewWidth/2,10, 0])
-        pts.SetPoint(12,[(viewWidth/2+RASRulerSize*scalingFactor/10),5, 0])
-        pts.SetPoint(13,[(viewWidth/2+RASRulerSize*scalingFactor/10),15, 0])
-        pts.SetPoint(14,[(viewWidth/2+RASRulerSize*scalingFactor/10*2),5, 0])
-        pts.SetPoint(15,[(viewWidth/2+RASRulerSize*scalingFactor/10*2),10, 0])
-        pts.SetPoint(16,[(viewWidth/2+RASRulerSize*scalingFactor/10*3),5, 0])
-        pts.SetPoint(17,[(viewWidth/2+RASRulerSize*scalingFactor/10*3),15, 0])
-        pts.SetPoint(18,[(viewWidth/2+RASRulerSize*scalingFactor/10*4),5, 0])
-        pts.SetPoint(19,[(viewWidth/2+RASRulerSize*scalingFactor/10*4),10, 0])
-        pts.SetPoint(20,[(viewWidth/2+RASRulerSize*scalingFactor/10*5),5, 0])
-        pts.SetPoint(21,[(viewWidth/2+RASRulerSize*scalingFactor/10*5),15, 0])
-
-        textActor = self.rulerTextActors[sliceViewName]
-        textActor.SetInput(scalingFactorString)
-        textProperty = textActor.GetTextProperty()
-        # set font size
-        textProperty.SetFontSize(self.fontSize)
-        # set font family
-        if self.fontFamily == 'Times':
-          textProperty.SetFontFamilyToTimes()
-        else:
-          textProperty.SetFontFamilyToArial()
-        # set ruler text actor position
-        textActor.SetDisplayPosition(int((viewWidth+RASRulerSize*scalingFactor)/2)+10,5)
-
-        renderer.AddActor2D(self.rulerActors[sliceViewName])
-        renderer.RemoveActor2D(textActor)
-        renderer.AddActor2D(textActor)
-
   def modifyScalarBar(self, sliceLogic):
     sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
     if not sliceCompositeNode:
@@ -930,7 +470,6 @@ class SliceAnnotations(VTKObservationMixin):
     sliceViewName = backgroundLayer.GetSliceNode().GetLayoutName()
 
     renderer = self.renderers[sliceViewName]
-    orientationRenderer = self.orientationMarkerRenderers[sliceViewName]
     if self.sliceViews[sliceViewName]:
       scalarBar = self.scalarBars[sliceViewName]
       # Font
@@ -951,8 +490,6 @@ class SliceAnnotations(VTKObservationMixin):
 
       renderer.SetViewport(0,0,1,1)
       renderer.SetLayer(0)
-      if orientationRenderer is not None:
-        orientationRenderer.SetLayer(1)
       #renderWindow = renderer.GetRenderWindow()
       #interactor = renderWindow.GetInteractor()
 
@@ -961,8 +498,10 @@ class SliceAnnotations(VTKObservationMixin):
       #scalarBarWidget.SetInteractor(interactor)
       renderer.AddActor(self.scalarBars[sliceViewName])
 
-      ## Adjusting the positions
-      if self.orientationMarkerEnabled:
+      # Adjusting the positions of the scalar bar: shift up the scalar bar
+      # if there is an orientation marker in the bottom right corner
+      sliceNode = backgroundLayer.GetSliceNode()
+      if sliceNode.GetOrientationMarkerType() != slicer.vtkMRMLAbstractViewNode.OrientationMarkerTypeNone:
         scalarBar.SetPosition(0.8,0.3)
         scalarBar.SetPosition2(0.17,0.7)
       else:

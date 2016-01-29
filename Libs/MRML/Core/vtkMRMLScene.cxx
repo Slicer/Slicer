@@ -394,13 +394,13 @@ void vtkMRMLScene::AddDefaultNode(vtkMRMLNode* node)
 {
   if (node==NULL)
     {
-    vtkErrorMacro("vtkMRMLScene::SetDefaultNodeByClass failed: invalid node");
+    vtkErrorMacro("vtkMRMLScene::AddDefaultNode failed: invalid node");
     return;
     }
   const char* className = node->GetClassName();
   if (className==NULL)
     {
-    vtkErrorMacro("vtkMRMLScene::SetDefaultNodeByClass failed: invalid className");
+    vtkErrorMacro("vtkMRMLScene::AddDefaultNode failed: invalid className");
     return;
     }
   this->DefaultNodes[std::string(className)] = node;

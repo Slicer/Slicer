@@ -24,6 +24,8 @@
 // MRML includes
 #include "vtkMRMLNode.h"
 
+class vtkMRMLModelNode;
+
 /// \brief Abstract MRML node to represent a view.
 /// The class holds the properties common to any view type (3D, slice, chart..)
 /// Views are not hidden from editors by default (HideFromEditor is 0)
@@ -117,6 +119,81 @@ public:
   vtkGetVector3Macro (BackgroundColor2, double);
   vtkSetVector3Macro (BackgroundColor2, double);
 
+  /// Tells if it is meaningful to display orientation marker in this view.
+  /// It is set statically in each specific view node class and cannot be changed dynamically.
+  vtkGetMacro(OrientationMarkerEnabled, bool);
+
+  ///
+  /// Get/Set orientation marker type (e.g., not displayed, cube, human, coordinate system axes)
+  vtkSetMacro(OrientationMarkerType, int);
+  vtkGetMacro(OrientationMarkerType, int);
+
+  ///
+  /// Get/Set a custom human orientation marker model.
+  /// If NULL or invalid node ID is specified then the default human model will be used.
+  /// If the node has point data array with the name "Color" and 3 scalar components then
+  /// it will be used to specify RGB color for the model. If no color point data is specified
+  /// then the solid color specified in the model node's first display node will be used as color.
+  void SetOrientationMarkerHumanModelNodeID(const char* modelNodeId);
+  const char* GetOrientationMarkerHumanModelNodeID();
+  vtkMRMLModelNode* GetOrientationMarkerHumanModelNode();
+
+  ///
+  /// Convert between orientation marker type ID and name
+  static const char* GetOrientationMarkerTypeAsString(int id);
+  static int GetOrientationMarkerTypeFromString(const char* name);
+
+  ///
+  /// Get/Set orientation marker is size. There are a few predefined marker sizes, defined by an enumerated value (e.g., small, medium, large).
+  vtkSetMacro(OrientationMarkerSize, int);
+  vtkGetMacro(OrientationMarkerSize, int);
+
+  ///
+  /// Convert between orientation marker type ID and name
+  static const char* GetOrientationMarkerSizeAsString(int id);
+  static int GetOrientationMarkerSizeFromString(const char* name);
+
+  /// Enum to specify orientation marker types
+  enum OrientationMarkerTypeType
+  {
+    OrientationMarkerTypeNone=0,
+    OrientationMarkerTypeCube,
+    OrientationMarkerTypeHuman,
+    OrientationMarkerTypeAxes,
+    OrientationMarkerType_Last // insert valid types above this line
+  };
+
+  enum OrientationMarkerSizeType
+  {
+    OrientationMarkerSizeSmall=0,
+    OrientationMarkerSizeMedium,
+    OrientationMarkerSizeLarge,
+    OrientationMarkerSize_Last // insert valid types above this line
+  };
+
+  /// Tells if it is meaningful to display ruler in this view.
+  /// It is set statically in each specific view node class and cannot be changed dynamically.
+  vtkGetMacro(RulerEnabled, bool);
+
+  ///
+  /// Get/Set ruler type (e.g., not displayed, thin, thick)
+  vtkSetMacro(RulerType, int);
+  vtkGetMacro(RulerType, int);
+
+  ///
+  /// Convert between ruler type ID and name
+  static const char* GetRulerTypeAsString(int id);
+  static int GetRulerTypeFromString(const char* name);
+
+  /// Enum to specify orientation marker types
+  enum RulerTypeType
+  {
+    RulerTypeNone=0,
+    RulerTypeThin,
+    RulerTypeThick,
+    RulerType_Last // insert valid types above this line
+  };
+
 protected:
   vtkMRMLAbstractViewNode();
   ~vtkMRMLAbstractViewNode();
@@ -146,6 +223,22 @@ protected:
   /// Background colors
   double BackgroundColor[3];
   double BackgroundColor2[3];
+
+  ///
+  /// For views that supports orientation marker display (where OrientationMarkerEnabled=true)
+  /// these parameters define how to display the orientation marker.
+  bool OrientationMarkerEnabled;
+  int OrientationMarkerType;
+  int OrientationMarkerSize;
+
+  static const char* OrientationMarkerHumanModelReferenceRole;
+  static const char* OrientationMarkerHumanModelMRMLAttributeName;
+
+  ///
+  /// For views that supports ruler display (where RulerEnabled=true)
+  /// these parameters define how to display the ruler.
+  bool RulerEnabled;
+  int RulerType;
 };
 
 //------------------------------------------------------------------------------

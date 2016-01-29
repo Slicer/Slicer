@@ -44,7 +44,9 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
     QStringList() << "vtkMRMLCameraDisplayableManager"
                   << "vtkMRMLViewDisplayableManager"
                   << "vtkMRMLModelDisplayableManager"
-                  << "vtkMRMLThreeDReformatDisplayableManager";
+                  << "vtkMRMLThreeDReformatDisplayableManager"
+                  << "vtkMRMLOrientationMarkerDisplayableManager"
+                  << "vtkMRMLRulerDisplayableManager";
   vtkNew<vtkCollection> collection;
   view.getDisplayableManagers(collection.GetPointer());
   int numManagers = collection->GetNumberOfItems();
@@ -59,8 +61,8 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
     }
   for (int i = 0; i < numManagers; ++i)
     {
-    vtkMRMLAbstractThreeDViewDisplayableManager *threeDViewDM =
-      vtkMRMLAbstractThreeDViewDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
+    vtkMRMLAbstractDisplayableManager *threeDViewDM =
+      vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (threeDViewDM)
       {
       std::cout << "\tDisplayable manager " << i << " class name = " << threeDViewDM->GetClassName() << std::endl;

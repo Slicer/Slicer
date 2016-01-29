@@ -29,6 +29,7 @@
 class QSettings;
 
 class qSlicerViewControllersModulePrivate;
+class vtkMRMLAbstractViewNode;
 class vtkMRMLSliceNode;
 class vtkMRMLViewNode;
 
@@ -81,6 +82,10 @@ protected:
 
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
+
+  /// Helper functions to read/write common view settings
+  static void readCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings);
+  static void writeCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings);
 
 protected:
   QScopedPointer<qSlicerViewControllersModulePrivate> d_ptr;

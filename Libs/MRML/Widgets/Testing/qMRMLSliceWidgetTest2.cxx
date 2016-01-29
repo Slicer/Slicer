@@ -122,7 +122,9 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   QStringList expectedDisplayableManagerClassNames =
     QStringList() << "vtkMRMLVolumeGlyphSliceDisplayableManager"
                   << "vtkMRMLModelSliceDisplayableManager"
-                  << "vtkMRMLCrosshairDisplayableManager";
+                  << "vtkMRMLCrosshairDisplayableManager"
+                  << "vtkMRMLOrientationMarkerDisplayableManager"
+                  << "vtkMRMLRulerDisplayableManager";
   qMRMLSliceView *sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
   vtkNew<vtkCollection> collection;
   sliceView->getDisplayableManagers(collection.GetPointer());
@@ -138,8 +140,8 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     }
   for (int i = 0; i < numManagers; ++i)
     {
-    vtkMRMLAbstractSliceViewDisplayableManager *sliceViewDM =
-      vtkMRMLAbstractSliceViewDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
+    vtkMRMLAbstractDisplayableManager *sliceViewDM =
+      vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (sliceViewDM)
       {
       std::cout << "\tDisplayable manager " << i << " class name = " << sliceViewDM->GetClassName() << std::endl;

@@ -77,14 +77,6 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
                    q, SLOT(lookFromAxis(ctkAxesWidget::Axis)));
 
-  // Pitch, Roll, Yaw buttons
-  QObject::connect(this->PitchButton, SIGNAL(clicked()),
-                   q, SLOT(pitchView()));
-  QObject::connect(this->RollButton, SIGNAL(clicked()),
-                   q, SLOT(rollView()));
-  QObject::connect(this->YawButton, SIGNAL(clicked()),
-                   q, SLOT(yawView()));
-
   // Orthographic/perspective button
   QObject::connect(this->OrthoButton, SIGNAL(toggled(bool)),
                    q, SLOT(setOrthographicModeEnabled(bool)));
@@ -150,6 +142,60 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->actionSet3DAxisLabelVisible, SIGNAL(triggered(bool)),
                    q, SLOT(set3DAxisLabelVisible(bool)));
 
+  // OrientationMarker actions
+  // Type
+  this->OrientationMarkerTypesMapper = new ctkSignalMapper(this->PopupWidget);
+  this->OrientationMarkerTypesMapper->setMapping(this->actionOrientationMarkerTypeNone, vtkMRMLAbstractViewNode::OrientationMarkerTypeNone);
+  this->OrientationMarkerTypesMapper->setMapping(this->actionOrientationMarkerTypeCube, vtkMRMLAbstractViewNode::OrientationMarkerTypeCube);
+  this->OrientationMarkerTypesMapper->setMapping(this->actionOrientationMarkerTypeHuman, vtkMRMLAbstractViewNode::OrientationMarkerTypeHuman);
+  this->OrientationMarkerTypesMapper->setMapping(this->actionOrientationMarkerTypeAxes, vtkMRMLAbstractViewNode::OrientationMarkerTypeAxes);
+  QActionGroup* orientationMarkerTypesActions = new QActionGroup(this->PopupWidget);
+  orientationMarkerTypesActions->setExclusive(true);
+  orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeNone);
+  orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeCube);
+  orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeHuman);
+  orientationMarkerTypesActions->addAction(this->actionOrientationMarkerTypeAxes);
+  QObject::connect(this->OrientationMarkerTypesMapper, SIGNAL(mapped(int)),q, SLOT(setOrientationMarkerType(int)));
+  QObject::connect(orientationMarkerTypesActions, SIGNAL(triggered(QAction*)),this->OrientationMarkerTypesMapper, SLOT(map(QAction*)));
+  // Size
+  this->OrientationMarkerSizesMapper = new ctkSignalMapper(this->PopupWidget);
+  this->OrientationMarkerSizesMapper->setMapping(this->actionOrientationMarkerSizeSmall, vtkMRMLAbstractViewNode::OrientationMarkerSizeSmall);
+  this->OrientationMarkerSizesMapper->setMapping(this->actionOrientationMarkerSizeMedium, vtkMRMLAbstractViewNode::OrientationMarkerSizeMedium);
+  this->OrientationMarkerSizesMapper->setMapping(this->actionOrientationMarkerSizeLarge, vtkMRMLAbstractViewNode::OrientationMarkerSizeLarge);
+  QActionGroup* orientationMarkerSizesActions = new QActionGroup(this->PopupWidget);
+  orientationMarkerSizesActions->setExclusive(true);
+  orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeSmall);
+  orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeMedium);
+  orientationMarkerSizesActions->addAction(this->actionOrientationMarkerSizeLarge);
+  QObject::connect(this->OrientationMarkerSizesMapper, SIGNAL(mapped(int)),q, SLOT(setOrientationMarkerSize(int)));
+  QObject::connect(orientationMarkerSizesActions, SIGNAL(triggered(QAction*)),this->OrientationMarkerSizesMapper, SLOT(map(QAction*)));
+  // Menu
+  QMenu* orientationMarkerMenu = new QMenu(tr("Orientation marker"), this->PopupWidget);
+  orientationMarkerMenu->setObjectName("orientationMarkerMenu");
+  this->OrientationMarkerButton->setMenu(orientationMarkerMenu);
+  orientationMarkerMenu->addActions(orientationMarkerTypesActions->actions());
+  orientationMarkerMenu->addSeparator();
+  orientationMarkerMenu->addActions(orientationMarkerSizesActions->actions());
+
+  // Ruler actions
+  // Type
+  this->RulerTypesMapper = new ctkSignalMapper(this->PopupWidget);
+  this->RulerTypesMapper->setMapping(this->actionRulerTypeNone, vtkMRMLAbstractViewNode::RulerTypeNone);
+  this->RulerTypesMapper->setMapping(this->actionRulerTypeThin, vtkMRMLAbstractViewNode::RulerTypeThin);
+  this->RulerTypesMapper->setMapping(this->actionRulerTypeThick, vtkMRMLAbstractViewNode::RulerTypeThick);
+  QActionGroup* rulerTypesActions = new QActionGroup(this->PopupWidget);
+  rulerTypesActions->setExclusive(true);
+  rulerTypesActions->addAction(this->actionRulerTypeNone);
+  rulerTypesActions->addAction(this->actionRulerTypeThin);
+  rulerTypesActions->addAction(this->actionRulerTypeThick);
+  QObject::connect(this->RulerTypesMapper, SIGNAL(mapped(int)),q, SLOT(setRulerType(int)));
+  QObject::connect(rulerTypesActions, SIGNAL(triggered(QAction*)),this->RulerTypesMapper, SLOT(map(QAction*)));
+  // Menu
+  QMenu* rulerMenu = new QMenu(tr("Ruler"), this->PopupWidget);
+  rulerMenu->setObjectName("rulerMenu");
+  this->RulerButton->setMenu(rulerMenu);
+  rulerMenu->addActions(rulerTypesActions->actions());
+
   // More controls
   QMenu* moreMenu = new QMenu("More", this->PopupWidget);
   moreMenu->addAction(this->actionUseDepthPeeling);
@@ -167,6 +213,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   // Background color
   QActionGroup* backgroundColorActions = new QActionGroup(this->PopupWidget);
   backgroundColorActions->setExclusive(true);
+  visibilityMenu->addSeparator();
   visibilityMenu->addAction(this->actionSetLightBlueBackground);
   visibilityMenu->addAction(this->actionSetBlackBackground);
   visibilityMenu->addAction(this->actionSetWhiteBackground);
@@ -275,10 +322,10 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
   // Enable buttons
   QList<QWidget*> widgets;
   widgets << d->AxesWidget
-    << d->PitchButton << d->RollButton << d->YawButton
     << d->CenterButton << d->OrthoButton << d->VisibilityButton
     << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
-    << d->RockButton << d->SpinButton << d->MoreToolButton;
+    << d->RockButton << d->SpinButton << d->MoreToolButton
+    << d->OrientationMarkerButton; // RulerButton enable state is not set here (it depends on render mode)
   foreach(QWidget* w, widgets)
     {
     w->setEnabled(d->ViewNode != 0);
@@ -304,12 +351,29 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
     !d->actionSetBlackBackground->isChecked() &&
     !d->actionSetWhiteBackground->isChecked());
 
-  d->OrthoButton->setChecked(
-    d->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
+  d->OrthoButton->setChecked(d->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
 
-  QAction* action = qobject_cast<QAction*>(d->StereoTypesMapper->mapping(
-    d->ViewNode->GetStereoType()));
-  action->setChecked(true);
+  QAction* action = qobject_cast<QAction*>(d->StereoTypesMapper->mapping(d->ViewNode->GetStereoType()));
+  if (action)
+    {
+    action->setChecked(true);
+    }
+  action = qobject_cast<QAction*>(d->OrientationMarkerTypesMapper->mapping(d->ViewNode->GetOrientationMarkerType()));
+  if (action)
+    {
+    action->setChecked(true);
+    }
+  action = qobject_cast<QAction*>(d->OrientationMarkerSizesMapper->mapping(d->ViewNode->GetOrientationMarkerSize()));
+  if (action)
+    {
+    action->setChecked(true);
+    }
+  action = qobject_cast<QAction*>(d->RulerTypesMapper->mapping(d->ViewNode->GetRulerType()));
+  if (action)
+    {
+    action->setChecked(true);
+    }
+  d->RulerButton->setEnabled(d->ViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
 
   d->SpinButton->setChecked(d->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
   d->RockButton->setChecked(d->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
@@ -529,4 +593,42 @@ void qMRMLThreeDViewControllerWidget::setStereoType(int newStereoType)
     return;
     }
   d->ViewNode->SetStereoType(newStereoType);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setOrientationMarkerType(int newOrientationMarkerType)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    return;
+    }
+  d->ViewNode->SetOrientationMarkerType(newOrientationMarkerType);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setOrientationMarkerSize(int newOrientationMarkerSize)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    return;
+    }
+  d->ViewNode->SetOrientationMarkerSize(newOrientationMarkerSize);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    return;
+    }
+  d->ViewNode->SetRulerType(newRulerType);
+  // Switch to orthographic render mode automatically if ruler is enabled
+  if (newRulerType!=vtkMRMLViewNode::RulerTypeNone && d->ViewNode->GetRenderMode()!=vtkMRMLViewNode::Orthographic)
+    {
+    d->ViewNode->SetRenderMode(vtkMRMLViewNode::Orthographic);
+    }
 }

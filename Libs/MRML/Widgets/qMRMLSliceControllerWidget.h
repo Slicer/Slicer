@@ -236,6 +236,13 @@ public slots:
   void setSliceModelDimensionX(int dim);
   void setSliceModelDimensionY(int dim);
 
+  // Orientation marker
+  void setOrientationMarkerType(int type);
+  void setOrientationMarkerSize(int size);
+
+  // Ruler
+  void setRulerType(int type);
+
   // Lightbox
   void setLightbox(int rows, int columns);
   void setLightboxTo1x1();

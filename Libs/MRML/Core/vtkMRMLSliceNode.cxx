@@ -114,6 +114,9 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->SetOrientationToAxial();
   this->SetLayoutLabel("");
+
+  this->OrientationMarkerEnabled = true;
+  this->RulerEnabled = true;
 }
 
 //----------------------------------------------------------------------------

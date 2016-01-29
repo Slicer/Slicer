@@ -113,6 +113,31 @@ vtkMRMLAbstractLogic* qSlicerViewControllersModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::readCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings)
+{
+  if (settings.contains("OrientationMarkerType"))
+    {
+    defaultViewNode->SetOrientationMarkerType(vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(settings.value("OrientationMarkerType").toString().toLatin1()));
+    }
+  if (settings.contains("OrientationMarkerSize"))
+    {
+    defaultViewNode->SetOrientationMarkerSize(vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(settings.value("OrientationMarkerSize").toString().toLatin1()));
+    }
+  if (settings.contains("RulerType"))
+    {
+    defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(settings.value("RulerType").toString().toLatin1()));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerViewControllersModule::writeCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings)
+{
+  settings.setValue("OrientationMarkerType",vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(defaultViewNode->GetOrientationMarkerType()));
+  settings.setValue("OrientationMarkerSize",vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(defaultViewNode->GetOrientationMarkerSize()));
+  settings.setValue("RulerType",vtkMRMLAbstractViewNode::GetRulerTypeAsString(defaultViewNode->GetRulerType()));
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode* defaultViewNode)
 {
   if (!defaultViewNode)
@@ -138,6 +163,7 @@ void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode
     {
     defaultViewNode->SetUseDepthPeeling(settings.value("UseDepthPeeling").toBool());
     }
+  readCommonViewSettings(defaultViewNode, settings);
 }
 
 //-----------------------------------------------------------------------------
@@ -154,6 +180,7 @@ void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNod
   settings.setValue("AxisLabelsVisibility", bool(defaultViewNode->GetAxisLabelsVisible()));
   settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
   settings.setValue("UseDepthPeeling", bool(defaultViewNode->GetUseDepthPeeling()));
+  writeCommonViewSettings(defaultViewNode, settings);
 }
 
 //-----------------------------------------------------------------------------
@@ -166,6 +193,7 @@ void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode
     }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
+  readCommonViewSettings(defaultViewNode, settings);
 }
 
 //-----------------------------------------------------------------------------
@@ -178,6 +206,7 @@ void qSlicerViewControllersModule::writeDefaultSliceViewSettings(vtkMRMLSliceNod
     }
   QSettings settings;
   settings.beginGroup("DefaultSliceView");
+  writeCommonViewSettings(defaultViewNode, settings);
 }
 
 //-----------------------------------------------------------------------------

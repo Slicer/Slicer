@@ -80,6 +80,10 @@ set(DisplayableManager_SRCS
   vtkMRMLCrosshairDisplayableManager.cxx
   vtkMRMLModelSliceDisplayableManager.cxx
   vtkMRMLVolumeGlyphSliceDisplayableManager.cxx
+
+  # DisplayableManager common between ThreeDView and SliceView
+  vtkMRMLOrientationMarkerDisplayableManager.cxx
+  vtkMRMLRulerDisplayableManager.cxx
   )
 
 set(KIT_SRCS
@@ -87,11 +91,11 @@ set(KIT_SRCS
   vtkMRMLAbstractDisplayableManager.cxx
   vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
-  
+
   # ThreeDView factory and DisplayableManager
   vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
-  
+
   # SliceView factory and DisplayableManager
   vtkMRMLAbstractSliceViewDisplayableManager.cxx
   vtkMRMLSliceViewDisplayableManagerFactory.cxx

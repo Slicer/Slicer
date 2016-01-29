@@ -216,6 +216,40 @@
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="OrientationMarkerButton">
+          <property name="toolTip">
+           <string>Show orientation marker</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/OrientationMarker.png</normaloff>:/Icons/OrientationMarker.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="RulerButton">
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/Ruler.png</normaloff>:/Icons/Ruler.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="SliceMoreOptionButton">
           <property name="toolTip">
            <string>Advanced options</string>
@@ -613,6 +647,30 @@
     <string>Show reformat widget</string>
    </property>
   </action>
+  <action name="actionOrientationMarkerTypeCube">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Cube</string>
+   </property>
+  </action>
+  <action name="actionOrientationMarkerTypeHuman">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Human</string>
+   </property>
+  </action>
+  <action name="actionOrientationMarkerTypeAxes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Axes</string>
+   </property>
+  </action>
   <action name="actionCompositingAlpha_blend">
    <property name="checkable">
     <bool>true</bool>
@@ -900,6 +958,83 @@
    </property>
    <property name="toolTip">
     <string>Lock reformat widget's normal to the camera one. </string>
+   </property>
+  </action>
+  <action name="actionOrientationMarkerTypeNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>No orientation marker</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide orientation marker</string>
+   </property>
+  </action>
+  <action name="actionOrientationMarkerSizeSmall">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Small</string>
+   </property>
+   <property name="toolTip">
+    <string>Set orientation marker size to small</string>
+   </property>
+  </action>
+  <action name="actionOrientationMarkerSizeMedium">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Medium</string>
+   </property>
+   <property name="toolTip">
+    <string>Set orientation marker size to small to medium</string>
+   </property>
+  </action>
+  <action name="actionOrientationMarkerSizeLarge">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Large</string>
+   </property>
+   <property name="toolTip">
+    <string>Set orientation marker size to large</string>
+   </property>
+  </action>
+  <action name="actionRulerTypeNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>No ruler</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide ruler</string>
+   </property>
+  </action>
+  <action name="actionRulerTypeThin">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Thin</string>
+   </property>
+   <property name="toolTip">
+    <string>Show thin ruler</string>
+   </property>
+  </action>
+  <action name="actionRulerTypeThick">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Thick</string>
+   </property>
+   <property name="toolTip">
+    <string>Show thick ruler</string>
    </property>
   </action>
  </widget>
@@ -1289,6 +1424,38 @@
     <hint type="destinationlabel">
      <x>274</x>
      <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>OrientationMarkerButton</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>6</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>264</x>
+     <y>11</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>RulerButton</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>9</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>367</x>
+     <y>15</y>
     </hint>
    </hints>
   </connection>
