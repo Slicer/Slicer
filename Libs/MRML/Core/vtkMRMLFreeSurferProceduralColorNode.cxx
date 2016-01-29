@@ -17,6 +17,7 @@ Version:   $Revision: 1.0 $
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLLogic.h"
 
 #include "vtkFSLookupTable.h"
 
@@ -33,27 +34,10 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   this->HideFromEditors = 1;
   this->LabelsFileName = NULL;
 
-  // get the home directory and the colour file in the freesurfer lib dir
-  std::string slicerHome;
-  if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
-    {
-    if (vtksys::SystemTools::GetEnv("PWD") != NULL)
-      {
-      slicerHome =  std::string(vtksys::SystemTools::GetEnv("PWD"));
-      }
-    else
-      {
-      slicerHome =  std::string("");
-      }
-    }
-  else
-    {
-    slicerHome = std::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
-    }
-  // check to see if slicer home was set
+  // get the colour file in the freesurfer share dir
   std::vector<std::string> filesVector;
   filesVector.push_back(""); // for relative path
-  filesVector.push_back(slicerHome);
+  filesVector.push_back(vtkMRMLLogic::GetApplicationHomeDirectory());
   filesVector.push_back(std::string("share/FreeSurfer/FreeSurferColorLUT20120827.txt"));
   std::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());

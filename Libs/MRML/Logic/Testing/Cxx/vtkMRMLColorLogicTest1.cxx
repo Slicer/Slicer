@@ -65,8 +65,7 @@ namespace
 //----------------------------------------------------------------------------
 bool TestPerformance()
 {
-  // To load freesurfer files, SLICER_HOME is requested
-  //vtksys::SystemTools::PutEnv("SLICER_HOME=..." );
+  // To load freesurfer files, MRML_APPLICATION_HOME_DIR_ENV environment variable has to be set
   vtkNew<vtkMRMLScene> scene;
   vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::New();
 
@@ -145,7 +144,7 @@ bool TestNodeIDs()
       return false;
       }
     }
-  // To test free surfers, SLICER_HOME env variable needs to be set.
+  // To load freesurfer files, MRML_APPLICATION_HOME_DIR_ENV environment variable has to be set
   return true;
 }
 

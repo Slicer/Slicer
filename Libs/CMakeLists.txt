@@ -57,6 +57,12 @@ endif()
 set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
 set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 
+# Name of the environment variable that contains the application home directory.
+set(MRML_APPLICATION_HOME_DIR_ENV "SLICER_HOME")
+
+# Name of the subdirectory within the application directory where shared files are stored.
+set(MRML_APPLICATION_SHARE_SUBDIR ${Slicer_SHARE_DIR})
+
 # vtkITK contains tests that uses MRML's test data.
 set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Core/Testing/TestData)
 

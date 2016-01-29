@@ -10,6 +10,7 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
+#include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <set>
@@ -140,4 +141,37 @@ void vtkMRMLLogic::RemoveUnreferencedDisplayNodes()
     }
 }
 
+//----------------------------------------------------------------------------
+std::string vtkMRMLLogic::GetApplicationHomeDirectory()
+{
+  std::string applicationHome;
+  if (vtksys::SystemTools::GetEnv(MRML_APPLICATION_HOME_DIR_ENV) != NULL)
+    {
+    applicationHome = std::string(vtksys::SystemTools::GetEnv(MRML_APPLICATION_HOME_DIR_ENV));
+    }
+  else
+    {
+    if (vtksys::SystemTools::GetEnv("PWD") != NULL)
+      {
+      applicationHome =  std::string(vtksys::SystemTools::GetEnv("PWD"));
+      }
+    else
+      {
+      applicationHome =  std::string("");
+      }
+    }
+  return applicationHome;
+}
 
+//----------------------------------------------------------------------------
+std::string vtkMRMLLogic::GetApplicationShareDirectory()
+{
+  std::string applicationHome = vtkMRMLLogic::GetApplicationHomeDirectory();
+  std::vector<std::string> filesVector;
+  filesVector.push_back(""); // for relative path
+  filesVector.push_back(applicationHome);
+  filesVector.push_back(MRML_APPLICATION_SHARE_SUBDIR);
+  std::string applicationShare = vtksys::SystemTools::JoinPath(filesVector);
+
+  return applicationShare;
+}

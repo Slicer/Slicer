@@ -42,6 +42,14 @@ public:
 
   void RemoveUnreferencedDisplayNodes();
 
+  /// Get application home directory.
+  /// The path is retrieved from the environment variable defined by MRML_APPLICATION_HOME_DIR_ENV.
+  static std::string GetApplicationHomeDirectory();
+
+  /// Get application share subdirectory.
+  /// The path is constructed by concatenating application home directory and MRML_APPLICATION_SHARE_SUBDIR.
+  static std::string GetApplicationShareDirectory();
+
 protected:
   vtkMRMLLogic();
   virtual ~vtkMRMLLogic();
