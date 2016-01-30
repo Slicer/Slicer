@@ -353,7 +353,7 @@ if(Slicer_BUILD_SlicerDMRI)
     if(WIN32)
       list(APPEND _step_comands
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${_dest_dir}/${_module_name}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_dir} ${_dest_dir}/${_module_name}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_dir}/${_module_dir} ${_dest_dir}/${_module_name}
         )
     else()
       list(APPEND _step_comands
