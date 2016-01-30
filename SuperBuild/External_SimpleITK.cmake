@@ -34,7 +34,7 @@ ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" PythonPacka
 ")
 
   set(SimpleITK_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
-  set(SimpleITK_GIT_TAG 6f184b49a03a0503b6773fceb427f12acdb3eaa6 ) # 0.10.0.dev127-g6f184
+  set(SimpleITK_GIT_TAG ee2a30c6242a38e88c41744f24979c1276bfa371 ) # 0.10.0.dev199
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)

@@ -30,11 +30,11 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://github.com/Slicer/ITK.git)
-  # ITK release branch of 2016-01-19 (0c4381b) with
+  # ITK v4.9.0 release branch of 2016-01-29 with
   #   * Slicer patches for CMP0042 (See Slicer r24522)
   #   * Cherry-picked from master:
   #    - ENH: Allow ITKVideoBridgeOpenCV to be built externally.
-  set(ITKv4_GIT_TAG 615607fe1498dfb85e69cbc719f52d7e9cf776de)
+  set(ITKv4_GIT_TAG b61e91d914a40a96e1e65b1032b09627885dfe34)
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 
