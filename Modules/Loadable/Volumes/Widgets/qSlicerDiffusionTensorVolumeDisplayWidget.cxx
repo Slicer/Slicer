@@ -175,6 +175,16 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
         newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
       }
     Q_ASSERT(dtiSliceDisplayNodes.size());
+    d->RedSliceCheckBox->setChecked(dtiSliceDisplayNodes[0]->GetVisibility());
+    if (dtiSliceDisplayNodes.size() > 1)
+      {
+      d->YellowSliceCheckBox->setChecked(dtiSliceDisplayNodes[1]->GetVisibility());
+      }
+    if (dtiSliceDisplayNodes.size() > 2)
+      {
+      d->GreenSliceCheckBox->setChecked(dtiSliceDisplayNodes[1]->GetVisibility());
+      }
+
     glyphableVolumeSliceNode = dtiSliceDisplayNodes[0];
     }
   // The update tasks are also needed when scene is closed (newVolumeDisplayNode is NULL)
