@@ -218,6 +218,8 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
   this->SettingsDialog = new ctkSettingsDialog(0);
   this->SettingsDialog->setResetButton(true);
+  // Some settings panels are quite large, show maximize button to allow resizing with a single click
+  this->SettingsDialog->setWindowFlags(this->SettingsDialog->windowFlags() | Qt::WindowMaximizeButtonHint);
 
   qSlicerSettingsGeneralPanel* generalPanel = new qSlicerSettingsGeneralPanel;
   this->SettingsDialog->addPanel("General", generalPanel);
