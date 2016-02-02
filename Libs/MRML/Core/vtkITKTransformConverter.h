@@ -148,6 +148,22 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
   std::string itkTransformClassName = transformItk_LPS->GetNameOfClass();
 
   // Linear transform of doubles or floats, dimension 3
+
+  // ITKIO transform libraries are build as shared and dynamic_cast
+  // can NOT be used with templated classes that are
+  // instantiated in a translation unit different than the one where they are
+  // defined. It will work only if the classes are explicitly instantiated
+  // and exported.
+  // To workaround the issue, instead of using dynamic_cast:
+  // (1) to ensure the objects are of the right type string comparison is done
+  // (2) static_cast is used instead of dynamic_cast.
+  // See InsightSoftwareConsortium/ITK@d1e9fe2
+  // and see http://stackoverflow.com/questions/8024010/why-do-template-class-functions-have-to-be-declared-in-the-same-translation-unit
+  //
+  // The disadvantage of this approach is that each supported class name has to be explicitly listed here and if the class hierarchy changes in ITK
+  // then the static cast may produce invalid results. Also, even if the transform class name is matching,
+  // we may cast the transform to a wrong type due to mismatch in dimensions (not 3) or data type (not double or float).
+
   if (itkTransformClassName.find( "AffineTransform" ) != std::string::npos ||
       itkTransformClassName == "MatrixOffsetTransformBase" ||
       itkTransformClassName == "Rigid3DTransform" ||
