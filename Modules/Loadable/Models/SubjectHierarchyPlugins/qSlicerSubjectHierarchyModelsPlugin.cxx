@@ -198,13 +198,11 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkMRMLSubjectHierarchyNode
   // Get basic tooltip from abstract plugin
   QString tooltipString = Superclass::tooltip(node);
 
-  vtkMRMLModelNode* modelNode =
-    vtkMRMLModelNode::SafeDownCast(node->GetAssociatedNode());
-  vtkPolyData* polyData = modelNode->GetPolyData();
-  if (modelNode && modelNode->GetDisplayNode() && polyData)
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node->GetAssociatedNode());
+  vtkPolyData* polyData = modelNode ? modelNode->GetPolyData() : NULL;
+  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : NULL;
+  if (modelNode && displayNode && polyData)
     {
-    vtkMRMLModelDisplayNode* displayNode =
-      vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
     bool visible = (displayNode->GetVisibility() > 0);
     tooltipString.append( QString(" (Points: %1  Cells: %2  Visible: %3")
       .arg(polyData->GetNumberOfPoints()).arg(polyData->GetNumberOfCells())
