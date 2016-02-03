@@ -131,8 +131,14 @@
              <string>vtkMRMLLabelMapVolumeNode</string>
             </stringlist>
            </property>
+           <property name="noneEnabled">
+            <bool>true</bool>
+           </property>
            <property name="renameEnabled">
             <bool>true</bool>
+           </property>
+           <property name="noneDisplay">
+            <string>Replace current node</string>
            </property>
           </widget>
          </item>
