@@ -199,7 +199,7 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairToggleAction->setText(QObject::tr("Crosshair"));
   this->CrosshairToolButton->setDefaultAction(this->CrosshairToggleAction);
   QObject::connect(this->CrosshairToggleAction, SIGNAL(toggled(bool)),
-                   this, SLOT(setCrosshairMode(bool)));
+                   this, SLOT(setCrosshairEnabled(bool)));
 
   q->addWidget(this->CrosshairToolButton);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
@@ -230,7 +230,7 @@ void qSlicerViewersToolBarPrivate::setNavigation(bool mode)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerViewersToolBarPrivate::setCrosshairMode(bool mode)
+void qSlicerViewersToolBarPrivate::setCrosshairEnabled(bool enabled)
 {
 //  Q_Q(qSlicerViewersToolBar);
 
@@ -245,7 +245,7 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(bool mode)
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
     {
-    if (mode)
+    if (enabled)
       {
       node->SetCrosshairMode(this->CrosshairLastMode);
       }
@@ -417,12 +417,6 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     // toggle on/off, navigation/cross-reference, style of crosshair
     //
 
-    // on/off
-    if (this->CrosshairToolButton)
-      {
-      this->CrosshairToggleAction->setChecked( crosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair );
-      }
-
     // style of crosshair
     if (this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()) != NULL)
       {
@@ -450,6 +444,14 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     if (crosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
       {
       this->CrosshairLastMode = crosshairNode->GetCrosshairMode();
+      }
+
+    // on/off
+    // Checking the crosshair button may trigger a crosshair enable/disable action
+    // therefore this toggle action should be the last.
+    if (this->CrosshairToolButton)
+      {
+      this->CrosshairToggleAction->setChecked( crosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair );
       }
 
     }
