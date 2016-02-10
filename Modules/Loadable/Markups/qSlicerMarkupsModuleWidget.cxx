@@ -319,7 +319,9 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       }
     }
   // update the checked state of showing the slice intersections
-  this->sliceIntersectionsVisibilityCheckBox->setChecked(q->sliceIntersectionsVisible());
+  // vtkSlicerMarkupsLogic::GetSliceIntersectionsVisibility() cannot be called, as the scene
+  // is not yet set, so just set to the default value (slice intersections not visible).
+  this->sliceIntersectionsVisibilityCheckBox->setChecked(false);
   QObject::connect(this->sliceIntersectionsVisibilityCheckBox,
                    SIGNAL(toggled(bool)),
                    q, SLOT(onSliceIntersectionsVisibilityToggled(bool)));
