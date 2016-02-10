@@ -355,6 +355,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     }
 
   this->setMRMLDisplayNode(dnode);
+
+  emit currentVolumeNodeChanged(volumeNode);
 }
 
 // --------------------------------------------------------------------------
@@ -416,6 +418,8 @@ void qSlicerVolumeRenderingModuleWidget
   d->DisplayNode = displayNode;
 
   this->updateFromMRMLDisplayNode();
+
+  emit currentVolumeRenderingDisplayNodeChanged(displayNode);
 }
 
 // --------------------------------------------------------------------------
@@ -649,6 +653,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
     {
     this->mrmlScene()->RemoveNode(oldDisplayNode);
     }
+
+  emit currentVolumeRenderingDisplayNodeChanged(displayNode);
 }
 
 // --------------------------------------------------------------------------
