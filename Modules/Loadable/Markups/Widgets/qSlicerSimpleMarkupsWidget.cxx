@@ -568,12 +568,12 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeChanged()
     if ( currentMarkupsNode != NULL )
       {
       d->MarkupsLogic->SetActiveListID( currentMarkupsNode ); // If there are other widgets, they are responsible for updating themselves
-      if( d->EnterPlaceModeOnNodeChange )
+      if( d->EnterPlaceModeOnNodeChange && interactionNode != NULL)
         {
         interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::Place );
         }
       }
-    else if( d->EnterPlaceModeOnNodeChange )
+    else if( d->EnterPlaceModeOnNodeChange && interactionNode != NULL)
       {
       interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
       }
