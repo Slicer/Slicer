@@ -613,17 +613,17 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
       tr[i] = int(round(trIJK[i]))
       if tr[i] < 0:
         tr[i] = 0
-      if tr[i] > dims[i]:
+      if tr[i] >= dims[i]:
         tr[i] = dims[i] - 1
       bl[i] = int(round(blIJK[i]))
       if bl[i] < 0:
         bl[i] = 0
-      if bl[i] > dims[i]:
+      if bl[i] >= dims[i]:
         bl[i] = dims[i] - 1
       br[i] = int(round(brIJK[i]))
       if br[i] < 0:
         br[i] = 0
-      if br[i] > dims[i]:
+      if br[i] >= dims[i]:
         br[i] = dims[i] - 1
 
     # If the region is smaller than a pixel then paint it using paintPixel mode,
@@ -651,17 +651,11 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     # get the layers and nodes
     # and ijk to ras matrices including transforms
     #
-    labelLogic = self.sliceLogic.GetLabelLayer()
-    labelNode = labelLogic.GetVolumeNode()
-    backgroundLogic = self.sliceLogic.GetLabelLayer()
-    backgroundNode = backgroundLogic.GetVolumeNode()
     backgroundIJKToRAS = self.logic.getIJKToRASMatrix(backgroundNode)
     labelIJKToRAS = self.logic.getIJKToRASMatrix(labelNode)
 
-
     xyToRAS = sliceNode.GetXYToRAS()
     brushCenter = xyToRAS.MultiplyPoint( (x, y, 0, 1) )[:3]
-
 
     brushRadius = self.radius
     bSphere = self.sphere
