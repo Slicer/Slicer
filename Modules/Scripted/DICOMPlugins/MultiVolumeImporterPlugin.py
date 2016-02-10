@@ -131,6 +131,14 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return loadables
 
+  def emptyTagValueFound(self,files,tags):
+    for f in files:
+      for tag in tags:
+        value = slicer.dicomDatabase.fileValue(files[0],self.tags['instanceNumber'])
+        if value == None or value == "":
+          return True
+    return False
+
   def examineFilesIPPInstanceNumber(self,files):
     """
     This strategy first orders files into lists, where each list is
@@ -141,6 +149,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     This strategy was required to handle DSC MRI data collected on
     some GE platforms.
     """
+
+    if self.emptyTagValueFound(files,['instanceNumber','position','repetitionTime']):
+      return []
 
     loadables = []
     subseriesLists = {}
