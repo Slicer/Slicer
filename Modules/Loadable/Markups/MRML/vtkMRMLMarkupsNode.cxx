@@ -912,6 +912,9 @@ void vtkMRMLMarkupsNode::SetNthMarkupAssociatedNodeID(int n, std::string id)
       {
       vtkDebugMacro("Changing markup " << n << " associated node id from " << markup->AssociatedNodeID.c_str() << " to " << id.c_str());
       markup->AssociatedNodeID = std::string(id.c_str());
+      int markupIndex = n;
+      this->Modified();
+      this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::NthMarkupModifiedEvent, (void*)&markupIndex);
       }
     }
   else
