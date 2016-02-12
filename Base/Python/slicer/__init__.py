@@ -55,8 +55,9 @@ def initLogging(logger):
   # and all console outputs are sent automatically to the application log anyway.
   applicationLogHandler = SlicerApplicationLogHandler()
   applicationLogHandler.setLevel(logging.DEBUG)
-  # Filter messages at INFO level or above (they will be printed on the console)
-  applicationLogHandler.addFilter(_LogReverseLevelFilter(logging.INFO))
+  # We could filter out messages at INFO level or above (as they will be printed on the console anyway) by adding
+  # applicationLogHandler.addFilter(_LogReverseLevelFilter(logging.INFO))
+  # but then we would not log file name and line number of info, warning, and error level messages.
   applicationLogHandler.setFormatter(logging.Formatter('%(levelname)s: %(message)s (%(pathname)s:%(lineno)d)'))
   logger.addHandler(applicationLogHandler)
 
