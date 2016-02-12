@@ -228,6 +228,13 @@ foreach(extension_name ${EXTENSION_LIST})
             -DMIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
             -DMIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
             )
+          if(APPLE)
+            list(APPEND ext_ep_cmake_args
+              -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
+              -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}
+              -DCMAKE_OSX_SYSROOT:PATH=${CMAKE_OSX_SYSROOT}
+              )
+          endif()
 
           foreach(dep ${EXTENSION_DEPENDS})
             list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
