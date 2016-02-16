@@ -37,6 +37,9 @@
 #include <QList>
 class QAction;
 
+// VTK includes
+#include <vtkWeakPointer.h>
+
 // CTK includes
 #include <ctkPimpl.h>
 
@@ -118,7 +121,7 @@ public slots:
 public:
   qSlicerCLIModuleUIHelper* CLIModuleUIHelper;
 
-  vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+  vtkWeakPointer<vtkMRMLCommandLineModuleNode> CommandLineModuleNode;
   QAction* AutoRunWhenParameterChanged;
   QAction* AutoRunWhenInputModified;
   QAction* AutoRunOnOtherInputEvents;
