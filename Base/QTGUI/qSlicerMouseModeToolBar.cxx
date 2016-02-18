@@ -232,7 +232,14 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
     if (placeNodeClassName == activePlace)
       {
       // make it the default
-      this->CreateAndPlaceToolButton->setDefaultAction(action);
+      if (this->CreateAndPlaceToolButton->defaultAction()!=action)
+        {
+        this->CreateAndPlaceToolButton->setDefaultAction(action);
+        // default action is changed, therefore we need to call
+        // updateWidgetFromInteractionNode to make sure the mouse
+        // cursor is set to the correct shape
+        this->updateWidgetFromInteractionNode();
+        }
       }
     }
 }
