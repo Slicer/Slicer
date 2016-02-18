@@ -38,6 +38,7 @@
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLTransformNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -235,6 +236,12 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
       {
       vtkMRMLStorableNode::SafeDownCast(clonedDataNode)->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
       }
+    // Trigger display update (needed to invoke update of transforms in displayable managers)
+    vtkMRMLTransformableNode* transformableClonedNode = vtkMRMLTransformableNode::SafeDownCast(clonedDataNode);
+    if (transformableClonedNode && transformableClonedNode->GetParentTransformNode())
+    {
+      transformableClonedNode->GetParentTransformNode()->Modified();
+    }
 
     // Get hierarchy nodes
     vtkMRMLHierarchyNode* genericHierarchyNode =
