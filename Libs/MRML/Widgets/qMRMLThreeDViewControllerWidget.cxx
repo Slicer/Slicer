@@ -231,9 +231,6 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   this->AnimateViewButtonGroup = new ctkButtonGroup(this->PopupWidget);
   this->AnimateViewButtonGroup->addButton(this->SpinButton, vtkMRMLViewNode::Spin);
   this->AnimateViewButtonGroup->addButton(this->RockButton, vtkMRMLViewNode::Rock);
-  this->AnimateViewButtonGroup = new ctkButtonGroup(this->PopupWidget);
-  this->AnimateViewButtonGroup->addButton(this->SpinButton);
-  this->AnimateViewButtonGroup->addButton(this->RockButton);
   QObject::connect(this->SpinButton, SIGNAL(toggled(bool)),
                    q, SLOT(spinView(bool)));
   QObject::connect(this->RockButton, SIGNAL(toggled(bool)),
