@@ -10,15 +10,12 @@ from slicer.ScriptedLoadableModule import *
 class TablesSelfTest(ScriptedLoadableModule):
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    parent.title = "TablesSelfTest"
-    parent.categories = ["Testing.TestCases"]
-    parent.dependencies = ["Tables"]
-    parent.contributors = ["Andras Lasso (PerkLab, Queen's)"]
-    parent.helpText = """
-    This is a self test for the Subject hierarchy core plugins.
-    """
-    parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care""" # replace with organization, grant and thanks.
-    self.parent = parent
+    self.parent.title = "TablesSelfTest"
+    self.parent.categories = ["Testing.TestCases"]
+    self.parent.dependencies = ["Tables"]
+    self.parent.contributors = ["Andras Lasso (PerkLab, Queen's)"]
+    self.parent.helpText = """This is a self test for Table node and widgets."""
+    parent.acknowledgementText = """This file was originally developed by Andras Lasso, PerkLab, Queen's University and was supported through the Applied Cancer Research Unit program of Cancer Care Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care"""
 
     # Add this test to the SelfTest module's list for discovery when the module
     # is created.  Since this module may be discovered before SelfTests itself,
@@ -81,7 +78,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
 
     self.section_SetupPathsAndNames()
     self.section_CreateTable()
-    self.section_section_TableWidgetButtons()
+    self.section_TableWidgetButtons()
     self.section_CliTableInputOutput()
     self.delayDisplay("Test passed",self.delayMs)
 
@@ -115,7 +112,7 @@ class TablesSelfTestTest(ScriptedLoadableModuleTest):
     self.assertTrue( table.GetNumberOfColumns() == 1 )
 
   # ------------------------------------------------------------------------------
-  def section_section_TableWidgetButtons(self):
+  def section_TableWidgetButtons(self):
     self.delayDisplay("Test widget buttons",self.delayMs)
 
     slicer.util.selectModule('Tables')
