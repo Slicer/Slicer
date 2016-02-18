@@ -8,17 +8,18 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}ModuleWidgetsAbstractPlugin.h
   qSlicer${MODULE_NAME}ModuleWidgetsPlugin.cxx
   qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
-
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.cxx
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.h
+  qSlicerMarkupsPlaceWidgetPlugin.cxx
+  qSlicerMarkupsPlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.cxx
   qSlicerSimpleMarkupsWidgetPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
   qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
-
   qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.h
+  qSlicerMarkupsPlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.h
   )
 

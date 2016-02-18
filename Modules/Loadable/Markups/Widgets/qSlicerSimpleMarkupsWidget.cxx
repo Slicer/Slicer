@@ -60,17 +60,11 @@ public:
   virtual void setupUi(qSlicerSimpleMarkupsWidget*);
 
 public:
-  QColor DefaultNodeColor;
-
   bool EnterPlaceModeOnNodeChange;
   bool JumpToSliceEnabled;
 
-  QList < QWidget* > OptionsWidgets;
-
   vtkWeakPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
   vtkWeakPointer<vtkMRMLMarkupsNode> CurrentMarkupsNode;
-  vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
-  vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
 };
 
 // --------------------------------------------------------------------------
@@ -100,7 +94,6 @@ void qSlicerSimpleMarkupsWidgetPrivate::setupUi(qSlicerSimpleMarkupsWidget* widg
 qSlicerSimpleMarkupsWidget::qSlicerSimpleMarkupsWidget(QWidget* parentWidget) : Superclass( parentWidget ) , d_ptr( new qSlicerSimpleMarkupsWidgetPrivate(*this) )
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   this->setup();
 }
 
@@ -131,59 +124,28 @@ void qSlicerSimpleMarkupsWidget::setup()
     }
   d->setupUi(this);
 
-  d->OptionsWidgets << d->ActiveButton << d->ColorButton << d->PlaceButton << d->ExtraButton;
-
-  d->DefaultNodeColor.setRgb(0.0,1.0,0.0);
-
   connect( d->MarkupsFiducialNodeComboBox, SIGNAL( currentNodeChanged( vtkMRMLNode* ) ), this, SLOT( onMarkupsFiducialNodeChanged() ) );
   connect( d->MarkupsFiducialNodeComboBox, SIGNAL( nodeAddedByUser( vtkMRMLNode* ) ), this, SLOT( onMarkupsFiducialNodeAdded( vtkMRMLNode* ) ) );
-
-  // Use the pressed signal (otherwise we can unpress buttons without clicking them)
-  connect( d->ColorButton, SIGNAL( colorChanged( QColor ) ), this, SLOT( onColorButtonChanged( QColor ) ) );
-
-  connect( d->VisibilityButton, SIGNAL( clicked() ), this, SLOT( onVisibilityButtonClicked() ) );
-  d->VisibilityButton->setIcon( QIcon( ":/Icons/Small/SlicerVisible.png" ) );
-  connect( d->LockButton, SIGNAL( clicked() ), this, SLOT( onLockButtonClicked() ) );
-  d->LockButton->setIcon( QIcon( ":/Icons/Small/SlicerUnlock.png" ) );
-  connect( d->DeleteButton, SIGNAL( clicked() ), this, SLOT( onDeleteButtonClicked() ) );
-  d->DeleteButton->setIcon( QIcon( ":/Icons/MarkupsDelete.png" ) );
-
-  connect( d->ActiveButton, SIGNAL( toggled( bool ) ), this, SLOT( onActiveButtonClicked() ) );
-  d->ActiveButton->setIcon( QApplication::style()->standardIcon( QStyle::SP_DialogApplyButton ) );
-
-  connect( d->PlaceButton, SIGNAL( toggled( bool ) ), this, SLOT( onPlaceButtonClicked() ) ); 
-  d->PlaceButton->setIcon( QIcon( ":/Icons/MarkupsMouseModePlace.png" ) );
-  
-  d->ExtraButton->setIcon( QIcon( ":/Icons/Ellipsis.png" ) );
+  connect( d->MarkupsPlaceWidget, SIGNAL( activeMarkupsFiducialPlaceModeChanged(bool) ), this, SIGNAL( activeMarkupsFiducialPlaceModeChanged(bool) ) );
 
   d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
   d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
   d->MarkupsFiducialTableWidget->horizontalHeader()->setResizeMode( QHeaderView::Stretch );
   d->MarkupsFiducialTableWidget->setContextMenuPolicy( Qt::CustomContextMenu );
-  // only select rows rather than cells
-  d->MarkupsFiducialTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+  d->MarkupsFiducialTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows); // only select rows rather than cells
 
   connect(d->MarkupsFiducialTableWidget, SIGNAL( customContextMenuRequested(const QPoint&) ), this, SLOT( onMarkupsFiducialTableContextMenu(const QPoint&) ) );
-  connect( d->MarkupsFiducialTableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( onMarkupsFiducialEdited( int, int ) ) );
+  connect(d->MarkupsFiducialTableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( onMarkupsFiducialEdited( int, int ) ) );
   // listen for click on a markup
   connect(d->MarkupsFiducialTableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(onMarkupsFiducialSelected(int,int)));
   // listen for the current cell selection change (happens when arrows are used to navigate)
   connect(d->MarkupsFiducialTableWidget, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(onMarkupsFiducialSelected(int, int)));
-
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::connectInteractionAndSelectionNodes()
-{
-  Q_D(qSlicerSimpleMarkupsWidget);
-
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qSlicerSimpleMarkupsWidget::currentNode() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-
   return d->MarkupsFiducialNodeComboBox->currentNode();
 }
 
@@ -200,7 +162,6 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
   Q_D(qSlicerSimpleMarkupsWidget);
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( currentNode );
-
   if (currentMarkupsNode==d->CurrentMarkupsNode)
     {
     // not changed
@@ -211,6 +172,8 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
   bool wasBlocked = d->MarkupsFiducialNodeComboBox->blockSignals(true);
   d->MarkupsFiducialNodeComboBox->setCurrentNode( currentMarkupsNode );
   d->MarkupsFiducialNodeComboBox->blockSignals(wasBlocked);
+
+  d->MarkupsPlaceWidget->setCurrentNode( currentMarkupsNode );
 
   // Reconnect the appropriate nodes
   this->qvtkReconnect(d->CurrentMarkupsNode, currentMarkupsNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
@@ -226,7 +189,6 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 void qSlicerSimpleMarkupsWidget::setNodeBaseName(QString newNodeBaseName)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   d->MarkupsFiducialNodeComboBox->setBaseName(newNodeBaseName);
 }
 
@@ -234,15 +196,20 @@ void qSlicerSimpleMarkupsWidget::setNodeBaseName(QString newNodeBaseName)
 void qSlicerSimpleMarkupsWidget::setDefaultNodeColor(QColor color)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
+  d->MarkupsPlaceWidget->setDefaultNodeColor(color);
+}
 
-  d->DefaultNodeColor = color;
+//-----------------------------------------------------------------------------
+QColor qSlicerSimpleMarkupsWidget::defaultNodeColor() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsPlaceWidget->defaultNodeColor();
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerSimpleMarkupsWidget::enterPlaceModeOnNodeChange() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-
   return d->EnterPlaceModeOnNodeChange;
 }
 
@@ -250,7 +217,6 @@ bool qSlicerSimpleMarkupsWidget::enterPlaceModeOnNodeChange() const
 void qSlicerSimpleMarkupsWidget::setEnterPlaceModeOnNodeChange(bool enterPlaceMode)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   d->EnterPlaceModeOnNodeChange = enterPlaceMode;
 }
 
@@ -258,7 +224,6 @@ void qSlicerSimpleMarkupsWidget::setEnterPlaceModeOnNodeChange(bool enterPlaceMo
 bool qSlicerSimpleMarkupsWidget::jumpToSliceEnabled() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-
   return d->JumpToSliceEnabled;
 }
 
@@ -266,7 +231,6 @@ bool qSlicerSimpleMarkupsWidget::jumpToSliceEnabled() const
 void qSlicerSimpleMarkupsWidget::setJumpToSliceEnabled(bool enable)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   d->JumpToSliceEnabled = enable;
 }
 
@@ -288,24 +252,14 @@ void qSlicerSimpleMarkupsWidget::setNodeSelectorVisible(bool visible)
 bool qSlicerSimpleMarkupsWidget::optionsVisible() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
-  foreach( QWidget *w, d->OptionsWidgets )
-  {
-    if (!w->isVisible())
-    {
-      return false;
-    }
-  }
-  return true;
+  return d->MarkupsPlaceWidget->isVisible();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::setOptionsVisible(bool visible)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  foreach( QWidget *w, d->OptionsWidgets )
-  {
-    w->setVisible(visible);
-  }
+  d->MarkupsPlaceWidget->setVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -319,51 +273,20 @@ QTableWidget* qSlicerSimpleMarkupsWidget::tableWidget() const
 void qSlicerSimpleMarkupsWidget::setNodeColor(QColor color)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-  if ( currentMarkupsNode == NULL )
-    {
-    return;
-    }
-  
-  vtkMRMLDisplayNode* currentMarkupsDisplayNode = currentMarkupsNode->GetDisplayNode();
-  if ( currentMarkupsDisplayNode == NULL )
-    {
-    return;
-    }
-
-  double rgbDoubleVector[3] = {color.redF(),color.greenF(),color.blueF()};
-  currentMarkupsDisplayNode->SetColor( rgbDoubleVector );
-  currentMarkupsDisplayNode->SetSelectedColor( rgbDoubleVector );
+  d->MarkupsPlaceWidget->setNodeColor(color);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::getNodeColor(QColor color)
+QColor qSlicerSimpleMarkupsWidget::nodeColor() const
 {
-  Q_D(qSlicerSimpleMarkupsWidget);
-
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-  if ( currentMarkupsNode == NULL )
-    {
-    return;
-    }
-  
-  vtkMRMLDisplayNode* currentMarkupsDisplayNode = currentMarkupsNode->GetDisplayNode();
-  if ( currentMarkupsDisplayNode == NULL )
-    {
-    return;
-    }
-
-  double rgbDoubleVector[3] = {0.0,0.0,0.0};
-  currentMarkupsDisplayNode->GetSelectedColor(rgbDoubleVector);
-  color.setRgb(rgbDoubleVector[0], rgbDoubleVector[1], rgbDoubleVector[2]);
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsPlaceWidget->nodeColor();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::highlightNthFiducial(int n)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   if ( n >= 0 && n < d->MarkupsFiducialTableWidget->rowCount() )
     {
     d->MarkupsFiducialTableWidget->selectRow(n);
@@ -377,209 +300,30 @@ void qSlicerSimpleMarkupsWidget::highlightNthFiducial(int n)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onColorButtonChanged(QColor color)
-{
-  Q_D(qSlicerSimpleMarkupsWidget);
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  double colorDoubleVector[3] = {0.0,0.0,0.0};
-  qMRMLUtils::qColorToColor( color, colorDoubleVector );
-
-  if ( currentMarkupsNode != NULL && currentMarkupsNode->GetDisplayNode() != NULL )
-    {
-    currentMarkupsNode->GetDisplayNode()->SetSelectedColor( colorDoubleVector );
-    }
-
-  this->updateWidget();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onVisibilityButtonClicked()
-{
-  Q_D(qSlicerSimpleMarkupsWidget);
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  if ( currentMarkupsNode != NULL && currentMarkupsNode->GetDisplayNode() != NULL )
-    {
-    currentMarkupsNode->GetDisplayNode()->SetVisibility( ! currentMarkupsNode->GetDisplayNode()->GetVisibility() );
-    }
-
-  this->updateWidget();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onLockButtonClicked()
-{
-  Q_D(qSlicerSimpleMarkupsWidget);
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  if ( currentMarkupsNode != NULL )
-    {
-    currentMarkupsNode->SetLocked( ! currentMarkupsNode->GetLocked() );
-    }
-
-  this->updateWidget();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onDeleteButtonClicked()
-{
-  Q_D(qSlicerSimpleMarkupsWidget);
-
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  if ( currentMarkupsNode  == NULL )
-    {
-    return;
-    }
-
-  QItemSelectionModel* selectionModel = d->MarkupsFiducialTableWidget->selectionModel();
-  std::vector< int > deleteFiducials;
-  // Need to find selected before removing because removing automatically refreshes the table
-  for ( int i = 0; i < d->MarkupsFiducialTableWidget->rowCount(); i++ )
-    {
-    if ( selectionModel->rowIntersectsSelection( i, d->MarkupsFiducialTableWidget->rootIndex() ) )
-      {
-      deleteFiducials.push_back( i );
-      }
-    }
-  // Traversing this way should be more efficient and correct
-  for ( int i = deleteFiducials.size() - 1; i >= 0; i-- )
-    {
-    currentMarkupsNode->RemoveMarkup( deleteFiducials.at( i ) );
-    }
-
-  this->updateWidget();
-}    
-
-//-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onPlaceButtonClicked()
-{
-  Q_D(qSlicerSimpleMarkupsWidget);
-
-  if (d->MarkupsLogic == NULL || this->mrmlScene() == NULL)
-    {
-    qCritical("qSlicerSimpleMarkupsWidget::onPlaceButtonClicked failed: Markups module logic or scene is invalid");
-    return;
-    }
-
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  // Depending to the current state, change the activeness and placeness for the current markups node
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
-
-  bool isActive = currentMarkupsNode != NULL && d->MarkupsLogic->GetActiveListID().compare( currentMarkupsNode->GetID() ) == 0;
-  bool isPlace = interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place;
-
-  if ( isPlace && isActive )
-    {
-    interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
-    }
-  else
-    {
-    interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::Place );
-    }
-
-  if ( currentMarkupsNode != NULL )
-    {
-    // If there are other widgets, they are responsible for updating themselves
-    d->MarkupsLogic->SetActiveListID( currentMarkupsNode );
-    }
-
-  this->updateWidget();
-
-  emit markupsFiducialPlaceModeChanged();
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::activate()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
-  if (d->MarkupsLogic == NULL || this->mrmlScene() == NULL)
-    {
-    qCritical("qSlicerSimpleMarkupsWidget::activate failed: Markups module logic or scene is invalid");
-    return;
-    }
-
-  vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  // Depending to the current state, change the activeness and placeness for the current markups node
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
-
-  bool isActive = currentMarkupsNode != NULL && d->MarkupsLogic->GetActiveListID().compare( currentMarkupsNode->GetID() ) == 0;
-
-  if ( ! isActive )
-    {
-    // Deactivate
-    interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
-    }
-
-  if ( currentMarkupsNode != NULL )
-    {
-    // If there are other widgets, they are responsible for updating themselves
-    d->MarkupsLogic->SetActiveListID( currentMarkupsNode );
-    }
-
-  this->updateWidget();
-
-  emit markupsFiducialActivated();
+  d->MarkupsPlaceWidget->setCurrentNodeActive(true);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::placeActive(bool place)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
-  if (place)
-    {
-    // activate and set place mode
-    onPlaceButtonClicked();
-    }
-  else
-    {
-    // exit place mode
-    vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
-    if (interactionNode)
-      {
-      interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
-      }
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSimpleMarkupsWidget::onActiveButtonClicked()
-{
-  this->activate();
+  d->MarkupsPlaceWidget->setPlaceModeEnabled(place);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeChanged()
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-
-  if (d->MarkupsLogic != NULL && this->mrmlScene() != NULL)
-    {
-    // Depending to the current state, change the activeness and placeness for the current markups node
-    vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
-
-    if ( currentMarkupsNode != NULL )
-      {
-      d->MarkupsLogic->SetActiveListID( currentMarkupsNode ); // If there are other widgets, they are responsible for updating themselves
-      if( d->EnterPlaceModeOnNodeChange && interactionNode != NULL)
-        {
-        interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::Place );
-        }
-      }
-    else if( d->EnterPlaceModeOnNodeChange && interactionNode != NULL)
-      {
-      interactionNode->SetCurrentInteractionMode( vtkMRMLInteractionNode::ViewTransform );
-      }
-    }
-
   this->setCurrentNode(currentMarkupsNode);
+
+  if (d->EnterPlaceModeOnNodeChange)
+    {
+    d->MarkupsPlaceWidget->setPlaceModeEnabled(currentMarkupsNode!=NULL);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -594,9 +338,13 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialNodeAdded( vtkMRMLNode* newNod
     }
 
   vtkMRMLMarkupsFiducialNode* newMarkupsFiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( newNode );
-  d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsFiducialNode ); // Make sure there is an associated display node
+  if (newMarkupsFiducialNode->GetDisplayNode()==NULL)
+    {
+    // Make sure there is an associated display node
+    d->MarkupsLogic->AddNewDisplayNodeForMarkupsNode( newMarkupsFiducialNode );
+    }
   d->MarkupsFiducialNodeComboBox->setCurrentNode( newMarkupsFiducialNode );
-  this->setNodeColor( d->DefaultNodeColor );
+  this->setNodeColor( defaultNodeColor() );
   this->onMarkupsFiducialNodeChanged();
 }
 
@@ -614,13 +362,11 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
   QPoint globalPosition = d->MarkupsFiducialTableWidget->viewport()->mapToGlobal( position );
 
   QMenu* fiducialsMenu = new QMenu( d->MarkupsFiducialTableWidget );
-  QAction* activateAction = new QAction( "Make fiducial list active", fiducialsMenu );
   QAction* deleteAction = new QAction( "Delete highlighted fiducials", fiducialsMenu );
   QAction* upAction = new QAction( "Move current fiducial up", fiducialsMenu );
   QAction* downAction = new QAction( "Move current fiducial down", fiducialsMenu );
   QAction* jumpAction = new QAction( "Jump slices to fiducial", fiducialsMenu );
 
-  fiducialsMenu->addAction( activateAction );
   fiducialsMenu->addAction( deleteAction );
   fiducialsMenu->addAction( upAction );
   fiducialsMenu->addAction( downAction );
@@ -630,19 +376,13 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
 
   int currentFiducial = d->MarkupsFiducialTableWidget->currentRow();
   vtkMRMLMarkupsFiducialNode* currentNode = vtkMRMLMarkupsFiducialNode::SafeDownCast( d->MarkupsFiducialNodeComboBox->currentNode() );
-  
+
   if ( currentNode == NULL )
     {
     return;
     }
 
   // Only do this for non-null node
-  if ( selectedAction == activateAction )
-    {
-    d->MarkupsLogic->SetActiveListID( currentNode ); // If there are other widgets, they are responsible for updating themselves
-    emit markupsFiducialNodeChanged();
-    }
-
   if ( selectedAction == deleteAction )
     {
     QItemSelectionModel* selectionModel = d->MarkupsFiducialTableWidget->selectionModel();
@@ -662,7 +402,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
       }
     }
 
-  
+
   if ( selectedAction == upAction )
     {
     if ( currentFiducial > 0 )
@@ -775,80 +515,16 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsFiducialTableWidget->clear();
     d->MarkupsFiducialTableWidget->setRowCount( 0 );
     d->MarkupsFiducialTableWidget->setColumnCount( 0 );
-    d->ActiveButton->setChecked( Qt::Unchecked );
-    d->PlaceButton->setChecked( Qt::Unchecked );
+    d->MarkupsPlaceWidget->setEnabled(false);
     emit updateFinished();
     return;
     }
 
-  // Set the button indicating if this list is active
-  bool wasBlockedActiveButton = d->ActiveButton->blockSignals( true );
-  bool wasBlockedPlaceButton = d->PlaceButton->blockSignals( true );
-  bool wasBlockedColorButton = d->ColorButton->blockSignals( true );
-  bool wasBlockedVisibilityButton = d->VisibilityButton->blockSignals( true );
-  bool wasBlockedLockButton = d->LockButton->blockSignals( true );
-
-  // Depending to the current state, change the activeness and placeness for the current markups node
-  vtkMRMLInteractionNode *interactionNode = vtkMRMLInteractionNode::SafeDownCast( this->mrmlScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
-
-  if ( currentMarkupsFiducialNode->GetDisplayNode() != NULL  )
-    {
-    double* color = currentMarkupsFiducialNode->GetDisplayNode()->GetSelectedColor();
-    QColor qColor;
-    qMRMLUtils::colorToQColor( color, qColor );
-    d->ColorButton->setColor( qColor );
-    }
-
-  if ( d->MarkupsLogic->GetActiveListID().compare( currentMarkupsFiducialNode->GetID() ) == 0 )
-    {
-    d->ActiveButton->setChecked( Qt::Checked );
-    }
-  else
-    {
-    d->ActiveButton->setChecked( Qt::Unchecked );
-    }
-
-  bool placeButtonWasChecked = d->PlaceButton->isChecked();
-  if ( interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place && d->MarkupsLogic->GetActiveListID().compare( currentMarkupsFiducialNode->GetID() ) == 0 )
-    {
-    d->PlaceButton->setChecked( true );
-    }
-  else
-    {
-    d->PlaceButton->setChecked( false );
-    }
-  if (placeButtonWasChecked != d->PlaceButton->isChecked())
-    {
-    emit activeMarkupsFiducialPlaceModeChanged(d->PlaceButton->isChecked());
-    }
-
-  if ( currentMarkupsFiducialNode->GetDisplayNode() != NULL && currentMarkupsFiducialNode->GetDisplayNode()->GetVisibility() )
-    {
-    d->VisibilityButton->setIcon( QIcon( ":/Icons/Small/SlicerVisible.png" ) );
-    }
-  else
-    {
-    d->VisibilityButton->setIcon( QIcon( ":/Icons/Small/SlicerInvisible.png" ) );
-    }
-
-  if ( currentMarkupsFiducialNode->GetLocked() )
-    {
-    d->LockButton->setIcon( QIcon( ":/Icons/Small/SlicerLock.png" ) );
-    }
-  else
-    {
-    d->LockButton->setIcon( QIcon( ":/Icons/Small/SlicerUnlock.png" ) );
-    }
-
-  d->ActiveButton->blockSignals( wasBlockedActiveButton );
-  d->PlaceButton->blockSignals( wasBlockedPlaceButton );
-  d->ColorButton->blockSignals( wasBlockedColorButton );
-  d->VisibilityButton->blockSignals( wasBlockedVisibilityButton);
-  d->LockButton->blockSignals( wasBlockedLockButton );
+  d->MarkupsPlaceWidget->setEnabled(true);
 
   // Update the fiducials table
   bool wasBlockedTableWidget = d->MarkupsFiducialTableWidget->blockSignals( true );
-  
+
   if (d->MarkupsFiducialTableWidget->rowCount()==currentMarkupsFiducialNode->GetNumberOfFiducials())
     {
     // don't recreate the table if the number of items is not changed to preserve selection state
@@ -870,7 +546,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsFiducialTableWidget->setRowCount( currentMarkupsFiducialNode->GetNumberOfFiducials() );
     d->MarkupsFiducialTableWidget->setColumnCount( FIDUCIAL_COLUMNS );
     d->MarkupsFiducialTableWidget->setHorizontalHeaderLabels( QStringList() << "Label" << "X" << "Y" << "Z" );
-  
+
     double fiducialPosition[ 3 ] = { 0, 0, 0 };
     std::string fiducialLabel;
     for ( int i = 0; i < currentMarkupsFiducialNode->GetNumberOfFiducials(); i++ )
@@ -899,18 +575,13 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 void qSlicerSimpleMarkupsWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-
   Superclass::setMRMLScene(scene);
+  this->updateWidget();
+}
 
-  vtkMRMLSelectionNode* selectionNode = NULL;
-  vtkMRMLInteractionNode *interactionNode = NULL;
-
-  if (d->MarkupsLogic != NULL && d->MarkupsLogic->GetMRMLScene() != NULL)
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast( d->MarkupsLogic->GetMRMLScene()->GetNodeByID( d->MarkupsLogic->GetSelectionNodeID() ) );
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast( d->MarkupsLogic->GetMRMLScene()->GetNodeByID( "vtkMRMLInteractionNodeSingleton" ) );
-    }
-  
-  this->qvtkReconnect(d->SelectionNode, selectionNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
-  this->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidget()));
+//-----------------------------------------------------------------------------
+qSlicerMarkupsPlaceWidget* qSlicerSimpleMarkupsWidget::markupsPlaceWidget() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsPlaceWidget;
 }
