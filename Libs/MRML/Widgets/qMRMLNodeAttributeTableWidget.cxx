@@ -134,12 +134,14 @@ void qMRMLNodeAttributeTableWidget::updateWidgetFromMRML()
 
   if (d->MRMLNode.GetPointer())
     {
+    d->NodeInformationGroupBox->setVisible(true);
     std::stringstream infoStream;
     d->MRMLNode->PrintSelf(infoStream, vtkIndent(0));
     d->MRMLNodeInfoLabel->setText(QLatin1String(infoStream.str().c_str()));
     }
   else
     {
+    d->NodeInformationGroupBox->setVisible(false);
     d->MRMLNodeInfoLabel->clear();
     }
 }

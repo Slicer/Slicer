@@ -43,6 +43,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLNode.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SubjectHierarchy
@@ -56,7 +57,6 @@ public:
   ~qSlicerSubjectHierarchyModuleWidgetPrivate();
   vtkSlicerSubjectHierarchyModuleLogic* logic() const;
 public:
-
   /// Subject hierarchy plugin logic
   qSlicerSubjectHierarchyPluginLogic* PluginLogic;
 };
@@ -83,7 +83,6 @@ qSlicerSubjectHierarchyModuleWidgetPrivate::logic() const
   Q_Q(const qSlicerSubjectHierarchyModuleWidget);
   return vtkSlicerSubjectHierarchyModuleLogic::SafeDownCast(q->logic());
 }
-
 
 //-----------------------------------------------------------------------------
 // qSlicerSubjectHierarchyModuleWidget methods
@@ -170,8 +169,9 @@ void qSlicerSubjectHierarchyModuleWidget::setup()
   d->SubjectHierarchyTreeView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
   d->SubjectHierarchyTreeView->header()->resizeSection(sceneModel->transformColumn(), 60);
 
-  connect( d->SubjectHierarchyTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->MRMLNodeAttributeTableWidget, SLOT(setMRMLNode(vtkMRMLNode*)) );
   connect( d->SubjectHierarchyTreeView->sceneModel(), SIGNAL(invalidateFilter()), d->SubjectHierarchyTreeView->model(), SLOT(invalidate()) );
+  connect( d->SubjectHierarchyTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(setDataNodeFromSubjectHierarchyNode(vtkMRMLNode*)) );
+  connect( d->SubjectHierarchyTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)), d->SubjectHierarchyNodeAttributeTableWidget, SLOT(setMRMLNode(vtkMRMLNode*)) );
 
   this->setMRMLIDsVisible(d->DisplayMRMLIDsCheckBox->isChecked());
   this->setTransformsVisible(d->DisplayTransformsCheckBox->isChecked());
@@ -224,6 +224,26 @@ void qSlicerSubjectHierarchyModuleWidget::setTransformsVisible(bool visible)
   d->DisplayTransformsCheckBox->blockSignals(true);
   d->DisplayTransformsCheckBox->setChecked(visible);
   d->DisplayTransformsCheckBox->blockSignals(false);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSubjectHierarchyModuleWidget::setDataNodeFromSubjectHierarchyNode(vtkMRMLNode* node)
+{
+  Q_D(qSlicerSubjectHierarchyModuleWidget);
+
+  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
+  if (!shNode)
+  {
+    qCritical() << "setDataNodeFromSubjectHierarchyNode: Input node should be subject hierarchy node!";
+    return;
+  }
+
+  vtkMRMLNode* dataNode = shNode->GetAssociatedNode();
+  d->DataNodeInspectorGroupBox->setVisible(dataNode);
+  if (dataNode)
+  {
+    d->DataNodeAttributeTableWidget->setMRMLNode(dataNode);
+  }
 }
 
 //-----------------------------------------------------------------------------

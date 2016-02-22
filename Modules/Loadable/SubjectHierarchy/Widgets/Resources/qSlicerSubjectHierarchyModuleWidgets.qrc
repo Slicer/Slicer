@@ -2,16 +2,10 @@
   <qresource>
     <file>Icons/Chart.png</file>
     <file>Icons/Folder.png</file>
-    <file>Icons/Labelmap.png</file>
-    <file>Icons/Markup.png</file>
-    <file>Icons/Model.png</file>
     <file>Icons/Patient.png</file>
     <file>Icons/Study.png</file>
     <file>Icons/Transform.png</file>
     <file>Icons/Unknown.png</file>
-    <file>Icons/Volume.png</file>
-    <file>Icons/VolumeVisibilityOff.png</file>
-    <file>Icons/VolumeVisibilityOn.png</file>
     <file>Icons/Warning.png</file>
   </qresource>
 </RCC>

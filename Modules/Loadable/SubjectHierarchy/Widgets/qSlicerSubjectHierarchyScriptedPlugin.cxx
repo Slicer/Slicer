@@ -23,7 +23,6 @@
 // SubjectHierarchy includes
 #include "qSlicerSubjectHierarchyScriptedPlugin.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
-#include "qSlicerSubjectHierarchyPluginHandler.h"
 
 // Qt includes
 #include <QDebug>
