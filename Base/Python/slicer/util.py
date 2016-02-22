@@ -587,8 +587,14 @@ def toVTKString(str):
   """Convert unicode string into 8-bit encoded ascii string.
   Unicode characters without ascii equivalent will be stripped out.
   """
-  return str.encode('latin1', 'ignore')
-
+  vtkStr = ""
+  for c in str:
+    try:
+      cc = c.encode("latin1", "ignore")
+    except (UnicodeDecodeError):
+      cc = "?"
+    vtkStr = vtkStr + cc
+  return vtkStr
 
 #
 # File Utlities
