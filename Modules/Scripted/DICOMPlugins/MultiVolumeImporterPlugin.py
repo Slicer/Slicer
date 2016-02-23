@@ -134,7 +134,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
   def emptyTagValueFound(self,files,tags):
     for f in files:
       for tag in tags:
-        value = slicer.dicomDatabase.fileValue(files[0],self.tags['instanceNumber'])
+        value = slicer.dicomDatabase.fileValue(f,tag)
         if value == None or value == "":
           return True
     return False
