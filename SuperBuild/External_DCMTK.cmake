@@ -33,11 +33,9 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
-  # DCMTK-3.6.1_20150924 + patch for MacOSX/Windows build error
-  #  + patch for DcmSegmentation
-  #  + patches related to incorrect frame pixel data packing
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(${proj}_GIT_TAG "eb9c842fee8e2cc20fb1f3092eaad8b99919a998")
+  # DCMTK-3.6.1_20160216
+  set(${proj}_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk)
+  set(${proj}_GIT_TAG "DCMTK-3.6.1_20160216")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
