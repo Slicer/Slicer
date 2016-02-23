@@ -354,45 +354,58 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAboutToBeRemoved(vtkObject* scene
       }
 
     // Check if node has children and ask if branch is to be removed.
-    // If node contains a virtual branch, then it is assumed to be taken care of by the owner plugin
+    // Only keep non-virtual nodes in the list of nodes to remove:
+    // If node is the parent of a virtual branch, then it is assumed to be taken care of by the owner plugin
     // (a virtual branch is a branch where the children nodes do not correspond to actual MRML data nodes,
     // but to implicit items contained by the parent MRML node, e.g. in case of Markups or Segmentations)
-    if (!subjectHierarchyNode->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()))
+    std::vector<vtkMRMLHierarchyNode*> childNodes;
+    subjectHierarchyNode->GetAllChildrenNodes(childNodes);
+    std::vector<vtkMRMLHierarchyNode*> nonVirtualChildNodes;
+    for (std::vector<vtkMRMLHierarchyNode*>::iterator childIt = childNodes.begin();
+      childIt != childNodes.end(); ++childIt)
       {
-      std::vector<vtkMRMLHierarchyNode*> childrenNodes;
-      subjectHierarchyNode->GetAllChildrenNodes(childrenNodes);
-      if (!childrenNodes.empty() && !d->DeleteBranchInProgress)
+      vtkMRMLHierarchyNode* child = (*childIt);
+      // If parent is virtual branch then node is virtual node
+      if (!child->GetParentNode()->GetAttribute(
+          vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str() ) )
         {
-        QMessageBox::StandardButton answer = QMessageBox::Yes;
-        if (!d->AutoDeleteSubjectHierarchyChildren)
+        nonVirtualChildNodes.push_back(child);
+        }
+      }
+
+    // If auto deletion is on, or otherwise the user answers positively to the question whether to
+    // delete whole branch, then delete all non-virtual child nodes form the branch
+    if (!nonVirtualChildNodes.empty() && !d->DeleteBranchInProgress)
+      {
+      QMessageBox::StandardButton answer = QMessageBox::Yes;
+      if (!d->AutoDeleteSubjectHierarchyChildren)
+        {
+        answer =
+          QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
+          tr("The deleted subject hierarchy node has children. "
+              "Do you want to remove those too?\n\n"
+              "If you choose yes, the whole branch will be deleted, including all children.\n"
+              "If you choose Yes to All, this question never appears again, and all subject hierarchy children are automatically deleted. This can be later changed in Application Settings."),
+          QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
+          QMessageBox::No);
+        }
+      // Delete branch if the user chose yes
+      if (answer == QMessageBox::Yes || answer == QMessageBox::YesToAll)
+        {
+        d->DeleteBranchInProgress = true;
+        for (std::vector<vtkMRMLHierarchyNode*>::iterator childIt = nonVirtualChildNodes.begin();
+          childIt != nonVirtualChildNodes.end(); ++childIt)
           {
-          answer =
-            QMessageBox::question(NULL, tr("Delete subject hierarchy branch?"),
-            tr("The deleted subject hierarchy node has children. "
-               "Do you want to remove those too?\n\n"
-               "If you choose yes, the whole branch will be deleted, including all children.\n"
-               "If you choose Yes to All, this question never appears again, and all subject hierarchy children are automatically deleted. This can be later changed in Application Settings."),
-            QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll,
-            QMessageBox::No);
+          scene->RemoveNode(*childIt);
           }
-        // Delete branch if the user chose yes
-        if (answer == QMessageBox::Yes || answer == QMessageBox::YesToAll)
-          {
-          d->DeleteBranchInProgress = true;
-          for (std::vector<vtkMRMLHierarchyNode*>::iterator childrenIt = childrenNodes.begin();
-            childrenIt != childrenNodes.end(); ++childrenIt)
-            {
-            scene->RemoveNode(*childrenIt);
-            }
-          d->DeleteBranchInProgress = false;
-          }
-        // Save auto-creation flag in settings
-        if (answer == QMessageBox::YesToAll)
-          {
-          d->AutoDeleteSubjectHierarchyChildren = true;
-          QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
-          settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
-          }
+        d->DeleteBranchInProgress = false;
+        }
+      // Save auto-creation flag in settings
+      if (answer == QMessageBox::YesToAll)
+        {
+        d->AutoDeleteSubjectHierarchyChildren = true;
+        QSettings *settings = qSlicerApplication::application()->settingsDialog()->settings();
+        settings->setValue("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren", "true");
         }
       }
     }
