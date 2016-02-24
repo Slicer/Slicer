@@ -175,11 +175,17 @@ public:
   /// Add a markup to the end of the list. Return index
   /// of new markup, -1 on failure.
   int AddMarkup(Markup markup);
-  /// Create a new markup with n points, init points to (0,0,0). Return index
-  /// of new markup, -1 on failure.
-  int AddMarkupWithNPoints(int n, std::string label = std::string());
-  /// Create a new markup and add a point to it, returning the markup index
+  /// Create a new markup with n points.
+  /// If point is specified then all markup positions will be initialized to that position,
+  /// otherwise markup positions are initialized to (0,0,0).
+  /// Return index of new markup, -1 on failure.
+  int AddMarkupWithNPoints(int n, std::string label = std::string(), vtkVector3d* point = NULL);
+  /// Create a new markup with one point.
+  /// Return index of new markup, -1 on failure.
   int AddPointToNewMarkup(vtkVector3d point, std::string label = std::string());
+  /// Create a new markup with one point, defined in the world coordinate system.
+  /// Return index of new markup, -1 on failure.
+  int AddPointWorldToNewMarkup(vtkVector3d point, std::string label = std::string());
   /// Add a point to the nth markup, returning the point index
   int AddPointToNthMarkup(vtkVector3d point, int n);
 
@@ -342,6 +348,12 @@ public:
   /// Called after an already initialised markup has been added to the
   /// scene. Returns false if n out of bounds, true on success.
   bool ResetNthMarkupID(int n);
+
+  /// Utility function to convert a point position in markup node's coordinate system to world coordinate system
+  void TransformPointToWorld(vtkVector3d inMarkup, vtkVector3d &outWorld);
+
+  /// Utility function to convert a point position in world coordinate system to markup node's coordinate system
+  void TransformPointFromWorld(vtkVector3d inWorld, vtkVector3d &outMarkup);
 
 protected:
   vtkMRMLMarkupsNode();

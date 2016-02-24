@@ -496,9 +496,7 @@ int vtkMRMLMarkupsNode::AddMarkup(Markup markup)
 }
 
 //-----------------------------------------------------------
-
-//-----------------------------------------------------------
-int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label)
+int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label /*=std::string()*/, vtkVector3d* point /*=NULL*/)
 {
   int markupIndex = -1;
   if (n < 0)
@@ -509,45 +507,29 @@ int vtkMRMLMarkupsNode::AddMarkupWithNPoints(int n, std::string label)
   Markup markup;
   markup.Label = label;
   this->InitMarkup(&markup);
-  for (int i = 0; i < n; i++)
+  if (point != NULL)
     {
-    vtkVector3d p;
-    p.SetX(0.0);
-    p.SetY(0.0);
-    p.SetZ(0.0);
-    markup.points.push_back(p);
+    markup.points = std::vector<vtkVector3d>(n,*point);
     }
-  this->Markups.push_back(markup);
-  this->MaximumNumberOfMarkups++;
-
-  markupIndex = this->GetNumberOfMarkups() - 1;
-
-  this->Modified();
-  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
-
-  return markupIndex;
+  else
+    {
+    markup.points = std::vector<vtkVector3d>(n,vtkVector3d(0,0,0));
+    }
+  return this->AddMarkup(markup);
 }
 
 //-----------------------------------------------------------
+int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point, std::string label /*=std::string()*/)
+{
+  return this->AddMarkupWithNPoints(1, label, &point);
+}
 
 //-----------------------------------------------------------
-int vtkMRMLMarkupsNode::AddPointToNewMarkup(vtkVector3d point, std::string label)
+int vtkMRMLMarkupsNode::AddPointWorldToNewMarkup(vtkVector3d pointWorld, std::string label /*=std::string()*/)
 {
-  int markupIndex = 0;
-
-  Markup newmarkup;
-  newmarkup.Label = label;
-  this->InitMarkup(&newmarkup);
-  newmarkup.points.push_back(point);
-  this->Markups.push_back(newmarkup);
-  this->MaximumNumberOfMarkups++;
-
-  markupIndex = this->Markups.size() - 1;
-
-  this->Modified();
-  this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::MarkupAddedEvent, (void*)&markupIndex);
-
-  return markupIndex;
+  vtkVector3d point;
+  this->TransformPointFromWorld(pointWorld, point);
+  return this->AddMarkupWithNPoints(1, label, &point);
 }
 
 //-----------------------------------------------------------
@@ -597,42 +579,12 @@ void vtkMRMLMarkupsNode::GetMarkupPointLPS(int markupIndex, int pointIndex, doub
 //-----------------------------------------------------------
 int vtkMRMLMarkupsNode::GetMarkupPointWorld(int markupIndex, int pointIndex, double worldxyz[4])
 {
-  vtkVector3d vectorPoint = this->GetMarkupPointVector(markupIndex, pointIndex);
-  double xyz[3];
-  xyz[0] = vectorPoint.GetX();
-  xyz[1] = vectorPoint.GetY();
-  xyz[2] = vectorPoint.GetZ();
-  // get the markup's transform node
-  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkGeneralTransform *transformToWorld = vtkGeneralTransform::New();
-  transformToWorld->Identity();
-  if (tnode != 0 && !tnode->IsTransformToWorldLinear())
-    {
-    tnode->GetTransformToWorld(transformToWorld);
-    }
-  else if (tnode != NULL && tnode->IsTransformToWorldLinear())
-    {
-    vtkNew<vtkMatrix4x4> matrixTransformToWorld;
-    matrixTransformToWorld->Identity();
-    tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
-    transformToWorld->Concatenate(matrixTransformToWorld.GetPointer());
-  }
-
-  // convert by the parent transform
-  double  xyzw[4];
-  xyzw[0] = xyz[0];
-  xyzw[1] = xyz[1];
-  xyzw[2] = xyz[2];
-  xyzw[3] = 1.0;
-
-  double *p = transformToWorld->TransformDoublePoint(xyzw);
-  worldxyz[0]=p[0];
-  worldxyz[1]=p[1];
-  worldxyz[2]=p[2];
-  worldxyz[3]=1;
-
-  transformToWorld->Delete();
-
+  vtkVector3d world;
+  this->TransformPointToWorld(this->GetMarkupPointVector(markupIndex, pointIndex), world);
+  worldxyz[0] = world[0];
+  worldxyz[1] = world[1];
+  worldxyz[2] = world[2];
+  worldxyz[3] = 1;
   return 1;
 }
 
@@ -805,28 +757,9 @@ void vtkMRMLMarkupsNode::SetMarkupPointWorld(const int markupIndex, const int po
     {
     return;
     }
-
-  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  vtkGeneralTransform *transformFromWorld = vtkGeneralTransform::New();
-  transformFromWorld->Identity();
-  if (tnode != 0 && !tnode->IsTransformToWorldLinear())
-    {
-    tnode->GetTransformFromWorld(transformFromWorld);
-    }
-  else if (tnode != NULL && tnode->IsTransformToWorldLinear())
-    {
-    vtkNew<vtkMatrix4x4> matrixTransformToWorld;
-    tnode->GetMatrixTransformToWorld(matrixTransformToWorld.GetPointer());
-    matrixTransformToWorld->Invert();
-    transformFromWorld->Concatenate(matrixTransformToWorld.GetPointer());
-  }
-
-  double *worldxyz = transformFromWorld->TransformDoublePoint(x,y,z);
-
-  tnode = NULL;
-
-  this->SetMarkupPoint(markupIndex, pointIndex, worldxyz[0], worldxyz[1], worldxyz[2]);
-  transformFromWorld->Delete();
+  vtkVector3d markupxyz;
+  TransformPointFromWorld(vtkVector3d(x,y,z), markupxyz);
+  this->SetMarkupPoint(markupIndex, pointIndex, markupxyz[0], markupxyz[1], markupxyz[2]);
 }
 
 //-----------------------------------------------------------
@@ -1432,4 +1365,44 @@ std::string vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat()
     newFormatString.replace(replacePos, 2, name);
     }
   return newFormatString;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::TransformPointToWorld(vtkVector3d inMarkup, vtkVector3d &outWorld)
+{
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode == NULL)
+    {
+    // not transformed
+    outWorld = inMarkup;
+    return;
+    }
+
+  // Get transform
+  vtkNew<vtkGeneralTransform> transformToWorld;
+  tnode->GetTransformToWorld(transformToWorld.GetPointer());
+
+  // Convert coordinates
+  double* world = transformToWorld->TransformDoublePoint(inMarkup.GetData());
+  outWorld = vtkVector3d(world);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::TransformPointFromWorld(vtkVector3d inWorld, vtkVector3d &outMarkup)
+{
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
+  if (tnode == NULL)
+    {
+    // not transformed
+    outMarkup = inWorld;
+    return;
+    }
+
+  // Get transform
+  vtkNew<vtkGeneralTransform> transformFromWorld;
+  tnode->GetTransformFromWorld(transformFromWorld.GetPointer());
+
+  // Convert coordinates
+  double* markup = transformFromWorld->TransformDoublePoint(inWorld.GetData());
+  outMarkup = vtkVector3d(markup);
 }

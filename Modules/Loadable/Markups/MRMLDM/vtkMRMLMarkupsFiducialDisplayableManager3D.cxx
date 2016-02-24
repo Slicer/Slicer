@@ -721,7 +721,7 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::OnClickInRenderWindow(double x,
     }
 
   // add a fiducial: this will trigger an update of the widgets
-  int fiducialIndex = activeFiducialNode->AddMarkupWithNPoints(1);
+  int fiducialIndex = activeFiducialNode->AddPointWorldToNewMarkup(vtkVector3d(worldCoordinates1));
   if (fiducialIndex == -1)
     {
     vtkErrorMacro("OnClickInRenderWindow: unable to add a fiducial to active fiducial list!");
@@ -731,8 +731,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager3D::OnClickInRenderWindow(double x,
       }
     return;
     }
-  // set values on it
-  activeFiducialNode->SetNthFiducialWorldCoordinates(fiducialIndex,worldCoordinates1);
   // std::cout << "OnClickInRenderWindow: Setting " << fiducialIndex << "th fiducial label from " << activeFiducialNode->GetNthFiducialLabel(fiducialIndex);
 
   // reset updating state
