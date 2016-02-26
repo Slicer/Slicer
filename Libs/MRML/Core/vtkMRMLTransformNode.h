@@ -119,28 +119,66 @@ public:
   int  IsTransformToNodeLinear(vtkMRMLTransformNode* node);
 
   ///
-  /// Get concatenated transforms to the top
+  /// Get concatenated transforms to world.
+  /// \sa GetTransformBetweenNodes
   void GetTransformToWorld(vtkGeneralTransform* transformToWorld);
 
   ///
-  /// Get concatenated transforms from the top
+  /// Get concatenated transforms from world.
+  /// \sa GetTransformBetweenNodes
   void GetTransformFromWorld(vtkGeneralTransform* transformToWorld);
 
   ///
-  /// Get concatenated transforms between nodes
+  /// Get concatenated transforms to the specified node.
+  /// \sa GetTransformBetweenNodes
   void GetTransformToNode(vtkMRMLTransformNode* node,
                           vtkGeneralTransform* transformToNode);
 
   ///
-  /// Get concatenated transforms to the top parent.
+  /// Get concatenated transforms from the specified node.
+  /// \sa GetTransformBetweenNodes
+  void GetTransformFromNode(vtkMRMLTransformNode* node,
+                          vtkGeneralTransform* transformFromNode);
+
+  ///
+  /// Get concatenated transforms from source to target node
+  /// Source and target nodes are allowed to be NULL, which means that transform is the world transform.
+  static void GetTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
+    vtkMRMLTransformNode* targetNode, vtkGeneralTransform* transformSourceToTarget);
+
+  ///
+  /// Get concatenated transforms to world.
   /// Returns 0 if the transform is not linear (cannot be described by a matrix).
+  /// \sa GetMatrixTransformBetweenNodes
   virtual int GetMatrixTransformToWorld(vtkMatrix4x4* transformToWorld);
 
   ///
-  /// Get concatenated transforms between nodes
+  /// Get concatenated transforms from world.
   /// Returns 0 if the transform is not linear (cannot be described by a matrix).
+  /// \sa GetMatrixTransformBetweenNodes
+  virtual int GetMatrixTransformFromWorld(vtkMatrix4x4* transformFromWorld);
+
+  ///
+  /// Get concatenated transforms to the specified node.
+  /// Returns 0 if the transform is not linear (cannot be described by a matrix).
+  /// \sa GetMatrixTransformBetweenNodes
   virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node,
                                        vtkMatrix4x4* transformToNode);
+
+  ///
+  /// Get concatenated transforms from the specified node.
+  /// Returns 0 if the transform is not linear (cannot be described by a matrix).
+  /// \sa GetMatrixTransformBetweenNodes
+  virtual int GetMatrixTransformFromNode(vtkMRMLTransformNode* node,
+                                       vtkMatrix4x4* transformFromNode);
+
+  ///
+  /// Get concatenated transforms from source to target node
+  /// Source and target nodes are allowed to be NULL, which means that transform is the world transform.
+  /// Returns 0 if the transform is not linear (cannot be described by a matrix).
+  static int GetMatrixTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
+    vtkMRMLTransformNode* targetNode, vtkMatrix4x4* transformSourceToTarget);
+
   ///
   /// Returns 1 if this node is one of the node's descendents
   /// NULL designates the world transform node and so always returns with 1.
@@ -167,6 +205,7 @@ public:
   /// To overwrite a non-linear or composite transform first remove
   /// the old transform by calling SetAndObserveTransformToParent(NULL)
   /// and then set the matrix.
+  /// \sa SetMatrixTransformFromParent
   virtual int SetMatrixTransformToParent(vtkMatrix4x4 *matrix);
 
   ///
