@@ -32,7 +32,9 @@
 #include <vtkActor.h>
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkAxesActor.h>
+#include <vtkBoundingBox.h>
 #include <vtkCamera.h>
+#include <vtkCaptionActor2D.h>
 #include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
@@ -44,6 +46,8 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtksys/SystemTools.hxx>
 
@@ -54,12 +58,43 @@ static const int RENDERER_LAYER = 1; // layer ID where the orientation marker wi
 static const char* AXES_LABELS[] = {"L", "R", "P", "A", "I", "S"};
 static const char ORIENTATION_MARKERS_DIR[] = "OrientationMarkers";
 static const char HUMAN_MODEL_VTP_FILENAME[] = "Human.vtp";
+static const int AXIS_LABEL_BASE_FONT_SIZE = 24;
+
+//---------------------------------------------------------------------------
+class vtkCenteredAxesActor : public vtkAxesActor
+{
+public:
+  static vtkCenteredAxesActor* New();
+  vtkTypeMacro(vtkCenteredAxesActor, vtkAxesActor);
+
+  // Description:
+  // Get the actual bounds for this Actor.
+  // vtkAxesActor's implementation keeps the origin in the middle of the bounds
+  // which wastes a lot of space.
+  double* GetBounds()
+    {
+    vtkBoundingBox totalBoundingBox(this->XAxisShaft->GetBounds());
+    totalBoundingBox.AddBounds(this->YAxisShaft->GetBounds());
+    totalBoundingBox.AddBounds(this->ZAxisShaft->GetBounds());
+    totalBoundingBox.AddBounds(this->XAxisTip->GetBounds());
+    totalBoundingBox.AddBounds(this->YAxisTip->GetBounds());
+    totalBoundingBox.AddBounds(this->ZAxisTip->GetBounds());
+    totalBoundingBox.GetBounds(this->Bounds);
+    return this->Bounds;
+    }
+
+protected:
+  vtkCenteredAxesActor() {};
+  ~vtkCenteredAxesActor() {};
+};
+
+vtkStandardNewMacro(vtkCenteredAxesActor);
 
 //---------------------------------------------------------------------------
 class vtkRendererUpdateObserver : public vtkCommand
 {
 public:
-  static vtkRendererUpdateObserver *New()
+  static vtkRendererUpdateObserver* New()
     {
     return new vtkRendererUpdateObserver;
     }
@@ -105,7 +140,7 @@ public:
 
   vtkSmartPointer<vtkAnnotatedCubeActor> CubeActor;
   vtkSmartPointer<vtkActor> HumanActor;
-  vtkSmartPointer<vtkAxesActor> AxesActor;
+  vtkSmartPointer<vtkCenteredAxesActor> AxesActor;
   vtkProp3D* DisplayedActor;
 
   // Keep a reference to it to allow modifying polydata input
@@ -115,6 +150,8 @@ public:
   vtkSmartPointer<vtkRendererUpdateObserver> RendererUpdateObserver;
   int RendererUpdateObservationId;
   vtkWeakPointer<vtkRenderer> ObservedRenderer;
+
+  double AxesActorFontViewportSize;
 
   vtkMRMLOrientationMarkerDisplayableManager* External;
 };
@@ -133,6 +170,7 @@ vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLOrie
   this->MarkerRenderer = vtkSmartPointer<vtkRenderer>::New();
   this->HumanPolyData = vtkSmartPointer<vtkPolyData>::New();
   this->HumanPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->AxesActorFontViewportSize = 0.0;
   // Orientation marker actors are not created here to converve resources
   // (especially the human marker may be expensive). These actors are created
   // when they are first needed.
@@ -185,6 +223,11 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::SetupMarkerRendere
     }
   this->MarkerRenderer->SetLayer(RENDERER_LAYER);
   renderWindow->AddRenderer(this->MarkerRenderer);
+  vtkCamera* camera = this->MarkerRenderer->GetActiveCamera();
+  if (camera)
+    {
+    camera->ParallelProjectionOn();
+    }
 
   // In 3D viewers we need to follow the renderer and update the orientation marker accordingly
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
@@ -258,12 +301,27 @@ vtkProp3D* vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetAxesActor
 {
   if (!this->AxesActor)
     {
-    this->AxesActor = vtkSmartPointer<vtkAxesActor>::New();
+    this->AxesActor = vtkSmartPointer<vtkCenteredAxesActor>::New();
     this->AxesActor->SetXAxisLabelText(AXES_LABELS[1]);
     this->AxesActor->SetYAxisLabelText(AXES_LABELS[3]);
     this->AxesActor->SetZAxisLabelText(AXES_LABELS[5]);
     this->AxesActor->PickableOff();
     this->AxesActor->DragableOff();
+
+    // Set up axes actor label size to scale with view size
+    vtkCaptionActor2D* captionActors[3] =
+      {
+      this->AxesActor->GetXAxisCaptionActor2D(),
+      this->AxesActor->GetYAxisCaptionActor2D(),
+      this->AxesActor->GetZAxisCaptionActor2D()
+      };
+    for (int i=0; i<3; i++)
+      {
+      captionActors[i]->GetTextActor()->SetTextScaleModeToViewport();
+      captionActors[i]->GetTextActor()->SetNonLinearFontScale( 0.9, 24 );
+      captionActors[i]->GetTextActor()->GetTextProperty()->SetFontSize( 36 );
+      }
+
     }
   return this->AxesActor;
 }
@@ -460,16 +518,32 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
   double maxY = 1;
   this->MarkerRenderer->NormalizedDisplayToDisplay(maxX, maxY);
   int rendererSizeInPixels[2] = {maxX-minX, maxY-minY};
+
   if (rendererSizeInPixels[0]>0 && rendererSizeInPixels[1]>0)
     {
     // Compute normalized size for a square-shaped viewport. Square size is defined a percentage of renderer height.
     double viewPortSizeInPixels = double(rendererSizeInPixels[1])*(0.01*sizePercent);
+
+    if (viewNode->GetOrientationMarkerType()==vtkMRMLAbstractViewNode::OrientationMarkerTypeAxes && this->AxesActor)
+      {
+      // Force update of axes actor label size if view size is changed
+      // This is necessary because vtkTextActor::ComputeScaledFont() is only called if
+      // TextProperty is modified - not updated if the viewport size is updated,
+      // but we want to update the font size if the viewport size is changed.
+      if (this->AxesActorFontViewportSize != viewPortSizeInPixels)
+        {
+        this->AxesActor->GetXAxisCaptionActor2D()->GetTextActor()->GetTextProperty()->Modified();
+        this->AxesActor->GetYAxisCaptionActor2D()->GetTextActor()->GetTextProperty()->Modified();
+        this->AxesActor->GetZAxisCaptionActor2D()->GetTextActor()->GetTextProperty()->Modified();
+        this->AxesActorFontViewportSize = viewPortSizeInPixels;
+        }
+      }
+
     double newViewport[4] =
       {
       1.0-viewPortSizeInPixels/double(rendererSizeInPixels[0]), 0.0,
       1.0, viewPortSizeInPixels/double(rendererSizeInPixels[1])
       };
-
     // Clip viewport to valid range
     if (newViewport[0]<0.0) newViewport[0] = 0.0;
     if (newViewport[1]<0.0) newViewport[1] = 0.0;
