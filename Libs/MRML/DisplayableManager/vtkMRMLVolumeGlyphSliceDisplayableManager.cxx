@@ -79,6 +79,7 @@ public:
   bool AddVolume(vtkMRMLDisplayableNode* volume);
   // Remove the volume pointed by the iterator, return an iterator pointing to
   // the following
+  void RemoveVolume(vtkMRMLDisplayableNode* volume);
   std::vector<vtkMRMLDisplayableNode*>::iterator RemoveVolume(
     std::vector<vtkMRMLDisplayableNode*>::iterator volumeIt);
   void UpdateVolume(vtkMRMLDisplayableNode* volume);
@@ -313,6 +314,18 @@ std::vector<vtkMRMLDisplayableNode*>::iterator vtkMRMLVolumeGlyphSliceDisplayabl
   // vector::erase() returns a random access iterator pointing to the new location
   // of the element that followed the last element erased by the function call.
   return this->VolumeNodes.erase(volumeIt);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
+::RemoveVolume(vtkMRMLDisplayableNode* volume)
+{
+  // Sanity check: make sure the volume exists in the list
+  std::vector<vtkMRMLDisplayableNode*>::iterator volumeIt = std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume);
+  if (volumeIt != this->VolumeNodes.end())
+    {
+    this->RemoveVolume(volumeIt);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -564,6 +577,17 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
 ::UpdateFromMRMLScene()
 {
   this->Internal->UpdateSliceNode();
+}
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeGlyphSliceDisplayableManager
+::OnMRMLSceneStartClose()
+{
+  std::vector<vtkMRMLDisplayableNode*> volumes = this->Internal->VolumeNodes;
+  for (std::vector<vtkMRMLDisplayableNode*>::iterator it = volumes.begin();
+       it != volumes.end(); it++)
+    {
+    this->Internal->RemoveVolume(*it);
+    }
 }
 
 //---------------------------------------------------------------------------

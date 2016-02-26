@@ -172,19 +172,24 @@ void qSlicerDTISliceDisplayWidget::setMRMLDTISliceDisplayNode(
 {
   Q_D(qSlicerDTISliceDisplayWidget);
 
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* oldDisplayNode =
-    this->displayNode();
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* oldDisplayPropertiesNode =
-    this->displayPropertiesNode();
-
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* oldDisplayNode = 0;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* oldDisplayPropertiesNode = 0;
+  if (displayNode)
+    {
+    oldDisplayNode = this->displayNode();
+    oldDisplayPropertiesNode = this->displayPropertiesNode();
+    }
   d->DisplayNode = displayNode;
 
-  qvtkReconnect(oldDisplayNode, this->displayNode(),vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(oldDisplayPropertiesNode, this->displayPropertiesNode(),
-                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  if (displayNode)
+    {
+    qvtkReconnect(oldDisplayNode, this->displayNode(),vtkCommand::ModifiedEvent,
+                  this, SLOT(updateWidgetFromMRML()));
+    qvtkReconnect(oldDisplayPropertiesNode, this->displayPropertiesNode(),
+                  vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
-  this->updateWidgetFromMRML();
+    this->updateWidgetFromMRML();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -265,7 +270,6 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
     d->GlyphScalarColorTableComboBox->setEnabled(true);
   }
 
-
   if (d->DisplayNode && (d->DisplayNode->GetAutoScalarRange()))
   {
     double scalarRange[2];
@@ -273,16 +277,13 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
 
     this->setScalarRange(scalarRange[0], scalarRange[1]);
   }
-
-
-
 }
 
 // --------------------------------------------------------------------------
 void qSlicerDTISliceDisplayWidget::setColorMap(vtkMRMLNode* colorNode)
 {
   Q_D(qSlicerDTISliceDisplayWidget);
-  if (!d->DisplayNode)
+  if (!d->DisplayNode || !colorNode)
     {
     return;
     }

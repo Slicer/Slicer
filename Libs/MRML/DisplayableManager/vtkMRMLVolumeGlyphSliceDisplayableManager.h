@@ -33,7 +33,6 @@
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManager
   : public vtkMRMLAbstractSliceViewDisplayableManager
 {
-
 public:
   static vtkMRMLVolumeGlyphSliceDisplayableManager* New();
   vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
@@ -48,6 +47,7 @@ protected:
   virtual void UnobserveMRMLScene();
   virtual void UpdateFromMRMLScene();
   virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
+  virtual void OnMRMLSceneStartClose();
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
