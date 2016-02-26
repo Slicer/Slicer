@@ -35,7 +35,6 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkStringArray.h>
-#include <vtkGeneralTransform.h>
 
 // STD includes
 #include <sstream>
@@ -1365,44 +1364,4 @@ std::string vtkMRMLMarkupsNode::ReplaceListNameInMarkupLabelFormat()
     newFormatString.replace(replacePos, 2, name);
     }
   return newFormatString;
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::TransformPointToWorld(vtkVector3d inMarkup, vtkVector3d &outWorld)
-{
-  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode == NULL)
-    {
-    // not transformed
-    outWorld = inMarkup;
-    return;
-    }
-
-  // Get transform
-  vtkNew<vtkGeneralTransform> transformToWorld;
-  tnode->GetTransformToWorld(transformToWorld.GetPointer());
-
-  // Convert coordinates
-  double* world = transformToWorld->TransformDoublePoint(inMarkup.GetData());
-  outWorld = vtkVector3d(world);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::TransformPointFromWorld(vtkVector3d inWorld, vtkVector3d &outMarkup)
-{
-  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (tnode == NULL)
-    {
-    // not transformed
-    outMarkup = inWorld;
-    return;
-    }
-
-  // Get transform
-  vtkNew<vtkGeneralTransform> transformFromWorld;
-  tnode->GetTransformFromWorld(transformFromWorld.GetPointer());
-
-  // Convert coordinates
-  double* markup = transformFromWorld->TransformDoublePoint(inWorld.GetData());
-  outMarkup = vtkVector3d(markup);
 }

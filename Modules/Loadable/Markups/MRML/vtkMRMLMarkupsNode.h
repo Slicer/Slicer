@@ -349,12 +349,6 @@ public:
   /// scene. Returns false if n out of bounds, true on success.
   bool ResetNthMarkupID(int n);
 
-  /// Utility function to convert a point position in markup node's coordinate system to world coordinate system
-  void TransformPointToWorld(vtkVector3d inMarkup, vtkVector3d &outWorld);
-
-  /// Utility function to convert a point position in world coordinate system to markup node's coordinate system
-  void TransformPointFromWorld(vtkVector3d inWorld, vtkVector3d &outMarkup);
-
 protected:
   vtkMRMLMarkupsNode();
   ~vtkMRMLMarkupsNode();

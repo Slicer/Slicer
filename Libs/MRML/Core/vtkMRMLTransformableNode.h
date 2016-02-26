@@ -17,6 +17,7 @@
 
 // MRML includes
 #include "vtkMRMLStorableNode.h"
+#include "vtkVector.h"
 class vtkMRMLTransformNode;
 
 // VTK includes
@@ -81,13 +82,21 @@ public:
   /// \sa SetAndObserveTransformNodeID, ApplyTransformMatrix, CanApplyNonLinearTransforms
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
-  /// Apply the observed transform to the input point.
+  /// Utility function to convert a point position in the node's coordinate system to world coordinate system.
   /// \sa TransformPointFromWorld, SetAndObserveTransformNodeID
-  virtual void TransformPointToWorld(const double in[4], double out[4]);
+  virtual void TransformPointToWorld(const double inLocal[3], double outWorld[3]);
 
-  /// Apply the invert of the observed transform to the input point.
+  /// Utility function to convert a point position in the node's coordinate system to world coordinate system.
   /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
-  virtual void TransformPointFromWorld(const double in[4], double out[4]);
+  virtual void TransformPointToWorld(const vtkVector3d &inLocal, vtkVector3d &outWorld);
+
+  /// Utility function to convert a point position in world coordinate system to markup node's coordinate system
+  /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
+  virtual void TransformPointFromWorld(const double inWorld[3], double outLocal[3]);
+
+  /// Utility function to convert a point position in world coordinate system to markup node's coordinate system
+  /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
+  virtual void TransformPointFromWorld(const vtkVector3d &inWorld, vtkVector3d &outLocal);
 
   /// Get referenced transform node id
   const char *GetTransformNodeID();

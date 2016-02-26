@@ -68,10 +68,10 @@ int TestSetAndObserveTransformNodeID()
 
   transformable->SetAndObserveTransformNodeID(transform->GetID());
   CHECK_POINTER(transformable->GetParentTransformNode(), transform.GetPointer());
-  double point[4] = {0., 0., 0., 1.};
-  double res[4] = {-1., -1., -1., -1.};
+  double point[3] = {0., 0., 0.};
+  double res[3] = {-1., -1., -1.};
   transformable->TransformPointToWorld(point, res);
-  if (res[0] != 1. || res[1] != 0. || res[2] != 0. || res[3] != 1. )
+  if (res[0] != 1. || res[1] != 0. || res[2] != 0.)
     {
     std::cout << __LINE__ << "TransformPointToWorld failed"
               << std::endl;
