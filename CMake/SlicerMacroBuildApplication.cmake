@@ -379,6 +379,18 @@ macro(slicerMacroBuildApplication)
   endif(QT_MAC_USE_COCOA)
 
   # --------------------------------------------------------------------------
+  # Include dirs
+  # --------------------------------------------------------------------------
+
+  set(include_dirs
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${SLICERAPP_INCLUDE_DIRECTORIES}
+    )
+
+  include_directories(${include_dirs})
+
+  # --------------------------------------------------------------------------
   # Build the executable
   # --------------------------------------------------------------------------
   set(Slicer_HAS_CONSOLE_IO_SUPPORT TRUE)
