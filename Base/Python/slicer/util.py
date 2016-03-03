@@ -121,10 +121,18 @@ def showStatusMessage(message, duration = 0):
   if mw:
     mw.statusBar().showMessage(message, duration)
 
-def findChildren(widget=None,name="",text="",title="",className=""):
-  """ return a list of child widgets that match the passed name """
-  # TODO: figure out why the native QWidget.findChildren method
-  # does not seem to work from PythonQt
+def findChildren(widget=None, name="", text="", title="", className=""):
+  """ Return a list of child widgets that meet all the given criteria.
+  If no criteria are provided, the function will return all widgets descendants.
+  If no widget is provided, slicer.util.mainWindow() is used.
+  :param widget: parent widget where the widgets will be searched
+  :param name: name attribute of the widget
+  :param text: text attribute of the widget
+  :param title: title attribute of the widget
+  :param className: className() attribute of the widget
+  :return: list with all the widgets that meet all the given criteria.
+  """
+  # TODO: figure out why the native QWidget.findChildren method does not seem to work from PythonQt
   import slicer, fnmatch
   if not widget:
     widget = mainWindow()
@@ -132,7 +140,12 @@ def findChildren(widget=None,name="",text="",title="",className=""):
     return []
   children = []
   parents = [widget]
-  while parents != []:
+  kwargs = {'name': name, 'text': text, 'title': title, 'className': className}
+  expected_matches = []
+  for kwarg in kwargs.iterkeys():
+    if kwargs[kwarg]:
+      expected_matches.append(kwarg)
+  while parents:
     p = parents.pop()
     # sometimes, p is null, f.e. when using --python-script or --python-code
     if not p:
@@ -140,29 +153,12 @@ def findChildren(widget=None,name="",text="",title="",className=""):
     if not hasattr(p,'children'):
       continue
     parents += p.children()
-    if name and fnmatch.fnmatchcase(p.name, name):
+    matched_filter_criteria = 0
+    for attribute in expected_matches:
+      if hasattr(p, attribute) and fnmatch.fnmatchcase(getattr(p, attribute), kwargs[attribute]):
+        matched_filter_criteria = matched_filter_criteria + 1
+    if matched_filter_criteria == len(expected_matches):
       children.append(p)
-    elif text:
-      try:
-        p.text
-        if fnmatch.fnmatchcase(p.text, text):
-          children.append(p)
-      except (AttributeError, TypeError):
-        pass
-    elif title:
-      try:
-        p.title
-        if fnmatch.fnmatchcase(p.title, title):
-          children.append(p)
-      except AttributeError:
-        pass
-    elif className:
-      try:
-        p.className()
-        if fnmatch.fnmatchcase(p.className(), className):
-          children.append(p)
-      except AttributeError:
-        pass
   return children
 
 #
