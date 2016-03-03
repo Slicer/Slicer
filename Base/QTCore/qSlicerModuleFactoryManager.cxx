@@ -22,6 +22,8 @@
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
+#include "vtkSlicerConfigure.h" // XXX For modulePaths() function.
+
 // STD includes
 #include <algorithm>
 
@@ -298,6 +300,27 @@ vtkSlicerApplicationLogic* qSlicerModuleFactoryManager::appLogic()const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->AppLogic;
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerModuleFactoryManager::modulePaths(const QString& basePath)
+{
+  // XXX Each factory should be updated with virtual methods like "hasModulePath(basePath)"
+  //     and "modulePath(basePath)".
+
+  QStringList paths;
+  foreach(const QString& subPath, QStringList()
+          << Slicer_QTSCRIPTEDMODULES_LIB_DIR
+          << Slicer_CLIMODULES_BIN_DIR
+          << Slicer_QTLOADABLEMODULES_LIB_DIR)
+    {
+    QString candidatePath = QDir(basePath).filePath(subPath);
+    if (QDir(candidatePath).exists())
+      {
+      paths << candidatePath;
+      }
+    }
+  return paths;
 }
 
 //-----------------------------------------------------------------------------

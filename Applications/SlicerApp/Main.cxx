@@ -158,7 +158,20 @@ int SlicerAppMain(int argc, char* argv[])
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
-  moduleFactoryManager->addSearchPaths(app.commandOptions()->additonalModulePaths());
+  QStringList additionalModulePaths;
+  foreach(const QString& extensionOrModulePath, app.commandOptions()->additonalModulePaths())
+    {
+    QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
+    if (!modulePaths.empty())
+      {
+      additionalModulePaths << modulePaths;
+      }
+    else
+      {
+      additionalModulePaths << extensionOrModulePath;
+      }
+    }
+  moduleFactoryManager->addSearchPaths(additionalModulePaths);
   qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
 
   // Register and instantiate modules

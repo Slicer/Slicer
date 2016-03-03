@@ -81,7 +81,7 @@ public:
   Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
 
   /// Get commandOptions
-  Q_INVOKABLE qSlicerCommandOptions* commandOptions();
+  Q_INVOKABLE qSlicerCommandOptions* commandOptions()const;
 
   /// Get IO Manager
   Q_INVOKABLE qSlicerIOManager* ioManager();

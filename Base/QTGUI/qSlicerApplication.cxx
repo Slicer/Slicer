@@ -368,7 +368,7 @@ ctkErrorLogModel* qSlicerApplication::errorLogModel()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCommandOptions* qSlicerApplication::commandOptions()
+qSlicerCommandOptions* qSlicerApplication::commandOptions()const
 {
   qSlicerCommandOptions* _commandOptions =
     dynamic_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
@@ -837,6 +837,20 @@ void qSlicerApplication::displayApplicationInformations() const
   // Additional module paths
   QStringList additionalModulePaths =
       this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
+
+  qSlicerModuleFactoryManager* moduleFactoryManager = this->moduleManager()->factoryManager();
+  foreach(const QString& extensionOrModulePath, this->commandOptions()->additonalModulePaths())
+    {
+    QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
+    if (!modulePaths.empty())
+      {
+      additionalModulePaths << modulePaths;
+      }
+    else
+      {
+      additionalModulePaths << extensionOrModulePath;
+      }
+    }
 
   qDebug("%s: %s",
          qPrintable(titles.at(7).leftJustified(titleWidth, '.')),

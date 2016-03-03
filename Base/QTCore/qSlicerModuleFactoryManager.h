@@ -88,6 +88,9 @@ public:
   /// \todo move it as protected
   bool loadModule(const QString& name);
 
+  /// Return all module paths that are direct child of \a basePath.
+  QStringList modulePaths(const QString& basePath);
+
 public slots:
   /// Set the MRML scene to pass to modules at "load" time.
   void setMRMLScene(vtkMRMLScene* mrmlScene);
