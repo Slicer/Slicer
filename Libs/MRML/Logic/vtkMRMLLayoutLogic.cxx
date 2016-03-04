@@ -127,6 +127,21 @@ const char* oneUp3DView =
   "  </view>"
   " </item>"
   "</layout>";
+
+const char* threeDTableView =
+  "<layout type=\"horizontal\" split=\"true\">"
+  " <item>"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
+  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "  </view>"
+  " </item>"
+  " <item>"
+  "  <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableView1\">"
+  "  <property name=\"viewlabel\" action=\"default\">T</property>"
+  "  </view>"
+  " </item>"
+  "</layout>";
+
 const char* oneUpRedView =
   "<layout type=\"horizontal\">"
   " <item>"
@@ -615,7 +630,7 @@ const char* fourUpTableView =
   " </item>"
   " <item>"
   "  <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableView1\">"
-  "    <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    <property name=\"viewlabel\" action=\"default\">T</property>"
   "  </view>"
   " </item>"
   "</layout>";
@@ -1367,6 +1382,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          fourUpView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView,
                                          oneUp3DView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayout3DTableView,
+                                         threeDTableView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView,
                                          oneUpRedView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutOneUpYellowSliceView,

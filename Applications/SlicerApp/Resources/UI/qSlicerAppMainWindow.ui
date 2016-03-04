@@ -76,6 +76,7 @@
      <addaction name="ViewLayoutDual3DAction"/>
      <addaction name="ViewLayoutTriple3DAction"/>
      <addaction name="ViewLayoutOneUp3DAction"/>
+     <addaction name="ViewLayout3DTableAction"/>
      <addaction name="ViewLayoutOneUpQuantitativeAction"/>
      <addaction name="ViewLayoutOneUpRedSliceAction"/>
      <addaction name="ViewLayoutOneUpYellowSliceAction"/>
@@ -258,6 +259,7 @@
    <addaction name="ViewLayoutDual3DAction"/>
    <addaction name="ViewLayoutTriple3DAction"/>
    <addaction name="ViewLayoutOneUp3DAction"/>
+   <addaction name="ViewLayout3DTableAction"/>
    <addaction name="ViewLayoutOneUpQuantitativeAction"/>
    <addaction name="ViewLayoutOneUpRedSliceAction"/>
    <addaction name="ViewLayoutOneUpYellowSliceAction"/>
@@ -827,6 +829,18 @@
    </property>
    <property name="text">
     <string>3D only</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="ViewLayout3DTableAction">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/Layout3DTableView.png</normaloff>:/Icons/Layout3DTableView.png</iconset>
+   </property>
+   <property name="text">
+    <string>3D Table</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>

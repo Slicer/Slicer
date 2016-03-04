@@ -211,8 +211,19 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkMRMLSubjectHie
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(node->GetAssociatedNode());
   if (associatedTableNode && visible)
     {
-    // Switch to four-up table layout
-    layoutNode->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutFourUpTableView );
+    // Switch to a layout that contains table
+    switch (qSlicerApplication::application()->layoutManager()->layout())
+      {
+      case vtkMRMLLayoutNode::SlicerLayoutFourUpTableView:
+      case vtkMRMLLayoutNode::SlicerLayout3DTableView:
+        // table already shown, no need to change
+        break;
+      case vtkMRMLLayoutNode::SlicerLayoutOneUp3DView:
+        layoutNode->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayout3DTableView );
+        break;
+      default:
+        layoutNode->SetViewArrangement( vtkMRMLLayoutNode::SlicerLayoutFourUpTableView );
+      }
 
     // Make sure we have a valid table view node (if we want to show the table, but there was
     // no table view, then one was just created when we switched to table layout)
@@ -270,13 +281,9 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkMRMLSubjectHier
     }
 
   // Return hidden if current layout is not one of the table ones
+  // All layouts containing a table should be listed here:
   if ( qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutFourUpTableView
-    /* All layouts should be added here where a table can be shown:
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutOneUpTableView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutConventionalTableView
-    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeTableView
-    */
-    )
+    && qSlicerApplication::application()->layoutManager()->layout() != vtkMRMLLayoutNode::SlicerLayout3DTableView )
     {
     return 0;
     }
