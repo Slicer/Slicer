@@ -272,6 +272,22 @@ public:
   /// module share directory
   /// \sa vtkMRMLVolumePropertyNode, GetModuleShareDirectory()
   vtkMRMLScene* GetPresetsScene();
+  
+  /// Add a preset to the preset scene.
+  /// If the optional icon image is specified then that will be used to
+  /// in preset selector widgets. The icon is stored as a volume node
+  /// in the preset scene.
+  /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
+  void AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = NULL);
+  
+  /// Removes a preset and its associated icon (if specified) from the preset scene.
+  /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
+  void RemovePreset(vtkMRMLVolumePropertyNode* preset);
+  
+  /// This node reference role name allows linking from a preset node to a volume
+  /// node that contains an icon for the preset node.
+  /// For example, the icon is used for representing the node in qSlicerPresetComboBox.
+  static const char* GetIconVolumeReferenceRole() { return "IconVolume"; };
 
   /// Return the preset \a presetName contained in the presets scene
   /// loaded using \a GetPresetsScene().

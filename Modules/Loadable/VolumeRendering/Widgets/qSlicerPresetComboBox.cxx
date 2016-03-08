@@ -30,13 +30,18 @@
 #include <ctkVTKScalarsToColorsUtils.h>
 #include <ctkWidgetsUtils.h>
 
+/// Module logic includes
+#include "vtkSlicerVolumeRenderingLogic.h"
+
 // MRMLWidgets includes
 #include <qMRMLSceneModel.h>
+#include <qMRMLUtils.h>
 
 // VolumeRenderingWidgets includes
 #include "qSlicerPresetComboBox_p.h"
 
 // MRML includes
+#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLVolumePropertyNode.h>
 
 // VTK includes
@@ -56,6 +61,7 @@ qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
   listView->setWrapping(true);
   listView->setMovement(QListView::Static);
   listView->setFlow(QListView::LeftToRight);
+  listView->setResizeMode(QListView::Adjust); // resize list view if widget width is changed
   listView->setSpacing(0);
   this->setView(listView);
 }
@@ -72,9 +78,7 @@ void qSlicerIconComboBox::showPopup()
   QRect screen = QApplication::desktop()->availableGeometry(
     QApplication::desktop()->screenNumber(this));
   QPoint below = mapToGlobal(listRect.bottomLeft());
-  //int belowHeight = screen.bottom() - below.y();
   QPoint above = mapToGlobal(listRect.topLeft());
-  //int aboveHeight = above.y() - screen.y();
 
   // CustomSize
   //
@@ -181,12 +185,32 @@ qSlicerPresetComboBox
 // --------------------------------------------------------------------------
 void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 {
-  // Search corresponding icon
-  QIcon presetIcon(QString(":/presets/") + presetNode->GetName());
-  if (presetIcon.isNull())
+  if (presetNode == NULL)
     {
     return;
     }
+
+  // Search corresponding icon
+  QIcon presetIcon;
+  vtkMRMLVolumeNode* iconVolume = vtkMRMLVolumeNode::SafeDownCast(
+    presetNode->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+  if (iconVolume && iconVolume->GetImageData()!=NULL)
+    {
+    QImage qimage;
+    qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(),qimage);
+    presetIcon = QIcon(QPixmap::fromImage(qimage));
+    }
+  if (presetIcon.availableSizes().size() == 0)
+    {
+    // Check if an image is available for this preset in the stock preset images
+    presetIcon = QIcon(QString(":/presets/") + presetNode->GetName());
+    }
+  if (presetIcon.availableSizes().size() == 0)
+    {
+    // Use generic icon (puzzle piece)
+    presetIcon = QIcon(":/Icons/Extension.png");
+    }
+
   // Set icon
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sortFilterProxyModel()->sourceModel());
   sceneModel->setData(sceneModel->indexFromNode(presetNode), presetIcon, Qt::DecorationRole);
@@ -204,19 +228,19 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
   vtkMRMLVolumePropertyNode* volumePropertyNode = vtkMRMLVolumePropertyNode::SafeDownCast(presetNode);
   if (volumePropertyNode)
     {
-    int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
-    vtkScalarsToColors* colors =
-      volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
-    assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
-    QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
+  int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
+  vtkScalarsToColors* colors =
+    volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
+  assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
+  QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
 #if QT_VERSION >= 0x040700
-    QString imgSrc = ctk::base64HTMLImageTagSrc(img);
+  QString imgSrc = ctk::base64HTMLImageTagSrc(img);
 #else
-    QString imgSrc = QString(":%1").arg(presetNode->GetName());
-    QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
+  QString imgSrc = QString(":%1").arg(presetNode->GetName());
+  QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
 #endif
-    QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
-    sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
+  QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
+  sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
     }
 }
 

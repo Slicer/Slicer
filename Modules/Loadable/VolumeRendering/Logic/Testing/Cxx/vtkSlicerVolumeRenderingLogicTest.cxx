@@ -21,103 +21,88 @@
 // VolumeRendering includes
 #include <vtkMRMLVolumeRenderingDisplayNode.h>
 #include <vtkSlicerVolumeRenderingLogic.h>
+#include <vtkMRMLVolumePropertyNode.h>
 
 // MRML includes
+#include <vtkMRMLCoreTestingMacros.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLVolumeNode.h>
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
-bool testDefaultRenderingMethod(const std::string& moduleShareDirectory);
-bool testPresets(const std::string &moduleShareDirectory);
+int testDefaultRenderingMethod(const std::string& moduleShareDirectory);
+int testPresets(const std::string &moduleShareDirectory);
 
 //----------------------------------------------------------------------------
 int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
 {
   if (argc != 2)
     {
-    std::cout << "Missing moduleShareDirectory argument !" << std::endl;
+    std::cout << "Missing moduleShare Directory argument !" << std::endl;
     return EXIT_FAILURE;
     }
   std::string moduleShareDirectory(argv[1]);
 
-  bool res = true;
-  res = testDefaultRenderingMethod(moduleShareDirectory) && res;
-  res = testPresets(moduleShareDirectory) && res;
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  CHECK_EXIT_SUCCESS(testDefaultRenderingMethod(moduleShareDirectory));
+  CHECK_EXIT_SUCCESS(testPresets(moduleShareDirectory));
+  return EXIT_SUCCESS;
 }
 
 //----------------------------------------------------------------------------
-bool testDefaultRenderingMethod(const std::string& moduleShareDirectory)
+int testDefaultRenderingMethod(const std::string& moduleShareDirectory)
 {
   vtkNew<vtkSlicerVolumeRenderingLogic> logic;
   logic->SetModuleShareDirectory(moduleShareDirectory);
 
-  vtkMRMLVolumeRenderingDisplayNode* displayNode =
-    logic->CreateVolumeRenderingDisplayNode();
-  if (logic->GetDefaultRenderingMethod() != 0 ||
-      displayNode != 0)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()"
-              << std::endl << "displayNode:" << displayNode << std::endl;
-    return false;
-    }
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = logic->CreateVolumeRenderingDisplayNode();
+  CHECK_NULL(logic->GetDefaultRenderingMethod());
+  CHECK_NULL(displayNode);
 
   vtkNew<vtkMRMLScene> scene;
   logic->SetMRMLScene(scene.GetPointer());
   displayNode = logic->CreateVolumeRenderingDisplayNode();
-  if (displayNode == 0 ||
-      !displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()"
-              << std::endl << "displayNode:" << displayNode << " ("
-              << (displayNode ? displayNode->GetClassName() : "none") << ")" << std::endl;
-    return false;
-    }
+  CHECK_NOT_NULL(displayNode);
+  CHECK_BOOL(displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"), true);
   displayNode->Delete();
 
   logic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   displayNode = logic->CreateVolumeRenderingDisplayNode();
-  if (displayNode == 0 ||
-      !displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()"
-              << std::endl << "displayNode:" << displayNode << " ("
-              << (displayNode ? displayNode->GetClassName() : "none") << ")" << std::endl;
-    return false;
-    }
+  CHECK_NOT_NULL(displayNode);
+  CHECK_BOOL(displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"), true);
   displayNode->Delete();
 
-  return true;
+  return EXIT_SUCCESS;
 }
 
 //----------------------------------------------------------------------------
-bool testPresets(const std::string& moduleShareDirectory)
+int testPresets(const std::string& moduleShareDirectory)
 {
   vtkNew<vtkSlicerVolumeRenderingLogic> logic;
   logic->SetModuleShareDirectory(moduleShareDirectory);
 
-  if (logic->GetPresetsScene() == 0)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::GetPresetsScene()" << std::endl;
-    return false;
-    }
+  CHECK_NOT_NULL(logic->GetPresetsScene());
+  CHECK_NOT_NULL(logic->GetPresetByName("MR-Default"));
 
-  const char* presetName = "MR-Default";
-  if (logic->GetPresetByName(presetName) == 0)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::GetPresetByName()\n"
-              << " - Failed to load preset '" << presetName << "'"
-              << std::endl;
-    return false;
-    }
+  vtkNew<vtkMRMLVolumePropertyNode> newPreset;
+  newPreset->SetName("MyNewPreset");
+  CHECK_NULL(logic->GetPresetByName("MyNewPreset"));
+  logic->AddPreset(newPreset.GetPointer());
+  CHECK_NOT_NULL(logic->GetPresetByName("MyNewPreset"));
 
-  return true;
+  vtkNew<vtkImageData> iconImage;
+  vtkNew<vtkMRMLVolumePropertyNode> newPresetWithIcon;
+  newPresetWithIcon->SetName("MyNewPresetWithIcon");
+  logic->AddPreset(newPresetWithIcon.GetPointer(), iconImage.GetPointer());
+  vtkMRMLNode* newPresetWithIcon2 = logic->GetPresetByName("MyNewPresetWithIcon");
+  CHECK_NOT_NULL(newPresetWithIcon2);
+  vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(
+    newPresetWithIcon2->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+  CHECK_NOT_NULL(iconNode);
+  CHECK_POINTER(iconNode->GetImageData(), iconImage.GetPointer());
+
+  return EXIT_SUCCESS;
 }

@@ -24,6 +24,7 @@
 #include <vtkSlicerVolumeRenderingLogic.h>
 
 // MRML includes
+#include <vtkMRMLCoreTestingMacros.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -33,7 +34,7 @@
 #include <vtkTestingOutputWindow.h>
 
 //----------------------------------------------------------------------------
-bool testAddVolumePropertyFromFile(const std::string &temporaryDirectory);
+int testAddVolumePropertyFromFile(const std::string &temporaryDirectory);
 
 //----------------------------------------------------------------------------
 int vtkSlicerVolumeRenderingLogicAddFromFileTest(int argc, char* argv[])
@@ -45,13 +46,13 @@ int vtkSlicerVolumeRenderingLogicAddFromFileTest(int argc, char* argv[])
     }
   std::string temporaryDirectory(argv[1]);
 
-  bool res = true;
-  res = testAddVolumePropertyFromFile(temporaryDirectory) && res;
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  CHECK_EXIT_SUCCESS(testAddVolumePropertyFromFile(temporaryDirectory));
+  
+  return EXIT_SUCCESS;
 }
 
 //----------------------------------------------------------------------------
-bool testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
+int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
 {
   vtkNew<vtkSlicerVolumeRenderingLogic> logic;
 
@@ -70,30 +71,12 @@ bool testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   std::cout << "fileName = " << fileName.c_str() << std::endl;
 
   volumePropertyStorageNode->SetFileName(fileName.c_str());
-  int ret = volumePropertyStorageNode->WriteData(defaultVolumePropertyNode.GetPointer());
-
-  if (!ret)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile\n"
-              << " - failed on writing to file name: "
-              << fileName.c_str()
-              << std::endl;
-    return false;
-    }
+  CHECK_INT(volumePropertyStorageNode->WriteData(defaultVolumePropertyNode.GetPointer()), 1);
   std::cout << "\tfile written okay" << std::endl;
 
   // try reading without a scene
   vtkMRMLVolumePropertyNode *vpNode = logic->AddVolumePropertyFromFile(fileName.c_str());
-  if (vpNode != NULL)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile\n"
-              << " - failed on reading with no scene "
-              << fileName.c_str()
-              << std::endl;
-    return false;
-    }
+  CHECK_NULL(vpNode);
 
   // set the scene
   vtkNew<vtkMRMLScene> scene;
@@ -103,40 +86,18 @@ bool testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vpNode = logic->AddVolumePropertyFromFile(NULL);
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  if (vpNode != NULL)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile\n"
-              << " - failed on null file  name"
-              << std::endl;
-    return false;
-    }
+  CHECK_NULL(vpNode);
 
   // empty file name
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   vpNode = logic->AddVolumePropertyFromFile("");
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  if (vpNode != NULL)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile\n"
-              << " - failed on empty file name"
-              << std::endl;
-    return false;
-    }
+  CHECK_NULL(vpNode);
 
   // read it back in
   vpNode = logic->AddVolumePropertyFromFile(fileName.c_str());
-  if (!vpNode)
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with vtkSlicerVolumeRenderingLogic::AddVolumePropertyFromFile\n"
-              << " - failed on reading from file name: "
-              << fileName.c_str()
-              << std::endl;
-    return false;
-    }
+  CHECK_NOT_NULL(vpNode);
 
   std::cout << "Test passed!" << std::endl;
-  return true;
+  return EXIT_SUCCESS;
 }
