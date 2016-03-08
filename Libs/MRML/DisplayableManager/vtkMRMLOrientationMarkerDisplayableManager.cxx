@@ -55,7 +55,6 @@
 
 // Constants
 static const int RENDERER_LAYER = 1; // layer ID where the orientation marker will be displayed
-static const char* AXES_LABELS[] = {"L", "R", "P", "A", "I", "S"};
 static const char ORIENTATION_MARKERS_DIR[] = "OrientationMarkers";
 static const char HUMAN_MODEL_VTP_FILENAME[] = "Human.vtp";
 static const int AXIS_LABEL_BASE_FONT_SIZE = 24;
@@ -132,6 +131,7 @@ public:
 
   void UpdateMarkerType();
   void UpdateMarkerSize();
+  void UpdateMarkerLabels();
   void UpdateMarkerOrientation();
 
   std::string GetOrientationMarkerModelPath(const char* modelFileName);
@@ -244,12 +244,6 @@ vtkProp3D* vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetCubeActor
   if (!this->CubeActor)
     {
     this->CubeActor = vtkSmartPointer<vtkAnnotatedCubeActor>::New();
-    this->CubeActor->SetXMinusFaceText(AXES_LABELS[0]);
-    this->CubeActor->SetXPlusFaceText(AXES_LABELS[1]);
-    this->CubeActor->SetYMinusFaceText(AXES_LABELS[2]);
-    this->CubeActor->SetYPlusFaceText(AXES_LABELS[3]);
-    this->CubeActor->SetZMinusFaceText(AXES_LABELS[4]);
-    this->CubeActor->SetZPlusFaceText(AXES_LABELS[5]);
     this->CubeActor->SetZFaceTextRotation(90);
     this->CubeActor->GetTextEdgesProperty()->SetColor(0.95,0.95,0.95);
     this->CubeActor->GetTextEdgesProperty()->SetLineWidth(2);
@@ -302,9 +296,6 @@ vtkProp3D* vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetAxesActor
   if (!this->AxesActor)
     {
     this->AxesActor = vtkSmartPointer<vtkCenteredAxesActor>::New();
-    this->AxesActor->SetXAxisLabelText(AXES_LABELS[1]);
-    this->AxesActor->SetYAxisLabelText(AXES_LABELS[3]);
-    this->AxesActor->SetZAxisLabelText(AXES_LABELS[5]);
     this->AxesActor->PickableOff();
     this->AxesActor->DragableOff();
 
@@ -560,6 +551,38 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerLabels()
+{
+  if (this->MarkerRenderer==NULL)
+    {
+    vtkErrorWithObjectMacro(this->External, "vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerLabels() failed: MarkerRenderer is invalid");
+    return;
+    }
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->External->GetMRMLDisplayableNode());
+  if (!viewNode || !viewNode->GetOrientationMarkerEnabled())
+    {
+    return;
+    }
+  switch (viewNode->GetOrientationMarkerType())
+    {
+    case vtkMRMLAbstractViewNode::OrientationMarkerTypeCube:
+      this->CubeActor->SetXMinusFaceText(viewNode->GetAxisLabel(0));
+      this->CubeActor->SetXPlusFaceText(viewNode->GetAxisLabel(1));
+      this->CubeActor->SetYMinusFaceText(viewNode->GetAxisLabel(2));
+      this->CubeActor->SetYPlusFaceText(viewNode->GetAxisLabel(3));
+      this->CubeActor->SetZMinusFaceText(viewNode->GetAxisLabel(4));
+      this->CubeActor->SetZPlusFaceText(viewNode->GetAxisLabel(5));
+      break;
+    case vtkMRMLAbstractViewNode::OrientationMarkerTypeAxes:
+      this->AxesActor->SetXAxisLabelText(viewNode->GetAxisLabel(1));
+      this->AxesActor->SetYAxisLabelText(viewNode->GetAxisLabel(3));
+      this->AxesActor->SetZAxisLabelText(viewNode->GetAxisLabel(5));
+      break;
+    }
+}
+
+
+//---------------------------------------------------------------------------
 // vtkMRMLOrientationMarkerDisplayableManager methods
 
 //---------------------------------------------------------------------------
@@ -593,6 +616,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::UpdateFromViewNode()
   // View node is changed, which may mean that either the marker type (visibility), size, or orientation is changed
   this->Internal->UpdateMarkerType();
   this->Internal->UpdateMarkerSize();
+  this->Internal->UpdateMarkerLabels();
   this->Internal->UpdateMarkerOrientation();
 }
 

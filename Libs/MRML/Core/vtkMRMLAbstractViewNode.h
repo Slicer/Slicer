@@ -21,10 +21,14 @@
 #ifndef __vtkMRMLAbstractViewNode_h
 #define __vtkMRMLAbstractViewNode_h
 
+// VTK includes
+#include <vtkSmartPointer.h>
+
 // MRML includes
 #include "vtkMRMLNode.h"
 
 class vtkMRMLModelNode;
+class vtkStringArray;
 
 /// \brief Abstract MRML node to represent a view.
 /// The class holds the properties common to any view type (3D, slice, chart..)
@@ -194,6 +198,20 @@ public:
     RulerType_Last // insert valid types above this line
   };
 
+  ///
+  /// Get/Set labels of coordinate system axes.
+  /// Order of labels: -X, +X, -Y, +Y, -Z, +Z.
+  /// Default: L, R, P, A, I, S
+  /// Note that these labels are used for display only (for example, showing organ specific
+  /// directions, such as "Temporal" and "Nasal" instead of "Left" and "Right").
+  /// Therefore, changing labels will not change orientation of displayed data in the view.
+  const char* GetAxisLabel(int labelIndex);
+  void SetAxisLabel(int labelIndex, const char* label);
+
+  ///
+  /// Total number of coordinate system axis labels
+  static const int AxisLabelsCount;
+
 protected:
   vtkMRMLAbstractViewNode();
   ~vtkMRMLAbstractViewNode();
@@ -239,6 +257,10 @@ protected:
   /// these parameters define how to display the ruler.
   bool RulerEnabled;
   int RulerType;
+
+  ///
+  /// Labels of coordinate system axes
+  vtkSmartPointer<vtkStringArray> AxisLabels;
 };
 
 //------------------------------------------------------------------------------

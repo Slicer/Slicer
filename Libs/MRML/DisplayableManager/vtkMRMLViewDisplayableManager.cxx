@@ -67,6 +67,7 @@ public:
 
   void UpdateAxisVisibility();
   void UpdateAxisLabelVisibility();
+  void UpdateAxisLabelText();
   void SetAxisLabelColor(double newAxisLabelColor[3]);
 
   void UpdateRenderMode();
@@ -76,6 +77,7 @@ public:
   void UpdateBackgroundColor();
 
   std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
+  std::vector<vtkSmartPointer<vtkVectorText> > AxisLabelTexts;
   vtkSmartPointer<vtkActor>                  BoxAxisActor;
   vtkBoundingBox*                            BoxAxisBoundingBox;
   vtkMRMLViewDisplayableManager*             External;
@@ -114,13 +116,16 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
   this->BoxAxisActor->SetPickable(0);
 
   this->AxisLabelActors.clear();
+  this->AxisLabelTexts.clear();
 
+  // default labels, will be overridden by view node AxisLabels
   const char* labels[6] = {"R", "A", "S", "L", "P", "I"};
 
   for(int i = 0; i < 6; ++i)
     {
     vtkNew<vtkVectorText> axisText;
     axisText->SetText(labels[i]);
+    this->AxisLabelTexts.push_back(axisText.GetPointer());
 
     vtkNew<vtkPolyDataMapper> axisMapper;
     axisMapper->SetInputConnection(axisText->GetOutputPort());
@@ -427,6 +432,34 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelText()
+{
+  vtkMRMLViewNode* viewNode = this->External->GetMRMLViewNode();
+  if (!viewNode || !viewNode->GetAxisLabelsVisible())
+    {
+    return;
+    }
+
+  bool updateNeeded = false;
+  // In this displayable manager class axis labels are ordered as +X,+Y,+Z,-X,-Y-,-Z.
+  // In the view node axis labels are ordered as -X,+X,-Y,+Y,-Z,+Z.
+  // viewAxisToDmAxis converts from view to displayable manager axis order.
+  const int viewAxisToDmAxis[6]={3,0,4,1,5,2};
+  for (int labelIndexView=0; labelIndexView<6; labelIndexView++)
+    {
+    if (strcmp(this->AxisLabelTexts[viewAxisToDmAxis[labelIndexView]]->GetText(),viewNode->GetAxisLabel(labelIndexView))!=0)
+      {
+      this->AxisLabelTexts[viewAxisToDmAxis[labelIndexView]]->SetText(viewNode->GetAxisLabel(labelIndexView));
+      updateNeeded = true;
+      }
+    }
+  if (updateNeeded)
+    {
+    this->External->RequestRender();
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::SetAxisLabelColor(double newAxisLabelColor[3])
 {
   for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
@@ -601,6 +634,7 @@ void vtkMRMLViewDisplayableManager::UpdateFromViewNode()
   this->Internal->UpdateRenderMode();
   this->Internal->UpdateAxisLabelVisibility();
   this->Internal->UpdateAxisVisibility();
+  this->Internal->UpdateAxisLabelText();
   this->Internal->UpdateStereoType();
   this->Internal->UpdateBackgroundColor();
 }
