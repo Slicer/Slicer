@@ -155,8 +155,13 @@ def findChildren(widget=None, name="", text="", title="", className=""):
     parents += p.children()
     matched_filter_criteria = 0
     for attribute in expected_matches:
-      if hasattr(p, attribute) and fnmatch.fnmatchcase(getattr(p, attribute), kwargs[attribute]):
-        matched_filter_criteria = matched_filter_criteria + 1
+      if hasattr(p, attribute):
+        attr_name = getattr(p, attribute)
+        if attribute == 'className':
+          # className is a method, not a direct attribute. Invoke the method
+          attr_name = attr_name()
+        if fnmatch.fnmatchcase(attr_name, kwargs[attribute]):
+          matched_filter_criteria = matched_filter_criteria + 1
     if matched_filter_criteria == len(expected_matches):
       children.append(p)
   return children
