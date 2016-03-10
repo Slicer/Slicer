@@ -23,11 +23,10 @@
 #ifndef __qMRMLTableViewPlugin_h
 #define __qMRMLTableViewPlugin_h
 
-#include "qSlicerTablesModuleWidgetsAbstractPlugin.h"
+#include "qMRMLWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_TABLES_WIDGETS_PLUGINS_EXPORT
-qMRMLTableViewPlugin
-  : public QObject, public qSlicerTablesModuleWidgetsAbstractPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTableViewPlugin
+  : public QObject, public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
