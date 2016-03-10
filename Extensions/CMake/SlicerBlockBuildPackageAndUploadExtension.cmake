@@ -100,10 +100,13 @@ set_property(GLOBAL PROPERTY Label ${label})
 
 # If no CTestConfig.cmake file is found in ${ctestconfig_dest_dir},
 # one will be generated.
-set(ctestconfig_dest_dir ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY})
-if(NOT EXISTS ${ctestconfig_dest_dir}/CTestConfig.cmake)
-  message(STATUS "CTestConfig.cmake has been written to: ${ctestconfig_dest_dir}")
-  file(WRITE ${ctestconfig_dest_dir}/CTestConfig.cmake
+foreach(ctestconfig_dest_dir
+  ${EXTENSION_SUPERBUILD_BINARY_DIR}
+  ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
+  )
+  if(NOT EXISTS ${ctestconfig_dest_dir}/CTestConfig.cmake)
+    message(STATUS "CTestConfig.cmake has been written to: ${ctestconfig_dest_dir}")
+    file(WRITE ${ctestconfig_dest_dir}/CTestConfig.cmake
 "set(CTEST_PROJECT_NAME \"${EXTENSION_NAME}\")
 set(CTEST_NIGHTLY_START_TIME \"3:00:00 UTC\")
 
@@ -111,7 +114,8 @@ set(CTEST_DROP_METHOD \"http\")
 set(CTEST_DROP_SITE \"slicer.cdash.org\")
 set(CTEST_DROP_LOCATION \"/submit.php?project=Slicer4\")
 set(CTEST_DROP_SITE_CDASH TRUE)")
-endif()
+  endif()
+endforeach()
 
 set(track_qualifier_cleaned "${Slicer_EXTENSIONS_TRACK_QUALIFIER}-")
 # Track associated with 'master' should default to either 'Continuous', 'Nightly' or 'Experimental'
