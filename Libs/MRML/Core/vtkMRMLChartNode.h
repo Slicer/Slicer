@@ -129,8 +129,10 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   ///
   /// \li  "showLines" - show lines "on" or "off"
   /// \li  "showMarkers" - show markers "on" or "off"
+  /// \li  "size" - marker size is an integer larger than 0 and smaller than 2^32 - 1
   /// \li  "linePattern" - line pattern can be "solid", "dashed", "dotted",
   ///                      "dashed-dotted"
+  /// \li  "lineWidth" - line width is an integer larger than 0 and smaller than 2^32 - 1
   /// \li  "color" - color to use for the array lines and points (<code>\#RRGGBB</code>)
   /// \li  "lookupTable" - MRMLID of a ColorNode to use to color individual
   ///         bars in bar chart (useful with categorical data)

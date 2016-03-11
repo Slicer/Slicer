@@ -841,6 +841,17 @@ QString qMRMLChartViewPrivate::lineOptions(vtkMRMLChartNode *cn)
     options << ", seriesColors: " << this->seriesColorsString(colorNode);
     }
 
+  // markerOptions
+  options << ", markerOptions: {" ;
+  // markers size
+  const char *markersSize = cn->GetProperty("default", "size");
+  if (markersSize && QString(markersSize).toInt() > 0)  // Checks if given size is an integer and if larger than 0
+    {
+    options << "size: " << markersSize;
+    }
+  options << "}" ;
+  // end of markerOptions
+
   // default properties for a series
   //
   //
@@ -904,6 +915,13 @@ QString qMRMLChartViewPrivate::lineOptions(vtkMRMLChartNode *cn)
     options << ", linePattern: '-.'";
     }
 
+  // line width
+  const char *lineWidth = cn->GetProperty("default", "lineWidth");
+  if (lineWidth && QString(lineWidth).toInt() > 0)  // Checks if given lineWidth is an integer and if larger than 0
+    {
+    options << ", lineWidth: " << lineWidth;
+    }
+
   // end of seriesDefaults properties
   options << "}";
 
@@ -964,6 +982,13 @@ QString qMRMLChartViewPrivate::lineOptions(vtkMRMLChartNode *cn)
       options << ", linePattern: '-.'";
       }
 
+    // line width
+  const char *lineWidth = cn->GetProperty(arrayName.c_str(), "lineWidth");
+  if (lineWidth && QString(lineWidth).toInt() > 0)  // Checks if given lineWidth is an integer and if larger than 0
+    {
+    options << ", lineWidth: " << lineWidth;
+    }
+
     // color
     const char *color = cn->GetProperty(arrayName.c_str(), "color");
 
@@ -972,6 +997,16 @@ QString qMRMLChartViewPrivate::lineOptions(vtkMRMLChartNode *cn)
       options << ", color: '" << color << "'";
       }
 
+    // markerOptions
+    options << ", markerOptions: {" ;
+    // markers size
+    const char *markersSize = cn->GetProperty(arrayName.c_str(), "size");
+    if (markersSize && QString(markersSize).toInt() > 0)  // Checks if given size is an integer and if larger than 0
+      {
+      options << "size: " << markersSize;
+      }
+    options << "}" ;
+    // end of markerOptions
     // end of a series
     options << "}";
     if (idx < arrayNames->GetNumberOfValues()-1)
