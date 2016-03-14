@@ -143,7 +143,7 @@ void vtkMRMLTableNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   if (this->Table && this->Table == vtkTable::SafeDownCast(caller) &&
-    event ==  vtkCommand::ModifiedEvent)
+    event == vtkCommand::ModifiedEvent)
     {
     // this indicates that the table model (that is stored in a separate file) is modified
     // and therefore the object will be marked as changed for file saving

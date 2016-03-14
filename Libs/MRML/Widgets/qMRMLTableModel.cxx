@@ -35,6 +35,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
 #include <vtkTable.h>
+#include <vtkBitArray.h>
 
 //------------------------------------------------------------------------------
 // qMRMLTableModelPrivate
@@ -157,7 +158,7 @@ void qMRMLTableModel::updateModelFromMRML()
   vtkTable* table = (tableNode ? tableNode->GetTable() : NULL);
   if (table==NULL || table->GetNumberOfColumns()==0)
     {
-    // setRowCount and setColumnCount to 0 would not be enough, it's necesary to remove the header as well
+    // setRowCount and setColumnCount to 0 would not be enough, it's necessary to remove the header as well
     setRowCount(0);
     setColumnCount(0);
     reset();
@@ -185,11 +186,13 @@ void qMRMLTableModel::updateModelFromMRML()
     setColumnCount(static_cast<int>(numberOfTableColumns-tableColOffset));
     }
 
+  // Setup items for each table column
   for (vtkIdType tableCol = tableColOffset; tableCol < numberOfTableColumns; ++tableCol)
     {
     int modelCol = static_cast<int>(tableCol - tableColOffset);
 
     QString columnName(table->GetColumnName(tableCol));
+    vtkAbstractArray* columnArray = table->GetColumn(tableCol);
 
     if (useColumnNameAsColumnHeader)
       {
@@ -201,35 +204,56 @@ void qMRMLTableModel::updateModelFromMRML()
       setHeaderData(modelCol, d->Transposed ? Qt::Vertical : Qt::Horizontal, autoColumnHeader);
       }
 
+    // Go through the rows of the current column
     for (vtkIdType tableRow = tableRowOffset; tableRow < numberOfTableRows; ++tableRow)
       {
       int modelRow = static_cast<int>(tableRow - tableRowOffset);
 
+      // Use existing item if already created
       QStandardItem* existingItem = NULL;
       if (d->Transposed)
         {
-        existingItem = item(modelCol, static_cast<int>(modelRow));
+        existingItem = this->item(modelCol, static_cast<int>(modelRow));
         }
       else
         {
-        existingItem = item(static_cast<int>(modelRow), modelCol);
+        existingItem = this->item(static_cast<int>(modelRow), modelCol);
         }
       QStandardItem* item = existingItem;
+      // Create item if did not exist
       if (item==NULL)
         {
         item = new QStandardItem();
         }
 
+      // Items in first row use bold font, the others regular
       if (tableRow>=0)
         {
         vtkVariant variant = table->GetValue(tableRow, tableCol);
-        item->setText(QString(variant.ToString()));
         if (tableRow==0)
           {
           // the first row might have been bold earlier, make sure
           // it is reset to non-bold
           QFont font;
           item->setData(font, Qt::FontRole);
+          }
+
+        // Set item property for known types.
+        // Special types are defined to be displayed differently, handled by qMRMLTableItemDelegate.
+        // NOTE: The data type itself can be enough, but in future types it will be necessary to define display role
+        //       as well, e.g. double array can be both color and position.
+        if (vtkBitArray::SafeDownCast(columnArray))
+          {
+          // Boolean values indicated by a column of vtkBitArray type are displayed as checkboxes
+          item->setData(variant.ToInt(), Qt::CheckStateRole);
+          item->setData(QVariant(), Qt::DisplayRole);
+          item->setFlags(item->flags() | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+          item->setData(vtkMRMLTableNode::BoolType, Qt::WhatsThisRole);
+          }
+        // Default display as text
+        else
+          {
+          item->setText(QString(variant.ToString()));
           }
         }
       else
@@ -239,6 +263,8 @@ void qMRMLTableModel::updateModelFromMRML()
         font.setBold(true);
         item->setData(font, Qt::FontRole);
         }
+
+      // Handle locked flag
       if (locked)
         {
         // Item is view-only, clear the ItemIsEditable flag
@@ -249,6 +275,8 @@ void qMRMLTableModel::updateModelFromMRML()
         // Item is editable, set the ItemIsEditable flag
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         }
+
+      // Add item if just created
       if (item!=existingItem)
         {
         if (d->Transposed)
@@ -289,9 +317,9 @@ void qMRMLTableModel::updateModelFromMRML()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)const
+void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
 {
-  Q_D(const qMRMLTableModel);
+  Q_D(qMRMLTableModel);
   if (item == NULL)
     {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: item is invalid");
@@ -315,26 +343,49 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)const
 
   if (tableRow>=0)
     {
-    // cell value changed
-    vtkVariant itemText(item->text().toLatin1().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
-    vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol);
-    table->SetValue(tableRow, tableCol, itemText);
-    vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
-    if (valueInTableBefore == valueInTableAfter)
+    // Get item value according to type
+    int type = item->data(Qt::WhatsThisRole).toInt();
+    if (type == vtkMRMLTableNode::BoolType)
       {
-      // the value is not changed, this means that the table cannot store this value - revert the value in the table
-      QObject::disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
-      item->setText(QString(valueInTableBefore.ToString()));
-      QObject::connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
+      // Cell bool value changed
+      int checked = item->data(Qt::CheckStateRole).toInt();
+      int valueBefore = table->GetValue(tableRow, tableCol).ToInt();
+      if (checked == valueBefore)
+        {
+        // The value is not changed, this means that the table cannot store this value - revert the value in the table
+        this->blockSignals(true);
+        item->setData(valueBefore, Qt::CheckStateRole);
+        item->setData(QVariant(), Qt::DisplayRole); // No text is supposed to be in the cell
+        this->blockSignals(false);
+        }
+      else
+        {
+        table->SetValue(tableRow, tableCol, vtkVariant(checked));
+        }
       }
     else
       {
-      table->Modified();
+      // Cell text value changed
+      vtkVariant itemText(item->text().toLatin1().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
+      vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol);
+      table->SetValue(tableRow, tableCol, itemText);
+      vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
+      if (valueInTableBefore == valueInTableAfter)
+        {
+        // The value is not changed, this means that the table cannot store this value - revert the value in the table
+        this->blockSignals(true);
+        item->setText(QString(valueInTableBefore.ToString()));
+        this->blockSignals(false);
+        }
+      else
+        {
+        table->Modified();
+        }
       }
     }
   else
     {
-    // column header changed
+    // Column header changed
     vtkAbstractArray* column = table->GetColumn(tableCol);
     if (column)
       {

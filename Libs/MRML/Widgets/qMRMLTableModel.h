@@ -65,7 +65,7 @@ public:
   bool transposed()const;
 
   /// Return the VTK table cell associated to the node index.
-  void updateMRMLFromModel(QStandardItem* item)const;
+  void updateMRMLFromModel(QStandardItem* item);
 
   /// Update the entire table from the MRML node
   void updateModelFromMRML();

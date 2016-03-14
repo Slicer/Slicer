@@ -312,13 +312,10 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
         // the currently selected item doesn't get a decoration.
         // TODO: Cache the pixmap as it is expensive to compute and it is done
         // for ALL the colors of the node anytime a color is changed.
-        //item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), Qt::DecorationRole);
         pixmap = qMRMLUtils::createColorPixmap(
           qApp->style(), QColor::fromRgbF(rgba[0], rgba[1], rgba[2]));
         item->setData(pixmap, Qt::DecorationRole);
-        //item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), Qt::DecorationRole);
         item->setData(QColor::fromRgbF(rgba[0], rgba[1], rgba[2]), qMRMLColorModel::ColorRole);
-        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         }
       else
         {
@@ -329,13 +326,11 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
         {
         item->setText(colorName);
         item->setData(QVariant(),Qt::SizeHintRole);
-        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         }
       else
         {
         item->setText(QString());
         item->setData((validColor ? pixmap.size() : QVariant()),Qt::SizeHintRole);
-        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         }
       item->setToolTip(colorName);
       break;

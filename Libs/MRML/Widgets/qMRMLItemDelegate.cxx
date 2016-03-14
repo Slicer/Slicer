@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QEvent>
 #include <QHBoxLayout>
+#include <QDebug>
 
 // CTK includes
 #include <ctkColorDialog.h>
@@ -61,10 +62,9 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index)const
     {
     return true;
     }
-  else if(editData.isNull() &&
-          //qobject_cast<const qMRMLColorModel*>(index.model()) != 0 &&
-          decorationData.type() == QVariant::Pixmap &&
-          index.data(qMRMLColorModel::ColorRole).type() == QVariant::Color)
+  else if ( editData.isNull() &&
+            decorationData.type() == QVariant::Pixmap &&
+            index.data(qMRMLColorModel::ColorRole).type() == QVariant::Color )
     {
     return true;
     }
@@ -126,28 +126,10 @@ QWidget *qMRMLItemDelegate
     slider->setRange(0., 1.);
     slider->setPopupSlider(true);
     slider->popup()->layout()->setSizeConstraint(QLayout::SetMinimumSize);
-    // ctkSliderWidget::setParent() must be called after
-    // ctkSliderWidget::setPopupSlider(true)
     slider->setParent(parent);
 
     ctkDoubleSpinBox *spinBox = slider->spinBox();
     spinBox->setFrame(false);
-    /*
-    //spinBox->setParent(parent);
-
-    ctkPopupWidget* popupWidget = new ctkPopupWidget;
-    QHBoxLayout* layout = new QHBoxLayout;
-    layout->addWidget(slider);
-    layout->setContentsMargins(0,0,0,0);
-    popupWidget->setLayout(layout);
-    popupWidget->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    popupWidget->setOrientation(Qt::Horizontal);
-    popupWidget->setHorizontalDirection(Qt::RightToLeft);
-    popupWidget->setBaseWidget(spinBox);
-
-    QObject::connect(spinBox, SIGNAL(destroyed(QObject*)),
-                     popupWidget, SLOT(deleteLater()));
-    */
     QObject::connect(slider, SIGNAL(valueChanged(double)),
                      this, SLOT(commitSenderData()));
     return slider;
@@ -163,7 +145,6 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
     {
     QColor color = index.data(this->colorRole(index)).value<QColor>();
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
-    Q_ASSERT(colorPicker);
     if (colorPicker) // colorPicker may be NULL, don't make the application crash when that happens
       {
       colorPicker->blockSignals(true);
@@ -177,21 +158,20 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor,
       }
     else
       {
-      qWarning("qMRMLItemDelegate::setEditorData failed: colorPicker is invalid");
+      qWarning() << Q_FUNC_INFO << " failed: colorPicker is invalid";
       }
     }
   else if (this->is0To1Value(index))
     {
     ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     double value = index.data(Qt::EditRole).toDouble();
-    Q_ASSERT(sliderWidget);
     if (sliderWidget) // sliderWidget may be NULL, don't make the application crash when that happens
       {
       sliderWidget->setValue(value);
       }
     else
       {
-      qWarning("qMRMLItemDelegate::setEditorData failed: sliderWidget is invalid");
+      qWarning() << Q_FUNC_INFO << " failed: sliderWidget is invalid";
       }
     }
   else
@@ -215,7 +195,6 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   else if (this->is0To1Value(index))
     {
     ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
-    //spinBox->interpretText();
     QString value = QString::number(sliderWidget->value(), 'f', 2);
     model->setData(index, value, Qt::EditRole);
     }
@@ -229,11 +208,6 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
 void qMRMLItemDelegate::commitSenderData()
 {
   QWidget* editor = qobject_cast<QWidget*>(this->sender());
-  //ctkSliderWidget* sliderEditor = qobject_cast<ctkSliderWidget*>(editor);
-  //if (sliderEditor)
-  //  {
-  //  editor = sliderEditor->spinBox();
-  //  }
   emit commitData(editor);
 }
 
@@ -284,7 +258,7 @@ bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
       (event->type() == QEvent::FocusOut ||
       (event->type() == QEvent::Hide && editor->isWindow())))
     {
-    //the Hide event will take care of he editors that are in fact complete dialogs
+    // The Hide event will take care of he editors that are in fact complete dialogs
     if (!editor->isActiveWindow() || (QApplication::focusWidget() != editor))
       {
       QWidget* widget = QApplication::focusWidget();

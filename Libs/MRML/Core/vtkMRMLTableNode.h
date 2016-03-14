@@ -44,6 +44,16 @@ class vtkTable;
 class VTK_MRML_EXPORT vtkMRMLTableNode : public vtkMRMLStorableNode
 {
 public:
+  /// Data types supported by the table. Used in qMRMLTableModel for visualization.
+  enum
+  {
+    /// Default string type (vtkStringArray column). If omitted, then this one is used.
+    StringType = 0,
+    /// Boolean type (vtkBitArray column)
+    BoolType
+  };
+
+public:
   static vtkMRMLTableNode *New();
   vtkTypeMacro(vtkMRMLTableNode,vtkMRMLStorableNode);
 
@@ -69,18 +79,17 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName()
-    {return "Table";};
+  virtual const char* GetNodeTagName() { return "Table"; };
 
   ///
   /// Method to propagate events generated in mrml
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData);
 
   //----------------------------------------------------------------
   /// Get and Set Macros
   //----------------------------------------------------------------
   virtual void SetAndObserveTable(vtkTable* table);
-  vtkGetObjectMacro ( Table, vtkTable );
+  vtkGetObjectMacro(Table, vtkTable);
 
   ///
   /// Table contents cannot be edited through the user interface
@@ -152,7 +161,7 @@ public:
   int GetNumberOfColumns();
 
   //----------------------------------------------------------------
-  /// Constructor and destroctor
+  /// Constructor and destructor
   //----------------------------------------------------------------
  protected:
   vtkMRMLTableNode();
