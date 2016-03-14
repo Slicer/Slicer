@@ -173,6 +173,8 @@ set(MRMLWidgets_SRCS
   qMRMLSortFilterProxyModel.h
   qMRMLSpinBox.cxx
   qMRMLSpinBox.h
+  qMRMLTableItemDelegate.cxx
+  qMRMLTableItemDelegate.h
   qMRMLTableModel.cxx
   qMRMLTableModel.h
   qMRMLTableView.cxx
@@ -282,6 +284,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.h
   qMRMLSpinBox.h
+  qMRMLTableItemDelegate.h
   qMRMLTableModel.h
   qMRMLTableView.h
   qMRMLTableView_p.h
