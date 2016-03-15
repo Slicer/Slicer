@@ -31,6 +31,7 @@
 #include <vtkDelimitedTextWriter.h>
 #include <vtkTable.h>
 #include <vtkStringArray.h>
+#include <vtkBitArray.h>
 #include <vtkNew.h>
 #include <vtksys/SystemTools.hxx>
 
@@ -76,7 +77,7 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  // check that the file exists
+  // Check that the file exists
   if (vtksys::SystemTools::FileExists(fullName) == false)
     {
     vtkErrorMacro("ReadData: table file '" << fullName << "' not found.");
@@ -86,18 +87,17 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkNew<vtkDelimitedTextReader> reader;
   reader->SetFileName(fullName.c_str());
   reader->SetHaveHeaders(true);
-  // Make sure string delimiter characters are removed (sombody may have written a tsv with string delimiters)
+  // Make sure string delimiter characters are removed (somebody may have written a tsv with string delimiters)
   reader->SetUseStringDelimiter(true);
   // File contents is preserved better if we don't try to detect numeric columns
   reader->DetectNumericColumnsOff();
 
-  // compute file prefix
+  // Compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   vtkDebugMacro("ReadData: extension = " << extension);
   if ( extension == std::string(".tsv") || extension == std::string(".txt"))
     {
     reader->SetFieldDelimiterCharacters("\t");
-
     }
   else if ( extension == std::string(".csv") )
     {
@@ -108,16 +108,64 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadData: failed to read table file: " << fullName << " - file extension not supported: " << extension );
     return 0;
     }
+
+  // Read table
+  vtkTable* rawTable = NULL;
   try
     {
     reader->Update();
-    tableNode->SetAndObserveTable(reader->GetOutput());
+    rawTable = reader->GetOutput();
     }
   catch (...)
     {
     vtkErrorMacro("ReadData: failed to read table file: " << fullName);
     return 0;
     }
+
+  // Parse type specifiers and change column types accordingly
+  // NOTE: In the future it may be necessary to specify not just type but also display,
+  //       e.g. color and position data have the same type, but displayed differently
+  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
+  for (int col=0; col<rawTable->GetNumberOfColumns(); ++col)
+    {
+    vtkAbstractArray* column = rawTable->GetColumn(col);
+    if (!column->GetName())
+      {
+      vtkWarningMacro("ReadData: empty column name in file: " << fullName << ", skipping column!");
+      continue;
+      }
+
+    // Get type specifier
+    std::string columnName(column->GetName());
+    std::string cleanColumnName(columnName);
+    std::string typeSpecifier("");
+    size_t bracketOpenPosition = columnName.find("[");
+    size_t bracketClosePosition = columnName.find("]");
+    if (bracketOpenPosition != std::string::npos && bracketOpenPosition < bracketClosePosition)
+      {
+      typeSpecifier = columnName.substr(bracketOpenPosition+1, bracketClosePosition-bracketOpenPosition-1);
+      cleanColumnName = columnName.substr(0, bracketOpenPosition);
+      }
+
+    // Missing or empty type: default string column
+    if (typeSpecifier.empty())
+      {
+      table->AddColumn(column);
+      }
+    // Bool type: copy contents into bit array
+    else if (!typeSpecifier.compare("type=bool"))
+      {
+      vtkSmartPointer<vtkBitArray> boolColumn = vtkSmartPointer<vtkBitArray>::New();
+      boolColumn->SetName(cleanColumnName.c_str());
+      boolColumn->SetNumberOfTuples(column->GetNumberOfTuples());
+      for (int row=0; row<column->GetNumberOfTuples(); ++row)
+        {
+        boolColumn->SetVariantValue(row, column->GetVariantValue(row));
+        }
+      table->AddColumn(boolColumn);
+      }
+    }
+  tableNode->SetAndObserveTable(table);
 
   vtkDebugMacro("ReadData: successfully read table from file: " << fullName);
   return 1;
@@ -145,9 +193,28 @@ int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
+  // Add type specifiers to column names in a temporary copy of the table
+  // NOTE: In the future it may be necessary to specify not just type but also display,
+  //       e.g. color and position data have the same type, but displayed differently
+  vtkSmartPointer<vtkTable> tableCopy = vtkSmartPointer<vtkTable>::New();
+  tableCopy->DeepCopy(tableNode->GetTable());
+  for (int col=0; col<tableCopy->GetNumberOfColumns(); ++col)
+    {
+    vtkAbstractArray* column = tableCopy->GetColumn(col);
+
+    // Boolean type
+    if (vtkBitArray::SafeDownCast(column))
+      {
+      std::string columnName(column->GetName() ? column->GetName() : "?");
+      columnName.append("[type=bool]");
+      column->SetName(columnName.c_str());
+      }
+    }
+  
+  // Write table to file
   vtkNew<vtkDelimitedTextWriter> writer;
   writer->SetFileName(fullName.c_str());
-  writer->SetInputData( tableNode->GetTable() );
+  writer->SetInputData(tableCopy);
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if (extension == ".tsv" || extension == ".txt")
