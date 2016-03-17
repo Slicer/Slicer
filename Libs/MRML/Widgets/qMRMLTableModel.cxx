@@ -245,10 +245,10 @@ void qMRMLTableModel::updateModelFromMRML()
         if (vtkBitArray::SafeDownCast(columnArray))
           {
           // Boolean values indicated by a column of vtkBitArray type are displayed as checkboxes
-          item->setData(variant.ToInt(), Qt::CheckStateRole);
-          item->setData(QVariant(), Qt::DisplayRole);
-          item->setFlags(item->flags() | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
           item->setData(vtkMRMLTableNode::BoolType, Qt::WhatsThisRole);
+          item->setCheckable(true);
+          item->setCheckState(variant.ToInt() ? Qt::Checked : Qt::Unchecked);
+          item->setText(QString()); // No text is supposed to be in the cell
           }
         // Default display as text
         else
@@ -348,19 +348,21 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
     if (type == vtkMRMLTableNode::BoolType)
       {
       // Cell bool value changed
-      int checked = item->data(Qt::CheckStateRole).toInt();
+      int checked = item->checkState();
       int valueBefore = table->GetValue(tableRow, tableCol).ToInt();
       if (checked == valueBefore)
         {
         // The value is not changed, this means that the table cannot store this value - revert the value in the table
         this->blockSignals(true);
-        item->setData(valueBefore, Qt::CheckStateRole);
-        item->setData(QVariant(), Qt::DisplayRole); // No text is supposed to be in the cell
+        item->setCheckState(valueBefore ? Qt::Checked : Qt::Unchecked);
+        item->setText(QString()); // No text is supposed to be in the cell
         this->blockSignals(false);
         }
       else
         {
         table->SetValue(tableRow, tableCol, vtkVariant(checked));
+        table->GetColumn(tableCol)->Modified(); // Enable observation of checked state changed separately
+        table->Modified();
         }
       }
     else

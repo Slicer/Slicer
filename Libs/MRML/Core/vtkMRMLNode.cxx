@@ -1038,6 +1038,16 @@ void vtkMRMLNode::RemoveNodeReferenceIDs(const char* referenceRole)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNode::GetNodeReferenceRoles(std::vector<std::string> &roles)
+{
+  roles.clear();
+  for (NodeReferencesType::iterator roleIt = this->NodeReferences.begin(); roleIt != this->NodeReferences.end(); roleIt++)
+    {
+    roles.push_back(roleIt->first);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLNode::GetNodeReferences(const char* referenceRole, std::vector<vtkMRMLNode*> &nodes)
 {
   if (referenceRole)

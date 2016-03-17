@@ -693,6 +693,8 @@ public:
   void GetNodeReferenceIDs(const char* referenceRole,
                            std::vector<const char*> &referencedNodeIDs);
 
+  /// Get reference roles of the present node references
+  void GetNodeReferenceRoles(std::vector<std::string> &roles);
 
   /// HierarchyModifiedEvent is generated when the hierarchy node with which
   /// this node is associated changes
@@ -885,7 +887,7 @@ protected:
 
   vtkObserverManager *MRMLObserverManager;
 
-  /// NodeReferences is a map that stores vector of refererences for each referenceRole,
+  /// NodeReferences is a map that stores vector of references for each referenceRole,
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
   typedef std::vector< vtkSmartPointer<vtkMRMLNodeReference> > NodeReferenceListType;
   typedef std::map< std::string, NodeReferenceListType > NodeReferencesType;
