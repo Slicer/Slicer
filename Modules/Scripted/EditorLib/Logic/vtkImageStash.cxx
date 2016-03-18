@@ -29,6 +29,7 @@ vtkImageStash::vtkImageStash()
   this->CompressionLevel = 1; // corresponds to Z_BEST_SPEED
   this->Stashing = 0;
   this->StashingThreadID = 0;
+  this->StashingSucceeded = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -109,13 +110,23 @@ void vtkImageStash::Stash()
   // and even if it uses less memory the buffer size is not reduced.
   // Call squeeze on the buffer to reclaim the unused memory space
   // (typically reduces memory consumption from hundreds of megabytes to under a megabyte)
-  compressedBuffer->Squeeze();
-  this->SetStashedScalars(compressedBuffer);
-  compressedBuffer->Delete();
+  if (compressedBuffer)
+    {
+    compressedBuffer->Squeeze();
+    this->SetStashedScalars(compressedBuffer);
+    compressedBuffer->Delete();
 
-  // this will realloc a zero sized buffer
-  scalars->SetNumberOfTuples(0);
-  scalars->Squeeze();
+    // this will realloc a zero sized buffer
+    scalars->SetNumberOfTuples(0);
+    scalars->Squeeze();
+    this->SetStashingSucceeded(1);
+    }
+  else
+    {
+    // couldn't really compress
+    this->SetStashedScalars(0);
+    this->SetStashingSucceeded(0);
+    }
 }
 
 //----------------------------------------------------------------------------

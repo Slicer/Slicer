@@ -86,6 +86,11 @@ public:
   vtkSetMacro(Stashing, int);
   vtkGetMacro(Stashing, int);
 
+  // Description:
+  // 1 if the last call to Stash worked correctly, 0 otherwise
+  vtkSetMacro(StashingSucceeded, int);
+  vtkGetMacro(StashingSucceeded, int);
+
 protected:
   vtkImageStash();
   ~vtkImageStash();
@@ -97,6 +102,7 @@ protected:
   vtkZLibDataCompressor *Compressor;
   int CompressionLevel;
   int Stashing;
+  int StashingSucceeded;
 
 private:
   int StashingThreadID;
@@ -108,6 +114,3 @@ private:
 
 
 #endif
-
-
-
