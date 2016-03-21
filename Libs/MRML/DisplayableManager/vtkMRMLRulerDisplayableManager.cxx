@@ -210,8 +210,6 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::SetupMarkerRenderer()
 //---------------------------------------------------------------------------
 void vtkMRMLRulerDisplayableManager::vtkInternal::SetupRuler()
 {
-  const int numberOfTickLines = 11;
-
   this->RulerLineActor->GetPoint1Coordinate()->SetCoordinateSystemToDisplay();
   this->RulerLineActor->GetPoint2Coordinate()->SetCoordinateSystemToDisplay();
   this->RulerLineActor->LabelVisibilityOff();
@@ -278,7 +276,6 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
     if (cam && cam->GetParallelProjection())
       {
       // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left
-      double* viewport = this->MarkerRenderer->GetViewport();
       // Determine the available renderer size in pixels
       double minX = 0;
       double minY = 0;
@@ -286,7 +283,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
       double maxX = 1;
       double maxY = 1;
       this->MarkerRenderer->NormalizedDisplayToDisplay(maxX, maxY);
-      int rendererSizeInPixels[2] = {maxX-minX, maxY-minY};
+      int rendererSizeInPixels[2] = {static_cast<int>(maxX-minX), static_cast<int>(maxY-minY)};
 
       viewWidthPixel = rendererSizeInPixels[0];
       viewHeightPixel = rendererSizeInPixels[1];
@@ -335,7 +332,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
   int rulerTextMarginPixel = int(RULER_TEXT_MARGIN*viewHeightPixel);
 
   // Ruler line
-  double pointOrigin[3] = {double(viewWidthPixel)/2.0, rulerLineMarginPixel, 0};
+  double pointOrigin[3] = {double(viewWidthPixel)/2.0, static_cast<double>(rulerLineMarginPixel), 0.0};
   this->RulerLineActor->SetPoint2(pointOrigin[0]-double(bestMatchScalePreset->Length)*scalingFactorPixelPerMm/2.0, rulerLineMarginPixel);
   this->RulerLineActor->SetPoint1(pointOrigin[0]+double(bestMatchScalePreset->Length)*scalingFactorPixelPerMm/2.0, rulerLineMarginPixel);
   this->RulerLineActor->SetNumberOfLabels(bestMatchScalePreset->NumberOfMajorDivisions+1);

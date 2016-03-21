@@ -164,8 +164,12 @@ void qSlicerTablesModuleWidget::onMRMLTableNodeModified(vtkObject* caller)
 {
   Q_D(qSlicerTablesModuleWidget);
 
+#ifndef QT_NO_DEBUG
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(caller);
   Q_ASSERT(d->MRMLTableNode == tableNode);
+#else
+  Q_UNUSED(caller);
+#endif
 
   bool validNode = d->MRMLTableNode != 0;
   bool editableNode = d->MRMLTableNode != 0 && !d->MRMLTableNode->GetLocked();

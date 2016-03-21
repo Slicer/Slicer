@@ -508,7 +508,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
   double maxX = 1;
   double maxY = 1;
   this->MarkerRenderer->NormalizedDisplayToDisplay(maxX, maxY);
-  int rendererSizeInPixels[2] = {maxX-minX, maxY-minY};
+  int rendererSizeInPixels[2] = {static_cast<int>(maxX-minX), static_cast<int>(maxY-minY)};
 
   if (rendererSizeInPixels[0]>0 && rendererSizeInPixels[1]>0)
     {
