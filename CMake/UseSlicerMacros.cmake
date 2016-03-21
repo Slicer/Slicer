@@ -50,6 +50,9 @@ endfunction()
 # If the optional argument 'SKIP_TRUNCATE' is provided, the
 # text will NOT be truncated it too long.
 #
+# If the optional argument 'OBFUSCATE' is provided, 'OBFUSCATED' will
+# be displayed instead of the variable value.
+#
 # In the current implementation, the padding is hardcoded to a length of 40
 # and the total text will be truncated if longer than 120 characters.
 #
@@ -65,9 +68,14 @@ endfunction()
 #
 function(slicer_setting_variable_message varname)
   set(truncate TRUE)
-  if("${ARGV1}" STREQUAL "SKIP_TRUNCATE")
-    set(truncate FALSE)
-  endif()
+  set(obfuscate FALSE)
+  foreach(arg ${ARGN})
+    if(arg STREQUAL "SKIP_TRUNCATE")
+      set(truncate FALSE)
+    elseif(arg STREQUAL "OBFUSCATE")
+      set(obfuscate TRUE)
+    endif()
+  endforeach()
   set(pretext_right_jusitfy_length 45)
   set(fill_char ".")
   set(truncated_text_length 120)
@@ -77,16 +85,21 @@ function(slicer_setting_variable_message varname)
     set(value "NOT DEFINED")
   endif()
 
+  set(_value ${value})
+  if(obfuscate)
+    set(_value "OBFUSCATED")
+  endif()
+
   set(pretext "Setting ${varname}")
   string(LENGTH ${pretext} pretext_length)
   math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length} - 1")
   if(pad_length GREATER 0)
     string(RANDOM LENGTH ${pad_length} ALPHABET ${fill_char} pretext_dots)
-    set(text "${pretext} ${pretext_dots}: ${value}")
+    set(text "${pretext} ${pretext_dots}: ${_value}")
   elseif(pad_length EQUAL 0)
-    set(text "${pretext} : ${value}")
+    set(text "${pretext} : ${_value}")
   else()
-    set(text "${pretext}: ${value}")
+    set(text "${pretext}: ${_value}")
   endif()
   string(LENGTH "${text}" text_length)
   if(${truncate} AND ${text_length} GREATER ${truncated_text_length})
@@ -122,6 +135,9 @@ function(slicer_setting_variable_message_test)
 
   set(THIS_IS_A_LONG_VARIABLE_NAME_OVER_FORTY_FIVE_CHARS "This is a long variable name over forty five characters")
   slicer_setting_variable_message("THIS_IS_A_LONG_VARIABLE_NAME_OVER_FORTY_FIVE_CHARS")
+
+  set(YOU_SHOULD_NOT_SEE_THE_VALUE "You should not see this")
+  slicer_setting_variable_message("YOU_SHOULD_NOT_SEE_THE_VALUE" OBFUSCATE)
 
   message("SUCCESS")
 endfunction()
