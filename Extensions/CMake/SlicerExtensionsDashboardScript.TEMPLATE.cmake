@@ -37,11 +37,6 @@ set(MIDAS_PACKAGE_API_KEY "API_KEY")
 # Dashboard options
 #-----------------------------------------------------------------------------
 set(EXTENSIONS_BUILDSYSTEM_TESTING FALSE)
-set(WITH_KWSTYLE FALSE)
-set(WITH_MEMCHECK FALSE)
-set(WITH_COVERAGE FALSE)
-set(WITH_DOCUMENTATION FALSE)
-#set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ) # for example: $ENV{HOME}/Projects/Doxygen
 set(CTEST_BUILD_CONFIGURATION "Release") # Release or Debug
 set(CTEST_TEST_TIMEOUT 500)
 set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j -l4" on unix
@@ -68,8 +63,6 @@ set(SCRIPT_MODE "experimental") # "experimental", "continuous", "nightly"
 # Additional CMakeCache options
 #-----------------------------------------------------------------------------
 set(ADDITIONAL_CMAKECACHE_OPTION "
-  ADDITIONAL_C_FLAGS:STRING=
-  ADDITIONAL_CXX_FLAGS:STRING=
 ")
 
 #-----------------------------------------------------------------------------
@@ -84,8 +77,6 @@ endif()
 #-----------------------------------------------------------------------------
 find_program(CTEST_SVN_COMMAND NAMES svn)
 find_program(CTEST_GIT_COMMAND NAMES git)
-find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
-find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
 
 #-----------------------------------------------------------------------------
 # Git tag
