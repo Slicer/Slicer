@@ -590,9 +590,9 @@ ImageToImageRegistrationHelper<TImage>
     typename AffineTransformType::ParametersType scales;
     scales.set_size( ImageDimension * ImageDimension + ImageDimension );
     unsigned int scaleNum = 0;
-    for( int d1 = 0; d1 < ImageDimension; d1++ )
+    for( unsigned int d1 = 0; d1 < ImageDimension; d1++ )
       {
-      for( int d2 = 0; d2 < ImageDimension; d2++ )
+      for( unsigned int d2 = 0; d2 < ImageDimension; d2++ )
         {
         if( d1 == d2 )
           {
@@ -605,7 +605,7 @@ ImageToImageRegistrationHelper<TImage>
         ++scaleNum;
         }
       }
-    for( int d1 = 0; d1 < ImageDimension; d1++ )
+    for( unsigned int d1 = 0; d1 < ImageDimension; d1++ )
       {
       scales[scaleNum] = 1.0 / (m_ExpectedOffsetPixelMagnitude * m_FixedImage->GetSpacing()[0]);
       ++scaleNum;

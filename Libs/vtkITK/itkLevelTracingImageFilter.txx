@@ -300,6 +300,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   pix.Fill(0);
   pix[0]  = m_Seed[0];
   pix[1]  = m_Seed[1];
+  pixTemp.Fill(0);
 
 
   // 8 connected neighbor offsets

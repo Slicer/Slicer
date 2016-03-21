@@ -82,11 +82,11 @@ InitialImageToImageRegistrationMethod<TImage>
       landmarkTransform->SetIdentity();
       landmarkCalc->SetTransform(landmarkTransform);
       landmarkCalc->InitializeTransform();
-      for( int i = 0; i < TImage::ImageDimension; i++ )
+      for( unsigned int i = 0; i < TImage::ImageDimension; i++ )
         {
         center[i] = landmarkTransform->GetCenter()[i];
         offset[i] = landmarkTransform->GetTranslation()[i];
-        for( int j = 0; j < TImage::ImageDimension; j++ )
+        for( unsigned int j = 0; j < TImage::ImageDimension; j++ )
           {
           matrix(i, j) = landmarkTransform->GetMatrix() (i, j);
           }
@@ -109,11 +109,11 @@ InitialImageToImageRegistrationMethod<TImage>
       landmarkTransform->SetIdentity();
       landmarkCalc->SetTransform(landmarkTransform);
       landmarkCalc->InitializeTransform();
-      for( int i = 0; i < TImage::ImageDimension; i++ )
+      for( unsigned int i = 0; i < TImage::ImageDimension; i++ )
         {
         center[i] = landmarkTransform->GetCenter()[i];
         offset[i] = landmarkTransform->GetTranslation()[i];
-        for( int j = 0; j < TImage::ImageDimension; j++ )
+        for( unsigned int j = 0; j < TImage::ImageDimension; j++ )
           {
           matrix(i, j) = landmarkTransform->GetMatrix() (i, j);
           }
@@ -170,7 +170,7 @@ InitialImageToImageRegistrationMethod<TImage>
     Point<double, ImageDimension> movingCenterPoint;
 
     size = this->GetMovingImage()->GetLargestPossibleRegion().GetSize();
-    for( int i = 0; i < ImageDimension; i++ )
+    for( unsigned int i = 0; i < ImageDimension; i++ )
       {
       movingCenterIndex[i] = size[i] / 2;
       }
@@ -192,7 +192,7 @@ InitialImageToImageRegistrationMethod<TImage>
     if( !this->GetUseRegionOfInterest() )
       {
       std::cout << "Init: Using full image extent" << std::endl;
-      for( int i = 0; i < ImageDimension; i++ )
+      for( unsigned int i = 0; i < ImageDimension; i++ )
         {
         fixedCenterIndex[i] = size[i] / 2;
         }
@@ -202,7 +202,7 @@ InitialImageToImageRegistrationMethod<TImage>
     else
       {
       std::cout << "Init: Using region of interest" << std::endl;
-      for( int i = 0; i < ImageDimension; i++ )
+      for( unsigned int i = 0; i < ImageDimension; i++ )
         {
         fixedCenterPoint[i] = ( this->GetRegionOfInterestPoint1()[i]
                                 + this->GetRegionOfInterestPoint2()[i] ) / 2;
@@ -214,7 +214,7 @@ InitialImageToImageRegistrationMethod<TImage>
     Point<double, ImageDimension> movingCenterPoint;
 
     size = this->GetMovingImage()->GetLargestPossibleRegion().GetSize();
-    for( int i = 0; i < ImageDimension; i++ )
+    for( unsigned int i = 0; i < ImageDimension; i++ )
       {
       movingCenterIndex[i] = size[i] / 2;
       }
