@@ -20,11 +20,13 @@
 #include "itkProgressReporter.h"
 # include "itkIterationReporter.h"
 
-#include <vcl_map.h>
-#include <vcl_string.h>
-#include <vcl_cmath.h>
-#include <vcl_algorithm.h>
-#include <vcl_utility.h>
+#include <map>
+#include <string>
+#include <cmath>
+#include <vcl_compiler.h>
+#include <iostream>
+#include <algorithm>
+#include <utility>
 
 #include <iostream>
 #include <ctime>
@@ -253,15 +255,15 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
 template<class TInputImage, class TOutputImage, class TWeightPixelType>
 void GrowCutSegmentationImageFilter< TInputImage, TOutputImage, TWeightPixelType>::
-ComputeLabelVolumes(TOutputImage *outputImage, vcl_vector< unsigned > &volumes,
-                    vcl_vector< unsigned > &physicalVolumes)
+ComputeLabelVolumes(TOutputImage *outputImage, std::vector< unsigned > &volumes,
+                    std::vector< unsigned > &physicalVolumes)
 {
   //volumes.resize(3);
 
 #ifndef USE_LABELSHAPEFILTER
 
-  vcl_map<unsigned short, unsigned int>labelMap;
-  vcl_vector< unsigned short > labels;
+  std::map<unsigned short, unsigned int>labelMap;
+  std::vector< unsigned short > labels;
   unsigned int index = 0;
   ImageRegionConstIteratorWithIndex< OutputImageType > label( outputImage,
                                                               outputImage->GetBufferedRegion());
@@ -270,10 +272,10 @@ ComputeLabelVolumes(TOutputImage *outputImage, vcl_vector< unsigned > &volumes,
     {
 
     unsigned short pix = static_cast<unsigned short>(label.Get());
-    vcl_map<unsigned short, unsigned int>::iterator it = labelMap.find(pix);
+    std::map<unsigned short, unsigned int>::iterator it = labelMap.find(pix);
     if(it == labelMap.end())
       {
-      labelMap.insert(vcl_pair<unsigned short, unsigned int>(pix, index));
+      labelMap.insert(std::pair<unsigned short, unsigned int>(pix, index));
       volumes.push_back(1);
       labels.push_back(pix);
       ++index;
@@ -287,7 +289,7 @@ ComputeLabelVolumes(TOutputImage *outputImage, vcl_vector< unsigned > &volumes,
   // std::cout<<" label \t "<<" volume "<<std::endl;
   // for (unsigned int i = 0; i < index; i++)
   //   {
-  //   vcl_map<unsigned short, unsigned int>::iterator it = labelMap.find(labels[i]);
+  //   std::map<unsigned short, unsigned int>::iterator it = labelMap.find(labels[i]);
   //   std::cout<<labels[i]<<"\t"<<volumes[it->second]<<std::endl;
   //   }
 
@@ -631,7 +633,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
       }
     }
 
-  maxRadius = static_cast< unsigned int>(vcl_ceil(maxRadius*0.5));
+  maxRadius = static_cast< unsigned int>(std::ceil(maxRadius*0.5));
 
   // float threshSaturation = .96; //.999; // Determine the saturation according to the size of the object
   // float threshUnchanged = 0.05;
@@ -671,7 +673,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
     unsigned relUnlabeled = (unlabeled*100)/totalROIVolume;
     unsigned relSaturated = ((currSaturatedPix+currLocallySaturatedPix)*100)/totalROIVolume;
 
-    // unsigned permodified = (currModified > prevModifiedPix) ? ((currModified-prevModifiedPix)*100)/(vcl_max(static_cast<unsigned int>(1), vcl_max(currModified, prevModifiedPix))) : ((prevModifiedPix - currModified)*100)/(vcl_max(static_cast<unsigned int>(1), vcl_max(currModified, prevModifiedPix)));
+    // unsigned permodified = (currModified > prevModifiedPix) ? ((currModified-prevModifiedPix)*100)/(std::max(static_cast<unsigned int>(1), std::max(currModified, prevModifiedPix))) : ((prevModifiedPix - currModified)*100)/(std::max(static_cast<unsigned int>(1), std::max(currModified, prevModifiedPix)));
 
     converged = (prevModifiedPix == currModified) ||
       (relUnlabeled < threshUnchanged && relSaturated > threshSaturation);
@@ -723,8 +725,8 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
 
   time(&end);
 
-  vcl_vector< unsigned > labelVolumes;
-  vcl_vector< unsigned > physicalVolumes;
+  std::vector< unsigned > labelVolumes;
+  std::vector< unsigned > physicalVolumes;
 
   this->ComputeLabelVolumes(m_LabelImage, labelVolumes, physicalVolumes);
 
@@ -739,7 +741,7 @@ GrowCutSegmentationImageFilter<TInputImage, TOutputImage, TWeightPixelType>
   typedef ImageFileWriter < OutputImageType > WriterType;
   typename WriterType::Pointer writer = WriterType::New();
 
-  vcl_string outfilename = "segmented_img.mhd";
+  std::string outfilename = "segmented_img.mhd";
   writer->SetFileName(outfilename.c_str());
   writer->SetInput(m_LabelImage);
   writer->Update();

@@ -14,7 +14,7 @@ namespace itk
 
 #if defined(VTK_TYPE_USE___INT64)
 template <>
-class NumericTraits<__int64> : public vcl_numeric_limits<__int64> {
+class NumericTraits<__int64> : public std::numeric_limits<__int64> {
 public:
   typedef __int64 ValueType;
   typedef __int64 PrintType;
@@ -26,10 +26,10 @@ public:
   static const __int64 VTK_ITK_EXPORT Zero;
   static const __int64 VTK_ITK_EXPORT One;
 
-  static __int64 min( ) { return vcl_numeric_limits<__int64>::min(); }
-  static __int64 max( ) { return vcl_numeric_limits<__int64>::max(); }
-  static __int64 min( __int64 ) { return vcl_numeric_limits<__int64>::min(); }
-  static __int64 max( __int64 ) { return vcl_numeric_limits<__int64>::max(); }
+  static __int64 min( ) { return std::numeric_limits<__int64>::min(); }
+  static __int64 max( ) { return std::numeric_limits<__int64>::max(); }
+  static __int64 min( __int64 ) { return std::numeric_limits<__int64>::min(); }
+  static __int64 max( __int64 ) { return std::numeric_limits<__int64>::max(); }
   static __int64 NonpositiveMin() { return min(); }
   static bool IsPositive(__int64 val) { return val > Zero; }
   static bool IsNonpositive(__int64 val) { return val <= Zero; }
@@ -39,7 +39,7 @@ public:
 };
 
 template <>
-class NumericTraits<unsigned __int64> : public vcl_numeric_limits<unsigned __int64> {
+class NumericTraits<unsigned __int64> : public std::numeric_limits<unsigned __int64> {
 public:
   typedef unsigned __int64 ValueType;
   typedef unsigned __int64 PrintType;
@@ -51,10 +51,10 @@ public:
   static const unsigned __int64 VTK_ITK_EXPORT Zero;
   static const unsigned __int64 VTK_ITK_EXPORT One;
 
-  static unsigned __int64 min( ) { return vcl_numeric_limits<unsigned __int64>::min(); }
-  static unsigned __int64 max( ) { return vcl_numeric_limits<unsigned __int64>::max(); }
-  static unsigned __int64 min( unsigned __int64 ) { return vcl_numeric_limits<unsigned __int64>::min(); }
-  static unsigned __int64 max( unsigned __int64 ) { return vcl_numeric_limits<unsigned __int64>::max(); }
+  static unsigned __int64 min( ) { return std::numeric_limits<unsigned __int64>::min(); }
+  static unsigned __int64 max( ) { return std::numeric_limits<unsigned __int64>::max(); }
+  static unsigned __int64 min( unsigned __int64 ) { return std::numeric_limits<unsigned __int64>::min(); }
+  static unsigned __int64 max( unsigned __int64 ) { return std::numeric_limits<unsigned __int64>::max(); }
   static unsigned __int64 NonpositiveMin() { return min(); }
   static bool IsPositive(unsigned __int64 val) { return val != Zero; }
   static bool IsNonpositive(unsigned __int64 val) { return val == Zero; }
