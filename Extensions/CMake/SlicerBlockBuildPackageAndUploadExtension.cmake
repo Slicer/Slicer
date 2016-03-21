@@ -234,7 +234,7 @@ else()
     ctest_submit(PARTS Build)
   endif()
 
-  if(RUN_CTEST_UPLOAD AND COMMAND ctest_upload)
+  if(RUN_CTEST_UPLOAD)
     message("Uploading package URL for extension ${EXTENSION_NAME} ...")
 
     file(STRINGS ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}/PACKAGES.txt package_list)

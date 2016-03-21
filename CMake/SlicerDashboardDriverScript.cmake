@@ -59,13 +59,6 @@ if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
   set(CTEST_CONFIGURATION_TYPE ${CTEST_BUILD_CONFIGURATION})
 endif()
 
-# Make sure command 'ctest_upload' is available if WITH_PACKAGES is True
-if(WITH_PACKAGES)
-  if(NOT COMMAND ctest_upload)
-    message(FATAL_ERROR "Failed to enable option WITH_PACKAGES ! CMake ${CMAKE_VERSION} doesn't support 'ctest_upload' command.")
-  endif()
-endif()
-
 #-----------------------------------------------------------------------------
 # Macro allowing to set a variable to its default value.
 # The default value is set with:
