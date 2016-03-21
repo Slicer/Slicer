@@ -7,23 +7,23 @@
 
 # The following variable are expected to be define in the top-level script:
 set(expected_variables
-  ADDITIONAL_CMAKECACHE_OPTION
-  CTEST_NOTES_FILES
   CTEST_SITE
-  CTEST_DASHBOARD_ROOT
-  CTEST_CMAKE_GENERATOR
+  CTEST_BUILD_NAME
+  SCRIPT_MODE
+  CTEST_BUILD_CONFIGURATION
   WITH_MEMCHECK
   WITH_COVERAGE
   WITH_DOCUMENTATION
-  CTEST_BUILD_CONFIGURATION
+  ADDITIONAL_CMAKECACHE_OPTION
+  CTEST_NOTES_FILES
+  CTEST_DASHBOARD_ROOT
+  CTEST_CMAKE_GENERATOR
   CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
   TEST_TO_EXCLUDE_REGEX
   CTEST_PROJECT_NAME
   CTEST_SOURCE_DIRECTORY
   CTEST_BINARY_DIRECTORY
-  CTEST_BUILD_NAME
-  SCRIPT_MODE
   CTEST_COVERAGE_COMMAND
   CTEST_MEMORYCHECK_COMMAND
   CTEST_SVN_COMMAND
@@ -31,21 +31,15 @@ set(expected_variables
   QT_QMAKE_EXECUTABLE
   )
 
+# Update list of expected variables based on build options.
 if(WITH_DOCUMENTATION)
   list(APPEND expected_variables DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
 endif()
-if(NOT DEFINED CTEST_PARALLEL_LEVEL)
-  set(CTEST_PARALLEL_LEVEL 8)
-endif()
 
-if(WITH_PACKAGES AND NOT DEFINED MIDAS_PACKAGE_URL)
-  list(APPEND expected_variables MIDAS_PACKAGE_URL)
-endif()
+# List of all variables
+set(variables ${expected_variables})
 
-if(EXISTS "${CTEST_LOG_FILE}")
-  list(APPEND CTEST_NOTES_FILES ${CTEST_LOG_FILE})
-endif()
-
+# Sanity check
 foreach(var ${expected_variables})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} should be defined in top-level script !")
@@ -55,37 +49,71 @@ endforeach()
 if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
   set(CTEST_CONFIGURATION_TYPE ${CTEST_BUILD_CONFIGURATION})
 endif()
+list(APPEND variables CTEST_CONFIGURATION_TYPE)
+
+if(EXISTS "${CTEST_LOG_FILE}")
+  list(APPEND CTEST_NOTES_FILES ${CTEST_LOG_FILE})
+endif()
+list(APPEND variables CTEST_LOG_FILE)
+list(APPEND variables CTEST_NOTES_FILES)
 
 #-----------------------------------------------------------------------------
-# Macro allowing to set a variable to its default value.
+# Macro allowing to set a variable to its default value if not already defined.
 # The default value is set with:
 #  (1) if set, the value environment variable <var>.
 #  (2) if set, the value of local variable variable <var>.
 #  (3) if none of the above, the value passed as a parameter.
-macro(setOnlyIfNotDefined var defaultvalue)
-  if(DEFINED ENV{${var}})
-    message(STATUS "Setting '${var}' variable with environment variable value '$ENV{${var}}'")
+# Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
+macro(setIfNotDefined var defaultvalue)
+  set(_obfuscate FALSE)
+  foreach(arg ${ARGN})
+    if(arg STREQUAL "OBFUSCATE")
+      set(_obfuscate TRUE)
+    endif()
+  endforeach()
+  if(DEFINED ENV{${var}} AND NOT DEFINED ${var})
+    set(_value "$ENV{${var}}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Setting '${var}' variable with environment variable value '${_value}'")
     set(${var} $ENV{${var}})
   endif()
   if(NOT DEFINED ${var})
+    set(_value "${defaultvalue}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Setting '${var}' variable with default value '${_value}'")
     set(${var} "${defaultvalue}")
+  endif()
+  if(NOT _obfuscate)
+    list(APPEND variables ${var})
   endif()
 endmacro()
 
 #-----------------------------------------------------------------------------
+# Set default values
+#-----------------------------------------------------------------------------
+setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
+setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
+setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
+setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
+
+#-----------------------------------------------------------------------------
 # The following variable can be used while testing the driver scripts
 #-----------------------------------------------------------------------------
-setOnlyIfNotDefined(run_ctest_submit TRUE)
-setOnlyIfNotDefined(run_ctest_with_disable_clean FALSE)
-setOnlyIfNotDefined(run_ctest_with_update TRUE)
-setOnlyIfNotDefined(run_ctest_with_configure TRUE)
-setOnlyIfNotDefined(run_ctest_with_build TRUE)
-setOnlyIfNotDefined(run_ctest_with_test TRUE)
-setOnlyIfNotDefined(run_ctest_with_coverage TRUE)
-setOnlyIfNotDefined(run_ctest_with_memcheck TRUE)
-setOnlyIfNotDefined(run_ctest_with_packages TRUE)
-setOnlyIfNotDefined(run_ctest_with_upload TRUE)
-setOnlyIfNotDefined(run_ctest_with_notes TRUE)
+setIfNotDefined(run_ctest_submit TRUE)
+setIfNotDefined(run_ctest_with_disable_clean FALSE)
+setIfNotDefined(run_ctest_with_update TRUE)
+setIfNotDefined(run_ctest_with_configure TRUE)
+setIfNotDefined(run_ctest_with_build TRUE)
+setIfNotDefined(run_ctest_with_test TRUE)
+setIfNotDefined(run_ctest_with_coverage TRUE)
+setIfNotDefined(run_ctest_with_memcheck TRUE)
+setIfNotDefined(run_ctest_with_packages TRUE)
+setIfNotDefined(run_ctest_with_upload TRUE)
+setIfNotDefined(run_ctest_with_notes TRUE)
 
 #-----------------------------------------------------------------------------
 if(NOT DEFINED GIT_REPOSITORY)
@@ -95,24 +123,21 @@ if(NOT DEFINED GIT_REPOSITORY)
   if(NOT DEFINED SVN_BRANCH)
     set(SVN_BRANCH "trunk")
   endif()
-  set(repository ${SVN_REPOSITORY}/${SVN_BRANCH})
+  set(SVN_URL ${SVN_REPOSITORY}/${SVN_BRANCH})
   set(svn_checkout_option "")
   if(NOT "${SVN_REVISION}" STREQUAL "")
-    set(repository "${repository}@${SVN_REVISION}")
+    set(SVN_URL "${SVN_URL}@${SVN_REVISION}")
     set(run_ctest_with_update FALSE)
   endif()
-  message("SVN_BRANCH .............: ${SVN_BRANCH}")
-  message("SVN_REVISION ...........: ${SVN_REVISION}")
-  message("SVN_REPOSITORY .........: ${SVN_REPOSITORY}")
-  message("SVN_URL ................: ${repository}")
+  set(repository ${SVN_URL})
+  list(APPEND variables SVN_REPOSITORY SVN_BRANCH SVN_REVISION SVN_URL)
 else()
   set(repository ${GIT_REPOSITORY})
   set(git_branch_option "")
   if(NOT "${GIT_TAG}" STREQUAL "")
     set(git_branch_option "-b ${GIT_TAG}")
   endif()
-  message("GIT_REPOSITORY ......: ${GIT_REPOSITORY}")
-  message("GIT_TAG .............: ${GIT_TAG}")
+  list(APPEND variables GIT_REPOSITORY GIT_TAG)
 endif()
 
 # Should binary directory be cleaned?
@@ -156,6 +181,46 @@ if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
   set(CTEST_USE_LAUNCHERS 0)
 endif()
 set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} ${CTEST_USE_LAUNCHERS})
+
+list(APPEND variables empty_binary_directory)
+list(APPEND variables force_build)
+list(APPEND variables model)
+list(APPEND variables track)
+list(APPEND variables CTEST_USE_LAUNCHERS)
+
+# Given a variable name, this function will display the text
+#   "-- <varname> ................: ${<varname>}"
+# and will ensure that the message is consistenly padded.
+#
+# If the variable is not defined, it will display:
+#   "-- <varname> ................: <NOT DEFINED>"
+function(display_var varname)
+  set(pretext_right_jusitfy_length 35)
+  set(fill_char ".")
+
+  set(value ${${varname}})
+  if(NOT DEFINED ${varname})
+    set(value "NOT DEFINED")
+  endif()
+
+  set(pretext "${varname}")
+  string(LENGTH ${pretext} pretext_length)
+  math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length} - 1")
+  if(pad_length GREATER 0)
+    string(RANDOM LENGTH ${pad_length} ALPHABET ${fill_char} pretext_dots)
+    set(text "${pretext} ${pretext_dots}: ${value}")
+  elseif(pad_length EQUAL 0)
+    set(text "${pretext} : ${value}")
+  else()
+    set(text "${pretext}: ${value}")
+  endif()
+  message(STATUS "${text}")
+endfunction()
+
+# Display variables
+foreach(var ${variables})
+  display_var(${var})
+endforeach()
 
 if(empty_binary_directory AND NOT run_ctest_with_disable_clean)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")

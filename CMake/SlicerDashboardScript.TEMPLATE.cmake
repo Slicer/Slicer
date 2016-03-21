@@ -140,20 +140,6 @@ set(CTEST_PROJECT_NAME "Slicer4")
 set(CTEST_BUILD_NAME "${MY_OPERATING_SYSTEM}-${MY_COMPILER}-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
 
 #
-# Display build info
-#
-message("CTEST_SITE ................: ${CTEST_SITE}")
-message("CTEST_BUILD_NAME ..........: ${CTEST_BUILD_NAME}")
-message("SCRIPT_MODE ...............: ${SCRIPT_MODE}")
-message("CTEST_BUILD_CONFIGURATION .: ${CTEST_BUILD_CONFIGURATION}")
-message("WITH_KWSTYLE ..............: ${WITH_KWSTYLE}")
-message("WITH_COVERAGE: ............: ${WITH_COVERAGE}")
-message("WITH_MEMCHECK .............: ${WITH_MEMCHECK}")
-message("WITH_PACKAGES .............: ${WITH_PACKAGES}")
-message("WITH_DOCUMENTATION ........: ${WITH_DOCUMENTATION}")
-message("DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY: ${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}")
-
-#
 # Convenient function allowing to download a file
 #
 function(download_file url dest)
