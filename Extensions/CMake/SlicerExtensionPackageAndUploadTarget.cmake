@@ -9,9 +9,9 @@
 #  (1) build the standard 'package' target,
 #  (2) extract the list of generated packages from its standard output,
 #  (3) append the list of generated package filepaths to a file named PACKAGES.txt,
-#  (4) upload the extension packages on midas.
+#  (4) upload the first package on midas.
 #
-# The following variables are expected to be defined in the calling scope:
+# The following variables are expected to be defined in the including scope:
 #  CMAKE_SOURCE_DIR
 #  EXTENSION_SUPERBUILD_BINARY_DIR
 #  EXTENSION_BUILD_SUBDIRECTORY
@@ -31,6 +31,15 @@
 #  EXTENSION_ENABLED
 #  EXTENSION_OPERATING_SYSTEM
 #  EXTENSION_ARCHITECTURE
+#
+# Then, using  the 'SlicerMacroExtractRepositoryInfo' CMake module, the script
+# will also set the following variables:
+#  EXTENSION_WC_TYPE
+#  EXTENSION_WC_URL
+#  EXTENSION_WC_REVISION
+#
+# Finally, each time the 'packageupload' target is built, this same module will be
+# executed with all variables previously defined as arguments.
 #
 
 if(NOT DEFINED PACKAGEUPLOAD)
@@ -180,7 +189,7 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # The following code will read the list of created packages from PACKAGES.txt
-# file and upload each one of them to midas.
+# file and upload the first one to midas.
 
 # Current assumption: Exactly one extension package is expected. If this
 # even change. The following code would have to be updated.
