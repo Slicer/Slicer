@@ -38,4 +38,7 @@ export(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.
 include(${Slicer_SOURCE_DIR}/CMake/SlicerGenerateSlicerConfig.cmake)
 
 #-----------------------------------------------------------------------------
+include(SlicerPackageAndUploadTarget)
+
+#-----------------------------------------------------------------------------
 include(${Slicer_SOURCE_DIR}/CMake/SlicerCPack.cmake)

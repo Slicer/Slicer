@@ -147,6 +147,9 @@ if(WITH_PACKAGES)
 endif()
 set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 
+# Used in SlicerPackageAndUploadTarget CMake module
+set(ENV{CTEST_MODEL} ${model})
+
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 1)
 if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
@@ -300,7 +303,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     endif()
 
     #-----------------------------------------------------------------------------
-    # Create packages / installers ...
+    # Package and upload
     #-----------------------------------------------------------------------------
     if(WITH_PACKAGES AND (run_ctest_with_packages OR run_ctest_with_upload))
       message("----------- [ WITH_PACKAGES and UPLOAD ] -----------")
@@ -309,85 +312,40 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         message("Build Errors Detected: ${build_errors}. Aborting package generation")
       else()
 
-        if(MY_BITNESS EQUAL 32)
-          set(dashboard_Architecture "i386")
-        else()
-          set(dashboard_Architecture "amd64")
-        endif()
-
-        if(WIN32)
-          set(dashboard_OperatingSystem "win")
-        elseif(APPLE)
-          set(dashboard_OperatingSystem "macosx")
-        elseif(UNIX)
-          set(dashboard_OperatingSystem "linux")
-        endif()
-
-        #-----------------------------------------------------------------------------
-        # Build and upload Slicer packages
-        #-----------------------------------------------------------------------------
-
-        # Update CMake module path so that in addition to our custom 'FindGit' module,
-        # our custom macros/functions can also be included.
+        # Update CMake module path so that our custom macros/functions can be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
-        include(CTestPackage)
-        include(MIDASAPIUploadPackage)
         include(MIDASCTestUploadURL)
 
-        set(Subversion_SVN_EXECUTABLE ${CTEST_SVN_COMMAND})
-        include(SlicerMacroExtractRepositoryInfo)
-
-        SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${CTEST_SOURCE_DIRECTORY})
-
-        set(packages)
+        message("Packaging and uploading Slicer to midas ...")
+        set(package_list)
         if(run_ctest_with_packages)
-          message("Packaging ...")
-          ctest_package(
-            BINARY_DIR ${slicer_build_dir}
-            CONFIG ${CTEST_BUILD_CONFIGURATION}
-            RETURN_VAR packages)
-        else()
-          set(packages ${CMAKE_CURRENT_LIST_FILE})
+          ctest_build(
+            TARGET packageupload
+            BUILD ${slicer_build_dir}
+            APPEND
+            )
+          ctest_submit(PARTS Build)
         endif()
+
         if(run_ctest_with_upload)
-          message("Uploading ...")
-          foreach(p ${packages})
+          message("Uploading Slicer package URL ...")
+
+          file(STRINGS ${slicer_build_dir}/PACKAGES.txt package_list)
+
+          foreach(p ${package_list})
             get_filename_component(package_name "${p}" NAME)
-            set(midas_upload_status "fail")
-            if(DEFINED MIDAS_PACKAGE_URL
-               AND DEFINED MIDAS_PACKAGE_EMAIL
-               AND DEFINED MIDAS_PACKAGE_API_KEY)
-              message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
-              midas_api_upload_package(
-                SERVER_URL ${MIDAS_PACKAGE_URL}
-                SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
-                SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
-                SUBMISSION_TYPE ${SCRIPT_MODE}
-                SOURCE_REVISION ${Slicer_WC_REVISION}
-                SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
-                OPERATING_SYSTEM ${dashboard_OperatingSystem}
-                ARCHITECTURE ${dashboard_Architecture}
-                PACKAGE_FILEPATH ${p}
-                PACKAGE_TYPE "installer"
-                RESULT_VARNAME midas_upload_status
-                )
-            endif()
-            if(NOT midas_upload_status STREQUAL "ok")
-              message("Uploading [${package_name}] on CDash") # On failure, upload the package to CDash instead
-              ctest_upload(FILES ${p})
-            else()
-              message("Uploading URL on CDash")  # On success, upload a link to CDash
-              midas_ctest_upload_url(
-                API_URL ${MIDAS_PACKAGE_URL}
-                FILEPATH ${p}
-                )
-            endif()
+            message("Uploading URL to [${package_name}] on CDash")
+            midas_ctest_upload_url(
+              API_URL ${MIDAS_PACKAGE_URL}
+              FILEPATH ${p}
+              )
             if(run_ctest_submit)
               ctest_submit(PARTS Upload)
             endif()
           endforeach()
         endif()
+
       endif()
     endif()
 
