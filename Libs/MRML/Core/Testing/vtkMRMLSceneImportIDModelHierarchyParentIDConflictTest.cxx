@@ -47,7 +47,7 @@ int vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest(int vtkNotUsed(argc),
 
 //---------------------------------------------------------------------------
 // add a 5 deep model hierarchy to a scene
-int PopulateScene(int line, vtkMRMLScene *scene)
+int PopulateScene(vtkMRMLScene *scene)
 {
   CHECK_INT(scene->GetNumberOfNodes(), 0);
 
@@ -121,7 +121,7 @@ int ImportIDModelHierarchyParentIDConflictTestXMLString()
 {
   vtkNew<vtkMRMLScene> scene;
 
-  if (PopulateScene(__LINE__, scene.GetPointer())==EXIT_FAILURE)
+  if (PopulateScene(scene.GetPointer())==EXIT_FAILURE)
     {
     return EXIT_FAILURE;
     }
@@ -258,7 +258,7 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
   // make a second scene file on disk with 5 nodes, the first one conflicting with the one node in the first scene
   vtkNew<vtkMRMLScene> scene2;
 
-  if (PopulateScene(__LINE__, scene2.GetPointer())==EXIT_FAILURE)
+  if (PopulateScene(scene2.GetPointer())==EXIT_FAILURE)
     {
     return EXIT_FAILURE;
     }
