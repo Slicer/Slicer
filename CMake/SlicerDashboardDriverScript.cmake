@@ -37,9 +37,6 @@ endif()
 if(NOT DEFINED CTEST_PARALLEL_LEVEL)
   set(CTEST_PARALLEL_LEVEL 8)
 endif()
-if(NOT DEFINED WITH_TESTING_EXTENSIONS)
-  set(WITH_TESTING_EXTENSIONS OFF)
-endif()
 
 if(WITH_PACKAGES AND NOT DEFINED MIDAS_PACKAGE_URL)
   list(APPEND expected_variables MIDAS_PACKAGE_URL)
@@ -196,11 +193,6 @@ macro(run_ctest)
     message("First time build - Initialize CMakeCache.txt")
     set(force_build TRUE)
 
-    if(WITH_TESTING_EXTENSIONS)
-      set(ADDITIONAL_CMAKECACHE_OPTION
-        "${ADDITIONAL_CMAKECACHE_OPTION} CTEST_MODEL:STRING=${model}")
-    endif()
-
     #-----------------------------------------------------------------------------
     # Write initial cache.
     #-----------------------------------------------------------------------------
@@ -211,8 +203,6 @@ Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
 DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
-Slicer_BUILD_TESTING_EXTENSIONS:BOOL=${WITH_TESTING_EXTENSIONS}
-Slicer_UPLOAD_EXTENSIONS:BOOL=${WITH_TESTING_EXTENSIONS}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()

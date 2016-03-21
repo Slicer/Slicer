@@ -462,8 +462,3 @@ ExternalProject_Add_Step(${proj} forcebuild
   DEPENDEES build
   ALWAYS 1
   )
-
-#-----------------------------------------------------------------------------
-# Slicer extensions
-#-----------------------------------------------------------------------------
-add_subdirectory(Extensions/CMake)
