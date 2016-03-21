@@ -29,9 +29,6 @@ set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
 # Open a shell and type in "cmake --help" to obtain the proper spelling of the generator
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(MY_BITNESS            "64")
-set(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
-set(MIDAS_PACKAGE_EMAIL "EMAIL")
-set(MIDAS_PACKAGE_API_KEY "API_KEY")
 
 #-----------------------------------------------------------------------------
 # Dashboard options

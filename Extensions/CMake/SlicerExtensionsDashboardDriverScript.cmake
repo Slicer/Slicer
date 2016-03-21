@@ -114,47 +114,70 @@ function(_get_slicer_revision headerfile varname)
 endfunction()
 
 
-# Macro allowing to set a variable to its default value only if not already defined
+# Macro allowing to set a variable to its default value if not already defined.
+# The default value is set with:
+#  (1) if set, the value environment variable <var>.
+#  (2) if set, the value of local variable variable <var>.
+#  (3) if none of the above, the value passed as a parameter.
+# Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
 macro(setIfNotDefined var defaultvalue)
+  set(_obfuscate FALSE)
+  foreach(arg ${ARGN})
+    if(arg STREQUAL "OBFUSCATE")
+      set(_obfuscate TRUE)
+    endif()
+  endforeach()
+  if(DEFINED ENV{${var}} AND NOT DEFINED ${var})
+    set(_value "$ENV{${var}}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Setting '${var}' variable with environment variable value '${_value}'")
+    set(${var} $ENV{${var}})
+  endif()
   if(NOT DEFINED ${var})
+    set(_value "${defaultvalue}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Setting '${var}' variable with default value '${_value}'")
     set(${var} "${defaultvalue}")
+  endif()
+  if(NOT _obfuscate)
+    list(APPEND variables ${var})
   endif()
 endmacro()
 
+
+
 # The following variable are expected to be define in the top-level script:
 set(expected_variables
+  CTEST_SITE
+  CTEST_BUILD_NAME
+  SCRIPT_MODE
+  CTEST_BUILD_CONFIGURATION
   ADDITIONAL_CMAKECACHE_OPTION
   CTEST_NOTES_FILES
-  CTEST_SITE
   CTEST_DASHBOARD_ROOT
   CTEST_CMAKE_GENERATOR
-  CTEST_BUILD_CONFIGURATION
   CTEST_TEST_TIMEOUT
   CTEST_BUILD_FLAGS
   CTEST_PROJECT_NAME
+  EXTENSIONS_TRACK_QUALIFIER
   EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY
   EXTENSIONS_BUILDSYSTEM_TESTING
   EXTENSIONS_INDEX_GIT_REPOSITORY
   EXTENSIONS_INDEX_GIT_TAG
   CTEST_BINARY_DIRECTORY
-  CTEST_BUILD_NAME
-  SCRIPT_MODE
   CTEST_SVN_COMMAND
   CTEST_GIT_COMMAND
-  MIDAS_PACKAGE_URL
-  MIDAS_PACKAGE_EMAIL
-  MIDAS_PACKAGE_API_KEY
   Slicer_DIR
   )
 
-if(NOT DEFINED CTEST_PARALLEL_LEVEL)
-  set(CTEST_PARALLEL_LEVEL 8)
-endif()
+# List of all variables
+set(variables ${expected_variables})
 
-if(EXISTS "${CTEST_LOG_FILE}")
-  list(APPEND CTEST_NOTES_FILES ${CTEST_LOG_FILE})
-endif()
-
+# Sanity check
 foreach(var ${expected_variables})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} should be defined in top-level script !")
@@ -164,13 +187,41 @@ endforeach()
 if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
   set(CTEST_CONFIGURATION_TYPE ${CTEST_BUILD_CONFIGURATION})
 endif()
+list(APPEND variables CTEST_CONFIGURATION_TYPE)
+
+if(EXISTS "${CTEST_LOG_FILE}")
+  list(APPEND CTEST_NOTES_FILES ${CTEST_LOG_FILE})
+endif()
+list(APPEND variables CTEST_LOG_FILE)
+list(APPEND variables CTEST_NOTES_FILES)
+
+#-----------------------------------------------------------------------------
+# Set default values
+#-----------------------------------------------------------------------------
+setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
+setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
+setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
+setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
+
+#-----------------------------------------------------------------------------
+# The following variable can be used while testing the driver scripts
+#-----------------------------------------------------------------------------
+setIfNotDefined(run_ctest_submit TRUE)
+setIfNotDefined(run_ctest_with_update TRUE)
+setIfNotDefined(run_ctest_with_configure TRUE)
+setIfNotDefined(run_ctest_with_build TRUE)
+setIfNotDefined(run_ctest_with_notes TRUE)
+setIfNotDefined(Slicer_UPLOAD_EXTENSIONS TRUE)
 
 set(CTEST_COMMAND ${CMAKE_CTEST_COMMAND})
+
 set(CTEST_SOURCE_DIRECTORY ${EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY})
-message(CTEST_SOURCE_DIRECTORY:${CTEST_SOURCE_DIRECTORY})
+list(APPEND variables CTEST_SOURCE_DIRECTORY)
+
 if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   set(Slicer_EXTENSION_DESCRIPTION_DIR "${CTEST_BINARY_DIRECTORY}/ExtensionsIndex")
 endif()
+list(APPEND variables Slicer_EXTENSION_DESCRIPTION_DIR)
 
 # Since having '/' in the build name confuses CDash (Separate entries are added for both
 # update and rest of the build), let's convert them into '-'.
@@ -207,17 +258,6 @@ endif()
 set(track Extensions-${track_qualifier_cleaned}${model})
 set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 
-
-# Display build info
-message("CTEST_SITE ................: ${CTEST_SITE}")
-message("CTEST_BUILD_NAME ..........: ${CTEST_BUILD_NAME}")
-message("SCRIPT_MODE ...............: ${SCRIPT_MODE}")
-message("CTEST_BUILD_CONFIGURATION .: ${CTEST_BUILD_CONFIGURATION}")
-message("WITH_PACKAGES .............: ${WITH_PACKAGES}")
-message("EXTENSIONS_TRACK_QUALIFIER : ${EXTENSIONS_TRACK_QUALIFIER}")
-message("EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY: ${EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY}")
-message("Slicer_DIR ................: ${Slicer_DIR}")
-
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 1)
 if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
@@ -225,10 +265,50 @@ if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
 endif()
 set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} ${CTEST_USE_LAUNCHERS})
 
+list(APPEND variables empty_binary_directory)
+list(APPEND variables force_build)
+list(APPEND variables model)
+list(APPEND variables track)
+list(APPEND variables CTEST_USE_LAUNCHERS)
+
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
   ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
 endif()
+
+# Given a variable name, this function will display the text
+#   "-- <varname> ................: ${<varname>}"
+# and will ensure that the message is consistenly padded.
+#
+# If the variable is not defined, it will display:
+#   "-- <varname> ................: <NOT DEFINED>"
+function(display_var varname)
+  set(pretext_right_jusitfy_length 35)
+  set(fill_char ".")
+
+  set(value ${${varname}})
+  if(NOT DEFINED ${varname})
+    set(value "NOT DEFINED")
+  endif()
+
+  set(pretext "${varname}")
+  string(LENGTH ${pretext} pretext_length)
+  math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length} - 1")
+  if(pad_length GREATER 0)
+    string(RANDOM LENGTH ${pad_length} ALPHABET ${fill_char} pretext_dots)
+    set(text "${pretext} ${pretext_dots}: ${value}")
+  elseif(pad_length EQUAL 0)
+    set(text "${pretext} : ${value}")
+  else()
+    set(text "${pretext}: ${value}")
+  endif()
+  message(STATUS "${text}")
+endfunction()
+
+# Display variables
+foreach(var ${variables})
+  display_var(${var})
+endforeach()
 
 if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   # Compute 'work_dir' and 'src_name' variable used by both _write_gitclone_script and _update_gitclone_script
@@ -275,16 +355,6 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
 
 endif()
-
-#-----------------------------------------------------------------------------
-# The following variable can be used while testing the driver scripts
-#-----------------------------------------------------------------------------
-setIfNotDefined(run_ctest_submit TRUE)
-setIfNotDefined(run_ctest_with_update TRUE)
-setIfNotDefined(run_ctest_with_configure TRUE)
-setIfNotDefined(run_ctest_with_build TRUE)
-setIfNotDefined(run_ctest_with_notes TRUE)
-setIfNotDefined(Slicer_UPLOAD_EXTENSIONS TRUE)
 
 #
 # run_ctest macro
