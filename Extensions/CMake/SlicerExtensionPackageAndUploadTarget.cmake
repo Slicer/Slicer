@@ -107,10 +107,14 @@ set(${varname} \"${${varname}}\")")
   set(script_args_file ${CMAKE_CURRENT_BINARY_DIR}/midas_api_upload_extension-command-args.cmake)
   file(WRITE ${script_args_file} ${script_arg_list})
 
+  set(_cpack_output_file ${EXTENSION_BINARY_DIR}/packageupload_cpack_output.txt)
+
   add_custom_target(packageupload
+    COMMAND ${CMAKE_COMMAND} -E echo "CPack log: ${_cpack_output_file}"
     COMMAND ${CMAKE_COMMAND}
       -DPACKAGEUPLOAD:BOOL=1
       -DCONFIG:STRING=${CMAKE_CFG_INTDIR}
+      -DCPACK_OUTPUT_FILE:FILEPATH=${_cpack_output_file}
       -DSCRIPT_ARGS_FILE:FILEPATH=${script_args_file}
       -P ${CMAKE_CURRENT_LIST_FILE}
     COMMENT "Package and upload extension"
@@ -132,6 +136,7 @@ include(${SCRIPT_ARGS_FILE})
 # Sanity checks
 set(expected_defined_vars
   CONFIG
+  CPACK_OUTPUT_FILE
   )
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
@@ -148,13 +153,12 @@ endforeach()
 # to wait for a rebuild of the project.
 set(_build_target 1)
 
-set(cpack_output_file ${EXTENSION_BINARY_DIR}/package_target_output.txt)
 if(_build_target)
   execute_process(
     COMMAND ${CMAKE_COMMAND} --build ${EXTENSION_BINARY_DIR} --target package --config ${CONFIG}
     WORKING_DIRECTORY ${EXTENSION_BINARY_DIR}
     OUTPUT_STRIP_TRAILING_WHITESPACE
-    OUTPUT_FILE ${cpack_output_file}
+    OUTPUT_FILE ${CPACK_OUTPUT_FILE}
     RESULT_VARIABLE rv
     )
 else()
@@ -162,7 +166,7 @@ else()
 endif()
 
 # Display CPack output
-file(READ ${cpack_output_file} cpack_output)
+file(READ ${CPACK_OUTPUT_FILE} cpack_output)
 message(${cpack_output})
 
 if(NOT rv EQUAL 0)
@@ -179,7 +183,7 @@ file(WRITE ${package_list_file} "")
 # Extract list of generated packages
 set(regexp ".*CPack: - package: (.*) generated\\.")
 set(raw_package_list)
-file(STRINGS ${cpack_output_file} raw_package_list REGEX ${regexp})
+file(STRINGS ${CPACK_OUTPUT_FILE} raw_package_list REGEX ${regexp})
 
 foreach(package ${raw_package_list})
   string(REGEX REPLACE ${regexp} "\\1" package_path "${package}" )
