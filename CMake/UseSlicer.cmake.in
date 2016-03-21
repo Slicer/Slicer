@@ -385,8 +385,8 @@ if(NOT Slicer_DONT_USE_EXTENSION)
   set(MIDAS_PACKAGE_API_KEY ${_api_key} CACHE STRING "Token allowing to authenticate to the MIDAS server.")
 
   slicer_setting_variable_message("MIDAS_PACKAGE_URL")
-  slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL")
-  slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
+  slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL" OBFUSCATE)
+  slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY" OBFUSCATE)
 
   set(optional_vars HOMEPAGE CATEGORY ICONURL CONTRIBUTORS DESCRIPTION
                     SCREENSHOTURLS DEPENDS LICENSE_FILE README_FILE
