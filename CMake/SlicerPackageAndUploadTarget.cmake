@@ -128,7 +128,7 @@ set(${varname} \"${${varname}}\")")
       -DCPACK_OUTPUT_FILE:FILEPATH=${_cpack_output_file}
       -DSCRIPT_ARGS_FILE:FILEPATH=${script_args_file}
       -P ${CMAKE_CURRENT_LIST_FILE}
-    COMMENT "Package and upload extension"
+    COMMENT "Package and upload"
     )
   return()
 endif()
