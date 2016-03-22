@@ -62,6 +62,10 @@ function(midas_api_upload_package)
     API_KEY ${MY_SERVER_APIKEY}
     RESULT_VARNAME midas_api_token
     )
+  if(midas_api_token STREQUAL "")
+    set(${MY_RESULT_VARNAME} "fail" PARENT_SCOPE)
+    return()
+  endif()
 
   get_filename_component(basename "${MY_PACKAGE_FILEPATH}" NAME)
   midas_api_escape_for_url(basename "${basename}")
