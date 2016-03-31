@@ -28,6 +28,8 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumeRenderingScenarioNode);
 vtkMRMLVolumeRenderingScenarioNode::vtkMRMLVolumeRenderingScenarioNode()
 {
   this->ParametersNodeID = NULL;
+
+  this->SetHideFromEditors(1);
 }
 
 //----------------------------------------------------------------------------
