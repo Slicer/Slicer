@@ -30,6 +30,11 @@
 #include "qSlicerVolumesIOOptionsWidget.h"
 #include "ui_qSlicerVolumesIOOptionsWidget.h"
 
+/// Slicer includes
+#include "qSlicerCoreApplication.h"
+#include "vtkMRMLColorLogic.h"
+#include "vtkSlicerApplicationLogic.h"
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
 class qSlicerVolumesIOOptionsWidgetPrivate
@@ -79,6 +84,12 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
           this, SLOT(updateProperties()));
   connect(d->OrientationCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(updateProperties()));
+  connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+          this, SLOT(updateProperties()));
+
+  // need to update the color selector when the label map check box is toggled
+  connect(d->LabelMapCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(updateColorSelector()));
 
   // Single file by default
   d->SingleFileCheckBox->setChecked(true);
@@ -110,6 +121,7 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
   d->Properties["center"] = d->CenteredCheckBox->isChecked();
   d->Properties["singleFile"] = d->SingleFileCheckBox->isChecked();
   d->Properties["discardOrientation"] = d->OrientationCheckBox->isChecked();
+  d->Properties["colorNodeID"] = d->ColorTableComboBox->currentNodeID();
 }
 
 //-----------------------------------------------------------------------------
@@ -152,4 +164,31 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
   d->SingleFileCheckBox->setChecked(!onlyNumberInName && !onlyNumberInExtension);
   d->LabelMapCheckBox->setChecked(hasLabelMapName);
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
+
+  // update the color selector since the label map check box may not
+  // have changed on setting this new name
+  this->updateColorSelector();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerVolumesIOOptionsWidget::updateColorSelector()
+{
+  Q_D(qSlicerVolumesIOOptionsWidget);
+
+  if (qSlicerCoreApplication::application() != NULL)
+    {
+    // access the color logic which has information about default color nodes
+    vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();
+    if (appLogic && appLogic->GetColorLogic())
+      {
+      if (d->LabelMapCheckBox->isChecked())
+        {
+        d->ColorTableComboBox->setCurrentNodeID(appLogic->GetColorLogic()->GetDefaultLabelMapColorNodeID());
+        }
+      else
+        {
+        d->ColorTableComboBox->setCurrentNodeID(appLogic->GetColorLogic()->GetDefaultVolumeColorNodeID());
+        }
+      }
+    }
 }

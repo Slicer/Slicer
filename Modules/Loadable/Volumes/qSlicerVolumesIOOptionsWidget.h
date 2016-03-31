@@ -46,7 +46,12 @@ public slots:
   virtual void setFileNames(const QStringList& fileNames);
 
 protected slots:
+  /// Update the name, labelmap, center, singleFile, discardOrientation,
+  /// colorNodeID properties
   void updateProperties();
+  /// Update the color node selection to the default label map
+  /// or volume color node depending on the label map checkbox state.
+  void updateColorSelector();
 
 private:
   Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerVolumesIOOptionsWidget);

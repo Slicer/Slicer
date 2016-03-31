@@ -30,6 +30,7 @@
 #include "vtkSlicerVolumesLogic.h"
 
 // MRML includes
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLSelectionNode.h>
@@ -105,7 +106,10 @@ QStringList qSlicerVolumesReader::extensions()const
 //-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerVolumesReader::options()const
 {
-  return new qSlicerVolumesIOOptionsWidget;
+  // set the mrml scene on the options widget to allow selecting a color node
+  qSlicerIOOptionsWidget* options = new qSlicerVolumesIOOptionsWidget;
+  options->setMRMLScene(this->mrmlScene());
+  return options;
 }
 
 //-----------------------------------------------------------------------------
@@ -158,6 +162,14 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     fileList.GetPointer());
   if (node)
     {
+    if (properties.contains("colorNodeID"))
+      {
+      QString colorNodeID = properties["colorNodeID"].toString();
+      if (node->GetDisplayNode())
+        {
+        node->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toLatin1());
+        }
+      }
     vtkSlicerApplicationLogic* appLogic =
       d->Logic->GetApplicationLogic();
     vtkMRMLSelectionNode* selectionNode =

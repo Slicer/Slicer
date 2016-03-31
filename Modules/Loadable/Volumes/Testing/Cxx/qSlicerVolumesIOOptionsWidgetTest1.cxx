@@ -20,22 +20,51 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 #include <QTimer>
 
+// Slicer includes
+#include "qSlicerApplication.h"
+#include "vtkSlicerApplicationLogic.h"
 // Volumes includes
 #include "qSlicerVolumesIOOptionsWidget.h"
+
+// MRML includes
+#include "vtkMRMLColorLogic.h"
+#include "vtkMRMLScene.h"
 
 //-----------------------------------------------------------------------------
 int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
 {
-  QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
+
+  // set up the color nodes for access from the widget
+  vtkSlicerApplicationLogic* appLogic = qSlicerCoreApplication::application()->applicationLogic();
+  QString defaultLabelColor;
+  QString defaultGreyColor;
+  if (appLogic && appLogic->GetColorLogic())
+    {
+    appLogic->GetColorLogic()->SetMRMLScene(qSlicerApplication::application()->mrmlScene());
+    appLogic->GetColorLogic()->AddDefaultColorNodes();
+    defaultLabelColor = QString(appLogic->GetColorLogic()->GetDefaultLabelMapColorNodeID());
+    defaultGreyColor = QString(appLogic->GetColorLogic()->GetDefaultVolumeColorNodeID());
+    }
 
   qSlicerVolumesIOOptionsWidget optionsWidget;
+  optionsWidget.setMRMLScene(qSlicerApplication::application()->mrmlScene());
 
   optionsWidget.setFileName("mylabelmap-seg.nrrd");
   if (!optionsWidget.properties()["labelmap"].toBool())
     {
     std::cerr << "Must be a labelmap" << std::endl;
+    return EXIT_FAILURE;
+    }
+  QString colorID = optionsWidget.properties()["colorNodeID"].toString();
+  qDebug() << __LINE__ << ": Label map: color id: " << colorID;
+  if (colorID != defaultLabelColor)
+    {
+    std::cerr << __LINE__ << ": wrong color id set for a label map, expected "
+              << defaultLabelColor.toStdString() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -45,6 +74,14 @@ int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
     std::cerr << "Must be a labelmap" << std::endl;
     return EXIT_FAILURE;
     }
+  colorID = optionsWidget.properties()["colorNodeID"].toString();
+  qDebug() << __LINE__ << ": Label map: color id: " << colorID;
+  if (colorID != defaultLabelColor)
+    {
+    std::cerr << __LINE__ << ": wrong color id set for a label map, expected "
+              << defaultLabelColor.toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   optionsWidget.setFileName("./segment.nrrd");
   if (optionsWidget.properties()["labelmap"].toBool())
@@ -52,6 +89,15 @@ int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
     std::cerr << "Not a labelmap" << std::endl;
     return EXIT_FAILURE;
     }
+  colorID = optionsWidget.properties()["colorNodeID"].toString();
+  qDebug() << __LINE__ << ": Greyscale: color id: " << colorID;
+  if (colorID != defaultGreyColor)
+    {
+    std::cerr << __LINE__ << ": wrong color id set for a grey scale, expected "
+              << defaultGreyColor.toStdString() << std::endl;
+    return EXIT_FAILURE;
+    }
+
 
   optionsWidget.show();
 
