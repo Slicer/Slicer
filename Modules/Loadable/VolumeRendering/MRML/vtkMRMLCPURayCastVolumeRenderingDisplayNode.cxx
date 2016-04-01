@@ -34,8 +34,6 @@ vtkMRMLNodeNewMacro(vtkMRMLCPURayCastVolumeRenderingDisplayNode);
 vtkMRMLCPURayCastVolumeRenderingDisplayNode::vtkMRMLCPURayCastVolumeRenderingDisplayNode()
 {
   this->RaycastTechnique = vtkMRMLCPURayCastVolumeRenderingDisplayNode::Composite;
-
-  this->SetHideFromEditors(1);
 }
 
 //----------------------------------------------------------------------------

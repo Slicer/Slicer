@@ -74,8 +74,6 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->WindowLevel[1] = 0.0;
 
   this->PerformanceControl = 0;
-
-  this->SetHideFromEditors(false);
 }
 
 //----------------------------------------------------------------------------
