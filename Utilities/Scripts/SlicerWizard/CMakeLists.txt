@@ -12,7 +12,8 @@ endif()
 configure_file(
   "__version__.py.in"
   "${CMAKE_CURRENT_SOURCE_DIR}/__version__.py"
-  @ONLY)
+  @ONLY
+  NEWLINE_STYLE UNIX)
 
 set(SlicerWizard_PYTHON_SCRIPTS
   __init__.py
