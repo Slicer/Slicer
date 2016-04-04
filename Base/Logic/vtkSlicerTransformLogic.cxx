@@ -220,7 +220,9 @@ const char* vtkSlicerTransformLogic::GetVisualizationDisplacementMagnitudeScalar
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPointSet, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* gridToRAS, int* gridSize)
+void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPointSet,
+  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* gridToRAS, int* gridSize,
+  bool transformToWorld /* = true */)
 {
   if (!inputTransformNode)
     {
@@ -241,7 +243,14 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
   sampleVectors_RAS->SetName("DisplacementVector");
 
   vtkNew<vtkGeneralTransform> inputTransform;
-  inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
+  if (transformToWorld)
+    {
+    inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
+    }
+  else
+    {
+    inputTransformNode->GetTransformFromWorld(inputTransform.GetPointer());
+    }
 
   double point_RAS[4] = {0,0,0,1};
   double transformedPoint_RAS[4] = {0,0,0,1};
@@ -338,17 +347,24 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImageData* magnitudeImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS)
+bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImageData* magnitudeImage,
+  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS, bool transformToWorld /* = true */)
 {
-  if (!inputTransformNode)
+  if (!magnitudeImage || !inputTransformNode || !ijkToRAS)
     {
-    return;
+    vtkGenericWarningMacro("vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage failed: invalid input");
+    return false;
     }
-  vtkNew<vtkGeneralTransform> inputTransform;
-  inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
 
-  int* extent=magnitudeImage->GetExtent();
-  int imageSize[3]={extent[1]-extent[0]+1, extent[3]-extent[2]+1, extent[5]-extent[4]+1};
+  vtkNew<vtkGeneralTransform> inputTransform;
+  if (transformToWorld)
+    {
+    inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
+    }
+  else
+    {
+    inputTransformNode->GetTransformFromWorld(inputTransform.GetPointer());
+    }
 
   // The orientation of the volume cannot be set in the image
   // therefore the volume will not appear in the correct position
@@ -360,11 +376,12 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
   double pointDislocationVector_RAS[4] = {0,0,0,1};
   double point_IJK[4]={0,0,0,1};
   float* voxelPtr=static_cast<float*>(magnitudeImage->GetScalarPointer());
-  for (point_IJK[2]=0; point_IJK[2]<imageSize[2]; point_IJK[2]++)
+  int* extent=magnitudeImage->GetExtent();
+  for (point_IJK[2]=extent[4]; point_IJK[2]<=extent[5]; point_IJK[2]++)
     {
-    for (point_IJK[1]=0; point_IJK[1]<imageSize[1]; point_IJK[1]++)
+    for (point_IJK[1]=extent[2]; point_IJK[1]<=extent[3]; point_IJK[1]++)
       {
-      for (point_IJK[0]=0; point_IJK[0]<imageSize[0]; point_IJK[0]++)
+      for (point_IJK[0]=extent[0]; point_IJK[0]<=extent[1]; point_IJK[0]++)
         {
         ijkToRAS->MultiplyPoint(point_IJK, point_RAS);
 
@@ -383,122 +400,264 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
         }
       }
     }
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude/*=true*/)
+vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode,
+  vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude/*=true*/, vtkMRMLVolumeNode* existingOutputVolumeNode /* = NULL */)
 {
-  if (inputTransformNode==NULL || referenceVolumeNode==NULL || referenceVolumeNode->GetImageData()==NULL)
+  if (inputTransformNode==NULL)
     {
-    vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementMagnitudeVolumeFromTransform failed: inputs are invalid");
+    vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform failed: inputs are invalid");
+    return NULL;
+    }
+  if ((referenceVolumeNode==NULL || referenceVolumeNode->GetImageData()==NULL) && (existingOutputVolumeNode==NULL))
+    {
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid \
+      reference volume node or an existing output volume node has to be specified");
     return NULL;
     }
   vtkMRMLScene* scene=this->GetMRMLScene();
   if (scene==NULL)
     {
-    vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementMagnitudeVolumeFromTransform failed: scene invalid");
+    vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform failed: scene invalid");
     return NULL;
+    }
+
+  // Create/get a volume node
+  vtkSmartPointer<vtkMRMLVolumeNode> outputVolumeNode;
+  if (existingOutputVolumeNode!=NULL)
+    {
+    outputVolumeNode = existingOutputVolumeNode;
+    // We always compute transform to world. Set the parent transform to world, to be consistent.
+    outputVolumeNode->SetAndObserveTransformNodeID(NULL);
+  }
+  else
+    {
+    outputVolumeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    std::string nodeName=inputTransformNode->GetName();
+    if (magnitude)
+      {
+      nodeName+=" displacement magnitude";
+      }
+    else
+      {
+      nodeName+=" displacement vectors";
+      }
+    nodeName=scene->GenerateUniqueName(nodeName)vertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* ;
+    outputVolumeNode->SetName(nodeName.c_str());
+    scene->AddNode(outputVolumeNode);
+    }
+
+  // Create/get displacement field image
+  vtkImageData* outputVolume = outputVolumeNode->GetImageData();
+  if (outputVolume==NULL)
+    {
+    vtkNew<vtkImageData> newOutputVolume;
+    outputVolume = newOutputVolume.GetPointer();
+    outputVolumeNode->SetAndObserveImageData(outputVolume);
+    }
+
+  vtkNew<vtkMatrix4x4> ijkToRas; // RAS refers to world
+  if (referenceVolumeNode!=NULL)
+    {
+    referenceVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
+    vtkNew<vtkMatrix4x4> rasToWorld;
+    if (vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(referenceVolumeNode->GetParentTransformNode(), NULL /* world */, rasToWorld.GetPointer()))
+      {
+      vtkMatrix4x4::Multiply4x4(rasToWorld.GetPointer(), ijkToRas.GetPointer(), ijkToRas.GetPointer());
+      }
+    else
+      {
+      vtkWarningMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform: non-linearly transformed reference volume is not supported.\
+        Harden or remove the transform from of the reference volume.");
+      }
+    outputVolumeNode->SetIJKToRASMatrix(ijkToRas.GetPointer());
+    outputVolume->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+    outputVolumeNode->SetAndObserveImageData(outputVolume);
+    }
+  else
+    {
+    outputVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
     }
 
   // Fill the volume
-  vtkNew<vtkImageData> outputVolume;
-  outputVolume->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
-  vtkNew<vtkMatrix4x4> ijkToRas;
-  referenceVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
-  std::string nodeName=inputTransformNode->GetName();
   if (magnitude)
     {
-    vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(outputVolume.GetPointer(), inputTransformNode, ijkToRas.GetPointer());
-    nodeName+=" displacement magnitude";
+    vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(outputVolume, inputTransformNode, ijkToRas.GetPointer());
     }
   else
     {
-    vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume.GetPointer(), inputTransformNode, ijkToRas.GetPointer());
-    nodeName+=" displacement vectors";
+    vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume, inputTransformNode, ijkToRas.GetPointer());
     }
 
-  // Create a volume node
-  vtkNew<vtkMRMLScalarVolumeNode> outputVolumeNode;
-  nodeName=scene->GenerateUniqueName(nodeName);
-  outputVolumeNode->SetName(nodeName.c_str());
-  outputVolumeNode->SetIJKToRASMatrix(ijkToRas.GetPointer());
-  outputVolumeNode->SetAndObserveImageData(outputVolume.GetPointer());
-  scene->AddNode(outputVolumeNode.GetPointer());
-
-  if (magnitude)
+  if (outputVolumeNode->GetDisplayNode()==NULL)
     {
-    vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
-    scene->AddNode(displayNode.GetPointer());
-    displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
-    outputVolumeNode->SetAndObserveNthDisplayNodeID(0, displayNode->GetID());
-    }
-  else
-    {
-    vtkNew<vtkMRMLVectorVolumeDisplayNode> displayNode;
-    scene->AddNode(displayNode.GetPointer());
-    displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
-    outputVolumeNode->SetAndObserveNthDisplayNodeID(0, displayNode->GetID());
-    }
+    if (magnitude)
+      {
+      vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
+      scene->AddNode(displayNode.GetPointer());
+      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      outputVolumeNode->SetAndObserveNthDisplayNodeID(0, displayNode->GetID());
+      }
+    else
+      {
+      vtkNew<vtkMRMLVectorVolumeDisplayNode> displayNode;
+      scene->AddNode(displayNode.GetPointer());
+      displayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
+      outputVolumeNode->SetAndObserveNthDisplayNodeID(0, displayNode->GetID());
+      }
+  }
 
-  return outputVolumeNode.GetPointer();
+  return outputVolumeNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode)
+vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode,
+  vtkMRMLVolumeNode* referenceVolumeNode /* = NULL */, vtkMRMLTransformNode* existingOutputTransformNode /* = NULL */)
 {
-  if (inputTransformNode==NULL || referenceVolumeNode==NULL || referenceVolumeNode->GetImageData()==NULL)
-    {
-    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: inputs are invalid");
+  if (inputTransformNode == NULL)
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: inputTransformNode is invalid");
     return NULL;
-    }
-  vtkMRMLScene* scene=this->GetMRMLScene();
-  if (scene==NULL)
-    {
+  }
+  if ((referenceVolumeNode == NULL || referenceVolumeNode->GetImageData() == NULL) && (existingOutputTransformNode == NULL))
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid reference volume node \
+      or an existing output transform node has to be specified");
+    return NULL;
+  }
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (scene == NULL)
+  {
     vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: scene invalid");
     return NULL;
+  }
+
+  // Create/get a grid transform
+  vtkSmartPointer<vtkMRMLTransformNode> outputGridTransformNode;
+  if (existingOutputTransformNode != NULL)
+  {
+    outputGridTransformNode = existingOutputTransformNode;
+    // We always compute transform to world. Set the parent transform to world, to be consistent.
+    outputGridTransformNode->SetAndObserveTransformNodeID(NULL);
+  }
+  else
+  {
+    outputGridTransformNode = vtkSmartPointer<vtkMRMLTransformNode>::New();
+    std::string nodeName = std::string(inputTransformNode->GetName()) + " grid transform";
+    outputGridTransformNode->SetName(scene->GenerateUniqueName(nodeName).c_str());
+    scene->AddNode(outputGridTransformNode);
+  }
+  // Create/get grid transform
+  vtkOrientedGridTransform* outputGridTransform = vtkOrientedGridTransform::SafeDownCast(
+    outputGridTransformNode->GetTransformToParentAs("vtkOrientedGridTransform",
+    false /* don't report conversion error */));
+  if (outputGridTransform == NULL || vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(outputGridTransform))
+  {
+    // we cannot reuse the existing transform, create a new one
+    vtkNew<vtkOrientedGridTransform> newOutputGridTransform;
+    outputGridTransform = newOutputGridTransform.GetPointer();
+    outputGridTransformNode->SetAndObserveTransformFromParent(outputGridTransform);
+  }
+  // Create/get displacement field image
+  vtkImageData* outputVolume = outputGridTransform->GetDisplacementGrid();
+  if (outputVolume == NULL)
+    {
+    vtkNew<vtkImageData> newOutputVolume;
+    outputVolume = newOutputVolume.GetPointer();
+    outputGridTransform->SetDisplacementGridData(outputVolume);
+    }
+  // Update geometry based on reference image (if specified)
+  vtkNew<vtkMatrix4x4> ijkToRas; // RAS refers to world
+  if (referenceVolumeNode != NULL)
+  {
+    referenceVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
+    vtkNew<vtkMatrix4x4> rasToWorld;
+    if (vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(referenceVolumeNode->GetParentTransformNode(), NULL /* world */, rasToWorld.GetPointer()))
+    {
+      vtkMatrix4x4::Multiply4x4(rasToWorld.GetPointer(), ijkToRas.GetPointer(), ijkToRas.GetPointer());
+    }
+    else
+    {
+      vtkWarningMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume \
+        is not supported. Harden or remove the transform from of the reference volume.");
+    }
+    double origin[3] = { 0, 0, 0 };
+    double spacing[3] = { 1, 1, 1 };
+    vtkNew<vtkMatrix4x4> ijkToRasDirection; // normalized direction matrix
+    for (int c = 0; c < 3; c++)
+      {
+      origin[c] = ijkToRas->GetElement(c, 3);
+      spacing[c] = sqrt(ijkToRas->Element[0][c] * ijkToRas->Element[0][c]
+        + ijkToRas->Element[1][c] * ijkToRas->Element[1][c]
+        + ijkToRas->Element[2][c] * ijkToRas->Element[2][c]);
+      if (spacing[c] == 0)
+        {
+        // Prevent division by zero in case there is a projection matrix is in the transform chain
+        spacing[c] = 1.0;
+        }
+      for (int r = 0; r < 3; r++)
+        {
+        ijkToRasDirection->SetElement(r, c, ijkToRas->GetElement(r, c) / spacing[c]);
+        }
+      }
+    outputVolume->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
+    outputVolume->SetOrigin(origin);
+    outputVolume->SetSpacing(spacing);
+    // vtkImageData cannot store directions, therefore that has to be set in the grid transform
+    outputGridTransform->SetGridDirectionMatrix(ijkToRasDirection.GetPointer());
+    }
+  else
+    {
+    // Use existing geometry in grid transform
+    double* origin = outputVolume->GetOrigin();
+    double* spacing = outputVolume->GetSpacing();
+    vtkMatrix4x4* gridDirection = outputGridTransform->GetGridDirectionMatrix();
+    for (unsigned int row=0; row < 3; row++ )
+      {
+      for (unsigned int col = 0; col < 3; col++)
+        {
+        if (gridDirection!=NULL)
+          {
+          ijkToRas->SetElement(row, col, spacing[col]*gridDirection->GetElement(row,col) );
+          }
+        else
+          {
+          ijkToRas->SetElement(row, col, spacing[col]*ijkToRas->GetElement(row, col) );
+          }
+        }
+      ijkToRas->SetElement(row, 3, origin[row]);
+      }
     }
 
-  // Fill the volume
-  vtkNew<vtkImageData> outputVolume;
-  outputVolume->SetExtent(referenceVolumeNode->GetImageData()->GetExtent());
-  vtkNew<vtkMatrix4x4> ijkToRas;
-  referenceVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
-  vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume.GetPointer(), inputTransformNode, ijkToRas.GetPointer());
-
-  // Create a volume node
-  vtkNew<vtkMRMLTransformNode> outputGridTransformNode;
-  std::string nodeName=std::string(inputTransformNode->GetName())+" grid transform";
-  outputGridTransformNode->SetName(scene->GenerateUniqueName(nodeName).c_str());
-
-  vtkNew<vtkOrientedGridTransform> outputGridTransform;
-  // The output volume has unit spacing and zero origin (because ijkToRas contains origin, spacing, and directions)
-  // so we have to set it here
-  outputVolume->SetOrigin(referenceVolumeNode->GetOrigin());
-  outputVolume->SetSpacing(referenceVolumeNode->GetSpacing());
-  // Volume cannot store directions, therefore that has to be set in the grid transform
-  vtkNew<vtkMatrix4x4> ijkToRasDirection; // normalized direction matrix
-  referenceVolumeNode->GetIJKToRASDirectionMatrix(ijkToRasDirection.GetPointer());
-  outputGridTransform->SetGridDirectionMatrix(ijkToRasDirection.GetPointer());
-  outputGridTransform->SetDisplacementGridData(outputVolume.GetPointer());
-
-  outputGridTransformNode->SetAndObserveTransformToParent(outputGridTransform.GetPointer());
-  scene->AddNode(outputGridTransformNode.GetPointer());
+  // Fill the volume with displacement values
+  bool transformToWorld = false; // usually grid transform is defined as transform from parent
+  vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume, inputTransformNode, ijkToRas.GetPointer(), transformToWorld);
 
   return outputGridTransformNode.GetPointer();
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageData* vectorImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS)
+bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageData* vectorImage,
+  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS, bool transformToWorld /* = true */)
 {
-  if (!inputTransformNode)
+  if (!vectorImage || !inputTransformNode || !ijkToRAS)
     {
-    return;
+    vtkGenericWarningMacro("vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage failed: invalid input");
+    return false;
     }
   vtkNew<vtkGeneralTransform> inputTransform;
-  inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
-
-  int* extent=vectorImage->GetExtent();
-  int imageSize[3]={extent[1]-extent[0]+1, extent[3]-extent[2]+1, extent[5]-extent[4]+1};
+  if (transformToWorld)
+    {
+    inputTransformNode->GetTransformToWorld(inputTransform.GetPointer());
+    }
+  else
+    {
+    inputTransformNode->GetTransformFromWorld(inputTransform.GetPointer());
+    }
 
   // The orientation of the volume cannot be set in the image
   // therefore the volume will not appear in the correct position
@@ -509,11 +668,12 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageDa
   double transformedPoint_RAS[4] = {0,0,0,1};
   double point_IJK[4]={0,0,0,1};
   float* voxelPtr=static_cast<float*>(vectorImage->GetScalarPointer());
-  for (point_IJK[2]=0; point_IJK[2]<imageSize[2]; point_IJK[2]++)
+  int* extent=vectorImage->GetExtent();
+  for (point_IJK[2]=extent[4]; point_IJK[2]<=extent[5]; point_IJK[2]++)
     {
-    for (point_IJK[1]=0; point_IJK[1]<imageSize[1]; point_IJK[1]++)
+    for (point_IJK[1]=extent[2]; point_IJK[1]<=extent[3]; point_IJK[1]++)
       {
-      for (point_IJK[0]=0; point_IJK[0]<imageSize[0]; point_IJK[0]++)
+      for (point_IJK[0]=extent[0]; point_IJK[0]<=extent[1]; point_IJK[0]++)
         {
         ijkToRAS->MultiplyPoint(point_IJK, point_RAS);
 
@@ -526,6 +686,8 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageDa
         }
       }
     }
+
+  return true;
 }
 
 //----------------------------------------------------------------------------

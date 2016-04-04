@@ -431,6 +431,144 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="ConvertCollapsibleButton">
+     <property name="text">
+      <string>Convert</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="ConvertReferenceVolumeLabel">
+        <property name="text">
+         <string>Reference volume:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="ConvertReferenceVolumeNodeComboBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>9</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Volume that defines origin, spacing, and axis directions of the exported displacement field. If the reference volume is under a non-linear transform then the non-transformed geometry is used as reference.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="baseName">
+         <string/>
+        </property>
+        <property name="noneEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="editEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="ConvertOutputDisplacementFieldLabel">
+        <property name="text">
+         <string>Output displacement field:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="ConvertOutputDisplacementFieldNodeComboBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>9</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Volume or grid transform node that will store the displacement field.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLTransformNode</string>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="showChildNodeTypes">
+         <bool>false</bool>
+        </property>
+        <property name="baseName">
+         <string>Displacement Field</string>
+        </property>
+        <property name="noneEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="editEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ConvertMagnitudeOnlyLabel">
+        <property name="text">
+         <string>Magnitude only:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="ConvertMagnitudeOnlyCheckBox">
+        <property name="toolTip">
+         <string>If checked, displacement magnitude values will be stored in the output volume node. If unchecked, the output node will contain displacement vectors. Always unchecked for transform output.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QPushButton" name="ConvertPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="BottomSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -753,6 +891,54 @@
     <hint type="destinationlabel">
      <x>195</x>
      <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ConvertOutputDisplacementFieldNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>461</x>
+     <y>816</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>1529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ConvertReferenceVolumeNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>461</x>
+     <y>816</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>1484</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ConvertCollapsibleButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>552</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>1512</y>
     </hint>
    </hints>
   </connection>

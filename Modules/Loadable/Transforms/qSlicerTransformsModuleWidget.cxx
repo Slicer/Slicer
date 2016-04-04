@@ -39,9 +39,10 @@
 #include <qMRMLUtils.h>
 
 // MRML includes
+#include "vtkMRMLScalarVolumeNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
-#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -197,7 +198,21 @@ void qSlicerTransformsModuleWidget::setup()
     QApplication::style()->standardIcon(QStyle::SP_ArrowLeft);
   d->UntransformToolButton->setIcon(leftIcon);
 
+  // Connect convert button
+  this->connect(d->ConvertPushButton,
+    SIGNAL(clicked()),
+    SLOT(convert()));
+
+  // Connect node convert input/output node selectors
+  this->connect(d->ConvertReferenceVolumeNodeComboBox,
+    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    SLOT(updateConvertButtonState()));
+  this->connect(d->ConvertOutputDisplacementFieldNodeComboBox,
+    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+    SLOT(updateConvertButtonState()));
+
   this->onNodeSelected(0);
+  this->updateConvertButtonState();
 }
 
 //-----------------------------------------------------------------------------
@@ -541,5 +556,61 @@ void qSlicerTransformsModuleWidget::onTransformableSectionClicked(bool clicked)
     // the transformable section is open, add spacer to prevent stretching of
     // the remaining sections
     d->BottomSpacer->changeSize(1,1, QSizePolicy::Fixed, QSizePolicy::Expanding);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::convert()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  if (d->MRMLTransformNode == NULL)
+    {
+    qWarning("qSlicerTransformsModuleWidget::convert failed: MRMLTransformNode is invalid");
+    return;
+    }
+  if (d->ConvertReferenceVolumeNodeComboBox->currentNode() == NULL)
+    {
+    qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
+    return;
+    }
+  if (d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() == NULL)
+    {
+    qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
+    return;
+    }
+  vtkMRMLVolumeNode* outputVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
+  vtkMRMLTransformNode* outputTransformNode = vtkMRMLTransformNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
+  vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertReferenceVolumeNodeComboBox->currentNode());
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  if (outputVolumeNode)
+    {
+    bool magnitudeOnly = (d->ConvertMagnitudeOnlyCheckBox->checkState() == Qt::Checked);
+    d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, magnitudeOnly, outputVolumeNode);
+    }
+  else if (outputTransformNode)
+    {
+    d->logic()->ConvertToGridTransform(d->MRMLTransformNode, referenceVolumeNode, outputTransformNode);
+    }
+  else
+    {
+    qWarning("qSlicerTransformsModuleWidget::convert failed: invalid output node type");
+    }
+  QApplication::restoreOverrideCursor();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::updateConvertButtonState()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  bool enableConvert = (d->MRMLTransformNode != NULL
+    && d->ConvertReferenceVolumeNodeComboBox->currentNode() != NULL
+    && d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() != NULL);
+  d->ConvertPushButton->setEnabled(enableConvert);
+
+  bool isVolumeOutput = (vtkMRMLVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode()) != NULL);
+  d->ConvertMagnitudeOnlyCheckBox->setEnabled(isVolumeOutput);
+  if (!isVolumeOutput)
+    {
+    d->ConvertMagnitudeOnlyCheckBox->setChecked(false);
     }
 }

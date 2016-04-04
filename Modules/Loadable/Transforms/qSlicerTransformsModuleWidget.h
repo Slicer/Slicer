@@ -77,6 +77,9 @@ protected slots:
   void onDisplaySectionClicked(bool);
   void onTransformableSectionClicked(bool);
 
+  void updateConvertButtonState();
+  void convert();
+
 protected:
   ///
   /// Convenient method to return the coordinate system currently selected

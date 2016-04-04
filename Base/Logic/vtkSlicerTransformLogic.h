@@ -88,24 +88,34 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkMRMLAbstr
   /// Create a volume node that contains the transform displacement in each voxel.
   /// If magnitude is true then a scalar volume is created, each voxel containing the magnitude of the displacement.
   /// If magnitude is false then a 3-component scalar volume is created, each voxel containing the displacement vector.
-  /// referenceVolumeNode specifies the volume origin, spacing, extent, and orientation
-  vtkMRMLScalarVolumeNode* CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude=true);
+  /// referenceVolumeNode specifies the volume origin, spacing, extent, and orientation.
+  /// If existingOutputVolumeNode is specified then instead of creating a new volume node, that existing node will be updated.
+  vtkMRMLVolumeNode* CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL,
+    bool magnitude = true, vtkMRMLVolumeNode* existingOutputVolumeNode = NULL);
 
   /// Convert the input transform to a grid transform.
-  /// referenceVolumeNode specifies the volume origin, spacing, extent, and orientation
-  vtkMRMLTransformNode* ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode);
+  /// If referenceVolumeNode is specified then it will determine the origin, spacing, extent, and orientation of the displacement field.
+  /// If existingOutputTransformNode is specified then instead of creating a new transform node, that existing node will be updated.
+  vtkMRMLTransformNode* ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* referenceVolumeNode = NULL,
+    vtkMRMLTransformNode* existingOutputTransformNode = NULL);
 
   /// Take samples from the displacement field and store the magnitude in an image volume
   /// The extents of the output image must be set before calling this method.
   /// The origin and spacing attributes of the output image are ignored (origin, spacing, and axis directions
   /// are all specified by ijkToRAS).
-  static void GetTransformedPointSamplesAsMagnitudeImage(vtkImageData* outputMagnitudeImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS);
+  /// If transformToWorld is true then transform to world is returned, otherwise transform from world is returned.
+  /// Returns true on success.
+  static bool GetTransformedPointSamplesAsMagnitudeImage(vtkImageData* outputMagnitudeImage, vtkMRMLTransformNode* inputTransformNode,
+    vtkMatrix4x4* ijkToRAS, bool transformToWorld = true);
 
   /// Take samples from the displacement field and store the vector components in an image volume
   /// The extents of the output image must be set before calling this method.
   /// The origin and spacing attributes of the output image are ignored (origin, spacing, and axis directions
   /// are all specified by ijkToRAS).
-  static void GetTransformedPointSamplesAsVectorImage(vtkImageData* outputVectorImage, vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS);
+  /// If transformToWorld is true then transform to world is returned, otherwise transform from world is returned.
+  /// Returns true on success.
+  static bool GetTransformedPointSamplesAsVectorImage(vtkImageData* outputVectorImage, vtkMRMLTransformNode* inputTransformNode,
+    vtkMatrix4x4* ijkToRAS, bool transformToWorld = true);
 
   enum TransformKind
   {
@@ -160,8 +170,9 @@ protected:
   /// and stores it in an unstructured grid.
   /// gridToRAS specifies the grid origin, direction, and spacing
   /// gridSize is a 3-component int array specifying the dimension of the grid
+  /// If transformToWorld is true then transform to world is returned, otherwise transform from world is returned.
   static void GetTransformedPointSamples(vtkPointSet* outputPointSet_RAS, vtkMRMLTransformNode* inputTransformNode,
-    vtkMatrix4x4* gridToRAS, int* gridSize);
+    vtkMatrix4x4* gridToRAS, int* gridSize, bool transformToWorld = true);
 
   /// Takes samples from the displacement field specified by the transformation on a slice
   /// and stores it in an unstructured grid.
