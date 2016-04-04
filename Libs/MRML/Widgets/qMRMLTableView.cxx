@@ -330,41 +330,88 @@ void qMRMLTableView::pasteSelection()
     {
     return;
     }
+  QStringList lines = text.split('\n');
+  if (lines.empty())
+    {
+    // nothing to paste
+    return;
+    }
+  if (lines.back().isEmpty())
+    {
+    // usually there is an extra empty line at the end
+    // remove that to avoid adding an extra empty line to the table
+    lines.pop_back();
+    }
+  if (lines.empty())
+    {
+    // nothing to paste
+    return;
+    }
 
+  // If there is no selection then paste from top-left
   qMRMLTableModel* mrmlModel = tableModel();
   int rowIndex = currentIndex().row();
-  int startColumnIndex = currentIndex().column();
-  QStringList lines = text.split('\n');
-  if (!lines.empty())
+  if (rowIndex < 0)
     {
-    // If there are multiple table views then each cell modification would trigger
-    // a table update, which may be very slow in case of large tables, therefore
-    // we need to use StartModify/EndModify.
-    vtkMRMLTableNode* tableNode = mrmlTableNode();
-    int wasModified = tableNode->StartModify();
-    foreach(QString line, lines)
-      {
-      if (rowIndex>=mrmlModel->rowCount())
-          {
-          // reached last row in the table, ignore subsequent rows
-          break;
-          }
-      int columnIndex = startColumnIndex;
-      QStringList cells = line.split('\t');
-      foreach(QString cell, cells)
-        {
-        if (columnIndex>=mrmlModel->columnCount())
-          {
-          // reached last column in the table, ignore subsequent columns
-          break;
-          }
-        mrmlModel->item(rowIndex,columnIndex)->setText(cell);
-        columnIndex++;
-        }
-      rowIndex++;
-      }
-    tableNode->EndModify(wasModified);
+    rowIndex = 0;
     }
+  int startColumnIndex = currentIndex().column();
+  if (startColumnIndex < 0)
+    {
+    startColumnIndex = 0;
+    }
+
+  // If there are multiple table views then each cell modification would trigger
+  // a table update, which may be very slow in case of large tables, therefore
+  // we need to use StartModify/EndModify.
+  vtkMRMLTableNode* tableNode = mrmlTableNode();
+  int wasModified = tableNode->StartModify();
+
+  // Pre-allocate new rows (to reduce number of updateModelFromMRML() calls
+  if (tableNode->GetNumberOfColumns() == 0)
+    {
+    // insertRow() may insert two rows if the table is empty (one column header + one data item),
+    // which could cause an extra row added to the table. To prevent this, we add a column instead,
+    // which is just a single value.
+    insertColumn();
+    mrmlModel->updateModelFromMRML();
+    }
+  for (int i = lines.size() - (mrmlModel->rowCount() - rowIndex); i>0; i--)
+    {
+    insertRow();
+    }
+  mrmlModel->updateModelFromMRML();
+
+  foreach(QString line, lines)
+    {
+    int columnIndex = startColumnIndex;
+    QStringList cells = line.split('\t');
+    foreach(QString cell, cells)
+      {
+      // Pre-allocate new columns (enough for at least for storing all the items in the current row)
+      if (columnIndex >= mrmlModel->columnCount())
+        {
+        for (int i = cells.size() - (mrmlModel->columnCount() - startColumnIndex); i>0; i--)
+          {
+          insertColumn();
+          }
+        mrmlModel->updateModelFromMRML();
+        }
+      // Set values in items
+      QStandardItem* item = mrmlModel->item(rowIndex,columnIndex);
+      if (item != NULL)
+        {
+        item->setText(cell);
+        }
+      else
+        {
+        qWarning() << "Failed to set " << cell << " in table cell (" << rowIndex << ", " << columnIndex << ")";
+        }
+      columnIndex++;
+      }
+    rowIndex++;
+    }
+  tableNode->EndModify(wasModified);
 }
 
 //-----------------------------------------------------------------------------
