@@ -446,7 +446,7 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
       {
       nodeName+=" displacement vectors";
       }
-    nodeName=scene->GenerateUniqueName(nodeName)vertToGridTransform(vtkMRMLTransformNode* inputTransformNode, vtkMRMLVolumeNode* ;
+    nodeName=scene->GenerateUniqueName(nodeName);
     outputVolumeNode->SetName(nodeName.c_str());
     scene->AddNode(outputVolumeNode);
     }
