@@ -64,7 +64,6 @@ class DICOMProcess(object):
     print ("Starting %s with " % cmd, args)
     self.process.start(cmd, args)
 
-
   def onStateChanged(self, newState):
     print("process %s now in state %s" % (self.cmd, self.QProcessState[newState]))
     if newState == 0 and self.process:
@@ -73,6 +72,8 @@ class DICOMProcess(object):
       print('error code is: %d' % self.process.error())
       print('standard out is: %s' % stdout)
       print('standard error is: %s' % stderr)
+      return stdout, stderr
+    return None, None
 
   def stop(self):
     if hasattr(self,'process'):
@@ -80,6 +81,7 @@ class DICOMProcess(object):
         print("stopping DICOM process")
         self.process.kill()
         self.process = None
+
 
 class DICOMCommand(DICOMProcess):
   """
@@ -112,116 +114,164 @@ class DICOMCommand(DICOMProcess):
     stdout = self.process.readAllStandardOutput()
     return stdout
 
-class DICOMListener(DICOMProcess):
-  """helper class to run dcmtk's storescp as listener
+
+class DICOMStoreSCPProcess(DICOMProcess):
+  """helper class to run dcmtk's storescp
   Code here depends only on python and DCMTK executables
   TODO: it might make sense to refactor this as a generic tool
   for interacting with DCMTK
+  """
+
+  STORESCP_PROCESS_FILE_NAME = "storescp"
+
+  def __init__(self, incomingDataDir, incomingPort=None):
+    super(DICOMStoreSCPProcess,self).__init__()
+
+    self.incomingDataDir = incomingDataDir
+    if not os.path.exists(self.incomingDataDir):
+      os.mkdir(self.incomingDataDir)
+
+    if incomingPort:
+      assert type(incomingPort) is int
+      self.port = str(incomingPort)
+    else:
+      settings = qt.QSettings()
+      self.port = settings.value('StoragePort')
+      if not self.port:
+        settings.setValue('StoragePort', '11112')
+        self.port = settings.value('StoragePort')
+
+    self.storescpExecutable = os.path.join(self.exeDir, self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
+    self.dcmdumpExecutable = os.path.join(self.exeDir,'dcmdump'+self.exeExtension)
+
+  def __del__(self):
+    super(DICOMStoreSCPProcess,self).__del__()
+
+  def onStateChanged(self, newState):
+    stdout, stderr = super(DICOMStoreSCPProcess, self).onStateChanged(newState)
+    if stderr and stderr.size():
+      slicer.util.errorDisplay("An error occurred. For further information click 'Show Details...'",
+                               windowTitle=self.__class__.__name__, detailedText=str(stderr))
+    return stdout, stderr
+
+  def start(self, cmd=None, args=None):
+    if self.killStoreSCPProcesses():
+      onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' \
+                            % (self.dcmdumpExecutable, self.incomingDataDir)
+      args = [str(self.port), '--accept-all', '--output-directory' , self.incomingDataDir, '--exec-sync',
+              '--exec-on-reception', onReceptionCallback]
+      print("starting storescp process")
+      super(DICOMStoreSCPProcess,self).start(self.storescpExecutable, args)
+      self.process.connect('readyReadStandardOutput()', self.readFromStandardOutput)
+    else:
+      slicer.util.warningDisplay("Storescp process could not be started", windowTitle=self.__class__.__name__)
+
+  def killStoreSCPProcesses(self):
+    uniqueListener = True
+    if os.name == 'nt':
+      uniqueListener = self.killStoreSCPProcessesNT(uniqueListener)
+    elif os.name == 'posix':
+      uniqueListener = self.killStoreSCPProcessesPosix(uniqueListener)
+    return uniqueListener
+
+  def killStoreSCPProcessesPosix(self, uniqueListener):
+    p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+    out, err = p.communicate()
+    for line in out.splitlines():
+      if self.STORESCP_PROCESS_FILE_NAME in line:
+        pid = int(line.split(None, 1)[0])
+        uniqueListener = self.notifyUserAboutRunningStoreSCP(pid)
+    return uniqueListener
+
+  def killStoreSCPProcessesNT(self, uniqueListener):
+    cmd = 'WMIC PROCESS get Caption'
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    processList = []
+    for line in process.stdout:
+      processList.append(line.strip())
+    if any(self.STORESCP_PROCESS_FILE_NAME + self.exeExtension in process for process in processList):
+      uniqueListener = self.notifyUserAboutRunningStoreSCP()
+    return uniqueListener
+
+  def readFromStandardOutput(self, readLineCallback=None):
+    print('================ready to read stdout from %s===================' % self.__class__.__name__)
+    while self.process.canReadLine():
+      line = str(self.process.readLine())
+      print("From %s: %s" % (self.__class__.__name__, line))
+      if readLineCallback:
+        readLineCallback(line)
+    print('================end reading stdout from %s===================' % self.__class__.__name__)
+    self.readFromStandardError()
+
+  def readFromStandardError(self):
+    stdErr = str(self.process.readAllStandardError())
+    if stdErr:
+      print('================ready to read stderr from %s===================' % self.__class__.__name__)
+      print ("processed stderr: %s" %stdErr)
+      print('================end reading stderr from %s===================' % self.__class__.__name__)
+
+  def notifyUserAboutRunningStoreSCP(self, pid=None):
+    if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
+      if os.name == 'nt':
+        os.popen('taskkill /f /im %s' % self.STORESCP_PROCESS_FILE_NAME + self.exeExtension)
+      elif os.name == 'posix':
+        import signal
+        os.kill(pid, signal.SIGKILL)
+      return True
+    return False
+
+
+class DICOMListener(DICOMStoreSCPProcess):
+  """helper class that uses storscp process including indexing
+  into Slicer DICOMdatabase.
   TODO: down the line we might have ctkDICOMListener perform
   this task as a QObject callable from PythonQt
   """
 
-  def __init__(self,database,fileToBeAddedCallback=None,fileAddedCallback=None):
-    super(DICOMListener,self).__init__()
+  def __init__(self, database, fileToBeAddedCallback=None, fileAddedCallback=None):
     self.dicomDatabase = database
     self.indexer = ctk.ctkDICOMIndexer()
     self.fileToBeAddedCallback = fileToBeAddedCallback
     self.fileAddedCallback = fileAddedCallback
     self.lastFileAdded = None
+
     settings = qt.QSettings()
-
-    dir = settings.value('DatabaseDirectory')
-    if not dir:
-      raise( UserWarning('Database directory not set: cannot start DICOMListener') )
-    if not os.path.exists(dir):
-      os.mkdir(dir)
-    self.incomingDir = dir + "/incoming"
-    if not os.path.exists(self.incomingDir):
-      os.mkdir(self.incomingDir)
-
-    self.port = settings.value('StoragePort')
-    if not self.port:
-      settings.setValue('StoragePort', '11112')
-      self.port = settings.value('StoragePort')
-
+    databaseDirectory = settings.value('DatabaseDirectory')
+    if not databaseDirectory:
+      raise(UserWarning('Database directory not set: cannot start DICOMListener'))
+    if not os.path.exists(databaseDirectory):
+      os.mkdir(databaseDirectory)
+    incomingDir = databaseDirectory + "/incoming"
+    super(DICOMListener,self).__init__(incomingDataDir=incomingDir)
 
   def __del__(self):
-    super(DICOMListener,self).__del__()
+    super(DICOMListener, self).__del__()
 
-  def start(self):
-    self.storeSCPExecutable = self.exeDir+'/storescp'+self.exeExtension
-    dcmdumpExecutable = self.exeDir+'/dcmdump'+self.exeExtension
+  def readFromStandardOutput(self):
+    super(DICOMListener,self).readFromStandardOutput(readLineCallback=self.processStdoutLine)
 
-    uniqueListener = True
-    # kill previous executables
-    osName = os.name
-    if osName  == 'nt':
-      cmd = 'WMIC PROCESS get Caption'
-      proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-      processList = []
-      for line in proc.stdout:
-        processList.append(line.strip())
-      if any("storescp.exe" in process for process in processList):
-        uniqueListener = self.killOtherListeners(osName)
+  def processStdoutLine(self, line):
+    searchTag = '# dcmdump (1/1): '
+    tagStart = line.find(searchTag)
+    if tagStart != -1:
+      dicomFilePath = line[tagStart + len(searchTag):].strip()
+      destinationDir = os.path.dirname(self.dicomDatabase.databaseFilename)
+      print()
+      print()
+      print()
+      print ("indexing: %s into %s " % (dicomFilePath, destinationDir) )
+      if self.fileToBeAddedCallback:
+        self.fileToBeAddedCallback()
+      self.indexer.addFile( self.dicomDatabase, dicomFilePath, destinationDir )
+      print ("done indexing")
+      self.lastFileAdded = dicomFilePath
+      if self.fileAddedCallback:
+        print ("calling callback...")
+        self.fileAddedCallback()
+        print ("callback done")
+      else:
+        print ("no callback")
 
-    elif osName == 'posix':
-      p = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-      out, err = p.communicate()
-      for line in out.splitlines():
-        if 'storescp' in line:
-          pid = int(line.split(None, 1)[0])
-          uniqueListener = self.killOtherListeners(osName,pid)
-
-    if uniqueListener:
-      # start the server!
-      onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
-      args = [str(self.port),
-          '--accept-all',
-          '--output-directory' , self.incomingDir,
-          '--exec-sync', '--exec-on-reception', onReceptionCallback]
-      print("starting DICOM listener")
-      super(DICOMListener,self).start(self.storeSCPExecutable, args)
-
-      self.process.connect('readyReadStandardOutput()', self.readFromListener)
-
-  def readFromListener(self):
-    print('================ready to read from listener===================')
-    while self.process.canReadLine():
-      line = str(self.process.readLine())
-      print ("From Listener: %s" % (line) )
-      searchTag = '# dcmdump (1/1): '
-      tagStart = line.find(searchTag)
-      if tagStart != -1:
-        dicomFilePath = line[tagStart + len(searchTag):].strip()
-        destinationDir = os.path.dirname(self.dicomDatabase.databaseFilename)
-        print()
-        print()
-        print()
-        print ("indexing: %s into %s " % (dicomFilePath, destinationDir) )
-        if self.fileToBeAddedCallback:
-          self.fileToBeAddedCallback()
-        self.indexer.addFile( self.dicomDatabase, dicomFilePath, destinationDir )
-        print ("done indexing")
-        self.lastFileAdded = dicomFilePath
-        if self.fileAddedCallback:
-          print ("calling callback...")
-          self.fileAddedCallback()
-          print ("callback done")
-        else:
-          print ("no callback")
-    stdErr = str(self.process.readAllStandardError())
-    print ("processed stderr")
-
-  def killOtherListeners(self, osName, pid= None):
-    if slicer.util.confirmYesNoDisplay('There are other DICOM listeners running.\n Do you want to end them?'):
-      if osName == 'nt':
-        os.popen('taskkill /f /im storescp.exe')
-      elif osName == 'posix':
-        import signal
-        os.kill(pid, signal.SIGKILL)
-      return True
-    else:
-      return False
 
 class DICOMSender(DICOMProcess):
   """Code to send files to a remote host
@@ -265,6 +315,7 @@ class DICOMSender(DICOMProcess):
       print('standard out is: %s' % stdout)
       print('standard error is: %s' % stderr)
       raise( UserWarning("Could not send %s to %s:%s" % (file, self.address, self.port)) )
+
 
 class DICOMTestingQRServer(object):
   """helper class to set up the DICOM servers
