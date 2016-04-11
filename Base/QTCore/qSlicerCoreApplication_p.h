@@ -173,6 +173,10 @@ public:
 
   QHash<int, QByteArray>                      LoadedResources;
   int                                         NextResourceHandle;
+
+  /// Associated modules for each node type.
+  /// Key: node class name; values: module names.
+  QMultiMap<QString, QString> ModulesForNodes;
 };
 
 #endif

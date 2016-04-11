@@ -170,10 +170,3 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
     return QIcon();
     }
 }
-
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDefaultPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  Q_UNUSED(node);
-  // No role, no edit properties
-}

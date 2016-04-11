@@ -156,3 +156,13 @@ void qSlicerAnnotationsModule::showScreenshotDialog()
   dynamic_cast<qSlicerAnnotationModuleWidget*>(this->widgetRepresentation())
       ->grabSnapShot();
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerAnnotationsModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLAnnotationNode"
+    << "vtkMRMLAnnotationDisplayNode"
+    << "vtkMRMLAnnotationStorageNode"
+    << "vtkMRMLAnnotationHierarchyNode";
+}

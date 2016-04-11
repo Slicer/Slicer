@@ -165,15 +165,6 @@ QIcon qSlicerSubjectHierarchySceneViewsPlugin::icon(vtkMRMLSubjectHierarchyNode*
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchySceneViewsPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  Q_UNUSED(node);
-
-  // Switch to scene views module
-  qSlicerSubjectHierarchyAbstractPlugin::switchToModule("SceneViews");
-}
-
-//---------------------------------------------------------------------------
 QList<QAction*> qSlicerSubjectHierarchySceneViewsPlugin::nodeContextMenuActions()const
 {
   Q_D(const qSlicerSubjectHierarchySceneViewsPlugin);

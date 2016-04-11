@@ -22,6 +22,8 @@ public:
   qSlicerCropVolumeModuleWidget(QWidget *parent=0);
   virtual ~qSlicerCropVolumeModuleWidget();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+
 public slots:
 
 protected:

@@ -598,21 +598,3 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
     }
 
 }
-
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyVolumesPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  // Switch to volumes module and volume already selected
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("Volumes");
-  if (moduleWidget)
-    {
-    // Get node selector combobox
-    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("ActiveVolumeNodeSelector");
-
-    // Choose current data node
-    if (nodeSelector)
-      {
-      nodeSelector->setCurrentNode(node->GetAssociatedNode());
-      }
-    }
-}

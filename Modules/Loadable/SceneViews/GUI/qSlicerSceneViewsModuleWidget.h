@@ -34,6 +34,8 @@ public:
   /// Disconnect from scene when exiting
   virtual void exit();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+
 public slots:
     /// a public slot allowing other modules to open up the scene view capture
     /// dialog (get the module manager, get the module sceneviews, get the

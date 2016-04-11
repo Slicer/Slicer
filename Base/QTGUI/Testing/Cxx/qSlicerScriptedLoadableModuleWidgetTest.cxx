@@ -22,9 +22,13 @@
 #include <ctkTest.h>
 #include <ctkUtils.h>
 
+// VTK includes
+#include <vtkNew.h>
+
 // Slicer includes
 #include "qSlicerPythonManager.h"
 #include "qSlicerScriptedLoadableModuleWidget.h"
+#include "vtkMRMLModelNode.h"
 
 #include <PythonQt.h>
 // ----------------------------------------------------------------------------
@@ -54,6 +58,9 @@ private slots:
 
   void testSetup();
   void testSetup_data();
+
+  void testNodeEdit();
+  void testNodeEdit_data();
 
 };
 
@@ -162,6 +169,42 @@ void qSlicerScriptedLoadableModuleWidgetTester::testEnterExit_data()
   QTest::newRow("1") << "qSlicerScriptedLoadableModuleNewStyleTestWidget.py";
 }
 
+// ----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModuleWidgetTester::testNodeEdit()
+{
+  QVERIFY(this->resetTmp());
+
+  QFETCH(QString, scriptName);
+  QString scriptPath = this->preparePythonSource(scriptName);
+  QVERIFY(QFile::exists(scriptPath));
+
+  qSlicerScriptedLoadableModuleWidget w;
+  w.setPythonSource(scriptPath);
+
+  vtkNew<vtkMRMLModelNode> node;
+  node->SetName("Some");
+
+  QVERIFY(w.nodeEditable(NULL) == 0.3);
+  QVERIFY(w.property("editableNodeName").toString() == QString(""));
+  QVERIFY(w.nodeEditable(node.GetPointer()) == 0.7);
+  QVERIFY(w.property("editableNodeName").toString() == QString("Some"));
+
+  QVERIFY(w.setEditedNode(NULL) == false);
+  QVERIFY(w.property("editedNodeName").toString() == QString(""));
+  QVERIFY(w.setEditedNode(node.GetPointer(), "someRole", "someContext") == true);
+  QVERIFY(w.property("editedNodeName").toString() == QString("Some"));
+  QVERIFY(w.property("editedNodeRole").toString() == QString("someRole"));
+  QVERIFY(w.property("editedNodeContext").toString() == QString("someContext"));
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModuleWidgetTester::testNodeEdit_data()
+{
+  QTest::addColumn<QString>("scriptName");
+
+  QTest::newRow("0") << "qSlicerScriptedLoadableModuleTestWidget.py";
+  QTest::newRow("1") << "qSlicerScriptedLoadableModuleNewStyleTestWidget.py";
+}
 
 namespace
 {

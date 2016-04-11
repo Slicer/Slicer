@@ -58,6 +58,9 @@ public:
 
   virtual QStringList categories()const;
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
 protected:
   /// Initialize the module. Register the volumes reader/writer
   virtual void setup();

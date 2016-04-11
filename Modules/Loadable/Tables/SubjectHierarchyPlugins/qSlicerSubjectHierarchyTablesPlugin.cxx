@@ -302,24 +302,6 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkMRMLSubjectHier
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTablesPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  // Switch to tables module and select transform
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("Tables");
-  if (moduleWidget)
-    {
-    // Get node selector combobox
-    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("TableNodeSelector");
-
-    // Choose current data node
-    if (nodeSelector)
-      {
-      nodeSelector->setCurrentNode(node->GetAssociatedNode());
-      }
-    }
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()const
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();

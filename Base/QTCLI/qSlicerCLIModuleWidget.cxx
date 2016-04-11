@@ -556,3 +556,53 @@ void qSlicerCLIModuleWidget::setAutoRunCancelsRunningProcess(bool autoRun)
     }
   d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
+
+//-----------------------------------------------------------
+bool qSlicerCLIModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  vtkMRMLCommandLineModuleNode* cmdLineModuleNode = vtkMRMLCommandLineModuleNode::SafeDownCast(node);
+  if (!cmdLineModuleNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid input node";
+    return false;
+    }
+  const char* moduleTitle = cmdLineModuleNode->GetAttribute("CommandLineModule");
+  if (!moduleTitle)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: CommandLineModule attribute of node is not set";
+    return false;
+    }
+  if (moduleTitle != this->module()->title())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: mismatch of module title in CommandLineModule attribute of node";
+    return false;
+    }
+  d->MRMLCommandLineModuleNodeSelector->setCurrentNode(node);
+  return true;
+}
+
+//-----------------------------------------------------------
+double qSlicerCLIModuleWidget::nodeEditable(vtkMRMLNode* node)
+{
+  if (vtkMRMLCommandLineModuleNode::SafeDownCast(node))
+    {
+    vtkMRMLCommandLineModuleNode* cmdLineModuleNode = vtkMRMLCommandLineModuleNode::SafeDownCast(node);
+    const char* moduleTitle = cmdLineModuleNode->GetAttribute("CommandLineModule");
+    if (!moduleTitle)
+      {
+      // node is not associated to any module
+      return 0.0;
+      }
+    if (moduleTitle != this->module()->title())
+      {
+      return 0.0;
+      }
+    // Module title matches, probably this module owns this node
+    return 0.5;
+    }
+  else
+    {
+    return 0.0;
+    }
+}

@@ -22,6 +22,7 @@
 #include <QDir>
 
 // SlicerQt includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
@@ -383,6 +384,10 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager
     {
     module->setName(moduleName);
     module->setObjectName(QString("%1Module").arg(moduleName));
+    foreach(const QString& associatedNodeType, module->associatedNodeTypes())
+      {
+      qSlicerCoreApplication::application()->addModuleAssociatedNodeType(associatedNodeType, moduleName);
+      }
     foreach(const QString& dependency, module->dependencies())
       {
       QStringList dependees = d->ModuleDependees.value(dependency);

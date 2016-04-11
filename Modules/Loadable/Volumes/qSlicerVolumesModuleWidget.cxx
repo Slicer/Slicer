@@ -26,6 +26,7 @@
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLVolumeDisplayNode.h>
 
 // Volumes includes
 #include "qSlicerVolumesModuleWidget.h"
@@ -142,4 +143,29 @@ void qSlicerVolumesModuleWidget::convertToLabelmap()
     d->ActiveVolumeNodeSelector->setCurrentNode(targetLabelMapNode);
     this->mrmlScene()->RemoveNode(currentScalarVolumeNode);
     }
+}
+
+//-----------------------------------------------------------
+bool qSlicerVolumesModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerVolumesModuleWidget);
+  if (vtkMRMLVolumeNode::SafeDownCast(node))
+    {
+    d->ActiveVolumeNodeSelector->setCurrentNode(node);
+    return true;
+    }
+
+  if (vtkMRMLVolumeDisplayNode::SafeDownCast(node))
+    {
+    vtkMRMLVolumeDisplayNode* displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(node);
+    vtkMRMLVolumeNode* displayableNode = vtkMRMLVolumeNode::SafeDownCast(displayNode->GetDisplayableNode());
+    if (!displayableNode)
+      {
+      return false;
+      }
+    d->ActiveVolumeNodeSelector->setCurrentNode(displayableNode);
+    return true;
+    }
+
+  return false;
 }

@@ -5,6 +5,7 @@ class qSlicerScriptedLoadableModuleTest:
     import string
     parent.title = "qSlicerScriptedLoadableModule Test"
     parent.categories = ["Testing"]
+    parent.associatedNodeTypes = ["vtkMRMLModelNode", "vtkMRMLScalarVolumeNode"]
     parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"]
     parent.helpText = """
     This module is used to test qSlicerScriptedLoadableModule and qSlicerScriptedLoadableModuleWidget classes.

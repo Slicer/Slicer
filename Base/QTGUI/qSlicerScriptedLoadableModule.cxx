@@ -45,6 +45,7 @@ public:
   QString Title;
   QStringList Categories;
   QStringList Contributors;
+  QStringList AssociatedNodeTypes;
   QStringList Dependencies;
   QString HelpText;
   QString AcknowledgementText;
@@ -274,6 +275,10 @@ CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, categories, Categories)
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setContributors, Contributors)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, contributors, Contributors)
+
+//-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setAssociatedNodeTypes, AssociatedNodeTypes)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, associatedNodeTypes, AssociatedNodeTypes)
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setHelpText, HelpText)

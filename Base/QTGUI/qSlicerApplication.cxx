@@ -45,6 +45,7 @@
 
 // QTGUI includes
 #include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleRepresentation.h"
 #include "qSlicerApplication.h"
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreApplication_p.h"
@@ -512,84 +513,84 @@ void qSlicerApplication::confirmRestart(QString reason)
 //-----------------------------------------------------------------------------
 QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
 {
+  Q_D(const qSlicerApplication);
+  QString mostSuitableModuleName = "Data";
+  double mostSuitableModuleConfidence = 0.0;
+
+  vtkMRMLNode* currentNode = node;
   QString nodeClassName = node->GetClassName();
-  if (node->IsA("vtkMRMLCameraNode") ||
-      node->IsA("vtkMRMLViewNode"))
+
+  // Modules that explicitly support the specified node type
+  QStringList moduleNames = this->modulesAssociatedWithNodeType(nodeClassName);
+
+  // Modules that support a parent class of the node
+  QStringList classNames = this->allModuleAssociatedNodeTypes();
+  foreach(const QString& className, classNames)
     {
-    return "Cameras";
+    if (node->IsA(className.toLatin1()))
+      {
+      moduleNames << this->modulesAssociatedWithNodeType(className);
+      }
     }
-  else if (node->IsA("vtkMRMLSliceNode") ||
-           node->IsA("vtkMRMLSliceCompositeNode") ||
-           node->IsA("vtkMRMLSliceLayerNode"))
+
+  foreach(const QString& moduleName, moduleNames)
     {
-    return "SliceController";
+    qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
+    if (!module)
+      {
+      qWarning() << "Module " << moduleName << " associated with node class " << nodeClassName << " was not found";
+      continue;
+      }
+    qSlicerAbstractModuleRepresentation* widget = module->widgetRepresentation();
+    if (!widget)
+      {
+      qWarning() << "Module " << moduleName << " associated with node class " << nodeClassName << " does not have widget";
+      continue;
+      }
+    double nodeEditableConfidence = widget->nodeEditable(node);
+    if (mostSuitableModuleConfidence < nodeEditableConfidence)
+      {
+      mostSuitableModuleName = moduleName;
+      mostSuitableModuleConfidence = nodeEditableConfidence;
+      }
     }
-  else if (node->IsA("vtkMRMLMarkupsNode") ||
-           node->IsA("vtkMRMLMarkupsDisplayNode") ||
-           node->IsA("vtkMRMLMarkupsStorageNode") ||
-           node->IsA("vtkMRMLAnnotationFiducialNode"))
+  if (mostSuitableModuleConfidence == 0.0)
     {
-    return "Markups";
+    qWarning() << "Couldn't find a module for node class" << nodeClassName;
     }
-  else if (node->IsA("vtkMRMLAnnotationNode") ||
-           node->IsA("vtkMRMLAnnotationDisplayNode") ||
-           node->IsA("vtkMRMLAnnotationStorageNode") ||
-           node->IsA("vtkMRMLAnnotationHierarchyNode"))
-    {
-    return "Annotations";
-    }
-  else if (node->IsA("vtkMRMLTransformNode") ||
-           node->IsA("vtkMRMLTransformStorageNode"))
-    {
-    return "Transforms";
-    }
-  else if (node->IsA("vtkMRMLColorNode"))
-    {
-    return "Colors";
-    }
-  else if (nodeClassName.contains("vtkMRMLFiberBundle"))
-    {
-    return "TractographyDisplay";
-    }
-  else if (node->IsA("vtkMRMLModelNode") ||
-           node->IsA("vtkMRMLModelDisplayNode") ||
-           node->IsA("vtkMRMLModelHierarchyNode") ||
-           node->IsA("vtkMRMLModelStorageNode"))
-    {
-    return "Models";
-    }
-  else if (node->IsA("vtkMRMLSceneViewNode") ||
-           node->IsA("vtkMRMLSceneViewStorageNode"))
-    {
-    return "SceneViews";
-    }
-  else if (node->IsA("vtkMRMLVolumeNode") ||
-           node->IsA("vtkMRMLVolumeDisplayNode") ||
-           node->IsA("vtkMRMLVolumeArchetypeStorageNode") ||
-           node->IsA("vtkMRMLVolumeHeaderlessStorageNode"))
-    {
-    return "Volumes";
-    }
-  else if (node->IsA("vtkMRMLVolumePropertyNode") ||
-           node->IsA("vtkMRMLVolumePropertyStorageNode") ||
-           node->IsA("vtkMRMLVolumeRenderingDisplayNode"))
-    {
-    return "VolumeRendering";
-    }
-  qWarning() << "Couldn't find a module for node class" << node->GetClassName();
-  return "data";
+  return mostSuitableModuleName;
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerApplication::openNodeModule(vtkMRMLNode* node)
 {
+  if (!node)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: node is invalid";
+    return;
+    }
   QString moduleName = this->nodeModule(node);
   qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
   qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
-  if (moduleWithAction)
+  if (!moduleWithAction)
     {
-    moduleWithAction->action()->trigger();
+    qWarning() << Q_FUNC_INFO << " failed: suitable module was not found";
+    return;
     }
+  // Select node (select node before activate because some modules create a default node
+  // if activated without selecting a node)
+  qSlicerAbstractModuleRepresentation* widget = moduleWithAction->widgetRepresentation();
+  if (!widget)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: suitable module widget was not found";
+    return;
+    }
+  if (!widget->setEditedNode(node))
+    {
+    qWarning() << Q_FUNC_INFO << " failed: setEditedNode failed for node type " << node->GetClassName();
+    }
+  // Activate module widget
+  moduleWithAction->action()->trigger();
 }
 
 // --------------------------------------------------------------------------

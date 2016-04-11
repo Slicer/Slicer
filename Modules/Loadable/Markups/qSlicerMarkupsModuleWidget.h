@@ -89,6 +89,9 @@ public:
   /// the slice composite nodes
   bool sliceIntersectionsVisible();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  virtual double nodeEditable(vtkMRMLNode* node);
+
 public slots:
 
   /// Respond to the scene events

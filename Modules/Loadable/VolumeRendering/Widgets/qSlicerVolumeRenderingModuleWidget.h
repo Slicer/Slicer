@@ -57,6 +57,9 @@ public:
   void addRenderingMethodWidget(const QString& methodClassName,
                                 qSlicerVolumeRenderingPropertiesWidget* widget);
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  virtual double nodeEditable(vtkMRMLNode* node);
+
 public slots:
 
   /// Set the MRML node of interest

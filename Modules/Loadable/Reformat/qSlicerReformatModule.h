@@ -57,6 +57,10 @@ public:
 
   /// Return the contributor for the module
   virtual QStringList contributors()const;
+
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
 protected:
 
   /// Initialize the module. Register the volumes reader/writer

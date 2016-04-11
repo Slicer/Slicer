@@ -24,9 +24,15 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// VTK includes
+#include <vtkPythonUtil.h>
+
 // SlicerQt includes
 #include "qSlicerScriptedLoadableModuleWidget.h"
 #include "qSlicerScriptedUtils_p.h"
+
+// MRML includes
+#include "vtkMRMLNode.h"
 
 //-----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleWidgetPrivate
@@ -39,7 +45,9 @@ public:
   enum {
     SetupMethod = 0,
     EnterMethod,
-    ExitMethod
+    ExitMethod,
+    SetEditedNodeMethod,
+    NodeEditableMethod
     };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
@@ -56,6 +64,8 @@ qSlicerScriptedLoadableModuleWidgetPrivate::qSlicerScriptedLoadableModuleWidgetP
   this->PythonCppAPI.declareMethod(Self::SetupMethod, "setup");
   this->PythonCppAPI.declareMethod(Self::EnterMethod, "enter");
   this->PythonCppAPI.declareMethod(Self::ExitMethod, "exit");
+  this->PythonCppAPI.declareMethod(Self::SetEditedNodeMethod, "setEditedNode");
+  this->PythonCppAPI.declareMethod(Self::NodeEditableMethod, "nodeEditable");
 }
 
 //-----------------------------------------------------------------------------
@@ -199,4 +209,52 @@ void qSlicerScriptedLoadableModuleWidget::exit()
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::exit();
   d->PythonCppAPI.callMethod(Pimpl::ExitMethod);
+}
+
+//-----------------------------------------------------------
+bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerScriptedLoadableModuleWidget);
+  PyObject* arguments = PyTuple_New(3);
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyTuple_SET_ITEM(arguments, 1, PyString_FromString(role.toLatin1()));
+  PyTuple_SET_ITEM(arguments, 2, PyString_FromString(context.toLatin1()));
+  PyObject* result = d->PythonCppAPI.callMethod(d->SetEditedNodeMethod, arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::setEditedNode(node);
+    }
+
+  // Parse result
+  if (!PyBool_Check(result))
+    {
+    qWarning() << d->PythonSource << ": qSlicerScriptedLoadableModuleWidget: Function 'setEditedNode' is expected to return a boolean";
+    return false;
+    }
+
+  return (result == Py_True);
+}
+
+//-----------------------------------------------------------
+double qSlicerScriptedLoadableModuleWidget::nodeEditable(vtkMRMLNode* node)
+{
+  Q_D(const qSlicerScriptedLoadableModuleWidget);
+  PyObject* arguments = PyTuple_New(1);
+  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
+  PyObject* result = d->PythonCppAPI.callMethod(d->NodeEditableMethod, arguments);
+  if (!result)
+    {
+    // Method call failed (probably an omitted function), call default implementation
+    return this->Superclass::nodeEditable(node);
+    }
+
+  // Parse result
+  if (!PyFloat_Check(result))
+    {
+    qWarning() << d->PythonSource << ": qSlicerScriptedLoadableModuleWidget: Function 'nodeEditable' is expected to return a floating point number!";
+    return 0.0;
+    }
+
+  return PyFloat_AsDouble(result);
 }

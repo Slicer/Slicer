@@ -145,3 +145,9 @@ vtkMRMLAbstractLogic* qSlicerTablesModule::createLogic()
 {
   return vtkSlicerTablesLogic::New();
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerTablesModule::associatedNodeTypes() const
+{
+  return QStringList() << "vtkMRMLTableNode";
+}

@@ -169,23 +169,6 @@ QIcon qSlicerSubjectHierarchyModelsPlugin::visibilityIcon(int visible)
   return qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->visibilityIcon(visible);
 }
 
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  // Switch to models module
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("Models");
-  if (moduleWidget)
-    {
-    // Get filter search box
-    QLineEdit* searchBox = moduleWidget->findChild<QLineEdit*>("ScrollToModelSearchBox");
-    if (searchBox && node->GetAssociatedNode())
-      {
-      // Enter node name in the filter box to select it
-      searchBox->setText(node->GetAssociatedNode()->GetName());
-      }
-    }
-}
-
 //-----------------------------------------------------------------------------
 QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkMRMLSubjectHierarchyNode* node)const
 {

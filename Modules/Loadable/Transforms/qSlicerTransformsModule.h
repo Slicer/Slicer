@@ -62,6 +62,9 @@ public:
   /// Contributors of the module
   virtual QStringList contributors()const;
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
 protected:
   /// Reimplemented to initialize the transforms IO
   virtual void setup();

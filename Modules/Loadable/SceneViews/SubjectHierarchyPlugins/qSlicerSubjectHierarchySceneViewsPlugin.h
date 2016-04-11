@@ -75,9 +75,6 @@ public:
   /// \return Icon to set, NULL if nothing to set
   virtual QIcon icon(vtkMRMLSubjectHierarchyNode* node);
 
-  /// Open module belonging to node and set inputs in opened module
-  virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
-
   /// Get node context menu item actions to add to tree view
   Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
 

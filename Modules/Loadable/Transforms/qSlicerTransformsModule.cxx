@@ -159,3 +159,11 @@ void qSlicerTransformsModule::setup()
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyTransformsPlugin());
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerTransformsModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLTransformNode"
+    << "vtkMRMLTransformDisplayNode";
+}

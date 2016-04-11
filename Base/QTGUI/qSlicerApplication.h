@@ -111,10 +111,7 @@ public:
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
 
-  /// Return the best module name for a given node.
-  /// \note qSlicerApplication is a temporary host for the function as it should be
-  /// moved into a DataManager where module can register new node
-  /// types/modules
+  /// Return the module name that is most suitable for editing the specified node.
   QString nodeModule(vtkMRMLNode* node)const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;

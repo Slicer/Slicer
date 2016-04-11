@@ -173,6 +173,17 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// reimplemented in each module.
   Q_PROPERTY(bool isBuiltIn READ isBuiltIn)
 
+  /// This property specifies node classes this module is associated with.
+  /// All children node classes are also associated with the module.
+  /// Currently association is only used for editing node properties.
+  /// If a node class is specified in this property and setEditedNode() and
+  /// nodeEditable() methods are implemented in the module's widget then
+  /// "Edit properties" function in node selector widgets will activate this
+  /// module and select the chosen node.
+  /// Any module can associate nodes with any module, by calling
+  /// qSlicerApplication::application()->registerNodeModule() method.
+  Q_PROPERTY(QStringList associatedNodeTypes READ associatedNodeTypes)
+
 public:
 
   typedef QObject Superclass;
@@ -280,6 +291,9 @@ public:
   /// or any user-specified folder.
   bool isBuiltIn()const;
   void setBuiltIn(bool value);
+
+  /// Return node types associated with this module (e.g., node types this module can edit)
+  virtual QStringList associatedNodeTypes()const;
 
 public slots:
 

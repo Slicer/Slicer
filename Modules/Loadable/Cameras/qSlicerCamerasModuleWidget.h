@@ -39,6 +39,8 @@ public:
   qSlicerCamerasModuleWidget(QWidget *parent=0);
   virtual ~qSlicerCamerasModuleWidget();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+
 public slots:
   ///
   /// Inherited from qSlicerWidget. Reimplemented for refresh issues.

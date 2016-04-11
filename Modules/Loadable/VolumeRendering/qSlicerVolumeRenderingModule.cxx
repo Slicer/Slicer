@@ -163,3 +163,12 @@ vtkMRMLAbstractLogic* qSlicerVolumeRenderingModule::createLogic()
 {
   return vtkSlicerVolumeRenderingLogic::New();
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerVolumeRenderingModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLVolumePropertyNode"
+    << "vtkMRMLVolumeRenderingDisplayNode"
+    << "vtkMRMLAnnotationROINode"; // volume rendering clipping box
+}

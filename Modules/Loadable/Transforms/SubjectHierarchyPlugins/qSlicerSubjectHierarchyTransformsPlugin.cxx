@@ -241,24 +241,6 @@ void qSlicerSubjectHierarchyTransformsPlugin::showContextMenuActionsForNode(vtkM
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTransformsPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  // Switch to transforms module and select transform
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("Transforms");
-  if (moduleWidget)
-    {
-    // Get node selector combobox
-    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("TransformNodeSelector");
-
-    // Choose current data node
-    if (nodeSelector)
-      {
-      nodeSelector->setCurrentNode(node->GetAssociatedNode());
-      }
-    }
-}
-
-//---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyTransformsPlugin::invert()
 {
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();

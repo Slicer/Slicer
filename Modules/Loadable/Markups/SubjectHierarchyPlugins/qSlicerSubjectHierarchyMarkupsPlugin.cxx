@@ -168,21 +168,3 @@ QIcon qSlicerSubjectHierarchyMarkupsPlugin::visibilityIcon(int visible)
   // Have the default plugin (which is not registered) take care of this
   return qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->visibilityIcon(visible);
 }
-
-//---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyMarkupsPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
-{
-  // Switch to markups module
-  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("Markups");
-  if (moduleWidget)
-    {
-    // Get node selector combobox
-    qMRMLNodeComboBox* nodeSelector = moduleWidget->findChild<qMRMLNodeComboBox*>("activeMarkupMRMLNodeComboBox");
-
-    // Choose current data node
-    if (nodeSelector)
-      {
-      nodeSelector->setCurrentNode(node->GetAssociatedNode());
-      }
-    }
-}

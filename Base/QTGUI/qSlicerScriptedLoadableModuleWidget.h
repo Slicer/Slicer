@@ -53,6 +53,9 @@ public:
   virtual void enter();
   virtual void exit();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  virtual double nodeEditable(vtkMRMLNode* node);
+
 protected:
   virtual void setup();
 

@@ -79,9 +79,6 @@ public:
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
-  /// Open module belonging to node and set inputs in opened module
-  virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
-
   /// Generate tooltip for a owned subject hierarchy node
   virtual QString tooltip(vtkMRMLSubjectHierarchyNode* node)const;
 

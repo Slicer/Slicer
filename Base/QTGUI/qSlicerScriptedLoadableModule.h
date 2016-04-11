@@ -38,6 +38,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
   /// Reimplemented to expose the setter setCategories
   Q_PROPERTY(QStringList categories READ categories WRITE setCategories)
   Q_PROPERTY(QStringList contributors READ contributors WRITE setContributors)
+  Q_PROPERTY(QStringList associatedNodeTypes READ associatedNodeTypes WRITE setAssociatedNodeTypes)
   Q_PROPERTY(QString helpText READ helpText WRITE setHelpText)
   Q_PROPERTY(QString acknowledgementText READ acknowledgementText WRITE setAcknowledgementText)
   Q_PROPERTY(QVariantMap extensions READ extensions WRITE setExtensions)
@@ -64,6 +65,9 @@ public:
 
   virtual QStringList contributors()const;
   void setContributors(const QStringList& newContributors);
+
+  virtual QStringList associatedNodeTypes()const;
+  void setAssociatedNodeTypes(const QStringList& newAssociatedNodeTypes);
 
   virtual QString helpText()const;
   void setHelpText(const QString& newHelpText);

@@ -51,7 +51,9 @@ public:
   virtual QStringList contributors()const;
 
   virtual QStringList categories()const;
-  virtual QStringList dependencies() const;
+  virtual QStringList dependencies()const;
+
+  virtual QStringList associatedNodeTypes()const;
 
 protected:
 

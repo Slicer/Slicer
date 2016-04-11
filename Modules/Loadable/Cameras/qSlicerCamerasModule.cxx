@@ -113,3 +113,11 @@ QStringList qSlicerCamerasModule::contributors()const
   contributors << QString("Sebastien Barr&eacute; (Kitware)");
   return contributors;
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerCamerasModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLCameraNode"
+    << "vtkMRMLViewNode";
+}

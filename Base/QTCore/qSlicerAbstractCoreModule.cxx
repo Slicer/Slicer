@@ -315,3 +315,9 @@ void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepre
     }
   d->WidgetRepresentations.removeAll(representation);
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerAbstractCoreModule::associatedNodeTypes()const
+{
+  return QStringList();
+}

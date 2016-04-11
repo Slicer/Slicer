@@ -34,6 +34,9 @@ public:
 
   virtual QStringList categories()const;
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:

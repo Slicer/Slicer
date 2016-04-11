@@ -213,18 +213,7 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
     return;
     }
   // find SliceNode in the scene
-  vtkMRMLSliceNode *node= 0;
-  int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  for (int n=0; n<nnodes; n++)
-    {
-    node = vtkMRMLSliceNode::SafeDownCast (
-          this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
-    if (node->GetLayoutName() && !strcmp(node->GetLayoutName(), this->GetName()))
-      {
-      break;
-      }
-    node = 0;
-    }
+  vtkMRMLSliceNode *node = vtkMRMLSliceLogic::GetSliceNode(this->GetMRMLScene(), this->GetName());
 
   if ( this->SliceNode != 0 && node != 0 &&
         this->SliceCompositeNode &&
@@ -2351,6 +2340,44 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic
         !strcmp(sliceCompositeNode->GetLayoutName(), layoutName))
       {
       return sliceCompositeNode;
+      }
+    }
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLSliceNode* vtkMRMLSliceLogic
+::GetSliceNode(vtkMRMLSliceCompositeNode* sliceCompositeNode)
+{
+  if (!sliceCompositeNode)
+    {
+    return 0;
+    }
+  return sliceCompositeNode ? vtkMRMLSliceLogic::GetSliceNode(
+    sliceCompositeNode->GetScene(), sliceCompositeNode->GetLayoutName()) : 0;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLSliceNode* vtkMRMLSliceLogic
+::GetSliceNode(vtkMRMLScene* scene, const char* layoutName)
+{
+  if (!scene || !layoutName)
+    {
+    return 0;
+    }
+  vtkObject* itNode = NULL;
+  vtkCollectionSimpleIterator it;
+  for (scene->GetNodes()->InitTraversal(it); itNode = scene->GetNodes()->GetNextItemAsObject(it);)
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(itNode);
+    if (!sliceNode)
+      {
+      continue;
+      }
+    if (sliceNode->GetLayoutName() &&
+      !strcmp(sliceNode->GetLayoutName(), layoutName))
+      {
+      return sliceNode;
       }
     }
   return 0;

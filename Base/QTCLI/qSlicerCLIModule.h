@@ -83,6 +83,9 @@ public:
   /// Extracted from the "contributor" field
   virtual QStringList contributors() const;
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
   virtual QImage logo() const;
   void setLogo(const ModuleLogo& logo);
 

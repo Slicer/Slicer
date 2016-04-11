@@ -72,9 +72,6 @@ public:
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
-  /// Open module belonging to node and set inputs in opened module
-  virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
-
 public:
   /// Set default visibility icons owned by the scene model so that the default plugin can set them
   void setDefaultVisibilityIcons(QIcon visibleIcon, QIcon hiddenIcon, QIcon partiallyVisibleIcon);

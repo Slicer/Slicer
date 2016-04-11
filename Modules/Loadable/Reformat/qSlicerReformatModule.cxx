@@ -21,6 +21,9 @@
 // Qt includes
 #include <QtPlugin>
 
+// QTGUI includes
+#include "qSlicerApplication.h"
+
 // Reformat Logic includes
 #include <vtkSlicerReformatLogic.h>
 
@@ -123,4 +126,12 @@ createWidgetRepresentation()
 vtkMRMLAbstractLogic* qSlicerReformatModule::createLogic()
 {
   return vtkSlicerReformatLogic::New();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerReformatModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLSliceNode"
+    << "vtkMRMLSliceCompositeNode";
 }

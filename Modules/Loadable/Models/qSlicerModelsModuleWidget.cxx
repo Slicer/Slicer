@@ -37,6 +37,7 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLSelectionNode.h"
@@ -561,4 +562,29 @@ void qSlicerModelsModuleWidget::updateWidgetFromSelectionNode()
       }
     }
   d->ModelDisplayWidget->setMRMLModelOrHierarchyNode(d->ModelDisplayWidget->mrmlDisplayableNode());
+}
+
+//-----------------------------------------------------------
+bool qSlicerModelsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerModelsModuleWidget);
+  if (vtkMRMLModelNode::SafeDownCast(node) || vtkMRMLModelHierarchyNode::SafeDownCast(node))
+    {
+    d->ModelHierarchyTreeView->setCurrentNode(node);
+    return true;
+    }
+
+  if (vtkMRMLModelDisplayNode::SafeDownCast(node))
+    {
+    vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
+    vtkMRMLModelNode* displayableNode = vtkMRMLModelNode::SafeDownCast(displayNode->GetDisplayableNode());
+    if (!displayableNode)
+      {
+      return false;
+      }
+    d->ModelHierarchyTreeView->setCurrentNode(displayableNode);
+    return true;
+    }
+
+  return false;
 }

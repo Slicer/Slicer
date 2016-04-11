@@ -40,6 +40,7 @@ public:
   qSlicerColorsModuleWidget(QWidget *parent=0);
   virtual ~qSlicerColorsModuleWidget();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
 
 public slots:
   void setCurrentColorNode(vtkMRMLNode*);

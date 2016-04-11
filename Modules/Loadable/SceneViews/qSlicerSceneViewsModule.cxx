@@ -118,3 +118,9 @@ void qSlicerSceneViewsModule::showSceneViewDialog()
   dynamic_cast<qSlicerSceneViewsModuleWidget*>(this->widgetRepresentation())
     ->showSceneViewDialog();
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerSceneViewsModule::associatedNodeTypes() const
+{
+  return QStringList() << "vtkMRMLSceneViewNode";
+}

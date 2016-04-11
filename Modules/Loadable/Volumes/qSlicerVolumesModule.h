@@ -60,6 +60,9 @@ protected:
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
 protected:
   QScopedPointer<qSlicerVolumesModulePrivate> d_ptr;
 

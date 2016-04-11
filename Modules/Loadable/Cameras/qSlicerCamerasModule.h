@@ -51,6 +51,9 @@ public:
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
 protected:
 
   /// Create and return the widget representation associated to this module

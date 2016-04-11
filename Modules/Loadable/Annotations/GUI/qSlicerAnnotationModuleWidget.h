@@ -25,10 +25,6 @@ public:
     qSlicerAnnotationModuleWidget(QWidget *parent=0);
     ~qSlicerAnnotationModuleWidget();
 
-
-
-
-
     /// Different Annotation Types
     enum
       {
@@ -47,6 +43,8 @@ public:
     /// step with the mouse modes tool bar. If interactionNode is null, try to
     /// get it from the scene.
     void updateWidgetFromInteractionMode(vtkMRMLInteractionNode *interactionNode);
+
+    virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
 
 protected:
 

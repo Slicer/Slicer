@@ -31,6 +31,9 @@
 #include "GUI/qSlicerAnnotationModuleSnapShotDialog.h"
 
 // MRML includes
+#include "vtkMRMLAnnotationDisplayNode.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLDisplayableHierarchyNode.h"
 #include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLNode.h"
@@ -611,3 +614,27 @@ void qSlicerAnnotationModuleWidget::reportDialogRejected()
 
 }
 
+//-----------------------------------------------------------
+bool qSlicerAnnotationModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerAnnotationModuleWidget);
+  if (vtkMRMLAnnotationNode::SafeDownCast(node) || vtkMRMLAnnotationHierarchyNode::SafeDownCast(node))
+    {
+    d->hierarchyTreeView->setCurrentNode(node);
+    return true;
+    }
+
+  if (vtkMRMLAnnotationDisplayNode::SafeDownCast(node))
+    {
+    vtkMRMLAnnotationDisplayNode* displayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(node);
+    vtkMRMLAnnotationNode* displayableNode = vtkMRMLAnnotationNode::SafeDownCast(displayNode->GetDisplayableNode());
+    if (!displayableNode)
+      {
+      return false;
+      }
+    d->hierarchyTreeView->setCurrentNode(displayableNode);
+    return true;
+    }
+
+  return false;
+}

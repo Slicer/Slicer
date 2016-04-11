@@ -725,3 +725,29 @@ void qSlicerReformatModuleWidget::centerSliceNode()
   // Apply the center
   reformatLogic->SetSliceOrigin(d->MRMLSliceNode, center);
 }
+
+//-----------------------------------------------------------
+bool qSlicerReformatModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerReformatModuleWidget);
+
+  if (vtkMRMLSliceNode::SafeDownCast(node))
+    {
+    d->SliceNodeSelector->setCurrentNode(node);
+    return true;
+    }
+
+  if (vtkMRMLSliceCompositeNode::SafeDownCast(node))
+    {
+    vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceLogic::GetSliceNode(sliceCompositeNode);
+    if (!sliceNode)
+      {
+      return false;
+      }
+    d->SliceNodeSelector->setCurrentNode(sliceNode);
+    return true;
+    }
+
+  return false;
+}

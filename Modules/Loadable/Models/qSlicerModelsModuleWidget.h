@@ -45,6 +45,8 @@ public:
 
   vtkMRMLSelectionNode* getSelectionNode();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
 

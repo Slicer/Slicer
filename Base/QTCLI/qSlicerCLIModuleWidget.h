@@ -48,6 +48,10 @@ public:
   /// Get the current \a commandLineModuleNode
   Q_INVOKABLE vtkMRMLCommandLineModuleNode * currentCommandLineModuleNode()const;
 
+  // Node editing
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+  virtual double nodeEditable(vtkMRMLNode* node);
+
 public slots:
   /// Set the current \a commandLineModuleNode
   void setCurrentCommandLineModuleNode(vtkMRMLNode* commandLineModuleNode);

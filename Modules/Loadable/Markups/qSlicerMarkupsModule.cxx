@@ -164,7 +164,6 @@ void qSlicerMarkupsModule::setup()
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyMarkupsPlugin());
 }
 
-
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerMarkupsModule::createWidgetRepresentation()
 {
@@ -175,4 +174,14 @@ qSlicerAbstractModuleRepresentation * qSlicerMarkupsModule::createWidgetRepresen
 vtkMRMLAbstractLogic* qSlicerMarkupsModule::createLogic()
 {
   return vtkSlicerMarkupsLogic::New();
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerMarkupsModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLAnnotationFiducialNode"
+    << "vtkMRMLMarkupsDisplayNode"
+    << "vtkMRMLMarkupsFiducialNode"
+    << "vtkMRMLMarkupsFiducialStorageNode";
 }

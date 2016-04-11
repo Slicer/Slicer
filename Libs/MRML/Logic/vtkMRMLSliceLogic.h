@@ -327,6 +327,8 @@ public:
   std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
   /// Return the associated slicerlayer nodes
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLSliceNode* node);
+  /// Return the associated slice node
+  static vtkMRMLSliceNode* GetSliceNode(vtkMRMLSliceCompositeNode* node);
 
   /// Default node name suffix for use with volume slice models to distinguish them
   /// as built in models rather than user accessible.
@@ -370,6 +372,8 @@ protected:
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene,
                                                           const char* layoutName);
+  static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
+    const char* layoutName);
 
   bool                        AddingSliceModelNodes;
   bool                        Initialized;

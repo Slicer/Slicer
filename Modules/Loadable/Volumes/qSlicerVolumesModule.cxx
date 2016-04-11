@@ -168,3 +168,11 @@ vtkMRMLAbstractLogic* qSlicerVolumesModule::createLogic()
 {
   return vtkSlicerVolumesLogic::New();
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerVolumesModule::associatedNodeTypes() const
+{
+  return QStringList()
+    << "vtkMRMLVolumeNode"
+    << "vtkMRMLVolumeDisplayNode";
+}

@@ -78,9 +78,6 @@ public:
   /// Get visibility icon for a visibility state
   virtual QIcon visibilityIcon(int visible);
 
-  /// Open module belonging to node and set inputs in opened module
-  virtual void editProperties(vtkMRMLSubjectHierarchyNode* node);
-
 protected:
   QScopedPointer<qSlicerSubjectHierarchyMarkupsPluginPrivate> d_ptr;
 

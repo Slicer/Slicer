@@ -3231,3 +3231,47 @@ void qSlicerMarkupsModuleWidget::onTransformedCoordinatesToggled(bool checked)
   // tbd: only update the coordinates
   this->updateWidgetFromMRML();
 }
+
+//-----------------------------------------------------------
+bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+{
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (vtkMRMLMarkupsFiducialNode::SafeDownCast(node))
+    {
+    d->activeMarkupMRMLNodeComboBox->setCurrentNode(node);
+    return true;
+    }
+
+  if (vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
+    {
+    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(node);
+    vtkMRMLMarkupsFiducialNode* displayableNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(displayNode->GetDisplayableNode());
+    if (!displayableNode)
+      {
+      return false;
+      }
+    d->activeMarkupMRMLNodeComboBox->setCurrentNode(displayableNode);
+    return true;
+    }
+
+  return false;
+}
+
+//-----------------------------------------------------------
+double qSlicerMarkupsModuleWidget::nodeEditable(vtkMRMLNode* node)
+{
+  if (vtkMRMLMarkupsFiducialNode::SafeDownCast(node)
+    || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
+    {
+    return 0.5;
+    }
+  else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
+    {
+    // The module cannot directly edit this type of node but can convert it
+    return 0.1;
+    }
+  else
+    {
+    return 0.0;
+    }
+}

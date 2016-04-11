@@ -44,6 +44,8 @@ public:
   qSlicerTablesModuleWidget(QWidget *parent=0);
   virtual ~qSlicerTablesModuleWidget();
 
+  virtual bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString());
+
 public slots:
   /// Select the specified node as the current node in the user interface
   void setCurrentTableNode(vtkMRMLNode*);

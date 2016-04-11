@@ -24,6 +24,7 @@
 // Qt includes
 #include <QApplication>
 #include <QMetaType>
+#include <QStringList>
 #include <QVariant>
 
 // CTK includes
@@ -222,6 +223,21 @@ public:
   ///
   /// \sa qSlicerUtils::isRelease()
   bool isRelease()const;
+
+  /// Associate a module with a node type.
+  /// It is currently only used for determining which module can edit a specific node.
+  /// If multiple modules are registered for the same class then the node widget's
+  /// nodeEditable method is used for determining which module is the most suitable for editing.
+  Q_INVOKABLE void addModuleAssociatedNodeType(const QString& nodeClassName, const QString& moduleName);
+
+  /// Remove association between a module and a node type.
+  Q_INVOKABLE void removeModuleAssociatedNodeType(const QString& nodeClassName, const QString& moduleName);
+
+  /// List of all modules that are associated with the specified node type.
+  Q_INVOKABLE QStringList modulesAssociatedWithNodeType(const QString& nodeClassName) const;
+
+  /// List of all node types that are associated with any module.
+  Q_INVOKABLE QStringList allModuleAssociatedNodeTypes() const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Get python manager

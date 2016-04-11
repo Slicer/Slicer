@@ -192,3 +192,9 @@ bool qSlicerColorsModule::isHidden()const
 {
   return false;
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerColorsModule::associatedNodeTypes() const
+{
+  return QStringList() << "vtkMRMLColorNode";
+}

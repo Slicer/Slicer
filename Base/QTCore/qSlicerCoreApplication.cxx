@@ -1690,3 +1690,33 @@ bool qSlicerCoreApplication::unregisterResource(int handle)
 
   return false;
 }
+
+// --------------------------------------------------------------------------
+void qSlicerCoreApplication::addModuleAssociatedNodeType(const QString& nodeClassName, const QString& moduleName)
+{
+  Q_D(qSlicerCoreApplication);
+  d->ModulesForNodes.insert(nodeClassName, moduleName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerCoreApplication::removeModuleAssociatedNodeType(const QString& nodeClassName, const QString& moduleName)
+{
+  Q_D(qSlicerCoreApplication);
+  d->ModulesForNodes.remove(nodeClassName, moduleName);
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerCoreApplication::modulesAssociatedWithNodeType(const QString& nodeClassName) const
+{
+  Q_D(const qSlicerCoreApplication);
+  QList<QString> moduleNames = d->ModulesForNodes.values(nodeClassName);
+  return moduleNames;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerCoreApplication::allModuleAssociatedNodeTypes() const
+{
+  Q_D(const qSlicerCoreApplication);
+  QList<QString> nodeClassNames = d->ModulesForNodes.uniqueKeys();
+  return nodeClassNames;
+}

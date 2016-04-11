@@ -138,3 +138,9 @@ vtkMRMLAbstractLogic* qSlicerCropVolumeModule::createLogic()
 {
   return vtkSlicerCropVolumeLogic::New();
 }
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerCropVolumeModule::associatedNodeTypes() const
+{
+  return QStringList() << "vtkMRMLCropVolumeParametersNode";
+}

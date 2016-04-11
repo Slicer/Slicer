@@ -52,6 +52,9 @@ public:
   virtual QStringList contributors()const;
   virtual bool isHidden()const;
 
+  /// Specify editable node types
+  virtual QStringList associatedNodeTypes()const;
+
   virtual void setMRMLScene(vtkMRMLScene* newMRMLScene);
 
 protected:

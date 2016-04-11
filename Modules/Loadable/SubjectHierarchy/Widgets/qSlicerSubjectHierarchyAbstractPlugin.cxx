@@ -117,9 +117,7 @@ QIcon qSlicerSubjectHierarchyAbstractPlugin::visibilityIcon(int visible)
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyAbstractPlugin::editProperties(vtkMRMLSubjectHierarchyNode* node)
 {
-  Q_UNUSED(node);
-
-  // If there is no role, no edit properties action is needed
+  qSlicerApplication::application()->openNodeModule(node->GetAssociatedNode());
 }
 
 //-----------------------------------------------------------------------------
