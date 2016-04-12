@@ -237,8 +237,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
         qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
           qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
         parent = folderPlugin->createFolderUnderNode(parent);
-        QString nodeName = currentComponent + QString(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str());
-        parent->SetName(nodeName.toLatin1().constData());
+        parent->SetName(currentComponent.toLatin1().constData());
         createdNodes << parent;
         }
       // Leaf node (file name) and not top-level

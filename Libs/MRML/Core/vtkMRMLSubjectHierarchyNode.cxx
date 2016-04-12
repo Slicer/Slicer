@@ -771,8 +771,12 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
     childSubjectHierarchyNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries());
     }
 
-  std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
-  childSubjectHierarchyNode->SetName(shNodeName.c_str());
+  if (associatedNode)
+    {
+    // if a data node is associated then append '_SubjectHierarchy' to avoid name conflict
+    std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
+    childSubjectHierarchyNode->SetName(shNodeName.c_str());
+    }
 
   if (nodeCreated)
     {

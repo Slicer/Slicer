@@ -480,13 +480,17 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
   // Name column
   if ( item->column() == this->nameColumn() )
     {
-    subjectHierarchyNode->SetName(item->text().append(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str()).toLatin1().constData());
-
     // Rename data node too
     vtkMRMLNode* associatedDataNode = subjectHierarchyNode->GetAssociatedNode();
     if (associatedDataNode)
       {
       associatedDataNode->SetName(item->text().toLatin1().constData());
+      // if a data node is associated then append '_SubjectHierarchy' to avoid name conflict
+      subjectHierarchyNode->SetName(item->text().append(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str()).toLatin1().constData());
+      }
+      else
+      {
+      subjectHierarchyNode->SetName(item->text().toLatin1().constData());
       }
     }
   // Visibility column

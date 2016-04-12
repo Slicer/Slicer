@@ -121,7 +121,7 @@ void qSlicerMarkupsPlaceWidget::setup()
     }
   if (d->MarkupsLogic == NULL)
     {
-    qCritical("qSlicerMarkupsPlaceWidget::setup: Markups module is not found, some markup manipulation features will not be available");
+    qCritical() << Q_FUNC_INFO << " setup: Markups module is not found, some markup manipulation features will not be available";
     }
   d->setupUi(this);
 
@@ -251,7 +251,7 @@ void qSlicerMarkupsPlaceWidget::setCurrentNodeActive(bool active)
   Q_D(qSlicerMarkupsPlaceWidget);
   if (d->MarkupsLogic == NULL || this->mrmlScene() == NULL || d->InteractionNode == NULL)
     {
-    qCritical("qSlicerMarkupsPlaceWidget::activate failed: Markups module logic, scene, or interaction node is invalid");
+    qCritical() << Q_FUNC_INFO << " activate failed: Markups module logic, scene, or interaction node is invalid";
     return;
     }
   bool wasActive = currentNodeActive();
@@ -295,7 +295,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
   Q_D(qSlicerMarkupsPlaceWidget);
   if (d->MarkupsLogic == NULL || this->mrmlScene() == NULL || d->InteractionNode == NULL || this->currentMarkupsFiducialNode() == NULL)
     {
-    qCritical("qSlicerMarkupsPlaceWidget::activate failed: Markups module logic, scene, or interaction node is invalid");
+    qCritical() << Q_FUNC_INFO << " activate failed: Markups module logic, scene, or interaction node is invalid";
     return;
     }
   bool wasActive = currentNodeActive();

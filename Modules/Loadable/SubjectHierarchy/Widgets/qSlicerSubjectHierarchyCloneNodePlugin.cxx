@@ -272,9 +272,6 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
   else // No associated node
     {
     std::string clonedSubjectHierarchyNodeName = node->GetName();
-    vtksys::SystemTools::ReplaceString(clonedSubjectHierarchyNodeName,
-      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix().c_str(), "");
-    clonedSubjectHierarchyNodeName.append(std::string(getCloneNodeNamePostfix().toLatin1().constData()));
     if (!name.isEmpty())
     {
       clonedSubjectHierarchyNodeName = std::string(name.toLatin1().constData());
