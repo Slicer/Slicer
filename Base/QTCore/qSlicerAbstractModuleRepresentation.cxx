@@ -88,6 +88,9 @@ void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* m
 //-----------------------------------------------------------
 bool qSlicerAbstractModuleRepresentation::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
 {
+  Q_UNUSED(node);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
   qWarning() << Q_FUNC_INFO << " failed: method is not implemented in " << this->moduleName();
   return false;
 }
@@ -95,6 +98,7 @@ bool qSlicerAbstractModuleRepresentation::setEditedNode(vtkMRMLNode* node, QStri
 //-----------------------------------------------------------
 double qSlicerAbstractModuleRepresentation::nodeEditable(vtkMRMLNode* node)
 {
+  Q_UNUSED(node);
   // It is assumed that only associated nodes will be tried to be edited,
   // so most of the time using the recommended neutral confidence value is
   // reasonable. If a module is more or less confident than default

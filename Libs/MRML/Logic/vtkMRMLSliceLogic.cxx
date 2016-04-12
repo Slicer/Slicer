@@ -2367,7 +2367,7 @@ vtkMRMLSliceNode* vtkMRMLSliceLogic
     }
   vtkObject* itNode = NULL;
   vtkCollectionSimpleIterator it;
-  for (scene->GetNodes()->InitTraversal(it); itNode = scene->GetNodes()->GetNextItemAsObject(it);)
+  for (scene->GetNodes()->InitTraversal(it); (itNode = scene->GetNodes()->GetNextItemAsObject(it));)
     {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(itNode);
     if (!sliceNode)
