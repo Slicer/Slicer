@@ -140,7 +140,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     chartNode.SetName(self.sampleChartName)
 
     # Add markups to subject hierarchy
-    studyNode = slicer.util.getNode(self.studyName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    studyNode = slicer.util.getNode(self.studyName)
     self.assertIsNotNone( studyNode )
 
     chartShNode = slicer.vtkMRMLSubjectHierarchyNode.CreateSubjectHierarchyNode(slicer.mrmlScene, studyNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelSeries(), self.sampleChartName, chartNode)

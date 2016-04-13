@@ -265,7 +265,7 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Reparent node in subject hierarchy",self.delayMs)
 
     # Get second study node and labelmap node to reparent
-    study2Node = slicer.util.getNode(self.study2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    study2Node = slicer.util.getNode(self.study2Name)
     self.assertIsNotNone( study2Node )
     sampleLabelmapShNode = slicer.util.getNode(self.sampleLabelmapName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
     self.assertIsNotNone( sampleLabelmapShNode )
@@ -328,11 +328,11 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( sampleModelShNode )
     self.assertEqual( sampleModelShNode.GetParentNode(), studyNode )
     
-    patient2Node = slicer.util.getNode(self.patient2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    patient2Node = slicer.util.getNode(self.patient2Name)
     self.assertIsNotNone( patient2Node )
     self.assertIsNone( patient2Node.GetParentNode() )
 
-    study2Node = slicer.util.getNode(self.study2Name + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    study2Node = slicer.util.getNode(self.study2Name)
     self.assertIsNotNone( study2Node )
     self.assertEqual( study2Node.GetParentNode(), patient2Node )
 
@@ -340,11 +340,11 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( sampleLabelmapShNode )
     self.assertEqual( sampleLabelmapShNode.GetParentNode(), study2Node )
 
-    testSeriesNode = slicer.util.getNode(self.testSeriesName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    testSeriesNode = slicer.util.getNode(self.testSeriesName)
     self.assertIsNotNone( testSeriesNode )
     self.assertEqual( testSeriesNode.GetParentNode(), study2Node )
 
-    testSubseriesNode = slicer.util.getNode(self.testSubseriesName + slicer.vtkMRMLSubjectHierarchyConstants.GetSubjectHierarchyNodeNamePostfix())
+    testSubseriesNode = slicer.util.getNode(self.testSubseriesName)
     self.assertIsNotNone( testSubseriesNode )
     self.assertEqual( testSubseriesNode.GetParentNode(), testSeriesNode )
 

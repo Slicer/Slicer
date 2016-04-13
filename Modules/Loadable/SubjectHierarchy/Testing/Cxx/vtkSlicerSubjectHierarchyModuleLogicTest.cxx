@@ -306,11 +306,10 @@ namespace
       return false;
       }
     // Check name
-    std::string patientNodeName = std::string(patientNode->GetNameWithoutPostfix()) +
-      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
-    if (patientNodeName.compare(patientNode->GetName()))
+    std::string patientNodeNameWithoutPostfix = patientNode->GetNameWithoutPostfix();
+    if (patientNodeNameWithoutPostfix.compare(patientNode->GetName()))
       {
-      std::cout << "Failed to get correct name without postfix!" << std::endl;
+      std::cout << "Failed to get correct name without postfix (it should be the same as the full name)" << std::endl;
       return false;
       }
 

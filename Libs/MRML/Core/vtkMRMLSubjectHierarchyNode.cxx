@@ -751,7 +751,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::GetChildWithName(vtkMR
 vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(
   vtkMRMLScene* scene, vtkMRMLSubjectHierarchyNode* parent, const char* level, const char* nodeName, vtkMRMLNode* associatedNode/*=NULL*/)
 {
-  // Use existing subject hierarchy node if found
+  // Use existing subject hierarchy node if found (only one subject hierarchy node can be associated with a data node)
   bool nodeCreated = false;
   vtkMRMLSubjectHierarchyNode* childSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(associatedNode);
   if (!childSubjectHierarchyNode)
@@ -761,6 +761,7 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
     nodeCreated = true;
     }
 
+  // Set level
   if (level)
     {
     childSubjectHierarchyNode->SetLevel(level);
@@ -771,21 +772,36 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
     childSubjectHierarchyNode->SetLevel(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelSeries());
     }
 
+  // Set name
+  std::string shNodeName;
   if (associatedNode)
     {
-    // if a data node is associated then append '_SubjectHierarchy' to avoid name conflict
-    std::string shNodeName = nodeName + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
+    // if a data node is associated then use that name and append '_SubjectHierarchy' to avoid name conflict
+    shNodeName = std::string(nodeName) + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
+    }
+  else if (nodeName)
+    {
+    // if data node is not specified but the user provided a name then use that
+    shNodeName = nodeName;
+    }
+  if (!shNodeName.empty())
+    {
     childSubjectHierarchyNode->SetName(shNodeName.c_str());
     }
 
+  // Add to scene
   if (nodeCreated)
     {
     scene->AddNode(childSubjectHierarchyNode);
-    childSubjectHierarchyNode->Delete(); // Return ownership to the scene only
-  if (associatedNode)
-    {
-    childSubjectHierarchyNode->SetAssociatedNodeID(associatedNode->GetID());
+    childSubjectHierarchyNode->Delete(); // ownership is assigned to the scene
     }
+
+  // Add node references
+  if (nodeCreated && associatedNode)
+    {
+    // Associated node ID has to be set only if a new node was created
+    // (if node has been already existed then it means that the associated node ID had been already set).
+    childSubjectHierarchyNode->SetAssociatedNodeID(associatedNode->GetID());
     }
   if (parent)
     {
