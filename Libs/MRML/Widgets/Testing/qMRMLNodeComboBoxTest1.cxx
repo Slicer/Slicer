@@ -116,6 +116,7 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
   sceneFactory.generateNode("vtkMRMLViewNode");
 
   nodeSelector.setNodeTypes(QStringList("vtkMRMLViewNode"));
+  nodeSelector.setNodeTypeLabel("3D view", "vtkMRMLViewNode");
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
   if (nodeSelector.nodeCount() != 1)
     {

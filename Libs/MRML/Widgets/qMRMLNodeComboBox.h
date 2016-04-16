@@ -148,6 +148,13 @@ public:
   void setBaseName(const QString& baseName, const QString& nodeType = "");
   QString baseName(const QString& nodeType = "")const;
 
+  /// NodeTypeLabel is the name displayed to the user as node type. By default the node's tag is used.
+  /// Configuration is useful for cases when a more specific type name is preferred (e.g., instead of
+  /// the generic "Create new SubjectHierarchy" option, a module can set up the widget to show
+  /// "Create new Measurements"). If label is set to empty then the default label is used.
+  Q_INVOKABLE void setNodeTypeLabel(const QString& label, const QString& nodeType);
+  Q_INVOKABLE QString nodeTypeLabel(const QString& nodeType)const;
+
   /// return the number of nodes. it can be different from count()
   /// as count includes the "AddNode", "Remove Node"... items
   int nodeCount()const;

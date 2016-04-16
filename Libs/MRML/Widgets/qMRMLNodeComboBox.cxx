@@ -207,7 +207,7 @@ void qMRMLNodeComboBoxPrivate::updateDefaultText()
       {
       nodeType = nodeTypes[0];
       }
-    cb->setDefaultText(QObject::tr("Select a ") + this->nodeTypeLabel(nodeType));
+    cb->setDefaultText(QObject::tr("Select a ") + q->nodeTypeLabel(nodeType));
     }
 }
 
@@ -256,7 +256,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       {
       nodeType = nodeTypes[0];
       }
-    QString label = this->nodeTypeLabel(nodeType);
+    QString label = q->nodeTypeLabel(nodeType);
 
     if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled
         || this->RenameEnabled || !this->UserMenuActions.empty())
@@ -275,7 +275,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       {
       foreach (QString nodeType, q->nodeTypes())
         {
-        QString label = this->nodeTypeLabel(nodeType);
+        QString label = q->nodeTypeLabel(nodeType);
         extraItems.append(QObject::tr("Create new ") + label);
         if (this->RenameEnabled)
           {
@@ -333,26 +333,6 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
             new qMRMLNodeComboBoxDelegate(q->parent(), q->comboBox()));
         }
     }
-}
-
-// --------------------------------------------------------------------------
-QString qMRMLNodeComboBoxPrivate::nodeTypeLabel(const QString& nodeType)const
-{
-  Q_Q(const qMRMLNodeComboBox);
-  QString label;
-  if (q->mrmlScene())
-    {
-    label = q->mrmlScene()->GetTagByClassName(nodeType.toLatin1());
-    if (label.isEmpty() && nodeType == "vtkMRMLVolumeNode")
-      {
-      label = QObject::tr("Volume");
-      }
-    }
-  if (label.isEmpty())
-    {
-    label = QObject::tr("node");
-    }
-  return label;
 }
 
 // --------------------------------------------------------------------------
@@ -416,7 +396,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
     QString nodeTypeName;
     foreach (QString nodeType, this->nodeTypes())
       {
-      QString foundLabel = d->nodeTypeLabel(nodeType);
+      QString foundLabel = this->nodeTypeLabel(nodeType);
       if (foundLabel==label)
         {
         nodeTypeName = nodeType;
@@ -448,7 +428,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
     QString nodeTypeName;
     foreach (QString nodeType, this->nodeTypes())
       {
-      QString foundLabel = d->nodeTypeLabel(nodeType);
+      QString foundLabel = this->nodeTypeLabel(nodeType);
       if (foundLabel==label)
         {
         nodeTypeName = nodeType;
@@ -549,6 +529,54 @@ QString qMRMLNodeComboBox::baseName(const QString& nodeType /* ="" */ )const
   return d->MRMLNodeFactory->baseName(nodeClasses[0]);
 }
 
+//-----------------------------------------------------------------------------
+void qMRMLNodeComboBox::setNodeTypeLabel(const QString& label, const QString& nodeType)
+{
+  Q_D(qMRMLNodeComboBox);
+  if (nodeType.isEmpty())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: nodeType is invalid";
+    return;
+    }
+  if (label.isEmpty())
+    {
+    d->NodeTypeLabels.remove(nodeType);
+    }
+  else
+    {
+    d->NodeTypeLabels[nodeType] = label;
+    }
+  d->updateDefaultText();
+  d->updateActionItems();
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLNodeComboBox::nodeTypeLabel(const QString& nodeType)const
+{
+  Q_D(const qMRMLNodeComboBox);
+  // If a label was explicitly specified then use that
+  if (d->NodeTypeLabels.contains(nodeType))
+    {
+    return d->NodeTypeLabels[nodeType];
+    }
+  // Otherwise use the node tag
+  if (this->mrmlScene())
+    {
+    QString label = this->mrmlScene()->GetTagByClassName(nodeType.toLatin1());
+    if (!label.isEmpty())
+      {
+      return label;
+      }
+    }
+  // Special case: for volumes, use "Volume" as label
+  if (nodeType == "vtkMRMLVolumeNode")
+      {
+      return QObject::tr("Volume");
+      }
+  // Otherwise just label the node as "node"
+  return QObject::tr("node");
+}
+
 // --------------------------------------------------------------------------
 vtkMRMLNode* qMRMLNodeComboBox::addNode(QString nodeType)
 {
@@ -625,7 +653,7 @@ void qMRMLNodeComboBox::renameCurrentNode()
 
   bool ok = false;
   QString newName = QInputDialog::getText(
-    this, "Rename " + d->nodeTypeLabel(node->GetClassName()), "New name:",
+    this, "Rename " + this->nodeTypeLabel(node->GetClassName()), "New name:",
     QLineEdit::Normal, node->GetName(), &ok);
   if (!ok)
     {
