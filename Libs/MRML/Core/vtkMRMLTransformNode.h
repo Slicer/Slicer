@@ -278,15 +278,17 @@ public:
 
   ///
   /// Retrieves the transform as the specified transform class.
+  /// If modifiableOnly is set to true then NULL will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
   /// Returns NULL if the transform is not a kind of transform that was requested.
   /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkOrientedBSplineTransform"));
-  vtkAbstractTransform* GetTransformToParentAs(const char* transformType, bool logErrorIfFails=true);
+  vtkAbstractTransform* GetTransformToParentAs(const char* transformType, bool logErrorIfFails = true, bool modifiableOnly = false);
 
   ///
   /// Retrieves the transform as the specified transform class.
+  /// If modifiableOnly is set to true then NULL will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
   /// Returns NULL if the transform is not a kind of transform that was requested.
   /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkOrientedBSplineTransform"));
-  vtkAbstractTransform* GetTransformFromParentAs(const char* transformType, bool logErrorIfFails=true);
+  vtkAbstractTransform* GetTransformFromParentAs(const char* transformType, bool logErrorIfFails = true, bool modifiableOnly = false);
 
   /// Set and observe a new transform of this node to parent node.
   /// Each time the transform is modified,

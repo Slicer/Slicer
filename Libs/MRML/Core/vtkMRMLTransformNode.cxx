@@ -1004,39 +1004,67 @@ vtkAbstractTransform* vtkMRMLTransformNode::GetAbstractTransformAs(vtkAbstractTr
 }
 
 //----------------------------------------------------------------------------
-vtkAbstractTransform* vtkMRMLTransformNode::GetTransformToParentAs(const char* transformClassName, bool logErrorIfFails/* =true */)
+vtkAbstractTransform* vtkMRMLTransformNode::GetTransformToParentAs(const char* transformClassName,
+  bool logErrorIfFails/* =true */, bool modifiableOnly/* =false */)
 {
+  vtkAbstractTransform *transform = NULL;
   if (this->TransformToParent)
     {
-    return GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
+    transform = GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
     }
   else if (this->TransformFromParent)
     {
-    vtkAbstractTransform *transform = GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
-    if (transform!=NULL)
+    vtkAbstractTransform *inverseTransform = GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
+    if (inverseTransform != NULL)
       {
-      return transform->GetInverse();
+      transform = inverseTransform->GetInverse();
       }
     }
-  return NULL;
+  if (modifiableOnly && transform != NULL)
+    {
+    // if a transform is computed from its inverse then it is not editable
+    if (vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(transform))
+      {
+      if (logErrorIfFails)
+        {
+        vtkErrorMacro("vtkMRMLTransformNode::GetTransformToParentAs failed: transform is available but not modifiable");
+        }
+      return NULL;
+      }
+    }
+  return transform;
 }
 
 //----------------------------------------------------------------------------
-vtkAbstractTransform* vtkMRMLTransformNode::GetTransformFromParentAs(const char* transformClassName, bool logErrorIfFails/* =true */)
+vtkAbstractTransform* vtkMRMLTransformNode::GetTransformFromParentAs(const char* transformClassName,
+  bool logErrorIfFails/* =true */, bool modifiableOnly/* =false */)
 {
+  vtkAbstractTransform *transform = NULL;
   if (this->TransformFromParent)
     {
-    return GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
+    transform = GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
     }
   else if (this->TransformToParent)
     {
-    vtkAbstractTransform *transform = GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
-    if (transform!=NULL)
+    vtkAbstractTransform *inverseTransform = GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
+    if (inverseTransform != NULL)
       {
-      return transform->GetInverse();
+      transform = inverseTransform->GetInverse();
       }
     }
-  return NULL;
+  if (modifiableOnly && transform != NULL)
+    {
+    // if a transform is computed from its inverse then it is not editable
+    if (vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(transform))
+      {
+      if (logErrorIfFails)
+        {
+        vtkErrorMacro("vtkMRMLTransformNode::GetTransformFromParentAs failed: transform is available but not modifiable");
+        }
+      return NULL;
+      }
+    }
+  return transform;
 }
 
 //----------------------------------------------------------------------------

@@ -519,49 +519,50 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
   vtkMRMLVolumeNode* referenceVolumeNode /* = NULL */, vtkMRMLTransformNode* existingOutputTransformNode /* = NULL */)
 {
   if (inputTransformNode == NULL)
-  {
+    {
     vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: inputTransformNode is invalid");
     return NULL;
-  }
+    }
   if ((referenceVolumeNode == NULL || referenceVolumeNode->GetImageData() == NULL) && (existingOutputTransformNode == NULL))
-  {
+    {
     vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid reference volume node \
       or an existing output transform node has to be specified");
     return NULL;
-  }
+    }
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (scene == NULL)
-  {
+    {
     vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: scene invalid");
     return NULL;
-  }
+    }
 
   // Create/get a grid transform
   vtkSmartPointer<vtkMRMLTransformNode> outputGridTransformNode;
   if (existingOutputTransformNode != NULL)
-  {
+    {
     outputGridTransformNode = existingOutputTransformNode;
     // We always compute transform to world. Set the parent transform to world, to be consistent.
     outputGridTransformNode->SetAndObserveTransformNodeID(NULL);
-  }
+    }
   else
-  {
+    {
     outputGridTransformNode = vtkSmartPointer<vtkMRMLTransformNode>::New();
     std::string nodeName = std::string(inputTransformNode->GetName()) + " grid transform";
     outputGridTransformNode->SetName(scene->GenerateUniqueName(nodeName).c_str());
     scene->AddNode(outputGridTransformNode);
-  }
+    }
   // Create/get grid transform
   vtkOrientedGridTransform* outputGridTransform = vtkOrientedGridTransform::SafeDownCast(
     outputGridTransformNode->GetTransformToParentAs("vtkOrientedGridTransform",
-    false /* don't report conversion error */));
-  if (outputGridTransform == NULL || vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(outputGridTransform))
-  {
+    false /* don't report conversion error */,
+    true /* we would like to modify the transform */));
+  if (outputGridTransform == NULL)
+    {
     // we cannot reuse the existing transform, create a new one
     vtkNew<vtkOrientedGridTransform> newOutputGridTransform;
     outputGridTransform = newOutputGridTransform.GetPointer();
     outputGridTransformNode->SetAndObserveTransformFromParent(outputGridTransform);
-  }
+    }
   // Create/get displacement field image
   vtkImageData* outputVolume = outputGridTransform->GetDisplacementGrid();
   if (outputVolume == NULL)
@@ -573,18 +574,18 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
   // Update geometry based on reference image (if specified)
   vtkNew<vtkMatrix4x4> ijkToRas; // RAS refers to world
   if (referenceVolumeNode != NULL)
-  {
+    {
     referenceVolumeNode->GetIJKToRASMatrix(ijkToRas.GetPointer());
     vtkNew<vtkMatrix4x4> rasToWorld;
     if (vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(referenceVolumeNode->GetParentTransformNode(), NULL /* world */, rasToWorld.GetPointer()))
-    {
+      {
       vtkMatrix4x4::Multiply4x4(rasToWorld.GetPointer(), ijkToRas.GetPointer(), ijkToRas.GetPointer());
-    }
+      }
     else
-    {
+      {
       vtkWarningMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume \
         is not supported. Harden or remove the transform from of the reference volume.");
-    }
+      }
     double origin[3] = { 0, 0, 0 };
     double spacing[3] = { 1, 1, 1 };
     vtkNew<vtkMatrix4x4> ijkToRasDirection; // normalized direction matrix
@@ -889,7 +890,7 @@ int vtkSlicerTransformLogic::GetGridSubdivision(vtkMRMLTransformDisplayNode* dis
     {
     // avoid infinite loops and division by zero errors
     subdivision=1;
-   }
+    }
   return subdivision;
 }
 
@@ -931,11 +932,11 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData, vtkMRMLTrans
 
   // Create lines along k
   for (int k = 0; k < numGridPoints[2]-1; k++)
-   {
+    {
     for (int j = 0; j < numGridPoints[1]; j+=gridSubdivision)
-     {
+      {
       for (int i = 0; i < numGridPoints[0]; i+=gridSubdivision)
-       {
+        {
         line->GetPointIds()->SetId(0, (i) + ((j)*numGridPoints[0]) + ((k)*numGridPoints[0]*numGridPoints[1]));
         line->GetPointIds()->SetId(1, (i) + ((j)*numGridPoints[0]) + ((k+1)*numGridPoints[0]*numGridPoints[1]));
         grid->InsertNextCell(line.GetPointer());
@@ -1061,9 +1062,9 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output, vtk
   vtkNew<vtkContourFilter> contourFilter;
   double* levels=displayNode->GetContourLevelsMm();
   for (unsigned int i=0; i<displayNode->GetNumberOfContourLevels(); i++)
-   {
+    {
     contourFilter->SetValue(i, levels[i]);
-   }
+    }
   contourFilter->SetInputData(magnitudeImage.GetPointer());
   contourFilter->Update();
 
@@ -1202,7 +1203,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
   vtkMRMLSliceNode* sliceNode=vtkMRMLSliceNode::SafeDownCast(regionNode);
   vtkMRMLDisplayableNode* displayableNode=vtkMRMLDisplayableNode::SafeDownCast(regionNode);
   if (sliceNode!=NULL)
-   {
+    {
     double pointSpacing=displayNode->GetGlyphSpacingMm();
 
     vtkMatrix4x4* sliceToRAS=sliceNode->GetSliceToRAS();
@@ -1241,7 +1242,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
     regionSize_IJK[2]=floor(bounds_RAS[5]-bounds_RAS[4]);
     }
   else
-   {
+    {
     vtkWarningWithObjectMacro(displayNode, "Failed to get transform visualization in 3D: unsupported ROI type");
     return false;
     }
