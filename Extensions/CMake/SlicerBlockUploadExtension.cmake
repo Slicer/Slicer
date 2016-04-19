@@ -93,7 +93,7 @@ set(CMAKE_OSX_SYSROOT \"${CMAKE_OSX_SYSROOT}\")")
 endif()
 foreach(dep ${EXTENSION_DEPENDS})
   set(EXTENSION_COMMAND_ARG_LIST "${EXTENSION_COMMAND_ARG_LIST}
-set(${dep}_DIR \"${${dep}_DIR}\")")
+set(${dep}_DIR \"${${dep}_DIR}/${${dep}_BUILD_SUBDIRECTORY}\")")
 endforeach()
 
 #-----------------------------------------------------------------------------

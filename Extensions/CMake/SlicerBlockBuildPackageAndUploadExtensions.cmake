@@ -67,6 +67,7 @@ foreach(file ${s4extfiles})
     list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
     string(REGEX REPLACE "^NA$" "" EXTENSION_EXT_DEPENDS "${EXTENSION_EXT_DEPENDS}")
     set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_EXT_DEPENDS})
+    set(${EXTENSION_NAME}_BUILD_SUBDIRECTORY ${EXTENSION_FILE_BUILD_SUBDIRECTORY})
   endif()
 endforeach()
 
@@ -237,7 +238,7 @@ foreach(extension_name ${EXTENSION_LIST})
           endif()
 
           foreach(dep ${EXTENSION_DEPENDS})
-            list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
+            list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build/${${dep}_BUILD_SUBDIRECTORY})
           endforeach()
 
           # Add extension external project
