@@ -614,9 +614,16 @@ class ExtensionWizard(object):
                      "Slicer-%s.%s" % tuple(__version_info__[:2]),
                      "Wizard", "Templates")
         ]
+    descriptionFileTemplate = None
     for candidate in candidateBuiltInTemplatePaths:
         if os.path.exists(candidate):
             self._templateManager.addPath(candidate)
+            descriptionFileTemplate = os.path.join(candidate, "Extensions", "extension_description.s4ext.in")
+    if descriptionFileTemplate is None or not os.path.exists(descriptionFileTemplate):
+      logging.warning("failed to locate template 'Extensions/extension_description.s4ext.in' "
+                      "in these directories: %s" % candidateBuiltInTemplatePaths)
+    else:
+      ExtensionDescription.DESCRIPTION_FILE_TEMPLATE = descriptionFileTemplate
 
     # Add user-specified template paths and keys
     self._templateManager.parseArguments(args)
