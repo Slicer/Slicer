@@ -777,7 +777,14 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchy
   if (associatedNode)
     {
     // if a data node is associated then use that name and append '_SubjectHierarchy' to avoid name conflict
-    shNodeName = std::string(nodeName) + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
+    if (nodeName)
+      {
+      shNodeName = std::string(nodeName) + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
+      }
+    else
+      {
+      shNodeName = std::string(associatedNode->GetName()) + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNodeNamePostfix();
+      }
     }
   else if (nodeName)
     {
