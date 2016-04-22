@@ -79,6 +79,10 @@
         <description><![CDATA[Is this surface model visible in the 3D view?]]></description>
       </parameter>
       <parameter>
+        <label>View</label>
+        <description><![CDATA[In which views is this surface model visible? If none are checked, the model is visible in all 2D and 3D views.]]></description>
+      </parameter>
+      <parameter>
         <label>Clip</label>
         <description><![CDATA[Is clipping (using the slice planes) enabled for this model? Once it is on, go to the Clipping pane to set the options.]]></description>
       </parameter>
@@ -173,22 +177,31 @@
       <parameter>
         <label>Preview</label>
         <description><![CDATA[A rendering of a sphere using the current material properties, useful if the surface model isn't regular.]]></description>
+        <parameters>
+          <label>Presets</label>
+          <description><![CDATA[A set of buttons allowing the user to select a new material properties from a set of defaults.]]></description>
+          <parameter>
+            <label>Full ambient material properties.</label>
+            <description><![CDATA[Eliminating all directional shading.]]></description>
+          </parameter>
+          <parameter>
+            <label>Dull material properties</label>
+            <description><![CDATA[No specular lighting.]]></description>
+          </parameter>
+          <parameter>
+            <label>Smooth material properties</label>
+            <description><![CDATA[Moderate specular lighting.]]></description>
+          </parameter>
+          <parameter>
+            <label>Shiny material properties</label>
+            <description><![CDATA[High specular lighting.]]></description>
+          </parameter>
+        </parameters>
       </parameter>
-      <string-enumeration>
-        <label>Presets</label>
-        <description><![CDATA[A set of buttons allowing the user to select a new material properties from a set of defaults.]]></description>
-        <element>Full ambient eliminating all directional shading</element>
-        <element>Dull material properties (no specular lighting)</element>
-        <element>Smooth material properties (moderate specular lighting)</element>
-        <element>Shiny material properties (high specular lighting)</element>
-      </string-enumeration>
     </parameters>
     <parameters>
       <label>Scalars</label>
-      <parameter>
-        <label>Scalars panel</label>
-        <description><![CDATA[Scalar overlay properties]]></description>
-      </parameter>
+      <description><![CDATA[Scalar overlay properties]]></description>
       <parameter>
         <label>Visible</label>
         <description><![CDATA[Are the scalars visible on the surface model?]]></description>
@@ -198,8 +211,56 @@
         <description><![CDATA[A drop down menu listing the current scalar overlays associated with this model and shows which one is currently active. Most models will have normals, Freesurfer surface models can have multiple scalar overlay files associated with them (e.g. lh.sulc, lh.curv).]]></description>
       </parameter>
       <parameter>
+        <label>Active Scalar Range</label>
+        <description><![CDATA[Displays the numerical range spanned by the currently active scalar array (used when the Data scalar range type is selected).]]></description>
+      </parameter>
+      <parameter>
         <label>Color Table</label>
         <description><![CDATA[Select a color look up table used to map the scalar overlay's values  (usually in the range of 0.0 to 1.0) to colors. There are built in color maps that can be browsed in the Colors module. The most commonly used color map for FreeSurfer scalar overlays is the GreenRed one. Legacy color maps from Slicer2 include Grey, Iron, Rainbow, etc. Those color maps with "labels" in their names are usually discrete and don't work well for the continuous scalar overlay ranges.]]></description>
+      </parameter>
+      <parameter>
+        <label>Scalar Range Type</label>
+        <description><![CDATA[Select which scalar range to use: range in the scalar data array, Color Table range, Display Scalar Range, range of the data type of the scalar array.]]></description>
+        <parameters>
+          <parameter>
+            <label>Data</label>
+            <description><![CDATA[Use the min/max of the overlay data for the scalar range.]]></description>
+          </parameter>
+          <parameter>
+            <label>LUT</label>
+            <description><![CDATA[Use the scalar range from the associated color node.]]></description>
+          </parameter>
+          <parameter>
+            <label>Display</label>
+            <description><![CDATA[Use the Display Scalar Range set below.]]></description>
+          </parameter>
+          <parameter>
+            <label>Data Type</label>
+            <description><![CDATA[Use the min/max of the data type of the scalar array for the range.]]></description>
+          </parameter>
+        </parameters>
+      </parameter>
+      <parameter>
+        <label>Display Scalar Range</label>
+        <description><![CDATA[Set the scalar range on the model's display node.]]></description>
+        <parameters>
+          <parameter>
+            <label>Min</label>
+            <description><![CDATA[Low value of Display Scalar Range.]]></description>
+          </parameter>
+          <parameter>
+            <label>Auto/Manual</label>
+            <description><![CDATA[Set the auto scalar range flag. Auto updates the Display Scalar Range from the scalar range of the data.]]></description>
+          </parameter>
+          <parameter>
+            <label>Max</label>
+            <description><![CDATA[High value of Display Scalar Ranges.]]></description>
+          </parameter>
+          <parameter>
+            <label>Range slider</label>
+            <description><![CDATA[Set the display scalar range, used when the Display option is selected.]]></description>
+          </parameter>
+        </parameters>
       </parameter>
     </parameters>
     <parameters>
@@ -208,30 +269,52 @@
         <label>Clipping</label>
         <description><![CDATA[Control the clipping properties for this surface model]]></description>
       </parameter>
-      <string-enumeration>
+      <parameters>
         <label>Clipping Type</label>
         <description><![CDATA[When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model. The parts of the model inside the selected space is kept, parts outside of the selection are clipped away.]]></description>
-        <element>Union</element>
-        <element>Intersection</element>
-      </string-enumeration>
-      <string-enumeration>
+        <parameter>
+          <label>Union</label>
+        </parameter>
+        <parameter>
+          <label>Intersection</label>
+        </parameter>
+      </parameters>
+      <parameters>
         <label>Red Slice Clipping</label>
         <description><![CDATA[Use the positive or negative space defined by the Red slice plane to clip the model. Positive side is toward the Superior, negative is toward the Inferior. Keeps the part of the model in the selected space, clips away the rest.]]></description>
-        <element>Positive</element>
-        <element>Negative</element>
-      </string-enumeration>
-      <string-enumeration>
+        <parameter>
+          <label>Positive</label>
+          <description><![CDATA[Positive side is toward the Superior.]]></description>
+        </parameter>
+        <parameter>
+          <label>Negative</label>
+          <description><![CDATA[Negative side is toward the Inferior.]]></description>
+        </parameter>
+      </parameters>
+      <parameters>
         <label>Yellow Slice Clipping</label>
         <description><![CDATA[Use the positive or negative space defined by the Yellow slice plane to clip the model. Positive side is toward the Right, negative is toward the Left. Keeps the part of the model in the selected space, clips away the rest.]]></description>
-        <element>Positive</element>
-        <element>Negative</element>
-      </string-enumeration>
-      <string-enumeration>
+<parameter>
+          <label>Positive</label>
+          <description><![CDATA[Positive side is toward the Right.]]></description>
+        </parameter>
+        <parameter>
+          <label>Negative</label>
+          <description><![CDATA[Toward the left.]]></description>
+        </parameter>
+      </parameters>
+      <parameters>
         <label>Green Slice Clipping</label>
         <description><![CDATA[Use the positive or negative space defined by the Green slice plane to clip the model. Positive side is toward the Anterior, negative is toward the Posterior. Keeps the part of the model in the selected space, clips away the rest.]]></description>
-        <element>Positive</element>
-        <element>Negative</element>
-      </string-enumeration>
+        <parameter>
+          <label>Positive</label>
+          <description><![CDATA[Positive side is toward the Anterior.]]></description>
+        </parameter>
+        <parameter>
+          <label>Negative</label>
+          <description><![CDATA[Toward the Posterior.]]></description>
+        </parameter>
+      </parameters>
     </parameters>
   </parameters>
 </executable>
