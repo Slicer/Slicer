@@ -40,8 +40,7 @@ public:
 // qSlicerLoadableModuleTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleTemplateModulePrivate
-::qSlicerLoadableModuleTemplateModulePrivate()
+qSlicerLoadableModuleTemplateModulePrivate::qSlicerLoadableModuleTemplateModulePrivate()
 {
 }
 
@@ -49,8 +48,7 @@ qSlicerLoadableModuleTemplateModulePrivate
 // qSlicerLoadableModuleTemplateModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableModuleTemplateModule
-::qSlicerLoadableModuleTemplateModule(QObject* _parent)
+qSlicerLoadableModuleTemplateModule::qSlicerLoadableModuleTemplateModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerLoadableModuleTemplateModulePrivate)
 {
@@ -62,27 +60,27 @@ qSlicerLoadableModuleTemplateModule::~qSlicerLoadableModuleTemplateModule()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModuleTemplateModule::helpText()const
+QString qSlicerLoadableModuleTemplateModule::helpText() const
 {
-  return "This is a loadable module bundled in an extension";
+  return "This is a loadable module that can be bundled in an extension";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModuleTemplateModule::acknowledgementText()const
+QString qSlicerLoadableModuleTemplateModule::acknowledgementText() const
 {
-  return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
+  return "This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerLoadableModuleTemplateModule::contributors()const
+QStringList qSlicerLoadableModuleTemplateModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
+  moduleContributors << QString("John Doe (AnyWare Corp.)");
   return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerLoadableModuleTemplateModule::icon()const
+QIcon qSlicerLoadableModuleTemplateModule::icon() const
 {
   return QIcon(":/Icons/LoadableModuleTemplate.png");
 }
@@ -106,7 +104,7 @@ void qSlicerLoadableModuleTemplateModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerLoadableModuleTemplateModule
+qSlicerAbstractModuleRepresentation* qSlicerLoadableModuleTemplateModule
 ::createWidgetRepresentation()
 {
   return new qSlicerLoadableModuleTemplateModuleWidget;

@@ -60,4 +60,3 @@ void qSlicerLoadableModuleTemplateModuleWidget::setup()
   d->setupUi(this);
   this->Superclass::setup();
 }
-

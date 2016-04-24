@@ -28,7 +28,9 @@ int DoIt( int argc, char * argv[], T )
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   typedef itk::ImageFileReader<InputImageType>  ReaderType;
+
   typename ReaderType::Pointer reader = ReaderType::New();
+
   reader->SetFileName( inputVolume.c_str() );
 
   typedef itk::SmoothingRecursiveGaussianImageFilter<
@@ -103,6 +105,7 @@ int main( int argc, char * argv[] )
         break;
       }
     }
+
   catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;

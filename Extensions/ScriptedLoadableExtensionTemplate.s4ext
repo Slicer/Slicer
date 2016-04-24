@@ -7,31 +7,38 @@
 # This is source code manager (i.e. svn)
 scm local
 scmurl Testing/ScriptedLoadableExtensionTemplate
+scmrevision NA
 
 # list dependencies
 # - These should be names of other modules that have .s4ext files
 # - The dependencies will be built first
 depends NA
 
+# Inner build directory (default is ".")
+build_subdirectory .
+
 # homepage
-homepage    http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting
+homepage http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/ScriptedLoadableExtensionTemplate
 
 # Firstname1 Lastname1 ([SubOrg1, ]Org1), Firstname2 Lastname2 ([SubOrg2, ]Org2)
 # For example: Jane Roe (Superware), John Doe (Lab1, Nowhere), Joe Bloggs (Noware)
-contributors Jean-Christophe Fillion-Robin (Kitware)
+contributors John Doe (AnyWare Corp.)
 
 # Match category in the xml description of the module (where it shows up in Modules menu)
-category    Examples
+category Examples
 
 # url to icon (png, size 128x128 pixels)
-iconurl     http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co
+iconurl http://www.example.com/Slicer/Extensions/ScriptedLoadableExtensionTemplate.png
 
 # Give people an idea what to expect from this code
-#  - Is it just a test or something you stand beind?
-status      Beta
+#  - Is it just a test or something you stand behind?
+status 
 
 # One line stating what the module does
-description This is an example of scripted Qt loadable module built as an extension
+description This is an example of a simple extension
 
 # Space separated list of urls
-screenshoturls http://wiki.slicer.org/slicerWiki/images/e/e2/Slicer-r19441-ScriptedLoadableExtensionTemplate-screenshot.png
+screenshoturls http://www.example.com/Slicer/Extensions/ScriptedLoadableExtensionTemplate/Screenshots/1.png
+
+# 0 or 1: Define if the extension should be enabled after its installation.
+enabled 1

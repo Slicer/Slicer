@@ -18,17 +18,18 @@ class ScriptedLoadableModuleTemplate(ScriptedLoadableModule):
     self.parent.title = "ScriptedLoadableModuleTemplate" # TODO make this more human readable by adding spaces
     self.parent.categories = ["Examples"]
     self.parent.dependencies = []
-    self.parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware), Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
+    self.parent.contributors = ["John Doe (AnyWare Corp.)"] # replace with "Firstname Lastname (Organization)"
     self.parent.helpText = """
     This is an example of scripted loadable module bundled in an extension.
     It performs a simple thresholding on the input volume and optionally captures a screenshot.
     """
     self.parent.acknowledgementText = """
-    This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc. and Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
+    This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+    and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
 
 #
-# qScriptedLoadableModuleTemplateWidget
+# ScriptedLoadableModuleTemplateWidget
 #
 
 class ScriptedLoadableModuleTemplateWidget(ScriptedLoadableModuleWidget):
@@ -226,7 +227,7 @@ class ScriptedLoadableModuleTemplateLogic(ScriptedLoadableModuleLogic):
 
     # Capture screenshot
     if enableScreenshots:
-      self.takeScreenshot('ScriptedLoadableModuleTemplate-Start','MyScreenshot',-1)
+      self.takeScreenshot('ScriptedLoadableModuleTemplateTest-Start','MyScreenshot',-1)
 
     logging.info('Processing completed')
 

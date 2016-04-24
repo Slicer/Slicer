@@ -58,7 +58,7 @@ protected:
 private:
 
   vtkSlicerLoadableModuleTemplateLogic(const vtkSlicerLoadableModuleTemplateLogic&); // Not implemented
-  void operator=(const vtkSlicerLoadableModuleTemplateLogic&);               // Not implemented
+  void operator=(const vtkSlicerLoadableModuleTemplateLogic&); // Not implemented
 };
 
 #endif
