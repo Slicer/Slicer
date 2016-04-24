@@ -28,19 +28,18 @@ int DoIt( int argc, char * argv[], T )
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType> WriterType;
-
-  typedef itk::SmoothingRecursiveGaussianImageFilter<
-    InputImageType, OutputImageType>  FilterType;
 
   typename ReaderType::Pointer reader = ReaderType::New();
 
   reader->SetFileName( inputVolume.c_str() );
 
+  typedef itk::SmoothingRecursiveGaussianImageFilter<
+    InputImageType, OutputImageType>  FilterType;
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetInput( reader->GetOutput() );
   filter->SetSigma( sigma );
 
+  typedef itk::ImageFileWriter<OutputImageType> WriterType;
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputVolume.c_str() );
   writer->SetInput( filter->GetOutput() );
