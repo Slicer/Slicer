@@ -22,8 +22,10 @@ int DoIt( int argc, char * argv[], T )
   typedef TPixel InputPixelType;
   typedef TPixel OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
-  typedef itk::Image<OutputPixelType, 3> OutputImageType;
+  const unsigned int Dimension = 3;
+
+  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
+  typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   typedef itk::ImageFileReader<InputImageType>  ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
