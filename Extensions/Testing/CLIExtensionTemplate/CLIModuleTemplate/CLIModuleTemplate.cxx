@@ -14,13 +14,13 @@
 namespace
 {
 
-template <class T>
+template <typename TPixel>
 int DoIt( int argc, char * argv[], T )
 {
   PARSE_ARGS;
 
-  typedef    T InputPixelType;
-  typedef    T OutputPixelType;
+  typedef TPixel InputPixelType;
+  typedef TPixel OutputPixelType;
 
   typedef itk::Image<InputPixelType,  3> InputImageType;
   typedef itk::Image<OutputPixelType, 3> OutputImageType;
