@@ -96,11 +96,13 @@ int main( int argc, char * argv[] )
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
-        std::cout << "unknown component type" << std::endl;
+        std::cerr << "Unknown input image pixel component type: ";
+        std::cerr << itk::ImageIOBase::GetComponentTypeAsString( componentType );
+        std::cerr << std::endl;
+        return EXIT_FAILURE;
         break;
       }
     }
-
   catch( itk::ExceptionObject & excep )
     {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
