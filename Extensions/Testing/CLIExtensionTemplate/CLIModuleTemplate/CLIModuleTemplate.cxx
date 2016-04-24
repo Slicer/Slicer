@@ -69,7 +69,7 @@ int main( int argc, char * argv[] )
         return DoIt( argc, argv, static_cast<unsigned char>(0) );
         break;
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
+        return DoIt( argc, argv, static_cast<signed char>(0) );
         break;
       case itk::ImageIOBase::USHORT:
         return DoIt( argc, argv, static_cast<unsigned short>(0) );
