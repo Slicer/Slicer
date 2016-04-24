@@ -119,6 +119,13 @@ class ExtensionDescription(object):
         setattr(self, "scmrevision", repo.last_change_revision)
         sourcedir = repo.wc_root
 
+      # Handle local source directory
+      elif hasattr(repo, "relative_directory"):
+        setattr(self, "scm", "local")
+        setattr(self, "scmurl", repo.relative_directory)
+        setattr(self, "scmrevision", "NA")
+        sourcedir = os.path.join(repo.root, repo.relative_directory)
+
     else:
       setattr(self, "scm", "local")
       setattr(self, "scmurl", "NA")

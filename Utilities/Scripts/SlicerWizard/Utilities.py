@@ -28,6 +28,7 @@ __all__ = [
   'detectEncoding',
   'buildProcessArgs',
   'createEmptyRepo',
+  'SourceTreeDirectory',
   'getRepo',
   'getRemote',
   'localRoot',
@@ -319,6 +320,36 @@ def createEmptyRepo(path, tool=None):
 
   os.makedirs(path)
   return git.Repo.init(path)
+
+#-----------------------------------------------------------------------------
+class SourceTreeDirectory(object):
+  """Abstract representation of a source tree directory.
+
+  .. attribute:: root
+
+    Location of the source tree.
+
+  .. attribute:: relative_directory
+
+    The relative path to the source directory.
+  """
+  #---------------------------------------------------------------------------
+  def __init__(self, root, relative_directory):
+    """
+    :param root: Location of the source tree.
+    :type root: :class:`basestring`
+
+    :param relative_directory: Relative directory.
+    :type relative_directory: :class:`basestring`
+
+    :raises:
+      * :exc:`~exceptions.IOError` if the ``root/relative_directory`` does not exist.
+      .
+    """
+    if not os.path.exists(os.path.join(root, relative_directory)):
+      raise IOError("'root/relative_directory' does not exist")
+    self.root = root
+    self.relative_directory = relative_directory
 
 #-----------------------------------------------------------------------------
 def getRepo(path, tool=None, create=False):

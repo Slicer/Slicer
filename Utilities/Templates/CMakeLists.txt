@@ -9,3 +9,5 @@ configure_file(
  ${Slicer_BINARY_DIR}/Utilities/Templates/Extensions/extension_description.s4ext.in
  COPYONLY
 )
+
+include(SlicerExtensionTemplatesGenerator)

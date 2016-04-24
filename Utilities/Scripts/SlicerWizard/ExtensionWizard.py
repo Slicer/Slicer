@@ -138,7 +138,13 @@ class ExtensionWizard(object):
     """
 
     try:
-      r = getRepo(args.destination)
+      r = None
+
+      if args.localExtensionsDir:
+        r = SourceTreeDirectory(args.localExtensionsDir, os.path.relpath(args.destination, args.localExtensionsDir))
+
+      else:
+        r = getRepo(args.destination)
 
       if r is None:
         xd = ExtensionDescription(sourcedir=args.destination)
@@ -565,6 +571,7 @@ class ExtensionWizard(object):
     parser.add_argument("--debug", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--test", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--dryRun", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--localExtensionsDir", help=argparse.SUPPRESS)
 
     parser.add_argument("--create", metavar="<TYPE:>NAME",
                         help="create TYPE extension NAME"
