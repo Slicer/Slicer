@@ -1048,6 +1048,25 @@ void vtkMRMLNode::GetNodeReferenceRoles(std::vector<std::string> &roles)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLNode::GetNumberOfNodeReferenceRoles()
+{
+  return this->NodeReferences.size();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLNode::GetNthNodeReferenceRole(int n)
+{
+  if (n<0 || n>=this->NodeReferences.size())
+    {
+    vtkErrorMacro("vtkMRMLNode::GetNthNodeReferenceRole failed: n="<<n<<" is out of range");
+    return NULL;
+    }
+  NodeReferencesType::iterator roleIt( this->NodeReferences.begin() );
+  std::advance( roleIt, n );
+  return roleIt->first.c_str();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLNode::GetNodeReferences(const char* referenceRole, std::vector<vtkMRMLNode*> &nodes)
 {
   if (referenceRole)

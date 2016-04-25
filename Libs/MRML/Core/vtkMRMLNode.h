@@ -693,8 +693,17 @@ public:
   void GetNodeReferenceIDs(const char* referenceRole,
                            std::vector<const char*> &referencedNodeIDs);
 
-  /// Get reference roles of the present node references
+  /// Get reference roles of the present node references.
+  /// \sa GetNodeReferenceRoles(), GetNodeReferenceRoles(), GetNthNodeReferenceRole()
   void GetNodeReferenceRoles(std::vector<std::string> &roles);
+
+  /// Get number of node reference role names.
+  /// \sa GetNodeReferenceRoles(), GetNodeReferenceRoles(), GetNthNodeReferenceRole()
+  int GetNumberOfNodeReferenceRoles();
+
+  /// Get a specific node reference role name.
+  /// \sa GetNodeReferenceRoles(), GetNodeReferenceRoles(), GetNthNodeReferenceRole()
+  const char* GetNthNodeReferenceRole(int n);
 
   /// HierarchyModifiedEvent is generated when the hierarchy node with which
   /// this node is associated changes
