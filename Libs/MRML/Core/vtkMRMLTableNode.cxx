@@ -165,15 +165,33 @@ void vtkMRMLTableNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "\nLocked: " << this->GetLocked();
   os << indent << "\nUseColumnNameAsColumnHeader: " << this->GetUseColumnNameAsColumnHeader();
   os << indent << "\nUseFirstColumnAsRowHeader: " << this->GetUseFirstColumnAsRowHeader();
-  os << indent << "\nTable Data:";
-  if (this->GetTable())
+  os << indent << "\nColumns:";
+  vtkTable* table = this->GetTable();
+  if (table)
     {
-    os << "\n";
-    this->GetTable()->PrintSelf(os, indent.GetNextIndent());
+    // Column (columnIndex): (columnName) [(columnType):(numberOfComponents)]
+    os << (table->GetNumberOfColumns()>0 ? "\n" : " (none)");
+    for (int columnIndex = 0; columnIndex < table->GetNumberOfColumns(); ++columnIndex)
+      {
+      os << indent << "  Column "<< columnIndex<<": ";
+      vtkAbstractArray* column = table->GetColumn(columnIndex);
+      if (column == NULL)
+        {
+        os << "(invalid)\n";
+        continue;
+        }
+      os << (column->GetName() ? column->GetName() : "(undefined)");
+      os << " [" << column->GetDataTypeAsString();
+      if (column->GetNumberOfComponents() != 1)
+        {
+        os << ":" << column->GetNumberOfComponents();
+        }
+      os << "]\n";
+      }
     }
   else
     {
-    os << "none\n";
+    os << " (no table)\n";
     }
 }
 
