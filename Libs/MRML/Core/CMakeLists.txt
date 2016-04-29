@@ -162,6 +162,7 @@ set(MRMLCore_SRCS
   vtkMRMLSubjectHierarchyNode.h
   vtkMRMLTableNode.cxx
   vtkMRMLTableStorageNode.cxx
+  vtkMRMLTableSQLiteStorageNode.cxx
   vtkMRMLTableViewNode.cxx
   vtkMRMLTransformNode.cxx
   vtkMRMLTransformStorageNode.cxx

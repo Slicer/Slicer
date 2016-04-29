@@ -22,6 +22,9 @@
 
 // Qt includes
 #include <QFileInfo>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QDir>
 
 // SlicerQt includes
 #include "qSlicerTablesReader.h"
@@ -33,9 +36,11 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLTableNode.h>
+#include <vtkMRMLStorageNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkSQLiteDatabase.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerTablesReaderPrivate
@@ -98,6 +103,10 @@ QStringList qSlicerTablesReader::extensions()const
     << "Table (*.tsv)"
     << "Table (*.csv)"
     << "Table (*.txt)"
+    << "Table (*.db)"
+    << "Table (*.db3)"
+    << "Table (*.sqlite)"
+    << "Table (*.sqlite3)"
     ;
 }
 
@@ -114,6 +123,40 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
     name = properties["name"].toString();
     }
   std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toLatin1());
+
+  // Chek if the file is sqlite
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
+  if( extension.empty() )
+    {
+    qCritical("ReadData: no file extension specified: %s", qPrintable(fileName));
+    return false;
+    }
+  if (   !extension.compare(".db")
+      || !extension.compare(".db3")
+      || !extension.compare(".sqlite")
+      || !extension.compare(".sqlite3"))
+    {
+    uname = "";
+    std::string dbname = std::string("sqlite://") + fileName.toStdString();
+    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
+                   vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+    if (!database->Open("", vtkSQLiteDatabase::USE_EXISTING))
+      {
+      bool ok;
+      QString text = QInputDialog::getText(0, tr("QInputDialog::getText()"),
+                                           tr("Database Password:"), QLineEdit::Normal,
+                                           "", &ok);
+      if (ok && !text.isEmpty())
+        {
+        uname = text.toStdString();
+        }
+      }
+    }
+  else
+    {
+    uname = this->mrmlScene()->GetUniqueNameByString(name.toLatin1());
+    }
+
   vtkMRMLTableNode* node = NULL;
   if (d->Logic!=NULL)
     {

@@ -80,6 +80,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLStorageNodeTest1.cxx
   vtkMRMLTableNodeTest1.cxx
   vtkMRMLTableStorageNodeTest1.cxx
+  vtkMRMLTableSQLiteStorageNodeTest.cxx
   vtkMRMLTableViewNodeTest1.cxx
   vtkMRMLTensorVolumeNodeTest1.cxx
   vtkMRMLTransformableNodeReferenceSaveImportTest.cxx
