@@ -5,9 +5,14 @@ machine:
     - docker
 
 dependencies:
+  cache_directories:
+        - "~/docker"
+
   override:
     - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker pull slicer/slicer-build-deps
+    - mkdir -p ~/docker; docker save slicer/slicer-build-deps > ~/docker/image.tar
 
 test:
   override:
