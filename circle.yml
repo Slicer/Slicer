@@ -1,0 +1,15 @@
+machine:
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker pull slicer/slicer-build-deps
+
+test:
+  override:
+    - "git diff --name-only master | grep -q SuperBuild > /dev/null || echo 'Notice: TravisCI does not build changes to Slicer dependencies'"
+    - docker run -e "BUILD_TOOL_FLAGS=-j5" --rm -v ~/Slicer:/usr/src/Slicer slicer/slicer-build-deps
