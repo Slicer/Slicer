@@ -16,6 +16,6 @@ dependencies:
 
 test:
   override:
-    - "git diff --name-only master | grep -q SuperBuild > /dev/null || echo 'Notice: TravisCI does not build changes to Slicer dependencies'"
+    - "echo 'Notice: CircleCI does not build changes to Slicer dependencies' && if git diff --name-only master | grep -q SuperBuild > /dev/null; then false; fi"
     - docker run -e "BUILD_TOOL_FLAGS=-j5" --name slicer -v ~/Slicer:/usr/src/Slicer slicer/slicer-build-deps
     - docker cp slicer:$(docker cp slicer:/usr/src/Slicer-build/Slicer-build/PACKAGE_FILE.txt - | tar xO) $CIRCLE_ARTIFACTS
