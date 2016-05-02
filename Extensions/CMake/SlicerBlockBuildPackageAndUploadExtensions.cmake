@@ -96,6 +96,11 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   #  message(${v}:${EXTENSION_EXT_${v}})
   #endforeach()
 
+  # Ensure extensions depending on this extension can lookup the corresponding
+  # _DIR and _BUILD_SUBDIRECTORY variables.
+  set(${EXTENSION_NAME}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
+  set(${EXTENSION_NAME}_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY})
+
   message(STATUS "Configuring extension: ${EXTENSION_NAME}")
   if("${EXTENSION_EXT_SCM}" STREQUAL "" AND "${EXTENSION_EXT_SCMURL}" STREQUAL "")
     message(WARNING "Failed to extract extension information associated to file: ${file}")
@@ -161,8 +166,8 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         #-----------------------------------------------------------------------------
         # Slicer_UPLOAD_EXTENSIONS: TRUE
         #-----------------------------------------------------------------------------
-        set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
-        set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY})
+        set(EXTENSION_SUPERBUILD_BINARY_DIR ${${EXTENSION_NAME}_BINARY_DIR})
+        set(EXTENSION_BUILD_SUBDIRECTORY ${${EXTENSION_NAME}_BUILD_SUBDIRECTORY})
         if(NOT DEFINED CTEST_MODEL)
           set(CTEST_MODEL "Experimental")
         endif()
@@ -172,7 +177,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         ExternalProject_Add(${proj}
           ${ext_ep_options_repository}
           SOURCE_DIR ${EXTENSION_SOURCE_DIR}
-          BINARY_DIR ${EXTENSION_NAME}-build
+          BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}
           CONFIGURE_COMMAND ""
           BUILD_COMMAND ${EXTENSION_UPLOAD_COMMAND}
           INSTALL_COMMAND ""
@@ -212,7 +217,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         endif()
 
         foreach(dep ${EXTENSION_DEPENDS})
-          list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build/${${dep}_BUILD_SUBDIRECTORY})
+          list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${${dep}_BINARY_DIR}/${${dep}_BUILD_SUBDIRECTORY})
         endforeach()
 
         # Add extension external project
@@ -221,7 +226,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
           ${ext_ep_options_repository}
           INSTALL_COMMAND ""
           SOURCE_DIR ${EXTENSION_SOURCE_DIR}
-          BINARY_DIR ${EXTENSION_NAME}-build
+          BINARY_DIR ${${EXTENSION_NAME}_BINARY_DIR}
           CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
           CMAKE_ARGS
             ${ext_ep_cmake_args}

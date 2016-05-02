@@ -152,7 +152,10 @@ CMAKE_OSX_SYSROOT:PATH=${CMAKE_OSX_SYSROOT}")
 endif()
 
 foreach(dep ${EXTENSION_DEPENDS})
-  set(cmakecache_content "${cmakecache_content}\n${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/../${dep}-build")
+  set(cmakecache_content "${cmakecache_content}
+${dep}_BINARY_DIR:PATH=${${dep}_BINARY_DIR}
+${dep}_BUILD_SUBDIRECTORY:STRING=${${dep}_BUILD_SUBDIRECTORY}
+${dep}_DIR:PATH=${${dep}_BINARY_DIR}/${${dep}_BUILD_SUBDIRECTORY}")
 endforeach()
 
 #-----------------------------------------------------------------------------
