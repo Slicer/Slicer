@@ -135,6 +135,16 @@ set(Slicer_WC_REVISION "@Slicer_WC_REVISION@")
 set(Slicer_WC_URL "@Slicer_WC_URL@")
 set(Slicer_WC_ROOT "@Slicer_WC_ROOT@")
 
+# Note that the variable "Slicer_WC_REVISION" can be forced to
+# a particular value by setting environment variable of the same name.
+# This is particularly useful when the revision of Slicer changes because of
+# updates to the extension build system and the extensions still need to be
+# built against the revision prior to the update.
+if(NOT "$ENV{Slicer_WC_REVISION}" STREQUAL "")
+  set(Slicer_WC_REVISION "$ENV{Slicer_WC_REVISION}")
+  message(STATUS "SlicerConfig: Forcing Slicer_WC_REVISION to '${Slicer_WC_REVISION}'")
+endif()
+
 # Slicer os and architecture
 set(Slicer_OS "@Slicer_OS@")
 set(Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@")
