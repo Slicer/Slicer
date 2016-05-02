@@ -185,27 +185,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
           DEPENDERS build
           ALWAYS 1
           )
-        if(Slicer_SOURCE_DIR)
-          # Add convenient external project allowing to build the extension
-          # independently of Slicer
-          ExternalProject_Add(${proj}-rebuild
-            ${ext_ep_options_repository}
-            SOURCE_DIR ${EXTENSION_SOURCE_DIR}
-            BINARY_DIR ${EXTENSION_NAME}-build
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ${EXTENSION_UPLOAD_COMMAND}
-            INSTALL_COMMAND ""
-            ${EP_ARG_EXTENSION_REBUILD_DEPENDS}
-            )
-          # This custom external project step forces the build and later
-          # steps to run whenever a top level build is done...
-          ExternalProject_Add_Step(${proj}-rebuild forcebuild
-            DEPENDEES configure
-            DEPENDERS build
-            ALWAYS 1
-            )
-          set_property(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
-        endif()
 
       else()
         #-----------------------------------------------------------------------------
@@ -255,28 +234,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
           DEPENDERS build
           ALWAYS 1
           )
-        if(Slicer_SOURCE_DIR)
-          # Add convenient external project allowing to build the extension
-          # independently of Slicer
-          ExternalProject_Add(${proj}-rebuild
-            ${ext_ep_options_repository}
-            INSTALL_COMMAND ""
-            SOURCE_DIR ${EXTENSION_SOURCE_DIR}
-            BINARY_DIR ${EXTENSION_NAME}-build
-            CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
-            CMAKE_ARGS
-              ${ext_ep_cmake_args}
-            ${EP_ARG_EXTENSION_REBUILD_DEPENDS}
-            )
-          # This custom external project step forces the build and later
-          # steps to run whenever a top level build is done...
-          ExternalProject_Add_Step(${proj}-rebuild forcebuild
-            DEPENDEES configure
-            DEPENDERS build
-            ALWAYS 1
-            )
-          set_property(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
-        endif()
       endif()
     endif()
   endif()
