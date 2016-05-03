@@ -1849,16 +1849,13 @@ vtkProp3D * vtkMRMLModelDisplayableManager::GetActorByID(const char *id)
     return (0);
     }
 
-  std::map<std::string, vtkProp3D *>::iterator iter;
-  // search for matching string (can't use find, since it would look for
-  // matching pointer not matching content)
-  for(iter=this->Internal->DisplayedActors.begin(); iter != this->Internal->DisplayedActors.end(); iter++)
+  std::map<std::string, vtkProp3D *>::iterator iter =
+    this->Internal->DisplayedActors.find(std::string(id));
+  if (iter != this->Internal->DisplayedActors.end())
     {
-    if ( iter->first.c_str() && !strcmp( iter->first.c_str(), id ) )
-      {
-      return (iter->second);
-      }
+    return iter->second;
     }
+
   return (0);
 }
 
