@@ -13,7 +13,9 @@ if(WIN32)
 endif()
 
 find_package(Git)
+mark_as_superbuild(GIT_EXECUTABLE)
 find_package(Subversion)
+mark_as_superbuild(Subversion_SVN_EXECUTABLE)
 
 set(Slicer_EXTENSIONS_TRACK_QUALIFIER "master" CACHE STRING "CDash extensions track qualifier (master, 4.4, ...)")
 
