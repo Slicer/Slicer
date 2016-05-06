@@ -524,6 +524,7 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
     {
     return -1;
     }
+
   const char* nId = 0;
   int index = -1;
   vtkMRMLNode* parent = this->parentNode(node);
@@ -534,7 +535,7 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
   vtkMRMLNode* n = 0;
   vtkCollectionSimpleIterator it;
   for (nodes->InitTraversal(it);
-       (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
+       (n = (vtkMRMLNode*)(nodes->GetNextItemAsObject(it))) ;)
     {
     // note: parent can be NULL, it means that the scene is the parent
     if (parent == this->parentNode(n))
