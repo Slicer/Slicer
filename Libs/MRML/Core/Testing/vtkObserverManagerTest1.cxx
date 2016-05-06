@@ -93,8 +93,7 @@ int vtkObserverManagerTest1(int , char * [] )
 
   // make a new node to observe
   vtkSmartPointer<vtkMRMLModelNode> observed2 = vtkSmartPointer<vtkMRMLModelNode>::New();
-  observerManager->SetAndObserveObject(vtkObjectPointer( &(observed2)), observed2);
-  observerManager->AddObjectEvents(observed2, events.GetPointer());
+  observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed2)), observed2, events.GetPointer());
   observed2->SetName("Testing a second model node");
 
   observerManager->RemoveObjectEvents(observed2);
