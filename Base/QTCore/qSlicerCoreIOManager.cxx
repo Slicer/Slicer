@@ -502,6 +502,8 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   QStringList nodes;
   foreach (qSlicerFileReader* reader, readers)
     {
+    QTime timeProbe;
+    timeProbe.start();
     reader->setMRMLScene(d->currentScene());
     if (!reader->canLoadFile(parameters["fileName"].toString()))
       {
@@ -511,8 +513,11 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
       {
       continue;
       }
+    float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
     qDebug() << reader->description() << "Reader has successfully read the file"
-             << parameters["fileName"].toString();
+             << parameters["fileName"].toString()
+             << QString("[%1s]").arg(
+                  QString::number(elapsedTimeInSeconds,'f', 2));
     nodes << reader->loadedNodes();
     success = true;
     break;
