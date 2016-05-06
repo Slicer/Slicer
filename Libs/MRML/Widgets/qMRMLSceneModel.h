@@ -269,6 +269,7 @@ protected:
   virtual void updateScene();
   virtual void populateScene();
   virtual QStandardItem* insertNode(vtkMRMLNode* node);
+  virtual QStandardItem* insertNode(vtkMRMLNode* node, int index);
   virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
 
   virtual bool isANode(const QStandardItem* item)const;

@@ -770,13 +770,15 @@ void qMRMLSceneModel::populateScene()
   Q_D(qMRMLSceneModel);
   Q_ASSERT(d->MRMLScene);
   // Add nodes
+  int index = -1;
   vtkMRMLNode *node = 0;
   vtkCollectionSimpleIterator it;
   d->MisplacedNodes.clear();
   for (d->MRMLScene->GetNodes()->InitTraversal(it);
        (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it)) ;)
     {
-    this->insertNode(node);
+    index++;
+    this->insertNode(node, index);
     }
   foreach(vtkMRMLNode* misplacedNode, d->MisplacedNodes)
     {
@@ -786,6 +788,12 @@ void qMRMLSceneModel::populateScene()
 
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
+{
+  return this->insertNode(node, this->nodeIndex(node));
+}
+
+//------------------------------------------------------------------------------
+QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, int nodeIndex)
 {
   Q_D(qMRMLSceneModel);
   QStandardItem* nodeItem = this->itemFromNode(node);
@@ -806,7 +814,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
     }
   int min = this->preItems(parentItem).count();
   int max = parentItem->rowCount() - this->postItems(parentItem).count();
-  int row = min + this->nodeIndex(node);
+  int row = min + nodeIndex;
   if (row > max)
     {
     d->MisplacedNodes << node;
