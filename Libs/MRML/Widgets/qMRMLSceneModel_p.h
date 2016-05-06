@@ -71,6 +71,12 @@ public:
   void listenNodeModifiedEvent();
   void reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParent);
 
+  /// This method is called by qMRMLSceneModel::populateScene() to speed up
+  /// the loading of large scene. By explicitly specifying the \a idnex, it
+  /// skips repetitive scene traversal calls caused by
+  /// qMRMLSceneModel::nodeIndex(vtkMRMLNode*).
+  QStandardItem* insertNode(vtkMRMLNode* node, int index);
+
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   qMRMLSceneModel::NodeTypes ListenNodeModifiedEvent;
   bool LazyUpdate;

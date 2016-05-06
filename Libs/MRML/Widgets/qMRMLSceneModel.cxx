@@ -778,7 +778,8 @@ void qMRMLSceneModel::populateScene()
        (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it)) ;)
     {
     index++;
-    this->insertNode(node, index);
+    Q_ASSERT(index == d->RowCache.count());
+    d->insertNode(node, index);
     }
   foreach(vtkMRMLNode* misplacedNode, d->MisplacedNodes)
     {
@@ -789,39 +790,40 @@ void qMRMLSceneModel::populateScene()
 //------------------------------------------------------------------------------
 QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node)
 {
-  return this->insertNode(node, this->nodeIndex(node));
+  Q_D(qMRMLSceneModel);
+  return d->insertNode(node, this->nodeIndex(node));
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, int nodeIndex)
+QStandardItem* qMRMLSceneModelPrivate::insertNode(vtkMRMLNode* node, int nodeIndex)
 {
-  Q_D(qMRMLSceneModel);
-  QStandardItem* nodeItem = this->itemFromNode(node);
+  Q_Q(qMRMLSceneModel);
+  QStandardItem* nodeItem = q->itemFromNode(node);
   if (nodeItem != 0)
     {
     // It is possible that the node has been already added if it is the parent
     // of a child node already inserted.
     return nodeItem;
     }
-  vtkMRMLNode* parentNode = this->parentNode(node);
+  vtkMRMLNode* parentNode = q->parentNode(node);
   QStandardItem* parentItem =
-    parentNode ? this->itemFromNode(parentNode) : this->mrmlSceneItem();
+    parentNode ? q->itemFromNode(parentNode) : q->mrmlSceneItem();
   if (!parentItem)
     {
     Q_ASSERT(parentNode);
-    parentItem = this->insertNode(parentNode);
+    parentItem = q->insertNode(parentNode);
     Q_ASSERT(parentItem);
     }
-  int min = this->preItems(parentItem).count();
-  int max = parentItem->rowCount() - this->postItems(parentItem).count();
+  int min = q->preItems(parentItem).count();
+  int max = parentItem->rowCount() - q->postItems(parentItem).count();
   int row = min + nodeIndex;
   if (row > max)
     {
-    d->MisplacedNodes << node;
+    this->MisplacedNodes << node;
     row = max;
     }
-  nodeItem = this->insertNode(node, parentItem, row);
-  Q_ASSERT(this->itemFromNode(node) == nodeItem);
+  nodeItem = q->insertNode(node, parentItem, row);
+  Q_ASSERT(q->itemFromNode(node) == nodeItem);
   return nodeItem;
 }
 
