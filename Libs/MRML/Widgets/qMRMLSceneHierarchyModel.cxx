@@ -210,7 +210,11 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
        (n = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
     {
     // note: parent can be NULL, it means that the scene is the parent
-    if (parent == this->parentNode(n))
+    vtkMRMLHierarchyNode *currentHierarchyNode =
+      vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, n->GetID());
+    vtkMRMLNode *currentParentNode =
+        (currentHierarchyNode ? currentHierarchyNode->GetParentNode() : 0);
+    if (parent == currentParentNode)
       {
       nId = n->GetID();
       if (nId && !strcmp(nodeId, nId))
@@ -218,7 +222,7 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 //      std::cout << "nodeIndex:  no parent for node " << node->GetID() << " index = " << index << std::endl;
         return index;
         }
-      if (!vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(d->MRMLScene, n->GetID()))
+      if (!currentHierarchyNode)
         {
         ++index;
         }
