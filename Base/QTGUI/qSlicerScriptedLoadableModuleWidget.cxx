@@ -220,6 +220,7 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QStri
   PyTuple_SET_ITEM(arguments, 1, PyString_FromString(role.toLatin1()));
   PyTuple_SET_ITEM(arguments, 2, PyString_FromString(context.toLatin1()));
   PyObject* result = d->PythonCppAPI.callMethod(d->SetEditedNodeMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -243,6 +244,7 @@ double qSlicerScriptedLoadableModuleWidget::nodeEditable(vtkMRMLNode* node)
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->NodeEditableMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation

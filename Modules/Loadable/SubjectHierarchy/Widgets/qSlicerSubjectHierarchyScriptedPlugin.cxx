@@ -232,6 +232,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyNode(vtkMRML
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyNodeMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -299,6 +300,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkMRMLSubjectHierarchyNode* n
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -321,6 +323,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyInt_FromLong(visible));
   PyObject* result = d->PythonCppAPI.callMethod(d->VisibilityIconMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -343,6 +346,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkMRMLSubjectHierarc
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->EditPropertiesMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -415,6 +419,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForNode(vtkMRM
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForNodeMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -431,6 +436,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMR
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, vtkPythonUtil::GetObjectFromPointer(parent));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanAddNodeToSubjectHierarchyMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -456,6 +462,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentNodeInsideSubjectHierar
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, vtkPythonUtil::GetObjectFromPointer(parent));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanReparentNodeInsideSubjectHierarchyMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -481,6 +488,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::reparentNodeInsideSubjectHierarchy(v
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(nodeToReparent));
   PyTuple_SET_ITEM(arguments, 1, vtkPythonUtil::GetObjectFromPointer(parentNode));
   PyObject* result = d->PythonCppAPI.callMethod(d->ReparentNodeInsideSubjectHierarchyMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -504,6 +512,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedNodeName(vtkMRMLSubjectH
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->DisplayedNodeNameMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -527,6 +536,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkMRMLSubjectHierarchyNo
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->TooltipMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -551,6 +561,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkMRMLSubjectH
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, PyInt_FromLong(visible));
   PyObject* result = d->PythonCppAPI.callMethod(d->SetDisplayVisibilityMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
@@ -565,6 +576,7 @@ int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkMRMLSubjectHi
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->GetDisplayVisibilityMethod, arguments);
+  Py_DECREF(arguments);
   if (!result)
     {
     // Method call failed (probably an omitted function), call default implementation
