@@ -273,7 +273,7 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
   if (newScene)
     {
     // Selection Node
-    selectionNode = newScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode");
+    selectionNode = newScene->GetNodeByID("vtkMRMLSelectionNodeSingleton");
     if (!selectionNode)
       {
       selectionNode = newScene->AddNode(vtkNew<vtkMRMLSelectionNode>().GetPointer());

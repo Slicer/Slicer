@@ -55,7 +55,7 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::GetSelectedList()
   vtkMRMLSelectionNode *selnode = NULL;
 
   selnode = vtkMRMLSelectionNode::SafeDownCast (
-            this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+            this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
   if (selnode != NULL)
     {
@@ -84,7 +84,7 @@ void vtkSlicerFiducialsLogic::AddFiducialListSelected()
   // make it active
   vtkMRMLSelectionNode *selnode;
   selnode = vtkMRMLSelectionNode::SafeDownCast (
-            this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+            this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selnode && node)
     {
     this->GetMRMLScene()->SaveStateForUndo(selnode);

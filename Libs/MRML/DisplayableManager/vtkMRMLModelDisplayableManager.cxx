@@ -2258,21 +2258,14 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
   return;
 }
 
+//---------------------------------------------------------------------------
 vtkMRMLSelectionNode* vtkMRMLModelDisplayableManager::GetSelectionNode()
 {
   // If selection node is set then use that, otherwise find selection node in the scene
   if (this->Internal->SelectionNode == 0)
     {
-    std::vector<vtkMRMLNode *> selectionNodes;
-    if (this->GetMRMLScene())
-      {
-      this->GetMRMLScene()->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
-      }
-
-    if (selectionNodes.size() > 0)
-      {
-      this->Internal->SelectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
-      }
+    this->Internal->SelectionNode = vtkMRMLSelectionNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
   return this->Internal->SelectionNode;
 }

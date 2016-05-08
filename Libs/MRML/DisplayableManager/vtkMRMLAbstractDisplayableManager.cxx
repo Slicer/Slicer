@@ -587,7 +587,7 @@ void vtkMRMLAbstractDisplayableManager::CreateIfPossible()
 
     // Look for SelectionNode
     this->Internal->MRMLSelectionNode = vtkMRMLSelectionNode::SafeDownCast(
-        this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+        this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     if (!this->Internal->MRMLSelectionNode)
       {
       vtkWarningMacro( << "CreateIfPossible - MRMLScene does NOT contain any SelectionNode");

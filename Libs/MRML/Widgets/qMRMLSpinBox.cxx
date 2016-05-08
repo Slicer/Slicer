@@ -85,7 +85,7 @@ void qMRMLSpinBoxPrivate::setAndObserveSelectionNode()
   if (this->MRMLScene)
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
 
   q->qvtkReconnect(this->SelectionNode, selectionNode,

@@ -215,7 +215,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToSelectionNode()
 
   vtkMRMLSelectionNode* selectionNode =
     vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
     {
     vtkDebugMacro("AddObserversToSelectionNode: selectionNode found")
@@ -240,7 +240,7 @@ void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromSelectionNode()
 
   vtkMRMLSelectionNode* selectionNode =
     vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
     {
     vtkUnObserveMRMLNodeMacro(selectionNode);
@@ -1961,7 +1961,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 {
 
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-        this->GetMRMLScene()->GetNthNodeByClass( 0, "vtkMRMLSelectionNode"));
+        this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if ( selectionNode == 0 )
     {
     vtkErrorMacro ( "IsCorrectDisplayableManager: No selection node in the scene." );

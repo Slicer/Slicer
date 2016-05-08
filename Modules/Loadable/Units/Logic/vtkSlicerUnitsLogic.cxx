@@ -259,7 +259,7 @@ void vtkSlicerUnitsLogic::SetDefaultUnit(const char* quantity, const char* id)
     }
 
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
     {
     selectionNode->SetUnitNodeID(quantity, id);
@@ -311,7 +311,7 @@ void vtkSlicerUnitsLogic::SaveDefaultUnits()
 {
   // Save selection node units.
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   std::vector<const char *> quantities;
   std::vector<const char *> unitIDs;
   if (selectionNode)
@@ -340,7 +340,7 @@ void vtkSlicerUnitsLogic::RestoreDefaultUnits()
 {
   this->RestoringDefaultUnits = true;
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   std::vector<vtkMRMLUnitNode*> units;
   int wasModifying = 0;
   if (selectionNode)

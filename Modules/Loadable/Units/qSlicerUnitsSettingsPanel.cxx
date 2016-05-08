@@ -205,7 +205,7 @@ void qSlicerUnitsSettingsPanelPrivate::setMRMLScene(vtkMRMLScene* scene)
   if (this->MRMLScene)
     {
     newSelectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      scene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
 
   this->setSelectionNode(newSelectionNode);

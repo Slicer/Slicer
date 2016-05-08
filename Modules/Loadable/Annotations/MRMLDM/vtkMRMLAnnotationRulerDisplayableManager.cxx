@@ -666,7 +666,7 @@ std::string vtkMRMLAnnotationRulerDisplayableManager
   if (this->GetMRMLScene())
     {
     vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
     if (selectionNode)
       {
@@ -704,7 +704,7 @@ double vtkMRMLAnnotationRulerDisplayableManager
   if (this->GetMRMLScene())
     {
     vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
     if (selectionNode)
       {

@@ -524,7 +524,7 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
 
   // add known annotation types to the selection node
   vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
     {
     // got into batch mode
@@ -557,7 +557,7 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
   vtkMRMLSelectionNode *selectionNode = NULL;
   if (this->GetMRMLScene())
     {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
   if (!selectionNode)
     {
@@ -629,7 +629,7 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
   if (this->GetMRMLScene())
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
   if (!selectionNode)
     {
@@ -1955,7 +1955,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
       node);
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
   if (!annotationNode)
     {
