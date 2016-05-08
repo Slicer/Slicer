@@ -734,9 +734,14 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
 }
 
 //-----------------------------------------------------------
-bool qSlicerCropVolumeModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerCropVolumeModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                                  QString role /* = QString()*/,
+                                                  QString context /* = QString()*/)
 {
   Q_D(qSlicerCropVolumeModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
+
   if (vtkMRMLCropVolumeParametersNode::SafeDownCast(node))
     {
     d->ParametersNodeComboBox->setCurrentNode(node);

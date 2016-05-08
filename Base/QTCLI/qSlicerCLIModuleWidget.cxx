@@ -558,9 +558,13 @@ void qSlicerCLIModuleWidget::setAutoRunCancelsRunningProcess(bool autoRun)
 }
 
 //-----------------------------------------------------------
-bool qSlicerCLIModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerCLIModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                           QString role /* = QString()*/,
+                                           QString context /* = QString()*/)
 {
   Q_D(qSlicerCLIModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
   vtkMRMLCommandLineModuleNode* cmdLineModuleNode = vtkMRMLCommandLineModuleNode::SafeDownCast(node);
   if (!cmdLineModuleNode)
     {

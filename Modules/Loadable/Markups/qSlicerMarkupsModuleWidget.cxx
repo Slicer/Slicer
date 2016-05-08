@@ -3233,9 +3233,13 @@ void qSlicerMarkupsModuleWidget::onTransformedCoordinatesToggled(bool checked)
 }
 
 //-----------------------------------------------------------
-bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                               QString role /* = QString()*/,
+                                               QString context /* = QString()*/)
 {
   Q_D(qSlicerMarkupsModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
   if (vtkMRMLMarkupsFiducialNode::SafeDownCast(node))
     {
     d->activeMarkupMRMLNodeComboBox->setCurrentNode(node);

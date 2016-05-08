@@ -616,9 +616,13 @@ void qSlicerTransformsModuleWidget::updateConvertButtonState()
 }
 
 //-----------------------------------------------------------
-bool qSlicerTransformsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerTransformsModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                                  QString role /* = QString()*/,
+                                                  QString context /* = QString()*/)
 {
   Q_D(qSlicerTransformsModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
   if (vtkMRMLTransformNode::SafeDownCast(node))
     {
     d->TransformNodeSelector->setCurrentNode(node);

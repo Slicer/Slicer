@@ -153,9 +153,13 @@ void  qSlicerCamerasModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------
-bool qSlicerCamerasModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerCamerasModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                               QString role /* = QString()*/,
+                                               QString context /* = QString()*/)
 {
   Q_D(qSlicerCamerasModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
 
   if (vtkMRMLViewNode::SafeDownCast(node))
     {

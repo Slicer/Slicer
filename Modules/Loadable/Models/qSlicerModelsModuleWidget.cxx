@@ -560,9 +560,13 @@ void qSlicerModelsModuleWidget::updateWidgetFromSelectionNode()
 }
 
 //-----------------------------------------------------------
-bool qSlicerModelsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerModelsModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                              QString role /* = QString()*/,
+                                              QString context /* = QString()*/)
 {
   Q_D(qSlicerModelsModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
   if (vtkMRMLModelNode::SafeDownCast(node) || vtkMRMLModelHierarchyNode::SafeDownCast(node))
     {
     d->ModelHierarchyTreeView->setCurrentNode(node);

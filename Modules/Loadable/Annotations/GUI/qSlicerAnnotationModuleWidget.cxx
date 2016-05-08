@@ -615,9 +615,14 @@ void qSlicerAnnotationModuleWidget::reportDialogRejected()
 }
 
 //-----------------------------------------------------------
-bool qSlicerAnnotationModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerAnnotationModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                                  QString role /* = QString()*/,
+                                                  QString context /* = QString()*/)
 {
   Q_D(qSlicerAnnotationModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
+
   if (vtkMRMLAnnotationNode::SafeDownCast(node) || vtkMRMLAnnotationHierarchyNode::SafeDownCast(node))
     {
     d->hierarchyTreeView->setCurrentNode(node);

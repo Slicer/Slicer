@@ -212,7 +212,9 @@ void qSlicerScriptedLoadableModuleWidget::exit()
 }
 
 //-----------------------------------------------------------
-bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                                        QString role /* = QString()*/,
+                                                        QString context /* = QString()*/)
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   PyObject* arguments = PyTuple_New(3);

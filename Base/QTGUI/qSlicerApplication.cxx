@@ -470,6 +470,11 @@ void qSlicerApplication::handleCommandLineArguments()
   this->Superclass::handleCommandLineArguments();
 
   this->setToolTipsEnabled(!options->disableToolTips());
+
+  if (options->exitAfterStartup())
+    {
+    this->quit();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -517,7 +522,6 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
   QString mostSuitableModuleName = "Data";
   double mostSuitableModuleConfidence = 0.0;
 
-  vtkMRMLNode* currentNode = node;
   QString nodeClassName = node->GetClassName();
 
   // Modules that explicitly support the specified node type

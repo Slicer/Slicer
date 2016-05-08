@@ -146,9 +146,13 @@ void qSlicerVolumesModuleWidget::convertToLabelmap()
 }
 
 //-----------------------------------------------------------
-bool qSlicerVolumesModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerVolumesModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                               QString role /* = QString()*/,
+                                               QString context /* = QString()*/)
 {
   Q_D(qSlicerVolumesModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
   if (vtkMRMLVolumeNode::SafeDownCast(node))
     {
     d->ActiveVolumeNodeSelector->setCurrentNode(node);

@@ -234,9 +234,14 @@ void qSlicerTablesModuleWidget::setCurrentTableNode(vtkMRMLNode* tableNode)
 }
 
 //-----------------------------------------------------------
-bool qSlicerTablesModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerTablesModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                              QString role /* = QString()*/,
+                                              QString context /* = QString()*/)
 {
   Q_D(qSlicerTablesModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
+
   if (vtkMRMLTableNode::SafeDownCast(node))
     {
     d->TableNodeSelector->setCurrentNode(node);

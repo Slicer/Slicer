@@ -857,9 +857,14 @@ void qSlicerVolumeRenderingModuleWidget
 }
 
 //-----------------------------------------------------------
-bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                                       QString role /* = QString()*/,
+                                                       QString context /* = QString()*/)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
+
   if (vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node))
     {
     vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node);
@@ -876,7 +881,6 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node, QStrin
   if (vtkMRMLVolumePropertyNode::SafeDownCast(node))
     {
     // Find first volume rendering display node corresponding to this property node
-    vtkMRMLVolumePropertyNode* propNode = vtkMRMLVolumePropertyNode::SafeDownCast(node);
     vtkMRMLScene* scene = this->mrmlScene();
     if (!scene)
       {

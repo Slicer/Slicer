@@ -727,9 +727,13 @@ void qSlicerReformatModuleWidget::centerSliceNode()
 }
 
 //-----------------------------------------------------------
-bool qSlicerReformatModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
+bool qSlicerReformatModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                                QString role /* = QString()*/,
+                                                QString context /* = QString()*/)
 {
   Q_D(qSlicerReformatModuleWidget);
+  Q_UNUSED(role);
+  Q_UNUSED(context);
 
   if (vtkMRMLSliceNode::SafeDownCast(node))
     {
