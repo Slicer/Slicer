@@ -59,7 +59,6 @@ public:
   QAction *RenameMultipleNodesAction;
   QStringList HideChildNodeTypes;
   QString FiberDisplayClass;
-  vtkMRMLSelectionNode* SelectionNode;
   vtkSmartPointer<vtkCallbackCommand> CallBack;
 };
 
@@ -75,7 +74,6 @@ qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
   this->HideChildNodeTypes = (QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
   this->FiberDisplayClass = "vtkMRMLFiberBundleLineDisplayNode";
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
-  this->SelectionNode = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -437,6 +435,7 @@ void qSlicerModelsModuleWidget::hideAllModels()
     }
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::includeFiberBundles(bool include)
 {
   Q_D(qSlicerModelsModuleWidget);
@@ -456,6 +455,7 @@ void qSlicerModelsModuleWidget::includeFiberBundles(bool include)
   this->updateWidgetFromSelectionNode();
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::onDisplayClassChanged(int index)
 {
   Q_D(qSlicerModelsModuleWidget);
@@ -486,26 +486,21 @@ void qSlicerModelsModuleWidget::onDisplayClassChanged(int index)
   this->updateWidgetFromSelectionNode();
 }
 
+//-----------------------------------------------------------------------------
 vtkMRMLSelectionNode* qSlicerModelsModuleWidget::getSelectionNode()
 {
   Q_D(qSlicerModelsModuleWidget);
 
-  if (d->SelectionNode == 0)
+  vtkMRMLSelectionNode* selectionNode = 0;
+  if (this->mrmlScene())
     {
-    std::vector<vtkMRMLNode *> selectionNodes;
-    if (this->mrmlScene())
-      {
-      this->mrmlScene()->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
-      }
-
-    if (selectionNodes.size() > 0)
-      {
-      d->SelectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
-      }
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
-  return d->SelectionNode;
+  return selectionNode;
 }
 
+//-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::updateWidgetFromSelectionNode()
 {
   Q_D(qSlicerModelsModuleWidget);

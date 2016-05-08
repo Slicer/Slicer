@@ -986,14 +986,9 @@ void qMRMLSceneModel::updateItemDataFromNode(
     else if (displayableNode)
       {
       std::string displayType;
-      std::vector<vtkMRMLNode *> selectionNodes;
-      this->mrmlScene()->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
 
-      vtkMRMLSelectionNode* selectionNode = 0;
-      if (selectionNodes.size() > 0)
-        {
-        selectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
-        }
+      vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+        this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
       if (selectionNode)
         {
         char *displayableType = (char *)node->GetClassName();

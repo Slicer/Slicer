@@ -60,14 +60,10 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
     }
 
   vtkMRMLSelectionNode* selectionNode = 0;
-  std::vector<vtkMRMLNode *> selectionNodes;
   if (this->MRMLScene)
     {
-    this->MRMLScene->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
-    if (selectionNodes.size() > 0)
-      {
-      selectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
-      }
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->MRMLScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
 
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);

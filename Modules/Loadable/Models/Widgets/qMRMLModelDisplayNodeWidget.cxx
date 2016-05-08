@@ -57,7 +57,6 @@ public:
   virtual void setRange(double min, double max);
 
   vtkSmartPointer<vtkMRMLModelDisplayNode> MRMLModelDisplayNode;
-  vtkSmartPointer<vtkMRMLSelectionNode> MRMLSelectionNode;
   vtkSmartPointer<vtkMRMLNode>  ModelOrHierarchyNode;
 };
 
@@ -596,23 +595,16 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
     }
 }
 
+//------------------------------------------------------------------------------
 vtkMRMLSelectionNode* qMRMLModelDisplayNodeWidget::getSelectionNode(vtkMRMLScene *mrmlScene)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
-
-  if (d->MRMLSelectionNode.GetPointer() == 0)
+  vtkMRMLSelectionNode* selectionNode = 0;
+  if (mrmlScene)
     {
-    std::vector<vtkMRMLNode *> selectionNodes;
-    if (mrmlScene)
-      {
-      mrmlScene->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
-      }
-
-    if (selectionNodes.size() > 0)
-      {
-      d->MRMLSelectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
-      }
+    selectionNode =
+      vtkMRMLSelectionNode::SafeDownCast(mrmlScene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
-  return d->MRMLSelectionNode;
+  return selectionNode;
 }
 

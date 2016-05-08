@@ -477,16 +477,11 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     return;
     }
 
-  std::vector<vtkMRMLNode *> selectionNodes;
   vtkMRMLSelectionNode *selectionNode = 0;
   if (this->GetMRMLScene())
     {
-    this->GetMRMLScene()->GetNodesByClass("vtkMRMLSelectionNode", selectionNodes);
-    }
-
-  if (selectionNodes.size() > 0)
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(selectionNodes[0]);
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
     }
 
   std::map<std::string, std::string> displayNodeClasses =
