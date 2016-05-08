@@ -889,7 +889,7 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
     vtkMRMLVolumeRenderingDisplayNode* displayNode = NULL;
     vtkObject* itNode = NULL;
     vtkCollectionSimpleIterator it;
-    for (scene->GetNodes()->InitTraversal(it); itNode = scene->GetNodes()->GetNextItemAsObject(it);)
+    for (scene->GetNodes()->InitTraversal(it); (itNode = scene->GetNodes()->GetNextItemAsObject(it));)
       {
       displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(itNode);
       if (!displayNode)
