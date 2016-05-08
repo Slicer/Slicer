@@ -247,7 +247,7 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
        this->GetCameraNode()->GetScene() != 0 )
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-        this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+        this->GetCameraNode()->GetScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
 
     if (interactionNode != 0)
       {
@@ -320,7 +320,7 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
        this->GetCameraNode()->GetScene() != 0 )
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(
-        this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+        this->GetCameraNode()->GetScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
 
     if (interactionNode != 0)
       {

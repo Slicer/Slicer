@@ -505,7 +505,7 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
   // also observe the interaction node for changes
   vtkMRMLInteractionNode *interactionNode =
     vtkMRMLInteractionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   if (interactionNode)
     {
     vtkIntArray *interactionEvents = vtkIntArray::New();
@@ -580,7 +580,7 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent)
   vtkMRMLInteractionNode *interactionNode = NULL;
   if ( this->GetMRMLScene())
     {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
     }
   if (!interactionNode)
     {
@@ -639,7 +639,7 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
 
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+          this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   if (interactionNode == NULL)
     {
     vtkErrorMacro ( "StopPlaceMode: No interaction node in the scene." );
@@ -679,7 +679,7 @@ void vtkSlicerAnnotationModuleLogic::CancelCurrentOrRemoveLastAddedAnnotationNod
   vtkMRMLInteractionNode *interactionNode = NULL;
   if (this->GetMRMLScene())
     {
-    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
     }
 
   if (!interactionNode)

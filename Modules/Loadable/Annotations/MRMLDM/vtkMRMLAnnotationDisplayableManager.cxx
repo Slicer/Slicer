@@ -170,7 +170,7 @@ void vtkMRMLAnnotationDisplayableManager::AddObserversToInteractionNode()
   // also observe the interaction node for changes
   vtkMRMLInteractionNode *interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(
-          this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+          this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   if (interactionNode)
     {
 
@@ -198,7 +198,7 @@ void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromInteractionNode()
 
   // find the interaction node
   vtkMRMLInteractionNode *interactionNode =
-    vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   if (interactionNode)
     {
     vtkUnObserveMRMLNodeMacro(interactionNode);
@@ -470,7 +470,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
   // Remove all placed seeds
   this->Helper->RemoveSeeds();
 
-  vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
   this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
 
   // and render again after seeds were removed

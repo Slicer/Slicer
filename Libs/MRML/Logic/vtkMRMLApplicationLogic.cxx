@@ -286,7 +286,7 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
   if (newScene)
     {
     // Interaction Node
-    interactionNode = newScene->GetNthNodeByClass(0, "vtkMRMLInteractionNode");
+    interactionNode = newScene->GetNodeByID("vtkMRMLInteractionNodeSingleton");
     if (!interactionNode)
       {
       interactionNode = newScene->AddNode(vtkNew<vtkMRMLInteractionNode>().GetPointer());
