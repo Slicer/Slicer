@@ -66,6 +66,12 @@ bool qSlicerCommandOptions::enableQtTesting()const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::exitAfterStartup()const
+{
+  return this->parsedArgs().value("exit-after-startup").toBool();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
@@ -91,4 +97,7 @@ void qSlicerCommandOptions::addArguments()
   this->addArgument("qt-testing", "", QVariant::Bool,
                     "Enable QtTesting in the user interface");
 #endif
+
+  this->addArgument("exit-after-startup", "", QVariant::Bool,
+                    "Exit after startup is complete. Useful for measuring startup time");
 }
