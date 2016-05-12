@@ -3,7 +3,8 @@
   <category>Informatics</category>
   <title>Markups</title>
   <description><![CDATA[Create and edit markups, supplementary information associated with a scene. Currently supported markups are lists of fiducial points. Fiducials can be placed using the mouse mode tool bar. Once fiducial place mode has been entered, a new fiducial can be placed under the current mouse position by pressing the p key. Right mouse button click will exit persistent place mode.]]></description>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Markups</documentation-url>
+  <version>4.4</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/Markups</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
@@ -16,11 +17,11 @@
     </parameter>
     <parameter>
       <label>Visibility</label>
-      <description><![CDATA[Toggle the list visibility, which will over ride the individual markup visibility settings. If the eye icon is open, the list is visible, and pressing it will make it invisible. If the eye icon is closed, the list is invisilbe and pressing the button will make it visible.]]></description>
+      <description><![CDATA[Toggle the list visibility, which will override the individual markup visibility settings. If the eye icon is open, the list is visible, and pressing it will make it invisible. If the eye icon is closed, the list is invisible and pressing the button will make it visible.]]></description>
     </parameter>
     <parameter>
       <label>Locked</label>
-      <description><![CDATA[Toggle the list lock state (if it can be moved by mouse interactions in the viewers), which will over ride the individual markup lock settings. If the lock icon is open, the list is unlocked, and pressing it will lock it. If the lock icon is closed, the list is locked and pressing the button will unlock it. When the list is locked, the table is disabled so no changes can be made to fiducial positions there.]]></description>
+      <description><![CDATA[Toggle the list lock state (if it can be moved by mouse interactions in the viewers), which will override the individual markup lock settings. If the lock icon is open, the list is unlocked, and pressing it will lock it. If the lock icon is closed, the list is locked and pressing the button will unlock it. When the list is locked, the table is disabled so no changes can be made to fiducial positions there.]]></description>
     </parameter>
     <parameter>
       <label>Scale</label>
@@ -36,11 +37,11 @@
     <description>These buttons apply changes to markups in the selected list.</description>
     <parameter>
       <label>Toggle visibility flag</label>
-      <description><![CDATA[Toggle visibility flag on all markups in list, use drop down menu to set all to visible or invisible.]]></description>
+      <description><![CDATA[Toggle visibility flag on all markups in list. Use the drop down menu to set all to visible or invisible.]]></description>
     </parameter>
     <parameter>
       <label>Toggle selected flag</label>
-      <description><![CDATA[Toggle selected flag on all markups in list, use drop down menu to set all to selected or deselected. Only selected markups will be passed to command line modules.]]></description>
+      <description><![CDATA[Toggle selected flag on all markups in list. Use the drop down menu to set all to selected or deselected. Only selected markups will be passed to command line modules.]]></description>
     </parameter>
     <parameter>
       <label>Toggle lock flag</label>
@@ -52,7 +53,7 @@
     </parameter>
     <parameter>
       <label>Remove all markups from the active list</label>
-      <description><![CDATA[Pressing this button will delete all of the markups in the active list, leaving it having a list length of 0]]></description>
+      <description><![CDATA[Pressing this button will delete all of the markups in the active list, leaving it with a list length of 0.]]></description>
     </parameter>
   </parameters>
   <parameters>
@@ -64,7 +65,7 @@
     </parameter>
     <parameter>
       <label>Hide RAS</label>
-      <description><![CDATA[Check to hide the coordinate columns in the table, uncheck to show them. Right click in rows to see coordinates.]]></description>
+      <description><![CDATA[Check to hide the coordinate columns in the table and uncheck to show them. Right click in rows to see coordinates.]]></description>
     </parameter>
   </parameters>
   <parameters>
@@ -118,7 +119,7 @@
     </parameter>
     <parameter>
       <label>Apply</label>
-      <description><![CDATA[Rename all markups in this list according to the current name format, trying to preserve numbers. A quick way to renumber all the fiducials according to their index is to use a name format with no number in it, rename, then add the number format specifier %d to the format and rename one more time.]]></description>
+      <description><![CDATA[Rename all markups in this list according to the current name format, trying to preserve numbers. A quick way to re-number all the fiducials according to their index is to use a name format with no number in it, rename, then add the number format specifier %d to the format and rename one more time.]]></description>
     </parameter>
     <parameter>
       <label>Reset</label>

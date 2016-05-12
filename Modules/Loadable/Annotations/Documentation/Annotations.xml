@@ -3,7 +3,8 @@
   <category>Base</category>
   <title>Annotations</title>
   <description><![CDATA[Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs). Use the Markups module for fiducials.]]></description>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Annotations</documentation-url>
+  <version>4.3</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/Annotations</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (SPL, BWH), Daniel Haehn (SPL, BWH), Kilian Pohl (UPenn), Yong Zhang (IBM), Wendy Plesniak (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
@@ -101,11 +102,11 @@
     <label>Modify Annotation Hierarchy Properties</label>
     <parameter>
       <label>Type</label>
-      <description><![CDATA[The class type for this annotation hierarchy]]></description>
+      <description><![CDATA[The class types for this annotation hierarchy]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
-      <description><![CDATA[Click on this button to bring up a color picker widget to set the color used for all annotations in this hierarchy when the hierarchy is collapsed (not implemented yet)]]></description>
+      <description><![CDATA[Click on this button to bring up a color picker widget to set the color used for all annotations in this hierarchy when the hierarchy is collapsed.]]></description>
     </parameter>
     <parameter>
       <label>Apply to List</label>
@@ -140,7 +141,7 @@
     <label>Modify Annotation Properties</label>
     <parameter>
       <label>Type</label>
-      <description><![CDATA[The class type for this annotation, is it a ruler, region of interest?]]></description>
+      <description><![CDATA[The class type for this annotation. For example, a ruler or a region of interest.]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
@@ -160,7 +161,7 @@
     </parameter>
     <parameter>
       <label>Size</label>
-      <description><![CDATA[Click on the small, Medium, Large buttons to change the scaling of the annotation]]></description>
+      <description><![CDATA[Click on the Small, Medium, Large buttons to change the scaling of the annotation]]></description>
     </parameter>
     <parameter>
       <label>RAS</label>
@@ -194,7 +195,7 @@
     <label>Toolbar</label>
     <parameter>
       <label>Annotations toolbar</label>
-      <description><![CDATA[Create new annotations by selecting them from the drop down menu. Return to rotate mouse mode by clicking on the rotate idcon. Toggle persistent placement of annotations by checking and unchecking the Persistent checkbox]]></description>
+      <description><![CDATA[Create new annotations by selecting them from the drop down menu. Return to rotate mouse mode by clicking on the rotate icon. Toggle persistent placement of annotations by checking and unchecking the Persistent checkbox]]></description>
     </parameter>
   </parameters>
 </executable>

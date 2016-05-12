@@ -3,7 +3,8 @@
   <category>Core</category>
   <title>Volume Rendering</title>
   <description><![CDATA[This module provides interactive visualization of 3D image data.]]></description>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/VolumeRendering</documentation-url>
+  <version>4.3</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/VolumeRendering</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Yanling Liu (SAIC-Frederick, NCI-Frederick), Andreas Freudling (SPL, BWH), Ron Kikinis(SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Some of the transfer functions were contributed by Kitware Inc. (VolView)]]></acknowledgements>
@@ -12,11 +13,11 @@
     <description><![CDATA[Contains the list of nodes required for VolumeRendering. It is unlikely that you need to interact with controllers.]]></description>
     <parameter>
       <label>Volume</label>
-      <description><![CDATA[Select the current volume to render. Note that only 1 volume can be rendered at a time.]]></description>
+      <description><![CDATA[Select the current volume to render. Note that only one volume can be rendered at a time.]]></description>
     </parameter>
     <parameter>
       <label>Display</label>
-      <description><![CDATA[Select the current volume rendering display properties. Volume rendering display nodes contains all the informations relative to volume rendering. They contain pointers to the ROI, volume property and view nodes. A new display node is automatically created if none exist for the current volume.]]></description>
+      <description><![CDATA[Select the current volume rendering display properties. Volume rendering display nodes contains all the information relative to volume rendering. They contain pointers to the ROI, volume property and view nodes. A new display node is automatically created if none exist for the current volume.]]></description>
     </parameter>
     <parameter>
       <label>ROI</label>
@@ -44,11 +45,11 @@
     </parameter>
     <parameter>
       <label>Crop</label>
-      <description><![CDATA[Simple controls for the cropping box (aka ROI). More controls are available in the "Advanced..." section. Enable/Disable cropping of the volume. Show/Hide the cropping box. Reset the box ROI to the volume's bounds.]]></description>
+      <description><![CDATA[Simple controls for the cropping box (ROI). More controls are available in the "Advanced..." section. Enable/Disable cropping of the volume. Show/Hide the cropping box. Reset the box ROI to the volume's bounds.]]></description>
     </parameter>
     <parameter>
       <label>Rendering</label>
-      <description><![CDATA[Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.  VTK CPU Ray Casting: Available on all platforms, the volume rendering is enterily realized on the CPU (default).  VTK GPU Ray Casting: Available on all platforms with compatible graphic cards (it impossible for us to test all combinations). GPU is faster typically, but may not have the same quality on all cards.]]></description>
+      <description><![CDATA[Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.<br  /><UL><b>VTK CPU Ray Casting:</b> Available on all platforms, the volume rendering is enterily realized on the CPU (default)<br  /><b>VTK GPU Ray Casting</b>: Available on all platforms except on Mac with an NVidia graphic card, fastest method to volume render<br  /><b>VTK OpenGL 3D Texture Mapping:</b> Available on all platforms, use the GPU but it is not ray casting<br  /><b>NCI GPU Ray Casting</b>: Available on all platforms, ray caster on the GPU, doesn't support compositing.]]></description>
     </parameter>
   </parameters>
   <parameters>
@@ -72,11 +73,56 @@
     </parameter>
     <parameter>
       <label>Synchronize with Volumes module</label>
-      <description><![CDATA[***Click: Apply once the properties (window/level, threshold, lut) of the Volumes module to the Volume Rendering module.***Toggled: by clicking on the checkbox, you can toggle the button. When toggled, any modification occuring in the Volumes module is instantaneously applied to the volume rendering]]></description>
+      <description><![CDATA[<br  /><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Click:</b> Apply once the properties (window/level, threshold, lut) of the Volumes module to the Volume Rendering module.<br  /><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Toggled: </b>By clicking on the checkbox, you can toggle the button. When toggled, any modification occuring in the Volumes module is instantaneously applied to the volume rendering]]>
+      </description>
+    </parameter>
+  </parameters>
+  <parameters>
+    <label>Volume Properties</label>
+    <description><![CDATA[Advanced views of the transfer functions.]]></description> 
+    <parameter>
+      <label>Left button click</label>label>
+      <description><![CDATA[Set current point or create a new point if no point is under the mouse.]]></description>
+    </parameter> 
+    <parameter>
+      <label>Left button move</label> 
+      <description><![CDATA[Move the current or selected points if any.]]></description>
     </parameter>
     <parameter>
-      <label>Volume Properties</label>
-      <description><![CDATA[Advanced views of the transfer functions.***Left button click: set current point or create a new point if no point is under the mouse.***Left button move: move the current or selected points if any.***Right button click: select/unselect point. Selected points can be moved at once***Right button move: define an area to select points***Middle button click: delete point under the mouse cursor.***Right/Left arrow keys: change of current point***Delete key: delete the current point and set the next point as current***Backspace key: delete the current point and set the previous point as current***ESC key: unselect all points.***Unsupported: "ALT to move selected points", "CTRL-A to select all points"]]***Control Inputs:****X: scalar value****O: opacity****M: mid-point****S: sharpness></description>
+      <label>Right button click</label>
+      <description><![CDATA[Select/unselect point. Selected points can be moved at once]]></description>
+    </parameter>
+    <parameter>
+      <label>Right button move</label>
+      <description><![CDATA[Define an area to select points:]]></description>  
+    </parameter>
+    <parameter>
+      <label>Middle button click </label>
+      <description><![CDATA[Delete point under the mouse cursor.]]></description>
+    </parameter>
+    <parameter>
+      <label>Right/Left arrow keys</label> 
+      <description><![CDATA[Change of current point]]></description>
+    </parameter>
+    <parameter>
+      <label>Delete key</label> 
+      <description><![CDATA[Delete the current point and set the next point as current]]></description>
+    </parameter>
+    <parameter>
+      <label>Backspace key </label>
+      <description><![CDATA[Delete the current point and set the previous point as current]]></description>
+    </parameter>
+    <parameter>
+      <label>ESC key</label>
+      <description><![CDATA[Unselect all points.]]></description>
+    </parameter>
+    <parameter>
+      <label>Unsupported </label> 
+      <description><![CDATA["ALT to move selected points", "CTRL-A to select all points"]]></description>
+    </parameter>
+    <parameter>
+      <label>Control Inputs:</label>
+      <description><![CDATA[<br  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X: scalar value<BR  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O: opacity<br  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M: mid-point<br  />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S: sharpness]]></description>
     </parameter>
     <parameter>
       <label>Scalar Opacity Mapping</label>
@@ -115,4 +161,5 @@
       <description><![CDATA[Control wether the cropping box is instantaneously updated when dragging the sliders or only when the mouse button is released.]]></description>
     </parameter>
   </parameters>
+
 </executable>

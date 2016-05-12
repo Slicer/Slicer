@@ -3,7 +3,8 @@
   <category>Core</category>
   <title>Volumes</title>
   <description><![CDATA[This module is used for changing the appearance of various volume types.]]></description>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/Volumes</documentation-url>
+  <version>4.4</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.4/Modules/Volumes</documentation-url>
   <license>slicer4</license>
   <contributor>Steve Pieper (Isomics), Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Nicole Aucoin (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
@@ -27,6 +28,10 @@
       <description><![CDATA[The location of the center of the 0,0,0 (IJK) pixel expressed with respect to patient space.  Patient space is organized with respect to the subject's Right, Anterior, and Superior anatomical directions.  See http://www.slicer.org/slicerWiki/index.php/Coordinate_systems for more information.]]></description>
     </parameter>
     <parameter>
+      <label>IJK to RAS Direction Matrix</label>
+      <description><![CDATA[The trasnform matrix from the IJK to RAS coordinate systems]]></description>
+    </parameter>
+    <parameter>
       <label>Center Volume</label>
       <description><![CDATA[This button will adjust the Image Origin so that the entire volume is centered around 0,0,0 in patient space.]]></description>
     </parameter>
@@ -47,12 +52,12 @@
       <description><![CDATA[Path to the file which this volume was loaded from/saved to]]></description>
     </parameter>
     <parameter>
-      <label>LabelMap</label>
-      <description><![CDATA[Indicates and controls if the Volume is a label map]]></description>
-    </parameter>
-    <parameter>
       <label>Window/Level Presets</label>
       <description><![CDATA[Loaded from DICOM headers defined by scanner or by technician.]]></description>
+    </parameter>
+    <parameter>
+      <label>LabelMap</label>
+      <description><![CDATA[Indicates and controls if the Volume is a label map]]></description>
     </parameter>
   </parameters>
   <parameters>
@@ -61,10 +66,6 @@
     <parameter>
       <label>Lookup Table</label>
       <description><![CDATA[Select the color mapping for scalar volumes to colors.]]></description>
-    </parameter>
-    <parameter>
-      <label>Label Outline Thickness</label>
-      <description><![CDATA[When displaying the label map in outline mode, this controls the width of the outline (in pixels).]]></description>
     </parameter>
     <parameter>
       <label>Interpolate</label>
@@ -103,7 +104,7 @@
       <description><![CDATA[Mapping from tensor to scalar.]]></description>
     </parameter>
     <parameter>
-      <label>Glyphs on Slices Display</label>
+      <label>Slice Visibility</label>
       <description><![CDATA[Allows display of graphics visualizations of tensors on one or more of the standard Red, Green, or Yellow slice views.]]></description>
     </parameter>
     <parameter>
@@ -133,10 +134,6 @@
     <parameter>
       <label>Spacing</label>
       <description><![CDATA[Controls the number of glyphs on the slice view.]]></description>
-    </parameter>
-    <parameter>
-      <label>Glyph Eigenvector</label>
-      <description><![CDATA[Selects which aspect of tensor controls orientation of glyphs.]]></description>
     </parameter>
   </parameters>
 </executable>
