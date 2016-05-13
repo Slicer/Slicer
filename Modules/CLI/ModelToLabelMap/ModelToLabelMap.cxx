@@ -190,12 +190,13 @@ int DoIt( int argc, char * argv[])
 
     if( label->GetLargestPossibleRegion().IsInside(idx) )
       {
-      label->SetPixel( idx, labelValue );
+      label->SetPixel( idx, 255 );
       }
     }
 
   // do morphological closing
-  LabelImageType::Pointer                           closedLabel = BinaryClosingFilter3D( label, 2);
+  unsigned int                                      kernelRadius = 2;
+  LabelImageType::Pointer                           closedLabel = BinaryClosingFilter3D( label, kernelRadius );
   itk::ImageRegionIteratorWithIndex<LabelImageType> itLabel(closedLabel, closedLabel->GetLargestPossibleRegion() );
 
   // do flood fill using binary threshold image function
@@ -229,13 +230,20 @@ int DoIt( int argc, char * argv[])
   for( floodFill.GoToBegin(); !floodFill.IsAtEnd(); ++floodFill )
     {
     LabelImageType::IndexType i = floodFill.GetIndex();
-    closedLabel->SetPixel( i, labelValue );
+    closedLabel->SetPixel( i, 255 );
     }
-  LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( closedLabel, 2);
+  LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( closedLabel, kernelRadius );
   for( itLabel.GoToBegin(); !itLabel.IsAtEnd(); ++itLabel )
     {
     LabelImageType::IndexType i = itLabel.GetIndex();
-    label->SetPixel( i, finalLabel->GetPixel(i) );
+    if (finalLabel->GetPixel(i) == 255)
+      {
+      label->SetPixel( i, labelValue );
+      }
+    else
+      {
+      label->SetPixel( i, finalLabel->GetPixel(i) );
+      }
     }
 
   typename WriterType::Pointer writer = WriterType::New();
