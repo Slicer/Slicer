@@ -1,8 +1,8 @@
 <MRML  version="12877" userTags="">
 <Selection
-  id="vtkMRMLSelectionNode1"  name="vtkMRMLSelectionNode1"  hideFromEditors="true"  selectable="true"  selected="false"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="vtkMRMLLayoutNode1"></Selection>
+  id="vtkMRMLSelectionNodeSingleton"  name="vtkMRMLSelectionNode1"  hideFromEditors="true"  selectable="true"  selected="false"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="vtkMRMLLayoutNode1"></Selection>
  <Interaction
-  id="vtkMRMLInteractionNode1"  name="vtkMRMLInteractionNode1"  hideFromEditors="true"  selectable="true"  selected="false"  currentInteractionMode="ViewTransform"  lastInteractionMode="ViewTransform" ></Interaction>
+  id="vtkMRMLInteractionNodeSingleton"  name="vtkMRMLInteractionNode1"  hideFromEditors="true"  selectable="true"  selected="false"  currentInteractionMode="ViewTransform"  lastInteractionMode="ViewTransform" ></Interaction>
  <Layout
   id="vtkMRMLLayoutNode1"  name="vtkMRMLLayoutNode1"  hideFromEditors="true"  selectable="true"  selected="false"  currentViewArrangement="2"  guiPanelVisibility="1"  bottomPanelVisibility ="1"  guiPanelLR="0"  collapseSliceControllers="0"
   numberOfCompareViewRows="1"  numberOfCompareViewColumns="1"  numberOfLightboxRows="1"  numberOfLightboxColumns="1"  mainPanelSize="400"  secondaryPanelSize="400"  selectedModule="Data" ></Layout>

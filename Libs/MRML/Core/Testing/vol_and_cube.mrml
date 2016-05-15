@@ -1,65 +1,65 @@
 <MRML>
 
 <Selection
-  id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1" hideFromEditors="true" 
+  id="vtkMRMLSelectionNodeSingleton" name="vtkMRMLSelectionNode1" hideFromEditors="true"
   activeVolumeID="vtkMRMLScalarVolumeNode1" activeLayoutID="vtkMRMLLayoutNode1">
 </Selection>
 <Interaction
-  id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1" hideFromEditors="true"
+  id="vtkMRMLInteractionNodeSingleton" name="vtkMRMLInteractionNode1" hideFromEditors="true"
   currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform">
 </Interaction>
 
 <Slice
-  id="filevtkMRMLSliceNode1" name="yellowAxial"  hideFromEditors="true" 
-  fieldOfView="283.203 261.719 250" dimensions="290 268 1" 
+  id="filevtkMRMLSliceNode1" name="yellowAxial"  hideFromEditors="true"
+  fieldOfView="283.203 261.719 250" dimensions="290 268 1"
   sliceToRAS="-1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1" layoutName="Yellow" orientation="Axial" >
 </Slice>
 
 <SliceComposite
-  id="vtkMRMLSliceCompositeNode1" name="fileCompred"  hideFromEditors="true" 
-  backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" 
+  id="vtkMRMLSliceCompositeNode1" name="fileCompred"  hideFromEditors="true"
+  backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID=""
   labelVolumeID="" labelOpacity="1" layoutName="Red" >
 </SliceComposite>
 
 <Slice
-id="filevtkMRMLSliceNode2" name="greenSagittal"  hideFromEditors="true" 
-fieldOfView="250 250 250" dimensions="256 256 1" 
-sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Green" 
+id="filevtkMRMLSliceNode2" name="greenSagittal"  hideFromEditors="true"
+fieldOfView="250 250 250" dimensions="256 256 1"
+sliceToRAS="0 0 1 0 -1 0 0 0 0 1 0 0 0 0 0 1" layoutName="Green"
 orientation="Sagittal" >
 </Slice>
 
 <SliceComposite
-id="vtkMRMLSliceCompositeNode2" name="fileCompyellow"  hideFromEditors="true" 
-backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" 
+id="vtkMRMLSliceCompositeNode2" name="fileCompyellow"  hideFromEditors="true"
+backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID=""
 labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
 
 <Slice
-  id="filevtkMRMLSliceNode3" name="redCoronal"  hideFromEditors="true" 
-  fieldOfView="250 250 250" dimensions="256 256 1" 
+  id="filevtkMRMLSliceNode3" name="redCoronal"  hideFromEditors="true"
+  fieldOfView="250 250 250" dimensions="256 256 1"
   sliceToRAS="-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1" layoutName="Red" orientation="Coronal" >
 </Slice>
 
 <SliceComposite
-  id="vtkMRMLSliceCompositeNode3" name="fileCompgreen"  hideFromEditors="true" 
-  backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" labelVolumeID="" 
+  id="vtkMRMLSliceCompositeNode3" name="fileCompgreen"  hideFromEditors="true"
+  backgroundVolumeID="vtkMRMLScalarVolumeNode1" foregroundVolumeID="" labelVolumeID=""
   labelOpacity="1" layoutName="Green" >
 </SliceComposite>
 
 <VolumeArchetypeStorage
-  id="vtkMRMLVolumeArchetypeStorageNode1" name=""  hideFromEditors="true" 
+  id="vtkMRMLVolumeArchetypeStorageNode1" name=""  hideFromEditors="true"
   fileName="TestData/fixed.nrrd" >
 </VolumeArchetypeStorage>
 
 <VolumeDisplay
-  id="vtkMRMLVolumeDisplayNode1" name=""  hideFromEditors="true" window="252" level="109" 
-  upperThreshold="235" lowerThreshold="-17" interpolate="1" autoWindowLevel="1" 
+  id="vtkMRMLVolumeDisplayNode1" name=""  hideFromEditors="true" window="252" level="109"
+  upperThreshold="235" lowerThreshold="-17" interpolate="1" autoWindowLevel="1"
   applyThreshold="0" autoThreshold="0" colorNodeID="vtkMRMLColorTableNodeGrey">
 </VolumeDisplay>
 
 <Volume
-  id="vtkMRMLScalarVolumeNode1" name="fixed.nrrd"  hideFromEditors="false" 
-  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1" 
-  ijkToRASDirections="0   -0   1 -1   0   -0 0 -1 0 " spacing="5.2 3.75 3.75" 
+  id="vtkMRMLScalarVolumeNode1" name="fixed.nrrd"  hideFromEditors="false"
+  storageNodeRef="vtkMRMLVolumeArchetypeStorageNode1" displayNodeRef="vtkMRMLVolumeDisplayNode1"
+  ijkToRASDirections="0   -0   1 -1   0   -0 0 -1 0 " spacing="5.2 3.75 3.75"
   origin="-80.6 120 120" labelMap="0" >
 </Volume>
 
@@ -67,13 +67,13 @@ labelVolumeID="" labelOpacity="1" layoutName="Yellow" ></SliceComposite>
 id="vtkMRMLModelStorageNode1" name=""  hideFromEditors="true" fileName="TestData/cube.vtk" ></ModelStorage>
 
 <ModelDisplay
-  id="vtkMRMLModelDisplayNode4" name=""  hideFromEditors="true"  color="0.5 0.5 0.5" 
-  ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true" 
+  id="vtkMRMLModelDisplayNode4" name=""  hideFromEditors="true"  color="0.5 0.5 0.5"
+  ambient="0" diffuse="1" specular="0" power="1" opacity="1" visibility="true"
   clipping="false" backfaceCulling="true" scalarVisibility="false" scalarRange="0 100">
 </ModelDisplay>
 
 <Model
-  id="vtkMRMLModelNode1" name="cube.vtk"  hideFromEditors="false" 
+  id="vtkMRMLModelNode1" name="cube.vtk"  hideFromEditors="false"
   storageNodeRef="vtkMRMLModelStorageNode1" displayNodeRef="vtkMRMLModelDisplayNode4" >
 </Model>
 

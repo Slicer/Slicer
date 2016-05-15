@@ -1,8 +1,8 @@
 <MRML>
 <Selection
- id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1" hideFromEditors="true" selectable="true"  activeVolumeID="vtkMRMLDiffusionTensorVolumeNode1" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL" activeLayoutID="vtkMRMLLayoutNode1"></Selection>
+ id="vtkMRMLSelectionNodeSingleton" name="vtkMRMLSelectionNode1" hideFromEditors="true" selectable="true"  activeVolumeID="vtkMRMLDiffusionTensorVolumeNode1" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL" activeLayoutID="vtkMRMLLayoutNode1"></Selection>
 <Interaction
- id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1" hideFromEditors="true" selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
+ id="vtkMRMLInteractionNodeSingleton" name="vtkMRMLInteractionNode1" hideFromEditors="true" selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
 <Layout
  id="vtkMRMLLayoutNode1" name="vtkMRMLLayoutNode1" hideFromEditors="true" selectable="true"  currentViewArrangement="14" guiPanelVisibility="1" bottomPanelVisiblity ="1" guiPanelLR="0" numberOfCompareViewRows="0" numberOfCompareViewColumns="0"></Layout>
 <View

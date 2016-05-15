@@ -1,8 +1,8 @@
 <MRML>
 <Selection
- id="vtkMRMLSelectionNode1" name="vtkMRMLSelectionNode1"  hideFromEditors="true"  selectable="true" activeVolumeID="NULL" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL" ></Selection>
+ id="vtkMRMLSelectionNodeSingleton" name="vtkMRMLSelectionNode1"  hideFromEditors="true"  selectable="true" activeVolumeID="NULL" activeLabelVolumeID="NULL" activeFiducialListID="NULL" activeROIListID="NULL" activeCameraID="NULL" activeViewID="NULL" ></Selection>
 <Interaction
- id="vtkMRMLInteractionNode1" name="vtkMRMLInteractionNode1"  hideFromEditors="true"  selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
+ id="vtkMRMLInteractionNodeSingleton" name="vtkMRMLInteractionNode1"  hideFromEditors="true"  selectable="true"  currentInteractionMode="ViewTransform" lastInteractionMode="ViewTransform"></Interaction>
 <View
  id="vtkMRMLViewNode1" name="vtkMRMLViewNode1"  hideFromEditors="true"  selectable="true"  active="false" fieldOfView="200" letterSize="0.05" boxVisible="true" fiducialsVisible="true" fiducialLabelsVisible="true" axisLabelsVisible="true" backgroundColor="0.70196 0.70196 0.90588" animationMode="Off" viewAxisMode="LookFrom" spinDegrees="2" spinMs="5" spinDirection="YawLeft" rotateDegrees="5" rockLength="200" rockCount="0" stereoType="NoStereo" renderMode="Perspective"></View>
 <Camera
