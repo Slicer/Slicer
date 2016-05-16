@@ -308,6 +308,33 @@ void vtkMRMLSliceLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode *sliceNode1, vtkMRMLSliceNode *sliceNode2,
+  double comparisonTolerance /* = 0.001 */)
+{
+  if (sliceNode1 == NULL || sliceNode2 == NULL)
+    {
+    vtkErrorMacro("vtkMRMLSliceLinkLogic::IsOrientationMatching failed: invalid input");
+    return false;
+    }
+  vtkMatrix4x4* sliceToRAS1 = sliceNode1->GetSliceToRAS();
+  vtkMatrix4x4* sliceToRAS2 = sliceNode2->GetSliceToRAS();
+  for (int axisIndex = 0; axisIndex < 3; axisIndex++)
+  {
+    double axisVector1[3] = { sliceToRAS1->Element[0][axisIndex], sliceToRAS1->Element[1][axisIndex], sliceToRAS1->Element[2][axisIndex] };
+    double axisVector2[3] = { sliceToRAS2->Element[0][axisIndex], sliceToRAS2->Element[1][axisIndex], sliceToRAS2->Element[2][axisIndex] };
+    vtkMath::Normalize(axisVector1);
+    vtkMath::Normalize(axisVector2);
+    if ((fabs(axisVector1[0] - axisVector2[0]) > comparisonTolerance)
+      || (fabs(axisVector1[1] - axisVector2[1]) > comparisonTolerance)
+      || (fabs(axisVector1[2] - axisVector2[2]) > comparisonTolerance))
+      {
+      return false;
+      }
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 {
   // only broadcast a slice node event if we are not already actively
@@ -329,10 +356,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
       if (sNode != sliceNode)
         {
         // Link slice parameters whenever the reformation is consistent
-        if (!strcmp(sNode->GetOrientationString(),
-                    sliceNode->GetOrientationString()))
-        // if (sliceNode->Matrix4x4AreEqual(sliceNode->GetSliceToRAS(),
-        //                                  sNode->GetSliceToRAS()))
+        if (vtkMRMLSliceLinkLogic::IsOrientationMatching(sliceNode, sNode))
           {
           // std::cout << "Orientation match, flags = " << sliceNode->GetInteractionFlags() << std::endl;
           // std::cout << "Broadcasting SliceToRAS, SliceOrigin, and FieldOfView to "

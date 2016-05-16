@@ -75,6 +75,9 @@ protected:
   /// Broadcast a slice composite node to other slice composite nodes
   void BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode *compositeNode);
 
+  /// Returns true if orientation of the slices match. Slice position and scaling is ignored.
+  bool IsOrientationMatching(vtkMRMLSliceNode *sliceNode1, vtkMRMLSliceNode *sliceNode2, double comparisonTolerance = 0.001);
+
 private:
 
   vtkMRMLSliceLinkLogic(const vtkMRMLSliceLinkLogic&);
