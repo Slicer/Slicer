@@ -3,7 +3,6 @@
   <category>Base</category>
   <title>Annotations</title>
   <description><![CDATA[Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs). Use the Markups module for fiducials.]]></description>
-  <version>4.3</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/Annotations</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (SPL, BWH), Daniel Haehn (SPL, BWH), Kilian Pohl (UPenn), Yong Zhang (IBM), Wendy Plesniak (SPL, BWH)</contributor>
