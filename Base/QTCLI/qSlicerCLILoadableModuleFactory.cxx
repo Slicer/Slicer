@@ -42,6 +42,30 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   // fails before returning the module. See QScopedPointer::take()
   QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
 
+  QString xmlDescription = this->resolveXMLModuleDescriptionSymbol();
+  if (!this->resolveSymbols(module->moduleDescription()))
+    {
+    return 0;
+    }
+  if (xmlDescription.isEmpty())
+    {
+    return 0;
+    }
+
+  module->setModuleType("SharedObjectModule");
+
+  module->setXmlModuleDescription(xmlDescription);
+  module->setTempDirectory(this->TempDirectory);
+  module->setPath(this->path());
+  module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
+  module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
+
+  return module.take();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLILoadableModuleFactoryItem::resolveXMLModuleDescriptionSymbol()
+{
   // Resolves symbol
   const char* xmlDescription = const_cast<const char *>(reinterpret_cast<char*>(
     this->symbolAddress("XMLModuleDescription")));
@@ -53,9 +77,14 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
     {
     this->appendInstantiateErrorString(QString("CLI loadable: %1").arg(this->path()));
     this->appendInstantiateErrorString("Failed to retrieve Xml Description");
-    return 0;
+    return QString();
     }
+  return QString(xmlDescription);
+}
 
+//-----------------------------------------------------------------------------
+bool qSlicerCLILoadableModuleFactoryItem::resolveSymbols(ModuleDescription& desc)
+{
   // Resolves symbol
   typedef int (*ModuleEntryPointType)(int argc, char* argv[]);
   ModuleEntryPointType moduleEntryPoint =
@@ -66,29 +95,21 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
     {
     this->appendInstantiateErrorString(QString("CLI loadable: %1").arg(this->path()));
     this->appendInstantiateErrorString("Failed to retrieve Module Entry Point");
-    return 0;
+    return false;
     }
 
   char buffer[256];
   // The entry point address must be encoded the same way it is decoded. As it
   // is decoded using  sscanf, it must be encoded using sprintf
   sprintf(buffer, "slicer:%p", moduleEntryPoint);
-  module->setEntryPoint(QString(buffer));
-  module->setModuleType("SharedObjectModule");
-
-  module->setXmlModuleDescription(QString(xmlDescription));
-  module->setTempDirectory(this->TempDirectory);
-  module->setPath(this->path());
-  module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
-  module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
+  desc.SetTarget(std::string(buffer)); // EntryPoint
 
   ModuleLogo logo;
-  if (updateLogo(this, logo))
+  if (this->updateLogo(this, logo))
     {
-    module->setLogo(logo);
+    desc.SetLogo(logo);
     }
-
-  return module.take();
+  return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -40,6 +40,7 @@ public:
   virtual void uninstantiate();
 protected:
   virtual qSlicerAbstractCoreModule* instanciator();
+  QString runCLIWithXmlArgument();
 private:
   QString TempDirectory;
   qSlicerCLIModule* CLIModule;

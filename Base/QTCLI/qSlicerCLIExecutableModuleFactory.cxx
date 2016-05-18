@@ -49,6 +49,26 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   module->setModuleType("CommandLineModule");
   module->setEntryPoint(this->path());
 
+  QString xmlDescription = this->runCLIWithXmlArgument();
+  if (xmlDescription.isEmpty())
+    {
+    return 0;
+    }
+
+  module->setXmlModuleDescription(xmlDescription.toLatin1());
+  module->setTempDirectory(this->TempDirectory);
+  module->setPath(this->path());
+  module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
+  module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
+
+  this->CLIModule = module.data();
+
+  return module.take();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
+{
   ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
 
   int cliProcessTimeoutInMs = 5000;
@@ -112,7 +132,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
     {
     this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
     this->appendInstantiateErrorString("Failed to retrieve Xml Description");
-    return 0;
+    return QString();
     }
   if (!xmlDescription.startsWith("<?xml"))
     {
@@ -122,16 +142,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
                                            xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
     xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
     }
-
-  module->setXmlModuleDescription(xmlDescription.toLatin1());
-  module->setTempDirectory(this->TempDirectory);
-  module->setPath(this->path());
-  module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
-  module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
-
-  this->CLIModule = module.data();
-
-  return module.take();
+  return xmlDescription;
 }
 
 //-----------------------------------------------------------------------------
