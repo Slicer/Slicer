@@ -1056,9 +1056,9 @@ int vtkMRMLNode::GetNumberOfNodeReferenceRoles()
 //----------------------------------------------------------------------------
 const char* vtkMRMLNode::GetNthNodeReferenceRole(int n)
 {
-  if (n<0 || n>=this->NodeReferences.size())
+  if (n < 0 || n >= static_cast<int>(this->NodeReferences.size()))
     {
-    vtkErrorMacro("vtkMRMLNode::GetNthNodeReferenceRole failed: n="<<n<<" is out of range");
+    vtkErrorMacro("vtkMRMLNode::GetNthNodeReferenceRole failed: n=" << n << " is out of range");
     return NULL;
     }
   NodeReferencesType::iterator roleIt( this->NodeReferences.begin() );
