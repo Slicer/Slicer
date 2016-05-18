@@ -44,16 +44,6 @@ public:
   typedef qSlicerCLIModulePrivate Self;
   qSlicerCLIModulePrivate();
 
-  QString           Title;
-  QString           Acknowledgement;
-  QString           Help;
-  QStringList       Categories;
-  QStringList       Contributors;
-  QImage            Logo;
-  int               Index;
-
-  QString           EntryPoint;
-  QString           ModuleType;
   QString           TempDirectory;
 
   ModuleDescription                 Desc;
@@ -65,7 +55,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCLIModulePrivate::qSlicerCLIModulePrivate()
 {
-  this->Index = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -117,19 +106,94 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerCLIModule, QString, title, Title);
-CTK_GET_CPP(qSlicerCLIModule, QStringList, categories, Categories);
-CTK_GET_CPP(qSlicerCLIModule, QStringList, contributors, Contributors);
-CTK_GET_CPP(qSlicerCLIModule, int, index, Index);
-CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
-CTK_GET_CPP(qSlicerCLIModule, QImage, logo, Logo);
-CTK_GET_CPP(qSlicerCLIModule, QString, helpText, Help);
+QString qSlicerCLIModule::title()const
+{
+  Q_D(const qSlicerCLIModule);
+  return QString::fromStdString(d->Desc.GetTitle());
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerCLIModule::categories()const
+{
+  Q_D(const qSlicerCLIModule);
+  return QString::fromStdString(d->Desc.GetCategory()).split(';');
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerCLIModule::contributors()const
+{
+  Q_D(const qSlicerCLIModule);
+  return QStringList() << QString::fromStdString(d->Desc.GetContributor());
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCLIModule::index()const
+{
+  Q_D(const qSlicerCLIModule);
+  bool ok = false;
+  int index = QString::fromStdString(d->Desc.GetIndex()).toInt(&ok);
+  return (ok ? index : -1);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIModule::acknowledgementText()const
+{
+  Q_D(const qSlicerCLIModule);
+  return QString::fromStdString(d->Desc.GetAcknowledgements());
+}
+
+//-----------------------------------------------------------------------------
+QImage qSlicerCLIModule::logo()const
+{
+  Q_D(const qSlicerCLIModule);
+  return this->moduleLogoToImage(d->Desc.GetLogo());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIModule::helpText()const
+{
+  Q_D(const qSlicerCLIModule);
+  QString help =
+    "%1<br>"
+    "For more detailed documentation see the online documentation at "
+    "<a href=\"%2\">%2</a>";
+
+  return help.arg(
+    QString::fromStdString(d->Desc.GetDescription())).arg(
+    QString::fromStdString(d->Desc.GetDocumentationURL()));
+}
+
+//-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerCLIModule, const QString&, setTempDirectory, TempDirectory);
 CTK_GET_CPP(qSlicerCLIModule, QString, tempDirectory, TempDirectory);
-CTK_SET_CPP(qSlicerCLIModule, const QString&, setEntryPoint, EntryPoint);
-CTK_GET_CPP(qSlicerCLIModule, QString, entryPoint, EntryPoint);
-CTK_SET_CPP(qSlicerCLIModule, const QString&, setModuleType, ModuleType);
-CTK_GET_CPP(qSlicerCLIModule, QString, moduleType, ModuleType);
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::setEntryPoint(const QString& entryPoint)
+{
+  Q_D(qSlicerCLIModule);
+  d->Desc.SetTarget(entryPoint.toStdString());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIModule::entryPoint()const
+{
+  Q_D(const qSlicerCLIModule);
+  return QString::fromStdString(d->Desc.GetTarget());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModule::setModuleType(const QString& moduleType)
+{
+  Q_D(qSlicerCLIModule);
+  d->Desc.SetType(moduleType.toStdString());
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLIModule::moduleType()const
+{
+  Q_D(const qSlicerCLIModule);
+  return QString::fromStdString(d->Desc.GetType());
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescription)
@@ -139,9 +203,8 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   Q_ASSERT(!this->entryPoint().isEmpty());
 
   // Parse module description
-  ModuleDescription desc;
   ModuleDescriptionParser parser;
-  if (parser.Parse(xmlModuleDescription.toStdString(), desc) != 0)
+  if (parser.Parse(xmlModuleDescription.toStdString(), d->Desc) != 0)
     {
     qWarning() << "Failed to parse xml module description:\n"
                << xmlModuleDescription;
@@ -149,37 +212,9 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
     }
 
   // Set properties
-  d->Title = QString::fromStdString(desc.GetTitle());
-  d->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
-  d->Contributors = QStringList() << QString::fromStdString(desc.GetContributor());
-  d->Logo = this->moduleLogoToImage(desc.GetLogo());
-  bool ok = false;
-  d->Index = QString::fromStdString(desc.GetIndex()).toInt(&ok);
-  if (!ok)
-    {
-    d->Index = -1;
-    }
-  d->Categories = QStringList() << QString::fromStdString(desc.GetCategory()).split(';');
-
-  QString help =
-    "%1<br>"
-    "For more detailed documentation see the online documentation at "
-    "<a href=\"%2\">%2</a>";
-
-  d->Help = help.arg(
-    QString::fromStdString(desc.GetDescription())).arg(
-    QString::fromStdString(desc.GetDocumentationURL()));
-
-  // Set module type
-  desc.SetType(this->moduleType().toStdString());
-
-  // Set module entry point
-  desc.SetTarget(this->entryPoint().toStdString());
 
   // Register the module description in the master list
-  vtkMRMLCommandLineModuleNode::RegisterModuleDescription(desc);
-
-  d->Desc = desc;
+  vtkMRMLCommandLineModuleNode::RegisterModuleDescription(d->Desc);
 }
 
 //-----------------------------------------------------------------------------
@@ -193,7 +228,7 @@ vtkSlicerCLIModuleLogic* qSlicerCLIModule::cliModuleLogic()
 void qSlicerCLIModule::setLogo(const ModuleLogo& logo)
 {
   Q_D(qSlicerCLIModule);
-  d->Logo = this->moduleLogoToImage(logo);
+  d->Desc.SetLogo(logo);
 }
 
 //-----------------------------------------------------------------------------
