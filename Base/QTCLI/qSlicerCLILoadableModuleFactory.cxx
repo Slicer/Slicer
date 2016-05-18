@@ -36,16 +36,93 @@ qSlicerCLILoadableModuleFactoryItem::qSlicerCLILoadableModuleFactoryItem(
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCLILoadableModuleFactoryItem::load()
+{
+  // If XML description file exists, skip loading. It will be
+  // lazily done by calling ModuleDescription::GetTarget() method.
+  if (!QFile::exists(this->xmlModuleDescriptionFilePath()))
+    {
+    return this->Superclass::load();
+    }
+  else
+    {
+    return true;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(
+    void* libraryLoader, ModuleDescription& desc)
+{
+  qSlicerCLILoadableModuleFactoryItem* item =
+      reinterpret_cast<qSlicerCLILoadableModuleFactoryItem*>(libraryLoader);
+  // Load library
+  if (!item->Superclass::load())
+    {
+    qWarning() << "Failed to load" << item->path();
+    return;
+    }
+
+  // Resolve symbols
+  if (!item->resolveSymbols(desc))
+    {
+    return;
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath()const
+{
+  QFileInfo info = QFileInfo(this->path());
+  QString moduleName =
+      qSlicerUtils::extractModuleNameFromLibraryName(info.baseName());
+  return QDir(info.path()).filePath(moduleName + ".xml");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
   // Using a scoped pointer ensures the memory will be cleaned if instantiator
   // fails before returning the module. See QScopedPointer::take()
   QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
 
-  QString xmlDescription = this->resolveXMLModuleDescriptionSymbol();
-  if (!this->resolveSymbols(module->moduleDescription()))
+  QString xmlFilePath = this->xmlModuleDescriptionFilePath();
+
+  //
+  // If the xml file exists, read it and associate it with the module
+  // description. The "ModuleEntryPoint" address will be lazily retrieved
+  // after calling ModuleDescription::GetTarget() method.
+  //
+  // If not, directly resolve the symbols "XMLModuleDescription" and
+  // "ModuleEntryPoint" from the loaded library.
+  //
+  QString xmlDescription;
+  if (QFile::exists(xmlFilePath))
     {
-    return 0;
+    QFile xmlFile(xmlFilePath);
+    if (xmlFile.open(QIODevice::ReadOnly))
+      {
+      xmlDescription = QTextStream(&xmlFile).readAll();
+      }
+    else
+      {
+      this->appendInstantiateErrorString(QString("CLI description: %1").arg(xmlFilePath));
+      this->appendInstantiateErrorString("Failed to read Xml Description");
+      return 0;
+      }
+    // Set callback to allow lazy loading of target symbols.
+    module->moduleDescription().SetTargetCallback(
+          this, qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols);
+    }
+  else
+    {
+    // Library is expected to already be loaded
+    // in qSlicerCLILoadableModuleFactoryItem::load()
+    xmlDescription = this->resolveXMLModuleDescriptionSymbol();
+    if (!this->resolveSymbols(module->moduleDescription()))
+      {
+      return 0;
+      }
     }
   if (xmlDescription.isEmpty())
     {

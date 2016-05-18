@@ -41,7 +41,15 @@ class qSlicerCLILoadableModuleFactoryItem
 public:
   typedef ctkFactoryLibraryItem<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLILoadableModuleFactoryItem(const QString& newTempDirectory);
+  virtual bool load();
+
+  static void loadLibraryAndResolveSymbols(
+      void* libraryLoader,  ModuleDescription& desc);
+
 protected:
+  /// Return path of the expected XML file.
+  QString xmlModuleDescriptionFilePath()const;
+
   virtual qSlicerAbstractCoreModule* instanciator();
   QString resolveXMLModuleDescriptionSymbol();
   bool resolveSymbols(ModuleDescription& desc);
