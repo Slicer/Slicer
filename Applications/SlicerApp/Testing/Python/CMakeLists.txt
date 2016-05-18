@@ -116,6 +116,17 @@ nowarning_test(nomainwindow_nocli_noloadable_noscripted --no-main-window --disab
 nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
 
 #
+# Test Slicer command line options
+#
+
+add_test(
+  NAME py_SlicerOptionDisableSettingsTest
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionDisableSettingsTest.py
+    ${Slicer_LAUNCHER_EXECUTABLE}
+  )
+
+#
 # Check if scripted module import works as expected
 #
 

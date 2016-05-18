@@ -1209,16 +1209,22 @@ QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
   QFileInfo fileInfo = QFileInfo(this->userSettings()->fileName());
   QString prefix = fileInfo.completeBaseName();
   QString suffix = "-" + this->repositoryRevision();
-  if (this->coreCommandOptions()->isTestingEnabled() ||
-      this->coreCommandOptions()->settingsDisabled())
+  bool useTmp = this->coreCommandOptions()->isTestingEnabled() ||
+      this->coreCommandOptions()->settingsDisabled();
+  if (useTmp)
     {
     suffix += "-tmp";
+    useTmp = true;
     }
   QString fileName =
       QDir(fileInfo.path()).filePath(QString("%1%2%3.ini")
                                      .arg(prefix)
                                      .arg(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME)
                                      .arg(suffix));
+  if (useTmp)
+    {
+    QSettings(fileName, QSettings::IniFormat).clear();
+    }
   return fileName;
 }
 
