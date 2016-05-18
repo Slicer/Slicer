@@ -36,7 +36,6 @@
 #include <ModuleDescription.h>
 #include <ModuleDescriptionParser.h>
 #include <ModuleLogo.h>
-#include <ModuleProcessInformation.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModulePrivate
@@ -58,7 +57,6 @@ public:
   QString           TempDirectory;
 
   ModuleDescription                 Desc;
-  ModuleProcessInformation*         ProcessInformation;
 };
 
 //-----------------------------------------------------------------------------
@@ -67,7 +65,6 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCLIModulePrivate::qSlicerCLIModulePrivate()
 {
-  this->ProcessInformation = 0;
   this->Index = -1;
 }
 
@@ -163,8 +160,6 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
     d->Index = -1;
     }
   d->Categories = QStringList() << QString::fromStdString(desc.GetCategory()).split(';');
-
-  d->ProcessInformation = desc.GetProcessInformation();
 
   QString help =
     "%1<br>"
