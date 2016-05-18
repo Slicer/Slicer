@@ -71,7 +71,11 @@ public:
   ///   in the secondary transform.
   /// preferITKv3CompatibleTransforms: If true then BSpline transform will created as BSplineDeformableTransform and additive bulk transform component is always written
   ///   in the secondary transform. If false then BSpline transform will be written as BSplineTransform (multiplicative bulk component is saved in a composite transform).
-  static itk::Object::Pointer CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms);
+  /// If initialize is set to true then the transform is initialized to be readily usable.
+  /// Initialization takes a long time for kernel transforms with many points,
+  /// If a transform is created only to write it to file, initialization can be turned off to improve performance.
+  static itk::Object::Pointer CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk,
+    itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms, bool initialize = true);
 
   template <typename T> static bool SetVTKBSplineFromITKv3Generic(vtkObject* loggerObject, vtkOrientedBSplineTransform* bsplineVtk, typename itk::TransformBaseTemplate<T>::Pointer warpTransformItk, typename itk::TransformBaseTemplate<T>::Pointer bulkTransformItk);
 
@@ -94,7 +98,8 @@ protected:
 
   template<typename T>
   static bool SetVTKThinPlateSplineTransformFromITK(vtkObject* loggerObject, vtkThinPlateSplineTransform* transformVtk_RAS, typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
-  static bool SetITKThinPlateSplineTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkThinPlateSplineTransform* transformVtk_RAS);
+  static bool SetITKThinPlateSplineTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS,
+    vtkThinPlateSplineTransform* transformVtk_RAS, bool initialize = true);
 
   static bool IsIdentityMatrix(vtkMatrix4x4 *matrix);
 
@@ -1167,7 +1172,8 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
 }
 
 //----------------------------------------------------------------------------
-bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkThinPlateSplineTransform* transformVtk_RAS)
+bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* loggerObject,
+  itk::Object::Pointer& transformItk_LPS, vtkThinPlateSplineTransform* transformVtk_RAS, bool initialize /*= true*/)
 {
   if (transformVtk_RAS==NULL)
     {
@@ -1220,7 +1226,10 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
     InverseThinPlateSplineTransformDoubleType::Pointer tpsTransformItk = InverseThinPlateSplineTransformDoubleType::New();
     tpsTransformItk->SetSourceLandmarks(sourceLandmarksItk_Lps);
     tpsTransformItk->SetTargetLandmarks(targetLandmarksItk_Lps);
-    tpsTransformItk->ComputeWMatrix();
+    if (initialize)
+      {
+      tpsTransformItk->ComputeWMatrix();
+      }
     transformItk_LPS = tpsTransformItk;
     }
   else
@@ -1228,7 +1237,10 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
     ThinPlateSplineTransformDoubleType::Pointer tpsTransformItk = ThinPlateSplineTransformDoubleType::New();
     tpsTransformItk->SetSourceLandmarks(sourceLandmarksItk_Lps);
     tpsTransformItk->SetTargetLandmarks(targetLandmarksItk_Lps);
-    tpsTransformItk->ComputeWMatrix();
+    if (initialize)
+      {
+      tpsTransformItk->ComputeWMatrix();
+      }
     transformItk_LPS = tpsTransformItk;
     }
   return true;
@@ -1283,7 +1295,8 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(
 }
 
 //----------------------------------------------------------------------------
-itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObject* loggerObject, vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms)
+itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObject* loggerObject,
+  vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms, bool initialize /*= true*/)
 {
   typedef itk::CompositeTransform< double > CompositeTransformType;
 
@@ -1356,7 +1369,7 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
     else if (vtkThinPlateSplineTransform::SafeDownCast(singleTransformVtk))
       {
       vtkThinPlateSplineTransform* tpsTransformVtk = vtkThinPlateSplineTransform::SafeDownCast(singleTransformVtk);
-      if (!SetITKThinPlateSplineTransformFromVTK(loggerObject, primaryTransformItk, tpsTransformVtk))
+      if (!SetITKThinPlateSplineTransformFromVTK(loggerObject, primaryTransformItk, tpsTransformVtk, initialize))
         {
         // conversion failed
         return 0;

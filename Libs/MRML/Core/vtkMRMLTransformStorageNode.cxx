@@ -477,7 +477,10 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
 
   // Convert VTK transform to ITK transform
   itk::Object::Pointer secondaryTransformItk; // only used for ITKv3 compatibility
-  itk::Object::Pointer transformItk = vtkITKTransformConverter::CreateITKTransformFromVTK(this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms);
+  // ITK transform is created without initialization, because initialization may take a long time for certain transform types
+  // which would slow down saving. Initialization is only needed for computing transformations, not necessary for file writing.
+  itk::Object::Pointer transformItk = vtkITKTransformConverter::CreateITKTransformFromVTK(
+    this, transformVtk, secondaryTransformItk, this->PreferITKv3CompatibleTransforms, false);
   if (transformItk.IsNull())
     {
     vtkErrorMacro("WriteTransform failed: cannot to convert VTK transform to ITK transform");
