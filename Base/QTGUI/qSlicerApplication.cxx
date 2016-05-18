@@ -473,7 +473,16 @@ void qSlicerApplication::handleCommandLineArguments()
 
   if (options->exitAfterStartup())
     {
-    this->quit();
+#ifdef Slicer_USE_PYTHONQT
+    if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+      {
+      this->exit(this->corePythonManager()->pythonErrorOccured() ? EXIT_FAILURE : EXIT_SUCCESS);
+      }
+    else
+#endif
+      {
+      this->quit();
+      }
     }
 }
 
