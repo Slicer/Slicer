@@ -245,6 +245,13 @@ QImage qSlicerCLIModule::moduleLogoToImage(const ModuleLogo& logo)
 }
 
 //-----------------------------------------------------------------------------
+ModuleDescription& qSlicerCLIModule::moduleDescription()
+{
+  Q_D(qSlicerCLIModule);
+  return d->Desc;
+}
+
+//-----------------------------------------------------------------------------
 QStringList qSlicerCLIModule::associatedNodeTypes()const
 {
   return QStringList() << "vtkMRMLCommandLineModuleNode";
