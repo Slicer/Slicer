@@ -54,9 +54,8 @@ def run(executable, arguments=[], verbose=False):
     if not verbose:
       print('STDOUT: ' + stdout)
     print('STDERR: ' + stderr)
-    verbose = True
 
-  return p.returncode
+  return (p.returncode, stdout, stderr)
 
 def runSlicer(slicer_executable, arguments=[], verbose=False):
   """Run ``slicer_executable`` with provided ``arguments``.

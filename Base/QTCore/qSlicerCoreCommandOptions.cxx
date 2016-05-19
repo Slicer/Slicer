@@ -320,6 +320,13 @@ bool qSlicerCoreCommandOptions::settingsDisabled() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::keepTemporarySettings() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("keep-temporary-settings").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::isTestingEnabled() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -420,6 +427,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("disable-settings", "", QVariant::Bool,
                     "Start application ignoring user settings and using new temporary settings.");
+
+  this->addArgument("keep-temporary-settings", "", QVariant::Bool,
+                    "Indicate whether temporary settings should be maintained.");
 
   this->addArgument("disable-message-handlers", "", QVariant::Bool,
                     "Start application disabling the 'terminal' message handlers.");

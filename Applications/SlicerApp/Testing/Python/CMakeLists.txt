@@ -120,7 +120,7 @@ nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
 #
 
 add_test(
-  NAME py_SlicerOptionDisableSettingsTest
+  NAME py_nomainwindow_SlicerOptionDisableSettingsTest
   COMMAND ${PYTHON_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionDisableSettingsTest.py
     ${Slicer_LAUNCHER_EXECUTABLE}

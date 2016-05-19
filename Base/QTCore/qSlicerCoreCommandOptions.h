@@ -166,8 +166,15 @@ public:
   ///
   /// When disabled, temporary settings file are created.
   ///
-  /// \note Temporary settings are always cleared.
+  /// By default, temporary settings are cleared unless keepTemporarySettings()
+  /// returns \a True.
   bool settingsDisabled() const;
+
+  /// Returns a value indicating whether temporary settings should be maintained.
+  ///
+  /// Temporary settings are created when settingsDisabled() is \a true and
+  /// are cleared by default.
+  bool keepTemporarySettings() const;
 
   /// Return True if slicer is in testing mode.
   /// Typically set when running unit tests:

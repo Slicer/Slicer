@@ -386,7 +386,7 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
     q->setApplicationName(q->applicationName() + "-tmp");
     }
   QSettings* settings = this->newSettings();
-  if (useTmp)
+  if (useTmp && !q->coreCommandOptions()->keepTemporarySettings())
     {
     settings->clear();
     }
@@ -848,6 +848,12 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     return;
     }
 
+  if (!options->settingsDisabled() && options->keepTemporarySettings())
+    {
+    qWarning() << "Argument '--keep-temporary-settings' requires "
+                  "'--settings-disabled' to be specified.";
+    }
+
   if (options->isTestingEnabled())
     {
     this->setAttribute(AA_EnableTesting);
@@ -1219,7 +1225,7 @@ QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
                                      .arg(prefix)
                                      .arg(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME)
                                      .arg(suffix));
-  if (useTmp)
+  if (useTmp && !this->coreCommandOptions()->keepTemporarySettings())
     {
     QSettings(fileName, QSettings::IniFormat).clear();
     }
