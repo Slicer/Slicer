@@ -386,47 +386,47 @@ void qSlicerCoreCommandOptions::addArguments()
                     "List of additional module path to consider when searching for modules to load.");
 
   this->addArgument("disable-modules", "", QVariant::Bool,
-                    "Disables the loading of any Modules.");
+                    "Disable the loading of any Modules.");
 
   this->addArgument("disable-builtin-modules", "", QVariant::Bool,
-                    "Disables the loading of builtin Modules.");
+                    "Disable the loading of builtin Modules.");
 
 #ifdef Slicer_BUILD_CLI_SUPPORT
   this->addArgument("disable-cli-modules", "", QVariant::Bool,
-                    "Disables the loading of any Command Line Modules.");
+                    "Disable the loading of any Command Line Modules.");
 
   this->addArgument("disable-builtin-cli-modules", "", QVariant::Bool,
-                    "Disables the loading of builtin Command Line Modules.");
+                    "Disable the loading of builtin Command Line Modules.");
 #endif
 
   this->addArgument("disable-loadable-modules", "", QVariant::Bool,
-                    "Disables the loading of any Loadable Modules.");
+                    "Disable the loading of any Loadable Modules.");
 
   this->addArgument("disable-builtin-loadable-modules", "", QVariant::Bool,
-                    "Disables the loading of builtin Loadable Modules.");
+                    "Disable the loading of builtin Loadable Modules.");
 
 #ifdef Slicer_USE_PYTHONQT
   this->addArgument("disable-scripted-loadable-modules", "", QVariant::Bool,
-                    "Disables the loading of any Scripted Loadable Modules.");
+                    "Disable the loading of any Scripted Loadable Modules.");
 
   this->addArgument("disable-builtin-scripted-loadable-modules", "", QVariant::Bool,
-                    "Disables the loading of builtinScripted Loadable Modules.");
+                    "Disable the loading of builtinScripted Loadable Modules.");
 #endif
 
   this->addArgument("version", "", QVariant::Bool,
-                    "Displays version information and exits.");
+                    "Display version information and exits.");
 
   this->addArgument("program-path", "", QVariant::Bool,
-                    "Displays application program path and exits.");
+                    "Display application program path and exits.");
 
   this->addArgument("home", "", QVariant::Bool,
-                    "Displays home path and exits.");
+                    "Display home path and exits.");
 
   this->addArgument("settings-path", "", QVariant::Bool,
-                    "Displays settings path and exits.");
+                    "Display settings path and exits.");
 
   this->addArgument("temporary-path", "", QVariant::Bool,
-                    "Displays temporary path and exits.");
+                    "Display temporary path and exits.");
 
   this->addArgument("verbose-module-discovery", "", QVariant::Bool,
                     "Enable verbose output during module discovery process.");

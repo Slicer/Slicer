@@ -77,13 +77,13 @@ void qSlicerCommandOptions::addArguments()
   this->Superclass::addArguments();
 
   this->addArgument("disable-tooltips", "", QVariant::Bool,
-                    "Disables toolstips in the user interface.");
+                    "Disable toolstips in the user interface.");
 
   this->addArgument("no-splash", "", QVariant::Bool,
-                    "Disables the startup splash screen.");
+                    "Disable the startup splash screen.");
 
   this->addArgument("no-main-window", "", QVariant::Bool,
-                    "Disables display of the main slicer window.  Use with --python-script for alternate interface");
+                    "Disable display of the main slicer window.  Use with --python-script for alternate interface");
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
