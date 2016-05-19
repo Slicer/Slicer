@@ -133,6 +133,16 @@ add_test(
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
+if(UNIX)
+  add_test(
+    NAME py_nomainwindow_SlicerOptionModulesToIgnoreTest
+    COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionModulesToIgnoreTest.py
+      ${Slicer_LAUNCHER_EXECUTABLE}
+      ${Slicer_BINARY_DIR}/bin/slicerExtensionWizard
+    )
+endif()
+
 #
 # Check if scripted module import works as expected
 #

@@ -37,6 +37,18 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsModulesPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
+
+  /// This property holds the names of the modules to ignore at registration time.
+  ///
+  /// It corresponds to the names of the modules that are expected to always
+  /// be ignored by saving and restoring them from the application settings.
+  ///
+  /// \sa qSlicerAbstractModuleFactoryManager::modulesToIgnore
+  Q_PROPERTY(QStringList modulesToAlwaysIgnore
+             READ modulesToAlwaysIgnore
+             WRITE setModulesToAlwaysIgnore
+             NOTIFY modulesToAlwaysIgnoreChanged)
+
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -47,7 +59,19 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsModulesPanel();
 
+  /// Get the \a modulesToAlwaysIgnore list.
+  /// \sa setModulesToAlwaysIgnore(const QStringList& modulesNames)
+  QStringList modulesToAlwaysIgnore()const;
+
 public slots:
+
+  /// Set the \a modulesToAlwaysIgnore list.
+  ///
+  /// If list is modified, the signal
+  /// modulesToAlwaysIgnoreChanged(const QStringLists&) is emitted.
+  ///
+  /// \sa modulesToAlwaysIgnore()
+  void setModulesToAlwaysIgnore(const QStringList& modulesNames);
 
 protected slots:
   void onHomeModuleChanged(const QString& moduleName);
@@ -57,7 +81,9 @@ protected slots:
   void onAdditionalModulePathsChanged();
   void onAddModulesAdditionalPathClicked();
   void onRemoveModulesAdditionalPathClicked();
-  void onModulesToIgnoreChanged();
+
+signals:
+  void modulesToAlwaysIgnoreChanged(const QStringList& modulesNames);
 
 protected:
   QScopedPointer<qSlicerSettingsModulesPanelPrivate> d_ptr;

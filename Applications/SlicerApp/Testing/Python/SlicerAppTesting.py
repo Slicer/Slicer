@@ -38,13 +38,15 @@ EXIT_FAILURE=1
 EXIT_SUCCESS=0
 
 
-def run(executable, arguments=[], verbose=False):
+def run(executable, arguments=[], verbose=False, shell=False):
   """Run ``executable`` with provided ``arguments``.
   """
   print("%s %s" % (os.path.basename(executable), " ".join([pipes.quote(arg) for arg in arguments])))
   arguments.insert(0, executable)
+  if shell:
+    arguments = " ".join([pipes.quote(arg) for arg in arguments])
   p = subprocess.Popen(args=arguments, stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE)
+                       stderr=subprocess.PIPE, shell=shell)
   stdout, stderr = p.communicate()
 
   if verbose:
