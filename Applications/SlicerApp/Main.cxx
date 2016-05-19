@@ -174,6 +174,12 @@ int SlicerAppMain(int argc, char* argv[])
   moduleFactoryManager->addSearchPaths(additionalModulePaths);
   qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
 
+  // Set list of modules to ignore
+  foreach(const QString& moduleToIgnore, app.commandOptions()->modulesToIgnore())
+    {
+    moduleFactoryManager->addModuleToIgnore(moduleToIgnore);
+    }
+
   // Register and instantiate modules
   splashMessage(splashScreen, "Registering modules...");
   moduleFactoryManager->registerModules();

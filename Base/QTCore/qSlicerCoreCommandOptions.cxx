@@ -163,6 +163,14 @@ bool qSlicerCoreCommandOptions::disableBuiltInModules() const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerCoreCommandOptions::modulesToIgnore() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  QString modulesToIgnore = d->ParsedArgs.value("modules-to-ignore").toString();
+  return modulesToIgnore.size() == 0 ? QStringList() : modulesToIgnore.split(",");
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableCLIModules() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -384,6 +392,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("additional-module-paths", "", QVariant::StringList,
                     "List of additional module path to consider when searching for modules to load.");
+
+  this->addArgument("modules-to-ignore", "", QVariant::String,
+                    "Comma separated list of modules that should *NOT* be loaded.");
 
   this->addArgument("disable-modules", "", QVariant::Bool,
                     "Disable the loading of any Modules.");
