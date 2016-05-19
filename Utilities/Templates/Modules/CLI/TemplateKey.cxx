@@ -15,7 +15,7 @@ namespace
 {
 
 template <typename TPixel>
-int DoIt( int argc, char * argv[], T )
+int DoIt( int argc, char * argv[], TPixel )
 {
   PARSE_ARGS;
 
