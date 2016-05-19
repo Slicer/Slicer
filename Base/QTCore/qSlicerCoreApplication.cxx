@@ -996,7 +996,6 @@ QSettings* qSlicerCoreApplication::userSettings()const
   if(!mutable_d->UserSettings)
     {
     mutable_d->UserSettings = mutable_d->instantiateSettings(
-          this->coreCommandOptions()->isTestingEnabled() ||
           this->coreCommandOptions()->settingsDisabled());
     }
   return mutable_d->UserSettings;
@@ -1209,8 +1208,7 @@ QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
   QFileInfo fileInfo = QFileInfo(this->userSettings()->fileName());
   QString prefix = fileInfo.completeBaseName();
   QString suffix = "-" + this->repositoryRevision();
-  bool useTmp = this->coreCommandOptions()->isTestingEnabled() ||
-      this->coreCommandOptions()->settingsDisabled();
+  bool useTmp = this->coreCommandOptions()->settingsDisabled();
   if (useTmp)
     {
     suffix += "-tmp";

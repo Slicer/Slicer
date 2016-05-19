@@ -315,7 +315,8 @@ bool qSlicerCoreCommandOptions::disableTerminalOutputs()const
 bool qSlicerCoreCommandOptions::settingsDisabled() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("disable-settings").toBool();
+  return d->ParsedArgs.value("disable-settings").toBool() ||
+      this->isTestingEnabled();
 }
 
 //-----------------------------------------------------------------------------
@@ -345,7 +346,7 @@ void qSlicerCoreCommandOptions::addArguments()
                     "Display available command line arguments.");
 
   this->addArgument("testing", "", QVariant::Bool,
-                    "Activate testing mode. Doesn't use user settings in that mode.",
+                    "Activate testing mode. It implies --disable-settings.",
                     QVariant(false));
 
 #ifdef Slicer_USE_PYTHONQT
@@ -418,7 +419,7 @@ void qSlicerCoreCommandOptions::addArguments()
                     "Enable verbose output during module discovery process.");
 
   this->addArgument("disable-settings", "", QVariant::Bool,
-                    "Start application ignoring user settings.");
+                    "Start application ignoring user settings and using new temporary settings.");
 
   this->addArgument("disable-message-handlers", "", QVariant::Bool,
                     "Start application disabling the 'terminal' message handlers.");

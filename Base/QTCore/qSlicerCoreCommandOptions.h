@@ -162,21 +162,24 @@ public:
   /// \sa ctkErrorLogModel::setTerminalOutputs()
   bool disableTerminalOutputs()const;
 
-  /// Return True if slicer settings are ignored
+  /// Return a value indicating if slicer settings should be disabled.
+  ///
+  /// When disabled, temporary settings file are created.
+  ///
+  /// \note Temporary settings are always cleared.
   bool settingsDisabled() const;
 
   /// Return True if slicer is in testing mode.
   /// Typically set when running unit tests:
   ///  ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
-  /// \note Using this option is equivalent to 'disable-settings' option. Note that
-  /// this may change in the future.
-  /// \sa settingsEnabled()
+  /// \note Using this option implies 'disable-settings' option.
+  /// \sa settingsDisabled()
   bool isTestingEnabled()const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Return True if slicer has no python infrastructure initialized.
   /// Python is still compiled with the app, but not enabled at run-time.
-  /// \sa settingsEnabled()
+  /// \sa settingsDisabled()
   bool isPythonDisabled()const;
 #endif
 
