@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-// MRMLDisplayableManager includes
+// vtkAddon includes
 #include <vtkLoggingMacros.h>
 
 // VTK includes
