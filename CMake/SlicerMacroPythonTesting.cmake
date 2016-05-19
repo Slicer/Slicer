@@ -33,7 +33,7 @@ macro(SLICER_ADD_PYTHON_TEST)
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash
     --testing
-    --ignore-slicerrc ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS} ${MY_SLICER_ARGS}
+    ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS} ${MY_SLICER_ARGS}
     --python-script ${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
   set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
@@ -54,7 +54,7 @@ macro(SLICER_ADD_PYTHON_UNITTEST)
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash
     --testing
-    --ignore-slicerrc ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
+    ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
     --python-code "import slicer.testing\\; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     ${MY_SLICER_ARGS}
     )

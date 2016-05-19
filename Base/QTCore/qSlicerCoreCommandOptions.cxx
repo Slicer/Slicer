@@ -129,7 +129,8 @@ bool qSlicerCoreCommandOptions::ignoreRest() const
 bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("ignore-slicerrc").toBool();
+  return d->ParsedArgs.value("ignore-slicerrc").toBool() ||
+      this->isTestingEnabled();
 }
 
 //-----------------------------------------------------------------------------
@@ -352,8 +353,13 @@ void qSlicerCoreCommandOptions::addArguments()
   this->addArgument("help", "h", QVariant::Bool,
                     "Display available command line arguments.");
 
+#ifdef Slicer_USE_PYTHONQT
+  QString testingDescription = "Activate testing mode. It implies --disable-settings and --ignore-slicerrc.";
+#else
+  QString testingDescription = "Activate testing mode. It implies --disable-settings.";
+#endif
   this->addArgument("testing", "", QVariant::Bool,
-                    "Activate testing mode. It implies --disable-settings.",
+                    testingDescription,
                     QVariant(false));
 
 #ifdef Slicer_USE_PYTHONQT

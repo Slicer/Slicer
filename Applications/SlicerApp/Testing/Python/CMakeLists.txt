@@ -9,14 +9,14 @@ set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../../Data/Input)
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest1
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --ignore-slicerrc --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
   --python-code "exit(slicer.util.EXIT_SUCCESS)"
   )
 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest2
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --ignore-slicerrc --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
   --python-code "exit(slicer.util.EXIT_FAILURE)"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL TRUE)
@@ -24,14 +24,14 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest3
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --ignore-slicerrc --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
   --python-code "import slicer.testing; slicer.testing.exitSuccess()"
   )
 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest4
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --ignore-slicerrc --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
   --python-code "import slicer.testing; slicer.testing.exitFailure('Should fail !')"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
@@ -39,7 +39,7 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest5
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --ignore-slicerrc --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
   --python-code "raise Exception('Should fail !')"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest5 PROPERTIES WILL_FAIL TRUE)
@@ -88,7 +88,7 @@ macro(nowarning_test test_name)
   add_test(
     NAME py_nowarning_${test_name}Test
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-    ${ARGN} --ignore-slicerrc --testing --python-code "exit(slicer.util.EXIT_SUCCESS)"
+    ${ARGN} --testing --python-code "exit(slicer.util.EXIT_SUCCESS)"
     )
   set(fail_regexp)
   list(APPEND fail_regexp "Failed to obtain reference to")
@@ -123,6 +123,13 @@ add_test(
   NAME py_nomainwindow_SlicerOptionDisableSettingsTest
   COMMAND ${PYTHON_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionDisableSettingsTest.py
+    ${Slicer_LAUNCHER_EXECUTABLE}
+  )
+
+add_test(
+  NAME py_nomainwindow_SlicerOptionIgnoreSlicerRCTest
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionIgnoreSlicerRCTest.py
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
