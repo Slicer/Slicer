@@ -227,8 +227,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   ///
   /// helper for comparing to matrices
-  /// TODO: is there a standard VTK method?
-  int Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2);
+  bool Matrix4x4AreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2);
 
   ///
   /// Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS

@@ -42,7 +42,7 @@
 #include <vtkTrivialProducer.h>
 #include <vtkTransform.h>
 #include <vtkVersion.h>
-
+#include <vtkAddonMathUtilities.h>
 
 //
 #include "vtkImageLabelOutline.h"
@@ -55,22 +55,7 @@ vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
 bool AreMatricesEqual(const vtkMatrix4x4* first, const vtkMatrix4x4* second)
 {
-  return first->GetElement(0,0) == second->GetElement(0,0) &&
-         first->GetElement(0,1) == second->GetElement(0,1) &&
-         first->GetElement(0,2) == second->GetElement(0,2) &&
-         first->GetElement(0,3) == second->GetElement(0,3) &&
-         first->GetElement(1,0) == second->GetElement(1,0) &&
-         first->GetElement(1,1) == second->GetElement(1,1) &&
-         first->GetElement(1,2) == second->GetElement(1,2) &&
-         first->GetElement(1,3) == second->GetElement(1,3) &&
-         first->GetElement(2,0) == second->GetElement(2,0) &&
-         first->GetElement(2,1) == second->GetElement(2,1) &&
-         first->GetElement(2,2) == second->GetElement(2,2) &&
-         first->GetElement(2,3) == second->GetElement(2,3) &&
-         first->GetElement(3,0) == second->GetElement(3,0) &&
-         first->GetElement(3,1) == second->GetElement(3,1) &&
-         first->GetElement(3,2) == second->GetElement(3,2) &&
-         first->GetElement(3,3) == second->GetElement(3,3);
+  return vtkAddonMathUtilities::Matrix4x4AreEqual(first, second, /* tolerance= */ 0);
 }
 
 // Convert a linear transform that is almost exactly a permute transform

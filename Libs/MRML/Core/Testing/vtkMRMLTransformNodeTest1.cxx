@@ -10,31 +10,23 @@
 
 =========================================================================auto=*/
 
+// MRML includes
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 
+// VTK includes
 #include <vtkGeneralTransform.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkTransform.h>
+#include <vtkAddonMathUtilities.h>
 
 // TODO: Move this fuzzy matrix comparison with configurable tolerance to vtkAddon
-bool Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2)
+bool Matrix4x4AreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
 {
-  const double tol = 1e-3;
-  for (int i = 0; i < 4; i++)
-    {
-    for (int j = 0; j < 4; j++)
-      {
-      if ( fabs(m1->GetElement(i, j) - m2->GetElement(i, j)) > tol )
-        {
-        return false;
-        }
-      }
-    }
-    return true;
+  return vtkAddonMathUtilities::Matrix4x4AreEqual(m1, m2);
 }
 
 vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double translateZ, double rotateX, double rotateY, double rotateZ)

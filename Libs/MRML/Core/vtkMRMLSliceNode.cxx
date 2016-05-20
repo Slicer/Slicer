@@ -24,6 +24,7 @@ Version:   $Revision: 1.2 $
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkVector.h>
+#include <vtkAddonMathUtilities.h>
 
 // VNL includes
 #include <vnl/vnl_double_3.h>
@@ -434,20 +435,9 @@ void vtkMRMLSliceNode::SetOrientationToCoronal()
 
 //----------------------------------------------------------------------------
 // Local helper to compare matrices -- TODO: is there a standard version of this?
-int vtkMRMLSliceNode::Matrix4x4AreEqual(vtkMatrix4x4 *m1, vtkMatrix4x4 *m2)
+bool vtkMRMLSliceNode::Matrix4x4AreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
 {
-  int i,j;
-  for (i = 0; i < 4; i++)
-    {
-    for (j = 0; j < 4; j++)
-      {
-      if ( m1->GetElement(i, j) != m2->GetElement(i, j) )
-        {
-        return 0;
-        }
-      }
-    }
-    return 1;
+  return vtkAddonMathUtilities::Matrix4x4AreEqual(m1, m2, /* tolerance= */ 0);
 }
 
 //----------------------------------------------------------------------------
