@@ -27,6 +27,8 @@
 // MRMLLogic includes
 #include "vtkMRMLColorLogic.h"
 
+
+using namespace vtkAddonTestingUtilities;
 using namespace vtkMRMLCoreTestingUtilities;
 
 namespace

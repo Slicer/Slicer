@@ -1,6 +1,7 @@
 set(KIT vtkAddon)
 
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+  vtkAddonTestingUtilitiesTest1.cxx
   vtkLoggingMacrosTest1.cxx
   )
 
@@ -19,4 +20,5 @@ macro(TEST_FILE TEST_NAME FILENAME)
     )
 endmacro()
 
+simple_test( vtkAddonTestingUtilitiesTest1 )
 simple_test( vtkLoggingMacrosTest1 )

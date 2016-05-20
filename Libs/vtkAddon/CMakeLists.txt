@@ -49,6 +49,9 @@ endif()
 # Sources
 # --------------------------------------------------------------------------
 set(vtkAddon_SRCS
+  vtkAddonTestingUtilities.cxx
+  vtkAddonTestingUtilities.h
+  vtkAddonTestingUtilities.txx
   vtkLoggingMacros.h
   vtkTestingOutputWindow.cxx
   vtkTestingOutputWindow.h
@@ -67,6 +70,7 @@ set(vtkAddon_SRCS
 # Helper classes
 
 set_source_files_properties(
+  vtkAddonTestingUtilities.h
   vtkLoggingMacros.h 
   WRAP_EXCLUDE
   )

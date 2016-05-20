@@ -32,6 +32,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+using namespace vtkAddonTestingUtilities;
 using namespace vtkMRMLCoreTestingUtilities;
 
 //----------------------------------------------------------------------------

@@ -43,42 +43,11 @@ class vtkMRMLTransformNode;
 
 /// This module provides functions to facilitate writing tests.
 ///
-/// Example:
-///
-/// \code{.cpp}
-/// int current = 40 + 2;
-/// int expected = 43;
-/// if (!CheckInt(__LINE__, "40 + 2", current, expected))
-///   {
-///   return false;
-///   }
-/// \endcode
-///
 /// Usually these test methods are used by single-line convenience macros
 /// defined in vtkMRMLCoreTestingMacros.h.
 
 namespace vtkMRMLCoreTestingUtilities
 {
-
-VTK_MRML_EXPORT
-bool CheckInt(int line, const std::string& description,
-              int current, int expected);
-
-VTK_MRML_EXPORT
-bool CheckNotNull(int line, const std::string& description,
-                  const void* pointer);
-
-VTK_MRML_EXPORT
-bool CheckNull(int line, const std::string& description,
-               const void* pointer);
-
-VTK_MRML_EXPORT
-bool CheckPointer(int line, const std::string& description,
-                  void* current, void* expected, bool errorIfDifferent = true);
-
-VTK_MRML_EXPORT
-bool CheckString(int line, const std::string& description,
-                 const char* current, const char* expected, bool errorIfDifferent = true );
 
 VTK_MRML_EXPORT
 bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene,

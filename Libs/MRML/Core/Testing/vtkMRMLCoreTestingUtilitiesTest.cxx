@@ -30,11 +30,6 @@
 using namespace vtkMRMLCoreTestingUtilities;
 
 //----------------------------------------------------------------------------
-bool TestCheckInt();
-bool TestCheckNotNull();
-bool TestCheckNull();
-bool TestCheckPointer();
-bool TestCheckString();
 bool TestCheckNodeInSceneByID();
 bool TestCheckNodeIdAndName();
 
@@ -42,82 +37,9 @@ bool TestCheckNodeIdAndName();
 int vtkMRMLCoreTestingUtilitiesTest(int , char * [] )
 {
   bool res = true;
-  res = res && TestCheckInt();
-  res = res && TestCheckNotNull();
-  res = res && TestCheckNull();
-  res = res && TestCheckPointer();
-  res = res && TestCheckString();
   res = res && TestCheckNodeInSceneByID();
   res = res && TestCheckNodeIdAndName();
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-//----------------------------------------------------------------------------
-bool TestCheckInt()
-{
-  if (!CheckInt(__LINE__, "TestCheckInt", 1, 1)
-      || CheckInt(__LINE__, "TestCheckInt Expected Failure", 1, -1))
-    {
-    std::cerr << "Line " << __LINE__ << " - TestCheckInt failed" << std::endl;
-    return false;
-    }
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool TestCheckNotNull()
-{
-  int foo = 1;
-  if (!CheckNotNull(__LINE__, "TestCheckNotNull", &foo)
-      || CheckNotNull(__LINE__, "TestCheckNotNull Expected Failure", 0))
-    {
-    std::cerr << "Line " << __LINE__ << " - TestCheckNotNull failed" << std::endl;
-    return false;
-    }
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool TestCheckNull()
-{
-  int foo = 1;
-  if (!CheckNull(__LINE__, "TestCheckNull", 0)
-      || CheckNull(__LINE__, "TestCheckNull Expected Failure", &foo))
-    {
-    std::cerr << "Line " << __LINE__ << " - TestCheckNull failed" << std::endl;
-    return false;
-    }
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool TestCheckPointer()
-{
-  int foo = 1;
-  int bar = 1;
-  if (!CheckPointer(__LINE__, "TestCheckPointer", &foo, &foo)
-      || CheckPointer(__LINE__, "TestCheckPointer Expected Failure", &foo, &bar))
-    {
-    std::cerr << "Line " << __LINE__ << " - TestCheckPointer failed" << std::endl;
-    return false;
-    }
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool TestCheckString()
-{
-  const char* foo = "foo";
-  const char* bar = "bar";
-  if (!CheckString(__LINE__, "TestCheckString", 0, 0)
-      ||!CheckString(__LINE__, "TestCheckString", foo, foo)
-      || CheckString(__LINE__, "TestCheckString Expected Failure", foo, bar)
-      || CheckString(__LINE__, "TestCheckString Expected Failure", foo, 0))
-    {
-    std::cerr << "Line " << __LINE__ << " - TestCheckString failed" << std::endl;
-    return false;
-    }
-  return true;
 }
 
 namespace

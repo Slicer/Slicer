@@ -27,6 +27,7 @@
 // STD includes
 #include <sstream>
 
+using namespace vtkAddonTestingUtilities;
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
@@ -2906,6 +2907,7 @@ void DisplaySceneNodeReferences(
 //----------------------------------------------------------------------------
 bool TestImportSceneReferenceValidDuringImport()
 {
+  (void)(DisplaySceneNodeReferences); // Avoid unused-function warning
 
   //
   // Create scene and register node
