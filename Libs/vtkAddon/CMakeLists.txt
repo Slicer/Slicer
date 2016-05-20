@@ -59,6 +59,8 @@ set(vtkAddon_SRCS
   vtkOrientedBSplineTransform.h
   vtkOrientedGridTransform.cxx
   vtkOrientedGridTransform.h
+  vtkAddonMathUtilities.h
+  vtkAddonMathUtilities.cxx
   )
 
 # Abstract/pure virtual classes
