@@ -41,6 +41,7 @@
 
 #include <vtkMatrix4x4.h>
 #include <vtkPointData.h>
+#include <vtkSmartPointer.h>
 #include <vtkVersion.h>
 
 #include "teem/nrrd.h"
@@ -69,7 +70,7 @@ public:
   /// Get a space separated list of all keys in the header
   /// the string is allocated and deleted in this object.  This method
   /// does not support spaces in key names.
-  char* GetHeaderKeys();
+  const char* GetHeaderKeys();
 
   ///
   /// Get a list of keys in the header. Preferred method to use as it
@@ -228,12 +229,13 @@ protected:
   vtkNRRDReader();
   ~vtkNRRDReader();
 
-  vtkMatrix4x4* RasToIjkMatrix;
-  vtkMatrix4x4* MeasurementFrameMatrix;
-  vtkMatrix4x4* NRRDWorldToRasMatrix;
+  static bool GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfComponents);
 
-  char* HeaderKeys;
-  char* CurrentFileName;
+  vtkSmartPointer<vtkMatrix4x4> RasToIjkMatrix;
+  vtkSmartPointer<vtkMatrix4x4> MeasurementFrameMatrix;
+  vtkSmartPointer<vtkMatrix4x4> NRRDWorldToRasMatrix;
+
+  std::string CurrentFileName;
 
   Nrrd *nrrd;
 
@@ -245,6 +247,7 @@ protected:
   bool UseNativeOrigin;
 
   std::map <std::string, std::string> HeaderKeyValue;
+  std::string HeaderKeys; // buffer for returning key list
 
   virtual void ExecuteInformation();
   virtual void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo);
