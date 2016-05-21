@@ -100,6 +100,27 @@
             </item>
 
             <item row="1" column="0">
+              <widget class="QPushButton" name="OpenExtensionsManagerButton">
+                <property name="toolTip">
+                  <string>Raise the "Extensions Manager" wizard that allows to find, download and install Slicer extensions.&lt;br&gt;&lt;br&gt;An extension is a delivery package bundling together one or more Slicer modules.&lt;br&gt;&lt;br&gt;After installing an extension, the associated modules will be available in the module selector.</string>
+                </property>
+                <property name="text">
+                  <string> Install Slicer Extensions</string>
+                </property>
+                <property name="icon">
+                  <iconset resource="../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+                    <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+                </property>
+                <property name="iconSize">
+                  <size>
+                    <width>22</width>
+                    <height>22</height>
+                  </size>
+                </property>
+              </widget>
+            </item>
+
+            <item row="2" column="0">
               <widget class="QPushButton" name="EditApplicationSettingsButton">
                 <property name="text">
                   <string>Customize Slicer</string>

@@ -81,6 +81,9 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
     {
     group->addButton(collapsible);
     }
+
+  QObject::connect(this->OpenExtensionsManagerButton, SIGNAL(clicked()),
+                   qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
 }
 
 //-----------------------------------------------------------------------------
