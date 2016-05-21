@@ -9,14 +9,14 @@ set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../../Data/Input)
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest1
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-modules --no-main-window
   --python-code "exit(slicer.util.EXIT_SUCCESS)"
   )
 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest2
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-modules --no-main-window
   --python-code "exit(slicer.util.EXIT_FAILURE)"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL TRUE)
@@ -24,14 +24,14 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest3
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-modules --no-main-window
   --python-code "import slicer.testing; slicer.testing.exitSuccess()"
   )
 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest4
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-modules --no-main-window
   --python-code "import slicer.testing; slicer.testing.exitFailure('Should fail !')"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
@@ -39,7 +39,7 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest5
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
-  --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules --no-main-window
+  --testing --disable-modules --no-main-window
   --python-code "raise Exception('Should fail !')"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest5 PROPERTIES WILL_FAIL TRUE)
@@ -70,13 +70,13 @@ set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 slicer_add_python_unittest(
   SCRIPT SlicerUnitTestTest.py
-  SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 
 slicer_add_python_unittest(
   SCRIPT SlicerUnitTestWithErrorsTest.py
-  SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 set_tests_properties(py_nomainwindow_SlicerUnitTestWithErrorsTest PROPERTIES WILL_FAIL TRUE)
@@ -104,6 +104,7 @@ nowarning_test(mainwindow_nocli_noloadable --disable-cli-modules --disable-loada
 nowarning_test(mainwindow_nocli_noscripted --disable-cli-modules --disable-scripted-loadable-modules)
 nowarning_test(mainwindow_noloadable_noscripted --disable-loadable-modules --disable-scripted-loadable-modules)
 nowarning_test(mainwindow_nocli_noloadable_noscripted --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules)
+nowarning_test(mainwindow_nomodules --disable-modules)
 nowarning_test(nomainwindow --no-main-window)
 nowarning_test(nomainwindow_python_interactor --no-main-window --show-python-interactor)
 nowarning_test(nomainwindow_nocli --no-main-window --disable-cli-modules)
@@ -113,6 +114,7 @@ nowarning_test(nomainwindow_nocli_noloadable --no-main-window --disable-cli-modu
 nowarning_test(nomainwindow_nocli_noscripted --no-main-window --disable-cli-modules --disable-scripted-loadable-modules)
 nowarning_test(nomainwindow_noloadable_noscripted --no-main-window --disable-loadable-modules --disable-scripted-loadable-modules)
 nowarning_test(nomainwindow_nocli_noloadable_noscripted --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules)
+nowarning_test(nomainwindow_nomodules --no-main-window --disable-modules)
 nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
 
 #
@@ -158,7 +160,7 @@ slicer_add_python_test(
 #
 slicer_add_python_unittest(
   SCRIPT SlicerSceneObserverTest.py
-  SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 
@@ -166,7 +168,7 @@ if(VTK_DEBUG_LEAKS AND Slicer_HAS_CONSOLE_IO_SUPPORT)
   set(testname MRMLCreateNodeByClassWithoutSetReferenceCount)
   slicer_add_python_test(
     SCRIPT ${testname}.py
-    SCRIPT_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+    SCRIPT_ARGS --no-main-window --disable-modules
     TESTNAME_PREFIX nomainwindow_
     )
   set_tests_properties(py_nomainwindow_${testname}
@@ -177,7 +179,7 @@ endif()
 set(testname MRMLCreateNodeByClassWithSetReferenceCountMinusOne)
 slicer_add_python_test(
   SCRIPT ${testname}.py
-  SCRIPT_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  SCRIPT_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 
@@ -190,7 +192,7 @@ slicer_add_python_test(
 set(testname MRMLCreateNodeByClassWithSetReferenceCountToOne)
 slicer_add_python_test(
   SCRIPT ${testname}.py
-  SCRIPT_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  SCRIPT_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 # The test application is expected to crash. If a test is run from
@@ -206,7 +208,7 @@ set_tests_properties(py_nomainwindow_${testname} PROPERTIES
 
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/tests/test_saferef.py
-  SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 
