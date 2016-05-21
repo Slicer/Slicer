@@ -42,7 +42,7 @@ def TemporaryPythonScript(code, *args, **kwargs):
   print("Written script %s [%s]" % (script.name, code))
   return script
 
-def collect_startup_times_overall(outut_file):
+def collect_startup_times_overall(outut_file, repeat=1):
 
   tests = [
     [],
@@ -58,21 +58,17 @@ def collect_startup_times_overall(outut_file):
   for test in tests:
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test)
     results[" ".join(test)] = duration
-    print("{:.3f} seconds".format(duration))
-    print("")
 
   for test in tests:
     test.insert(0, '--disable-python')
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test)
     results[" ".join(test)] = duration
-    print("{:.3f} seconds".format(duration))
-    print("")
 
   with open(outut_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
 
-def collect_startup_times_excluding_one_module(output_file):
+def collect_startup_times_excluding_one_module(output_file, repeat=1):
 
   # Collect list of all modules and their associated types
   python_script = TemporaryPythonScript("""
@@ -125,7 +121,6 @@ with open("Modules.json", 'w') as output:
       print("=> failed\n")
     else:
       moduleTimes[moduleName] = duration
-      print("=> {:.3f} seconds\n".format(duration))
 
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
@@ -135,13 +130,14 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Measure startup times.')
   parser.add_argument("--overall", action="store_true")
   parser.add_argument("--excluding-one-module", action="store_true")
+  parser.add_argument("-n", "--repeat",  default=1, type=int)
   parser.add_argument("/path/to/Slicer")
   args = parser.parse_args()
 
   slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
   all = not args.overall and not args.excluding_one_module
 
-  runSlicerAndExitWithTime = timecall(runSlicerAndExit)
+  runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
 
   if all or args.overall:
     collect_startup_times_overall("StartupTimes.json")

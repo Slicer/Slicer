@@ -68,15 +68,25 @@ def runSlicer(slicer_executable, arguments=[], verbose=True):
 def runSlicerAndExit(slicer_executable, arguments=[], verbose=True):
   """Run ``slicer_executable`` with provided ``arguments`` and exit.
   """
-  arguments.insert(0, '--exit-after-startup')
-  return runSlicer(slicer_executable, arguments, verbose)
+  args = ['--exit-after-startup']
+  args.extend(arguments)
+  return runSlicer(slicer_executable, args, verbose)
 
-def timecall(method):
+def timecall(method, **kwargs):
   """Wrap ``method`` and return its execution time.
   """
+  repeat = 1
+  if 'repeat' in kwargs:
+    repeat = kwargs['repeat']
   def wrapper(*args, **kwargs):
-    start = time.time()
-    result = method(*args, **kwargs)
-    duration = time.time() - start
+    durations = []
+    for iteration in range(1, repeat + 1):
+      start = time.time()
+      result = method(*args, **kwargs)
+      durations.append(time.time() - start)
+      print("{:d}/{:d}: {:.2f}s".format(iteration, repeat, durations[-1]))
+    average = sum(durations) / len(durations)
+    print("Average: {:.2f}s\n".format(average))
+    duration = average
     return (duration, result)
   return wrapper
