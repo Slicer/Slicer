@@ -13,6 +13,7 @@ def quit():
 
 def exit(status=EXIT_SUCCESS):
   from slicer import app
+  app.commandOptions().runPythonAndExit = False
   app.exit(status)
 
 def restart():

@@ -7,19 +7,35 @@ set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../../Data/Input)
 #
 
 add_test(
-  NAME py_nomainwindow_SlicerPythonCodeTest1
+  NAME py_nomainwindow_SlicerPythonCodeExitSuccessTest
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
+  --disable-modules --no-main-window
+  --python-code "exit(slicer.util.EXIT_SUCCESS)"
+  )
+add_test(
+  NAME py_nomainwindow_testing_SlicerPythonCodeExitSuccessTest
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
   --testing --disable-modules --no-main-window
   --python-code "exit(slicer.util.EXIT_SUCCESS)"
   )
 
 add_test(
-  NAME py_nomainwindow_SlicerPythonCodeTest2
+  NAME py_nomainwindow_SlicerPythonCodeExitFailureTest
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
+  --disable-modules --no-main-window
+  --python-code "exit(slicer.util.EXIT_FAILURE)"
+  )
+add_test(
+  NAME py_nomainwindow_testing_SlicerPythonCodeExitFailureTest
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
   --testing --disable-modules --no-main-window
   --python-code "exit(slicer.util.EXIT_FAILURE)"
   )
-set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL TRUE)
+set_tests_properties(
+    py_nomainwindow_SlicerPythonCodeExitFailureTest
+    py_nomainwindow_testing_SlicerPythonCodeExitFailureTest
+  PROPERTIES WILL_FAIL TRUE
+  )
 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest3
