@@ -913,13 +913,6 @@ void vtkMRMLMarkupsFiducialDisplayableManager2D::PropagateMRMLToWidget(vtkMRMLMa
     return;
     }
 
-  if (node->GetScene()->IsBatchProcessing())
-    {
-    // compress events
-    this->SetUpdateFromMRMLRequested(1);
-    return;
-    }
-
   // cast to the specific widget
   vtkSeedWidget* seedWidget = vtkSeedWidget::SafeDownCast(widget);
 
