@@ -164,7 +164,7 @@
             <string>Feedback</string>
           </property>
           <property name="collapsed">
-            <bool>false</bool>
+            <bool>true</bool>
           </property>
           <property name="contentsFrameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -186,11 +186,6 @@
                 </property>
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/Feedback.html</string>
-                  </url>
                 </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
@@ -229,11 +224,6 @@
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/About.html</string>
-                  </url>
-                </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
                 </property>
@@ -270,11 +260,6 @@
                 </property>
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/Overview.html</string>
-                  </url>
                 </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
@@ -313,11 +298,6 @@
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/LoadingScenesAndData.html</string>
-                  </url>
-                </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
                 </property>
@@ -354,11 +334,6 @@
                 </property>
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/AdjustingDataDisplay.html</string>
-                  </url>
                 </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
@@ -397,11 +372,6 @@
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/MouseModes.html</string>
-                  </url>
-                </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
                 </property>
@@ -439,11 +409,6 @@
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/OtherUsefulHints.html</string>
-                  </url>
-                </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>
                 </property>
@@ -480,11 +445,6 @@
                 </property>
                 <property name="verticalScrollBarPolicy">
                   <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-                <property name="source">
-                  <url>
-                    <string>qrc:HTML/Acknowledgment.html</string>
-                  </url>
                 </property>
                 <property name="openExternalLinks">
                   <bool>true</bool>

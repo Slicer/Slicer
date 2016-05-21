@@ -54,6 +54,9 @@ public slots:
 protected:
   virtual void setup();
 
+protected slots:
+  void loadSource(QWidget*);
+
 protected:
   QScopedPointer<qSlicerWelcomeModuleWidgetPrivate> d_ptr;
 

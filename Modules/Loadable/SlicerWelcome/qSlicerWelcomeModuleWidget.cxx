@@ -23,6 +23,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QSettings>
+#include <QSignalMapper>
 
 // Slicer includes
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT
@@ -56,6 +57,8 @@ public:
   void setupUi(qSlicerWidget* widget);
 
   bool selectModule(const QString& moduleName);
+
+  QSignalMapper CollapsibleButtonMapper;
 };
 
 //-----------------------------------------------------------------------------
@@ -70,6 +73,8 @@ qSlicerWelcomeModuleWidgetPrivate::qSlicerWelcomeModuleWidgetPrivate(qSlicerWelc
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
+  Q_Q(qSlicerWelcomeModuleWidget);
+
   this->Ui_qSlicerWelcomeModuleWidget::setupUi(widget);
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
@@ -84,6 +89,50 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   QObject::connect(this->OpenExtensionsManagerButton, SIGNAL(clicked()),
                    qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
+
+
+  // Lazily set the fitted browser source to avoid overhead when the module
+  // is loaded.
+  this->FeedbackCollapsibleWidget->setProperty("source", "qrc:HTML/Feedback.html");
+  this->WelcomeAndAboutCollapsibleWidget->setProperty("source", "qrc:HTML/About.html");
+  this->OverviewCollapsibleWidget->setProperty("source", "qrc:HTML/Overview.html");
+  this->LoadingScenesAndDataCollapsibleWidget->setProperty("source", "qrc:HTML/LoadingScenesAndData.html");
+  this->AdjustingDataDisplayCollapsibleWidget->setProperty("source", "qrc:HTML/AdjustingDataDisplay.html");
+  this->MouseModesCollapsibleWidget->setProperty("source", "qrc:HTML/MouseModes.html");
+  this->OtherUsefulHintsCollapsibleWidget->setProperty("source", "qrc:HTML/OtherUsefulHints.html");
+  this->AcknowledgmentCollapsibleWidget->setProperty("source", "qrc:HTML/Acknowledgment.html");
+
+  foreach(QWidget* widget, QWidgetList()
+          << this->FeedbackCollapsibleWidget
+          << this->WelcomeAndAboutCollapsibleWidget
+          << this->OverviewCollapsibleWidget
+          << this->LoadingScenesAndDataCollapsibleWidget
+          << this->AdjustingDataDisplayCollapsibleWidget
+          << this->MouseModesCollapsibleWidget
+          << this->OtherUsefulHintsCollapsibleWidget
+          << this->AcknowledgmentCollapsibleWidget
+          )
+    {
+    this->CollapsibleButtonMapper.setMapping(widget, widget);
+    QObject::connect(widget, SIGNAL(contentsCollapsed(bool)),
+                     &this->CollapsibleButtonMapper, SLOT(map()));
+    }
+
+  QObject::connect(&this->CollapsibleButtonMapper, SIGNAL(mapped(QWidget*)),
+                   q, SLOT(loadSource(QWidget*)));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerWelcomeModuleWidget::loadSource(QWidget* widget)
+{
+  // Lookup fitted browser
+  ctkFittedTextBrowser* fittedTextBrowser =
+      widget->findChild<ctkFittedTextBrowser*>();
+  Q_ASSERT(fittedTextBrowser);
+  if (fittedTextBrowser->source().isEmpty())
+    {
+    fittedTextBrowser->setSource(widget->property("source").toString());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -148,6 +197,8 @@ void qSlicerWelcomeModuleWidget::setup()
 #endif
 
   this->Superclass::setup();
+
+  d->FeedbackCollapsibleWidget->setCollapsed(false);
 }
 
 
