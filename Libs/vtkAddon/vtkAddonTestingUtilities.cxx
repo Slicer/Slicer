@@ -39,7 +39,7 @@ bool CheckNotNull(int line, const std::string& description,
 {
   if(!pointer)
     {
-    std::cerr << "\nLine " << line << " - " << description
+    std::cerr << "\nLine " << line << " - " << description.c_str()
               << " : CheckNotNull failed"
               << "\n\tpointer:" << pointer
               << std::endl;
@@ -53,7 +53,7 @@ bool CheckNull(int line, const std::string& description, const void* pointer)
 {
   if(pointer)
     {
-    std::cerr << "\nLine " << line << " - " << description
+    std::cerr << "\nLine " << line << " - " << description.c_str()
               << " : CheckNull failed"
               << "\n\tpointer:" << pointer
               << std::endl;
@@ -86,8 +86,8 @@ bool CheckString(int line, const std::string& description,
     }
   if(different == errorIfDifferent)
     {
-    std::cerr << "\nLine " << line << " - " << description
-              << " : " << testName << "  failed"
+    std::cerr << "\nLine " << line << " - " << description.c_str()
+              << " : " << testName.c_str() << "  failed"
               << "\n\tcurrent :" << (current ? current : "<null>")
               << "\n\texpected:" << (expected ? expected : "<null>")
               << std::endl;

@@ -41,8 +41,8 @@ bool Check(int line, const std::string& description,
     {
     if(current != expected)
       {
-      std::cerr << "\nLine " << line << " - " << description
-                << " : " << testName << " failed"
+      std::cerr << "\nLine " << line << " - " << description.c_str()
+                << " : " << testName.c_str() << " failed"
                 << "\n\tcurrent :" << current
                 << "\n\texpected:" << expected
                 << std::endl;
@@ -53,8 +53,8 @@ bool Check(int line, const std::string& description,
     {
     if(current == expected)
       {
-      std::cerr << "\nLine " << line << " - " << description
-                << " : " << testName << " failed"
+      std::cerr << "\nLine " << line << " - " << description.c_str()
+                << " : " << testName.c_str() << " failed"
                 << "\n\tcurrent :" << current
                 << "\n\texpected to be different from:" << expected
                 << std::endl;
