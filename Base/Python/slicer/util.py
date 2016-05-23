@@ -59,7 +59,21 @@ def importVTKClassesFromDirectory(directory, dest_module_name, filematch = '*'):
 def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
   importClassesFromDirectory(directory, dest_module_name, 'PythonQtClassWrapper', filematch)
 
+# To avoid globbing multiple times the same directory, successful
+# call to ``importClassesFromDirectory()`` will be indicated by
+# adding an entry to the ``__import_classes_cache`` set.
+#
+# Each entry is a tuple of form (directory, dest_module_name, type_name, filematch)
+__import_classes_cache = set()
+
 def importClassesFromDirectory(directory, dest_module_name, type_name, filematch = '*'):
+
+  # Create entry for __import_classes_cache
+  cache_key = ",".join([directory, dest_module_name, type_name, filematch])
+  # Check if function has already been called with this set of parameters
+  if cache_key in __import_classes_cache:
+    return
+
   import glob, os, re, fnmatch
   re_filematch = re.compile(fnmatch.translate(filematch))
   for fname in glob.glob(os.path.join(directory, filematch)):
@@ -72,6 +86,8 @@ def importClassesFromDirectory(directory, dest_module_name, type_name, filematch
       import sys
       print(detail, file=sys.stderr)
 
+  __import_classes_cache.add(cache_key)
+
 def importModuleObjects(from_module_name, dest_module_name, type_name):
   """Import object of type 'type_name' from module identified
   by 'from_module_name' into the module identified by 'dest_module_name'."""
@@ -79,6 +95,10 @@ def importModuleObjects(from_module_name, dest_module_name, type_name):
   # Obtain a reference to the module identifed by 'dest_module_name'
   import sys
   dest_module = sys.modules[dest_module_name]
+
+  # Skip if module has already been loaded
+  if from_module_name in sys.modules:
+    return
 
   # Obtain a reference to the module identified by 'from_module_name'
   import imp
