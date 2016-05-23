@@ -6,10 +6,6 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/slicerqt
   slicer/testing
   slicer/util
-  slicer/moduledm/__init__
-  slicer/modulelogic/__init__
-  slicer/modulemrml/__init__
-  slicer/modulewidget/__init__
   freesurfer
   mrml
   mrmlLogic
@@ -30,12 +26,7 @@ set(Slicer_PYTHON_MODULES_CONFIG "
 'logic',
 'qSlicerBaseQTCorePythonQt',
 'qSlicerBaseQTGUIPythonQt',
-'qSlicerBaseQTAppPythonQt',
-# slicer module
-'moduledm',
-'modulelogic',
-'modulemrml',
-'modulewidget'"
+'qSlicerBaseQTAppPythonQt'"
   )
 
 if(Slicer_BUILD_CLI_SUPPORT)

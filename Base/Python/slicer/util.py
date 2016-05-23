@@ -79,7 +79,6 @@ def importModuleObjects(from_module_name, dest_module_name, type_name):
   # Obtain a reference to the module identifed by 'dest_module_name'
   import sys
   dest_module = sys.modules[dest_module_name]
-  slicer_module = sys.modules['slicer']
 
   # Obtain a reference to the module identified by 'from_module_name'
   import imp
@@ -95,7 +94,6 @@ def importModuleObjects(from_module_name, dest_module_name, type_name):
     # Add the object to dest_module_globals_dict if any
     if type(item).__name__ == type_name:
       setattr(dest_module, item_name, item)
-      setattr(slicer_module, item_name, item)
 
 #
 # UI

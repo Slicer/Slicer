@@ -83,13 +83,13 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
   ctkScopedCurrentDir scopedCurrentDir(modulePathWithoutIntDir.absolutePath());
   pythonManager->executeString(QString(
         "from slicer.util import importVTKClassesFromDirectory;"
-        "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer*ModuleLogic.py');"
-        "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer*ModuleMRML.py');"
-        "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer*ModuleMRMLDisplayableManager.py');"
+        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleLogic.py');"
+        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRML.py');"
+        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManager.py');"
         ).arg(pythonPath));
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
-        "importQtClassesFromDirectory('%1', 'slicer.modulewidget', filematch='qSlicer*PythonQt.*');"
+        "importQtClassesFromDirectory('%1', 'slicer', filematch='qSlicer*PythonQt.*');"
         ).arg(modulePathWithoutIntDir.absolutePath()));
   return !pythonManager->pythonErrorOccured();
 #else
