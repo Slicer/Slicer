@@ -61,8 +61,9 @@ def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
 
 def importClassesFromDirectory(directory, dest_module_name, type_name, filematch = '*'):
   import glob, os, re, fnmatch
+  re_filematch = re.compile(fnmatch.translate(filematch))
   for fname in glob.glob(os.path.join(directory, filematch)):
-    if not re.compile(fnmatch.translate(filematch)).match(os.path.basename(fname)):
+    if not re_filematch.match(os.path.basename(fname)):
       continue
     try:
       from_module_name = os.path.splitext(os.path.basename(fname))[0]
