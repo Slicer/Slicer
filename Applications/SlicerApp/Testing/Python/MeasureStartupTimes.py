@@ -42,6 +42,14 @@ def TemporaryPythonScript(code, *args, **kwargs):
   print("Written script %s [%s]" % (script.name, code))
   return script
 
+def collect_startup_times_normal(output_file, drop_cache=False):
+  results= {}
+  test = []
+  (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+  results[" ".join(test)] = duration
+  with open(output_file, 'w') as file:
+    file.write(json.dumps(results, indent=4))
+
 def collect_startup_times_overall(output_file, drop_cache=False):
 
   tests = [
@@ -128,17 +136,25 @@ with open("Modules.json", 'w') as output:
 if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Measure startup times.')
+  # Experiments
+  parser.add_argument("--normal", action="store_true")
   parser.add_argument("--overall", action="store_true")
   parser.add_argument("--excluding-one-module", action="store_true")
+  # Common options
   parser.add_argument("-n", "--repeat",  default=1, type=int)
   parser.add_argument("--drop-cache", action="store_true")
   parser.add_argument("/path/to/Slicer")
   args = parser.parse_args()
 
   slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
-  all = not args.overall and not args.excluding_one_module
+  all = not args.overall and not args.excluding_one_module and not args.normal
 
   runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
+
+  # Since the "normal" experiment is included in the "overall" one,
+  # it is not executed by default.
+  if args.normal:
+    collect_startup_times_normal("StartupTimesNormal.json", drop_cache=args.drop_cache)
 
   if all or args.overall:
     collect_startup_times_overall("StartupTimes.json", drop_cache=args.drop_cache)
