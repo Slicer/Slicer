@@ -40,10 +40,18 @@ __all__ = ['EXIT_FAILURE', 'EXIT_SUCCESS', 'run', 'runSlicer', 'runSlicerAndExit
 EXIT_FAILURE=1
 EXIT_SUCCESS=0
 
+def dropcache():
+  if sys.platform in ["linux", "linux2"]:
+    run('/usr/bin/sudo', ['sysctl', 'vm.drop_caches=1'], drop_cache=False)
+  else:
+    # XXX Implement other platform (Windows: EmptyStandbyList ?, MacOSX: Purge ?)
+    raise Exception("--drop-cache is not supported on %s" % sys.platform)
 
-def run(executable, arguments=[], verbose=True, shell=False):
+def run(executable, arguments=[], verbose=True, shell=False, drop_cache=False):
   """Run ``executable`` with provided ``arguments``.
   """
+  if drop_cache:
+    dropcache()
   if verbose:
     print("%s %s" % (os.path.basename(executable), " ".join([pipes.quote(arg) for arg in arguments])))
   arguments.insert(0, executable)
@@ -58,19 +66,19 @@ def run(executable, arguments=[], verbose=True, shell=False):
 
   return (p.returncode, stdout, stderr)
 
-def runSlicer(slicer_executable, arguments=[], verbose=True):
+def runSlicer(slicer_executable, arguments=[], verbose=True, **kwargs):
   """Run ``slicer_executable`` with provided ``arguments``.
   """
   args = ['--no-splash']
   args.extend(arguments)
-  return run(slicer_executable, args, verbose)
+  return run(slicer_executable, args, verbose, **kwargs)
 
-def runSlicerAndExit(slicer_executable, arguments=[], verbose=True):
+def runSlicerAndExit(slicer_executable, arguments=[], verbose=True, **kwargs):
   """Run ``slicer_executable`` with provided ``arguments`` and exit.
   """
   args = ['--exit-after-startup']
   args.extend(arguments)
-  return runSlicer(slicer_executable, args, verbose)
+  return runSlicer(slicer_executable, args, verbose, **kwargs)
 
 def timecall(method, **kwargs):
   """Wrap ``method`` and return its execution time.

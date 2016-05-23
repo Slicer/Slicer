@@ -42,7 +42,7 @@ def TemporaryPythonScript(code, *args, **kwargs):
   print("Written script %s [%s]" % (script.name, code))
   return script
 
-def collect_startup_times_overall(outut_file, repeat=1):
+def collect_startup_times_overall(output_file, drop_cache=False):
 
   tests = [
     [],
@@ -56,19 +56,19 @@ def collect_startup_times_overall(outut_file, repeat=1):
   results= {}
 
   for test in tests:
-    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test)
+    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     results[" ".join(test)] = duration
 
   for test in tests:
     test.insert(0, '--disable-python')
-    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test)
+    (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     results[" ".join(test)] = duration
 
-  with open(outut_file, 'w') as file:
+  with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
 
-def collect_startup_times_excluding_one_module(output_file, repeat=1):
+def collect_startup_times_excluding_one_module(output_file, drop_cache=False):
 
   # Collect list of all modules and their associated types
   python_script = TemporaryPythonScript("""
@@ -113,7 +113,7 @@ with open("Modules.json", 'w') as output:
     #  print("=> Skipping CLI [%s]\n" % moduleName)
     #  continue
     print("[%d/%d]" % (idx, len(modules)))
-    (duration, result) = runSlicerAndExitWithTime(slicer_executable, ['--testing', '--modules-to-ignore', moduleName])
+    (duration, result) = runSlicerAndExitWithTime(slicer_executable, ['--testing', '--modules-to-ignore', moduleName], drop_cache=drop_cache)
     (returnCode, stdout, stderr) = result
     if returnCode != EXIT_SUCCESS:
       # XXX Ignore module with dependencies
@@ -131,6 +131,7 @@ if __name__ == '__main__':
   parser.add_argument("--overall", action="store_true")
   parser.add_argument("--excluding-one-module", action="store_true")
   parser.add_argument("-n", "--repeat",  default=1, type=int)
+  parser.add_argument("--drop-cache", action="store_true")
   parser.add_argument("/path/to/Slicer")
   args = parser.parse_args()
 
@@ -140,7 +141,7 @@ if __name__ == '__main__':
   runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
 
   if all or args.overall:
-    collect_startup_times_overall("StartupTimes.json")
+    collect_startup_times_overall("StartupTimes.json", drop_cache=args.drop_cache)
 
   if all or args.excluding_one_module:
-    collect_startup_times_excluding_one_module("StartupTimesExcludingOneModule.json")
+    collect_startup_times_excluding_one_module("StartupTimesExcludingOneModule.json", drop_cache=args.drop_cache)
