@@ -123,7 +123,6 @@ if(MRMLDisplayableManager_USE_PYTHON)
 endif()
 
 # Create the instantiator for DisplayableManager classes.
-set(VTK_USE_INSTANTIATOR_NEW 1)
 include(${VTK_CMAKE_DIR}/vtkMakeInstantiator.cmake)
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}Instantiator"
   DisplayableManagerInstantiator_SRCS

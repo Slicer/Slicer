@@ -26,7 +26,6 @@ set(DisplayableManagerTest_SRCS
   )
 
 # Create the instantiator for DisplayableManager classes.
-set(VTK_USE_INSTANTIATOR_NEW 1)
 VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}TestInstantiator"
   DisplayableManagerInstantiatorTest_SRCS
   "${DisplayableManagerTest_SRCS}"

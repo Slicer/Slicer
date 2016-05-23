@@ -25,7 +25,6 @@ set(displayable_manager_SRCS
   vtkMRMLAnnotationROIDisplayableManager.cxx
   )
 
-set(VTK_USE_INSTANTIATOR_NEW 1)
 VTK_MAKE_INSTANTIATOR3("${MODULE_NAME}Instantiator"
   displayable_manager_instantiator_SRCS
   "${displayable_manager_SRCS}"
