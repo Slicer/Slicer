@@ -52,6 +52,7 @@ public:
   /// <ul>
   ///   <li>vtkSlicer*ModuleLogic.py</li>
   ///   <li>vtkSlicer*ModuleMRML.py</li>
+  ///   <li>vtkSlicer*ModuleMRMLDisplayableManager.py</li>
   ///   <li>qSlicer*PythonQt.* python</li>
   /// </ul>
   /// These files are searched within the \a modulePath minus the \a IntDir
@@ -59,7 +60,8 @@ public:
   /// \sa qSlicerCoreApplication::intDir(), qSlicerCoreApplication::corePythonManager()
   static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
                                            const QString& intDir,
-                                           const QString& modulePath);
+                                           const QString& modulePath,
+                                           bool isEmbedded=false);
 
   /// Set \a module identified by \a moduleName has an attribute of "slicer.modules" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()

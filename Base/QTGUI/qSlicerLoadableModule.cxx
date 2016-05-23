@@ -59,7 +59,9 @@ qSlicerLoadableModule::~qSlicerLoadableModule()
 
 //-----------------------------------------------------------------------------
 bool qSlicerLoadableModule::importModulePythonExtensions(
-    qSlicerCorePythonManager * pythonManager, const QString& intDir, const QString& modulePath)
+    qSlicerCorePythonManager * pythonManager,
+    const QString& intDir,const QString& modulePath,
+    bool isEmbedded)
 {
 #ifdef Slicer_USE_PYTHONQT
   if(!pythonManager)
@@ -72,14 +74,18 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
     modulePathWithoutIntDir.cdUp();
     }
   QString pythonPath = modulePathWithoutIntDir.filePath("Python");
-  QStringList paths; paths << QFileInfo(modulePath).dir().absolutePath() << pythonPath;
-  pythonManager->appendPythonPaths(paths);
+  if (!isEmbedded)
+    {
+    QStringList paths; paths << QFileInfo(modulePath).dir().absolutePath() << pythonPath;
+    pythonManager->appendPythonPaths(paths);
+    }
   // Update current application directory, so that *PythonD modules can be loaded
   ctkScopedCurrentDir scopedCurrentDir(modulePathWithoutIntDir.absolutePath());
   pythonManager->executeString(QString(
         "from slicer.util import importVTKClassesFromDirectory;"
         "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer*ModuleLogic.py');"
         "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer*ModuleMRML.py');"
+        "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer*ModuleMRMLDisplayableManager.py');"
         ).arg(pythonPath));
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
@@ -152,11 +158,13 @@ void qSlicerLoadableModule::setup()
 
 #ifdef Slicer_USE_PYTHONQT
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  if (app && !app->isEmbeddedModule(this->path()))
+  if (app)
     {
     // By convention, if the module is not embedded,
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
-    if (!Self::importModulePythonExtensions(app->corePythonManager(), app->intDir(), this->path()))
+    if (!Self::importModulePythonExtensions(
+          app->corePythonManager(), app->intDir(), this->path(),
+          app->isEmbeddedModule(this->path())))
       {
       qWarning() << "qSlicerLoadableModule::setup - Failed to import module" << this->name() << "python extensions";
       }
