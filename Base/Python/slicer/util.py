@@ -80,21 +80,20 @@ def importModuleObjects(from_module_name, dest_module_name, type_name):
   import sys
   dest_module = sys.modules[dest_module_name]
 
-  exec "import %s" % (from_module_name)
+  # Obtain a reference to the module identified by 'from_module_name'
+  import imp
+  fp, pathname, description = imp.find_module(from_module_name)
+  module = imp.load_module(from_module_name, fp, pathname, description)
 
-  # Obtain a reference to the associated VTK module
-  module = eval(from_module_name)
-
-  # Loop over content of the python module associated with the given VTK python library
+  # Loop over content of the python module associated with the given python library
   for item_name in dir(module):
 
     # Obtain a reference associated with the current object
-    item = eval("%s.%s" % (from_module_name, item_name))
+    item = getattr(module, item_name)
 
     # Add the object to dest_module_globals_dict if any
     if type(item).__name__ == type_name:
-      exec("from %s import %s" % (from_module_name, item_name))
-      exec("dest_module.%s = %s"%(item_name, item_name))
+      setattr(dest_module, item_name, item)
 
 #
 # UI
