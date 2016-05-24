@@ -92,7 +92,7 @@ QString qSlicerTablesModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerTablesModule::acknowledgementText()const
 {
-  return "This work was was partially funded by OCAIRO, the Applied Cancer Research Unit program of Cancer Care Ontario, and Department of Anesthesia and Critical Care Medicine, Children’s Hospital of Philadelphia.";
+  return "This work was was partially funded by OCAIRO, the Applied Cancer Research Unit program of Cancer Care Ontario, and Department of Anesthesia and Critical Care Medicine, Children's Hospital of Philadelphia.";
 }
 
 //-----------------------------------------------------------------------------
