@@ -43,8 +43,8 @@ int qSlicerApplicationTpyclEMSegmentIntegrationTest(int argc, char* argv[])
     std::cout << "emsegmentModulePythonPath:" << qPrintable(emsegmentModulePythonPath) << std::endl;
     app->pythonManager()->executeString(QString(
       "from slicer.util import importVTKClassesFromDirectory;"
-      "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer%2ModuleLogic.py');"
-      "importVTKClassesFromDirectory('%1', 'slicer.modulemrml', filematch='vtkSlicer%2ModuleMRML.py');"
+      "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer%2ModuleLogic.py');"
+      "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer%2ModuleMRML.py');"
       ).arg(emsegmentModulePythonPath).arg("EMSegment"));
 
     }

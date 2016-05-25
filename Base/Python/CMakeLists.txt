@@ -37,6 +37,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
   set(Slicer_PYTHON_MODULES_CONFIG "${Slicer_PYTHON_MODULES_CONFIG},
 # CLI logic (Slicer_BUILD_CLI_SUPPORT:ON)
 'mrmlcli',
+'qSlicerBaseQTCLIPython',
 'qSlicerBaseQTCLIPythonQt',
 "
   )
