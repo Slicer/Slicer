@@ -8,7 +8,6 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/util
   freesurfer
   mrml
-  mrmlLogic
   saferef
   teem
   vtkAddon
@@ -19,7 +18,6 @@ set(Slicer_PYTHON_MODULES_CONFIG "
 # slicer libs
 'freesurfer',
 'mrml',
-'mrmlLogic',
 'teem',
 'qMRMLWidgetsPythonQt',
 # slicer base libs
@@ -32,11 +30,9 @@ set(Slicer_PYTHON_MODULES_CONFIG "
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND Slicer_PYTHON_SCRIPTS
     slicer/cli
-    mrmlcli
     )
   set(Slicer_PYTHON_MODULES_CONFIG "${Slicer_PYTHON_MODULES_CONFIG},
 # CLI logic (Slicer_BUILD_CLI_SUPPORT:ON)
-'mrmlcli',
 'qSlicerBaseQTCLIPython',
 'qSlicerBaseQTCLIPythonQt',
 "
