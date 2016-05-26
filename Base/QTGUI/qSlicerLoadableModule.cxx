@@ -90,7 +90,7 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
         "importQtClassesFromDirectory('%1', 'slicer', filematch='qSlicer*PythonQt.*');"
-        ).arg(modulePathWithoutIntDir.absolutePath()));
+        ).arg(modulePathWithoutIntDir.absoluteFilePath(intDir)));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);
