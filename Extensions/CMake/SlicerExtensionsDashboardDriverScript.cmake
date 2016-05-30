@@ -396,6 +396,7 @@ macro(run_ctest)
       #-----------------------------------------------------------------------------
       file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
 CTEST_MODEL:STRING=${model}
+CTEST_SITE:STRING=${CTEST_SITE}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${EXTENSIONS_TRACK_QUALIFIER}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}
