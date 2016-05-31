@@ -63,38 +63,28 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
     const QString& intDir,const QString& modulePath,
     bool isEmbedded)
 {
+  Q_UNUSED(intDir);
+  Q_UNUSED(isEmbedded);
 #ifdef Slicer_USE_PYTHONQT
   if(!pythonManager)
     {
     return false;
     }
-  QDir modulePathWithoutIntDir = QFileInfo(modulePath).dir();
-  if (intDir ==  modulePathWithoutIntDir.dirName())
-    {
-    modulePathWithoutIntDir.cdUp();
-    }
-  QString pythonPath = modulePathWithoutIntDir.filePath("Python");
-  if (!isEmbedded)
-    {
-    QStringList paths; paths << QFileInfo(modulePath).dir().absolutePath() << pythonPath;
-    pythonManager->appendPythonPaths(paths);
-    }
   // Update current application directory, so that *PythonD modules can be loaded
-  ctkScopedCurrentDir scopedCurrentDir(modulePathWithoutIntDir.absolutePath());
+  ctkScopedCurrentDir scopedCurrentDir(QFileInfo(modulePath).absolutePath());
   pythonManager->executeString(QString(
         "from slicer.util import importVTKClassesFromDirectory;"
-        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleLogic.py');"
-        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRML.py');"
-        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManager.py');"
-        ).arg(pythonPath));
+        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
+        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
+        "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
+        ).arg(scopedCurrentDir.currentPath()));
   pythonManager->executeString(QString(
         "from slicer.util import importQtClassesFromDirectory;"
         "importQtClassesFromDirectory('%1', 'slicer', filematch='qSlicer*PythonQt.*');"
-        ).arg(modulePathWithoutIntDir.absoluteFilePath(intDir)));
+        ).arg(scopedCurrentDir.currentPath()));
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);
-  Q_UNUSED(intDir);
   Q_UNUSED(modulePath);
   return false;
 #endif

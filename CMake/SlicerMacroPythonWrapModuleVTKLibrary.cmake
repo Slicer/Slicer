@@ -81,28 +81,4 @@ macro(SlicerMacroPythonWrapModuleVTKLibrary)
     KIT_PYTHON_LIBRARIES ${PYTHONWRAPMODULEVTKLIBRARY_Wrapped_LIBRARIES}
     )
 
-  # Generate "Python/<lib_name>.py" file
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Python/${PYTHONWRAPMODULEVTKLIBRARY_RELATIVE_PYTHON_DIR}/${lib_name}.py "
-\"\"\" This module loads all the classes from the ${lib_name} library into its
-namespace.\"\"\"
-
-from ${lib_name}Python import *
-")
-
-  file(GLOB PYFILES
-    RELATIVE "${CMAKE_CURRENT_BINARY_DIR}/Python"
-    "${CMAKE_CURRENT_BINARY_DIR}/Python/${PYTHONWRAPMODULEVTKLIBRARY_RELATIVE_PYTHON_DIR}/*.py")
-  if(PYFILES)
-    include(ctkMacroCompilePythonScript)
-    ctkMacroCompilePythonScript(
-      TARGET_NAME ${lib_name}
-      SCRIPTS "${PYFILES}"
-      RESOURCES ""
-      SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Python
-      DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}
-      INSTALL_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR}
-      NO_INSTALL_SUBDIR
-      )
-  endif()
-
 endmacro()
