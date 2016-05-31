@@ -16,7 +16,6 @@ set(Slicer_PYTHON_SCRIPTS
 
 set(Slicer_PYTHON_MODULES_CONFIG "
 # slicer libs
-'freesurfer',
 'mrml',
 'teem',
 'qMRMLWidgetsPythonQt',
