@@ -4,7 +4,6 @@ import unittest
 import vtk
 import qt
 import slicer
-import EditorLib
 
 class SlicerMRB(unittest.TestCase):
   """ Test for slicer data bundle
