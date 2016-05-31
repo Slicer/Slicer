@@ -42,15 +42,19 @@ def TemporaryPythonScript(code, *args, **kwargs):
   print("Written script %s [%s]" % (script.name, code))
   return script
 
-def collect_startup_times_normal(output_file, drop_cache=False):
+def collect_startup_times_normal(output_file, drop_cache=False, display_output=False):
   results= {}
   test = []
   (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+  (returnCode, stdout, stderr) = result
+  if display_output:
+    if stdout: print("STDOUT [%s]\n" % stdout)
+    if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
   results[" ".join(test)] = duration
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
-def collect_startup_times_overall(output_file, drop_cache=False):
+def collect_startup_times_overall(output_file, drop_cache=False, display_output=False):
 
   tests = [
     [],
@@ -71,6 +75,11 @@ def collect_startup_times_overall(output_file, drop_cache=False):
     test.insert(0, '--disable-python')
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     results[" ".join(test)] = duration
+
+    (returnCode, stdout, stderr) = result
+    if display_output:
+      if stdout: print("STDOUT [%s]\n" % stdout)
+      if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
 
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
@@ -116,7 +125,7 @@ with open("Modules.json", 'w') as output:
 
   return read_modules(output_file)
 
-def collect_startup_times_including_one_module(output_file, drop_cache=False):
+def collect_startup_times_including_one_module(output_file, drop_cache=False, display_output=False):
   modules = collect_modules()
   # Collect startup times disabling each module one by one
   moduleTimes = {}
@@ -127,6 +136,9 @@ def collect_startup_times_including_one_module(output_file, drop_cache=False):
     test = ['--testing', '--modules-to-ignore', ",".join(modules_minus_one)]
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
     (returnCode, stdout, stderr) = result
+    if display_output:
+      if stdout: print("STDOUT [%s]\n" % stdout)
+      if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
     if returnCode != EXIT_SUCCESS:
       # XXX Ignore module with dependencies
       duration = None
@@ -137,7 +149,7 @@ def collect_startup_times_including_one_module(output_file, drop_cache=False):
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
-def collect_startup_times_excluding_one_module(output_file, drop_cache=False):
+def collect_startup_times_excluding_one_module(output_file, drop_cache=False, display_output=False):
   modules = collect_modules()
   # Collect startup times disabling each module one by one
   moduleTimes = {}
@@ -148,6 +160,9 @@ def collect_startup_times_excluding_one_module(output_file, drop_cache=False):
     print("[%d/%d]" % (idx, len(modules)))
     (duration, result) = runSlicerAndExitWithTime(slicer_executable, ['--testing', '--modules-to-ignore', moduleName], drop_cache=drop_cache)
     (returnCode, stdout, stderr) = result
+    if display_output:
+      if stdout: print("STDOUT [%s]\n" % stdout)
+      if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
     if returnCode != EXIT_SUCCESS:
       # XXX Ignore module with dependencies
       duration = None
@@ -158,7 +173,7 @@ def collect_startup_times_excluding_one_module(output_file, drop_cache=False):
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
-def collect_startup_times_modules_to_load(output_file, modules_to_load, drop_cache=False):
+def collect_startup_times_modules_to_load(output_file, modules_to_load, drop_cache=False, display_output=False):
   modules = collect_modules()
   modulesToIgnore = list(modules.keys())
   for moduleName in modules_to_load.split(","):
@@ -167,6 +182,10 @@ def collect_startup_times_modules_to_load(output_file, modules_to_load, drop_cac
 
   test = ['--testing', '--modules-to-ignore', ",".join(modulesToIgnore)]
   (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+  (returnCode, stdout, stderr) = result
+  if display_output:
+    if stdout: print("STDOUT [%s]\n" % stdout)
+    if stderr and returnCode == EXIT_SUCCESS: print("STDERR [%s]\n" % stderr)
 
   results= {}
   results[" ".join(modulesToIgnore)] = duration
@@ -186,6 +205,7 @@ if __name__ == '__main__':
   parser.add_argument("-n", "--repeat",  default=1, type=int)
   parser.add_argument("--drop-cache", action="store_true")
   parser.add_argument("--reuse-module-list", action="store_true")
+  parser.add_argument("--display-slicer-output", action="store_true")
   parser.add_argument("/path/to/Slicer")
   args = parser.parse_args()
 
@@ -202,21 +222,29 @@ if __name__ == '__main__':
     print("Loading existing module listing")
     collect_modules = read_modules
 
+  common_kwargs = {
+    'display_output': args.display_slicer_output,
+    'drop_cache': args.drop_cache
+    }
+
   # Since the "normal" experiment is included in the "overall" one,
   # it is not executed by default.
   if args.normal:
-    collect_startup_times_normal("StartupTimesNormal.json", drop_cache=args.drop_cache)
+    collect_startup_times_normal("StartupTimesNormal.json", **common_kwargs)
 
   # Since the "modules-to-load" experiment requires user input and is provided
   # for convenience, it is not executed by default.
   if args.modules_to_load:
-    collect_startup_times_modules_to_load("StartupTimesSelectedModules.json", args.modules_to_load, drop_cache=args.drop_cache)
+    collect_startup_times_modules_to_load(
+      "StartupTimesSelectedModules.json", args.modules_to_load, **common_kwargs)
 
   if all or args.overall:
-    collect_startup_times_overall("StartupTimes.json", drop_cache=args.drop_cache)
+    collect_startup_times_overall("StartupTimes.json", **common_kwargs)
 
   if all or args.excluding_one_module:
-    collect_startup_times_excluding_one_module("StartupTimesExcludingOneModule.json", drop_cache=args.drop_cache)
+    collect_startup_times_excluding_one_module(
+      "StartupTimesExcludingOneModule.json", **common_kwargs)
 
   if all or args.including_one_module:
-    collect_startup_times_including_one_module("StartupTimesIncludingOneModule.json", drop_cache=args.drop_cache)
+    collect_startup_times_including_one_module(
+      "StartupTimesIncludingOneModule.json", **common_kwargs)
