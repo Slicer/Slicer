@@ -50,7 +50,7 @@ class SlicerApplicationLogHandler(logging.Handler):
       context.setFunction(record.funcName)
       context.setMessage(record.msg)
       threadId = "{0}({1})".format(record.threadName, record.thread)
-      app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
+      slicer.app.errorLogModel().addEntry(qt.QDateTime.currentDateTime(), threadId,
         self.pythonToCtkLevelConverter[record.levelno], self.origin, context, record.msg)
     except:
       self.handleError(record)
