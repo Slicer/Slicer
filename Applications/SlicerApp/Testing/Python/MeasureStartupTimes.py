@@ -75,7 +75,14 @@ def collect_startup_times_overall(output_file, drop_cache=False):
   with open(output_file, 'w') as file:
     file.write(json.dumps(results, indent=4))
 
-def collect_modules():
+def read_modules(input_file='Modules.json'):
+  # Read list of modules
+  with open(input_file) as input:
+    modules = json.load(input)
+  print("Found %d modules reading %s\n" % (len(modules), input_file))
+  return modules
+
+def collect_modules(output_file='Modules.json'):
   # Collect list of all modules and their associated types
   python_script = TemporaryPythonScript("""
 import json
@@ -107,11 +114,7 @@ with open("Modules.json", 'w') as output:
   assert returnCode == EXIT_SUCCESS
   print("=> ok\n")
 
-  # Read list of modules
-  with open('Modules.json') as input:
-    modules = json.load(input)
-  print("Found %d  modules\n" % len(modules))
-  return modules
+  return read_modules(output_file)
 
 def collect_startup_times_including_one_module(output_file, drop_cache=False):
   modules = collect_modules()
@@ -182,6 +185,7 @@ if __name__ == '__main__':
   # Common options
   parser.add_argument("-n", "--repeat",  default=1, type=int)
   parser.add_argument("--drop-cache", action="store_true")
+  parser.add_argument("--reuse-module-list", action="store_true")
   parser.add_argument("/path/to/Slicer")
   args = parser.parse_args()
 
@@ -193,6 +197,10 @@ if __name__ == '__main__':
     and not args.including_one_module)
 
   runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
+
+  if args.reuse_module_list:
+    print("Loading existing module listing")
+    collect_modules = read_modules
 
   # Since the "normal" experiment is included in the "overall" one,
   # it is not executed by default.
