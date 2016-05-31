@@ -64,7 +64,6 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
     bool isEmbedded)
 {
   Q_UNUSED(intDir);
-  Q_UNUSED(isEmbedded);
 #ifdef Slicer_USE_PYTHONQT
   if(!pythonManager)
     {
@@ -72,6 +71,13 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
     }
   // Update current application directory, so that *PythonD modules can be loaded
   ctkScopedCurrentDir scopedCurrentDir(QFileInfo(modulePath).absolutePath());
+
+  if (!isEmbedded)
+    {
+    QStringList paths; paths << scopedCurrentDir.currentPath();
+    pythonManager->appendPythonPaths(paths);
+    }
+
   pythonManager->executeString(QString(
         "from slicer.util import importVTKClassesFromDirectory;"
         "importVTKClassesFromDirectory('%1', 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
@@ -84,8 +90,9 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
         ).arg(scopedCurrentDir.currentPath()));
   return !pythonManager->pythonErrorOccured();
 #else
-  Q_UNUSED(pythonManager);
+  Q_UNUSED(isEmbedded);
   Q_UNUSED(modulePath);
+  Q_UNUSED(pythonManager);
   return false;
 #endif
 }
