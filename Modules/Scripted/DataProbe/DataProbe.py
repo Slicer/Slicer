@@ -2,6 +2,7 @@ import os
 import unittest
 import qt, vtk, ctk
 import slicer
+import teem
 import DataProbeLib
 
 #
@@ -533,7 +534,7 @@ class DataProbeWidget:
 
 class CalculateTensorScalars:
     def __init__(self):
-        self.dti_math = slicer.vtkDiffusionTensorMathematics()
+        self.dti_math = teem.vtkDiffusionTensorMathematics()
 
         self.single_pixel_image = vtk.vtkImageData()
         self.single_pixel_image.SetExtent(0, 0, 0, 0, 0, 0)

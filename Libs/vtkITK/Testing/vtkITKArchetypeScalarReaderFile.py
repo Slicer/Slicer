@@ -2,6 +2,7 @@
 import unittest
 import slicer
 import vtkITK
+import teem
 from vtk.util import numpy_support as ns
 import numpy
 
@@ -28,7 +29,7 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
         self.ritk.SetArchetype(self.file_name)
         self.ritk.Update()
 
-        self.rnrrd = slicer.vtkNRRDReader()
+        self.rnrrd = teem.vtkNRRDReader()
         self.rnrrd.SetFileName(self.file_name)
         self.rnrrd.Update()
 
