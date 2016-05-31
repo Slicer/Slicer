@@ -155,11 +155,27 @@ def collect_startup_times_excluding_one_module(output_file, drop_cache=False):
   with open(output_file, 'w') as file:
     file.write(json.dumps(moduleTimes, indent=4))
 
+def collect_startup_times_modules_to_load(output_file, modules_to_load, drop_cache=False):
+  modules = collect_modules()
+  modulesToIgnore = list(modules.keys())
+  for moduleName in modules_to_load.split(","):
+    print("Including %s" % moduleName)
+    del modulesToIgnore[modulesToIgnore.index(moduleName)]
+
+  test = ['--testing', '--modules-to-ignore', ",".join(modulesToIgnore)]
+  (duration, result) = runSlicerAndExitWithTime(slicer_executable, test, drop_cache=drop_cache)
+
+  results= {}
+  results[" ".join(modulesToIgnore)] = duration
+  with open(output_file, 'w') as file:
+    file.write(json.dumps(results, indent=4))
+
 if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Measure startup times.')
   # Experiments
   parser.add_argument("--normal", action="store_true")
+  parser.add_argument("--modules-to-load")
   parser.add_argument("--overall", action="store_true")
   parser.add_argument("--excluding-one-module", action="store_true")
   parser.add_argument("--including-one-module", action="store_true")
@@ -170,7 +186,11 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   slicer_executable = os.path.expanduser(getattr(args, "/path/to/Slicer"))
-  all = not args.normal and not args.overall and not args.excluding_one_module and not args.including_one_module
+  all = (not args.normal
+    and not args.modules_to_load
+    and not args.overall
+    and not args.excluding_one_module
+    and not args.including_one_module)
 
   runSlicerAndExitWithTime = timecall(runSlicerAndExit, repeat=args.repeat)
 
@@ -178,6 +198,11 @@ if __name__ == '__main__':
   # it is not executed by default.
   if args.normal:
     collect_startup_times_normal("StartupTimesNormal.json", drop_cache=args.drop_cache)
+
+  # Since the "modules-to-load" experiment requires user input and is provided
+  # for convenience, it is not executed by default.
+  if args.modules_to_load:
+    collect_startup_times_modules_to_load("StartupTimesSelectedModules.json", args.modules_to_load, drop_cache=args.drop_cache)
 
   if all or args.overall:
     collect_startup_times_overall("StartupTimes.json", drop_cache=args.drop_cache)
