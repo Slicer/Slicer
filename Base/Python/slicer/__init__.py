@@ -12,7 +12,7 @@ def _createModule(name, globals, docstring):
   globals[moduleName] = module
 
 #-----------------------------------------------------------------------------
-# Load modules
+# Create slicer.modules and slicer.moduleNames
 
 _createModule('slicer.modules', globals(),
 """This module provides an access to all instantiated Slicer modules.
@@ -28,6 +28,9 @@ The module attributes are the Slicer modules names, the associated
 value is the module name.
 """)
 
+#-----------------------------------------------------------------------------
+# Load modules: Add VTK and PythonQt python module attributes into slicer namespace
+
 try:
   from kits import available_kits
 except ImportError:
@@ -39,7 +42,9 @@ for kit in available_kits:
    except ImportError as detail:
      print detail
 
-# Removing things the user shouldn't have to see.
+#-----------------------------------------------------------------------------
+# Cleanup: Removing things the user shouldn't have to see.
+
 del _createModule
 del available_kits
 del kit
