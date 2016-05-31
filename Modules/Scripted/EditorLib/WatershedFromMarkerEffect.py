@@ -7,13 +7,6 @@ import LabelEffect
 
 import math
 
-HAVE_SIMPLEITK=True
-try:
-  import SimpleITK as sitk
-  import sitkUtils
-except ImportError:
-  HAVE_SIMPLEITK=False
-
 __all__ = [
   'WatershedFromMarkerEffectOptions',
   'WatershedFromMarkerEffectTool',
@@ -46,7 +39,10 @@ class WatershedFromMarkerEffectOptions(Effect.EffectOptions):
   def create(self):
     super(WatershedFromMarkerEffectOptions,self).create()
 
-    if not HAVE_SIMPLEITK:
+    try:
+      import SimpleITK as sitk
+      import sitkUtils
+    except ImportError:
       self.warningLabel = qt.QLabel()
       self.warningLabel.text = "WatershedFromMarker is not available because\nSimpleITK is not available in this build"
       self.widgets.append(self.warningLabel)
@@ -207,7 +203,6 @@ class WatershedFromMarkerEffectTool(LabelEffect.LabelEffectTool):
     """
     pass
 
-
 #
 # WatershedFromMarkerEffectLogic
 #
@@ -231,13 +226,10 @@ class WatershedFromMarkerEffectLogic(LabelEffect.LabelEffectLogic):
   def apply(self,xy):
     pass
 
-  try:
+  def doit(self):
+
     import SimpleITK as sitk
     import sitkUtils
-  except ImportError:
-    pass
-
-  def doit(self):
 
     labelLogic = self.sliceLogic.GetLabelLayer()
     labelNode = labelLogic.GetVolumeNode()
