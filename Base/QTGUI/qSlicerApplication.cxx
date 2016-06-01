@@ -828,11 +828,13 @@ void qSlicerApplication::displayApplicationInformations() const
   numberOfPhysicalCPU = (unsigned int) info.dwNumberOfProcessors;
 #endif
 
-  qDebug("%s: %s %.3f MHz, %d cores",
+  unsigned int numberOfLogicalCPU = systemInfo->GetNumberOfLogicalCPU();
+
+  qDebug("%s: %s %s, %d cores, %d logical processors",
          qPrintable(titles.at(4).leftJustified(titleWidth, '.')),
          systemInfo->GetVendorString() ? systemInfo->GetVendorString() : "unknown",
-         systemInfo->GetProcessorClockFrequency()/1000,
-         numberOfPhysicalCPU);
+         systemInfo->GetModelName() ? systemInfo->GetModelName() : "unknown",
+         numberOfPhysicalCPU, numberOfLogicalCPU);
 
   QSettings settings;
 
