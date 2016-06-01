@@ -24,6 +24,7 @@ public:
   const char * GetVendorID();
   const char * GetTypeID();
   const char * GetFamilyID();
+  const char * GetModelName();
   const char * GetModelID();
   const char * GetSteppingCode();
   const char * GetExtendedProcessorName();

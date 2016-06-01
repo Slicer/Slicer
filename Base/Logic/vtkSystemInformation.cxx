@@ -33,6 +33,12 @@ const char * vtkSystemInformation::GetFamilyID()
   return this->StringHolder.c_str();
 }
 
+const char * vtkSystemInformation::GetModelName()
+{
+  this->StringHolder = this->SystemInformation.GetModelName();
+  return this->StringHolder.c_str();
+}
+
 const char * vtkSystemInformation::GetModelID()
 {
   this->StringHolder = this->SystemInformation.GetModelID();
@@ -188,6 +194,7 @@ vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "VendorString: " << this->GetVendorString() << "\n";
   os << indent << "TypeID: " << this->GetTypeID() << "\n";
   os << indent << "FamilyID: " << this->GetFamilyID() << "\n";
+  os << indent << "ModelName: " << this->GetModelName() << "\n";
   os << indent << "ModelID: " << this->GetModelID() << "\n";
   os << indent << "SteppingCode: " << this->GetSteppingCode() << "\n";
   os << indent << "ExtendedProcessorName: " << this->GetExtendedProcessorName() << "\n";
