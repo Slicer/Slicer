@@ -471,7 +471,9 @@ def getNodes(pattern = "", scene=None):
       node = scene.GetNthNode(idx)
       name = node.GetName()
       id = node.GetID()
-      if fnmatch.fnmatchcase(name, pattern) or fnmatch.fnmatchcase(id, pattern):
+      if (pattern == "" or
+          fnmatch.fnmatchcase(name, pattern) or
+          fnmatch.fnmatchcase(id, pattern)):
         nodes[node.GetName()] = node
     return nodes
 
