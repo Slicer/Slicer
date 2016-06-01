@@ -107,8 +107,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.sampleMarkupName = 'SampleMarkup'
     self.sampleChartName = 'SampleChart'
     self.studyName = 'Study'
-    from qSlicerSubjectHierarchyModuleWidgetsPythonQt import qSlicerSubjectHierarchyCloneNodePlugin
-    self.cloneNodeNamePostfix = qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
+    self.cloneNodeNamePostfix = slicer.qSlicerSubjectHierarchyCloneNodePlugin().getCloneNodeNamePostfix()
 
   # ------------------------------------------------------------------------------
   def section_MarkupRole(self):
@@ -164,7 +163,6 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     markupsNode.SetAndObserveStorageNodeID(markupsStorageNode.GetID())
 
     # Get clone node plugin
-    import qSlicerSubjectHierarchyModuleWidgetsPythonQt
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
     self.assertIsNotNone( subjectHierarchyWidget )
     subjectHierarchyPluginLogic = subjectHierarchyWidget.pluginLogic()
@@ -191,8 +189,7 @@ class SubjectHierarchyCorePluginsSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( clonedMarkupNode.GetDisplayNode() )
     self.assertIsNotNone( clonedMarkupNode.GetStorageNode() )
 
-    from vtkSlicerSubjectHierarchyModuleLogic import vtkSlicerSubjectHierarchyModuleLogic
-    inSameStudy = vtkSlicerSubjectHierarchyModuleLogic.AreNodesInSameBranch(markupsShNode, clonedMarkupShNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
+    inSameStudy = slicer.vtkSlicerSubjectHierarchyModuleLogic.AreNodesInSameBranch(markupsShNode, clonedMarkupShNode, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMLevelStudy())
     self.assertTrue( inSameStudy )
 
   # ------------------------------------------------------------------------------

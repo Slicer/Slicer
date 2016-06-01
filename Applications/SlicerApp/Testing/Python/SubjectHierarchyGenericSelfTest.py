@@ -194,8 +194,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
   def section_AddNodeToSubjectHierarchy(self):
     self.delayDisplay("Add node to subject hierarchy",self.delayMs)
 
-    import qSlicerSubjectHierarchyModuleWidgetsPythonQt
-
     # Get volume previously loaded from DICOM
     ctVolumeNode = slicer.util.getNode('vtkMRMLScalarVolumeNode*')
     self.assertIsNotNone( ctVolumeNode )
@@ -271,7 +269,6 @@ class SubjectHierarchyGenericSelfTestTest(ScriptedLoadableModuleTest):
     self.assertIsNotNone( sampleLabelmapShNode )
 
     # Get subject hierarchy scene model
-    import qSlicerSubjectHierarchyModuleWidgetsPythonQt
     subjectHierarchyWidget = slicer.modules.subjecthierarchy.widgetRepresentation()
     self.assertIsNotNone( subjectHierarchyWidget )
     subjectHierarchySceneModel = subjectHierarchyWidget.subjectHierarchySceneModel()

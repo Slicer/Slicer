@@ -181,9 +181,8 @@ class DICOMPlugin(object):
     tags['instanceUID'] = "0008,0018"
 
     # Import and check dependencies
-    from vtkSlicerSubjectHierarchyModuleLogic import vtkSlicerSubjectHierarchyModuleLogic
     try:
-      vtkSlicerSubjectHierarchyModuleLogic
+      slicer.vtkSlicerSubjectHierarchyModuleLogic
     except AttributeError:
       import sys
       sys.stderr.write('Unable to create SubjectHierarchy nodes: SubjectHierarchy module not found!')
@@ -230,7 +229,7 @@ class DICOMPlugin(object):
     studyInstanceUid = slicer.dicomDatabase.fileValue(firstFile,tags['studyInstanceUID'])
     studyId = slicer.dicomDatabase.fileValue(firstFile,tags['studyID'])
     studyNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), studyInstanceUid)
-    vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(slicer.mrmlScene, patientId, studyInstanceUid, seriesInstanceUid)
+    slicer.vtkSlicerSubjectHierarchyModuleLogic.InsertDicomSeriesInHierarchy(slicer.mrmlScene, patientId, studyInstanceUid, seriesInstanceUid)
 
     if patientNode is None:
       patientNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNodeByUID(slicer.mrmlScene, slicer.vtkMRMLSubjectHierarchyConstants.GetDICOMUIDName(), patientId)
