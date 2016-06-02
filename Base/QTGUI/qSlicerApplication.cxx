@@ -208,11 +208,7 @@ void qSlicerApplicationPrivate::init()
   this->ErrorLogModel->setAllMsgHandlerEnabled(true);
 
   q->setupFileLogging();
-
-  if (!this->CoreCommandOptions->displayMessageAndExit())
-    {
-    q->displayApplicationInformation();
-    }
+  q->logApplicationInformation();
 
   //----------------------------------------------------------------------------
   // Settings Dialog
@@ -732,11 +728,40 @@ void qSlicerApplication::setupFileLogging()
   d->ErrorLogModel->setFilePath(currentLogFilePath);
 }
 
+namespace
+{
+
 // --------------------------------------------------------------------------
-void qSlicerApplication::displayApplicationInformation() const
+struct qSlicerScopedTerminalOutputSettings
+{
+  qSlicerScopedTerminalOutputSettings(
+      ctkErrorLogModel* errorLogModel,
+      const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
+    ErrorLogModel(errorLogModel)
+  {
+    this->Saved = errorLogModel->terminalOutputs();
+    errorLogModel->setTerminalOutputs(terminalOutputs);
+  }
+  ~qSlicerScopedTerminalOutputSettings()
+  {
+    this->ErrorLogModel->setTerminalOutputs(this->Saved);
+  }
+  ctkErrorLogModel* ErrorLogModel;
+  ctkErrorLogTerminalOutput::TerminalOutputs Saved;
+};
+
+}
+
+// --------------------------------------------------------------------------
+void qSlicerApplication::logApplicationInformation() const
 {
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
+
+  qSlicerScopedTerminalOutputSettings currentTerminalOutputSettings(
+        this->errorLogModel(),
+        this->commandOptions()->displayApplicationInformation() ?
+          this->errorLogModel()->terminalOutputs() : ctkErrorLogTerminalOutput::None);
 
   QStringList titles = QStringList()
       << "Session start time "

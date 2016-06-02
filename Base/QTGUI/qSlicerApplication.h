@@ -116,8 +116,9 @@ public:
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
 
-  /// Display application information.
-  /// This function will print to standard output the following
+  /// Log application information.
+  ///
+  /// This function will log the following
   /// details:
   ///   - Session start time
   ///   - Slicer version
@@ -127,7 +128,12 @@ public:
   ///   - Developer mode enabled
   ///   - Prefer executable CLI
   ///   - Additional module paths
-  Q_INVOKABLE virtual void displayApplicationInformation() const;
+  ///
+  /// \note Starting the application with `--application-information` will
+  /// also print the information to standard output.
+  ///
+  /// \sa qSlicerCoreCommandOptions::displayApplicationInformation()
+  Q_INVOKABLE virtual void logApplicationInformation() const;
 
 public slots:
 

@@ -82,5 +82,24 @@ if(Slicer_HAS_CONSOLE_IO_SUPPORT)
     slicer_nomainwindow_DisableModulesCommandLineOptionsTest2
     PROPERTIES PASS_REGULAR_EXPRESSION "Number of loaded modules: 1"
     )
+
+  add_test(
+    NAME slicer_nomainwindow_NoApplicationInformationOptionTest
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
+    --disable-modules --exit-after-startup
+    )
+  set_tests_properties(
+    slicer_nomainwindow_NoApplicationInformationOptionTest
+    PROPERTIES FAIL_REGULAR_EXPRESSION "Session start time"
+    )
+  add_test(
+    NAME slicer_nomainwindow_ApplicationInformationOptionTest
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${APP_TARGET_NAME}>
+    --disable-modules --exit-after-startup --application-information
+    )
+  set_tests_properties(
+    slicer_nomainwindow_ApplicationInformationOptionTest
+    PROPERTIES PASS_REGULAR_EXPRESSION "Session start time"
+    )
 endif()
 

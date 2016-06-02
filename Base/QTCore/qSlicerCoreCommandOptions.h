@@ -45,6 +45,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool disableBuiltInCLIModules READ disableBuiltInCLIModules CONSTANT)
   Q_PROPERTY(bool disableBuiltInLoadableModules READ disableBuiltInLoadableModules CONSTANT)
   Q_PROPERTY(bool disableBuiltInScriptedLoadableModules READ disableBuiltInScriptedLoadableModules CONSTANT)
+  Q_PROPERTY(bool displayApplicationInformation READ displayApplicationInformation CONSTANT)
   Q_PROPERTY(bool displayVersionAndExit READ displayVersionAndExit CONSTANT)
   Q_PROPERTY(bool displayProgramPathAndExit READ displayProgramPathAndExit CONSTANT)
   Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit CONSTANT)
@@ -149,6 +150,9 @@ public:
   /// \sa displaySettingsPathAndExit()
   /// \sa displayTemporaryPathAndExit()
   virtual bool displayMessageAndExit() const;
+
+  /// Return True if slicer should display application information in the terminal.
+  bool displayApplicationInformation() const;
 
   /// Return True if slicer should display details regarding the module discovery process
   bool verboseModuleDiscovery()const;
