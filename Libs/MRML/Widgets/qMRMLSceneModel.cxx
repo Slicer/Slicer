@@ -778,7 +778,6 @@ void qMRMLSceneModel::populateScene()
        (node = (vtkMRMLNode*)d->MRMLScene->GetNodes()->GetNextItemAsObject(it)) ;)
     {
     index++;
-    Q_ASSERT(index == d->RowCache.count());
     d->insertNode(node, index);
     }
   foreach(vtkMRMLNode* misplacedNode, d->MisplacedNodes)
