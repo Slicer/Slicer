@@ -116,7 +116,7 @@ public:
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
 
-  /// Display application informations.
+  /// Display application information.
   /// This function will print to standard output the following
   /// details:
   ///   - Session start time
@@ -127,7 +127,7 @@ public:
   ///   - Developer mode enabled
   ///   - Prefer executable CLI
   ///   - Additional module paths
-  Q_INVOKABLE virtual void displayApplicationInformations() const;
+  Q_INVOKABLE virtual void displayApplicationInformation() const;
 
 public slots:
 

@@ -211,7 +211,7 @@ void qSlicerApplicationPrivate::init()
 
   if (!this->CoreCommandOptions->displayMessageAndExit())
     {
-    q->displayApplicationInformations();
+    q->displayApplicationInformation();
     }
 
   //----------------------------------------------------------------------------
@@ -733,7 +733,7 @@ void qSlicerApplication::setupFileLogging()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerApplication::displayApplicationInformations() const
+void qSlicerApplication::displayApplicationInformation() const
 {
   // Log essential information about the application version and the host computer.
   // This helps in reproducing reported problems.
