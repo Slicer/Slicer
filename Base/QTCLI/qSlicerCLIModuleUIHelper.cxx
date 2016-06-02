@@ -871,17 +871,12 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   QWidget* widget = new QWidget;
   ctkPathLineEdit* pathLineEdit =
     new ctkPathLineEdit(name, QStringList() << QString("*.*"), ctkPathLineEdit::Files, widget);
-  QToolButton* browseButton = new QToolButton(widget);
-  browseButton->setText("...");
-  QObject::connect(browseButton, SIGNAL(clicked()),
-                   pathLineEdit, SLOT(browse()));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(File, name, label, pathLineEdit);
 
   QHBoxLayout* hBoxLayout = new QHBoxLayout;
   hBoxLayout->setContentsMargins(0,0,0,0);
   hBoxLayout->addWidget(pathLineEdit);
-  hBoxLayout->addWidget(browseButton);
   widget->setLayout(hBoxLayout);
   return widget;
 }
