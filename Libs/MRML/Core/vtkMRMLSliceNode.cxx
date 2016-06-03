@@ -19,12 +19,14 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 #include <vtkVector.h>
-#include <vtkAddonMathUtilities.h>
+
 
 // VNL includes
 #include <vnl/vnl_double_3.h>
@@ -43,7 +45,7 @@ vtkMRMLNodeNewMacro(vtkMRMLSliceNode);
 vtkMRMLSliceNode::vtkMRMLSliceNode()
 {
   // set by user
-  this->SliceToRAS = vtkMatrix4x4::New();
+  this->SliceToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
   this->SliceToRAS->Identity();
 
   this->JumpMode = OffsetJumpSlice;
@@ -52,14 +54,14 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->OrientationReference = NULL;
 
   // calculated by UpdateMatrices()
-  this->XYToSlice = vtkMatrix4x4::New();
-  this->XYToRAS = vtkMatrix4x4::New();
-  this->UVWToSlice = vtkMatrix4x4::New();
-  this->UVWToRAS = vtkMatrix4x4::New();
+  this->XYToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
+  this->XYToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  this->UVWToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
+  this->UVWToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
 
   // set the default field of view to a convenient size for looking
   // at slices through human heads (a 1 pixel thick slab 25x25 cm)
-  // TODO: how best to represent this as a slab rather than infinitessimal slice?
+  // TODO: how best to represent this as a slab rather than infinitesimal slice?
   this->FieldOfView[0] = 250.0;
   this->FieldOfView[1] = 250.0;
   this->FieldOfView[2] = 1.0;
@@ -123,26 +125,6 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 //----------------------------------------------------------------------------
 vtkMRMLSliceNode::~vtkMRMLSliceNode()
 {
-  if ( this->SliceToRAS != NULL)
-    {
-    this->SliceToRAS->Delete();
-    }
-  if ( this->XYToSlice != NULL)
-    {
-    this->XYToSlice->Delete();
-    }
-  if ( this->XYToRAS != NULL)
-    {
-    this->XYToRAS->Delete();
-    }
-  if ( this->UVWToSlice != NULL)
-    {
-    this->UVWToSlice->Delete();
-    }
-  if ( this->UVWToRAS != NULL)
-    {
-    this->UVWToRAS->Delete();
-    }
   if ( this->OrientationString )
     {
     delete [] this->OrientationString;
@@ -1184,6 +1166,12 @@ void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
 }
 
 //----------------------------------------------------------------------------
+vtkMatrix4x4 *vtkMRMLSliceNode::GetSliceToRAS()
+{
+  return this->SliceToRAS;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
@@ -1269,6 +1257,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
 {
   if (this->JumpMode == CenteredJumpSlice)
@@ -1281,7 +1270,7 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
     }
 }
 
-
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
 {
   vtkMatrix4x4 *sliceToRAS = this->GetSliceToRAS();
@@ -1379,6 +1368,7 @@ void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 {
   bool modified = false;
@@ -1398,6 +1388,7 @@ void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
 {
   if ( x != this->XYZOrigin[0] ||
@@ -1411,6 +1402,7 @@ void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
 {
   if ( x != this->UVWOrigin[0] ||
@@ -1424,8 +1416,8 @@ void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
     }
 }
 
-void vtkMRMLSliceNode::SetDimensions(int x, int y,
-                                     int z)
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetDimensions(int x, int y, int z)
 {
   if ( x != this->Dimensions[0] ||
        y != this->Dimensions[1] ||
@@ -1438,6 +1430,7 @@ void vtkMRMLSliceNode::SetDimensions(int x, int y,
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
 {
   if ( x != this->UVWExtents[0] ||
@@ -1451,11 +1444,13 @@ void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWExtents (double xyz[3])
 {
   this->SetUVWExtents(xyz[0], xyz[1], xyz[2]);
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
 {
   if (this->SliceResolutionMode != mode)
@@ -1478,26 +1473,26 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
   }
 }
 
-
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWDimensions (int xyz[3])
 {
   this->SetUVWDimensions(xyz[0], xyz[1], xyz[2]);
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWMaximumDimensions (int xyz[3])
 {
   this->SetUVWMaximumDimensions(xyz[0], xyz[1], xyz[2]);
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWOrigin (double xyz[3])
 {
   this->SetUVWOrigin(xyz[0], xyz[1], xyz[2]);
 }
 
-
-
-void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y,
-                                               int z)
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y, int z)
 {
   if ( x != this->UVWMaximumDimensions[0] || y != this->UVWMaximumDimensions[1]
        || z != this->UVWMaximumDimensions[2] )
@@ -1509,8 +1504,8 @@ void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y,
     }
 }
 
-void vtkMRMLSliceNode::SetUVWDimensions(int x, int y,
-                                            int z)
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetUVWDimensions(int x, int y, int z)
 {
   if ( x != this->UVWDimensions[0] ||
        y != this->UVWDimensions[1] ||
@@ -1535,6 +1530,7 @@ void vtkMRMLSliceNode::SetUVWDimensions(int x, int y,
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
 {
   bool modified = false;
@@ -1577,11 +1573,13 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetSliceOrigin(double xyz[3])
 {
   this->SetSliceOrigin(xyz[0],xyz[1],xyz[2]);
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimensions[3])
 {
   bool modified = false;
@@ -1625,6 +1623,31 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
     }
 }
 
+//----------------------------------------------------------------------------
+vtkMatrix4x4 *vtkMRMLSliceNode::GetXYToSlice()
+{
+  return this->XYToSlice;
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix4x4 *vtkMRMLSliceNode::GetXYToRAS()
+{
+  return this->XYToRAS;
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix4x4 *vtkMRMLSliceNode::GetUVWToSlice()
+{
+  return this->UVWToSlice;
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix4x4 *vtkMRMLSliceNode::GetUVWToRAS()
+{
+  return this->UVWToRAS;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
 {
   // Much of this code looks more like application logic than data
@@ -1683,6 +1706,7 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
 {
   // Much of this code looks more like application logic than data
@@ -1720,6 +1744,7 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
 {
   // Much of this code looks more like application logic than data
@@ -1758,33 +1783,31 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
     }
 }
 
-
-
+//----------------------------------------------------------------------------
 void
 vtkMRMLSliceNode::SetSliceSpacingModeToAutomatic()
 {
   this->SetSliceSpacingMode(AutomaticSliceSpacingMode);
 }
 
-
+//----------------------------------------------------------------------------
 void
 vtkMRMLSliceNode::SetSliceSpacingModeToPrescribed()
 {
   this->SetSliceSpacingMode(PrescribedSliceSpacingMode);
 }
 
-void
-vtkMRMLSliceNode::SetJumpModeToCentered()
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetJumpModeToCentered()
 {
   this->SetJumpMode(CenteredJumpSlice);
 }
 
-void
-vtkMRMLSliceNode::SetJumpModeToOffset()
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::SetJumpModeToOffset()
 {
   this->SetJumpMode(OffsetJumpSlice);
 }
-
 
 //----------------------------------------------------------------------------
 // Get/Set the current distance from the origin to the slice plane
@@ -1872,6 +1895,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
     }
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
 {
 

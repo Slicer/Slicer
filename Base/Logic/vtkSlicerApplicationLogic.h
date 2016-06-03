@@ -26,7 +26,6 @@
 
 // VTK includes
 #include <vtkCollection.h>
-#include <vtkSmartPointer.h>
 
 // ITK includes
 #include <itkMultiThreader.h>

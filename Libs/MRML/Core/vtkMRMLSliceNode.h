@@ -61,7 +61,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   ///
   /// Mapping from RAS space onto the slice plane
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
-  vtkGetObjectMacro (SliceToRAS, vtkMatrix4x4);
+  virtual vtkMatrix4x4 *GetSliceToRAS();
   virtual void SetSliceToRAS(vtkMatrix4x4* sliceToRAS);
 
   ///
@@ -208,22 +208,22 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   ///
   /// Matrix mapping from XY pixel coordinates on an image window
   /// into slice coordinates in mm
-  vtkGetObjectMacro (XYToSlice, vtkMatrix4x4);
+  vtkMatrix4x4 *GetXYToSlice();
 
   ///
   /// Matrix mapping from XY pixel coordinates on an image window
   /// into RAS world coordinates
-  vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
+  vtkMatrix4x4 *GetXYToRAS();
 
   ///
   /// Matrix mapping from UVW texture coordinates
   /// into slice coordinates in mm
-  vtkGetObjectMacro (UVWToSlice, vtkMatrix4x4);
+  vtkMatrix4x4 *GetUVWToSlice();
 
   ///
   /// Matrix mapping from UVW texture coordinates
   /// into RAS world coordinates
-  vtkGetObjectMacro (UVWToRAS, vtkMatrix4x4);
+  vtkMatrix4x4 *GetUVWToRAS();
 
   ///
   /// helper for comparing to matrices
@@ -410,13 +410,13 @@ protected:
   vtkMRMLSliceNode(const vtkMRMLSliceNode&);
   void operator=(const vtkMRMLSliceNode&);
 
-  vtkMatrix4x4 *SliceToRAS;
+  vtkSmartPointer<vtkMatrix4x4> SliceToRAS;
 
-  vtkMatrix4x4 *XYToSlice;
-  vtkMatrix4x4 *XYToRAS;
+  vtkSmartPointer<vtkMatrix4x4> XYToSlice;
+  vtkSmartPointer<vtkMatrix4x4> XYToRAS;
 
-  vtkMatrix4x4 *UVWToSlice;
-  vtkMatrix4x4 *UVWToRAS;
+  vtkSmartPointer<vtkMatrix4x4> UVWToSlice;
+  vtkSmartPointer<vtkMatrix4x4> UVWToRAS;
 
 
   int JumpMode;
