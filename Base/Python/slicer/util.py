@@ -463,8 +463,8 @@ def getNodes(pattern="*", scene=None):
     By default, ``pattern`` is a wildcard and it returns all nodes associated
     with ``slicer.mrmlScene``.
     """
-    import slicer, fnmatch
-    nodes = {}
+    import slicer, collections, fnmatch
+    nodes = collections.OrderedDict()
     if scene is None:
       scene = slicer.mrmlScene
     count = scene.GetNumberOfNodes()

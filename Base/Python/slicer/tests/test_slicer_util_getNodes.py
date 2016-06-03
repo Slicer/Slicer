@@ -8,9 +8,10 @@ class SlicerUtilTest(unittest.TestCase):
 
     @staticmethod
     def _configure_scene(scene):
-        nodes = [slicer.vtkMRMLScalarVolumeNode() for idx in range(2)]
+        nodes = [slicer.vtkMRMLScalarVolumeNode() for idx in range(3)]
         scene.AddNode(nodes[0]).SetName("Volume1")
         scene.AddNode(nodes[1]).SetName("Volume2")
+        scene.AddNode(nodes[2]).SetName("Volume")
         return nodes
 
     def test_getNode(self):
@@ -35,4 +36,4 @@ class SlicerUtilTest(unittest.TestCase):
 
         self.assertEqual(slicer.util.getNodes("Volume1").keys(), ["Volume1"])
         self.assertEqual(slicer.util.getNodes("Volume2").keys(), ["Volume2"])
-        self.assertEqual(slicer.util.getNodes("Volume*").keys(), ["Volume1", "Volume2"])
+        self.assertEqual(slicer.util.getNodes("Volume*").keys(), ["Volume1", "Volume2", "Volume"])
