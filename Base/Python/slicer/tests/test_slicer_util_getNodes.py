@@ -15,7 +15,7 @@ class SlicerUtilTest(unittest.TestCase):
         return nodes
 
     def test_getNode(self):
-        self.assertEqual(slicer.util.getNode(""), None)
+        self.assertIsNone(slicer.util.getNode(""))
 
         # For the following tests, use a dedicated scene where
         # all nodes are known.
@@ -29,10 +29,10 @@ class SlicerUtilTest(unittest.TestCase):
         self.assertEqual(slicer.util.getNodes(), slicer.util.getNodes("*"))
         self.assertEqual(slicer.util.getNodes(""), {})
 
-        self.assertTrue("Volume1" in slicer.util.getNodes("*"))
-        self.assertTrue("Volume2" in slicer.util.getNodes("*"))
-        self.assertTrue("Volume1" in slicer.util.getNodes())
-        self.assertTrue("Volume2" in slicer.util.getNodes())
+        self.assertIn("Volume1", slicer.util.getNodes("*"))
+        self.assertIn("Volume2", slicer.util.getNodes("*"))
+        self.assertIn("Volume1", slicer.util.getNodes())
+        self.assertIn("Volume2", slicer.util.getNodes())
 
         self.assertEqual(slicer.util.getNodes("Volume1").keys(), ["Volume1"])
         self.assertEqual(slicer.util.getNodes("Volume2").keys(), ["Volume2"])
