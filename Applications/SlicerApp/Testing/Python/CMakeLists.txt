@@ -238,7 +238,7 @@ slicer_add_python_unittest(
 
 slicer_add_python_unittest(
   SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_util_getNodes.py
-  SLICER_ARGS --no-main-window --disable-cli-modules --disable-scripted-loadable-modules
+  SLICER_ARGS --no-main-window --disable-modules
   TESTNAME_PREFIX nomainwindow_
   )
 
