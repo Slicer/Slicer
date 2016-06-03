@@ -94,6 +94,8 @@ public:
   void setupOrientationMarkerMenu();
   void setupRulerMenu();
 
+  qMRMLOrientation mrmlOrientation(const QString& name);
+
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
 
   void enableLayerWidgets();

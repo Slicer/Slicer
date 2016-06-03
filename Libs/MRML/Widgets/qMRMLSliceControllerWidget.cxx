@@ -792,8 +792,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->SliceOrientationSelector->blockSignals(wasBlocked);
 
   // Update slice offset slider tooltip
-  qMRMLOrientation orientation = this->SliceOrientationToDescription[
-          QString::fromStdString(this->MRMLSliceNode->GetOrientationString())];
+  qMRMLOrientation orientation = this->mrmlOrientation(
+      QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
   this->SliceOffsetSlider->setToolTip(orientation.ToolTip);
   this->SliceOffsetSlider->setPrefix(orientation.Prefix);
 
@@ -2413,6 +2413,18 @@ void qMRMLSliceControllerWidgetPrivate::setupRulerMenu()
   rulerMenu->setObjectName("rulerMenu");
   this->RulerButton->setMenu(rulerMenu);
   rulerMenu->addActions(rulerTypesActions->actions());
+}
+
+// --------------------------------------------------------------------------
+qMRMLOrientation qMRMLSliceControllerWidgetPrivate::mrmlOrientation(const QString &name)
+{
+  QHash<QString, qMRMLOrientation>::iterator it = this->SliceOrientationToDescription.find(name);
+  if (it != this->SliceOrientationToDescription.end())
+    {
+    return it.value();
+    }
+  qMRMLOrientation obliqueOrientation = {qMRMLSliceControllerWidget::tr(""), qMRMLSliceControllerWidget::tr("Oblique")};
+  return obliqueOrientation;
 }
 
 // --------------------------------------------------------------------------
