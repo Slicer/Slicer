@@ -16,6 +16,9 @@ class SlicerUtilTest(unittest.TestCase):
         scene.AddNode(nodes[2]).SetName("Volume")
         return nodes
 
+    def test_getFirstNodeByName(self):
+        self.assertEqual(slicer.util.getFirstNodeByName("Volume", 'vtkMRMLScalarVolumeNode').GetName(), "Volume1" )
+
     def test_getNode(self):
         self.assertIsNone(slicer.util.getNode(""))
 

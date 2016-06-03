@@ -509,14 +509,9 @@ def getFirstNodeByName(name, className=None):
   - use a regular expression to match names post-pended with addition characters
   - optionally specify a classname that must match
   """
-  nodes = getNodes(name+'*')
-  for nodeName in nodes.keys():
-    if not className:
-      return (nodes[nodeName]) # return the first one
-    else:
-      if nodes[nodeName].IsA(className):
-        return (nodes[nodeName])
-  return None
+  import slicer
+  scene = slicer.mrmlScene
+  return scene.GetFirstNode(name, className, [0], False)
 
 class NodeModify:
   """Context manager to conveniently compress mrml node modified event.
