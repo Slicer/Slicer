@@ -75,12 +75,12 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   // Storable node
   vtkMRMLTableNode *tableNode;
 
-  // Chek if the file is sqlite
+  // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
   if( extension.empty() )
     {
     vtkErrorMacro("ReadData: no file extension specified: " << fileName);
-    return false;
+    return 0;
     }
   if (   !extension.compare(".db")
       || !extension.compare(".db3")
@@ -127,7 +127,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       }
     }
   else
-  {
+    {
     // Storage node
     vtkNew<vtkMRMLTableStorageNode> tableStorageNode;
     tableStorageNode->SetFileName(fileName);
@@ -150,7 +150,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       return 0;
       }
     tableNode = tableNode1.GetPointer();
-  }
+    }
 
   return tableNode;
 }
