@@ -1,6 +1,7 @@
 import unittest
 import slicer
 import slicer.util
+import vtk
 
 class SlicerUtilTest(unittest.TestCase):
     def setUp(self):
@@ -8,9 +9,10 @@ class SlicerUtilTest(unittest.TestCase):
 
     @staticmethod
     def _configure_scene(scene):
-        nodes = [slicer.vtkMRMLScalarVolumeNode() for idx in range(3)]
+        nodes = [slicer.vtkMRMLScalarVolumeNode() for idx in range(4)]
         scene.AddNode(nodes[0]).SetName("Volume1")
         scene.AddNode(nodes[1]).SetName("Volume2")
+        scene.AddNode(nodes[2]).SetName("Volume")
         scene.AddNode(nodes[2]).SetName("Volume")
         return nodes
 
@@ -37,3 +39,13 @@ class SlicerUtilTest(unittest.TestCase):
         self.assertEqual(slicer.util.getNodes("Volume1").keys(), ["Volume1"])
         self.assertEqual(slicer.util.getNodes("Volume2").keys(), ["Volume2"])
         self.assertEqual(slicer.util.getNodes("Volume*").keys(), ["Volume1", "Volume2", "Volume"])
+
+    def test_getNodesMultipleNodesSharingName(self):
+
+        self.assertIn("Volume", slicer.util.getNodes("Volume"))
+        self.assertIn("Volume", slicer.util.getNodes("Volume", useLists=True))
+
+        self.assertEqual(slicer.util.getNodes("Volume").keys(), ["Volume"])
+        self.assertIsInstance(slicer.util.getNodes("Volume")["Volume"], vtk.vtkObject)
+        self.assertEqual(slicer.util.getNodes("Volume",useLists=True).keys(), ["Volume"])
+        self.assertIsInstance(slicer.util.getNodes("Volume",useLists=True)["Volume"], list)

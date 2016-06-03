@@ -458,10 +458,13 @@ def resetSliceViews():
 # MRML
 #
 
-def getNodes(pattern="*", scene=None):
+def getNodes(pattern="*", scene=None, useLists=False):
     """Return a dictionary of nodes where the name or id matches the ``pattern``.
     By default, ``pattern`` is a wildcard and it returns all nodes associated
     with ``slicer.mrmlScene``.
+    If multiple node share the same name, using ``useLists=False`` (default behavior)
+    returns only the last node with that name. If ``useLists=True``, it returns
+    a dictionary of lists of nodes.
     """
     import slicer, collections, fnmatch
     nodes = collections.OrderedDict()
@@ -474,7 +477,10 @@ def getNodes(pattern="*", scene=None):
       id = node.GetID()
       if (fnmatch.fnmatchcase(name, pattern) or
           fnmatch.fnmatchcase(id, pattern)):
-        nodes[node.GetName()] = node
+        if useLists:
+          nodes.setdefault(node.GetName(), []).append(node)
+        else:
+          nodes[node.GetName()] = node
     return nodes
 
 def getNode(pattern="*", index=0, scene=None):
