@@ -197,7 +197,12 @@ public:
   ///
   /// By default, \a byName will be compared using an exact match. If
   /// \a exactNameMatch is set to \a false, the node will be returned if
-  /// its name starts with \a byName.
+  /// its name starts with \a byName. If the pointer \a byHideFromEditors
+  /// is not set, the function will return both the nodes hidden from
+  /// editors as well as the nodes visible in editors. If the pointer
+  /// \a byHideFromEditors is set, the function will only return the
+  /// nodes that are either hidden from editors or the nodes that are
+  /// visible in editors.
   vtkMRMLNode *GetFirstNode(const char* byName = 0, const char* byClass = 0,
                             const int* byHideFromEditors = 0,
                             bool exactNameMatch = true);
