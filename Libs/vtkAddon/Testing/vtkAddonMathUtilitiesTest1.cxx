@@ -44,23 +44,23 @@ int vtkAddonMathUtilitiesTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   m2->DeepCopy(m1.GetPointer());
 
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m2.GetPointer()), true);
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m3.GetPointer()), false);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m2.GetPointer()), true);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m3.GetPointer()), false);
 
   double tolerance = 1e-3;
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), true);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), true);
 
   m1->SetElement(0, 0 , 1e-4);
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), true);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), true);
 
   m1->SetElement(0, 0 , -1e-4);
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), true);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), true);
 
   m1->SetElement(0, 0 , 5e-3);
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), false);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), false);
 
   m1->SetElement(0, 0 , -5e-3);
-  CHECK_BOOL( vtkAddonMathUtilities::Matrix4x4AreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), false);
+  CHECK_BOOL( vtkAddonMathUtilities::MatrixAreEqual(m1.GetPointer(), m2.GetPointer(), tolerance), false);
 
 
   return EXIT_SUCCESS;

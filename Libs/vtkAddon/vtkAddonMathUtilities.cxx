@@ -38,9 +38,9 @@ void vtkAddonMathUtilities::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkAddonMathUtilities::Matrix4x4AreEqual(const vtkMatrix4x4* m1,
-                                              const vtkMatrix4x4* m2,
-                                              double tolerance)
+bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix4x4* m1,
+                                           const vtkMatrix4x4* m2,
+                                           double tolerance)
 {
   for (int i = 0; i < 4; i++)
     {

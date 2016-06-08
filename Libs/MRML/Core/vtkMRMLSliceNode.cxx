@@ -419,7 +419,7 @@ void vtkMRMLSliceNode::SetOrientationToCoronal()
 // Local helper to compare matrices -- TODO: is there a standard version of this?
 bool vtkMRMLSliceNode::Matrix4x4AreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
 {
-  return vtkAddonMathUtilities::Matrix4x4AreEqual(m1, m2, /* tolerance= */ 0);
+  return vtkAddonMathUtilities::MatrixAreEqual(m1, m2, /* tolerance= */ 0);
 }
 
 //----------------------------------------------------------------------------
