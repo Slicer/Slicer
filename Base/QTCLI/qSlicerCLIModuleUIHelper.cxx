@@ -49,7 +49,6 @@ qSlicerWidgetValueWrapper::qSlicerWidgetValueWrapper(const QString& _name,
                                                      QObject* parentObject)
   :QObject(parentObject),Name(_name), Label(_label)
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -270,7 +269,6 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
   Self::ImageTypeAttributeToNodeType["signal"] = "vtkMRMLMultiVolumeNode";
   Self::ImageTypeAttributeToNodeType["multichannel"] = "vtkMRMLMultiVolumeNode";
   Self::ImageTypeAttributeToNodeType["dynamic-contrast-enhanced"] = "vtkMRMLMultiVolumeNode";
-
 
   // Geometry type attribute mapping
   Self::GeometryTypeAttributeToNodeType["fiberbundle"] = "vtkMRMLFiberBundleNode";
@@ -841,11 +839,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createDirectoryTagWidget(const ModuleParameter& moduleParameter)
 {
-  if (isOutputChannel(moduleParameter))
-  {
-    return createStringTagWidget(moduleParameter);
-  }
-
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
 
@@ -860,11 +853,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDirectoryTagWidget(const ModuleP
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParameter& moduleParameter)
 {
-  if (isOutputChannel(moduleParameter))
-  {
-    return createStringTagWidget(moduleParameter);
-  }
-
   QString label = QString::fromStdString(moduleParameter.GetLabel());
   QString name = QString::fromStdString(moduleParameter.GetName());
 
