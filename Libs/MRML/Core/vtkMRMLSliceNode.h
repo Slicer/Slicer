@@ -116,10 +116,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   vtkSetMacro ( UseLabelOutline, int );
   vtkBooleanMacro ( UseLabelOutline, int );
 
+  /// \brief Set 'standard' radiological convention views of patient space.
   ///
-  /// 'standard' radiological convention views of patient space
-  /// these calls adjust the SliceToRAS matrix to position the slice
-  /// cutting plane
+  /// If the associated orientation preset has been renamed or removed, calling
+  /// these function returns \a False.
+  ///
+  /// \sa SetOrientationString(const char*)
   void SetOrientationToAxial();
   void SetOrientationToSagittal();
   void SetOrientationToCoronal();
