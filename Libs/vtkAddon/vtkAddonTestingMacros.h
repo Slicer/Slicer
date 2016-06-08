@@ -87,6 +87,15 @@
     } \
   }
 
+/// Verifies if actual double value is the same as expected
+#define CHECK_DOUBLE(actual, expected) \
+  { \
+  if (!vtkAddonTestingUtilities::Check<double>(__LINE__,#actual " != " #expected, (actual), (expected), "CheckDouble")) \
+    { \
+    return EXIT_FAILURE; \
+    } \
+  }
+
 /// Verifies if actual int value is the same as expected
 #define CHECK_INT(actual, expected) \
   { \
