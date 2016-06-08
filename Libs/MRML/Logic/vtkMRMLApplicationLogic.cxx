@@ -206,7 +206,12 @@ vtkCollection* vtkMRMLApplicationLogic::GetSliceLogics()const
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
 {
+  if (sliceLogics == this->Internal->SliceLogics)
+    {
+    return;
+    }
   this->Internal->SliceLogics = sliceLogics;
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------

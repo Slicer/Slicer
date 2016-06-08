@@ -23,6 +23,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkNew.h>
 
 // STD includes
@@ -30,18 +31,75 @@
 
 
 //-----------------------------------------------------------------------------
+int SliceLogicsTest();
 int TemporaryPathTest();
 
 //-----------------------------------------------------------------------------
 int vtkMRMLApplicationLogicTest1(int , char * [])
 {
+  CHECK_INT(SliceLogicsTest(), EXIT_SUCCESS);
   CHECK_INT(TemporaryPathTest(), EXIT_SUCCESS);
   return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-// Test void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path);
-// Test const char* vtkMRMLApplicationLogic::GetTemporaryPath();
+int SliceLogicsTest()
+{
+  vtkNew<vtkMRMLApplicationLogic> appLogic;
+
+  // By default, a null collection is expected
+  {
+    unsigned long mtime = appLogic->GetMTime();
+    CHECK_NULL(appLogic->GetSliceLogics());
+    CHECK_BOOL(appLogic->GetMTime() == mtime, true);
+  }
+
+  // Set a null string
+  {
+    unsigned long mtime = appLogic->GetMTime();
+    appLogic->SetSliceLogics(0);
+    CHECK_NULL(appLogic->GetSliceLogics());
+    CHECK_BOOL(appLogic->GetMTime() > mtime, false);
+  }
+
+  // Set a non-empty collection should work
+  {
+    unsigned long mtime = appLogic->GetMTime();
+    vtkNew<vtkCollection> logics;
+    logics->AddItem(vtkSmartPointer<vtkObject>::New());
+    appLogic->SetSliceLogics(logics.GetPointer());
+    CHECK_POINTER(appLogic->GetSliceLogics(), logics.GetPointer());
+    CHECK_INT(appLogic->GetSliceLogics()->GetNumberOfItems(), 1);
+    CHECK_BOOL(appLogic->GetMTime() > mtime, true);
+  }
+
+  // Set a null collection.
+  {
+    unsigned long mtime = appLogic->GetMTime();
+    appLogic->SetSliceLogics(0);
+    CHECK_NULL(appLogic->GetSliceLogics());
+    CHECK_BOOL(appLogic->GetMTime() > mtime, true);
+  }
+
+  {
+    vtkNew<vtkCollection> logics;
+    logics->AddItem(vtkSmartPointer<vtkObject>::New());
+    appLogic->SetSliceLogics(logics.GetPointer());
+  }
+
+  // Set an empty collection.
+  {
+    unsigned long mtime = appLogic->GetMTime();
+    vtkNew<vtkCollection> logics;
+    appLogic->SetSliceLogics(logics.GetPointer());
+    CHECK_NOT_NULL(appLogic->GetSliceLogics());
+    CHECK_INT(appLogic->GetSliceLogics()->GetNumberOfItems(), 0);
+    CHECK_BOOL(appLogic->GetMTime() > mtime, true);
+  }
+
+  return EXIT_SUCCESS;
+}
+
 //-----------------------------------------------------------------------------
 int TemporaryPathTest()
 {
