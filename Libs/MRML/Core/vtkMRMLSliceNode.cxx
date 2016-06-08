@@ -1152,7 +1152,7 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
 {
   // The LayoutName is preserved by vtkMRMLNode::Reset, however the orientation,
-  // and the layout color (typically associated with the ayoutName) are not
+  // and the layout color (typically associated with the layoutName) are not
   // preserved automatically.
   // This require a custom behavior implemented here.
   std::string orientation = this->GetOrientationString();

@@ -142,7 +142,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   /// Description
   /// The OrientationReference is a place to store the last orientation
-  /// that was explicitly selected.  This way if they RotateToVolumePlane
+  /// that was explicitly selected.  This way if the RotateToVolumePlane
   /// is called repeatedly it will always return the same plane
   /// (without the hint, it would first try to match, say, Coronal, and then
   /// try to match 'Reformat' but would not know what overall orientation to pick).
