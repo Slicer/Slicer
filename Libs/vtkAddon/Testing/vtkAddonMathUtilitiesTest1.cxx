@@ -32,6 +32,7 @@ int AreMatrixEqual_4x4_4x4_Test();
 int AreMatrixEqual_4x4_3x3_Test();
 int AreMatrixEqual_3x3_4x4_Test();
 int AreMatrixEqual_3x3_3x3_Test();
+int GetOrientationMatrixTest();
 
 //----------------------------------------------------------------------------
 int vtkAddonMathUtilitiesTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -40,6 +41,7 @@ int vtkAddonMathUtilitiesTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   CHECK_INT(AreMatrixEqual_4x4_3x3_Test(), EXIT_SUCCESS);
   CHECK_INT(AreMatrixEqual_3x3_4x4_Test(), EXIT_SUCCESS);
   CHECK_INT(AreMatrixEqual_3x3_3x3_Test(), EXIT_SUCCESS);
+  CHECK_INT(GetOrientationMatrixTest(), EXIT_SUCCESS);
   return EXIT_SUCCESS;
 }
 
@@ -110,4 +112,31 @@ int AreMatrixEqual_3x3_4x4_Test()
 int AreMatrixEqual_3x3_3x3_Test()
 {
   return AreMatrixEqual_Test<vtkMatrix3x3, vtkMatrix3x3>(3, 3);
+}
+
+//----------------------------------------------------------------------------
+int GetOrientationMatrixTest()
+{
+  vtkNew<vtkMatrix4x4> m44;
+  for (int ii = 0; ii < 4; ii++)
+    {
+    for (int jj = 0; jj < 4; jj++)
+      {
+      m44->SetElement(ii, jj, (1 + ii)*(1 + jj));
+      }
+    }
+
+  vtkNew<vtkMatrix3x3> m33;
+
+  vtkAddonMathUtilities::GetOrientationMatrix(m44.GetPointer(), m33.GetPointer());
+
+  for (int ii = 0; ii < 3; ii++)
+    {
+    for (int jj = 0; jj < 3; jj++)
+      {
+      CHECK_DOUBLE(m33->GetElement(ii, jj), (1 + ii)*(1 + jj));
+      }
+    }
+
+  return EXIT_SUCCESS;
 }

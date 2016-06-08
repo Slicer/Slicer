@@ -99,3 +99,20 @@ bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix3x3 *m1,
     }
   return true;
 }
+
+//----------------------------------------------------------------------------
+void vtkAddonMathUtilities::GetOrientationMatrix(vtkMatrix4x4* source,
+                                                 vtkMatrix3x3* dest)
+{
+  if (!source || !dest)
+    {
+    return;
+    }
+  for (int ii = 0; ii < 3; ++ii)
+    {
+    for (int jj = 0; jj < 3; ++jj)
+      {
+      dest->SetElement(ii, jj, source->GetElement(ii, jj));
+      }
+    }
+}

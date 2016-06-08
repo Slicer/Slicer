@@ -48,6 +48,11 @@ public:
   static bool MatrixAreEqual(const vtkMatrix3x3 *m1,
                              const vtkMatrix3x3 *m2,
                              double tolerance = 1e-3);
+
+  /// Update orientation vectors of \a dest matrix with values from \a source
+  /// matrix.
+  static void GetOrientationMatrix(vtkMatrix4x4* source, vtkMatrix3x3* dest);
+
 protected:
   vtkAddonMathUtilities();
   ~vtkAddonMathUtilities();
