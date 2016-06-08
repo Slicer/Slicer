@@ -22,6 +22,7 @@
 #include <QDebug>
 
 // qMRML includes
+#include "qMRMLSliceControllerWidget_p.h" // For updateSliceOrientationSelector
 #include "qMRMLSliceInformationWidget_p.h"
 
 // MRML includes
@@ -95,11 +96,8 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   // Update layout name
   this->LayoutNameLineEdit->setText(QLatin1String(this->MRMLSliceNode->GetLayoutName()));
 
-  // Update orientation selector state
-  int index = this->SliceOrientationSelector->findText(
-      QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
-  Q_ASSERT(index>=0 && index <=4);
-  this->SliceOrientationSelector->setCurrentIndex(index);
+  qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(
+        this->MRMLSliceNode, this->SliceOrientationSelector);
 
   // Update slice visibility toggle
   this->SliceVisibilityToggle->setChecked(this->MRMLSliceNode->GetSliceVisible());
@@ -207,18 +205,12 @@ void qMRMLSliceInformationWidget::setSliceOrientation(const QString& orientation
 {
   Q_D(qMRMLSliceInformationWidget);
 
-#ifndef QT_NO_DEBUG
-  QStringList expectedOrientation;
-  expectedOrientation << "Axial" << "Sagittal" << "Coronal" << "Reformat";
-  Q_ASSERT(expectedOrientation.contains(orientation));
-#endif
-
   if (!d->MRMLSliceNode)
     {
     return;
     }
 
-  d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
+  d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
 }
 
 //---------------------------------------------------------------------------

@@ -39,6 +39,7 @@
 #include <qMRMLTreeViewEventTranslator.h>
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelDisplayNode.h>
@@ -90,6 +91,8 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   qMRMLTreeView widget;
 
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
   widget.setMRMLScene(scene.GetPointer());
   scene->SetURL(argv[2]);
   scene->Import();
@@ -107,6 +110,7 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   vtkNew<vtkMRMLModelDisplayNode> displayModelNode2;
 
   vtkNew<vtkMRMLScene> scene2;
+  applicationLogic->SetMRMLScene(scene2.GetPointer());
   scene2->AddNode(modelNode.GetPointer());
   scene2->AddNode(modelNode2.GetPointer());
   scene2->AddNode(displayModelNode.GetPointer());

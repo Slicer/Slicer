@@ -55,7 +55,7 @@ vtkStandardNewMacro(vtkMRMLSliceLayerLogic);
 
 bool AreMatricesEqual(const vtkMatrix4x4* first, const vtkMatrix4x4* second)
 {
-  return vtkAddonMathUtilities::MatrixAreEqual(first, second, /* tolerance= */ 0);
+  return vtkAddonMathUtilities::MatrixAreEqual(first, second);
 }
 
 // Convert a linear transform that is almost exactly a permute transform

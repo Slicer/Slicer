@@ -23,6 +23,7 @@
 #include <QString>
 
 // SlicerQt includes
+#include "qMRMLSliceControllerWidget_p.h" // For updateSliceOrientationSelector
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerReformatLogic.h"
 
@@ -259,11 +260,8 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
     return;
     }
 
-  // Update the selector
-  int index = this->SliceOrientationSelector->findText(
-      QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
-  Q_ASSERT(index>=0 && index <=4);
-  this->SliceOrientationSelector->setCurrentIndex(index);
+  qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(
+        this->MRMLSliceNode, this->SliceOrientationSelector);
 
   // Update the normal spinboxes
   bool wasNormalBlocking = this->NormalCoordinatesWidget->blockSignals(true);
@@ -640,15 +638,7 @@ onSliceOrientationChanged(const QString& orientation)
   d->resetSlider(d->PASlider);
   d->resetSlider(d->ISSlider);
 
-#ifndef QT_NO_DEBUG
-  QStringList expectedOrientation;
-  expectedOrientation << tr("Axial") << tr("Sagittal")
-                      << tr("Coronal") << tr("Reformat");
-  Q_ASSERT(expectedOrientation.contains(orientation));
-#endif
-
   d->MRMLSliceNode->SetOrientation(orientation.toLatin1());
-  d->MRMLSliceNode->SetOrientationString(orientation.toLatin1());
 }
 
 //------------------------------------------------------------------------------

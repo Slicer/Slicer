@@ -32,6 +32,7 @@
 #include "qMRMLTreeView.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -50,6 +51,8 @@ int qMRMLSceneModelHierarchyModelTest2(int argc, char * argv [])
     return EXIT_FAILURE;
     }
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
   scene->SetURL( argv[1] );
   scene->Connect();
 

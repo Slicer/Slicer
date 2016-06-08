@@ -26,6 +26,7 @@
 #include "qMRMLVolumeThresholdWidget.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLVolumeNode.h>
 
@@ -47,6 +48,9 @@ int qMRMLVolumeThresholdWidgetTest1(int argc, char * argv [] )
     }
 
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
+
   scene->SetURL(argv[1]);
   scene->Connect();
   if (scene->GetNumberOfNodes() == 0)

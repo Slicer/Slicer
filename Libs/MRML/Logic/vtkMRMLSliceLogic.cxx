@@ -45,6 +45,7 @@
 #include <vtkPlaneSource.h>
 #include <vtkPolyDataCollection.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 #include <vtkTransform.h>
 #include <vtkVersion.h>
 
@@ -228,7 +229,8 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
     {
     if ( node == 0 )
       {
-      node = vtkMRMLSliceNode::New();
+      node = vtkMRMLSliceNode::SafeDownCast(
+            this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceNode"));
       node->SetName(this->GetName());
       node->SetLayoutName(this->GetName());
       this->SetSliceNode (node);
@@ -264,17 +266,28 @@ void vtkMRMLSliceLogic::UpdateSliceNodeFromLayout()
     return;
     }
 
+  if (this->SliceNode->GetNumberOfSliceOrientationPresets() < 3)
+    {
+    vtkErrorMacro("UpdateSliceNodeFromLayout: " << this->GetName() <<
+                  " could not set its slice node orientation. At least 3"
+                  " orientation preset names are required.")
+    return;
+    }
+
+  vtkNew<vtkStringArray> namedOrientations;
+  this->SliceNode->GetSliceOrientationPresetNames(namedOrientations.GetPointer());
+
   if ( !strcmp( this->GetName(), "Red" ) )
     {
-    this->SliceNode->SetOrientationToAxial();
+    this->SliceNode->SetOrientation(namedOrientations->GetValue(0));
     }
   if ( !strcmp( this->GetName(), "Yellow" ) )
     {
-    this->SliceNode->SetOrientationToSagittal();
+    this->SliceNode->SetOrientation(namedOrientations->GetValue(1));
     }
   if ( !strcmp( this->GetName(), "Green" ) )
     {
-    this->SliceNode->SetOrientationToCoronal();
+    this->SliceNode->SetOrientation(namedOrientations->GetValue(2));
     }
 }
 

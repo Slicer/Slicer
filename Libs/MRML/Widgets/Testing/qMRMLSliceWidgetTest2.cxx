@@ -30,10 +30,12 @@
 
 // MRML includes
 #include <vtkMRMLAbstractSliceViewDisplayableManager.h>
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
@@ -88,6 +90,9 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
     }
 
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
+
   vtkMRMLScalarVolumeNode* scalarNode = loadVolume(argv[1], scene.GetPointer());
   if (scalarNode == 0)
     {
@@ -98,6 +103,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   QSize viewSize(256, 256);
   qMRMLSliceWidget sliceWidget;
   sliceWidget.setMRMLScene(scene.GetPointer());
+
   sliceWidget.resize(viewSize.width(), sliceWidget.sliceController()->height() + viewSize.height() );
 
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceWidget.sliceLogic()->GetSliceCompositeNode();

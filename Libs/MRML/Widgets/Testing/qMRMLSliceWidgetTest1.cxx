@@ -27,6 +27,7 @@
 #include "qMRMLNodeObject.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLScene.h>
@@ -50,6 +51,8 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
     }
 
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
   scene->SetURL(argv[1]);
   scene->Connect();
   if (scene->GetNumberOfNodes() == 0)

@@ -28,6 +28,7 @@
 #include "qMRMLVolumeThresholdWidget.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLVolumeNode.h>
@@ -53,6 +54,8 @@ int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
     }
 
   vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
 
   // Add default color nodes
   vtkNew<vtkMRMLColorLogic> colorLogic;

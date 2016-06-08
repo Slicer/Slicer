@@ -25,6 +25,7 @@
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSliceNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLTransformableNode.h"
@@ -579,6 +580,10 @@ int ExerciseSceneLoadingMethods(const char * sceneFilePath, vtkMRMLScene* inputS
     {
       scene = vtkSmartPointer<vtkMRMLScene>::New();
     }
+
+  // Add default slice orientation presets
+  vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene);
+
   scene->SetURL(sceneFilePath);
   scene->Connect();
   int numberOfNodes = scene->GetNumberOfNodes();

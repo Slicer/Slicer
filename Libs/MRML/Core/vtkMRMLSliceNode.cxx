@@ -21,10 +21,12 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkAddonMathUtilities.h>
 #include <vtkMath.h>
+#include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 #include <vtkVector.h>
 
 
@@ -50,7 +52,6 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->JumpMode = OffsetJumpSlice;
 
-  this->OrientationString = NULL;
   this->OrientationReference = NULL;
 
   // calculated by UpdateMatrices()
@@ -115,7 +116,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->LayoutColor[1] = vtkMRMLSliceNode::grayColor()[1];
   this->LayoutColor[2] = vtkMRMLSliceNode::grayColor()[2];
 
-  this->SetOrientationToAxial();
+  this->SetOrientationReference("Reformat");
   this->SetLayoutLabel("");
 
   this->OrientationMarkerEnabled = true;
@@ -125,10 +126,6 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 //----------------------------------------------------------------------------
 vtkMRMLSliceNode::~vtkMRMLSliceNode()
 {
-  if ( this->OrientationString )
-    {
-    delete [] this->OrientationString;
-    }
   if ( this->OrientationReference )
     {
     delete [] this->OrientationReference;
@@ -315,111 +312,349 @@ bool vtkMRMLSliceNode
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetOrientation(const char* orientation)
+bool vtkMRMLSliceNode::SetOrientation(const char* orientation)
 {
   if (!orientation)
     {
+    vtkErrorMacro("SetOrientation: invalid input orientation");
+    return false;
+    }
+
+  vtkMatrix3x3 *orientationPreset =
+      this->GetSliceOrientationPreset(orientation);
+  if (orientationPreset == NULL)
+    {
+    return false;
+    }
+
+  for (int ii = 0; ii < 3; ++ii)
+    {
+    for (int jj = 0; jj < 3; ++jj)
+      {
+      this->SliceToRAS->SetElement(ii, jj, orientationPreset->GetElement(ii, jj));
+      }
+    }
+
+  // SetOrientationReference() behaviour will be maintained for backward compatibility
+  this->SetOrientationReference(orientation);
+
+  this->UpdateMatrices();
+  return true;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSliceNode::GetOrientation()
+{
+  return this->GetOrientation(this->SliceToRAS);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSliceNode::GetOrientationString()
+{
+  std::string current = this->GetOrientation();
+  if (current != this->OrientationString)
+    {
+    this->OrientationString = current;
+    }
+  return this->OrientationString.c_str();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::SetOrientationToAxial()
+{
+  return this->SetOrientation("Axial");
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::SetOrientationToSagittal()
+{
+  return this->SetOrientation("Sagittal");
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::SetOrientationToCoronal()
+{
+  return this->SetOrientation("Coronal");
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
+{
+  return vtkAddonMathUtilities::MatrixAreEqual(m1, m2);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4 *matrix,
+                                      const vtkMatrix3x3 *orientationMatrix)
+{
+  return vtkAddonMathUtilities::MatrixAreEqual(matrix, orientationMatrix);
+}
+
+//----------------------------------------------------------------------------
+vtkMatrix3x3 *vtkMRMLSliceNode::GetSliceOrientationPreset(const std::string &name)
+{
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    if (it->first == name)
+      {
+      return it->second;
+      }
+    }
+
+  vtkErrorMacro("GetSliceOrientationPreset: invalid orientation preset name: "
+                << name);
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orientationMatrix)
+{
+  if (!orientationMatrix)
+    {
+    vtkErrorMacro("GetSliceOrientationPresetName: invalid input Matrix.");
+    return std::string();
+    }
+
+  std::vector< OrientationPresetType >::reverse_iterator it;
+  for (it = this->OrientationMatrices.rbegin();
+       it != this->OrientationMatrices.rend();
+       ++it)
+    {
+    std::string presetName = it->first;
+    vtkMatrix3x3* presetOrientationMatrix = this->GetSliceOrientationPreset(presetName);
+    if (vtkAddonMathUtilities::MatrixAreEqual(orientationMatrix, presetOrientationMatrix))
+      {
+      return presetName;
+      }
+    }
+  return std::string();
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4 *sliceToRAS)
+{
+  vtkNew<vtkMatrix3x3> orientationMatrix;
+  vtkAddonMathUtilities::GetOrientationMatrix(
+        sliceToRAS, orientationMatrix.GetPointer());
+
+  std::string orientation =
+      this->GetSliceOrientationPresetName(orientationMatrix.GetPointer());
+  if (orientation != "")
+    {
+    return orientation;
+    }
+  return "Reformat";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::GetSliceOrientationPresetNames(vtkStringArray *presetOrientationNames)
+{
+  if (presetOrientationNames == NULL)
+    {
+    vtkErrorMacro("GetSliceOrientationPresetNames: invalid input vtkStringArray.");
     return;
     }
- if (!strcmp(orientation, "Axial"))
+
+  presetOrientationNames->SetNumberOfValues(this->OrientationMatrices.size());
+
+  std::vector< OrientationPresetType >::iterator it;
+  int id = 0;
+  for (it = this->OrientationMatrices.begin();
+       it != this->OrientationMatrices.end();
+       ++it)
     {
-    this->SetOrientationToAxial();
-    }
-  else if (!strcmp(orientation, "Sagittal"))
-    {
-    this->SetOrientationToSagittal();
-    }
-  else if (!strcmp(orientation, "Coronal"))
-    {
-    this->SetOrientationToCoronal();
-    }
-  else if (!strcmp(orientation, "Reformat"))
-    {
-    this->SetOrientationToReformat();
-    }
-  else
-    {
-    vtkErrorMacro("SetOrientation: invalid orientation: " << orientation);
+    presetOrientationNames->SetValue(id, it->first);
+    id++;
     }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetOrientationToReformat()
+int vtkMRMLSliceNode::GetNumberOfSliceOrientationPresets() const
 {
-    // Don't need to do anything.  Leave the matrices where they were
-    // so the reformat starts where you were.
-
-    this->SetOrientationString( "Reformat" );
+  return static_cast<int>(this->OrientationMatrices.size());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetOrientationToAxial()
+bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string &name, vtkMatrix3x3 *orientationMatrix)
 {
-    // Px -> Patient Left
-    this->SliceToRAS->SetElement(0, 0, -1.0);
-    this->SliceToRAS->SetElement(1, 0,  0.0);
-    this->SliceToRAS->SetElement(2, 0,  0.0);
-    // Py -> Patient Anterior
-    this->SliceToRAS->SetElement(0, 1,  0.0);
-    this->SliceToRAS->SetElement(1, 1,  1.0);
-    this->SliceToRAS->SetElement(2, 1,  0.0);
-    // Pz -> Patient Inferior
-    this->SliceToRAS->SetElement(0, 2,  0.0);
-    this->SliceToRAS->SetElement(1, 2,  0.0);
-    this->SliceToRAS->SetElement(2, 2,  1.0);
+  if (name == "Reformat")
+    {
+    vtkWarningMacro("AddSliceOrientationPreset: Reformat refer to any arbitrary orientation. "
+                    "Therefore, it can not be used a preset name.");
+    return false;
+    }
 
-    this->SetOrientationString( "Axial" );
-    this->SetOrientationReference( "Axial" );
-    this->UpdateMatrices();
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    if (it->first == name)
+      {
+      vtkDebugMacro("AddSliceOrientationPreset: the orientation preset " << name << " is already stored.");
+      return false;
+      }
+    }
+
+  this->OrientationMatrices.push_back(OrientationPresetType(name, orientationMatrix));
+  return true;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetOrientationToSagittal()
+bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string &name)
 {
-    // Px -> Patient Posterior
-    this->SliceToRAS->SetElement(0, 0,  0.0);
-    this->SliceToRAS->SetElement(1, 0, -1.0);
-    this->SliceToRAS->SetElement(2, 0,  0.0);
-    // Py -> Patient Inferior
-    this->SliceToRAS->SetElement(0, 1,  0.0);
-    this->SliceToRAS->SetElement(1, 1,  0.0);
-    this->SliceToRAS->SetElement(2, 1,  1.0);
-    // Pz -> Patient Right
-    this->SliceToRAS->SetElement(0, 2,  1.0);
-    this->SliceToRAS->SetElement(1, 2,  0.0);
-    this->SliceToRAS->SetElement(2, 2,  0.0);
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    if (it->first == name)
+      {
+      this->OrientationMatrices.erase(it);
+      return true;
+      }
+    }
 
-    this->SetOrientationString( "Sagittal" );
-    this->SetOrientationReference( "Sagittal" );
-    this->UpdateMatrices();
+  vtkErrorMacro("RemoveSliceOrientationPreset: the orientation preset " << name << " is not stored.");
+  return false;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetOrientationToCoronal()
+bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string &name, const std::string &updatedName)
 {
-    // Px -> Patient Left
-    this->SliceToRAS->SetElement(0, 0, -1.0);
-    this->SliceToRAS->SetElement(1, 0,  0.0);
-    this->SliceToRAS->SetElement(2, 0,  0.0);
-    // Py -> Patient Inferior
-    this->SliceToRAS->SetElement(0, 1,  0.0);
-    this->SliceToRAS->SetElement(1, 1,  0.0);
-    this->SliceToRAS->SetElement(2, 1,  1.0);
-    // Pz -> Patient Anterior
-    this->SliceToRAS->SetElement(0, 2,  0.0);
-    this->SliceToRAS->SetElement(1, 2,  1.0);
-    this->SliceToRAS->SetElement(2, 2,  0.0);
+  if (name == "Reformat" || updatedName == "Reformat")
+    {
+    vtkErrorMacro("RenameSliceOrientationPreset: 'Reformat' refers to any "
+                  "arbitrary orientation. It can NOT be used as a preset name.");
+    return false;
+    }
+  if (name == updatedName)
+    {
+    return false;
+    }
 
-    this->SetOrientationString( "Coronal" );
-    this->SetOrientationReference( "Coronal" );
-    this->UpdateMatrices();
+  if (!name.compare(this->GetOrientationReference()))
+    {
+    this->SetOrientationReference(updatedName.c_str());
+    }
+
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    if (it->first == name)
+      {
+      it->first = updatedName;
+      return true;
+      }
+    }
+
+  vtkErrorMacro("RenameSliceOrientationPreset: The orientation preset "
+                "'" << name << "' does NOT exist.");
+  return false;
 }
 
 //----------------------------------------------------------------------------
-// Local helper to compare matrices -- TODO: is there a standard version of this?
-bool vtkMRMLSliceNode::Matrix4x4AreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
+bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string &name)
 {
-  return vtkAddonMathUtilities::MatrixAreEqual(m1, m2, /* tolerance= */ 0);
+  if (name == "Reformat")
+    {
+    vtkWarningMacro("HasSliceOrientationPreset: 'Reformat' refers to any "
+                    "arbitrary orientation. It can NOT be used as a preset name.");
+    return false;
+    }
+
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    if (it->first == name)
+      {
+      return true;
+      }
+    }
+
+  return false;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix)
+{
+  if (!orientationMatrix)
+    {
+    return;
+    }
+  orientationMatrix->SetElement(0, 0, -1.0);
+  orientationMatrix->SetElement(1, 0,  0.0);
+  orientationMatrix->SetElement(2, 0,  0.0);
+  orientationMatrix->SetElement(0, 1,  0.0);
+  orientationMatrix->SetElement(1, 1,  1.0);
+  orientationMatrix->SetElement(2, 1,  0.0);
+  orientationMatrix->SetElement(0, 2,  0.0);
+  orientationMatrix->SetElement(1, 2,  0.0);
+  orientationMatrix->SetElement(2, 2,  1.0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::InitializeSagittalMatrix(vtkMatrix3x3* orientationMatrix)
+{
+  if (!orientationMatrix)
+    {
+    return;
+    }
+  orientationMatrix->SetElement(0, 0,  0.0);
+  orientationMatrix->SetElement(1, 0,  -1.0);
+  orientationMatrix->SetElement(2, 0,  0.0);
+  orientationMatrix->SetElement(0, 1,  0.0);
+  orientationMatrix->SetElement(1, 1,  0.0);
+  orientationMatrix->SetElement(2, 1,  1.0);
+  orientationMatrix->SetElement(0, 2,  1.0);
+  orientationMatrix->SetElement(1, 2,  0.0);
+  orientationMatrix->SetElement(2, 2,  0.0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::InitializeCoronalMatrix(vtkMatrix3x3* orientationMatrix)
+{
+  if (!orientationMatrix)
+    {
+    return;
+    }
+  orientationMatrix->SetElement(0, 0, -1.0);
+  orientationMatrix->SetElement(1, 0,  0.0);
+  orientationMatrix->SetElement(2, 0,  0.0);
+  orientationMatrix->SetElement(0, 1,  0.0);
+  orientationMatrix->SetElement(1, 1,  0.0);
+  orientationMatrix->SetElement(2, 1,  1.0);
+  orientationMatrix->SetElement(0, 2,  0.0);
+  orientationMatrix->SetElement(1, 2,  1.0);
+  orientationMatrix->SetElement(2, 2,  0.0);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene)
+{
+  if (!scene)
+    {
+    return;
+    }
+
+  // Setting Orientation Matrices presets
+  vtkNew<vtkMatrix3x3> axialSliceToRAS;
+  vtkMRMLSliceNode::InitializeAxialMatrix(axialSliceToRAS.GetPointer());
+
+  vtkNew<vtkMatrix3x3> sagittalSliceToRAS;
+  vtkMRMLSliceNode::InitializeSagittalMatrix(sagittalSliceToRAS.GetPointer());
+
+  vtkNew<vtkMatrix3x3> coronalSliceToRAS;
+  vtkMRMLSliceNode::InitializeCoronalMatrix(coronalSliceToRAS.GetPointer());
+
+  // Setting a Slice Default Node
+  vtkSmartPointer<vtkMRMLNode> defaultNode = scene->GetDefaultNodeByClass("vtkMRMLSliceNode");
+  if (!defaultNode)
+    {
+    defaultNode.TakeReference(scene->CreateNodeByClass("vtkMRMLSliceNode"));
+    scene->AddDefaultNode(defaultNode);
+    }
+  vtkMRMLSliceNode * defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(defaultNode);
+  defaultSliceNode->AddSliceOrientationPreset("Axial", axialSliceToRAS.GetPointer());
+  defaultSliceNode->AddSliceOrientationPreset("Sagittal", sagittalSliceToRAS.GetPointer());
+  defaultSliceNode->AddSliceOrientationPreset("Coronal", coronalSliceToRAS.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -579,7 +814,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     bool modified = false;
 
     // check to see if the matrix actually changed
-    if ( !Matrix4x4AreEqual (xyToRAS.GetPointer(), this->XYToRAS) )
+    if ( !MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS) )
       {
       this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
       this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
@@ -607,7 +842,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
     vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
 
-    if (!Matrix4x4AreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
+    if (!MatrixAreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
       {
       this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
       modified = true;
@@ -617,48 +852,6 @@ void vtkMRMLSliceNode::UpdateMatrices()
       {
       this->Modified();
       }
-
-    const char *orientationString = "Reformat";
-    if ( this->SliceToRAS->GetElement(0, 0) == -1.0 &&
-         this->SliceToRAS->GetElement(1, 0) ==  0.0 &&
-         this->SliceToRAS->GetElement(2, 0) ==  0.0 &&
-         this->SliceToRAS->GetElement(0, 1) ==  0.0 &&
-         this->SliceToRAS->GetElement(1, 1) ==  1.0 &&
-         this->SliceToRAS->GetElement(2, 1) ==  0.0 &&
-         this->SliceToRAS->GetElement(0, 2) ==  0.0 &&
-         this->SliceToRAS->GetElement(1, 2) ==  0.0 &&
-         this->SliceToRAS->GetElement(2, 2) ==  1.0 )
-      {
-        orientationString = "Axial";
-      }
-
-    if ( this->SliceToRAS->GetElement(0, 0) ==  0.0 &&
-         this->SliceToRAS->GetElement(1, 0) == -1.0 &&
-         this->SliceToRAS->GetElement(2, 0) ==  0.0 &&
-         this->SliceToRAS->GetElement(0, 1) ==  0.0 &&
-         this->SliceToRAS->GetElement(1, 1) ==  0.0 &&
-         this->SliceToRAS->GetElement(2, 1) ==  1.0 &&
-         this->SliceToRAS->GetElement(0, 2) ==  1.0 &&
-         this->SliceToRAS->GetElement(1, 2) ==  0.0 &&
-         this->SliceToRAS->GetElement(2, 2) ==  0.0 )
-      {
-        orientationString = "Sagittal";
-      }
-
-    if ( this->SliceToRAS->GetElement(0, 0) == -1.0 &&
-         this->SliceToRAS->GetElement(1, 0) ==  0.0 &&
-         this->SliceToRAS->GetElement(2, 0) ==  0.0 &&
-         this->SliceToRAS->GetElement(0, 1) ==  0.0 &&
-         this->SliceToRAS->GetElement(1, 1) ==  0.0 &&
-         this->SliceToRAS->GetElement(2, 1) ==  1.0 &&
-         this->SliceToRAS->GetElement(0, 2) ==  0.0 &&
-         this->SliceToRAS->GetElement(1, 2) ==  1.0 &&
-         this->SliceToRAS->GetElement(2, 2) ==  0.0 )
-      {
-        orientationString = "Coronal";
-      }
-
-    this->SetOrientationString( orientationString );
 
     // as UpdateMatrices can be called with DisableModifiedEvent
     // (typically when the scene is closed, slice nodes are reset but shouldn't
@@ -733,12 +926,29 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       }
     }
   of << indent << " sliceToRAS=\"" << ss.str().c_str() << "\"";
+
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    std::stringstream ss;
+    int j;
+    for (i=0; i<3; i++)
+      {
+      for (j=0; j<3; j++)
+        {
+        ss << it->second->GetElement(i,j);
+        if ( !( i==2 && j==2) )
+          {
+          ss << " ";
+          }
+        }
+      }
+      of << indent << " orientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<"=\"" << ss.str().c_str() << "\"";
+    }
+
   of << indent << " layoutColor=\"" << this->LayoutColor[0] << " "
      << this->LayoutColor[1] << " " << this->LayoutColor[2] << "\"";
-  if (this->OrientationString)
-    {
-    of << indent << " orientation=\"" << this->OrientationString << "\"";
-    }
+  of << indent << " orientation=\"" << this->GetOrientation() << "\"";
   if (this->OrientationReference)
     {
     of << indent << " orientationReference=\"" << this->OrientationReference << "\"";
@@ -955,7 +1165,10 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
    else if (!strcmp(attName, "orientation"))
       {
-      this->SetOrientationString( attValue );
+      if (strcmp( attValue, "Reformat" ))
+        {
+        this->SetOrientation( attValue );
+        }
       }
    else if (!strcmp(attName, "orientationReference"))
       {
@@ -1003,6 +1216,26 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
           this->SliceToRAS->SetElement(i,j,val);
           }
         }
+      }
+    else if (!strncmp(this->URLDecodeString(attName), "orientationMatrix", 17))
+      {
+      std::string name = std::string(this->URLDecodeString(attName));
+      std::stringstream ss;
+      double val;
+      vtkNew<vtkMatrix3x3> orientationMatrix;
+      orientationMatrix->Identity();
+      ss << attValue;
+      int i, j;
+      for (i=0; i<3; i++)
+        {
+        for (j=0; j<3; j++)
+          {
+          ss >> val;
+          orientationMatrix->SetElement(i,j,val);
+          }
+        }
+      name.erase(0,17);
+      this->AddSliceOrientationPreset(name, orientationMatrix.GetPointer());
       }
     else if (!strcmp(attName, "prescribedSliceSpacing"))
       {
@@ -1114,7 +1347,21 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
 
   this->SetSliceVisible(node->GetSliceVisible());
   this->SliceToRAS->DeepCopy(node->GetSliceToRAS());
-  this->SetOrientationString(node->GetOrientationString());
+
+  vtkNew<vtkStringArray> namedOrientations;
+  node->GetSliceOrientationPresetNames(namedOrientations.GetPointer());
+
+  for (int i = 0; i < namedOrientations->GetNumberOfValues(); i++)
+    {
+    this->AddSliceOrientationPreset(namedOrientations->GetValue(i),
+        node->GetSliceOrientationPreset(namedOrientations->GetValue(i)));
+    }
+
+  std::string orientation = node->GetOrientation();
+  if (orientation != "Reformat")
+    {
+    this->SetOrientation(orientation.c_str());
+    }
   this->SetOrientationReference(node->GetOrientationReference());
 
   this->JumpMode = node->JumpMode;
@@ -1155,12 +1402,15 @@ void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
   // and the layout color (typically associated with the layoutName) are not
   // preserved automatically.
   // This require a custom behavior implemented here.
-  std::string orientation = this->GetOrientationString();
+  std::string orientation = this->GetOrientation();
   double layoutColor[3] = {0.0, 0.0, 0.0};
   this->GetLayoutColor(layoutColor);
   this->Superclass::Reset(defaultNode);
   int wasModified = this->StartModify();
-  this->SetOrientation(orientation.c_str());
+  if (orientation != "Reformat")
+    {
+    this->SetOrientation(orientation.c_str());
+    }
   this->SetLayoutColor(layoutColor);
   this->EndModify(wasModified);
 }
@@ -1240,6 +1490,13 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << indent << "SliceToRAS: \n";
   this->SliceToRAS->PrintSelf(os, indent.GetNextIndent());
+
+  std::vector< OrientationPresetType >::iterator it;
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
+    {
+    os << indent << "OrientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<": \n";
+    it->second->PrintSelf(os, indent.GetNextIndent());
+    }
 
   os << indent << "XYToRAS: \n";
   this->XYToRAS->PrintSelf(os, indent.GetNextIndent());
@@ -2118,8 +2375,6 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
     this->SliceToRAS->SetElement(1, nullColumn, C.GetY());
     this->SliceToRAS->SetElement(2, nullColumn, C.GetZ());
     }
-
-  this->SetOrientationToReformat(); // just sets the string - indicates that this is not patient aligned
 
   this->UpdateMatrices();
 }

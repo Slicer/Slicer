@@ -52,6 +52,7 @@
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkStringArray.h>
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
@@ -769,6 +770,45 @@ void qMRMLSliceControllerWidgetPrivate::updateFromMRMLScene()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(
+    vtkMRMLSliceNode* sliceNode, QComboBox* sliceOrientationSelector)
+{
+  Q_ASSERT(sliceNode);
+  Q_ASSERT(sliceOrientationSelector);
+
+  vtkNew<vtkStringArray> orientationNames;
+  sliceNode->GetSliceOrientationPresetNames(orientationNames.GetPointer());
+
+  bool wasBlocked = sliceOrientationSelector->blockSignals(true);
+
+  // Clear list
+  sliceOrientationSelector->clear();
+
+  // Add all available presets
+  for (int idx = 0; idx < orientationNames->GetNumberOfValues(); ++idx)
+    {
+    sliceOrientationSelector->addItem(QString::fromStdString(orientationNames->GetValue(idx)));
+    }
+
+  QString currentOrientation = QString::fromStdString(sliceNode->GetOrientation());
+
+  // Add "Reformat" only if current orientation is "Reformat"
+  if (currentOrientation == "Reformat")
+    {
+    sliceOrientationSelector->addItem(currentOrientation);
+    }
+
+  // Update orientation selector state
+  int index = sliceOrientationSelector->findText(currentOrientation);
+  Q_ASSERT(index>=0);
+
+  // Set current orientation
+  sliceOrientationSelector->setCurrentIndex(index);
+
+  sliceOrientationSelector->blockSignals(wasBlocked);
+}
+
+// --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 {
   if (!this->MRMLSliceNode)
@@ -781,19 +821,11 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   // Update abbreviated slice view name
   this->ViewLabel->setText(this->MRMLSliceNode->GetLayoutLabel());
 
-  // Update orientation selector state
-  int index = this->SliceOrientationSelector->findText(
-      QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
-  Q_ASSERT(index>=0 && index <=4);
-
-  // We block the signal to avoid calling setSliceOrientation from the MRMLNode
-  wasBlocked = this->SliceOrientationSelector->blockSignals(true);
-  this->SliceOrientationSelector->setCurrentIndex(index);
-  this->SliceOrientationSelector->blockSignals(wasBlocked);
+  Self::updateSliceOrientationSelector(this->MRMLSliceNode, this->SliceOrientationSelector);
 
   // Update slice offset slider tooltip
   qMRMLOrientation orientation = this->mrmlOrientation(
-      QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
+      QString::fromStdString(this->MRMLSliceNode->GetOrientation().c_str()));
   this->SliceOffsetSlider->setToolTip(orientation.ToolTip);
   this->SliceOffsetSlider->setPrefix(orientation.Prefix);
 
@@ -1635,12 +1667,6 @@ QString qMRMLSliceControllerWidget::sliceOrientation()const
 void qMRMLSliceControllerWidget::setSliceOrientation(const QString& orientation)
 {
   Q_D(qMRMLSliceControllerWidget);
-
-#ifndef QT_NO_DEBUG
-  QStringList expectedOrientation;
-  expectedOrientation << "Axial" << "Sagittal" << "Coronal" << "Reformat";
-  Q_ASSERT(expectedOrientation.contains(orientation));
-#endif
 
   if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
     {

@@ -76,6 +76,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidgetPrivate
   Q_DECLARE_PUBLIC(qMRMLSliceControllerWidget);
 
 public:
+  typedef qMRMLSliceControllerWidgetPrivate Self;
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLSliceControllerWidgetPrivate(qMRMLSliceControllerWidget& object);
   virtual ~qMRMLSliceControllerWidgetPrivate();
@@ -105,6 +106,11 @@ public:
 
   void setForegroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
   void setBackgroundInterpolation(vtkMRMLSliceLogic* logic, bool interpolate);
+
+  /// Create a list of orientation containing the regular presets and also
+  /// the "Reformat" string if sliceToRAS is different one of the preset.
+  static void updateSliceOrientationSelector(
+      vtkMRMLSliceNode* sliceNode, QComboBox *sliceOrientationSelector);
 
 public slots:
   /// Update widget state when the scene is modified
@@ -141,7 +147,7 @@ public slots:
 
 protected:
   virtual void setupPopupUi();
-  void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
+  virtual void setMRMLSliceNodeInternal(vtkMRMLSliceNode* sliceNode);
   void setMRMLSliceCompositeNodeInternal(vtkMRMLSliceCompositeNode* sliceComposite);
 
 public:

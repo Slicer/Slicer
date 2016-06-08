@@ -20,6 +20,7 @@
 class vtkMRMLVolumeNode;
 
 // VTK includes
+class vtkMatrix3x3;
 class vtkMatrix4x4;
 
 /// \brief MRML node for storing a slice through RAS space.
@@ -31,6 +32,12 @@ class vtkMatrix4x4;
 class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 {
   public:
+  /// \brief Instantiate a new Slice node without any orientation presets.
+  ///
+  /// \note To instantiate a vtkMRMLSliceNode with preconfigured
+  /// orientation preset matrices (the default presets are: Axial,
+  /// Sagittal and Coronal in default), it is necessary to use
+  /// vtkMRMLScene::CreateNodeByClass(const char*)
   static vtkMRMLSliceNode *New();
   vtkTypeMacro(vtkMRMLSliceNode,vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -121,35 +128,106 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// If the associated orientation preset has been renamed or removed, calling
   /// these function returns \a False.
   ///
-  /// \sa SetOrientationString(const char*)
-  void SetOrientationToAxial();
-  void SetOrientationToSagittal();
-  void SetOrientationToCoronal();
+  /// \sa SetOrientation(const char*)
+  bool SetOrientationToAxial();
+  bool SetOrientationToSagittal();
+  bool SetOrientationToCoronal();
 
+  /// \brief Get orientation.
   ///
-  /// General 'reformat' view that allows for multiplanar reformat
-  void SetOrientationToReformat();
+  /// It returns a string with a description of the slice orientation
+  ///
+  /// \sa GetOrientation(vtkMatrix4x4* sliceToRAS)
+  /// \sa SetOrientation(const char* orientation)
+  std::string GetOrientation();
 
-  /// Convenient function that calls SetOrientationToAxial(),
-  /// SetOrientationToSagittal(), SetOrientationToCoronal() or
-  /// SetOrientationToReformat() depending on the value of the string
-  void SetOrientation(const char* orientation);
+  /// \brief Return the orientation name associated with \a sliceToRAS.
+  std::string GetOrientation(vtkMatrix4x4* sliceToRAS);
 
-  /// Description
-  /// A description of the current orientation
-  /// Warning, OrientationString doesn't change the matrices, use
-  /// SetOrientation() instead.
-  vtkGetStringMacro (OrientationString);
-  vtkSetStringMacro (OrientationString);
+  /// \brief Set orientation.
+  ///
+  /// It adjusts the SliceToRAS matrix to position the slice
+  /// cutting plane.
+  ///
+  /// Valid \a orientations are known as presets and are easily added,
+  /// removed or renamed.
+  ///
+  /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix4x4* sliceToRAS)
+  /// \sa UpdateMatrices()
+  bool SetOrientation(const char* orientation);
 
-  /// Description
+  /// \brief Get orientation.
+  ///
+  /// \deprecated Prefer GetOrientation()
+  virtual const char* GetOrientationString();
+
+protected:
+
   /// The OrientationReference is a place to store the last orientation
   /// that was explicitly selected.  This way if the RotateToVolumePlane
   /// is called repeatedly it will always return the same plane
   /// (without the hint, it would first try to match, say, Coronal, and then
   /// try to match 'Reformat' but would not know what overall orientation to pick).
+  ///
+  /// \deprecated
   vtkGetStringMacro (OrientationReference);
   vtkSetStringMacro (OrientationReference);
+
+public:
+
+  /// \brief Return the sliceToRAS matrix associated with \a name.
+  vtkMatrix3x3 *GetSliceOrientationPreset(const std::string& name);
+
+  /// \brief Return the preset name corresponding to \a orientationMatrix.
+  ///
+  /// Returns an empty string if \a orientationMatrix is not an existing
+  /// preset.
+  std::string GetSliceOrientationPresetName(vtkMatrix3x3* orientationMatrix);
+
+  /// \brief Return all the orientation preset names.
+  void GetSliceOrientationPresetNames(vtkStringArray* presetOrientationNames);
+
+  /// \brief Return number of orientation presets.
+  /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix3x3* orientationMatrix)
+  int GetNumberOfSliceOrientationPresets() const;
+
+  /// \brief Add an orientation preset.
+  ///
+  /// \sa RenameSliceOrientationPreset(const std::string& name, const std::string& updatedName)
+  /// \sa RemoveSliceOrientationPreset(const std::string& name)
+  bool AddSliceOrientationPreset(const std::string& name, vtkMatrix3x3* orientationMatrix);
+
+  /// \brief Remove an orientation preset.
+  ///
+  /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix4x4* sliceToRAS)
+  bool RemoveSliceOrientationPreset(const std::string& name);
+
+  /// \brief Rename an orientation preset.
+  ///
+  /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix4x4* sliceToRAS)
+  bool RenameSliceOrientationPreset(const std::string& name, const std::string& updatedName);
+
+  /// \brief Return True if an orientation preset is stored.
+  ///
+  /// \sa AddSliceOrientationPreset(const std::string& name, vtkMatrix4x4* sliceToRAS)
+  bool HasSliceOrientationPreset(const std::string& name);
+
+  /// \brief Initialize \a orientationMatrix as an `Axial` orientation matrix.
+  static void InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix);
+
+  /// \brief Initialize \a orientationMatrix as a `Sagittal` orientation matrix.
+  static void InitializeSagittalMatrix(vtkMatrix3x3* orientationMatrix);
+
+  /// \brief Initialize \a orientationMatrix as a `Coronal` orientation matrix.
+  static void InitializeCoronalMatrix(vtkMatrix3x3* orientationMatrix);
+
+  /// \brief Add default slice orientation presets to \a scene.
+  ///
+  /// \sa vtkMRMLScene::AddDefaultNode(vtkMRMLNode* node)
+  /// \sa InitializeAxialMatrix(vtkMatrix3x3* orientationMatrix)
+  /// \sa InitializeSagittalMatrix(vtkMatrix3x3* orientationMatrix)
+  /// \sa InitializeCoronalMatrix(vtkMatrix3x3* orientationMatrix)
+  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene);
 
   ///
   /// Size of the slice plane in millimeters
@@ -229,8 +307,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   ///
   /// helper for comparing to matrices
-  bool Matrix4x4AreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2);
+  bool MatrixAreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2);
 
+  bool MatrixAreEqual(const vtkMatrix4x4 *matrix,
+                      const vtkMatrix3x3 *orientationMatrix);
   ///
   /// Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   /// - called when any of the inputs change
@@ -420,6 +500,8 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> UVWToSlice;
   vtkSmartPointer<vtkMatrix4x4> UVWToRAS;
 
+  typedef std::pair <std::string, vtkSmartPointer<vtkMatrix3x3> > OrientationPresetType;
+  std::vector< OrientationPresetType > OrientationMatrices;
 
   int JumpMode;
 
@@ -438,7 +520,9 @@ protected:
   int UVWDimensions[3];
   int UVWMaximumDimensions[3];
 
-  char *OrientationString;
+  // Hold the string returned by GetOrientationString
+  std::string OrientationString;
+
   char *OrientationReference;
 
   double LayoutColor[3];

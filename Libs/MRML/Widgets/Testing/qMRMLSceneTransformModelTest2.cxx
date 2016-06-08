@@ -26,9 +26,11 @@
 #include "qMRMLSortFilterProxyModel.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLScene.h>
 
-// STD includes
+// VTK includes
+#include <vtkNew.h>
 
 int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
 {
@@ -47,6 +49,8 @@ int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
     qMRMLSortFilterProxyModel sort;
     sort.setSourceModel(&model);
     vtkMRMLScene* scene = vtkMRMLScene::New();
+    vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+    applicationLogic->SetMRMLScene(scene);
     model.setMRMLScene(scene);
     scene->SetURL(argv[1]);
     scene->Connect();

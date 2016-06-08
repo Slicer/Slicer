@@ -35,6 +35,12 @@
 #include "qMRMLSliceControllerWidget.h"
 #include "qMRMLSceneFactoryWidget.h"
 
+// MRML includes
+#include <vtkMRMLApplicationLogic.h>
+
+// VTK includes
+#include <vtkNew.h>
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -68,6 +74,9 @@ int qMRMLSliceControllerWidgetEventTranslatorPlayerTest1(int argc, char * argv [
   qMRMLSceneFactoryWidget sceneFactory;
   sceneFactory.generateScene();
   sceneFactory.generateNode("vtkMRMLViewNode");
+
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(sceneFactory.mrmlScene());
 
   widget->setMRMLScene(sceneFactory.mrmlScene());
 

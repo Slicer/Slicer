@@ -14,6 +14,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLSliceNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -193,6 +194,9 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   vtkSmartPointer<vtkMRMLScene>  scene = vtkSmartPointer<vtkMRMLScene>::New(); // vtkSmartPointer instead of vtkNew to allow SetPointer
   EXERCISE_BASIC_OBJECT_METHODS(scene.GetPointer());
   CHECK_INT(scene->GetNumberOfNodes(), 0);
+
+  // Add default slice orientation presets
+  vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene);
 
   // Configure mrml event observer
   vtkNew<vtkMRMLSceneCallback> callback;

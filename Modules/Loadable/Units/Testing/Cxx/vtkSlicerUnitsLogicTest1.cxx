@@ -22,6 +22,7 @@
 #include "vtkSlicerUnitsLogic.h"
 
 // MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLUnitNode.h>
@@ -257,7 +258,9 @@ bool testImportScene(const char* sceneFilePath)
 
   std::cout << "  ...import" << std::endl;
   scene->SetURL(sceneFilePath);
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   scene->Import();
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // Test scene
   std::vector<vtkMRMLNode*> nodes;

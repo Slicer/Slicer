@@ -21,6 +21,8 @@
 // MRML includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLCoreTestingMacros.h"
+#include <vtkMRMLScene.h>
+#include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -32,12 +34,14 @@
 
 //-----------------------------------------------------------------------------
 int SliceLogicsTest();
+int SliceOrientationPresetInitializationTest();
 int TemporaryPathTest();
 
 //-----------------------------------------------------------------------------
 int vtkMRMLApplicationLogicTest1(int , char * [])
 {
   CHECK_INT(SliceLogicsTest(), EXIT_SUCCESS);
+  CHECK_INT(SliceOrientationPresetInitializationTest(), EXIT_SUCCESS);
   CHECK_INT(TemporaryPathTest(), EXIT_SUCCESS);
   return EXIT_SUCCESS;
 }
@@ -95,6 +99,33 @@ int SliceLogicsTest()
     CHECK_NOT_NULL(appLogic->GetSliceLogics());
     CHECK_INT(appLogic->GetSliceLogics()->GetNumberOfItems(), 0);
     CHECK_BOOL(appLogic->GetMTime() > mtime, true);
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int SliceOrientationPresetInitializationTest()
+{
+  {
+    vtkNew<vtkMRMLSliceNode> sliceNode;
+    CHECK_INT(sliceNode->GetNumberOfSliceOrientationPresets(), 0);
+  }
+
+  {
+    vtkNew<vtkMRMLScene> scene;
+    vtkMRMLSliceNode * defaultSliceNode =
+        vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
+    CHECK_NULL(defaultSliceNode);
+  }
+
+  {
+    vtkNew<vtkMRMLScene> scene;
+    vtkNew<vtkMRMLApplicationLogic> appLogic;
+    appLogic->SetMRMLScene(scene.GetPointer());
+    vtkMRMLSliceNode * defaultSliceNode =
+        vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
+    CHECK_INT(defaultSliceNode->GetNumberOfSliceOrientationPresets(), 3);
   }
 
   return EXIT_SUCCESS;

@@ -300,6 +300,9 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene *newScene)
     }
   this->SetInteractionNode(vtkMRMLInteractionNode::SafeDownCast(interactionNode));
 
+  // Add default slice orientation presets
+  vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(newScene);
+
   this->Superclass::SetMRMLSceneInternal(newScene);
 
   this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
