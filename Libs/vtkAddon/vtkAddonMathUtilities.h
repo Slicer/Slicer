@@ -24,6 +24,7 @@
 #include <vtkObject.h>
 
 class vtkMatrix4x4;
+class vtkMatrix3x3;
 
 class VTK_ADDON_EXPORT vtkAddonMathUtilities : public vtkObject
 {
@@ -36,6 +37,17 @@ public:
                              const vtkMatrix4x4* m2,
                              double tolerance = 1e-3);
 
+  static bool MatrixAreEqual(const vtkMatrix4x4 *m1,
+                             const vtkMatrix3x3 *m2,
+                             double tolerance = 1e-3);
+
+  static bool MatrixAreEqual(const vtkMatrix3x3 *m1,
+                             const vtkMatrix4x4 *m2,
+                             double tolerance = 1e-3);
+
+  static bool MatrixAreEqual(const vtkMatrix3x3 *m1,
+                             const vtkMatrix3x3 *m2,
+                             double tolerance = 1e-3);
 protected:
   vtkAddonMathUtilities();
   ~vtkAddonMathUtilities();

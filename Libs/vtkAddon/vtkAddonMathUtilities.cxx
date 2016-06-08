@@ -15,6 +15,7 @@
 
 #include <vtkAddonMathUtilities.h>
 #include <vtkMath.h>
+#include <vtkMatrix3x3.h>
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 
@@ -45,6 +46,50 @@ bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix4x4* m1,
   for (int i = 0; i < 4; i++)
     {
     for (int j = 0; j < 4; j++)
+      {
+      if ( fabs(m1->GetElement(i, j) - m2->GetElement(i, j)) >= tolerance )
+        {
+        return false;
+        }
+      }
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix4x4 *m1,
+                                           const vtkMatrix3x3 *m2,
+                                           double tolerance)
+{
+  for (int i = 0; i < 3; i++)
+    {
+    for (int j = 0; j < 3; j++)
+      {
+      if ( fabs(m1->GetElement(i, j) - m2->GetElement(i, j)) >= tolerance )
+        {
+        return false;
+        }
+      }
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix3x3 *m1,
+                                           const vtkMatrix4x4 *m2,
+                                           double tolerance)
+{
+  return MatrixAreEqual(m2, m1, tolerance);
+}
+
+//----------------------------------------------------------------------------
+bool vtkAddonMathUtilities::MatrixAreEqual(const vtkMatrix3x3 *m1,
+                                           const vtkMatrix3x3 *m2,
+                                           double tolerance)
+{
+  for (int i = 0; i < 3; i++)
+    {
+    for (int j = 0; j < 3; j++)
       {
       if ( fabs(m1->GetElement(i, j) - m2->GetElement(i, j)) >= tolerance )
         {
