@@ -17,6 +17,7 @@ class SlicerUtilTest(unittest.TestCase):
         scene.AddNode(nodes[1]).SetName("Volume2")
         scene.AddNode(nodes[2]).SetName("Volume")
         scene.AddNode(nodes[3]).SetName("Volume")
+        nodes[0].SetHideFromEditors(1)
         return nodes
 
     def test_getFirstNodeByName(self):
