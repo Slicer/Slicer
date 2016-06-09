@@ -511,7 +511,7 @@ def getFirstNodeByName(name, className=None):
   """
   import slicer
   scene = slicer.mrmlScene
-  return scene.GetFirstNode(name, className, [0], False)
+  return scene.GetFirstNode(name, className, None, False)
 
 class NodeModify:
   """Context manager to conveniently compress mrml node modified event.
