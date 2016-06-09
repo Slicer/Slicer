@@ -4,8 +4,11 @@ import slicer.util
 import vtk
 
 class SlicerUtilTest(unittest.TestCase):
+
     def setUp(self):
+        slicer.mrmlScene.Clear(0)
         self.nodes = self._configure_scene(slicer.mrmlScene)
+        self.assertEqual(slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode"), 4)
 
     @staticmethod
     def _configure_scene(scene):
@@ -13,7 +16,7 @@ class SlicerUtilTest(unittest.TestCase):
         scene.AddNode(nodes[0]).SetName("Volume1")
         scene.AddNode(nodes[1]).SetName("Volume2")
         scene.AddNode(nodes[2]).SetName("Volume")
-        scene.AddNode(nodes[2]).SetName("Volume")
+        scene.AddNode(nodes[3]).SetName("Volume")
         return nodes
 
     def test_getFirstNodeByName(self):
