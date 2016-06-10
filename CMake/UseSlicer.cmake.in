@@ -294,7 +294,8 @@ endif()
 set(Slicer_BUNDLE_EXTENSIONS_LOCATION "")
 if(APPLE)
   set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_EXTENSIONS_DIRNAME}/${EXTENSION_NAME}/")
-  set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
+  set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE) # XXX Probably not needed anymore
+  set(CMAKE_MACOSX_RPATH 0 CACHE BOOL "" FORCE)
 endif()
 
 #-----------------------------------------------------------------------------
