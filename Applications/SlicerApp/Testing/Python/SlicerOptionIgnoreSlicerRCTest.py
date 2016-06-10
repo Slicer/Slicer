@@ -43,10 +43,10 @@ if __name__ == '__main__':
   common_args = ['--disable-modules', '--no-main-window']
 
   loadedMsg = "Slicer RC file loaded"
-  slicerrc = tempfile.mkstemp()[1]
+  fd, slicerrc = tempfile.mkstemp()
   assert os.path.isfile(slicerrc)
   try:
-    with open(slicerrc, 'w') as file:
+    with os.fdopen(fd, 'w') as file:
       file.write("print('" + loadedMsg + "')\n")
     os.environ['SLICERRC'] = slicerrc
     if debug:
