@@ -1,5 +1,6 @@
 from __future__ import division
 import os
+import logging
 import qt
 import vtk
 import slicer
@@ -22,7 +23,7 @@ class SliceAnnotations(VTKObservationMixin):
     VTKObservationMixin.__init__(self)
     self.hasVTKPVScalarBarActor = hasattr(slicer, 'vtkPVScalarBarActor')
     if not self.hasVTKPVScalarBarActor:
-      slicer.logging.warning("SliceAnnotations: Disable features relying on vtkPVScalarBarActor")
+      logging.warning("SliceAnnotations: Disable features relying on vtkPVScalarBarActor")
 
     self.layoutManager = layoutManager
     if self.layoutManager is None:
