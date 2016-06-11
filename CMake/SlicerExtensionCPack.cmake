@@ -175,6 +175,8 @@ if(APPLE)
     # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
     #        let's make sure the following install rule is evaluated within its own directory.
     #        Otherwise, the associated script will be executed before any other relevant install rules.
+    file(WRITE ${slicer_extension_cpack_bundle_fixup_directory}/CMakeLists.txt
+      "install(SCRIPT \"${slicer_extension_cpack_bundle_fixup_directory}/SlicerExtensionCPackBundleFixup.cmake\")")
     add_subdirectory(${slicer_extension_cpack_bundle_fixup_directory} ${slicer_extension_cpack_bundle_fixup_directory}-binary)
 
   else()
