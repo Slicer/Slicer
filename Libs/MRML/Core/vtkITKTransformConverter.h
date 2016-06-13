@@ -190,9 +190,9 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
       {
       for (unsigned int j=0; j < D; j++)
         {
-        (*transformVtk_LPS)[i][j] = dlt->GetMatrix()[i][j];
+        transformVtk_LPS->SetElement(i, j, dlt->GetMatrix()[i][j]);
         }
-      (*transformVtk_LPS)[i][D] = dlt->GetOffset()[i];
+      transformVtk_LPS->SetElement(i, D, dlt->GetOffset()[i]);
       }
     }
 
@@ -211,7 +211,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
     convertedToVtkMatrix=true;
     for (unsigned int i=0; i < D; i++)
       {
-      (*transformVtk_LPS)[i][i] = dst->GetScale()[i];
+      transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
       }
     }
 
@@ -223,7 +223,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
     convertedToVtkMatrix=true;
     for (unsigned int i=0; i < D; i++)
       {
-      (*transformVtk_LPS)[i][D] = dtt->GetOffset()[i];
+      transformVtk_LPS->SetElement(i, D, dtt->GetOffset()[i]);
       }
     }
 
@@ -278,9 +278,9 @@ bool vtkITKTransformConverter::SetITKLinearTransformFromVTK(vtkObject* loggerObj
     {
     for (unsigned int j=0; j < VTKDimension; j++)
       {
-      itkmat[i][j] = (*vtkmat)[i][j];
+      itkmat[i][j] = vtkmat->GetElement(i, j);
       }
-    itkoffset[i] = (*vtkmat)[i][VTKDimension];
+    itkoffset[i] = vtkmat->GetElement(i, VTKDimension);
     }
 
   AffineTransformType::Pointer affine = AffineTransformType::New();
