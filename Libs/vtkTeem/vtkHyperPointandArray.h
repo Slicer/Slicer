@@ -17,7 +17,7 @@
 #include "vtkTeemConfigure.h"
 
 #include "vtkSystemIncludes.h"
-#include "vtkStreamer.h"
+#include "vtkHyperStreamline.h"
 
 
 /// copied directly from vtkHyperStreamline.

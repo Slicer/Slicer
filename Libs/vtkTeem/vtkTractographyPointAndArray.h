@@ -16,7 +16,7 @@
 #define __vtkTractographyPointAndArray_h
 
 #include "vtkSystemIncludes.h"
-#include "vtkStreamer.h"
+#include "vtkHyperStreamline.h"
 #include "vtkTeemConfigure.h"
 
 /// copied directly from vtkTractographyStreamline.
