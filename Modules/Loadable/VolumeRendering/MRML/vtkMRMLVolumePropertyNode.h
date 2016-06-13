@@ -20,7 +20,7 @@ class vtkVolumeProperty;
 
 // STD includes
 #include <string>
-#include <vtksys/stl/vector>
+#include <vector>
 
 #define COUNT_CROPPING_REGION_PLANES 6
 
