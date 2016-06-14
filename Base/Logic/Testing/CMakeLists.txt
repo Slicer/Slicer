@@ -6,6 +6,7 @@ set(KIT_TEST_SRCS
   vtkSlicerApplicationLogicTest1.cxx
   vtkSlicerTransformLogicTest1.cxx
   vtkArchiveTest1.cxx
+  vtkSlicerVersionConfigureTest1.cxx
   )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}
@@ -21,3 +22,4 @@ simple_test( vtkArchiveTest1 ${CMAKE_CURRENT_SOURCE_DIR}/vol.zip)
 simple_test( vtkDataIOManagerLogicTest1 )
 simple_test( vtkSlicerApplicationLogicTest1 )
 simple_test( vtkSlicerTransformLogicTest1 ${CMAKE_CURRENT_SOURCE_DIR}/affineTransform.txt)
+simple_test( vtkSlicerVersionConfigureTest1 )
