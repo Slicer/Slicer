@@ -25,14 +25,9 @@
 #
 # The following variables are expected to be defined in the including scope:
 #  GIT_EXECUTABLE
-#  Slicer_ARCHITECTURE
 #  Slicer_BINARY_DIR
 #  Slicer_CMAKE_DIR
 #  Slicer_MAIN_PROJECT_APPLICATION_NAME
-#  Slicer_OS
-#  Slicer_OS_LINUX_NAME
-#  Slicer_OS_MAC_NAME
-#  Slicer_OS_WIN_NAME
 #  Slicer_SOURCE_DIR
 #  Slicer_VERSION_MAJOR
 #  Slicer_VERSION_MINOR
@@ -50,14 +45,9 @@
 # --------------------------------------------------------------------------
 set(expected_defined_vars
   GIT_EXECUTABLE
-  Slicer_ARCHITECTURE
   Slicer_BINARY_DIR
   Slicer_CMAKE_DIR
   Slicer_MAIN_PROJECT_APPLICATION_NAME # Used by SlicerVersion.cmake
-  Slicer_OS
-  Slicer_OS_LINUX_NAME
-  Slicer_OS_MAC_NAME
-  Slicer_OS_WIN_NAME
   Slicer_SOURCE_DIR
   Slicer_VERSION_MAJOR
   Slicer_VERSION_MINOR

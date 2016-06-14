@@ -13,20 +13,33 @@
 #ifndef __vtkSlicerVersionConfigure_h
 #define __vtkSlicerVersionConfigure_h
 
-#define Slicer_VERSION_MAJOR @Slicer_VERSION_MAJOR@
-#define Slicer_VERSION_MINOR @Slicer_VERSION_MINOR@
-#define Slicer_VERSION_PATCH @Slicer_VERSION_PATCH@
+/// \file vtkSlicerVersionConfigure.h
+
+#include "vtkSlicerVersionConfigureInternal.h"
+
+/// \def Slicer_VERSION
+/// \brief Slicer version string.
+///
+/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>`.
 #define Slicer_VERSION "@Slicer_VERSION@"
+
+/// \def Slicer_VERSION_FULL
+/// \brief Slicer long version string.
+///
+/// Format is `<Slicer_VERSION_MAJOR>.<Slicer_VERSION_MINOR>.<Slicer_VERSION_PATCH>[-rc<Slicer_VERSION_RC>][-<Slicer_BUILDDATE>|-<Slicer_VERSION_TWEAK>]`
 #define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
 
-#define Slicer_OS_LINUX_NAME "@Slicer_OS_LINUX_NAME@"
-#define Slicer_OS_MAC_NAME "@Slicer_OS_MAC_NAME@"
-#define Slicer_OS_WIN_NAME "@Slicer_OS_WIN_NAME@"
-
-#define Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@"
-#define Slicer_OS "@Slicer_OS@"
+/// \def Slicer_BUILDDATE
+/// \brief Build date associated with this project binaries.
 #define Slicer_BUILDDATE "@Slicer_BUILDDATE@"
+
+/// \def Slicer_WC_URL
+/// \brief Source control management URL identifying this project sources.
 #define Slicer_WC_URL "@Slicer_WC_URL@"
+
+/// \def Slicer_WC_REVISION
+/// \brief Revision identifying this project sources.
+/// \sa Slicer_WC_URL
 #define Slicer_WC_REVISION "@Slicer_WC_REVISION@"
 
 #endif // __vtkSlicerVersionConfigure_h
