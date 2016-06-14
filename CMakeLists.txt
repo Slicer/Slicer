@@ -359,7 +359,6 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 #-----------------------------------------------------------------------------
 include(CMakeParseArguments)
 include(Slicer3PluginsMacros)
-include(SlicerMacroExtractRepositoryInfo)
 include(SlicerMacroGetOperatingSystemArchitectureBitness)
 if(Slicer_BUILD_I18N_SUPPORT)
   include(SlicerMacroTranslation)
@@ -461,31 +460,7 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disc
 # Releases define a tweak level
 #set(Slicer_VERSION_TWEAK 1)
 #set(Slicer_VERSION_RC 0)
-
-SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
-string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
-  Slicer_BUILDDATE "${Slicer_WC_LAST_CHANGED_DATE}")
-
-if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
-  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
-endif()
-
-if("${Slicer_VERSION_TWEAK}" STREQUAL "")
-  set(_version_qualifier "-${Slicer_BUILDDATE}")
-elseif("${Slicer_VERSION_TWEAK}" GREATER 0)
-  set(_version_qualifier "-${Slicer_VERSION_TWEAK}")
-endif()
-
-# XXX This variable should not be set explicitly
-set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
-set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
-if(Slicer_VERSION_RC)
-  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-rc${Slicer_VERSION_RC}")
-endif()
-set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}${_version_qualifier}")
-
-message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} version [${Slicer_VERSION_FULL}]")
-message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
+include(SlicerVersion)
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories
