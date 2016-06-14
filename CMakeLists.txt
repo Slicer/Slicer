@@ -1031,7 +1031,6 @@ get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
 
 set(files
   vtkSlicerConfigure.h
-  vtkSlicerVersionConfigure.h
   )
 foreach(f ${files})
   configure_file(
@@ -1039,6 +1038,11 @@ foreach(f ${files})
     ${CMAKE_CURRENT_BINARY_DIR}/${f}
     )
 endforeach()
+
+# Add target configuring 'vtkSlicerVersionConfigure.h' at build time.
+include(SlicerConfigureVersionHeaderTarget)
+add_dependencies(qSlicerBaseQTCore SlicerConfigureVersionHeader)
+
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
   install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
