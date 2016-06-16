@@ -288,10 +288,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     }
 
   // See if bounding box has changed. If not, no need to change the axis actors.
-  bool bBoxChanged = false;
   if (newBBox != *(this->BoxAxisBoundingBox))
     {
-    bBoxChanged = true;
     *(this->BoxAxisBoundingBox) = newBBox;
 
     double bounds[6];
@@ -358,20 +356,6 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     actor->SetCamera(renderer->GetActiveCamera());
     actor->SetVisibility(axisLabelVisibility);
     }
-
-  // Until we come up with a solution for all use cases, the resetting
-  // of the camera is disabled
-  // See http://www.na-mic.org/Bug/view.php?id=2341
-#if 0
-  if (bBoxChanged)
-    {
-    renderer->ResetCamera();
-    renderer->GetActiveCamera()->Dolly(1.5);
-    renderer->ResetCameraClippingRange();
-    }
-#else
-  (void)bBoxChanged;
-#endif
 }
 
 //---------------------------------------------------------------------------
