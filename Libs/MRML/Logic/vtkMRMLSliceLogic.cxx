@@ -1640,7 +1640,7 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
   //sliceNode->SetSliceOffset(offset);
 
   //TODO Fit UVW space
-
+  this->SnapSliceOffsetToIJK();
   sliceNode->UpdateMatrices( );
 }
 
