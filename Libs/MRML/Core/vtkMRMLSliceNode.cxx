@@ -37,9 +37,6 @@ Version:   $Revision: 1.2 $
 #include <algorithm>
 
 //------------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkMRMLSliceNode, SliceToRAS, vtkMatrix4x4);
-
-//------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSliceNode);
 
 //----------------------------------------------------------------------------

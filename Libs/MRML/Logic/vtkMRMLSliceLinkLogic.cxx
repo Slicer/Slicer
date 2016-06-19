@@ -367,8 +367,6 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
             & vtkMRMLSliceNode::SliceToRASFlag)
             {
-            // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
-            // does a shallow copy. So we have to explictly call DeepCopy()
             sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
             }
 
@@ -413,9 +411,6 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           {
           // We could copy the orientation strings, but we really
           // want the slice to ras to match, so copy that
-
-          // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
-          // does a shallow copy. So we have to explictly call DeepCopy()
           sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
 
           // Forces the internal matrices to be updated which results

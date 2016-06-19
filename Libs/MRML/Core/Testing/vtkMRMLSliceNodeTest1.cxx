@@ -40,14 +40,14 @@ int vtkMRMLSliceNodeTest1(int , char * [] )
 
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  CHECK_INT(AddSliceOrientationPresetTest(), EXIT_SUCCESS);
-  CHECK_INT(RemoveSliceOrientationPresetTest(), EXIT_SUCCESS);
-  CHECK_INT(RenameSliceOrientationPresetTest(), EXIT_SUCCESS);
-  CHECK_INT(HasSliceOrientationPresetTest(), EXIT_SUCCESS);
-  CHECK_INT(GetSliceOrientationPresetTest(), EXIT_SUCCESS);
-  CHECK_INT(GetSliceOrientationPresetNameTest(), EXIT_SUCCESS);
-  CHECK_INT(SetOrientationTest(), EXIT_SUCCESS);
-  CHECK_INT(InitializeDefaultMatrixTest(), EXIT_SUCCESS);
+  CHECK_EXIT_SUCCESS(AddSliceOrientationPresetTest());
+  CHECK_EXIT_SUCCESS(RemoveSliceOrientationPresetTest());
+  CHECK_EXIT_SUCCESS(RenameSliceOrientationPresetTest());
+  CHECK_EXIT_SUCCESS(HasSliceOrientationPresetTest());
+  CHECK_EXIT_SUCCESS(GetSliceOrientationPresetTest());
+  CHECK_EXIT_SUCCESS(GetSliceOrientationPresetNameTest());
+  CHECK_EXIT_SUCCESS(SetOrientationTest());
+  CHECK_EXIT_SUCCESS(InitializeDefaultMatrixTest());
 
   return EXIT_SUCCESS;
 }
@@ -158,11 +158,10 @@ int RemoveSliceOrientationPresetTest()
   expectedOrientationNames.push_back("Ones");
   expectedOrientationNames.push_back("Threes");
 
-  CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
-                                        expectedOrientationNames), EXIT_SUCCESS);
+  CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
 
-  CHECK_INT(sliceNode->GetSliceOrientationPreset("Ones")->GetElement(0, 0), 1);
-  CHECK_INT(sliceNode->GetSliceOrientationPreset("Threes")->GetElement(0, 0), 3);
+  CHECK_DOUBLE(sliceNode->GetSliceOrientationPreset("Ones")->GetElement(0, 0), 1.0);
+  CHECK_DOUBLE(sliceNode->GetSliceOrientationPreset("Threes")->GetElement(0, 0), 3.0);
 
   return EXIT_SUCCESS;
 }
@@ -184,8 +183,7 @@ int RenameSliceOrientationPresetTest()
     expectedOrientationNames.push_back("Sagittal");
     expectedOrientationNames.push_back("Coronal");
 
-    CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
-                                          expectedOrientationNames), EXIT_SUCCESS);
+    CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
 
   CHECK_BOOL(sliceNode->RenameSliceOrientationPreset("Axial", "Foo"), true);
@@ -196,8 +194,7 @@ int RenameSliceOrientationPresetTest()
     expectedOrientationNames.push_back("Sagittal");
     expectedOrientationNames.push_back("Coronal");
 
-    CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
-                                          expectedOrientationNames), EXIT_SUCCESS);
+    CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
 
   CHECK_BOOL(sliceNode->RenameSliceOrientationPreset("Coronal", "Bar"), true);
@@ -208,8 +205,7 @@ int RenameSliceOrientationPresetTest()
     expectedOrientationNames.push_back("Sagittal");
     expectedOrientationNames.push_back("Bar");
 
-    CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
-                                          expectedOrientationNames), EXIT_SUCCESS);
+    CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
 
   // "Reformat" is a special value and can NOT be used as a preset.
@@ -223,8 +219,7 @@ int RenameSliceOrientationPresetTest()
     expectedOrientationNames.push_back("Sagittal");
     expectedOrientationNames.push_back("Bar");
 
-    CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
-                                          expectedOrientationNames), EXIT_SUCCESS);
+    CHECK_EXIT_SUCCESS(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames));
   }
 
   return EXIT_SUCCESS;
@@ -399,6 +394,16 @@ int SetOrientationTest()
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Coronal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Coronal");
     CHECK_BOOL(sliceNode->GetSliceToRAS()->GetMTime() > sliceToRASMTime, true);
+  }
+
+  // Check setting of SliceToRAS transform by modifying existing SliceToRAS
+  {
+    CHECK_BOOL(sliceNode->SetOrientationToCoronal(), true);
+    CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Coronal"));
+    CHECK_STRING(sliceNode->GetOrientationString(), "Coronal");
+    sliceNode->GetSliceToRAS()->SetElement(0, 0, sliceNode->GetSliceToRAS()->GetElement(0, 0) + 0.5);
+    CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Reformat"));
+    CHECK_STRING(sliceNode->GetOrientationString(), "Reformat");
   }
 
   return EXIT_SUCCESS;
