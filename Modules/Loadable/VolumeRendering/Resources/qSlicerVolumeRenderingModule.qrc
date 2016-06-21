@@ -24,7 +24,8 @@
 	<file alias="CT-Muscle">Icons/CT-Muscle.png</file>
 	<file alias="CT-Pulmonary-Arteries">Icons/CT-Pulmonary-Arteries.png</file>
 	<file alias="CT-Soft-Tissue">Icons/CT-Soft-Tissue.png</file>
-	<file alias="MR-Angio">Icons/MR-Angio.png</file>
+  <file alias="DTI-FA-Brain">Icons/DTI-FA-Brain.png</file>
+  <file alias="MR-Angio">Icons/MR-Angio.png</file>
 	<file alias="MR-Default">Icons/MR-Default.png</file>
 	<file alias="MR-MIP">Icons/MR-MIP.png</file>
 	<file alias="MR-T2-Brain">Icons/MR-T2-Brain.png</file>

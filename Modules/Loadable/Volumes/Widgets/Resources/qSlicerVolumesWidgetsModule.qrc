@@ -7,5 +7,6 @@
     <file>Icons/WindowLevelPreset-Abdomen.png</file>
     <file>Icons/WindowLevelPreset-Brain.png</file>
     <file>Icons/WindowLevelPreset-Lung.png</file>
+    <file>Icons/WindowLevelPreset-DTI.png</file>
   </qresource>
 </RCC>

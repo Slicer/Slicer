@@ -99,6 +99,9 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
                    q, SLOT(onPresetButtonClicked()));
   QObject::connect(this->CTLungPresetToolButton, SIGNAL(clicked()),
                    q, SLOT(onPresetButtonClicked()));
+  QObject::connect(this->DTIPresetToolButton, SIGNAL(clicked()),
+                   q, SLOT(onPresetButtonClicked()));
+
 }
 
 // --------------------------------------------------------------------------
@@ -370,7 +373,12 @@ void qSlicerScalarVolumeDisplayWidget::setPreset(const QString& presetName)
     window = 1400.;
     level = -500.;
     }
-
+  else if (presetName == "DTI")
+    {
+    colorNodeID = "vtkMRMLColorTableNodeRainbow";
+    window = 1.0;
+    level = 0.5;
+    }
   vtkMRMLNode* colorNode = this->mrmlScene()->GetNodeByID(colorNodeID.toLatin1());
   if (colorNode)
     {
