@@ -123,6 +123,7 @@ set(SlicerBaseLogic_SRCS
   vtkTransformVisualizerGlyph3D.cxx
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx
+  vtkImageFillROI.cxx
   )
 
 if(Slicer_USE_PYTHONQT)

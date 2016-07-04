@@ -10,7 +10,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   vtkImageConnectivity.cxx
   vtkImageErode.cxx
-  vtkImageFillROI.cxx
   vtkImageLabelChange.cxx
   vtkImageSlicePaint.cxx
   vtkImageStash.cxx

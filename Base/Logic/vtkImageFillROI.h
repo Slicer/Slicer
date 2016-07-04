@@ -22,7 +22,7 @@
 #ifndef __vtkImageFillROI_h
 #define __vtkImageFillROI_h
 
-#include "vtkSlicerEditorLibModuleLogicExport.h"
+#include "vtkSlicerBaseLogic.h"
 
 // VTK includes
 #include <vtkImageAlgorithm.h>
@@ -32,7 +32,8 @@
 #define SHAPE_POINTS  3
 
 class vtkPoints;
-class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageFillROI : public vtkImageAlgorithm
+
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageFillROI : public vtkImageAlgorithm
 {
 public:
   static vtkImageFillROI *New();

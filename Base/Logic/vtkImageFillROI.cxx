@@ -805,4 +805,3 @@ int vtkImageFillROI::RequestData(
     }
   return 1;
 }
-
