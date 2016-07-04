@@ -258,7 +258,6 @@ void qSlicerDirectoryListView::dragEnterEvent(QDragEnterEvent *event)
 void qSlicerDirectoryListView::dropEvent(QDropEvent *event)
 {
   Q_D(qSlicerDirectoryListView);
-  bool pathAdded = false;
   foreach(QUrl url, event->mimeData()->urls())
     {
     if (!url.isValid() || url.isEmpty())
