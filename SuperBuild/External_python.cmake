@@ -223,7 +223,10 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     )
 
   # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_BUILD "PYTHONHOME=${python_DIR}")
+  set(${proj}_ENVVARS_LAUNCHER_BUILD
+    "PYTHONHOME=${python_DIR}"
+    "PYTHONNOUSERSITE=1"
+    )
   mark_as_superbuild(
     VARS ${proj}_ENVVARS_LAUNCHER_BUILD
     LABELS "ENVVARS_LAUNCHER_BUILD"
@@ -254,7 +257,10 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     )
 
   # environment variables
-  set(${proj}_ENVVARS_LAUNCHER_INSTALLED "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python")
+  set(${proj}_ENVVARS_LAUNCHER_INSTALLED
+    "PYTHONHOME=<APPLAUNCHER_DIR>/lib/Python"
+    "PYTHONNOUSERSITE=1"
+    )
   mark_as_superbuild(
     VARS ${proj}_ENVVARS_LAUNCHER_INSTALLED
     LABELS "ENVVARS_LAUNCHER_INSTALLED"
