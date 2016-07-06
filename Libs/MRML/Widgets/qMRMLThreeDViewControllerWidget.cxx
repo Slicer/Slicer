@@ -333,13 +333,15 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
     return;
     }
 
+  // In the axes widget the order of labels is: +X, -X, +Z, -Z, +Y, -Y
+  // and in the view node axis labels order is: -X, +X, -Y, +Y, -Z, +Z.
   QStringList axesLabels;
-  axesLabels <<  d->ViewNode->GetAxisLabel(0);
-  axesLabels <<  d->ViewNode->GetAxisLabel(1);
-  axesLabels <<  d->ViewNode->GetAxisLabel(4);
-  axesLabels <<  d->ViewNode->GetAxisLabel(5);
-  axesLabels <<  d->ViewNode->GetAxisLabel(2);
-  axesLabels <<  d->ViewNode->GetAxisLabel(3);
+  axesLabels <<  d->ViewNode->GetAxisLabel(1); // +X
+  axesLabels <<  d->ViewNode->GetAxisLabel(0); // -X
+  axesLabels <<  d->ViewNode->GetAxisLabel(5); // +Z
+  axesLabels <<  d->ViewNode->GetAxisLabel(4); // -Z
+  axesLabels <<  d->ViewNode->GetAxisLabel(3); // +Y
+  axesLabels <<  d->ViewNode->GetAxisLabel(2); // -Y
   d->AxesWidget->setAxesLabels(axesLabels);
 
   d->actionSet3DAxisVisible->setChecked(d->ViewNode->GetBoxVisible());
