@@ -1,0 +1,30 @@
+from AbstractScriptedSegmentEditorEffect import *
+from AbstractScriptedSegmentEditorLabelEffect import *
+from AbstractScriptedSegmentEditorIslandEffect import *
+
+# Add effect name to the list of scripted segment editor effects.
+# SegmentEditor module will instantiate the effect class and register
+# in the effect factory.
+try:
+  slicer.modules.segmenteditorscriptedeffectnames
+except AttributeError:
+  slicer.modules.segmenteditorscriptedeffectnames=[]
+
+import importlib
+import traceback
+effectNames = [
+  "SegmentEditorThresholdEffect",
+  "SegmentEditorSmoothingEffect",
+  "SegmentEditorGrowCutEffect",
+  "SegmentEditorDrawEffect",
+  "SegmentEditorLevelTracingEffect",
+  "SegmentEditorMarginEffect",
+  "SegmentEditorLogicalEffect",
+  "SegmentEditorIdentifyIslandsEffect"
+  ]
+for effectName in effectNames:
+  try:
+    m=importlib.import_module("SegmentEditorEffects."+effectName)
+    slicer.modules.segmenteditorscriptedeffectnames.extend([effectName])
+  except Exception as e:
+    logging.error(traceback.format_exc())

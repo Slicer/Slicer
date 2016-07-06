@@ -8,6 +8,7 @@ set(modules
   LabelStatistics
   PerformanceTests
   SampleData
+  SegmentEditor
   SelfTests
   SurfaceToolbox
   VectorToScalarVolume

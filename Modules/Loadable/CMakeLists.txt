@@ -18,6 +18,7 @@ set(qtmodules
   ModelTransform
   #FiberBundles
   SceneViews
+  Segmentations
   SlicerWelcome
   Tables
   Reformat

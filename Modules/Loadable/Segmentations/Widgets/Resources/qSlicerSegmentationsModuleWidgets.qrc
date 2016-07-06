@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>Icons/Add.png</file>
+    <file>Icons/Edit.png</file>
+    <file>Icons/Help.png</file>
+    <file>Icons/Master.png</file>
+    <file>Icons/MakeModel.png</file>
+    <file>Icons/Present.png</file>
+    <file>Icons/Remove.png</file>
+  </qresource>
+</RCC>

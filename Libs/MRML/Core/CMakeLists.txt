@@ -67,6 +67,7 @@ set(include_dirs
   ${CMAKE_CURRENT_BINARY_DIR}
   ${vtkAddon_INCLUDE_DIRS}
   ${vtkITK_INCLUDE_DIRS}
+  ${vtkSegmentationCore_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS}
   )
 if(MRML_USE_vtkTeem)
@@ -151,6 +152,12 @@ set(MRMLCore_SRCS
   vtkMRMLSceneViewStorageNode.cxx
   vtkMRMLScriptedModuleNode.cxx
   vtkMRMLScriptedModuleNode.h
+  vtkMRMLSegmentationNode.cxx
+  vtkMRMLSegmentationNode.h
+  vtkMRMLSegmentationDisplayNode.cxx
+  vtkMRMLSegmentationDisplayNode.h
+  vtkMRMLSegmentationStorageNode.cxx
+  vtkMRMLSegmentationStorageNode.h
   vtkMRMLSelectionNode.cxx
   vtkMRMLSliceCompositeNode.cxx
   vtkMRMLSliceNode.cxx
@@ -250,6 +257,7 @@ add_library(${lib_name} ${srcs})
 set(libs
   vtkAddon
   vtkITK
+  vtkSegmentationCore
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   vtkIOInfovis

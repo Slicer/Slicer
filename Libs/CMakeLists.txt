@@ -23,6 +23,7 @@ list(APPEND dirs
   vtkAddon
   vtkTeem
   vtkITK
+  vtkSegmentationCore
   FreeSurfer
   MRML/Core
   )
