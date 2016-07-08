@@ -91,7 +91,7 @@ mark_as_superbuild(
 
 set(ITK_EXTERNAL_NAME ITKv4)
 
-set(VTK_EXTERNAL_NAME VTKv6)
+set(VTK_EXTERNAL_NAME VTKv7)
 
 set(Slicer_DEPENDENCIES curl teem ${VTK_EXTERNAL_NAME} ${ITK_EXTERNAL_NAME} CTK LibArchive)
 
