@@ -166,9 +166,9 @@ set(cmakecache_current "")
 if(EXISTS ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt)
   file(READ ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt cmakecache_current)
 endif()
-if(NOT ${cmakecache_content} STREQUAL "${cmakecache_current}")
+if(NOT "${cmakecache_content}" STREQUAL "${cmakecache_current}")
   message(STATUS "Writting ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt")
-  file(WRITE ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt ${cmakecache_content})
+  file(WRITE ${EXTENSION_SUPERBUILD_BINARY_DIR}/CMakeCache.txt "${cmakecache_content}")
 endif()
 
 # Explicitly set CTEST_BINARY_DIRECTORY so that ctest_submit find
