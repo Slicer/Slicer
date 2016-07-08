@@ -20,6 +20,11 @@
 
 include(CMakeParseArguments)
 
+if(NOT DEFINED Slicer_CMAKE_DIR)
+  set(Slicer_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR}/../../CMake)
+endif()
+include(${Slicer_CMAKE_DIR}/ListToString.cmake)
+
 if(NOT DEFINED Slicer_EXTENSIONS_CMAKE_DIR)
   set(Slicer_EXTENSIONS_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
 endif()
@@ -31,7 +36,6 @@ function(slicerFunctionGenerateExtensionDescription)
     EXTENSION_BUILD_SUBDIRECTORY
     EXTENSION_CATEGORY
     EXTENSION_CONTRIBUTORS
-    EXTENSION_DEPENDS
     EXTENSION_DESCRIPTION
     EXTENSION_ENABLED
     EXTENSION_HOMEPAGE
@@ -46,7 +50,9 @@ function(slicerFunctionGenerateExtensionDescription)
     SLICER_WC_REVISION
     SLICER_WC_ROOT
     )
-  set(multiValueArgs)
+  set(multiValueArgs
+    EXTENSION_DEPENDS
+    )
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
@@ -66,9 +72,8 @@ function(slicerFunctionGenerateExtensionDescription)
     endif()
   endforeach()
 
-
-  # A list of extension names without spaces is expected
-  #TODO if()
+  # Convert to space separated list
+  list_to_string(" " "${MY_EXTENSION_DEPENDS}" MY_EXTENSION_DEPENDS)
 
   set(expected_existing_vars DESTINATION_DIR)
   foreach(var ${expected_existing_vars})
@@ -159,10 +164,31 @@ function(slicer_generate_extension_description_test)
   endif()
 
   # Generate description file of an extension *with* dependencies
+  # where EXTENSION_DEPENDS is a space separated string
   slicerFunctionGenerateExtensionDescription(
     ${common_args}
     EXTENSION_BUILD_SUBDIRECTORY "inner/inner-inner-build"
     EXTENSION_DEPENDS "Foo Bar"
+    EXTENSION_ENABLED 0
+    EXTENSION_STATUS ""
+    )
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/SlicerToKiwiExporter.s4ext
+      ${Slicer_SOURCE_DIR}/Extensions/CMake/Testing/extension_description_with_depends.s4ext
+    ERROR_VARIABLE error
+    RESULT_VARIABLE result
+    )
+  if(NOT result EQUAL 0)
+    message(FATAL_ERROR "${error}")
+  endif()
+
+  # Generate description file of an extension *with* dependencies
+  # where EXTENSION_DEPENDS is a list
+  slicerFunctionGenerateExtensionDescription(
+    ${common_args}
+    EXTENSION_BUILD_SUBDIRECTORY "inner/inner-inner-build"
+    EXTENSION_DEPENDS Foo Bar
     EXTENSION_ENABLED 0
     EXTENSION_STATUS ""
     )
