@@ -67,10 +67,12 @@ private:
 
 };
 
+#ifndef __VTK_WRAP__
 //BTX
 VTK_SINGLETON_DECLARE_INITIALIZER(VTK_MRML_DISPLAYABLEMANAGER_EXPORT,
                                   vtkMRMLSliceViewDisplayableManagerFactory);
 //ETX
+#endif // __VTK_WRAP__
 
 #endif
 
