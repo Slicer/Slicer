@@ -18,6 +18,10 @@
 #
 ################################################################################
 
+if(NOT DEFINED Slicer_EXTENSIONS_CMAKE_DIR)
+  set(Slicer_EXTENSIONS_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
+endif()
+
 function(slicerFunctionGenerateExtensionDescription)
   set(options)
   set(oneValueArgs
@@ -105,7 +109,7 @@ function(slicerFunctionGenerateExtensionDescription)
   endif()
 
   configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/../Utilities/Templates/Extensions/extension_description.s4ext.in
+    ${Slicer_EXTENSIONS_CMAKE_DIR}/../../Utilities/Templates/Extensions/extension_description.s4ext.in
     ${filename}
     )
 
