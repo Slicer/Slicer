@@ -86,5 +86,11 @@ set(Slicer_LOCAL_EXTENSIONS_DIR "${default_local_extension_dir}" CACHE STRING "P
 option(BUILD_TESTING "Test extensions." ${Slicer_BUILD_TESTING})
 
 option(Slicer_UPLOAD_EXTENSIONS "Build, test, package and upload extensions" OFF)
+set(CTEST_DROP_SITE "slicer.cdash.org" CACHE STRING "Dashboard results are uploaded to this URL.")
+
+configure_file(
+  CTestConfig.cmake.in
+  ${CMAKE_BINARY_DIR}/CTestConfig.cmake
+  )
 
 include(SlicerBlockBuildPackageAndUploadExtensions)

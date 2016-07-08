@@ -8,6 +8,11 @@ set(expected_defined_vars
   Slicer_EXTENSIONS_TRACK_QUALIFIER
   Slicer_WC_REVISION
   )
+if(Slicer_UPLOAD_EXTENSIONS)
+  list(APPEND expected_defined_vars
+    CTEST_DROP_SITE
+    )
+endif()
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
