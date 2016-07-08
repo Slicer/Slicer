@@ -23,5 +23,3 @@ slicer_add_python_unittest(
                 ${MODULE_BUILD_DIR}
                 ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
   )
-# See http://na-mic.org/Mantis/view.php?id=4228
-set_tests_properties(py_SegmentationsModuleTest1 PROPERTIES WILL_FAIL TRUE)

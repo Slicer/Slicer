@@ -20,7 +20,6 @@ class SegmentationsModuleTest1(unittest.TestCase):
   #------------------------------------------------------------------------------
   def test_SegmentationsModuleTest1(self):
     # Check for modules
-    self.assertIsNotNone( slicer.modules.dicomrtimportexport )
     self.assertIsNotNone( slicer.modules.segmentations )
 
     self.TestSection_00_SetupPathsAndNames()
@@ -38,19 +37,20 @@ class SegmentationsModuleTest1(unittest.TestCase):
     if not os.access(self.segmentationsModuleTestDir, os.F_OK):
       os.mkdir(self.segmentationsModuleTestDir)
 
-    self.dicomDataDir = self.segmentationsModuleTestDir + '/TinyRtStudy'
-    if not os.access(self.dicomDataDir, os.F_OK):
-      os.mkdir(self.dicomDataDir)
+    self.dataDir = self.segmentationsModuleTestDir + '/TinyPatient_Seg'
+    if not os.access(self.dataDir, os.F_OK):
+      os.mkdir(self.dataDir)
+    self.dataSegDir = self.dataDir + '/TinyPatient_Structures.seg'
 
-    self.testDicomDatabaseDir = self.segmentationsModuleTestDir + '/CtkDicomDatabase'
-    self.dicomZipFilePath = self.segmentationsModuleTestDir + '/TinyRtStudy.zip'
+    self.dataZipFilePath = self.segmentationsModuleTestDir + '/TinyPatient_Seg.zip'
 
     # Get slicer objects that are used throughout the test
     self.dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
 
     # Define variables
     self.originalDatabaseDirectory = None
-    self.expectedNumOfFilesInDicomDataDir = 12
+    self.expectedNumOfFilesInDataDir = 2
+    self.expectedNumOfFilesInDataSegDir = 2
     self.inputSegmentationNode = None
     self.secondSegmentationNode = None
     self.sphereSegment = None
@@ -58,51 +58,37 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.closedSurfaceReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationClosedSurfaceRepresentationName()
     self.binaryLabelmapReprName = vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()
 
-    # Switch to temporary DICOM database
-    try:
-      if not os.access(self.testDicomDatabaseDir, os.F_OK):
-        os.mkdir(self.testDicomDatabaseDir)
-      if slicer.dicomDatabase:
-        self.originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
-      else:
-        settings = qt.QSettings()
-        settings.setValue('DatabaseDirectory', self.testDicomDatabaseDir)
-      self.dicomWidget.onDatabaseDirectoryChanged(self.testDicomDatabaseDir)
-      self.assertTrue(slicer.dicomDatabase.isOpen)
-      slicer.dicomDatabase.initializeDatabase()
-    except Exception, e:
-      import traceback
-      traceback.print_exc()
-      logging.error('Failed to open temporary DICOM database')
-
   #------------------------------------------------------------------------------
   def TestSection_01_RetrieveInputData(self):
     try:
       import urllib
       downloads = (
-          ('http://slicer.kitware.com/midas3/download/folder/2822/TinyRtStudy.zip', self.dicomZipFilePath),
+          ('http://slicer.kitware.com/midas3/download/folder/3763/TinyPatient_Seg.zip', self.dataZipFilePath),
           )
 
       downloaded = 0
       for url,filePath in downloads:
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
           if downloaded == 0:
-            logging.info('Downloading input data to folder\n' + self.dicomZipFilePath)
+            logging.info('Downloading input data to folder\n' + self.dataZipFilePath)
           logging.info('Requesting download from %s...' % (url))
           urllib.urlretrieve(url, filePath)
           downloaded += 1
         else:
-          logging.info('Input data has been found in folder ' + self.dicomZipFilePath)
+          logging.info('Input data has been found in folder ' + self.dataZipFilePath)
       if downloaded > 0:
         logging.info('Downloading input data finished')
 
-      numOfFilesInDicomDataDir = len([name for name in os.listdir(self.dicomDataDir) if os.path.isfile(self.dicomDataDir + '/' + name)])
-      if (numOfFilesInDicomDataDir != self.expectedNumOfFilesInDicomDataDir):
-        slicer.app.applicationLogic().Unzip(self.dicomZipFilePath, self.segmentationsModuleTestDir)
+      numOfFilesInDataDir = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])
+      if (numOfFilesInDataDir != self.expectedNumOfFilesInDataDir):
+        slicer.app.applicationLogic().Unzip(self.dataZipFilePath, self.segmentationsModuleTestDir)
         logging.info("Unzipping done")
 
-      numOfFilesInDicomDataDirTest = len([name for name in os.listdir(self.dicomDataDir) if os.path.isfile(self.dicomDataDir + '/' + name)])
-      self.assertEqual( numOfFilesInDicomDataDirTest, self.expectedNumOfFilesInDicomDataDir )
+      numOfFilesInDataDirTest = len([name for name in os.listdir(self.dataDir) if os.path.isfile(self.dataDir + '/' + name)])
+      self.assertEqual( numOfFilesInDataDirTest, self.expectedNumOfFilesInDataDir )
+      self.assertTrue( os.access(self.dataSegDir, os.F_OK) )
+      numOfFilesInDataSegDirTest = len([name for name in os.listdir(self.dataSegDir) if os.path.isfile(self.dataSegDir + '/' + name)])
+      self.assertEqual( numOfFilesInDataSegDirTest, self.expectedNumOfFilesInDataSegDir )
 
     except Exception, e:
       import traceback
@@ -111,33 +97,15 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
   #------------------------------------------------------------------------------
   def TestSection_02_LoadInputData(self):
-    indexer = ctk.ctkDICOMIndexer()
-    self.assertIsNotNone( indexer )
-
-    # Import study to database
-    indexer.addDirectory( slicer.dicomDatabase, self.dicomDataDir )
-    indexer.waitForImportFinished()
-
-    self.assertEqual( len(slicer.dicomDatabase.patients()), 1 )
-    self.assertIsNotNone( slicer.dicomDatabase.patients()[0] )
-
-    # Choose first patient from the patient list
-    patient = slicer.dicomDatabase.patients()[0]
-    studies = slicer.dicomDatabase.studiesForPatient(patient)
-    series = [slicer.dicomDatabase.seriesForStudy(study) for study in studies]
-    seriesUIDs = [uid for uidList in series for uid in uidList]
-    self.dicomWidget.detailsPopup.offerLoadables(seriesUIDs, 'SeriesUIDList')
-    self.dicomWidget.detailsPopup.examineForLoading()
-
-    loadables = self.dicomWidget.detailsPopup.loadableTable.loadables
-    self.assertTrue( len(loadables) > 0 )
-
     # Load into Slicer
-    self.dicomWidget.detailsPopup.loadCheckedLoadables()
-    self.inputSegmentationNode = slicer.util.getNode('vtkMRMLSegmentationNode1')
-    self.assertIsNotNone(self.inputSegmentationNode)
+    ctLoadSuccess = slicer.util.loadVolume(self.dataDir + '/TinyPatient_CT.nrrd')
+    self.assertTrue( ctLoadSuccess )
+    segLoadSuccess = slicer.util.loadNodeFromFile(self.dataDir + '/TinyPatient_Structures.seg.vtm', "SegmentationFile", {})
+    self.assertTrue( segLoadSuccess )
 
     # Change master representation to closed surface (so that conversion is possible when adding segment)
+    self.inputSegmentationNode = slicer.util.getNode('vtkMRMLSegmentationNode1')
+    self.assertIsNotNone(self.inputSegmentationNode)
     self.inputSegmentationNode.GetSegmentation().SetMasterRepresentationName(self.closedSurfaceReprName)
 
   #------------------------------------------------------------------------------
