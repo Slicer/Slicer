@@ -6,7 +6,7 @@
 
 # This is source code manager (i.e. svn)
 scm ${scm_type}
-${scm_path_token} ${scm_url}
+scmurl ${scm_url}
 scmrevision ${MY_EXTENSION_WC_REVISION}
 
 # list dependencies

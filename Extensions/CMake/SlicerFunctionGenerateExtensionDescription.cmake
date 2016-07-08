@@ -87,8 +87,6 @@ function(slicerFunctionGenerateExtensionDescription)
   set(filename ${MY_DESTINATION_DIR}/${MY_EXTENSION_NAME}.s4ext)
 
   set(scm_type ${MY_EXTENSION_WC_TYPE})
-  #set(scm_path_token ${MY_EXTENSION_WC_TYPE}path)
-  set(scm_path_token scmurl)
   set(scm_url ${MY_EXTENSION_WC_URL})
 
   #message(MY_SLICER_WC_ROOT:${MY_SLICER_WC_ROOT})
@@ -103,7 +101,6 @@ function(slicerFunctionGenerateExtensionDescription)
   if(${MY_EXTENSION_WC_TYPE} STREQUAL "local" OR (${MY_EXTENSION_WC_ROOT} STREQUAL ${MY_SLICER_WC_ROOT}
      AND ${MY_EXTENSION_WC_REVISION} STREQUAL ${MY_SLICER_WC_REVISION}))
     set(scm_type local)
-    #set(scm_path_token localpath)
     set(scm_url ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 

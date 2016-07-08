@@ -250,7 +250,6 @@ class ExtensionDescription(object):
     # Creation of the map
     dictio = dict()
     dictio["scm_type"] = getattr(self, "scm")
-    dictio["scm_path_token"] = "scmurl"
     dictio["scm_url"] = getattr(self, "scmurl")
     dictio["MY_EXTENSION_WC_REVISION"] = getattr(self, "scmrevision")
     dictio["MY_EXTENSION_DEPENDS"] = getattr(self, "depends")
