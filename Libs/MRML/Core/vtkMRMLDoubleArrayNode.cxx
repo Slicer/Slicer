@@ -71,12 +71,12 @@ void vtkMRMLDoubleArrayNode::WriteXML(ostream& of, int nIndent)
     double xy[3];
     for (int i = 0; i < n; i ++)
       {
-      this->Array->GetTupleValue(i, xy);
+      this->Array->GetTypedTuple(i, xy);
       ssX    << xy[0] << ", ";
       ssY    << xy[1] << ", ";
       ssYerr << xy[2] << ", ";
       }
-    this->Array->GetTupleValue(n, xy);
+    this->Array->GetTypedTuple(n, xy);
     // put the last values
     ssX    << xy[0];
     ssY    << xy[1];
@@ -170,7 +170,7 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
         xy[0] = valueX[i];
         xy[1] = valueY[i];
         xy[2] = valueYErr[i];
-        this->Array->SetTupleValue(i, xy);
+        this->Array->SetTypedTuple(i, xy);
         }
       }
     }
@@ -187,7 +187,7 @@ void vtkMRMLDoubleArrayNode::ReadXMLAttributes(const char** atts)
         xy[0] = valueX[i];
         xy[1] = valueY[i];
         xy[2] = 0.0;
-        this->Array->SetTupleValue(i, xy);
+        this->Array->SetTypedTuple(i, xy);
         }
       }
     }
@@ -267,7 +267,7 @@ int vtkMRMLDoubleArrayNode::GetValues(int index, double* values)
     {
     return 0;
     }
-  this->Array->GetTupleValue(index, values);
+  this->Array->GetTypedTuple(index, values);
   return 1;
 }
 
@@ -351,7 +351,7 @@ int vtkMRMLDoubleArrayNode::SetValues(int index, double* values)
     {
     return 0;
     }
-  this->Array->SetTupleValue(index, values);
+  this->Array->SetTypedTuple(index, values);
   this->Modified();
   return 1;
 }
@@ -501,7 +501,7 @@ void vtkMRMLDoubleArrayNode::GetRange(double* rangeX, double* rangeY, int fInclu
   if (nTuples > 0)
     {
     // Get the first values as an initial value
-    this->Array->GetTupleValue(0, xy);
+    this->Array->GetTypedTuple(0, xy);
     rangeX[0] = xy[0];
     rangeX[1] = xy[0];
     rangeY[0] = xy[1] - c * xy[2];
@@ -510,7 +510,7 @@ void vtkMRMLDoubleArrayNode::GetRange(double* rangeX, double* rangeY, int fInclu
     // Search the array
     for (int i = 1; i < nTuples; i ++)
       {
-      this->Array->GetTupleValue(i, xy);
+      this->Array->GetTypedTuple(i, xy);
 
       // X value
       if (xy[0] < rangeX[0])
@@ -559,14 +559,14 @@ void vtkMRMLDoubleArrayNode::GetXRange(double* range)
     {
 
     // Get the first values as an initial value
-    this->Array->GetTupleValue(0, xy);
+    this->Array->GetTypedTuple(0, xy);
     range[0] = xy[0];
     range[1] = xy[0];
 
     // Search the array
     for (int i = 1; i < nTuples; i ++)
       {
-      this->Array->GetTupleValue(i, xy);
+      this->Array->GetTypedTuple(i, xy);
       if (xy[0] < range[0])
         {
         range[0] = xy[0];
@@ -615,14 +615,14 @@ void vtkMRMLDoubleArrayNode::GetYRange(double* range, int fIncludeError)
     {
 
     // Get the first values as an initial value
-    this->Array->GetTupleValue(0, xy);
+    this->Array->GetTypedTuple(0, xy);
     range[0] = xy[1] - c * xy[2];
     range[1] = xy[1] + c * xy[2];
 
     // Search the array
     for (int i = 1; i < nTuples; i ++)
       {
-      this->Array->GetTupleValue(i, xy);
+      this->Array->GetTypedTuple(i, xy);
       double low  = xy[1] - c * xy[2];
       double high = xy[1] + c * xy[2];
 

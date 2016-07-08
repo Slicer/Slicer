@@ -483,7 +483,7 @@ void vtkITKImageWriter::Write()
         float outValue[6];
         for(int i=0; i<out->GetNumberOfTuples(); i++)
           {
-          in->GetTupleValue(i, inValue);
+          in->GetTypedTuple(i, inValue);
           //ITK expect tensors saved in upper-triangular format
           outValue[0] = inValue[0];
           outValue[1] = inValue[1];

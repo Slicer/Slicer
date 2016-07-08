@@ -121,7 +121,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
         value[i + 3 * j] = float(tensor(i, j));
         }
       }
-    tensors->SetTupleValue(position, value);
+    tensors->SetTypedTuple(position, value);
     }
 }
 

@@ -60,6 +60,6 @@ void vtkITKTimeSeriesDatabase::ExecuteDataWithInformation(vtkDataObject *output,
     vtkUnsignedLongArray::SafeDownCast(
       vtkImageData::SafeDownCast(output)->GetPointData()->GetScalars())
       ->SetVoidArray(ptr, PixelContainerShort->Size(), 0,
-                     vtkDataArrayTemplate<unsigned long>::VTK_DATA_ARRAY_DELETE);
+                     vtkAOSDataArrayTemplate<unsigned long>::VTK_DATA_ARRAY_DELETE);
     PixelContainerShort->ContainerManageMemoryOff();
   };

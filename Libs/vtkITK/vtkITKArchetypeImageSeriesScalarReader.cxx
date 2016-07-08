@@ -15,9 +15,9 @@
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
 
 // VTK includes
+#include <vtkAOSDataArrayTemplate.h>
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
-#include <vtkDataArrayTemplate.h>
 #include <vtkImageData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
@@ -35,9 +35,9 @@ vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
 namespace {
 
 template <class T>
-vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
+vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 {
-  return vtkDataArrayTemplate<T>::FastDownCast(a);
+  return vtkAOSDataArrayTemplate<T>::FastDownCast(a);
 }
 
 };
@@ -120,7 +120,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
       DownCast<type>(data->GetPointData()->GetScalars())                \
         ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
-                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
+                       vtkAOSDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer##typeN->ContainerManageMemoryOff();\
     }\
     break
@@ -154,7 +154,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
       DownCast<type>(data->GetPointData()->GetScalars())                \
         ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
-                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
+                       vtkAOSDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer2##typeN->ContainerManageMemoryOff();\
     }\
     break

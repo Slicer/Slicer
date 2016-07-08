@@ -856,13 +856,13 @@ void vtkSeedTracts::TransformStreamlinesToRASAndAppendToPolyData(vtkPolyData *ou
       }
     vtkIdTypeArray *cellArrayTransf = transformer->GetOutput()->GetLines()->GetData();
     cellIndex = cellArrayTransf->GetNumberOfTuples()-1;
-    cellArray->SetTupleValue(cellId, &cellIndex);
+    cellArray->SetTypedTuple(cellId, &cellIndex);
     cellId++;
     for (int k=1; k<cellArrayTransf->GetNumberOfTuples(); k++)
       {
       //cellArray->InsertNextValue(ptOffset+cellArrayTransf->GetValue(k));
       cellIndex = ptOffset+cellArrayTransf->GetValue(k);
-      cellArray->SetTupleValue(cellId, &cellIndex);
+      cellArray->SetTypedTuple(cellId, &cellIndex);
       cellId++;
       }
     ptOffset += transformer->GetOutput()->GetNumberOfPoints();

@@ -292,7 +292,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
       out = static_cast<unsigned char>((2125.0 * in[0] +  7154.0 * in[1] +  0721.0 * in[2]) / 10000.0);
 
-      grayScalars->SetTupleValue(i, &out);
+      grayScalars->SetTypedTuple(i, &out);
       }
 
     vtkITKLevelTracingTrace(this,
