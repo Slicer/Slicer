@@ -725,6 +725,7 @@ if(BUILD_TESTING)
     COPYONLY)
 
   add_subdirectory(CMake/Testing)
+  add_subdirectory(Extensions/CMake/Testing)
 
   if(Slicer_BUILD_CLI_SUPPORT)
     set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})

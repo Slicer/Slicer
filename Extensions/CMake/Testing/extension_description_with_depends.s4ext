@@ -1,0 +1,44 @@
+#
+# First token of each non-comment line is the keyword and the rest of the line
+# (including spaces) is the value.
+# - the value can be blank
+#
+
+# This is source code manager (i.e. svn)
+scm git
+scmurl git://github.com/jcfr/SlicerToKiwiExporter.git
+scmrevision 9d7341e978df954a2c875240290833d7528ef29c
+
+# list dependencies
+# - These should be names of other modules that have .s4ext files
+# - The dependencies will be built first
+depends Foo Bar
+
+# Inner build directory (default is ".")
+build_subdirectory inner/inner-inner-build
+
+# homepage
+homepage http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/SlicerToKiwiExporter
+
+# Firstname1 Lastname1 ([SubOrg1, ]Org1), Firstname2 Lastname2 ([SubOrg2, ]Org2)
+# For example: Jane Roe (Superware), John Doe (Lab1, Nowhere), Joe Bloggs (Noware)
+contributors Jean-Christophe Fillion-Robin (Kitware), Pat Marion (Kitware), Steve Pieper (Isomics), Atsushi Yamada (Shiga University of Medical Science)
+
+# Match category in the xml description of the module (where it shows up in Modules menu)
+category Exporter
+
+# url to icon (png, size 128x128 pixels)
+iconurl http://www.slicer.org/slicerWiki/images/6/64/SlicerToKiwiExporterLogo.png
+
+# Give people an idea what to expect from this code
+#  - Is it just a test or something you stand behind?
+status 
+
+# One line stating what the module does
+description The SlicerToKiwiExporter module provides Slicer user with any easy way to export models into a KiwiViewer scene file.
+
+# Space separated list of urls
+screenshoturls http://www.slicer.org/slicerWiki/images/9/9e/SlicerToKiwiExporter_Kiwiviewer_8.PNG http://www.slicer.org/slicerWiki/images/a/ab/SlicerToKiwiExporter_Kiwiviewer_9.PNG http://www.slicer.org/slicerWiki/images/9/9a/SlicerToKiwiExporter_SaveDialog_Select-file-format_1.png
+
+# 0 or 1: Define if the extension should be enabled after its installation.
+enabled 0
