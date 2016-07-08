@@ -81,7 +81,9 @@ list(APPEND Module_SRCS
   ${CMAKE_CURRENT_BINARY_DIR}/${vtk-module}ObjectFactory.cxx)
 set_source_files_properties(
   ${vtk-module}ObjectFactory.cxx
-  WRAP_EXCLUDE
+  PROPERTIES
+    WRAP_EXCLUDE 1
+    WRAP_EXCLUDE_PYTHON 1
   )
 list(APPEND module_replacements_SRCS ${vtk-module}ObjectFactory.cxx)
 
