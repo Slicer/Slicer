@@ -226,7 +226,7 @@ NewImplicitPlaneWidget()
 {
   // Instantiate implcite plane widget and his representation
   vtkNew<vtkImplicitPlaneRepresentation> rep;
-  double defaultBounds[6] = {100, -100, 100, -100, 100, -100};
+  double defaultBounds[6] = {-100, 100, -100, 100, -100, 100};
   rep->PlaceWidget(defaultBounds);
   rep->SetOutlineTranslation(0);
   rep->SetScaleEnabled(0);
