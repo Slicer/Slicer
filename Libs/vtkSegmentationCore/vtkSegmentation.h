@@ -111,6 +111,7 @@ public:
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
   virtual bool GetModifiedSinceRead();
 
+#ifndef __VTK_WRAP__
 //BTX
   /// Determine common labelmap geometry for whole segmentation.
   /// If the segmentation has reference image geometry conversion parameter, then oversample it to
@@ -128,6 +129,7 @@ public:
   /// \param computeEffectiveExtent Specifies if the extent of a segment is the whole extent or the effective extent (where voxel values >0 found)
   void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage, const std::vector<std::string>& segmentIDs = std::vector<std::string>(), bool computeEffectiveExtent=false);
 //ETX
+#endif // __VTK_WRAP__
 
 // Segment related methods
 public:

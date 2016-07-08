@@ -125,6 +125,7 @@ public:
   /// Get subject hierarchy node belonging to a certain segment
   vtkMRMLSubjectHierarchyNode* GetSegmentSubjectHierarchyNode(std::string segmentID);
 
+#ifndef __VTK_WRAP__
 //BTX
   /// Build merged labelmap of the binary labelmap representations of the specified segments
   /// \param mergedImageData Output image data for the merged labelmap image data
@@ -134,6 +135,7 @@ public:
   /// \return Success flag
   virtual bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry = NULL, const std::vector<std::string>& segmentIDs = std::vector<std::string>());
 //ETX
+#endif // __VTK_WRAP__
 
   /// Python-accessible version of the more generic \sa GenerateMergedLabelmap.
   /// The last argument specifying the list of segments to be included is omitted, which means that
