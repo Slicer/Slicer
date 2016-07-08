@@ -54,7 +54,8 @@ def sourceDir():
 #
 
 def importVTKClassesFromDirectory(directory, dest_module_name, filematch = '*'):
-  importClassesFromDirectory(directory, dest_module_name, 'vtkclass', filematch)
+  from vtk import vtkObjectBase
+  importClassesFromDirectory(directory, dest_module_name, vtkObjectBase, filematch)
 
 def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
   importClassesFromDirectory(directory, dest_module_name, 'PythonQtClassWrapper', filematch)
@@ -63,13 +64,12 @@ def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
 # call to ``importClassesFromDirectory()`` will be indicated by
 # adding an entry to the ``__import_classes_cache`` set.
 #
-# Each entry is a tuple of form (directory, dest_module_name, type_name, filematch)
+# Each entry is a tuple of form (directory, dest_module_name, type_info, filematch)
 __import_classes_cache = set()
 
-def importClassesFromDirectory(directory, dest_module_name, type_name, filematch = '*'):
-
+def importClassesFromDirectory(directory, dest_module_name, type_info, filematch = '*'):
   # Create entry for __import_classes_cache
-  cache_key = ",".join([directory, dest_module_name, type_name, filematch])
+  cache_key = ",".join([str(arg) for arg in [directory, dest_module_name, type_info, filematch]])
   # Check if function has already been called with this set of parameters
   if cache_key in __import_classes_cache:
     return
@@ -81,15 +81,15 @@ def importClassesFromDirectory(directory, dest_module_name, type_name, filematch
       continue
     try:
       from_module_name = os.path.splitext(os.path.basename(fname))[0]
-      importModuleObjects(from_module_name, dest_module_name, type_name)
+      importModuleObjects(from_module_name, dest_module_name, type_info)
     except ImportError as detail:
       import sys
       print(detail, file=sys.stderr)
 
   __import_classes_cache.add(cache_key)
 
-def importModuleObjects(from_module_name, dest_module_name, type_name):
-  """Import object of type 'type_name' from module identified
+def importModuleObjects(from_module_name, dest_module_name, type_info):
+  """Import object of type 'type_info' (str or type) from module identified
   by 'from_module_name' into the module identified by 'dest_module_name'."""
 
   # Obtain a reference to the module identifed by 'dest_module_name'
@@ -111,8 +111,17 @@ def importModuleObjects(from_module_name, dest_module_name, type_name):
     # Obtain a reference associated with the current object
     item = getattr(module, item_name)
 
-    # Add the object to dest_module_globals_dict if any
-    if type(item).__name__ == type_name:
+    # Check type match by type or type name
+    match = False
+    if isinstance(type_info, type):
+      try:
+        match = issubclass(item, type_info)
+      except TypeError as e:
+        pass
+    else:
+      match = type(item).__name__ == type_info
+
+    if match:
       setattr(dest_module, item_name, item)
 
 #
