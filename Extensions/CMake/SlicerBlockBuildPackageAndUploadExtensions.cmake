@@ -200,6 +200,13 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         #-----------------------------------------------------------------------------
         # Slicer_UPLOAD_EXTENSIONS: FALSE
         #-----------------------------------------------------------------------------
+        foreach(dep ${EXTENSION_DEPENDS})
+          list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${${dep}_BINARY_DIR}/${${dep}_BUILD_SUBDIRECTORY})
+        endforeach()
+
+        include(ListToString)
+        list_to_string("^^" "${EXTENSION_DEPENDS}" EXTENSION_DEPENDS)
+
         list(APPEND ext_ep_cmake_args
           -D${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL=ON
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -221,10 +228,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
             )
         endif()
 
-        foreach(dep ${EXTENSION_DEPENDS})
-          list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${${dep}_BINARY_DIR}/${${dep}_BUILD_SUBDIRECTORY})
-        endforeach()
-
         # Add extension external project
         set(proj ${EXTENSION_NAME})
         ExternalProject_Add(${proj}
@@ -235,6 +238,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
           CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
           CMAKE_ARGS
             ${ext_ep_cmake_args}
+          LIST_SEPARATOR "^^"
           ${EP_ARG_EXTENSION_DEPENDS}
           )
         # This custom external project step forces the build and later
