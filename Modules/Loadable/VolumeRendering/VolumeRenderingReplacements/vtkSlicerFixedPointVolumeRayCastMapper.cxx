@@ -1197,9 +1197,7 @@ void vtkSlicerFixedPointVolumeRayCastMapper::PerVolumeInitialization( vtkRendere
     }
     else
     {
-        this->UpdateInformation();
-        this->SetUpdateExtentToWholeExtent();
-        this->Update();
+        this->UpdateWholeExtent();
     }
 
     // Compute some matrices from voxels to view and vice versa based

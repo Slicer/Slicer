@@ -849,7 +849,14 @@ int vtkNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double S
 // are assumed to be the same as the file extent/order.
 void vtkNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
 {
-  this->SetUpdateExtentToWholeExtent();
+  if (this->GetOutputInformation(0))
+    {
+    this->GetOutputInformation(0)->Set(
+      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+      this->GetOutputInformation(0)->Get(
+        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    }
+
   vtkImageData *imageData = this->AllocateOutputData(output, outInfo);
 
   if (this->GetFileName() == NULL)

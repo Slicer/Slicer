@@ -321,8 +321,13 @@ void vtkITKImageWriter::Write()
     }
 
   this->UpdateInformation();
-  this->SetUpdateExtent(this->GetOutputInformation(0)->Get(
-                        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+  if (this->GetOutputInformation(0))
+    {
+    this->GetOutputInformation(0)->Set(
+      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+      this->GetOutputInformation(0)->Get(
+        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    }
   int inputDataType =
     pointData->GetScalars() ? pointData->GetScalars()->GetDataType() :
     pointData->GetTensors() ? pointData->GetTensors()->GetDataType() :
