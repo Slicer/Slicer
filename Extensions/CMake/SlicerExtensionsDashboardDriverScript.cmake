@@ -202,6 +202,7 @@ setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3")
 setIfNotDefined(MIDAS_PACKAGE_EMAIL "MIDAS_PACKAGE_EMAIL-NOTDEFINED" OBFUSCATE)
 setIfNotDefined(MIDAS_PACKAGE_API_KEY "MIDAS_PACKAGE_API_KEY-NOTDEFINED" OBFUSCATE)
+setIfNotDefined(CTEST_DROP_SITE "slicer.cdash.org")
 
 #-----------------------------------------------------------------------------
 # The following variable can be used while testing the driver scripts
@@ -373,6 +374,12 @@ macro(run_ctest)
   if(slicer_build_in_progress)
     message("Skipping run_ctest() - Slicer build in PROGRESS")
   else()
+
+    message("Configuring ${CTEST_BINARY_DIRECTORY}/CTestConfig.cmake")
+    configure_file(
+      ${CTEST_SOURCE_DIRECTORY}/CTestConfig.cmake.in
+      ${CTEST_BINARY_DIRECTORY}/CTestConfig.cmake
+      )
 
     ctest_start(${model} TRACK ${track})
 
