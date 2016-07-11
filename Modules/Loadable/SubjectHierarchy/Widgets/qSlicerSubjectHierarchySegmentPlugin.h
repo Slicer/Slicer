@@ -62,6 +62,9 @@ public:
   QMenu* segmentWithMenu();
 
 protected slots:
+  /// Switches to Segment Editor and sets current volume node as master volume
+  void segmentCurrentNodeWithSegmentEditor();
+
   /// Switches to Editor and sets current volume node as master volume
   void segmentCurrentNodeWithEditor();
 

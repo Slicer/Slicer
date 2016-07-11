@@ -113,7 +113,11 @@ void qSlicerSubjectHierarchySegmentPluginPrivate::init()
   this->SegmentWithMenu = QSharedPointer<QMenu>(new QMenu());
   this->SegmentWithMenuAction->setMenu(this->SegmentWithMenu.data());
 
-  QAction* editorAction = new QAction("Editor",q);
+  QAction* segmentEditorAction = new QAction("Segment Editor",q);
+  QObject::connect(segmentEditorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentNodeWithSegmentEditor()));
+  this->SegmentWithMenu->addAction(segmentEditorAction);
+
+  QAction* editorAction = new QAction("Editor (obsolete)",q);
   QObject::connect(editorAction, SIGNAL(triggered()), q, SLOT(segmentCurrentNodeWithEditor()));
   this->SegmentWithMenu->addAction(editorAction);
 }
@@ -153,7 +157,7 @@ void qSlicerSubjectHierarchySegmentPlugin::showContextMenuActionsForNode(vtkMRML
     vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
     if (!currentNode)
       {
-      qCritical() << "qSlicerSubjectHierarchySegmentPlugin::showContextMenuActionsForNode: Invalid current node!";
+      qCritical() << Q_FUNC_INFO << ": Invalid current node!";
       return;
       }
 
@@ -170,19 +174,56 @@ QMenu* qSlicerSubjectHierarchySegmentPlugin::segmentWithMenu()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithSegmentEditor()
+{
+  vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
+  vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
+  if (!scene || !currentNode || !currentNode->GetAssociatedNode())
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid current node or scene!";
+    return;
+    }
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
+  if (!volumeNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid volume node to segment!";
+    return;
+    }
+
+#ifdef Slicer_USE_PYTHONQT
+  // Switch to Segment Editor module
+  qSlicerAbstractModuleWidget* moduleWidget = qSlicerSubjectHierarchyAbstractPlugin::switchToModule("SegmentEditor");
+
+  // Set master and merge volume in Editor
+  if (moduleWidget)
+    {
+    PythonQt::init();
+    PythonQtObjectPtr context = PythonQt::self()->getMainModule();
+    context.evalScript( QString(
+      "masterNode = slicer.mrmlScene.GetNodeByID(%1)"
+      "editorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()"
+      "editorWidget.parameterSetNode.SetAndObserveMasterVolumeNode(masterNode)" )
+      .arg(currentNode->GetAssociatedNode()->GetID()) );
+    }
+#else
+  qDebug() << Q_FUNC_INFO << ": Segment Editor module is not available";
+#endif
+}
+
+//---------------------------------------------------------------------------
 void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!scene || !currentNode || !currentNode->GetAssociatedNode())
     {
-    qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Invalid current node or scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node or scene!";
     return;
     }
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(currentNode->GetAssociatedNode());
   if (!volumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Invalid volume node to segment!";
+    qCritical() << Q_FUNC_INFO << ": Invalid volume node to segment!";
     return;
     }
 
@@ -222,7 +263,7 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
   vtkMRMLSelectionNode* selectionNode = qSlicerCoreApplication::application()->applicationLogic()->GetSelectionNode();
   if (!selectionNode)
     {
-    qCritical() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor: Unable to get selection node";
+    qCritical() << Q_FUNC_INFO << ": Unable to get selection node";
     return;
     }
   vtkMRMLSliceCompositeNode* compositeNode = NULL;
@@ -256,7 +297,6 @@ void qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor()
       .arg(currentNode->GetAssociatedNode()->GetID()).arg(labelNode->GetID()) );
     }
 #else
-  qDebug() << "qSlicerSubjectHierarchySegmentPlugin::segmentCurrentNodeWithEditor -- "
-              "Editor module is not available to edit label map" << labelNode->GetName();
+  qDebug() << Q_FUNC_INFO << ": Editor module is not available to edit label map" << labelNode->GetName();
 #endif
 }

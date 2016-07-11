@@ -193,7 +193,8 @@ class EditorWidget(VTKObservationMixin):
 
   # sets up the widget
   def setup(self):
-
+    # Message suggesting using Segment Editor
+    self.createSegmentEditorMessage()
 
     #
     # Editor Volumes
@@ -281,5 +282,35 @@ class EditorWidget(VTKObservationMixin):
 
   def updateLabelFrame(self, mergeVolume):
     self.editLabelMapsFrame.collapsed = not mergeVolume
+
+  def createSegmentEditorMessage(self):
+    self.messageLayout = qt.QHBoxLayout()
+    self.messageLayout.addSpacing(8)
+
+    infoIcon = qt.QApplication.style().standardIcon(qt.QStyle.SP_MessageBoxInformation)
+    self.infoIconLabel = qt.QLabel(self.parent)
+    self.infoIconLabel.setPixmap(infoIcon.pixmap(36,36))
+    self.messageLayout.addWidget(self.infoIconLabel)
+    self.messageLayout.addSpacing(8)
+
+    self.segmentEditorLabel = qt.QLabel(self.parent)
+    self.segmentEditorLabel.text = 'Try the new <a href="#SwitchToSegmentEditor"><span style=" text-decoration: underline; color:#0000ff;">Segment Editor</span></a> module for more advanced editing!<br>Please help us improve the module by giving <a href="#Feedback"><span style=" text-decoration: underline; color:#0000ff;">feedback</span></a>.'
+    self.segmentEditorLabel.openExternalLinks = False
+    self.segmentEditorLabel.setSizePolicy( qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred) )
+    self.segmentEditorLabel.connect( 'linkActivated(QString)', self.onSwitchToSegmentEditor )
+    self.messageLayout.addWidget(self.segmentEditorLabel)
+
+    self.layout.addLayout(self.messageLayout)
+
+  def onSwitchToSegmentEditor(self, link):
+    if link == '#SwitchToSegmentEditor':
+      slicer.util.selectModule('SegmentEditor')
+      editorWidget = slicer.modules.segmenteditor.widgetRepresentation().self()
+      if editorWidget is not None and self.helper is not None:
+        masterNode = self.helper.masterSelector.currentNode()
+        editorWidget.parameterSetNode.SetAndObserveMasterVolumeNode(masterNode)
+
+    elif link == '#Feedback':
+      qt.QDesktopServices.openUrl(qt.QUrl('http://massmail.spl.harvard.edu/mailman/listinfo/slicer-users'))
 
   #->> TODO: check to make sure editor module smoothly handles interactive changes to the master and merge nodes
