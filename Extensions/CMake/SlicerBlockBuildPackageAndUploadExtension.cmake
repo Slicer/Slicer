@@ -96,7 +96,7 @@ setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_MODEL "Experimental")
 
 set(label ${EXTENSION_NAME})
-set_property(GLOBAL PROPERTY SubProject ${label})
+#set_property(GLOBAL PROPERTY SubProject ${label})
 set_property(GLOBAL PROPERTY Label ${label})
 
 # If no CTestConfig.cmake file is found in ${ctestconfig_dest_dir},
