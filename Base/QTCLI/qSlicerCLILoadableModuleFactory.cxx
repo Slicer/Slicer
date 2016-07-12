@@ -60,6 +60,8 @@ void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(
   if (!item->Superclass::load())
     {
     qWarning() << "Failed to load" << item->path();
+    qWarning() << "QLibrary error message(s): ";
+    qWarning() << item->loadErrorStrings();
     return;
     }
 
