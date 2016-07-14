@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # Used to generate PEM encoded files from Mozilla certdata.txt.
-# Run as ./mkcrt.pl > certificate.crt
+# Run as ./make-cert.pl > certificate.crt
 #
 # Parts of this script courtesy of RedHat (mkcabundle.pl)
 #

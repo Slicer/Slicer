@@ -36,9 +36,9 @@ be (re-)generated.
 
 Step1: Download the list of trusted CAs from mozilla website [4]
 
- certhost='http://mxr.mozilla.org'                        &&
- certdir='/mozilla/source/security/nss/lib/ckfw/builtins' &&
- url="$certhost$certdir/certdata.txt?raw=1"               &&
+ certhost='https://github.com/mozilla/gecko-dev'          &&
+ certdir='/blob/master/security/nss/lib/ckfw/builtins'    &&
+ url="$certhost$certdir/certdata.txt?raw=true"            &&
  wget --output-document certdata.txt $url                 &&
  unset certhost certdir url
 
@@ -47,10 +47,7 @@ Step2: Generate "Slicer.crt"
 
  ./make-ca.sh                                         &&
  ./remove-expired-certs.sh certs                      &&
- REVISION=$(grep CVS_ID certdata.txt | cut -f4 -d'$') &&
- VERSION=$(echo $REVISION | cut -f2 -d" ")            &&
- mv "BLFS-ca-bundle-${VERSION}.crt"  "Slicer.crt"     &&
- unset REVISION VERSION
+ mv "BLFS-ca-bundle-0.crt"  "Slicer.crt"
 
 
 Step3: Clean-up
