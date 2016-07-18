@@ -1357,10 +1357,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
             }
 
           // we need to render again
-          if (currentRenderer)
-            {
-            currentRenderer->Render();
-            }
+          this->RequestRender();
           }
 
         }
