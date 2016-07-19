@@ -50,6 +50,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
 
 //--------------------------------------------------------------------------
@@ -148,6 +149,14 @@ void qMRMLSliceViewPrivate::init()
   this->LightBoxRendererManagerProxy->SetLightBoxRendererManager(
     q->lightBoxRendererManager());
   this->initDisplayableManagers();
+
+  // Force an initial render to ensure that the render window creates an OpenGL
+  // context. If operations that require a context--such as hardware
+  // picking--are performed when no context exists, OpenGL errors will occur.
+  // When using the VTK OpenGL2 backend the errors may be followed by a
+  // segfault. Such a scenario can occur when the app is started using a layout
+  // that hides one or more of the slice views.
+  q->renderWindow()->Render();
 }
 
 //---------------------------------------------------------------------------
