@@ -59,7 +59,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::name()const
 {
   if (m_Name.isEmpty())
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::name: Empty plugin name!";
+    qCritical() << Q_FUNC_INFO << ": Empty plugin name!";
     }
   return this->m_Name;
 }
@@ -68,7 +68,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::name()const
 void qSlicerSubjectHierarchyAbstractPlugin::setName(QString name)
 {
   Q_UNUSED(name);
-  qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::setName: Cannot set plugin name by method, only in constructor!";
+  qCritical() << Q_FUNC_INFO << ": Cannot set plugin name by method, only in constructor!";
 }
 
 //---------------------------------------------------------------------------
@@ -148,13 +148,13 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
 {
   if (!nodeToAdd)
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy: Invalid node to add!";
+    qCritical() << Q_FUNC_INFO << ": Invalid node to add!";
     return false;
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return false;
     }
 
@@ -163,7 +163,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
     scene, parentNode, level, nodeToAdd->GetName(), nodeToAdd);
   if (!subjectHierarchyNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy: Failed to create subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Failed to create subject hierarchy node!";
     return false;
     }
 
@@ -215,7 +215,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkMRMLSubjectHierarchyNo
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::tooltip: Subject hierarchy node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy node is NULL!";
     return QString("Invalid!");
     }
 
@@ -284,7 +284,7 @@ qSlicerAbstractModuleWidget* qSlicerSubjectHierarchyAbstractPlugin::switchToModu
   qSlicerAbstractModule* moduleWithAction = qobject_cast<qSlicerAbstractModule*>(module);
   if (!moduleWithAction)
     {
-    qCritical() << "qSlicerSubjectHierarchyAbstractPlugin::switchToModule: Module with name '" << moduleName << "' not found!";
+    qCritical() << Q_FUNC_INFO << ": Module with name '" << moduleName << "' not found!";
     return NULL;
     }
 

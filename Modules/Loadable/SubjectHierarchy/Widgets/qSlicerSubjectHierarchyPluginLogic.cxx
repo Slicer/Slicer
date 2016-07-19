@@ -96,7 +96,7 @@ void qSlicerSubjectHierarchyPluginLogicPrivate::loadApplicationSettings()
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (!settings)
     {
-    qWarning() << "qSlicerSubjectHierarchyPluginLogic::setup: Invalid application settings!";
+    qWarning() << Q_FUNC_INFO << ": Invalid application settings!";
     }
   else
     {
@@ -205,7 +205,7 @@ void qSlicerSubjectHierarchyPluginLogic::checkSupportedNodesInScene()
     // This should only happen if auto-creation is off. Report error in this case, because it's a bug
     if (d->AutoCreateSubjectHierarchy)
       {
-      qCritical() << "qSlicerSubjectHierarchyPluginLogic::updateWidgetFromMRML: Subject hierarchy auto-creation is on, still there are supported data nodes outside the hierarchy. This is a bug, please report with reproducible steps. Thanks!";
+      qCritical() << Q_FUNC_INFO << ": Subject hierarchy auto-creation is on, still there are supported data nodes outside the hierarchy. This is a bug, please report with reproducible steps. Thanks!";
       return;
       }
 
@@ -315,8 +315,8 @@ void qSlicerSubjectHierarchyPluginLogic::onNodeAdded(vtkObject* sceneObject, vtk
       bool successfullyAddedByPlugin = selectedPlugin->addNodeToSubjectHierarchy(node, NULL);
       if (!successfullyAddedByPlugin)
         {
-        qWarning() << "qSlicerSubjectHierarchyPluginLogic::onNodeAdded: Failed to add node "
-          << node->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+        qWarning() << Q_FUNC_INFO << ": Failed to add node " << node->GetName() <<
+          " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
         }
       }
     }
@@ -435,7 +435,7 @@ void qSlicerSubjectHierarchyPluginLogic::onSubjectHierarchyNodeModified(vtkObjec
     QString pluginAfter( subjectHierarchyNode->GetOwnerPluginName() );
     //if (pluginBefore.compare(pluginAfter))
     //  {
-    //  qDebug() << "qSlicerSubjectHierarchyPluginLogic::onSubjectHierarchyNodeModified: Subject hierarchy node '" <<
+    //  qDebug() << Q_FUNC_INFO << ": Subject hierarchy node '" <<
     //    subjectHierarchyNode->GetName() << "' has been modified, plugin search performed, and owner plugin changed from '" <<
     //    pluginBefore << "' to '" << pluginAfter << "'";
     //  }
@@ -498,7 +498,7 @@ void qSlicerSubjectHierarchyPluginLogic::onMRMLNodeHierarchyModified(vtkObject* 
     // We cannot handle multi-level nesting yet, it's only used by subject hierarchy, so it must be a bug!
     if (associatedHierarchyNodes.size() > 2)
       {
-      qCritical() << "qSlicerSubjectHierarchyPluginLogic::onMRMLNodeHierarchyModified: Multi-level nested associations detected for node "
+      qCritical() << Q_FUNC_INFO << ": Multi-level nested associations detected for node "
         << node->GetName() << "! This is probably a bug, please report.";
       return;
       }
@@ -518,7 +518,7 @@ void qSlicerSubjectHierarchyPluginLogic::onMRMLNodeHierarchyModified(vtkObject* 
       }
     else // Neither is subject hierarchy. This should never happen
       {
-      qCritical() << "qSlicerSubjectHierarchyPluginLogic::onMRMLNodeHierarchyModified: Invalid nested associations detected for node "
+      qCritical() << Q_FUNC_INFO << ": Invalid nested associations detected for node "
         << node->GetName() << "! This is probably a bug, please report.";
       return;
       }
@@ -563,8 +563,8 @@ void qSlicerSubjectHierarchyPluginLogic::addSupportedNodesToSubjectHierarchy()
         {
         // Should never happen! If a plugin answers positively to the canOwn question (condition of
         // reaching this point), then it has to be able to add it.
-        qCritical() << "qSlicerSubjectHierarchyPluginLogic::onNodeAdded: Failed to add node "
-          << node->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
+        qCritical() << Q_FUNC_INFO << ": Failed to add node " << node->GetName()
+          << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
         }
       }
     }

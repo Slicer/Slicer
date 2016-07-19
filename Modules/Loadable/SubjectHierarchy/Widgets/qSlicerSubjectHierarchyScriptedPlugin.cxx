@@ -206,7 +206,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString newPyt
   if (!qSlicerScriptedUtils::setModuleAttribute(
         "slicer", className, self))
     {
-    qCritical() << "Failed to set" << ("slicer." + className);
+    qCritical() << Q_FUNC_INFO << ": Failed to set" << ("slicer." + className);
     }
 
   return true;
@@ -242,7 +242,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyNode(vtkMRML
   // Parse result
   if (!PyFloat_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'canOwnSubjectHierarchyNode' is expected to return a floating point number!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canOwnSubjectHierarchyNode' is expected to return a floating point number!";
     return this->Superclass::canOwnSubjectHierarchyNode(node);
     }
 
@@ -263,7 +263,7 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin()const
   // Parse result
   if (!PyString_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'roleForPlugin' is expected to return a string!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'roleForPlugin' is expected to return a string!";
     return this->Superclass::roleForPlugin();
     }
 
@@ -285,7 +285,7 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText()const
   // Parse result
   if (!PyString_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'helpText' is expected to return a string!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
     }
 
@@ -446,7 +446,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMR
   // Parse result
   if (!PyFloat_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'canAddNodeToSubjectHierarchy' is expected to return a floating point number!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canAddNodeToSubjectHierarchy' is expected to return a floating point number!";
     return this->Superclass::canAddNodeToSubjectHierarchy(node, parent);
     }
 
@@ -472,7 +472,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentNodeInsideSubjectHierar
   // Parse result
   if (!PyFloat_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'canReparentNodeInsideSubjectHierarchy' is expected to return a floating point number!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'canReparentNodeInsideSubjectHierarchy' is expected to return a floating point number!";
     return this->Superclass::canReparentNodeInsideSubjectHierarchy(node, parent);
     }
 
@@ -498,7 +498,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::reparentNodeInsideSubjectHierarchy(v
   // Parse result
   if (!PyBool_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'reparentNodeInsideSubjectHierarchy' is expected to return a boolean!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'reparentNodeInsideSubjectHierarchy' is expected to return a boolean!";
     return this->Superclass::reparentNodeInsideSubjectHierarchy(nodeToReparent, parentNode);
     }
 
@@ -522,7 +522,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedNodeName(vtkMRMLSubjectH
   // Parse result
   if (!PyString_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'displayedNodeName' is expected to return a string!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'displayedNodeName' is expected to return a string!";
     return this->Superclass::displayedNodeName(node);
     }
 
@@ -546,7 +546,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkMRMLSubjectHierarchyNo
   // Parse result
   if (!PyString_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'tooltip' is expected to return a string!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'tooltip' is expected to return a string!";
     return this->Superclass::tooltip(node);
     }
 
@@ -586,7 +586,7 @@ int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkMRMLSubjectHi
   // Parse result
   if (!PyInt_Check(result))
     {
-    qWarning() << d->PythonSource << ": qSlicerSubjectHierarchyScriptedPlugin: Function 'getDisplayVisibility' is expected to return an integer!";
+    qWarning() << d->PythonSource << ": " << Q_FUNC_INFO << ": Function 'getDisplayVisibility' is expected to return an integer!";
     return this->Superclass::getDisplayVisibility(node);
     }
 

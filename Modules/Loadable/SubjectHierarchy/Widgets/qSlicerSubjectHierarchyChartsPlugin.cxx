@@ -112,7 +112,7 @@ double qSlicerSubjectHierarchyChartsPlugin::canAddNodeToSubjectHierarchy(vtkMRML
   Q_UNUSED(parent);
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::canAddNodeToSubjectHierarchy: Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
     return 0.0;
     }
   else if (node->IsA("vtkMRMLChartNode"))
@@ -129,7 +129,7 @@ double qSlicerSubjectHierarchyChartsPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::canOwnSubjectHierarchyNode: Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
     return 0.0;
     }
 
@@ -154,7 +154,7 @@ QIcon qSlicerSubjectHierarchyChartsPlugin::icon(vtkMRMLSubjectHierarchyNode* nod
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::icon: NULL node given!";
+    qCritical() << Q_FUNC_INFO << ": NULL node given!";
     return QIcon();
     }
 
@@ -189,13 +189,13 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkMRMLSubjectHie
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility: NULL node!";
+    qCritical() << Q_FUNC_INFO << ": NULL node!";
     return;
     }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return;
     }
   if (this->getDisplayVisibility(node) == visible)
@@ -211,7 +211,7 @@ void qSlicerSubjectHierarchyChartsPlugin::setDisplayVisibility(vtkMRMLSubjectHie
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(layoutNodeVtkObject);
   if (!layoutNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::getChartViewNode: Unable to get layout node!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get layout node!";
     return;
     }
 
@@ -262,7 +262,7 @@ int qSlicerSubjectHierarchyChartsPlugin::getDisplayVisibility(vtkMRMLSubjectHier
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::getDisplayVisibility: NULL node!";
+    qCritical() << Q_FUNC_INFO << ": NULL node!";
     return -1;
     }
 
@@ -308,7 +308,7 @@ vtkMRMLChartViewNode* qSlicerSubjectHierarchyChartsPlugin::getChartViewNode()con
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::getChartViewNode: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return NULL;
     }
 
@@ -318,7 +318,7 @@ vtkMRMLChartViewNode* qSlicerSubjectHierarchyChartsPlugin::getChartViewNode()con
   vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast( chartViewNodes->GetNextItemAsObject() );
   if (!chartViewNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyChartsPlugin::getChartViewNode: Unable to get chart view node!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get chart view node!";
     return NULL;
     }
 

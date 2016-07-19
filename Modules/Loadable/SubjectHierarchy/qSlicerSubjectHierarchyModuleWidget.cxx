@@ -234,7 +234,7 @@ void qSlicerSubjectHierarchyModuleWidget::setDataNodeFromSubjectHierarchyNode(vt
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
   if (!shNode)
   {
-    qCritical() << "setDataNodeFromSubjectHierarchyNode: Input node should be subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Input node should be subject hierarchy node!";
     return;
   }
 

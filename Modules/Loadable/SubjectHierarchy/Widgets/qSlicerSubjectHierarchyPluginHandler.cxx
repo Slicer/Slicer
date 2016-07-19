@@ -119,12 +119,12 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
 {
   if (pluginToRegister == NULL)
     {
-    qCritical() << "qSlicerSubjectHierarchyPluginHandler::RegisterPlugin: Invalid plugin to register!";
+    qCritical() << Q_FUNC_INFO << ": Invalid plugin to register!";
     return false;
     }
   if (pluginToRegister->name().isEmpty())
     {
-    qCritical() << "qSlicerSubjectHierarchyPluginHandler::RegisterPlugin: SubjectHierarchy plugin cannot be registered with empty name!";
+    qCritical() << Q_FUNC_INFO << ": SubjectHierarchy plugin cannot be registered with empty name!";
     return false;
     }
 
@@ -134,8 +134,7 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
     {
     if (pluginToRegister->name().compare(currentPlugin->name()) == 0)
       {
-      qDebug() << "qSlicerSubjectHierarchyPluginHandler::RegisterPlugin: "
-                    "SubjectHierarchy plugin " << pluginToRegister->name() << " is already registered";
+      qDebug() << Q_FUNC_INFO << ": SubjectHierarchy plugin " << pluginToRegister->name() << " is already registered";
       return false;
       }
     }
@@ -183,7 +182,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::plu
       }
     }
 
-  qWarning() << "qSlicerSubjectHierarchyPluginHandler::pluginByName: Plugin named '" << name << "' cannot be found!";
+  qWarning() << Q_FUNC_INFO << ": Plugin named '" << name << "' cannot be found!";
   return NULL;
 }
 
@@ -304,8 +303,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::get
 {
   if (!node->GetOwnerPluginName())
     {
-    qCritical() << "qSlicerSubjectHierarchyPluginHandler::getOwnerPluginForSubjectHierarchyNode: Node '" << node->GetName()
-      << "' is not owned by any plugin!";
+    qCritical() << Q_FUNC_INFO << ": Node '" << node->GetName() << "' is not owned by any plugin!";
     return NULL;
     }
 
@@ -318,7 +316,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::sel
 {
   if (candidatePlugins.empty())
     {
-    qCritical() << "qSlicerSubjectHierarchyPluginHandler::selectPluginFromDialog: Empty candidate plugin list! Returning default plugin.";
+    qCritical() << Q_FUNC_INFO << ": Empty candidate plugin list! Returning default plugin.";
     return m_DefaultPlugin;
     }
 
@@ -345,7 +343,7 @@ qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginHandler::sel
     }
 
   // User pressed cancel (or [1] failed to find the plugin)
-  qWarning() << "qSlicerSubjectHierarchyPluginHandler::selectPluginFromDialog: Plugin selection failed! Returning first available plugin";
+  qWarning() << Q_FUNC_INFO << ": Plugin selection failed! Returning first available plugin";
   return candidatePlugins[0];
 }
 
@@ -397,7 +395,7 @@ void qSlicerSubjectHierarchyPluginHandler::reconnectOwnerPluginChanged(vtkObject
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
   if (!subjectHierarchyNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyPluginHandler::onOwnerPluginChanged: Invalid subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy node!";
     return;
     }
 

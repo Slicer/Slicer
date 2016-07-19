@@ -139,7 +139,7 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::icon(vtkMRMLSubjectHierarchyNode* no
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyDefaultPlugin::icon: NULL node given!";
+    qCritical() << Q_FUNC_INFO << ": NULL node given!";
     return QIcon();
     }
 

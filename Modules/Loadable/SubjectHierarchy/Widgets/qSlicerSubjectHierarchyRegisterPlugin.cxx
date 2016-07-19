@@ -168,7 +168,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForNode(vtkMRM
     vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
     if (!currentNode)
       {
-      qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::showContextMenuActionsForNode: Invalid current node!";
+      qCritical() << Q_FUNC_INFO << ": Invalid current node!";
       return;
       }
 
@@ -194,7 +194,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerCurrentNodeTo()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::createChildContourSetForCurrentNode: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
 
@@ -213,7 +213,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!currentNode || !scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid: Invalid current node or MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node or MRML scene!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -223,8 +223,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
   vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid: "
-                   "Unable to get input volume nodes from the selected subject hierarchy nodes!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get input volume nodes from the selected subject hierarchy nodes!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -273,7 +272,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid()
   this->m_RegisterFromNode = NULL;
 
 #else
-  qWarning() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedRigid: This operation cannot be performed with CLI disabled";
+  qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
 #endif
 }
 
@@ -285,7 +284,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!currentNode || !scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline: Invalid current node or MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node or MRML scene!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -295,8 +294,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
   vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline: "
-                   "Unable to get input volume nodes from the selected subject hierarchy nodes!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get input volume nodes from the selected subject hierarchy nodes!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -345,7 +343,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline()
   this->m_RegisterFromNode = NULL;
 
 #else
-  qWarning() << "qSlicerSubjectHierarchyRegisterPlugin::registerImageBasedBSpline: This operation cannot be performed with CLI disabled";
+  qWarning() << Q_FUNC_INFO << ": This operation cannot be performed with CLI disabled";
 #endif
 }
 
@@ -356,7 +354,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!currentNode || !scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark: Invalid current node or MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node or MRML scene!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -366,8 +364,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
   vtkMRMLNode* registerToVolumeNode = currentNode->GetAssociatedNode();
   if (!registerFromVolumeNode || !registerToVolumeNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark: "
-                   "Unable to get input volume nodes from the selected subject hierarchy nodes!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get input volume nodes from the selected subject hierarchy nodes!";
     this->m_RegisterFromNode = NULL;
     return;
     }
@@ -406,8 +403,7 @@ void qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark()
       }
     else
       {
-      qCritical() << "qSlicerSubjectHierarchyRegisterPlugin::registerInteractiveLandmark: "
-                     "Failed to get volume selector dialog for landmark registration module!";
+      qCritical() << Q_FUNC_INFO << ": Failed to get volume selector dialog for landmark registration module!";
       }
     }
 

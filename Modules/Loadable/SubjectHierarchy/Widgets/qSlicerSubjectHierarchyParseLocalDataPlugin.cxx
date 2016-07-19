@@ -186,7 +186,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       {
       if (filePath.count() == 0)
         {
-        qWarning() << "qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirectoryStructure: Too shallow file path found!";
+        qWarning() << Q_FUNC_INFO << ": Too shallow file path found!";
         firstComponentMatch = false;
         break;
         }
@@ -204,8 +204,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     // If first component matches through all file paths, remove it
     if (firstComponentMatch)
       {
-      qDebug() << "qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirectoryStructure: "
-                  "First component (" << firstComponent << ") matches in all paths, removing";
+      qDebug() << Q_FUNC_INFO << ": First component (" << firstComponent << ") matches in all paths, removing";
       for (int i=0; i<loadedFilePaths.count(); ++i)
         {
         QStringList currentFilePath = loadedFilePaths[i];

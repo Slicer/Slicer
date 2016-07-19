@@ -313,7 +313,7 @@ void qMRMLSceneSubjectHierarchyModel::onItemChanged(QStandardItem * item)
   vtkMRMLNode* mrmlNode = this->mrmlNodeFromItem(item);
   if (!mrmlNode)
   {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::onItemChanged: Failed to get MRML node from scene model item";
+    qCritical() << Q_FUNC_INFO << ": Failed to get MRML node from scene model item";
     return;
   }
   this->updateNodeFromItem(mrmlNode, item);
@@ -378,7 +378,7 @@ void qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode(QStandardItem* item
   else
     {
     // Owner plugin name is not set for subject hierarchy node. Show it as a regular node
-    //qDebug() << "qMRMLSceneSubjectHierarchyModel::updateItemDataFromNode: No owner plugin defined for subject hierarchy node '" << subjectHierarchyNode->GetName() << "'!";
+    //qDebug() << Q_FUNC_INFO << ": No owner plugin defined for subject hierarchy node '" << subjectHierarchyNode->GetName() << "'!";
     //Superclass::updateItemDataFromNode(item,node,column);
     return;
     }
@@ -543,7 +543,7 @@ void qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, 
         }
       else if (answer == QMessageBox::Cancel)
         {
-        //qDebug() << "qMRMLSceneSubjectHierarchyModel::updateNodeFromItemData: Transform branch cancelled";
+        //qDebug() << Q_FUNC_INFO << ": Transform branch cancelled";
         return;
         }
       }
@@ -557,7 +557,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
 {
   if (!node || newParent == node)
     {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Invalid node to reparent!";
+    qCritical() << Q_FUNC_INFO << ": Invalid node to reparent!";
     return false;
     }
 
@@ -569,7 +569,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
 
   if (!this->mrmlScene())
     {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return false;
     }
 
@@ -577,13 +577,13 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
   vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
   if (!subjectHierarchyNode)
     {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Reparented node (" << node->GetName() << ") is not a subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Reparented node (" << node->GetName() << ") is not a subject hierarchy node!";
     return false;
     }
 
   if (newParent && !this->canBeAParent(newParent))
     {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Target parent node (" << newParent->GetName() << ") is not a valid subject hierarchy parent node!";
+    qCritical() << Q_FUNC_INFO << ": Target parent node (" << newParent->GetName() << ") is not a valid subject hierarchy parent node!";
     return false;
     }
 
@@ -616,7 +616,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
         && subjectHierarchyNode->GetParentNode()->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetVirtualBranchSubjectHierarchyNodeAttributeName().c_str()) ) )
     && selectedPlugin == qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin() )
   {
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Failed to reparent virtual node "
+    qCritical() << Q_FUNC_INFO << ": Failed to reparent virtual node "
       << subjectHierarchyNode->GetName() << " under parent " << (newParent ? newParent->GetName() : "scene");
     return false;
   }
@@ -628,7 +628,7 @@ bool qMRMLSceneSubjectHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* n
     {
     subjectHierarchyNode->SetParentNodeID( subjectHierarchyNode->GetParentNodeID() );
 
-    qCritical() << "qMRMLSceneSubjectHierarchyModel::reparent: Failed to reparent node "
+    qCritical() << Q_FUNC_INFO << ": Failed to reparent node "
       << subjectHierarchyNode->GetName() << " through plugin '" << selectedPlugin->name().toLatin1().constData() << "'";
     return false;
     }

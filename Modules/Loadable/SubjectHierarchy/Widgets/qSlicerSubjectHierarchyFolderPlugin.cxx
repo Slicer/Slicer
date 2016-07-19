@@ -110,7 +110,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyNode(vtkMRMLSu
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyNode: Input node is NULL!";
+    qCritical() << Q_FUNC_INFO << ": Input node is NULL!";
     return 0.0;
     }
 
@@ -130,7 +130,7 @@ const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyFolderPlugin::roleForPlugin: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return "Error!";
     }
 
@@ -148,7 +148,7 @@ QIcon qSlicerSubjectHierarchyFolderPlugin::icon(vtkMRMLSubjectHierarchyNode* nod
 {
   if (!node)
     {
-    qCritical() << "qSlicerSubjectHierarchyFolderPlugin::icon: NULL node given!";
+    qCritical() << Q_FUNC_INFO << ": NULL node given!";
     return QIcon();
     }
 
@@ -223,7 +223,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyFolderPlugin::createFolderUn
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->scene();
   if (!scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyFolderPlugin::createFolderUnderNode: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return NULL;
     }
 
@@ -249,7 +249,7 @@ void qSlicerSubjectHierarchyFolderPlugin::createFolderUnderCurrentNode()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyFolderPlugin::createFolderUnderCurrentNode: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
 

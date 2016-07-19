@@ -139,14 +139,14 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode: Invalid current subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current subject hierarchy node!";
     return;
     }
 
   vtkMRMLSubjectHierarchyNode* clonedSubjectHierarchyNode = qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjectHierarchyNode(currentNode);
   if (!clonedSubjectHierarchyNode)
     {
-    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode: Failed to clone subject hierarchy node" << currentNode->GetNameWithoutPostfix().c_str();
+    qCritical() << Q_FUNC_INFO << ": Failed to clone subject hierarchy node" << currentNode->GetNameWithoutPostfix().c_str();
     }
 }
 
@@ -160,7 +160,7 @@ vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjec
   vtkMRMLScene* scene = node->GetScene();
   if (!scene)
     {
-    qCritical() << "qSlicerSubjectHierarchyCloneNodePlugin::cloneSubjectHierarchyNode: Invalid MRML scene!";
+    qCritical() << Q_FUNC_INFO << ": Invalid MRML scene!";
     return NULL;
     }
 

@@ -387,13 +387,13 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode: Invalid current node for manually selecting owner plugin!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node for manually selecting owner plugin!";
     return;
     }
   QString selectedPluginName = d->SelectPluginActionGroup->checkedAction()->data().toString();
   if (selectedPluginName.isEmpty())
     {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode: No owner plugin found for node " << currentNode->GetName();
+    qCritical() << Q_FUNC_INFO << ": No owner plugin found for node " << currentNode->GetName();
     return;
     }
   else if (!selectedPluginName.compare(currentNode->GetOwnerPluginName()))
@@ -413,7 +413,7 @@ void qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode()
 
   // Set new owner plugin
   currentNode->SetOwnerPluginName(selectedPluginName.toLatin1().constData());
-  //qDebug() << "qMRMLSubjectHierarchyTreeView::selectPluginForCurrentNode: Owner plugin of subject hierarchy node '"
+  //qDebug() << Q_FUNC_INFO << ": Owner plugin of subject hierarchy node '"
   //  << currentNode->GetName() << "' has been manually changed to '" << d->SelectPluginActionGroup->checkedAction()->data().toString() << "'";
 }
 
@@ -424,7 +424,7 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::updateSelectPluginActions: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
   QString ownerPluginName = QString(currentNode->GetOwnerPluginName());
@@ -463,7 +463,7 @@ void qMRMLSubjectHierarchyTreeView::removeCurrentNodeFromSubjectHierarchy()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::removeCurrentNodeFromSubjectHierarchy: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
 
@@ -477,7 +477,7 @@ void qMRMLSubjectHierarchyTreeView::editCurrentSubjectHierarchyNode()
   vtkMRMLSubjectHierarchyNode* currentNode = qSlicerSubjectHierarchyPluginHandler::instance()->currentNode();
   if (!currentNode)
     {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::editCurrentSubjectHierarchyNode: Invalid current node!";
+    qCritical() << Q_FUNC_INFO << ": Invalid current node!";
     return;
     }
 
@@ -502,7 +502,7 @@ void qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu()
   QAction* senderAction = qobject_cast<QAction*>(this->sender());
   if (!senderAction)
     {
-    qCritical() << "qMRMLSubjectHierarchyTreeView::expandToDepthFromContextMenu: Unable to get sender action!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get sender action!";
     return;
     }
 

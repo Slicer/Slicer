@@ -113,7 +113,7 @@ void qMRMLTransformItemDelegate::setEditorData(QWidget *editor,
     qMRMLNodeComboBox* transformNodeCombobox = qobject_cast<qMRMLNodeComboBox*>(editor);
     if (!transformNodeCombobox)
       {
-      qCritical() << "qMRMLTransformItemDelegate::setEditorData: Invalid editor widget!";
+      qCritical() << Q_FUNC_INFO << ": Invalid editor widget!";
       return;
       }
     transformNodeCombobox->blockSignals(true);
@@ -135,7 +135,7 @@ void qMRMLTransformItemDelegate::setModelData(QWidget *editor, QAbstractItemMode
     qMRMLNodeComboBox* transformNodeCombobox = qobject_cast<qMRMLNodeComboBox*>(editor);
     if (!transformNodeCombobox)
       {
-      qCritical() << "qMRMLTransformItemDelegate::setModelData: Invalid editor widget!";
+      qCritical() << Q_FUNC_INFO << ": Invalid editor widget!";
       return;
       }
     QString transformNodeID = transformNodeCombobox->currentNodeID();
