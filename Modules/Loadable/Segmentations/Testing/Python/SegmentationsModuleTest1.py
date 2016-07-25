@@ -28,7 +28,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.TestSection_1_AddRemoveSegment()
     self.TestSection_2_MergeLabelmapWithDifferentGeometries()
     self.TestSection_3_ImportExportSegment()
-    self.TestSection_Z_ClearDatabase()
+
+    logging.info('Test finished')
 
   #------------------------------------------------------------------------------
   def TestSection_00_SetupPathsAndNames(self):
@@ -44,11 +45,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
 
     self.dataZipFilePath = self.segmentationsModuleTestDir + '/TinyPatient_Seg.zip'
 
-    # Get slicer objects that are used throughout the test
-    self.dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-
     # Define variables
-    self.originalDatabaseDirectory = None
     self.expectedNumOfFilesInDataDir = 2
     self.expectedNumOfFilesInDataSegDir = 2
     self.inputSegmentationNode = None
@@ -392,14 +389,3 @@ class SegmentationsModuleTest1(unittest.TestCase):
     slicer.mrmlScene.RemoveNode(bodyModelNodeTransformed)
     slicer.mrmlScene.RemoveNode(bodyLabelmapNodeTransformed)
     slicer.mrmlScene.RemoveNode(modelTransformedImportSegmentationNode)
-
-  #------------------------------------------------------------------------------
-  def TestSection_Z_ClearDatabase(self):
-    # Clear temporary database and restore original one
-    slicer.dicomDatabase.initializeDatabase()
-    slicer.dicomDatabase.closeDatabase()
-    self.assertFalse(slicer.dicomDatabase.isOpen)
-    if self.originalDatabaseDirectory:
-      self.dicomWidget.onDatabaseDirectoryChanged(self.originalDatabaseDirectory)
-
-    logging.info('Test finished')

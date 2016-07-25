@@ -19,7 +19,9 @@ endif()
 slicer_add_python_unittest(
   SCRIPT SegmentationsModuleTest1.py
   SLICER_ARGS --disable-cli-modules
+              --no-main-window
               --additional-module-paths
                 ${MODULE_BUILD_DIR}
                 ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+  TESTNAME_PREFIX nomainwindow_
   )

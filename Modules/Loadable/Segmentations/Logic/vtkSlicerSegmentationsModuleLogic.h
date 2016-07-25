@@ -35,6 +35,7 @@
 
 class vtkCallbackCommand;
 class vtkOrientedImageData;
+class vtkPolyData;
 class vtkDataObject;
 class vtkGeneralTransform;
 
@@ -153,6 +154,11 @@ public:
   /// \return Success flag
   static bool ApplyParentTransformToOrientedImageData(vtkMRMLTransformableNode* transformableNode, vtkOrientedImageData* orientedImageData);
 
+  /// Apply the parent transform of a node to a poly data.
+  /// Useful if we want to get a surface or contours representation of a segmentation in the proper geometry for processing.
+  /// \return Success flag
+  static bool ApplyParentTransformToPolyData(vtkMRMLTransformableNode* transformableNode, vtkPolyData* polyData);
+
   /// Get transform between a representation node (e.g. labelmap or model) and a segmentation node.
   /// Useful if we want to add a representation to a segment, and we want to make sure that the segment will be located the same place
   /// the representation node was. The output transform is the representation node's parent transform concatenated with the inverse
@@ -164,7 +170,18 @@ public:
   /// \return Success flag
   static bool GetTransformBetweenRepresentationAndSegmentation(vtkMRMLTransformableNode* representationNode, vtkMRMLSegmentationNode* segmentationNode, vtkGeneralTransform* representationToSegmentationTransform);
 
-  /// Convenience function to get binary labelmap representation of a segment in a segmentation.
+  /// Convenience function to get a specified representation of a segment in a segmentation.
+  /// A duplicate of the representation data object is copied into the argument output object, with the segmentation's parent transform
+  /// applied if requested (on by default).
+  /// \param segmentationNode Input segmentation node containing the segment to extract
+  /// \param segmentID Segment identifier of the segment to extract
+  /// \param representationName Name of the requested representation
+  /// \param segmentRepresentation Output representation data object into which the given representation in the segment is copied
+  /// \param applyParentTransform Flag determining whether to apply parent transform of the segmentation node. On by default
+  /// \return Success flag
+  static bool GetSegmentRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string segmentID, std::string representationName, vtkDataObject* segmentRepresentation, bool applyParentTransform=true);
+
+  /// Convenience function to get binary labelmap representation of a segment in a segmentation. Uses \sa GetSegmentRepresentation
   /// A duplicate of the oriented image data is copied into the argument image data, with the segmentation's parent transform
   /// applied if requested (on by default).
   /// The oriented image data can be used directly for processing, or to create a labelmap volume using \sa CreateLabelmapVolumeFromOrientedImageData.
