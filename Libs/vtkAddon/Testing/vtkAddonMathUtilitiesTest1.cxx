@@ -15,6 +15,9 @@
 
 ==============================================================================*/
 
+// std includes
+#include <sstream>
+
 // vtkAddon includes
 #include "vtkAddonMathUtilities.h"
 #include "vtkAddonTestingMacros.h"
@@ -33,6 +36,8 @@ int AreMatrixEqual_4x4_3x3_Test();
 int AreMatrixEqual_3x3_4x4_Test();
 int AreMatrixEqual_3x3_3x3_Test();
 int GetOrientationMatrixTest();
+int ToString_Test();
+int FromString_Test();
 
 //----------------------------------------------------------------------------
 int vtkAddonMathUtilitiesTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -42,6 +47,8 @@ int vtkAddonMathUtilitiesTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   CHECK_INT(AreMatrixEqual_3x3_4x4_Test(), EXIT_SUCCESS);
   CHECK_INT(AreMatrixEqual_3x3_3x3_Test(), EXIT_SUCCESS);
   CHECK_INT(GetOrientationMatrixTest(), EXIT_SUCCESS);
+  CHECK_INT(ToString_Test(), EXIT_SUCCESS);
+  CHECK_INT(FromString_Test(), EXIT_SUCCESS);
   return EXIT_SUCCESS;
 }
 
@@ -137,6 +144,93 @@ int GetOrientationMatrixTest()
       CHECK_DOUBLE(m33->GetElement(ii, jj), (1 + ii)*(1 + jj));
       }
     }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int ToString_Test()
+{
+  vtkNew<vtkMatrix4x4> mat;
+  std::stringstream ss;
+  std::string delimiter = ",";
+  std::string rowDelimiter = "\n";
+  for (int ii = 0; ii < 4; ii++)
+    {
+    for (int jj = 0; jj < 4; jj++)
+      {
+      double val = (1 + ii)*(1 + jj);
+      mat->SetElement(ii, jj, val);
+      ss << val << delimiter;
+      }
+    ss << rowDelimiter;
+    }
+
+  std::string resultStr = vtkAddonMathUtilities::ToString(mat.GetPointer(), delimiter, rowDelimiter);
+
+  CHECK_INT(resultStr.compare(ss.str()), 0);
+
+  return EXIT_SUCCESS;
+}
+
+bool MatrixEqual(std::string matrixStr, vtkMatrix4x4* matrixExpected, int numberOfFilledRowsCols = 4)
+{
+  vtkNew<vtkMatrix4x4> matrixFromStr;
+
+  // If less than 16 values are passed then not all rows/columns are filled
+  // (e.g., 2x2, 3x3 matrix). Pre-fill the non-filled region to make the
+  // matrices equal.
+  for (int r = 0; r < 4; r++)
+    {
+    for (int c = 0; c < 4; c++)
+      {
+      if (r < numberOfFilledRowsCols && c < numberOfFilledRowsCols)
+        {
+        continue;
+        }
+      matrixFromStr->SetElement(r, c, matrixExpected->GetElement(r,c));
+      }
+    }
+
+  vtkAddonMathUtilities::FromString(matrixFromStr.GetPointer(), matrixStr);
+  return vtkAddonMathUtilities::MatrixAreEqual(matrixFromStr.GetPointer(), matrixExpected);
+}
+
+//----------------------------------------------------------------------------
+int FromString_Test()
+{
+  vtkNew<vtkMatrix4x4> mat;
+  mat->SetElement(0, 0, 11);
+  mat->SetElement(0, 1, 22);
+  mat->SetElement(0, 2, 33);
+  mat->SetElement(0, 3, 44);
+  mat->SetElement(1, 0, 55);
+  mat->SetElement(1, 1, 66);
+  mat->SetElement(1, 2, 77);
+  mat->SetElement(1, 3, 88);
+  mat->SetElement(2, 0, 99);
+  mat->SetElement(2, 1, 1010);
+  mat->SetElement(2, 2, 1111);
+  mat->SetElement(2, 3, 1212);
+  mat->SetElement(3, 0, 1313);
+  mat->SetElement(3, 1, 1414);
+  mat->SetElement(3, 2, 1515);
+  mat->SetElement(3, 3, 1616);
+
+  // Generic list style
+  CHECK_BOOL(MatrixEqual("11,22,33,44,55,66,77,88,99,1010,1111,1212,1313,1414,1515,1616", mat.GetPointer()), true);
+  CHECK_BOOL(MatrixEqual("11 22 33 44 55 66 77 88 99 1010 1111 1212 1313 1414 1515 1616", mat.GetPointer()), true);
+  CHECK_BOOL(MatrixEqual("11 22 33 55 66 77 99 1010 1111", mat.GetPointer(), 3), true);
+  CHECK_BOOL(MatrixEqual("11 22 55 66", mat.GetPointer(), 2), true);
+  CHECK_BOOL(MatrixEqual("11", mat.GetPointer(), 1), true);
+  // Python numpy array style
+  CHECK_BOOL(MatrixEqual("[[11, 22, 33, 44], [55, 66, 77, 88], [99, 1010, 1111, 1212], [1313, 1414, 1515, 1616]]",
+    mat.GetPointer()), true);
+  CHECK_BOOL(MatrixEqual("[[11, 22, 33, 44],\n       [55, 66, 77, 88],\n       [99, 1010, 1111, 1212],\n"
+    "[1313, 1414, 1515, 1616]]", mat.GetPointer()), true);
+  // Matlab-style
+  CHECK_BOOL(MatrixEqual("[11 22 33 44; 55 66 77 88 99; 1010 1111 1212; 1313 1414 1515 1616]", mat.GetPointer()), true);
+  CHECK_BOOL(MatrixEqual("[11, 22, 33, 44; 55, 66, 77, 88, 99; 1010, 1111, 1212; 1313, 1414, 1515, 1616]", mat.GetPointer()), true);
 
   return EXIT_SUCCESS;
 }

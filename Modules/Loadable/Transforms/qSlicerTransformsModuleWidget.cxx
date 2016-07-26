@@ -45,6 +45,7 @@
 #include "vtkMRMLTransformDisplayNode.h"
 
 // VTK includes
+#include <vtkAddonMathUtilities.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
@@ -401,25 +402,15 @@ void qSlicerTransformsModuleWidget::copyTransform()
   if (!linearTransform)
     {
     // Silent fail, no worries!
-    qDebug() << "Unable to cast parent transform as a vtkLinearTransform";
+    qWarning() << "Unable to cast parent transform as a vtkLinearTransform";
     return;
     }
 
   vtkMatrix4x4* internalMatrix = linearTransform->GetMatrix();
-  QString output;
-
-  for (int rowIndex = 0; rowIndex < 4; ++rowIndex)
-    {
-    for (int columnIndex = 0; columnIndex < 4; ++columnIndex)
-     {
-      output.append(
-            QString::number(internalMatrix->GetElement(rowIndex, columnIndex)));
-      output.append(" ");
-     }
-    output.append("\n");
-    }
-
-  QApplication::clipboard()->setText(output);
+  std::string delimiter = " ";
+  std::string rowDelimiter = "\n";
+  std::string output = vtkAddonMathUtilities::ToString(internalMatrix, delimiter, rowDelimiter);
+  QApplication::clipboard()->setText(QString::fromStdString(output));
 }
 
 //-----------------------------------------------------------------------------
@@ -429,38 +420,13 @@ void qSlicerTransformsModuleWidget::pasteTransform()
 
   vtkNew<vtkMatrix4x4> tempMatrix;
 
-  QString text = QApplication::clipboard()->text();
-  QRegExp rx("(\\ |\\,|\\:|\\t|\\n|\\[|\\])");
-  QStringList entries = text.split(rx, QString::SkipEmptyParts);
-
-  if (entries.count() != 4
-      && entries.count() != 9
-      && entries.count() != 16)
+  std::string text = QApplication::clipboard()->text().toStdString();
+  bool success = vtkAddonMathUtilities::FromString(tempMatrix.GetPointer(), text);
+  if (!success)
     {
-    // Silent fail, incompatible matrix size
-    qDebug() << "qSlicerTransformsModuleWidget::pasteTransform -- "
-                "Pasted matrix is not a 2x2 or 3x3 or 4x4 matrix.";
+    qWarning() << "Cannot convert pasted string to matrix.";
     return;
     }
-
-  bool ok = true;
-  int index = 0;
-  foreach(const QString& entry, entries)
-    {
-    double numericEntry = entry.toDouble(&ok);
-    if (!ok)
-      {
-      // Silent fail, no problem!
-      qDebug() << "qSlicerTransformsModuleWidget::pasteTransform -- "
-                  "Unable to cast string to double: " << entry;
-      return;
-      }
-    tempMatrix->SetElement(index / static_cast<int>(sqrt(static_cast<double>(entries.count()))),
-                           index % static_cast<int>(sqrt(static_cast<double>(entries.count()))),
-                           numericEntry);
-    ++index;
-  }
-
   d->MRMLTransformNode->SetMatrixTransformToParent(tempMatrix.GetPointer());
 }
 
