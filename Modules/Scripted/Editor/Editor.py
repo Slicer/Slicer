@@ -296,7 +296,13 @@ class EditorWidget(VTKObservationMixin):
     self.segmentEditorLabel = qt.QLabel(self.parent)
     self.segmentEditorLabel.text = 'Try the new <a href="#SwitchToSegmentEditor"><span style=" text-decoration: underline; color:#0000ff;">Segment Editor</span></a> module for more advanced editing!<br>Please help us improve the module by giving <a href="#Feedback"><span style=" text-decoration: underline; color:#0000ff;">feedback</span></a>.'
     self.segmentEditorLabel.openExternalLinks = False
-    self.segmentEditorLabel.setSizePolicy( qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred) )
+
+    # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Preferred)
+    # fails on some systems, therefore set the policies using separate method calls
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
+    qSize.setVerticalPolicy(qt.QSizePolicy.Preferred)
+    self.segmentEditorLabel.setSizePolicy( qSize )
     self.segmentEditorLabel.connect( 'linkActivated(QString)', self.onSwitchToSegmentEditor )
     self.messageLayout.addWidget(self.segmentEditorLabel)
 
