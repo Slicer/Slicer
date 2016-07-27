@@ -64,6 +64,7 @@
 #include "qSlicerCoreIOManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
+# include "ctkPythonConsole.h"
 #endif
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 # include "qSlicerExtensionsManagerModel.h"
@@ -1290,6 +1291,20 @@ qSlicerCorePythonManager* qSlicerCoreApplication::corePythonManager()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CorePythonManager.data();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setPythonConsole(ctkPythonConsole* console)
+{
+  Q_D(qSlicerCoreApplication);
+  d->PythonConsole = console;
+}
+
+//-----------------------------------------------------------------------------
+ctkPythonConsole* qSlicerCoreApplication::pythonConsole()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->PythonConsole.data();
 }
 
 #endif

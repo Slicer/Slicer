@@ -26,6 +26,7 @@
 #include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
+# include "ctkPythonConsole.h"
 #endif
 
 // Slicer includes
@@ -175,6 +176,26 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
   if (pythonManager->getVariable("value").toInt() != 7)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with getVariable()" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  ctkPythonConsole * pythonConsole = app.pythonConsole();
+  if (pythonConsole)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with  pythonConsole()"
+              << " - NULL pointer is expected." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Note: qSlicerCoreApplication class takes ownership of the pythonConsole and
+  // will be responsible to delete it
+  app.setPythonConsole(new ctkPythonConsole());
+
+  pythonConsole = app.pythonConsole();
+  if (!pythonConsole)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with pythonConsole()"
+              << " - Return a NULL pointer." << std::endl;
     return EXIT_FAILURE;
     }
 

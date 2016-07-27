@@ -134,15 +134,6 @@ int SlicerAppMain(int argc, char* argv[])
   setEnableQtTesting(); // disabled the native menu bar.
 #endif
 
-#ifdef Slicer_USE_PYTHONQT
-  ctkPythonConsole pythonConsole;
-  pythonConsole.setWindowTitle("Slicer Python Interactor");
-  if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
-    {
-    qSlicerApplicationHelper::initializePythonConsole(&pythonConsole);
-    }
-#endif
-
   bool enableMainWindow = !app.commandOptions()->noMainWindow();
   enableMainWindow = enableMainWindow && !app.commandOptions()->runPythonAndExit();
   bool showSplashScreen = !app.commandOptions()->noSplash() && enableMainWindow;
@@ -202,6 +193,19 @@ int SlicerAppMain(int argc, char* argv[])
     {
     window.reset(new qSlicerAppMainWindow);
     window->setWindowTitle(window->windowTitle()+ " " + Slicer_VERSION_FULL);
+    }
+  else if (app.commandOptions()->showPythonInteractor()
+    && !app.commandOptions()->runPythonAndExit())
+    {
+    // there is no main window but we need to show Python interactor
+#ifdef Slicer_USE_PYTHONQT
+    ctkPythonConsole* pythonConsole = app.pythonConsole();
+    pythonConsole->setWindowTitle("Slicer Python Interactor");
+    pythonConsole->resize(600, 280);
+    pythonConsole->show();
+    pythonConsole->activateWindow();
+    pythonConsole->raise();
+#endif
     }
 
   // Load all available modules

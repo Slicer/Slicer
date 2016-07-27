@@ -60,6 +60,12 @@ if(BUILD_TESTING)
     list(APPEND KIT_TEST_TARGET_LIBRARIES Qt4::QtTest)
   endif()
 
+  if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_TEST_TARGET_LIBRARIES
+    CTKScriptingPythonWidgets
+    )
+  endif()
+
   add_executable(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT_TEST_TARGET_LIBRARIES})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})

@@ -67,7 +67,7 @@ public:
   void setErrorLogIconHighlighted(bool);
 
 #ifdef Slicer_USE_PYTHONQT
-  ctkPythonConsole*               PythonConsole;
+  QDockWidget*                    PythonConsoleDockWidget;
 #endif
   ctkErrorLogWidget*              ErrorLogWidget;
   QToolButton*                    ErrorLogToolButton;

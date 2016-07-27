@@ -34,6 +34,9 @@
 #include <ctkErrorLogStreamMessageHandler.h>
 #include <ctkITKErrorLogMessageHandler.h>
 #include <ctkMessageBox.h>
+#ifdef Slicer_USE_PYTHONQT
+# include "ctkPythonConsole.h"
+#endif
 #include <ctkSettings.h>
 #ifdef Slicer_USE_QtTesting
 #include <ctkQtTestingUtility.h>
@@ -55,6 +58,7 @@
 #include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
+# include "qSlicerSettingsPythonPanel.h"
 #endif
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 # include "qSlicerExtensionsManagerDialog.h"
@@ -172,13 +176,31 @@ void qSlicerApplicationPrivate::init()
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    // Note: qSlicerCoreApplication class takes ownership of the pythonManager and
+    // qSlicerCoreApplication class takes ownership of the pythonManager and
     // will be responsible to delete it
     q->setCorePythonManager(new qSlicerPythonManager());
+    // qSlicerCoreApplication does not take ownership of PythonConsole, therefore
+    // we have to delete it in the destructor if it is not deleted already
+    // and not owned by a widget (it is owned and deleted by a widget if it is added
+    // to the GUI)
+    q->setPythonConsole(new ctkPythonConsole());
     }
 #endif
 
   this->Superclass::init();
+
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    q->pythonConsole()->initialize(q->pythonManager());
+    QStringList autocompletePreferenceList;
+    autocompletePreferenceList
+      << "slicer"
+      << "slicer.mrmlScene"
+      << "qt.QPushButton";
+    q->pythonConsole()->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
+    }
+#endif
 
   this->initStyle();
 
@@ -244,6 +266,13 @@ void qSlicerApplicationPrivate::init()
   qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel =
       new qSlicerSettingsInternationalizationPanel;
   this->SettingsDialog->addPanel("Internationalization", qtInternationalizationPanel);
+#endif
+
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    q->settingsDialog()->addPanel("Python", new qSlicerSettingsPythonPanel);
+    }
 #endif
 
   qSlicerSettingsDeveloperPanel* developerPanel = new qSlicerSettingsDeveloperPanel;
@@ -325,6 +354,19 @@ qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
 //-----------------------------------------------------------------------------
 qSlicerApplication::~qSlicerApplication()
 {
+#ifdef Slicer_USE_PYTHONQT
+  // We have to delete PythonConsole if it is not deleted already
+  // and not owned by a widget (it is owned and deleted by a widget if it is added
+  // to the GUI).
+  ctkPythonConsole* pythonConsolePtr = this->pythonConsole();
+  if (pythonConsolePtr)
+    {
+    if (pythonConsolePtr->parent() == NULL)
+      {
+      delete pythonConsolePtr;
+      }
+    }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -385,14 +427,23 @@ qSlicerIOManager* qSlicerApplication::ioManager()
 //-----------------------------------------------------------------------------
 qSlicerPythonManager* qSlicerApplication::pythonManager()
 {
-  qSlicerPythonManager* _pythonManager = 0;
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+  if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    _pythonManager = qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
-    Q_ASSERT(_pythonManager);
+    return 0;
     }
-
+  qSlicerPythonManager* _pythonManager = qobject_cast<qSlicerPythonManager*>(this->corePythonManager());
+  Q_ASSERT(_pythonManager);
   return _pythonManager;
+}
+
+//-----------------------------------------------------------------------------
+ctkPythonConsole* qSlicerApplication::pythonConsole()
+{
+  if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    return 0;
+    }
+  return Superclass::pythonConsole();
 }
 #endif
 

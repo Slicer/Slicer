@@ -35,6 +35,7 @@
 #include <QSettings>
 #include <QShowEvent>
 #include <QSignalMapper>
+#include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
 
@@ -101,7 +102,7 @@ qSlicerAppMainWindowPrivate::qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& o
   : q_ptr(&object)
 {
 #ifdef Slicer_USE_PYTHONQT
-  this->PythonConsole = 0;
+  this->PythonConsoleDockWidget = 0;
 #endif
   this->ErrorLogWidget = 0;
   this->ErrorLogToolButton = 0;
@@ -463,15 +464,29 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 #ifdef Slicer_USE_PYTHONQT
   if (q->pythonConsole())
     {
+    this->PythonConsoleDockWidget = new QDockWidget(q->tr("Python Interactor"));
+    this->PythonConsoleDockWidget->setObjectName("PythonConsoleDockWidget");
+    this->PythonConsoleDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    this->PythonConsoleDockWidget->setWidget(q->pythonConsole());
+    q->addDockWidget(Qt::BottomDockWidgetArea, this->PythonConsoleDockWidget);
+
     QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
       q, SLOT(onPythonConsoleUserInput(const QString&)));
+
+    this->PythonConsoleDockWidget->toggleViewAction()->setText(q->tr("&Python Interactor"));
+    this->PythonConsoleDockWidget->toggleViewAction()->setToolTip(q->tr(
+      "Show/hide Python Interactor window for controlling the application's data, user interface, and internals"));
+    this->PythonConsoleDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+3"));
+    this->ViewMenu->insertAction(this->WindowToolBarsMenu->menuAction(),
+      this->PythonConsoleDockWidget->toggleViewAction());
+    QObject::connect(this->PythonConsoleDockWidget->toggleViewAction(), SIGNAL(toggled(bool)),
+      q, SLOT(onPythonConsoleToggled(bool)));
     }
   else
     {
     qWarning("qSlicerAppMainWindowPrivate::setupUi: Failed to create Python console");
     }
 #endif
-
 }
 
 //-----------------------------------------------------------------------------
@@ -721,21 +736,7 @@ qSlicerModuleSelectorToolBar* qSlicerAppMainWindow::moduleSelector()const
 ctkPythonConsole* qSlicerAppMainWindow::pythonConsole()const
 {
   Q_D(const qSlicerAppMainWindow);
-  if (!d->PythonConsole)
-    {
-    // Lookup reference of 'PythonConsole' widget
-    // and cache the value
-    foreach(QWidget * widget, qApp->topLevelWidgets())
-      {
-      if(widget->objectName().compare(QLatin1String("pythonConsole")) == 0)
-        {
-        const_cast<qSlicerAppMainWindowPrivate*>(d)
-          ->PythonConsole = qobject_cast<ctkPythonConsole*>(widget);
-        break;
-        }
-      }
-    }
-  return d->PythonConsole;
+  return qSlicerCoreApplication::application()->pythonConsole();
 }
 
 //---------------------------------------------------------------------------
@@ -923,14 +924,26 @@ void qSlicerAppMainWindow::on_WindowErrorLogAction_triggered()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAppMainWindow::on_WindowPythonInteractorAction_triggered()
+void qSlicerAppMainWindow::onPythonConsoleToggled(bool toggled)
 {
+  Q_D(qSlicerAppMainWindow);
 #ifdef Slicer_USE_PYTHONQT
-  ctkPythonConsole* console = this->pythonConsole();
-  Q_ASSERT(console);
-  console->show();
-  console->activateWindow();
-  console->raise();
+  if (!this->pythonConsole() || !d->PythonConsoleDockWidget)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: python console is not available";
+    return;
+    }
+  if (toggled)
+    {
+    d->PythonConsoleDockWidget->activateWindow();
+    QTextEdit* textEditWidget = this->pythonConsole()->findChild<QTextEdit*>();
+    if (textEditWidget)
+      {
+      textEditWidget->setFocus();
+      }
+    }
+#else
+  Q_UNUSED(toggled);
 #endif
 }
 
@@ -1068,7 +1081,25 @@ void qSlicerAppMainWindow::showEvent(QShowEvent *event)
   if (!event->spontaneous())
     {
     this->disclaimer();
+    this->pythonConsoleInitialDisplay();
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAppMainWindow::pythonConsoleInitialDisplay()
+{
+  Q_D(qSlicerAppMainWindow);
+#ifdef Slicer_USE_PYTHONQT
+  qSlicerApplication * app = qSlicerApplication::application();
+  if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    return;
+    }
+  if (app->commandOptions()->showPythonInteractor() && d->PythonConsoleDockWidget)
+    {
+    d->PythonConsoleDockWidget->show();
+    }
+#endif
 }
 
 //-----------------------------------------------------------------------------

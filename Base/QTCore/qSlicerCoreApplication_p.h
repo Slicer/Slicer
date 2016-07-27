@@ -33,6 +33,7 @@
 //
 
 // Qt includes
+#include <QPointer>
 #include <QProcessEnvironment>
 #include <QSettings>
 #include <QSharedPointer>
@@ -154,6 +155,7 @@ public:
 #ifdef Slicer_USE_PYTHONQT
   /// CorePythonManager - It should exist only one instance of the CorePythonManager
   QSharedPointer<qSlicerCorePythonManager>    CorePythonManager;
+  QPointer<ctkPythonConsole> PythonConsole; // it may be owned by a widget, so we cannot refer to it by a strong pointer
 #endif
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT

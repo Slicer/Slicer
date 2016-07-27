@@ -89,7 +89,8 @@ public:
   #ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager
   Q_INVOKABLE qSlicerPythonManager * pythonManager();
-  #endif
+  Q_INVOKABLE ctkPythonConsole * pythonConsole();
+#endif
 
   #ifdef Slicer_USE_QtTesting
   /// Get test utility

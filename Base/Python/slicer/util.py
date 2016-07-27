@@ -144,7 +144,10 @@ def mainWindow(verbose = True):
   return lookupTopLevelWidget('qSlicerAppMainWindow', verbose)
 
 def pythonShell(verbose = True):
-  return lookupTopLevelWidget('pythonConsole', verbose)
+  console = slicer.app.pythonConsole()
+  if not console and verbose:
+    print("Failed to obtain reference to python shell", file=sys.stderr)
+  return console
 
 def showStatusMessage(message, duration = 0):
   mw = mainWindow(verbose=False)

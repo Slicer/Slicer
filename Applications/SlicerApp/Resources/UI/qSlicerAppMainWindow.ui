@@ -101,7 +101,6 @@
      </property>
      <addaction name="WindowToolbarsResetToDefaultAction"/>
     </widget>
-    <addaction name="WindowPythonInteractorAction"/>
     <addaction name="ViewExtensionsManagerAction"/>
     <addaction name="separator"/>
     <addaction name="WindowToolBarsMenu"/>
@@ -328,7 +327,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="ViewExtensionsManagerAction"/>
-   <addaction name="WindowPythonInteractorAction"/>
   </widget>
   <action name="FileLoadSceneAction">
    <property name="icon">
@@ -651,21 +649,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
-   </property>
-  </action>
-  <action name="WindowPythonInteractorAction">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/python-icon.png</normaloff>:/python-icon.png</iconset>
-   </property>
-   <property name="text">
-    <string>Python Interactor</string>
-   </property>
-   <property name="toolTip">
-    <string>Raise the Python Interactor for controlling the application's data, gui and internals.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+3</string>
    </property>
   </action>
   <action name="WindowToolbarsResetToDefaultAction">

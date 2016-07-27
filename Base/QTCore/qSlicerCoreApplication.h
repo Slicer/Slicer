@@ -44,6 +44,7 @@ class qSlicerCoreApplicationPrivate;
 class qSlicerModuleManager;
 #ifdef Slicer_USE_PYTHONQT
 class qSlicerCorePythonManager;
+class ctkPythonConsole;
 #endif
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 class qSlicerExtensionsManagerModel;
@@ -246,6 +247,16 @@ public:
   /// Set the IO manager
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCorePythonManager(qSlicerCorePythonManager* pythonManager);
+
+  /// Get python console
+  ctkPythonConsole* pythonConsole()const;
+
+  /// Set the python console
+  /// \note qSlicerCoreApplication will not take ownership of the object,
+  /// because it will be owned by the widget that it is part of
+  /// (either it is part of the main window or a top-level window).
+  void setPythonConsole(ctkPythonConsole* pythonConsole);
+
 #endif
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT

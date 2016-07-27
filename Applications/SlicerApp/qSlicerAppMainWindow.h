@@ -97,8 +97,9 @@ public slots:
   virtual void setLayoutNumberOfCompareViewRows(int);
   virtual void setLayoutNumberOfCompareViewColumns(int);
 
+  virtual void onPythonConsoleToggled(bool);
+
   virtual void on_WindowErrorLogAction_triggered();
-  virtual void on_WindowPythonInteractorAction_triggered();
   virtual void on_WindowToolbarsResetToDefaultAction_triggered();
 
   virtual void on_HelpKeyboardShortcutsAction_triggered();
@@ -132,6 +133,9 @@ protected slots:
 protected:
   /// Connect MainWindow action with slots defined in MainWindowCore
   virtual void setupMenuActions();
+
+  /// Open Python interactor if it was requested
+  virtual void pythonConsoleInitialDisplay();
 
   /// Open a popup to warn the user Slicer is not for clinical use.
   virtual void disclaimer();
