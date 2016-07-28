@@ -258,10 +258,6 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   toolBarActions << this->ViewersToolBar->toggleViewAction();
   toolBarActions << this->DialogToolBar->toggleViewAction();
 
-  this->WindowToolBarsMenu->insertActions(
-    this->WindowToolbarsResetToDefaultAction, toolBarActions);
-  this->WindowToolBarsMenu->insertSeparator(
-    this->WindowToolbarsResetToDefaultAction);
   //----------------------------------------------------------------------------
   // Hide toolbars by default
   //----------------------------------------------------------------------------
@@ -468,7 +464,9 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     this->PythonConsoleDockWidget->setObjectName("PythonConsoleDockWidget");
     this->PythonConsoleDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
     this->PythonConsoleDockWidget->setWidget(q->pythonConsole());
+    // Set default state
     q->addDockWidget(Qt::BottomDockWidgetArea, this->PythonConsoleDockWidget);
+    this->PythonConsoleDockWidget->hide();
 
     QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
       q, SLOT(onPythonConsoleUserInput(const QString&)));

@@ -99,12 +99,12 @@
      <property name="title">
       <string>&amp;Toolbars</string>
      </property>
-     <addaction name="WindowToolbarsResetToDefaultAction"/>
     </widget>
     <addaction name="ViewExtensionsManagerAction"/>
     <addaction name="separator"/>
     <addaction name="WindowToolBarsMenu"/>
     <addaction name="LayoutMenu"/>
+    <addaction name="WindowToolbarsResetToDefaultAction"/>
     <addaction name="separator"/>
     <addaction name="WindowErrorLogAction"/>
     <addaction name="separator"/>
@@ -656,7 +656,7 @@
     <string>Reset to default</string>
    </property>
    <property name="toolTip">
-    <string>Restore the toolbars to their default state</string>
+    <string>Restore all windows and toolbars to their default positions and states</string>
    </property>
   </action>
   <action name="HelpKeyboardShortcutsAction">
