@@ -471,45 +471,63 @@ def resetSliceViews():
 #
 
 def getNodes(pattern="*", scene=None, useLists=False):
-    """Return a dictionary of nodes where the name or id matches the ``pattern``.
-    By default, ``pattern`` is a wildcard and it returns all nodes associated
-    with ``slicer.mrmlScene``.
-    If multiple node share the same name, using ``useLists=False`` (default behavior)
-    returns only the last node with that name. If ``useLists=True``, it returns
-    a dictionary of lists of nodes.
-    """
-    import slicer, collections, fnmatch
-    nodes = collections.OrderedDict()
-    if scene is None:
-      scene = slicer.mrmlScene
-    count = scene.GetNumberOfNodes()
-    for idx in range(count):
-      node = scene.GetNthNode(idx)
-      name = node.GetName()
-      id = node.GetID()
-      if (fnmatch.fnmatchcase(name, pattern) or
-          fnmatch.fnmatchcase(id, pattern)):
-        if useLists:
-          nodes.setdefault(node.GetName(), []).append(node)
-        else:
-          nodes[node.GetName()] = node
-    return nodes
+  """Return a dictionary of nodes where the name or id matches the ``pattern``.
+  By default, ``pattern`` is a wildcard and it returns all nodes associated
+  with ``slicer.mrmlScene``.
+  If multiple node share the same name, using ``useLists=False`` (default behavior)
+  returns only the last node with that name. If ``useLists=True``, it returns
+  a dictionary of lists of nodes.
+  """
+  import slicer, collections, fnmatch
+  nodes = collections.OrderedDict()
+  if scene is None:
+    scene = slicer.mrmlScene
+  count = scene.GetNumberOfNodes()
+  for idx in range(count):
+    node = scene.GetNthNode(idx)
+    name = node.GetName()
+    id = node.GetID()
+    if (fnmatch.fnmatchcase(name, pattern) or
+        fnmatch.fnmatchcase(id, pattern)):
+      if useLists:
+        nodes.setdefault(node.GetName(), []).append(node)
+      else:
+        nodes[node.GetName()] = node
+  return nodes
 
 def getNode(pattern="*", index=0, scene=None):
-    """Return the indexth node where name or id matches ``pattern``.
-    By default, ``pattern`` is a wildcard and it returns the first node
-    associated with ``slicer.mrmlScene``.
-    """
-    nodes = getNodes(pattern, scene)
-    try:
-      return nodes.values()[index]
-    except IndexError:
-      return None
+  """Return the indexth node where name or id matches ``pattern``.
+  By default, ``pattern`` is a wildcard and it returns the first node
+  associated with ``slicer.mrmlScene``.
+  """
+  nodes = getNodes(pattern, scene)
+  try:
+    return nodes.values()[index]
+  except IndexError:
+    return None
 
-def getFirstNodeByClassByName(className, name, scene=None):
+def getNodesByClass(className, scene=None):
+  """Return all nodes in the scene of the specified class.
+  """
   import slicer
   if scene is None:
-      scene = slicer.mrmlScene
+    scene = slicer.mrmlScene
+  nodes = slicer.mrmlScene.GetNodesByClass(className)
+  nodes.UnRegister(slicer.mrmlScene)
+  nodeList = []
+  nodes.InitTraversal()
+  node = nodes.GetNextItemAsObject()
+  while node:
+    nodeList.append(node)
+    node = nodes.GetNextItemAsObject()
+  return nodeList
+
+def getFirstNodeByClassByName(className, name, scene=None):
+  """Return the frist node in the scene that matches the specified node name and node class.
+  """
+  import slicer
+  if scene is None:
+    scene = slicer.mrmlScene
   nodes = scene.GetNodesByClassByName(className, name)
   nodes.UnRegister(nodes)
   if nodes.GetNumberOfItems() > 0:
