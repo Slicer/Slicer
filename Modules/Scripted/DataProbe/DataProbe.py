@@ -550,7 +550,7 @@ class CalculateTensorScalars:
         if len(tensor) != 9:
             raise ValueError("Invalid tensor a 9-array is required")
 
-        self.tensor_data.SetTupleValue(0, tensor)
+        self.tensor_data.SetTuple9(0, *tensor)
         self.tensor_data.Modified()
         self.single_pixel_image.Modified()
 
