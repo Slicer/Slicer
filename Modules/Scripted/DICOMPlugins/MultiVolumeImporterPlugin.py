@@ -39,6 +39,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['RepetitionTime'] = "0018,0080"
     self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
     self.multiVolumeTags['SeriesTime'] = "0008,0031"
+    self.multiVolumeTags['ContentTime'] = "0008,0033"
     # this one is GE-specific using the private tag
     self.multiVolumeTags['Siemens.B-value'] = "0019,100c"
     self.multiVolumeTags['GE.B-value'] = "0043,1039"
@@ -58,6 +59,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
     self.multiVolumeTagsUnits['SeriesTime'] = "ms"
+    self.multiVolumeTagsUnits['ContentTime'] = "ms"
     self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
     self.multiVolumeTagsUnits['Siemens.B-value'] = "sec/mm2"
     self.multiVolumeTagsUnits['GE.B-value'] = "sec/mm2"
@@ -640,7 +642,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           # not found?
           continue
 
-        if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
+        if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime' or frameTag == 'ContentTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
           tagValue = self.tm2ms(tagValueStr) # convert to ms
         elif frameTag == "GE.B-value":
@@ -704,7 +706,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           frameFileListStr = frameFileListStr+file+','
 
         # if mv was parsed by series time, probably makes sense to start from 0
-        if frameTag == 'SeriesTime' or frameTag == 'AcquisitionTime':
+        if frameTag == 'SeriesTime' or frameTag == 'AcquisitionTime' or frameTag == 'ContentTime':
           frameLabelsArray.InsertNextValue(tagValue-tagValue0)
           frameLabelsStr = frameLabelsStr+str(tagValue-tagValue0)+','
         else:
