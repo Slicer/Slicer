@@ -479,6 +479,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
       this->PythonConsoleDockWidget->toggleViewAction());
     QObject::connect(this->PythonConsoleDockWidget->toggleViewAction(), SIGNAL(toggled(bool)),
       q, SLOT(onPythonConsoleToggled(bool)));
+    this->PythonConsoleDockWidget->toggleViewAction()->setIcon(QIcon(":/python-icon.png"));
+    this->DialogToolBar->addAction(this->PythonConsoleDockWidget->toggleViewAction());
     }
   else
     {
