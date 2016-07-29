@@ -26,6 +26,7 @@
 #include <ctkPythonConsole.h>
 
 // QtGUI includes
+#include "qSlicerApplication.h"
 #include "qSlicerSettingsPythonPanel.h"
 #include "ui_qSlicerSettingsPythonPanel.h"
 
@@ -62,16 +63,7 @@ void qSlicerSettingsPythonPanelPrivate::init()
   Q_Q(qSlicerSettingsPythonPanel);
 
   this->setupUi(q);
-
-  // Lookup reference of 'PythonConsole' widget
-  foreach(QWidget * widget, qApp->topLevelWidgets())
-    {
-    if(widget->objectName().compare(QLatin1String("pythonConsole")) == 0)
-      {
-      this->PythonConsole = QPointer<ctkPythonConsole>(qobject_cast<ctkPythonConsole*>(widget));
-      break;
-      }
-    }
+  this->PythonConsole = qSlicerApplication::application()->pythonConsole();
   if (this->PythonConsole.isNull())
     {
     qWarning() << "qSlicerSettingsPythonPanelPrivate requires a python console";
@@ -132,6 +124,10 @@ void qSlicerSettingsPythonPanelPrivate::init()
   //
   // Register settings with their corresponding widgets
   //
+  q->registerProperty("Python/DockableWindow", this->DockableWindowCheckBox,
+    "checked", SIGNAL(toggled(bool)),
+    "Display Python interactor in a window that can be placed inside the main window.",
+    ctkSettingsPanel::OptionRequireRestart);
 
   q->registerProperty("Python/BackgroundColor", this->BackgroundColorPicker, "color",
                       SIGNAL(colorChanged(QColor)));

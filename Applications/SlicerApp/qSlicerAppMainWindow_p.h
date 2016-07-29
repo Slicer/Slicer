@@ -68,6 +68,7 @@ public:
 
 #ifdef Slicer_USE_PYTHONQT
   QDockWidget*                    PythonConsoleDockWidget;
+  QAction*                        PythonConsoleToggleViewAction;
 #endif
   ctkErrorLogWidget*              ErrorLogWidget;
   QToolButton*                    ErrorLogToolButton;
