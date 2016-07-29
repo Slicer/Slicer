@@ -395,11 +395,14 @@ void qSlicerSimpleMarkupsWidget::onMarkupsFiducialTableContextMenu(const QPoint&
         deleteFiducials.push_back( i );
         }
       }
+    // Do this in batch mode
+    int wasModifying = currentNode->StartModify();
     //Traversing this way should be more efficient and correct
     for ( int i = deleteFiducials.size() - 1; i >= 0; i-- )
       {
       currentNode->RemoveMarkup( deleteFiducials.at( i ) );
       }
+    currentNode->EndModify(wasModifying);
     }
 
 
