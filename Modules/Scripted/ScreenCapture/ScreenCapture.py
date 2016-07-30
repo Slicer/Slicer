@@ -196,14 +196,16 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.extraVideoOptionsWidget = qt.QComboBox()
     self.extraVideoOptionsWidget.addItem("-c:v mpeg4 -qscale:v 5")
     self.extraVideoOptionsWidget.addItem("-c:v libx264 -preset veryslow -qp 0")
+    self.extraVideoOptionsWidget.addItem("-f mp4 -vcodec libx264 -pix_fmt yuv420p")
     self.extraVideoOptionsWidget.setEditable(True)
     self.extraVideoOptionsWidget.setToolTip(
       '<html>\n'
       '  <p>Additional video conversion options passed to ffmpeg.</p>'
       '  <p><b>Examples:</b>'
       '  <ul>'
-      '    <li><b>MPEG4:</b> -c:v mpeg4 -qscale:v 5</li>'
-      '    <li><b>H264:</b> -c:v libx264 -preset veryslow -qp 0</li>'
+      '    <li><b>MPEG4: </b>-c:v mpeg4 -qscale:v 5</li>'
+      '    <li><b>H264: </b>-c:v libx264 -preset veryslow -qp 0</li>'
+      '    <li><b>Quicktime: </b>-f mp4 -vcodec libx264 -pix_fmt yuv420p</li>'
       '  </ul></p>'
       '  <p>See more encoding options at:'
       '  <i>https://trac.ffmpeg.org/wiki/Encode/H.264</i> and'
@@ -317,9 +319,12 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
       if videoOutputRequested:
         fps = numberOfSteps / self.videoLengthSliderWidget.value
-        self.logic.createVideo(fps, self.extraVideoOptionsWidget.currentText,
-                               outputDir, imageFileNamePattern, self.videoFileNameWidget.text)
-        self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
+        try:
+          self.logic.createVideo(fps, self.extraVideoOptionsWidget.currentText,
+            outputDir, imageFileNamePattern, self.videoFileNameWidget.text)
+        except ValueError, e:
+          self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
+          raise ValueError(e)
 
       self.addLog("Done.")
     except Exception as e:
@@ -403,6 +408,34 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     return sliceOffsetResolution
 
+  def captureImageFromView(self, view, filename):
+    view.forceRender()
+    # qt.QPixmap().grabWidget(...) would not grab the background
+    rw = view.renderWindow()
+    wti = vtk.vtkWindowToImageFilter()
+    wti.SetInput(rw)
+    wti.Update()
+    writer = vtk.vtkPNGWriter()
+    writer.SetFileName(filename)
+    outputImage = wti.GetOutput()
+    imageSize = outputImage.GetDimensions()
+
+    if imageSize[0]<2 or imageSize[1]<2:
+      # image is too small, most likely it is invalid
+      raise ValueError('Capture image from view failed')
+
+    # Make sure image witdth is even, otherwise encoding may fail
+    if imageSize[0] & 1 == 1:
+      imageClipper = vtk.vtkImageClip()
+      imageClipper.SetInputConnection(wti.GetOutputPort())
+      extent = outputImage.GetExtent()
+      imageClipper.SetOutputWholeExtent(extent[0], extent[1]-1, extent[2], extent[3], extent[4], extent[5])
+      writer.SetInputConnection(imageClipper.GetOutputPort())
+    else:
+      writer.SetInputConnection(wti.GetOutputPort())
+
+    writer.Write()
+
   def captureSliceSweep(self, sliceNode, startSliceOffset, endSliceOffset, numberOfImages, outputDir, outputFilenamePattern):
     if not sliceNode.IsMappedInLayout():
       raise ValueError('Selected slice view is not visible in the current layout.')
@@ -421,16 +454,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       filename = filePathPattern % offsetIndex
       self.addLog("Write "+filename)
       sliceLogic.SetSliceOffset(startSliceOffset+offsetIndex*offsetStepSize)
-      sliceView.forceRender()
-      # qt.QPixmap().grabWidget(...) would not grab the background
-      rw = sliceView.renderWindow()
-      wti = vtk.vtkWindowToImageFilter()
-      wti.SetInput(rw)
-      wti.Update()
-      writer = vtk.vtkPNGWriter()
-      writer.SetFileName(filename)
-      writer.SetInputConnection(wti.GetOutputPort())
-      writer.Write()
+      self.captureImageFromView(sliceView, filename)
 
     sliceLogic.SetSliceOffset(originalSliceOffset)
 
@@ -459,16 +483,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       else:
         # fade to start
         compositeNode.SetForegroundOpacity(startForegroundOpacity + (numberOfImages-offsetIndex) * opacityStepSize)
-      sliceView.forceRender()
-      # qt.QPixmap().grabWidget(...) would not grab the background
-      rw = sliceView.renderWindow()
-      wti = vtk.vtkWindowToImageFilter()
-      wti.SetInput(rw)
-      wti.Update()
-      writer = vtk.vtkPNGWriter()
-      writer.SetFileName(filename)
-      writer.SetInputConnection(wti.GetOutputPort())
-      writer.Write()
+      self.captureImageFromView(sliceView, filename)
 
     compositeNode.SetForegroundOpacity(originalForegroundOpacity)
 
@@ -507,16 +522,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     for offsetIndex in range(numberOfImages):
       filename = filePathPattern % offsetIndex
       self.addLog("Write " + filename)
-      renderView.forceRender()
-      # qt.QPixmap().grabWidget(...) would not grab the background
-      rw = renderView.renderWindow()
-      wti = vtk.vtkWindowToImageFilter()
-      wti.SetInput(rw)
-      wti.Update()
-      writer = vtk.vtkPNGWriter()
-      writer.SetFileName(filename)
-      writer.SetInputConnection(wti.GetOutputPort())
-      writer.Write()
+      self.captureImageFromView(renderView, filename)
       renderView.yaw()
 
     # Restore original orientation and rotation step size & direction
