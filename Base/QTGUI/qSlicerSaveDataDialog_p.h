@@ -43,6 +43,11 @@ public:
   void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
 
+  /// Helper function for finding a node in the main scene and all scene view scenes.
+  /// This method differs from vtkMRMLScene::GetNodeByID in that this method looks for
+  /// node IDs in the internal scene view scenes as well.
+  static vtkMRMLNode* getNodeByID(char *id, vtkMRMLScene* scene);
+
 public slots:
   void setDirectory(const QString& newDirectory);
   void selectModifiedSceneData();
@@ -111,6 +116,8 @@ protected:
   QString           format(int row)const;
   QString           type(int row)const;
   qSlicerIOOptions* options(int row)const;
+
+  /// Helper function for finding a node in the main scene and all scene view scenes
   vtkMRMLNode*      getNodeByID(char *id)const;
 
   vtkMRMLScene* MRMLScene;

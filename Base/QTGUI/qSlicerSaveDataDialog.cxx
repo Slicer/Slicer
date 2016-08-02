@@ -119,9 +119,13 @@ QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, cons
     vtkObject * object = mrmlScene;
     if (!nodeID.isEmpty())
       {
-      object = mrmlScene->GetNodeByID(nodeID.toLatin1());
+      object = qSlicerSaveDataDialogPrivate::getNodeByID(nodeID.toLatin1().data(), mrmlScene);
       }
-    Q_ASSERT(object);
+    if (!object)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: node not found by ID " << qPrintable(nodeID);
+      return QString();
+      }
     strippedFileName = qSlicerSaveDataDialogPrivate::stripKnownExtension(fixup, object);
     strippedFileName += extension;
     }
@@ -444,6 +448,14 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
     return;
     }
 
+  if (!storableNode->GetStorageNode())
+    {
+    qCritical() << Q_FUNC_INFO << " failed: storage node not found for node "
+      << (storableNode->GetID() ? storableNode->GetID() : "(unknown)")
+      << ". The node will not be shown in the save data dialog.";
+    return;
+    }
+
   // Create a new entry
   int row = this->FileWidget->rowCount();
   this->FileWidget->insertRow(row);
@@ -506,7 +518,10 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
       return QFileInfo();
       }
 
-    this->MRMLScene->AddNode(storageNode);
+    // Use the node's scene instead of the dialog's scene to make sure
+    // node->GetStorageNode() will find the storage node (the two scenes are different
+    // for storable nodes in scene views).
+    node->GetScene()->AddNode(storageNode);
     node->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
     snode = storageNode;
@@ -938,13 +953,19 @@ vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
 //-----------------------------------------------------------------------------
 vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id)const
 {
-  vtkMRMLNode *node = this->MRMLScene->GetNodeByID(id);
+  return qSlicerSaveDataDialogPrivate::getNodeByID(id, this->MRMLScene);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* scene)
+{
+  vtkMRMLNode *node = scene->GetNodeByID(id);
   if (node == 0)
     {
     // search in SceneView nodes
     std::string sID(id);
     std::vector<vtkMRMLNode *> nodes;
-    this->MRMLScene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
+    scene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
     std::vector<vtkMRMLNode *>::iterator it;
 
     for (it = nodes.begin(); it != nodes.end(); it++)
