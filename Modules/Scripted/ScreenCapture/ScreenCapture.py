@@ -27,6 +27,9 @@ class ScreenCapture(ScriptedLoadableModule):
 # ScreenCaptureWidget
 #
 
+VIEW_SLICE = 'slice'
+VIEW_3D = '3d'
+
 class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
   """Uses ScriptedLoadableModuleWidget base class, available at:
   https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
@@ -37,6 +40,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     self.logic = ScreenCaptureLogic()
     self.logic.logCallback = self.addLog
+    self.viewNodeType = None
+    self.animationMode = None
 
     # Instantiate and connect widgets ...
 
@@ -60,66 +65,79 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.viewNodeSelector.setToolTip( "Contents of this slice or 3D view will be captured." )
     inputFormLayout.addRow("View to capture: ", self.viewNodeSelector)
 
-    #
-    # Slice view options area
-    #
-    self.sliceViewOptionsCollapsibleButton = ctk.ctkCollapsibleButton()
-    self.sliceViewOptionsCollapsibleButton.text = "Slice view options"
-    self.layout.addWidget(self.sliceViewOptionsCollapsibleButton)
-    sliceViewOptionsLayout = qt.QFormLayout(self.sliceViewOptionsCollapsibleButton)
+    # Mode
+    self.animationModeWidget = qt.QComboBox()
+    self.animationModeWidget.setToolTip("Select the property that will be adjusted")
+    inputFormLayout.addRow("Animation mode:", self.animationModeWidget)
 
-    # Slice mode
-    self.sliceModeWidget = qt.QComboBox()
-    self.sliceModeWidget.addItem("sweep")
-    self.sliceModeWidget.addItem("fade")
-    self.sliceModeWidget.setToolTip("Select the property that will be adjusted")
-    sliceViewOptionsLayout.addRow("Mode:", self.sliceModeWidget)
+    # Slice start offset position
+    self.sliceStartOffsetSliderLabel = qt.QLabel("Start sweep offset:")
+    self.sliceStartOffsetSliderWidget = ctk.ctkSliderWidget()
+    self.sliceStartOffsetSliderWidget.singleStep = 30
+    self.sliceStartOffsetSliderWidget.minimum = -100
+    self.sliceStartOffsetSliderWidget.maximum = 100
+    self.sliceStartOffsetSliderWidget.value = 0
+    self.sliceStartOffsetSliderWidget.setToolTip("Start slice sweep offset.")
+    inputFormLayout.addRow(self.sliceStartOffsetSliderLabel, self.sliceStartOffsetSliderWidget)
 
-    # Start slice offset position
-    self.startSliceOffsetSliderLabel = qt.QLabel("Start sweep offset:")
-    self.startSliceOffsetSliderWidget = ctk.ctkSliderWidget()
-    self.startSliceOffsetSliderWidget.singleStep = 30
-    self.startSliceOffsetSliderWidget.minimum = -100
-    self.startSliceOffsetSliderWidget.maximum = 100
-    self.startSliceOffsetSliderWidget.value = 0
-    self.startSliceOffsetSliderWidget.setToolTip("Start slice sweep offset.")
-    sliceViewOptionsLayout.addRow(self.startSliceOffsetSliderLabel, self.startSliceOffsetSliderWidget)
+    # Slice end offset position
+    self.sliceEndOffsetSliderLabel = qt.QLabel("End sweep offset:")
+    self.sliceEndOffsetSliderWidget = ctk.ctkSliderWidget()
+    self.sliceEndOffsetSliderWidget.singleStep = 5
+    self.sliceEndOffsetSliderWidget.minimum = -100
+    self.sliceEndOffsetSliderWidget.maximum = 100
+    self.sliceEndOffsetSliderWidget.value = 0
+    self.sliceEndOffsetSliderWidget.setToolTip("End slice sweep offset.")
+    inputFormLayout.addRow(self.sliceEndOffsetSliderLabel, self.sliceEndOffsetSliderWidget)
 
-    # End slice offset position
-    self.endSliceOffsetSliderLabel = qt.QLabel("End sweep offset:")
-    self.endSliceOffsetSliderWidget = ctk.ctkSliderWidget()
-    self.endSliceOffsetSliderWidget.singleStep = 5
-    self.endSliceOffsetSliderWidget.minimum = -100
-    self.endSliceOffsetSliderWidget.maximum = 100
-    self.endSliceOffsetSliderWidget.value = 0
-    self.endSliceOffsetSliderWidget.setToolTip("End slice sweep offset.")
-    sliceViewOptionsLayout.addRow(self.endSliceOffsetSliderLabel, self.endSliceOffsetSliderWidget)
-
-    #
-    # 3D view options area
-    #
-    self.threeDViewOptionsCollapsibleButton = ctk.ctkCollapsibleButton()
-    self.threeDViewOptionsCollapsibleButton.text = "3D view options"
-    self.layout.addWidget(self.threeDViewOptionsCollapsibleButton)
-    threeDViewOptionsLayout = qt.QFormLayout(self.threeDViewOptionsCollapsibleButton)
-
-    # Start rotation
+    # 3D start rotation
+    self.startRotationSliderLabel = qt.QLabel("Start rotation angle:")
     self.startRotationSliderWidget = ctk.ctkSliderWidget()
     self.startRotationSliderWidget.singleStep = 5
     self.startRotationSliderWidget.minimum = 0
     self.startRotationSliderWidget.maximum = 180
     self.startRotationSliderWidget.value = 180
     self.startRotationSliderWidget.setToolTip("Rotation angle for the first image, relative to current orientation.")
-    threeDViewOptionsLayout.addRow("Start rotation angle:", self.startRotationSliderWidget)
+    inputFormLayout.addRow(self.startRotationSliderLabel, self.startRotationSliderWidget)
 
-    # End rotation
+    # 3D end rotation
+    self.endRotationSliderLabel = qt.QLabel("End rotation angle:")
     self.endRotationSliderWidget = ctk.ctkSliderWidget()
     self.endRotationSliderWidget.singleStep = 5
     self.endRotationSliderWidget.minimum = 0
     self.endRotationSliderWidget.maximum = 180
     self.endRotationSliderWidget.value = 180
     self.endRotationSliderWidget.setToolTip("Rotation angle for the last image, relative to current orientation.")
-    threeDViewOptionsLayout.addRow("End rotation angle:", self.endRotationSliderWidget)
+    inputFormLayout.addRow(self.endRotationSliderLabel, self.endRotationSliderWidget)
+
+    # Sequence browser node selector
+    self.sequenceBrowserNodeSelectorLabel = qt.QLabel("End rotation angle:")
+    self.sequenceBrowserNodeSelectorWidget = slicer.qMRMLNodeComboBox()
+    self.sequenceBrowserNodeSelectorWidget.nodeTypes = ["vtkMRMLSequenceBrowserNode"]
+    self.sequenceBrowserNodeSelectorWidget.addEnabled = False
+    self.sequenceBrowserNodeSelectorWidget.removeEnabled = False
+    self.sequenceBrowserNodeSelectorWidget.noneEnabled = False
+    self.sequenceBrowserNodeSelectorWidget.showHidden = False
+    self.sequenceBrowserNodeSelectorWidget.setMRMLScene( slicer.mrmlScene )
+    self.sequenceBrowserNodeSelectorWidget.setToolTip( "Items defined by this sequence browser will be replayed." )
+    inputFormLayout.addRow(self.sequenceBrowserNodeSelectorLabel, self.sequenceBrowserNodeSelectorWidget)
+
+    # Sequence start index
+    self.sequenceStartItemIndexLabel = qt.QLabel("Start index:")
+    self.sequenceStartItemIndexWidget = ctk.ctkSliderWidget()
+    self.sequenceStartItemIndexWidget.minimum = 0
+    self.sequenceStartItemIndexWidget.decimals = 0
+    self.sequenceStartItemIndexWidget.setToolTip("First item in the sequence to capture.")
+    inputFormLayout.addRow(self.sequenceStartItemIndexLabel, self.sequenceStartItemIndexWidget)
+
+    # Sequence end index
+    self.sequenceEndItemIndexLabel = qt.QLabel("End index:")
+    self.sequenceEndItemIndexWidget = ctk.ctkSliderWidget()
+    self.sequenceEndItemIndexWidget.singleStep = 10
+    self.sequenceEndItemIndexWidget.minimum = 0
+    self.sequenceEndItemIndexWidget.decimals = 0
+    self.sequenceEndItemIndexWidget.setToolTip("Last item in the sequence to capture.")
+    inputFormLayout.addRow(self.sequenceEndItemIndexLabel, self.sequenceEndItemIndexWidget)
 
     #
     # Output area
@@ -150,7 +168,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     self.videoExportCheckBox = qt.QCheckBox()
     self.videoExportCheckBox.checked = False
-    self.videoExportCheckBox.setToolTip("If checked, exported images will be written as a video file.")
+    self.videoExportCheckBox.setToolTip("If checked, exported images will be written as a video file."
+      " Requires setting of ffmpeg executable path in Advanced section.")
     outputFormLayout.addRow("Video export:", self.videoExportCheckBox)
 
     self.videoFileNameWidget = qt.QLineEdit()
@@ -175,7 +194,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     #
     self.advancedCollapsibleButton = ctk.ctkCollapsibleButton()
     self.advancedCollapsibleButton.text = "Advanced"
-    self.advancedCollapsibleButton.collapsed = not (not self.logic.getFfmpegPath())
+    self.advancedCollapsibleButton.collapsed = True
     outputFormLayout.addRow(self.advancedCollapsibleButton)
     advancedFormLayout = qt.QFormLayout(self.advancedCollapsibleButton)
 
@@ -229,15 +248,29 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     # connections
     self.captureButton.connect('clicked(bool)', self.onCaptureButton)
-    self.viewNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onViewNodeSelected)
-    self.sliceModeWidget.connect("currentIndexChanged(int)", self.onSliceViewModeSelected)
-    self.startSliceOffsetSliderWidget.connect('valueChanged(double)', self.setSliceOffset)
-    self.endSliceOffsetSliderWidget.connect('valueChanged(double)', self.setSliceOffset)
+    self.viewNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateViewOptions)
+    self.animationModeWidget.connect("currentIndexChanged(int)", self.updateViewOptions)
+    self.sliceStartOffsetSliderWidget.connect('valueChanged(double)', self.setSliceOffset)
+    self.sliceEndOffsetSliderWidget.connect('valueChanged(double)', self.setSliceOffset)
+    self.sequenceBrowserNodeSelectorWidget.connect("currentNodeChanged(vtkMRMLNode*)", self.updateViewOptions)
+    self.sequenceStartItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
+    self.sequenceEndItemIndexWidget.connect('valueChanged(double)', self.setSequenceItemIndex)
     self.videoExportCheckBox.connect('toggled(bool)', self.fileNamePatternWidget, 'setDisabled(bool)')
     self.videoExportCheckBox.connect('toggled(bool)', self.videoFileNameWidget, 'setEnabled(bool)')
     self.videoExportCheckBox.connect('toggled(bool)', self.videoLengthSliderWidget, 'setEnabled(bool)')
 
-    self.onViewNodeSelected()
+    self.updateViewOptions()
+
+  def currentViewNodeType(self):
+    viewNode = self.viewNodeSelector.currentNode()
+    if not viewNode:
+      return None
+    elif viewNode.IsA("vtkMRMLSliceNode"):
+      return VIEW_SLICE
+    elif viewNode.IsA("vtkMRMLViewNode"):
+      return VIEW_3D
+    else:
+      return None
 
   def addLog(self, text):
     """Append text to log window
@@ -249,42 +282,89 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
   def cleanup(self):
     pass
 
-  def enableSliceViewOptions(self, enable):
-    self.sliceViewOptionsCollapsibleButton.setVisible(enable)
-    if enable:
+  def updateViewOptions(self):
+
+    sequencesModuleAvailable = hasattr(slicer.modules, 'sequences')
+
+    if self.viewNodeType !=  self.currentViewNodeType():
+      self.viewNodeType = self.currentViewNodeType()
+
+      self.animationModeWidget.clear()
+      if self.viewNodeType == VIEW_SLICE:
+        self.animationModeWidget.addItem("slice sweep")
+        self.animationModeWidget.addItem("slice fade")
+      if self.viewNodeType == VIEW_3D:
+        self.animationModeWidget.addItem("3D rotation")
+      if sequencesModuleAvailable:
+        self.animationModeWidget.addItem("sequence")
+
+    if self.animationMode != self.animationModeWidget.currentText:
+      self.animationMode = self.animationModeWidget.currentText
+
+    # slice sweep
+    self.sliceStartOffsetSliderLabel.visible = (self.animationMode == "slice sweep")
+    self.sliceStartOffsetSliderWidget.visible = (self.animationMode == "slice sweep")
+    self.sliceEndOffsetSliderLabel.visible = (self.animationMode == "slice sweep")
+    self.sliceEndOffsetSliderWidget.visible = (self.animationMode == "slice sweep")
+    if self.animationMode == "slice sweep":
       offsetResolution = self.logic.getSliceOffsetResolution(self.viewNodeSelector.currentNode())
       sliceOffsetMin, sliceOffsetMax = self.logic.getSliceOffsetRange(self.viewNodeSelector.currentNode())
 
-      wasBlocked = self.startSliceOffsetSliderWidget.blockSignals(True)
-      self.startSliceOffsetSliderWidget.singleStep = offsetResolution
-      self.startSliceOffsetSliderWidget.minimum = sliceOffsetMin
-      self.startSliceOffsetSliderWidget.maximum = sliceOffsetMax
-      self.startSliceOffsetSliderWidget.value = sliceOffsetMin
-      self.startSliceOffsetSliderWidget.blockSignals(wasBlocked)
+      wasBlocked = self.sliceStartOffsetSliderWidget.blockSignals(True)
+      self.sliceStartOffsetSliderWidget.singleStep = offsetResolution
+      self.sliceStartOffsetSliderWidget.minimum = sliceOffsetMin
+      self.sliceStartOffsetSliderWidget.maximum = sliceOffsetMax
+      self.sliceStartOffsetSliderWidget.value = sliceOffsetMin
+      self.sliceStartOffsetSliderWidget.blockSignals(wasBlocked)
 
-      wasBlocked = self.endSliceOffsetSliderWidget.blockSignals(True)
-      self.endSliceOffsetSliderWidget.singleStep = offsetResolution
-      self.endSliceOffsetSliderWidget.minimum = sliceOffsetMin
-      self.endSliceOffsetSliderWidget.maximum = sliceOffsetMax
-      self.endSliceOffsetSliderWidget.value = sliceOffsetMax
-      self.endSliceOffsetSliderWidget.blockSignals(wasBlocked)
+      wasBlocked = self.sliceEndOffsetSliderWidget.blockSignals(True)
+      self.sliceEndOffsetSliderWidget.singleStep = offsetResolution
+      self.sliceEndOffsetSliderWidget.minimum = sliceOffsetMin
+      self.sliceEndOffsetSliderWidget.maximum = sliceOffsetMax
+      self.sliceEndOffsetSliderWidget.value = sliceOffsetMax
+      self.sliceEndOffsetSliderWidget.blockSignals(wasBlocked)
 
-  def enable3dViewOptions(self, enable):
-    self.threeDViewOptionsCollapsibleButton.setVisible(enable)
+    # 3D rotation
+    self.startRotationSliderLabel.visible = (self.animationMode == "3D rotation")
+    self.startRotationSliderWidget.visible = (self.animationMode == "3D rotation")
+    self.endRotationSliderLabel.visible = (self.animationMode == "3D rotation")
+    self.endRotationSliderWidget.visible = (self.animationMode == "3D rotation")
 
-  def onViewNodeSelected(self):
-    viewNode = self.viewNodeSelector.currentNode()
-    self.enableSliceViewOptions(viewNode and viewNode.IsA("vtkMRMLSliceNode"))
-    self.enable3dViewOptions(viewNode and viewNode.IsA("vtkMRMLViewNode"))
+    # Sequence
+    self.sequenceBrowserNodeSelectorLabel.visible = (self.animationMode == "sequence")
+    self.sequenceBrowserNodeSelectorWidget.visible = (self.animationMode == "sequence")
+    self.sequenceStartItemIndexLabel.visible = (self.animationMode == "sequence")
+    self.sequenceStartItemIndexWidget.visible = (self.animationMode == "sequence")
+    self.sequenceEndItemIndexLabel.visible = (self.animationMode == "sequence")
+    self.sequenceEndItemIndexWidget.visible = (self.animationMode == "sequence")
+    if self.animationMode == "sequence":
+      sequenceBrowserNode = self.sequenceBrowserNodeSelectorWidget.currentNode()
 
-  def onSliceViewModeSelected(self):
-    sweepMode = (self.sliceModeWidget.currentText == "sweep")
-    self.startSliceOffsetSliderWidget.setEnabled(sweepMode)
-    self.endSliceOffsetSliderWidget.setEnabled(sweepMode)
+      sequenceItemCount = 0
+      if sequenceBrowserNode and sequenceBrowserNode.GetMasterSequenceNode():
+        sequenceItemCount = sequenceBrowserNode.GetMasterSequenceNode().GetNumberOfDataNodes()
+
+      if sequenceItemCount>0:
+        wasBlocked = self.sequenceStartItemIndexWidget.blockSignals(True)
+        self.sequenceStartItemIndexWidget.maximum = sequenceItemCount-1
+        self.sequenceStartItemIndexWidget.value = 0
+        self.sequenceStartItemIndexWidget.blockSignals(wasBlocked)
+
+        wasBlocked = self.sequenceEndItemIndexWidget.blockSignals(True)
+        self.sequenceEndItemIndexWidget.maximum = sequenceItemCount-1
+        self.sequenceEndItemIndexWidget.value = sequenceItemCount-1
+        self.sequenceEndItemIndexWidget.blockSignals(wasBlocked)
+
+      self.sequenceStartItemIndexWidget.enabled = sequenceItemCount>0
+      self.sequenceEndItemIndexWidget.enabled = sequenceItemCount>0
 
   def setSliceOffset(self, offset):
     sliceLogic = self.logic.getSliceLogicFromSliceNode(self.viewNodeSelector.currentNode())
     sliceLogic.SetSliceOffset(offset)
+
+  def setSequenceItemIndex(self, index):
+    sequenceBrowserNode = self.sequenceBrowserNodeSelectorWidget.currentNode()
+    sequenceBrowserNode.SetSelectedItemNumber(int(index))
 
   def onSelect(self):
     self.captureButton.enabled = self.viewNodeSelector.currentNode()
@@ -305,15 +385,18 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     imageFileNamePattern = self.logic.getRandomFilePattern() if videoOutputRequested else self.fileNamePatternWidget.text
 
     try:
-      if viewNode.IsA("vtkMRMLSliceNode"):
-        if self.sliceModeWidget.currentText == "sweep":
-          self.logic.captureSliceSweep(viewNode, self.startSliceOffsetSliderWidget.value,
-            self.endSliceOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern)
-        elif self.sliceModeWidget.currentText == "fade":
-          self.logic.captureSliceFade(viewNode, numberOfSteps, outputDir, imageFileNamePattern)
-      elif viewNode.IsA("vtkMRMLViewNode"):
+      if self.animationModeWidget.currentText == "slice sweep":
+        self.logic.captureSliceSweep(viewNode, self.sliceStartOffsetSliderWidget.value,
+          self.sliceEndOffsetSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern)
+      elif self.animationModeWidget.currentText == "slice fade":
+        self.logic.captureSliceFade(viewNode, numberOfSteps, outputDir, imageFileNamePattern)
+      elif self.animationModeWidget.currentText == "3D rotation":
         self.logic.capture3dViewRotation(viewNode, self.startRotationSliderWidget.value,
           self.endRotationSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern)
+      elif self.animationModeWidget.currentText == "sequence":
+        self.logic.captureSequence(viewNode, self.sequenceBrowserNodeSelectorWidget.currentNode(),
+          self.sequenceStartItemIndexWidget.value, self.sequenceEndItemIndexWidget.value,
+          numberOfSteps, outputDir, imageFileNamePattern)
       else:
         raise ValueError('Unsupported view node type.')
 
@@ -322,9 +405,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         try:
           self.logic.createVideo(fps, self.extraVideoOptionsWidget.currentText,
             outputDir, imageFileNamePattern, self.videoFileNameWidget.text)
-        except ValueError, e:
+        except Exception as e:
           self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
           raise ValueError(e)
+        self.logic.deleteTemporaryFiles(outputDir, imageFileNamePattern, numberOfSteps)
 
       self.addLog("Done.")
     except Exception as e:
@@ -436,6 +520,27 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     writer.Write()
 
+  def viewFromNode(self, viewNode):
+    if not viewNode:
+      raise ValueError('Invalid view node.')
+    elif viewNode.IsA("vtkMRMLSliceNode"):
+      if not viewNode.IsMappedInLayout():
+        raise ValueError('Selected slice view is not visible in the current layout.')
+      return slicer.app.layoutManager().sliceWidget(viewNode.GetLayoutName()).sliceView()
+    elif viewNode.IsA("vtkMRMLViewNode"):
+      renderView = None
+      lm = slicer.app.layoutManager()
+      for widgetIndex in range(lm.threeDViewCount):
+        view = lm.threeDWidget(widgetIndex).threeDView()
+        if viewNode == view.mrmlViewNode():
+          renderView = view
+          break
+      if not renderView:
+        raise ValueError('Selected 3D view is not visible in the current layout.')
+      return renderView
+    else:
+      raise ValueError('Invalid view node.')
+
   def captureSliceSweep(self, sliceNode, startSliceOffset, endSliceOffset, numberOfImages, outputDir, outputFilenamePattern):
     if not sliceNode.IsMappedInLayout():
       raise ValueError('Selected slice view is not visible in the current layout.')
@@ -447,7 +552,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     sliceLogic = self.getSliceLogicFromSliceNode(sliceNode)
     originalSliceOffset = sliceLogic.GetSliceOffset()
 
-    sliceView = slicer.app.layoutManager().sliceWidget(sliceNode.GetLayoutName()).sliceView()
+    sliceView = self.viewFromNode(sliceNode)
     compositeNode = sliceLogic.GetSliceCompositeNode()
     offsetStepSize = (endSliceOffset-startSliceOffset)/(numberOfImages-1)
     for offsetIndex in range(numberOfImages):
@@ -460,15 +565,13 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
   def captureSliceFade(self, sliceNode, numberOfImages, outputDir,
                         outputFilenamePattern):
-    if not sliceNode.IsMappedInLayout():
-      raise ValueError('Selected slice view is not visible in the current layout.')
 
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
     filePathPattern = os.path.join(outputDir, outputFilenamePattern)
 
     sliceLogic = self.getSliceLogicFromSliceNode(sliceNode)
-    sliceView = slicer.app.layoutManager().sliceWidget(sliceNode.GetLayoutName()).sliceView()
+    sliceView = self.viewFromNode(sliceNode)
     compositeNode = sliceLogic.GetSliceCompositeNode()
     originalForegroundOpacity = compositeNode.GetForegroundOpacity()
     startForegroundOpacity = 0.0
@@ -495,18 +598,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
-
     filePathPattern = os.path.join(outputDir, outputFilenamePattern)
 
-    renderView = None
-    lm = slicer.app.layoutManager()
-    for widgetIndex in range(lm.threeDViewCount):
-      view = lm.threeDWidget(widgetIndex).threeDView()
-      if viewNode == view.mrmlViewNode():
-        renderView = view
-        break
-    if not renderView:
-      raise ValueError('Selected 3D view is not visible in the current layout.')
+    renderView = self.viewFromNode(viewNode)
 
     # Save original orientation and go to start orientation
     originalPitchRollYawIncrement = renderView.pitchRollYawIncrement
@@ -532,6 +626,29 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     renderView.yaw()
     renderView.setPitchRollYawIncrement(originalPitchRollYawIncrement)
     renderView.yawDirection = originalYawDirection
+
+  def captureSequence(self, viewNode, sequenceBrowserNode, sequenceStartIndex,
+                        sequenceEndIndex, numberOfImages, outputDir, outputFilenamePattern):
+    """
+    Acquire a set of screenshots of a view while iterating through a sequence.
+    """
+
+    if not os.path.exists(outputDir):
+      os.makedirs(outputDir)
+    filePathPattern = os.path.join(outputDir, outputFilenamePattern)
+
+    originalSelectedItemNumber = sequenceBrowserNode.GetSelectedItemNumber()
+
+    renderView = self.viewFromNode(viewNode)
+    stepSize = (sequenceEndIndex - sequenceStartIndex) / (numberOfImages - 1)
+    for offsetIndex in range(numberOfImages):
+      sequenceBrowserNode.SetSelectedItemNumber(int(sequenceStartIndex+offsetIndex*stepSize))
+      filename = filePathPattern % offsetIndex
+      self.addLog("Write " + filename)
+      self.captureImageFromView(renderView, filename)
+
+    sequenceBrowserNode.SetSelectedItemNumber(originalSelectedItemNumber)
+
 
   def createVideo(self, frameRate, extraOptions, outputDir, imageFileNamePattern, videoFileName):
     self.addLog("Export to video...")
