@@ -406,9 +406,9 @@ class LabeledImageChartView(object):
     img = self.labelNode.GetImageData()
     extent = img.GetWholeExtent() if vtk.VTK_MAJOR_VERSION <= 5 else img.GetExtent()
     self.labeledVoxels = {}
-    for i in range(extent[1]):
-      for j in range(extent[3]):
-        for k in range(extent[5]):
+    for i in range(extent[1]+1):
+      for j in range(extent[3]+1):
+        for k in range(extent[5]+1):
           labelValue = img.GetScalarComponentAsFloat(i, j, k, 0)
           if labelValue:
             if labelValue in self.labeledVoxels.keys():
