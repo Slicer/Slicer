@@ -258,6 +258,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   toolBarActions << this->CaptureToolBar->toggleViewAction();
   toolBarActions << this->ViewersToolBar->toggleViewAction();
   toolBarActions << this->DialogToolBar->toggleViewAction();
+  this->WindowToolBarsMenu->addActions(toolBarActions);
 
   //----------------------------------------------------------------------------
   // Hide toolbars by default
