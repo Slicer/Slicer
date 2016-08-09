@@ -423,13 +423,13 @@ void qSlicerSegmentationsModuleWidget::init()
     this, SLOT(onMoveToCurrentSegmentation()) );
 
   // Show only segment names in copy/view segment list and make it non-editable
-  d->SegmentsTableView_Current->setSelectionMode(QAbstractItemView::SingleSelection);
+  d->SegmentsTableView_Current->setSelectionMode(QAbstractItemView::ExtendedSelection);
   d->SegmentsTableView_Current->setHeaderVisible(false);
   d->SegmentsTableView_Current->setVisibilityColumnVisible(false);
   d->SegmentsTableView_Current->setColorColumnVisible(false);
   d->SegmentsTableView_Current->setOpacityColumnVisible(false);
 
-  d->SegmentsTableView_Other->setSelectionMode(QAbstractItemView::SingleSelection);
+  d->SegmentsTableView_Other->setSelectionMode(QAbstractItemView::ExtendedSelection);
   d->SegmentsTableView_Other->setHeaderVisible(false);
   d->SegmentsTableView_Other->setVisibilityColumnVisible(false);
   d->SegmentsTableView_Other->setColorColumnVisible(false);
