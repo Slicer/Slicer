@@ -355,63 +355,82 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   // Sets visibility, set pipeline polydata input, update color
   //   calculate and set pipeline transforms.
 
-  if (!displayNode || !pipeline)
+  if (!pipeline)
     {
+    vtkErrorWithObjectMacro(this->External, "vtkMRMLModelSliceDisplayableManager::"
+      "vtkInternal::UpdateDisplayNodePipeline failed: pipeline is invalid");
     return;
     }
 
-  // Update visibility
-  bool visible = this->IsVisible(displayNode);
-  pipeline->Actor->SetVisibility(visible);
-
-  if (visible)
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+  if (!modelDisplayNode)
     {
-    vtkMRMLModelDisplayNode* modelDisplayNode =
-      vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
-    vtkPolyData* polyData = modelDisplayNode->GetOutputPolyData();
-    if (!polyData)
-      {
-      return;
-      }
-    pipeline->ModelWarper->SetInputData(polyData);
-    // need this to update bounds of the locator, to avoid crash in the cutter
-    modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
-
-    pipeline->ModelWarper->SetTransform(pipeline->NodeToWorld);
-
-    //  Set Plane Transform
-    this->SetSlicePlaneFromMatrix(this->SliceXYToRAS, pipeline->Plane);
-    pipeline->Plane->Modified();
-
-    //  Set PolyData Transform
-    vtkNew<vtkMatrix4x4> rasToSliceXY;
-    vtkMatrix4x4::Invert(this->SliceXYToRAS, rasToSliceXY.GetPointer());
-    pipeline->TransformToSlice->SetMatrix(rasToSliceXY.GetPointer());
-
-    // optimization for slice to slice intersections which are 1 quad polydatas
-    // no need for 50^3 default locator divisons
-    if (polyData->GetPoints() != NULL && polyData->GetNumberOfPoints() <= 4)
-    {
-      vtkNew<vtkPointLocator> locator;
-      double *bounds = polyData->GetBounds();
-      locator->SetDivisions(2,2,2);
-      locator->InitPointInsertion(polyData->GetPoints(), bounds);
-      pipeline->Cutter->SetLocator(locator.GetPointer());
+    vtkErrorWithObjectMacro(this->External, "vtkMRMLModelSliceDisplayableManager::"
+      "vtkInternal::UpdateDisplayNodePipeline failed: vtkMRMLModelDisplayNode display node type is expected");
+    pipeline->Actor->SetVisibility(false);
+    return;
     }
 
-    // Update pipeline actor
-    vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->Actor);
-    vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
-      actor->GetMapper());
-    mapper->SetInputConnection( pipeline->Transformer->GetOutputPort() );
-    mapper->SetLookupTable( displayNode->GetColorNode() ?
-                            displayNode->GetColorNode()->GetScalarsToColors() : 0);
-    mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
-    actor->SetPosition(0,0);
-    vtkProperty2D* actorProperties = actor->GetProperty();
-    actorProperties->SetColor(displayNode->GetColor() );
-    actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness() );
+  if (!this->IsVisible(displayNode))
+    {
+    pipeline->Actor->SetVisibility(false);
+    return;
     }
+
+  vtkPolyData* polyData = modelDisplayNode->GetOutputPolyData();
+  if (!polyData)
+    {
+    pipeline->Actor->SetVisibility(false);
+    return;
+    }
+
+  // Need this to update bounds of the locator, to avoid crash in the cutter
+  modelDisplayNode->GetOutputPolyDataConnection()->GetProducer()->Update();
+
+  if (!polyData->GetPoints() || polyData->GetNumberOfPoints() == 0)
+    {
+    // there are no points, so there is nothing to cut
+    pipeline->Actor->SetVisibility(false);
+    return;
+    }
+
+  pipeline->ModelWarper->SetInputData(polyData);
+  pipeline->ModelWarper->SetTransform(pipeline->NodeToWorld);
+
+  //  Set Plane Transform
+  this->SetSlicePlaneFromMatrix(this->SliceXYToRAS, pipeline->Plane);
+  pipeline->Plane->Modified();
+
+  //  Set PolyData Transform
+  vtkNew<vtkMatrix4x4> rasToSliceXY;
+  vtkMatrix4x4::Invert(this->SliceXYToRAS, rasToSliceXY.GetPointer());
+  pipeline->TransformToSlice->SetMatrix(rasToSliceXY.GetPointer());
+
+  // optimization for slice to slice intersections which are 1 quad polydatas
+  // no need for 50^3 default locator divisons
+  if (polyData->GetPoints() != NULL && polyData->GetNumberOfPoints() <= 4)
+    {
+    vtkNew<vtkPointLocator> locator;
+    double *bounds = polyData->GetBounds();
+    locator->SetDivisions(2,2,2);
+    locator->InitPointInsertion(polyData->GetPoints(), bounds);
+    pipeline->Cutter->SetLocator(locator.GetPointer());
+    }
+
+  // Update pipeline actor
+  vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->Actor);
+  vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
+    actor->GetMapper());
+  mapper->SetInputConnection( pipeline->Transformer->GetOutputPort() );
+  mapper->SetLookupTable( displayNode->GetColorNode() ?
+                          displayNode->GetColorNode()->GetScalarsToColors() : 0);
+  mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+  actor->SetPosition(0,0);
+  vtkProperty2D* actorProperties = actor->GetProperty();
+  actorProperties->SetColor(displayNode->GetColor() );
+  actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness() );
+
+  pipeline->Actor->SetVisibility(true);
 }
 
 //---------------------------------------------------------------------------
