@@ -249,10 +249,24 @@ this version of visual studio [${MSVC_VERSION}]. You could either:
       )
 
     set(OpenSSL_DIR ${EP_SOURCE_DIR})
+    set(_openssl_base_dir ${OpenSSL_DIR})
     if(DEFINED CMAKE_CONFIGURATION_TYPES)
       set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_CFG_INTDIR})
+      set(_copy_release_directory 1)
     else()
       set(OpenSSL_DIR ${OpenSSL_DIR}/${CMAKE_BUILD_TYPE})
+      if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set(_copy_release_directory 1)
+      endif()
+    endif()
+
+    # Support building in RelWithDebInfo configuration
+    if(_copy_release_directory)
+      ExternalProject_Add_Step(${proj} copy_release_directory
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${_openssl_base_dir}/Release" "${_openssl_base_dir}/RelWithDebInfo"
+        COMMENT "Copying '${_openssl_base_dir}/Release' to '${_openssl_base_dir}/RelWithDebInfo'"
+        DEPENDEES install
+        )
     endif()
 
     set(OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
