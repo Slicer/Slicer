@@ -21,13 +21,16 @@
 ==============================================================================*/
 
 // SubjectHierarchy includes
-#include "vtkSlicerSubjectHierarchyModuleLogic.h"
-#include "vtkMRMLSubjectHierarchyConstants.h"
-#include "vtkMRMLSubjectHierarchyNode.h"
+#include <vtkSlicerSubjectHierarchyModuleLogic.h>
+#include <vtkMRMLSubjectHierarchyConstants.h>
+#include <vtkMRMLSubjectHierarchyNode.h>
 
 // MRML includes
-#include "vtkMRMLScene.h"
-#include "vtkMRMLTransformNode.h"
+#include <vtkMRMLScene.h>
+#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLStorageNode.h>
 
 // Slicer Libs includes
 #include <vtkSlicerTransformLogic.h>
@@ -36,6 +39,9 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkObjectFactory.h>
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerSubjectHierarchyModuleLogic::CLONED_SUBJECT_HIERARCHY_NODE_NAME_POSTFIX = " Copy";
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerSubjectHierarchyModuleLogic);
@@ -95,7 +101,7 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSe
 {
   if ( !scene || !patientId || !studyInstanceUID || !seriesInstanceUID )
     {
-    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Invalid input arguments!" << std::endl;
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Invalid input arguments!");
     return NULL;
     }
 
@@ -190,7 +196,7 @@ vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSam
 {
   if ( !node1 || !node2 || node1->GetScene() != node2->GetScene() )
     {
-    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch: Invalid input nodes or they are not in the same scene!" << std::endl;
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch: Invalid input nodes or they are not in the same scene!");
     return NULL;
     }
 
@@ -295,7 +301,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(vtkMRMLSubjectHierarc
 {
   if (!node)
     {
-    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid input node!" << std::endl;
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid input node!");
     return;
     }
 
@@ -356,7 +362,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjec
 {
   if (!node)
     {
-    std::cerr << "vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid input node!" << std::endl;
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::TransformBranch: Invalid input node!");
     return;
     }
 
@@ -381,4 +387,139 @@ void vtkSlicerSubjectHierarchyModuleLogic::HardenTransformOnBranch(vtkMRMLSubjec
       }
     subjectHierarchyNode->Modified();
     }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLSubjectHierarchyNode* vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node, const char* name/*=NULL*/)
+{
+  if (!node)
+    {
+    vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyNode: Invalid input node!");
+    return NULL;
+    }
+  vtkMRMLScene* scene = node->GetScene();
+  if (!scene)
+    {
+    vtkErrorWithObjectMacro(node, "vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyNode: Invalid scene for node " << node->GetName());
+    return NULL;
+    }
+
+  vtkMRMLSubjectHierarchyNode* clonedSubjectHierarchyNode = NULL;
+  vtkMRMLNode* associatedDataNode = node->GetAssociatedNode();
+  if (associatedDataNode)
+    {
+    // Create data node clone
+    vtkSmartPointer<vtkMRMLNode> clonedDataNode;
+    clonedDataNode.TakeReference(scene->CreateNodeByClass(associatedDataNode->GetClassName()));
+    std::string clonedDataNodeName = ( name ? std::string(name) : std::string(associatedDataNode->GetName()) + std::string(CLONED_SUBJECT_HIERARCHY_NODE_NAME_POSTFIX) );
+    scene->AddNode(clonedDataNode);
+
+    // Clone display node
+    vtkSmartPointer<vtkMRMLDisplayNode> clonedDisplayNode;
+    vtkMRMLDisplayableNode* displayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(associatedDataNode);
+    if (displayableDataNode && displayableDataNode->GetDisplayNode())
+      {
+      // If display node was automatically created by the specific module logic when the data node was added to the scene, then do not create it
+      vtkMRMLDisplayableNode* clonedDisplayableDataNode = vtkMRMLDisplayableNode::SafeDownCast(clonedDataNode);
+      if (clonedDisplayableDataNode->GetDisplayNode())
+        {
+        clonedDisplayNode = clonedDisplayableDataNode->GetDisplayNode();
+        }
+      else
+        {
+        clonedDisplayNode = vtkSmartPointer<vtkMRMLDisplayNode>::Take( vtkMRMLDisplayNode::SafeDownCast(
+          scene->CreateNodeByClass(displayableDataNode->GetDisplayNode()->GetClassName()) ) );
+        clonedDisplayNode->Copy(displayableDataNode->GetDisplayNode());
+        std::string clonedDisplayNodeName = clonedDataNodeName + "_Display";
+        clonedDisplayNode->SetName(clonedDisplayNodeName.c_str());
+        scene->AddNode(clonedDisplayNode);
+        clonedDisplayableDataNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+        }
+      }
+
+    // Clone storage node
+    vtkSmartPointer<vtkMRMLStorageNode> clonedStorageNode;
+    vtkMRMLStorableNode* storableDataNode = vtkMRMLStorableNode::SafeDownCast(associatedDataNode);
+    if (storableDataNode && storableDataNode->GetStorageNode())
+      {
+      // If storage node was automatically created by the specific module logic when the data node was added to the scene, then do not create it
+      vtkMRMLStorableNode* clonedStorableDataNode = vtkMRMLStorableNode::SafeDownCast(clonedDataNode);
+      if (clonedStorableDataNode->GetStorageNode())
+        {
+        clonedStorageNode = clonedStorableDataNode->GetStorageNode();
+        }
+      else
+        {
+        clonedStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take( vtkMRMLStorageNode::SafeDownCast(
+          scene->CreateNodeByClass(storableDataNode->GetStorageNode()->GetClassName()) ) );
+        clonedStorageNode->Copy(storableDataNode->GetStorageNode());
+        if (storableDataNode->GetStorageNode()->GetFileName())
+          {
+          std::string clonedStorageNodeFileName = std::string(storableDataNode->GetStorageNode()->GetFileName()) + std::string(CLONED_SUBJECT_HIERARCHY_NODE_NAME_POSTFIX);
+          clonedStorageNode->SetFileName(clonedStorageNodeFileName.c_str());
+          }
+        scene->AddNode(clonedStorageNode);
+        clonedStorableDataNode->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
+        }
+      }
+
+    // Copy data node
+    // Display and storage nodes might be involved in the copy process, so they are needed to be set up before the copy operation
+    clonedDataNode->Copy(associatedDataNode);
+    clonedDataNode->SetName(clonedDataNodeName.c_str());
+    // Copy overwrites display and storage node references too, need to restore
+    if (clonedDisplayNode.GetPointer())
+      {
+      vtkMRMLDisplayableNode::SafeDownCast(clonedDataNode)->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
+      }
+    if (clonedStorageNode.GetPointer())
+      {
+      vtkMRMLStorableNode::SafeDownCast(clonedDataNode)->SetAndObserveStorageNodeID(clonedStorageNode->GetID());
+      }
+    // Trigger display update (needed to invoke update of transforms in displayable managers)
+    vtkMRMLTransformableNode* transformableClonedNode = vtkMRMLTransformableNode::SafeDownCast(clonedDataNode);
+    if (transformableClonedNode && transformableClonedNode->GetParentTransformNode())
+    {
+      transformableClonedNode->GetParentTransformNode()->Modified();
+    }
+
+    // Get hierarchy nodes
+    vtkMRMLHierarchyNode* genericHierarchyNode =
+      vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene, associatedDataNode->GetID());
+
+    // Put data node in the same non-subject hierarchy if any
+    if (genericHierarchyNode != node)
+      {
+      vtkSmartPointer<vtkMRMLHierarchyNode> clonedHierarchyNode;
+      clonedHierarchyNode.TakeReference( vtkMRMLHierarchyNode::SafeDownCast(
+        scene->CreateNodeByClass(genericHierarchyNode->GetClassName()) ) );
+      clonedHierarchyNode->Copy(genericHierarchyNode);
+      std::string clonedHierarchyNodeName = std::string(genericHierarchyNode->GetName()) + std::string(CLONED_SUBJECT_HIERARCHY_NODE_NAME_POSTFIX);
+      clonedHierarchyNode->SetName(clonedHierarchyNodeName.c_str());
+      scene->AddNode(clonedHierarchyNode);
+      clonedHierarchyNode->SetAssociatedNodeID(clonedDataNode->GetID());
+      }
+
+    // Put data node in the same subject hierarchy branch as current node
+    clonedSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,
+      vtkMRMLSubjectHierarchyNode::SafeDownCast(node->GetParentNode()),
+      node->GetLevel(), clonedDataNodeName.c_str(), clonedDataNode);
+
+    // Trigger update
+    clonedSubjectHierarchyNode->Modified();
+    }
+  else // No associated node
+    {
+    std::string clonedSubjectHierarchyNodeName = node->GetName();
+    if (name)
+    {
+      clonedSubjectHierarchyNodeName = std::string(name);
+    }
+
+    clonedSubjectHierarchyNode = vtkMRMLSubjectHierarchyNode::CreateSubjectHierarchyNode(scene,
+      vtkMRMLSubjectHierarchyNode::SafeDownCast(node->GetParentNode()),
+      node->GetLevel(), clonedSubjectHierarchyNodeName.c_str());
+    }
+
+  return clonedSubjectHierarchyNode;
 }

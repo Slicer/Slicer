@@ -142,9 +142,9 @@ qSlicerSegmentEditorAbstractEffect::~qSlicerSegmentEditorAbstractEffect()
 QString qSlicerSegmentEditorAbstractEffect::name()const
 {
   if (m_Name.isEmpty())
-      {
+    {
     qCritical() << Q_FUNC_INFO << ": Empty effect name!";
-      }
+    }
   return this->m_Name;
 }
 

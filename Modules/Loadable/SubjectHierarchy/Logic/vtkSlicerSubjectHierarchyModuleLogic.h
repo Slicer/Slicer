@@ -42,6 +42,10 @@ class VTK_SLICER_SUBJECTHIERARCHY_LOGIC_EXPORT vtkSlicerSubjectHierarchyModuleLo
   public vtkSlicerModuleLogic
 {
 public:
+  /// Postfix added to cloned subject hierarchy node name by default
+  static const char* CLONED_SUBJECT_HIERARCHY_NODE_NAME_POSTFIX;
+
+public:
   static vtkSlicerSubjectHierarchyModuleLogic *New();
   vtkTypeMacro(vtkSlicerSubjectHierarchyModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -77,6 +81,12 @@ public:
 
   /// Harden transform on subject hierarchy node and on all children, recursively
   static void HardenTransformOnBranch(vtkMRMLSubjectHierarchyNode* node);
+
+  /// Clone subject hierarchy node, the associated data node, and its display and storage nodes
+  /// \param node Subject hierarchy node to clone
+  /// \param name Custom name. If omitted, then default postfix is added from \sa node
+  /// \return Clone subject hierarchy node
+  static vtkMRMLSubjectHierarchyNode* CloneSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* node, const char* name=NULL);
 
 protected:
   /// Called each time a new scene is set
