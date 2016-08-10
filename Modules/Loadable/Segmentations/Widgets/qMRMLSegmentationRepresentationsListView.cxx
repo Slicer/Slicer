@@ -29,13 +29,14 @@
 #include "vtkSegmentation.h"
 
 // Qt includes
-#include <QDebug>
-#include <QVariant>
-#include <QPushButton>
-#include <QToolButton>
 #include <QAction>
+#include <QDebug>
 #include <QDialog>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QSettings>
+#include <QToolButton>
+#include <QVariant>
 
 #define REPRESENTATION_NAME_PROPERTY "RepresentationName"
 
@@ -326,9 +327,17 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationAdvanced()
 
   // Create dialog to show the parameters widget in a popup window
   QDialog* parametersDialog = new QDialog(NULL, Qt::Dialog);
+  parametersDialog->setObjectName("SegmentationConversionParametersWindow");
   parametersDialog->setWindowTitle("Advanced segmentation conversion");
   QVBoxLayout* layout = new QVBoxLayout(parametersDialog);
-  parametersDialog->resize(QSize(640,360));
+
+  // Load last saved dialog position (the dialog may contain several options, so
+  // it is useful if last size&position is preserved.
+  QSettings settings;
+  settings.beginGroup("Segmentations");
+  parametersDialog->restoreGeometry(settings.value("SegmentationConversionParametersWindowGeometry").toByteArray());
+  settings.endGroup();
+
   layout->setContentsMargins(4, 4, 4, 4);
   layout->setSpacing(4);
 
@@ -344,6 +353,11 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationAdvanced()
 
   // Show dialog
   parametersDialog->exec();
+
+  // Save dialog size&position
+  settings.beginGroup("Segmentations");
+  settings.setValue("SegmentationConversionParametersWindowGeometry", parametersDialog->saveGeometry());
+  settings.endGroup();
 
   // Delete dialog when done
   delete parametersDialog;
