@@ -214,6 +214,7 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromDisplayNode()
   Q_D(qSlicerSegmentationsModuleWidget);
 
   vtkMRMLSegmentationDisplayNode* displayNode = this->segmentationDisplayNode();
+  d->CollapsibleButton_Display->setEnabled(displayNode != NULL);
   if (!displayNode)
     {
     return;
@@ -474,6 +475,8 @@ void qSlicerSegmentationsModuleWidget::onSegmentSelectionChanged(const QItemSele
   Q_UNUSED(deselected);
   Q_D(qSlicerSegmentationsModuleWidget);
 
+  d->pushButton_AddSegment->setEnabled(d->SegmentationNode != NULL);
+
   QStringList selectedSegmentIds = d->SegmentsTableView->selectedSegmentIDs();
   d->pushButton_EditSelected->setEnabled(selectedSegmentIds.count() == 1);
   d->pushButton_RemoveSelected->setEnabled(selectedSegmentIds.count() > 0);
@@ -493,7 +496,15 @@ void qSlicerSegmentationsModuleWidget::onAddSegment()
     }
 
   // Create empty segment in current segmentation
-  currentSegmentationNode->GetSegmentation()->AddEmptySegment();
+  std::string addedSegmentID = currentSegmentationNode->GetSegmentation()->AddEmptySegment();
+
+  // Select the new segment
+  if (!addedSegmentID.empty())
+    {
+    QStringList segmentIDList;
+    segmentIDList << QString(addedSegmentID.c_str());
+    d->SegmentsTableView->setSelectedSegmentIDs(segmentIDList);
+    }
 }
 
 //-----------------------------------------------------------------------------
