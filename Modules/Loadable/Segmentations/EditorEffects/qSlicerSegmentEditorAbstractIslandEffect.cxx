@@ -95,7 +95,7 @@ void qSlicerSegmentEditorAbstractIslandEffect::setupOptionsFrame()
   d->MinimumSizeSpinBox = new QSpinBox();
   d->MinimumSizeSpinBox->setMinimum(0);
   d->MinimumSizeSpinBox->setMaximum(VTK_INT_MAX);
-  d->MinimumSizeSpinBox->setValue(0);
+  d->MinimumSizeSpinBox->setValue(1000);
   this->addOptionsWidget(d->MinimumSizeSpinBox);
 
   QObject::connect(d->FullyConnectedCheckbox, SIGNAL(clicked()), this, SLOT(updateMRMLFromGUI()));
@@ -106,7 +106,7 @@ void qSlicerSegmentEditorAbstractIslandEffect::setupOptionsFrame()
 void qSlicerSegmentEditorAbstractIslandEffect::setMRMLDefaults()
 {
   this->setCommonParameter(this->fullyConnectedParameterName(), 1);
-  this->setCommonParameter(this->minimumSizeParameterName(), 0);
+  this->setCommonParameter(this->minimumSizeParameterName(), 1000);
 }
 
 //-----------------------------------------------------------------------------
