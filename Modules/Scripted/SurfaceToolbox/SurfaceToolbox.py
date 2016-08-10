@@ -122,20 +122,27 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
     smoothingFormLayout.addWidget(laplaceMethodFrame)
     laplaceMethodFormLayout = qt.QFormLayout(laplaceMethodFrame)
 
-    laplaceIterationsFrame, laplaceIterationsSlider, laplaceIterationsSpinBox = numericInputFrame(self.parent,"Iterations:","Tooltip",0.0,500.0,1.0,0)
+    laplaceIterationsFrame, laplaceIterationsSlider, laplaceIterationsSpinBox = numericInputFrame(self.parent,"Iterations:",
+      "Determines the maximum number of smoothing iterations. Higher value allows more smoothing."
+      +" In general, small relaxation factors and large numbers of iterations are more stable than"
+      +" larger relaxation factors and smaller numbers of iterations. ",0.0,500.0,1.0,0)
     laplaceMethodFormLayout.addWidget(laplaceIterationsFrame)
 
-    laplaceRelaxationFrame, laplaceRelaxationSlider, laplaceRelaxationSpinBox = numericInputFrame(self.parent,"Relaxation:","Tooltip",0.0,1.0,0.1,1)
+    laplaceRelaxationFrame, laplaceRelaxationSlider, laplaceRelaxationSpinBox = numericInputFrame(self.parent,"Relaxation:",
+      "Specifies how much points may be displaced during each iteration. Higher value results in more smoothing.",0.0,1.0,0.1,1)
     laplaceMethodFormLayout.addWidget(laplaceRelaxationFrame)
 
     taubinMethodFrame = qt.QFrame(self.parent)
     smoothingFormLayout.addWidget(taubinMethodFrame)
     taubinMethodFormLayout = qt.QFormLayout(taubinMethodFrame)
 
-    taubinIterationsFrame, taubinIterationsSlider, taubinIterationsSpinBox = numericInputFrame(self.parent,"Iterations:","Tooltip",0.0,100.0,1.0,0)
+    taubinIterationsFrame, taubinIterationsSlider, taubinIterationsSpinBox = numericInputFrame(self.parent,"Iterations:",
+      "Determines the maximum number of smoothing iterations. Higher value allows more accurate smoothing."
+      +" Typically 10-20 iterations are enough.",0.0,100.0,1.0,0)
     taubinMethodFormLayout.addWidget(taubinIterationsFrame)
 
-    taubinPassBandFrame, taubinPassBandSlider, taubinPassBandSpinBox = numericInputFrame(self.parent,"Pass Band:","Tooltip",0.0,1.0,0.01,2)
+    taubinPassBandFrame, taubinPassBandSlider, taubinPassBandSpinBox = numericInputFrame(self.parent,"Pass Band:"
+      "Number between 0 and 2. Lower values produce more smoothing.",0.0,2.0,0.0001,4)
     taubinMethodFormLayout.addWidget(taubinPassBandFrame)
 
     boundarySmoothingCheckBox = qt.QCheckBox("Boundary Smoothing")
