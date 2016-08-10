@@ -397,14 +397,14 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
     segmentationToSegmentationIjkTransformMatrix->Invert();
     worldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
 
-    vtkNew<vtkPoints> paintCoordinates_Ijk;
-    worldToModifierLabelmapIjkTransform->TransformPoints(this->PaintCoordinates_World, paintCoordinates_Ijk.GetPointer());
-
     vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
     // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
     // TODO: show a meaningful error message to the user if attempted
     vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(NULL, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
     worldToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
+
+    vtkNew<vtkPoints> paintCoordinates_Ijk;
+    worldToModifierLabelmapIjkTransform->TransformPoints(this->PaintCoordinates_World, paintCoordinates_Ijk.GetPointer());
 
     vtkNew<vtkImageStencilToImage> stencilToImage;
     stencilToImage->SetInputConnection(this->BrushPolyDataToStencil->GetOutputPort());
