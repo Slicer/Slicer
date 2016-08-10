@@ -27,9 +27,9 @@
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
 #include <vtkVersion.h>
-#include <vtkMarchingCubes.h>
+#include <vtkDiscreteMarchingCubes.h>
 #include <vtkDecimatePro.h>
-#include <vtkSmoothPolyDataFilter.h>
+#include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkImageConstantPad.h>
@@ -41,8 +41,11 @@ vtkSegmentationConverterRuleNewMacro(vtkBinaryLabelmapToClosedSurfaceConversionR
 //----------------------------------------------------------------------------
 vtkBinaryLabelmapToClosedSurfaceConversionRule::vtkBinaryLabelmapToClosedSurfaceConversionRule()
 {
-  this->ConversionParameters[GetDecimationFactorParameterName()] = std::make_pair("0.0", "Desired reduction in the total number of polygons (e.g., if set to 0.9, then reduce the data set to 10% of its original size)");
-  this->ConversionParameters[GetSmoothingFactorParameterName()] = std::make_pair("0.1", "Relaxation factor for Laplacian smoothing. Value of 0 results in no smoothing, while 1 means significant smoothing.");
+  this->ConversionParameters[GetDecimationFactorParameterName()] = std::make_pair("0.0",
+    "Desired reduction in the total number of polygons. Range: 0.0 (no decimation) to 1.0 (as much simplification as possible)."
+    " Value of 0.8 typically reduces data set size by 80% without losing too much details.");
+  this->ConversionParameters[GetSmoothingFactorParameterName()] = std::make_pair("0.5",
+    "Smoothing factor. Range: 0.0 (no smoothing) to 1.0 (strong smoothing).");
 }
 
 //----------------------------------------------------------------------------
@@ -97,16 +100,22 @@ vtkDataObject* vtkBinaryLabelmapToClosedSurfaceConversionRule::ConstructRepresen
 bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sourceRepresentation, vtkDataObject* targetRepresentation)
 {
   // Check validity of source and target representation objects
-  vtkOrientedImageData* binaryLabelMap = vtkOrientedImageData::SafeDownCast(sourceRepresentation);
-  if (!binaryLabelMap)
+  vtkOrientedImageData* orientedBinaryLabelMap = vtkOrientedImageData::SafeDownCast(sourceRepresentation);
+  if (!orientedBinaryLabelMap)
     {
-    vtkErrorMacro("Convert: Source representation is not an oriented image data");
+    vtkErrorMacro("Convert: Source representation is not oriented image data");
+    return false;
+    }
+  vtkSmartPointer<vtkImageData> binaryLabelMap = vtkImageData::SafeDownCast(sourceRepresentation);
+  if (!binaryLabelMap.GetPointer())
+    {
+    vtkErrorMacro("Convert: Source representation is not image data");
     return false;
     }
   vtkPolyData* closedSurfacePolyData = vtkPolyData::SafeDownCast(targetRepresentation);
   if (!closedSurfacePolyData)
     {
-    vtkErrorMacro("Convert: Target representation is not a poly data");
+    vtkErrorMacro("Convert: Target representation is not poly data");
     return false;
     }
 
@@ -120,111 +129,98 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     vtkErrorMacro("Convert: No polygons can be created, input image extent is empty");
     return false;
     }
+
+  /// If input labelmap has non-background border voxels, then those regions remain open in the output closed surface.
+  /// This function adds a 1 voxel padding to the labelmap in these cases.
   bool paddingNecessary = this->IsLabelmapPaddingNecessary(binaryLabelMap);
   if (paddingNecessary)
     {
-    vtkOrientedImageData* paddedLabelmap = vtkOrientedImageData::New();
-    paddedLabelmap->DeepCopy(binaryLabelMap);
-    this->PadLabelmap(paddedLabelmap);
-    binaryLabelMap = paddedLabelmap;
+    vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
+    padder->SetInputData(binaryLabelMap);
+    int extent[6] = { 0, -1, 0, -1, 0, -1 };
+    binaryLabelMap->GetExtent(extent);
+    // Set the output extent to the new size
+    padder->SetOutputWholeExtent(extent[0] - 1, extent[1] + 1, extent[2] - 1, extent[3] + 1, extent[4] - 1, extent[5] + 1);
+    padder->Update();
+    binaryLabelMap = padder->GetOutput();
     }
+  // Clone labelmap and set identity geometry so that the whole transform can be done in IJK space and then
+  // the whole transform can be applied on the poly data to transform it to the world coordinate system
+  vtkSmartPointer<vtkImageData> binaryLabelmapWithIdentityGeometry = vtkSmartPointer<vtkImageData>::New();
+  binaryLabelmapWithIdentityGeometry->ShallowCopy(binaryLabelMap);
+  binaryLabelmapWithIdentityGeometry->SetOrigin(0, 0, 0);
+  binaryLabelmapWithIdentityGeometry->SetSpacing(1.0, 1.0, 1.0);
 
   // Get conversion parameters
   double decimationFactor = vtkVariant(this->ConversionParameters[GetDecimationFactorParameterName()].first).ToDouble();
   double smoothingFactor = vtkVariant(this->ConversionParameters[GetSmoothingFactorParameterName()].first).ToDouble();
 
-  // Save geometry of oriented image data before conversion so that it can be applied on the poly data afterwards
-  vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  binaryLabelMap->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
-
-  // Clone labelmap and set identity geometry so that the whole transform can be done in IJK space and then
-  // the whole transform can be applied on the poly data to transform it to the world coordinate system
-  vtkSmartPointer<vtkOrientedImageData> binaryLabelmapWithIdentityGeometry = vtkSmartPointer<vtkOrientedImageData>::New();
-  binaryLabelmapWithIdentityGeometry->ShallowCopy(binaryLabelMap);
-  vtkSmartPointer<vtkMatrix4x4> identityMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  identityMatrix->Identity();
-  binaryLabelmapWithIdentityGeometry->SetGeometryFromImageToWorldMatrix(identityMatrix);
-
   // Run marching cubes
-  vtkSmartPointer<vtkMarchingCubes> marchingCubes = vtkSmartPointer<vtkMarchingCubes>::New();
+  vtkSmartPointer<vtkDiscreteMarchingCubes> marchingCubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
   marchingCubes->SetInputData(binaryLabelmapWithIdentityGeometry);
-  marchingCubes->SetNumberOfContours(1);
-  marchingCubes->SetValue(0, 0.5); //TODO: In the vtkLabelmapToModelFilter class this is LabelValue/2.0. If we know why, it would make sense to explain it here.
-  marchingCubes->ComputeScalarsOff();
+  const int labelmapFillValue = 1;
+  marchingCubes->GenerateValues(1, labelmapFillValue, labelmapFillValue);
   marchingCubes->ComputeGradientsOff();
   marchingCubes->ComputeNormalsOff();
-  try
-    {
-    marchingCubes->Update();
-    }
-  catch(...)
-    {
-    vtkErrorMacro("Convert: Error while running marching cubes!");
-    return false;
-    }
-  if (marchingCubes->GetOutput()->GetNumberOfPolys() == 0)
+  marchingCubes->ComputeScalarsOff();
+  marchingCubes->Update();
+  vtkSmartPointer<vtkPolyData> processingResult = marchingCubes->GetOutput();
+  if (processingResult->GetNumberOfPolys() == 0)
     {
     vtkErrorMacro("Convert: No polygons can be created");
     return false;
     }
 
-  // Decimate if necessary
-  vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
-  decimator->SetInputConnection(marchingCubes->GetOutputPort());
+  // Decimate
   if (decimationFactor > 0.0)
     {
+    vtkSmartPointer<vtkDecimatePro> decimator = vtkSmartPointer<vtkDecimatePro>::New();
+    decimator->SetInputData(processingResult);
     decimator->SetFeatureAngle(60);
     decimator->SplittingOff();
     decimator->PreserveTopologyOn();
     decimator->SetMaximumError(1);
     decimator->SetTargetReduction(decimationFactor);
-    try
-      {
-      decimator->Update();
-      }
-    catch(...)
-      {
-      vtkErrorMacro("Error decimating model");
-      return false;
-      }
+    decimator->Update();
+    processingResult = decimator->GetOutput();
     }
 
-  // Perform smoothing using specified factor
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  if (decimationFactor > 0.0)
+  if (smoothingFactor>0)
     {
-    smoothFilter->SetInputConnection(decimator->GetOutputPort());
+    vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+    smoother->SetInputData(processingResult);
+    smoother->SetNumberOfIterations(20); // based on VTK documentation ("Ten or twenty iterations is all the is usually necessary")
+    // This formula maps 0.0 -> 1.0 (almost no smoothing), 0.25 -> 0.01 (average smoothing),
+    // 0.5 -> 0.001 (more smoothing), 1.0 -> 0.0001 (very strong smoothing).
+    double passBand = pow(10.0, -4.0*smoothingFactor);
+    smoother->SetPassBand(passBand);
+    smoother->BoundarySmoothingOff();
+    smoother->FeatureEdgeSmoothingOff();
+    smoother->NonManifoldSmoothingOn();
+    smoother->NormalizeCoordinatesOn();
+    smoother->Update();
+    processingResult = smoother->GetOutput();
     }
-  else
-    {
-    smoothFilter->SetInputConnection(marchingCubes->GetOutputPort());
-    }
-  smoothFilter->SetRelaxationFactor(smoothingFactor);
-  smoothFilter->Update();
 
   // Transform the result surface from labelmap IJK to world coordinate system
   vtkSmartPointer<vtkTransform> labelmapGeometryTransform = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  orientedBinaryLabelMap->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
   labelmapGeometryTransform->SetMatrix(labelmapImageToWorldMatrix);
 
   vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  transformPolyDataFilter->SetInputConnection(smoothFilter->GetOutputPort());
+  transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
   transformPolyDataFilter->Update();
 
   // Set output
   closedSurfacePolyData->ShallowCopy(transformPolyDataFilter->GetOutput());
 
-  // Delete temporary padded labelmap if it was created
-  if (paddingNecessary)
-    {
-    binaryLabelMap->Delete();
-    }
-
   return true;
 }
 
 //----------------------------------------------------------------------------
-bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(vtkOrientedImageData* binaryLabelMap)
+bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(vtkImageData* binaryLabelMap)
 {
   if (!binaryLabelMap)
     {
@@ -285,17 +281,4 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(
     }
 
   return false;
-}
-
-//----------------------------------------------------------------------------
-void vtkBinaryLabelmapToClosedSurfaceConversionRule::PadLabelmap(vtkOrientedImageData* binaryLabelMap)
-{
-  vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
-  padder->SetInputData(binaryLabelMap);
-  int extent[6] = {0,-1,0,-1,0,-1};
-  binaryLabelMap->GetExtent(extent);
-  // Set the output extent to the new size
-  padder->SetOutputWholeExtent(extent[0]-1, extent[1]+1, extent[2]-1, extent[3]+1, extent[4]-1, extent[5]+1);
-  padder->Update();
-  binaryLabelMap->vtkImageData::DeepCopy(padder->GetOutput());
 }
