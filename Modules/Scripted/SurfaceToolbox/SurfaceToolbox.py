@@ -141,7 +141,7 @@ class SurfaceToolboxWidget(ScriptedLoadableModuleWidget):
       +" Typically 10-20 iterations are enough.",0.0,100.0,1.0,0)
     taubinMethodFormLayout.addWidget(taubinIterationsFrame)
 
-    taubinPassBandFrame, taubinPassBandSlider, taubinPassBandSpinBox = numericInputFrame(self.parent,"Pass Band:"
+    taubinPassBandFrame, taubinPassBandSlider, taubinPassBandSpinBox = numericInputFrame(self.parent,"Pass Band:",
       "Number between 0 and 2. Lower values produce more smoothing.",0.0,2.0,0.0001,4)
     taubinMethodFormLayout.addWidget(taubinPassBandFrame)
 
