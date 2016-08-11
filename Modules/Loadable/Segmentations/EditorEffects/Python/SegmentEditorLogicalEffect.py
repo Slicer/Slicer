@@ -45,11 +45,15 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       '<li><b>Invert:</b> inverts selected segment.</li>'
       '<li><b>Clear:</b> clears selected segment.</li>'
       '<li><b>Fill:</b> completely fills selected segment.</li>')
-    self.scriptedEffect.addLabeledOptionsWidget("Operation:", self.methodSelectorComboBox)
 
-    self.applyButton = qt.QPushButton("Apply")
-    self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-    self.scriptedEffect.addOptionsWidget(self.applyButton)
+    self.bypassMaskingCheckBox = qt.QCheckBox("Bypass masking")
+    self.bypassMaskingCheckBox.setToolTip("Ignore all masking options and only modify the selected segment.")
+    self.bypassMaskingCheckBox.objectName = self.__class__.__name__ + 'BypassMasking'
+
+    operationFrame = qt.QHBoxLayout()
+    operationFrame.addWidget(self.methodSelectorComboBox)
+    operationFrame.addWidget(self.bypassMaskingCheckBox)
+    self.marginSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationFrame)
 
     self.modifierSegmentSelectorLabel = qt.QLabel("Modifier segment:")
     self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelectorLabel)
@@ -64,9 +68,14 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.modifierSegmentSelector.setToolTip('Contents of this segment will be used for modifying the selected segment. This segment itself will not be changed.')
     self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelector)
 
+    self.applyButton = qt.QPushButton("Apply")
+    self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+    self.scriptedEffect.addOptionsWidget(self.applyButton)
+
     self.applyButton.connect('clicked()', self.onApply)
     self.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
     self.modifierSegmentSelector.connect("selectionChanged(QItemSelection, QItemSelection)", self.updateMRMLFromGUI)
+    self.bypassMaskingCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
 
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
@@ -75,6 +84,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameter("Operation", LOGICAL_COPY)
     self.scriptedEffect.setParameter("ModifierSegmentID", "")
+    self.scriptedEffect.setParameter("BypassMasking", 1)
 
   def activate(self):
     # TODO: is this needed? probably it should be called for all effects on activation
@@ -124,14 +134,42 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     else:
       self.applyButton.enabled = True
 
+    bypassMasking = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("BypassMasking") == 0 else qt.Qt.Checked
+    wasBlocked = self.bypassMaskingCheckBox.blockSignals(True)
+    self.bypassMaskingCheckBox.setCheckState(bypassMasking)
+    self.bypassMaskingCheckBox.blockSignals(wasBlocked)
 
   def updateMRMLFromGUI(self):
     operationIndex = self.methodSelectorComboBox.currentIndex
     operation = self.methodSelectorComboBox.itemData(operationIndex)
     self.scriptedEffect.setParameter("Operation", operation)
 
+    bypassMasking = 1 if self.bypassMaskingCheckBox.isChecked() else 0
+    self.scriptedEffect.setParameter("BypassMasking", bypassMasking)
+
     modifierSegmentIDs = ';'.join(self.modifierSegmentSelector.selectedSegmentIDs()) # semicolon-separated list of segment IDs
     self.scriptedEffect.setParameter("ModifierSegmentID", modifierSegmentIDs)
+
+  def getInvertedBinaryLabelmap(self, modifierLabelmap):
+    import vtkSegmentationCorePython as vtkSegmentationCore
+
+    fillValue = 1
+    eraseValue = 0
+    inverter = vtk.vtkImageThreshold()
+    inverter.SetInputData(modifierLabelmap)
+    inverter.SetInValue(fillValue)
+    inverter.SetOutValue(eraseValue)
+    inverter.ReplaceInOn()
+    inverter.ThresholdByLower(0)
+    inverter.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
+    inverter.Update()
+
+    invertedModifierLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    invertedModifierLabelmap.ShallowCopy(inverter.GetOutput())
+    imageToWorldMatrix = vtk.vtkMatrix4x4()
+    modifierLabelmap.GetImageToWorldMatrix(imageToWorldMatrix)
+    invertedModifierLabelmap.SetGeometryFromImageToWorldMatrix(imageToWorldMatrix)
+    return invertedModifierLabelmap
 
   def onApply(self):
 
@@ -140,12 +178,16 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     # Get modifier labelmap and parameters
 
     operation = self.scriptedEffect.parameter("Operation")
+    bypassMasking =  (self.scriptedEffect.integerParameter("BypassMasking") != 0)
+
+    selectedSegmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()
+
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    segmentation = segmentationNode.GetSegmentation()
 
     if operation in self.operationsRequireModifierSegment:
 
       # Get modifier segment
-      segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-      segmentation = segmentationNode.GetSegmentation()
       modifierSegmentID = self.modifierSegmentID()
       if not modifierSegmentID:
         logging.error("Operation {0} requires a selected modifier segment".format(operation))
@@ -154,11 +196,24 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       modifierSegmentLabelmap = modifierSegment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
 
       if operation == LOGICAL_COPY:
-        self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+        if bypassMasking:
+          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(modifierSegmentLabelmap,
+            segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, modifierSegmentLabelmap.GetExtent())
+        else:
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
       elif operation == LOGICAL_UNION:
-        self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
+        if bypassMasking:
+          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(modifierSegmentLabelmap,
+            segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_MERGE_MAX, modifierSegmentLabelmap.GetExtent())
+        else:
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeAdd)
       elif operation == LOGICAL_SUBTRACT:
-        self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove)
+        if bypassMasking:
+          invertedModifierSegmentLabelmap = self.getInvertedBinaryLabelmap(modifierSegmentLabelmap)
+          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(invertedModifierSegmentLabelmap, segmentationNode, selectedSegmentID,
+            slicer.vtkSlicerSegmentationsModuleLogic.MODE_MERGE_MIN, modifierSegmentLabelmap.GetExtent())
+        else:
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(modifierSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeRemove)
       elif operation == LOGICAL_INTERSECT:
         selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
         intersectionLabelmap = vtkSegmentationCore.vtkOrientedImageData()
@@ -171,25 +226,29 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
           min(selectedSegmentLabelmapExtent[3], modifierSegmentLabelmapExtent[3]),
           max(selectedSegmentLabelmapExtent[4], modifierSegmentLabelmapExtent[4]),
           min(selectedSegmentLabelmapExtent[5], modifierSegmentLabelmapExtent[5])]
-        self.scriptedEffect.modifySelectedSegmentByLabelmap(intersectionLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, commonExtent)
+        if bypassMasking:
+          slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(intersectionLabelmap, segmentationNode, selectedSegmentID,
+            slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, commonExtent)
+        else:
+          self.scriptedEffect.modifySelectedSegmentByLabelmap(intersectionLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet, commonExtent)
 
     elif operation == LOGICAL_INVERT:
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-      inverter = vtk.vtkImageThreshold()
-      inverter.SetInputData(selectedSegmentLabelmap)
-      inverter.SetInValue(1)
-      inverter.SetOutValue(0)
-      inverter.ReplaceInOn()
-      inverter.ThresholdByLower(0)
-      inverter.SetOutputScalarType(vtk.VTK_UNSIGNED_CHAR)
-      inverter.Update()
-      selectedSegmentLabelmap.DeepCopy(inverter.GetOutput())
-      self.scriptedEffect.modifySelectedSegmentByLabelmap(selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+      invertedSelectedSegmentLabelmap = self.getInvertedBinaryLabelmap(selectedSegmentLabelmap)
+      if bypassMasking:
+        slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(
+          invertedSelectedSegmentLabelmap, segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE)
+      else:
+        self.scriptedEffect.modifySelectedSegmentByLabelmap(invertedSelectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
     elif operation == LOGICAL_CLEAR or operation == LOGICAL_FILL:
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
       vtkSegmentationCore.vtkOrientedImageDataResample.FillImage(selectedSegmentLabelmap, 1 if operation == LOGICAL_FILL else 0, selectedSegmentLabelmap.GetExtent())
-      self.scriptedEffect.modifySelectedSegmentByLabelmap(selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
+      if bypassMasking:
+        slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(
+          selectedSegmentLabelmap, segmentationNode, selectedSegmentID, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE)
+      else:
+        self.scriptedEffect.modifySelectedSegmentByLabelmap(selectedSegmentLabelmap, slicer.qSlicerSegmentEditorAbstractEffect.ModificationModeSet)
 
     else:
       logging.error("Uknown operation: {0}".format(operation))
