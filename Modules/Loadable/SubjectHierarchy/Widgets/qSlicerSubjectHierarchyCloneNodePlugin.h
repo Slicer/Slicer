@@ -51,6 +51,9 @@ public:
   virtual ~qSlicerSubjectHierarchyCloneNodePlugin();
 
 public:
+  Q_INVOKABLE static const QString getCloneNodeNamePostfix();
+
+public:
   /// Get node context menu item actions to add to tree view
   Q_INVOKABLE virtual QList<QAction*> nodeContextMenuActions()const;
 

@@ -150,3 +150,9 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentNode()
   // Trigger update
   emit requestInvalidateFilter();
 }
+
+//---------------------------------------------------------------------------
+const QString qSlicerSubjectHierarchyCloneNodePlugin::getCloneNodeNamePostfix()
+{
+  return QString(vtkSlicerSubjectHierarchyModuleLogic::CLONED_SUBJECT_HIERARCHY_NODE_NAME_POSTFIX);
+}
