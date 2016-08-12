@@ -100,7 +100,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # If no segmentation node exists then create one so that the user does not have to create one manually
     if not self.editor.segmentationNodeID():
-      newSegmentationNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLSegmentationNode')
+      newSegmentationNode = slicer.vtkMRMLSegmentationNode()
       slicer.mrmlScene.AddNode(newSegmentationNode)
       self.editor.setSegmentationNode(newSegmentationNode)
       masterVolumeNodeID = self.getDefaultMasterVolumeNodeID()

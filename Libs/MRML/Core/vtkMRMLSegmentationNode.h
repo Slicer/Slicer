@@ -214,7 +214,7 @@ protected:
 
 protected:
   vtkMRMLSegmentationNode();
-  ~vtkMRMLSegmentationNode();
+  virtual ~vtkMRMLSegmentationNode();
   vtkMRMLSegmentationNode(const vtkMRMLSegmentationNode&);
   void operator=(const vtkMRMLSegmentationNode&);
 
