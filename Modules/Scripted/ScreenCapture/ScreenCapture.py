@@ -508,12 +508,16 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
       # image is too small, most likely it is invalid
       raise ValueError('Capture image from view failed')
 
-    # Make sure image witdth is even, otherwise encoding may fail
-    if imageSize[0] & 1 == 1:
+    # Make sure image witdth and height is even, otherwise encoding may fail
+    imageWidthOdd = (imageSize[0] & 1 == 1)
+    imageHeightOdd = (imageSize[1] & 1 == 1)
+    if imageWidthOdd or imageHeightOdd:
       imageClipper = vtk.vtkImageClip()
       imageClipper.SetInputConnection(wti.GetOutputPort())
       extent = outputImage.GetExtent()
-      imageClipper.SetOutputWholeExtent(extent[0], extent[1]-1, extent[2], extent[3], extent[4], extent[5])
+      imageClipper.SetOutputWholeExtent(extent[0], extent[1]-1 if imageWidthOdd else extent[1],
+                                        extent[2], extent[3]-1 if imageHeightOdd else extent[3],
+                                        extent[4], extent[5])
       writer.SetInputConnection(imageClipper.GetOutputPort())
     else:
       writer.SetInputConnection(wti.GetOutputPort())
