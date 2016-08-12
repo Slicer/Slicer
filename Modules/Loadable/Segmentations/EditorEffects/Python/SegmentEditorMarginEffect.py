@@ -77,13 +77,15 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
 
     kernelSizePixel = self.getKernelSizePixel()
     if kernelSizePixel[0]<=1 and kernelSizePixel[1]<=1 and kernelSizePixel[2]<=1:
-      operationName = "margin too small"
+      self.kernelSizePixel.text = "margin too small"
+      self.applyButton.setEnabled(False)
     else:
       if marginSizeMm>0:
         operationName = "grow"
       else:
         operationName = "shrink"
       self.kernelSizePixel.text = "{0}x{1}x{2} pixels ({3})".format(abs(kernelSizePixel[0]), abs(kernelSizePixel[1]), abs(kernelSizePixel[2]), operationName)
+      self.applyButton.setEnabled(True)
 
   def updateMRMLFromGUI(self):
     self.scriptedEffect.setParameter("MarginSizeMm", self.marginSizeMmSpinBox.value)
