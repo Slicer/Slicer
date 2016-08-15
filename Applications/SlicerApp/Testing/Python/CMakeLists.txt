@@ -189,8 +189,8 @@ if(VTK_DEBUG_LEAKS AND Slicer_HAS_CONSOLE_IO_SUPPORT)
     SCRIPT_ARGS --no-main-window --disable-modules
     TESTNAME_PREFIX nomainwindow_
     )
-  set_tests_properties(py_nomainwindow_${testname}
-    PROPERTIES PASS_REGULAR_EXPRESSION "instances? still around"
+  set_tests_properties(py_nomainwindow_${testname} PROPERTIES
+    PASS_REGULAR_EXPRESSION "instances? still around"
     )
 endif()
 
@@ -205,23 +205,6 @@ set(testname MRMLSceneImportAndExport)
 slicer_add_python_test(
   SCRIPT ${testname}.py
   TESTNAME_PREFIX mainwindow_
-  )
-
-set(testname MRMLCreateNodeByClassWithSetReferenceCountToOne)
-slicer_add_python_test(
-  SCRIPT ${testname}.py
-  SCRIPT_ARGS --no-main-window --disable-modules
-  TESTNAME_PREFIX nomainwindow_
-  )
-# The test application is expected to crash. If a test is run from
-# Visual Studio by building RUN_TESTS target and it crashes then an error popup is displayed
-# and test execution is stopped until the user closes the popup - causing delays in the
-# test execution.
-# DASHBOARD_TEST_FROM_CTEST variable is set in order to force CTest to disable debugger
-# and error reporting popups and thus avoiding test execution delays.
-set_tests_properties(py_nomainwindow_${testname} PROPERTIES 
-  ENVIRONMENT "DASHBOARD_TEST_FROM_CTEST=1"
-  WILL_FAIL TRUE
   )
 
 slicer_add_python_unittest(
