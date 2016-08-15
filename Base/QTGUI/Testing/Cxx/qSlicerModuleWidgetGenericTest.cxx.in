@@ -21,6 +21,8 @@
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // Qt includes
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDir>
 #include <QTimer>
 #ifdef Slicer_USE_PYTHONQT
@@ -54,7 +56,11 @@
 // VTK includes
 #include <vtkNew.h>
 
-const int minimumWidth = 500;
+// STD includes
+#include <algorithm>
+
+const int allowedWidgetWidthPixel = 500; // no matter how large the screen is, up to 500px widget width is allowed
+const int allowedWidgetWidthScreenPercentage = 30; // about 1/3 of the screen width is allowed
 
 //-----------------------------------------------------------------------------
 int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
@@ -174,12 +180,25 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   // If the element is in a form layout, QFormLayout::layoutFieldGrowthPolicy
   // might need to be set to AllNonFixedFieldsGrow.
   // All those changes can be set from Qt Designer.
-  if (widget->minimumSizeHint().width() > minimumWidth)
+  const int desktopWidth = QApplication::desktop()->width();
+
+  // Compute actual allowed widget size. Absolute pixel value works for most
+  // legacy systems and provides backward compatibility.
+  // On high-resolution screens widgets may be much larger, therefore
+  // we also allow widgets that have acceptable size relative to the screen size.
+  int maxMinimumSizeHintWidth = std::max(allowedWidgetWidthPixel,
+    int(double(desktopWidth) * double(allowedWidgetWidthScreenPercentage) * 0.01));
+
+  if (widget->minimumSizeHint().width() > maxMinimumSizeHintWidth)
     {
     std::cerr << "Line " << __LINE__
               << " qSlicer@MODULENAME@Module widget has a minimum size hint width"
               << " of " << widget->minimumSizeHint().width() << "px. It is wider"
-              << " than the max width of " << minimumWidth << "px." << std::endl;
+              << " than the maximum allowed width of " << maxMinimumSizeHintWidth << "px."
+              << " (maximum allowed width computed as: " << allowedWidgetWidthPixel << "px or "
+              << allowedWidgetWidthScreenPercentage << "% of screen width of "
+              << desktopWidth << "px)"
+              << std::endl;
     res = false;
     }
 
