@@ -14,8 +14,6 @@ set(qtmodules
   Markups
   #Measurements
   Models
-  ModelMirror
-  ModelTransform
   #FiberBundles
   SceneViews
   Segmentations
