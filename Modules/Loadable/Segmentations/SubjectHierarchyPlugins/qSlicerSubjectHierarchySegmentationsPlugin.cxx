@@ -204,11 +204,10 @@ QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkMRMLSubjectHierar
   }
 
   // Master representation
-  tooltipString.append( QString(" (Master representation: %1)").arg(
-    segmentation->GetMasterRepresentationName() ? segmentation->GetMasterRepresentationName() : "None!" ) );
+  tooltipString.append(QString(" (Master representation: %1)").arg(segmentation->GetMasterRepresentationName().c_str()));
 
   // Number of segments
-  tooltipString.append( QString(" (Number of segments: %1)").arg(segmentation->GetNumberOfSegments()) );
+  tooltipString.append(QString(" (Number of segments: %1)").arg(segmentation->GetNumberOfSegments()));
 
   return tooltipString;
 }

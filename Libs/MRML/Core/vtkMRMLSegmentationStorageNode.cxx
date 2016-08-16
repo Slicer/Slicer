@@ -140,25 +140,18 @@ void vtkMRMLSegmentationStorageNode::InitializeSupportedReadFileTypes()
 void vtkMRMLSegmentationStorageNode::InitializeSupportedWriteFileTypes()
 {
   Superclass::InitializeSupportedWriteFileTypes();
-
   vtkMRMLSegmentationNode* segmentationNode = this->GetAssociatedDataNode();
-  if (segmentationNode)
+  if (!segmentationNode)
     {
-    const char* masterRepresentation = segmentationNode->GetSegmentation()->GetMasterRepresentationName();
-    if (masterRepresentation)
-      {
-      if (!strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
-        {
-        // Binary labelmap -> 4D NRRD volume
-        this->SupportedWriteFileTypes->InsertNextValue("Segmentation 4D NRRD volume (.seg.nrrd)");
-        }
-      else if ( !strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
-             || !strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationPlanarContourRepresentationName()) )
-        {
-        // Closed surface or planar contours -> MultiBlock polydata
-        this->SupportedWriteFileTypes->InsertNextValue("Segmentation Multi-block dataset (.seg.vtm)");
-        }
-      }
+    return;
+    }
+  if (segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
+    {
+    this->SupportedWriteFileTypes->InsertNextValue("Segmentation 4D NRRD volume (.seg.nrrd)");
+    }
+  else if (segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData())
+    {
+    this->SupportedWriteFileTypes->InsertNextValue("Segmentation Multi-block dataset (.seg.vtm)");
     }
 }
 
@@ -192,25 +185,18 @@ vtkMRMLSegmentationNode* vtkMRMLSegmentationStorageNode::GetAssociatedDataNode()
 const char* vtkMRMLSegmentationStorageNode::GetDefaultWriteFileExtension()
 {
   vtkMRMLSegmentationNode* segmentationNode = this->GetAssociatedDataNode();
-  if (segmentationNode)
+  if (!segmentationNode)
     {
-    const char* masterRepresentation = segmentationNode->GetSegmentation()->GetMasterRepresentationName();
-    if (masterRepresentation)
-      {
-      if (!strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
-        {
-        // Binary labelmap -> 4D NRRD volume
-        return "seg.nrrd";
-        }
-      else if ( !strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
-             || !strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationPlanarContourRepresentationName()) )
-        {
-        // Closed surface or planar contours -> MultiBlock polydata
-        return "seg.vtm";
-        }
-      }
+    return NULL;
     }
-
+  if (segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
+    {
+    return "seg.nrrd";
+    }
+  else if (segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData())
+    {
+    return "seg.vtm";
+    }
   // Master representation is not supported for writing to file
   return NULL;
 }
@@ -797,16 +783,12 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
   // Write only master representation
-  const char* masterRepresentation = segmentationNode->GetSegmentation()->GetMasterRepresentationName();
-  if (!strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+  if (segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
     {
-    // Binary labelmap -> 4D NRRD volume
     return this->WriteBinaryLabelmapRepresentation(segmentationNode, fullName);
     }
-  else if ( !strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
-         || !strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationPlanarContourRepresentationName()) )
+  else if (segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData())
     {
-    // Closed surface or planar contours -> MultiBlock polydata
     return this->WritePolyDataRepresentation(segmentationNode, fullName);
     }
 
@@ -824,8 +806,7 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
 
   // Get and check master representation
-  const char* masterRepresentation = segmentation->GetMasterRepresentationName();
-  if (!masterRepresentation || strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
+  if (!segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
     {
     vtkErrorMacro("WriteBinaryLabelmapRepresentation: Invalid master representation to write as image data");
     return 0;
@@ -869,7 +850,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   // Save extent of common geometry image
   writer->SetAttribute(GetSegmentationMetaDataKey(KEY_SEGMENTATION_EXTENT).c_str(), GetImageExtentAsString(commonGeometryImage));
   // Save master representation name
-  writer->SetAttribute(GetSegmentationMetaDataKey(KEY_SEGMENTATION_MASTER_REPRESENTATION).c_str(), masterRepresentation);
+  writer->SetAttribute(GetSegmentationMetaDataKey(KEY_SEGMENTATION_MASTER_REPRESENTATION).c_str(),
+    segmentationNode->GetSegmentation()->GetMasterRepresentationName());
   // Save conversion parameters
   std::string conversionParameters = segmentation->SerializeAllConversionParameters();
   writer->SetAttribute(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONVERSION_PARAMETERS).c_str(), conversionParameters);
@@ -888,7 +870,8 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
     vtkSegment* currentSegment = segmentIt->second.GetPointer();
 
     // Get master representation from segment
-    vtkSmartPointer<vtkOrientedImageData> currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(currentSegment->GetRepresentation(masterRepresentation));
+    vtkSmartPointer<vtkOrientedImageData> currentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
+      currentSegment->GetRepresentation(segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
     if (!currentBinaryLabelmap)
       {
       vtkErrorMacro("WriteBinaryLabelmapRepresentation: Failed to retrieve master representation from segment " << currentSegmentID);
@@ -978,10 +961,7 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
 
   // Get and check master representation
-  const char* masterRepresentation = segmentation->GetMasterRepresentationName();
-  if ( !masterRepresentation
-    || ( strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName())
-      && strcmp(masterRepresentation, vtkSegmentationConverter::GetSegmentationPlanarContourRepresentationName()) ) )
+  if (!segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData())
     {
     vtkErrorMacro("WritePolyDataRepresentation: Invalid master representation to write as poly data");
     return 0;
@@ -1000,7 +980,8 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
     vtkSegment* currentSegment = segmentIt->second.GetPointer();
 
     // Get master representation from segment
-    vtkPolyData* currentPolyData = vtkPolyData::SafeDownCast(currentSegment->GetRepresentation(masterRepresentation));
+    vtkPolyData* currentPolyData = vtkPolyData::SafeDownCast(currentSegment->GetRepresentation(
+      segmentationNode->GetSegmentation()->GetMasterRepresentationName()));
     if (!currentPolyData)
       {
       vtkErrorMacro("WritePolyDataRepresentation: Failed to retrieve master representation from segment " << currentSegmentID);
@@ -1016,7 +997,7 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
     // MasterRepresentation
     vtkSmartPointer<vtkStringArray> masterRepresentationArray = vtkSmartPointer<vtkStringArray>::New();
     masterRepresentationArray->SetNumberOfValues(1);
-    masterRepresentationArray->SetValue(0,masterRepresentation);
+    masterRepresentationArray->SetValue(0, segmentationNode->GetSegmentation()->GetMasterRepresentationName());
     masterRepresentationArray->SetName(GetSegmentationMetaDataKey(KEY_SEGMENTATION_MASTER_REPRESENTATION).c_str());
     currentPolyDataCopy->GetFieldData()->AddArray(masterRepresentationArray);
 
@@ -1146,7 +1127,7 @@ std::string vtkMRMLSegmentationStorageNode::SerializeContainedRepresentationName
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::CreateRepresentationsBySerializedNames(vtkSegmentation* segmentation, std::string representationNames)
 {
-  if (!segmentation || segmentation->GetNumberOfSegments() == 0 || !segmentation->GetMasterRepresentationName())
+  if (!segmentation || segmentation->GetNumberOfSegments() == 0)
     {
     vtkErrorMacro("CreateRepresentationsBySerializedNames: Invalid segmentation!");
     return;

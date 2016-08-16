@@ -63,7 +63,6 @@ public:
 //----------------------------------------------------------------------------
 vtkSegmentation::vtkSegmentation()
 {
-  this->MasterRepresentationName = NULL;
   this->SetMasterRepresentationName(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName());
   this->Converter = vtkSegmentationConverter::New();
 
@@ -74,6 +73,8 @@ vtkSegmentation::vtkSegmentation()
   this->MasterRepresentationCallbackCommand = vtkCallbackCommand::New();
   this->MasterRepresentationCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->MasterRepresentationCallbackCommand->SetCallback( vtkSegmentation::OnMasterRepresentationModified );
+
+  this->MasterRepresentationModifiedEnabled = true;
 }
 
 //----------------------------------------------------------------------------
@@ -104,7 +105,7 @@ void vtkSegmentation::WriteXML(ostream& of, int nIndent)
 {
   vtkIndent indent(nIndent);
 
-  of << indent << " MasterRepresentationName=\"" << (this->MasterRepresentationName ? this->MasterRepresentationName : "NULL") << "\"";
+  of << indent << " MasterRepresentationName=\"" << this->MasterRepresentationName << "\"";
 
   // Note: Segment info is not written as it is managed by the storage node instead.
 }
@@ -164,7 +165,7 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Debug: " << (this->Debug ? "On\n" : "Off\n");
   os << indent << "Modified Time: " << this->GetMTime() << "\n";
 
-  os << indent << "MasterRepresentationName:  " << (this->MasterRepresentationName ? this->MasterRepresentationName : "NULL") << "\n";
+  os << indent << "MasterRepresentationName:  " << this->MasterRepresentationName << "\n";
   os << indent << "Number of segments:  " << this->Segments.size() << "\n";
 
   for (SegmentMap::iterator it = this->Segments.begin(); it != this->Segments.end(); ++it)
@@ -218,39 +219,26 @@ bool vtkSegmentation::GetModifiedSinceRead()
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::SetMasterRepresentationName(const char* representationName)
+void vtkSegmentation::SetMasterRepresentationName(const std::string& representationName)
 {
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting MasterRepresentationName to " << (representationName?representationName:"(null)") );
-  if ( this->MasterRepresentationName == NULL && representationName == NULL) { return;}
-  if ( this->MasterRepresentationName && representationName && (!strcmp(this->MasterRepresentationName,representationName))) { return;}
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting MasterRepresentationName to " << representationName );
+  if ( this->MasterRepresentationName == representationName )
+    {
+    // no change in representation name
+    return;
+    }
 
   // Remove observation of old master representation in all segments
-  this->SetMasterRepresentationModifiedEnabled(false);
+  bool wasMasterRepresentationModifiedEnabled = this->SetMasterRepresentationModifiedEnabled(false);
 
-  // Set master representation name
-  delete [] this->MasterRepresentationName;
-  if (representationName)
-    {
-    size_t n = strlen(representationName) + 1;
-    char *cp1 =  new char[n];
-    const char *cp2 = (representationName);
-    this->MasterRepresentationName = cp1;
-    do { *cp1++ = *cp2++; } while ( --n );
-    }
-  else
-    {
-    this->MasterRepresentationName = NULL;
-    }
+  this->MasterRepresentationName = representationName;
 
   // Add observation of new master representation in all segments
-  this->SetMasterRepresentationModifiedEnabled(true);
+  this->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
 
   // Invalidate all representations other than the master.
   // These representations will be automatically converted later on demand.
-  if (this->MasterRepresentationName)
-    {
-    this->InvalidateNonMasterRepresentations();
-    }
+  this->InvalidateNonMasterRepresentations();
 
   // Invoke events
   this->Modified();
@@ -258,9 +246,13 @@ void vtkSegmentation::SetMasterRepresentationName(const char* representationName
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
+bool vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
 {
-  // Remove observation of old master representation in all segments
+  if (this->MasterRepresentationModifiedEnabled == enabled)
+    {
+    return this->MasterRepresentationModifiedEnabled;
+    }
+  // Add/remove observation of master representation in all segments
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
     {
     vtkDataObject* masterRepresentation = segmentIt->second->GetRepresentation(this->MasterRepresentationName);
@@ -279,6 +271,8 @@ void vtkSegmentation::SetMasterRepresentationModifiedEnabled(bool enabled)
         }
       }
     }
+  this->MasterRepresentationModifiedEnabled = enabled;
+  return !enabled; // return old value
 }
 
 //---------------------------------------------------------------------------
@@ -311,11 +305,6 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
   if (!segment)
     {
     vtkErrorMacro("AddSegment: Invalid segment!");
-    return false;
-    }
-  if (!this->MasterRepresentationName)
-    {
-    vtkErrorMacro("AddSegment: Invalid master representation name!");
     return false;
     }
 
@@ -353,7 +342,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
         vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(*reprIt));
       if (!emptyRepresentation)
         {
-        vtkErrorMacro("AddEmptySegment: Unable to construct empty representation type '" << (*reprIt) << "'");
+        vtkErrorMacro("AddSegment: Unable to construct empty representation type '" << (*reprIt) << "'");
         return false;
         }
       segment->AddRepresentation(*reprIt, emptyRepresentation);
@@ -416,7 +405,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
           vtkSegmentationConverter::GetCheapestPath(pathsToCurrentRepresentation);
         if (cheapestPath.empty())
           {
-          vtkErrorMacro("AddSegment: Unable to perform conversion!"); // Sanity check, it should never happen
+          vtkErrorMacro("AddSegment: Unable to perform conversion"); // Sanity check, it should never happen
           return false;
           }
         // Perform conversion
@@ -451,7 +440,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
 
   // Add observation of master representation in new segment
   vtkDataObject* masterRepresentation = segment->GetRepresentation(this->MasterRepresentationName);
-  if (masterRepresentation)
+  if (masterRepresentation && this->MasterRepresentationModifiedEnabled)
     {
     // Observe segment's master representation
     if (!masterRepresentation->HasObserver(vtkCommand::ModifiedEvent, this->MasterRepresentationCallbackCommand))
@@ -525,13 +514,6 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
 
   // Remove segment
   this->Segments.erase(segmentIt);
-
-  // If the segmentation became empty then clear master representation
-  // (Otherwise the representation table will show a master representation with no data underneath)
-  if (this->Segments.empty())
-    {
-    this->SetMasterRepresentationName(NULL);
-    }
 
   // Fire segment removed event
   this->InvokeEvent(vtkSegmentation::SegmentRemoved, (void*)segmentId.c_str());
@@ -705,7 +687,7 @@ void vtkSegmentation::ApplyLinearTransform(vtkAbstractTransform* transform)
     vtkDataObject* currentMasterRepresentation = it->second->GetRepresentation(this->MasterRepresentationName);
     if (!currentMasterRepresentation)
       {
-      vtkErrorMacro("ApplyLinearTransform: Cannot get master representation (" << (this->MasterRepresentationName ? this->MasterRepresentationName : "NULL") << ") from segment!");
+      vtkErrorMacro("ApplyLinearTransform: Cannot get master representation (" << this->MasterRepresentationName << ") from segment!");
       return;
       }
 
@@ -752,7 +734,7 @@ void vtkSegmentation::ApplyNonLinearTransform(vtkAbstractTransform* transform)
     vtkDataObject* currentMasterRepresentation = it->second->GetRepresentation(this->MasterRepresentationName);
     if (!currentMasterRepresentation)
       {
-      vtkErrorMacro("ApplyNonLinearTransform: Cannot get master representation (" << (this->MasterRepresentationName ? this->MasterRepresentationName : "NULL") << ") from segment!");
+      vtkErrorMacro("ApplyNonLinearTransform: Cannot get master representation (" << this->MasterRepresentationName << ") from segment!");
       return;
       }
 
@@ -836,11 +818,6 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
     vtkErrorMacro("CreateRepresentation: Invalid converter!");
     return false;
     }
-  if (!this->MasterRepresentationName)
-    {
-    vtkErrorMacro("CreateRepresentation: Master representation not specified!");
-    return false;
-    }
 
   // Simply return success if the target representation exists
   if (!alwaysConvert)
@@ -919,11 +896,6 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
     vtkErrorMacro("CreateRepresentation: Invalid converter!");
     return false;
     }
-  if (!this->MasterRepresentationName)
-    {
-    vtkErrorMacro("CreateRepresentation: Master representation not specified!");
-    return false;
-    }
   if (path.empty())
     {
     return false;
@@ -974,12 +946,6 @@ vtkDataObject* vtkSegmentation::GetSegmentRepresentation(std::string segmentId, 
 //---------------------------------------------------------------------------
 void vtkSegmentation::InvalidateNonMasterRepresentations()
 {
-  if (!this->MasterRepresentationName)
-    {
-    vtkErrorMacro("InvalidateNonMasterRepresentations: Master representation not specified!");
-    return;
-    }
-
   // Iterate through all segments and remove all representations that are not the master representation
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
     {
@@ -1018,37 +984,45 @@ bool vtkSegmentation::ContainsRepresentation(std::string representationName)
 //-----------------------------------------------------------------------------
 bool vtkSegmentation::IsMasterRepresentationPolyData()
 {
-  if (!this->MasterRepresentationName)
+  if (!this->Segments.empty())
     {
-    return false;
+    // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
+    vtkSegment* firstSegment = this->Segments.begin()->second;
+    vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
+    return vtkPolyData::SafeDownCast(masterRepresentation);
     }
-
-  // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
-  vtkSegment* firstSegment = this->Segments.begin()->second;
-
-  vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
-  return vtkPolyData::SafeDownCast(masterRepresentation);
+  else
+    {
+    // There are no segments, create an empty representation to find out what type it is
+    vtkSmartPointer<vtkDataObject> masterRepresentation = vtkSmartPointer<vtkDataObject>::Take(
+      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->MasterRepresentationName));
+    return vtkPolyData::SafeDownCast(masterRepresentation);
+    }
 }
 
 //-----------------------------------------------------------------------------
 bool vtkSegmentation::IsMasterRepresentationImageData()
 {
-  if (!this->MasterRepresentationName)
+  if (!this->Segments.empty())
     {
-    return false;
+    // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
+    vtkSegment* firstSegment = this->Segments.begin()->second;
+    vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
+    return vtkOrientedImageData::SafeDownCast(masterRepresentation);
     }
-
-  // Assume the first segment contains the same name of representations as all segments (this should be the case by design)
-  vtkSegment* firstSegment = this->Segments.begin()->second;
-
-  vtkDataObject* masterRepresentation = firstSegment->GetRepresentation(this->MasterRepresentationName);
-  return vtkOrientedImageData::SafeDownCast(masterRepresentation);
+  else
+    {
+    // There are no segments, create an empty representation to find out what type it is
+    vtkSmartPointer<vtkDataObject> masterRepresentation = vtkSmartPointer<vtkDataObject>::Take(
+      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByRepresentation(this->MasterRepresentationName));
+    return vtkOrientedImageData::SafeDownCast(masterRepresentation);
+    }
 }
 
 //-----------------------------------------------------------------------------
 bool vtkSegmentation::CanAcceptRepresentation(std::string representationName)
 {
-  if (representationName.empty() || !this->MasterRepresentationName)
+  if (representationName.empty())
     {
     return false;
     }
@@ -1131,6 +1105,14 @@ std::string vtkSegmentation::AddEmptySegment(std::string segmentId/*=""*/, std::
 }
 
 //-----------------------------------------------------------------------------
+void vtkSegmentation::GetPossibleConversions(const std::string& targetRepresentationName,
+  vtkSegmentationConverter::ConversionPathAndCostListType &pathsCosts)
+{
+  pathsCosts.clear();
+  this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, pathsCosts);
+};
+
+//-----------------------------------------------------------------------------
 bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation, std::string segmentId, bool removeFromSource/*=false*/)
 {
   if (!fromSegmentation || segmentId.empty())
@@ -1152,17 +1134,6 @@ bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentat
     {
     vtkErrorMacro("CopySegmentFromSegmentation: Failed to get segment!");
     return false;
-    }
-
-  // If segmentation has no master representation defined, then set it to be the same as in source
-  if (!fromSegmentation->GetMasterRepresentationName())
-    {
-    vtkErrorMacro("CopySegmentFromSegmentation: Source segmentation has no master representation defined!");
-    return false;
-    }
-  if (!this->MasterRepresentationName)
-    {
-    this->SetMasterRepresentationName(fromSegmentation->GetMasterRepresentationName());
     }
 
   // If source segmentation contains reference image geometry conversion parameter,

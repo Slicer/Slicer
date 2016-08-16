@@ -737,8 +737,8 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
     return false;
     }
 
-  // If target segmentation is newly created thus have no master representation, make it match the source
-  if (!toSegmentation->GetMasterRepresentationName())
+  // If target segmentation is empty, make it match the source
+  if (toSegmentation->GetNumberOfSegments()==0)
     {
     toSegmentation->SetMasterRepresentationName(fromSegmentation->GetMasterRepresentationName());
     }
@@ -757,8 +757,11 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
       return false;
       }
 
-    QString message = QString("Cannot convert source master representation '%1' into target master '%2', thus unable to copy segment '%3' from segmentation '%4' to '%5'.\n\nWould you like to change the master representation of '%5' to '%1'?\n\nNote: This may result in unwanted data loss in %5.")
-      .arg(fromSegmentation->GetMasterRepresentationName()).arg(toSegmentation->GetMasterRepresentationName()).arg(segmentId).arg(fromNode->GetName()).arg(toNode->GetName());
+    QString message = QString("Cannot convert source master representation '%1' into target master '%2', "
+      "thus unable to copy segment '%3' from segmentation '%4' to '%5'.\n\nWould you like to change the master representation of '%5' to '%1'?\n\n"
+      "Note: This may result in unwanted data loss in %5.")
+      .arg(fromSegmentation->GetMasterRepresentationName().c_str())
+      .arg(toSegmentation->GetMasterRepresentationName().c_str()).arg(segmentId).arg(fromNode->GetName()).arg(toNode->GetName());
     QMessageBox::StandardButton answer =
       QMessageBox::question(NULL, tr("Failed to copy segment"), message,
       QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
@@ -768,7 +771,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentBetweenSegmentations(
       bool successfulConversion = toSegmentation->CreateRepresentation(fromSegmentation->GetMasterRepresentationName());
       if (!successfulConversion)
         {
-        QString message = QString("Failed to convert %1 to %2!").arg(toNode->GetName()).arg(fromSegmentation->GetMasterRepresentationName());
+        QString message = QString("Failed to convert %1 to %2!").arg(toNode->GetName()).arg(fromSegmentation->GetMasterRepresentationName().c_str());
         QMessageBox::warning(NULL, tr("Conversion failed"), message);
         return false;
         }
@@ -1017,14 +1020,14 @@ bool qSlicerSegmentationsModuleWidget::updateMasterRepresentationInSegmentation(
   std::string newMasterRepresentation(representation.toLatin1().constData());
 
   // Set master representation to the added one if segmentation is empty or master representation is undefined
-  if (segmentation->GetNumberOfSegments() == 0 || segmentation->GetMasterRepresentationName() == NULL)
+  if (segmentation->GetNumberOfSegments() == 0)
     {
-    segmentation->SetMasterRepresentationName(newMasterRepresentation.c_str());
+    segmentation->SetMasterRepresentationName(newMasterRepresentation);
     return true;
     }
 
   // No action is necessary if segmentation is non-empty and the master representation matches the contained one in segment
-  if (!strcmp(segmentation->GetMasterRepresentationName(), newMasterRepresentation.c_str()))
+  if (segmentation->GetMasterRepresentationName() == newMasterRepresentation)
     {
     return true;
     }
@@ -1044,7 +1047,9 @@ bool qSlicerSegmentationsModuleWidget::updateMasterRepresentationInSegmentation(
   // Ask the user if master was different but not empty
   QString message = QString("Segment is to be added in segmentation '%1' that contains a representation (%2) different than the master representation in the segmentation (%3). "
     "The master representation need to be changed so that the segment can be added. This might result in unwanted data loss.\n\n"
-    "Do you wish to change the master representation to %2?").arg(segmentationNode->GetName()).arg(newMasterRepresentation.c_str()).arg(segmentation->GetMasterRepresentationName());
+    "Do you wish to change the master representation to %2?")
+    .arg(segmentationNode->GetName()).arg(newMasterRepresentation.c_str())
+    .arg(segmentation->GetMasterRepresentationName().c_str());
   QMessageBox::StandardButton answer =
     QMessageBox::question(NULL, tr("Master representation is needed to be changed to add segment"), message,
     QMessageBox::Yes | QMessageBox::No, QMessageBox::No);

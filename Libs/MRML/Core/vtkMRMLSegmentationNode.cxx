@@ -665,10 +665,13 @@ bool vtkMRMLSegmentationNode::AddSegmentDisplayProperties(std::string segmentId)
   segment->GetDefaultColor(defaultColor);
   // Generate color if default color is the default gray
   displayNode->IncrementNumberOfAddedSegments();
-  if (defaultColor[0] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0] && defaultColor[1] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1] && defaultColor[2] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2])
+  bool generateNewDefaultColor =
+    (defaultColor[0] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0]
+     && defaultColor[1] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1]
+     && defaultColor[2] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2]);
+  if (generateNewDefaultColor)
     {
     displayNode->GenerateSegmentColor(defaultColor);
-    segment->SetDefaultColor(defaultColor);
     }
   colorTableNode->SetColor(colorIndex, segmentId.c_str(), defaultColor[0], defaultColor[1], defaultColor[2], 1.0);
 
@@ -685,6 +688,14 @@ bool vtkMRMLSegmentationNode::AddSegmentDisplayProperties(std::string segmentId)
   properties.Opacity2DFill = 0.4;
   properties.Opacity2DOutline = 1.0;
   displayNode->SetSegmentDisplayProperties(segmentId, properties);
+
+  // Update segment's default color
+  // (we cannot do this before setting display properties, as changing the default color triggers an update,
+  // and we don't want to perform an update without display properties set up).
+  if (generateNewDefaultColor)
+    {
+    segment->SetDefaultColor(defaultColor);
+    }
 
   colorTableNode->EndModify(wasModifyingColorTableNode);
   displayNode->EndModify(wasModifyingDisplayNode);

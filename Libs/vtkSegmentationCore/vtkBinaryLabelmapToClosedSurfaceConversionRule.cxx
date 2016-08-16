@@ -126,7 +126,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     || binaryLabelMapExtent[4] > binaryLabelMapExtent[5])
     {
     // empty labelmap
-    vtkErrorMacro("Convert: No polygons can be created, input image extent is empty");
+    vtkDebugMacro("Convert: No polygons can be created, input image extent is empty");
     return false;
     }
 

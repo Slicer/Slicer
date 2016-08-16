@@ -124,7 +124,8 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkDataObject* sour
     }
   if (closedSurfacePolyData->GetNumberOfPoints() < 2 || closedSurfacePolyData->GetNumberOfCells() < 2)
     {
-    vtkErrorMacro("Convert: Cannot create binary labelmap from surface with number of points: " << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
+    vtkDebugMacro("Convert: Cannot create binary labelmap from surface with number of points: "
+      << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
     return false;
     }
 

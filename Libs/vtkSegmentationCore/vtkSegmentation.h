@@ -262,7 +262,7 @@ public:
 
   /// Get all possible conversions between the master representation and a specified target representation
   void GetPossibleConversions(const std::string& targetRepresentationName,
-    vtkSegmentationConverter::ConversionPathAndCostListType &pathsCosts) { this->Converter->GetPossibleConversions(this->MasterRepresentationName, targetRepresentationName, pathsCosts); };
+    vtkSegmentationConverter::ConversionPathAndCostListType &pathsCosts);
 
   /// Set a conversion parameter to all rules having this parameter
   void SetConversionParameter(const std::string& name, const std::string& value) { this->Converter->SetConversionParameter(name, value); };
@@ -286,11 +286,11 @@ public:
 // Get/set methods
 public:
   /// Get master representation name
-  vtkGetStringMacro(MasterRepresentationName);
+  vtkGetMacro(MasterRepresentationName, std::string);
   /// Set master representation name.
   /// Need to make sure before setting the name that the newly set master representation exists in
   /// the segmentation! Use \sa CreateRepresentation for that.
-  virtual void SetMasterRepresentationName(const char* representationName);
+  virtual void SetMasterRepresentationName(const std::string& representationName);
 
 protected:
   /// Convert given segment along a specified path
@@ -313,8 +313,11 @@ protected:
   /// with the given name, then it is postfixed by "_1"
   std::string GenerateUniqueSegmentId(std::string id);
 
-  /// Enable/disable master representation modified event.
-  void SetMasterRepresentationModifiedEnabled(bool enabled);
+  /// Temporarily enable/disable master representation modified event.
+  /// \return Old value of MasterRepresentationModifiedEnabled.
+  /// In general, the old value should be restored after modified is temporarily disabled to ensure proper
+  /// state when calling SetMasterRepresentationModifiedEnabled in nested functions.
+  bool SetMasterRepresentationModifiedEnabled(bool enabled);
 
 protected:
   /// Callback function invoked when segment is modified.
@@ -338,7 +341,7 @@ protected:
   /// 1. This representation is saved on disk
   /// 2. If this representation is modified, the others are invalidated
   /// This value must be set by the creator of the segmentation object!
-  char* MasterRepresentationName;
+  std::string MasterRepresentationName;
 
   /// Converter instance
   vtkSegmentationConverter* Converter;
@@ -348,6 +351,9 @@ protected:
 
   /// Command handling master representation modified events
   vtkCallbackCommand* MasterRepresentationCallbackCommand;
+
+  /// Modified events of  master representations are observed
+  bool MasterRepresentationModifiedEnabled;
 
   friend class vtkSlicerSegmentationsModuleLogic;
   friend class qMRMLSegmentEditorWidgetPrivate;

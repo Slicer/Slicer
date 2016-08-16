@@ -809,10 +809,10 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
 
   // If master representation is not binary labelmap, then cannot add
   // (this should have been done by the UI classes, notifying the users about hazards of changing the master representation)
-  if ( !segmentationNode->GetSegmentation()->GetMasterRepresentationName()
-    || strcmp(segmentationNode->GetSegmentation()->GetMasterRepresentationName(), vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) )
+  if ( segmentationNode->GetSegmentation()->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Master representation of the target segmentation node " << (segmentationNode->GetName()?segmentationNode->GetName():"NULL") << " is not binary labelmap!");
+    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Master representation of the target segmentation node "
+      << (segmentationNode->GetName()?segmentationNode->GetName():"NULL") << " is not binary labelmap!");
     return false;
     }
 
@@ -930,10 +930,10 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
 
   // If master representation is not binary labelmap, then cannot add
   // (this should have been done by the UI classes, notifying the users about hazards of changing the master representation)
-  if ( !segmentationNode->GetSegmentation()->GetMasterRepresentationName()
-    || strcmp(segmentationNode->GetSegmentation()->GetMasterRepresentationName(), vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) )
+  if (segmentationNode->GetSegmentation()->GetMasterRepresentationName() != vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName())
     {
-    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Master representation of the target segmentation node " << (segmentationNode->GetName()?segmentationNode->GetName():"NULL") << " is not binary labelmap!");
+    vtkErrorWithObjectMacro(segmentationNode, "ImportLabelmapToSegmentationNode: Master representation of the target segmentation node "
+      << (segmentationNode->GetName()?segmentationNode->GetName():"NULL") << " is not binary labelmap!");
     return false;
     }
 
@@ -1279,7 +1279,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(vtkOrientedIm
   //    Disable modified event so that the consequently emitted MasterRepresentationModified event that causes
   //    removal of all other representations in all segments does not get activated. Instead, explicitly create
   //    representations for the edited segment that the other segments have.
-  segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(false);
+  bool wasMasterRepresentationModifiedEnabled = segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(false);
   segmentLabelmap->ShallowCopy(newSegmentLabelmap);
 
   // 3. Shrink the image data extent to only contain the effective data (extent of non-zero voxels)
@@ -1320,7 +1320,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetBinaryLabelmapToSegment(vtkOrientedIm
     }
 
   // Re-enable master representation modified event
-  segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(true);
+  segmentationNode->GetSegmentation()->SetMasterRepresentationModifiedEnabled(wasMasterRepresentationModifiedEnabled);
 
   return true;
 }

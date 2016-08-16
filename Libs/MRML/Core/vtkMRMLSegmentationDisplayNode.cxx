@@ -841,10 +841,9 @@ std::string vtkMRMLSegmentationDisplayNode::GetDisplayRepresentationName3D()
     }
 
   // Otherwise if master representation is poly data then use that
-  char* masterRepresentationName = segmentation->GetMasterRepresentationName();
-  if (masterRepresentationName && segmentation->IsMasterRepresentationPolyData())
+  if (segmentation->IsMasterRepresentationPolyData())
     {
-    return std::string(masterRepresentationName);
+    return std::string(segmentation->GetMasterRepresentationName());
     }
 
   // Otherwise return first poly data representation if any
