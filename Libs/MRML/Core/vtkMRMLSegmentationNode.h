@@ -120,16 +120,17 @@ public:
   /// The "other order", i.e. when the volume is loaded first and the segmentation second,
   /// should be handled at loading time of the segmentation (because then we already know about the volume)
   /// \param shNodeWithNewUID Subject hierarchy node that just got a new UID
-  void OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchyNode* shNodeWithNewUID);
+  virtual void OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchyNode* shNodeWithNewUID);
 
   /// Get subject hierarchy node belonging to a certain segment
-  vtkMRMLSubjectHierarchyNode* GetSegmentSubjectHierarchyNode(std::string segmentID);
+  virtual vtkMRMLSubjectHierarchyNode* GetSegmentSubjectHierarchyNode(std::string segmentID);
 
 #ifndef __VTK_WRAP__
 //BTX
   /// Build merged labelmap of the binary labelmap representations of the specified segments
   /// \param mergedImageData Output image data for the merged labelmap image data
-  /// \param extentComputationMode Determines how to compute extents (EXTENT_REFERENCE_GEOMETRY, EXTENT_UNION_OF_SEGMENTS, or EXTENT_UNION_OF_EFFECTIVE_SEGMENTS).
+  /// \param extentComputationMode Determines how to compute extents (EXTENT_REFERENCE_GEOMETRY, EXTENT_UNION_OF_SEGMENTS,
+  ///   EXTENT_UNION_OF_SEGMENTS_PADDED, EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, or EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED).
   /// \param mergedLabelmapGeometry Determines geometry of merged labelmap if not NULL, automatically determined otherwise
   /// \param segmentIDs List of IDs of segments to include in the merged labelmap. If empty or missing, then all segments are included
   /// \return Success flag
@@ -141,10 +142,11 @@ public:
   /// The last argument specifying the list of segments to be included is omitted, which means that
   /// all the segments will be merged.
   /// \sa GenerateMergedLabelmap
-  bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry);
+  virtual bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
+    vtkOrientedImageData* mergedLabelmapGeometry = NULL, vtkStringArray* segmentIDs = NULL);
 
   /// Re-generate displayed merged labelmap
-  void ReGenerateDisplayedMergedLabelmap();
+  virtual void ReGenerateDisplayedMergedLabelmap();
 
   /// Make sure image data of a volume node has extents that start at zero.
   /// This needs to be done for compatibility reasons, as many components assume the extent has a form of
@@ -154,9 +156,8 @@ public:
   /// Expose reference identifier to get the volume node defining the reference image geometry if any
   static std::string GetReferenceImageGeometryReferenceRole() { return "referenceImageGeometryRef"; };
   /// Set reference image geometry conversion parameter from the volume node, keeping reference
-  void SetReferenceImageGeometryParameterFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode);
+  virtual void SetReferenceImageGeometryParameterFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode);
 
-public:
   /// Get segmentation object
   vtkGetObjectMacro(Segmentation, vtkSegmentation);
   /// Set and observe segmentation object
@@ -172,7 +173,7 @@ public:
   /// Generate merged labelmap image data for display if needed
   virtual vtkImageData* GetImageData();
   /// Query existence or merged labelmap. Do not trigger merged labelmap generation
-  bool HasMergedLabelmap();
+  virtual bool HasMergedLabelmap();
 
   /// Set default reference terminology color table node when node is added to a scene
   virtual void SetSceneReferences();

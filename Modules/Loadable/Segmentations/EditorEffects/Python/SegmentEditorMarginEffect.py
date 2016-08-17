@@ -56,7 +56,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     return slicer.util.mainWindow().cursor
 
   def setMRMLDefaults(self):
-    self.scriptedEffect.setParameter("MarginSizeMm", 3)
+    self.scriptedEffect.setParameterDefault("MarginSizeMm", 3)
 
   def getKernelSizePixel(self):
     selectedSegmentLabelmapSpacing = [1.0, 1.0, 1.0]

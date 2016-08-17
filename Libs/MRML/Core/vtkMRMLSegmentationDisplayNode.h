@@ -27,6 +27,7 @@
 #include <set>
 
 class vtkMRMLColorTableNode;
+class vtkStringArray;
 class vtkVector3d;
 
 /// \ingroup Segmentations
@@ -228,6 +229,9 @@ public:
   /// Set all three types of segment opacity by segment ID
   void SetSegmentOpacity(std::string segmentID, double opacity);
   void SetAllSegmentsOpacity(double opacity, bool changeVisibleSegmentsOnly = false);
+
+  /// Get all visible segment IDs.
+  void GetVisibleSegmentIDs(vtkStringArray* segmentIDs);
 
 protected:
   /// Set segment color in associated color table

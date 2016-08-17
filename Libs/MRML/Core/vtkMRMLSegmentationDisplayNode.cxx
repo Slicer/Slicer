@@ -34,11 +34,12 @@
 #include "vtkSegmentationConverterFactory.h"
 
 // VTK includes
+#include <vtkLookupTable.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
-#include <vtkVersion.h>
-#include <vtkLookupTable.h>
+#include <vtkStringArray.h>
 #include <vtkVector.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <algorithm>
@@ -958,5 +959,22 @@ void vtkMRMLSegmentationDisplayNode::GetAllSegmentIDs(std::vector<std::string>& 
         ++segmentIDIt;
         }
       }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmentIDs)
+{
+  if (segmentIDs == NULL)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs failed: invalid segmentIDs");
+    return;
+    }
+  std::vector<std::string> segmentIDsVector;
+  this->GetAllSegmentIDs(segmentIDsVector, true);
+  segmentIDs->Reset();
+  for (std::vector<std::string>::iterator it = segmentIDsVector.begin(); it != segmentIDsVector.end(); ++it)
+    {
+    segmentIDs->InsertNextValue(*it);
     }
 }

@@ -105,8 +105,8 @@ void qSlicerSegmentEditorAbstractIslandEffect::setupOptionsFrame()
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractIslandEffect::setMRMLDefaults()
 {
-  this->setCommonParameter(this->fullyConnectedParameterName(), 1);
-  this->setCommonParameter(this->minimumSizeParameterName(), 1000);
+  this->setCommonParameterDefault(this->fullyConnectedParameterName(), 1);
+  this->setCommonParameterDefault(this->minimumSizeParameterName(), 1000);
 }
 
 //-----------------------------------------------------------------------------

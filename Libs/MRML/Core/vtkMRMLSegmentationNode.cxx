@@ -39,16 +39,18 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
-#include <vtkIntArray.h>
-#include <vtkNew.h>
-#include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
-#include <vtkMath.h>
-#include <vtkMatrix4x4.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
-#include <vtkTransform.h>
+#include <vtkIntArray.h>
 #include <vtkLookupTable.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
+#include <vtkMatrix4x4.h>
+#include <vtkTransform.h>
 
 // STD includes
 #include <algorithm>
@@ -989,7 +991,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
     || imageDataExtent[0] != referenceExtent[0] || imageDataExtent[1] != referenceExtent[1] || imageDataExtent[2] != referenceExtent[2]
     || imageDataExtent[3] != referenceExtent[3] || imageDataExtent[4] != referenceExtent[4] || imageDataExtent[5] != referenceExtent[5] )
     {
-    if (mergedImageData->GetScalarType() != VTK_SHORT)
+    if (mergedImageData->GetPointData()->GetScalars() && mergedImageData->GetScalarType() != VTK_SHORT)
       {
       vtkWarningMacro("GenerateMergedLabelmap: Merged image data scalar type is not short. Allocating using short.");
       }
@@ -1085,9 +1087,18 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry)
+bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
+  vtkOrientedImageData* mergedLabelmapGeometry /*=NULL*/, vtkStringArray* segmentIDs /*=NULL*/)
 {
-  return this->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry);
+  std::vector<std::string> segmentIDsVector;
+  if (segmentIDs)
+    {
+    for (int i = 0; i < segmentIDs->GetNumberOfValues(); i++)
+      {
+      segmentIDsVector.push_back(segmentIDs->GetValue(i));
+      }
+    }
+  return this->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDsVector);
 }
 
 //---------------------------------------------------------------------------

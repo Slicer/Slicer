@@ -122,8 +122,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     pass # For the sake of example
 
   def setMRMLDefaults(self):
-    self.scriptedEffect.setParameter("MinimumThreshold", 0.)
-    self.scriptedEffect.setParameter("MaximumThreshold", 0)
+    self.scriptedEffect.setParameterDefault("MinimumThreshold", 0.)
+    self.scriptedEffect.setParameterDefault("MaximumThreshold", 0)
 
   def updateGUIFromMRML(self):
     self.thresholdSlider.blockSignals(True)

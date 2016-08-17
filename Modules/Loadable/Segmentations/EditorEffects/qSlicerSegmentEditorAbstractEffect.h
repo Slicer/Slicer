@@ -243,6 +243,9 @@ public:
   /// \param name Parameter name string
   /// \param value Parameter value string
   Q_INVOKABLE void setParameter(QString name, QString value);
+  /// Set parameter only if it is not defined already.
+  /// \sa setParameter
+  Q_INVOKABLE void setParameterDefault(QString name, QString value);
   /// Set parameters that are common for multiple effects. Typically used by base class effects, such
   ///   as label \sa setParameter
   /// By default the parameter names are prefixed for each effect, so they are unique for effects.
@@ -250,23 +253,44 @@ public:
   /// Note: Parameter getter functions look for effect parameters first, then common parameter if the
   ///   effect-specific is not found.
   Q_INVOKABLE void setCommonParameter(QString name, QString value);
+  /// Set parameter only if it is not defined already.
+  /// \sa setCommonParameter
+  Q_INVOKABLE void setCommonParameterDefault(QString name, QString value);
 
   /// Convenience function to set integer parameter
   /// \param name Parameter name string
   /// \param value Parameter value integer
   Q_INVOKABLE void setParameter(QString name, int value);
+  /// Set parameter only if it is not defined already.
+  /// \sa setParameter
+  Q_INVOKABLE void setParameterDefault(QString name, int value);
   /// Convenience function to set integer common parameter \sa setCommonParameter
   Q_INVOKABLE void setCommonParameter(QString name, int value);
+  /// Set parameter only if it is not defined already.
+  /// \sa setCommonParameter
+  Q_INVOKABLE void setCommonParameterDefault(QString name, int value);
 
   /// Convenience function to set double parameter
   /// \param name Parameter name string
   /// \param value Parameter value double
   Q_INVOKABLE void setParameter(QString name, double value);
+  /// Set parameter only if it is not defined already.
+  /// \sa setParameter
+  Q_INVOKABLE void setParameterDefault(QString name, double value);
   /// Convenience function to set double common parameter \sa setCommonParameter
   Q_INVOKABLE void setCommonParameter(QString name, double value);
+  /// Set parameter only if it is not defined already.
+  /// \sa setCommonParameter
+  Q_INVOKABLE void setCommonParameterDefault(QString name, double value);
 
 // Utility functions
 public:
+  /// Returns true if the effect-specific parameter is already defined.
+  Q_INVOKABLE bool parameterDefined(QString name);
+
+  /// Returns true if the common parameter is already defined.
+  Q_INVOKABLE bool commonParameterDefined(QString name);
+
   Q_INVOKABLE vtkOrientedImageData* modifierLabelmap();
 
   /// Reset modifier labelmap to default (resets geometry, clears content)

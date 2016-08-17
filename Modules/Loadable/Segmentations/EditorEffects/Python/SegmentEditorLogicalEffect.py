@@ -82,9 +82,9 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     return slicer.util.mainWindow().cursor
 
   def setMRMLDefaults(self):
-    self.scriptedEffect.setParameter("Operation", LOGICAL_COPY)
-    self.scriptedEffect.setParameter("ModifierSegmentID", "")
-    self.scriptedEffect.setParameter("BypassMasking", 1)
+    self.scriptedEffect.setParameterDefault("Operation", LOGICAL_COPY)
+    self.scriptedEffect.setParameterDefault("ModifierSegmentID", "")
+    self.scriptedEffect.setParameterDefault("BypassMasking", 1)
 
   def activate(self):
     # TODO: is this needed? probably it should be called for all effects on activation

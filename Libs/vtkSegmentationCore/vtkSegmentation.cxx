@@ -1241,12 +1241,14 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   vtkSmartPointer<vtkOrientedImageData> commonGeometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
   vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryString, commonGeometryImage, false);
 
-  if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS)
+  if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS
+    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED)
     {
     // Determine extent that contains all segments
     int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
     this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, mergedSegmentIDs,
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED,
+      extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
     commonGeometryImage->SetExtent(commonGeometryExtent);
     }
 
@@ -1264,7 +1266,8 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 }
 
 //-----------------------------------------------------------------------------
-void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage, const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/, bool computeEffectiveExtent /*=false*/)
+void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
+  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/, bool computeEffectiveExtent /*=false*/, bool addPadding /*=false*/)
 {
   // If segment IDs list is empty then include all segments
   std::vector<std::string> mergedSegmentIDs;
@@ -1341,7 +1344,20 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
           commonGeometryExtent[i * 2 + 1] = std::max(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2 + 1], commonGeometryExtent[i * 2 + 1]);
           }
         }
-      // TODO: maybe calculate effective extent to make sure the data is as compact as possible? (saving may be a good time to make segments more compact)
+      }
+    }
+  if (addPadding)
+    {
+    // Add single-voxel padding
+    for (int i = 0; i < 3; i++)
+      {
+      if (commonGeometryExtent[i * 2]>commonGeometryExtent[i * 2 + 1])
+        {
+        // empty along this dimension, do not pad
+        continue;
+        }
+      commonGeometryExtent[i * 2] -= 1;
+      commonGeometryExtent[i * 2 + 1] += 1;
       }
     }
 }

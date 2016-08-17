@@ -773,6 +773,36 @@ void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, QString valu
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::parameterDefined(QString name)
+{
+  QString attributeName = QString("%1.%2").arg(this->name()).arg(name);
+  return this->commonParameterDefined(attributeName);
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::commonParameterDefined(QString name)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (!d->ParameterSetNode)
+    {
+    return false;
+    }
+  const char* existingValue = d->ParameterSetNode->GetAttribute(name.toLatin1().constData());
+  return (existingValue != NULL && strlen(existingValue) > 0);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, QString value)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (this->parameterDefined(name))
+    {
+    return;
+    }
+  this->setParameter(name, value);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, QString value)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
@@ -811,9 +841,31 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, QStrin
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name, QString value)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (this->commonParameterDefined(name))
+    {
+    return;
+    }
+  this->setCommonParameter(name, value);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, int value)
 {
   this->setParameter(name, QString::number(value));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, int value)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (this->parameterDefined(name))
+    {
+    return;
+    }
+  this->setParameter(name, value);
 }
 
 //-----------------------------------------------------------------------------
@@ -823,15 +875,48 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, int va
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name, int value)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (this->commonParameterDefined(name))
+    {
+    return;
+    }
+  this->setCommonParameter(name, value);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, double value)
 {
   this->setParameter(name, QString::number(value));
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, double value)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (this->parameterDefined(name))
+    {
+    return;
+    }
+  this->setParameter(name, value);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, double value)
 {
   this->setCommonParameter(name, QString::number(value));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name, double value)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  if (this->commonParameterDefined(name))
+    {
+    return;
+    }
+  this->setCommonParameter(name, value);
 }
 
 //-----------------------------------------------------------------------------
