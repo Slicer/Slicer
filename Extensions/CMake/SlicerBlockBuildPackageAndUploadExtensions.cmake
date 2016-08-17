@@ -112,7 +112,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
   else()
     set(ext_add_project True)
     set(ext_ep_options_repository)
-    set(ext_ep_cmake_args)
     set(ext_revision ${EXTENSION_EXT_SCMREVISION})
     if("${EXTENSION_EXT_SCM}" STREQUAL "git")
       set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
@@ -121,8 +120,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
       endif()
       set(ext_ep_options_repository
         GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${ext_revision})
-      list(APPEND ext_ep_cmake_args
-         -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
     elseif("${EXTENSION_EXT_SCM}" STREQUAL "svn")
       set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
       if("${ext_revision}" STREQUAL "")
@@ -130,8 +127,6 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
       endif()
       set(ext_ep_options_repository
         SVN_REPOSITORY ${EXTENSION_EXT_SCMURL} SVN_REVISION -r ${ext_revision})
-      list(APPEND ext_ep_cmake_args
-         -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
       if(NOT ${EXTENSION_EXT_SVNUSERNAME} STREQUAL "")
          list(APPEND ext_ep_options_repository
            SVN_USERNAME "${EXTENSION_EXT_SVNUSERNAME}"
@@ -200,6 +195,10 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         #-----------------------------------------------------------------------------
         # Slicer_UPLOAD_EXTENSIONS: FALSE
         #-----------------------------------------------------------------------------
+        set(ext_ep_cmake_args
+          -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+          -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE}
+          )
         foreach(dep ${EXTENSION_DEPENDS})
           list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${${dep}_BINARY_DIR}/${${dep}_BUILD_SUBDIRECTORY})
         endforeach()
