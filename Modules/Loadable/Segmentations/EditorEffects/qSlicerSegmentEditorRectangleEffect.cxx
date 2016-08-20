@@ -322,11 +322,10 @@ bool qSlicerSegmentEditorRectangleEffect::processInteractionEvents(
     vtkOrientedImageData* modifierLabelmap = defaultModifierLabelmap();
     if (lines->GetNumberOfCells() > 0 && modifierLabelmap)
       {
-      //TODO:
-      //self.logic.undoRedo = self.undoRedo
+      this->saveStateForUndo();
       this->appendPolyMask(modifierLabelmap, rectangle->PolyData, sliceWidget);
+      this->modifySelectedSegmentByLabelmap(modifierLabelmap, ModificationModeAdd);
       }
-    this->modifySelectedSegmentByLabelmap(modifierLabelmap, ModificationModeAdd);
     abortEvent = true;
     }
   return abortEvent;

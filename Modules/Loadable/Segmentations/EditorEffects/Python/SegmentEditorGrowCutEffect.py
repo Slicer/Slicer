@@ -60,8 +60,8 @@ Minimum two segments are required. If segments overlap, segment higher in the se
         return
 
     slicer.util.showStatusMessage("Running GrowCut...", 2000)
-    #TODO:
-    #self.logic.undoRedo = self.undoRedo
+    self.scriptedEffect.saveStateForUndo()
+
     self.growCut()
     slicer.util.showStatusMessage("GrowCut Finished", 2000)
 

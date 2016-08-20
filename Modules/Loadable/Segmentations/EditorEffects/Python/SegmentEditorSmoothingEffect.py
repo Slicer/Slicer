@@ -167,9 +167,8 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     try:
       # This can be a long operation - indicate it to the user
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
-      #slicer.app.processEvents()  # force update
 
-      #self.scriptedEffect.saveStateForUndo()
+      self.scriptedEffect.saveStateForUndo()
 
       smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
       if smoothingMethod == JOINT_TAUBIN:

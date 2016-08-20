@@ -49,9 +49,7 @@ class SegmentEditorLevelTracingEffect(AbstractScriptedSegmentEditorLabelEffect):
       return abortEvent
 
     if eventId == vtk.vtkCommand.LeftButtonPressEvent:
-      # Save state for undo
-      #TODO:
-      # self.logic.undoRedo = self.undoRedo
+      self.scriptedEffect.saveStateForUndo()
 
       # Get modifier labelmap
       import vtkSegmentationCorePython as vtkSegmentationCore

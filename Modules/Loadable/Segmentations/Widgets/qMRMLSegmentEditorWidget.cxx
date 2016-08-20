@@ -28,6 +28,7 @@
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkMRMLSegmentEditorNode.h"
 #include "vtkSegmentation.h"
+#include "vtkSegmentationHistory.h"
 #include "vtkSegment.h"
 #include "vtkOrientedImageData.h"
 #include "vtkOrientedImageDataResample.h"
@@ -176,6 +177,7 @@ public:
   vtkWeakPointer<vtkMRMLSegmentEditorNode> ParameterSetNode;
 
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
+  vtkSmartPointer<vtkSegmentationHistory> SegmentationHistory;
 
   vtkWeakPointer<vtkMRMLScalarVolumeNode> MasterVolumeNode;
 
@@ -237,6 +239,7 @@ qMRMLSegmentEditorWidgetPrivate::qMRMLSegmentEditorWidgetPrivate(qMRMLSegmentEdi
   this->MaskLabelmap = vtkOrientedImageData::New();
   this->SelectedSegmentLabelmap = vtkOrientedImageData::New();
   this->ReferenceGeometryImage = vtkOrientedImageData::New();
+  this->SegmentationHistory = vtkSmartPointer<vtkSegmentationHistory>::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -310,6 +313,17 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   QObject::connect( this->MasterVolumeIntensityMaskCheckBox, SIGNAL(toggled(bool)), q, SLOT(onMasterVolumeIntensityMaskChecked(bool)));
   QObject::connect( this->MasterVolumeIntensityMaskRangeWidget, SIGNAL(valuesChanged(double,double)), q, SLOT(onMasterVolumeIntensityMaskRangeChanged(double,double)));
   QObject::connect( this->OverwriteModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onOverwriteModeChanged(int)));
+
+  QObject::connect( this->UndoButton, SIGNAL(clicked()), q, SLOT(onUndo()));
+  QObject::connect( this->RedoButton, SIGNAL(clicked()), q, SLOT(onRedo()));
+
+  q->qvtkConnect(this->SegmentationHistory, vtkCommand::ModifiedEvent,
+    q, SLOT(onSegmentationHistoryChanged()));
+
+  // Undo/redo is not yet optimized for speed or performance
+  // therefore disable it by default for now.
+  // TODO: enable by default after optimizations are completed.
+  q->setUndoEnabled(false);
 
   // Widget properties
   this->SegmentsTableView->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -421,7 +435,8 @@ void qMRMLSegmentEditorWidgetPrivate::initializeEffect(qSlicerSegmentEditorAbstr
   // introducing a direct dependency of the effect on the widget.
   effect->setCallbackSlots(q,
     SLOT(setActiveEffectByName(QString)),
-    SLOT(updateVolume(void*,bool&)));
+    SLOT(updateVolume(void*,bool&)),
+    SLOT(saveStateForUndo()));
 
   effect->setVolumes(this->AlignedMasterVolume, this->ModifierLabelmap, this->MaskLabelmap, this->SelectedSegmentLabelmap, this->ReferenceGeometryImage);
 
@@ -1066,6 +1081,7 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded, this, SLOT(onSegmentAddedRemoved()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved, this, SLOT(onSegmentAddedRemoved()));
     d->SegmentationNode = segmentationNode;
+    d->SegmentationHistory->SetSegmentation(d->SegmentationNode ? d->SegmentationNode->GetSegmentation() : NULL);
 
     bool wasBlocked = d->MRMLNodeComboBox_Segmentation->blockSignals(true);
     d->MRMLNodeComboBox_Segmentation->setCurrentNode(d->SegmentationNode);
@@ -1725,6 +1741,8 @@ void qMRMLSegmentEditorWidget::onAddSegment()
     return;
     }
 
+  d->SegmentationHistory->SaveState();
+
   // Create empty segment in current segmentation
   std::string addedSegmentID = segmentationNode->GetSegmentation()->AddEmptySegment();
 
@@ -1754,6 +1772,8 @@ void qMRMLSegmentEditorWidget::onRemoveSegment()
     {
     return;
     }
+
+  d->SegmentationHistory->SaveState();
 
   // Remove segment
   segmentationNode->GetSegmentation()->RemoveSegment(selectedSegmentID);
@@ -2060,6 +2080,16 @@ void qMRMLSegmentEditorWidget::setActiveEffectByName(QString effectName)
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::saveStateForUndo()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (d->SegmentationHistory->GetMaximumNumberOfStates() > 0)
+    {
+    d->SegmentationHistory->SaveState();
+    }
+}
+
+//---------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::updateVolume(void* volumeToUpdate, bool& success)
 {
   Q_D(qMRMLSegmentEditorWidget);
@@ -2235,4 +2265,76 @@ void qMRMLSegmentEditorWidget::setMasterVolumeNodeSelectorVisible(bool visible)
   Q_D(qMRMLSegmentEditorWidget);
   d->MRMLNodeComboBox_MasterVolume->setVisible(visible);
   d->label_MasterVolume->setVisible(visible);
+}
+
+//-----------------------------------------------------------------------------
+bool qMRMLSegmentEditorWidget::undoEnabled() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return (d->UndoButton->isVisible() || d->RedoButton->isVisible());
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setUndoEnabled(bool enabled)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (enabled)
+    {
+    d->SegmentationHistory->RemoveAllStates();
+    }
+  d->UndoButton->setVisible(enabled);
+  d->RedoButton->setVisible(enabled);
+}
+
+//-----------------------------------------------------------------------------
+int qMRMLSegmentEditorWidget::maximumNumberOfUndoStates() const
+{
+  Q_D(const qMRMLSegmentEditorWidget);
+  return d->SegmentationHistory->GetMaximumNumberOfStates();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::setMaximumNumberOfUndoStates(int maxNumberOfStates)
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->SegmentationHistory->SetMaximumNumberOfStates(maxNumberOfStates);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onUndo()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  if (d->SegmentationNode == NULL)
+    {
+    return;
+    }
+  d->SegmentationHistory->RestorePreviousState();
+
+  // Trigger display update
+  // TODO: use proper event observation instead (it would handle multiple display nodes, etc)
+  if (d->SegmentationNode && d->SegmentationNode->GetDisplayNode())
+    {
+    d->SegmentationNode->GetDisplayNode()->Modified();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onRedo()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->SegmentationHistory->RestoreNextState();
+  // Trigger display update
+  // TODO: use proper event observation instead (it would handle multiple display nodes, etc)
+  if (d->SegmentationNode && d->SegmentationNode->GetDisplayNode())
+    {
+    d->SegmentationNode->GetDisplayNode()->Modified();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentEditorWidget::onSegmentationHistoryChanged()
+{
+  Q_D(qMRMLSegmentEditorWidget);
+  d->UndoButton->setEnabled(d->SegmentationHistory->IsRestorePreviousStateAvailable());
+  d->RedoButton->setEnabled(d->SegmentationHistory->IsRestoreNextStateAvailable());
 }

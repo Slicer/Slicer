@@ -66,8 +66,11 @@ public:
   ~qSlicerSegmentEditorAbstractEffectPrivate();
   void scheduleRender(qMRMLWidget* viewWidget);
 signals:
+  // Signals that are used for effects to request operations from the editor
+  // without having any dependency on the editor.
   void selectEffectSignal(QString);
   void updateVolumeSignal(void*,bool&);
+  void saveStateForUndoSignal();
 public:
   /// Segment editor parameter set node
   vtkWeakPointer<vtkMRMLSegmentEditorNode> ParameterSetNode;

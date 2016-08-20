@@ -373,10 +373,8 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintApply(qMRMLWidget* viewWidget)
     return;
     }
 
-  //TODO:
-  //if self.paintCoordinates != []:
-  //  if self.undoRedo:
-  //    self.undoRedo.saveState()
+  q->saveStateForUndo();
+
   if (q->integerParameter("BrushPixelMode"))
     {
     this->paintPixels(viewWidget, this->PaintCoordinates_World);

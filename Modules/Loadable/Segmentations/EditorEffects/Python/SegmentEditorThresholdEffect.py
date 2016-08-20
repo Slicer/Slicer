@@ -161,9 +161,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       min = self.scriptedEffect.doubleParameter("MinimumThreshold")
       max = self.scriptedEffect.doubleParameter("MaximumThreshold")
 
-      # Save state for undo
-      #TODO:
-      #self.undoRedo.saveState()
+      self.scriptedEffect.saveStateForUndo()
 
       # Perform thresholding
       thresh = vtk.vtkImageThreshold()

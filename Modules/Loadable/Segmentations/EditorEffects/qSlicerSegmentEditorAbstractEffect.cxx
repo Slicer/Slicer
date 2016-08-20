@@ -198,11 +198,13 @@ bool qSlicerSegmentEditorAbstractEffect::active()
 
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffect::setCallbackSlots(QObject* receiver, const char* selectEffectSlot, const char* updateVolumeSlot)
+void qSlicerSegmentEditorAbstractEffect::setCallbackSlots(QObject* receiver, const char* selectEffectSlot,
+  const char* updateVolumeSlot, const char* saveStateForUndoSlot)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
   QObject::connect(d, SIGNAL(selectEffectSignal(QString)), receiver, selectEffectSlot);
   QObject::connect(d, SIGNAL(updateVolumeSignal(void*,bool&)), receiver, updateVolumeSlot);
+  QObject::connect(d, SIGNAL(saveStateForUndoSignal()), receiver, saveStateForUndoSlot);
 }
 
 //-----------------------------------------------------------------------------
@@ -1002,6 +1004,13 @@ vtkOrientedImageData* qSlicerSegmentEditorAbstractEffect::referenceGeometryImage
     return NULL;
     }
   return d->ReferenceGeometryImage;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::saveStateForUndo()
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  emit d->saveStateForUndoSignal();
 }
 
 //-----------------------------------------------------------------------------

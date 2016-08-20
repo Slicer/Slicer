@@ -231,9 +231,7 @@ class DrawPipeline:
     idArray.InsertNextTuple1(p)
     idArray.SetTuple1(0, idArray.GetNumberOfTuples() - 1)
 
-    # Save state for undo
-    #TODO:
-    # self.logic.undoRedo = self.undoRedo
+    self.scriptedEffect.saveStateForUndo()
 
     # Get modifier labelmap
     import vtkSegmentationCorePython as vtkSegmentationCore

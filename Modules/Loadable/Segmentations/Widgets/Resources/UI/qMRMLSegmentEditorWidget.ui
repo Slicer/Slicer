@@ -157,11 +157,77 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="EffectsGroupBox">
-     <property name="title">
-      <string>Effects</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QGroupBox" name="EffectsGroupBox">
+       <property name="title">
+        <string>Effects</string>
+       </property>
+       <zorder>AddSegmentButton</zorder>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QToolButton" name="UndoButton">
+         <property name="toolTip">
+          <string>Undo last operation</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+           <normaloff>:/Icons/Medium/SlicerUndo.png</normaloff>:/Icons/Medium/SlicerUndo.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="RedoButton">
+         <property name="toolTip">
+          <string>Redo last operation</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+           <normaloff>:/Icons/Medium/SlicerRedo.png</normaloff>:/Icons/Medium/SlicerRedo.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QGroupBox" name="OptionsGroupBox">
@@ -310,6 +376,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLSegmentsTableView</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSegmentsTableView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCheckBox</class>
    <extends>QCheckBox</extends>
    <header>ctkCheckBox.h</header>
@@ -331,15 +403,10 @@
    <extends>QWidget</extends>
    <header>ctkRangeWidget.h</header>
   </customwidget>
-  <customwidget>
-   <class>qMRMLSegmentsTableView</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLSegmentsTableView.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../qSlicerSegmentationsModuleWidgets.qrc"/>
+  <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -61,6 +61,8 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   QVTK_OBJECT
   Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
   Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible)
+  Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
+  Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
 
 public:
   typedef qMRMLWidget Superclass;
@@ -112,6 +114,12 @@ public:
   /// Show/hide the master volume node selector widget.
   bool masterVolumeNodeSelectorVisible() const;
 
+  /// Undo/redo enabled.
+  bool undoEnabled() const;
+
+  /// Get amximum number of saved undo/redo states.
+  int maximumNumberOfUndoStates() const;
+
 public slots:
   /// Set the MRML \a scene associated with the widget
   virtual void setMRMLScene(vtkMRMLScene* newScene);
@@ -134,6 +142,10 @@ public slots:
   /// Set active effect by name
   Q_INVOKABLE void setActiveEffectByName(QString effectName);
 
+  /// Save current segmentation before performing an edit operation
+  /// to allow reverting to the current state by using undo
+  void saveStateForUndo();
+
   /// Update modifierLabelmap, maskLabelmap, or alignedMasterVolumeNode
   Q_INVOKABLE void updateVolume(void* volumePtr, bool& success);
 
@@ -142,6 +154,12 @@ public slots:
 
   /// Show/hide the master volume node selector widget.
   void setMasterVolumeNodeSelectorVisible(bool);
+
+  /// Undo/redo enabled.
+  void setUndoEnabled(bool);
+
+  /// Set amximum number of saved undo/redo states.
+  void setMaximumNumberOfUndoStates(int);
 
 protected slots:
   /// Handles changing of current segmentation MRML node
@@ -178,10 +196,20 @@ protected slots:
   /// Changed selected overwriteable segments
   void onOverwriteModeChanged(int);
 
+  /// Clean up when scene is closed
   void onMRMLSceneEndCloseEvent();
 
-  // Sets default parameters in parameter set node (after setting or closing scene)
+  /// Sets default parameters in parameter set node (after setting or closing scene)
   void initializeParameterSetNode();
+
+  /// Restores previous saved state of the segmentation
+  void onUndo();
+
+  /// Restores next saved state of the segmentation
+  void onRedo();
+
+  /// Updates GUI if segmentation history is changed (e.g., undo/redo button states)
+  void onSegmentationHistoryChanged();
 
 protected:
   /// Callback function invoked when interaction happens

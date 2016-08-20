@@ -92,6 +92,8 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
 
   def onApply(self):
 
+    self.scriptedEffect.saveStateForUndo()
+
     # Get modifier labelmap and parameters
     modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
     selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()

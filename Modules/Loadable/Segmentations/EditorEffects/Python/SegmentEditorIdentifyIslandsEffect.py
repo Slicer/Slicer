@@ -42,8 +42,7 @@ class SegmentEditorIdentifyIslandsEffect(AbstractScriptedSegmentEditorIslandEffe
     return slicer.util.mainWindow().cursor
 
   def onApply(self):
-    #TODO:
-    #self.logic.undoRedo = self.undoRedo
+    self.scriptedEffect.saveStateForUndo()
 
     # Get parameters
     fullyConnected = self.scriptedEffect.integerParameter("FullyConnected")

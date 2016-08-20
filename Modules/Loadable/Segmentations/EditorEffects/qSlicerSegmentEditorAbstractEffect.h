@@ -220,9 +220,10 @@ public:
   Q_INVOKABLE void selectEffect(QString effectName);
 
   /// Connect callback signals. Callbacks are called by the editor effect to request operations from the editor widget.
-  /// selectEffectSlot: called from the active effect to initiate switching to another effect (or de-select).
-  /// updateVolumeSlot: called to request update of a volume (modifierLabelmap, alignedMasterVolume, maskLabelmap).
-  void setCallbackSlots(QObject* receiver, const char* selectEffectSlot, const char* updateVolumeSlot);
+  /// \param selectEffectSlot called from the active effect to initiate switching to another effect (or de-select).
+  /// \param updateVolumeSlot called to request update of a volume (modifierLabelmap, alignedMasterVolume, maskLabelmap).
+  /// \param saveStateForUndoSlot called to request saving of segmentation state for undo operation
+  void setCallbackSlots(QObject* receiver, const char* selectEffectSlot, const char* updateVolumeSlot, const char* saveStateForUndoSlot);
 
   /// Called by the editor widget.
   void setVolumes(vtkOrientedImageData* alignedMasterVolume, vtkOrientedImageData* modifierLabelmap,
@@ -306,6 +307,10 @@ public:
   /// Get image data of master volume aligned with the modifier labelmap.
   /// \return Pointer to the image data
   Q_INVOKABLE vtkOrientedImageData* masterVolumeImageData();
+
+  /// Signal to the editor that current state has to be saved (for allowing reverting
+  /// to current segmentation state by undo operation)
+  Q_INVOKABLE void saveStateForUndo();
 
   /// Get render window for view widget
   Q_INVOKABLE static vtkRenderWindow* renderWindow(qMRMLWidget* viewWidget);

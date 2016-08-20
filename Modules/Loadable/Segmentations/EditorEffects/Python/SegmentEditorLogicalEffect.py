@@ -173,6 +173,8 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
 
   def onApply(self):
 
+    self.scriptedEffect.saveStateForUndo()
+
     import vtkSegmentationCorePython as vtkSegmentationCore
 
     # Get modifier labelmap and parameters

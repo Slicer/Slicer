@@ -1017,14 +1017,6 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
     return true;
     }
 
-  // Get display node
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (!displayNode)
-    {
-    vtkErrorMacro("GenerateMergedLabelmap: No display node associated with segmentation!");
-    return false;
-    }
-
   // Create merged labelmap
   for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
     {
