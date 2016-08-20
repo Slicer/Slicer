@@ -169,6 +169,8 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
       qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
       #slicer.app.processEvents()  # force update
 
+      #self.scriptedEffect.saveStateForUndo()
+
       smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
       if smoothingMethod == JOINT_TAUBIN:
         self.smoothMultipleSegments()
@@ -186,10 +188,6 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
       # Get modifier labelmap
       modifierLabelmap = self.scriptedEffect.defaultModifierLabelmap()
       selectedSegmentLabelmap = self.scriptedEffect.selectedSegmentLabelmap()
-
-      # Save state for undo
-      #TODO:
-      #self.undoRedo.saveState()
 
       smoothingMethod = self.scriptedEffect.parameter("SmoothingMethod")
 
@@ -275,6 +273,15 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
       logging.error('Failed to apply smoothing: cannot get list of visible segments')
       return
 
+    segmentColorIndices = [] # list of [segmentId, colorIndex]
+    for i in range(visibleSegmentIds.GetNumberOfValues()):
+      segmentId = visibleSegmentIds.GetValue(i)
+      segment = segmentationNode.GetSegmentation().GetSegment(segmentId)
+      colorIndexStr = vtk.mutable("")
+      if not segment.GetTag(slicer.vtkMRMLSegmentationDisplayNode.GetColorIndexTag(), colorIndexStr):
+        logging.error("Joint smoothing: failed to get color index for segment " + segmentId)
+      segmentColorIndices.append([segmentId, int(colorIndexStr)])
+
     # Perform smoothing in voxel space
     ici = vtk.vtkImageChangeInformation()
     ici.SetInputData(mergedImage)
@@ -284,9 +291,11 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     # Convert labelmap to combined polydata
     convertToPolyData = vtk.vtkDiscreteMarchingCubes()
     convertToPolyData.SetInputConnection(ici.GetOutputPort())
-    startLabel = 1
-    endLabel = visibleSegmentIds.GetNumberOfValues()
-    convertToPolyData.GenerateValues(endLabel - startLabel + 1, startLabel, endLabel)
+    convertToPolyData.SetNumberOfContours(len(segmentColorIndices))
+    contourIndex = 0
+    for segmentId, colorIndex in segmentColorIndices:
+      convertToPolyData.SetValue(contourIndex, colorIndex)
+      contourIndex += 1
 
     # Low-pass filtering using Taubin's method
     smoothingFactor = self.scriptedEffect.doubleParameter("JointTaubinSmoothingFactor")
@@ -331,15 +340,15 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     imageToWorldMatrix = vtk.vtkMatrix4x4()
     mergedImage.GetImageToWorldMatrix(imageToWorldMatrix)
 
-    for i in range(visibleSegmentIds.GetNumberOfValues()):
-      threshold.ThresholdBetween(i+1, i+1)
+    for segmentId, colorIndex in segmentColorIndices:
+      threshold.ThresholdBetween(colorIndex, colorIndex)
       stencil.Update()
       smoothedBinaryLabelMap = vtkSegmentationCore.vtkOrientedImageData()
       smoothedBinaryLabelMap.ShallowCopy(stencil.GetOutput())
       smoothedBinaryLabelMap.SetImageToWorldMatrix(imageToWorldMatrix)
       # Write results to segments directly, bypassing masking
       slicer.vtkSlicerSegmentationsModuleLogic.SetBinaryLabelmapToSegment(smoothedBinaryLabelMap,
-        segmentationNode, visibleSegmentIds.GetValue(i), slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, smoothedBinaryLabelMap.GetExtent())
+        segmentationNode, segmentId, slicer.vtkSlicerSegmentationsModuleLogic.MODE_REPLACE, smoothedBinaryLabelMap.GetExtent())
 
 MEDIAN = 'MEDIAN'
 GAUSSIAN = 'GAUSSIAN'
