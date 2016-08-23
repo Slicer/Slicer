@@ -21,16 +21,19 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings)
   # Configure script
 
   # Third party libraries may live at the superbuild top level, add them to
-  # the library paths and paths lists and adjust the number of paths size,
-  # otherwise just use the two local paths
+  # the paths lists and adjust the number of paths size, otherwise just use
+  # the local paths
   if (DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
     set(THIRD_PARTY_LIBRARYPATHS "3\\\\path=${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
 size=3")
     set(THIRD_PARTY_BINPATHS "3\\\\path=${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_BIN_DIR}/\${CMAKE_CFG_INTDIR}
 size=3")
+    set(THIRD_PARTY_PYTHONPATHS "4\\\\path=${EXTENSION_SUPERBUILD_BINARY_DIR}/${Slicer_THIRDPARTY_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+size=4")
   else()
     set(THIRD_PARTY_LIBRARYPATHS "size=2")
     set(THIRD_PARTY_BINPATHS "size=2")
+    set(THIRD_PARTY_PYTHONPATHS "size=3")
   endif()
 
   set(_additonal_settings_configure_script ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings-configure.cmake)
@@ -51,7 +54,7 @@ ${THIRD_PARTY_BINPATHS}
 1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
 2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
 3\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}
-size=3
+${THIRD_PARTY_PYTHONPATHS}
 \")
 ")
 
