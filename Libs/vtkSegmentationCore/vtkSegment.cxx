@@ -36,8 +36,9 @@
 #include <vtkDataSet.h>
 
 // STD includes
-#include <sstream>
 #include <algorithm>
+#include <set>
+#include <sstream>
 
 //----------------------------------------------------------------------------
 const double vtkSegment::SEGMENT_COLOR_VALUE_INVALID[4] = {0.5, 0.5, 0.5, 1.0};
@@ -154,34 +155,65 @@ void vtkSegment::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkSegment::DeepCopy(vtkSegment* aSegment)
+void vtkSegment::DeepCopy(vtkSegment* source)
 {
-  if (!aSegment)
+  if (!source)
     {
+    vtkErrorMacro("vtkSegment::DeepCopy failed: sourceSegment is invalid")
     return;
     }
 
-  // Copy properties
-  this->SetName(aSegment->Name);
-  this->SetDefaultColor(aSegment->DefaultColor);
-  this->Tags = aSegment->Tags;
+  this->DeepCopyMetadata(source);
 
   // Deep copy representations
+  std::set<std::string> representationNamesToKeep;
   RepresentationMap::iterator reprIt;
-  for (reprIt=aSegment->Representations.begin(); reprIt!=aSegment->Representations.end(); ++reprIt)
+  for (reprIt=source->Representations.begin(); reprIt!=source->Representations.end(); ++reprIt)
     {
     vtkDataObject* representationCopy =
       vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass( reprIt->second->GetClassName() );
     if (!representationCopy)
       {
       vtkErrorMacro("DeepCopy: Unable to construct representation type class '" << reprIt->second->GetClassName() << "'");
-      return;
+      continue;
       }
     representationCopy->DeepCopy(reprIt->second);
     this->AddRepresentation(reprIt->first, representationCopy);
-    representationCopy->Delete(); // Release ownership to segment only
+    representationCopy->Delete(); // this representation is now owned by the segment
+    representationNamesToKeep.insert(reprIt->first);
+    }
+
+  // Remove representations that are not in the source segment
+  for (reprIt = this->Representations.begin(); reprIt != this->Representations.end();
+    /*upon deletion the increment is done already, so don't increment here*/)
+    {
+    if (representationNamesToKeep.find(reprIt->first) == representationNamesToKeep.end())
+      {
+      // this representation should not be kept
+      RepresentationMap::iterator reprItToRemove = reprIt;
+      ++reprIt;
+      this->Representations.erase(reprItToRemove);
+      continue;
+      }
+    ++reprIt;
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkSegment::DeepCopyMetadata(vtkSegment* source)
+{
+  if (!source)
+    {
+    vtkErrorMacro("vtkSegment::DeepCopy failed: sourceSegment is invalid")
+    return;
+    }
+
+  // Copy properties
+  this->SetName(source->Name);
+  this->SetDefaultColor(source->DefaultColor);
+  this->Tags = source->Tags;
+}
+
 
 //---------------------------------------------------------------------------
 // (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax)
@@ -358,4 +390,12 @@ void vtkSegment::ExtendBounds(double partialBounds[6], double globalBounds[6])
     {
     globalBounds[5] = partialBounds[5];
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSegment::SetDefaultColorWithoutModifiedEvent(double color[3])
+{
+  this->DefaultColor[0] = color[0];
+  this->DefaultColor[1] = color[1];
+  this->DefaultColor[2] = color[2];
 }

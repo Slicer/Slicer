@@ -20,7 +20,7 @@
 
 // SegmentationCore includes
 #include "vtkSegmentationHistory.h"
-
+#include "vtkSegmentationConverterFactory.h"
 #include "vtkSegmentation.h"
 
 // VTK includes
@@ -76,8 +76,12 @@ void vtkSegmentationHistory::SetSegmentation(vtkSegmentation* segmentation)
   vtkSetObjectBodyMacro(Segmentation, vtkSegmentation, segmentation);
   if (this->Segmentation)
     {
-    this->Segmentation->AddObserver(vtkCommand::ModifiedEvent, this->SegmentationModifiedCallbackCommand);
+    // These events invalidate future states (no redo will be available after these)
+    this->Segmentation->AddObserver(vtkSegmentation::SegmentAdded, this->SegmentationModifiedCallbackCommand);
+    this->Segmentation->AddObserver(vtkSegmentation::SegmentRemoved, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::MasterRepresentationModified, this->SegmentationModifiedCallbackCommand);
+    //this->Segmentation->AddObserver(vtkSegmentation::ContainedRepresentationNamesModified, this->SegmentationModifiedCallbackCommand);
+    //this->Segmentation->AddObserver(vtkSegmentation::SegmentModified, this->SegmentationModifiedCallbackCommand);
     }
 }
 
@@ -122,20 +126,70 @@ bool vtkSegmentationHistory::SaveState()
       vtkErrorMacro("Failed to save state of segment " << *segmentIDIt);
       continue;
       }
+    // Previous saved state of the segment
+    // (if the new state has exactly the same representation then only a shallow copy will be made)
+    vtkSegment* baselineSegment = NULL;
+    if (this->SegmentationStates.size() > 0)
+      {
+      SegmentsMap::iterator baselineSegmentIt = this->SegmentationStates.back().Segments.find(*segmentIDIt);
+      if (baselineSegmentIt != this->SegmentationStates.back().Segments.end())
+        {
+        baselineSegment = baselineSegmentIt->second.GetPointer();
+        }
+      }
     vtkSmartPointer<vtkSegment> segmentClone = vtkSmartPointer<vtkSegment>::New();
-    segmentClone->DeepCopy(segment);
+    CopySegment(segmentClone, segment, baselineSegment);
     newSegmentationState.Segments[*segmentIDIt] = segmentClone;
     }
   this->SegmentationStates.push_back(newSegmentationState);
+
   // Set the current state as last restored state
-  this->LastRestoredState = this->SegmentationStates.size() - 1;
+  this->LastRestoredState = this->SegmentationStates.size();
   this->RemoveAllObsoleteStates();
 
-  // TODO: remove this after proper modification observation is fixed
-  this->LastRestoredState = this->SegmentationStates.size();
   this->Modified();
-
   return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkSegmentationHistory::CopySegment(vtkSegment* destination, vtkSegment* source, vtkSegment* baseline)
+{
+  destination->RemoveAllRepresentations();
+  destination->DeepCopyMetadata(source);
+
+  // Copy representations
+  std::vector<std::string> representationNames;
+  source->GetContainedRepresentationNames(representationNames);
+  for (std::vector<std::string>::iterator representationNameIt = representationNames.begin();
+    representationNameIt != representationNames.end(); ++representationNameIt)
+    {
+    vtkDataObject* sourceRepresentation = source->GetRepresentation(*representationNameIt);
+    vtkDataObject* baselineRepresentation = NULL;
+    if (baseline)
+      {
+      baselineRepresentation = baseline->GetRepresentation(*representationNameIt);
+      }
+    // Shallow-copy from baseline if it's up-to-date, otherwise deep-copy from source
+    if (baselineRepresentation != NULL
+      && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
+      {
+      // we already have an up-to-date copy in the baseline, so reuse that
+      destination->AddRepresentation(*representationNameIt, baselineRepresentation);
+      }
+    else
+      {
+      vtkDataObject* representationCopy =
+        vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass(sourceRepresentation->GetClassName());
+      if (!representationCopy)
+        {
+        vtkErrorMacro("DeepCopy: Unable to construct representation type class '" << sourceRepresentation->GetClassName() << "'");
+        continue;
+        }
+      representationCopy->DeepCopy(sourceRepresentation);
+      destination->AddRepresentation(*representationNameIt, representationCopy);
+      representationCopy->Delete(); // this representation is now owned by the segment
+      }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -162,6 +216,9 @@ bool vtkSegmentationHistory::RestorePreviousState()
     {
     // Save the current state to make sure the user can redo the undo operation
     this->SaveState();
+    // this->SegmentationStates.size() - 1 is the state that we've just saved
+    // this->SegmentationStates.size() - 2 is the state that was the last saved state before
+    stateToRestore = this->SegmentationStates.size() - 2;
     }
   return this->RestoreState(stateToRestore);
 }
@@ -269,6 +326,7 @@ void vtkSegmentationHistory::RemoveAllObsoleteStates()
   while ((this->SegmentationStates.size() > this->MaximumNumberOfStates) && (!this->SegmentationStates.empty()))
     {
     this->SegmentationStates.pop_front();
+    this->LastRestoredState--;
     modified = true;
    }
   if (modified)
@@ -307,8 +365,11 @@ void vtkSegmentationHistory::OnSegmentationModified(vtkObject* vtkNotUsed(caller
     return;
     }
   self->RemoveAllNextStates();
-  self->LastRestoredState = self->SegmentationStates.size();
-  self->Modified();
+  if (self->LastRestoredState != self->SegmentationStates.size())
+    {
+    self->LastRestoredState = self->SegmentationStates.size();
+    self->Modified();
+    }
 }
 
 //---------------------------------------------------------------------------

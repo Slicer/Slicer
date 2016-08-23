@@ -179,39 +179,27 @@ public:
   virtual void SetSceneReferences();
 
 protected:
-  /// Add display properties for segment with given ID
-  virtual bool AddSegmentDisplayProperties(std::string segmentId);
-
-  /// Reset all display related data
-  virtual void ResetSegmentDisplayProperties();
-
-protected:
   /// Set segmentation object
   vtkSetObjectMacro(Segmentation, vtkSegmentation);
 
+  /// Callback function for all events from the segmentation object.
+  static void SegmentationModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+
   /// Callback function observing the master representation of the segmentation (and each segment within)
   /// Invalidates all representations other than the master. These representations will be automatically converted later on demand.
-  static void OnMasterRepresentationModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  void OnMasterRepresentationModified();
 
   /// Callback function observing segment added events.
   /// Triggers update of display properties
-  static void OnSegmentAdded(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  void OnSegmentAdded(const char* segmentId);
 
   /// Callback function observing segment removed events.
   /// Triggers update of display properties
-  static void OnSegmentRemoved(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  void OnSegmentRemoved(const char* segmentId);
 
   /// Callback function observing segment modified events.
   /// Forwards event from the node.
-  static void OnSegmentModified(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
-
-  /// Callback function observing representation created events.
-  /// Forwards event from the node.
-  static void OnRepresentationCreated(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
-
-  /// Callback function observing representation removed events.
-  /// Forwards event from the node.
-  static void OnRepresentationRemoved(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
+  void OnSegmentModified(const char* segmentId);
 
 protected:
   vtkMRMLSegmentationNode();
@@ -225,23 +213,8 @@ protected:
   /// Keep track of merged labelmap modification time
   vtkTimeStamp LabelmapMergeTime;
 
-  /// Command handling master representation modified events
-  vtkCallbackCommand* MasterRepresentationCallbackCommand;
-
-  /// Command handling segment added event
-  vtkCallbackCommand* SegmentAddedCallbackCommand;
-
-  /// Command handling segment removed event
-  vtkCallbackCommand* SegmentRemovedCallbackCommand;
-
-  /// Command handling segment modified event
-  vtkCallbackCommand* SegmentModifiedCallbackCommand;
-
-  /// Command handling representation created event
-  vtkCallbackCommand* RepresentationCreatedCallbackCommand;
-
-  /// Command handling representation removed event
-  vtkCallbackCommand* RepresentationRemovedCallbackCommand;
+  /// Command handling events from segmentation object
+  vtkSmartPointer<vtkCallbackCommand> SegmentationModifiedCallbackCommand;
 };
 
 #endif // __vtkMRMLSegmentationNode_h

@@ -64,29 +64,9 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentationNode);
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
 {
-  this->MasterRepresentationCallbackCommand = vtkCallbackCommand::New();
-  this->MasterRepresentationCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->MasterRepresentationCallbackCommand->SetCallback( vtkMRMLSegmentationNode::OnMasterRepresentationModified );
-
-  this->SegmentAddedCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentAddedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->SegmentAddedCallbackCommand->SetCallback( vtkMRMLSegmentationNode::OnSegmentAdded );
-
-  this->SegmentRemovedCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentRemovedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->SegmentRemovedCallbackCommand->SetCallback( vtkMRMLSegmentationNode::OnSegmentRemoved );
-
-  this->SegmentModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->SegmentModifiedCallbackCommand->SetCallback( vtkMRMLSegmentationNode::OnSegmentModified );
-
-  this->RepresentationCreatedCallbackCommand = vtkCallbackCommand::New();
-  this->RepresentationCreatedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->RepresentationCreatedCallbackCommand->SetCallback( vtkMRMLSegmentationNode::OnRepresentationCreated );
-
-  this->RepresentationRemovedCallbackCommand = vtkCallbackCommand::New();
-  this->RepresentationRemovedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->RepresentationRemovedCallbackCommand->SetCallback( vtkMRMLSegmentationNode::OnRepresentationRemoved );
+  this->SegmentationModifiedCallbackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->SegmentationModifiedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->SegmentationModifiedCallbackCommand->SetCallback(vtkMRMLSegmentationNode::SegmentationModifiedCallback);
 
   // Create empty segmentations object
   this->Segmentation = NULL;
@@ -98,48 +78,8 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
 vtkMRMLSegmentationNode::~vtkMRMLSegmentationNode()
 {
   this->SetAndObserveSegmentation(NULL);
-
-  if (this->MasterRepresentationCallbackCommand)
-    {
-    this->MasterRepresentationCallbackCommand->SetClientData(NULL);
-    this->MasterRepresentationCallbackCommand->Delete();
-    this->MasterRepresentationCallbackCommand = NULL;
-    }
-
-  if (this->SegmentAddedCallbackCommand)
-    {
-    this->SegmentAddedCallbackCommand->SetClientData(NULL);
-    this->SegmentAddedCallbackCommand->Delete();
-    this->SegmentAddedCallbackCommand = NULL;
-    }
-
-  if (this->SegmentRemovedCallbackCommand)
-    {
-    this->SegmentRemovedCallbackCommand->SetClientData(NULL);
-    this->SegmentRemovedCallbackCommand->Delete();
-    this->SegmentRemovedCallbackCommand = NULL;
-    }
-
-  if (this->SegmentModifiedCallbackCommand)
-    {
-    this->SegmentModifiedCallbackCommand->SetClientData(NULL);
-    this->SegmentModifiedCallbackCommand->Delete();
-    this->SegmentModifiedCallbackCommand = NULL;
-    }
-
-  if (this->RepresentationCreatedCallbackCommand)
-    {
-    this->RepresentationCreatedCallbackCommand->SetClientData(NULL);
-    this->RepresentationCreatedCallbackCommand->Delete();
-    this->RepresentationCreatedCallbackCommand = NULL;
-    }
-
-  if (this->RepresentationRemovedCallbackCommand)
-    {
-    this->RepresentationRemovedCallbackCommand->SetClientData(NULL);
-    this->RepresentationRemovedCallbackCommand->Delete();
-    this->RepresentationRemovedCallbackCommand = NULL;
-    }
+  // Make sure this callback cannot call this object
+  this->SegmentationModifiedCallbackCommand->SetClientData(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -205,15 +145,6 @@ void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
 
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent(); // This call loses event parameters (i.e. callData)
-
-  // The InvokePendingModifiedEvent call loses event parameters (i.e. callData)
-  // Needed to invoke SegmentAdded events explicitly so that segment subject hierarchy nodes are correctly created
-  vtkSegmentation::SegmentMap segmentMap = this->Segmentation->GetSegments();
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-    {
-    const char* segmentIdChars = segmentIt->first.c_str();
-    this->Segmentation->InvokeEvent(vtkSegmentation::SegmentAdded, (void*)segmentIdChars);
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -288,17 +219,7 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
   if (this->Segmentation)
     {
     vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, vtkSegmentation::MasterRepresentationModified, this, this->MasterRepresentationCallbackCommand );
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, vtkSegmentation::SegmentAdded, this, this->SegmentAddedCallbackCommand );
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, vtkSegmentation::SegmentRemoved, this, this->SegmentRemovedCallbackCommand );
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, vtkSegmentation::SegmentModified, this, this->SegmentModifiedCallbackCommand );
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, vtkSegmentation::RepresentationCreated, this, this->RepresentationCreatedCallbackCommand );
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, vtkSegmentation::RepresentationRemoved, this, this->RepresentationRemovedCallbackCommand );
+      this->Segmentation, 0, this, this->SegmentationModifiedCallbackCommand);
     }
 
   this->SetSegmentation(segmentation);
@@ -307,22 +228,22 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
   if (this->Segmentation)
     {
     vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::MasterRepresentationModified, this, this->MasterRepresentationCallbackCommand );
+      this->Segmentation, vtkSegmentation::MasterRepresentationModified, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentAdded, this, this->SegmentAddedCallbackCommand );
+      this->Segmentation, vtkSegmentation::SegmentAdded, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentRemoved, this, this->SegmentRemovedCallbackCommand );
+      this->Segmentation, vtkSegmentation::SegmentRemoved, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentModified, this, this->SegmentModifiedCallbackCommand );
+      this->Segmentation, vtkSegmentation::SegmentModified, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::RepresentationCreated, this, this->RepresentationCreatedCallbackCommand );
+      this->Segmentation, vtkSegmentation::ContainedRepresentationNamesModified, this, this->SegmentationModifiedCallbackCommand);
     vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::RepresentationRemoved, this, this->RepresentationRemovedCallbackCommand );
+      this->Segmentation, vtkSegmentation::RepresentationModified, this, this->SegmentationModifiedCallbackCommand);
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnMasterRepresentationModified(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+void vtkMRMLSegmentationNode::SegmentationModifiedCallback(vtkObject* vtkNotUsed(caller), unsigned long eid, void* clientData, void* callData)
 {
   vtkMRMLSegmentationNode* self = reinterpret_cast<vtkMRMLSegmentationNode*>(clientData);
   if (!self)
@@ -331,203 +252,81 @@ void vtkMRMLSegmentationNode::OnMasterRepresentationModified(vtkObject* vtkNotUs
     }
   if (!self->Segmentation)
     {
-    vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnMasterRepresentationModified: No segmentation in segmentation node!");
+    // this object is being deleted
     return;
     }
+  switch (eid)
+    {
+    case vtkSegmentation::MasterRepresentationModified:
+      self->OnMasterRepresentationModified();
+      self->InvokeCustomModifiedEvent(eid, callData);
+      break;
+    case vtkSegmentation::RepresentationModified:
+      self->InvokeCustomModifiedEvent(eid, callData);
+      break;
+    case vtkSegmentation::ContainedRepresentationNamesModified:
+      self->InvokeCustomModifiedEvent(eid);
+      break;
+    case vtkSegmentation::SegmentAdded:
+      self->OnSegmentAdded(reinterpret_cast<char*>(callData));
+      self->InvokeCustomModifiedEvent(eid, callData);
+      break;
+    case vtkSegmentation::SegmentRemoved:
+      self->OnSegmentRemoved(reinterpret_cast<char*>(callData));
+      self->InvokeCustomModifiedEvent(eid, callData);
+      break;
+    case vtkSegmentation::SegmentModified:
+      self->OnSegmentModified(reinterpret_cast<char*>(callData));
+      self->InvokeCustomModifiedEvent(eid, callData);
+      break;
+    default:
+      vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::SegmentationModifiedCallback: Unknown event id "<<eid);
+      return;
+    }
+}
 
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationNode::OnMasterRepresentationModified()
+{
   // Reset supported write file types
-  vtkMRMLSegmentationStorageNode* storageNode =  vtkMRMLSegmentationStorageNode::SafeDownCast(self->GetStorageNode());
+  vtkMRMLSegmentationStorageNode* storageNode =  vtkMRMLSegmentationStorageNode::SafeDownCast(this->GetStorageNode());
   if (storageNode)
     {
     storageNode->ResetSupportedWriteFileTypes();
     }
-  // Trigger display update
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(self->GetDisplayNode());
-  if (displayNode)
-    {
-    displayNode->Modified();
-    }
-
-  // Invoke node event
-  self->InvokeCustomModifiedEvent(vtkSegmentation::MasterRepresentationModified, self);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentAdded(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+void vtkMRMLSegmentationNode::OnSegmentAdded(const char* segmentId)
 {
-  vtkMRMLSegmentationNode* self = reinterpret_cast<vtkMRMLSegmentationNode*>(clientData);
-  if (!self)
-    {
-    return;
-    }
-  if (!self->Segmentation)
-    {
-    vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnSegmentAdded: No segmentation in segmentation node!");
-    return;
-    }
-  if (self->Scene && self->Scene->IsImporting())
-    {
-    return;
-    }
-
-  // Get segment ID
-  char* segmentId = reinterpret_cast<char*>(callData);
-
-  // Add segment display properties if not present (can be present if node is cloned or scene loaded)
-  if (!self->AddSegmentDisplayProperties(segmentId))
-    {
-    vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnSegmentAdded: Failed to add display properties for segment " << segmentId);
-    return;
-    }
-
   // Re-generate merged labelmap with the added segment if the segment is not empty
   vtkOrientedImageData* segmentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
-    self->Segmentation->GetSegment(segmentId)->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) );
-  if ( self->HasMergedLabelmap()
+    this->Segmentation->GetSegment(segmentId)->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) );
+  if ( this->HasMergedLabelmap()
     && segmentBinaryLabelmap && !segmentBinaryLabelmap->IsEmpty() )
     {
-    self->ReGenerateDisplayedMergedLabelmap();
+    this->ReGenerateDisplayedMergedLabelmap();
     }
-
-  // Invoke node event
-  self->InvokeCustomModifiedEvent(vtkSegmentation::SegmentAdded, (void*)segmentId);
-
-  self->Modified();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentRemoved(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* segmentId)
 {
-  vtkMRMLSegmentationNode* self = reinterpret_cast<vtkMRMLSegmentationNode*>(clientData);
-  if (!self)
-    {
-    return;
-    }
-  if (!self->Segmentation)
-    {
-    vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnSegmentRemoved: No segmentation in segmentation node!");
-    return;
-    }
-
-  // Get segment ID
-  char* segmentId = reinterpret_cast<char*>(callData);
-
-  // Remove display properties
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(self->GetDisplayNode());
-  if (displayNode)
-    {
-    // Remove entry from segment display properties
-    displayNode->RemoveSegmentDisplayProperties(segmentId);
-
-    // Remove segment entry from color table
-    vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(displayNode->GetColorNode());
-    if (!colorTableNode)
-      {
-      vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnSegmentRemoved: No color table node associated with segmentation!");
-      return;
-      }
-    int colorIndex = colorTableNode->GetColorIndexByName(segmentId);
-    if (colorIndex < 0)
-      {
-      vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnSegmentRemoved: No color table entry found for segment " << segmentId);
-      return;
-      }
-    colorTableNode->SetColor(colorIndex,vtkMRMLSegmentationDisplayNode::GetSegmentationColorNameRemoved(),
-      vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0], vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1],
-      vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2], vtkSegment::SEGMENT_COLOR_VALUE_INVALID[3] );
-    }
-
   // Re-generate merged labelmap without the removed segment
-  if (self->HasMergedLabelmap())
+  if (this->HasMergedLabelmap())
     {
-    self->ReGenerateDisplayedMergedLabelmap();
+    this->ReGenerateDisplayedMergedLabelmap();
     }
-
-  // Invoke node event
-  self->InvokeCustomModifiedEvent(vtkSegmentation::SegmentRemoved, (void*)segmentId);
-
-  self->Modified();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentModified(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
+void vtkMRMLSegmentationNode::OnSegmentModified(const char* segmentId)
 {
-  vtkMRMLSegmentationNode* self = reinterpret_cast<vtkMRMLSegmentationNode*>(clientData);
-  if (!self)
-    {
-    return;
-    }
-  if (!self->Segmentation)
-    {
-    vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::OnSegmentModified: No segmentation in segmentation node!");
-    return;
-    }
-
   // Re-generate merged labelmap with modified representation
-  if (!(self->Scene && self->Scene->IsImporting()) && self->HasMergedLabelmap())
+  if (this->HasMergedLabelmap())
     {
-    self->ReGenerateDisplayedMergedLabelmap();
+    this->ReGenerateDisplayedMergedLabelmap();
     }
-
-  // Get segment ID
-  char* segmentId = reinterpret_cast<char*>(callData);
-
-  // Invoke node event, but do not invoke general modified
-  self->InvokeCustomModifiedEvent(vtkSegmentation::SegmentModified, (void*)segmentId);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnRepresentationCreated(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
-{
-  vtkMRMLSegmentationNode* self = reinterpret_cast<vtkMRMLSegmentationNode*>(clientData);
-  if (!self)
-    {
-    return;
-    }
-
-  // Get created representation name
-  char* targetRepresentationName = reinterpret_cast<char*>(callData);
-
-  // Show new representation (it is assumed that the representation was created intentionally, and is needed to visualize)
-  vtkSmartPointer<vtkMRMLSegmentationDisplayNode> displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(self->GetDisplayNode());
-  if (displayNode)
-    {
-    // Show new representation in 3D if model
-    // Commented out, as it would overwrite settings in the display node when segmentation is loaded from scene
-    //std::set<std::string> modelRepresentationNames;
-    //displayNode->GetPolyDataRepresentationNames(modelRepresentationNames);
-    //if (modelRepresentationNames.find(std::string(targetRepresentationName)) != modelRepresentationNames.end())
-    //{
-    //  displayNode->SetPreferredDisplayRepresentationName3D(targetRepresentationName);
-    //}
-
-    // Commented out, as it would overwrite settings in the display node when segmentation is loaded from scene
-    // Show new representation in 2D in every case
-    //displayNode->SetPreferredDisplayRepresentationName2D(targetRepresentationName);
-    }
-
-  // Invoke node event
-  self->InvokeCustomModifiedEvent(vtkSegmentation::RepresentationCreated, (void*)targetRepresentationName);
-
-  self->Modified();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnRepresentationRemoved(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* callData)
-{
-  vtkMRMLSegmentationNode* self = reinterpret_cast<vtkMRMLSegmentationNode*>(clientData);
-  if (!self)
-    {
-    return;
-    }
-
-  // Get created representation name
-  char* targetRepresentationName = reinterpret_cast<char*>(callData);
-
-  // Invoke node event
-  self->InvokeCustomModifiedEvent(vtkSegmentation::RepresentationRemoved, (void*)targetRepresentationName);
-
-  self->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -605,137 +404,6 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
     }
 }
 
-//---------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::AddSegmentDisplayProperties(std::string segmentId)
-{
-  if (!this->Scene)
-    {
-    vtkErrorMacro("AddSegmentDisplayProperties: Unable to update display properties outside a MRML scene");
-    return false;
-    }
-
-  // Get segment
-  vtkSegment* segment = this->Segmentation->GetSegment(segmentId);
-  if (!segment)
-    {
-    vtkErrorMacro("AddSegmentDisplayProperties: No segment found with ID " << segmentId);
-    return false;
-    }
-
-  // Get display node and create it if does not exist
-  int wasModifyingDisplayNode = -1;
-  vtkSmartPointer<vtkMRMLSegmentationDisplayNode> displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (!displayNode)
-    {
-    // Create default display node if not found
-    displayNode = vtkSmartPointer<vtkMRMLSegmentationDisplayNode>::New();
-    this->Scene->AddNode(displayNode);
-    wasModifyingDisplayNode = displayNode->StartModify();
-    this->SetAndObserveDisplayNodeID(displayNode->GetID());
-    displayNode->SetBackfaceCulling(0); // Needed only because of the ribbon model normal vectors
-    }
-  else
-    {
-    // Do not add segment display properties if already present (can be present if node is cloned or scene loaded)
-    if (displayNode->GetSegmentDisplayPropertiesDefined(segmentId))
-      {
-      vtkDebugMacro("AddSegmentDisplayProperties: Display properties for segment " << segmentId << " was already present, leaving it unchanged");
-      return true;
-      }
-    wasModifyingDisplayNode = displayNode->StartModify();
-    }
-
-  // Create color table for segmentation if does not exist
-  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(displayNode->GetColorNode());
-  if (!colorTableNode)
-    {
-    //TODO: Color table must be present at all times after terminology support is added
-    colorTableNode = displayNode->CreateColorTableNode(this->Name);
-    }
-
-  int wasModifyingColorTableNode = colorTableNode->StartModify();
-
-  // Add entry in color table for segment
-  int colorIndex = colorTableNode->GetNumberOfColors();
-  colorTableNode->SetNumberOfColors(colorIndex+1);
-  colorTableNode->GetLookupTable()->SetTableRange(0, colorIndex);
-  // Set color index as tag to segment
-  segment->SetTag(vtkMRMLSegmentationDisplayNode::GetColorIndexTag(), colorIndex);
-
-  // Set segment color for merged labelmap
-  double defaultColor[3] = {0.0,0.0,0.0};
-  segment->GetDefaultColor(defaultColor);
-  // Generate color if default color is the default gray
-  displayNode->IncrementNumberOfAddedSegments();
-  bool generateNewDefaultColor =
-    (defaultColor[0] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0]
-     && defaultColor[1] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1]
-     && defaultColor[2] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2]);
-  if (generateNewDefaultColor)
-    {
-    displayNode->GenerateSegmentColor(defaultColor);
-    }
-  colorTableNode->SetColor(colorIndex, segmentId.c_str(), defaultColor[0], defaultColor[1], defaultColor[2], 1.0);
-
-  // Add entry in segment display properties
-  vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-  properties.Color[0] = defaultColor[0];
-  properties.Color[1] = defaultColor[1];
-  properties.Color[2] = defaultColor[2];
-  properties.Visible = true;
-  properties.Visible3D = true;
-  properties.Visible2DFill = true;
-  properties.Visible2DOutline = true;
-  properties.Opacity3D = 1.0;
-  properties.Opacity2DFill = 0.4;
-  properties.Opacity2DOutline = 1.0;
-  displayNode->SetSegmentDisplayProperties(segmentId, properties);
-
-  // Update segment's default color
-  // (we cannot do this before setting display properties, as changing the default color triggers an update,
-  // and we don't want to perform an update without display properties set up).
-  if (generateNewDefaultColor)
-    {
-    segment->SetDefaultColor(defaultColor);
-    }
-
-  colorTableNode->EndModify(wasModifyingColorTableNode);
-  displayNode->EndModify(wasModifyingDisplayNode);
-
-  return true;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::ResetSegmentDisplayProperties()
-{
-  if (!this->Scene)
-    {
-    vtkErrorMacro("ResetSegmentDisplayProperties: Unable to update display properties outside a MRML scene");
-    return;
-    }
-
-  // Clear display properties
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (displayNode)
-    {
-    displayNode->ClearSegmentDisplayProperties();
-
-    vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(displayNode->GetColorNode());
-    if (colorTableNode && colorTableNode->GetNumberOfColors() > 0)
-      {
-      colorTableNode->SetNumberOfColors(0);
-      colorTableNode->GetLookupTable()->SetTableRange(0, 0);
-      }
-    }
-
-  // Add display properties for all segments
-  vtkSegmentation::SegmentMap segmentMap = this->Segmentation->GetSegments();
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-    {
-    this->AddSegmentDisplayProperties(segmentIt->first);
-    }
-}
-
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLSegmentationNode::CreateDefaultStorageNode()
 {
@@ -759,9 +427,6 @@ void vtkMRMLSegmentationNode::CreateDefaultDisplayNodes()
   vtkNew<vtkMRMLSegmentationDisplayNode> displayNode;
   this->GetScene()->AddNode(displayNode.GetPointer());
   this->SetAndObserveDisplayNodeID(displayNode->GetID());
-  displayNode->SetBackfaceCulling(0); // Needed only because of the ribbon model normal vectors
-
-  this->ResetSegmentDisplayProperties();
 }
 
 //---------------------------------------------------------------------------
@@ -776,17 +441,6 @@ void vtkMRMLSegmentationNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
 {
-  // Make sure preferred display representations exist after transformation
-  // (it is invalidated in the process unless it is the master representation)
-  char* preferredDisplayRepresentation2D = NULL;
-  char* preferredDisplayRepresentation3D = NULL;
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
-  if (displayNode)
-    {
-    preferredDisplayRepresentation2D = displayNode->GetPreferredDisplayRepresentationName2D();
-    preferredDisplayRepresentation3D = displayNode->GetPreferredDisplayRepresentationName3D();
-    }
-
   // Apply transform on segmentation
   vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
   if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
@@ -797,6 +451,17 @@ void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
     {
     this->Segmentation->ApplyNonLinearTransform(transform);
     }
+
+  // Make sure preferred display representations exist after transformation
+  // (it is invalidated in the process unless it is the master representation)
+  char* preferredDisplayRepresentation2D = NULL;
+  char* preferredDisplayRepresentation3D = NULL;
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetDisplayNode());
+  if (displayNode)
+  {
+    preferredDisplayRepresentation2D = displayNode->GetPreferredDisplayRepresentationName2D();
+    preferredDisplayRepresentation3D = displayNode->GetPreferredDisplayRepresentationName3D();
+  }
 
   // Make sure preferred display representations exist after transformation
   // (it was invalidated in the process unless it is the master representation)

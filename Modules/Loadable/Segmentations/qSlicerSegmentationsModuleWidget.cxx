@@ -287,7 +287,7 @@ void qSlicerSegmentationsModuleWidget::populate3DRepresentationsCombobox()
 
   // Note: This function used to collect existing poly data representations from
   // the segmentation and was connected to events like this:
-  // qvtkConnect( segmentationNode, vtkSegmentation::RepresentationCreated, this, SLOT( populateRepresentationsCombobox() ) );
+  // qvtkConnect( segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT( populateRepresentationsCombobox() ) );
   // It was then decided that a preferred poly data representation can be selected
   // regardless its existence, thus the combobox is populated only once at initialization.
 

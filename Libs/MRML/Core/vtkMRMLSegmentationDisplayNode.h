@@ -27,8 +27,10 @@
 #include <set>
 
 class vtkMRMLColorTableNode;
+class vtkSegmentation;
 class vtkStringArray;
 class vtkVector3d;
+
 
 /// \ingroup Segmentations
 /// \brief MRML node for representing segmentation display attributes.
@@ -124,14 +126,11 @@ public:
   /// \return True if display properties are specified for the segment.
   bool GetSegmentDisplayProperties(std::string segmentID, SegmentDisplayProperties &properties);
 
-  /// Get information about segment display properties specification.
-  /// Does not log warning if display properties have not been defined for
-  /// \param segmentID Identifier of segment of which the properties are queried
-  /// \return True if display properties are specified for the segment.
-  bool GetSegmentDisplayPropertiesDefined(std::string segmentID);
-
-  /// Set segment display properties. Add new entry if not in list already
+  /// Set segment display properties.
   void SetSegmentDisplayProperties(std::string segmentID, SegmentDisplayProperties &properties);
+
+  /// Set segment display properties to default.
+  void SetSegmentDisplayPropertiesToDefault(const std::string& segmentId);
 
   /// Remove segment display properties
   void RemoveSegmentDisplayProperties(std::string segmentID);
@@ -149,8 +148,7 @@ public:
   void GenerateSegmentColor(double color[3]);
   /// Python compatibility function for \sa GenerateSegmentColor
   void GenerateSegmentColor(double &r, double &g, double &b);
-  /// Increment \sa NumberOfAddedSegments when new segment is added
-  void IncrementNumberOfAddedSegments();
+
 
   /// Collect representation names that are stored as poly data
   void GetPolyDataRepresentationNames(std::set<std::string> &representationNames);
@@ -241,6 +239,8 @@ protected:
   /// Convenience function for getting all segment IDs.
   void GetAllSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
 
+  void UpdateSegmentList();
+
 protected:
   vtkMRMLSegmentationDisplayNode();
   virtual ~vtkMRMLSegmentationDisplayNode();
@@ -264,6 +264,10 @@ protected:
   /// Number of segments ever added to the segmentation belonging to this display node.
   /// Used to generate new color for new segments, taken into account removed segments too.
   unsigned int NumberOfAddedSegments;
+
+  /// For checking if cached segment list in SegmentationDisplayProperties has to be updated
+  unsigned long SegmentListUpdateTime;
+  vtkSegmentation* SegmentListUpdateSource;
 };
 
 #endif

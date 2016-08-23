@@ -50,16 +50,16 @@ public:
     /// it is not recommended to do so as it doesn't mark the data as modified, which may result in
     /// an incorrect return value for \sa GetModifiedSinceRead()
     MasterRepresentationModified = 62100,
+    /// Fired if any representation (including the master representation) in any segment is modified
+    RepresentationModified,
     /// Fired if new segment is added
     SegmentAdded,
     /// Fired if segment is removed
     SegmentRemoved,
     /// Fired if segment is modified
     SegmentModified,
-    /// Fired if a representation is created on conversion
-    RepresentationCreated,
-    /// Fired if a representation is removed
-    RepresentationRemoved
+    /// Fired if a representation is created or removed in the segments (e.g., created by conversion from master)
+    ContainedRepresentationNamesModified,
     };
 
   enum

@@ -52,7 +52,10 @@ public:
   void WriteXML(ostream& of, int nIndent);
 
   /// Deep copy one segment into another
-  virtual void DeepCopy(vtkSegment* aSegment);
+  virtual void DeepCopy(vtkSegment* source);
+
+  /// Deep copy metadata (i.e., all data but representations) one segment into another
+  virtual void DeepCopyMetadata(vtkSegment* source);
 
   /// Get bounding box in global RAS in the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetBounds(double bounds[6]);
@@ -115,6 +118,12 @@ public:
 
   vtkGetVector3Macro(DefaultColor, double);
   vtkSetVector3Macro(DefaultColor, double);
+
+  /// Set default color without triggering modified event.
+  /// This is a temporary hack for allowing changing default color
+  /// when color in display node is changed.
+  /// TODO: remove this when terminology infrastructure is in place.
+  void SetDefaultColorWithoutModifiedEvent(double color[3]);
 
 protected:
   vtkSegment();

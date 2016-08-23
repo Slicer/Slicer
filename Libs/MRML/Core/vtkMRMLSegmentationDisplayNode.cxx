@@ -26,7 +26,7 @@
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLColorTableNode.h>
-
+#include <vtkMRMLSegmentationNode.h>
 // SegmentationCore includes
 #include "vtkSegmentation.h"
 #include "vtkOrientedImageData.h"
@@ -43,6 +43,7 @@
 
 // STD includes
 #include <algorithm>
+#include <vector>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSegmentationDisplayNode);
@@ -52,8 +53,11 @@ vtkMRMLSegmentationDisplayNode::vtkMRMLSegmentationDisplayNode()
   : PreferredDisplayRepresentationName2D(NULL)
   , PreferredDisplayRepresentationName3D(NULL)
   , NumberOfAddedSegments(0)
+  , SegmentListUpdateTime(0)
+  , SegmentListUpdateSource(0)
 {
   this->SliceIntersectionVisibility = true;
+  this->SetBackfaceCulling(0); // segment models are not necessarily closed surfaces (e.g., ribbon models)
 
   this->SegmentationDisplayProperties.clear();
 }
@@ -77,6 +81,7 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " PreferredDisplayRepresentationName3D=\""
     << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "NULL") << "\"";
 
+  this->UpdateSegmentList();
   of << indent << " SegmentationDisplayProperties=\"";
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
@@ -189,6 +194,8 @@ void vtkMRMLSegmentationDisplayNode::Copy(vtkMRMLNode *anode)
     this->SetPreferredDisplayRepresentationName2D(node->GetPreferredDisplayRepresentationName2D());
     this->SetPreferredDisplayRepresentationName3D(node->GetPreferredDisplayRepresentationName3D());
     this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
+    this->SegmentListUpdateSource = node->SegmentListUpdateSource;
+    this->SegmentListUpdateTime = node->SegmentListUpdateTime;
     }
 
   this->EndModify(wasModifying);
@@ -201,6 +208,8 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << " PreferredDisplayRepresentationName2D:   " << (this->PreferredDisplayRepresentationName2D ? this->PreferredDisplayRepresentationName2D : "NULL") << "\n";
   os << indent << " PreferredDisplayRepresentationName3D:   " << (this->PreferredDisplayRepresentationName3D ? this->PreferredDisplayRepresentationName3D : "NULL") << "\n";
+
+  this->UpdateSegmentList();
 
   os << indent << " SegmentationDisplayProperties:\n";
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
@@ -277,6 +286,7 @@ bool vtkMRMLSegmentationDisplayNode::SetSegmentColorTableEntry(std::string segme
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationDisplayNode::GetSegmentDisplayProperties(std::string segmentId, SegmentDisplayProperties &properties)
 {
+  this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentId);
   if (propsIt == this->SegmentationDisplayProperties.end())
     {
@@ -287,13 +297,6 @@ bool vtkMRMLSegmentationDisplayNode::GetSegmentDisplayProperties(std::string seg
     }
   properties = propsIt->second;
   return true;
-}
-
-//---------------------------------------------------------------------------
-bool vtkMRMLSegmentationDisplayNode::GetSegmentDisplayPropertiesDefined(std::string segmentId)
-{
-  SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentId);
-  return (propsIt != this->SegmentationDisplayProperties.end());
 }
 
 //---------------------------------------------------------------------------
@@ -368,6 +371,18 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
 
   // Set color in color table too
   this->SetSegmentColorTableEntry(segmentId, properties.Color[0], properties.Color[1], properties.Color[2]);
+  // Save cached value of color
+  // TODO: remove this when terminology infrastructure is in place
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
+  if (segmentationNode)
+    {
+    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+    vtkSegment* segment = segmentation->GetSegment(segmentId);
+    if (segment)
+      {
+      segment->SetDefaultColorWithoutModifiedEvent(properties.Color);
+      }
+    }
 
   if (modified)
     {
@@ -662,6 +677,77 @@ void vtkMRMLSegmentationDisplayNode::SetAllSegmentsOpacity(double opacity, bool 
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const std::string& segmentId)
+{
+  // Create color table for segmentation if does not exist
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->GetColorNode());
+  if (!colorTableNode)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault failed: invalid color node");
+    return;
+    }
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
+  if (!segmentationNode)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode: No segmentation node associated to this display node");
+    return;
+    }
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  vtkSegment* segment = segmentation->GetSegment(segmentId);
+  if (!segment)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode: segment not found by id " << segmentId);
+    return;
+    }
+
+  int wasModifyingDisplayNode = this->StartModify();
+  int wasModifyingColorTableNode = colorTableNode->StartModify();
+
+  // Get entry in color table for segment
+  int colorIndex = colorTableNode->GetColorIndexByName(segmentId.c_str());
+  if (colorIndex < 0)
+    {
+    colorIndex = colorTableNode->GetNumberOfColors();
+    colorTableNode->SetNumberOfColors(colorIndex + 1);
+    colorTableNode->GetLookupTable()->SetTableRange(0, colorIndex);
+    }
+  // Set color index as tag to segment
+  segment->SetTag(vtkMRMLSegmentationDisplayNode::GetColorIndexTag(), colorIndex);
+
+  // Set segment color for merged labelmap
+  double defaultColor[3] = { 0.0, 0.0, 0.0 };
+  segment->GetDefaultColor(defaultColor);
+  // Generate color if default color is the default gray
+  this->NumberOfAddedSegments += 1;
+  bool generateNewDefaultColor =
+    (defaultColor[0] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0]
+    && defaultColor[1] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1]
+    && defaultColor[2] == vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2]);
+  if (generateNewDefaultColor)
+    {
+    this->GenerateSegmentColor(defaultColor);
+    }
+  colorTableNode->SetColor(colorIndex, segmentId.c_str(), defaultColor[0], defaultColor[1], defaultColor[2], 1.0);
+
+  // Add entry in segment display properties
+  vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
+  properties.Color[0] = defaultColor[0];
+  properties.Color[1] = defaultColor[1];
+  properties.Color[2] = defaultColor[2];
+  properties.Visible = true;
+  properties.Visible3D = true;
+  properties.Visible2DFill = true;
+  properties.Visible2DOutline = true;
+  properties.Opacity3D = 1.0;
+  properties.Opacity2DFill = 0.4;
+  properties.Opacity2DOutline = 1.0;
+  this->SetSegmentDisplayProperties(segmentId, properties);
+
+  colorTableNode->EndModify(wasModifyingColorTableNode);
+  this->EndModify(wasModifyingDisplayNode);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLSegmentationDisplayNode::RemoveSegmentDisplayProperties(std::string segmentId)
 {
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentId);
@@ -804,12 +890,6 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double &r, double &g, 
   r = color[0];
   g = color[1];
   b = color[2];
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::IncrementNumberOfAddedSegments()
-{
-  this->NumberOfAddedSegments += 1;
 }
 
 //---------------------------------------------------------------------------
@@ -977,4 +1057,92 @@ void vtkMRMLSegmentationDisplayNode::GetVisibleSegmentIDs(vtkStringArray* segmen
     {
     segmentIDs->InsertNextValue(*it);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
+{
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetDisplayableNode());
+  if (!segmentationNode)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::UpdateSegmentList: No segmentation node associated to this display node");
+    return;
+    }
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  if (this->SegmentListUpdateSource == segmentation && this->SegmentListUpdateTime >= segmentation->GetMTime())
+    {
+    // already up-to-date
+    return;
+    }
+  this->SegmentListUpdateTime = segmentation->GetMTime();
+  this->SegmentListUpdateSource = segmentation;
+
+  int wasModifyingDisplayNode = this->StartModify();
+
+  // Create color table for segmentation if does not exist
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->GetColorNode());
+  if (!colorTableNode)
+    {
+    //TODO: Color table must be present at all times after terminology support is added
+    colorTableNode = this->CreateColorTableNode(this->Name);
+    }
+  if (!colorTableNode)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationDisplayNode::UpdateSegmentList: Failed to get color node");
+    this->EndModify(wasModifyingDisplayNode);
+    return;
+    }
+
+  int wasModifyingColorTableNode = colorTableNode->StartModify();
+
+  // Remove unused segment display properties and colors
+  // Get list of segment IDs that we have display properties for but does not exist in
+  // the segmentation anymore.
+  std::vector<std::string> orphanSegmentIds;
+  for (SegmentDisplayPropertiesMap::iterator it = this->SegmentationDisplayProperties.begin();
+    it != this->SegmentationDisplayProperties.end(); ++it)
+    {
+    if (segmentation->GetSegment(it->first) == NULL)
+      {
+      // the segment does not exist in segmentation
+      orphanSegmentIds.push_back(it->first);
+      }
+    }
+  // Delete unused properties and color table entries
+  for (std::vector<std::string>::iterator orphanSegmentIdIt = orphanSegmentIds.begin();
+    orphanSegmentIdIt != orphanSegmentIds.end(); ++orphanSegmentIdIt)
+    {
+    // Remove segment display properies
+    this->RemoveSegmentDisplayProperties(*orphanSegmentIdIt);
+    // Remove segment entry from color table
+    int colorIndex = colorTableNode->GetColorIndexByName(orphanSegmentIdIt->c_str());
+    if (colorIndex >= 0)
+      {
+      colorTableNode->SetColor(colorIndex, vtkMRMLSegmentationDisplayNode::GetSegmentationColorNameRemoved(),
+        vtkSegment::SEGMENT_COLOR_VALUE_INVALID[0], vtkSegment::SEGMENT_COLOR_VALUE_INVALID[1],
+        vtkSegment::SEGMENT_COLOR_VALUE_INVALID[2], vtkSegment::SEGMENT_COLOR_VALUE_INVALID[3]);
+      }
+    }
+
+  // Add missing segment display properties
+  // Get segmend list of segments that do not have display properties.
+  vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
+  std::vector<std::string> missingSegmentIDs;
+  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+    {
+    if (this->SegmentationDisplayProperties.find(segmentIt->first) == this->SegmentationDisplayProperties.end())
+      {
+      // the segment does not exist in segmentation
+      missingSegmentIDs.push_back(segmentIt->first);
+      }
+    }
+  // Add missing properties
+  for (std::vector<std::string>::iterator missingSegmentIdIt = missingSegmentIDs.begin();
+    missingSegmentIdIt != missingSegmentIDs.end(); ++missingSegmentIdIt)
+    {
+    SetSegmentDisplayPropertiesToDefault(*missingSegmentIdIt);
+    }
+
+  colorTableNode->EndModify(wasModifyingColorTableNode);
+  this->EndModify(wasModifyingDisplayNode);
 }
