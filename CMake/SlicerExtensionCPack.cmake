@@ -161,7 +161,7 @@ if(APPLE)
 
   set(msg "Checking if extension type is SuperBuild")
   message(STATUS "${msg}")
-  if(DEFINED ${EXTENSION_NAME}_SUPERBUILD)
+  if(${EXTENSION_NAME}_SUPERBUILD)
     message(STATUS "${msg} - true")
     set(_is_superbuild_extension 1)
   else()
