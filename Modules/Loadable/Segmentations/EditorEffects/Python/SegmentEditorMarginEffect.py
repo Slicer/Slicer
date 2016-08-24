@@ -24,9 +24,19 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return "Grow or shrink selected segment by specified margin size. Positive margin size makes the segment grow, negative margin size makes the segment shrink."
+    return "Grow or shrink selected segment by specified margin size."
 
   def setupOptionsFrame(self):
+
+    operationLayout = qt.QVBoxLayout()
+
+    self.shrinkOptionRadioButton = qt.QRadioButton("Shrink")
+    self.growOptionRadioButton = qt.QRadioButton("Grow")
+    operationLayout.addWidget(self.shrinkOptionRadioButton)
+    operationLayout.addWidget(self.growOptionRadioButton)
+    self.growOptionRadioButton.setChecked(True)
+
+    self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationLayout)
 
     self.marginSizeMmSpinBox = slicer.qMRMLSpinBox()
     self.marginSizeMmSpinBox.setMRMLScene(slicer.mrmlScene)
@@ -39,8 +49,8 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
     self.kernelSizePixel.setToolTip("Size change in pixels. Computed from the segment's spacing and the specified margin size.")
 
     marginSizeFrame = qt.QHBoxLayout()
-    marginSizeFrame.addWidget(self.kernelSizePixel)
     marginSizeFrame.addWidget(self.marginSizeMmSpinBox)
+    marginSizeFrame.addWidget(self.kernelSizePixel)
     self.marginSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Margin size:", marginSizeFrame)
 
     self.applyButton = qt.QPushButton("Apply")
@@ -50,6 +60,8 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
 
     self.applyButton.connect('clicked()', self.onApply)
     self.marginSizeMmSpinBox.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.growOptionRadioButton.connect("toggled(bool)", self.growOperationToggled)
+    self.shrinkOptionRadioButton.connect("toggled(bool)", self.shrinkOperationToggled)
 
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
@@ -72,23 +84,37 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
   def updateGUIFromMRML(self):
     marginSizeMm = self.scriptedEffect.doubleParameter("MarginSizeMm")
     wasBlocked = self.marginSizeMmSpinBox.blockSignals(True)
-    self.marginSizeMmSpinBox.value = marginSizeMm
+    self.marginSizeMmSpinBox.value = abs(marginSizeMm)
     self.marginSizeMmSpinBox.blockSignals(wasBlocked)
 
+    wasBlocked = self.growOptionRadioButton.blockSignals(True)
+    self.growOptionRadioButton.setChecked(marginSizeMm > 0)
+    self.growOptionRadioButton.blockSignals(wasBlocked)
+
+    wasBlocked = self.shrinkOptionRadioButton.blockSignals(True)
+    self.shrinkOptionRadioButton.setChecked(marginSizeMm < 0)
+    self.shrinkOptionRadioButton.blockSignals(wasBlocked)
+
     kernelSizePixel = self.getKernelSizePixel()
+
     if kernelSizePixel[0]<=1 and kernelSizePixel[1]<=1 and kernelSizePixel[2]<=1:
       self.kernelSizePixel.text = "margin too small"
       self.applyButton.setEnabled(False)
     else:
-      if marginSizeMm>0:
-        operationName = "grow"
-      else:
-        operationName = "shrink"
-      self.kernelSizePixel.text = "{0}x{1}x{2} pixels ({3})".format(abs(kernelSizePixel[0]), abs(kernelSizePixel[1]), abs(kernelSizePixel[2]), operationName)
+      self.kernelSizePixel.text = "{0}x{1}x{2} pixels".format(abs(kernelSizePixel[0]), abs(kernelSizePixel[1]), abs(kernelSizePixel[2]))
       self.applyButton.setEnabled(True)
 
+  def growOperationToggled(self, toggled):
+    if toggled:
+      self.scriptedEffect.setParameter("MarginSizeMm", self.marginSizeMmSpinBox.value)
+
+  def shrinkOperationToggled(self, toggled):
+    if toggled:
+      self.scriptedEffect.setParameter("MarginSizeMm", -self.marginSizeMmSpinBox.value)
+
   def updateMRMLFromGUI(self):
-    self.scriptedEffect.setParameter("MarginSizeMm", self.marginSizeMmSpinBox.value)
+    marginSizeMm = (self.marginSizeMmSpinBox.value) if self.growOptionRadioButton.checked else (-self.marginSizeMmSpinBox.value)
+    self.scriptedEffect.setParameter("MarginSizeMm", marginSizeMm)
 
   def onApply(self):
 

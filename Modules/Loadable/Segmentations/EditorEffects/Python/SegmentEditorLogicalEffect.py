@@ -50,8 +50,12 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.bypassMaskingCheckBox.setToolTip("Ignore all masking options and only modify the selected segment.")
     self.bypassMaskingCheckBox.objectName = self.__class__.__name__ + 'BypassMasking'
 
+    self.applyButton = qt.QPushButton("Apply")
+    self.applyButton.objectName = self.__class__.__name__ + 'Apply'
+
     operationFrame = qt.QHBoxLayout()
     operationFrame.addWidget(self.methodSelectorComboBox)
+    operationFrame.addWidget(self.applyButton)
     operationFrame.addWidget(self.bypassMaskingCheckBox)
     self.marginSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Operation:", operationFrame)
 
@@ -67,10 +71,6 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
     self.modifierSegmentSelector.setMRMLScene(slicer.mrmlScene)
     self.modifierSegmentSelector.setToolTip('Contents of this segment will be used for modifying the selected segment. This segment itself will not be changed.')
     self.scriptedEffect.addOptionsWidget(self.modifierSegmentSelector)
-
-    self.applyButton = qt.QPushButton("Apply")
-    self.applyButton.objectName = self.__class__.__name__ + 'Apply'
-    self.scriptedEffect.addOptionsWidget(self.applyButton)
 
     self.applyButton.connect('clicked()', self.onApply)
     self.methodSelectorComboBox.connect("currentIndexChanged(int)", self.updateMRMLFromGUI)
@@ -132,6 +132,7 @@ class SegmentEditorLogicalEffect(AbstractScriptedSegmentEditorEffect):
       self.applyButton.setToolTip("Please select a modifier segment in the list below.")
       self.applyButton.enabled = False
     else:
+      self.applyButton.setToolTip("")
       self.applyButton.enabled = True
 
     bypassMasking = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("BypassMasking") == 0 else qt.Qt.Checked

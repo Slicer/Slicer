@@ -62,8 +62,8 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     self.kernelSizePixel.setToolTip("Diameter of the neighborhood in pixels. Computed from the segment's spacing and the specified kernel size.")
 
     kernelSizeFrame = qt.QHBoxLayout()
-    kernelSizeFrame.addWidget(self.kernelSizePixel)
     kernelSizeFrame.addWidget(self.kernelSizeMmSpinBox)
+    kernelSizeFrame.addWidget(self.kernelSizePixel)
     self.kernelSizeMmLabel = self.scriptedEffect.addLabeledOptionsWidget("Kernel size:", kernelSizeFrame)
 
     self.gaussianStandardDeviationMmSpinBox = slicer.qMRMLSpinBox()
