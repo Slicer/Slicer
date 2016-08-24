@@ -338,7 +338,7 @@ void vtkSegmentationHistory::RemoveAllObsoleteStates()
 //---------------------------------------------------------------------------
 void vtkSegmentationHistory::SetMaximumNumberOfStates(int maximumNumberOfStates)
 {
-  if (maximumNumberOfStates = this->MaximumNumberOfStates)
+  if (maximumNumberOfStates == this->MaximumNumberOfStates)
     {
     return;
     }
