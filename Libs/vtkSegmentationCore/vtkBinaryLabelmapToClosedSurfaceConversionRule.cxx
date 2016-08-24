@@ -127,7 +127,8 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
     {
     // empty labelmap
     vtkDebugMacro("Convert: No polygons can be created, input image extent is empty");
-    return false;
+    closedSurfacePolyData->Reset();
+    return true;
     }
 
   /// If input labelmap has non-background border voxels, then those regions remain open in the output closed surface.
@@ -167,8 +168,9 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   vtkSmartPointer<vtkPolyData> processingResult = marchingCubes->GetOutput();
   if (processingResult->GetNumberOfPolys() == 0)
     {
-    vtkErrorMacro("Convert: No polygons can be created");
-    return false;
+    vtkDebugMacro("Convert: No polygons can be created, probably all voxels are empty");
+    closedSurfacePolyData->Reset();
+    return true;
     }
 
   // Decimate
