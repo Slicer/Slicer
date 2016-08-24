@@ -247,6 +247,10 @@ def loadScalarOverlay(filename, returnNode=False):
   filetype = 'ScalarOverlayFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
+def loadSegmentation(filename, returnNode=False):
+  filetype = 'SegmentationFile'
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
+
 def loadTransform(filename, returnNode=False):
   filetype = 'TransformFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
@@ -279,6 +283,10 @@ def openAddModelDialog():
 def openAddScalarOverlayDialog():
   from slicer import app
   return app.coreIOManager().openAddScalarOverlayDialog()
+
+def openAddSegmentationDialog():
+  from slicer import app, qSlicerFileDialog
+  return app.coreIOManager().openDialog('SegmentationFile', qSlicerFileDialog.Read)
 
 def openAddTransformDialog():
   from slicer import app
