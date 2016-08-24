@@ -81,6 +81,15 @@ public:
   QIcon VisibleIcon;
   QIcon InvisibleIcon;
 
+  // Currently, if we are requesting segment display information from the
+  // segmentation display node,  the display node may emit modification events.
+  // We make sure these events do not interrupt the update process by setting
+  // IsUpdatingWidgetFromMRML to true when an update is already in progress.
+  // TODO: When terminiology infrastructure is in place then segmentation display
+  // node should not invoke modification events on Get...() method calls and then
+  // this flag can probably be removed.
+  bool IsUpdatingWidgetFromMRML;
+
 private:
   QStringList ColumnLabels;
 };
@@ -90,6 +99,7 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   : q_ptr(&object)
   , SegmentationNode(NULL)
   , RepresentationNode(NULL)
+  , IsUpdatingWidgetFromMRML(false)
 {
 }
 
@@ -161,7 +171,7 @@ QTableWidgetItem* qMRMLSegmentsTableViewPrivate::findItemBySegmentID(QString seg
     QTableWidgetItem* item = this->SegmentsTable->item(row, this->columnIndex("Name"));
     if (!item)
       {
-      return NULL;
+      continue;
       }
     if (!item->data(q->IDRole).toString().compare(segmentID))
       {
@@ -289,6 +299,12 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 {
   Q_D(qMRMLSegmentsTableView);
 
+  if (d->IsUpdatingWidgetFromMRML)
+    {
+    return;
+    }
+  d->IsUpdatingWidgetFromMRML = true;
+
   d->setMessage(QString());
 
   // Block signals so that onSegmentTableItemChanged function is not called when populating
@@ -313,6 +329,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     d->SegmentsTable->setItem(0, d->columnIndex("Name"), representationItem);
 
     d->SegmentsTable->blockSignals(false);
+    d->IsUpdatingWidgetFromMRML = false;
     return;
     }
 
@@ -322,6 +339,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     d->setMessage(tr("No node is selected"));
     d->SegmentsTable->setRowCount(0);
     d->SegmentsTable->blockSignals(false);
+    d->IsUpdatingWidgetFromMRML = false;
     return;
     }
   else if (d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
@@ -329,17 +347,13 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     d->setMessage(tr("Empty segmentation"));
     d->SegmentsTable->setRowCount(0);
     d->SegmentsTable->blockSignals(false);
+    d->IsUpdatingWidgetFromMRML = false;
     return;
     }
 
   // Get segmentation display node
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     d->SegmentationNode->GetDisplayNode() );
-  if (!displayNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
-    return;
-    }
 
   vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
   d->SegmentsTable->setRowCount(segmentMap.size());
@@ -359,14 +373,18 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    displayNode->GetSegmentDisplayProperties(segmentIt->first, properties);
+    if (displayNode)
+      {
+      displayNode->GetSegmentDisplayProperties(segmentIt->first, properties);
+      }
 
     // Visibility (show only 3D visibility; if the user changes it then it applies to all types of visibility)
     QToolButton* visibilityButton = new QToolButton();
+    visibilityButton->setEnabled(displayNode != NULL);
     visibilityButton->setAutoRaise(true);
     visibilityButton->setToolTip("Set visibility for segment. Keep the button pressed for the advanced visibility options to show");
     visibilityButton->setProperty(ID_PROPERTY, segmentId);
-    if (properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
+    if (displayNode != NULL && properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
       {
       visibilityButton->setProperty(VISIBILITY_PROPERTY, true);
       visibilityButton->setIcon(d->VisibleIcon);
@@ -421,12 +439,18 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 
   // Unblock signals
   d->SegmentsTable->blockSignals(false);
+  d->IsUpdatingWidgetFromMRML = false;
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::updateWidgetFromMRML()
 {
   Q_D(qMRMLSegmentsTableView);
+
+  if (d->IsUpdatingWidgetFromMRML)
+    {
+    return;
+    }
 
   if (d->RepresentationNode!=NULL)
     {
@@ -442,11 +466,6 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
   // Get segmentation display node
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
     d->SegmentationNode->GetDisplayNode() );
-  if (!displayNode)
-    {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
-    return;
-    }
 
   // Find items for each segment and update each field
   vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
@@ -465,14 +484,18 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
 
     // Get segment display properties
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    displayNode->GetSegmentDisplayProperties(segmentIt->first, properties);
+    if (displayNode)
+      {
+      displayNode->GetSegmentDisplayProperties(segmentIt->first, properties);
+      }
 
     // Visibility
     QToolButton* visibilityButton = qobject_cast<QToolButton*>(
       d->SegmentsTable->cellWidget(row, d->columnIndex("Visible")) );
     if (visibilityButton)
       {
-      if (properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
+      visibilityButton->setEnabled(displayNode != NULL);
+      if (displayNode != NULL && properties.Visible && (properties.Visible3D || properties.Visible2DFill || properties.Visible2DOutline))
         {
         visibilityButton->setProperty(VISIBILITY_PROPERTY, true);
         visibilityButton->setIcon(d->VisibleIcon);

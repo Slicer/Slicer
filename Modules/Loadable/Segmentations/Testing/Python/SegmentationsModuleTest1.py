@@ -221,8 +221,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 43573723)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 10601312)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 274360)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 0) # Built from color table and color four is removed in previous test section
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 0)  # Built from color table and color four is removed in previous test section
 
   #------------------------------------------------------------------------------
   def TestSection_3_ImportExportSegment(self):

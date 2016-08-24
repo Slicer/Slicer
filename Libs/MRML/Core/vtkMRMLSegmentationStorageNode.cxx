@@ -628,9 +628,6 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     }
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
 
-  // Get display node to load displayed color and opacity
-  segmentationNode->CreateDefaultDisplayNodes();
-
   // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)
   this->AddPolyDataFileNames(path, segmentation);
 
@@ -644,6 +641,11 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
     vtkErrorMacro("ReadPolyDataRepresentation: Failed to read file " << path);
     return 0;
     }
+
+  int segmentationNodeWasModified = segmentationNode->StartModify();
+
+  // Get display node to load displayed color and opacity
+  segmentationNode->CreateDefaultDisplayNodes();
 
   // Read segment poly datas
   std::string masterRepresentationName;
@@ -665,6 +667,7 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       if (!masterRepresentationArray)
         {
         vtkErrorMacro("ReadPolyDataRepresentation: Unable to find master representation for segmentation in file " << path);
+        segmentationNode->EndModify(segmentationNodeWasModified);
         return 0;
         }
       masterRepresentationName = masterRepresentationArray->GetValue(0);
@@ -762,6 +765,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
 
   // Create contained representations now that all the data is loaded
   this->CreateRepresentationsBySerializedNames(segmentation, containedRepresentationNames);
+
+  segmentationNode->EndModify(segmentationNodeWasModified);
 
   return 1;
 }
