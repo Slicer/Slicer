@@ -43,7 +43,7 @@ public:
   ~qSlicerLabelMapVolumeDisplayWidgetPrivate();
   void init();
 
-  vtkMRMLScalarVolumeNode* VolumeNode;
+  vtkWeakPointer<vtkMRMLScalarVolumeNode> VolumeNode;
 };
 
 //-----------------------------------------------------------------------------
