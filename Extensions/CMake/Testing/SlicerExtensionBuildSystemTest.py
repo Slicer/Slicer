@@ -253,6 +253,10 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         ],
         cwd=config.CMAKE_CURRENT_BINARY_DIR,
         )
+      if suffix == 'B':
+        project = ExtensionProject(test_binary_dir + '/TestExt%s' % suffix)
+        project.setValue('EXTENSION_DEPENDS', 'TestExtA')
+        project.save()
       if suffix == 'C':
         project = ExtensionProject(test_binary_dir + '/TestExt%s' % suffix)
         project.setValue('EXTENSION_DEPENDS', 'TestExtA TestExtB')
