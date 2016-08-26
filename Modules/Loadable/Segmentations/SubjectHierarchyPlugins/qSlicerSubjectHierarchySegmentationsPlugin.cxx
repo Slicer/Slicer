@@ -393,7 +393,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved(vtkObject* cal
   if (!segmentationSubjectHierarchyNode)
   {
     // Debug message instead of warning because auto subject hierarchy node creation might not be enabled
-    qDebug() << "qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved: Unable to find subject hierarchy node for segmentation node " << segmentationNode->GetName() << " so per-segment subject hierarchy node cannot be created";
+    qDebug() << "qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved: Subject hierarchy node cannot be found for segmentation node " << segmentationNode->GetName() << " so per-segment subject hierarchy node cannot be removed. Ignore this message if subject hierarchy auto creation is not enabled.";
     return;
   }
 
