@@ -34,6 +34,13 @@ class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLSegme
   : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 public:
+
+  /// Field names for 2D display parameters
+  static const char* GetScalarRangeFieldName() {return "ScalarRange";};
+  static const char* GetThresholdValueFieldName() {return "ThresholdValue";};
+  static const char* GetInterpolationTypeFieldName() {return "InterpolationType";};
+
+public:
   static vtkMRMLSegmentationsDisplayableManager2D* New();
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);

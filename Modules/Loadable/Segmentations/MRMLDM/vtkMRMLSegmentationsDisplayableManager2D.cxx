@@ -65,6 +65,9 @@
 #include <vtkTriangleFilter.h>
 #include <vtkCleanPolyData.h>
 #include <vtkCellArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkIntArray.h>
+#include <vtkImageThreshold.h>
 
 // STD includes
 #include <algorithm>
@@ -146,6 +149,7 @@ public:
     vtkSmartPointer<vtkImageLabelOutline> LabelOutline;
     vtkSmartPointer<vtkLookupTable> LookupTableOutline;
     vtkSmartPointer<vtkLookupTable> LookupTableFill;
+    vtkSmartPointer<vtkImageThreshold> ImageThreshold;
     };
 
   typedef std::map<std::string, const Pipeline*> PipelineMapType;
@@ -484,6 +488,7 @@ vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::CreateSegmentPipeline(std
   pipeline->LabelOutline = vtkSmartPointer<vtkImageLabelOutline>::New();
   pipeline->LookupTableOutline = vtkSmartPointer<vtkLookupTable>::New();
   pipeline->LookupTableFill = vtkSmartPointer<vtkLookupTable>::New();
+  pipeline->ImageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
 
   // Set up image pipeline
   pipeline->Reslice->SetBackgroundColor(0.0, 0.0, 0.0, 0.0);
@@ -506,6 +511,10 @@ vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::CreateSegmentPipeline(std
   pipeline->LookupTableFill->SetTableRange(0, 1);
   pipeline->LookupTableFill->SetTableValue(0,  0, 0, 0,  0);
   pipeline->LookupTableFill->SetTableValue(1,  0, 0, 0,  0);
+
+  pipeline->ImageThreshold->SetInputConnection(pipeline->Reslice->GetOutputPort());
+  pipeline->ImageThreshold->SetOutValue(1);
+  pipeline->ImageThreshold->SetInValue(0);
 
   // Image outline
   pipeline->LabelOutline->SetInputConnection(pipeline->Reslice->GetOutputPort());
@@ -791,11 +800,32 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->PolyDataOutlineActor->SetVisibility(false);
       pipeline->PolyDataFillActor->SetVisibility(false);
 
+      // Set the range of the scalars in the image data from the ScalarRange field if it exists
+      // Default to the scalar range of 0.0 to 1.0 otherwise
+      double minimumValue = 0.0;
+      double maximumValue = 1.0;
+      vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
+        imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetScalarRangeFieldName()));
+      if (scalarRange && scalarRange->GetNumberOfValues() == 2)
+        {
+        minimumValue = scalarRange->GetValue(0);
+        maximumValue = scalarRange->GetValue(1);
+        }
+
       // Set segment color
       pipeline->LookupTableOutline->SetTableValue(1,
         properties.Color[0], properties.Color[1], properties.Color[2], properties.Opacity2DOutline * displayNode->GetOpacity());
-      pipeline->LookupTableFill->SetTableValue(1,
-        properties.Color[0], properties.Color[1], properties.Color[2], properties.Opacity2DFill * displayNode->GetOpacity());
+      pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1); //TODO: potentially specify the number of values in the table
+      pipeline->LookupTableFill->SetRampToLinear();
+      pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
+      double hsv[3] = {0,0,0};
+      vtkMath::RGBToHSV(properties.Color, hsv);
+      pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
+      pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
+      pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
+      pipeline->LookupTableFill->SetAlphaRange(0.0, properties.Opacity2DFill * displayNode->GetOpacity());
+      pipeline->LookupTableFill->ForceBuild();
+      pipeline->Reslice->SetBackgroundLevel(minimumValue);
 
       // Calculate image IJK to world RAS transform
       pipeline->SliceToImageTransform->Identity();
@@ -825,8 +855,17 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         {
         pipeline->Reslice->SetResliceTransform(pipeline->SliceToImageTransform);
         }
-      //TODO: Interpolate fractional labelmaps
+
+      // Set the interpolation mode from the InterpolationType field if it exists
+      // Default to nearest neighbor interpolation otherwise
       pipeline->Reslice->SetInterpolationModeToNearestNeighbor();
+      vtkIntArray* interpolationType = vtkIntArray::SafeDownCast(
+        imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetInterpolationTypeFieldName()));
+      if (interpolationType && interpolationType->GetNumberOfValues() == 1)
+        {
+        pipeline->Reslice->SetInterpolationMode(interpolationType->GetValue(0));
+        }
+
       pipeline->Reslice->SetInputData(identityImageData);
       int dimensions[3] = {0,0,0};
       this->SliceNode->GetDimensions(dimensions);
@@ -836,6 +875,17 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       if (segmentOutlineVisible)
         {
         pipeline->LabelOutline->SetInputConnection(pipeline->Reslice->GetOutputPort());
+
+        // Set the outline threshold from the ThresholdValue field if it exists
+        // If ThresholdValue is not specified, then do not perform thresholding
+        vtkDoubleArray* thresholdValue = vtkDoubleArray::SafeDownCast(
+          imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetThresholdValueFieldName()));
+        if (thresholdValue && thresholdValue->GetNumberOfValues() == 1)
+          {
+          pipeline->ImageThreshold->ThresholdByLower(thresholdValue->GetValue(0));
+          pipeline->LabelOutline->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
+          }
+
         pipeline->LabelOutline->SetOutline(displayNode->GetSliceIntersectionThickness());
         }
       else
