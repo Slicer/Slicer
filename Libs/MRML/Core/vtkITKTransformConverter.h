@@ -341,8 +341,17 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
     return false;
     }
 
-  typename BSplineTransformType::Pointer bsplineItk = dynamic_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
-  if (!bsplineItk.GetPointer())
+  typename BSplineTransformType::Pointer bsplineItk;
+  std::string warpTransformItkName = warpTransformItk->GetNameOfClass();
+  if (warpTransformItkName == "InverseBSplineTransform" ||
+      warpTransformItkName == "BSplineTransform" ||
+      warpTransformItkName == "BSplineDeformableTransform" ||
+      warpTransformItkName == "InverseBSplineDeformableTransform"
+      )
+    {
+    bsplineItk = static_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
+    }
+  else
     {
     return false;
     }
