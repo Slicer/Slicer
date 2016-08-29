@@ -856,9 +856,33 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   QString label = QString::fromStdString(moduleParameter.GetLabel());
   QString name = QString::fromStdString(moduleParameter.GetName());
 
+  QStringList fileExtensions;
+  const std::vector< std::string > fileExtensionsStd = moduleParameter.GetFileExtensions();
+  if (!fileExtensionsStd.empty())
+    {
+    QString customFilter("Compatible Files (");
+    for (std::vector< std::string >::const_iterator it = fileExtensionsStd.begin();
+      it != fileExtensionsStd.end(); ++it)
+      {
+      if (it != fileExtensionsStd.begin())
+        {
+        customFilter.append(" ");
+        }
+      customFilter.append(QString("*")+it->c_str());
+      }
+    customFilter.append(")");
+    fileExtensions << customFilter;
+    }
+  fileExtensions << QString("All Files (*.*)");
+
   QWidget* widget = new QWidget;
   ctkPathLineEdit* pathLineEdit =
-    new ctkPathLineEdit(name, QStringList() << QString("*.*"), ctkPathLineEdit::Files, widget);
+    new ctkPathLineEdit(name, fileExtensions, ctkPathLineEdit::Files, widget);
+
+  if (isOutputChannel(moduleParameter))
+    {
+    pathLineEdit->setFilters(pathLineEdit->filters() | ctkPathLineEdit::Writable);
+    }
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(File, name, label, pathLineEdit);
 

@@ -108,6 +108,12 @@
       <label>Input Files</label>
       <channel>input</channel>
     </file>
+    <file fileExtensions=".nrrd,.nhdr">
+      <longflag>outputFile1</longflag>
+      <description><![CDATA[An output file]]></description>
+      <label>Output file</label>
+      <channel>output</channel>
+    </file>
     <directory>
       <longflag>directory1</longflag>
       <description><![CDATA[An input directory. If no default is specified, the current directory is used,]]></description>

@@ -19,7 +19,9 @@ int main(int argc, char *argv[])
   PARSE_ARGS;
 
   // files
+  std::cout << "Input file = " << file1 << std::endl;
   std::cout << "Files size = " << files.size() << std::endl;
+  std::cout << "Output file = " << outputFile1 << std::endl;
 
   // booleans
   std::cout << "Boolean 1 = " << boolean1 << std::endl;
