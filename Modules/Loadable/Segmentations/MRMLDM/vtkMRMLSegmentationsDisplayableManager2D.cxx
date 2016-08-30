@@ -197,6 +197,9 @@ private:
   vtkMRMLSegmentationsDisplayableManager2D* External;
   bool AddingSegmentationNode;
   vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
+
+  bool SmoothFractionalLabelMapBorder;
+  vtkIdType DefaultFractionalInterpolationType;
 };
 
 //---------------------------------------------------------------------------
@@ -209,6 +212,9 @@ vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::vtkInternal(vtkMRMLSegmen
 {
   this->SliceXYToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
   this->SliceXYToRAS->Identity();
+
+  this->SmoothFractionalLabelMapBorder = true;
+  this->DefaultFractionalInterpolationType = VTK_LINEAR_INTERPOLATION;
 }
 
 //---------------------------------------------------------------------------
@@ -815,9 +821,17 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       // Set segment color
       pipeline->LookupTableOutline->SetTableValue(1,
         properties.Color[0], properties.Color[1], properties.Color[2], properties.Opacity2DOutline * displayNode->GetOpacity());
-      pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1); //TODO: potentially specify the number of values in the table
+      pipeline->LookupTableFill->SetNumberOfTableValues(2);
       pipeline->LookupTableFill->SetRampToLinear();
-      pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
+      pipeline->LookupTableFill->SetTableRange(0, 1);
+
+      if (!this->SmoothFractionalLabelMapBorder)
+        {
+        //TODO: this works for labelmaps that are int or char type, but would need to be changed for floating point representations since it only creates table values in integer increments
+        pipeline->LookupTableFill->SetNumberOfTableValues(maximumValue - minimumValue + 1);
+        pipeline->LookupTableFill->SetTableRange(minimumValue, maximumValue);
+        }
+
       double hsv[3] = {0,0,0};
       vtkMath::RGBToHSV(properties.Color, hsv);
       pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
@@ -865,11 +879,16 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         {
         pipeline->Reslice->SetInterpolationMode(interpolationType->GetValue(0));
         }
+      else if (scalarRange && scalarRange->GetNumberOfValues() == 2)
+        {
+        pipeline->Reslice->SetInterpolationMode(this->DefaultFractionalInterpolationType);
+        }
 
       pipeline->Reslice->SetInputData(identityImageData);
       int dimensions[3] = {0,0,0};
       this->SliceNode->GetDimensions(dimensions);
       pipeline->Reslice->SetOutputExtent(0, dimensions[0]-1, 0, dimensions[1]-1, 0, dimensions[2]-1);
+      pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->Reslice->GetOutputPort());
 
       // Set outline properties and turn it off if not shown
       if (segmentOutlineVisible)
@@ -884,6 +903,11 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
           {
           pipeline->ImageThreshold->ThresholdByLower(thresholdValue->GetValue(0));
           pipeline->LabelOutline->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
+
+          if (this->SmoothFractionalLabelMapBorder)
+            {
+              pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
+            }
           }
 
         pipeline->LabelOutline->SetOutline(displayNode->GetSliceIntersectionThickness());
