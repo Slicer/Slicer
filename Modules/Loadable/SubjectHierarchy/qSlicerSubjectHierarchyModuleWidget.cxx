@@ -232,18 +232,9 @@ void qSlicerSubjectHierarchyModuleWidget::setDataNodeFromSubjectHierarchyNode(vt
   Q_D(qSlicerSubjectHierarchyModuleWidget);
 
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(node);
-  if (!shNode)
-  {
-    qCritical() << Q_FUNC_INFO << ": Input node should be subject hierarchy node!";
-    return;
-  }
-
-  vtkMRMLNode* dataNode = shNode->GetAssociatedNode();
-  d->DataNodeInspectorGroupBox->setVisible(dataNode);
-  if (dataNode)
-  {
-    d->DataNodeAttributeTableWidget->setMRMLNode(dataNode);
-  }
+  vtkMRMLNode* dataNode = (shNode ? shNode->GetAssociatedNode() : NULL);
+  d->DataNodeInspectorGroupBox->setVisible(dataNode!=NULL);
+  d->DataNodeAttributeTableWidget->setMRMLNode(dataNode);
 }
 
 //-----------------------------------------------------------------------------
