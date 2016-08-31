@@ -104,6 +104,12 @@ public:
   /// This must be overwritten by subclasses that use storage nodes.
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename = NULL);
+
+  /// Returns true on success. If storage node is not needed then
+  /// storage node is not created and the method returns with true.
+  virtual bool AddDefaultStorageNode(const char* filename = NULL);
+
   /// Returns true if the node is more recent than the file on disk.
   /// This information can be used by the application to know which node
   /// has been modified since it has been last read or written.

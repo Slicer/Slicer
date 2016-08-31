@@ -906,46 +906,11 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       // Read the data into the referenced node
       if (itksys::SystemTools::FileExists( req.GetFilename().c_str() ))
         {
-        if (vtkMRMLModelNode::SafeDownCast(nd)!=NULL)
-          {
-          // Model node is a special case, the appropriate storage node depends on the file extension.
-          // It would be better to pass the file name to CreateDefaultStorageNode() method, then it would not be necessary to
-          // add such an exception here.
-          // first determine if it's free surfer file name
-          vtkWarningMacro("ProcessReadNodeData: making a new model storage node");
-          vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> fssn = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::New();
-          vtkSmartPointer<vtkMRMLModelStorageNode> msn = vtkSmartPointer<vtkMRMLModelStorageNode>::New();
-          vtkSmartPointer<vtkMRMLFreeSurferModelOverlayStorageNode> fson = vtkSmartPointer<vtkMRMLFreeSurferModelOverlayStorageNode>::New();
-          if (fssn->SupportedFileType(req.GetFilename().c_str()))
-            {
-            storageNode = fssn;
-            createdNewStorageNode = true;
-            }
-          else if (fson->SupportedFileType(req.GetFilename().c_str()))
-            {
-            storageNode = fson;
-            createdNewStorageNode = true;
-            }
-          else if (msn->SupportedFileType(req.GetFilename().c_str()))
-            {
-            storageNode = msn;
-            createdNewStorageNode = true;
-            }
-          }
-        else
-          {
-          // Use CreateDefaultStorageNode for all other nodes
-          storageNode.TakeReference(storableNode->CreateDefaultStorageNode());
-          createdNewStorageNode = true;
-
-          // Note: Transforms can be communicated either using storage nodes or
-          // in scenes. We handle the former here. The latter is handled
-          // by ProcessReadSceneData()
-          }
-
         // file is there on disk
+        storableNode->AddDefaultStorageNode(req.GetFilename().c_str());
+        storageNode = storableNode->GetStorageNode();
+        createdNewStorageNode = (storageNode != NULL);
         }
-       // done making a new storage node
       }
 
     // Have the storage node read the data into the current node
@@ -953,12 +918,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
       {
       try
         {
-        if ( storableNode->GetStorageNode() == NULL && createdNewStorageNode)
-          {
-          vtkDebugMacro("ProcessReadNodeData: found a storable node's storage node, it didn't exist already, adding the storage node " << storageNode->GetID());
-          this->GetMRMLScene()->AddNode( storageNode );
-          storableNode->SetAndObserveStorageNodeID( storageNode->GetID() );
-          }
         vtkDebugMacro("ProcessReadNodeData: about to call read data, storage node's read state is " << storageNode->GetReadStateAsString());
         if (useURI)
           {
@@ -973,7 +932,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         else
           {
           storageNode->SetFileName( req.GetFilename().c_str() );
-           vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
+          vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
           storageNode->ReadData( nd, /*temporary*/true );
           if (createdNewStorageNode)
             {

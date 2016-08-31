@@ -60,8 +60,12 @@ bool qSlicerFileReader::canLoadFile(const QString& fileName)const
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName)const
+QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =NULL */)const
 {
+  if (longestExtensionMatchPtr)
+    {
+    (*longestExtensionMatchPtr) = 0;
+    }
   QStringList matchingNameFilters;
   QFileInfo file(fileName);
   if (!file.isFile() ||
@@ -72,12 +76,18 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName)cons
     }
   foreach(const QString& nameFilter, this->extensions())
     {
-    foreach(const QString& extension, ctk::nameFilterToExtensions(nameFilter))
+    foreach(QString extension, ctk::nameFilterToExtensions(nameFilter))
       {
       QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
       Q_ASSERT(regExp.isValid());
       if (regExp.exactMatch(file.absoluteFilePath()))
         {
+        extension.remove('*'); // wildcard does not count, that's not a specific match
+        int matchedExtensionLength = extension.size();
+        if (longestExtensionMatchPtr && (*longestExtensionMatchPtr) < matchedExtensionLength)
+          {
+          (*longestExtensionMatchPtr) = matchedExtensionLength;
+          }
         matchingNameFilters << nameFilter;
         }
       }

@@ -617,30 +617,19 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
 bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
 {
   // determine file type
-  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
+  std::string extension = this->GetSupportedFileExtension(filename.c_str());
   if( extension.empty() )
     {
     vtkErrorMacro("ReadData: no file extension specified: " << filename.c_str());
     return false;
     }
-
   if ( !extension.compare(".nrrd")
       || !extension.compare(".nhdr")
       || !extension.compare(".mha")
       || !extension.compare(".mhd")
-      || !extension.compare(".nii") )
+      || !extension.compare(".nii")
+      || !extension.compare(".nii.gz"))
     {
-    return true;
-    }
-
-  // extension may contain only the last extension, which is not enough if we want to detect .nii.gz,
-  // so handle that case separately here
-  std::string filenameLowercase = vtksys::SystemTools::LowerCase(filename);
-  std::string ending=".nii.gz";
-  if (filenameLowercase.length() > ending.length()
-      && (0 == filenameLowercase.compare (filenameLowercase.length() - ending.length(), ending.length(), ending)) )
-    {
-    // filename ends with .nii.gz
     return true;
     }
 

@@ -74,6 +74,13 @@ public:
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
+  /// Return complete file extension for the specified filename.
+  /// Longest matched extension will be returned (.seg.nrrd will be returned
+  /// if both .nrrd and .seg.nrrd are matched), including dot.
+  /// If filename is not specified then the current FileName will be used
+  /// If there is no match then empty is returned.
+  virtual std::string GetSupportedFileExtension(const char* fileName = NULL, bool includeReadable = true, bool includeWriteable = true);
+
   ///
   /// return the nth file name, null if doesn't exist
   const char *GetNthFileName(int n) const;
@@ -147,7 +154,13 @@ public:
   ///
   /// Check to see if this storage node can handle the file type in the input
   /// string. If input string is null, check URI, then check FileName. Returns
-  /// 1 if is supported, 0 otherwise.
+  /// nonzero if supported, 0 otherwise.
+  /// The higher the value, the higher the confidence that this reader
+  /// is the most suitable for reading the file.
+  /// Typically, the confidence is the length of the file matched file extension
+  /// (including the dot). So, for example for .nrrd file extension the returned
+  /// value is 5, for .seg.nrrd the returned value is 9. If a reader looks into
+  /// the file content then it may return with much higher confidence values.
   /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
@@ -160,6 +173,13 @@ public:
   /// Get all the supported write file types
   /// Subclasses should overwrite InitializeSupportedWriteFileTypes().
   virtual vtkStringArray* GetSupportedWriteFileTypes();
+
+  ///
+  /// Get all file extensions from file types list
+  /// returned by GetSupportedReadFileTypes() or GetSupportedWriteFileTypes().
+  /// Always includes a dot.
+  /// If extension is not specified for a type or .* is specified then .* will be returned.
+  virtual void GetFileExtensionsFromFileTypes(vtkStringArray* inputFileTypes, vtkStringArray* outputFileExtensions);
 
   ///
   /// Allow to set specific file format that this node will write output.
@@ -277,6 +297,10 @@ public:
   /// Helper function for getting extension from a full filename.
   /// It always returns lowercase extension.
   static std::string GetLowercaseExtensionFromFileName(const std::string& filename);
+
+  /// Remove extension from filename.
+  /// If extension is empty, ".", or ".*"
+  static std::string GetFileNameWithoutExtension(const std::string& filename, const std::string& extension);
 
 protected:
   vtkMRMLStorageNode();

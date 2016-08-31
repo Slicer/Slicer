@@ -110,18 +110,7 @@ void vtkMRMLColorNode::ReadXMLAttributes(const char** atts)
       if (this->GetStorageNode() == NULL)
         {
         vtkWarningMacro("A color node has a file name, but no storage node, trying to create one");
-        vtkSmartPointer<vtkMRMLStorageNode> snode = this->CreateDefaultStorageNode();
-        if (snode && this->GetScene())
-          {
-          snode->SetFileName(attValue);
-          this->GetScene()->AddNode(snode);
-          this->SetAndObserveStorageNodeID(snode->GetID());
-          }
-        else
-          {
-          vtkErrorMacro("Unable to create or add to scene a new color storage node to read file " << attValue);
-          }
-
+        this->AddDefaultStorageNode(attValue);
         }
       }
     }

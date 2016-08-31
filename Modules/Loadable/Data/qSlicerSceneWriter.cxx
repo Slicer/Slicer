@@ -131,19 +131,14 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
     {
     // make a new one
     vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
-    //newSceneViewNode->SetScene(this->mrmlScene());
     newSceneViewNode->SetName(defaultSceneName);
     newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
     this->mrmlScene()->AddNode(newSceneViewNode.GetPointer());
 
     // create a storage node
-    vtkMRMLStorageNode *storageNode = newSceneViewNode->CreateDefaultStorageNode();
     // set the file name from the node name
     std::string fname = std::string(newSceneViewNode->GetName()) + std::string(".png");
-    storageNode->SetFileName(fname.c_str());
-    this->mrmlScene()->AddNode(storageNode);
-    newSceneViewNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    storageNode->Delete();
+    newSceneViewNode->AddDefaultStorageNode(fname.c_str());
 
     // use the new one
     sceneViewNode = newSceneViewNode.GetPointer();
@@ -204,7 +199,7 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
 
   // make a subdirectory with the name the user has chosen
   QFileInfo bundle = QFileInfo(QDir(pack.absoluteFilePath()),
-                               fileInfo.baseName());
+                               fileInfo.completeBaseName());
   QString bundlePath = bundle.absoluteFilePath();
   if ( bundle.exists() )
     {

@@ -77,12 +77,12 @@ public:
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
   qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension)const;
 
-  /// Returns a full extension for this file that is recognised by Slicer IO.
-  /// Consults the qSlicerIOCoreManager for a list of known suffixes, if no match
+  /// Returns a full extension for this storable node that is recognised by Slicer IO.
+  /// Consults the storage node for a list of known suffixes, if no match
   /// is found and the .* extension exists, return the Qt completeSuffix string.
   /// If .* is not in the complete list of known suffixes, returns an empty suffix.
   /// Always includes the leading dot.
-  Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(const QString &fileName)const;
+  Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode *node)const;
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.

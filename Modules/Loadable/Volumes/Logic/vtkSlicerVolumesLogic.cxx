@@ -1305,7 +1305,7 @@ int vtkSlicerVolumesLogic::IsFreeSurferVolume (const char* filename)
     return 0;
     }
 
-  std::string extension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(filename) );
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
   if (extension == std::string(".mgz") ||
       extension == std::string(".mgh") ||
       extension == std::string(".mgh.gz"))

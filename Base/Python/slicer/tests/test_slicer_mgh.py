@@ -25,11 +25,8 @@ class SlicerUtilLoadSaveMGHTests(unittest.TestCase):
     self.assertTrue(slicer.util.saveNode(node, filename))
     self.assertTrue(os.path.exists(filename))
 
-""" NOT YET SUPPORTED
   def test_saveLongCompressedNode(self):
     node = slicer.util.getNode('T1_longname')
     filename = os.path.join(slicer.app.temporaryPath, 'MGH_T1_longname.mgh.gz')
     self.assertTrue(slicer.util.saveNode(node, filename))
     self.assertTrue(os.path.exists(filename))
-"""
-

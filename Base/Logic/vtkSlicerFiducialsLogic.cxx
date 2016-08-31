@@ -101,30 +101,17 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
 {
   this->GetMRMLScene()->SaveStateForUndo();
 
-  vtkMRMLNode *node =
-    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode");
-  if (node == NULL)
+  vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
+    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode"));
+  vtkMRMLFiducialListNode* fiducialListNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+  if (fiducialListNode == NULL)
     {
     return NULL;
     }
-  // set up a storage node
-  vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(node);
-  if (storableNode)
-    {
-    vtkMRMLStorageNode *snode = vtkMRMLFiducialListNode::SafeDownCast(node)->CreateDefaultStorageNode();
-    //    vtkMRMLStorageNode *snode = storableNode->CreateDefaultStorageNode();
-    if (snode)
-      {
-      snode->SetScene(this->GetMRMLScene());
-      this->GetMRMLScene()->AddNode(snode);
-      storableNode->SetAndObserveStorageNodeID(snode->GetID());
-      snode->Delete();
-      }
-    }
-  node->SetName(this->GetMRMLScene()->GetUniqueNameByString("L"));
-  this->GetMRMLScene()->AddNode(node);
-  node->Delete();
-  return vtkMRMLFiducialListNode::SafeDownCast(node);
+  this->GetMRMLScene()->AddNode(fiducialListNode);
+  fiducialListNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("L"));
+  fiducialListNode->AddDefaultStorageNode();
+  return fiducialListNode;
 }
 
 //----------------------------------------------------------------------------
@@ -213,10 +200,12 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* p
 {
   this->GetMRMLScene()->SaveStateForUndo();
 
-  vtkMRMLNode *node =
-    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode");
-  if (node == NULL)
+  vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(
+    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFiducialListNode"));
+  vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+  if (listNode == NULL)
     {
+    vtkErrorMacro("vtkSlicerFiducialsLogic::LoadFiducialList: failed to create vtkMRMLFiducialListNode");
     return NULL;
     }
 
@@ -225,29 +214,26 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::LoadFiducialList(const char* p
   std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
   node->SetName(uname.c_str());
 
-  this->GetMRMLScene()->AddNode(node);
-  node->Delete();
+  this->GetMRMLScene()->AddNode(listNode);
 
-  vtkMRMLFiducialListNode *listNode = vtkMRMLFiducialListNode::SafeDownCast(node);
+  bool success = listNode->AddDefaultStorageNode(path);
+  vtkMRMLStorageNode *snode = listNode->GetStorageNode();
+  if (!success || !snode)
+    {
+    vtkErrorMacro("vtkSlicerFiducialsLogic::LoadFiducialList: failed to add storage node");
+    this->GetMRMLScene()->RemoveNode(listNode);
+    return NULL;
+    }
 
-  vtkMRMLStorageNode *snode = listNode->CreateDefaultStorageNode();
-  snode->SetFileName(path);
-  this->GetMRMLScene()->AddNode(snode);
-
-  listNode->SetAndObserveStorageNodeID(snode->GetID());
   int retval = snode->ReadData(listNode);
-
   if (retval == 0)
     {
       vtkErrorMacro("LoadFiducialList: error reading fiducial file " << path);
       // remove the nodes
       this->GetMRMLScene()->RemoveNode(snode);
       this->GetMRMLScene()->RemoveNode(listNode);
-      snode->Delete();
       return NULL;
     }
-
-  snode->Delete();
 
   return listNode;
 }

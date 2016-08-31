@@ -181,6 +181,8 @@ public:
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */);
+
   /// Create and observe default display node
   virtual void CreateDefaultDisplayNodes();
 

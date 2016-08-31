@@ -511,20 +511,19 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   if (snode == 0)
     {
-    vtkMRMLStorageNode* storageNode = node->CreateDefaultStorageNode();
-    if (storageNode == 0)
+    bool success = node->AddDefaultStorageNode();
+    if (!success)
       {
-      // node can be stored in the scene
+      qCritical() << Q_FUNC_INFO << " failed: error while trying to add storage node";
       return QFileInfo();
       }
-
-    // Use the node's scene instead of the dialog's scene to make sure
-    // node->GetStorageNode() will find the storage node (the two scenes are different
-    // for storable nodes in scene views).
-    node->GetScene()->AddNode(storageNode);
-    node->SetAndObserveStorageNodeID(storageNode->GetID());
-    storageNode->Delete();
-    snode = storageNode;
+    snode = node->GetStorageNode();
+    if (!snode)
+      {
+      // no error and no storage node means that
+      // there is no need for storage node, the node can be stored in the scene
+      return QFileInfo();
+      }
     }
   else
     {
@@ -532,21 +531,18 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     // node name
     if (snode->GetFileName() && node->GetName())
       {
-      QFileInfo existingInfo(snode->GetFileName());
-      qSlicerCoreIOManager* coreIOManager =
-           qSlicerCoreApplication::application()->coreIOManager();
-      QString suffix = coreIOManager->completeSlicerWritableFileNameSuffix(existingInfo.fileName());
-      if (!suffix.startsWith(QString(".")))
-        {
-        suffix = QString(".") + suffix;
-        }
-      QFileInfo newInfo(existingInfo.absoluteDir(), QString(safeNodeName + suffix));
+      std::string filename = snode->GetFileName();
+      std::string extension = snode->GetSupportedFileExtension(filename.c_str());
+      std::string filenameWithoutExtension = vtkMRMLStorageNode::GetFileNameWithoutExtension(filename, extension);
+      QFileInfo existingInfo(filenameWithoutExtension.c_str());
+      QString baseName = existingInfo.fileName();
       // Only reset the file name if the user has set the name explicitly (that is,
       // if the name isn't the default created by qSlicerVolumesIOOptionsWidget::setFileNames
       // TODO: this logic relies on the GUI so we should consider moving it into MRML proper
       // with a way for storage nodes to generate their default node names from a given filename
-      if (existingInfo.completeBaseName() != QString(node->GetName()))
+      if (baseName != QString(node->GetName()))
         {
+        QFileInfo newInfo(existingInfo.absoluteDir(), safeNodeName + QString(extension.c_str()));
         snode->SetFileName(newInfo.absoluteFilePath().toLatin1());
         node->StorableModified();
         }
@@ -654,11 +650,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   int currentFormat = -1;
-  QString currentExtension = coreIOManager->completeSlicerWritableFileNameSuffix(fileInfo.fileName());
-  if (!currentExtension.startsWith(QString(".")))
-    {
-    currentExtension = currentExtension + QString(".");
-    }
+  QString currentExtension = coreIOManager->completeSlicerWritableFileNameSuffix(node);
   foreach(QString nameFilter, coreIOManager->fileWriterExtensions(node))
     {
     QString extension = QString::fromStdString(

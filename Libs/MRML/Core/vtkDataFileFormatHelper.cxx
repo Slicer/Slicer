@@ -212,6 +212,11 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
       fileext = fileext.substr(0, pos1);
       }
     std::string lowercaseExtension=vtksys::SystemTools::LowerCase(fileext);
+    // make sure there is a leading . character
+    if (!lowercaseExtension.empty() && lowercaseExtension[0] != '.')
+      {
+      lowercaseExtension = std::string(".") + lowercaseExtension;
+      }
     return lowercaseExtension;
     }
   else

@@ -27,41 +27,16 @@
 
 // MRML includes
 #include "vtkMRMLScene.h"
-
+#include "vtkMRMLStorableNode.h"
 
 #include "vtkMRMLCoreTestingMacros.h"
 
 int qSlicerCoreIOManagerTest1(int argc, char * argv [])
 {
-  if(argc < 2)
-    {
-    std::cerr << "Missing arguments" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   // make the core application so that the manager can be instantiated
   qSlicerCoreApplication app(argc, argv);
 
   qSlicerCoreIOManager manager;
-
-  vtkNew<vtkMRMLScene> scene1;
-
-  QString filename = argv[1];
-
-  //manager.loadScene( scene1.GetPointer(), filename );
-
-  vtkNew<vtkMRMLScene> scene2;
-
-  //manager.loadScene( scene2.GetPointer(), filename );
-
-  //manager.closeScene( scene1.GetPointer() );
-
-  QString extension = "mrml";
-
-  //QString fileType = manager.fileTypeFromExtension( extension );
-
-  std::cout << "File Type from extension " << qPrintable(extension);
-  //std::cout << " is " << qPrintable(fileType) << std::endl;
 
   // get all the writable file extensions
   QStringList allWritableExtensions = manager.allWritableFileExtensions();
@@ -95,17 +70,28 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
   QStringList testFileNames;
   testFileNames << "MRHead.nrrd" << "brain.nii.gz" << "brain.1.nii.gz"
                 << "brain.thisisafailurecase" << "brain" << "model.vtp.gz"
-                << "model.1.vtk" << "color.table.txt.ctbl";
+                << "model.1.vtk" << "color.table.txt.ctbl"
+                << "something.seg.nrrd" << "some.more.seg.seg.nrrd" << "some.less.nrrd";
+  QStringList storageNodeClassNames;
+  storageNodeClassNames << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode"
+    << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLModelNode"
+    << "vtkMRMLModelNode" << "vtkMRMLColorTableNode"
+    << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode";
   QStringList expectedExtensions;
   // thisisafailurecase is the default Qt completeSuffix since it doesn't match any
   // known Slicer ext, same with no suffix, and the vtp.gz one
   expectedExtensions << ".nrrd" << ".nii.gz" << ".nii.gz"
-                     << ".thisisafailurecase" << "." << ".vtp.gz"
-                     << ".vtk" << ".ctbl";
+                     << "." << "." << "."
+                     << ".vtk" << ".ctbl"
+                     << ".seg.nrrd" << ".seg.nrrd" << ".nrrd";
 
   for (int i = 0; i < testFileNames.size(); ++i)
     {
-    QString ext = manager.completeSlicerWritableFileNameSuffix(testFileNames[i]);
+    vtkSmartPointer<vtkMRMLNode> node = vtkSmartPointer<vtkMRMLNode>::Take(app.mrmlScene()->CreateNodeByClass(storageNodeClassNames[i].toLatin1().constData()));
+    app.mrmlScene()->AddNode(node);
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+    storableNode->AddDefaultStorageNode(testFileNames[i].toLatin1().constData());
+    QString ext = manager.completeSlicerWritableFileNameSuffix(storableNode);
     if (expectedExtensions[i] != ext)
       {
       qWarning() << "Failed on file " << testFileNames[i]
@@ -113,7 +99,8 @@ int qSlicerCoreIOManagerTest1(int argc, char * argv [])
                  << ", but got " << ext;
       return EXIT_FAILURE;
       }
-    qDebug() << "Found extension " << ext << " from file " << testFileNames[i];
+    qDebug() << "Found extension " << ext << " from file " << testFileNames[i] << " using " << storageNodeClassNames[i];
     }
+
   return EXIT_SUCCESS;
 }

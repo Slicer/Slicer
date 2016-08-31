@@ -88,39 +88,29 @@ qSlicerFileReader* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)c
 //-----------------------------------------------------------------------------
 QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fileName)const
 {
-  QList<qSlicerFileReader*> matchingReaders;
-  // Some readers ("DICOM (*)" or "Scalar Overlay (*.*))" can support any file,
-  // they are called generic readers. They might not be the best choice to read
-  // the file as it might exist a more specific reader to read it.
-  // So let's add generic readers at the end of the reader list.
-  QList<qSlicerFileReader*> genericReaders;
+  // Use a map so that we can access readers sorted by confidence.
+  // The more specific the filter that was matched, the higher confidence
+  // that the reader is more appropriate (e.g., *.seg.nrrd is more specific than *.nrrd;
+  // *.nrrd is more specific than *.*)
+  QMultiMap<int, qSlicerFileReader*> matchingReadersSortedByConfidence;
   foreach(qSlicerFileReader* reader, this->Readers)
     {
-    QStringList matchingNameFilters = reader->supportedNameFilters(fileName);
-    if (matchingNameFilters.count() == 0)
+    // reader->supportedNameFilters will return the length of the longest matched file extension
+    // in longestExtensionMatch variable.
+    int longestExtensionMatch = 0;
+    QStringList matchedNameFilters = reader->supportedNameFilters(fileName, &longestExtensionMatch);
+    if (!matchedNameFilters.empty())
       {
-      continue;
-      }
-    // Generic readers must be added to the end
-    foreach(const QString& nameFilter, matchingNameFilters)
-      {
-      if (nameFilter.contains( "*.*" ) || nameFilter.contains("(*)"))
-        {
-        genericReaders << reader;
-        continue;
-        }
-      if (!matchingReaders.contains(reader))
-        {
-        matchingReaders << reader;
-        }
+      matchingReadersSortedByConfidence.insert(longestExtensionMatch, reader);
       }
     }
-  foreach(qSlicerFileReader* reader, genericReaders)
+  // Put matching readers in a list, with highest confidence readers pushed to the front
+  QList<qSlicerFileReader*> matchingReaders;
+  QMapIterator<int, qSlicerFileReader*> i(matchingReadersSortedByConfidence);
+  while (i.hasNext())
     {
-    if (!matchingReaders.contains(reader))
-      {
-      matchingReaders << reader;
-      }
+    i.next();
+    matchingReaders.push_front(i.value());
     }
   return matchingReaders;
 }
@@ -327,12 +317,12 @@ QStringList qSlicerCoreIOManager::allWritableFileExtensions()const
       vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(mrmlNode);
       if (snode)
         {
-        const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
+        vtkNew<vtkStringArray> supportedFileExtensions;
+        snode->GetFileExtensionsFromFileTypes(snode->GetSupportedWriteFileTypes(), supportedFileExtensions.GetPointer());
+        const int formatCount = supportedFileExtensions->GetNumberOfValues();
         for (int formatIt = 0; formatIt < formatCount; ++formatIt)
           {
-          vtkStdString format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
-          QString extension = QString::fromStdString(
-                 vtkDataFileFormatHelper::GetFileExtensionFromFormatString(format));
+          QString extension = QString::fromStdString(supportedFileExtensions->GetValue(formatIt));
           extensions << extension;
           }
         }
@@ -364,12 +354,12 @@ QStringList qSlicerCoreIOManager::allReadableFileExtensions()const
       vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(mrmlNode);
       if (snode)
         {
-        const int formatCount = snode->GetSupportedReadFileTypes()->GetNumberOfValues();
+        vtkNew<vtkStringArray> supportedFileExtensions;
+        snode->GetFileExtensionsFromFileTypes(snode->GetSupportedReadFileTypes(), supportedFileExtensions.GetPointer());
+        const int formatCount = supportedFileExtensions->GetNumberOfValues();
         for (int formatIt = 0; formatIt < formatCount; ++formatIt)
           {
-          vtkStdString format = snode->GetSupportedReadFileTypes()->GetValue(formatIt);
-          QString extension = QString::fromStdString(
-                 vtkDataFileFormatHelper::GetFileExtensionFromFormatString(format));
+          QString extension = QString::fromStdString(supportedFileExtensions->GetValue(formatIt));
           extensions << extension;
           }
         }
@@ -413,32 +403,22 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(const QString &fileName)const
+QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode *node)const
 {
-  // first get all possible Slicer file extensions
-  QStringList allExtensions = qSlicerCoreIOManager::allWritableFileExtensions();
-  // then iterate through them to find one that matches
-  foreach (QString extension, allExtensions)
+  vtkMRMLStorageNode* storageNode = node->GetStorageNode();
+  if (!storageNode)
     {
-    // check if this extension is at the end of the file name
-    if (fileName.endsWith(extension))
-      {
-      return extension;
-      }
+    qWarning() << Q_FUNC_INFO << " failed: no storage node is available";
+    return QString(".");
     }
-  if (allExtensions.contains(QString(".*")))
+  QString ext = QString::fromStdString(storageNode->GetSupportedFileExtension(NULL, false, true));
+  if (!ext.isEmpty())
     {
-    // if the .* option is in the valid extensions list,
-    // use the QFileInfo complete suffix. That will return
-    // a string of everything following the first '.', then
-    // prepend the dot to match the extensions returned from above
-    QString suffix = QString (".") + QFileInfo(fileName).completeSuffix();
-    qDebug() << "Slicer extension not found in file name " << fileName
-             << ", returning Qt complete suffix as .* case " << suffix;
-    return suffix;
+    // found
+    return ext;
     }
   // otherwise return an empty suffix
-  return QString (".");
+  return QString(".");
 }
 
 //-----------------------------------------------------------------------------
@@ -575,18 +555,17 @@ vtkMRMLNode* qSlicerCoreIOManager::loadNodesAndGetFirst(
 vtkMRMLStorageNode* qSlicerCoreIOManager::createAndAddDefaultStorageNode(
     vtkMRMLStorableNode* node)
 {
-  vtkMRMLStorageNode* snode = node ? node->GetStorageNode() : 0;
-  if (snode == 0 && node != 0)
+  if (!node)
     {
-    snode = node->CreateDefaultStorageNode();
-    if (snode != 0)
-      {
-      node->GetScene()->AddNode(snode);
-      snode->Delete();
-      node->SetAndObserveStorageNodeID(snode->GetID());
-      }
+    qCritical() << Q_FUNC_INFO << " failed: invalid input node";
+    return 0;
     }
-  return snode;
+  if (!node->AddDefaultStorageNode())
+    {
+    qCritical() << Q_FUNC_INFO << " failed: error while adding default storage node";
+    return 0;
+    }
+  return node->GetStorageNode();
 }
 
 //-----------------------------------------------------------------------------

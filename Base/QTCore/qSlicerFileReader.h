@@ -51,7 +51,10 @@ public:
   /// and the supported extensions are "Volumes (*.mha *.nrrd *.raw)",
   /// "Images (*.png" *.jpg")", "DICOM (*)" then it returns
   /// "Volumes (*.mha *.nrrd *.raw), DICOM (*)"
-  QStringList supportedNameFilters(const QString& fileName)const;
+  /// \param longestExtensionMatchPtr If non-zero then the method returns
+  /// the length of the longest matched extension length in this argument.
+  /// It can be used to determine how specifically extension matched.
+  QStringList supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr = NULL)const;
 
   /// Properties availables : fileMode, multipleFiles, fileType.
   virtual bool load(const IOProperties& properties);

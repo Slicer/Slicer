@@ -25,6 +25,9 @@
 #include <ctkFlowLayout.h>
 #include <ctkUtils.h>
 
+// VTK includes
+#include <vtkNew.h>
+
 /// Volumes includes
 #include "qSlicerIOOptions_p.h"
 #include "qSlicerVolumesIOOptionsWidget.h"
@@ -33,6 +36,7 @@
 /// Slicer includes
 #include "qSlicerCoreApplication.h"
 #include "vtkMRMLColorLogic.h"
+#include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkSlicerApplicationLogic.h"
 
 //-----------------------------------------------------------------------------
@@ -138,24 +142,31 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
   bool onlyNumberInName = false;
   bool onlyNumberInExtension = false;
   bool hasLabelMapName = false;
+
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> snode;
   foreach(const QString& fileName, fileNames)
     {
     QFileInfo fileInfo(fileName);
+    QString fileBaseName = fileInfo.baseName();
     if (fileInfo.isFile())
       {
-      names << fileInfo.completeBaseName();
+      std::string fileNameStd = fileInfo.fileName().toStdString();
+      std::string extension = snode->GetSupportedFileExtension(fileNameStd.c_str());
+      std::string filenameWithoutExtension = vtkMRMLStorageNode::GetFileNameWithoutExtension(fileNameStd, extension);
+      fileBaseName = QString(filenameWithoutExtension.c_str());
+      names << fileBaseName;
       // Single file
       // If the name (or the extension) is just a number, then it must be a 2D
       // slice from a 3D volume, so uncheck Single File.
-      onlyNumberInName = QRegExp("[0-9\\.\\-\\_\\@\\(\\)\\~]+").exactMatch(fileInfo.baseName());
+      onlyNumberInName = QRegExp("[0-9\\.\\-\\_\\@\\(\\)\\~]+").exactMatch(fileBaseName);
       fileInfo.suffix().toInt(&onlyNumberInExtension);
       }
     // Because '_' is considered as a word character (\w), \b
     // doesn't consider '_' as a word boundary.
     QRegExp labelMapName("(\\b|_)([Ll]abel(s)?)(\\b|_)");
     QRegExp segName("(\\b|_)([Ss]eg)(\\b|_)");
-    if (fileInfo.baseName().contains(labelMapName) ||
-        fileInfo.baseName().contains(segName))
+    if (fileBaseName.contains(labelMapName) ||
+      fileBaseName.contains(segName))
       {
       hasLabelMapName = true;
       }

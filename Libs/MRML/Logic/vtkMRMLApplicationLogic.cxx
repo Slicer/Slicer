@@ -680,13 +680,13 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   //
   // create a scene view, using the snapshot passed in if any
   //
-  vtkMRMLSceneViewNode * newSceneViewNode = vtkMRMLSceneViewNode::New();
+  vtkNew<vtkMRMLSceneViewNode> newSceneViewNode;
   newSceneViewNode->SetScene(this->GetMRMLScene());
   newSceneViewNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Slicer Data Bundle Scene View"));
   newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
   // save the scene view
   newSceneViewNode->StoreScene();
-  this->GetMRMLScene()->AddNode(newSceneViewNode);
+  this->GetMRMLScene()->AddNode(newSceneViewNode.GetPointer());
 
   vtkSmartPointer<vtkMRMLStorageNode> newSceneViewStorageNode;
   if (screenShot)
@@ -694,16 +694,14 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
     // assumes has been passed a screen shot of the full layout
     newSceneViewNode->SetScreenShotType(4);
     newSceneViewNode->SetScreenShot(screenShot);
-    // create a storage node
-    newSceneViewStorageNode.TakeReference(newSceneViewNode->CreateDefaultStorageNode());
     // set the file name from the node name, using a relative path, it will go
     // at the same level as the  .mrml file
     std::string sceneViewFileName = std::string(newSceneViewNode->GetName()) + std::string(".png");
-    newSceneViewStorageNode->SetFileName(sceneViewFileName.c_str());
-    this->GetMRMLScene()->AddNode(newSceneViewStorageNode);
-    newSceneViewNode->SetAndObserveStorageNodeID(newSceneViewStorageNode->GetID());
+    // create a storage node
+    newSceneViewNode->AddDefaultStorageNode(sceneViewFileName.c_str());
+    newSceneViewStorageNode = newSceneViewNode->GetStorageNode();
     // force a write
-    newSceneViewStorageNode->WriteData(newSceneViewNode);
+    newSceneViewStorageNode->WriteData(newSceneViewNode.GetPointer());
     }
 
   // write the scene to disk, changes paths to relative
@@ -718,8 +716,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   this->GetMRMLScene()->SetRootDirectory(origRootDirectory.c_str());
 
   // clean up scene views
-  this->GetMRMLScene()->RemoveNode(newSceneViewNode);
-  newSceneViewNode->Delete();
+  this->GetMRMLScene()->RemoveNode(newSceneViewNode.GetPointer());
   if (newSceneViewStorageNode)
     {
     this->GetMRMLScene()->RemoveNode(newSceneViewStorageNode);
@@ -820,16 +817,13 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
   if (!storageNode)
     {
     vtkDebugMacro("creating a new storage node for " << storableNode->GetID());
-    vtkSmartPointer<vtkMRMLStorageNode> newStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(storableNode->CreateDefaultStorageNode());
-    if (newStorageNode==NULL)
+    storableNode->AddDefaultStorageNode();
+    storageNode = storableNode->GetStorageNode();
+    if (!storageNode)
       {
       // no need for storage node to store this node
       return;
       }
-    // we have to initialize storaoge node with a valid name in the new directory
-    this->GetMRMLScene()->AddNode(newStorageNode);
-    storableNode->SetAndObserveStorageNodeID(newStorageNode->GetID());
-    storageNode = storableNode->GetStorageNode();
     }
 
   // save the old values for the storage nodes
@@ -865,20 +859,11 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
     std::string defaultWriteExtension = std::string(".")
       + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
     std::string uniqueFileName = fileBaseName;
-    std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileBaseName);
+    std::string extension = storageNode->GetSupportedFileExtension(fileBaseName.c_str());
     if (defaultWriteExtension != extension)
       {
       // for saving to MRB all nodes will be written in their default format
-      if (extension.find(".gz") != std::string::npos)
-        {
-        // there's a double extension
-        uniqueFileName = vtksys::SystemTools::GetFilenameWithoutLastExtension(vtksys::SystemTools::GetFilenameWithoutLastExtension(fileBaseName)) +
-                         defaultWriteExtension;
-        }
-      else
-        {
-        uniqueFileName = vtksys::SystemTools::GetFilenameWithoutLastExtension(fileBaseName) + defaultWriteExtension;
-        }
+      uniqueFileName = vtkMRMLStorageNode::GetFileNameWithoutExtension(fileBaseName, extension) + defaultWriteExtension;
       }
     storageNode->SetFileName(uniqueFileName.c_str());
     }

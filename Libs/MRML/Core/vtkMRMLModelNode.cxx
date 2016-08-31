@@ -15,6 +15,8 @@ Version:   $Revision: 1.3 $
 // MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
+#include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
+#include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelStorageNode.h"
@@ -655,6 +657,27 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
 vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 {
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLModelNode::GetDefaultStorageNodeClassName(const char* filename /* =NULL */)
+{
+  if (!filename)
+    {
+    return "vtkMRMLModelStorageNode";
+    }
+  // Appropriate storage node depends on the file extension.
+  vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> fssn = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::New();
+  if (fssn->SupportedFileType(filename))
+    {
+    return "vtkMRMLFreeSurferModelStorageNode";
+    }
+  vtkSmartPointer<vtkMRMLFreeSurferModelOverlayStorageNode> fson = vtkSmartPointer<vtkMRMLFreeSurferModelOverlayStorageNode>::New();
+  if (fson->SupportedFileType(filename))
+    {
+    return "vtkMRMLFreeSurferModelOverlayStorageNode";
+    }
+  return "vtkMRMLModelStorageNode";
 }
 
 //----------------------------------------------------------------------------

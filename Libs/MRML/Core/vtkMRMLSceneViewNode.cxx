@@ -173,17 +173,12 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
     if (storageNode == NULL)
       {
       // only read the directory if there isn't a storage node already
-      storageNode = this->CreateDefaultStorageNode();
+      this->AddDefaultStorageNode(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str());
+      storageNode = this->GetStorageNode();
       if (storageNode)
         {
-        storageNode->SetFileName(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str());
-        if (this->GetScene())
-          {
-          this->GetScene()->AddNode(storageNode);
-          }
         vtkWarningMacro("ReadXMLAttributes: found the ScreenCapture directory, creating a storage node to read the image file at\n\t" << storageNode->GetFileName() << "\n\tImage data be overwritten if there is a storage node pointing to another file");
         storageNode->ReadData(this);
-        storageNode->Delete();
         }
       }
     else
@@ -376,22 +371,17 @@ void vtkMRMLSceneViewNode::StoreScene()
       if (this->IncludeNodeInSceneView(storableNode) &&
           storableNode->GetSaveWithScene() )
         {
-        vtkSmartPointer<vtkMRMLStorageNode> storageNode = storableNode->GetStorageNode();
-        if (!storageNode)
+        if (!storableNode->GetStorageNode())
           {
           // No storage node in the main scene, try add one.
-          // If CreateDefaultStorageNode returns NULL it means the node can be stored
-          // in the scene (without using a storage node).
-          storageNode.TakeReference(storableNode->CreateDefaultStorageNode());
+          storableNode->AddDefaultStorageNode();
+          vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
           if (storageNode)
             {
             std::string fileBaseName = std::string(storableNode->GetName());
             std::string extension = storageNode->GetDefaultWriteFileExtension();
             std::string storageFileName = fileBaseName + std::string(".") + extension;
             storageNode->SetFileName(storageFileName.c_str());
-            // add to the main scene
-            this->Scene->AddNode(storageNode);
-            storableNode->SetAndObserveStorageNodeID(storageNode->GetID());
             }
           }
         }
