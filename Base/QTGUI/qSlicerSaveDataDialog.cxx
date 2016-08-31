@@ -408,7 +408,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
   // Don't show if the node doesn't want to (internal node)
   if (!storableNode ||
-      storableNode->GetHideFromEditors())
+    storableNode->GetHideFromEditors() || !storableNode->GetSaveWithScene())
     {
     return;
     }
