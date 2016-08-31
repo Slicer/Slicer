@@ -888,7 +888,21 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       int dimensions[3] = {0,0,0};
       this->SliceNode->GetDimensions(dimensions);
       pipeline->Reslice->SetOutputExtent(0, dimensions[0]-1, 0, dimensions[1]-1, 0, dimensions[2]-1);
+
+      // If ThresholdValue is not specified, then do not perform thresholding
+      vtkDoubleArray* thresholdValue = vtkDoubleArray::SafeDownCast(
+        imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetThresholdValueFieldName()));
+      if (thresholdValue && thresholdValue->GetNumberOfValues() == 1)
+        {
+        pipeline->ImageThreshold->ThresholdByLower(thresholdValue->GetValue(0));
+        }
+
+      // Smooth the border of fractional labelmaps
       pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->Reslice->GetOutputPort());
+      if (this->SmoothFractionalLabelMapBorder && thresholdValue && thresholdValue->GetNumberOfValues() == 1)
+        {
+          pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
+        }
 
       // Set outline properties and turn it off if not shown
       if (segmentOutlineVisible)
@@ -896,18 +910,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         pipeline->LabelOutline->SetInputConnection(pipeline->Reslice->GetOutputPort());
 
         // Set the outline threshold from the ThresholdValue field if it exists
-        // If ThresholdValue is not specified, then do not perform thresholding
-        vtkDoubleArray* thresholdValue = vtkDoubleArray::SafeDownCast(
-          imageData->GetFieldData()->GetAbstractArray(vtkMRMLSegmentationsDisplayableManager2D::GetThresholdValueFieldName()));
         if (thresholdValue && thresholdValue->GetNumberOfValues() == 1)
           {
-          pipeline->ImageThreshold->ThresholdByLower(thresholdValue->GetValue(0));
           pipeline->LabelOutline->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
-
-          if (this->SmoothFractionalLabelMapBorder)
-            {
-              pipeline->ImageFillActor->GetMapper()->GetInputAlgorithm()->SetInputConnection(pipeline->ImageThreshold->GetOutputPort());
-            }
           }
 
         pipeline->LabelOutline->SetOutline(displayNode->GetSliceIntersectionThickness());
