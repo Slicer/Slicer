@@ -262,20 +262,25 @@ void vtkMRMLSegmentationNode::SegmentationModifiedCallback(vtkObject* vtkNotUsed
       self->InvokeCustomModifiedEvent(eid, callData);
       break;
     case vtkSegmentation::RepresentationModified:
+      self->StorableModifiedTime.Modified();
       self->InvokeCustomModifiedEvent(eid, callData);
       break;
     case vtkSegmentation::ContainedRepresentationNamesModified:
+      self->StorableModifiedTime.Modified();
       self->InvokeCustomModifiedEvent(eid);
       break;
     case vtkSegmentation::SegmentAdded:
+      self->StorableModifiedTime.Modified();
       self->OnSegmentAdded(reinterpret_cast<char*>(callData));
       self->InvokeCustomModifiedEvent(eid, callData);
       break;
     case vtkSegmentation::SegmentRemoved:
+      self->StorableModifiedTime.Modified();
       self->OnSegmentRemoved(reinterpret_cast<char*>(callData));
       self->InvokeCustomModifiedEvent(eid, callData);
       break;
     case vtkSegmentation::SegmentModified:
+      self->StorableModifiedTime.Modified();
       self->OnSegmentModified(reinterpret_cast<char*>(callData));
       self->InvokeCustomModifiedEvent(eid, callData);
       break;
@@ -407,7 +412,6 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLSegmentationNode::CreateDefaultStorageNode()
 {
-  this->StorableModified(); // Workaround to make save dialog check the segmentation node
   return vtkMRMLSegmentationStorageNode::New();
 }
 
@@ -501,9 +505,7 @@ bool vtkMRMLSegmentationNode::GetModifiedSinceRead()
 {
   // Avoid calling vtkMRMLVolumeNode::GetModifiedSinceRead as it calls GetImageData
   // which triggers merge. It is undesirable especially if it's only called when exiting.
-  return this->vtkMRMLStorableNode::GetModifiedSinceRead()
-    || (this->HasMergedLabelmap() && this->GetImageData()->GetMTime() > this->GetStoredTime())
-    || this->Segmentation->GetModifiedSinceRead();
+  return this->vtkMRMLStorableNode::GetModifiedSinceRead();
 }
 
 //---------------------------------------------------------------------------

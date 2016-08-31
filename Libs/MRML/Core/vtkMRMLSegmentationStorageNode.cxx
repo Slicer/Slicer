@@ -133,8 +133,10 @@ void vtkMRMLSegmentationStorageNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation 4D NRRD volume (.seg.nrrd)");
-  this->SupportedReadFileTypes->InsertNextValue("Segmentation Multi-block dataset (.seg.vtm)");
+  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.seg.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.seg.vtm)");
+  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue("Segmentation (.vtm)");
 }
 
 //----------------------------------------------------------------------------
@@ -142,17 +144,29 @@ void vtkMRMLSegmentationStorageNode::InitializeSupportedWriteFileTypes()
 {
   Superclass::InitializeSupportedWriteFileTypes();
   vtkMRMLSegmentationNode* segmentationNode = this->GetAssociatedDataNode();
-  if (!segmentationNode)
+  bool masterIsImage = true;
+  bool masterIsPolyData = true;
+  if (segmentationNode)
     {
-    return;
+    // restrict write file types to those that are suitable for current master representaton
+    masterIsImage = segmentationNode->GetSegmentation()->IsMasterRepresentationImageData();
+    masterIsPolyData = segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData();
+    if (!masterIsImage && !masterIsPolyData)
+      {
+      // if contains unknown representation then enable all formats
+      masterIsImage = true;
+      masterIsPolyData = true;
+      }
     }
-  if (segmentationNode->GetSegmentation()->IsMasterRepresentationImageData())
+  if (masterIsImage)
     {
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation 4D NRRD volume (.seg.nrrd)");
+    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.seg.nrrd)");
+    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.nrrd)");
     }
-  else if (segmentationNode->GetSegmentation()->IsMasterRepresentationPolyData())
+  if (masterIsPolyData)
     {
-    this->SupportedWriteFileTypes->InsertNextValue("Segmentation Multi-block dataset (.seg.vtm)");
+    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.seg.vtm)");
+    this->SupportedWriteFileTypes->InsertNextValue("Segmentation (.vtm)");
     }
 }
 

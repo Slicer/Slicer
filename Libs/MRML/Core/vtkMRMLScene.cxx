@@ -44,6 +44,9 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLROINode.h"
 #include "vtkMRMLROIListNode.h"
 #include "vtkMRMLScriptedModuleNode.h"
+#include "vtkMRMLSegmentationDisplayNode.h"
+#include "vtkMRMLSegmentationNode.h"
+#include "vtkMRMLSegmentationStorageNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceNode.h"
@@ -167,6 +170,9 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLROIListNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceCompositeNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLScriptedModuleNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationDisplayNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationNode >::New() );
+  this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSegmentationStorageNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSelectionNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLSliceNode >::New() );
   this->RegisterNodeClass( vtkSmartPointer< vtkMRMLVolumeArchetypeStorageNode >::New() );

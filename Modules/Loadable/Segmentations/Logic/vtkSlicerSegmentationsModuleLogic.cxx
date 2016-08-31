@@ -115,9 +115,8 @@ void vtkSlicerSegmentationsModuleLogic::RegisterNodes()
     return;
     }
 
-  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentationNode>::New());
-  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentationDisplayNode>::New());
-  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentationStorageNode>::New());
+  // vtkMRMLSegmentationNode, vtkMRMLSegmentationDisplayNode, and
+  // vtkMRMLSegmentationStorageNode nodes are registered in vtkMRMLScene.
   this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLSegmentEditorNode>::New());
 
   // Register converter rules

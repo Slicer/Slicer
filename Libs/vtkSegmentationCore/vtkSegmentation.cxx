@@ -204,21 +204,6 @@ void vtkSegmentation::GetBounds(double bounds[6])
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegmentation::GetModifiedSinceRead()
-{
-  for (SegmentMap::iterator it = this->Segments.begin(); it != this->Segments.end(); ++it)
-    {
-    vtkSegment* segment = it->second;
-    if (segment->GetModifiedSinceRead(this->MTime))
-      {
-      return true;
-      }
-    }
-
-  return false;
-}
-
-//---------------------------------------------------------------------------
 void vtkSegmentation::SetMasterRepresentationName(const std::string& representationName)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting MasterRepresentationName to " << representationName );

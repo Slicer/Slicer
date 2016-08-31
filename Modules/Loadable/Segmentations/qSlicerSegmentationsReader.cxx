@@ -85,7 +85,7 @@ qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSegmentationsReader::extensions()const
 {
-  return QStringList() << "Segmentation (*.seg)" << "4D NRRD volume (*.nrrd)" << "Multi-block dataset (*.vtm)";
+  return QStringList() << "Segmentation (*.seg.nrrd)" << "Segmentation (*.seg.vtm)" << "Segmentation (*.nrrd)" << "Segmentation (*.vtm)";
 }
 
 //-----------------------------------------------------------------------------

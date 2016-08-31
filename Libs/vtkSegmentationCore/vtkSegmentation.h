@@ -46,9 +46,6 @@ public:
   enum
     {
     /// Fired when the master representation in ANY segment is changed.
-    /// While it is possible for the subclasses to fire the events without modifying the actual data,
-    /// it is not recommended to do so as it doesn't mark the data as modified, which may result in
-    /// an incorrect return value for \sa GetModifiedSinceRead()
     MasterRepresentationModified = 62100,
     /// Fired if any representation (including the master representation) in any segment is modified
     RepresentationModified,
@@ -106,14 +103,6 @@ public:
   /// Apply a non-linear transform on the master representation of the segments. The others will be invalidated
   /// Harden transform both if oriented image data and poly data.
   virtual void ApplyNonLinearTransform(vtkAbstractTransform* transform);
-
-  /// Returns true if the node (default behavior) or the internal data are modified
-  /// since read/written.
-  /// Note: The MTime of the internal data is used to know if it has been modified.
-  /// So if you invoke one of the data modified events without calling Modified() on the
-  /// internal data, GetModifiedSinceRead() won't return true.
-  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead();
 
 #ifndef __VTK_WRAP__
 //BTX

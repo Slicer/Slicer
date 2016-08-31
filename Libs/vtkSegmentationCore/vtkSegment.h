@@ -60,14 +60,6 @@ public:
   /// Get bounding box in global RAS in the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetBounds(double bounds[6]);
 
-  /// Returns true if the node (default behavior) or the internal data are modified
-  /// since read/written.
-  /// Note: The MTime of the internal data is used to know if it has been modified.
-  /// So if you invoke one of the data modified events without calling Modified() on the
-  /// internal data, GetModifiedSinceRead() won't return true.
-  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  bool GetModifiedSinceRead(const vtkTimeStamp& storedTime);
-
   /// Utility function to get extended bounds
   /// \param partialBounds New bounds with which the globalBounds will be extended if necessary
   /// \param globalBounds Global bounds to be extended with partialBounds

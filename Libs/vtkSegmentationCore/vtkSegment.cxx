@@ -109,20 +109,6 @@ void vtkSegment::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
-//---------------------------------------------------------------------------
-bool vtkSegment::GetModifiedSinceRead(const vtkTimeStamp& storedTime)
-{
-  RepresentationMap::iterator reprIt;
-  for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
-    {
-    if (reprIt->second && reprIt->second->GetMTime() > storedTime)
-      {
-      return true;
-      }
-    }
-  return false;
-}
-
 //----------------------------------------------------------------------------
 void vtkSegment::ReadXMLAttributes(const char** vtkNotUsed(atts))
 {
