@@ -201,6 +201,14 @@ void vtkMRMLSegmentationNode::PrintSelf(ostream& os, vtkIndent indent)
   this->Segmentation->PrintSelf(os, indent.GetNextIndent());
 }
 
+//-----------------------------------------------------------
+void vtkMRMLSegmentationNode::UpdateScene(vtkMRMLScene *scene)
+{
+  // Don't call vtkMRMLVolumeNode's UpdateScene, as it would call
+  // this->SetAndObserveImageData(this->GetImageData()).
+  vtkMRMLDisplayableNode::UpdateScene(scene);
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segmentation)
 {
@@ -594,18 +602,18 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
 {
   if (!mergedImageData)
     {
-    vtkErrorMacro("GenerateMergedLabelmap: Invalid image data!");
+    vtkErrorMacro("GenerateMergedLabelmap: Invalid image data");
     return false;
     }
   // If segmentation is missing or empty then we cannot create a merged image data
   if (!this->Segmentation)
     {
-    vtkErrorMacro("GenerateMergedLabelmap: Invalid segmentation!");
+    vtkErrorMacro("GenerateMergedLabelmap: Invalid segmentation");
     return false;
     }
   if (!this->Segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
     {
-    vtkErrorMacro("GenerateMergedLabelmap: Segmentation does not contain binary labelmap representation!");
+    vtkErrorMacro("GenerateMergedLabelmap: Segmentation does not contain binary labelmap representation");
     return false;
     }
 
@@ -766,7 +774,7 @@ void vtkMRMLSegmentationNode::ReGenerateDisplayedMergedLabelmap()
   if (!this->Segmentation->CreateRepresentation(
     vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
     {
-    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: Unable to get labelmap representation from segments!");
+    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: Unable to get labelmap representation from segments");
     this->LabelmapMergeTime.Modified();
     return;
     }
@@ -783,7 +791,7 @@ void vtkMRMLSegmentationNode::ReGenerateDisplayedMergedLabelmap()
 
   if (!this->GenerateMergedLabelmap(displayedOrientedLabelmap.GetPointer(), vtkSegmentation::EXTENT_REFERENCE_GEOMETRY, NULL, std::vector<std::string>()))
     {
-    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: Failed to create merged labelmap for 2D visualization!");
+    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: Failed to create merged labelmap for 2D visualization");
     this->LabelmapMergeTime.Modified();
     return;
     }

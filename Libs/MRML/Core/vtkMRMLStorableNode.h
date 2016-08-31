@@ -104,6 +104,10 @@ public:
   /// This must be overwritten by subclasses that use storage nodes.
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  /// Determines the most appropriate storage node class for the
+  /// provided file name and node content.
+  /// If the method is not overwritten by subclass then it uses
+  /// CreateDefaultStorageNode to determine storage node class name.
   virtual std::string GetDefaultStorageNodeClassName(const char* filename = NULL);
 
   /// Returns true on success. If storage node is not needed then

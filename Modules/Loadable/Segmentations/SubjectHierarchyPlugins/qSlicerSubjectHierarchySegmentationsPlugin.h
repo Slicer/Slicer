@@ -52,6 +52,9 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by type or identifier attribute)
   virtual double canAddNodeToSubjectHierarchy(vtkMRMLNode* nodeToAdd, vtkMRMLSubjectHierarchyNode* parent=NULL)const;
 
+  /// Creates SH node using default method and updates all segments
+  virtual bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkMRMLSubjectHierarchyNode* parent, const char* level = NULL);
+
   /// Determines if the actual plugin can handle a subject hierarchy node. The plugin with
   /// the highest confidence number will "own" the node in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)

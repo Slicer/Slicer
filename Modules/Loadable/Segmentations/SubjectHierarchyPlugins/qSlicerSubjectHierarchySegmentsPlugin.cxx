@@ -22,6 +22,7 @@
 #include "qSlicerSubjectHierarchySegmentsPlugin.h"
 
 #include "qSlicerSubjectHierarchySegmentationsPlugin.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
 #include "vtkSlicerSegmentationsModuleLogic.h"
@@ -243,18 +244,24 @@ const QString qSlicerSubjectHierarchySegmentsPlugin::helpText()const
 QString qSlicerSubjectHierarchySegmentsPlugin::tooltip(vtkMRMLSubjectHierarchyNode* node)const
 {
   if (!node)
-      {
+    {
     qCritical() << Q_FUNC_INFO << ": Subject hierarchy node is NULL!";
     return QString("Invalid!");
-      }
+    }
 
   // Get basic tooltip from abstract plugin
   QString tooltipString = Superclass::tooltip(node);
+  if (node && node->GetScene() && node->GetScene()->IsImporting())
+    {
+    // during import SH node may be created before the segmentation is read into the scene,
+    // so don't attempt to access the segment yet
+    return tooltipString;
+    }
 
   vtkSegment* segment = vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyNode(node);
   if (!segment)
     {
-    qCritical() << Q_FUNC_INFO << ": Unable to get segment for segment subject hierarchy node!";
+    qCritical() << Q_FUNC_INFO << ": Unable to get segment for segment subject hierarchy node " << (node->GetID() ? node->GetID() : "(unknown)");
     return tooltipString;
     }
 
@@ -373,6 +380,13 @@ int qSlicerSubjectHierarchySegmentsPlugin::getDisplayVisibility(vtkMRMLSubjectHi
   if (!node)
     {
     qCritical() << Q_FUNC_INFO << ": NULL node!";
+    return -1;
+    }
+
+  if (node && node->GetScene() && node->GetScene()->IsImporting())
+    {
+    // during import SH node may be created before the segmentation is read into the scene,
+    // so don't attempt to access the segment yet
     return -1;
     }
 

@@ -567,6 +567,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 {
   if (!segmentShNode)
     {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyNode: input subject hierarchy node is invalid");
     return NULL;
     }
 
@@ -592,7 +593,7 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierar
 {
   vtkMRMLSegmentationNode* segmentationNode =
     vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyNode(segmentShNode);
-  if (!segmentationNode)
+  if (!segmentShNode || !segmentationNode)
     {
     return NULL;
     }
@@ -600,14 +601,16 @@ vtkSegment* vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierar
   const char* segmentId = segmentShNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
   if (!segmentId)
     {
-    vtkWarningWithObjectMacro(segmentShNode, "vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyNode: Segment subject hierarchy node does not contain segment ID!");
+    vtkWarningWithObjectMacro(segmentShNode, "vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyNode: Segment subject hierarchy node "
+      << (segmentShNode->GetID() ? segmentShNode->GetID() : "(unknown)") << " does not contain segment ID");
     return NULL;
     }
 
   vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
   if (!segment)
     {
-    vtkErrorWithObjectMacro(segmentShNode, "vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyNode: Segmentation does not contain segment with given ID!");
+    vtkErrorWithObjectMacro(segmentShNode, "vtkSlicerSegmentationsModuleLogic::GetSegmentForSegmentSubjectHierarchyNode: "
+      "Segmentation does not contain segment with given ID: " << (segmentId ? segmentId : "(empty)"));
     }
 
   return segment;
