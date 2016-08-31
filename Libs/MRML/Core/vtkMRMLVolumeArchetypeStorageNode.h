@@ -72,10 +72,6 @@ public:
   vtkSetMacro(UseOrientationFromFile, int);
   vtkGetMacro(UseOrientationFromFile, int);
 
-  ///
-  /// Return a defualt file extension for writting
-  virtual const char* GetDefaultWriteFileExtension();
-
   /// Return true if the reference node is supported by the storage node
   virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
   virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode);

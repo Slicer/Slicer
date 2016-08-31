@@ -76,6 +76,8 @@ public:
   virtual const char* GetNodeTagName()  {return "SegmentationStorage";};
 
   /// Return a default file extension for writing
+  /// File write extension is determined dynamically
+  /// from master representation type.
   virtual const char* GetDefaultWriteFileExtension();
 
   /// Return true if the reference node can be read in

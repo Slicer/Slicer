@@ -48,6 +48,7 @@ vtkMRMLTableSQLiteStorageNode::vtkMRMLTableSQLiteStorageNode()
 {
   this->TableName = 0;
   this->Password = 0;
+  this->DefaultWriteFileExtension = "sqlite3";
 }
 
 //----------------------------------------------------------------------------
@@ -316,10 +317,4 @@ void vtkMRMLTableSQLiteStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.db3)");
   this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.sqlite)");
   this->SupportedWriteFileTypes->InsertNextValue("SQLight database (.sqlite3)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLTableSQLiteStorageNode::GetDefaultWriteFileExtension()
-{
-  return "sqlite3";
 }

@@ -40,10 +40,6 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyStorage
   /// Get node XML tag name (like Storage, Transform)
   virtual const char* GetNodeTagName()  {return "VolumePropertyStorage";};
 
-  ///
-  /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension();
-
   /// Return true if the node can be read in
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 

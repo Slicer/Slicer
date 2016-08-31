@@ -79,6 +79,7 @@ vtkMRMLNodeNewMacro(vtkMRMLModelStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLModelStorageNode::vtkMRMLModelStorageNode()
 {
+  this->DefaultWriteFileExtension = "vtk";
 }
 
 //----------------------------------------------------------------------------
@@ -407,10 +408,3 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
   this->SupportedWriteFileTypes->InsertNextValue("PLY (.ply)");
 }
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLModelStorageNode::GetDefaultWriteFileExtension()
-{
-  return "vtk";
-}
-

@@ -54,10 +54,6 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  ///
-  /// Return a default file extension for writing
-  virtual const char* GetDefaultWriteFileExtension();
-
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 
   /// Coordinate system options

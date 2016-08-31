@@ -25,6 +25,7 @@ vtkMRMLNodeNewMacro(vtkMRMLHierarchyStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyStorageNode::vtkMRMLHierarchyStorageNode()
 {
+  this->DefaultWriteFileExtension = "txt";
 }
 
 //----------------------------------------------------------------------------
@@ -152,10 +153,4 @@ void vtkMRMLHierarchyStorageNode::InitializeSupportedReadFileTypes()
 void vtkMRMLHierarchyStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLHierarchyStorageNode::GetDefaultWriteFileExtension()
-{
-  return "txt";
 }

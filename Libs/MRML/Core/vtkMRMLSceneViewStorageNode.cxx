@@ -43,6 +43,7 @@ vtkMRMLNodeNewMacro(vtkMRMLSceneViewStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLSceneViewStorageNode::vtkMRMLSceneViewStorageNode()
 {
+  this->DefaultWriteFileExtension = "png";
 }
 
 //----------------------------------------------------------------------------
@@ -239,10 +240,4 @@ void vtkMRMLSceneViewStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("JPEG (.jpeg)");
   this->SupportedWriteFileTypes->InsertNextValue("TIFF (.tiff)");
   this->SupportedWriteFileTypes->InsertNextValue("BMP (.bmp)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLSceneViewStorageNode::GetDefaultWriteFileExtension()
-{
-  return "png";
 }

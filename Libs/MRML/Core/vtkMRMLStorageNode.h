@@ -212,11 +212,14 @@ public:
   void SetURIPrefix(const char *uriPrefix);
 
   ///
-  /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension()
-    {
-    return NULL;
-    };
+  /// Return default file extension for writing.
+  virtual const char* GetDefaultWriteFileExtension();
+
+  ///
+  /// Set default file extension for writing.
+  /// It is just a hint, the storage node may choose a different
+  /// extension if the provided extension is not suitable.
+  virtual void SetDefaultWriteFileExtension(const char* ext);
 
   ///
   /// Set the nth file in FileNameList, checks that it is already defined
@@ -319,6 +322,7 @@ protected:
   vtkStringArray* SupportedReadFileTypes;
 
   /// List of supported extensions to write in
+  std::string DefaultWriteFileExtension;
   vtkStringArray* SupportedWriteFileTypes;
   char* WriteFileFormat;
 

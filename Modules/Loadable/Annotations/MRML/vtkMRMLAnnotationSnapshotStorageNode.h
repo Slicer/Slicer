@@ -36,9 +36,6 @@ public:
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "AnnotationSnapshotStorage";};
 
-  /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension();
-
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode);
 protected:

@@ -31,6 +31,7 @@ vtkMRMLNodeNewMacro(vtkMRMLProceduralColorStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorStorageNode::vtkMRMLProceduralColorStorageNode()
 {
+  this->DefaultWriteFileExtension = "txt";
 }
 
 //----------------------------------------------------------------------------
@@ -227,10 +228,4 @@ void vtkMRMLProceduralColorStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Color Function (.cxml)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLProceduralColorStorageNode::GetDefaultWriteFileExtension()
-{
-  return "txt";
 }

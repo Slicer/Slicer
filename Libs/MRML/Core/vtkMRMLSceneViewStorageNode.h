@@ -39,9 +39,6 @@ public:
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension();
-
   /// Return true if the node can be read in
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 

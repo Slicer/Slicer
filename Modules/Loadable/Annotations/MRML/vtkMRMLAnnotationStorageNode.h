@@ -27,10 +27,6 @@ public:
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "AnnotationStorage";};
 
-  // Description:
-  // Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension();
-
   /// Return true if the node can be read in
   virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
 

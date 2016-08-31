@@ -39,6 +39,7 @@ vtkMRMLNodeNewMacro(vtkMRMLNRRDStorageNode);
 vtkMRMLNRRDStorageNode::vtkMRMLNRRDStorageNode()
 {
   this->CenterImage = 0;
+  this->DefaultWriteFileExtension = "nhdr";
 }
 
 //----------------------------------------------------------------------------
@@ -515,12 +516,6 @@ void vtkMRMLNRRDStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nhdr)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLNRRDStorageNode::GetDefaultWriteFileExtension()
-{
-  return "nhdr";
 }
 
 //----------------------------------------------------------------------------

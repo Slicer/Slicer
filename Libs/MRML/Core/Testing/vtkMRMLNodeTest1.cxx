@@ -122,10 +122,6 @@ public:
   virtual void ReadXMLAttributes(const char** atts);
 
   // Implemented to satisfy the storage node interface
-  virtual const char* GetDefaultWriteFileExtension()
-    {
-    return "noop";
-    }
   virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode)
     {
     return refNode->IsA("vtkMRMLNodeTestHelper1");
@@ -165,6 +161,7 @@ private:
   vtkMRMLStorageNodeTestHelper()
     {
     this->OtherNodeID = NULL;
+    this->DefaultWriteFileExtension = "noop";
     }
   ~vtkMRMLStorageNodeTestHelper()
     {

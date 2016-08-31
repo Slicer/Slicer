@@ -27,6 +27,7 @@ vtkMRMLFiducialListStorageNode::vtkMRMLFiducialListStorageNode()
 {
   // version 2 has the new glyph symbol numbering, which starts at 1
   this->Version = 2;
+  this->DefaultWriteFileExtension = "fcsv";
 }
 
 //----------------------------------------------------------------------------
@@ -515,10 +516,4 @@ void vtkMRMLFiducialListStorageNode::InitializeSupportedReadFileTypes()
 void vtkMRMLFiducialListStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Fiducial List CSV (.fcsv)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLFiducialListStorageNode::GetDefaultWriteFileExtension()
-{
-  return "fcsv";
 }

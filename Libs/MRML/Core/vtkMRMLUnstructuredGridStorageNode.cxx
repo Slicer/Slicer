@@ -30,6 +30,12 @@ Version:   $Revision: 1.2 $
 vtkMRMLNodeNewMacro(vtkMRMLUnstructuredGridStorageNode);
 
 //----------------------------------------------------------------------------
+vtkMRMLUnstructuredGridStorageNode::vtkMRMLUnstructuredGridStorageNode()
+{
+  this->DefaultWriteFileExtension = "vtk";
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLUnstructuredGridStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -155,10 +161,4 @@ void vtkMRMLUnstructuredGridStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue(
     "Unstructured Grid (.vtk)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLUnstructuredGridStorageNode::GetDefaultWriteFileExtension()
-{
-  return "vtk";
 }

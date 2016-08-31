@@ -40,6 +40,7 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationSnapshotStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationSnapshotStorageNode::vtkMRMLAnnotationSnapshotStorageNode()
 {
+  this->DefaultWriteFileExtension = "png";
 }
 
 //----------------------------------------------------------------------------
@@ -252,10 +253,4 @@ void vtkMRMLAnnotationSnapshotStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("JPEG (.jpeg)");
   this->SupportedWriteFileTypes->InsertNextValue("TIFF (.tiff)");
   this->SupportedWriteFileTypes->InsertNextValue("BMP (.bmp)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLAnnotationSnapshotStorageNode::GetDefaultWriteFileExtension()
-{
-  return "png";
 }

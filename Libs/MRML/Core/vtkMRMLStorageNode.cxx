@@ -184,6 +184,11 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
   ss << this->UseCompression;
   of << indent << " useCompression=\"" << ss.str() << "\"";
 
+  if (this->GetDefaultWriteFileExtension() != NULL)
+    {
+    of << indent << " defaultWriteFileExtension=\"" << this->GetDefaultWriteFileExtension() << "\"";
+    }
+
   of << indent << " readState=\"" << this->ReadState <<  "\"";
   of << indent << " writeState=\"" << this->WriteState <<  "\"";
 }
@@ -287,6 +292,11 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       std::string uri = vtkMRMLNode::URLDecodeString(attValue);
       this->AddURI(uri.c_str());
       }
+    else if (!strncmp(attName, "defaultWriteFileExtension", 25))
+      {
+      this->SetDefaultWriteFileExtension(attValue);
+      }
+
     else if (!strcmp(attName, "useCompression"))
       {
       std::stringstream ss;
@@ -330,6 +340,7 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
   this->SetUseCompression(node->UseCompression);
   this->SetReadState(node->ReadState);
   this->SetWriteState(node->WriteState);
+  this->SetDefaultWriteFileExtension(node->GetDefaultWriteFileExtension());
 
   this->EndModify(disabledModify);
 }
@@ -363,6 +374,8 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << indent << "WriteFileFormat: " <<
     (this->WriteFileFormat ? this->WriteFileFormat : "(none)") << "\n";
+  os << indent << "DefaultWriteFileExtension: " <<
+    (this->GetDefaultWriteFileExtension() ? this->GetDefaultWriteFileExtension() : "(none)") << "\n";
 
   os << indent << "TempFileName: " << (this->TempFileName ? this->TempFileName : "(none)") << "\n";
 }
@@ -933,6 +946,29 @@ vtkStringArray* vtkMRMLStorageNode::GetSupportedWriteFileTypes()
     }
   return this->SupportedWriteFileTypes;
 }
+
+//------------------------------------------------------------------------------
+const char* vtkMRMLStorageNode::GetDefaultWriteFileExtension()
+{
+  // for backward compatibility, we return NULL by default
+  if (this->DefaultWriteFileExtension.empty())
+    {
+    return NULL;
+    }
+  return this->DefaultWriteFileExtension.c_str();
+};
+
+//------------------------------------------------------------------------------
+void vtkMRMLStorageNode::SetDefaultWriteFileExtension(const char* ext)
+{
+  std::string extStr = (ext ? ext : "");
+  if (extStr == this->DefaultWriteFileExtension)
+    {
+    return;
+    }
+  this->DefaultWriteFileExtension = extStr;
+  this->Modified();
+};
 
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::InitializeSupportedReadFileTypes()

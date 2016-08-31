@@ -15,6 +15,7 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationStorageNode);
 vtkMRMLAnnotationStorageNode::vtkMRMLAnnotationStorageNode()
 {
   //this->Debug =1;
+  this->DefaultWriteFileExtension = "acsv";
 }
 
 //----------------------------------------------------------------------------
@@ -659,10 +660,4 @@ void vtkMRMLAnnotationStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Annotation List CSV (.acsv)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLAnnotationStorageNode::GetDefaultWriteFileExtension()
-{
-  return "acsv";
 }

@@ -55,6 +55,7 @@ vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
   this->CenterImage = 0;
   this->SingleFile  = 0;
   this->UseOrientationFromFile = 1;
+  this->DefaultWriteFileExtension = "nrrd";
 }
 
 //----------------------------------------------------------------------------
@@ -612,12 +613,6 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
                                                      supportedFormats->GetValue(i));
       }
     }
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLVolumeArchetypeStorageNode::GetDefaultWriteFileExtension()
-{
-  return "nrrd";
 }
 
 //----------------------------------------------------------------------------

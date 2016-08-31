@@ -41,10 +41,6 @@ public:
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FiducialListStorage";};
 
-  ///
-  /// Return a default file extension for writing
-  virtual const char* GetDefaultWriteFileExtension();
-
   /// Get/Set the storage node version
   vtkGetMacro(Version, int);
   vtkSetMacro(Version, int);

@@ -34,6 +34,7 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialStorageNode::vtkMRMLMarkupsFiducialStorageNode()
 {
+  this->DefaultWriteFileExtension = "fcsv";
 }
 
 //----------------------------------------------------------------------------
@@ -573,10 +574,4 @@ void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedReadFileTypes()
 void vtkMRMLMarkupsFiducialStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Markups Fiducial CSV (.fcsv)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLMarkupsFiducialStorageNode::GetDefaultWriteFileExtension()
-{
-  return "fcsv";
 }

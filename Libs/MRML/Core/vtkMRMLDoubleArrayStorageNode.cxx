@@ -27,6 +27,7 @@ vtkMRMLNodeNewMacro(vtkMRMLDoubleArrayStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLDoubleArrayStorageNode::vtkMRMLDoubleArrayStorageNode()
 {
+  this->DefaultWriteFileExtension = "mcsv";
 }
 
 //----------------------------------------------------------------------------
@@ -299,10 +300,4 @@ void vtkMRMLDoubleArrayStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Measurement CSV (.mcsv)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLDoubleArrayStorageNode::GetDefaultWriteFileExtension()
-{
-  return "mcsv";
 }

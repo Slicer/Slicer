@@ -30,6 +30,7 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumePropertyStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyStorageNode::vtkMRMLVolumePropertyStorageNode()
 {
+  this->DefaultWriteFileExtension = "vp";
 }
 
 //----------------------------------------------------------------------------
@@ -225,10 +226,4 @@ void vtkMRMLVolumePropertyStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("VolumeProperty (.vp)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
   this->SupportedWriteFileTypes->InsertNextValue("VolumeProperty (.*)");
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLVolumePropertyStorageNode::GetDefaultWriteFileExtension()
-{
-  return "vp";
 }

@@ -37,6 +37,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTransformStorageNode);
 vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 {
   this->PreferITKv3CompatibleTransforms = 0;
+  this->DefaultWriteFileExtension = "h5";
   vtkITKTransformConverter::RegisterInverseTransformTypes();
 }
 
@@ -610,11 +611,6 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("Displacement field (.mhd)");
   this->SupportedWriteFileTypes->InsertNextValue("Displacement field (.nii)");
   this->SupportedWriteFileTypes->InsertNextValue("Displacement field (.nii.gz)");
-}
-//----------------------------------------------------------------------------
-const char* vtkMRMLTransformStorageNode::GetDefaultWriteFileExtension()
-{
-  return "h5";
 }
 
 //----------------------------------------------------------------------------
