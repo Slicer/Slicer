@@ -807,15 +807,9 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
 
   QString type = QString::fromStdString(moduleParameter.GetType());
 
-  // Note: TransformNode is abstract making it inappropriate for
-  // an output type since the node selector must be able to make
-  // an instance of the class.  For now, revert to LinearTransformNode.
-
-  QString defaultNodeType =
-    (channel == "input" ? "vtkMRMLTransformNode" : "vtkMRMLLinearTransformNode");
-  QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType,
-                                           type, defaultNodeType);
-
+    QString defaultNodeType = "vtkMRMLTransformNode";
+    QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType,
+      type, defaultNodeType);
   QString index = QString::fromStdString(moduleParameter.GetIndex());
   // TODO - title + " Transform"
 
@@ -823,9 +817,23 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNoneEnabled(index.isEmpty());
-  widget->setAddEnabled(nodeType != "vtkMRMLTransformNode" && channel != "input");
+  widget->setAddEnabled(channel != "input");
   widget->setRenameEnabled(true);
-  widget->setNodeTypes(QStringList(nodeType));
+  if (nodeType == "vtkMRMLTransformNode" && widget->addEnabled())
+    {
+    // When any kind of transform can be added, allow creating
+    // any kind of transform node types.
+    widget->setNodeTypes(QStringList()
+      << "vtkMRMLTransformNode"
+      << "vtkMRMLLinearTransformNode"
+      << "vtkMRMLGridTransformNode"
+      << "vtkMRMLBSplineTransformNode"
+      );
+    }
+  else
+    {
+    widget->setNodeTypes(QStringList(nodeType));
+    }
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
   QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
