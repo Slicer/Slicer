@@ -29,6 +29,8 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
+class vtkMRMLMarkupsNode;
+
 /// \ingroup Slicer_QtModules_Markups
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialStorageNode : public vtkMRMLMarkupsStorageNode
 {
@@ -78,6 +80,7 @@ protected:
   /// label can have spaces, everything up to next comma is used, no quotes
   /// necessary, same with the description
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
+
 };
 
 #endif

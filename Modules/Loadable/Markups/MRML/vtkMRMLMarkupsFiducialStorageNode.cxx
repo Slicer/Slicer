@@ -382,8 +382,8 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             if (component.size())
               {
               vtkDebugMacro("Got label = " << component.c_str());
-              label = component;
-              markupsNode->SetNthMarkupLabelFromStorage(thisMarkupNumber,label);
+              label = this->ConvertStringFromStorageFormat(component);
+              markupsNode->SetNthMarkupLabel(thisMarkupNumber, label);
               }
             else
               {
@@ -407,8 +407,8 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
             if (component.size())
               {
               vtkDebugMacro("Got desc = " << component.c_str());
-              desc = component;
-              markupsNode->SetNthMarkupDescriptionFromStorage(thisMarkupNumber,desc);
+              desc = this->ConvertStringFromStorageFormat(component);
+              markupsNode->SetNthMarkupDescription(thisMarkupNumber, desc);
               }
             else
               {
@@ -536,12 +536,8 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     bool sel = markupsNode->GetNthMarkupSelected(i);
     bool lock = markupsNode->GetNthMarkupLocked(i);
 
-    std::string label = markupsNode->GetNthMarkupLabelForStorage(i);
-    std::string desc = markupsNode->GetNthMarkupDescriptionForStorage(i);
-    if (desc.size() == 0)
-      {
-      desc = std::string("");
-      }
+    std::string label = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupLabel(i));
+    std::string desc = this->ConvertStringToStorageFormat(markupsNode->GetNthMarkupDescription(i));
 
     std::string associatedNodeID = markupsNode->GetNthMarkupAssociatedNodeID(i);
     if (associatedNodeID.size() == 0)

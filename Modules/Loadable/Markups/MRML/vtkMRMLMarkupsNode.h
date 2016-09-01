@@ -298,19 +298,6 @@ public:
   /// Set the Description on the nth markup
   void SetNthMarkupDescription(int n, std::string description);
 
-  /// Get the label on the nth markup, converting between
-  /// user input and storage node file safe strings
-  std::string GetNthMarkupLabelForStorage(int n = 0);
-  /// Set the label on the nth markup, converting between
-  /// user input and storage node file safe strings
-  void SetNthMarkupLabelFromStorage(int n, std::string label);
-  /// Get the description on the nth markup, converting between
-  /// user input and storage node file safe strings
-  std::string GetNthMarkupDescriptionForStorage(int n = 0);
-  /// Set the description on the nth markup, converting between
-  /// user input and storage node file safe strings
-  void SetNthMarkupDescriptionFromStorage(int n, std::string description);
-
   // Transform utility functions
 
   /// Returns true since can apply non linear transforms
