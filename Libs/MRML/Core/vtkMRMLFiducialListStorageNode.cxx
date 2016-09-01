@@ -52,7 +52,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("vtkMRMLFiducialListStorageNode: File name not specified");
     return 0;
@@ -434,7 +434,7 @@ int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 int vtkMRMLFiducialListStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("vtkMRMLFiducialListStorageNode: File name not specified");
     return 0;

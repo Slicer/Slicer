@@ -209,7 +209,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
 
   std::string fullName = this->GetFullNameFromFileName();
 
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("vtkMRMLAnnotationStorageNode: File name not specified");
     return 0;
@@ -576,7 +576,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
     }
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("OpenFileToWrite: File name not specified");
     return 0;

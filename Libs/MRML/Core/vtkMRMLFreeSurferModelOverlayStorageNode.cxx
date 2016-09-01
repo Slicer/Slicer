@@ -83,7 +83,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 
   std::string fullName = this->GetFullNameFromFileName();
 
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
@@ -720,7 +720,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::WriteDataInternal(vtkMRMLNode *ref
   //vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("WriteData: File name not specified");
     return 0;
@@ -752,12 +752,12 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::CopyData(vtkMRMLNode *refNode,
 //  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
   std::string newName = newFileName;
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("vtkMRMLFreeSurferModelOverlayNode: File name not specified");
     return 0;
     }
-  if ( newName == std::string(""))
+  if ( newName.empty())
     {
     vtkErrorMacro("vtkMRMLFreeSurferModelOverlayNode: Copy-to file name not specified");
     return 0;

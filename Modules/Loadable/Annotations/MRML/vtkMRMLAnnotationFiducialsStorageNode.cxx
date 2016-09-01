@@ -432,7 +432,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 // {
 //   std::string fullName = this->GetFullNameFromFileName();
 //
-//   if (fullName == std::string(""))
+//   if (fullName.empty())
 //     {
 //     vtkErrorMacro("vtkMRMLAnnotationFiducialsStorageNode: File name not specified");
 //     return 0;

@@ -54,7 +54,7 @@ int vtkMRMLUnstructuredGridStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLUnstructuredGridNode *modelNode = vtkMRMLUnstructuredGridNode::SafeDownCast (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("ReadData: File name not specified");
     return result;
@@ -111,7 +111,7 @@ int vtkMRMLUnstructuredGridStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkMRMLUnstructuredGridNode *modelNode = vtkMRMLUnstructuredGridNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
     return 0;

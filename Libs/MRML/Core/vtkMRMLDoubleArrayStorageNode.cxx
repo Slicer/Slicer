@@ -52,7 +52,7 @@ int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
-  if (fullName == std::string(""))
+  if (fullName.empty())
     {
     vtkErrorMacro("vtkMRMLDoubleArrayStorageNode: File name not specified");
     return 0;
@@ -218,7 +218,7 @@ int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     }
 
     std::string fullName = this->GetFullNameFromFileName();
-    if (fullName == std::string(""))
+    if (fullName.empty())
     {
         vtkErrorMacro("vtkMRMLDoubleArrayStorageNode: File name not specified");
         return 0;
