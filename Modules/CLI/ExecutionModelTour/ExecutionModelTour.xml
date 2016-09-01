@@ -132,18 +132,62 @@
       <label>Output image</label>
       <channel>output</channel>
     </image>
-    <transform type="linear">
-      <longflag>transform1</longflag>
-      <description><![CDATA[An input transform]]></description>
+  </parameters>
+  <parameters>
+    <label>Transform Parameters</label>
+    <description><![CDATA[Parameters that describe transforms.]]></description>
+    <transform>
+      <longflag>transformInput</longflag>
+      <description><![CDATA[A generic input transform]]></description>
       <label>Input transform</label>
       <channel>input</channel>
     </transform>
     <transform type="linear">
-      <longflag>transform2</longflag>
-      <description><![CDATA[An output transform]]></description>
+      <longflag>transform1</longflag>
+      <description><![CDATA[A linear input transform]]></description>
+      <label>Input transform linear</label>
+      <channel>input</channel>
+    </transform>
+    <transform type="nonlinear">
+      <longflag>transformInputNonlinear</longflag>
+      <description><![CDATA[A nonlinear input transform]]></description>
+      <label>Input transform nonlinear</label>
+      <channel>input</channel>
+    </transform>
+    <transform type="bspline">
+      <longflag>transformInputBspline</longflag>
+      <description><![CDATA[A bspline input transform]]></description>
+      <label>Input transform bspline</label>
+      <channel>input</channel>
+    </transform>
+    <transform>
+      <longflag>transformOutput</longflag>
+      <description><![CDATA[A generic output transform]]></description>
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
+    <transform type="linear">
+      <longflag>transform2</longflag>
+      <description><![CDATA[A linear output transform]]></description>
+      <label>Output transform linear</label>
+      <channel>output</channel>
+    </transform>
+    <transform type="nonlinear">
+      <longflag>transformOutputNonlinear</longflag>
+      <description><![CDATA[A nonlinear output transform]]></description>
+      <label>Output transform nonlinear</label>
+      <channel>output</channel>
+    </transform>
+    <transform type="bspline">
+      <longflag>transformOutputBspline</longflag>
+      <description><![CDATA[A bspline output transform]]></description>
+      <label>Output transform bspline</label>
+      <channel>output</channel>
+    </transform>
+  </parameters>
+  <parameters>
+    <label>Point Parameters</label>
+    <description><![CDATA[Parameters that describe point sets.]]></description>
     <point multiple="true" coordinateSystem="ras">
       <name>seed</name>
       <label>Seeds</label>
@@ -165,6 +209,32 @@
       <longflag>seedsOutFile</longflag>
       <channel>output</channel>
     </pointfile>
+  </parameters>
+  <parameters>
+    <label>Geometry Parameters</label>
+    <description><![CDATA[Parameters that describe models.]]></description>
+    <geometry>
+      <name>InputModel</name>
+      <label>Input Model</label>
+      <longflag>inputModel</longflag>
+      <channel>input</channel>
+      <description><![CDATA[Input model]]></description>
+    </geometry>
+    <geometry reference="InputModel">
+      <name>OutputModel</name>
+      <label>Output Model</label>
+      <longflag>outputModel</longflag>
+      <channel>output</channel>
+      <description><![CDATA[Output model]]></description>
+    </geometry>
+    <geometry aggregate="true" fileExtensions=".mrml" multiple="true">
+      <name>ModelSceneFile</name>
+      <channel>output</channel>
+      <label>Models</label>
+      <longflag>modelSceneFile</longflag>
+      <description><![CDATA[Generated models, under a model hierarchy node. Models are imported into Slicer under a model hierarchy node. The model hierarchy node must be created before running the model maker, by selecting Create New ModelHierarchy from the Models drop down menu.]]></description>
+      <default>models.mrml</default>
+    </geometry>
   </parameters>
   <parameters>
     <label>Index Parameters</label>
