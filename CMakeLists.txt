@@ -514,7 +514,7 @@ endif()
 #-----------------------------------------------------------------------------
 # VTKv7 - Slicer_VTK_COMPONENTS
 #-----------------------------------------------------------------------------
-set(Slicer_VTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Choose the rendering backend.")
+set(Slicer_VTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Choose the rendering backend.")
 set_property(CACHE Slicer_VTK_RENDERING_BACKEND PROPERTY STRINGS "OpenGL" "OpenGL2")
 mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
 set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
