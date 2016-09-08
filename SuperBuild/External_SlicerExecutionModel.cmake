@@ -5,7 +5,7 @@ set(proj SlicerExecutionModel)
 set(${proj}_DEPENDENCIES ${ITK_EXTERNAL_NAME})
 
 if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
-  set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} JsonCpp)
+  set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} JsonCpp ParameterSerializer)
 endif()
 
 # Include dependent projects if any
@@ -57,6 +57,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
 
   if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
     _set(JsonCpp_DIR PATH ${JsonCpp_DIR})
+    _set(ParameterSerializer_DIR PATH ${ParameterSerializer_DIR})
   endif()
 
   ExternalProject_Add(${proj}
@@ -72,6 +73,8 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Unused
       -DBUILD_TESTING:BOOL=OFF
       -DITK_DIR:PATH=${ITK_DIR}
+      -DGenerateCLP_USE_SERIALIZER:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}
+      -DModuleDescriptionParser_USE_SERIALIZER:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}
       -DSlicerExecutionModel_USE_JSONCPP:BOOL=${Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT}
       -DSlicerExecutionModel_LIBRARY_PROPERTIES:STRING=${Slicer_LIBRARY_PROPERTIES}
       -DSlicerExecutionModel_INSTALL_BIN_DIR:PATH=${Slicer_INSTALL_LIB_DIR}

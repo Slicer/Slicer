@@ -163,6 +163,17 @@ if(UNIX)
     )
 endif()
 
+if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
+  add_test(
+    NAME py_nomainwindow_CLISerializationTest
+    COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/CLISerializationTest.py
+      ${Slicer_LAUNCHER_EXECUTABLE}
+      ${Slicer_SOURCE_DIR}/Testing/Data/Input
+      ${Slicer_BINARY_DIR}/Testing/Temporary
+    )
+endif()
+
 #
 # Check if scripted module import works as expected
 #
