@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>358</width>
-    <height>502</height>
+    <height>601</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -135,100 +135,8 @@
       <property name="margin">
        <number>4</number>
       </property>
-      <item row="4" column="1">
-       <widget class="QComboBox" name="comboBox_DisplayedRepresentation3D">
-        <property name="toolTip">
-         <string>Representation that is shown in 3D (models only)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_Opacity">
-        <property name="text">
-         <string>Opacity:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_Views">
-        <property name="text">
-         <string>Views:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="qMRMLDisplayNodeViewComboBox" name="DisplayNodeViewComboBox"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_Representation3D">
-        <property name="toolTip">
-         <string>Representation that is shown as a model in 3D and as slice intersections in 2D if exists</string>
-        </property>
-        <property name="text">
-         <string>Representation in 3D views:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="spinBox_SliceIntersectionThickness">
-        <property name="suffix">
-         <string> px</string>
-        </property>
-        <property name="maximum">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_SliceIntersectionThickness">
-        <property name="text">
-         <string>Slice intersection thickness:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="checkBox_Visible">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="ctkSliderWidget" name="SliderWidget_Opacity">
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="pageStep">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_Visible">
-        <property name="text">
-         <string>Visible:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_Representation2D">
-        <property name="text">
-         <string>Representation in 2D views:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QComboBox" name="comboBox_DisplayedRepresentation2D">
-        <property name="toolTip">
-         <string>Representation that is shown in the 2D slice views</string>
-        </property>
-       </widget>
+       <widget class="qMRMLSegmentationDisplayNodeWidget" name="SegmentationDisplayNodeWidget"/>
       </item>
      </layout>
     </widget>
@@ -541,16 +449,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLDisplayNodeViewComboBox</class>
-   <extends>qMRMLCheckableNodeComboBox</extends>
-   <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -579,6 +477,11 @@
    <header>qMRMLSegmentationRepresentationsListView.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLSegmentationDisplayNodeWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSegmentationDisplayNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
@@ -589,11 +492,6 @@
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -627,24 +525,24 @@
      <y>3</y>
     </hint>
     <hint type="destinationlabel">
-     <x>535</x>
-     <y>510</y>
+     <x>293</x>
+     <y>609</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerSegmentationsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>SegmentsTableView</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <sender>SegmentsTableView</sender>
+   <signal>selectionChanged(QItemSelection,QItemSelection)</signal>
+   <receiver>SegmentationDisplayNodeWidget</receiver>
+   <slot>onSegmentSelectionChanged(QItemSelection,QItemSelection)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>93</x>
-     <y>3</y>
+     <x>157</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel">
-     <x>126</x>
-     <y>103</y>
+     <x>137</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>

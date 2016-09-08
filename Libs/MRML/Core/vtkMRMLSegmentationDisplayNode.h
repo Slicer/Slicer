@@ -68,7 +68,7 @@ public:
     , Visible2DFill(true)
     , Visible2DOutline(true)
     , Opacity3D(1.0)
-    , Opacity2DFill(0.5)
+    , Opacity2DFill(1.0) // Default is 1, because these are relative values. Half transparency is default for the whole segmentation
     , Opacity2DOutline(1.0)
       {
       Color[0] = 1.0;
@@ -111,6 +111,29 @@ public:
   vtkGetStringMacro(PreferredDisplayRepresentationName3D);
   /// Set name of representation that is displayed in the 3D view if exists
   vtkSetStringMacro(PreferredDisplayRepresentationName3D);
+
+  /// Get/Set 3D visibility
+  vtkGetMacro(Visibility3D, bool);
+  vtkSetMacro(Visibility3D, bool);
+  vtkBooleanMacro(Visibility3D, bool);
+  /// Get/Set 2D fill visibility
+  vtkGetMacro(Visibility2DFill, bool);
+  vtkSetMacro(Visibility2DFill, bool);
+  vtkBooleanMacro(Visibility2DFill, bool);
+  /// Get/Set 2D outline visibility
+  vtkGetMacro(Visibility2DOutline, bool);
+  vtkSetMacro(Visibility2DOutline, bool);
+  vtkBooleanMacro(Visibility2DOutline, bool);
+
+  /// Get/Set 3D opacity
+  vtkGetMacro(Opacity3D, double);
+  vtkSetMacro(Opacity3D, double);
+  /// Get/Set 2D fill opacity
+  vtkGetMacro(Opacity2DFill, double);
+  vtkSetMacro(Opacity2DFill, double);
+  /// Get/Set 2D outline opacity
+  vtkGetMacro(Opacity2DOutline, double);
+  vtkSetMacro(Opacity2DOutline, double);
 
 public:
   /// Create color table node for segmentation
@@ -268,6 +291,20 @@ protected:
   /// For checking if cached segment list in SegmentationDisplayProperties has to be updated
   vtkMTimeType SegmentListUpdateTime;
   vtkSegmentation* SegmentListUpdateSource;
+
+  /// 3D visibility for the whole segmentation
+  bool Visibility3D;
+  /// 2D fill visibility for the whole segmentation
+  bool Visibility2DFill;
+  /// 2D outline visibility for the whole segmentation
+  bool Visibility2DOutline;
+
+  /// 3D opacity for the whole segmentation
+  double Opacity3D;
+  /// 2D fill opacity for the whole segmentation
+  double Opacity2DFill;
+  /// 2D outline opacity for the whole segmentation
+  double Opacity2DOutline;
 };
 
 #endif

@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -78,6 +79,9 @@ public:
   /// Model or labelmap volume MRML node containing a representation (for import/export)
   vtkWeakPointer<vtkMRMLDisplayableNode> RepresentationNode;
 
+  /// Flag determining whether the long-press per-view segment visibility options are available
+  bool AdvancedSegmentVisibility;
+
   QIcon VisibleIcon;
   QIcon InvisibleIcon;
 
@@ -85,7 +89,7 @@ public:
   // segmentation display node,  the display node may emit modification events.
   // We make sure these events do not interrupt the update process by setting
   // IsUpdatingWidgetFromMRML to true when an update is already in progress.
-  // TODO: When terminiology infrastructure is in place then segmentation display
+  // TODO: When terminology infrastructure is in place then segmentation display
   // node should not invoke modification events on Get...() method calls and then
   // this flag can probably be removed.
   bool IsUpdatingWidgetFromMRML;
@@ -99,6 +103,7 @@ qMRMLSegmentsTableViewPrivate::qMRMLSegmentsTableViewPrivate(qMRMLSegmentsTableV
   : q_ptr(&object)
   , SegmentationNode(NULL)
   , RepresentationNode(NULL)
+  , AdvancedSegmentVisibility(false)
   , IsUpdatingWidgetFromMRML(false)
 {
 }
@@ -397,27 +402,30 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     d->SegmentsTable->setCellWidget(row, d->columnIndex("Visible"), visibilityButton);
     connect(visibilityButton, SIGNAL(clicked()), this, SLOT(onVisibilityButtonClicked()));
 
-    // Set up actions for the visibility button
-    QAction* visibility3DAction = new QAction("Show in 3D", visibilityButton);
-    visibility3DAction->setCheckable(true);
-    visibility3DAction->setChecked(properties.Visible3D);
-    visibility3DAction->setProperty(ID_PROPERTY, segmentId);
-    connect(visibility3DAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility3DActionToggled(bool)));
-    visibilityButton->addAction(visibility3DAction);
+    // Set up actions for the visibility button if required
+    if (d->AdvancedSegmentVisibility)
+      {
+      QAction* visibility3DAction = new QAction("Show in 3D", visibilityButton);
+      visibility3DAction->setCheckable(true);
+      visibility3DAction->setChecked(properties.Visible3D);
+      visibility3DAction->setProperty(ID_PROPERTY, segmentId);
+      connect(visibility3DAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility3DActionToggled(bool)));
+      visibilityButton->addAction(visibility3DAction);
 
-    QAction* visibility2DFillAction = new QAction("Show in 2D as fill", visibilityButton);
-    visibility2DFillAction->setCheckable(true);
-    visibility2DFillAction->setChecked(properties.Visible2DFill);
-    visibility2DFillAction->setProperty(ID_PROPERTY, segmentId);
-    connect(visibility2DFillAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DFillActionToggled(bool)));
-    visibilityButton->addAction(visibility2DFillAction);
+      QAction* visibility2DFillAction = new QAction("Show in 2D as fill", visibilityButton);
+      visibility2DFillAction->setCheckable(true);
+      visibility2DFillAction->setChecked(properties.Visible2DFill);
+      visibility2DFillAction->setProperty(ID_PROPERTY, segmentId);
+      connect(visibility2DFillAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DFillActionToggled(bool)));
+      visibilityButton->addAction(visibility2DFillAction);
 
-    QAction* visibility2DOutlineAction = new QAction("Show in 2D as outline", visibilityButton);
-    visibility2DOutlineAction->setCheckable(true);
-    visibility2DOutlineAction->setChecked(properties.Visible2DOutline);
-    visibility2DOutlineAction->setProperty(ID_PROPERTY, segmentId);
-    connect(visibility2DOutlineAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DOutlineActionToggled(bool)));
-    visibilityButton->addAction(visibility2DOutlineAction);
+      QAction* visibility2DOutlineAction = new QAction("Show in 2D as outline", visibilityButton);
+      visibility2DOutlineAction->setCheckable(true);
+      visibility2DOutlineAction->setChecked(properties.Visible2DOutline);
+      visibility2DOutlineAction->setProperty(ID_PROPERTY, segmentId);
+      connect(visibility2DOutlineAction, SIGNAL(triggered(bool)), this, SLOT(onVisibility2DOutlineActionToggled(bool)));
+      visibilityButton->addAction(visibility2DOutlineAction);
+      }
 
     // Color
     QTableWidgetItem* colorItem = new QTableWidgetItem();
@@ -427,7 +435,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     colorItem->setToolTip("Color");
     d->SegmentsTable->setItem(row, d->columnIndex("Color"), colorItem);
 
-    // Opacity (show only 3D opacity; if the user changes it then it applies to all types of opacity)
+    // Opacity (only 3D opacity - 2D outline and fill can be set in the display widget)
     QTableWidgetItem* opacityItem = new QTableWidgetItem();
     //QString displayedOpacity = QString::number(properties.Opacity3D, 'f', 2);
     //opacityItem->setData(Qt::EditRole, displayedOpacity); // for qMRMLItemDelegate
@@ -506,11 +514,14 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
         visibilityButton->setIcon(d->InvisibleIcon);
         }
 
-      // Update actions
-      QList<QAction*> visibilityActions = visibilityButton->actions();
-      visibilityActions[0]->setChecked(properties.Visible3D);
-      visibilityActions[1]->setChecked(properties.Visible2DFill);
-      visibilityActions[2]->setChecked(properties.Visible2DOutline);
+      // Update actions if enabled
+      if (d->AdvancedSegmentVisibility)
+        {
+        QList<QAction*> visibilityActions = visibilityButton->actions();
+        visibilityActions[0]->setChecked(properties.Visible3D);
+        visibilityActions[1]->setChecked(properties.Visible2DFill);
+        visibilityActions[2]->setChecked(properties.Visible2DOutline);
+        }
       }
 
     // Color
@@ -598,8 +609,6 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
         {
         // Set to all kinds of opacities as they are combined on the UI
         properties.Opacity3D = opacity.toDouble();
-        properties.Opacity2DFill = opacity.toDouble();
-        properties.Opacity2DOutline = opacity.toDouble();
         valueChanged = true;
         }
       }

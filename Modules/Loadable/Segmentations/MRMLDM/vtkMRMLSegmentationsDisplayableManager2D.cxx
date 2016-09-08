@@ -243,7 +243,8 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMR
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
   return displayNode
-      && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID());
+      && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID())
+      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill());
 }
 
 //---------------------------------------------------------------------------
@@ -700,8 +701,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
     // Get visibility
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     displayNode->GetSegmentDisplayProperties(pipeline->SegmentID, properties);
-    bool segmentOutlineVisible = displayNodeVisible && properties.Visible && properties.Visible2DOutline;
-    bool segmentFillVisible = displayNodeVisible && properties.Visible && properties.Visible2DFill;
+    bool segmentOutlineVisible = displayNodeVisible && properties.Visible
+      && properties.Visible2DOutline && displayNode->GetVisibility2DOutline();
+    bool segmentFillVisible = displayNodeVisible && properties.Visible
+      && properties.Visible2DFill && displayNode->GetVisibility2DFill();
 
     // Get representation to display
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(
@@ -791,12 +794,12 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       // Update pipeline actors
       pipeline->PolyDataOutlineActor->SetVisibility(segmentOutlineVisible);
       pipeline->PolyDataOutlineActor->GetProperty()->SetColor(properties.Color[0], properties.Color[1], properties.Color[2]);
-      pipeline->PolyDataOutlineActor->GetProperty()->SetOpacity(properties.Opacity2DOutline * displayNode->GetOpacity());
+      pipeline->PolyDataOutlineActor->GetProperty()->SetOpacity(properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity());
       pipeline->PolyDataOutlineActor->GetProperty()->SetLineWidth(displayNode->GetSliceIntersectionThickness());
       pipeline->PolyDataOutlineActor->SetPosition(0,0);
       pipeline->PolyDataFillActor->SetVisibility(segmentFillVisible);
       pipeline->PolyDataFillActor->GetProperty()->SetColor(properties.Color[0], properties.Color[1], properties.Color[2]);
-      pipeline->PolyDataFillActor->GetProperty()->SetOpacity(properties.Opacity2DFill * displayNode->GetOpacity());
+      pipeline->PolyDataFillActor->GetProperty()->SetOpacity(properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity());
       pipeline->PolyDataFillActor->SetPosition(0,0);
       }
     // If shown representation is image data
@@ -820,7 +823,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
       // Set segment color
       pipeline->LookupTableOutline->SetTableValue(1,
-        properties.Color[0], properties.Color[1], properties.Color[2], properties.Opacity2DOutline * displayNode->GetOpacity());
+        properties.Color[0], properties.Color[1], properties.Color[2], properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity());
       pipeline->LookupTableFill->SetNumberOfTableValues(2);
       pipeline->LookupTableFill->SetRampToLinear();
       pipeline->LookupTableFill->SetTableRange(0, 1);
@@ -837,7 +840,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->LookupTableFill->SetHueRange(hsv[0], hsv[0]);
       pipeline->LookupTableFill->SetSaturationRange(hsv[1], hsv[1]);
       pipeline->LookupTableFill->SetValueRange(hsv[2], hsv[2]);
-      pipeline->LookupTableFill->SetAlphaRange(0.0, properties.Opacity2DFill * displayNode->GetOpacity());
+      pipeline->LookupTableFill->SetAlphaRange(0.0, properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity());
       pipeline->LookupTableFill->ForceBuild();
       pipeline->Reslice->SetBackgroundLevel(minimumValue);
 

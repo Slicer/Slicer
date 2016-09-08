@@ -16,27 +16,28 @@
   and was supported through the Applied Cancer Research Unit program of Cancer Care
   Ontario with funds provided by the Ontario Ministry of Health and Long-Term Care
 
-==============================================================================*/\
+==============================================================================*/
 
-#ifndef __qSlicerSegmentationsModuleWidgetsAbstractPlugin_h
-#define __qSlicerSegmentationsModuleWidgetsAbstractPlugin_h
+#ifndef __qMRMLSegmentationDisplayNodeWidgetPlugin_h
+#define __qMRMLSegmentationDisplayNodeWidgetPlugin_h
 
-#include <QDesignerCustomWidgetInterface>
-#include "qSlicerSegmentationsModuleWidgetsPluginsExport.h"
+#include "qSlicerSegmentationsModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qSlicerSegmentationsModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentationDisplayNodeWidgetPlugin
+  : public QObject
+  , public qSlicerSegmentationsModuleWidgetsAbstractPlugin
 {
-  Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
+  Q_OBJECT
 
-  qSlicerSegmentationsModuleWidgetsAbstractPlugin();
-  // Don't reimplement this method.
-  QString group() const;
-  // You can reimplement these methods
-  virtual QIcon icon() const;
-  virtual QString toolTip() const;
-  virtual QString whatsThis() const;
+public:
+  qMRMLSegmentationDisplayNodeWidgetPlugin(QObject* parent = 0);
+
+  QWidget *createWidget(QWidget* parent);
+  QString  domXml() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
+
 };
 
 #endif

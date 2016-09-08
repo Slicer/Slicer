@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -29,8 +30,8 @@
 #include "vtkSegmentation.h"
 #include "vtkSegment.h"
 
-// MRML includes
-#include <vtkMRMLLabelMapVolumeNode.h>
+// VYK includes
+#include <vtkWeakPointer.h>
 
 // Qt includes
 #include <QDebug>
@@ -54,7 +55,7 @@ public:
 
 public:
   /// Segmentation MRML node containing shown segments
-  vtkMRMLSegmentationNode* SegmentationNode;
+  vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
 
   /// Selected segment ID
   QString SelectedSegmentID;

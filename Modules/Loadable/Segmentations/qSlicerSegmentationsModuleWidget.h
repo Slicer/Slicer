@@ -106,16 +106,8 @@ protected slots:
   /// Handle change of selection for the "other" node in copy/move/import/export
   void setOtherSegmentationOrRepresentationNode(vtkMRMLNode* node);
 
-  /// Update display section from display node of the current segmentation node
-  void updateWidgetFromDisplayNode();
-
   /// Update copy/move/import/export buttons based on selection
   void updateCopyMoveButtonStates();
-
-  /// Populate combobox that contain possible 3D representation names
-  void populate3DRepresentationsCombobox();
-  /// Populate combobox that contain possible 2D representation names
-  void populate2DRepresentationsCombobox();
 
   /// Callback function for selection changes in the main segment table view
   void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
@@ -123,12 +115,6 @@ protected slots:
   void onAddSegment();
   void onEditSelectedSegment();
   void onRemoveSelectedSegments();
-
-  void onVisibilityChanged(int);
-  void onOpacityChanged(double);
-  void onSliceIntersectionThicknessChanged(int);
-  void onRepresentation3DChanged(int);
-  void onRepresentation2DChanged(int);
 
   void onAddLabelmap();
   void onAddModel();
