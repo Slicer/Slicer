@@ -290,6 +290,9 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_ITKPython" OFF)
 mark_as_superbuild(Slicer_INSTALL_ITKPython)
 
+option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" OFF)
+mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
+
 #
 # SimpleITK has large internal libraries, which take an extremely long
 # time to link on windows when they are static. Creating shared

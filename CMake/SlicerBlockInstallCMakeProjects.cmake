@@ -39,6 +39,14 @@ if(NOT "${SimpleITK_DIR}" STREQUAL "" AND EXISTS "${SimpleITK_DIR}/CMakeCache.tx
 endif()
 
 # -------------------------------------------------------------------------
+# Install JsonCpp
+# -------------------------------------------------------------------------
+if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT
+  AND NOT "${JsonCpp_DIR}" STREQUAL "" AND EXISTS "${JsonCpp_DIR}/CMakeCache.txt")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JsonCpp_DIR};JsonCpp;Unspecified;/")
+endif()
+
+# -------------------------------------------------------------------------
 # Install SlicerExecutionModel
 # -------------------------------------------------------------------------
 if(Slicer_BUILD_CLI_SUPPORT
