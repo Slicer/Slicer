@@ -2859,7 +2859,7 @@ void vtkSlicerCLIModuleLogic
         break;
       case vtkMRMLCommandLineModuleNode::AutoRunEvent:
         {
-        unsigned long requestTime = reinterpret_cast<unsigned long>(callData);
+        vtkMTimeType requestTime = reinterpret_cast<vtkMTimeType>(callData);
         // Make sure the CLI node has its AutoRun flag enabled and its mode is
         // valid.
         bool autoRun = cliNode->GetAutoRun() &&
@@ -2928,7 +2928,7 @@ void vtkSlicerCLIModuleLogic
       extraDelay = 100;
       }
     }
-  unsigned long requestTime = 1; // we don't want 0, so 1 works
+  vtkMTimeType requestTime = 1; // we don't want 0, so 1 works
   if (node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter)
     {
     requestTime = std::max(requestTime, node->GetParameterMTime());

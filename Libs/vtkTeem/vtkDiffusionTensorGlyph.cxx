@@ -798,10 +798,10 @@ void vtkDiffusionTensorGlyph::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 // Account for the MTime of objects we use
 //
-unsigned long int vtkDiffusionTensorGlyph::GetMTime()
+vtkMTimeType vtkDiffusionTensorGlyph::GetMTime()
 {
-  unsigned long mTime=this->vtkObject::GetMTime();
-  unsigned long time;
+  vtkMTimeType mTime=this->vtkObject::GetMTime();
+  vtkMTimeType time;
 
   if ( this->Mask != NULL )
     {

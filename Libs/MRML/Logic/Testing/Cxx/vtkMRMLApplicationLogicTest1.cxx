@@ -53,14 +53,14 @@ int SliceLogicsTest()
 
   // By default, a null collection is expected
   {
-    unsigned long mtime = appLogic->GetMTime();
+    vtkMTimeType mtime = appLogic->GetMTime();
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() == mtime, true);
   }
 
   // Set a null string
   {
-    unsigned long mtime = appLogic->GetMTime();
+    vtkMTimeType mtime = appLogic->GetMTime();
     appLogic->SetSliceLogics(0);
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() > mtime, false);
@@ -68,7 +68,7 @@ int SliceLogicsTest()
 
   // Set a non-empty collection should work
   {
-    unsigned long mtime = appLogic->GetMTime();
+    vtkMTimeType mtime = appLogic->GetMTime();
     vtkNew<vtkCollection> logics;
     logics->AddItem(vtkSmartPointer<vtkObject>::New());
     appLogic->SetSliceLogics(logics.GetPointer());
@@ -79,7 +79,7 @@ int SliceLogicsTest()
 
   // Set a null collection.
   {
-    unsigned long mtime = appLogic->GetMTime();
+    vtkMTimeType mtime = appLogic->GetMTime();
     appLogic->SetSliceLogics(0);
     CHECK_NULL(appLogic->GetSliceLogics());
     CHECK_BOOL(appLogic->GetMTime() > mtime, true);
@@ -93,7 +93,7 @@ int SliceLogicsTest()
 
   // Set an empty collection.
   {
-    unsigned long mtime = appLogic->GetMTime();
+    vtkMTimeType mtime = appLogic->GetMTime();
     vtkNew<vtkCollection> logics;
     appLogic->SetSliceLogics(logics.GetPointer());
     CHECK_NOT_NULL(appLogic->GetSliceLogics());

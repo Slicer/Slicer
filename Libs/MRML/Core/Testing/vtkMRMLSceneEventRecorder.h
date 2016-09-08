@@ -45,7 +45,7 @@ public:
                        void *callData);
   // List of node that should be updated when NodeAddedEvent is catched
   std::map<unsigned long, unsigned int> CalledEvents;
-  std::map<unsigned long, unsigned long> LastEventMTime;
+  std::map<unsigned long, vtkMTimeType> LastEventMTime;
 protected:
   vtkMRMLSceneEventRecorder();
   virtual ~vtkMRMLSceneEventRecorder();

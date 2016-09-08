@@ -266,7 +266,7 @@ protected:
   unsigned int NumberOfAddedSegments;
 
   /// For checking if cached segment list in SegmentationDisplayProperties has to be updated
-  unsigned long SegmentListUpdateTime;
+  vtkMTimeType SegmentListUpdateTime;
   vtkSegmentation* SegmentListUpdateSource;
 };
 

@@ -1144,9 +1144,9 @@ void vtkMRMLTransformNode::Inverse()
 }
 
 //----------------------------------------------------------------------------
-unsigned long vtkMRMLTransformNode::GetTransformToWorldMTime()
+vtkMTimeType vtkMRMLTransformNode::GetTransformToWorldMTime()
 {
-  unsigned long latestMTime=0;
+  vtkMTimeType latestMTime=0;
   vtkAbstractTransform* transformToParent=this->GetTransformToParent();
   if (transformToParent!=NULL)
     {
@@ -1156,7 +1156,7 @@ unsigned long vtkMRMLTransformNode::GetTransformToWorldMTime()
   vtkMRMLTransformNode *parent = this->GetParentTransformNode();
   if (parent != NULL)
     {
-    unsigned long parentMTime=parent->GetTransformToWorldMTime();
+    vtkMTimeType parentMTime=parent->GetTransformToWorldMTime();
     if (parentMTime>latestMTime)
       {
       latestMTime=parentMTime;

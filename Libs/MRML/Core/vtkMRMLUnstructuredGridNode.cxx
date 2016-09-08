@@ -79,7 +79,7 @@ if (this->UnstructuredGrid != NULL)
       this->UnstructuredGrid, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
     }
 
-  unsigned long mtime1, mtime2;
+  vtkMTimeType mtime1, mtime2;
   mtime1 = this->GetMTime();
   this->SetUnstructuredGrid(unstructuredGrid);
   mtime2 = this->GetMTime();

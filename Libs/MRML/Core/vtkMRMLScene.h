@@ -698,7 +698,7 @@ protected:
   NodeReferencesType::iterator FindNodeReference(const char* referencedId, vtkMRMLNode* referencingNode);
 
   vtkCollection*  Nodes;
-  unsigned long   SceneModifiedTime;
+  vtkMTimeType    SceneModifiedTime;
 
   /// data i/o handling members
   vtkCacheManager *  CacheManager;
@@ -744,7 +744,7 @@ protected:
 
   int ReadDataOnLoad;
 
-  unsigned long NodeIDsMTime;
+  vtkMTimeType  NodeIDsMTime;
 
   void RemoveAllNodes(bool removeSingletons);
 

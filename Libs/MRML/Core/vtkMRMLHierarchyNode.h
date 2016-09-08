@@ -197,7 +197,7 @@ protected:
   typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode *> > HierarchyChildrenNodesType;
 
   static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
-  static std::map< vtkMRMLScene*, unsigned long> SceneHierarchyChildrenNodesMTime;
+  static std::map< vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;
 
   ////////////////////////////
   ///
@@ -209,7 +209,7 @@ protected:
 
   static std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
 
-  static std::map< vtkMRMLScene*, unsigned long> SceneAssociatedHierarchyNodesMTime;
+  static std::map< vtkMRMLScene*, vtkMTimeType> SceneAssociatedHierarchyNodesMTime;
 
   double SortingValue;
 

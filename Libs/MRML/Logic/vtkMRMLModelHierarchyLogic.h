@@ -109,8 +109,8 @@ protected:
   typedef std::map<std::string, std::vector< vtkMRMLModelHierarchyNode *> > HierarchyChildrenNodesType;
   HierarchyChildrenNodesType HierarchyChildrenNodes;
 
-  unsigned long ModelHierarchyNodesMTime;
-  unsigned long HierarchyChildrenNodesMTime;
+  vtkMTimeType ModelHierarchyNodesMTime;
+  vtkMTimeType HierarchyChildrenNodesMTime;
 
   static int ChildrenVisibilitySetBatchUpdateThreshold;
 };

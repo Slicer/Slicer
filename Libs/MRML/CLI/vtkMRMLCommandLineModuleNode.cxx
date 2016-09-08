@@ -610,19 +610,19 @@ unsigned int vtkMRMLCommandLineModuleNode::GetAutoRunDelay() const
 }
 
 //----------------------------------------------------------------------------
-unsigned long vtkMRMLCommandLineModuleNode::GetLastRunTime() const
+vtkMTimeType vtkMRMLCommandLineModuleNode::GetLastRunTime() const
 {
   return this->Internal->LastRunTime.GetMTime();
 }
 
 //----------------------------------------------------------------------------
-unsigned long vtkMRMLCommandLineModuleNode::GetParameterMTime() const
+vtkMTimeType vtkMRMLCommandLineModuleNode::GetParameterMTime() const
 {
   return this->Internal->ParameterMTime.GetMTime();
 }
 
 //----------------------------------------------------------------------------
-unsigned long vtkMRMLCommandLineModuleNode::GetInputMTime() const
+vtkMTimeType vtkMRMLCommandLineModuleNode::GetInputMTime() const
 {
   return this->Internal->InputMTime.GetMTime();
 }

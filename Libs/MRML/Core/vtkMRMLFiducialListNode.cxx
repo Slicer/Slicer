@@ -359,7 +359,7 @@ void vtkMRMLFiducialListNode::Copy(vtkMRMLNode *anode)
       {
       vtkMRMLFiducial *fid = vtkMRMLFiducial::SafeDownCast(node->FiducialList->vtkCollection::GetItemAsObject(f));
       vtkMRMLFiducial *fidThis = vtkMRMLFiducial::SafeDownCast(this->FiducialList->vtkCollection::GetItemAsObject(f));
-      unsigned long mtime = fidThis->GetMTime();
+      vtkMTimeType mtime = fidThis->GetMTime();
       fidThis->Copy(fid);
       // Copy doesn't copy the ID, so check to see if the fiducial node in the
       // list to copy has a different id

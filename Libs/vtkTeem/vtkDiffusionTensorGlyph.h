@@ -165,7 +165,7 @@ public:
   /// When determining the modified time of the filter,
   /// this checks the modified time of the mask input,
   /// if it exists.
-  unsigned long int GetMTime();
+  vtkMTimeType GetMTime();
 
 protected:
   vtkDiffusionTensorGlyph();

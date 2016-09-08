@@ -334,7 +334,7 @@ int SetOrientationTest()
 
   // Set a valid orientation
   {
-    unsigned long sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientation("Sagittal"), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Sagittal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Sagittal");
@@ -343,7 +343,7 @@ int SetOrientationTest()
 
   // Orientation are case sensitive
   {
-    unsigned long sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
     CHECK_BOOL(sliceNode->SetOrientation("axial"), false);
     TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -354,7 +354,7 @@ int SetOrientationTest()
 
   // The sliceToRAS matrix define the current orientation
   {
-    unsigned long sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
     CHECK_BOOL(sliceNode->SetOrientation("Reformat"), false);
     TESTING_OUTPUT_ASSERT_ERRORS_END();
@@ -371,7 +371,7 @@ int SetOrientationTest()
 
   // Check SetOrientationToAxial
   {
-    unsigned long sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientationToAxial(), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Axial"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Axial");
@@ -380,7 +380,7 @@ int SetOrientationTest()
 
   // Check SetOrientationToSagittal
   {
-    unsigned long sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientationToSagittal(), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Sagittal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Sagittal");
@@ -389,7 +389,7 @@ int SetOrientationTest()
 
   // Check SetOrientationToCoronal
   {
-    unsigned long sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
+    vtkMTimeType sliceToRASMTime = sliceNode->GetSliceToRAS()->GetMTime();
     CHECK_BOOL(sliceNode->SetOrientationToCoronal(), true);
     CHECK_STD_STRING(sliceNode->GetOrientation(), std::string("Coronal"));
     CHECK_STRING(sliceNode->GetOrientationString(), "Coronal");

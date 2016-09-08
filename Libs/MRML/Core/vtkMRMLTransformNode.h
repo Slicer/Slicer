@@ -339,7 +339,7 @@ public:
   void Inverse();
 
   /// Get the latest modification time of the stored transform
-  unsigned long GetTransformToWorldMTime();
+  vtkMTimeType GetTransformToWorldMTime();
 
   /// Get a human-readable description of the transformation
   /// The returned string is stored in a shared buffer therefore the text has to be copied. This is a

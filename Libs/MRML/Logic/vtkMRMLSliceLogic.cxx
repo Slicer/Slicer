@@ -936,8 +936,8 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         alphaBlending = true;
         }
       }
-    unsigned long int oldBlendMTime = this->Blend->GetMTime();
-    unsigned long int oldBlendUVWMTime = this->BlendUVW->GetMTime();
+    vtkMTimeType oldBlendMTime = this->Blend->GetMTime();
+    vtkMTimeType oldBlendUVWMTime = this->BlendUVW->GetMTime();
 
     int layerIndex = 0;
     int layerIndexUVW = 0;

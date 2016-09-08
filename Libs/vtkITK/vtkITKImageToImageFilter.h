@@ -71,9 +71,9 @@ public:
   ///
   /// This method considers the sub filters MTimes when computing this objects
   /// modified time.
-  unsigned long int GetMTime()
+  vtkMTimeType GetMTime()
   {
-    unsigned long int t1, t2;
+    vtkMTimeType t1, t2;
 
     t1 = this->Superclass::GetMTime();
     t2 = this->vtkExporter->GetMTime();

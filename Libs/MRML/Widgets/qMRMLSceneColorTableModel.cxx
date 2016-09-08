@@ -42,7 +42,7 @@ public:
     ColorGradient();
     void updatePixmap(vtkScalarsToColors* scalarsToColors);
 
-    unsigned long MTime;
+    vtkMTimeType  MTime;
     QPixmap       Pixmap;
   };
 

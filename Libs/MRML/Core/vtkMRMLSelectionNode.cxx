@@ -664,7 +664,7 @@ void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
   std::string safeQuantity = quantity ? quantity : "";
   std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
 
-  unsigned long mTime = this->GetMTime();
+  vtkMTimeType mTime = this->GetMTime();
   this->SetAndObserveNodeReferenceID(referenceRole.c_str(), id);
   // \todo a bit too much hackish...
   if (this->GetMTime() > mTime)

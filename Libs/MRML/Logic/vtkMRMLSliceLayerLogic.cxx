@@ -646,11 +646,11 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     return;
     }
 
-  unsigned long oldReSliceMTime = this->Reslice->GetMTime();
-  unsigned long oldReSliceUVWMTime = this->ResliceUVW->GetMTime();
-  unsigned long oldAssign = this->AssignAttributeTensorsToScalars->GetMTime();
-  unsigned long oldLabel = this->LabelOutline->GetMTime();
-  unsigned long oldLabelUVW = this->LabelOutlineUVW->GetMTime();
+  vtkMTimeType oldReSliceMTime = this->Reslice->GetMTime();
+  vtkMTimeType oldReSliceUVWMTime = this->ResliceUVW->GetMTime();
+  vtkMTimeType oldAssign = this->AssignAttributeTensorsToScalars->GetMTime();
+  vtkMTimeType oldLabel = this->LabelOutline->GetMTime();
+  vtkMTimeType oldLabelUVW = this->LabelOutlineUVW->GetMTime();
 
   if ( (this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) ||
        (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0))

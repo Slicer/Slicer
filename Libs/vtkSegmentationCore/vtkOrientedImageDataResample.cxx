@@ -937,7 +937,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     vtkGenericWarningMacro("vtkOrientedImageDataResample::MergeImage: Failed to pad segment labelmap");
     return false;
     }
-  unsigned long outputImageMTimeBefore = outputImage->GetMTime();
+  vtkMTimeType outputImageMTimeBefore = outputImage->GetMTime();
   switch (inputImage->GetScalarType())
     {
     vtkTemplateMacro(MergeImageGeneric<VTK_TT>(
@@ -951,7 +951,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     vtkGenericWarningMacro("vtkOrientedImageDataResample::MergeImage: Unknown ScalarType");
     return false;
     }
-  unsigned long outputImageMTimeAfter = outputImage->GetMTime();
+  vtkMTimeType outputImageMTimeAfter = outputImage->GetMTime();
   if (outputModified != NULL)
     {
     (*outputModified) = (outputImageMTimeBefore<outputImageMTimeAfter);
