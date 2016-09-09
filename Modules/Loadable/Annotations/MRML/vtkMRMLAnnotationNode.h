@@ -68,6 +68,10 @@ public:
                                    unsigned long /*event*/,
                                    void * /*callData*/ );
 
+  // vtkMRMLModelNode overrides it and it handles models only, while in annotations
+  // we have all kinds of nodes (e.g., screenshot), so we need to revert to the generic
+  // storable node implementation.
+  virtual std::string GetDefaultStorageNodeClassName(const char* filename /* =NULL */);
 
   // Description:
   // Create default storage node or NULL if does not have one
