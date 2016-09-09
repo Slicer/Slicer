@@ -59,6 +59,18 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(${proj}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
   set(${proj}_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+  set(${proj}_INCLUDE_DIR ${${proj}_SOURCE_DIR}/include)
+  if(WIN32)
+    set(lib_prefix "")
+    set(lib_ext "lib")
+  elseif(APPLE)
+    set(lib_prefix "lib")
+    set(lib_ext "dylib")
+  else()
+    set(lib_prefix "lib")
+    set(lib_ext "so")
+  endif()
+  set(${proj}_LIBRARY ${${proj}_DIR}/src/lib_json/${CMAKE_CFG_INTDIR}/${lib_prefix}jsoncpp.${lib_ext})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
@@ -74,6 +86,10 @@ else()
 endif()
 
 mark_as_superbuild(
-  VARS JsonCpp_DIR:PATH
+  VARS ${proj}_INCLUDE_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )
+mark_as_superbuild(
+  VARS ${proj}_LIBRARY:PATH
   LABELS "FIND_PACKAGE"
   )

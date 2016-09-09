@@ -56,14 +56,15 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
     ${Slicer_INSTALL_CLIMODULES_LIB_DIR})
 
   if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
-    _set(JsonCpp_DIR PATH ${JsonCpp_DIR})
+    _set(JsonCpp_INCLUDE_DIR PATH ${JsonCpp_INCLUDE_DIR})
+    _set(JsonCpp_LIBRARY PATH ${JsonCpp_LIBRARY})
     _set(ParameterSerializer_DIR PATH ${ParameterSerializer_DIR})
   endif()
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
-    GIT_TAG "9a74e80ac70fb21ac6cf82a3dad8e23f0959214d"
+    GIT_TAG "983d2112ec431af20cafa49ca6cf7bd1a777869a"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_CACHE_ARGS
