@@ -75,8 +75,6 @@ public:
   } ScalarRangeFlagType;
 
   /// Returns the first displayable node that is associated to this display node
-  /// Warning: This function is slow as it browses the entire scene to find the
-  /// displayable node.
   /// \sa vtkMRMLDisplayableNode
   virtual vtkMRMLDisplayableNode* GetDisplayableNode();
 
@@ -695,6 +693,9 @@ protected:
   /// \sa ScalarRangeFlagType,GetScalarRangeFlag(), SetScalarRangeFlag(),
   /// ScalarRange, SetScalarRange(), GetScalarRange()
   int ScalarRangeFlag;
+
+  /// Cached value of last found displayable node (it is expensive to determine it)
+  vtkWeakPointer<vtkMRMLDisplayableNode> LastFoundDisplayableNode;
 private:
   void SetColorNodeID(const char* id);
 };

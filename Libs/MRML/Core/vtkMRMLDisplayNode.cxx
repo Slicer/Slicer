@@ -629,6 +629,17 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
     {
     return NULL;
     }
+  // It is an expensive operation to determine the displayable node
+  // (need to iterate through the scene), so the last found value
+  // is cached. If it is still valid then we use it.
+  if (this->LastFoundDisplayableNode != NULL)
+    {
+    if (this->LastFoundDisplayableNode->GetScene() == this->Scene
+      && this->LastFoundDisplayableNode->HasDisplayNodeID(this->GetID()))
+      {
+      return this->LastFoundDisplayableNode;
+      }
+    }
   vtkMRMLNode* node = NULL;
   vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
@@ -639,9 +650,11 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
       vtkMRMLDisplayableNode::SafeDownCast(node);
     if (displayableNode && displayableNode->HasDisplayNodeID(this->GetID()))
       {
+      this->LastFoundDisplayableNode = displayableNode;
       return displayableNode;
       }
     }
+  this->LastFoundDisplayableNode = NULL;
   return NULL;
 }
 
