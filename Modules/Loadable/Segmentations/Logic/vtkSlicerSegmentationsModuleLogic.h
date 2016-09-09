@@ -87,6 +87,9 @@ public:
   /// \return 0 if contains no label or multiple labels, the label if it contains a single one
   static int DoesLabelmapContainSingleLabel(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode);
 
+  /// Utility function that returns all non-empty label values in a labelmap
+  static void GetAllLabelValues(vtkIntArray* labels, vtkImageData* labelmap);
+
   /// Create segment from labelmap volume MRML node. The contents are set as binary labelmap representation in the segment.
   /// Returns NULL if labelmap contains more than one label. In that case \sa ImportLabelmapToSegmentationNode needs to be used.
   /// NOTE: Need to take ownership of the created object! For example using vtkSmartPointer<vtkSegment>::Take
@@ -141,6 +144,9 @@ public:
   /// The colors of the new segments are randomly generated.
   /// \param baseSegmentName Prefix for the names of the new segments. Empty by default, in which case the prefix will be "Label"
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName="");
+
+  /// Import model into the segmentation as a segment.
+  static bool ImportModelToSegmentationNode(vtkMRMLModelNode* modelNode, vtkMRMLSegmentationNode* segmentationNode);
 
   /// Create representation of only one segment in a segmentation.
   /// Useful if only one segment is processed, and we do not want to convert all segments to a certain

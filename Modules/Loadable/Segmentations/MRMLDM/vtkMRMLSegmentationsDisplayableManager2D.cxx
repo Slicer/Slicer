@@ -731,6 +731,62 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       continue;
       }
 
+    int dimensions[3] = { 0, 0, 0 };
+    this->SliceNode->GetDimensions(dimensions);
+    int sliceOutputExtent[6] = { 0, dimensions[0] - 1, 0, dimensions[1] - 1, 0, dimensions[2] - 1 };
+
+    double segmentBounds_Segment[6] = { 0 };
+    vtkSegment* segment = segmentation->GetSegment(pipeline->SegmentID);
+    segment->GetBounds(segmentBounds_Segment);
+
+    vtkNew<vtkGeneralTransform> sliceToSegmentationTransform;
+    sliceToSegmentationTransform->Concatenate(this->SliceXYToRAS);
+    sliceToSegmentationTransform->Concatenate(pipeline->WorldToNodeTransform);
+
+    double segmentBounds_Slice[6] = { 0 };
+    vtkOrientedImageDataResample::TransformBounds(segmentBounds_Segment, sliceToSegmentationTransform->GetInverse(), segmentBounds_Slice);
+
+    bool visibleInCurrentSlice = true;
+
+    // if segment does not intersect the slice plane then hide actors
+    const double slicePositionTolerance = 0.1;
+    if ((segmentBounds_Slice[4]<-slicePositionTolerance && segmentBounds_Slice[5]<-slicePositionTolerance)
+      || (segmentBounds_Slice[4]>slicePositionTolerance && segmentBounds_Slice[5]>slicePositionTolerance))
+      {
+      visibleInCurrentSlice = false;
+      }
+    else
+      {
+      int outlineWidth = segmentationDisplayNode->GetSliceIntersectionThickness();
+       for (int i=0; i<3; i++)
+         {
+         int startExtent = int(floor(segmentBounds_Slice[i * 2]) - outlineWidth);
+         int endExtent = int(ceil(segmentBounds_Slice[i * 2 + 1]) + outlineWidth);
+         if (segmentBounds_Slice[i * 2] < startExtent)
+           {
+           segmentBounds_Slice[i * 2] = startExtent;
+           }
+         if (segmentBounds_Slice[i * 2 + 1] > endExtent)
+           {
+           segmentBounds_Slice[i * 2 + 1] = endExtent;
+           }
+         }
+       if (segmentBounds_Slice[0]>segmentBounds_Slice[1]
+         || segmentBounds_Slice[2]>segmentBounds_Slice[3])
+         {
+         visibleInCurrentSlice = false;
+         }
+      }
+
+    if (!visibleInCurrentSlice)
+      {
+      pipelineIt->second->PolyDataOutlineActor->SetVisibility(false);
+      pipelineIt->second->PolyDataFillActor->SetVisibility(false);
+      pipelineIt->second->ImageOutlineActor->SetVisibility(false);
+      pipelineIt->second->ImageFillActor->SetVisibility(false);
+      continue;
+      }
+
     // If shown representation is poly data
     if (polyData)
       {
@@ -888,9 +944,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         }
 
       pipeline->Reslice->SetInputData(identityImageData);
-      int dimensions[3] = {0,0,0};
-      this->SliceNode->GetDimensions(dimensions);
-      pipeline->Reslice->SetOutputExtent(0, dimensions[0]-1, 0, dimensions[1]-1, 0, dimensions[2]-1);
+      pipeline->Reslice->SetOutputExtent(sliceOutputExtent);
 
       // If ThresholdValue is not specified, then do not perform thresholding
       vtkDoubleArray* thresholdValue = vtkDoubleArray::SafeDownCast(

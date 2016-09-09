@@ -707,6 +707,59 @@ void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtk
 }
 
 //----------------------------------------------------------------------------
+void vtkOrientedImageDataResample::TransformBounds(const double inputBounds[6], vtkAbstractTransform* inputToOutputTransform, double outputBounds[6])
+{
+  if (!inputToOutputTransform)
+    {
+    return;
+    }
+
+  // Apply transform on all eight corners and determine output extent based on these transformed corners
+  outputBounds[0] = VTK_DOUBLE_MAX;
+  outputBounds[1] = VTK_DOUBLE_MIN;
+  outputBounds[2] = VTK_DOUBLE_MAX;
+  outputBounds[3] = VTK_DOUBLE_MIN;
+  outputBounds[4] = VTK_DOUBLE_MAX;
+  outputBounds[5] = VTK_DOUBLE_MIN;
+  double outputBoxCorner[3];
+  for (int i = 0; i<2; ++i)
+    {
+    for (int j = 0; j<2; ++j)
+      {
+      for (int k = 0; k<2; ++k)
+        {
+        double inputBoxCorner[3] = { inputBounds[i], inputBounds[2 + j], inputBounds[4 + k] };
+        inputToOutputTransform->TransformPoint(inputBoxCorner, outputBoxCorner);
+        if (outputBoxCorner[0] < outputBounds[0])
+          {
+          outputBounds[0] = outputBoxCorner[0];
+          }
+        if (outputBoxCorner[0] > outputBounds[1])
+          {
+          outputBounds[1] = outputBoxCorner[0];
+          }
+        if (outputBoxCorner[1] < outputBounds[2])
+          {
+          outputBounds[2] = outputBoxCorner[1];
+          }
+        if (outputBoxCorner[1] > outputBounds[3])
+          {
+          outputBounds[3] = outputBoxCorner[1];
+          }
+        if (outputBoxCorner[2] < outputBounds[4])
+          {
+          outputBounds[4] = outputBoxCorner[2];
+          }
+        if (outputBoxCorner[2] > outputBounds[5])
+          {
+          outputBounds[5] = outputBoxCorner[2];
+          }
+        }
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedImageData* image, vtkAbstractTransform* transform, double transformedBounds[6])
 {
   if (!image || !transform)

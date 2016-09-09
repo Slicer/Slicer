@@ -114,8 +114,13 @@ public:
   /// Only considers spacing and orientation, origin and extent may be different!
   static bool DoGeometriesMatchIgnoreOrigin(vtkOrientedImageData* image1, vtkOrientedImageData* image2);
 
-  /// Transform input extent to determine output extent of an image. Use all bounding box corners
+  /// Transform input extent to determine output extent of an image. Use all bounding box corners,
+  /// may miss part of the extent in case of non-linear transforms are used.
   static void TransformExtent(const int inputExtent[6], vtkAbstractTransform* inputToOutputTransform, int outputExtent[6]);
+
+  /// Transform input bounds to determine output bounds. Use all bounding box corners,
+  /// may miss part of the extent in case of non-linear transforms are used.
+  static void TransformBounds(const double inputBounds[6], vtkAbstractTransform* inputToOutputTransform, double outputBounds[6]);
 
   /// Transform bounds of oriented image data using a linear or non-linear transform
   static void TransformOrientedImageDataBounds(vtkOrientedImageData* image, vtkAbstractTransform* transform, double transformedBounds[6]);

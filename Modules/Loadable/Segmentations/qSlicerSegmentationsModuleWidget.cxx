@@ -747,20 +747,14 @@ void qSlicerSegmentationsModuleWidget::onCopyToCurrentSegmentation()
       }
     else if (modelNode)
       {
-      vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::Take(
-        vtkSlicerSegmentationsModuleLogic::CreateSegmentFromModelNode(modelNode, currentSegmentationNode));
-      if (!segment.GetPointer())
+      if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(),
+        vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
         {
-        QString message = QString("Failed to copy from model node %1!").arg(modelNode->GetName());
-        qCritical() << Q_FUNC_INFO << ": " << message;
-        QMessageBox::warning(NULL, tr("Failed to create segment from model"), message);
-        }
-      else
-        {
-        if (this->updateMasterRepresentationInSegmentation(currentSegmentationNode->GetSegmentation(), vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()))
+        if (!vtkSlicerSegmentationsModuleLogic::ImportModelToSegmentationNode(modelNode, currentSegmentationNode))
           {
-          // Add segment to current segmentation
-          currentSegmentationNode->GetSegmentation()->AddSegment(segment);
+          QString message = QString("Failed to copy polydata from model node %1!").arg(modelNode->GetName());
+          qCritical() << Q_FUNC_INFO << ": " << message;
+          QMessageBox::warning(NULL, tr("Failed to import model node"), message);
           }
         }
       }
@@ -770,6 +764,7 @@ void qSlicerSegmentationsModuleWidget::onCopyToCurrentSegmentation()
       return;
       }
     }
+  currentSegmentationNode->CreateDefaultDisplayNodes();
 }
 
 //-----------------------------------------------------------------------------
@@ -802,6 +797,7 @@ void qSlicerSegmentationsModuleWidget::onMoveToCurrentSegmentation()
     {
     qCritical() << Q_FUNC_INFO << ": Invalid operation!";
     }
+  currentSegmentationNode->CreateDefaultDisplayNodes();
 }
 
 //-----------------------------------------------------------------------------
