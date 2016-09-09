@@ -29,6 +29,7 @@
 #include <vtkVersion.h>
 #include <vtkDiscreteMarchingCubes.h>
 #include <vtkDecimatePro.h>
+#include <vtkPolyDataNormals.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -46,6 +47,9 @@ vtkBinaryLabelmapToClosedSurfaceConversionRule::vtkBinaryLabelmapToClosedSurface
     " Value of 0.8 typically reduces data set size by 80% without losing too much details.");
   this->ConversionParameters[GetSmoothingFactorParameterName()] = std::make_pair("0.5",
     "Smoothing factor. Range: 0.0 (no smoothing) to 1.0 (strong smoothing).");
+  this->ConversionParameters[GetComputeSurfaceNormalsParameterName()] = std::make_pair("1",
+    "Compute surface normals. 1 (default) = surface normals are computed. "
+    "0 = surface normals are not computed (slightly faster but produces less smooth surface display).");
 }
 
 //----------------------------------------------------------------------------
@@ -155,6 +159,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   // Get conversion parameters
   double decimationFactor = vtkVariant(this->ConversionParameters[GetDecimationFactorParameterName()].first).ToDouble();
   double smoothingFactor = vtkVariant(this->ConversionParameters[GetSmoothingFactorParameterName()].first).ToDouble();
+  int computeSurfaceNormals = vtkVariant(this->ConversionParameters[GetComputeSurfaceNormalsParameterName()].first).ToInt();
 
   // Run marching cubes
   vtkSmartPointer<vtkDiscreteMarchingCubes> marchingCubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
@@ -213,11 +218,18 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
-  transformPolyDataFilter->Update();
 
-  // Set output
-  closedSurfacePolyData->ShallowCopy(transformPolyDataFilter->GetOutput());
-
+  if (computeSurfaceNormals)
+    {    vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
+    polyDataNormals->Update();
+    closedSurfacePolyData->ShallowCopy(polyDataNormals->GetOutput());
+    }
+  else
+    {
+    transformPolyDataFilter->Update();
+    closedSurfacePolyData->ShallowCopy(transformPolyDataFilter->GetOutput());
+    }
   return true;
 }
 

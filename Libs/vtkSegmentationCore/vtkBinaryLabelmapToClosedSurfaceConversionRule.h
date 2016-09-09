@@ -40,6 +40,8 @@ public:
   static const std::string GetDecimationFactorParameterName() { return "Decimation factor"; };
   /// Conversion parameter: smoothing factor
   static const std::string GetSmoothingFactorParameterName() { return "Smoothing factor"; };
+  /// Conversion parameter: compute surface normals
+  static const std::string GetComputeSurfaceNormalsParameterName() { return "Compute surface normals"; };
 
 public:
   static vtkBinaryLabelmapToClosedSurfaceConversionRule* New();
