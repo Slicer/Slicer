@@ -45,6 +45,8 @@
 #include <QKeyEvent>
 #include <QStringList>
 #include <QToolButton>
+#include <QContextMenuEvent>
+#include <QMenu>
 
 // qMRML includes
 #include "qMRMLItemDelegate.h"
@@ -858,78 +860,130 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
   return this->QWidget::eventFilter(target, event);
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::endProcessing()
 {
   this->populateSegmentTable();
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setSelectionMode(int mode)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setSelectionMode(static_cast<QAbstractItemView::SelectionMode>(mode));
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setHeaderVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->horizontalHeader()->setVisible(visible);
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setVisibilityColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->columnIndex("Visible"), !visible);
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setColorColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->columnIndex("Color"), !visible);
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void qMRMLSegmentsTableView::setOpacityColumnVisible(bool visible)
 {
   Q_D(qMRMLSegmentsTableView);
   d->SegmentsTable->setColumnHidden(d->columnIndex("Opacity"), !visible);
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int qMRMLSegmentsTableView::selectionMode()
 {
   Q_D(qMRMLSegmentsTableView);
   return d->SegmentsTable->selectionMode();
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool qMRMLSegmentsTableView::headerVisible()
 {
   Q_D(qMRMLSegmentsTableView);
   return d->SegmentsTable->horizontalHeader()->isVisible();
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool qMRMLSegmentsTableView::visibilityColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
   return !d->SegmentsTable->isColumnHidden(d->columnIndex("Visible"));
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool qMRMLSegmentsTableView::colorColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
   return !d->SegmentsTable->isColumnHidden(d->columnIndex("Color"));
 }
 
-// --------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool qMRMLSegmentsTableView::opacityColumnVisible()
 {
   Q_D(qMRMLSegmentsTableView);
   return !d->SegmentsTable->isColumnHidden(d->columnIndex("Opacity"));
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
+{
+  QMenu* contextMenu = new QMenu(this);
+
+  QAction* showOnlySelectedAction = new QAction("Show only selected segments", this);
+  QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
+  contextMenu->addAction(showOnlySelectedAction);
+
+  contextMenu->popup(event->globalPos());
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::showOnlySelectedSegments()
+{
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  if (selectedSegmentIDs.size() == 0)
+    {
+    qWarning() << Q_FUNC_INFO << ": No segment selected";
+    return;
+    }
+
+  Q_D(qMRMLSegmentsTableView);
+  if (!d->SegmentationNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    return;
+    }
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+    d->SegmentationNode->GetDisplayNode() );
+  if (!displayNode)
+    {
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation " << d->SegmentationNode->GetName();
+    return;
+    }
+
+  // Hide all segments except the selected ones
+  int disabledModify = displayNode->StartModify();
+  vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
+  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+    {
+    bool visible = false;
+    if (selectedSegmentIDs.contains(segmentIt->first.c_str()))
+      {
+      visible = true;
+      }
+
+    displayNode->SetSegmentVisibility(segmentIt->first, visible);
+    }
+  displayNode->EndModify(disabledModify);
 }

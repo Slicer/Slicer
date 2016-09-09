@@ -712,14 +712,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
     vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
       segmentation->GetSegmentRepresentation(pipeline->SegmentID, shownRepresenatationName) );
     if (imageData)
-    {
+      {
       int* imageExtent = imageData->GetExtent();
       if (imageExtent[0]>imageExtent[1] || imageExtent[2]>imageExtent[3] || imageExtent[4]>imageExtent[5])
-      {
+        {
         // empty image
         imageData = NULL;
+        }
       }
-    }
 
     if ( (!segmentOutlineVisible && !segmentFillVisible)
       || ((!polyData || polyData->GetNumberOfPoints() == 0) && !imageData) )

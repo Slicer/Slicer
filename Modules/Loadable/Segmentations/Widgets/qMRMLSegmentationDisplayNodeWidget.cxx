@@ -160,14 +160,17 @@ void qMRMLSegmentationDisplayNodeWidget::setSegmentationDisplayNode(vtkMRMLSegme
 {
   Q_D(qMRMLSegmentationDisplayNodeWidget);
 
+  if (d->SegmentationDisplayNode == node)
+    {
+    return;
+    }
+
   qvtkReconnect(d->SegmentationDisplayNode, node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node);
-  if (d->SegmentationDisplayNode != displayNode)
-    {
-    d->SegmentationDisplayNode = displayNode;
-    this->updateWidgetFromMRML();
-    }
+  d->SegmentationDisplayNode = displayNode;
+
+  this->updateWidgetFromMRML();
 }
 
 //-----------------------------------------------------------------------------

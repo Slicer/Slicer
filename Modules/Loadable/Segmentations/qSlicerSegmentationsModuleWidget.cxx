@@ -195,6 +195,7 @@ void qSlicerSegmentationsModuleWidget::updateWidgetFromMRML()
   d->MRMLNodeComboBox_OtherSegmentationOrRepresentationNode->sortFilterProxyModel()->setHiddenNodeIDs(hiddenNodeIDs);
 
   // Update display group from segmentation display node
+  d->SegmentationDisplayNodeWidget->setSegmentationNode(d->SegmentationNode);
   d->SegmentationDisplayNodeWidget->updateWidgetFromMRML();
 
   // Update copy/move/import/export buttons from selection
@@ -321,7 +322,7 @@ void qSlicerSegmentationsModuleWidget::onSegmentationNodeChanged(vtkMRMLNode* no
   vtkMRMLSegmentationNode* segmentationNode =  vtkMRMLSegmentationNode::SafeDownCast(node);
 
   qvtkReconnect(d->SegmentationNode, segmentationNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromDisplayNode()));
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::MasterRepresentationModified, this, SLOT(updateWidgetFromMRML()));
 
   d->SegmentationNode = segmentationNode;

@@ -532,7 +532,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::showAllSegments()
     return;
     }
 
-  // Hide all segments except the current one
+  // Show all segments
   std::vector<vtkMRMLHierarchyNode*> segmentSubjectHierarchyNodes = parentNode->GetChildrenNodes();
   for (std::vector<vtkMRMLHierarchyNode*>::iterator segmentShIt = segmentSubjectHierarchyNodes.begin(); segmentShIt != segmentSubjectHierarchyNodes.end(); ++segmentShIt)
     {
