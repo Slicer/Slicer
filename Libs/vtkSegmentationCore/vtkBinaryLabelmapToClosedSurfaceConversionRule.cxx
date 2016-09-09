@@ -24,17 +24,19 @@
 #include "vtkOrientedImageData.h"
 
 // VTK includes
+#include <vtkDecimatePro.h>
+#include <vtkDiscreteMarchingCubes.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkImageConstantPad.h>
+#include <vtkImageThreshold.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkVersion.h>
-#include <vtkDiscreteMarchingCubes.h>
-#include <vtkDecimatePro.h>
 #include <vtkPolyDataNormals.h>
-#include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkImageConstantPad.h>
-#include <vtkImageChangeInformation.h>
+#include <vtkVersion.h>
+#include <vtkWindowedSincPolyDataFilter.h>
 
 //----------------------------------------------------------------------------
 vtkSegmentationConverterRuleNewMacro(vtkBinaryLabelmapToClosedSurfaceConversionRule);
@@ -164,7 +166,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   // Run marching cubes
   vtkSmartPointer<vtkDiscreteMarchingCubes> marchingCubes = vtkSmartPointer<vtkDiscreteMarchingCubes>::New();
   marchingCubes->SetInputData(binaryLabelmapWithIdentityGeometry);
-  const int labelmapFillValue = 1;
+  const int labelmapFillValue = binaryLabelmapWithIdentityGeometry->GetScalarRange()[1]; // max value
   marchingCubes->GenerateValues(1, labelmapFillValue, labelmapFillValue);
   marchingCubes->ComputeGradientsOff();
   marchingCubes->ComputeNormalsOff();
@@ -219,9 +221,14 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkDataObject* sour
   transformPolyDataFilter->SetInputData(processingResult);
   transformPolyDataFilter->SetTransform(labelmapGeometryTransform);
 
-  if (computeSurfaceNormals)
-    {    vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+  if (computeSurfaceNormals>0)
+    {
+    vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
+    polyDataNormals->ConsistencyOn(); // discrete marching cubes may generate inconsistent surface
+    // We almost always perform smoothing, so splitting would not be able to preserve any sharp features
+    // (and sharp edges would look like artifacts in the smooth surface).
+    polyDataNormals->SplittingOff();
     polyDataNormals->Update();
     closedSurfacePolyData->ShallowCopy(polyDataNormals->GetOutput());
     }
