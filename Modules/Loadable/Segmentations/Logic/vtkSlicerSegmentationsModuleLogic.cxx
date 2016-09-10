@@ -398,20 +398,18 @@ vtkOrientedImageData* vtkSlicerSegmentationsModuleLogic::CreateOrientedImageData
 //-----------------------------------------------------------------------------
 int vtkSlicerSegmentationsModuleLogic::DoesLabelmapContainSingleLabel(vtkMRMLLabelMapVolumeNode* labelmapVolumeNode)
 {
-  if (!labelmapVolumeNode)
-    {
+  if (!labelmapVolumeNode || !labelmapVolumeNode->GetImageData())
+  {
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::DoesLabelmapContainSingleLabel: Invalid labelmap volume MRML node");
     return 0;
-    }
+  }
+  int highLabel = (int)(ceil(labelmapVolumeNode->GetImageData()->GetScalarRange()[1]));
+  if (highLabel == 0)
+  {
+    return 0;
+  }
   vtkSmartPointer<vtkImageAccumulate> imageAccumulate = vtkSmartPointer<vtkImageAccumulate>::New();
   imageAccumulate->SetInputConnection(labelmapVolumeNode->GetImageDataConnection());
-  imageAccumulate->Update();
-  int highLabel = (int)imageAccumulate->GetMax()[0];
-  if (highLabel == 0)
-    {
-    return 0;
-    }
-
   imageAccumulate->IgnoreZeroOn();
   imageAccumulate->Update();
   int lowLabel = (int)imageAccumulate->GetMin()[0];
@@ -438,12 +436,12 @@ void vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(vtkIntArray* labels, v
     vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::GetAllLabelValues: Invalid labelmap");
     return;
    }
+  double* scalarRange = labelmap->GetScalarRange();
+  int lowLabel = (int)(floor(scalarRange[0]));
+  int highLabel = (int)(ceil(scalarRange[1]));
   vtkSmartPointer<vtkImageAccumulate> imageAccumulate = vtkSmartPointer<vtkImageAccumulate>::New();
   imageAccumulate->SetInputData(labelmap);
   imageAccumulate->IgnoreZeroOn(); // Do not create segment from background
-  imageAccumulate->Update();
-  int lowLabel = (int)imageAccumulate->GetMin()[0];
-  int highLabel = (int)imageAccumulate->GetMax()[0];
   imageAccumulate->SetComponentExtent(lowLabel, highLabel, 0, 0, 0, 0);
   imageAccumulate->SetComponentOrigin(0, 0, 0);
   imageAccumulate->SetComponentSpacing(1, 1, 1);
@@ -451,6 +449,10 @@ void vtkSlicerSegmentationsModuleLogic::GetAllLabelValues(vtkIntArray* labels, v
 
   for (int label = lowLabel; label <= highLabel; ++label)
     {
+    if (label == 0)
+      {
+      continue;
+      }
     double frequency = imageAccumulate->GetOutput()->GetPointData()->GetScalars()->GetTuple1(label - lowLabel);
     if (frequency == 0.0)
       {
@@ -913,7 +915,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
   //threshold->SetNumberOfThreads(1);
 
   int segmentationNodeWasModified = segmentationNode->StartModify();
-  for (int labelIndex = 0; labelIndex <= labelValues->GetNumberOfValues(); ++labelIndex)
+  for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
     {
     int label = labelValues->GetValue(labelIndex);
     threshold->ThresholdBetween(label, label);
@@ -1028,7 +1030,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
   //TODO: pending resolution of bug http://www.na-mic.org/Bug/view.php?id=1822,
   //   run the thresholding in single threaded mode to avoid data corruption observed on mac release builds
   //threshold->SetNumberOfThreads(1);
-  for (int labelIndex = 0; labelIndex <= labelValues->GetNumberOfValues(); ++labelIndex)
+  for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
   {
     int label = labelValues->GetValue(labelIndex);
 
