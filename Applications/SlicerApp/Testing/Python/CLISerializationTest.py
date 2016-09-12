@@ -119,17 +119,18 @@ if __name__ == '__main__':
           "files" : [ "1.does", "2.not", "3.matter" ],
           "image1" : "",
           "image2" : "",
-          "outputFile1" : "",
-          "seed" : [[1.0,0.0,-1.0]],
-          "seedsFile" : "",
-          "seedsOutFile" : serializeSeedsOutFile,
-          "transform1" : "%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode1"%(data_dir),
-          "transform2" : "%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode2"%(data_dir)
+          "outputFile1" : ""
         },
         "Generic Tables" :
         {
           "inputDT" : "",
           "outputDT" : ""
+        },
+        "Geometry Parameters" :
+        {
+          "InputModel" : "",
+          "ModelSceneFile" : [],
+          "OutputModel" : ""
         },
         "Index Parameters" :
         {
@@ -140,6 +141,12 @@ if __name__ == '__main__':
         {
           "inputFA" : "",
           "outputFA" : ""
+        },
+        "Point Parameters" :
+        {
+          "seed" : [[1.0,0.0,-1.0]],
+          "seedsFile" : "",
+          "seedsOutFile" : serializeSeedsOutFile,
         },
         "Regions of interest" :
         {
@@ -159,6 +166,17 @@ if __name__ == '__main__':
           "anintegervectorreturn" : [],
           "astringchoicereturn" : "Bill",
           "astringreturn" : "Hello"
+        },
+        "Transform Parameters" :
+        {
+          "transform1" : "%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode1"%(data_dir),
+          "transform2" : "%s/ExecutionModelTourTest.mrml#vtkMRMLLinearTransformNode2"%(data_dir),
+          "transformInput" : "",
+          "transformInputBspline" : "",
+          "transformInputNonlinear" : "",
+          "transformOutput" : "",
+          "transformOutputBspline" : "",
+          "transformOutputNonlinear" : ""
         },
         "Vector Parameters" :
         {
