@@ -22,10 +22,11 @@ endif()
 
 if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS)
 
   if(APPLE)
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DSlicerExecutionModel_DEFAULT_CLI_EXECUTABLE_LINK_FLAGS:STRING=-Wl,-rpath,@loader_path/../../../
       )
   endif()
@@ -36,7 +37,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
 
   macro(_set var type value)
     set(${var} ${value})
-    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -D${var}:${type}=${value}
       )
   endmacro()
@@ -56,9 +57,20 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
     ${Slicer_INSTALL_CLIMODULES_LIB_DIR})
 
   if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
-    _set(JsonCpp_INCLUDE_DIR PATH ${JsonCpp_INCLUDE_DIR})
-    _set(JsonCpp_LIBRARY PATH ${JsonCpp_LIBRARY})
     _set(ParameterSerializer_DIR PATH ${ParameterSerializer_DIR})
+    _set(JsonCpp_INCLUDE_DIR PATH ${JsonCpp_INCLUDE_DIR})
+
+    # JsoncCpp_LIBRARY needs to be added as a CMAKE_ARGS because it contains an
+    # expression that needs to be evaluated
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      -DJsonCpp_LIBRARY:PATH=${JsonCpp_LIBRARY}
+      )
+  endif()
+
+  if(NOT EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS STREQUAL "")
+    set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      CMAKE_ARGS
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS})
   endif()
 
   ExternalProject_Add(${proj}
@@ -83,7 +95,8 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
       #-DSlicerExecutionModel_INSTALL_SHARE_DIR:PATH=${Slicer_INSTALL_ROOT}share/${SlicerExecutionModel}
       -DSlicerExecutionModel_INSTALL_NO_DEVELOPMENT:BOOL=${Slicer_INSTALL_NO_DEVELOPMENT}
       -DSlicerExecutionModel_DEFAULT_CLI_TARGETS_FOLDER_PREFIX:STRING=Module-
-      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
