@@ -905,10 +905,16 @@ void vtkMRMLStorageNode::SetURIPrefix(const char *uriPrefix)
 //----------------------------------------------------------------------------
 vtkStringArray* vtkMRMLStorageNode::GetSupportedReadFileTypes()
 {
-  if(this->SupportedReadFileTypes->GetNumberOfTuples()==0)
+  if (this->SupportedReadFileTypes->GetNumberOfTuples() == 0)
     {
+    // File types list has not been initialized yet
     this->InitializeSupportedReadFileTypes();
-    this->SupportedReadFileTypes->InsertNextValue("All files (.*)");
+    if (this->SupportedReadFileTypes->GetNumberOfTuples() == 0)
+      {
+      // InitializeSupportedReadFileTypes has not added any specific file formats,
+      // which means that all file types are supported.
+      this->SupportedReadFileTypes->InsertNextValue("All files (.*)");
+      }
     }
   return this->SupportedReadFileTypes;
 }
@@ -918,6 +924,7 @@ vtkStringArray* vtkMRMLStorageNode::GetSupportedWriteFileTypes()
 {
   if(this->SupportedWriteFileTypes->GetNumberOfTuples()==0)
     {
+    // File types list has not been initialized yet
     this->InitializeSupportedWriteFileTypes();
     }
   return this->SupportedWriteFileTypes;
