@@ -504,7 +504,6 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
 
   // Fire segment removed event
   this->InvokeEvent(vtkSegmentation::SegmentRemoved, (void*)segmentId.c_str());
-
 }
 
 //---------------------------------------------------------------------------

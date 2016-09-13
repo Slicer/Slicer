@@ -85,7 +85,7 @@ protected slots:
 
   /// Called when a node is removed from the scene so that the segment subject hierarchy
   /// nodes are removed too
-  void onNodeAboutToBeRemoved(vtkObject* scene, vtkObject* nodeObject);
+  void onNodeRemoved(vtkObject* scene, vtkObject* nodeObject);
 
   /// Called when subject hierarchy node is modified. Renames segment if subject hierarchy node has been renamed
   void onSubjectHierarchyNodeModified(vtkObject*);

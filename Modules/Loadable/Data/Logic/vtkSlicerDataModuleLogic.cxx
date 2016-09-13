@@ -145,11 +145,11 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     while (nodeIterator != nodesToRemove.end())
       {
       this->GetMRMLScene()->RemoveNode(*nodeIterator);
-    if (useBatchMode)
-      {
-      this->GetMRMLScene()->ProgressState(
-              vtkMRMLScene::BatchProcessState, ++progress);
-      }
+      if (useBatchMode)
+        {
+        this->GetMRMLScene()->ProgressState(
+                vtkMRMLScene::BatchProcessState, ++progress);
+        }
       ++nodeIterator;
       }
   if (useBatchMode)

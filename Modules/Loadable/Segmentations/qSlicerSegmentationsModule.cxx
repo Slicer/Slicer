@@ -129,8 +129,8 @@ void qSlicerSegmentationsModule::setMRMLScene(vtkMRMLScene* scene)
 {
   // Connect scene node added event to make connections enabling per-segment subject hierarchy actions
   qvtkReconnect( this->mrmlScene(), scene, vtkMRMLScene::NodeAddedEvent, this, SLOT( onNodeAdded(vtkObject*,vtkObject*) ) );
-    // Connect scene node removed event so that the per-segment subject hierarchy nodes are removed too
-  qvtkReconnect( this->mrmlScene(), scene, vtkMRMLScene::NodeAboutToBeRemovedEvent, this, SLOT( onNodeAboutToBeRemoved(vtkObject*,vtkObject*) ) );
+  // Connect scene node removed event so that the per-segment subject hierarchy nodes are removed too
+  qvtkReconnect( this->mrmlScene(), scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT( onNodeRemoved(vtkObject*,vtkObject*) ) );
 
   Superclass::setMRMLScene(scene);
 }
@@ -239,7 +239,7 @@ void qSlicerSegmentationsModule::onNodeAdded(vtkObject* sceneObject, vtkObject* 
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModule::onNodeAboutToBeRemoved(vtkObject* sceneObject, vtkObject* nodeObject)
+void qSlicerSegmentationsModule::onNodeRemoved(vtkObject* sceneObject, vtkObject* nodeObject)
 {
   vtkMRMLScene* scene = vtkMRMLScene::SafeDownCast(sceneObject);
   if (!scene)
@@ -253,49 +253,79 @@ void qSlicerSegmentationsModule::onNodeAboutToBeRemoved(vtkObject* sceneObject, 
     return;
     }
 
-  // Remove segment subject hierarchy nodes if segmentation node is being removed
-  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(nodeObject);
-  if (segmentationNode)
+  vtkMRMLSubjectHierarchyNode* removedShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
+  if (!removedShNode)
     {
-    vtkMRMLSubjectHierarchyNode* segmentationSubjectHierarchyNode =
-      vtkMRMLSubjectHierarchyNode::GetAssociatedSubjectHierarchyNode(segmentationNode);
-    if (segmentationSubjectHierarchyNode)
+    return;
+    }
+
+  // If a segment SH node was removed then remove segment from its segmentation
+  if (removedShNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
+    {
+    std::string segmentId = removedShNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
+
+    // Rely only on ID because the removed node is not in the scene any more
+    vtkMRMLSubjectHierarchyNode* segmentationShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
+      scene->GetNodeByID(removedShNode->GetParentNodeID()) );
+    if (!segmentationShNode)
       {
-      std::vector<vtkMRMLHierarchyNode*> segmentSubjectHierarchyNodes = segmentationSubjectHierarchyNode->GetChildrenNodes();
-      for (std::vector<vtkMRMLHierarchyNode*>::iterator childIt = segmentSubjectHierarchyNodes.begin(); childIt != segmentSubjectHierarchyNodes.end(); ++childIt)
+      // Happens if segmentation SH is removed, and segment SH nodes are removed from the other branch of this function
+      return;
+      }
+    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
+      segmentationShNode->GetAssociatedNode() );
+    if (segmentationNode)
+      {
+      // Segment might have been removed first, and subject hierarchy second, in which case we should not try to remove segment again
+      if (segmentationNode->GetSegmentation()->GetSegment(segmentId))
         {
-        vtkMRMLSubjectHierarchyNode* currentSegmentShNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(*childIt);
-        scene->RemoveNode(currentSegmentShNode);
+        segmentationNode->GetSegmentation()->RemoveSegment(segmentId);
         }
       }
     }
-
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(nodeObject);
-  if (subjectHierarchyNode)
+  // If a segmentation SH node was removed then remove its virtual branch containing the segment SH nodes
+  // (the SegmentRemoved event is not hit any more as the segmentation object was already removed)
+  else if (removedShNode->GetOwnerPluginName() && !strcmp(removedShNode->GetOwnerPluginName(), "Segmentations"))
     {
-    // Remove segmentation node if its associated subject hierarchy node is being removed.
-    // This is necessary so that the segment virtual nodes are removed before the segmentation SH node is removed,
-    // otherwise the event observers will be removed, and the segment virtual nodes will be left in the scene.
-    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      subjectHierarchyNode->GetAssociatedNode());
-    if (segmentationNode)
+    // Collect a list of segment subject hierarchy nodes that are children of the node removed
+    std::vector<vtkMRMLSubjectHierarchyNode*> segmentShNodesToRemove;
+    scene->InitTraversal();
+    vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(
+      scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode") );
+    while (shNode != NULL)
       {
-      scene->RemoveNode(segmentationNode);
-      }
-    // Remove segment from parent segmentation if its subject hierarchy node is being removed
-    else if (subjectHierarchyNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName()))
-      {
-      std::string segmentId = subjectHierarchyNode->GetAttribute(vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
-
-      segmentationNode = vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyNode(subjectHierarchyNode);
-      if (segmentationNode)
+      // Rely only on IDs because the removed node is not in the scene any more
+      if (shNode->GetParentNodeID() && !strcmp(shNode->GetParentNodeID(), removedShNode->GetID()))
         {
-        // Segment might have been removed first, and subject hierarchy second, in which case we should not try to remove segment again
-        if (segmentationNode->GetSegmentation()->GetSegment(segmentId))
-          {
-          segmentationNode->GetSegmentation()->RemoveSegment(segmentId);
-          }
+        segmentShNodesToRemove.push_back(shNode);
         }
+      shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(scene->GetNextNodeByClass("vtkMRMLSubjectHierarchyNode"));
+      }
+
+    // Now remove the collected nodes. Batch process is only used if many nodes will be removed
+    // because entering/exiting batch processing is a very expensive operation (the display flickers,
+    // lots of things are recomputed), so it should be only done if we save time by skipping many small updates.
+    int toRemove = segmentShNodesToRemove.size();
+    bool useBatchMode = toRemove > 10; // Switch to batch mode if more than 10 nodes to remove
+    int progress = 0;
+    if (useBatchMode)
+      {
+      scene->StartState(vtkMRMLScene::BatchProcessState, toRemove);
+      }
+      std::vector<vtkMRMLSubjectHierarchyNode*>::const_iterator nodeIterator;
+      nodeIterator = segmentShNodesToRemove.begin();
+      while (nodeIterator != segmentShNodesToRemove.end())
+        {
+        scene->RemoveNode(*nodeIterator);
+        if (useBatchMode)
+          {
+          scene->ProgressState(vtkMRMLScene::BatchProcessState, ++progress);
+          }
+        ++nodeIterator;
+        }
+    if (useBatchMode)
+      {
+      scene->EndState(vtkMRMLScene::BatchProcessState);
       }
     }
 }
