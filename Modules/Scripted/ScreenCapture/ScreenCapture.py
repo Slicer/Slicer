@@ -485,10 +485,11 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     self.logCallback = None
 
     self.videoFormatPresets = [
-      {"name": "H264 (generic)", "fileExtension": "avi", "extraVideoOptions": "-f mp4 libx264 -preset veryslow -qp 0 -pix_fmt yuv420p"},
-      {"name": "H264 (Quicktime)", "fileExtension": "mp4", "extraVideoOptions": "-f mp4 -vcodec libx264 -pix_fmt yuv420p"},
-      {"name": "MPEG4", "fileExtension": "mp4", "extraVideoOptions": "-c:v mpeg4 -qscale:v 5"},
-      {"name": "Animated GIF", "fileExtension": "gif", "extraVideoOptions": "-filter_complex palettegen,[v]paletteuse"},
+      {"name": "H.264",                    "fileExtension": "mp4", "extraVideoOptions": "-codec libx264 -preset slower -pix_fmt yuv420p"},
+      {"name": "H.264 (high-quality)",     "fileExtension": "mp4", "extraVideoOptions": "-codec libx264 -preset slower -crf 18 -pix_fmt yuv420p"},
+      {"name": "MPEG-4",                   "fileExtension": "mp4", "extraVideoOptions": "-codec mpeg4 -qscale 5"},
+      {"name": "MPEG-4 (high-quality)",    "fileExtension": "mp4", "extraVideoOptions": "-codec mpeg4 -qscale 3"},
+      {"name": "Animated GIF",             "fileExtension": "gif", "extraVideoOptions": "-filter_complex palettegen,[v]paletteuse"},
       {"name": "Animated GIF (grayscale)", "fileExtension": "gif", "extraVideoOptions": "-vf format=gray"} ]
 
   def addLog(self, text):
