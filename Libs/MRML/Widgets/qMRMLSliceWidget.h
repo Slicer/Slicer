@@ -141,6 +141,10 @@ public slots:
   /// Fit slices to background
   void fitSliceToBackground();
 
+signals:
+  /// Signal emitted when editing of a node is requested from within the slice widget
+  void nodeAboutToBeEdited(vtkMRMLNode* node);
+
 protected:
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
 

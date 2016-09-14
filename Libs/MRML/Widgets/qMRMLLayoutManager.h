@@ -228,6 +228,9 @@ signals:
   void activeTableRendererChanged(vtkRenderer* newRenderer);
   void layoutChanged(int);
 
+  /// Signal emitted when editing of a node is requested from within the layout
+  void nodeAboutToBeEdited(vtkMRMLNode* node);
+
 protected:
   QScopedPointer<qMRMLLayoutManagerPrivate> d_ptr;
   qMRMLLayoutManager(qMRMLLayoutManagerPrivate* obj, QWidget* viewport, QObject* parent);

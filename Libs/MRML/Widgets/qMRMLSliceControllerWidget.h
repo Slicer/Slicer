@@ -259,10 +259,13 @@ public slots:
   void setBackgroundInterpolation(bool nearestNeighbor);
 
 signals:
-
   /// This signal is emitted when the given \a imageData is modified.
   void imageDataConnectionChanged(vtkAlgorithmOutput * imageDataConnection);
+
   void renderRequested();
+
+  /// Signal emitted when editing of a node is requested from within the controller
+  void nodeAboutToBeEdited(vtkMRMLNode* node);
 
 protected:
   /// Constructor allowing derived class to specify a specialized pimpl.

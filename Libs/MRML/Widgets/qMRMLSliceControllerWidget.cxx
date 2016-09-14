@@ -273,6 +273,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   //              this->actionLabelMapVisibility, SLOT(setEnabled(bool)));
   this->connect(this->LabelMapComboBox, SIGNAL(currentNodeChanged(bool)),
                 this->actionLabelMapOutline, SLOT(setEnabled(bool)));
+  this->connect(this->LabelMapComboBox, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
+                q, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)));
 
   // Connect Foreground layer selector
   this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -285,6 +287,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   //              this->actionForegroundVisibility, SLOT(setEnabled(bool)));
   this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(bool)),
                 this->actionForegroundInterpolation, SLOT(setEnabled(bool)));
+  this->connect(this->ForegroundComboBox, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
+                q, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)));
 
   // Connect Background layer selector
   this->connect(this->BackgroundComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -304,6 +308,8 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    this->ForegroundComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->BackgroundComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->BackgroundComboBox, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
+                   q, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)));
 
   // Connect actions to buttons
   this->SliceVisibilityButton->setDefaultAction(this->actionShow_in_3D);

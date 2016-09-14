@@ -68,6 +68,8 @@ void qMRMLSliceWidgetPrivate::init()
           this, SLOT(setImageDataConnection(vtkAlgorithmOutput*)));
   connect(this->SliceController, SIGNAL(renderRequested()),
           this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
+  connect(this->SliceController, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
+          q, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)));
 }
 
 // --------------------------------------------------------------------------

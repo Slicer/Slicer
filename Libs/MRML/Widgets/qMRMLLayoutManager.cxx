@@ -264,6 +264,9 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
 
   this->sliceLogics()->AddItem(sliceWidget->sliceLogic());
 
+  QObject::connect(sliceWidget, SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)),
+                   this->layoutManager(), SIGNAL(nodeAboutToBeEdited(vtkMRMLNode*)));
+
   return sliceWidget;
 }
 
