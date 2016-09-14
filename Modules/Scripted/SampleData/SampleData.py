@@ -100,7 +100,8 @@ class SampleDataWidget(ScriptedLoadableModuleWidget):
 
     # This module is often used in developer mode, therefore
     # collapse reload & test section by default.
-    self.reloadCollapsibleButton.collapsed = True
+    if hasattr(self, "reloadCollapsibleButton"):
+      self.reloadCollapsibleButton.collapsed = True
 
     self.observerTags = []
     self.logic = SampleDataLogic(self.logMessage)
