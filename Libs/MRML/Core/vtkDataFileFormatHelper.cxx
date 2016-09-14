@@ -231,8 +231,9 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
     std::string lowerCaseExtension = vtksys::SystemTools::LowerCase(fileformat.substr(pos1));
     if (!lowerCaseExtension.empty())
       {
-      vtkGenericWarningMacro("vtkDataFileFormatHelper::GetFileExtensionFromFormatString: please update deprecated extension-only format specifier!: "
-                             << lowerCaseExtension.c_str() );
+      vtkGenericWarningMacro("vtkDataFileFormatHelper::GetFileExtensionFromFormatString: please update deprecated "
+        "extension-only format specifier to 'File format name (.ext)' format! "
+        "Current format string: " << fileformat.c_str());
       return lowerCaseExtension;
       }
     }

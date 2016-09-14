@@ -148,21 +148,19 @@ int TestWriteData()
 //---------------------------------------------------------------------------
 int TestExtensionFormatHelper()
 {
-  bool status;
   vtkNew<vtkDataFileFormatHelper> helper;
-  status  = (vtkDataFileFormatHelper::GetFileExtensionFromFormatString("VTK File (.vtk)")
-             == ".vtk");
-  status &= (vtkDataFileFormatHelper::GetFileExtensionFromFormatString("foo")
-             == "");
 
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("VTK File (.vtk)"), ".vtk");
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("Segmentation (.seg.nrrd)"), ".seg.nrrd");
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("This is a NRRD (.nrrd)"), ".nrrd");
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("Nifti-file (.nii.gz)"), ".nii.gz");
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("Any file (.*)"), ".*");
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString("foo"), "");
 
   TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
-
-  status &= (vtkDataFileFormatHelper::GetFileExtensionFromFormatString(".vtk")
-             == ".vtk");
-
+  CHECK_STD_STRING(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(".vtk"), ".vtk");
   TESTING_OUTPUT_ASSERT_WARNINGS(1);
   TESTING_OUTPUT_ASSERT_WARNINGS_END();
 
-  return status == true ? EXIT_SUCCESS : EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
