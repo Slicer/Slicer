@@ -193,6 +193,10 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
 std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
   const char* format)
 {
+  // Format string: "short descriptive string (.EXT)"
+  // also supports: ".EXT" however this is deprecated
+  //                and use will print warning.
+
   std::string fileformat(format);
   std::string::size_type pos1 = fileformat.find("(");
   std::string::size_type pos2 = fileformat.find(")");
@@ -219,10 +223,21 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
       }
     return lowercaseExtension;
     }
-  else
+
+  // handle extension-only formats
+  pos1 = fileformat.find_first_of(".");
+  if (pos1 != std::string::npos)
     {
-    return "";
+    std::string lowerCaseExtension = vtksys::SystemTools::LowerCase(fileformat.substr(pos1));
+    if (!lowerCaseExtension.empty())
+      {
+      vtkGenericWarningMacro("vtkDataFileFormatHelper::GetFileExtensionFromFormatString: please update deprecated extension-only format specifier!: "
+                             << lowerCaseExtension.c_str() );
+      return lowerCaseExtension;
+      }
     }
+  // default case
+  return "";
 }
 
 //----------------------------------------------------------------------------

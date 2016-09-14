@@ -15,6 +15,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLStorageNode.h"
+#include "vtkDataFileFormatHelper.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -64,6 +65,7 @@ vtkStandardNewMacro(vtkMRMLStorageNodeTestHelper1);
 int TestBasics();
 int TestReadData();
 int TestWriteData();
+int TestExtensionFormatHelper();
 
 //---------------------------------------------------------------------------
 int vtkMRMLStorageNodeTest1(int , char * [] )
@@ -71,6 +73,7 @@ int vtkMRMLStorageNodeTest1(int , char * [] )
   CHECK_EXIT_SUCCESS(TestBasics());
   CHECK_EXIT_SUCCESS(TestReadData());
   CHECK_EXIT_SUCCESS(TestWriteData());
+  CHECK_EXIT_SUCCESS(TestExtensionFormatHelper());
   return EXIT_SUCCESS;
 }
 
@@ -140,4 +143,26 @@ int TestWriteData()
 {
   // TODO
   return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+int TestExtensionFormatHelper()
+{
+  bool status;
+  vtkNew<vtkDataFileFormatHelper> helper;
+  status  = (vtkDataFileFormatHelper::GetFileExtensionFromFormatString("VTK File (.vtk)")
+             == ".vtk");
+  status &= (vtkDataFileFormatHelper::GetFileExtensionFromFormatString("foo")
+             == "");
+
+
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+
+  status &= (vtkDataFileFormatHelper::GetFileExtensionFromFormatString(".vtk")
+             == ".vtk");
+
+  TESTING_OUTPUT_ASSERT_WARNINGS(1);
+  TESTING_OUTPUT_ASSERT_WARNINGS_END();
+
+  return status == true ? EXIT_SUCCESS : EXIT_FAILURE;
 }
