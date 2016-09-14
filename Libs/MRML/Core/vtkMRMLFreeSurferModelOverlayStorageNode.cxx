@@ -787,17 +787,17 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::CopyData(vtkMRMLNode *refNode,
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelOverlayStorageNode::InitializeSupportedReadFileTypes()
 {
-  this->SupportedReadFileTypes->InsertNextValue(".w");
-  this->SupportedReadFileTypes->InsertNextValue(".thickness");
-  this->SupportedReadFileTypes->InsertNextValue(".curv");
-  this->SupportedReadFileTypes->InsertNextValue(".avg_curv");
-  this->SupportedReadFileTypes->InsertNextValue(".sulc");
-  this->SupportedReadFileTypes->InsertNextValue(".area");
-  this->SupportedReadFileTypes->InsertNextValue(".annot");
-  this->SupportedReadFileTypes->InsertNextValue(".mgz");
-  this->SupportedReadFileTypes->InsertNextValue(".mgh.gz");
-  this->SupportedReadFileTypes->InsertNextValue(".mgh");
-  this->SupportedReadFileTypes->InsertNextValue(".label");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer W file (.w)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Thickness (.thickness)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Curvature (.curv)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Avg. Curvature (.avg_curv)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Sulcus (.sulc)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Area (.area)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Annotation (.annot)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer MGZ (.mgz)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer MGH GZ (.mgh.gz)");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer MGH (.mgh");
+  this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Label (.label)");
 }
 
 //----------------------------------------------------------------------------
