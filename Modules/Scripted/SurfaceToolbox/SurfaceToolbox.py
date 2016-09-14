@@ -11,16 +11,16 @@ class SurfaceToolbox(ScriptedLoadableModule):
     self.parent.categories = ["Surface Models"]
     self.parent.dependencies = []
     self.parent.contributors = ["Luca Antiga (Orobix), Ron Kikinis (Brigham and Women's Hospital)"] # replace with "Firstname Lastname (Org)"
-    self.parent.helpText = string.Template("""
-    This module supports various cleanup and optimization processes on surface models.
-    Select the input and output models, and then enable the stages of the pipeline by selecting the buttons.
-    Stages that include parameters will open up when they are enabled.
-    Click apply to activate the pipeline and then click the Toggle button to compare the model before and after the operation.
-    See <a href=\"$a/Documentation/$b.$c/Modules/SurfaceToolbox\">$a/Documentation/$b.$c/Modules/SurfaceToolbox</a> for more information.
-    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
+    self.parent.helpText = """
+This module supports various cleanup and optimization processes on surface models.
+Select the input and output models, and then enable the stages of the pipeline by selecting the buttons.
+Stages that include parameters will open up when they are enabled.
+Click apply to activate the pipeline and then click the Toggle button to compare the model before and after the operation.
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
-    This module was developed by Luca Antiga, Orobix Srl, with a little help from Steve Pieper, Isomics, Inc.
-    """
+This module was developed by Luca Antiga, Orobix Srl, with a little help from Steve Pieper, Isomics, Inc.
+"""
 
 def numericInputFrame(parent, label, tooltip, minimum, maximum, step, decimals):
   inputFrame = qt.QFrame(parent)

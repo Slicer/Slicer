@@ -1,35 +1,51 @@
+import os
+import unittest
 import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
+import logging
+
 #
 # Endoscopy
 #
 
-class Endoscopy:
+class Endoscopy(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def __init__(self, parent):
-    import string
-    parent.title = "Endoscopy"
-    parent.categories = ["Endoscopy"]
-    parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = string.Template("""
-    Create a path model as a spline interpolation of a set of fiducial points. Pick the Camera to be modified by the path and the Fiducial List defining the control points. Clicking "Create path" will make a path model and enable the flythrough panel. You can manually scroll though the path with the Frame slider. The Play/Pause button toggles animated flythrough. The Frame Skip slider speeds up the animation by skipping points on the path. The Frame Delay slider slows down the animation by adding more time between frames. The View Angle provides is used to approximate the optics of an endoscopy system. See <a href=\"$a/Documentation/$b.$c/Modules/Endoscopy\">$a/Documentation/$b.$c/Modules/Endoscopy</a> for more information.
-    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
-    parent.acknowledgementText = """
-    This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See <a>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.  Module implemented by Steve Pieper.
-    """
-    self.parent = parent
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "Endoscopy"
+    self.parent.categories = ["Endoscopy"]
+    self.parent.dependencies = []
+    self.parent.contributors = ["Steve Pieper (Isomics)"]
+    self.parent.helpText = """
+Create a path model as a spline interpolation of a set of fiducial points.
+Pick the Camera to be modified by the path and the Fiducial List defining the control points.
+Clicking "Create path" will make a path model and enable the flythrough panel.
+You can manually scroll through the path with the Frame slider. The Play/Pause button toggles animated flythrough.
+The Frame Skip slider speeds up the animation by skipping points on the path.
+The Frame Delay slider slows down the animation by adding more time between frames.
+The View Angle provides is used to approximate the optics of an endoscopy system.
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
+    self.parent.acknowledgementText = """
+This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy
+(See <a>http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy</a>)
+NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.  Module implemented by Steve Pieper.
+"""
 
 #
 # qSlicerPythonModuleExampleWidget
 #
 
-class EndoscopyWidget:
+class EndoscopyWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def __init__(self, parent=None):
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-    else:
-      self.parent = parent
-    self.layout = self.parent.layout()
+    ScriptedLoadableModuleWidget.__init__(self, parent)
     self.cameraNode = None
     self.cameraNodeObserverTag = None
     self.cameraObserverTag= None
@@ -41,13 +57,10 @@ class EndoscopyWidget:
     self.timer = qt.QTimer()
     self.timer.setInterval(20)
     self.timer.connect('timeout()', self.flyToNext)
-    if not parent:
-      self.setup()
-      self.cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
-      self.inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
-      self.parent.show()
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
     # Path collapsible button
     pathCollapsibleButton = ctk.ctkCollapsibleButton()
     pathCollapsibleButton.text = "Path"
@@ -75,7 +88,7 @@ class EndoscopyWidget:
     inputFiducialsNodeSelector.objectName = 'inputFiducialsNodeSelector'
     inputFiducialsNodeSelector.toolTip = "Select a fiducial list to define control points for the path."
     inputFiducialsNodeSelector.nodeTypes = ['vtkMRMLMarkupsFiducialNode', 'vtkMRMLAnnotationHierarchyNode', 'vtkMRMLFiducialListNode']
-    inputFiducialsNodeSelector.noneEnabled = True
+    inputFiducialsNodeSelector.noneEnabled = False
     inputFiducialsNodeSelector.addEnabled = False
     inputFiducialsNodeSelector.removeEnabled = False
     inputFiducialsNodeSelector.connect('currentNodeChanged(bool)', self.enableOrDisableCreateButton)
@@ -150,6 +163,10 @@ class EndoscopyWidget:
     self.frameSlider = frameSlider
     self.viewAngleSlider = viewAngleSlider
     self.playButton = playButton
+
+    cameraNodeSelector.setMRMLScene(slicer.mrmlScene)
+    inputFiducialsNodeSelector.setMRMLScene(slicer.mrmlScene)
+
 
   def setCameraNode(self, newCameraNode):
     """Allow to set the current camera node.

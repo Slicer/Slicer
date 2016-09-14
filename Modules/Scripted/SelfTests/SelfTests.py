@@ -1,8 +1,7 @@
 import traceback
-import qt
-import ctk
-import slicer
-
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
+import logging
 #
 # SelfTests
 #
@@ -19,23 +18,21 @@ class ExampleSelfTests(object):
     slicer.mrmlScene.Clear(0)
 
 
-
-
-class SelfTests:
+class SelfTests(ScriptedLoadableModule):
   def __init__(self, parent):
-    import string
-    parent.title = "SelfTests"
-    parent.categories = ["Testing",]
-    parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = string.Template("""
-The SelfTests module allows developers to provide built-in self-tests (BIST) for slicer so that users can tell if their installed version of slicer are running as designed.  See <a href=\"$a/Documentation/$b.$c/Modules/SelfTests\">$a/Documentation/$b.$c/Modules/SelfTests</a> for more information.
-""").substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
-    parent.acknowledgementText = """
-    <img src=':Logos/Isomics.png'><br><br>
-This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
-    """
-    #parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadSelfTests.png')
-    self.parent = parent
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "SelfTests"
+    self.parent.categories = ["Testing"]
+    self.parent.contributors = ["Steve Pieper (Isomics)"]
+    self.parent.helpText = """
+The SelfTests module allows developers to provide built-in self-tests (BIST) for slicer so that users can tell
+if their installed version of slicer are running as designed.
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
+    self.parent.acknowledgementText = """
+This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program
+and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).
+"""
 
     #
     # slicer.selfTests is a dictionary of tests that are registered
@@ -58,35 +55,24 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
 # SelfTests widget
 #
 
-class SelfTestsWidget:
+
+class SelfTestsWidget(ScriptedLoadableModuleWidget):
+  """Slicer module that creates the Qt GUI for interacting with SelfTests
+  Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
   """
-  Slicer module that creates the Qt GUI for interacting with SelfTests
-  """
-
-  def __init__(self, parent=None):
-    self.logic = SelfTestsLogic(slicer.selfTests)
-
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-      self.layout = self.parent.layout()
-      self.setup()
-      self.parent.show()
-    else:
-      self.parent = parent
-      self.layout = parent.layout()
-
-    globals()['selfTests'] = self
-
-  def enter(self):
-    pass
-
-  def exit(self):
-    pass
 
   # sets up the widget
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
+    # This module is often used in developer mode, therefore
+    # collapse reload & test section by default.
+    self.reloadCollapsibleButton.collapsed = True
+
+    self.logic = SelfTestsLogic(slicer.selfTests)
+
+    globals()['selfTests'] = self
 
     #
     # test list

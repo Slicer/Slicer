@@ -15,10 +15,16 @@ class SegmentEditor(ScriptedLoadableModule):
     self.parent.categories = ["Segmentation"]
     self.parent.dependencies = ["Segmentations"]
     self.parent.contributors = ["Csaba Pinter (Queen's University), Andras Lasso (Queen's University)"]
-    self.parent.helpText = string.Template("""
-This module allows editing segmentation objects by directly drawing and using segmentaiton tools on the contained segments.\n\nRepresentations other than the labelmap one (which is used for editing) are automatically updated real-time, so for example the closed surface can be visualized as edited in the 3D view.<br><br>
-See <a href=\"$a/Documentation/$b.$c/Modules/SegmentEditor\">the documentation</a> for more information.""").substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
-    self.parent.acknowledgementText = """This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)."""
+    self.parent.helpText = """
+This module allows editing segmentation objects by directly drawing and using segmentaiton tools on the contained segments.
+Representations other than the labelmap one (which is used for editing) are automatically updated real-time,
+so for example the closed surface can be visualized as edited in the 3D view.
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
+    self.parent.acknowledgementText = """
+This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program
+and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).
+"""
 
 #
 # SegmentEditorWidget

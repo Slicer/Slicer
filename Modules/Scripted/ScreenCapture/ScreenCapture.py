@@ -19,9 +19,15 @@ class ScreenCapture(ScriptedLoadableModule):
     self.parent.categories = ["Utilities"]
     self.parent.dependencies = []
     self.parent.contributors = ["Andras Lasso (PerkLab Queen's University)"]
-    self.parent.helpText = """Capture image sequences from 2D and 3D viewers."""
-    self.parent.acknowledgementText = """This work was was funded by Cancer Care Ontario
- and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)"""
+    self.parent.helpText = """
+This module captures image sequences and videos
+from dynamic contents shown in 3D and slice viewers.
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
+    self.parent.acknowledgementText = """
+This work was was funded by Cancer Care Ontario
+and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
+"""
 
 #
 # ScreenCaptureWidget

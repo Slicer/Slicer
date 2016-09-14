@@ -1,26 +1,32 @@
 import os
-import slicer
-import qt, ctk
+import unittest
+import vtk, qt, ctk, slicer
+from slicer.ScriptedLoadableModule import *
+import logging
 
 #
 # SampleData
 #
 
-class SampleData:
+class SampleData(ScriptedLoadableModule):
+  """Uses ScriptedLoadableModule base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
+
   def __init__(self, parent):
-    import string
-    parent.title = "Sample Data"
-    parent.categories = ["Informatics"]
-    parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
-    parent.helpText = string.Template("""
+    ScriptedLoadableModule.__init__(self, parent)
+    self.parent.title = "Sample Data"
+    self.parent.categories = ["Informatics"]
+    self.parent.dependencies = []
+    self.parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
+    self.parent.helpText = """
 The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.
-See <a href=\"$a/Documentation/$b.$c/Modules/SampleData\">$a/Documentation/$b.$c/Modules/SampleData</a> for more information.
-    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
-    parent.acknowledgementText = """
-This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
-    """
-    parent.icon = qt.QIcon(':Icons/XLarge/SlicerDownloadMRHead.png')
-    self.parent = parent
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
+    self.parent.acknowledgementText = """
+This work was was funded by Cancer Care Ontario
+and the Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO)
+"""
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
@@ -84,33 +90,20 @@ class SampleDataSource:
 # SampleData widget
 #
 
-class SampleDataWidget:
-
-  def __init__(self, parent=None):
-    self.observerTags = []
-    self.logic = SampleDataLogic(self.logMessage)
-
-    if not parent:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-      self.layout = self.parent.layout()
-      self.setup()
-      self.parent.show()
-    else:
-      self.parent = parent
-      self.layout = parent.layout()
-
-  def enter(self):
-    pass
-
-  def exit(self):
-    pass
-
-  def updateGUIFromMRML(self, caller, event):
-    pass
+class SampleDataWidget(ScriptedLoadableModuleWidget):
+  """Uses ScriptedLoadableModuleWidget base class, available at:
+  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
+  """
 
   def setup(self):
+    ScriptedLoadableModuleWidget.setup(self)
+
+    # This module is often used in developer mode, therefore
+    # collapse reload & test section by default.
+    self.reloadCollapsibleButton.collapsed = True
+
+    self.observerTags = []
+    self.logic = SampleDataLogic(self.logMessage)
 
     categories = slicer.modules.sampleDataSources.keys()
     categories.sort()

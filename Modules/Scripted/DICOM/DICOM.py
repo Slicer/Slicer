@@ -26,12 +26,13 @@ class DICOM(ScriptedLoadableModule):
     self.parent.title = "DICOM"
     self.parent.categories = ["", "Informatics"] # top level module
     self.parent.contributors = ["Steve Pieper (Isomics)"]
-    self.parent.helpText = string.Template("""
-The DICOM module integrates DICOM classes from CTK (based on DCMTK).  See <a href=\"$a/Documentation/$b.$c/Modules/DICOM\">the documentaiton</a> for more information.
-""").substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
+    self.parent.helpText = """
+The DICOM module integrates DICOM classes from CTK (based on DCMTK).
+"""
+    self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a href=http://www.slicer.org>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.  Based on work from CommonTK (http://www.commontk.org).
-    """
+"""
     self.parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadDICOM.png')
     self.parent.dependencies = ["SubjectHierarchy"]
 
