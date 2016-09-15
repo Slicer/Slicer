@@ -98,24 +98,15 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     inputFormLayout.addRow(self.sliceEndOffsetSliderLabel, self.sliceEndOffsetSliderWidget)
 
     # 3D start rotation
-    self.startRotationSliderLabel = qt.QLabel("Start rotation angle:")
-    self.startRotationSliderWidget = ctk.ctkSliderWidget()
-    self.startRotationSliderWidget.singleStep = 5
-    self.startRotationSliderWidget.minimum = 0
-    self.startRotationSliderWidget.maximum = 180
-    self.startRotationSliderWidget.value = 180
-    self.startRotationSliderWidget.setToolTip("Rotation angle for the first image, relative to current orientation.")
-    inputFormLayout.addRow(self.startRotationSliderLabel, self.startRotationSliderWidget)
-
-    # 3D end rotation
-    self.endRotationSliderLabel = qt.QLabel("End rotation angle:")
-    self.endRotationSliderWidget = ctk.ctkSliderWidget()
-    self.endRotationSliderWidget.singleStep = 5
-    self.endRotationSliderWidget.minimum = 0
-    self.endRotationSliderWidget.maximum = 180
-    self.endRotationSliderWidget.value = 180
-    self.endRotationSliderWidget.setToolTip("Rotation angle for the last image, relative to current orientation.")
-    inputFormLayout.addRow(self.endRotationSliderLabel, self.endRotationSliderWidget)
+    self.rotationSliderLabel = qt.QLabel("Rotation range:")
+    self.rotationSliderWidget = ctk.ctkRangeWidget()
+    self.rotationSliderWidget.singleStep = 5
+    self.rotationSliderWidget.minimum = -180
+    self.rotationSliderWidget.maximum = 180
+    self.rotationSliderWidget.minimumValue = -180
+    self.rotationSliderWidget.maximumValue = 180
+    self.rotationSliderWidget.setToolTip("View rotation range, relative to current view orientation.")
+    inputFormLayout.addRow(self.rotationSliderLabel, self.rotationSliderWidget)
 
     # Sequence browser node selector
     self.sequenceBrowserNodeSelectorLabel = qt.QLabel("Sequence:")
@@ -363,10 +354,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       self.sliceEndOffsetSliderWidget.blockSignals(wasBlocked)
 
     # 3D rotation
-    self.startRotationSliderLabel.visible = (self.animationMode == "3D rotation")
-    self.startRotationSliderWidget.visible = (self.animationMode == "3D rotation")
-    self.endRotationSliderLabel.visible = (self.animationMode == "3D rotation")
-    self.endRotationSliderWidget.visible = (self.animationMode == "3D rotation")
+    self.rotationSliderLabel.visible = (self.animationMode == "3D rotation")
+    self.rotationSliderWidget.visible = (self.animationMode == "3D rotation")
 
     # Sequence
     self.sequenceBrowserNodeSelectorLabel.visible = (self.animationMode == "sequence")
@@ -437,8 +426,8 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
       elif self.animationModeWidget.currentText == "slice fade":
         self.logic.captureSliceFade(viewNode, numberOfSteps, outputDir, imageFileNamePattern)
       elif self.animationModeWidget.currentText == "3D rotation":
-        self.logic.capture3dViewRotation(viewNode, self.startRotationSliderWidget.value,
-          self.endRotationSliderWidget.value, numberOfSteps, outputDir, imageFileNamePattern)
+        self.logic.capture3dViewRotation(viewNode, self.rotationSliderWidget.minimumValue,
+          self.rotationSliderWidget.maximumValue, numberOfSteps, outputDir, imageFileNamePattern)
       elif self.animationModeWidget.currentText == "sequence":
         self.logic.captureSequence(viewNode, self.sequenceBrowserNodeSelectorWidget.currentNode(),
           self.sequenceStartItemIndexWidget.value, self.sequenceEndItemIndexWidget.value,
@@ -672,12 +661,12 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     # Save original orientation and go to start orientation
     originalPitchRollYawIncrement = renderView.pitchRollYawIncrement
     originalYawDirection = renderView.yawDirection
-    renderView.setPitchRollYawIncrement(startRotation)
+    renderView.setPitchRollYawIncrement(-startRotation)
     renderView.yawDirection = renderView.YawLeft
     renderView.yaw()
 
     # Rotate step-by-step
-    rotationStepSize = (endRotation + startRotation) / (numberOfImages - 1)
+    rotationStepSize = (endRotation - startRotation) / (numberOfImages - 1)
     renderView.setPitchRollYawIncrement(rotationStepSize)
     renderView.yawDirection = renderView.YawRight
     for offsetIndex in range(numberOfImages):
@@ -835,6 +824,6 @@ class ScreenCaptureTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Testing 3D view rotation")
     viewNode = slicer.util.getNode('vtkMRMLViewNode1')
     self.assertIsNotNone(viewNode)
-    self.logic.capture3dViewRotation(viewNode, 180, 180, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
+    self.logic.capture3dViewRotation(viewNode, -180, 180, self.numberOfImages, self.tempDir, self.imageFileNamePattern)
     self.verifyAndDeleteWrittenFiles()
     self.delayDisplay('Testing 3D view rotation completed successfully')
