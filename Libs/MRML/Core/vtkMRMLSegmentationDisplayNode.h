@@ -2,7 +2,8 @@
 
   Program: 3D Slicer
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -136,12 +137,6 @@ public:
   vtkSetMacro(Opacity2DOutline, double);
 
 public:
-  /// Create color table node for segmentation
-  /// First two values are fixed: 0=Background, 1=Invalid
-  /// The subsequent colors correspond to the segments in order of segment indices.
-  /// \param segmentationNodeName Name of the segmentation node that is set to the color node with a postfix
-  virtual vtkMRMLColorTableNode* CreateColorTableNode(const char* segmentationNodeName);
-
   /// Get segment display properties for a specific segment
   /// \param segmentID Identifier of segment of which the properties are queried
   /// \param properties Display properties of the segment are copied into this object. If display properties
@@ -255,13 +250,11 @@ public:
   void GetVisibleSegmentIDs(vtkStringArray* segmentIDs);
 
 protected:
-  /// Set segment color in associated color table
-  /// \return Success flag
-  bool SetSegmentColorTableEntry(std::string segmentId, double r, double g, double b);
-
   /// Convenience function for getting all segment IDs.
   void GetAllSegmentIDs(std::vector<std::string>& segmentIDs, bool visibleSegmentsOnly);
 
+  /// Update list of segment display properties.
+  /// Remove entries for missing segments and add missing entries for existing segments
   void UpdateSegmentList();
 
 protected:

@@ -1017,7 +1017,7 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   // For each of 6 volume boundary planes:
   // 1. Convert the slice image to a polydata
   // 2. Transform polydata
-  // Then uppend all poly datas and compute RAS extents
+  // Then append all poly datas and compute RAS extents
 
   vtkNew<vtkImageDataGeometryFilter> imageDataGeometryFilter;
   imageDataGeometryFilter->SetInput(this->GetImageData());
@@ -1154,4 +1154,42 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   resampleImage->DeepCopy(reslice->GetOutput());
 
   this->SetAndObserveImageData(resampleImage.GetPointer());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
+{
+  vtkImageData* imageData = this->GetImageData();
+  if (!imageData)
+    {
+    return;
+    }
+
+  int extent[6] = {0,-1,0,-1,0,-1};
+  imageData->GetExtent(extent);
+
+  // No need to shift if extent already starts at zeros
+  if (extent[0] == 0 && extent[2] == 0 && extent[4] == 0)
+    {
+    return;
+    }
+
+  // Shift the origin to the extent's start
+  vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
+  this->GetIJKToRASMatrix(ijkToRasMatrix);
+  double shiftedOrigin_IJK[4] = {
+    static_cast<double>(extent[0]),
+    static_cast<double>(extent[2]),
+    static_cast<double>(extent[4]),
+    1.0 };
+  double shiftedOrigin_RAS[4] = { 0.0, 0.0, 0.0, 1.0 };
+  ijkToRasMatrix->MultiplyPoint(shiftedOrigin_IJK, shiftedOrigin_RAS);
+  this->SetOrigin(shiftedOrigin_RAS);
+
+  for (int i=0; i<3; ++i)
+    {
+    extent[2*i+1] -= extent[2*i];
+    extent[2*i] = 0;
+    }
+  imageData->SetExtent(extent);
 }

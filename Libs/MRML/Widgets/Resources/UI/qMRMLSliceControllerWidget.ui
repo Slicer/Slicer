@@ -4,10 +4,10 @@
  <widget class="ctkPopupWidget" name="qMRMLSliceControllerWidget">
   <property name="geometry">
    <rect>
-    <x>505</x>
-    <y>334</y>
-    <width>257</width>
-    <height>130</height>
+    <x>0</x>
+    <y>0</y>
+    <width>329</width>
+    <height>138</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,374 @@
    <property name="spacing">
     <number>0</number>
    </property>
+   <item row="2" column="1">
+    <widget class="QToolButton" name="LabelMapVisibilityButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::MenuButtonPopup</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>65</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select the label map</string>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLLabelMapVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="SegmentationOutlineButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QToolButton" name="SegmentationVisibilityButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::MenuButtonPopup</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QToolButton" name="LabelMapOutlineButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" rowspan="2">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="popupSlider">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>65</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select the foreground</string>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
+    <widget class="QToolButton" name="ForegroundInterpolationButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="ctkSliderWidget" name="SegmentationOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="qMRMLSegmentSelectorWidget" name="SegmentSelectorWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>65</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="editEnabled" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="multiSelection" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="horizontalLayout" stdset="0">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="popupSlider">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QToolButton" name="BackgroundInterpolationButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::DelayedPopup</enum>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>65</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Select the background</string>
+     </property>
+     <property name="nodeTypes">
+      <stringlist>
+       <string>vtkMRMLVolumeNode</string>
+      </stringlist>
+     </property>
+     <property name="noneEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="addEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="removeEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="renameEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="LabelMapIconLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../qMRMLWidgets.qrc">:/Icons/SliceViewerLB.png</pixmap>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="ForegroundIconLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../qMRMLWidgets.qrc">:/Icons/SliceViewerFG.png</pixmap>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="BackgroundIconLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../qMRMLWidgets.qrc">:/Icons/SliceViewerBG.png</pixmap>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="5">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
@@ -85,11 +453,11 @@
           <property name="checked">
            <bool>false</bool>
           </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
           <property name="popupMode">
            <enum>QToolButton::MenuButtonPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -186,11 +554,11 @@
         </item>
         <item>
          <widget class="QToolButton" name="SliceSpacingButton">
-          <property name="text">
-           <string/>
-          </property>
           <property name="toolTip">
            <string>Slice spacing may be set automatically or manually by the user or context</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
           <property name="icon">
            <iconset resource="../qMRMLWidgets.qrc">
@@ -291,291 +659,21 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QToolButton" name="LabelMapOptionButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>Select options for the Label Layer (not yet implemented).</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SliceViewerLB.png</normaloff>:/Icons/SliceViewerLB.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QToolButton" name="LabelMapVisibilityButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::MenuButtonPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
+    <widget class="QLabel" name="SegmentationIconLabel">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="pageStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QToolButton" name="LabelMapOutlineButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-       <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>65</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Select the label map</string>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLLabelMapVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="noneEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="addEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="removeEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="renameEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QToolButton" name="ForegroundOptionButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>Select options for the Foreground Layer</string>
-     </property>
      <property name="text">
       <string/>
      </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SliceViewerFG.png</normaloff>:/Icons/SliceViewerFG.png</iconset>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QToolButton" name="ForegroundInterpolationButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-       <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>65</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Select the foreground</string>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="noneEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="addEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="removeEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="renameEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QToolButton" name="BackgroundOptionButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>Select options for the Background Layer</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SliceViewerBG.png</normaloff>:/Icons/SliceViewerBG.png</iconset>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="pageStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="popupSlider">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="3">
-    <widget class="QToolButton" name="BackgroundInterpolationButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::DelayedPopup</enum>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="4">
-    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-       <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>65</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Select the background</string>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="noneEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="addEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="removeEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="renameEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" rowspan="2">
-    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="pageStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="popupSlider">
-      <bool>false</bool>
+     <property name="pixmap">
+      <pixmap resource="../qMRMLWidgets.qrc">:/Icons/SliceViewerSEG.png</pixmap>
      </property>
     </widget>
    </item>
@@ -710,45 +808,45 @@
    <property name="icon">
     <iconset resource="../qMRMLWidgets.qrc">
      <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>
-     <normalon>:/Icons/SlicerAutomaticSliceSpacing.png</normalon>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
+     <normalon>:/Icons/SlicerAutomaticSliceSpacing.png</normalon>:/Icons/SlicerManualSliceSpacing.png</iconset>
    </property>
    <property name="text">
     <string>Automatic</string>
    </property>
   </action>
-   <action name="actionSliceModelModeVolumes">
-     <property name="checkable">
-       <bool>true</bool>
-     </property>
-     <property name="text">
-       <string>FOV, Spacing match Volumes</string>
-     </property>
-   </action>
-   <action name="actionSliceModelMode2D">
-     <property name="checkable">
-       <bool>true</bool>
-     </property>
-     <property name="text">
-       <string>FOV, Spacing match 2D</string>
-     </property>
-   </action>
-   <action name="actionSliceModelMode2D_Volumes">
-     <property name="checkable">
-       <bool>true</bool>
-     </property>
-     <property name="text">
-       <string>FOV matches 2D, Spacing matches Volumes</string>
-     </property>
-   </action>
-   <action name="actionSliceModelModeVolumes_2D">
-     <property name="checkable">
-       <bool>true</bool>
-     </property>
-     <property name="text">
-       <string>FOV matches Volumes, Spacing matches 2D View</string>
-     </property>
-   </action>
-   <action name="actionLightbox1x1_view">
+  <action name="actionSliceModelModeVolumes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FOV, Spacing match Volumes</string>
+   </property>
+  </action>
+  <action name="actionSliceModelMode2D">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FOV, Spacing match 2D</string>
+   </property>
+  </action>
+  <action name="actionSliceModelMode2D_Volumes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FOV matches 2D, Spacing matches Volumes</string>
+   </property>
+  </action>
+  <action name="actionSliceModelModeVolumes_2D">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FOV matches Volumes, Spacing matches 2D View</string>
+   </property>
+  </action>
+  <action name="actionLightbox1x1_view">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1037,12 +1135,54 @@
     <string>Show thick ruler</string>
    </property>
   </action>
+  <action name="actionSegmentationOutlineFill">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/SlicesLabelOutlineAndFill.png</normaloff>:/Icons/SlicesLabelOutlineAndFill.png</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle segmentation outline/fill</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle between segmentation outline only, outline and fill, and fill only states</string>
+   </property>
+  </action>
+  <action name="actionSegmentationVisibility">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/VisibleOn.png</normaloff>
+     <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Segmentation</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle segmentation visibility</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSegmentSelectorWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSegmentSelectorWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkComboBox</class>
@@ -1078,48 +1218,48 @@
   <connection>
    <sender>LabelMapComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
-   <receiver>LabelMapOptionButton</receiver>
+   <receiver>LabelMapIconLabel</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>46</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>22</x>
-     <y>45</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>ForegroundComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
-   <receiver>ForegroundOptionButton</receiver>
+   <receiver>ForegroundIconLabel</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>68</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>22</x>
-     <y>68</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>BackgroundComboBox</sender>
    <signal>currentNodeChanged(bool)</signal>
-   <receiver>BackgroundOptionButton</receiver>
+   <receiver>BackgroundIconLabel</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>91</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>22</x>
-     <y>90</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -1130,12 +1270,12 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>7</x>
-     <y>7</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>284</x>
-     <y>111</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -1162,12 +1302,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>12</x>
-     <y>29</y>
+     <x>1</x>
+     <y>1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>168</x>
-     <y>23</y>
+     <x>161</x>
+     <y>1</y>
     </hint>
    </hints>
   </connection>
@@ -1178,12 +1318,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>9</x>
-     <y>24</y>
+     <x>1</x>
+     <y>1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>25</y>
+     <x>184</x>
+     <y>1</y>
     </hint>
    </hints>
   </connection>
@@ -1222,48 +1362,96 @@
   <connection>
    <sender>MoreButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>LabelMapOptionButton</receiver>
+   <receiver>SegmentationIconLabel</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>7</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>13</x>
-     <y>46</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MoreButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ForegroundOptionButton</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>6</x>
-     <y>24</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>11</x>
-     <y>69</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MoreButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>BackgroundOptionButton</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>5</x>
+     <x>20</x>
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>15</x>
-     <y>96</y>
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>LabelMapIconLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ForegroundIconLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>BackgroundIconLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SegmentationVisibilityButton</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1</x>
+     <y>1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>46</x>
+     <y>48</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SegmentationOpacitySlider</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>8</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>234</x>
+     <y>51</y>
     </hint>
    </hints>
   </connection>
@@ -1274,12 +1462,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>8</x>
-     <y>23</y>
+     <x>1</x>
+     <y>1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>34</x>
-     <y>50</y>
+     <x>23</x>
+     <y>74</y>
     </hint>
    </hints>
   </connection>
@@ -1294,8 +1482,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>67</x>
-     <y>51</y>
+     <x>129</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
@@ -1310,8 +1498,8 @@
      <y>12</y>
     </hint>
     <hint type="destinationlabel">
-     <x>68</x>
-     <y>65</y>
+     <x>23</x>
+     <y>130</y>
     </hint>
    </hints>
   </connection>
@@ -1322,12 +1510,28 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>8</x>
-     <y>27</y>
+     <x>1</x>
+     <y>1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>74</x>
-     <y>93</y>
+     <x>129</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SegmentationOutlineButton</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>48</y>
     </hint>
    </hints>
   </connection>
@@ -1342,8 +1546,8 @@
      <y>11</y>
     </hint>
     <hint type="destinationlabel">
-     <x>116</x>
-     <y>40</y>
+     <x>235</x>
+     <y>74</y>
     </hint>
    </hints>
   </connection>
@@ -1358,8 +1562,8 @@
      <y>22</y>
     </hint>
     <hint type="destinationlabel">
-     <x>119</x>
-     <y>66</y>
+     <x>235</x>
+     <y>101</y>
     </hint>
    </hints>
   </connection>
@@ -1374,8 +1578,24 @@
      <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>125</x>
-     <y>90</y>
+     <x>235</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SegmentSelectorWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>
@@ -1390,8 +1610,8 @@
      <y>21</y>
     </hint>
     <hint type="destinationlabel">
-     <x>155</x>
-     <y>38</y>
+     <x>258</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
@@ -1406,8 +1626,8 @@
      <y>7</y>
     </hint>
     <hint type="destinationlabel">
-     <x>170</x>
-     <y>64</y>
+     <x>258</x>
+     <y>103</y>
     </hint>
    </hints>
   </connection>
@@ -1422,8 +1642,8 @@
      <y>11</y>
     </hint>
     <hint type="destinationlabel">
-     <x>274</x>
-     <y>21</y>
+     <x>321</x>
+     <y>2</y>
     </hint>
    </hints>
   </connection>
@@ -1454,8 +1674,8 @@
      <y>15</y>
     </hint>
     <hint type="destinationlabel">
-     <x>367</x>
-     <y>15</y>
+     <x>276</x>
+     <y>1</y>
     </hint>
    </hints>
   </connection>

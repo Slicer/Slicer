@@ -43,6 +43,7 @@
     <file>Icons/SliceViewerBG.png</file>
     <file>Icons/SliceViewerFG.png</file>
     <file>Icons/SliceViewerLB.png</file>
+    <file>Icons/SliceViewerSEG.png</file>
     <file>Icons/SliceViewerOR.png</file>
     <file>Icons/SliceInterpolationOn.png</file>
     <file>Icons/SliceInterpolationOff.png</file>
@@ -56,8 +57,10 @@
     <file>Icons/SlicesFeaturesVisible.png</file>
     <file>Icons/SlicesFieldOfView.png</file>
     <file>Icons/SlicesFitToWindow.png</file>
+    <file>Icons/SlicesLabelFill.png</file>
     <file>Icons/SlicesLabelNoOutline.png</file>
     <file>Icons/SlicesLabelOutline.png</file>
+    <file>Icons/SlicesLabelOutlineAndFill.png</file>
     <file>Icons/SlicesLabelOpacity.png</file>
     <file>Icons/SlicerRotateToPixelSpace.png</file>
     <file>Icons/SlicesSpatialUnit.png</file>

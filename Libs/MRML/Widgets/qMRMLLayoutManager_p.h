@@ -95,8 +95,8 @@ public:
   //bool startUpdateLayout();
   //void endUpdateLayout(bool updateEnabled);
 
-  // Refresh the viewport with the current layout from the layout
-  // layout node. Empty the view if there is no layout node.
+  /// Refresh the viewport with the current layout from the layout
+  /// layout node. Empty the view if there is no layout node.
   void updateLayoutInternal();
 
   void setLayoutNumberOfCompareViewRowsInternal(int num);
@@ -130,6 +130,10 @@ public slots:
   void onActiveThreeDViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActiveChartViewNodeChanged(vtkMRMLAbstractViewNode*);
   void onActiveTableViewNodeChanged(vtkMRMLAbstractViewNode*);
+
+  /// Show segmentation controls in slice widgets only if there is at
+  /// least one segmentation node in the scene
+  void updateSegmentationControls();
 
 public:
   bool                    Enabled;

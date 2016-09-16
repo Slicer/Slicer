@@ -525,6 +525,10 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
       mrmlViewFactory->onViewNodeAdded(viewNode);
       }
     }
+  else if (node->IsA("vtkMRMLSegmentationNode"))
+    {
+    this->updateSegmentationControls();
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -550,6 +554,10 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
       {
       mrmlViewFactory->onViewNodeRemoved(viewNode);
       }
+    }
+  else if (node->IsA("vtkMRMLSegmentationNode"))
+    {
+    this->updateSegmentationControls();
     }
 }
 
@@ -694,6 +702,18 @@ void qMRMLLayoutManagerPrivate::setLayoutNumberOfCompareViewColumnsInternal(int 
     this->MRMLLayoutNode->SetNumberOfCompareViewColumns(num);
     }
 }
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::updateSegmentationControls()
+{
+  Q_Q(qMRMLLayoutManager);
+
+  foreach(const QString& viewName, q->sliceViewNames())
+    {
+    q->sliceWidget(viewName)->sliceController()->updateSegmentationControlsVisibility();
+    }
+}
+
 
 //------------------------------------------------------------------------------
 // qMRMLLayoutManager methods
@@ -913,6 +933,9 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
 
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndBatchProcessEvent,
                    d, SLOT(updateLayoutFromMRMLScene()));
+
+  d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndBatchProcessEvent,
+                   d, SLOT(updateSegmentationControls()));
 
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndRestoreEvent,
                    d, SLOT(onSceneRestoredEvent()));

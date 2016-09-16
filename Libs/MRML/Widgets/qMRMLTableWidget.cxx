@@ -42,7 +42,7 @@ static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLTableWidget");
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-// qMRMLSliceViewPrivate
+// qMRMLTableWidgetPrivate
 class qMRMLTableWidgetPrivate
   : public QObject
 {

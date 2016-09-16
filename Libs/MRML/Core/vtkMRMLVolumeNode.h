@@ -164,6 +164,12 @@ public:
   vtkGetObjectMacro(ImageDataConnection, vtkAlgorithmOutput);
 
   ///
+  /// Make sure image data of a volume node has extents that start at zero.
+  /// This needs to be done for compatibility reasons, as many components assume the extent has a form of
+  /// (0,dim[0],0,dim[1],0,dim[2]), which is not the case many times for segmentation merged labelmaps.
+  void ShiftImageDataExtentToZeroStart();
+
+  ///
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,

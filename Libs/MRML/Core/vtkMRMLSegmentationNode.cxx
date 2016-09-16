@@ -1,8 +1,7 @@
 /*==============================================================================
 
-  Program: 3D Slicer
-
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -30,12 +29,13 @@
 #include "vtkCalculateOversamplingFactor.h"
 
 // MRML includes
+#include <vtkEventBroker.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkEventBroker.h>
 #include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLSubjectHierarchyConstants.h>
+#include <vtkMRMLScalarVolumeNode.h>
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -54,9 +54,6 @@
 
 // STD includes
 #include <algorithm>
-
-//------------------------------------------------------------------------------
-static const char* REFERENCETERMINOLOGYCOLORTABLE_REFERENCE_ROLE = "referenceTerminologyColorTableRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSegmentationNode);
@@ -111,14 +108,7 @@ void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
   // Deep copy segmentation (containing the same segments from two segmentations is unstable)
   this->Segmentation->DeepCopy(otherNode->GetSegmentation());
 
-  // Copy other parameters
-  if (otherNode->GetAddToScene())
-    {
-    this->CopyOrientation(otherNode);
-    }
-
-  // Skip the volume node stage as the merged labelmap will be generated on request
-  vtkMRMLDisplayableNode::Copy(anode);
+  Superclass::Copy(anode);
 
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
@@ -134,14 +124,7 @@ void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
   // Deep copy segmentation
   this->Segmentation->DeepCopy(otherNode->Segmentation);
 
-  // Copy other parameters
-  if (otherNode->GetAddToScene())
-    {
-    this->CopyOrientation(otherNode);
-    }
-
-  // Skip the volume node stage as the merged labelmap will be generated on request
-  vtkMRMLDisplayableNode::Copy(aNode);
+  Superclass::Copy(aNode);
 
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent(); // This call loses event parameters (i.e. callData)
@@ -150,63 +133,10 @@ void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  // We don't call Superclass::Printself because vtkMRMLVolumeNode::PrintSelf would call
-  // GetImageData, which would turn on merged labelmap generation.
-  vtkMRMLDisplayableNode::PrintSelf(os,indent);
+  Superclass::PrintSelf(os,indent);
 
-  os << indent << "Merged labelmap:";
-  if (this->HasMergedLabelmap())
-    {
-    os << "\n";
-    os << indent.GetNextIndent() << "Origin:";
-    for(int j=0; j<3; j++)
-      {
-      os << " " << this->Origin[j];
-      }
-    os << "\n";
-    os << indent.GetNextIndent() << "Spacing:";
-    for(int j=0; j<3; j++)
-      {
-      os << " " << this->Spacing[j];
-      }
-    os << "\n";
-    os << indent.GetNextIndent() << "IJKToRASDirections:\n";
-    for(int i=0; i<3; i++)
-      {
-      os << indent.GetNextIndent().GetNextIndent();
-      for(int j=0; j<3; j++)
-        {
-        os << this->IJKToRASDirections[i][j] << " ";
-        }
-      os << "\n";
-      }
-    vtkImageData* imageData = this->GetImageData();
-    if (imageData)
-      {
-      os << indent.GetNextIndent() << "Extent:";
-      for(int j=0; j<6; j++)
-        {
-        os << " " << imageData->GetExtent()[j];
-        }
-      os << "\n";
-      os << indent.GetNextIndent() << "Scalar type: " << imageData->GetScalarTypeAsString() << "\n";
-      os << indent.GetNextIndent() << "Number of components: " << imageData->GetNumberOfScalarComponents() << "\n";
-      }
-    }
-  else
-    {
-    os << " (none)\n";
-    }
   os << indent << "Segmentation:";
   this->Segmentation->PrintSelf(os, indent.GetNextIndent());
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSegmentationNode::UpdateScene(vtkMRMLScene *scene)
-{
-  // Don't call vtkMRMLVolumeNode's UpdateScene, as it would call
-  // this->SetAndObserveImageData(this->GetImageData()).
-  vtkMRMLDisplayableNode::UpdateScene(scene);
 }
 
 //----------------------------------------------------------------------------
@@ -312,34 +242,16 @@ void vtkMRMLSegmentationNode::OnMasterRepresentationModified()
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentAdded(const char* segmentId)
 {
-  // Re-generate merged labelmap with the added segment if the segment is not empty
-  vtkOrientedImageData* segmentBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
-    this->Segmentation->GetSegment(segmentId)->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()) );
-  if ( this->HasMergedLabelmap()
-    && segmentBinaryLabelmap && !segmentBinaryLabelmap->IsEmpty() )
-    {
-    this->ReGenerateDisplayedMergedLabelmap();
-    }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* segmentId)
 {
-  // Re-generate merged labelmap without the removed segment
-  if (this->HasMergedLabelmap())
-    {
-    this->ReGenerateDisplayedMergedLabelmap();
-    }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSegmentModified(const char* segmentId)
 {
-  // Re-generate merged labelmap with modified representation
-  if (this->HasMergedLabelmap())
-    {
-    this->ReGenerateDisplayedMergedLabelmap();
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -399,7 +311,7 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchy
     if (nodeUidValueStr.find(*uidIt) != std::string::npos)
       {
       // Only set the reference once, but check all UIDs
-      if (!referencedVolumeFound && referencedVolumeNode != this)
+      if (!referencedVolumeFound)
         {
         // Set reference image geometry parameter if volume node is found
         this->SetReferenceImageGeometryParameterFromVolumeNode(referencedVolumeNode);
@@ -508,89 +420,6 @@ void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
   this->Segmentation->GetBounds(bounds);
 }
 
-//---------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::GetModifiedSinceRead()
-{
-  // Avoid calling vtkMRMLVolumeNode::GetModifiedSinceRead as it calls GetImageData
-  // which triggers merge. It is undesirable especially if it's only called when exiting.
-  return this->vtkMRMLStorableNode::GetModifiedSinceRead();
-}
-
-//---------------------------------------------------------------------------
-vtkImageData* vtkMRMLSegmentationNode::GetImageData()
-{
-  if (this->Scene && this->Scene->IsImporting())
-    {
-    // Do not do conversion on this request when importing scene, just return the existing image data.
-    // Conversions when importing scene should be done explicitly by the segmentation storage node.
-    return Superclass::GetImageData();
-    }
-
-  bool mergeNecessary = false;
-
-  // Create image data if it does not exist
-  vtkImageData* imageData = Superclass::GetImageData();
-  if (!imageData)
-    {
-    vtkSmartPointer<vtkImageData> internalImageData = vtkSmartPointer<vtkImageData>::New();
-    this->SetAndObserveImageData(internalImageData);
-    imageData = Superclass::GetImageData();
-    mergeNecessary = true;
-    }
-
-  // Merge labelmap if merge time is older than segment modified time
-  if (!mergeNecessary && this->Segmentation)
-    {
-    vtkSegmentation::SegmentMap segmentMap = this->Segmentation->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      // Get master representation from segment
-      vtkSegment* currentSegment = segmentIt->second;
-      vtkDataObject* masterRepresentation = currentSegment->GetRepresentation(this->Segmentation->GetMasterRepresentationName());
-      if (masterRepresentation)
-        {
-        if (masterRepresentation->GetMTime() > this->LabelmapMergeTime.GetMTime())
-          {
-          mergeNecessary = true;
-          break;
-          }
-        }
-      }
-    }
-
-  // Perform merging if necessary
-  if (mergeNecessary)
-    {
-    this->ReGenerateDisplayedMergedLabelmap();
-    }
-
-  // Check if image data is valid, and return a one voxel sized valid one if not
-  int mergedImageExtent[6] = {0,-1,0,-1,0,-1};
-  imageData->GetExtent(mergedImageExtent);
-  if (mergedImageExtent[0] > mergedImageExtent[1] || mergedImageExtent[2] > mergedImageExtent[3] || mergedImageExtent[4] > mergedImageExtent[5])
-    {
-    int oneVoxelExtent[6] = {0,0,0,0,0,0};
-    imageData->SetExtent(oneVoxelExtent);
-    imageData->AllocateScalars(VTK_SHORT, 4); // Four components to avoid vtkImageMapToColors errors
-
-    void* imageDataVoxelsPointer = imageData->GetScalarPointerForExtent(oneVoxelExtent);
-    if (!imageDataVoxelsPointer)
-      {
-      vtkErrorMacro("GetImageData: Failed to allocate memory for one-voxel image!");
-      return NULL;
-      }
-    memset(imageDataVoxelsPointer, 0, imageData->GetScalarSize());
-    }
-
-  return imageData;
-}
-
-//---------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::HasMergedLabelmap()
-{
-  vtkImageData* imageData = Superclass::GetImageData();
-  return (imageData != NULL);
-}
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
@@ -769,49 +598,6 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::ReGenerateDisplayedMergedLabelmap()
-{
-  if (!this->Segmentation->CreateRepresentation(
-    vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()))
-    {
-    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: Unable to get labelmap representation from segments");
-    this->LabelmapMergeTime.Modified();
-    return;
-    }
-
-  // Create an oriented labelmap that shares pixel buffer with the displayed (non-oriented) labelmap
-  vtkImageData* displayedNonOrientedLabelmap = Superclass::GetImageData();
-  if (!displayedNonOrientedLabelmap)
-    {
-    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: cannot get displayable image data");
-    return;
-    }
-  vtkNew<vtkOrientedImageData> displayedOrientedLabelmap;
-  displayedOrientedLabelmap->ShallowCopy(displayedNonOrientedLabelmap);
-
-  if (!this->GenerateMergedLabelmap(displayedOrientedLabelmap.GetPointer(), vtkSegmentation::EXTENT_REFERENCE_GEOMETRY, NULL, std::vector<std::string>()))
-    {
-    vtkErrorMacro("ReGenerateDisplayedMergedLabelmap: Failed to create merged labelmap for 2D visualization");
-    this->LabelmapMergeTime.Modified();
-    return;
-    }
-
-  // Save labelmap merge timestamp
-  this->LabelmapMergeTime.Modified();
-
-  // Save common labelmap geometry in segmentation node
-  vtkNew<vtkMatrix4x4> mergedImageToWorldMatrix;
-  displayedOrientedLabelmap->GetImageToWorldMatrix(mergedImageToWorldMatrix.GetPointer());
-  this->SetIJKToRASMatrix(mergedImageToWorldMatrix.GetPointer());
-  displayedNonOrientedLabelmap->ShallowCopy(displayedOrientedLabelmap.GetPointer());
-  displayedNonOrientedLabelmap->SetOrigin(0, 0, 0);
-  displayedNonOrientedLabelmap->SetSpacing(1, 1, 1);
-
-  // Make sure merged labelmap extents starts at zeros for compatibility reasons
-  vtkMRMLSegmentationNode::ShiftVolumeNodeExtentToZeroStart(this);
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLSubjectHierarchyNode* vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyNode(std::string segmentID)
 {
   vtkMRMLSubjectHierarchyNode* segmentationSubjectHierarchyNode =
@@ -837,48 +623,9 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSegmentationNode::GetSegmentSubjectHierarchy
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::ShiftVolumeNodeExtentToZeroStart(vtkMRMLScalarVolumeNode* volumeNode)
-{
-  if (!volumeNode || !volumeNode->vtkMRMLScalarVolumeNode::GetImageData())
-    {
-    return;
-    }
-
-  vtkImageData* imageData = volumeNode->vtkMRMLScalarVolumeNode::GetImageData();
-  int extent[6] = {0,-1,0,-1,0,-1};
-  imageData->GetExtent(extent);
-
-  // No need to shift if extent already starts at zeros
-  if (extent[0] == 0 && extent[2] == 0 && extent[4] == 0)
-    {
-    return;
-    }
-
-  // Shift the origin to the extent's start
-  vtkSmartPointer<vtkMatrix4x4> volumeNodeIjkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  volumeNode->GetIJKToRASMatrix(volumeNodeIjkToRasMatrix);
-  double shiftedOrigin_IJK[4] = {
-    static_cast<double>(extent[0]),
-    static_cast<double>(extent[2]),
-    static_cast<double>(extent[4]),
-    1.0 };
-  double shiftedOrigin_RAS[4] = { 0.0, 0.0, 0.0, 1.0 };
-  volumeNodeIjkToRasMatrix->MultiplyPoint(shiftedOrigin_IJK, shiftedOrigin_RAS);
-  volumeNode->SetOrigin(shiftedOrigin_RAS);
-
-  for (int i=0; i<3; ++i)
-    {
-    extent[2*i+1] -= extent[2*i];
-    extent[2*i] = 0;
-    }
-  imageData->SetExtent(extent);
-
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 {
-  if (!volumeNode || volumeNode == this || !volumeNode->GetImageData())
+  if (!volumeNode || !volumeNode->GetImageData())
     {
     return;
     }
@@ -911,33 +658,4 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
   // Set node reference from segmentation to reference geometry volume
   this->SetNodeReferenceID(
     vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), volumeNode->GetID() );
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::SetSceneReferences()
-{
-  Superclass::SetSceneReferences();
-
-  if (!this->Scene)
-  {
-    vtkErrorMacro("SetSceneReferences: Scene is expected to be non NULL.");
-    return;
-  }
-
-  // Reference terminology is the generic anatomical colors by default
-  vtkMRMLColorTableNode* genericAnatomyColorsNode = vtkMRMLColorTableNode::SafeDownCast(
-    this->Scene->GetNodeByID("vtkMRMLColorTableNodeFileGenericAnatomyColors.txt") );
-  this->SetAndObserveReferenceTerminologyColorNode(genericAnatomyColorsNode);
-}
-
-//---------------------------------------------------------------------------
-vtkMRMLColorTableNode* vtkMRMLSegmentationNode::GetReferenceTerminologyColorNode()
-{
-  return vtkMRMLColorTableNode::SafeDownCast( this->GetNodeReference(REFERENCETERMINOLOGYCOLORTABLE_REFERENCE_ROLE) );
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::SetAndObserveReferenceTerminologyColorNode(vtkMRMLColorTableNode* node)
-{
-  this->SetNodeReferenceID(REFERENCETERMINOLOGYCOLORTABLE_REFERENCE_ROLE, (node ? node->GetID() : NULL));
 }

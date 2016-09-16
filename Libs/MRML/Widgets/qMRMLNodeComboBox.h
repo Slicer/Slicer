@@ -95,7 +95,7 @@ public:
   /// Get MRML scene that has been set by setMRMLScene(), there is no scene
   /// by default (0).
   /// \sa setMRMLScene
-  vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
 
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,

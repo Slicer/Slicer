@@ -1,8 +1,7 @@
 /*==============================================================================
 
-  Program: 3D Slicer
-
-  Copyright (c) Kitware Inc.
+  Copyright (c) Laboratory for Percutaneous Surgery (PerkLab)
+  Queen's University, Kingston, ON, Canada. All Rights Reserved.
 
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
@@ -24,7 +23,7 @@
 
 // MRML includes
 #include <vtkMRML.h>
-#include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLColorTableNode.h>
 
 // STD includes
@@ -36,6 +35,7 @@
 class vtkCallbackCommand;
 class vtkMRMLScene;
 class vtkMRMLSubjectHierarchyNode;
+class vtkMRMLScalarVolumeNode;
 
 /// \brief MRML node containing segmentations
 /// \ingroup Segmentations
@@ -56,14 +56,14 @@ class vtkMRMLSubjectHierarchyNode;
 /// transparency, overlapping, multiple representation types, and display multiple segmentations at the
 /// same time.
 ///
-class VTK_MRML_EXPORT vtkMRMLSegmentationNode : public vtkMRMLLabelMapVolumeNode
+class VTK_MRML_EXPORT vtkMRMLSegmentationNode : public vtkMRMLDisplayableNode
 {
 public:
   // Define constants
   static const char* GetSegmentIDAttributeName() { return "segmentID"; };
 
   static vtkMRMLSegmentationNode *New();
-  vtkTypeMacro(vtkMRMLSegmentationNode, vtkMRMLLabelMapVolumeNode);
+  vtkTypeMacro(vtkMRMLSegmentationNode, vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Create instance of a GAD node.
@@ -105,15 +105,6 @@ public:
   /// Create and observe a segmentation display node
   virtual void CreateDefaultDisplayNodes();
 
-  /// Reimplemented to take into account the modified time of the internal data.
-  /// Returns true if the node (default behavior) or the internal data are modified
-  /// since read/written.
-  /// Note: The MTime of the internal data is used to know if it has been modified.
-  /// So if you invoke one of the data modified events without calling Modified() on the
-  /// internal data, GetModifiedSinceRead() won't return true.
-  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead();
-
   /// Function called from segmentation logic when UID is added in a subject hierarchy node.
   /// In case the newly added UID is a volume node referenced from this segmentation,
   /// its geometry will be set as image geometry conversion parameter.
@@ -145,17 +136,6 @@ public:
   virtual bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
     vtkOrientedImageData* mergedLabelmapGeometry = NULL, vtkStringArray* segmentIDs = NULL);
 
-  /// Re-generate displayed merged labelmap
-  virtual void ReGenerateDisplayedMergedLabelmap();
-
-  /// Updated so that it does not ask for image data (as it would try to generate merged labelmap)
-  virtual void UpdateScene(vtkMRMLScene *scene);
-
-  /// Make sure image data of a volume node has extents that start at zero.
-  /// This needs to be done for compatibility reasons, as many components assume the extent has a form of
-  /// (0,dim[0],0,dim[1],0,dim[2]), which is not the case many times for segmentation merged labelmaps.
-  static void ShiftVolumeNodeExtentToZeroStart(vtkMRMLScalarVolumeNode* volumeNode);
-
   /// Expose reference identifier to get the volume node defining the reference image geometry if any
   static std::string GetReferenceImageGeometryReferenceRole() { return "referenceImageGeometryRef"; };
   /// Set reference image geometry conversion parameter from the volume node, keeping reference
@@ -165,21 +145,6 @@ public:
   vtkGetObjectMacro(Segmentation, vtkSegmentation);
   /// Set and observe segmentation object
   void SetAndObserveSegmentation(vtkSegmentation* segmentation);
-
-  /// Get reference terminology color table node.
-  /// This node contains the terminology from which the user can assign terminology to new segments
-  vtkMRMLColorTableNode* GetReferenceTerminologyColorNode();
-  /// Set and observe reference terminology color table node.
-  /// This node contains the terminology from which the user can assign terminology to new segments
-  void SetAndObserveReferenceTerminologyColorNode(vtkMRMLColorTableNode* node);
-
-  /// Generate merged labelmap image data for display if needed
-  virtual vtkImageData* GetImageData();
-  /// Query existence or merged labelmap. Do not trigger merged labelmap generation
-  virtual bool HasMergedLabelmap();
-
-  /// Set default reference terminology color table node when node is added to a scene
-  virtual void SetSceneReferences();
 
 protected:
   /// Set segmentation object
@@ -212,9 +177,6 @@ protected:
 
   /// Segmentation object to store the actual data
   vtkSegmentation* Segmentation;
-
-  /// Keep track of merged labelmap modification time
-  vtkTimeStamp LabelmapMergeTime;
 
   /// Command handling events from segmentation object
   vtkSmartPointer<vtkCallbackCommand> SegmentationModifiedCallbackCommand;

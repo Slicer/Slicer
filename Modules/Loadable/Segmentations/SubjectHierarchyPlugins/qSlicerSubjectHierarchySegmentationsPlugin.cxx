@@ -420,7 +420,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentRemoved(vtkObject* cal
   if (!segmentId)
     {
     // Calling InvokePendingModifiedEvent loses event parameters, so in this case segment IDs are empty
-    updateAllSegmentsFromMRML(segmentationNode);
+    this->updateAllSegmentsFromMRML(segmentationNode);
     return;
     }
 
