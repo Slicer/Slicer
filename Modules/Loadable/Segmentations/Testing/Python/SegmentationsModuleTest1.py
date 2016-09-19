@@ -113,9 +113,6 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Get baseline values
     displayNode = self.inputSegmentationNode.GetDisplayNode()
     self.assertIsNotNone(displayNode)
-    colorTableNode = displayNode.GetColorNode()
-    self.assertIsNotNone(colorTableNode)
-    self.assertEqual(colorTableNode.GetNumberOfColors(), 3)
     # If segments are not found then the returned color is the pre-defined invalid color
     bodyColor = displayNode.GetSegmentColor('Body_Contour')
     self.assertTrue(int(bodyColor[0]*100) == 33 and int(bodyColor[1]*100) == 66 and bodyColor[2] == 0.0)
@@ -138,13 +135,15 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Add segment to segmentation
     self.inputSegmentationNode.GetSegmentation().AddSegment(self.sphereSegment)
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 3)
-    self.assertEqual(colorTableNode.GetNumberOfColors(), 4)
     sphereColor = displayNode.GetSegmentColor(self.sphereSegmentName)
     self.assertTrue(sphereColor[0] == 0.0 and sphereColor[1] == 0.0 and sphereColor[2] == 1.0)
 
     # Check merged labelmap
+    mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    self.inputSegmentationNode.GetSegmentation().CreateRepresentation(self.binaryLabelmapReprName)
+    self.inputSegmentationNode.GenerateMergedLabelmapForAllSegments(mergedLabelmap, 0)
     imageStat = vtk.vtkImageAccumulate()
-    imageStat.SetInputData(self.inputSegmentationNode.GetImageData())
+    imageStat.SetInputData(mergedLabelmap)
     imageStat.SetComponentExtent(0,4,0,0,0,0)
     imageStat.SetComponentOrigin(0,0,0)
     imageStat.SetComponentSpacing(1,1,1)
@@ -159,12 +158,6 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Remove segment from segmentation
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(self.sphereSegmentName)
     self.assertEqual(self.inputSegmentationNode.GetSegmentation().GetNumberOfSegments(), 2)
-    self.assertEqual(colorTableNode.GetNumberOfColors(), 4)
-    sphereColorArray = [0]*4
-    colorTableNode.GetColor(3,sphereColorArray)
-    self.assertEqual(int(sphereColorArray[0]*100), 50)
-    self.assertEqual(int(sphereColorArray[1]*100), 50)
-    self.assertEqual(int(sphereColorArray[2]*100), 50)
     sphereColor = displayNode.GetSegmentColor(self.sphereSegmentName)
     self.assertTrue(sphereColor[0] == 0.5 and sphereColor[1] == 0.5 and sphereColor[2] == 0.5)
 
@@ -203,9 +196,9 @@ class SegmentationsModuleTest1(unittest.TestCase):
     # Check merged labelmap
     # Reference geometry has the tiny patient spacing, and it is oversampled to have smimilar
     # voxel size as the sphere labelmap with the uniform 1mm spacing
-    mergedLabelmap = self.inputSegmentationNode.GetImageData()
-    self.assertIsNotNone(mergedLabelmap)
-    mergedLabelmapSpacing = self.inputSegmentationNode.GetSpacing()
+    mergedLabelmap = vtkSegmentationCore.vtkOrientedImageData()
+    self.inputSegmentationNode.GenerateMergedLabelmapForAllSegments(mergedLabelmap, 0)
+    mergedLabelmapSpacing = mergedLabelmap.GetSpacing()
     self.assertAlmostEqual(mergedLabelmapSpacing[0], 1.2894736842, 8)
     self.assertAlmostEqual(mergedLabelmapSpacing[1], 1.2894736842, 8)
     self.assertAlmostEqual(mergedLabelmapSpacing[2], 0.6052631578, 8)
@@ -278,8 +271,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 12900275)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 10601312)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 274360)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 0) # Built from color table and color four is removed in previous test section
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 422605)
 
     # Import model to segment
     modelImportSegmentationNode = slicer.vtkMRMLSegmentationNode()

@@ -1130,12 +1130,6 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeSelected(vtkMRMLNode* 
     return;
     }
 
-  // Show segmentation node if not already shown
-  if (!displayNode->GetVisibility())
-    {
-    displayNode->SetVisibility(true);
-    }
-
   // Update the controls with the new segmentation node
   this->onSegmentationNodeDisplayModifiedEvent(segmentationNode);
 
@@ -1148,7 +1142,7 @@ void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeSelected(vtkMRMLNode* 
 void qMRMLSliceControllerWidgetPrivate::onSegmentationNodeDisplayModifiedEvent(vtkObject* nodeObject)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(nodeObject);
-  if (!segmentationNode)
+  if (!segmentationNode || segmentationNode != this->SegmentSelectorWidget->currentNode())
     {
     return;
     }
