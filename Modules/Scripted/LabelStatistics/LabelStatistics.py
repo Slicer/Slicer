@@ -194,7 +194,13 @@ class LabelStatisticsWidget(ScriptedLoadableModuleWidget):
   def onExportToTable(self):
     """write the label statistics to a table node
     """
-    self.logic.exportToTable()
+    table = self.logic.exportToTable()
+
+    # Add table to the scene and show it
+    slicer.mrmlScene.AddNode(table)
+    slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
+    slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(table.GetID())
+    slicer.app.applicationLogic().PropagateTableSelection()
 
   def onSave(self):
     """save the label statistics
@@ -427,14 +433,14 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
     table = slicer.vtkMRMLTableNode()
     tableWasModified = table.StartModify()
 
-    table.SetName(slicer.mrmlScene.GenerateUniqueName(self.nodeBaseName+' statistics'))
-    
+    table.SetName(slicer.mrmlScene.GenerateUniqueName(self.nodeBaseName + ' statistics'))
+
     # Define table columns
     if colorNode:
-      col=table.AddColumn()
+      col = table.AddColumn()
       col.SetName("Type")
     for k in self.keys:
-      col=table.AddColumn()
+      col = table.AddColumn()
       col.SetName(k)
     for i in self.labelStats["Labels"]:
       rowIndex = table.AddEmptyRow()
@@ -444,16 +450,11 @@ class LabelStatisticsLogic(ScriptedLoadableModuleLogic):
         columnIndex += 1
       # Add other values
       for k in self.keys:
-        table.SetCellText(rowIndex, columnIndex, str(self.labelStats[i,k]))
+        table.SetCellText(rowIndex, columnIndex, str(self.labelStats[i, k]))
         columnIndex += 1
 
     table.EndModify(tableWasModified)
-
-    # Add table to the scene and show it
-    slicer.mrmlScene.AddNode(table)
-    slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
-    slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(table.GetID())
-    slicer.app.applicationLogic().PropagateTableSelection()
+    return table
 
   def statsAsCSV(self):
     """
