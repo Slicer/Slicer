@@ -259,6 +259,23 @@ class DataProbeInfoWidget(object):
       self.layerIJKs[layer].setText(self.generateIJKPixelDescription(ijk, layerLogic))
       self.layerValues[layer].setText(self.generateIJKPixelValueDescription(ijk, layerLogic))
 
+    # collect information from displayable managers
+    displayableManagerCollection = vtk.vtkCollection()
+    if sliceNode:
+      sliceView = slicer.app.layoutManager().sliceWidget(sliceNode.GetLayoutName()).sliceView()
+      sliceView.getDisplayableManagers(displayableManagerCollection)
+    aggregatedDisplayableManagerInfo = ''
+    for index in xrange(displayableManagerCollection.GetNumberOfItems()):
+      displayableManager = displayableManagerCollection.GetItemAsObject(index)
+      infoString = displayableManager.GetDataProbeInfoStringForPosition(xyz)
+      if infoString != "":
+        aggregatedDisplayableManagerInfo += infoString + "<br>"
+    if aggregatedDisplayableManagerInfo != '':
+      self.displayableManagerInfo.text = '<html>' + aggregatedDisplayableManagerInfo + '</html>'
+      self.displayableManagerInfo.show()
+    else:
+      self.displayableManagerInfo.hide()
+
     # set image
     if (not slicer.mrmlScene.IsBatchProcessing()) and sliceLogic and hasVolume and self.showImage:
       pixmap = self._createMagnifiedPixmap(
@@ -436,6 +453,15 @@ class DataProbeInfoWidget(object):
       _setFixedFontFamily(self.layerNames[layer])
       _setFixedFontFamily(self.layerIJKs[layer])
       _setFixedFontFamily(self.layerValues[layer])
+
+    # information collected about the current crosshair position
+    # from displayable managers registered to the current view
+    self.displayableManagerInfo = qt.QLabel()
+    self.displayableManagerInfo.indent = 6
+    self.displayableManagerInfo.wordWrap = True
+    self.frame.layout().addWidget(self.displayableManagerInfo)
+    # only show if not empty
+    self.displayableManagerInfo.hide()
 
     # goto module button
     self.goToModule = qt.QPushButton('->', self.frame)

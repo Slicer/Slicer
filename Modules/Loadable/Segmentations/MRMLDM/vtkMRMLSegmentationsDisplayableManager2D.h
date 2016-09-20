@@ -45,6 +45,10 @@ public:
   vtkTypeMacro(vtkMRMLSegmentationsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Assemble and return info string to display in Data probe for a given viewer XYZ position.
+  /// \return Invalid string by default, meaning no information to display.
+  virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]);
+
 protected:
   virtual void UnobserveMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
