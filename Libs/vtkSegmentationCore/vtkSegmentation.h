@@ -45,18 +45,19 @@ class vtkSegmentationCore_EXPORT vtkSegmentation : public vtkObject
 public:
   enum
     {
-    /// Fired when the master representation in ANY segment is changed.
+    /// Invoked when content of the master representation in a segment is changed.
     MasterRepresentationModified = 62100,
-    /// Fired if any representation (including the master representation) in any segment is modified
+    /// Invoked when content of any representation (including the master representation) in a segment is changed.
     RepresentationModified,
-    /// Fired if new segment is added
+    /// Invoked if new segment is added
     SegmentAdded,
-    /// Fired if segment is removed
+    /// Invoked if a segment is removed
     SegmentRemoved,
-    /// Fired if segment is modified
+    /// Invoked if a segment is modified (name changed, tags changed, etc).
+    /// Note: the event is not invoked when content of a representation in a segment is changed.
     SegmentModified,
-    /// Fired if a representation is created or removed in the segments (e.g., created by conversion from master)
-    ContainedRepresentationNamesModified,
+    /// Invoked if a representation is created or removed in the segments (e.g., created by conversion from master).
+    ContainedRepresentationNamesModified
     };
 
   enum

@@ -36,7 +36,7 @@
 // VTK includes
 #include <vtkMatrix4x4.h>
 #include <vtkWeakPointer.h>
- 
+
 // Qt includes
 #include <QDebug>
 #include <QVariant>
@@ -382,6 +382,12 @@ void qMRMLSegmentationConversionParametersWidget::applyConversion()
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
 
+  if (!d->SegmentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: segmentation node is invalid";
+    return;
+    }
+
   // Perform conversion using selected path and chosen conversion parameters
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(d->TargetRepresentationName.toLatin1().constData(), this->selectedPath(), this->conversionParameters()))
@@ -399,6 +405,12 @@ void qMRMLSegmentationConversionParametersWidget::onParameterChanged(QTableWidge
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
 
+  if (!d->SegmentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: segmentation node is invalid";
+    return;
+    }
+
   // Get name item (safe to assume that changed item is the value, as it is the only editable one)
   int row = changedItem->row();
   QTableWidgetItem* nameItem = d->ParametersTable->item(row, d->parametersColumnIndex("Name"));
@@ -411,6 +423,12 @@ void qMRMLSegmentationConversionParametersWidget::onParameterChanged(QTableWidge
 void qMRMLSegmentationConversionParametersWidget::onSetReferenceImageGeometryFromVolumeClicked()
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
+
+  if (!d->SegmentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: segmentation node is invalid";
+    return;
+    }
 
   QDialog* getGeometryFromVolumeDialog = new QDialog(NULL, Qt::Dialog);
   QVBoxLayout* geometryLayout = new QVBoxLayout(getGeometryFromVolumeDialog);
@@ -454,6 +472,12 @@ void qMRMLSegmentationConversionParametersWidget::onSetReferenceImageGeometryFro
 void qMRMLSegmentationConversionParametersWidget::setReferenceImageGeometryParameterFromVolumeNode(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentationConversionParametersWidget);
+
+  if (!d->SegmentationNode)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: segmentation node is invalid";
+    return;
+    }
 
   // If selection is 'None', then do not change reference image geometry parameter
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(node);

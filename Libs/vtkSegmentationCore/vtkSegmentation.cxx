@@ -135,6 +135,8 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
     return;
     }
 
+  this->RemoveAllSegments();
+
   // Copy properties
   this->SetMasterRepresentationName(aSegmentation->GetMasterRepresentationName());
 

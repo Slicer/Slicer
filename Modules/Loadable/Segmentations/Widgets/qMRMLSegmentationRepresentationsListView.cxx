@@ -310,6 +310,11 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationDefault()
 {
   Q_D(qMRMLSegmentationRepresentationsListView);
 
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
   // Get representation name
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();
 
@@ -378,6 +383,11 @@ void qMRMLSegmentationRepresentationsListView::removeRepresentation()
 {
   Q_D(qMRMLSegmentationRepresentationsListView);
 
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
+
   // Get representation name
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();
 
@@ -391,6 +401,11 @@ void qMRMLSegmentationRepresentationsListView::removeRepresentation()
 void qMRMLSegmentationRepresentationsListView::makeMaster()
 {
   Q_D(qMRMLSegmentationRepresentationsListView);
+
+  if (!d->SegmentationNode)
+    {
+    return;
+    }
 
   // Get representation name
   QString representationName = this->sender()->property(REPRESENTATION_NAME_PROPERTY).toString();

@@ -117,7 +117,7 @@ void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
 {
-  this->DisableModifiedEventOn();
+  int wasModified = this->StartModify();
 
   vtkMRMLSegmentationNode *otherNode = vtkMRMLSegmentationNode::SafeDownCast(aNode);
 
@@ -126,8 +126,7 @@ void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
 
   Superclass::Copy(aNode);
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent(); // This call loses event parameters (i.e. callData)
+  this->EndModify(wasModified);
 }
 
 //----------------------------------------------------------------------------
