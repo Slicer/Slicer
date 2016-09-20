@@ -87,6 +87,14 @@ class ScriptedLoadableModuleWidget:
     if not self.developerMode:
       return
 
+    def createHLayout(elements):
+      widget = qt.QWidget()
+      rowLayout = qt.QHBoxLayout()
+      widget.setLayout(rowLayout)
+      for element in elements:
+        rowLayout.addWidget(element)
+      return widget
+
     #
     # Reload and Test area
     #
@@ -95,22 +103,12 @@ class ScriptedLoadableModuleWidget:
     self.layout.addWidget(self.reloadCollapsibleButton)
     reloadFormLayout = qt.QFormLayout(self.reloadCollapsibleButton)
 
-    # restart Slicer button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
-    self.restartButton = qt.QPushButton("Restart Slicer")
-    self.restartButton.toolTip = "Restart Slicer"
-    self.restartButton.name = "ScriptedLoadableModuleTemplate Restart"
-    reloadFormLayout.addWidget(self.restartButton)
-    self.restartButton.connect('clicked()', slicer.app.restart)
-
     # reload button
     # (use this during development, but remove it when delivering
     #  your module to users)
     self.reloadButton = qt.QPushButton("Reload")
     self.reloadButton.toolTip = "Reload this module."
     self.reloadButton.name = "ScriptedLoadableModuleTemplate Reload"
-    reloadFormLayout.addWidget(self.reloadButton)
     self.reloadButton.connect('clicked()', self.onReload)
 
     # reload and test button
@@ -118,8 +116,18 @@ class ScriptedLoadableModuleWidget:
     #  your module to users)
     self.reloadAndTestButton = qt.QPushButton("Reload and Test")
     self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    reloadFormLayout.addWidget(self.reloadAndTestButton)
     self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
+
+    # restart Slicer button
+    # (use this during development, but remove it when delivering
+    #  your module to users)
+    self.restartButton = qt.QPushButton("Restart Slicer")
+    self.restartButton.toolTip = "Restart Slicer"
+    self.restartButton.name = "ScriptedLoadableModuleTemplate Restart"
+    self.restartButton.connect('clicked()', slicer.app.restart)
+
+    reloadFormLayout.addWidget(createHLayout([self.reloadButton, self.reloadAndTestButton, self.restartButton]))
+
 
   def setup(self):
     # Instantiate and connect default widgets ...
