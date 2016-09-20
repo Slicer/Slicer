@@ -40,6 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModuleWidget
   :public qSlicerWidget, public qSlicerAbstractModuleRepresentation
 {
   Q_OBJECT
+  Q_PROPERTY(bool isEntered READ isEntered);
 public:
   /// Constructor
   /// \sa QWidget

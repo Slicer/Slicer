@@ -126,11 +126,14 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.editor.removeViewObservations()
 
   def onSceneEndClose(self, caller, event):
-    self.enter()
+    if self.parent.isEntered:
+      self.selectParameterNode()
+      self.editor.updateWidgetFromMRML()
 
   def onSceneEndImport(self, caller, event):
-    self.selectParameterNode()
-    self.enter()
+    if self.parent.isEntered:
+      self.selectParameterNode()
+      self.editor.updateWidgetFromMRML()
 
   def cleanup(self):
     self.removeObservers()
