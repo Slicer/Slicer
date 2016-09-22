@@ -167,15 +167,87 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
   this->EndModify(disabledModify);
 }
 
+bool ArraysEqual(vtkIntArray* array1, vtkIntArray* array2)
+{
+  if (array1 == NULL && array2 == NULL)
+    {
+    return true;
+    }
+  if (array1 == NULL || array2 == NULL)
+    {
+    return false;
+    }
+  if (array1->GetNumberOfTuples() != array2->GetNumberOfTuples())
+    {
+    return false;
+    }
+  int arraySize = array1->GetNumberOfTuples();
+  for (int i = 0; i<arraySize; i++)
+    {
+    if (array1->GetValue(i) != array2->GetValue(i))
+      {
+      return false;
+      }
+    }
+  return true;
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
 {
-  // Remove references if not existing in the node to copy
+  this->NodeReferenceMRMLAttributeNames = node->NodeReferenceMRMLAttributeNames;
+  this->NodeReferenceEvents = node->NodeReferenceEvents;
+
+  // Only update references is they are different (to avoid unnecessary event invocations)
+  std::vector<std::string> referenceRoles;
+  this->GetNodeReferenceRoles(referenceRoles);
+  std::vector<std::string> referenceRolesInSource;
+  node->GetNodeReferenceRoles(referenceRolesInSource);
+  bool referencesAreEqual = false;
+  if (referenceRoles == referenceRolesInSource)
+    {
+    referencesAreEqual = true;
+    for (NodeReferencesType::iterator sourceNodeReferencesIt = node->NodeReferences.begin();
+      sourceNodeReferencesIt != node->NodeReferences.end() && referencesAreEqual; sourceNodeReferencesIt++)
+      {
+      std::string referenceRole = sourceNodeReferencesIt->first;
+      NodeReferencesType::iterator targetNodeReferencesIt = this->NodeReferences.find(referenceRole);
+      if (sourceNodeReferencesIt->second.size() != targetNodeReferencesIt->second.size())
+        {
+        referencesAreEqual = false;
+        break;
+        }
+      int numberOfNodeReferences = sourceNodeReferencesIt->second.size();
+      for (int i = 0; i < numberOfNodeReferences; i++)
+        {
+        vtkMRMLNodeReference* sourceReference = sourceNodeReferencesIt->second[i];
+        vtkMRMLNodeReference* targetReference = targetNodeReferencesIt->second[i];
+        if (!sourceReference || !targetReference)
+          {
+          vtkErrorMacro(<< "CopyReferences: invalid reference found.");
+          referencesAreEqual = false;
+          break;
+          }
+        if (strcmp(sourceReference->GetReferencedNodeID(), targetReference->GetReferencedNodeID()) != 0
+          || !ArraysEqual(sourceReference->GetEvents(), targetReference->GetEvents()))
+          {
+          referencesAreEqual = false;
+          break;
+          }
+        }
+      }
+    }
+
+  if (referencesAreEqual)
+    {
+    // no need to copy, they are already the same
+    return;
+    }
+
+  // Remove all existing references
   this->RemoveNodeReferenceIDs(NULL);
 
-  this->NodeReferenceMRMLAttributeNames = node->NodeReferenceMRMLAttributeNames;
-
-  // Add or replace node references
+  // Add node references
   for (NodeReferencesType::iterator it = node->NodeReferences.begin(); it != node->NodeReferences.end(); it++)
     {
     std::string referenceRole = it->first;
@@ -194,6 +266,7 @@ void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
       copiedReference->SetReferenceRole(referenceRole.c_str());
       copiedReference->SetReferencedNodeID(reference->GetReferencedNodeID());
       copiedReference->SetReferencingNode(this);
+      copiedReference->SetEvents(reference->GetEvents());
       this->NodeReferences[std::string(referenceRole)].push_back(copiedReference.GetPointer());
       }
     }
