@@ -484,7 +484,8 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     QTableWidgetItem* nameItem = d->findItemBySegmentID(segmentIt->first.c_str());
     if (!nameItem)
       {
-      qCritical() << Q_FUNC_INFO << ": Cannot find table item corresponding to segment ID '" << segmentIt->first.c_str() << " in segmentation node " << d->SegmentationNode->GetName();
+      qCritical() << Q_FUNC_INFO << ": Cannot find table item corresponding to segment ID '"
+        << segmentIt->first.c_str() << "' in segmentation node " << d->SegmentationNode->GetName();
       continue;
       }
     int row = nameItem->row();

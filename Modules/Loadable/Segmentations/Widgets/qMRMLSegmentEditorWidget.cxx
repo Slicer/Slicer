@@ -1072,11 +1072,11 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
   if (segmentationNode != d->SegmentationNode)
     {
     // Connect events needed to update closed surface button
+    qvtkReconnect(d->SegmentationNode, segmentationNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT(onSegmentAddedRemoved()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded, this, SLOT(onSegmentAddedRemoved()));
     qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved, this, SLOT(onSegmentAddedRemoved()));
     d->SegmentationNode = segmentationNode;
-    d->SegmentationHistory->SetSegmentation(d->SegmentationNode ? d->SegmentationNode->GetSegmentation() : NULL);
 
     bool wasBlocked = d->MRMLNodeComboBox_Segmentation->blockSignals(true);
     d->MRMLNodeComboBox_Segmentation->setCurrentNode(d->SegmentationNode);
@@ -1139,6 +1139,8 @@ void qMRMLSegmentEditorWidget::updateWidgetFromSegmentationNode()
         }
       }
     }
+
+  d->SegmentationHistory->SetSegmentation(d->SegmentationNode ? d->SegmentationNode->GetSegmentation() : NULL);
 
   // Update closed surface button with new segmentation
   this->onSegmentAddedRemoved();
@@ -1826,8 +1828,6 @@ void qMRMLSegmentEditorWidget::onCreateSurfaceToggled(bool on)
     {
     segmentationNode->GetSegmentation()->RemoveRepresentation(
       vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
-    // Trigger display update
-    displayNode->Modified();
     }
 }
 
@@ -2304,13 +2304,6 @@ void qMRMLSegmentEditorWidget::onUndo()
     return;
     }
   d->SegmentationHistory->RestorePreviousState();
-
-  // Trigger display update
-  // TODO: use proper event observation instead (it would handle multiple display nodes, etc)
-  if (d->SegmentationNode && d->SegmentationNode->GetDisplayNode())
-    {
-    d->SegmentationNode->GetDisplayNode()->Modified();
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2318,12 +2311,6 @@ void qMRMLSegmentEditorWidget::onRedo()
 {
   Q_D(qMRMLSegmentEditorWidget);
   d->SegmentationHistory->RestoreNextState();
-  // Trigger display update
-  // TODO: use proper event observation instead (it would handle multiple display nodes, etc)
-  if (d->SegmentationNode && d->SegmentationNode->GetDisplayNode())
-    {
-    d->SegmentationNode->GetDisplayNode()->Modified();
-    }
 }
 
 //-----------------------------------------------------------------------------

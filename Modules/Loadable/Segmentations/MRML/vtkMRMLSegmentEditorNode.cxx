@@ -54,6 +54,7 @@ vtkMRMLSegmentEditorNode::vtkMRMLSegmentEditorNode()
   , OverwriteMode(OverwriteAllSegments)
   , MasterVolumeIntensityMask(false)
 {
+  this->SetHideFromEditors(true);
   this->MasterVolumeIntensityMaskRange[0] = 0.0;
   this->MasterVolumeIntensityMaskRange[1] = 0.0;
 }

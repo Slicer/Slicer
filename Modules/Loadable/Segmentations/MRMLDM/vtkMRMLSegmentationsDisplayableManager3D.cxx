@@ -529,6 +529,10 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::AddObservations(vtkM
     {
     broker->AddObservation(node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
+  if (!broker->GetObservationExist(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand()))
+    {
+    broker->AddObservation(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -547,6 +551,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveObservations(v
   observations = broker->GetObservations(node, vtkSegmentation::SegmentAdded, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
   observations = broker->GetObservations(node, vtkSegmentation::SegmentRemoved, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  broker->RemoveObservations(observations);
+  observations = broker->GetObservations(node, vtkSegmentation::SegmentModified, this->External, this->External->GetMRMLNodesCallbackCommand());
   broker->RemoveObservations(observations);
 }
 
@@ -679,7 +685,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
     else if ( (event == vtkCommand::ModifiedEvent)
            || (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-           || (event == vtkSegmentation::RepresentationModified) )
+           || (event == vtkSegmentation::RepresentationModified)
+           || (event == vtkSegmentation::SegmentModified) )
       {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();

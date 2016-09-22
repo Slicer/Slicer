@@ -83,7 +83,10 @@ vtkMRMLSegmentationNode::~vtkMRMLSegmentationNode()
 void vtkMRMLSegmentationNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
-  this->Segmentation->WriteXML(of, nIndent);
+  if (this->Segmentation)
+    {
+    this->Segmentation->WriteXML(of, nIndent);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -93,6 +96,12 @@ void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
+
+  if (!this->Segmentation)
+    {
+    vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
+    this->SetAndObserveSegmentation(segmentation);
+    }
   this->Segmentation->ReadXMLAttributes(atts);
 
   this->EndModify(disabledModify);
@@ -101,32 +110,39 @@ void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::Copy(vtkMRMLNode *anode)
 {
-  this->DisableModifiedEventOn();
-
   vtkMRMLSegmentationNode* otherNode = vtkMRMLSegmentationNode::SafeDownCast(anode);
+  if (!otherNode)
+    {
+    vtkErrorMacro("vtkMRMLSegmentationNode::Copy failed: invalid input node");
+    return;
+    }
 
-  // Deep copy segmentation (containing the same segments from two segmentations is unstable)
-  this->Segmentation->DeepCopy(otherNode->GetSegmentation());
+  int wasModified = this->StartModify();
 
   Superclass::Copy(anode);
 
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
+  if (otherNode->Segmentation)
+    {
+    if (!this->Segmentation)
+      {
+      vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
+      this->SetAndObserveSegmentation(segmentation);
+      }
+    // Deep copy segmentation (containing the same segments from two segmentations is unstable)
+    this->Segmentation->DeepCopy(otherNode->GetSegmentation());
+    }
+  else
+    {
+    this->SetAndObserveSegmentation(NULL);
+    }
+
+  this->EndModify(wasModified);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::DeepCopy(vtkMRMLNode* aNode)
 {
-  int wasModified = this->StartModify();
-
-  vtkMRMLSegmentationNode *otherNode = vtkMRMLSegmentationNode::SafeDownCast(aNode);
-
-  // Deep copy segmentation
-  this->Segmentation->DeepCopy(otherNode->Segmentation);
-
-  Superclass::Copy(aNode);
-
-  this->EndModify(wasModified);
+  Copy(aNode);
 }
 
 //----------------------------------------------------------------------------
@@ -135,7 +151,14 @@ void vtkMRMLSegmentationNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Segmentation:";
-  this->Segmentation->PrintSelf(os, indent.GetNextIndent());
+  if (this->Segmentation)
+    {
+    this->Segmentation->PrintSelf(os, indent.GetNextIndent());
+    }
+  else
+    {
+    os << " (invalid)\n";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -144,12 +167,6 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
   if (segmentation == this->Segmentation)
     {
     return;
-    }
-  if (this->Segmentation && segmentation && this->Segmentation != segmentation)
-    {
-    // If both new and current segmentation is valid, then it's an unexpected scenario
-    // as this function should only be called at creation and destruction
-    vtkErrorMacro("SetAndObserveSegmentation: Unexpected change of contained segmentation object!");
     }
 
   // Remove segment event observations from previous segmentation
@@ -256,7 +273,7 @@ void vtkMRMLSegmentationNode::OnSegmentModified(const char* segmentId)
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchyNode* shNodeWithNewUID)
 {
-  if (!shNodeWithNewUID)
+  if (!shNodeWithNewUID || !this->Segmentation)
     {
     return;
     }
@@ -364,6 +381,11 @@ void vtkMRMLSegmentationNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::ApplyTransform(vtkAbstractTransform* transform)
 {
+  if (!this->Segmentation)
+    {
+    return;
+    }
+
   // Apply transform on segmentation
   vtkSmartPointer<vtkTransform> linearTransform = vtkSmartPointer<vtkTransform>::New();
   if (vtkOrientedImageDataResample::IsTransformLinear(transform, linearTransform))
@@ -416,7 +438,10 @@ bool vtkMRMLSegmentationNode::CanApplyNonLinearTransforms() const
 void vtkMRMLSegmentationNode::GetRASBounds(double bounds[6])
 {
   vtkOrientedImageData::UninitializeBounds(bounds);
-  this->Segmentation->GetBounds(bounds);
+  if (this->Segmentation)
+    {
+    this->Segmentation->GetBounds(bounds);
+    }
 }
 
 
@@ -627,6 +652,11 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
   if (!volumeNode || !volumeNode->GetImageData())
     {
     return;
+    }
+  if (!this->Segmentation)
+    {
+    vtkSmartPointer<vtkSegmentation> segmentation = vtkSmartPointer<vtkSegmentation>::New();
+    this->SetAndObserveSegmentation(segmentation);
     }
 
   // Get serialized geometry of selected volume
