@@ -40,6 +40,49 @@ class vtkCallbackCommand;
 class vtkStringArray;
 
 /// \ingroup SegmentationCore
+/// \brief This class encapsulates a segmentation that can contain multiple segments and multiple representations for each segment
+/// \details
+///   The primary purpose of this class is to serve as a container to store the segments (in labelmap analogy the "labels").
+///   Also provides generic functions on the segmentation level. Performs conversion to a specified representation, extracts
+///   geometry information etc.
+/// 
+///   Main points to remember:
+///   * Each segment has the same set of representations. This means that if segments are copied/moved between segmentations,
+///     then conversion will take place if possible (if not then copy will fail)
+///   * Default representations types are
+///     * Binary labelmap (vtkOrientedImageData)
+///     * Closed surface (vtkPolyData)
+///     * Additional representations can be defined (SlicerRT adds three: Planar contour, Fractional labelmap, Ribbon model)
+///   * Conversion between representations are driven by a conversion graph in which the nodes are the representations and the edges
+///     are conversion rules
+///     * When converting with the default method (\sa CreateRepresentation without specifying a path), then the path with the lowest
+///       cost is used (rules have a cost field that gives a ballpark value for the conversion cost)
+///     * Representation types can be defined by registering conversion algorithms (rules) that specify their source and target
+///       representations, and an estimated cost metric
+///   * Master representation
+///     * Privileged representation type. Can be any of the available representations, but usually it's the original representation
+///       of the data (binary labelmap for editing, planar contour for RT)
+///     * Properties:
+///       a) all conversions use it as source,
+///       b) when changed all other representations are invalidated, and
+///       c) it is the representation that is saved to disk
+///     * Using the proper master representation ensures that no information is lost, which is crucial to avoid discrepancies that can
+///       never be solved when data is permanently lost in conversion
+///       
+///  Schematic illustration of the segmentation container:
+///  
+///                            +=============================================+
+///                            |             Patient (vtkSegmentation)       |
+///                            +======================+======================+
+///                            |  Brain (vtkSegment)  |  Tumor (vtkSegment)  |
+///                            +======================+======================+
+///            Binary labelmap | vtkOrientedImageData | vtkOrientedImageData |
+///                            +----------------------+----------------------+
+///             Closed surface | vtkPolyData          | vtkPolyData          |
+///                            +----------------------+----------------------+
+///      Custom representation | vtkDataObject        | vtkDataObject        |
+///                            +----------------------+----------------------+
+///    
 class vtkSegmentationCore_EXPORT vtkSegmentation : public vtkObject
 {
 public:

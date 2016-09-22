@@ -34,6 +34,14 @@
 #include "vtkSegmentationCoreConfigure.h"
 
 /// \ingroup SegmentationCore
+/// \brief This class encapsulates a segment that is part of a segmentation
+/// \details
+///   A \sa vtkSegmentation can contain multiple segments (this class) each of which represent
+///   one anatomical or other structure (in labelmap terms, a "label"). Each segmentation can
+///   contain the structure in multiple representations.
+///   Default representation types include Binary labelmap and Closed surface, but additional
+///   custom representations can be added (see description of \sa vtkSegmentation).
+///   
 class vtkSegmentationCore_EXPORT vtkSegment : public vtkObject
 {
   typedef std::map<std::string, vtkSmartPointer<vtkDataObject> > RepresentationMap;
@@ -66,7 +74,8 @@ public:
   static void ExtendBounds(double partialBounds[6], double globalBounds[6]);
 
   /// Get representation of a given type. This class is not responsible for conversion, only storage!
-  /// \param name Representation name
+  /// \param name Representation name. Default representation names can be queried from \sa vtkSegmentationConverter,
+  ///   for example by calling vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()
   /// \return The specified representation object, NULL if not present
   vtkDataObject* GetRepresentation(std::string name);
 
@@ -77,7 +86,8 @@ public:
   void RemoveRepresentation(std::string name);
 
   /// Remove all representations except one if specified. Fires only one Modified event
-  /// \param exceptionRepresentationName Exception name that will not be removed (e.g. invalidate non-master representations), empty by default
+  /// \param exceptionRepresentationName Exception name that will not be removed
+  ///   (e.g. invalidate non-master representations), empty by default
   void RemoveAllRepresentations(std::string exceptionRepresentationName="");
 
   /// Set/add tag
