@@ -344,9 +344,10 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
     {
     d->PasteTransformToolButton->setVisible(isLinearTransform);
     }
-
-  d->SplitPushButton->setVisible(isCompositeTransform);
-
+  if (isCompositeTransform!=d->SplitPushButton->isVisible())
+    {
+    d->SplitPushButton->setVisible(isCompositeTransform);
+    }
 }
 
 //-----------------------------------------------------------------------------
