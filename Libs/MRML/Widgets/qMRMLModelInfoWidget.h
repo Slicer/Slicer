@@ -56,6 +56,7 @@ protected slots:
   void updateWidgetFromMRML();
 
 protected:
+  virtual void showEvent(QShowEvent *);
   QScopedPointer<qMRMLModelInfoWidgetPrivate> d_ptr;
 
 private:

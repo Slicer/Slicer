@@ -115,9 +115,24 @@ void qMRMLModelInfoWidget::setMRMLModelNode(vtkMRMLModelNode* modelNode)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLModelInfoWidget::showEvent(QShowEvent *)
+{
+  // Update the widget, now that it becomes becomes visible
+  // (we might have missed some updates, because widget contents is not updated
+  // if the widget is not visible).
+  updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
 void qMRMLModelInfoWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLModelInfoWidget);
+  if (!this->isVisible())
+  {
+    // Getting the model information is too expensive,
+    // so if the widget is not visible then do not update
+    return;
+  }
   vtkPolyData *poly = d->MRMLModelNode ? d->MRMLModelNode->GetPolyData() : 0;
   if (poly)
     {
