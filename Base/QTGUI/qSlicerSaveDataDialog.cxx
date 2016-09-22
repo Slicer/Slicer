@@ -499,13 +499,17 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
 {
-  // Make sure series number is not one digit (names like "1: something" confuse save dialog, see http://www.na-mic.org/Bug/view.php?id=3991)
-  // TODO: This is a workaround, remove if good fix found
-  QString safeNodeName(node->GetName());
-  if (safeNodeName.length() > 1 &&
-      safeNodeName.at(0).isNumber() && safeNodeName.at(1) == QChar(':'))
+  // Remove characters from node name that cannot be used in file names
+  // (same method as in qSlicerFileNameItemDelegate::fixupFileName)
+  QString inputNodeName(node->GetName() ? node->GetName() : "");
+  QString safeNodeName;
+  QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
+  for (int i = 0; i < inputNodeName.size(); ++i)
     {
-    safeNodeName.insert(0, tr("0"));
+    if (regExp.exactMatch(QString(inputNodeName[i])))
+      {
+      safeNodeName += inputNodeName[i];
+      }
     }
 
   vtkMRMLStorageNode* snode = node->GetStorageNode();
@@ -531,17 +535,15 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     // node name
     if (snode->GetFileName() && node->GetName())
       {
-      std::string filename = snode->GetFileName();
-      std::string extension = snode->GetSupportedFileExtension(filename.c_str());
-      std::string filenameWithoutExtension = vtkMRMLStorageNode::GetFileNameWithoutExtension(filename, extension);
-      QFileInfo existingInfo(filenameWithoutExtension.c_str());
-      QString baseName = existingInfo.fileName();
+      std::string filenameWithoutExtension = snode->GetFileNameWithoutExtension();
       // Only reset the file name if the user has set the name explicitly (that is,
       // if the name isn't the default created by qSlicerVolumesIOOptionsWidget::setFileNames
       // TODO: this logic relies on the GUI so we should consider moving it into MRML proper
       // with a way for storage nodes to generate their default node names from a given filename
-      if (baseName != QString(node->GetName()))
+      if (QString(filenameWithoutExtension.c_str()) != safeNodeName)
         {
+        QFileInfo existingInfo(snode->GetFileName());
+        std::string extension = snode->GetSupportedFileExtension();
         QFileInfo newInfo(existingInfo.absoluteDir(), safeNodeName + QString(extension.c_str()));
         snode->SetFileName(newInfo.absoluteFilePath().toLatin1());
         node->StorableModified();

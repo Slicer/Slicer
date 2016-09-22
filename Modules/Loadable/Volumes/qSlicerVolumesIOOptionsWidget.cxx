@@ -151,8 +151,7 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
     if (fileInfo.isFile())
       {
       std::string fileNameStd = fileInfo.fileName().toStdString();
-      std::string extension = snode->GetSupportedFileExtension(fileNameStd.c_str());
-      std::string filenameWithoutExtension = vtkMRMLStorageNode::GetFileNameWithoutExtension(fileNameStd, extension);
+      std::string filenameWithoutExtension = snode->GetFileNameWithoutExtension(fileNameStd.c_str());
       fileBaseName = QString(filenameWithoutExtension.c_str());
       names << fileBaseName;
       // Single file

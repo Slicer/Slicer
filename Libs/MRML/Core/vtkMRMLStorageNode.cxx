@@ -1242,18 +1242,26 @@ std::string vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(const std::str
 }
 
 //------------------------------------------------------------------------------
-std::string vtkMRMLStorageNode::GetFileNameWithoutExtension(const std::string& filename, const std::string& extension)
+std::string vtkMRMLStorageNode::GetFileNameWithoutExtension(const char* filePath /* =NULL */)
 {
-  if (extension.empty() || extension == "." || extension == ".*")
+  std::string filePathStd = (filePath ? filePath : "");
+  if (filePathStd.empty())
     {
-    return filename;
+    // If filePath is not specified then use current filename
+    filePathStd = (this->GetFileName() ? this->GetFileName() : "");
     }
+  if (filePathStd.empty())
+    {
+    return "";
+    }
+  std::string fileName = vtksys::SystemTools::GetFilenameName(filePathStd);
+  std::string extension = this->GetSupportedFileExtension(fileName.c_str());
 
-  if (filename.length() < extension.length() ||
-    filename.compare(filename.length() - extension.length(), extension.length(), extension) != 0)
+  if (fileName.length() < extension.length() ||
+    fileName.compare(fileName.length() - extension.length(), extension.length(), extension) != 0)
     {
     // extension not matched to the end of filename
-    return filename;
+    return fileName;
     }
-  return filename.substr(0, filename.length() - extension.length());
+  return fileName.substr(0, fileName.length() - extension.length());
 }

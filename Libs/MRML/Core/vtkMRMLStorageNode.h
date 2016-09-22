@@ -298,9 +298,9 @@ public:
   /// It always returns lowercase extension.
   static std::string GetLowercaseExtensionFromFileName(const std::string& filename);
 
-  /// Remove extension from filename.
-  /// If extension is empty, ".", or ".*"
-  static std::string GetFileNameWithoutExtension(const std::string& filename, const std::string& extension);
+  /// Remove suported extension from filename.
+  /// If filename is not specified then the current FileName will be used.
+  std::string GetFileNameWithoutExtension(const char* fileName = NULL);
 
 protected:
   vtkMRMLStorageNode();

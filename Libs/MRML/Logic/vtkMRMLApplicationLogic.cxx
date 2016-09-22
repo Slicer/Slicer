@@ -863,7 +863,7 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
     if (defaultWriteExtension != extension)
       {
       // for saving to MRB all nodes will be written in their default format
-      uniqueFileName = vtkMRMLStorageNode::GetFileNameWithoutExtension(fileBaseName, extension) + defaultWriteExtension;
+      uniqueFileName = storageNode->GetFileNameWithoutExtension(fileBaseName.c_str()) + defaultWriteExtension;
       }
     storageNode->SetFileName(uniqueFileName.c_str());
     }
