@@ -130,7 +130,108 @@ public:
 
   struct Pipeline
     {
-    std::string SegmentID;
+    Pipeline()
+      {
+      this->WorldToSliceTransform = vtkSmartPointer<vtkTransform>::New();
+      this->NodeToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+      this->WorldToNodeTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+
+      // Create poly data pipeline
+      this->PolyDataOutlineActor = vtkSmartPointer<vtkActor2D>::New();
+      this->PolyDataFillActor = vtkSmartPointer<vtkActor2D>::New();
+      this->Cutter = vtkSmartPointer<vtkCutter>::New();
+      this->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      this->Plane = vtkSmartPointer<vtkPlane>::New();
+      this->Stripper = vtkSmartPointer<vtkStripper>::New();
+      this->Cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+      this->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+
+      // Set up poly data outline pipeline
+      this->Cutter->SetInputConnection(this->ModelWarper->GetOutputPort());
+      this->Cutter->SetCutFunction(this->Plane);
+      this->Cutter->SetGenerateCutScalars(0);
+      vtkSmartPointer<vtkTransformPolyDataFilter> polyDataOutlineTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      polyDataOutlineTransformer->SetInputConnection(this->Cutter->GetOutputPort());
+      polyDataOutlineTransformer->SetTransform(this->WorldToSliceTransform);
+      vtkSmartPointer<vtkPolyDataMapper2D> polyDataOutlineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      polyDataOutlineMapper->SetInputConnection(polyDataOutlineTransformer->GetOutputPort());
+      this->PolyDataOutlineActor->SetMapper(polyDataOutlineMapper);
+      this->PolyDataOutlineActor->SetVisibility(0);
+
+      // Set up poly data fill pipeline
+      this->Stripper->SetInputConnection(this->Cutter->GetOutputPort());
+      this->Cleaner->SetInputConnection(NULL); // This will be modified in the UpdateDisplayNodePipeline function
+      this->TriangleFilter->SetInputConnection(this->Cleaner->GetOutputPort());
+      vtkSmartPointer<vtkTransformPolyDataFilter> polyDataFillTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      polyDataFillTransformer->SetInputConnection(this->TriangleFilter->GetOutputPort());
+      polyDataFillTransformer->SetTransform(this->WorldToSliceTransform);
+      vtkSmartPointer<vtkPolyDataMapper2D> polyDataFillMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+      polyDataFillMapper->SetInputConnection(polyDataFillTransformer->GetOutputPort());
+      this->PolyDataFillActor->SetMapper(polyDataFillMapper);
+      this->PolyDataFillActor->SetVisibility(0);
+
+      // Create image pipeline
+      this->ImageOutlineActor = vtkSmartPointer<vtkActor2D>::New();
+      this->ImageFillActor = vtkSmartPointer<vtkActor2D>::New();
+      this->Reslice = vtkSmartPointer<vtkImageReslice>::New();
+      this->SliceToImageTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+      this->LabelOutline = vtkSmartPointer<vtkImageLabelOutline>::New();
+      this->LookupTableOutline = vtkSmartPointer<vtkLookupTable>::New();
+      this->LookupTableFill = vtkSmartPointer<vtkLookupTable>::New();
+      this->ImageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
+
+      // Set up image pipeline
+      this->Reslice->SetBackgroundColor(0.0, 0.0, 0.0, 0.0);
+      this->Reslice->AutoCropOutputOff();
+      this->Reslice->SetOptimization(1);
+      this->Reslice->SetOutputOrigin(0.0, 0.0, 0.0);
+      this->Reslice->SetOutputSpacing(1.0, 1.0, 1.0);
+      this->Reslice->SetOutputDimensionality(3);
+      this->Reslice->GenerateStencilOutputOn();
+
+      this->SliceToImageTransform->PostMultiply();
+
+      this->LookupTableOutline->SetRampToLinear();
+      this->LookupTableOutline->SetNumberOfTableValues(2);
+      this->LookupTableOutline->SetTableRange(0, 1);
+      this->LookupTableOutline->SetTableValue(0, 0, 0, 0, 0);
+      this->LookupTableOutline->SetTableValue(1, 0, 0, 0, 0);
+      this->LookupTableFill->SetRampToLinear();
+      this->LookupTableFill->SetNumberOfTableValues(2);
+      this->LookupTableFill->SetTableRange(0, 1);
+      this->LookupTableFill->SetTableValue(0, 0, 0, 0, 0);
+      this->LookupTableFill->SetTableValue(1, 0, 0, 0, 0);
+
+      this->ImageThreshold->SetInputConnection(this->Reslice->GetOutputPort());
+      this->ImageThreshold->SetOutValue(1);
+      this->ImageThreshold->SetInValue(0);
+
+      // Image outline
+      this->LabelOutline->SetInputConnection(this->Reslice->GetOutputPort());
+      vtkSmartPointer<vtkImageMapToRGBA> outlineColorMapper = vtkSmartPointer<vtkImageMapToRGBA>::New();
+      outlineColorMapper->SetInputConnection(this->LabelOutline->GetOutputPort());
+      outlineColorMapper->SetOutputFormatToRGBA();
+      outlineColorMapper->SetLookupTable(this->LookupTableOutline);
+      vtkSmartPointer<vtkImageMapper> imageOutlineMapper = vtkSmartPointer<vtkImageMapper>::New();
+      imageOutlineMapper->SetInputConnection(outlineColorMapper->GetOutputPort());
+      imageOutlineMapper->SetColorWindow(255);
+      imageOutlineMapper->SetColorLevel(127.5);
+      this->ImageOutlineActor->SetMapper(imageOutlineMapper);
+      this->ImageOutlineActor->SetVisibility(0);
+
+      // Image fill
+      vtkSmartPointer<vtkImageMapToRGBA> fillColorMapper = vtkSmartPointer<vtkImageMapToRGBA>::New();
+      fillColorMapper->SetInputConnection(this->Reslice->GetOutputPort());
+      fillColorMapper->SetOutputFormatToRGBA();
+      fillColorMapper->SetLookupTable(this->LookupTableFill);
+      vtkSmartPointer<vtkImageMapper> imageFillMapper = vtkSmartPointer<vtkImageMapper>::New();
+      imageFillMapper->SetInputConnection(fillColorMapper->GetOutputPort());
+      imageFillMapper->SetColorWindow(255);
+      imageFillMapper->SetColorLevel(127.5);
+      this->ImageFillActor->SetMapper(imageFillMapper);
+      this->ImageFillActor->SetVisibility(0);
+      }
+
     vtkSmartPointer<vtkTransform> WorldToSliceTransform;
     vtkSmartPointer<vtkGeneralTransform> NodeToWorldTransform;
     vtkSmartPointer<vtkGeneralTransform> WorldToNodeTransform;
@@ -154,7 +255,7 @@ public:
     vtkSmartPointer<vtkImageThreshold> ImageThreshold;
     };
 
-  typedef std::map<std::string, const Pipeline*> PipelineMapType;
+  typedef std::map<std::string, const Pipeline*> PipelineMapType; // first: segment ID; second: display pipeline
   typedef std::map < vtkMRMLSegmentationDisplayNode*, PipelineMapType > PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
@@ -176,7 +277,7 @@ public:
 
   // Display Nodes
   void AddDisplayNode(vtkMRMLSegmentationNode*, vtkMRMLSegmentationDisplayNode*);
-  Pipeline* CreateSegmentPipeline(std::string segmentID);
+  Pipeline* CreateSegmentPipeline();
   void UpdateDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
   void UpdateAllDisplayNodesForSegment(vtkMRMLSegmentationNode* segmentationNode);
   void UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode*, PipelineMapType&);
@@ -193,7 +294,7 @@ public:
   bool UseDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
   bool UseDisplayableNode(vtkMRMLSegmentationNode* node);
   void ClearDisplayableNodes();
-  bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode, const Pipeline* pipeline);
+  bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode, const Pipeline* pipeline, const std::string &segmentID);
 
 private:
   vtkSmartPointer<vtkMatrix4x4> SliceXYToRAS;
@@ -437,7 +538,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMR
   vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
   for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
     {
-    pipelineVector[segmentIt->first] = this->CreateSegmentPipeline(segmentIt->first);
+    pipelineVector[segmentIt->first] = this->CreateSegmentPipeline();
     }
 
   this->DisplayPipelines.insert( std::make_pair(displayNode, pipelineVector) );
@@ -448,108 +549,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMR
 
 //---------------------------------------------------------------------------
 vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::Pipeline*
-vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::CreateSegmentPipeline(std::string segmentID)
+vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::CreateSegmentPipeline()
 {
   Pipeline* pipeline = new Pipeline();
-  pipeline->SegmentID = segmentID;
-  pipeline->WorldToSliceTransform = vtkSmartPointer<vtkTransform>::New();
-  pipeline->NodeToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-  pipeline->WorldToNodeTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-
-  // Create poly data pipeline
-  pipeline->PolyDataOutlineActor = vtkSmartPointer<vtkActor2D>::New();
-  pipeline->PolyDataFillActor = vtkSmartPointer<vtkActor2D>::New();
-  pipeline->Cutter = vtkSmartPointer<vtkCutter>::New();
-  pipeline->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  pipeline->Plane = vtkSmartPointer<vtkPlane>::New();
-  pipeline->Stripper = vtkSmartPointer<vtkStripper>::New();
-  pipeline->Cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
-  pipeline->TriangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-
-  // Set up poly data outline pipeline
-  pipeline->Cutter->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
-  pipeline->Cutter->SetCutFunction(pipeline->Plane);
-  pipeline->Cutter->SetGenerateCutScalars(0);
-  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataOutlineTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  polyDataOutlineTransformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
-  polyDataOutlineTransformer->SetTransform(pipeline->WorldToSliceTransform);
-  vtkSmartPointer<vtkPolyDataMapper2D> polyDataOutlineMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  polyDataOutlineMapper->SetInputConnection(polyDataOutlineTransformer->GetOutputPort());
-  pipeline->PolyDataOutlineActor->SetMapper(polyDataOutlineMapper);
-  pipeline->PolyDataOutlineActor->SetVisibility(0);
-
-  // Set up poly data fill pipeline
-  pipeline->Stripper->SetInputConnection(pipeline->Cutter->GetOutputPort());
-  pipeline->Cleaner->SetInputConnection(NULL); // This will be modified in the UpdateDisplayNodePipeline function
-  pipeline->TriangleFilter->SetInputConnection(pipeline->Cleaner->GetOutputPort());
-  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataFillTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  polyDataFillTransformer->SetInputConnection(pipeline->TriangleFilter->GetOutputPort());
-  polyDataFillTransformer->SetTransform(pipeline->WorldToSliceTransform);
-  vtkSmartPointer<vtkPolyDataMapper2D> polyDataFillMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  polyDataFillMapper->SetInputConnection(polyDataFillTransformer->GetOutputPort());
-  pipeline->PolyDataFillActor->SetMapper(polyDataFillMapper);
-  pipeline->PolyDataFillActor->SetVisibility(0);
-
-  // Create image pipeline
-  pipeline->ImageOutlineActor = vtkSmartPointer<vtkActor2D>::New();
-  pipeline->ImageFillActor = vtkSmartPointer<vtkActor2D>::New();
-  pipeline->Reslice = vtkSmartPointer<vtkImageReslice>::New();
-  pipeline->SliceToImageTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-  pipeline->LabelOutline = vtkSmartPointer<vtkImageLabelOutline>::New();
-  pipeline->LookupTableOutline = vtkSmartPointer<vtkLookupTable>::New();
-  pipeline->LookupTableFill = vtkSmartPointer<vtkLookupTable>::New();
-  pipeline->ImageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
-
-  // Set up image pipeline
-  pipeline->Reslice->SetBackgroundColor(0.0, 0.0, 0.0, 0.0);
-  pipeline->Reslice->AutoCropOutputOff();
-  pipeline->Reslice->SetOptimization(1);
-  pipeline->Reslice->SetOutputOrigin(0.0, 0.0, 0.0);
-  pipeline->Reslice->SetOutputSpacing(1.0, 1.0, 1.0);
-  pipeline->Reslice->SetOutputDimensionality(3);
-  pipeline->Reslice->GenerateStencilOutputOn();
-
-  pipeline->SliceToImageTransform->PostMultiply();
-
-  pipeline->LookupTableOutline->SetRampToLinear();
-  pipeline->LookupTableOutline->SetNumberOfTableValues(2);
-  pipeline->LookupTableOutline->SetTableRange(0, 1);
-  pipeline->LookupTableOutline->SetTableValue(0,  0, 0, 0,  0);
-  pipeline->LookupTableOutline->SetTableValue(1,  0, 0, 0,  0);
-  pipeline->LookupTableFill->SetRampToLinear();
-  pipeline->LookupTableFill->SetNumberOfTableValues(2);
-  pipeline->LookupTableFill->SetTableRange(0, 1);
-  pipeline->LookupTableFill->SetTableValue(0,  0, 0, 0,  0);
-  pipeline->LookupTableFill->SetTableValue(1,  0, 0, 0,  0);
-
-  pipeline->ImageThreshold->SetInputConnection(pipeline->Reslice->GetOutputPort());
-  pipeline->ImageThreshold->SetOutValue(1);
-  pipeline->ImageThreshold->SetInValue(0);
-
-  // Image outline
-  pipeline->LabelOutline->SetInputConnection(pipeline->Reslice->GetOutputPort());
-  vtkSmartPointer<vtkImageMapToRGBA> outlineColorMapper = vtkSmartPointer<vtkImageMapToRGBA>::New();
-  outlineColorMapper->SetInputConnection(pipeline->LabelOutline->GetOutputPort());
-  outlineColorMapper->SetOutputFormatToRGBA();
-  outlineColorMapper->SetLookupTable(pipeline->LookupTableOutline);
-  vtkSmartPointer<vtkImageMapper> imageOutlineMapper = vtkSmartPointer<vtkImageMapper>::New();
-  imageOutlineMapper->SetInputConnection(outlineColorMapper->GetOutputPort());
-  imageOutlineMapper->SetColorWindow(255);
-  imageOutlineMapper->SetColorLevel(127.5);
-  pipeline->ImageOutlineActor->SetMapper(imageOutlineMapper);
-  pipeline->ImageOutlineActor->SetVisibility(0);
-
-  // Image fill
-  vtkSmartPointer<vtkImageMapToRGBA> fillColorMapper = vtkSmartPointer<vtkImageMapToRGBA>::New();
-  fillColorMapper->SetInputConnection(pipeline->Reslice->GetOutputPort());
-  fillColorMapper->SetOutputFormatToRGBA();
-  fillColorMapper->SetLookupTable(pipeline->LookupTableFill);
-  vtkSmartPointer<vtkImageMapper> imageFillMapper = vtkSmartPointer<vtkImageMapper>::New();
-  imageFillMapper->SetInputConnection(fillColorMapper->GetOutputPort());
-  imageFillMapper->SetColorWindow(255);
-  imageFillMapper->SetColorLevel(127.5);
-  pipeline->ImageFillActor->SetMapper(imageFillMapper);
-  pipeline->ImageFillActor->SetVisibility(0);
 
   // Add actors to Renderer
   this->External->GetRenderer()->AddActor( pipeline->PolyDataOutlineActor );
@@ -615,7 +617,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelin
     PipelineMapType::iterator pipelineIt = pipelines.find(segmentIt->first);
     if (pipelineIt == pipelines.end())
       {
-      pipelines[segmentIt->first] = this->CreateSegmentPipeline(segmentIt->first);
+      pipelines[segmentIt->first] = this->CreateSegmentPipeline();
       requestTransformUpdate = true;
       }
     }
@@ -625,7 +627,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelin
   while (pipelineIt != pipelines.end())
     {
     const Pipeline* pipeline = pipelineIt->second;
-    vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.find(pipeline->SegmentID);
+    vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.find(pipelineIt->first);
     if (segmentIt == segmentMap.end())
       {
       PipelineMapType::iterator erasedIt = pipelineIt;
@@ -703,7 +705,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
     // Get visibility
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    displayNode->GetSegmentDisplayProperties(pipeline->SegmentID, properties);
+    displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
     bool segmentOutlineVisible = displayNodeVisible && properties.Visible
       && properties.Visible2DOutline && displayNode->GetVisibility2DOutline();
     bool segmentFillVisible = displayNodeVisible && properties.Visible
@@ -711,9 +713,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
 
     // Get representation to display
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(
-      segmentation->GetSegmentRepresentation(pipeline->SegmentID, shownRepresenatationName) );
+      segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
     vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
-      segmentation->GetSegmentRepresentation(pipeline->SegmentID, shownRepresenatationName) );
+      segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
     if (imageData)
       {
       int* imageExtent = imageData->GetExtent();
@@ -734,7 +736,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       continue;
       }
 
-    bool visibleInCurrentSlice = this->IsSegmentVisibleInCurrentSlice(displayNode, pipeline);
+    bool visibleInCurrentSlice = this->IsSegmentVisibleInCurrentSlice(displayNode, pipeline, pipelineIt->first);
     if (!visibleInCurrentSlice)
       {
       pipeline->PolyDataOutlineActor->SetVisibility(false);
@@ -1037,7 +1039,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayableNode(v
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCurrentSlice(
-  vtkMRMLSegmentationDisplayNode* displayNode, const Pipeline* pipeline )
+  vtkMRMLSegmentationDisplayNode* displayNode, const Pipeline* pipeline, const std::string &segmentID)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
     displayNode->GetDisplayableNode() );
@@ -1052,7 +1054,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
     }
 
   double segmentBounds_Segment[6] = { 0 };
-  vtkSegment* segment = segmentation->GetSegment(pipeline->SegmentID);
+  vtkSegment* segment = segmentation->GetSegment(segmentID);
   segment->GetBounds(segmentBounds_Segment);
 
   vtkSmartPointer<vtkGeneralTransform> segmentationToSliceTransform = vtkSmartPointer<vtkGeneralTransform>::New();
@@ -1331,7 +1333,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
 
       // Get visibility
       vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-      displayNode->GetSegmentDisplayProperties(pipeline->SegmentID, properties);
+      displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
       bool segmentVisible = displayNodeVisible && properties.Visible
         && (properties.Visible2DOutline || properties.Visible2DFill);
       if (!segmentVisible)
@@ -1340,16 +1342,16 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
         }
 
       // Skip if segment is not visible in the current slice
-      if (!this->Internal->IsSegmentVisibleInCurrentSlice(displayNode, pipeline))
+      if (!this->Internal->IsSegmentVisibleInCurrentSlice(displayNode, pipeline, pipelineIt->first))
         {
         continue;
         }
 
       // Get displayed representation
       vtkPolyData* polyData = vtkPolyData::SafeDownCast(
-        segmentation->GetSegmentRepresentation(pipeline->SegmentID, shownRepresenatationName) );
+        segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
       vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(
-        segmentation->GetSegmentRepresentation(pipeline->SegmentID, shownRepresenatationName) );
+        segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresenatationName));
       if (imageData)
         {
         int* imageExtent = imageData->GetExtent();
@@ -1376,7 +1378,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
           ijk[0], ijk[1], ijk[2], 0);
         if (voxelValue > 0.0)
           {
-          segmentIDsAtPosition.insert(pipeline->SegmentID);
+          segmentIDsAtPosition.insert(pipelineIt->first);
           }
         }
       else if (polyData)
@@ -1411,7 +1413,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
           // Inside bounds the position is evaluated in the cell
           if (cell->EvaluatePosition(ras, NULL, subId, pcoords, dist2, weights) == 1)
             {
-            segmentIDsAtPosition.insert(pipeline->SegmentID);
+            segmentIDsAtPosition.insert(pipelineIt->first);
             break;
             }
           }

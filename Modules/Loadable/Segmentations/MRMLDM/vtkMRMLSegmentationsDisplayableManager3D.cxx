@@ -61,14 +61,27 @@ public:
 
   struct Pipeline
     {
-    std::string SegmentID;
+
+    Pipeline()
+      {
+      this->Actor = vtkSmartPointer<vtkActor>::New();
+      vtkNew<vtkPolyDataMapper> mapper;
+      this->Actor->SetMapper(mapper.GetPointer());
+      this->Actor->SetVisibility(false);
+      this->InputPolyData = vtkSmartPointer<vtkPolyData>::New();
+      this->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+      this->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
+      this->ModelWarper->SetInputData(this->InputPolyData);
+      mapper->SetInputConnection(this->ModelWarper->GetOutputPort());
+      }
+
     vtkSmartPointer<vtkActor> Actor;
     vtkSmartPointer<vtkPolyData> InputPolyData;
     vtkSmartPointer<vtkTransformPolyDataFilter> ModelWarper;
     vtkSmartPointer<vtkGeneralTransform> NodeToWorld;
     };
 
-  typedef std::map<std::string, const Pipeline*> PipelineMapType;
+  typedef std::map<std::string, const Pipeline*> PipelineMapType; // first: segment ID; second: display pipeline
   typedef std::map < vtkMRMLSegmentationDisplayNode*, PipelineMapType > PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
@@ -300,16 +313,6 @@ vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::Pipeline*
 vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::CreateSegmentPipeline(std::string segmentID)
 {
   Pipeline* pipeline = new Pipeline();
-  pipeline->SegmentID = segmentID;
-  pipeline->Actor = vtkSmartPointer<vtkActor>::New();
-  vtkNew<vtkPolyDataMapper> mapper;
-  pipeline->Actor->SetMapper(mapper.GetPointer());
-  pipeline->Actor->SetVisibility(false);
-  pipeline->InputPolyData = vtkSmartPointer<vtkPolyData>::New();
-  pipeline->ModelWarper = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  pipeline->NodeToWorld = vtkSmartPointer<vtkGeneralTransform>::New();
-  pipeline->ModelWarper->SetInputData(pipeline->InputPolyData);
-  mapper->SetInputConnection(pipeline->ModelWarper->GetOutputPort());
 
   // Add actor to Renderer and local cache
   this->External->GetRenderer()->AddActor( pipeline->Actor );
@@ -383,7 +386,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
   while (pipelineIt != pipelines.end())
     {
     const Pipeline* pipeline = pipelineIt->second;
-    vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.find(pipeline->SegmentID);
+    vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.find(pipelineIt->first);
     if (segmentIt == segmentMap.end())
       {
       PipelineMapType::iterator erasedIt = pipelineIt;
@@ -449,7 +452,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
 
     // Update visibility
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-    displayNode->GetSegmentDisplayProperties(pipeline->SegmentID, properties);
+    displayNode->GetSegmentDisplayProperties(pipelineIt->first, properties);
     bool segmentVisible = displayNodeVisible && properties.Visible && properties.Visible3D;
     pipeline->Actor->SetVisibility(segmentVisible);
     if (!segmentVisible)
@@ -459,7 +462,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
 
     // Get poly data to display
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(
-      segmentation->GetSegmentRepresentation(pipeline->SegmentID, shownRepresentationName) );
+      segmentation->GetSegmentRepresentation(pipelineIt->first, shownRepresentationName));
     if (!polyData || polyData->GetNumberOfPoints() == 0)
       {
       pipeline->Actor->SetVisibility(false);
