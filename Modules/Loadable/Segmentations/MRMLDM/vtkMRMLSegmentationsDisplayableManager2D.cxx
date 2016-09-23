@@ -1055,13 +1055,14 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
   vtkSegment* segment = segmentation->GetSegment(pipeline->SegmentID);
   segment->GetBounds(segmentBounds_Segment);
 
-  vtkSmartPointer<vtkGeneralTransform> sliceToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-  sliceToSegmentationTransform->Identity();
-  sliceToSegmentationTransform->Concatenate(this->SliceXYToRAS);
-  sliceToSegmentationTransform->Concatenate(pipeline->WorldToNodeTransform);
+  vtkSmartPointer<vtkGeneralTransform> segmentationToSliceTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+  vtkNew<vtkMatrix4x4> rasToSliceXY;
+  vtkMatrix4x4::Invert(this->SliceXYToRAS, rasToSliceXY.GetPointer());
+  segmentationToSliceTransform->Concatenate(rasToSliceXY.GetPointer());
+  segmentationToSliceTransform->Concatenate(pipeline->NodeToWorldTransform);
 
   double segmentBounds_Slice[6] = { 0 };
-  vtkOrientedImageDataResample::TransformBounds(segmentBounds_Segment, sliceToSegmentationTransform->GetInverse(), segmentBounds_Slice);
+  vtkOrientedImageDataResample::TransformBounds(segmentBounds_Segment, segmentationToSliceTransform, segmentBounds_Slice);
 
   bool visibleInCurrentSlice = true;
 
