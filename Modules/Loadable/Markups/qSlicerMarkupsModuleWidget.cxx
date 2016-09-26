@@ -2824,7 +2824,7 @@ void qSlicerMarkupsModuleWidget::observeMarkupsNode(vtkMRMLNode *markupsNode)
         this->qvtkDisconnect(node, vtkMRMLMarkupsNode::NthMarkupModifiedEvent,
                              this, SLOT(onActiveMarkupsNodeNthMarkupModifiedEvent(vtkObject*,vtkObject*)));
         this->qvtkDisconnect(node, vtkMRMLMarkupsNode::MarkupAddedEvent,
-                             this, SLOT(onActiveMarkupsNodeMarkupAddedEvent()));
+                             this, SLOT(onActiveMarkupsNodeMarkupAddedEvent(vtkObject*,vtkObject*)));
         this->qvtkDisconnect(node, vtkMRMLMarkupsNode::MarkupRemovedEvent,
                              this, SLOT(onActiveMarkupsNodeMarkupRemovedEvent()));
 
@@ -2876,7 +2876,7 @@ void qSlicerMarkupsModuleWidget::observeMarkupsNode(vtkMRMLNode *markupsNode)
       this->qvtkConnect(markupsNode, vtkMRMLMarkupsNode::NthMarkupModifiedEvent,
                         this, SLOT(onActiveMarkupsNodeNthMarkupModifiedEvent(vtkObject*,vtkObject*)));
       this->qvtkConnect(markupsNode, vtkMRMLMarkupsNode::MarkupAddedEvent,
-                        this, SLOT(onActiveMarkupsNodeMarkupAddedEvent()));
+                        this, SLOT(onActiveMarkupsNodeMarkupAddedEvent(vtkObject*,vtkObject*)));
       this->qvtkConnect(markupsNode, vtkMRMLMarkupsNode::MarkupRemovedEvent,
                         this, SLOT(onActiveMarkupsNodeMarkupRemovedEvent()));
       // qDebug() << "\tconnected markups node " << markupsNode->GetID();
@@ -3006,20 +3006,21 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeMarkupAddedEvent()//vtkMRMLNode *markupsNode)
+void qSlicerMarkupsModuleWidget::onActiveMarkupsNodeMarkupAddedEvent(vtkObject * vtkNotUsed(caller), vtkObject *callData)
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-  //qDebug() << "onActiveMarkupsNodeMarkupAddedEvent";
+  if (callData == NULL)
+    {
+    // batch update
+    this->updateWidgetFromMRML();
+    return;
+    }
 
   QString activeMarkupsNodeID = d->activeMarkupMRMLNodeComboBox->currentNodeID();
 
-  //qDebug() << QString("active markups node id from combo box = ") + activeMarkupsNodeID;
-
   int newRow = d->activeMarkupTableWidget->rowCount();
-  //qDebug() << QString("\tnew row / row count = ") + QString::number(newRow);
   d->activeMarkupTableWidget->insertRow(newRow);
-  //qDebug() << QString("\t after inserting a row, row count = ") + QString::number(d->activeMarkupTableWidget->rowCount());
 
   this->updateRow(newRow);
 
