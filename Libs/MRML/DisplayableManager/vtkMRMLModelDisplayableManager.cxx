@@ -1755,10 +1755,20 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           actor->GetTexture()->SetInputConnection(modelDisplayNode->GetTextureImageDataConnection());
           actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
           actor->GetProperty()->SetColor(1., 1., 1.);
+
+          // Force actors to be treated as opaque. Otherwise, transparent
+          // elements in the texture cause the actor to be treated as
+          // translucent, i.e. rendered without writing to the depth buffer.
+          // See http://www.na-mic.org/Bug/view.php?id=4253.
+          if (actor->GetProperty()->GetOpacity() == 1.0)
+            {
+            actor->ForceOpaqueOn();
+            }
           }
         else
           {
           actor->SetTexture(0);
+          actor->ForceOpaqueOff();
           }
         }
       else if (imageActor)
