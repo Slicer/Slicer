@@ -315,7 +315,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
   d->setMessage(QString());
 
   // Block signals so that onSegmentTableItemChanged function is not called when populating
-  d->SegmentsTable->blockSignals(true);
+  bool wasBlocked = d->SegmentsTable->blockSignals(true);
 
   // Clear table so that it can be populated
   d->SegmentsTable->clearContents();
@@ -335,7 +335,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     representationItem->setFont(boldFont);
     d->SegmentsTable->setItem(0, d->columnIndex("Name"), representationItem);
 
-    d->SegmentsTable->blockSignals(false);
+    d->SegmentsTable->blockSignals(wasBlocked);
     d->IsUpdatingWidgetFromMRML = false;
     return;
     }
@@ -345,7 +345,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     {
     d->setMessage(tr("No node is selected"));
     d->SegmentsTable->setRowCount(0);
-    d->SegmentsTable->blockSignals(false);
+    d->SegmentsTable->blockSignals(wasBlocked);
     d->IsUpdatingWidgetFromMRML = false;
     return;
     }
@@ -353,7 +353,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     {
     d->setMessage(tr("Empty segmentation"));
     d->SegmentsTable->setRowCount(0);
-    d->SegmentsTable->blockSignals(false);
+    d->SegmentsTable->blockSignals(wasBlocked);
     d->IsUpdatingWidgetFromMRML = false;
     return;
     }
@@ -448,7 +448,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     }
 
   // Unblock signals
-  d->SegmentsTable->blockSignals(false);
+  d->SegmentsTable->blockSignals(wasBlocked);
   d->IsUpdatingWidgetFromMRML = false;
 }
 

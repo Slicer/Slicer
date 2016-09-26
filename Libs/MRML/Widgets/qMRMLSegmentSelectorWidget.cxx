@@ -207,7 +207,7 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     d->CheckableComboBox_Segment->setVisible(true);
 
     // Block signals so that onSegmentMultiSelectionChanged function is not called when populating
-    d->CheckableComboBox_Segment->blockSignals(true);
+    bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
 
     // Add items for each segment
     vtkSegmentation::SegmentMap segmentMap = d->SegmentationNode->GetSegmentation()->GetSegments();
@@ -224,14 +224,14 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     this->setSelectedSegmentIDs(d->SelectedSegmentIDs);
 
     // Unblock signals
-    d->CheckableComboBox_Segment->blockSignals(false);
+    d->CheckableComboBox_Segment->blockSignals(wasBlocked);
     }
   else
     {
     d->comboBox_Segment->setVisible(true);
 
     // Block signals so that onCurrentSegmentChanged function is not called when populating
-    d->comboBox_Segment->blockSignals(true);
+    bool wasBlocked = d->comboBox_Segment->blockSignals(true);
 
     // Add 'None' item if enabled
     if (this->noneEnabled())
@@ -254,7 +254,7 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     d->comboBox_Segment->setCurrentIndex(-1);
 
     // Unblock signals
-    d->comboBox_Segment->blockSignals(false);
+    d->comboBox_Segment->blockSignals(wasBlocked);
 
     // Make sure fist segment is selected (we checked before that there is at least one segment)
     d->comboBox_Segment->setCurrentIndex(this->noneEnabled() ? 1 : 0);
@@ -350,7 +350,6 @@ void qMRMLSegmentSelectorWidget::setCurrentSegmentID(QString segmentID)
   if (segmentID.isEmpty() && this->noneEnabled())
     {
     d->comboBox_Segment->setCurrentIndex(0);
-    d->comboBox_Segment->blockSignals(false);
     return;
     }
 
@@ -394,7 +393,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
   d->SelectedSegmentIDs = segmentIDList;
 
   // Update checkbox states in checkable combobox
-  d->CheckableComboBox_Segment->blockSignals(true);
+  bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
   for (int row=0; row<d->CheckableComboBox_Segment->model()->rowCount(); ++row)
     {
     QModelIndex index = d->CheckableComboBox_Segment->model()->index(row,0);
@@ -408,7 +407,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
       d->CheckableComboBox_Segment->setCheckState(index, Qt::Unchecked);
       }
     }
-  d->CheckableComboBox_Segment->blockSignals(false);
+  d->CheckableComboBox_Segment->blockSignals(wasBlocked);
 }
 
 //--------------------------------------------------------------------------
@@ -502,7 +501,7 @@ void qMRMLSegmentSelectorWidget::setHorizontalLayout(bool horizontal)
   if (horizontal)
     {
     d->gridLayout->addWidget(d->frame_Segment, 0,1);
-    d->label_Segment->setText("/");
+    d->label_Segment->setText("");
     d->MRMLNodeComboBox_Segmentation->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     d->comboBox_Segment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     d->CheckableComboBox_Segment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

@@ -143,10 +143,6 @@ public:
   /// Select first segment in table view
   void selectFirstSegment();
 
-  /// Show selected segment in 2D views as fill only, all the others as outline only
-  /// for per-segment effects, otherwise show all segments as fill only
-  void showSelectedSegment();
-
   /// Enable or disable effects and their options based on input selection
   void updateEffectsEnabled();
 
@@ -789,14 +785,6 @@ void qMRMLSegmentEditorWidgetPrivate::selectFirstSegment()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidgetPrivate::showSelectedSegment()
-{
-  // Here we could change the selected segment's display.
-  // It seems that it is not necessary for now, but keep the method
-  // as a placeholder for a while.
-}
-
-//-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidgetPrivate::updateEffectsEnabled()
 {
   if (!this->ParameterSetNode)
@@ -963,6 +951,9 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   int overwriteModeIndex = d->OverwriteModeComboBox->findData(d->ParameterSetNode->GetOverwriteMode());
   d->OverwriteModeComboBox->setCurrentIndex(overwriteModeIndex);
   d->OverwriteModeComboBox->blockSignals(wasBlocked);
+
+  // Segmentation object might have been replaced, update selected segment
+  onSegmentAddedRemoved();
 
   // Effects section
 
@@ -1412,9 +1403,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromEffect()
 
   // Set active effect
   d->ActiveEffect = activeEffect;
-
-  // Make sure the selected segment is properly shown based on selections
-  d->showSelectedSegment();
 }
 
 //-----------------------------------------------------------------------------
@@ -1627,37 +1615,30 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
     }
 
   // Set segment ID if changed
-  d->ParameterSetNode->DisableModifiedEventOn();
   if (selectedSegmentIDs.isEmpty())
     {
     d->ParameterSetNode->SetSelectedSegmentID(NULL);
+    // Also de-select current effect if per-segment
+    if (d->ActiveEffect && d->ActiveEffect->perSegment())
+      {
+      this->setActiveEffect(NULL);
+      }
     }
   else
     {
     d->ParameterSetNode->SetSelectedSegmentID(selectedSegmentID.toLatin1().constData());
-
-    // Also de-select current effect if it is not per-segment
+    // Also de-select current effect if not per-segment
     if (d->ActiveEffect && !d->ActiveEffect->perSegment())
       {
       this->setActiveEffect(NULL);
       }
     }
-  d->ParameterSetNode->DisableModifiedEventOff();
 
   // Disable editing if no segment is selected
   d->updateEffectsEnabled();
 
   // Only enable remove button if a segment is selected
   d->RemoveSegmentButton->setEnabled(!selectedSegmentID.isEmpty());
-
-  // Create modifier labelmap from selected segment, using the bounds of the master volume
-  //this->updateEditedVolumes();
-  //this->updateMaskLabelmap();
-  //d->notifyEffectsOfModifierLabelmapChange();
-
-  // Show selected segment as fill only, all the others as outline only for per-segment effects,
-  // otherwise show all segments as fill only
-  d->showSelectedSegment();
 }
 
 //-----------------------------------------------------------------------------

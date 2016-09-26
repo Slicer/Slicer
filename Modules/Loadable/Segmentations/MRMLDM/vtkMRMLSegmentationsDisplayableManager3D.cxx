@@ -685,8 +685,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
         this->RequestRender();
         }
       }
-    else if ( (event == vtkCommand::ModifiedEvent)
-           || (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
            || (event == vtkSegmentation::RepresentationModified)
            || (event == vtkSegmentation::SegmentModified) )
@@ -694,8 +693,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
       }
-    else if ( (event == vtkSegmentation::SegmentAdded)
-      || (event == vtkSegmentation::SegmentRemoved) )
+    else if ( (event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
+           || (event == vtkSegmentation::SegmentAdded)
+           || (event == vtkSegmentation::SegmentRemoved) )
       {
       this->Internal->UpdateAllDisplayNodesForSegment(displayableNode);
       this->RequestRender();
