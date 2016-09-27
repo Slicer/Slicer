@@ -327,10 +327,10 @@ void vtkMRMLMarkupsDisplayableManager3D
         this->OnMRMLMarkupsNodeNthMarkupModifiedEvent(markupsNode, n);
         break;
       case vtkMRMLMarkupsNode::MarkupAddedEvent:
-        this->OnMRMLMarkupsNodeMarkupAddedEvent(markupsNode);
+        this->OnMRMLMarkupsNodeMarkupAddedEvent(markupsNode, n);
         break;
       case vtkMRMLMarkupsNode::MarkupRemovedEvent:
-        this->OnMRMLMarkupsNodeMarkupRemovedEvent(markupsNode);
+        this->OnMRMLMarkupsNodeMarkupRemovedEvent(markupsNode, n);
         break;
       case vtkMRMLTransformableNode::TransformModifiedEvent:
         this->OnMRMLMarkupsNodeTransformModifiedEvent(markupsNode);

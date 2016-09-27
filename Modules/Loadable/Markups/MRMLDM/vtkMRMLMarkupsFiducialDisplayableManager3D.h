@@ -49,11 +49,11 @@ protected:
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLMarkupsNode* node);
   /// Create new handle on widget when a new markup is added to a markups node
-  virtual void OnMRMLMarkupsNodeMarkupAddedEvent(vtkMRMLMarkupsNode * markupsNode);
+  virtual void OnMRMLMarkupsNodeMarkupAddedEvent(vtkMRMLMarkupsNode * markupsNode, int n);
   /// Respond to the nth markup modified event
   virtual void OnMRMLMarkupsNodeNthMarkupModifiedEvent(vtkMRMLMarkupsNode * markupsNode, int n);
   /// Respond to a markup being removed from the markups node
-  virtual void OnMRMLMarkupsNodeMarkupRemovedEvent(vtkMRMLMarkupsNode * markupsNode);
+  virtual void OnMRMLMarkupsNodeMarkupRemovedEvent(vtkMRMLMarkupsNode * markupsNode, int n);
 
   /// Gets called when widget was created
   virtual void OnWidgetCreated(vtkAbstractWidget * widget, vtkMRMLMarkupsNode * node);
