@@ -61,13 +61,13 @@ class vtkStringArray;
 ///       representations, and an estimated cost metric
 ///   * Master representation
 ///     * Privileged representation type. Can be any of the available representations, but usually it's the original representation
-///       of the data (binary labelmap for editing, planar contour for RT)
-///     * Properties:
-///       a) all conversions use it as source,
-///       b) when changed all other representations are invalidated, and
-///       c) it is the representation that is saved to disk
-///     * Using the proper master representation ensures that no information is lost, which is crucial to avoid discrepancies that can
-///       never be solved when data is permanently lost in conversion
+///       of the data (binary labelmap for editing, binary or fractional labelmap for DICOM SEG, planar contour for DICOM RT, etc.)
+///       * Using the proper master representation ensures that no information is lost, which is crucial to avoid discrepancies that can
+///         never be solved when data is permanently lost in conversion
+///     * Properties
+///       * All conversions use it as source (up-to-date representations along conversion path are used if available)
+///       * When changed all other representations are invalidated (and is re-converted later from master)
+///       * It is the representation that is saved to disk
 ///       
 ///  Schematic illustration of the segmentation container:
 ///  
