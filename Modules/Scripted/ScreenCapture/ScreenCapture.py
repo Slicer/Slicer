@@ -208,7 +208,7 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     ffmpegPath = self.logic.getFfmpegPath()
     self.ffmpegPathSelector = ctk.ctkPathLineEdit()
     self.ffmpegPathSelector.setCurrentPath(ffmpegPath)
-    self.ffmpegPathSelector.nameFilters = ['ffmpeg.exe', 'ffmpeg']
+    self.ffmpegPathSelector.nameFilters = [self.logic.getFfmpegExecutableFilename()]
     self.ffmpegPathSelector.setSizePolicy(qt.QSizePolicy.MinimumExpanding, qt.QSizePolicy.Preferred)
     self.ffmpegPathSelector.setToolTip("Set the path to ffmpeg executable. Download from: https://www.ffmpeg.org/")
     advancedFormLayout.addRow("ffmpeg executable:", self.ffmpegPathSelector)
@@ -409,9 +409,22 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
     self.videoExportFfmpegWarning.setVisible(False)
     if videoOutputRequested:
       if not self.logic.isFfmpegPathValid():
+        # ffmpeg not found, try to automatically find it at common locations
+        self.logic.findFfmpeg()
+      if not self.logic.isFfmpegPathValid() and os.name == 'nt': # TODO: implement download for Linux/MacOS?
+        # ffmpeg not found, offer downloading it
+        if slicer.util.confirmOkCancelDisplay(
+          'Video encoder not detected on your system. '
+          'Download ffmpeg video encoder?',
+          windowTitle='Download confirmation'):
+          if not self.logic.ffmpegDownload():
+            slicer.util.errorDisplay("ffmpeg download failed")
+      if not self.logic.isFfmpegPathValid():
+        # still not found, user has to specify path manually
         self.videoExportFfmpegWarning.setVisible(True)
         self.advancedCollapsibleButton.collapsed = False
         return
+      self.ffmpegPathSelector.currentPath = self.logic.getFfmpegPath()
 
     # Need to create a new random file pattern if video output is requested to make sure that new image files are not mixed up with
     # existing files in the output directory
@@ -498,6 +511,79 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     import os
     ffmpegPath = self.getFfmpegPath()
     return os.path.isfile(ffmpegPath)
+
+  def getDownloadedFfmpegDirectory(self):
+    return os.path.dirname(slicer.app.slicerUserSettingsFilePath)+'/ffmpeg'
+
+  def getFfmpegExecutableFilename(self):
+    if os.name == 'nt':
+      return 'ffmpeg.exe'
+    else:
+      return 'ffmpeg'
+
+  def findFfmpeg(self):
+    # Try to find the executable at specific paths
+    commonFfmpegPaths = [
+      '/usr/local/bin/ffmpeg'
+      ]
+    for ffmpegPath in commonFfmpegPaths:
+      if os.path.isfile(ffmpegPath):
+        # found one
+        self.setFfmpegPath(ffmpegPath)
+        return True
+    # Search for the executable in directories
+    commonFfmpegDirs = [
+      self.getDownloadedFfmpegDirectory()
+      ]
+    for ffmpegDir in commonFfmpegDirs:
+      if self.findFfmpegInDirectory(ffmpegDir):
+        # found it
+        return True
+    # Not found
+    return False
+
+  def findFfmpegInDirectory(self, ffmpegDir):
+    ffmpegExecutableFilename = self.getFfmpegExecutableFilename()
+    for dirpath, dirnames, files in os.walk(ffmpegDir):
+      for name in files:
+        if name==ffmpegExecutableFilename:
+          ffmpegExecutablePath = (dirpath + '/' + name).replace('\\','/')
+          self.setFfmpegPath(ffmpegExecutablePath)
+          return True
+    return False
+
+  def ffmpegDownload(self):
+    if os.name == 'nt':
+      url = 'https://ffmpeg.zeranoe.com/builds/win64/shared/ffmpeg-20160927-92de2c2-win64-shared.zip'
+    else:
+      # TODO: implement downloading for Linux/MacOS?
+      return False
+
+    qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+    success = True
+    try:
+      ffmpegTargetDirectory = self.getDownloadedFfmpegDirectory()
+      import urllib
+      filePath = slicer.app.temporaryPath + '/ffmpeg-package.zip'
+
+      for i in range(2): # try download&unzip twice, second time force download
+        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0\
+          or i==1: # force download
+          logging.info('Requesting download ffmpeg from %s...\n' % url)
+          urllib.urlretrieve(url, filePath)
+
+        logging.info('Unzipping ffmpeg')
+        qt.QDir().mkpath(ffmpegTargetDirectory)
+        slicer.app.applicationLogic().Unzip(filePath, ffmpegTargetDirectory)
+        success = self.findFfmpegInDirectory(ffmpegTargetDirectory)
+        if success:
+          break
+
+    except:
+      success = False
+
+    qt.QApplication.restoreOverrideCursor()
+    return success
 
   def getFfmpegPath(self):
     settings = qt.QSettings()
