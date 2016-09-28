@@ -49,6 +49,7 @@ class SegmentEditorWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     #
     import qSlicerSegmentationsModuleWidgetsPythonQt
     self.editor = qSlicerSegmentationsModuleWidgetsPythonQt.qMRMLSegmentEditorWidget()
+    self.editor.setMaximumNumberOfUndoStates(10)
     # Set parameter node first so that the automatic selections made when the scene is set are saved
     self.selectParameterNode()
     self.editor.setMRMLScene(slicer.mrmlScene)

@@ -140,7 +140,7 @@ void qMRMLSegmentsTableViewPrivate::init()
   QObject::connect(this->SegmentsTable, SIGNAL(itemChanged(QTableWidgetItem*)),
                    q, SLOT(onSegmentTableItemChanged(QTableWidgetItem*)));
   QObject::connect(this->SegmentsTable->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-                   q, SIGNAL(selectionChanged(QItemSelection,QItemSelection)));
+                   q, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)));
 
   // Set item delegate to handle color and opacity changes
   qMRMLItemDelegate* itemDelegate = new qMRMLItemDelegate(this->SegmentsTable);
@@ -314,6 +314,8 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 
   d->setMessage(QString());
 
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+
   // Block signals so that onSegmentTableItemChanged function is not called when populating
   bool wasBlocked = d->SegmentsTable->blockSignals(true);
 
@@ -337,6 +339,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
 
     d->SegmentsTable->blockSignals(wasBlocked);
     d->IsUpdatingWidgetFromMRML = false;
+    emit selectionChanged(QItemSelection(), QItemSelection());
     return;
     }
 
@@ -347,6 +350,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     d->SegmentsTable->setRowCount(0);
     d->SegmentsTable->blockSignals(wasBlocked);
     d->IsUpdatingWidgetFromMRML = false;
+    emit selectionChanged(QItemSelection(), QItemSelection());
     return;
     }
   else if (d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() == 0)
@@ -355,6 +359,7 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     d->SegmentsTable->setRowCount(0);
     d->SegmentsTable->blockSignals(wasBlocked);
     d->IsUpdatingWidgetFromMRML = false;
+    emit selectionChanged(QItemSelection(), QItemSelection());
     return;
     }
 
@@ -448,8 +453,10 @@ void qMRMLSegmentsTableView::populateSegmentTable()
     }
 
   // Unblock signals
+  this->setSelectedSegmentIDs(selectedSegmentIDs);
   d->SegmentsTable->blockSignals(wasBlocked);
   d->IsUpdatingWidgetFromMRML = false;
+  emit selectionChanged(QItemSelection(), QItemSelection());
 }
 
 //-----------------------------------------------------------------------------
@@ -547,6 +554,17 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+  Q_D(qMRMLSegmentsTableView);
+  if (d->SegmentsTable->signalsBlocked())
+    {
+    return;
+    }
+  emit selectionChanged(selected, deselected);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changedItem)
 {
   Q_D(qMRMLSegmentsTableView);
@@ -571,6 +589,7 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
       qCritical() << Q_FUNC_INFO << ": Segment with ID '" << segmentId << "' not found in segmentation node " << d->SegmentationNode->GetName();
       return;
       }
+    emit segmentAboutToBeModified(segmentId);
     segment->SetName(nameText.toLatin1().constData());
     }
   // If visualization has been changed
@@ -788,34 +807,33 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
   Q_D(qMRMLSegmentsTableView);
 
   if (!d->SegmentationNode)
-  {
+    {
     qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
     return;
-  }
-
-  // Deselect items that don't have to be selected anymore
-  QList<QTableWidgetItem*> selectedItems = d->SegmentsTable->selectedItems();
-  foreach(QTableWidgetItem* item, selectedItems)
-  {
-    if (!segmentIDs.contains(item->data(IDRole).toString()))
-    {
-      d->SegmentsTable->setItemSelected(item, false);
     }
-  }
 
-  // Find item by segment ID
-  foreach (QString segmentID, segmentIDs)
+  // Select items that have to be selected
+  foreach(QString segmentID, segmentIDs)
     {
     QTableWidgetItem* segmentItem = d->findItemBySegmentID(segmentID);
     if (!segmentItem)
       {
-      qCritical() << Q_FUNC_INFO << ": Cannot find table item corresponding to segment ID '" << segmentID << " in segmentation node "
-        << (d->SegmentationNode->GetName() ? d->SegmentationNode->GetName() : "(undefined)");
+      // no such segment is in the table, ignore it
       continue;
       }
 
     // Select item for segment
     d->SegmentsTable->setItemSelected(segmentItem, true);
+    }
+
+  // Deselect items that don't have to be selected anymore
+  QList<QTableWidgetItem*> selectedItems = d->SegmentsTable->selectedItems();
+  foreach(QTableWidgetItem* item, selectedItems)
+    {
+    if (!segmentIDs.contains(item->data(IDRole).toString()))
+      {
+      d->SegmentsTable->setItemSelected(item, false);
+      }
     }
 }
 

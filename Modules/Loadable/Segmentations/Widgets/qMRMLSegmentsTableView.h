@@ -121,9 +121,16 @@ signals:
   /// Emitted if selection changes
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
+  /// Emitted when a segment property (e.g., name) is about to be changed.
+  /// Can be used for capturing the current state of the segment, before it is modified.
+  void segmentAboutToBeModified(const QString &segmentID);
+
 protected slots:
   /// Handles changing of values in a cell (segment name, visibility, color, opacity)
   void onSegmentTableItemChanged(QTableWidgetItem* changedItem);
+
+  /// Forwards selection changed events. In case of batch update of items, selected and deselected are empty.
+  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
   /// Handles clicks on a table cell (visibility)
   void onVisibilityButtonClicked();

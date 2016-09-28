@@ -302,6 +302,8 @@ void qMRMLSegmentEditorWidgetPrivate::init()
     q, SLOT(onMasterVolumeNodeChanged(vtkMRMLNode*)) );
   QObject::connect( this->SegmentsTableView, SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
     q, SLOT(onSegmentSelectionChanged(QItemSelection,QItemSelection)) );
+  QObject::connect( this->SegmentsTableView, SIGNAL(segmentAboutToBeModified(QString)),
+    q, SLOT(saveStateForUndo()) );
   QObject::connect( this->AddSegmentButton, SIGNAL(clicked()), q, SLOT(onAddSegment()) );
   QObject::connect( this->RemoveSegmentButton, SIGNAL(clicked()), q, SLOT(onRemoveSegment()) );
   QObject::connect( this->CreateSurfaceButton, SIGNAL(toggled(bool)), q, SLOT(onCreateSurfaceToggled(bool)) );
@@ -799,6 +801,8 @@ void qMRMLSegmentEditorWidgetPrivate::updateEffectsEnabled()
   this->OptionsGroupBox->setEnabled(masterVolumeSelected);
 
   // Enable only non-per-segment effects if no segment is selected, otherwise enable all effects
+  vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
+  bool segmentAvailable = segmentationNode && (segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0);
   QString selectedSegmentID(this->ParameterSetNode->GetSelectedSegmentID());
   bool segmentSelected = !selectedSegmentID.isEmpty();
   QList<QAbstractButton*> effectButtons = this->EffectButtonGroup.buttons();
@@ -811,7 +815,7 @@ void qMRMLSegmentEditorWidgetPrivate::updateEffectsEnabled()
       // NULL effect
       continue;
       }
-    effectButton->setEnabled(segmentSelected || !effect->perSegment());
+    effectButton->setEnabled(segmentAvailable && (segmentSelected || !effect->perSegment()));
     }
 }
 
@@ -1356,19 +1360,6 @@ void qMRMLSegmentEditorWidget::updateWidgetFromEffect()
     d->OptionsGroupBox->setTitle(activeEffect->name());
     //d->OptionsGroupBox->setToolTip(activeEffect->helpText());
     d->label_EffectHelp->setText(activeEffect->helpText());
-
-    // If selected effect is not per-segment, then clear segment selection
-    // and prevent selection until a per-segment one is selected
-    if (!activeEffect->perSegment())
-      {
-      // Clear selection
-      d->SegmentsTableView->clearSelection();
-      }
-    else if (d->ActiveEffect && !d->ActiveEffect->perSegment())
-      {
-      // Select first segment if previous effect was not per-segment
-      d->selectFirstSegment();
-      }
     }
   else
     {
@@ -1627,11 +1618,6 @@ void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &s
   else
     {
     d->ParameterSetNode->SetSelectedSegmentID(selectedSegmentID.toLatin1().constData());
-    // Also de-select current effect if not per-segment
-    if (d->ActiveEffect && !d->ActiveEffect->perSegment())
-      {
-      this->setActiveEffect(NULL);
-      }
     }
 
   // Disable editing if no segment is selected
@@ -1745,24 +1731,47 @@ void qMRMLSegmentEditorWidget::onRemoveSegment()
     }
 
   vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode->GetSegmentationNode();
-  const char* selectedSegmentID = d->ParameterSetNode->GetSelectedSegmentID();
-  if (!segmentationNode || !selectedSegmentID)
+  std::string selectedSegmentID = (d->ParameterSetNode->GetSelectedSegmentID() ? d->ParameterSetNode->GetSelectedSegmentID() : "");
+  if (!segmentationNode || selectedSegmentID.empty())
     {
     return;
     }
 
   d->SegmentationHistory->SaveState();
 
+  // Switch to a new valid segment now (to avoid transient state when no segments are selected
+  // as it could inactivate current effect).
+  vtkSegmentation::SegmentMap segmentMap = segmentationNode->GetSegmentation()->GetSegments();
+  if (segmentMap.size() > 1)
+    {
+    std::string newSelectedSegmentID;
+    vtkSegmentation::SegmentMap::iterator previousSegmentIt = segmentMap.begin();
+    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+      {
+      if (segmentIt->first == selectedSegmentID)
+        {
+        // found the currently selected segment
+        // use the next segment (if at the end, use the previous)
+        ++segmentIt;
+        if (segmentIt != segmentMap.end())
+          {
+          newSelectedSegmentID = segmentIt->first;
+          }
+        else
+          {
+          newSelectedSegmentID = previousSegmentIt->first;
+          }
+        break;
+        }
+      previousSegmentIt = segmentIt;
+      }
+    QStringList newSelectedSegmentIdList;
+    newSelectedSegmentIdList << QString(newSelectedSegmentID.c_str());
+    d->SegmentsTableView->setSelectedSegmentIDs(newSelectedSegmentIdList);
+    }
+
   // Remove segment
   segmentationNode->GetSegmentation()->RemoveSegment(selectedSegmentID);
-
-  // Select first segment if there is at least one segment
-  if (segmentationNode->GetSegmentation()->GetNumberOfSegments())
-    {
-    QStringList firstSegmentId;
-    firstSegmentId << QString(segmentationNode->GetSegmentation()->GetSegments().begin()->first.c_str());
-    d->SegmentsTableView->setSelectedSegmentIDs(firstSegmentId);
-    }
 }
 
 //-----------------------------------------------------------------------------
