@@ -524,7 +524,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
   def findFfmpeg(self):
     # Try to find the executable at specific paths
     commonFfmpegPaths = [
-      '/usr/local/bin/ffmpeg'
+      '/usr/local/bin/ffmpeg',
+      '/usr/bin/ffmpeg'
       ]
     for ffmpegPath in commonFfmpegPaths:
       if os.path.isfile(ffmpegPath):
