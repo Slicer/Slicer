@@ -260,9 +260,25 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
     else
       {
       // Only extent is different
+      int* inputExtent = inputImage->GetExtent();
+      int* referenceExtent = referenceImage->GetExtent();
+      int unionExtent[6] = { 0, -1, 0, -1, 0, -1 };
+      if (padImage)
+        {
+        // Make sure input image data fits into the extent.
+        for (int i = 0; i < 3; i++)
+          {
+          unionExtent[i * 2] = std::min(inputExtent[i * 2], referenceExtent[i * 2]);
+          unionExtent[i * 2 + 1] = std::max(inputExtent[i * 2 + 1], referenceExtent[i * 2 + 1]);
+          }
+        }
+      else
+        {
+        referenceImage->GetExtent(unionExtent);
+        }
       vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
       padder->SetInputData(inputImage);
-      padder->SetOutputWholeExtent(referenceImage->GetExtent());
+      padder->SetOutputWholeExtent(unionExtent);
       padder->Update();
       outputImage->ShallowCopy(padder->GetOutput());
       outputImage->SetImageToWorldMatrix(referenceImageToWorldMatrix.GetPointer());
@@ -292,28 +308,30 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
   inputImageToReferenceImageTransform->Concatenate(worldToReferenceImageMatrix.GetPointer());
 
   // Calculate output extent in reference frame for padding if requested. Use all bounding box corners
-  int inputExtentInReferenceFrame[6] = {0,-1,0,-1,0,-1};
+  int inputExtentInReferenceFrame[6] = { 0, -1, 0, -1, 0, -1 };
+  vtkOrientedImageDataResample::TransformExtent(inputImage->GetExtent(), inputImageToReferenceImageTransform.GetPointer(), inputExtentInReferenceFrame);
+  int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
+  referenceImage->GetExtent(referenceExtent);
+  int unionExtent[6] = { 0, -1, 0, -1, 0, -1 };
   if (padImage)
     {
-    vtkOrientedImageDataResample::TransformExtent(inputImage->GetExtent(), inputImageToReferenceImageTransform.GetPointer(), inputExtentInReferenceFrame);
+    // Make sure input image data fits into the extent.
+    for (int i = 0; i < 3; i++)
+      {
+      unionExtent[i * 2] = std::min(inputExtentInReferenceFrame[i * 2], referenceExtent[i * 2]);
+      unionExtent[i * 2 + 1] = std::max(inputExtentInReferenceFrame[i * 2 + 1], referenceExtent[i * 2 + 1]);
+      }
     }
   else
     {
-    referenceImage->GetExtent(inputExtentInReferenceFrame);
+    referenceImage->GetExtent(unionExtent);
     }
 
   // Return with failure if output extent is empty
-  if ( inputExtentInReferenceFrame[0] > inputExtentInReferenceFrame[1] || inputExtentInReferenceFrame[2] > inputExtentInReferenceFrame[3] || inputExtentInReferenceFrame[4] > inputExtentInReferenceFrame[5] )
+  if (unionExtent[0] > unionExtent[1] || unionExtent[2] > unionExtent[3] || unionExtent[4] > unionExtent[5])
     {
     return false;
     }
-
-  // Make sure input image data fits into the extent. If padding is disabled, then union extent is the reference extent
-  int referenceExtent[6] = {0,-1,0,-1,0,-1};
-  referenceImage->GetExtent(referenceExtent);
-  int unionExtent[6] = { std::min(inputExtentInReferenceFrame[0],referenceExtent[0]), std::max(inputExtentInReferenceFrame[1],referenceExtent[1]),
-                         std::min(inputExtentInReferenceFrame[2],referenceExtent[2]), std::max(inputExtentInReferenceFrame[3],referenceExtent[3]),
-                         std::min(inputExtentInReferenceFrame[4],referenceExtent[4]), std::max(inputExtentInReferenceFrame[5],referenceExtent[5]) };
 
   // Invert transform for the resampling
   vtkAbstractTransform* referenceImageToInputImageTransform = inputImageToReferenceImageTransform->GetInverse();
