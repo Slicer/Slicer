@@ -119,7 +119,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->FavoritesMoreButton->setChecked(false);
 
   // Default values
-  this->PreferExecutableCLICheckBox->setChecked(false);
+  this->PreferExecutableCLICheckBox->setChecked(true);
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
   this->DisableModulesListView->setFactoryManager( factoryManager );
   this->FavoritesModulesListView->setFactoryManager( factoryManager );
