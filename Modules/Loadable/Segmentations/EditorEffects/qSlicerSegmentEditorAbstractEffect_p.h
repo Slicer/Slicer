@@ -64,7 +64,6 @@ protected:
 public:
   qSlicerSegmentEditorAbstractEffectPrivate(qSlicerSegmentEditorAbstractEffect& object);
   ~qSlicerSegmentEditorAbstractEffectPrivate();
-  void scheduleRender(qMRMLWidget* viewWidget);
 signals:
   // Signals that are used for effects to request operations from the editor
   // without having any dependency on the editor.

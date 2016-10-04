@@ -18,19 +18,19 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSegmentEditorRectangleEffect_h
-#define __qSlicerSegmentEditorRectangleEffect_h
+#ifndef __qSlicerSegmentEditorScissorsEffect_h
+#define __qSlicerSegmentEditorScissorsEffect_h
 
 // Segmentations Editor Effects includes
 #include "qSlicerSegmentationsEditorEffectsExport.h"
 
 #include "qSlicerSegmentEditorAbstractLabelEffect.h"
 
-class qSlicerSegmentEditorRectangleEffectPrivate;
+class qSlicerSegmentEditorScissorsEffectPrivate;
 class vtkPolyData;
 
 /// \ingroup SlicerRt_QtModules_Segmentations
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorRectangleEffect :
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScissorsEffect :
   public qSlicerSegmentEditorAbstractLabelEffect
 {
 public:
@@ -38,8 +38,8 @@ public:
 
 public:
   typedef qSlicerSegmentEditorAbstractLabelEffect Superclass;
-  qSlicerSegmentEditorRectangleEffect(QObject* parent = NULL);
-  virtual ~qSlicerSegmentEditorRectangleEffect();
+  qSlicerSegmentEditorScissorsEffect(QObject* parent = NULL);
+  virtual ~qSlicerSegmentEditorScissorsEffect();
 
 public:
   /// Get icon for effect to be displayed in segment editor
@@ -47,6 +47,12 @@ public:
 
   /// Get help text for effect to be displayed in the help box
   Q_INVOKABLE virtual const QString helpText()const;
+
+  /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
+  virtual void setupOptionsFrame();
+
+  /// Set default parameters in the parameter MRML node
+  virtual void setMRMLDefaults();
 
   /// Clone editor effect
   virtual qSlicerSegmentEditorAbstractEffect* clone();
@@ -60,12 +66,19 @@ public:
   /// Perform actions to deactivate the effect (such as destroy actors, etc.)
   Q_INVOKABLE virtual void deactivate();
 
+public slots:
+  /// Update user interface from parameter set node
+  virtual void updateGUIFromMRML();
+
+  /// Update parameter set node from user interface
+  virtual void updateMRMLFromGUI();
+
 protected:
-  QScopedPointer<qSlicerSegmentEditorRectangleEffectPrivate> d_ptr;
+  QScopedPointer<qSlicerSegmentEditorScissorsEffectPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSegmentEditorRectangleEffect);
-  Q_DISABLE_COPY(qSlicerSegmentEditorRectangleEffect);
+  Q_DECLARE_PRIVATE(qSlicerSegmentEditorScissorsEffect);
+  Q_DISABLE_COPY(qSlicerSegmentEditorScissorsEffect);
 };
 
 #endif

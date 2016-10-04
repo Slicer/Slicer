@@ -306,36 +306,6 @@ BrushPipeline* qSlicerSegmentEditorPaintEffectPrivate::brushForWidget(qMRMLWidge
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::forceRender(qMRMLWidget* viewWidget)
-{
-  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
-  if (sliceWidget)
-    {
-    sliceWidget->sliceView()->forceRender();
-    }
-  if (threeDWidget)
-    {
-    threeDWidget->threeDView()->forceRender();
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::scheduleRender(qMRMLWidget* viewWidget)
-{
-  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
-  if (sliceWidget)
-    {
-    sliceWidget->sliceView()->scheduleRender();
-    }
-  if (threeDWidget)
-    {
-    threeDWidget->threeDView()->scheduleRender();
-    }
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::paintAddPoint(qMRMLWidget* viewWidget, double brushPosition_World[3])
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
@@ -346,7 +316,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintAddPoint(qMRMLWidget* viewWidg
   if (q->integerParameter("BrushPixelMode") || !this->DelayedPaint)
     {
     this->paintApply(viewWidget);
-    this->forceRender(viewWidget); // TODO: repaint all?
+    qSlicerSegmentEditorAbstractEffect::forceRender(viewWidget); // TODO: repaint all?
     }
 }
 
@@ -597,23 +567,6 @@ void qSlicerSegmentEditorPaintEffectPrivate::onRadiusValueChanged(double value)
   q->setCommonParameter("BrushRadius", value);
 }
 
-//----------------------------------------------------------------------------
-double qSlicerSegmentEditorPaintEffectPrivate::GetSliceSpacing(qMRMLSliceWidget* sliceWidget)
-{
-  // Implementation copied from vtkSliceViewInteractorStyle::GetSliceSpacing()
-  vtkMRMLSliceNode *sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
-  double spacing = 1.0;
-  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
-      {
-    spacing = sliceNode->GetPrescribedSliceSpacing()[2];
-      }
-  else
-      {
-    spacing = sliceWidget->sliceLogic()->GetLowestVolumeSliceSpacing()[2];
-      }
-  return spacing;
-}
-
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewWidget, double brushPosition_World[3])
 {
@@ -631,7 +584,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
     {
     this->BrushCylinderSource->SetRadius(radiusMm);
     this->BrushCylinderSource->SetResolution(16);
-    double sliceSpacingMm = this->GetSliceSpacing(sliceWidget);
+    double sliceSpacingMm = qSlicerSegmentEditorAbstractEffect::sliceSpacing(sliceWidget);
     this->BrushCylinderSource->SetHeight(sliceSpacingMm);
     this->BrushCylinderSource->SetCenter(0, 0, sliceSpacingMm/2.0);
     this->BrushToWorldOriginTransformer->SetInputConnection(this->BrushCylinderSource->GetOutputPort());
@@ -694,7 +647,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
 
     BrushPipeline* brushPipeline = this->brushForWidget(sliceWidget);
     this->updateBrush(sliceWidget, brushPipeline);
-    this->scheduleRender(sliceWidget);
+    qSlicerSegmentEditorAbstractEffect::scheduleRender(sliceWidget);
     }
   for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
     {
@@ -703,7 +656,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
 
     BrushPipeline* brushPipeline = this->brushForWidget(threeDWidget);
     this->updateBrush(threeDWidget, brushPipeline);
-    this->scheduleRender(threeDWidget);
+    qSlicerSegmentEditorAbstractEffect::scheduleRender(threeDWidget);
     }
 
   foreach (qMRMLWidget* viewWidget, unusedWidgetPipelines)
@@ -766,6 +719,7 @@ qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent
 {
   this->m_Name = QString("Paint");
   this->m_Erase = false;
+  this->m_ShowEffectCursorInThreeDView = true;
 }
 
 //----------------------------------------------------------------------------
@@ -955,7 +909,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
   // Update paint feedback glyph to follow mouse
   d->updateBrushModel(viewWidget, brushPosition_World);
   d->updateBrushes();
-  d->forceRender(viewWidget);
+  qSlicerSegmentEditorAbstractEffect::forceRender(viewWidget);
   return abortEvent;
 }
 

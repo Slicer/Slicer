@@ -341,7 +341,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 
   // Define default effect order
   this->DefaultEffectOrder << "Paint" << "Draw" << "Erase" << "Wand" << "LevelTracing"
-    << "Rectangle" << "Margin"  << "GrowCut" << "Threshold" << "Logical"; //TODO: Add island effects, etc.
+    << "Scissors" << "Margin"  << "GrowCut" << "Threshold" << "Logical"; //TODO: Add island effects, etc.
 
   // Instantiate and expose effects
   this->initializeEffects();
@@ -826,35 +826,27 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
     {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
-    if (effect)
+    if (effect && effect->showEffectCursorInSliceView())
       {
-      sliceWidget->setCursor(effect->createCursor(sliceWidget));
+      sliceWidget->sliceView()->setCursor(effect->createCursor(sliceWidget));
       }
     else
       {
-      sliceWidget->unsetCursor();
+      sliceWidget->sliceView()->unsetCursor();
       }
     }
-  /*
-  TODO: Activate this when implementing effects in 3D views.
-  It is not enabled now because:
-  1. Cursor is not changedin the main view just in the header (it is a bug that should be fixed in the threeDWidget)
-  2. Cursor should probably only changed for effects that work in the 3D view. Effects should state if they operate in
-     slice and/or 3D view.
-
   for (int threeDViewId = 0; threeDViewId < layoutManager->threeDViewCount(); ++threeDViewId)
     {
     qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);
-    if (effect)
+    if (effect && effect->showEffectCursorInThreeDView())
       {
-      threeDWidget->setCursor(effect->createCursor(threeDWidget));
+      threeDWidget->threeDView()->setCursor(effect->createCursor(threeDWidget));
       }
     else
       {
-      threeDWidget->unsetCursor();
+      threeDWidget->threeDView()->unsetCursor();
       }
     }
-  */
 }
 
 //-----------------------------------------------------------------------------

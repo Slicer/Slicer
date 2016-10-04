@@ -97,25 +97,6 @@ qSlicerSegmentEditorAbstractEffectPrivate::~qSlicerSegmentEditorAbstractEffectPr
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorAbstractEffectPrivate::scheduleRender(qMRMLWidget* viewWidget)
-{
-  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
-  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
-  if (sliceWidget)
-    {
-    sliceWidget->sliceView()->scheduleRender();
-    }
-  else if (threeDWidget)
-    {
-    threeDWidget->threeDView()->scheduleRender();
-    }
-  else
-    {
-    qCritical() << Q_FUNC_INFO << ": Unsupported view widget";
-    }
-}
-
-//-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
@@ -124,12 +105,14 @@ void qSlicerSegmentEditorAbstractEffectPrivate::scheduleRender(qMRMLWidget* view
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* parent)
  : Superclass(parent)
+ , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
  , m_Name(QString())
  , m_Active(false)
  , m_PerSegment(true)
  , m_FillValue(1.0)
  , m_EraseValue(0.0)
- , d_ptr(new qSlicerSegmentEditorAbstractEffectPrivate(*this))
+ , m_ShowEffectCursorInSliceView(true)
+ , m_ShowEffectCursorInThreeDView(false)
 {
 }
 
@@ -556,7 +539,7 @@ void qSlicerSegmentEditorAbstractEffect::addActor3D(qMRMLWidget* viewWidget, vtk
   if (renderer)
     {
     renderer->AddViewProp(actor);
-    d->scheduleRender(viewWidget);
+    this->scheduleRender(viewWidget);
     }
   else
     {
@@ -573,7 +556,7 @@ void qSlicerSegmentEditorAbstractEffect::addActor2D(qMRMLWidget* viewWidget, vtk
   if (renderer)
     {
     renderer->AddActor2D(actor);
-    d->scheduleRender(viewWidget);
+    this->scheduleRender(viewWidget);
     }
   else
     {
@@ -590,7 +573,7 @@ void qSlicerSegmentEditorAbstractEffect::removeActor3D(qMRMLWidget* viewWidget, 
   if (renderer)
     {
     renderer->RemoveActor(actor);
-    d->scheduleRender(viewWidget);
+    this->scheduleRender(viewWidget);
     }
   else
     {
@@ -607,7 +590,7 @@ void qSlicerSegmentEditorAbstractEffect::removeActor2D(qMRMLWidget* viewWidget, 
   if (renderer)
     {
     renderer->RemoveActor2D(actor);
-    d->scheduleRender(viewWidget);
+    this->scheduleRender(viewWidget);
     }
   else
     {
@@ -1225,4 +1208,63 @@ QVector3D qSlicerSegmentEditorAbstractEffect::xyToIjk(QPoint xy, qMRMLSliceWidge
   qSlicerSegmentEditorAbstractEffect::xyToIjk(xy, outputIjk, sliceWidget, image);
   QVector3D outputVector(outputIjk[0], outputIjk[1], outputIjk[2]);
   return outputVector;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::forceRender(qMRMLWidget* viewWidget)
+{
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+  if (sliceWidget)
+    {
+    sliceWidget->sliceView()->forceRender();
+    }
+  if (threeDWidget)
+    {
+    threeDWidget->threeDView()->forceRender();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::scheduleRender(qMRMLWidget* viewWidget)
+{
+  qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
+  qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
+  if (sliceWidget)
+    {
+    sliceWidget->sliceView()->scheduleRender();
+    }
+  if (threeDWidget)
+    {
+    threeDWidget->threeDView()->scheduleRender();
+    }
+}
+
+//----------------------------------------------------------------------------
+double qSlicerSegmentEditorAbstractEffect::sliceSpacing(qMRMLSliceWidget* sliceWidget)
+{
+  // Implementation copied from vtkSliceViewInteractorStyle::GetSliceSpacing()
+  vtkMRMLSliceNode *sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
+  double spacing = 1.0;
+  if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+    {
+    spacing = sliceNode->GetPrescribedSliceSpacing()[2];
+    }
+  else
+    {
+    spacing = sliceWidget->sliceLogic()->GetLowestVolumeSliceSpacing()[2];
+    }
+  return spacing;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::showEffectCursorInSliceView()
+{
+  return m_ShowEffectCursorInSliceView;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerSegmentEditorAbstractEffect::showEffectCursorInThreeDView()
+{
+  return m_ShowEffectCursorInThreeDView;
 }

@@ -114,9 +114,6 @@ protected:
 
   double GetSliceSpacing(qMRMLSliceWidget* sliceWidget);
 
-  void forceRender(qMRMLWidget* viewWidget);
-  void scheduleRender(qMRMLWidget* viewWidget);
-
 public slots:
   void onRadiusUnitsClicked();
   void onQuickRadiusButtonClicked();

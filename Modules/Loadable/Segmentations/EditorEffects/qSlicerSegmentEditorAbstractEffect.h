@@ -304,6 +304,9 @@ public:
 
   Q_INVOKABLE vtkOrientedImageData* referenceGeometryImage();
 
+  Q_INVOKABLE bool showEffectCursorInSliceView();
+  Q_INVOKABLE bool showEffectCursorInThreeDView();
+
   /// Get image data of master volume aligned with the modifier labelmap.
   /// \return Pointer to the image data
   Q_INVOKABLE vtkOrientedImageData* masterVolumeImageData();
@@ -347,6 +350,11 @@ public:
   /// Convert XY in-slice position to image IJK position, python accessor method
   Q_INVOKABLE static QVector3D xyToIjk(QPoint xy, qMRMLSliceWidget* sliceWidget, vtkOrientedImageData* image);
 
+  Q_INVOKABLE static void forceRender(qMRMLWidget* viewWidget);
+  Q_INVOKABLE static void scheduleRender(qMRMLWidget* viewWidget);
+
+  Q_INVOKABLE static double sliceSpacing(qMRMLSliceWidget* sliceWidget);
+
 protected:
   /// Name of the effect
   QString m_Name;
@@ -357,6 +365,9 @@ protected:
   /// of modifier labelmap, but it is set to empty in the parameter set node.
   /// True by default.
   bool m_PerSegment;
+
+  bool m_ShowEffectCursorInSliceView;
+  bool m_ShowEffectCursorInThreeDView;
 
   double m_FillValue;
   double m_EraseValue;

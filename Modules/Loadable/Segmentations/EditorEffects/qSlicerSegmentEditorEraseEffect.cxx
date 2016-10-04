@@ -56,6 +56,7 @@ qSlicerSegmentEditorEraseEffect::qSlicerSegmentEditorEraseEffect(QObject* parent
 {
   this->m_Name = QString("Erase");
   this->m_Erase = true;
+  this->m_ShowEffectCursorInThreeDView = true;
 }
 
 //----------------------------------------------------------------------------

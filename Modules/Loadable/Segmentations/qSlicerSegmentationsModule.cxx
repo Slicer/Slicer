@@ -40,7 +40,7 @@
 // Segment editor effects includes
 #include "qSlicerSegmentEditorEffectFactory.h"
 #include "qSlicerSegmentEditorPaintEffect.h"
-#include "qSlicerSegmentEditorRectangleEffect.h"
+#include "qSlicerSegmentEditorScissorsEffect.h"
 #include "qSlicerSegmentEditorEraseEffect.h"
 
 // Subject Hierarchy includes
@@ -162,7 +162,7 @@ void qSlicerSegmentationsModule::setup()
   // C++ effects
   qSlicerSegmentEditorEffectFactory::instance()->registerEffect(new qSlicerSegmentEditorPaintEffect());
   qSlicerSegmentEditorEffectFactory::instance()->registerEffect(new qSlicerSegmentEditorEraseEffect());
-  qSlicerSegmentEditorEffectFactory::instance()->registerEffect(new qSlicerSegmentEditorRectangleEffect());
+  qSlicerSegmentEditorEffectFactory::instance()->registerEffect(new qSlicerSegmentEditorScissorsEffect());
   // Python effects
   // (otherwise it would be the responsibility of the module that embeds the segment editor widget)
   PythonQt::init();
