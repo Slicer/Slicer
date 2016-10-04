@@ -63,39 +63,12 @@ endif()
 # --------------------------------------------------------------------------
 set(vtkTeem_SRCS
   vtkDiffusionTensorMathematics.cxx
-  vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
-  vtkPolyDataTensorToColor.cxx
-  vtkPolyDataColorLinesByOrientation.cxx
-  vtkBSplineInterpolateImageFunction.cxx
-  vtkHyperPointandArray.cxx
-  vtkHyperStreamlineDTMRI.cxx
-  vtkHyperStreamlineTeem.cxx
   vtkNRRDReader.cxx
   vtkNRRDWriter.cxx
-  vtkPreciseHyperStreamline.cxx
-  vtkPreciseHyperStreamlinePoints.cxx
-  vtkSeedTracts.cxx
-  vtkTensorImplicitFunctionToFunctionSet.cxx
-  vtkTractographyPointAndArray.cxx
-  vtkTensorMask.cxx
-  vtkTensorRotate.cxx
   vtkImageLabelCombine.cxx
   )
 
-# Abstract/pure virtual classes
-
-#set_source_files_properties(
-#  ABSTRACT
-#  )
-
-# Helper classes
-
-set_source_files_properties(
-  vtkHyperPointandArray.cxx
-  vtkTractographyPointAndArray.cxx
-  WRAP_EXCLUDE
-  )
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
