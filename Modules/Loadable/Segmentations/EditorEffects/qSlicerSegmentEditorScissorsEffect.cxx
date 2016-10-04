@@ -48,6 +48,7 @@
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkVector.h>
@@ -74,30 +75,39 @@ public:
   ScissorsPipeline()
     {
     this->IsDragging = false;
-    this->PolyData = vtkPolyData::New();
-    this->Mapper = vtkPolyDataMapper2D::New();
+    this->PolyData = vtkSmartPointer<vtkPolyData>::New();
+    this->Mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
     this->Mapper->SetInputData(this->PolyData);
-    this->Actor = vtkActor2D::New();
+    this->Actor = vtkSmartPointer<vtkActor2D>::New();
     this->Actor->SetMapper(this->Mapper);
     this->Actor->VisibilityOff();
     vtkProperty2D* outlineProperty = this->Actor->GetProperty();
     outlineProperty->SetColor(1,1,0);
-    outlineProperty->SetLineWidth(1);
+    outlineProperty->SetLineWidth(2);
+
+    this->PolyDataThin = vtkSmartPointer<vtkPolyData>::New();
+    this->MapperThin = vtkSmartPointer<vtkPolyDataMapper2D>::New();
+    this->MapperThin->SetInputData(this->PolyDataThin);
+    this->ActorThin = vtkSmartPointer<vtkActor2D>::New();
+    this->ActorThin->SetMapper(this->MapperThin);
+    this->ActorThin->VisibilityOff();
+    vtkProperty2D* outlinePropertyThin = this->ActorThin->GetProperty();
+    // Make the line a bit thinner and darker to distinguish from the thick line
+    outlinePropertyThin->SetColor(0.7, 0.7, 0);
+    outlinePropertyThin->SetLineStipplePattern(0xff00); // Note: line stipple may not be supported in VTK OpenGL2 backend
+    outlinePropertyThin->SetLineWidth(1);
     };
   ~ScissorsPipeline()
     {
-    this->Actor->Delete();
-    this->Actor = NULL;
-    this->Mapper->Delete();
-    this->Mapper = NULL;
-    this->PolyData->Delete();
-    this->PolyData = NULL;
     };
 public:
   bool IsDragging;
-  vtkActor2D* Actor;
-  vtkPolyDataMapper2D* Mapper;
-  vtkPolyData* PolyData;
+  vtkSmartPointer<vtkActor2D> Actor;
+  vtkSmartPointer<vtkPolyDataMapper2D> Mapper;
+  vtkSmartPointer<vtkPolyData> PolyData;
+  vtkSmartPointer<vtkActor2D> ActorThin;
+  vtkSmartPointer<vtkPolyDataMapper2D> MapperThin;
+  vtkSmartPointer<vtkPolyData> PolyDataThin;
 };
 
 //-----------------------------------------------------------------------------
@@ -210,6 +220,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::clearScissorsPipelines()
     qMRMLWidget* viewWidget = it.key();
     ScissorsPipeline* pipeline = it.value();
     q->removeActor2D(viewWidget, pipeline->Actor);
+    q->removeActor2D(viewWidget, pipeline->ActorThin);
     delete pipeline;
     }
   this->ScissorsPipelines.clear();
@@ -238,6 +249,7 @@ ScissorsPipeline* qSlicerSegmentEditorScissorsEffectPrivate::scissorsPipelineFor
   else
     {
     q->addActor2D(viewWidget, pipeline->Actor);
+    q->addActor2D(viewWidget, pipeline->ActorThin);
     }
 
   this->ScissorsPipelines[viewWidget] = pipeline;
@@ -265,6 +277,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pi
     this->DragStartPosition = eventPosition;
 
     pipeline->PolyData->Initialize();
+    pipeline->PolyDataThin->Initialize();
 
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
@@ -291,13 +304,33 @@ void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pi
         }
       }
 
-    if (this->shape() != ShapeFreeForm)
+    // Make the last line in the polydata (connects first and last point)
+    // Free-form shape uses a separate actor to show it with a thinner line
+    if (this->shape() == ShapeFreeForm)
       {
-      // Make the last line in the polydata
+      // pipeline->PolyDataThin contains the thin closing line (from the first to last point)
+      vtkSmartPointer<vtkPoints> pointsThin = vtkSmartPointer<vtkPoints>::New();
+      vtkSmartPointer<vtkCellArray> linesThin = vtkSmartPointer<vtkCellArray>::New();
+      pipeline->PolyDataThin->SetPoints(pointsThin);
+      pipeline->PolyDataThin->SetLines(linesThin);
+
+      pointsThin->InsertNextPoint(eventPosition[0], eventPosition[1], 0.0);
+      pointsThin->InsertNextPoint(eventPosition[0], eventPosition[1], 0.0);
+
+      vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+      idList->InsertNextId(0);
+      idList->InsertNextId(1);
+      pipeline->PolyDataThin->InsertNextCell(VTK_LINE, idList);
+
+      pipeline->ActorThin->VisibilityOn();
+      }
+    else
+      {
       vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
       idList->InsertNextId(pointIndex);
       idList->InsertNextId(firstPointIndex);
       pipeline->PolyData->InsertNextCell(VTK_LINE, idList);
+      pipeline->ActorThin->VisibilityOff();
       }
 
     pipeline->Actor->VisibilityOn();
@@ -305,6 +338,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::createGlyph(ScissorsPipeline* pi
   else
     {
     pipeline->Actor->VisibilityOff();
+    pipeline->ActorThin->VisibilityOff();
     }
 }
 
@@ -327,6 +361,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
         points->SetPoint(1, this->DragStartPosition[0], eventPosition[1], 0.0);
         points->SetPoint(2, eventPosition[0], eventPosition[1], 0.0);
         points->SetPoint(3, eventPosition[0], this->DragStartPosition[1], 0.0);
+        points->Modified();
         break;
         }
       case ShapeCircle:
@@ -344,6 +379,7 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
           double angle = 2.0 * vtkMath::Pi() * i / double(numberOfPoints);
           points->SetPoint(i, this->DragStartPosition[0] + radius * sin(angle), this->DragStartPosition[1] + radius * cos(angle), 0.0);
           }
+        points->Modified();
         break;
         }
       case ShapeFreeForm:
@@ -366,14 +402,17 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
           idList->InsertNextId(newPointId);
           }
         pipeline->PolyData->InsertNextCell(VTK_LINE, idList);
+        points->Modified();
+        pipeline->PolyDataThin->GetPoints()->SetPoint(1, eventPosition[0], eventPosition[1], 0.0);
+        pipeline->PolyDataThin->GetPoints()->Modified();
         break;
         }
       }
-    pipeline->Actor->VisibilityOn();
     }
   else
     {
     pipeline->Actor->VisibilityOff();
+    pipeline->ActorThin->VisibilityOff();
     }
 }
 //-----------------------------------------------------------------------------
