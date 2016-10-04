@@ -40,12 +40,15 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     self.methodSelectorComboBox.addItem("Closing (fill holes)", MORPHOLOGICAL_CLOSING)
     self.methodSelectorComboBox.addItem("Gaussian", GAUSSIAN)
     self.methodSelectorComboBox.addItem("Joint smoothing", JOINT_TAUBIN)
+    self.methodSelectorComboBox.addItem("Interpolation", MORPHOLOGICAL_INTERPOLATION)
     self.methodSelectorComboBox.setToolTip("""<html>Smoothing methods:<ul style="margin: 0">
 <li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged.</li>
 <li><b>Opening:</b> removes extrusions smaller than the specified kernel size.</li>
 <li><b>Closing:</b> fills sharp corners and holes smaller than the specified kernel size.</li>
 <li><b>Gaussian:</b> smoothes all contours, tends to shrink the segment.</li>
 <li><b>Joint smoothing:</b> smoothes all visible segments at once. It requires segments to be non-overlapping. Bypasses masking settings.</li>
+<li><b>Interpolation:</b> creates a complete segmentation from segmentation on a sparse set of slices
+(see http://insight-journal.org/browse/publication/977).</li>
 </ul></html>""")
     self.scriptedEffect.addLabeledOptionsWidget("Smoothing method:", self.methodSelectorComboBox)
 
@@ -215,6 +218,13 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
         thresh2.Update()
         modifierLabelmap.DeepCopy(thresh2.GetOutput())
 
+      elif smoothingMethod == MORPHOLOGICAL_INTERPOLATION:
+        import vtkITK
+        interpolator = vtkITK.vtkITKMorphologicalContourInterpolator()
+        interpolator.SetInputData(selectedSegmentLabelmap)
+        interpolator.Update()
+        modifierLabelmap.DeepCopy(interpolator.GetOutput())
+
       else:
         # size rounded to nearest odd number. If kernel size is even then image gets shifted.
         kernelSizePixel = self.getKernelSizePixel()
@@ -354,3 +364,4 @@ GAUSSIAN = 'GAUSSIAN'
 MORPHOLOGICAL_OPENING = 'MORPHOLOGICAL_OPENING'
 MORPHOLOGICAL_CLOSING = 'MORPHOLOGICAL_CLOSING'
 JOINT_TAUBIN = 'JOINT_TAUBIN'
+MORPHOLOGICAL_INTERPOLATION = 'MORPHOLOGICAL_INTERPOLATION'
