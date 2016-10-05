@@ -5,6 +5,7 @@ set(qtmodules
   AtlasCreator
   Cameras
   Units
+  Terminologies
   Colors
   SubjectHierarchy
   Transforms
@@ -14,7 +15,6 @@ set(qtmodules
   Markups
   #Measurements
   Models
-  #FiberBundles
   SceneViews
   Segmentations
   SlicerWelcome
