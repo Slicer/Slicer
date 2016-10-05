@@ -78,14 +78,15 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     allfiles = []
     for files in fileLists:
       loadables += self.examineFiles(files)
+
+      # this strategy sorts the files into groups
+      loadables += self.examineFilesIPPAcqTime(files)
+
       allfiles += files
 
     # here all files are lumped into one list for the situations when
     # individual frames should be parsed from series
     loadables += self.examineFilesMultiseries(allfiles)
-
-    # this strategy sorts the files into groups
-    loadables += self.examineFilesIPPAcqTime(allfiles)
 
     # this strategy sorts the files into groups
     loadables += self.examineFilesIPPInstanceNumber(allfiles)
