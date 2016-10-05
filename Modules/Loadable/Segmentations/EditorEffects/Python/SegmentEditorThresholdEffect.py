@@ -110,7 +110,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
       if (self.scriptedEffect.doubleParameter("MinimumThreshold") == self.scriptedEffect.doubleParameter("MaximumThreshold")):
         # has not been initialized yet
         self.scriptedEffect.setParameter("MinimumThreshold", lo+(hi-lo)*0.25)
-        self.scriptedEffect.setParameter("MaximumThreshold", lo+(hi-lo)*0.75)
+        self.scriptedEffect.setParameter("MaximumThreshold", hi)
 
   def layoutChanged(self):
     self.setupPreviewDisplay()
