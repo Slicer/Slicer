@@ -788,7 +788,17 @@ void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedI
   // Get input image properties
   vtkSmartPointer<vtkMatrix4x4> imageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   image->GetImageToWorldMatrix(imageToWorldMatrix);
-  int* imageExtent = image->GetExtent();
+  int* imageExtentCenter = image->GetExtent();
+  // Add 0.5 to image extents to contain voxel corners
+  double imageExtent[6] =
+    {
+    static_cast<double>(imageExtent[0]) - 0.5,
+    static_cast<double>(imageExtent[1]) + 0.5,
+    static_cast<double>(imageExtent[2]) - 0.5,
+    static_cast<double>(imageExtent[3]) + 0.5,
+    static_cast<double>(imageExtent[4]) - 0.5,
+    static_cast<double>(imageExtent[5]) + 0.5
+    };
 
   // Append transformed side planes poly data to one model and get bounds
   vtkNew<vtkAppendPolyData> appendPolyData;
@@ -796,9 +806,9 @@ void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedI
     {
     int normalAxis = i/2; // Axis along which the plane is constant
     double currentPlaneOriginImage[4] = {
-      static_cast<double>(imageExtent[0]),
-      static_cast<double>(imageExtent[2]),
-      static_cast<double>(imageExtent[4]),
+      imageExtent[0],
+      imageExtent[2],
+      imageExtent[4],
       1.0};
     currentPlaneOriginImage[normalAxis] += (imageExtent[i] - imageExtent[normalAxis*2]);
     double currentPlaneOriginWorld[4] = {0.0, 0.0, 0.0, 1.0};

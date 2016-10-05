@@ -66,6 +66,7 @@ public:
   virtual void DeepCopyMetadata(vtkSegment* source);
 
   /// Get bounding box in global RAS in the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  /// For image data bound is computed for the voxel corner points (not voxel center points).
   virtual void GetBounds(double bounds[6]);
 
   /// Utility function to get extended bounds

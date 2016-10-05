@@ -345,6 +345,11 @@ void vtkOrientedImageData::ComputeBounds()
           static_cast<double>(extent[4+zSide]),
           1.0 };
 
+        // Use voxel corner as boundary, not voxel center:
+        cornerPointIJK[0] += (xSide == 0 ? -0.5 : 0.5);
+        cornerPointIJK[1] += (ySide == 0 ? -0.5 : 0.5);
+        cornerPointIJK[2] += (zSide == 0 ? -0.5 : 0.5);
+
         // Transform IJK coordinate to get the world coordinate
         double cornerPointWorld[4] = {0.0,0.0,0.0,0.0};
         geometryMatrix->MultiplyPoint(cornerPointIJK, cornerPointWorld);
