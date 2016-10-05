@@ -120,7 +120,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
 
     // Option to prefer executable CLIs to limit memory consumption.
     bool preferExecutableCLIs =
-      app->userSettings()->value("Modules/PreferExecutableCLI", false).toBool();
+      app->userSettings()->value("Modules/PreferExecutableCLI", Slicer_CLI_PREFER_EXECUTABLE_DEFAULT).toBool();
 
     qSlicerCLILoadableModuleFactory* cliLoadableFactory = new qSlicerCLILoadableModuleFactory();
     cliLoadableFactory->setTempDirectory(tempDirectory);

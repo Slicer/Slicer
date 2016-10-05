@@ -73,6 +73,8 @@
 #define Slicer_CLIMODULES_LIB_DIR "@Slicer_CLIMODULES_LIB_DIR@"
 #define Slicer_CLIMODULES_SHARE_DIR "@Slicer_CLIMODULES_SHARE_DIR@"
 
+#define Slicer_CLI_PREFER_EXECUTABLE_DEFAULT true
+
 #cmakedefine Slicer_USE_PYTHONQT
 #ifdef Slicer_USE_PYTHONQT
 #  define Slicer_PYTHON_VERSION_DOT "@Slicer_PYTHON_VERSION_DOT@"

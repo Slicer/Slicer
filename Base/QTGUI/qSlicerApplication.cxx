@@ -921,7 +921,7 @@ void qSlicerApplication::logApplicationInformation() const
          developerModeEnabled ? "yes" : "no");
 
   // Prefer executable CLI
-  bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", false).toBool();
+  bool preferExecutableCli = settings.value("Modules/PreferExecutableCLI", Slicer_CLI_PREFER_EXECUTABLE_DEFAULT).toBool();
   qDebug("%s: %s",
          qPrintable(titles.at(6).leftJustified(titleWidth, '.')),
          preferExecutableCli ? "yes" : "no");
