@@ -93,3 +93,12 @@ mark_as_superbuild(
   VARS ${proj}_LIBRARY:PATH
   LABELS "FIND_PACKAGE"
   )
+# JsonCpp is a project built using CMake. JsconCpp_DIR ensures the install
+# rules will be used to create the Slicer package. However because JsonCpp
+# doesn't provide a JsonCppConfig.cmake, it is not yet associated with the
+# "FIND_PACKAGE" label.
+# Instead the variables JsonCpp_INCLUDE_DIR and JsonCpp_LIBRARY are
+# expected to be set to ensure FindJsonCpp.cmake finds everything.
+mark_as_superbuild(
+  VARS ${proj}_DIR:PATH
+  )
