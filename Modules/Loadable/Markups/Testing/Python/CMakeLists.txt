@@ -17,14 +17,6 @@ slicer_add_python_test(SCRIPT MarkupsSceneViewRestoreTestSimple.py
 slicer_add_python_test(SCRIPT MarkupsSceneViewRestoreTestManyLists.py
                        SLICER_ARGS --disable-cli-modules)
 
-# Test fiducials in the neurosurgical planning tutorial
-slicerMacroBuildScriptedModule(
-  NAME NeurosurgicalPlanningTutorialMarkupsSelfTest
-  SCRIPTS NeurosurgicalPlanningTutorialMarkupsSelfTest.py
-  RESOURCES ${MARKUPS_PYTHON_RESOURCES}
-  )
-slicer_add_python_unittest(SCRIPT NeurosurgicalPlanningTutorialMarkupsSelfTest.py)
-
 # Test fiducials in compare viewers
 slicerMacroBuildScriptedModule(
   NAME MarkupsInCompareViewersSelfTest
