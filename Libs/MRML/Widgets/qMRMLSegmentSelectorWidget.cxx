@@ -408,6 +408,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
       }
     }
   d->CheckableComboBox_Segment->blockSignals(wasBlocked);
+  d->CheckableComboBox_Segment->repaint();
 }
 
 //--------------------------------------------------------------------------
