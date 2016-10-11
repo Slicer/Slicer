@@ -528,6 +528,7 @@ set(Slicer_VTK_COMPONENTS
   vtkFiltersGeometry
   vtkGUISupportQtOpenGL
   vtkGUISupportQtSQL
+  vtkIOExport
   vtkIOImage
   vtkIOLegacy
   vtkIOPLY

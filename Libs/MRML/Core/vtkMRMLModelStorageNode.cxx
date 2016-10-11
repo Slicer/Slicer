@@ -18,16 +18,22 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkActor.h>
 #include <vtkBYUReader.h>
 #include <vtkCellArray.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkOBJReader.h>
+#include <vtkOBJExporter.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkProperty.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
 #include <vtkSTLReader.h>
 #include <vtkSTLWriter.h>
 #include <vtkStringArray.h>
@@ -373,6 +379,42 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       result = 0;
       }
     }
+  else if (extension == ".obj")
+    {
+    vtkNew<vtkPolyDataMapper> mapper;
+    mapper->SetInputConnection(modelNode->GetPolyDataConnection());
+    vtkNew<vtkActor> actor;
+    actor->SetMapper(mapper.GetPointer());
+    vtkMRMLDisplayNode* displayNode = modelNode->GetDisplayNode();
+    if (displayNode)
+      {
+      actor->GetProperty()->SetColor(displayNode->GetColor());
+      actor->GetProperty()->SetOpacity(displayNode->GetOpacity());
+      }
+    vtkNew<vtkRenderer> renderer;
+    renderer->AddActor(actor.GetPointer());
+    vtkNew<vtkRenderWindow> renderWindow;
+    renderWindow->AddRenderer(renderer.GetPointer());
+    vtkNew<vtkOBJExporter> exporter;
+    exporter->SetRenderWindow(renderWindow.GetPointer());
+    std::string fullNameWithoutExtension = fullName;
+    if (fullNameWithoutExtension.size() > 4)
+      {
+      fullNameWithoutExtension.erase(fullNameWithoutExtension.size() - 4);
+      }
+    exporter->SetFilePrefix(fullNameWithoutExtension.c_str());
+    try
+      {
+      exporter->Write();
+      this->ResetFileNameList();
+      std::string materialFileName = fullNameWithoutExtension + ".mtl";
+      this->AddFileName(materialFileName.c_str());
+      }
+    catch (...)
+      {
+      result = 0;
+      }
+    }
   else
     {
     result = 0;
@@ -402,9 +444,9 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
   // SupportedFileType() says they are supported
   this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
   this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");
-  //
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
   this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
   this->SupportedWriteFileTypes->InsertNextValue("PLY (.ply)");
+  this->SupportedWriteFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
 }
