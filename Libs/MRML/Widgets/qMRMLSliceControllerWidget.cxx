@@ -813,6 +813,17 @@ void qMRMLSliceControllerWidgetPrivate::enableLayerWidgets()
 void qMRMLSliceControllerWidgetPrivate::updateFromMRMLScene()
 {
   this->updateWidgetFromMRMLSliceCompositeNode();
+
+  // If there are any segmentation nodes in the scene and selection is None, then select the first one
+  Q_Q(qMRMLSliceControllerWidget);
+  if (!this->SegmentSelectorWidget->currentNode())
+    {
+    vtkMRMLNode* firstSegmentationNode = q->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLSegmentationNode");
+    if (firstSegmentationNode)
+      {
+      this->SegmentSelectorWidget->setCurrentNode(firstSegmentationNode);
+      }
+    }
 }
 
 // --------------------------------------------------------------------------

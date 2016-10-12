@@ -249,6 +249,9 @@
      <property name="horizontalLayout" stdset="0">
       <bool>true</bool>
      </property>
+     <property name="selectNodeUponCreation" stdset="0">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="4" column="2">

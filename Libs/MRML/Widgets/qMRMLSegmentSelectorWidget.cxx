@@ -516,3 +516,17 @@ void qMRMLSegmentSelectorWidget::setHorizontalLayout(bool horizontal)
     d->CheckableComboBox_Segment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 }
+
+//--------------------------------------------------------------------------
+bool qMRMLSegmentSelectorWidget::selectNodeUponCreation()const
+{
+  Q_D(const qMRMLSegmentSelectorWidget);
+  return d->MRMLNodeComboBox_Segmentation->selectNodeUponCreation();
+}
+
+//--------------------------------------------------------------------------
+void qMRMLSegmentSelectorWidget::setSelectNodeUponCreation(bool value)
+{
+  Q_D(qMRMLSegmentSelectorWidget);
+  d->MRMLNodeComboBox_Segmentation->setSelectNodeUponCreation(value);
+}

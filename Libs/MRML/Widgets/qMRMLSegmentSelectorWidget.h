@@ -51,6 +51,7 @@ public:
   Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
   Q_PROPERTY(bool horizontalLayout READ horizontalLayout WRITE setHorizontalLayout)
+  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
 
 public:
   /// Superclass typedef
@@ -107,6 +108,12 @@ public:
   /// Set whether the widget layout is horizontal (everything in one row) or vertical. False by default
   /// \sa horizontalLayout, horizontalLayout()
   void setHorizontalLayout(bool horizontal);
+
+  /// if true, when the user create a node using "Add node", the node will be
+  /// automatically selected. It doesn't apply if the node is programatically
+  /// added (when the combobox is populated by the scene).
+  bool selectNodeUponCreation()const;
+  void setSelectNodeUponCreation(bool value);
 
 public slots:
   /// Set segmentation MRML node
