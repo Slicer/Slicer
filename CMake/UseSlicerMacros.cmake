@@ -47,11 +47,14 @@ endfunction()
 # If the variable is not defined, it will display:
 #   "-- Setting <varname> ........: <NOT DEFINED>"
 #
-# If the optional argument 'SKIP_TRUNCATE' is provided, the
+# If the option 'SKIP_TRUNCATE' is provided, the
 # text will NOT be truncated it too long.
 #
-# If the optional argument 'OBFUSCATE' is provided, 'OBFUSCATED' will
+# If the option 'OBFUSCATE' is provided, 'OBFUSCATED' will
 # be displayed instead of the variable value.
+#
+# If the optional argument `PRETEXT <pretext>` is provided,
+# `<pretext` will be displaying instead of `Setting <varname>`.
 #
 # In the current implementation, the padding is hardcoded to a length of 40
 # and the total text will be truncated if longer than 120 characters.
@@ -69,7 +72,7 @@ endfunction()
 include(CMakeParseArguments)
 function(slicer_setting_variable_message varname)
   set(options      OBFUSCATE SKIP_TRUNCATE)
-  set(oneValueArgs )
+  set(oneValueArgs PRETEXT)
   set(multiValueArgs )
   CMAKE_PARSE_ARGUMENTS(LOCAL
     "${options}"
@@ -82,6 +85,12 @@ function(slicer_setting_variable_message varname)
     set(truncate FALSE)
     endif()
   set(obfuscate ${LOCAL_OBFUSCATE})
+
+  set(pretext "Setting ${varname}")
+  if(DEFINED LOCAL_PRETEXT)
+    set(pretext ${LOCAL_PRETEXT})
+  endif()
+
   set(pretext_right_jusitfy_length 45)
   set(fill_char ".")
   set(truncated_text_length 120)
@@ -96,7 +105,6 @@ function(slicer_setting_variable_message varname)
     set(_value "OBFUSCATED")
   endif()
 
-  set(pretext "Setting ${varname}")
   string(LENGTH ${pretext} pretext_length)
   math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length} - 1")
   if(pad_length GREATER 0)
@@ -144,6 +152,11 @@ function(slicer_setting_variable_message_test)
 
   set(YOU_SHOULD_NOT_SEE_THE_VALUE "You should not see this")
   slicer_setting_variable_message("YOU_SHOULD_NOT_SEE_THE_VALUE" OBFUSCATE)
+
+  set(YOU_SHOULD_SEE_DIFFERENT_PRETEXT "good")
+  slicer_setting_variable_message(
+    "YOU_SHOULD_SEE_DIFFERENT_PRETEXT"
+    PRETEXT "This is different pretext")
 
   message("SUCCESS")
 endfunction()
