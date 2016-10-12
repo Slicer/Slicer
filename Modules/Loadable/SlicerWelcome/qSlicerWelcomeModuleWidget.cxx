@@ -19,11 +19,13 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QDesktopServices>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QSettings>
 #include <QSignalMapper>
+#include <QTextStream>
 
 // Slicer includes
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT
@@ -39,6 +41,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerModulePanel.h"
+#include "qSlicerUtils.h"
 
 // CTK includes
 #include "ctkButtonGroup.h"
@@ -93,14 +96,14 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Lazily set the fitted browser source to avoid overhead when the module
   // is loaded.
-  this->FeedbackCollapsibleWidget->setProperty("source", "qrc:HTML/Feedback.html");
-  this->WelcomeAndAboutCollapsibleWidget->setProperty("source", "qrc:HTML/About.html");
-  this->OverviewCollapsibleWidget->setProperty("source", "qrc:HTML/Overview.html");
-  this->LoadingScenesAndDataCollapsibleWidget->setProperty("source", "qrc:HTML/LoadingScenesAndData.html");
-  this->AdjustingDataDisplayCollapsibleWidget->setProperty("source", "qrc:HTML/AdjustingDataDisplay.html");
-  this->MouseModesCollapsibleWidget->setProperty("source", "qrc:HTML/MouseModes.html");
-  this->OtherUsefulHintsCollapsibleWidget->setProperty("source", "qrc:HTML/OtherUsefulHints.html");
-  this->AcknowledgmentCollapsibleWidget->setProperty("source", "qrc:HTML/Acknowledgment.html");
+  this->FeedbackCollapsibleWidget->setProperty("source", ":HTML/Feedback.html");
+  this->WelcomeAndAboutCollapsibleWidget->setProperty("source", ":HTML/About.html");
+  this->OverviewCollapsibleWidget->setProperty("source", ":HTML/Overview.html");
+  this->LoadingScenesAndDataCollapsibleWidget->setProperty("source", ":HTML/LoadingScenesAndData.html");
+  this->AdjustingDataDisplayCollapsibleWidget->setProperty("source", ":HTML/AdjustingDataDisplay.html");
+  this->MouseModesCollapsibleWidget->setProperty("source", ":HTML/MouseModes.html");
+  this->OtherUsefulHintsCollapsibleWidget->setProperty("source", ":HTML/OtherUsefulHints.html");
+  this->AcknowledgmentCollapsibleWidget->setProperty("source", ":HTML/Acknowledgment.html");
 
   foreach(QWidget* widget, QWidgetList()
           << this->FeedbackCollapsibleWidget
@@ -131,7 +134,29 @@ void qSlicerWelcomeModuleWidget::loadSource(QWidget* widget)
   Q_ASSERT(fittedTextBrowser);
   if (fittedTextBrowser->source().isEmpty())
     {
-    fittedTextBrowser->setSource(widget->property("source").toString());
+    // Read content
+    QString url = widget->property("source").toString();
+    QFile source(url);
+    if(!source.open(QIODevice::ReadOnly))
+      {
+      qWarning() << Q_FUNC_INFO << ": Failed to read" << url;
+      return;
+      }
+    QTextStream in(&source);
+    QString html = in.readAll();
+    source.close();
+
+    qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+
+    // Update occurences of wiki URLs
+    QString wikiVersion = "Nightly";
+    if (app->isRelease())
+      {
+      wikiVersion = QString("%1.%2").arg(app->majorVersion()).arg(app->minorVersion());
+      }
+    html = qSlicerUtils::replaceWikiUrlVersion(html, wikiVersion);
+
+    fittedTextBrowser->setHtml(html);
     }
 }
 
