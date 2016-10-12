@@ -87,7 +87,8 @@ public:
 
   /// Assemble and return info string to display in Data probe for a given viewer XYZ position.
   /// \return Invalid string by default, meaning no information to display.
-  virtual std::string GetDataProbeInfoStringForPosition(double xyz[3]) { return ""; };
+  virtual std::string GetDataProbeInfoStringForPosition(
+      double vtkNotUsed(xyz)[3]) { return ""; }
 
 protected:
 
