@@ -41,13 +41,6 @@ public:
   void setupUi(qSlicerWidget* widget);
 
   bool HelpAndAcknowledgmentVisible;
-  /*
-  QTextBrowser*          HelpLabel;
-  //QWebView*              HelpLabel;
-  QBoxLayout*            Layout;
-  QScrollArea*           ScrollArea;
-  ctkCollapsibleButton* HelpCollapsibleButton;
-  */
 };
 
 //---------------------------------------------------------------------------
