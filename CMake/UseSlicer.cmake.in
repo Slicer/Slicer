@@ -393,10 +393,9 @@ if(NOT Slicer_DONT_USE_EXTENSION)
   slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL" OBFUSCATE)
   slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY" OBFUSCATE)
 
-  set(optional_vars HOMEPAGE CATEGORY ICONURL CONTRIBUTORS DESCRIPTION
-                    SCREENSHOTURLS DEPENDS LICENSE_FILE README_FILE
-                    )
-  foreach(var ${optional_vars})
+  include(SlicerExtensionDescriptionSpec)
+
+  foreach(var IN LISTS Slicer_EXT_OPTIONAL_METADATA_NAMES)
     slicer_setting_variable_message(EXTENSION_${var})
   endforeach()
 
