@@ -21,6 +21,10 @@ _server = None
 _midas_token = 'TestTokenWithExpectedLengthxxxxxxxxxxxxx'
 _requests = []
 
+_midas_upload_query_data = {}
+"""Keep track of Midas upload query parameters for each submitted Extension.
+"""
+
 def get_cmakecache_values(file_path, variables):
   result = dict.fromkeys(variables)
   with open(file_path) as cmakecache:
@@ -131,6 +135,13 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
       response_type = "application/json"
       query_data = parse_qs(urlparse(self.path).query)
       if query_data['method'][0] == 'midas.slicerpackages.extension.upload':
+
+        extension_name = query_data['productname'][0]
+
+        # Keep track of method parameters
+        global _midas_upload_query_data
+        _midas_upload_query_data[extension_name] = query_data
+
         # Send back extension data
         response_data = {
           'stat': 'ok',
@@ -138,7 +149,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
           'message': '',
           'data': {
             'extension': {
-              'productname': query_data['productname'][0]
+              'productname': extension_name
               # XXX Real server sends back all properties of extension DAO
             }
           }
@@ -223,6 +234,20 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
     if _server:
       _server.stop()
 
+  def _remove_matching_lines(self, filepath, patterns=[]):
+    """Given an input ``filepath`` and a list of ``patterns``, this function
+    will update the file in place removing all lines matching any of the
+    listed ``patterns``.
+    """
+    updated_content = []
+    with open(filepath) as content:
+      for line in content:
+        if any([pattern in line for pattern in patterns]):
+          continue
+        updated_content.append(line)
+    with open(filepath, 'w') as output:
+      output.write("".join(updated_content))
+
   def _prepare_test_binary_dir(self, test_binary_dir):
 
     # Remove binary directory
@@ -273,6 +298,29 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         )
       with open(extension_description_dir + '/TestExt%s.s4ext' % suffix, 'w') as description_file:
         description_file.write(description)
+
+      if suffix == 'A':
+        #
+        # Strip all optional metadata from Extension A. This allows to check
+        # that the full process can effectively succeed without them.
+        # See issue #4276
+        #
+        # Extension A is chosen because it has no dependency. This mean we
+        # can even strip the DEPENDS option.
+        #
+        # Finally, note this is done after generating the description file
+        # because the ExtensionWizard currently expects them to be set.
+        #
+        # The list of optional metadata has been copied from
+        # SlicerExtensionDescriptionSpec.cmake CMake module.
+        #
+        patterns = ['EXTENSION_' + pattern for pattern in [
+          'SVNUSERNAME', 'SVNPASSWORD', 'DEPENDS', 'BUILD_SUBDIRECTORY',
+          'HOMEPAGE', 'CONTRIBUTORS', 'CATEGORY', 'ICONURL',
+          'DESCRIPTION', 'SCREENSHOTURLS', 'ENABLED', 'STATUS'
+          ]]
+        extension_dir = test_binary_dir + '/TestExt%s' % suffix
+        self._remove_matching_lines(extension_dir + '/CMakeLists.txt', patterns)
 
   def test_index_build_with_upload(self):
     self._test_index_build('build_with_upload', True)
@@ -394,6 +442,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
     # Check
     self._check_caches(test_binary_dir + '/S-E')
     self._check_queries(test_upload, with_ctest=True)
+    self._check_midas_upload_query_parameters(test_upload, with_ctest=True)
 
   def _test_index_build(self, test_name, test_upload):
 
@@ -450,6 +499,7 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
     # Check
     self._check_caches(test_binary_dir)
     self._check_queries(test_upload, with_ctest=False)
+    self._check_midas_upload_query_parameters(test_upload, with_ctest=False)
 
   def _check_caches(self, test_binary_dir):
 
@@ -553,3 +603,65 @@ include({slicer_source_dir}/Extensions/CMake/SlicerExtensionsDashboardDriverScri
         # Upload top-level build results and notes to CDash
         check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Build\.xml')
         check_cdash_request(parse_request(requests.next()), 'PUT', r'.+Notes\.xml')
+
+  def _check_midas_upload_query_parameters(self, test_upload, with_ctest=False):
+    if not test_upload:
+      for extensionName in ['TestExtA', 'TestExtB', 'TestExtC']:
+        self.assertTrue(extensionName not in _midas_upload_query_data)
+
+    else:
+
+      def _expected_parameters(extensionName):
+        expected = {
+          'arch': ['amd64'],
+          'codebase': ['Slicer4'],
+          'method': ['midas.slicerpackages.extension.upload'],
+          'name': None, # ['25430-linux-amd64-TestExtB-local0-0000-00-00.tar.gz'],
+          'os': None, # ['linux'],
+          'packagetype': ['archive'],
+          'productname': [extensionName],
+          'repository_type': ['local'],
+          'repository_url': ['NA'],
+          'revision': ['0'],
+          'slicer_revision': None, #['25430'],
+          'submissiontype': ['nightly'],
+          'token': ['TestTokenWithExpectedLengthxxxxxxxxxxxxx']
+          }
+        if extensionName != 'TestExtA':
+          expected.update({
+            'category': ['Examples'],
+            'contributors': ['John Doe (AnyWare Corp.)'],
+            'description': ['This is an example of a simple extension'],
+            'enabled': ['1'],
+            'homepage': ['http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/%s' % extensionName],
+            'icon_url': ['http://www.example.com/Slicer/Extensions/%s.png' % extensionName],
+            'screenshots': ['http://www.example.com/Slicer/Extensions/%s/Screenshots/1.png' % extensionName],
+          })
+        else:
+          # XXX We should have a way to get the default value from
+          #     SlicerExtensionDescriptionSpec.cmake
+          # XXX Empty parameter are not sent to the server
+          expected.update({
+            #'category': [''],
+            #'contributors': [''],
+            #'description': [''],
+            'enabled': ['1'],
+            #'homepage': [''],
+            #'icon_url': [''],
+            #'screenshots': [''],
+          })
+        return expected
+
+      for extensionName in ['TestExtA', 'TestExtB', 'TestExtC']:
+        query_data = _midas_upload_query_data[extensionName]
+        expected_query_data = _expected_parameters(extensionName)
+
+        self.assertEqual(sorted(query_data.keys()), sorted(expected_query_data.keys()))
+
+        for key, expected_value in expected_query_data.items():
+          current_value = query_data[key]
+          if expected_value is None:
+            # XXX For now only consider values that do not change with platform
+            # and Slicer revision.
+            continue
+          self.assertEqual(current_value, expected_value)
