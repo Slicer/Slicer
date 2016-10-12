@@ -66,16 +66,22 @@ endfunction()
 #   -- Setting SHORTNAME ........: This is short variable name
 #   -- Setting LONGLONGNAME .....: This is a longer variable name
 #
+include(CMakeParseArguments)
 function(slicer_setting_variable_message varname)
+  set(options      OBFUSCATE SKIP_TRUNCATE)
+  set(oneValueArgs )
+  set(multiValueArgs )
+  CMAKE_PARSE_ARGUMENTS(LOCAL
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+    )
   set(truncate TRUE)
-  set(obfuscate FALSE)
-  foreach(arg ${ARGN})
-    if(arg STREQUAL "SKIP_TRUNCATE")
-      set(truncate FALSE)
-    elseif(arg STREQUAL "OBFUSCATE")
-      set(obfuscate TRUE)
+  if(LOCAL_SKIP_TRUNCATE)
+    set(truncate FALSE)
     endif()
-  endforeach()
+  set(obfuscate ${LOCAL_OBFUSCATE})
   set(pretext_right_jusitfy_length 45)
   set(fill_char ".")
   set(truncated_text_length 120)
