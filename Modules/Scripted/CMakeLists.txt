@@ -3,6 +3,7 @@ include(SlicerMacroBuildScriptedModule)
 
 set(modules
   DataProbe
+  DMRIInstall
   Editor
   EditorLib
   LabelStatistics
