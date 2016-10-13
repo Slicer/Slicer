@@ -278,12 +278,23 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         ],
         cwd=config.CMAKE_CURRENT_BINARY_DIR,
         )
+      extension_dir = test_binary_dir + '/TestExt%s' % suffix
+
+      if suffix == 'A':
+        # Add a failing test to ExtensionA. This allows to check that
+        # dependers of ExtensionsA can still configure/build/test without
+        # any issues. See #4247
+        module_dir = extension_dir + '/Mod%s' % suffix
+        with open(module_dir + '/Testing/Python/CMakeLists.txt', 'a') as content:
+          content.write("add_test(NAME FailingTest COMMAND invalid_test)")
+
       if suffix == 'B':
-        project = ExtensionProject(test_binary_dir + '/TestExt%s' % suffix)
+        project = ExtensionProject(extension_dir)
         project.setValue('EXTENSION_DEPENDS', 'TestExtA')
         project.save()
+
       if suffix == 'C':
-        project = ExtensionProject(test_binary_dir + '/TestExt%s' % suffix)
+        project = ExtensionProject(extension_dir)
         project.setValue('EXTENSION_DEPENDS', 'TestExtA TestExtB')
         project.save()
 
@@ -292,7 +303,7 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
         [sys.executable,
         config.Slicer_SOURCE_DIR + '/Utilities/Scripts/ExtensionWizard.py',
         '--localExtensionsDir=%s' % test_binary_dir,
-        '--describe', test_binary_dir + '/TestExt%s' % suffix,
+        '--describe', extension_dir,
         ],
         cwd=config.CMAKE_CURRENT_BINARY_DIR,
         )
@@ -319,7 +330,6 @@ class SlicerExtensionBuildSystemTest(unittest.TestCase):
           'HOMEPAGE', 'CONTRIBUTORS', 'CATEGORY', 'ICONURL',
           'DESCRIPTION', 'SCREENSHOTURLS', 'ENABLED', 'STATUS'
           ]]
-        extension_dir = test_binary_dir + '/TestExt%s' % suffix
         self._remove_matching_lines(extension_dir + '/CMakeLists.txt', patterns)
 
   def test_index_build_with_upload(self):
