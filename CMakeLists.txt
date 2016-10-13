@@ -33,7 +33,7 @@ if(NOT DEFINED Slicer_VERSION_MAJOR)
   set(Slicer_VERSION_MAJOR "4")
 endif()
 if(NOT DEFINED Slicer_VERSION_MINOR)
-  set(Slicer_VERSION_MINOR "5")
+  set(Slicer_VERSION_MINOR "6")
 endif()
 if(NOT DEFINED Slicer_VERSION_PATCH)
   set(Slicer_VERSION_PATCH "0")
@@ -461,7 +461,7 @@ message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} text of disc
 # Slicer version number.
 #-----------------------------------------------------------------------------
 # Releases define a tweak level
-#set(Slicer_VERSION_TWEAK 1)
+set(Slicer_VERSION_TWEAK 0)
 #set(Slicer_VERSION_RC 0)
 include(SlicerVersion)
 
