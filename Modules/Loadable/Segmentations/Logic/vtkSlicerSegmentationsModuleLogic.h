@@ -142,6 +142,8 @@ public:
 
   /// Import all labels from a labelmap image to a segmentation node, each label to a separate segment
   /// The colors of the new segments are randomly generated.
+  /// LabelmapImage is defined in the segmentation node's coordinate system
+  /// (parent transform of the segmentation node is not used during import).
   /// \param baseSegmentName Prefix for the names of the new segments. Empty by default, in which case the prefix will be "Label"
   static bool ImportLabelmapToSegmentationNode(vtkOrientedImageData* labelmapImage, vtkMRMLSegmentationNode* segmentationNode, std::string baseSegmentName="");
 

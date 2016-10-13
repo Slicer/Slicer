@@ -1032,19 +1032,6 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
     ss << (baseSegmentName.empty() ? "Label" : baseSegmentName) << "_" << label;
     segment->SetName(ss.str().c_str());
 
-    // Apply parent transforms if any
-    vtkMRMLTransformNode* segmentationParentTransformNode = segmentationNode->GetParentTransformNode();
-    if (segmentationParentTransformNode)
-      {
-      vtkSmartPointer<vtkGeneralTransform> worldToSegmentationTransform = vtkSmartPointer<vtkGeneralTransform>::New();
-      if (segmentationParentTransformNode)
-        {
-        segmentationParentTransformNode->GetTransformFromWorld(worldToSegmentationTransform);
-        }
-
-      vtkOrientedImageDataResample::TransformOrientedImage(labelOrientedImageData, worldToSegmentationTransform);
-      }
-
     // Add oriented image data as binary labelmap representation
     segment->AddRepresentation(
       vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(),
