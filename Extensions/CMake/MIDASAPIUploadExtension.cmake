@@ -69,13 +69,6 @@ function(midas_api_upload_extension)
     endif()
   endforeach()
 
-  foreach(var ${optional_args})
-    if(NOT DEFINED MY_${var} AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
-      message(AUTHOR_WARNING "warning: CMake variable ${var} is empty !")
-      set(${var}_AUTHOR_WARN "DONE")
-    endif()
-  endforeach()
-
   foreach(var ${expected_existing_args})
     if(NOT EXISTS "${MY_${var}}")
       message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
