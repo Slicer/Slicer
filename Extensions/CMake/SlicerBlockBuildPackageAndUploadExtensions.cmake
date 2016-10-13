@@ -192,7 +192,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
         message(STATUS "Configuring extension upload wrapper script: ${upload_extension_wrapper_script}")
         file(WRITE ${upload_extension_wrapper_script} "
           execute_process(
-            COMMAND ${EXTENSION_UPLOAD_COMMAND}
+            COMMAND ${EXTENSION_UPLOAD_WRAPPER_COMMAND}
             WORKING_DIR \"${EXTENSION_SUPERBUILD_BINARY_DIR}\"
             RESULT_VARIABLE result
             )
@@ -205,7 +205,7 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
           SOURCE_DIR ${EXTENSION_SOURCE_DIR}
           BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}
           CONFIGURE_COMMAND ""
-          BUILD_COMMAND ${CMAKE_COMMAND} -P ${upload_extension_wrapper_script}
+          BUILD_COMMAND ${CMAKE_COMMAND} -DCTEST_BUILD_CONFIGURATION=${CTEST_BUILD_CONFIGURATION} -P ${upload_extension_wrapper_script}
           INSTALL_COMMAND ""
           ${EP_ARG_EXTENSION_DEPENDS}
           )
