@@ -172,14 +172,40 @@ foreach(EXTENSION_NAME ${EXTENSION_LIST})
           set(CTEST_MODEL "Experimental")
         endif()
         include(SlicerBlockUploadExtension)
-        # Add extension external project
+
         set(proj ${EXTENSION_NAME})
+
+        set(upload_extension_wrapper_script
+          ${CMAKE_CURRENT_BINARY_DIR}/upload_${proj}_wrapper_script.cmake)
+
+        #
+        # The following wrapper script is required to workaround issue #4247
+        # and avoid the overall extension build from failing if only one test
+        # of an extension being depended on fails.
+        #
+        # Note that as soon as CMake >= 3.6.7 is released, it should be possible
+        # to remove the wrapper script and simply specify CAPTURE_CMAKE_ERROR
+        # ctest_test option.
+        #
+        # See https://cmake.org/cmake/help/v3.7/command/ctest_test.html
+        #
+        message(STATUS "Configuring extension upload wrapper script: ${upload_extension_wrapper_script}")
+        file(WRITE ${upload_extension_wrapper_script} "
+          execute_process(
+            COMMAND ${EXTENSION_UPLOAD_COMMAND}
+            WORKING_DIR \"${EXTENSION_SUPERBUILD_BINARY_DIR}\"
+            RESULT_VARIABLE result
+            )
+          message(STATUS \"upload_${proj}_wrapper_script: Ignoring result \${result}\")
+          ")
+
+        # Add extension external project
         ExternalProject_Add(${proj}
           ${ext_ep_options_repository}
           SOURCE_DIR ${EXTENSION_SOURCE_DIR}
           BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}
           CONFIGURE_COMMAND ""
-          BUILD_COMMAND ${EXTENSION_UPLOAD_COMMAND}
+          BUILD_COMMAND ${CMAKE_COMMAND} -P ${upload_extension_wrapper_script}
           INSTALL_COMMAND ""
           ${EP_ARG_EXTENSION_DEPENDS}
           )
