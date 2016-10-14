@@ -41,10 +41,6 @@ class VTK_MRML_EXPORT vtkMRMLSegmentationDisplayNode : public vtkMRMLLabelMapVol
 {
 public:
   // Define constants
-  static const std::string GetColorTableNodeNamePostfix() { return "_ColorTable"; };
-  static const std::string GetColorIndexTag() { return "ColorIndex"; };
-  static const char* GetSegmentationColorNameBackground() { return "Background"; };
-  static const char* GetSegmentationColorNameRemoved() { return "Removed"; };
   static unsigned short GetSegmentationColorIndexBackground() { return 0; };
 
   /// Display properties per segment

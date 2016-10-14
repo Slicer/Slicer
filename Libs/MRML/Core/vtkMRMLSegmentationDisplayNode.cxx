@@ -688,30 +688,6 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const 
 
   int wasModifyingDisplayNode = this->StartModify();
 
-  // Get color index tag used in merged labelmap and set a consecutive one if not found
-  std::string colorIndexStr("");
-  if (!segment->GetTag(vtkMRMLSegmentationDisplayNode::GetColorIndexTag(), colorIndexStr))
-    {
-    // Set color index to be one larger than the largest one found in the segments
-    // (cannot simply go by number of segments because segments can be removed and then there will be a gap in the color indices)
-    int maxColorIndex = 0;
-    vtkSegmentation::SegmentMap segmentMap = segmentation->GetSegments();
-    for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
-      {
-      if (segmentIt->second->GetTag(vtkMRMLSegmentationDisplayNode::GetColorIndexTag(), colorIndexStr))
-        {
-        int colorIndex = vtkVariant(colorIndexStr).ToInt();
-        if (colorIndex > maxColorIndex)
-          {
-          maxColorIndex = colorIndex;
-          }
-        }
-      }
-
-    // Set color index as tag to segment
-    segment->SetTag(vtkMRMLSegmentationDisplayNode::GetColorIndexTag(), maxColorIndex+1);
-    }
-
   // Set segment color for merged labelmap
   double defaultColor[3] = { 0.0, 0.0, 0.0 };
   segment->GetDefaultColor(defaultColor);

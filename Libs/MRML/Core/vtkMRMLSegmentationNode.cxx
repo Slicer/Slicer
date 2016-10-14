@@ -546,7 +546,8 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
     }
 
   // Create merged labelmap
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt)
+  unsigned short colorIndex = backgroundColor + 1;
+  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt, ++colorIndex)
     {
     std::string currentSegmentId(segmentIt->first);
     vtkSegment* currentSegment = segmentIt->second;
@@ -555,15 +556,6 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
       {
       continue;
       }
-    // Get color table index for the segment
-    std::string colorIndexStr;
-    bool tagFound = currentSegment->GetTag(vtkMRMLSegmentationDisplayNode::GetColorIndexTag(), colorIndexStr);
-    if (!tagFound)
-      {
-      vtkErrorMacro("GenerateMergedLabelmap: No color table index found for segment " << currentSegmentId);
-      continue;
-      }
-    short colorIndex = vtkVariant(colorIndexStr).ToShort();
 
     // Get binary labelmap from segment
     vtkOrientedImageData* representationBinaryLabelmap = vtkOrientedImageData::SafeDownCast(
