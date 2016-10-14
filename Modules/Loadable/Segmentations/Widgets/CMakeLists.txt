@@ -8,6 +8,7 @@ set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerSegmentationsModuleMRML_INCLUDE_DIRS}
   ${vtkSlicerSegmentationsModuleLogic_INCLUDE_DIRS}
   ${qSlicerSegmentationsEditorEffects_INCLUDE_DIRS}
+  ${qSlicerTerminologiesModuleWidgets_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -50,6 +51,7 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicerSegmentationsModuleMRML
   vtkSlicerSegmentationsModuleLogic
   qSlicerSegmentationsEditorEffects
+  qSlicerTerminologiesModuleWidgets
   )
 
 #-----------------------------------------------------------------------------

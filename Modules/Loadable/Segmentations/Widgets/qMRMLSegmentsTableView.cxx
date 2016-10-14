@@ -31,6 +31,9 @@
 #include "vtkSegmentation.h"
 #include "vtkSegment.h"
 
+// Terminologies includes
+#include "qSlicerTerminologyItemDelegate.h"
+
 // MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
@@ -144,9 +147,10 @@ void qMRMLSegmentsTableViewPrivate::init()
 
   // Set item delegate to handle color and opacity changes
   qMRMLItemDelegate* itemDelegate = new qMRMLItemDelegate(this->SegmentsTable);
-  this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Color"), itemDelegate);
-  //this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), itemDelegate);
-  this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), new qMRMLDoubleSpinBoxDelegate(this->SegmentsTable));
+  //this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Color"), itemDelegate);
+  this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Color"), new qSlicerTerminologyItemDelegate(this->SegmentsTable));
+  this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), itemDelegate);
+  //this->SegmentsTable->setItemDelegateForColumn(this->columnIndex("Opacity"), new qMRMLDoubleSpinBoxDelegate(this->SegmentsTable));
 
   this->SegmentsTable->installEventFilter(q);
 }
@@ -434,19 +438,20 @@ void qMRMLSegmentsTableView::populateSegmentTable()
       visibilityButton->addAction(visibility2DOutlineAction);
       }
 
-    // Color
+    // Terminology / color
     QTableWidgetItem* colorItem = new QTableWidgetItem();
     QColor color = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
     colorItem->setData(Qt::DecorationRole, color);
+    colorItem->setData(Qt::EditRole, qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(segmentIt->second));
     colorItem->setData(IDRole, segmentId);
-    colorItem->setToolTip("Color");
+    colorItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segmentIt->second));
     d->SegmentsTable->setItem(row, d->columnIndex("Color"), colorItem);
 
     // Opacity (only 3D opacity - 2D outline and fill can be set in the display widget)
     QTableWidgetItem* opacityItem = new QTableWidgetItem();
-    //QString displayedOpacity = QString::number(properties.Opacity3D, 'f', 2);
-    //opacityItem->setData(Qt::EditRole, displayedOpacity); // for qMRMLItemDelegate
-    opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
+    QString displayedOpacity = QString::number(properties.Opacity3D, 'f', 2);
+    opacityItem->setData(Qt::EditRole, displayedOpacity); // for qMRMLItemDelegate
+    //opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
     opacityItem->setData(IDRole, segmentId);
     opacityItem->setToolTip("Opacity");
     d->SegmentsTable->setItem(row, d->columnIndex("Opacity"), opacityItem);
@@ -538,6 +543,10 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     QTableWidgetItem* colorItem = d->SegmentsTable->item(row, d->columnIndex("Color"));
     if (colorItem)
       {
+      // Set terminology information from segment to item
+      colorItem->setData(Qt::EditRole, qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(segmentIt->second));
+      colorItem->setToolTip(qMRMLSegmentsTableView::terminologyInfoStringForSegment(segmentIt->second));
+      // Set color
       QColor color = QColor::fromRgbF(properties.Color[0], properties.Color[1], properties.Color[2]);
       colorItem->setData(Qt::DecorationRole, color);
       }
@@ -546,9 +555,9 @@ void qMRMLSegmentsTableView::updateWidgetFromMRML()
     QTableWidgetItem* opacityItem =  d->SegmentsTable->item(row, d->columnIndex("Opacity"));
     if (opacityItem)
       {
-      //QString displayedOpacity = QString::number(properties.PolyDataOpacity, 'f', 2);
-      //opacityItem->setData(Qt::EditRole, displayedOpacity); // for qMRMLItemDelegate
-      opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
+      QString displayedOpacityStr = QString::number(properties.Opacity3D, 'f', 2);
+      opacityItem->setData(Qt::EditRole, displayedOpacityStr); // for qMRMLItemDelegate
+      //opacityItem->setData(Qt::EditRole, properties.Opacity3D); // for qMRMLDoubleSpinBoxDelegate
       }
     }
 }
@@ -607,9 +616,9 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
     vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
     displayNode->GetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
 
-    bool valueChanged = false;
+    bool displayPropertyChanged = false;
 
-    // Color changed
+    // Color / terminology changed
     if (changedItem->column() == d->columnIndex("Color"))
       {
       QColor color = changedItem->data(Qt::DecorationRole).value<QColor>();
@@ -619,8 +628,17 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
         properties.Color[0] = color.redF();
         properties.Color[1] = color.greenF();
         properties.Color[2] = color.blueF();
-        valueChanged = true;
+        displayPropertyChanged = true;
         }
+
+      vtkSegment* segment = d->SegmentationNode->GetSegmentation()->GetSegment(segmentId.toLatin1().constData());
+      if (!segment)
+        {
+        qCritical() << Q_FUNC_INFO << ": Segment with ID '" << segmentId << "' not found in segmentation node " << d->SegmentationNode->GetName();
+        return;
+        }
+      QStringList terminologyCodeMeanings = changedItem->data(Qt::EditRole).toStringList();
+      qMRMLSegmentsTableView::setTerminologySegmentTagsFromCodeMeanings(terminologyCodeMeanings, segment);
       }
     // Opacity changed
     else if (changedItem->column() == d->columnIndex("Opacity"))
@@ -631,11 +649,11 @@ void qMRMLSegmentsTableView::onSegmentTableItemChanged(QTableWidgetItem* changed
         {
         // Set to all kinds of opacities as they are combined on the UI
         properties.Opacity3D = opacity.toDouble();
-        valueChanged = true;
+        displayPropertyChanged = true;
         }
       }
     // Set changed properties to segmentation display node if a value has actually changed
-    if (valueChanged)
+    if (displayPropertyChanged)
       {
       displayNode->SetSegmentDisplayProperties(segmentId.toLatin1().constData(), properties);
       }
@@ -1005,4 +1023,128 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
     displayNode->SetSegmentVisibility(segmentIt->first, visible);
     }
   displayNode->EndModify(disabledModify);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::setTerminologySegmentTagsFromCodeMeanings(QStringList codeMeanings, vtkSegment* segment)
+{
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment given";
+    return;
+    }
+
+  int index=0;
+  foreach (QString string, codeMeanings) // Do it in a loop so that it exits at last element
+    {
+    switch (index)
+      {
+      case 0:
+        segment->SetTag(vtkSegment::GetTerminologyContextTagName(), string.toLatin1().constData());
+        break;
+      case 1:
+        segment->SetTag(vtkSegment::GetTerminologyCategoryTagName(), string.toLatin1().constData());
+        break;
+      case 2:
+        segment->SetTag(vtkSegment::GetTerminologyTypeTagName(), string.toLatin1().constData());
+        break;
+      case 3:
+        segment->SetTag(vtkSegment::GetTerminologyTypeModifierTagName(), string.toLatin1().constData());
+        break;
+      case 4:
+        segment->SetTag(vtkSegment::GetAnatomicContextTagName(), string.toLatin1().constData());
+        break;
+      case 5:
+        segment->SetTag(vtkSegment::GetAnatomicRegionTagName(), string.toLatin1().constData());
+        break;
+      case 6:
+        segment->SetTag(vtkSegment::GetAnatomicRegionModifierTagName(), string.toLatin1().constData());
+        break;
+      }
+    ++index;
+    }
+}
+
+//------------------------------------------------------------------------------
+QStringList qMRMLSegmentsTableView::getCodeMeaningsFromTerminologySegmentTags(vtkSegment* segment)
+{
+  QStringList codeMeanings;
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment given";
+    return codeMeanings;
+    }
+
+  codeMeanings.clear();
+  std::string tagValue("");
+
+  codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyContextTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyCategoryTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyTypeTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetTerminologyTypeModifierTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetAnatomicContextTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetAnatomicRegionTagName(), tagValue) ? tagValue.c_str() : "" );
+  codeMeanings << ( segment->GetTag(vtkSegment::GetAnatomicRegionModifierTagName(), tagValue) ? tagValue.c_str() : "" );
+  return codeMeanings;
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLSegmentsTableView::terminologyInfoStringForSegment(vtkSegment* segment)
+{
+  if (!segment)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid segment given";
+    return QString();
+    }
+
+  std::string tagValue("");
+  QString terminology = QString("Terminology:");
+  if (segment->GetTag(vtkSegment::GetTerminologyContextTagName(), tagValue))
+    {
+    terminology = terminology + QString("\n  Context: %1").arg(tagValue.c_str());
+    }
+  else
+    {
+    // Definitely invalid terminology
+    return QString("No terminology information");
+    }
+
+  if (segment->GetTag(vtkSegment::GetTerminologyCategoryTagName(), tagValue))
+    {
+    terminology = terminology + QString("\n  Category: %1").arg(tagValue.c_str());
+    }
+  else
+    {
+    terminology = terminology + QString("\n  Category: NONE");
+    }
+  if (segment->GetTag(vtkSegment::GetTerminologyTypeTagName(), tagValue))
+    {
+    terminology = terminology + QString("\n  Type: %1").arg(tagValue.c_str());
+    }
+  else
+    {
+    terminology = terminology + QString("\n  Type: NONE");
+    }
+  if (segment->GetTag(vtkSegment::GetTerminologyTypeModifierTagName(), tagValue) && !tagValue.empty())
+    {
+    terminology = terminology + QString("\n    Modifier: %1").arg(tagValue.c_str());
+    }
+
+  // If anatomic region is not selected, then do not show anatomic context name either
+  std::string anatomicRegion("");
+  bool anatomicRegionTagPresent = segment->GetTag(vtkSegment::GetAnatomicRegionTagName(), anatomicRegion);
+  if (!anatomicRegion.empty() && segment->GetTag(vtkSegment::GetAnatomicContextTagName(), tagValue))
+    {
+    terminology = terminology + QString("\n  Anatomic context: %1").arg(tagValue.c_str());
+    }
+  if (anatomicRegionTagPresent && !anatomicRegion.empty())
+    {
+    terminology = terminology + QString("\n  Anatomic region: %1").arg(anatomicRegion.c_str());
+    }
+  if (segment->GetTag(vtkSegment::GetAnatomicRegionModifierTagName(), tagValue) && !tagValue.empty())
+    {
+    terminology = terminology + QString("\n    Modifier: %1").arg(tagValue.c_str());
+    }
+
+  return terminology;
 }

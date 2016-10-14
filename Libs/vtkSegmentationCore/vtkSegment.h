@@ -49,6 +49,14 @@ class vtkSegmentationCore_EXPORT vtkSegment : public vtkObject
 public:
   static const double SEGMENT_COLOR_VALUE_INVALID[4];
 
+  static const char* GetTerminologyContextTagName();
+  static const char* GetTerminologyCategoryTagName();
+  static const char* GetTerminologyTypeTagName();
+  static const char* GetTerminologyTypeModifierTagName();
+  static const char* GetAnatomicContextTagName();
+  static const char* GetAnatomicRegionTagName();
+  static const char* GetAnatomicRegionModifierTagName();
+
   static vtkSegment* New();
   vtkTypeMacro(vtkSegment, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);

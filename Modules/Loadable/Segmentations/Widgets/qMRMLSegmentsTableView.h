@@ -34,6 +34,7 @@
 #include <ctkVTKObject.h>
 
 class vtkMRMLNode;
+class vtkSegment;
 class qMRMLSegmentsTableViewPrivate;
 class QTableWidget;
 class QTableWidgetItem;
@@ -86,6 +87,14 @@ public:
   Q_INVOKABLE void setSelectedSegmentIDs(QStringList segmentIDs);
   /// Clear segment selection
   Q_INVOKABLE void clearSelection();
+
+  /// Set terminology related segment tags from code meanings string list
+  Q_INVOKABLE static void setTerminologySegmentTagsFromCodeMeanings(QStringList codeMeanings, vtkSegment* segment);
+  /// Set terminology related segment tags from code meanings string list
+  Q_INVOKABLE static QStringList getCodeMeaningsFromTerminologySegmentTags(vtkSegment* segment);
+
+  /// Assemble terminology info string (for tooltips) from a segment's terminology tags
+  Q_INVOKABLE static QString terminologyInfoStringForSegment(vtkSegment* segment);
 
   int selectionMode();
   bool headerVisible();
