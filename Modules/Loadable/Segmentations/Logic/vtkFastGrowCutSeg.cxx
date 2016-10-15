@@ -2,8 +2,6 @@
 
 const unsigned short SrcDimension = 3;
 typedef float DistPixelType;  // float type pixel for cost function
-//typedef short SrcPixelType;
-//typedef unsigned char LabPixelType;
 const int VTKDistPixelType = VTK_FLOAT;
 
 #include <iostream>
@@ -89,33 +87,28 @@ public:
   vtkInternal();
   virtual ~vtkInternal();
 
-  template<typename SrcPixelType, typename LabPixelType>
-  bool InitializationAHP(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData);
+  void Reset();
 
   template<typename SrcPixelType, typename LabPixelType>
-  void DijkstraBasedClassificationAHP(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData);
+  bool InitializationAHP(vtkImageData *sourceVol, vtkImageData *seedVol);
 
   template<typename SrcPixelType, typename LabPixelType>
-  bool DoSegmentation(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData);
+  void DijkstraBasedClassificationAHP(vtkImageData *sourceVol, vtkImageData *seedVol);
+
+  template<typename SrcPixelType, typename LabPixelType>
+  bool DoSegmentation(vtkImageData *sourceVol, vtkImageData *seedVol);
 
   template <class SourceVolType>
-  void ExecuteGrowCut(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData);
+  void ExecuteGrowCut(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outputVol);
 
   template< class SourceVolType, class SeedVolType>
-  void ExecuteGrowCut2(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData);
+  void ExecuteGrowCut2(vtkImageData *sourceVol, vtkImageData *seedVol);
 
   void SetImageSize(const int imSize[3]);
 
-  /*
-  std::vector<SrcPixelType> m_imSrc; // input1
-  std::vector<LabPixelType> m_imSeed; // input2
-  std::vector<LabPixelType> m_imLab; // output
-  std::vector<LabPixelType> m_imLabPre; // last result
-  std::vector<FPixelType> m_imDistPre; // last distance map
-  std::vector<FPixelType> m_imDist; // current distance map
-  */
   vtkSmartPointer<vtkImageData> m_imDist;
   vtkSmartPointer<vtkImageData> m_imDistPre;
+  vtkSmartPointer<vtkImageData> m_imLab;
   vtkSmartPointer<vtkImageData> m_imLabPre;
 
   int m_imSize[3];
@@ -136,11 +129,18 @@ vtkFastGrowCutSeg::vtkInternal::vtkInternal()
   m_bSegInitialized = false;
   m_imDist = vtkSmartPointer<vtkImageData>::New();
   m_imDistPre = vtkSmartPointer<vtkImageData>::New();
+  m_imLab = vtkSmartPointer<vtkImageData>::New();
   m_imLabPre = vtkSmartPointer<vtkImageData>::New();
 };
 
 //-----------------------------------------------------------------------------
 vtkFastGrowCutSeg::vtkInternal::~vtkInternal()
+{
+  this->Reset();
+};
+
+//-----------------------------------------------------------------------------
+void vtkFastGrowCutSeg::vtkInternal::Reset()
 {
   if (m_heap != NULL)
   {
@@ -152,31 +152,28 @@ vtkFastGrowCutSeg::vtkInternal::~vtkInternal()
     delete[]m_hpNodes;
     m_hpNodes = NULL;
   }
-};
-
-//-----------------------------------------------------------------------------
-void vtkFastGrowCutSeg::vtkInternal::SetImageSize(const int imSize[3])
-{
-  m_imSize[0] = imSize[0];
-  m_imSize[1] = imSize[1];
-  m_imSize[2] = imSize[2];
-};
+  m_bSegInitialized = false;
+  m_imDist->Initialize();
+  m_imDistPre->Initialize();
+  m_imLab->Initialize();
+  m_imLabPre->Initialize();
+}
 
 //-----------------------------------------------------------------------------
 template<typename SrcPixelType, typename LabPixelType>
-bool vtkFastGrowCutSeg::vtkInternal::DoSegmentation(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData)
+bool vtkFastGrowCutSeg::vtkInternal::DoSegmentation(vtkImageData *sourceVol, vtkImageData *seedVol)
 {
-  if (!InitializationAHP<SrcPixelType, LabPixelType>(sourceVol, seedVol, outData))
+  if (!InitializationAHP<SrcPixelType, LabPixelType>(sourceVol, seedVol))
   {
     return false;
   }
-  DijkstraBasedClassificationAHP<SrcPixelType, LabPixelType>(sourceVol, seedVol, outData);
+  DijkstraBasedClassificationAHP<SrcPixelType, LabPixelType>(sourceVol, seedVol);
   return true;
 };
 
 //-----------------------------------------------------------------------------
 template<typename SrcPixelType, typename LabPixelType>
-bool vtkFastGrowCutSeg::vtkInternal::InitializationAHP(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData)
+bool vtkFastGrowCutSeg::vtkInternal::InitializationAHP(vtkImageData *sourceVol, vtkImageData *seedVol)
 {
   m_DIMX = m_imSize[0];
   m_DIMY = m_imSize[1];
@@ -184,29 +181,32 @@ bool vtkFastGrowCutSeg::vtkInternal::InitializationAHP(vtkImageData *sourceVol, 
   m_DIMXY = m_DIMX*m_DIMY;
   m_DIMXYZ = m_DIMXY*m_DIMZ;
 
-  std::cout << "DIM = [" << m_DIMX << ", " << m_DIMY << ", " << m_DIMZ << "]" << std::endl;
-
-
   if ((m_heap = new FibHeap) == NULL || (m_hpNodes = new HeapNode[m_DIMXYZ + 1]) == NULL)
   {
-    std::cerr << "Memory allocation failed-- ABORTING.\n";
+    vtkGenericWarningMacro("Memory allocation failed. Dimensions: " << m_imSize[0] << "x" << m_imSize[1] << "x" << m_imSize[2]);
     return false;
   }
   m_heap->ClearHeapOwnership();
 
   SrcPixelType* imSrc = static_cast<SrcPixelType*>(sourceVol->GetScalarPointer());
   LabPixelType* imSeed = static_cast<LabPixelType*>(seedVol->GetScalarPointer());
-  LabPixelType* imLab = static_cast<LabPixelType*>(outData->GetScalarPointer());
 
   long  i, j, k, index;
   if (!m_bSegInitialized)
   {
+    m_imLab->SetOrigin(seedVol->GetOrigin());
+    m_imLab->SetSpacing(seedVol->GetSpacing());
+    m_imLab->SetExtent(seedVol->GetExtent());
+    m_imLab->AllocateScalars(seedVol->GetScalarType(), 1);
+    m_imDist->SetOrigin(seedVol->GetOrigin());
+    m_imDist->SetSpacing(seedVol->GetSpacing());
     m_imDist->SetExtent(seedVol->GetExtent());
     m_imDist->AllocateScalars(VTKDistPixelType, 1);
     m_imLabPre->SetExtent(0, -1, 0, -1, 0, -1);
     m_imLabPre->AllocateScalars(seedVol->GetScalarType(), 1);
     m_imDistPre->SetExtent(0, -1, 0, -1, 0, -1);
     m_imDistPre->AllocateScalars(VTKDistPixelType, 1);
+    LabPixelType* imLab = static_cast<LabPixelType*>(m_imLab->GetScalarPointer());
     DistPixelType* imDist = static_cast<DistPixelType*>(m_imDist->GetScalarPointer());
 
     // Compute index offset
@@ -260,6 +260,7 @@ bool vtkFastGrowCutSeg::vtkInternal::InitializationAHP(vtkImageData *sourceVol, 
   else
   {
     // Already initialized
+    LabPixelType* imLab = static_cast<LabPixelType*>(m_imLab->GetScalarPointer());
     LabPixelType* imLabPre = static_cast<LabPixelType*>(m_imLabPre->GetScalarPointer());
     DistPixelType* imDist = static_cast<DistPixelType*>(m_imDist->GetScalarPointer());
 
@@ -287,7 +288,7 @@ bool vtkFastGrowCutSeg::vtkInternal::InitializationAHP(vtkImageData *sourceVol, 
 
 //-----------------------------------------------------------------------------
 template<typename SrcPixelType, typename LabPixelType>
-void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData)
+void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData *sourceVol, vtkImageData *seedVol)
 {
   HeapNode *hnMin, hnTmp;
   float t, tOri, tSrc;
@@ -295,7 +296,7 @@ void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData
   LabPixelType labSrc;
   SrcPixelType pixCenter;
 
-  LabPixelType* imLab = static_cast<LabPixelType*>(outData->GetScalarPointer());
+  LabPixelType* imLab = static_cast<LabPixelType*>(m_imLab->GetScalarPointer());
   SrcPixelType* imSrc = static_cast<SrcPixelType*>(sourceVol->GetScalarPointer());
 
   // Insert 0 then extract it, which will balance heap
@@ -318,7 +319,18 @@ void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData
       tSrc = hnMin->GetKeyValue();
 
       // stop propagation when the new distance is larger than the previous one
-      if (tSrc == DIST_INF) break;
+      if (tSrc == DIST_INF)
+      {
+        for (index = 0; index < m_DIMXYZ; index++)
+        {
+          if (imLab[index] == 0)
+          {
+            imLab[index] = imLabPre[index];
+            imDist[index] = imDistPre[index];
+          }
+        }
+        break;
+      }
       if (tSrc > imDistPre[index])
       {
         imDist[index] = imDistPre[index];
@@ -354,7 +366,7 @@ void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData
   else
   {
     DistPixelType* imDist = static_cast<DistPixelType*>(m_imDist->GetScalarPointer());
-    LabPixelType* imLab = static_cast<LabPixelType*>(outData->GetScalarPointer());
+    LabPixelType* imLab = static_cast<LabPixelType*>(m_imLab->GetScalarPointer());
 
     // Normal Dijkstra (to be used in initializing the segmenter for the current image)
     while (!m_heap->IsEmpty())
@@ -387,8 +399,9 @@ void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData
   }
 
   // Update previous labels and distance information
-  m_imLabPre->DeepCopy(outData);
+  m_imLabPre->DeepCopy(m_imLab);
   m_imDistPre->DeepCopy(m_imDist);
+  m_bSegInitialized = true;
 
   // Release memory
   if (m_heap != NULL)
@@ -405,35 +418,58 @@ void vtkFastGrowCutSeg::vtkInternal::DijkstraBasedClassificationAHP(vtkImageData
 
 //-----------------------------------------------------------------------------
 template< class SourceVolType, class SeedVolType>
-void vtkFastGrowCutSeg::vtkInternal::ExecuteGrowCut2(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData)
+void vtkFastGrowCutSeg::vtkInternal::ExecuteGrowCut2(vtkImageData *sourceVol, vtkImageData *seedVol)
 {
-  int* dims = sourceVol->GetDimensions();
-  // TODO: Check image size. If it's different then maybe reallocate.
-  this->SetImageSize(dims);
-  m_bSegInitialized = false;
-
   // Do Segmentation
-  this->DoSegmentation<SourceVolType, SeedVolType>(sourceVol, seedVol, outData);
+  this->DoSegmentation<SourceVolType, SeedVolType>(sourceVol, seedVol);
 }
 
 //----------------------------------------------------------------------------
 template <class SourceVolType>
 void vtkFastGrowCutSeg::vtkInternal::ExecuteGrowCut(vtkImageData *sourceVol, vtkImageData *seedVol, vtkImageData *outData)
 {
+
+  int extent[6];
+  double spacing[3], origin[3];
+  sourceVol->GetOrigin(origin);
+  sourceVol->GetSpacing(spacing);
+  sourceVol->GetExtent(extent);
+
+  int outExtent[6];
+  double outSpacing[3], outOrigin[3];
+  this->m_imLab->GetOrigin(outOrigin);
+  this->m_imLab->GetSpacing(outSpacing);
+  this->m_imLab->GetExtent(outExtent);
+  const double compareTolerance = 1e-6;
+  if (outExtent[0] != extent[0] || outExtent[1] != extent[1]
+    || outExtent[2] != extent[2] || outExtent[3] != extent[3]
+    || outExtent[4] != extent[4] || outExtent[5] != extent[5]
+    || fabs(outOrigin[0] - origin[0])>compareTolerance
+    || fabs(outOrigin[1] - origin[1])>compareTolerance
+    || fabs(outOrigin[2] - origin[2])>compareTolerance
+    || fabs(outSpacing[0] - spacing[0])>compareTolerance
+    || fabs(outSpacing[1] - spacing[1])>compareTolerance
+    || fabs(outSpacing[2] - spacing[2])>compareTolerance)
+  {
+    this->Reset();
+  }
+
+  sourceVol->GetDimensions(m_imSize);
+
   switch (seedVol->GetScalarType())
   {
-    vtkTemplateMacro((ExecuteGrowCut2<SourceVolType, VTK_TT>(sourceVol, seedVol, outData)));
+    vtkTemplateMacro((ExecuteGrowCut2<SourceVolType, VTK_TT>(sourceVol, seedVol)));
   default:
     vtkGenericWarningMacro("vtkOrientedImageDataResample::MergeImage: Unknown ScalarType");
   }
+
+  outData->ShallowCopy(this->m_imLab);
 }
 
 //-----------------------------------------------------------------------------
 vtkFastGrowCutSeg::vtkFastGrowCutSeg()
 {
   this->Internal = new vtkInternal();
-  SourceVol = NULL;
-  SeedVol = NULL;
   this->SetNumberOfInputPorts(2);
   this->SetNumberOfOutputPorts(1);
 }
@@ -441,16 +477,6 @@ vtkFastGrowCutSeg::vtkFastGrowCutSeg()
 //-----------------------------------------------------------------------------
 vtkFastGrowCutSeg::~vtkFastGrowCutSeg()
 {
-  //these functions decrement reference count on the vtkImageData's (incremented by the SetMacros)
-  if (this->SourceVol)
-  {
-    this->SetSourceVol(NULL);
-  }
-
-  if (this->SeedVol)
-  {
-    this->SetSeedVol(NULL);
-  }
   delete this->Internal;
 }
 
@@ -462,21 +488,8 @@ void vtkFastGrowCutSeg::ExecuteDataWithInformation(
   vtkImageData *seedVol = vtkImageData::SafeDownCast(GetInput(1));
   vtkImageData *outVol = vtkImageData::SafeDownCast(outData);
 
-  int outExt[6];
-  double spacing[3], origin[3];
-
-  sourceVol->GetOrigin(origin);
-  sourceVol->GetSpacing(spacing);
-  sourceVol->GetExtent(outExt);
-
   //TODO: check if source and seed volumes have the same size, origin, spacing
 
-  outVol->SetOrigin(origin);
-  outVol->SetSpacing(spacing);
-  outVol->SetExtent(outExt);
-  outVol->AllocateScalars(outInfo);
-
-  vtkFastGrowCutSeg::vtkInternal *self = this->Internal;
   switch (sourceVol->GetScalarType())
   {
     vtkTemplateMacro(this->Internal->ExecuteGrowCut<VTK_TT>(sourceVol, seedVol, outVol));
@@ -500,14 +513,9 @@ int vtkFastGrowCutSeg::RequestInformation(
   return 1;
 }
 
-void vtkFastGrowCutSeg::Initialization()
+void vtkFastGrowCutSeg::Reset()
 {
-}
-
-
-void vtkFastGrowCutSeg::RunFGC()
-{
-
+  this->Internal->Reset();
 }
 
 void vtkFastGrowCutSeg::PrintSelf(ostream &os, vtkIndent indent)

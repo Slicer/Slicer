@@ -134,8 +134,12 @@ a complete segmentation, taking into account the master volume content.
 
   def onPreview(self):
     slicer.util.showStatusMessage("Running auto-complete...", 2000)
-    self.scriptedEffect.saveStateForUndo()
-    self.preview()
+    try:
+      # This can be a long operation - indicate it to the user
+      qt.QApplication.setOverrideCursor(qt.Qt.WaitCursor)
+      self.preview()
+    finally:
+      qt.QApplication.restoreOverrideCursor()
 
   def reset(self):
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
@@ -156,6 +160,8 @@ a complete segmentation, taking into account the master volume content.
     import vtkSegmentationCorePython as vtkSegmentationCore
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+
+    self.scriptedEffect.saveStateForUndo()
 
     # Move segments from preview into current segmentation
     segmentIDs = vtk.vtkStringArray()
@@ -180,7 +186,7 @@ a complete segmentation, taking into account the master volume content.
     method = self.scriptedEffect.parameter("AutoCompleteMethod")
 
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
-    if not previewNode:
+    if not previewNode or not self.clippedMasterImageData or not self.mergedLabelmapGeometryImage:
       # Compute merged labelmap extent (effective extent slightly expanded)
       self.selectedSegmentIds = vtk.vtkStringArray()
       segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)

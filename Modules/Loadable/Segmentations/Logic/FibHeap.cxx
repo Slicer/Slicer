@@ -46,7 +46,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstdio>
-#include "fibheap.h"
+#include "FibHeap.h"
 using namespace std;
 
 //***************************************************************************
