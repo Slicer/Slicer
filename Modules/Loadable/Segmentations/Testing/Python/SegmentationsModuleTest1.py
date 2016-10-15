@@ -152,8 +152,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStatResult = imageStat.GetOutput()
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 795)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 194)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 5)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 6)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 6)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 5)
 
     # Remove segment from segmentation
     self.inputSegmentationNode.GetSegmentation().RemoveSegment(self.sphereSegmentName)
@@ -213,8 +213,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStatResult = imageStat.GetOutput()
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 43573723)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 10601312)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 274360)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 274360)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(4,0,0,0), 0)  # Built from color table and color four is removed in previous test section
 
   #------------------------------------------------------------------------------
@@ -270,8 +270,8 @@ class SegmentationsModuleTest1(unittest.TestCase):
     imageStatResult = imageStat.GetOutput()
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(0,0,0,0), 12900275)
     self.assertEqual(imageStatResult.GetScalarComponentAsDouble(1,0,0,0), 10601312)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 274360)
-    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(2,0,0,0), 422605)
+    self.assertEqual(imageStatResult.GetScalarComponentAsDouble(3,0,0,0), 274360)
 
     # Import model to segment
     modelImportSegmentationNode = slicer.vtkMRMLSegmentationNode()
