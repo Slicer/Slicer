@@ -1299,6 +1299,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
   this->GetMRMLSliceNode()->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
   double ras[3] = { rasw[0], rasw[1], rasw[2] };
 
+  bool firstSegmentationNode = true;
   vtkInternal::PipelinesCacheType::iterator displayNodeIt;
   for (displayNodeIt = this->Internal->DisplayPipelines.begin(); displayNodeIt != this->Internal->DisplayPipelines.end(); ++displayNodeIt)
     {
@@ -1426,8 +1427,16 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
       }
 
     // Assemble info string for current segmentation
-    segmentsAtPositionInfoStr.append( "<b>" + std::string(segmentationNode->GetName()) + "</b> " );
-    std::string segmentsInfoStr("");
+    if (firstSegmentationNode)
+      {
+      firstSegmentationNode = false;
+      }
+    else
+      {
+      segmentsAtPositionInfoStr.append(" "); // separate segmentations
+      }
+    segmentsAtPositionInfoStr.append( "<b>" + std::string(segmentationNode->GetName()) + ":</b> " );
+    std::string segmentsInfoStr;
     for (std::set<std::string>::iterator segmentIt=segmentIDsAtPosition.begin(); segmentIt!=segmentIDsAtPosition.end(); ++segmentIt)
       {
       vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIt);
@@ -1442,7 +1451,7 @@ std::string vtkMRMLSegmentationsDisplayableManager2D::GetDataProbeInfoStringForP
             << std::setw(2) << (int)(segmentColor.GetZ() * 255.0);
         segmentsInfoStr.append("<font color=\"" + colorStream.str() + "\">&#x25cf;</font>");
 
-        segmentsInfoStr.append(segment->GetName());
+        segmentsInfoStr.append(segment->GetName() ? segment->GetName() : "");
         segmentsInfoStr.append(" ");
         }
       }

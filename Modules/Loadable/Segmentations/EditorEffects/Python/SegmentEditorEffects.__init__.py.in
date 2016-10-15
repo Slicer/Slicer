@@ -15,7 +15,7 @@ import traceback
 effectNames = [
   "SegmentEditorThresholdEffect",
   "SegmentEditorSmoothingEffect",
-  "SegmentEditorGrowCutEffect",
+  "SegmentEditorAutoCompleteEffect",
   "SegmentEditorDrawEffect",
   "SegmentEditorLevelTracingEffect",
   "SegmentEditorMarginEffect",

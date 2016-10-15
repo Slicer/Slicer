@@ -293,6 +293,14 @@ mark_as_superbuild(Slicer_INSTALL_ITKPython)
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" ON)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
+if(NOT Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
+  # Terminologies modules requires JSON, which is provided by parameter serializer.
+  # Therefore, Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT is required for Slicer build.
+  # It could be possible to disable Terminologies module and all features that use it.
+  message(FATAL_ERROR "Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT option required to be enabled. ")
+endif()
+
+
 #
 # SimpleITK has large internal libraries, which take an extremely long
 # time to link on windows when they are static. Creating shared

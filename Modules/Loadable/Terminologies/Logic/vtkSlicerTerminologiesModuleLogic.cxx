@@ -40,7 +40,7 @@
 #include <vtkStringArray.h>
 #include <vtkVariant.h>
 
-// JSON includes
+// JSON includes (requires Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 #include <json/json.h>
 
 //----------------------------------------------------------------------------

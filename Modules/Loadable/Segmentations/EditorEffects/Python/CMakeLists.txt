@@ -12,7 +12,7 @@ set(SegmentEditorEffects_PYTHON_SCRIPTS
   SegmentEditorMarginEffect
   SegmentEditorDrawEffect
   SegmentEditorLogicalEffect
-  SegmentEditorGrowCutEffect
+  SegmentEditorAutoCompleteEffect
   SegmentEditorIdentifyIslandsEffect
   SegmentEditorLevelTracingEffect
   SegmentEditorSmoothingEffect
@@ -23,7 +23,7 @@ set(SegmentEditorEffects_PYTHON_RESOURCES
   Resources/Icons/Margin.png
   Resources/Icons/Draw.png
   Resources/Icons/Logical.png
-  Resources/Icons/GrowCut.png
+  Resources/Icons/AutoComplete.png
   Resources/Icons/IdentifyIslands.png
   Resources/Icons/LevelTracing.png
   Resources/Icons/Smoothing.png

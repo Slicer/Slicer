@@ -40,15 +40,12 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     self.methodSelectorComboBox.addItem("Closing (fill holes)", MORPHOLOGICAL_CLOSING)
     self.methodSelectorComboBox.addItem("Gaussian", GAUSSIAN)
     self.methodSelectorComboBox.addItem("Joint smoothing", JOINT_TAUBIN)
-    self.methodSelectorComboBox.addItem("Interpolation", MORPHOLOGICAL_INTERPOLATION)
     self.methodSelectorComboBox.setToolTip("""<html>Smoothing methods:<ul style="margin: 0">
 <li><b>Median:</b> removes small details while keeps smooth contours mostly unchanged.</li>
 <li><b>Opening:</b> removes extrusions smaller than the specified kernel size.</li>
 <li><b>Closing:</b> fills sharp corners and holes smaller than the specified kernel size.</li>
 <li><b>Gaussian:</b> smoothes all contours, tends to shrink the segment.</li>
 <li><b>Joint smoothing:</b> smoothes all visible segments at once. It requires segments to be non-overlapping. Bypasses masking settings.</li>
-<li><b>Interpolation:</b> creates a complete segmentation from segmentation on a sparse set of slices
-(see http://insight-journal.org/browse/publication/977).</li>
 </ul></html>""")
     self.scriptedEffect.addLabeledOptionsWidget("Smoothing method:", self.methodSelectorComboBox)
 
@@ -218,13 +215,6 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
         thresh2.Update()
         modifierLabelmap.DeepCopy(thresh2.GetOutput())
 
-      elif smoothingMethod == MORPHOLOGICAL_INTERPOLATION:
-        import vtkITK
-        interpolator = vtkITK.vtkITKMorphologicalContourInterpolator()
-        interpolator.SetInputData(selectedSegmentLabelmap)
-        interpolator.Update()
-        modifierLabelmap.DeepCopy(interpolator.GetOutput())
-
       else:
         # size rounded to nearest odd number. If kernel size is even then image gets shifted.
         kernelSizePixel = self.getKernelSizePixel()
@@ -282,14 +272,10 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
       logging.error('Failed to apply smoothing: cannot get list of visible segments')
       return
 
-    segmentColorIndices = [] # list of [segmentId, colorIndex]
+    segmentLabelValues = [] # list of [segmentId, labelValue]
     for i in range(visibleSegmentIds.GetNumberOfValues()):
       segmentId = visibleSegmentIds.GetValue(i)
-      segment = segmentationNode.GetSegmentation().GetSegment(segmentId)
-      colorIndexStr = vtk.mutable("")
-      if not segment.GetTag(slicer.vtkMRMLSegmentationDisplayNode.GetColorIndexTag(), colorIndexStr):
-        logging.error("Joint smoothing: failed to get color index for segment " + segmentId)
-      segmentColorIndices.append([segmentId, int(colorIndexStr)])
+      segmentLabelValues.append([segmentId, i+1])
 
     # Perform smoothing in voxel space
     ici = vtk.vtkImageChangeInformation()
@@ -300,10 +286,10 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     # Convert labelmap to combined polydata
     convertToPolyData = vtk.vtkDiscreteMarchingCubes()
     convertToPolyData.SetInputConnection(ici.GetOutputPort())
-    convertToPolyData.SetNumberOfContours(len(segmentColorIndices))
+    convertToPolyData.SetNumberOfContours(len(segmentLabelValues))
     contourIndex = 0
-    for segmentId, colorIndex in segmentColorIndices:
-      convertToPolyData.SetValue(contourIndex, colorIndex)
+    for segmentId, labelValue in segmentLabelValues:
+      convertToPolyData.SetValue(contourIndex, labelValue)
       contourIndex += 1
 
     # Low-pass filtering using Taubin's method
@@ -349,8 +335,8 @@ class SegmentEditorSmoothingEffect(AbstractScriptedSegmentEditorEffect):
     imageToWorldMatrix = vtk.vtkMatrix4x4()
     mergedImage.GetImageToWorldMatrix(imageToWorldMatrix)
 
-    for segmentId, colorIndex in segmentColorIndices:
-      threshold.ThresholdBetween(colorIndex, colorIndex)
+    for segmentId, labelValue in segmentLabelValues:
+      threshold.ThresholdBetween(labelValue, labelValue)
       stencil.Update()
       smoothedBinaryLabelMap = vtkSegmentationCore.vtkOrientedImageData()
       smoothedBinaryLabelMap.ShallowCopy(stencil.GetOutput())
@@ -364,4 +350,3 @@ GAUSSIAN = 'GAUSSIAN'
 MORPHOLOGICAL_OPENING = 'MORPHOLOGICAL_OPENING'
 MORPHOLOGICAL_CLOSING = 'MORPHOLOGICAL_CLOSING'
 JOINT_TAUBIN = 'JOINT_TAUBIN'
-MORPHOLOGICAL_INTERPOLATION = 'MORPHOLOGICAL_INTERPOLATION'

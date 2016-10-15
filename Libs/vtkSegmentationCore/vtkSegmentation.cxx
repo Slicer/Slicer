@@ -1164,6 +1164,35 @@ bool vtkSegmentation::CopySegmentFromSegmentation(vtkSegmentation* fromSegmentat
 }
 
 //-----------------------------------------------------------------------------
+std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputationMode, vtkStringArray* segmentIds)
+{
+  std::vector<std::string> segmentIdsVector;
+  if (segmentIds)
+  {
+    for (int segmentIndex = 0; segmentIndex < segmentIds->GetNumberOfValues(); ++segmentIndex)
+    {
+      segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
+    }
+  }
+  return this->DetermineCommonLabelmapGeometry(extentComputationMode, segmentIdsVector);
+}
+
+//-----------------------------------------------------------------------------
+void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
+  vtkStringArray* segmentIds /*=NULL*/, bool computeEffectiveExtent /*=false*/, bool addPadding /*=false*/)
+{
+  std::vector<std::string> segmentIdsVector;
+  if (segmentIds)
+  {
+    for (int segmentIndex = 0; segmentIndex < segmentIds->GetNumberOfValues(); ++segmentIndex)
+    {
+      segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
+    }
+  }
+  this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, segmentIdsVector, computeEffectiveExtent, addPadding);
+}
+
+//-----------------------------------------------------------------------------
 std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputationMode, const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/)
 {
   // If segment IDs list is empty then include all segments

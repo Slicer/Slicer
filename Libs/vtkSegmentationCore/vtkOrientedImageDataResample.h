@@ -81,13 +81,14 @@ public:
   /// Extent can be specified to restrict imageToAppend's extent to a smaller region.
   /// inputImage and imageToAppend must have the same geometry, but they may have different extents.
   static bool MergeImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* imageToAppend, vtkOrientedImageData* outputImage, int operation,
-    const int extent[6] = 0, int maskThreshold = 0, int fillValue = 1, bool *outputModified=NULL);
+    const int extent[6] = 0, int maskThreshold = 0, double fillValue = 1, bool *outputModified=NULL);
 
   /// Modifies inputImage in-place by combining with modifierImage using max/min operation.
   /// The extent will remain unchanged.
   /// Extent can be specified to restrict modifierImage's extent to a smaller region.
   /// inputImage and modifierImage must have the same geometry (origin, spacing, directions) and scalar type, but they may have different extents.
-  static bool ModifyImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* modifierImage, int operation, const int extent[6] = 0, int maskThreshold = 0, int fillValue = 1);
+  static bool ModifyImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* modifierImage, int operation,
+    const int extent[6] = 0, int maskThreshold = 0, double fillValue = 1);
 
   /// Copy image with clipping to the specified extent
   static bool CopyImage(vtkOrientedImageData* imageToCopy, vtkOrientedImageData* outputImage, const int extent[6]=0);

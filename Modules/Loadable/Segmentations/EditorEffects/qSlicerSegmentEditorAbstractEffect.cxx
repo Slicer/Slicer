@@ -626,6 +626,13 @@ void qSlicerSegmentEditorAbstractEffect::addOptionsWidget(QWidget* newOptionsWid
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerSegmentEditorAbstractEffect::addOptionsWidget(QLayout* newOptionsWidget)
+{
+  Q_D(qSlicerSegmentEditorAbstractEffect);
+  this->optionsLayout()->addRow(newOptionsWidget);
+}
+
+//-----------------------------------------------------------------------------
 QWidget* qSlicerSegmentEditorAbstractEffect::addLabeledOptionsWidget(QString label, QWidget* newOptionsWidget)
 {
   Q_D(qSlicerSegmentEditorAbstractEffect);
@@ -1008,11 +1015,21 @@ vtkRenderWindow* qSlicerSegmentEditorAbstractEffect::renderWindow(qMRMLWidget* v
   qMRMLThreeDWidget* threeDWidget = qobject_cast<qMRMLThreeDWidget*>(viewWidget);
   if (sliceWidget)
     {
+    if (!sliceWidget->sliceView())
+      {
+      // probably the application is closing
+      return NULL;
+      }
     return sliceWidget->sliceView()->renderWindow();
     }
   else if (threeDWidget)
     {
-    return threeDWidget->threeDView()->renderWindow();
+    if (!threeDWidget->threeDView())
+      {
+      // probably the application is closing
+      return NULL;
+      }
+      return threeDWidget->threeDView()->renderWindow();
     }
 
   qCritical() << Q_FUNC_INFO << ": Unsupported view widget type!";

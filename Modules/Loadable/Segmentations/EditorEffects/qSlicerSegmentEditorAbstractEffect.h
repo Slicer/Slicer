@@ -194,6 +194,7 @@ public:
   /// The implemented effects need to create their options UI widget, make the connections,
   /// then call this function to add the options UI to the effect options frame
   Q_INVOKABLE void addOptionsWidget(QWidget* newOptionsWidget);
+  Q_INVOKABLE void addOptionsWidget(QLayout* newOptionsWidget);
 
   Q_INVOKABLE QWidget* addLabeledOptionsWidget(QString label, QWidget* newOptionsWidget);
   Q_INVOKABLE QWidget* addLabeledOptionsWidget(QString label, QLayout* newOptionsWidget);

@@ -170,6 +170,13 @@ public:
 //ETX
 #endif // __VTK_WRAP__
 
+  /// Determine common labelmap geometry for whole segmentation, for python compatibility.
+  std::string DetermineCommonLabelmapGeometry(int extentComputationMode, vtkStringArray* segmentIds);
+
+  /// Determine common labelmap extent for whole segmentation, for python compatibility.
+  void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
+    vtkStringArray* segmentIds, bool computeEffectiveExtent=false, bool addPadding=false);
+
 // Segment related methods
 public:
   /// Add a segment to this segmentation, do necessary conversions, and observe underlying

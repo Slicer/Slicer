@@ -53,7 +53,7 @@ void MergeImageGeneric2(
     int operation,
     const int extent[6],
     int maskThreshold,
-    int fillValue)
+    double fillValue)
 {
   // Compute update extent as intersection of base and modifier image extents (extent can be further reduced by specifying a smaller extent)
   int updateExt[6] = { 0, -1, 0, -1, 0, -1 };
@@ -202,7 +202,7 @@ void MergeImageGeneric(
     int operation,
     const int extent[6],
     int maskThreshold,
-    int fillValue)
+    double fillValue)
 {
   switch (modifierImage->GetScalarType())
     {
@@ -996,7 +996,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     int operation,
     const int extent[6]/*=0*/,
     int maskThreshold /*=0*/,
-    int fillValue /*=1*/,
+    double fillValue /*=1*/,
     bool *outputModified /*=NULL*/)
 {
   if (outputModified != NULL)
@@ -1047,7 +1047,7 @@ bool vtkOrientedImageDataResample::ModifyImage(
     int operation,
     const int extent[6]/*=0*/,
     int maskThreshold /*=0*/,
-    int fillValue /*=1*/)
+    double fillValue /*=1*/)
 {
   if (!inputImage || !modifierImage)
     {

@@ -340,8 +340,13 @@ void qMRMLSegmentEditorWidgetPrivate::init()
   layout->setSpacing(0);
 
   // Define default effect order
-  this->DefaultEffectOrder << "Paint" << "Draw" << "Erase" << "Wand" << "LevelTracing"
-    << "Scissors" << "Margin"  << "GrowCut" << "Threshold" << "Logical"; //TODO: Add island effects, etc.
+  this->DefaultEffectOrder
+    // Local painting
+    << "Paint" << "Draw" << "Erase" << "LevelTracing" << "Auto-complete"
+    // Global processing
+    << "Threshold" << "Margin" << "Smoothing"
+    // Global splitting, merging
+    << "Scissors" << "IdentifyIslands"  << "Logical operators";
 
   // Instantiate and expose effects
   this->initializeEffects();
@@ -823,6 +828,12 @@ void qMRMLSegmentEditorWidgetPrivate::updateEffectsEnabled()
 void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstractEffect* effect)
 {
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
+  if (!layoutManager)
+    {
+    // application is closing
+    return;
+    }
+
   foreach(QString sliceViewName, layoutManager->sliceViewNames())
     {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);

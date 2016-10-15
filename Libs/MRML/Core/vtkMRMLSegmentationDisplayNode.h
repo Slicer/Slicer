@@ -41,7 +41,6 @@ class VTK_MRML_EXPORT vtkMRMLSegmentationDisplayNode : public vtkMRMLLabelMapVol
 {
 public:
   // Define constants
-  static unsigned short GetSegmentationColorIndexBackground() { return 0; };
 
   /// Display properties per segment
   struct SegmentDisplayProperties

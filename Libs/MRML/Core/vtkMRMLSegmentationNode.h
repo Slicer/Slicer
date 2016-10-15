@@ -119,7 +119,8 @@ public:
 #ifndef __VTK_WRAP__
 //BTX
   /// Build merged labelmap of the binary labelmap representations of the specified segments
-  /// \param mergedImageData Output image data for the merged labelmap image data
+  /// \param mergedImageData Output image data for the merged labelmap image data. Voxels of background volume will be
+  /// of signed short type. Label value of n-th segment = (n + 1). Label value of background = 0.
   /// \param extentComputationMode Determines how to compute extents (EXTENT_REFERENCE_GEOMETRY, EXTENT_UNION_OF_SEGMENTS,
   ///   EXTENT_UNION_OF_SEGMENTS_PADDED, EXTENT_UNION_OF_EFFECTIVE_SEGMENTS, or EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED).
   /// \param mergedLabelmapGeometry Determines geometry of merged labelmap if not NULL, automatically determined otherwise

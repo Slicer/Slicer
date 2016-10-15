@@ -529,7 +529,6 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
   mergedImageData->SetImageToWorldMatrix(mergedImageToWorldMatrix);
 
   // Paint the image data background first
-  unsigned short backgroundColor = vtkMRMLSegmentationDisplayNode::GetSegmentationColorIndexBackground();
   short* mergedImagePtr = (short*)mergedImageData->GetScalarPointerForExtent(referenceExtent);
   if (!mergedImagePtr)
     {
@@ -537,7 +536,8 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
     return false;
     }
 
-  vtkOrientedImageDataResample::FillImage(mergedImageData, backgroundColor);
+  const short backgroundColorIndex = 0;
+  vtkOrientedImageDataResample::FillImage(mergedImageData, backgroundColorIndex);
 
   // Skip the rest if there are no segments
   if (this->Segmentation->GetNumberOfSegments() == 0)
@@ -546,7 +546,7 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
     }
 
   // Create merged labelmap
-  unsigned short colorIndex = backgroundColor + 1;
+  short colorIndex = backgroundColorIndex + 1;
   for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt, ++colorIndex)
     {
     std::string currentSegmentId(segmentIt->first);
