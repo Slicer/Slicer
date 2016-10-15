@@ -243,8 +243,16 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
   bool isInputImageTransformIdentity = false;
   if (inputImageTransform == NULL)
     {
-    // TODO: this could be improved by checking if inputImageTransform is identity
     isInputImageTransformIdentity = true;
+    }
+  else
+    {
+    // TODO: this could be further improved to detect if inputImageTransform is identity
+    vtkGeneralTransform* inputImageTransformGeneral = vtkGeneralTransform::SafeDownCast(inputImageTransform);
+    if (inputImageTransformGeneral && inputImageTransformGeneral->GetNumberOfConcatenatedTransforms() == 0)
+      {
+      isInputImageTransformIdentity = true;
+      }
     }
   if ( isInputImageTransformIdentity
     && vtkOrientedImageDataResample::DoGeometriesMatch(inputImage, referenceImage))
