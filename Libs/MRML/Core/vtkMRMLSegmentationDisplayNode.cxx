@@ -1049,7 +1049,9 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
   this->SegmentListUpdateTime = segmentation->GetMTime();
   this->SegmentListUpdateSource = segmentation;
 
-  int wasModifyingDisplayNode = this->StartModify();
+  // Disable modified event, as we just update internal cache
+  bool wasDisableModified = this->GetDisableModifiedEvent();
+  this->SetDisableModifiedEvent(true);
 
   // Remove unused segment display properties and colors
   // Get list of segment IDs that we have display properties for but does not exist in
@@ -1091,5 +1093,5 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList()
     this->SetSegmentDisplayPropertiesToDefault(*missingSegmentIdIt);
     }
 
-  this->EndModify(wasModifyingDisplayNode);
+   this->SetDisableModifiedEvent(wasDisableModified);
 }

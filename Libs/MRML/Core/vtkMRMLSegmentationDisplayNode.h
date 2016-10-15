@@ -23,7 +23,7 @@
 #ifndef __vtkMRMLSegmentationDisplayNode_h
 #define __vtkMRMLSegmentationDisplayNode_h
 
-#include "vtkMRMLLabelMapVolumeDisplayNode.h"
+#include "vtkMRMLDisplayNode.h"
 
 #include <set>
 
@@ -37,7 +37,7 @@ class vtkVector3d;
 /// \brief MRML node for representing segmentation display attributes.
 ///
 /// vtkMRMLSegmentationDisplayNode nodes describe how volume is displayed.
-class VTK_MRML_EXPORT vtkMRMLSegmentationDisplayNode : public vtkMRMLLabelMapVolumeDisplayNode
+class VTK_MRML_EXPORT vtkMRMLSegmentationDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   // Define constants
@@ -80,7 +80,7 @@ public:
 
 public:
   static vtkMRMLSegmentationDisplayNode *New();
-  vtkTypeMacro(vtkMRMLSegmentationDisplayNode,vtkMRMLLabelMapVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLSegmentationDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();

@@ -824,7 +824,7 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
 {
   Q_D(qMRMLSegmentsTableView);
 
-  if (!d->SegmentationNode)
+  if (!d->SegmentationNode && !segmentIDs.empty())
     {
     qCritical() << Q_FUNC_INFO << " failed: segmentation node is not set";
     return;
