@@ -1008,9 +1008,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
   threshold->ReplaceInOn();
   threshold->ReplaceOutOn();
   threshold->SetOutputScalarType(labelmapImage->GetScalarType());
-  //TODO: pending resolution of bug http://www.na-mic.org/Bug/view.php?id=1822,
-  //   run the thresholding in single threaded mode to avoid data corruption observed on mac release builds
-  //threshold->SetNumberOfThreads(1);
+
   for (int labelIndex = 0; labelIndex < labelValues->GetNumberOfValues(); ++labelIndex)
   {
     int label = labelValues->GetValue(labelIndex);
@@ -1020,7 +1018,17 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
 
     // Create oriented image data for label
     vtkSmartPointer<vtkOrientedImageData> labelOrientedImageData = vtkSmartPointer<vtkOrientedImageData>::New();
-    labelOrientedImageData->vtkImageData::DeepCopy(threshold->GetOutput());
+    labelOrientedImageData->ShallowCopy(threshold->GetOutput());
+
+    // Clip to effective extent
+    int labelOrientedImageDataEffectiveExtent[6] = { 0, -1, 0, -1, 0, -1 };
+    vtkOrientedImageDataResample::CalculateEffectiveExtent(labelOrientedImageData, labelOrientedImageDataEffectiveExtent);
+    vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
+    padder->SetInputData(labelOrientedImageData);
+    padder->SetOutputWholeExtent(labelOrientedImageDataEffectiveExtent);
+    padder->Update();
+
+    labelOrientedImageData->ShallowCopy(padder->GetOutput());
     vtkSmartPointer<vtkMatrix4x4> labelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
     labelmapImage->GetImageToWorldMatrix(labelmapImageToWorldMatrix);
     labelOrientedImageData->SetGeometryFromImageToWorldMatrix(labelmapImageToWorldMatrix);
