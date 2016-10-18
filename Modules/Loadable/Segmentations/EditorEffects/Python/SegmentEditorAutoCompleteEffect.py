@@ -229,12 +229,8 @@ a complete segmentation, taking into account the master volume content.
       masterImageClipper = vtk.vtkImageConstantPad()
       masterImageClipper.SetInputData(masterImageData)
       masterImageClipper.SetOutputWholeExtent(self.mergedLabelmapGeometryImage.GetExtent())
-      # TODO: investigate why image type has to be short for growcut (it should not be)
-      masterImageCaster = vtk.vtkImageCast()
-      masterImageCaster.SetInputConnection(masterImageClipper.GetOutputPort())
-      masterImageCaster.SetOutputScalarTypeToShort()
-      masterImageCaster.Update()
-      self.clippedMasterImageData.ShallowCopy(masterImageCaster.GetOutput())
+      masterImageClipper.Update()
+      self.clippedMasterImageData.ShallowCopy(masterImageClipper.GetOutput())
       self.clippedMasterImageData.CopyDirections(self.mergedLabelmapGeometryImage)
 
     previewNode.GetSegmentation().RemoveAllSegments()
@@ -256,16 +252,16 @@ a complete segmentation, taking into account the master volume content.
 
     elif method == GROWCUT:
 
-      # TODO: Update is supposed to be much faster than recomputation. Check in vtkFastGrowCutSeg
-      # implementation why it is not faster.
       import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
-      if self.growCutFilter:
-        self.growCutFilter.SetSeedVol(mergedImage)
+      # if self.growCutFilter exists but previewNode is empty then probably the scene was closed
+      # while in preview mode
+      if self.growCutFilter and previewNode:
+        self.growCutFilter.SetSeedLabelVolume(mergedImage)
         self.growCutFilter.Update()
       else:
-        self.growCutFilter = vtkSlicerSegmentationsModuleLogic.vtkFastGrowCutSeg()
-        self.growCutFilter.SetSourceVol(self.clippedMasterImageData)
-        self.growCutFilter.SetSeedVol(mergedImage)
+        self.growCutFilter = vtkSlicerSegmentationsModuleLogic.vtkImageGrowCutSegment()
+        self.growCutFilter.SetIntensityVolume(self.clippedMasterImageData)
+        self.growCutFilter.SetSeedLabelVolume(mergedImage)
         self.growCutFilter.Update()
 
       outputLabelmap.DeepCopy( self.growCutFilter.GetOutput() )

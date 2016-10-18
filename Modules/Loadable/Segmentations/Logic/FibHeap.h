@@ -84,7 +84,7 @@ public:
   FibHeapNode *ExtractMin();
   int DecreaseKey(FibHeapNode *theNode, FibHeapNode& NewKey);
   int Delete(FibHeapNode *theNode);
-    bool IsEmpty() {return (MinRoot == NULL);}
+  bool IsEmpty() {return (MinRoot == NULL);}
 
   // Extra utility functions
   int  GetHeapOwnership() { return HeapOwnershipFlag; };

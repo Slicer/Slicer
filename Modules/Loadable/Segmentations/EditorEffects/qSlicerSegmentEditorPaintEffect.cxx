@@ -611,7 +611,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
 void qSlicerSegmentEditorPaintEffectPrivate::updateBrush(qMRMLWidget* viewWidget, BrushPipeline* pipeline)
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
-  if (q->integerParameter("BrushPixelMode"))
+  if (this->BrushToWorldOriginTransformer->GetNumberOfInputConnections(0) == NULL || q->integerParameter("BrushPixelMode"))
     {
     pipeline->SetBrushVisibility(false);
     return;

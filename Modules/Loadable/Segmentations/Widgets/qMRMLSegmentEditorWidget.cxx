@@ -908,9 +908,12 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
   const char* selectedSegmentID = d->ParameterSetNode->GetSelectedSegmentID();
   if (selectedSegmentID)
     {
-    QStringList segmentID;
-    segmentID << QString(selectedSegmentID);
-    d->SegmentsTableView->setSelectedSegmentIDs(segmentID);
+    if (segmentationNode)
+      {
+      QStringList segmentID;
+      segmentID << QString(selectedSegmentID);
+      d->SegmentsTableView->setSelectedSegmentIDs(segmentID);
+      }
     }
   else
     {
