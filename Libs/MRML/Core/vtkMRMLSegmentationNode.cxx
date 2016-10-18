@@ -547,13 +547,13 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
 
   // Create merged labelmap
   short colorIndex = backgroundColorIndex + 1;
-  for (vtkSegmentation::SegmentMap::iterator segmentIt = segmentMap.begin(); segmentIt != segmentMap.end(); ++segmentIt, ++colorIndex)
+  for (std::vector<std::string>::iterator segmentIdIt = mergedSegmentIDs.begin(); segmentIdIt != mergedSegmentIDs.end(); ++segmentIdIt, ++colorIndex)
     {
-    std::string currentSegmentId(segmentIt->first);
-    vtkSegment* currentSegment = segmentIt->second;
-    bool segmentIncluded = ( std::find(mergedSegmentIDs.begin(), mergedSegmentIDs.end(), std::string(currentSegmentId)) != mergedSegmentIDs.end() );
-    if (!segmentIncluded)
+    std::string currentSegmentId = *segmentIdIt;
+    vtkSegment* currentSegment = this->Segmentation->GetSegment(currentSegmentId);
+    if (!currentSegment)
       {
+      vtkWarningMacro("GenerateMergedLabelmap: Segment not found: " << currentSegmentId);
       continue;
       }
 
