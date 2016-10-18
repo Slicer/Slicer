@@ -588,3 +588,10 @@ qSlicerMarkupsPlaceWidget* qSlicerSimpleMarkupsWidget::markupsPlaceWidget() cons
   Q_D(const qSlicerSimpleMarkupsWidget);
   return d->MarkupsPlaceWidget;
 }
+
+//-----------------------------------------------------------------------------
+qMRMLNodeComboBox* qSlicerSimpleMarkupsWidget::markupsSelectorComboBox() const
+{
+  Q_D(const qSlicerSimpleMarkupsWidget);
+  return d->MarkupsFiducialNodeComboBox;
+}

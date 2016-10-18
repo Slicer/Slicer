@@ -62,6 +62,9 @@ public:
   /// Get the markups placement widget (containing place and delete button)
   Q_INVOKABLE qSlicerMarkupsPlaceWidget* markupsPlaceWidget() const;
 
+  /// Get the markup node selector combo box
+  Q_INVOKABLE qMRMLNodeComboBox* markupsSelectorComboBox() const;
+
   /// Accessors to control place mode behavior
   bool enterPlaceModeOnNodeChange() const;
 
