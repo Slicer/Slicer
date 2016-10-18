@@ -42,9 +42,9 @@ public:
   virtual int operator ==(FibHeapNode& RHS)
   {
     if (FHN_Cmp(RHS))
-    {
+      {
       return 0;
-    }
+      }
     return m_Key == ((HeapNode&)RHS).m_Key ? 1 : 0;
   }
 
@@ -52,9 +52,9 @@ public:
   {
     int x = FHN_Cmp(RHS);
     if (x != 0)
-    {
+      {
       return x < 0 ? 1 : 0;
-    }
+      }
     return m_Key < ((HeapNode&)RHS).m_Key ? 1 : 0;
   }
 
@@ -134,15 +134,15 @@ vtkImageGrowCutSegment::vtkInternal::~vtkInternal()
 void vtkImageGrowCutSegment::vtkInternal::Reset()
 {
   if (m_Heap != NULL)
-  {
+    {
     delete m_Heap;
     m_Heap = NULL;
-  }
+    }
   if (m_HeapNodes != NULL)
-  {
+    {
     delete[]m_HeapNodes;
     m_HeapNodes = NULL;
-  }
+    }
   m_bSegInitialized = false;
   m_DistanceVolume->Initialize();
   m_DistanceVolumePre->Initialize();
@@ -157,15 +157,15 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
   m_Heap = new FibHeap;
   long dimXYZ = m_DimX * m_DimY * m_DimZ;
   if ((m_HeapNodes = new HeapNode[dimXYZ + 1]) == NULL)
-  {
+    {
     vtkGenericWarningMacro("Memory allocation failed. Dimensions: " << m_DimX << "x" << m_DimY << "x" << m_DimZ);
     return false;
-  }
+    }
   IntensityPixelType* imSrc = static_cast<IntensityPixelType*>(intensityVolume->GetScalarPointer());
   LabelPixelType* seedLabelVolumePtr = static_cast<LabelPixelType*>(seedLabelVolume->GetScalarPointer());
 
   if (!m_bSegInitialized)
-  {
+    {
     m_ResultLabelVolume->SetOrigin(seedLabelVolume->GetOrigin());
     m_ResultLabelVolume->SetSpacing(seedLabelVolume->GetSpacing());
     m_ResultLabelVolume->SetExtent(seedLabelVolume->GetExtent());
@@ -190,19 +190,19 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
     // about 5-6% longer computation time. Therefore,
     // we put indices in order x1y1z1, x1y1z2, x1y1z3, etc.
     for (int ix = -1; ix <= 1; ix++)
-    {
-      for (int iy = -1; iy <= 1; iy++)
       {
-        for (int iz = -1; iz <= 1; iz++)
+      for (int iy = -1; iy <= 1; iy++)
         {
-          if (ix == 0 && iy == 0 && iz == 0)
+        for (int iz = -1; iz <= 1; iz++)
           {
+          if (ix == 0 && iy == 0 && iz == 0)
+            {
             continue;
-          }
+            }
           m_NeighborIndexOffsets.push_back(long(ix) + m_DimX*(long(iy) + m_DimY*long(iz)));
+          }
         }
       }
-    }
 
     // Determine neighborhood size for computation at each voxel.
     // The neighborhood size is everwhere the same (size of m_NeighborIndexOffsets)
@@ -211,64 +211,64 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
     const unsigned char numberOfNeighbors = m_NeighborIndexOffsets.size();
     unsigned char* nbSizePtr = &(m_NumberOfNeighbors[0]);
     for (int z = 0; z < m_DimZ; z++)
-    {
+      {
       bool zEdge = (z == 0 || z == m_DimZ - 1);
       for (int y = 0; y < m_DimY; y++)
-      {
+        {
         bool yEdge = (y == 0 || y == m_DimY - 1);
         *(nbSizePtr++) = 0; // x == 0 (there is always padding, so we don'neighborNewDistance need to check if m_DimX>0)
         unsigned char nbSize = (zEdge || yEdge) ? 0 : numberOfNeighbors;
         for (int x = m_DimX-2; x > 0; x--)
-        {
+          {
           *(nbSizePtr++) = nbSize;
-        }
+          }
         *(nbSizePtr++) = 0; // x == m_DimX-1 (there is always padding, so we don'neighborNewDistance need to check if m_DimX>1)
+        }
       }
-    }
 
     for (long index = 0; index < dimXYZ; index++)
-    {
+      {
       LabelPixelType seedValue = seedLabelVolumePtr[index];
       resultLabelVolumePtr[index] = seedValue;
       if (seedValue == 0)
-      {
+        {
         m_HeapNodes[index] = DIST_INF;
         distanceVolumePtr[index] = DIST_INF;
-      }
+        }
       else
-      {
+        {
         m_HeapNodes[index] = DIST_EPSILON;
         distanceVolumePtr[index] = DIST_EPSILON;
-      }
+        }
       m_Heap->Insert(&m_HeapNodes[index]);
       m_HeapNodes[index].SetIndexValue(index);
+      }
     }
-  }
   else
-  {
+    {
     // Already initialized
     LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
     LabelPixelType* resultLabelVolumePrePtr = static_cast<LabelPixelType*>(m_ResultLabelVolumePre->GetScalarPointer());
     DistancePixelType* distanceVolumePtr = static_cast<DistancePixelType*>(m_DistanceVolume->GetScalarPointer());
 
     for (long index = 0; index < dimXYZ; index++)
-    {
-      if (seedLabelVolumePtr[index] != 0 && seedLabelVolumePtr[index] != resultLabelVolumePrePtr[index])
       {
+      if (seedLabelVolumePtr[index] != 0 && seedLabelVolumePtr[index] != resultLabelVolumePrePtr[index])
+        {
         m_HeapNodes[index] = DIST_EPSILON;
         distanceVolumePtr[index] = DIST_EPSILON;
         resultLabelVolumePtr[index] = seedLabelVolumePtr[index];
-      }
+        }
       else
-      {
+        {
         m_HeapNodes[index] = DIST_INF;
         distanceVolumePtr[index] = DIST_INF;
         resultLabelVolumePtr[index] = 0;
-      }
+        }
       m_Heap->Insert(&m_HeapNodes[index]);
       m_HeapNodes[index].SetIndexValue(index);
+      }
     }
-  }
   return true;
 }
 
@@ -285,7 +285,7 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
   m_Heap->ExtractMin();
 
   if (!m_bSegInitialized)
-  {
+    {
     // Full computation
     DistancePixelType* distanceVolumePtr = static_cast<DistancePixelType*>(m_DistanceVolume->GetScalarPointer());
     LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
@@ -293,7 +293,7 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
     // Normal Dijkstra (to be used in initializing the segmenter for the current image)
     HeapNode hnTmp;
     while (!m_Heap->IsEmpty())
-    {
+      {
       HeapNode* hnMin = (HeapNode *)m_Heap->ExtractMin();
       long index = hnMin->GetIndexValue();
       DistancePixelType currentDistance = hnMin->GetKeyValue();
@@ -304,24 +304,24 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
       DistancePixelType pixCenter = imSrc[index];
       unsigned char nbSize = m_NumberOfNeighbors[index];
       for (unsigned char i = 0; i < nbSize; i++)
-      {
+        {
         long indexNgbh = index + m_NeighborIndexOffsets[i];
         DistancePixelType neighborCurrentDistance = distanceVolumePtr[indexNgbh];
         DistancePixelType neighborNewDistance = fabs(pixCenter - imSrc[indexNgbh]) + currentDistance;
         if (neighborCurrentDistance > neighborNewDistance)
-        {
+          {
           distanceVolumePtr[indexNgbh] = neighborNewDistance;
           resultLabelVolumePtr[indexNgbh] = currentLabel;
 
           hnTmp = m_HeapNodes[indexNgbh];
           hnTmp.SetKeyValue(neighborNewDistance);
           m_Heap->DecreaseKey(&m_HeapNodes[indexNgbh], hnTmp);
+          }
         }
       }
     }
-  }
   else
-  {
+    {
     // Quick update
 
     LabelPixelType* resultLabelVolumePrePtr = static_cast<LabelPixelType*>(m_ResultLabelVolumePre->GetScalarPointer());
@@ -330,7 +330,7 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
     HeapNode hnTmp;
     long dimXYZ = m_DimX * m_DimY * m_DimZ;
     while (!m_Heap->IsEmpty())
-    {
+      {
       DistancePixelType* distanceVolumePrePtr = static_cast<DistancePixelType*>(m_DistanceVolumePre->GetScalarPointer());
       DistancePixelType* distanceVolumePtr = static_cast<DistancePixelType*>(m_DistanceVolume->GetScalarPointer());
 
@@ -339,26 +339,26 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
 
       // Stop of minimum value is infinite
       if (currentDistance == DIST_INF)
-      {
-        for (long index = 0; index < dimXYZ; index++)
         {
-          if (resultLabelVolumePtr[index] == 0)
+        for (long index = 0; index < dimXYZ; index++)
           {
+          if (resultLabelVolumePtr[index] == 0)
+            {
             resultLabelVolumePtr[index] = resultLabelVolumePrePtr[index];
             distanceVolumePtr[index] = distanceVolumePrePtr[index];
+            }
           }
-        }
         break;
-      }
+        }
 
       // Stop propagation when the new distance is larger than the previous one
       long index = hnMin->GetIndexValue();
       if (currentDistance > distanceVolumePrePtr[index])
-      {
+        {
         distanceVolumePtr[index] = distanceVolumePrePtr[index];
         resultLabelVolumePtr[index] = resultLabelVolumePrePtr[index];
         continue;
-      }
+        }
 
       LabelPixelType currentLabel = resultLabelVolumePtr[index];
       distanceVolumePtr[index] = currentDistance;
@@ -367,22 +367,22 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
       DistancePixelType pixCenter = imSrc[index];
       unsigned char nbSize = m_NumberOfNeighbors[index];
       for (unsigned char i = 0; i < nbSize; i++)
-      {
+        {
         long indexNgbh = index + m_NeighborIndexOffsets[i];
         DistancePixelType neighborCurrentDistance = distanceVolumePtr[indexNgbh];
         DistancePixelType neighborNewDistance = fabs(pixCenter - imSrc[indexNgbh]) + currentDistance;
         if (neighborCurrentDistance > neighborNewDistance)
-        {
+          {
           distanceVolumePtr[indexNgbh] = neighborNewDistance;
           resultLabelVolumePtr[indexNgbh] = currentLabel;
 
           hnTmp = m_HeapNodes[indexNgbh];
           hnTmp.SetKeyValue(neighborNewDistance);
           m_Heap->DecreaseKey(&m_HeapNodes[indexNgbh], hnTmp);
+          }
         }
       }
     }
-  }
 
   // Update previous labels and distance information
   m_ResultLabelVolumePre->DeepCopy(m_ResultLabelVolume);
@@ -391,16 +391,16 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(vtkImag
 
   // Release memory
   if (m_Heap != NULL)
-  {
+    {
     delete m_Heap;
     m_Heap = NULL;
-  }
+    }
   //m_HeapNodes.clear();
   if (m_HeapNodes != NULL)
-  {
+    {
     delete[] m_HeapNodes;
     m_HeapNodes = NULL;
-  }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -413,16 +413,17 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut2(vtkImageData *intensit
   m_DimZ = imSize[2];
 
   if (m_DimX <= 2 || m_DimY <= 2 || m_DimZ <= 2)
-  {
+    {
     // image is too small (there should be space for at least one voxel padding around the image)
     vtkGenericWarningMacro("vtkImageGrowCutSegment: image size is too small");
     return false;
-  }
+    }
 
   if (!InitializationAHP<IntensityPixelType, LabelPixelType>(intensityVolume, seedLabelVolume))
-  {
+    {
     return false;
-  }
+    }
+
   DijkstraBasedClassificationAHP<IntensityPixelType, LabelPixelType>(intensityVolume, seedLabelVolume);
   return true;
 }
@@ -431,14 +432,33 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut2(vtkImageData *intensit
 template <class SourceVolType>
 bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume, vtkImageData *resultLabelVolume)
 {
-  // Restart growcut from scratch if image size is changed (then cached buffers cannot be reused)
+  const double compareTolerance = 1e-6;
   int* extent = intensityVolume->GetExtent();
   double* spacing = intensityVolume->GetSpacing();
   double* origin = intensityVolume->GetOrigin();
+  int* seedExtent = seedLabelVolume->GetExtent();
+  double* seedSpacing = seedLabelVolume->GetSpacing();
+  double* seedOrigin = seedLabelVolume->GetOrigin();
+
+  // Return with error if intensity volume geometry differs from seed label volume geometry
+  if (seedExtent[0] != extent[0] || seedExtent[1] != extent[1]
+    || seedExtent[2] != extent[2] || seedExtent[3] != extent[3]
+    || seedExtent[4] != extent[4] || seedExtent[5] != extent[5]
+    || fabs(seedOrigin[0] - origin[0]) > compareTolerance
+    || fabs(seedOrigin[1] - origin[1]) > compareTolerance
+    || fabs(seedOrigin[2] - origin[2]) > compareTolerance
+    || fabs(seedSpacing[0] - spacing[0]) > compareTolerance
+    || fabs(seedSpacing[1] - spacing[1]) > compareTolerance
+    || fabs(seedSpacing[2] - spacing[2]) > compareTolerance)
+    {
+    vtkGenericWarningMacro("vtkImageGrowCutSegment: Seed label volume geometry does not match intensity volume geometry");
+    return false;
+    }
+
+  // Restart growcut from scratch if image size is changed (then cached buffers cannot be reused)
   int* outExtent = m_ResultLabelVolume->GetExtent();
   double* outSpacing = m_ResultLabelVolume->GetSpacing();
   double* outOrigin = m_ResultLabelVolume->GetOrigin();
-  const double compareTolerance = 1e-6;
   if (outExtent[0] != extent[0] || outExtent[1] != extent[1]
     || outExtent[2] != extent[2] || outExtent[3] != extent[3]
     || outExtent[4] != extent[4] || outExtent[5] != extent[5]
@@ -448,13 +468,13 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData *intensity
     || fabs(outSpacing[0] - spacing[0]) > compareTolerance
     || fabs(outSpacing[1] - spacing[1]) > compareTolerance
     || fabs(outSpacing[2] - spacing[2]) > compareTolerance)
-  {
+    {
     this->Reset();
-  }
+    }
   else if (m_ResultLabelVolume->GetScalarType() != seedLabelVolume->GetScalarType())
-  {
+    {
     this->Reset();
-  }
+    }
 
   bool success = false;
   switch (seedLabelVolume->GetScalarType())
@@ -465,13 +485,13 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData *intensity
   }
 
   if (success)
-  {
+    {
     resultLabelVolume->ShallowCopy(this->m_ResultLabelVolume);
-  }
+    }
   else
-  {
+    {
     resultLabelVolume->Initialize();
-  }
+    }
   return success;
 }
 
@@ -497,16 +517,14 @@ void vtkImageGrowCutSegment::ExecuteDataWithInformation(
   vtkImageData *seedLabelVolume = vtkImageData::SafeDownCast(this->GetInput(1));
   vtkImageData *resultLabelVolume = vtkImageData::SafeDownCast(resultLabelVolumeDataObject);
 
-  //TODO: check if intensity and seed volumes have the same size, origin, spacing
-
   vtkNew<vtkTimerLog> logger;
   logger->StartTimer();
 
   switch (intensityVolume->GetScalarType())
-  {
+    {
     vtkTemplateMacro(this->Internal->ExecuteGrowCut<VTK_TT>(intensityVolume, seedLabelVolume, resultLabelVolume));
     break;
-  }
+    }
   logger->StopTimer();
   vtkInfoMacro(<< "vtkImageGrowCutSegment execution time: " << logger->GetElapsedTime());
 }
@@ -520,9 +538,9 @@ int vtkImageGrowCutSegment::RequestInformation(
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(1);
   if (inInfo != NULL)
-  {
+    {
     this->Superclass::RequestInformation(request, inputVector, outputVector);
-  }
+    }
   return 1;
 }
 

@@ -187,6 +187,7 @@ a complete segmentation, taking into account the master volume content.
 
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
     if not previewNode or not self.clippedMasterImageData or not self.mergedLabelmapGeometryImage:
+      self.reset()
       # Compute merged labelmap extent (effective extent slightly expanded)
       self.selectedSegmentIds = vtk.vtkStringArray()
       segmentationNode.GetDisplayNode().GetVisibleSegmentIDs(self.selectedSegmentIds)
@@ -255,7 +256,7 @@ a complete segmentation, taking into account the master volume content.
       import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
       # if self.growCutFilter exists but previewNode is empty then probably the scene was closed
       # while in preview mode
-      if self.growCutFilter and previewNode:
+      if self.growCutFilter:
         self.growCutFilter.SetSeedLabelVolume(mergedImage)
         self.growCutFilter.Update()
       else:
