@@ -315,6 +315,8 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     if ( node == 0 )
       {
       node = vtkMRMLSliceCompositeNode::New();
+      std::string compositeNodeName = std::string(this->GetName() ? this->GetName() : "") + " Composite";
+      node->SetName(compositeNodeName.c_str());
       node->SetLayoutName(this->GetName());
       this->SetSliceCompositeNode (node);
       node->Delete();
