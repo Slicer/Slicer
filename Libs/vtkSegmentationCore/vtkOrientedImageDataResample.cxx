@@ -800,12 +800,12 @@ void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedI
   // Add 0.5 to image extents to contain voxel corners
   double imageExtent[6] =
     {
-    static_cast<double>(imageExtent[0]) - 0.5,
-    static_cast<double>(imageExtent[1]) + 0.5,
-    static_cast<double>(imageExtent[2]) - 0.5,
-    static_cast<double>(imageExtent[3]) + 0.5,
-    static_cast<double>(imageExtent[4]) - 0.5,
-    static_cast<double>(imageExtent[5]) + 0.5
+    static_cast<double>(imageExtentCenter[0]) - 0.5,
+    static_cast<double>(imageExtentCenter[1]) + 0.5,
+    static_cast<double>(imageExtentCenter[2]) - 0.5,
+    static_cast<double>(imageExtentCenter[3]) + 0.5,
+    static_cast<double>(imageExtentCenter[4]) - 0.5,
+    static_cast<double>(imageExtentCenter[5]) + 0.5
     };
 
   // Append transformed side planes poly data to one model and get bounds
