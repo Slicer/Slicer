@@ -97,26 +97,28 @@ class ScriptedLoadableModuleWidget:
 
     #
     # Reload and Test area
-    #
+    # Used during development, but hidden when delivering
+    # developer mode is turned off.
     self.reloadCollapsibleButton = ctk.ctkCollapsibleButton()
     self.reloadCollapsibleButton.text = "Reload && Test"
     self.layout.addWidget(self.reloadCollapsibleButton)
     reloadFormLayout = qt.QFormLayout(self.reloadCollapsibleButton)
 
     # reload button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
     self.reloadButton = qt.QPushButton("Reload")
     self.reloadButton.toolTip = "Reload this module."
     self.reloadButton.name = "ScriptedLoadableModuleTemplate Reload"
     self.reloadButton.connect('clicked()', self.onReload)
 
     # reload and test button
-    # (use this during development, but remove it when delivering
-    #  your module to users)
     self.reloadAndTestButton = qt.QPushButton("Reload and Test")
     self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
     self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
+
+    # edit python source code
+    self.editSourceButton = qt.QPushButton("Edit")
+    self.editSourceButton.toolTip = "Edit the module's source code."
+    self.editSourceButton.connect('clicked()', self.onEditSource)
 
     # restart Slicer button
     # (use this during development, but remove it when delivering
@@ -126,7 +128,7 @@ class ScriptedLoadableModuleWidget:
     self.restartButton.name = "ScriptedLoadableModuleTemplate Restart"
     self.restartButton.connect('clicked()', slicer.app.restart)
 
-    reloadFormLayout.addWidget(createHLayout([self.reloadButton, self.reloadAndTestButton, self.restartButton]))
+    reloadFormLayout.addWidget(createHLayout([self.reloadButton, self.reloadAndTestButton, self.editSourceButton, self.restartButton]))
 
 
   def setup(self):
@@ -153,6 +155,10 @@ class ScriptedLoadableModuleWidget:
       traceback.print_exc()
       errorMessage = "Reload and Test: Exception!\n\n" + str(e) + "\n\nSee Python Console for Stack Trace"
       slicer.util.errorDisplay(errorMessage)
+
+  def onEditSource(self):
+    filePath = slicer.util.modulePath(self.moduleName)
+    qt.QDesktopServices.openUrl(qt.QUrl("file:///"+filePath, qt.QUrl.TolerantMode))
 
 class ScriptedLoadableModuleLogic():
   def __init__(self, parent = None):
