@@ -23,6 +23,7 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     # Observation for auto-update
     self.observedSegmentation = None
     self.segmentationNodeObserverTags = []
+    self.maximumPreviewOpacity = 0.8
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
@@ -75,8 +76,8 @@ a complete segmentation, taking into account the master volume content. Minimum 
 
     self.previewOpacitySlider = ctk.ctkSliderWidget()
     self.previewOpacitySlider.setToolTip("Adjust visibility of results preview.")
-    self.previewOpacitySlider.minimum = 0.2
-    self.previewOpacitySlider.maximum = 0.8
+    self.previewOpacitySlider.minimum = 1.0 - self.maximumPreviewOpacity
+    self.previewOpacitySlider.maximum = self.maximumPreviewOpacity
     self.previewOpacitySlider.value = 0.0
     self.previewOpacitySlider.singleStep = 0.05
     self.previewOpacitySlider.pageStep = 0.1
@@ -185,10 +186,10 @@ a complete segmentation, taking into account the master volume content. Minimum 
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
     if previewNode:
-      previewNode.GetDisplayNode().SetOpacity2DFill(self.previewOpacitySlider.value)
-      segmentationNode.GetDisplayNode().SetOpacity2DFill(0.8-self.previewOpacitySlider.value)
+      previewNode.GetDisplayNode().SetOpacity2DFill(self.previewOpacitySlider.value-(1.0-self.maximumPreviewOpacity))
+      segmentationNode.GetDisplayNode().SetOpacity2DFill(self.maximumPreviewOpacity-self.previewOpacitySlider.value)
     else:
-      segmentationNode.GetDisplayNode().SetOpacity2DFill(0.8)
+      segmentationNode.GetDisplayNode().SetOpacity2DFill(self.maximumPreviewOpacity)
 
     autoUpdate = 1 if self.autoUpdateCheckBox.isChecked() else 0
     self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
