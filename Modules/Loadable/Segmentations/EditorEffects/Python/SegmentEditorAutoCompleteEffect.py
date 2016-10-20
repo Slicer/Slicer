@@ -20,6 +20,9 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     self.selectedSegmentIds = None
     self.clippedMasterImageData = None
     self.growCutFilter = None
+    # Observation for auto-update
+    self.observedSegmentation = None
+    self.segmentationNodeObserverTags = []
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
@@ -34,12 +37,9 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     return qt.QIcon()
 
   def helpText(self):
-    return """Create a complete segmentation from a partial segmentation.
-Use any effects to prepare partial segmentation, click Update to preview results, \
-and click Apply to accept displayed results. \
-To refine results: edit partial segmentation using any effects and click Update.
-Masking settings are bypassed. Minimum two segments are required. If segments overlap, segment higher in the segments table will have priority.
-"""
+    return """Create a complete segmentation from a partial segmentation from partial segmentation \
+created using other effects. Masking settings are bypassed. If segments overlap, segment higher in \
+the segments table will have priority."""
 
   def setupOptionsFrame(self):
     self.methodSelectorComboBox = qt.QComboBox()
@@ -50,30 +50,43 @@ Masking settings are bypassed. Minimum two segments are required. If segments ov
 The complete segmentation will be created by interpolating segmentations on slices that were skipped.</li>
 <li><b>Expand segments:</b> Create segments using any editor effect: one segment inside
 each each region that should belong to a separate segment. Segments will be expanded to create
-a complete segmentation, taking into account the master volume content.
+a complete segmentation, taking into account the master volume content. Minimum two segments are required.
 (see http://insight-journal.org/browse/publication/977)</li>
 </ul></html>""")
     self.scriptedEffect.addLabeledOptionsWidget("Method:", self.methodSelectorComboBox)
 
+    self.autoUpdateCheckBox = qt.QCheckBox("Auto-update")
+    self.autoUpdateCheckBox.setToolTip("Auto-update results preview when input segments change.")
+    self.autoUpdateCheckBox.setChecked(False)
+
+    self.previewButton = qt.QPushButton("Initialize")
+    self.previewButton.objectName = self.__class__.__name__ + 'Preview'
+    self.previewButton.setToolTip("Preview complete segmentation")
+    # qt.QSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Expanding)
+    # fails on some systems, therefore set the policies using separate method calls
+    qSize = qt.QSizePolicy()
+    qSize.setHorizontalPolicy(qt.QSizePolicy.Expanding)
+    self.previewButton.setSizePolicy(qSize)
+
+    previewFrame = qt.QHBoxLayout()
+    previewFrame.addWidget(self.autoUpdateCheckBox)
+    previewFrame.addWidget(self.previewButton)
+    self.scriptedEffect.addLabeledOptionsWidget("Preview:", previewFrame)
+
     self.previewOpacitySlider = ctk.ctkSliderWidget()
     self.previewOpacitySlider.setToolTip("Adjust visibility of results preview.")
-    self.previewOpacitySlider.minimum = 0.0
-    self.previewOpacitySlider.maximum = 1.0
+    self.previewOpacitySlider.minimum = 0.2
+    self.previewOpacitySlider.maximum = 0.8
     self.previewOpacitySlider.value = 0.0
     self.previewOpacitySlider.singleStep = 0.05
     self.previewOpacitySlider.pageStep = 0.1
-    #self.previewOpacityLabel = self.scriptedEffect.addLabeledOptionsWidget("Preview opacity:", self.previewOpacitySlider)
+    self.previewOpacitySlider.spinBoxVisible = False
 
-    self.previewButton = qt.QPushButton("Update")
-    self.previewButton.objectName = self.__class__.__name__ + 'Preview'
-    self.previewButton.setToolTip("Preview complete segmentation")
-    #self.scriptedEffect.addOptionsWidget(self.previewButton)
-
-    previewFrame = qt.QHBoxLayout()
-    previewFrame.addWidget(self.previewOpacitySlider)
-    previewFrame.addWidget(self.previewButton)
-    self.scriptedEffect.addLabeledOptionsWidget("Preview", previewFrame)
-
+    displayFrame = qt.QHBoxLayout()
+    displayFrame.addWidget(qt.QLabel("inputs"))
+    displayFrame.addWidget(self.previewOpacitySlider)
+    displayFrame.addWidget(qt.QLabel("results"))
+    self.scriptedEffect.addLabeledOptionsWidget("Display:", displayFrame)
 
     self.cancelButton = qt.QPushButton("Cancel")
     self.cancelButton.objectName = self.__class__.__name__ + 'Cancel'
@@ -93,6 +106,7 @@ a complete segmentation, taking into account the master volume content.
     self.cancelButton.connect('clicked()', self.onCancel)
     self.applyButton.connect('clicked()', self.onApply)
     self.previewOpacitySlider.connect("valueChanged(double)", self.updateMRMLFromGUI)
+    self.autoUpdateCheckBox.connect("stateChanged(int)", self.updateMRMLFromGUI)
 
   def createCursor(self, widget):
     # Turn off effect-specific cursor for this effect
@@ -100,6 +114,40 @@ a complete segmentation, taking into account the master volume content.
 
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("AutoCompleteMethod", MORPHOLOGICAL_SLICE_INTERPOLATION)
+
+  def onSegmentationModified(self, caller, event):
+    import vtkSegmentationCorePython as vtkSegmentationCore
+
+    if event == vtkSegmentationCore.vtkSegmentation.SegmentAdded or event == vtkSegmentationCore.vtkSegmentation.SegmentRemoved:
+      self.onCancel()
+      return
+
+    self.onPreview()
+
+  def observeSegmentation(self, observationEnabled):
+    import vtkSegmentationCorePython as vtkSegmentationCore
+    segmentation = self.scriptedEffect.parameterSetNode().GetSegmentationNode().GetSegmentation()
+    if observationEnabled and self.observedSegmentation == segmentation:
+      return
+    if not observationEnabled and not self.observedSegmentation:
+      return
+    # Need to update the observer
+    # Remove old observer
+    if self.observedSegmentation:
+      for tag in self.segmentationNodeObserverTags:
+        self.observedSegmentation.RemoveObserver(tag)
+      self.segmentationNodeObserverTags = []
+      self.observedSegmentation = None
+    # Add new observer
+    if segmentation:
+      self.observedSegmentation = segmentation
+      observedEvents = [
+        vtkSegmentationCore.vtkSegmentation.SegmentAdded,
+        vtkSegmentationCore.vtkSegmentation.SegmentRemoved,
+        vtkSegmentationCore.vtkSegmentation.SegmentModified,
+        vtkSegmentationCore.vtkSegmentation.MasterRepresentationModified ]
+      for eventId in observedEvents:
+        self.segmentationNodeObserverTags.append(self.observedSegmentation.AddObserver(eventId, self.onSegmentationModified))
 
   def updateGUIFromMRML(self):
     methodIndex = self.methodSelectorComboBox.findData(self.scriptedEffect.parameter("AutoCompleteMethod"))
@@ -116,8 +164,18 @@ a complete segmentation, taking into account the master volume content.
     self.previewOpacitySlider.setEnabled(previewNode is not None)
     if previewNode:
       wasBlocked = self.previewOpacitySlider.blockSignals(True)
-      self.previewOpacitySlider.value = previewNode.GetDisplayNode().GetOpacity()
+      self.previewOpacitySlider.value = previewNode.GetDisplayNode().GetOpacity2DFill()
       self.previewOpacitySlider.blockSignals(wasBlocked)
+      self.previewButton.text = "Update"
+      self.observeSegmentation(self.autoUpdateCheckBox.isChecked())
+    else:
+      self.previewButton.text = "Initialize"
+      self.observeSegmentation(False)
+
+    autoUpdate = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("AutoUpdate") == 0 else qt.Qt.Checked
+    wasBlocked = self.autoUpdateCheckBox.blockSignals(True)
+    self.autoUpdateCheckBox.setCheckState(autoUpdate)
+    self.autoUpdateCheckBox.blockSignals(wasBlocked)
 
   def updateMRMLFromGUI(self):
     methodIndex = self.methodSelectorComboBox.currentIndex
@@ -127,10 +185,13 @@ a complete segmentation, taking into account the master volume content.
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
     if previewNode:
-      previewNode.GetDisplayNode().SetOpacity(self.previewOpacitySlider.value)
-      segmentationNode.GetDisplayNode().SetOpacity(1.0-self.previewOpacitySlider.value)
+      previewNode.GetDisplayNode().SetOpacity2DFill(self.previewOpacitySlider.value)
+      segmentationNode.GetDisplayNode().SetOpacity2DFill(0.8-self.previewOpacitySlider.value)
     else:
-      segmentationNode.GetDisplayNode().SetOpacity(1.0)
+      segmentationNode.GetDisplayNode().SetOpacity2DFill(0.8)
+
+    autoUpdate = 1 if self.autoUpdateCheckBox.isChecked() else 0
+    self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
 
   def onPreview(self):
     slicer.util.showStatusMessage("Running auto-complete...", 2000)
@@ -151,6 +212,8 @@ a complete segmentation, taking into account the master volume content.
     self.clippedMasterImageData = None
     self.previewOpacitySlider.value = 0.0
     self.growCutFilter = None
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    segmentationNode.GetDisplayNode().SetOpacity2DFill(0.8)
     self.updateGUIFromMRML()
 
   def onCancel(self):
