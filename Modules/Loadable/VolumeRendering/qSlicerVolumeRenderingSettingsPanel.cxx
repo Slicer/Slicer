@@ -69,7 +69,7 @@ qSlicerVolumeRenderingSettingsPanelPrivate
 ::qSlicerVolumeRenderingSettingsPanelPrivate(qSlicerVolumeRenderingSettingsPanel& object)
   :q_ptr(&object)
 {
-  this->MemoryRegExp = QRegExp("^(\\d+(?:\\.\\d*)?)\\s?(Mo|Go)$");
+  this->MemoryRegExp = QRegExp("^(\\d+(?:\\.\\d*)?)\\s?(MB|GB)$");
 }
 
 // --------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
   this->GPUMemoryComboBox->setEditable(true);
   this->GPUMemoryComboBox->lineEdit()->setValidator(
     new QRegExpValidator(this->MemoryRegExp, q));
-  this->GPUMemoryComboBox->insertItem(0, q->tr("0 Mo"));
+  this->GPUMemoryComboBox->insertItem(0, q->tr("0 MB"));
   this->GPUMemoryComboBox->insertSeparator(1);
 
   QObject::connect(this->GPUMemoryComboBox, SIGNAL(editTextChanged(QString)),
@@ -120,7 +120,7 @@ int qSlicerVolumeRenderingSettingsPanelPrivate::memoryFromString(const QString& 
   QString memoryUnit = this->MemoryRegExp.cap(2);
 
   double value = memoryValue.toDouble();
-  double unit = memoryUnit == "Mo" ? 1. : 1024;
+  double unit = memoryUnit == "MB" ? 1. : 1024;
 
   return static_cast<int>(value * unit);
 }
@@ -128,10 +128,10 @@ int qSlicerVolumeRenderingSettingsPanelPrivate::memoryFromString(const QString& 
 // --------------------------------------------------------------------------
 QString qSlicerVolumeRenderingSettingsPanelPrivate::memoryToString(int memory)const
 {
-  QString value = QString::number(memory) + " Mo";
+  QString value = QString::number(memory) + " MB";
   if (memory > 1024)
     {
-    value = QString::number(static_cast<float>(memory) / 1024) + " Go";
+    value = QString::number(static_cast<float>(memory) / 1024) + " GB";
     }
   return value;
 }

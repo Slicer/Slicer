@@ -350,7 +350,7 @@
           <item row="1" column="1">
            <widget class="QComboBox" name="MemorySizeComboBox">
             <property name="toolTip">
-             <string>Amount of memory in Mo available on the GPU for rendering. &quot;Default&quot; can be modified in the settings.</string>
+             <string>Amount of memory in MB available on the GPU for rendering. &quot;Default&quot; can be modified in the settings.</string>
             </property>
             <property name="currentIndex">
              <number>-1</number>

@@ -150,16 +150,20 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QSettings settings;
   int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
   this->MemorySizeComboBox->addItem(
-    QString("Default (%1 Mo)").arg(defaultGPUMemorySize), 0);
+    QString("Default (%1 MB)").arg(defaultGPUMemorySize), 0);
   this->MemorySizeComboBox->insertSeparator(1);
-  this->MemorySizeComboBox->addItem("128 Mo", 128);
-  this->MemorySizeComboBox->addItem("256 Mo", 256);
-  this->MemorySizeComboBox->addItem("512 Mo", 512);
-  this->MemorySizeComboBox->addItem("1024 Mo", 1024);
-  this->MemorySizeComboBox->addItem("1.5 Go", 1536);
-  this->MemorySizeComboBox->addItem("2 Go", 2048);
-  this->MemorySizeComboBox->addItem("3 Go", 3072);
-  this->MemorySizeComboBox->addItem("4 Go", 4096);
+  this->MemorySizeComboBox->addItem("128 MB", 128);
+  this->MemorySizeComboBox->addItem("256 MB", 256);
+  this->MemorySizeComboBox->addItem("512 MB", 512);
+  this->MemorySizeComboBox->addItem("1024 MB", 1024);
+  this->MemorySizeComboBox->addItem("1.5 GB", 1536);
+  this->MemorySizeComboBox->addItem("2 GB", 2048);
+  this->MemorySizeComboBox->addItem("3 GB", 3072);
+  this->MemorySizeComboBox->addItem("4 GB", 4096);
+  this->MemorySizeComboBox->addItem("6 GB", 6144);
+  this->MemorySizeComboBox->addItem("8 GB", 8192);
+  this->MemorySizeComboBox->addItem("12 GB", 12288);
+  this->MemorySizeComboBox->addItem("16 GB", 16384);
 
   QObject::connect(this->MemorySizeComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentMemorySizeChanged(int)));

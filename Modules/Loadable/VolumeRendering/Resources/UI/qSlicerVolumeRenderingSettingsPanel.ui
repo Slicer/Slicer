@@ -31,42 +31,62 @@
      </property>
      <item>
       <property name="text">
-       <string>128 Mo</string>
+       <string>128 MB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>256 Mo</string>
+       <string>256 MB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>512 Mo</string>
+       <string>512 MB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>1024 Mo</string>
+       <string>1024 MB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>1.5 Go</string>
+       <string>1.5 GB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>2 Go</string>
+       <string>2 GB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>3 Go</string>
+       <string>3 GB</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>4 Go</string>
+       <string>4 GB</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>6 GB</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>8 GB</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>12 GB</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>16 GB</string>
       </property>
      </item>
     </widget>
