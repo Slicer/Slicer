@@ -23,7 +23,10 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     # Observation for auto-update
     self.observedSegmentation = None
     self.segmentationNodeObserverTags = []
-    self.maximumPreviewOpacity = 0.8
+
+  def __del__(self, scriptedEffect):
+    super(SegmentEditorAutoCompleteEffect,self).__del__()
+    self.observeSegmentation(False)
 
   def clone(self):
     import qSlicerSegmentationsEditorEffectsPythonQt as effects
@@ -59,6 +62,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
     self.autoUpdateCheckBox = qt.QCheckBox("Auto-update")
     self.autoUpdateCheckBox.setToolTip("Auto-update results preview when input segments change.")
     self.autoUpdateCheckBox.setChecked(False)
+    self.autoUpdateCheckBox.setEnabled(False)
 
     self.previewButton = qt.QPushButton("Initialize")
     self.previewButton.objectName = self.__class__.__name__ + 'Preview'
@@ -76,8 +80,8 @@ a complete segmentation, taking into account the master volume content. Minimum 
 
     self.previewOpacitySlider = ctk.ctkSliderWidget()
     self.previewOpacitySlider.setToolTip("Adjust visibility of results preview.")
-    self.previewOpacitySlider.minimum = 1.0 - self.maximumPreviewOpacity
-    self.previewOpacitySlider.maximum = self.maximumPreviewOpacity
+    self.previewOpacitySlider.minimum = 0
+    self.previewOpacitySlider.maximum = 1.0
     self.previewOpacitySlider.value = 0.0
     self.previewOpacitySlider.singleStep = 0.05
     self.previewOpacitySlider.pageStep = 0.1
@@ -123,6 +127,10 @@ a complete segmentation, taking into account the master volume content. Minimum 
       self.onCancel()
       return
 
+    if not self.autoUpdateCheckBox.isChecked():
+      # just in case a queued request comes through
+      return
+
     self.onPreview()
 
   def observeSegmentation(self, observationEnabled):
@@ -140,7 +148,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
       self.segmentationNodeObserverTags = []
       self.observedSegmentation = None
     # Add new observer
-    if segmentation:
+    if observationEnabled and segmentation is not None:
       self.observedSegmentation = segmentation
       observedEvents = [
         vtkSegmentationCore.vtkSegmentation.SegmentAdded,
@@ -165,12 +173,14 @@ a complete segmentation, taking into account the master volume content. Minimum 
     self.previewOpacitySlider.setEnabled(previewNode is not None)
     if previewNode:
       wasBlocked = self.previewOpacitySlider.blockSignals(True)
-      self.previewOpacitySlider.value = previewNode.GetDisplayNode().GetOpacity2DFill()
+      self.previewOpacitySlider.value = self.getPreviewOpacity()
       self.previewOpacitySlider.blockSignals(wasBlocked)
       self.previewButton.text = "Update"
+      self.autoUpdateCheckBox.setEnabled(True)
       self.observeSegmentation(self.autoUpdateCheckBox.isChecked())
     else:
       self.previewButton.text = "Initialize"
+      self.autoUpdateCheckBox.setEnabled(False)
       self.observeSegmentation(False)
 
     autoUpdate = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("AutoUpdate") == 0 else qt.Qt.Checked
@@ -186,10 +196,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
     if previewNode:
-      previewNode.GetDisplayNode().SetOpacity2DFill(self.previewOpacitySlider.value-(1.0-self.maximumPreviewOpacity))
-      segmentationNode.GetDisplayNode().SetOpacity2DFill(self.maximumPreviewOpacity-self.previewOpacitySlider.value)
-    else:
-      segmentationNode.GetDisplayNode().SetOpacity2DFill(self.maximumPreviewOpacity)
+      self.setPreviewOpacity(self.previewOpacitySlider.value)
 
     autoUpdate = 1 if self.autoUpdateCheckBox.isChecked() else 0
     self.scriptedEffect.setParameter("AutoUpdate", autoUpdate)
@@ -204,17 +211,17 @@ a complete segmentation, taking into account the master volume content. Minimum 
       qt.QApplication.restoreOverrideCursor()
 
   def reset(self):
+    self.observeSegmentation(False)
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
     if previewNode:
       self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, None)
       slicer.mrmlScene.RemoveNode(previewNode)
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    segmentationNode.GetDisplayNode().SetOpacity(1.0)
     self.mergedLabelmapGeometryImage = None
     self.selectedSegmentIds = None
     self.clippedMasterImageData = None
-    self.previewOpacitySlider.value = 0.0
     self.growCutFilter = None
-    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
-    segmentationNode.GetDisplayNode().SetOpacity2DFill(0.8)
     self.updateGUIFromMRML()
 
   def onCancel(self):
@@ -238,6 +245,22 @@ a complete segmentation, taking into account the master volume content. Minimum 
       previewNode.GetSegmentation().RemoveSegment(segmentID) # delete now to limit memory usage
 
     self.reset()
+
+  def setPreviewOpacity(self, opacity):
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    segmentationNode.GetDisplayNode().SetOpacity(1.0-opacity)
+    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    if previewNode:
+      previewNode.GetDisplayNode().SetOpacity(opacity)
+
+    # Make sure the GUI is up-to-date
+    wasBlocked = self.previewOpacitySlider.blockSignals(True)
+    self.previewOpacitySlider.value = opacity
+    self.previewOpacitySlider.blockSignals(wasBlocked)
+
+  def getPreviewOpacity(self):
+    previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
+    return previewNode.GetDisplayNode().GetOpacity() if previewNode else 0.6 # default opacity for preview
 
   def preview(self):
     # Get master volume image data
@@ -284,11 +307,10 @@ a complete segmentation, taking into account the master volume content. Minimum 
       previewNode = slicer.mrmlScene.AddNode(previewNode)
       previewNode.CreateDefaultDisplayNodes()
       previewNode.GetDisplayNode().SetVisibility2DOutline(False)
-      previewNode.GetDisplayNode().SetOpacity2DFill(0.6)
       if segmentationNode.GetParentTransformNode():
         previewNode.SetAndObserveTransformNodeID(segmentationNode.GetParentTransformNode().GetID())
       self.scriptedEffect.parameterSetNode().SetNodeReferenceID(ResultPreviewNodeReferenceRole, previewNode.GetID())
-      self.previewOpacitySlider.value = 0.5
+      self.setPreviewOpacity(0.6)
 
       self.clippedMasterImageData = vtkSegmentationCore.vtkOrientedImageData()
       masterImageClipper = vtk.vtkImageConstantPad()
