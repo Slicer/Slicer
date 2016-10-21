@@ -410,7 +410,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     {
     return;
     }
-  bool displayNodeVisible = displayNode->GetOpacity3D() && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID());
+  bool displayNodeVisible = displayNode->GetOpacity3D()>0 && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID());
 
   // Get segmentation display node
   vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(displayNode);
@@ -483,7 +483,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayNodePip
     pipeline->Actor->GetProperty()->SetBackfaceCulling(displayNode->GetBackfaceCulling());
 
     pipeline->Actor->GetProperty()->SetColor(properties.Color[0], properties.Color[1], properties.Color[2]);
-    pipeline->Actor->GetProperty()->SetOpacity(properties.Opacity3D * displayNode->GetOpacity3D() * displayNode->GetOpacity());
+    pipeline->Actor->GetProperty()->SetOpacity(properties.Opacity3D * displayNode->GetOpacity3D());
 
     if (displayNode->GetSelected())
       {
