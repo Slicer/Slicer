@@ -18,14 +18,24 @@ class SegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEditorEffect):
     # Stores merged labelmap image geometry (voxel data is not allocated)
     self.mergedLabelmapGeometryImage = None
     self.selectedSegmentIds = None
+    self.selectedSegmentModifiedTimes = {} # map from segment ID to ModifiedTime
     self.clippedMasterImageData = None
     self.growCutFilter = None
     # Observation for auto-update
     self.observedSegmentation = None
     self.segmentationNodeObserverTags = []
 
+    # Wait this much after the last modified event before starting aut-update:
+    autoUpdateDelaySec = 1.0
+    self.delayedAutoUpdateTimer = qt.QTimer()
+    self.delayedAutoUpdateTimer.singleShot = True
+    self.delayedAutoUpdateTimer.interval = autoUpdateDelaySec * 1000
+    self.delayedAutoUpdateTimer.connect('timeout()', self.onPreview)
+
+
   def __del__(self, scriptedEffect):
     super(SegmentEditorAutoCompleteEffect,self).__del__()
+    self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
 
   def clone(self):
@@ -119,19 +129,43 @@ a complete segmentation, taking into account the master volume content. Minimum 
 
   def setMRMLDefaults(self):
     self.scriptedEffect.setParameterDefault("AutoCompleteMethod", MORPHOLOGICAL_SLICE_INTERPOLATION)
+    self.scriptedEffect.setParameterDefault("AutoUpdate", "0")
 
   def onSegmentationModified(self, caller, event):
-    import vtkSegmentationCorePython as vtkSegmentationCore
-
-    if event == vtkSegmentationCore.vtkSegmentation.SegmentAdded or event == vtkSegmentationCore.vtkSegmentation.SegmentRemoved:
-      self.onCancel()
-      return
-
     if not self.autoUpdateCheckBox.isChecked():
       # just in case a queued request comes through
       return
 
-    self.onPreview()
+    import vtkSegmentationCorePython as vtkSegmentationCore
+    segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
+    segmentation = segmentationNode.GetSegmentation()
+
+    updateNeeded = False
+    for segmentIndex in range(self.selectedSegmentIds.GetNumberOfValues()):
+      segmentID = self.selectedSegmentIds.GetValue(segmentIndex)
+      segment = segmentation.GetSegment(segmentID)
+      if not segment:
+        # selected segment was deleted, cancel segmentation
+        logging.warning("Segmentation cancelled")
+        #qt.QTimer.singleShot(0, self.onCancel)
+        self.onCancel()
+        return
+      segmentLabelmap = segment.GetRepresentation(vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())
+      if self.selectedSegmentModifiedTimes.has_key(segmentID) \
+        and segmentLabelmap.GetMTime() == self.selectedSegmentModifiedTimes[segmentID]:
+        # this segment has not changed since last update
+        continue
+      self.selectedSegmentModifiedTimes[segmentID] = segmentLabelmap.GetMTime()
+      updateNeeded = True
+      # continue so that all segment modified times are updated
+
+    if not updateNeeded:
+      return
+
+    logging.warning("Segmentation update requested")
+    # There could be multiple update events for a single paint operation (e.g., one segment overwrites the other)
+    # therefore don't update directly, just set up/reset a timer that will perform the update when it elapses.
+    self.delayedAutoUpdateTimer.start()
 
   def observeSegmentation(self, observationEnabled):
     import vtkSegmentationCorePython as vtkSegmentationCore
@@ -181,6 +215,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
     else:
       self.previewButton.text = "Initialize"
       self.autoUpdateCheckBox.setEnabled(False)
+      self.delayedAutoUpdateTimer.stop()
       self.observeSegmentation(False)
 
     autoUpdate = qt.Qt.Unchecked if self.scriptedEffect.integerParameter("AutoUpdate") == 0 else qt.Qt.Checked
@@ -211,6 +246,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
       qt.QApplication.restoreOverrideCursor()
 
   def reset(self):
+    self.delayedAutoUpdateTimer.stop()
     self.observeSegmentation(False)
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)
     if previewNode:
@@ -220,6 +256,7 @@ a complete segmentation, taking into account the master volume content. Minimum 
     segmentationNode.GetDisplayNode().SetOpacity(1.0)
     self.mergedLabelmapGeometryImage = None
     self.selectedSegmentIds = None
+    self.selectedSegmentModifiedTimes = {}
     self.clippedMasterImageData = None
     self.growCutFilter = None
     self.updateGUIFromMRML()
@@ -228,6 +265,9 @@ a complete segmentation, taking into account the master volume content. Minimum 
     self.reset()
 
   def onApply(self):
+    self.delayedAutoUpdateTimer.stop()
+    self.observeSegmentation(False)
+
     import vtkSegmentationCorePython as vtkSegmentationCore
     segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
     previewNode = self.scriptedEffect.parameterSetNode().GetNodeReference(ResultPreviewNodeReferenceRole)

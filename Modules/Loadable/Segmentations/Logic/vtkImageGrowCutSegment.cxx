@@ -250,23 +250,30 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(vtkImageData *intens
     LabelPixelType* resultLabelVolumePtr = static_cast<LabelPixelType*>(m_ResultLabelVolume->GetScalarPointer());
     LabelPixelType* resultLabelVolumePrePtr = static_cast<LabelPixelType*>(m_ResultLabelVolumePre->GetScalarPointer());
     DistancePixelType* distanceVolumePtr = static_cast<DistancePixelType*>(m_DistanceVolume->GetScalarPointer());
+    DistancePixelType* distanceVolumePrePtr = static_cast<DistancePixelType*>(m_DistanceVolumePre->GetScalarPointer());
 
     for (long index = 0; index < dimXYZ; index++)
       {
-      if (seedLabelVolumePtr[index] != 0 && seedLabelVolumePtr[index] != resultLabelVolumePrePtr[index])
+      if (seedLabelVolumePtr[index] != 0)
         {
-        m_HeapNodes[index] = DIST_EPSILON;
-        distanceVolumePtr[index] = DIST_EPSILON;
-        resultLabelVolumePtr[index] = seedLabelVolumePtr[index];
+        // Only grow from new/changed seeds
+        if (resultLabelVolumePtr[index] != seedLabelVolumePtr[index])
+          {
+          m_HeapNodes[index] = DIST_EPSILON;
+          distanceVolumePtr[index] = DIST_EPSILON;
+          resultLabelVolumePtr[index] = seedLabelVolumePtr[index];
+          m_Heap->Insert(&m_HeapNodes[index]);
+          m_HeapNodes[index].SetIndexValue(index);
+          }
         }
       else
         {
         m_HeapNodes[index] = DIST_INF;
         distanceVolumePtr[index] = DIST_INF;
         resultLabelVolumePtr[index] = 0;
+        m_Heap->Insert(&m_HeapNodes[index]);
+        m_HeapNodes[index].SetIndexValue(index);
         }
-      m_Heap->Insert(&m_HeapNodes[index]);
-      m_HeapNodes[index].SetIndexValue(index);
       }
     }
   return true;
